@@ -3,3 +3,4 @@
 *.egg-info
 reports/
 build/
+nohup.out
