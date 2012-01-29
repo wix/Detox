@@ -2,3 +2,4 @@
 .env/
 *.egg-info
 reports/
+build/

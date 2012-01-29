@@ -14,19 +14,15 @@
 		F6016C8A1462143C0037BB3D /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A12CD51451231B00C1D980 /* CFNetwork.framework */; };
 		F60CC2A114D4EA0500A005E4 /* SRTWebSocketOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F60CC2A014D4EA0500A005E4 /* SRTWebSocketOperation.m */; };
 		F611322A14D4C4F2008A42D5 /* SRTBonjourLocatorOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = F611322814D4C4F2008A42D5 /* SRTBonjourLocatorOperation.h */; };
-		F611322B14D4C4F2008A42D5 /* SRTBonjourLocatorOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F611322914D4C4F2008A42D5 /* SRTBonjourLocatorOperation.m */; };
+		F62417D414D5073D003CE997 /* SRTBonjourLocatorOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F611322914D4C4F2008A42D5 /* SRTBonjourLocatorOperation.m */; };
 		F6572126146C7B6A00D6B8A9 /* NSData+SRB64Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F6572124146C7B6A00D6B8A9 /* NSData+SRB64Additions.m */; };
 		F6A12CD1145119B700C1D980 /* SRWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A12CCF145119B700C1D980 /* SRWebSocket.h */; };
 		F6A12CD2145119B700C1D980 /* SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = F6A12CD0145119B700C1D980 /* SRWebSocket.m */; };
 		F6AE451D145906A70022AF3C /* libSocketRocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B2082D1450F597009315AF /* libSocketRocket.a */; };
 		F6AE4520145906B20022AF3C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B208301450F597009315AF /* Foundation.framework */; };
-		F6AE4521145906B20022AF3C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B208431450F611009315AF /* UIKit.framework */; };
-		F6AE4522145906B20022AF3C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B208461450F611009315AF /* CoreGraphics.framework */; };
-		F6AE4523145906C10022AF3C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B208461450F611009315AF /* CoreGraphics.framework */; };
 		F6AE45241459071C0022AF3C /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A12CD51451231B00C1D980 /* CFNetwork.framework */; };
 		F6AE4528145907D30022AF3C /* SenTestCase+SRTAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = F6AE4527145907D30022AF3C /* SenTestCase+SRTAdditions.m */; };
 		F6BDA804145900D200FE3253 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6BDA803145900D200FE3253 /* SenTestingKit.framework */; };
-		F6BDA805145900D200FE3253 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B208431450F611009315AF /* UIKit.framework */; };
 		F6BDA806145900D200FE3253 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B208301450F597009315AF /* Foundation.framework */; };
 		F6BDA80C145900D200FE3253 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F6BDA80A145900D200FE3253 /* InfoPlist.strings */; };
 		F6BDA8161459016900FE3253 /* SRTAutobahnTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F6BDA8151459016900FE3253 /* SRTAutobahnTests.m */; };
@@ -52,8 +48,6 @@
 		F6B2082D1450F597009315AF /* libSocketRocket.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSocketRocket.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6B208301450F597009315AF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F6B208341450F597009315AF /* SocketRocket-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SocketRocket-Prefix.pch"; sourceTree = "<group>"; };
-		F6B208431450F611009315AF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		F6B208461450F611009315AF /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		F6BDA802145900D200FE3253 /* SRWebSocketTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SRWebSocketTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6BDA803145900D200FE3253 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		F6BDA809145900D200FE3253 /* SRWebSocketTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SRWebSocketTests-Info.plist"; sourceTree = "<group>"; };
@@ -70,8 +64,6 @@
 			files = (
 				F6C41C96145F7C4700641356 /* libicucore.dylib in Frameworks */,
 				F6AE4520145906B20022AF3C /* Foundation.framework in Frameworks */,
-				F6AE4521145906B20022AF3C /* UIKit.framework in Frameworks */,
-				F6AE4522145906B20022AF3C /* CoreGraphics.framework in Frameworks */,
 				F6016C8914620ECC0037BB3D /* Security.framework in Frameworks */,
 				F6016C8A1462143C0037BB3D /* CFNetwork.framework in Frameworks */,
 			);
@@ -83,10 +75,8 @@
 			files = (
 				F6C41C98145F7C6100641356 /* libicucore.dylib in Frameworks */,
 				F6BDA804145900D200FE3253 /* SenTestingKit.framework in Frameworks */,
-				F6BDA805145900D200FE3253 /* UIKit.framework in Frameworks */,
 				F6BDA806145900D200FE3253 /* Foundation.framework in Frameworks */,
 				F6AE451D145906A70022AF3C /* libSocketRocket.a in Frameworks */,
-				F6AE4523145906C10022AF3C /* CoreGraphics.framework in Frameworks */,
 				F6AE45241459071C0022AF3C /* CFNetwork.framework in Frameworks */,
 				F6016C8814620EC70037BB3D /* Security.framework in Frameworks */,
 			);
@@ -121,8 +111,6 @@
 				F6A12CD51451231B00C1D980 /* CFNetwork.framework */,
 				F6A12CD3145122FC00C1D980 /* Security.framework */,
 				F6B208301450F597009315AF /* Foundation.framework */,
-				F6B208431450F611009315AF /* UIKit.framework */,
-				F6B208461450F611009315AF /* CoreGraphics.framework */,
 				F6BDA803145900D200FE3253 /* SenTestingKit.framework */,
 			);
 			name = Frameworks;
@@ -287,7 +275,6 @@
 				F6A12CD2145119B700C1D980 /* SRWebSocket.m in Sources */,
 				F6016C7C146124B20037BB3D /* base64.c in Sources */,
 				F6572126146C7B6A00D6B8A9 /* NSData+SRB64Additions.m in Sources */,
-				F611322B14D4C4F2008A42D5 /* SRTBonjourLocatorOperation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -298,6 +285,7 @@
 				F6BDA8161459016900FE3253 /* SRTAutobahnTests.m in Sources */,
 				F6AE4528145907D30022AF3C /* SenTestCase+SRTAdditions.m in Sources */,
 				F60CC2A114D4EA0500A005E4 /* SRTWebSocketOperation.m in Sources */,
+				F62417D414D5073D003CE997 /* SRTBonjourLocatorOperation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

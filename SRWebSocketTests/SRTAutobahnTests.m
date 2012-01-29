@@ -55,10 +55,6 @@
 {
     _sockets = [[NSMutableArray alloc] init];
 
-    
-    __block BOOL hasFinished = NO;
-    __block BOOL hasFailed = NO;
-
     NSString *const testHarnessKey = [[NSProcessInfo processInfo].environment objectForKey:@"SR_TESTHARNESS_KEY"];
 
     STAssertNotNil(testHarnessKey, @"Should have SR_TESTHARNESS_KEY key set in env");
@@ -114,8 +110,6 @@
     } timeout:60 * 60];
     
     STAssertNil(updateReportOperation.error, @"Updating the report should not have errored");
-        
-    STAssertFalse(hasFailed, @"Failed connection");
 }
 
 @end
