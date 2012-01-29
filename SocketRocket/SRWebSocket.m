@@ -242,6 +242,8 @@ typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
     uint32_t _currentStringScanPosition;
     NSMutableData *_currentFrameData;
     
+    NSString *_closeReason;
+    
     uint8_t _currentReadMaskKey[4];
     size_t _currentReadMaskOffset;
 
@@ -261,11 +263,6 @@ typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
 @synthesize delegate = _delegate;
 @synthesize url = _url;
 @synthesize readyState = _readyState;
-
-@synthesize onOpen = _onOpen;
-@synthesize onClose = _onClose;
-@synthesize onMessage = _onMessage;
-@synthesize onError = _onError;
 
 static __strong NSData *CRLFCRLF;
 
@@ -329,29 +326,6 @@ static __strong NSData *CRLFCRLF;
     _consumers = [[NSMutableArray alloc] init];
     
     // default handlers
-    self.onError = ^(SRWebSocket *webSocket, NSError *error) {
-        if ([webSocket.delegate respondsToSelector:@selector(webSocket:didFailWithError:)]) {
-            [webSocket.delegate webSocket:webSocket didFailWithError:error];
-        }
-    };
-    
-    self.onMessage = ^(SRWebSocket *webSocket, id message) {
-        if ([webSocket.delegate respondsToSelector:@selector(webSocket:didReceiveMessage:)]) {
-            [webSocket.delegate webSocket:webSocket didReceiveMessage:message];
-        }
-    };
-    
-    self.onClose = ^(SRWebSocket *webSocket, NSInteger code, NSString *reason, BOOL wasClean) {
-        if ([webSocket.delegate respondsToSelector:@selector(webSocket:didCloseWithCode:reason:wasClean:)]) {
-            [webSocket.delegate webSocket:webSocket didCloseWithCode:code reason:reason wasClean:wasClean];
-        }
-    };
-    
-    self.onOpen = ^(SRWebSocket *webSocket) {
-        if ([webSocket.delegate respondsToSelector:@selector(webSocketDidOpen:)]) {
-            [webSocket.delegate webSocketDidOpen:webSocket];
-        }
-    };
 }
 
 - (void)dealloc
@@ -419,7 +393,9 @@ static __strong NSData *CRLFCRLF;
     }
 
     dispatch_async(_callbackQueue, ^{
-        self.onOpen(self);
+        if ([self.delegate respondsToSelector:@selector(webSocketDidOpen:)]) {
+            [self.delegate webSocketDidOpen:self];
+        }
     });
 }
 
@@ -567,7 +543,9 @@ static __strong NSData *CRLFCRLF;
     dispatch_async(_workQueue, ^{
         if (self.readyState != SR_CLOSED) {
             dispatch_async(_callbackQueue, ^{
-                _onError(self, error);
+                if ([self.delegate respondsToSelector:@selector(webSocket:didFailWithError:)]) {
+                    [self.delegate webSocket:self didFailWithError:error];
+                }
             });
 
             self.readyState = SR_CLOSED;
@@ -619,7 +597,7 @@ static __strong NSData *CRLFCRLF;
 - (void)handleMessage:(id)message
 {
     dispatch_async(_callbackQueue, ^{
-        _onMessage(self, message);
+        [self.delegate webSocket:self didReceiveMessage:message];
     });
 }
 
@@ -663,8 +641,6 @@ static inline BOOL closeCodeIsValid(int closeCode) {
     size_t dataSize = data.length;
     __block uint16_t closeCode = 0;
     
-    NSString *reason = nil;
-    
     SRFastLog(@"Received close frame");
     
     if (dataSize == 1) {
@@ -679,8 +655,8 @@ static inline BOOL closeCodeIsValid(int closeCode) {
             return;
         }
         if (dataSize > 2) {
-            reason = [[NSString alloc] initWithData:[data subdataWithRange:NSMakeRange(2, dataSize - 2)] encoding:NSUTF8StringEncoding];
-            if (!reason) {
+            _closeReason = [[NSString alloc] initWithData:[data subdataWithRange:NSMakeRange(2, dataSize - 2)] encoding:NSUTF8StringEncoding];
+            if (!_closeReason) {
                 [self _closeWithProtocolError:@"Close reason MUST be valid UTF-8"];
                 return;
             }
@@ -692,7 +668,7 @@ static inline BOOL closeCodeIsValid(int closeCode) {
     assert(dispatch_get_current_queue() == _workQueue);
     
     if (self.readyState == SR_OPEN) {
-        [self closeWithCode:1000 reason:reason];
+        [self closeWithCode:1000 reason:nil];
     }
     [self _disconnect];
 }
@@ -962,7 +938,9 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
         [_inputStream close];
         
         dispatch_async(_callbackQueue, ^{
-            _onClose(self, _closeCode, nil, YES);
+            if ([self.delegate respondsToSelector:@selector(webSocket:didCloseWithCode:reason:wasClean:)]) {
+                [self.delegate webSocket:self didCloseWithCode:_closeCode reason:_closeReason wasClean:YES];
+            }
         });
     }
 }

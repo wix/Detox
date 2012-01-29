@@ -26,11 +26,6 @@ typedef enum {
 
 @class SRWebSocket;
 
-typedef void (^SROnOpenHandler)(SRWebSocket *webSocket);
-typedef void (^SROnMessageHandler)(SRWebSocket *webSocket, NSString *message);
-typedef void (^SROnCloseHandler)(SRWebSocket *webSocket, NSInteger code, NSString *reason, BOOL wasClean);
-typedef void (^SROnErrorHandler)(SRWebSocket *webSocket, NSError *error);
-
 extern NSString *const SRWebSocketErrorDomain;
 
 @protocol SRWebSocketDelegate;
@@ -54,20 +49,16 @@ extern NSString *const SRWebSocketErrorDomain;
 // Send a UTF8 String or Data
 - (void)send:(id)data;
 
-// Must not be set to nil
-@property (nonatomic, copy) SROnOpenHandler onOpen;
-@property (nonatomic, copy) SROnMessageHandler onMessage;
-@property (nonatomic, copy) SROnCloseHandler onClose;
-@property (nonatomic, copy) SROnErrorHandler onError;
-
 @end
 
 @protocol SRWebSocketDelegate <NSObject>
+
+- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(NSString *)message;
+
 @optional
 
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket;
 - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error;
-- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(NSString *)message;
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean;
 
 @end
