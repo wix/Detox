@@ -15,6 +15,20 @@
 		F60CC2A114D4EA0500A005E4 /* SRTWebSocketOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F60CC2A014D4EA0500A005E4 /* SRTWebSocketOperation.m */; };
 		F611322A14D4C4F2008A42D5 /* SRTBonjourLocatorOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = F611322814D4C4F2008A42D5 /* SRTBonjourLocatorOperation.h */; };
 		F62417D414D5073D003CE997 /* SRTBonjourLocatorOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F611322914D4C4F2008A42D5 /* SRTBonjourLocatorOperation.m */; };
+		F62417E614D52F3C003CE997 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F62417E514D52F3C003CE997 /* UIKit.framework */; };
+		F62417E714D52F3C003CE997 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B208301450F597009315AF /* Foundation.framework */; };
+		F62417E914D52F3C003CE997 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F62417E814D52F3C003CE997 /* CoreGraphics.framework */; };
+		F62417EF14D52F3C003CE997 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F62417ED14D52F3C003CE997 /* InfoPlist.strings */; };
+		F62417F114D52F3C003CE997 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F62417F014D52F3C003CE997 /* main.m */; };
+		F62417F514D52F3C003CE997 /* TCAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F62417F414D52F3C003CE997 /* TCAppDelegate.m */; };
+		F62417F814D52F3C003CE997 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F62417F614D52F3C003CE997 /* MainStoryboard.storyboard */; };
+		F62417FB14D52F3C003CE997 /* TCViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F62417FA14D52F3C003CE997 /* TCViewController.m */; };
+		F624180114D5300C003CE997 /* TCChatCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F624180014D5300C003CE997 /* TCChatCell.m */; };
+		F624180214D532E0003CE997 /* libSocketRocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B2082D1450F597009315AF /* libSocketRocket.a */; };
+		F624180314D53449003CE997 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A12CD51451231B00C1D980 /* CFNetwork.framework */; };
+		F624180414D53449003CE997 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A12CD3145122FC00C1D980 /* Security.framework */; };
+		F624180514D53449003CE997 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6BDA803145900D200FE3253 /* SenTestingKit.framework */; };
+		F624180614D53451003CE997 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6C41C95145F7C4700641356 /* libicucore.dylib */; };
 		F6572126146C7B6A00D6B8A9 /* NSData+SRB64Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F6572124146C7B6A00D6B8A9 /* NSData+SRB64Additions.m */; };
 		F6A12CD1145119B700C1D980 /* SRWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A12CCF145119B700C1D980 /* SRWebSocket.h */; };
 		F6A12CD2145119B700C1D980 /* SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = F6A12CD0145119B700C1D980 /* SRWebSocket.m */; };
@@ -47,6 +61,20 @@
 		F60CC2A014D4EA0500A005E4 /* SRTWebSocketOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRTWebSocketOperation.m; sourceTree = "<group>"; };
 		F611322814D4C4F2008A42D5 /* SRTBonjourLocatorOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRTBonjourLocatorOperation.h; sourceTree = "<group>"; };
 		F611322914D4C4F2008A42D5 /* SRTBonjourLocatorOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRTBonjourLocatorOperation.m; sourceTree = "<group>"; };
+		F62417E314D52F3C003CE997 /* TestChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F62417E514D52F3C003CE997 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		F62417E814D52F3C003CE997 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		F62417EC14D52F3C003CE997 /* TestChat-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "TestChat-Info.plist"; sourceTree = "<group>"; };
+		F62417EE14D52F3C003CE997 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F62417F014D52F3C003CE997 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		F62417F214D52F3C003CE997 /* TestChat-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TestChat-Prefix.pch"; sourceTree = "<group>"; };
+		F62417F314D52F3C003CE997 /* TCAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCAppDelegate.h; sourceTree = "<group>"; };
+		F62417F414D52F3C003CE997 /* TCAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCAppDelegate.m; sourceTree = "<group>"; };
+		F62417F714D52F3C003CE997 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
+		F62417F914D52F3C003CE997 /* TCViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCViewController.h; sourceTree = "<group>"; };
+		F62417FA14D52F3C003CE997 /* TCViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCViewController.m; sourceTree = "<group>"; };
+		F62417FF14D5300C003CE997 /* TCChatCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCChatCell.h; sourceTree = "<group>"; };
+		F624180014D5300C003CE997 /* TCChatCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCChatCell.m; sourceTree = "<group>"; };
 		F6572123146C7B6A00D6B8A9 /* NSData+SRB64Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+SRB64Additions.h"; sourceTree = "<group>"; };
 		F6572124146C7B6A00D6B8A9 /* NSData+SRB64Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+SRB64Additions.m"; sourceTree = "<group>"; };
 		F6A12CCF145119B700C1D980 /* SRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocket.h; sourceTree = "<group>"; };
@@ -68,6 +96,21 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		F62417E014D52F3C003CE997 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F62417E614D52F3C003CE997 /* UIKit.framework in Frameworks */,
+				F62417E714D52F3C003CE997 /* Foundation.framework in Frameworks */,
+				F62417E914D52F3C003CE997 /* CoreGraphics.framework in Frameworks */,
+				F624180214D532E0003CE997 /* libSocketRocket.a in Frameworks */,
+				F624180314D53449003CE997 /* CFNetwork.framework in Frameworks */,
+				F624180414D53449003CE997 /* Security.framework in Frameworks */,
+				F624180514D53449003CE997 /* SenTestingKit.framework in Frameworks */,
+				F624180614D53451003CE997 /* libicucore.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F6B2082A1450F597009315AF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -95,11 +138,38 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F62417EA14D52F3C003CE997 /* TestChat */ = {
+			isa = PBXGroup;
+			children = (
+				F62417EB14D52F3C003CE997 /* Supporting Files */,
+				F62417F314D52F3C003CE997 /* TCAppDelegate.h */,
+				F62417F414D52F3C003CE997 /* TCAppDelegate.m */,
+				F62417F614D52F3C003CE997 /* MainStoryboard.storyboard */,
+				F62417F914D52F3C003CE997 /* TCViewController.h */,
+				F62417FA14D52F3C003CE997 /* TCViewController.m */,
+				F62417FF14D5300C003CE997 /* TCChatCell.h */,
+				F624180014D5300C003CE997 /* TCChatCell.m */,
+			);
+			path = TestChat;
+			sourceTree = "<group>";
+		};
+		F62417EB14D52F3C003CE997 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F62417EC14D52F3C003CE997 /* TestChat-Info.plist */,
+				F62417ED14D52F3C003CE997 /* InfoPlist.strings */,
+				F62417F014D52F3C003CE997 /* main.m */,
+				F62417F214D52F3C003CE997 /* TestChat-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		F6B208221450F597009315AF = {
 			isa = PBXGroup;
 			children = (
 				F6B208321450F597009315AF /* SocketRocket */,
 				F6BDA807145900D200FE3253 /* SRWebSocketTests */,
+				F62417EA14D52F3C003CE997 /* TestChat */,
 				F6B2082F1450F597009315AF /* Frameworks */,
 				F6B2082E1450F597009315AF /* Products */,
 			);
@@ -110,6 +180,7 @@
 			children = (
 				F6B2082D1450F597009315AF /* libSocketRocket.a */,
 				F6BDA802145900D200FE3253 /* SRWebSocketTests.octest */,
+				F62417E314D52F3C003CE997 /* TestChat.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -122,6 +193,8 @@
 				F6A12CD3145122FC00C1D980 /* Security.framework */,
 				F6B208301450F597009315AF /* Foundation.framework */,
 				F6BDA803145900D200FE3253 /* SenTestingKit.framework */,
+				F62417E514D52F3C003CE997 /* UIKit.framework */,
+				F62417E814D52F3C003CE997 /* CoreGraphics.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -189,6 +262,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		F62417E214D52F3C003CE997 /* TestChat */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F62417FC14D52F3C003CE997 /* Build configuration list for PBXNativeTarget "TestChat" */;
+			buildPhases = (
+				F62417DF14D52F3C003CE997 /* Sources */,
+				F62417E014D52F3C003CE997 /* Frameworks */,
+				F62417E114D52F3C003CE997 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TestChat;
+			productName = TestChat;
+			productReference = F62417E314D52F3C003CE997 /* TestChat.app */;
+			productType = "com.apple.product-type.application";
+		};
 		F6B2082C1450F597009315AF /* SocketRocket */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F6B2083A1450F597009315AF /* Build configuration list for PBXNativeTarget "SocketRocket" */;
@@ -247,11 +337,21 @@
 			targets = (
 				F6B2082C1450F597009315AF /* SocketRocket */,
 				F6BDA801145900D200FE3253 /* SRWebSocketTests */,
+				F62417E214D52F3C003CE997 /* TestChat */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		F62417E114D52F3C003CE997 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F62417EF14D52F3C003CE997 /* InfoPlist.strings in Resources */,
+				F62417F814D52F3C003CE997 /* MainStoryboard.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F6BDA7FF145900D200FE3253 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -279,6 +379,17 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		F62417DF14D52F3C003CE997 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F62417F114D52F3C003CE997 /* main.m in Sources */,
+				F62417F514D52F3C003CE997 /* TCAppDelegate.m in Sources */,
+				F62417FB14D52F3C003CE997 /* TCViewController.m in Sources */,
+				F624180114D5300C003CE997 /* TCChatCell.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F6B208291450F597009315AF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -311,6 +422,22 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		F62417ED14D52F3C003CE997 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F62417EE14D52F3C003CE997 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		F62417F614D52F3C003CE997 /* MainStoryboard.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F62417F714D52F3C003CE997 /* en */,
+			);
+			name = MainStoryboard.storyboard;
+			sourceTree = "<group>";
+		};
 		F6BDA80A145900D200FE3253 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -322,6 +449,45 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		F62417FD14D52F3C003CE997 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TestChat/TestChat-Prefix.pch";
+				INFOPLIST_FILE = "TestChat/TestChat-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		F62417FE14D52F3C003CE997 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TestChat/TestChat-Prefix.pch";
+				INFOPLIST_FILE = "TestChat/TestChat-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
 		F6B208381450F597009315AF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -455,6 +621,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		F62417FC14D52F3C003CE997 /* Build configuration list for PBXNativeTarget "TestChat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F62417FD14D52F3C003CE997 /* Debug */,
+				F62417FE14D52F3C003CE997 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		F6B208271450F597009315AF /* Build configuration list for PBXProject "SocketRocket" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

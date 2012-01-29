@@ -68,9 +68,11 @@ static inline dispatch_queue_t log_queue() {
     return queue;
 }
 
+//#define SR_ENABLE_LOG
+
 static inline void SRFastLog(NSString *format, ...)  {
     
-#if 0
+#ifdef SR_ENABLE_LOG
     __block va_list arg_list;
     va_start (arg_list, format);
     
@@ -78,7 +80,7 @@ static inline void SRFastLog(NSString *format, ...)  {
     
     va_end(arg_list);
     
-    NSLog(@"SR %@", formattedString);
+    NSLog(@"[SR] %@", formattedString);
 #endif
 }
 
@@ -351,13 +353,15 @@ static __strong NSData *CRLFCRLF;
 }
 
 - (void)dealloc
-{    
-    dispatch_release(_callbackQueue);
-    dispatch_release(_workQueue);
-    [_inputStream close];
-    [_outputStream close];
+{
     _inputStream.delegate = nil;
     _outputStream.delegate = nil;
+
+    [_inputStream close];
+    [_outputStream close];
+    
+    dispatch_release(_callbackQueue);
+    dispatch_release(_workQueue);
 }
 
 #ifndef NDEBUG
@@ -717,7 +721,6 @@ static inline BOOL closeCodeIsValid(int closeCode) {
 - (void)_disconnect;
 {
     SRFastLog(@"Trying to disconnect");
-    [_inputStream removeFromRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
     dispatch_async(_workQueue, ^{
         _closeWhenFinishedWriting = YES;
         [self _pumpWriting];
