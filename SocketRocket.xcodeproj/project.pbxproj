@@ -30,6 +30,16 @@
 		F6C41C98145F7C6100641356 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6C41C95145F7C4700641356 /* libicucore.dylib */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		F62417D514D50869003CE997 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F6B208241450F597009315AF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F6B2082C1450F597009315AF;
+			remoteInfo = SocketRocket;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		F6016C7B146124B20037BB3D /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
 		F6016C7E146124ED0037BB3D /* base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
@@ -208,6 +218,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				F62417D614D50869003CE997 /* PBXTargetDependency */,
 			);
 			name = SRWebSocketTests;
 			productName = SRWebSocketTests;
@@ -290,6 +301,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F62417D614D50869003CE997 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F6B2082C1450F597009315AF /* SocketRocket */;
+			targetProxy = F62417D514D50869003CE997 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		F6BDA80A145900D200FE3253 /* InfoPlist.strings */ = {
