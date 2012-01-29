@@ -504,6 +504,7 @@ static __strong NSData *CRLFCRLF;
 - (void)closeWithCode:(NSInteger)code reason:(NSString *)reason;
 {
     assert(code);
+    _closeCode = code;
     if (self.readyState == SR_CLOSING || self.readyState == SR_CLOSED) {
         return;
     }
@@ -639,21 +640,27 @@ static __strong NSData *CRLFCRLF;
     
     if (dataSize == 1) {
         // TODO handle error
-//        assert(NO);
+        [self _closeWithProtocolError:[NSString stringWithFormat:@"Payload for close must be larger than 2 bytes"]];
+        return;
     } else if (dataSize >= 2) {
         [data getBytes:&closeCode length:sizeof(closeCode)];
         closeCode = EndianU16_BtoN(closeCode);
-
+        if (closeCode == 0) {
+            [self _closeWithProtocolError:[NSString stringWithFormat:@"Cannot have close code of 0"]];
+            return;
+        }
         if (dataSize > 2) {
             reason = [[NSString alloc] initWithData:[data subdataWithRange:NSMakeRange(2, dataSize - 2)] encoding:NSUTF8StringEncoding];
         }
+    } else {
+        closeCode = 1005;
     }
     
     assert(dispatch_get_current_queue() == _workQueue);
     
     dispatch_async(_workQueue, ^{
         if (self.readyState == SR_OPEN) {
-            [self closeWithCode:SRStatusCodeNormal reason:reason];
+            [self closeWithCode:closeCode reason:reason];
         }
         [self _disconnect];
     });
@@ -742,7 +749,7 @@ static __strong NSData *CRLFCRLF;
     
     if (frame_header.payload_length == 0) {
         if (isControlFrame) {
-            [self _handleFrameWithData:[NSData data] opCode:frame_header.opcode];
+            [self _handleFrameWithData:curData opCode:frame_header.opcode];
         } else {
             if (frame_header.fin) {
 //                assert(_currentFrameData.length == frame_header.payload_length);
@@ -1188,7 +1195,7 @@ static const size_t SRFrameHeaderOverhead = 32;
         }
             
         case NSStreamEventErrorOccurred: {
-            SRFastLog(@"NSStreamEventErrorOccurred %@", aStream);
+            SRFastLog(@"NSStreamEventErrorOccurred %@ %@", aStream, [aStream streamError]);
             /// TODO specify error better!
             [self _failWithError:aStream.streamError];
             _readBufferOffset = 0;

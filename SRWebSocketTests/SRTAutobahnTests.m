@@ -16,6 +16,9 @@
 
 #import <SenTestingKit/SenTestingKit.h>
 #import "SRWebSocket.h"
+#import "SRTWebSocketOperation.h"
+#import "SRTBonjourLocatorOperation.h"
+#import "SenTestCase+SRTAdditions.h"
 
 #define SRLogDebug(format, ...) 
 //#define SRLogDebug(format, ...) NSLog(format, __VA_ARGS__)
@@ -23,9 +26,21 @@
 @interface SRTAutobahnTests : SenTestCase
 @end
 
-@interface TestOperation : NSOperation <SRWebSocketDelegate>
+@interface TestOperation : SRTWebSocketOperation <SRWebSocketDelegate>
+- (id)initWithBaseURL:(NSURL *)url testNumber:(NSInteger)testNumber agent:(NSString *)agent;
+@end
 
-- (id)initWithTestNumber:(NSInteger)testNumber;
+
+@interface CaseGetterOperation : SRTWebSocketOperation <SRWebSocketDelegate>
+- (id)initWithBaseURL:(NSURL *)url;
+
+@property (nonatomic, readonly) NSInteger caseCount;
+
+@end
+
+@interface UpdateOperation : SRTWebSocketOperation <SRWebSocketDelegate>
+
+- (id)initWithBaseURL:(NSURL *)url agent:(NSString *)agent;
 
 @end
 
@@ -40,137 +55,141 @@
 {
     _sockets = [[NSMutableArray alloc] init];
 
-    NSOperationQueue *testQueue = [[NSOperationQueue alloc] init];
     
     __block BOOL hasFinished = NO;
     __block BOOL hasFailed = NO;
-    
-    __weak SRTAutobahnTests *weakself = self;
-    _curWebSocket = [[SRWebSocket alloc] initWithURL:[NSURL URLWithString:@"ws://localhost:9001/getCaseCount"]];
-    _curWebSocket.onMessage = ^(SRWebSocket *webSocket, NSString *message) {
-        NSOperation *finishOperation = [NSBlockOperation blockOperationWithBlock:^{
-            weakself->_curWebSocket = [[SRWebSocket alloc] initWithURL:[NSURL URLWithString:@"ws://localhost:9001/updateReports?agent=socketrocket"]];
-            
-            NSLog(@"-- Updating Reports");
-            weakself->_curWebSocket.onClose = ^(SRWebSocket *webSocket, NSInteger code, NSString *reason, BOOL wasClean) {
-                NSLog(@"-- reports updated... exiting");
-                hasFinished = YES;
-            };
-            weakself->_curWebSocket.onError = ^(SRWebSocket *webSocket, NSError *error) {
-                NSLog(@"Error updating reports %@", error.localizedDescription);
-                hasFailed = YES;
-                hasFinished = YES;
-            };
-            
-            [weakself->_curWebSocket open];
-        }];
-        
-        
-        testQueue.maxConcurrentOperationCount = 1;
-        
-        for (int i = 0; i < [message integerValue]; i++) {
-            NSOperation *op = [[TestOperation alloc] initWithTestNumber:i + 1];
-            [finishOperation addDependency:op];
-            [testQueue addOperation:op];
-        }
-        
-        [testQueue addOperation:finishOperation];
-    };
-    
-    [_curWebSocket open];
+
+    NSString *const testHarnessKey = [[NSProcessInfo processInfo].environment objectForKey:@"SR_TESTHARNESS_KEY"];
+
+    STAssertNotNil(testHarnessKey, @"Should have SR_TESTHARNESS_KEY key set in env");
+
+    SRTBonjourLocatorOperation *locatorOperation = [[SRTBonjourLocatorOperation alloc] initWithKey:testHarnessKey];
+    [locatorOperation start];
+
     [self runCurrentRunLoopUntilTestPasses:^BOOL{
-        return hasFinished;
+        return locatorOperation.isFinished;
+    } timeout:20.0];
+
+    STAssertNotNil(locatorOperation.foundService, @"Should have found a test harness service");
+    
+    NSURL *prefixURL = [[[NSURL alloc] 
+                         initWithScheme:locatorOperation.foundScheme 
+                         host:[NSString stringWithFormat:@"%@:%d", 
+                               locatorOperation.foundService.hostName,
+                               locatorOperation.foundService.port] 
+                         path:@"/.."] 
+                        standardizedURL];
+    
+    CaseGetterOperation *caseGetter = [[CaseGetterOperation alloc] initWithBaseURL:prefixURL];
+    [caseGetter start];
+    
+    [self runCurrentRunLoopUntilTestPasses:^BOOL{
+        return caseGetter.isFinished;
+    } timeout:20.0];
+    
+    STAssertNil(caseGetter.error, @"CaseGetter should have successfully returned the number of testCases");
+    
+    NSInteger caseCount = caseGetter.caseCount;
+    
+    NSOperationQueue *testQueue = [[NSOperationQueue alloc] init];
+    
+    testQueue.maxConcurrentOperationCount = 1;
+    
+    NSString *agent = [NSBundle bundleForClass:[self class]].bundleIdentifier;
+    
+    UpdateOperation *updateReportOperation = [[UpdateOperation alloc] initWithBaseURL:prefixURL agent:agent];
+    
+    for (int caseNumber = 1; caseNumber <= caseCount; caseNumber++) {
+        TestOperation *testOp = [[TestOperation alloc] initWithBaseURL:prefixURL testNumber:caseNumber agent:agent];
+        [updateReportOperation addDependency:testOp];
+        [testQueue addOperation:testOp];
+    }
+    
+    testQueue.suspended = NO;
+    
+    [testQueue addOperation:updateReportOperation];
+    
+    [self runCurrentRunLoopUntilTestPasses:^BOOL{
+        return updateReportOperation.isFinished;
     } timeout:60 * 60];
     
-    STAssertFalse(hasFailed, @"timeout");
+    STAssertNil(updateReportOperation.error, @"Updating the report should not have errored");
+        
+    STAssertFalse(hasFailed, @"Failed connection");
 }
-
-@end
-
-@interface TestOperation ()
-
-@property (nonatomic) BOOL isFinished;
-@property (nonatomic) BOOL isExecuting;
 
 @end
 
 @implementation TestOperation {
     NSInteger _testNumber;
-    SRWebSocket *_webSocket;
 }
 
-@synthesize isFinished = _isFinished;
-@synthesize isExecuting = _isExecuting;
-
-- (id)initWithTestNumber:(NSInteger)testNumber;
-{
-    self = [super init];
+- (id)initWithBaseURL:(NSURL *)url testNumber:(NSInteger)testNumber agent:(NSString *)agent;
+{   
+    
+    NSString *path = [[url URLByAppendingPathComponent:@"runCase"] absoluteString];
+    path = [path stringByAppendingFormat:@"?case=%d&agent=%@", testNumber, agent];
+    
+    self = [super initWithURL:[NSURL URLWithString:path]];
     if (self) {
         _testNumber = testNumber;
-        _isExecuting = NO;
-        _isFinished = NO;
     }
     return self;
 }
 
-- (BOOL)isConcurrent;
-{
-    return YES;
-}
-
 - (void)start;
 {
+    [super start];
     NSLog(@"Starting test %d", _testNumber);
-    self.isExecuting = YES;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        _webSocket = [[SRWebSocket alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"ws://localhost:9001/runCase?case=%d&agent=socketrocket", _testNumber]]];
-        _webSocket.delegate = self;
-        [_webSocket open];
-    });
-}
-
-- (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean;
-{
-    NSLog(@"Received close for %d", _testNumber);
-    
-    [self willChangeValueForKey:@"isExecuting"];
-    [self willChangeValueForKey:@"isFinished"];
-    _isFinished = YES;
-    _isExecuting = NO;
-    _webSocket = nil;
-    [self didChangeValueForKey:@"isExecuting"];
-    [self didChangeValueForKey:@"isFinished"];
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message;
 {
-    if ([message isKindOfClass:[NSString class]]) {
-        SRLogDebug(@"Echoing String for %d %@", _testNumber, [(NSString *)message substringToIndex:MIN(128, [message length])]);
-    } else {
-        SRLogDebug(@"Echoing String for %d %@", _testNumber, [(NSData *)message subdataWithRange:NSMakeRange(0, MIN(128, ([message length])))]);
-    }
     [webSocket send:message];
-    
-    double delayInSeconds = 100.0;
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-        if (!self.isFinished) {
-            NSLog(@"Timing Out");
-            [_webSocket closeWithCode:0 reason:nil];
-        }
-    });
-}
-
-- (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error;
-{
-    NSLog(@"failed with error %@", [error localizedDescription]);            
-    [self willChangeValueForKey:@"isExecuting"];
-    [self willChangeValueForKey:@"isFinished"];
-    _isFinished = YES;
-    _isExecuting = NO;
-    _webSocket = nil;
-    [self didChangeValueForKey:@"isExecuting"];
-    [self didChangeValueForKey:@"isFinished"];
 }
 
 @end
+
+
+@implementation CaseGetterOperation
+
+@synthesize caseCount = _caseCount;
+
+- (id)initWithBaseURL:(NSURL *)url;
+{
+    self = [super initWithURL:[url URLByAppendingPathComponent:@"getCaseCount"]];
+    if (self) {
+    }
+    return self;
+}
+
+- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message;
+{
+    _caseCount = [message integerValue];
+}
+
+@end
+
+
+@implementation UpdateOperation
+
+- (id)initWithBaseURL:(NSURL *)url agent:(NSString *)agent;
+{
+    NSString *path = [[url URLByAppendingPathComponent:@"updateReports"] absoluteString];
+    path = [path stringByAppendingFormat:@"?agent=%@", agent];
+    
+    return [super initWithURL:[NSURL URLWithString:path]];
+}
+
+- (void)start;
+{
+    [super start];
+    NSLog(@"Updating Reports!");
+}
+
+@end
+
+
+
+
+
