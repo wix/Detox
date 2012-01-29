@@ -71,7 +71,6 @@ static inline dispatch_queue_t log_queue() {
 //#define SR_ENABLE_LOG
 
 static inline void SRFastLog(NSString *format, ...)  {
-    
 #ifdef SR_ENABLE_LOG
     __block va_list arg_list;
     va_start (arg_list, format);
@@ -280,6 +279,7 @@ typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
 
     __attribute__((NSObject)) CFHTTPMessageRef _receivedHTTPHeaders;
     
+    BOOL _sentClose;
     BOOL _didFail;
     int _closeCode;
 }
@@ -560,9 +560,12 @@ static __strong NSData *CRLFCRLF;
 
 - (void)_closeWithProtocolError:(NSString *)message;
 {
-    [self closeWithCode:SRStatusCodeProtocolError reason:message];
-    dispatch_async(_workQueue, ^{
-        [self _disconnect];
+    // Need to shunt this on the _callbackQueue first to see if they received any messages 
+    dispatch_async(_callbackQueue, ^{
+        [self closeWithCode:SRStatusCodeProtocolError reason:message];
+        dispatch_async(_workQueue, ^{
+            [self _disconnect];
+        });
     });
 }
 
@@ -614,7 +617,12 @@ static __strong NSData *CRLFCRLF;
 
 - (void)handlePing:(NSData *)pingData;
 {
-    [self _sendFrameWithOpcode:SROpCodePong data:pingData];
+    // Need to pingpong this off _callbackQueue first to make sure messages happen in order
+    dispatch_async(_callbackQueue, ^{
+        dispatch_async(_workQueue, ^{
+            [self _sendFrameWithOpcode:SROpCodePong data:pingData];
+        });
+    });
 }
 
 - (void)handlePong;
@@ -622,7 +630,7 @@ static __strong NSData *CRLFCRLF;
     // NOOP
 }
 
-- (void)handleMessage:(id)message
+- (void)_handleMessage:(id)message
 {
     dispatch_async(_callbackQueue, ^{
         [self.delegate webSocket:self didReceiveMessage:message];
@@ -698,16 +706,17 @@ static inline BOOL closeCodeIsValid(int closeCode) {
     if (self.readyState == SR_OPEN) {
         [self closeWithCode:1000 reason:nil];
     }
-    [self _disconnect];
+    dispatch_async(_workQueue, ^{
+        [self _disconnect];
+    });
 }
 
 - (void)_disconnect;
 {
+    assert(dispatch_get_current_queue() == _workQueue);
     SRFastLog(@"Trying to disconnect");
-    dispatch_async(_workQueue, ^{
-        _closeWhenFinishedWriting = YES;
-        [self _pumpWriting];
-    });
+    _closeWhenFinishedWriting = YES;
+    [self _pumpWriting];
 }
 
 - (void)_handleFrameWithData:(NSData *)frameData opCode:(NSInteger)opcode;
@@ -734,11 +743,11 @@ static inline BOOL closeCodeIsValid(int closeCode) {
 
                 return;
             }
-            [self handleMessage:str];
+            [self _handleMessage:str];
             break;
         }
         case SROpCodeBinaryFrame:
-            [self handleMessage:[frameData copy]];
+            [self _handleMessage:[frameData copy]];
             break;
         case SROpCodeConnectionClose:
             [self handleCloseWithData:frameData];
@@ -960,7 +969,13 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
 
     }
     
-    if (_closeWhenFinishedWriting && _outputBuffer.length - _outputBufferOffset == 0 && (_inputStream.streamStatus != NSStreamStatusNotOpen && _inputStream.streamStatus != NSStreamStatusClosed)) {
+    if (_closeWhenFinishedWriting && 
+        _outputBuffer.length - _outputBufferOffset == 0 && 
+        (_inputStream.streamStatus != NSStreamStatusNotOpen &&
+         _inputStream.streamStatus != NSStreamStatusClosed) &&
+        !_sentClose) {
+        _sentClose = YES;
+            
         [_outputStream close];
         [_inputStream close];
         
@@ -1213,56 +1228,54 @@ static const size_t SRFrameHeaderOverhead = 32;
 
 - (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode;
 {
-//    SRFastLog(@"%@ Got stream event %d", aStream, eventCode);
-    switch (eventCode) {
-        case NSStreamEventOpenCompleted: {
-            SRFastLog(@"NSStreamEventOpenCompleted %@", aStream);
-            if (self.readyState >= SR_CLOSING) {
-                return;
-            }
-            
-            assert(_readBuffer);
-
-            dispatch_async(_workQueue, ^{
+    //    SRFastLog(@"%@ Got stream event %d", aStream, eventCode);
+    dispatch_async(_workQueue, ^{
+        switch (eventCode) {
+            case NSStreamEventOpenCompleted: {
+                SRFastLog(@"NSStreamEventOpenCompleted %@", aStream);
+                if (self.readyState >= SR_CLOSING) {
+                    return;
+                }
+                
+                assert(_readBuffer);
+                
                 if (self.readyState == SR_CONNECTING && aStream == _inputStream) {
                     [self didConnect];
                 }
                 [self _pumpWriting];
                 [self _pumpScanner];
-            });
-            break;
-        }
-            
-        case NSStreamEventErrorOccurred: {
-            SRFastLog(@"NSStreamEventErrorOccurred %@ %@", aStream, [[aStream streamError] copy]);
-            /// TODO specify error better!
-            [self _failWithError:aStream.streamError];
-            _readBufferOffset = 0;
-            [_readBuffer setLength:0];
-            break;
-            
-        }
-            
-        case NSStreamEventEndEncountered: {
-            SRFastLog(@"NSStreamEventEndEncountered %@", aStream);
-            if (aStream.streamError) {
+                break;
+            }
+                
+            case NSStreamEventErrorOccurred: {
+                SRFastLog(@"NSStreamEventErrorOccurred %@ %@", aStream, [[aStream streamError] copy]);
+                /// TODO specify error better!
                 [self _failWithError:aStream.streamError];
+                _readBufferOffset = 0;
+                [_readBuffer setLength:0];
+                break;
+                
             }
-            
-            if (self.readyState != SR_CLOSED) {
-                self.readyState = SR_CLOSED;
+                
+            case NSStreamEventEndEncountered: {
+                SRFastLog(@"NSStreamEventEndEncountered %@", aStream);
+                if (aStream.streamError) {
+                    [self _failWithError:aStream.streamError];
+                }
+                
+                if (self.readyState != SR_CLOSED) {
+                    self.readyState = SR_CLOSED;
+                }
+                break;
             }
-            break;
-        }
-            
-        case NSStreamEventHasBytesAvailable: {
-            dispatch_async(_workQueue, ^{
+                
+            case NSStreamEventHasBytesAvailable: {
                 const int bufferSize = 2048;
                 uint8_t buffer[bufferSize];
                 
                 while (_inputStream.hasBytesAvailable) {
                     int bytes_read = [_inputStream read:buffer maxLength:bufferSize];
-                
+                    
                     if (bytes_read > 0) {
                         [_readBuffer appendBytes:buffer length:bytes_read];
                     } else if (bytes_read < 0) {
@@ -1274,20 +1287,19 @@ static const size_t SRFrameHeaderOverhead = 32;
                     }
                 };
                 [self _pumpScanner];
-            });
-            break;
-        }
-            
-        case NSStreamEventHasSpaceAvailable: {
-            dispatch_async(_workQueue, ^{
+                break;
+            }
+                
+            case NSStreamEventHasSpaceAvailable: {
                 [self _pumpWriting];
-            });
-            break;
+                break;
+            }
+                
+            default:
+                break;
         }
-            
-        default:
-            break;
-    }
+    });
+
 }
 
 @end
