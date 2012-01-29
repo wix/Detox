@@ -38,13 +38,11 @@ extern NSString *const SRWebSocketErrorDomain;
 @property (nonatomic, readonly, strong) NSURL *url;
 
 - (id)initWithURLRequest:(NSURLRequest *)request;
-- (void)connectToHost:(NSString *)host port:(NSInteger)port;
 
 - (void)open;
+
 - (void)close;
 - (void)closeWithCode:(NSInteger)code reason:(NSString *)reason;
-
-- (void)failWithError:(NSError *)error;
 
 // Send a UTF8 String or Data
 - (void)send:(id)data;

@@ -236,7 +236,7 @@ typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
 - (BOOL)_checkHandshake:(NSDictionary *)headers;
 - (void)_SR_commonInit;
 
-+ (dispatch_queue_t)globalReadQueue;
+- (void)_connectToHost:(NSString *)host port:(NSInteger)port;
 
 @property (nonatomic) SRReadyState readyState;
 
@@ -293,18 +293,6 @@ static __strong NSData *CRLFCRLF;
 + (void)initialize;
 {
     CRLFCRLF = [[NSData alloc] initWithBytes:"\r\n\r\n" length:4];
-}
-
-+ (dispatch_queue_t)globalReadQueue;
-{
-    static dispatch_queue_t globalQueue = nil;
-    static dispatch_once_t token;
-    
-    dispatch_once(&token, ^{
-        globalQueue = dispatch_queue_create("org.lolrus.socket.globalQueue", DISPATCH_QUEUE_SERIAL);
-    });
-    
-    return globalQueue;
 }
 
 - (id)initWithURLRequest:(NSURLRequest *)request;
@@ -388,7 +376,7 @@ static __strong NSData *CRLFCRLF;
         }
     }
 
-    [self connectToHost:_url.host port:port];
+    [self _connectToHost:_url.host port:port];
 }
 
 
@@ -415,13 +403,13 @@ static __strong NSData *CRLFCRLF;
     
     if (responseCode >= 400) {
         SRFastLog(@"Request failed with response code %d", responseCode);
-        [self failWithError:[NSError errorWithDomain:@"org.lolrus.SocketRocket" code:2132 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"received bad response code from server %d", responseCode] forKey:NSLocalizedDescriptionKey]]];
+        [self _failWithError:[NSError errorWithDomain:@"org.lolrus.SocketRocket" code:2132 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"received bad response code from server %d", responseCode] forKey:NSLocalizedDescriptionKey]]];
         return;
 
     }
     
     if(![self _checkHandshake:dict]) {
-        [self failWithError:[NSError errorWithDomain:SRWebSocketErrorDomain code:2133 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Invalid Sec-WebSocket-Accept response"] forKey:NSLocalizedDescriptionKey]]];
+        [self _failWithError:[NSError errorWithDomain:SRWebSocketErrorDomain code:2133 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Invalid Sec-WebSocket-Accept response"] forKey:NSLocalizedDescriptionKey]]];
         return;
     }
     
@@ -489,7 +477,7 @@ static __strong NSData *CRLFCRLF;
     [self _readHTTPHeader];
 }
 
-- (void)connectToHost:(NSString *)host port:(NSInteger)port;
+- (void)_connectToHost:(NSString *)host port:(NSInteger)port;
 {    
     CFReadStreamRef readStream = NULL;
     CFWriteStreamRef writeStream = NULL;
@@ -568,11 +556,6 @@ static __strong NSData *CRLFCRLF;
         
         [self _sendFrameWithOpcode:SROpCodeConnectionClose data:payload];
     });
-}
-
-- (void)failWithError:(NSError *)error;
-{
-    [self _failWithError:error];
 }
 
 - (void)_closeWithProtocolError:(NSString *)message;
@@ -1189,6 +1172,8 @@ static const size_t SRFrameHeaderOverhead = 32;
         unmasked_payload = (uint8_t *)[data bytes];
     } else if ([data isKindOfClass:[NSString class]]) {
         unmasked_payload =  (const uint8_t *)[data UTF8String];
+    } else {
+        assert(NO);
     }
     
     if (payloadLength < 126) {
