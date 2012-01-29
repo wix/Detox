@@ -152,10 +152,10 @@
 			isa = PBXGroup;
 			children = (
 				F6BDA808145900D200FE3253 /* Supporting Files */,
+				F6BDA8151459016900FE3253 /* SRTAutobahnTests.m */,
 				F6BDA810145900D200FE3253 /* SRWebSocketTests-Prefix.pch */,
 				F6AE4526145907D30022AF3C /* SenTestCase+SRTAdditions.h */,
 				F6AE4527145907D30022AF3C /* SenTestCase+SRTAdditions.m */,
-				F6BDA8151459016900FE3253 /* SRTAutobahnTests.m */,
 				F611322814D4C4F2008A42D5 /* SRTBonjourLocatorOperation.h */,
 				F611322914D4C4F2008A42D5 /* SRTBonjourLocatorOperation.m */,
 				F60CC29F14D4EA0500A005E4 /* SRTWebSocketOperation.h */,

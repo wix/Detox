@@ -358,6 +358,8 @@ static __strong NSData *CRLFCRLF;
 {    
     dispatch_release(_callbackQueue);
     dispatch_release(_workQueue);
+    [_inputStream close];
+    [_outputStream close];
     _inputStream.delegate = nil;
     _outputStream.delegate = nil;
 }
@@ -689,17 +691,16 @@ static inline BOOL closeCodeIsValid(int closeCode) {
     
     assert(dispatch_get_current_queue() == _workQueue);
     
-    dispatch_async(_workQueue, ^{
-        if (self.readyState == SR_OPEN) {
-            [self closeWithCode:1000 reason:reason];
-        }
-        [self _disconnect];
-    });
+    if (self.readyState == SR_OPEN) {
+        [self closeWithCode:1000 reason:reason];
+    }
+    [self _disconnect];
 }
 
 - (void)_disconnect;
 {
     SRFastLog(@"Trying to disconnect");
+    [_inputStream removeFromRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
     dispatch_async(_workQueue, ^{
         _closeWhenFinishedWriting = YES;
         [self _pumpWriting];
@@ -1226,7 +1227,7 @@ static const size_t SRFrameHeaderOverhead = 32;
         }
             
         case NSStreamEventErrorOccurred: {
-            SRFastLog(@"NSStreamEventErrorOccurred %@ %@", aStream, [aStream streamError]);
+            SRFastLog(@"NSStreamEventErrorOccurred %@ %@", aStream, [[aStream streamError] copy]);
             /// TODO specify error better!
             [self _failWithError:aStream.streamError];
             _readBufferOffset = 0;
