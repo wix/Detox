@@ -163,6 +163,7 @@ This will set up your `virtualenv <http://pypi.python.org/pypi/virtualenv>`_.
 Now, in your terminal ::
 
   source .env/bin/activate
+  brew install libevent
   pip install \
     git+https://github.com/Lawouach/WebSocket-for-Python \
     git+https://github.com/progrium/wssh.git
