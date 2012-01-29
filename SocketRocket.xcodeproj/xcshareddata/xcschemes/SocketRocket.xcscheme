@@ -50,7 +50,7 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Run Script"
-               scriptText = "EXISTING_PID=`cat $TMPDIR/srtharness.pid`&#10;&#10;if $EXISTING_PID; then&#10;    echo &quot;Killing SRTextharneess PID&quot;&#10;    kill $EXISTING_PID&#10;    rm $TMPDIR/srtharness.pid&#10;fi&#10;&#10;open $PROJECT_DIR/reports/clients/index.html"
+               scriptText = "PIDFILE=$TMPDIR/srtharness.pid&#10;if [ -r $PIDFILE ]; then&#10;    EXISTING_PID=`cat $PIDFILE`&#10;    echo &quot;Killing SRTextharneess PID:&quot; $EXISTING_PID&#10;    kill $EXISTING_PID&#10;    rm $PIDFILE&#10;fi&#10;&#10;&#10;open $PROJECT_DIR/reports/clients/index.html"
                shellToInvoke = "/bin/bash">
                <EnvironmentBuildable>
                   <BuildableReference

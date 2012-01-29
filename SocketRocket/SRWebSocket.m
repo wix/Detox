@@ -38,6 +38,8 @@ typedef enum {
     SRStatusCodeGoingAway = 1001,
     SRStatusCodeProtocolError = 1002,
     SRStatusCodeUnhandledType = 1003,
+    // 1004 reserved
+    SRStatusNoStatusReceived = 1005,
     // 1004-1006 reserved
     SRStatusCodeInvalidUTF8 = 1007,
     SRStatusCodePolicyViolated = 1008,
@@ -504,7 +506,6 @@ static __strong NSData *CRLFCRLF;
 - (void)closeWithCode:(NSInteger)code reason:(NSString *)reason;
 {
     assert(code);
-    _closeCode = code;
     if (self.readyState == SR_CLOSING || self.readyState == SR_CLOSED) {
         return;
     }
@@ -620,6 +621,32 @@ static __strong NSData *CRLFCRLF;
     });
 }
 
+
+static inline BOOL closeCodeIsValid(int closeCode) {
+    if (closeCode < 1000) {
+        return NO;
+    }
+    
+    if (closeCode >= 1000 && closeCode <= 1011) {
+        if (closeCode == 1004 ||
+            closeCode == 1005 ||
+            closeCode == 1006) {
+            return NO;
+        }
+        return YES;
+    }
+    
+    if (closeCode >= 3000 && closeCode <= 3999) {
+        return YES;
+    }
+    
+    if (closeCode >= 4000 && closeCode <= 4999) {
+        return YES;
+    }
+
+    return NO;
+}
+
 //  Note from RFC:
 //
 //  If there is a body, the first two
@@ -640,27 +667,31 @@ static __strong NSData *CRLFCRLF;
     
     if (dataSize == 1) {
         // TODO handle error
-        [self _closeWithProtocolError:[NSString stringWithFormat:@"Payload for close must be larger than 2 bytes"]];
+        [self _closeWithProtocolError:@"Payload for close must be larger than 2 bytes"];
         return;
     } else if (dataSize >= 2) {
         [data getBytes:&closeCode length:sizeof(closeCode)];
-        closeCode = EndianU16_BtoN(closeCode);
-        if (closeCode == 0) {
-            [self _closeWithProtocolError:[NSString stringWithFormat:@"Cannot have close code of 0"]];
+        _closeCode = EndianU16_BtoN(closeCode);
+        if (!closeCodeIsValid(_closeCode)) {
+            [self _closeWithProtocolError:[NSString stringWithFormat:@"Cannot have close code of %d", _closeCode]];
             return;
         }
         if (dataSize > 2) {
             reason = [[NSString alloc] initWithData:[data subdataWithRange:NSMakeRange(2, dataSize - 2)] encoding:NSUTF8StringEncoding];
+            if (!reason) {
+                [self _closeWithProtocolError:@"Close reason MUST be valid UTF-8"];
+                return;
+            }
         }
     } else {
-        closeCode = 1005;
+        _closeCode = SRStatusNoStatusReceived;
     }
     
     assert(dispatch_get_current_queue() == _workQueue);
     
     dispatch_async(_workQueue, ^{
         if (self.readyState == SR_OPEN) {
-            [self closeWithCode:closeCode reason:reason];
+            [self closeWithCode:1000 reason:reason];
         }
         [self _disconnect];
     });
