@@ -4,4 +4,4 @@
 reports/
 build/
 nohup.out
-README.html
+.DS_Store

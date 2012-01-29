@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.8.1: http://docutils.sourceforge.net/" />
+<title>SocketRocket Objective-C WebSocket Client (beta)</title>
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 7056 2011-06-17 10:50:48Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+
+See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+object[type="image/svg+xml"], object[type="application/x-shockwave-flash"] {
+  overflow: hidden;
+}
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left, object.align-left {
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right, object.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: inherit }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block, pre.math {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+</head>
+<body>
+<div class="document" id="socketrocket-objective-c-websocket-client-beta">
+<h1 class="title">SocketRocket Objective-C WebSocket Client (beta)</h1>
+
+<p>A conforming WebSocket (<a class="reference external" href="http://tools.ietf.org/html/rfc6455">RFC 6455</a>)
+client library.</p>
+<p>SocketRocket currently conforms to all ~300 of <a class="reference external" href="http://www.tavendo.de/autobahn/testsuite.html">Autobahn</a>'s fuzzing tests (aside from
+two UTF-8 ones where it is merely <em>non-strict</em>. tests 6.4.2 and 6.4.4)</p>
+<p>It should work on OS X too.  There are no UIKit dependencies.</p>
+<div class="warning">
+<p class="first admonition-title">Warning</p>
+<p>This is not production-quality software yet.  It has only been used in
+devlopment environments.</p>
+<p><strong>USE AT YOUR OWN RISK</strong></p>
+<p class="last">(it will mature quickly… I am just conservative)</p>
+</div>
+<div class="section" id="features-design">
+<h1>Features/Design</h1>
+<ul class="simple">
+<li>TLS (wss) support.  It uses CFStream so we get this for &quot;free&quot;</li>
+<li>Uses NSStream/CFNetworking.  Earlier implementations used <tt class="docutils literal">dispatch_io</tt>,
+however, this proved to be make TLS nearly impossible.  Also I wanted this to
+work in iOS 4.x.</li>
+<li>Uses ARC.  It uses the 4.0 compatible subset (no weak refs).</li>
+<li>Seems to perform quite well</li>
+<li>Parallel architecture. Most of the work is done in background worker queues.</li>
+<li>Delegate-based. Had older versions that could use blocks too, but I felt it
+didn't blend well with retain cycles and just objective C in general.</li>
+</ul>
+</div>
+<div class="section" id="installing">
+<h1>Installing</h1>
+<p>There's a few options. Choose one, or just figure it out</p>
+<ul>
+<li><p class="first">You can copy all the files in the SocketRocket group into your app.</p>
+</li>
+<li><p class="first">Include SocketRocket as a subproject and use libSocketRocket</p>
+<p>If you do this, you must add -ObjC to your &quot;other linker flogs&quot; option</p>
+</li>
+<li><p class="first">For OS X you will ahve to repackage make a .framework target.  I will take
+contributions. Message me if you are interested.</p>
+</li>
+</ul>
+<div class="section" id="framework-dependencies">
+<h2>Framework Dependencies</h2>
+<p>Your .app must be linked against the following frameworks/dylibs</p>
+<ul class="simple">
+<li>libicucore.dylib</li>
+<li>CFNetwork.framework</li>
+<li>Security.framework</li>
+<li>Foundation.framework</li>
+</ul>
+</div>
+</div>
+<div class="section" id="known-issues-sever-todo-s">
+<h1>Known Issues/Sever Todo's</h1>
+<ul class="simple">
+<li>Needs auth delegates (like in NSURLConnection)</li>
+<li>Move the streams off the main runloop (most of the work is backgrounded uses
+GCD, but I just haven't gotten around to moving it off the main loop since I
+converted it from dispatch_io)</li>
+<li>Re-implement server. I removed an existing implementation as well because it
+wasn't being used and I wasn't super happy with the interface.  Will revisit
+this.</li>
+<li>Separate framer and client logic. This will make it nicer when having a
+server.</li>
+</ul>
+</div>
+<div class="section" id="testing">
+<h1>Testing</h1>
+<p>Included are setup scripts for the python testing environment.  It comes
+packaged with vitualenv so all the dependencies are installed in userland.</p>
+<p>To run the short test from the command line, run</p>
+<pre class="literal-block">
+make test
+</pre>
+<p>To run all the tests, run</p>
+<pre class="literal-block">
+make test_all
+</pre>
+<p>The short tests don't include the performance tests.  (the test harness is
+actually the bottleneck, not SocketRocket).</p>
+<p>The first time this is run, it may take a while to install the dependencies.  It
+will be smooth sailing after that.  After the test runs the makefile will open
+the results page in your browser.  If nothing comes up, you failed.  Working on
+making this interface a bit nicer.</p>
+<p>To run from the app, choose the <tt class="docutils literal">SocketRocket</tt> target and run the test action
+(<tt class="docutils literal">cmd+u</tt>). It runs the same thing, but makes it easier to debug.  There is
+some serious pre/post hooks in the Test action.  You can edit it to customize
+behavior.</p>
+</div>
+<div class="section" id="testchat-demo">
+<h1>TestChat Demo</h1>
+<p>SocketRocket includes a demo app, TestChat.  It will &quot;chat&quot; with a listening
+websocket on port 9900.</p>
+<p>It's a simple project.  Uses storyboard.  Storyboard is sweet.</p>
+<div class="section" id="test-client-server-wssh">
+<h2>Test Client Server (<tt class="docutils literal">wssh</tt>)</h2>
+<p>To talk to the chat client, we are going to use an app called <a class="reference external" href="https://github.com/progrium/wssh">wssh</a>. It's somewhat like <tt class="docutils literal">netcat</tt> but for
+websockets.</p>
+<p>We have to get some dependencies.  We also want to reuse the virtualenv we made
+when we ran the tests. If you haven't run the tests yet, go into the
+SocketRocket root directory and type</p>
+<pre class="literal-block">
+make test
+</pre>
+<p>This will set up your <a class="reference external" href="http://pypi.python.org/pypi/virtualenv">virtualenv</a>.
+Now, in your terminal</p>
+<pre class="literal-block">
+source .env/bin/activate
+pip install \
+  git+https://github.com/Lawouach/WebSocket-for-Python \
+  git+https://github.com/progrium/wssh.git
+</pre>
+<p>In the same terminal session, start wssh</p>
+<pre class="literal-block">
+wssh ws://localhost:9900/ -l
+</pre>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">After disconnecting the TestChat client you may have to <tt class="docutils literal">ctrl+c</tt> and
+restart wssh.</p>
+</div>
+</div>
+<div class="section" id="chatting">
+<h2>Chatting</h2>
+<p>Now, start TestChat.app (just run the target in the XCode project).  If you had
+it started already you can hit the refresh button to reconnect.  It should say
+&quot;Connected!&quot; on top.</p>
+<p>You can type into the <tt class="docutils literal">wssh</tt> client to communicate to the app, or type into the
+app's textview to communicate to the <tt class="docutils literal">wssh</tt>.</p>
+</div>
+</div>
+<div class="section" id="websocket-server-implementation-recommendations">
+<h1>WebSocket Server Implementation Recommendations</h1>
+<p>SocketRocket has been used with the following libraries:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/facebook/tornado">Tornado</a></li>
+<li>Go's <a class="reference external" href="http://weekly.golang.org">weekly build</a> (the official release has an
+outdated protocol, so you may have to use weekly until <a class="reference external" href="http://blog.golang.org/2011/10/preview-of-go-version-1.html">Go 1</a> is released)</li>
+<li><a class="reference external" href="http://www.tavendo.de/autobahn/testsuite.html">Autobahn</a> (using it's fuzzing
+client)</li>
+</ul>
+<p>I found Autobahn (and twisted) to be the most difficult to use.  I have not been
+too impressed by it's performance in testing either. Maybe it has to do with the
+masking?</p>
+<p>The Tornado one is dirt simple and works like a charm.  (<cite>IPython notebook
+&lt;http://ipython.org/ipython-doc/dev/interactive/htmlnotebook.html&gt;</cite> uses it
+too).  It's much easier to configure handlers and routes than in
+Autobahn/twisted.</p>
+<p>As far as Go's goes, it works in my limited testing. I much prefer go's
+concurrency model as well. Try it! You may like it.
+(<tt class="docutils literal">brew install <span class="pre">--use-git</span> <span class="pre">--devel</span> <span class="pre">--HEAD</span> go</tt> seems to give me a reasonable
+version).  It could use some more control over things such as pings, etc, but I
+am sure it will come in time.</p>
+</div>
+</div>
+</body>
+</html>
