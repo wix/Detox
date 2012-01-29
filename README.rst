@@ -39,8 +39,11 @@ There's a few options. Choose one, or just figure it out
 
   If you do this, you must add -ObjC to your "other linker flogs" option
 
-- For OS X you will ahve to repackage make a .framework target.  I will take
+- For OS X you will have to repackage make a .framework target.  I will take
   contributions. Message me if you are interested.
+
+Depending on how you configure your project you may need to ``#import`` either
+``<SocketRocket/SRSocketRocket.h>`` or ``"SRSocketRocket.h"``
 
 Framework Dependencies
 ``````````````````````
@@ -50,6 +53,53 @@ Your .app must be linked against the following frameworks/dylibs
 - CFNetwork.framework
 - Security.framework
 - Foundation.framework
+
+
+API
+---
+The classes
+
+``SRWebSocket``
+```````````````
+The Web Socket.
+
+What you need to know :: 
+
+  @interface SRWebSocket : NSObject
+
+  // Make it with this
+  - (id)initWithURLRequest:(NSURLRequest *)request;
+
+  // Set this before opening
+  @property (nonatomic, assign) id <SRWebSocketDelegate> delegate;
+
+  - (void)open;
+  
+  // Close it with this
+  - (void)close;
+
+  // Send a UTF8 String or Data
+  - (void)send:(id)data;
+
+
+  @end
+
+``SRWebSocketDelegate``
+```````````````````````
+You implement this ::
+
+  @protocol SRWebSocketDelegate <NSObject>
+
+  - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(NSString *)message;
+
+  @optional
+
+  - (void)webSocketDidOpen:(SRWebSocket *)webSocket;
+  - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error;
+  - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean;
+
+  @end
+
 
 Known Issues/Sever Todo's
 -------------------------
@@ -89,8 +139,8 @@ To run from the app, choose the ``SocketRocket`` target and run the test action
 some serious pre/post hooks in the Test action.  You can edit it to customize
 behavior.
 
-TestChat Demo
--------------
+TestChat Demo Application
+-------------------------
 SocketRocket includes a demo app, TestChat.  It will "chat" with a listening
 websocket on port 9900.
 
@@ -152,7 +202,7 @@ too impressed by it's performance in testing either. Maybe it has to do with the
 masking?
 
 The Tornado one is dirt simple and works like a charm.  (`IPython notebook
-<http://ipython.org/ipython-doc/dev/interactive/htmlnotebook.html>` uses it
+<http://ipython.org/ipython-doc/dev/interactive/htmlnotebook.html>`_ uses it
 too).  It's much easier to configure handlers and routes than in
 Autobahn/twisted.
 

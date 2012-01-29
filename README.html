@@ -352,10 +352,12 @@ didn't blend well with retain cycles and just objective C in general.</li>
 <li><p class="first">Include SocketRocket as a subproject and use libSocketRocket</p>
 <p>If you do this, you must add -ObjC to your &quot;other linker flogs&quot; option</p>
 </li>
-<li><p class="first">For OS X you will ahve to repackage make a .framework target.  I will take
+<li><p class="first">For OS X you will have to repackage make a .framework target.  I will take
 contributions. Message me if you are interested.</p>
 </li>
 </ul>
+<p>Depending on how you configure your project you may need to <tt class="docutils literal">#import</tt> either
+<tt class="docutils literal">&lt;SocketRocket/SRSocketRocket.h&gt;</tt> or <tt class="docutils literal">&quot;SRSocketRocket.h&quot;</tt></p>
 <div class="section" id="framework-dependencies">
 <h2>Framework Dependencies</h2>
 <p>Your .app must be linked against the following frameworks/dylibs</p>
@@ -365,6 +367,52 @@ contributions. Message me if you are interested.</p>
 <li>Security.framework</li>
 <li>Foundation.framework</li>
 </ul>
+</div>
+</div>
+<div class="section" id="api">
+<h1>API</h1>
+<p>The classes</p>
+<div class="section" id="srwebsocket">
+<h2><tt class="docutils literal">SRWebSocket</tt></h2>
+<p>The Web Socket.</p>
+<p>What you need to know</p>
+<pre class="literal-block">
+&#64;interface SRWebSocket : NSObject
+
+// Make it with this
+- (id)initWithURLRequest:(NSURLRequest *)request;
+
+// Set this before opening
+&#64;property (nonatomic, assign) id &lt;SRWebSocketDelegate&gt; delegate;
+
+- (void)open;
+
+// Close it with this
+- (void)close;
+
+// Send a UTF8 String or Data
+- (void)send:(id)data;
+
+
+&#64;end
+</pre>
+</div>
+<div class="section" id="srwebsocketdelegate">
+<h2><tt class="docutils literal">SRWebSocketDelegate</tt></h2>
+<p>You implement this</p>
+<pre class="literal-block">
+&#64;protocol SRWebSocketDelegate &lt;NSObject&gt;
+
+- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(NSString *)message;
+
+&#64;optional
+
+- (void)webSocketDidOpen:(SRWebSocket *)webSocket;
+- (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error;
+- (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean;
+
+&#64;end
+</pre>
 </div>
 </div>
 <div class="section" id="known-issues-sever-todo-s">
@@ -459,8 +507,7 @@ client)</li>
 <p>I found Autobahn (and twisted) to be the most difficult to use.  I have not been
 too impressed by it's performance in testing either. Maybe it has to do with the
 masking?</p>
-<p>The Tornado one is dirt simple and works like a charm.  (<cite>IPython notebook
-&lt;http://ipython.org/ipython-doc/dev/interactive/htmlnotebook.html&gt;</cite> uses it
+<p>The Tornado one is dirt simple and works like a charm.  (<a class="reference external" href="http://ipython.org/ipython-doc/dev/interactive/htmlnotebook.html">IPython notebook</a> uses it
 too).  It's much easier to configure handlers and routes than in
 Autobahn/twisted.</p>
 <p>As far as Go's goes, it works in my limited testing. I much prefer go's
