@@ -20,8 +20,8 @@
 #import <unicode/utf8.h>
 #import <endian.h>
 #import <CommonCrypto/CommonDigest.h>
-
 #import "base64.h"
+#import "NSData+SRB64Additions.h"
 
 typedef enum  {
     SROpCodeTextFrame = 0x1,
@@ -70,7 +70,7 @@ static inline dispatch_queue_t log_queue() {
 
 static inline void SRFastLog(NSString *format, ...)  {
     
-#if 1
+#if 0
     __block va_list arg_list;
     va_start (arg_list, format);
     
@@ -82,7 +82,7 @@ static inline void SRFastLog(NSString *format, ...)  {
 #endif
 }
 
-static NSString *const strAppendForAuth = @"258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+static NSString *const SRWebSocketAppendToSecKeyString = @"258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
 static inline int32_t validate_dispatch_data_partial_string(NSData *data) {
     
@@ -130,22 +130,25 @@ static inline int32_t validate_dispatch_data_partial_string(NSData *data) {
 }
 
 
-@interface NSString (DispatchDataAdditions)
+@interface NSData (SRWebSocket)
 
 - (NSString *)stringBySHA1ThenBase64Encoding;
 
 @end
 
-#define CONSERVATIVE_COPY
 
-@implementation NSString (DispatchDataAdditions)
+@interface NSString (SRWebSocket)
 
 - (NSString *)stringBySHA1ThenBase64Encoding;
-{
+
+@end
+
+
+static NSString *newSHA1String(const char *bytes, size_t length) {
     uint8_t md[CC_SHA1_DIGEST_LENGTH];
     
-    CC_SHA1([self UTF8String], [self lengthOfBytesUsingEncoding:NSUTF8StringEncoding], md);
-
+    CC_SHA1(bytes, length, md);
+    
     size_t buffer_size = ((sizeof(md) * 3 + 2) / 2);
     
     char *buffer =  (char *)malloc(buffer_size);
@@ -157,6 +160,23 @@ static inline int32_t validate_dispatch_data_partial_string(NSData *data) {
     } else{
         return [[NSString alloc] initWithBytesNoCopy:buffer length:len encoding:NSASCIIStringEncoding freeWhenDone:YES];
     }
+}
+
+@implementation NSData (SRWebSocket)
+
+- (NSString *)stringBySHA1ThenBase64Encoding;
+{
+    return newSHA1String(self.bytes, self.length);
+}
+
+@end
+
+
+@implementation NSString (SRWebSocket)
+
+- (NSString *)stringBySHA1ThenBase64Encoding;
+{
+    return newSHA1String(self.UTF8String, self.length);
 }
 
 @end
@@ -211,7 +231,7 @@ typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
 
 - (void)_sendFrameWithOpcode:(SROpCode)opcode data:(id)data;
 
-- (void)_checkHandshake:(NSDictionary *)headers;
+- (BOOL)_checkHandshake:(NSDictionary *)headers;
 - (void)_SR_commonInit;
 
 + (dispatch_queue_t)globalReadQueue;
@@ -243,6 +263,8 @@ typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
     NSMutableData *_currentFrameData;
     
     NSString *_closeReason;
+    
+    NSString *_secKey;
     
     uint8_t _currentReadMaskKey[4];
     size_t _currentReadMaskOffset;
@@ -367,16 +389,24 @@ static __strong NSData *CRLFCRLF;
 
 
 
-- (void)_checkHandshake:(NSDictionary *)headers;
+- (BOOL)_checkHandshake:(NSDictionary *)headers;
 {
-    SRFastLog(@"TODO: Add handshake checking");
+    NSString *acceptHeader = [headers objectForKey:@"Sec-WebSocket-Accept"];
+    
+    if (acceptHeader == nil) {
+        return NO;
+    }
+    
+    NSString *concattedString = [_secKey stringByAppendingString:SRWebSocketAppendToSecKeyString];
+    NSString *expectedAccept = [concattedString stringBySHA1ThenBase64Encoding];
+    
+    return [acceptHeader isEqualToString:expectedAccept];
 }
 
 - (void)_HTTPHeadersDidFinish;
 {
     NSDictionary *dict = CFBridgingRelease(CFHTTPMessageCopyAllHeaderFields(_receivedHTTPHeaders));
-
-    [self _checkHandshake:dict];
+    
     NSInteger responseCode = CFHTTPMessageGetResponseStatusCode(_receivedHTTPHeaders);
     
     if (responseCode >= 400) {
@@ -384,6 +414,11 @@ static __strong NSData *CRLFCRLF;
         [self failWithError:[NSError errorWithDomain:@"org.lolrus.SocketRocket" code:2132 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"received bad response code from server %d", responseCode] forKey:NSLocalizedDescriptionKey]]];
         return;
 
+    }
+    
+    if(![self _checkHandshake:dict]) {
+        [self failWithError:[NSError errorWithDomain:SRWebSocketErrorDomain code:2133 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Invalid Sec-WebSocket-Accept response"] forKey:NSLocalizedDescriptionKey]]];
+        return;
     }
     
     self.readyState = SR_OPEN;
@@ -430,9 +465,15 @@ static __strong NSData *CRLFCRLF;
         CFHTTPMessageSetHeaderFieldValue(request, (__bridge CFStringRef)key, (__bridge CFStringRef)obj);
     }];
     
+    
+    NSMutableData *keyBytes = [[NSMutableData alloc] initWithLength:16];
+    SecRandomCopyBytes(kSecRandomDefault, keyBytes.length, keyBytes.mutableBytes);
+    _secKey = [keyBytes SR_stringByBase64Encoding];
+    assert([_secKey length] == 24);
+    
     CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Upgrade"), CFSTR("websocket"));
     CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Connection"), CFSTR("Upgrade"));
-    CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Sec-WebSocket-Key"), CFSTR("/PiDVHFKG9+oB7rLAudvxw=="));
+    CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Sec-WebSocket-Key"), (__bridge CFStringRef)_secKey);
     CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Sec-WebSocket-Version"), (__bridge CFStringRef)[NSString stringWithFormat:@"%d", _webSocketVersion]);
     CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Origin"), (__bridge CFStringRef)_url.absoluteString);
     

@@ -71,7 +71,7 @@
     NSURL *prefixURL = [[[NSURL alloc] 
                          initWithScheme:locatorOperation.foundScheme 
                          host:[NSString stringWithFormat:@"%@:%d", 
-                               locatorOperation.foundService.hostName,
+                               @"localhost",
                                locatorOperation.foundService.port] 
                          path:@"/.."] 
                         standardizedURL];
@@ -83,7 +83,7 @@
         return caseGetter.isFinished;
     } timeout:20.0];
     
-    STAssertNil(caseGetter.error, @"CaseGetter should have successfully returned the number of testCases");
+    STAssertNil(caseGetter.error, @"CaseGetter should have successfully returned the number of testCases. Instead got error %@", caseGetter.error);
     
     NSInteger caseCount = caseGetter.caseCount;
     
