@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		F6016C7C146124B20037BB3D /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = F6016C7B146124B20037BB3D /* base64.c */; };
 		F6016C7F146124ED0037BB3D /* base64.h in Headers */ = {isa = PBXBuildFile; fileRef = F6016C7E146124ED0037BB3D /* base64.h */; };
-		F6016C8714620EC60037BB3D /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A12CD3145122FC00C1D980 /* Security.framework */; };
 		F6016C8814620EC70037BB3D /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A12CD3145122FC00C1D980 /* Security.framework */; };
 		F6016C8914620ECC0037BB3D /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A12CD3145122FC00C1D980 /* Security.framework */; };
 		F6016C8A1462143C0037BB3D /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A12CD51451231B00C1D980 /* CFNetwork.framework */; };
@@ -17,10 +16,8 @@
 		F611322A14D4C4F2008A42D5 /* SRTBonjourLocatorOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = F611322814D4C4F2008A42D5 /* SRTBonjourLocatorOperation.h */; };
 		F611322B14D4C4F2008A42D5 /* SRTBonjourLocatorOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F611322914D4C4F2008A42D5 /* SRTBonjourLocatorOperation.m */; };
 		F6572126146C7B6A00D6B8A9 /* NSData+SRB64Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F6572124146C7B6A00D6B8A9 /* NSData+SRB64Additions.m */; };
-		F66996FE146759FE0014B93E /* libSocketRocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B2082D1450F597009315AF /* libSocketRocket.a */; };
 		F6A12CD1145119B700C1D980 /* SRWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A12CCF145119B700C1D980 /* SRWebSocket.h */; };
 		F6A12CD2145119B700C1D980 /* SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = F6A12CD0145119B700C1D980 /* SRWebSocket.m */; };
-		F6A12CD61451231B00C1D980 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A12CD51451231B00C1D980 /* CFNetwork.framework */; };
 		F6AE451D145906A70022AF3C /* libSocketRocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B2082D1450F597009315AF /* libSocketRocket.a */; };
 		F6AE4520145906B20022AF3C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B208301450F597009315AF /* Foundation.framework */; };
 		F6AE4521145906B20022AF3C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B208431450F611009315AF /* UIKit.framework */; };
@@ -28,12 +25,6 @@
 		F6AE4523145906C10022AF3C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B208461450F611009315AF /* CoreGraphics.framework */; };
 		F6AE45241459071C0022AF3C /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A12CD51451231B00C1D980 /* CFNetwork.framework */; };
 		F6AE4528145907D30022AF3C /* SenTestCase+SRTAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = F6AE4527145907D30022AF3C /* SenTestCase+SRTAdditions.m */; };
-		F6B208441450F611009315AF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B208431450F611009315AF /* UIKit.framework */; };
-		F6B208451450F611009315AF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B208301450F597009315AF /* Foundation.framework */; };
-		F6B208471450F611009315AF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B208461450F611009315AF /* CoreGraphics.framework */; };
-		F6B2084D1450F611009315AF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F6B2084B1450F611009315AF /* InfoPlist.strings */; };
-		F6B2084F1450F611009315AF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F6B2084E1450F611009315AF /* main.m */; };
-		F6B208531450F611009315AF /* SRTAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F6B208521450F611009315AF /* SRTAppDelegate.m */; };
 		F6BDA804145900D200FE3253 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6BDA803145900D200FE3253 /* SenTestingKit.framework */; };
 		F6BDA805145900D200FE3253 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B208431450F611009315AF /* UIKit.framework */; };
 		F6BDA806145900D200FE3253 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B208301450F597009315AF /* Foundation.framework */; };
@@ -41,7 +32,6 @@
 		F6BDA8161459016900FE3253 /* SRTAutobahnTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F6BDA8151459016900FE3253 /* SRTAutobahnTests.m */; };
 		F6C41C96145F7C4700641356 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6C41C95145F7C4700641356 /* libicucore.dylib */; };
 		F6C41C98145F7C6100641356 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6C41C95145F7C4700641356 /* libicucore.dylib */; };
-		F6C41C99145F7C7700641356 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6C41C95145F7C4700641356 /* libicucore.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,15 +52,8 @@
 		F6B2082D1450F597009315AF /* libSocketRocket.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSocketRocket.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6B208301450F597009315AF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F6B208341450F597009315AF /* SocketRocket-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SocketRocket-Prefix.pch"; sourceTree = "<group>"; };
-		F6B208411450F611009315AF /* SRTests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SRTests.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6B208431450F611009315AF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		F6B208461450F611009315AF /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		F6B2084A1450F611009315AF /* SRTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SRTests-Info.plist"; sourceTree = "<group>"; };
-		F6B2084C1450F611009315AF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		F6B2084E1450F611009315AF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		F6B208501450F611009315AF /* SRTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SRTests-Prefix.pch"; sourceTree = "<group>"; };
-		F6B208511450F611009315AF /* SRTAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRTAppDelegate.h; sourceTree = "<group>"; };
-		F6B208521450F611009315AF /* SRTAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SRTAppDelegate.m; sourceTree = "<group>"; };
 		F6BDA802145900D200FE3253 /* SRWebSocketTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SRWebSocketTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6BDA803145900D200FE3253 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		F6BDA809145900D200FE3253 /* SRWebSocketTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SRWebSocketTests-Info.plist"; sourceTree = "<group>"; };
@@ -91,20 +74,6 @@
 				F6AE4522145906B20022AF3C /* CoreGraphics.framework in Frameworks */,
 				F6016C8914620ECC0037BB3D /* Security.framework in Frameworks */,
 				F6016C8A1462143C0037BB3D /* CFNetwork.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F6B2083E1450F611009315AF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F6C41C99145F7C7700641356 /* libicucore.dylib in Frameworks */,
-				F6A12CD61451231B00C1D980 /* CFNetwork.framework in Frameworks */,
-				F6B208441450F611009315AF /* UIKit.framework in Frameworks */,
-				F6B208451450F611009315AF /* Foundation.framework in Frameworks */,
-				F6B208471450F611009315AF /* CoreGraphics.framework in Frameworks */,
-				F6016C8714620EC60037BB3D /* Security.framework in Frameworks */,
-				F66996FE146759FE0014B93E /* libSocketRocket.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,7 +99,6 @@
 			isa = PBXGroup;
 			children = (
 				F6B208321450F597009315AF /* SocketRocket */,
-				F6B208481450F611009315AF /* SRTests */,
 				F6BDA807145900D200FE3253 /* SRWebSocketTests */,
 				F6B2082F1450F597009315AF /* Frameworks */,
 				F6B2082E1450F597009315AF /* Products */,
@@ -141,7 +109,6 @@
 			isa = PBXGroup;
 			children = (
 				F6B2082D1450F597009315AF /* libSocketRocket.a */,
-				F6B208411450F611009315AF /* SRTests.app */,
 				F6BDA802145900D200FE3253 /* SRWebSocketTests.octest */,
 			);
 			name = Products;
@@ -179,27 +146,6 @@
 			isa = PBXGroup;
 			children = (
 				F6B208341450F597009315AF /* SocketRocket-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		F6B208481450F611009315AF /* SRTests */ = {
-			isa = PBXGroup;
-			children = (
-				F6B208511450F611009315AF /* SRTAppDelegate.h */,
-				F6B208521450F611009315AF /* SRTAppDelegate.m */,
-				F6B208491450F611009315AF /* Supporting Files */,
-			);
-			path = SRTests;
-			sourceTree = "<group>";
-		};
-		F6B208491450F611009315AF /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				F6B2084A1450F611009315AF /* SRTests-Info.plist */,
-				F6B2084B1450F611009315AF /* InfoPlist.strings */,
-				F6B2084E1450F611009315AF /* main.m */,
-				F6B208501450F611009315AF /* SRTests-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -262,23 +208,6 @@
 			productReference = F6B2082D1450F597009315AF /* libSocketRocket.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		F6B208401450F611009315AF /* SRTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F6B208541450F611009315AF /* Build configuration list for PBXNativeTarget "SRTests" */;
-			buildPhases = (
-				F6B2083D1450F611009315AF /* Sources */,
-				F6B2083E1450F611009315AF /* Frameworks */,
-				F6B2083F1450F611009315AF /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = SRTests;
-			productName = SRTests;
-			productReference = F6B208411450F611009315AF /* SRTests.app */;
-			productType = "com.apple.product-type.application";
-		};
 		F6BDA801145900D200FE3253 /* SRWebSocketTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F6BDA813145900D200FE3253 /* Build configuration list for PBXNativeTarget "SRWebSocketTests" */;
@@ -318,21 +247,12 @@
 			projectRoot = "";
 			targets = (
 				F6B2082C1450F597009315AF /* SocketRocket */,
-				F6B208401450F611009315AF /* SRTests */,
 				F6BDA801145900D200FE3253 /* SRWebSocketTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		F6B2083F1450F611009315AF /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F6B2084D1450F611009315AF /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		F6BDA7FF145900D200FE3253 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -371,15 +291,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F6B2083D1450F611009315AF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F6B2084F1450F611009315AF /* main.m in Sources */,
-				F6B208531450F611009315AF /* SRTAppDelegate.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		F6BDA7FD145900D200FE3253 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -393,14 +304,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		F6B2084B1450F611009315AF /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				F6B2084C1450F611009315AF /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
 		F6BDA80A145900D200FE3253 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -492,54 +395,6 @@
 			};
 			name = Release;
 		};
-		F6B208551450F611009315AF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(DEVELOPER_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/System/Library/Frameworks\"",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "SRTests/SRTests-Prefix.pch";
-				INFOPLIST_FILE = "SRTests/SRTests-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(DEVELOPER_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/usr/lib/system\"",
-					"\"$(DEVELOPER_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/usr/lib\"",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				WRAPPER_EXTENSION = app;
-			};
-			name = Debug;
-		};
-		F6B208561450F611009315AF /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(DEVELOPER_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/System/Library/Frameworks\"",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "SRTests/SRTests-Prefix.pch";
-				INFOPLIST_FILE = "SRTests/SRTests-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(DEVELOPER_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/usr/lib/system\"",
-					"\"$(DEVELOPER_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/usr/lib\"",
-				);
-				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				WRAPPER_EXTENSION = app;
-			};
-			name = Release;
-		};
 		F6BDA811145900D200FE3253 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -599,15 +454,6 @@
 			buildConfigurations = (
 				F6B2083B1450F597009315AF /* Debug */,
 				F6B2083C1450F597009315AF /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		F6B208541450F611009315AF /* Build configuration list for PBXNativeTarget "SRTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				F6B208551450F611009315AF /* Debug */,
-				F6B208561450F611009315AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -93,7 +93,7 @@
     
     NSOperationQueue *testQueue = [[NSOperationQueue alloc] init];
     
-    testQueue.maxConcurrentOperationCount = 1;
+    testQueue.maxConcurrentOperationCount = 8;
     
     NSString *agent = [NSBundle bundleForClass:[self class]].bundleIdentifier;
     
