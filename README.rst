@@ -1,0 +1,163 @@
+SocketRocket Objective-C WebSocket Client (beta)
+================================================
+A conforming WebSocket (`RFC 6455 <http://tools.ietf.org/html/rfc6455>`_)
+client library.
+
+SocketRocket currently conforms to all ~300 of `Autobahn
+<http://www.tavendo.de/autobahn/testsuite.html>`_'s fuzzing tests (aside from
+two UTF-8 ones where it is merely *non-strict*. tests 6.4.2 and 6.4.4)
+
+It should work on OS X too.  There are no UIKit dependencies.
+
+.. Warning::
+  This is not production-quality software yet.  It has only been used in
+  devlopment environments.
+  
+  **USE AT YOUR OWN RISK**
+
+  (it will mature quickly… I am just conservative)
+
+Features/Design
+---------------
+
+- TLS (wss) support.  It uses CFStream so we get this for "free"
+- Uses NSStream/CFNetworking.  Earlier implementations used ``dispatch_io``,
+  however, this proved to be make TLS nearly impossible.  Also I wanted this to
+  work in iOS 4.x.
+- Uses ARC.  It uses the 4.0 compatible subset (no weak refs).
+- Seems to perform quite well
+- Parallel architecture. Most of the work is done in background worker queues.
+- Delegate-based. Had older versions that could use blocks too, but I felt it
+  didn't blend well with retain cycles and just objective C in general.
+
+Installing
+----------
+There's a few options. Choose one, or just figure it out
+
+- You can copy all the files in the SocketRocket group into your app.
+- Include SocketRocket as a subproject and use libSocketRocket
+
+  If you do this, you must add -ObjC to your "other linker flogs" option
+
+- For OS X you will ahve to repackage make a .framework target.  I will take
+  contributions. Message me if you are interested.
+
+Framework Dependencies
+``````````````````````
+Your .app must be linked against the following frameworks/dylibs
+
+- libicucore.dylib
+- CFNetwork.framework
+- Security.framework
+- Foundation.framework
+
+Known Issues/Sever Todo's
+-------------------------
+- Needs auth delegates (like in NSURLConnection)
+- Move the streams off the main runloop (most of the work is backgrounded uses
+  GCD, but I just haven't gotten around to moving it off the main loop since I
+  converted it from dispatch_io)
+- Re-implement server. I removed an existing implementation as well because it
+  wasn't being used and I wasn't super happy with the interface.  Will revisit
+  this.
+- Separate framer and client logic. This will make it nicer when having a
+  server.
+
+Testing
+-------
+Included are setup scripts for the python testing environment.  It comes
+packaged with vitualenv so all the dependencies are installed in userland.
+
+To run the short test from the command line, run ::
+
+  make test
+
+To run all the tests, run ::
+
+  make test_all
+
+The short tests don't include the performance tests.  (the test harness is
+actually the bottleneck, not SocketRocket).
+
+The first time this is run, it may take a while to install the dependencies.  It
+will be smooth sailing after that.  After the test runs the makefile will open
+the results page in your browser.  If nothing comes up, you failed.  Working on
+making this interface a bit nicer.
+
+To run from the app, choose the ``SocketRocket`` target and run the test action
+(``cmd+u``). It runs the same thing, but makes it easier to debug.  There is
+some serious pre/post hooks in the Test action.  You can edit it to customize
+behavior.
+
+TestChat Demo
+-------------
+SocketRocket includes a demo app, TestChat.  It will "chat" with a listening
+websocket on port 9900.
+
+It's a simple project.  Uses storyboard.  Storyboard is sweet.
+
+
+Test Client Server (``wssh``)
+```````````````````````````````
+To talk to the chat client, we are going to use an app called `wssh
+<https://github.com/progrium/wssh>`_. It's somewhat like ``netcat`` but for
+websockets.
+
+We have to get some dependencies.  We also want to reuse the virtualenv we made
+when we ran the tests. If you haven't run the tests yet, go into the
+SocketRocket root directory and type ::
+
+  make test
+
+This will set up your `virtualenv <http://pypi.python.org/pypi/virtualenv>`_.
+Now, in your terminal ::
+
+  source .env/bin/activate
+  pip install \
+    git+https://github.com/Lawouach/WebSocket-for-Python \
+    git+https://github.com/progrium/wssh.git
+
+In the same terminal session, start wssh ::
+
+  wssh ws://localhost:9900/ -l
+
+
+.. Note:: 
+  After disconnecting the TestChat client you may have to ``ctrl+c`` and
+  restart wssh.
+
+Chatting
+````````
+Now, start TestChat.app (just run the target in the XCode project).  If you had
+it started already you can hit the refresh button to reconnect.  It should say
+"Connected!" on top.
+
+You can type into the ``wssh`` client to communicate to the app, or type into the
+app's textview to communicate to the ``wssh``.
+
+
+WebSocket Server Implementation Recommendations
+-----------------------------------------------
+SocketRocket has been used with the following libraries:
+
+- `Tornado <https://github.com/facebook/tornado>`_
+- Go's `weekly build <http://weekly.golang.org>`_ (the official release has an
+  outdated protocol, so you may have to use weekly until `Go 1
+  <http://blog.golang.org/2011/10/preview-of-go-version-1.html>`_ is released)
+- `Autobahn <http://www.tavendo.de/autobahn/testsuite.html>`_ (using it's fuzzing
+  client)
+
+I found Autobahn (and twisted) to be the most difficult to use.  I have not been
+too impressed by it's performance in testing either. Maybe it has to do with the
+masking?
+
+The Tornado one is dirt simple and works like a charm.  (`IPython notebook
+<http://ipython.org/ipython-doc/dev/interactive/htmlnotebook.html>` uses it
+too).  It's much easier to configure handlers and routes than in
+Autobahn/twisted.
+
+As far as Go's goes, it works in my limited testing. I much prefer go's
+concurrency model as well. Try it! You may like it.
+(``brew install --use-git --devel --HEAD go`` seems to give me a reasonable
+version).  It could use some more control over things such as pings, etc, but I
+am sure it will come in time.
