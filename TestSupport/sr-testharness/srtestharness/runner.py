@@ -37,7 +37,7 @@ def main():
     parser.add_argument('-w', '--webdir', default='.')
     parser.add_argument('-d', '--debug', default=False, action='store_true', help='Debug Mode [default: %(default)s]')
 
-    parser.add_argument('-o', '--outdir', default='./reports/clients', metavar='DIR', help='Output Directory [default: %(default)s]')
+    parser.add_argument('-o', '--outdir', default='./pages/results', metavar='DIR', help='Output Directory [default: %(default)s]')
 
     parser.add_argument('-c', '--cases', default=['*'], nargs='+', help='test cases [default: %(default)s]')
     parser.add_argument('-x', '--exclude-cases', default=[], nargs='+', help='test cases to exclude [default: %(default)s]')
