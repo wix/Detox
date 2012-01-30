@@ -68,7 +68,7 @@ The classes
 ```````````````
 The Web Socket.
 
-What you need to know :: 
+What you need to know:: 
 
   @interface SRWebSocket : NSObject
 
@@ -123,11 +123,11 @@ Testing
 Included are setup scripts for the python testing environment.  It comes
 packaged with vitualenv so all the dependencies are installed in userland.
 
-To run the short test from the command line, run ::
+To run the short test from the command line, run::
 
   make test
 
-To run all the tests, run ::
+To run all the tests, run::
 
   make test_all
 
@@ -160,12 +160,12 @@ websockets.
 
 We have to get some dependencies.  We also want to reuse the virtualenv we made
 when we ran the tests. If you haven't run the tests yet, go into the
-SocketRocket root directory and type ::
+SocketRocket root directory and type::
 
   make test
 
 This will set up your `virtualenv <http://pypi.python.org/pypi/virtualenv>`_.
-Now, in your terminal ::
+Now, in your terminal::
 
   source .env/bin/activate
   brew install libevent
@@ -173,7 +173,7 @@ Now, in your terminal ::
     git+https://github.com/Lawouach/WebSocket-for-Python \
     git+https://github.com/progrium/wssh.git
 
-In the same terminal session, start wssh ::
+In the same terminal session, start wssh::
 
   wssh ws://localhost:9900/ -l
 
