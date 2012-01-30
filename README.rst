@@ -37,7 +37,7 @@ There's a few options. Choose one, or just figure it out
 - You can copy all the files in the SocketRocket group into your app.
 - Include SocketRocket as a subproject and use libSocketRocket
 
-  If you do this, you must add -ObjC to your "other linker flogs" option
+  If you do this, you must add -ObjC to your "other linker flags" option
 
 - For OS X you will have to repackage make a .framework target.  I will take
   contributions. Message me if you are interested.
@@ -210,5 +210,5 @@ Autobahn/twisted.
 As far as Go's goes, it works in my limited testing. I much prefer go's
 concurrency model as well. Try it! You may like it.
 (``brew install --use-git --devel --HEAD go`` seems to give me a reasonable
-version).  It could use some more control over things such as pings, etc, but I
+version).  It could use some more control over things such as pings, etc., but I
 am sure it will come in time.
