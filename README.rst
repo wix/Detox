@@ -4,6 +4,8 @@ A conforming WebSocket (`RFC 6455 <http://tools.ietf.org/html/rfc6455>`_)
 client library.
 
 `Test results here <http://square.github.com/SocketRocket/results/>`_
+you can see what the results for modern browsers look like `here
+<http://www.tavendo.de/autobahn/testsuite/report/clients/index.html>`_
 
 SocketRocket currently conforms to all ~300 of `Autobahn
 <http://www.tavendo.de/autobahn/testsuite.html>`_'s fuzzing tests (aside from
