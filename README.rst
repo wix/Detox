@@ -16,7 +16,7 @@ It should work on OS X too.  There are no UIKit dependencies.
 
 .. Warning::
   This is not production-quality software yet.  It has only been used in
-  devlopment environments.
+  development environments.
   
   **USE AT YOUR OWN RISK**
 
@@ -42,7 +42,7 @@ There's a few options. Choose one, or just figure it out
 - You can copy all the files in the SocketRocket group into your app.
 - Include SocketRocket as a subproject and use libSocketRocket
 
-  If you do this, you must add -ObjC to your "other linker flags" option
+  If you do this, you must add ``-ObjC`` to your "other linker flags" option
 
 - For OS X you will have to repackage make a .framework target.  I will take
   contributions. Message me if you are interested.
