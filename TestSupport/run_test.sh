@@ -12,7 +12,7 @@ bash TestSupport/ensure_virtualenv.sh .env
 
 CHILD_PID=$!
 
-xcodebuild -target SocketRocket -sdk $SDK -configuration Debug clean
-xcodebuild -target SRWebSocketTests -sdk $SDK -configuration Debug clean build
+xcodebuild -target SocketRocket -arch i386 -configuration Debug -sdk iphonesimulator clean
+xcodebuild -target SRWebSocketTests -arch i386 -configuration Debug -sdk iphonesimulator clean build 
 
 kill $CHILD_PID
