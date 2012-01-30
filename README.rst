@@ -7,6 +7,8 @@ SocketRocket currently conforms to all ~300 of `Autobahn
 <http://www.tavendo.de/autobahn/testsuite.html>`_'s fuzzing tests (aside from
 two UTF-8 ones where it is merely *non-strict*. tests 6.4.2 and 6.4.4)
 
+`**test results here** <http://square.github.com/SocketRocket/results/>`_
+
 It should work on OS X too.  There are no UIKit dependencies.
 
 .. Warning::
