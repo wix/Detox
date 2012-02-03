@@ -152,11 +152,10 @@ websocket on port 9900.
 It's a simple project.  Uses storyboard.  Storyboard is sweet.
 
 
-Test Client Server (``wssh``)
-```````````````````````````````
-To talk to the chat client, we are going to use an app called `wssh
-<https://github.com/progrium/wssh>`_. It's somewhat like ``netcat`` but for
-websockets.
+TestChat Server
+```````````````
+We've included a small server for the chat app.  It has a simple function.
+It will take a message and broadcast it to all other connected clients.
 
 We have to get some dependencies.  We also want to reuse the virtualenv we made
 when we ran the tests. If you haven't run the tests yet, go into the
@@ -168,19 +167,11 @@ This will set up your `virtualenv <http://pypi.python.org/pypi/virtualenv>`_.
 Now, in your terminal::
 
   source .env/bin/activate
-  brew install libevent
-  pip install \
-    git+https://github.com/Lawouach/WebSocket-for-Python \
-    git+https://github.com/progrium/wssh.git
+  pip install git+https://github.com/facebook/tornado.git
 
-In the same terminal session, start wssh::
+In the same terminal session, start the chatroom server::
 
-  wssh ws://localhost:9900/ -l
-
-
-.. Note:: 
-  After disconnecting the TestChat client you may have to ``ctrl+c`` and
-  restart wssh.
+  python TestChatServer/py/chatroom.py
 
 Chatting
 ````````
@@ -188,8 +179,8 @@ Now, start TestChat.app (just run the target in the XCode project).  If you had
 it started already you can hit the refresh button to reconnect.  It should say
 "Connected!" on top.
 
-You can type into the ``wssh`` client to communicate to the app, or type into the
-app's textview to communicate to the ``wssh``.
+To talk with the app, open up your browser to `<http://localhost:9000>` and
+start chatting.
 
 
 WebSocket Server Implementation Recommendations

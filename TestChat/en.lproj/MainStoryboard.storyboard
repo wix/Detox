@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1938" systemVersion="11C74" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="J5d-9g-n8O">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.1" toolsVersion="2166" systemVersion="11D50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="J5d-9g-n8O">
     <dependencies>
         <development defaultVersion="4200" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="933"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1166"/>
     </dependencies>
     <scenes>
+        <!--View Controller-->
         <scene sceneID="6me-oX-IDw">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KsG-hH-48N" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -15,7 +16,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <textView key="tableFooterView" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" id="rfU-78-BK7">
                             <rect key="frame" x="0.0" y="110" width="320" height="48"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                             <color key="backgroundColor" red="0.90196079015731812" green="0.90196079015731812" blue="0.90196079015731812" alpha="1" colorSpace="calibratedRGB"/>
                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                             <fontDescription key="fontDescription" type="boldSystem" pointSize="14"/>
@@ -97,6 +98,7 @@
             </objects>
             <point key="canvasLocation" x="676" y="93"/>
         </scene>
+        <!--Navigation Controller-->
         <scene sceneID="nGX-KT-vxI">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DyG-Ww-kME" userLabel="First Responder" sceneMemberID="firstResponder"/>

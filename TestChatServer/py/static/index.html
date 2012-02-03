@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <script src='proxy.js'>
+    </script>
+    <style type='text/css'>
+      html {
+        background-color: rgb(48,48, 48);
+        color: rgb(221, 190, 120);
+        font-family: "HelveticaNeue", Helvetica, Arial;
+      }
+
+      a {
+        color: rgb(193, 127, 128);
+      }
+      #info_div {
+        font-size:small;
+        color: rgb(108, 144, 100);
+      }
+
+      .device_details {
+        font-size:small;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>Chat History</h3>
+    <ul id='history'>
+    </ul>
+    <form id="msg_form">
+      <input type='text' name='message' id='msg_field'/>
+      <input type='submit'/>
+    </form>
+
+    <ul id='client_list'></ul>
+    <div id='info_div'></div>
+  </body>
+</html>
