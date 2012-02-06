@@ -179,7 +179,7 @@ Now, start TestChat.app (just run the target in the XCode project).  If you had
 it started already you can hit the refresh button to reconnect.  It should say
 "Connected!" on top.
 
-To talk with the app, open up your browser to `<http://localhost:9000>` and
+To talk with the app, open up your browser to `http://localhost:9000 <http://localhost:9000>`_ and
 start chatting.
 
 
