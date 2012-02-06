@@ -106,8 +106,8 @@ You implement this ::
   @end
 
 
-Known Issues/Sever Todo's
--------------------------
+Known Issues/Server Todo's
+--------------------------
 - Needs auth delegates (like in NSURLConnection)
 - Move the streams off the main runloop (most of the work is backgrounded uses
   GCD, but I just haven't gotten around to moving it off the main loop since I
