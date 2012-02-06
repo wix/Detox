@@ -49,6 +49,8 @@ func main() {
     msg := make(chan Msg)
 
     http.Handle("/chat", websocket.Handler(newChatServer(reg, unreg, msg)))
+    http.Handle("/", http.FileServer(http.Dir("../static")))
+
     go run(reg, unreg, msg)
 
     err := http.ListenAndServe(":9000", nil)

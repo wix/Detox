@@ -19,7 +19,7 @@ args = None
 
 def parse_args():
     global args
-    static_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'static'))
+    static_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'static'))
     parser = argparse.ArgumentParser(description='Gateway server')
 
     parser.add_argument('-v', '--verbose', help='verbose logging', action='store_true')

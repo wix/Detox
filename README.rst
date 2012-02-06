@@ -16,7 +16,7 @@ It should work on OS X too.  There are no UIKit dependencies.
 
 .. Warning::
   This is not production-quality software yet.  It has only been used in
-  development environments.
+  devlopment environments.
   
   **USE AT YOUR OWN RISK**
 
@@ -42,7 +42,7 @@ There's a few options. Choose one, or just figure it out
 - You can copy all the files in the SocketRocket group into your app.
 - Include SocketRocket as a subproject and use libSocketRocket
 
-  If you do this, you must add ``-ObjC`` to your "other linker flags" option
+  If you do this, you must add -ObjC to your "other linker flags" option
 
 - For OS X you will have to repackage make a .framework target.  I will take
   contributions. Message me if you are interested.
@@ -173,6 +173,11 @@ In the same terminal session, start the chatroom server::
 
   python TestChatServer/py/chatroom.py
 
+There's also a Go implementation (with the latest weekly) where you can::
+
+  cd TestChatServer/go
+  go run chatroom.go
+
 Chatting
 ````````
 Now, start TestChat.app (just run the target in the XCode project).  If you had
@@ -205,8 +210,7 @@ Autobahn/twisted.
 
 As far as Go's goes, it works in my limited testing. I much prefer go's
 concurrency model as well. Try it! You may like it.
-(``brew install --use-git --devel --HEAD go`` seems to give me a reasonable
-version).  It could use some more control over things such as pings, etc., but I
+It could use some more control over things such as pings, etc., but I
 am sure it will come in time.
 
 Contributing
