@@ -196,7 +196,7 @@ SocketRocket has been used with the following libraries:
 - Go's `weekly build <http://weekly.golang.org>`_ (the official release has an
   outdated protocol, so you may have to use weekly until `Go 1
   <http://blog.golang.org/2011/10/preview-of-go-version-1.html>`_ is released)
-- `Autobahn <http://www.tavendo.de/autobahn/testsuite.html>`_ (using it's fuzzing
+- `Autobahn <http://www.tavendo.de/autobahn/testsuite.html>`_ (using its fuzzing
   client)
 
 I found Autobahn (and twisted) to be the most difficult to use.  I have not been
