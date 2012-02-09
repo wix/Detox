@@ -199,10 +199,6 @@ SocketRocket has been used with the following libraries:
 - `Autobahn <http://www.tavendo.de/autobahn/testsuite.html>`_ (using its fuzzing
   client)
 
-I found Autobahn (and twisted) to be the most difficult to use.  I have not been
-too impressed by it's performance in testing either. Maybe it has to do with the
-masking?
-
 The Tornado one is dirt simple and works like a charm.  (`IPython notebook
 <http://ipython.org/ipython-doc/dev/interactive/htmlnotebook.html>`_ uses it
 too).  It's much easier to configure handlers and routes than in
@@ -212,6 +208,11 @@ As far as Go's goes, it works in my limited testing. I much prefer go's
 concurrency model as well. Try it! You may like it.
 It could use some more control over things such as pings, etc., but I
 am sure it will come in time.
+
+Autobahn is a great test suite.  The Python server code is good, and conforms
+well (obviously).  Hovever, for me, twisted would be a deal-breaker for writing
+something new.  I find it a bit too complex and heavy for a simple service. If
+you are already using twisted though, Autobahn is probably for you.
 
 Contributing
 ------------
