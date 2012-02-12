@@ -1,14 +1,14 @@
 export MACOSX_DEPLOYMENT_TARGET="10.7"
 
 TEST_SCENARIOS=$1
-TEST_KEY=$2
+TEST_URL=$2
 SDK=$3
 
-export SR_TESTHARNESS_KEY=$TEST_KEY
+export SR_TEST_URL=$TEST_URL
 
 bash TestSupport/ensure_virtualenv.sh .env
 
-.env/bin/sr-testharness -k $TEST_KEY -i '' -c "$TEST_SCENARIOS" &
+.env/bin/sr-testharness -i '' -c "$TEST_SCENARIOS" &
 
 CHILD_PID=$!
 
