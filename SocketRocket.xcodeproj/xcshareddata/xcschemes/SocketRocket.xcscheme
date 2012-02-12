@@ -87,8 +87,8 @@
       </MacroExpansion>
       <EnvironmentVariables>
          <EnvironmentVariable
-            key = "SR_TESTHARNESS_KEY"
-            value = "hello_test_harness"
+            key = "SR_TEST_URL"
+            value = "ws://localhost:9001"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>

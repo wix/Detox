@@ -17,7 +17,6 @@
 #import <SenTestingKit/SenTestingKit.h>
 #import "SRWebSocket.h"
 #import "SRTWebSocketOperation.h"
-#import "SRTBonjourLocatorOperation.h"
 #import "SenTestCase+SRTAdditions.h"
 
 #define SRLogDebug(format, ...) 
@@ -54,27 +53,9 @@
 - (void)testFuzzer;
 {
     _sockets = [[NSMutableArray alloc] init];
-
-    NSString *const testHarnessKey = [[NSProcessInfo processInfo].environment objectForKey:@"SR_TESTHARNESS_KEY"];
-
-    STAssertNotNil(testHarnessKey, @"Should have SR_TESTHARNESS_KEY key set in env");
-
-    SRTBonjourLocatorOperation *locatorOperation = [[SRTBonjourLocatorOperation alloc] initWithKey:testHarnessKey];
-    [locatorOperation start];
-
-    [self runCurrentRunLoopUntilTestPasses:^BOOL{
-        return locatorOperation.isFinished;
-    } timeout:20.0];
-
-    STAssertNotNil(locatorOperation.foundService, @"Should have found a test harness service");
     
-    NSURL *prefixURL = [[[NSURL alloc] 
-                         initWithScheme:locatorOperation.foundScheme 
-                         host:[NSString stringWithFormat:@"%@:%d", 
-                               @"localhost",
-                               locatorOperation.foundService.port] 
-                         path:@"/.."] 
-                        standardizedURL];
+    NSString *testURLString = [[NSProcessInfo processInfo].environment objectForKey:@"SR_TEST_URL"];
+    NSURL *prefixURL = [NSURL URLWithString:testURLString];    
     
     CaseGetterOperation *caseGetter = [[CaseGetterOperation alloc] initWithBaseURL:prefixURL];
     [caseGetter start];
