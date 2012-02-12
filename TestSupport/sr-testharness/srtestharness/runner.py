@@ -65,19 +65,6 @@ def main():
  
     log.msg("Using Twisted reactor class %s" % str(reactor.__class__))
 
-    proc = None
-    if args.broadcast_bonjour_key:
-        parsed_url = urlparse.urlparse(args.url)
-        proc = subprocess.Popen(['/usr/bin/dns-sd',
-                                 '-R', 'Websocket Test Harness',
-                                 '_autbahn_ws._tcp',
-                                 'local',
-                                 '%d' % parsed_url.port,
-                                 'scheme=%s' % parsed_url.scheme, 
-                                 'key=%s' % args.broadcast_bonjour_key]
-                                )
-        
-
     if args.exit_timeout:
         def exit_callback():
             log.msg("Exiting due to timeout (--exit-timeout/-t)")
@@ -87,10 +74,4 @@ def main():
 
         reactor.callLater(args.exit_timeout, exit_callback)
     
-    try:
-        reactor.run()
-    finally:
-        if proc:
-            log.msg("terminating dns-sd")
-            proc.terminate()
-            proc.wait()
+    reactor.run()
