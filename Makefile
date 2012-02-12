@@ -4,10 +4,12 @@ TEST_SCENARIOS="[1-8]*"
 test:
 
 	bash ./TestSupport/run_test.sh $(TEST_SCENARIOS) $(TEST_KEY)
-	open reports/clients/index.html
+	mkdir -p pages/results
+	open pages/results/index.html
 
 test_all:
 
 	bash ./TestSupport/run_test.sh '*' $(TEST_KEY) $(SDK)
-	open reports/clients/index.html
+	mkdir -p pages/results
+	open pages/results/index.html
 
