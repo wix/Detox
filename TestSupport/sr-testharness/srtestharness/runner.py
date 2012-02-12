@@ -46,8 +46,6 @@ def main():
 
     parser.add_argument('-t', '--exit-timeout', metavar='SECONDS', default=None, type=float, help='Will automatically exit after %(metavar)s seconds [default: %(default)s]')
 
-    parser.add_argument('-k', '--broadcast-bonjour-key', default=None, help='Enables bonjour broadcasting. Key is used to figure out which port we are listening on')
-
     args = parser.parse_args()
 
     spec = args.__dict__
