@@ -8,7 +8,12 @@ export SR_TEST_URL=$TEST_URL
 
 bash TestSupport/ensure_virtualenv.sh .env
 
-.env/bin/sr-testharness -i '' -c "$TEST_SCENARIOS" &
+pushd TestSupport/sr-testharness/
+python setup.py develop
+popd
+
+source .env/bin/activate 
+sr-testharness -i '' -c "$TEST_SCENARIOS" &
 
 CHILD_PID=$!
 
