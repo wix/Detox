@@ -167,7 +167,9 @@
 				F6B2082F1450F597009315AF /* Frameworks */,
 				F6B2082E1450F597009315AF /* Products */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
 		};
 		F6B2082E1450F597009315AF /* Products */ = {
 			isa = PBXGroup;
