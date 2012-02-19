@@ -232,7 +232,7 @@ typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
 
 - (void)_sendFrameWithOpcode:(SROpCode)opcode data:(id)data;
 
-- (BOOL)_checkHandshake:(NSDictionary *)headers;
+- (BOOL)_checkHandshake:(CFHTTPMessageRef)httpMessage;
 - (void)_SR_commonInit;
 
 - (void)_connectToHost:(NSString *)host port:(NSInteger)port;
@@ -381,10 +381,10 @@ static __strong NSData *CRLFCRLF;
 
 
 
-- (BOOL)_checkHandshake:(NSDictionary *)headers;
+- (BOOL)_checkHandshake:(CFHTTPMessageRef)httpMessage;
 {
-    NSString *acceptHeader = [headers objectForKey:@"Sec-WebSocket-Accept"];
-    
+    NSString *acceptHeader = CFBridgingRelease(CFHTTPMessageCopyHeaderFieldValue(httpMessage, CFSTR("Sec-WebSocket-Accept")));
+
     if (acceptHeader == nil) {
         return NO;
     }
@@ -397,8 +397,6 @@ static __strong NSData *CRLFCRLF;
 
 - (void)_HTTPHeadersDidFinish;
 {
-    NSDictionary *dict = CFBridgingRelease(CFHTTPMessageCopyAllHeaderFields(_receivedHTTPHeaders));
-    
     NSInteger responseCode = CFHTTPMessageGetResponseStatusCode(_receivedHTTPHeaders);
     
     if (responseCode >= 400) {
@@ -408,7 +406,7 @@ static __strong NSData *CRLFCRLF;
 
     }
     
-    if(![self _checkHandshake:dict]) {
+    if(![self _checkHandshake:_receivedHTTPHeaders]) {
         [self _failWithError:[NSError errorWithDomain:SRWebSocketErrorDomain code:2133 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Invalid Sec-WebSocket-Accept response"] forKey:NSLocalizedDescriptionKey]]];
         return;
     }
