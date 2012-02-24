@@ -18,7 +18,7 @@
 #import "SRWebSocket.h"
 
 #import <unicode/utf8.h>
-#import <endian.h>
+#import <Endian.h>
 #import <CommonCrypto/CommonDigest.h>
 #import "base64.h"
 #import "NSData+SRB64Additions.h"
