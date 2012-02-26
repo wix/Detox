@@ -5,3 +5,4 @@ reports/
 build/
 nohup.out
 .DS_Store
+xcuserdata/
