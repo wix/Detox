@@ -598,6 +598,7 @@ static __strong NSData *CRLFCRLF;
 }
 - (void)send:(id)data;
 {
+    NSAssert(self.readyState != SR_CONNECTING, @"Invalid State: Cannot call send: until connection is open");
     // TODO: maybe not copy this for performance
     data = [data copy];
     dispatch_async(_workQueue, ^{
