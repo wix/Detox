@@ -117,6 +117,7 @@
     NSLog(@":( Websocket Failed With Error %@", error);
     
     self.title = @"Connection Failed! (see logs)";
+    _webSocket = nil;
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(NSString *)message;
@@ -125,6 +126,13 @@
     [_messages addObject:[[TCMessage alloc] initWithMessage:message fromMe:NO]];
     [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:_messages.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
     [self.tableView scrollRectToVisible:self.tableView.tableFooterView.frame animated:YES];
+}
+
+- (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean;
+{
+    NSLog(@"WebSocket closed");
+    self.title = @"Connection Closed! (see logs)";
+    _webSocket = nil;
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
