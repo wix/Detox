@@ -1264,15 +1264,27 @@ static const size_t SRFrameHeaderOverhead = 32;
                 SRFastLog(@"NSStreamEventEndEncountered %@", aStream);
                 if (aStream.streamError) {
                     [self _failWithError:aStream.streamError];
+                } else {
+                    if (self.readyState != SR_CLOSED) {
+                        self.readyState = SR_CLOSED;
+                    }
+
+                    if (!_sentClose && !_failed) {
+                        _sentClose = YES;
+                        // If we get closed in this state it's probably not clean because we should be sending this when we send messages
+                        dispatch_async(_callbackQueue, ^{
+                            if ([self.delegate respondsToSelector:@selector(webSocket:didCloseWithCode:reason:wasClean:)]) {
+                                [self.delegate webSocket:self didCloseWithCode:0 reason:@"Stream end encountered" wasClean:NO];
+                            }
+                        });
+                    }
                 }
                 
-                if (self.readyState != SR_CLOSED) {
-                    self.readyState = SR_CLOSED;
-                }
                 break;
             }
                 
             case NSStreamEventHasBytesAvailable: {
+                SRFastLog(@"NSStreamEventHasBytesAvailable %@", aStream);
                 const int bufferSize = 2048;
                 uint8_t buffer[bufferSize];
                 
@@ -1294,11 +1306,13 @@ static const size_t SRFrameHeaderOverhead = 32;
             }
                 
             case NSStreamEventHasSpaceAvailable: {
+                SRFastLog(@"NSStreamEventHasSpaceAvailable %@", aStream);
                 [self _pumpWriting];
                 break;
             }
                 
             default:
+                SRFastLog(@"(default)  %@", aStream);
                 break;
         }
     });
