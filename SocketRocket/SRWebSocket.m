@@ -794,7 +794,6 @@ static inline BOOL closeCodeIsValid(int closeCode) {
             [self _handleFrameWithData:curData opCode:frame_header.opcode];
         } else {
             if (frame_header.fin) {
-//                assert(_currentFrameData.length == frame_header.payload_length);
                 [self _handleFrameWithData:_currentFrameData opCode:frame_header.opcode];
             } else {
                 // TODO add assert that opcode is not a control;
@@ -807,7 +806,7 @@ static inline BOOL closeCodeIsValid(int closeCode) {
                 [self _handleFrameWithData:newData opCode:frame_header.opcode];
             } else {
                 if (frame_header.fin) {
-                    [self _handleFrameWithData:_currentFrameData opCode:frame_header.opcode];
+                    [self _handleFrameWithData:self->_currentFrameData opCode:frame_header.opcode];
                 } else {
                     // TODO add assert that opcode is not a control;
                     [self _readFrameContinue];
