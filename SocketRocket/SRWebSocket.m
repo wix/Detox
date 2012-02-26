@@ -364,7 +364,8 @@ static __strong NSData *CRLFCRLF;
 
 #endif
 
-- (void)open {
+- (void)open;
+{
     assert(_url);
 
     NSInteger port = _url.port.integerValue;
