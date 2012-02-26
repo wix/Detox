@@ -273,7 +273,8 @@ typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
     BOOL _consumerStopped;
     
     BOOL _closeWhenFinishedWriting;
-    
+    BOOL _failed;
+
     BOOL _secure;
     NSURLRequest *_urlRequest;
 
@@ -573,6 +574,7 @@ static __strong NSData *CRLFCRLF;
 {
     dispatch_async(_workQueue, ^{
         if (self.readyState != SR_CLOSED) {
+            _failed = YES;
             dispatch_async(_callbackQueue, ^{
                 if ([self.delegate respondsToSelector:@selector(webSocket:didFailWithError:)]) {
                     [self.delegate webSocket:self didFailWithError:error];
@@ -978,11 +980,13 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
         [_outputStream close];
         [_inputStream close];
         
-        dispatch_async(_callbackQueue, ^{
-            if ([self.delegate respondsToSelector:@selector(webSocket:didCloseWithCode:reason:wasClean:)]) {
-                [self.delegate webSocket:self didCloseWithCode:_closeCode reason:_closeReason wasClean:YES];
-            }
-        });
+        if (!_failed) {
+            dispatch_async(_callbackQueue, ^{
+                if ([self.delegate respondsToSelector:@selector(webSocket:didCloseWithCode:reason:wasClean:)]) {
+                    [self.delegate webSocket:self didCloseWithCode:_closeCode reason:_closeReason wasClean:YES];
+                }
+            });
+        }
     }
 }
 
