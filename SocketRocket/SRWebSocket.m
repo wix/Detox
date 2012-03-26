@@ -488,14 +488,24 @@ static __strong NSData *CRLFCRLF;
     _outputStream = CFBridgingRelease(writeStream);
     _inputStream = CFBridgingRelease(readStream);
     
+    
     if (_secure) {
+        NSMutableDictionary *SSLOptions = [[NSMutableDictionary alloc] init];
+             
         [_outputStream setProperty:(__bridge id)kCFStreamSocketSecurityLevelNegotiatedSSL forKey:(__bridge id)kCFStreamPropertySocketSecurityLevel];
+        
+        // If we're using pinned certs, don't validate the certificate chain
+        if ([_urlRequest SR_SSLPinnedCertificates].count) {
+            [SSLOptions setValue:[NSNumber numberWithBool:NO] forKey:(__bridge id)kCFStreamSSLValidatesCertificateChain];
+        }
+        
         #if DEBUG
+        [SSLOptions setValue:[NSNumber numberWithBool:NO] forKey:(__bridge id)kCFStreamSSLValidatesCertificateChain];
         NSLog(@"SocketRocket: In debug mode.  Allowing connection to any root cert");
-        [_outputStream setProperty:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] 
-                                                               forKey:(__bridge id)kCFStreamSSLAllowsAnyRoot]
-                            forKey:(__bridge id)kCFStreamPropertySSLSettings];
         #endif
+        
+        [_outputStream setProperty:SSLOptions
+                            forKey:(__bridge id)kCFStreamPropertySSLSettings];
     }
     
     _inputStream.delegate = self;
@@ -1232,6 +1242,10 @@ static const size_t SRFrameHeaderOverhead = 32;
 - (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode;
 {
     //    SRFastLog(@"%@ Got stream event %d", aStream, eventCode);
+    if (eventCode == NSStreamEventErrorOccurred || eventCode == NSStreamEventErrorOccurred) {
+        
+        
+    }
     dispatch_async(_workQueue, ^{
         switch (eventCode) {
             case NSStreamEventOpenCompleted: {
@@ -1240,6 +1254,35 @@ static const size_t SRFrameHeaderOverhead = 32;
                     return;
                 }
                 
+                
+                if (_secure && aStream == _outputStream) {
+                    NSArray *sslCerts = [_urlRequest SR_SSLPinnedCertificates];
+                    if (sslCerts) {
+                        SecTrustRef secTrust = (__bridge SecTrustRef)[aStream propertyForKey:(__bridge id)kCFStreamPropertySSLPeerTrust];
+                        BOOL found = NO;
+                        if (secTrust) {
+                            NSInteger numCerts = SecTrustGetCertificateCount(secTrust);
+                            for (NSInteger i = 0; i < numCerts && !found; i++) {
+                                SecCertificateRef cert = SecTrustGetCertificateAtIndex(secTrust, i);
+                                NSData *certData = CFBridgingRelease(SecCertificateCopyData(cert));
+                                
+                                for (id ref in sslCerts) {
+                                    SecCertificateRef trustedCert = (__bridge SecCertificateRef)ref;
+                                    NSData *trustedCertData = CFBridgingRelease(SecCertificateCopyData(trustedCert));
+                                    
+                                    if ([trustedCertData isEqualToData:certData]) {
+                                        found = YES;
+                                    }
+                                }
+                            }
+                        }
+                        
+                        if (!found) {
+                            [self _failWithError:[NSError errorWithDomain:@"org.lolrus.SocketRocket" code:23556 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Invalid server cert"] forKey:NSLocalizedDescriptionKey]]];
+                        }
+                    }
+                    
+                }
                 assert(_readBuffer);
                 
                 if (self.readyState == SR_CONNECTING && aStream == _inputStream) {
@@ -1347,4 +1390,26 @@ static const size_t SRFrameHeaderOverhead = 32;
 @end
 
 
+@implementation  NSURLRequest (CertificateAdditions)
+
+- (NSArray *)SR_SSLPinnedCertificates;
+{
+    return [NSURLProtocol propertyForKey:@"SR_SSLPinnedCertificates" inRequest:self];
+}
+
+@end
+
+@implementation  NSMutableURLRequest (CertificateAdditions)
+
+- (NSArray *)SR_SSLPinnedCertificates;
+{
+    return [NSURLProtocol propertyForKey:@"SR_SSLPinnedCertificates" inRequest:self];
+}
+
+- (void)setSR_SSLPinnedCertificates:(NSArray *)SR_SSLPinnedCertificates;
+{
+    [NSURLProtocol setProperty:SR_SSLPinnedCertificates forKey:@"SR_SSLPinnedCertificates" inRequest:self];
+}
+
+@end
 

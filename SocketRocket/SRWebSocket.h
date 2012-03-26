@@ -15,6 +15,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Security/SecCertificate.h>
 
 typedef enum {
     SR_CONNECTING   = 0,
@@ -58,5 +59,19 @@ extern NSString *const SRWebSocketErrorDomain;
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket;
 - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error;
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean;
+
+@end
+
+
+@interface NSURLRequest (CertificateAdditions)
+
+@property (nonatomic, retain, readonly) NSArray *SR_SSLPinnedCertificates;
+
+@end
+
+
+@interface NSMutableURLRequest (CertificateAdditions)
+
+@property (nonatomic, retain) NSArray *SR_SSLPinnedCertificates;
 
 @end
