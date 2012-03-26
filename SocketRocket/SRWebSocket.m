@@ -267,6 +267,8 @@ typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
     
     NSString *_secKey;
     
+    BOOL _pinnedCertFound;
+    
     uint8_t _currentReadMaskKey[4];
     size_t _currentReadMaskOffset;
 
@@ -1241,11 +1243,39 @@ static const size_t SRFrameHeaderOverhead = 32;
 
 - (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode;
 {
-    //    SRFastLog(@"%@ Got stream event %d", aStream, eventCode);
-    if (eventCode == NSStreamEventErrorOccurred || eventCode == NSStreamEventErrorOccurred) {
+    if (_secure && !_pinnedCertFound && (eventCode == NSStreamEventHasBytesAvailable || eventCode == NSStreamEventHasSpaceAvailable)) {
         
-        
+        NSArray *sslCerts = [_urlRequest SR_SSLPinnedCertificates];
+        if (sslCerts) {
+            SecTrustRef secTrust = (__bridge SecTrustRef)[aStream propertyForKey:(__bridge id)kCFStreamPropertySSLPeerTrust];
+            if (secTrust) {
+                NSInteger numCerts = SecTrustGetCertificateCount(secTrust);
+                for (NSInteger i = 0; i < numCerts && !_pinnedCertFound; i++) {
+                    SecCertificateRef cert = SecTrustGetCertificateAtIndex(secTrust, i);
+                    NSData *certData = CFBridgingRelease(SecCertificateCopyData(cert));
+                    
+                    for (id ref in sslCerts) {
+                        SecCertificateRef trustedCert = (__bridge SecCertificateRef)ref;
+                        NSData *trustedCertData = CFBridgingRelease(SecCertificateCopyData(trustedCert));
+                        
+                        if ([trustedCertData isEqualToData:certData]) {
+                            _pinnedCertFound = YES;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            if (!_pinnedCertFound) {
+                dispatch_async(_workQueue, ^{
+                    [self _failWithError:[NSError errorWithDomain:@"org.lolrus.SocketRocket" code:23556 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Invalid server cert"] forKey:NSLocalizedDescriptionKey]]];
+                });
+                return;
+            }
+        }
     }
+
+    //    SRFastLog(@"%@ Got stream event %d", aStream, eventCode);
     dispatch_async(_workQueue, ^{
         switch (eventCode) {
             case NSStreamEventOpenCompleted: {
@@ -1254,35 +1284,7 @@ static const size_t SRFrameHeaderOverhead = 32;
                     return;
                 }
                 
-                
-                if (_secure && aStream == _outputStream) {
-                    NSArray *sslCerts = [_urlRequest SR_SSLPinnedCertificates];
-                    if (sslCerts) {
-                        SecTrustRef secTrust = (__bridge SecTrustRef)[aStream propertyForKey:(__bridge id)kCFStreamPropertySSLPeerTrust];
-                        BOOL found = NO;
-                        if (secTrust) {
-                            NSInteger numCerts = SecTrustGetCertificateCount(secTrust);
-                            for (NSInteger i = 0; i < numCerts && !found; i++) {
-                                SecCertificateRef cert = SecTrustGetCertificateAtIndex(secTrust, i);
-                                NSData *certData = CFBridgingRelease(SecCertificateCopyData(cert));
-                                
-                                for (id ref in sslCerts) {
-                                    SecCertificateRef trustedCert = (__bridge SecCertificateRef)ref;
-                                    NSData *trustedCertData = CFBridgingRelease(SecCertificateCopyData(trustedCert));
-                                    
-                                    if ([trustedCertData isEqualToData:certData]) {
-                                        found = YES;
-                                    }
-                                }
-                            }
-                        }
-                        
-                        if (!found) {
-                            [self _failWithError:[NSError errorWithDomain:@"org.lolrus.SocketRocket" code:23556 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Invalid server cert"] forKey:NSLocalizedDescriptionKey]]];
-                        }
-                    }
-                    
-                }
+
                 assert(_readBuffer);
                 
                 if (self.readyState == SR_CONNECTING && aStream == _inputStream) {
