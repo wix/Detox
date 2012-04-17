@@ -19,7 +19,8 @@ setup(name='srtestharness',
       zip_safe=True,
       install_requires=[
           # -*- Extra requirements: -*-
-          'autobahn'
+          'autobahntestsuite',
+          'autobahn',
       ],
       entry_points="""
       # -*- Entry points: -*-

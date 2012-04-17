@@ -18,6 +18,6 @@ sr-testharness -i '' -c "$TEST_SCENARIOS" &
 CHILD_PID=$!
 
 xcodebuild -target SocketRocket -arch i386 -configuration $CONFIGURATION -sdk iphonesimulator clean
-xcodebuild -target SRWebSocketTests -arch i386 -configuration $CONFIGURATION -sdk iphonesimulator clean build 
+xcodebuild -target SRWebSocketTests -arch i386 -configuration $CONFIGURATION -sdk iphonesimulator clean build TEST_AFTER_BUILD=YES
 
 kill $CHILD_PID
