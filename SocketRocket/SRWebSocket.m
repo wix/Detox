@@ -145,6 +145,15 @@ static inline int32_t validate_dispatch_data_partial_string(NSData *data) {
 @end
 
 
+@interface NSURL (SRWebSocket)
+
+// The origin isn't really applicable for a native application
+// So instead, just map ws -> http and wss -> https
+- (NSString *)SR_origin;
+
+@end
+
+
 static NSString *newSHA1String(const char *bytes, size_t length) {
     uint8_t md[CC_SHA1_DIGEST_LENGTH];
     
@@ -468,7 +477,8 @@ static __strong NSData *CRLFCRLF;
     CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Connection"), CFSTR("Upgrade"));
     CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Sec-WebSocket-Key"), (__bridge CFStringRef)_secKey);
     CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Sec-WebSocket-Version"), (__bridge CFStringRef)[NSString stringWithFormat:@"%d", _webSocketVersion]);
-    CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Origin"), (__bridge CFStringRef)_url.absoluteString);
+    
+    CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Origin"), (__bridge CFStringRef)_url.SR_origin);
     
     NSData *message = CFBridgingRelease(CFHTTPMessageCopySerializedMessage(request));
     
@@ -1347,4 +1357,25 @@ static const size_t SRFrameHeaderOverhead = 32;
 @end
 
 
+
+@implementation NSURL (SRWebSocket)
+
+- (NSString *)SR_origin;
+{
+    NSString *scheme = [self.scheme lowercaseString];
+        
+    if ([scheme isEqualToString:@"wss"]) {
+        scheme = @"https";
+    } else if ([scheme isEqualToString:@"ws"]) {
+        scheme = @"http";
+    }
+    
+    if (self.port) {
+        return [NSString stringWithFormat:@"%@://%@:%@/", scheme, self.host, self.port];
+    } else {
+        return [NSString stringWithFormat:@"%@://%@/", scheme, self.host];
+    }
+}
+
+@end
 
