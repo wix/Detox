@@ -29,7 +29,7 @@
 		F6396B86153E67EC00345B5E /* SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = F6A12CD0145119B700C1D980 /* SRWebSocket.m */; };
 		F6396B87153E67EC00345B5E /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = F6016C7B146124B20037BB3D /* base64.c */; };
 		F6396B88153E67EC00345B5E /* NSData+SRB64Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F6572124146C7B6A00D6B8A9 /* NSData+SRB64Additions.m */; };
-		F6396B8F153E67EC00345B5E /* SRWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A12CCF145119B700C1D980 /* SRWebSocket.h */; };
+		F6396B8F153E67EC00345B5E /* SRWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A12CCF145119B700C1D980 /* SRWebSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F6396B90153E67EC00345B5E /* base64.h in Headers */ = {isa = PBXBuildFile; fileRef = F6016C7E146124ED0037BB3D /* base64.h */; };
 		F6396BA0153E6D3700345B5E /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6396B9F153E6D3700345B5E /* Security.framework */; };
 		F6396BA2153E6D4800345B5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6396BA1153E6D4800345B5E /* Foundation.framework */; };
