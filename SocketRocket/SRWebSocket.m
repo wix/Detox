@@ -191,6 +191,7 @@ typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
 - (void)_connectToHost:(NSString *)host port:(NSInteger)port;
 
 @property (nonatomic) SRReadyState readyState;
+@property (nonatomic, copy) NSArray *protocols;
 
 @end
 
@@ -241,6 +242,7 @@ typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
 @synthesize delegate = _delegate;
 @synthesize url = _url;
 @synthesize readyState = _readyState;
+@synthesize protocols = _protocols;
 
 static __strong NSData *CRLFCRLF;
 
@@ -249,7 +251,7 @@ static __strong NSData *CRLFCRLF;
     CRLFCRLF = [[NSData alloc] initWithBytes:"\r\n\r\n" length:4];
 }
 
-- (id)initWithURLRequest:(NSURLRequest *)request;
+- (id)initWithURLRequest:(NSURLRequest *)request protocols:(NSArray *)protocols;
 {
     self = [super init];
     if (self) {
@@ -257,6 +259,8 @@ static __strong NSData *CRLFCRLF;
         _url = request.URL;
         NSString *scheme = [_url scheme];
         
+        self.protocols = protocols;
+
         assert([scheme isEqualToString:@"ws"] || [scheme isEqualToString:@"http"] || [scheme isEqualToString:@"wss"] || [scheme isEqualToString:@"https"]);
         _urlRequest = request;
         
@@ -268,6 +272,22 @@ static __strong NSData *CRLFCRLF;
     }
     
     return self;
+}
+
+- (id)initWithURLRequest:(NSURLRequest *)request;
+{
+    return [self initWithURLRequest:request protocols:nil];
+}
+
+- (id)initWithURL:(NSURL *)url;
+{
+    return [self initWithURL:url protocols:nil];
+}
+
+- (id)initWithURL:(NSURL *)url protocols:(NSArray *)protocols;
+{
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];    
+    return [self initWithURLRequest:request protocols:protocols];
 }
 
 - (void)_SR_commonInit;
@@ -418,6 +438,10 @@ static __strong NSData *CRLFCRLF;
     
     CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Origin"), (__bridge CFStringRef)_url.SR_origin);
     
+    if (self.protocols) {
+        CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Sec-WebSocket-Protocol"), (__bridge CFStringRef)[self.protocols componentsJoinedByString:@", "]);
+    }
+
     [_urlRequest.allHTTPHeaderFields enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         CFHTTPMessageSetHeaderFieldValue(request, (__bridge CFStringRef)key, (__bridge CFStringRef)obj);
     }];
@@ -1412,4 +1436,5 @@ static inline int32_t validate_dispatch_data_partial_string(NSData *data) {
 }
 
 #endif
+
 

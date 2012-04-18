@@ -36,9 +36,17 @@ extern NSString *const SRWebSocketErrorDomain;
 
 @property (nonatomic, readonly) SRReadyState readyState;
 @property (nonatomic, readonly, retain) NSURL *url;
+@property (nonatomic, readonly, copy) NSArray *protocols;
 
+// Protocols should be an array of strings that turn into Sec-WebSocket-Protocol
+- (id)initWithURLRequest:(NSURLRequest *)request protocols:(NSArray *)protocols;
 - (id)initWithURLRequest:(NSURLRequest *)request;
 
+// Some helper constructors
+- (id)initWithURL:(NSURL *)url protocols:(NSArray *)protocols;
+- (id)initWithURL:(NSURL *)url;
+
+// SRWebSockets are intended one-time-use only.  Open should be called once and only once
 - (void)open;
 
 - (void)close;
