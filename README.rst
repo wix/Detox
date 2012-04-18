@@ -68,9 +68,9 @@ The classes
 ```````````````
 The Web Socket.
 
-.. note:: ``SRWebSocket`` will retain itself between ``-(void)open`` and when it closes.
-  This is similar to how ``NSURLConnection`` behaves. (unlike
-  ``NSURLConnection``, ``SRWebSocket`` won't retain the delegate)
+.. note:: ``SRWebSocket`` will retain itself between ``-(void)open`` and when it
+  closes, errors, or fails.  This is similar to how ``NSURLConnection`` behaves.
+  (unlike ``NSURLConnection``, ``SRWebSocket`` won't retain the delegate)
 
 What you need to know:: 
 
