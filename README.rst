@@ -13,7 +13,7 @@ two UTF-8 ones where it is merely *non-strict*. tests 6.4.2 and 6.4.4)
 
 Features/Design
 ---------------
-- TLS (wss) support.  It uses CFStream so we get this for "free"
+- TLS (wss) support.  It uses CFStream so we get this for *free*
 - Uses NSStream/CFNetworking.  Earlier implementations used ``dispatch_io``,
   however, this proved to be make TLS nearly impossible.  Also I wanted this to
   work in iOS 4.x.
@@ -68,6 +68,11 @@ The classes
 ```````````````
 The Web Socket.
 
+.. note::
+  ``SRWebSocket`` will retain itself between ``-(void)open`` and when it closes.
+  This is similar to how ``NSURLConnection`` behaves. (unlike
+  ``NSURLConnection``, ``SRWebSocket`` won't retain the delegate)
+
 What you need to know:: 
 
   @interface SRWebSocket : NSObject
@@ -95,7 +100,7 @@ You implement this ::
 
   @protocol SRWebSocketDelegate <NSObject>
 
-  - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(NSString *)message;
+  - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message;
 
   @optional
 
@@ -104,7 +109,6 @@ You implement this ::
   - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean;
 
   @end
-
 
 Known Issues/Server Todo's
 --------------------------

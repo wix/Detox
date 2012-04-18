@@ -237,6 +237,9 @@ typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
     BOOL _didFail;
     int _closeCode;
     
+    // We use this to retain ourselves.
+    __strong SRWebSocket *_selfRetain;
+    
     NSArray *_requestedProtocols;
 }
 
@@ -343,6 +346,8 @@ static __strong NSData *CRLFCRLF;
     assert(_url);
     NSAssert(_readyState == SR_CONNECTING && _inputStream == nil && _outputStream == nil, @"Cannot call -(void)open on SRWebSocket more than once");
 
+    _selfRetain = self;
+    
     NSInteger port = _url.port.integerValue;
     if (port == 0) {
         if (!_secure) {
@@ -570,6 +575,7 @@ static __strong NSData *CRLFCRLF;
             });
 
             self.readyState = SR_CLOSED;
+            _selfRetain = nil;
 
             SRFastLog(@"Failing with error %@", error.localizedDescription);
             
@@ -955,7 +961,6 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
             _outputBuffer = [[NSMutableData alloc] initWithBytes:(char *)_outputBuffer.bytes + _outputBufferOffset length:_outputBuffer.length - _outputBufferOffset];
             _outputBufferOffset = 0;
         }
-
     }
     
     if (_closeWhenFinishedWriting && 
@@ -975,6 +980,8 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
                 }
             });
         }
+        
+        _selfRetain = nil;
     }
 }
 
@@ -1255,6 +1262,7 @@ static const size_t SRFrameHeaderOverhead = 32;
                 } else {
                     if (self.readyState != SR_CLOSED) {
                         self.readyState = SR_CLOSED;
+                        _selfRetain = nil;
                     }
 
                     if (!_sentClose && !_failed) {
