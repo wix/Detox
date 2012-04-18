@@ -36,7 +36,7 @@ extern NSString *const SRWebSocketErrorDomain;
 
 @property (nonatomic, readonly) SRReadyState readyState;
 @property (nonatomic, readonly, retain) NSURL *url;
-@property (nonatomic, readonly, copy) NSArray *protocols;
+@property (nonatomic, readonly, copy) NSString *protocol;
 
 // Protocols should be an array of strings that turn into Sec-WebSocket-Protocol
 - (id)initWithURLRequest:(NSURLRequest *)request protocols:(NSArray *)protocols;

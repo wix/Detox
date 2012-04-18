@@ -191,7 +191,6 @@ typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
 - (void)_connectToHost:(NSString *)host port:(NSInteger)port;
 
 @property (nonatomic) SRReadyState readyState;
-@property (nonatomic, copy) NSArray *protocols;
 
 @end
 
@@ -237,12 +236,14 @@ typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
     BOOL _sentClose;
     BOOL _didFail;
     int _closeCode;
+    
+    NSArray *_requestedProtocols;
 }
 
 @synthesize delegate = _delegate;
 @synthesize url = _url;
 @synthesize readyState = _readyState;
-@synthesize protocols = _protocols;
+@synthesize protocol = _protocol;
 
 static __strong NSData *CRLFCRLF;
 
@@ -259,7 +260,7 @@ static __strong NSData *CRLFCRLF;
         _url = request.URL;
         NSString *scheme = [_url scheme];
         
-        self.protocols = protocols;
+        _requestedProtocols = [protocols copy];
 
         assert([scheme isEqualToString:@"ws"] || [scheme isEqualToString:@"http"] || [scheme isEqualToString:@"wss"] || [scheme isEqualToString:@"https"]);
         _urlRequest = request;
@@ -386,6 +387,17 @@ static __strong NSData *CRLFCRLF;
         return;
     }
     
+    NSString *negotiatedProtocol = CFBridgingRelease(CFHTTPMessageCopyHeaderFieldValue(_receivedHTTPHeaders, CFSTR("Sec-WebSocket-Protocol")));
+    if (negotiatedProtocol) {
+        // Make sure we requested the protocol
+        if ([_requestedProtocols indexOfObject:negotiatedProtocol] == NSNotFound) {
+            [self _failWithError:[NSError errorWithDomain:SRWebSocketErrorDomain code:2133 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Server specified Sec-WebSocket-Protocol that wasn't requested"] forKey:NSLocalizedDescriptionKey]]];
+            return;
+        }
+        
+        _protocol = negotiatedProtocol;
+    }
+    
     self.readyState = SR_OPEN;
     
     if (!_didFail) {
@@ -438,8 +450,8 @@ static __strong NSData *CRLFCRLF;
     
     CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Origin"), (__bridge CFStringRef)_url.SR_origin);
     
-    if (self.protocols) {
-        CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Sec-WebSocket-Protocol"), (__bridge CFStringRef)[self.protocols componentsJoinedByString:@", "]);
+    if (_requestedProtocols) {
+        CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Sec-WebSocket-Protocol"), (__bridge CFStringRef)[_requestedProtocols componentsJoinedByString:@", "]);
     }
 
     [_urlRequest.allHTTPHeaderFields enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
