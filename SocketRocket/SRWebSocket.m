@@ -69,100 +69,11 @@ typedef struct {
     uint64_t payload_length;
 } frame_header;
 
-
-static inline dispatch_queue_t log_queue() {
-
-    static dispatch_queue_t queue = 0;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        queue = dispatch_queue_create("fast log queue", DISPATCH_QUEUE_SERIAL);
-    });
-    
-    return queue;
-}
-
-//#define SR_ENABLE_LOG
-
-static inline void SRFastLog(NSString *format, ...)  {
-#ifdef SR_ENABLE_LOG
-    __block va_list arg_list;
-    va_start (arg_list, format);
-    
-    NSString *formattedString = [[NSString alloc] initWithFormat:format arguments:arg_list];
-    
-    va_end(arg_list);
-    
-    NSLog(@"[SR] %@", formattedString);
-#endif
-}
-
 static NSString *const SRWebSocketAppendToSecKeyString = @"258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
-#ifdef HAS_ICU
-
-static inline int32_t validate_dispatch_data_partial_string(NSData *data) {
-    
-    const void * contents = [data bytes];
-    long size = [data length];
-    
-    const uint8_t *str = (const uint8_t *)contents;
-    
-    
-    UChar32 codepoint = 1;
-    int32_t offset = 0;
-    int32_t lastOffset = 0;
-    while(offset < size && codepoint > 0)  {
-        lastOffset = offset;
-        U8_NEXT(str, offset, size, codepoint);
-    }
-    
-    if (codepoint == -1) {
-        // Check to see if the last byte is valid or whether it was just continuing
-        if (!U8_IS_LEAD(str[lastOffset]) || U8_COUNT_TRAIL_BYTES(str[lastOffset]) + lastOffset < (int32_t)size) {
-            
-            size = -1;
-        } else {
-            uint8_t leadByte = str[lastOffset];
-            U8_MASK_LEAD_BYTE(leadByte, U8_COUNT_TRAIL_BYTES(leadByte));
-            
-            for (int i = lastOffset + 1; i < offset; i++) {
-                
-                if (U8_IS_SINGLE(str[i]) || U8_IS_LEAD(str[i]) || !U8_IS_TRAIL(str[i])) {
-                    size = -1;
-                }
-            }
-            
-            if (size != -1) {
-                size = lastOffset;
-            }
-        }
-    }
-    
-    if (size != -1 && ![[NSString alloc] initWithBytesNoCopy:(char *)[data bytes] length:size encoding:NSUTF8StringEncoding freeWhenDone:NO]) {
-        size = -1;
-    }
-    
-    return size;
-}
-
-#else
-
-// This is a hack, and probably not optimal
-static inline int32_t validate_dispatch_data_partial_string(NSData *data) {
-    static const int maxCodepointSize = 3;
-    
-    for (int i = 0; i < maxCodepointSize; i++) {
-        NSString *str = [[NSString alloc] initWithBytesNoCopy:(char *)data.bytes length:data.length - i encoding:NSUTF8StringEncoding freeWhenDone:NO];
-        if (str) {
-            return data.length - i;
-        }
-    }
-    
-    return -1;
-}
-
-#endif
-
+static inline int32_t validate_dispatch_data_partial_string(NSData *data);
+static inline dispatch_queue_t log_queue();
+static inline void SRFastLog(NSString *format, ...);
 
 @interface NSData (SRWebSocket)
 
@@ -1411,4 +1322,96 @@ static const size_t SRFrameHeaderOverhead = 32;
 }
 
 @end
+
+static inline dispatch_queue_t log_queue() {
+    
+    static dispatch_queue_t queue = 0;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        queue = dispatch_queue_create("fast log queue", DISPATCH_QUEUE_SERIAL);
+    });
+    
+    return queue;
+}
+
+//#define SR_ENABLE_LOG
+
+static inline void SRFastLog(NSString *format, ...)  {
+#ifdef SR_ENABLE_LOG
+    __block va_list arg_list;
+    va_start (arg_list, format);
+    
+    NSString *formattedString = [[NSString alloc] initWithFormat:format arguments:arg_list];
+    
+    va_end(arg_list);
+    
+    NSLog(@"[SR] %@", formattedString);
+#endif
+}
+
+
+#ifdef HAS_ICU
+
+static inline int32_t validate_dispatch_data_partial_string(NSData *data) {
+    
+    const void * contents = [data bytes];
+    long size = [data length];
+    
+    const uint8_t *str = (const uint8_t *)contents;
+    
+    
+    UChar32 codepoint = 1;
+    int32_t offset = 0;
+    int32_t lastOffset = 0;
+    while(offset < size && codepoint > 0)  {
+        lastOffset = offset;
+        U8_NEXT(str, offset, size, codepoint);
+    }
+    
+    if (codepoint == -1) {
+        // Check to see if the last byte is valid or whether it was just continuing
+        if (!U8_IS_LEAD(str[lastOffset]) || U8_COUNT_TRAIL_BYTES(str[lastOffset]) + lastOffset < (int32_t)size) {
+            
+            size = -1;
+        } else {
+            uint8_t leadByte = str[lastOffset];
+            U8_MASK_LEAD_BYTE(leadByte, U8_COUNT_TRAIL_BYTES(leadByte));
+            
+            for (int i = lastOffset + 1; i < offset; i++) {
+                
+                if (U8_IS_SINGLE(str[i]) || U8_IS_LEAD(str[i]) || !U8_IS_TRAIL(str[i])) {
+                    size = -1;
+                }
+            }
+            
+            if (size != -1) {
+                size = lastOffset;
+            }
+        }
+    }
+    
+    if (size != -1 && ![[NSString alloc] initWithBytesNoCopy:(char *)[data bytes] length:size encoding:NSUTF8StringEncoding freeWhenDone:NO]) {
+        size = -1;
+    }
+    
+    return size;
+}
+
+#else
+
+// This is a hack, and probably not optimal
+static inline int32_t validate_dispatch_data_partial_string(NSData *data) {
+    static const int maxCodepointSize = 3;
+    
+    for (int i = 0; i < maxCodepointSize; i++) {
+        NSString *str = [[NSString alloc] initWithBytesNoCopy:(char *)data.bytes length:data.length - i encoding:NSUTF8StringEncoding freeWhenDone:NO];
+        if (str) {
+            return data.length - i;
+        }
+    }
+    
+    return -1;
+}
+
+#endif
 
