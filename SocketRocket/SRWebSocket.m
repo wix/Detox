@@ -17,9 +17,22 @@
 
 #import "SRWebSocket.h"
 
+#if TARGET_OS_IPHONE
+#define HAS_ICU
+#endif
+
+#ifdef HAS_ICU
 #import <unicode/utf8.h>
+#endif
+
+#if TARGET_OS_IPHONE
 #import <Endian.h>
+#else
+#import <CoreServices/CoreServices.h>
+#endif
+
 #import <CommonCrypto/CommonDigest.h>
+#import <Security/SecRandom.h>
 #import "base64.h"
 #import "NSData+SRB64Additions.h"
 
@@ -85,13 +98,15 @@ static inline void SRFastLog(NSString *format, ...)  {
 
 static NSString *const SRWebSocketAppendToSecKeyString = @"258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
+#ifdef HAS_ICU
+
 static inline int32_t validate_dispatch_data_partial_string(NSData *data) {
     
     const void * contents = [data bytes];
     long size = [data length];
     
     const uint8_t *str = (const uint8_t *)contents;
-
+    
     
     UChar32 codepoint = 1;
     int32_t offset = 0;
@@ -109,26 +124,44 @@ static inline int32_t validate_dispatch_data_partial_string(NSData *data) {
         } else {
             uint8_t leadByte = str[lastOffset];
             U8_MASK_LEAD_BYTE(leadByte, U8_COUNT_TRAIL_BYTES(leadByte));
-
+            
             for (int i = lastOffset + 1; i < offset; i++) {
                 
                 if (U8_IS_SINGLE(str[i]) || U8_IS_LEAD(str[i]) || !U8_IS_TRAIL(str[i])) {
                     size = -1;
                 }
             }
-                 
+            
             if (size != -1) {
                 size = lastOffset;
             }
         }
     }
-
+    
     if (size != -1 && ![[NSString alloc] initWithBytesNoCopy:(char *)[data bytes] length:size encoding:NSUTF8StringEncoding freeWhenDone:NO]) {
         size = -1;
     }
     
     return size;
 }
+
+#else
+
+// This is a hack, and probably not optimal
+static inline int32_t validate_dispatch_data_partial_string(NSData *data) {
+    static const int maxCodepointSize = 3;
+    
+    for (int i = 0; i < maxCodepointSize; i++) {
+        NSString *str = [[NSString alloc] initWithBytesNoCopy:(char *)data.bytes length:data.length - i encoding:NSUTF8StringEncoding freeWhenDone:NO];
+        if (str) {
+            return data.length - i;
+        }
+    }
+    
+    return -1;
+}
+
+#endif
 
 
 @interface NSData (SRWebSocket)

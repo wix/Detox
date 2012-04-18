@@ -11,20 +11,14 @@ SocketRocket currently conforms to all ~300 of `Autobahn
 <http://www.tavendo.de/autobahn/testsuite.html>`_'s fuzzing tests (aside from
 two UTF-8 ones where it is merely *non-strict*. tests 6.4.2 and 6.4.4)
 
-
-It should work on OS X too.  There are no UIKit dependencies.
-
-.. Warning::
-  This is not production-quality software yet.  It has only been used in
-  devlopment environments.
-  
-  **USE AT YOUR OWN RISK**
-
-  (it will mature quickly… I am just conservative)
+Now has (32-bit only) OS X support.  ``SocketRocket.framework`` inside Xcode
+project is for OS X only.  It should be identical in function aside from the
+unicode validation.  ICU isn't shipped with OS X which is what the original
+implementation used for unicode validation.  The workaround is much more
+rhudimentary and less robust.
 
 Features/Design
 ---------------
-
 - TLS (wss) support.  It uses CFStream so we get this for "free"
 - Uses NSStream/CFNetworking.  Earlier implementations used ``dispatch_io``,
   however, this proved to be make TLS nearly impossible.  Also I wanted this to
