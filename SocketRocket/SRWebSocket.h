@@ -59,7 +59,8 @@ extern NSString *const SRWebSocketErrorDomain;
 
 @protocol SRWebSocketDelegate <NSObject>
 
-- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(NSString *)message;
+// message will either be an NSString if the server is using text 
+// or NSData if the server is using binary
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message;
 
 @optional
