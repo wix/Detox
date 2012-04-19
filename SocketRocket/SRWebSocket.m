@@ -231,7 +231,7 @@ typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
     BOOL _secure;
     NSURLRequest *_urlRequest;
 
-    __attribute__((NSObject)) CFHTTPMessageRef _receivedHTTPHeaders;
+    CFHTTPMessageRef _receivedHTTPHeaders;
     
     BOOL _sentClose;
     BOOL _didFail;
@@ -327,6 +327,11 @@ static __strong NSData *CRLFCRLF;
     
     dispatch_release(_callbackQueue);
     dispatch_release(_workQueue);
+    
+    if (_receivedHTTPHeaders) {
+        CFRelease(_receivedHTTPHeaders);
+        _receivedHTTPHeaders = NULL;
+    }
 }
 
 #ifndef NDEBUG
