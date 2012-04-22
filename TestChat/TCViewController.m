@@ -120,7 +120,7 @@
     _webSocket = nil;
 }
 
-- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(NSString *)message;
+- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message;
 {
     NSLog(@"Received \"%@\"", message);
     [_messages addObject:[[TCMessage alloc] initWithMessage:message fromMe:NO]];

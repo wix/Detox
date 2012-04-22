@@ -11,21 +11,9 @@ SocketRocket currently conforms to all ~300 of `Autobahn
 <http://www.tavendo.de/autobahn/testsuite.html>`_'s fuzzing tests (aside from
 two UTF-8 ones where it is merely *non-strict*. tests 6.4.2 and 6.4.4)
 
-
-It should work on OS X too.  There are no UIKit dependencies.
-
-.. Warning::
-  This is not production-quality software yet.  It has only been used in
-  devlopment environments.
-  
-  **USE AT YOUR OWN RISK**
-
-  (it will mature quickly… I am just conservative)
-
 Features/Design
 ---------------
-
-- TLS (wss) support.  It uses CFStream so we get this for "free"
+- TLS (wss) support.  It uses CFStream so we get this for *free*
 - Uses NSStream/CFNetworking.  Earlier implementations used ``dispatch_io``,
   however, this proved to be make TLS nearly impossible.  Also I wanted this to
   work in iOS 4.x.
@@ -35,8 +23,8 @@ Features/Design
 - Delegate-based. Had older versions that could use blocks too, but I felt it
   didn't blend well with retain cycles and just objective C in general.
 
-Installing
-----------
+Installing (iOS)
+----------------
 There's a few options. Choose one, or just figure it out
 
 - You can copy all the files in the SocketRocket group into your app.
@@ -59,6 +47,18 @@ Your .app must be linked against the following frameworks/dylibs
 - Security.framework
 - Foundation.framework
 
+Installing (OS X)
+-----------------
+SocketRocket now has (64-bit only) OS X support.  ``SocketRocket.framework``
+inside Xcode project is for OS X only.  It should be identical in function aside
+from the unicode validation.  ICU isn't shipped with OS X which is what the
+original implementation used for unicode validation.  The workaround is much
+more rhudimentary and less robust.
+
+1. Add SocketRocket.xcodeproj as either a subproject of your app or in your workspace.
+2. Add ``SocketRocket.framework`` to the link libraries
+3. If you don't have a "copy files" step for ``Framework``, create one
+4. Add ``SocketRocket.framework`` to the "copy files" step.
 
 API
 ---
@@ -67,6 +67,10 @@ The classes
 ``SRWebSocket``
 ```````````````
 The Web Socket.
+
+.. note:: ``SRWebSocket`` will retain itself between ``-(void)open`` and when it
+  closes, errors, or fails.  This is similar to how ``NSURLConnection`` behaves.
+  (unlike ``NSURLConnection``, ``SRWebSocket`` won't retain the delegate)
 
 What you need to know:: 
 
@@ -95,7 +99,7 @@ You implement this ::
 
   @protocol SRWebSocketDelegate <NSObject>
 
-  - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(NSString *)message;
+  - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message;
 
   @optional
 
@@ -104,7 +108,6 @@ You implement this ::
   - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean;
 
   @end
-
 
 Known Issues/Server Todo's
 --------------------------

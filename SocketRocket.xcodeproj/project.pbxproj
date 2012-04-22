@@ -26,7 +26,14 @@
 		F624180314D53449003CE997 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A12CD51451231B00C1D980 /* CFNetwork.framework */; };
 		F624180414D53449003CE997 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6A12CD3145122FC00C1D980 /* Security.framework */; };
 		F624180614D53451003CE997 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6C41C95145F7C4700641356 /* libicucore.dylib */; };
+		F6396B86153E67EC00345B5E /* SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = F6A12CD0145119B700C1D980 /* SRWebSocket.m */; };
+		F6396B87153E67EC00345B5E /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = F6016C7B146124B20037BB3D /* base64.c */; };
+		F6396B88153E67EC00345B5E /* NSData+SRB64Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F6572124146C7B6A00D6B8A9 /* NSData+SRB64Additions.m */; };
 		F6572126146C7B6A00D6B8A9 /* NSData+SRB64Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = F6572124146C7B6A00D6B8A9 /* NSData+SRB64Additions.m */; };
+		F668C899153E923C0044DBAC /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6396BA4153E6D7400345B5E /* CoreServices.framework */; };
+		F668C89A153E923C0044DBAC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6396BA1153E6D4800345B5E /* Foundation.framework */; };
+		F668C89B153E923C0044DBAC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6396B9F153E6D3700345B5E /* Security.framework */; };
+		F668C8AA153E92F90044DBAC /* SRWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A12CCF145119B700C1D980 /* SRWebSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F6A12CD1145119B700C1D980 /* SRWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A12CCF145119B700C1D980 /* SRWebSocket.h */; };
 		F6A12CD2145119B700C1D980 /* SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = F6A12CD0145119B700C1D980 /* SRWebSocket.m */; };
 		F6AE451D145906A70022AF3C /* libSocketRocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B2082D1450F597009315AF /* libSocketRocket.a */; };
@@ -70,8 +77,16 @@
 		F62417FA14D52F3C003CE997 /* TCViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCViewController.m; sourceTree = "<group>"; };
 		F62417FF14D5300C003CE997 /* TCChatCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCChatCell.h; sourceTree = "<group>"; };
 		F624180014D5300C003CE997 /* TCChatCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCChatCell.m; sourceTree = "<group>"; };
+		F6396B9F153E6D3700345B5E /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
+		F6396BA1153E6D4800345B5E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		F6396BA4153E6D7400345B5E /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		F6572123146C7B6A00D6B8A9 /* NSData+SRB64Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+SRB64Additions.h"; sourceTree = "<group>"; };
 		F6572124146C7B6A00D6B8A9 /* NSData+SRB64Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+SRB64Additions.m"; sourceTree = "<group>"; };
+		F668C880153E91210044DBAC /* SocketRocket.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SocketRocket.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F668C884153E91210044DBAC /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		F668C885153E91210044DBAC /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		F668C886153E91210044DBAC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		F668C889153E91210044DBAC /* SocketRocketOSX-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SocketRocketOSX-Info.plist"; sourceTree = "<group>"; };
 		F6A12CCF145119B700C1D980 /* SRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocket.h; sourceTree = "<group>"; };
 		F6A12CD0145119B700C1D980 /* SRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocket.m; sourceTree = "<group>"; };
 		F6A12CD3145122FC00C1D980 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -102,6 +117,16 @@
 				F624180314D53449003CE997 /* CFNetwork.framework in Frameworks */,
 				F624180414D53449003CE997 /* Security.framework in Frameworks */,
 				F624180614D53451003CE997 /* libicucore.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F668C87C153E91210044DBAC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F668C899153E923C0044DBAC /* CoreServices.framework in Frameworks */,
+				F668C89A153E923C0044DBAC /* Foundation.framework in Frameworks */,
+				F668C89B153E923C0044DBAC /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -158,12 +183,41 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		F6396BA3153E6D4D00345B5E /* OSX Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F6396BA4153E6D7400345B5E /* CoreServices.framework */,
+				F6396BA1153E6D4800345B5E /* Foundation.framework */,
+				F6396B9F153E6D3700345B5E /* Security.framework */,
+			);
+			name = "OSX Frameworks";
+			sourceTree = "<group>";
+		};
+		F668C883153E91210044DBAC /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F668C884153E91210044DBAC /* AppKit.framework */,
+				F668C885153E91210044DBAC /* CoreData.framework */,
+				F668C886153E91210044DBAC /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		F668C887153E91210044DBAC /* SocketRocketOSX */ = {
+			isa = PBXGroup;
+			children = (
+				F668C889153E91210044DBAC /* SocketRocketOSX-Info.plist */,
+			);
+			path = SocketRocketOSX;
+			sourceTree = "<group>";
+		};
 		F6B208221450F597009315AF = {
 			isa = PBXGroup;
 			children = (
 				F6B208321450F597009315AF /* SocketRocket */,
 				F6BDA807145900D200FE3253 /* SRWebSocketTests */,
 				F62417EA14D52F3C003CE997 /* TestChat */,
+				F668C887153E91210044DBAC /* SocketRocketOSX */,
 				F6B2082F1450F597009315AF /* Frameworks */,
 				F6B2082E1450F597009315AF /* Products */,
 			);
@@ -177,6 +231,7 @@
 				F6B2082D1450F597009315AF /* libSocketRocket.a */,
 				F6BDA802145900D200FE3253 /* SRWebSocketTests.octest */,
 				F62417E314D52F3C003CE997 /* TestChat.app */,
+				F668C880153E91210044DBAC /* SocketRocket.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -184,6 +239,7 @@
 		F6B2082F1450F597009315AF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F6396BA3153E6D4D00345B5E /* OSX Frameworks */,
 				F6C41C95145F7C4700641356 /* libicucore.dylib */,
 				F6A12CD51451231B00C1D980 /* CFNetwork.framework */,
 				F6A12CD3145122FC00C1D980 /* Security.framework */,
@@ -191,6 +247,7 @@
 				F6BDA803145900D200FE3253 /* SenTestingKit.framework */,
 				F62417E514D52F3C003CE997 /* UIKit.framework */,
 				F62417E814D52F3C003CE997 /* CoreGraphics.framework */,
+				F668C883153E91210044DBAC /* Other Frameworks */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -243,6 +300,14 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		F668C87D153E91210044DBAC /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F668C8AA153E92F90044DBAC /* SRWebSocket.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F6B2082B1450F597009315AF /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -271,6 +336,24 @@
 			productName = TestChat;
 			productReference = F62417E314D52F3C003CE997 /* TestChat.app */;
 			productType = "com.apple.product-type.application";
+		};
+		F668C87F153E91210044DBAC /* SocketRocketOSX */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F668C891153E91210044DBAC /* Build configuration list for PBXNativeTarget "SocketRocketOSX" */;
+			buildPhases = (
+				F6396B85153E67EC00345B5E /* Sources */,
+				F668C87C153E91210044DBAC /* Frameworks */,
+				F668C87D153E91210044DBAC /* Headers */,
+				F668C87E153E91210044DBAC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SocketRocketOSX;
+			productName = SocketRocketOSX;
+			productReference = F668C880153E91210044DBAC /* SocketRocket.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 		F6B2082C1450F597009315AF /* SocketRocket */ = {
 			isa = PBXNativeTarget;
@@ -329,6 +412,7 @@
 			projectRoot = "";
 			targets = (
 				F6B2082C1450F597009315AF /* SocketRocket */,
+				F668C87F153E91210044DBAC /* SocketRocketOSX */,
 				F6BDA801145900D200FE3253 /* SRWebSocketTests */,
 				F62417E214D52F3C003CE997 /* TestChat */,
 			);
@@ -342,6 +426,13 @@
 			files = (
 				F62417EF14D52F3C003CE997 /* InfoPlist.strings in Resources */,
 				F62417F814D52F3C003CE997 /* MainStoryboard.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F668C87E153E91210044DBAC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -380,6 +471,16 @@
 				F62417F514D52F3C003CE997 /* TCAppDelegate.m in Sources */,
 				F62417FB14D52F3C003CE997 /* TCViewController.m in Sources */,
 				F624180114D5300C003CE997 /* TCChatCell.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F6396B85153E67EC00345B5E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6396B86153E67EC00345B5E /* SRWebSocket.m in Sources */,
+				F6396B87153E67EC00345B5E /* base64.c in Sources */,
+				F6396B88153E67EC00345B5E /* NSData+SRB64Additions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -479,6 +580,60 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		F668C892153E91210044DBAC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
+				);
+				FRAMEWORK_VERSION = A;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SocketRocket/SocketRocket-Prefix.pch";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INFOPLIST_FILE = "SocketRocketOSX/SocketRocketOSX-Info.plist";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/$(EXECUTABLE_PATH)";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = SocketRocket;
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Debug;
+		};
+		F668C893153E91210044DBAC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
+				);
+				FRAMEWORK_VERSION = A;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SocketRocket/SocketRocket-Prefix.pch";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INFOPLIST_FILE = "SocketRocketOSX/SocketRocketOSX-Info.plist";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/$(EXECUTABLE_PATH)";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = SocketRocket;
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
 		};
@@ -622,6 +777,15 @@
 			buildConfigurations = (
 				F62417FD14D52F3C003CE997 /* Debug */,
 				F62417FE14D52F3C003CE997 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F668C891153E91210044DBAC /* Build configuration list for PBXNativeTarget "SocketRocketOSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F668C892153E91210044DBAC /* Debug */,
+				F668C893153E91210044DBAC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

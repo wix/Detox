@@ -8,7 +8,7 @@ from twisted.python import log
 from twisted.internet import reactor
 from twisted.web.server import Site
 from twisted.web.static import File
-from autobahn.fuzzing import FuzzingServerFactory
+from autobahntestsuite.fuzzing import FuzzingServerFactory
 from autobahn.websocket import listenWS
 
 class jsondict(dict):

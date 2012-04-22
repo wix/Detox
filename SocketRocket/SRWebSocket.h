@@ -38,8 +38,19 @@ extern NSString *const SRWebSocketErrorDomain;
 @property (nonatomic, readonly) SRReadyState readyState;
 @property (nonatomic, readonly, retain) NSURL *url;
 
+// This returns the negotiated protocol.
+// It will be niluntil after the handshake completes.
+@property (nonatomic, readonly, copy) NSString *protocol;
+
+// Protocols should be an array of strings that turn into Sec-WebSocket-Protocol
+- (id)initWithURLRequest:(NSURLRequest *)request protocols:(NSArray *)protocols;
 - (id)initWithURLRequest:(NSURLRequest *)request;
 
+// Some helper constructors
+- (id)initWithURL:(NSURL *)url protocols:(NSArray *)protocols;
+- (id)initWithURL:(NSURL *)url;
+
+// SRWebSockets are intended one-time-use only.  Open should be called once and only once
 - (void)open;
 
 - (void)close;
@@ -52,7 +63,9 @@ extern NSString *const SRWebSocketErrorDomain;
 
 @protocol SRWebSocketDelegate <NSObject>
 
-- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(NSString *)message;
+// message will either be an NSString if the server is using text 
+// or NSData if the server is using binary
+- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message;
 
 @optional
 
