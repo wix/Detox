@@ -239,6 +239,8 @@ typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
     BOOL _didFail;
     int _closeCode;
     
+    BOOL _isPumping;
+    
     // We use this to retain ourselves.
     __strong SRWebSocket *_selfRetain;
     
@@ -1168,9 +1170,17 @@ static const char CRLFCRLFBytes[] = {'\r', '\n', '\r', '\n'};
 {
     assert(dispatch_get_current_queue() == _workQueue);
     
+    if (!_isPumping) {
+        _isPumping = YES;
+    } else {
+        return;
+    }
+    
     while ([self _innerPumpScanner]) {
         
     }
+    
+    _isPumping = NO;
 }
 
 //#define NOMASK
