@@ -76,6 +76,7 @@ The Web Socket.
 What you need to know
 
 .. code-block:: objective-c
+
   @interface SRWebSocket : NSObject
 
   // Make it with this
@@ -99,6 +100,7 @@ What you need to know
 You implement this
 
 .. code-block:: objective-c
+
   @protocol SRWebSocketDelegate <NSObject>
 
   - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message;
@@ -149,8 +151,7 @@ To run from the app, choose the ``SocketRocket`` target and run the test action
 some serious pre/post hooks in the Test action.  You can edit it to customize
 behavior.
 
-.. Note::
-  Xcode only up to version 4.4 is currently supported for the test
+.. note:: Xcode only up to version 4.4 is currently supported for the test
   harness
 
 TestChat Demo Application
