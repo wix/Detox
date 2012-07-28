@@ -16,9 +16,10 @@ sr-testharness -i '' -c "$TEST_SCENARIOS" &
 
 CHILD_PID=$!
 
-extra_opts="VALID_ARCHS=i386"
+extra_opts="VALID_ARCHS=i386 ARCH=i386"
 
-xcodebuild -target SocketRocket -arch i386 -configuration $CONFIGURATION -sdk iphonesimulator clean $extra_opts
-xcodebuild -target SRWebSocketTests -arch i386 -configuration $CONFIGURATION -sdk iphonesimulator clean build TEST_AFTER_BUILD=YES $extra_opts
+SHARED_ARGS="-arch i386 -configuration $CONFIGURATION -sdk iphonesimulator"
+
+xcodebuild -scheme SocketRocketTests $SHARED_ARGS TEST_AFTER_BUILD=YES  clean build $extra_opts
 
 kill $CHILD_PID

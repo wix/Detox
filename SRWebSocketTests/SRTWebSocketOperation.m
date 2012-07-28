@@ -41,7 +41,6 @@
 
 - (void)start;
 {
-    NSLog(@"Starting %@", _url);
     dispatch_async(dispatch_get_main_queue(), ^{
         _webSocket = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:_url]];
         _webSocket.delegate = self;
