@@ -73,8 +73,9 @@ The Web Socket.
   closes, errors, or fails.  This is similar to how ``NSURLConnection`` behaves.
   (unlike ``NSURLConnection``, ``SRWebSocket`` won't retain the delegate)
 
-What you need to know:: 
+What you need to know
 
+.. code-block:: objective-c
   @interface SRWebSocket : NSObject
 
   // Make it with this
@@ -91,13 +92,13 @@ What you need to know::
   // Send a UTF8 String or Data
   - (void)send:(id)data;
 
-
   @end
 
 ``SRWebSocketDelegate``
 ```````````````````````
-You implement this ::
+You implement this
 
+.. code-block:: objective-c
   @protocol SRWebSocketDelegate <NSObject>
 
   - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message;
