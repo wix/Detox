@@ -58,6 +58,22 @@
 
 @end
 
+@interface TestInfoOperation : SRTWebSocketOperation <SRWebSocketDelegate>
+
+@property (nonatomic) NSDictionary *info;
+
+- (id)initWithBaseURL:(NSURL *)url caseNumber:(NSInteger)caseNumber;
+
+@end
+
+@interface TestResultsOperation : SRTWebSocketOperation <SRWebSocketDelegate>
+
+@property (nonatomic) NSDictionary *info;
+
+- (id)initWithBaseURL:(NSURL *)url caseNumber:(NSInteger)caseNumber agent:(NSString *)agent;
+
+@end
+
 @implementation SRTAutobahnTests {
     SRWebSocket *_curWebSocket; 
     NSInteger _testCount;
@@ -66,12 +82,23 @@
     NSString *_testURLString;
     NSURL *_prefixURL;
     NSString *_agent;
+    NSString *_description;
+}
+
+- (id)initWithInvocation:(NSInvocation *)anInvocation description:(NSString *)description;
+{
+    self = [self initWithInvocation:anInvocation];
+    if (self) {
+        _description = description;
+    }
+    return self;
 }
 
 - (id)initWithInvocation:(NSInvocation *)anInvocation;
 {
     self = [super initWithInvocation:anInvocation];
     if (self) {
+        [self raiseAfterFailure];
         _testURLString = [[NSProcessInfo processInfo].environment objectForKey:@"SR_TEST_URL"];
         _prefixURL = [NSURL URLWithString:_testURLString];
         _agent = [NSBundle bundleForClass:[self class]].bundleIdentifier;
@@ -105,13 +132,14 @@
     return NO;
 }
 
-- (void) performTest:(SenTestRun *) aRun
+- (void) performTest:(SenTestCaseRun *) aRun
 {
     if (self.invocation) {
         [super performTest:aRun];
         return;
     }
-    for (int i = 0; i < aRun.test.testCaseCount; i++) {
+    [aRun start];
+    for (int i = 1; i <= aRun.test.testCaseCount; i++) {
         SEL sel = @selector(performTestWithNumber:);
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[[self class] instanceMethodSignatureForSelector:sel]];
         
@@ -120,12 +148,21 @@
         
         [invocation setArgument:&i atIndex:2];
         
-        SenTestCase *testCase = [[[self class] alloc] initWithInvocation:invocation];
+        NSString *description = [self caseDescriptionForCaseNumber:i];
+
+        SenTestCase *testCase = [[[self class] alloc] initWithInvocation:invocation description:description];
         
         SenTestCaseRun *run = [[SenTestCaseRun alloc] initWithTest:testCase];
         
         [testCase performTest:run];
+        
+        for (NSException *e in run.exceptions) {
+            [aRun addException:e];
+        }
+        
+//        [aRun ]
     }
+    [aRun stop];
     
     [self updateReports];
 }
@@ -137,10 +174,25 @@
     return i;
 }
 
+- (NSString *)caseDescriptionForCaseNumber:(NSInteger)caseNumber;
+{
+    TestInfoOperation *testInfoOperation = [[TestInfoOperation alloc] initWithBaseURL:_prefixURL caseNumber:caseNumber];
+    
+    [testInfoOperation start];
+    
+    [self runCurrentRunLoopUntilTestPasses:^BOOL{
+        return testInfoOperation.isFinished;
+    } timeout:60 * 60];
+    
+    STAssertNil(testInfoOperation.error, @"Updating the report should not have errored");
+    
+    return [NSString stringWithFormat:@"%@ - %@", [testInfoOperation.info objectForKey:@"id"], [testInfoOperation.info objectForKey:@"description"]];
+}
+                                            
 - (NSString *)description;
 {
-    if (self.invocation) {
-        return [NSString stringWithFormat:@"Autobahn test %d", self.testNum];
+    if (_description) {
+        return _description;
     } else {
         return @"Autobahn Test Harness";
     }
@@ -157,13 +209,21 @@
     
     testQueue.maxConcurrentOperationCount = 1;
     
-    
-    
     TestOperation *testOp = [[TestOperation alloc] initWithBaseURL:_prefixURL testNumber:testNumber agent:_agent];
     [testQueue addOperation:testOp];
     
-    testQueue.suspended = NO;
+    TestResultsOperation *resultOp = [[TestResultsOperation alloc] initWithBaseURL:_prefixURL caseNumber:testNumber agent:_agent];
+    [resultOp addDependency:testOp];
+    [testQueue addOperation:resultOp];
     
+    testQueue.suspended = NO;
+
+    [self runCurrentRunLoopUntilTestPasses:^BOOL{
+        return resultOp.isFinished;
+    } timeout:60 * 60];
+    
+    STAssertTrue(!testOp.error, @"Test operation should not have failed");
+    STAssertEqualObjects(@"OK", [resultOp.info objectForKey:@"behavior"], @"Test behavior should be OK");
 }
 
 - (void)updateReports;
@@ -177,7 +237,6 @@
     } timeout:60 * 60];
     
     STAssertNil(updateReportOperation.error, @"Updating the report should not have errored");
-
 }
 
 @end
@@ -246,3 +305,41 @@
 @end
 
 
+@implementation TestInfoOperation
+
+@synthesize info = _info;
+
+- (id)initWithBaseURL:(NSURL *)url caseNumber:(NSInteger)caseNumber;
+{
+    NSString *path = [[url URLByAppendingPathComponent:@"getCaseInfo"] absoluteString];
+    path = [path stringByAppendingFormat:@"?case=%d", caseNumber];
+    
+    return [super initWithURL:[NSURL URLWithString:path]];
+}
+
+- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(NSString *)message;
+{
+    self.info = [NSJSONSerialization JSONObjectWithData:[message dataUsingEncoding:NSUTF8StringEncoding] options:0 error:NULL];
+}
+
+@end
+
+
+@implementation TestResultsOperation
+
+@synthesize info = _info;
+
+- (id)initWithBaseURL:(NSURL *)url caseNumber:(NSInteger)caseNumber agent:(NSString *)agent;
+{
+    NSString *path = [[url URLByAppendingPathComponent:@"getCaseStatus"] absoluteString];
+    path = [path stringByAppendingFormat:@"?case=%d&agent=%@", caseNumber, agent];
+    
+    return [super initWithURL:[NSURL URLWithString:path]];
+}
+
+- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(NSString *)message;
+{
+    self.info = [NSJSONSerialization JSONObjectWithData:[message dataUsingEncoding:NSUTF8StringEncoding] options:0 error:NULL];
+}
+
+@end
