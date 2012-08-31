@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name               = "SocketRocket"
-  s.version            = '0.1'
+  s.version            = '0.2.0'
   s.summary            = 'A conforming WebSocket (RFC 6455) client library.'
   s.homepage           = 'https://github.com/square/SocketRocket'
   s.authors            = 'Square'
