@@ -680,6 +680,7 @@
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"OS_OBJECT_USE_OBJC_RETAIN_RELEASE=0",
+					NDEBUG,
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
