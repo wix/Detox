@@ -206,15 +206,18 @@ typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
 
 @property (nonatomic) SRReadyState readyState;
 
-@property (nonatomic) NSOperationQueue *delegateQueue;
-
+@property (nonatomic) NSOperationQueue *delegateOperationQueue;
+@property (nonatomic) dispatch_queue_t delegateDispatchQueue;
 
 @end
 
 
 @implementation SRWebSocket {
     NSInteger _webSocketVersion;
-    NSOperationQueue *_delegateQueue;
+    
+    NSOperationQueue *_delegateOperationQueue;
+    dispatch_queue_t _delegateDispatchQueue;
+    
     dispatch_queue_t _workQueue;
     NSMutableArray *_consumers;
 
@@ -330,7 +333,8 @@ static __strong NSData *CRLFCRLF;
     
     _workQueue = dispatch_queue_create(NULL, DISPATCH_QUEUE_SERIAL);
     
-    _delegateQueue = [NSOperationQueue mainQueue];
+    _delegateDispatchQueue = dispatch_get_main_queue();
+    dispatch_retain(_delegateDispatchQueue);
     
     _readBuffer = [[NSMutableData alloc] init];
     _outputBuffer = [[NSMutableData alloc] init];
@@ -359,6 +363,11 @@ static __strong NSData *CRLFCRLF;
         CFRelease(_receivedHTTPHeaders);
         _receivedHTTPHeaders = NULL;
     }
+    
+    if (_delegateDispatchQueue) {
+        dispatch_release(_delegateDispatchQueue);
+        _delegateDispatchQueue = NULL;
+    }
 }
 
 #ifndef NDEBUG
@@ -383,7 +392,29 @@ static __strong NSData *CRLFCRLF;
     [self _connect];
 }
 
+// Calls block on delegate queue
+- (void)_performDelegateBlock:(dispatch_block_t)block;
+{
+    if (_delegateOperationQueue) {
+        [_delegateOperationQueue addOperationWithBlock:block];
+    } else {
+        assert(_delegateDispatchQueue);
+        dispatch_async(_delegateDispatchQueue, block);
+    }
+}
 
+- (void)setDelegateDispatchQueue:(dispatch_queue_t)queue;
+{
+    if (queue) {
+        dispatch_retain(queue);
+    }
+    
+    if (_delegateDispatchQueue) {
+        dispatch_release(_delegateDispatchQueue);
+    }
+    
+    _delegateDispatchQueue = queue;
+}
 
 - (BOOL)_checkHandshake:(CFHTTPMessageRef)httpMessage;
 {
@@ -432,7 +463,7 @@ static __strong NSData *CRLFCRLF;
         [self _readFrameNew];
     }
 
-    [_delegateQueue addOperationWithBlock:^{
+    [self _performDelegateBlock:^{
         if ([self.delegate respondsToSelector:@selector(webSocketDidOpen:)]) {
             [self.delegate webSocketDidOpen:self];
         };
@@ -616,7 +647,7 @@ static __strong NSData *CRLFCRLF;
 - (void)_closeWithProtocolError:(NSString *)message;
 {
     // Need to shunt this on the _callbackQueue first to see if they received any messages 
-    [_delegateQueue addOperationWithBlock:^{
+    [self _performDelegateBlock:^{
         [self closeWithCode:SRStatusCodeProtocolError reason:message];
         dispatch_async(_workQueue, ^{
             [self _disconnect];
@@ -629,7 +660,7 @@ static __strong NSData *CRLFCRLF;
     dispatch_async(_workQueue, ^{
         if (self.readyState != SR_CLOSED) {
             _failed = YES;
-            [_delegateQueue addOperationWithBlock:^{
+            [self _performDelegateBlock:^{
                 if ([self.delegate respondsToSelector:@selector(webSocket:didFailWithError:)]) {
                     [self.delegate webSocket:self didFailWithError:error];
                 }
@@ -676,7 +707,7 @@ static __strong NSData *CRLFCRLF;
 - (void)handlePing:(NSData *)pingData;
 {
     // Need to pingpong this off _callbackQueue first to make sure messages happen in order
-    [_delegateQueue addOperationWithBlock:^{
+    [self _performDelegateBlock:^{
         dispatch_async(_workQueue, ^{
             [self _sendFrameWithOpcode:SROpCodePong data:pingData];
         });
@@ -691,7 +722,7 @@ static __strong NSData *CRLFCRLF;
 - (void)_handleMessage:(id)message
 {
     SRFastLog(@"Received message");
-    [_delegateQueue addOperationWithBlock:^{
+    [self _performDelegateBlock:^{
         [self.delegate webSocket:self didReceiveMessage:message];
     }];
 }
@@ -1036,7 +1067,7 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
         [_inputStream close];
         
         if (!_failed) {
-            [_delegateQueue addOperationWithBlock:^{
+            [self _performDelegateBlock:^{
                 if ([self.delegate respondsToSelector:@selector(webSocket:didCloseWithCode:reason:wasClean:)]) {
                     [self.delegate webSocket:self didCloseWithCode:_closeCode reason:_closeReason wasClean:YES];
                 }
@@ -1381,7 +1412,7 @@ static const size_t SRFrameHeaderOverhead = 32;
                     if (!_sentClose && !_failed) {
                         _sentClose = YES;
                         // If we get closed in this state it's probably not clean because we should be sending this when we send messages
-                        [_delegateQueue addOperationWithBlock:^{
+                        [self _performDelegateBlock:^{
                             if ([self.delegate respondsToSelector:@selector(webSocket:didCloseWithCode:reason:wasClean:)]) {
                                 [self.delegate webSocket:self didCloseWithCode:0 reason:@"Stream end encountered" wasClean:NO];
                             }

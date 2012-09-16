@@ -50,8 +50,10 @@ extern NSString *const SRWebSocketErrorDomain;
 - (id)initWithURL:(NSURL *)url protocols:(NSArray *)protocols;
 - (id)initWithURL:(NSURL *)url;
 
-// Delegage queue will be +[NSOperationQueue mainQueue] by default
-- (void)setDelegateQueue:(NSOperationQueue*) queue;
+// Delegage queue will be dispatch_main_queue by default
+// Only can set OperationQeuue or dispatch_queue
+- (void)setDelegateOperationQueue:(NSOperationQueue*) queue;
+- (void)setDelegateDispatchQueue:(dispatch_queue_t) queue;
 
 // By default, it will schedule itself on +[NSRunLoop SR_networkRunLoop] using defaultModes
 - (void)scheduleInRunLoop:(NSRunLoop *)aRunLoop forMode:(NSString *)mode;
