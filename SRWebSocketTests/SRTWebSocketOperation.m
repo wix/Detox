@@ -74,4 +74,9 @@
     _webSocket = nil;
 }
 
+- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message;
+{
+    NSAssert(NO, @"Please override %@", NSStringFromSelector(_cmd));
+}
+
 @end
