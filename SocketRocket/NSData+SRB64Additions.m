@@ -17,6 +17,7 @@
 #import "NSData+SRB64Additions.h"
 #import "base64.h"
 
+
 @implementation NSData (SRB64Additions)
 
 - (NSString *)SR_stringByBase64Encoding;

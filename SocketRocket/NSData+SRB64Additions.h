@@ -16,6 +16,7 @@
 
 #import <Foundation/Foundation.h>
 
+
 @interface NSData (SRB64Additions)
 
 - (NSString *)SR_stringByBase64Encoding;
