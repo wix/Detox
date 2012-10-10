@@ -265,7 +265,7 @@ static __strong NSData *CRLFCRLF;
     if (self) {
         assert(request.URL);
         _url = request.URL;
-        NSString *scheme = [_url scheme];
+        NSString *scheme = [[_url scheme] lowercaseString];
         
         _requestedProtocols = [protocols copy];
 
