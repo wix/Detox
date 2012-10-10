@@ -206,10 +206,10 @@ typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
     NSOutputStream *_outputStream;
    
     NSMutableData *_readBuffer;
-    NSInteger _readBufferOffset;
+    NSUInteger _readBufferOffset;
  
     NSMutableData *_outputBuffer;
-    NSInteger _outputBufferOffset;
+    NSUInteger _outputBufferOffset;
 
     uint8_t _currentFrameOpcode;
     size_t _currentFrameCount;
@@ -970,7 +970,7 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
     
     NSUInteger dataLength = _outputBuffer.length;
     if (dataLength - _outputBufferOffset > 0 && _outputStream.hasSpaceAvailable) {
-        NSUInteger bytesWritten = [_outputStream write:_outputBuffer.bytes + _outputBufferOffset maxLength:dataLength - _outputBufferOffset];
+        NSInteger bytesWritten = [_outputStream write:_outputBuffer.bytes + _outputBufferOffset maxLength:dataLength - _outputBufferOffset];
         if (bytesWritten == -1) {
             [self _failWithError:[NSError errorWithDomain:@"org.lolrus.SocketRocket" code:2145 userInfo:[NSDictionary dictionaryWithObject:@"Error writing to stream" forKey:NSLocalizedDescriptionKey]]];
              return;
@@ -1045,7 +1045,7 @@ static const char CRLFCRLFBytes[] = {'\r', '\n', '\r', '\n'};
         
         size_t size = data.length;
         const unsigned char *buffer = data.bytes;
-        for (int i = 0; i < size; i++ ) {
+        for (size_t i = 0; i < size; i++ ) {
             if (((const unsigned char *)buffer)[i] == ((const unsigned char *)bytes)[match_count]) {
                 match_count += 1;
                 if (match_count == length) {
@@ -1114,7 +1114,7 @@ static const char CRLFCRLFBytes[] = {'\r', '\n', '\r', '\n'};
             NSUInteger len = mutableSlice.length;
             uint8_t *bytes = mutableSlice.mutableBytes;
             
-            for (int i = 0; i < len; i++) {
+            for (NSUInteger i = 0; i < len; i++) {
                 bytes[i] = bytes[i] ^ _currentReadMaskKey[_currentReadMaskOffset % sizeof(_currentReadMaskKey)];
                 _currentReadMaskOffset += 1;
             }
@@ -1240,7 +1240,7 @@ static const size_t SRFrameHeaderOverhead = 32;
     }
         
     if (!useMask) {
-        for (int i = 0; i < payloadLength; i++) {
+        for (size_t i = 0; i < payloadLength; i++) {
             frame_buffer[frame_buffer_size] = unmasked_payload[i];
             frame_buffer_size += 1;
         }
@@ -1250,7 +1250,7 @@ static const size_t SRFrameHeaderOverhead = 32;
         frame_buffer_size += sizeof(uint32_t);
         
         // TODO: could probably optimize this with SIMD
-        for (int i = 0; i < payloadLength; i++) {
+        for (size_t i = 0; i < payloadLength; i++) {
             frame_buffer[frame_buffer_size] = unmasked_payload[i] ^ mask_key[i % sizeof(uint32_t)];
             frame_buffer_size += 1;
         }
