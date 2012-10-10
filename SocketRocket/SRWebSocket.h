@@ -50,6 +50,15 @@ extern NSString *const SRWebSocketErrorDomain;
 - (id)initWithURL:(NSURL *)url protocols:(NSArray *)protocols;
 - (id)initWithURL:(NSURL *)url;
 
+// Delegage queue will be dispatch_main_queue by default
+// Only can set OperationQeuue or dispatch_queue
+- (void)setDelegateOperationQueue:(NSOperationQueue*) queue;
+- (void)setDelegateDispatchQueue:(dispatch_queue_t) queue;
+
+// By default, it will schedule itself on +[NSRunLoop SR_networkRunLoop] using defaultModes
+- (void)scheduleInRunLoop:(NSRunLoop *)aRunLoop forMode:(NSString *)mode;
+- (void)unscheduleFromRunLoop:(NSRunLoop *)aRunLoop forMode:(NSString *)mode;
+
 // SRWebSockets are intended one-time-use only.  Open should be called once and only once
 - (void)open;
 
@@ -86,5 +95,11 @@ extern NSString *const SRWebSocketErrorDomain;
 @interface NSMutableURLRequest (CertificateAdditions)
 
 @property (nonatomic, retain) NSArray *SR_SSLPinnedCertificates;
+
+@end
+
+@interface NSRunLoop (SRWebSocket)
+
++ (NSRunLoop *)SR_networkRunLoop;
 
 @end

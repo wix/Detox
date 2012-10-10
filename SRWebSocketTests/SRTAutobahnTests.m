@@ -159,8 +159,6 @@
         for (NSException *e in run.exceptions) {
             [aRun addException:e];
         }
-        
-//        [aRun ]
     }
     [aRun stop];
     
