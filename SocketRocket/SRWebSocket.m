@@ -33,6 +33,7 @@
 
 #import <CommonCrypto/CommonDigest.h>
 #import <Security/SecRandom.h>
+
 #import "base64.h"
 #import "NSData+SRB64Additions.h"
 
@@ -1295,7 +1296,6 @@ static const size_t SRFrameHeaderOverhead = 32;
         }
     }
 
-    //    SRFastLog(@"%@ Got stream event %d", aStream, eventCode);
     dispatch_async(_workQueue, ^{
         switch (eventCode) {
             case NSStreamEventOpenCompleted: {
@@ -1303,7 +1303,6 @@ static const size_t SRFrameHeaderOverhead = 32;
                 if (self.readyState >= SR_CLOSING) {
                     return;
                 }
-                
 
                 assert(_readBuffer);
                 
@@ -1383,7 +1382,6 @@ static const size_t SRFrameHeaderOverhead = 32;
                 break;
         }
     });
-
 }
 
 @end
@@ -1459,7 +1457,6 @@ static const size_t SRFrameHeaderOverhead = 32;
 @end
 
 static inline dispatch_queue_t log_queue() {
-    
     static dispatch_queue_t queue = 0;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -1488,12 +1485,10 @@ static inline void SRFastLog(NSString *format, ...)  {
 #ifdef HAS_ICU
 
 static inline int32_t validate_dispatch_data_partial_string(NSData *data) {
-    
     const void * contents = [data bytes];
     long size = [data length];
     
     const uint8_t *str = (const uint8_t *)contents;
-    
     
     UChar32 codepoint = 1;
     int32_t offset = 0;
@@ -1513,7 +1508,6 @@ static inline int32_t validate_dispatch_data_partial_string(NSData *data) {
             U8_MASK_LEAD_BYTE(leadByte, U8_COUNT_TRAIL_BYTES(leadByte));
             
             for (int i = lastOffset + 1; i < offset; i++) {
-                
                 if (U8_IS_SINGLE(str[i]) || U8_IS_LEAD(str[i]) || !U8_IS_TRAIL(str[i])) {
                     size = -1;
                 }
