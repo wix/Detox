@@ -40,11 +40,11 @@
 typedef enum  {
     SROpCodeTextFrame = 0x1,
     SROpCodeBinaryFrame = 0x2,
-    //3-7Reserved 
+    // 3-7 reserved.
     SROpCodeConnectionClose = 0x8,
     SROpCodePing = 0x9,
     SROpCodePong = 0xA,
-    //B-F reserved
+    // B-F reserved.
 } SROpCode;
 
 typedef enum {
@@ -52,9 +52,9 @@ typedef enum {
     SRStatusCodeGoingAway = 1001,
     SRStatusCodeProtocolError = 1002,
     SRStatusCodeUnhandledType = 1003,
-    // 1004 reserved
+    // 1004 reserved.
     SRStatusNoStatusReceived = 1005,
-    // 1004-1006 reserved
+    // 1004-1006 reserved.
     SRStatusCodeInvalidUTF8 = 1007,
     SRStatusCodePolicyViolated = 1008,
     SRStatusCodeMessageTooBig = 1009,
@@ -92,8 +92,8 @@ static inline void SRFastLog(NSString *format, ...);
 
 @interface NSURL (SRWebSocket)
 
-// The origin isn't really applicable for a native application
-// So instead, just map ws -> http and wss -> https
+// The origin isn't really applicable for a native application.
+// So instead, just map ws -> http and wss -> https.
 - (NSString *)SR_origin;
 
 @end
@@ -145,7 +145,7 @@ static NSString *newSHA1String(const char *bytes, size_t length) {
 
 NSString *const SRWebSocketErrorDomain = @"SRWebSocketErrorDomain";
 
-// Returns number of bytes consumed. returning 0 means you didn't match.
+// Returns number of bytes consumed. Returning 0 means you didn't match.
 // Sends bytes to callback handler;
 typedef size_t (^stream_scanner)(NSData *collected_data);
 
@@ -166,7 +166,7 @@ typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
 
 @end
 
-// This class is not thread-safe, and is expected to always be run on the same queue
+// This class is not thread-safe, and is expected to always be run on the same queue.
 @interface SRIOConsumerPool : NSObject
 
 - (id)initWithBufferCapacity:(NSUInteger)poolSize;
