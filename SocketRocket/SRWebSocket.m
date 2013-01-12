@@ -1734,16 +1734,18 @@ static NSRunLoop *networkRunLoop = nil;
 
 - (void)main;
 {
-    _runLoop = [NSRunLoop currentRunLoop];
-    dispatch_group_leave(_waitGroup);
-    
-    NSTimer *timer = [[NSTimer alloc] initWithFireDate:[NSDate distantFuture] interval:0.0 target:nil selector:nil userInfo:nil repeats:NO];
-    [_runLoop addTimer:timer forMode:NSDefaultRunLoopMode];
-    
-    while ([_runLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]]) {
+    @autoreleasepool {
+        _runLoop = [NSRunLoop currentRunLoop];
+        dispatch_group_leave(_waitGroup);
         
+        NSTimer *timer = [[NSTimer alloc] initWithFireDate:[NSDate distantFuture] interval:0.0 target:nil selector:nil userInfo:nil repeats:NO];
+        [_runLoop addTimer:timer forMode:NSDefaultRunLoopMode];
+        
+        while ([_runLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]]) {
+            
+        }
+        assert(NO);
     }
-    assert(NO);
 }
 
 - (NSRunLoop *)runLoop;
