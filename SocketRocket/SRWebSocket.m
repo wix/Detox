@@ -625,16 +625,17 @@ static __strong NSData *CRLFCRLF;
 - (void)closeWithCode:(NSInteger)code reason:(NSString *)reason;
 {
     assert(code);
-    if (self.readyState == SR_CLOSING || self.readyState == SR_CLOSED) {
-        return;
-    }
-    
-    BOOL wasConnecting = self.readyState == SR_CONNECTING;
-
-    self.readyState = SR_CLOSING;
-
-    SRFastLog(@"Closing with code %d reason %@", code, reason);
     dispatch_async(_workQueue, ^{
+        if (self.readyState == SR_CLOSING || self.readyState == SR_CLOSED) {
+            return;
+        }
+        
+        BOOL wasConnecting = self.readyState == SR_CONNECTING;
+        
+        self.readyState = SR_CLOSING;
+        
+        SRFastLog(@"Closing with code %d reason %@", code, reason);
+        
         if (wasConnecting) {
             [self _disconnect];
             return;
