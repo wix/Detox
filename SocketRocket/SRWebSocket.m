@@ -37,6 +37,21 @@
 #import "base64.h"
 #import "NSData+SRB64Additions.h"
 
+#if OS_OBJECT_USE_OBJC_RETAIN_RELEASE
+#define sr_dispatch_retain(x)
+#define sr_dispatch_release(x)
+#define maybe_bridge(x) ((__bridge void *) x)
+#else
+#define sr_dispatch_retain(x) dispatch_retain(x)
+#define sr_dispatch_release(x) dispatch_release(x)
+#define maybe_bridge(x) (x)
+#endif
+
+#if !__has_feature(objc_arc) 
+#error SocketRocket muust be compiled with ARC enabled
+#endif
+
+
 typedef enum  {
     SROpCodeTextFrame = 0x1,
     SROpCodeBinaryFrame = 0x2,
@@ -325,17 +340,17 @@ static __strong NSData *CRLFCRLF;
         _secure = YES;
     }
     
-    
     _readyState = SR_CONNECTING;
-
     _consumerStopped = YES;
-    
     _webSocketVersion = 13;
     
     _workQueue = dispatch_queue_create(NULL, DISPATCH_QUEUE_SERIAL);
     
+    // Going to set a specific on the queue so we can validate we're on the work queue
+    dispatch_queue_set_specific(_workQueue, (__bridge void *)self, maybe_bridge(_workQueue), NULL);
+    
     _delegateDispatchQueue = dispatch_get_main_queue();
-    dispatch_retain(_delegateDispatchQueue);
+    sr_dispatch_retain(_delegateDispatchQueue);
     
     _readBuffer = [[NSMutableData alloc] init];
     _outputBuffer = [[NSMutableData alloc] init];
@@ -350,6 +365,11 @@ static __strong NSData *CRLFCRLF;
     // default handlers
 }
 
+- (void)assertOnWorkQueue;
+{
+    assert(dispatch_get_specific((__bridge void *)self) == maybe_bridge(_workQueue));
+}
+
 - (void)dealloc
 {
     _inputStream.delegate = nil;
@@ -358,7 +378,8 @@ static __strong NSData *CRLFCRLF;
     [_inputStream close];
     [_outputStream close];
     
-    dispatch_release(_workQueue);
+    sr_dispatch_release(_workQueue);
+    _workQueue = NULL;
     
     if (_receivedHTTPHeaders) {
         CFRelease(_receivedHTTPHeaders);
@@ -366,7 +387,7 @@ static __strong NSData *CRLFCRLF;
     }
     
     if (_delegateDispatchQueue) {
-        dispatch_release(_delegateDispatchQueue);
+        sr_dispatch_release(_delegateDispatchQueue);
         _delegateDispatchQueue = NULL;
     }
 }
@@ -407,11 +428,11 @@ static __strong NSData *CRLFCRLF;
 - (void)setDelegateDispatchQueue:(dispatch_queue_t)queue;
 {
     if (queue) {
-        dispatch_retain(queue);
+        sr_dispatch_retain(queue);
     }
     
     if (_delegateDispatchQueue) {
-        dispatch_release(_delegateDispatchQueue);
+        sr_dispatch_release(_delegateDispatchQueue);
     }
     
     _delegateDispatchQueue = queue;
@@ -679,7 +700,7 @@ static __strong NSData *CRLFCRLF;
 
 - (void)_writeData:(NSData *)data;
 {    
-    assert(dispatch_get_current_queue() == _workQueue);
+    [self assertOnWorkQueue];
 
     if (_closeWhenFinishedWriting) {
             return;
@@ -792,7 +813,7 @@ static inline BOOL closeCodeIsValid(int closeCode) {
         _closeCode = SRStatusNoStatusReceived;
     }
     
-    assert(dispatch_get_current_queue() == _workQueue);
+    [self assertOnWorkQueue];
     
     if (self.readyState == SR_OPEN) {
         [self closeWithCode:1000 reason:nil];
@@ -804,7 +825,7 @@ static inline BOOL closeCodeIsValid(int closeCode) {
 
 - (void)_disconnect;
 {
-    assert(dispatch_get_current_queue() == _workQueue);
+    [self assertOnWorkQueue];
     SRFastLog(@"Trying to disconnect");
     _closeWhenFinishedWriting = YES;
     [self _pumpWriting];
@@ -1039,7 +1060,7 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
 
 - (void)_pumpWriting;
 {
-    assert(dispatch_get_current_queue() == _workQueue);
+    [self assertOnWorkQueue];
     
     NSUInteger dataLength = _outputBuffer.length;
     if (dataLength - _outputBufferOffset > 0 && _outputStream.hasSpaceAvailable) {
@@ -1081,13 +1102,13 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
 
 - (void)_addConsumerWithScanner:(stream_scanner)consumer callback:(data_callback)callback;
 {
-    assert(dispatch_get_current_queue() == _workQueue);
+    [self assertOnWorkQueue];
     [self _addConsumerWithScanner:consumer callback:callback dataLength:0];
 }
 
 - (void)_addConsumerWithDataLength:(size_t)dataLength callback:(data_callback)callback readToCurrentFrame:(BOOL)readToCurrentFrame unmaskBytes:(BOOL)unmaskBytes;
 {   
-    assert(dispatch_get_current_queue() == _workQueue);
+    [self assertOnWorkQueue];
     assert(dataLength);
     
     [_consumers addObject:[_consumerPool consumerWithScanner:nil handler:callback bytesNeeded:dataLength readToCurrentFrame:readToCurrentFrame unmaskBytes:unmaskBytes]];
@@ -1096,7 +1117,7 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
 
 - (void)_addConsumerWithScanner:(stream_scanner)consumer callback:(data_callback)callback dataLength:(size_t)dataLength;
 {    
-    assert(dispatch_get_current_queue() == _workQueue);
+    [self assertOnWorkQueue];
     [_consumers addObject:[_consumerPool consumerWithScanner:consumer handler:callback bytesNeeded:dataLength readToCurrentFrame:NO unmaskBytes:NO]];
     [self _pumpScanner];
 }
@@ -1244,7 +1265,7 @@ static const char CRLFCRLFBytes[] = {'\r', '\n', '\r', '\n'};
 
 -(void)_pumpScanner;
 {
-    assert(dispatch_get_current_queue() == _workQueue);
+    [self assertOnWorkQueue];
     
     if (!_isPumping) {
         _isPumping = YES;
@@ -1265,7 +1286,7 @@ static const size_t SRFrameHeaderOverhead = 32;
 
 - (void)_sendFrameWithOpcode:(SROpCode)opcode data:(id)data;
 {
-    assert(dispatch_get_current_queue() == _workQueue);
+    [self assertOnWorkQueue];
     
     NSAssert(data == nil || [data isKindOfClass:[NSData class]] || [data isKindOfClass:[NSString class]], @"Function expects nil, NSString or NSData");
     
@@ -1688,7 +1709,7 @@ static NSRunLoop *networkRunLoop = nil;
 
 - (void)dealloc
 {
-    dispatch_release(_waitGroup);
+    sr_dispatch_release(_waitGroup);
 }
 
 - (id)init

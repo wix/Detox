@@ -16,12 +16,23 @@ Features/Design
 - TLS (wss) support.  It uses CFStream so we get this for *free*
 - Uses NSStream/CFNetworking.  Earlier implementations used ``dispatch_io``,
   however, this proved to be make TLS nearly impossible.  Also I wanted this to
-  work in iOS 4.x.
+  work in iOS 4.x. (SocketRocket only supports 5.0 and above now)
 - Uses ARC.  It uses the 4.0 compatible subset (no weak refs).
 - Seems to perform quite well
 - Parallel architecture. Most of the work is done in background worker queues.
 - Delegate-based. Had older versions that could use blocks too, but I felt it
   didn't blend well with retain cycles and just objective C in general.
+
+Changes
+-------
+
+v0.3.1-beta1 - 2013-01-12
+`````````````````````````
+
+- Cleaned up GCD so OS_OBJECT_USE_OBJC_RETAIN_RELEASE is optional
+- Removed deprecated ``dispatch_get_current_queue`` in favor of ``dispatch_queue_set_specific`` and ``dispatch_get_specific``
+- Dropping support for iOS 4.0 (it may still work)
+
 
 Installing (iOS)
 ----------------
