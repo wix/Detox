@@ -127,12 +127,12 @@
     return caseCount;
 }
 
-- (BOOL) isEmpty;
+- (BOOL)isEmpty;
 {
     return NO;
 }
 
-- (void) performTest:(SenTestCaseRun *) aRun
+- (void)performTest:(SenTestCaseRun *) aRun
 {
     if (self.invocation) {
         [super performTest:aRun];

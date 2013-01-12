@@ -277,7 +277,7 @@ typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
     
     BOOL _isPumping;
     
-    BOOL _didSchedule;
+    NSMutableSet *_scheduledRunloops;
     
     // We use this to retain ourselves.
     __strong SRWebSocket *_selfRetain;
@@ -358,7 +358,10 @@ static __strong NSData *CRLFCRLF;
     _currentFrameData = [[NSMutableData alloc] init];
 
     _consumers = [[NSMutableArray alloc] init];
+    
     _consumerPool = [[SRIOConsumerPool alloc] init];
+    
+    _scheduledRunloops = [[NSMutableSet alloc] init];
     
     [self _initializeStreams];
     
@@ -593,8 +596,7 @@ static __strong NSData *CRLFCRLF;
 
 - (void)_connect;
 {
-    
-    if (!_didSchedule) {
+    if (!_scheduledRunloops.count) {
         [self scheduleInRunLoop:[NSRunLoop SR_networkRunLoop] forMode:NSDefaultRunLoopMode];
     }
     
@@ -605,16 +607,18 @@ static __strong NSData *CRLFCRLF;
 
 - (void)scheduleInRunLoop:(NSRunLoop *)aRunLoop forMode:(NSString *)mode;
 {
-    _didSchedule = YES;
-    
     [_outputStream scheduleInRunLoop:aRunLoop forMode:mode];
     [_inputStream scheduleInRunLoop:aRunLoop forMode:mode];
+    
+    [_scheduledRunloops addObject:@[aRunLoop, mode]];
 }
 
 - (void)unscheduleFromRunLoop:(NSRunLoop *)aRunLoop forMode:(NSString *)mode;
 {
     [_outputStream removeFromRunLoop:aRunLoop forMode:mode];
     [_inputStream removeFromRunLoop:aRunLoop forMode:mode];
+    
+    [_scheduledRunloops removeObject:@[aRunLoop, mode]];
 }
 
 - (void)close;
@@ -1088,6 +1092,11 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
             
         [_outputStream close];
         [_inputStream close];
+        
+        
+        for (NSArray *runLoop in [_scheduledRunloops copy]) {
+            [self unscheduleFromRunLoop:[runLoop objectAtIndex:0] forMode:[runLoop objectAtIndex:1]];
+        }
         
         if (!_failed) {
             [self _performDelegateBlock:^{

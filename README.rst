@@ -26,6 +26,12 @@ Features/Design
 Changes
 -------
 
+v0.3.1-beta2 - 2013-01-12
+`````````````````````````
+
+- Stability fix for ``closeWithCode:reason:`` (Thanks @michaelpetrov!)
+- Actually clean up the NSStreams and remove them from their runloops
+
 v0.3.1-beta1 - 2013-01-12
 `````````````````````````
 
