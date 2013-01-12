@@ -31,6 +31,8 @@ v0.3.1-beta2 - 2013-01-12
 
 - Stability fix for ``closeWithCode:reason:`` (Thanks @michaelpetrov!)
 - Actually clean up the NSStreams and remove them from their runloops
+- ``_SRRunLoopThread``'s ``main`` wasn't correctly wrapped with
+  ``@autoreleasepool``
 
 v0.3.1-beta1 - 2013-01-12
 `````````````````````````
