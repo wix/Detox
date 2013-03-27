@@ -381,8 +381,10 @@ static __strong NSData *CRLFCRLF;
     [_inputStream close];
     [_outputStream close];
     
-    sr_dispatch_release(_workQueue);
-    _workQueue = NULL;
+    if (_workQueue) {
+        sr_dispatch_release(_workQueue);
+        _workQueue = NULL;
+    }
     
     if (_receivedHTTPHeaders) {
         CFRelease(_receivedHTTPHeaders);
