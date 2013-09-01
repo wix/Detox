@@ -269,7 +269,7 @@ typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
     BOOL _secure;
     NSURLRequest *_urlRequest;
 
-    CFHTTPMessageRef _receivedHTTPHeaders;
+    
     
     BOOL _sentClose;
     BOOL _didFail;
