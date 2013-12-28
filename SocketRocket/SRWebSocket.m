@@ -570,7 +570,12 @@ static __strong NSData *CRLFCRLF;
     _outputStream = CFBridgingRelease(writeStream);
     _inputStream = CFBridgingRelease(readStream);
     
-    
+    _inputStream.delegate = self;
+    _outputStream.delegate = self;
+}
+
+- (void)_updateSecureStreamOptions
+{
     if (_secure) {
         NSMutableDictionary *SSLOptions = [[NSMutableDictionary alloc] init];
         
@@ -581,21 +586,23 @@ static __strong NSData *CRLFCRLF;
             [SSLOptions setValue:[NSNumber numberWithBool:NO] forKey:(__bridge id)kCFStreamSSLValidatesCertificateChain];
         }
         
-#if DEBUG
-        [SSLOptions setValue:[NSNumber numberWithBool:NO] forKey:(__bridge id)kCFStreamSSLValidatesCertificateChain];
-        NSLog(@"SocketRocket: In debug mode.  Allowing connection to any root cert");
+#ifndef DEBUG
+        if ([self allowUntrustedSSLCertificates])
 #endif
+        {
+            [SSLOptions setValue:[NSNumber numberWithBool:NO] forKey:(__bridge id)kCFStreamSSLValidatesCertificateChain];
+            SRFastLog(@"Allowing connection to any root cert");
+        }
         
         [_outputStream setProperty:SSLOptions
                             forKey:(__bridge id)kCFStreamPropertySSLSettings];
     }
-    
-    _inputStream.delegate = self;
-    _outputStream.delegate = self;
 }
 
 - (void)_connect;
 {
+    [self _updateSecureStreamOptions];
+    
     if (!_scheduledRunloops.count) {
         [self scheduleInRunLoop:[NSRunLoop SR_networkRunLoop] forMode:NSDefaultRunLoopMode];
     }
