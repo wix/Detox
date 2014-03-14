@@ -45,7 +45,6 @@
 		F6BDA806145900D200FE3253 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B208301450F597009315AF /* Foundation.framework */; };
 		F6BDA80C145900D200FE3253 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F6BDA80A145900D200FE3253 /* InfoPlist.strings */; };
 		F6BDA8161459016900FE3253 /* SRTAutobahnTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F6BDA8151459016900FE3253 /* SRTAutobahnTests.m */; };
-		F6C41C96145F7C4700641356 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6C41C95145F7C4700641356 /* libicucore.dylib */; };
 		F6C41C98145F7C6100641356 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F6C41C95145F7C4700641356 /* libicucore.dylib */; };
 /* End PBXBuildFile section */
 
@@ -136,7 +135,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F6C41C96145F7C4700641356 /* libicucore.dylib in Frameworks */,
 				F6AE4520145906B20022AF3C /* Foundation.framework in Frameworks */,
 				F6016C8914620ECC0037BB3D /* Security.framework in Frameworks */,
 				F6016C8A1462143C0037BB3D /* CFNetwork.framework in Frameworks */,
@@ -715,10 +713,10 @@
 				GCC_PREFIX_HEADER = "SocketRocket/SocketRocket-Prefix.pch";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DEVELOPER_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/usr/lib/system\"",
-					"\"$(DEVELOPER_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/usr/lib\"",
+					"\"$(DEVELOPER_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator7.1.sdk/usr/lib/system\"",
+					"\"$(DEVELOPER_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator7.1.sdk/usr/lib\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "-Licucore";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -733,10 +731,10 @@
 				GCC_PREFIX_HEADER = "SocketRocket/SocketRocket-Prefix.pch";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DEVELOPER_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/usr/lib/system\"",
-					"\"$(DEVELOPER_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/usr/lib\"",
+					"\"$(DEVELOPER_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator7.1.sdk/usr/lib/system\"",
+					"\"$(DEVELOPER_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator7.1.sdk/usr/lib\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "-Licucore";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
