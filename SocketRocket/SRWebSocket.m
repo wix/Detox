@@ -119,8 +119,10 @@ static inline void SRFastLog(NSString *format, ...);
 
 static NSString *newSHA1String(const char *bytes, size_t length) {
     uint8_t md[CC_SHA1_DIGEST_LENGTH];
-    
-    CC_SHA1(bytes, length, md);
+
+    assert(length >= 0);
+    assert(length <= UINT32_MAX);
+    CC_SHA1(bytes, (CC_LONG)length, md);
     
     return [[NSData dataWithBytes:md length:CC_SHA1_DIGEST_LENGTH] base64Encoding];
 }
@@ -538,7 +540,8 @@ static __strong NSData *CRLFCRLF;
 
 - (void)_initializeStreams;
 {
-    NSInteger port = _url.port.integerValue;
+    assert(_url.port.unsignedIntValue <= UINT32_MAX);
+    uint32_t port = _url.port.unsignedIntValue;
     if (port == 0) {
         if (!_secure) {
             port = 80;
@@ -906,7 +909,8 @@ static inline BOOL closeCodeIsValid(int closeCode) {
             }
         }
     } else {
-        [self _addConsumerWithDataLength:frame_header.payload_length callback:^(SRWebSocket *self, NSData *newData) {
+        assert(frame_header.payload_length <= SIZE_T_MAX);
+        [self _addConsumerWithDataLength:(size_t)frame_header.payload_length callback:^(SRWebSocket *self, NSData *newData) {
             if (isControlFrame) {
                 [self _handleFrameWithData:newData opCode:frame_header.opcode];
             } else {
@@ -1446,7 +1450,7 @@ static const size_t SRFrameHeaderOverhead = 32;
                 uint8_t buffer[bufferSize];
                 
                 while (_inputStream.hasBytesAvailable) {
-                    int bytes_read = [_inputStream read:buffer maxLength:bufferSize];
+                    NSInteger bytes_read = [_inputStream read:buffer maxLength:bufferSize];
                     
                     if (bytes_read > 0) {
                         [_readBuffer appendBytes:buffer length:bytes_read];
@@ -1608,9 +1612,14 @@ static inline void SRFastLog(NSString *format, ...)  {
 #ifdef HAS_ICU
 
 static inline int32_t validate_dispatch_data_partial_string(NSData *data) {
+    if ([data length] > INT32_MAX) {
+        // INT32_MAX is the limit so long as this Framework is using 32 bit ints everywhere.
+        return -1;
+    }
+
+    int32_t size = (int32_t)[data length];
+
     const void * contents = [data bytes];
-    long size = [data length];
-    
     const uint8_t *str = (const uint8_t *)contents;
     
     UChar32 codepoint = 1;
