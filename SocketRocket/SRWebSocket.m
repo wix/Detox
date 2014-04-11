@@ -59,19 +59,6 @@ typedef enum  {
     // B-F reserved.
 } SROpCode;
 
-typedef enum {
-    SRStatusCodeNormal = 1000,
-    SRStatusCodeGoingAway = 1001,
-    SRStatusCodeProtocolError = 1002,
-    SRStatusCodeUnhandledType = 1003,
-    // 1004 reserved.
-    SRStatusNoStatusReceived = 1005,
-    // 1004-1006 reserved.
-    SRStatusCodeInvalidUTF8 = 1007,
-    SRStatusCodePolicyViolated = 1008,
-    SRStatusCodeMessageTooBig = 1009,
-} SRStatusCode;
-
 typedef struct {
     BOOL fin;
 //  BOOL rsv1;
