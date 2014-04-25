@@ -1360,6 +1360,8 @@ static const size_t SRFrameHeaderOverhead = 32;
 
 - (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode;
 {
+    __weak typeof(self) weakSelf = self;
+    
     if (_secure && !_pinnedCertFound && (eventCode == NSStreamEventHasBytesAvailable || eventCode == NSStreamEventHasSpaceAvailable)) {
         
         NSArray *sslCerts = [_urlRequest SR_SSLPinnedCertificates];
@@ -1385,7 +1387,8 @@ static const size_t SRFrameHeaderOverhead = 32;
             
             if (!_pinnedCertFound) {
                 dispatch_async(_workQueue, ^{
-                    [self _failWithError:[NSError errorWithDomain:@"org.lolrus.SocketRocket" code:23556 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Invalid server cert"] forKey:NSLocalizedDescriptionKey]]];
+                    NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : @"Invalid server cert" };
+                    [weakSelf _failWithError:[NSError errorWithDomain:@"org.lolrus.SocketRocket" code:23556 userInfo:userInfo]];
                 });
                 return;
             }
@@ -1393,90 +1396,98 @@ static const size_t SRFrameHeaderOverhead = 32;
     }
 
     dispatch_async(_workQueue, ^{
-        switch (eventCode) {
-            case NSStreamEventOpenCompleted: {
-                SRFastLog(@"NSStreamEventOpenCompleted %@", aStream);
-                if (self.readyState >= SR_CLOSING) {
-                    return;
-                }
-                assert(_readBuffer);
-                
-                if (self.readyState == SR_CONNECTING && aStream == _inputStream) {
-                    [self didConnect];
-                }
-                [self _pumpWriting];
-                [self _pumpScanner];
-                break;
-            }
-                
-            case NSStreamEventErrorOccurred: {
-                SRFastLog(@"NSStreamEventErrorOccurred %@ %@", aStream, [[aStream streamError] copy]);
-                /// TODO specify error better!
-                [self _failWithError:aStream.streamError];
-                _readBufferOffset = 0;
-                [_readBuffer setLength:0];
-                break;
-                
-            }
-                
-            case NSStreamEventEndEncountered: {
-                [self _pumpScanner];
-                SRFastLog(@"NSStreamEventEndEncountered %@", aStream);
-                if (aStream.streamError) {
-                    [self _failWithError:aStream.streamError];
-                } else {
-                    if (self.readyState != SR_CLOSED) {
-                        self.readyState = SR_CLOSED;
-                        _selfRetain = nil;
-                    }
-
-                    if (!_sentClose && !_failed) {
-                        _sentClose = YES;
-                        // If we get closed in this state it's probably not clean because we should be sending this when we send messages
-                        [self _performDelegateBlock:^{
-                            if ([self.delegate respondsToSelector:@selector(webSocket:didCloseWithCode:reason:wasClean:)]) {
-                                [self.delegate webSocket:self didCloseWithCode:0 reason:@"Stream end encountered" wasClean:NO];
-                            }
-                        }];
-                    }
-                }
-                
-                break;
-            }
-                
-            case NSStreamEventHasBytesAvailable: {
-                SRFastLog(@"NSStreamEventHasBytesAvailable %@", aStream);
-                const int bufferSize = 2048;
-                uint8_t buffer[bufferSize];
-                
-                while (_inputStream.hasBytesAvailable) {
-                    NSInteger bytes_read = [_inputStream read:buffer maxLength:bufferSize];
-                    
-                    if (bytes_read > 0) {
-                        [_readBuffer appendBytes:buffer length:bytes_read];
-                    } else if (bytes_read < 0) {
-                        [self _failWithError:_inputStream.streamError];
-                    }
-                    
-                    if (bytes_read != bufferSize) {
-                        break;
-                    }
-                };
-                [self _pumpScanner];
-                break;
-            }
-                
-            case NSStreamEventHasSpaceAvailable: {
-                SRFastLog(@"NSStreamEventHasSpaceAvailable %@", aStream);
-                [self _pumpWriting];
-                break;
-            }
-                
-            default:
-                SRFastLog(@"(default)  %@", aStream);
-                break;
-        }
+        [weakSelf safeHandleEvent:eventCode stream:aStream];
     });
+}
+
+- (void)safeHandleEvent:(NSStreamEvent)eventCode stream:(NSStream *)aStream
+{
+    __strong typeof(self) strongSelf = self;
+    ((void)strongSelf);
+    
+    switch (eventCode) {
+        case NSStreamEventOpenCompleted: {
+            SRFastLog(@"NSStreamEventOpenCompleted %@", aStream);
+            if (self.readyState >= SR_CLOSING) {
+                return;
+            }
+            assert(_readBuffer);
+            
+            if (self.readyState == SR_CONNECTING && aStream == _inputStream) {
+                [self didConnect];
+            }
+            [self _pumpWriting];
+            [self _pumpScanner];
+            break;
+        }
+            
+        case NSStreamEventErrorOccurred: {
+            SRFastLog(@"NSStreamEventErrorOccurred %@ %@", aStream, [[aStream streamError] copy]);
+            /// TODO specify error better!
+            [self _failWithError:aStream.streamError];
+            _readBufferOffset = 0;
+            [_readBuffer setLength:0];
+            break;
+            
+        }
+            
+        case NSStreamEventEndEncountered: {
+            [self _pumpScanner];
+            SRFastLog(@"NSStreamEventEndEncountered %@", aStream);
+            if (aStream.streamError) {
+                [self _failWithError:aStream.streamError];
+            } else {
+                if (self.readyState != SR_CLOSED) {
+                    self.readyState = SR_CLOSED;
+                    _selfRetain = nil;
+                }
+
+                if (!_sentClose && !_failed) {
+                    _sentClose = YES;
+                    // If we get closed in this state it's probably not clean because we should be sending this when we send messages
+                    [self _performDelegateBlock:^{
+                        if ([self.delegate respondsToSelector:@selector(webSocket:didCloseWithCode:reason:wasClean:)]) {
+                            [self.delegate webSocket:self didCloseWithCode:0 reason:@"Stream end encountered" wasClean:NO];
+                        }
+                    }];
+                }
+            }
+            
+            break;
+        }
+            
+        case NSStreamEventHasBytesAvailable: {
+            SRFastLog(@"NSStreamEventHasBytesAvailable %@", aStream);
+            const int bufferSize = 2048;
+            uint8_t buffer[bufferSize];
+            
+            while (_inputStream.hasBytesAvailable) {
+                NSInteger bytes_read = [_inputStream read:buffer maxLength:bufferSize];
+                
+                if (bytes_read > 0) {
+                    [_readBuffer appendBytes:buffer length:bytes_read];
+                } else if (bytes_read < 0) {
+                    [self _failWithError:_inputStream.streamError];
+                }
+                
+                if (bytes_read != bufferSize) {
+                    break;
+                }
+            };
+            [self _pumpScanner];
+            break;
+        }
+            
+        case NSStreamEventHasSpaceAvailable: {
+            SRFastLog(@"NSStreamEventHasSpaceAvailable %@", aStream);
+            [self _pumpWriting];
+            break;
+        }
+            
+        default:
+            SRFastLog(@"(default)  %@", aStream);
+            break;
+    }
 }
 
 @end
