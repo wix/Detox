@@ -683,7 +683,7 @@ static __strong NSData *CRLFCRLF;
             }];
 
             self.readyState = SR_CLOSED;
-            _selfRetain = nil;
+            [self _scheduleCleanup];
 
             SRFastLog(@"Failing with error %@", error.localizedDescription);
             
@@ -1096,7 +1096,7 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
             }];
         }
         
-        _selfRetain = nil;
+        [self _scheduleCleanup];
     }
 }
 
@@ -1120,6 +1120,29 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
     [self assertOnWorkQueue];
     [_consumers addObject:[_consumerPool consumerWithScanner:consumer handler:callback bytesNeeded:dataLength readToCurrentFrame:NO unmaskBytes:NO]];
     [self _pumpScanner];
+}
+
+
+- (void)_scheduleCleanup
+{
+    // Cleanup NSStream delegate's in the same RunLoop used by the streams themselves:
+    // This way we'll prevent race conditions between handleEvent and SRWebsocket's dealloc
+    NSTimer *timer = [NSTimer timerWithTimeInterval:(0.0f) target:self selector:@selector(_cleanupSelfReference:) userInfo:nil repeats:NO];
+    [[NSRunLoop SR_networkRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
+}
+
+- (void)_cleanupSelfReference:(NSTimer *)timer
+{
+    _inputStream.delegate = nil;
+    _outputStream.delegate = nil;
+    
+    [_inputStream close];
+    [_outputStream close];
+    
+    // Cleanup selfRetain in the same GCD queue as usual
+    dispatch_async(_workQueue, ^{
+        _selfRetain = nil;
+    });
 }
 
 
@@ -1439,7 +1462,7 @@ static const size_t SRFrameHeaderOverhead = 32;
             } else {
                 if (self.readyState != SR_CLOSED) {
                     self.readyState = SR_CLOSED;
-                    _selfRetain = nil;
+                    [self _scheduleCleanup];
                 }
 
                 if (!_sentClose && !_failed) {
