@@ -1144,13 +1144,7 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
 {
     _inputStream.delegate = nil;
     _outputStream.delegate = nil;
-    
-    if (!_sentClose) {
-        [_inputStream close];
-        [_outputStream close];
-        _sentClose = YES;
-    }
-    
+        
     // Cleanup selfRetain in the same GCD queue as usual
     dispatch_async(_workQueue, ^{
         _selfRetain = nil;
