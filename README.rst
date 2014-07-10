@@ -222,9 +222,7 @@ WebSocket Server Implementation Recommendations
 SocketRocket has been used with the following libraries:
 
 - `Tornado <https://github.com/facebook/tornado>`_
-- Go's `weekly build <http://weekly.golang.org>`_ (the official release has an
-  outdated protocol, so you may have to use weekly until `Go 1
-  <http://blog.golang.org/2011/10/preview-of-go-version-1.html>`_ is released)
+- Go's `WebSocket package <http://godoc.org/code.google.com/p/go.net/websocket>`_ or Gorilla's `version <http://www.gorillatoolkit.org/pkg/websocket>`_
 - `Autobahn <http://www.tavendo.de/autobahn/testsuite.html>`_ (using its fuzzing
   client)
 
