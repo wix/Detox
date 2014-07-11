@@ -599,7 +599,7 @@ static __strong NSData *CRLFCRLF;
 
 - (void)close;
 {
-    [self closeWithCode:-1 reason:nil];
+    [self closeWithCode:SRStatusCodeNormal reason:nil];
 }
 
 - (void)closeWithCode:(NSInteger)code reason:(NSString *)reason;
