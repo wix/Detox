@@ -27,6 +27,7 @@ typedef enum {
 @class SRWebSocket;
 
 extern NSString *const SRWebSocketErrorDomain;
+extern NSString *const SRHTTPResponseErrorKey;
 
 #pragma mark - SRWebSocketDelegate
 
