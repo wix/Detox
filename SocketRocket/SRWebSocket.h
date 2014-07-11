@@ -24,6 +24,19 @@ typedef enum {
     SR_CLOSED       = 3,
 } SRReadyState;
 
+typedef enum SRStatusCode : NSInteger {
+    SRStatusCodeNormal = 1000,
+    SRStatusCodeGoingAway = 1001,
+    SRStatusCodeProtocolError = 1002,
+    SRStatusCodeUnhandledType = 1003,
+    // 1004 reserved.
+    SRStatusNoStatusReceived = 1005,
+    // 1004-1006 reserved.
+    SRStatusCodeInvalidUTF8 = 1007,
+    SRStatusCodePolicyViolated = 1008,
+    SRStatusCodeMessageTooBig = 1009,
+} SRStatusCode;
+
 @class SRWebSocket;
 
 extern NSString *const SRWebSocketErrorDomain;
