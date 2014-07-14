@@ -512,7 +512,7 @@ static __strong NSData *CRLFCRLF;
     NSMutableData *keyBytes = [[NSMutableData alloc] initWithLength:16];
     SecRandomCopyBytes(kSecRandomDefault, keyBytes.length, keyBytes.mutableBytes);
     
-    if ([keyBytes respondsToSelector:@selector(base64EncodedDataWithOptions:)]) {
+    if ([keyBytes respondsToSelector:@selector(base64EncodedStringWithOptions:)]) {
         _secKey = [keyBytes base64EncodedStringWithOptions:0];
     } else {
         _secKey = keyBytes.base64Encoding;
