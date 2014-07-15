@@ -586,9 +586,13 @@ static __strong NSData *CRLFCRLF;
             [SSLOptions setValue:[NSNumber numberWithBool:NO] forKey:(__bridge id)kCFStreamSSLValidatesCertificateChain];
         }
         
-#ifndef DEBUG
-        if ([self allowUntrustedSSLCertificates])
+        BOOL allowUntrustedSSLCertificates = self.allowUntrustedSSLCertificates;
+        
+#if DEBUG
+        allowUntrustedSSLCertificates = YES;
 #endif
+
+        if (allowUntrustedSSLCertificates)
         {
             [SSLOptions setValue:[NSNumber numberWithBool:NO] forKey:(__bridge id)kCFStreamSSLValidatesCertificateChain];
             SRFastLog(@"Allowing connection to any root cert");
@@ -599,7 +603,7 @@ static __strong NSData *CRLFCRLF;
     }
 }
 
-- (void)_connect;
+- (void)_connect
 {
     [self _updateSecureStreamOptions];
     

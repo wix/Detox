@@ -41,6 +41,9 @@ extern NSString *const SRWebSocketErrorDomain;
 @property (nonatomic, readonly) SRReadyState readyState;
 @property (nonatomic, readonly, retain) NSURL *url;
 
+// Specifies whether SSL trust chain should NOT be evaluated.
+// By default this flag is set to NO, meaning only secure SSL connections are allowed.
+// For DEBUG builds this flag is ignored, and connections are allowed to any root certificates.
 @property (nonatomic, readwrite) BOOL allowUntrustedSSLCertificates;
 
 // This returns the negotiated protocol.
