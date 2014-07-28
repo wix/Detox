@@ -514,7 +514,7 @@ static __strong NSData *CRLFCRLF;
     }];
 }
 
-- (void)didConnect
+- (void)didConnect;
 {
     SRFastLog(@"Connected");
     CFHTTPMessageRef request = CFHTTPMessageCreateRequest(NULL, CFSTR("GET"), (__bridge CFURLRef)_url, kCFHTTPVersion1_1);
@@ -574,7 +574,7 @@ static __strong NSData *CRLFCRLF;
     _outputStream.delegate = self;
 }
 
-- (void)_updateSecureStreamOptions
+- (void)_updateSecureStreamOptions;
 {
     if (_secure) {
         NSMutableDictionary *SSLOptions = [[NSMutableDictionary alloc] init];
@@ -592,8 +592,7 @@ static __strong NSData *CRLFCRLF;
         allowUntrustedSSLCertificates = YES;
 #endif
 
-        if (allowUntrustedSSLCertificates)
-        {
+        if (allowUntrustedSSLCertificates) {
             [SSLOptions setValue:[NSNumber numberWithBool:NO] forKey:(__bridge id)kCFStreamSSLValidatesCertificateChain];
             SRFastLog(@"Allowing connection to any root cert");
         }
@@ -603,7 +602,7 @@ static __strong NSData *CRLFCRLF;
     }
 }
 
-- (void)_connect
+- (void)_connect;
 {
     [self _updateSecureStreamOptions];
     
