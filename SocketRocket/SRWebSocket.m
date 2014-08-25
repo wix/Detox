@@ -1343,9 +1343,11 @@ static const size_t SRFrameHeaderOverhead = 32;
         frame_buffer_size += sizeof(uint32_t);
         
         // TODO: could probably optimize this with SIMD
-        for (size_t i = 0; i < payloadLength; i++) {
-            frame_buffer[frame_buffer_size] = unmasked_payload[i] ^ mask_key[i % sizeof(uint32_t)];
-            frame_buffer_size += 1;
+        if (unmasked_payload) {
+            for (size_t i = 0; i < payloadLength; i++) {
+                frame_buffer[frame_buffer_size] = unmasked_payload[i] ^ mask_key[i % sizeof(uint32_t)];
+                frame_buffer_size += 1;
+            }
         }
     }
 
