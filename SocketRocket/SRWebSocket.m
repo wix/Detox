@@ -140,6 +140,7 @@ static NSString *newSHA1String(const char *bytes, size_t length) {
 @end
 
 NSString *const SRWebSocketErrorDomain = @"SRWebSocketErrorDomain";
+NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
 
 // Returns number of bytes consumed. Returning 0 means you didn't match.
 // Sends bytes to callback handler;
