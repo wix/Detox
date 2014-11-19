@@ -73,7 +73,7 @@ SocketRocket now has (64-bit only) OS X support.  ``SocketRocket.framework``
 inside Xcode project is for OS X only.  It should be identical in function aside
 from the unicode validation.  ICU isn't shipped with OS X which is what the
 original implementation used for unicode validation.  The workaround is much
-more rhudimentary and less robust.
+more rudimentary and less robust.
 
 1. Add SocketRocket.xcodeproj as either a subproject of your app or in your workspace.
 2. Add ``SocketRocket.framework`` to the link libraries
@@ -237,7 +237,7 @@ It could use some more control over things such as pings, etc., but I
 am sure it will come in time.
 
 Autobahn is a great test suite.  The Python server code is good, and conforms
-well (obviously).  Hovever, for me, twisted would be a deal-breaker for writing
+well (obviously).  However for me, twisted would be a deal-breaker for writing
 something new.  I find it a bit too complex and heavy for a simple service. If
 you are already using twisted though, Autobahn is probably for you.
 
