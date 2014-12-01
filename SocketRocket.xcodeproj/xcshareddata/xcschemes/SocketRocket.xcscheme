@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0510"
+   LastUpgradeVersion = "0610"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -117,14 +117,23 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "F6B2082C1450F597009315AF"
+            BuildableName = "libSocketRocket.a"
+            BlueprintName = "SocketRocket"
+            ReferencedContainer = "container:SocketRocket.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
          <AdditionalOption
-            key = "OBJC_PRINT_EXCEPTIONS"
+            key = "NSZombieEnabled"
             value = "YES"
             isEnabled = "YES">
          </AdditionalOption>
          <AdditionalOption
-            key = "NSZombieEnabled"
+            key = "OBJC_PRINT_EXCEPTIONS"
             value = "YES"
             isEnabled = "YES">
          </AdditionalOption>

@@ -65,6 +65,11 @@
     [self _reconnect];
 }
 
+- (void)sendPing:(id)sender;
+{
+    [_webSocket sendPing:nil];
+}
+
 - (void)viewDidAppear:(BOOL)animated;
 {
     [super viewDidAppear:animated];
@@ -133,6 +138,11 @@
     NSLog(@"WebSocket closed");
     self.title = @"Connection Closed! (see logs)";
     _webSocket = nil;
+}
+
+- (void)webSocket:(SRWebSocket *)webSocket didReceivePong:(NSData *)pongPayload;
+{
+    NSLog(@"Websocket received pong");
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;

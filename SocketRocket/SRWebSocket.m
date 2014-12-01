@@ -111,7 +111,13 @@ static NSString *newSHA1String(const char *bytes, size_t length) {
     assert(length <= UINT32_MAX);
     CC_SHA1(bytes, (CC_LONG)length, md);
     
-    return [[NSData dataWithBytes:md length:CC_SHA1_DIGEST_LENGTH] base64Encoding];
+    NSData *data = [NSData dataWithBytes:md length:CC_SHA1_DIGEST_LENGTH];
+    
+    if ([data respondsToSelector:@selector(base64EncodedStringWithOptions:)]) {
+        return [data base64EncodedStringWithOptions:0];
+    }
+    
+    return [data base64Encoding];
 }
 
 @implementation NSData (SRWebSocket)
@@ -134,6 +140,7 @@ static NSString *newSHA1String(const char *bytes, size_t length) {
 @end
 
 NSString *const SRWebSocketErrorDomain = @"SRWebSocketErrorDomain";
+NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
 
 // Returns number of bytes consumed. Returning 0 means you didn't match.
 // Sends bytes to callback handler;
@@ -437,9 +444,8 @@ static __strong NSData *CRLFCRLF;
     
     if (responseCode >= 400) {
         SRFastLog(@"Request failed with response code %d", responseCode);
-        [self _failWithError:[NSError errorWithDomain:@"org.lolrus.SocketRocket" code:2132 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"received bad response code from server %ld", (long)responseCode] forKey:NSLocalizedDescriptionKey]]];
+        [self _failWithError:[NSError errorWithDomain:SRWebSocketErrorDomain code:2132 userInfo:@{NSLocalizedDescriptionKey:[NSString stringWithFormat:@"received bad response code from server %ld", (long)responseCode], SRHTTPResponseErrorKey:@(responseCode)}]];
         return;
-
     }
     
     if(![self _checkHandshake:_receivedHTTPHeaders]) {
@@ -500,7 +506,13 @@ static __strong NSData *CRLFCRLF;
         
     NSMutableData *keyBytes = [[NSMutableData alloc] initWithLength:16];
     SecRandomCopyBytes(kSecRandomDefault, keyBytes.length, keyBytes.mutableBytes);
-    _secKey = keyBytes.base64Encoding;
+    
+    if ([keyBytes respondsToSelector:@selector(base64EncodedStringWithOptions:)]) {
+        _secKey = [keyBytes base64EncodedStringWithOptions:0];
+    } else {
+        _secKey = [keyBytes base64Encoding];
+    }
+    
     assert([_secKey length] == 24);
     
     CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Upgrade"), CFSTR("websocket"));
@@ -600,7 +612,7 @@ static __strong NSData *CRLFCRLF;
 
 - (void)close;
 {
-    [self closeWithCode:-1 reason:nil];
+    [self closeWithCode:SRStatusCodeNormal reason:nil];
 }
 
 - (void)closeWithCode:(NSInteger)code reason:(NSString *)reason;
@@ -690,6 +702,7 @@ static __strong NSData *CRLFCRLF;
     [_outputBuffer appendData:data];
     [self _pumpWriting];
 }
+
 - (void)send:(id)data;
 {
     NSAssert(self.readyState != SR_CONNECTING, @"Invalid State: Cannot call send: until connection is open");
@@ -708,6 +721,16 @@ static __strong NSData *CRLFCRLF;
     });
 }
 
+- (void)sendPing:(NSData *)data;
+{
+    NSAssert(self.readyState == SR_OPEN, @"Invalid State: Cannot call send: until connection is open");
+    // TODO: maybe not copy this for performance
+    data = [data copy] ?: [NSData data]; // It's okay for a ping to be empty
+    dispatch_async(_workQueue, ^{
+        [self _sendFrameWithOpcode:SROpCodePing data:data];
+    });
+}
+
 - (void)handlePing:(NSData *)pingData;
 {
     // Need to pingpong this off _callbackQueue first to make sure messages happen in order
@@ -718,9 +741,14 @@ static __strong NSData *CRLFCRLF;
     }];
 }
 
-- (void)handlePong;
+- (void)handlePong:(NSData *)pongData;
 {
-    // NOOP
+    SRFastLog(@"Received pong");
+    [self _performDelegateBlock:^{
+        if ([self.delegate respondsToSelector:@selector(webSocket:didReceivePong:)]) {
+            [self.delegate webSocket:self didReceivePong:pongData];
+        }
+    }];
 }
 
 - (void)_handleMessage:(id)message
@@ -850,7 +878,7 @@ static inline BOOL closeCodeIsValid(int closeCode) {
             [self handlePing:frameData];
             break;
         case SROpCodePong:
-            [self handlePong];
+            [self handlePong:frameData];
             break;
         default:
             [self _closeWithProtocolError:[NSString stringWithFormat:@"Unknown opcode %ld", (long)opcode]];
@@ -1049,7 +1077,7 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
     if (dataLength - _outputBufferOffset > 0 && _outputStream.hasSpaceAvailable) {
         NSInteger bytesWritten = [_outputStream write:_outputBuffer.bytes + _outputBufferOffset maxLength:dataLength - _outputBufferOffset];
         if (bytesWritten == -1) {
-            [self _failWithError:[NSError errorWithDomain:@"org.lolrus.SocketRocket" code:2145 userInfo:[NSDictionary dictionaryWithObject:@"Error writing to stream" forKey:NSLocalizedDescriptionKey]]];
+            [self _failWithError:[NSError errorWithDomain:SRWebSocketErrorDomain code:2145 userInfo:[NSDictionary dictionaryWithObject:@"Error writing to stream" forKey:NSLocalizedDescriptionKey]]];
              return;
         }
         
@@ -1304,7 +1332,11 @@ static const size_t SRFrameHeaderOverhead = 32;
 {
     [self assertOnWorkQueue];
     
-    NSAssert(data == nil || [data isKindOfClass:[NSData class]] || [data isKindOfClass:[NSString class]], @"Function expects nil, NSString or NSData");
+    if (nil == data) {
+        return;
+    }
+    
+    NSAssert([data isKindOfClass:[NSData class]] || [data isKindOfClass:[NSString class]], @"NSString or NSData");
     
     size_t payloadLength = [data isKindOfClass:[NSString class]] ? [(NSString *)data lengthOfBytesUsingEncoding:NSUTF8StringEncoding] : [data length];
         
@@ -1336,7 +1368,7 @@ static const size_t SRFrameHeaderOverhead = 32;
     } else if ([data isKindOfClass:[NSString class]]) {
         unmasked_payload =  (const uint8_t *)[data UTF8String];
     } else {
-        assert(NO);
+        return;
     }
     
     if (payloadLength < 126) {
