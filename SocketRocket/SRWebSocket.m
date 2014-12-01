@@ -1159,8 +1159,13 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
 
 - (void)_cleanupSelfReference:(NSTimer *)timer
 {
+    // Nuke NSStream delegate's
     _inputStream.delegate = nil;
     _outputStream.delegate = nil;
+    
+    // Remove the streams, right now, from the networkRunLoop
+    [_inputStream close];
+    [_outputStream close];
         
     // Cleanup selfRetain in the same GCD queue as usual
     dispatch_async(_workQueue, ^{
