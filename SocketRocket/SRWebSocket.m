@@ -116,8 +116,11 @@ static NSString *newSHA1String(const char *bytes, size_t length) {
     if ([data respondsToSelector:@selector(base64EncodedStringWithOptions:)]) {
         return [data base64EncodedStringWithOptions:0];
     }
-    
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     return [data base64Encoding];
+#pragma clang diagnostic pop
 }
 
 @implementation NSData (SRWebSocket)
@@ -509,7 +512,10 @@ static __strong NSData *CRLFCRLF;
     if ([keyBytes respondsToSelector:@selector(base64EncodedStringWithOptions:)]) {
         _secKey = [keyBytes base64EncodedStringWithOptions:0];
     } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         _secKey = [keyBytes base64Encoding];
+#pragma clang diagnostic pop
     }
     
     assert([_secKey length] == 24);
