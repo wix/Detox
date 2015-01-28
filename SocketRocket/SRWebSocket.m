@@ -692,11 +692,11 @@ static __strong NSData *CRLFCRLF;
             }];
 
             self.readyState = SR_CLOSED;
-            [self _scheduleCleanup];
 
             SRFastLog(@"Failing with error %@", error.localizedDescription);
             
             [self _disconnect];
+            [self _scheduleCleanup];
         }
     });
 }
@@ -1104,13 +1104,15 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
          _inputStream.streamStatus != NSStreamStatusClosed) &&
         !_sentClose) {
         _sentClose = YES;
+        
+        @synchronized(self) {
+            [_outputStream close];
+            [_inputStream close];
             
-        [_outputStream close];
-        [_inputStream close];
-        
-        
-        for (NSArray *runLoop in [_scheduledRunloops copy]) {
-            [self unscheduleFromRunLoop:[runLoop objectAtIndex:0] forMode:[runLoop objectAtIndex:1]];
+            
+            for (NSArray *runLoop in [_scheduledRunloops copy]) {
+                [self unscheduleFromRunLoop:[runLoop objectAtIndex:0] forMode:[runLoop objectAtIndex:1]];
+            }
         }
         
         if (!_failed) {
@@ -1166,14 +1168,16 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
 
 - (void)_cleanupSelfReference:(NSTimer *)timer
 {
-    // Nuke NSStream delegate's
-    _inputStream.delegate = nil;
-    _outputStream.delegate = nil;
-    
-    // Remove the streams, right now, from the networkRunLoop
-    [_inputStream close];
-    [_outputStream close];
+    @synchronized(self) {
+        // Nuke NSStream delegate's
+        _inputStream.delegate = nil;
+        _outputStream.delegate = nil;
         
+        // Remove the streams, right now, from the networkRunLoop
+        [_inputStream close];
+        [_outputStream close];
+    }
+    
     // Cleanup selfRetain in the same GCD queue as usual
     dispatch_async(_workQueue, ^{
         _selfRetain = nil;
