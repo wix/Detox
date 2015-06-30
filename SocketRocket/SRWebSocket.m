@@ -1749,8 +1749,22 @@ static NSRunLoop *networkRunLoop = nil;
         _runLoop = [NSRunLoop currentRunLoop];
         dispatch_group_leave(_waitGroup);
         
-        NSTimer *timer = [[NSTimer alloc] initWithFireDate:[NSDate distantFuture] interval:0.0 target:nil selector:nil userInfo:nil repeats:NO];
-        [_runLoop addTimer:timer forMode:NSDefaultRunLoopMode];
+        // Add an empty run loop source to prevent runloop from spinning.
+        CFRunLoopSourceContext sourceCtx = {
+            .version = 0,
+            .info = NULL,
+            .retain = NULL,
+            .release = NULL,
+            .copyDescription = NULL,
+            .equal = NULL,
+            .hash = NULL,
+            .schedule = NULL,
+            .cancel = NULL,
+            .perform = NULL
+        };
+        CFRunLoopSourceRef source = CFRunLoopSourceCreate(NULL, 0, &sourceCtx);
+        CFRunLoopAddSource(CFRunLoopGetCurrent(), source, kCFRunLoopDefaultMode);
+        CFRelease(source);
         
         while ([_runLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]]) {
             
