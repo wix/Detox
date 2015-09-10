@@ -372,7 +372,7 @@ static __strong NSData *CRLFCRLF;
 
     _selfRetain = self;
     
-    [self _openConnection];
+    [self openConnection];
 }
 
 // Calls block on delegate queue
@@ -561,7 +561,7 @@ static __strong NSData *CRLFCRLF;
     _outputStream.delegate = self;
 }
 
-- (void)_openConnection;
+- (void)openConnection;
 {
     if (!_scheduledRunloops.count) {
         [self scheduleInRunLoop:[NSRunLoop SR_networkRunLoop] forMode:NSDefaultRunLoopMode];
@@ -608,7 +608,7 @@ static __strong NSData *CRLFCRLF;
         SRFastLog(@"Closing with code %d reason %@", code, reason);
         
         if (wasConnecting) {
-            [self _closeConnection];
+            [self closeConnection];
             return;
         }
 
@@ -645,7 +645,7 @@ static __strong NSData *CRLFCRLF;
     [self _performDelegateBlock:^{
         [self closeWithCode:SRStatusCodeProtocolError reason:message];
         dispatch_async(_workQueue, ^{
-            [self _closeConnection];
+            [self closeConnection];
         });
     }];
 }
@@ -666,7 +666,7 @@ static __strong NSData *CRLFCRLF;
 
             SRFastLog(@"Failing with error %@", error.localizedDescription);
             
-            [self _closeConnection];
+            [self closeConnection];
         }
     });
 }
@@ -808,11 +808,11 @@ static inline BOOL closeCodeIsValid(int closeCode) {
         [self closeWithCode:1000 reason:nil];
     }
     dispatch_async(_workQueue, ^{
-        [self _closeConnection];
+        [self closeConnection];
     });
 }
 
-- (void)_closeConnection;
+- (void)closeConnection;
 {
     [self assertOnWorkQueue];
     SRFastLog(@"Trying to disconnect");
@@ -839,7 +839,7 @@ static inline BOOL closeCodeIsValid(int closeCode) {
             if (str == nil && frameData) {
                 [self closeWithCode:SRStatusCodeInvalidUTF8 reason:@"Text frames must be valid UTF-8"];
                 dispatch_async(_workQueue, ^{
-                    [self _closeConnection];
+                    [self closeConnection];
                 });
 
                 return;
@@ -1230,7 +1230,7 @@ static const char CRLFCRLFBytes[] = {'\r', '\n', '\r', '\n'};
                     if (valid_utf8_size == -1) {
                         [self closeWithCode:SRStatusCodeInvalidUTF8 reason:@"Text frames must be valid UTF-8"];
                         dispatch_async(_workQueue, ^{
-                            [self _closeConnection];
+                            [self closeConnection];
                         });
                         return didWork;
                     } else {
