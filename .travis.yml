@@ -1,0 +1,8 @@
+language: objective-c
+osx_image: xcode6.4
+before_script:
+    - bundle install
+script:
+    - xcodebuild -project SocketRocket.xcodeproj -scheme "SocketRocket" -sdk iphonesimulator -configuration Debug -PBXBuildsContinueAfterErrors=0 ACTIVE_ARCH_ONLY=0 build test
+    - xcodebuild -project SocketRocket.xcodeproj -scheme "SocketRocketOSX" -sdk macosx10.10 -configuration Debug -destination "platform=OS X" -PBXBuildsContinueAfterErrors=0 build
+    - pod lib lint --verbose --fail-fast

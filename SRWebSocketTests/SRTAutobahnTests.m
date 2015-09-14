@@ -14,8 +14,8 @@
 //   limitations under the License.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
-#import <SenTestingKit/SenTestRun.h>
+#import <XCTest/XCTest.h>
+#import <XCTest/XCTestRun.h>
 #import "SRWebSocket.h"
 #import "SRTWebSocketOperation.h"
 #import "SenTestCase+SRTAdditions.h"
@@ -23,7 +23,7 @@
 #define SRLogDebug(format, ...) 
 //#define SRLogDebug(format, ...) NSLog(format, __VA_ARGS__)
 
-@interface SRTAutobahnTests : SenTestCase
+@interface SRTAutobahnTests : XCTestCase
 @end
 
 @interface TestOperation : SRTWebSocketOperation <SRWebSocketDelegate>
@@ -98,7 +98,6 @@
 {
     self = [super initWithInvocation:anInvocation];
     if (self) {
-        [self raiseAfterFailure];
         _testURLString = [[NSProcessInfo processInfo].environment objectForKey:@"SR_TEST_URL"];
         _prefixURL = [NSURL URLWithString:_testURLString];
         _agent = [NSBundle bundleForClass:[self class]].bundleIdentifier;
@@ -106,7 +105,7 @@
     return self;
 }
 
-- (unsigned int)testCaseCount;
+- (NSUInteger)testCaseCount;
 {
     if (self.invocation) {
         return [super testCaseCount];
@@ -120,7 +119,7 @@
         return caseGetter.isFinished;
     } timeout:20.0];
     
-    STAssertNil(caseGetter.error, @"CaseGetter should have successfully returned the number of testCases. Instead got error %@", caseGetter.error);
+    XCTAssertNil(caseGetter.error, @"CaseGetter should have successfully returned the number of testCases. Instead got error %@", caseGetter.error);
     
     NSInteger caseCount = caseGetter.caseCount;
     
@@ -132,7 +131,7 @@
     return NO;
 }
 
-- (void)performTest:(SenTestCaseRun *) aRun
+- (void)performTest:(XCTestCaseRun *) aRun
 {
     if (self.invocation) {
         [super performTest:aRun];
@@ -150,15 +149,11 @@
         
         NSString *description = [self caseDescriptionForCaseNumber:i];
 
-        SenTestCase *testCase = [[[self class] alloc] initWithInvocation:invocation description:description];
+        XCTestCase *testCase = [[[self class] alloc] initWithInvocation:invocation description:description];
         
-        SenTestCaseRun *run = [[SenTestCaseRun alloc] initWithTest:testCase];
+        XCTestCaseRun *run = [[XCTestCaseRun alloc] initWithTest:testCase];
         
         [testCase performTest:run];
-        
-        for (NSException *e in run.exceptions) {
-            [aRun addException:e];
-        }
     }
     [aRun stop];
     
@@ -182,7 +177,7 @@
         return testInfoOperation.isFinished;
     } timeout:60 * 60];
     
-    STAssertNil(testInfoOperation.error, @"Updating the report should not have errored");
+    XCTAssertNil(testInfoOperation.error, @"Updating the report should not have errored");
     
     return [NSString stringWithFormat:@"%@ - %@", [testInfoOperation.info objectForKey:@"id"], [testInfoOperation.info objectForKey:@"description"]];
 }
@@ -220,8 +215,8 @@
         return resultOp.isFinished;
     } timeout:60 * 60];
     
-    STAssertTrue(!testOp.error, @"Test operation should not have failed");
-    STAssertEqualObjects(@"OK", [resultOp.info objectForKey:@"behavior"], @"Test behavior should be OK");
+    XCTAssertTrue(!testOp.error, @"Test operation should not have failed");
+    XCTAssertEqualObjects(@"OK", [resultOp.info objectForKey:@"behavior"], @"Test behavior should be OK");
 }
 
 - (void)updateReports;
@@ -234,7 +229,7 @@
         return updateReportOperation.isFinished;
     } timeout:60 * 60];
     
-    STAssertNil(updateReportOperation.error, @"Updating the report should not have errored");
+    XCTAssertNil(updateReportOperation.error, @"Updating the report should not have errored");
 }
 
 @end
@@ -247,7 +242,7 @@
 {   
     
     NSString *path = [[url URLByAppendingPathComponent:@"runCase"] absoluteString];
-    path = [path stringByAppendingFormat:@"?case=%d&agent=%@", testNumber, agent];
+    path = [path stringByAppendingFormat:@"?case=%@&agent=%@", @(testNumber), agent];
     
     self = [super initWithURL:[NSURL URLWithString:path]];
     if (self) {
@@ -310,7 +305,7 @@
 - (id)initWithBaseURL:(NSURL *)url caseNumber:(NSInteger)caseNumber;
 {
     NSString *path = [[url URLByAppendingPathComponent:@"getCaseInfo"] absoluteString];
-    path = [path stringByAppendingFormat:@"?case=%d", caseNumber];
+    path = [path stringByAppendingFormat:@"?case=%@", @(caseNumber)];
     
     return [super initWithURL:[NSURL URLWithString:path]];
 }
@@ -330,7 +325,7 @@
 - (id)initWithBaseURL:(NSURL *)url caseNumber:(NSInteger)caseNumber agent:(NSString *)agent;
 {
     NSString *path = [[url URLByAppendingPathComponent:@"getCaseStatus"] absoluteString];
-    path = [path stringByAppendingFormat:@"?case=%d&agent=%@", caseNumber, agent];
+    path = [path stringByAppendingFormat:@"?case=%@&agent=%@", @(caseNumber), agent];
     
     return [super initWithURL:[NSURL URLWithString:path]];
 }
