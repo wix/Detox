@@ -55,6 +55,8 @@ extern NSString *const SRHTTPResponseErrorKey;
 @property (nonatomic, readonly) SRReadyState readyState;
 @property (nonatomic, readonly, retain) NSURL *url;
 
+@property (nonatomic, readonly) CFHTTPMessageRef receivedHTTPHeaders;
+
 // This returns the negotiated protocol.
 // It will be nil until after the handshake completes.
 @property (nonatomic, readonly, copy) NSString *protocol;
