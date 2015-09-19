@@ -494,7 +494,16 @@ static __strong NSData *CRLFCRLF;
     }
     
     assert([_secKey length] == 24);
-    
+
+    // Apply cookies if any have been provided
+    NSDictionary * cookies = [NSHTTPCookie requestHeaderFieldsWithCookies:[self requestCookies]];
+    for (NSString * cookieKey in cookies) {
+        NSString * cookieValue = [cookies objectForKey:cookieKey];
+        if ([cookieKey length] && [cookieValue length]) {
+            CFHTTPMessageSetHeaderFieldValue(request, (__bridge CFStringRef)cookieKey, (__bridge CFStringRef)cookieValue);
+        }
+    }
+ 
     CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Upgrade"), CFSTR("websocket"));
     CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Connection"), CFSTR("Upgrade"));
     CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Sec-WebSocket-Key"), (__bridge CFStringRef)_secKey);

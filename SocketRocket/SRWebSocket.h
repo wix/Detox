@@ -57,6 +57,9 @@ extern NSString *const SRHTTPResponseErrorKey;
 
 @property (nonatomic, readonly) CFHTTPMessageRef receivedHTTPHeaders;
 
+// Optional array of cookies (NSHTTPCookie objects) to apply to the connections
+@property (nonatomic, readwrite) NSArray * requestCookies;
+
 // This returns the negotiated protocol.
 // It will be nil until after the handshake completes.
 @property (nonatomic, readonly, copy) NSString *protocol;
