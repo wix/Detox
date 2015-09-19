@@ -1,52 +1,24 @@
-#Ignore user-specific settings
-*.mode1v3
-*.mode2v3
-*.pbxuser
-*.perspectivev3
-*.xcworkspace
-xcuserdata
-
-#Ignore textmate build errors
-*.tm_build_errors
-
-#Ignore temp nibs and swap files
-*.swp
-*~.nib
-
-#Ignore the build, since we don't want archived builds
-build
-
-.gitattributes
-
-#Probably don't want to check in xcuserdata
+.idea/
+.env/
+*.egg-info
+reports/
+build/
+nohup.out
+.DS_Store
 xcuserdata/
-*.xcworkspace/
-
-*.orig
-.idea
-
-#Ignore the token from the asset update script
-*.LastAssetUpdate_*
-
-env/
-
-.build_env/
-
-Frameworks/MerchantShared/DerivedSources/*
-!Frameworks/MerchantShared/DerivedSources/Makefile
-
-*.pyc
-
-# Instruments' output during UI Automation test
-traces
-instrumentscli*.trace
-
-git-cmp
-
-TestResults/*
-*/TestResults/*
-
-.clang-format
-
-.bin/
-.bundle/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+*.xcworkspace
+!default.xcworkspace
+*xcuserdata
+*.xccheckout
+profile
+*.moved-aside
+DerivedData
+extern/
