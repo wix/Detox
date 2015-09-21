@@ -17,6 +17,7 @@ xcuserdata/
 *.xcworkspace
 !default.xcworkspace
 *xcuserdata
+*.xccheckout
 profile
 *.moved-aside
 DerivedData
