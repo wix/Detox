@@ -13,5 +13,6 @@
 @property (nonatomic, retain) IBOutlet UITextView *inputView;
 
 - (IBAction)reconnect:(id)sender;
+- (IBAction)sendPing:(id)sender;
 
 @end

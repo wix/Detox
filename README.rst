@@ -8,7 +8,7 @@ You can compare to what `modern browsers look like here
 <http://www.tavendo.de/autobahn/testsuite/report/clients/index.html>`_.
 
 SocketRocket currently conforms to all ~300 of `Autobahn
-<http://www.tavendo.de/autobahn/testsuite.html>`_'s fuzzing tests (aside from
+<http://autobahn.ws/testsuite/>`_'s fuzzing tests (aside from
 two UTF-8 ones where it is merely *non-strict*. tests 6.4.2 and 6.4.4)
 
 Features/Design
@@ -56,7 +56,7 @@ There's a few options. Choose one, or just figure it out
 
 
 Depending on how you configure your project you may need to ``#import`` either
-``<SocketRocket/SRSocketRocket.h>`` or ``"SRSocketRocket.h"``
+``<SocketRocket/SRWebSocket.h>`` or ``"SRWebSocket.h"``
 
 Framework Dependencies
 ``````````````````````
@@ -73,7 +73,7 @@ SocketRocket now has (64-bit only) OS X support.  ``SocketRocket.framework``
 inside Xcode project is for OS X only.  It should be identical in function aside
 from the unicode validation.  ICU isn't shipped with OS X which is what the
 original implementation used for unicode validation.  The workaround is much
-more rhudimentary and less robust.
+more rudimentary and less robust.
 
 1. Add SocketRocket.xcodeproj as either a subproject of your app or in your workspace.
 2. Add ``SocketRocket.framework`` to the link libraries
@@ -222,9 +222,7 @@ WebSocket Server Implementation Recommendations
 SocketRocket has been used with the following libraries:
 
 - `Tornado <https://github.com/facebook/tornado>`_
-- Go's `weekly build <http://weekly.golang.org>`_ (the official release has an
-  outdated protocol, so you may have to use weekly until `Go 1
-  <http://blog.golang.org/2011/10/preview-of-go-version-1.html>`_ is released)
+- Go's `WebSocket package <http://godoc.org/code.google.com/p/go.net/websocket>`_ or Gorilla's `version <http://www.gorillatoolkit.org/pkg/websocket>`_
 - `Autobahn <http://www.tavendo.de/autobahn/testsuite.html>`_ (using its fuzzing
   client)
 
@@ -239,7 +237,7 @@ It could use some more control over things such as pings, etc., but I
 am sure it will come in time.
 
 Autobahn is a great test suite.  The Python server code is good, and conforms
-well (obviously).  Hovever, for me, twisted would be a deal-breaker for writing
+well (obviously).  However for me, twisted would be a deal-breaker for writing
 something new.  I find it a bit too complex and heavy for a simple service. If
 you are already using twisted though, Autobahn is probably for you.
 

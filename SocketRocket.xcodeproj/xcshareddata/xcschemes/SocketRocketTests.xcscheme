@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0500"
+   LastUpgradeVersion = "0630"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F6BDA801145900D200FE3253"
-               BuildableName = "SRWebSocketTests.octest"
+               BuildableName = "SRWebSocketTests.xctest"
                BlueprintName = "SRWebSocketTests"
                ReferencedContainer = "container:SocketRocket.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F6BDA801145900D200FE3253"
-               BuildableName = "SRWebSocketTests.octest"
+               BuildableName = "SRWebSocketTests.xctest"
                BlueprintName = "SRWebSocketTests"
                ReferencedContainer = "container:SocketRocket.xcodeproj">
             </BuildableReference>
@@ -49,10 +49,19 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "F6BDA801145900D200FE3253"
+            BuildableName = "SRWebSocketTests.xctest"
+            BlueprintName = "SRWebSocketTests"
+            ReferencedContainer = "container:SocketRocket.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
          <AdditionalOption
-            key = "MallocScribble"
-            value = ""
+            key = "NSZombieEnabled"
+            value = "YES"
             isEnabled = "YES">
          </AdditionalOption>
          <AdditionalOption
@@ -66,8 +75,8 @@
             isEnabled = "YES">
          </AdditionalOption>
          <AdditionalOption
-            key = "NSZombieEnabled"
-            value = "YES"
+            key = "MallocScribble"
+            value = ""
             isEnabled = "YES">
          </AdditionalOption>
       </AdditionalOptions>

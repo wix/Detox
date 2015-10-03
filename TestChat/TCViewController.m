@@ -7,7 +7,7 @@
 //
 
 #import "TCViewController.h"
-#import "SRWebSocket.h"
+#import <SocketRocket/SRWebSocket.h>
 #import "TCChatCell.h"
 
 @interface TCMessage : NSObject
@@ -63,6 +63,11 @@
 - (void)reconnect:(id)sender;
 {
     [self _reconnect];
+}
+
+- (void)sendPing:(id)sender;
+{
+    [_webSocket sendPing:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated;
@@ -133,6 +138,11 @@
     NSLog(@"WebSocket closed");
     self.title = @"Connection Closed! (see logs)";
     _webSocket = nil;
+}
+
+- (void)webSocket:(SRWebSocket *)webSocket didReceivePong:(NSData *)pongPayload;
+{
+    NSLog(@"Websocket received pong");
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
