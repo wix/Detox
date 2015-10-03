@@ -55,11 +55,7 @@ extern NSString *const SRHTTPResponseErrorKey;
 @property (nonatomic, readonly) SRReadyState readyState;
 @property (nonatomic, readonly, retain) NSURL *url;
 
-// Specifies whether SSL trust chain should NOT be evaluated.
-// By default this flag is set to NO, meaning only secure SSL connections are allowed.
-// For DEBUG builds this flag is ignored, and SSL connections are allowed regardless
-// of the certificate trust configuration
-@property (nonatomic, readwrite) BOOL allowUntrustedSSLCertificates;
+
 @property (nonatomic, readonly) CFHTTPMessageRef receivedHTTPHeaders;
 
 // Optional array of cookies (NSHTTPCookie objects) to apply to the connections
@@ -70,10 +66,12 @@ extern NSString *const SRHTTPResponseErrorKey;
 @property (nonatomic, readonly, copy) NSString *protocol;
 
 // Protocols should be an array of strings that turn into Sec-WebSocket-Protocol.
+- (id)initWithURLRequest:(NSURLRequest *)request protocols:(NSArray *)protocols allowsUntrustedSSLCertificates:(BOOL)allowsUntrustedSSLCertificates;
 - (id)initWithURLRequest:(NSURLRequest *)request protocols:(NSArray *)protocols;
 - (id)initWithURLRequest:(NSURLRequest *)request;
 
 // Some helper constructors.
+- (id)initWithURL:(NSURL *)url protocols:(NSArray *)protocols allowsUntrustedSSLCertificates:(BOOL)allowsUntrustedSSLCertificates;
 - (id)initWithURL:(NSURL *)url protocols:(NSArray *)protocols;
 - (id)initWithURL:(NSURL *)url;
 
