@@ -529,7 +529,7 @@ static __strong NSData *CRLFCRLF;
     assert([_secKey length] == 24);
     
     // set header for http basic auth
-    if (_url.user && _url.password) {
+    if (_url.user.length && _url.password.length) {
         NSString *userAndPasswordBase64Encoded = [[[NSString stringWithFormat:@"%@:%@", _url.user, _url.password] dataUsingEncoding:NSUTF8StringEncoding] SR_stringByBase64Encoding];
         _authorization = [NSString stringWithFormat:@"Basic %@", userAndPasswordBase64Encoded];
         CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Authorization"), (__bridge CFStringRef)_authorization);
