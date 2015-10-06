@@ -14,13 +14,13 @@
 //   limitations under the License.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
 
 typedef BOOL (^PXPredicateBlock)();
 
 
-@interface SenTest (PXAdditions)
+@interface XCTest (PXAdditions)
 
 - (void)runCurrentRunLoopUntilTestPasses:(PXPredicateBlock)predicate timeout:(NSTimeInterval)timeout;
 

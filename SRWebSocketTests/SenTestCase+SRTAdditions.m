@@ -17,7 +17,7 @@
 #import "SenTestCase+SRTAdditions.h"
 
 
-@implementation SenTestCase (SRTAdditions)
+@implementation XCTestCase (SRTAdditions)
 
 - (void)runCurrentRunLoopUntilTestPasses:(PXPredicateBlock)predicate timeout:(NSTimeInterval)timeout;
 {
@@ -32,7 +32,7 @@
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
     }
     
-    STAssertTrue(currentTime <= timeoutTime, @"Timed out");
+    XCTAssertTrue(currentTime <= timeoutTime, @"Timed out");
 }
 
 @end

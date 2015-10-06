@@ -1,6 +1,12 @@
 TEST_SCENARIOS="[1-8]*"
 TEST_URL='ws://localhost:9001/'
 
+all:
+	$(MAKE) -C SocketRocket
+
+clean:
+	$(MAKE) -C SocketRocket clean
+
 test:
 
 	mkdir -p pages/results
