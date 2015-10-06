@@ -255,7 +255,7 @@ typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
     NSString *_closeReason;
     
     NSString *_secKey;
-    NSString *_authorization;
+    NSString *_basicAuthorizationString;
     
     BOOL _pinnedCertFound;
     
@@ -531,8 +531,8 @@ static __strong NSData *CRLFCRLF;
     // set header for http basic auth
     if (_url.user.length && _url.password.length) {
         NSString *userAndPasswordBase64Encoded = [[[NSString stringWithFormat:@"%@:%@", _url.user, _url.password] dataUsingEncoding:NSUTF8StringEncoding] SR_stringByBase64Encoding];
-        _authorization = [NSString stringWithFormat:@"Basic %@", userAndPasswordBase64Encoded];
-        CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Authorization"), (__bridge CFStringRef)_authorization);
+        _basicAuthorizationString = [NSString stringWithFormat:@"Basic %@", userAndPasswordBase64Encoded];
+        CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Authorization"), (__bridge CFStringRef)_basicAuthorizationString);
     }
     CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Upgrade"), CFSTR("websocket"));
     CFHTTPMessageSetHeaderFieldValue(request, CFSTR("Connection"), CFSTR("Upgrade"));
