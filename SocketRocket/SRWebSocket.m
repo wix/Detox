@@ -1594,10 +1594,14 @@ static const size_t SRFrameHeaderOverhead = 32;
         scheme = @"http";
     }
     
-    if (self.port) {
-        return [NSString stringWithFormat:@"%@://%@:%@/", scheme, self.host, self.port];
+    BOOL portIsDefault = !self.port ||
+                         ([scheme isEqualToString:@"http"] && self.port.integerValue == 80) ||
+                         ([scheme isEqualToString:@"https"] && self.port.integerValue == 443);
+    
+    if (!portIsDefault) {
+        return [NSString stringWithFormat:@"%@://%@:%@", scheme, self.host, self.port];
     } else {
-        return [NSString stringWithFormat:@"%@://%@/", scheme, self.host];
+        return [NSString stringWithFormat:@"%@://%@", scheme, self.host];
     }
 }
 
