@@ -1207,7 +1207,7 @@ static const char CRLFCRLFBytes[] = {'\r', '\n', '\r', '\n'};
     
     BOOL didWork = NO;
     
-    if (self.readyState >= SR_CLOSING) {
+    if (self.readyState >= SR_CLOSED) {
         return didWork;
     }
     
