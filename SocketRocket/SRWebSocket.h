@@ -115,17 +115,17 @@ extern NSString *const SRHTTPResponseErrorKey;
 
 @end
 
-#pragma mark - NSURLRequest (CertificateAdditions)
+#pragma mark - NSURLRequest (SRCertificateAdditions)
 
-@interface NSURLRequest (CertificateAdditions)
+@interface NSURLRequest (SRCertificateAdditions)
 
 @property (nonatomic, retain, readonly) NSArray *SR_SSLPinnedCertificates;
 
 @end
 
-#pragma mark - NSMutableURLRequest (CertificateAdditions)
+#pragma mark - NSMutableURLRequest (SRCertificateAdditions)
 
-@interface NSMutableURLRequest (CertificateAdditions)
+@interface NSMutableURLRequest (SRCertificateAdditions)
 
 @property (nonatomic, retain) NSArray *SR_SSLPinnedCertificates;
 
