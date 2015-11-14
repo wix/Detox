@@ -608,6 +608,46 @@ static __strong NSData *CRLFCRLF;
         [_outputStream setProperty:SSLOptions
                             forKey:(__bridge id)kCFStreamPropertySSLSettings];
     }
+    
+    _inputStream.delegate = self;
+    _outputStream.delegate = self;
+    
+    [self setupNetworkServiceType:_urlRequest.networkServiceType];
+}
+
+- (void)setupNetworkServiceType:(NSURLRequestNetworkServiceType)requestNetworkServiceType
+{
+    NSString *networkServiceType;
+    switch (requestNetworkServiceType) {
+        case NSURLNetworkServiceTypeDefault:
+            break;
+        case NSURLNetworkServiceTypeVoIP: {
+            networkServiceType = NSStreamNetworkServiceTypeVoIP;
+#ifdef __IPHONE_9_0
+            if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_8_3) {
+                static dispatch_once_t predicate;
+                dispatch_once(&predicate, ^{
+                    NSLog(@"SocketRocket: %@ - this service type is deprecated in favor of using PushKit for VoIP control", networkServiceType);
+                });
+            }
+#endif
+            break;
+        }
+        case NSURLNetworkServiceTypeVideo:
+            networkServiceType = NSStreamNetworkServiceTypeVideo;
+            break;
+        case NSURLNetworkServiceTypeBackground:
+            networkServiceType = NSStreamNetworkServiceTypeBackground;
+            break;
+        case NSURLNetworkServiceTypeVoice:
+            networkServiceType = NSStreamNetworkServiceTypeVoice;
+            break;
+    }
+    
+    if (networkServiceType != nil) {
+        [_inputStream setProperty:networkServiceType forKey:NSStreamNetworkServiceType];
+        [_outputStream setProperty:networkServiceType forKey:NSStreamNetworkServiceType];
+    }
 }
 
 - (void)openConnection;
