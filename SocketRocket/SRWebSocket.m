@@ -1536,9 +1536,6 @@ static const size_t SRFrameHeaderOverhead = 32;
 
 - (void)safeHandleEvent:(NSStreamEvent)eventCode stream:(NSStream *)aStream
 {
-    __strong typeof(self) strongSelf = self;
-    ((void)strongSelf);
-    
     switch (eventCode) {
         case NSStreamEventOpenCompleted: {
             SRFastLog(@"NSStreamEventOpenCompleted %@", aStream);
