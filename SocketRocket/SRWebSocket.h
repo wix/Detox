@@ -55,6 +55,7 @@ extern NSString *const SRHTTPResponseErrorKey;
 @property (nonatomic, readonly) SRReadyState readyState;
 @property (nonatomic, readonly, retain) NSURL *url;
 
+
 @property (nonatomic, readonly) CFHTTPMessageRef receivedHTTPHeaders;
 
 // Optional array of cookies (NSHTTPCookie objects) to apply to the connections
@@ -65,10 +66,12 @@ extern NSString *const SRHTTPResponseErrorKey;
 @property (nonatomic, readonly, copy) NSString *protocol;
 
 // Protocols should be an array of strings that turn into Sec-WebSocket-Protocol.
+- (id)initWithURLRequest:(NSURLRequest *)request protocols:(NSArray *)protocols allowsUntrustedSSLCertificates:(BOOL)allowsUntrustedSSLCertificates;
 - (id)initWithURLRequest:(NSURLRequest *)request protocols:(NSArray *)protocols;
 - (id)initWithURLRequest:(NSURLRequest *)request;
 
 // Some helper constructors.
+- (id)initWithURL:(NSURL *)url protocols:(NSArray *)protocols allowsUntrustedSSLCertificates:(BOOL)allowsUntrustedSSLCertificates;
 - (id)initWithURL:(NSURL *)url protocols:(NSArray *)protocols;
 - (id)initWithURL:(NSURL *)url;
 
@@ -112,17 +115,17 @@ extern NSString *const SRHTTPResponseErrorKey;
 
 @end
 
-#pragma mark - NSURLRequest (CertificateAdditions)
+#pragma mark - NSURLRequest (SRCertificateAdditions)
 
-@interface NSURLRequest (CertificateAdditions)
+@interface NSURLRequest (SRCertificateAdditions)
 
 @property (nonatomic, retain, readonly) NSArray *SR_SSLPinnedCertificates;
 
 @end
 
-#pragma mark - NSMutableURLRequest (CertificateAdditions)
+#pragma mark - NSMutableURLRequest (SRCertificateAdditions)
 
-@interface NSMutableURLRequest (CertificateAdditions)
+@interface NSMutableURLRequest (SRCertificateAdditions)
 
 @property (nonatomic, retain) NSArray *SR_SSLPinnedCertificates;
 
