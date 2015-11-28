@@ -3,9 +3,9 @@ SocketRocket Objective-C WebSocket Client (beta)
 A conforming WebSocket (`RFC 6455 <http://tools.ietf.org/html/rfc6455>`_)
 client library.
 
-`Test results for SocketRocket here <http://square.github.com/SocketRocket/results/>`_.
+`Test results for SocketRocket here <http://square.github.io/SocketRocket/results/>`_.
 You can compare to what `modern browsers look like here
-<http://www.tavendo.de/autobahn/testsuite/report/clients/index.html>`_.
+<http://tavendo.com/autobahn/testsuite/report/clients/index.html>`_.
 
 SocketRocket currently conforms to all ~300 of `Autobahn
 <http://autobahn.ws/testsuite/>`_'s fuzzing tests (aside from
@@ -192,11 +192,11 @@ SocketRocket root directory and type::
 
   make test
 
-This will set up your `virtualenv <http://pypi.python.org/pypi/virtualenv>`_.
+This will set up your `virtualenv <https://pypi.python.org/pypi/virtualenv>`_.
 Now, in your terminal::
 
   source .env/bin/activate
-  pip install git+https://github.com/facebook/tornado.git
+  pip install git+https://github.com/tornadoweb/tornado.git
 
 In the same terminal session, start the chatroom server::
 
@@ -222,8 +222,8 @@ WebSocket Server Implementation Recommendations
 SocketRocket has been used with the following libraries:
 
 - `Tornado <https://github.com/facebook/tornado>`_
-- Go's `WebSocket package <http://godoc.org/code.google.com/p/go.net/websocket>`_ or Gorilla's `version <http://www.gorillatoolkit.org/pkg/websocket>`_
-- `Autobahn <http://www.tavendo.de/autobahn/testsuite.html>`_ (using its fuzzing
+- Go's `WebSocket package <https://godoc.org/golang.org/x/net/websocket>`_ or Gorilla's `version <http://www.gorillatoolkit.org/pkg/websocket>`_
+- `Autobahn <http://tavendo.com/autobahn/testsuite.html>`_ (using its fuzzing
   client)
 
 The Tornado one is dirt simple and works like a charm.  (`IPython notebook
