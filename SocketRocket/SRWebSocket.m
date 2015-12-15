@@ -623,7 +623,7 @@ static __strong NSData *CRLFCRLF;
             break;
         case NSURLNetworkServiceTypeVoIP: {
             networkServiceType = NSStreamNetworkServiceTypeVoIP;
-#ifdef __IPHONE_9_0
+#if TARGET_OS_IPHONE && __IPHONE_9_0
             if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_8_3) {
                 static dispatch_once_t predicate;
                 dispatch_once(&predicate, ^{
