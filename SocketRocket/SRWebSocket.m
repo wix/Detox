@@ -395,7 +395,7 @@ static __strong NSData *CRLFCRLF;
         dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, _urlRequest.timeoutInterval * NSEC_PER_SEC);
         dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
             if (self.readyState == SR_CONNECTING)
-                [self _failWithError:[NSError errorWithDomain:@"com.squareup.SocketRocket" code:60 userInfo:@{NSLocalizedDescriptionKey: @"Timeout Connecting to Server"}]];
+                [self _failWithError:[NSError errorWithDomain:@"com.squareup.SocketRocket" code:504 userInfo:@{NSLocalizedDescriptionKey: @"Timeout Connecting to Server"}]];
         });
     }
 
