@@ -1487,9 +1487,7 @@ static const size_t SRFrameHeaderOverhead = 32;
                     [self _failWithError:[NSError errorWithDomain:SRWebSocketErrorDomain code:23556 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Invalid server cert"] forKey:NSLocalizedDescriptionKey]]];
                 });
                 return;
-            }
-            
-            if (aStream == _outputStream && _pinnedCertFound) {
+            } else if (aStream == _outputStream) {
                 dispatch_async(_workQueue, ^{
                     [self didConnect];
                 });
@@ -1506,7 +1504,9 @@ static const size_t SRFrameHeaderOverhead = 32;
                 }
                 assert(_readBuffer);
                 
-                if (!_secure && self.readyState == SR_CONNECTING && aStream == _inputStream) {
+                // didConnect fires after certificate verification if we're using pinned certificates.
+                BOOL usingPinnedCerts = [[_urlRequest SR_SSLPinnedCertificates] count] > 0;
+                if ((!_secure || !usingPinnedCerts) && self.readyState == SR_CONNECTING && aStream == _inputStream) {
                     [self didConnect];
                 }
                 [self _pumpWriting];
