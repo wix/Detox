@@ -25,16 +25,27 @@ typedef NS_ENUM(NSInteger, SRReadyState) {
 };
 
 typedef enum SRStatusCode : NSInteger {
+    // 0–999: Reserved and not used.
     SRStatusCodeNormal = 1000,
     SRStatusCodeGoingAway = 1001,
     SRStatusCodeProtocolError = 1002,
     SRStatusCodeUnhandledType = 1003,
     // 1004 reserved.
     SRStatusNoStatusReceived = 1005,
-    // 1004-1006 reserved.
+    SRStatusCodeAbnormal = 1006,
     SRStatusCodeInvalidUTF8 = 1007,
     SRStatusCodePolicyViolated = 1008,
     SRStatusCodeMessageTooBig = 1009,
+    SRStatusCodeMissingExtension = 1010,
+    SRStatusCodeInternalError = 1011,
+    SRStatusCodeServiceRestart = 1012,
+    SRStatusCodeTryAgainLater = 1013,
+    // 1014: Reserved for future use by the WebSocket standard.
+    SRStatusCodeTLSHandshake = 1015,
+    // 1016–1999: Reserved for future use by the WebSocket standard.
+    // 2000–2999: Reserved for use by WebSocket extensions.
+    // 3000–3999: Available for use by libraries and frameworks. May not be used by applications. Available for registration at the IANA via first-come, first-serve.
+    // 4000–4999: Available for use by applications.
 } SRStatusCode;
 
 @class SRWebSocket;
