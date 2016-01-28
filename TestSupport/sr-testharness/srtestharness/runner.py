@@ -9,7 +9,7 @@ from twisted.internet import reactor
 from twisted.web.server import Site
 from twisted.web.static import File
 from autobahntestsuite.fuzzing import FuzzingServerFactory
-from autobahn.websocket import listenWS
+from autobahn.twisted.websocket import listenWS
 
 class jsondict(dict):
     def __init__(self, json_value):
