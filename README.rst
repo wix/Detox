@@ -209,7 +209,7 @@ There's also a Go implementation (with the latest weekly) where you can::
 
 Chatting
 ````````
-Now, start TestChat.app (just run the target in the XCode project).  If you had
+Now, start TestChat.app (just run the target in the Xcode project).  If you had
 it started already you can hit the refresh button to reconnect.  It should say
 "Connected!" on top.
 
