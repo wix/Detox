@@ -375,10 +375,8 @@ static __strong NSData *CRLFCRLF;
 
 - (void)setReadyState:(SRReadyState)aReadyState;
 {
-    [self willChangeValueForKey:@"readyState"];
     assert(aReadyState > _readyState);
     _readyState = aReadyState;
-    [self didChangeValueForKey:@"readyState"];
 }
 
 #endif
