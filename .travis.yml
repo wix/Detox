@@ -1,9 +1,27 @@
 language: objective-c
-osx_image: xcode6.4
+osx_image: xcode7.2
+sudo: false
+xcode_project: SocketRocket.xcodeproj
+env:
+  global:
+    - IOS_SDK=iphonesimulator9.2
+    - IOS_SCHEME="SocketRocket-iOS"
+    - MACOS_SDK=macosx10.11
+    - MACOS_SCHEME="SocketRocketOSX"
+    - TVOS_SDK=appletvsimulator9.1
+    - TVOS_SCHEME="SocketRocket-tvOS"
+  matrix:
+    - DESTINATION="OS=9.2,name=iPad 2"         SDK="$IOS_SDK"   SCHEME="$IOS_SCHEME"
+    - DESTINATION="OS=9.2,name=iPad Air"       SDK="$IOS_SDK"   SCHEME="$IOS_SCHEME"
+    - DESTINATION="OS=9.2,name=iPhone 5"       SDK="$IOS_SDK"   SCHEME="$IOS_SCHEME"
+    - DESTINATION="OS=9.2,name=iPhone 6s"      SDK="$IOS_SDK"   SCHEME="$IOS_SCHEME"
+    - DESTINATION="OS=8.4,name=iPhone 6"       SDK="$IOS_SDK"   SCHEME="$IOS_SCHEME"
+    - DESTINATION="OS=8.4,name=iPad Air"       SDK="$IOS_SDK"   SCHEME="$IOS_SCHEME"
+    - DESTINATION="OS=9.1,name=Apple TV 1080p" SDK="$TVOS_SDK"  SCHEME="$TVOS_SCHEME"
+    - DESTINATION="platform=OS X"              SDK="$MACOS_SDK" SCHEME="$MACOS_SCHEME"
 before_script:
     - bundle install
 script:
-    - xcodebuild -project SocketRocket.xcodeproj -scheme "SocketRocket" -sdk iphonesimulator -configuration Debug -PBXBuildsContinueAfterErrors=0 ACTIVE_ARCH_ONLY=0 build test
-    - xcodebuild -project SocketRocket.xcodeproj -scheme "SocketRocket-iOS" -sdk iphonesimulator -configuration Debug -PBXBuildsContinueAfterErrors=0 ACTIVE_ARCH_ONLY=0 build
-    - xcodebuild -project SocketRocket.xcodeproj -scheme "SocketRocketOSX" -sdk macosx10.10 -configuration Debug -destination "platform=OS X" -PBXBuildsContinueAfterErrors=0 build
+    - xcodebuild -version
+    - xcodebuild -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug -PBXBuildsContinueAfterErrors=0 ACTIVE_ARCH_ONLY=0 build test | xcpretty -tc
     - pod lib lint --verbose --fail-fast
