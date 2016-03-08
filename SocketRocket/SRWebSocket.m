@@ -934,6 +934,8 @@ static inline BOOL closeCodeIsValid(int closeCode) {
         });
     }
     
+    //frameData will be copied before passing to handlers
+    //otherwise there can be misbehaviours when value at the pointer is changed
     switch (opcode) {
         case SROpCodeTextFrame: {
             NSString *str = [[NSString alloc] initWithData:frameData encoding:NSUTF8StringEncoding];
@@ -952,13 +954,13 @@ static inline BOOL closeCodeIsValid(int closeCode) {
             [self _handleMessage:[frameData copy]];
             break;
         case SROpCodeConnectionClose:
-            [self handleCloseWithData:frameData];
+            [self handleCloseWithData:[frameData copy]];
             break;
         case SROpCodePing:
-            [self handlePing:frameData];
+            [self handlePing:[frameData copy]];
             break;
         case SROpCodePong:
-            [self handlePong:frameData];
+            [self handlePong:[frameData copy]];
             break;
         default:
             [self _closeWithProtocolError:[NSString stringWithFormat:@"Unknown opcode %ld", (long)opcode]];
