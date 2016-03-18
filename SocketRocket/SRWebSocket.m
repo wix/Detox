@@ -938,16 +938,19 @@ static inline BOOL closeCodeIsValid(int closeCode) {
     //otherwise there can be misbehaviours when value at the pointer is changed
     switch (opcode) {
         case SROpCodeTextFrame: {
-            NSString *str = [[NSString alloc] initWithData:frameData encoding:NSUTF8StringEncoding];
-            if (str == nil && frameData) {
-                [self closeWithCode:SRStatusCodeInvalidUTF8 reason:@"Text frames must be valid UTF-8"];
-                dispatch_async(_workQueue, ^{
-                    [self closeConnection];
-                });
-
-                return;
+            if ([self.delegate respondsToSelector:@selector(webSocketShouldConvertTextFrameToString:)] && ![self.delegate webSocketShouldConvertTextFrameToString:self]) {
+                [self _handleMessage:[frameData copy]];
+            } else {
+                NSString *str = [[NSString alloc] initWithData:frameData encoding:NSUTF8StringEncoding];
+                if (str == nil && frameData) {
+                    [self closeWithCode:SRStatusCodeInvalidUTF8 reason:@"Text frames must be valid UTF-8"];
+                    dispatch_async(_workQueue, ^{
+                        [self closeConnection];
+                    });
+                    return;
+                }
+                [self _handleMessage:str];
             }
-            [self _handleMessage:str];
             break;
         }
         case SROpCodeBinaryFrame:

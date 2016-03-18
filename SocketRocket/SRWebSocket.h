@@ -124,6 +124,9 @@ extern NSString *const SRHTTPResponseErrorKey;
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean;
 - (void)webSocket:(SRWebSocket *)webSocket didReceivePong:(NSData *)pongPayload;
 
+// Return YES to convert messages sent as Text to an NSString. Return NO to skip NSData -> NSString conversion for Text messages. Defaults to YES.
+- (BOOL)webSocketShouldConvertTextFrameToString:(SRWebSocket *)webSocket;
+
 @end
 
 #pragma mark - NSURLRequest (SRCertificateAdditions)
