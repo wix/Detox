@@ -1,0 +1,37 @@
+language: objective-c
+osx_image: xcode7.3
+sudo: false
+env:
+  matrix:
+    - DESTINATION="OS=9.3,name=iPhone 6s" SDK=iphonesimulator9.3
+    - DESTINATION="OS=9.2,name=iPhone 6s" SDK=iphonesimulator9.3
+    - DESTINATION="OS=9.1,name=iPad Pro" SDK=iphonesimulator9.3
+    - DESTINATION="OS=9.0,name=iPhone 6s Plus" SDK=iphonesimulator9.3
+    - DESTINATION="OS=8.4,name=iPad 2" SDK=iphonesimulator9.3
+    - DESTINATION="OS=8.3,name=iPad Retina" SDK=iphonesimulator9.3
+    - DESTINATION="OS=8.2,name=iPad Air" SDK=iphonesimulator9.3
+    - DESTINATION="OS=8.1,name=iPhone 5" SDK=iphonesimulator9.3
+    - DESTINATION="OS=8.1,name=iPhone 4S" SDK=iphonesimulator9.3
+    - GREY_RUBY=true
+before_install:
+  - gem install xcpretty --no-rdoc --no-ri --no-document --quiet
+before_script:
+  - Scripts/setup-earlgrey.sh
+script:
+  - set -o pipefail
+  - xcodebuild -version
+  - xcodebuild -showsdks
+  - if [[ ${GREY_RUBY} ]]; then
+      cd gem;
+      bundle install --retry=3;
+      rake;
+    fi
+  - if [[ ${DESTINATION} == *"OS=9.2"* || ${DESTINATION} == *"OS=8.4"* ]]; then
+      env NSUnbufferedIO=YES xcodebuild -project Tests/UnitTests/UnitTests.xcodeproj -scheme EarlGreyUnitTests -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO test | xcpretty -c;
+    fi
+  - if [[ ${DESTINATION} == *"OS=9.3"* ]]; then
+      env NSUnbufferedIO=YES xcodebuild -project Tests/FunctionalTests/FunctionalTests.xcodeproj -scheme EarlGreyFunctionalSwiftTests -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO test | xcpretty -c;
+    fi
+  - if [[ ${DESTINATION} ]]; then
+      env NSUnbufferedIO=YES xcodebuild -project Tests/FunctionalTests/FunctionalTests.xcodeproj -scheme EarlGreyFunctionalTests -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO test | xcpretty -c;
+    fi
