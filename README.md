@@ -24,6 +24,10 @@ E2E tests and automation library for mobile
 6. run the project by pressing play
 7. you should see an app in the simulator with "Welcome" and "Click Me" button, the iOS Accessibility Inspector might also show up
 8. if you get weird "DerivedData" errors, change the xcode "DerivedData" setting back to default
+9. if you get build problems, delete the following (since EarlGrey downloads them on build):
+  * `detox/example/node_modules/detox/ios/EarlGrey/OCHamcrest.framework`
+  * `detox/example/node_modules/detox/ios/EarlGrey/fishhook`
+  * `detox/example/node_modules/detox/ios/EarlGrey/Tests/UnitTests/ocmock`
 
 #### Step 3: Run the e2e test
 
