@@ -7,9 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SRWebSocket.h"
+#import "WebSocket.h"
+#import "TestRunner.h"
 
-@interface DetoxManager : NSObject<SRWebSocketDelegate>
+@interface DetoxManager : NSObject<WebSocketDelegate, TestRunnerDelegate>
 
 + (void) connectToServer:(NSString*)url withSessionId:(NSString*)sessionId;
 

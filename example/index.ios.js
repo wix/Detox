@@ -9,45 +9,44 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  TouchableOpacity
 } from 'react-native';
 
 class example extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      afterButton: false
+    };
+  }
   render() {
+    if (this.state.afterButton) return this.renderAfterButton();
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
+      <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
+        <Text style={{fontSize: 25, marginBottom: 30}}>
+          Welcome
         </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
+        <TouchableOpacity onPress={this.onButtonPress.bind(this)}>
+          <Text style={{color: 'blue'}}>Click Me</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+  renderAfterButton() {
+    return (
+      <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
+        <Text style={{fontSize: 25}}>
+          Yay
         </Text>
       </View>
     );
   }
+  onButtonPress() {
+    this.setState({
+      afterButton: true
+    });
+  }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
 
 AppRegistry.registerComponent('example', () => example);

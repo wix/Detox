@@ -10,8 +10,8 @@
 
 @interface DetoxManager()
 
-@property (nonatomic, retain) SRWebSocket *websocket;
-@property (nonatomic, retain) NSString *sessionId;
+@property (nonatomic, retain) WebSocket *websocket;
+@property (nonatomic, retain) TestRunner *testRunner;
 
 @end
 
@@ -28,6 +28,19 @@
     return sharedInstance;
 }
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self == nil) return nil;
+    
+    self.websocket = [[WebSocket alloc] init];
+    self.websocket.delegate = self;
+    self.testRunner = [[TestRunner alloc] init];
+    self.testRunner.delegate = self;
+    
+    return self;
+}
+
 + (void) connectToServer:(NSString*)url withSessionId:(NSString*)sessionId
 {
     [[DetoxManager sharedInstance] connectToServer:url withSessionId:sessionId];
@@ -35,35 +48,37 @@
 
 - (void) connectToServer:(NSString*)url withSessionId:(NSString*)sessionId
 {
-    if (self.websocket)
+    [self.websocket connectToServer:url withSessionId:sessionId];
+}
+
+- (void) websocketDidReceiveAction:(NSString *)type withParams:(NSDictionary *)params
+{
+    if ([type isEqualToString:@"invoke"])
     {
-        [self.websocket close];
-        self.websocket = nil;
+        [self.testRunner invoke:params];
     }
-    self.sessionId = sessionId;
-    self.websocket = [[SRWebSocket alloc] initWithURL:[NSURL URLWithString:url]];
-    self.websocket.delegate = self;
-    [self.websocket open];
 }
 
-- (void)webSocketDidOpen:(SRWebSocket *)webSocket
+- (void)testRunnerOnInvokeResult:(id)res withInvocationId:(NSString *)invocationId
 {
-    [self.websocket sendString:self.sessionId];
+    if (res == nil) res = @"(null)";
+    if (![res isKindOfClass:[NSString class]] && ![res isKindOfClass:[NSNumber class]])
+    {
+        res = [NSString stringWithFormat:@"(%@)", NSStringFromClass([res class])];
+    }
+    [self.websocket sendAction:@"invokeResult" withParams:@{@"id": invocationId, @"result": res}];
 }
 
-- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessageWithString:(NSString *)string
+- (void)testRunnerOnTestFailed:(NSString *)details
 {
-    NSLog(@"Detox Received message: %@", string);
+    if (details == nil) details = @"";
+    [self.websocket sendAction:@"testFailed" withParams:@{@"details": details}];
 }
 
-- (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error
+- (void)testRunnerOnError:(NSString *)error
 {
-    NSLog(@"Detox Error: %@", error);
-}
-
-- (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean
-{
-    NSLog(@"Detox Closed: %@", reason);
+    if (error == nil) error = @"";
+    [self.websocket sendAction:@"error" withParams:@{@"error": error}];
 }
 
 @end

@@ -1,0 +1,15 @@
+//
+//  MethodInvocation.h
+//  Detox
+//
+//  Created by Tal Kol on 6/16/16.
+//  Copyright © 2016 Wix. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface MethodInvocation : NSObject
+
++ (id) invoke:(NSDictionary*)params onError:(void (^)(NSString*))onError;
+
+@end
