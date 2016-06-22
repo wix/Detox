@@ -37,12 +37,15 @@ function connect(onConnect) {
   });
 }
 
-function invoke(params) {
+function execute(invocation) {
+  if (typeof invocation === 'function') {
+    invocation = invocation();
+  }
   var id = _invokeQueue.length;
-  params.id = id.toString();
-  _invokeQueue.push(params);
+  invocation.id = id.toString();
+  _invokeQueue.push(invocation);
   if (_readyForInvokeId >= id) {
-    sendAction('invoke', params);
+    sendAction('invoke', invocation);
   }
 }
 
@@ -71,6 +74,15 @@ function handleAction(type, params) {
     }
   }
 }
+
+
+var Invoke = require('./invoke/Invoke.js');
+var invoke = {
+  EarlGrey: require('./invoke/EarlGrey.js'),
+  IOS: require('./invoke/IOS.js'),
+  call: Invoke.call,
+  execute: execute
+};
 
 module.exports = {
   config: config,

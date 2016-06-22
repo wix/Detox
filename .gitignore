@@ -2,6 +2,8 @@ ios/EarlGrey/Demo
 ios/EarlGrey/docs
 ios/EarlGrey/Tests
 
+lib
+
 npm-debug.log
 
 #########################

@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/wix/detox.git"
   },
-  "version": "0.1.0",
+  "version": "2.1.0",
   "description": "E2E tests and automation for mobile",
   "nativePackage": true,
   "bugs": {
@@ -20,7 +20,7 @@
   "scripts": {
     "build": "BABEL_ENV=test babel src -d lib"
   },
-  "dependencies": {
+  "devDependencies": {
     "babel-cli": "^6.8.0",
     "babel-core": "^6.8.0",
     "babel-eslint": "^6.0.4",
@@ -29,5 +29,17 @@
     "babel-preset-react": "^6.5.0",
     "babel-preset-stage-0": "^6.5.0",
     "babel-register": "^6.8.0"
+  },
+  "babel": {
+    "env": {
+      "test": {
+        "presets": [
+          "es2015",
+          "react",
+          "stage-0"
+        ],
+        "retainLines": true
+      }
+    }
   }
 }

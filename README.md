@@ -17,6 +17,9 @@ E2E tests and automation library for mobile
 #### Step 2: Run the example iOS project in the simulator
 
 1. git clone the repo at http://github.com/wix/detox
+2. open the `detox` folder
+3. `npm install`
+4. `npm run build`
 2. open the `detox/example` folder
 3. `npm install`
 4. open `detox/example/ios/example.xcodeproj` in xcode
@@ -39,7 +42,7 @@ E2E tests and automation library for mobile
 
 1. reload the app by clicking `CMD+R`
 2. edit the file `detox/example/e2e/example.spec.js`
-3. in line 91 change "Mitzi" to "Yay" like the comment says
+3. in line 25 change "Mitzi" to "Yay" like the comment says
 4. re-run the test `npm run e2e`
 5. the test will hopefully now pass
 

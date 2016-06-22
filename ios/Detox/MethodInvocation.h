@@ -11,5 +11,6 @@
 @interface MethodInvocation : NSObject
 
 + (id) invoke:(NSDictionary*)params onError:(void (^)(NSString*))onError;
++ (id) serializeValue:(id)value onError:(void (^)(NSString*))onError;
 
 @end
