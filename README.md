@@ -42,7 +42,7 @@ E2E tests and automation library for mobile
 
 1. reload the app by clicking `CMD+R`
 2. edit the file `detox/example/e2e/example.spec.js`
-3. in line 25 change "Mitzi" to "Yay" like the comment says
+3. in line 17 change "Mitzi" to "Yay" like the comment says
 4. re-run the test `npm run e2e`
 5. the test will hopefully now pass
 
