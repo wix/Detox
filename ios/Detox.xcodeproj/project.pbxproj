@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CCA99FFF1D227DBE00C762B8 /* ReactNativeSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = CCA99FFD1D227DBE00C762B8 /* ReactNativeSupport.h */; };
+		CCA9A0001D227DBE00C762B8 /* ReactNativeSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA99FFE1D227DBE00C762B8 /* ReactNativeSupport.m */; };
 		CCE6D43B1D11A76500F81E39 /* Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE6D43A1D11A76500F81E39 /* Detox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CCFA7D8F1D11C54100E15EDF /* EarlGrey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCFA7D8E1D11C4E400E15EDF /* EarlGrey.framework */; };
 		CCFA7DB31D11C63100E15EDF /* SRDelegateController.h in Headers */ = {isa = PBXBuildFile; fileRef = CCFA7D951D11C63000E15EDF /* SRDelegateController.h */; };
@@ -68,6 +70,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CCA99FFD1D227DBE00C762B8 /* ReactNativeSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactNativeSupport.h; sourceTree = "<group>"; };
+		CCA99FFE1D227DBE00C762B8 /* ReactNativeSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactNativeSupport.m; sourceTree = "<group>"; };
 		CCE6D4371D11A76500F81E39 /* Detox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Detox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCE6D43A1D11A76500F81E39 /* Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.h; sourceTree = "<group>"; };
 		CCE6D43C1D11A76500F81E39 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -160,6 +164,8 @@
 				CCFA7E511D12CA1500E15EDF /* TestFailureHandler.m */,
 				CCFA7E441D12191200E15EDF /* MethodInvocation.h */,
 				CCFA7E451D12191200E15EDF /* MethodInvocation.m */,
+				CCA99FFD1D227DBE00C762B8 /* ReactNativeSupport.h */,
+				CCA99FFE1D227DBE00C762B8 /* ReactNativeSupport.m */,
 				CCE6D43C1D11A76500F81E39 /* Info.plist */,
 				CCFA7D921D11C63000E15EDF /* SocketRocket */,
 			);
@@ -295,6 +301,7 @@
 				CCFA7DC11D11C63100E15EDF /* SRHash.h in Headers */,
 				CCE6D43B1D11A76500F81E39 /* Detox.h in Headers */,
 				CCFA7E4A1D12A60600E15EDF /* TestRunner.h in Headers */,
+				CCA99FFF1D227DBE00C762B8 /* ReactNativeSupport.h in Headers */,
 				CCFA7DBD1D11C63100E15EDF /* SRSecurityOptions.h in Headers */,
 				CCFA7DB71D11C63100E15EDF /* SRIOConsumerPool.h in Headers */,
 				CCFA7E4E1D12AA4C00E15EDF /* WebSocket.h in Headers */,
@@ -394,6 +401,7 @@
 				CCFA7DC01D11C63100E15EDF /* SRError.m in Sources */,
 				CCFA7E531D12CA1500E15EDF /* TestFailureHandler.m in Sources */,
 				CCFA7DC41D11C63100E15EDF /* SRURLUtilities.m in Sources */,
+				CCA9A0001D227DBE00C762B8 /* ReactNativeSupport.m in Sources */,
 				CCFA7DBA1D11C63100E15EDF /* SRProxyConnect.m in Sources */,
 				CCFA7DC61D11C63100E15EDF /* NSRunLoop+SRWebSocket.m in Sources */,
 				CCFA7E4B1D12A60600E15EDF /* TestRunner.m in Sources */,

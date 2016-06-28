@@ -5,6 +5,7 @@ module.exports = {
   connect: websocket.connect,
   waitForTestResult: websocket.waitForTestResult,
   ios: {
-    expect: require('./ios/expect')
+    expect: require('./ios/expect'),
+    simulator: require('./ios/simulator')
   }
 };

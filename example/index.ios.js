@@ -17,18 +17,21 @@ class example extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      afterButton: false
+      greeting: undefined
     };
   }
   render() {
-    if (this.state.afterButton) return this.renderAfterButton();
+    if (this.state.greeting) return this.renderAfterButton();
     return (
       <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={{fontSize: 25, marginBottom: 30}}>
           Welcome
         </Text>
-        <TouchableOpacity onPress={this.onButtonPress.bind(this)}>
-          <Text style={{color: 'blue'}}>Click Me</Text>
+        <TouchableOpacity onPress={this.onButtonPress.bind(this, 'Hello')}>
+          <Text style={{color: 'blue', marginBottom: 20}}>Say Hello</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={this.onButtonPress.bind(this, 'World')}>
+          <Text style={{color: 'blue', marginBottom: 20}}>Say World</Text>
         </TouchableOpacity>
       </View>
     );
@@ -37,14 +40,14 @@ class example extends Component {
     return (
       <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={{fontSize: 25}}>
-          Yay
+          {this.state.greeting}!!!
         </Text>
       </View>
     );
   }
-  onButtonPress() {
+  onButtonPress(greeting) {
     this.setState({
-      afterButton: true
+      greeting: greeting
     });
   }
 }

@@ -9,8 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "WebSocket.h"
 #import "TestRunner.h"
+#import "ReactNativeSupport.h"
 
-@interface DetoxManager : NSObject<WebSocketDelegate, TestRunnerDelegate>
+@interface DetoxManager : NSObject<WebSocketDelegate, TestRunnerDelegate, ReactNativeSupportDelegate>
 
 + (void) connectToServer:(NSString*)url withSessionId:(NSString*)sessionId;
 

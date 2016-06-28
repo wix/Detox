@@ -36,15 +36,6 @@ Graybox E2E tests and automation library for mobile
 
 1. open a new terminal in `detox/example` folder
 2. `npm run e2e`
-3. the suite is built of 3 separate tests and should pass
-
-#### Step 4: Let's fail the test
-
-1. reload the app by clicking `CMD+R`
-2. edit the file `detox/example/e2e/example.spec.js`
-3. un-remark the fourth test (the one with Mitzi)
-4. re-run the test `npm run e2e`
-5. the test should fail
 
 #### Some implementation details
 

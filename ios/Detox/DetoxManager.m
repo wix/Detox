@@ -12,6 +12,7 @@
 
 @property (nonatomic, retain) WebSocket *websocket;
 @property (nonatomic, retain) TestRunner *testRunner;
+@property (nonatomic, retain) ReactNativeSupport *reactNativeSupport;
 
 @end
 
@@ -37,6 +38,8 @@
     self.websocket.delegate = self;
     self.testRunner = [[TestRunner alloc] init];
     self.testRunner.delegate = self;
+    self.reactNativeSupport = [[ReactNativeSupport alloc] init];
+    self.reactNativeSupport.delegate = self;
     
     return self;
 }
@@ -56,6 +59,13 @@
     if ([type isEqualToString:@"invoke"])
     {
         [self.testRunner invoke:params];
+        return;
+    }
+    
+    if ([type isEqualToString:@"reactNativeReload"])
+    {
+        [self.reactNativeSupport reloadApp];
+        return;
     }
 }
 
@@ -79,6 +89,11 @@
 {
     if (error == nil) error = @"";
     [self.websocket sendAction:@"error" withParams:@{@"error": error}];
+}
+
+- (void)reactNativeAppDidLoad
+{
+    [self.websocket sendAction:@"reactNativeAppLoaded" withParams:@{}];
 }
 
 @end

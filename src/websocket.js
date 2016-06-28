@@ -9,6 +9,7 @@ var _invokeQueue = [];
 var _readyForInvokeId = 0;
 var _finishOnInvokeId;
 var _onTestResult;
+var _onNextAction = {};
 
 function sendAction(type, params) {
   if (!_ws) return;
@@ -55,7 +56,15 @@ function waitForTestResult(done) {
   _onTestResult = done;
 }
 
+function waitForNextAction(type, done) {
+  _onNextAction[type] = done;
+}
+
 function handleAction(type, params) {
+  if (typeof _onNextAction[type] === 'function') {
+    _onNextAction[type]();
+    _onNextAction[type] = undefined;
+  }
   if (type === 'testFailed') {
     // console.log('DETOX: Test Failed:\n%s', params.details);
     if (typeof _onTestResult === 'function') {
@@ -91,5 +100,7 @@ module.exports = {
   config: config,
   connect: connect,
   waitForTestResult: waitForTestResult,
-  execute: execute
+  waitForNextAction: waitForNextAction,
+  execute: execute,
+  sendAction: sendAction
 };
