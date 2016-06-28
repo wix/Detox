@@ -1,21 +1,22 @@
-var detox = require('detox');
-var element = detox.ios.expect.element;
-var expect = detox.ios.expect.expect;
-var by = detox.ios.expect.by;
+describe('Example', function () {
 
-detox.config({
-  server: 'ws://localhost:8099',
-  sessionId: 'example'
-});
+  it('should show Click Me on start', function () {
+    expect(element(by.label('Click Me'))).toBeVisible();
+  });
 
-detox.connect(function () {
+  it('should show Yay after click', function () {
+    element(by.label('Click Me')).tap();
+    expect(element(by.label('Yay'))).toBeVisible();
+  });
 
-  element(by.label('Click Me')).tap();
+  it('should show Yay', function () {
+    expect(element(by.label('Yay'))).toBeVisible();
+  });
 
-  expect(element(by.label('Yay'))).toBeVisible();
-
-  expect(element(by.label('Mitzi'))).toBeVisible(); // change Mitzi to Yay to make the test pass
-
-  detox.done();
+  /*
+  it('should fail when looking for Mitzi', function () {
+    expect(element(by.label('Mitzi'))).toBeVisible();
+  });
+  */
 
 });

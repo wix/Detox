@@ -8,6 +8,7 @@ var _ws;
 var _invokeQueue = [];
 var _readyForInvokeId = 0;
 var _finishOnInvokeId;
+var _onTestResult;
 
 function sendAction(type, params) {
   if (!_ws) return;
@@ -49,28 +50,39 @@ function execute(invocation) {
   }
 }
 
-function done() {
+function waitForTestResult(done) {
   _finishOnInvokeId = _invokeQueue.length;
+  _onTestResult = done;
 }
 
 function handleAction(type, params) {
   if (type === 'testFailed') {
-    console.log('Test Failed:\n%s', params.details);
-    process.exit(0);
+    // console.log('DETOX: Test Failed:\n%s', params.details);
+    if (typeof _onTestResult === 'function') {
+      _onTestResult(new Error(params.details));
+      _onTestResult = undefined;
+    } else {
+      process.exit(0);
+    }
   }
   if (type === 'error') {
     console.log('error: %s', params.error);
   }
   if (type === 'invokeResult') {
-    // console.log('invokeResult: %s %s', params.id, params.result);
-    console.log('.');
+    // console.log('DETOX: invokeResult: %s %s', params.id, params.result);
+    // console.log('DETOX: .');
     _readyForInvokeId++;
     if (_invokeQueue[_readyForInvokeId]) {
       sendAction('invoke', _invokeQueue[_readyForInvokeId]);
     }
     if (_finishOnInvokeId === _readyForInvokeId) {
-      console.log('Test Passed');
-      process.exit(0);
+      // console.log('DETOX: Test Passed');
+      if (typeof _onTestResult === 'function') {
+        _onTestResult();
+        _onTestResult = undefined;
+      } else {
+        process.exit(0);
+      }
     }
   }
 }
@@ -78,6 +90,6 @@ function handleAction(type, params) {
 module.exports = {
   config: config,
   connect: connect,
-  done: done,
+  waitForTestResult: waitForTestResult,
   execute: execute
 };

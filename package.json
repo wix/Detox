@@ -41,5 +41,8 @@
         "retainLines": true
       }
     }
+  },
+  "dependencies": {
+    "mocha": "^2.5.3"
   }
 }

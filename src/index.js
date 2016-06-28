@@ -3,7 +3,7 @@ var websocket = require('./websocket');
 module.exports = {
   config: websocket.config,
   connect: websocket.connect,
-  done: websocket.done,
+  waitForTestResult: websocket.waitForTestResult,
   ios: {
     expect: require('./ios/expect')
   }

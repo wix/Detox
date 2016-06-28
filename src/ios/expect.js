@@ -113,7 +113,14 @@ const by = {
   label: (value) => new LabelMatcher(value)
 };
 
+const exportGlobals = function () {
+  global.element = element;
+  global.expect = expect;
+  global.by = by;
+};
+
 export {
+  exportGlobals,
   expect,
   element,
   by
