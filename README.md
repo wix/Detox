@@ -4,6 +4,8 @@ Graybox E2E tests and automation library for mobile
 
 ## Development still in progress!
 
+<img src="http://i.imgur.com/O2ZzrKG.gif">
+
 ## Wanna see it in action??
 
 #### Step 1: Run the server
