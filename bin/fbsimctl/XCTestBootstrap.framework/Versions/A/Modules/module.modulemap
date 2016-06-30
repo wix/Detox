@@ -1,0 +1,6 @@
+framework module XCTestBootstrap {
+  umbrella header "XCTestBootstrap.h"
+
+  export *
+  module * { export * }
+}

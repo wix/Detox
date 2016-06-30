@@ -12,5 +12,11 @@
   },
   "devDependencies": {
     "detox": "file:.."
+  },
+  "detox": {
+    "ios-simulator": {
+      "app": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
+      "device": "iPhone 6s, iOS 9.3"
+    }
   }
 }

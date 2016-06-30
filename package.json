@@ -43,6 +43,7 @@
     }
   },
   "dependencies": {
-    "mocha": "^2.5.3"
+    "mocha": "^2.5.3",
+    "bplist-parser": "^0.1.1"
   }
 }

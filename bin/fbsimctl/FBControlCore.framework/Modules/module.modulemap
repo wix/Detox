@@ -1,0 +1,6 @@
+framework module FBControlCore {
+  umbrella header "FBControlCore.h"
+
+  export *
+  module * { export * }
+}
