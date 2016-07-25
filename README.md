@@ -18,26 +18,40 @@ Graybox E2E tests and automation library for mobile
 
 #### Step 2: Run the example iOS project in the simulator
 
+##### Build detox
+
 1. git clone the repo at http://github.com/wix/detox
 2. open the `detox` folder
 3. `npm install`
 4. `npm run build`
-2. open the `detox/example` folder
-3. `npm install`
-4. open `detox/example/ios/example.xcodeproj` in xcode
-5. make sure you don't have any running RN packagers
-6. run the project by pressing play
-7. you should see an app in the simulator with "Welcome" and "Click Me" button, the iOS Accessibility Inspector might also show up
-8. if you get weird "DerivedData" errors, change the xcode "DerivedData" setting back to default
-9. if you get build problems, delete the following (since EarlGrey downloads them on build):
+
+##### Build the example project
+
+1. open the `detox/example` folder
+2. `npm install`
+3. make sure you don't have any running RN packagers
+4. build the example iOS project by running `react-native run-ios`
+5. the successful build results should be in `detox/example/ios/build/Build/Products/Debug-iphonesimulator`
+6. you can close the simulator opened by this action
+
+##### If the command line build fails try the following
+
+1. open `detox/example/ios/example.xcodeproj` in xcode
+2. make sure you don't have any running RN packagers
+3. run the project by pressing play
+4. you should see an app in the simulator with "Welcome" and "Click Me" button, the iOS Accessibility Inspector might also show up
+5. if you get weird "DerivedData" errors, change the xcode "DerivedData" setting back to default
+6. if you get build problems, delete the following (since EarlGrey downloads them on build):
   * `detox/example/node_modules/detox/ios/EarlGrey/OCHamcrest.framework`
   * `detox/example/node_modules/detox/ios/EarlGrey/fishhook`
   * `detox/example/node_modules/detox/ios/EarlGrey/Tests/UnitTests/ocmock`
 
 #### Step 3: Run the e2e test
 
-1. open a new terminal in `detox/example` folder
-2. `npm run e2e`
+1. make sure successful build results are in `detox/example/ios/build/Build/Products/Debug-iphonesimulator`
+2. open a new terminal in `detox/example` folder
+3. `npm run e2e`
+4. this action will open a new simulator and run the tests in it
 
 #### Some implementation details
 
