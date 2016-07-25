@@ -4,24 +4,35 @@ const fs = require('fs');
 const bplist = require('bplist-parser');
 const websocket = require('../websocket');
 
+// FBSimulatorControl command line docs
+// https://github.com/facebook/FBSimulatorControl/issues/250
+// https://github.com/facebook/FBSimulatorControl/blob/master/fbsimctl/FBSimulatorControlKitTests/Tests/Unit/CommandParsersTests.swift
+
 function reloadReactNativeApp(onLoad) {
   websocket.waitForNextAction('reactNativeAppLoaded', onLoad);
   websocket.sendAction('reactNativeReload');
 }
 
 function getBundleIdFromApp(appPath, onComplete) {
-  const absPath = getAppAbsolutePath(appPath);
-  const infoPlistPath = path.join(absPath, '/Info.plist');
   try {
+    const absPath = getAppAbsolutePath(appPath);
+    const infoPlistPath = path.join(absPath, '/Info.plist');
     bplist.parseFile(infoPlistPath, function (err, obj) {
-      if (err) throw err;
+      if (err) {
+        onComplete(err);
+        return;
+      }
       if (Array.isArray(obj)) obj = obj[0];
       const bundleId = obj['CFBundleIdentifier'];
-      if (!bundleId) throw new Error(`Field CFBundleIdentifier not found inside Info.plist of app binary at ${absPath}`);
+      if (!bundleId) {
+        onComplete(new Error(`Field CFBundleIdentifier not found inside Info.plist of app binary at ${absPath}`));
+        return;
+      }
       onComplete(null, bundleId);
     });
   } catch (e) {
-    throw new Error(`Cannot read Info.plist from app binary at ${absPath}, did you build it?`);
+    onComplete(e);
+    return;
   }
 }
 
@@ -31,7 +42,8 @@ function executeSimulatorCommand(args, onComplete) {
   exec(cmd, function (err, stderr, stdout) {
     if (err) {
       console.log(stderr);
-      throw err;
+      onComplete(err);
+      return;
     }
     onComplete();
   });
@@ -49,17 +61,28 @@ function getAppAbsolutePath(appPath) {
 
 // ./node_modules/detox/bin/fbsimctl/fbsimctl install ./ios/build/Build/Products/Debug-iphonesimulator/example.app
 function installApp(appPath, onComplete) {
-  const absPath = getAppAbsolutePath(appPath);
-  executeSimulatorCommand(`install ${absPath}`, function (err) {
-    if (err) throw err;
-    onComplete();
-  });
+  try {
+    const absPath = getAppAbsolutePath(appPath);
+    executeSimulatorCommand(`install ${absPath}`, function (err) {
+      if (err) {
+        onComplete(err);
+        return;
+      }
+      onComplete();
+    });
+  } catch (e) {
+    onComplete(e);
+    return;
+  }
 }
 
 // ./node_modules/detox/bin/fbsimctl/fbsimctl uninstall org.reactjs.native.example.example
 function uninstallApp(appPath, onComplete) {
   getBundleIdFromApp(appPath, function (err, bundleId) {
-    if (err) throw err;
+    if (err) {
+      onComplete(err);
+      return;
+    }
     executeSimulatorCommand(`uninstall ${bundleId}`, function (err2) {
       // this might fail if the app isn't installed, so don't worry about failure
       onComplete();
@@ -70,9 +93,15 @@ function uninstallApp(appPath, onComplete) {
 // ./node_modules/detox/bin/fbsimctl/fbsimctl launch org.reactjs.native.example.example
 function launchApp(appPath, onComplete) {
   getBundleIdFromApp(appPath, function (err, bundleId) {
-    if (err) throw err;
+    if (err) {
+      onComplete(err);
+      return;
+    }
     executeSimulatorCommand(`launch ${bundleId}`, function (err2) {
-      if (err2) throw err2;
+      if (err2) {
+        onComplete(err2);
+        return;
+      }
       onComplete();
     });
   });
@@ -81,9 +110,15 @@ function launchApp(appPath, onComplete) {
 // ./node_modules/detox/bin/fbsimctl/fbsimctl relaunch org.reactjs.native.example.example
 function relaunchApp(appPath, onComplete) {
   getBundleIdFromApp(appPath, function (err, bundleId) {
-    if (err) throw err;
+    if (err) {
+      onComplete(err);
+      return;
+    }
     executeSimulatorCommand(`relaunch ${bundleId}`, function (err2) {
-      if (err2) throw err2;
+      if (err2) {
+        onComplete(err2);
+        return;
+      }
       onComplete();
     });
   });
@@ -91,11 +126,20 @@ function relaunchApp(appPath, onComplete) {
 
 function deleteAndRelaunchApp(appPath, onComplete) {
   uninstallApp(appPath, function (err) {
-    if (err) throw err;
+    if (err) {
+      onComplete(err);
+      return;
+    }
     installApp(appPath, function (err2) {
-      if (err2) throw err2;
+      if (err2) {
+        onComplete(err2);
+        return;
+      }
       launchApp(appPath, function (err3) {
-        if (err3) throw err3;
+        if (err3) {
+          onComplete(err3);
+          return;
+        }
         onComplete();
       });
     });
@@ -113,7 +157,10 @@ function getQueryFromDevice(device) {
 function bootSimulator(device, onComplete) {
   const query = getQueryFromDevice(device);
   executeSimulatorCommand(`--state=shutdown ${query} boot`, function (err) {
-    if (err) throw err;
+    if (err) {
+      onComplete(err);
+      return;
+    }
     onComplete();
   });
 }
@@ -122,7 +169,10 @@ function bootSimulator(device, onComplete) {
 function shutdownSimulator(device, onComplete) {
   const query = getQueryFromDevice(device);
   executeSimulatorCommand(`--state=booted ${query} shutdown`, function (err) {
-    if (err) throw err;
+    if (err) {
+      onComplete(err);
+      return;
+    }
     onComplete();
   });
 }
@@ -132,17 +182,32 @@ function prepare(params, onComplete) {
   if (params['ios-simulator']) {
     foundScheme = true;
     const settings = params['ios-simulator'];
-    if (!settings.app) throw new Error(`ios-simulator.app property is missing, should hold the app binary path`);
-    if (!settings.device) throw new Error(`ios-simulator.device property is missing, should hold the device type we test on`);
+    if (!settings.app) {
+      onComplete(new Error(`ios-simulator.app property is missing, should hold the app binary path`));
+      return;
+    }
+    if (!settings.device) {
+      onComplete(new Error(`ios-simulator.device property is missing, should hold the device type we test on`));
+      return;
+    }
     bootSimulator(settings.device, function (err) {
-      if (err) throw err;
+      if (err) {
+        onComplete(err);
+        return;
+      }
       deleteAndRelaunchApp(settings.app, function (err2) {
-        if (err2) throw err2;
+        if (err2) {
+          onComplete(err2);
+          return;
+        }
         onComplete();
       });
     });
   }
-  if (!foundScheme) throw new Error(`No scheme was found, in order to test a simulator pass settings under the ios-simulator property`);
+  if (!foundScheme) {
+    onComplete(new Error(`No scheme was found, in order to test a simulator pass settings under the ios-simulator property`));
+    return;
+  }
 }
 
 export {
