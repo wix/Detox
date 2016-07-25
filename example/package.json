@@ -14,6 +14,10 @@
     "detox": "file:.."
   },
   "detox": {
+    "session": {
+      "server": "ws://localhost:8099",
+      "sessionId": "example"
+    },
     "ios-simulator": {
       "app": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
       "device": "iPhone 6s, iOS 9.3"

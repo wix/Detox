@@ -8,6 +8,8 @@ const websocket = require('../websocket');
 // https://github.com/facebook/FBSimulatorControl/issues/250
 // https://github.com/facebook/FBSimulatorControl/blob/master/fbsimctl/FBSimulatorControlKitTests/Tests/Unit/CommandParsersTests.swift
 
+let _defaultLaunchArgs = [];
+
 function reloadReactNativeApp(onLoad) {
   websocket.waitForNextAction('reactNativeAppLoaded', onLoad);
   websocket.sendAction('reactNativeReload');
@@ -90,14 +92,14 @@ function uninstallApp(appPath, onComplete) {
   });
 }
 
-// ./node_modules/detox/bin/fbsimctl/fbsimctl launch org.reactjs.native.example.example
+// ./node_modules/detox/bin/fbsimctl/fbsimctl launch org.reactjs.native.example.example arg1 arg2 arg3
 function launchApp(appPath, onComplete) {
   getBundleIdFromApp(appPath, function (err, bundleId) {
     if (err) {
       onComplete(err);
       return;
     }
-    executeSimulatorCommand(`launch ${bundleId}`, function (err2) {
+    executeSimulatorCommand(`launch ${bundleId} ${_defaultLaunchArgs.join(' ')}`, function (err2) {
       if (err2) {
         onComplete(err2);
         return;
@@ -114,7 +116,7 @@ function relaunchApp(appPath, onComplete) {
       onComplete(err);
       return;
     }
-    executeSimulatorCommand(`relaunch ${bundleId}`, function (err2) {
+    executeSimulatorCommand(`relaunch ${bundleId} ${_defaultLaunchArgs.join(' ')}`, function (err2) {
       if (err2) {
         onComplete(err2);
         return;
@@ -179,6 +181,21 @@ function shutdownSimulator(device, onComplete) {
 
 function prepare(params, onComplete) {
   let foundScheme = false;
+  if (params['session']) {
+    const settings = params['session'];
+    if (!settings.server) {
+      onComplete(new Error(`session.server property is missing, should hold the server address`));
+      return;
+    }
+    if (!settings.sessionId) {
+      onComplete(new Error(`session.sessionId property is missing, should hold the server session id`));
+      return;
+    }
+    _defaultLaunchArgs = ['-detoxServer', settings.server, '-detoxSessionId', settings.sessionId];
+  } else {
+    onComplete(new Error(`No session configuration was found, pass settings under the session property`));
+    return;
+  }
   if (params['ios-simulator']) {
     foundScheme = true;
     const settings = params['ios-simulator'];

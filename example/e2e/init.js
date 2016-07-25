@@ -1,17 +1,15 @@
 var detox = require('detox');
 detox.ios.expect.exportGlobals();
 global.simulator = detox.ios.simulator;
+var config = require('../package.json').detox;
 
 before(function (done) {
   this.timeout(40000);
-  simulator.prepare(require('../package.json').detox, done);
+  simulator.prepare(config, done);
 });
 
 before(function (done) {
-  detox.config({
-    server: 'ws://localhost:8099',
-    sessionId: 'example'
-  });
+  detox.config(config.session);
   detox.connect(done);
 });
 

@@ -55,7 +55,8 @@
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   
-  [DetoxManager connectToServer:@"http://localhost:8099" withSessionId:@"example"];
+  // init detox conditionally depending on given command line arguments
+  [DetoxManager conditionalInit:[NSUserDefaults standardUserDefaults]];
   
   return YES;
 }

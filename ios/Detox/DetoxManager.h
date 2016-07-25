@@ -13,6 +13,6 @@
 
 @interface DetoxManager : NSObject<WebSocketDelegate, TestRunnerDelegate, ReactNativeSupportDelegate>
 
-+ (void) connectToServer:(NSString*)url withSessionId:(NSString*)sessionId;
++ (void) conditionalInit:(NSUserDefaults*)options;
 
 @end
