@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CC0F35231D460F26008BB94F /* EarlGrey.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCFA7D8E1D11C4E400E15EDF /* EarlGrey.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CCA99FFF1D227DBE00C762B8 /* ReactNativeSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = CCA99FFD1D227DBE00C762B8 /* ReactNativeSupport.h */; };
 		CCA9A0001D227DBE00C762B8 /* ReactNativeSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA99FFE1D227DBE00C762B8 /* ReactNativeSupport.m */; };
 		CCE6D43B1D11A76500F81E39 /* Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE6D43A1D11A76500F81E39 /* Detox.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -68,6 +69,19 @@
 			remoteInfo = EarlGrey;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CC0F35221D460EFC008BB94F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				CC0F35231D460F26008BB94F /* EarlGrey.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		CCA99FFD1D227DBE00C762B8 /* ReactNativeSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactNativeSupport.h; sourceTree = "<group>"; };
@@ -322,6 +336,7 @@
 				CCE6D4331D11A76500F81E39 /* Frameworks */,
 				CCE6D4341D11A76500F81E39 /* Headers */,
 				CCE6D4351D11A76500F81E39 /* Resources */,
+				CC0F35221D460EFC008BB94F /* CopyFiles */,
 			);
 			buildRules = (
 			);

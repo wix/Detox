@@ -22,7 +22,8 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
-		CCFA7DF61D11D3BF00E15EDF /* Detox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCFA7DF51D11D25A00E15EDF /* Detox.framework */; };
+		CC0F35301D461096008BB94F /* Detox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCFA7DF51D11D25A00E15EDF /* Detox.framework */; };
+		CC0F35311D461096008BB94F /* Detox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CCFA7DF51D11D25A00E15EDF /* Detox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -103,6 +104,13 @@
 			remoteGlobalIDString = 58B5119B1A9E6C1200147676;
 			remoteInfo = RCTText;
 		};
+		CC0F35321D461096008BB94F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CCFA7DEF1D11D25A00E15EDF /* Detox.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CCE6D4361D11A76500F81E39;
+			remoteInfo = Detox;
+		};
 		CCFA7DF41D11D25A00E15EDF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CCFA7DEF1D11D25A00E15EDF /* Detox.xcodeproj */;
@@ -118,6 +126,20 @@
 			remoteInfo = Detox;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CC0F353E1D461097008BB94F /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				CC0F35311D461096008BB94F /* Detox.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
@@ -156,9 +178,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CCFA7DF61D11D3BF00E15EDF /* Detox.framework in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
+				CC0F35301D461096008BB94F /* Detox.framework in Frameworks */,
 				00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */,
 				00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */,
 				133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */,
@@ -368,11 +390,13 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
+				CC0F353E1D461097008BB94F /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				CCFA7DF81D11D3D000E15EDF /* PBXTargetDependency */,
+				CC0F35331D461096008BB94F /* PBXTargetDependency */,
 			);
 			name = example;
 			productName = "Hello World";
@@ -600,6 +624,11 @@
 			isa = PBXTargetDependency;
 			target = 13B07F861A680F5B00A75B9A /* example */;
 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
+		};
+		CC0F35331D461096008BB94F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Detox;
+			targetProxy = CC0F35321D461096008BB94F /* PBXContainerItemProxy */;
 		};
 		CCFA7DF81D11D3D000E15EDF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
