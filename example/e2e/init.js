@@ -16,3 +16,7 @@ before(function (done) {
 afterEach(function (done) {
   detox.waitForTestResult(done);
 });
+
+after(function (done) {
+  detox.cleanup(done);
+});

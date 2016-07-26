@@ -39,6 +39,11 @@ function connect(onConnect) {
   });
 }
 
+function cleanup(onComplete) {
+  waitForNextAction('cleanupDone', onComplete);
+  sendAction('cleanup');
+}
+
 function execute(invocation) {
   if (typeof invocation === 'function') {
     invocation = invocation();
@@ -99,6 +104,7 @@ function handleAction(type, params) {
 module.exports = {
   config: config,
   connect: connect,
+  cleanup: cleanup,
   waitForTestResult: waitForTestResult,
   waitForNextAction: waitForNextAction,
   execute: execute,

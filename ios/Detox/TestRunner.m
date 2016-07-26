@@ -10,7 +10,6 @@
 #import "MethodInvocation.h"
 #import "TestFailureHandler.h"
 
-
 @interface TestRunner()
 
 @property (nonatomic, retain) TestFailureHandler *failureHandler;
@@ -27,6 +26,14 @@
     //[[GREYConfiguration sharedInstance] setValue:@".*localhost.*" forConfigKey:kGREYConfigKeyURLBlacklistRegex];
 }
 
+- (void) cleanupEarlGrey
+{
+    // this triggers grey_tearDown in GREYAutomationSetup
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"GREYXCTestCaseInstanceDidFinish"
+                                                        object:self
+                                                      userInfo:nil];
+}
+
 - (instancetype)init
 {
     self = [super init];
@@ -37,6 +44,11 @@
     [self initEarlGrey];
     
     return self;
+}
+
+- (void) cleanup
+{
+    [self cleanupEarlGrey];
 }
 
 - (void)onTestFailed:(NSString *)details

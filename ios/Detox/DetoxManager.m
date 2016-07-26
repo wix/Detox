@@ -74,6 +74,13 @@
         return;
     }
     
+    if ([type isEqualToString:@"cleanup"])
+    {
+        [self.testRunner cleanup];
+        [self.websocket sendAction:@"cleanupDone" withParams:@{}];
+        return;
+    }
+    
     if ([type isEqualToString:@"reactNativeReload"])
     {
         [self.reactNativeSupport reloadApp];
