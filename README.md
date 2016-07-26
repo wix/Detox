@@ -64,3 +64,9 @@ Graybox E2E tests and automation library for mobile
 * We've abstracted this away in favor of an protractor-like api, see `detox/example/e2e/example.spec.js`
 * See everything EarlGrey supports [here](https://github.com/google/EarlGrey/blob/master/docs/api.md) and in this [cheatsheet](https://github.com/google/EarlGrey/blob/master/docs/cheatsheet/cheatsheet.pdf)
 * In the future we'll use [fbsimctl](https://github.com/facebook/FBSimulatorControl) to control the simulator from the test, restart the app, etc
+
+#### Roadmap
+
+* Cleaner code and refactoring once we have the basic architecture figured out
+* Improve separation of test start and test end in the native detox test runner
+* Maybe move entire mechanism to XCTestCase (instead of pure app code like now)
