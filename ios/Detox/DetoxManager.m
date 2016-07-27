@@ -44,23 +44,6 @@
     return self;
 }
 
-+ (void) conditionalInit:(NSUserDefaults*)options
-{
-    // options is normally [NSUserDefaults standardUserDefaults]
-    // these include command line arguments:
-    // MyApplication -detoxServer "http://localhost:8099" -detoxSessionId "example"
-    
-    NSString *detoxServer = [options stringForKey:@"detoxServer"];
-    NSString *detoxSessionId = [options stringForKey:@"detoxSessionId"];
-    if (!detoxServer || !detoxSessionId)
-    {
-        // if these args were not provided as part of options, don't start Detox at all!
-        return;
-    }
-    
-    [[DetoxManager sharedInstance] connectToServer:detoxServer withSessionId:detoxSessionId];
-}
-
 - (void) connectToServer:(NSString*)url withSessionId:(NSString*)sessionId
 {
     [self.websocket connectToServer:url withSessionId:sessionId];

@@ -9,12 +9,16 @@
 
 #import "AppDelegate.h"
 #import "RCTRootView.h"
-#import <Detox/DetoxManager.h>
+#import "DetoxLoader.h"
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  // this conditional init loads Detox only when command line arguments are given
+  // in normal execution, Detox is not loaded and there's zero impact on the app
+  detoxConditionalInit();
+  
   NSURL *jsCodeLocation;
 
   /**
@@ -54,9 +58,6 @@
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
-  
-  // init detox conditionally depending on given command line arguments
-  [DetoxManager conditionalInit:[NSUserDefaults standardUserDefaults]];
   
   return YES;
 }

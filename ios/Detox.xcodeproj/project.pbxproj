@@ -86,6 +86,7 @@
 /* Begin PBXFileReference section */
 		CCA99FFD1D227DBE00C762B8 /* ReactNativeSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactNativeSupport.h; sourceTree = "<group>"; };
 		CCA99FFE1D227DBE00C762B8 /* ReactNativeSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactNativeSupport.m; sourceTree = "<group>"; };
+		CCE105591D48D82F00A40950 /* DetoxLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetoxLoader.h; sourceTree = "<group>"; };
 		CCE6D4371D11A76500F81E39 /* Detox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Detox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCE6D43A1D11A76500F81E39 /* Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.h; sourceTree = "<group>"; };
 		CCE6D43C1D11A76500F81E39 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -168,6 +169,7 @@
 			isa = PBXGroup;
 			children = (
 				CCE6D43A1D11A76500F81E39 /* Detox.h */,
+				CCE105591D48D82F00A40950 /* DetoxLoader.h */,
 				CCFA7DD61D11C9F400E15EDF /* DetoxManager.h */,
 				CCFA7DD71D11C9F400E15EDF /* DetoxManager.m */,
 				CCFA7E4C1D12AA4C00E15EDF /* WebSocket.h */,
