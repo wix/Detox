@@ -1,5 +1,5 @@
 {
-  "name": "example",
+  "name": "rn-example",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -11,7 +11,8 @@
     "react-native": "^0.27.2"
   },
   "devDependencies": {
-    "detox": "file:.."
+    "detox": "latest",
+    "detox-server": "latest"
   },
   "detox": {
     "session": {

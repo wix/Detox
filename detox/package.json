@@ -1,19 +1,19 @@
 {
   "name": "detox",
+  "description": "E2E tests and automation for mobile",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
+  "version": "2.2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/wix/detox.git"
   },
-  "version": "2.1.0",
-  "description": "E2E tests and automation for mobile",
   "nativePackage": true,
   "bugs": {
     "url": "https://github.com/wix/detox/issues"
   },
-  "homepage": "https://github.com/wix/detox",
+  "homepage": "https://github.com/wix/detox/detox",
   "main": "./lib/index.js",
   "author": "Tal Kol <talkol@gmail.com>",
   "license": "MIT",
