@@ -1,5 +1,6 @@
-# detox
-### Example Project
+> detox
+
+# Example Project
 
 ## Step 1: Install the example project
 
