@@ -58,3 +58,11 @@
 * create your first test! `myFirstTest.spec.js` with content similar to [this](rn-example/e2e/example.spec.js)
 
 #### Step 4: Run your tests by following [these instructions](RUNNING.md)
+
+## Troubleshooting build problems
+
+* if you get weird "DerivedData" errors, change the Xcode "DerivedData" setting back to default
+* if you get build problems, delete the following (since EarlGrey downloads them on build):
+  * `detox/example/node_modules/detox/ios/EarlGrey/OCHamcrest.framework`
+  * `detox/example/node_modules/detox/ios/EarlGrey/fishhook`
+  * `detox/example/node_modules/detox/ios/EarlGrey/Tests/UnitTests/ocmock`
