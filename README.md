@@ -16,6 +16,7 @@ See the [Installing](INSTALLING.md) instructions
 
 ## Some implementation details
 
+* We let you write your e2e tests in JS (they can even be cross-platform)
 * We use websockets to communicate (so it should be super fast and bi-directional)
 * Both the app and the tester are clients, so we need the server to proxy between them
 * We are relying on EarlGrey as our gray-box native library for iOS (espresso for Android later on)
