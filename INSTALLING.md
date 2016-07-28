@@ -2,7 +2,10 @@
 
 # Adding e2e tests to your project with detox
 
-## React Native Project
+* [React Native projects](#react-native-project)
+* [Pure native projects](#pure-native-project)
+
+## React Native project
 
 #### Step 1: Modify your package.json
 
@@ -58,6 +61,10 @@
 * create your first test! `myFirstTest.spec.js` with content similar to [this](rn-example/e2e/example.spec.js)
 
 #### Step 4: Run your tests by following [these instructions](RUNNING.md)
+
+## Pure native project
+
+Instructions coming soon
 
 <br>
 
