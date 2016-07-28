@@ -1,6 +1,6 @@
 > detox
 
-# Example Project
+# React Native Example Project
 
 ## Step 1: Install the example project
 
