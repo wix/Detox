@@ -10,7 +10,11 @@ Graybox E2E tests and automation library for mobile
 
 Open the React Native [example project](rn-example) and follow the instructions
 
-#### Some implementation details
+## Wanna try it with your own project?
+
+See the [Installing](INSTALLING.md) instructions
+
+## Some implementation details
 
 * We use websockets to communicate (so it should be super fast and bi-directional)
 * Both the app and the tester are clients, so we need the server to proxy between them
@@ -18,9 +22,9 @@ Open the React Native [example project](rn-example) and follow the instructions
 * The JS tester controls EarlGrey by remote using a strange JSON protocol
 * Instead of wrapping the zillion API calls EarlGrey supports, we implemented a reflection mechanism
 * So the JS tester in low level actually invokes the native methods.. freaky
-* We've abstracted this away in favor of an protractor-like api, see `detox/example/e2e/example.spec.js`
+* We've abstracted this away in favor of an protractor-like api, see [`rn-example/e2e/example.spec.js`](rn-example/e2e/example.spec.js)
 * See everything EarlGrey supports [here](https://github.com/google/EarlGrey/blob/master/docs/api.md) and in this [cheatsheet](https://github.com/google/EarlGrey/blob/master/docs/cheatsheet/cheatsheet.pdf)
-* In the future we'll use [fbsimctl](https://github.com/facebook/FBSimulatorControl) to control the simulator from the test, restart the app, etc
+* we use [fbsimctl](https://github.com/facebook/FBSimulatorControl) to control the simulator from the test, restart the app, etc
 
 #### Roadmap
 
