@@ -31,15 +31,3 @@ See the [Installing](INSTALLING.md) instructions
 * Cleaner code and refactoring once we have the basic architecture figured out
 * Improve separation of test start and test end in the native detox test runner
 * Maybe move entire mechanism to XCTestCase (instead of pure app code like now)
-
-##### Troubleshooting
-
-1. open `detox/example/ios/example.xcodeproj` in xcode
-2. make sure you don't have any running RN packagers
-3. run the project by pressing play
-4. you should see an app in the simulator with "Welcome" and "Click Me" button, the iOS Accessibility Inspector might also show up
-5. if you get weird "DerivedData" errors, change the xcode "DerivedData" setting back to default
-6. if you get build problems, delete the following (since EarlGrey downloads them on build):
-  * `detox/example/node_modules/detox/ios/EarlGrey/OCHamcrest.framework`
-  * `detox/example/node_modules/detox/ios/EarlGrey/fishhook`
-  * `detox/example/node_modules/detox/ios/EarlGrey/Tests/UnitTests/ocmock`
