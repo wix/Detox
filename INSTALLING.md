@@ -59,6 +59,8 @@
 
 #### Step 4: Run your tests by following [these instructions](RUNNING.md)
 
+<br>
+
 ## Troubleshooting build problems
 
 * if you get weird "DerivedData" errors, change the Xcode "DerivedData" setting back to default
