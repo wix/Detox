@@ -1087,6 +1087,10 @@
 				MODULEMAP_FILE = "";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					XCTest,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.earlgrey.EarlGrey;
 				PRODUCT_MODULE_NAME = EarlGrey;
 				SDKROOT = iphoneos;
@@ -1133,6 +1137,10 @@
 				MODULEMAP_FILE = "";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					XCTest,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.earlgrey.EarlGrey;
 				PRODUCT_MODULE_NAME = EarlGrey;
 				SDKROOT = iphoneos;
