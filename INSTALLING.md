@@ -5,7 +5,11 @@
 * [React Native projects](#react-native-project)
 * [Pure native projects](#pure-native-project)
 
+<br>
+
 ## React Native project
+
+### Testing your project in Debug (default)
 
 #### Step 1: Modify your package.json
 
@@ -26,11 +30,13 @@
       "sessionId": "example"
     },
     "ios-simulator": {
-      "app": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
+      "app": "ios/build/Build/Products/Debug-iphonesimulator/yourproject.app",
       "device": "iPhone 6s, iOS 9.3"
     }
   }
 ```
+> Note: replace "yourproject" above with your Product name from Xcode
+
 * the resulting package.json should look something like [this](rn-example/package.json)
 
 #### Step 2: Add the native dependencies to your iOS project
@@ -60,7 +66,51 @@
 * create `init.js` file with this [content](rn-example/e2e/init.js)
 * create your first test! `myFirstTest.spec.js` with content similar to [this](rn-example/e2e/example.spec.js)
 
-#### Step 4: Run your tests by following [these instructions](RUNNING.md)
+#### Step 4: Build and run your project
+
+* make sure you're in your project root folder
+* make sure you don't have any running RN packagers
+* build your project by running `react-native run-ios`
+* if everything is ok, you'll see the app in the simulator - you can close the simulator after
+* the successful build results should be in `ios/build/Build/Products/Debug-iphonesimulator`
+* if you have build problems, see [troubleshooting](#troubleshooting-build-problems)
+
+> Note: if you build your project in a different way, it's ok, just make sure build results are found where specified in package.json (detox > ios-simulator > app)
+
+#### Step 5: Run your tests by following [these instructions](RUNNING.md)
+
+### Testing your project in Release
+
+Make sure you've followed the Debug instructions first, then proceed
+
+#### Step 1: Create a Release scheme
+
+* open your iOS project in Xcode (normally in `ios/yourproject.xcodeproj`)
+* open menu `Product` - `Scheme` - `Manage Schemes...` - choose the main scheme for your project and click `Edit...` - click `Duplicate Scheme`
+* rename the new scheme to `Release`, under `Info` - set `Build Configuration` to `Release`, remove the checkbox from `Debug executable`
+
+#### Step 2: Modify package.json and build your project
+
+* in the `detox` section of package.json, modify `app` to Release:
+```json
+    "ios-simulator": {
+      "app": "ios/build/Build/Products/Release-iphonesimulator/yourproject.app",
+      "device": "iPhone 6s, iOS 9.3"
+    }
+```
+> Note: replace "yourproject" above with your Product name from Xcode
+
+* make sure you're in your project root folder
+* build your project by running `react-native run-ios --scheme "Release"`
+* if everything is ok, you'll see the app in the simulator - you can close the simulator after
+* the successful build results should be in `ios/build/Build/Products/Release-iphonesimulator`
+* if you have build problems, see [troubleshooting](#troubleshooting-build-problems)
+
+> Note: if you build your project in a different way, it's ok, just make sure the "Release" scheme build results are found where specified in package.json (detox > ios-simulator > app)
+
+#### Step 3: Run your tests by following [these instructions](RUNNING.md)
+
+<br>
 
 ## Pure native project
 
@@ -70,8 +120,7 @@ Instructions coming soon
 
 ## Troubleshooting build problems
 
-* if you get weird "DerivedData" errors, change the Xcode "DerivedData" setting back to default
-* if you get build problems, delete the following (since EarlGrey downloads them on build):
-  * `detox/example/node_modules/detox/ios/EarlGrey/OCHamcrest.framework`
-  * `detox/example/node_modules/detox/ios/EarlGrey/fishhook`
-  * `detox/example/node_modules/detox/ios/EarlGrey/Tests/UnitTests/ocmock`
+* if you get build problems, delete the following folders (since EarlGrey downloads them on build):
+  * `node_modules/detox/ios/EarlGrey/OCHamcrest.framework`
+  * `node_modules/detox/ios/EarlGrey/fishhook`
+  * `node_modules/detox/ios/EarlGrey/Tests/UnitTests/ocmock`
