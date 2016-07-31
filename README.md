@@ -29,6 +29,11 @@ See the [Installing](INSTALLING.md) instructions
 
 #### Roadmap
 
+* Make Release projects work
+* Bring back the error messages when a test is failing
+* Improve errors printed during app execution (maybe show NSLog)
+* Create a pure native example project and install instructions
+* Add a test folder to the project so we can always test stuff like new matchers before releasing
 * Cleaner code and refactoring once we have the basic architecture figured out
 * Improve separation of test start and test end in the native detox test runner
 * Maybe move entire mechanism to XCTestCase (instead of pure app code like now)
