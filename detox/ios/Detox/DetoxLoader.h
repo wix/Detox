@@ -42,7 +42,10 @@ static inline void detoxConditionalInit()
             dlclose(handle);
         }
     }
-    
+    else 
+    {
+        NSLog(@"[%s] main: Unable to open library: %s\n", __FILE__, dlerror());
+    }
     if (DetoxManager != nil)
     {
         [[DetoxManager sharedInstance] connectToServer:detoxServer withSessionId:detoxSessionId];
