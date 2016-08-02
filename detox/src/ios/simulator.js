@@ -10,6 +10,11 @@ const websocket = require('../websocket');
 
 let _defaultLaunchArgs = [];
 
+function waitUntilReady(onReady) {
+  websocket.waitForNextAction('ready', onReady);
+  websocket.sendAction('isReady');
+}
+
 function reloadReactNativeApp(onLoad) {
   websocket.waitForNextAction('reactNativeAppLoaded', onLoad);
   websocket.sendAction('reactNativeReload');
@@ -235,7 +240,9 @@ function prepare(params, onComplete) {
           onComplete(err2);
           return;
         }
-        onComplete();
+        waitUntilReady(function () {
+          onComplete();
+        });
       });
     });
   }
@@ -254,5 +261,6 @@ export {
   launchApp,
   relaunchApp,
   deleteAndRelaunchApp,
-  reloadReactNativeApp
+  reloadReactNativeApp,
+  waitUntilReady
 };

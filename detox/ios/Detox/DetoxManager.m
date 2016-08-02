@@ -57,6 +57,12 @@
         return;
     }
     
+    if ([type isEqualToString:@"isReady"])
+    {
+        [self.websocket sendAction:@"ready" withParams:@{}];
+        return;
+    }
+    
     if ([type isEqualToString:@"cleanup"])
     {
         [self.testRunner cleanup];
