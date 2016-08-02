@@ -51,6 +51,18 @@ function executeSimulatorCommand(args, onComplete) {
   });
 }
 
+function executeOrigSimulatorCommand(args, onComplete) {
+  const cmd = 'xcrun simctl ' + args;
+  exec(cmd, function (err, stderr, stdout) {
+    if (err) {
+      console.log(stderr);
+      onComplete(err);
+      return;
+    }
+    onComplete();
+  });
+}
+
 function getAppAbsolutePath(appPath) {
   const absPath = path.join(__dirname, '../../../../', appPath);
   try {
@@ -85,10 +97,16 @@ function uninstallApp(appPath, onComplete) {
       onComplete(err);
       return;
     }
+    // it turns out that for deleting apps the orig simulator is much faster than fb's
+    executeOrigSimulatorCommand(`uninstall booted ${bundleId}`, function (err2) {
+      onComplete();
+    });
+    /*
     executeSimulatorCommand(`uninstall ${bundleId}`, function (err2) {
       // this might fail if the app isn't installed, so don't worry about failure
       onComplete();
     });
+    */
   });
 }
 
