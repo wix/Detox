@@ -38,7 +38,7 @@ class IdMatcher extends Matcher {
   constructor(value) {
     super();
     if (typeof value !== 'string') throw new Error(`IdMatcher ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityId:', value);
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityID:', value);
   }
 }
 
