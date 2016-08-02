@@ -2,6 +2,16 @@
 
 # React Native Example Project
 
+## Requirements
+
+* make sure you have Xcode installed (tested with v7.3)
+  * iPhone 6s iOS 9.3 simulator is installed
+* make sure you have node installed (tested with v6.2.2)
+  * npm is installed (tested with v3.9.5)
+* make sure you have react-native dependencies installed:
+   * react-native-cli is installed (`npm install -g react-native-cli`)
+   * watchman is installed (`brew install watchman`)
+
 ## Step 1: Install the example project
 
 * make sure you're in folder `detox/rn-example`
