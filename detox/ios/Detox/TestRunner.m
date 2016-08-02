@@ -13,6 +13,8 @@
 @interface TestRunner()
 
 @property (nonatomic, retain) TestFailureHandler *failureHandler;
+@property (nonatomic, retain) NSString *currentInvocationId;
+
 
 @end
 
@@ -41,6 +43,7 @@
     
     self.failureHandler = [[TestFailureHandler alloc] init];
     self.failureHandler.delegate = self;
+    self.currentInvocationId = nil;
     [self initEarlGrey];
     
     return self;
@@ -53,19 +56,25 @@
 
 - (void)onTestFailed:(NSString *)details
 {
-    if (self.delegate) [self.delegate testRunnerOnTestFailed:details];
+    if (self.currentInvocationId != nil)
+    {
+        if (self.delegate) [self.delegate testRunnerOnTestFailed:details];
+        self.currentInvocationId = nil;
+    }
 }
 
 - (void) invoke:(NSDictionary*)params
 {
-    NSString *invocationId = [params objectForKey:@"id"];
+    self.currentInvocationId = [params objectForKey:@"id"];
     grey_execute_async(^{
-        id res = [MethodInvocation invoke:params onError:^(NSString *error) {
+        id res = [MethodInvocation invoke:params onError:^(NSString *error)
+        {
             if (self.delegate) [self.delegate testRunnerOnError:error];
         }];
-        if (invocationId != nil)
+        if (self.currentInvocationId != nil)
         {
-            if (self.delegate) [self.delegate testRunnerOnInvokeResult:res withInvocationId:invocationId];
+            if (self.delegate) [self.delegate testRunnerOnInvokeResult:res withInvocationId:self.currentInvocationId];
+            self.currentInvocationId = nil;
         }
     });
 }

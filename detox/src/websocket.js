@@ -76,7 +76,7 @@ function handleAction(type, params) {
       _onTestResult(new Error(params.details));
       _onTestResult = undefined;
     } else {
-      process.exit(0);
+      console.log('error: _onTestResult is undefined on testFailed');
     }
   }
   if (type === 'error') {
@@ -95,7 +95,7 @@ function handleAction(type, params) {
         _onTestResult();
         _onTestResult = undefined;
       } else {
-        process.exit(0);
+        console.log('error: _onTestResult is undefined on test passed');
       }
     }
   }
