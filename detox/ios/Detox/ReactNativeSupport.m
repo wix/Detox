@@ -8,19 +8,34 @@
 
 #import "ReactNativeSupport.h"
 
+@interface ReactNativeSupport()
+
+@property (nonatomic, assign) BOOL javascriptJustLoaded;
+
+@end
+
+
 @implementation ReactNativeSupport
 
 NSString *const RCTReloadNotification = @"RCTReloadNotification";
 NSString *const RCTJavaScriptDidLoadNotification = @"RCTJavaScriptDidLoadNotification";
+NSString *const RCTContentDidAppearNotification = @"RCTContentDidAppearNotification";
+
 
 - (instancetype)init
 {
     self = [super init];
     if (self == nil) return nil;
+    self.javascriptJustLoaded = NO;
     
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(appDidLoad)
+                                             selector:@selector(javascriptDidLoad)
                                                  name:RCTJavaScriptDidLoadNotification
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(contentDidAppear)
+                                                 name:RCTContentDidAppearNotification
                                                object:nil];
     
     return self;
@@ -41,9 +56,18 @@ NSString *const RCTJavaScriptDidLoadNotification = @"RCTJavaScriptDidLoadNotific
                                                       userInfo:nil];
 }
 
-- (void) appDidLoad
+- (void) javascriptDidLoad
 {
-    if (self.delegate) [self.delegate reactNativeAppDidLoad];
+    self.javascriptJustLoaded = YES;
+}
+
+- (void) contentDidAppear
+{
+    if (self.javascriptJustLoaded)
+    {
+        self.javascriptJustLoaded = NO;
+        if (self.delegate) [self.delegate reactNativeAppDidLoad];
+    }
 }
 
 

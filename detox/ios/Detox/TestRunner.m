@@ -15,7 +15,6 @@
 @property (nonatomic, retain) TestFailureHandler *failureHandler;
 @property (nonatomic, retain) NSString *currentInvocationId;
 
-
 @end
 
 
