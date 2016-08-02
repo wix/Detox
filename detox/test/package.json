@@ -1,0 +1,27 @@
+{
+  "name": "detox-test",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "e2e": "mocha e2e --opts ./e2e/mocha.opts"
+  },
+  "dependencies": {
+    "react": "15.1.0",
+    "react-native": "^0.27.2"
+  },
+  "devDependencies": {
+    "detox": "file:..",
+    "detox-server": "file:../../detox-server"
+  },
+  "detox": {
+    "session": {
+      "server": "ws://localhost:8099",
+      "sessionId": "test"
+    },
+    "ios-simulator": {
+      "app": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
+      "device": "iPhone 6s, iOS 9.3"
+    }
+  }
+}
