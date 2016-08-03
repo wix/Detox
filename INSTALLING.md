@@ -148,8 +148,9 @@ Apparently, your project is not a node of npm (Node.js isn't necessary for a pur
   }
 }
 ```
-> Note: replace "NativeExample" from detox => ios-simulator => app with your Product name from Xcode
 * Run `npm install`
+> Note: replace "NativeExample" from detox => ios-simulator => app with your Product name from Xcode
+
 
 #### Step 2: Copying the build output to your project
 * Open your Xcode project.
