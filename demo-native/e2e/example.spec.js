@@ -1,13 +1,8 @@
 describe('Example', function () {
 
-  afterEach(function (done) {
-    settings = require("../package.json")
-    const appDir = settings.detox["ios-simulator"].app
-    console.log("Dir: ", appDir)
-    simulator.relaunchApp(appDir, done)
-    console.log("Relaunched app")
+  beforeEach(function (done) {
+    simulator.deleteAndRelaunchApp(done);
   });
-
 
   it('should have welcome screen', function () {
     expect(element(by.label('Welcome'))).toBeVisible();

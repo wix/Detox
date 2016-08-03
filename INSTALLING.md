@@ -144,7 +144,7 @@ Your detox tests will run on node.js in JavaScript, let's create your node envir
       "sessionId": "your-native-project"
     },
     "ios-simulator": {
-      "app": "ios/build/products/Debug-iphonesimulator/yourproject.app",
+      "app": "ios/build/Products/Debug-iphonesimulator/yourproject.app",
       "device": "iPhone 6s, iOS 9.3"
     }
   }
@@ -165,14 +165,14 @@ Your detox tests will run on node.js in JavaScript, let's create your node envir
   if [ ! -d "build" ]; then
       mkdir build
   fi
-  cp -rf ${BUILT_PRODUCTS_DIR}/../ /${SRCROOT}/build/products
+  cp -rf ${BUILT_PRODUCTS_DIR}/../ /${SRCROOT}/build/Products
   ```
-> Note: now, when you build your project, the build output will also be copied to ios/build/products (referenced by package.json)
+> Note: now, when you build your project, the build output will also be copied to ios/build/Products (referenced by package.json)
 
 #### Step 3: Add the native dependencies to your iOS project
 
 * open your iOS project in Xcode (normally in `ios/yourproject.xcodeproj`)
-* on the left pane, right click on the `Libraries` folder - `Add Files to "project"...`, then select `../node_modules/detox/ios/Detox.xcodeproj`
+* on the left pane, create a `Frameworks` folder and right click on it - `Add Files to "project"...`, then select `../node_modules/detox/ios/Detox.xcodeproj`
 * on the left pane, click on the project name on top, on the right choose the main target - `Build Phases`, then:
   * under `Target Dependencies` - click add (the + icon) - `Detox`
   * add another build phase by clicking add on top (the + icon) - `New Copy Files Phase` - Destination `Frameworks` - click add (the + icon) - `Detox.framework`

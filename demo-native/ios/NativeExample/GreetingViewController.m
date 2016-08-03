@@ -10,7 +10,7 @@
 
 @implementation GreetingViewController
 
--(void)viewDidAppear:(BOOL)animated {
+-(void)viewWillAppear:(BOOL)animated {
     if (self.greeting != nil) {
         self.greetingLabel.text = self.greeting;
     }

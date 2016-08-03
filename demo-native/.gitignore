@@ -3,6 +3,7 @@
 
 .idea
 node_modules/
+npm-debug.log
 .log
 
 # OSX

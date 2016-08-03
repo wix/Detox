@@ -22,11 +22,11 @@
 ## Step 3: Build and run the demo project
 
 * open `ios/NativeExample.xcodeproj` in Xcode and build it
-* the successful build results should be in `ios/build/Build/Products/Debug-iphonesimulator`
+* the successful build results should be in `ios/build/Products/Debug-iphonesimulator`
 
 ## Step 4: Run the e2e test
 
 * make sure you're in folder `detox/demo-native`
-* make sure successful build results are in `ios/build/Build/Products/Debug-iphonesimulator`
+* make sure successful build results are in `ios/build/Products/Debug-iphonesimulator`
 * run `npm run e2e`
 * this action will open a new simulator and run the tests in it

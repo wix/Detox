@@ -15,7 +15,7 @@
       "sessionId": "demo-native"
     },
     "ios-simulator": {
-      "app": "ios/build/products/Debug-iphonesimulator/NativeExample.app",
+      "app": "ios/build/Products/Debug-iphonesimulator/NativeExample.app",
       "device": "iPhone 6s, iOS 9.3"
     }
   }

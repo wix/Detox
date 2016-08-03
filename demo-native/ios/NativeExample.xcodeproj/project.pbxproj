@@ -14,7 +14,7 @@
 		4BD3FEC41D4E1F5E005AEE71 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BD3FEC21D4E1F5E005AEE71 /* LaunchScreen.storyboard */; };
 		4BD3FECC1D4E1FBA005AEE71 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BD3FECB1D4E1FBA005AEE71 /* Main.storyboard */; };
 		4BD3FED01D4E2000005AEE71 /* GreetingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BD3FECF1D4E2000005AEE71 /* GreetingViewController.m */; };
-		4BD3FEDD1D4E2774005AEE71 /* Detox.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = 4BD3FED91D4E275D005AEE71 /* Detox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CC330DC31D528B2E008292A2 /* Detox.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4BD3FED91D4E275D005AEE71 /* Detox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,15 +35,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		4BD3FEDC1D4E276E005AEE71 /* Copy Files */ = {
+		CC330DC21D528B15008292A2 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 7;
+			dstSubfolderSpec = 10;
 			files = (
-				4BD3FEDD1D4E2774005AEE71 /* Detox.framework in Copy Files */,
+				CC330DC31D528B2E008292A2 /* Detox.framework in CopyFiles */,
 			);
-			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -78,8 +77,8 @@
 		4BD3FEA81D4E1F5E005AEE71 = {
 			isa = PBXGroup;
 			children = (
-				4BD3FED31D4E275D005AEE71 /* Detox.xcodeproj */,
 				4BD3FEB31D4E1F5E005AEE71 /* NativeExample */,
+				CC330DC01D528918008292A2 /* Frameworks */,
 				4BD3FEB21D4E1F5E005AEE71 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -134,6 +133,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		CC330DC01D528918008292A2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4BD3FED31D4E275D005AEE71 /* Detox.xcodeproj */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -144,7 +151,7 @@
 				4BD3FEAD1D4E1F5E005AEE71 /* Sources */,
 				4BD3FEAF1D4E1F5E005AEE71 /* Resources */,
 				4BD3FEAE1D4E1F5E005AEE71 /* Frameworks */,
-				4BD3FEDC1D4E276E005AEE71 /* Copy Files */,
+				CC330DC21D528B15008292A2 /* CopyFiles */,
 				4BAB4C4F1D51D46A0005974C /* Run Script */,
 			);
 			buildRules = (
@@ -231,7 +238,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd ${SRCROOT}\nif [ ! -d \"build\" ]; then\n    mkdir build\nfi\ncp -rf ${BUILT_PRODUCTS_DIR}/../ /${SRCROOT}/build/products";
+			shellScript = "cd ${SRCROOT}\nif [ ! -d \"build\" ]; then\n    mkdir build\nfi\ncp -rf ${BUILT_PRODUCTS_DIR}/../ /${SRCROOT}/build/Products";
 		};
 /* End PBXShellScriptBuildPhase section */
 
