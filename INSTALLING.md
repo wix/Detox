@@ -124,30 +124,30 @@ Apparently, your project is not a node of npm (Node.js isn't necessary for a pur
 * Move the content of your root directory to this folder.
 * Outside the `ios` folder, create a file named `package.json`.
 * copy this to your `package.json` (edit variables like `name`):
-  ```json
-  {
-    "name": "native-example",
-    "version": "0.0.1",
-    "private": true,
-    "scripts": {
-      "e2e": "mocha e2e --opts ./e2e/mocha.opts"
+```json
+{
+  "name": "native-example",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "e2e": "mocha e2e --opts ./e2e/mocha.opts"
+  },
+  "devDependencies": {
+    "detox": "latest",
+    "detox-server": "latest"
+  },
+  "detox": {
+    "session": {
+      "server": "ws://localhost:8099",
+      "sessionId": "example"
     },
-    "devDependencies": {
-      "detox": "latest",
-      "detox-server": "latest"
-    },
-    "detox": {
-      "session": {
-        "server": "ws://localhost:8099",
-        "sessionId": "example"
-      },
-      "ios-simulator": {
-        "app": "ios/build/products/Debug-iphonesimulator/NativeExample.app",
-        "device": "iPhone 6s, iOS 9.3"
-      }
+    "ios-simulator": {
+      "app": "ios/build/products/Debug-iphonesimulator/NativeExample.app",
+      "device": "iPhone 6s, iOS 9.3"
     }
   }
-  ```
+}
+```
   > Note: replace "NativeExample" from detox => ios-simulator => app with your Product name from Xcode
 * Run `npm install`
 
