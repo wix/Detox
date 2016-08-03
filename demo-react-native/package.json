@@ -1,5 +1,5 @@
 {
-  "name": "rn-example",
+  "name": "demo-react-native",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -17,7 +17,7 @@
   "detox": {
     "session": {
       "server": "ws://localhost:8099",
-      "sessionId": "example"
+      "sessionId": "demo-react-native"
     },
     "ios-simulator": {
       "app": "ios/build/Build/Products/Debug-iphonesimulator/example.app",

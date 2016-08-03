@@ -8,7 +8,9 @@ Graybox E2E tests and automation library for mobile
 
 ## Wanna see it in action??
 
-Open the React Native [example project](rn-example) and follow the instructions
+Open the [React Native demo project](demo-react-native) and follow the instructions
+
+Not using React Native? you now have a [pure native demo project](demo-native) too
 
 ## Wanna try it with your own project?
 
@@ -23,17 +25,12 @@ See the [Installing](INSTALLING.md) instructions
 * The JS tester controls EarlGrey by remote using a strange JSON protocol
 * Instead of wrapping the zillion API calls EarlGrey supports, we implemented a reflection mechanism
 * So the JS tester in low level actually invokes the native methods.. freaky
-* We've abstracted this away in favor of an protractor-like api, see [`rn-example/e2e/example.spec.js`](rn-example/e2e/example.spec.js)
+* We've abstracted this away in favor of an protractor-like api, see [`demo-react-native/e2e/example.spec.js`](demo-react-native/e2e/example.spec.js)
 * See everything EarlGrey supports [here](https://github.com/google/EarlGrey/blob/master/docs/api.md) and in this [cheatsheet](https://github.com/google/EarlGrey/blob/master/docs/cheatsheet/cheatsheet.pdf)
-* we use [fbsimctl](https://github.com/facebook/FBSimulatorControl) to control the simulator from the test, restart the app, etc
+* We use [fbsimctl](https://github.com/facebook/FBSimulatorControl) to control the simulator from the test, restart the app, etc
 
 #### Roadmap
 
-* Make Release projects work
-* Bring back the error messages when a test is failing
 * Improve errors printed during app execution (maybe show NSLog)
-* Create a pure native example project and install instructions
-* Add a test folder to the project so we can always test stuff like new matchers before releasing
 * Cleaner code and refactoring once we have the basic architecture figured out
 * Improve separation of test start and test end in the native detox test runner
-* Maybe move entire mechanism to XCTestCase (instead of pure app code like now)

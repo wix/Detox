@@ -1,9 +1,9 @@
 {
-  "name": "native-example",
+  "name": "demo-native",
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "e2e": "mocha e2e --opts ./e2e/mocha.opts"
+    "e2e": "./node_modules/.bin/mocha e2e --opts ./e2e/mocha.opts"
   },
   "devDependencies": {
     "detox": "latest",
@@ -12,7 +12,7 @@
   "detox": {
     "session": {
       "server": "ws://localhost:8099",
-      "sessionId": "example"
+      "sessionId": "demo-native"
     },
     "ios-simulator": {
       "app": "ios/build/products/Debug-iphonesimulator/NativeExample.app",
