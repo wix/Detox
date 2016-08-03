@@ -1,0 +1,6 @@
+####
+# Webstrom
+
+.idea
+node_modules/
+.log
