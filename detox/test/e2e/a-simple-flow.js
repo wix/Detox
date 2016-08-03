@@ -1,4 +1,4 @@
-describe('Example', function () {
+describe('Simple Flow', function () {
 
   beforeEach(function (done) {
     simulator.reloadReactNativeApp(done);

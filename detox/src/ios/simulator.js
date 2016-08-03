@@ -9,8 +9,9 @@ const websocket = require('../websocket');
 // https://github.com/facebook/FBSimulatorControl/blob/master/fbsimctl/FBSimulatorControlKitTests/Tests/Unit/CommandParsersTests.swift
 
 let _defaultLaunchArgs = [];
+let _currentScheme = {};
 
-function waitUntilReady(onReady) {
+function _waitUntilReady(onReady) {
   websocket.waitForNextAction('ready', onReady);
   websocket.sendAction('isReady');
 }
@@ -20,9 +21,9 @@ function reloadReactNativeApp(onLoad) {
   websocket.sendAction('reactNativeReload');
 }
 
-function getBundleIdFromApp(appPath, onComplete) {
+function _getBundleIdFromApp(appPath, onComplete) {
   try {
-    const absPath = getAppAbsolutePath(appPath);
+    const absPath = _getAppAbsolutePath(appPath);
     const infoPlistPath = path.join(absPath, '/Info.plist');
     bplist.parseFile(infoPlistPath, function (err, obj) {
       if (err) {
@@ -43,7 +44,7 @@ function getBundleIdFromApp(appPath, onComplete) {
   }
 }
 
-function executeSimulatorCommand(args, onComplete) {
+function _executeSimulatorCommand(args, onComplete) {
   const fbsimctlPath = path.join(__dirname, '../../bin/fbsimctl/fbsimctl');
   const cmd = fbsimctlPath + ' ' + args;
   exec(cmd, function (err, stderr, stdout) {
@@ -56,7 +57,7 @@ function executeSimulatorCommand(args, onComplete) {
   });
 }
 
-function executeOrigSimulatorCommand(args, onComplete) {
+function _executeOrigSimulatorCommand(args, onComplete) {
   const cmd = 'xcrun simctl ' + args;
   exec(cmd, function (err, stderr, stdout) {
     if (err) {
@@ -68,7 +69,7 @@ function executeOrigSimulatorCommand(args, onComplete) {
   });
 }
 
-function getAppAbsolutePath(appPath) {
+function _getAppAbsolutePath(appPath) {
   const absPath = path.join(__dirname, '../../../../', appPath);
   try {
     fs.accessSync(absPath, fs.F_OK);
@@ -79,10 +80,10 @@ function getAppAbsolutePath(appPath) {
 }
 
 // ./node_modules/detox/bin/fbsimctl/fbsimctl install ./ios/build/Build/Products/Debug-iphonesimulator/example.app
-function installApp(appPath, onComplete) {
+function _installApp(appPath, onComplete) {
   try {
-    const absPath = getAppAbsolutePath(appPath);
-    executeSimulatorCommand(`install ${absPath}`, function (err) {
+    const absPath = _getAppAbsolutePath(appPath);
+    _executeSimulatorCommand(`install ${absPath}`, function (err) {
       if (err) {
         onComplete(err);
         return;
@@ -96,18 +97,18 @@ function installApp(appPath, onComplete) {
 }
 
 // ./node_modules/detox/bin/fbsimctl/fbsimctl uninstall org.reactjs.native.example.example
-function uninstallApp(appPath, onComplete) {
-  getBundleIdFromApp(appPath, function (err, bundleId) {
+function _uninstallApp(appPath, onComplete) {
+  _getBundleIdFromApp(appPath, function (err, bundleId) {
     if (err) {
       onComplete(err);
       return;
     }
     // it turns out that for deleting apps the orig simulator is much faster than fb's
-    executeOrigSimulatorCommand(`uninstall booted ${bundleId}`, function (err2) {
+    _executeOrigSimulatorCommand(`uninstall booted ${bundleId}`, function (err2) {
       onComplete();
     });
     /*
-    executeSimulatorCommand(`uninstall ${bundleId}`, function (err2) {
+    _executeSimulatorCommand(`uninstall ${bundleId}`, function (err2) {
       // this might fail if the app isn't installed, so don't worry about failure
       onComplete();
     });
@@ -116,13 +117,13 @@ function uninstallApp(appPath, onComplete) {
 }
 
 // ./node_modules/detox/bin/fbsimctl/fbsimctl launch org.reactjs.native.example.example arg1 arg2 arg3
-function launchApp(appPath, onComplete) {
-  getBundleIdFromApp(appPath, function (err, bundleId) {
+function _launchApp(appPath, onComplete) {
+  _getBundleIdFromApp(appPath, function (err, bundleId) {
     if (err) {
       onComplete(err);
       return;
     }
-    executeSimulatorCommand(`launch ${bundleId} ${_defaultLaunchArgs.join(' ')}`, function (err2) {
+    _executeSimulatorCommand(`launch ${bundleId} ${_defaultLaunchArgs.join(' ')}`, function (err2) {
       if (err2) {
         onComplete(err2);
         return;
@@ -133,13 +134,13 @@ function launchApp(appPath, onComplete) {
 }
 
 // ./node_modules/detox/bin/fbsimctl/fbsimctl relaunch org.reactjs.native.example.example
-function relaunchApp(appPath, onComplete) {
-  getBundleIdFromApp(appPath, function (err, bundleId) {
+function _relaunchApp(appPath, onComplete) {
+  _getBundleIdFromApp(appPath, function (err, bundleId) {
     if (err) {
       onComplete(err);
       return;
     }
-    executeSimulatorCommand(`relaunch ${bundleId} ${_defaultLaunchArgs.join(' ')}`, function (err2) {
+    _executeSimulatorCommand(`relaunch ${bundleId} ${_defaultLaunchArgs.join(' ')}`, function (err2) {
       if (err2) {
         onComplete(err2);
         return;
@@ -149,18 +150,34 @@ function relaunchApp(appPath, onComplete) {
   });
 }
 
-function deleteAndRelaunchApp(appPath, onComplete) {
-  uninstallApp(appPath, function (err) {
+function relaunchApp(onComplete) {
+  if (!_currentScheme.app) {
+    onComplete(new Error(`scheme.app property is missing, should hold the app binary path`));
+    return;
+  }
+  _relaunchApp(_currentScheme.app, function (err) {
     if (err) {
       onComplete(err);
       return;
     }
-    installApp(appPath, function (err2) {
+    _waitUntilReady(function () {
+      onComplete();
+    });
+  });
+}
+
+function _deleteAndRelaunchApp(appPath, onComplete) {
+  _uninstallApp(appPath, function (err) {
+    if (err) {
+      onComplete(err);
+      return;
+    }
+    _installApp(appPath, function (err2) {
       if (err2) {
         onComplete(err2);
         return;
       }
-      launchApp(appPath, function (err3) {
+      _launchApp(appPath, function (err3) {
         if (err3) {
           onComplete(err3);
           return;
@@ -171,7 +188,23 @@ function deleteAndRelaunchApp(appPath, onComplete) {
   });
 }
 
-function getQueryFromDevice(device) {
+function deleteAndRelaunchApp(onComplete) {
+  if (!_currentScheme.app) {
+    onComplete(new Error(`scheme.app property is missing, should hold the app binary path`));
+    return;
+  }
+  _deleteAndRelaunchApp(_currentScheme.app, function (err) {
+    if (err) {
+      onComplete(err);
+      return;
+    }
+    _waitUntilReady(function () {
+      onComplete();
+    });
+  });
+}
+
+function _getQueryFromDevice(device) {
   let res = '';
   const deviceParts = device.split(',');
   for (let i = 0 ; i < deviceParts.length ; i++) res += `"${deviceParts[i].trim()}" `;
@@ -179,9 +212,9 @@ function getQueryFromDevice(device) {
 }
 
 // ./node_modules/detox/bin/fbsimctl/fbsimctl "iPhone 5" "iOS 8.3" boot
-function bootSimulator(device, onComplete) {
-  const query = getQueryFromDevice(device);
-  executeSimulatorCommand(`--state=shutdown ${query} boot`, function (err) {
+function _bootSimulator(device, onComplete) {
+  const query = _getQueryFromDevice(device);
+  _executeSimulatorCommand(`--state=shutdown ${query} boot`, function (err) {
     if (err) {
       onComplete(err);
       return;
@@ -191,9 +224,9 @@ function bootSimulator(device, onComplete) {
 }
 
 // ./node_modules/detox/bin/fbsimctl/fbsimctl "iPhone 5" "iOS 8.3" shutdown
-function shutdownSimulator(device, onComplete) {
-  const query = getQueryFromDevice(device);
-  executeSimulatorCommand(`--state=booted ${query} shutdown`, function (err) {
+function _shutdownSimulator(device, onComplete) {
+  const query = _getQueryFromDevice(device);
+  _executeSimulatorCommand(`--state=booted ${query} shutdown`, function (err) {
     if (err) {
       onComplete(err);
       return;
@@ -221,29 +254,17 @@ function prepare(params, onComplete) {
   }
   if (params['ios-simulator']) {
     foundScheme = true;
-    const settings = params['ios-simulator'];
-    if (!settings.app) {
-      onComplete(new Error(`ios-simulator.app property is missing, should hold the app binary path`));
-      return;
-    }
-    if (!settings.device) {
+    _currentScheme = params['ios-simulator'];
+    if (!_currentScheme.device) {
       onComplete(new Error(`ios-simulator.device property is missing, should hold the device type we test on`));
       return;
     }
-    bootSimulator(settings.device, function (err) {
+    _bootSimulator(_currentScheme.device, function (err) {
       if (err) {
         onComplete(err);
         return;
       }
-      deleteAndRelaunchApp(settings.app, function (err2) {
-        if (err2) {
-          onComplete(err2);
-          return;
-        }
-        waitUntilReady(function () {
-          onComplete();
-        });
-      });
+      deleteAndRelaunchApp(onComplete);
     });
   }
   if (!foundScheme) {
@@ -254,13 +275,7 @@ function prepare(params, onComplete) {
 
 export {
   prepare,
-  bootSimulator,
-  shutdownSimulator,
-  installApp,
-  uninstallApp,
-  launchApp,
   relaunchApp,
   deleteAndRelaunchApp,
-  reloadReactNativeApp,
-  waitUntilReady
+  reloadReactNativeApp
 };
