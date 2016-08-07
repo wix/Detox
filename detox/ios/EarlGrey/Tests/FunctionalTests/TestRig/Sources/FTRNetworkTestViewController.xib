@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="FTRNetworkTestViewController">
+            <connections>
+                <outlet property="requestCompletedLabel" destination="5ew-SP-2TH" id="yyD-1q-hkw"/>
+                <outlet property="responseVerifiedLabel" destination="JrE-Fn-4nL" id="cKy-Ad-dag"/>
+                <outlet property="retryIndicator" destination="nG6-bQ-LiZ" id="QCN-5e-7Mi"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IY4-Z9-CL1">
+                    <rect key="frame" x="95" y="78" width="130" height="30"/>
+                    <state key="normal" title="NSURLConnection">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="NSURLConnectionTest"/>
+                    </userDefinedRuntimeAttributes>
+                    <connections>
+                        <action selector="testNetworkClick:" destination="-1" eventType="touchUpInside" id="xep-rS-Xbd"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DLm-KL-uJZ">
+                    <rect key="frame" x="108" y="116" width="105" height="30"/>
+                    <state key="normal" title="NSURLSession">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="NSURLSessionTest"/>
+                    </userDefinedRuntimeAttributes>
+                    <connections>
+                        <action selector="userDidTapNSURLSessionTest:" destination="-1" eventType="touchUpInside" id="uY0-VC-Lgx"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tW3-WU-1cn">
+                    <rect key="frame" x="51" y="153" width="218" height="30"/>
+                    <state key="normal" title="GTMSessionFetcher With Block">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="GTMSessionFetcherBlockTest"/>
+                    </userDefinedRuntimeAttributes>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3dd-a6-rCS">
+                    <rect key="frame" x="42" y="190" width="236" height="30"/>
+                    <state key="normal" title="GTMSessionFetcher With Selector">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="GTMSessionFetcherSELTest"/>
+                    </userDefinedRuntimeAttributes>
+                </button>
+                <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Retry Detected" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nG6-bQ-LiZ">
+                    <rect key="frame" x="102" y="475" width="116" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Request completed" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5ew-SP-2TH">
+                    <rect key="frame" x="85" y="522" width="151" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="FTRRequestCompletedLabel"/>
+                    </userDefinedRuntimeAttributes>
+                </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WQ8-4b-zEn">
+                    <rect key="frame" x="52" y="225" width="216" height="30"/>
+                    <state key="normal" title="GTMSessionFetcher With Retry">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="GTMSessionFetcherRetryTest"/>
+                    </userDefinedRuntimeAttributes>
+                </button>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Response Verified" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JrE-Fn-4nL">
+                    <rect key="frame" x="91" y="440" width="139" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="FTRResponseVerifiedLabel"/>
+                    </userDefinedRuntimeAttributes>
+                </label>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="5ew-SP-2TH" secondAttribute="bottom" constant="25" id="1d5-Nx-YXb"/>
+                <constraint firstItem="IY4-Z9-CL1" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="78" id="8Co-mI-fmZ"/>
+                <constraint firstItem="nG6-bQ-LiZ" firstAttribute="top" secondItem="JrE-Fn-4nL" secondAttribute="bottom" constant="15" id="Ahj-bh-fMV"/>
+                <constraint firstAttribute="centerX" secondItem="5ew-SP-2TH" secondAttribute="centerX" id="IUr-p0-WPV"/>
+                <constraint firstAttribute="centerX" secondItem="WQ8-4b-zEn" secondAttribute="centerX" id="K82-Hj-b8E"/>
+                <constraint firstAttribute="centerX" secondItem="tW3-WU-1cn" secondAttribute="centerX" id="KlF-l7-Z5H"/>
+                <constraint firstItem="tW3-WU-1cn" firstAttribute="top" secondItem="DLm-KL-uJZ" secondAttribute="bottom" constant="7" id="LaC-KD-dMn"/>
+                <constraint firstItem="3dd-a6-rCS" firstAttribute="top" secondItem="tW3-WU-1cn" secondAttribute="bottom" constant="7" id="M6s-x8-NZh"/>
+                <constraint firstItem="5ew-SP-2TH" firstAttribute="top" secondItem="nG6-bQ-LiZ" secondAttribute="bottom" constant="27" id="fRg-ie-AON"/>
+                <constraint firstAttribute="centerX" secondItem="JrE-Fn-4nL" secondAttribute="centerX" id="ft2-fA-F1V"/>
+                <constraint firstAttribute="centerX" secondItem="nG6-bQ-LiZ" secondAttribute="centerX" id="hLl-iO-q2F"/>
+                <constraint firstAttribute="centerX" secondItem="IY4-Z9-CL1" secondAttribute="centerX" id="oFl-Fw-iVK"/>
+                <constraint firstItem="DLm-KL-uJZ" firstAttribute="top" secondItem="IY4-Z9-CL1" secondAttribute="bottom" constant="8" id="rXD-a1-kjQ"/>
+                <constraint firstItem="WQ8-4b-zEn" firstAttribute="top" secondItem="3dd-a6-rCS" secondAttribute="bottom" constant="5" id="sTs-zK-Xfv"/>
+                <constraint firstAttribute="centerX" secondItem="3dd-a6-rCS" secondAttribute="centerX" id="usF-I2-Vl2"/>
+                <constraint firstAttribute="centerX" secondItem="DLm-KL-uJZ" secondAttribute="centerX" id="wHX-5C-XgP"/>
+            </constraints>
+        </view>
+    </objects>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination" type="retina4"/>
+    </simulatedMetricsContainer>
+</document>

@@ -1,6 +1,10 @@
 ios/EarlGrey/Demo
 ios/EarlGrey/docs
-ios/EarlGrey/Tests
+ios/EarlGrey/OCHamcrest.framework
+ios/EarlGrey/fishhook
+ios/EarlGrey/Tests/UnitTests/ocmock
+ios/EarlGrey/Tests/UnitTests/TestRig/Resources
+ios/EarlGrey/Tests/FunctionalTests/TestRig/Resources
 
 lib
 

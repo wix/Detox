@@ -1,6 +1,7 @@
 const exec = require('child_process').exec;
 const path = require('path');
 const fs = require('fs');
+const _ = require('lodash');
 const bplist = require('bplist-parser');
 const websocket = require('../websocket');
 
@@ -237,8 +238,42 @@ function _shutdownSimulator(device, onComplete) {
   });
 }
 
+// returns undefined if not found
+function _getArgValue(key) {
+  for (let i = 0; i < process.argv.length ; i++) {
+    if (process.argv[i].startsWith(`--${key}=`)) {
+      return process.argv[i].split('=')[1];
+    }
+  }
+  return undefined;
+}
+
+// returns true if found scheme, false if no scheme found
+function _setCurrentScheme(params) {
+  let scheme;
+  const schemeOverride = _getArgValue('detoxScheme');
+  if (schemeOverride) {
+    scheme = _.get(params, schemeOverride);
+  }
+  if (!scheme) {
+    scheme = _.get(params, 'ios-simulator.debug');
+  }
+  if (!scheme) {
+    scheme = _.get(params, 'ios-simulator.release');
+  }
+  if (!scheme) {
+    scheme = _.get(params, 'ios-simulator');
+  }
+  if (scheme) {
+    _currentScheme = scheme;
+    console.log('DETOX scheme:\n', scheme, '\n');
+    return true;
+  } else {
+    return false;
+  }
+}
+
 function prepare(params, onComplete) {
-  let foundScheme = false;
   if (params['session']) {
     const settings = params['session'];
     if (!settings.server) {
@@ -254,11 +289,9 @@ function prepare(params, onComplete) {
     onComplete(new Error(`No session configuration was found, pass settings under the session property`));
     return;
   }
-  if (params['ios-simulator']) {
-    foundScheme = true;
-    _currentScheme = params['ios-simulator'];
+  if (_setCurrentScheme(params)) {
     if (!_currentScheme.device) {
-      onComplete(new Error(`ios-simulator.device property is missing, should hold the device type we test on`));
+      onComplete(new Error(`scheme.device property is missing, should hold the device type we test on`));
       return;
     }
     _bootSimulator(_currentScheme.device, function (err) {
@@ -268,8 +301,7 @@ function prepare(params, onComplete) {
       }
       deleteAndRelaunchApp(onComplete);
     });
-  }
-  if (!foundScheme) {
+  } else {
     onComplete(new Error(`No scheme was found, in order to test a simulator pass settings under the ios-simulator property`));
     return;
   }

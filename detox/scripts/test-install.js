@@ -34,9 +34,23 @@ shell.echo('# killing any running react-native packagers');
 shell.exec('pkill -f "react-native/packager"');
 
 shell.echo('\n#################################################################');
+shell.echo('# node ./node_modules/detox/scripts/clean-build.js');
+if (shell.exec('node ./node_modules/detox/scripts/clean-build.js').code !== 0) {
+  shell.echo('error: node ./node_modules/detox/scripts/clean-build.js');
+  process.exit(1);
+}
+
+shell.echo('\n#################################################################');
 shell.echo('# react-native run-ios');
 if (shell.exec('react-native run-ios').code !== 0) {
   shell.echo('error: react-native run-ios');
+  process.exit(1);
+}
+
+shell.echo('\n#################################################################');
+shell.echo('# react-native run-ios --scheme "example Release"');
+if (shell.exec('react-native run-ios --scheme "example Release"').code !== 0) {
+  shell.echo('error: react-native run-ios --scheme "example Release"');
   process.exit(1);
 }
 

@@ -18,7 +18,7 @@ shell.cd('test');
 
 shell.echo('\n#################################################################');
 shell.echo('# deleting node modules');
-shell.rm('-rf', 'node_modules');
+shell.rm('-rf', './node_modules');
 
 shell.echo('\n#################################################################');
 shell.echo('# deleting ios build');

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="0bE-ao-gjD" customClass="FTRCollectionViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" reversesTitleShadowWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2YR-bh-A8X">
+                        <rect key="frame" x="10" y="2" width="30" height="46"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" red="0.94656504760000004" green="0.94656504760000004" blue="0.94656504760000004" alpha="1" colorSpace="calibratedRGB"/>
+                        <fontDescription key="fontDescription" type="boldSystem" pointSize="28"/>
+                        <state key="normal" title="A">
+                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                        </state>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="titleLabel.adjustsFontSizeToFitWidth" value="YES"/>
+                        </userDefinedRuntimeAttributes>
+                        <connections>
+                            <action selector="onTap:" destination="0bE-ao-gjD" eventType="touchUpInside" id="EXv-BR-gxP"/>
+                        </connections>
+                    </button>
+                </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            </view>
+            <gestureRecognizers/>
+            <constraints>
+                <constraint firstItem="2YR-bh-A8X" firstAttribute="leading" secondItem="0bE-ao-gjD" secondAttribute="leading" constant="2" id="0vp-Lv-3af"/>
+                <constraint firstAttribute="bottom" secondItem="2YR-bh-A8X" secondAttribute="bottom" constant="2" id="C8P-7Q-rPQ"/>
+                <constraint firstAttribute="trailing" secondItem="2YR-bh-A8X" secondAttribute="trailing" constant="2" id="HaA-1j-UXx"/>
+                <constraint firstAttribute="centerX" secondItem="2YR-bh-A8X" secondAttribute="centerX" id="SIv-GI-OiL"/>
+                <constraint firstAttribute="centerY" secondItem="2YR-bh-A8X" secondAttribute="centerY" id="WyD-ET-APb"/>
+                <constraint firstItem="2YR-bh-A8X" firstAttribute="top" secondItem="0bE-ao-gjD" secondAttribute="top" constant="2" id="spl-sS-Dnb"/>
+            </constraints>
+            <size key="customSize" width="50" height="48"/>
+            <connections>
+                <outlet property="alphaButton" destination="2YR-bh-A8X" id="HBZ-47-Gpz"/>
+            </connections>
+        </collectionViewCell>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+    </objects>
+</document>

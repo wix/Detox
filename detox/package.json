@@ -46,8 +46,9 @@
     }
   },
   "dependencies": {
+    "bplist-parser": "^0.1.1",
     "detox-tools": "^1.0.0",
-    "mocha": "^2.5.3",
-    "bplist-parser": "^0.1.1"
+    "lodash": "^4.14.1",
+    "mocha": "^2.5.3"
   }
 }

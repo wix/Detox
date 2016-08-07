@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "e2e": "./node_modules/.bin/mocha e2e --opts ./e2e/mocha.opts"
+    "e2e": "./node_modules/.bin/mocha e2e --opts ./e2e/mocha.opts",
+    "e2e-release": "./node_modules/.bin/mocha e2e --opts ./e2e/mocha.opts --detoxScheme=ios-simulator.release"
   },
   "dependencies": {
     "react": "15.1.0",
@@ -21,8 +22,14 @@
       "sessionId": "test"
     },
     "ios-simulator": {
-      "app": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
-      "device": "iPhone 6s, iOS 9.3"
+      "debug": {
+        "app": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
+        "device": "iPhone 6s, iOS 9.3"
+      },
+      "release": {
+        "app": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+        "device": "iPhone 6s, iOS 9.3"
+      }
     }
   }
 }

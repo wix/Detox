@@ -215,3 +215,4 @@ Coming soon...
   * `node_modules/detox/ios/EarlGrey/OCHamcrest.framework`
   * `node_modules/detox/ios/EarlGrey/fishhook`
   * `node_modules/detox/ios/EarlGrey/Tests/UnitTests/ocmock`
+  * you can do this automatically by running `node ./node_modules/detox/scripts/clean-build.js` from your project root (where package.json is)

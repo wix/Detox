@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6724" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6711"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="FTRSliderViewController">
+            <connections>
+                <outlet property="slider1" destination="PEx-zX-vdi" id="UM6-UO-q1l"/>
+                <outlet property="slider2" destination="u4Y-fZ-aXg" id="WQw-8T-62B"/>
+                <outlet property="slider3" destination="paI-Tc-qhv" id="7bb-C7-k9a"/>
+                <outlet property="slider4" destination="inD-Sc-t5g" id="FbW-N1-7rF"/>
+                <outlet property="slider5" destination="Vu6-p3-2fW" id="HQv-Sj-XZo"/>
+                <outlet property="slider6" destination="Vks-sv-83q" id="JYn-Je-suw"/>
+                <outlet property="sliderSnap" destination="ObM-hm-9bf" id="FJp-xS-LRI"/>
+                <outlet property="view" destination="iN0-l3-epB" id="TZB-oi-2u0"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="u4Y-fZ-aXg">
+                    <rect key="frame" x="57" y="110" width="206" height="31"/>
+                    <accessibility key="accessibilityConfiguration" label="slider2"/>
+                    <connections>
+                        <action selector="valueChanged:" destination="-1" eventType="valueChanged" id="WNd-C6-Jis"/>
+                    </connections>
+                </slider>
+                <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="inD-Sc-t5g">
+                    <rect key="frame" x="127" y="186" width="66" height="31"/>
+                    <accessibility key="accessibilityConfiguration" label="slider4"/>
+                    <connections>
+                        <action selector="valueChanged:" destination="-1" eventType="valueChanged" id="igU-hN-Ruh"/>
+                    </connections>
+                </slider>
+                <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Vu6-p3-2fW">
+                    <rect key="frame" x="18" y="224" width="284" height="31"/>
+                    <accessibility key="accessibilityConfiguration" label="slider5"/>
+                    <connections>
+                        <action selector="touchUpInside:" destination="-1" eventType="touchUpInside" id="0yj-W9-Vgf"/>
+                        <action selector="touchUpOutside:" destination="-1" eventType="touchUpOutside" id="RLi-LY-AFf"/>
+                        <action selector="valueChanged:" destination="-1" eventType="valueChanged" id="Zej-7x-0K5"/>
+                    </connections>
+                </slider>
+                <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="PEx-zX-vdi">
+                    <rect key="frame" x="18" y="72" width="284" height="31"/>
+                    <accessibility key="accessibilityConfiguration" label="slider1"/>
+                    <connections>
+                        <action selector="valueChanged:" destination="-1" eventType="valueChanged" id="X8B-EO-wU4"/>
+                    </connections>
+                </slider>
+                <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="paI-Tc-qhv">
+                    <rect key="frame" x="82" y="148" width="156" height="31"/>
+                    <accessibility key="accessibilityConfiguration" label="slider3"/>
+                    <connections>
+                        <action selector="valueChanged:" destination="-1" eventType="valueChanged" id="306-2O-GhB"/>
+                    </connections>
+                </slider>
+                <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="8" minValue="0.0" maxValue="10" translatesAutoresizingMaskIntoConstraints="NO" id="ObM-hm-9bf">
+                    <rect key="frame" x="127" y="300" width="66" height="31"/>
+                    <color key="minimumTrackTintColor" red="0.30401031229999997" green="0.48455310839999999" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="maximumTrackTintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="thumbTintColor" red="0.086274512110000007" green="0.49411767719999999" blue="0.98431378599999997" alpha="1" colorSpace="deviceRGB"/>
+                    <connections>
+                        <action selector="valueChanged:" destination="-1" eventType="valueChanged" id="sbK-nf-JH1"/>
+                    </connections>
+                </slider>
+                <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Vks-sv-83q">
+                    <rect key="frame" x="18" y="262" width="284" height="31"/>
+                    <connections>
+                        <action selector="valueChanged:" destination="-1" eventType="valueChanged" id="Qaz-Rb-teP"/>
+                    </connections>
+                </slider>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+        </view>
+    </objects>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination" type="retina4"/>
+    </simulatedMetricsContainer>
+</document>

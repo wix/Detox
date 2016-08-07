@@ -14,7 +14,7 @@ shell.cd('test');
 shell.echo('\n#################################################################');
 shell.echo('copy detox js');
 shell.cp('-Rf', '../lib/*', 'node_modules/detox/lib');
-shell.cp('-Rf', '../lib/*', 'node_modules/detox/lib');
+shell.cp('-Rf', '../scripts/*', 'node_modules/detox/scripts');
 
 shell.echo('\n#################################################################');
 shell.echo('copy detox-server js');
