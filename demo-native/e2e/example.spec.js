@@ -1,7 +1,7 @@
 describe('Example', function () {
 
   beforeEach(function (done) {
-    simulator.deleteAndRelaunchApp(done);
+    simulator.relaunchApp(done);
   });
 
   it('should have welcome screen', function () {

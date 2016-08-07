@@ -12,7 +12,6 @@ describe('Simulator Actions', function () {
 
   describe('relaunchApp', function () {
     before(function (done) {
-      this.timeout(20000); // this action for some reason is super slow
       simulator.relaunchApp(done);
     });
     it('should tap successfully', function () {

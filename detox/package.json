@@ -46,6 +46,7 @@
     }
   },
   "dependencies": {
+    "detox-tools": "^1.0.0",
     "mocha": "^2.5.3",
     "bplist-parser": "^0.1.1"
   }
