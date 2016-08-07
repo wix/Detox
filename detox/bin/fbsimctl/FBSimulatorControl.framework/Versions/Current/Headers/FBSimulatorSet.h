@@ -61,7 +61,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nullable FBSimulator *)createSimulatorWithConfiguration:(FBSimulatorConfiguration *)configuration error:(NSError **)error;
 
-#pragma mark Creation Methods
+/**
+ Finds and creates the Configurations for the missing 'Default Simulators' in the reciever.
+ */
+- (NSArray<FBSimulatorConfiguration *> *)configurationsForAbsentDefaultSimulators;
+
+#pragma mark Desctructive Methods
 
 /**
  Kills a Simulator in the Set.

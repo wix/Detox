@@ -44,6 +44,7 @@ function _getBundleIdFromApp(appPath, onComplete) {
   }
 }
 
+// fb simctl commands (we try to use it as much as possible since it supports multiple instances)
 function _executeSimulatorCommand(args, onComplete) {
   const fbsimctlPath = path.join(__dirname, '../../bin/fbsimctl/fbsimctl');
   const cmd = fbsimctlPath + ' ' + args;
@@ -57,6 +58,7 @@ function _executeSimulatorCommand(args, onComplete) {
   });
 }
 
+// original simctl by Apple (we try to use it only where fbsimctl doesn't work or is very slow)
 function _executeOrigSimulatorCommand(args, onComplete) {
   const cmd = 'xcrun simctl ' + args;
   exec(cmd, function (err, stderr, stdout) {

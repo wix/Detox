@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param application the Application to Install.
  @return the reciever, for chaining.
  */
-- (instancetype)installApplication:(FBSimulatorApplication *)application;
+- (instancetype)installApplication:(FBApplicationDescriptor *)application;
 
 /**
  Uninstalls the given Application.
@@ -58,7 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param application the Application to terminate.
  @return the reciever, for chaining.
  */
-- (instancetype)terminateApplication:(FBSimulatorApplication *)application;
+- (instancetype)terminateApplication:(FBApplicationDescriptor *)application;
 
 /**
  Terminates an Application based on the Bundle ID.

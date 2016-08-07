@@ -45,4 +45,13 @@
  */
 - (instancetype)startTestRunnerLaunchConfiguration:(FBApplicationLaunchConfiguration *)configuration testBundlePath:(NSString *)testBundlePath reporter:(id<FBTestManagerTestReporter>)reporter workingDirectory:(NSString *)workingDirectory;
 
+/**
+ Starting test runner does not wait till test execution has finished. In same maner as starting application does not wait till application has finished execution.
+ This method can be used in order to wait till all testing sessions have finished and possbily process the results.
+
+ @param timeout the maximum time to wait for test to finish.
+ @return the reciever, for chaining.
+ */
+- (instancetype)waitUntilAllTestRunnersHaveFinishedTestingWithTimeout:(NSTimeInterval)timeout;
+
 @end

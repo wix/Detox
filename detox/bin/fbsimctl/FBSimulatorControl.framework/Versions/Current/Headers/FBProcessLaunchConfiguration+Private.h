@@ -26,6 +26,6 @@
 
 @interface FBAgentLaunchConfiguration ()
 
-@property (nonatomic, copy, readwrite) FBSimulatorBinary *agentBinary;
+@property (nonatomic, copy, readwrite) FBBinaryDescriptor *agentBinary;
 
 @end

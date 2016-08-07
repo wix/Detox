@@ -12,6 +12,8 @@
 @class FBProcessInfo;
 @class FBSimulator;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  An Interface to a Simulator's launchctl.
  */
@@ -35,3 +37,5 @@
 - (BOOL)processIsRunningOnSimulator:(FBProcessInfo *)process error:(NSError **)error;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -129,7 +129,7 @@
  @param binary the Binary of the Launched process to filter running processes by.
  @return a FBUserLaunchedProcess for a running process that matches the launch configuration, nil otherwise.
  */
-- (FBProcessInfo *)runningProcessForBinary:(FBSimulatorBinary *)binary;
+- (FBProcessInfo *)runningProcessForBinary:(FBBinaryDescriptor *)binary;
 
 /**
  Returns the Process State for the given Application, does not reach into previous states.
@@ -137,7 +137,7 @@
  @param application the Application of the Launched process to filter running processes by.
  @return a FBUserLaunchedProcess for a running process that matches the launch configuration, nil otherwise.
  */
-- (FBProcessInfo *)runningProcessForApplication:(FBSimulatorApplication *)application;
+- (FBProcessInfo *)runningProcessForApplication:(FBApplicationDescriptor *)application;
 
 /**
  Returns a mapping of Process Identifier to Termination Status.

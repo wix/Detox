@@ -12,7 +12,7 @@
 #import <FBSimulatorControl/FBSimulatorInteraction.h>
 
 /**
- Interactions dependent on the existence of an FBSimulatorBridge on a booted Simulator.
+ Interactions dependent on the existence of an FBSimulatorConnection on a booted Simulator.
  */
 @interface FBSimulatorInteraction (Bridge)
 

@@ -16,7 +16,6 @@
 @class FBControlCoreLogger;
 @class FBProcessFetcher;
 @class FBProcessInfo;
-@class FBSimulatorBridge;
 @class FBSimulatorConfiguration;
 @class FBSimulatorDiagnostics;
 @class FBSimulatorHistory;
@@ -109,21 +108,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly, nullable) FBProcessInfo *containerApplication;
 
 /**
- The Bridge of the Simulator.
- */
-@property (nonatomic, strong, readonly, nullable) FBSimulatorBridge *bridge;
-
-/**
  The FBSimulatorDiagnostics instance for fetching diagnostics for the Simulator.
  */
 @property (nonatomic, strong, readonly, nonnull) FBSimulatorDiagnostics *diagnostics;
-
-@end
-
-/**
- Command Conformances.
- */
-@interface FBSimulator (Commands) <FBApplicationCommands>
 
 @end
 

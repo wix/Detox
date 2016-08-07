@@ -11,41 +11,32 @@
 
 #import <FBControlCore/FBControlCore.h>
 
-@class FBFramebuffer;
-@class FBSimulator;
-@class FBSimulatorLaunchConfiguration;
-@protocol SimulatorBridge;
-@protocol FBSimulatorEventSink;
 @class FBApplicationLaunchConfiguration;
+@class FBSimulator;
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- A Simulator Bridge is a container for all of the relevant services that can be obtained when launching via: -[SimDevice bootWithOptions:error].
- Typically these are all the services with which Simulator.app can interact with, except that we have them inside FBSimulatorControl.
+ Wraps the 'SimulatorBridge' Connection and Protocol
  */
-@interface FBSimulatorBridge : NSObject  <FBJSONSerializable>
+@interface FBSimulatorBridge : NSObject <FBDebugDescribeable, FBJSONSerializable>
 
 #pragma mark Initializers
 
 /**
- The Designated Initializer
+ Creates and Returns a SimulatorBridge for the attaching to the provided Simulator.
+ Fails if the connection could not established.
 
- @param framebuffer the Framebuffer. May be nil.
- @param hidPort the Indigo HID Port. Zero if no such port exists.
- @param bridge the underlying bridge. Must not be nil.
- @param eventSink the event sink. Must not be nil.
+ @param simulator the Simulator to attach to.
+ @param error an error out for any error that occurs.
+ @return a FBSimulatorBridge object on success, nil otherwise.
  */
-- (instancetype)initWithFramebuffer:(nullable FBFramebuffer *)framebuffer hidPort:(mach_port_t)hidPort bridge:(id<SimulatorBridge>)bridge eventSink:(id<FBSimulatorEventSink>)eventSink;
++ (nullable instancetype)bridgeForSimulator:(FBSimulator *)simulator error:(NSError **)error;
 
 /**
- Tears down the bridge and it's resources, waiting for any asynchronous teardown to occur before returning.
- Must only ever be called from the main thread.
-
- @param timeout the number of seconds to wait for termination to occur in. If 0 or fewer, the reciever won't wait.
- @return YES if the termination occurred within timeout seconds, NO otherwise.
+ Should be called when the connection to the remote bridge should be disconnected.
  */
-- (BOOL)terminateWithTimeout:(NSTimeInterval)timeout;
+- (void)disconnect;
 
 #pragma mark Interacting with the Simulator
 
@@ -78,13 +69,6 @@ NS_ASSUME_NONNULL_BEGIN
  @return the Process Identifeir of the Launched Application if successful, -1 otherwise.
  */
 - (pid_t)launch:(FBApplicationLaunchConfiguration *)configuration stdOutPath:(nullable NSString *)stdOutPath stdErrPath:(nullable NSString *)stdErrPath error:(NSError **)error;
-
-#pragma mark Properties
-
-/**
- The FBSimulatorFramebuffer Instance.
- */
-@property (nonatomic, strong, readonly, nullable) FBFramebuffer *framebuffer;
 
 @end
 

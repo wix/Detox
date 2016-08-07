@@ -11,9 +11,9 @@
 
 #import <FBSimulatorControl/FBSimulator.h>
 
+@class FBApplicationDescriptor ;
+@class FBBinaryDescriptor;
 @class FBProcessLaunchConfiguration;
-@class FBSimulatorApplication;
-@class FBSimulatorBinary;
 
 /**
  A Diagnostic key for the Termination Status.

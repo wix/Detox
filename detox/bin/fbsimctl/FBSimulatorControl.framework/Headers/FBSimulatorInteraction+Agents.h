@@ -10,7 +10,7 @@
 #import <FBSimulatorControl/FBSimulatorInteraction.h>
 
 @class FBAgentLaunchConfiguration;
-@class FBSimulatorBinary;
+@class FBBinaryDescriptor;
 
 @interface FBSimulatorInteraction (Agents)
 
@@ -28,6 +28,6 @@
  @param agent the Agent Launch Configuration to Launch.
  @return the reciever, for chaining.
  */
-- (instancetype)killAgent:(FBSimulatorBinary *)agent;
+- (instancetype)killAgent:(FBBinaryDescriptor *)agent;
 
 @end

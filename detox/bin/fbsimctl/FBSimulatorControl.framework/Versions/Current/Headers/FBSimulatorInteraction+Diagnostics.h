@@ -9,7 +9,7 @@
 
 #import <FBSimulatorControl/FBSimulatorInteraction.h>
 
-@class FBSimulatorApplication;
+@class FBApplicationDescriptor ;
 
 @interface FBSimulatorInteraction (Diagnostics)
 
@@ -22,7 +22,7 @@
  @param frequencyInMilliseconds the frequency with which to sample.
  @returns the reciever, for chaining.
  */
- - (instancetype)sampleApplication:(FBSimulatorApplication *)application withDuration:(NSInteger)durationInSeconds frequency:(NSInteger)frequencyInMilliseconds;
+ - (instancetype)sampleApplication:(FBApplicationDescriptor *)application withDuration:(NSInteger)durationInSeconds frequency:(NSInteger)frequencyInMilliseconds;
 
 /**
  Executes a command with lldb(1). This is done asynchronously.
@@ -32,6 +32,6 @@
  @param command to execute.
  @returns the reciever, for chaining.
  */
-- (instancetype)onApplication:(FBSimulatorApplication *)application executeLLDBCommand:(NSString *)command;
+- (instancetype)onApplication:(FBApplicationDescriptor *)application executeLLDBCommand:(NSString *)command;
 
 @end

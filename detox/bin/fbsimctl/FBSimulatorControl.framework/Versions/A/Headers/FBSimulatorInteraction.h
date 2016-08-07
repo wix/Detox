@@ -12,8 +12,8 @@
 #import <FBSimulatorControl/FBInteraction.h>
 #import <FBSimulatorControl/FBSimulator.h>
 
+@class FBApplicationDescriptor ;
 @class FBSimulator;
-@class FBSimulatorApplication;
 @class FBSimulatorConfiguration;
 
 /**

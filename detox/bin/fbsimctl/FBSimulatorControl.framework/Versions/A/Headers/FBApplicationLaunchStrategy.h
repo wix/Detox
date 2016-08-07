@@ -9,10 +9,10 @@
 
 #import <Foundation/Foundation.h>
 
+@class FBApplicationDescriptor ;
 @class FBApplicationLaunchConfiguration;
 @class FBProcessInfo;
 @class FBSimulator;
-@class FBSimulatorApplication;
 
 NS_ASSUME_NONNULL_BEGIN
 

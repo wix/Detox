@@ -100,8 +100,8 @@ typedef int swift_int4  __attribute__((__ext_vector_type__(4)));
 #pragma clang diagnostic ignored "-Wproperty-attribute-mismatch"
 #pragma clang diagnostic ignored "-Wduplicate-method-arg"
 
-SWIFT_CLASS("_TtC21FBSimulatorControlKit3CLI")
-@interface CLI : NSObject
+SWIFT_CLASS("_TtC21FBSimulatorControlKit15CLIBootstrapper")
+@interface CLIBootstrapper : NSObject
 + (int32_t)bootstrap;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
@@ -138,8 +138,9 @@ SWIFT_CLASS("_TtC21FBSimulatorControlKit17JSONEventReporter")
 @interface JSONEventReporter : NSObject
 @end
 
+@protocol FBiOSTarget;
 @class FBProcessInfo;
-@class FBSimulatorBridge;
+@class FBSimulatorConnection;
 @class FBTestManager;
 @class FBAgentLaunchConfiguration;
 @class NSFileHandle;
@@ -150,23 +151,24 @@ SWIFT_CLASS("_TtC21FBSimulatorControlKit17JSONEventReporter")
 
 SWIFT_CLASS("_TtC21FBSimulatorControlKit17SimulatorReporter")
 @interface SimulatorReporter : NSObject <FBSimulatorEventSink>
-@property (nonatomic, readonly, assign) FBSimulator * _Nonnull target;
+@property (nonatomic, readonly, assign) FBSimulator * _Nonnull simulator;
 @property (nonatomic, readonly, strong) FBiOSTargetFormat * _Nonnull format;
-- (void)containerApplicationDidLaunch:(FBProcessInfo * _Null_unspecified)applicationProcess;
-- (void)containerApplicationDidTerminate:(FBProcessInfo * _Null_unspecified)applicationProcess expected:(BOOL)expected;
-- (void)bridgeDidConnect:(FBSimulatorBridge * _Null_unspecified)bridge;
-- (void)bridgeDidDisconnect:(FBSimulatorBridge * _Null_unspecified)bridge expected:(BOOL)expected;
-- (void)testmanagerDidConnect:(FBTestManager * _Null_unspecified)testManager;
-- (void)testmanagerDidDisconnect:(FBTestManager * _Null_unspecified)testManager;
-- (void)simulatorDidLaunch:(FBProcessInfo * _Null_unspecified)launchdProcess;
-- (void)simulatorDidTerminate:(FBProcessInfo * _Null_unspecified)launchdProcess expected:(BOOL)expected;
-- (void)agentDidLaunch:(FBAgentLaunchConfiguration * _Null_unspecified)launchConfig didStart:(FBProcessInfo * _Null_unspecified)agentProcess stdOut:(NSFileHandle * _Null_unspecified)stdOut stdErr:(NSFileHandle * _Null_unspecified)stdErr;
-- (void)agentDidTerminate:(FBProcessInfo * _Null_unspecified)agentProcess expected:(BOOL)expected;
-- (void)applicationDidLaunch:(FBApplicationLaunchConfiguration * _Null_unspecified)launchConfig didStart:(FBProcessInfo * _Null_unspecified)applicationProcess;
-- (void)applicationDidTerminate:(FBProcessInfo * _Null_unspecified)applicationProcess expected:(BOOL)expected;
-- (void)diagnosticAvailable:(FBDiagnostic * _Null_unspecified)log;
+@property (nonatomic, readonly, strong) id <FBiOSTarget> _Nonnull target;
+- (void)containerApplicationDidLaunch:(FBProcessInfo * _Nonnull)applicationProcess;
+- (void)containerApplicationDidTerminate:(FBProcessInfo * _Nonnull)applicationProcess expected:(BOOL)expected;
+- (void)connectionDidConnect:(FBSimulatorConnection * _Nonnull)connection;
+- (void)connectionDidDisconnect:(FBSimulatorConnection * _Nonnull)connection expected:(BOOL)expected;
+- (void)testmanagerDidConnect:(FBTestManager * _Nonnull)testManager;
+- (void)testmanagerDidDisconnect:(FBTestManager * _Nonnull)testManager;
+- (void)simulatorDidLaunch:(FBProcessInfo * _Nonnull)launchdProcess;
+- (void)simulatorDidTerminate:(FBProcessInfo * _Nonnull)launchdProcess expected:(BOOL)expected;
+- (void)agentDidLaunch:(FBAgentLaunchConfiguration * _Nonnull)launchConfig didStart:(FBProcessInfo * _Nonnull)agentProcess stdOut:(NSFileHandle * _Nonnull)stdOut stdErr:(NSFileHandle * _Nonnull)stdErr;
+- (void)agentDidTerminate:(FBProcessInfo * _Nonnull)agentProcess expected:(BOOL)expected;
+- (void)applicationDidLaunch:(FBApplicationLaunchConfiguration * _Nonnull)launchConfig didStart:(FBProcessInfo * _Nonnull)applicationProcess;
+- (void)applicationDidTerminate:(FBProcessInfo * _Nonnull)applicationProcess expected:(BOOL)expected;
+- (void)diagnosticAvailable:(FBDiagnostic * _Nonnull)log;
 - (void)didChangeState:(FBSimulatorState)state;
-- (void)terminationHandleAvailable:(id <FBTerminationHandle> _Null_unspecified)terminationHandle;
+- (void)terminationHandleAvailable:(id <FBTerminationHandle> _Nonnull)terminationHandle;
 @end
 
 #pragma clang diagnostic pop

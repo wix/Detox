@@ -9,8 +9,8 @@
 
 #import <FBSimulatorControl/FBSimulator.h>
 
+@class FBApplicationDescriptor ;
 @class FBSimDeviceWrapper;
-@class FBSimulatorApplication;
 @class FBSimulatorInteraction;
 @class FBSimulatorLaunchCtl;
 
@@ -51,9 +51,25 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Fetches a list of the installed applications=
  */
-@property (nonatomic, copy, readonly) NSArray<FBSimulatorApplication *> *installedApplications;
+@property (nonatomic, copy, readonly) NSArray<FBApplicationDescriptor *> *installedApplications;
 
 #pragma mark Methods
+
+/**
+ Convenience method for obtaining SimulatorState from a String.
+
+ @param stateString the State String to convert from
+ @return an Enumerated State for the String.
+ */
++ (FBSimulatorState)simulatorStateFromStateString:(NSString *)stateString;
+
+/**
+ Convenience method for obtaining a description of Simulator State
+
+ @param state the Enumerated State to convert from.
+ @return a String Representation of the Simulator State.
+ */
++ (NSString *)stateStringFromSimulatorState:(FBSimulatorState)state;
 
 /**
  Synchronously waits on the provided state.
@@ -82,16 +98,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)waitOnState:(FBSimulatorState)state withError:(NSError **)error;
 
 /**
- Convenience method for obtaining a description of Simulator State
- */
-+ (NSString *)stateStringFromSimulatorState:(FBSimulatorState)state;
-
-/**
- Convenience method for obtaining SimulatorState from a String.
- */
-+ (FBSimulatorState)simulatorStateFromStateString:(NSString *)stateString;
-
-/**
  Calls `freeSimulator:error:` on this device's pool, with the reciever as the first argument.
 
  @param error an error out for any error that occured.
@@ -108,13 +114,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)eraseWithError:(NSError **)error;
 
 /**
- Fetches the FBSimulatorApplication instance by Bundle ID, on the Simulator.
+ Fetches the FBApplicationDescriptor instance by Bundle ID, on the Simulator.
 
  @param bundleID the Bundle ID to fetch an installed application for.
  @param error an error out for any error that occurs.
- @return a FBSimulatorApplication instance if one could be obtained, nil otherwise.
+ @return a FBApplicationDescriptor instance if one could be obtained, nil otherwise.
  */
-- (nullable FBSimulatorApplication *)installedApplicationWithBundleID:(NSString *)bundleID error:(NSError **)error;
+- (nullable FBApplicationDescriptor *)installedApplicationWithBundleID:(NSString *)bundleID error:(NSError **)error;
 
 /**
  Determines whether a provided Bundle ID represents a System Application
@@ -151,9 +157,9 @@ NS_ASSUME_NONNULL_BEGIN
  and when it is stable enough state to launch Applications/Daemons, these Service Names
  represent the Services that are known to signify readyness.
 
- @return a NSSet<NSString> of the required process names.
+ @return the required process names.
  */
-- (NSSet *)requiredProcessNamesToVerifyBooted;
+- (NSSet<NSString *> *)requiredProcessNamesToVerifyBooted;
 
 @end
 

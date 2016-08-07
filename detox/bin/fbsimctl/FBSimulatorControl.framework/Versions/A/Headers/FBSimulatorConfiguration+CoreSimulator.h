@@ -16,6 +16,8 @@
 @protocol FBControlCoreConfiguration_Device;
 @protocol FBControlCoreConfiguration_OS;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  Adapting FBSimulatorConfiguration to CoreSimulator.
  */
@@ -29,7 +31,7 @@
  @param device the Device to obtain the OS Configuration for
  @return the newest OS Configuration for the provided Device Configuration, or nil if none is available.
  */
-+ (id<FBControlCoreConfiguration_OS>)newestAvailableOSForDevice:(id<FBControlCoreConfiguration_Device>)device;
++ (nullable id<FBControlCoreConfiguration_OS>)newestAvailableOSForDevice:(id<FBControlCoreConfiguration_Device>)device;
 
 /**
  Returns a new Simulator Configuration, for the newest available OS for the current Device.
@@ -45,7 +47,7 @@
  @param device the Device to obtain the OS Configuration for
  @return the newest OS Configuration for the provided Device Configuration, or nil if none is available.
  */
-+ (id<FBControlCoreConfiguration_OS>)oldestAvailableOSForDevice:(id<FBControlCoreConfiguration_Device>)device;
++ (nullable id<FBControlCoreConfiguration_OS>)oldestAvailableOSForDevice:(id<FBControlCoreConfiguration_Device>)device;
 
 /**
  Returns a new Simulator Configuration, for the oldest available OS for the current Device.
@@ -76,6 +78,12 @@
  */
 - (BOOL)checkRuntimeRequirementsReturningError:(NSError **)error;
 
+/**
+ Returns an Array of all the Simulator Configurations that are available for the current environment.
+ This means each available runtime is combined with each available device.
+ */
++ (NSArray<FBSimulatorConfiguration *> *)allAvailableDefaultConfigurations;
+
 #pragma mark Obtaining CoreSimulator Classes
 
 /**
@@ -84,7 +92,7 @@
  @param error an error out for any error that occurs.
  @return a SimRuntime if one could be obtained, nil otherwise.
  */
-- (SimRuntime *)obtainRuntimeWithError:(NSError **)error;
+- (nullable SimRuntime *)obtainRuntimeWithError:(NSError **)error;
 
 /**
  Obtains the appropriate SimDeviceType for a given configuration, or nil if no matching SimDeviceType is available.
@@ -92,6 +100,8 @@
  @param error an error out for any error that occurs.
  @return a SimDeviceType if one could be obtained, nil otherwise.
  */
-- (SimDeviceType *)obtainDeviceTypeWithError:(NSError **)error;
+- (nullable SimDeviceType *)obtainDeviceTypeWithError:(NSError **)error;
 
 @end
+
+NS_ASSUME_NONNULL_END

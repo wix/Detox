@@ -46,6 +46,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)disconnect;
 
+/**
+ Waits until testing has finished.
+
+ @param timeout the the maximum time to wait for test to finish.
+ @return YES if the test execution has finished, NO otherwise.
+ */
+- (BOOL)waitUntilTestingHasFinishedWithTimeout:(NSTimeInterval)timeout;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -16,8 +16,8 @@
 @class FBSimulatorControlConfiguration;
 @class FBSimulatorPool;
 @class FBSimulatorSet;
-@class SimDevice;
-@class SimDeviceSet;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  Options for how a pool should handle allocation & freeing.
@@ -64,7 +64,7 @@ typedef NS_OPTIONS(NSUInteger, FBSimulatorAllocationOptions){
  @param error an error out for any error that occured.
  @return a FBSimulator if one could be allocated with the provided options, nil otherwise
  */
-- (FBSimulator *)allocateSimulatorWithConfiguration:(FBSimulatorConfiguration *)configuration options:(FBSimulatorAllocationOptions)options error:(NSError **)error;
+- (nullable FBSimulator *)allocateSimulatorWithConfiguration:(FBSimulatorConfiguration *)configuration options:(FBSimulatorAllocationOptions)options error:(NSError **)error;
 
 /**
  Marks a device that was previously returned from `allocateDeviceWithName:sdkVersion:error:` as free.
@@ -103,3 +103,5 @@ typedef NS_OPTIONS(NSUInteger, FBSimulatorAllocationOptions){
 @property (nonatomic, copy, readonly) NSArray *unallocatedSimulators;
 
 @end
+
+NS_ASSUME_NONNULL_END

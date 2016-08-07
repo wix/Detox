@@ -9,7 +9,7 @@
 	<key>CFBundleExecutable</key>
 	<string>FBSimulatorControlKit</string>
 	<key>CFBundleIdentifier</key>
-	<string>FB.FBSimulatorControlKit</string>
+	<string>com.facebook.FBSimulatorControlKit</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

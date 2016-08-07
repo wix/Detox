@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param application the Application to authorize settings for.
  @return the reciever, for chaining.
  */
-- (instancetype)authorizeLocationSettingForApplication:(FBSimulatorApplication *)application;
+- (instancetype)authorizeLocationSettingForApplication:(FBApplicationDescriptor *)application;
 
 /**
  Overrides the default SpringBoard watchdog timer for the applications. You can use this to give your application more

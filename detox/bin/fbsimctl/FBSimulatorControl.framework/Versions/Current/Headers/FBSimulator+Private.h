@@ -17,19 +17,23 @@
 @class FBSimulatorResourceManager;
 @protocol FBControlCoreLogger;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface FBSimulator ()
 
 @property (nonatomic, strong, readonly) FBSimulatorEventRelay *eventRelay;
 @property (nonatomic, strong, readonly) FBSimulatorHistoryGenerator *historyGenerator;
-@property (nonatomic, strong, readonly) FBMutableSimulatorEventSink *mutableSink;
+@property (nonatomic, strong, readonly, nullable) FBMutableSimulatorEventSink *mutableSink;
 @property (nonatomic, strong, readonly) FBSimulatorResourceManager *resourceSink;
 @property (nonatomic, strong, readonly) FBProcessFetcher *processFetcher;
 @property (nonatomic, copy, readonly) NSArray *commandResponders;
 
 @property (nonatomic, copy, readwrite) FBSimulatorConfiguration *configuration;
-@property (nonatomic, weak, readwrite) FBSimulatorPool *pool;
+@property (nonatomic, weak, readwrite, nullable) FBSimulatorPool *pool;
 
-+ (instancetype)fromSimDevice:(SimDevice *)device configuration:(FBSimulatorConfiguration *)configuration set:(FBSimulatorSet *)set;
-- (instancetype)initWithDevice:(SimDevice *)device configuration:(FBSimulatorConfiguration *)configuration set:(FBSimulatorSet *)set processFetcher:(FBProcessFetcher *)processFetcher auxillaryDirectory:(NSString *)auxillaryDirectory logger:(id<FBControlCoreLogger>)logger;
++ (instancetype)fromSimDevice:(SimDevice *)device configuration:(nullable FBSimulatorConfiguration *)configuration set:(FBSimulatorSet *)set;
+- (instancetype)initWithDevice:(SimDevice *)device configuration:(FBSimulatorConfiguration *)configuration set:(FBSimulatorSet *)set processFetcher:(FBProcessFetcher *)processFetcher auxillaryDirectory:(NSString *)auxillaryDirectory logger:(nullable id<FBControlCoreLogger>)logger;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -69,7 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param timeout a maximum time to wait for the connection to be established.
  @param error If there is an error, upon return contains an NSError object that describes the problem.
- @return YES if connection connection has been established successfuly, NO otherwise.
+ @return YES if connection has been established successfuly, NO otherwise.
  */
 - (BOOL)connectTestRunnerWithTestManagerDaemonWithTimeout:(NSTimeInterval)timeout error:(NSError **)error;
 
@@ -89,6 +89,15 @@ NS_ASSUME_NONNULL_BEGIN
  Terminates connection between test runner(XCTest bundle) and testmanagerd
  */
 - (void)disconnectTestRunnerAndTestManagerDaemon;
+
+/**
+ Connecting mediator does not wait till test execution has finished.
+ This method can be used in order to wait till test execution has finished.
+
+ @param timeout the the maximum time to wait for test to finish.
+ @return YES if the test execution has finished, NO otherwise.
+ */
+- (BOOL)waitUntilTestRunnerAndTestManagerDaemonHaveFinishedExecutionWithTimeout:(NSTimeInterval)timeout;
 
 @end
 

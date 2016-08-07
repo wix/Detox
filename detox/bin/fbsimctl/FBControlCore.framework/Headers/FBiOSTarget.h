@@ -11,6 +11,7 @@
 
 #import <FBControlCore/FBJSONConversion.h>
 #import <FBControlCore/FBDebugDescribeable.h>
+#import <FBControlCore/FBApplicationCommands.h>
 
 @class FBProcessInfo;
 @protocol FBControlCoreConfiguration_Device;
@@ -43,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Common Properties of Devices & Simulators.
  */
-@protocol FBiOSTarget <NSObject, FBJSONSerializable, FBDebugDescribeable>
+@protocol FBiOSTarget <NSObject, FBJSONSerializable, FBDebugDescribeable, FBApplicationCommands>
 
 /**
  The Unique Device Identifier of the iOS Target.
@@ -68,7 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Process Information about the launchd process of the iOS Target. Currently only applies to Simulators.
  */
-@property (nonatomic, assign, nullable, readonly) FBProcessInfo *launchdProcess;
+@property (nonatomic, copy, nullable, readonly) FBProcessInfo *launchdProcess;
 
 /**
  The Configuration of the iOS Target's Device.

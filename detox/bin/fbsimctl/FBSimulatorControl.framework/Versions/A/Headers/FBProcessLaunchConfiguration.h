@@ -11,9 +11,9 @@
 
 #import <FBControlCore/FBControlCore.h>
 
+@class FBApplicationDescriptor ;
+@class FBBinaryDescriptor;
 @class FBSimulator;
-@class FBSimulatorApplication;
-@class FBSimulatorBinary;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -61,7 +61,7 @@ typedef NS_OPTIONS(NSUInteger, FBProcessLaunchOptions) {
  @param options the options of the launched process.
  @returns a new Configuration Object with the arguments applied.
  */
-+ (instancetype)configurationWithApplication:(FBSimulatorApplication *)application arguments:(NSArray<NSString *> *)arguments environment:(NSDictionary<NSString *, NSString *> *)environment options:(FBProcessLaunchOptions)options;
++ (instancetype)configurationWithApplication:(FBApplicationDescriptor *)application arguments:(NSArray<NSString *> *)arguments environment:(NSDictionary<NSString *, NSString *> *)environment options:(FBProcessLaunchOptions)options;
 
 /**
  Creates and returns a new Configuration with the provided parameters.
@@ -101,12 +101,12 @@ typedef NS_OPTIONS(NSUInteger, FBProcessLaunchOptions) {
  @param options the options of the launched process.
  @returns a new Configuration Object with the arguments applied.
  */
-+ (instancetype)configurationWithBinary:(FBSimulatorBinary *)agentBinary arguments:(NSArray<NSString *> *)arguments environment:(NSDictionary<NSString *, NSString *> *)environment options:(FBProcessLaunchOptions)options;
++ (instancetype)configurationWithBinary:(FBBinaryDescriptor *)agentBinary arguments:(NSArray<NSString *> *)arguments environment:(NSDictionary<NSString *, NSString *> *)environment options:(FBProcessLaunchOptions)options;
 
 /**
  The Binary Path of the agent to Launch.
  */
-@property (nonatomic, copy, readonly) FBSimulatorBinary *agentBinary;
+@property (nonatomic, copy, readonly) FBBinaryDescriptor *agentBinary;
 
 @end
 

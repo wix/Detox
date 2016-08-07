@@ -8,7 +8,10 @@
  */
 
 #import <FBControlCore/FBApplicationCommands.h>
+#import <FBControlCore/FBApplicationDescriptor.h>
+#import <FBControlCore/FBBinaryDescriptor.h>
 #import <FBControlCore/FBASLParser.h>
+#import <FBControlCore/FBBatchLogSearch.h>
 #import <FBControlCore/FBBinaryParser.h>
 #import <FBControlCore/FBCapacityQueue.h>
 #import <FBControlCore/FBCollectionInformation.h>

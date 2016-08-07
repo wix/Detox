@@ -40,8 +40,8 @@
 @property (nonatomic, copy, readonly) FBProcessInfo *containerApplication;
 
 /**
- The current Framebuffer.
+ The current Simulator Connection.
  */
-@property (nonatomic, strong, readonly) FBSimulatorBridge *bridge;
+@property (nonatomic, strong, readonly) FBSimulatorConnection *connection;
 
 @end

@@ -13,8 +13,8 @@
 #import <FBSimulatorControl/FBSimulatorEventSink.h>
 #import <FBSimulatorControl/FBSimulatorHistory.h>
 
+@class FBBinaryDescriptor;
 @class FBProcessLaunchConfiguration;
-@class FBSimulatorBinary;
 
 /**
  An Object responsible for building `FBSimulatorHistory` be converting events into state.

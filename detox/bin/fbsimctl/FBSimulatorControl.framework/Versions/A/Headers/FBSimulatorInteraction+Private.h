@@ -9,8 +9,8 @@
 
 #import <FBSimulatorControl/FBSimulatorInteraction.h>
 
+@class FBBinaryDescriptor;
 @class FBProcessInfo;
-@class FBSimulatorBinary;
 
 @interface FBSimulatorInteraction ()
 
@@ -35,7 +35,7 @@
  @param block the block to execute with the process.
  @return the reciever, for chaining.
  */
-- (instancetype)binary:(FBSimulatorBinary *)binary interact:(BOOL (^)(NSError **error, FBSimulator *simulator, FBProcessInfo *process))block;
+- (instancetype)binary:(FBBinaryDescriptor *)binary interact:(BOOL (^)(NSError **error, FBSimulator *simulator, FBProcessInfo *process))block;
 
 /**
  Interact with the Simulator.

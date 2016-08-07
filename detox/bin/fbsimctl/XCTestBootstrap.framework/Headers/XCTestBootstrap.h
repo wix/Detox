@@ -23,6 +23,7 @@
 #import <XCTestBootstrap/FBTestManagerProcessInteractionDelegate.h>
 #import <XCTestBootstrap/FBTestManagerResultSummary.h>
 #import <XCTestBootstrap/FBTestManagerTestReporter.h>
+#import <XCTestBootstrap/FBTestManagerTestReporterComposite.h>
 #import <XCTestBootstrap/FBTestRunnerConfiguration.h>
 #import <XCTestBootstrap/FBXCTestManagerLoggingForwarder.h>
 #import <XCTestBootstrap/FBXCTestRunStrategy.h>

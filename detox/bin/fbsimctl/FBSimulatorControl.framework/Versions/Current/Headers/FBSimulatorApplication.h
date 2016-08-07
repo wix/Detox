@@ -14,7 +14,7 @@
 /**
  Concrete value wrapper around a binary artifact.
  */
-@interface FBSimulatorBinary : NSObject <NSCopying, NSCoding, FBJSONSerializable, FBJSONDeserializable, FBDebugDescribeable>
+@interface FBSimulatorBinary : NSObject <NSCopying, NSCoding, FBJSONSerializable, FBDebugDescribeable>
 
 /**
  The Designated Initializer.

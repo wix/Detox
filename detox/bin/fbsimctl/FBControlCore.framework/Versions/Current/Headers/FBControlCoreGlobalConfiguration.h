@@ -35,11 +35,6 @@ extern NSString *const FBControlCoreDebugLogging;
 + (NSString *)developerDirectory;
 
 /**
- The File Path to of Xcode's Info.plist, defined by the Developer Directory.
- */
-+ (NSString *)xcodeInfoPlistPath;
-
-/**
  The File Path of Apple's 'Apple Configurator' Application, if installed.
  */
 + (nullable NSString *)appleConfiguratorApplicationPath;

@@ -11,8 +11,8 @@
 
 #import <FBControlCore/FBControlCore.h>
 
+@class FBBinaryDescriptor;
 @class FBProcessInfo;
-@class FBSimulatorBinary;
 @class FBSimulatorControlConfiguration;
 @class SimDevice;
 
@@ -130,7 +130,7 @@ extern NSString *const FBSimulatorControlSimulatorLaunchEnvironmentSimulatorUDID
  @param binary the binary of the Application to search for.
  @return an NSPredicate that operates on an Collection of id<FBProcessInfo>.
  */
-+ (NSPredicate *)processesForBinary:(FBSimulatorBinary *)binary;
++ (NSPredicate *)processesForBinary:(FBBinaryDescriptor *)binary;
 
 @end
 
