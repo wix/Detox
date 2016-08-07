@@ -16,6 +16,7 @@
 * add detox to the `devDependencies` section of package.json:
   * run `npm install detox --save-dev`
   * run `npm install detox-server --save-dev`
+  * run `npm install detox-tools --save-dev`
 * add to the `scripts` section of package.json:
 ```json
 "scripts": {
@@ -136,7 +137,8 @@ Your detox tests will run on node.js in JavaScript, let's create your node envir
   },
   "devDependencies": {
     "detox": "latest",
-    "detox-server": "latest"
+    "detox-server": "latest",
+    "detox-tools": "latest"
   },
   "detox": {
     "session": {

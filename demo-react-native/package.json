@@ -12,7 +12,8 @@
   },
   "devDependencies": {
     "detox": "latest",
-    "detox-server": "latest"
+    "detox-server": "latest",
+    "detox-tools": "latest"
   },
   "detox": {
     "session": {

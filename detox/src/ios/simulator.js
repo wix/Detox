@@ -46,7 +46,7 @@ function _getBundleIdFromApp(appPath, onComplete) {
 
 // fb simctl commands (we try to use it as much as possible since it supports multiple instances)
 function _executeSimulatorCommand(args, onComplete) {
-  const fbsimctlPath = path.join(__dirname, '../../bin/fbsimctl/fbsimctl');
+  const fbsimctlPath = path.join(__dirname, '../../../detox-tools/fbsimctl/fbsimctl');
   const cmd = fbsimctlPath + ' ' + args;
   exec(cmd, function (err, stderr, stdout) {
     if (err) {
@@ -81,7 +81,7 @@ function _getAppAbsolutePath(appPath) {
   return absPath;
 }
 
-// ./node_modules/detox/bin/fbsimctl/fbsimctl install ./ios/build/Build/Products/Debug-iphonesimulator/example.app
+// ./node_modules/detox-tools/fbsimctl/fbsimctl install ./ios/build/Build/Products/Debug-iphonesimulator/example.app
 function _installApp(appPath, onComplete) {
   try {
     const absPath = _getAppAbsolutePath(appPath);
@@ -98,7 +98,7 @@ function _installApp(appPath, onComplete) {
   }
 }
 
-// ./node_modules/detox/bin/fbsimctl/fbsimctl uninstall org.reactjs.native.example.example
+// ./node_modules/detox-tools/fbsimctl/fbsimctl uninstall org.reactjs.native.example.example
 function _uninstallApp(appPath, onComplete) {
   _getBundleIdFromApp(appPath, function (err, bundleId) {
     if (err) {
@@ -118,7 +118,7 @@ function _uninstallApp(appPath, onComplete) {
   });
 }
 
-// ./node_modules/detox/bin/fbsimctl/fbsimctl launch org.reactjs.native.example.example arg1 arg2 arg3
+// ./node_modules/detox-tools/fbsimctl/fbsimctl launch org.reactjs.native.example.example arg1 arg2 arg3
 function _launchApp(appPath, onComplete) {
   _getBundleIdFromApp(appPath, function (err, bundleId) {
     if (err) {
@@ -135,7 +135,7 @@ function _launchApp(appPath, onComplete) {
   });
 }
 
-// ./node_modules/detox/bin/fbsimctl/fbsimctl relaunch org.reactjs.native.example.example
+// ./node_modules/detox-tools/fbsimctl/fbsimctl relaunch org.reactjs.native.example.example
 function _relaunchApp(appPath, onComplete) {
   _getBundleIdFromApp(appPath, function (err, bundleId) {
     if (err) {
@@ -213,7 +213,7 @@ function _getQueryFromDevice(device) {
   return res.trim();
 }
 
-// ./node_modules/detox/bin/fbsimctl/fbsimctl "iPhone 5" "iOS 8.3" boot
+// ./node_modules/detox-tools/fbsimctl/fbsimctl "iPhone 5" "iOS 8.3" boot
 function _bootSimulator(device, onComplete) {
   const query = _getQueryFromDevice(device);
   _executeSimulatorCommand(`--state=shutdown ${query} boot`, function (err) {
@@ -225,7 +225,7 @@ function _bootSimulator(device, onComplete) {
   });
 }
 
-// ./node_modules/detox/bin/fbsimctl/fbsimctl "iPhone 5" "iOS 8.3" shutdown
+// ./node_modules/detox-tools/fbsimctl/fbsimctl "iPhone 5" "iOS 8.3" shutdown
 function _shutdownSimulator(device, onComplete) {
   const query = _getQueryFromDevice(device);
   _executeSimulatorCommand(`--state=booted ${query} shutdown`, function (err) {

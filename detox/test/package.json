@@ -12,7 +12,8 @@
   },
   "devDependencies": {
     "detox": "file:..",
-    "detox-server": "file:../../detox-server"
+    "detox-server": "file:../../detox-server",
+    "detox-tools": "file:../../detox-tools"
   },
   "detox": {
     "session": {
