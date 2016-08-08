@@ -32,3 +32,10 @@ See the [Installing](INSTALLING.md) instructions
 * We've abstracted this away in favor of a protractor-like api, see [`demo-react-native/e2e/example.spec.js`](demo-react-native/e2e/example.spec.js)
 * See everything EarlGrey supports [here](https://github.com/google/EarlGrey/blob/master/docs/api.md) and in this [cheatsheet](https://github.com/google/EarlGrey/blob/master/docs/cheatsheet/cheatsheet.pdf)
 * We use [fbsimctl](https://github.com/facebook/FBSimulatorControl) to control the simulator from the test, restart the app, etc
+
+## License
+
+* detox by itself and all original source code in this repo is MIT
+* detox relies on some important dependencies, their respective licenses are:
+  * [EarlGrey](https://github.com/google/EarlGrey/blob/master/LICENSE)
+  * [FBSimulatorControl](https://github.com/facebook/FBSimulatorControl/blob/master/LICENSE)
