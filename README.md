@@ -2,6 +2,10 @@
 
 Graybox E2E tests and automation library for mobile
 
+### Why?
+
+High velocity native mobile development requires us to adopt continuous integration workflows, which means our reliance on manual QA has to drop significantly. The most difficult part of automated testing on mobile is the tip of the testing pyramid - E2E. The core problem with E2E tests is flakiness - tests are usually not deterministic. We believe the only way to tackle flakiness head on is by moving from blackbox testing to graybox testing and that's where detox comes into play.
+
 ## Development still in progress!
 
 <img src="http://i.imgur.com/O2ZzrKG.gif">
@@ -25,12 +29,6 @@ See the [Installing](INSTALLING.md) instructions
 * The JS tester controls EarlGrey by remote using a strange JSON protocol
 * Instead of wrapping the zillion API calls EarlGrey supports, we implemented a reflection mechanism
 * So the JS tester in low level actually invokes the native methods.. freaky
-* We've abstracted this away in favor of an protractor-like api, see [`demo-react-native/e2e/example.spec.js`](demo-react-native/e2e/example.spec.js)
+* We've abstracted this away in favor of a protractor-like api, see [`demo-react-native/e2e/example.spec.js`](demo-react-native/e2e/example.spec.js)
 * See everything EarlGrey supports [here](https://github.com/google/EarlGrey/blob/master/docs/api.md) and in this [cheatsheet](https://github.com/google/EarlGrey/blob/master/docs/cheatsheet/cheatsheet.pdf)
 * We use [fbsimctl](https://github.com/facebook/FBSimulatorControl) to control the simulator from the test, restart the app, etc
-
-#### Roadmap
-
-* Improve errors printed during app execution (maybe show NSLog)
-* Cleaner code and refactoring once we have the basic architecture figured out
-* Improve separation of test start and test end in the native detox test runner
