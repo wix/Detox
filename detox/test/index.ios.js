@@ -15,18 +15,18 @@ import {
 } from 'react-native';
 import _ from 'lodash';
 
-const STRESSFUL_STRING_LENGTH = 7800
-const STRESSFUL_EVENTS_COUNT = 150
+const STRESSFUL_STRING_LENGTH = 7800;
+const STRESSFUL_EVENTS_COUNT = 150;
 
 function buildStringByLength(length) {
-  str = ""
-  charcode = 65
+  str = "";
+  charcode = 65;
   for (let i=0; i < length; i++) {
-    str += String.fromCharCode(charcode)
-    charcode ++
-    if (charcode == 91) charcode = 65
+    str += String.fromCharCode(charcode);
+    charcode ++;
+    if (charcode == 91) charcode = 65;
   }
-  return str
+  return str;
 }
 
 class example extends Component {
@@ -63,14 +63,12 @@ class example extends Component {
   renderAfterButton() {
     return (
       <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
-        <ScrollView>
-          <Text style={{fontSize: 10, width: 300, height: 10}}>
-            Bridge: {this.state.passToBridge}
-          </Text>
-          <Text style={{fontSize: 25}}>
-            {this.state.greeting}!!!
-          </Text>
-        </ScrollView>
+        <Text style={{fontSize: 10, width: 300, height: 10}}>
+          Bridge: {this.state.passToBridge}
+        </Text>
+        <Text style={{fontSize: 25}}>
+          {this.state.greeting}!!!
+        </Text>
       </View>
     );
   }
@@ -84,21 +82,21 @@ class example extends Component {
   bridgeStressButtonPressed(greeting) {
     this.onButtonPress(greeting)
 
-    // var data = require('./resources/stressful-text.json').text
-    const data = buildStringByLength(STRESSFUL_STRING_LENGTH)
+    const data = buildStringByLength(STRESSFUL_STRING_LENGTH);
     this.setState({
       passToBridge: data
-    })
+      greeting: greeting
+    });
   }
 
   eventsStressButtonPressed(greeting) {
     // Stress:
     for (let i =0; i < STRESSFUL_EVENTS_COUNT; i++) {
-      let myString = ""
-      setImmediate(() => { myString = buildStringByLength(1000) })
+      let myString = "";
+      setImmediate(() => { myString = buildStringByLength(1000) });
     }
 
-    this.onButtonPress(greeting)
+    setImmediate(() => { this.onButtonPress(greeting) });
   }
 
 }
