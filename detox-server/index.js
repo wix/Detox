@@ -13,7 +13,7 @@ function sendAction(ws, type, params) {
   ws.send(JSON.stringify({
     type: type,
     params: params
-  }));
+  }) + '\n ');
 }
 
 function sendToOtherRole(sessionId, role, type, params) {
@@ -30,21 +30,27 @@ wss.on('connection', function connection(ws) {
   var sessionId;
   var role;
   ws.on('message', function (str) {
-    var action = JSON.parse(str);
-    if (!action.type) return;
-    if (action.type === 'login') {
-      if (action.params && action.params.sessionId && action.params.role) {
-        sessionId = action.params.sessionId;
-        role = action.params.role;
-        console.log('login sessionId=%s role=%s', sessionId, role);
-        _.set(sessions, [sessionId, role], ws);
-      }
-    } else {
-      if (sessionId && role) {
-        console.log('fw sessionId=%s action=%s from role=%s', sessionId, action.type, role);
-        sendToOtherRole(sessionId, role, action.type, action.params);
+    try {
+      var action = JSON.parse(str);
+      if (!action.type) return;
+      if (action.type === 'login') {
+        if (action.params && action.params.sessionId && action.params.role) {
+          sessionId = action.params.sessionId;
+          role = action.params.role;
+          console.log('login sessionId=%s role=%s', sessionId, role);
+          _.set(sessions, [sessionId, role], ws);
+        }
+      } else {
+        if (sessionId && role) {
+          console.log('fw sessionId=%s action=%s from role=%s', sessionId, action.type, role);
+          sendToOtherRole(sessionId, role, action.type, action.params);
+        }
       }
     }
+    catch (error) {
+      console.log("Invalid JSON received, cannot parse")
+    }
+
   });
   ws.on('close', function () {
     if (sessionId && role) {
