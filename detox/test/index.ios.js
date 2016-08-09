@@ -16,6 +16,7 @@ import {
 import _ from 'lodash';
 
 const STRESSFUL_STRING_LENGTH = 7800
+const STRESSFUL_EVENTS_COUNT = 3
 
 function buildStringByLength(length) {
   str = ""
@@ -54,7 +55,8 @@ class example extends Component {
         </Text>
         {this.renderTestButton('Say Hello', this.onButtonPress.bind(this, 'Hello'))}
         {this.renderTestButton('Say World', this.onButtonPress.bind(this, 'World'))}
-        {this.renderTestButton('stressful', this.stressfulButtonPressed.bind(this, 'Hello World'))}
+        {this.renderTestButton('Bridge Stress', this.bridgeStressButtonPressed.bind(this, 'Hello World'))}
+        {this.renderTestButton('Events Stress', this.eventsStressButtonPressed.bind(this, 'Hello World'))}
       </View>
     );
   }
@@ -79,7 +81,7 @@ class example extends Component {
     });
   }
 
-  stressfulButtonPressed(greeting) {
+  bridgeStressButtonPressed(greeting) {
     this.onButtonPress(greeting)
 
     // var data = require('./resources/stressful-text.json').text
@@ -88,6 +90,16 @@ class example extends Component {
       passToBridge: data
     })
   }
+
+  eventsStressButtonPressed(greeting) {
+    // Stress:
+    for (let i =0; i < STRESSFUL_EVENTS_COUNT; i++) {
+      setImmediate(() => { for (let j = 0; j < 10; j++) buildStringByLength(10) })
+    }
+
+    this.onButtonPress(greeting)
+  }
+
 }
 
 AppRegistry.registerComponent('example', () => example);
