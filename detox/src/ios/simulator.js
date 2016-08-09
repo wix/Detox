@@ -11,6 +11,7 @@ const websocket = require('../websocket');
 
 let _defaultLaunchArgs = [];
 let _currentScheme = {};
+let _verbose = false;
 
 function _waitUntilReady(onReady) {
   websocket.waitForNextAction('ready', onReady);
@@ -49,7 +50,14 @@ function _getBundleIdFromApp(appPath, onComplete) {
 function _executeSimulatorCommand(options, onComplete) {
   const fbsimctlPath = path.join(__dirname, '../../../detox-tools/fbsimctl/fbsimctl');
   const cmd = fbsimctlPath + ' ' + options.args;
+  if (_verbose) {
+    console.log(`DETOX: ${cmd}\n`);
+  }
   exec(cmd, function (err, stdout, stderr) {
+    if (_verbose) {
+      if (stdout) console.log(`DETOX (stdout):\n`, stdout, '\n');
+      if (stderr) console.log(`DETOX (stderr):\n`, stderr, '\n');
+    }
     if (options.showStdout) {
       console.log(`DETOX fbsimctl ${options.args}:\n`, stdout, '\n');
     }
@@ -66,7 +74,14 @@ function _executeSimulatorCommand(options, onComplete) {
 // original simctl by Apple (we try to use it only where fbsimctl doesn't work or is very slow)
 function _executeOrigSimulatorCommand(options, onComplete) {
   const cmd = 'xcrun simctl ' + options.args;
+  if (_verbose) {
+    console.log(`DETOX: ${cmd}\n`);
+  }
   exec(cmd, function (err, stdout, stderr) {
+    if (_verbose) {
+      if (stdout) console.log(`DETOX (stdout):\n`, stdout, '\n');
+      if (stderr) console.log(`DETOX (stderr):\n`, stderr, '\n');
+    }
     if (options.showStdout) {
       console.log(`DETOX simctl ${options.args}:\n`, stdout, '\n');
     }
@@ -272,6 +287,9 @@ function _getArgValue(key) {
     if (process.argv[i].startsWith(`--${key}=`)) {
       return process.argv[i].split('=')[1];
     }
+    if (process.argv[i] === `--${key}`) {
+      return true;
+    }
   }
   return undefined;
 }
@@ -302,6 +320,7 @@ function _setCurrentScheme(params) {
 }
 
 function prepare(params, onComplete) {
+  _verbose = _getArgValue('detoxVerbose');
   if (params['session']) {
     const settings = params['session'];
     if (!settings.server) {
