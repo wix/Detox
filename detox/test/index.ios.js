@@ -16,7 +16,7 @@ import {
 import _ from 'lodash';
 
 const STRESSFUL_STRING_LENGTH = 7800
-const STRESSFUL_EVENTS_COUNT = 3
+const STRESSFUL_EVENTS_COUNT = 150
 
 function buildStringByLength(length) {
   str = ""
@@ -94,7 +94,8 @@ class example extends Component {
   eventsStressButtonPressed(greeting) {
     // Stress:
     for (let i =0; i < STRESSFUL_EVENTS_COUNT; i++) {
-      setImmediate(() => { for (let j = 0; j < 10; j++) buildStringByLength(10) })
+      let myString = ""
+      setImmediate(() => { myString = buildStringByLength(1000) })
     }
 
     this.onButtonPress(greeting)
