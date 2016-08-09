@@ -1,4 +1,4 @@
-const MULTI_TEST_COUNT = 30
+const MULTI_TEST_COUNT = 35
 
 describe.only('Stressful Use', function() {
   describe('Stress on React Bridge', function() {
