@@ -243,7 +243,7 @@ function _listSimulators(device, onComplete) {
 // ./node_modules/detox-tools/fbsimctl/fbsimctl "iPhone 5" "iOS 8.3" boot
 function _bootSimulator(device, onComplete) {
   const query = _getQueryFromDevice(device);
-  const options = {args: `--state=shutdown ${query} boot`};
+  const options = {args: `--state=shutdown --state=shutting-down ${query} boot`};
   _executeSimulatorCommand(options, function (err) {
     if (err) {
       onComplete(err);
