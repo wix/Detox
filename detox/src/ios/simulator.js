@@ -106,10 +106,11 @@ function _getAppAbsolutePath(appPath) {
 }
 
 // ./node_modules/detox-tools/fbsimctl/fbsimctl install ./ios/build/Build/Products/Debug-iphonesimulator/example.app
-function _installApp(appPath, onComplete) {
+function _installApp(device, appPath, onComplete) {
   try {
+    const query = _getQueryFromDevice(device);
     const absPath = _getAppAbsolutePath(appPath);
-    const options = {args: `install ${absPath}`};
+    const options = {args: `${query} install ${absPath}`};
     _executeSimulatorCommand(options, function (err) {
       if (err) {
         onComplete(err);
@@ -124,35 +125,37 @@ function _installApp(appPath, onComplete) {
 }
 
 // ./node_modules/detox-tools/fbsimctl/fbsimctl uninstall org.reactjs.native.example.example
-function _uninstallApp(appPath, onComplete) {
+function _uninstallApp(device, appPath, onComplete) {
+  const query = _getQueryFromDevice(device);
   _getBundleIdFromApp(appPath, function (err, bundleId) {
     if (err) {
       onComplete(err);
       return;
     }
+    /*
     // it turns out that for deleting apps the orig simulator is much faster than fb's
     const options = {args: `uninstall booted ${bundleId}`};
     _executeOrigSimulatorCommand(options, function (err2) {
       onComplete();
     });
-    /*
-    const options = {args: `uninstall ${bundleId}`};
+    */
+    const options = {args: `${query} uninstall ${bundleId}`};
     _executeSimulatorCommand(options, function (err2) {
       // this might fail if the app isn't installed, so don't worry about failure
       onComplete();
     });
-    */
   });
 }
 
 // ./node_modules/detox-tools/fbsimctl/fbsimctl launch org.reactjs.native.example.example arg1 arg2 arg3
-function _launchApp(appPath, onComplete) {
+function _launchApp(device, appPath, onComplete) {
+  const query = _getQueryFromDevice(device);
   _getBundleIdFromApp(appPath, function (err, bundleId) {
     if (err) {
       onComplete(err);
       return;
     }
-    const options = {args: `launch ${bundleId} ${_defaultLaunchArgs.join(' ')}`};
+    const options = {args: `${query} launch ${bundleId} ${_defaultLaunchArgs.join(' ')}`};
     _executeSimulatorCommand(options, function (err2) {
       if (err2) {
         onComplete(err2);
@@ -164,13 +167,14 @@ function _launchApp(appPath, onComplete) {
 }
 
 // ./node_modules/detox-tools/fbsimctl/fbsimctl relaunch org.reactjs.native.example.example
-function _relaunchApp(appPath, onComplete) {
+function _relaunchApp(device, appPath, onComplete) {
+  const query = _getQueryFromDevice(device);
   _getBundleIdFromApp(appPath, function (err, bundleId) {
     if (err) {
       onComplete(err);
       return;
     }
-    const options = {args: `relaunch ${bundleId} ${_defaultLaunchArgs.join(' ')}`};
+    const options = {args: `${query} relaunch ${bundleId} ${_defaultLaunchArgs.join(' ')}`};
     _executeSimulatorCommand(options, function (err2) {
       if (err2) {
         onComplete(err2);
@@ -182,11 +186,15 @@ function _relaunchApp(appPath, onComplete) {
 }
 
 function relaunchApp(onComplete) {
+  if (!_currentScheme.device) {
+    onComplete(new Error(`scheme.device property is missing, should hold the device type we test on`));
+    return;
+  }
   if (!_currentScheme.app) {
     onComplete(new Error(`scheme.app property is missing, should hold the app binary path`));
     return;
   }
-  _relaunchApp(_currentScheme.app, function (err) {
+  _relaunchApp(_currentScheme.device, _currentScheme.app, function (err) {
     if (err) {
       onComplete(err);
       return;
@@ -197,18 +205,18 @@ function relaunchApp(onComplete) {
   });
 }
 
-function _deleteAndRelaunchApp(appPath, onComplete) {
-  _uninstallApp(appPath, function (err) {
+function _deleteAndRelaunchApp(device, appPath, onComplete) {
+  _uninstallApp(device, appPath, function (err) {
     if (err) {
       onComplete(err);
       return;
     }
-    _installApp(appPath, function (err2) {
+    _installApp(device, appPath, function (err2) {
       if (err2) {
         onComplete(err2);
         return;
       }
-      _launchApp(appPath, function (err3) {
+      _launchApp(device, appPath, function (err3) {
         if (err3) {
           onComplete(err3);
           return;
@@ -220,11 +228,15 @@ function _deleteAndRelaunchApp(appPath, onComplete) {
 }
 
 function deleteAndRelaunchApp(onComplete) {
+  if (!_currentScheme.device) {
+    onComplete(new Error(`scheme.device property is missing, should hold the device type we test on`));
+    return;
+  }
   if (!_currentScheme.app) {
     onComplete(new Error(`scheme.app property is missing, should hold the app binary path`));
     return;
   }
-  _deleteAndRelaunchApp(_currentScheme.app, function (err) {
+  _deleteAndRelaunchApp(_currentScheme.device, _currentScheme.app, function (err) {
     if (err) {
       onComplete(err);
       return;
