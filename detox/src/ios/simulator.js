@@ -46,12 +46,16 @@ function _getBundleIdFromApp(appPath, onComplete) {
 }
 
 // fb simctl commands (we try to use it as much as possible since it supports multiple instances)
-function _executeSimulatorCommand(args, onComplete) {
+function _executeSimulatorCommand(options, onComplete) {
   const fbsimctlPath = path.join(__dirname, '../../../detox-tools/fbsimctl/fbsimctl');
-  const cmd = fbsimctlPath + ' ' + args;
-  exec(cmd, function (err, stderr, stdout) {
+  const cmd = fbsimctlPath + ' ' + options.args;
+  exec(cmd, function (err, stdout, stderr) {
+    if (options.showStdout) {
+      console.log(`DETOX fbsimctl ${options.args}:\n`, stdout, '\n');
+    }
     if (err) {
-      console.log(stderr);
+      console.error(stdout);
+      console.error(stderr);
       onComplete(err);
       return;
     }
@@ -60,11 +64,15 @@ function _executeSimulatorCommand(args, onComplete) {
 }
 
 // original simctl by Apple (we try to use it only where fbsimctl doesn't work or is very slow)
-function _executeOrigSimulatorCommand(args, onComplete) {
-  const cmd = 'xcrun simctl ' + args;
-  exec(cmd, function (err, stderr, stdout) {
+function _executeOrigSimulatorCommand(options, onComplete) {
+  const cmd = 'xcrun simctl ' + options.args;
+  exec(cmd, function (err, stdout, stderr) {
+    if (options.showStdout) {
+      console.log(`DETOX simctl ${options.args}:\n`, stdout, '\n');
+    }
     if (err) {
-      console.log(stderr);
+      console.error(stdout);
+      console.error(stderr);
       onComplete(err);
       return;
     }
@@ -86,7 +94,8 @@ function _getAppAbsolutePath(appPath) {
 function _installApp(appPath, onComplete) {
   try {
     const absPath = _getAppAbsolutePath(appPath);
-    _executeSimulatorCommand(`install ${absPath}`, function (err) {
+    const options = {args: `install ${absPath}`};
+    _executeSimulatorCommand(options, function (err) {
       if (err) {
         onComplete(err);
         return;
@@ -107,11 +116,13 @@ function _uninstallApp(appPath, onComplete) {
       return;
     }
     // it turns out that for deleting apps the orig simulator is much faster than fb's
-    _executeOrigSimulatorCommand(`uninstall booted ${bundleId}`, function (err2) {
+    const options = {args: `uninstall booted ${bundleId}`};
+    _executeOrigSimulatorCommand(options, function (err2) {
       onComplete();
     });
     /*
-    _executeSimulatorCommand(`uninstall ${bundleId}`, function (err2) {
+    const options = {args: `uninstall ${bundleId}`};
+    _executeSimulatorCommand(options, function (err2) {
       // this might fail if the app isn't installed, so don't worry about failure
       onComplete();
     });
@@ -126,7 +137,8 @@ function _launchApp(appPath, onComplete) {
       onComplete(err);
       return;
     }
-    _executeSimulatorCommand(`launch ${bundleId} ${_defaultLaunchArgs.join(' ')}`, function (err2) {
+    const options = {args: `launch ${bundleId} ${_defaultLaunchArgs.join(' ')}`};
+    _executeSimulatorCommand(options, function (err2) {
       if (err2) {
         onComplete(err2);
         return;
@@ -143,7 +155,8 @@ function _relaunchApp(appPath, onComplete) {
       onComplete(err);
       return;
     }
-    _executeSimulatorCommand(`relaunch ${bundleId} ${_defaultLaunchArgs.join(' ')}`, function (err2) {
+    const options = {args: `relaunch ${bundleId} ${_defaultLaunchArgs.join(' ')}`};
+    _executeSimulatorCommand(options, function (err2) {
       if (err2) {
         onComplete(err2);
         return;
@@ -214,10 +227,24 @@ function _getQueryFromDevice(device) {
   return res.trim();
 }
 
+// ./node_modules/detox-tools/fbsimctl/fbsimctl "iPhone 5" "iOS 8.3" list
+function _listSimulators(device, onComplete) {
+  const query = _getQueryFromDevice(device);
+  const options = {args: `${query} list`, showStdout: true};
+  _executeSimulatorCommand(options, function (err) {
+    if (err) {
+      onComplete(err);
+      return;
+    }
+    onComplete();
+  });
+}
+
 // ./node_modules/detox-tools/fbsimctl/fbsimctl "iPhone 5" "iOS 8.3" boot
 function _bootSimulator(device, onComplete) {
   const query = _getQueryFromDevice(device);
-  _executeSimulatorCommand(`--state=shutdown ${query} boot`, function (err) {
+  const options = {args: `--state=shutdown ${query} boot`};
+  _executeSimulatorCommand(options, function (err) {
     if (err) {
       onComplete(err);
       return;
@@ -229,7 +256,8 @@ function _bootSimulator(device, onComplete) {
 // ./node_modules/detox-tools/fbsimctl/fbsimctl "iPhone 5" "iOS 8.3" shutdown
 function _shutdownSimulator(device, onComplete) {
   const query = _getQueryFromDevice(device);
-  _executeSimulatorCommand(`--state=booted ${query} shutdown`, function (err) {
+  const options = {args: `--state=booted ${query} shutdown`};
+  _executeSimulatorCommand(options, function (err) {
     if (err) {
       onComplete(err);
       return;
@@ -294,12 +322,14 @@ function prepare(params, onComplete) {
       onComplete(new Error(`scheme.device property is missing, should hold the device type we test on`));
       return;
     }
-    _bootSimulator(_currentScheme.device, function (err) {
-      if (err) {
-        onComplete(err);
-        return;
-      }
-      deleteAndRelaunchApp(onComplete);
+    _listSimulators(_currentScheme.device, function (err) {
+      _bootSimulator(_currentScheme.device, function (err2) {
+        if (err2) {
+          onComplete(err2);
+          return;
+        }
+        deleteAndRelaunchApp(onComplete);
+      });
     });
   } else {
     onComplete(new Error(`No scheme was found, in order to test a simulator pass settings under the ios-simulator property`));
