@@ -19,6 +19,7 @@ class example extends Component {
     this.state = {
       greeting: undefined
     };
+    console.log('example React Component constructed (console.log test)');
   }
   render() {
     if (this.state.greeting) return this.renderAfterButton();
@@ -46,6 +47,7 @@ class example extends Component {
     );
   }
   onButtonPress(greeting) {
+    console.log('onButtonPress ' + greeting + ' (console.log test)');
     this.setState({
       greeting: greeting
     });

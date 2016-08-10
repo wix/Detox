@@ -1,4 +1,5 @@
 const exec = require('child_process').exec;
+const spawn = require('child_process').spawn;
 const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
@@ -12,6 +13,7 @@ const websocket = require('../websocket');
 let _defaultLaunchArgs = [];
 let _currentScheme = {};
 let _verbose = false;
+let _appLogProcess;
 
 function _waitUntilReady(onReady) {
   websocket.waitForNextAction('ready', onReady);
@@ -64,10 +66,10 @@ function _executeSimulatorCommand(options, onComplete) {
     if (err) {
       console.error(stdout);
       console.error(stderr);
-      onComplete(err);
+      onComplete(err, stdout, stderr);
       return;
     }
-    onComplete();
+    onComplete(null, stdout, stderr);
   });
 }
 
@@ -88,10 +90,10 @@ function _executeOrigSimulatorCommand(options, onComplete) {
     if (err) {
       console.error(stdout);
       console.error(stderr);
-      onComplete(err);
+      onComplete(err, stdout, stderr);
       return;
     }
-    onComplete();
+    onComplete(null, stdout, stderr);
   });
 }
 
@@ -147,6 +149,40 @@ function _uninstallApp(device, appPath, onComplete) {
   });
 }
 
+function _getAppLogfile(bundleId, stdout) {
+  const suffix = `fbsimulatorcontrol/diagnostics/out_err/${bundleId}_err.txt`;
+  const re = new RegExp('[^\\s]+' + suffix);
+  const matches = stdout.match(re);
+  if (matches && matches.length > 0) {
+    const logfile = matches[0];
+    console.log(`DETOX app logfile: ${logfile}\n`);
+    return logfile;
+  }
+  return undefined;
+}
+
+function _listenOnAppLogfile(logfile) {
+  if (_appLogProcess) {
+    _appLogProcess.kill();
+    _appLogProcess = undefined;
+  }
+  if (!logfile) return;
+  _appLogProcess = spawn('tail', ['-f', logfile]);
+  _appLogProcess.stdout.on('data', function (buffer) {
+    const data = buffer.toString('utf8');
+    if (_verbose) {
+      console.log('DETOX app: ' + data);
+    }
+  });
+}
+
+process.on('exit', function () {
+  if (_appLogProcess) {
+    _appLogProcess.kill();
+    _appLogProcess = undefined;
+  }
+});
+
 // ./node_modules/detox-tools/fbsimctl/fbsimctl launch org.reactjs.native.example.example arg1 arg2 arg3
 function _launchApp(device, appPath, onComplete) {
   const query = _getQueryFromDevice(device);
@@ -155,8 +191,12 @@ function _launchApp(device, appPath, onComplete) {
       onComplete(err);
       return;
     }
-    const options = {args: `${query} launch ${bundleId} ${_defaultLaunchArgs.join(' ')}`};
-    _executeSimulatorCommand(options, function (err2) {
+    const options = {args: `${query} launch --stderr ${bundleId} ${_defaultLaunchArgs.join(' ')}`};
+    _executeSimulatorCommand(options, function (err2, stdout, stderr) {
+      if (_verbose) {
+        // in the future we'll allow expectations on logs and _listenOnAppLogfile will always run (remove if)
+        _listenOnAppLogfile(_getAppLogfile(bundleId, stdout));
+      }
       if (err2) {
         onComplete(err2);
         return;
@@ -175,7 +215,11 @@ function _relaunchApp(device, appPath, onComplete) {
       return;
     }
     const options = {args: `${query} relaunch ${bundleId} ${_defaultLaunchArgs.join(' ')}`};
-    _executeSimulatorCommand(options, function (err2) {
+    _executeSimulatorCommand(options, function (err2, stdout, stderr) {
+      if (_verbose) {
+        // in the future we'll allow expectations on logs and _listenOnAppLogfile will always run (remove if)
+        _listenOnAppLogfile(_getAppLogfile(bundleId, stdout));
+      }
       if (err2) {
         onComplete(err2);
         return;
