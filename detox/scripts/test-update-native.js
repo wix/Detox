@@ -10,7 +10,7 @@ shell.cp('-Rf', '../ios/*', 'node_modules/detox/ios');
 
 shell.echo('\n#################################################################');
 shell.echo('# killing any running react-native packagers');
-shell.exec('pkill -f "react-native/packager"');
+shell.exec('pkill -f "react-native/packager" ; pkill -f "react-native start"');
 
 shell.echo('\n#################################################################');
 shell.echo('# react-native run-ios');

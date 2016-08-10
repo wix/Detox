@@ -31,7 +31,7 @@ if (!shell.exec('netstat -n -atp tcp | grep -i "listen" | grep ".8099"', {silent
 
 shell.echo('\n#################################################################');
 shell.echo('# killing any running react-native packagers');
-shell.exec('pkill -f "react-native/packager"');
+shell.exec('pkill -f "react-native/packager" ; pkill -f "react-native start"');
 
 shell.echo('\n#################################################################');
 shell.echo('# node ./node_modules/detox/scripts/clean-build.js');

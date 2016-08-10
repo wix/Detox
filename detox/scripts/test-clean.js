@@ -2,7 +2,7 @@ var shell = require('shelljs');
 
 shell.echo('\n#################################################################');
 shell.echo('# killing any running react-native packagers');
-shell.exec('pkill -f "react-native/packager"');
+shell.exec('pkill -f "react-native/packager" ; pkill -f "react-native start"');
 
 shell.echo('\n#################################################################');
 shell.echo('# killing ios simulator');

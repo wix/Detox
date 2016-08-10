@@ -23,7 +23,9 @@
     "test-clean": "node scripts/test-clean.js",
     "test-update-js": "node scripts/test-update-js.js",
     "test-update-native": "node scripts/test-update-native.js",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js",
+    "test-debug": "node scripts/test.js --debug",
+    "test-release": "node scripts/test.js --release"
   },
   "devDependencies": {
     "babel-cli": "^6.8.0",
