@@ -20,6 +20,10 @@ Not using React Native? you now have a [pure native demo project](demo-native) t
 
 See the [Installing](INSTALLING.md) instructions
 
+## Dealing with flakiness
+
+See the [Flakiness](FLAKINESS.md) handbook
+
 ## Some implementation details
 
 * We let you write your e2e tests in JS (they can even be cross-platform)
