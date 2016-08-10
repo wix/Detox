@@ -35,7 +35,7 @@ function _getBundleIdFromApp(appPath, onComplete) {
       if (Array.isArray(obj)) obj = obj[0];
       const bundleId = obj['CFBundleIdentifier'];
       if (!bundleId) {
-        onComplete(new Error(`Field CFBundleIdentifier not found inside Info.plist of app binary at ${absPath}`));
+        onComplete(new Error(`field CFBundleIdentifier not found inside Info.plist of app binary at ${absPath}`));
         return;
       }
       onComplete(null, bundleId);
@@ -51,12 +51,12 @@ function _executeSimulatorCommand(options, onComplete) {
   const fbsimctlPath = path.join(__dirname, '../../../detox-tools/fbsimctl/fbsimctl');
   const cmd = fbsimctlPath + ' ' + options.args;
   if (_verbose) {
-    console.log(`DETOX: ${cmd}\n`);
+    console.log(`DETOX exec: ${cmd}\n`);
   }
   exec(cmd, function (err, stdout, stderr) {
     if (_verbose) {
-      if (stdout) console.log(`DETOX (stdout):\n`, stdout, '\n');
-      if (stderr) console.log(`DETOX (stderr):\n`, stderr, '\n');
+      if (stdout) console.log(`DETOX exec stdout:\n`, stdout, '\n');
+      if (stderr) console.log(`DETOX exec stderr:\n`, stderr, '\n');
     }
     if (options.showStdout) {
       console.log(`DETOX fbsimctl ${options.args}:\n`, stdout, '\n');
@@ -75,12 +75,12 @@ function _executeSimulatorCommand(options, onComplete) {
 function _executeOrigSimulatorCommand(options, onComplete) {
   const cmd = 'xcrun simctl ' + options.args;
   if (_verbose) {
-    console.log(`DETOX: ${cmd}\n`);
+    console.log(`DETOX exec: ${cmd}\n`);
   }
   exec(cmd, function (err, stdout, stderr) {
     if (_verbose) {
-      if (stdout) console.log(`DETOX (stdout):\n`, stdout, '\n');
-      if (stderr) console.log(`DETOX (stderr):\n`, stderr, '\n');
+      if (stdout) console.log(`DETOX exec stdout:\n`, stdout, '\n');
+      if (stderr) console.log(`DETOX exec stderr:\n`, stderr, '\n');
     }
     if (options.showStdout) {
       console.log(`DETOX simctl ${options.args}:\n`, stdout, '\n');
@@ -100,7 +100,7 @@ function _getAppAbsolutePath(appPath) {
   try {
     fs.accessSync(absPath, fs.F_OK);
   } catch (e) {
-    throw new Error(`App binary not found at ${absPath}, did you build it?`);
+    throw new Error(`app binary not found at ${absPath}, did you build it?`);
   }
   return absPath;
 }
