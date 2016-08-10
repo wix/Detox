@@ -1,4 +1,4 @@
-const MULTI_TEST_COUNT = 35;
+const MULTI_TEST_COUNT = 100;
 
 describe('Stressful Use', function() {
   beforeEach(function (done) {
@@ -15,10 +15,13 @@ describe('Stressful Use', function() {
     expect(element(by.label('Hello World!!!'))).toBeVisible();
   });
 
-  for (let i = 0; i < MULTI_TEST_COUNT; i++) {
-    it(`should handle tap in stress consecutive test #${i+1}`, function () {
-      element(by.label('Say Hello')).tap();
-      expect(element(by.label('Hello!!!'))).toBeVisible();
-    });
-  };
+  describe('Consecutive Test', function() {
+    for (let i = 0; i < MULTI_TEST_COUNT; i++) {
+      it.only(`should handle tap in stress consecutive test #${i+1}`, function () {
+        element(by.label('Say Hello')).tap();
+        expect(element(by.label('Hello!!!'))).toBeVisible();
+      });
+    };
+  })
+
 });

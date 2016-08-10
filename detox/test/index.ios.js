@@ -15,8 +15,8 @@ import {
 } from 'react-native';
 import _ from 'lodash';
 
-const STRESSFUL_STRING_LENGTH = 7800;
-const STRESSFUL_EVENTS_COUNT = 150;
+const STRESSFUL_STRING_LENGTH = 48000; // Min: 32000
+const STRESSFUL_EVENTS_COUNT = 570; // Min: 380
 
 function buildStringByLength(length) {
   str = "";
@@ -63,7 +63,7 @@ class example extends Component {
   renderAfterButton() {
     return (
       <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
-        <Text style={{fontSize: 10, width: 300, height: 10}}>
+        <Text style={{fontSize: 10, width: 0, height: 0}}>
           Bridge: {this.state.passToBridge}
         </Text>
         <Text style={{fontSize: 25}}>
@@ -84,7 +84,7 @@ class example extends Component {
 
     const data = buildStringByLength(STRESSFUL_STRING_LENGTH);
     this.setState({
-      passToBridge: data
+      passToBridge: data,
       greeting: greeting
     });
   }
