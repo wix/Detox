@@ -13,10 +13,11 @@ var _onNextAction = {};
 
 function sendAction(type, params) {
   if (!_ws) return;
-  _ws.send(JSON.stringify({
+  const json = JSON.stringify({
     type: type,
     params: params
-  }));
+  }) + '\n '
+  _ws.send(json);
 }
 
 function config(params) {
