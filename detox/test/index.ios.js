@@ -1,19 +1,10 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
 import {
   AppRegistry,
-  StyleSheet,
   Text,
   View,
-  ScrollView,
   TouchableOpacity
 } from 'react-native';
-import _ from 'lodash';
 import * as Screens from './src/Screens'
 
 import SanityScreen from './src/Screens/SanityScreen'

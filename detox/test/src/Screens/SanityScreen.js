@@ -22,6 +22,7 @@ export default class SanityScreen extends Component {
     this.state = {
       greeting: undefined,
     };
+    console.log('SanityScreen React Component constructed (console.log test)');
   }
 
   renderTestButton(label, onPress) {
@@ -55,6 +56,7 @@ export default class SanityScreen extends Component {
   }
 
   onButtonPress(greeting) {
+    console.log('SanityScreen onButtonPress ' + greeting + ' (console.log test)');
     this.setState({
       greeting: greeting
     });
