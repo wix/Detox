@@ -5,6 +5,7 @@ describe('Simulator Actions', function () {
       simulator.reloadReactNativeApp(done);
     });
     it('should tap successfully', function () {
+      element(by.label('SanityScreen')).tap();
       element(by.label('Say Hello')).tap();
       expect(element(by.label('Hello!!!'))).toBeVisible();
     });
@@ -15,6 +16,7 @@ describe('Simulator Actions', function () {
       simulator.relaunchApp(done);
     });
     it('should tap successfully', function () {
+      element(by.label('SanityScreen')).tap();
       element(by.label('Say Hello')).tap();
       expect(element(by.label('Hello!!!'))).toBeVisible();
     });
@@ -25,6 +27,7 @@ describe('Simulator Actions', function () {
       simulator.deleteAndRelaunchApp(done);
     });
     it('should tap successfully', function () {
+      element(by.label('SanityScreen')).tap();
       element(by.label('Say Hello')).tap();
       expect(element(by.label('Hello!!!'))).toBeVisible();
     });
