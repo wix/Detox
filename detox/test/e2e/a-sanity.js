@@ -1,12 +1,12 @@
-describe.only('Simple Flow', function () {
+describe('Sanity', function () {
 
   beforeEach(function (done) {
     simulator.reloadReactNativeApp(done);
   });
 
-  beforeEach(() => {
-    element(by.label('SanityScreen')).tap();
-  })
+  beforeEach(function () {
+    element(by.label('Sanity')).tap();
+  });
 
   it('should have welcome screen', function () {
     expect(element(by.label('Welcome'))).toBeVisible();

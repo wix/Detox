@@ -1,32 +1,31 @@
-const MULTI_TEST_COUNT = 100;
+describe.skip('Stress Tests', function () {
 
-describe('Stressful Use', function() {
   beforeEach(function (done) {
     simulator.reloadReactNativeApp(done);
   });
 
-  beforeEach(() => {
-    element(by.label('StressScreen')).tap();
+  beforeEach(function () {
+    element(by.label('Stress')).tap();
   })
 
-  it('should handle tap during conditions of stressful bridge', function() {
-
+  it('should handle tap during busy bridge', function () {
     element(by.label('Bridge Stress')).tap();
     expect(element(by.label('Hello World!!!'))).toBeVisible();
   });
 
-  it('should handle tap during conditions of stressful JS event loop', function() {
+  it('should handle tap during busy JS event loop', function () {
     element(by.label('Events Stress')).tap();
     expect(element(by.label('Hello World!!!'))).toBeVisible();
   });
 
-  describe('Consecutive Test', function() {
+  describe('Consecutive Test', function () {
+    const MULTI_TEST_COUNT = 20;
     for (let i = 0; i < MULTI_TEST_COUNT; i++) {
-      it(`should handle tap in stress consecutive test #${i+1}`, function () {
+      it(`should handle tap in consecutive test #${i+1}`, function () {
         element(by.label('Say Hello')).tap();
         expect(element(by.label('Hello!!!'))).toBeVisible();
       });
     };
-  })
+  });
 
 });

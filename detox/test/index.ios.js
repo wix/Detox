@@ -29,7 +29,7 @@ class example extends Component {
     if (!this.state.screen) {
       return (
         <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
-          <Text style={{fontSize: 25, marginBottom: 30}}>
+          <Text style={{fontSize: 20, marginBottom: 30}}>
             Choose a test
           </Text>
           {this.renderScreenButton('Sanity', Screens.SanityScreen)}
