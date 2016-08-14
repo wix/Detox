@@ -1,2 +1,7 @@
-export const SANITY_SCREEN = "SanityScreen";
-export const STRESS_SCREEN = "StressScreen";
+import SanityScreen from './SanityScreen';
+import StressScreen from './StressScreen';
+
+export {
+  SanityScreen,
+  StressScreen
+};

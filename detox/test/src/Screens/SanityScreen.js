@@ -1,20 +1,9 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
 import {
-  AppRegistry,
-  StyleSheet,
   Text,
   View,
-  ScrollView,
   TouchableOpacity
 } from 'react-native';
-import _ from 'lodash';
-import * as Screens from './'
 
 export default class SanityScreen extends Component {
   constructor(props) {
@@ -22,7 +11,7 @@ export default class SanityScreen extends Component {
     this.state = {
       greeting: undefined,
     };
-    console.log('SanityScreen React Component constructed (console.log test)');
+    console.log('SanityScreen react component constructed (console.log test)');
   }
 
   renderTestButton(label, onPress) {
@@ -56,7 +45,7 @@ export default class SanityScreen extends Component {
   }
 
   onButtonPress(greeting) {
-    console.log('SanityScreen onButtonPress ' + greeting + ' (console.log test)');
+    console.log('SanityScreen onButtonPress "' + greeting + '" (console.log test)');
     this.setState({
       greeting: greeting
     });

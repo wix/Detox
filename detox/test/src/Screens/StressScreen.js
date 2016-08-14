@@ -1,20 +1,9 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
 import {
-  AppRegistry,
-  StyleSheet,
   Text,
   View,
-  ScrollView,
   TouchableOpacity
 } from 'react-native';
-import _ from 'lodash';
-import * as Screens from './'
 
 const STRESSFUL_STRING_LENGTH = 48000; // Min: 32000
 const STRESSFUL_EVENTS_COUNT = 570; // Min: 380

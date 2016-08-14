@@ -5,10 +5,7 @@ import {
   View,
   TouchableOpacity
 } from 'react-native';
-import * as Screens from './src/Screens'
-
-import SanityScreen from './src/Screens/SanityScreen'
-import StressScreen from './src/Screens/StressScreen'
+import * as Screens from './src/screens'
 
 class example extends Component {
   constructor(props) {
@@ -18,14 +15,12 @@ class example extends Component {
     };
   }
 
-  renderScreenButton(screen) {
+  renderScreenButton(title, component) {
     return (
       <TouchableOpacity onPress={() => {
-        this.setState({
-          screen
-        });
+        this.setState({screen: component});
       }}>
-        <Text style={{color: 'blue', marginBottom: 20}}>{screen}</Text>
+        <Text style={{color: 'blue', marginBottom: 20}}>{title}</Text>
       </TouchableOpacity>
     )
   }
@@ -35,24 +30,17 @@ class example extends Component {
       return (
         <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
           <Text style={{fontSize: 25, marginBottom: 30}}>
-            Please Choose a test
+            Choose a test
           </Text>
-          {this.renderScreenButton(Screens.SANITY_SCREEN)}
-          {this.renderScreenButton(Screens.STRESS_SCREEN)}
+          {this.renderScreenButton('Sanity', Screens.SanityScreen)}
+          {this.renderScreenButton('Stress', Screens.StressScreen)}
         </View>
       );
     }
-
-    switch (this.state.screen) {
-      case Screens.SANITY_SCREEN:
-        return (
-          <SanityScreen></SanityScreen>
-        );
-      case Screens.STRESS_SCREEN:
-        return (
-          <StressScreen></StressScreen>
-        );
-    }
+    const Screen = this.state.screen;
+    return (
+      <Screen />
+    );
   }
 }
 
