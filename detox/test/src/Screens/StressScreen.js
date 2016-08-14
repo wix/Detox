@@ -2,29 +2,37 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  TouchableOpacity
+  TouchableOpacity,
+  NativeModules
 } from 'react-native';
 
-const STRESSFUL_STRING_LENGTH = 48000; // Min: 32000
-const STRESSFUL_EVENTS_COUNT = 570; // Min: 380
+const NativeModule = NativeModules.NativeModule;
 
-function buildStringByLength(length) {
-  str = "";
-  charcode = 65;
-  for (let i=0; i < length; i++) {
-    str += String.fromCharCode(charcode);
-    charcode ++;
-    if (charcode == 91) charcode = 65;
+const BRIDGE_ONEWAY_CALLS = 10;
+const BRIDGE_ONEWAY_STR_CHUNK_LEN = 20;
+const BRIDGE_TWOWAY_CALLS = 10;
+const BRIDGE_TWOWAY_STR_CHUNK_LEN = 20;
+const BRIDGE_SETSTATE_STR_CHUNK_LEN = 20;
+const EVENT_LOOP_COUNT = 10;
+const EVENT_LOOP_STR_CHUNK_LEN = 20;
+
+function getStringByLength(chunks) {
+  let res = '';
+  for (let i = 0; i < chunks ; i++) {
+    res += 'EqtCfLH6DYnLT4WjBcLfR9M33uxSEEBMphVSTnpKpEfHCBNn3oxVMpEQ0Rzqlx8BiiyCIF5WnkEhJyGsGhHtVfjgwCueY0DQXmat';
   }
-  return str;
+  return res;
 }
 
 export default class StressScreen extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
-      greeting: undefined,
-      passToBridge: undefined
+      phase1: undefined,
+      phase2: undefined,
+      extraData: undefined,
+      counter: 1
     };
   }
 
@@ -37,56 +45,102 @@ export default class StressScreen extends Component {
   }
 
   render() {
-    if (this.state.greeting) return this.renderAfterButton();
+    if (this.state.phase2) return this.renderPhase2();
+    if (this.state.phase1) return this.renderPhase1();
     return (
       <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
-        <Text style={{fontSize: 25, marginBottom: 30}}>
-          Welcome
-        </Text>
-        {this.renderTestButton('Say Hello', this.onButtonPress.bind(this, 'Hello'))}
-        {this.renderTestButton('Say World', this.onButtonPress.bind(this, 'World'))}
-        {this.renderTestButton('Bridge Stress', this.bridgeStressButtonPressed.bind(this, 'Hello World'))}
-        {this.renderTestButton('Events Stress', this.eventsStressButtonPressed.bind(this, 'Hello World'))}
-      </View>
-    );
-  }
-  renderAfterButton() {
-    return (
-      <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
-        <Text style={{fontSize: 10, width: 0, height: 0}}>
-          Bridge: {this.state.passToBridge}
-        </Text>
-        <Text style={{fontSize: 25}}>
-          {this.state.greeting}!!!
-        </Text>
+        {this.renderTestButton('Bridge OneWay Stress', this.bridgeOneWayStressButtonPressed.bind(this))}
+        {this.renderTestButton('Bridge TwoWay Stress', this.bridgeTwoWayStressButtonPressed.bind(this))}
+        {this.renderTestButton('Bridge setState Stress', this.bridgeSetStateStressButtonPressed.bind(this))}
+        {this.renderTestButton('EventLoop Stress', this.eventLoopStressButtonPressed.bind(this))}
+        {this.renderTestButton(`Consecutive Stress ${this.state.counter}`, this.consecutiveStressButtonPressed.bind(this))}
       </View>
     );
   }
 
-  onButtonPress(greeting) {
+  renderPhase2() {
+    return (
+      <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
+        <Text style={{fontSize: 25, marginBottom: 20}}>
+          {this.state.phase2}
+        </Text>
+        {
+          !this.state.extraData ? false :
+          <Text style={{fontSize: 10, width: 100, height: 20}}>
+            Extra Data: {this.state.extraData}
+          </Text>
+        }
+      </View>
+    );
+  }
+
+  renderPhase1() {
+    return (
+      <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
+        <TouchableOpacity onPress={this.onButtonPress.bind(this)}>
+          <Text style={{color: 'blue', marginBottom: 20}}>Next</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  onButtonPress() {
     this.setState({
-      greeting: greeting
+      phase2: this.state.phase1
     });
   }
 
-  bridgeStressButtonPressed(greeting) {
-    this.onButtonPress(greeting)
-
-    const data = buildStringByLength(STRESSFUL_STRING_LENGTH);
+  bridgeOneWayStressButtonPressed() {
     this.setState({
-      passToBridge: data,
-      greeting: greeting
+      phase1: 'BridgeOneWay'
+    });
+    setImmediate(() => {
+      const str = getStringByLength(BRIDGE_ONEWAY_STR_CHUNK_LEN);
+      for (let i = 0 ; i < BRIDGE_ONEWAY_CALLS ; i++) {
+        NativeModule.echoWithoutResponse(str);
+      }
     });
   }
 
-  eventsStressButtonPressed(greeting) {
-    // Stress:
-    for (let i =0; i < STRESSFUL_EVENTS_COUNT; i++) {
-      let myString = "";
-      setImmediate(() => { myString = buildStringByLength(1000) });
+  bridgeTwoWayStressButtonPressed() {
+    this.setState({
+      phase1: 'BridgeTwoWay'
+    });
+    setImmediate(() => {
+      const str = getStringByLength(BRIDGE_TWOWAY_STR_CHUNK_LEN);
+      for (let i = 0 ; i < BRIDGE_TWOWAY_CALLS ; i++) {
+        NativeModule.echoWithResponse(str);
+      }
+    });
+  }
+
+  bridgeSetStateStressButtonPressed() {
+    this.setState({
+      phase1: 'BridgeSetState'
+    });
+    setImmediate(() => {
+      const str = getStringByLength(BRIDGE_SETSTATE_STR_CHUNK_LEN);
+      this.setState({
+        extraData: str
+      });
+    });
+  }
+
+  eventLoopStressButtonPressed() {
+    this.setState({
+      phase1: 'EventLoop'
+    });
+    for (let i = 0 ; i < EVENT_LOOP_COUNT ; i++) {
+      setImmediate(() => {
+        let str = getStringByLength(EVENT_LOOP_STR_CHUNK_LEN);
+      });
     }
+  }
 
-    setImmediate(() => { this.onButtonPress(greeting) });
+  consecutiveStressButtonPressed() {
+    this.setState({
+      counter: this.state.counter + 1
+    });
   }
 
 }

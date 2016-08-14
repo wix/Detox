@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 
 export default class SanityScreen extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -34,6 +35,7 @@ export default class SanityScreen extends Component {
       </View>
     );
   }
+
   renderAfterButton() {
     return (
       <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>

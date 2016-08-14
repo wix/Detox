@@ -8,6 +8,7 @@ import {
 import * as Screens from './src/screens'
 
 class example extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -42,6 +43,7 @@ class example extends Component {
       <Screen />
     );
   }
+
 }
 
 AppRegistry.registerComponent('example', () => example);

@@ -6,26 +6,37 @@ describe.skip('Stress Tests', function () {
 
   beforeEach(function () {
     element(by.label('Stress')).tap();
-  })
+  });
 
-  it('should handle tap during busy bridge', function () {
-    element(by.label('Bridge Stress')).tap();
-    expect(element(by.label('Hello World!!!'))).toBeVisible();
+  it('should handle tap during busy bridge (one way)', function () {
+    element(by.label('Bridge OneWay Stress')).tap();
+    element(by.label('Next')).tap();
+    expect(element(by.label('BridgeOneWay'))).toBeVisible();
+  });
+
+  it('should handle tap during busy bridge (two way)', function () {
+    element(by.label('Bridge TwoWay Stress')).tap();
+    element(by.label('Next')).tap();
+    expect(element(by.label('BridgeTwoWay'))).toBeVisible();
+  });
+
+  it('should handle tap during busy bridge (setState)', function () {
+    element(by.label('Bridge setState Stress')).tap();
+    element(by.label('Next')).tap();
+    expect(element(by.label('BridgeSetState'))).toBeVisible();
   });
 
   it('should handle tap during busy JS event loop', function () {
-    element(by.label('Events Stress')).tap();
-    expect(element(by.label('Hello World!!!'))).toBeVisible();
+    element(by.label('EventLoop Stress')).tap();
+    element(by.label('Next')).tap();
+    expect(element(by.label('EventLoop'))).toBeVisible();
   });
 
-  describe('Consecutive Test', function () {
-    const MULTI_TEST_COUNT = 20;
-    for (let i = 0; i < MULTI_TEST_COUNT; i++) {
-      it(`should handle tap in consecutive test #${i+1}`, function () {
-        element(by.label('Say Hello')).tap();
-        expect(element(by.label('Hello!!!'))).toBeVisible();
-      });
-    };
+  it('should handle consecutive taps', function () {
+    const TAP_COUNT = 50;
+    for (let i = 1 ; i <= TAP_COUNT ; i++) {
+      element(by.label('Consecutive Stress ' + i)).tap();
+    }
   });
 
 });
