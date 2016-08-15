@@ -7,10 +7,14 @@
 //
 
 #import "ReactNativeSupport.h"
+#import "ReactNativeBridgeIdlingResource.h"
+#import "ReactNativeUIManagerIdlingResource.h"
 
 @interface ReactNativeSupport()
 
 @property (nonatomic, assign) BOOL javascriptJustLoaded;
+@property (nonatomic, retain) ReactNativeBridgeIdlingResource *bridgeIdlingResource;
+@property (nonatomic, retain) ReactNativeUIManagerIdlingResource *uiManagerIdlingResource;
 
 @end
 
@@ -27,6 +31,8 @@ NSString *const RCTContentDidAppearNotification = @"RCTContentDidAppearNotificat
     self = [super init];
     if (self == nil) return nil;
     self.javascriptJustLoaded = NO;
+    self.bridgeIdlingResource = nil;
+    self.uiManagerIdlingResource = nil;
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(javascriptDidLoad)
@@ -48,6 +54,8 @@ NSString *const RCTContentDidAppearNotification = @"RCTContentDidAppearNotificat
 
 - (void) reloadApp
 {
+    [self removeIdlingResources];
+    
     // option 1: [[RCTBridge currentBridge] reload]
     
     // option 2: post notification
@@ -59,6 +67,11 @@ NSString *const RCTContentDidAppearNotification = @"RCTContentDidAppearNotificat
 - (void) javascriptDidLoad
 {
     self.javascriptJustLoaded = YES;
+ 
+    // install idling resources to help earlgrey sync with react native
+    [self removeIdlingResources];
+    self.bridgeIdlingResource = [ReactNativeBridgeIdlingResource idlingResourceForBridge:nil name:@"ReactNative Bridge"];
+    self.uiManagerIdlingResource = [ReactNativeUIManagerIdlingResource idlingResourceForBridge:nil name:@"ReactNative UIManager"];
 }
 
 - (void) contentDidAppear
@@ -70,5 +83,18 @@ NSString *const RCTContentDidAppearNotification = @"RCTContentDidAppearNotificat
     }
 }
 
+- (void) removeIdlingResources
+{
+    if (self.bridgeIdlingResource != nil)
+    {
+        [ReactNativeBridgeIdlingResource deregister:self.bridgeIdlingResource];
+        self.bridgeIdlingResource = nil;
+    }
+    if (self.uiManagerIdlingResource != nil)
+    {
+        [ReactNativeUIManagerIdlingResource deregister:self.uiManagerIdlingResource];
+        self.uiManagerIdlingResource = nil;
+    }
+}
 
 @end
