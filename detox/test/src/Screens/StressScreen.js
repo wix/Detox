@@ -116,36 +116,36 @@ export default class StressScreen extends Component {
     this.setState({
       phase1: 'BridgeOneWay'
     });
-    setImmediate(() => {
+    setTimeout(() => {
       const str = getStringByLength(BRIDGE_ONEWAY_STR_CHUNK_LEN);
       for (let i = 0 ; i < BRIDGE_ONEWAY_CALLS ; i++) {
         NativeModule.echoWithoutResponse(str);
       }
-    });
+    }, 1);
   }
 
   bridgeTwoWayStressButtonPressed() {
     this.setState({
       phase1: 'BridgeTwoWay'
     });
-    setImmediate(() => {
+    setTimeout(() => {
       const str = getStringByLength(BRIDGE_TWOWAY_STR_CHUNK_LEN);
       for (let i = 0 ; i < BRIDGE_TWOWAY_CALLS ; i++) {
         NativeModule.echoWithResponse(str);
       }
-    });
+    }, 1);
   }
 
   bridgeSetStateStressButtonPressed() {
     this.setState({
       phase1: 'BridgeSetState'
     });
-    setImmediate(() => {
+    setTimeout(() => {
       const str = getStringByLength(BRIDGE_SETSTATE_STR_CHUNK_LEN);
       this.setState({
         extraData: str
       });
-    });
+    }, 1);
   }
 
   eventLoopStressButtonPressed() {
@@ -153,9 +153,9 @@ export default class StressScreen extends Component {
       phase1: 'EventLoop'
     });
     for (let i = 0 ; i < EVENT_LOOP_COUNT ; i++) {
-      setImmediate(() => {
+      setTimeout(() => {
         let str = getStringByLength(EVENT_LOOP_STR_CHUNK_LEN);
-      });
+      }, 1);
     }
   }
 
