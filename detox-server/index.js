@@ -26,7 +26,7 @@ function sendToOtherRole(sessionId, role, type, params) {
   if (ws) {
     sendAction(ws, type, params);
   } else {
-    console.log('%s: cannot fw sessionId=%s since other role=%s not connected', now(), sessionId, otherRole);
+    console.log('%s: role=%s not connected, cannot fw action (sessionId=%s)', now(), otherRole, sessionId);
   }
 }
 
@@ -41,12 +41,12 @@ wss.on('connection', function connection(ws) {
         if (action.params && action.params.sessionId && action.params.role) {
           sessionId = action.params.sessionId;
           role = action.params.role;
-          console.log('%s: login sessionId=%s role=%s', now(), sessionId, role);
+          console.log('%s: role=%s login (sessionId=%s)', now(), role, sessionId);
           _.set(sessions, [sessionId, role], ws);
         }
       } else {
         if (sessionId && role) {
-          console.log('%s: fw sessionId=%s action=%s from role=%s', now(), sessionId, action.type, role);
+          console.log('%s: role=%s action=%s (sessionId=%s)', now(), role, action.type, sessionId);
           sendToOtherRole(sessionId, role, action.type, action.params);
         }
       }
@@ -58,7 +58,7 @@ wss.on('connection', function connection(ws) {
   });
   ws.on('close', function () {
     if (sessionId && role) {
-      console.log('%s: disconnect sessionId=%s role=%s', now(), sessionId, role);
+      console.log('%s: role=%s disconnect (sessionId=%s)', now(), role, sessionId);
       _.set(sessions, [sessionId, role], undefined);
     }
   });
