@@ -11,6 +11,7 @@
 
 @protocol WebSocketDelegate <NSObject>
 
+- (void)websocketDidConnect;
 - (void)websocketDidReceiveAction:(NSString*)type withParams:(NSDictionary*)params;
 
 @end

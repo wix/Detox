@@ -73,7 +73,7 @@
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket
 {
     [self sendAction:@"login" withParams:@{@"sessionId": self.sessionId, @"role": @"testee"}];
-    [self sendAction:@"ready" withParams:@{}];
+    if (self.delegate) [self.delegate websocketDidConnect];
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessageWithString:(NSString *)string

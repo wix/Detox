@@ -13,6 +13,7 @@
 @property (nonatomic, retain) WebSocket *websocket;
 @property (nonatomic, retain) TestRunner *testRunner;
 @property (nonatomic, retain) ReactNativeSupport *reactNativeSupport;
+@property (nonatomic, assign) BOOL isReady;
 
 @end
 
@@ -34,6 +35,7 @@
     self = [super init];
     if (self == nil) return nil;
     
+    self.isReady = NO;
     self.websocket = [[WebSocket alloc] init];
     self.websocket.delegate = self;
     self.testRunner = [[TestRunner alloc] init];
@@ -49,6 +51,15 @@
     [self.websocket connectToServer:url withSessionId:sessionId];
 }
 
+- (void) websocketDidConnect
+{
+    if (![self.reactNativeSupport isReactNativeApp])
+    {
+        self.isReady = YES;
+        [self.websocket sendAction:@"ready" withParams:@{}];
+    }
+}
+
 - (void) websocketDidReceiveAction:(NSString *)type withParams:(NSDictionary *)params
 {
     if ([type isEqualToString:@"invoke"])
@@ -59,7 +70,10 @@
     
     if ([type isEqualToString:@"isReady"])
     {
-        [self.websocket sendAction:@"ready" withParams:@{}];
+        if (self.isReady)
+        {
+            [self.websocket sendAction:@"ready" withParams:@{}];
+        }
         return;
     }
     
@@ -72,6 +86,7 @@
     
     if ([type isEqualToString:@"reactNativeReload"])
     {
+        self.isReady = NO;
         [self.reactNativeSupport reloadApp];
         return;
     }
@@ -101,7 +116,8 @@
 
 - (void)reactNativeAppDidLoad
 {
-    [self.websocket sendAction:@"reactNativeAppLoaded" withParams:@{}];
+    self.isReady = YES;
+    [self.websocket sendAction:@"ready" withParams:@{}];
 }
 
 @end

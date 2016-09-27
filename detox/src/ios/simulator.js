@@ -21,7 +21,7 @@ function _waitUntilReady(onReady) {
 }
 
 function reloadReactNativeApp(onLoad) {
-  websocket.waitForNextAction('reactNativeAppLoaded', onLoad);
+  websocket.waitForNextAction('ready', onLoad);
   websocket.sendAction('reactNativeReload');
 }
 

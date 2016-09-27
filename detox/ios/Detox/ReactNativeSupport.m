@@ -52,6 +52,11 @@ NSString *const RCTContentDidAppearNotification = @"RCTContentDidAppearNotificat
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+- (BOOL) isReactNativeApp
+{
+    return (NSClassFromString(@"RCTBridge") != nil);
+}
+
 - (void) reloadApp
 {
     [self removeIdlingResources];

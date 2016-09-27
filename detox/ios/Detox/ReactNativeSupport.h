@@ -18,6 +18,7 @@
 
 @property (nonatomic, assign) id<ReactNativeSupportDelegate> delegate;
 
+- (BOOL) isReactNativeApp;
 - (void) reloadApp;
 
 @end
