@@ -11,6 +11,12 @@
 #import "Common/GREYDefines.h"
 #import "Common/GREYPrivate.h"
 
+static const CGFloat MOVING_AVERAGE_WEIGHT = 0.2;
+static const CGFloat MIN_THRESHOLD_FOR_IDLE = 10;
+
+// save this state variable between RN reloads
+static NSTimeInterval _timeToIdleMin = 1.0;
+
 typedef enum {
     kWaiting,
     kBusy,
@@ -22,7 +28,8 @@ typedef enum {
     NSString *_name;
     id<RN_RCTBridge> _bridge;
     IdlingCheckState _state;
-    int _consecutiveIdles;
+    NSTimeInterval _lastIdleTime;
+    NSTimeInterval _timeToIdleAvg;
 }
 
 + (instancetype)idlingResourceForBridge:(id)bridge name:(NSString *)name
@@ -53,7 +60,8 @@ typedef enum {
         _name = [name copy];
         _bridge = bridge;
         _state = kBusy;
-        _consecutiveIdles = 0;
+        _lastIdleTime = CACurrentMediaTime();
+        _timeToIdleAvg = 0;
     }
     return self;
 }
@@ -70,18 +78,22 @@ typedef enum {
 
 - (BOOL)isIdleNow
 {
+    NSTimeInterval time = CACurrentMediaTime();
+    NSTimeInterval timeSoFar = time - _lastIdleTime;
+    
     if (_bridge == nil) return NO;
     if (![_bridge isValid] || [_bridge isLoading]) return NO;
     id<RN_RCTJavaScriptExecutor> executor = [_bridge valueForKey:@"javaScriptExecutor"];
     if (executor == nil) return NO;
     
+    BOOL wasIdle = NO;
     if (_state == kIdle)
     {
-        _consecutiveIdles++;
-    }
-    else
-    {
-        _consecutiveIdles = 0;
+        wasIdle = YES;
+        NSTimeInterval idleTime = CACurrentMediaTime();
+        _timeToIdleAvg = (1.0 - MOVING_AVERAGE_WEIGHT) * _timeToIdleAvg + MOVING_AVERAGE_WEIGHT * timeSoFar;
+        if (_timeToIdleAvg < _timeToIdleMin) _timeToIdleMin = _timeToIdleAvg;
+        _lastIdleTime = idleTime;
     }
     if (_state != kWaiting)
     {
@@ -94,7 +106,11 @@ typedef enum {
         }];
     }
     BOOL res = NO;
-    if (_consecutiveIdles > 2) res = YES;
+    
+    // consider if (timeSoFar < MIN_THRESHOLD_FOR_IDLE * _timeToIdleMin) only
+    if (timeSoFar < MIN_THRESHOLD_FOR_IDLE * _timeToIdleMin && _timeToIdleAvg < MIN_THRESHOLD_FOR_IDLE * _timeToIdleMin) res = YES;
+    
+    // NSLog(@"idle=%d, timeSoFar = %f, avg = %f, min = %f", res, timeSoFar, _timeToIdleAvg, _timeToIdleMin);
     // NSLog(@"ReactNativeBridgeIdlingResource:    idle=%d (%d)", res, _consecutiveIdles);
     return res;
 }
