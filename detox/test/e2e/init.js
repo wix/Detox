@@ -8,6 +8,7 @@ before(function (done) {
   detox.connect(done);
 });
 
+// remark this section when debugging directly in Xcode
 before(function (done) {
   this.timeout(40000);
   simulator.prepare(config, done);
