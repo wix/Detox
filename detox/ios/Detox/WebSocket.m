@@ -41,6 +41,7 @@
         NSLog(@"Detox Error: sendAction encode - %@", error);
         return;
     }
+    NSLog(@"Detox Action Sent: %@", type);
     NSString *json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
     [self.websocket sendString:json];
 }
@@ -67,6 +68,7 @@
         NSLog(@"Detox Error: receiveAction invalid params");
         return;
     }
+    NSLog(@"Detox Action Received: %@", type);
     if (self.delegate) [self.delegate websocketDidReceiveAction:type withParams:params];
 }
 
