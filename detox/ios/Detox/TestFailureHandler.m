@@ -13,6 +13,9 @@
 - (void)handleException:(GREYFrameworkException *)exception details:(NSString *)details
 {
     NSLog(@"Detox Test Failed: %@", exception);
+    UIWindow* window = [[UIApplication sharedApplication] keyWindow];
+    NSLog(@"UI Hierarchy on test failure: %@", [GREYElementHierarchy hierarchyStringForElement:window]);
+
     if (self.delegate) [self.delegate onTestFailed:[exception description]];
 }
 
