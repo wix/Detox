@@ -18,6 +18,7 @@ describe('Simple Flow', function () {
   it('should show world screen after tap', function () {
     element(by.label('Say World')).tap();
     expect(element(by.label('World!!!'))).toBeVisible();
+    expect(element(by.label('No such label'))).toNotBeVisible();
   });
 
 });
