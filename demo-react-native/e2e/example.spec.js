@@ -8,6 +8,7 @@ describe('Example', function () {
     expect(element(by.label('Welcome'))).toBeVisible();
     expect(element(by.label('Say Hello'))).toBeVisible();
     expect(element(by.label('Say World'))).toBeVisible();
+    expect(element(by.label('Say goodbye'))).toNotBeVisible();
   });
 
   it('should show hello screen after tap', function () {
