@@ -5,7 +5,7 @@ import {
   View,
   TouchableOpacity
 } from 'react-native';
-import * as Screens from './src/Screens'
+import * as Screens from './src/Screens';
 
 class example extends Component {
 
