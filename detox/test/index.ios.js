@@ -5,7 +5,7 @@ import {
   View,
   TouchableOpacity
 } from 'react-native';
-import * as Screens from './src/screens'
+import * as Screens from './src/Screens'
 
 class example extends Component {
 
@@ -34,6 +34,7 @@ class example extends Component {
             Choose a test
           </Text>
           {this.renderScreenButton('Sanity', Screens.SanityScreen)}
+          {this.renderScreenButton('Matchers', Screens.MatchersScreen)}
           {this.renderScreenButton('Stress', Screens.StressScreen)}
         </View>
       );
