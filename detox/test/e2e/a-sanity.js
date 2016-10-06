@@ -1,13 +1,3 @@
-describe('Pre Sanity', function () {
-
-  // purpose of this test is to avoid running reloadReactNativeApp on the first line
-  it('should have welcome screen', function () {
-    element(by.label('Sanity')).tap();
-    expect(element(by.label('Welcome'))).toBeVisible();
-  });
-
-});
-
 describe('Sanity', function () {
 
   beforeEach(function (done) {
