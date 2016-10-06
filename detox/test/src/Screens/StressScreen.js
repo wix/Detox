@@ -10,10 +10,10 @@ const NativeModule = NativeModules.NativeModule;
 
 const BRIDGE_ONEWAY_CALLS = 10000;
 const BRIDGE_ONEWAY_STR_CHUNK_LEN = 40000;
-const BRIDGE_TWOWAY_CALLS = 1000;
+const BRIDGE_TWOWAY_CALLS = 500;
 const BRIDGE_TWOWAY_STR_CHUNK_LEN = 10000;
 const BRIDGE_SETSTATE_STR_CHUNK_LEN = 10000;
-const EVENT_LOOP_COUNT = 10000;
+const EVENT_LOOP_COUNT = 5000;
 const EVENT_LOOP_STR_CHUNK_LEN = 10000;
 
 function getStringByLength(chunks) {
