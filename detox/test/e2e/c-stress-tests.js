@@ -1,4 +1,4 @@
-describe.skip('Stress Tests', function () {
+describe('Stress Tests', function () {
 
   beforeEach(function (done) {
     simulator.reloadReactNativeApp(done);
