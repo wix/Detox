@@ -26,4 +26,8 @@ describe('Assertions', function () {
     expect(element(by.id('UniqueId204'))).toHaveLabel('I contain some text');
   });
 
+  it('should assert an element has (accesibility) id', function () {
+    expect(element(by.label('I contain some text'))).toHaveId('UniqueId204');
+  });
+
 });
