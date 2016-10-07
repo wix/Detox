@@ -56,6 +56,20 @@ class NotVisibleMatcher extends Matcher {
   }
 }
 
+class ExistsMatcher extends Matcher {
+  constructor() {
+    super();
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForNotNil');
+  }
+}
+
+class NotExistsMatcher extends Matcher {
+  constructor() {
+    super();
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForNil');
+  }
+}
+
 class TextMatcher extends Matcher {
   constructor(value) {
     super();
@@ -132,6 +146,12 @@ class ExpectElement extends Expect {
   }
   toBeNotVisible() {
     return new MatcherAssertionInteraction(this._object, new NotVisibleMatcher()).execute();
+  }
+  toExist() {
+    return new MatcherAssertionInteraction(this._object, new ExistsMatcher()).execute();
+  }
+  toNotExist() {
+    return new MatcherAssertionInteraction(this._object, new NotExistsMatcher()).execute();
   }
   toHaveText(value) {
     return new MatcherAssertionInteraction(this._object, new TextMatcher(value)).execute();

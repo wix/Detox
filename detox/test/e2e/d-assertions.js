@@ -16,6 +16,15 @@ describe('Assertions', function () {
     expect(element(by.id('UniqueId205'))).toBeNotVisible();
   });
 
+  // prefer toBeVisible to make sure the user actually sees this element
+  it('should assert an element exists', function () {
+    expect(element(by.id('UniqueId205'))).toExist();
+  });
+
+  it('should assert an element does not exist', function () {
+    expect(element(by.id('RandomJunk959'))).toNotExist();
+  });
+
   // matches specific text elements like UIButton, UILabel, UITextField or UITextView, RCTText
   it('should assert an element has text', function () {
     expect(element(by.id('UniqueId204'))).toHaveText('I contain some text');
