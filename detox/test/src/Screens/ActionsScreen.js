@@ -21,7 +21,9 @@ export default class ActionsScreen extends Component {
     return (
       <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
 
-        <TouchableOpacity onPress={this.onButtonPress.bind(this, 'Tap Working')}>
+        <TouchableOpacity onPress={this.onButtonPress.bind(this, 'Tap Working')}
+          onLongPress={this.onButtonPress.bind(this, 'Long Press Working')}
+        >
           <Text style={{color: 'blue', marginBottom: 20}}>Tap Me</Text>
         </TouchableOpacity>
 

@@ -87,6 +87,13 @@ class TapAction extends Action {
   }
 }
 
+class LongPressAction extends Action {
+  constructor() {
+    super();
+    this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForLongPress');
+  }
+}
+
 class TypeTextAction extends Action {
   constructor(value) {
     super();
@@ -127,6 +134,9 @@ class Element {
   }
   tap() {
     return new ActionInteraction(this, new TapAction()).execute();
+  }
+  longPress() {
+    return new ActionInteraction(this, new LongPressAction()).execute();
   }
   typeText(value) {
     return new ActionInteraction(this, new TypeTextAction(value)).execute();
