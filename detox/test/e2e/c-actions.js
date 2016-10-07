@@ -1,4 +1,4 @@
-describe.only('Actions', function () {
+describe('Actions', function () {
 
   beforeEach(function (done) {
     simulator.reloadReactNativeApp(done);
