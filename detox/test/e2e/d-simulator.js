@@ -1,4 +1,4 @@
-describe('Simulator Actions', function () {
+describe('Simulator', function () {
 
   describe('reloadReactNativeApp', function () {
     before(function (done) {

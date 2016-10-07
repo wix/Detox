@@ -35,6 +35,7 @@ class example extends Component {
           </Text>
           {this.renderScreenButton('Sanity', Screens.SanityScreen)}
           {this.renderScreenButton('Matchers', Screens.MatchersScreen)}
+          {this.renderScreenButton('Actions', Screens.ActionsScreen)}
           {this.renderScreenButton('Stress', Screens.StressScreen)}
         </View>
       );

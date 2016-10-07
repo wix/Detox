@@ -1,4 +1,4 @@
-describe('Stress Tests', function () {
+describe('StressTests', function () {
 
   beforeEach(function (done) {
     simulator.reloadReactNativeApp(done);
