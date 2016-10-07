@@ -49,6 +49,13 @@ class VisibleMatcher extends Matcher {
   }
 }
 
+class NotVisibleMatcher extends Matcher {
+  constructor() {
+    super();
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForNotVisible');
+  }
+}
+
 class TextMatcher extends Matcher {
   constructor(value) {
     super();
@@ -122,6 +129,9 @@ class ExpectElement extends Expect {
   }
   toBeVisible() {
     return new MatcherAssertionInteraction(this._object, new VisibleMatcher()).execute();
+  }
+  toBeNotVisible() {
+    return new MatcherAssertionInteraction(this._object, new NotVisibleMatcher()).execute();
   }
   toHaveText(value) {
     return new MatcherAssertionInteraction(this._object, new TextMatcher(value)).execute();
