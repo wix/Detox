@@ -8,12 +8,12 @@ describe('Matchers', function () {
     element(by.label('Matchers')).tap();
   });
 
-  it('should match elements by label', function () {
+  it('should match elements by (accesibility) label', function () {
     element(by.label('Label')).tap();
     expect(element(by.label('Label Working!!!'))).toBeVisible();
   });
 
-  it('should match elements by id', function () {
+  it('should match elements by (accesibility) id', function () {
     element(by.id('UniqueId345')).tap();
     expect(element(by.label('ID Working!!!'))).toBeVisible();
   });

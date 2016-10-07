@@ -126,6 +126,9 @@ class ExpectElement extends Expect {
   toHaveText(value) {
     return new MatcherAssertionInteraction(this._object, new TextMatcher(value)).execute();
   }
+  toHaveLabel(value) {
+    return new MatcherAssertionInteraction(this._object, new LabelMatcher(value)).execute();
+  }
 }
 
 //// syntax
