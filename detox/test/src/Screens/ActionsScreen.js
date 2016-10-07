@@ -25,6 +25,12 @@ export default class ActionsScreen extends Component {
           <Text style={{color: 'blue', marginBottom: 20}}>Tap Me</Text>
         </TouchableOpacity>
 
+        <TextInput style={{height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5}}
+          onChangeText={this.onChangeTypeText.bind(this)}
+          value={this.state.typeText}
+          testID='UniqueId937'
+        />
+
       </View>
     );
   }
@@ -43,6 +49,17 @@ export default class ActionsScreen extends Component {
     this.setState({
       greeting: greeting
     });
+  }
+
+  onChangeTypeText(text) {
+    this.setState({
+      typeText: text
+    });
+    if (text == 'passcode') {
+      this.setState({
+        greeting: 'Type Working'
+      });
+    }
   }
 
 }

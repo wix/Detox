@@ -58,6 +58,14 @@ class TapAction extends Action {
   }
 }
 
+class TypeTextAction extends Action {
+  constructor(value) {
+    super();
+    if (typeof value !== 'string') throw new Error(`TypeTextAction ctor argument must be a string, got ${typeof value}`);
+    this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForTypeText:', value);
+  }
+}
+
 class Interaction {
   execute() {
     if (!this._call) throw new Error(`Interaction.execute cannot find a valid _call, got ${typeof this._call}`);
@@ -90,6 +98,9 @@ class Element {
   }
   tap() {
     return new ActionInteraction(this, new TapAction()).execute();
+  }
+  typeText(value) {
+    return new ActionInteraction(this, new TypeTextAction(value)).execute();
   }
 }
 

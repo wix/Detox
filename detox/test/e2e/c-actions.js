@@ -13,4 +13,10 @@ describe.only('Actions', function () {
     expect(element(by.label('Tap Working!!!'))).toBeVisible();
   });
 
+  // Backspace is supported by using "\b" in the string. Return key is supported with "\n"
+  it('should type in an element', function () {
+    element(by.id('UniqueId937')).typeText('passcode');
+    expect(element(by.label('Type Working!!!'))).toBeVisible();
+  });
+
 });
