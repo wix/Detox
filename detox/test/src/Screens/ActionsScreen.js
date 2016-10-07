@@ -13,6 +13,7 @@ export default class ActionsScreen extends Component {
     this.state = {
       greeting: undefined,
       typeText: '',
+      clearText: 'some stuff here..',
       numTaps: 0
     };
   }
@@ -36,6 +37,12 @@ export default class ActionsScreen extends Component {
           onChangeText={this.onChangeTypeText.bind(this)}
           value={this.state.typeText}
           testID='UniqueId937'
+        />
+
+        <TextInput style={{height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5}}
+          onChangeText={this.onChangeClearText.bind(this)}
+          value={this.state.clearText}
+          testID='UniqueId005'
         />
 
       </View>
@@ -71,6 +78,17 @@ export default class ActionsScreen extends Component {
     if (text == 'passcode') {
       this.setState({
         greeting: 'Type Working'
+      });
+    }
+  }
+
+  onChangeClearText(text) {
+    this.setState({
+      clearText: text
+    });
+    if (text == '') {
+      this.setState({
+        greeting: 'Clear Working'
       });
     }
   }

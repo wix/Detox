@@ -29,4 +29,9 @@ describe('Actions', function () {
     expect(element(by.label('Type Working!!!'))).toBeVisible();
   });
 
+  it('should clear text in an element', function () {
+    element(by.id('UniqueId005')).clearText();
+    expect(element(by.label('Clear Working!!!'))).toBeVisible();
+  });
+
 });
