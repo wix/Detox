@@ -12,8 +12,8 @@
 
 - (void)handleException:(GREYFrameworkException *)exception details:(NSString *)details
 {
-    NSLog(@"Detox Test Failed: %@", exception);
-    if (self.delegate) [self.delegate onTestFailed:[exception description]];
+    NSLog(@"Detox Test Failed: %@", details);
+    if (self.delegate) [self.delegate onTestFailed:details];
 }
 
 - (void)setInvocationFile:(NSString *)fileName andInvocationLine:(NSUInteger)lineNumber
