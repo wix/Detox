@@ -18,6 +18,11 @@ describe('Actions', function () {
     expect(element(by.label('Long Press Working!!!'))).toBeVisible();
   });
 
+  it('should multi tap on an element', function () {
+    element(by.id('UniqueId819')).multiTap(3);
+    expect(element(by.id('UniqueId819'))).toHaveLabel('Taps: 3');
+  });
+
   // Backspace is supported by using "\b" in the string. Return key is supported with "\n"
   it('should type in an element', function () {
     element(by.id('UniqueId937')).typeText('passcode');

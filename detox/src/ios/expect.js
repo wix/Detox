@@ -94,6 +94,14 @@ class LongPressAction extends Action {
   }
 }
 
+class MultiTapAction extends Action {
+  constructor(value) {
+    super();
+    if (typeof value !== 'number') throw new Error(`MultiTapAction ctor argument must be a number, got ${typeof value}`);
+    this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForMultipleTapsWithCount:', invoke.IOS.NSInteger(value));
+  }
+}
+
 class TypeTextAction extends Action {
   constructor(value) {
     super();
@@ -137,6 +145,9 @@ class Element {
   }
   longPress() {
     return new ActionInteraction(this, new LongPressAction()).execute();
+  }
+  multiTap(value) {
+    return new ActionInteraction(this, new MultiTapAction(value)).execute();
   }
   typeText(value) {
     return new ActionInteraction(this, new TypeTextAction(value)).execute();

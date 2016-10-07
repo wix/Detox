@@ -12,7 +12,8 @@ export default class ActionsScreen extends Component {
     super(props);
     this.state = {
       greeting: undefined,
-      typeText: ''
+      typeText: '',
+      numTaps: 0
     };
   }
 
@@ -25,6 +26,10 @@ export default class ActionsScreen extends Component {
           onLongPress={this.onButtonPress.bind(this, 'Long Press Working')}
         >
           <Text style={{color: 'blue', marginBottom: 20}}>Tap Me</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={this.onMultiTapPress.bind(this)}>
+          <Text testID='UniqueId819' style={{color: 'blue', marginBottom: 20}}>Taps: {this.state.numTaps}</Text>
         </TouchableOpacity>
 
         <TextInput style={{height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5}}
@@ -50,6 +55,12 @@ export default class ActionsScreen extends Component {
   onButtonPress(greeting) {
     this.setState({
       greeting: greeting
+    });
+  }
+
+  onMultiTapPress() {
+    this.setState({
+      numTaps: this.state.numTaps + 1
     });
   }
 

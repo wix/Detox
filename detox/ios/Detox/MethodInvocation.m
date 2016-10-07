@@ -53,6 +53,12 @@
         if (![value isKindOfClass:[NSNumber class]]) return nil;
         return value;
     }
+    if ([type isEqualToString:@"NSInteger"])
+    {
+        if (![value isKindOfClass:[NSNumber class]]) return nil;
+        NSInteger i = [value integerValue];
+        return [NSNumber numberWithInteger:i];
+    }
     if ([type isEqualToString:@"CGRect"])
     {
         if (![value isKindOfClass:[NSDictionary class]]) return nil;
@@ -150,6 +156,11 @@
 + (void) invocation:(NSInvocation*)invocation setNonPointerArg:(NSValue*)value atIndex:(NSInteger)idx
 {
     NSString *type = [NSString stringWithUTF8String:value.objCType];
+    if ([type isEqualToString:@"q"])
+    {
+        NSInteger v = [(NSNumber*)value integerValue];
+        [invocation setArgument:&v atIndex:idx];
+    }
     if ([type isEqualToString:@"{CGPoint=dd}"])
     {
         CGPoint v = [value CGPointValue];

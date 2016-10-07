@@ -5,6 +5,13 @@ var Class = function (value) {
   };
 }
 
+var NSInteger = function (value) {
+  return {
+    type: 'NSInteger',
+    value: value
+  };
+};
+
 var CGPoint = function (value) {
   return {
     type: 'CGPoint',
@@ -21,6 +28,7 @@ var CGRect = function (value) {
 
 module.exports = {
   Class: Class,
+  NSInteger: NSInteger,
   CGPoint: CGPoint,
   CGRect: CGRect
 };
