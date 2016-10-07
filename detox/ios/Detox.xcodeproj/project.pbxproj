@@ -12,6 +12,8 @@
 		CC38FC461D61DEB800589F1C /* ReactNativeBridgeIdlingResource.m in Sources */ = {isa = PBXBuildFile; fileRef = CC38FC441D61DEB800589F1C /* ReactNativeBridgeIdlingResource.m */; };
 		CC38FC4F1D622AFB00589F1C /* ReactNativeUIManagerIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = CC38FC4D1D622AFB00589F1C /* ReactNativeUIManagerIdlingResource.h */; };
 		CC38FC501D622AFB00589F1C /* ReactNativeUIManagerIdlingResource.m in Sources */ = {isa = PBXBuildFile; fileRef = CC38FC4E1D622AFB00589F1C /* ReactNativeUIManagerIdlingResource.m */; };
+		CC654C761DA7B3720057ECE9 /* GREYMatchers+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = CC654C741DA7B3720057ECE9 /* GREYMatchers+Detox.h */; };
+		CC654C771DA7B3720057ECE9 /* GREYMatchers+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = CC654C751DA7B3720057ECE9 /* GREYMatchers+Detox.m */; };
 		CCA99FFF1D227DBE00C762B8 /* ReactNativeSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = CCA99FFD1D227DBE00C762B8 /* ReactNativeSupport.h */; };
 		CCA9A0001D227DBE00C762B8 /* ReactNativeSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA99FFE1D227DBE00C762B8 /* ReactNativeSupport.m */; };
 		CCE6D43B1D11A76500F81E39 /* Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE6D43A1D11A76500F81E39 /* Detox.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -93,6 +95,8 @@
 		CC38FC481D61F36100589F1C /* ReactNativeHeaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReactNativeHeaders.h; sourceTree = "<group>"; };
 		CC38FC4D1D622AFB00589F1C /* ReactNativeUIManagerIdlingResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactNativeUIManagerIdlingResource.h; sourceTree = "<group>"; };
 		CC38FC4E1D622AFB00589F1C /* ReactNativeUIManagerIdlingResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactNativeUIManagerIdlingResource.m; sourceTree = "<group>"; };
+		CC654C741DA7B3720057ECE9 /* GREYMatchers+Detox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GREYMatchers+Detox.h"; sourceTree = "<group>"; };
+		CC654C751DA7B3720057ECE9 /* GREYMatchers+Detox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GREYMatchers+Detox.m"; sourceTree = "<group>"; };
 		CCA99FFD1D227DBE00C762B8 /* ReactNativeSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactNativeSupport.h; sourceTree = "<group>"; };
 		CCA99FFE1D227DBE00C762B8 /* ReactNativeSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactNativeSupport.m; sourceTree = "<group>"; };
 		CCE105591D48D82F00A40950 /* DetoxLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetoxLoader.h; sourceTree = "<group>"; };
@@ -171,6 +175,15 @@
 			name = ReactNativeSupport;
 			sourceTree = "<group>";
 		};
+		CC654C731DA7B2A60057ECE9 /* EarlGreyExtentions */ = {
+			isa = PBXGroup;
+			children = (
+				CC654C741DA7B3720057ECE9 /* GREYMatchers+Detox.h */,
+				CC654C751DA7B3720057ECE9 /* GREYMatchers+Detox.m */,
+			);
+			name = EarlGreyExtentions;
+			sourceTree = "<group>";
+		};
 		CCE6D42D1D11A76500F81E39 = {
 			isa = PBXGroup;
 			children = (
@@ -203,6 +216,7 @@
 				CCFA7E511D12CA1500E15EDF /* TestFailureHandler.m */,
 				CCFA7E441D12191200E15EDF /* MethodInvocation.h */,
 				CCFA7E451D12191200E15EDF /* MethodInvocation.m */,
+				CC654C731DA7B2A60057ECE9 /* EarlGreyExtentions */,
 				CC38FC471D61E3B500589F1C /* ReactNativeSupport */,
 				CCE6D43C1D11A76500F81E39 /* Info.plist */,
 				CCFA7D921D11C63000E15EDF /* SocketRocket */,
@@ -331,6 +345,7 @@
 				CC38FC4F1D622AFB00589F1C /* ReactNativeUIManagerIdlingResource.h in Headers */,
 				CCFA7DC51D11C63100E15EDF /* NSRunLoop+SRWebSocket.h in Headers */,
 				CCFA7E521D12CA1500E15EDF /* TestFailureHandler.h in Headers */,
+				CC654C761DA7B3720057ECE9 /* GREYMatchers+Detox.h in Headers */,
 				CCFA7E461D12191200E15EDF /* MethodInvocation.h in Headers */,
 				CCFA7DD81D11C9F400E15EDF /* DetoxManager.h in Headers */,
 				CCFA7DCA1D11C63100E15EDF /* SRWebSocket.h in Headers */,
@@ -443,6 +458,7 @@
 				CCFA7E531D12CA1500E15EDF /* TestFailureHandler.m in Sources */,
 				CCFA7DC41D11C63100E15EDF /* SRURLUtilities.m in Sources */,
 				CCA9A0001D227DBE00C762B8 /* ReactNativeSupport.m in Sources */,
+				CC654C771DA7B3720057ECE9 /* GREYMatchers+Detox.m in Sources */,
 				CCFA7DBA1D11C63100E15EDF /* SRProxyConnect.m in Sources */,
 				CCFA7DC61D11C63100E15EDF /* NSRunLoop+SRWebSocket.m in Sources */,
 				CCFA7E4B1D12A60600E15EDF /* TestRunner.m in Sources */,

@@ -49,6 +49,14 @@ class VisibleMatcher extends Matcher {
   }
 }
 
+class TextMatcher extends Matcher {
+  constructor(value) {
+    super();
+    if (typeof value !== 'string') throw new Error(`TextMatcher ctor argument must be a string, got ${typeof value}`);
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForTextDetox:', value);
+  }
+}
+
 class Action {}
 
 class TapAction extends Action {
@@ -114,6 +122,9 @@ class ExpectElement extends Expect {
   }
   toBeVisible() {
     return new MatcherAssertionInteraction(this._object, new VisibleMatcher()).execute();
+  }
+  toHaveText(value) {
+    return new MatcherAssertionInteraction(this._object, new TextMatcher(value)).execute();
   }
 }
 
