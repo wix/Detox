@@ -12,6 +12,13 @@ var NSInteger = function (value) {
   };
 };
 
+var CGFloat = function (value) {
+  return {
+    type: 'CGFloat',
+    value: value
+  };
+};
+
 var CGPoint = function (value) {
   return {
     type: 'CGPoint',
@@ -29,6 +36,7 @@ var CGRect = function (value) {
 module.exports = {
   Class: Class,
   NSInteger: NSInteger,
+  CGFloat: CGFloat,
   CGPoint: CGPoint,
   CGRect: CGRect
 };

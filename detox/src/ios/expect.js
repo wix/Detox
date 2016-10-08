@@ -74,7 +74,15 @@ class TextMatcher extends Matcher {
   constructor(value) {
     super();
     if (typeof value !== 'string') throw new Error(`TextMatcher ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForTextDetox:', value);
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForText:', value);
+  }
+}
+
+class ExtendedScrollMatcher extends Matcher {
+  constructor(matcher) {
+    super();
+    if (!matcher instanceof Matcher) throw new Error(`ExtendedScrollMatcher ctor argument must be a valid Matcher, got ${typeof matcher}`);
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForScrollChildOfMatcher:', matcher._call);
   }
 }
 
@@ -117,6 +125,22 @@ class ClearTextAction extends Action {
   }
 }
 
+class ScrollAmountAction extends Action {
+  constructor(direction, amount) {
+    super();
+    if (typeof direction !== 'string') throw new Error(`ScrollAmountAction ctor 1st argument must be a string, got ${typeof direction}`);
+    switch (direction) {
+      case 'left': direction = 1; break;
+      case 'right': direction = 2; break;
+      case 'up': direction = 3; break;
+      case 'down': direction = 4; break;
+      default: throw new Error(`ScrollAmountAction direction must be a 'left'/'right'/'up'/'down', got ${direction}`);
+    }
+    if (typeof amount !== 'number') throw new Error(`ScrollAmountAction ctor 2nd argument must be a number, got ${typeof amount}`);
+    this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForScrollInDirection:amount:', invoke.IOS.NSInteger(direction), invoke.IOS.CGFloat(amount));
+  }
+}
+
 class Interaction {
   execute() {
     if (!this._call) throw new Error(`Interaction.execute cannot find a valid _call, got ${typeof this._call}`);
@@ -144,7 +168,11 @@ class MatcherAssertionInteraction extends Interaction {
 
 class Element {
   constructor(matcher) {
-    if (!matcher instanceof Matcher) throw new Error(`Element ctor argument must be a valid Matcher, got ${typeof matcher}`);
+    this._originalMatcher = matcher;
+    this._selectElementWithMatcher(this._originalMatcher);
+  }
+  _selectElementWithMatcher(matcher) {
+    if (!matcher instanceof Matcher) throw new Error(`Element _selectElementWithMatcher argument must be a valid Matcher, got ${typeof matcher}`);
     this._call = invoke.call(invoke.EarlGrey.instance, 'selectElementWithMatcher:', matcher._call);
   }
   tap() {
@@ -161,6 +189,11 @@ class Element {
   }
   clearText() {
     return new ActionInteraction(this, new ClearTextAction()).execute();
+  }
+  scroll(amount, direction = 'down') {
+    // override the user's element selection with an extended matcher that looks for UIScrollView children
+    this._selectElementWithMatcher(new ExtendedScrollMatcher(this._originalMatcher));
+    return new ActionInteraction(this, new ScrollAmountAction(direction, amount)).execute();
   }
 }
 

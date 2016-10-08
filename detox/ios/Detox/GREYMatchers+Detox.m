@@ -11,7 +11,7 @@
 
 @implementation GREYMatchers (Detox)
 
-+ (id<GREYMatcher>)matcherForTextDetox:(NSString *)text
++ (id<GREYMatcher>)detoxMatcherForText:(NSString *)text
 {
     Class RN_RCTText = NSClassFromString(@"RCTText");
     if (!RN_RCTText)
@@ -24,6 +24,17 @@
                       grey_allOf(grey_anyOf(grey_kindOfClass(RN_RCTText), nil),
                                  hasProperty(@"accessibilityLabel", text), nil), nil);
     
+}
+
++ (id<GREYMatcher>)detoxMatcherForScrollChildOfMatcher:(id<GREYMatcher>)matcher
+{
+    // find scroll views in a more robust way, either the original matcher already points to a UIScrollView
+    // and if it isn't look for a child under it that is a UIScrollView
+    return grey_anyOf(grey_allOf(grey_anyOf(grey_kindOfClass([UIScrollView class]),
+                                            grey_kindOfClass([UIWebView class]), nil),
+                                 matcher, nil),
+                      grey_allOf(grey_kindOfClass([UIScrollView class]),
+                                 grey_ancestor(matcher), nil), nil);
 }
 
 @end

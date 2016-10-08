@@ -34,4 +34,12 @@ describe('Actions', function () {
     expect(element(by.label('Clear Working!!!'))).toBeVisible();
   });
 
+  it('should scroll for a small amount in direction', function () {
+    expect(element(by.label('Text1'))).toBeVisible();
+    expect(element(by.label('Text4'))).toBeNotVisible();
+    element(by.id('ScrollView161')).scroll(100, 'down');
+    expect(element(by.label('Text1'))).toBeNotVisible();
+    expect(element(by.label('Text4'))).toBeVisible();
+  });
+
 });

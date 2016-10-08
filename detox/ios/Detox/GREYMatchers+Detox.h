@@ -10,6 +10,8 @@
 
 @interface GREYMatchers (Detox)
 
-+ (id<GREYMatcher>)matcherForTextDetox:(NSString *)text;
++ (id<GREYMatcher>)detoxMatcherForText:(NSString *)text;
+
++ (id<GREYMatcher>)detoxMatcherForScrollChildOfMatcher:(id<GREYMatcher>)matcher;
 
 @end
