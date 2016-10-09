@@ -95,6 +95,14 @@ class CombineBothMatcher extends Matcher {
   }
 }
 
+class NotMatcher extends Matcher {
+  constructor(matcher) {
+    super();
+    if (!matcher instanceof Matcher) throw new Error(`NotMatcher ctor argument must be a valid Matcher, got ${typeof matcher}`);
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForNot:', matcher._call);
+  }
+}
+
 class Action {}
 
 class TapAction extends Action {
@@ -200,11 +208,18 @@ class WaitForInteraction extends Interaction {
     this._element = element;
     this._originalMatcher = matcher;
     // we need to override the original matcher for the element and add matcher to it as well
-    this._element._selectElementWithMatcher(new CombineBothMatcher(this._element._originalMatcher, matcher));
+    this._element._selectElementWithMatcher(new CombineBothMatcher(this._element._originalMatcher, this._originalMatcher));
+  }
+  _not() {
+    this._notCondition = true;
+    return this;
   }
   withTimeout(timeout) {
     if (typeof timeout !== 'number') throw new Error(`WaitForInteraction withTimeout argument must be a number, got ${typeof timeout}`);
-    const _conditionCall = invoke.call(invoke.IOS.Class('GREYCondition'), 'detoxConditionForElementMatched:', this._element._call);
+    let _conditionCall = invoke.call(invoke.IOS.Class('GREYCondition'), 'detoxConditionForElementMatched:', this._element._call);
+    if (this._notCondition) {
+      _conditionCall = invoke.call(invoke.IOS.Class('GREYCondition'), 'detoxConditionForNotElementMatched:', this._element._call);
+    }
     this._call = invoke.call(_conditionCall, 'waitWithTimeout:', invoke.IOS.CGFloat(timeout));
     this.execute();
   }
@@ -314,8 +329,14 @@ class WaitForElement extends WaitFor {
   toBeVisible() {
     return new WaitForInteraction(this._element, new VisibleMatcher());
   }
+  toBeNotVisible() {
+    return new WaitForInteraction(this._element, new VisibleMatcher())._not();
+  }
   toExist() {
     return new WaitForInteraction(this._element, new ExistsMatcher());
+  }
+  toNotExist() {
+    return new WaitForInteraction(this._element, new ExistsMatcher())._not();
   }
 }
 

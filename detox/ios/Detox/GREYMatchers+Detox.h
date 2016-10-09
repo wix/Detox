@@ -16,4 +16,6 @@
 
 + (id<GREYMatcher>)detoxMatcherForBoth:(id<GREYMatcher>)firstMatcher and:(id<GREYMatcher>)secondMatcher;
 
++ (id<GREYMatcher>)detoxMatcherForNot:(id<GREYMatcher>)matcher;
+
 @end

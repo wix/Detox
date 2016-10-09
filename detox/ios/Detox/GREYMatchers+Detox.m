@@ -42,4 +42,9 @@
     return grey_allOf(firstMatcher, secondMatcher, nil);
 }
 
++ (id<GREYMatcher>)detoxMatcherForNot:(id<GREYMatcher>)matcher
+{
+    return grey_not(matcher);
+}
+
 @end

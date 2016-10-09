@@ -12,4 +12,6 @@
 
 + (instancetype)detoxConditionForElementMatched:(GREYElementInteraction*)interaction;
 
++ (instancetype)detoxConditionForNotElementMatched:(GREYElementInteraction*)interaction;
+
 @end

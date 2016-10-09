@@ -4,7 +4,8 @@ import {
   View,
   TouchableOpacity,
   TextInput,
-  ScrollView
+  ScrollView,
+  Animated
 } from 'react-native';
 
 export default class WaitForScreen extends Component {
@@ -13,11 +14,15 @@ export default class WaitForScreen extends Component {
     super(props);
     this.state = {
       greeting: undefined,
-      showsUp: false
+      showsUp: false,
+      becomeVisibleLeft: new Animated.Value(-500)
     };
     setTimeout(() => {
       this.setState({showsUp: true});
     }, 1000);
+    setTimeout(() => {
+      Animated.timing(this.state.becomeVisibleLeft, {toValue: 0, duration: 1000}).start();
+    }, 500);
   }
 
   render() {
@@ -41,6 +46,12 @@ export default class WaitForScreen extends Component {
             <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}}>Text8</Text>
           </ScrollView>
         </View>
+
+        {this.state.showsUp ? false :
+          <Text testID='UniqueId085' style={{marginBottom: 20, textAlign: 'center', color: 'red'}}>I disappear after 1 sec</Text>
+        }
+
+        <Animated.Text testID='UniqueId521' style={{marginBottom: 20, textAlign: 'center', color: 'green', left: this.state.becomeVisibleLeft}}>I move in after 1 sec</Animated.Text>
 
       </View>
     );

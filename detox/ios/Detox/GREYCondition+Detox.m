@@ -19,4 +19,13 @@
     }];
 }
 
++ (instancetype)detoxConditionForNotElementMatched:(GREYElementInteraction*)interaction
+{
+    return [self conditionWithName:@"Wait for not element Detox Condition" block:^BOOL{
+        NSError *error;
+        [interaction assertWithMatcher:grey_nil() error:&error];
+        return (error == nil);
+    }];
+}
+
 @end
