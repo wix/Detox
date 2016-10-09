@@ -20,6 +20,10 @@ Not using React Native? you now have a [pure native demo project](demo-native) t
 
 See the [Installing](INSTALLING.md) instructions
 
+## Wanna learn the API for writing tests?
+
+See Detox's own [E2E test suite](detox/test/e2e) to learn the test API by example
+
 ## Dealing with flakiness
 
 See the [Flakiness](FLAKINESS.md) handbook
