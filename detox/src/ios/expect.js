@@ -199,9 +199,14 @@ class WaitForInteraction extends Interaction {
     if (!matcher instanceof Matcher) throw new Error(`WaitForInteraction ctor 2nd argument must be a valid Matcher, got ${typeof matcher}`);
     this._element = element;
     this._originalMatcher = matcher;
+    // we need to override the original matcher for the element and add matcher to it as well
+    this._element._selectElementWithMatcher(new CombineBothMatcher(this._element._originalMatcher, matcher));
   }
   withTimeout(timeout) {
-    throw new Error('not implemented');
+    if (typeof timeout !== 'number') throw new Error(`WaitForInteraction withTimeout argument must be a number, got ${typeof timeout}`);
+    const _conditionCall = invoke.call(invoke.IOS.Class('GREYCondition'), 'detoxConditionForElementMatched:', this._element._call);
+    this._call = invoke.call(_conditionCall, 'waitWithTimeout:', invoke.IOS.CGFloat(timeout));
+    this.execute();
   }
   whileElement(searchMatcher) {
     return new WaitForActionInteraction(this._element, this._originalMatcher, searchMatcher);
@@ -217,8 +222,6 @@ class WaitForActionInteraction extends Interaction {
     this._element = element;
     this._originalMatcher = matcher;
     this._searchMatcher = searchMatcher;
-    // we need to override the original matcher for the element and add matcher to it as well
-    this._element._selectElementWithMatcher(new CombineBothMatcher(this._element._originalMatcher, matcher));
   }
   _execute(searchAction) {
     if (!searchAction instanceof Action) throw new Error(`WaitForActionInteraction _execute argument must be a valid Action, got ${typeof searchAction}`);

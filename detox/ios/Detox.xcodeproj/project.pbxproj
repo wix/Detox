@@ -17,6 +17,8 @@
 		CCA99FFF1D227DBE00C762B8 /* ReactNativeSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = CCA99FFD1D227DBE00C762B8 /* ReactNativeSupport.h */; };
 		CCA9A0001D227DBE00C762B8 /* ReactNativeSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA99FFE1D227DBE00C762B8 /* ReactNativeSupport.m */; };
 		CCE6D43B1D11A76500F81E39 /* Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE6D43A1D11A76500F81E39 /* Detox.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CCF391F71DAA8B9200BBFB1E /* GREYCondition+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = CCF391F51DAA8B9200BBFB1E /* GREYCondition+Detox.h */; };
+		CCF391F81DAA8B9200BBFB1E /* GREYCondition+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = CCF391F61DAA8B9200BBFB1E /* GREYCondition+Detox.m */; };
 		CCFA7D8F1D11C54100E15EDF /* EarlGrey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCFA7D8E1D11C4E400E15EDF /* EarlGrey.framework */; };
 		CCFA7DB31D11C63100E15EDF /* SRDelegateController.h in Headers */ = {isa = PBXBuildFile; fileRef = CCFA7D951D11C63000E15EDF /* SRDelegateController.h */; };
 		CCFA7DB41D11C63100E15EDF /* SRDelegateController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCFA7D961D11C63000E15EDF /* SRDelegateController.m */; };
@@ -103,6 +105,8 @@
 		CCE6D4371D11A76500F81E39 /* Detox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Detox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCE6D43A1D11A76500F81E39 /* Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.h; sourceTree = "<group>"; };
 		CCE6D43C1D11A76500F81E39 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CCF391F51DAA8B9200BBFB1E /* GREYCondition+Detox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GREYCondition+Detox.h"; sourceTree = "<group>"; };
+		CCF391F61DAA8B9200BBFB1E /* GREYCondition+Detox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GREYCondition+Detox.m"; sourceTree = "<group>"; };
 		CCFA7D891D11C4E400E15EDF /* EarlGrey.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = EarlGrey.xcodeproj; path = EarlGrey/EarlGrey.xcodeproj; sourceTree = SOURCE_ROOT; };
 		CCFA7D951D11C63000E15EDF /* SRDelegateController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRDelegateController.h; sourceTree = "<group>"; };
 		CCFA7D961D11C63000E15EDF /* SRDelegateController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRDelegateController.m; sourceTree = "<group>"; };
@@ -180,6 +184,8 @@
 			children = (
 				CC654C741DA7B3720057ECE9 /* GREYMatchers+Detox.h */,
 				CC654C751DA7B3720057ECE9 /* GREYMatchers+Detox.m */,
+				CCF391F51DAA8B9200BBFB1E /* GREYCondition+Detox.h */,
+				CCF391F61DAA8B9200BBFB1E /* GREYCondition+Detox.m */,
 			);
 			name = EarlGreyExtentions;
 			sourceTree = "<group>";
@@ -340,6 +346,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CCF391F71DAA8B9200BBFB1E /* GREYCondition+Detox.h in Headers */,
 				CCFA7DB51D11C63100E15EDF /* SRIOConsumer.h in Headers */,
 				CCFA7DB91D11C63100E15EDF /* SRProxyConnect.h in Headers */,
 				CC38FC4F1D622AFB00589F1C /* ReactNativeUIManagerIdlingResource.h in Headers */,
@@ -472,6 +479,7 @@
 				CC38FC461D61DEB800589F1C /* ReactNativeBridgeIdlingResource.m in Sources */,
 				CCFA7DB41D11C63100E15EDF /* SRDelegateController.m in Sources */,
 				CCFA7DC81D11C63100E15EDF /* NSURLRequest+SRWebSocket.m in Sources */,
+				CCF391F81DAA8B9200BBFB1E /* GREYCondition+Detox.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

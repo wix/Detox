@@ -12,14 +12,22 @@ export default class WaitForScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      greeting: undefined
+      greeting: undefined,
+      showsUp: false
     };
+    setTimeout(() => {
+      this.setState({showsUp: true});
+    }, 1000);
   }
 
   render() {
     if (this.state.greeting) return this.renderAfterButton();
     return (
       <View style={{flex: 1, paddingTop: 40, justifyContent: 'flex-start'}}>
+
+        {!this.state.showsUp ? false :
+          <Text testID='UniqueId336' style={{marginBottom: 20, textAlign: 'center'}}>I appear after 1 sec</Text>
+        }
 
         <View style={{height: 100, borderColor: '#c0c0c0', borderWidth: 1, backgroundColor: '#f8f8ff', marginBottom: 20}}>
           <ScrollView testID='ScrollView630'>
