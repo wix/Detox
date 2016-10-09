@@ -86,6 +86,15 @@ class ExtendedScrollMatcher extends Matcher {
   }
 }
 
+class CombineBothMatcher extends Matcher {
+  constructor(firstMatcher, secondMatcher) {
+    super();
+    if (!firstMatcher instanceof Matcher) throw new Error(`CombineBothMatcher ctor 1st argument must be a valid Matcher, got ${typeof firstMatcher}`);
+    if (!secondMatcher instanceof Matcher) throw new Error(`CombineBothMatcher ctor 2nd argument must be a valid Matcher, got ${typeof secondMatcher}`);
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForBoth:and:', firstMatcher._call, secondMatcher._call);
+  }
+}
+
 class Action {}
 
 class TapAction extends Action {
@@ -166,18 +175,61 @@ class Interaction {
 class ActionInteraction extends Interaction {
   constructor(element, action) {
     super();
-    if (!element instanceof Element) throw new Error(`ActionInteraction ctor argument must be a valid Element, got ${typeof element}`);
-    if (!action instanceof Action) throw new Error(`ActionInteraction ctor argument must be a valid Action, got ${typeof action}`);
+    if (!element instanceof Element) throw new Error(`ActionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
+    if (!action instanceof Action) throw new Error(`ActionInteraction ctor 2nd argument must be a valid Action, got ${typeof action}`);
     this._call = invoke.call(element._call, 'performAction:', action._call);
+    // TODO: move this.execute() here from the caller
   }
 }
 
 class MatcherAssertionInteraction extends Interaction {
   constructor(element, matcher) {
     super();
-    if (!element instanceof Element) throw new Error(`MatcherAssertionInteraction ctor argument must be a valid Element, got ${typeof element}`);
-    if (!matcher instanceof Matcher) throw new Error(`MatcherAssertionInteraction ctor argument must be a valid Matcher, got ${typeof matcher}`);
+    if (!element instanceof Element) throw new Error(`MatcherAssertionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
+    if (!matcher instanceof Matcher) throw new Error(`MatcherAssertionInteraction ctor 2nd argument must be a valid Matcher, got ${typeof matcher}`);
     this._call = invoke.call(element._call, 'assertWithMatcher:', matcher._call);
+    // TODO: move this.execute() here from the caller
+  }
+}
+
+class WaitForInteraction extends Interaction {
+  constructor(element, matcher) {
+    super();
+    if (!element instanceof Element) throw new Error(`WaitForInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
+    if (!matcher instanceof Matcher) throw new Error(`WaitForInteraction ctor 2nd argument must be a valid Matcher, got ${typeof matcher}`);
+    this._element = element;
+    this._originalMatcher = matcher;
+  }
+  withTimeout(timeout) {
+    throw new Error('not implemented');
+  }
+  whileElement(searchMatcher) {
+    return new WaitForActionInteraction(this._element, this._originalMatcher, searchMatcher);
+  }
+}
+
+class WaitForActionInteraction extends Interaction {
+  constructor(element, matcher, searchMatcher) {
+    super();
+    if (!element instanceof Element) throw new Error(`WaitForActionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
+    if (!matcher instanceof Matcher) throw new Error(`WaitForActionInteraction ctor 2nd argument must be a valid Matcher, got ${typeof matcher}`);
+    if (!searchMatcher instanceof Matcher) throw new Error(`WaitForActionInteraction ctor 3rd argument must be a valid Matcher, got ${typeof searchMatcher}`);
+    this._element = element;
+    this._originalMatcher = matcher;
+    this._searchMatcher = searchMatcher;
+    // we need to override the original matcher for the element and add matcher to it as well
+    this._element._selectElementWithMatcher(new CombineBothMatcher(this._element._originalMatcher, matcher));
+  }
+  _execute(searchAction) {
+    if (!searchAction instanceof Action) throw new Error(`WaitForActionInteraction _execute argument must be a valid Action, got ${typeof searchAction}`);
+    const _interactionCall = invoke.call(this._element._call, 'usingSearchAction:onElementWithMatcher:', searchAction._call, this._searchMatcher._call);
+    this._call = invoke.call(_interactionCall, 'assertWithMatcher:', this._originalMatcher._call);
+    this.execute();
+  }
+  scroll(amount, direction = 'down') {
+    // override the user's element selection with an extended matcher that looks for UIScrollView children
+    this._searchMatcher = new ExtendedScrollMatcher(this._searchMatcher);
+    this._execute(new ScrollAmountAction(direction, amount));
   }
 }
 
@@ -223,36 +275,57 @@ class ExpectElement extends Expect {
   constructor(element) {
     super();
     if (!element instanceof Element) throw new Error(`ExpectElement ctor argument must be a valid Element, got ${typeof element}`);
-    this._object = element;
+    this._element = element;
   }
   toBeVisible() {
-    return new MatcherAssertionInteraction(this._object, new VisibleMatcher()).execute();
+    return new MatcherAssertionInteraction(this._element, new VisibleMatcher()).execute();
   }
   toBeNotVisible() {
-    return new MatcherAssertionInteraction(this._object, new NotVisibleMatcher()).execute();
+    return new MatcherAssertionInteraction(this._element, new NotVisibleMatcher()).execute();
   }
   toExist() {
-    return new MatcherAssertionInteraction(this._object, new ExistsMatcher()).execute();
+    return new MatcherAssertionInteraction(this._element, new ExistsMatcher()).execute();
   }
   toNotExist() {
-    return new MatcherAssertionInteraction(this._object, new NotExistsMatcher()).execute();
+    return new MatcherAssertionInteraction(this._element, new NotExistsMatcher()).execute();
   }
   toHaveText(value) {
-    return new MatcherAssertionInteraction(this._object, new TextMatcher(value)).execute();
+    return new MatcherAssertionInteraction(this._element, new TextMatcher(value)).execute();
   }
   toHaveLabel(value) {
-    return new MatcherAssertionInteraction(this._object, new LabelMatcher(value)).execute();
+    return new MatcherAssertionInteraction(this._element, new LabelMatcher(value)).execute();
   }
   toHaveId(value) {
-    return new MatcherAssertionInteraction(this._object, new IdMatcher(value)).execute();
+    return new MatcherAssertionInteraction(this._element, new IdMatcher(value)).execute();
+  }
+}
+
+class WaitFor {}
+
+class WaitForElement extends WaitFor {
+  constructor(element) {
+    super();
+    if (!element instanceof Element) throw new Error(`WaitForElement ctor argument must be a valid Element, got ${typeof element}`);
+    this._element = element;
+  }
+  toBeVisible() {
+    return new WaitForInteraction(this._element, new VisibleMatcher());
+  }
+  toExist() {
+    return new WaitForInteraction(this._element, new ExistsMatcher());
   }
 }
 
 //// syntax
 
-function expect(object) {
-  if (object instanceof Element) return new ExpectElement(object);
-  throw new Error(`expect() argument is invalid, got ${typeof object}`);
+function expect(element) {
+  if (element instanceof Element) return new ExpectElement(element);
+  throw new Error(`expect() argument is invalid, got ${typeof element}`);
+}
+
+function waitFor(element) {
+  if (element instanceof Element) return new WaitForElement(element);
+  throw new Error(`waitFor() argument is invalid, got ${typeof element}`);
 }
 
 function element(matcher) {
@@ -267,12 +340,14 @@ const by = {
 const exportGlobals = function () {
   global.element = element;
   global.expect = expect;
+  global.waitFor = waitFor;
   global.by = by;
 };
 
 export {
   exportGlobals,
   expect,
+  waitFor,
   element,
   by
 };

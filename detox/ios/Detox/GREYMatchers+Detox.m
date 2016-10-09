@@ -37,4 +37,9 @@
                                  grey_ancestor(matcher), nil), nil);
 }
 
++ (id<GREYMatcher>)detoxMatcherForBoth:(id<GREYMatcher>)firstMatcher and:(id<GREYMatcher>)secondMatcher
+{
+    return grey_allOf(firstMatcher, secondMatcher, nil);
+}
+
 @end
