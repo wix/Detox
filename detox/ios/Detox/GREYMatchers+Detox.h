@@ -18,4 +18,6 @@
 
 + (id<GREYMatcher>)detoxMatcherForNot:(id<GREYMatcher>)matcher;
 
++ (id<GREYMatcher>)detoxMatcherForClass:(NSString *)aClassName;
+
 @end

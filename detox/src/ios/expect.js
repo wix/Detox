@@ -42,6 +42,15 @@ class IdMatcher extends Matcher {
   }
 }
 
+class TypeMatcher extends Matcher {
+  constructor(value) {
+    super();
+    if (typeof value !== 'string') throw new Error(`TypeMatcher ctor argument must be a string, got ${typeof value}`);
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForClass:', value);
+  }
+}
+
+
 class VisibleMatcher extends Matcher {
   constructor() {
     super();
@@ -358,7 +367,8 @@ function element(matcher) {
 
 const by = {
   label: (value) => new LabelMatcher(value),
-  id: (value) => new IdMatcher(value)
+  id: (value) => new IdMatcher(value),
+  type: (value) => new TypeMatcher(value)
 };
 
 const exportGlobals = function () {
