@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
+  Image,
   TouchableOpacity
 } from 'react-native';
 
@@ -27,6 +28,11 @@ export default class MatchersScreen extends Component {
           <Text testID='UniqueId345' style={{color: 'blue', marginBottom: 20}}>ID</Text>
         </TouchableOpacity>
 
+        {!this.state.hideStar ?
+          <TouchableOpacity onPress={this.onStarPress.bind(this)}>
+            <Image source={require('../assets/star.png')}/>
+          </TouchableOpacity> : null}
+
       </View>
     );
   }
@@ -44,6 +50,12 @@ export default class MatchersScreen extends Component {
   onButtonPress(greeting) {
     this.setState({
       greeting: greeting
+    });
+  }
+
+  onStarPress() {
+    this.setState({
+      hideStar: true
     });
   }
 

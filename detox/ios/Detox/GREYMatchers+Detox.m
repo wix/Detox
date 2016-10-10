@@ -47,4 +47,10 @@
     return grey_not(matcher);
 }
 
++ (id<GREYMatcher>)detoxMatcherForClass:(NSString *)aClassName
+{
+    Class klass = NSClassFromString(aClassName);
+    return grey_kindOfClass(klass);
+}
+
 @end

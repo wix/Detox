@@ -18,4 +18,10 @@ describe('Matchers', function () {
     expect(element(by.label('ID Working!!!'))).toBeVisible();
   });
 
+  it.only('should match elements by type', function () {
+    expect(element(by.type('RCTImageView'))).toBeVisible();
+    element(by.type('RCTImageView')).tap();
+    expect(element(by.type('RCTImageView'))).toBeNotVisible();
+  });
+
 });
