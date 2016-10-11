@@ -25,13 +25,14 @@ export default class MatchersScreen extends Component {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={this.onButtonPress.bind(this, 'ID Working')}>
-          <Text testID='UniqueId345' style={{color: 'blue', marginBottom: 20}}>ID</Text>
+          <Text testID='UniqueId345' style={{color: 'blue', marginBottom: 10}}>ID</Text>
         </TouchableOpacity>
 
         {!this.state.hideStar ?
           <TouchableOpacity onPress={this.onStarPress.bind(this)}>
-            <Image source={require('../assets/star.png')}/>
-          </TouchableOpacity> : null}
+            <Image source={require('../assets/star.png')} style={{width: 50, height: 50, marginBottom: 10}} />
+          </TouchableOpacity> : null
+        }
 
       </View>
     );
