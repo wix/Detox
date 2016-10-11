@@ -34,12 +34,19 @@ export default class MatchersScreen extends Component {
           </TouchableOpacity> : null
         }
 
-        <View testID='Grandfather883' style={{padding: 8, backgroundColor: 'red'}}>
+        <View testID='Grandfather883' style={{padding: 8, backgroundColor: 'red', marginBottom: 10}}>
           <View testID='Father883' style={{padding: 8, backgroundColor: 'green'}}>
             <View testID='Son883' style={{padding: 8, backgroundColor: 'blue'}}>
               <View testID='Grandson883' style={{padding: 8, backgroundColor: 'purple'}} />
             </View>
           </View>
+        </View>
+
+        <View style={{flexDirection: 'row', marginBottom: 20}}>
+          <Text testID='ProductId000' style={{margin: 10}}>Product</Text>
+          <Text testID='ProductId001' style={{margin: 10}}>Product</Text>
+          <Text testID='ProductId002' style={{margin: 10}}>Product</Text>
+          <Text testID='ProductId003' style={{margin: 10}}>Product</Text>
         </View>
 
       </View>

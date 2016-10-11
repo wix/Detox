@@ -42,4 +42,9 @@ describe('Matchers', function () {
     expect(element(by.id('Grandson883').withDescendant(by.id('Grandfather883')))).toNotExist();
   });
 
+  // waiting to upgrade EarlGrey version in order to test this (not supported in our current one)
+  it.skip('should choose from multiple elements matching the same matcher using index', function () {
+    expect(element(by.label('Product')).atIndex(2)).toHaveId('ProductId002');
+  });
+
 });
