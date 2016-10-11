@@ -24,7 +24,20 @@ detox.invoke.execute(_getInteraction2);
 
 //// classes
 
-class Matcher {}
+class Matcher {
+  withAncestor(matcher) {
+    if (!matcher instanceof Matcher) throw new Error(`Matcher withAncestor argument must be a valid Matcher, got ${typeof matcher}`);
+    const _originalMatcherCall = this._call;
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForBoth:andAncestorMatcher:', _originalMatcherCall, matcher._call);
+    return this;
+  }
+  withDescendant(matcher) {
+    if (!matcher instanceof Matcher) throw new Error(`Matcher withDescendant argument must be a valid Matcher, got ${typeof matcher}`);
+    const _originalMatcherCall = this._call;
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForBoth:andDescendantMatcher:', _originalMatcherCall, matcher._call);
+    return this;
+  }
+}
 
 class LabelMatcher extends Matcher {
   constructor(value) {
@@ -87,6 +100,7 @@ class TextMatcher extends Matcher {
   }
 }
 
+// TODO: maybe refactor this and move into a member of Matcher class
 class ExtendedScrollMatcher extends Matcher {
   constructor(matcher) {
     super();
@@ -95,6 +109,7 @@ class ExtendedScrollMatcher extends Matcher {
   }
 }
 
+// TODO: maybe refactor this and move into a member of Matcher class
 class CombineBothMatcher extends Matcher {
   constructor(firstMatcher, secondMatcher) {
     super();
@@ -104,6 +119,7 @@ class CombineBothMatcher extends Matcher {
   }
 }
 
+// TODO: maybe refactor this and move into a member of Matcher class
 class NotMatcher extends Matcher {
   constructor(matcher) {
     super();

@@ -42,6 +42,16 @@
     return grey_allOf(firstMatcher, secondMatcher, nil);
 }
 
++ (id<GREYMatcher>)detoxMatcherForBoth:(id<GREYMatcher>)firstMatcher andAncestorMatcher:(id<GREYMatcher>)ancestorMatcher
+{
+    return grey_allOf(firstMatcher, grey_ancestor(ancestorMatcher), nil);
+}
+
++ (id<GREYMatcher>)detoxMatcherForBoth:(id<GREYMatcher>)firstMatcher andDescendantMatcher:(id<GREYMatcher>)descendantMatcher
+{
+    return grey_allOf(firstMatcher, grey_descendant(descendantMatcher), nil);
+}
+
 + (id<GREYMatcher>)detoxMatcherForNot:(id<GREYMatcher>)matcher
 {
     return grey_not(matcher);
