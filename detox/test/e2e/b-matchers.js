@@ -24,6 +24,13 @@ describe('Matchers', function () {
     expect(element(by.type('RCTImageView'))).toBeNotVisible();
   });
 
+  // https://facebook.github.io/react-native/docs/accessibility.html#accessibilitytraits-ios
+  // Accessibility Inspector in the simulator can help investigate traits
+  it('should match elements by accesibility trait', function () {
+    element(by.traits(['button', 'text'])).tap();
+    expect(element(by.label('Traits Working!!!'))).toBeVisible();
+  });
+
   it('should match elements with ancenstor (parent)', function () {
     expect(element(by.id('Grandson883').withAncestor(by.id('Son883')))).toExist();
     expect(element(by.id('Son883').withAncestor(by.id('Grandson883')))).toNotExist();
