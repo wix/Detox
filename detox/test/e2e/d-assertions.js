@@ -39,4 +39,11 @@ describe('Assertions', function () {
     expect(element(by.label('I contain some text'))).toHaveId('UniqueId204');
   });
 
+  // for example, the value of a UISwitch in the "on" state is "1"
+  it('should assert an element has (accesibility) value', function () {
+    expect(element(by.id('UniqueId146'))).toHaveValue('0');
+    element(by.id('UniqueId146')).tap();
+    expect(element(by.id('UniqueId146'))).toHaveValue('1');
+  });
+
 });

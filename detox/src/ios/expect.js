@@ -100,6 +100,14 @@ class TextMatcher extends Matcher {
   }
 }
 
+class ValueMatcher extends Matcher {
+  constructor(value) {
+    super();
+    if (typeof value !== 'string') throw new Error(`ValueMatcher ctor argument must be a string, got ${typeof value}`);
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityValue:', value);
+  }
+}
+
 // TODO: maybe refactor this and move into a member of Matcher class
 class ExtendedScrollMatcher extends Matcher {
   constructor(matcher) {
@@ -347,6 +355,9 @@ class ExpectElement extends Expect {
   toHaveId(value) {
     return new MatcherAssertionInteraction(this._element, new IdMatcher(value)).execute();
   }
+  toHaveValue(value) {
+    return new MatcherAssertionInteraction(this._element, new ValueMatcher(value)).execute();
+  }
 }
 
 class WaitFor {}
@@ -368,6 +379,12 @@ class WaitForElement extends WaitFor {
   }
   toNotExist() {
     return new WaitForInteraction(this._element, new ExistsMatcher())._not();
+  }
+  toHaveValue() {
+    return new WaitForInteraction(this._element, new ValueMatcher());
+  }
+  toNotHaveValue() {
+    return new WaitForInteraction(this._element, new ValueMatcher())._not();
   }
 }
 
