@@ -37,9 +37,25 @@ class Matcher {
     this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForBoth:andDescendantMatcher:', _originalMatcherCall, matcher._call);
     return this;
   }
+  and(matcher) {
+    if (!matcher instanceof Matcher) throw new Error(`Matcher and argument must be a valid Matcher, got ${typeof matcher}`);
+    const _originalMatcherCall = this._call;
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForBoth:and:', _originalMatcherCall, matcher._call);
+    return this;
+  }
+  not() {
+    const _originalMatcherCall = this._call;
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForNot:', _originalMatcherCall);
+    return this;
+  }
   _avoidProblematicReactNativeElements() {
     const _originalMatcherCall = this._call;
     this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherAvoidingProblematicReactNativeElements:', _originalMatcherCall);
+    return this;
+  }
+  _extendToDescendantScrollViews() {
+    const _originalMatcherCall = this._call;
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForScrollChildOfMatcher:', _originalMatcherCall);
     return this;
   }
 }
@@ -139,34 +155,6 @@ class ValueMatcher extends Matcher {
     super();
     if (typeof value !== 'string') throw new Error(`ValueMatcher ctor argument must be a string, got ${typeof value}`);
     this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityValue:', value);
-  }
-}
-
-// TODO: maybe refactor this and move into a member of Matcher class
-class ExtendedScrollMatcher extends Matcher {
-  constructor(matcher) {
-    super();
-    if (!matcher instanceof Matcher) throw new Error(`ExtendedScrollMatcher ctor argument must be a valid Matcher, got ${typeof matcher}`);
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForScrollChildOfMatcher:', matcher._call);
-  }
-}
-
-// TODO: maybe refactor this and move into a member of Matcher class
-class CombineBothMatcher extends Matcher {
-  constructor(firstMatcher, secondMatcher) {
-    super();
-    if (!firstMatcher instanceof Matcher) throw new Error(`CombineBothMatcher ctor 1st argument must be a valid Matcher, got ${typeof firstMatcher}`);
-    if (!secondMatcher instanceof Matcher) throw new Error(`CombineBothMatcher ctor 2nd argument must be a valid Matcher, got ${typeof secondMatcher}`);
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForBoth:and:', firstMatcher._call, secondMatcher._call);
-  }
-}
-
-// TODO: maybe refactor this and move into a member of Matcher class
-class NotMatcher extends Matcher {
-  constructor(matcher) {
-    super();
-    if (!matcher instanceof Matcher) throw new Error(`NotMatcher ctor argument must be a valid Matcher, got ${typeof matcher}`);
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForNot:', matcher._call);
   }
 }
 
@@ -297,7 +285,7 @@ class WaitForInteraction extends Interaction {
     this._element = element;
     this._originalMatcher = matcher;
     // we need to override the original matcher for the element and add matcher to it as well
-    this._element._selectElementWithMatcher(new CombineBothMatcher(this._element._originalMatcher, this._originalMatcher));
+    this._element._selectElementWithMatcher(this._element._originalMatcher.and(this._originalMatcher));
   }
   _not() {
     this._notCondition = true;
@@ -335,7 +323,7 @@ class WaitForActionInteraction extends Interaction {
   }
   scroll(amount, direction = 'down') {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
-    this._searchMatcher = new ExtendedScrollMatcher(this._searchMatcher);
+    this._searchMatcher = this._searchMatcher._extendToDescendantScrollViews();
     this._execute(new ScrollAmountAction(direction, amount));
   }
 }
@@ -372,12 +360,12 @@ class Element {
   }
   scroll(amount, direction = 'down') {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
-    this._selectElementWithMatcher(new ExtendedScrollMatcher(this._originalMatcher));
+    this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
     return new ActionInteraction(this, new ScrollAmountAction(direction, amount)).execute();
   }
   scrollTo(edge) {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
-    this._selectElementWithMatcher(new ExtendedScrollMatcher(this._originalMatcher));
+    this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
     return new ActionInteraction(this, new ScrollEdgeAction(edge)).execute();
   }
   swipe(direction, speed = 'fast') {
