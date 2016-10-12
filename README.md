@@ -8,6 +8,8 @@ High velocity native mobile development requires us to adopt continuous integrat
 
 ## Development still in progress!
 
+Please note that this library is still pre version 1.0.0 and under active development. The NPM version is higher because the name "detox" was transferred to us from a previous inactive package.
+
 <img src="http://i.imgur.com/O2ZzrKG.gif">
 
 ## Wanna see it in action??
