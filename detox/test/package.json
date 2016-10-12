@@ -15,8 +15,7 @@
   },
   "devDependencies": {
     "detox": "file:..",
-    "detox-server": "file:../../detox-server",
-    "detox-tools": "file:../../detox-tools"
+    "detox-server": "file:../../detox-server"
   },
   "detox": {
     "session": {
@@ -26,11 +25,11 @@
     "ios-simulator": {
       "debug": {
         "app": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
-        "device": "iPhone 6s, iOS 9.3"
+        "device": "iPhone 6s"
       },
       "release": {
         "app": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-        "device": "iPhone 6s, iOS 9.3"
+        "device": "iPhone 6s"
       }
     }
   }

@@ -50,7 +50,7 @@ function _getBundleIdFromApp(appPath, onComplete) {
 
 // fb simctl commands (we try to use it as much as possible since it supports multiple instances)
 function _executeSimulatorCommand(options, onComplete) {
-  const fbsimctlPath = path.join(__dirname, '../../../detox-tools/fbsimctl/fbsimctl');
+  const fbsimctlPath = 'fbsimctl'; //By this point, it should already be installed on the system by brew.
   const cmd = fbsimctlPath + ' ' + options.args;
   if (_verbose) {
     console.log(`DETOX exec: ${cmd}\n`);
