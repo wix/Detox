@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "lodash": "^4.14.1",
-    "react": "15.2.1",
-    "react-native": "0.31.0"
+    "react": "15.3.2",
+    "react-native": "0.35.0"
   },
   "devDependencies": {
     "detox": "file:..",
