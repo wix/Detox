@@ -4,7 +4,8 @@ import {
   View,
   TouchableOpacity,
   TextInput,
-  ScrollView
+  ScrollView,
+  RefreshControl
 } from 'react-native';
 
 export default class ActionsScreen extends Component {
@@ -15,7 +16,8 @@ export default class ActionsScreen extends Component {
       greeting: undefined,
       typeText: '',
       clearText: 'some stuff here..',
-      numTaps: 0
+      numTaps: 0,
+      isRefreshing: false
     };
   }
 
@@ -57,6 +59,13 @@ export default class ActionsScreen extends Component {
             <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}}>Text6</Text>
             <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}}>Text7</Text>
             <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}}>Text8</Text>
+          </ScrollView>
+        </View>
+
+        <View style={{height: 100, borderColor: '#c0c0c0', borderWidth: 1, backgroundColor: '#f8f8ff', marginBottom: 20}}>
+          <ScrollView testID='ScrollView799' refreshControl={
+            <RefreshControl refreshing={this.state.isRefreshing} onRefresh={this.onRefresh.bind(this)} title="Loading..." />
+          }>
           </ScrollView>
         </View>
 
@@ -106,6 +115,17 @@ export default class ActionsScreen extends Component {
         greeting: 'Clear Working'
       });
     }
+  }
+
+  onRefresh() {
+    this.setState({
+      isRefreshing: true
+    });
+    setTimeout(() => {
+      this.setState({
+        greeting: 'PullToReload Working'
+      });
+    }, 500);
   }
 
 }

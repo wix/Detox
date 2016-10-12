@@ -37,6 +37,23 @@
                                  grey_ancestor(matcher), nil), nil);
 }
 
++ (id<GREYMatcher>)detoxMatcherAvoidingProblematicReactNativeElements:(id<GREYMatcher>)matcher
+{
+    Class RN_RCTScrollView = NSClassFromString(@"RCTScrollView");
+    if (!RN_RCTScrollView)
+    {
+        return matcher;
+    }
+    
+    // RCTScrollView is problematic because EarlGrey's visibility matcher adds a subview and this causes a RN assertion
+    //  solution: if we match RCTScrollView, switch over to matching its contained UIScrollView
+    
+    return grey_anyOf(grey_allOf(grey_kindOfClass([UIScrollView class]),
+                                 grey_ancestor(grey_allOf(matcher, grey_kindOfClass(RN_RCTScrollView), nil)), nil),
+                      grey_allOf(matcher,
+                                 grey_not(grey_kindOfClass(RN_RCTScrollView)), nil), nil);
+}
+
 + (id<GREYMatcher>)detoxMatcherForBoth:(id<GREYMatcher>)firstMatcher and:(id<GREYMatcher>)secondMatcher
 {
     return grey_allOf(firstMatcher, secondMatcher, nil);
