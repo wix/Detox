@@ -8,8 +8,8 @@
 
 #import "ReactNativeHeaders.h"
 #import "ReactNativeBridgeIdlingResource.h"
-#import "Common/GREYDefines.h"
-#import "Common/GREYPrivate.h"
+
+#import "EarlGreyExtensions.h"
 
 static const CGFloat MOVING_AVERAGE_WEIGHT = 0.2;
 static const CGFloat MIN_THRESHOLD_FOR_IDLE = 10;

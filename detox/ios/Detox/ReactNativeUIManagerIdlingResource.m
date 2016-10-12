@@ -8,13 +8,14 @@
 
 #import "ReactNativeHeaders.h"
 #import "ReactNativeUIManagerIdlingResource.h"
-#import "Common/GREYDefines.h"
-#import "Common/GREYPrivate.h"
 
+#import "EarlGreyExtensions.h"
 
 @interface GREYDispatchQueueIdlingResource (ReactNativeUIManagerIdlingResource)
 - (instancetype)initWithDispatchQueue:(dispatch_queue_t)queue name:(NSString *)name;
 @end
+
+extern dispatch_queue_t RCTGetUIManagerQueue(void);
 
 
 @implementation ReactNativeUIManagerIdlingResource
@@ -29,10 +30,10 @@
 }
 
 // this is a hack since we don't have a public API to check this and we crash over an assertion if we install twice
-+ (GREYDispatchQueueIdlingResource*)checkIfDispatchQueueIdlingResourceAlreadyInstalled:(id)bridge
++ (GREYDispatchQueueIdlingResource*)checkIfDispatchQueueIdlingResourceAlreadyInstalled:(id)bridge name:(NSString*)name
 {
     dispatch_queue_t queue = [self getUIQueueFromBridge:bridge];
-    return [[GREYDispatchQueueIdlingResource class] performSelector:@selector(grey_resourceForCurrentlyTrackedDispatchQueue:) withObject:queue];
+	return [[GREYDispatchQueueIdlingResource class] performSelector:@selector(resourceWithDispatchQueue:name:) withObject:queue withObject:name];
 }
 
 + (instancetype)idlingResourceForBridge:(id)bridge name:(NSString *)name
@@ -47,7 +48,7 @@
     if (bridge == nil) return nil;
     
     // we have an issue that calling unregister on the idling resource (sometimes?)
-    GREYDispatchQueueIdlingResource *existing = [self checkIfDispatchQueueIdlingResourceAlreadyInstalled:bridge];
+	GREYDispatchQueueIdlingResource *existing = [self checkIfDispatchQueueIdlingResourceAlreadyInstalled:bridge name:name];
     if (existing != nil)
     {
         // I suspect that we have a race condition and deregister doesn't free the idling resource immediately, need to investigate further

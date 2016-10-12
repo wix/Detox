@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		39B044411DAECFCE00431EC5 /* SocketRocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39B044361DAECE2F00431EC5 /* SocketRocket.framework */; };
 		CC0F35231D460F26008BB94F /* EarlGrey.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCFA7D8E1D11C4E400E15EDF /* EarlGrey.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CC38FC451D61DEB800589F1C /* ReactNativeBridgeIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = CC38FC431D61DEB800589F1C /* ReactNativeBridgeIdlingResource.h */; };
 		CC38FC461D61DEB800589F1C /* ReactNativeBridgeIdlingResource.m in Sources */ = {isa = PBXBuildFile; fileRef = CC38FC441D61DEB800589F1C /* ReactNativeBridgeIdlingResource.m */; };
@@ -20,31 +21,6 @@
 		CCF391F71DAA8B9200BBFB1E /* GREYCondition+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = CCF391F51DAA8B9200BBFB1E /* GREYCondition+Detox.h */; };
 		CCF391F81DAA8B9200BBFB1E /* GREYCondition+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = CCF391F61DAA8B9200BBFB1E /* GREYCondition+Detox.m */; };
 		CCFA7D8F1D11C54100E15EDF /* EarlGrey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCFA7D8E1D11C4E400E15EDF /* EarlGrey.framework */; };
-		CCFA7DB31D11C63100E15EDF /* SRDelegateController.h in Headers */ = {isa = PBXBuildFile; fileRef = CCFA7D951D11C63000E15EDF /* SRDelegateController.h */; };
-		CCFA7DB41D11C63100E15EDF /* SRDelegateController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCFA7D961D11C63000E15EDF /* SRDelegateController.m */; };
-		CCFA7DB51D11C63100E15EDF /* SRIOConsumer.h in Headers */ = {isa = PBXBuildFile; fileRef = CCFA7D981D11C63000E15EDF /* SRIOConsumer.h */; };
-		CCFA7DB61D11C63100E15EDF /* SRIOConsumer.m in Sources */ = {isa = PBXBuildFile; fileRef = CCFA7D991D11C63000E15EDF /* SRIOConsumer.m */; };
-		CCFA7DB71D11C63100E15EDF /* SRIOConsumerPool.h in Headers */ = {isa = PBXBuildFile; fileRef = CCFA7D9A1D11C63000E15EDF /* SRIOConsumerPool.h */; };
-		CCFA7DB81D11C63100E15EDF /* SRIOConsumerPool.m in Sources */ = {isa = PBXBuildFile; fileRef = CCFA7D9B1D11C63000E15EDF /* SRIOConsumerPool.m */; };
-		CCFA7DB91D11C63100E15EDF /* SRProxyConnect.h in Headers */ = {isa = PBXBuildFile; fileRef = CCFA7D9D1D11C63000E15EDF /* SRProxyConnect.h */; };
-		CCFA7DBA1D11C63100E15EDF /* SRProxyConnect.m in Sources */ = {isa = PBXBuildFile; fileRef = CCFA7D9E1D11C63000E15EDF /* SRProxyConnect.m */; };
-		CCFA7DBB1D11C63100E15EDF /* SRRunLoopThread.h in Headers */ = {isa = PBXBuildFile; fileRef = CCFA7DA01D11C63000E15EDF /* SRRunLoopThread.h */; };
-		CCFA7DBC1D11C63100E15EDF /* SRRunLoopThread.m in Sources */ = {isa = PBXBuildFile; fileRef = CCFA7DA11D11C63000E15EDF /* SRRunLoopThread.m */; };
-		CCFA7DBD1D11C63100E15EDF /* SRSecurityOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = CCFA7DA31D11C63000E15EDF /* SRSecurityOptions.h */; };
-		CCFA7DBE1D11C63100E15EDF /* SRSecurityOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = CCFA7DA41D11C63000E15EDF /* SRSecurityOptions.m */; };
-		CCFA7DBF1D11C63100E15EDF /* SRError.h in Headers */ = {isa = PBXBuildFile; fileRef = CCFA7DA61D11C63000E15EDF /* SRError.h */; };
-		CCFA7DC01D11C63100E15EDF /* SRError.m in Sources */ = {isa = PBXBuildFile; fileRef = CCFA7DA71D11C63000E15EDF /* SRError.m */; };
-		CCFA7DC11D11C63100E15EDF /* SRHash.h in Headers */ = {isa = PBXBuildFile; fileRef = CCFA7DA81D11C63000E15EDF /* SRHash.h */; };
-		CCFA7DC21D11C63100E15EDF /* SRHash.m in Sources */ = {isa = PBXBuildFile; fileRef = CCFA7DA91D11C63000E15EDF /* SRHash.m */; };
-		CCFA7DC31D11C63100E15EDF /* SRURLUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = CCFA7DAA1D11C63000E15EDF /* SRURLUtilities.h */; };
-		CCFA7DC41D11C63100E15EDF /* SRURLUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CCFA7DAB1D11C63000E15EDF /* SRURLUtilities.m */; };
-		CCFA7DC51D11C63100E15EDF /* NSRunLoop+SRWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = CCFA7DAC1D11C63000E15EDF /* NSRunLoop+SRWebSocket.h */; };
-		CCFA7DC61D11C63100E15EDF /* NSRunLoop+SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = CCFA7DAD1D11C63000E15EDF /* NSRunLoop+SRWebSocket.m */; };
-		CCFA7DC71D11C63100E15EDF /* NSURLRequest+SRWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = CCFA7DAE1D11C63000E15EDF /* NSURLRequest+SRWebSocket.h */; };
-		CCFA7DC81D11C63100E15EDF /* NSURLRequest+SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = CCFA7DAF1D11C63000E15EDF /* NSURLRequest+SRWebSocket.m */; };
-		CCFA7DC91D11C63100E15EDF /* SocketRocket.h in Headers */ = {isa = PBXBuildFile; fileRef = CCFA7DB01D11C63000E15EDF /* SocketRocket.h */; };
-		CCFA7DCA1D11C63100E15EDF /* SRWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = CCFA7DB11D11C63000E15EDF /* SRWebSocket.h */; };
-		CCFA7DCB1D11C63100E15EDF /* SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = CCFA7DB21D11C63000E15EDF /* SRWebSocket.m */; };
 		CCFA7DCD1D11C6CC00E15EDF /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCFA7DCC1D11C6CC00E15EDF /* CFNetwork.framework */; };
 		CCFA7DCF1D11C6DA00E15EDF /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCFA7DCE1D11C6DA00E15EDF /* Security.framework */; };
 		CCFA7DD11D11C6E400E15EDF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCFA7DD01D11C6E400E15EDF /* Foundation.framework */; };
@@ -62,6 +38,55 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		399321781DAECCF600CDC9AB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3993216D1DAECCF600CDC9AB /* SocketRocket.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F668C880153E91210044DBAC;
+			remoteInfo = SocketRocketOSX;
+		};
+		3993217A1DAECCF600CDC9AB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3993216D1DAECCF600CDC9AB /* SocketRocket.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2D4227621BB4358C000C1A6C;
+			remoteInfo = "SocketRocket-iOS";
+		};
+		3993217C1DAECCF600CDC9AB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3993216D1DAECCF600CDC9AB /* SocketRocket.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3345DC901C52ACD70083CCB8;
+			remoteInfo = "SocketRocket-tvOS";
+		};
+		3993217E1DAECCF600CDC9AB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3993216D1DAECCF600CDC9AB /* SocketRocket.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F6BDA802145900D200FE3253;
+			remoteInfo = SRWebSocketTests;
+		};
+		399321801DAECCF600CDC9AB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3993216D1DAECCF600CDC9AB /* SocketRocket.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F62417E314D52F3C003CE997;
+			remoteInfo = TestChat;
+		};
+		39B044351DAECE2F00431EC5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3993216D1DAECCF600CDC9AB /* SocketRocket.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 81D6478D1D2CA78800690609;
+			remoteInfo = "SocketRocket-iOS";
+		};
+		39B0443F1DAECFC500431EC5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3993216D1DAECCF600CDC9AB /* SocketRocket.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 81D6475F1D2CA78800690609;
+			remoteInfo = "SocketRocket-iOS";
+		};
 		CCFA7D8D1D11C4E400E15EDF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CCFA7D891D11C4E400E15EDF /* EarlGrey.xcodeproj */;
@@ -92,6 +117,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3993216D1DAECCF600CDC9AB /* SocketRocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SocketRocket.xcodeproj; path = SocketRocket/SocketRocket.xcodeproj; sourceTree = SOURCE_ROOT; };
+		39B044421DAED0F700431EC5 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		39B044441DAED24B00431EC5 /* EarlGreyExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EarlGreyExtensions.h; sourceTree = "<group>"; };
 		CC38FC431D61DEB800589F1C /* ReactNativeBridgeIdlingResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactNativeBridgeIdlingResource.h; sourceTree = "<group>"; };
 		CC38FC441D61DEB800589F1C /* ReactNativeBridgeIdlingResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactNativeBridgeIdlingResource.m; sourceTree = "<group>"; };
 		CC38FC481D61F36100589F1C /* ReactNativeHeaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReactNativeHeaders.h; sourceTree = "<group>"; };
@@ -108,31 +136,6 @@
 		CCF391F51DAA8B9200BBFB1E /* GREYCondition+Detox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GREYCondition+Detox.h"; sourceTree = "<group>"; };
 		CCF391F61DAA8B9200BBFB1E /* GREYCondition+Detox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GREYCondition+Detox.m"; sourceTree = "<group>"; };
 		CCFA7D891D11C4E400E15EDF /* EarlGrey.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = EarlGrey.xcodeproj; path = EarlGrey/EarlGrey.xcodeproj; sourceTree = SOURCE_ROOT; };
-		CCFA7D951D11C63000E15EDF /* SRDelegateController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRDelegateController.h; sourceTree = "<group>"; };
-		CCFA7D961D11C63000E15EDF /* SRDelegateController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRDelegateController.m; sourceTree = "<group>"; };
-		CCFA7D981D11C63000E15EDF /* SRIOConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRIOConsumer.h; sourceTree = "<group>"; };
-		CCFA7D991D11C63000E15EDF /* SRIOConsumer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRIOConsumer.m; sourceTree = "<group>"; };
-		CCFA7D9A1D11C63000E15EDF /* SRIOConsumerPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRIOConsumerPool.h; sourceTree = "<group>"; };
-		CCFA7D9B1D11C63000E15EDF /* SRIOConsumerPool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRIOConsumerPool.m; sourceTree = "<group>"; };
-		CCFA7D9D1D11C63000E15EDF /* SRProxyConnect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRProxyConnect.h; sourceTree = "<group>"; };
-		CCFA7D9E1D11C63000E15EDF /* SRProxyConnect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRProxyConnect.m; sourceTree = "<group>"; };
-		CCFA7DA01D11C63000E15EDF /* SRRunLoopThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRRunLoopThread.h; sourceTree = "<group>"; };
-		CCFA7DA11D11C63000E15EDF /* SRRunLoopThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRRunLoopThread.m; sourceTree = "<group>"; };
-		CCFA7DA31D11C63000E15EDF /* SRSecurityOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRSecurityOptions.h; sourceTree = "<group>"; };
-		CCFA7DA41D11C63000E15EDF /* SRSecurityOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRSecurityOptions.m; sourceTree = "<group>"; };
-		CCFA7DA61D11C63000E15EDF /* SRError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRError.h; sourceTree = "<group>"; };
-		CCFA7DA71D11C63000E15EDF /* SRError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRError.m; sourceTree = "<group>"; };
-		CCFA7DA81D11C63000E15EDF /* SRHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRHash.h; sourceTree = "<group>"; };
-		CCFA7DA91D11C63000E15EDF /* SRHash.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRHash.m; sourceTree = "<group>"; };
-		CCFA7DAA1D11C63000E15EDF /* SRURLUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRURLUtilities.h; sourceTree = "<group>"; };
-		CCFA7DAB1D11C63000E15EDF /* SRURLUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRURLUtilities.m; sourceTree = "<group>"; };
-		CCFA7DAC1D11C63000E15EDF /* NSRunLoop+SRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSRunLoop+SRWebSocket.h"; sourceTree = "<group>"; };
-		CCFA7DAD1D11C63000E15EDF /* NSRunLoop+SRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSRunLoop+SRWebSocket.m"; sourceTree = "<group>"; };
-		CCFA7DAE1D11C63000E15EDF /* NSURLRequest+SRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURLRequest+SRWebSocket.h"; sourceTree = "<group>"; };
-		CCFA7DAF1D11C63000E15EDF /* NSURLRequest+SRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURLRequest+SRWebSocket.m"; sourceTree = "<group>"; };
-		CCFA7DB01D11C63000E15EDF /* SocketRocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketRocket.h; sourceTree = "<group>"; };
-		CCFA7DB11D11C63000E15EDF /* SRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocket.h; sourceTree = "<group>"; };
-		CCFA7DB21D11C63000E15EDF /* SRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocket.m; sourceTree = "<group>"; };
 		CCFA7DCC1D11C6CC00E15EDF /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		CCFA7DCE1D11C6DA00E15EDF /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		CCFA7DD01D11C6E400E15EDF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -154,6 +157,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39B044411DAECFCE00431EC5 /* SocketRocket.framework in Frameworks */,
 				CCFA7DD31D11C6FC00E15EDF /* libicucore.tbd in Frameworks */,
 				CCFA7DD11D11C6E400E15EDF /* Foundation.framework in Frameworks */,
 				CCFA7DCF1D11C6DA00E15EDF /* Security.framework in Frameworks */,
@@ -165,6 +169,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3993216E1DAECCF600CDC9AB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				39B044361DAECE2F00431EC5 /* SocketRocket.framework */,
+				3993217B1DAECCF600CDC9AB /* SocketRocket.framework */,
+				399321791DAECCF600CDC9AB /* SocketRocket.framework */,
+				3993217D1DAECCF600CDC9AB /* SocketRocket.framework */,
+				3993217F1DAECCF600CDC9AB /* SocketRocketTests-iOS.xctest */,
+				399321811DAECCF600CDC9AB /* TestChat.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		CC38FC471D61E3B500589F1C /* ReactNativeSupport */ = {
 			isa = PBXGroup;
 			children = (
@@ -182,6 +199,7 @@
 		CC654C731DA7B2A60057ECE9 /* EarlGreyExtentions */ = {
 			isa = PBXGroup;
 			children = (
+				39B044441DAED24B00431EC5 /* EarlGreyExtensions.h */,
 				CC654C741DA7B3720057ECE9 /* GREYMatchers+Detox.h */,
 				CC654C751DA7B3720057ECE9 /* GREYMatchers+Detox.m */,
 				CCF391F51DAA8B9200BBFB1E /* GREYCondition+Detox.h */,
@@ -225,7 +243,6 @@
 				CC654C731DA7B2A60057ECE9 /* EarlGreyExtentions */,
 				CC38FC471D61E3B500589F1C /* ReactNativeSupport */,
 				CCE6D43C1D11A76500F81E39 /* Info.plist */,
-				CCFA7D921D11C63000E15EDF /* SocketRocket */,
 			);
 			path = Detox;
 			sourceTree = "<group>";
@@ -238,98 +255,12 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		CCFA7D921D11C63000E15EDF /* SocketRocket */ = {
-			isa = PBXGroup;
-			children = (
-				CCFA7D931D11C63000E15EDF /* Internal */,
-				CCFA7DAC1D11C63000E15EDF /* NSRunLoop+SRWebSocket.h */,
-				CCFA7DAD1D11C63000E15EDF /* NSRunLoop+SRWebSocket.m */,
-				CCFA7DAE1D11C63000E15EDF /* NSURLRequest+SRWebSocket.h */,
-				CCFA7DAF1D11C63000E15EDF /* NSURLRequest+SRWebSocket.m */,
-				CCFA7DB01D11C63000E15EDF /* SocketRocket.h */,
-				CCFA7DB11D11C63000E15EDF /* SRWebSocket.h */,
-				CCFA7DB21D11C63000E15EDF /* SRWebSocket.m */,
-			);
-			path = SocketRocket;
-			sourceTree = "<group>";
-		};
-		CCFA7D931D11C63000E15EDF /* Internal */ = {
-			isa = PBXGroup;
-			children = (
-				CCFA7D941D11C63000E15EDF /* Delegate */,
-				CCFA7D971D11C63000E15EDF /* IOConsumer */,
-				CCFA7D9C1D11C63000E15EDF /* Proxy */,
-				CCFA7D9F1D11C63000E15EDF /* RunLoop */,
-				CCFA7DA21D11C63000E15EDF /* Security */,
-				CCFA7DA51D11C63000E15EDF /* Utilities */,
-			);
-			path = Internal;
-			sourceTree = "<group>";
-		};
-		CCFA7D941D11C63000E15EDF /* Delegate */ = {
-			isa = PBXGroup;
-			children = (
-				CCFA7D951D11C63000E15EDF /* SRDelegateController.h */,
-				CCFA7D961D11C63000E15EDF /* SRDelegateController.m */,
-			);
-			path = Delegate;
-			sourceTree = "<group>";
-		};
-		CCFA7D971D11C63000E15EDF /* IOConsumer */ = {
-			isa = PBXGroup;
-			children = (
-				CCFA7D981D11C63000E15EDF /* SRIOConsumer.h */,
-				CCFA7D991D11C63000E15EDF /* SRIOConsumer.m */,
-				CCFA7D9A1D11C63000E15EDF /* SRIOConsumerPool.h */,
-				CCFA7D9B1D11C63000E15EDF /* SRIOConsumerPool.m */,
-			);
-			path = IOConsumer;
-			sourceTree = "<group>";
-		};
-		CCFA7D9C1D11C63000E15EDF /* Proxy */ = {
-			isa = PBXGroup;
-			children = (
-				CCFA7D9D1D11C63000E15EDF /* SRProxyConnect.h */,
-				CCFA7D9E1D11C63000E15EDF /* SRProxyConnect.m */,
-			);
-			path = Proxy;
-			sourceTree = "<group>";
-		};
-		CCFA7D9F1D11C63000E15EDF /* RunLoop */ = {
-			isa = PBXGroup;
-			children = (
-				CCFA7DA01D11C63000E15EDF /* SRRunLoopThread.h */,
-				CCFA7DA11D11C63000E15EDF /* SRRunLoopThread.m */,
-			);
-			path = RunLoop;
-			sourceTree = "<group>";
-		};
-		CCFA7DA21D11C63000E15EDF /* Security */ = {
-			isa = PBXGroup;
-			children = (
-				CCFA7DA31D11C63000E15EDF /* SRSecurityOptions.h */,
-				CCFA7DA41D11C63000E15EDF /* SRSecurityOptions.m */,
-			);
-			path = Security;
-			sourceTree = "<group>";
-		};
-		CCFA7DA51D11C63000E15EDF /* Utilities */ = {
-			isa = PBXGroup;
-			children = (
-				CCFA7DA61D11C63000E15EDF /* SRError.h */,
-				CCFA7DA71D11C63000E15EDF /* SRError.m */,
-				CCFA7DA81D11C63000E15EDF /* SRHash.h */,
-				CCFA7DA91D11C63000E15EDF /* SRHash.m */,
-				CCFA7DAA1D11C63000E15EDF /* SRURLUtilities.h */,
-				CCFA7DAB1D11C63000E15EDF /* SRURLUtilities.m */,
-			);
-			path = Utilities;
-			sourceTree = "<group>";
-		};
 		CCFA7DD41D11C71300E15EDF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				39B044421DAED0F700431EC5 /* XCTest.framework */,
 				CCFA7D891D11C4E400E15EDF /* EarlGrey.xcodeproj */,
+				3993216D1DAECCF600CDC9AB /* SocketRocket.xcodeproj */,
 				CCFA7DD21D11C6FC00E15EDF /* libicucore.tbd */,
 				CCFA7DD01D11C6E400E15EDF /* Foundation.framework */,
 				CCFA7DCE1D11C6DA00E15EDF /* Security.framework */,
@@ -347,29 +278,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				CCF391F71DAA8B9200BBFB1E /* GREYCondition+Detox.h in Headers */,
-				CCFA7DB51D11C63100E15EDF /* SRIOConsumer.h in Headers */,
-				CCFA7DB91D11C63100E15EDF /* SRProxyConnect.h in Headers */,
 				CC38FC4F1D622AFB00589F1C /* ReactNativeUIManagerIdlingResource.h in Headers */,
-				CCFA7DC51D11C63100E15EDF /* NSRunLoop+SRWebSocket.h in Headers */,
 				CCFA7E521D12CA1500E15EDF /* TestFailureHandler.h in Headers */,
 				CC654C761DA7B3720057ECE9 /* GREYMatchers+Detox.h in Headers */,
 				CCFA7E461D12191200E15EDF /* MethodInvocation.h in Headers */,
 				CCFA7DD81D11C9F400E15EDF /* DetoxManager.h in Headers */,
-				CCFA7DCA1D11C63100E15EDF /* SRWebSocket.h in Headers */,
-				CCFA7DB31D11C63100E15EDF /* SRDelegateController.h in Headers */,
-				CCFA7DC91D11C63100E15EDF /* SocketRocket.h in Headers */,
-				CCFA7DC71D11C63100E15EDF /* NSURLRequest+SRWebSocket.h in Headers */,
-				CCFA7DC11D11C63100E15EDF /* SRHash.h in Headers */,
 				CCE6D43B1D11A76500F81E39 /* Detox.h in Headers */,
 				CCFA7E4A1D12A60600E15EDF /* TestRunner.h in Headers */,
 				CCA99FFF1D227DBE00C762B8 /* ReactNativeSupport.h in Headers */,
-				CCFA7DBD1D11C63100E15EDF /* SRSecurityOptions.h in Headers */,
-				CCFA7DB71D11C63100E15EDF /* SRIOConsumerPool.h in Headers */,
 				CCFA7E4E1D12AA4C00E15EDF /* WebSocket.h in Headers */,
 				CC38FC451D61DEB800589F1C /* ReactNativeBridgeIdlingResource.h in Headers */,
-				CCFA7DBF1D11C63100E15EDF /* SRError.h in Headers */,
-				CCFA7DC31D11C63100E15EDF /* SRURLUtilities.h in Headers */,
-				CCFA7DBB1D11C63100E15EDF /* SRRunLoopThread.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -389,6 +307,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				39B044401DAECFC500431EC5 /* PBXTargetDependency */,
 				CCFA7D911D11C54500E15EDF /* PBXTargetDependency */,
 			);
 			name = Detox;
@@ -402,7 +321,7 @@
 		CCE6D42E1D11A76500F81E39 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = Wix;
 				TargetAttributes = {
 					CCE6D4361D11A76500F81E39 = {
@@ -425,6 +344,10 @@
 					ProductGroup = CCFA7D8A1D11C4E400E15EDF /* Products */;
 					ProjectRef = CCFA7D891D11C4E400E15EDF /* EarlGrey.xcodeproj */;
 				},
+				{
+					ProductGroup = 3993216E1DAECCF600CDC9AB /* Products */;
+					ProjectRef = 3993216D1DAECCF600CDC9AB /* SocketRocket.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -434,6 +357,48 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		399321791DAECCF600CDC9AB /* SocketRocket.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SocketRocket.framework;
+			remoteRef = 399321781DAECCF600CDC9AB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		3993217B1DAECCF600CDC9AB /* SocketRocket.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SocketRocket.framework;
+			remoteRef = 3993217A1DAECCF600CDC9AB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		3993217D1DAECCF600CDC9AB /* SocketRocket.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SocketRocket.framework;
+			remoteRef = 3993217C1DAECCF600CDC9AB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		3993217F1DAECCF600CDC9AB /* SocketRocketTests-iOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "SocketRocketTests-iOS.xctest";
+			remoteRef = 3993217E1DAECCF600CDC9AB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		399321811DAECCF600CDC9AB /* TestChat.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = TestChat.app;
+			remoteRef = 399321801DAECCF600CDC9AB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		39B044361DAECE2F00431EC5 /* SocketRocket.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SocketRocket.framework;
+			remoteRef = 39B044351DAECE2F00431EC5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		CCFA7D8E1D11C4E400E15EDF /* EarlGrey.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -459,26 +424,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				CCFA7E471D12191200E15EDF /* MethodInvocation.m in Sources */,
-				CCFA7DCB1D11C63100E15EDF /* SRWebSocket.m in Sources */,
 				CCFA7DD91D11C9F400E15EDF /* DetoxManager.m in Sources */,
-				CCFA7DC01D11C63100E15EDF /* SRError.m in Sources */,
 				CCFA7E531D12CA1500E15EDF /* TestFailureHandler.m in Sources */,
-				CCFA7DC41D11C63100E15EDF /* SRURLUtilities.m in Sources */,
 				CCA9A0001D227DBE00C762B8 /* ReactNativeSupport.m in Sources */,
 				CC654C771DA7B3720057ECE9 /* GREYMatchers+Detox.m in Sources */,
-				CCFA7DBA1D11C63100E15EDF /* SRProxyConnect.m in Sources */,
-				CCFA7DC61D11C63100E15EDF /* NSRunLoop+SRWebSocket.m in Sources */,
 				CCFA7E4B1D12A60600E15EDF /* TestRunner.m in Sources */,
-				CCFA7DB61D11C63100E15EDF /* SRIOConsumer.m in Sources */,
-				CCFA7DB81D11C63100E15EDF /* SRIOConsumerPool.m in Sources */,
 				CC38FC501D622AFB00589F1C /* ReactNativeUIManagerIdlingResource.m in Sources */,
-				CCFA7DC21D11C63100E15EDF /* SRHash.m in Sources */,
-				CCFA7DBE1D11C63100E15EDF /* SRSecurityOptions.m in Sources */,
-				CCFA7DBC1D11C63100E15EDF /* SRRunLoopThread.m in Sources */,
 				CCFA7E4F1D12AA4C00E15EDF /* WebSocket.m in Sources */,
 				CC38FC461D61DEB800589F1C /* ReactNativeBridgeIdlingResource.m in Sources */,
-				CCFA7DB41D11C63100E15EDF /* SRDelegateController.m in Sources */,
-				CCFA7DC81D11C63100E15EDF /* NSURLRequest+SRWebSocket.m in Sources */,
 				CCF391F81DAA8B9200BBFB1E /* GREYCondition+Detox.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -486,6 +439,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		39B044401DAECFC500431EC5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "SocketRocket-iOS";
+			targetProxy = 39B0443F1DAECFC500431EC5 /* PBXContainerItemProxy */;
+		};
 		CCFA7D911D11C54500E15EDF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = EarlGrey;
@@ -508,8 +466,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -556,8 +516,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -587,13 +549,13 @@
 		CCE6D4401D11A76500F81E39 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
-				FRAMEWORK_SEARCH_PATHS = "${SRCROOT}/EarlGrey/**";
-				HEADER_SEARCH_PATHS = "${SRCROOT}/EarlGrey/**";
+				GCC_WARN_UNDECLARED_SELECTOR = NO;
 				INFOPLIST_FILE = Detox/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -607,13 +569,13 @@
 		CCE6D4411D11A76500F81E39 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
-				FRAMEWORK_SEARCH_PATHS = "${SRCROOT}/EarlGrey/**";
-				HEADER_SEARCH_PATHS = "${SRCROOT}/EarlGrey/**";
+				GCC_WARN_UNDECLARED_SELECTOR = NO;
 				INFOPLIST_FILE = Detox/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;

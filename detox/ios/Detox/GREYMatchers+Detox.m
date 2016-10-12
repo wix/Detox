@@ -7,7 +7,7 @@
 //
 
 #import "GREYMatchers+Detox.h"
-#import <OCHamcrest/OCHamcrest.h>
+#import "EarlGreyExtensions.h"
 
 @implementation GREYMatchers (Detox)
 

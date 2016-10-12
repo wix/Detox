@@ -1,0 +1,6 @@
+[submodule "detox/ios/SocketRocket"]
+	path = detox/ios/SocketRocket
+	url = https://github.com/facebook/SocketRocket.git
+[submodule "detox/ios/EarlGrey"]
+	path = detox/ios/EarlGrey
+	url = https://github.com/google/EarlGrey.git
