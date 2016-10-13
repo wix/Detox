@@ -10,6 +10,8 @@
 #import "ReactNativeBridgeIdlingResource.h"
 #import "ReactNativeUIManagerIdlingResource.h"
 
+@import ObjectiveC;
+
 @interface ReactNativeSupport()
 
 @property (nonatomic, assign) BOOL javascriptJustLoaded;
@@ -59,14 +61,32 @@ NSString *const RCTContentDidAppearNotification = @"RCTContentDidAppearNotificat
 
 - (void) reloadApp
 {
+	if(NSClassFromString(@"RCTBridge") == nil)
+	{
+		//Not RN app - noop.
+		return;
+	}
+	
     [self removeIdlingResources];
-    
-    // option 1: [[RCTBridge currentBridge] reload]
-    
-    // option 2: post notification
-    [[NSNotificationCenter defaultCenter] postNotificationName:RCTReloadNotification
-                                                        object:nil
-                                                      userInfo:nil];
+	
+	id bridge = [NSClassFromString(@"RCTBridge") valueForKey:@"currentBridge"];
+	
+	SEL reqRelSel = NSSelectorFromString(@"requestReload");
+	if([bridge respondsToSelector:reqRelSel])
+	{
+		//performSelector is not safe when retrun value is void. Instead, obtain function pointer to method and call that.
+		
+		//Call RN public API to request reload.
+		void(*m)(id, SEL) = (void(*)(id, SEL))method_getImplementation(class_getInstanceMethod(NSClassFromString(@"RCTBridge"), reqRelSel));
+		m(bridge, reqRelSel);
+	}
+	else
+	{
+		//Legacy call to reload RN.
+		[[NSNotificationCenter defaultCenter] postNotificationName:RCTReloadNotification
+															object:nil
+														  userInfo:nil];
+	}
 }
 
 - (void) javascriptDidLoad
