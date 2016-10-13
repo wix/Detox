@@ -5,10 +5,6 @@ shell.echo('cd test');
 shell.cd('test');
 
 shell.echo('\n#################################################################');
-shell.echo('copy detox native');
-shell.cp('-Rf', '../ios/*', 'node_modules/detox/ios');
-
-shell.echo('\n#################################################################');
 shell.echo('# killing any running react-native packagers');
 shell.exec('pkill -f "react-native/packager" ; pkill -f "react-native start"');
 
