@@ -1,17 +1,12 @@
+require('shelljs/global');
+
 var detox = require('detox');
-detox.ios.expect.exportGlobals();
-global.simulator = detox.ios.simulator;
 var config = require('../package.json').detox;
 
 before(function (done) {
-  detox.config(config.session);
-  detox.connect(done);
-});
-
-// remark this section when debugging directly in Xcode
-before(function (done) {
   this.timeout(40000);
-  simulator.prepare(config, done);
+  detox.config(config);
+  detox.start(done);
 });
 
 afterEach(function (done) {

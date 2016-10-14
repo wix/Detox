@@ -1,21 +1,13 @@
-var shell = require('shelljs');
+require('shelljs/global');
 
-shell.cd('test');
+cd('test');
 
-if (process.argv[2] !== '--release') {
-  shell.echo('\n#################################################################');
-  shell.echo('# npm run e2e (debug)');
-  if (shell.exec('npm run e2e').code !== 0) {
-    shell.echo('error: npm run e2e');
-    process.exit(1);
-  }
-}
+echo('\n#################################################################');
+echo('# npm run e2e (debug)');
 
-if (process.argv[2] !== '--debug') {
-  shell.echo('\n#################################################################');
-  shell.echo('# npm run e2e-release');
-  if (shell.exec('npm run e2e-release').code !== 0) {
-    shell.echo('error: npm run e2e-release');
-    process.exit(1);
-  }
+let argv = process.argv.slice(2).map(str => str.toLowerCase());
+
+if (exec('npm run e2e -- --___detoxargs___:::"' + argv.join(' ') + '"').code !== 0) {
+  echo('error: npm run e2e');
+  exit(1);
 }

@@ -1,9 +1,6 @@
 var WebSocket = require('ws');
 
-var _detoxConfig = {
-  server: 'ws://localhost:8099',
-  sessionId: 'example'
-};
+var _detoxConfig = {};
 var _ws;
 var _invokeQueue = [];
 var _readyForInvokeId = 0;
