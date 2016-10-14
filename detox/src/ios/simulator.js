@@ -1,3 +1,4 @@
+const utils = require('../utils.js');
 const exec = require('child_process').exec;
 const spawn = require('child_process').spawn;
 const path = require('path');
@@ -337,23 +338,10 @@ function _shutdownSimulator(device, onComplete) {
   });
 }
 
-// returns undefined if not found
-function _getArgValue(key) {
-  for (let i = 0; i < process.argv.length ; i++) {
-    if (process.argv[i].startsWith(`--${key}=`)) {
-      return process.argv[i].split('=')[1];
-    }
-    if (process.argv[i] === `--${key}`) {
-      return true;
-    }
-  }
-  return undefined;
-}
-
 // returns true if found scheme, false if no scheme found
 function _setCurrentScheme(params) {
   let scheme;
-  const schemeOverride = _getArgValue('detoxScheme');
+  const schemeOverride = utils.getArgValue('scheme');
   if (schemeOverride) {
     scheme = _.get(params, schemeOverride);
   }
@@ -376,7 +364,7 @@ function _setCurrentScheme(params) {
 }
 
 function prepare(params, onComplete) {
-  _verbose = _getArgValue('detoxVerbose');
+  _verbose = utils.getArgValue('verbose');
   if (params['session']) {
     const settings = params['session'];
     if (!settings.server) {
