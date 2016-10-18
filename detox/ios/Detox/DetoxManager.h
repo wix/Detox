@@ -11,7 +11,7 @@
 #import "TestRunner.h"
 #import "ReactNativeSupport.h"
 
-@interface DetoxManager : NSObject<WebSocketDelegate, TestRunnerDelegate, ReactNativeSupportDelegate>
+@interface DetoxManager : NSObject<WebSocketDelegate, TestRunnerDelegate>
 
 + (instancetype)sharedInstance;
 - (void) connectToServer:(NSString*)url withSessionId:(NSString*)sessionId;

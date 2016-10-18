@@ -7,12 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		39492D561DB0644D003E2A2D /* WXJSDisplayLinkIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 39492D541DB0644C003E2A2D /* WXJSDisplayLinkIdlingResource.h */; };
+		39492D571DB0644D003E2A2D /* WXJSDisplayLinkIdlingResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 39492D551DB0644D003E2A2D /* WXJSDisplayLinkIdlingResource.m */; };
+		39492D5A1DB0658C003E2A2D /* WXRunLoopIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 39492D581DB0658C003E2A2D /* WXRunLoopIdlingResource.h */; };
+		39492D5B1DB0658C003E2A2D /* WXRunLoopIdlingResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 39492D591DB0658C003E2A2D /* WXRunLoopIdlingResource.m */; };
+		39492D5E1DB06A0F003E2A2D /* WXJSTimerCounterIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 39492D5C1DB06A0F003E2A2D /* WXJSTimerCounterIdlingResource.h */; };
+		39492D5F1DB06A0F003E2A2D /* WXJSTimerCounterIdlingResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 39492D5D1DB06A0F003E2A2D /* WXJSTimerCounterIdlingResource.m */; };
 		39B044411DAECFCE00431EC5 /* SocketRocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39B044361DAECE2F00431EC5 /* SocketRocket.framework */; };
 		CC0F35231D460F26008BB94F /* EarlGrey.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCFA7D8E1D11C4E400E15EDF /* EarlGrey.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CC38FC451D61DEB800589F1C /* ReactNativeBridgeIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = CC38FC431D61DEB800589F1C /* ReactNativeBridgeIdlingResource.h */; };
-		CC38FC461D61DEB800589F1C /* ReactNativeBridgeIdlingResource.m in Sources */ = {isa = PBXBuildFile; fileRef = CC38FC441D61DEB800589F1C /* ReactNativeBridgeIdlingResource.m */; };
-		CC38FC4F1D622AFB00589F1C /* ReactNativeUIManagerIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = CC38FC4D1D622AFB00589F1C /* ReactNativeUIManagerIdlingResource.h */; };
-		CC38FC501D622AFB00589F1C /* ReactNativeUIManagerIdlingResource.m in Sources */ = {isa = PBXBuildFile; fileRef = CC38FC4E1D622AFB00589F1C /* ReactNativeUIManagerIdlingResource.m */; };
 		CC654C761DA7B3720057ECE9 /* GREYMatchers+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = CC654C741DA7B3720057ECE9 /* GREYMatchers+Detox.h */; };
 		CC654C771DA7B3720057ECE9 /* GREYMatchers+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = CC654C751DA7B3720057ECE9 /* GREYMatchers+Detox.m */; };
 		CCA99FFF1D227DBE00C762B8 /* ReactNativeSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = CCA99FFD1D227DBE00C762B8 /* ReactNativeSupport.h */; };
@@ -117,19 +119,20 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		39492D541DB0644C003E2A2D /* WXJSDisplayLinkIdlingResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXJSDisplayLinkIdlingResource.h; sourceTree = "<group>"; };
+		39492D551DB0644D003E2A2D /* WXJSDisplayLinkIdlingResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXJSDisplayLinkIdlingResource.m; sourceTree = "<group>"; };
+		39492D581DB0658C003E2A2D /* WXRunLoopIdlingResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXRunLoopIdlingResource.h; sourceTree = "<group>"; };
+		39492D591DB0658C003E2A2D /* WXRunLoopIdlingResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXRunLoopIdlingResource.m; sourceTree = "<group>"; };
+		39492D5C1DB06A0F003E2A2D /* WXJSTimerCounterIdlingResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXJSTimerCounterIdlingResource.h; sourceTree = "<group>"; };
+		39492D5D1DB06A0F003E2A2D /* WXJSTimerCounterIdlingResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXJSTimerCounterIdlingResource.m; sourceTree = "<group>"; };
 		3993216D1DAECCF600CDC9AB /* SocketRocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SocketRocket.xcodeproj; path = SocketRocket/SocketRocket.xcodeproj; sourceTree = SOURCE_ROOT; };
 		39B044421DAED0F700431EC5 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		39B044441DAED24B00431EC5 /* EarlGreyExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EarlGreyExtensions.h; sourceTree = "<group>"; };
-		CC38FC431D61DEB800589F1C /* ReactNativeBridgeIdlingResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactNativeBridgeIdlingResource.h; sourceTree = "<group>"; };
-		CC38FC441D61DEB800589F1C /* ReactNativeBridgeIdlingResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactNativeBridgeIdlingResource.m; sourceTree = "<group>"; };
 		CC38FC481D61F36100589F1C /* ReactNativeHeaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReactNativeHeaders.h; sourceTree = "<group>"; };
-		CC38FC4D1D622AFB00589F1C /* ReactNativeUIManagerIdlingResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactNativeUIManagerIdlingResource.h; sourceTree = "<group>"; };
-		CC38FC4E1D622AFB00589F1C /* ReactNativeUIManagerIdlingResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactNativeUIManagerIdlingResource.m; sourceTree = "<group>"; };
 		CC654C741DA7B3720057ECE9 /* GREYMatchers+Detox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GREYMatchers+Detox.h"; sourceTree = "<group>"; };
 		CC654C751DA7B3720057ECE9 /* GREYMatchers+Detox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GREYMatchers+Detox.m"; sourceTree = "<group>"; };
 		CCA99FFD1D227DBE00C762B8 /* ReactNativeSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactNativeSupport.h; sourceTree = "<group>"; };
 		CCA99FFE1D227DBE00C762B8 /* ReactNativeSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactNativeSupport.m; sourceTree = "<group>"; };
-		CCE105591D48D82F00A40950 /* DetoxLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetoxLoader.h; sourceTree = "<group>"; };
 		CCE6D4371D11A76500F81E39 /* Detox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Detox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCE6D43A1D11A76500F81E39 /* Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.h; sourceTree = "<group>"; };
 		CCE6D43C1D11A76500F81E39 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -188,10 +191,12 @@
 				CC38FC481D61F36100589F1C /* ReactNativeHeaders.h */,
 				CCA99FFD1D227DBE00C762B8 /* ReactNativeSupport.h */,
 				CCA99FFE1D227DBE00C762B8 /* ReactNativeSupport.m */,
-				CC38FC431D61DEB800589F1C /* ReactNativeBridgeIdlingResource.h */,
-				CC38FC441D61DEB800589F1C /* ReactNativeBridgeIdlingResource.m */,
-				CC38FC4D1D622AFB00589F1C /* ReactNativeUIManagerIdlingResource.h */,
-				CC38FC4E1D622AFB00589F1C /* ReactNativeUIManagerIdlingResource.m */,
+				39492D541DB0644C003E2A2D /* WXJSDisplayLinkIdlingResource.h */,
+				39492D551DB0644D003E2A2D /* WXJSDisplayLinkIdlingResource.m */,
+				39492D581DB0658C003E2A2D /* WXRunLoopIdlingResource.h */,
+				39492D591DB0658C003E2A2D /* WXRunLoopIdlingResource.m */,
+				39492D5C1DB06A0F003E2A2D /* WXJSTimerCounterIdlingResource.h */,
+				39492D5D1DB06A0F003E2A2D /* WXJSTimerCounterIdlingResource.m */,
 			);
 			name = ReactNativeSupport;
 			sourceTree = "<group>";
@@ -229,7 +234,6 @@
 			isa = PBXGroup;
 			children = (
 				CCE6D43A1D11A76500F81E39 /* Detox.h */,
-				CCE105591D48D82F00A40950 /* DetoxLoader.h */,
 				CCFA7DD61D11C9F400E15EDF /* DetoxManager.h */,
 				CCFA7DD71D11C9F400E15EDF /* DetoxManager.m */,
 				CCFA7E4C1D12AA4C00E15EDF /* WebSocket.h */,
@@ -277,17 +281,18 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39492D5E1DB06A0F003E2A2D /* WXJSTimerCounterIdlingResource.h in Headers */,
 				CCF391F71DAA8B9200BBFB1E /* GREYCondition+Detox.h in Headers */,
-				CC38FC4F1D622AFB00589F1C /* ReactNativeUIManagerIdlingResource.h in Headers */,
 				CCFA7E521D12CA1500E15EDF /* TestFailureHandler.h in Headers */,
+				39492D5A1DB0658C003E2A2D /* WXRunLoopIdlingResource.h in Headers */,
 				CC654C761DA7B3720057ECE9 /* GREYMatchers+Detox.h in Headers */,
 				CCFA7E461D12191200E15EDF /* MethodInvocation.h in Headers */,
 				CCFA7DD81D11C9F400E15EDF /* DetoxManager.h in Headers */,
 				CCE6D43B1D11A76500F81E39 /* Detox.h in Headers */,
+				39492D561DB0644D003E2A2D /* WXJSDisplayLinkIdlingResource.h in Headers */,
 				CCFA7E4A1D12A60600E15EDF /* TestRunner.h in Headers */,
 				CCA99FFF1D227DBE00C762B8 /* ReactNativeSupport.h in Headers */,
 				CCFA7E4E1D12AA4C00E15EDF /* WebSocket.h in Headers */,
-				CC38FC451D61DEB800589F1C /* ReactNativeBridgeIdlingResource.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -428,11 +433,12 @@
 				CCFA7E531D12CA1500E15EDF /* TestFailureHandler.m in Sources */,
 				CCA9A0001D227DBE00C762B8 /* ReactNativeSupport.m in Sources */,
 				CC654C771DA7B3720057ECE9 /* GREYMatchers+Detox.m in Sources */,
+				39492D571DB0644D003E2A2D /* WXJSDisplayLinkIdlingResource.m in Sources */,
 				CCFA7E4B1D12A60600E15EDF /* TestRunner.m in Sources */,
-				CC38FC501D622AFB00589F1C /* ReactNativeUIManagerIdlingResource.m in Sources */,
 				CCFA7E4F1D12AA4C00E15EDF /* WebSocket.m in Sources */,
-				CC38FC461D61DEB800589F1C /* ReactNativeBridgeIdlingResource.m in Sources */,
 				CCF391F81DAA8B9200BBFB1E /* GREYCondition+Detox.m in Sources */,
+				39492D5F1DB06A0F003E2A2D /* WXJSTimerCounterIdlingResource.m in Sources */,
+				39492D5B1DB0658C003E2A2D /* WXRunLoopIdlingResource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
