@@ -17,7 +17,7 @@
 @end
 
 __attribute__((constructor))
-static inline void detoxConditionalInit()
+static void detoxConditionalInit()
 {
 	//Timeout will be regulated by mochaJS. Perhaps it would be best to somehow pass the timeout value from JS to here. For now, this will do.
 	[[GREYConfiguration sharedInstance] setDefaultValue:@(DBL_MAX) forConfigKey:kGREYConfigKeyInteractionTimeoutDuration];
