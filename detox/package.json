@@ -26,7 +26,8 @@
     "test": "node scripts/test.js",
     "start-server": "node scripts/start-server.js",
     "start-packager": "node scripts/start-packager.js",
-    "test-exec": "node scripts/test-exec.js"
+    "test-exec": "node scripts/test-exec.js",
+    "postinstall": "scripts/fixup-softlinks.sh"
   },
   "devDependencies": {
     "babel-cli": "^6.8.0",

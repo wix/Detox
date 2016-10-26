@@ -7,98 +7,97 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		39492D561DB0644D003E2A2D /* WXJSDisplayLinkIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 39492D541DB0644C003E2A2D /* WXJSDisplayLinkIdlingResource.h */; };
-		39492D571DB0644D003E2A2D /* WXJSDisplayLinkIdlingResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 39492D551DB0644D003E2A2D /* WXJSDisplayLinkIdlingResource.m */; };
-		39492D5A1DB0658C003E2A2D /* WXRunLoopIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 39492D581DB0658C003E2A2D /* WXRunLoopIdlingResource.h */; };
-		39492D5B1DB0658C003E2A2D /* WXRunLoopIdlingResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 39492D591DB0658C003E2A2D /* WXRunLoopIdlingResource.m */; };
-		39492D5E1DB06A0F003E2A2D /* WXJSTimerCounterIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 39492D5C1DB06A0F003E2A2D /* WXJSTimerCounterIdlingResource.h */; };
-		39492D5F1DB06A0F003E2A2D /* WXJSTimerCounterIdlingResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 39492D5D1DB06A0F003E2A2D /* WXJSTimerCounterIdlingResource.m */; };
-		39B044411DAECFCE00431EC5 /* SocketRocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39B044361DAECE2F00431EC5 /* SocketRocket.framework */; };
-		CC0F35231D460F26008BB94F /* EarlGrey.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CCFA7D8E1D11C4E400E15EDF /* EarlGrey.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CC654C761DA7B3720057ECE9 /* GREYMatchers+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = CC654C741DA7B3720057ECE9 /* GREYMatchers+Detox.h */; };
-		CC654C771DA7B3720057ECE9 /* GREYMatchers+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = CC654C751DA7B3720057ECE9 /* GREYMatchers+Detox.m */; };
-		CCA99FFF1D227DBE00C762B8 /* ReactNativeSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = CCA99FFD1D227DBE00C762B8 /* ReactNativeSupport.h */; };
-		CCA9A0001D227DBE00C762B8 /* ReactNativeSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA99FFE1D227DBE00C762B8 /* ReactNativeSupport.m */; };
-		CCE6D43B1D11A76500F81E39 /* Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = CCE6D43A1D11A76500F81E39 /* Detox.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CCF391F71DAA8B9200BBFB1E /* GREYCondition+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = CCF391F51DAA8B9200BBFB1E /* GREYCondition+Detox.h */; };
-		CCF391F81DAA8B9200BBFB1E /* GREYCondition+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = CCF391F61DAA8B9200BBFB1E /* GREYCondition+Detox.m */; };
-		CCFA7D8F1D11C54100E15EDF /* EarlGrey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCFA7D8E1D11C4E400E15EDF /* EarlGrey.framework */; };
-		CCFA7DCD1D11C6CC00E15EDF /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCFA7DCC1D11C6CC00E15EDF /* CFNetwork.framework */; };
-		CCFA7DCF1D11C6DA00E15EDF /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCFA7DCE1D11C6DA00E15EDF /* Security.framework */; };
-		CCFA7DD11D11C6E400E15EDF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCFA7DD01D11C6E400E15EDF /* Foundation.framework */; };
-		CCFA7DD31D11C6FC00E15EDF /* libicucore.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CCFA7DD21D11C6FC00E15EDF /* libicucore.tbd */; };
-		CCFA7DD81D11C9F400E15EDF /* DetoxManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CCFA7DD61D11C9F400E15EDF /* DetoxManager.h */; };
-		CCFA7DD91D11C9F400E15EDF /* DetoxManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CCFA7DD71D11C9F400E15EDF /* DetoxManager.m */; };
-		CCFA7E461D12191200E15EDF /* MethodInvocation.h in Headers */ = {isa = PBXBuildFile; fileRef = CCFA7E441D12191200E15EDF /* MethodInvocation.h */; };
-		CCFA7E471D12191200E15EDF /* MethodInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = CCFA7E451D12191200E15EDF /* MethodInvocation.m */; };
-		CCFA7E4A1D12A60600E15EDF /* TestRunner.h in Headers */ = {isa = PBXBuildFile; fileRef = CCFA7E481D12A60600E15EDF /* TestRunner.h */; };
-		CCFA7E4B1D12A60600E15EDF /* TestRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = CCFA7E491D12A60600E15EDF /* TestRunner.m */; };
-		CCFA7E4E1D12AA4C00E15EDF /* WebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = CCFA7E4C1D12AA4C00E15EDF /* WebSocket.h */; };
-		CCFA7E4F1D12AA4C00E15EDF /* WebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = CCFA7E4D1D12AA4C00E15EDF /* WebSocket.m */; };
-		CCFA7E521D12CA1500E15EDF /* TestFailureHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = CCFA7E501D12CA1500E15EDF /* TestFailureHandler.h */; };
-		CCFA7E531D12CA1500E15EDF /* TestFailureHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = CCFA7E511D12CA1500E15EDF /* TestFailureHandler.m */; };
+		3947679C1DBF985400D72256 /* Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 3947679A1DBF985400D72256 /* Detox.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		394767AE1DBF987E00D72256 /* DetoxManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767A41DBF987E00D72256 /* DetoxManager.h */; };
+		394767AF1DBF987E00D72256 /* DetoxManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767A51DBF987E00D72256 /* DetoxManager.m */; };
+		394767B01DBF987E00D72256 /* MethodInvocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767A61DBF987E00D72256 /* MethodInvocation.h */; };
+		394767B11DBF987E00D72256 /* MethodInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767A71DBF987E00D72256 /* MethodInvocation.m */; };
+		394767B21DBF987E00D72256 /* TestFailureHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767A81DBF987E00D72256 /* TestFailureHandler.h */; };
+		394767B31DBF987E00D72256 /* TestFailureHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767A91DBF987E00D72256 /* TestFailureHandler.m */; };
+		394767B41DBF987E00D72256 /* TestRunner.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767AA1DBF987E00D72256 /* TestRunner.h */; };
+		394767B51DBF987E00D72256 /* TestRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767AB1DBF987E00D72256 /* TestRunner.m */; };
+		394767B61DBF987E00D72256 /* WebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767AC1DBF987E00D72256 /* WebSocket.h */; };
+		394767B71DBF987E00D72256 /* WebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767AD1DBF987E00D72256 /* WebSocket.m */; };
+		394767BE1DBF98A700D72256 /* EarlGreyExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767B91DBF98A700D72256 /* EarlGreyExtensions.h */; };
+		394767BF1DBF98A700D72256 /* GREYCondition+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767BA1DBF98A700D72256 /* GREYCondition+Detox.h */; };
+		394767C01DBF98A700D72256 /* GREYCondition+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767BB1DBF98A700D72256 /* GREYCondition+Detox.m */; };
+		394767C11DBF98A700D72256 /* GREYMatchers+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767BC1DBF98A700D72256 /* GREYMatchers+Detox.h */; };
+		394767C21DBF98A700D72256 /* GREYMatchers+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767BD1DBF98A700D72256 /* GREYMatchers+Detox.m */; };
+		394767CD1DBF98D900D72256 /* ReactNativeHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767C41DBF98D900D72256 /* ReactNativeHeaders.h */; };
+		394767CE1DBF98D900D72256 /* ReactNativeSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767C51DBF98D900D72256 /* ReactNativeSupport.h */; };
+		394767CF1DBF98D900D72256 /* ReactNativeSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767C61DBF98D900D72256 /* ReactNativeSupport.m */; };
+		394767D01DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767C71DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.h */; };
+		394767D11DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767C81DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.m */; };
+		394767D21DBF98D900D72256 /* WXJSTimerCounterIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767C91DBF98D900D72256 /* WXJSTimerCounterIdlingResource.h */; };
+		394767D31DBF98D900D72256 /* WXJSTimerCounterIdlingResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767CA1DBF98D900D72256 /* WXJSTimerCounterIdlingResource.m */; };
+		394767D41DBF98D900D72256 /* WXRunLoopIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767CB1DBF98D900D72256 /* WXRunLoopIdlingResource.h */; };
+		394767D51DBF98D900D72256 /* WXRunLoopIdlingResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767CC1DBF98D900D72256 /* WXRunLoopIdlingResource.m */; };
+		394767F61DBF994200D72256 /* SocketRocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 394767E71DBF992400D72256 /* SocketRocket.framework */; };
+		394767F71DBF994500D72256 /* EarlGrey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 394767DC1DBF991E00D72256 /* EarlGrey.framework */; };
+		39C3C3511DBF9A13008177E1 /* EarlGrey.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 394767DC1DBF991E00D72256 /* EarlGrey.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		39C3C3531DBF9A19008177E1 /* SocketRocket.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 394767E91DBF992400D72256 /* SocketRocket.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		399321781DAECCF600CDC9AB /* PBXContainerItemProxy */ = {
+		394767DB1DBF991E00D72256 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 3993216D1DAECCF600CDC9AB /* SocketRocket.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F668C880153E91210044DBAC;
-			remoteInfo = SocketRocketOSX;
-		};
-		3993217A1DAECCF600CDC9AB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3993216D1DAECCF600CDC9AB /* SocketRocket.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 2D4227621BB4358C000C1A6C;
-			remoteInfo = "SocketRocket-iOS";
-		};
-		3993217C1DAECCF600CDC9AB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3993216D1DAECCF600CDC9AB /* SocketRocket.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3345DC901C52ACD70083CCB8;
-			remoteInfo = "SocketRocket-tvOS";
-		};
-		3993217E1DAECCF600CDC9AB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3993216D1DAECCF600CDC9AB /* SocketRocket.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F6BDA802145900D200FE3253;
-			remoteInfo = SRWebSocketTests;
-		};
-		399321801DAECCF600CDC9AB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3993216D1DAECCF600CDC9AB /* SocketRocket.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F62417E314D52F3C003CE997;
-			remoteInfo = TestChat;
-		};
-		39B044351DAECE2F00431EC5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3993216D1DAECCF600CDC9AB /* SocketRocket.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 81D6478D1D2CA78800690609;
-			remoteInfo = "SocketRocket-iOS";
-		};
-		39B0443F1DAECFC500431EC5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3993216D1DAECCF600CDC9AB /* SocketRocket.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 81D6475F1D2CA78800690609;
-			remoteInfo = "SocketRocket-iOS";
-		};
-		CCFA7D8D1D11C4E400E15EDF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CCFA7D891D11C4E400E15EDF /* EarlGrey.xcodeproj */;
+			containerPortal = 394767D71DBF991E00D72256 /* EarlGrey.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = FD1000E91C5B466F00B2DB0A;
 			remoteInfo = EarlGrey;
 		};
-		CCFA7D901D11C54500E15EDF /* PBXContainerItemProxy */ = {
+		394767E61DBF992400D72256 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = CCFA7D891D11C4E400E15EDF /* EarlGrey.xcodeproj */;
+			containerPortal = 394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 81D6478D1D2CA78800690609;
+			remoteInfo = "SocketRocket-iOS";
+		};
+		394767E81DBF992400D72256 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2D4227621BB4358C000C1A6C;
+			remoteInfo = "SocketRocket-iOS-Dynamic";
+		};
+		394767EA1DBF992400D72256 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F668C880153E91210044DBAC;
+			remoteInfo = "SocketRocket-macOS";
+		};
+		394767EC1DBF992400D72256 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3345DC901C52ACD70083CCB8;
+			remoteInfo = "SocketRocket-tvOS";
+		};
+		394767EE1DBF992400D72256 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F6BDA802145900D200FE3253;
+			remoteInfo = "SocketRocketTests-iOS";
+		};
+		394767F01DBF992400D72256 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F62417E314D52F3C003CE997;
+			remoteInfo = TestChat;
+		};
+		394767F21DBF993400D72256 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D4227611BB4358C000C1A6C;
+			remoteInfo = "SocketRocket-iOS-Dynamic";
+		};
+		394767F41DBF993900D72256 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 394767D71DBF991E00D72256 /* EarlGrey.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = FD1000E81C5B466F00B2DB0A;
 			remoteInfo = EarlGrey;
@@ -106,315 +105,304 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		CC0F35221D460EFC008BB94F /* CopyFiles */ = {
+		39C3C34B1DBF9A05008177E1 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CC0F35231D460F26008BB94F /* EarlGrey.framework in CopyFiles */,
+				39C3C3531DBF9A19008177E1 /* SocketRocket.framework in CopyFiles */,
+				39C3C3511DBF9A13008177E1 /* EarlGrey.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		39492D541DB0644C003E2A2D /* WXJSDisplayLinkIdlingResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXJSDisplayLinkIdlingResource.h; sourceTree = "<group>"; };
-		39492D551DB0644D003E2A2D /* WXJSDisplayLinkIdlingResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXJSDisplayLinkIdlingResource.m; sourceTree = "<group>"; };
-		39492D581DB0658C003E2A2D /* WXRunLoopIdlingResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXRunLoopIdlingResource.h; sourceTree = "<group>"; };
-		39492D591DB0658C003E2A2D /* WXRunLoopIdlingResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXRunLoopIdlingResource.m; sourceTree = "<group>"; };
-		39492D5C1DB06A0F003E2A2D /* WXJSTimerCounterIdlingResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXJSTimerCounterIdlingResource.h; sourceTree = "<group>"; };
-		39492D5D1DB06A0F003E2A2D /* WXJSTimerCounterIdlingResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXJSTimerCounterIdlingResource.m; sourceTree = "<group>"; };
-		3993216D1DAECCF600CDC9AB /* SocketRocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SocketRocket.xcodeproj; path = SocketRocket/SocketRocket.xcodeproj; sourceTree = SOURCE_ROOT; };
-		39B044421DAED0F700431EC5 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		39B044441DAED24B00431EC5 /* EarlGreyExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EarlGreyExtensions.h; sourceTree = "<group>"; };
-		CC38FC481D61F36100589F1C /* ReactNativeHeaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReactNativeHeaders.h; sourceTree = "<group>"; };
-		CC654C741DA7B3720057ECE9 /* GREYMatchers+Detox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GREYMatchers+Detox.h"; sourceTree = "<group>"; };
-		CC654C751DA7B3720057ECE9 /* GREYMatchers+Detox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GREYMatchers+Detox.m"; sourceTree = "<group>"; };
-		CCA99FFD1D227DBE00C762B8 /* ReactNativeSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactNativeSupport.h; sourceTree = "<group>"; };
-		CCA99FFE1D227DBE00C762B8 /* ReactNativeSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactNativeSupport.m; sourceTree = "<group>"; };
-		CCE6D4371D11A76500F81E39 /* Detox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Detox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CCE6D43A1D11A76500F81E39 /* Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.h; sourceTree = "<group>"; };
-		CCE6D43C1D11A76500F81E39 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		CCF391F51DAA8B9200BBFB1E /* GREYCondition+Detox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GREYCondition+Detox.h"; sourceTree = "<group>"; };
-		CCF391F61DAA8B9200BBFB1E /* GREYCondition+Detox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GREYCondition+Detox.m"; sourceTree = "<group>"; };
-		CCFA7D891D11C4E400E15EDF /* EarlGrey.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = EarlGrey.xcodeproj; path = EarlGrey/EarlGrey.xcodeproj; sourceTree = SOURCE_ROOT; };
-		CCFA7DCC1D11C6CC00E15EDF /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
-		CCFA7DCE1D11C6DA00E15EDF /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		CCFA7DD01D11C6E400E15EDF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		CCFA7DD21D11C6FC00E15EDF /* libicucore.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libicucore.tbd; path = usr/lib/libicucore.tbd; sourceTree = SDKROOT; };
-		CCFA7DD61D11C9F400E15EDF /* DetoxManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetoxManager.h; sourceTree = "<group>"; };
-		CCFA7DD71D11C9F400E15EDF /* DetoxManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetoxManager.m; sourceTree = "<group>"; };
-		CCFA7E441D12191200E15EDF /* MethodInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MethodInvocation.h; sourceTree = "<group>"; };
-		CCFA7E451D12191200E15EDF /* MethodInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MethodInvocation.m; sourceTree = "<group>"; };
-		CCFA7E481D12A60600E15EDF /* TestRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestRunner.h; sourceTree = "<group>"; };
-		CCFA7E491D12A60600E15EDF /* TestRunner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestRunner.m; sourceTree = "<group>"; };
-		CCFA7E4C1D12AA4C00E15EDF /* WebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocket.h; sourceTree = "<group>"; };
-		CCFA7E4D1D12AA4C00E15EDF /* WebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebSocket.m; sourceTree = "<group>"; };
-		CCFA7E501D12CA1500E15EDF /* TestFailureHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFailureHandler.h; sourceTree = "<group>"; };
-		CCFA7E511D12CA1500E15EDF /* TestFailureHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestFailureHandler.m; sourceTree = "<group>"; };
+		394767971DBF985400D72256 /* Detox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Detox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3947679A1DBF985400D72256 /* Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.h; sourceTree = "<group>"; };
+		3947679B1DBF985400D72256 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		394767A41DBF987E00D72256 /* DetoxManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetoxManager.h; sourceTree = "<group>"; };
+		394767A51DBF987E00D72256 /* DetoxManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetoxManager.m; sourceTree = "<group>"; };
+		394767A61DBF987E00D72256 /* MethodInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MethodInvocation.h; sourceTree = "<group>"; };
+		394767A71DBF987E00D72256 /* MethodInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MethodInvocation.m; sourceTree = "<group>"; };
+		394767A81DBF987E00D72256 /* TestFailureHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFailureHandler.h; sourceTree = "<group>"; };
+		394767A91DBF987E00D72256 /* TestFailureHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestFailureHandler.m; sourceTree = "<group>"; };
+		394767AA1DBF987E00D72256 /* TestRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestRunner.h; sourceTree = "<group>"; };
+		394767AB1DBF987E00D72256 /* TestRunner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestRunner.m; sourceTree = "<group>"; };
+		394767AC1DBF987E00D72256 /* WebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocket.h; sourceTree = "<group>"; };
+		394767AD1DBF987E00D72256 /* WebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebSocket.m; sourceTree = "<group>"; };
+		394767B91DBF98A700D72256 /* EarlGreyExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EarlGreyExtensions.h; sourceTree = "<group>"; };
+		394767BA1DBF98A700D72256 /* GREYCondition+Detox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GREYCondition+Detox.h"; sourceTree = "<group>"; };
+		394767BB1DBF98A700D72256 /* GREYCondition+Detox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GREYCondition+Detox.m"; sourceTree = "<group>"; };
+		394767BC1DBF98A700D72256 /* GREYMatchers+Detox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GREYMatchers+Detox.h"; sourceTree = "<group>"; };
+		394767BD1DBF98A700D72256 /* GREYMatchers+Detox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GREYMatchers+Detox.m"; sourceTree = "<group>"; };
+		394767C41DBF98D900D72256 /* ReactNativeHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactNativeHeaders.h; sourceTree = "<group>"; };
+		394767C51DBF98D900D72256 /* ReactNativeSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactNativeSupport.h; sourceTree = "<group>"; };
+		394767C61DBF98D900D72256 /* ReactNativeSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactNativeSupport.m; sourceTree = "<group>"; };
+		394767C71DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXJSDisplayLinkIdlingResource.h; sourceTree = "<group>"; };
+		394767C81DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXJSDisplayLinkIdlingResource.m; sourceTree = "<group>"; };
+		394767C91DBF98D900D72256 /* WXJSTimerCounterIdlingResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXJSTimerCounterIdlingResource.h; sourceTree = "<group>"; };
+		394767CA1DBF98D900D72256 /* WXJSTimerCounterIdlingResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXJSTimerCounterIdlingResource.m; sourceTree = "<group>"; };
+		394767CB1DBF98D900D72256 /* WXRunLoopIdlingResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXRunLoopIdlingResource.h; sourceTree = "<group>"; };
+		394767CC1DBF98D900D72256 /* WXRunLoopIdlingResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXRunLoopIdlingResource.m; sourceTree = "<group>"; };
+		394767D71DBF991E00D72256 /* EarlGrey.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = EarlGrey.xcodeproj; path = EarlGrey/EarlGrey.xcodeproj; sourceTree = "<group>"; };
+		394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SocketRocket.xcodeproj; path = SocketRocket/SocketRocket.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		CCE6D4331D11A76500F81E39 /* Frameworks */ = {
+		394767931DBF985400D72256 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				39B044411DAECFCE00431EC5 /* SocketRocket.framework in Frameworks */,
-				CCFA7DD31D11C6FC00E15EDF /* libicucore.tbd in Frameworks */,
-				CCFA7DD11D11C6E400E15EDF /* Foundation.framework in Frameworks */,
-				CCFA7DCF1D11C6DA00E15EDF /* Security.framework in Frameworks */,
-				CCFA7DCD1D11C6CC00E15EDF /* CFNetwork.framework in Frameworks */,
-				CCFA7D8F1D11C54100E15EDF /* EarlGrey.framework in Frameworks */,
+				394767F71DBF994500D72256 /* EarlGrey.framework in Frameworks */,
+				394767F61DBF994200D72256 /* SocketRocket.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3993216E1DAECCF600CDC9AB /* Products */ = {
+		3947678D1DBF985400D72256 = {
 			isa = PBXGroup;
 			children = (
-				39B044361DAECE2F00431EC5 /* SocketRocket.framework */,
-				3993217B1DAECCF600CDC9AB /* SocketRocket.framework */,
-				399321791DAECCF600CDC9AB /* SocketRocket.framework */,
-				3993217D1DAECCF600CDC9AB /* SocketRocket.framework */,
-				3993217F1DAECCF600CDC9AB /* SocketRocketTests-iOS.xctest */,
-				399321811DAECCF600CDC9AB /* TestChat.app */,
+				394767991DBF985400D72256 /* Detox */,
+				394767D61DBF990F00D72256 /* Frameworks */,
+				394767981DBF985400D72256 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		394767981DBF985400D72256 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				394767971DBF985400D72256 /* Detox.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		CC38FC471D61E3B500589F1C /* ReactNativeSupport */ = {
+		394767991DBF985400D72256 /* Detox */ = {
 			isa = PBXGroup;
 			children = (
-				CC38FC481D61F36100589F1C /* ReactNativeHeaders.h */,
-				CCA99FFD1D227DBE00C762B8 /* ReactNativeSupport.h */,
-				CCA99FFE1D227DBE00C762B8 /* ReactNativeSupport.m */,
-				39492D541DB0644C003E2A2D /* WXJSDisplayLinkIdlingResource.h */,
-				39492D551DB0644D003E2A2D /* WXJSDisplayLinkIdlingResource.m */,
-				39492D581DB0658C003E2A2D /* WXRunLoopIdlingResource.h */,
-				39492D591DB0658C003E2A2D /* WXRunLoopIdlingResource.m */,
-				39492D5C1DB06A0F003E2A2D /* WXJSTimerCounterIdlingResource.h */,
-				39492D5D1DB06A0F003E2A2D /* WXJSTimerCounterIdlingResource.m */,
+				3947679A1DBF985400D72256 /* Detox.h */,
+				394767A41DBF987E00D72256 /* DetoxManager.h */,
+				394767A51DBF987E00D72256 /* DetoxManager.m */,
+				394767A61DBF987E00D72256 /* MethodInvocation.h */,
+				394767A71DBF987E00D72256 /* MethodInvocation.m */,
+				394767A81DBF987E00D72256 /* TestFailureHandler.h */,
+				394767A91DBF987E00D72256 /* TestFailureHandler.m */,
+				394767AA1DBF987E00D72256 /* TestRunner.h */,
+				394767AB1DBF987E00D72256 /* TestRunner.m */,
+				394767AC1DBF987E00D72256 /* WebSocket.h */,
+				394767AD1DBF987E00D72256 /* WebSocket.m */,
+				394767B81DBF988C00D72256 /* EarlGreyExtensions */,
+				394767C31DBF98B100D72256 /* ReactNativeSupport */,
+				3947679B1DBF985400D72256 /* Info.plist */,
+			);
+			path = Detox;
+			sourceTree = "<group>";
+		};
+		394767B81DBF988C00D72256 /* EarlGreyExtensions */ = {
+			isa = PBXGroup;
+			children = (
+				394767B91DBF98A700D72256 /* EarlGreyExtensions.h */,
+				394767BA1DBF98A700D72256 /* GREYCondition+Detox.h */,
+				394767BB1DBF98A700D72256 /* GREYCondition+Detox.m */,
+				394767BC1DBF98A700D72256 /* GREYMatchers+Detox.h */,
+				394767BD1DBF98A700D72256 /* GREYMatchers+Detox.m */,
+			);
+			name = EarlGreyExtensions;
+			sourceTree = "<group>";
+		};
+		394767C31DBF98B100D72256 /* ReactNativeSupport */ = {
+			isa = PBXGroup;
+			children = (
+				394767C41DBF98D900D72256 /* ReactNativeHeaders.h */,
+				394767C51DBF98D900D72256 /* ReactNativeSupport.h */,
+				394767C61DBF98D900D72256 /* ReactNativeSupport.m */,
+				394767C71DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.h */,
+				394767C81DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.m */,
+				394767C91DBF98D900D72256 /* WXJSTimerCounterIdlingResource.h */,
+				394767CA1DBF98D900D72256 /* WXJSTimerCounterIdlingResource.m */,
+				394767CB1DBF98D900D72256 /* WXRunLoopIdlingResource.h */,
+				394767CC1DBF98D900D72256 /* WXRunLoopIdlingResource.m */,
 			);
 			name = ReactNativeSupport;
 			sourceTree = "<group>";
 		};
-		CC654C731DA7B2A60057ECE9 /* EarlGreyExtentions */ = {
+		394767D61DBF990F00D72256 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				39B044441DAED24B00431EC5 /* EarlGreyExtensions.h */,
-				CC654C741DA7B3720057ECE9 /* GREYMatchers+Detox.h */,
-				CC654C751DA7B3720057ECE9 /* GREYMatchers+Detox.m */,
-				CCF391F51DAA8B9200BBFB1E /* GREYCondition+Detox.h */,
-				CCF391F61DAA8B9200BBFB1E /* GREYCondition+Detox.m */,
-			);
-			name = EarlGreyExtentions;
-			sourceTree = "<group>";
-		};
-		CCE6D42D1D11A76500F81E39 = {
-			isa = PBXGroup;
-			children = (
-				CCE6D4391D11A76500F81E39 /* Detox */,
-				CCFA7DD41D11C71300E15EDF /* Frameworks */,
-				CCE6D4381D11A76500F81E39 /* Products */,
-			);
-			sourceTree = "<group>";
-		};
-		CCE6D4381D11A76500F81E39 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CCE6D4371D11A76500F81E39 /* Detox.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		CCE6D4391D11A76500F81E39 /* Detox */ = {
-			isa = PBXGroup;
-			children = (
-				CCE6D43A1D11A76500F81E39 /* Detox.h */,
-				CCFA7DD61D11C9F400E15EDF /* DetoxManager.h */,
-				CCFA7DD71D11C9F400E15EDF /* DetoxManager.m */,
-				CCFA7E4C1D12AA4C00E15EDF /* WebSocket.h */,
-				CCFA7E4D1D12AA4C00E15EDF /* WebSocket.m */,
-				CCFA7E481D12A60600E15EDF /* TestRunner.h */,
-				CCFA7E491D12A60600E15EDF /* TestRunner.m */,
-				CCFA7E501D12CA1500E15EDF /* TestFailureHandler.h */,
-				CCFA7E511D12CA1500E15EDF /* TestFailureHandler.m */,
-				CCFA7E441D12191200E15EDF /* MethodInvocation.h */,
-				CCFA7E451D12191200E15EDF /* MethodInvocation.m */,
-				CC654C731DA7B2A60057ECE9 /* EarlGreyExtentions */,
-				CC38FC471D61E3B500589F1C /* ReactNativeSupport */,
-				CCE6D43C1D11A76500F81E39 /* Info.plist */,
-			);
-			path = Detox;
-			sourceTree = "<group>";
-		};
-		CCFA7D8A1D11C4E400E15EDF /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CCFA7D8E1D11C4E400E15EDF /* EarlGrey.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		CCFA7DD41D11C71300E15EDF /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				39B044421DAED0F700431EC5 /* XCTest.framework */,
-				CCFA7D891D11C4E400E15EDF /* EarlGrey.xcodeproj */,
-				3993216D1DAECCF600CDC9AB /* SocketRocket.xcodeproj */,
-				CCFA7DD21D11C6FC00E15EDF /* libicucore.tbd */,
-				CCFA7DD01D11C6E400E15EDF /* Foundation.framework */,
-				CCFA7DCE1D11C6DA00E15EDF /* Security.framework */,
-				CCFA7DCC1D11C6CC00E15EDF /* CFNetwork.framework */,
+				394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */,
+				394767D71DBF991E00D72256 /* EarlGrey.xcodeproj */,
 			);
 			name = Frameworks;
-			path = Detox;
+			sourceTree = "<group>";
+		};
+		394767D81DBF991E00D72256 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				394767DC1DBF991E00D72256 /* EarlGrey.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		394767DE1DBF992400D72256 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				394767E71DBF992400D72256 /* SocketRocket.framework */,
+				394767E91DBF992400D72256 /* SocketRocket.framework */,
+				394767EB1DBF992400D72256 /* SocketRocket.framework */,
+				394767ED1DBF992400D72256 /* SocketRocket.framework */,
+				394767EF1DBF992400D72256 /* SocketRocketTests-iOS.xctest */,
+				394767F11DBF992400D72256 /* TestChat.app */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		CCE6D4341D11A76500F81E39 /* Headers */ = {
+		394767941DBF985400D72256 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				39492D5E1DB06A0F003E2A2D /* WXJSTimerCounterIdlingResource.h in Headers */,
-				CCF391F71DAA8B9200BBFB1E /* GREYCondition+Detox.h in Headers */,
-				CCFA7E521D12CA1500E15EDF /* TestFailureHandler.h in Headers */,
-				39492D5A1DB0658C003E2A2D /* WXRunLoopIdlingResource.h in Headers */,
-				CC654C761DA7B3720057ECE9 /* GREYMatchers+Detox.h in Headers */,
-				CCFA7E461D12191200E15EDF /* MethodInvocation.h in Headers */,
-				CCFA7DD81D11C9F400E15EDF /* DetoxManager.h in Headers */,
-				CCE6D43B1D11A76500F81E39 /* Detox.h in Headers */,
-				39492D561DB0644D003E2A2D /* WXJSDisplayLinkIdlingResource.h in Headers */,
-				CCFA7E4A1D12A60600E15EDF /* TestRunner.h in Headers */,
-				CCA99FFF1D227DBE00C762B8 /* ReactNativeSupport.h in Headers */,
-				CCFA7E4E1D12AA4C00E15EDF /* WebSocket.h in Headers */,
+				394767D21DBF98D900D72256 /* WXJSTimerCounterIdlingResource.h in Headers */,
+				394767CD1DBF98D900D72256 /* ReactNativeHeaders.h in Headers */,
+				394767D41DBF98D900D72256 /* WXRunLoopIdlingResource.h in Headers */,
+				394767BF1DBF98A700D72256 /* GREYCondition+Detox.h in Headers */,
+				394767B21DBF987E00D72256 /* TestFailureHandler.h in Headers */,
+				394767CE1DBF98D900D72256 /* ReactNativeSupport.h in Headers */,
+				3947679C1DBF985400D72256 /* Detox.h in Headers */,
+				394767B61DBF987E00D72256 /* WebSocket.h in Headers */,
+				394767BE1DBF98A700D72256 /* EarlGreyExtensions.h in Headers */,
+				394767B41DBF987E00D72256 /* TestRunner.h in Headers */,
+				394767D01DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.h in Headers */,
+				394767B01DBF987E00D72256 /* MethodInvocation.h in Headers */,
+				394767C11DBF98A700D72256 /* GREYMatchers+Detox.h in Headers */,
+				394767AE1DBF987E00D72256 /* DetoxManager.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		CCE6D4361D11A76500F81E39 /* Detox */ = {
+		394767961DBF985400D72256 /* Detox */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CCE6D43F1D11A76500F81E39 /* Build configuration list for PBXNativeTarget "Detox" */;
+			buildConfigurationList = 3947679F1DBF985400D72256 /* Build configuration list for PBXNativeTarget "Detox" */;
 			buildPhases = (
-				CCE6D4321D11A76500F81E39 /* Sources */,
-				CCE6D4331D11A76500F81E39 /* Frameworks */,
-				CCE6D4341D11A76500F81E39 /* Headers */,
-				CCE6D4351D11A76500F81E39 /* Resources */,
-				CC0F35221D460EFC008BB94F /* CopyFiles */,
+				394767921DBF985400D72256 /* Sources */,
+				394767931DBF985400D72256 /* Frameworks */,
+				394767941DBF985400D72256 /* Headers */,
+				394767951DBF985400D72256 /* Resources */,
+				39C3C34B1DBF9A05008177E1 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				39B044401DAECFC500431EC5 /* PBXTargetDependency */,
-				CCFA7D911D11C54500E15EDF /* PBXTargetDependency */,
+				394767F51DBF993900D72256 /* PBXTargetDependency */,
+				394767F31DBF993400D72256 /* PBXTargetDependency */,
 			);
 			name = Detox;
 			productName = Detox;
-			productReference = CCE6D4371D11A76500F81E39 /* Detox.framework */;
+			productReference = 394767971DBF985400D72256 /* Detox.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		CCE6D42E1D11A76500F81E39 /* Project object */ = {
+		3947678E1DBF985400D72256 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0810;
-				ORGANIZATIONNAME = Wix;
+				ORGANIZATIONNAME = "Leo Natan";
 				TargetAttributes = {
-					CCE6D4361D11A76500F81E39 = {
-						CreatedOnToolsVersion = 7.3;
+					394767961DBF985400D72256 = {
+						CreatedOnToolsVersion = 8.1;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
-			buildConfigurationList = CCE6D4311D11A76500F81E39 /* Build configuration list for PBXProject "Detox" */;
+			buildConfigurationList = 394767911DBF985400D72256 /* Build configuration list for PBXProject "Detox" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = CCE6D42D1D11A76500F81E39;
-			productRefGroup = CCE6D4381D11A76500F81E39 /* Products */;
+			mainGroup = 3947678D1DBF985400D72256;
+			productRefGroup = 394767981DBF985400D72256 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = CCFA7D8A1D11C4E400E15EDF /* Products */;
-					ProjectRef = CCFA7D891D11C4E400E15EDF /* EarlGrey.xcodeproj */;
+					ProductGroup = 394767D81DBF991E00D72256 /* Products */;
+					ProjectRef = 394767D71DBF991E00D72256 /* EarlGrey.xcodeproj */;
 				},
 				{
-					ProductGroup = 3993216E1DAECCF600CDC9AB /* Products */;
-					ProjectRef = 3993216D1DAECCF600CDC9AB /* SocketRocket.xcodeproj */;
+					ProductGroup = 394767DE1DBF992400D72256 /* Products */;
+					ProjectRef = 394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */;
 				},
 			);
 			projectRoot = "";
 			targets = (
-				CCE6D4361D11A76500F81E39 /* Detox */,
+				394767961DBF985400D72256 /* Detox */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		399321791DAECCF600CDC9AB /* SocketRocket.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SocketRocket.framework;
-			remoteRef = 399321781DAECCF600CDC9AB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3993217B1DAECCF600CDC9AB /* SocketRocket.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SocketRocket.framework;
-			remoteRef = 3993217A1DAECCF600CDC9AB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3993217D1DAECCF600CDC9AB /* SocketRocket.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SocketRocket.framework;
-			remoteRef = 3993217C1DAECCF600CDC9AB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3993217F1DAECCF600CDC9AB /* SocketRocketTests-iOS.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "SocketRocketTests-iOS.xctest";
-			remoteRef = 3993217E1DAECCF600CDC9AB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		399321811DAECCF600CDC9AB /* TestChat.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = TestChat.app;
-			remoteRef = 399321801DAECCF600CDC9AB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		39B044361DAECE2F00431EC5 /* SocketRocket.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SocketRocket.framework;
-			remoteRef = 39B044351DAECE2F00431EC5 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CCFA7D8E1D11C4E400E15EDF /* EarlGrey.framework */ = {
+		394767DC1DBF991E00D72256 /* EarlGrey.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = EarlGrey.framework;
-			remoteRef = CCFA7D8D1D11C4E400E15EDF /* PBXContainerItemProxy */;
+			remoteRef = 394767DB1DBF991E00D72256 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		394767E71DBF992400D72256 /* SocketRocket.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SocketRocket.framework;
+			remoteRef = 394767E61DBF992400D72256 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		394767E91DBF992400D72256 /* SocketRocket.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SocketRocket.framework;
+			remoteRef = 394767E81DBF992400D72256 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		394767EB1DBF992400D72256 /* SocketRocket.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SocketRocket.framework;
+			remoteRef = 394767EA1DBF992400D72256 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		394767ED1DBF992400D72256 /* SocketRocket.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SocketRocket.framework;
+			remoteRef = 394767EC1DBF992400D72256 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		394767EF1DBF992400D72256 /* SocketRocketTests-iOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "SocketRocketTests-iOS.xctest";
+			remoteRef = 394767EE1DBF992400D72256 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		394767F11DBF992400D72256 /* TestChat.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = TestChat.app;
+			remoteRef = 394767F01DBF992400D72256 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
-		CCE6D4351D11A76500F81E39 /* Resources */ = {
+		394767951DBF985400D72256 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -424,41 +412,41 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		CCE6D4321D11A76500F81E39 /* Sources */ = {
+		394767921DBF985400D72256 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CCFA7E471D12191200E15EDF /* MethodInvocation.m in Sources */,
-				CCFA7DD91D11C9F400E15EDF /* DetoxManager.m in Sources */,
-				CCFA7E531D12CA1500E15EDF /* TestFailureHandler.m in Sources */,
-				CCA9A0001D227DBE00C762B8 /* ReactNativeSupport.m in Sources */,
-				CC654C771DA7B3720057ECE9 /* GREYMatchers+Detox.m in Sources */,
-				39492D571DB0644D003E2A2D /* WXJSDisplayLinkIdlingResource.m in Sources */,
-				CCFA7E4B1D12A60600E15EDF /* TestRunner.m in Sources */,
-				CCFA7E4F1D12AA4C00E15EDF /* WebSocket.m in Sources */,
-				CCF391F81DAA8B9200BBFB1E /* GREYCondition+Detox.m in Sources */,
-				39492D5F1DB06A0F003E2A2D /* WXJSTimerCounterIdlingResource.m in Sources */,
-				39492D5B1DB0658C003E2A2D /* WXRunLoopIdlingResource.m in Sources */,
+				394767B31DBF987E00D72256 /* TestFailureHandler.m in Sources */,
+				394767B71DBF987E00D72256 /* WebSocket.m in Sources */,
+				394767D51DBF98D900D72256 /* WXRunLoopIdlingResource.m in Sources */,
+				394767CF1DBF98D900D72256 /* ReactNativeSupport.m in Sources */,
+				394767B51DBF987E00D72256 /* TestRunner.m in Sources */,
+				394767D31DBF98D900D72256 /* WXJSTimerCounterIdlingResource.m in Sources */,
+				394767C01DBF98A700D72256 /* GREYCondition+Detox.m in Sources */,
+				394767D11DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.m in Sources */,
+				394767B11DBF987E00D72256 /* MethodInvocation.m in Sources */,
+				394767C21DBF98A700D72256 /* GREYMatchers+Detox.m in Sources */,
+				394767AF1DBF987E00D72256 /* DetoxManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		39B044401DAECFC500431EC5 /* PBXTargetDependency */ = {
+		394767F31DBF993400D72256 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "SocketRocket-iOS";
-			targetProxy = 39B0443F1DAECFC500431EC5 /* PBXContainerItemProxy */;
+			name = "SocketRocket-iOS-Dynamic";
+			targetProxy = 394767F21DBF993400D72256 /* PBXContainerItemProxy */;
 		};
-		CCFA7D911D11C54500E15EDF /* PBXTargetDependency */ = {
+		394767F51DBF993900D72256 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = EarlGrey;
-			targetProxy = CCFA7D901D11C54500E15EDF /* PBXContainerItemProxy */;
+			targetProxy = 394767F41DBF993900D72256 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		CCE6D43D1D11A76500F81E39 /* Debug */ = {
+		3947679D1DBF985400D72256 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -470,12 +458,13 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -498,7 +487,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -508,7 +497,7 @@
 			};
 			name = Debug;
 		};
-		CCE6D43E1D11A76500F81E39 /* Release */ = {
+		3947679E1DBF985400D72256 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -520,12 +509,13 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -542,7 +532,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -552,41 +542,35 @@
 			};
 			name = Release;
 		};
-		CCE6D4401D11A76500F81E39 /* Debug */ = {
+		394767A01DBF985400D72256 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				GCC_WARN_UNDECLARED_SELECTOR = NO;
 				INFOPLIST_FILE = Detox/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.wix.Detox;
+				PRODUCT_BUNDLE_IDENTIFIER = com.leonatan.Detox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
-		CCE6D4411D11A76500F81E39 /* Release */ = {
+		394767A11DBF985400D72256 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				GCC_WARN_UNDECLARED_SELECTOR = NO;
 				INFOPLIST_FILE = Detox/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.wix.Detox;
+				PRODUCT_BUNDLE_IDENTIFIER = com.leonatan.Detox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -595,25 +579,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		CCE6D4311D11A76500F81E39 /* Build configuration list for PBXProject "Detox" */ = {
+		394767911DBF985400D72256 /* Build configuration list for PBXProject "Detox" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CCE6D43D1D11A76500F81E39 /* Debug */,
-				CCE6D43E1D11A76500F81E39 /* Release */,
+				3947679D1DBF985400D72256 /* Debug */,
+				3947679E1DBF985400D72256 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CCE6D43F1D11A76500F81E39 /* Build configuration list for PBXNativeTarget "Detox" */ = {
+		3947679F1DBF985400D72256 /* Build configuration list for PBXNativeTarget "Detox" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CCE6D4401D11A76500F81E39 /* Debug */,
-				CCE6D4411D11A76500F81E39 /* Release */,
+				394767A01DBF985400D72256 /* Debug */,
+				394767A11DBF985400D72256 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = CCE6D42E1D11A76500F81E39 /* Project object */;
+	rootObject = 3947678E1DBF985400D72256 /* Project object */;
 }

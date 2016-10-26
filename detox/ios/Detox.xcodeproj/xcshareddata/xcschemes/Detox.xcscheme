@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CCE6D4361D11A76500F81E39"
+               BlueprintIdentifier = "394767961DBF985400D72256"
                BuildableName = "Detox.framework"
                BlueprintName = "Detox"
                ReferencedContainer = "container:Detox.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CCE6D4361D11A76500F81E39"
+            BlueprintIdentifier = "394767961DBF985400D72256"
             BuildableName = "Detox.framework"
             BlueprintName = "Detox"
             ReferencedContainer = "container:Detox.xcodeproj">
@@ -63,7 +63,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CCE6D4361D11A76500F81E39"
+            BlueprintIdentifier = "394767961DBF985400D72256"
             BuildableName = "Detox.framework"
             BlueprintName = "Detox"
             ReferencedContainer = "container:Detox.xcodeproj">
