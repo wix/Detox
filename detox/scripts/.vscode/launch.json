@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Local File",
+            "type": "Ruby",
+            "request": "launch",
+            "cwd": "${workspaceRoot}",
+            "program": "${workspaceRoot}/deploy_detox.rb",
+            "args": [
+                "~/Desktop/detox-install_wip/DetoxDemoProject/DetoxDemoProject.xcodeproj"
+            ]
+        }
+    ]
+}
