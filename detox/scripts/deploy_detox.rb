@@ -17,15 +17,15 @@ if ARGV.count != 1 then
   exit
 end
 
-project_path = Pathname.new(ARGV[0]).expand_path
-project_path += ".xcodeproj" unless project_path.exist? 
+project_path_str = ARGV[0].end_with?(".xcodeproj") ? ARGV[0] : ARGV[0] + ".xcodeproj"
+project_path = Pathname.new(project_path_str).expand_path
 raise "Cannot find Xcode project" unless project_path.exist?
 
 project_path_dir = project_path.dirname
 
 puts "", "########################################", "Building Detox Framework", "########################################", ""
 
-# raise "Detox framework build failed" unless system("xcodebuild build -project #{project_path_dir}/node_modules/detox/ios/Detox.xcodeproj -scheme DetoxFramework -configuration Release -derivedDataPath #{project_path_dir}/DetoxBuild", :out=>"/dev/null")
+raise "Error: Detox framework build failed" unless system("xcodebuild clean build -project #{project_path_dir}/node_modules/detox/ios/Detox.xcodeproj -scheme DetoxFramework -configuration Release -derivedDataPath #{project_path_dir}/DetoxBuild", :out=>"/dev/null")
 
 puts "", "########################################", "Integrating Detox Framework with Project", "########################################", ""
 
@@ -52,7 +52,7 @@ end
 added_configs.each { |config| project.build_configuration_list.build_configurations << config }
 
 project.targets.each do |target|
-	if target.product_type == "com.apple.product-type.application" and target.platform_name == :ios and target.shell_script_build_phases.find { |script| script.name.nil? == false and script.name.include?("Detox") }.nil? then
+	if target.product_type == "com.apple.product-type.application" and target.platform_name == :ios and target.shell_script_build_phases.find { |script| script.name.nil? == false and script.name.eql?("Copy Detox Framework") }.nil? then
 		script = target.new_shell_script_build_phase('Copy Detox Framework')
 		script.shell_path = '/bin/bash'
 		script.shell_script = "if [ -n \"$DEPLOY_DETOX_FRAMEWORK\" ]; then\nmkdir -p \"${BUILT_PRODUCTS_DIR}\"/\"${FRAMEWORKS_FOLDER_PATH}\"\ncp -r \"${PROJECT_DIR}\"/DetoxBuild/Build/Products/Release-universal/Detox.framework \"${BUILT_PRODUCTS_DIR}\"/\"${FRAMEWORKS_FOLDER_PATH}\"\nfi"
@@ -98,6 +98,8 @@ project.targets.each do |target|
 	added_configs.each { |config| target.build_configuration_list.build_configurations << config }
 end
 
+raise "Error: Unable to save Xcode project" unless project.save()
+
 scheme_names = Xcodeproj::Project.schemes(project_path)
 saved_schemes = 0
 
@@ -110,14 +112,12 @@ scheme_names.each do |scheme_name|
 		#Ignore schemes for extensions
 		next unless scheme.launch_action.xml_element.attributes['launchAutomaticallySubstyle'].nil?
 		scheme.launch_action.build_configuration += '_Detox'
-		scheme.save_as(project_path, scheme_name + '_Detox', true)
+		raise "Error: Unable to save scheme" unless scheme.save_as(project_path, scheme_name + '_Detox', true)
 		saved_schemes += 1	
 	rescue => exception
 	end
 end
 
-puts 'Error: No shared schemes found. Set at least one scheme as shared.' if saved_schemes == 0
-
-project.save()
+puts 'Warning: No shared schemes found. For best results, set at least one scheme as shared.' if saved_schemes == 0
 
 puts "", "########################################", "Done", "########################################", ""
