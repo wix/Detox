@@ -4,7 +4,7 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "version": "3.2.1",
+  "version": "4.0.0-experimental",
   "repository": {
     "type": "git",
     "url": "https://github.com/wix/detox.git"
