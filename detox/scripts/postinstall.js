@@ -6,7 +6,7 @@ shell.echo('# fixing SocketRocket soft links');
 
 if(shell.exec('scripts/fixup-softlinks.sh').code != 0) {
   shell.echo('error: could not fix SocketRocket soft links.');
-  //process.exit(1);
+  process.exit(1);
 }
 
 
