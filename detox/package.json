@@ -18,7 +18,7 @@
   "author": "Tal Kol <talkol@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "BABEL_ENV=test babel src -d lib",
+    "build": "scripts/build.sh",
     "test-install": "node scripts/test-install.js",
     "test-clean": "node scripts/test-clean.js",
     "test-update-js": "node scripts/test-update-js.js",
