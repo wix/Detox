@@ -43,7 +43,7 @@
     }
     NSLog(@"Detox Action Sent: %@", type);
     NSString *json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    [self.websocket sendString:json];
+    [self.websocket sendString:json error:NULL];
 }
 
 - (void) receiveAction:(NSString*)json

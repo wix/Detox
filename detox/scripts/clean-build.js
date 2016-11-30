@@ -4,6 +4,8 @@ var shell = require('shelljs');
 // it should be run with: `node ./node_modules/detox/scripts/clean-build.js`
 // from the project root (where package.json is)
 
+shell.exec('rm -f ios.tar');
+
 shell.echo('\n#################################################################');
 shell.echo('# deleting node_modules/detox/ios/EarlGrey/OCHamcrest.framework');
 shell.rm('-rf', './node_modules/detox/ios/EarlGrey/OCHamcrest.framework');

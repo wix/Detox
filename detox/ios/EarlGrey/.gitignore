@@ -1,6 +1,0 @@
-*~
-*.sw[o-p]
-.DS_Store
-xcuserdata
-*.gem
-Gemfile.lock

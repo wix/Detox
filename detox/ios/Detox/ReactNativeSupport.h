@@ -8,18 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol ReactNativeSupportDelegate <NSObject>
-
-- (void)reactNativeAppDidLoad;
-
-@end
-
 @interface ReactNativeSupport : NSObject
 
-@property (nonatomic, assign) id<ReactNativeSupportDelegate> delegate;
-
-- (BOOL) isReactNativeApp;
-- (void) reloadApp;
++ (BOOL)isReactNativeApp;
++ (void)reloadApp;
++ (void)waitForReactNativeLoadWithCompletionHandler:(void(^)(void))handler;
 
 @end
 

@@ -4,7 +4,7 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "version": "3.2.1",
+  "version": "4.0.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/wix/detox.git"
@@ -18,7 +18,7 @@
   "author": "Tal Kol <talkol@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "BABEL_ENV=test babel src -d lib",
+    "build": "scripts/build.sh",
     "test-install": "node scripts/test-install.js",
     "test-clean": "node scripts/test-clean.js",
     "test-update-js": "node scripts/test-update-js.js",
@@ -26,7 +26,8 @@
     "test": "node scripts/test.js",
     "start-server": "node scripts/start-server.js",
     "start-packager": "node scripts/start-packager.js",
-    "test-exec": "node scripts/test-exec.js"
+    "test-exec": "node scripts/test-exec.js",
+    "postinstall": "scripts/postinstall.sh"
   },
   "devDependencies": {
     "babel-cli": "^6.8.0",
@@ -50,8 +51,8 @@
   },
   "dependencies": {
     "bplist-parser": "^0.1.1",
-    "detox-tools": "^1.0.0",
     "lodash": "^4.14.1",
-    "mocha": "^2.5.3"
+    "mocha": "^2.5.3",
+    "xcode": "^0.8.9"
   }
 }

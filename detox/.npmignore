@@ -6,6 +6,7 @@ ios/EarlGrey/fishhook
 ios/EarlGrey/Tests/UnitTests/ocmock
 ios/EarlGrey/Tests/UnitTests/TestRig/Resources
 ios/EarlGrey/Tests/FunctionalTests/TestRig/Resources
+ios/
 
 build/
 DerivedData/

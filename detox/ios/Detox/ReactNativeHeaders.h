@@ -15,19 +15,20 @@
 
 typedef void (^RN_RCTJavaScriptCallback)(id json, NSError *error);
 
-@protocol RN_RCTUIManager
+@protocol RN_RCTUIManager <NSObject>
 - (dispatch_queue_t)methodQueue;
 @end
 
-@protocol RN_RCTBridge
+@protocol RN_RCTBridge <NSObject>
 + (id)currentBridge;
+- (void)requestReload;
 - (id<RN_RCTUIManager>) uiManager;
-- (id)valueForKey:(NSString*)key;
 @property (nonatomic, readonly, getter=isLoading) BOOL loading;
 @property (nonatomic, readonly, getter=isValid) BOOL valid;
+
 @end
 
-@protocol RN_RCTJavaScriptExecutor
+@protocol RN_RCTJavaScriptExecutor <NSObject>
 - (void)executeBlockOnJavaScriptQueue:(dispatch_block_t)block;
 - (void)flushedQueue:(RN_RCTJavaScriptCallback)onComplete;
 @end

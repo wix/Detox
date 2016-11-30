@@ -5,8 +5,11 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
-  Animated
+  Animated,
+  NativeModules
 } from 'react-native';
+
+const NativeModule = NativeModules.NativeModule;
 
 export default class WaitForScreen extends Component {
 
@@ -17,12 +20,13 @@ export default class WaitForScreen extends Component {
       showsUp: false,
       becomeVisibleLeft: new Animated.Value(-500)
     };
-    setTimeout(() => {
+    NativeModule.nativeSetTimeout(1000, () => {
       this.setState({showsUp: true});
-    }, 1000);
-    setTimeout(() => {
+    });
+
+    NativeModule.nativeSetTimeout(500, () => {
       Animated.timing(this.state.becomeVisibleLeft, {toValue: 0, duration: 1000}).start();
-    }, 500);
+    });
   }
 
   render() {
