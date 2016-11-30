@@ -1,6 +1,5 @@
 var shell = require('shelljs');
 
-
 shell.echo('\n#################################################################');
 shell.echo('# fixing SocketRocket soft links');
 

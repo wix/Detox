@@ -27,7 +27,7 @@
     "start-server": "node scripts/start-server.js",
     "start-packager": "node scripts/start-packager.js",
     "test-exec": "node scripts/test-exec.js",
-    "postinstall": "node scripts/postinstall"
+    "postinstall": "scripts/postinstall.sh"
   },
   "devDependencies": {
     "babel-cli": "^6.8.0",
