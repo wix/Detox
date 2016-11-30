@@ -89,7 +89,7 @@ project.targets.each do |target|
             other_linker_flags << 'Detox'
             build_conf.build_settings['OTHER_LDFLAGS'] = other_linker_flags
             
-            build_conf.build_settings['COPY_DETOX_FRAMEWORK'] = 'YES'
+            build_conf.build_settings['DEPLOY_DETOX_FRAMEWORK'] = 'YES'
         end
         
         added_configs << build_conf if should_add
