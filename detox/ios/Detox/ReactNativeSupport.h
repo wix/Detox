@@ -10,8 +10,9 @@
 
 @interface ReactNativeSupport : NSObject
 
-+ (BOOL) isReactNativeApp;
-+ (void) reloadApp;
++ (BOOL)isReactNativeApp;
++ (void)reloadApp;
++ (void)waitForReactNativeLoadWithCompletionHandler:(void(^)(void))handler;
 
 @end
 

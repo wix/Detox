@@ -11,6 +11,7 @@
 
 @interface DetoxManager()
 
+@property (nonatomic) BOOL isReady;
 @property (nonatomic, retain) WebSocket *websocket;
 @property (nonatomic, retain) TestRunner *testRunner;
 
@@ -61,6 +62,11 @@ static void detoxConditionalInit()
 	self.testRunner = [[TestRunner alloc] init];
 	self.testRunner.delegate = self;
 	
+	if([ReactNativeSupport isReactNativeApp])
+	{
+		[self _waitForRNLoad];
+	}
+	
 	return self;
 }
 
@@ -73,6 +79,7 @@ static void detoxConditionalInit()
 {
 	if (![ReactNativeSupport isReactNativeApp])
 	{
+		_isReady = YES;
 		[self.websocket sendAction:@"ready" withParams:@{}];
 	}
 }
@@ -87,7 +94,10 @@ static void detoxConditionalInit()
 	
 	if ([type isEqualToString:@"isReady"])
 	{
-		[self.websocket sendAction:@"ready" withParams:@{}];
+		if(_isReady)
+		{
+			[self.websocket sendAction:@"ready" withParams:@{}];
+		}
 		return;
 	}
 	
@@ -100,19 +110,22 @@ static void detoxConditionalInit()
 	
 	if ([type isEqualToString:@"reactNativeReload"])
 	{
+		_isReady = NO;
 		[ReactNativeSupport reloadApp];
 		
-		__block __weak id observer;
-		__weak __typeof(self) weakSelf = self;
+		[self _waitForRNLoad];
 		
-		observer = [[NSNotificationCenter defaultCenter] addObserverForName:@"RCTContentDidAppearNotification" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
-			
-			[weakSelf.websocket sendAction:@"ready" withParams:@{}];
-			
-			[[NSNotificationCenter defaultCenter] removeObserver:observer];
-		}];
 		return;
 	}
+}
+
+- (void)_waitForRNLoad
+{
+	__weak __typeof(self) weakSelf = self;
+	[ReactNativeSupport waitForReactNativeLoadWithCompletionHandler:^{
+		weakSelf.isReady = YES;
+		[weakSelf.websocket sendAction:@"ready" withParams:@{}];
+	}];
 }
 
 - (void)testRunnerOnInvokeResult:(id)res withInvocationId:(NSString *)invocationId

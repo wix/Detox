@@ -120,4 +120,19 @@ void setupForTests()
 	}
 }
 
++ (void)waitForReactNativeLoadWithCompletionHandler:(void (^)(void))handler
+{
+	__block __weak id observer;
+	
+	observer = [[NSNotificationCenter defaultCenter] addObserverForName:@"RCTContentDidAppearNotification" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+		
+		if(handler)
+		{
+			handler();
+		}
+		
+		[[NSNotificationCenter defaultCenter] removeObserver:observer];
+	}];
+}
+
 @end
