@@ -23,10 +23,6 @@ raise "Cannot find Xcode project" unless project_path.exist?
 
 project_path_dir = project_path.dirname
 
-puts "", "########################################", "Building Detox Framework", "########################################", ""
-
-raise "Error: Detox framework build failed" unless system("xcodebuild clean build -project #{__dir__}/../ios/Detox.xcodeproj -scheme DetoxFramework -configuration Release -derivedDataPath #{project_path_dir}/DetoxBuild", :out=>"/dev/null")
-
 puts "", "########################################", "Integrating Detox Framework with Project", "########################################", ""
 
 project = Xcodeproj::Project.open(project_path)
@@ -55,7 +51,7 @@ project.targets.each do |target|
     if target.product_type == "com.apple.product-type.application" and target.platform_name == :ios and target.shell_script_build_phases.find { |script| script.name.nil? == false and script.name.eql?("Copy Detox Framework") }.nil? then
         script = target.new_shell_script_build_phase('Copy Detox Framework')
         script.shell_path = '/bin/bash'
-        script.shell_script = "if [ -n \"$DEPLOY_DETOX_FRAMEWORK\" ]; then\nmkdir -p \"${BUILT_PRODUCTS_DIR}\"/\"${FRAMEWORKS_FOLDER_PATH}\"\ncp -r \"${PROJECT_DIR}\"/DetoxBuild/Build/Products/Release-universal/Detox.framework \"${BUILT_PRODUCTS_DIR}\"/\"${FRAMEWORKS_FOLDER_PATH}\"\nfi"
+        script.shell_script = "if [ -n \"$DEPLOY_DETOX_FRAMEWORK\" ]; then\nmkdir -p \"${BUILT_PRODUCTS_DIR}\"/\"${FRAMEWORKS_FOLDER_PATH}\"\ncp -r \"${PROJECT_DIR}\"/../node_modules/detox/Detox.framework \"${BUILT_PRODUCTS_DIR}\"/\"${FRAMEWORKS_FOLDER_PATH}\"\nfi"
     end
     
     added_configs = []

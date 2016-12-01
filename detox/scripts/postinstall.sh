@@ -2,9 +2,9 @@
 
 printf "\n#################################################################\n"
 
-if [ -f ios.tar ]; then
-  tar -xf ios.tar
-  rm -f ios.tar
+if [ -f Detox.framework.tar ]; then
+  tar -xf Detox.framework.tar
+  rm -f Detox.framework.tar
 fi
 
 brew list fbsimctl &> /dev/null

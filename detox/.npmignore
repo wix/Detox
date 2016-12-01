@@ -10,6 +10,8 @@ ios/
 
 build/
 DerivedData/
+DetoxBuild/
+Detox.framework/
 
 
 #################
