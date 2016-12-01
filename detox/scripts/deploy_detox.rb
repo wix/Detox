@@ -74,7 +74,7 @@ project.targets.each do |target|
             unless search_paths.kind_of?(Array)
                 search_paths = [search_paths]
             end
-            search_paths << '$(PROJECT_DIR)/DetoxBuild/Build/Products/Release-universal'
+            search_paths << '$(PROJECT_DIR)/../node_modules/detox'
             build_conf.build_settings['FRAMEWORK_SEARCH_PATHS'] = search_paths
             
             other_linker_flags = config.build_settings['OTHER_LDFLAGS'].nil? ? ['$(inherited)'] : config.build_settings['OTHER_LDFLAGS'].dup if
