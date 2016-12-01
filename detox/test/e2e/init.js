@@ -1,5 +1,3 @@
-require('shelljs/global');
-
 var detox = require('detox');
 var config = require('../package.json').detox;
 
