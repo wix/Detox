@@ -17,9 +17,6 @@
   "main": "./lib/index.js",
   "author": "Tal Kol <talkol@gmail.com>",
   "license": "MIT",
-  "bin": {
-    "detox-deploy": "./scripts/deploy_detox.rb"
-  },
   "scripts": {
     "build": "scripts/build.sh",
     "test-install": "node scripts/test-install.js",
