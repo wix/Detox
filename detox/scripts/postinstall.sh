@@ -1,5 +1,5 @@
 #!/bin/bash
 
 if [ `uname` == "Darwin" ]; then
-  source postinstall.ios.sh
+  source "$(dirname ${0})/postinstall.ios.sh"
 fi
