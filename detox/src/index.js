@@ -20,7 +20,7 @@ function _start(onStart) {
 
   websocket.config(_detoxConfig.session);
   websocket.connect(() => {
-    const target = utils.getArgValue('target') | 'ios-sim';
+    const target = utils.getArgValue('target') || 'ios-sim';
     if(target === 'ios-sim') {
       simulator.prepare(_detoxConfig, onStart);
     }
