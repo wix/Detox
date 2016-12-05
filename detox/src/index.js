@@ -18,11 +18,10 @@ function _start(onStart) {
   expect.exportGlobals();
   global.simulator = simulator;
 
-  utils.getArgValue('target');
-
   websocket.config(_detoxConfig.session);
   websocket.connect(() => {
-    if(utils.getArgValue('target') === 'ios-sim') {
+    const target = utils.getArgValue('target') | 'ios-sim';
+    if(target === 'ios-sim') {
       simulator.prepare(_detoxConfig, onStart);
     }
     else {

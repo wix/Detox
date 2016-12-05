@@ -33,7 +33,7 @@ describe('StressTests', function () {
   });
 
   it('should handle consecutive taps', function () {
-    const TAP_COUNT = 5;
+    const TAP_COUNT = 20;
     for (let i = 1 ; i <= TAP_COUNT ; i++) {
       element(by.label('Consecutive Stress ' + i)).tap();
     }
