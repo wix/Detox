@@ -1,22 +1,19 @@
 {
-  "name": "demo-native",
-  "version": "0.0.1",
-  "private": true,
+  "devDependencies": {
+    "detox": "^4.0.9",
+    "detox-server": "^1.1.0"
+  },
   "scripts": {
     "e2e": "./node_modules/.bin/mocha e2e --opts ./e2e/mocha.opts"
-  },
-  "devDependencies": {
-    "detox": "latest",
-    "detox-server": "latest"
   },
   "detox": {
     "session": {
       "server": "ws://localhost:8099",
-      "sessionId": "demo-native"
+      "sessionId": "YourProject"
     },
     "ios-simulator": {
-      "app": "ios/build/Products/Debug-iphonesimulator/NativeExample.app",
-      "device": "iPhone 6s, iOS 9.3"
+      "app": "Build/Products/Debug_Detox-iphonesimulator/NativeExample.app",
+      "device": "iPhone 7, iOS 10.1"
     }
   }
 }

@@ -7,12 +7,8 @@
     "e2e": "./node_modules/.bin/mocha e2e --opts ./e2e/mocha.opts"
   },
   "dependencies": {
-    "react": "15.1.0",
-    "react-native": "^0.27.2"
-  },
-  "devDependencies": {
-    "detox": "latest",
-    "detox-server": "latest"
+    "react": "*",
+    "react-native": "*"
   },
   "detox": {
     "session": {
@@ -20,8 +16,12 @@
       "sessionId": "demo-react-native"
     },
     "ios-simulator": {
-      "app": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
-      "device": "iPhone 6s, iOS 9.3"
+      "app": "ios/build/Build/Products/Debug_Detox-iphonesimulator/example.app",
+      "device": "iPhone 7, iOS 10.1"
     }
+  },
+  "devDependencies": {
+    "detox": "^4.0.9",
+    "detox-server": "^1.1.0"
   }
 }

@@ -7,7 +7,6 @@
 //
 
 #import "AppDelegate.h"
-#import "DetoxLoader.h"
 
 @interface AppDelegate ()
 
@@ -15,9 +14,8 @@
 
 @implementation AppDelegate
 
-
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    detoxConditionalInit();
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
     return YES;
 }
 

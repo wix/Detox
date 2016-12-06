@@ -9,16 +9,11 @@
 
 #import "AppDelegate.h"
 #import "RCTRootView.h"
-#import "DetoxLoader.h"
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  // this conditional init loads Detox only when command line arguments are given
-  // in normal execution, Detox is not loaded and there's zero impact on the app
-  detoxConditionalInit();
-  
   NSURL *jsCodeLocation;
 
   // this is a simple variant over the default React Native starter project which loads the bundle
