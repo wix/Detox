@@ -1,0 +1,17 @@
+language: objective-c
+
+osx_image: xcode8.1
+
+branches:
+  only:
+    - travist_testing
+
+env:
+  global:
+    - NODE_VERSION=stable
+
+install:
+  - nvm install $NODE_VERSION
+
+script:
+  - ./scripts/travis.sh

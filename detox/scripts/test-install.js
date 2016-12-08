@@ -42,14 +42,14 @@ if (shell.exec('node ./node_modules/detox/scripts/clean-build.js').code !== 0) {
 
 shell.echo('\n#################################################################');
 shell.echo('# react-native run-ios');
-if (shell.exec('react-native run-ios').code !== 0) {
+if (shell.exec('react-native run-ios', {silent: true}).code !== 0) {
   shell.echo('error: react-native run-ios');
   process.exit(1);
 }
 
 shell.echo('\n#################################################################');
 shell.echo('# react-native run-ios --scheme "example Release"');
-if (shell.exec('react-native run-ios --scheme "example Release"').code !== 0) {
+if (shell.exec('react-native run-ios --scheme "example Release"', {silent: true}).code !== 0) {
   shell.echo('error: react-native run-ios --scheme "example Release"');
   process.exit(1);
 }

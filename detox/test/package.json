@@ -23,11 +23,11 @@
     "ios-simulator": {
       "debug": {
         "app": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
-        "device": "iPhone 6s, iOS 10.1"
+        "device": "iPhone 7, iOS 10.1"
       },
       "release": {
         "app": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-        "device": "iPhone 6s, iOS 10.1"
+        "device": "iPhone 7, iOS 10.1"
       }
     }
   }
