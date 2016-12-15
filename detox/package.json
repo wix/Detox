@@ -5,6 +5,9 @@
     "registry": "https://registry.npmjs.org/"
   },
   "version": "4.0.10",
+  "bin": {
+    "detox": "./scripts/detox.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/wix/detox.git"
@@ -51,7 +54,9 @@
   },
   "dependencies": {
     "bplist-parser": "^0.1.1",
+    "commander": "^2.9.0",
     "lodash": "^4.14.1",
-    "mocha": "^2.5.3"
+    "mocha": "^2.5.3",
+    "shelljs": "^0.7.5"
   }
 }
