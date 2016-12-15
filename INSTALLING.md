@@ -65,12 +65,12 @@ By default, Xcode uses a randomized hidden path for outputting project build art
 
 #### Step 5: Build Your Project
 
-* Build your project with a newly created `_Detox` scheme
-	* Building with Xcode
-	   * Select the desired `_Detox` scheme
-	   * Build your project
-	* Building from command-line
-		* `xcodebuild -scheme YourProject_Detox`
+* Build your project with a newly created `_Detox` scheme:
+	* Building with Xcode.
+	   * Select the desired `_Detox` scheme.
+	   * Build your project.
+	* Building from command-line:
+		* `xcodebuild -scheme YourProject_Detox -sdk iphonesimulator -derivedDataPath build`
 	* Building using React Native
 		* `react-native run-ios --scheme YourProject_Detox`
 * If you have build problems, see [troubleshooting](#troubleshooting-build-problems).
