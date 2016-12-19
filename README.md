@@ -32,6 +32,10 @@ See Detox's own [E2E test suite](detox/test/e2e) to learn the test API by exampl
 
 See the [Flakiness](FLAKINESS.md) handbook
 
+## Contributing to detox
+
+If you're interested in working on detox core and contributing to detox itself, take a look [here](detox).
+
 ## Some implementation details
 
 * We let you write your e2e tests in JS (they can even be cross-platform)
