@@ -2,7 +2,7 @@ var shell = require('shelljs');
 
 shell.echo('\n#################################################################');
 shell.echo('# npm run build');
-if (shell.exec('npm run build').code !== 0) {
+if (shell.exec('npm run build', {silent: true}).code !== 0) {
   shell.echo('error: npm run build');
   process.exit(1);
 }
@@ -41,21 +41,17 @@ if (shell.exec('node ./node_modules/detox/scripts/clean-build.js').code !== 0) {
 }
 
 shell.echo('\n#################################################################');
-shell.echo('# react-native run-ios');
-if (shell.exec('react-native run-ios', {silent: true}).code !== 0) {
-  shell.echo('error: react-native run-ios');
+shell.echo('# export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build');
+if (shell.exec('export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build', {silent: true}).code !== 0) {
+  shell.echo('error: export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build');
   process.exit(1);
 }
 
 shell.echo('\n#################################################################');
-shell.echo('# react-native run-ios --scheme "example Release"');
-if (shell.exec('react-native run-ios --scheme "example Release"', {silent: true}).code !== 0) {
-  shell.echo('error: react-native run-ios --scheme "example Release"');
+shell.echo('# export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -scheme example -configuration Release -sdk iphonesimulator -derivedDataPath ios/build');
+if (shell.exec('export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -scheme example -configuration Release -sdk iphonesimulator -derivedDataPath ios/build', {silent: true}).code !== 0) {
+  shell.echo('error: export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -scheme example -configuration Release -sdk iphonesimulator -derivedDataPath ios/build');
   process.exit(1);
 }
-
-shell.echo('\n#################################################################');
-shell.echo('# killing ios simulator');
-shell.exec('killall "Simulator"');
 
 shell.echo('\n');

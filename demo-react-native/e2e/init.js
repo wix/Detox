@@ -2,7 +2,7 @@ var detox = require('detox');
 var config = require('../package.json').detox;
 
 before(function (done) {
-  this.timeout(40000);
+  this.timeout(120000);
   detox.config(config);
   detox.start(done);
 });
