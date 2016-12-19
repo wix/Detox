@@ -1,5 +1,7 @@
 # detox
 
+[![Build Status](https://travis-ci.org/wix/detox.svg?branch=master)](https://travis-ci.org/wix/detox)
+
 Graybox E2E tests and automation library for mobile
 
 ### Why?
