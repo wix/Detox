@@ -2,6 +2,8 @@
 
 # Library
 
+This README is only relevant if you're interested in contributing to detox core itself. If you're just using detox to run tests on your projects, take a look at the README in the root folder.
+
 ## Install
 
 * make sure you're in folder `detox/detox`
@@ -16,6 +18,12 @@
 * run `npm run test`
   * `npm run test --debug` (for tests only on a debug app)
   * `npm run test --release` (for tests only on a release app)
+
+## Before You Publish
+
+* make sure you've ran the tests and they all pass
+* ...
+* run `npm publish`
 
 ## Developing detox and maintaining your sanity
 
