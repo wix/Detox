@@ -16,7 +16,7 @@
       "sessionId": "demo-react-native"
     },
     "ios-simulator": {
-      "app": "ios/build/Build/Products/Debug_Detox-iphonesimulator/example.app",
+      "app": "ios/build/Build/Products/Release_Detox-iphonesimulator/example.app",
       "device": "iPhone 7, iOS 10.1"
     }
   },
