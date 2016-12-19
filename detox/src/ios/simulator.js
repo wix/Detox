@@ -391,7 +391,12 @@ function prepare(params, onComplete) {
           onComplete(err2);
           return;
         }
-        deleteAndRelaunchApp(onComplete);
+        if ( _getArgValue('detoxReuse')) {
+          console.log('Reusing existing app')
+          relaunchApp(onComplete);
+        } else {
+          deleteAndRelaunchApp(onComplete);
+        }
       });
     });
   } else {
