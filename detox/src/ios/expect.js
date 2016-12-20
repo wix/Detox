@@ -190,6 +190,15 @@ class TypeTextAction extends Action {
   }
 }
 
+
+class ReplaceTextAction extends Action {
+  constructor(value) {
+    super();
+    if (typeof value !== 'string') throw new Error(`ReplaceTextAction ctor argument must be a string, got ${typeof value}`);
+    this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForReplaceText:', value);
+  }
+}
+
 class ClearTextAction extends Action {
   constructor() {
     super();
@@ -354,6 +363,9 @@ class Element {
   }
   typeText(value) {
     return new ActionInteraction(this, new TypeTextAction(value)).execute();
+  }
+  replaceText(value) {
+    return new ActionInteraction(this, new ReplaceTextAction(value)).execute();
   }
   clearText() {
     return new ActionInteraction(this, new ClearTextAction()).execute();
