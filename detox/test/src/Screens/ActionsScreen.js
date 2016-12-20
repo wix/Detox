@@ -49,6 +49,12 @@ export default class ActionsScreen extends Component {
           testID='UniqueId005'
         />
 
+        <TextInput style={{height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5}}
+           onChangeText={this.onReplaceText.bind(this)}
+           value={this.state.replaceText}
+           testID='UniqueId006'
+        />
+
         <View style={{height: 100, borderColor: '#c0c0c0', borderWidth: 1, backgroundColor: '#f8f8ff', marginBottom: 20}}>
           <ScrollView testID='ScrollView161'>
             <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}}>Text1</Text>
@@ -102,6 +108,17 @@ export default class ActionsScreen extends Component {
     if (text == 'passcode') {
       this.setState({
         greeting: 'Type Working'
+      });
+    }
+  }
+
+  onReplaceText(text) {
+    this.setState({
+      replaceText: text
+    });
+    if (text == 'replaced_text') {
+      this.setState({
+        greeting: 'Replace Working'
       });
     }
   }

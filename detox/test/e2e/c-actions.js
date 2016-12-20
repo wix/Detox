@@ -36,6 +36,12 @@ describe('Actions', function () {
     expect(element(by.label('Clear Working!!!'))).toBeVisible();
   });
 
+  it.only('should replace text in an element', function () {
+    element(by.id('UniqueId006')).tap();
+    element(by.id('UniqueId006')).replaceText('replaced_text');
+    expect(element(by.label('Replace Working!!!'))).toBeVisible();
+  });
+
   // directions: 'up'/'down'/'left'/'right'
   it('should scroll for a small amount in direction', function () {
     expect(element(by.label('Text1'))).toBeVisible();
