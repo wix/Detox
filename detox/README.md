@@ -27,7 +27,7 @@ After cloning, make sure to run the following `git` command to make sure all dep
 ## Before You Publish
 
 * make sure you've ran the tests and they all pass
-* ...
+* run `npm run build`
 * run `npm publish`
 
 ## Developing detox and maintaining your sanity
