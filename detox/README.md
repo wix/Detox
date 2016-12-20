@@ -4,14 +4,10 @@
 
 This README is only relevant if you're interested in contributing to detox core itself. If you're just using detox to run tests on your projects, take a look at the README in the root folder.
 
-## Cloning Properly
-
-After cloning, make sure to run the following `git` command to make sure all dependencies are properly checked out:
-`git submodule update --init --recursive`
-
 ## Install
 
 * make sure you're in folder `detox/detox`
+* run `git submodule update --init --recursive`<br>(this makes sure all git submodule dependencies are properly checked out)
 * run `npm install`
 * run `npm run build`
 
