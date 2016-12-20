@@ -36,7 +36,7 @@ describe('Actions', function () {
     expect(element(by.label('Clear Working!!!'))).toBeVisible();
   });
 
-  it.only('should replace text in an element', function () {
+  it('should replace text in an element', function () {
     element(by.id('UniqueId006')).tap();
     element(by.id('UniqueId006')).replaceText('replaced_text');
     expect(element(by.label('Replace Working!!!'))).toBeVisible();
