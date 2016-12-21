@@ -32,9 +32,13 @@
 			__strong __typeof(weakSelf) strongSelf = weakSelf;
 			if(strongSelf)
 			{
-				dispatch_sync(strongSelf->_timersCounterSerialQueue, ^{
-					strongSelf->_timersCount += 1;
-				});
+				NSTimer* underlyingTimer = [_self valueForKey:@"_sleepTimer"];
+				if(underlyingTimer == nil || underlyingTimer.isValid == NO)
+				{
+					dispatch_sync(strongSelf->_timersCounterSerialQueue, ^{
+						strongSelf->_timersCount += 1;
+					});
+				}
 			}
 			
 			orig_scheduleSleepTimer(_self, NSSelectorFromString(@"scheduleSleepTimer:"), date);
