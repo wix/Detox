@@ -75,4 +75,9 @@ describe('Actions', function () {
     expect(element(by.label('PullToReload Working!!!'))).toBeVisible();
   });
 
+  it('should wait for long timeout', function () {
+    element(by.id('WhyDoAllTheTestIDsHaveTheseStrangeNames')).tap();
+    expect(element(by.id('WhyDoAllTheTestIDsHaveTheseStrangeNames'))).toBeVisible();
+  });
+
 });
