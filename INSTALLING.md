@@ -55,6 +55,7 @@ By default, Xcode uses a randomized hidden path for outputting project build art
 * Make sure your Project schemes are shared. Open you project in Xcode, select menu `Product` ► `Scheme` ► `Manage Schemes...`, and check the `Shared Scheme` checkbox next to schemes that are part of the project. There is no need to do this for library schemes. Note the scheme you would like to use Detox with.
 * In your root folder, run `node_modules/detox/scripts/deploy_detox.rb <Path To>/YourProject.xcodeproj`.
 * Notice the new scheme(s) added in your Xcode project. If you had a `YourProject` scheme before, now there is an analogous `YourProject_Detox` scheme.
+* Make sure to add the new schema files to your source control (e.g. `git add ios/MyProject.xcodeproj/xcshareddata/xcschemes/Release_Detox.xcscheme`)
 
 #### Step 4: Prepare the E2E Folder for Your Tests
 
