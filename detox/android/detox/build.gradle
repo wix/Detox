@@ -26,5 +26,6 @@ dependencies {
 //    })
     compile project(":react-native-invoke")
     compile 'com.android.support:appcompat-v7:25.0.1'
+    compile 'com.squareup.okhttp3:okhttp:3.5.0'
     testCompile 'junit:junit:4.12'
 }
