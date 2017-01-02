@@ -400,9 +400,27 @@ function prepare(params, onComplete) {
   }
 }
 
+function openURL(url, onComplete) {
+  if (!_currentScheme.device) {
+    onComplete(new Error(`scheme.device property is missing, should hold the device type we test on`));
+    return;
+  }
+
+  const query = _getQueryFromDevice(_currentScheme.device);
+  const options = {args: `${query} open ${url}`};
+  _executeSimulatorCommand(options, (err, stdout, stderr) => {
+    if (err) {
+      onComplete(err);
+      return;
+    }
+    onComplete();
+  });
+}
+
 export {
   prepare,
   relaunchApp,
   deleteAndRelaunchApp,
-  reloadReactNativeApp
+  reloadReactNativeApp,
+  openURL
 };

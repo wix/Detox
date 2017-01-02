@@ -30,9 +30,20 @@ function _start(onStart) {
   });
 }
 
+function openURL(url, onComplete) {
+  const target = utils.getArgValue('target') || 'ios-sim';
+  if(target === 'ios-sim') {
+    simulator.openURL(url, onComplete);
+  }
+  else {
+    onComplete();
+  }
+}
+
 module.exports = {
   config: _config,
   start: _start,
   cleanup: websocket.cleanup,
   waitForTestResult: websocket.waitForTestResult,
+  openURL: openURL
 };
