@@ -1,5 +1,5 @@
-
 include ':detox'
 
-include ':react-native-invoke'
-project(':react-native-invoke').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-invoke/android/invoke')
+include ':invoke'
+project(':invoke').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-invoke/android/invoke')
+//printf (project(':invoke').projectDir)

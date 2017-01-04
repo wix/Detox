@@ -4,6 +4,7 @@
     "detox-server": "^1.1.0"
   },
   "scripts": {
+    "start-server": "node ../detox-server/index.js",
     "e2e": "./node_modules/.bin/mocha e2e --opts ./e2e/mocha.opts"
   },
   "detox": {
