@@ -1,4 +1,5 @@
 #import "NativeModule.h"
+#import <UIKit/UIKit.h>
 
 static int CALL_COUNTER = 0;
 
@@ -28,6 +29,23 @@ RCT_EXPORT_METHOD(nativeSetTimeout:(NSTimeInterval)delay block:(RCTResponseSende
 			block(@[]);
 		});
 	});
+}
+
+RCT_EXPORT_METHOD(switchRoot)
+{
+  dispatch_async(dispatch_get_main_queue(), ^{
+    UIViewController* newRoot = [UIViewController new];
+    newRoot.view.backgroundColor = [UIColor greenColor];
+    UILabel* label = [UILabel new];
+    label.text = @"this is a new root";
+    [label sizeToFit];
+    [[newRoot view] addSubview:label];
+    label.center = newRoot.view.center;
+    
+    id<UIApplicationDelegate> delegate = [[UIApplication sharedApplication] delegate];
+    [[delegate window]setRootViewController:newRoot];
+    [[delegate window] makeKeyAndVisible];
+  });
 }
 
 @end

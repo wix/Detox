@@ -46,6 +46,8 @@
 	dispatch_sync(_dateSerialQueue, ^{
 		rv = _isBusy == NO;
 	});
+    
+    NSLog(@"RL:%@", @(rv));
 	
 	return rv;
 }

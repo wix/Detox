@@ -25,6 +25,8 @@
 
 - (BOOL)isIdleNow
 {
+    NSLog(@"DL:%@", @(_displayLink.isPaused));
+    
 	return _displayLink.isPaused;
 }
 

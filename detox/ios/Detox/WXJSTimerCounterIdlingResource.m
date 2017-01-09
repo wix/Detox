@@ -68,6 +68,8 @@
 	dispatch_sync(_timersCounterSerialQueue, ^{
 		rv = _timersCount == 0;
 	});
+    
+    NSLog(@"TM:%@", @(rv));
 	
 	return rv;
 }
