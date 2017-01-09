@@ -1,9 +1,17 @@
-require('/Users/danielzl/dev/detox/detox/test/node_modules/react-native/Libraries/Utilities/MessageQueue.js').MessageQueue.spy(true);
+describe('bug hunt', () => {
+  //beforeEach((done) => {
+  //  global.simulator.relaunchApp(done);
+  //});
 
-describe.only('bug hunt', () => {
-  it('switch root works', () => {
+  it('switch to a new native root works', () => {
     element(by.label('Switch Root')).tap();
-    element(by.label('Switch Root NOW!')).tap();
-    expect(element(by.label('this is a new root'))).toBeVisible();
+    element(by.label('Switch to a new native root')).tap();
+    expect(element(by.label('this is a new native root'))).toBeVisible();
+  });
+
+  it.only('switch to a multiple react roots works', () => {
+    element(by.label('Switch Root')).tap();
+    element(by.label('Switch to multiple react roots')).tap();
+    expect(element(by.label('Choose a test'))).toBeVisible();
   });
 });

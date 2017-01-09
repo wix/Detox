@@ -70,7 +70,7 @@ describe('Actions', function () {
   });
 
   // directions: 'up'/'down'/'left'/'right', speed: 'fast'/'slow'
-  it('should swipe down until pull to reload is triggered', function () {
+  xit('should swipe down until pull to reload is triggered', function () {
     element(by.id('ScrollView799')).swipe('down', 'fast');
     expect(element(by.label('PullToReload Working!!!'))).toBeVisible();
   });
