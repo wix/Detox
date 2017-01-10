@@ -21,8 +21,8 @@
       "sessionId": "test"
     },
     "ios-simulator": {
-        "app": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
-        "device": "iPhone 7"
+        "app": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+        "device": "iPhone 7 Plus"
     }
   }
 }
