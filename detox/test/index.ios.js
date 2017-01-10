@@ -52,3 +52,11 @@ class example extends Component {
 }
 
 AppRegistry.registerComponent('example', () => example);
+
+setTimeout(() => {
+  console.log("Don't cry for me Argentina.")
+}, 5000);
+
+setInterval(() => {
+  console.log("I am doing some periodic work.")
+}, 1000);
