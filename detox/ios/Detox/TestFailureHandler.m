@@ -14,10 +14,10 @@
 {
     NSString *description = [NSString stringWithFormat:@"%@\n%@", [exception description], details];
     
-    NSLog(@"Detox Test Failed:\n%@", description);
+    NSLog(@"☣️ DETOX:: Test Failed:\n%@", description);
     
     UIWindow* window = [[UIApplication sharedApplication] keyWindow];
-    NSLog(@"UI Hierarchy on test failure:\n%@", [GREYElementHierarchy hierarchyStringForElement:window]);
+    NSLog(@"☣️ DETOX:: UI Hierarchy on test failure:\n%@", [GREYElementHierarchy hierarchyStringForElement:window]);
     
     if (self.delegate) [self.delegate onTestFailed:description];
 }

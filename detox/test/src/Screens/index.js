@@ -4,6 +4,7 @@ import ActionsScreen from './ActionsScreen';
 import AssertionsScreen from './AssertionsScreen';
 import WaitForScreen from './WaitForScreen';
 import StressScreen from './StressScreen';
+import SwitchRootScreen from './SwitchRootScreen';
 
 export {
   SanityScreen,
@@ -11,5 +12,6 @@ export {
   ActionsScreen,
   AssertionsScreen,
   WaitForScreen,
-  StressScreen
+  StressScreen,
+  SwitchRootScreen
 };

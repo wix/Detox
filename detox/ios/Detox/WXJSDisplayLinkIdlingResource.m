@@ -25,6 +25,8 @@
 
 - (BOOL)isIdleNow
 {
+	NSLog(@"☣️ DETOX:: DisplayLinkIdleResource: %@", @(_displayLink.isPaused));
+    
 	return _displayLink.isPaused;
 }
 

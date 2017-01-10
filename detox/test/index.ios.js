@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   AppRegistry,
   Text,
@@ -39,6 +39,7 @@ class example extends Component {
           {this.renderScreenButton('Assertions', Screens.AssertionsScreen)}
           {this.renderScreenButton('WaitFor', Screens.WaitForScreen)}
           {this.renderScreenButton('Stress', Screens.StressScreen)}
+          {this.renderScreenButton('Switch Root', Screens.SwitchRootScreen)}
         </View>
       );
     }
@@ -51,3 +52,11 @@ class example extends Component {
 }
 
 AppRegistry.registerComponent('example', () => example);
+
+setTimeout(() => {
+  console.log("Don't cry for me Argentina.")
+}, 5000);
+
+setInterval(() => {
+  console.log("I am doing some periodic work.")
+}, 1000);

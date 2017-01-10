@@ -15,6 +15,26 @@
 	BOOL _isBusy;
 }
 
+- (NSString*)translateRunLoopActivity:(CFRunLoopActivity)act
+{
+    switch (act) {
+        case kCFRunLoopEntry:
+            return @"kCFRunLoopEntry";
+        case kCFRunLoopExit:
+            return @"kCFRunLoopExit";
+        case kCFRunLoopBeforeTimers:
+            return @"kCFRunLoopBeforeTimers";
+        case kCFRunLoopBeforeSources:
+            return @"kCFRunLoopBeforeSources";
+        case kCFRunLoopAfterWaiting:
+            return @"kCFRunLoopAfterWaiting";
+        case kCFRunLoopBeforeWaiting:
+            return @"kCFRunLoopBeforeWaiting";
+        default:
+            return @"----";
+    }
+}
+
 - (instancetype)initWithRunLoop:(CFRunLoopRef)runLoop
 {
 	self = [super init];
@@ -23,9 +43,10 @@
 		_runLoop = runLoop;
 		_dateSerialQueue = dispatch_queue_create("_dateSerialQueue", NULL);
 		
-		CFRunLoopAddObserver(_runLoop, CFRunLoopObserverCreateWithHandler(NULL, kCFRunLoopBeforeWaiting | kCFRunLoopAfterWaiting, YES, 0, ^(CFRunLoopObserverRef observer, CFRunLoopActivity activity) {
+		CFRunLoopAddObserver(_runLoop, CFRunLoopObserverCreateWithHandler(NULL, kCFRunLoopExit | kCFRunLoopBeforeWaiting | kCFRunLoopAfterWaiting, YES, 0, ^(CFRunLoopObserverRef observer, CFRunLoopActivity activity) {
 			dispatch_sync(_dateSerialQueue, ^{
-				if(activity == kCFRunLoopBeforeWaiting)
+//				NSLog(@"☣️ DETOX:: Current runloop activity: %@", [self translateRunLoopActivity: activity]);
+				if(activity == kCFRunLoopBeforeWaiting || activity == kCFRunLoopExit)
 				{
 					_isBusy = NO;
 				}
@@ -46,6 +67,8 @@
 	dispatch_sync(_dateSerialQueue, ^{
 		rv = _isBusy == NO;
 	});
+    
+    NSLog(@"☣️ DETOX:: RunloopIdleResource: %@", @(rv));
 	
 	return rv;
 }
