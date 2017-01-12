@@ -4,7 +4,7 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "version": "4.0.12",
+  "version": "4.0.13",
   "bin": {
     "detox": "./scripts/detox.js"
   },
