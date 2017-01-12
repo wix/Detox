@@ -293,7 +293,7 @@ function deleteAndRelaunchApp(onComplete) {
 }
 
 function _getQueryFromDevice(device) {
-  let res = '';
+  let res = '--first 1 --simulators ';
   const deviceParts = device.split(',');
   for (let i = 0 ; i < deviceParts.length ; i++) res += `"${deviceParts[i].trim()}" `;
   return res.trim();
