@@ -10,11 +10,12 @@
 
 #### Step 1: Run a local detox-server
 
-* run `./node_modules/.bin/detox-server`
+* run `npm run detox run-server`
 * you should see `server listening on localhost:8099...`
 
 #### Step 2: Run the e2e test
 
 * open the project folder (where package.json is found)
-* run `npm run e2e`
+* run `npm run detox test`
+* for verbose mode run `npm run detox test -- -d`
 * this action will open a new simulator and run the tests in it, yay

@@ -30,12 +30,13 @@ By default, Xcode uses a randomized hidden path for outputting project build art
 * Add to the `scripts` section of `package.json`:
 ```json
 "scripts": {
-    "e2e": "./node_modules/.bin/mocha e2e --opts ./e2e/mocha.opts"
+    "detox": "detox"
   }
 ```
 * Add a `detox` section to `package.json`:
 ```json
 "detox": {
+    "specs": "e2e" // tests root folder. Default is e2e
     "session": {
       "server": "ws://localhost:8099",
       "sessionId": "YourProject"
@@ -84,4 +85,4 @@ By default, Xcode uses a randomized hidden path for outputting project build art
 
 #### Step 7: Adding Additional Schemes
 
-You can add additional schemes to your project normally. After making changes to 
+You can add additional schemes to your project normally. After making changes to
