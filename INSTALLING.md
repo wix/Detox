@@ -36,7 +36,7 @@ By default, Xcode uses a randomized hidden path for outputting project build art
 * Add a `detox` section to `package.json`:
 ```json
 "detox": {
-    "specs": "e2e" // tests root folder. Default is e2e
+    "specs": "TestRootFolder",
     "session": {
       "server": "ws://localhost:8099",
       "sessionId": "YourProject"
@@ -47,7 +47,7 @@ By default, Xcode uses a randomized hidden path for outputting project build art
     }
   }
 ```
-> Note: replace `YourProject` above with your Product name from Xcode. Set the `app` path to the correct build path of your `.app` product, relative to the `package.json` file.
+> Note: replace `YourProject` above with your Product name from Xcode. Set the `app` path to the correct build path of your `.app` product, relative to the `package.json` file. Change `TestRootFolder` to your test root folder, default is e2e.
 
 * The resulting `package.json` should look something like [this](demo-react-native/package.json).
 
