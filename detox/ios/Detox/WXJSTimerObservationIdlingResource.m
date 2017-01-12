@@ -82,7 +82,11 @@
 
 - (NSString*)failuireReasonForDuration:(NSTimeInterval)duration repeats:(BOOL)repeats
 {
-	if(repeats == YES)
+	if(duration == 0)
+	{
+		return @"duration==0";
+	}
+	else if(repeats == YES)
 	{
 		return @"repeats==true";
 	}
@@ -124,7 +128,7 @@
 				}
 				
 				
-				if(duration <= _durationThreshold && repeats == NO)
+				if(duration > 0 && duration <= _durationThreshold && repeats == NO)
 				{
 					NSLog(@"☣️ DETOX:: Observing timer: %@ d: %@ r: %@", timerID, @(duration), @(repeats));
 					
