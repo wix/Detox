@@ -40,6 +40,7 @@ class example extends Component {
           {this.renderScreenButton('WaitFor', Screens.WaitForScreen)}
           {this.renderScreenButton('Stress', Screens.StressScreen)}
           {this.renderScreenButton('Switch Root', Screens.SwitchRootScreen)}
+          {this.renderScreenButton('Timeouts', Screens.TimeoutsScreen)}
         </View>
       );
     }
@@ -52,11 +53,3 @@ class example extends Component {
 }
 
 AppRegistry.registerComponent('example', () => example);
-
-setTimeout(() => {
-  console.log("Don't cry for me Argentina.")
-}, 5000);
-
-setInterval(() => {
-  console.log("I am doing some periodic work.")
-}, 1000);
