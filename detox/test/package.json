@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "e2e": "./node_modules/.bin/mocha e2e --opts ./e2e/mocha.opts"
+    "e2e": "node --harmony_async_await ./node_modules/.bin/mocha e2e --opts ./e2e/mocha.opts"
   },
   "dependencies": {
     "lodash": "^4.14.1",
@@ -22,7 +22,7 @@
     },
     "ios-simulator": {
         "app": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-        "device": "iPhone 7 Plus"
+        "device": "iPhone 6"
     }
   }
 }

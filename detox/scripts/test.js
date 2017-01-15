@@ -1,4 +1,5 @@
 require('shelljs/global');
+require('./logger');
 
 let argv = process.argv.slice(2).map(str => str.toLowerCase());
 
@@ -21,5 +22,3 @@ if(argv.filter(e => e.startsWith('target=')).length == 0) {
 }
 
 exec('npm run test-exec -- ' + argv.join(' '));
-
-echo('\n');

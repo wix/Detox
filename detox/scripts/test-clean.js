@@ -1,27 +1,20 @@
-var shell = require('shelljs');
+require('shelljs/global');
+require('./logger');
 
-shell.echo('\n#################################################################');
-shell.echo('# killing any running react-native packagers');
-shell.exec('pkill -f "react-native/packager" ; pkill -f "react-native start"');
+console.step('killing any running react-native packagers');
+exec('pkill -f "react-native/packager" ; pkill -f "react-native start"');
 
-shell.echo('\n#################################################################');
-shell.echo('# killing ios simulator');
-shell.exec('killall "Simulator"');
+console.step('killing ios simulator');
+exec('killall "Simulator"');
 
-shell.echo('\n#################################################################');
-shell.echo('# killing detox-server');
-shell.exec('pkill -f "detox-server"');
+console.step('killing detox-server');
+exec('pkill -f "detox-server"');
 
-shell.echo('\n#################################################################');
-shell.echo('# cd test');
-shell.cd('test');
+console.step('cd test');
+cd('test');
 
-shell.echo('\n#################################################################');
-shell.echo('# deleting node modules');
-shell.rm('-rf', './node_modules');
+console.step('# deleting node modules');
+rm('-rf', './node_modules');
 
-shell.echo('\n#################################################################');
-shell.echo('# deleting ios build');
-shell.rm('-rf', 'ios/build');
-
-shell.echo('\n');
+console.step('# deleting ios build');
+rm('-rf', 'ios/build');
