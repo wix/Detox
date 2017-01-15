@@ -99,7 +99,7 @@ function _executeOrigSimulatorCommand(options, onComplete) {
 }
 
 function _getAppAbsolutePath(appPath) {
-  const absPath = path.join(__dirname, '../../../../', appPath);
+  const absPath = path.join(process.cwd(), appPath);
   try {
     fs.accessSync(absPath, fs.F_OK);
   } catch (e) {
@@ -417,7 +417,7 @@ function openURL(url, onComplete) {
   });
 }
 
-export {
+module.exports = {
   prepare,
   relaunchApp,
   deleteAndRelaunchApp,

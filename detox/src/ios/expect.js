@@ -479,7 +479,7 @@ const exportGlobals = function () {
   global.by = by;
 };
 
-export {
+module.exports = {
   exportGlobals,
   expect,
   waitFor,

@@ -1,4 +1,4 @@
-var detox = require('detox');
+var detox = require('../../src/index');
 var config = require('../package.json').detox;
 
 before(function (done) {
