@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -29,7 +30,11 @@ public class WebSocketClient extends WebSocketListener {
     private String sessionId;
     private OkHttpClient client;
     private WebSocket websocket;
+    private ActionHandler actionHandler;
 
+    public WebSocketClient(ActionHandler actionHandler) {
+        this.actionHandler = actionHandler;
+    }
 
     public void connectToServer(String sessionId) {
         connectToServer(Environment.getServerHost(), sessionId);
@@ -49,7 +54,7 @@ public class WebSocketClient extends WebSocketListener {
         client.dispatcher().executorService().shutdown();
     }
 
-    public void sendAction(String type, HashMap params, ActionHandler handler) {
+    public void sendAction(String type, Map params) {
         HashMap data = new HashMap();
         data.put("type", type);
         data.put("params", params);
@@ -57,7 +62,7 @@ public class WebSocketClient extends WebSocketListener {
         JSONObject json = new JSONObject(data);
         websocket.send(json.toString());
         Log.d(LOG_TAG, "Detox Action Sent: " + type);
-        if(handler != null) handler.onAction();
+        if(actionHandler != null) actionHandler.onAction(type, params);
     }
 
     public void receiveAction(WebSocket webSocket,  String json) {
@@ -87,7 +92,8 @@ public class WebSocketClient extends WebSocketListener {
         HashMap params = new HashMap();
         params.put("sessionId", sessionId);
         params.put("role", "testee");
-        sendAction("login", params, null);
+        sendAction("login", params);
+        actionHandler.onConnect();
     }
 
     @Override
@@ -104,6 +110,7 @@ public class WebSocketClient extends WebSocketListener {
     public void onClosing(WebSocket webSocket, int code, String reason) {
         webSocket.close(1000, null);
         Log.d(LOG_TAG, "Detox Closed: " + code + " " + reason);
+        actionHandler.onClosed();
     }
 
     @Override
@@ -123,6 +130,8 @@ public class WebSocketClient extends WebSocketListener {
     }
 
     public interface ActionHandler {
-        void onAction();
+        void onAction(String type, Map params);
+        void onConnect();
+        void onClosed();
     }
 }
