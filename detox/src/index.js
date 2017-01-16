@@ -1,6 +1,6 @@
 var websocket = require('./websocket');
 var expect = require('./ios/expect');
-var simulator = require('./ios/simulator');
+var Simulator = require('./devices/simulator');
 var utils = require('./utils.js');
 
 var _detoxConfig = {
@@ -16,7 +16,7 @@ function _config(detoxConfig) {
 
 function _start(onStart) {
   expect.exportGlobals();
-  global.simulator = simulator;
+  global.simulator = new Simulator();
 
   websocket.config(_detoxConfig.session);
   websocket.connect(() => {
