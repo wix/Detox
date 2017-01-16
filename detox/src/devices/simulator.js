@@ -248,12 +248,12 @@ class Simulator extends Device {
       onComplete(new Error(`scheme.app property is missing, should hold the app binary path`));
       return;
     }
-    _relaunchApp(this._currentScheme.device, _currentScheme.app, (err) => {
+    this._relaunchApp(this._currentScheme.device, this._currentScheme.app, (err) => {
       if (err) {
         onComplete(err);
         return;
       }
-      _waitUntilReady(() => {
+      this._waitUntilReady(() => {
         onComplete();
       });
     });
