@@ -40,7 +40,8 @@
     "babel-preset-react-native-stage-0": "^1.0.0",
     "babel-register": "^6.8.0",
     "shelljs": "^0.7.3",
-    "ttab": "^0.3.1"
+    "ttab": "^0.3.1",
+    "colors": "^1.1.2"
   },
   "babel": {
     "env": {
