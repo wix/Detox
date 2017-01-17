@@ -205,7 +205,7 @@ class Simulator extends Device {
       this._executeSimulatorCommand(options, (err2, stdout, stderr) => {
         if (this._verbose) {
           // in the future we'll allow expectations on logs and _listenOnAppLogfile will always run (remove if)
-          _listenOnAppLogfile(_getAppLogfile(bundleId, stdout));
+          this._listenOnAppLogfile(this._getAppLogfile(bundleId, stdout));
         }
         if (err2) {
           onComplete(err2);
@@ -415,7 +415,7 @@ class Simulator extends Device {
       return;
     }
 
-    const query = _getQueryFromDevice(this._currentScheme.device);
+    const query = this._getQueryFromDevice(this._currentScheme.device);
     const options = {args: `${query} open ${url}`};
     this._executeSimulatorCommand(options, (err, stdout, stderr) => {
       if (err) {
@@ -426,12 +426,5 @@ class Simulator extends Device {
     });
   }
 }
-//module.exports = {
-//  prepare,
-//  relaunchApp,
-//  deleteAndRelaunchApp,
-//  reloadReactNativeApp,
-//  openURL
-//};
 
 module.exports = Simulator;
