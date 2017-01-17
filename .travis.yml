@@ -3,6 +3,7 @@ osx_image: xcode8.1
 branches:
   only:
   - master
+  - lerna
 env:
   global:
   - NODE_VERSION=stable
