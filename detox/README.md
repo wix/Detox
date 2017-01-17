@@ -6,10 +6,23 @@ This README is only relevant if you're interested in contributing to detox core 
 
 ## Install
 
-* make sure you're in folder `detox/detox`
-* run `git submodule update --init --recursive`<br>(this makes sure all git submodule dependencies are properly checked out)
-* run `npm install`
-* run `npm run build`
+### prerequisites 
+* Install command line tools
+
+```sh
+npm install -g lerna
+npm install -g react-native-cli
+```
+
+On project root directory:
+
+1. Update git submodules
+2. 
+	```sh
+	git submodule update --init --recursive`
+	```
+(this makes sure all git submodule dependencies are properly checked out) 
+
 
 ## Run Tests
 
