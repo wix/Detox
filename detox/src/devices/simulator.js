@@ -67,8 +67,15 @@ class Simulator extends Device {
 
   // fb simctl commands (we try to use it as much as possible since it supports multiple instances)
   _executeSimulatorCommand(options, onComplete) {
+    const frameworkPath = __dirname + "/../../Detox.framework/Detox";
+    if(fs.existsSync(frameworkPath) === false)
+    {
+      throw new Error('Detox.framework not found at ' + frameworkPath)
+    }
+
     const fbsimctlPath = 'fbsimctl'; //By this point, it should already be installed on the system by brew.
-    const cmd = fbsimctlPath + ' ' + options.args;
+    const cmd = "export FBSIMCTL_CHILD_DYLD_INSERT_LIBRARIES=\"" + frameworkPath + "\" && " + fbsimctlPath + ' ' + options.args;
+
     if (this._verbose) {
       console.log(`DETOX exec: ${cmd}\n`);
     }
@@ -217,14 +224,14 @@ class Simulator extends Device {
   }
 
   // ./node_modules/detox-tools/fbsimctl/fbsimctl relaunch org.reactjs.native.example.example
-  _relaunchApp(device, appPath, onComplete) {
+  _terminateApp(device, appPath, onComplete) {
     const query = this._getQueryFromDevice(device);
     this._getBundleIdFromApp(appPath, (err, bundleId) => {
       if (err) {
         onComplete(err);
         return;
       }
-      const options = {args: `${query} relaunch ${bundleId} ${this._defaultLaunchArgs.join(' ')}`};
+      const options = {args: `${query} terminate ${bundleId}`};
       this._executeSimulatorCommand(options, (err2, stdout, stderr) => {
         if (this._verbose) {
           // in the future we'll allow expectations on logs and _listenOnAppLogfile will always run (remove if)
@@ -232,6 +239,23 @@ class Simulator extends Device {
         }
         if (err2) {
           onComplete(err2);
+          return;
+        }
+        onComplete();
+      });
+    });
+  }
+
+  // Calling `relaunch` is not good as it seems `fbsimctl` does not forward env variables in this mode.
+  _relaunchApp(device, appPath, onComplete) {
+    this._terminateApp(device, appPath, (err) => {
+      if (err) {
+        onComplete(err);
+        return;
+      }
+      this._launchApp(device, appPath, (err3) => {
+        if (err3) {
+          onComplete(err3);
           return;
         }
         onComplete();

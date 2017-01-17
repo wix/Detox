@@ -6,8 +6,8 @@
 
 If you have integrated with Detox in the past, you will need to clean your project before integrating with current Detox version.
 
-* Under Frameworks, remove "Detox.framework" from your project.
-* In your AppDelegate.m, remove any Detox code, such as calls to `detoxConditionalInit()`.
+* Use the provided `cleanup_4.0.rb` to remove unneeded changes made with Detox 4.0.x.
+* Make sure to add changes performed by running this script to version control.
 
 #### Step 1: Prerequisites
 
@@ -42,7 +42,7 @@ By default, Xcode uses a randomized hidden path for outputting project build art
       "sessionId": "YourProject"
     },
     "ios-simulator": {
-      "app": "ios/Build/Products/Debug_Detox-iphonesimulator/YourProject.app",
+      "app": "ios/Build/Products/Debug-iphonesimulator/YourProject.app",
       "device": "iPhone 7, iOS 10.1"
     }
   }
@@ -51,38 +51,31 @@ By default, Xcode uses a randomized hidden path for outputting project build art
 
 * The resulting `package.json` should look something like [this](demo-react-native/package.json).
 
-#### Step 3: Integrate Detox in Your Project
-
-* Make sure your Project schemes are shared. Open you project in Xcode, select menu `Product` ► `Scheme` ► `Manage Schemes...`, and check the `Shared Scheme` checkbox next to schemes that are part of the project. There is no need to do this for library schemes. Note the scheme you would like to use Detox with.
-* In your root folder, run `node_modules/detox/scripts/deploy_detox.rb <Path To>/YourProject.xcodeproj`.
-* Notice the new scheme(s) added in your Xcode project. If you had a `YourProject` scheme before, now there is an analogous `YourProject_Detox` scheme.
-* Make sure to add the new schema files to your source control (e.g. `git add ios/MyProject.xcodeproj/xcshareddata/xcschemes/Release_Detox.xcscheme`)
-
-#### Step 4: Prepare the E2E Folder for Your Tests
+#### Step 3: Prepare the E2E Folder for Your Tests
 
 * Create an `e2e` folder in your project root and open it.
 * Create `mocha.opts` file with this [content](demo-react-native/e2e/mocha.opts).
 * Create `init.js` file with this [content](demo-react-native/e2e/init.js).
 * Create your first test! `myFirstTest.spec.js` with content similar to [this](demo-react-native/e2e/example.spec.js).
 
-#### Step 5: Build Your Project
+#### Step 4: Build Your Project
 
-* Build your project with a newly created `_Detox` scheme:
+* Build your project with your scheme:
 	* Building with Xcode.
-	   * Select the desired `_Detox` scheme.
+	   * Select the desired scheme.
 	   * Build your project.
 	* Building from command-line:
-		* `xcodebuild -scheme YourProject_Detox -sdk iphonesimulator -derivedDataPath build`
+		* `xcodebuild -scheme YourProject -sdk iphonesimulator -derivedDataPath build`
 	* Building using React Native
-		* `react-native run-ios --scheme YourProject_Detox`
+		* `react-native run-ios --scheme YourProject`
 * If you have build problems, see [troubleshooting](#troubleshooting-build-problems).
 
-> Note: remember to update the path for `app` in your `package.json`.
+> Note: remember to update the `app` path in your `package.json`.
 
-#### Step 6: Run Your Tests
+#### Step 5: Run Your Tests
 
 * Follow [these instructions](RUNNING.md).
 
-#### Step 7: Adding Additional Schemes
+#### Step 6: Adding Additional Schemes
 
 You can add additional schemes to your project normally. After making changes to
