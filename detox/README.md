@@ -6,23 +6,28 @@ This README is only relevant if you're interested in contributing to detox core 
 
 ## Install
 
-### prerequisites 
-* Install command line tools
+### Install command line tools
 
 ```sh
 npm install -g lerna
 npm install -g react-native-cli
 ```
 
-On project root directory:
+For all the internal projects (detox, detox-server, demos, test) `lerna` will create symbolic links in `node_modules` instead of `npm` copying the content of the projects. This way, any change you do on any code is there immediatly, no need to update node modules, or copy files between projects.
 
-1. Update git submodules
-2. 
-	```sh
-	git submodule update --init --recursive`
-	```
-(this makes sure all git submodule dependencies are properly checked out) 
+#### Update git submodules 
+On project root directory
 
+```sh
+git submodule update --init --recursive`
+```
+(this makes sure all git submodule dependencies are properly checked out)
+
+#### lerna bootstrap (instead of the multiple `npm install`s we did previosuly)
+
+```sh
+lerna bootsrap
+```
 
 ## Run Tests
 
@@ -51,19 +56,9 @@ First, follow the instructions above until the tests pass. Run the tests after e
  * if you change the e2e tests (stuff under `detox/detox/test/e2e`)
    * no need to do anything special
    * run `npm run test`
- * if you change the test RN app (stuff under `detox/detox/text`)
+ * if you change the test RN app (stuff under `detox/detox/test`)
    * for debug
      * no need to do anything special
-     * run `npm run test --debug`
-   * for release
-     * run `npm run test-install`
-     * run `npm run test --release`
- * if you change detox-server (stuff under `detox/detox-server`)
-   * run `npm run test-update-js`
-   * run `npm run test`
- * if you change detox-tools (stuff under `detox/detox-tools`)
-   * run `cd test ; npm install detox-tools ; cd ..`
-   * for debug
      * run `npm run test --debug`
    * for release
      * run `npm run test-install`
