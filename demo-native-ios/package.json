@@ -1,7 +1,7 @@
 {
   "devDependencies": {
-    "detox": "^4.0.9",
-    "detox-server": "^1.1.0"
+    "detox": "latest",
+    "detox-server": "latest"
   },
   "scripts": {
     "e2e": "./node_modules/.bin/mocha e2e --opts ./e2e/mocha.opts"
@@ -13,7 +13,7 @@
     },
     "ios-simulator": {
       "app": "Build/Products/Debug_Detox-iphonesimulator/NativeExample.app",
-      "device": "iPhone 7, iOS 10.1"
+      "device": "iPhone 7 Plus"
     }
   }
 }

@@ -7,7 +7,6 @@
 //
 
 #import "DetoxManager.h"
-#import <dlfcn.h>
 
 @interface DetoxManager()
 

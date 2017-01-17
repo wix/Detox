@@ -51,8 +51,16 @@ function _getBundleIdFromApp(appPath, onComplete) {
 
 // fb simctl commands (we try to use it as much as possible since it supports multiple instances)
 function _executeSimulatorCommand(options, onComplete) {
+  const frameworkPath = __dirname + "/../../Detox.framework/Detox";
+  if(fs.existsSync(frameworkPath) === false)
+  {
+    throw new Error('Detox.framework not found at ' + frameworkPath)
+  }
+
   const fbsimctlPath = 'fbsimctl'; //By this point, it should already be installed on the system by brew.
-  const cmd = fbsimctlPath + ' ' + options.args;
+  const cmd = "export FBSIMCTL_CHILD_DYLD_INSERT_LIBRARIES=\"" + frameworkPath + "\" && " + fbsimctlPath + ' ' + options.args;
+  // const cmd = "export FBSIMCTL_CHILD_DYLD_INSERT_LIBRARIES=\"" + frameworkPath + "\" && " + fbsimctlPath + ' ' + options.args;
+  console.log(cmd);
   if (_verbose) {
     console.log(`DETOX exec: ${cmd}\n`);
   }
@@ -207,15 +215,15 @@ function _launchApp(device, appPath, onComplete) {
   });
 }
 
-// ./node_modules/detox-tools/fbsimctl/fbsimctl relaunch org.reactjs.native.example.example
-function _relaunchApp(device, appPath, onComplete) {
+// fbsimctl terminate org.reactjs.native.example.example
+function _terminateApp(device, appPath, onComplete) {
   const query = _getQueryFromDevice(device);
   _getBundleIdFromApp(appPath, function (err, bundleId) {
     if (err) {
       onComplete(err);
       return;
     }
-    const options = {args: `${query} relaunch ${bundleId} ${_defaultLaunchArgs.join(' ')}`};
+    const options = {args: `${query} terminate ${bundleId}`};
     _executeSimulatorCommand(options, function (err2, stdout, stderr) {
       if (_verbose) {
         // in the future we'll allow expectations on logs and _listenOnAppLogfile will always run (remove if)
@@ -228,6 +236,46 @@ function _relaunchApp(device, appPath, onComplete) {
       onComplete();
     });
   });
+}
+
+// ./node_modules/detox-tools/fbsimctl/fbsimctl relaunch org.reactjs.native.example.example
+function _relaunchApp(device, appPath, onComplete) {
+  _terminateApp(device, appPath, function (err) {
+    if (err) {
+        onComplete(err);
+        return;
+      }
+      _launchApp(device, appPath, function (err3) {
+        if (err3) {
+          onComplete(err3);
+          return;
+        }
+        onComplete();
+      });
+  });
+
+
+  // Calling `relaunch` is not good as it seems `fbsimctl` does not forward env variables in this mode.
+
+  // const query = _getQueryFromDevice(device);
+  // _getBundleIdFromApp(appPath, function (err, bundleId) {
+  //   if (err) {
+  //     onComplete(err);
+  //     return;
+  //   }
+  //   const options = {args: `${query} relaunch ${bundleId} ${_defaultLaunchArgs.join(' ')}`};
+  //   _executeSimulatorCommand(options, function (err2, stdout, stderr) {
+  //     if (_verbose) {
+  //       // in the future we'll allow expectations on logs and _listenOnAppLogfile will always run (remove if)
+  //       _listenOnAppLogfile(_getAppLogfile(bundleId, stdout));
+  //     }
+  //     if (err2) {
+  //       onComplete(err2);
+  //       return;
+  //     }
+  //     onComplete();
+  //   });
+  // });
 }
 
 function relaunchApp(onComplete) {
