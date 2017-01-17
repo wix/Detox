@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "react": "*",
-    "react-native": "*"
+    "react-native": "^0.40.0"
   },
   "detox": {
     "session": {
@@ -16,12 +16,12 @@
       "sessionId": "demo-react-native"
     },
     "ios-simulator": {
-      "app": "ios/build/Build/Products/Release_Detox-iphonesimulator/example.app",
-      "device": "iPhone 7, iOS 10.1"
+      "app": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+      "device": "iPhone 7 Plus"
     }
   },
   "devDependencies": {
-    "detox": "^4.0.9",
-    "detox-server": "^1.1.0"
+    "detox": "latest",
+    "detox-server": "latest"
   }
 }
