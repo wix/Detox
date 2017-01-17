@@ -22,3 +22,4 @@ export default class SwitchRootScreen extends Component {
     );
   }
 }
+
