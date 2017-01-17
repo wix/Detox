@@ -58,7 +58,8 @@
     "commander": "^2.9.0",
     "lodash": "^4.14.1",
     "mocha": "^2.5.3",
-    "react-native-invoke": "^0.2.1",
-    "shelljs": "^0.7.5"
+    "ws": "^1.1.1",
+    "react-native-invoke": "^0.2.1"
   }
 }
+ 
