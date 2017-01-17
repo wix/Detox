@@ -3,7 +3,6 @@ require('./logger');
 set('-e');
 
 console.step('cd test');
-
 cd('test');
 
 console.step('killing any running react-native packagers');

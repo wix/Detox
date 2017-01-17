@@ -18,7 +18,7 @@ Please note that this library is still pre version 1.0.0 and under active develo
 
 Open the [React Native demo project](demo-react-native) and follow the instructions
 
-Not using React Native? you now have a [pure native demo project](demo-native) too
+Not using React Native? you now have a [pure native demo project](demo-native-ios) too
 
 ## Wanna try it with your own project?
 

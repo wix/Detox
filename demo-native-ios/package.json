@@ -1,10 +1,15 @@
 {
+  "name": "detox-demo-native-ios",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "packager": "react-native start",
+    "detox-server": "detox-server",
+    "e2e": "mocha e2e --opts ./e2e/mocha.opts"
+  },
   "devDependencies": {
     "detox": "^4.0.9",
     "detox-server": "^1.1.0"
-  },
-  "scripts": {
-    "e2e": "./node_modules/.bin/mocha e2e --opts ./e2e/mocha.opts"
   },
   "detox": {
     "session": {

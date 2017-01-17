@@ -1,0 +1,12 @@
+{
+  "lerna": "2.0.0-beta.32",
+  "packages": [
+    "demo-native-android",
+    "demo-native-ios",
+    "demo-react-native",
+    "detox",
+    "detox/test",
+    "detox-server"
+  ],
+  "version": "independent"
+}

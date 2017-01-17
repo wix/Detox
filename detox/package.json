@@ -6,7 +6,8 @@
   },
   "version": "4.0.13",
   "bin": {
-    "detox": "./scripts/detox.js"
+    "detox": "./scripts/detox.js",
+    "mocha": "./node_modules/.bin/mocha"
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,6 @@
     "build": "scripts/build.sh",
     "test-install": "node scripts/test-install.js",
     "test-clean": "node scripts/test-clean.js",
-    "test-update-js": "node scripts/test-update-js.js",
     "test-update-native": "node scripts/test-update-native.js",
     "test": "node scripts/test.js",
     "start-server": "node scripts/start-server.js",

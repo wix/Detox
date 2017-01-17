@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node node_modules/react-native/local-cli/cli.js start",
-    "start-server": "node ./node_modules/.bin/detox-server",
-    "e2e": "node --harmony_async_await ./node_modules/.bin/mocha e2e --opts ./e2e/mocha.opts"
+    "packager": "react-native start",
+    "detox-server": "detox-server",
+    "e2e": "mocha e2e --opts ./e2e/mocha.opts"
   },
   "dependencies": {
     "lodash": "^4.14.1",
@@ -13,8 +13,8 @@
     "react-native": "0.35.0"
   },
   "devDependencies": {
-    "detox": "file:..",
-    "detox-server": "file:../../detox-server"
+    "detox": "^4.0.9",
+    "detox-server": "^1.1.0"
   },
   "detox": {
     "session": {
