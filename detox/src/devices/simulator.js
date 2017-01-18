@@ -22,6 +22,7 @@ class Simulator extends Device {
     this._currentScheme = {};
     this._verbose = false;
     this._appLogProcess;
+    this._currentSimulator = "";
 
     process.on('exit', () => {
       if (this._appLogProcess) {
@@ -82,10 +83,10 @@ class Simulator extends Device {
     exec(cmd, (err, stdout, stderr) => {
       if (this._verbose) {
         if (stdout) console.log(`DETOX exec stdout:\n`, stdout, '\n');
-        if (stderr) console.log(`DETOX exec stderr:\n`, stderr, '\n');
+        // if (stderr) console.log(`DETOX exec stderr:\n`, stderr, '\n');
       }
       if (options.showStdout) {
-        console.log(`DETOX fbsimctl ${options.args}:\n`, stdout, '\n');
+        console.log(`DETOX ${cmd}\n`, stdout, '\n');
       }
       if (err) {
         console.error(stdout);
@@ -134,9 +135,8 @@ class Simulator extends Device {
   // ./node_modules/detox-tools/fbsimctl/fbsimctl install ./ios/build/Build/Products/Debug-iphonesimulator/example.app
   _installApp(device, appPath, onComplete) {
     try {
-      const query = this._getQueryFromDevice(device);
       const absPath = this._getAppAbsolutePath(appPath);
-      const options = {args: `${query} install ${absPath}`};
+      const options = {args: `${this._currentSimulator} install ${absPath}`};
       this._executeSimulatorCommand(options, (err) => {
         if (err) {
           onComplete(err);
@@ -152,7 +152,6 @@ class Simulator extends Device {
 
   // ./node_modules/detox-tools/fbsimctl/fbsimctl uninstall org.reactjs.native.example.example
   _uninstallApp(device, appPath, onComplete) {
-    const query = this._getQueryFromDevice(device);
     this._getBundleIdFromApp(appPath, (err, bundleId) => {
       if (err) {
         onComplete(err);
@@ -165,7 +164,7 @@ class Simulator extends Device {
         onComplete();
       });
       */
-      const options = {args: `${query} uninstall ${bundleId}`};
+      const options = {args: `${this._currentSimulator} uninstall ${bundleId}`};
       this._executeSimulatorCommand(options, (err2) => {
         // this might fail if the app isn't installed, so don't worry about failure
         onComplete();
@@ -202,13 +201,12 @@ class Simulator extends Device {
 
   // ./node_modules/detox-tools/fbsimctl/fbsimctl launch org.reactjs.native.example.example arg1 arg2 arg3
   _launchApp(device, appPath, onComplete) {
-    const query = this._getQueryFromDevice(device);
     this._getBundleIdFromApp(appPath, (err, bundleId) => {
       if (err) {
         onComplete(err);
         return;
       }
-      const options = {args: `${query} launch --stderr ${bundleId} ${this._defaultLaunchArgs.join(' ')}`};
+      const options = {args: `${this._currentSimulator} launch --stderr ${bundleId} ${this._defaultLaunchArgs.join(' ')}`};
       this._executeSimulatorCommand(options, (err2, stdout, stderr) => {
         if (this._verbose) {
           // in the future we'll allow expectations on logs and _listenOnAppLogfile will always run (remove if)
@@ -225,13 +223,12 @@ class Simulator extends Device {
 
   // ./node_modules/detox-tools/fbsimctl/fbsimctl relaunch org.reactjs.native.example.example
   _terminateApp(device, appPath, onComplete) {
-    const query = this._getQueryFromDevice(device);
     this._getBundleIdFromApp(appPath, (err, bundleId) => {
       if (err) {
         onComplete(err);
         return;
       }
-      const options = {args: `${query} terminate ${bundleId}`};
+      const options = {args: `${this._currentSimulator} terminate ${bundleId}`};
       this._executeSimulatorCommand(options, (err2, stdout, stderr) => {
         if (this._verbose) {
           // in the future we'll allow expectations on logs and _listenOnAppLogfile will always run (remove if)
@@ -326,7 +323,7 @@ class Simulator extends Device {
   }
 
   _getQueryFromDevice(device) {
-    let res = '--first 1 --simulators ';
+    let res = '';
     const deviceParts = device.split(',');
     for (let i = 0 ; i < deviceParts.length ; i++) res += `"${deviceParts[i].trim()}" `;
     return res.trim();
@@ -335,20 +332,21 @@ class Simulator extends Device {
   // ./node_modules/detox-tools/fbsimctl/fbsimctl "iPhone 5" "iOS 8.3" list
   _listSimulators(device, onComplete) {
     const query = this._getQueryFromDevice(device);
-    const options = {args: `${query} list`, showStdout: true};
-    this._executeSimulatorCommand(options, (err) => {
+    const options = {args: `${query} --first 1 --simulators list | awk '/(.*?).*/{ print $1 }'`, showStdout: true};
+    this._executeSimulatorCommand(options, (err, stdout) => {
       if (err) {
         onComplete(err);
         return;
       }
+      //stdout will contain the requested simulator id.
+      this._currentSimulator = stdout.trim();
       onComplete();
     });
   }
 
   // ./node_modules/detox-tools/fbsimctl/fbsimctl "iPhone 5" "iOS 8.3" boot
   _bootSimulator(device, onComplete) {
-    const query = this._getQueryFromDevice(device);
-    const options = {args: `--state=shutdown --state=shutting-down ${query} boot`};
+    const options = {args: `--state=shutdown --state=shutting-down ${this._currentSimulator} boot`};
     this._executeSimulatorCommand(options, (err) => {
       if (err) {
         onComplete(err);
@@ -360,8 +358,7 @@ class Simulator extends Device {
 
   // ./node_modules/detox-tools/fbsimctl/fbsimctl "iPhone 5" "iOS 8.3" shutdown
   _shutdownSimulator(device, onComplete) {
-    const query = this._getQueryFromDevice(device);
-    const options = {args: `--state=booted ${query} shutdown`};
+    const options = {args: `--state=booted ${this._currentSimulator} shutdown`};
     this._executeSimulatorCommand(options, (err) => {
       if (err) {
         onComplete(err);
@@ -397,7 +394,7 @@ class Simulator extends Device {
   }
 
   prepare(params, onComplete) {
-    this._verbose = utils.getArgValue('verbose');
+    this._verbose = true;// utils.getArgValue('verbose');
     if (params['session']) {
       const settings = params['session'];
       if (!settings.server) {
@@ -439,8 +436,7 @@ class Simulator extends Device {
       return;
     }
 
-    const query = this._getQueryFromDevice(this._currentScheme.device);
-    const options = {args: `${query} open ${url}`};
+    const options = {args: `${this._currentSimulator} open ${url}`};
     this._executeSimulatorCommand(options, (err, stdout, stderr) => {
       if (err) {
         onComplete(err);
