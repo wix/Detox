@@ -18,7 +18,7 @@
     },
     "ios-simulator": {
       "app": "Build/Products/Debug_Detox-iphonesimulator/NativeExample.app",
-      "device": "iPhone 7, iOS 10.1"
+      "device": "iPhone 7 Plus"
     }
   }
 }

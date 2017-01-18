@@ -1,5 +1,5 @@
 #import "AppDelegate.h"
-#import "RCTRootView.h"
+#import <React/RCTRootView.h>
 
 @implementation AppDelegate
 
