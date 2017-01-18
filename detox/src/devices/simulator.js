@@ -44,26 +44,21 @@ class Simulator extends Device {
   }
 
   _getBundleIdFromApp(appPath, onComplete) {
-    try {
-      const absPath = this._getAppAbsolutePath(appPath);
-      const infoPlistPath = path.join(absPath, '/Info.plist');
-      bplist.parseFile(infoPlistPath, (err, obj) => {
-        if (err) {
-          onComplete(err);
-          return;
-        }
-        if (Array.isArray(obj)) obj = obj[0];
-        const bundleId = obj['CFBundleIdentifier'];
-        if (!bundleId) {
-          onComplete(new Error(`field CFBundleIdentifier not found inside Info.plist of app binary at ${absPath}`));
-          return;
-        }
-        onComplete(null, bundleId);
-      });
-    } catch (e) {
-      onComplete(e);
-      return;
-    }
+    const absPath = this._getAppAbsolutePath(appPath);
+    const infoPlistPath = path.join(absPath, '/Info.plist');
+    bplist.parseFile(infoPlistPath, (err, obj) => {
+      if (err) {
+        onComplete(err);
+        return;
+      }
+      if (Array.isArray(obj)) obj = obj[0];
+      const bundleId = obj['CFBundleIdentifier'];
+      if (!bundleId) {
+        onComplete(new Error(`field CFBundleIdentifier not found inside Info.plist of app binary at ${absPath}`));
+        return;
+      }
+      onComplete(null, bundleId);
+    });
   }
 
   // fb simctl commands (we try to use it as much as possible since it supports multiple instances)
@@ -83,40 +78,14 @@ class Simulator extends Device {
     exec(cmd, (err, stdout, stderr) => {
       if (this._verbose) {
         if (stdout) console.log(`DETOX exec stdout:\n`, stdout, '\n');
-        // if (stderr) console.log(`DETOX exec stderr:\n`, stderr, '\n');
+        if (stderr) console.log(`DETOX exec stderr:\n`, stderr, '\n');
       }
       if (options.showStdout) {
         console.log(`DETOX ${cmd}\n`, stdout, '\n');
       }
-      if (err) {
-        console.error(stdout);
-        console.error(stderr);
-        onComplete(err, stdout, stderr);
-        return;
-      }
-      onComplete(null, stdout, stderr);
-    });
-  }
 
-  // original simctl by Apple (we try to use it only where fbsimctl doesn't work or is very slow)
-  _executeOrigSimulatorCommand(options, onComplete) {
-    const cmd = 'xcrun simctl ' + options.args;
-    if (this._verbose) {
-      console.log(`DETOX exec: ${cmd}\n`);
-    }
-    exec(cmd, (err, stdout, stderr) => {
-      if (this._verbose) {
-        if (stdout) console.log(`DETOX exec stdout:\n`, stdout, '\n');
-        if (stderr) console.log(`DETOX exec stderr:\n`, stderr, '\n');
-      }
-      if (options.showStdout) {
-        console.log(`DETOX simctl ${options.args}:\n`, stdout, '\n');
-      }
       if (err) {
-        console.error(stdout);
-        console.error(stderr);
-        onComplete(err, stdout, stderr);
-        return;
+        throw new Error(`${err} \nstdout: ${stdout} \nstderr: ${stderr}`);
       }
       onComplete(null, stdout, stderr);
     });
@@ -332,14 +301,18 @@ class Simulator extends Device {
   // ./node_modules/detox-tools/fbsimctl/fbsimctl "iPhone 5" "iOS 8.3" list
   _listSimulators(device, onComplete) {
     const query = this._getQueryFromDevice(device);
-    const options = {args: `${query} --first 1 --simulators list | awk '/(.*?).*/{ print $1 }'`, showStdout: true};
+    const options = {args: `${query} --first 1 --simulators list | head -1 | awk '/(^[0-9A-F]{8}-[0-9A-F]{4}-[1-5][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}).*/{ print $1 }'`, showStdout: true};
     this._executeSimulatorCommand(options, (err, stdout) => {
       if (err) {
         onComplete(err);
         return;
       }
+      const simId = stdout.trim();
+      if (!simId) {
+        throw new Error(`can't find a simulator to match with ${device}`);
+      }
       //stdout will contain the requested simulator id.
-      this._currentSimulator = stdout.trim();
+      this._currentSimulator = simId;
       onComplete();
     });
   }
@@ -394,7 +367,8 @@ class Simulator extends Device {
   }
 
   prepare(params, onComplete) {
-    this._verbose = true;// utils.getArgValue('verbose');
+    this._verbose = utils.getArgValue('verbose');
+
     if (params['session']) {
       const settings = params['session'];
       if (!settings.server) {

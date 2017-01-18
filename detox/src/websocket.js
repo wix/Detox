@@ -1,19 +1,19 @@
-var WebSocket = require('ws');
+const WebSocket = require('ws');
 
-var _detoxConfig = {};
-var _ws;
-var _invokeQueue = [];
-var _readyForInvokeId = 0;
-var _finishOnInvokeId;
-var _onTestResult;
-var _onNextAction = {};
+let _detoxConfig = {};
+let _ws;
+let _invokeQueue = [];
+let _readyForInvokeId = 0;
+let _finishOnInvokeId;
+let _onTestResult;
+let _onNextAction = {};
 
 function sendAction(type, params) {
   if (!_ws) return;
   const json = JSON.stringify({
     type: type,
     params: params
-  }) + '\n '
+  }) + '\n ';
   _ws.send(json);
 }
 
@@ -23,15 +23,15 @@ function config(params) {
 
 function connect(onConnect) {
   _ws = new WebSocket(_detoxConfig.server);
-  _ws.on('open', function () {
+  _ws.on('open',() => {
     sendAction('login', {
       sessionId: _detoxConfig.sessionId,
       role: 'tester'
     });
     onConnect();
   });
-  _ws.on('message', function (str) {
-    var action = JSON.parse(str);
+  _ws.on('message', (str) => {
+    let action = JSON.parse(str);
     if (!action.type) return;
     handleAction(action.type, action.params);
   });
@@ -42,11 +42,17 @@ function cleanup(onComplete) {
   sendAction('cleanup');
 }
 
+// if there's an error thrown, close the websocket,
+// if not, mocha will continue running until reaches timeout.
+process.on('uncaughtException', (err) => {
+  _ws.close();
+});
+
 function execute(invocation) {
   if (typeof invocation === 'function') {
     invocation = invocation();
   }
-  var id = _invokeQueue.length;
+  const id = _invokeQueue.length;
   invocation.id = id.toString();
   _invokeQueue.push(invocation);
   if (_readyForInvokeId >= id) {
@@ -100,11 +106,11 @@ function handleAction(type, params) {
 }
 
 module.exports = {
-  config: config,
-  connect: connect,
-  cleanup: cleanup,
-  waitForTestResult: waitForTestResult,
-  waitForNextAction: waitForNextAction,
-  execute: execute,
-  sendAction: sendAction
+  config,
+  connect,
+  cleanup,
+  waitForTestResult,
+  waitForNextAction,
+  execute,
+  sendAction
 };

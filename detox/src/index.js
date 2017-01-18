@@ -2,6 +2,7 @@ var websocket = require('./websocket');
 var expect = require('./ios/expect');
 var Simulator = require('./devices/simulator');
 var utils = require('./utils.js');
+require('./logger');
 
 var _detoxConfig = {
   session: {
