@@ -71,8 +71,7 @@ class Simulator extends Device {
       throw new Error(`Detox.framework not found at ${frameworkPath}`);
     }
 
-    const fbsimctlPath = 'fbsimctl'; //By this point, it should already be installed on the system by brew.
-    const cmd = "export FBSIMCTL_CHILD_DYLD_INSERT_LIBRARIES=\"" + frameworkPath + "\" && " + fbsimctlPath + ' ' + options.args;
+    const cmd = `export FBSIMCTL_CHILD_DYLD_INSERT_LIBRARIES=\"${frameworkPath}\" &&  fbsimctl ${options.args}`;
     log.verbose(`exec: ${cmd}\n`);
 
     try {
@@ -226,9 +225,9 @@ class Simulator extends Device {
   // ./node_modules/detox-tools/fbsimctl/fbsimctl "iPhone 5" "iOS 8.3" list
   async _listSimulators(device) {
     const query = this._getQueryFromDevice(device);
-    const options = {args: `${query} --first 1 --simulators list | head -1 | awk '/(^[0-9A-F]{8}-[0-9A-F]{4}-[1-5][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}).*/{ print $1 }'`, showStdout: true};
+    const options = {args: `--json ${query} --first 1 --simulators list`, showStdout: true};
     const result = await this._executeSimulatorCommand(options);
-    const simId = result.stdout.trim();
+    const simId = JSON.parse(result.stdout).subject.udid;
     if (!simId) {
       throw new Error(`can't find a simulator to match with ${device}`);
     }
