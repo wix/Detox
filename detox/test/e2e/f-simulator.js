@@ -1,32 +1,31 @@
-describe('Simulator', function () {
-
-  describe('reloadReactNativeApp', function () {
-    before(function (done) {
+describe('Simulator', () => {
+  describe('reloadReactNativeApp', () => {
+    before((done) => {
       simulator.reloadReactNativeApp(done);
     });
-    it('should tap successfully', function () {
+    it('should tap successfully', () => {
       element(by.label('Sanity')).tap();
       element(by.label('Say Hello')).tap();
       expect(element(by.label('Hello!!!'))).toBeVisible();
     });
   });
 
-  describe('relaunchApp', function () {
-    before(function (done) {
+  describe('relaunchApp', () => {
+    before((done) => {
       simulator.relaunchApp(done);
     });
-    it('should tap successfully', function () {
+    it('should tap successfully', () => {
       element(by.label('Sanity')).tap();
       element(by.label('Say Hello')).tap();
       expect(element(by.label('Hello!!!'))).toBeVisible();
     });
   });
 
-  describe('deleteAndRelaunchApp', function () {
-    before(function (done) {
+  describe('deleteAndRelaunchApp', () => {
+    before((done) => {
       simulator.deleteAndRelaunchApp(done);
     });
-    it('should tap successfully', function () {
+    it('should tap successfully', () => {
       element(by.label('Sanity')).tap();
       element(by.label('Say Hello')).tap();
       expect(element(by.label('Hello!!!'))).toBeVisible();
