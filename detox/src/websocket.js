@@ -46,6 +46,14 @@ function cleanup(onComplete) {
 // if not, mocha will continue running until reaches timeout.
 process.on('uncaughtException', (err) => {
   _ws.close();
+  throw err;
+});
+
+process.on('unhandledRejection', function(reason, p) {
+  _ws.close();
+  console.error(`Possibly Unhandled Rejection at: Promise reason: ${reason}`);
+  //process.exit(1);
+  throw reason;
 });
 
 function execute(invocation) {

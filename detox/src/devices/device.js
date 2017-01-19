@@ -16,19 +16,19 @@ class Device {
 
   }
 
-  relaunchApp() {
+  async relaunchApp() {
 
   }
 
-  deleteAndRelaunchApp() {
+  async deleteAndRelaunchApp() {
 
   }
 
-  reloadReactNativeApp() {
+  async reloadReactNativeApp() {
 
   }
 
-  openURL() {
+  async openURL() {
 
   }
 }

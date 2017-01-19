@@ -1,5 +1,5 @@
 const utils = require('../utils');
-const exec = require('child_process').exec;
+const exec = require('child-process-promise').exec;
 const spawn = require('child_process').spawn;
 const path = require('path');
 const fs = require('fs');
@@ -13,7 +13,6 @@ const bplist = require('bplist-parser');
 // https://github.com/facebook/FBSimulatorControl/issues/250
 // https://github.com/facebook/FBSimulatorControl/blob/master/fbsimctl/FBSimulatorControlKitTests/Tests/Unit/CommandParsersTests.swift
 
-
 class Simulator extends Device {
 
   constructor() {
@@ -21,7 +20,7 @@ class Simulator extends Device {
     this._defaultLaunchArgs = [];
     this._currentScheme = {};
     this._verbose = false;
-    this._appLogProcess;
+    this._appLogProcess = null;
     this._currentSimulator = "";
 
     process.on('exit', () => {
@@ -31,7 +30,6 @@ class Simulator extends Device {
       }
     });
   }
-
 
   _waitUntilReady(onReady) {
     websocket.waitForNextAction('ready', onReady);
@@ -43,30 +41,33 @@ class Simulator extends Device {
     websocket.sendAction('reactNativeReload');
   }
 
-  _getBundleIdFromApp(appPath, onComplete) {
+  _getBundleIdFromApp(appPath) {
     const absPath = this._getAppAbsolutePath(appPath);
     const infoPlistPath = path.join(absPath, '/Info.plist');
-    bplist.parseFile(infoPlistPath, (err, obj) => {
-      if (err) {
-        onComplete(err);
-        return;
-      }
-      if (Array.isArray(obj)) obj = obj[0];
-      const bundleId = obj['CFBundleIdentifier'];
-      if (!bundleId) {
-        onComplete(new Error(`field CFBundleIdentifier not found inside Info.plist of app binary at ${absPath}`));
-        return;
-      }
-      onComplete(null, bundleId);
+    return new Promise((resolve, reject) => {
+      bplist.parseFile(infoPlistPath, (err, obj) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        if (Array.isArray(obj)) {
+          obj = obj[0];
+        }
+        const bundleId = obj.CFBundleIdentifier;
+        if (!bundleId) {
+          reject(new Error(`field CFBundleIdentifier not found inside Info.plist of app binary at ${absPath}`));
+          return;
+        }
+        resolve(bundleId);
+      });
     });
   }
 
   // fb simctl commands (we try to use it as much as possible since it supports multiple instances)
-  _executeSimulatorCommand(options, onComplete) {
-    const frameworkPath = __dirname + "/../../Detox.framework/Detox";
-    if(fs.existsSync(frameworkPath) === false)
-    {
-      throw new Error('Detox.framework not found at ' + frameworkPath)
+  async _executeSimulatorCommand(options) {
+    const frameworkPath = path.join(__dirname, `/../../Detox.framework/Detox`);
+    if (fs.existsSync(frameworkPath) === false) {
+      throw new Error(`Detox.framework not found at ${frameworkPath}`);
     }
 
     const fbsimctlPath = 'fbsimctl'; //By this point, it should already be installed on the system by brew.
@@ -75,20 +76,31 @@ class Simulator extends Device {
     if (this._verbose) {
       console.log(`DETOX exec: ${cmd}\n`);
     }
-    exec(cmd, (err, stdout, stderr) => {
+
+    try {
+      const result = await exec(cmd);
       if (this._verbose) {
-        if (stdout) console.log(`DETOX exec stdout:\n`, stdout, '\n');
-        if (stderr) console.log(`DETOX exec stderr:\n`, stderr, '\n');
+        if (result.stdout) {
+          console.log(`DETOX exec stdout:\n`, result.stdout, '\n');
+        }
+        if (result.stderr) {
+          console.log(`DETOX exec stderr:\n`, result.stderr, '\n');
+        }
       }
       if (options.showStdout) {
-        console.log(`DETOX ${cmd}\n`, stdout, '\n');
+        console.log(`DETOX fbsimctl ${options.args}:\n`, result.stdout, '\n');
       }
 
-      if (err) {
-        throw new Error(`${err} \nstdout: ${stdout} \nstderr: ${stderr}`);
+      if (result.childProcess.exitCode !== 0) {
+        console.log(`DETOX exec stdout:\n`, result.stdout, '\n');
+        console.log(`DETOX exec stderr:\n`, result.stderr, '\n');
+        //throw new Error(`Got error `);
+        //process.exit(1);
       }
-      onComplete(null, stdout, stderr);
-    });
+      return result;
+    } catch (ex) {
+      throw ex;
+    }
   }
 
   _getAppAbsolutePath(appPath) {
@@ -102,43 +114,21 @@ class Simulator extends Device {
   }
 
   // ./node_modules/detox-tools/fbsimctl/fbsimctl install ./ios/build/Build/Products/Debug-iphonesimulator/example.app
-  _installApp(device, appPath, onComplete) {
-    try {
-      const absPath = this._getAppAbsolutePath(appPath);
-      const options = {args: `${this._currentSimulator} install ${absPath}`};
-      this._executeSimulatorCommand(options, (err) => {
-        if (err) {
-          onComplete(err);
-          return;
-        }
-        onComplete();
-      });
-    } catch (e) {
-      onComplete(e);
-      return;
-    }
+  async _installApp(appPath) {
+    const absPath = this._getAppAbsolutePath(appPath);
+    const options = {args: `${this._currentSimulator} install ${absPath}`};
+    return await this._executeSimulatorCommand(options);
   }
 
   // ./node_modules/detox-tools/fbsimctl/fbsimctl uninstall org.reactjs.native.example.example
-  _uninstallApp(device, appPath, onComplete) {
-    this._getBundleIdFromApp(appPath, (err, bundleId) => {
-      if (err) {
-        onComplete(err);
-        return;
-      }
-      /*
-      // it turns out that for deleting apps the orig simulator is much faster than fb's
-      const options = {args: `uninstall booted ${bundleId}`};
-      this._executeOrigSimulatorCommand(options, (err2) => {
-        onComplete();
-      });
-      */
-      const options = {args: `${this._currentSimulator} uninstall ${bundleId}`};
-      this._executeSimulatorCommand(options, (err2) => {
-        // this might fail if the app isn't installed, so don't worry about failure
-        onComplete();
-      });
-    });
+  async _uninstallApp(appPath) {
+    const bundleId = await this._getBundleIdFromApp(appPath);
+    const options = {args: `${this._currentSimulator} uninstall ${bundleId}`};
+    try {
+      await this._executeSimulatorCommand(options);
+    } catch (ex) {
+      //that's ok
+    }
   }
 
   _getAppLogfile(bundleId, stdout) {
@@ -158,7 +148,9 @@ class Simulator extends Device {
       this._appLogProcess.kill();
       this._appLogProcess = undefined;
     }
-    if (!logfile) return;
+    if (!logfile) {
+      return;
+    }
     this._appLogProcess = spawn('tail', ['-f', logfile]);
     this._appLogProcess.stdout.on('data', (buffer) => {
       const data = buffer.toString('utf8');
@@ -169,67 +161,34 @@ class Simulator extends Device {
   }
 
   // ./node_modules/detox-tools/fbsimctl/fbsimctl launch org.reactjs.native.example.example arg1 arg2 arg3
-  _launchApp(device, appPath, onComplete) {
-    this._getBundleIdFromApp(appPath, (err, bundleId) => {
-      if (err) {
-        onComplete(err);
-        return;
-      }
-      const options = {args: `${this._currentSimulator} launch --stderr ${bundleId} ${this._defaultLaunchArgs.join(' ')}`};
-      this._executeSimulatorCommand(options, (err2, stdout, stderr) => {
-        if (this._verbose) {
-          // in the future we'll allow expectations on logs and _listenOnAppLogfile will always run (remove if)
-          this._listenOnAppLogfile(this._getAppLogfile(bundleId, stdout));
-        }
-        if (err2) {
-          onComplete(err2);
-          return;
-        }
-        onComplete();
-      });
-    });
+  async _launchApp(appPath) {
+    const bundleId = await this._getBundleIdFromApp(appPath);
+    const options = {args: `${this._currentSimulator} launch --stderr ${bundleId} ${this._defaultLaunchArgs.join(' ')}`};
+    const result = await this._executeSimulatorCommand(options);
+    if (this._verbose) {
+      // in the future we'll allow expectations on logs and _listenOnAppLogfile will always run (remove if)
+      //this._listenOnAppLogfile(this._getAppLogfile(bundleId, result.stdout));
+    }
   }
 
   // ./node_modules/detox-tools/fbsimctl/fbsimctl relaunch org.reactjs.native.example.example
-  _terminateApp(device, appPath, onComplete) {
-    this._getBundleIdFromApp(appPath, (err, bundleId) => {
-      if (err) {
-        onComplete(err);
-        return;
-      }
-      const options = {args: `${this._currentSimulator} terminate ${bundleId}`};
-      this._executeSimulatorCommand(options, (err2, stdout, stderr) => {
-        if (this._verbose) {
-          // in the future we'll allow expectations on logs and _listenOnAppLogfile will always run (remove if)
-          this._listenOnAppLogfile(this._getAppLogfile(bundleId, stdout));
-        }
-        if (err2) {
-          onComplete(err2);
-          return;
-        }
-        onComplete();
-      });
-    });
+  async _terminateApp(appPath) {
+    const bundleId = await this._getBundleIdFromApp(appPath);
+    const options = {args: `${this._currentSimulator}  terminate ${bundleId}`};
+    const result = await this._executeSimulatorCommand(options);
+    if (this._verbose) {
+      // in the future we'll allow expectations on logs and _listenOnAppLogfile will always run (remove if)
+      //this._listenOnAppLogfile(this._getAppLogfile(bundleId, result.stdout));
+    }
   }
 
   // Calling `relaunch` is not good as it seems `fbsimctl` does not forward env variables in this mode.
-  _relaunchApp(device, appPath, onComplete) {
-    this._terminateApp(device, appPath, (err) => {
-      if (err) {
-        onComplete(err);
-        return;
-      }
-      this._launchApp(device, appPath, (err3) => {
-        if (err3) {
-          onComplete(err3);
-          return;
-        }
-        onComplete();
-      });
-    });
+  async _relaunchApp(appPath) {
+    await this._terminateApp(appPath);
+    await this._launchApp(appPath);
   }
 
-  relaunchApp(onComplete) {
+  async relaunchApp(onComplete) {
     if (!this._currentScheme.device) {
       onComplete(new Error(`scheme.device property is missing, should hold the device type we test on`));
       return;
@@ -238,107 +197,64 @@ class Simulator extends Device {
       onComplete(new Error(`scheme.app property is missing, should hold the app binary path`));
       return;
     }
-    this._relaunchApp(this._currentScheme.device, this._currentScheme.app, (err) => {
-      if (err) {
-        onComplete(err);
-        return;
-      }
-      this._waitUntilReady(() => {
-        onComplete();
-      });
+    await this._relaunchApp(this._currentScheme.app);
+    await this._waitUntilReady(() => {
+      onComplete();
     });
   }
 
-  _deleteAndRelaunchApp(device, appPath, onComplete) {
-    this._uninstallApp(device, appPath, (err) => {
-      if (err) {
-        onComplete(err);
-        return;
-      }
-      this._installApp(device, appPath, (err2) => {
-        if (err2) {
-          onComplete(err2);
-          return;
-        }
-        this._launchApp(device, appPath, (err3) => {
-          if (err3) {
-            onComplete(err3);
-            return;
-          }
-          onComplete();
-        });
-      });
-    });
+  async _deleteAndRelaunchApp(appPath) {
+    await this._uninstallApp(appPath);
+    await this._installApp(appPath);
+    await this._launchApp(appPath);
   }
 
-  deleteAndRelaunchApp(onComplete) {
+  async deleteAndRelaunchApp(onComplete) {
     if (!this._currentScheme.device) {
-      onComplete(new Error(`scheme.device property is missing, should hold the device type we test on`));
-      return;
+      throw new Error(`scheme.device property is missing, should hold the device type we test on`);
     }
     if (!this._currentScheme.app) {
-      onComplete(new Error(`scheme.app property is missing, should hold the app binary path`));
-      return;
+      throw new Error(`scheme.app property is missing, should hold the app binary path`);
     }
-    this._deleteAndRelaunchApp(this._currentScheme.device, this._currentScheme.app, (err) => {
-      if (err) {
-        onComplete(err);
-        return;
-      }
-      this._waitUntilReady(() => {
-        onComplete();
-      });
+    await this._deleteAndRelaunchApp(this._currentScheme.app);
+    this._waitUntilReady(() => {
+      onComplete();
     });
   }
 
   _getQueryFromDevice(device) {
     let res = '';
     const deviceParts = device.split(',');
-    for (let i = 0 ; i < deviceParts.length ; i++) res += `"${deviceParts[i].trim()}" `;
+    for (let i = 0; i < deviceParts.length; i++) {
+      res += `"${deviceParts[i].trim()}" `;
+    }
     return res.trim();
   }
 
   // ./node_modules/detox-tools/fbsimctl/fbsimctl "iPhone 5" "iOS 8.3" list
-  _listSimulators(device, onComplete) {
+  async _listSimulators(device) {
     const query = this._getQueryFromDevice(device);
     const options = {args: `${query} --first 1 --simulators list | head -1 | awk '/(^[0-9A-F]{8}-[0-9A-F]{4}-[1-5][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}).*/{ print $1 }'`, showStdout: true};
-    this._executeSimulatorCommand(options, (err, stdout) => {
-      if (err) {
-        onComplete(err);
-        return;
-      }
-      const simId = stdout.trim();
-      if (!simId) {
-        throw new Error(`can't find a simulator to match with ${device}`);
-      }
-      //stdout will contain the requested simulator id.
-      this._currentSimulator = simId;
-      onComplete();
-    });
+    const result = await this._executeSimulatorCommand(options);
+    const simId = result.stdout.trim();
+    if (!simId) {
+      throw new Error(`can't find a simulator to match with ${device}`);
+    }
+    //stdout will contain the requested simulator id.
+    this._currentSimulator = simId;
   }
 
   // ./node_modules/detox-tools/fbsimctl/fbsimctl "iPhone 5" "iOS 8.3" boot
-  _bootSimulator(device, onComplete) {
+  async _bootSimulator() {
     const options = {args: `--state=shutdown --state=shutting-down ${this._currentSimulator} boot`};
-    this._executeSimulatorCommand(options, (err) => {
-      if (err) {
-        onComplete(err);
-        return;
-      }
-      onComplete();
-    });
+    await this._executeSimulatorCommand(options);
   }
 
   // ./node_modules/detox-tools/fbsimctl/fbsimctl "iPhone 5" "iOS 8.3" shutdown
-  _shutdownSimulator(device, onComplete) {
-    const options = {args: `--state=booted ${this._currentSimulator} shutdown`};
-    this._executeSimulatorCommand(options, (err) => {
-      if (err) {
-        onComplete(err);
-        return;
-      }
-      onComplete();
-    });
+  async _shutdownSimulator(device) {
+    const query = this._getQueryFromDevice(device);
+    const options = {args: `--state=booted ${query} shutdown`};
+    await this._executeSimulatorCommand(options);
   }
 
   // returns true if found scheme, false if no scheme found
@@ -366,58 +282,40 @@ class Simulator extends Device {
     }
   }
 
-  prepare(params, onComplete) {
-    this._verbose = utils.getArgValue('verbose');
-
-    if (params['session']) {
-      const settings = params['session'];
+  async prepare(params, onComplete) {
+    this._verbose = true;//utils.getArgValue('verbose');
+    if (params.session) {
+      const settings = params.session;
       if (!settings.server) {
-        onComplete(new Error(`session.server property is missing, should hold the server address`));
-        return;
+        throw new Error(`session.server property is missing, should hold the server address`);
       }
       if (!settings.sessionId) {
-        onComplete(new Error(`session.sessionId property is missing, should hold the server session id`));
-        return;
+        throw new Error(`session.sessionId property is missing, should hold the server session id`);
       }
       this._defaultLaunchArgs = ['-detoxServer', settings.server, '-detoxSessionId', settings.sessionId];
     } else {
-      onComplete(new Error(`No session configuration was found, pass settings under the session property`));
-      return;
+      throw new Error(`No session configuration was found, pass settings under the session property`);
     }
     if (this._setCurrentScheme(params)) {
       if (!this._currentScheme.device) {
-        onComplete(new Error(`scheme.device property is missing, should hold the device type we test on`));
-        return;
+        throw new Error(`scheme.device property is missing, should hold the device type we test on`);
       }
-      this._listSimulators(this._currentScheme.device, (err) => {
-        this._bootSimulator(this._currentScheme.device, (err2) => {
-          if (err2) {
-            onComplete(err2);
-            return;
-          }
-          this.deleteAndRelaunchApp(onComplete);
-        });
-      });
+      await this._listSimulators(this._currentScheme.device);
+      await this._bootSimulator();
+      await this.deleteAndRelaunchApp(onComplete);
     } else {
-      onComplete(new Error(`No scheme was found, in order to test a simulator pass settings under the ios-simulator property`));
-      return;
+      throw new Error(`No scheme was found, in order to test a simulator pass settings under the ios-simulator property`);
     }
   }
 
-  openURL(url, onComplete) {
+  async openURL(url) {
     if (!this._currentScheme.device) {
-      onComplete(new Error(`scheme.device property is missing, should hold the device type we test on`));
-      return;
+      throw new Error(`scheme.device property is missing, should hold the device type we test on`);
     }
 
-    const options = {args: `${this._currentSimulator} open ${url}`};
-    this._executeSimulatorCommand(options, (err, stdout, stderr) => {
-      if (err) {
-        onComplete(err);
-        return;
-      }
-      onComplete();
-    });
+    const query = this._getQueryFromDevice(this._currentScheme.device);
+    const options = {args: `${query} open ${url}`};
+    await this._executeSimulatorCommand(options);
   }
 }
 
