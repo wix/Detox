@@ -2,9 +2,9 @@ const log = require('npmlog');
 const websocket = require('./websocket');
 const expect = require('./ios/expect');
 const Simulator = require('./devices/simulator');
-const utils = require('./utils.js');
+const argparse = require('./utils/argparse');
 
-const loglevel = utils.getArgValue('verbose') ? 'verbose' : 'info';
+const loglevel = argparse.getArgValue('verbose') ? 'verbose' : 'info';
 log.level = loglevel;
 log.heading = "detox";
 
@@ -25,7 +25,7 @@ async function _start(onStart) {
 
   websocket.config(_detoxConfig.session);
   websocket.connect(async() => {
-    const target = utils.getArgValue('target') || 'ios-sim';
+    const target = argparse.getArgValue('target') || 'ios-sim';
     if (target === 'ios-sim') {
       await simulator.prepare(_detoxConfig, onStart);
     } else {
@@ -35,7 +35,7 @@ async function _start(onStart) {
 }
 
 async function openURL(url, onComplete) {
-  const target = utils.getArgValue('target') || 'ios-sim';
+  const target = argparse.getArgValue('target') || 'ios-sim';
   if (target === 'ios-sim') {
     await simulator.openURL(url);
   }

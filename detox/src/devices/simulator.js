@@ -4,9 +4,9 @@ const spawn = require('child_process').spawn;
 const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
-const retry = require('./../utils/retry');
 const websocket = require('../websocket');
-const utils = require('../utils');
+const retry = require('../utils/retry');
+const argparse = require('../utils/argparse');
 const Device = require('./device');
 const bplist = require('bplist-parser');
 
@@ -253,7 +253,7 @@ class Simulator extends Device {
   // returns true if found scheme, false if no scheme found
   _setCurrentScheme(params) {
     let scheme;
-    const schemeOverride = utils.getArgValue('scheme');
+    const schemeOverride = argparse.getArgValue('scheme');
     if (schemeOverride) {
       scheme = _.get(params, schemeOverride);
     }
