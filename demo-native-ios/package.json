@@ -5,19 +5,20 @@
   "scripts": {
     "packager": "react-native start",
     "detox-server": "detox-server",
-    "e2e": "mocha e2e --opts ./e2e/mocha.opts"
+    "e2e": "mocha e2e --opts ./e2e/mocha.opts",
+    "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project NativeExample.xcodeproj -scheme NativeExample -derivedDataPath . -sdk iphonesimulator"
   },
   "devDependencies": {
-    "detox": "latest",
-    "detox-server": "latest"
+    "detox": "^4.1.0",
+    "detox-server": "^1.1.0"
   },
   "detox": {
     "session": {
       "server": "ws://localhost:8099",
-      "sessionId": "YourProject"
+      "sessionId": "detox-demo-native-ios"
     },
     "ios-simulator": {
-      "app": "Build/Products/Debug_Detox-iphonesimulator/NativeExample.app",
+      "app": "Build/Products/Debug-iphonesimulator/NativeExample.app",
       "device": "iPhone 7 Plus"
     }
   }

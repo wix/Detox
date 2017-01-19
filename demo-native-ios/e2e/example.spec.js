@@ -1,5 +1,4 @@
 describe('Example', function () {
-
   beforeEach(function (done) {
     simulator.relaunchApp(done);
   });

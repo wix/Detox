@@ -8,12 +8,12 @@ describe('Example', function () {
     expect(element(by.label('Welcome'))).toBeVisible();
   });
 
-  xit('should show hello screen after tap', function () {
+  it('should show hello screen after tap', function () {
     element(by.label('Say Hello')).tap();
     expect(element(by.label('Hello!!!'))).toBeVisible();
   });
 
-  xit('should show world screen after tap', function () {
+  it('should show world screen after tap', function () {
     element(by.label('Say World')).tap();
     expect(element(by.label('World!!!'))).toBeVisible();
   });

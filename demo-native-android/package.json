@@ -8,17 +8,13 @@
     "e2e": "mocha e2e --opts ./e2e/mocha.opts"
   },
   "devDependencies": {
-    "detox": "^4.0.9",
-    "detox-server": "^1.1.0"
+    "detox": "latest",
+    "detox-server": "latest"
   },
   "detox": {
     "session": {
       "server": "ws://localhost:8099",
-      "sessionId": "YourProject"
-    },
-    "ios-simulator": {
-      "app": "Build/Products/Debug_Detox-iphonesimulator/NativeExample.app",
-      "device": "iPhone 7, iOS 10.1"
+      "sessionId": "detox-demo-native-ios"
     }
   }
 }

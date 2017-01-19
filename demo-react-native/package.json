@@ -5,23 +5,30 @@
   "scripts": {
     "packager": "react-native start",
     "detox-server": "detox-server",
-    "e2e": "mocha e2e --opts ./e2e/mocha.opts"
+    "e2e:ios:debug": "mocha e2e --opts ./e2e/mocha.opts --scheme=ios-simulator.debug",
+    "e2e:ios:release": "mocha e2e --opts ./e2e/mocha.opts --scheme=ios-simulator.release",
+    "build:ios:debug": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -scheme \"example\" -derivedDataPath ios/build -sdk iphonesimulator",
+    "build:ios:release": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -scheme \"example Release\" -derivedDataPath ios/build -sdk iphonesimulator"
   },
   "dependencies": {
     "react": "*",
     "react-native": "^0.40.0"
   },
   "devDependencies": {
-    "detox": "^4.0.9",
+    "detox": "^4.1.0",
     "detox-server": "^1.1.0"
   },
   "detox": {
     "session": {
       "server": "ws://localhost:8099",
-      "sessionId": "demo-react-native"
+      "sessionId": "detox-demo-react-native"
     },
-    "ios-simulator": {
+    "ios-simulator.release": {
       "app": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+      "device": "iPhone 7 Plus"
+    },
+    "ios-simulator.debug": {
+      "app": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
       "device": "iPhone 7 Plus"
     }
   }

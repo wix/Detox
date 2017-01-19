@@ -354,7 +354,7 @@
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../node_modules/detox/ios/**";
 				INFOPLIST_FILE = NativeExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = me.etgar.NativeExample;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wix.demo.native.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -366,7 +366,7 @@
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../node_modules/detox/ios/**";
 				INFOPLIST_FILE = NativeExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = me.etgar.NativeExample;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wix.demo.native.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -379,8 +379,6 @@
 			buildConfigurations = (
 				4BD3FEC61D4E1F5E005AEE71 /* Debug */,
 				4BD3FEC71D4E1F5E005AEE71 /* Release */,
-				173E789D08820A24833C4577 /* Debug_Detox */,
-				C35FE8B62D123CB5A6B7CBC3 /* Release_Detox */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -390,8 +388,6 @@
 			buildConfigurations = (
 				4BD3FEC91D4E1F5E005AEE71 /* Debug */,
 				4BD3FECA1D4E1F5E005AEE71 /* Release */,
-				7CB02FF40EA5D1EBF63D4F33 /* Debug_Detox */,
-				5A65EF42581265ED22377872 /* Release_Detox */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

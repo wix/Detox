@@ -1,8 +1,8 @@
-var detox = require('detox');
-var config = require('../package.json').detox;
+require('babel-polyfill');
+const detox = require('detox');
+const config = require('../package.json').detox;
 
 before(function (done) {
-  this.timeout(120000);
   detox.config(config);
   detox.start(done);
 });
