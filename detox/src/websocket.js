@@ -9,7 +9,9 @@ let _onTestResult;
 let _onNextAction = {};
 
 function sendAction(type, params) {
-  if (!_ws) return;
+  if (!_ws) {
+    return;
+  }
   const json = JSON.stringify({
     type: type,
     params: params
@@ -23,7 +25,7 @@ function config(params) {
 
 function connect(onConnect) {
   _ws = new WebSocket(_detoxConfig.server);
-  _ws.on('open',() => {
+  _ws.on('open', () => {
     sendAction('login', {
       sessionId: _detoxConfig.sessionId,
       role: 'tester'
@@ -31,8 +33,10 @@ function connect(onConnect) {
     onConnect();
   });
   _ws.on('message', (str) => {
-    let action = JSON.parse(str);
-    if (!action.type) return;
+    const action = JSON.parse(str);
+    if (!action.type) {
+      return;
+    }
     handleAction(action.type, action.params);
   });
 }
@@ -45,12 +49,16 @@ function cleanup(onComplete) {
 // if there's an error thrown, close the websocket,
 // if not, mocha will continue running until reaches timeout.
 process.on('uncaughtException', (err) => {
-  _ws.close();
+  if (_ws) {
+    _ws.close();
+  }
   throw err;
 });
 
 process.on('unhandledRejection', function(reason, p) {
-  _ws.close();
+  if (_ws) {
+    _ws.close();
+  }
   console.error(`Possibly Unhandled Rejection at: Promise reason: ${reason}`);
   //process.exit(1);
   throw reason;

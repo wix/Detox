@@ -43,6 +43,7 @@
     "colors": "^1.1.2",
     "eslint": "3.x.x",
     "eslint-plugin-babel": "4.x.x",
+    "minimist": "^1.2.0",
     "shelljs": "^0.7.3",
     "ttab": "^0.3.1"
   },

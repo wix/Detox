@@ -472,7 +472,7 @@ const by = {
   traits: (value) => new TraitsMatcher(value)
 };
 
-const exportGlobals = function () {
+const exportGlobals =  () => {
   global.element = element;
   global.expect = expect;
   global.waitFor = waitFor;
