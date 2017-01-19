@@ -283,7 +283,7 @@ class Simulator extends Device {
   }
 
   async prepare(params, onComplete) {
-    this._verbose = true;//utils.getArgValue('verbose');
+    this._verbose = utils.getArgValue('verbose');
     if (params.session) {
       const settings = params.session;
       if (!settings.server) {
