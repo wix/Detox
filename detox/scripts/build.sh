@@ -6,4 +6,3 @@ xcodebuild build -project ios/Detox.xcodeproj -scheme DetoxFramework -configurat
 cp -r DetoxBuild/Build/Products/Release-universal/Detox.framework .
 rm -fr DetoxBuild
 tar -cf Detox.framework.tar Detox.framework
-rm -fr Detox.framework
