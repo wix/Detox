@@ -4,6 +4,7 @@ const spawn = require('child_process').spawn;
 const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
+const retry = require('./../utils/retry');
 const websocket = require('../websocket');
 const utils = require('../utils');
 const Device = require('./device');
@@ -238,7 +239,8 @@ class Simulator extends Device {
   // ./node_modules/detox-tools/fbsimctl/fbsimctl "iPhone 5" "iOS 8.3" boot
   async _bootSimulator() {
     const options = {args: `--state=shutdown --state=shutting-down ${this._currentSimulator} boot`};
-    await this._executeSimulatorCommand(options);
+    const result = await this._executeSimulatorCommand(options);
+    return result.childProcess.exitCode === 0;
   }
 
   // ./node_modules/detox-tools/fbsimctl/fbsimctl "iPhone 5" "iOS 8.3" shutdown
@@ -291,7 +293,14 @@ class Simulator extends Device {
         throw new Error(`scheme.device property is missing, should hold the device type we test on`);
       }
       await this._listSimulators(this._currentScheme.device);
-      await this._bootSimulator();
+
+      await retry({retries: 10, interval: 2000}, async () => {
+        log.info('trying to start simulator...');
+        if (await this._bootSimulator()) {
+          log.info('Simulator started');
+        }
+      });
+
       await this.deleteAndRelaunchApp(onComplete);
     } else {
       throw new Error(`No scheme was found, in order to test a simulator pass settings under the ios-simulator property`);
