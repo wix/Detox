@@ -1,4 +1,6 @@
+const log = require('npmlog');
 const WebSocket = require('ws');
+const _ = require('lodash');
 
 let _detoxConfig = {};
 let _ws;
@@ -9,9 +11,6 @@ let _onTestResult;
 let _onNextAction = {};
 
 function sendAction(type, params) {
-  if (!_ws) {
-    return;
-  }
   const json = JSON.stringify({
     type: type,
     params: params
@@ -52,14 +51,15 @@ process.on('uncaughtException', (err) => {
   if (_ws) {
     _ws.close();
   }
-  throw err;
+  //log.errorerr);
+  //throw err;
 });
 
 process.on('unhandledRejection', function(reason, p) {
   if (_ws) {
     _ws.close();
   }
-  console.error(`Possibly Unhandled Rejection at: Promise reason: ${reason}`);
+  //log.error('DETOX', `Unhandled Promise Rejection: ${reason}`);
   //process.exit(1);
   throw reason;
 });
@@ -91,31 +91,30 @@ function handleAction(type, params) {
     _onNextAction[type] = undefined;
   }
   if (type === 'testFailed') {
-    // console.log('DETOX: Test Failed:\n%s', params.details);
+    // log.info('DETOX: Test Failed:\n%s', params.details);
     if (typeof _onTestResult === 'function') {
       _onTestResult(new Error(params.details));
       _onTestResult = undefined;
     } else {
-      console.log('error: _onTestResult is undefined on testFailed');
+      log.error('_onTestResult is undefined on testFailed');
     }
   }
   if (type === 'error') {
-    console.log('error: %s', params.error);
+    log.error('%s', params.error);
   }
   if (type === 'invokeResult') {
-    // console.log('DETOX: invokeResult: %s %s', params.id, params.result);
-    // console.log('DETOX: .');
+    // info.info('DETOX: invokeResult: %s %s', params.id, params.result);
     _readyForInvokeId++;
     if (_invokeQueue[_readyForInvokeId]) {
       sendAction('invoke', _invokeQueue[_readyForInvokeId]);
     }
     if (_finishOnInvokeId === _readyForInvokeId) {
-      // console.log('DETOX: Test Passed');
+      // log.info('DETOX: Test Passed');
       if (typeof _onTestResult === 'function') {
         _onTestResult();
         _onTestResult = undefined;
       } else {
-        console.log('error: _onTestResult is undefined on test passed');
+        log.error('_onTestResult is undefined on test passed');
       }
     }
   }

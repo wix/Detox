@@ -1,11 +1,11 @@
-const utils = require('../utils');
+const log = require('npmlog');
 const exec = require('child-process-promise').exec;
 const spawn = require('child_process').spawn;
 const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
 const websocket = require('../websocket');
-
+const utils = require('../utils');
 const Device = require('./device');
 const bplist = require('bplist-parser');
 
@@ -72,30 +72,23 @@ class Simulator extends Device {
 
     const fbsimctlPath = 'fbsimctl'; //By this point, it should already be installed on the system by brew.
     const cmd = "export FBSIMCTL_CHILD_DYLD_INSERT_LIBRARIES=\"" + frameworkPath + "\" && " + fbsimctlPath + ' ' + options.args;
-
-    if (this._verbose) {
-      console.log(`DETOX exec: ${cmd}\n`);
-    }
+    log.verbose(`exec: ${cmd}\n`);
 
     try {
       const result = await exec(cmd);
-      if (this._verbose) {
-        if (result.stdout) {
-          console.log(`DETOX exec stdout:\n`, result.stdout, '\n');
-        }
-        if (result.stderr) {
-          console.log(`DETOX exec stderr:\n`, result.stderr, '\n');
-        }
+      if (result.stdout) {
+        log.verbose(`exec stdout:\n`, result.stdout);
+      }
+      if (result.stderr) {
+        log.verbose(`exec stderr:\n`, result.stderr);
       }
       if (options.showStdout) {
-        console.log(`DETOX fbsimctl ${options.args}:\n`, result.stdout, '\n');
+        log.verbose(`fbsimctl ${options.args}:\n`, result.stdout);
       }
 
       if (result.childProcess.exitCode !== 0) {
-        console.log(`DETOX exec stdout:\n`, result.stdout, '\n');
-        console.log(`DETOX exec stderr:\n`, result.stderr, '\n');
-        //throw new Error(`Got error `);
-        //process.exit(1);
+        log.error(`exec stdout:\n`, result.stdout);
+        log.error(`exec stderr:\n`, result.stderr);
       }
       return result;
     } catch (ex) {
@@ -137,7 +130,7 @@ class Simulator extends Device {
     const matches = stdout.match(re);
     if (matches && matches.length > 0) {
       const logfile = matches[0];
-      console.log(`DETOX app logfile: ${logfile}\n`);
+      log.info(`app logfile: ${logfile}\n`);
       return logfile;
     }
     return undefined;
@@ -154,9 +147,7 @@ class Simulator extends Device {
     this._appLogProcess = spawn('tail', ['-f', logfile]);
     this._appLogProcess.stdout.on('data', (buffer) => {
       const data = buffer.toString('utf8');
-      if (this._verbose) {
-        console.log('DETOX app: ' + data);
-      }
+      log.verbose('app: ' + data);
     });
   }
 
@@ -275,7 +266,7 @@ class Simulator extends Device {
     }
     if (scheme) {
       this._currentScheme = scheme;
-      console.log('DETOX scheme:\n', scheme, '\n');
+      log.info(`scheme`, scheme);
       return true;
     } else {
       return false;
@@ -283,7 +274,6 @@ class Simulator extends Device {
   }
 
   async prepare(params, onComplete) {
-    this._verbose = utils.getArgValue('verbose');
     if (params.session) {
       const settings = params.session;
       if (!settings.server) {

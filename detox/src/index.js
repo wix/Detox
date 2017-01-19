@@ -1,8 +1,12 @@
+const log = require('npmlog');
 const websocket = require('./websocket');
 const expect = require('./ios/expect');
 const Simulator = require('./devices/simulator');
 const utils = require('./utils.js');
-require('./logger');
+
+const loglevel = utils.getArgValue('verbose') ? 'verbose' : 'info';
+log.level = loglevel;
+log.heading = "detox";
 
 let _detoxConfig = {
   session: {

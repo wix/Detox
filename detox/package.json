@@ -60,11 +60,12 @@
   },
   "dependencies": {
     "bplist-parser": "^0.1.1",
+    "child-process-promise": "^2.2.0",
     "commander": "^2.9.0",
     "lodash": "^4.14.1",
     "mocha": "^3.2.0",
-    "ws": "^1.1.1",
+    "npmlog": "^4.0.2",
     "react-native-invoke": "^0.2.1",
-    "child-process-promise": "^2.2.0"
+    "ws": "^1.1.1"
   }
 }
