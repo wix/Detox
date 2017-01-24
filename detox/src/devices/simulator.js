@@ -227,9 +227,15 @@ class Simulator extends Device {
     const query = this._getQueryFromDevice(device);
     const options = {args: `--json ${query} --first 1 --simulators list`, showStdout: true};
     const result = await this._executeSimulatorCommand(options);
-    const simId = JSON.parse(result.stdout).subject.udid;
+
+    let simId;
+    if (result.stdout) {
+      simId = JSON.parse(result.stdout).subject.udid;
+    }
+
     if (!simId) {
-      throw new Error(`can't find a simulator to match with ${device}`);
+      throw new Error(`can't find a simulator to match with ${device}, run 'fbsimctl list' to list your supported devices. 
+                      It is advised to only state a device type, and not to state iOS version, e.g. "iPhone 7"'`);
     }
     //stdout will contain the requested simulator id.
     this._currentSimulator = simId;
