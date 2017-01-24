@@ -8,7 +8,6 @@ const websocket = require('../websocket');
 const retry = require('../utils/retry');
 const argparse = require('../utils/argparse');
 const Device = require('./device');
-const bplist = require('bplist-parser');
 
 // FBSimulatorControl command line docs
 // https://github.com/facebook/FBSimulatorControl/issues/250
@@ -42,26 +41,14 @@ class Simulator extends Device {
     websocket.sendAction('reactNativeReload');
   }
 
-  _getBundleIdFromApp(appPath) {
+  async _getBundleIdFromApp(appPath) {
     const absPath = this._getAppAbsolutePath(appPath);
-    const infoPlistPath = path.join(absPath, '/Info.plist');
-    return new Promise((resolve, reject) => {
-      bplist.parseFile(infoPlistPath, (err, obj) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        if (Array.isArray(obj)) {
-          obj = obj[0];
-        }
-        const bundleId = obj.CFBundleIdentifier;
-        if (!bundleId) {
-          reject(new Error(`field CFBundleIdentifier not found inside Info.plist of app binary at ${absPath}`));
-          return;
-        }
-        resolve(bundleId);
-      });
-    });
+    try {
+      const result = await exec(`/usr/libexec/PlistBuddy -c "Print CFBundleIdentifier" ${path.join(absPath, 'Info.plist')}`);
+      return _.trim(result.stdout);
+    } catch (ex) {
+      throw new Error(`field CFBundleIdentifier not found inside Info.plist of app binary at ${absPath}`);
+    }
   }
 
   // fb simctl commands (we try to use it as much as possible since it supports multiple instances)

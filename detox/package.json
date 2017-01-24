@@ -59,7 +59,6 @@
     }
   },
   "dependencies": {
-    "bplist-parser": "^0.1.1",
     "child-process-promise": "^2.2.0",
     "commander": "^2.9.0",
     "lodash": "^4.14.1",
