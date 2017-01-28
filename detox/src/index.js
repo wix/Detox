@@ -6,7 +6,7 @@ const argparse = require('./utils/argparse');
 
 const loglevel = argparse.getArgValue('verbose') ? 'verbose' : 'info';
 log.level = loglevel;
-log.heading = "detox";
+log.heading = 'detox';
 
 let _detoxConfig = {
   session: {

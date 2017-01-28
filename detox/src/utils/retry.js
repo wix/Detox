@@ -8,7 +8,7 @@ async function retry(options, func) {
   }
 
   const start = Date.now();
-  let {retries, interval } = options;
+  let {retries, interval} = options;
   retries = retries || DEFAULT_RETRIES;
   interval = interval || DEFAULT_INTERVAL;
 
@@ -17,15 +17,14 @@ async function retry(options, func) {
     try {
       return await func(currentRetry);
     } catch (e) {
-      const sleep = currentRetry * interval;
-      // wait for a bit before retrying...
-      await new Promise((accept) => setTimeout(accept, sleep));
+      if (currentRetry === retries - 1) {
+        throw e;
+      } else {
+        const sleep = currentRetry * interval;
+        await new Promise((accept) => setTimeout(accept, sleep));
+      }
     }
   }
-
-  throw new Error(`
-    Failed to resolve promise after ${retries} over ${Date.now() - start} ms
-  `);
 }
 
 module.exports = retry;

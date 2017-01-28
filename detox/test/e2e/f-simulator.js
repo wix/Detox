@@ -31,5 +31,4 @@ describe('Simulator', () => {
       expect(element(by.label('Hello!!!'))).toBeVisible();
     });
   });
-
 });

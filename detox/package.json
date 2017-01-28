@@ -31,6 +31,8 @@
     "start-server": "node scripts/start-server.js",
     "start-packager": "node scripts/start-packager.js",
     "test-exec": "node scripts/test-exec.js",
+    "unit": "jest",
+    "unit:watch": "jest --watch --trace-warnings",
     "postinstall": "scripts/postinstall.sh",
     "prepublish": "npm run build"
   },
@@ -46,7 +48,8 @@
     "eslint-plugin-babel": "4.x.x",
     "minimist": "^1.2.0",
     "shelljs": "^0.7.3",
-    "ttab": "^0.3.1"
+    "ttab": "^0.3.1",
+    "jest": "^18.1.0"
   },
   "babel": {
     "env": {
@@ -66,5 +69,13 @@
     "npmlog": "^4.0.2",
     "react-native-invoke": "^0.2.1",
     "ws": "^1.1.1"
+  },
+  "jest": {
+    "testPathDirs": [
+      "node_modules",
+      "src"
+    ],
+    "resetMocks": true,
+    "resetModules": true
   }
 }

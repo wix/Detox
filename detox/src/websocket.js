@@ -42,7 +42,11 @@ function connect(onConnect) {
 
 function cleanup(onComplete) {
   waitForNextAction('cleanupDone', onComplete);
-  sendAction('cleanup');
+  if (_ws.readyState === WebSocket.OPEN) {
+    sendAction('cleanup');
+  } else {
+    onComplete();
+  }
 }
 
 // if there's an error thrown, close the websocket,

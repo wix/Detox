@@ -316,7 +316,7 @@
       "never"
     ],
     "quote-props": [
-      "error",
+      "warn",
       "consistent-as-needed"
     ],
     "quotes": 0,
