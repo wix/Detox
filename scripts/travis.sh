@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-npm install -g lerna
+npm install -g lerna@2.0.0-beta.34
 npm install -g react-native-cli
 gem install xcpretty
 
