@@ -1,5 +1,10 @@
 #import "AppDelegate.h"
 #import <React/RCTRootView.h>
+@import UserNotifications;
+
+@interface AppDelegate () <UNUserNotificationCenterDelegate>
+
+@end
 
 @implementation AppDelegate
 
@@ -30,6 +35,8 @@
 	self.window.rootViewController = rootViewController;
 	[self.window makeKeyAndVisible];
 	
+	[UNUserNotificationCenter currentNotificationCenter].delegate = self;
+	
 	return YES;
 }
 
@@ -38,6 +45,31 @@
 	NSLog(@"%@", url);
 	
 	return YES;
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
+{
+	
+}
+
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
+{
+	
+}
+
+- (void)application:(UIApplication *)application handleActionWithIdentifier:(nullable NSString *)identifier forLocalNotification:(nonnull UILocalNotification *)notification withResponseInfo:(nonnull NSDictionary *)responseInfo completionHandler:(nonnull void (^)())completionHandler
+{
+	
+}
+
+- (void)application:(UIApplication *)application handleActionWithIdentifier:(nullable NSString *)identifier forRemoteNotification:(nonnull NSDictionary *)userInfo withResponseInfo:(nonnull NSDictionary *)responseInfo completionHandler:(nonnull void (^)())completionHandler
+{
+	
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)())completionHandler
+{
+	
 }
 
 @end
