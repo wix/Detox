@@ -2,8 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
 const log = require('npmlog');
-const retry = require('../utils/retry');
-const exec = require('child-process-promise').exec;
+const exec = require('../utils/exec');
 
 // FBSimulatorControl command line docs
 // https://github.com/facebook/FBSimulatorControl/issues/250
@@ -22,18 +21,21 @@ class Fbsimctl {
     const query = this._getQueryFromDevice(device);
     const options = {args: `${query} --first 1 --simulators list`};
     let result = {};
+    let simId;
     try {
       result = await this._execFbsimctlCommand(options, statusLogs, 1);
-      let simId;
-      if (result.stdout) {
-        const parsedJson = JSON.parse(result.stdout);
-        simId = _.get(parsedJson, 'subject.udid');
-        return simId;
-      }
+      const parsedJson = JSON.parse(result.stdout);
+      simId = _.get(parsedJson, 'subject.udid');
     } catch (ex) {
+      log.error(ex);
+    }
+
+    if (!simId) {
       throw new Error('Can\'t find a simulator to match with \'' + device + '\', run \'fbsimctl list\' to list your supported devices.\n'
                       + 'It is advised to only state a device type, and not to state iOS version, e.g. \'iPhone 7\'');
     }
+
+    return simId;
   }
 
   async boot(udid) {
@@ -110,43 +112,9 @@ class Fbsimctl {
     return JSON.parse(result.stdout).subject.state !== 'Booted';
   }
 
-  async _execFbsimctlCommand(options, statusLogs, retries = 10) {
-    this._operationCounter++;
-    if (!options.args) {
-      throw new Error(`args must be specified`);
-    }
+  async _execFbsimctlCommand(options, statusLogs, retries, interval) {
     const cmd = `${options.prefix ? options.prefix + '&&' : ''} fbsimctl --json ${options.args}`;
-    log.verbose(`${this._operationCounter}: ${cmd}`);
-
-    let result;
-    await retry({retries, interval: 1000}, async() => {
-      if (statusLogs && statusLogs.trying) {
-        log.info(`${this._operationCounter}: ${statusLogs.trying}`);
-      }
-      result = await exec(cmd);
-    });
-    if (result === undefined) {
-      throw new Error(`${this._operationCounter}: ${cmd} could not run`);
-    }
-
-    if (result.stdout) {
-      log.verbose(`${this._operationCounter}: stdout:`, result.stdout);
-    }
-
-    if (result.stderr) {
-      log.verbose(`${this._operationCounter}: stderr:`, result.stderr);
-    }
-
-    if (statusLogs && statusLogs.successful) {
-      log.info(`${this._operationCounter}: ${statusLogs.successful}`);
-    }
-
-    if (result.childProcess.exitCode !== 0) {
-      log.error(`${this._operationCounter}: stdout:`, result.stdout);
-      log.error(`${this._operationCounter}: stderr:`, result.stderr);
-    }
-
-    return result;
+    return await exec.execWithRetriesAndLogs(cmd, options, statusLogs, retries, interval);
   }
 
   _getFrameworkPath() {

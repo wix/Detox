@@ -7,6 +7,7 @@ gem install xcpretty
 lerna bootstrap
 
 cd detox
+npm run unit
 npm run build
 
 cd test
