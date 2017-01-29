@@ -58,17 +58,9 @@ public class DetoxUserNotificationDispatcher: NSObject {
 	}
 	
 	private func dispatchLegacyLocalNotification(_ notification: UILocalNotification, with actionIdentifier: String, on appDelegate: UIApplicationDelegate) {
-		let responseInfo : [String: Any]
-		if let userText = userNotificationData[DetoxUserNotificationKeys.userText] as? String {
-			responseInfo = [UIUserNotificationActionResponseTypedTextKey: userText]
-		}
-		else {
-			responseInfo = [:]
-		}
-		
 		let app = UIApplication.shared
 		if let os9Method = appDelegate.application(_:handleActionWithIdentifier:for:withResponseInfo: completionHandler:) {
-			os9Method(app, actionIdentifier, notification, responseInfo, {})
+			os9Method(app, actionIdentifier, notification, [:], {})
 		}
 		else {
 			appDelegate.application?(app, handleActionWithIdentifier: actionIdentifier, for: notification, completionHandler: {})
@@ -88,17 +80,9 @@ public class DetoxUserNotificationDispatcher: NSObject {
 	}
 	
 	private func dispatchLegacyRemoteNotification(_ notification: [String: Any], with actionIdentifier: String, on appDelegate: UIApplicationDelegate) {
-		let responseInfo : [String: Any]
-		if let userText = userNotificationData[DetoxUserNotificationKeys.userText] as? String {
-			responseInfo = [UIUserNotificationActionResponseTypedTextKey: userText]
-		}
-		else {
-			responseInfo = [:]
-		}
-		
 		let app = UIApplication.shared
 		if let os9Method = appDelegate.application(_:handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler:) {
-			os9Method(app, actionIdentifier, notification, responseInfo, {})
+			os9Method(app, actionIdentifier, [:], notification, {})
 		}
 		else {
 			appDelegate.application?(app, handleActionWithIdentifier: actionIdentifier, forRemoteNotification: notification, completionHandler: {})
@@ -119,18 +103,14 @@ public class DetoxUserNotificationDispatcher: NSObject {
 		if shouldUseLegacyPath {
 			let actionIdentifier = userNotificationData[DetoxUserNotificationKeys.actionIdentifier] as? String
 			let app = UIApplication.shared
-			switch (actionIdentifier, self.isLegacyRemoteNotification) {
+			switch (actionIdentifier, isLegacyRemoteNotification()) {
 			case (nil, false):
-				fallthrough
-			case ("default"?, false):
 				appDelegate.application?(app, didReceive: localNotification!)
 				break;
 			case let (actionIdentifier?, false):
 				dispatchLegacyLocalNotification(localNotification!, with: actionIdentifier, on: appDelegate)
 				break;
 			case (nil, true):
-				fallthrough
-			case ("default"?, true):
 				dispatchLegacyRemoteNotification(remoteNotification!, on: appDelegate, isDuringLaunch: isDuringLaunch)
 				break;
 			case let (actionIdentifier?, true):
@@ -176,22 +156,19 @@ public class DetoxUserNotificationDispatcher: NSObject {
 		
 		let repeats = self.userNotificationData[DetoxUserNotificationKeys.repeats] as? Bool ?? false
 		
-		let triggerData = self.userNotificationData[DetoxUserNotificationKeys.trigger] as! [String: Any]
-		
 		switch self.userNotificationData[DetoxUserNotificationKeys.absoluteTriggerType] as! String {
 		case DetoxUserNotificationKeys.TriggerTypes.calendar:
-			let dateComponentsData = DetoxUserNotificationDispatcher.value(for: DetoxUserNotificationKeys.dateComponents, in: triggerData, ofType: [String: Any].self, context: "calendar trigger")
-			let dc = DetoxUserNotificationDispatcher.dateComponents(from: dateComponentsData)
+			let dc = DetoxUserNotificationDispatcher.dateComponents(from: self.userNotificationData[DetoxUserNotificationKeys.dateComponents] as? [String: Any])
 			rv.fireDate = dc.date
 			break
 		case DetoxUserNotificationKeys.TriggerTypes.location:
-			let regionData = DetoxUserNotificationDispatcher.value(for: DetoxUserNotificationKeys.region, in: triggerData, ofType: [String: Any].self, context: "location trigger")
+			let regionData = DetoxUserNotificationDispatcher.value(for: DetoxUserNotificationKeys.region, in: self.userNotificationData, ofType: [String: Any].self, context: "location trigger")
 			let rgn = DetoxUserNotificationDispatcher.region(from: regionData)
 			rv.region = rgn
 			rv.regionTriggersOnce = repeats
 			break
 		case DetoxUserNotificationKeys.TriggerTypes.timeInterval:
-			let timeInterval = DetoxUserNotificationDispatcher.value(for: DetoxUserNotificationKeys.timeInterval, in: triggerData, ofType: Double.self, context: "time interval trigger")
+			let timeInterval = DetoxUserNotificationDispatcher.value(for: DetoxUserNotificationKeys.timeInterval, in: self.userNotificationData, ofType: Double.self, context: "time interval trigger")
 			rv.fireDate = Date(timeIntervalSinceNow: timeInterval)
 			break
 		default: break
@@ -209,10 +186,9 @@ public class DetoxUserNotificationDispatcher: NSObject {
 		return self.payload
 	}()
 	
-	private lazy var isLegacyRemoteNotification : Bool = {
-		[unowned self] in
-		return self.userNotificationData[DetoxUserNotificationKeys.absoluteTriggerType] as! String == DetoxUserNotificationKeys.TriggerTypes.push
-	}()
+	private func isLegacyRemoteNotification() -> Bool {
+		return userNotificationData[DetoxUserNotificationKeys.absoluteTriggerType] as! String == DetoxUserNotificationKeys.TriggerTypes.push
+	}
 	
 	private lazy var payload : [String: Any] = {
 		[unowned self] in
@@ -246,11 +222,13 @@ public class DetoxUserNotificationDispatcher: NSObject {
 		return rv
 	}
 	
-	private class func dateComponents(from data: [String: Any]) -> DateComponents {
+	private class func dateComponents(from data: [String: Any]?) -> DateComponents {
 		let rv = NSDateComponents()
 		
-		data.forEach {
-			rv.setValue($1, forKey: $0)
+		if let data = data {
+			data.forEach {
+				rv.setValue($1, forKey: $0)
+			}
 		}
 		
 		return rv as DateComponents
@@ -290,26 +268,23 @@ public class DetoxUserNotificationDispatcher: NSObject {
 		
 		let repeats = userNotificationData[DetoxUserNotificationKeys.repeats] as? Bool ?? false
 		
-		let triggerData = userNotificationData[DetoxUserNotificationKeys.trigger] as! [String: Any]
-		
 		var trigger : UNNotificationTrigger? = nil
 		switch userNotificationData[DetoxUserNotificationKeys.absoluteTriggerType] as! String {
 			case DetoxUserNotificationKeys.TriggerTypes.push:
-				let contentAvailable = userNotificationData[DetoxUserNotificationKeys.contentAvailable] as? Bool ?? false
+				let contentAvailable = userNotificationData[DetoxUserNotificationKeys.badge] as? Bool ?? false
 				trigger = UNPushNotificationTrigger(contentAvailable: contentAvailable, mutableContent: false)
 				break
 			case DetoxUserNotificationKeys.TriggerTypes.calendar:
-				let dateComponentsData = DetoxUserNotificationDispatcher.value(for: DetoxUserNotificationKeys.dateComponents, in: triggerData, ofType: [String: Any].self, context: "calendar trigger")
-				let dc = DetoxUserNotificationDispatcher.dateComponents(from: dateComponentsData)
+				let dc = DetoxUserNotificationDispatcher.dateComponents(from: userNotificationData[DetoxUserNotificationKeys.dateComponents] as? [String: Any])
 				trigger = UNCalendarNotificationTrigger(dateMatching: dc, repeats: repeats)
 				break
 			case DetoxUserNotificationKeys.TriggerTypes.location:
-				let regionData = DetoxUserNotificationDispatcher.value(for: DetoxUserNotificationKeys.region, in: triggerData, ofType: [String: Any].self, context: "location trigger")
+				let regionData = DetoxUserNotificationDispatcher.value(for: DetoxUserNotificationKeys.region, in: userNotificationData, ofType: [String: Any].self, context: "location trigger")
 				let rgn = DetoxUserNotificationDispatcher.region(from: regionData)
 				trigger = UNLocationNotificationTrigger(region: rgn, repeats: repeats)
 				break
 			case DetoxUserNotificationKeys.TriggerTypes.timeInterval:
-				let timeInterval = DetoxUserNotificationDispatcher.value(for: DetoxUserNotificationKeys.timeInterval, in: triggerData, ofType: Double.self, context: "time interval trigger")
+				let timeInterval = DetoxUserNotificationDispatcher.value(for: DetoxUserNotificationKeys.timeInterval, in: userNotificationData, ofType: Double.self, context: "time interval trigger")
 				trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeInterval, repeats: repeats)
 				break
 			default: break
@@ -319,25 +294,7 @@ public class DetoxUserNotificationDispatcher: NSObject {
 		
 		let notification = UNNotification(request: notificationRequest, date: Date())
 		
-		let notificationResponseType : UNNotificationResponse.Type
-		let userText = userNotificationData[DetoxUserNotificationKeys.userText] as? String
-		
-		
-		if userText != nil {
-			notificationResponseType = UNTextInputNotificationResponse.self
-		}
-		else {
-			notificationResponseType = UNNotificationResponse.self
-		}
-		
-		let rv = notificationResponseType.init(notification: notification, actionIdentifier: self.userNotificationData[DetoxUserNotificationKeys.actionIdentifier] as? String ?? UNNotificationDefaultActionIdentifier)
-
-		if userText != nil {
-			rv.setValue(userText, forKey: "userText")
-		}
-		
-		return rv
-		
+		return UNNotificationResponse(notification: notification, actionIdentifier: self.userNotificationData[DetoxUserNotificationKeys.actionIdentifier] as? String ?? UNNotificationDefaultActionIdentifier)
 	}
 }
 
