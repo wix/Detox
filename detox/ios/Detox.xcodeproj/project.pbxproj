@@ -21,41 +21,35 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		390D1C691E3A14EF007F5F46 /* UNNotificationResponse+PrivateHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 390D1C671E3A14EF007F5F46 /* UNNotificationResponse+PrivateHeaders.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		390D1C9C1E3A45F1007F5F46 /* UNNotification+PrivateHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 390D1C9A1E3A45F1007F5F46 /* UNNotification+PrivateHeaders.h */; };
-		390D1CA01E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 390D1C9E1E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h */; };
 		3947679C1DBF985400D72256 /* Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 3947679A1DBF985400D72256 /* Detox.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		394767AE1DBF987E00D72256 /* DetoxManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767A41DBF987E00D72256 /* DetoxManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		394767AE1DBF987E00D72256 /* DetoxManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767A41DBF987E00D72256 /* DetoxManager.h */; };
 		394767AF1DBF987E00D72256 /* DetoxManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767A51DBF987E00D72256 /* DetoxManager.m */; };
-		394767B01DBF987E00D72256 /* MethodInvocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767A61DBF987E00D72256 /* MethodInvocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		394767B01DBF987E00D72256 /* MethodInvocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767A61DBF987E00D72256 /* MethodInvocation.h */; };
 		394767B11DBF987E00D72256 /* MethodInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767A71DBF987E00D72256 /* MethodInvocation.m */; };
-		394767B21DBF987E00D72256 /* TestFailureHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767A81DBF987E00D72256 /* TestFailureHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		394767B21DBF987E00D72256 /* TestFailureHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767A81DBF987E00D72256 /* TestFailureHandler.h */; };
 		394767B31DBF987E00D72256 /* TestFailureHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767A91DBF987E00D72256 /* TestFailureHandler.m */; };
-		394767B41DBF987E00D72256 /* TestRunner.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767AA1DBF987E00D72256 /* TestRunner.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		394767B41DBF987E00D72256 /* TestRunner.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767AA1DBF987E00D72256 /* TestRunner.h */; };
 		394767B51DBF987E00D72256 /* TestRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767AB1DBF987E00D72256 /* TestRunner.m */; };
-		394767B61DBF987E00D72256 /* WebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767AC1DBF987E00D72256 /* WebSocket.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		394767B61DBF987E00D72256 /* WebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767AC1DBF987E00D72256 /* WebSocket.h */; };
 		394767B71DBF987E00D72256 /* WebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767AD1DBF987E00D72256 /* WebSocket.m */; };
-		394767BE1DBF98A700D72256 /* EarlGreyExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767B91DBF98A700D72256 /* EarlGreyExtensions.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		394767BF1DBF98A700D72256 /* GREYCondition+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767BA1DBF98A700D72256 /* GREYCondition+Detox.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		394767BE1DBF98A700D72256 /* EarlGreyExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767B91DBF98A700D72256 /* EarlGreyExtensions.h */; };
+		394767BF1DBF98A700D72256 /* GREYCondition+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767BA1DBF98A700D72256 /* GREYCondition+Detox.h */; };
 		394767C01DBF98A700D72256 /* GREYCondition+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767BB1DBF98A700D72256 /* GREYCondition+Detox.m */; };
-		394767C11DBF98A700D72256 /* GREYMatchers+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767BC1DBF98A700D72256 /* GREYMatchers+Detox.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		394767C11DBF98A700D72256 /* GREYMatchers+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767BC1DBF98A700D72256 /* GREYMatchers+Detox.h */; };
 		394767C21DBF98A700D72256 /* GREYMatchers+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767BD1DBF98A700D72256 /* GREYMatchers+Detox.m */; };
-		394767CD1DBF98D900D72256 /* ReactNativeHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767C41DBF98D900D72256 /* ReactNativeHeaders.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		394767CE1DBF98D900D72256 /* ReactNativeSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767C51DBF98D900D72256 /* ReactNativeSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		394767CD1DBF98D900D72256 /* ReactNativeHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767C41DBF98D900D72256 /* ReactNativeHeaders.h */; };
+		394767CE1DBF98D900D72256 /* ReactNativeSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767C51DBF98D900D72256 /* ReactNativeSupport.h */; };
 		394767CF1DBF98D900D72256 /* ReactNativeSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767C61DBF98D900D72256 /* ReactNativeSupport.m */; };
-		394767D01DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767C71DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		394767D01DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767C71DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.h */; };
 		394767D11DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767C81DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.m */; };
-		394767D21DBF98D900D72256 /* WXJSTimerObservationIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767C91DBF98D900D72256 /* WXJSTimerObservationIdlingResource.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		394767D21DBF98D900D72256 /* WXJSTimerObservationIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767C91DBF98D900D72256 /* WXJSTimerObservationIdlingResource.h */; };
 		394767D31DBF98D900D72256 /* WXJSTimerObservationIdlingResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767CA1DBF98D900D72256 /* WXJSTimerObservationIdlingResource.m */; };
-		394767D41DBF98D900D72256 /* WXRunLoopIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767CB1DBF98D900D72256 /* WXRunLoopIdlingResource.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		394767D41DBF98D900D72256 /* WXRunLoopIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767CB1DBF98D900D72256 /* WXRunLoopIdlingResource.h */; };
 		394767D51DBF98D900D72256 /* WXRunLoopIdlingResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767CC1DBF98D900D72256 /* WXRunLoopIdlingResource.m */; };
 		394767F61DBF994200D72256 /* SocketRocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 394767E71DBF992400D72256 /* SocketRocket.framework */; };
 		394767F71DBF994500D72256 /* EarlGrey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 394767DC1DBF991E00D72256 /* EarlGrey.framework */; };
-		39A34C711E30F10D00BEBB59 /* DetoxAppDelegateProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39A34C6F1E30F10D00BEBB59 /* DetoxAppDelegateProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		39A34C721E30F10D00BEBB59 /* DetoxAppDelegateProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A34C701E30F10D00BEBB59 /* DetoxAppDelegateProxy.m */; };
 		39C3C3511DBF9A13008177E1 /* EarlGrey.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 394767DC1DBF991E00D72256 /* EarlGrey.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		39C3C3531DBF9A19008177E1 /* SocketRocket.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 394767E91DBF992400D72256 /* SocketRocket.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -139,11 +133,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		390D1C671E3A14EF007F5F46 /* UNNotificationResponse+PrivateHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UNNotificationResponse+PrivateHeaders.h"; sourceTree = "<group>"; };
-		390D1C981E3A2893007F5F46 /* Detox.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Detox.xcconfig; sourceTree = "<group>"; };
-		390D1C991E3A292F007F5F46 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
-		390D1C9A1E3A45F1007F5F46 /* UNNotification+PrivateHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UNNotification+PrivateHeaders.h"; sourceTree = "<group>"; };
-		390D1C9E1E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UNPushNotificationTrigger+PrivateHeaders.h"; sourceTree = "<group>"; };
 		394767971DBF985400D72256 /* Detox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Detox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3947679A1DBF985400D72256 /* Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.h; sourceTree = "<group>"; };
 		3947679B1DBF985400D72256 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -173,9 +162,6 @@
 		394767CC1DBF98D900D72256 /* WXRunLoopIdlingResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXRunLoopIdlingResource.m; sourceTree = "<group>"; };
 		394767D71DBF991E00D72256 /* EarlGrey.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = EarlGrey.xcodeproj; path = EarlGrey/EarlGrey.xcodeproj; sourceTree = "<group>"; };
 		394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SocketRocket.xcodeproj; path = SocketRocket/SocketRocket.xcodeproj; sourceTree = "<group>"; };
-		39A34C6F1E30F10D00BEBB59 /* DetoxAppDelegateProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetoxAppDelegateProxy.h; sourceTree = "<group>"; };
-		39A34C701E30F10D00BEBB59 /* DetoxAppDelegateProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetoxAppDelegateProxy.m; sourceTree = "<group>"; };
-		39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetoxUserNotificationDispatcher.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,17 +177,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		390D1C661E3A1480007F5F46 /* UserNotificationsPrivate */ = {
-			isa = PBXGroup;
-			children = (
-				390D1C991E3A292F007F5F46 /* module.modulemap */,
-				390D1C671E3A14EF007F5F46 /* UNNotificationResponse+PrivateHeaders.h */,
-				390D1C9A1E3A45F1007F5F46 /* UNNotification+PrivateHeaders.h */,
-				390D1C9E1E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h */,
-			);
-			path = UserNotificationsPrivate;
-			sourceTree = "<group>";
-		};
 		3947678D1DBF985400D72256 = {
 			isa = PBXGroup;
 			children = (
@@ -222,14 +197,9 @@
 		394767991DBF985400D72256 /* Detox */ = {
 			isa = PBXGroup;
 			children = (
-				390D1C981E3A2893007F5F46 /* Detox.xcconfig */,
-				390D1C661E3A1480007F5F46 /* UserNotificationsPrivate */,
 				3947679A1DBF985400D72256 /* Detox.h */,
 				394767A41DBF987E00D72256 /* DetoxManager.h */,
 				394767A51DBF987E00D72256 /* DetoxManager.m */,
-				39A34C6F1E30F10D00BEBB59 /* DetoxAppDelegateProxy.h */,
-				39A34C701E30F10D00BEBB59 /* DetoxAppDelegateProxy.m */,
-				39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */,
 				394767A61DBF987E00D72256 /* MethodInvocation.h */,
 				394767A71DBF987E00D72256 /* MethodInvocation.m */,
 				394767A81DBF987E00D72256 /* TestFailureHandler.h */,
@@ -310,24 +280,20 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3947679C1DBF985400D72256 /* Detox.h in Headers */,
 				394767D21DBF98D900D72256 /* WXJSTimerObservationIdlingResource.h in Headers */,
-				390D1C691E3A14EF007F5F46 /* UNNotificationResponse+PrivateHeaders.h in Headers */,
-				39A34C711E30F10D00BEBB59 /* DetoxAppDelegateProxy.h in Headers */,
-				394767AE1DBF987E00D72256 /* DetoxManager.h in Headers */,
 				394767CD1DBF98D900D72256 /* ReactNativeHeaders.h in Headers */,
 				394767D41DBF98D900D72256 /* WXRunLoopIdlingResource.h in Headers */,
 				394767BF1DBF98A700D72256 /* GREYCondition+Detox.h in Headers */,
-				390D1C9C1E3A45F1007F5F46 /* UNNotification+PrivateHeaders.h in Headers */,
 				394767B21DBF987E00D72256 /* TestFailureHandler.h in Headers */,
 				394767CE1DBF98D900D72256 /* ReactNativeSupport.h in Headers */,
+				3947679C1DBF985400D72256 /* Detox.h in Headers */,
 				394767B61DBF987E00D72256 /* WebSocket.h in Headers */,
 				394767BE1DBF98A700D72256 /* EarlGreyExtensions.h in Headers */,
 				394767B41DBF987E00D72256 /* TestRunner.h in Headers */,
-				390D1CA01E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h in Headers */,
 				394767D01DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.h in Headers */,
 				394767B01DBF987E00D72256 /* MethodInvocation.h in Headers */,
 				394767C11DBF98A700D72256 /* GREYMatchers+Detox.h in Headers */,
+				394767AE1DBF987E00D72256 /* DetoxManager.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -361,7 +327,7 @@
 		3947678E1DBF985400D72256 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0830;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = "Leo Natan";
 				TargetAttributes = {
 					3941F4F21DC6200700F23DAC = {
@@ -370,7 +336,6 @@
 					};
 					394767961DBF985400D72256 = {
 						CreatedOnToolsVersion = 8.1;
-						LastSwiftMigration = 0820;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -494,9 +459,7 @@
 				394767D31DBF98D900D72256 /* WXJSTimerObservationIdlingResource.m in Sources */,
 				394767C01DBF98A700D72256 /* GREYCondition+Detox.m in Sources */,
 				394767D11DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.m in Sources */,
-				39A34C721E30F10D00BEBB59 /* DetoxAppDelegateProxy.m in Sources */,
 				394767B11DBF987E00D72256 /* MethodInvocation.m in Sources */,
-				39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */,
 				394767C21DBF98A700D72256 /* GREYMatchers+Detox.m in Sources */,
 				394767AF1DBF987E00D72256 /* DetoxManager.m in Sources */,
 			);
@@ -520,7 +483,6 @@
 /* Begin XCBuildConfiguration section */
 		3941F4F41DC6200700F23DAC /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 390D1C981E3A2893007F5F46 /* Detox.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -528,7 +490,6 @@
 		};
 		3941F4F51DC6200700F23DAC /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 390D1C981E3A2893007F5F46 /* Detox.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -536,7 +497,6 @@
 		};
 		3947679D1DBF985400D72256 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 390D1C981E3A2893007F5F46 /* Detox.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -553,7 +513,6 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -577,7 +536,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -589,7 +548,6 @@
 		};
 		3947679E1DBF985400D72256 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 390D1C981E3A2893007F5F46 /* Detox.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -606,7 +564,6 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -624,10 +581,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -637,10 +593,7 @@
 		};
 		394767A01DBF985400D72256 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 390D1C981E3A2893007F5F46 /* Detox.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -650,21 +603,15 @@
 				INFOPLIST_FILE = Detox/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PLATFORM_DIR)/Developer/Library/Frameworks";
-				MODULEMAP_FILE = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.leonatan.Detox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
 		394767A11DBF985400D72256 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 390D1C981E3A2893007F5F46 /* Detox.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -674,11 +621,9 @@
 				INFOPLIST_FILE = Detox/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PLATFORM_DIR)/Developer/Library/Frameworks";
-				MODULEMAP_FILE = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.leonatan.Detox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};

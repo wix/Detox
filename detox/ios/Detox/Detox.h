@@ -6,8 +6,6 @@
 //  Copyright © 2016 Wix. All rights reserved.
 //
 
-@import Foundation;
-
 //! Project version number for Detox.
 FOUNDATION_EXPORT double DetoxVersionNumber;
 
