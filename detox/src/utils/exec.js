@@ -4,10 +4,14 @@ const exec = require('child-process-promise').exec;
 
 let _operationCounter = 0;
 
-async function execWithRetriesAndLogs(cmd, options, statusLogs, retries = 10, interval = 1000) {
+async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, interval = 1000) {
   _operationCounter++;
-  if (!options.args) {
-    throw new Error(`optins.args must be specified`);
+
+  let cmd;
+  if (options) {
+    cmd = `${options.prefix ? options.prefix + ' && ' : ''}${bin} ${options.args}`;
+  } else {
+    cmd = bin;
   }
 
   log.verbose(`${_operationCounter}: ${cmd}`);
@@ -20,7 +24,7 @@ async function execWithRetriesAndLogs(cmd, options, statusLogs, retries = 10, in
     result = await exec(cmd);
   });
   if (result === undefined) {
-    throw new Error(`${_operationCounter}: ${cmd} could not run`);
+    throw new Error(`${_operationCounter}: running "${cmd}" returned undefined`);
   }
 
   if (result.stdout) {
@@ -35,10 +39,10 @@ async function execWithRetriesAndLogs(cmd, options, statusLogs, retries = 10, in
     log.info(`${_operationCounter}: ${statusLogs.successful}`);
   }
 
-  if (result.childProcess.exitCode !== 0) {
-    log.error(`${_operationCounter}: stdout:`, result.stdout);
-    log.error(`${_operationCounter}: stderr:`, result.stderr);
-  }
+  //if (result.childProcess.exitCode !== 0) {
+  //  log.error(`${_operationCounter}: stdout:`, result.stdout);
+  //  log.error(`${_operationCounter}: stderr:`, result.stderr);
+  //}
 
   return result;
 }

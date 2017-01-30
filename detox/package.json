@@ -31,8 +31,8 @@
     "start-server": "node scripts/start-server.js",
     "start-packager": "node scripts/start-packager.js",
     "test-exec": "node scripts/test-exec.js",
-    "unit": "jest",
-    "unit:watch": "jest --watch --trace-warnings",
+    "unit": "jest --coverage --verbose",
+    "unit:watch": "jest --watch --trace-warnings --coverage --verbose",
     "postinstall": "scripts/postinstall.sh",
     "prepublish": "npm run build"
   },
@@ -41,7 +41,7 @@
     "babel-core": "^6.8.0",
     "babel-eslint": "^6.0.4",
     "babel-polyfill": "^6.8.0",
-    "babel-preset-react-native-stage-0": "^1.0.0",
+    "babel-preset-latest": "^6.22.0",
     "babel-register": "^6.8.0",
     "colors": "^1.1.2",
     "eslint": "3.x.x",
@@ -55,7 +55,7 @@
     "env": {
       "test": {
         "presets": [
-          "react-native-stage-0"
+          "latest"
         ],
         "retainLines": true
       }

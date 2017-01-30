@@ -45,8 +45,7 @@ class Fbsimctl {
     };
 
     const options = {args: `--state=shutdown --state=shutting-down ${udid} boot`};
-    const result = await this._execFbsimctlCommand(options, statusLogs);
-    //return result.childProcess.exitCode === 0;
+    return await this._execFbsimctlCommand(options, statusLogs);
   }
 
   async install(udid, absPath) {
@@ -113,8 +112,8 @@ class Fbsimctl {
   }
 
   async _execFbsimctlCommand(options, statusLogs, retries, interval) {
-    const cmd = `${options.prefix ? options.prefix + '&&' : ''} fbsimctl --json ${options.args}`;
-    return await exec.execWithRetriesAndLogs(cmd, options, statusLogs, retries, interval);
+    const bin = `fbsimctl --json`;
+    return await exec.execWithRetriesAndLogs(bin, options, statusLogs, retries, interval);
   }
 
   _getFrameworkPath() {

@@ -7,7 +7,6 @@ async function retry(options, func) {
     options = {};
   }
 
-  const start = Date.now();
   let {retries, interval} = options;
   retries = retries || DEFAULT_RETRIES;
   interval = interval || DEFAULT_INTERVAL;
@@ -17,7 +16,7 @@ async function retry(options, func) {
     try {
       return await func(currentRetry);
     } catch (e) {
-      if (currentRetry === retries - 1) {
+      if (currentRetry === retries) {
         throw e;
       } else {
         const sleep = currentRetry * interval;
