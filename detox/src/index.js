@@ -4,7 +4,7 @@ const expect = require('./ios/expect');
 const Simulator = require('./devices/simulator');
 const argparse = require('./utils/argparse');
 
-const loglevel = argparse.getArgValue('verbose') ? 'verbose' : 'info';
+const loglevel = argparse.getArgValue('loglevel') ? argparse.getArgValue('loglevel') : 'info';
 log.level = loglevel;
 log.heading = 'detox';
 
@@ -15,11 +15,12 @@ let _detoxConfig = {
   }
 };
 
-function _config(detoxConfig) {
+function config(detoxConfig) {
+  _validateConfig(detoxConfig);
   _detoxConfig = detoxConfig;
 }
 
-async function _start(onStart) {
+function start(onStart) {
   expect.exportGlobals();
   global.simulator = new Simulator();
 
@@ -42,10 +43,26 @@ async function openURL(url, onComplete) {
   onComplete();
 }
 
+function _validateConfig(detoxConfig) {
+  if (!detoxConfig.session) {
+    throw new Error(`No session configuration was found, pass settings under the session property`);
+  }
+
+  const settings = detoxConfig.session;
+
+  if (!settings.server) {
+    throw new Error(`session.server property is missing, should hold the server address`);
+  }
+
+  if (!settings.sessionId) {
+    throw new Error(`session.sessionId property is missing, should hold the server session id`);
+  }
+}
+
 module.exports = {
-  config: _config,
-  start: _start,
+  config,
+  start,
   cleanup: websocket.cleanup,
   waitForTestResult: websocket.waitForTestResult,
-  openURL: openURL
+  openURL
 };

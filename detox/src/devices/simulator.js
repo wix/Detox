@@ -5,7 +5,6 @@ const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
 const websocket = require('../websocket');
-const retry = require('../utils/retry');
 const argparse = require('../utils/argparse');
 const Device = require('./device');
 const FBsimctl = require('./Fbsimctl');
@@ -17,7 +16,6 @@ class Simulator extends Device {
     this._fbsimctl = new FBsimctl();
     this._defaultLaunchArgs = [];
     this._currentScheme = {};
-    this._verbose = false;
     this._appLogProcess = null;
     this._simulatorUdid = "";
     this._bundleId = "";
@@ -91,57 +89,9 @@ class Simulator extends Device {
     return res.trim();
   }
 
-  _detrmineCurrentScheme(params) {
-    let scheme;
-    const schemeOverride = argparse.getArgValue('scheme');
-    if (schemeOverride) {
-      scheme = _.get(params, schemeOverride);
-    }
-    if (!scheme) {
-      scheme = _.get(params, 'ios-simulator.debug');
-    }
-    if (!scheme) {
-      scheme = _.get(params, 'ios-simulator.release');
-    }
-    if (!scheme) {
-      scheme = _.get(params, 'ios-simulator');
-    }
-    if (scheme) {
-      if (!scheme.device) {
-        throw new Error(`scheme.device property is missing, should hold the device type to test on`);
-      }
-      if (!scheme.app) {
-        throw new Error(`scheme.app property is missing, should hold the app binary path`);
-      }
-
-      log.info(`scheme`, scheme);
-      return scheme;
-    } else {
-      throw new Error(`No scheme was found, in order to test a simulator pass settings under the ios-simulator property`);
-    }
-  }
-
-  _validateParams(params) {
-    if (!params.session) {
-      throw new Error(`No session configuration was found, pass settings under the session property`);
-    }
-
-    const settings = params.session;
-
-    if (!settings.server) {
-      throw new Error(`session.server property is missing, should hold the server address`);
-    }
-
-    if (!settings.sessionId) {
-      throw new Error(`session.sessionId property is missing, should hold the server session id`);
-    }
-  }
-
   async prepare(params, onComplete) {
-    this._validateParams(params);
-
-    const settings = params.session;
-    this._defaultLaunchArgs = ['-detoxServer', settings.server, '-detoxSessionId', settings.sessionId];
+    const session = params.session;
+    this._defaultLaunchArgs = ['-detoxServer', session.server, '-detoxSessionId', session.sessionId];
 
     this._currentScheme = this._detrmineCurrentScheme(params);
     this._simulatorUdid = await this._fbsimctl.list(this._currentScheme.device);
