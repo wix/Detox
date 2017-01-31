@@ -1,14 +1,15 @@
 const log = require('npmlog');
 const WebSocket = require('ws');
 const _ = require('lodash');
+const Queue = require('./commons/dataStructures').Queue;
 
 let _detoxConfig = {};
 let _ws;
-let _invokeQueue = [];
-let _readyForInvokeId = 0;
-let _finishOnInvokeId;
+
+const _invokeQueue = new Queue();
+let invocationId = 0;
 let _onTestResult;
-let _onNextAction = {};
+const _onNextAction = {};
 
 function sendAction(type, params) {
   const json = JSON.stringify({
@@ -16,6 +17,7 @@ function sendAction(type, params) {
     params: params
   }) + '\n ';
   _ws.send(json);
+  log.silly(`ws sendAction (tester):`, `${json.trim()}`);
 }
 
 function config(params) {
@@ -24,6 +26,7 @@ function config(params) {
 
 function connect(onConnect) {
   _ws = new WebSocket(_detoxConfig.server);
+
   _ws.on('open', () => {
     sendAction('login', {
       sessionId: _detoxConfig.sessionId,
@@ -31,21 +34,79 @@ function connect(onConnect) {
     });
     onConnect();
   });
+
   _ws.on('message', (str) => {
     const action = JSON.parse(str);
     if (!action.type) {
-      return;
+      log.error(`ws received malformed action from testee:`, str, `action must have a type`);
     }
     handleAction(action.type, action.params);
+    log.silly(`ws handleAction (tester):`, `${str.trim()}`);
   });
 }
 
 function cleanup(onComplete) {
-  waitForNextAction('cleanupDone', onComplete);
+  waitForAction('cleanupDone', onComplete);
   if (_ws.readyState === WebSocket.OPEN) {
     sendAction('cleanup');
   } else {
     onComplete();
+  }
+}
+
+function execute(invocation) {
+  if (typeof invocation === 'function') {
+    invocation = invocation();
+  }
+
+  const id = invocationId++;
+  invocation.id = id.toString();
+  _invokeQueue.enqueue(invocation);
+  if (_invokeQueue.length() === 1) {
+    sendAction('invoke', _invokeQueue.peek());
+  }
+}
+
+function waitForTestResult(done) {
+  if (typeof done !== 'function') {
+    throw new Error(`must pass a 'done' parameter of type 'function' to detox.waitForTestResult(done)`);
+  }
+  _onTestResult = done;
+}
+
+function waitForAction(type, done) {
+  _onNextAction[type] = done;
+}
+
+function handleAction(type, params) {
+  if (typeof _onNextAction[type] === 'function') {
+    _onNextAction[type]();
+    _onNextAction[type] = undefined;
+  }
+
+  switch (type) {
+    case 'testFailed':
+      _onTestResult(new Error(params.details));
+      _onTestResult = undefined;
+      break;
+    case 'error':
+      log.error(params.error);
+      break;
+    case 'invokeResult':
+      _invokeQueue.dequeue();
+
+      if (_invokeQueue.peek()) {
+        sendAction('invoke', _invokeQueue.peek());
+      }
+
+      if (_invokeQueue.isEmpty()) {
+        _onTestResult();
+        _onTestResult = undefined;
+      }
+
+      break;
+    default:
+      break;
   }
 }
 
@@ -55,81 +116,24 @@ process.on('uncaughtException', (err) => {
   if (_ws) {
     _ws.close();
   }
-  //log.errorerr);
-  //throw err;
+
+  throw err;
 });
 
-process.on('unhandledRejection', function(reason, p) {
+process.on('unhandledRejection', (reason, p) => {
   if (_ws) {
     _ws.close();
   }
-  //log.error('DETOX', `Unhandled Promise Rejection: ${reason}`);
-  //process.exit(1);
+
   throw reason;
 });
-
-function execute(invocation) {
-  if (typeof invocation === 'function') {
-    invocation = invocation();
-  }
-  const id = _invokeQueue.length;
-  invocation.id = id.toString();
-  _invokeQueue.push(invocation);
-  if (_readyForInvokeId >= id) {
-    sendAction('invoke', invocation);
-  }
-}
-
-function waitForTestResult(done) {
-  _finishOnInvokeId = _invokeQueue.length;
-  _onTestResult = done;
-}
-
-function waitForNextAction(type, done) {
-  _onNextAction[type] = done;
-}
-
-function handleAction(type, params) {
-  if (typeof _onNextAction[type] === 'function') {
-    _onNextAction[type]();
-    _onNextAction[type] = undefined;
-  }
-  if (type === 'testFailed') {
-    // log.info('DETOX: Test Failed:\n%s', params.details);
-    if (typeof _onTestResult === 'function') {
-      _onTestResult(new Error(params.details));
-      _onTestResult = undefined;
-    } else {
-      log.error('_onTestResult is undefined on testFailed');
-    }
-  }
-  if (type === 'error') {
-    log.error('%s', params.error);
-  }
-  if (type === 'invokeResult') {
-    // info.info('DETOX: invokeResult: %s %s', params.id, params.result);
-    _readyForInvokeId++;
-    if (_invokeQueue[_readyForInvokeId]) {
-      sendAction('invoke', _invokeQueue[_readyForInvokeId]);
-    }
-    if (_finishOnInvokeId === _readyForInvokeId) {
-      // log.info('DETOX: Test Passed');
-      if (typeof _onTestResult === 'function') {
-        _onTestResult();
-        _onTestResult = undefined;
-      } else {
-        log.error('_onTestResult is undefined on test passed');
-      }
-    }
-  }
-}
 
 module.exports = {
   config,
   connect,
   cleanup,
   waitForTestResult,
-  waitForNextAction,
+  waitForAction,
   execute,
   sendAction
 };

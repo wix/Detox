@@ -29,7 +29,7 @@ class Simulator extends Device {
   }
 
   _waitUntilReady(onReady) {
-    websocket.waitForNextAction('ready', onReady);
+    websocket.waitForAction('ready', onReady);
     websocket.sendAction('isReady');
   }
 
@@ -119,7 +119,7 @@ class Simulator extends Device {
   }
 
   reloadReactNativeApp(onLoad) {
-    websocket.waitForNextAction('ready', onLoad);
+    websocket.waitForAction('ready', onLoad);
     websocket.sendAction('reactNativeReload');
   }
 
