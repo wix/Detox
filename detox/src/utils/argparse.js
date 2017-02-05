@@ -1,7 +1,8 @@
 const argv = require('minimist')(process.argv.slice(2));
 
 function getArgValue(key) {
-  return argv[key];
+  const value = argv[key];
+  return value;
 }
 
 module.exports = {
