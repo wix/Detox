@@ -53,7 +53,6 @@ class WebsocketClient {
 
   cleanup(done) {
     this.waitForAction('cleanupDone', done);
-    console.log(this.ws.readyState)
     if (this.ws.readyState === WebSocket.OPEN) {
       this.sendAction('cleanup');
     } else {
