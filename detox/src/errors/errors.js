@@ -9,10 +9,6 @@ class CustomError extends Error {
   }
 }
 
-class DetoxConfigError extends CustomError {
-
-}
-
 module.exports = {
-  DetoxConfigError
+  CustomError
 };

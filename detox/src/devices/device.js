@@ -1,50 +1,49 @@
-const utils = require('../utils/argparse');
 const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
 const argparse = require('../utils/argparse');
-const DetoxConfigError = require('../errors/errors').DetoxConfigError;
+const CustomError = require('../errors/errors').CustomError;
 
 class Device {
-  constructor() {
+  constructor(websocket, params) {
+    this._websocket = websocket;
 
+    const session = params.session;
+    this._defaultLaunchArgs = ['-detoxServer', session.server, '-detoxSessionId', session.sessionId];
+    this._currentScheme = this._detrmineCurrentScheme(params);
   }
 
-  prepare() {
-
+  reloadReactNativeApp(onLoad) {
+    this._websocket.waitForAction('ready', onLoad);
+    this._websocket.sendAction('reactNativeReload');
   }
 
-  async relaunchApp() {
-
+  _waitUntilReady(onReady) {
+    this._websocket.waitForAction('ready', onReady);
+    this._websocket.sendAction('isReady');
   }
 
-  async deleteAndRelaunchApp() {
-
-  }
-
-  async reloadReactNativeApp() {
-
-  }
-
-  async openURL() {
-
+  _getDefaultSchemesList() {
+    return ['ios-simulator.debug', 'ios-simulator.release', 'ios-simulator'];
   }
 
   _detrmineCurrentScheme(params) {
+    const defaultSchemes = this._getDefaultSchemesList();
 
     let scheme;
     const schemeOverride = argparse.getArgValue('scheme');
+
     if (schemeOverride) {
       scheme = _.get(params, schemeOverride);
+      if (!scheme) {
+        throw new DetoxConfigError(`could not find scheme '${schemeOverride}', make sure it's configured in your detox config`);
+      }
     }
-    if (!scheme) {
-      scheme = _.get(params, 'ios-simulator.debug');
-    }
-    if (!scheme) {
-      scheme = _.get(params, 'ios-simulator.release');
-    }
-    if (!scheme) {
-      scheme = _.get(params, 'ios-simulator');
+
+    let i = 0;
+    while (!scheme && i < defaultSchemes.length) {
+      scheme = _.get(params, defaultSchemes[i]);
+      i++;
     }
 
     this._validateScheme(scheme);
@@ -70,6 +69,9 @@ class Device {
       throw new DetoxConfigError(`scheme.app property is missing, should hold the app binary path`);
     }
   }
+}
+
+class DetoxConfigError extends CustomError {
 
 }
 

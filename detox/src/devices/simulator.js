@@ -4,33 +4,24 @@ const spawn = require('child_process').spawn;
 const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
-const argparse = require('../utils/argparse');
 const Device = require('./device');
 const FBsimctl = require('./Fbsimctl');
 
 class Simulator extends Device {
 
-  constructor(websocket) {
-    super(websocket);
-    this._websocket = websocket;
+  constructor(websocket, params) {
+    super(websocket, params);
     this._fbsimctl = new FBsimctl();
-    this._defaultLaunchArgs = [];
-    this._currentScheme = {};
-    this._appLogProcess = null;
+    //this._appLogProcess = null;
     this._simulatorUdid = "";
     this._bundleId = "";
 
-    process.on('exit', () => {
-      if (this._appLogProcess) {
-        this._appLogProcess.kill();
-        this._appLogProcess = undefined;
-      }
-    });
-  }
-
-  _waitUntilReady(onReady) {
-    this._websocket.waitForAction('ready', onReady);
-    this._websocket.sendAction('isReady');
+    //process.on('exit', () => {
+    //  if (this._appLogProcess) {
+    //    this._appLogProcess.kill();
+    //    this._appLogProcess = undefined;
+    //  }
+    //});
   }
 
   async _getBundleIdFromApp(appPath) {
@@ -53,47 +44,43 @@ class Simulator extends Device {
     return absPath;
   }
 
-  _getAppLogfile(bundleId, stdout) {
-    const suffix = `fbsimulatorcontrol/diagnostics/out_err/${bundleId}_err.txt`;
-    const re = new RegExp('[^\\s]+' + suffix);
-    const matches = stdout.match(re);
-    if (matches && matches.length > 0) {
-      const logfile = matches[0];
-      log.info(`app logfile: ${logfile}\n`);
-      return logfile;
-    }
-    return undefined;
-  }
+  //_getAppLogfile(bundleId, stdout) {
+  //  const suffix = `fbsimulatorcontrol/diagnostics/out_err/${bundleId}_err.txt`;
+  //  const re = new RegExp('[^\\s]+' + suffix);
+  //  const matches = stdout.match(re);
+  //  if (matches && matches.length > 0) {
+  //    const logfile = matches[0];
+  //    log.info(`app logfile: ${logfile}\n`);
+  //    return logfile;
+  //  }
+  //  return undefined;
+  //}
+  //
+  //_listenOnAppLogfile(logfile) {
+  //  if (this._appLogProcess) {
+  //    this._appLogProcess.kill();
+  //    this._appLogProcess = undefined;
+  //  }
+  //  if (!logfile) {
+  //    return;
+  //  }
+  //  this._appLogProcess = spawn('tail', ['-f', logfile]);
+  //  this._appLogProcess.stdout.on('data', (buffer) => {
+  //    const data = buffer.toString('utf8');
+  //    log.verbose('app: ' + data);
+  //  });
+  //}
+  //
+  //_getQueryFromDevice(device) {
+  //  let res = '';
+  //  const deviceParts = device.split(',');
+  //  for (let i = 0; i < deviceParts.length; i++) {
+  //    res += `"${deviceParts[i].trim()}" `;
+  //  }
+  //  return res.trim();
+  //}
 
-  _listenOnAppLogfile(logfile) {
-    if (this._appLogProcess) {
-      this._appLogProcess.kill();
-      this._appLogProcess = undefined;
-    }
-    if (!logfile) {
-      return;
-    }
-    this._appLogProcess = spawn('tail', ['-f', logfile]);
-    this._appLogProcess.stdout.on('data', (buffer) => {
-      const data = buffer.toString('utf8');
-      log.verbose('app: ' + data);
-    });
-  }
-
-  _getQueryFromDevice(device) {
-    let res = '';
-    const deviceParts = device.split(',');
-    for (let i = 0; i < deviceParts.length; i++) {
-      res += `"${deviceParts[i].trim()}" `;
-    }
-    return res.trim();
-  }
-
-  async prepare(params, onComplete) {
-    const session = params.session;
-    this._defaultLaunchArgs = ['-detoxServer', session.server, '-detoxSessionId', session.sessionId];
-
-    this._currentScheme = this._detrmineCurrentScheme(params);
+  async prepare(onComplete) {
     this._simulatorUdid = await this._fbsimctl.list(this._currentScheme.device);
     this._bundleId = await this._getBundleIdFromApp(this._currentScheme.app);
     await this._fbsimctl.boot(this._simulatorUdid);
@@ -116,11 +103,6 @@ class Simulator extends Device {
     this._waitUntilReady(() => {
       onComplete();
     });
-  }
-
-  reloadReactNativeApp(onLoad) {
-    this._websocket.waitForAction('ready', onLoad);
-    this._websocket.sendAction('reactNativeReload');
   }
 
   async openURL(url) {
