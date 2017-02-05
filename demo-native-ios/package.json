@@ -3,10 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "packager": "react-native start",
     "detox-server": "detox-server",
     "e2e": "mocha e2e --opts ./e2e/mocha.opts",
-    "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project NativeExample.xcodeproj -scheme NativeExample -derivedDataPath . -sdk iphonesimulator"
+    "build": "xcodebuild -project NativeExample.xcodeproj -scheme NativeExample -derivedDataPath . -sdk iphonesimulator"
   },
   "devDependencies": {
     "detox": "^4.1.0",
