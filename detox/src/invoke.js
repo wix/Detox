@@ -7,10 +7,6 @@ class InvocationManager {
     this.executionHandler = excutionHandler;
   }
 
-  call(...params) {
-    Invoke.call(...params);
-  }
-
   execute(invocation) {
     this.executionHandler.execute(invocation);
   }
