@@ -2,7 +2,6 @@ const utils = require('../utils/argparse');
 const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
-const websocket = require('../websocket');
 const argparse = require('../utils/argparse');
 const DetoxConfigError = require('../errors/errors').DetoxConfigError;
 

@@ -1,9 +1,24 @@
-var websocket = require('./websocket');
-var Invoke = require('./invoke/Invoke');
+const Invoke = require('./invoke/Invoke');
+const EarlGrey = require('./invoke/EarlGrey');
+const IOS = require('./invoke/IOS');
+
+class InvocationManager {
+  constructor(excutionHandler) {
+    this.executionHandler = excutionHandler;
+  }
+
+  call(...params) {
+    Invoke.call(...params);
+  }
+
+  execute(invocation) {
+    this.executionHandler.execute(invocation);
+  }
+}
 
 module.exports = {
-  EarlGrey: require('./invoke/EarlGrey'),
-  IOS: require('./invoke/IOS'),
-  call: Invoke.call,
-  execute: websocket.execute
-}
+  InvocationManager,
+  EarlGrey,
+  IOS,
+  call: Invoke.call
+};

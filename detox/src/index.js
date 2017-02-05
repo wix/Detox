@@ -1,12 +1,15 @@
 const log = require('npmlog');
-const websocket = require('./websocket');
+const WebsocketClient = require('./websocket');
 const expect = require('./ios/expect');
 const Simulator = require('./devices/simulator');
 const argparse = require('./utils/argparse');
+const InvocationManager = require('./invoke').InvocationManager;
 
 const loglevel = argparse.getArgValue('loglevel') ? argparse.getArgValue('loglevel') : 'info';
 log.level = loglevel;
 log.heading = 'detox';
+
+let websocket;
 
 let _detoxConfig = {
   session: {
@@ -20,19 +23,31 @@ function config(detoxConfig) {
   _detoxConfig = detoxConfig;
 }
 
-function start(onStart) {
+function start(done) {
   expect.exportGlobals();
-  global.simulator = new Simulator();
 
-  websocket.config(_detoxConfig.session);
+  websocket = new WebsocketClient(_detoxConfig.session);
+  global.simulator = new Simulator(websocket);
+
+  const invocationManager = new InvocationManager(websocket);
+  expect.setInvocationManager(invocationManager);
+
   websocket.connect(async() => {
     const target = argparse.getArgValue('target') || 'ios-sim';
     if (target === 'ios-sim') {
-      await simulator.prepare(_detoxConfig, onStart);
+      await simulator.prepare(_detoxConfig, done);
     } else {
-      onStart();
+      done();
     }
   });
+}
+
+function cleanup(done) {
+  websocket.cleanup(done);
+}
+
+function waitForTestResult(done) {
+  websocket.waitForTestResult(done);
 }
 
 async function openURL(url, onComplete) {
@@ -59,10 +74,24 @@ function _validateConfig(detoxConfig) {
   }
 }
 
+// if there's an error thrown, close the websocket,
+// if not, mocha will continue running until reaches timeout.
+process.on('uncaughtException', (err) => {
+  //websocket.close();
+
+  throw err;
+});
+
+process.on('unhandledRejection', (reason, p) => {
+  //websocket.close();
+
+  throw reason;
+});
+
 module.exports = {
   config,
   start,
-  cleanup: websocket.cleanup,
-  waitForTestResult: websocket.waitForTestResult,
+  cleanup,
+  waitForTestResult,
   openURL
 };

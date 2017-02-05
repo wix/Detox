@@ -1,4 +1,9 @@
 const invoke = require('../invoke');
+let invocationManager;
+
+function setInvocationManager(im) {
+  invocationManager = im;
+}
 
 //// examples
 
@@ -262,7 +267,7 @@ class SwipeAction extends Action {
 class Interaction {
   execute() {
     if (!this._call) throw new Error(`Interaction.execute cannot find a valid _call, got ${typeof this._call}`);
-    invoke.execute(this._call);
+    invocationManager.execute(this._call);
   }
 }
 
@@ -480,6 +485,7 @@ const exportGlobals = () => {
 };
 
 module.exports = {
+  setInvocationManager,
   exportGlobals,
   expect,
   waitFor,

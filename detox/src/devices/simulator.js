@@ -4,15 +4,15 @@ const spawn = require('child_process').spawn;
 const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
-const websocket = require('../websocket');
 const argparse = require('../utils/argparse');
 const Device = require('./device');
 const FBsimctl = require('./Fbsimctl');
 
 class Simulator extends Device {
 
-  constructor() {
-    super();
+  constructor(websocket) {
+    super(websocket);
+    this._websocket = websocket;
     this._fbsimctl = new FBsimctl();
     this._defaultLaunchArgs = [];
     this._currentScheme = {};
@@ -29,8 +29,8 @@ class Simulator extends Device {
   }
 
   _waitUntilReady(onReady) {
-    websocket.waitForAction('ready', onReady);
-    websocket.sendAction('isReady');
+    this._websocket.waitForAction('ready', onReady);
+    this._websocket.sendAction('isReady');
   }
 
   async _getBundleIdFromApp(appPath) {
@@ -119,8 +119,8 @@ class Simulator extends Device {
   }
 
   reloadReactNativeApp(onLoad) {
-    websocket.waitForAction('ready', onLoad);
-    websocket.sendAction('reactNativeReload');
+    this._websocket.waitForAction('ready', onLoad);
+    this._websocket.sendAction('reactNativeReload');
   }
 
   async openURL(url) {
