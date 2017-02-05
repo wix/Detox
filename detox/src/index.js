@@ -27,7 +27,7 @@ function start(done) {
   expect.exportGlobals();
 
   websocket = new WebsocketClient(_detoxConfig.session);
-  global.simulator = new Simulator(websocket);
+  global.simulator = new Simulator(websocket, _detoxConfig);
 
   const invocationManager = new InvocationManager(websocket);
   expect.setInvocationManager(invocationManager);
@@ -35,7 +35,7 @@ function start(done) {
   websocket.connect(async() => {
     const target = argparse.getArgValue('target') || 'ios-sim';
     if (target === 'ios-sim') {
-      await simulator.prepare(_detoxConfig, done);
+      await simulator.prepare(done);
     } else {
       done();
     }
