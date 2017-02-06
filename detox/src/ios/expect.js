@@ -1,4 +1,17 @@
 const invoke = require('../invoke');
+const matchers = require('./matchers');
+const Matcher = matchers.Matcher;
+const LabelMatcher = matchers.LabelMatcher;
+const IdMatcher = matchers.IdMatcher;
+const TypeMatcher = matchers.TypeMatcher;
+const TraitsMatcher = matchers.TraitsMatcher;
+const VisibleMatcher = matchers.VisibleMatcher;
+const NotVisibleMatcher = matchers.NotVisibleMatcher;
+const ExistsMatcher = matchers.ExistsMatcher;
+const NotExistsMatcher = matchers.NotExistsMatcher;
+const TextMatcher = matchers.TextMatcher;
+const ValueMatcher = matchers.ValueMatcher;
+
 let invocationManager;
 
 function setInvocationManager(im) {
@@ -27,141 +40,6 @@ detox.invoke.execute(_getInteraction2);
 
 */
 
-//// classes
-
-class Matcher {
-  withAncestor(matcher) {
-    if (!(matcher instanceof Matcher)) throw new Error(`Matcher withAncestor argument must be a valid Matcher, got ${typeof matcher}`);
-    const _originalMatcherCall = this._call;
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForBoth:andAncestorMatcher:', _originalMatcherCall, matcher._call);
-    return this;
-  }
-  withDescendant(matcher) {
-    if (!(matcher instanceof Matcher)) throw new Error(`Matcher withDescendant argument must be a valid Matcher, got ${typeof matcher}`);
-    const _originalMatcherCall = this._call;
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForBoth:andDescendantMatcher:', _originalMatcherCall, matcher._call);
-    return this;
-  }
-  and(matcher) {
-    if (!(matcher instanceof Matcher)) throw new Error(`Matcher and argument must be a valid Matcher, got ${typeof matcher}`);
-    const _originalMatcherCall = this._call;
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForBoth:and:', _originalMatcherCall, matcher._call);
-    return this;
-  }
-  not() {
-    const _originalMatcherCall = this._call;
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForNot:', _originalMatcherCall);
-    return this;
-  }
-  _avoidProblematicReactNativeElements() {
-    const _originalMatcherCall = this._call;
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherAvoidingProblematicReactNativeElements:', _originalMatcherCall);
-    return this;
-  }
-  _extendToDescendantScrollViews() {
-    const _originalMatcherCall = this._call;
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForScrollChildOfMatcher:', _originalMatcherCall);
-    return this;
-  }
-}
-
-class LabelMatcher extends Matcher {
-  constructor(value) {
-    super();
-    if (typeof value !== 'string') throw new Error(`LabelMatcher ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityLabel:', value);
-  }
-}
-
-class IdMatcher extends Matcher {
-  constructor(value) {
-    super();
-    if (typeof value !== 'string') throw new Error(`IdMatcher ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityID:', value);
-  }
-}
-
-class TypeMatcher extends Matcher {
-  constructor(value) {
-    super();
-    if (typeof value !== 'string') throw new Error(`TypeMatcher ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForClass:', value);
-  }
-}
-
-class TraitsMatcher extends Matcher {
-  constructor(value) {
-    super();
-    if ((typeof value !== 'object') || (!value instanceof Array)) throw new Error(`TraitsMatcher ctor argument must be an array, got ${typeof value}`);
-    let traits = 0;
-    for (let i = 0 ; i < value.length ; i++) {
-      switch (value[i]) {
-        case 'button': traits |= 1; break;
-        case 'link': traits |= 2; break;
-        case 'header': traits |= 4; break;
-        case 'search': traits |= 8; break;
-        case 'image': traits |= 16; break;
-        case 'selected': traits |= 32; break;
-        case 'plays': traits |= 64; break;
-        case 'key': traits |= 128; break;
-        case 'text': traits |= 256; break;
-        case 'summary': traits |= 512; break;
-        case 'disabled': traits |= 1024; break;
-        case 'frequentUpdates': traits |= 2048; break;
-        case 'startsMedia': traits |= 4096; break;
-        case 'adjustable': traits |= 8192; break;
-        case 'allowsDirectInteraction': traits |= 16384; break;
-        case 'pageTurn': traits |= 32768; break;
-        default: throw new Error(`Unknown trait '${value[i]}', see list in https://facebook.github.io/react-native/docs/accessibility.html#accessibilitytraits-ios`);
-      }
-    }
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityTraits:', invoke.IOS.NSInteger(traits));
-  }
-}
-
-class VisibleMatcher extends Matcher {
-  constructor() {
-    super();
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForSufficientlyVisible');
-  }
-}
-
-class NotVisibleMatcher extends Matcher {
-  constructor() {
-    super();
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForNotVisible');
-  }
-}
-
-class ExistsMatcher extends Matcher {
-  constructor() {
-    super();
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForNotNil');
-  }
-}
-
-class NotExistsMatcher extends Matcher {
-  constructor() {
-    super();
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForNil');
-  }
-}
-
-class TextMatcher extends Matcher {
-  constructor(value) {
-    super();
-    if (typeof value !== 'string') throw new Error(`TextMatcher ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForText:', value);
-  }
-}
-
-class ValueMatcher extends Matcher {
-  constructor(value) {
-    super();
-    if (typeof value !== 'string') throw new Error(`ValueMatcher ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityValue:', value);
-  }
-}
 
 class Action {}
 
@@ -194,7 +72,6 @@ class TypeTextAction extends Action {
     this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForTypeText:', value);
   }
 }
-
 
 class ReplaceTextAction extends Action {
   constructor(value) {
@@ -307,6 +184,7 @@ class WaitForInteraction extends Interaction {
   }
   withTimeout(timeout) {
     if (typeof timeout !== 'number') throw new Error(`WaitForInteraction withTimeout argument must be a number, got ${typeof timeout}`);
+    if (timeout < 0) throw new Error('timeout must be larger than 0');
     let _conditionCall = invoke.call(invoke.IOS.Class('GREYCondition'), 'detoxConditionForElementMatched:', this._element._call);
     if (this._notCondition) {
       _conditionCall = invoke.call(invoke.IOS.Class('GREYCondition'), 'detoxConditionForNotElementMatched:', this._element._call);
@@ -397,7 +275,7 @@ class Expect {}
 class ExpectElement extends Expect {
   constructor(element) {
     super();
-    if (!(element instanceof Element)) throw new Error(`ExpectElement ctor argument must be a valid Element, got ${typeof element}`);
+    //if (!(element instanceof Element)) throw new Error(`ExpectElement ctor argument must be a valid Element, got ${typeof element}`);
     this._element = element;
   }
   toBeVisible() {
@@ -431,7 +309,7 @@ class WaitFor {}
 class WaitForElement extends WaitFor {
   constructor(element) {
     super();
-    if ((!element instanceof Element)) throw new Error(`WaitForElement ctor argument must be a valid Element, got ${typeof element}`);
+    //if ((!element instanceof Element)) throw new Error(`WaitForElement ctor argument must be a valid Element, got ${typeof element}`);
     this._element = element;
   }
   toBeVisible() {
@@ -454,7 +332,6 @@ class WaitForElement extends WaitFor {
   }
 }
 
-//// syntax
 
 function expect(element) {
   if (element instanceof Element) return new ExpectElement(element);
@@ -474,7 +351,9 @@ const by = {
   label: (value) => new LabelMatcher(value),
   id: (value) => new IdMatcher(value),
   type: (value) => new TypeMatcher(value),
-  traits: (value) => new TraitsMatcher(value)
+  traits: (value) => new TraitsMatcher(value),
+  value: (value) => new ValueMatcher(value),
+  text: (value) => new TextMatcher(value)
 };
 
 const exportGlobals = () => {
