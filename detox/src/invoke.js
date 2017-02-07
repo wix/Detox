@@ -1,6 +1,5 @@
 const Invoke = require('./invoke/Invoke');
 const EarlGrey = require('./invoke/EarlGrey');
-const IOS = require('./invoke/IOS');
 
 class InvocationManager {
   constructor(excutionHandler) {
@@ -15,6 +14,6 @@ class InvocationManager {
 module.exports = {
   InvocationManager,
   EarlGrey,
-  IOS,
+  IOS: Invoke.genericInvokeObject,
   call: Invoke.call
 };

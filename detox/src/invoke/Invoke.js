@@ -22,6 +22,19 @@ function call(target, method, ...args) {
   };
 }
 
+const genericInvokeObject = new Proxy({},
+  {
+    get: (target, prop) => {
+      return (p) => {
+        return {
+          type: prop,
+          value: p
+        };
+      };
+    }
+  });
+
 module.exports = {
-  call: call
+  call,
+  genericInvokeObject
 };

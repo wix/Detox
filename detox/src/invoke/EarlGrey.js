@@ -1,8 +1,8 @@
-var instance = {
+const instance = {
   type: 'EarlGrey',
   value: 'instance'
 };
 
 module.exports = {
-  instance: instance
+  instance
 };
