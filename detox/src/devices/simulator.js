@@ -36,12 +36,11 @@ class Simulator extends Device {
 
   _getAppAbsolutePath(appPath) {
     const absPath = path.join(process.cwd(), appPath);
-    try {
-      fs.accessSync(absPath, fs.F_OK);
-    } catch (e) {
+    if (fs.existsSync(absPath)) {
+      return absPath;
+    } else {
       throw new Error(`app binary not found at ${absPath}, did you build it?`);
     }
-    return absPath;
   }
 
   //_getAppLogfile(bundleId, stdout) {

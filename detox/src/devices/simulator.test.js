@@ -2,6 +2,7 @@ const _ = require('lodash');
 const validScheme = require('../schemes.mock').valid;
 
 describe('simulator', () => {
+  let fs;
   let ws;
   let cpp;
   let Simulator;
@@ -14,7 +15,9 @@ describe('simulator', () => {
 
   beforeEach(() => {
     jest.mock('npmlog');
+
     jest.mock('fs');
+    fs = require('fs');
 
     jest.mock('child-process-promise');
     cpp = require('child-process-promise');
@@ -34,12 +37,36 @@ describe('simulator', () => {
     simulator = new Simulator(websocketClient, validScheme);
   });
 
-  it(`prepare() -  `, async() => {
+  it(`prepare() - expect to finish preperation and call 'done' callback`, async() => {
     const done = jest.fn();
     mockCppSuccessful(cpp);
+    fs.existsSync.mockReturnValue(true);
     await simulator.prepare(done);
     emitReady();
     expect(done).toHaveBeenCalled();
+  });
+
+  it(`prepare() -  `, async() => {
+    const done = jest.fn();
+    mockCppFailure(cpp);
+    try {
+      fs.existsSync.mockReturnValue(true);
+      await simulator.prepare(done);
+    } catch (ex) {
+      console.log(ex)
+      expect(ex).toBeDefined();
+    }
+  });
+
+  it(`prepare() -  `, async() => {
+    const done = jest.fn();
+    mockCppFailure(cpp);
+    try {
+      await simulator.prepare(done);
+    } catch (ex) {
+      console.log(ex)
+      expect(ex).toBeDefined();
+    }
   });
 
   it(`relaunchApp() -  `, async() => {
@@ -51,6 +78,7 @@ describe('simulator', () => {
 
   it(`deleteAndRelaunchApp() -  `, async() => {
     const done = jest.fn();
+    fs.existsSync.mockReturnValue(true);
     await simulator.deleteAndRelaunchApp(done);
     emitReady();
     expect(done).toHaveBeenCalled();
@@ -61,6 +89,10 @@ describe('simulator', () => {
     await simulator.reloadReactNativeApp(done);
     emitReady();
     expect(done).toHaveBeenCalled();
+  });
+
+  it(`openURL() -  `, async() => {
+    await simulator.openURL('url://poof');
   });
 
   function emitEvent(eventName, params) {
@@ -91,3 +123,10 @@ function mockCppSuccessful(cpp) {
   return successfulResult;
 }
 
+function mockCppFailure(cpp) {
+  const failureResult = returnSuccessfulWithValue('successful result');
+  const rejectedPromise = Promise.reject(failureResult);
+  cpp.exec.mockReturnValueOnce(rejectedPromise);
+
+  return failureResult;
+}

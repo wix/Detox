@@ -23,6 +23,12 @@ describe('device', () => {
     expect(resolvedScheme).toBeDefined();
   });
 
+  it(`_detrmineCurrentScheme() - should use custom scheme if suppled in command line args`, () => {
+    argparse.getArgValue.mockReturnValue('ios-simulator');
+    const resolvedScheme = device._detrmineCurrentScheme(validScheme);
+    expect(resolvedScheme).toBeDefined();
+  });
+
   it(`_detrmineCurrentScheme() - should throw error when a nonexistent custom scheme is suppled in command line args`, () => {
     argparse.getArgValue.mockReturnValue('nonexistent');
     try {
