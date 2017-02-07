@@ -23,7 +23,7 @@ class Queue {
   isEmpty() {
     return this.elements.length === 0;
   }
-};
+}
 
 module.exports = {
   Queue
