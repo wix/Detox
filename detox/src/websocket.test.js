@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const invoke = require('./invoke');
+const config = require('./schemes.mock').valid.session;
 
 describe('WebsocketClient', () => {
   let WebScoket;
@@ -82,12 +83,21 @@ describe('WebsocketClient', () => {
     expect(websocketClient.waitForTestResult).toThrow();
   });
 
-  it(`execute() should send an invocation json to testee`, () => {
+  it(`execute() should send an invocation json to testee, call is a function`, () => {
     const done = jest.fn();
     connect(done);
 
     const call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityLabel:', 'test');
     websocketClient.execute(call);
+    expectToSend(`{"type":"invoke","params":{"target":{"type":"Class","value":"GREYMatchers"},"method":"matcherForAccessibilityLabel:","args":["test"],"id":"0"}}`);
+  });
+
+  it(`execute() should send an invocation json to testee, call is a json`, () => {
+    const done = jest.fn();
+    connect(done);
+
+    const call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityLabel:', 'test');
+    websocketClient.execute(call());
     expectToSend(`{"type":"invoke","params":{"target":{"type":"Class","value":"GREYMatchers"},"method":"matcherForAccessibilityLabel:","args":["test"],"id":"0"}}`);
   });
 
@@ -119,10 +129,11 @@ describe('WebsocketClient', () => {
     expect(websocketClient.ws.close).toHaveBeenCalled();
   });
 
-  const config = {
-    server: "ws://localhost:8099",
-    sessionId: "test"
-  };
+  it(`close() should trigger ws.close() only if ws is defined`, () => {
+    websocketClient = new WebsocketClient(config);
+    websocketClient.close();
+    expect(websocketClient.ws).toBeUndefined();
+  });
 
   function connect(done) {
     websocketClient = new WebsocketClient(config);

@@ -40,7 +40,6 @@ detox.invoke.execute(_getInteraction2);
 
 */
 
-
 class Action {}
 
 class TapAction extends Action {
@@ -143,7 +142,7 @@ class SwipeAction extends Action {
 
 class Interaction {
   execute() {
-    if (!this._call) throw new Error(`Interaction.execute cannot find a valid _call, got ${typeof this._call}`);
+    //if (!this._call) throw new Error(`Interaction.execute cannot find a valid _call, got ${typeof this._call}`);
     invocationManager.execute(this._call);
   }
 }
@@ -151,8 +150,8 @@ class Interaction {
 class ActionInteraction extends Interaction {
   constructor(element, action) {
     super();
-    if (!(element instanceof Element)) throw new Error(`ActionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
-    if (!(action instanceof Action)) throw new Error(`ActionInteraction ctor 2nd argument must be a valid Action, got ${typeof action}`);
+    //if (!(element instanceof Element)) throw new Error(`ActionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
+    //if (!(action instanceof Action)) throw new Error(`ActionInteraction ctor 2nd argument must be a valid Action, got ${typeof action}`);
     this._call = invoke.call(element._call, 'performAction:', action._call);
     // TODO: move this.execute() here from the caller
   }
@@ -161,8 +160,8 @@ class ActionInteraction extends Interaction {
 class MatcherAssertionInteraction extends Interaction {
   constructor(element, matcher) {
     super();
-    if (!(element instanceof Element)) throw new Error(`MatcherAssertionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
-    if (!(matcher instanceof Matcher)) throw new Error(`MatcherAssertionInteraction ctor 2nd argument must be a valid Matcher, got ${typeof matcher}`);
+    //if (!(element instanceof Element)) throw new Error(`MatcherAssertionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
+    //if (!(matcher instanceof Matcher)) throw new Error(`MatcherAssertionInteraction ctor 2nd argument must be a valid Matcher, got ${typeof matcher}`);
     this._call = invoke.call(element._call, 'assertWithMatcher:', matcher._call);
     // TODO: move this.execute() here from the caller
   }
@@ -171,8 +170,8 @@ class MatcherAssertionInteraction extends Interaction {
 class WaitForInteraction extends Interaction {
   constructor(element, matcher) {
     super();
-    if (!(element instanceof Element)) throw new Error(`WaitForInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
-    if (!(matcher instanceof Matcher)) throw new Error(`WaitForInteraction ctor 2nd argument must be a valid Matcher, got ${typeof matcher}`);
+    //if (!(element instanceof Element)) throw new Error(`WaitForInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
+    //if (!(matcher instanceof Matcher)) throw new Error(`WaitForInteraction ctor 2nd argument must be a valid Matcher, got ${typeof matcher}`);
     this._element = element;
     this._originalMatcher = matcher;
     // we need to override the original matcher for the element and add matcher to it as well
@@ -200,15 +199,15 @@ class WaitForInteraction extends Interaction {
 class WaitForActionInteraction extends Interaction {
   constructor(element, matcher, searchMatcher) {
     super();
-    if (!(element instanceof Element)) throw new Error(`WaitForActionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
-    if (!(matcher instanceof Matcher)) throw new Error(`WaitForActionInteraction ctor 2nd argument must be a valid Matcher, got ${typeof matcher}`);
+    //if (!(element instanceof Element)) throw new Error(`WaitForActionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
+    //if (!(matcher instanceof Matcher)) throw new Error(`WaitForActionInteraction ctor 2nd argument must be a valid Matcher, got ${typeof matcher}`);
     if (!(searchMatcher instanceof Matcher)) throw new Error(`WaitForActionInteraction ctor 3rd argument must be a valid Matcher, got ${typeof searchMatcher}`);
     this._element = element;
     this._originalMatcher = matcher;
     this._searchMatcher = searchMatcher;
   }
   _execute(searchAction) {
-    if (!searchAction instanceof Action) throw new Error(`WaitForActionInteraction _execute argument must be a valid Action, got ${typeof searchAction}`);
+    //if (!searchAction instanceof Action) throw new Error(`WaitForActionInteraction _execute argument must be a valid Action, got ${typeof searchAction}`);
     const _interactionCall = invoke.call(this._element._call, 'usingSearchAction:onElementWithMatcher:', searchAction._call, this._searchMatcher._call);
     this._call = invoke.call(_interactionCall, 'assertWithMatcher:', this._originalMatcher._call);
     this.execute();
@@ -331,7 +330,6 @@ class WaitForElement extends WaitFor {
     return new WaitForInteraction(this._element, new ValueMatcher(value))._not();
   }
 }
-
 
 function expect(element) {
   if (element instanceof Element) return new ExpectElement(element);

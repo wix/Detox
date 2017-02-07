@@ -17,6 +17,14 @@ describe('exec', () => {
     expect(cpp.exec).toHaveBeenCalledWith(`bin`);
   });
 
+  it(`exec command with no arguments successfully`, async () => {
+    const successfulResult = returnSuccessfulNoValue();
+    const resolvedPromise = Promise.resolve(successfulResult);
+    cpp.exec.mockReturnValueOnce(resolvedPromise);
+    await exec.execWithRetriesAndLogs('bin');
+    expect(cpp.exec).toHaveBeenCalledWith(`bin`);
+  });
+
   it(`exec command with arguments successfully`, async () => {
     mockCppSuccessful(cpp);
 
@@ -130,6 +138,15 @@ function returnErrorWithValue(value) {
     stderr: value,
     childProcess: {
       exitCode: 1
+    }
+  };
+  return result;
+}
+
+function returnSuccessfulNoValue() {
+  const result = {
+    childProcess: {
+      exitCode: 0
     }
   };
   return result;

@@ -1,32 +1,32 @@
-var Class = function (value) {
+const Class = (value) => {
   return {
     type: 'Class',
     value: value
   };
-}
+};
 
-var NSInteger = function (value) {
+const NSInteger = (value) => {
   return {
     type: 'NSInteger',
     value: value
   };
 };
 
-var CGFloat = function (value) {
+const CGFloat = (value) => {
   return {
     type: 'CGFloat',
     value: value
   };
 };
 
-var CGPoint = function (value) {
+const CGPoint = (value) => {
   return {
     type: 'CGPoint',
     value: value
   };
 };
 
-var CGRect = function (value) {
+const CGRect = (value) => {
   return {
     type: 'CGRect',
     value: value

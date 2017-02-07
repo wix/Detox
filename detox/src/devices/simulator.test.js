@@ -53,7 +53,6 @@ describe('simulator', () => {
       fs.existsSync.mockReturnValue(true);
       await simulator.prepare(done);
     } catch (ex) {
-      console.log(ex)
       expect(ex).toBeDefined();
     }
   });
@@ -64,7 +63,6 @@ describe('simulator', () => {
     try {
       await simulator.prepare(done);
     } catch (ex) {
-      console.log(ex)
       expect(ex).toBeDefined();
     }
   });

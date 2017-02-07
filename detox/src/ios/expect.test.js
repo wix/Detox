@@ -26,7 +26,7 @@ describe('expect', () => {
   });
 
   it(`element by traits`, () => {
-    e.expect(e.element(e.by.traits(['button', 'link', 'header', 'search']))).toBeNotVisible();
+    e.expect(e.element(e.by.traits(['button', 'link', 'header', 'search']))).toBeVisible();
     e.expect(e.element(e.by.traits(['image', 'selected', 'plays', 'key']))).toBeNotVisible();
     e.expect(e.element(e.by.traits(['text', 'summary', 'disabled', 'frequentUpdates']))).toBeNotVisible();
     e.expect(e.element(e.by.traits(['startsMedia', 'adjustable', 'allowsDirectInteraction', 'pageTurn']))).toBeNotVisible();
@@ -67,6 +67,7 @@ describe('expect', () => {
     e.waitFor(e.element(e.by.id('id'))).toNotHaveValue('value');
 
     e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50, 'down');
+    e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50);
   });
 
   it(`waitFor (element) with wrong parameters should throw`, () => {
@@ -87,6 +88,7 @@ describe('expect', () => {
     e.element(e.by.id('UniqueId937')).typeText('passcode');
     e.element(e.by.id('UniqueId005')).clearText();
     e.element(e.by.id('UniqueId005')).replaceText('replaceTo');
+    e.element(e.by.id('ScrollView161')).scroll(100);
     e.element(e.by.id('ScrollView161')).scroll(100, 'down');
     e.element(e.by.id('ScrollView161')).scroll(100, 'up');
     e.element(e.by.id('ScrollView161')).scroll(100, 'right');
@@ -95,6 +97,7 @@ describe('expect', () => {
     e.element(e.by.id('ScrollView161')).scrollTo('top');
     e.element(e.by.id('ScrollView161')).scrollTo('left');
     e.element(e.by.id('ScrollView161')).scrollTo('right');
+    e.element(e.by.id('ScrollView799')).swipe('down');
     e.element(e.by.id('ScrollView799')).swipe('down', 'fast');
     e.element(e.by.id('ScrollView799')).swipe('up', 'slow');
     e.element(e.by.id('ScrollView799')).swipe('left', 'fast');
