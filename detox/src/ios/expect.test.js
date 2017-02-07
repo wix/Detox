@@ -60,8 +60,9 @@ describe('expect', () => {
   it(`waitFor (element)`, () => {
     e.waitFor(e.element(e.by.id('id'))).toBeVisible();
     e.waitFor(e.element(e.by.id('id'))).toBeNotVisible();
+    e.waitFor(e.element(e.by.id('id'))).toExist();
     e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout(0);
-    e.waitFor(e.element(e.by.id('id'))).toNotExist();
+    e.waitFor(e.element(e.by.id('id'))).toNotExist().withTimeout(0);
     e.waitFor(e.element(e.by.id('id'))).toHaveValue('value');
     e.waitFor(e.element(e.by.id('id'))).toNotHaveValue('value');
 
@@ -115,6 +116,18 @@ describe('expect', () => {
     expect(() => e.element(e.by.id('ScrollView799')).swipe('noDirection', 'fast')).toThrow();
     expect(() => e.element(e.by.id('ScrollView799')).swipe('down', 'NotFastNorSlow')).toThrow();
     expect(() => e.element(e.by.id('ScrollView799')).atIndex('NaN')).toThrow();
+  });
+
+  it(`exportGlobals() should export api functions`, () => {
+    const originalExpect = expect;
+    e.exportGlobals();
+    const newExpect = expect;
+    global.expect = originalExpect;
+
+    expect(newExpect).not.toEqual(originalExpect);
+    expect(element).toBeDefined();
+    expect(waitFor).toBeDefined();
+    expect(by).toBeDefined();
   });
 });
 
