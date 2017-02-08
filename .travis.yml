@@ -5,7 +5,7 @@ branches:
   - master
 env:
   global:
-  - NODE_VERSION=stable
+  - NODE_VERSION=7.5.0
 install:
 - nvm install $NODE_VERSION
 script:
