@@ -57,6 +57,10 @@
         "presets": [
           "latest"
         ],
+        "ignore": [
+          "*.test.js",
+          "*.mock.js"
+        ],
         "retainLines": true
       }
     }
