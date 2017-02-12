@@ -24,6 +24,15 @@
 		390D1C691E3A14EF007F5F46 /* UNNotificationResponse+PrivateHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 390D1C671E3A14EF007F5F46 /* UNNotificationResponse+PrivateHeaders.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		390D1C9C1E3A45F1007F5F46 /* UNNotification+PrivateHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 390D1C9A1E3A45F1007F5F46 /* UNNotification+PrivateHeaders.h */; };
 		390D1CA01E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 390D1C9E1E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h */; };
+		3928EFA81E47404900C19B6E /* DetoxUserNotificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3928EFA71E47404900C19B6E /* DetoxUserNotificationTests.swift */; };
+		3928EFAA1E47404900C19B6E /* Detox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 394767971DBF985400D72256 /* Detox.framework */; };
+		3928EFB51E47571500C19B6E /* TestableAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3928EFB41E47571500C19B6E /* TestableAppDelegate.swift */; };
+		3928EFB71E475C1F00C19B6E /* UNApiAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3928EFB61E475C1F00C19B6E /* UNApiAppDelegate.swift */; };
+		3928EFBC1E475E4C00C19B6E /* user_notification_timeInterval_trigger.json in Resources */ = {isa = PBXBuildFile; fileRef = 3928EFB81E475E4C00C19B6E /* user_notification_timeInterval_trigger.json */; };
+		3928EFBD1E475E4C00C19B6E /* user_notification_location_trigger.json in Resources */ = {isa = PBXBuildFile; fileRef = 3928EFB91E475E4C00C19B6E /* user_notification_location_trigger.json */; };
+		3928EFBE1E475E4C00C19B6E /* user_notification_calendar_trigger.json in Resources */ = {isa = PBXBuildFile; fileRef = 3928EFBA1E475E4C00C19B6E /* user_notification_calendar_trigger.json */; };
+		3928EFBF1E475E4C00C19B6E /* user_notification_push_trigger.json in Resources */ = {isa = PBXBuildFile; fileRef = 3928EFBB1E475E4C00C19B6E /* user_notification_push_trigger.json */; };
+		3928EFC21E47673800C19B6E /* LegacyApiAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3928EFC11E47673800C19B6E /* LegacyApiAppDelegate.swift */; };
 		3947679C1DBF985400D72256 /* Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 3947679A1DBF985400D72256 /* Detox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		394767AE1DBF987E00D72256 /* DetoxManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767A41DBF987E00D72256 /* DetoxManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		394767AF1DBF987E00D72256 /* DetoxManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767A51DBF987E00D72256 /* DetoxManager.m */; };
@@ -51,6 +60,7 @@
 		394767D51DBF98D900D72256 /* WXRunLoopIdlingResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767CC1DBF98D900D72256 /* WXRunLoopIdlingResource.m */; };
 		394767F61DBF994200D72256 /* SocketRocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 394767E71DBF992400D72256 /* SocketRocket.framework */; };
 		394767F71DBF994500D72256 /* EarlGrey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 394767DC1DBF991E00D72256 /* EarlGrey.framework */; };
+		394D589C1E50B59400556DB9 /* NSBundle+TestsFix.m in Sources */ = {isa = PBXBuildFile; fileRef = 394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */; };
 		39A34C711E30F10D00BEBB59 /* DetoxAppDelegateProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39A34C6F1E30F10D00BEBB59 /* DetoxAppDelegateProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		39A34C721E30F10D00BEBB59 /* DetoxAppDelegateProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A34C701E30F10D00BEBB59 /* DetoxAppDelegateProxy.m */; };
 		39C3C3511DBF9A13008177E1 /* EarlGrey.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 394767DC1DBF991E00D72256 /* EarlGrey.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -59,6 +69,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		3928EFAB1E47404900C19B6E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3947678E1DBF985400D72256 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 394767961DBF985400D72256;
+			remoteInfo = Detox;
+		};
 		394767DB1DBF991E00D72256 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 394767D71DBF991E00D72256 /* EarlGrey.xcodeproj */;
@@ -144,6 +161,16 @@
 		390D1C991E3A292F007F5F46 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		390D1C9A1E3A45F1007F5F46 /* UNNotification+PrivateHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UNNotification+PrivateHeaders.h"; sourceTree = "<group>"; };
 		390D1C9E1E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UNPushNotificationTrigger+PrivateHeaders.h"; sourceTree = "<group>"; };
+		3928EFA51E47404900C19B6E /* DetoxUserNotificationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DetoxUserNotificationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3928EFA71E47404900C19B6E /* DetoxUserNotificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxUserNotificationTests.swift; sourceTree = "<group>"; };
+		3928EFA91E47404900C19B6E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3928EFB41E47571500C19B6E /* TestableAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestableAppDelegate.swift; sourceTree = "<group>"; };
+		3928EFB61E475C1F00C19B6E /* UNApiAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UNApiAppDelegate.swift; sourceTree = "<group>"; };
+		3928EFB81E475E4C00C19B6E /* user_notification_timeInterval_trigger.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = user_notification_timeInterval_trigger.json; sourceTree = "<group>"; };
+		3928EFB91E475E4C00C19B6E /* user_notification_location_trigger.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = user_notification_location_trigger.json; sourceTree = "<group>"; };
+		3928EFBA1E475E4C00C19B6E /* user_notification_calendar_trigger.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = user_notification_calendar_trigger.json; sourceTree = "<group>"; };
+		3928EFBB1E475E4C00C19B6E /* user_notification_push_trigger.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = user_notification_push_trigger.json; sourceTree = "<group>"; };
+		3928EFC11E47673800C19B6E /* LegacyApiAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LegacyApiAppDelegate.swift; sourceTree = "<group>"; };
 		394767971DBF985400D72256 /* Detox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Detox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3947679A1DBF985400D72256 /* Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.h; sourceTree = "<group>"; };
 		3947679B1DBF985400D72256 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -173,12 +200,22 @@
 		394767CC1DBF98D900D72256 /* WXRunLoopIdlingResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXRunLoopIdlingResource.m; sourceTree = "<group>"; };
 		394767D71DBF991E00D72256 /* EarlGrey.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = EarlGrey.xcodeproj; path = EarlGrey/EarlGrey.xcodeproj; sourceTree = "<group>"; };
 		394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SocketRocket.xcodeproj; path = SocketRocket/SocketRocket.xcodeproj; sourceTree = "<group>"; };
+		394D589A1E50B59400556DB9 /* NSBundle+TestsFix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+TestsFix.h"; sourceTree = "<group>"; };
+		394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+TestsFix.m"; sourceTree = "<group>"; };
 		39A34C6F1E30F10D00BEBB59 /* DetoxAppDelegateProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetoxAppDelegateProxy.h; sourceTree = "<group>"; };
 		39A34C701E30F10D00BEBB59 /* DetoxAppDelegateProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetoxAppDelegateProxy.m; sourceTree = "<group>"; };
 		39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetoxUserNotificationDispatcher.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		3928EFA21E47404900C19B6E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3928EFAA1E47404900C19B6E /* Detox.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		394767931DBF985400D72256 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -202,10 +239,37 @@
 			path = UserNotificationsPrivate;
 			sourceTree = "<group>";
 		};
+		3928EFA61E47404900C19B6E /* DetoxUserNotificationTests */ = {
+			isa = PBXGroup;
+			children = (
+				3928EFC01E475E5500C19B6E /* UserNotificationTestInputs */,
+				3928EFA71E47404900C19B6E /* DetoxUserNotificationTests.swift */,
+				3928EFB41E47571500C19B6E /* TestableAppDelegate.swift */,
+				3928EFB61E475C1F00C19B6E /* UNApiAppDelegate.swift */,
+				3928EFC11E47673800C19B6E /* LegacyApiAppDelegate.swift */,
+				3928EFA91E47404900C19B6E /* Info.plist */,
+				394D589A1E50B59400556DB9 /* NSBundle+TestsFix.h */,
+				394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */,
+			);
+			path = DetoxUserNotificationTests;
+			sourceTree = "<group>";
+		};
+		3928EFC01E475E5500C19B6E /* UserNotificationTestInputs */ = {
+			isa = PBXGroup;
+			children = (
+				3928EFB81E475E4C00C19B6E /* user_notification_timeInterval_trigger.json */,
+				3928EFB91E475E4C00C19B6E /* user_notification_location_trigger.json */,
+				3928EFBA1E475E4C00C19B6E /* user_notification_calendar_trigger.json */,
+				3928EFBB1E475E4C00C19B6E /* user_notification_push_trigger.json */,
+			);
+			name = UserNotificationTestInputs;
+			sourceTree = "<group>";
+		};
 		3947678D1DBF985400D72256 = {
 			isa = PBXGroup;
 			children = (
 				394767991DBF985400D72256 /* Detox */,
+				3928EFA61E47404900C19B6E /* DetoxUserNotificationTests */,
 				394767D61DBF990F00D72256 /* Frameworks */,
 				394767981DBF985400D72256 /* Products */,
 			);
@@ -215,6 +279,7 @@
 			isa = PBXGroup;
 			children = (
 				394767971DBF985400D72256 /* Detox.framework */,
+				3928EFA51E47404900C19B6E /* DetoxUserNotificationTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -334,6 +399,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		3928EFA41E47404900C19B6E /* DetoxUserNotificationTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3928EFAD1E47404900C19B6E /* Build configuration list for PBXNativeTarget "DetoxUserNotificationTests" */;
+			buildPhases = (
+				3928EFA11E47404900C19B6E /* Sources */,
+				3928EFA21E47404900C19B6E /* Frameworks */,
+				3928EFA31E47404900C19B6E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3928EFAC1E47404900C19B6E /* PBXTargetDependency */,
+			);
+			name = DetoxUserNotificationTests;
+			productName = DetoxUserNotificationTests;
+			productReference = 3928EFA51E47404900C19B6E /* DetoxUserNotificationTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		394767961DBF985400D72256 /* Detox */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3947679F1DBF985400D72256 /* Build configuration list for PBXNativeTarget "Detox" */;
@@ -361,9 +444,15 @@
 		3947678E1DBF985400D72256 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0830;
 				LastUpgradeCheck = 0830;
 				ORGANIZATIONNAME = "Leo Natan";
 				TargetAttributes = {
+					3928EFA41E47404900C19B6E = {
+						CreatedOnToolsVersion = 8.3;
+						LastSwiftMigration = 0830;
+						ProvisioningStyle = Automatic;
+					};
 					3941F4F21DC6200700F23DAC = {
 						CreatedOnToolsVersion = 8.1;
 						ProvisioningStyle = Automatic;
@@ -399,6 +488,7 @@
 			targets = (
 				394767961DBF985400D72256 /* Detox */,
 				3941F4F21DC6200700F23DAC /* DetoxFramework */,
+				3928EFA41E47404900C19B6E /* DetoxUserNotificationTests */,
 			);
 		};
 /* End PBXProject section */
@@ -456,6 +546,17 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		3928EFA31E47404900C19B6E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3928EFBC1E475E4C00C19B6E /* user_notification_timeInterval_trigger.json in Resources */,
+				3928EFBE1E475E4C00C19B6E /* user_notification_calendar_trigger.json in Resources */,
+				3928EFBF1E475E4C00C19B6E /* user_notification_push_trigger.json in Resources */,
+				3928EFBD1E475E4C00C19B6E /* user_notification_location_trigger.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		394767951DBF985400D72256 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -482,6 +583,18 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		3928EFA11E47404900C19B6E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				394D589C1E50B59400556DB9 /* NSBundle+TestsFix.m in Sources */,
+				3928EFA81E47404900C19B6E /* DetoxUserNotificationTests.swift in Sources */,
+				3928EFB51E47571500C19B6E /* TestableAppDelegate.swift in Sources */,
+				3928EFC21E47673800C19B6E /* LegacyApiAppDelegate.swift in Sources */,
+				3928EFB71E475C1F00C19B6E /* UNApiAppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		394767921DBF985400D72256 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -505,6 +618,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		3928EFAC1E47404900C19B6E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 394767961DBF985400D72256 /* Detox */;
+			targetProxy = 3928EFAB1E47404900C19B6E /* PBXContainerItemProxy */;
+		};
 		394767F31DBF993400D72256 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "SocketRocket-iOS-Dynamic";
@@ -518,6 +636,34 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		3928EFAE1E47404900C19B6E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				INFOPLIST_FILE = DetoxUserNotificationTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.wix.DetoxUserNotificationTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		3928EFAF1E47404900C19B6E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				INFOPLIST_FILE = DetoxUserNotificationTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.wix.DetoxUserNotificationTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
 		3941F4F41DC6200700F23DAC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 390D1C981E3A2893007F5F46 /* Detox.xcconfig */;
@@ -651,7 +797,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PLATFORM_DIR)/Developer/Library/Frameworks";
 				MODULEMAP_FILE = "";
-				PRODUCT_BUNDLE_IDENTIFIER = com.leonatan.Detox;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wix.Detox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -675,7 +821,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PLATFORM_DIR)/Developer/Library/Frameworks";
 				MODULEMAP_FILE = "";
-				PRODUCT_BUNDLE_IDENTIFIER = com.leonatan.Detox;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wix.Detox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
@@ -685,6 +831,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		3928EFAD1E47404900C19B6E /* Build configuration list for PBXNativeTarget "DetoxUserNotificationTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3928EFAE1E47404900C19B6E /* Debug */,
+				3928EFAF1E47404900C19B6E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		3941F4F31DC6200700F23DAC /* Build configuration list for PBXAggregateTarget "DetoxFramework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

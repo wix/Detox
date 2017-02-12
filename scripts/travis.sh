@@ -8,7 +8,8 @@ lerna bootstrap
 
 cd detox
 npm run unit
-npm run build
+npm run build -- noframework
+xcodebuild -project ios/Detox.xcodeproj -scheme Detox -configuration Debug test -destination 'platform=iOS Simulator,name=iPhone 7 Plus' | XCPretty
 
 cd test
 (export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -scheme example -configuration Release -sdk iphonesimulator -derivedDataPath ios/build) | xcpretty

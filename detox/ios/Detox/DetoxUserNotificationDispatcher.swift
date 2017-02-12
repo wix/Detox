@@ -235,8 +235,8 @@ public class DetoxUserNotificationDispatcher: NSObject {
 		
 	}()
 	
-	private class func fatalError(forMissingKey key: String, in context: String) -> Never {
-		Swift.fatalError("\(context.uppercased()) requested but no \(key) found or in incorrect format.")
+	private class func fatalError(forMissingKey key: @autoclosure () -> String, in context: @autoclosure () -> String) -> Never {
+		Swift.fatalError("\(context().uppercased()) requested but no \(key()) found or in incorrect format.")
 	}
 	
 	private class func value<T>(for key: String, `in` data: [String: Any], ofType type: T.Type, context: String) -> T {
