@@ -7,6 +7,8 @@
 //
 
 #import "DetoxManager.h"
+#import <Detox/Detox-Swift.h>
+#import "DetoxAppDelegateProxy.h"
 
 @interface DetoxManager()
 
@@ -86,13 +88,12 @@ static void detoxConditionalInit()
 
 - (void) websocketDidReceiveAction:(NSString *)type withParams:(NSDictionary *)params
 {
-	if ([type isEqualToString:@"invoke"])
+	if([type isEqualToString:@"invoke"])
 	{
 		[self.testRunner invoke:params];
 		return;
 	}
-	
-	if ([type isEqualToString:@"isReady"])
+	else if([type isEqualToString:@"isReady"])
 	{
 		if(_isReady)
 		{
@@ -100,15 +101,20 @@ static void detoxConditionalInit()
 		}
 		return;
 	}
-	
-	if ([type isEqualToString:@"cleanup"])
+	else if([type isEqualToString:@"cleanup"])
 	{
 		[self.testRunner cleanup];
 		[self.websocket sendAction:@"cleanupDone" withParams:@{}];
 		return;
 	}
-	
-	if ([type isEqualToString:@"reactNativeReload"])
+	else if([type isEqualToString:@"userNotification"])
+	{
+		NSURL* userNotificationDataURL = [NSURL fileURLWithPath:params[@"detoxUserNotificationDataURL"]];
+		DetoxUserNotificationDispatcher* dispatcher = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationDataURL:userNotificationDataURL];
+		[dispatcher dispatchOnAppDelegate:DetoxAppDelegateProxy.currentAppDelegateProxy.originalAppDelegate simulateDuringLaunch:NO];
+		[self.websocket sendAction:@"userNotificationDone" withParams:@{}];
+	}
+	else if([type isEqualToString:@"reactNativeReload"])
 	{
 		_isReady = NO;
 		[ReactNativeSupport reloadApp];

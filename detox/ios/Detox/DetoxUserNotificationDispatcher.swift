@@ -75,13 +75,13 @@ public class DetoxUserNotificationDispatcher: NSObject {
 		}
 	}
 	
-	private func dispatchLegacyRemoteNotification(_ notification: [String: Any], on appDelegate: UIApplicationDelegate, isDuringLaunch: Bool) {
+	private func dispatchLegacyRemoteNotification(_ notification: [String: Any], on appDelegate: UIApplicationDelegate, simulateDuringLaunch: Bool) {
 		let app = UIApplication.shared
 		if let os7Method = appDelegate.application(_:didReceiveRemoteNotification:fetchCompletionHandler:) {
 			//This method is always called, regarding of launch status.
 			os7Method(app, notification, { (_) in })
 		}
-		else if isDuringLaunch == false {
+		else if simulateDuringLaunch == false {
 			//Only called by system if app was open, otherwise user needs to handle key from didFinishLaunch options dictionary.
 			appDelegate.application?(app, didReceiveRemoteNotification: notification)
 		}
@@ -105,8 +105,8 @@ public class DetoxUserNotificationDispatcher: NSObject {
 		}
 	}
 	
-	@objc(dispatchOnAppDelegate:isDuringLaunch:)
-	public func dispatch(on appDelegate: UIApplicationDelegate, isDuringLaunch: Bool) {
+	@objc(dispatchOnAppDelegate:simulateDuringLaunch:)
+	public func dispatch(on appDelegate: UIApplicationDelegate, simulateDuringLaunch: Bool) {
 		var shouldUseLegacyPath = true
 		os10api: if #available(iOS 10.0, *) {
 			guard let userNotificationsDelegate = UNUserNotificationCenter.current().delegate, let actualDelegateMethod = userNotificationsDelegate.userNotificationCenter(_:didReceive:withCompletionHandler:) else {
@@ -131,7 +131,7 @@ public class DetoxUserNotificationDispatcher: NSObject {
 			case (nil, true):
 				fallthrough
 			case ("default"?, true):
-				dispatchLegacyRemoteNotification(remoteNotification!, on: appDelegate, isDuringLaunch: isDuringLaunch)
+				dispatchLegacyRemoteNotification(remoteNotification!, on: appDelegate, simulateDuringLaunch: simulateDuringLaunch)
 				break;
 			case let (actionIdentifier?, true):
 				dispatchLegacyRemoteNotification(remoteNotification!, with: actionIdentifier, on: appDelegate)

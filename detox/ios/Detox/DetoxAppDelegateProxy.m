@@ -43,8 +43,6 @@ static DetoxAppDelegateProxy* _currentAppDelegateProxy;
 
 - (instancetype)initWithOriginalAppDelegate:(id<UIApplicationDelegate>)originalAppDelegate
 {
-//	self = [super init];
-	
 	_originalAppDelegate = originalAppDelegate;
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidLaunchNotification:) name:UIApplicationDidFinishLaunchingNotification object:nil];
@@ -52,9 +50,14 @@ static DetoxAppDelegateProxy* _currentAppDelegateProxy;
 	return self;
 }
 
+- (id<UIApplicationDelegate>)originalAppDelegate
+{
+	return _originalAppDelegate;
+}
+
 - (void)_applicationDidLaunchNotification:(NSNotification*)notification
 {
-	[self.userNotificationDispatcher dispatchOnAppDelegate:_originalAppDelegate isDuringLaunch:YES];
+	[self.userNotificationDispatcher dispatchOnAppDelegate:_originalAppDelegate simulateDuringLaunch:YES];
 }
 
 - (BOOL)respondsToSelector:(SEL)aSelector

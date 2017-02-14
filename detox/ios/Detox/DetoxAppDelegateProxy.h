@@ -7,9 +7,11 @@
 //
 
 @import Foundation;
+@import UIKit;
 
 @interface DetoxAppDelegateProxy : NSObject
 
 @property (class, nonatomic, strong, readonly) DetoxAppDelegateProxy* currentAppDelegateProxy;
+@property (nonatomic, strong, readonly) id<UIApplicationDelegate> originalAppDelegate;
 
 @end
