@@ -42,7 +42,7 @@ describe('simulator', () => {
     mockCppSuccessful(cpp);
     fs.existsSync.mockReturnValue(true);
     await simulator.prepare(done);
-    emitReady();
+    fakeDeviceReady();
     expect(done).toHaveBeenCalled();
   });
 
@@ -70,7 +70,7 @@ describe('simulator', () => {
   it(`relaunchApp() -  `, async() => {
     const done = jest.fn();
     await simulator.relaunchApp(done);
-    emitReady();
+    fakeDeviceReady();
     expect(done).toHaveBeenCalled();
   });
 
@@ -78,14 +78,21 @@ describe('simulator', () => {
     const done = jest.fn();
     fs.existsSync.mockReturnValue(true);
     await simulator.deleteAndRelaunchApp(done);
-    emitReady();
+    fakeDeviceReady();
     expect(done).toHaveBeenCalled();
   });
 
   it(`reloadReactNativeApp() -  `, async() => {
     const done = jest.fn();
     await simulator.reloadReactNativeApp(done);
-    emitReady();
+    fakeDeviceReady();
+    expect(done).toHaveBeenCalled();
+  });
+
+  it(`sendUserNotification() -  `, async() => {
+    const done = jest.fn();
+    await simulator.sendUserNotification(done, {});
+    fakeDeviceMessage('userNotificationDone', {});
     expect(done).toHaveBeenCalled();
   });
 
@@ -93,12 +100,16 @@ describe('simulator', () => {
     await simulator.openURL('url://poof');
   });
 
-  function emitEvent(eventName, params) {
+  function fakeWebsocketCallback(eventName, params) {
     _.fromPairs(websocketClient.ws.on.mock.calls)[eventName](params);
   }
 
-  function emitReady() {
-    emitEvent('message', `{"type":"ready","params":{}}`);
+  function fakeDeviceMessage(type, params) {
+    fakeWebsocketCallback('message', `{"type":"${type}","params":${JSON.stringify(params)}}`);
+  }
+
+  function fakeDeviceReady() {
+    fakeDeviceMessage('ready', {});
   }
 });
 

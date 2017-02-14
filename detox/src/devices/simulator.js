@@ -3,9 +3,11 @@ const exec = require('child-process-promise').exec;
 const spawn = require('child_process').spawn;
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 const _ = require('lodash');
 const Device = require('./device');
 const FBsimctl = require('./Fbsimctl');
+const FileUtils = require('../commons/FileUtils');
 
 class Simulator extends Device {
 
@@ -78,6 +80,12 @@ class Simulator extends Device {
   //  }
   //  return res.trim();
   //}
+
+  async sendUserNotification(done, notification) {
+    const notificationFilePath = path.join(os.tmpdir(), `detox`, `notifications`, `notification.json`);
+    FileUtils.writeFile(notificationFilePath, notification);
+    super.sendUserNotification(done, {detoxUserNotificationDataURL: notificationFilePath});
+  }
 
   async prepare(onComplete) {
     this._simulatorUdid = await this._fbsimctl.list(this._currentScheme.device);
