@@ -12,7 +12,7 @@ if [ $? != 0 ]; then
   printf "\n#################################################################\n"
   brew help &> /dev/null
   if [ $? != 0 ]; then
-    echo "error: could not fix SocketRocket soft links."
+    echo "error: Brew is not installed. Visit https://brew.sh/ for more information."
     exit 1
   fi
 
