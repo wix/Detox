@@ -67,11 +67,46 @@ describe('simulator', () => {
     }
   });
 
-  it(`relaunchApp() -  `, async() => {
+  it(`relaunchApp()`, async() => {
     const done = jest.fn();
     await simulator.relaunchApp(done);
     fakeDeviceReady();
     expect(done).toHaveBeenCalled();
+  });
+
+  it(`relaunchApp() with delete=true`, async() => {
+    const done = jest.fn();
+    fs.existsSync.mockReturnValue(true);
+
+    await simulator.relaunchApp(done, {delete: true});
+    fakeDeviceReady();
+
+    expect(done).toHaveBeenCalled();
+    expect(simulator._fbsimctl.uninstall).toHaveBeenCalled();
+    expect(simulator._fbsimctl.install).toHaveBeenCalled();
+  });
+
+  it(`relaunchApp() with url hould send the url as a param in launchParams`, async() => {
+    const done = jest.fn();
+    await simulator.relaunchApp(done, {url: `scheme://some.url`});
+    fakeDeviceReady();
+    expect(done).toHaveBeenCalled();
+  });
+
+  it(`relaunchApp() with userNofitication should send the userNotification as a param in launchParams`, async() => {
+    const done = jest.fn();
+    await simulator.relaunchApp(done, {userNotification: notification });
+    fakeDeviceReady();
+    expect(done).toHaveBeenCalled();
+  });
+
+  it(`relaunchApp() with url and userNofitication should throw`, async() => {
+    const done = jest.fn();
+    try {
+      await simulator.relaunchApp(done, {url: "scheme://some.url", userNotification: notification});
+    } catch (ex) {
+      expect(ex).toBeDefined();
+    }
   });
 
   it(`deleteAndRelaunchApp() -  `, async() => {
@@ -139,3 +174,23 @@ function mockCppFailure(cpp) {
 
   return failureResult;
 }
+
+const notification = {
+  "trigger": {
+  "type": "timeInterval",
+    "timeInterval": 30,
+    "repeats": false
+},
+  "title": "Title",
+  "subtitle": "Subtitle",
+  "body": "Body",
+  "badge": 1,
+  "payload": {
+  "key1": "value1",
+    "key2": "value2"
+},
+  "category": "com.example.category",
+  "user-text": "Hi there!",
+  "content-available": 0,
+  "action-identifier": "default2"
+};

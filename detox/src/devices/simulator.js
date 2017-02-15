@@ -7,7 +7,6 @@ const os = require('os');
 const _ = require('lodash');
 const Device = require('./device');
 const FBsimctl = require('./Fbsimctl');
-const FileUtils = require('../commons/FileUtils');
 
 class Simulator extends Device {
 
@@ -81,9 +80,14 @@ class Simulator extends Device {
   //  return res.trim();
   //}
 
-  async sendUserNotification(done, notification) {
+  createPushNotificationJson(notification) {
     const notificationFilePath = path.join(os.tmpdir(), `detox`, `notifications`, `notification.json`);
-    FileUtils.writeFile(notificationFilePath, notification);
+    fs.writeFileSync(notificationFilePath, notification);
+    return notificationFilePath;
+  }
+
+  async sendUserNotification(done, notification) {
+    const notificationFilePath = this.createPushNotificationJson(notification);
     super.sendUserNotification(done, {detoxUserNotificationDataURL: notificationFilePath});
   }
 
@@ -94,22 +98,40 @@ class Simulator extends Device {
     await this.deleteAndRelaunchApp(onComplete);
   }
 
-  async relaunchApp(onComplete) {
-    // Calling `relaunch` is not good as it seems `fbsimctl` does not forward env variables in this mode.
-    await this._fbsimctl.terminate(this._simulatorUdid, this._bundleId);
-    await this._fbsimctl.launch(this._simulatorUdid, this._bundleId, this._defaultLaunchArgs);
+  /*
+    delete
+    url
+    userNotification
+   */
+  async relaunchApp(onComplete, params = {}) {
+    console.log(params);
+    if (params.url && params.userNotification) {
+      throw new Error(`detox can't understand this 'relaunchApp(${JSON.stringify(params)})' request, either request to launch with url or with userNotification, not both`)
+    }
+
+    if (params.delete) {
+      await this._fbsimctl.uninstall(this._simulatorUdid, this._bundleId);
+      await this._fbsimctl.install(this._simulatorUdid, this._getAppAbsolutePath(this._currentScheme.app));
+    } else {
+      // Calling `relaunch` is not good as it seems `fbsimctl` does not forward env variables in this mode.
+      await this._fbsimctl.terminate(this._simulatorUdid, this._bundleId);
+    }
+
+    let additionalLaunchArgs;
+    if (params.url) {
+      additionalLaunchArgs = {'-detoxURLOverride': params.url}
+    } else if (params.userNotification) {
+      additionalLaunchArgs = {'-detoxUserNotificationDataURL': this.createPushNotificationJson(params.userNotification)}
+    }
+
+    await this._fbsimctl.launch(this._simulatorUdid, this._bundleId, this.prepareLaunchArgs(additionalLaunchArgs));
     await this._waitUntilReady(() => {
       onComplete();
     });
   }
 
   async deleteAndRelaunchApp(onComplete) {
-    await this._fbsimctl.uninstall(this._simulatorUdid, this._bundleId);
-    await this._fbsimctl.install(this._simulatorUdid, this._getAppAbsolutePath(this._currentScheme.app));
-    await this._fbsimctl.launch(this._simulatorUdid, this._bundleId, this._defaultLaunchArgs);
-    this._waitUntilReady(() => {
-      onComplete();
-    });
+    await this.relaunchApp(onComplete, {delete: true});
   }
 
   async openURL(url) {

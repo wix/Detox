@@ -7,12 +7,18 @@ const configuration = require('../configuration');
 class Device {
   constructor(websocket, params) {
     this._websocket = websocket;
-
-    const session = params.session;
-    this._defaultLaunchArgs = ['-detoxServer', session.server, '-detoxSessionId', session.sessionId]; //, '-detoxUserNotificationDataURL', uri];
+    this.params = params;
     this._currentScheme = this._detrmineCurrentScheme(params);
   }
 
+  prepareLaunchArgs(additionalLaunchArgs) {
+    const session = this.params.session;
+    let args = ['-detoxServer', session.server, '-detoxSessionId', session.sessionId];
+    if (additionalLaunchArgs) {
+      args = args.concat(_.flatten(Object.entries(additionalLaunchArgs)));
+    }
+    return  args;
+  }
   reloadReactNativeApp(onLoad) {
     this._websocket.waitForAction('ready', onLoad);
     this._websocket.sendAction('reactNativeReload');
