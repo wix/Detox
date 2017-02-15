@@ -4,23 +4,17 @@ const expect = require('./ios/expect');
 const Simulator = require('./devices/simulator');
 const argparse = require('./utils/argparse');
 const InvocationManager = require('./invoke').InvocationManager;
+const configuration = require('./configuration');
 
-const loglevel = argparse.getArgValue('loglevel') ? argparse.getArgValue('loglevel') : 'info';
-log.level = loglevel;
+log.level = loglevel = argparse.getArgValue('loglevel') || 'info';
 log.heading = 'detox';
 
 let websocket;
-
-let _detoxConfig = {
-  session: {
-    server: 'ws://localhost:8099',
-    sessionId: 'example'
-  }
-};
+let _detoxConfig;
 
 function config(detoxConfig) {
-  _validateConfig(detoxConfig);
-  _detoxConfig = detoxConfig;
+  configuration.validateConfig(detoxConfig);
+  _detoxConfig = detoxConfig || configuration.defaultConfig;
 }
 
 function start(done) {
@@ -56,22 +50,6 @@ async function openURL(url, onComplete) {
     await simulator.openURL(url);
   }
   onComplete();
-}
-
-function _validateConfig(detoxConfig) {
-  if (!detoxConfig.session) {
-    throw new Error(`No session configuration was found, pass settings under the session property`);
-  }
-
-  const settings = detoxConfig.session;
-
-  if (!settings.server) {
-    throw new Error(`session.server property is missing, should hold the server address`);
-  }
-
-  if (!settings.sessionId) {
-    throw new Error(`session.sessionId property is missing, should hold the server session id`);
-  }
 }
 
 // if there's an error thrown, close the websocket,

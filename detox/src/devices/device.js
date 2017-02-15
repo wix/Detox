@@ -2,14 +2,14 @@ const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
 const argparse = require('../utils/argparse');
-const CustomError = require('../errors/errors').CustomError;
+const configuration = require('../configuration');
 
 class Device {
   constructor(websocket, params) {
     this._websocket = websocket;
 
     const session = params.session;
-    this._defaultLaunchArgs = ['-detoxServer', session.server, '-detoxSessionId', session.sessionId];
+    this._defaultLaunchArgs = ['-detoxServer', session.server, '-detoxSessionId', session.sessionId]; //, '-detoxUserNotificationDataURL', uri];
     this._currentScheme = this._detrmineCurrentScheme(params);
   }
 
@@ -51,33 +51,9 @@ class Device {
       i++;
     }
 
-    this._validateScheme(scheme);
+    configuration.validateScheme(scheme);
     return scheme;
   }
-
-  _validateScheme(scheme) {
-    if (!scheme) {
-      throw new DetoxConfigError(`No scheme was found, in order to test a device pass settings under detox property, e.g.   
-           "detox": {
-            ...
-            "ios-simulator": {
-                "app": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-                "device": "iPhone 7 Plus"
-            }
-          }`);
-    }
-
-    if (!scheme.device) {
-      throw new DetoxConfigError(`scheme.device property is missing, should hold the device type to test on`);
-    }
-    if (!scheme.app) {
-      throw new DetoxConfigError(`scheme.app property is missing, should hold the app binary path`);
-    }
-  }
-}
-
-class DetoxConfigError extends CustomError {
-
 }
 
 module.exports = Device;
