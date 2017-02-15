@@ -31,7 +31,7 @@ class DetoxUserNotificationTests: XCTestCase {
 		XCTAssert(dispatcher.remoteNotification != nil)
 		_ = appDelegate.application(UIApplication.shared, willFinishLaunchingWithOptions: [.remoteNotification: dispatcher.remoteNotification!])
 		_ = appDelegate.application(UIApplication.shared, didFinishLaunchingWithOptions: [.remoteNotification: dispatcher.remoteNotification!])
-		dispatcher.dispatch(on: appDelegate, isDuringLaunch: true)
+		dispatcher.dispatch(on: appDelegate, simulateDuringLaunch: true)
 		
 		XCTAssert(appDelegate.remoteNotificationObjectWasFoundInWillLaunch)
 		XCTAssert(appDelegate.remoteNotificationObjectWasFoundInDidLaunch)
@@ -53,7 +53,7 @@ class DetoxUserNotificationTests: XCTestCase {
 		XCTAssert(dispatcher.localNotification != nil)
 		_ = appDelegate.application(UIApplication.shared, willFinishLaunchingWithOptions: [.localNotification: dispatcher.localNotification!])
 		_ = appDelegate.application(UIApplication.shared, didFinishLaunchingWithOptions: [.localNotification: dispatcher.localNotification!])
-		dispatcher.dispatch(on: appDelegate, isDuringLaunch: true)
+		dispatcher.dispatch(on: appDelegate, simulateDuringLaunch: true)
 		
 		XCTAssert(appDelegate.localNotificationObjectWasFoundInWillLaunch)
 		XCTAssert(appDelegate.localNotificationObjectWasFoundInDidLaunch)
