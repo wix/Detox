@@ -80,9 +80,20 @@ class Simulator extends Device {
   //  return res.trim();
   //}
 
+  ensureDirectoryExistence(filePath) {
+    var dirname = path.dirname(filePath);
+    if (fs.existsSync(dirname)) {
+      return true;
+    }
+
+    this.ensureDirectoryExistence(dirname);
+    fs.mkdirSync(dirname);
+  }
+
   createPushNotificationJson(notification) {
-    const notificationFilePath = path.join(os.tmpdir(), `detox`, `notifications`, `notification.json`);
-    fs.writeFileSync(notificationFilePath, notification);
+    const notificationFilePath = path.join(__dirname, `detox`, `notifications`, `notification.json`);
+    this.ensureDirectoryExistence(notificationFilePath);
+    fs.writeFileSync(notificationFilePath, JSON.stringify(notification));
     return notificationFilePath;
   }
 
@@ -98,13 +109,8 @@ class Simulator extends Device {
     await this.deleteAndRelaunchApp(onComplete);
   }
 
-  /*
-    delete
-    url
-    userNotification
-   */
   async relaunchApp(onComplete, params = {}) {
-    console.log(params);
+
     if (params.url && params.userNotification) {
       throw new Error(`detox can't understand this 'relaunchApp(${JSON.stringify(params)})' request, either request to launch with url or with userNotification, not both`)
     }

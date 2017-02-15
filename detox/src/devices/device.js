@@ -19,6 +19,7 @@ class Device {
     }
     return  args;
   }
+
   reloadReactNativeApp(onLoad) {
     this._websocket.waitForAction('ready', onLoad);
     this._websocket.sendAction('reactNativeReload');
@@ -47,7 +48,7 @@ class Device {
     if (schemeOverride) {
       scheme = _.get(params, schemeOverride);
       if (!scheme) {
-        throw new DetoxConfigError(`could not find scheme '${schemeOverride}', make sure it's configured in your detox config`);
+        throw new Error(`could not find scheme '${schemeOverride}', make sure it's configured in your detox config`);
       }
     }
 

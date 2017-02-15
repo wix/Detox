@@ -95,6 +95,7 @@ describe('simulator', () => {
 
   it(`relaunchApp() with userNofitication should send the userNotification as a param in launchParams`, async() => {
     const done = jest.fn();
+    fs.existsSync.mockReturnValue(true);
     await simulator.relaunchApp(done, {userNotification: notification });
     fakeDeviceReady();
     expect(done).toHaveBeenCalled();
@@ -126,6 +127,7 @@ describe('simulator', () => {
 
   it(`sendUserNotification() -  `, async() => {
     const done = jest.fn();
+    fs.existsSync.mockReturnValueOnce(false).mockReturnValueOnce(true);
     await simulator.sendUserNotification(done, {});
     fakeDeviceMessage('userNotificationDone', {});
     expect(done).toHaveBeenCalled();

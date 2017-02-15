@@ -3,7 +3,8 @@ import {
   AppRegistry,
   Text,
   View,
-  TouchableOpacity
+  TouchableOpacity,
+  PushNotificationIOS
 } from 'react-native';
 import * as Screens from './src/Screens';
 
@@ -12,7 +13,8 @@ class example extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      screen: undefined
+      screen: undefined,
+      pushNotification: undefined
     };
   }
 
@@ -26,7 +28,29 @@ class example extends Component {
     )
   }
 
+  renderAfterPushNotification(text) {
+    return (
+      <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
+        <Text style={{fontSize: 25}}>
+          {text}
+        </Text>
+      </View>
+    );
+  }
+
+  async componentDidMount() {
+    const result = await PushNotificationIOS.getInitialNotification();
+    if (result) {
+      this.setState({pushNotification: result.getAlert()});
+    }
+  }
+
   render() {
+    if (this.state.pushNotification) {
+      console.log(`this.state.pushNotification ${this.state.pushNotification}`);
+      return this.renderAfterPushNotification( this.state.pushNotification.title);
+    }
+
     if (!this.state.screen) {
       return (
         <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
@@ -53,3 +77,6 @@ class example extends Component {
 }
 
 AppRegistry.registerComponent('example', () => example);
+
+PushNotificationIOS.addEventListener('notification', () => console.log('received notification!!!'));
+PushNotificationIOS.addEventListener('localNotification',  () => console.log('received localNotification!!!'));

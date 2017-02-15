@@ -90,7 +90,11 @@ class Fbsimctl {
       successful: `${bundleId} terminated`
     };
     const options = {args: `${udid}  terminate ${bundleId}`};
-    const result = await this._execFbsimctlCommand(options, statusLogs);
+    try {
+      const result = await this._execFbsimctlCommand(options, statusLogs, 1);
+    } catch (ex) {
+      //this is ok
+    }
     // in the future we'll allow expectations on logs and _listenOnAppLogfile will always run (remove if)
     //this._listenOnAppLogfile(this._getAppLogfile(bundleId, result.stdout));
   }
