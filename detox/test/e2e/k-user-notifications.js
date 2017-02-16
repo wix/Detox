@@ -10,7 +10,7 @@ describe('User Notifications', () => {
     });
   });
 
-  describe('Foreground user notifications', () => {
+  xdescribe('Foreground user notifications', () => {
 
     beforeEach((done) => {
       simulator.relaunchApp(done);
