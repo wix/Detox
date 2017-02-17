@@ -5,6 +5,11 @@ describe('configuration', () => {
     configuration = require('./configuration');
   });
 
+  it(`providing a valid config`, () => {
+
+    expect(() => configuration.validateConfig(schemes.valid)).not.toThrow();
+  });
+
   it(`providing empty config should throw`, () => {
     testFaultyConfig('');
   });
