@@ -14,7 +14,7 @@ class example extends Component {
     super(props);
     this.state = {
       screen: undefined,
-      pushNotification: undefined
+      notification: undefined
     };
   }
 
@@ -41,14 +41,24 @@ class example extends Component {
   async componentDidMount() {
     const result = await PushNotificationIOS.getInitialNotification();
     if (result) {
-      this.setState({pushNotification: result.getAlert()});
+      this.setState({notification: result.getAlert()});
     }
   }
 
+  componentWillMount() {
+    PushNotificationIOS.addEventListener('notification', (notification) => this._onNotification(notification));
+    PushNotificationIOS.addEventListener('localNotification',  (notification) => this._onNotification(notification));
+  }
+
+  componentWillUnmount() {
+    PushNotificationIOS.removeEventLisener('notification',  (notification) => this._onNotification(notification));
+    PushNotificationIOS.removeEventLisener('localNotification', (notification) => this._onNotification(notification));
+  }
+
   render() {
-    if (this.state.pushNotification) {
-      console.log(`this.state.pushNotification ${this.state.pushNotification}`);
-      return this.renderAfterPushNotification( this.state.pushNotification.title);
+    if (this.state.notification) {
+      console.log(`this.state.pushNotification ${this.state.notification}`);
+      return this.renderAfterPushNotification( this.state.notification.title);
     }
 
     if (!this.state.screen) {
@@ -74,9 +84,10 @@ class example extends Component {
     );
   }
 
+  _onNotification(notification) {
+    console.log("notification.getMessage()" + JSON.stringify(notification));
+    this.setState({notification: notification.getMessage()});
+  }
 }
 
 AppRegistry.registerComponent('example', () => example);
-
-PushNotificationIOS.addEventListener('notification', () => console.log('received notification!!!'));
-PushNotificationIOS.addEventListener('localNotification',  () => console.log('received localNotification!!!'));

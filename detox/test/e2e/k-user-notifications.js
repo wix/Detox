@@ -16,12 +16,8 @@ describe('User Notifications', () => {
       simulator.relaunchApp(done);
     });
 
-    beforeEach((done) => {
-      simulator.sendUserNotification(done, {userNotification: userNotificationCalendarTrigger});
-    });
-
     it('local notification from inside the app', (done) => {
-
+      simulator.sendUserNotification(done, userNotificationCalendarTrigger);
     });
   });
 });
