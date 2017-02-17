@@ -93,7 +93,7 @@ class Simulator extends Device {
   createPushNotificationJson(notification) {
     const notificationFilePath = path.join(__dirname, `detox`, `notifications`, `notification.json`);
     this.ensureDirectoryExistence(notificationFilePath);
-    fs.writeFileSync(notificationFilePath, JSON.stringify(notification));
+    fs.writeFileSync(notificationFilePath, JSON.stringify(notification, null, 2));
     return notificationFilePath;
   }
 
@@ -131,9 +131,7 @@ class Simulator extends Device {
     }
 
     await this._fbsimctl.launch(this._simulatorUdid, this._bundleId, this.prepareLaunchArgs(additionalLaunchArgs));
-    await this._waitUntilReady(() => {
-      onComplete();
-    });
+    await this._waitUntilReady(onComplete);
   }
 
   async deleteAndRelaunchApp(onComplete) {
