@@ -78,7 +78,7 @@ describe('simulator', () => {
     const done = jest.fn();
     fs.existsSync.mockReturnValue(true);
 
-    await simulator.relaunchApp(done, {delete: true});
+    await simulator.relaunchApp({delete: true}, done);
     fakeDeviceReady();
 
     expect(done).toHaveBeenCalled();
@@ -88,7 +88,7 @@ describe('simulator', () => {
 
   it(`relaunchApp() with url hould send the url as a param in launchParams`, async() => {
     const done = jest.fn();
-    await simulator.relaunchApp(done, {url: `scheme://some.url`});
+    await simulator.relaunchApp({url: `scheme://some.url`}, done);
     fakeDeviceReady();
     expect(done).toHaveBeenCalled();
   });
@@ -96,7 +96,7 @@ describe('simulator', () => {
   it(`relaunchApp() with userNofitication should send the userNotification as a param in launchParams`, async() => {
     const done = jest.fn();
     fs.existsSync.mockReturnValue(true);
-    await simulator.relaunchApp(done, {userNotification: notification });
+    await simulator.relaunchApp({userNotification: notification}, done);
     fakeDeviceReady();
     expect(done).toHaveBeenCalled();
   });
@@ -104,11 +104,40 @@ describe('simulator', () => {
   it(`relaunchApp() with url and userNofitication should throw`, async() => {
     const done = jest.fn();
     try {
-      await simulator.relaunchApp(done, {url: "scheme://some.url", userNotification: notification});
+      await simulator.relaunchApp({url: "scheme://some.url", userNotification: notification}, done);
     } catch (ex) {
       expect(ex).toBeDefined();
     }
   });
+
+  it(`installApp() should call done when passed as param`, async () => {
+    const done = jest.fn();
+    fs.existsSync.mockReturnValue(true);
+    await simulator.installApp(done);
+    expect(done).toHaveBeenCalled();
+  });
+
+  it(`installApp() should support async await`, async() => {
+    const done = jest.fn();
+    fs.existsSync.mockReturnValue(true);
+    await simulator.installApp();
+    expect(done).not.toHaveBeenCalled();
+  });
+
+  it(`uninstallApp() should call done when passed as param`, async () => {
+    const done = jest.fn();
+    fs.existsSync.mockReturnValue(true);
+    await simulator.uninstallApp(done);
+    expect(done).toHaveBeenCalled();
+  });
+
+  it(`uninstallApp() should support async await`, async() => {
+    const done = jest.fn();
+    fs.existsSync.mockReturnValue(true);
+    await simulator.uninstallApp();
+    expect(done).not.toHaveBeenCalled();
+  });
+
 
   it(`deleteAndRelaunchApp() -  `, async() => {
     const done = jest.fn();
@@ -128,7 +157,7 @@ describe('simulator', () => {
   it(`sendUserNotification() -  `, async() => {
     const done = jest.fn();
     fs.existsSync.mockReturnValueOnce(false).mockReturnValueOnce(true);
-    await simulator.sendUserNotification(done, {});
+    await simulator.sendUserNotification({}, done);
     fakeDeviceMessage('userNotificationDone', {});
     expect(done).toHaveBeenCalled();
   });

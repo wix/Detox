@@ -41,7 +41,7 @@ class example extends Component {
   async componentDidMount() {
     const result = await PushNotificationIOS.getInitialNotification();
     if (result) {
-      this.setState({notification: result.getAlert()});
+      this.setState({notification: result.getAlert().title});
     }
   }
 
@@ -57,8 +57,7 @@ class example extends Component {
 
   render() {
     if (this.state.notification) {
-      console.log(`this.state.pushNotification ${this.state.notification}`);
-      return this.renderAfterPushNotification( this.state.notification.title);
+      return this.renderAfterPushNotification(this.state.notification);
     }
 
     if (!this.state.screen) {
@@ -85,8 +84,7 @@ class example extends Component {
   }
 
   _onNotification(notification) {
-    console.log("notification.getMessage()" + JSON.stringify(notification));
-    this.setState({notification: notification.getMessage()});
+    this.setState({notification: notification.getAlert()});
   }
 }
 

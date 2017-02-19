@@ -97,19 +97,23 @@ class Simulator extends Device {
     return notificationFilePath;
   }
 
-  async sendUserNotification(done, notification) {
+  async sendUserNotification(notification, done) {
     const notificationFilePath = this.createPushNotificationJson(notification);
-    super.sendUserNotification(done, {detoxUserNotificationDataURL: notificationFilePath});
+    super.sendUserNotification({detoxUserNotificationDataURL: notificationFilePath}, done);
   }
 
   async prepare(onComplete) {
     this._simulatorUdid = await this._fbsimctl.list(this._currentScheme.device);
     this._bundleId = await this._getBundleIdFromApp(this._currentScheme.app);
     await this._fbsimctl.boot(this._simulatorUdid);
-    await this.deleteAndRelaunchApp(onComplete);
+    await this.relaunchApp({delete: true}, onComplete);
   }
 
-  async relaunchApp(onComplete, params = {}) {
+  async relaunchApp(params, onComplete) {
+    if (typeof params === 'function') {
+      onComplete = params;
+      params = {};
+    }
 
     if (params.url && params.userNotification) {
       throw new Error(`detox can't understand this 'relaunchApp(${JSON.stringify(params)})' request, either request to launch with url or with userNotification, not both`)
@@ -134,8 +138,23 @@ class Simulator extends Device {
     await this._waitUntilReady(onComplete);
   }
 
+  async installApp(onComplete) {
+    console.log(this._simulatorUdid)
+    await this._fbsimctl.install(this._simulatorUdid, this._getAppAbsolutePath(this._currentScheme.app));
+    if (onComplete) onComplete();
+  }
+
+  async uninstallApp(onComplete) {
+    await this._fbsimctl.uninstall(this._simulatorUdid, this._bundleId);
+    if (onComplete) onComplete();
+  }
+
+  /**
+   * @deprecated Use relaunchApp(onComplete, {delete: true}) instead.
+   */
   async deleteAndRelaunchApp(onComplete) {
-    await this.relaunchApp(onComplete, {delete: true});
+    log.warn("deleteAndRelaunchApp() is deprecated; use relaunchApp(onComplete, {delete: true}) instead.");
+    await this.relaunchApp({delete: true}, onComplete);
   }
 
   async openURL(url) {

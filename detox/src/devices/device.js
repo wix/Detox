@@ -25,7 +25,7 @@ class Device {
     this._websocket.sendAction('reactNativeReload');
   }
 
-  async sendUserNotification(done, params) {
+  async sendUserNotification(params, done) {
     this._websocket.waitForAction('userNotificationDone', done);
     this._websocket.sendAction('userNotification', params);
   }

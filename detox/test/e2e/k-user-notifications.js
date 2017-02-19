@@ -2,7 +2,7 @@ describe('User Notifications', () => {
 
   describe('Background push notification', () => {
     beforeEach((done) => {
-      simulator.relaunchApp(done, {userNotification: userNotificationPushTrigger})
+      simulator.relaunchApp({userNotification: userNotificationPushTrigger}, done)
     });
 
     it('push notification from background', () => {
@@ -10,14 +10,17 @@ describe('User Notifications', () => {
     });
   });
 
-  xdescribe('Foreground user notifications', () => {
+  describe('Foreground user notifications', () => {
 
     beforeEach((done) => {
       simulator.relaunchApp(done);
     });
 
     it('local notification from inside the app', (done) => {
-      simulator.sendUserNotification(done, userNotificationCalendarTrigger);
+      simulator.sendUserNotification(userNotificationCalendarTrigger, () => {
+        expect(element(by.label('From calendar'))).toBeVisible();
+        done();
+      });
     });
   });
 });
@@ -61,7 +64,7 @@ const userNotificationCalendarTrigger = {
   },
   "title": "From calendar",
   "subtitle": "Subtitle",
-  "body": "Body",
+  "body": "From calendar",
   "badge": 1,
   "payload": {
     "key1": "value1",
