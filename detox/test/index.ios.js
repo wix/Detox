@@ -50,11 +50,6 @@ class example extends Component {
     PushNotificationIOS.addEventListener('localNotification',  (notification) => this._onNotification(notification));
   }
 
-  componentWillUnmount() {
-    PushNotificationIOS.removeEventLisener('notification',  (notification) => this._onNotification(notification));
-    PushNotificationIOS.removeEventLisener('localNotification', (notification) => this._onNotification(notification));
-  }
-
   render() {
     if (this.state.notification) {
       return this.renderAfterPushNotification(this.state.notification);
