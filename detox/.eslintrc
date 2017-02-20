@@ -260,14 +260,6 @@
         "ignoreTopLevelFunctions": true
       }
     ],
-    "new-cap": [
-      "error",
-      {
-        "capIsNewExceptions": [
-          "Immutable"
-        ]
-      }
-    ],
     "new-parens": "error",
     "newline-after-var": 0,
     "newline-before-return": 0,
@@ -398,14 +390,6 @@
     /*
      *                              babel plugin
      */
-    "babel/new-cap": [
-      "error",
-      {
-        "capIsNewExceptions": [
-          "Immutable"
-        ]
-      }
-    ],
     "babel/object-curly-spacing": [
       "error",
       "never"
