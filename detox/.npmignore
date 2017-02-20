@@ -14,6 +14,8 @@ DetoxBuild/
 Detox.framework/
 
 
+src/**/*.test.js
+
 #################
 # from .gitignore
 #################
