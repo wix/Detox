@@ -6,7 +6,7 @@ const argparse = require('./utils/argparse');
 const InvocationManager = require('./invoke').InvocationManager;
 const configuration = require('./configuration');
 
-log.level = loglevel = argparse.getArgValue('loglevel') || 'info';
+log.level = argparse.getArgValue('loglevel') || 'info';
 log.heading = 'detox';
 
 let websocket;
