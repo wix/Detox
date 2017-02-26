@@ -15,7 +15,7 @@ Detox uses [Node.js](https://nodejs.org/) for its operation. Node manages depend
 
 * Install the latest version of `brew` from [here](http://brew.sh).
 * If you haven't already, install Node.js by running `brew update && brew install node`.
-* You'd also need `fbsimctl` installed: `brew install fbsimctl`.
+* You'd also need `fbsimctl` installed: `brew tap facebook/fb && brew install fbsimctl`.
 * If you do not have a `package.json` file in the root folder of your project, create one by running `echo "{}" > package.json`.
 
 By default, Xcode uses a randomized hidden path for outputting project build artifacts, called Derived Data. For ease of use, it is recommended to change the project build path to a more convenient path.
