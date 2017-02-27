@@ -1,12 +1,10 @@
 const AsyncWebSocket = require('./AsyncWebSocket');
 const actions = require('./actions/actions');
-//const Queue = require('../commons/dataStructures').Queue;
 
 class Client {
   constructor(config) {
     this.configuration = config;
     this.ws = new AsyncWebSocket(config.server);
-    //this.messageCounter = 0;
     this.invocationId = 0;
   }
 

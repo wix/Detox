@@ -27,14 +27,12 @@ async function start() {
   const invocationManager = new InvocationManager(client);
   expect.setInvocationManager(invocationManager);
 
-
   await simulator.prepare();
 }
 
 async function cleanup() {
   await client.cleanup();
 }
-
 
 async function openURL(url) {
   const target = argparse.getArgValue('target') || 'ios-sim';

@@ -15,7 +15,8 @@
   "plugins": [
     "react",
     "react-native",
-    "babel"
+    "babel",
+    "promise"
   ],
   "rules": {
     /*
@@ -395,6 +396,18 @@
       "never"
     ],
     "babel/object-shorthand": 0,
-    "babel/no-await-in-loop": 0
+    "babel/no-await-in-loop": 0,
+    /*
+     *                              promise
+     */
+    "promise/always-return": "error",
+    "promise/no-return-wrap": "error",
+    "promise/param-names": "error",
+    "promise/catch-or-return": "error",
+    "promise/no-native": "off",
+    "promise/no-nesting": "error",
+    "promise/no-promise-in-callback": "error",
+    "promise/no-callback-in-promise": "error",
+    "promise/avoid-new": "error"
   }
 }
