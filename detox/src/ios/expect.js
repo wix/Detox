@@ -141,9 +141,9 @@ class SwipeAction extends Action {
 }
 
 class Interaction {
-  execute() {
+  async execute() {
     //if (!this._call) throw new Error(`Interaction.execute cannot find a valid _call, got ${typeof this._call}`);
-    invocationManager.execute(this._call);
+    await invocationManager.execute(this._call);
   }
 }
 
@@ -181,7 +181,7 @@ class WaitForInteraction extends Interaction {
     this._notCondition = true;
     return this;
   }
-  withTimeout(timeout) {
+  async withTimeout(timeout) {
     if (typeof timeout !== 'number') throw new Error(`WaitForInteraction withTimeout argument must be a number, got ${typeof timeout}`);
     if (timeout < 0) throw new Error('timeout must be larger than 0');
     let _conditionCall = invoke.call(invoke.IOS.Class('GREYCondition'), 'detoxConditionForElementMatched:', this._element._call);
@@ -189,7 +189,7 @@ class WaitForInteraction extends Interaction {
       _conditionCall = invoke.call(invoke.IOS.Class('GREYCondition'), 'detoxConditionForNotElementMatched:', this._element._call);
     }
     this._call = invoke.call(_conditionCall, 'waitWithTimeout:', invoke.IOS.CGFloat(timeout));
-    this.execute();
+    await this.execute();
   }
   whileElement(searchMatcher) {
     return new WaitForActionInteraction(this._element, this._originalMatcher, searchMatcher);
@@ -206,16 +206,16 @@ class WaitForActionInteraction extends Interaction {
     this._originalMatcher = matcher;
     this._searchMatcher = searchMatcher;
   }
-  _execute(searchAction) {
+  async _execute(searchAction) {
     //if (!searchAction instanceof Action) throw new Error(`WaitForActionInteraction _execute argument must be a valid Action, got ${typeof searchAction}`);
     const _interactionCall = invoke.call(this._element._call, 'usingSearchAction:onElementWithMatcher:', searchAction._call, this._searchMatcher._call);
     this._call = invoke.call(_interactionCall, 'assertWithMatcher:', this._originalMatcher._call);
-    this.execute();
+    await this.execute();
   }
-  scroll(amount, direction = 'down') {
+  async scroll(amount, direction = 'down') {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
     this._searchMatcher = this._searchMatcher._extendToDescendantScrollViews();
-    this._execute(new ScrollAmountAction(direction, amount));
+    await this._execute(new ScrollAmountAction(direction, amount));
   }
 }
 
@@ -234,38 +234,38 @@ class Element {
     this._call = invoke.call(_originalCall, 'atIndex:', invoke.IOS.NSInteger(index));
     return this;
   }
-  tap() {
-    return new ActionInteraction(this, new TapAction()).execute();
+  async tap() {
+    return await new ActionInteraction(this, new TapAction()).execute();
   }
-  longPress() {
-    return new ActionInteraction(this, new LongPressAction()).execute();
+  async longPress() {
+    return await new ActionInteraction(this, new LongPressAction()).execute();
   }
-  multiTap(value) {
-    return new ActionInteraction(this, new MultiTapAction(value)).execute();
+  async multiTap(value) {
+    return await new ActionInteraction(this, new MultiTapAction(value)).execute();
   }
-  typeText(value) {
-    return new ActionInteraction(this, new TypeTextAction(value)).execute();
+  async typeText(value) {
+    return await new ActionInteraction(this, new TypeTextAction(value)).execute();
   }
-  replaceText(value) {
-    return new ActionInteraction(this, new ReplaceTextAction(value)).execute();
+  async replaceText(value) {
+    return await new ActionInteraction(this, new ReplaceTextAction(value)).execute();
   }
-  clearText() {
-    return new ActionInteraction(this, new ClearTextAction()).execute();
+  async clearText() {
+    return await new ActionInteraction(this, new ClearTextAction()).execute();
   }
-  scroll(amount, direction = 'down') {
+  async scroll(amount, direction = 'down') {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
     this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
-    return new ActionInteraction(this, new ScrollAmountAction(direction, amount)).execute();
+    return await new ActionInteraction(this, new ScrollAmountAction(direction, amount)).execute();
   }
-  scrollTo(edge) {
+  async scrollTo(edge) {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
     this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
-    return new ActionInteraction(this, new ScrollEdgeAction(edge)).execute();
+    return await new ActionInteraction(this, new ScrollEdgeAction(edge)).execute();
   }
-  swipe(direction, speed = 'fast') {
+  async swipe(direction, speed = 'fast') {
     // override the user's element selection with an extended matcher that avoids RN issues with RCTScrollView
     this._selectElementWithMatcher(this._originalMatcher._avoidProblematicReactNativeElements());
-    return new ActionInteraction(this, new SwipeAction(direction, speed)).execute();
+    return await new ActionInteraction(this, new SwipeAction(direction, speed)).execute();
   }
 }
 
@@ -277,29 +277,29 @@ class ExpectElement extends Expect {
     //if (!(element instanceof Element)) throw new Error(`ExpectElement ctor argument must be a valid Element, got ${typeof element}`);
     this._element = element;
   }
-  toBeVisible() {
-    return new MatcherAssertionInteraction(this._element, new VisibleMatcher()).execute();
+  async toBeVisible() {
+    return await new MatcherAssertionInteraction(this._element, new VisibleMatcher()).execute();
   }
-  toBeNotVisible() {
-    return new MatcherAssertionInteraction(this._element, new NotVisibleMatcher()).execute();
+  async toBeNotVisible() {
+    return await new MatcherAssertionInteraction(this._element, new NotVisibleMatcher()).execute();
   }
   toExist() {
     return new MatcherAssertionInteraction(this._element, new ExistsMatcher()).execute();
   }
-  toNotExist() {
-    return new MatcherAssertionInteraction(this._element, new NotExistsMatcher()).execute();
+  async toNotExist() {
+    return await new MatcherAssertionInteraction(this._element, new NotExistsMatcher()).execute();
   }
-  toHaveText(value) {
-    return new MatcherAssertionInteraction(this._element, new TextMatcher(value)).execute();
+  async toHaveText(value) {
+    return await new MatcherAssertionInteraction(this._element, new TextMatcher(value)).execute();
   }
-  toHaveLabel(value) {
-    return new MatcherAssertionInteraction(this._element, new LabelMatcher(value)).execute();
+  async toHaveLabel(value) {
+    return await new MatcherAssertionInteraction(this._element, new LabelMatcher(value)).execute();
   }
-  toHaveId(value) {
-    return new MatcherAssertionInteraction(this._element, new IdMatcher(value)).execute();
+  async toHaveId(value) {
+    return await new MatcherAssertionInteraction(this._element, new IdMatcher(value)).execute();
   }
-  toHaveValue(value) {
-    return new MatcherAssertionInteraction(this._element, new ValueMatcher(value)).execute();
+  async toHaveValue(value) {
+    return await new MatcherAssertionInteraction(this._element, new ValueMatcher(value)).execute();
   }
 }
 

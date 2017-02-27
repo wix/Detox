@@ -97,24 +97,19 @@ class Simulator extends Device {
     return notificationFilePath;
   }
 
-  async sendUserNotification(notification, done) {
+  async sendUserNotification(notification) {
     const notificationFilePath = this.createPushNotificationJson(notification);
-    super.sendUserNotification({detoxUserNotificationDataURL: notificationFilePath}, done);
+    super.sendUserNotification({detoxUserNotificationDataURL: notificationFilePath});
   }
 
-  async prepare(onComplete) {
+  async prepare() {
     this._simulatorUdid = await this._fbsimctl.list(this._currentScheme.device);
     this._bundleId = await this._getBundleIdFromApp(this._currentScheme.app);
     await this._fbsimctl.boot(this._simulatorUdid);
-    await this.relaunchApp({delete: true}, onComplete);
+    await this.relaunchApp({delete: true});
   }
 
-  async relaunchApp(params, onComplete) {
-    if (typeof params === 'function') {
-      onComplete = params;
-      params = {};
-    }
-
+  async relaunchApp(params = {}) {
     if (params.url && params.userNotification) {
       throw new Error(`detox can't understand this 'relaunchApp(${JSON.stringify(params)})' request, either request to launch with url or with userNotification, not both`)
     }
@@ -135,26 +130,15 @@ class Simulator extends Device {
     }
 
     await this._fbsimctl.launch(this._simulatorUdid, this._bundleId, this.prepareLaunchArgs(additionalLaunchArgs));
-    await this._waitUntilReady(onComplete);
+    await this.client.waitUntilReady();
   }
 
-  async installApp(onComplete) {
-    console.log(this._simulatorUdid)
+  async installApp() {
     await this._fbsimctl.install(this._simulatorUdid, this._getAppAbsolutePath(this._currentScheme.app));
-    if (onComplete) onComplete();
   }
 
-  async uninstallApp(onComplete) {
+  async uninstallApp() {
     await this._fbsimctl.uninstall(this._simulatorUdid, this._bundleId);
-    if (onComplete) onComplete();
-  }
-
-  /**
-   * @deprecated Use relaunchApp(onComplete, {delete: true}) instead.
-   */
-  async deleteAndRelaunchApp(onComplete) {
-    log.warn("deleteAndRelaunchApp() is deprecated; use relaunchApp(onComplete, {delete: true}) instead.");
-    await this.relaunchApp({delete: true}, onComplete);
   }
 
   async openURL(url) {

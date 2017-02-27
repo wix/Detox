@@ -1,26 +1,24 @@
 describe('User Notifications', () => {
 
   describe('Background push notification', () => {
-    beforeEach((done) => {
-      simulator.relaunchApp({userNotification: userNotificationPushTrigger}, done)
+    beforeEach(async () => {
+      await simulator.relaunchApp({userNotification: userNotificationPushTrigger});
     });
 
-    it('push notification from background', () => {
-      expect(element(by.label('From push'))).toBeVisible();
+    it('push notification from background', async () => {
+      await expect(element(by.label('From push'))).toBeVisible();
     });
   });
 
   describe('Foreground user notifications', () => {
 
-    beforeEach((done) => {
-      simulator.relaunchApp(done);
+    beforeEach(async () => {
+      await simulator.relaunchApp();
     });
 
-    it('local notification from inside the app', (done) => {
-      simulator.sendUserNotification(userNotificationCalendarTrigger, () => {
-        expect(element(by.label('From calendar'))).toBeVisible();
-        done();
-      });
+    it('local notification from inside the app', async () => {
+      await simulator.sendUserNotification(userNotificationCalendarTrigger);
+      await expect(element(by.label('From calendar'))).toBeVisible();
     });
   });
 });

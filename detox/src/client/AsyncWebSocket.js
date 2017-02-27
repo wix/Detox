@@ -1,3 +1,4 @@
+const log = require('npmlog');
 const WebSocket = require('ws');
 
 class AsyncWebSocket {
@@ -5,19 +6,30 @@ class AsyncWebSocket {
   constructor(url) {
     this.url = url;
     this.ws = undefined;
+    this.inFlightPromise = {};
   }
 
   async open() {
     return new Promise(async (resolve, reject) => {
 
       this.ws = new WebSocket(this.url);
-      this.ws.on('open', (response) => {
+      this.ws.onopen = (response) => {
+        log.verbose(`ws onOpen`);
         resolve(response);
-      });
+      };
 
-      this.ws.on('error', (error) => {
-        reject(error);
-      });
+      this.ws.onerror = (error) => {
+        log.error(`ws onError: ${error}`);
+        this.inFlightPromise.reject(error);
+      };
+
+      this.ws.onmessage = (response) => {
+        log.verbose(`ws onMessage: ${response.data}`);
+        this.inFlightPromise.resolve(response.data);
+      };
+
+      this.inFlightPromise.resolve = resolve;
+      this.inFlightPromise.reject = reject;
     });
   }
 
@@ -28,24 +40,21 @@ class AsyncWebSocket {
     }
 
     return new Promise(async (resolve, reject) => {
+      log.verbose(`ws send: ${message}`);
+      this.inFlightPromise.resolve = resolve;
+      this.inFlightPromise.reject = reject;
       this.ws.send(message);
-      this.ws.on('message', (message) => {
-        resolve(message);
-      });
 
-      this.ws.on('error', (error) => {
-        reject(error);
-      });
     });
   }
 
   async close() {
     return new Promise(async (resolve, reject) => {
       if (this.ws) {
-        this.ws.on('close', (message) => {
+        this.ws.onclose = (message) => {
           this.ws = null;
           resolve(message);
-        });
+        };
 
         if (this.ws.readyState !== WebSocket.CLOSED) {
           this.ws.close();
@@ -58,6 +67,10 @@ class AsyncWebSocket {
         reject(new Error(`websocket is closed, init the by calling 'open()'`));
       }
     });
+  }
+
+  isOpen() {
+    return this.ws.readyState === WebSocket.OPEN;
   }
 }
 

@@ -5,8 +5,8 @@ const argparse = require('../utils/argparse');
 const configuration = require('../configuration');
 
 class Device {
-  constructor(websocket, params) {
-    this._websocket = websocket;
+  constructor(client, params) {
+    this.client = client;
     this.params = params;
     this._currentScheme = this._detrmineCurrentScheme(params);
   }
@@ -20,19 +20,12 @@ class Device {
     return  args;
   }
 
-  reloadReactNativeApp(onLoad) {
-    this._websocket.waitForAction('ready', onLoad);
-    this._websocket.sendAction('reactNativeReload');
+  async reloadReactNativeApp() {
+    await this.client.reloadReactNative();
   }
 
-  async sendUserNotification(params, done) {
-    this._websocket.waitForAction('userNotificationDone', done);
-    this._websocket.sendAction('userNotification', params);
-  }
-
-  async _waitUntilReady(onReady) {
-    this._websocket.waitForAction('ready', onReady);
-    this._websocket.sendAction('isReady');
+  async sendUserNotification(params) {
+    await this.client.sendUserNotification(params);
   }
 
   _getDefaultSchemesList() {

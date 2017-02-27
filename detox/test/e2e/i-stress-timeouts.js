@@ -1,39 +1,39 @@
 describe('StressTimeouts', () => {
-  beforeEach((done) => {
-    simulator.reloadReactNativeApp(done);
+  beforeEach(async () => {
+    await simulator.reloadReactNativeApp();
   });
 
-  beforeEach(() => {
-    element(by.label('Timeouts')).tap();
+  beforeEach(async () => {
+    await element(by.label('Timeouts')).tap();
   });
 
-  it('should handle a short timeout', () => {
-    element(by.id('TimeoutShort')).tap();
-    expect(element(by.label('Short Timeout Working!!!'))).toBeVisible();
+  it('should handle a short timeout', async () => {
+    await element(by.id('TimeoutShort')).tap();
+    await expect(element(by.label('Short Timeout Working!!!'))).toBeVisible();
   });
 
-  it('should handle zero timeout', () => {
-    element(by.id('TimeoutZero')).tap();
-    expect(element(by.label('Zero Timeout Working!!!'))).toBeVisible();
+  it('should handle zero timeout', async () => {
+    await element(by.id('TimeoutZero')).tap();
+    await expect(element(by.label('Zero Timeout Working!!!'))).toBeVisible();
   });
 
-  it('should ignore a short timeout', () => {
-    element(by.id('TimeoutIgnoreShort')).tap();
-    expect(element(by.label('Short Timeout Ignored!!!'))).toBeVisible();
+  it('should ignore a short timeout', async () => {
+    await element(by.id('TimeoutIgnoreShort')).tap();
+    await expect(element(by.label('Short Timeout Ignored!!!'))).toBeVisible();
   });
 
-  it('should ignore a long timeout', () => {
-    element(by.id('TimeoutIgnoreLong')).tap();
-    expect(element(by.label('Long Timeout Ignored!!!'))).toBeVisible();
+  it('should ignore a long timeout', async () => {
+    await element(by.id('TimeoutIgnoreLong')).tap();
+    await expect(element(by.label('Long Timeout Ignored!!!'))).toBeVisible();
   });
 
-  it('should handle setImmediate', () => {
-    element(by.id('Immediate')).tap();
-    expect(element(by.label('Immediate Working!!!'))).toBeVisible();
+  it('should handle setImmediate', async () => {
+    await element(by.id('Immediate')).tap();
+    await expect(element(by.label('Immediate Working!!!'))).toBeVisible();
   });
 
-  it('should ignore setInterval', () => {
-    element(by.id('IntervalIgnore')).tap();
-    expect(element(by.label('Interval Ignored!!!'))).toBeVisible();
+  it('should ignore setInterval', async () => {
+    await element(by.id('IntervalIgnore')).tap();
+    await expect(element(by.label('Interval Ignored!!!'))).toBeVisible();
   });
 });
