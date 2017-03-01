@@ -400,14 +400,14 @@
     /*
      *                              promise
      */
-    "promise/always-return": "error",
+    "promise/always-return": "off",
     "promise/no-return-wrap": "error",
     "promise/param-names": "error",
-    "promise/catch-or-return": "error",
+    "promise/catch-or-return": "off",
     "promise/no-native": "off",
     "promise/no-nesting": "error",
     "promise/no-promise-in-callback": "error",
-    "promise/no-callback-in-promise": "error",
+    "promise/no-callback-in-promise": "off",
     "promise/avoid-new": "off"
   }
 }
