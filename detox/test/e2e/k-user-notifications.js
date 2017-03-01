@@ -4,10 +4,20 @@ describe('User Notifications', () => {
     await expect(element(by.label('From push'))).toBeVisible();
   });
 
-  it('Foreground user notifications - local notification from inside the app', async () => {
+  it('Foreground user notifications - local notification from inside the app - async', async () => {
     await device.relaunchApp();
     await device.sendUserNotification(userNotificationCalendarTrigger);
     await expect(element(by.label('From calendar'))).toBeVisible();
+  });
+
+  it('Foreground user notifications - local notification from inside the app - callback', (done) => {
+    device.relaunchApp().then(() => {
+      return device.sendUserNotification(userNotificationCalendarTrigger);
+    }).then(() => {
+      return expect(element(by.label('From calendar'))).toBeVisible();
+    }).then(() => {
+      done();
+    });
   });
 });
 
