@@ -1,4 +1,3 @@
-const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
 const argparse = require('../utils/argparse');
@@ -6,7 +5,7 @@ const configuration = require('../configuration');
 
 class Device {
   constructor(client, params) {
-    this.client = client;
+    z
     this.params = params;
     this._currentScheme = this._detrmineCurrentScheme(params);
   }
@@ -17,7 +16,7 @@ class Device {
     if (additionalLaunchArgs) {
       args = args.concat(_.flatten(Object.entries(additionalLaunchArgs)));
     }
-    return  args;
+    return args;
   }
 
   async reloadReactNativeApp() {

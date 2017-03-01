@@ -1,6 +1,4 @@
-const log = require('npmlog');
 const exec = require('child-process-promise').exec;
-const spawn = require('child_process').spawn;
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -10,8 +8,8 @@ const FBsimctl = require('./Fbsimctl');
 
 class Simulator extends Device {
 
-  constructor(websocket, params) {
-    super(websocket, params);
+  constructor(client, params) {
+    super(client, params);
     this._fbsimctl = new FBsimctl();
     this._simulatorUdid = "";
     this._bundleId = "";
@@ -56,8 +54,7 @@ class Simulator extends Device {
 
   async sendUserNotification(notification) {
     const notificationFilePath = this.createPushNotificationJson(notification);
-    //super.sendUserNotification({detoxUserNotificationDataURL: notificationFilePath});
-    const x = Promise.resolve("bad");
+    await super.sendUserNotification({detoxUserNotificationDataURL: notificationFilePath});
   }
 
   async prepare() {

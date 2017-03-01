@@ -11,10 +11,9 @@ class AsyncWebSocket {
 
   async open() {
     return new Promise(async (resolve, reject) => {
-
       this.ws = new WebSocket(this.url);
       this.ws.onopen = (response) => {
-        log.verbose(`ws onOpen`);
+        log.verbose(`ws onOpen ${response}`);
         resolve(response);
       };
 
@@ -34,9 +33,8 @@ class AsyncWebSocket {
   }
 
   async send(message) {
-
     if (!this.ws) {
-      throw new Error(`Can't send a message on a closed websocket, init the by calling 'open()'`)
+      throw new Error(`Can't send a message on a closed websocket, init the by calling 'open()'`);
     }
 
     return new Promise(async (resolve, reject) => {
@@ -44,7 +42,6 @@ class AsyncWebSocket {
       this.inFlightPromise.resolve = resolve;
       this.inFlightPromise.reject = reject;
       this.ws.send(message);
-
     });
   }
 
@@ -58,18 +55,19 @@ class AsyncWebSocket {
 
         if (this.ws.readyState !== WebSocket.CLOSED) {
           this.ws.close();
-        }
-        else {
+        } else {
           this.ws.onclose();
         }
-      }
-      else {
+      } else {
         reject(new Error(`websocket is closed, init the by calling 'open()'`));
       }
     });
   }
 
   isOpen() {
+    if (!this.ws) {
+      return false;
+    }
     return this.ws.readyState === WebSocket.OPEN;
   }
 }

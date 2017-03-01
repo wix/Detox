@@ -22,7 +22,7 @@ class Client {
   }
 
   async waitUntilReady() {
-    await this.sendAction(new actions.Ready())
+    await this.sendAction(new actions.Ready());
   }
 
   async cleanup() {
@@ -41,7 +41,9 @@ class Client {
   }
 
   async sendAction(action) {
-    return await this.ws.send(JSON.stringify(action));
+    const response = await this.ws.send(JSON.stringify(action));
+    await action.handle(JSON.parse(response));
+    return response;
   }
 }
 

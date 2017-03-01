@@ -408,6 +408,6 @@
     "promise/no-nesting": "error",
     "promise/no-promise-in-callback": "error",
     "promise/no-callback-in-promise": "error",
-    "promise/avoid-new": "error"
+    "promise/avoid-new": "off"
   }
 }

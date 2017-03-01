@@ -1,5 +1,3 @@
-const log = require('npmlog');
-
 class Action {
   constructor(type, params = {}) {
     this.type = type;
@@ -67,14 +65,12 @@ class Invoke extends Action {
     switch (response.type) {
       case 'testFailed':
         throw new Error(response.params.details);
-        break;
       case 'invokeResult':
         break;
       case 'error':
-        log.error(response.params.error);
-        break;
+        throw new Error(response.params.error);
       default:
-        break;
+        throw new Error(`got an unsupported message from testee: ${JSON.stringify(response)}`);
     }
   }
 }

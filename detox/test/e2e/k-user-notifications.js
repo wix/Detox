@@ -1,5 +1,4 @@
 describe('User Notifications', () => {
-
   describe('Background push notification', () => {
     beforeEach(async () => {
       await simulator.relaunchApp({userNotification: userNotificationPushTrigger});
@@ -11,7 +10,6 @@ describe('User Notifications', () => {
   });
 
   describe('Foreground user notifications', () => {
-
     beforeEach(async () => {
       await simulator.relaunchApp();
     });

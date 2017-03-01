@@ -9,22 +9,24 @@ describe('AsyncWebSocket', () => {
   beforeEach(() => {
     jest.mock('npmlog');
     WebSocket = jest.mock('ws');
+    WebSocket.OPEN = 1;
+    WebSocket.CLOSED = 3;
+
     AsyncWebSocket = require('./AsyncWebSocket');
     client = new AsyncWebSocket(config.server);
-
   });
 
   it(`new AsyncWebSocket - websocket onOpen should resolve`, async () => {
-    const result = {};
+    const response = {response: 'onopen'};
     const promise = client.open();
-    emitEvent('open', result);
-    expect(await promise).toEqual(result);
+    client.ws.onopen(response);
+    expect(await promise).toEqual(response);
   });
 
   it(`new AsyncWebSocket - websocket onError should reject`, async () => {
     const error = new Error();
     const promise = client.open();
-    emitEvent('error', error);
+    client.ws.onerror(error);
 
     try {
       await promise;
@@ -34,27 +36,27 @@ describe('AsyncWebSocket', () => {
   });
 
   it(`send message on a closed connection should throw`, async () => {
-  try {
-    await client.send({message: 'a message'});
-  } catch (ex) {
-    expect(ex).toBeDefined();
-  }
+    try {
+      await client.send({message: 'a message'});
+    } catch (ex) {
+      expect(ex).toBeDefined();
+    }
   });
 
-  it.only(`send message should resolve upon returning message`, async () => {
-    const response = 'response';
-    connect(client);
+  it(`send message should resolve upon returning message`, async () => {
+    const response = {data: {response: 'onmessage'}};
+    await connect(client);
 
     const promise = client.send({message: 'a message'});
-    //emitEvent('message', response);
-    //expect(await promise).toEqual(response)
+    client.ws.onmessage(response);
+    expect(await promise).toEqual(response.data);
   });
 
   it(`send message should reject upon error`, async () => {
-    connect(client);
+    await connect(client);
     const error = new Error();
     const promise = client.send({message: 'a message'});
-    emitEvent('error', error);
+    client.ws.onerror(error);
     try {
       await promise;
     } catch (ex) {
@@ -63,41 +65,37 @@ describe('AsyncWebSocket', () => {
   });
 
   it(`close a connected websocket should close and resolve`, async () => {
-    connect(client);
+    await connect(client);
     const promise = client.close();
-    emitEvent('close', {});
+    client.ws.onclose({});
     expect(await promise).toEqual({});
   });
 
   it(`close a connected websocket should close and resolve`, async () => {
-    connect(client);
-    client.ws.readyState = 1;//Websocket.OPEN
+    const result = {};
+    await connect(client);
+    client.ws.readyState = WebSocket.OPEN;
     const promise = client.close();
-    emitEvent('close', {});
-
-    expect(await promise).toEqual({});
+    client.ws.onclose(result);
+    expect(await promise).toEqual(result);
   });
 
   it(`close a disconnected websocket should resolve`, async () => {
-    connect(client);
-    client.ws.readyState = 3;//Websocket.CLOSED
-    const promise = client.close();
-    emitEvent('close', {});
-
-    expect(await promise).toEqual({});
+    await connect(client);
+    client.ws.readyState = WebSocket.CLOSED;
+    await client.close();
+    expect(client.ws).toBeNull();
   });
 
-  async function connect(client) {
-    const result = {};
-    const promise = client.open();
-    emitEvent('open', result);
-    const test = await promise;
-    console.log(test)
-  }
+  it(`client.isOpen() should return false when closed, open when opened`, async () => {
+    expect(client.isOpen()).toBe(false);
+    await connect(client);
+    client.ws.readyState = WebSocket.OPEN;
+    expect(client.isOpen()).toBe(true);
+  });
 
   it(`closing a non-initialized websocket should throw`, async () => {
     const promise = client.close();
-
     try {
       await promise;
     } catch (ex) {
@@ -105,8 +103,10 @@ describe('AsyncWebSocket', () => {
     }
   });
 
-  function emitEvent(eventName, params) {
-    //console.log(client.ws.onopen.mock)
-    _.fromPairs(client.ws.onmessage.mock.calls)[eventName](params);
+  async function connect(client) {
+    const result = {};
+    const promise = client.open();
+    client.ws.onopen(result);
+    await promise;
   }
 });

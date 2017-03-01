@@ -4,6 +4,7 @@ const noAppPathScheme = require('../schemes.mock').noAppPath;
 const noDeviceScheme = require('../schemes.mock').noDevice;
 
 describe('device', () => {
+  let Client;
   let Device;
   let device;
 
@@ -13,9 +14,21 @@ describe('device', () => {
     jest.mock('../utils/argparse');
     argparse = require('../utils/argparse');
 
+    jest.mock('../client/client');
+    Client = require('../client/client');
     Device = require('./device');
+    device = new Device(new Client(), validScheme);
+  });
 
-    device = new Device("", validScheme);
+  it(`reloadReactNative() - should trigger reloadReactNative in websocket client`, () => {
+    device.reloadReactNativeApp();
+    expect(device.client.reloadReactNative).toHaveBeenCalledTimes(1);
+  });
+
+  it(`sendUserNotification() - should trigger sendUserNotification in websocket client`, () => {
+    const params = {some: "params"};
+    device.sendUserNotification(params);
+    expect(device.client.sendUserNotification).toHaveBeenCalledWith(params);
   });
 
   it(`_detrmineCurrentScheme() - should resolve a scheme if its valid`, () => {
