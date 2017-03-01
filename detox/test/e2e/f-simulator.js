@@ -1,6 +1,6 @@
 describe('Simulator', () => {
-  it('reloadReactNativeApp - should tap successfully', async () => {
-    await device.reloadReactNativeApp();
+  it('reloadReactNative - should tap successfully', async () => {
+    await device.reloadReactNative();
     await element(by.label('Sanity')).tap();
     await element(by.label('Say Hello')).tap();
     await expect(element(by.label('Hello!!!'))).toBeVisible();

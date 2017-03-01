@@ -10,7 +10,7 @@ class Device {
     this._currentScheme = this._detrmineCurrentScheme(params);
   }
 
-  async reloadReactNativeApp() {
+  async reloadReactNative() {
     await this.client.reloadReactNative();
   }
 

@@ -21,7 +21,7 @@ describe('device', () => {
   });
 
   it(`reloadReactNative() - should trigger reloadReactNative in websocket client`, () => {
-    device.reloadReactNativeApp();
+    device.reloadReactNative();
     expect(device.client.reloadReactNative).toHaveBeenCalledTimes(1);
   });
 

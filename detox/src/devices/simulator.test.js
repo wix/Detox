@@ -121,7 +121,7 @@ describe('simulator', () => {
   });
 
   it(`reloadReactNativeApp() should trigger client.reloadReactNative`, async() => {
-    await simulator.reloadReactNativeApp();
+    await simulator.reloadReactNative();
     expect(simulator.client.reloadReactNative).toHaveBeenCalledTimes(1);
   });
 

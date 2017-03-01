@@ -1,7 +1,7 @@
 describe('Example', function () {
 
   beforeEach(function (done) {
-    simulator.reloadReactNativeApp(done);
+    simulator.reloadReactNative(done);
   });
 
   it('should have welcome screen', function () {

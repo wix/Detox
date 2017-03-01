@@ -1,6 +1,6 @@
 describe('Assertions', () => {
   beforeEach(async () => {
-    await device.reloadReactNativeApp();
+    await device.reloadReactNative();
   });
 
   beforeEach(async () => {
