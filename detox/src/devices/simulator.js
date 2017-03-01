@@ -12,7 +12,7 @@ class Simulator extends Device {
     super(client, params);
     this._fbsimctl = new FBsimctl();
     this._simulatorUdid = "";
-    this._bundleId = "";
+    this.sim = "";
   }
 
   async _getBundleIdFromApp(appPath) {
