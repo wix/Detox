@@ -5,7 +5,7 @@ const configuration = require('../configuration');
 
 class Device {
   constructor(client, params) {
-    z
+    this.client = client;
     this.params = params;
     this._currentScheme = this._detrmineCurrentScheme(params);
   }
