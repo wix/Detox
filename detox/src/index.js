@@ -1,5 +1,4 @@
 const log = require('npmlog');
-const expect = require('./ios/expect');
 const Simulator = require('./devices/simulator');
 const argparse = require('./utils/argparse');
 const InvocationManager = require('./invoke').InvocationManager;
@@ -11,6 +10,7 @@ log.heading = 'detox';
 
 let client;
 let _detoxConfig;
+let expect;
 
 function config(detoxConfig) {
   configuration.validateConfig(detoxConfig);
@@ -18,16 +18,13 @@ function config(detoxConfig) {
 }
 
 async function start() {
-  expect.exportGlobals();
-
   client = new Client(_detoxConfig.session);
   client.connect();
-  global.simulator = new Simulator(client, _detoxConfig);
+
+  await initDevice();
 
   const invocationManager = new InvocationManager(client);
   expect.setInvocationManager(invocationManager);
-
-  await simulator.prepare();
 }
 
 async function cleanup() {
@@ -35,10 +32,42 @@ async function cleanup() {
 }
 
 async function openURL(url) {
-  const target = argparse.getArgValue('target') || 'ios-sim';
-  if (target === 'ios-sim') {
-    await simulator.openURL(url);
+  await device.openURL(url);
+}
+
+async function initDevice() {
+  const device = argparse.getArgValue('device');
+  switch (device) {
+    case 'ios.simulator':
+      await initIosSimulator();
+      break;
+    case 'ios.device':
+      await initIosDevice();
+      break;
+    case 'android.emulator':
+    case 'android.device':
+      throw new Error(`Can't run ${device}, Android is not yet supported`);
+    default:
+      log.warn(`No target selected, defaulting to iOS Simulator!`);
+      await initIosSimulator();
+      break;
   }
+}
+
+async function initIosSimulator() {
+  expect = require('./ios/expect');
+  expect.exportGlobals();
+  await setDevice(Simulator);
+}
+
+async function initIosDevice() {
+  expect = require('./ios/expect');
+  expect.exportGlobals();
+}
+
+async function setDevice(device) {
+  global.device = new device(client, _detoxConfig);
+  await global.device.prepare();
 }
 
 // if there's an error thrown, close the websocket,

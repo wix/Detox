@@ -1,6 +1,6 @@
 describe('StressRoot', () => {
   beforeEach(async () => {
-    await simulator.relaunchApp();
+    await device.relaunchApp();
   });
 
   beforeEach(async () => {
@@ -8,7 +8,7 @@ describe('StressRoot', () => {
   });
 
   after(async () => {
-    await simulator.relaunchApp();
+    await device.relaunchApp();
   });
 
   it('should switch root view controller from RN to native', async () => {

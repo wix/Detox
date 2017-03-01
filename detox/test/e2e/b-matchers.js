@@ -1,6 +1,6 @@
 describe('Matchers', () => {
   beforeEach(async () => {
-    await simulator.reloadReactNativeApp();
+    await device.reloadReactNativeApp();
   });
 
   beforeEach(async () => {
