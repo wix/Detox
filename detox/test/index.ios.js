@@ -25,7 +25,7 @@ class example extends Component {
       }}>
         <Text style={{color: 'blue', marginBottom: 20}}>{title}</Text>
       </TouchableOpacity>
-    )
+    );
   }
 
   renderAfterPushNotification(text) {
@@ -47,7 +47,7 @@ class example extends Component {
 
   componentWillMount() {
     PushNotificationIOS.addEventListener('notification', (notification) => this._onNotification(notification));
-    PushNotificationIOS.addEventListener('localNotification',  (notification) => this._onNotification(notification));
+    PushNotificationIOS.addEventListener('localNotification', (notification) => this._onNotification(notification));
   }
 
   render() {
