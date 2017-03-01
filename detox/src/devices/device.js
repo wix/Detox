@@ -10,15 +10,6 @@ class Device {
     this._currentScheme = this._detrmineCurrentScheme(params);
   }
 
-  prepareLaunchArgs(additionalLaunchArgs) {
-    const session = this.params.session;
-    let args = ['-detoxServer', session.server, '-detoxSessionId', session.sessionId];
-    if (additionalLaunchArgs) {
-      args = args.concat(_.flatten(Object.entries(additionalLaunchArgs)));
-    }
-    return args;
-  }
-
   async reloadReactNativeApp() {
     await this.client.reloadReactNative();
   }
@@ -52,6 +43,15 @@ class Device {
 
     configuration.validateScheme(scheme);
     return scheme;
+  }
+
+  _prepareLaunchArgs(additionalLaunchArgs) {
+    const session = this.params.session;
+    let args = ['-detoxServer', session.server, '-detoxSessionId', session.sessionId];
+    if (additionalLaunchArgs) {
+      args = args.concat(_.flatten(Object.entries(additionalLaunchArgs)));
+    }
+    return args;
   }
 }
 

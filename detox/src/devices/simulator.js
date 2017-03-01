@@ -84,7 +84,7 @@ class Simulator extends Device {
       additionalLaunchArgs = {'-detoxUserNotificationDataURL': this.createPushNotificationJson(params.userNotification)};
     }
 
-    await this._fbsimctl.launch(this._simulatorUdid, this._bundleId, this.prepareLaunchArgs(additionalLaunchArgs));
+    await this._fbsimctl.launch(this._simulatorUdid, this._bundleId, this._prepareLaunchArgs(additionalLaunchArgs));
     await this.client.waitUntilReady();
   }
 
