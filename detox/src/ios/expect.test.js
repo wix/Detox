@@ -1,4 +1,4 @@
-describe('expect', () => {
+describe('expect', async () => {
   let e;
 
   beforeEach(() => {
@@ -6,122 +6,123 @@ describe('expect', () => {
     e.setInvocationManager(new MockExecutor());
   });
 
-  it(`element by label`, () => {
-    e.expect(e.element(e.by.label('test'))).toBeVisible();
-    e.expect(e.element(e.by.label('test'))).toBeNotVisible();
-    e.expect(e.element(e.by.label('test'))).toExist();
-    e.expect(e.element(e.by.label('test'))).toNotExist();
-    e.expect(e.element(e.by.label('test'))).toHaveText('text');
-    e.expect(e.element(e.by.label('test'))).toHaveLabel('label');
-    e.expect(e.element(e.by.label('test'))).toHaveId('id');
-    e.expect(e.element(e.by.label('test'))).toHaveValue('value');
+  it(`element by label`, async () => {
+    await e.expect(e.element(e.by.label('test'))).toBeVisible();
+    await e.expect(e.element(e.by.label('test'))).toBeNotVisible();
+    await e.expect(e.element(e.by.label('test'))).toExist();
+    await e.expect(e.element(e.by.label('test'))).toNotExist();
+    await e.expect(e.element(e.by.label('test'))).toHaveText('text');
+    await e.expect(e.element(e.by.label('test'))).toHaveLabel('label');
+    await e.expect(e.element(e.by.label('test'))).toHaveId('id');
+    await e.expect(e.element(e.by.label('test'))).toHaveValue('value');
   });
 
-  it(`element by id`, () => {
-    e.expect(e.element(e.by.id('test'))).toBeVisible();
+  it(`element by id`, async () => {
+    await e.expect(e.element(e.by.id('test'))).toBeVisible();
   });
 
-  it(`element by type`, () => {
-    e.expect(e.element(e.by.type('test'))).toBeVisible();
+  it(`element by type`, async () => {
+    await e.expect(e.element(e.by.type('test'))).toBeVisible();
   });
 
-  it(`element by traits`, () => {
-    e.expect(e.element(e.by.traits(['button', 'link', 'header', 'search']))).toBeVisible();
-    e.expect(e.element(e.by.traits(['image', 'selected', 'plays', 'key']))).toBeNotVisible();
-    e.expect(e.element(e.by.traits(['text', 'summary', 'disabled', 'frequentUpdates']))).toBeNotVisible();
-    e.expect(e.element(e.by.traits(['startsMedia', 'adjustable', 'allowsDirectInteraction', 'pageTurn']))).toBeNotVisible();
+  it(`element by traits`, async () => {
+    await e.expect(e.element(e.by.traits(['button', 'link', 'header', 'search']))).toBeVisible();
+    await e.expect(e.element(e.by.traits(['image', 'selected', 'plays', 'key']))).toBeNotVisible();
+    await e.expect(e.element(e.by.traits(['text', 'summary', 'disabled', 'frequentUpdates']))).toBeNotVisible();
+    await e.expect(e.element(e.by.traits(['startsMedia', 'adjustable', 'allowsDirectInteraction', 'pageTurn']))).toBeNotVisible();
   });
 
-  it(`matcher helpers`, () => {
-    e.expect(e.element(e.by.id('test').withAncestor(e.by.id('ancestor')))).toBeVisible();
-    e.expect(e.element(e.by.id('test').withDescendant(e.by.id('descendant')))).toBeVisible();
-    e.expect(e.element(e.by.id('test').and(e.by.type('type')))).toBeVisible();
-    e.expect(e.element(e.by.id('test').not())).toBeVisible();
+  it(`matcher helpers`, async () => {
+    await e.expect(e.element(e.by.id('test').withAncestor(e.by.id('ancestor')))).toBeVisible();
+    await e.expect(e.element(e.by.id('test').withDescendant(e.by.id('descendant')))).toBeVisible();
+    await e.expect(e.element(e.by.id('test').and(e.by.type('type')))).toBeVisible();
+    await e.expect(e.element(e.by.id('test').not())).toBeVisible();
   });
 
-  it(`expect with wrong parameters should throw`, () => {
-    expect(() => e.expect('notAnElement')).toThrow();
-    expect(() => e.expect(e.element('notAMatcher'))).toThrow();
+  it(`expect with wrong parameters should throw`, async () => {
+     await expectToThrow(() => e.expect('notAnElement'));
+     await expectToThrow(() => e.expect(e.element('notAMatcher')));
   });
 
-  it(`matchers with wrong parameters should throw`, () => {
-    expect(() => e.element(e.by.label(5))).toThrow();
-    expect(() => e.element(e.by.id(5))).toThrow();
-    expect(() => e.element(e.by.type(0))).toThrow();
-    expect(() => e.by.traits(1)).toThrow();
-    expect(() => e.by.traits(['nonExistentTrait'])).toThrow();
-    expect(() => e.element(e.by.value(0))).toThrow();
-    expect(() => e.element(e.by.text(0))).toThrow();
-    expect(() => e.element(e.by.id('test').withAncestor('notAMatcher'))).toThrow();
-    expect(() => e.element(e.by.id('test').withDescendant('notAMatcher'))).toThrow();
-    expect(() => e.element(e.by.id('test').and('notAMatcher'))).toThrow();
+  it(`matchers with wrong parameters should throw`, async () => {
+    await expectToThrow(() => e.element(e.by.label(5)));
+    await expectToThrow(() => e.element(e.by.id(5)));
+    await expectToThrow(() => e.element(e.by.type(0)));
+    await expectToThrow(() => e.by.traits(1));
+    await expectToThrow(() => e.by.traits(['nonExistentTrait']));
+    await expectToThrow(() => e.element(e.by.value(0)));
+    await expectToThrow(() => e.element(e.by.text(0)));
+    await expectToThrow(() => e.element(e.by.id('test').withAncestor('notAMatcher')));
+    await expectToThrow(() => e.element(e.by.id('test').withDescendant('notAMatcher')));
+    await expectToThrow(() => e.element(e.by.id('test').and('notAMatcher')));
   });
 
-  it(`waitFor (element)`, () => {
-    e.waitFor(e.element(e.by.id('id'))).toBeVisible();
-    e.waitFor(e.element(e.by.id('id'))).toBeNotVisible();
-    e.waitFor(e.element(e.by.id('id'))).toExist();
-    e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout(0);
-    e.waitFor(e.element(e.by.id('id'))).toNotExist().withTimeout(0);
-    e.waitFor(e.element(e.by.id('id'))).toHaveValue('value');
-    e.waitFor(e.element(e.by.id('id'))).toNotHaveValue('value');
+  it(`waitFor (element)`, async () => {
+    await e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout(0);
+    await e.waitFor(e.element(e.by.id('id'))).toBeVisible();
+    await e.waitFor(e.element(e.by.id('id'))).toBeNotVisible();
+    await e.waitFor(e.element(e.by.id('id'))).toExist();
+    await e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout(0);
+    await e.waitFor(e.element(e.by.id('id'))).toNotExist().withTimeout(0);
+    await e.waitFor(e.element(e.by.id('id'))).toHaveValue('value');
+    await e.waitFor(e.element(e.by.id('id'))).toNotHaveValue('value');
 
-    e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50, 'down');
-    e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50);
+    await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50, 'down');
+    await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50);
   });
 
-  it(`waitFor (element) with wrong parameters should throw`, () => {
-    expect(() => e.waitFor('notAnElement')).toThrow();
-    expect(() => e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout('notANumber')).toThrow();
-    expect(() => e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout(-1)).toThrow();
-    expect(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement('notAnElement')).toThrow();
+  it(`waitFor (element) with wrong parameters should throw`, async () => {
+     await expectToThrow(() => e.waitFor('notAnElement'));
+     await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout('notANumber'));
+     await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout(-1));
+     await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement('notAnElement'));
   });
 
-  it(`waitFor (element) with non-elements should throw`, () => {
-    expect(() => e.waitFor('notAnElement').toBeVisible()).toThrow();
+  it(`waitFor (element) with non-elements should throw`, async () => {
+    await expectToThrow(() => e.waitFor('notAnElement').toBeVisible());
   });
 
-  it(`interactions`, () => {
-    e.element(e.by.label('Tap Me')).tap();
-    e.element(e.by.label('Tap Me')).longPress();
-    e.element(e.by.id('UniqueId819')).multiTap(3);
-    e.element(e.by.id('UniqueId937')).typeText('passcode');
-    e.element(e.by.id('UniqueId005')).clearText();
-    e.element(e.by.id('UniqueId005')).replaceText('replaceTo');
-    e.element(e.by.id('ScrollView161')).scroll(100);
-    e.element(e.by.id('ScrollView161')).scroll(100, 'down');
-    e.element(e.by.id('ScrollView161')).scroll(100, 'up');
-    e.element(e.by.id('ScrollView161')).scroll(100, 'right');
-    e.element(e.by.id('ScrollView161')).scroll(100, 'left');
-    e.element(e.by.id('ScrollView161')).scrollTo('bottom');
-    e.element(e.by.id('ScrollView161')).scrollTo('top');
-    e.element(e.by.id('ScrollView161')).scrollTo('left');
-    e.element(e.by.id('ScrollView161')).scrollTo('right');
-    e.element(e.by.id('ScrollView799')).swipe('down');
-    e.element(e.by.id('ScrollView799')).swipe('down', 'fast');
-    e.element(e.by.id('ScrollView799')).swipe('up', 'slow');
-    e.element(e.by.id('ScrollView799')).swipe('left', 'fast');
-    e.element(e.by.id('ScrollView799')).swipe('right', 'slow');
-    e.element(e.by.id('ScrollView799')).atIndex(1);
+  it(`interactions`, async () => {
+    await e.element(e.by.label('Tap Me')).tap();
+    await e.element(e.by.label('Tap Me')).longPress();
+    await e.element(e.by.id('UniqueId819')).multiTap(3);
+    await e.element(e.by.id('UniqueId937')).typeText('passcode');
+    await e.element(e.by.id('UniqueId005')).clearText();
+    await e.element(e.by.id('UniqueId005')).replaceText('replaceTo');
+    await e.element(e.by.id('ScrollView161')).scroll(100);
+    await e.element(e.by.id('ScrollView161')).scroll(100, 'down');
+    await e.element(e.by.id('ScrollView161')).scroll(100, 'up');
+    await e.element(e.by.id('ScrollView161')).scroll(100, 'right');
+    await e.element(e.by.id('ScrollView161')).scroll(100, 'left');
+    await e.element(e.by.id('ScrollView161')).scrollTo('bottom');
+    await e.element(e.by.id('ScrollView161')).scrollTo('top');
+    await e.element(e.by.id('ScrollView161')).scrollTo('left');
+    await e.element(e.by.id('ScrollView161')).scrollTo('right');
+    await e.element(e.by.id('ScrollView799')).swipe('down');
+    await e.element(e.by.id('ScrollView799')).swipe('down', 'fast');
+    await e.element(e.by.id('ScrollView799')).swipe('up', 'slow');
+    await e.element(e.by.id('ScrollView799')).swipe('left', 'fast');
+    await e.element(e.by.id('ScrollView799')).swipe('right', 'slow');
+    await e.element(e.by.id('ScrollView799')).atIndex(1);
   });
 
-  it(`interactions with wrong parameters should throw`, () => {
-    expect(() => e.element(e.by.id('UniqueId819')).multiTap('NaN')).toThrow();
-    expect(() => e.element(e.by.id('UniqueId937')).typeText(0)).toThrow();
-    expect(() => e.element(e.by.id('UniqueId005')).replaceText(3)).toThrow();
-    expect(() => e.element(e.by.id('ScrollView161')).scroll('NaN', 'down')).toThrow();
-    expect(() => e.element(e.by.id('ScrollView161')).scroll(100, 'noDirection')).toThrow();
-    expect(() => e.element(e.by.id('ScrollView161')).scroll(100, 0)).toThrow();
-    expect(() => e.element(e.by.id('ScrollView161')).scrollTo(0)).toThrow();
-    expect(() => e.element(e.by.id('ScrollView161')).scrollTo('noDirection')).toThrow();
-    expect(() => e.element(e.by.id('ScrollView799')).swipe(4, 'fast')).toThrow();
-    expect(() => e.element(e.by.id('ScrollView799')).swipe('noDirection', 0)).toThrow();
-    expect(() => e.element(e.by.id('ScrollView799')).swipe('noDirection', 'fast')).toThrow();
-    expect(() => e.element(e.by.id('ScrollView799')).swipe('down', 'NotFastNorSlow')).toThrow();
-    expect(() => e.element(e.by.id('ScrollView799')).atIndex('NaN')).toThrow();
+  it(`interactions with wrong parameters should throw`, async () => {
+    await expectToThrow(() => e.element(e.by.id('UniqueId819')).multiTap('NaN'));
+    await expectToThrow(() => e.element(e.by.id('UniqueId937')).typeText(0));
+    await expectToThrow(() => e.element(e.by.id('UniqueId005')).replaceText(3));
+    await expectToThrow(() => e.element(e.by.id('ScrollView161')).scroll('NaN', 'down'));
+    await expectToThrow(() => e.element(e.by.id('ScrollView161')).scroll(100, 'noDirection'));
+    await expectToThrow(() => e.element(e.by.id('ScrollView161')).scroll(100, 0));
+    await expectToThrow(() => e.element(e.by.id('ScrollView161')).scrollTo(0));
+    await expectToThrow(() => e.element(e.by.id('ScrollView161')).scrollTo('noDirection'));
+    await expectToThrow(() => e.element(e.by.id('ScrollView799')).swipe(4, 'fast'));
+    await expectToThrow(() => e.element(e.by.id('ScrollView799')).swipe('noDirection', 0));
+    await expectToThrow(() => e.element(e.by.id('ScrollView799')).swipe('noDirection', 'fast'));
+    await expectToThrow(() => e.element(e.by.id('ScrollView799')).swipe('down', 'NotFastNorSlow'));
+    await expectToThrow(() => e.element(e.by.id('ScrollView799')).atIndex('NaN'));
   });
 
-  it(`exportGlobals() should export api functions`, () => {
+  it(`exportGlobals() should export api functions`, async () => {
     const originalExpect = expect;
     e.exportGlobals();
     const newExpect = expect;
@@ -134,8 +135,16 @@ describe('expect', () => {
   });
 });
 
+async function expectToThrow(func) {
+  try {
+    await func();
+  } catch (ex) {
+    expect(ex).toBeDefined();
+  }
+}
+
 class MockExecutor {
-  execute(invocation) {
+  async execute(invocation) {
     if (typeof invocation === 'function') {
       invocation = invocation();
     }
@@ -144,6 +153,7 @@ class MockExecutor {
     expect(invocation.target.value).toBeDefined();
 
     this.recurse(invocation);
+    await this.timeout(1);
   }
 
   recurse(invocation) {
@@ -159,5 +169,9 @@ class MockExecutor {
         }
       }
     }
+  }
+
+  async timeout(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

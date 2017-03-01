@@ -1,6 +1,4 @@
-const log = require('npmlog');
 const exec = require('child-process-promise').exec;
-const spawn = require('child_process').spawn;
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -10,19 +8,11 @@ const FBsimctl = require('./Fbsimctl');
 
 class Simulator extends Device {
 
-  constructor(websocket, params) {
-    super(websocket, params);
+  constructor(client, params) {
+    super(client, params);
     this._fbsimctl = new FBsimctl();
-    //this._appLogProcess = null;
     this._simulatorUdid = "";
-    this._bundleId = "";
-
-    //process.on('exit', () => {
-    //  if (this._appLogProcess) {
-    //    this._appLogProcess.kill();
-    //    this._appLogProcess = undefined;
-    //  }
-    //});
+    this.sim = "";
   }
 
   async _getBundleIdFromApp(appPath) {
@@ -44,50 +34,15 @@ class Simulator extends Device {
     }
   }
 
-  //_getAppLogfile(bundleId, stdout) {
-  //  const suffix = `fbsimulatorcontrol/diagnostics/out_err/${bundleId}_err.txt`;
-  //  const re = new RegExp('[^\\s]+' + suffix);
-  //  const matches = stdout.match(re);
-  //  if (matches && matches.length > 0) {
-  //    const logfile = matches[0];
-  //    log.info(`app logfile: ${logfile}\n`);
-  //    return logfile;
-  //  }
-  //  return undefined;
-  //}
-  //
-  //_listenOnAppLogfile(logfile) {
-  //  if (this._appLogProcess) {
-  //    this._appLogProcess.kill();
-  //    this._appLogProcess = undefined;
-  //  }
-  //  if (!logfile) {
-  //    return;
-  //  }
-  //  this._appLogProcess = spawn('tail', ['-f', logfile]);
-  //  this._appLogProcess.stdout.on('data', (buffer) => {
-  //    const data = buffer.toString('utf8');
-  //    log.verbose('app: ' + data);
-  //  });
-  //}
-  //
-  //_getQueryFromDevice(device) {
-  //  let res = '';
-  //  const deviceParts = device.split(',');
-  //  for (let i = 0; i < deviceParts.length; i++) {
-  //    res += `"${deviceParts[i].trim()}" `;
-  //  }
-  //  return res.trim();
-  //}
-
   ensureDirectoryExistence(filePath) {
-    var dirname = path.dirname(filePath);
+    const dirname = path.dirname(filePath);
     if (fs.existsSync(dirname)) {
       return true;
     }
 
     this.ensureDirectoryExistence(dirname);
     fs.mkdirSync(dirname);
+    return true;
   }
 
   createPushNotificationJson(notification) {
@@ -97,26 +52,21 @@ class Simulator extends Device {
     return notificationFilePath;
   }
 
-  async sendUserNotification(notification, done) {
+  async sendUserNotification(notification) {
     const notificationFilePath = this.createPushNotificationJson(notification);
-    super.sendUserNotification({detoxUserNotificationDataURL: notificationFilePath}, done);
+    await super.sendUserNotification({detoxUserNotificationDataURL: notificationFilePath});
   }
 
-  async prepare(onComplete) {
+  async prepare() {
     this._simulatorUdid = await this._fbsimctl.list(this._currentScheme.device);
     this._bundleId = await this._getBundleIdFromApp(this._currentScheme.app);
     await this._fbsimctl.boot(this._simulatorUdid);
-    await this.relaunchApp({delete: true}, onComplete);
+    await this.relaunchApp({delete: true});
   }
 
-  async relaunchApp(params, onComplete) {
-    if (typeof params === 'function') {
-      onComplete = params;
-      params = {};
-    }
-
+  async relaunchApp(params = {}) {
     if (params.url && params.userNotification) {
-      throw new Error(`detox can't understand this 'relaunchApp(${JSON.stringify(params)})' request, either request to launch with url or with userNotification, not both`)
+      throw new Error(`detox can't understand this 'relaunchApp(${JSON.stringify(params)})' request, either request to launch with url or with userNotification, not both`);
     }
 
     if (params.delete) {
@@ -129,32 +79,21 @@ class Simulator extends Device {
 
     let additionalLaunchArgs;
     if (params.url) {
-      additionalLaunchArgs = {'-detoxURLOverride': params.url}
+      additionalLaunchArgs = {'-detoxURLOverride': params.url};
     } else if (params.userNotification) {
-      additionalLaunchArgs = {'-detoxUserNotificationDataURL': this.createPushNotificationJson(params.userNotification)}
+      additionalLaunchArgs = {'-detoxUserNotificationDataURL': this.createPushNotificationJson(params.userNotification)};
     }
 
     await this._fbsimctl.launch(this._simulatorUdid, this._bundleId, this.prepareLaunchArgs(additionalLaunchArgs));
-    await this._waitUntilReady(onComplete);
+    await this.client.waitUntilReady();
   }
 
-  async installApp(onComplete) {
-    console.log(this._simulatorUdid)
+  async installApp() {
     await this._fbsimctl.install(this._simulatorUdid, this._getAppAbsolutePath(this._currentScheme.app));
-    if (onComplete) onComplete();
   }
 
-  async uninstallApp(onComplete) {
+  async uninstallApp() {
     await this._fbsimctl.uninstall(this._simulatorUdid, this._bundleId);
-    if (onComplete) onComplete();
-  }
-
-  /**
-   * @deprecated Use relaunchApp(onComplete, {delete: true}) instead.
-   */
-  async deleteAndRelaunchApp(onComplete) {
-    log.warn("deleteAndRelaunchApp() is deprecated; use relaunchApp(onComplete, {delete: true}) instead.");
-    await this.relaunchApp({delete: true}, onComplete);
   }
 
   async openURL(url) {

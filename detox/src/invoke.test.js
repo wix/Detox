@@ -1,16 +1,16 @@
 const invoke = require('./invoke');
 
 describe('invoke', () => {
-  let WebsocketClient;
+  let Client;
 
   beforeEach(() => {
-    jest.mock('./websocket');
+    jest.mock('./client/client');
     jest.mock('./invoke/Invoke');
-    WebsocketClient = require('./websocket');
+    Client = require('./client/client');
   });
 
   it(`execute() should trigger executionHandler.execute()`, () => {
-    const invocationManager = new invoke.InvocationManager(new WebsocketClient(""));
+    const invocationManager = new invoke.InvocationManager(new Client(""));
     invocationManager.execute();
     expect(invocationManager.executionHandler.execute).toHaveBeenCalled();
   });

@@ -1,15 +1,11 @@
 const detox = require('../../src/index');
 const config = require('../package.json').detox;
 
-before((done) => {
+before(async () => {
   detox.config(config);
-  detox.start(done);
+  await detox.start();
 });
 
-afterEach((done) => {
-  detox.waitForTestResult(done);
-});
-
-after((done) => {
-  detox.cleanup(done);
+after(async () => {
+  await detox.cleanup();
 });

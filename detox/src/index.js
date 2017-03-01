@@ -1,67 +1,79 @@
 const log = require('npmlog');
-const WebsocketClient = require('./websocket');
-const expect = require('./ios/expect');
 const Simulator = require('./devices/simulator');
 const argparse = require('./utils/argparse');
 const InvocationManager = require('./invoke').InvocationManager;
 const configuration = require('./configuration');
+const Client = require('./client/client');
 
 log.level = argparse.getArgValue('loglevel') || 'info';
 log.heading = 'detox';
 
-let websocket;
-let _detoxConfig;
+let client;
+let detoxConfig;
+let expect;
 
-function config(detoxConfig) {
-  configuration.validateConfig(detoxConfig);
-  _detoxConfig = detoxConfig || configuration.defaultConfig;
+function config(userConfig) {
+  configuration.validateConfig(userConfig);
+  detoxConfig = userConfig || configuration.defaultConfig;
 }
 
-function start(done) {
-  expect.exportGlobals();
+async function start() {
+  client = new Client(detoxConfig.session);
+  client.connect();
 
-  websocket = new WebsocketClient(_detoxConfig.session);
-  global.simulator = new Simulator(websocket, _detoxConfig);
+  await initDevice();
 
-  const invocationManager = new InvocationManager(websocket);
+  const invocationManager = new InvocationManager(client);
   expect.setInvocationManager(invocationManager);
-
-  websocket.connect(async() => {
-    const target = argparse.getArgValue('target') || 'ios-sim';
-    if (target === 'ios-sim') {
-      await simulator.prepare(done);
-    } else {
-      done();
-    }
-  });
 }
 
-function cleanup(done) {
-  websocket.cleanup(done);
+async function cleanup() {
+  await client.cleanup();
 }
 
-function waitForTestResult(done) {
-  websocket.waitForTestResult(done);
+async function openURL(url) {
+  await device.openURL(url);
 }
 
-async function openURL(url, onComplete) {
-  const target = argparse.getArgValue('target') || 'ios-sim';
-  if (target === 'ios-sim') {
-    await simulator.openURL(url);
+async function initDevice() {
+  const device = argparse.getArgValue('device');
+  switch (device) {
+    case 'ios.simulator':
+      await initIosSimulator();
+      break;
+    case 'ios.device':
+      throw new Error(`Can't run ${device}, iOS physical devices are not yet supported`);
+    case 'android.emulator':
+    case 'android.device':
+      throw new Error(`Can't run ${device}, Android is not yet supported`);
+    default:
+      log.warn(`No supported target selected, defaulting to iOS Simulator!`);
+      await initIosSimulator();
+      break;
   }
-  onComplete();
+}
+
+async function initIosSimulator() {
+  expect = require('./ios/expect');
+  expect.exportGlobals();
+  await setDevice(Simulator);
+}
+
+async function setDevice(device) {
+  global.device = new device(client, detoxConfig);
+  await global.device.prepare();
 }
 
 // if there's an error thrown, close the websocket,
 // if not, mocha will continue running until reaches timeout.
 process.on('uncaughtException', (err) => {
-  //websocket.close();
+  //client.close();
 
   throw err;
 });
 
 process.on('unhandledRejection', (reason, p) => {
-  //websocket.close();
+  //client.close();
 
   throw reason;
 });
@@ -70,6 +82,5 @@ module.exports = {
   config,
   start,
   cleanup,
-  waitForTestResult,
   openURL
 };
