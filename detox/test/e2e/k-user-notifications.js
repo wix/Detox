@@ -1,4 +1,4 @@
-describe.only('User Notifications', () => {
+describe('User Notifications', () => {
   it('Background push notification - push notification from background', async () => {
     await device.relaunchApp({userNotification: userNotificationPushTrigger});
     await expect(element(by.label('From push'))).toBeVisible();
