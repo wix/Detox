@@ -9,16 +9,16 @@ log.level = argparse.getArgValue('loglevel') || 'info';
 log.heading = 'detox';
 
 let client;
-let _detoxConfig;
+let detoxConfig;
 let expect;
 
-function config(detoxConfig) {
-  configuration.validateConfig(detoxConfig);
-  _detoxConfig = detoxConfig || configuration.defaultConfig;
+function config(userConfig) {
+  configuration.validateConfig(userConfig);
+  detoxConfig = userConfig || configuration.defaultConfig;
 }
 
 async function start() {
-  client = new Client(_detoxConfig.session);
+  client = new Client(detoxConfig.session);
   client.connect();
 
   await initDevice();
@@ -42,13 +42,12 @@ async function initDevice() {
       await initIosSimulator();
       break;
     case 'ios.device':
-      await initIosDevice();
-      break;
+      throw new Error(`Can't run ${device}, iOS physical devices are not yet supported`);
     case 'android.emulator':
     case 'android.device':
       throw new Error(`Can't run ${device}, Android is not yet supported`);
     default:
-      log.warn(`No target selected, defaulting to iOS Simulator!`);
+      log.warn(`No supported target selected, defaulting to iOS Simulator!`);
       await initIosSimulator();
       break;
   }
@@ -60,13 +59,8 @@ async function initIosSimulator() {
   await setDevice(Simulator);
 }
 
-async function initIosDevice() {
-  expect = require('./ios/expect');
-  expect.exportGlobals();
-}
-
 async function setDevice(device) {
-  global.device = new device(client, _detoxConfig);
+  global.device = new device(client, detoxConfig);
   await global.device.prepare();
 }
 
