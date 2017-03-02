@@ -7,6 +7,8 @@ env:
   global:
   - NODE_VERSION=stable
 install:
+
+- curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
 - nvm install $NODE_VERSION
 - nvm use $NODE_VERSION
 - nvm ls
