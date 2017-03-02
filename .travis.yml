@@ -5,9 +5,11 @@ branches:
   - master
 env:
   global:
-  - NODE_VERSION=7.6.0
+  - NODE_VERSION=stable
 install:
 - nvm install $NODE_VERSION
+- nvm use $NODE_VERSION
+- nvm ls
 script:
 - ./scripts/travis.sh
 notifications:
