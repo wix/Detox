@@ -10,14 +10,11 @@ describe('User Notifications', () => {
     await expect(element(by.label('From calendar'))).toBeVisible();
   });
 
-  it('Foreground user notifications - local notification from inside the app - callback', (done) => {
-    device.relaunchApp().then(() => {
-      return device.sendUserNotification(userNotificationCalendarTrigger);
-    }).then(() => {
-      return expect(element(by.label('From calendar'))).toBeVisible();
-    }).then(() => {
-      done();
-    });
+  it('Foreground user notifications - local notification from inside the app - promises + callback', (done) => {
+    device.relaunchApp()
+          .then(() => device.sendUserNotification(userNotificationCalendarTrigger)
+          .then(() => expect(element(by.label('From calendar'))).toBeVisible()))
+          .then(done);
   });
 });
 
