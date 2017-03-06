@@ -44,5 +44,4 @@ describe('Assertions', () => {
     await element(by.id('UniqueId146')).tap();
     await expect(element(by.id('UniqueId146'))).toHaveValue('1');
   });
-
 });
