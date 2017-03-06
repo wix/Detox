@@ -446,7 +446,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
 				LastUpgradeCheck = 0830;
-				ORGANIZATIONNAME = "Leo Natan";
+				ORGANIZATIONNAME = Wix;
 				TargetAttributes = {
 					3928EFA41E47404900C19B6E = {
 						CreatedOnToolsVersion = 8.3;

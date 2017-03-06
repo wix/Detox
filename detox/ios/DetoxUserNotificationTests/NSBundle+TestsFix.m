@@ -3,7 +3,7 @@
 //  Detox
 //
 //  Created by Leo Natan (Wix) on 12/02/2017.
-//  Copyright © 2017 Leo Natan. All rights reserved.
+//  Copyright © 2017 Wix. All rights reserved.
 //
 
 #import "NSBundle+TestsFix.h"
