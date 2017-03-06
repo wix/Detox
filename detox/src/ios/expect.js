@@ -226,7 +226,7 @@ class Element {
   }
   _selectElementWithMatcher(matcher) {
     if (!(matcher instanceof Matcher)) throw new Error(`Element _selectElementWithMatcher argument must be a valid Matcher, got ${typeof matcher}`);
-    this._call = invoke.call(invoke.EarlGrey.instance, 'selectElementWithMatcher:', matcher._call);
+    this._call = invoke.call(invoke.EarlGrey.instance, 'detox_selectElementWithMatcher:', matcher._call);
   }
   atIndex(index) {
     if (typeof index !== 'number') throw new Error(`Element atIndex argument must be a number, got ${typeof index}`);
@@ -274,7 +274,6 @@ class Expect {}
 class ExpectElement extends Expect {
   constructor(element) {
     super();
-    //if (!(element instanceof Element)) throw new Error(`ExpectElement ctor argument must be a valid Element, got ${typeof element}`);
     this._element = element;
   }
   async toBeVisible() {
@@ -283,8 +282,8 @@ class ExpectElement extends Expect {
   async toBeNotVisible() {
     return await new MatcherAssertionInteraction(this._element, new NotVisibleMatcher()).execute();
   }
-  toExist() {
-    return new MatcherAssertionInteraction(this._element, new ExistsMatcher()).execute();
+  async toExist() {
+    return await new MatcherAssertionInteraction(this._element, new ExistsMatcher()).execute();
   }
   async toNotExist() {
     return await new MatcherAssertionInteraction(this._element, new NotExistsMatcher()).execute();

@@ -6,7 +6,7 @@
 //  Copyright © 2016 Wix. All rights reserved.
 //
 
-@import EarlGrey;
+#import <EarlGrey/EarlGrey.h>
 
 @interface GREYMatchers (Detox)
 

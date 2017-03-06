@@ -31,10 +31,14 @@
     // find scroll views in a more robust way, either the original matcher already points to a UIScrollView
     // and if it isn't look for a child under it that is a UIScrollView
     return grey_anyOf(grey_allOf(grey_anyOf(grey_kindOfClass([UIScrollView class]),
-                                            grey_kindOfClass([UIWebView class]), nil),
-                                 matcher, nil),
+                                            grey_kindOfClass([UIWebView class]),
+											nil),
+                                 matcher,
+								 nil),
                       grey_allOf(grey_kindOfClass([UIScrollView class]),
-                                 grey_ancestor(matcher), nil), nil);
+                                 grey_ancestor(matcher),
+								 nil),
+					  nil);
 }
 
 + (id<GREYMatcher>)detoxMatcherAvoidingProblematicReactNativeElements:(id<GREYMatcher>)matcher
@@ -48,10 +52,15 @@
     // RCTScrollView is problematic because EarlGrey's visibility matcher adds a subview and this causes a RN assertion
     //  solution: if we match RCTScrollView, switch over to matching its contained UIScrollView
     
-    return grey_anyOf(grey_allOf(grey_kindOfClass([UIScrollView class]),
-                                 grey_ancestor(grey_allOf(matcher, grey_kindOfClass(RN_RCTScrollView), nil)), nil),
-                      grey_allOf(matcher,
-                                 grey_not(grey_kindOfClass(RN_RCTScrollView)), nil), nil);
+	return grey_anyOf(grey_allOf(matcher,
+								 grey_not(grey_kindOfClass(RN_RCTScrollView)),
+								 nil),
+					  grey_allOf(grey_kindOfClass([UIScrollView class]),
+                                 grey_ancestor(grey_allOf(matcher,
+														  grey_kindOfClass(RN_RCTScrollView),
+														  nil)),
+								 nil),
+                      nil);
 }
 
 + (id<GREYMatcher>)detoxMatcherForBoth:(id<GREYMatcher>)firstMatcher and:(id<GREYMatcher>)secondMatcher

@@ -41,7 +41,7 @@
         NSLog(@"☣️ DETOX:: Error: sendAction encode - %@", error);
         return;
     }
-    NSLog(@"Detox Action Sent: %@", type);
+    NSLog(@"☣️ DETOX:: Detox Action Sent: %@", type);
     NSString *json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
     [self.websocket sendString:json error:NULL];
 }
