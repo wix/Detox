@@ -31,10 +31,6 @@ async function cleanup() {
   await client.cleanup();
 }
 
-async function openURL(url) {
-  await device.openURL(url);
-}
-
 async function initDevice() {
   const device = argparse.getArgValue('device');
   switch (device) {
@@ -81,6 +77,5 @@ process.on('unhandledRejection', (reason, p) => {
 module.exports = {
   config,
   start,
-  cleanup,
-  openURL
+  cleanup
 };
