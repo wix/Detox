@@ -3,8 +3,8 @@
 printf "\n#################################################################\n"
 
 if [ -f Detox.framework.tar ]; then
-  tar -xf Detox.framework.tar
-  rm -f Detox.framework.tar
+  tar -xjf Detox.framework.tbz
+  rm -f Detox.framework.tbz
 fi
 
 brew list fbsimctl &> /dev/null
