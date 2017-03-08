@@ -34,3 +34,4 @@ See the [Installing](INSTALLING.md) instructions
 * Improve errors printed during app execution (maybe show NSLog)
 * Cleaner code and refactoring once we have the basic architecture figured out
 * Improve separation of test start and test end in the native detox test runner
+
