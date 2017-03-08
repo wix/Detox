@@ -173,6 +173,7 @@ public class DetoxUserNotificationDispatcher: NSObject {
 		rv.alertBody = self.userNotificationData[DetoxUserNotificationKeys.body] as? String
 		rv.category = self.userNotificationData[DetoxUserNotificationKeys.category] as? String
 		rv.alertTitle = self.userNotificationData[DetoxUserNotificationKeys.title] as? String ?? ""
+		rv.userInfo = self.userPayload
 		
 		let repeats = self.userNotificationData[DetoxUserNotificationKeys.repeats] as? Bool ?? false
 		
@@ -214,9 +215,13 @@ public class DetoxUserNotificationDispatcher: NSObject {
 		return self.userNotificationData[DetoxUserNotificationKeys.absoluteTriggerType] as! String == DetoxUserNotificationKeys.TriggerTypes.push
 	}()
 	
+	private lazy var userPayload : [String: Any] = {
+		return self.userNotificationData[DetoxUserNotificationKeys.payload] as? [String: Any] ?? [:]
+	}()
+	
 	private lazy var payload : [String: Any] = {
 		[unowned self] in
-		var rv : [String: Any] = self.userNotificationData[DetoxUserNotificationKeys.payload] as? [String: Any] ?? [:]
+		var rv : [String: Any] = self.userPayload
 		var aps = rv[DetoxUserNotificationKeys.aps] as? [String: Any] ?? [:]
 		var alert = aps[DetoxUserNotificationKeys.alert] as? [String: Any] ?? [:]
 		
