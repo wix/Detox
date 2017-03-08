@@ -10,10 +10,10 @@
     "url": "https://github.com/wix/detox.git"
   },
   "bin": {
-    "detox-server": "./index.js"
+    "detox-server": "./cli.js"
   },
   "scripts": {
-    "start": "node ."
+    "start": "node cli.js"
   },
   "bugs": {
     "url": "https://github.com/wix/detox/issues"

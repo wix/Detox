@@ -5,9 +5,14 @@ describe('configuration', () => {
     configuration = require('./configuration');
   });
 
-  it(`providing a valid config`, () => {
+  it(`generate a default config`, async () => {
+    const config = await configuration.defaultConfig();
+    expect(() => config.session.server).toBeDefined();
+    expect(() => config.session.sessionId).toBeDefined();
+  });
 
-    expect(() => configuration.validateConfig(schemes.valid)).not.toThrow();
+  it(`providing a valid config`, () => {
+    expect(() => configuration.validateSession(schemes.valid)).not.toThrow();
   });
 
   it(`providing empty config should throw`, () => {
@@ -19,16 +24,16 @@ describe('configuration', () => {
   });
 
   it(`providing config with no session.server should throw`, () => {
-    testFaultyConfig(schemes.noServer)
+    testFaultyConfig(schemes.noServer);
   });
 
   it(`providing config with no session.sessionId should throw`, () => {
-    testFaultyConfig(schemes.noSessionId)
+    testFaultyConfig(schemes.noSessionId);
   });
 
   function testFaultyConfig(config) {
     try {
-      configuration.validateConfig(config);
+      configuration.validateSession(config);
     } catch (ex) {
       expect(ex).toBeDefined();
     }

@@ -1,24 +1,28 @@
 const CustomError = require('./errors/errors').CustomError;
+const uuid = require('./utils/uuid');
+const getPort = require('get-port');
 
-const defaultConfig = {
-  session: {
-    server: 'ws://localhost:8099',
-    sessionId: 'example'
-  }
-};
+async function defaultConfig() {
+  return {
+    session: {
+      server: `ws://localhost:${await getPort()}`,
+      sessionId: uuid.UUID()
+    }
+  };
+}
 
-function validateConfig(detoxConfig) {
+function validateSession(detoxConfig) {
   if (!detoxConfig.session) {
     throw new Error(`No session configuration was found, pass settings under the session property`);
   }
 
-  const settings = detoxConfig.session;
+  const session = detoxConfig.session;
 
-  if (!settings.server) {
+  if (!session.server) {
     throw new Error(`session.server property is missing, should hold the server address`);
   }
 
-  if (!settings.sessionId) {
+  if (!session.sessionId) {
     throw new Error(`session.sessionId property is missing, should hold the server session id`);
   }
 }
@@ -49,6 +53,6 @@ class DetoxConfigError extends CustomError {
 
 module.exports = {
   defaultConfig,
-  validateConfig,
+  validateSession,
   validateScheme
 };

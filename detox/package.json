@@ -51,6 +51,16 @@
     "shelljs": "^0.7.3",
     "ttab": "^0.3.1"
   },
+  "dependencies": {
+    "child-process-promise": "^2.2.0",
+    "commander": "^2.9.0",
+    "get-port": "^2.1.0",
+    "lodash": "^4.14.1",
+    "npmlog": "^4.0.2",
+    "react-native-invoke": "^0.2.1",
+    "ws": "^1.1.1",
+    "detox-server": "^1.1.1"
+  },
   "babel": {
     "env": {
       "test": {
@@ -60,14 +70,6 @@
         "retainLines": true
       }
     }
-  },
-  "dependencies": {
-    "child-process-promise": "^2.2.0",
-    "commander": "^2.9.0",
-    "lodash": "^4.14.1",
-    "npmlog": "^4.0.2",
-    "react-native-invoke": "^0.2.1",
-    "ws": "^1.1.1"
   },
   "jest": {
     "testPathDirs": [

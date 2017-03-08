@@ -18,10 +18,6 @@
     "detox-server": "^1.1.0"
   },
   "detox": {
-    "session": {
-      "server": "ws://localhost:8099",
-      "sessionId": "test"
-    },
     "ios-simulator": {
         "app": "ios/build/Build/Products/Release-iphonesimulator/example.app",
         "device": "iPhone 7 Plus"

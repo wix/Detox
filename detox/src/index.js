@@ -1,9 +1,13 @@
 const log = require('npmlog');
 const Simulator = require('./devices/simulator');
+const Device = require('./devices/device');
 const argparse = require('./utils/argparse');
 const InvocationManager = require('./invoke').InvocationManager;
 const configuration = require('./configuration');
 const Client = require('./client/client');
+const DetoxServer = require('detox-server');
+const URL = require('url').URL;
+const _ = require('lodash');
 
 log.level = argparse.getArgValue('loglevel') || 'info';
 log.heading = 'detox';
@@ -12,19 +16,27 @@ let client;
 let detoxConfig;
 let expect;
 
-function config(userConfig) {
-  configuration.validateConfig(userConfig);
-  detoxConfig = userConfig || configuration.defaultConfig;
+async function config(userConfig) {
+  if (userConfig && userConfig.session) {
+    configuration.validateSession(userConfig);
+    detoxConfig = userConfig;
+  } else {
+    detoxConfig = _.merge(await configuration.defaultConfig(), userConfig);
+    const server = new DetoxServer(new URL(detoxConfig.session.server).port);
+  }
 }
 
 async function start() {
   client = new Client(detoxConfig.session);
-  client.connect();
+  const _connect = client.connect();
+  const _initDevice = initDevice();
 
-  await initDevice();
-
+  expect = require('./ios/expect');
+  expect.exportGlobals();
   const invocationManager = new InvocationManager(client);
   expect.setInvocationManager(invocationManager);
+
+  await Promise.all([_initDevice]);
 }
 
 async function cleanup() {
@@ -42,9 +54,10 @@ async function initDevice() {
     case 'android.emulator':
     case 'android.device':
       throw new Error(`Can't run ${device}, Android is not yet supported`);
+    case 'none':
+      //await initGeneralDevice();
+      break;
     default:
-      log.warn(`No supported target selected, defaulting to iOS Simulator!`);
-      await initIosSimulator();
       break;
   }
 }
@@ -53,6 +66,12 @@ async function initIosSimulator() {
   expect = require('./ios/expect');
   expect.exportGlobals();
   await setDevice(Simulator);
+}
+
+async function initGeneralDevice() {
+  expect = require('./ios/expect');
+  expect.exportGlobals();
+  await setDevice(Device);
 }
 
 async function setDevice(device) {
