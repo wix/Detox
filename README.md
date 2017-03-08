@@ -55,4 +55,3 @@ If you're interested in working on detox core and contributing to detox itself, 
 * detox relies on some important dependencies, their respective licenses are:
   * [EarlGrey](https://github.com/google/EarlGrey/blob/master/LICENSE)
   * [FBSimulatorControl](https://github.com/facebook/FBSimulatorControl/blob/master/LICENSE)
-
