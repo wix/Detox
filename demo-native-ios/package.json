@@ -8,6 +8,7 @@
     "build": "xcodebuild -project NativeExample.xcodeproj -scheme NativeExample -derivedDataPath . -sdk iphonesimulator"
   },
   "devDependencies": {
+    "mocha": "^3.2.0",
     "detox": "^4.1.0",
     "detox-server": "^1.1.0"
   },

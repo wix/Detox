@@ -4,10 +4,9 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "version": "4.3.1",
+  "version": "4.3.2",
   "bin": {
-    "detox": "./scripts/detox.js",
-    "mocha": "./node_modules/.bin/mocha"
+    "detox": "./scripts/detox.js"
   },
   "repository": {
     "type": "git",
@@ -66,7 +65,6 @@
     "child-process-promise": "^2.2.0",
     "commander": "^2.9.0",
     "lodash": "^4.14.1",
-    "mocha": "^3.2.0",
     "npmlog": "^4.0.2",
     "react-native-invoke": "^0.2.1",
     "ws": "^1.1.1"
