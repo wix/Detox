@@ -8,6 +8,7 @@
     "e2e": "mocha e2e --opts ./e2e/mocha.opts"
   },
   "devDependencies": {
+    "mocha": "^3.2.0",
     "detox": "latest",
     "detox-server": "latest"
   },
