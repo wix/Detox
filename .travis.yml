@@ -6,13 +6,20 @@ branches:
 env:
   global:
   - NODE_VERSION=stable
+
 install:
 
 - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
 - export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 - nvm install $NODE_VERSION
 - nvm use $NODE_VERSION
-- nvm ls
+
+- npm install -g lerna@2.0.0-beta.38 >/dev/null 2>&1
+- npm install -g react-native-cli >/dev/null 2>&1
+- gem install xcpretty >/dev/null 2>&1
+
+
+
 script:
 - ./scripts/travis.sh
 notifications:
