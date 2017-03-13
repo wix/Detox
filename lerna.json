@@ -6,7 +6,8 @@
     "demo-react-native",
     "detox",
     "detox/test",
-    "detox-server"
+    "detox-server",
+    "detox-cli"
   ],
   "version": "independent"
 }

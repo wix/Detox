@@ -14,14 +14,14 @@
   },
   "devDependencies": {
     "mocha": "^3.2.0",
-    "detox": "^4.0.9",
-    "detox-server": "^1.1.0"
+    "detox": "^4.0.9"
   },
   "detox": {
     "specs": "e2e",
     "devices": {
       "ios.sim.release": {
         "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+        "build": "set -o pipefail && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -scheme example -configuration Release -sdk iphonesimulator -derivedDataPath ios/build | xcpretty",
         "type": "simulator",
         "name": "iPhone 7 Plus"
       }
