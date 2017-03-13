@@ -32,6 +32,11 @@ const invalidDeviceNoBinary = {
   }
 };
 
+const invalidNoDevice = {
+  "devices": {
+  }
+};
+
 const invalidDeviceNoDeviceType = {
   "devices": {
     "ios.sim.release": {
@@ -76,13 +81,25 @@ const invalidSessionNoServer = {
   }
 };
 
+const invalidOneDeviceTypeEmulatorNoSession = {
+  "devices": {
+    "ios.sim.release": {
+      "binaryPath": "some.apk",
+      "type": "emulator",
+      "name": "an emulator"
+    }
+  }
+};
+
 module.exports = {
   validOneDeviceNoSession,
   validTwoDevicesNoSession,
   invalidDeviceNoBinary,
+  invalidNoDevice,
   invalidDeviceNoDeviceType,
   invalidDeviceNoDeviceName,
   validOneDeviceAndSession,
   invalidSessionNoSessionId,
-  invalidSessionNoServer
+  invalidSessionNoServer,
+  invalidOneDeviceTypeEmulatorNoSession
 };

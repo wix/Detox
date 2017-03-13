@@ -23,6 +23,26 @@ describe('Detox', () => {
     }
   });
 
+  it(`Config with no devices, should throw`, async () => {
+    Detox = require('./Detox');
+    try {
+      detox = new Detox(schemes.invalidNoDevice);
+      await detox.init();
+    } catch (ex) {
+      expect(ex).toBeDefined();
+    }
+  });
+
+  it(`Config with emulator, should throw`, async () => {
+    Detox = require('./Detox');
+    try {
+      detox = new Detox(schemes.invalidOneDeviceTypeEmulatorNoSession);
+      await detox.init();
+    } catch (ex) {
+      expect(ex).toBeDefined();
+    }
+  });
+
   it(`One valid device, detox should init with generated session config and default to this device`, async () => {
     Detox = require('./Detox');
     detox = new Detox(schemes.validOneDeviceNoSession);
