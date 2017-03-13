@@ -7,7 +7,7 @@ class DetoxServer {
     this.wss = new WebSocketServer({port: port});
     this.sessions = {};
 
-    log.http(`${now()}: server listening on localhost:${this.wss.options.port}...`);
+    log.http(`${now()}:`, `server listening on localhost:${this.wss.options.port}...`);
     this._setup();
   }
 
@@ -25,11 +25,11 @@ class DetoxServer {
             if (action.params && action.params.sessionId && action.params.role) {
               sessionId = action.params.sessionId;
               role = action.params.role;
-              log.http(`${now()}: role=${role} login (sessionId=${sessionId})`);
+              log.http(`${now()}:`, `role=${role} login (sessionId=${sessionId})`);
               _.set(this.sessions, [sessionId, role], ws);
             }
           } else if (sessionId && role) {
-            log.http(`${now()}: role=${role} action=${action.type} (sessionId=${sessionId})`);
+            log.http(`${now()}:`, `role=${role} action=${action.type} (sessionId=${sessionId})`);
             this.sendToOtherRole(sessionId, role, action.type, action.params);
           }
         } catch (error) {
@@ -39,7 +39,7 @@ class DetoxServer {
 
       ws.on('close', () => {
         if (sessionId && role) {
-          log.http(`${now()}: role=${role} disconnect (sessionId=${sessionId})`);
+          log.http(`${now()}:`, `role=${role} disconnect (sessionId=${sessionId})`);
           _.set(this.sessions, [sessionId, role], undefined);
         }
       });
@@ -59,7 +59,7 @@ class DetoxServer {
     if (ws) {
       this.sendAction(ws, type, params);
     } else {
-      log.http(`${now()}: role=${otherRole} not connected, cannot fw action (sessionId=${sessionId})`);
+      log.http(`${now()}:`, `role=${otherRole} not connected, cannot fw action (sessionId=${sessionId})`);
     }
   }
 }
