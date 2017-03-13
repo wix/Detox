@@ -13,17 +13,17 @@ class AsyncWebSocket {
     return new Promise(async (resolve, reject) => {
       this.ws = new WebSocket(this.url);
       this.ws.onopen = (response) => {
-        log.verbose(`ws onOpen ${response}`);
+        log.verbose(`ws`, `onOpen ${response}`);
         resolve(response);
       };
 
       this.ws.onerror = (error) => {
-        log.error(`ws onError: ${error}`);
+        log.error(`ws`, `onError: ${error}`);
         this.inFlightPromise.reject(error);
       };
 
       this.ws.onmessage = (response) => {
-        log.verbose(`ws onMessage: ${response.data}`);
+        log.verbose(`ws`, `onMessage: ${response.data}`);
         this.inFlightPromise.resolve(response.data);
       };
 
@@ -38,7 +38,7 @@ class AsyncWebSocket {
     }
 
     return new Promise(async (resolve, reject) => {
-      log.verbose(`ws send: ${message}`);
+      log.verbose(`ws`, `send: ${message}`);
       this.inFlightPromise.resolve = resolve;
       this.inFlightPromise.reject = reject;
       this.ws.send(message);
