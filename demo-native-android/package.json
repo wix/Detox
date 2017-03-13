@@ -9,13 +9,9 @@
   },
   "devDependencies": {
     "mocha": "^3.2.0",
-    "detox": "^4.0.9",
-    "detox-server": "^1.1.0"
+    "detox": "^4.3.2"
   },
   "detox": {
-    "session": {
-      "server": "ws://localhost:8099",
-      "sessionId": "detox-demo-native-ios"
-    }
+ 
   }
 }

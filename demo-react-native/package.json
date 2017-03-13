@@ -16,21 +16,17 @@
   },
   "devDependencies": {
     "mocha": "^3.2.0",
-    "detox": "^4.1.0",
-    "detox-server": "^1.1.0"
+    "detox": "^4.1.0"
   },
   "detox": {
-    "session": {
-      "server": "ws://localhost:8099",
-      "sessionId": "detox-demo-react-native"
-    },
-    "ios-simulator.release": {
-      "app": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-      "device": "iPhone 7 Plus"
-    },
-    "ios-simulator.debug": {
-      "app": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
-      "device": "iPhone 7 Plus"
+    "specs": "e2e",
+    "devices": {
+      "ios.sim.release": {
+        "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+        "build": "set -o pipefail && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -scheme example -configuration Release -sdk iphonesimulator -derivedDataPath ios/build | xcpretty",
+        "type": "simulator",
+        "name": "iPhone 7 Plus"
+      }
     }
   }
 }
