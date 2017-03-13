@@ -10,20 +10,39 @@
     "url": "https://github.com/wix/detox.git"
   },
   "bin": {
-    "detox-server": "./cli.js"
+    "detox-server": "lib/cli.js"
   },
   "scripts": {
-    "start": "node cli.js"
+    "build":  "BABEL_ENV=test babel src -d lib",
+    "start": "node lib/cli.js"
   },
   "bugs": {
     "url": "https://github.com/wix/detox/issues"
   },
   "homepage": "https://github.com/wix/detox/detox-server",
-  "main": "index.js",
+  "main": "lib/index.js",
   "author": "Tal Kol <talkol@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "lodash": "^4.13.1",
     "ws": "^1.1.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.8.0",
+    "babel-core": "^6.8.0",
+    "babel-eslint": "^6.0.4",
+    "babel-polyfill": "^6.8.0",
+    "babel-preset-latest": "^6.22.0",
+    "babel-register": "^6.8.0"
+  },
+  "babel": {
+    "env": {
+      "test": {
+        "presets": [
+          "latest"
+        ],
+        "retainLines": true
+      }
+    }
   }
 }
