@@ -25,7 +25,8 @@
   "license": "MIT",
   "dependencies": {
     "lodash": "^4.13.1",
-    "ws": "^1.1.0"
+    "ws": "^1.1.0",
+    "npmlog": "^4.0.2"
   },
   "devDependencies": {
     "babel-cli": "^6.8.0",
