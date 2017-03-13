@@ -45,6 +45,7 @@ describe('Actions', () => {
   it('should scroll for a small amount in direction', async () => {
     await expect(element(by.label('Text1'))).toBeVisible();
     await expect(element(by.label('Text4'))).toBeNotVisible();
+    await expect(element(by.id('ScrollView161'))).toBeVisible();
     await element(by.id('ScrollView161')).scroll(100, 'down');
     await expect(element(by.label('Text1'))).toBeNotVisible();
     await expect(element(by.label('Text4'))).toBeVisible();
