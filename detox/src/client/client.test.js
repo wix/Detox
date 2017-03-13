@@ -1,4 +1,4 @@
-const config = require('../schemes.mock').valid.session;
+const config = require('../schemes.mock').validOneDeviceAndSession.session;
 const invoke = require('../invoke');
 
 describe('client', () => {

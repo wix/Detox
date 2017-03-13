@@ -18,9 +18,13 @@
     "detox-server": "^1.1.0"
   },
   "detox": {
-    "ios-simulator": {
-        "app": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-        "device": "iPhone 7 Plus"
+    "specs": "e2e",
+    "devices": {
+      "ios.sim.release": {
+        "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+        "type": "simulator",
+        "name": "iPhone 7 Plus"
+      }
     }
   }
 }

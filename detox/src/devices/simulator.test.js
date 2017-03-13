@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const validScheme = require('../schemes.mock').valid;
+const validScheme = require('../schemes.mock').validOneDeviceAndSession;
 
 describe('simulator', () => {
   let fs;
@@ -27,7 +27,7 @@ describe('simulator', () => {
 
     client = new Client(validScheme.session);
     client.connect();
-    simulator = new Simulator(client, validScheme);
+    simulator = new Simulator(client, validScheme.session, validScheme.devices['ios.sim.release']);
   });
 
   it(`prepare() should boot a device`, async () => {

@@ -8,8 +8,8 @@ const FBsimctl = require('./Fbsimctl');
 
 class Simulator extends Device {
 
-  constructor(client, params) {
-    super(client, params);
+  constructor(client, session, deviceConfig) {
+    super(client, session, deviceConfig);
     this._fbsimctl = new FBsimctl();
     this._simulatorUdid = "";
     this.sim = "";
@@ -58,20 +58,20 @@ class Simulator extends Device {
   }
 
   async prepare() {
-    this._simulatorUdid = await this._fbsimctl.list(this._currentScheme.device);
-    this._bundleId = await this._getBundleIdFromApp(this._currentScheme.app);
+    this._simulatorUdid = await this._fbsimctl.list(this._deviceConfig.name);
+    this._bundleId = await this._getBundleIdFromApp(this._deviceConfig.binaryPath);
     await this._fbsimctl.boot(this._simulatorUdid);
     await this.relaunchApp({delete: true});
   }
 
-  async relaunchApp(params = {}) {
+  async relaunchApp(params = {}, bundleId) {
     if (params.url && params.userNotification) {
       throw new Error(`detox can't understand this 'relaunchApp(${JSON.stringify(params)})' request, either request to launch with url or with userNotification, not both`);
     }
 
     if (params.delete) {
       await this._fbsimctl.uninstall(this._simulatorUdid, this._bundleId);
-      await this._fbsimctl.install(this._simulatorUdid, this._getAppAbsolutePath(this._currentScheme.app));
+      await this._fbsimctl.install(this._simulatorUdid, this._getAppAbsolutePath(this._deviceConfig.binaryPath));
     } else {
       // Calling `relaunch` is not good as it seems `fbsimctl` does not forward env variables in this mode.
       await this._fbsimctl.terminate(this._simulatorUdid, this._bundleId);
@@ -84,16 +84,19 @@ class Simulator extends Device {
       additionalLaunchArgs = {'-detoxUserNotificationDataURL': this.createPushNotificationJson(params.userNotification)};
     }
 
-    await this._fbsimctl.launch(this._simulatorUdid, this._bundleId, this._prepareLaunchArgs(additionalLaunchArgs));
+    const _bundleId = bundleId || this._bundleId;
+    await this._fbsimctl.launch(this._simulatorUdid, _bundleId, this._prepareLaunchArgs(additionalLaunchArgs));
     await this.client.waitUntilReady();
   }
 
-  async installApp() {
-    await this._fbsimctl.install(this._simulatorUdid, this._getAppAbsolutePath(this._currentScheme.app));
+  async installApp(binaryPath) {
+    const _binaryPath = binaryPath || this._getAppAbsolutePath(this._deviceConfig.binaryPath);
+    await this._fbsimctl.install(this._simulatorUdid, _binaryPath);
   }
 
-  async uninstallApp() {
-    await this._fbsimctl.uninstall(this._simulatorUdid, this._bundleId);
+  async uninstallApp(bundleId) {
+    const _bundleId = bundleId || this._bundleId;
+    await this._fbsimctl.uninstall(this._simulatorUdid, _bundleId);
   }
 
   async openURL(url) {

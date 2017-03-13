@@ -1,73 +1,88 @@
-const valid = {
+const validOneDeviceNoSession = {
+  "devices": {
+    "ios.sim.release": {
+      "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+      "type": "simulator",
+      "name": "iPhone 7 Plus, iOS 10.2"
+    }
+  }
+};
+
+const validTwoDevicesNoSession = {
+  "devices": {
+    "ios.sim.release": {
+      "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+      "type": "simulator",
+      "name": "iPhone 7 Plus, iOS 10.2"
+    },
+    "ios.sim.debug": {
+      "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
+      "type": "simulator",
+      "name": "iPhone 7 Plus, iOS 10.2"
+    }
+  }
+};
+
+const invalidDeviceNoBinary = {
+  "devices": {
+    "ios.sim.release": {
+      "type": "simulator",
+      "name": "iPhone 7 Plus, iOS 10.2"
+    }
+  }
+};
+
+const invalidDeviceNoDeviceType = {
+  "devices": {
+    "ios.sim.release": {
+      "binaryPath": "here",
+      "name": "iPhone 7 Plus, iOS 10.2"
+    }
+  }
+};
+
+const invalidDeviceNoDeviceName = {
+  "devices": {
+    "ios.sim.release": {
+      "binaryPath": "here",
+      "type": "simulator"
+    }
+  }
+};
+
+const validOneDeviceAndSession = {
   "session": {
     "server": "ws://localhost:8099",
     "sessionId": "test"
   },
-  "ios-simulator": {
-    "app": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-    "device": "iPhone 7 Plus"
+  "devices": {
+    "ios.sim.release": {
+      "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+      "type": "simulator",
+      "name": "iPhone 7 Plus, iOS 10.2"
+    }
   }
 };
 
-const noSession = {
-  "ios-simulator": {
-    "app": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-    "device": "iPhone 7 Plus"
+const invalidSessionNoSessionId = {
+  "session": {
+    "server": "ws://localhost:8099"
   }
 };
 
-const noServer = {
+const invalidSessionNoServer = {
   "session": {
     "sessionId": "test"
-  },
-  "ios-simulator": {
-    "app": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-    "device": "iPhone 7 Plus"
   }
 };
 
-const noSessionId = {
-  "session": {
-    "server": "ws://localhost:8099",
-  },
-  "ios-simulator": {
-    "app": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-    "device": "iPhone 7 Plus"
-  }
-};
-
-const noScheme = {
-  "session": {
-    "server": "ws://localhost:8099",
-    "sessionId": "test"
-  }
-};
-
-const noAppPath = {
-  "session": {
-    "server": "ws://localhost:8099",
-    "sessionId": "test"
-  },
-  "ios-simulator": {
-    "device": "iPhone 7 Plus"
-  }
-};
-
-const noDevice = {
-  "session": {
-    "server": "ws://localhost:8099",
-    "sessionId": "test"
-  },
-  "ios-simulator": {
-    "app": "ios/build/Build/Products/Release-iphonesimulator/example.app"
-  }
-};
 module.exports = {
-  valid,
-  noSession,
-  noServer,
-  noSessionId,
-  noScheme,
-  noAppPath,
-  noDevice
+  validOneDeviceNoSession,
+  validTwoDevicesNoSession,
+  invalidDeviceNoBinary,
+  invalidDeviceNoDeviceType,
+  invalidDeviceNoDeviceName,
+  validOneDeviceAndSession,
+  invalidSessionNoSessionId,
+  invalidSessionNoServer
 };

@@ -4,10 +4,10 @@ const argparse = require('../utils/argparse');
 const configuration = require('../configuration');
 
 class Device {
-  constructor(client, params) {
+  constructor(client, session, deviceConfig) {
     this.client = client;
-    this.params = params;
-    this._currentScheme = this._detrmineCurrentScheme(params);
+    this._session = session;
+    this._deviceConfig = deviceConfig;
   }
 
   async reloadReactNative() {
@@ -18,36 +18,8 @@ class Device {
     await this.client.sendUserNotification(params);
   }
 
-  _getDefaultSchemesList() {
-    return ['ios-simulator.debug', 'ios-simulator.release', 'ios-simulator'];
-  }
-
-  _detrmineCurrentScheme(params) {
-    const defaultSchemes = this._getDefaultSchemesList();
-
-    let scheme;
-    const schemeOverride = argparse.getArgValue('scheme');
-
-    if (schemeOverride) {
-      scheme = _.get(params, schemeOverride);
-      if (!scheme) {
-        throw new Error(`could not find scheme '${schemeOverride}', make sure it's configured in your detox config`);
-      }
-    }
-
-    let i = 0;
-    while (!scheme && i < defaultSchemes.length) {
-      scheme = _.get(params, defaultSchemes[i]);
-      i++;
-    }
-
-    configuration.validateScheme(scheme);
-    return scheme;
-  }
-
   _prepareLaunchArgs(additionalLaunchArgs) {
-    const session = this.params.session;
-    let args = ['-detoxServer', session.server, '-detoxSessionId', session.sessionId];
+    let args = ['-detoxServer', this._session.server, '-detoxSessionId', this._session.sessionId];
     if (additionalLaunchArgs) {
       args = args.concat(_.flatten(Object.entries(additionalLaunchArgs)));
     }

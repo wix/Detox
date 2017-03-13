@@ -2,21 +2,17 @@ const CustomError = require('./errors/errors').CustomError;
 const uuid = require('./utils/uuid');
 const getPort = require('get-port');
 
-async function defaultConfig() {
+async function defaultSession() {
   return {
-    session: {
-      server: `ws://localhost:${await getPort()}`,
-      sessionId: uuid.UUID()
-    }
+    server: `ws://localhost:${await getPort()}`,
+    sessionId: uuid.UUID()
   };
 }
 
-function validateSession(detoxConfig) {
-  if (!detoxConfig.session) {
+function validateSession(session) {
+  if (!session) {
     throw new Error(`No session configuration was found, pass settings under the session property`);
   }
-
-  const session = detoxConfig.session;
 
   if (!session.server) {
     throw new Error(`session.server property is missing, should hold the server address`);
@@ -27,8 +23,8 @@ function validateSession(detoxConfig) {
   }
 }
 
-function validateScheme(scheme) {
-  if (!scheme) {
+function validateDevice(device) {
+  if (!device) {
     throw new DetoxConfigError(`No scheme was found, in order to test a device pass settings under detox property, e.g.   
            "detox": {
             ...
@@ -39,11 +35,14 @@ function validateScheme(scheme) {
           }`);
   }
 
-  if (!scheme.device) {
-    throw new DetoxConfigError(`scheme.device property is missing, should hold the device type to test on`);
+  if (!device.binaryPath) {
+    throw new DetoxConfigError(`'binaryPath' property is missing, should hold the app binary path`);
   }
-  if (!scheme.app) {
-    throw new DetoxConfigError(`scheme.app property is missing, should hold the app binary path`);
+  if (!device.type) {
+    throw new DetoxConfigError(`'type' property is missing, should hold the device type to test on (currently only simulator is supported)`);
+  }
+  if (!device.name) {
+    throw new DetoxConfigError(`'name' property is missing, should hold the device name to run on (e.g. "iPhone 7", "iPhone 7, iOS 10.2"`);
   }
 }
 
@@ -52,7 +51,7 @@ class DetoxConfigError extends CustomError {
 }
 
 module.exports = {
-  defaultConfig,
+  defaultSession,
   validateSession,
-  validateScheme
+  validateDevice
 };
