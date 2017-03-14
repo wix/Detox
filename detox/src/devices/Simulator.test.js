@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const validScheme = require('../configurations.mock').validOneDeviceAndSession;
 
-describe('simulator', () => {
+describe('Simulator', () => {
   let fs;
   let ws;
   let cpp;
@@ -21,9 +21,9 @@ describe('simulator', () => {
     jest.mock('./Fbsimctl');
 
     jest.mock('../client/client');
-    Client = require('../client/client');
+    Client = require('../client/Client');
 
-    Simulator = require('./simulator');
+    Simulator = require('./Simulator');
 
     client = new Client(validScheme.session);
     client.connect();

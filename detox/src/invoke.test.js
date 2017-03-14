@@ -6,7 +6,7 @@ describe('invoke', () => {
   beforeEach(() => {
     jest.mock('./client/client');
     jest.mock('./invoke/Invoke');
-    Client = require('./client/client');
+    Client = require('./client/Client');
   });
 
   it(`execute() should trigger executionHandler.execute()`, () => {

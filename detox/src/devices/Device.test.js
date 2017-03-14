@@ -1,6 +1,6 @@
 const validScheme = require('../configurations.mock').validOneDeviceAndSession;
 
-describe('device', () => {
+describe('Device', () => {
   let Client;
   let Device;
   let device;
@@ -12,8 +12,8 @@ describe('device', () => {
     argparse = require('../utils/argparse');
 
     jest.mock('../client/client');
-    Client = require('../client/client');
-    Device = require('./device');
+    Client = require('../client/Client');
+    Device = require('./Device');
     device = new Device(new Client(), validScheme);
   });
 

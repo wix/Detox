@@ -1,7 +1,7 @@
 const config = require('../configurations.mock').validOneDeviceAndSession.session;
 const invoke = require('../invoke');
 
-describe('client', () => {
+describe('Client', () => {
   let WebSocket;
   let Client;
   let client;
@@ -9,7 +9,7 @@ describe('client', () => {
   beforeEach(() => {
     jest.mock('npmlog');
     WebSocket = jest.mock('./AsyncWebSocket');
-    Client = require('./client');
+    Client = require('./Client');
   });
 
   it(`reloadReactNative() - should receive ready from device and resolve`, async () => {

@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const _ = require('lodash');
-const Device = require('./device');
+const Device = require('./Device');
 const FBsimctl = require('./Fbsimctl');
 
 class Simulator extends Device {
