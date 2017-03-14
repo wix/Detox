@@ -21,7 +21,7 @@
   "author": "Tal Kol <talkol@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "scripts/build.sh noframework",
+    "build": "scripts/build.sh",
     "lint": "eslint src",
     "unit": "jest --coverage --verbose",
     "unit:ios": "set -o pipefail && xcodebuild -project ios/Detox.xcodeproj -scheme Detox -configuration Debug test -destination 'platform=iOS Simulator,name=iPhone 7 Plus' | xcpretty",
