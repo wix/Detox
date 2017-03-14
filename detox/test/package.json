@@ -5,8 +5,8 @@
   "scripts": {
     "packager": "react-native start",
     "detox-server": "detox run-server",
-    "e2e": "detox test --device ios.sim.release",
-    "build": "detox build --device ios.sim.release"
+    "e2e": "detox test --configuration ios.sim.release",
+    "build": "detox build --configuration ios.sim.release"
   },
   "dependencies": {
     "lodash": "^4.14.1",
@@ -19,7 +19,7 @@
   },
   "detox": {
     "specs": "e2e",
-    "devices": {
+    "configurations": {
       "ios.sim.release": {
         "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
         "build": "set -o pipefail && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -scheme example -configuration Release -sdk iphonesimulator -derivedDataPath ios/build | xcpretty",

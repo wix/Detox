@@ -25,11 +25,11 @@ class Detox {
   }
 
   async config() {
-    if (!(this.userConfig.devices && _.size(this.userConfig.devices) >= 1)) {
+    if (!(this.userConfig.configurations && _.size(this.userConfig.configurations) >= 1)) {
       throw new Error(`no configured devices`);
     }
 
-    this.detoxConfig.devices = this.userConfig.devices;
+    this.detoxConfig.configurations = this.userConfig.configurations;
 
     if (this.userConfig.session) {
       configuration.validateSession(this.userConfig.session);
@@ -60,10 +60,10 @@ class Detox {
     const deviceName = argparse.getArgValue('device');
     let deviceConfig;
 
-    if (!deviceName && _.size(this.detoxConfig.devices) === 1) {
-      deviceConfig = _.values(this.detoxConfig.devices)[0];
+    if (!deviceName && _.size(this.detoxConfig.configurations) === 1) {
+      deviceConfig = _.values(this.detoxConfig.configurations)[0];
     } else {
-      deviceConfig = this.detoxConfig.devices[deviceName];
+      deviceConfig = this.detoxConfig.configurations[deviceName];
     }
 
     configuration.validateDevice(deviceConfig);

@@ -5,20 +5,21 @@ const program = require('commander');
 const path = require('path');
 const cp = require('child_process');
 program
-  .option('-d, --device [device]', `[convince method] run the command defined in 'device.build'`)
+  .option('-d, --configuration [device configuration]', `[convince method] run the command defined in 'configuration.build'`)
   .parse(process.argv);
 
-if (!process.argv.slice(2).length) {
-  program.outputHelp();
-  process.exit(0);
-}
-
 const config = require(path.join(process.cwd(), 'package.json')).detox;
-const buildScript = _.result(config, `devices["${program.device}"].build`);
+
+let buildScript;
+if (program.configuration) {
+  buildScript = _.result(config, `configurations["${program.configuration}"].build`);
+} else if (_.size(config.configurations) === 1) {
+  buildScript = _.values(config.configurations)[0].build;
+}
 
 if (buildScript) {
   console.log(buildScript);
   cp.execSync(buildScript, {stdio: 'inherit'});
 } else {
-  throw new Error(`Could not find build script in detox.devices["${program.device}"]`);
+  throw new Error(`Could not find build script in detox.configurations["${program.configuration}"]`);
 }
