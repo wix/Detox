@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "packager": "react-native start",
-    "detox-server": "detox-server",
-    "e2e": "mocha e2e --opts ./e2e/mocha.opts"
+    "detox-server": "detox run-server",
+    "e2e": "detox test --device ios.sim.release",
+    "build": "detox build --device ios.sim.release"
   },
   "dependencies": {
     "lodash": "^4.14.1",

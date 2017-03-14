@@ -4,7 +4,6 @@
   "description": "detox CLI tool wrapper",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
   },
   "bin": {
     "detox": "./cli.sh"
