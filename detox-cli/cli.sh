@@ -3,11 +3,10 @@
 DETOX_PATH="${PWD}/node_modules/detox";
 DETOX_PACKAGE_JSON_PATH="${DETOX_PATH}/package.json";
 
-if [ -a DETOX_PACKAGE_JSON_PATH ]; then
-  "${DETOX_PATH}/detox" $@
+if [ -f $DETOX_PACKAGE_JSON_PATH ]; then
+  "${PWD}/node_modules/.bin/detox" $@
 else
   echo $DETOX_PACKAGE_JSON_PATH
-  "${PWD}/node_modules/.bin/detox" $@
   echo "detox is not installed in this directory"
   exit 1
 fi
