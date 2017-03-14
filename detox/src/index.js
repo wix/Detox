@@ -1,4 +1,4 @@
-const Detox = require('./detox');
+const Detox = require('./Detox');
 
 let detox;
 

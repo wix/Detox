@@ -1,4 +1,4 @@
-const schemes = require('./schemes.mock');
+const schemes = require('./configurations.mock');
 describe('index', () => {
   let detox;
   beforeEach(() => {

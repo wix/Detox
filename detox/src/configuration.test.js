@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const schemes = require('./schemes.mock');
+const schemes = require('./configurations.mock');
 
 describe('configuration', () => {
   let configuration;

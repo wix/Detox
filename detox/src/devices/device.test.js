@@ -1,7 +1,4 @@
-const validScheme = require('../schemes.mock').validOneDeviceAndSession;
-const noScheme = require('../schemes.mock').noScheme;
-const noAppPathScheme = require('../schemes.mock').noAppPath;
-const noDeviceScheme = require('../schemes.mock').noDevice;
+const validScheme = require('../configurations.mock').validOneDeviceAndSession;
 
 describe('device', () => {
   let Client;

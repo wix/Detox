@@ -1,4 +1,4 @@
-const schemes = require('./schemes.mock');
+const schemes = require('./configurations.mock');
 
 describe('Detox', () => {
   let Detox;
@@ -112,7 +112,8 @@ describe('Detox', () => {
   it(`cleanup on a non initialized detox should not throw`, async () => {
     Detox = require('./Detox');
     detox = new Detox(schemes.invalidDeviceNoDeviceType);
-    expect(await detox.cleanup).not.toThrow();
+    //expect(detox.cleanup).not.toThrow();
+    detox.cleanup();
   });
 
   function mockCommandLineArgs(args) {

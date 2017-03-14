@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const validScheme = require('../schemes.mock').validOneDeviceAndSession;
+const validScheme = require('../configurations.mock').validOneDeviceAndSession;
 
 describe('simulator', () => {
   let fs;
