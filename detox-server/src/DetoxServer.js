@@ -7,7 +7,7 @@ class DetoxServer {
     this.wss = new WebSocketServer({port: port});
     this.sessions = {};
 
-    log.wss(`${now()}:`, `server listening on localhost:${this.wss.options.port}...`);
+    log.log('wss', `${now()}:`, `server listening on localhost:${this.wss.options.port}...`);
     this._setup();
   }
 
@@ -25,21 +25,21 @@ class DetoxServer {
             if (action.params && action.params.sessionId && action.params.role) {
               sessionId = action.params.sessionId;
               role = action.params.role;
-              log.wss(`${now()}:`, `role=${role} login (sessionId=${sessionId})`);
+              log.log('wss', `${now()}:`, `role=${role} login (sessionId=${sessionId})`);
               _.set(this.sessions, [sessionId, role], ws);
             }
           } else if (sessionId && role) {
-            log.wss(`${now()}:`, `role=${role} action=${action.type} (sessionId=${sessionId})`);
+            log.log('wss', `${now()}:`, `role=${role} action=${action.type} (sessionId=${sessionId})`);
             this.sendToOtherRole(sessionId, role, action.type, action.params);
           }
         } catch (error) {
-          log.wss(`Invalid JSON received, cannot parse`);
+          log.log('wss', `Invalid JSON received, cannot parse`);
         }
       });
 
       ws.on('close', () => {
         if (sessionId && role) {
-          log.wss(`${now()}:`, `role=${role} disconnect (sessionId=${sessionId})`);
+          log.log('wss', `${now()}:`, `role=${role} disconnect (sessionId=${sessionId})`);
           _.set(this.sessions, [sessionId, role], undefined);
         }
       });
@@ -59,7 +59,7 @@ class DetoxServer {
     if (ws) {
       this.sendAction(ws, type, params);
     } else {
-      log.wss(`${now()}:`, `role=${otherRole} not connected, cannot fw action (sessionId=${sessionId})`);
+      log.log('wss', `${now()}:`, `role=${otherRole} not connected, cannot fw action (sessionId=${sessionId})`);
     }
   }
 }
