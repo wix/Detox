@@ -6,7 +6,7 @@
   },
   "version": "4.3.2",
   "bin": {
-    "detox": "./scripts/detox.js"
+    "detox": "local-cli/detox.js"
   },
   "repository": {
     "type": "git",
