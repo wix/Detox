@@ -14,7 +14,7 @@ const config = require(path.join(process.cwd(), 'package.json')).detox;
 const testFolder = config.specs || 'e2e';
 
 const loglevel = program.loglevel ? `--loglevel ${program.loglevel}` : '';
-const configuration = program.configuration ? `--device ${program.configuration}` : '';
+const configuration = program.configuration ? `--configuration ${program.configuration}` : '';
 
 let command;
 switch (program.runner) {

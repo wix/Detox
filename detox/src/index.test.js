@@ -12,4 +12,8 @@ describe('index', () => {
     await detox.init(schemes.validOneDeviceNoSession);
     await detox.cleanup();
   });
+
+  it(`Basic usage`, async() => {
+    await detox.cleanup();
+  });
 });

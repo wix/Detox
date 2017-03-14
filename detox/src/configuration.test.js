@@ -50,7 +50,7 @@ describe('configuration', () => {
   }
 
   function testFaultyDevice(config) {
-    const deviceConfig = _.values(config.devices)[0];
+    const deviceConfig = _.values(config.configurations)[0];
 
     try {
       configuration.validateDevice(deviceConfig);

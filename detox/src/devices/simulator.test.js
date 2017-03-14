@@ -27,7 +27,7 @@ describe('simulator', () => {
 
     client = new Client(validScheme.session);
     client.connect();
-    simulator = new Simulator(client, validScheme.session, validScheme.devices['ios.sim.release']);
+    simulator = new Simulator(client, validScheme.session, validScheme.configurations['ios.sim.release']);
   });
 
   it(`prepare() should boot a device`, async () => {

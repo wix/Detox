@@ -57,9 +57,10 @@ class Detox {
   }
 
   async initDevice() {
-    const deviceName = argparse.getArgValue('device');
+    const deviceName = argparse.getArgValue('configuration');
     let deviceConfig;
 
+    console.log(deviceName)
     if (!deviceName && _.size(this.detoxConfig.configurations) === 1) {
       deviceConfig = _.values(this.detoxConfig.configurations)[0];
     } else {

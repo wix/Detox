@@ -1,5 +1,5 @@
 const validOneDeviceNoSession = {
-  "devices": {
+  "configurations": {
     "ios.sim.release": {
       "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
       "type": "simulator",
@@ -9,7 +9,7 @@ const validOneDeviceNoSession = {
 };
 
 const validTwoDevicesNoSession = {
-  "devices": {
+  "configurations": {
     "ios.sim.release": {
       "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
       "type": "simulator",
@@ -24,7 +24,7 @@ const validTwoDevicesNoSession = {
 };
 
 const invalidDeviceNoBinary = {
-  "devices": {
+  "configurations": {
     "ios.sim.release": {
       "type": "simulator",
       "name": "iPhone 7 Plus, iOS 10.2"
@@ -33,12 +33,12 @@ const invalidDeviceNoBinary = {
 };
 
 const invalidNoDevice = {
-  "devices": {
+  "configurations": {
   }
 };
 
 const invalidDeviceNoDeviceType = {
-  "devices": {
+  "configurations": {
     "ios.sim.release": {
       "binaryPath": "here",
       "name": "iPhone 7 Plus, iOS 10.2"
@@ -47,7 +47,7 @@ const invalidDeviceNoDeviceType = {
 };
 
 const invalidDeviceNoDeviceName = {
-  "devices": {
+  "configurations": {
     "ios.sim.release": {
       "binaryPath": "here",
       "type": "simulator"
@@ -60,7 +60,7 @@ const validOneDeviceAndSession = {
     "server": "ws://localhost:8099",
     "sessionId": "test"
   },
-  "devices": {
+  "configurations": {
     "ios.sim.release": {
       "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
       "type": "simulator",
@@ -82,7 +82,7 @@ const invalidSessionNoServer = {
 };
 
 const invalidOneDeviceTypeEmulatorNoSession = {
-  "devices": {
+  "configurations": {
     "ios.sim.release": {
       "binaryPath": "some.apk",
       "type": "emulator",

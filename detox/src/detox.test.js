@@ -61,18 +61,18 @@ describe('Detox', () => {
     expect(detox.detoxConfig.session.sessionId).toBe(schemes.validOneDeviceAndSession.session.sessionId);
   });
 
-  it(`Two valid devices, detox should init with the device passed in '--device' cli option`, async () => {
-    mockCommandLineArgs({device: 'ios.sim.debug'});
+  it(`Two valid devices, detox should init with the device passed in '--configuration' cli option`, async () => {
+    mockCommandLineArgs({configuration: 'ios.sim.debug'});
     Detox = require('./Detox');
 
     detox = new Detox(schemes.validTwoDevicesNoSession);
     await detox.init();
 
-    expect(detox.detoxConfig.devices).toEqual(schemes.validTwoDevicesNoSession.devices);
+    expect(detox.detoxConfig.configurations).toEqual(schemes.validTwoDevicesNoSession.configurations);
   });
 
-  it(`Two valid devices, detox should throw if device passed in '--device' cli option doesn't exist`, async () => {
-    mockCommandLineArgs({device: 'nonexistent'});
+  it(`Two valid devices, detox should throw if device passed in '--configuration' cli option doesn't exist`, async () => {
+    mockCommandLineArgs({configuration: 'nonexistent'});
     Detox = require('./Detox');
 
     detox = new Detox(schemes.validTwoDevicesNoSession);
@@ -84,8 +84,8 @@ describe('Detox', () => {
     }
   });
 
-  it(`Two valid devices, detox should throw if device passed in '--device' cli option doesn't exist`, async () => {
-    mockCommandLineArgs({device: 'nonexistent'});
+  it(`Two valid devices, detox should throw if device passed in '--configuration' cli option doesn't exist`, async () => {
+    mockCommandLineArgs({configuration: 'nonexistent'});
     Detox = require('./Detox');
 
     detox = new Detox(schemes.validTwoDevicesNoSession);
@@ -107,6 +107,12 @@ describe('Detox', () => {
     } catch (ex) {
       expect(ex).toBeDefined();
     }
+  });
+
+  it(`cleanup on a non initialized detox should not throw`, async () => {
+    Detox = require('./Detox');
+    detox = new Detox(schemes.invalidDeviceNoDeviceType);
+    expect(await detox.cleanup).not.toThrow();
   });
 
   function mockCommandLineArgs(args) {
