@@ -1,4 +1,4 @@
-const CustomError = require('./errors/errors').CustomError;
+const CustomError = require('./errors/CustomError');
 const uuid = require('./utils/uuid');
 const getPort = require('get-port');
 
