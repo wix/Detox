@@ -1,5 +1,8 @@
 #! /usr/bin/env node
+const log = require('npmlog');
 const DetoxServer = require('./DetoxServer');
 
-const detoxServer = new DetoxServer(8099);
+log.addLevel('wss', 999, {fg: 'blue', bg: 'black'}, 'verb');
+log.level = 'wss';
 
+const detoxServer = new DetoxServer(8099);

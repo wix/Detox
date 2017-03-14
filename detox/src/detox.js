@@ -9,6 +9,7 @@ const URL = require('url').URL;
 const _ = require('lodash');
 
 log.level = argparse.getArgValue('loglevel') || 'info';
+log.addLevel('wss', 999, {fg: 'blue', bg: 'black'}, 'verb');
 log.heading = 'detox';
 
 class Detox {
