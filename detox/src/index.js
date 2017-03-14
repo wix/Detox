@@ -8,7 +8,9 @@ async function init(config) {
 }
 
 async function cleanup() {
-  await detox.cleanup();
+  if (detox) {
+    await detox.cleanup();
+  }
 }
 
 //// if there's an error thrown, close the websocket,

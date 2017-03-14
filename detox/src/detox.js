@@ -51,7 +51,9 @@ class Detox {
   }
 
   async cleanup() {
-    await this.client.cleanup();
+    if (this.client) {
+      await this.client.cleanup();
+    }
   }
 
   async initDevice() {
