@@ -1,9 +1,9 @@
 {
   "lerna": "2.0.0-beta.38",
   "packages": [
-    "demo-native-android",
-    "demo-native-ios",
-    "demo-react-native",
+    "examples/demo-native-android",
+    "examples/demo-native-ios",
+    "examples/demo-react-native",
     "detox",
     "detox/test",
     "detox-server",
