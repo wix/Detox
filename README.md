@@ -7,11 +7,11 @@ Graybox E2E Tests and Automation Library for Mobile
 - [About](#about)
 - [Getting Started](#getting-started)
 - [See it in Action](#see-it-in-action)
-- [The Detox API](#api)
-- [Dealing with flakiness](#flakiness)
-- [Contributing to detox](#contributing)
-- [Some implementation details](#implemetation-details)
-- [License](license)
+- [The Detox API](#the-detox-api)
+- [Dealing with flakiness](#fealing-with-flakiness)
+- [Contributing to detox](#contributing-to-detox)
+- [Some implementation details](#some-implemetation-details)
+- [License](#license)
 
 ### About
 
@@ -212,9 +212,9 @@ detox test --configuration yourConfiguration
 
 ## See it in Action
 
-Open the [React Native demo project](demo-react-native) and follow the instructions
+Open the [React Native demo project](examples/demo-react-native) and follow the instructions
 
-Not using React Native? you now have a [pure native demo project](demo-native-ios) too
+Not using React Native? you now have a [pure native demo project](examples/demo-native-ios) too
 
 ## The Detox API
 Check the [API Reference](API.md) or see detox's own [E2E test suite](detox/test/e2e) to learn the test API by example.
@@ -236,7 +236,7 @@ If you're interested in working on detox core and contributing to detox itself, 
 * The JS tester controls EarlGrey by remote using a strange JSON protocol
 * Instead of wrapping the zillion API calls EarlGrey supports, we implemented a reflection mechanism
 * So the JS tester in low level actually invokes the native methods.. freaky
-* We've abstracted this away in favor of a protractor-like api, see [`demo-react-native/e2e/example.spec.js`](demo-react-native/e2e/example.spec.js)
+* We've abstracted this away in favor of a protractor-like api, see [`demo-react-native/e2e/example.spec.js`](examples/demo-react-native/e2e/example.spec.js)
 * See everything EarlGrey supports [here](https://github.com/google/EarlGrey/blob/master/docs/api.md) and in this [cheatsheet](https://github.com/google/EarlGrey/blob/master/docs/cheatsheet/cheatsheet.pdf)
 * We use [fbsimctl](https://github.com/facebook/FBSimulatorControl) to control the simulator from the test, restart the app, etc
 
