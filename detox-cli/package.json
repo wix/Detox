@@ -1,6 +1,6 @@
 {
   "name": "detox-cli",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "detox CLI tool wrapper",
   "main": "index.js",
   "scripts": {
@@ -16,7 +16,7 @@
     "detox",
     "cli"
   ],
-  "author": "Rotem Meidan <rotemm@wix.com>",
+  "author": "Rotem Mizrachi Meidan <rotemm@wix.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/wix/detox/issues"
