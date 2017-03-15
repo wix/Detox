@@ -20,6 +20,5 @@ It's important to identify the various sources of flakiness in detox tests.
 
 In order to identify the source of flakiness you're suffering from you need more data. If you catch a failing test that should be passing, you need to record as much information as possible in order to investigate.
 
-* Enable verbose mode in detox. This will output a lot of information about what happening during the test.<br>To enable verbose mode run your tests like this:<br>`./node_modules/.bin/mocha e2e --opts ./e2e/mocha.opts --detoxVerbose`
-
-* Collect the logs of detox-server. The server outputs logs to stdout, these logs show you how the tester and the testee communicate.
+* Enable verbose mode in detox. This will output a lot of information about what happening during the test.<br>
+To enable verbose mode run your tests in verbose log mode:<br>`detox test --loglevel verbose`
