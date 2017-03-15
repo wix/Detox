@@ -13,11 +13,11 @@ Graybox E2E Tests and Automation Library for Mobile
 - [Some implementation details](#some-implemetation-details)
 - [License](#license)
 
-### About
+## About
 
 High velocity native mobile development requires us to adopt continuous integration workflows, which means our reliance on manual QA has to drop significantly. The most difficult part of automated testing on mobile is the tip of the testing pyramid - E2E. The core problem with E2E tests is flakiness - tests are usually not deterministic. We believe the only way to tackle flakiness head on is by moving from blackbox testing to graybox testing and that's where detox comes into play.
 
-## Development still in progress!
+### Development still in progress!
 
 Please note that this library is still pre version 1.0.0 and under active development. The NPM version is higher because the name "detox" was transferred to us from a previous inactive package.
 
