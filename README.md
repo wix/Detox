@@ -70,7 +70,7 @@ By default, Xcode uses a randomized hidden path for outputting project build art
 * With your project opened in Xcode, select menu `File` ► `Project Settings...`. Click on `Advanced...`, select `Custom` and from the drop-down menu, select `Project-relative Location`.
 * Build artifacts will now be created in a `DerivedData` folder next to your `xcodeproj` project.
 
-![MacDown logo](project-relative-path.jpeg)
+![Set relative path](project-relative-path.jpeg)
 
 #### Step 2: Create or Modify Your `package.json` for Detox
 
