@@ -13,7 +13,7 @@ describe('index', () => {
     await detox.cleanup();
   });
 
-  it(`Basic usage`, async() => {
+  it(`Basic usage, if detox is undefined, do not throw an error`, async() => {
     await detox.cleanup();
   });
 });
