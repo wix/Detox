@@ -5,9 +5,9 @@ const path = require('path');
 const cp = require('child_process');
 program
   .option('-r, --runner [runner]', 'Test runner (currently supports mocha)', 'mocha')
-  .option('-c, --runner-config [config]', 'Test runner config file', 'mocha.opts')
+  .option('-o, --runner-config [config]', 'Test runner config file', 'mocha.opts')
   .option('-l, --loglevel [value]', 'info, debug, verbose, silly')
-  .option('-d, --configuration [configuration name]', 'Run test on this configuration')
+  .option('-c, --configuration [configuration name]', 'Run test on this configuration')
   .parse(process.argv);
 
 const config = require(path.join(process.cwd(), 'package.json')).detox;

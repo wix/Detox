@@ -1,21 +1,19 @@
-describe('Example', function () {
-
-  beforeEach(function (done) {
-    simulator.reloadReactNative(done);
+describe('Example', () => {
+  beforeEach(async () => {
+    await device.reloadReactNative();
   });
 
-  it('should have welcome screen', function () {
-    expect(element(by.label('Welcome'))).toBeVisible();
+  it('should have welcome screen', async () => {
+    await expect(element(by.label('Welcome'))).toBeVisible();
   });
 
-  it('should show hello screen after tap', function () {
-    element(by.label('Say Hello')).tap();
-    expect(element(by.label('Hello!!!'))).toBeVisible();
+  it('should show hello screen after tap', async () => {
+    await element(by.label('Say Hello')).tap();
+    await expect(element(by.label('Hello!!!'))).toBeVisible();
   });
 
-  it('should show world screen after tap', function () {
-    element(by.label('Say World')).tap();
-    expect(element(by.label('World!!!'))).toBeVisible();
+  it('should show world screen after tap', async () => {
+    await element(by.label('Say World')).tap();
+    await expect(element(by.label('World!!!'))).toBeVisible();
   });
-
 });

@@ -1,14 +1,9 @@
 {
   "name": "detox-demo-react-native",
-  "version": "0.0.1-alpha.1715bd27",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
-    "packager": "react-native start",
-    "detox-server": "detox-server",
-    "e2e:ios:debug": "mocha e2e --opts ./e2e/mocha.opts --scheme=ios-simulator.debug",
-    "e2e:ios:release": "mocha e2e --opts ./e2e/mocha.opts --scheme=ios-simulator.release",
-    "build:ios:debug": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -scheme \"example\" -derivedDataPath ios/build -sdk iphonesimulator",
-    "build:ios:release": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -scheme \"example Release\" -derivedDataPath ios/build -sdk iphonesimulator"
+    "start": "react-native start"
   },
   "dependencies": {
     "react": "*",
@@ -20,10 +15,10 @@
   },
   "detox": {
     "specs": "e2e",
-    "devices": {
+    "configurations": {
       "ios.sim.release": {
         "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-        "build": "set -o pipefail && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -scheme example -configuration Release -sdk iphonesimulator -derivedDataPath ios/build | xcpretty",
+        "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -scheme example -configuration Release -sdk iphonesimulator -derivedDataPath ios/build",
         "type": "simulator",
         "name": "iPhone 7 Plus"
       }
