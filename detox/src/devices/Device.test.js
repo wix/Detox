@@ -11,7 +11,7 @@ describe('Device', () => {
     jest.mock('../utils/argparse');
     argparse = require('../utils/argparse');
 
-    jest.mock('../client/client');
+    jest.mock('../client/Client');
     Client = require('../client/Client');
     Device = require('./Device');
     device = new Device(new Client(), validScheme);

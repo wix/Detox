@@ -9,8 +9,8 @@ describe('Detox', () => {
     jest.mock('minimist');
     minimist = require('minimist');
     jest.mock('./ios/expect');
-    jest.mock('./client/client');
-    jest.mock('./devices/simulator');
+    jest.mock('./client/Client');
+    jest.mock('./devices/Simulator');
     jest.mock('detox-server');
   });
 

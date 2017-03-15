@@ -20,7 +20,7 @@ describe('Simulator', () => {
 
     jest.mock('./Fbsimctl');
 
-    jest.mock('../client/client');
+    jest.mock('../client/Client');
     Client = require('../client/Client');
 
     Simulator = require('./Simulator');
@@ -120,7 +120,7 @@ describe('Simulator', () => {
     expect(simulator._fbsimctl.uninstall).toHaveBeenCalledTimes(1);
   });
 
-  it(`reloadReactNativeApp() should trigger client.reloadReactNative`, async() => {
+  it(`reloadReactNative() should trigger client.reloadReactNative`, async() => {
     await simulator.reloadReactNative();
     expect(simulator.client.reloadReactNative).toHaveBeenCalledTimes(1);
   });

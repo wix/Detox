@@ -3,8 +3,8 @@ describe('index', () => {
   let detox;
   beforeEach(() => {
     jest.mock('detox-server');
-    jest.mock('./devices/simulator');
-    jest.mock('./client/client');
+    jest.mock('./devices/Simulator');
+    jest.mock('./client/Client');
     detox = require('./index');
   });
 

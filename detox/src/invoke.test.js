@@ -4,7 +4,7 @@ describe('invoke', () => {
   let Client;
 
   beforeEach(() => {
-    jest.mock('./client/client');
+    jest.mock('./client/Client');
     jest.mock('./invoke/Invoke');
     Client = require('./client/Client');
   });
