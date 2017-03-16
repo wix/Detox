@@ -4,7 +4,7 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "version": "5.0.0",
+  "version": "5.0.1",
   "bin": {
     "detox": "local-cli/detox.js"
   },
@@ -54,7 +54,7 @@
     "npmlog": "^4.0.2",
     "react-native-invoke": "^0.2.1",
     "ws": "^1.1.1",
-    "detox-server": "^1.2.0"
+    "detox-server": "^1.2.1"
   },
   "babel": {
     "env": {

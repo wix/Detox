@@ -4,7 +4,7 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "version": "1.2.0",
+  "version": "1.2.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/wix/detox.git"
@@ -13,7 +13,7 @@
     "detox-server": "lib/cli.js"
   },
   "scripts": {
-    "build":  "BABEL_ENV=test babel src -d lib",
+    "build": "BABEL_ENV=test babel src -d lib",
     "start": "node lib/cli.js"
   },
   "bugs": {
