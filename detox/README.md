@@ -10,7 +10,7 @@ Graybox E2E Tests and Automation Library for Mobile
 - [Getting Started](#getting-started)
 - [See it in Action](#see-it-in-action)
 - [The Detox API](#the-detox-api)
-- [Dealing with flakiness](#fealing-with-flakiness)
+- [Dealing with flakiness](#dealing-with-flakiness)
 - [Contributing to detox](#contributing-to-detox)
 - [Some implementation details](#some-implemetation-details)
 - [License](#license)
