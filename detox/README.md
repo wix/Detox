@@ -87,7 +87,7 @@ By default, Xcode uses a randomized hidden path for outputting project build art
 	npm install mocha --save-dev
 	``` 
 
-* Add the following to your `package.json`: <br>
+* Add detox to your `package.json`: <br>
 
 	
 	```json
@@ -143,7 +143,7 @@ That's it!
 |`build`| **[optional]** build command (either `xcodebuild`, `react-native run-ios`, etc...), will be later available through detox CLI tool.|
 	
 	
-###Server Configuration
+### Server Configuration
 Detox can either initialize a server using a generated configuration, or can be overriden with a manual  configuration:
 	
 ```json
