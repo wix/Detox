@@ -41,13 +41,13 @@ If you used previous detox version, follow the [migration guide](MIGRATION.md).
 * If you haven't already, install Node.js
 	
 	 ```sh
-	 brew update && brew install node 
+brew update && brew install node 
 	 ```
 
 * You will also need `fbsimctl` installed: 
 
 	 ```sh 
-	 brew tap facebook/fb && brew install fbsimctl
+brew tap facebook/fb && brew install fbsimctl
 	 ```
 	 
 * Detox CLI
@@ -55,7 +55,7 @@ If you used previous detox version, follow the [migration guide](MIGRATION.md).
   `detox-cli` package should be installed globally, enabling usage of detox command line tools outside of your npm scripts.
 
   ```sh
-  npm install -g detox-cli
+ npm install -g detox-cli
   ```
 
 * If you do not have a `package.json` file in the root folder of your project, create one by running 
@@ -78,13 +78,13 @@ By default, Xcode uses a randomized hidden path for outputting project build art
 * Install detox:
 
 	```sh
-	npm install detox --save-dev
+npm install detox --save-dev
 	```
 
 * Install mocha: 
 
 	```sh
-	npm install mocha --save-dev
+npm install mocha --save-dev
 	``` 
 
 * Add the following to your `package.json`: <br>
@@ -118,13 +118,13 @@ By using the `detox` command line tool, you can build and test your project easi
 * Build your app:
 
 	```sh
-	detox build
+detox build
 	```
 
 * Test your app:
 
 	```sh
-	detox test
+detox test
 	```
 
 That's it!
