@@ -29,12 +29,7 @@ Please note that this library is still pre version 1.0.0 and under active develo
 
 This is a step-by-step guide to help you add detox to your project.
 
-#### Step 0: Remove Previous Detox Integration (for `detox@3.x.x` users)
-
-If you have integrated with Detox in the past, you will need to clean your project before integrating with current Detox version.
-
-* Use the provided `cleanup_4.0.rb` to remove unneeded changes made with Detox 4.0.x.
-* Make sure to add changes performed by running this script to version control.
+If you used previous detox version, follow the [migration guide](MIGRATION.md).
 
 #### Step 1: Installing Dependencies
 
@@ -88,11 +83,7 @@ npm install detox --save-dev
 npm install mocha --save-dev
 ``` 
 
-* Add to the `scripts` section of `package.json`:
-
-
-* Add a `detox` section to `package.json`:
-
+* Add a `detox` section to `package.json`
 
 
 	`configurations`: holds all the device configurations, if there is only one configuration in `configurations` `detox build` and `detox test` will default to it, to choose a specific configuration use `--configuration` param<br>
@@ -102,7 +93,7 @@ npm install mocha --save-dev
 	
 	Configuration Params|     Details     |
 	--------------------|-----------------|
-	`binaryPath`			| relative path to the ipa/app due to be tested (make sure you build the app in a project relative path) |
+	`binaryPath`			| relative path to the ipa/app due to be  tested (make sure you build the app in a project relative path) |
 	`type` 				| device type, currently on `simulator` (iOS) is supported |
 	`name`					| device name, aligns to the device list avaliable through `fbsimctl list` for example, this is one line of the output of `fbsimctl list`: `A3C93900-6D17-4830-8FBE-E102E4BBCBB9 | iPhone 7 | Shutdown | iPhone 7 | iOS 10.2`, ir order to choose the first `iPhone 7` regardless of OS version, use `iPhone 7`. to be OS specific use `iPhone 7, iOS 10.2` |
 	`build`				| **[optional]** build command (either `xcodebuild`, `react-native run-ios`, etc...), will be later available through detox CLI tool. |
