@@ -135,14 +135,12 @@ That's it!
 `configurations` holds all the device configurations, if there is only one configuration in `configurations` `detox build` and `detox test` will default to it, to choose a specific configuration use `--configuration` param<br>
 	
 
-
-	
-Configuration Params|     Details     |
-	--------------------|-----------------|
-	`binaryPath`			| relative path to the ipa/app due to be  tested (make sure you build the app in a project relative path) |
-	`type` 				| device type, currently on `simulator` (iOS) is supported |
-	`name`					| device name, aligns to the device list avaliable through `fbsimctl list` for example, this is one line of the output of `fbsimctl list`: `A3C93900-6D17-4830-8FBE-E102E4BBCBB9 | iPhone 7 | Shutdown | iPhone 7 | iOS 10.2`, ir order to choose the first `iPhone 7` regardless of OS version, use `iPhone 7`. to be OS specific use `iPhone 7, iOS 10.2` |
-	`build`				| **[optional]** build command (either `xcodebuild`, `react-native run-ios`, etc...), will be later available through detox CLI tool. |
+|Configuration Params|Details|
+|---|---|
+|`binaryPath`|relative path to the ipa/app due to be  tested (make sure you build the app in a project relative path)|
+|`type`|device type, currently only `simulator` (iOS) is supported|
+|`name`|device name, aligns to the device list avaliable through `fbsimctl list` for example, this is one line of the output of `fbsimctl list`: `A3C93900-6D17-4830-8FBE-E102E4BBCBB9 | iPhone 7 | Shutdown | iPhone 7 | iOS 10.2`, ir order to choose the first `iPhone 7` regardless of OS version, use `iPhone 7`. to be OS specific use `iPhone 7, iOS 10.2`|
+|`build`| **[optional]** build command (either `xcodebuild`, `react-native run-ios`, etc...), will be later available through detox CLI tool.|
 	
 	
 ###Server Configuration
