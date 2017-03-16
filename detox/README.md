@@ -27,7 +27,7 @@ Please note that this library is still pre version 1.0.0 and under active develo
 
 ## Getting Started
 
-This is a step-by-step guide to help you add detox to your project. 
+This is a step-by-step guide to help you add detox to your project.
 
 #### Step 0: Remove Previous Detox Integration (for `detox@3.x.x` users)
 
