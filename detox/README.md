@@ -39,17 +39,17 @@ If you used previous detox version, follow the [migration guide](MIGRATION.md).
 
 * Install the latest version of [`brew`](http://brew.sh).
 * If you haven't already, install Node.js
-
- ```sh
- brew update && brew install node 
- ```
+	
+	 ```sh
+	 brew update && brew install node 
+	 ```
 
 * You will also need `fbsimctl` installed: 
 
- ```sh 
- brew tap facebook/fb && brew install fbsimctl
- ```
- 
+	 ```sh 
+	 brew tap facebook/fb && brew install fbsimctl
+	 ```
+	 
 * Detox CLI
  	
   `detox-cli` package should be installed globally, enabling usage of detox command line tools outside of your npm scripts.
@@ -77,15 +77,15 @@ By default, Xcode uses a randomized hidden path for outputting project build art
 
 * Install detox:
 
-```sh
-npm install detox --save-dev
-```
+	```sh
+	npm install detox --save-dev
+	```
 
 * Install mocha: 
 
-```sh
-npm install mocha --save-dev
-``` 
+	```sh
+	npm install mocha --save-dev
+	``` 
 
 * Add the following to your `package.json`: <br>
 
@@ -190,9 +190,9 @@ You can choose to build your project in any of these ways...
 	```
 * Building with xcodebuild:
 
- ```sh
-  xcodebuild -project ios/YourProject.xcodeproj -scheme YourProject -sdk iphonesimulator -derivedDataPath ios/build
- ```
+	```sh
+	xcodebuild -project ios/YourProject.xcodeproj -scheme YourProject -sdk iphonesimulator -derivedDataPath ios/build
+	```
 	
 * Building using React Native, this is the least suggested way of running your build, since it also starts a random simulator and installs the app on it.
 	
