@@ -6,6 +6,8 @@ Graybox E2E Tests and Automation Library for Mobile
 [![Build Status](https://travis-ci.org/wix/detox.svg?branch=master)](https://travis-ci.org/wix/detox)
 [![NPM Downloads](https://img.shields.io/npm/dm/detox.svg?style=flat)](https://www.npmjs.com/package/detox)
 
+
+
 - [About](#about)
 - [Getting Started](#getting-started)
 - [See it in Action](#see-it-in-action)
@@ -15,6 +17,8 @@ Graybox E2E Tests and Automation Library for Mobile
 - [Some implementation details](#some-implemetation-details)
 - [License](#license)
 
+<img src="http://i.imgur.com/3QqHeGO.gif">
+
 ## About
 
 High velocity native mobile development requires us to adopt continuous integration workflows, which means our reliance on manual QA has to drop significantly. The most difficult part of automated testing on mobile is the tip of the testing pyramid - E2E. The core problem with E2E tests is flakiness - tests are usually not deterministic. We believe the only way to tackle flakiness head on is by moving from blackbox testing to graybox testing and that's where detox comes into play.
@@ -23,7 +27,7 @@ High velocity native mobile development requires us to adopt continuous integrat
 
 Please note that this library is still pre version 1.0.0 and under active development. The NPM version is higher because the name "detox" was transferred to us from a previous inactive package.
 
-<img src="http://i.imgur.com/3QqHeGO.gif">
+
 
 ## Getting Started
 
@@ -40,7 +44,7 @@ If you used previous detox version, follow the [migration guide](MIGRATION.md).
  brew update && brew install node 
  ```
 
-* You'd also need `fbsimctl` installed: 
+* You will also need `fbsimctl` installed: 
 
  ```sh 
  brew tap facebook/fb && brew install fbsimctl
@@ -69,38 +73,22 @@ By default, Xcode uses a randomized hidden path for outputting project build art
 
 ![Set relative path](project-relative-path.jpeg)
 
-#### Step 2: Create or Modify Your `package.json` for Detox
+#### Step 2: Add Detox
 
-* Add `detox` to the `devDependencies` section of `package.json`:
+* Install detox:
 
 ```sh
 npm install detox --save-dev
 ```
 
-* Detox needs to run inside a test runner (there are many out there: [karma](https://github.com/karma-runner/karma), [mocha](https://github.com/mochajs/mocha), [ava](https://github.com/avajs) etc.). Currently, we recommend mocha.
+* Install mocha: 
 
 ```sh
 npm install mocha --save-dev
 ``` 
 
-* Add a `detox` section to `package.json`
+* Add the following to your `package.json`: <br>
 
-
-	`configurations`: holds all the device configurations, if there is only one configuration in `configurations` `detox build` and `detox test` will default to it, to choose a specific configuration use `--configuration` param<br>
-	
-
-	**per configuration: **
-	
-	Configuration Params|     Details     |
-	--------------------|-----------------|
-	`binaryPath`			| relative path to the ipa/app due to be  tested (make sure you build the app in a project relative path) |
-	`type` 				| device type, currently on `simulator` (iOS) is supported |
-	`name`					| device name, aligns to the device list avaliable through `fbsimctl list` for example, this is one line of the output of `fbsimctl list`: `A3C93900-6D17-4830-8FBE-E102E4BBCBB9 | iPhone 7 | Shutdown | iPhone 7 | iOS 10.2`, ir order to choose the first `iPhone 7` regardless of OS version, use `iPhone 7`. to be OS specific use `iPhone 7, iOS 10.2` |
-	`build`				| **[optional]** build command (either `xcodebuild`, `react-native run-ios`, etc...), will be later available through detox CLI tool. |
-	
-	
-
-	##### example:
 	
 	```json
 	"detox": {
@@ -114,11 +102,52 @@ npm install mocha --save-dev
 	    } 
 	  }
 	```
+For full configuration options see the **options** section below.
 	
-	##### Optional: setting a custom server
-	Detox can either initialize a server using a generated configuration, or can be overriden with a manual  configuration:
+
+#### Step 3: Create your first test (using mocha test runner)
+
+* Create an `e2e` folder in your project root.
+* Create `mocha.opts` file with this [content](examples/demo-react-native/e2e/mocha.opts).
+* Create `init.js` file with this [content](examples/demo-react-native/e2e/init.js).
+* Create your first test! `myFirstTest.spec.js` with content similar to [this](examples/demo-react-native/e2e/example.spec.js).
+
+#### Step 4: Build Your App and Run Detox Tests
+By using the `detox` command line tool, you can build and test your project easily.
+
+* Build your app:
+
+	```sh
+	detox build
+	```
+
+* Test your app:
+
+	```sh
+	detox test
+	```
+
+That's it!
+
+## Options 
+
+### Device Configuration
+`configurations` holds all the device configurations, if there is only one configuration in `configurations` `detox build` and `detox test` will default to it, to choose a specific configuration use `--configuration` param<br>
 	
-	```json
+
+
+	
+	Configuration Params|     Details     |
+	--------------------|-----------------|
+	`binaryPath`			| relative path to the ipa/app due to be  tested (make sure you build the app in a project relative path) |
+	`type` 				| device type, currently on `simulator` (iOS) is supported |
+	`name`					| device name, aligns to the device list avaliable through `fbsimctl list` for example, this is one line of the output of `fbsimctl list`: `A3C93900-6D17-4830-8FBE-E102E4BBCBB9 | iPhone 7 | Shutdown | iPhone 7 | iOS 10.2`, ir order to choose the first `iPhone 7` regardless of OS version, use `iPhone 7`. to be OS specific use `iPhone 7, iOS 10.2` |
+	`build`				| **[optional]** build command (either `xcodebuild`, `react-native run-ios`, etc...), will be later available through detox CLI tool. |
+	
+###Server Configuration
+Detox can either initialize a server using a generated configuration, or can be overriden with a manual  configuration:
+	
+```json
 	"detox": {
 	  ...
 	  "session": {
@@ -126,49 +155,35 @@ npm install mocha --save-dev
 		"sessionId": "YourProjectSessionId"
 	  }
 	}
-	```
-	##### Optional: setting a custom test root folder
-	Applies when using `detox-cli` by running `detox test` command, default is `e2e`.
+```
+
+### Test Root Folder
+
+
+##### Optional: setting a custom test root folder
+Applies when using `detox-cli` by running `detox test` command, default is `e2e`.
 	
-	```json
+```json
 	"detox": {
 	  ...
 	  "specs": "path/to/tests"
 	}
-	```
-	
+```
 
-#### Step 3: Prepare the E2E Folder for Your Tests (using mocha test runner)
+### Build Configuration
 
-* Create an `e2e` folder in your project root
-* Create `mocha.opts` file with this [content](examples/demo-react-native/e2e/mocha.opts).
-* Create `init.js` file with this [content](examples/demo-react-native/e2e/init.js).
-* Create your first test! `myFirstTest.spec.js` with content similar to [this](examples/demo-react-native/e2e/example.spec.js).
-
-#### Step 4: Building Your App and Running Detox Tests
-By using `detox` command line tool, you can build and test your project easily.
-
-##### Setup
 In your detox config (in package.json) paste your build command into the configuration's `build` field. 
 The build command will be triggered when running
 
-If there's only one configuration, you can simply use:
+You can choose to build your project in any of these ways...
 
-```sh
-detox build
-```
-For multiple configurations, choose your configuration by passing `--configuration` param:
+* If there's only one configuration, you can simply use:
 
-```sh
-detox build --configuration yourConfiguration
-```
+	```sh
+	detox build
+	```
 
-* We have prepared a build command in `detox-cli` that can help you control your tests easily
-
-#### Step 4.1: Build Your Project
-You can now choose to build your project in any of these ways...
-
-* Through `detox`:
+* To choose a specific configuration:
 	
 	```sh
 	detox build --configuration yourConfiguration
@@ -189,18 +204,18 @@ You can now choose to build your project in any of these ways...
 
 > Note: remember to update the `app` path in your `package.json`.
 
-#### Step 4.2: Run Your Tests
 
-If there's only one configuration, you can simply use:
+### Test Configuration
+* If there's only one configuration, you can simply use:
 
-```sh
-detox test
-```
-For multiple configurations, choose your configuration by passing `--configuration` param:
-
-```sh
-detox test --configuration yourConfiguration
-```
+	```sh
+	detox test
+	```
+* For multiple configurations, choose your configuration by passing `--configuration` param:
+	
+	```sh
+	detox test --configuration yourConfiguration
+	```
 
 
 ## See it in Action
