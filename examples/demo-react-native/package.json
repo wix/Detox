@@ -21,6 +21,12 @@
         "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -scheme example -configuration Release -sdk iphonesimulator -derivedDataPath ios/build",
         "type": "simulator",
         "name": "iPhone 7 Plus"
+      },
+      "ios.sim.release": {
+        "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
+        "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
+        "type": "simulator",
+        "name": "iPhone 7 Plus"
       }
     }
   }
