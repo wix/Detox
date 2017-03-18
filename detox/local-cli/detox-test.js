@@ -6,8 +6,9 @@ const cp = require('child_process');
 program
   .option('-r, --runner [runner]', 'Test runner (currently supports mocha)', 'mocha')
   .option('-o, --runner-config [config]', 'Test runner config file', 'mocha.opts')
-  .option('-l, --loglevel [value]', 'info, debug, verbose, silly')
-  .option('-c, --configuration [configuration name]', 'Run test on this configuration')
+  .option('-l, --loglevel [value]', 'info, debug, verbose, silly, wss')
+  .option('-c, --configuration [device configuration]', 'Select a device configuration from your defined configurations,'
+                                                        + 'if not supplied, and there\'s only one configuration, detox will default to it')
   .parse(process.argv);
 
 const config = require(path.join(process.cwd(), 'package.json')).detox;

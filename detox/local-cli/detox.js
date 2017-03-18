@@ -4,7 +4,7 @@ const program = require('commander');
 
 program
   .arguments('<process>')
-  .command('test', 'starts the tests')
-  .command('build', `[convince method] run the command defined in 'device.build'`)
-  .command('run-server', 'starts the detox server')
+  .command('test', 'Initiating your test suite')
+  .command('build', `[convince method] Run the command defined in 'device.build'`)
+  .command('run-server', 'Starts a standalone detox server')
   .parse(process.argv);
