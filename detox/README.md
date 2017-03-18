@@ -198,8 +198,6 @@ You can choose to build your project in any of these ways...
   ```sh 
   react-native run-ios
   ```
-	  
-* If you have build problems, see [troubleshooting](#troubleshooting-build-problems).
 
 > Note: remember to update the `app` path in your `package.json`.
 
