@@ -12,7 +12,7 @@
 
 ### Step 1: Npm install
 
-* Make sure you're in folder `detox/demo-react-native`.
+* Make sure you're in folder `examples/demo-react-native`.
 * Run `npm install`.
 
 ## To test Release build of your app
@@ -24,7 +24,7 @@
  ```
  
 ### Step 3: Test 
-* Run tests on the demo project``
+* Run tests on the demo project
  
  ```sh
  detox test --configuration ios.sim.release

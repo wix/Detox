@@ -1,9 +1,8 @@
 {
   "name": "detox-demo-native-ios",
-  "version": "0.0.1-alpha.1715bd27",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
-    "detox-server": "detox-server",
     "e2e": "mocha e2e --opts ./e2e/mocha.opts",
     "build": "xcodebuild -project NativeExample.xcodeproj -scheme NativeExample -derivedDataPath . -sdk iphonesimulator"
   },
@@ -12,9 +11,20 @@
     "detox": "^5.0.0"
   },
   "detox": {
-    "ios-simulator": {
-      "app": "Build/Products/Debug-iphonesimulator/NativeExample.app",
-      "device": "iPhone 7 Plus"
+    "specs": "e2e",
+    "configurations": {
+      "ios.sim.release": {
+        "binaryPath": "build/Build/Products/Release-iphonesimulator/NativeExample.app",
+        "build": "xcodebuild -project NativeExample.xcodeproj -scheme NativeExample -configuration Release -sdk iphonesimulator -derivedDataPath build",
+        "type": "simulator",
+        "name": "iPhone 7 Plus"
+      },
+      "ios.sim.release": {
+        "binaryPath": "build/Build/Products/Debug-iphonesimulator/NativeExample.app",
+        "build": "xcodebuild -project NativeExample.xcodeproj -scheme NativeExample -configuration Debug -sdk iphonesimulator -derivedDataPath build",
+        "type": "simulator",
+        "name": "iPhone 7 Plus"
+      }
     }
   }
 }
