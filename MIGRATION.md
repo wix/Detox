@@ -16,7 +16,7 @@ All of the API calls are now promise based, and must use either promise chains o
 Here's an example of async call to tap an element
 
 ```js
-// >=4.x.x
+// <=4.x.x
 beforeEach(() => {
   element(by.label('Sanity')).tap();
 });		    
@@ -33,7 +33,7 @@ beforeEach(async () => {
 Same thing with expectations
 
 ```js 
-// >=4.x.x
+// <=4.x.x
 it('should have welcome screen', () => {
   expect(element(by.label('Welcome'))).toBeVisible();
   expect(element(by.label('Say Hello'))).toBeVisible(); 
@@ -55,7 +55,7 @@ it('should have welcome screen', async () => {
 The global object `simulator` is now `device`, this change makes sense when thinking about multi-platform tests (Android support).
 Along with the new promise based API, this is how we now control the attached device
 
->=4.x.x | 5.x.x
+<=4.x.x | 5.x.x
 ------|--------
 `simulator.reloadReactNativeApp(done)`	| `await device.reloadReactNativeApp()`
 `simulator.relaunchApp(done)`				| `await device.relaunchApp()`
@@ -69,7 +69,7 @@ In order for our API to support multiple platforms and devices, and to be able t
 Previous config looked like this:
 
 ```json
-//>=4.x.x
+// <=4.x.x
   "detox": {
     "session": {
       "server": "ws://localhost:8099",
@@ -90,7 +90,7 @@ The new configuration holds a dictionary of `configurations`.
 4. **session object is not mandatory anymore**, if is not provided detox will handle server creation by itself.
 
 ```json
-//5.x.x
+// 5.x.x
   "detox": {
     "configurations": {
       "ios.sim.release": {
