@@ -18,6 +18,7 @@ install:
 
 - npm install -g lerna@2.0.0-beta.38 >/dev/null 2>&1
 - npm install -g react-native-cli >/dev/null 2>&1
+- npm install -g detox-cli >/dev/null 2>&1
 - gem install xcpretty >/dev/null 2>&1
 
 script:
