@@ -16,13 +16,13 @@
 * Build the demo project
  
  ```sh
- detox build
+ detox build --configuration ios.sim.release
  ```
  
-### Step 3: Test 
+### Step 3: Test
 * Run tests on the demo project
  
  ```sh
- detox test
+ detox test --configuration ios.sim.release
  ```
  This action will open a new simulator and run the tests on it.
