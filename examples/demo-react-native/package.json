@@ -22,7 +22,7 @@
         "type": "simulator",
         "name": "iPhone 7 Plus"
       },
-      "ios.sim.release": {
+      "ios.sim.debug": {
         "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
         "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
         "type": "simulator",
