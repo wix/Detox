@@ -1,5 +1,7 @@
 const _ = require('lodash');
 const validScheme = require('../configurations.mock').validOneDeviceAndSession;
+const invalidDeviceNoBinary = require('../configurations.mock').invalidDeviceNoBinary;
+const invalidDeviceNoDeviceName = require('../configurations.mock').invalidDeviceNoDeviceName;
 
 describe('Simulator', () => {
   let fs;
@@ -11,7 +13,7 @@ describe('Simulator', () => {
   let Client;
   let client;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.mock('fs');
     fs = require('fs');
 
@@ -26,11 +28,15 @@ describe('Simulator', () => {
     Simulator = require('./Simulator');
 
     client = new Client(validScheme.session);
-    client.connect();
-    simulator = new Simulator(client, validScheme.session, validScheme.configurations['ios.sim.release']);
+    await client.connect();
   });
 
+  function validSimulator() {
+    return new Simulator(client, validScheme.session, validScheme.configurations['ios.sim.release']);
+  }
+
   it(`prepare() should boot a device`, async () => {
+    simulator = validSimulator();
     simulator._getBundleIdFromApp = jest.fn();
     simulator._getAppAbsolutePath = jest.fn();
 
@@ -40,6 +46,7 @@ describe('Simulator', () => {
   });
 
   it(`prepare() with wrong app path should throw`, async () => {
+    simulator = validSimulator();
     fs.existsSync.mockReturnValueOnce(false);
 
     try {
@@ -50,6 +57,7 @@ describe('Simulator', () => {
   });
 
   it(`prepare() with an app with no plist.info should throw`, async () => {
+    simulator = validSimulator();
     fs.existsSync.mockReturnValueOnce(true);
 
     try {
@@ -59,7 +67,16 @@ describe('Simulator', () => {
     }
   });
 
+  it('init Simulator with invalid binaryPath should throw', async () => {
+    expect(() => new Simulator(client, invalidDeviceNoBinary.session, invalidDeviceNoBinary.configurations['ios.sim.release'])).toThrow();
+  });
+
+  it('init Simulator with invalid binaryPath should throw', async () => {
+    expect(() => new Simulator(client, invalidDeviceNoDeviceName.session, invalidDeviceNoDeviceName.configurations['ios.sim.release'])).toThrow();
+  });
+
   it(`relaunchApp()`, async() => {
+    simulator = validSimulator();
     await simulator.relaunchApp();
 
     expect(simulator._fbsimctl.terminate).toHaveBeenCalled();
@@ -69,6 +86,7 @@ describe('Simulator', () => {
   });
 
   it(`relaunchApp() with delete=true`, async() => {
+    simulator = validSimulator();
     fs.existsSync.mockReturnValue(true);
 
     await simulator.relaunchApp({delete: true});
@@ -81,6 +99,7 @@ describe('Simulator', () => {
   });
 
   it(`relaunchApp() with url should send the url as a param in launchParams`, async() => {
+    simulator = validSimulator();
     await simulator.relaunchApp({url: `scheme://some.url`});
 
     expect(simulator._fbsimctl.launch).toHaveBeenCalledWith(simulator._simulatorUdid,
@@ -89,6 +108,7 @@ describe('Simulator', () => {
   });
 
   it(`relaunchApp() with userNofitication should send the userNotification as a param in launchParams`, async() => {
+    simulator = validSimulator();
     fs.existsSync.mockReturnValue(true);
     simulator.createPushNotificationJson = jest.fn(() => 'url');
 
@@ -100,38 +120,43 @@ describe('Simulator', () => {
   });
 
   it(`relaunchApp() with url and userNofitication should throw`, async() => {
-    const done = jest.fn();
+    simulator = validSimulator();
     try {
-      await simulator.relaunchApp({url: "scheme://some.url", userNotification: notification}, done);
+      await simulator.relaunchApp({url: "scheme://some.url", userNotification: notification});
     } catch (ex) {
       expect(ex).toBeDefined();
     }
   });
 
   it(`installApp() should trigger fbsimctl.uinstall`, async () => {
+    simulator = validSimulator();
     fs.existsSync.mockReturnValue(true);
     await simulator.installApp();
     expect(simulator._fbsimctl.install).toHaveBeenCalledTimes(1);
   });
 
   it(`uninstallApp() should trigger fbsimctl.uninstall`, async () => {
+    simulator = validSimulator();
     fs.existsSync.mockReturnValue(true);
     await simulator.uninstallApp();
     expect(simulator._fbsimctl.uninstall).toHaveBeenCalledTimes(1);
   });
 
   it(`reloadReactNative() should trigger client.reloadReactNative`, async() => {
+    simulator = validSimulator();
     await simulator.reloadReactNative();
     expect(simulator.client.reloadReactNative).toHaveBeenCalledTimes(1);
   });
 
   it(`sendUserNotification() should trigger client.sendUserNotification`, async() => {
+    simulator = validSimulator();
     fs.existsSync.mockReturnValueOnce(false).mockReturnValueOnce(true);
     await simulator.sendUserNotification('notification');
     expect(simulator.client.sendUserNotification).toHaveBeenCalledTimes(1);
   });
 
   it(`openURL() should trigger fbsimctl.open `, async() => {
+    simulator = validSimulator();
     const url = 'url://poof';
     await simulator.openURL(url);
     expect(simulator._fbsimctl.open).toHaveBeenCalledWith(simulator._simulatorUdid, url);

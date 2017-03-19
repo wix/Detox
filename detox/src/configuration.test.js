@@ -33,27 +33,9 @@ describe('configuration', () => {
     testFaultySession(schemes.invalidSessionNoSessionId.session);
   });
 
-  it(`providing device config with no binaryPath should throw`, () => {
-    testFaultyDevice(schemes.invalidDeviceNoBinary);
-  });
-
-  it(`providing device config with no name should throw`, () => {
-    testFaultyDevice(schemes.invalidDeviceNoDeviceName);
-  });
-
   function testFaultySession(config) {
     try {
       configuration.validateSession(config);
-    } catch (ex) {
-      expect(ex).toBeDefined();
-    }
-  }
-
-  function testFaultyDevice(config) {
-    const deviceConfig = _.values(config.configurations)[0];
-
-    try {
-      configuration.validateDevice(deviceConfig);
     } catch (ex) {
       expect(ex).toBeDefined();
     }

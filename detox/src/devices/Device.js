@@ -1,17 +1,41 @@
 const fs = require('fs');
 const _ = require('lodash');
 const argparse = require('../utils/argparse');
-const configuration = require('../configuration');
 
 class Device {
   constructor(client, session, deviceConfig) {
     this.client = client;
     this._session = session;
     this._deviceConfig = deviceConfig;
+    this.validate(deviceConfig);
+  }
+
+  validate(deviceConfig) {
+    return true;
+  }
+
+  async prepare() {
+    await this.client.waitUntilReady();
+  }
+
+  async relaunchApp() {
+    return await Promise.resolve(444);
+  }
+
+  async installApp() {
+    return await Promise.resolve('');
+  }
+
+  async uninstallApp() {
+    return await Promise.resolve('');
+  }
+
+  async openURL() {
+    return await Promise.resolve('');
   }
 
   async reloadReactNative() {
-    await this.client.reloadReactNative();
+    return await this.client.reloadReactNative();
   }
 
   async sendUserNotification(params) {

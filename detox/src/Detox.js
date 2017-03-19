@@ -1,4 +1,5 @@
 const log = require('npmlog');
+const IosNoneDevice = require('./devices/IosNoneDevice');
 const Simulator = require('./devices/Simulator');
 const argparse = require('./utils/argparse');
 const InvocationManager = require('./invoke').InvocationManager;
@@ -9,7 +10,7 @@ const URL = require('url').URL;
 const _ = require('lodash');
 
 log.level = argparse.getArgValue('loglevel') || 'info';
-log.addLevel('wss', 999, {fg: 'blue', bg: 'black'}, 'verb');
+log.addLevel('wss', 999, {fg: 'blue', bg: 'black'}, 'wss');
 log.heading = 'detox';
 
 class Detox {
@@ -44,10 +45,8 @@ class Detox {
   async init() {
     await this.config();
     this.client = new Client(this.detoxConfig.session);
-    const _connect = this.client.connect();
-    const _initDevice = this.initDevice();
-
-    await Promise.all([_initDevice]);
+    await this.client.connect();
+    await this.initConfiguration();
   }
 
   async cleanup() {
@@ -56,21 +55,22 @@ class Detox {
     }
   }
 
-  async initDevice() {
-    const deviceName = argparse.getArgValue('configuration');
+  async initConfiguration() {
+    const configurationName = argparse.getArgValue('configuration');
 
     let deviceConfig;
-    if (!deviceName && _.size(this.detoxConfig.configurations) === 1) {
+    if (!configurationName && _.size(this.detoxConfig.configurations) === 1) {
       deviceConfig = _.values(this.detoxConfig.configurations)[0];
     } else {
-      deviceConfig = this.detoxConfig.configurations[deviceName];
+      deviceConfig = this.detoxConfig.configurations[configurationName];
     }
 
-    configuration.validateDevice(deviceConfig);
-
     switch (deviceConfig.type) {
-      case "simulator":
+      case "ios.simulator":
         await this.initIosSimulator(deviceConfig);
+        break;
+      case "ios.none":
+        await this.initIosNoneDevice(deviceConfig);
         break;
       default:
         throw new Error('only simulator is supported currently');
@@ -82,12 +82,20 @@ class Detox {
     await global.device.prepare();
   }
 
-  async initIosSimulator(deviceConfig) {
-    configuration.validateDevice(deviceConfig);
+  async initIosExpectations() {
     this.expect = require('./ios/expect');
     this.expect.exportGlobals();
     this.expect.setInvocationManager(new InvocationManager(this.client));
+  }
+
+  async initIosSimulator(deviceConfig) {
+    await this.initIosExpectations();
     await this.setDevice(Simulator, deviceConfig);
+  }
+
+  async initIosNoneDevice(deviceConfig) {
+    await this.initIosExpectations();
+    await this.setDevice(IosNoneDevice, deviceConfig);
   }
 }
 

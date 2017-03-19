@@ -71,6 +71,16 @@ describe('Detox', () => {
     expect(detox.detoxConfig.configurations).toEqual(schemes.validTwoDevicesNoSession.configurations);
   });
 
+  it(`Two valid devices, detox should init an ios.none device`, async () => {
+    mockCommandLineArgs({configuration: 'ios.sim.none'});
+    Detox = require('./Detox');
+
+    detox = new Detox(schemes.validOneIosNoneDeviceNoSession);
+    await detox.init();
+
+    expect(detox.detoxConfig.configurations).toEqual(schemes.validOneIosNoneDeviceNoSession.configurations);
+  });
+
   it(`Two valid devices, detox should throw if device passed in '--configuration' cli option doesn't exist`, async () => {
     mockCommandLineArgs({configuration: 'nonexistent'});
     Detox = require('./Detox');

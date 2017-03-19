@@ -3,16 +3,29 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const _ = require('lodash');
-const Device = require('./Device');
+const IosNoneDevice = require('./IosNoneDevice');
 const FBsimctl = require('./Fbsimctl');
+const configuration = require('../configuration');
 
-class Simulator extends Device {
+class Simulator extends IosNoneDevice {
 
   constructor(client, session, deviceConfig) {
     super(client, session, deviceConfig);
     this._fbsimctl = new FBsimctl();
     this._simulatorUdid = "";
     this.sim = "";
+  }
+
+  validate(deviceConfig) {
+    super.validate(deviceConfig);
+
+    if (!deviceConfig.binaryPath) {
+      configuration.throwOnEmptyBinaryPath();
+    }
+
+    if (!deviceConfig.name) {
+      configuration.throwOnEmptyName();
+    }
   }
 
   async _getBundleIdFromApp(appPath) {
@@ -32,29 +45,6 @@ class Simulator extends Device {
     } else {
       throw new Error(`app binary not found at ${absPath}, did you build it?`);
     }
-  }
-
-  ensureDirectoryExistence(filePath) {
-    const dirname = path.dirname(filePath);
-    if (fs.existsSync(dirname)) {
-      return true;
-    }
-
-    this.ensureDirectoryExistence(dirname);
-    fs.mkdirSync(dirname);
-    return true;
-  }
-
-  createPushNotificationJson(notification) {
-    const notificationFilePath = path.join(__dirname, `detox`, `notifications`, `notification.json`);
-    this.ensureDirectoryExistence(notificationFilePath);
-    fs.writeFileSync(notificationFilePath, JSON.stringify(notification, null, 2));
-    return notificationFilePath;
-  }
-
-  async sendUserNotification(notification) {
-    const notificationFilePath = this.createPushNotificationJson(notification);
-    await super.sendUserNotification({detoxUserNotificationDataURL: notificationFilePath});
   }
 
   async prepare() {

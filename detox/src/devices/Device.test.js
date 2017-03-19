@@ -27,4 +27,25 @@ describe('Device', () => {
     device.sendUserNotification(params);
     expect(device.client.sendUserNotification).toHaveBeenCalledWith(params);
   });
+
+  it(`relaunchApp() - should trigger waitUntilReady in websocket client`, () => {
+    device.prepare();
+    expect(device.client.waitUntilReady).toHaveBeenCalledTimes(1);
+  });
+
+  it(`relaunchApp() - should be defined`, async () => {
+    expect(await device.relaunchApp()).toBeDefined();
+  });
+
+  it(`installApp() - should be defined`, async () => {
+    expect(await device.installApp()).toBeDefined();
+  });
+
+  it(`uninstallApp() - should be defined`, async () => {
+    expect(await device.uninstallApp()).toBeDefined();
+  });
+
+  it(`openURL() - should be defined`, async () => {
+    expect(await device.openURL()).toBeDefined();
+  });
 });

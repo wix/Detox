@@ -2,7 +2,17 @@ const validOneDeviceNoSession = {
   "configurations": {
     "ios.sim.release": {
       "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-      "type": "simulator",
+      "type": "ios.simulator",
+      "name": "iPhone 7 Plus, iOS 10.2"
+    }
+  }
+};
+
+const validOneIosNoneDeviceNoSession = {
+  "configurations": {
+    "ios.sim.none": {
+      "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+      "type": "ios.none",
       "name": "iPhone 7 Plus, iOS 10.2"
     }
   }
@@ -12,12 +22,12 @@ const validTwoDevicesNoSession = {
   "configurations": {
     "ios.sim.release": {
       "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-      "type": "simulator",
+      "type": "ios.simulator",
       "name": "iPhone 7 Plus, iOS 10.2"
     },
     "ios.sim.debug": {
       "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
-      "type": "simulator",
+      "type": "ios.simulator",
       "name": "iPhone 7 Plus, iOS 10.2"
     }
   }
@@ -26,7 +36,7 @@ const validTwoDevicesNoSession = {
 const invalidDeviceNoBinary = {
   "configurations": {
     "ios.sim.release": {
-      "type": "simulator",
+      "type": "ios.simulator",
       "name": "iPhone 7 Plus, iOS 10.2"
     }
   }
@@ -50,7 +60,7 @@ const invalidDeviceNoDeviceName = {
   "configurations": {
     "ios.sim.release": {
       "binaryPath": "here",
-      "type": "simulator"
+      "type": "ios.simulator"
     }
   }
 };
@@ -63,7 +73,7 @@ const validOneDeviceAndSession = {
   "configurations": {
     "ios.sim.release": {
       "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-      "type": "simulator",
+      "type": "ios.simulator",
       "name": "iPhone 7 Plus, iOS 10.2"
     }
   }
@@ -93,6 +103,7 @@ const invalidOneDeviceTypeEmulatorNoSession = {
 
 module.exports = {
   validOneDeviceNoSession,
+  validOneIosNoneDeviceNoSession,
   validTwoDevicesNoSession,
   invalidDeviceNoBinary,
   invalidNoDevice,

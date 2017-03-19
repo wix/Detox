@@ -10,7 +10,7 @@ class Client {
 
   async connect() {
     await this.ws.open();
-    return await this.sendAction(new actions.Login(this.configuration.sessionId));
+    this.sendAction(new actions.Login(this.configuration.sessionId));
   }
 
   async reloadReactNative() {
