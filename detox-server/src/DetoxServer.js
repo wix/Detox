@@ -2,12 +2,16 @@ const log = require('npmlog');
 const _ = require('lodash');
 const WebSocketServer = require('ws').Server;
 
+log.addLevel('wss', 999, {fg: 'blue', bg: 'black'}, 'wss');
+log.heading = 'detox-server';
+log.loglevel = 'wss';
+
 class DetoxServer {
   constructor(port) {
     this.wss = new WebSocketServer({port: port});
     this.sessions = {};
 
-    log.log('wss', `${now()}:`, `server listening on localhost:${this.wss.options.port}...`);
+    log.log('info', `${now()}:`, `server listening on localhost:${this.wss.options.port}...`);
     this._setup();
   }
 
