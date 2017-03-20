@@ -33,7 +33,7 @@ Please note that this library is still pre version 1.0.0 and under active develo
 
 This is a step-by-step guide to help you add detox to your project.
 
-If you used previous detox version, follow the [migration guide](MIGRATION.md).
+If you used previous detox version, follow the [migration guide](../MIGRATION.md).
 
 #### Step 1: Installing Dependencies
 
