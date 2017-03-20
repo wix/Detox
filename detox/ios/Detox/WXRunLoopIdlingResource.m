@@ -68,8 +68,6 @@
 		rv = _isBusy == NO;
 	});
     
-    NSLog(@"☣️ DETOX:: RunloopIdleResource: %@", @(rv));
-	
 	return rv;
 }
 

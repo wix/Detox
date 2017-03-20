@@ -124,7 +124,7 @@
 				{
 					_observationWrapper = [[_WXJSTimingObservationWrapper alloc] initWithTimers:[_self valueForKey:@"_timers"]];
 					[_self setValue:_observationWrapper forKey:@"_timers"];
-					[_observations setObject:_observationWrapper forKey:_self];
+					[strongSelf->_observations setObject:_observationWrapper forKey:_self];
 				}
 				
 				
@@ -136,7 +136,7 @@
 				}
 				else
 				{
-					NSLog(@"☣️ DETOX:: Ignoring timer: %@ failure reason: \"%@\"", timerID, [self failuireReasonForDuration:duration repeats:repeats]);
+					NSLog(@"☣️ DETOX:: Ignoring timer: %@ failure reason: \"%@\"", timerID, [strongSelf failuireReasonForDuration:duration repeats:repeats]);
 				}
 			});
 			
@@ -160,8 +160,6 @@
 		
 		rv = observedTimersCount == 0;
 	});
-	
-    NSLog(@"☣️ DETOX:: TimerIdleResource: %@", @(rv));
 	
 	return rv;
 }

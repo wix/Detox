@@ -9,6 +9,8 @@
 #import "DetoxManager.h"
 #import <Detox/Detox-Swift.h>
 #import "DetoxAppDelegateProxy.h"
+#import "EarlGreyExtensions.h"
+#import "EarlGreyStatistics.h"
 
 @interface DetoxManager()
 
@@ -26,9 +28,6 @@ static void detoxConditionalInit()
 	
 	NSUserDefaults* options = [NSUserDefaults standardUserDefaults];
 	
-	// options (standardUserDefaults) include command line arguments:
-	// MyApplication -detoxServer "http://localhost:8099" -detoxSessionId "example"
-	
 	NSString *detoxServer = [options stringForKey:@"detoxServer"];
 	NSString *detoxSessionId = [options stringForKey:@"detoxSessionId"];
 	if (!detoxServer || !detoxSessionId)
@@ -37,7 +36,7 @@ static void detoxConditionalInit()
 		// if these args were not provided as part of options, don't start Detox at all!
 		return;
 	}
-	
+
 	[[DetoxManager sharedInstance] connectToServer:detoxServer withSessionId:detoxSessionId];
 }
 
@@ -122,6 +121,10 @@ static void detoxConditionalInit()
 		[self _waitForRNLoad];
 		
 		return;
+	}
+	else if([type isEqualToString:@"currentStatus"])
+	{
+		[self.websocket sendAction:@"currentStatusResult" withParams:[[EarlGreyStatistics sharedInstance] currentStatus]];
 	}
 }
 

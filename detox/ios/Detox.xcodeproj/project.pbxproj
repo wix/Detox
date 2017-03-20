@@ -24,6 +24,8 @@
 		390D1C691E3A14EF007F5F46 /* UNNotificationResponse+PrivateHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 390D1C671E3A14EF007F5F46 /* UNNotificationResponse+PrivateHeaders.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		390D1C9C1E3A45F1007F5F46 /* UNNotification+PrivateHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 390D1C9A1E3A45F1007F5F46 /* UNNotification+PrivateHeaders.h */; };
 		390D1CA01E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 390D1C9E1E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h */; };
+		391FA5E91E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.h in Headers */ = {isa = PBXBuildFile; fileRef = 391FA5E71E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.h */; };
+		391FA5EA1E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.m in Sources */ = {isa = PBXBuildFile; fileRef = 391FA5E81E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.m */; };
 		3928EFA81E47404900C19B6E /* DetoxUserNotificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3928EFA71E47404900C19B6E /* DetoxUserNotificationTests.swift */; };
 		3928EFAA1E47404900C19B6E /* Detox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 394767971DBF985400D72256 /* Detox.framework */; };
 		3928EFB51E47571500C19B6E /* TestableAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3928EFB41E47571500C19B6E /* TestableAppDelegate.swift */; };
@@ -61,6 +63,8 @@
 		394767F61DBF994200D72256 /* SocketRocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 394767E71DBF992400D72256 /* SocketRocket.framework */; };
 		394767F71DBF994500D72256 /* EarlGrey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 394767DC1DBF991E00D72256 /* EarlGrey.framework */; };
 		394D589C1E50B59400556DB9 /* NSBundle+TestsFix.m in Sources */ = {isa = PBXBuildFile; fileRef = 394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */; };
+		397EC9B51E7EDE0B00D5F2BB /* EarlGreyStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 397EC9B31E7EDE0B00D5F2BB /* EarlGreyStatistics.h */; };
+		397EC9B61E7EDE0B00D5F2BB /* EarlGreyStatistics.m in Sources */ = {isa = PBXBuildFile; fileRef = 397EC9B41E7EDE0B00D5F2BB /* EarlGreyStatistics.m */; };
 		39A34C711E30F10D00BEBB59 /* DetoxAppDelegateProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39A34C6F1E30F10D00BEBB59 /* DetoxAppDelegateProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		39A34C721E30F10D00BEBB59 /* DetoxAppDelegateProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A34C701E30F10D00BEBB59 /* DetoxAppDelegateProxy.m */; };
 		39C3C3511DBF9A13008177E1 /* EarlGrey.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 394767DC1DBF991E00D72256 /* EarlGrey.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -163,6 +167,8 @@
 		390D1C991E3A292F007F5F46 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		390D1C9A1E3A45F1007F5F46 /* UNNotification+PrivateHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UNNotification+PrivateHeaders.h"; sourceTree = "<group>"; };
 		390D1C9E1E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UNPushNotificationTrigger+PrivateHeaders.h"; sourceTree = "<group>"; };
+		391FA5E71E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GREYIdlingResourcePrettyPrint.h; sourceTree = "<group>"; };
+		391FA5E81E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GREYIdlingResourcePrettyPrint.m; sourceTree = "<group>"; };
 		3928EFA51E47404900C19B6E /* DetoxUserNotificationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DetoxUserNotificationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3928EFA71E47404900C19B6E /* DetoxUserNotificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxUserNotificationTests.swift; sourceTree = "<group>"; };
 		3928EFA91E47404900C19B6E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -204,6 +210,8 @@
 		394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SocketRocket.xcodeproj; path = SocketRocket/SocketRocket.xcodeproj; sourceTree = "<group>"; };
 		394D589A1E50B59400556DB9 /* NSBundle+TestsFix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+TestsFix.h"; sourceTree = "<group>"; };
 		394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+TestsFix.m"; sourceTree = "<group>"; };
+		397EC9B31E7EDE0B00D5F2BB /* EarlGreyStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EarlGreyStatistics.h; sourceTree = "<group>"; };
+		397EC9B41E7EDE0B00D5F2BB /* EarlGreyStatistics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EarlGreyStatistics.m; sourceTree = "<group>"; };
 		39A34C6F1E30F10D00BEBB59 /* DetoxAppDelegateProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetoxAppDelegateProxy.h; sourceTree = "<group>"; };
 		39A34C701E30F10D00BEBB59 /* DetoxAppDelegateProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetoxAppDelegateProxy.m; sourceTree = "<group>"; };
 		39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetoxUserNotificationDispatcher.swift; sourceTree = "<group>"; };
@@ -325,6 +333,10 @@
 				394767BD1DBF98A700D72256 /* GREYMatchers+Detox.m */,
 				468731A31E6C6D0500F151BE /* EarlGrey+Detox.h */,
 				468731A41E6C6D0500F151BE /* EarlGrey+Detox.m */,
+				397EC9B31E7EDE0B00D5F2BB /* EarlGreyStatistics.h */,
+				397EC9B41E7EDE0B00D5F2BB /* EarlGreyStatistics.m */,
+				391FA5E71E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.h */,
+				391FA5E81E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.m */,
 			);
 			name = EarlGreyExtensions;
 			sourceTree = "<group>";
@@ -385,7 +397,9 @@
 				3947679C1DBF985400D72256 /* Detox.h in Headers */,
 				394767D21DBF98D900D72256 /* WXJSTimerObservationIdlingResource.h in Headers */,
 				390D1C691E3A14EF007F5F46 /* UNNotificationResponse+PrivateHeaders.h in Headers */,
+				391FA5E91E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.h in Headers */,
 				39A34C711E30F10D00BEBB59 /* DetoxAppDelegateProxy.h in Headers */,
+				397EC9B51E7EDE0B00D5F2BB /* EarlGreyStatistics.h in Headers */,
 				394767AE1DBF987E00D72256 /* DetoxManager.h in Headers */,
 				468731A51E6C6D0500F151BE /* EarlGrey+Detox.h in Headers */,
 				394767CD1DBF98D900D72256 /* ReactNativeHeaders.h in Headers */,
@@ -611,6 +625,8 @@
 				394767B71DBF987E00D72256 /* WebSocket.m in Sources */,
 				394767D51DBF98D900D72256 /* WXRunLoopIdlingResource.m in Sources */,
 				468731A61E6C6D0500F151BE /* EarlGrey+Detox.m in Sources */,
+				397EC9B61E7EDE0B00D5F2BB /* EarlGreyStatistics.m in Sources */,
+				391FA5EA1E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.m in Sources */,
 				394767CF1DBF98D900D72256 /* ReactNativeSupport.m in Sources */,
 				394767B51DBF987E00D72256 /* TestRunner.m in Sources */,
 				394767D31DBF98D900D72256 /* WXJSTimerObservationIdlingResource.m in Sources */,

@@ -15,6 +15,8 @@
 
 - (void)registerIdlingResource:(id<GREYIdlingResource>)resource;
 - (void)deregisterIdlingResource:(id<GREYIdlingResource>)resource;
+- (NSOrderedSet *)grey_busyResources;
+- (NSDictionary *)grey_errorDictionaryForBusyResources:(NSOrderedSet *)busyResources;
 
 @end
 
