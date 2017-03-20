@@ -57,7 +57,7 @@ Along with the new promise based API, this is how we now control the attached de
 
 >=4.x.x | 5.x.x
 ------|--------
-`simulator.reloadReactNativeApp(done)`	| `await device.reloadReactNativeApp()`
+`simulator.reloadReactNativeApp(done)`	| `await device.reloadReactNative()`
 `simulator.relaunchApp(done)`				| `await device.relaunchApp()`
 `simulator.sendUserNotification(params, done)` | `await device.sendUserNotification(params)`
 `simulator.openURL(url)`					| `await device.openURL(url)`
