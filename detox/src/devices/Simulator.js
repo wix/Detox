@@ -92,6 +92,10 @@ class Simulator extends IosNoneDevice {
   async openURL(url) {
     await this._fbsimctl.open(this._simulatorUdid, url);
   }
+
+  async shutdown() {
+    await this._fbsimctl.shutdown(this._simulatorUdid);
+  }
 }
 
 module.exports = Simulator;

@@ -42,6 +42,10 @@ class Device {
     await this.client.sendUserNotification(params);
   }
 
+  async shutdown() {
+    return await Promise.resolve('');
+  }
+
   _prepareLaunchArgs(additionalLaunchArgs) {
     let args = ['-detoxServer', this._session.server, '-detoxSessionId', this._session.sessionId];
     if (additionalLaunchArgs) {

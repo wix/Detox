@@ -53,6 +53,10 @@ class Detox {
     if (this.client) {
       await this.client.cleanup();
     }
+
+    if (argparse.getArgValue('cleanup')) {
+      await this.device.shutdown();
+    }
   }
 
   async initConfiguration() {
@@ -83,8 +87,9 @@ class Detox {
   }
 
   async setDevice(device, deviceConfig) {
-    global.device = new device(this.client, this.detoxConfig.session, deviceConfig);
-    await global.device.prepare();
+    this.device = new device(this.client, this.detoxConfig.session, deviceConfig);
+    await this.device.prepare();
+    global.device = this.device;
   }
 
   async initIosExpectations() {

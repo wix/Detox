@@ -9,6 +9,7 @@ program
   .option('-l, --loglevel [value]', 'info, debug, verbose, silly, wss')
   .option('-c, --configuration [device configuration]', 'Select a device configuration from your defined configurations,'
                                                         + 'if not supplied, and there\'s only one configuration, detox will default to it')
+  .option('-u, --cleanup', 'shutdown simulator when test is over, useful for CI scripts, to make sure detox exists cleanly with no residue', false)
   .parse(process.argv);
 
 const config = require(path.join(process.cwd(), 'package.json')).detox;
@@ -16,11 +17,12 @@ const testFolder = config.specs || 'e2e';
 
 const loglevel = program.loglevel ? `--loglevel ${program.loglevel}` : '';
 const configuration = program.configuration ? `--configuration ${program.configuration}` : '';
+const cleanup = program.cleanup ? `--cleanup` : '';
 
 let command;
 switch (program.runner) {
   case 'mocha':
-    command = `node_modules/.bin/${program.runner} ${testFolder} --opts ${testFolder}/${program.runnerConfig} ${configuration} ${loglevel}`;
+    command = `node_modules/.bin/${program.runner} ${testFolder} --opts ${testFolder}/${program.runnerConfig} ${configuration} ${loglevel} ${cleanup}`;
     break;
   default:
     throw new Error(`${program.runner} is not supported in detox cli tools. You can still run your tests with the runner's own cli tool`);
