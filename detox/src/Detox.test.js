@@ -43,13 +43,29 @@ describe('Detox', () => {
     }
   });
 
+  it(`Passing --cleanup should shutdown the currently running device`, async () => {
+    mockCommandLineArgs({cleanup: true});
+    Detox = require('./Detox');
+    detox = new Detox(schemes.validOneDeviceNoSession);
+    await detox.init();
+    await detox.cleanup();
+    expect(detox.device.shutdown).toHaveBeenCalledTimes(1);
+  });
+
+  it(`Not passing --cleanup should keep the currently running device up`, async () => {
+    Detox = require('./Detox');
+    detox = new Detox(schemes.validOneDeviceNoSession);
+    await detox.init();
+    await detox.cleanup();
+    expect(detox.device.shutdown).toHaveBeenCalledTimes(0);
+  });
+
   it(`One valid device, detox should init with generated session config and default to this device`, async () => {
     Detox = require('./Detox');
     detox = new Detox(schemes.validOneDeviceNoSession);
     await detox.init();
 
     expect(detox.detoxConfig.session.server).toBeDefined();
-    expect(detox.detoxConfig.session.sessionId).toBeDefined();
   });
 
   it(`One valid device, detox should use session config and default to this device`, async () => {

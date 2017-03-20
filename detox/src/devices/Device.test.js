@@ -45,6 +45,10 @@ describe('Device', () => {
     expect(await device.uninstallApp()).toBeDefined();
   });
 
+  it(`shutdown() - should be defined`, async () => {
+    expect(await device.shutdown()).toBeDefined();
+  });
+
   it(`openURL() - should be defined`, async () => {
     expect(await device.openURL()).toBeDefined();
   });

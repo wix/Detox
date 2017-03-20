@@ -155,6 +155,13 @@ describe('Simulator', () => {
     expect(simulator.client.sendUserNotification).toHaveBeenCalledTimes(1);
   });
 
+  it(`shutdown() should trigger fbsimctl.shutdown`, async () => {
+    simulator = validSimulator();
+    fs.existsSync.mockReturnValue(true);
+    await simulator.shutdown();
+    expect(simulator._fbsimctl.shutdown).toHaveBeenCalledTimes(1);
+  });
+
   it(`openURL() should trigger fbsimctl.open `, async() => {
     simulator = validSimulator();
     const url = 'url://poof';
