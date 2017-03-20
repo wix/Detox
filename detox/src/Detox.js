@@ -65,6 +65,11 @@ class Detox {
       deviceConfig = this.detoxConfig.configurations[configurationName];
     }
 
+    if (!deviceConfig) {
+      throw new Error(`Can not determine which configuration to use, use --configuration to choose one of the following: 
+                      ${Object.keys(this.detoxConfig.configurations)}`);
+    }
+
     switch (deviceConfig.type) {
       case "ios.simulator":
         await this.initIosSimulator(deviceConfig);
