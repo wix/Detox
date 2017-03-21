@@ -70,7 +70,7 @@ class Detox {
     }
 
     if (!deviceConfig) {
-      throw new Error(`Can not determine which configuration to use. use --configuration to choose one of the following: 
+      throw new Error(`Cannot determine which configuration to use. use --configuration to choose one of the following: 
                       ${Object.keys(this.detoxConfig.configurations)}`);
     }
 
