@@ -8,7 +8,7 @@ We are improving detox API as we go along, sometimes these changes require us to
 The clearest example for for the 4->5 API changes is the change log of detox's own test suite.
 Check [detox test change log](https://github.com/wix/detox/commit/c636e2281d83d07fe0b479681c1a8a6b809823ff#diff-bf5e338e4f0bb49210688c7691dc8589) for a real life example.
 
-###Version 5.x.x breaks detox's API in 3 different places
+###Version 5.x.x breaks detox's API in 4 different places
 
 #### 1. Promise based flow
 All of the API calls are now promise based, and must use either promise chains or async-await.<br>
@@ -16,7 +16,7 @@ All of the API calls are now promise based, and must use either promise chains o
 Here's an example of async call to tap an element
 
 ```js
-// >=4.x.x
+// <=4.x.x
 beforeEach(() => {
   element(by.label('Sanity')).tap();
 });		    
@@ -33,7 +33,7 @@ beforeEach(async () => {
 Same thing with expectations
 
 ```js 
-// >=4.x.x
+// <=4.x.x
 it('should have welcome screen', () => {
   expect(element(by.label('Welcome'))).toBeVisible();
   expect(element(by.label('Say Hello'))).toBeVisible(); 
@@ -50,12 +50,46 @@ it('should have welcome screen', async () => {
 });
 ```
 
+#### 2. `detox` object has a leaner API
 
-#### 2. `simulator` is now `device`
+Configure and init detox with just one promise based function.
+
+```js
+// <=4.x.x
+detox.config(config);
+detox.start(done);
+```
+
+```js
+// 5.x.x
+await detox.init(config);
+```
+
+No need to wait for test result after each test, you can safely remove `detox.waitForTestResult`
+
+```js
+// <=4.x.x
+afterEach((done) => {
+  detox.waitForTestResult(done);
+});
+```
+
+cleanup is promise based
+```js
+// <=4.x.x
+detox.cleanup(done);
+```
+
+```js
+// 5.x.x
+await detox.cleanup();
+```
+
+#### 3. `simulator` is now `device`
 The global object `simulator` is now `device`, this change makes sense when thinking about multi-platform tests (Android support).
 Along with the new promise based API, this is how we now control the attached device
 
->=4.x.x | 5.x.x
+<=4.x.x | 5.x.x
 ------|--------
 `simulator.reloadReactNativeApp(done)`	| `await device.reloadReactNative()`
 `simulator.relaunchApp(done)`				| `await device.relaunchApp()`
@@ -63,13 +97,13 @@ Along with the new promise based API, this is how we now control the attached de
 `simulator.openURL(url)`					| `await device.openURL(url)`
 `simulator.sendUserNotification(params, done)`	| `await device.sendUserNotification(params)`
 
-#### 3. Detox config scheme
+#### 4. Detox config scheme
 In order for our API to support multiple platforms and devices, and to be able to provide a valid command line tool, we changed the the detox configuration scheme (in package.json)
 
 Previous config looked like this:
 
 ```json
-//>=4.x.x
+//<=4.x.x
   "detox": {
     "session": {
       "server": "ws://localhost:8099",
