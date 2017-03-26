@@ -127,7 +127,7 @@ By using the `detox` command line tool, you can build and test your project easi
 	detox test
 	```
 
-That's it!
+That's it! Your first failing detox test! Next, we'll go over usage and how to make this test pass.
 
 ## Options 
 
@@ -138,7 +138,7 @@ That's it!
 |Configuration Params|Details|
 |---|---|
 |`binaryPath`|relative path to the ipa/app due to be  tested (make sure you build the app in a project relative path)|
-|`type`|device type, currently only `simulator` (iOS) is supported|
+|`type`|device type, currently only `ios.simulator` is supported|
 |`name`|device name, aligns to the device list avaliable through `fbsimctl list` for example, this is one line of the output of `fbsimctl list`: `A3C93900-6D17-4830-8FBE-E102E4BBCBB9 | iPhone 7 | Shutdown | iPhone 7 | iOS 10.2`, ir order to choose the first `iPhone 7` regardless of OS version, use `iPhone 7`. to be OS specific use `iPhone 7, iOS 10.2`|
 |`build`| **[optional]** build command (either `xcodebuild`, `react-native run-ios`, etc...), will be later available through detox CLI tool.|
 	
