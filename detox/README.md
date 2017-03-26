@@ -58,13 +58,6 @@ If you used previous detox version, follow the [migration guide](../MIGRATION.md
   npm install -g detox-cli
   ```
 
-* If you do not have a `package.json` file in the root folder of your project, create one by running 
-
-  ```sh
-  npm init
-  ```
-  Follow the on screen instructions.
-
 ##### Set Xcode build path
 By default, Xcode uses a randomized hidden path for outputting project build artifacts, called DerivedData. For ease of use (and better support in CI environments), it is recommended to change the project build path to a more convenient path.
 
