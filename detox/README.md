@@ -96,7 +96,7 @@ By default, Xcode uses a randomized hidden path for outputting project build art
 	      "ios.sim.release": {
 	        "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
 	        "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Release -sdk iphonesimulator -derivedDataPath ios/build",
-	        "type": "simulator",
+	        "type": "ios.simulator",
 	        "name": "iPhone 7"
 	      }
 	    } 
