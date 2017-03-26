@@ -1,4 +1,5 @@
-{
+{   
+    "name": "detox",
     "title": "Detox",
     "description": "Graybox E2E tests and automation library for mobile",
     "github": "https://github.com/wix/detox",
