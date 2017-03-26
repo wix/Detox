@@ -1,0 +1,12 @@
+{
+    "title": "Detox",
+    "description": "Graybox E2E tests and automation library for mobile",
+    "github": "https://github.com/wix/detox",
+    "AndroidVideoUrl": "",
+    "IOSVideoUrl": "as",
+    "IOSDemoAppLink": "",
+    "MacVideoUrl": "https://github.com/wix/react-native/blob/master/src/videos/detox.mp4?raw=true",
+    "image": "",
+    "size" : "big",
+    "AndroidDemoAppLink": ""
+}
