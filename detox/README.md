@@ -87,15 +87,15 @@ By default, Xcode uses a randomized hidden path for outputting project build art
 	"detox": {
 	  "configurations": {
 	      "ios.sim.release": {
-	        "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-	        "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Release -sdk iphonesimulator -derivedDataPath ios/build",
+	        "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
+	        "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
 	        "type": "ios.simulator",
 	        "name": "iPhone 7"
 	      }
 	    } 
 	  }
 	```
-When debugging, make sure to replace 'Release' with 'Debug' in the binaryPath and build properties.
+To test a release version, make sure to replace 'Debug' with 'Release' in the binaryPath and build properties.
 For full configuration options see the **options** section below.
 	
 
