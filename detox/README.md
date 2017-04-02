@@ -95,7 +95,7 @@ By default, Xcode uses a randomized hidden path for outputting project build art
 	    } 
 	  }
 	```
-When debugging, make sure to change the binaryPath and the build properties to 'Debug'.
+When debugging, make sure to replace 'Release' with 'Debug' in the binaryPath and build properties.
 For full configuration options see the **options** section below.
 	
 
