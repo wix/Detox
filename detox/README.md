@@ -59,13 +59,6 @@ If you used previous detox version, follow the [migration guide](../MIGRATION.md
   npm install -g detox-cli
   ```
 
-* If you do not have a `package.json` file in the root folder of your project, create one by running 
-
-  ```sh
-  npm init
-  ```
-  Follow the on screen instructions.
-
 ##### Set Xcode build path
 By default, Xcode uses a randomized hidden path for outputting project build artifacts, called DerivedData. For ease of use (and better support in CI environments), it is recommended to change the project build path to a more convenient path.
 
@@ -88,21 +81,22 @@ By default, Xcode uses a randomized hidden path for outputting project build art
 	npm install mocha --save-dev
 	``` 
 
-* Add detox to your `package.json`: <br>
+* Add detox to your `package.json` (don't forget to switch 'example' with your project name): <br>
 
 	
 	```json
 	"detox": {
 	  "configurations": {
 	      "ios.sim.release": {
-	        "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-	        "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Release -sdk iphonesimulator -derivedDataPath ios/build",
-	        "type": "simulator",
+	        "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
+	        "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
+	        "type": "ios.simulator",
 	        "name": "iPhone 7"
 	      }
 	    } 
 	  }
 	```
+To test a release version, make sure to replace 'Debug' with 'Release' in the binaryPath and build properties.
 For full configuration options see the **options** section below.
 	
 
@@ -128,7 +122,7 @@ By using the `detox` command line tool, you can build and test your project easi
 	detox test
 	```
 
-That's it!
+That's it! Your first failing detox test! Next, we'll go over usage and how to make this test pass.
 
 ## Options 
 
@@ -139,7 +133,7 @@ That's it!
 |Configuration Params|Details|
 |---|---|
 |`binaryPath`|relative path to the ipa/app due to be  tested (make sure you build the app in a project relative path)|
-|`type`|device type, currently only `simulator` (iOS) is supported|
+|`type`|device type, currently only `ios.simulator` is supported|
 |`name`|device name, aligns to the device list avaliable through `fbsimctl list` for example, this is one line of the output of `fbsimctl list`: `A3C93900-6D17-4830-8FBE-E102E4BBCBB9 | iPhone 7 | Shutdown | iPhone 7 | iOS 10.2`, ir order to choose the first `iPhone 7` regardless of OS version, use `iPhone 7`. to be OS specific use `iPhone 7, iOS 10.2`|
 |`build`| **[optional]** build command (either `xcodebuild`, `react-native run-ios`, etc...), will be later available through detox CLI tool.|
 	
