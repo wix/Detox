@@ -48,7 +48,8 @@ If you used previous detox version, follow the [migration guide](../MIGRATION.md
 * You will also need `fbsimctl` installed: 
 
 	 ```sh 
-	 brew tap facebook/fb && brew install fbsimctl --HEAD
+	 brew tap facebook/fb
+	 export CODE_SIGNING_REQUIRED=NO && brew install fbsimctl --HEAD
 	 ```
 	 
 * Detox CLI
