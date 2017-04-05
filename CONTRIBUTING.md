@@ -25,7 +25,7 @@ npm install -g lerna
 npm install -g react-native-cli
 ```
 
-For all the internal projects (detox, detox-server, detox-cli, demos, test) `lerna` will create symbolic links in `node_modules` instead of `npm` copying the content of the projects. This way, any change you do on any code is there immediatly, no need to update node modules, or copy files between projects.
+For all the internal projects (detox, detox-server, detox-cli, demos, test) `lerna` will create symbolic links in `node_modules` instead of `npm` copying the content of the projects. This way, any change you do on any code is there immediately. There is no need to update node modules or copy files between projects.
 
 install `fbsimctl` 
 
@@ -38,6 +38,11 @@ install `xcpretty`
 
 ```sh
 gem install xcpretty
+```
+### Installing
+
+```sh
+lerna install
 ```
 
 ### Building
@@ -52,9 +57,9 @@ lerna run build
 lerna run test
 ```
 
-Detox JS code is 100% test covered and is set to break the build if covrage gets below, make sure you run unit tests locally before pushing using `lerna run test`
+Detox JS code is 100% test covered and is set to break the build if coverage gets below, so make sure you run unit tests (`lerna run test`) locally before pushing.
 
-Alternativley, to JS-only tests, in `detox/detox` directory, run: 
+Alternatively, to run only the JS tests, run the following from the `detox/detox` directory: 
 
 ```sh
 npm run unit
