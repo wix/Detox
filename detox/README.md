@@ -82,7 +82,7 @@ By default, Xcode uses a randomized hidden path for outputting project build art
 	npm install mocha --save-dev
 	``` 
 
-* Add detox to your `package.json` (don't forget to switch 'example' with your project name): <br>
+* Add a detox property to your `package.json`: <br> 
 
 	
 	```json
@@ -97,6 +97,8 @@ By default, Xcode uses a randomized hidden path for outputting project build art
 	    } 
 	  }
 	```
+* In the binaryPath and build properties switch 'example' with your project name (there are 3 occurrences of the word 'example' that need to be switched, don't forget to change them all!).
+<br>
 To test a release version, make sure to replace 'Debug' with 'Release' in the binaryPath and build properties.
 For full configuration options see the **options** section below.
 	
