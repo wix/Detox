@@ -108,7 +108,7 @@ describe('Simulator', () => {
     argparse.getArgValue.mockReturnValue(true);
     fs.existsSync.mockReturnValue(true);
 
-    await simulator.relaunchApp({delete: false});
+    await simulator.relaunchApp();
 
     expect(simulator._fbsimctl.uninstall).not.toHaveBeenCalled();
     expect(simulator._fbsimctl.install).not.toHaveBeenCalled();
