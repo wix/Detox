@@ -9,6 +9,7 @@ describe('Simulator', () => {
   let cpp;
   let Simulator;
   let simulator;
+  let argparse;
 
   let Client;
   let client;
@@ -23,6 +24,9 @@ describe('Simulator', () => {
     jest.mock('./Fbsimctl');
 
     jest.mock('../client/Client');
+    jest.mock('../utils/argparse');
+    argparse = require('../utils/argparse');
+
     Client = require('../client/Client');
 
     Simulator = require('./Simulator');
@@ -93,6 +97,21 @@ describe('Simulator', () => {
 
     expect(simulator._fbsimctl.uninstall).toHaveBeenCalled();
     expect(simulator._fbsimctl.install).toHaveBeenCalled();
+    expect(simulator._fbsimctl.launch).toHaveBeenCalledWith(simulator._simulatorUdid,
+      simulator._bundleId,
+      ["-detoxServer", "ws://localhost:8099", "-detoxSessionId", "test"]);
+  });
+
+
+  it(`relaunchApp() without delete when reuse is enabled should not uninstall and install`, async() => {
+    simulator = validSimulator();
+    argparse.getArgValue.mockReturnValue(true);
+    fs.existsSync.mockReturnValue(true);
+
+    await simulator.relaunchApp({delete: false});
+
+    expect(simulator._fbsimctl.uninstall).not.toHaveBeenCalled();
+    expect(simulator._fbsimctl.install).not.toHaveBeenCalled();
     expect(simulator._fbsimctl.launch).toHaveBeenCalledWith(simulator._simulatorUdid,
       simulator._bundleId,
       ["-detoxServer", "ws://localhost:8099", "-detoxSessionId", "test"]);
