@@ -124,7 +124,10 @@ By using the `detox` command line tool, you can build and test your project easi
 That's it! Your first failing detox test! Next, we'll go over usage and how to make this test pass.
 
 ## Usage 
-Detox enables us to emulate user behavior and test how our app reacts:
+
+### Basic
+
+This reloads your react native app, makes sure your first screen has an element with a 'Welcome' text in it and that after taping it an element with an 'Hello_123' id is visible:
 ```JS
 describe('Example', () => {
   beforeEach(async () => {
@@ -136,20 +139,18 @@ describe('Example', () => {
   });
 
   it('should show hello screen after tap', async () => {
-    await element(by.label('Say Hello')).tap();
-    await expect(element(by.label('Hello!!!'))).toBeVisible();
-  });
-
-  it('should show world screen after tap', async () => {
-    await element(by.label('Say World')).tap();
-    await expect(element(by.label('World!!!'))).toBeVisible();
+    await element(by.label('Welcome')).tap();
+    await expect(element(by.id('Hello_123'))).toBeVisible();
   });
 });
 ```
-We use **matchers** to find elements in our app, **Actions** to emulate user interaction with those elements and **Assertions** to test how our app reacts.
+detox uses **matchers** to find elements in your app, **Actions** to emulate user interaction with those elements and **Assertions** to test how your app reacts.
 ### Matchers 
-Matchers allow us to tell detox to find an element that matches some property.
-
+Matchers find elements that match some property:
+```JS
+element(by.id('welcome_123'))
+```
+ 
 
 
 
