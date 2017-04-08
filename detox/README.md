@@ -94,6 +94,7 @@ In `"binaryPath"`: `example.app` should be `<your_project_name>.app`. <br>
 In `"build"`: `example.xcodeproj` should be `<your_project_name>.xcodeproj` and 
 `-scheme example` should be <br> `-scheme <your_project_name>`.
 <br>
+
 To test a release version, make sure to replace 'Debug' with 'Release' in the binaryPath and build properties.
 For full configuration options see the **options** section below.
 	
