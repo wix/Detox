@@ -16,7 +16,7 @@ Graybox E2E Tests and Automation Library for Mobile
 - [The Detox API](#the-detox-api)
 - [Dealing with flakiness](#dealing-with-flakiness)
 - [Contributing to detox](#contributing-to-detox)
-- [Some implementation details](#some-implemetation-details)
+- [Some implementation details](#some-implementation-details)
 - [License](#license)
 
 <img src="http://i.imgur.com/3QqHeGO.gif">
@@ -127,7 +127,6 @@ That's it! Your first failing detox test! Next, we'll go over usage and how to m
 
 ## Usage 
 
-### Basic
 
 ```JS
 describe('Example', () => {
@@ -146,24 +145,80 @@ describe('Example', () => {
 });
 ```
 
-detox uses **matchers** to find elements in your app, **Actions** to emulate user interaction with those elements and **Assertions** to test how your app reacts.
+detox uses **Matchers** to find elements in your app, **Actions** to emulate user interaction with those elements and **Assertions** to test how your app reacts.
 ### Matchers 
-Matchers find elements that match some property.
-This finds all the elements with the id `welcome_123`:
-```JS
-element(by.id('welcome_123'))
+Matchers find elements in the current view hierarchy that match some property.
+They follow the simple `element(by.id('some_id'))` syntax
+
+```js
+// by id (add a 'testID' prop to your view for this to work)
+await element(by.id('tap_me'))
+// by text
+await element(by.label('Tap Me'))
+await element(by.traits(['button'])
+await element(by.id('Grandson883').withAncestor(by.id('Son883')))
+await element(by.id('Son883').withDescendant(by.id('Grandson883')))
+// by native view type
+await element(by.type('RCTImageView'))
+element(by.id('UniqueId937')).
+element(by.id('UniqueId005'))
+element(by.id('ScrollView161'))
+element(by.id('ScrollView161'))
+element(by.id('ScrollView161'))
+element(by.id('ScrollView161'))
+// to find the back button:
+await element(by.traits(['button']).and(by.label('Back')))
 ```
-This finds all the elements that contains the text `'Welcome'`:
-```JS
-element(by.label('Welcome'))
+The most common and recommended Matcher is the `by.id()` matcher.
+
+#### Examples
+The following view: 
+
+```jsx 
+<View testID='Grandfather883' style={{padding: 8, backgroundColor: 'red', marginBottom: 10}}>
+  <View testID='Father883' style={{padding: 8, backgroundColor: 'green'}}>
+    <View testID='Son883' style={{padding: 8, backgroundColor: 'blue'}}>
+      <View testID='Grandson883' style={{padding: 8, backgroundColor: 'purple'}} />
+    </View>
+  </View>
+</View>
 ```
-This finds an element with the id `welcome_123` that has a parent view with a `welcome_parent` id:
-```JS
-element(by.id('welcome_123').withAncestor(by.id('welcome_parent')))
+
+
+Will be matched by:
+
+```js
+await element(by.id('Grandson883'))
 ```
+
+```js
+await element(by.id('Grandson883').withAncestor(by.id('Son883')))
+```
+
+```js
+await element(by.id('Son883').withDescendant(by.id('Grandson883')))
+``` 
+
+
+A full matchers list can be found [here](../API.md) 
 
 ### Actions 
+Actions are functions we can use on elements to emulate user behavior:
+```js
+await element(by.label('Tap Me')).tap();
+await element(by.label('Tap Me')).longPress();
+await element(by.id('UniqueId819')).multiTap(3);
+await element(by.id('UniqueId937')).typeText('passcode');
+await element(by.id('UniqueId937')).replaceText('passcode again');
+await element(by.id('UniqueId005')).clearText();
+await element(by.id('ScrollView161')).scroll(100, 'down');
+await element(by.id('ScrollView161')).scroll(100, 'up');
+await element(by.id('ScrollView161')).scrollTo('bottom');
+await element(by.id('ScrollView161')).scrollTo('top');
 
+// directions: 'up'/'down'/'left'/'right', speed: 'fast'/'slow'
+await element(by.id('ScrollView799')).swipe('down', 'fast');
+```
 ### Aseertions
 
 
