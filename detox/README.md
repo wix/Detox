@@ -89,7 +89,7 @@ If you used previous detox version, follow the [migration guide](../MIGRATION.md
 	    } 
 	  }
 	```
-*  In the detox property you just copied, switch 'example' with your project name. <br>
+*  In the detox property you just copied, switch `example` with your project name. <br>
 In `"binaryPath"`: `example.app` should be `<your_project_name>.app`. <br>
 In `"build"`: `example.xcodeproj` should be `<your_project_name>.xcodeproj` and 
 `-scheme example` should be <br> `-scheme <your_project_name>`.
