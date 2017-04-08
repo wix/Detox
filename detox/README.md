@@ -139,15 +139,15 @@ describe('Example', () => {
   });
   
   it('should show hello screen after tap', async () => {
-    await element(by.id('welcome_button')).tap();
-    await expect(element(by.id('hello'))).toBeVisible();
+    await element(by.id('hello_button')).tap();
+    await expect(element(by.label('Hello!!!'))).toBeVisible();
   });
   
   it('should show world screen after tap', async () => {
-    await element(by.id('say_world')).tap();
-    await expect(element(by.id('world_text'))).toBeVisible();
+    await element(by.id('world_button')).tap();
+    await expect(element(by.label('World!!!'))).toBeVisible();
   });
-});
+})
 ```
 
 detox uses **Matchers** to find elements in your app, **Actions** to emulate user interaction with those elements and **Assertions** to test how your app reacts.
