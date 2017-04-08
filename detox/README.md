@@ -212,6 +212,12 @@ You can choose to build your project in any of these ways...
 	detox test --configuration yourConfiguration
 	```
 
+### Faster test runs with app reuse
+By default the app is rmoved, reinstalled and launched before each run.
+Starting fresh is critical in CI but in dev you might be able to save time between test runs and reuse the app that was previously installed in the simulator. To do so use the `reuse` flag and run your tests like this:`detox test --reuse`.
+This is especially useful with React Native DEV mode when making Javascript code changes that are getting picked up by the packager (and thus no reinstall is needed). This can save up to 7 seconds per run!
+You should not use this option if you made native code changes or if your app relies on local ("disk") storage.
+
 
 ## See it in Action
 

@@ -6,6 +6,7 @@ const _ = require('lodash');
 const IosNoneDevice = require('./IosNoneDevice');
 const FBsimctl = require('./Fbsimctl');
 const configuration = require('../configuration');
+const argparse = require('../utils/argparse');
 
 class Simulator extends IosNoneDevice {
 
@@ -51,8 +52,8 @@ class Simulator extends IosNoneDevice {
     this._simulatorUdid = await this._fbsimctl.list(this._deviceConfig.name);
     this._bundleId = await this._getBundleIdFromApp(this._deviceConfig.binaryPath);
     await this._fbsimctl.boot(this._simulatorUdid);
-    await this.relaunchApp({delete: true});
-  }
+    await this.relaunchApp({delete: !argparse.getArgValue('reuse')});
+}
 
   async relaunchApp(params = {}, bundleId) {
     if (params.url && params.userNotification) {
