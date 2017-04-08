@@ -124,7 +124,7 @@ By using the `detox` command line tool, you can build and test your project easi
 That's it! Your first failing detox test! Next, we'll go over usage and how to make this test pass.
 
 ## Usage 
-Detox enables us to emulate user behavior and test how our app reacts to it:
+Detox enables us to emulate user behavior and test how our app reacts:
 ```JS
 describe('Example', () => {
   beforeEach(async () => {
@@ -146,6 +146,12 @@ describe('Example', () => {
   });
 });
 ```
+We use **matchers** to find elements in our app, **Actions** to emulate user interaction with those elements and **Assertions** to test how our app reacts.
+### Matchers 
+Matchers allow us to tell detox to find an element that matches some property.
+
+
+
 
 ## Options 
 
