@@ -147,31 +147,27 @@ describe('Example', () => {
 
 detox uses **Matchers** to find elements in your app, **Actions** to emulate user interaction with those elements and **Assertions** to test how your app reacts.
 ### Matchers 
-Matchers find elements in the current view hierarchy that match some property.
-They follow the simple `element(by.id('some_id'))` syntax
+Matchers find elements in your app that match some property.
 
 ```js
-// by id (add a 'testID' prop to your view for this to work)
+// find an element that is matched by id (add a 'testID' prop to your view for this to work)
 await element(by.id('tap_me'))
-// by text
+// find an element that is matched by text
 await element(by.label('Tap Me'))
-await element(by.traits(['button'])
+// find an element by id and by parent id
 await element(by.id('Grandson883').withAncestor(by.id('Son883')))
+// find an element by id and by child id
 await element(by.id('Son883').withDescendant(by.id('Grandson883')))
-// by native view type
+// find an element by native view type
 await element(by.type('RCTImageView'))
-element(by.id('UniqueId937')).
-element(by.id('UniqueId005'))
-element(by.id('ScrollView161'))
-element(by.id('ScrollView161'))
-element(by.id('ScrollView161'))
-element(by.id('ScrollView161'))
+// find an element with an accessibility trait
+await element(by.traits(['button'])
 // to find the back button:
 await element(by.traits(['button']).and(by.label('Back')))
 ```
 The most common and recommended Matcher is the `by.id()` matcher.
 
-#### Examples
+#### Example
 The following view: 
 
 ```jsx 
@@ -198,7 +194,10 @@ await element(by.id('Grandson883').withAncestor(by.id('Son883')))
 ```js
 await element(by.id('Son883').withDescendant(by.id('Grandson883')))
 ``` 
-
+ To find the back button use: 
+```JS
+ await element(by.traits(['button']).and(by.label('Back')))
+```
 
 A full matchers list can be found [here](../API.md) 
 
