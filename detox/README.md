@@ -60,17 +60,6 @@ If you used previous detox version, follow the [migration guide](../MIGRATION.md
   npm install -g detox-cli
   ```
 
-##### Set Xcode build path
-By default, Xcode uses a randomized hidden path for outputting project build artifacts, called DerivedData. For ease of use (and better support in CI environments), it is recommended to change the project build path to a more convenient path.
-
-* With your project opened in Xcode, select menu `File` ► `Project Settings...`. Click on `Advanced...`, select `Custom` and from the drop-down menu, select `Relative to Derived Data`.
-* Build artifacts will now be created in a `DerivedData` folder next to your `xcodeproj` project.
-
-
-
-
-
-
 #### Step 2: Add Detox
 
 * Install detox:
@@ -85,7 +74,7 @@ By default, Xcode uses a randomized hidden path for outputting project build art
 	npm install mocha --save-dev
 	``` 
 
-* Add a detox property to your `package.json`: <br> 
+* Add this detox property to your `package.json` file: <br> 
 
 	
 	```json
@@ -100,7 +89,10 @@ By default, Xcode uses a randomized hidden path for outputting project build art
 	    } 
 	  }
 	```
-* In the binaryPath and build properties switch 'example' with your project name (there are 3 occurrences of the word 'example' that need to be switched, don't forget to change them all!).
+*  In the detox property you just copied, switch 'example' with your project name. <br>
+In `"binaryPath"`: `example.app` should be `<your_project_name>.app`. <br>
+In `"build"`: `example.xcodeproj` should be `<your_project_name>.xcodeproj` and 
+`-scheme example` should be <br> `-scheme <your_project_name>`.
 <br>
 To test a release version, make sure to replace 'Debug' with 'Release' in the binaryPath and build properties.
 For full configuration options see the **options** section below.
@@ -131,6 +123,12 @@ By using the `detox` command line tool, you can build and test your project easi
 That's it! Your first failing detox test! Next, we'll go over usage and how to make this test pass.
 
 ## Options 
+
+##### Set Xcode build path
+By default, Xcode uses a randomized hidden path for outputting project build artifacts, called DerivedData. For ease of use (and better support in CI environments), it is recommended to change the project build path to a more convenient path.
+
+* With your project opened in Xcode, select menu `File` ► `Project Settings...`. Click on `Advanced...`, select `Custom` and from the drop-down menu, select `Relative to Derived Data`.
+* Build artifacts will now be created in a `DerivedData` folder next to your `xcodeproj` project.
 
 ### Device Configuration
 `configurations` holds all the device configurations, if there is only one configuration in `configurations` `detox build` and `detox test` will default to it, to choose a specific configuration use `--configuration` param<br>
