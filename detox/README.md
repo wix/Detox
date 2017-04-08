@@ -63,10 +63,13 @@ If you used previous detox version, follow the [migration guide](../MIGRATION.md
 ##### Set Xcode build path
 By default, Xcode uses a randomized hidden path for outputting project build artifacts, called DerivedData. For ease of use (and better support in CI environments), it is recommended to change the project build path to a more convenient path.
 
-* With your project opened in Xcode, select menu `File` ► `Project Settings...`. Click on `Advanced...`, select `Custom` and from the drop-down menu, select `Project-relative Location`.
+* With your project opened in Xcode, select menu `File` ► `Project Settings...`. Click on `Advanced...`, select `Custom` and from the drop-down menu, select `Relative to Derived Data`.
 * Build artifacts will now be created in a `DerivedData` folder next to your `xcodeproj` project.
 
-![Set relative path](project-relative-path.jpeg)
+
+
+
+
 
 #### Step 2: Add Detox
 
