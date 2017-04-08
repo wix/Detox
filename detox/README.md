@@ -234,6 +234,46 @@ await element(by.id('ScrollView799')).swipe('down', 'fast');
 
 ### Aseertions
 
+The expection entity, asserting that the matched views have certain properties: visibility, content, etc...
+
+```js
+await expect(element(by.id('UniqueId204'))).toBeVisible();
+await expect(element(by.id('UniqueId205'))).toBeNotVisible();
+await expect(element(by.id('UniqueId205'))).toExist();
+await expect(element(by.id('RandomJunk959'))).toNotExist();
+await expect(element(by.id('UniqueId204'))).toHaveText('I contain some text');
+await expect(element(by.id('UniqueId204'))).toHaveLabel('I contain some text');
+await expect(element(by.label('I contain some text'))).toHaveId('UniqueId204');
+await expect(element(by.id('UniqueId146'))).toHaveValue('0');
+```
+
+### waitFor
+
+
+```js
+await waitFor(element(by.id('UniqueId336'))).toExist().withTimeout(2000);
+await waitFor(element(by.label('Text5'))).toBeVisible().whileElement(by.id('ScrollView630')).scroll(50, 'down');
+```
+
+
+### Device control
+
+If this is a react native app, reload react native JS bundle
+
+```js
+await device.reloadReactNative();
+```
+
+Install the app file defined in the current configuration
+
+```js
+await device.installApp();
+```
+
+Uninstall the app defined in the current configuration
+```js
+await device.uninstallApp();
+```
 
 ## Options 
 
