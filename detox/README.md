@@ -127,7 +127,7 @@ That's it! Your first failing detox test! Next, we'll go over usage and how to m
 
 ### Basic
 
-This reloads your react native app, makes sure your first screen has an element with a 'Welcome' text in it and that after taping it an element with an 'Hello_123' id is visible:
+This reloads your react native app, makes sure your first screen has an element with a `'Welcome'` text in it and that after taping it an element with an `Hello_123` id is visible:
 ```JS
 describe('Example', () => {
   beforeEach(async () => {
@@ -146,11 +146,19 @@ describe('Example', () => {
 ```
 detox uses **matchers** to find elements in your app, **Actions** to emulate user interaction with those elements and **Assertions** to test how your app reacts.
 ### Matchers 
-Matchers find elements that match some property:
+Matchers find elements that match some property.
+This finds all the elements with the id `welcome_123`:
 ```JS
 element(by.id('welcome_123'))
 ```
- 
+This finds all the elements that contains the text `'Welcome'`:
+```JS
+element(by.label('Welcome'))
+```
+This finds an element with the id `welcome_123` that has a parent view with a `welcome_parent` id:
+```JS
+element(by.id('welcome_123').withAncestor(by.id('welcome_parent')))
+```
 
 
 
