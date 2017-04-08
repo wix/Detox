@@ -82,7 +82,7 @@ If you used previous detox version, follow the [migration guide](../MIGRATION.md
 	```json
 	"detox": {
 	  "configurations": {
-	      "ios.sim.release": {
+	      "ios.sim.debug": {
 	        "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
 	        "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
 	        "type": "ios.simulator",
@@ -135,12 +135,17 @@ describe('Example', () => {
   });
   
   it('should have welcome screen', async () => {
-    await expect(element(by.label('Welcome'))).toBeVisible();
+    await expect(element(by.id('welcome'))).toBeVisible();
   });
   
   it('should show hello screen after tap', async () => {
-    await element(by.label('Welcome')).tap();
-    await expect(element(by.id('Hello_123'))).toBeVisible();
+    await element(by.id('welcome_button')).tap();
+    await expect(element(by.id('hello'))).toBeVisible();
+  });
+  
+  it('should show world screen after tap', async () => {
+    await element(by.id('say_world')).tap();
+    await expect(element(by.id('world_text'))).toBeVisible();
   });
 });
 ```
@@ -149,6 +154,12 @@ detox uses **Matchers** to find elements in your app, **Actions** to emulate use
 ### Matchers 
 Matchers find elements in your app that match some property.
 
+Whenever possible we recommend to match elements by id: 
+```js
+await element(by.id('random_id123'))
+```
+
+For other cases there is a variaty of options: 
 ```js
 // find an element by id (add a 'testID' prop to your view for this to work)
 await element(by.id('tap_me'))
@@ -173,15 +184,10 @@ await element(by.label('Product')).atIndex(2)
 
 // find an element with an accessibility trait
 await element(by.traits(['button'])
-
-// to find the back button:
-await element(by.traits(['button']).and(by.label('Back')))
-
 ```
-The most common and recommended Matcher is the `by.id()` matcher.
 
 #### Example
-To find the following view: 
+To find the view with the id `Son883`  
 
 ```jsx 
 <View testID='Grandfather883' style={{padding: 8, backgroundColor: 'red', marginBottom: 10}}>
@@ -197,16 +203,16 @@ To find the following view:
 Use:
 ```js
 // any of the following will work
-await element(by.id('Grandson883'))
-await element(by.id('Grandson883').withAncestor(by.id('Son883')))
+await element(by.id('Son883'))
+await element(by.id('Son883').withAncestor(by.id('Father883')))
 await element(by.id('Son883').withDescendant(by.id('Grandson883')))
 ```
- To find the back button use: 
+**Tip**: To find the back button use: 
 ```JS
  await element(by.traits(['button']).and(by.label('Back')))
 ```
 
-A full matchers list can be found [here](../API.md) 
+A more detailed explanation on matchers can be found [here](../API.md) 
 
 ### Actions 
 Actions are functions that emulate user behavior:
