@@ -23,14 +23,14 @@ class example extends Component {
   render() {
     if (this.state.greeting) return this.renderAfterButton();
     return (
-      <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
+      <View testID='welcome' style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={{fontSize: 25, marginBottom: 30}}>
           Welcome
         </Text>
-        <TouchableOpacity onPress={this.onButtonPress.bind(this, 'Hello')}>
+        <TouchableOpacity testID='hello_button' onPress={this.onButtonPress.bind(this, 'Hello')}>
           <Text style={{color: 'blue', marginBottom: 20}}>Say Hello</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={this.onButtonPress.bind(this, 'World')}>
+        <TouchableOpacity testID='world_button' onPress={this.onButtonPress.bind(this, 'World')}>
           <Text style={{color: 'blue', marginBottom: 20}}>Say World</Text>
         </TouchableOpacity>
       </View>
