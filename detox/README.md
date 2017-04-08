@@ -127,7 +127,7 @@ That's it! Your first failing detox test! Next, we'll go over usage and how to m
 
 ### Basic
 
-This reloads your react native app, makes sure your first screen has an element with a `'Welcome'` text in it and that after taping it an element with an `Hello_123` id is visible:
+This reloads your react native app, makes sure your first screen has an element with a `'Welcome'` text and that after tapping on it an element with an `Hello_123` id is visible:
 ```JS
 describe('Example', () => {
   beforeEach(async () => {
