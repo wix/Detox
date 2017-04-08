@@ -44,7 +44,7 @@
  * start react-native packager
  
   ```sh
- npm run packager
+ npm run start
  ```
  * Run tests on the demo project
  
