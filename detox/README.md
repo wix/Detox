@@ -150,25 +150,38 @@ detox uses **Matchers** to find elements in your app, **Actions** to emulate use
 Matchers find elements in your app that match some property.
 
 ```js
-// find an element that is matched by id (add a 'testID' prop to your view for this to work)
+// find an element by id (add a 'testID' prop to your view for this to work)
 await element(by.id('tap_me'))
-// find an element that is matched by text
+
+// find an element by text
 await element(by.label('Tap Me'))
+
 // find an element by id and by parent id
 await element(by.id('Grandson883').withAncestor(by.id('Son883')))
+
 // find an element by id and by child id
 await element(by.id('Son883').withDescendant(by.id('Grandson883')))
+
 // find an element by native view type
 await element(by.type('RCTImageView'))
+
+// multiple matchers
+await element(by.id('UniqueId345').and(by.label('ID')))
+
+// Choose from multiple elements matching the same matcher using index
+await element(by.label('Product')).atIndex(2)
+
 // find an element with an accessibility trait
 await element(by.traits(['button'])
+
 // to find the back button:
 await element(by.traits(['button']).and(by.label('Back')))
+
 ```
 The most common and recommended Matcher is the `by.id()` matcher.
 
 #### Example
-The following view: 
+To find the following view: 
 
 ```jsx 
 <View testID='Grandfather883' style={{padding: 8, backgroundColor: 'red', marginBottom: 10}}>
@@ -181,19 +194,13 @@ The following view:
 ```
 
 
-Will be matched by:
-
+Use:
 ```js
+// any of the following will work
 await element(by.id('Grandson883'))
-```
-
-```js
 await element(by.id('Grandson883').withAncestor(by.id('Son883')))
-```
-
-```js
 await element(by.id('Son883').withDescendant(by.id('Grandson883')))
-``` 
+```
  To find the back button use: 
 ```JS
  await element(by.traits(['button']).and(by.label('Back')))
@@ -202,7 +209,7 @@ await element(by.id('Son883').withDescendant(by.id('Grandson883')))
 A full matchers list can be found [here](../API.md) 
 
 ### Actions 
-Actions are functions we can use on elements to emulate user behavior:
+Actions are functions that emulate user behavior:
 ```js
 await element(by.label('Tap Me')).tap();
 await element(by.label('Tap Me')).longPress();
@@ -218,6 +225,7 @@ await element(by.id('ScrollView161')).scrollTo('top');
 // directions: 'up'/'down'/'left'/'right', speed: 'fast'/'slow'
 await element(by.id('ScrollView799')).swipe('down', 'fast');
 ```
+
 ### Aseertions
 
 
