@@ -42,7 +42,7 @@ gem install xcpretty
 ### Installing
 
 ```sh
-lerna install
+lerna bootstrap
 ```
 
 ### Building
