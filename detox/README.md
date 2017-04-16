@@ -149,8 +149,9 @@ describe('Example', () => {
   });
 })
 ```
+### Basic
+Detox uses **Matchers** to find elements in your app, **Actions** to emulate user interaction with those elements and **Assertions** to test how your app reacts.
 
-detox uses **Matchers** to find elements in your app, **Actions** to emulate user interaction with those elements and **Assertions** to test how your app reacts.
 ### Matchers 
 Matchers find elements in your app that match some property.
 
@@ -234,7 +235,7 @@ await element(by.id('ScrollView799')).swipe('down', 'fast');
 
 ### Aseertions
 
-The expection entity, asserting that the matched views have certain properties: visibility, content, etc...
+Assertions test how your app behaves:
 
 ```js
 await expect(element(by.id('UniqueId204'))).toBeVisible();
@@ -247,8 +248,10 @@ await expect(element(by.label('I contain some text'))).toHaveId('UniqueId204');
 await expect(element(by.id('UniqueId146'))).toHaveValue('0');
 ```
 
+## Async operations and device control 
 ### waitFor
 
+Test async code with waitFor:
 
 ```js
 await waitFor(element(by.id('UniqueId336'))).toExist().withTimeout(2000);
@@ -275,7 +278,8 @@ Uninstall the app defined in the current configuration
 await device.uninstallApp();
 ```
 
-## Options 
+
+### Configuration Options 
 
 ##### Set Xcode build path
 By default, Xcode uses a randomized hidden path for outputting project build artifacts, called DerivedData. For ease of use (and better support in CI environments), it is recommended to change the project build path to a more convenient path.
