@@ -11,7 +11,7 @@ Graybox E2E Tests and Automation Library for Mobile
 - [About](#about)
 - [Getting Started](#getting-started)
 - [Usage](#usage)
-- [Options](#options)
+- [Options](#configuration-options)
 - [See it in Action](#see-it-in-action)
 - [The Detox API](#the-detox-api)
 - [Dealing with flakiness](#dealing-with-flakiness)
@@ -149,7 +149,7 @@ describe('Example', () => {
   });
 })
 ```
-### Basic
+
 Detox uses **Matchers** to find elements in your app, **Actions** to emulate user interaction with those elements and **Assertions** to test how your app reacts.
 
 ### Matchers 
@@ -248,9 +248,7 @@ await expect(element(by.label('I contain some text'))).toHaveId('UniqueId204');
 await expect(element(by.id('UniqueId146'))).toHaveValue('0');
 ```
 
-## Async operations and device control 
 ### waitFor
-
 Test async code with waitFor:
 
 ```js
@@ -279,7 +277,7 @@ await device.uninstallApp();
 ```
 
 
-### Configuration Options 
+## Configuration Options 
 
 ##### Set Xcode build path
 By default, Xcode uses a randomized hidden path for outputting project build artifacts, called DerivedData. For ease of use (and better support in CI environments), it is recommended to change the project build path to a more convenient path.
