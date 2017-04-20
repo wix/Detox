@@ -1,8 +1,6 @@
 const fs = require('fs');
 const program = require('commander');
 const mochaTemplates = require('./templates/mocha.js')
-const runnerInit = require('./templates/init.js')
-const initjsContent = runnerInit.initjs 
 
 program
   .option('-r, --runner [runner]', 'Test runner (currently supports mocha)', 'mocha')
@@ -18,7 +16,7 @@ const createFile = (dir, content) => {
 }
 
 const dir = './e2e';
-const createFolder = (firstTestContent, runnerConfig) => {
+const createFolder = (firstTestContent, runnerConfig, initjsContent) => {
     if (!fs.existsSync(dir)){
         fs.mkdirSync(dir);
         createFile("./e2e/mocha.opts", runnerConfig)
@@ -31,10 +29,10 @@ const createFolder = (firstTestContent, runnerConfig) => {
 
 switch (program.runner) {
   case 'mocha':
-    createFolder(mochaTemplates.firstTest, mochaTemplates.runnerConfig)
+    createFolder(mochaTemplates.firstTest, mochaTemplates.runnerConfig, mochaTemplates.initjs)
     break;
   default:
-    createFolder(mochaTemplates.firstTest, mochaTemplates.runnerConfig)
+    createFolder(mochaTemplates.firstTest, mochaTemplates.runnerConfig, mochaTemplates.initjs)
 }
 
 
