@@ -7,5 +7,5 @@ program
   .command('test', 'Initiating your test suite')
   .command('build', `[convince method] Run the command defined in 'configuration.build'`)
   .command('run-server', 'Starts a standalone detox server')
-  .command('create-e2e', 'Create initial e2e tests folder')
+  .command('init', 'Create initial e2e tests folder')
   .parse(process.argv);
