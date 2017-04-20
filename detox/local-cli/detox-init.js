@@ -6,7 +6,7 @@ program
   .option('-r, --runner [runner]', 'Test runner (currently supports mocha)', 'mocha')
   .parse(process.argv);
 
-const createFile = (dir, content) => {
+function createFile(dir, content) {
     fs.writeFileSync(dir, content, (err) => {
     if(err) {
         return err;
@@ -16,7 +16,7 @@ const createFile = (dir, content) => {
 }
 
 const dir = './e2e';
-const createFolder = (firstTestContent, runnerConfig, initjsContent) => {
+function createFolder(firstTestContent, runnerConfig, initjsContent) {
     if (!fs.existsSync(dir)){
         fs.mkdirSync(dir);
         createFile("./e2e/mocha.opts", runnerConfig)
