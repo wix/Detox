@@ -1,18 +1,8 @@
 const fs = require('fs');
 const program = require('commander');
 const mochaTemplates = require('./templates/mocha.js')
-
-const initjsContent = `require('babel-polyfill');
-const detox = require('detox');
-const config = require('../package.json').detox;
-
-before(async () => {
-  await detox.init(config);
-});
-
-after(async () => {
-  await detox.cleanup();
-});`
+const runnerInit = require('./templates/init.js')
+const initjsContent = runnerInit.initjs 
 
 program
   .option('-r, --runner [runner]', 'Test runner (currently supports mocha)', 'mocha')
