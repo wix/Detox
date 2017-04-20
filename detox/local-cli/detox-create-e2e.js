@@ -1,8 +1,8 @@
-var fs = require('fs');
-var dir = './e2e';
+const fs = require('fs');
+const program = require('commander');
+const mochaTemplates = require('./templates/mocha.js')
 
-var mochaOptsContent= '--recursive --timeout 120000 --bail'
-var initjsContent = `require('babel-polyfill');
+const initjsContent = `require('babel-polyfill');
 const detox = require('detox');
 const config = require('../package.json').detox;
 
@@ -13,48 +13,38 @@ before(async () => {
 after(async () => {
   await detox.cleanup();
 });`
-var firstTestContent = `describe('Example', () => {
-  beforeEach(async () => {
-    await device.reloadReactNative();
-  });
-  
-  it('should have welcome screen', async () => {
-    await expect(element(by.id('welcome'))).toBeVisible();
-  });
-  
-  it('should show hello screen after tap', async () => {
-    await element(by.id('hello_button')).tap();
-    await expect(element(by.label('Hello!!!'))).toBeVisible();
-  });
-  
-  it('should show world screen after tap', async () => {
-    await element(by.id('world_button')).tap();
-    await expect(element(by.label('World!!!'))).toBeVisible();
-  });
-})`
 
-if (!fs.existsSync(dir)){
-    fs.mkdirSync(dir);
-    fs.writeFileSync("./e2e/mocha.opts", mochaOptsContent, function(err) {
+program
+  .option('-r, --runner [runner]', 'Test runner (currently supports mocha)', 'mocha')
+  .parse(process.argv);
+
+const createFile = (dir, content) => {
+    fs.writeFileSync(dir, content, (err) => {
     if(err) {
-        return console.log(err);
+        return err;
     }
-    console.log("The file was saved!");
+    console.log(`A file was created in "${dir}" `);
     }); 
-    fs.writeFileSync("./e2e/init.js", initjsContent, function(err) {
-    if(err) {
-        return console.log(err);
-    }
-
-    console.log("The file was saved!");
-    });
-    fs.writeFileSync("./e2e/firstTest.spec.js", firstTestContent, function(err) {
-    if(err) {
-        return console.log(err);
-    }
-
-    console.log("The file was saved!");
-    });
-} else {
-    return console.log('e2e folder already exists')
 }
+
+const dir = './e2e';
+const createFolder = (firstTestContent, runnerConfig) => {
+    if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir);
+        createFile("./e2e/mocha.opts", runnerConfig)
+        createFile("./e2e/init.js", initjsContent)
+        createFile("./e2e/firstTest.spec.js", firstTestContent)
+    } else {
+        return console.log('e2e folder already exists')
+    }
+}
+
+switch (program.runner) {
+  case 'mocha':
+    createFolder(mochaTemplates.firstTest, mochaTemplates.runnerConfig)
+    break;
+  default:
+    createFolder(mochaTemplates.firstTest, mochaTemplates.runnerConfig)
+}
+
+
