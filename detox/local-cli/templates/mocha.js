@@ -18,6 +18,18 @@ const firstTestContent = `describe('Example', () => {
     await expect(element(by.label('World!!!'))).toBeVisible();
   });
 })`
+const initjsContent = `require('babel-polyfill');
+const detox = require('detox');
+const config = require('../package.json').detox;
 
+before(async () => {
+  await detox.init(config);
+});
+
+after(async () => {
+  await detox.cleanup();
+});`
+
+exports.initjs = initjsContent
 exports.firstTest = firstTestContent
 exports.runnerConfig = mochaOptsContent
