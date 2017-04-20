@@ -102,7 +102,12 @@ For full configuration options see the **options** section below.
 	
 
 #### Step 3: Create your first test (using mocha test runner)
-
+Automatically: 
+<br>
+```sh
+detox init
+```
+Manually: <br>
 * Create an `e2e` folder in your project root.
 * Create `mocha.opts` file with this [content](examples/demo-react-native/e2e/mocha.opts).
 * Create `init.js` file with this [content](examples/demo-react-native/e2e/init.js).
