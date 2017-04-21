@@ -36,6 +36,8 @@ Please note that this library is still pre version 1.0.0 and under active develo
 
 This is a step-by-step guide to help you add detox to your project.
 
+You can also go through this [`short guide`](https://medium.com/@bogomolnyelad/how-to-test-your-react-native-app-like-a-real-user-ecfc72e9b6bc)
+
 If you used previous detox version, follow the [migration guide](../MIGRATION.md).
 
 #### Step 1: Installing Dependencies
