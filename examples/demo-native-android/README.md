@@ -1,6 +1,7 @@
 > detox
 
-# Pure Native Demo Project
+# Pure Native Android Demo Project
+currently, pure native android demo is **not supported**
 
 ## Requirements
 
