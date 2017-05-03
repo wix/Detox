@@ -7,12 +7,12 @@ program
   .parse(process.argv);
 
 function createFile(dir, content) {
-    fs.writeFileSync(dir, content, (err) => {
-    if(err) {
+    try {
+    fs.writeFileSync(dir, content);
+    console.log(`A file was created in "${dir}" `);
+    } catch(err){
         return err;
     }
-    console.log(`A file was created in "${dir}" `);
-    }); 
 }
 
 const dir = './e2e';
@@ -34,5 +34,3 @@ switch (program.runner) {
   default:
     createFolder(mochaTemplates.firstTest, mochaTemplates.runnerConfig, mochaTemplates.initjs)
 }
-
-
