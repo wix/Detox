@@ -1,8 +1,6 @@
-> detox
-
 # Contributing to detox
 
-##### Clone detox and submodules
+### Clone detox and submodules
 
 ```sh
 git clone git@github.com:wix/detox.git
@@ -12,13 +10,13 @@ git submodule update --init --recursive
 (this makes sure all git submodule dependencies are properly checked out)
 
 
-##### Install `node` v7.6 or higher (to support async-await natively)
+### Install `node` v7.6 or higher (to support async-await natively)
 
 ```
 brew install node
 ```
 
-##### Install global node libraries `lerna` and `react-native-cli`
+### Install global node libraries `lerna` and `react-native-cli`
 
 ```sh
 npm install -g lerna
@@ -27,14 +25,14 @@ npm install -g react-native-cli
 
 For all the internal projects (detox, detox-server, detox-cli, demos, test) `lerna` will create symbolic links in `node_modules` instead of `npm` copying the content of the projects. This way, any change you do on any code is there immediately. There is no need to update node modules or copy files between projects.
 
-install `fbsimctl` 
+### Install `fbsimctl` 
 
 ```sh
 brew tap facebook/fb
-brew install fbsimctl --HEAD
+export CODE_SIGNING_REQUIRED=NO && brew install fbsimctl --HEAD
 ```
 
-install `xcpretty`
+### Install `xcpretty`
 
 ```sh
 gem install xcpretty
