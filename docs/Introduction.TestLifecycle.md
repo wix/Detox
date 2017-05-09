@@ -1,9 +1,9 @@
-# Setup and Teardown
+# Test Lifecycle
 
 Detox is test runner independent, and we encourge you to choose your own test runner, but for the sake of demonstration we will use `mocha`'s syntax.
 
 
-### One Time Setup
+### Initial Setup
 The setup phase happens inside `detox.init()`. This is the phase where detox reads its configuration, starts a server, loads its expection library and starts a simulator.
 
 ```js
@@ -16,7 +16,7 @@ before(async () => {
 
 Of course, you can add any of your initilizations in this phase.
 
-### One Time Teardown
+### Teardown
 The cleanup phase should happen after all the tests have finished, can be initiated using `detox.cleanup()`. This is the phase where detox-server shuts down. The simulator will also shut itself down if `--cleanup` flag is added to `detox test`
 
 ```js

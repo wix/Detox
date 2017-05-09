@@ -26,7 +26,3 @@ Uninstall the app defined in the current [`configuration`]().
 
 
 ### `device.sendUserNotification(params)`
-
-
-### `device.shutdown()`
-Shutdown the currently attached device.

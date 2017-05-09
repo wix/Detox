@@ -93,7 +93,6 @@ Along with the new promise based API, this is how we now control the attached de
 `simulator.relaunchApp(done)`				| `await device.relaunchApp()`
 `simulator.sendUserNotification(params, done)` | `await device.sendUserNotification(params)`
 `simulator.openURL(url)`					| `await device.openURL(url)`
-`simulator.sendUserNotification(params, done)`	| `await device.sendUserNotification(params)`
 
 #### 4. Detox config scheme
 In order for our API to support multiple platforms and devices, and to be able to provide a valid command line tool, we changed the the detox configuration scheme (in package.json)
