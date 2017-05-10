@@ -14,9 +14,9 @@ Actions are functions that emulate user behavior. They are being performed on ma
 - [`.typeText()`](#typetext)
 - [`.replaceText()`](#replacetext)
 - [`.clearText()`](#cleartexttest)
-- [`.scroll()`](#scrollpixels,direction)
+- [`.scroll()`](#scrollpixels-direction)
 - [`.scrollTo()`](#scrolltoedge)
-- [`.swipe()`](#swipedirection,speed)
+- [`.swipe()`](#swipedirection-speed)
 
 
 ### `tap()`
