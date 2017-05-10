@@ -1,6 +1,6 @@
 # Expect
 
-Detox uses **Matchers** to find elements in your app, **Actions** to emulate user interaction with those elements and **Expectations** to verify values.
+Detox uses **Matchers** to find UI `elements` in your app, **Actions** to emulate user interaction with those `elements` and **Expectations** to verify values on those `elements`.
 
 Expect verifies if a certain value is as expected to be.
 

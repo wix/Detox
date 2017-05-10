@@ -1,6 +1,6 @@
 # Element
 
-Detox uses **Matchers** to find elements in your app, **Actions** to emulate user interaction with those elements and **Expectations** to verify values.
+Detox uses **Matchers** to find UI `elements` in your app, **Actions** to emulate user interaction with those `elements` and **Expectations** to verify values on those `elements`.
 
 
 ## Actions
@@ -62,7 +62,7 @@ await element(by.id('textField')).clearText();
 ```
 
 ### `scroll(pixels, direction)`
-Scroll amount of pixels.
+Scroll amount of pixels.<br>
 pixels - independent device pixels.<br>
 direction - left/right/top/bottom
 
@@ -83,7 +83,7 @@ await element(by.id('scrollView')).scrollTo('top');
 
 ### `swipe(direction, speed)`
 
-direction - left/right/up/down
+direction - left/right/up/down<br>
 speed - fast/slow
 
 ```js
