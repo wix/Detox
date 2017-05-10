@@ -1,5 +1,6 @@
-# Configuration Options 
+# Configuration Options
 
+## Configuring package.json 
 ### Device Configuration
 `configurations` holds all the device configurations, if there is only one configuration in `configurations` `detox build` and `detox test` will default to it, to choose a specific configuration use `--configuration` param<br>
 	
@@ -10,6 +11,22 @@
 |`type`|device type, currently only `ios.simulator` is supported|
 |`name`|device name, aligns to the device list avaliable through `fbsimctl list` for example, this is one line of the output of `fbsimctl list`: `A3C93900-6D17-4830-8FBE-E102E4BBCBB9 | iPhone 7 | Shutdown | iPhone 7 | iOS 10.2`, ir order to choose the first `iPhone 7` regardless of OS version, use `iPhone 7`. to be OS specific use `iPhone 7, iOS 10.2`|
 |`build`| **[optional]** build command (either `xcodebuild`, `react-native run-ios`, etc...), will be later available through detox CLI tool.|
+	
+**Example:**
+
+```json
+  "detox": {
+	...
+    "configurations": {
+      "ios.sim.debug": {
+        "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
+        "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
+        "type": "ios.simulator",
+        "name": "iPhone 7 Plus"
+      }
+    }
+  }
+```	
 	
 	
 ### Server Configuration
@@ -38,10 +55,13 @@ Applies when using `detox-cli` by running `detox test` command, default is `e2e`
 	}
 ```
 
+
+## detox-cli
 ### Build Configuration
 
-In your detox config (in package.json) paste your build command into the configuration's `build` field. 
-The build command will be triggered when running
+In your detox config (in `package.json`) paste your build command into the configuration's `build` field. 
+The build command will be triggered when running `detox build`.<br>
+**This is only a convience method, to help you manage building multiple configurations of your app and couple them to your tests. You can also choose not to use it and provide a compiled `app` by yourself.**
 
 You can choose to build your project in any of these ways...
 
@@ -93,10 +113,3 @@ detox test --reuse
 
 This is especially useful with React Native DEV mode when making Javascript code changes that are getting picked up by the packager (and thus no reinstall is needed). This can save up to 7 seconds per run!
 You should not use this option if you made native code changes or if your app relies on local ("disk") storage.
-
-
-### Set Xcode build path
-By default, Xcode uses a randomized hidden path for outputting project build artifacts, called DerivedData. For ease of use (and better support in CI environments), it is recommended to change the project build path to a more convenient path.
-
-* With your project opened in Xcode, select menu `File` ► `Project Settings...`. Click on `Advanced...`, select `Custom` and from the drop-down menu, select `Relative to Derived Data`.
-* Build artifacts will now be created in a `DerivedData` folder next to your `xcodeproj` project.
