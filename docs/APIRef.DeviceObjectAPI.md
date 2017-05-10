@@ -2,6 +2,8 @@
 
 `device` is globally available in every test file, it enables control over the current attached device (currently only simulatoris supported).
 
+### Methods
+
 - [`device.relaunchApp()`](#devicerelaunchapp)
 - [`device.reloadReactNative()`](#devicereloadreactnative)
 - [`device.installApp()`](#deviceinstallapp)

@@ -2,6 +2,8 @@
 Test async code with waitFor.<br>
 **Hang the test until an expectation is met.**
 
+### Methods
+
 - [`.toBeVisible()`](#tobevisible)
 - [`.toBeNotVisible()`](#tobenotvisible)
 - [`.toExist()`](#toexist)

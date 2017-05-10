@@ -1,13 +1,23 @@
 # Matchers
 
-Detox uses **Matchers** to find elements in your app, **Actions** to emulate user interaction with those elements and **Assertions** to verify values.
+Detox uses **Matchers** to find UI `elements` in your app, **Actions** to emulate user interaction with those `elements` and **Expectations** to verify values on those `elements`.
 
 
 Matchers find elements in your app that match one or more properties.
 
 **NOTE: Whenever possible we recommend to match elements `by.id`, these are more resilient to layout restructuring and text/language chagnes**
 
-#### `by.id()`
+### Methods
+
+- [`by.id()`](#byidid)
+- [`by.text()`](#bytexttext)
+- [`by.type()`](#bytypenativeviewtype)
+- [`by.traits()`](#bytraitstraits)
+
+- [Advanced](#advanced)
+
+
+#### `by.id(id)`
 `by.id` will match an id that is given to the view via [`testID`](https://facebook.github.io/react-native/docs/view.html#testid) prop.
 
 In a React Native component add testID like so:
@@ -26,19 +36,19 @@ await element(by.id('tap_me'));
 
 For other cases, and only if you can't use `by.id` there is a variety of options:
 
-#### `by.text()`
+#### `by.text(text)`
 Find an element by text, useful for text fields, buttons.
 
 ```js
 await element(by.text('Tap Me'));
 ```
-#### `by.type()`
+#### `by.type(nativeViewType)`
 Find an element by native view type.
 
 ```js
 await element(by.type('RCTImageView'));
 ```
-#### `by.traits()`
+#### `by.traits([traits])`
 Find an element with an accessibility trait.
 
 ```js

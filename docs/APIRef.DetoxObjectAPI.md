@@ -4,6 +4,7 @@
 
 >NOTE: detox is test runner independent, and we encourge you to choose your own test runner, but for the sake of demonstration we will use `mocha`'s syntax.
 
+### Methods
 
 - [`detox.init()`](#detox.init)
 - [`detox.cleanup()`](#detox.cleanup)
