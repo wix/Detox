@@ -8,19 +8,20 @@
 - [`device.uninstallApp()`](#deviceuninstallapp)
 - [`device.openURL(url)`](#deviceopenurl)
 - [`device.sendUserNotification(params)`](#devicesendusernotifications)
-- [`device.shutdown()`](#deviceshutdown)
 
 ### `device.relaunchApp()`
-Kill and relaunch the app defined in the current [`configuration`]().
+Kill and relaunch the app defined in the current [`configuration`](APIRef.Configuration.md).
+
+
 
 ### `device.reloadReactNative()`
-If this is a react native app, reload react native JS bundle.
+If this is a react native app, reload react native JS bundle. This action is much faster than `device.relaunchApp()`, and is recommended if you just need to reset your react native logic.
 
 ### `device.installApp()`
-Install the app file defined in the current [`configuration`]().
+Install the app file defined in the current [`configuration`](APIRef.Configuration.md).
 
 ### `device.uninstallApp()`
-Uninstall the app defined in the current [`configuration`]().
+Uninstall the app defined in the current [`configuration`](APIRef.Configuration.md).
 
 ### `device.openURL(url)`
 

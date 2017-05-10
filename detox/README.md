@@ -58,7 +58,7 @@ If you're interested in working on detox core and contributing to detox itself, 
 * The JS tester controls EarlGrey by remote using a strange JSON protocol
 * Instead of wrapping the zillion API calls EarlGrey supports, we implemented a reflection mechanism
 * So the JS tester in low level actually invokes the native methods.. freaky
-* We've abstracted this away in favor of a protractor-like api, see [`demo-react-native/e2e/example.spec.js`](examples/demo-react-native/e2e/example.spec.js)
+* We've abstracted this away in favor of a protractor-like api, see [`examples/demo-react-native/e2e/example.spec.js`](examples/demo-react-native/e2e/example.spec.js)
 * See everything EarlGrey supports [here](https://github.com/google/EarlGrey/blob/master/docs/api.md) and in this [cheatsheet](https://github.com/google/EarlGrey/blob/master/docs/cheatsheet/cheatsheet.pdf)
 * We use [fbsimctl](https://github.com/facebook/FBSimulatorControl) to control the simulator from the test, restart the app, etc
 
