@@ -6,7 +6,7 @@ You can also go through this [short guide](https://medium.com/@bogomolnyelad/how
 
 If you used previous detox version, follow the [migration guide](../MIGRATION.md).
 
-#### Step 1: Installing Dependencies
+### Step 1: Installing dependencies
 
 * Install the latest version of [`brew`](http://brew.sh).
 * If you haven't already, install Node.js
@@ -30,7 +30,7 @@ If you used previous detox version, follow the [migration guide](../MIGRATION.md
   npm install -g detox-cli
   ```
 
-#### Step 2: Add Detox
+### Step 2: Add detox
 
 * Install detox:
 
@@ -69,19 +69,21 @@ To test a release version, make sure to replace 'Debug' with 'Release' in the bi
 For full configuration options see the **options** section below.
 	
 
-#### Step 3: Create your first test (using mocha test runner)
-Automatically: 
-<br>
+### Step 3: Create your first test (using mocha test runner)
+##### Automatically:
+
 ```sh
 detox init
 ```
-Manually: <br>
+
+##### Manually:
+
 * Create an `e2e` folder in your project root.
 * Create `mocha.opts` file with this [content](examples/demo-react-native/e2e/mocha.opts).
 * Create `init.js` file with this [content](examples/demo-react-native/e2e/init.js).
 * Create your first test! `myFirstTest.spec.js` with content similar to [this](examples/demo-react-native/e2e/example.spec.js).
 
-#### Step 4: Build Your App and Run Detox Tests
+### Step 4: Build your app and run detox tests
 By using the `detox` command line tool, you can build and test your project easily.
 
 * Build your app:
