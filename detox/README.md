@@ -15,7 +15,7 @@ Graybox End-to-End Tests and Automation Library for Mobile
 - [Contributing](#contributing)
 - [License](#license)
 
-<img src="http://i.imgur.com/3QqHeGO.gif">
+<wimg src="http://i.imgur.com/3QqHeGO.gif">
 
 ## About
 
@@ -23,7 +23,7 @@ High velocity native mobile development requires us to adopt continuous integrat
 
 * 📱 **Cross Platform in Mind:** Detox is designed to be cross-platform, it currently supports iOS, Android will follow soon.
 * 🔃 **Synchronized Tests:** It is inherently synchronized with the app under test (never add `sleep()` in your test code again!!).
-* <img src="../docs/img/react-native.png" width="17px"/> 
+* <img src="https://raw.githubusercontent.com/wix/detox/master/docs/img/react-native.png" width="17px"/> 
 **React Native Support:** With a special synchronization mechanism, detox supports React Native apps out of the box.
 * ❗️**Test Runner Independent:** Can run with mocha, AVA, or any other JavaScript test runner.
 * 🔴 **Debuggable:** API uses async-await, and all operations are promises, this means that breakpoints will work as expected.
