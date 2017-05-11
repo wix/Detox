@@ -4,7 +4,6 @@
 
 - [Getting Started](Introduction.GettingStarted.md)
 - [Test Lifecycle](Introduction.TestLifecycle.md)
-- [Mocking](Introduction.Mocking.md)
 
 ## API Reference
 - [Configuration](APIRef.Configuration.md)
@@ -14,8 +13,11 @@
 - [Expect](APIRef.Expect.md)
 - [Matchers](APIRef.Matchers.md)
 - [waitFor](APIRef.waitFor.md)
+- [Mocking Open from URL (Deep Links)](APIRef.MockingOpenFromURL.md)
+- [Mocking User Notifications](APIRef.MockingUserNotifications.md)
 
 ## Guides
+- [Mocking](Guide.Mocking.md)
 - [Contributing](Guide.Contributing.md)
 - [Migration](Guide.Migration.md)
 - [Dealing with Flakiness](Guide.Flakiness.md)
