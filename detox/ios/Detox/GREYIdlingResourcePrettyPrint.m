@@ -127,7 +127,7 @@ NSDictionary* _prettyPrintTimedIdlingResource(GREYTimedIdlingResource* timed)
 	rv[@"object"] = [[timed valueForKeyPath:@"trackedObject"] debugDescription];
 	rv[@"name"] = [timed valueForKeyPath:@"name"];
 	rv[@"duration"] = [timed valueForKeyPath:@"duration"];
-	rv[@"endTrackingDate"] = [NSDate dateWithTimeIntervalSince1970:[[timed valueForKeyPath:@"endTrackingTime"] doubleValue]];
+	rv[@"endTrackingDate"] = [[NSDate dateWithTimeIntervalSince1970:[[timed valueForKeyPath:@"endTrackingTime"] doubleValue]] descriptionWithLocale:[NSLocale currentLocale]];
 	
 	return rv;
 }
