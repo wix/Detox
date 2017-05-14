@@ -12,12 +12,13 @@
   "commands": {
     "publish": {
       "ignore": [
-        "examples/demo-native-android",
-        "examples/demo-native-ios",
-        "examples/demo-react-native",
-        "detox/test"
+        "detox-demo-native-android",
+        "detox-demo-native-ios",
+        "detox-demo-react-native",
+        "detox-test"
       ]
     }
   },
-  "version": "independent"
+  "version": "independent",
+  "npmClient": "yarn"
 }
