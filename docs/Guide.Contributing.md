@@ -1,5 +1,6 @@
 # Contributing to detox
 
+
 ### Clone detox and submodules
 
 ```sh
@@ -69,7 +70,28 @@ npm run unit:watch
 After running the tests, jest will create a coverage report.
 
 ```sh
-cd detox/detox
+cd detox
 open coverage/lcov-report/index.html
 ```
 
+### Running detox e2e covarage tests
+Detox has a suite of e2e tests to test its own API while developing (and for regression). The way we do is is by maintaining a special application that is "tested" against detox's API, but essentially, it's the API that is tested, not the app.
+To run the e2e tests, go to `detox/detox/test`
+
+```sh
+cd detox/test
+```
+
+To build the application (if you already ran `lerna run build` you're covered)
+
+```sh
+npm run build
+```
+
+To run the e2e tests, after the application was built.
+
+```sh
+npm run e2e
+```
+
+**NOTE: The updated flow can always be found in [our CI build script](../scripts/ci.sh)**

@@ -25,7 +25,7 @@ install:
 - gem install xcpretty >/dev/null 2>&1
 
 script:
-- ./scripts/travis.sh
+- ./scripts/ci.sh
 notifications:
   email: true
   slack:
