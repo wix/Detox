@@ -16,6 +16,9 @@ if (program.configuration) {
   buildScript = _.result(config, `configurations["${program.configuration}"].build`);
 } else if (_.size(config.configurations) === 1) {
   buildScript = _.values(config.configurations)[0].build;
+} else {
+  throw new Error(`Cannot determine which configuration to use. use --configuration to choose one of the following: 
+                      ${Object.keys(config.configurations)}`);
 }
 
 if (buildScript) {
