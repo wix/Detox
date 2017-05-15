@@ -1,4 +1,4 @@
-# detox
+# Detox Documentation
 
 ## Introduction
 
@@ -6,8 +6,8 @@
 - [Writing You First Passing Test](Introduction.WritingFirstTest.md)
 - [How Detox Works](Introduction.HowDetoxWorks.md)
 
-
 ## API Reference
+
 - [Configuration](APIRef.Configuration.md)
 - [The detox object](APIRef.DetoxObjectAPI.md)
 - [The device object](APIRef.DeviceObjectAPI.md)
@@ -20,15 +20,17 @@
 - [Mocking User Notifications](APIRef.MockingUserNotifications.md)
 
 ## Troubleshooting
-- [Installation](Troubleshooting.Installation.md)
-- [Running Tests](Troubleshooting.RunningTests.md)
-- [Dealing with Flakiness](Troubleshooting.Flakiness.md)
+
+- [Troubleshooting Detox Installation](Troubleshooting.Installation.md)
+- [Troubleshooting a Test That Keeps Failing](Troubleshooting.RunningTests.md)
+- [Troubleshooting a Flaky Test](Troubleshooting.Flakiness.md)
 
 ## Guides
-- [Mocking](Guide.Mocking.md)
-- [Contributing](Guide.Contributing.md)
-- [Migration](Guide.Migration.md)
 
-## More
-- [Roadmap](More.Roadmap.md)
+- [Advanced Mocking With Detox](Guide.Mocking.md)
+- [Migration Between Detox Versions](Guide.Migration.md)
 
+## Contributing to Detox
+
+- [Detox Contribution Guide](Guide.Contributing.md)
+- [Detox Development Roadmap](More.Roadmap.md)
