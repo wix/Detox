@@ -15,8 +15,8 @@
 - [Matchers](APIRef.Matchers.md)
 - [Actions](APIRef.ActionsOnElement.md)
 - [Expect](APIRef.Expect.md)
-- [waitFor](APIRef.waitFor.md)
-- [Mocking Open from URL (Deep Links)](APIRef.MockingOpenFromURL.md)
+- [Manual Synchronization](APIRef.waitFor.md)
+- [Mocking Deep Links (App Launch From URL)](APIRef.MockingOpenFromURL.md)
 - [Mocking User Notifications](APIRef.MockingUserNotifications.md)
 
 ## Troubleshooting
