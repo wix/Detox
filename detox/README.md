@@ -15,7 +15,7 @@ Graybox End-to-End Tests and Automation Library for Mobile
 - [Contributing](#contributing)
 - [License](#license)
 
-<wimg src="http://i.imgur.com/3QqHeGO.gif">
+<img src="http://i.imgur.com/3QqHeGO.gif">
 
 ## About
 
