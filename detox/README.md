@@ -27,11 +27,6 @@ High velocity native mobile development requires us to adopt continuous integrat
 * ❗️**Test Runner Independent:** Can run with mocha, AVA, or any other JavaScript test runner.
 * 🔴 **Debuggable:** API uses async-await, and all operations are promises, this means that breakpoints will work as expected.
 
-### Development still in progress!
-
-Please note that this library is still pre version 1.0.0 and under active development. The NPM version is higher because the name "detox" was transferred to us from a previous inactive package.
-**Package can still break without respecting semver, though we try not to.**
-
 
 ## Getting Started
 
