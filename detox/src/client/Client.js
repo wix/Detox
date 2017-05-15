@@ -5,7 +5,7 @@ class Client {
   constructor(config) {
     this.configuration = config;
     this.ws = new AsyncWebSocket(config.server);
-    this.invocationId = 0;
+    this.actionId = 0;
   }
 
   async connect() {
@@ -35,12 +35,12 @@ class Client {
     if (typeof invocation === 'function') {
       invocation = invocation();
     }
-    const id = this.invocationId++;
-    invocation.id = id.toString();
     await this.sendAction(new actions.Invoke(invocation));
   }
 
   async sendAction(action) {
+    const id = this.actionId++;
+    action.params.id = id.toString();
     const response = await this.ws.send(JSON.stringify(action));
     await action.handle(JSON.parse(response));
     return response;
