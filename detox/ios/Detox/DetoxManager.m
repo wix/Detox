@@ -65,7 +65,7 @@ static void detoxConditionalInit()
 	
 	if([ReactNativeSupport isReactNativeApp])
 	{
-		[self _waitForRNLoad];
+		[self _waitForRNLoadWithId:nil];
 	}
 	
 	return self;
@@ -87,6 +87,10 @@ static void detoxConditionalInit()
 
 - (void) websocketDidReceiveAction:(NSString *)type withParams:(NSDictionary *)params
 {
+	id actionId = params[@"id"];
+	
+	NSAssert(actionId != nil, @"Got action with a null id");
+	
 	if([type isEqualToString:@"invoke"])
 	{
 		[self.testRunner invoke:params];
@@ -96,14 +100,14 @@ static void detoxConditionalInit()
 	{
 		if(_isReady)
 		{
-			[self.websocket sendAction:@"ready" withParams:@{}];
+			[self.websocket sendAction:@"ready" withParams:@{@"id": actionId}];
 		}
 		return;
 	}
 	else if([type isEqualToString:@"cleanup"])
 	{
 		[self.testRunner cleanup];
-		[self.websocket sendAction:@"cleanupDone" withParams:@{}];
+		[self.websocket sendAction:@"cleanupDone" withParams:@{@"id": actionId}];
 		return;
 	}
 	else if([type isEqualToString:@"userNotification"])
@@ -111,29 +115,32 @@ static void detoxConditionalInit()
 		NSURL* userNotificationDataURL = [NSURL fileURLWithPath:params[@"detoxUserNotificationDataURL"]];
 		DetoxUserNotificationDispatcher* dispatcher = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationDataURL:userNotificationDataURL];
 		[dispatcher dispatchOnAppDelegate:DetoxAppDelegateProxy.currentAppDelegateProxy.originalAppDelegate simulateDuringLaunch:NO];
-		[self.websocket sendAction:@"userNotificationDone" withParams:@{}];
+		[self.websocket sendAction:@"userNotificationDone" withParams:@{@"id": actionId}];
 	}
 	else if([type isEqualToString:@"reactNativeReload"])
 	{
 		_isReady = NO;
 		[ReactNativeSupport reloadApp];
 		
-		[self _waitForRNLoad];
+		[self _waitForRNLoadWithId:actionId];
 		
 		return;
 	}
 	else if([type isEqualToString:@"currentStatus"])
 	{
-		[self.websocket sendAction:@"currentStatusResult" withParams:[[EarlGreyStatistics sharedInstance] currentStatus]];
+		NSMutableDictionary* statsStatus = [[[EarlGreyStatistics sharedInstance] currentStatus] mutableCopy];
+		statsStatus[@"id"] = actionId;
+		
+		[self.websocket sendAction:@"currentStatusResult" withParams:statsStatus];
 	}
 }
 
-- (void)_waitForRNLoad
+- (void)_waitForRNLoadWithId:(id)actionId
 {
 	__weak __typeof(self) weakSelf = self;
 	[ReactNativeSupport waitForReactNativeLoadWithCompletionHandler:^{
 		weakSelf.isReady = YES;
-		[weakSelf.websocket sendAction:@"ready" withParams:@{}];
+		[weakSelf.websocket sendAction:@"ready" withParams:actionId == nil ? @{} : @{@"id": actionId}];
 	}];
 }
 
