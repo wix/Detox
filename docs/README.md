@@ -27,6 +27,10 @@
 
 ## Guides
 
+- [Running Tests Locally on Your Machine](#)
+- [Developing Your App While Writing Tests](#)
+- [Running Tests in CI (like Travis)](#)
+- [Debugging Apps in Xcode During a Test](#)
 - [Advanced Mocking With Detox](Guide.Mocking.md)
 - [Migration Between Detox Versions](Guide.Migration.md)
 
