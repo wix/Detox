@@ -141,4 +141,4 @@ detox test
 
 That's it. Your first failing detox test is running! 
 
-Next, we'll go over usage and how to make this test [actually pass](docs/Introduction.WritingFirstTest.md).
+Next, we'll go over usage and how to make this test [actually pass](Introduction.WritingFirstTest.md).
