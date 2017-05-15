@@ -5,6 +5,7 @@
 - [Getting Started](Introduction.GettingStarted.md)
 - [Writing You First Passing Test](Introduction.WritingFirstTest.md)
 - [How Detox Works](Introduction.HowDetoxWorks.md)
+- [Recommended Workflows With Detox](Introduction.Workflows.md)
 
 ## API Reference
 
@@ -27,10 +28,10 @@
 
 ## Guides
 
-- [Running Tests Locally on Your Machine](#)
-- [Developing Your App While Writing Tests](#)
-- [Running Tests in CI (like Travis)](#)
-- [Debugging Apps in Xcode During a Test](#)
+- [Running Tests Locally on Your Machine](Guide.RunningLocally.md)
+- [Developing Your App While Writing Tests](Guide.DevelopingWhileWritingTests.md)
+- [Running Tests in CI (like Travis)](Guide.RunningOnCI.md)
+- [Debugging Apps in Xcode During a Test](Guide.DebuggingInXcode.md)
 - [Advanced Mocking With Detox](Guide.Mocking.md)
 - [Migration Between Detox Versions](Guide.Migration.md)
 
