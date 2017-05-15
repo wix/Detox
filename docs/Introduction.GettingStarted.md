@@ -4,6 +4,8 @@ This is a step-by-step guide for adding detox to your React Native project.
 
 > TIP: You can also check out this [awesome tutorial](https://medium.com/@bogomolnyelad/how-to-test-your-react-native-app-like-a-real-user-ecfc72e9b6bc) on Medium with video by [@bogomolnyelad](https://medium.com/@bogomolnyelad)
 
+<br>
+
 ## Prerequisites
 
 Running detox (on iOS) requires the following:
@@ -14,6 +16,8 @@ Running detox (on iOS) requires the following:
 > TIP: Verify Xcode command line tools is installed by typing `gcc -v` in the terminal
 
 * A working [React Native](https://facebook.github.io/react-native/docs/getting-started.html) app you want to test
+
+<br>
 
 ## Step 1: Install dependencies
 
@@ -52,6 +56,8 @@ This package makes it easier to operate detox from the command line. `detox-cli`
   npm install -g detox-cli
   ```
 > TIP: Verify it works by typing in terminal `detox -h` to output the list of available commands
+
+<br>
 
 ## Step 2: Add detox to your project
 
@@ -93,7 +99,9 @@ In the above configuration example, change `example` to your actual project name
 Also make sure the simulator model specified under the key `"name"` (`iPhone 7` above) is actually available on your machine (it was installed by Xcode). Check this by typing `fbsimctl list` in terminal to display all available simulators.
 
 > TIP: To test a release version, replace 'Debug' with 'Release' in the binaryPath and build properties. For full configuration options see Configuration under the API Reference.
-	
+
+<br>
+
 ## Step 3: Create your first test (using mocha test runner)
 
 You can do this automatically by running:
@@ -108,6 +116,8 @@ Or you can do this manually instead by following these steps:
 * Create `mocha.opts` file with this [content](examples/demo-react-native/e2e/mocha.opts)
 * Create `init.js` file with this [content](examples/demo-react-native/e2e/init.js)
 * Create your first test! `myFirstTest.spec.js` with content similar to [this](examples/demo-react-native/e2e/example.spec.js)
+
+<br>
 
 ## Step 4: Build your app and run detox tests
 
@@ -131,4 +141,4 @@ detox test
 
 That's it. Your first failing detox test is running! 
 
-Next, we'll go over usage and how to make this test actually pass.
+Next, we'll go over usage and how to make this test [actually pass](docs/Introduction.WritingFirstTest.md).
