@@ -6,29 +6,46 @@ You can also go through this [short guide](https://medium.com/@bogomolnyelad/how
 
 If you used previous detox version, follow the [migration guide](../MIGRATION.md).
 
+### Prerequisites
+Running detox on iOS apps requires the following:
+
+1. Mac with macOS (at least macOS El Capitan 10.11)
+2. Xcode 8.2 with Xcode command line tools 
+
 ### Step 1: Installing dependencies
 
-* Install the latest version of [`brew`](http://brew.sh).
-* If you haven't already, install Node.js
+#### Install the latest version of [`Homebrew`](http://brew.sh)
+Homebrew is a package manager for macOS, we'll need it to install other command line tools.
+
+**Verify it works:** `brew -h` should print list of available commands.
+
+#### Install [Node.js](https://nodejs.org/en/)
+This is a JavaScript runtime detox will run on. **Install Node 7.6.0 and above for native async-await support**
 	
-	 ```sh
-	 brew update && brew install node 
-	 ```
+ ```sh
+ brew update && brew install node 
+ ```
 
-* You will also need `fbsimctl` installed: 
+**Verify it works:** `node -v` should print current node version, make sure its higher than 7.6.0.
 
-	 ```sh 
-	 brew tap facebook/fb
-	 export CODE_SIGNING_REQUIRED=NO && brew install fbsimctl --HEAD
-	 ```
+#### Install [`fbsimctl`](https://github.com/facebook/FBSimulatorControl/tree/master/fbsimctl)
+This library helps detox manage and automate iOS Simulators.
+
+ ```sh 
+ brew tap facebook/fb
+ export CODE_SIGNING_REQUIRED=NO && brew install fbsimctl --HEAD
+ ```
 	 
-* Detox CLI
- 	
-  `detox-cli` package should be installed globally, enabling usage of detox command line tools outside of your npm scripts.
+**Verify it works:** `fbsimctl list` should print list of available simulators.
+	 
+#### Install `detox-cli`
+To make it easier to access detox command line tools.
+ 	`detox-cli` package should be installed globally, enabling usage of detox command line tools outside of your npm scripts.
 
   ```sh
   npm install -g detox-cli
   ```
+**Verify it works:** `detox -h` should print list of available commands.
 
 ### Step 2: Add detox
 
