@@ -8,13 +8,13 @@
 
 ## API Reference
 
-- [Configuration](APIRef.Configuration.md)
+- [Detox Configuration](APIRef.Configuration.md)
 - [The detox object](APIRef.DetoxObjectAPI.md)
 - [The device object](APIRef.DeviceObjectAPI.md)
 - [Test Lifecycle](APIRef.TestLifecycle.md)
 - [Matchers](APIRef.Matchers.md)
 - [Actions](APIRef.ActionsOnElement.md)
-- [Expect](APIRef.Expect.md)
+- [Expectations](APIRef.Expect.md)
 - [Manual Synchronization](APIRef.waitFor.md)
 - [Mocking Deep Links (App Launch From URL)](APIRef.MockingOpenFromURL.md)
 - [Mocking User Notifications](APIRef.MockingUserNotifications.md)
