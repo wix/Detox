@@ -1,55 +1,75 @@
-# detox
+# Detox
 
-Graybox End-to-End Tests and Automation Library for Mobile
+Graybox End-to-End Tests and Automation Library for React Native
 
 [![NPM Version](https://img.shields.io/npm/v/detox.svg?style=flat)](https://www.npmjs.com/package/detox)
 [![Build Status](https://travis-ci.org/wix/detox.svg?branch=master)](https://travis-ci.org/wix/detox)
 [![NPM Downloads](https://img.shields.io/npm/dm/detox.svg?style=flat)](https://www.npmjs.com/package/detox)
 
 
-
 - [About](#about)
-- [Getting Started](#getting-started)
-- [Documentation](#documentation)
-- [See it in Action](#see-it-in-action)
-- [Contributing](#contributing)
-- [License](#license)
+- [Getting Started](/docs/Introduction.GettingStarted.md)
+- [Documentation](/docs/README.md)
 
-<img src="http://i.imgur.com/3QqHeGO.gif">
+<img width="799" height="449" src="http://i.imgur.com/eoaDEYp.gif">
+
+## What does a detox test look like?
+
+This is a test for a login screen, it runs on a device/simulator like an actual user:
+
+```js
+describe('Login flow', () => {
+    
+  it('should login successfully', async () => {
+    await device.reloadReactNative();
+    await expect(element(by.id('email'))).toBeVisible();
+      
+    await element(by.id('email')).typeText('john@example.com');
+    await element(by.id('password')).typeText('123456');
+    await element(by.label('Login')).tap();
+      
+    await expect(element(by.label('Welcome'))).toBeVisible();
+    await expect(element(by.id('email'))).toNotExist();
+  });
+  
+});
+```
 
 ## About
 
-High velocity native mobile development requires us to adopt continuous integration workflows, which means our reliance on manual QA has to drop significantly. The most difficult part of automated testing on mobile is the tip of the testing pyramid - E2E. The core problem with E2E tests is flakiness - tests are usually not deterministic. We believe the only way to tackle flakiness head on is by moving from blackbox testing to graybox testing and that's where detox comes into play.
+High velocity native mobile development requires us to adopt continuous integration workflows, which means our reliance on manual QA has to drop significantly. Detox tests your mobile app running in a real device/simulator, interacting with it as a user would.
 
-* 📱 **Cross Platform in Mind:** Detox is designed to be cross-platform, it currently supports iOS, Android will follow soon.
-* 🔃 **Synchronized Tests:** It is inherently synchronized with the app under test (never add `sleep()` in your test code again!!).
-* <img src="https://raw.githubusercontent.com/wix/detox/master/docs/img/react-native.png" width="17px"/> **React Native Support:** With a special synchronization mechanism, detox supports React Native apps out of the box.
-* ❗️**Test Runner Independent:** Can run with mocha, AVA, or any other JavaScript test runner.
-* 🔴 **Debuggable:** API uses async-await, and all operations are promises, this means that breakpoints will work as expected.
+The most difficult part of automated testing on mobile is the tip of the testing pyramid - E2E. The core problem with E2E tests is flakiness - tests are usually not deterministic. We believe the only way to tackle flakiness head on is by moving from blackbox testing to graybox testing and that's where detox comes into play.
 
+* **Cross Platform:** Write cross-platform tests in JavaScript. Currently supports iOS, Android will follow soon.
+* **Runs on Simulators:** Gain confidence to ship by testing your app on a device/simulator just like a real user.
+* **Automatically Synchronized:** Stops flakiness at the core by monitoring asynchronous processes in your app.
+* **React Native Support:** Built from the ground up to support React Native projects as well as pure native ones.
+* **Made For CI:** Execute your E2E tests on CI platforms like Travis without grief. 
+* **Test Runner Independent:** Use Mocha, AVA, or any other JavaScript test runner you like.
+* **Debuggable:** Modern async-await API allows breakpoints in asynchronous tests to work as expected.
 
 ## Getting Started
 
-Read our [Getting Started Guide](docs/Introduction.GettingStarted.md) to get detox running in less than 10 minutes.
+Read the [Getting Started Guide](/docs/Introduction.GettingStarted.md) to get detox running on your app in less than 10 minutes.
 
 ## Documentation
 
-Learn more about using detox from our [docs](docs)
+Learn everything about using detox from the [documentation](/docs/README.md).
 
 ## See it in Action
 
-Open the [React Native demo project](examples/demo-react-native) and follow the instructions.<br>
-Not using React Native? you now have a [pure native demo project](examples/demo-native-ios) too.
+Open the [React Native demo project](/examples/demo-react-native) and follow the instructions.<br>
+Not using React Native? we now have a [pure native demo project](/examples/demo-native-ios) too.
 
-## Contributing
+## Contributing to Detox
 
-There are still many challenges to conquer in detox. If you're interested in helping out with our roadmap, or suggest new features contact us and we'd love to get you on board.
+Open source from the first commit. If you're interested in helping out with our roadmap or you have a new feature to suggest, contact us and we'd love to get you on board.
 
-The best way to dive in into detox's core is our contributing guide [here](docs/Guide.Contributing.md).
+Dive into detox core by reading the [Detox Contribution Guide](/docs/Guide.Contributing.md).
 
 ## License
 
-* detox by itself and all original source code in this repo is MIT
-* detox relies on some important dependencies, their respective licenses are:
+* Detox by itself and all original source code in this repo is MIT
+* Detox relies on some important dependencies, their respective licenses are:
   * [EarlGrey](https://github.com/google/EarlGrey/blob/master/LICENSE)
-  * [FBSimulatorControl](https://github.com/facebook/FBSimulatorControl/blob/master/LICENSE)
