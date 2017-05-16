@@ -113,9 +113,9 @@ detox init
 Or you can do this manually instead by following these steps:
 
 * Create an `e2e` folder in your project root
-* Create `mocha.opts` file with this [content](examples/demo-react-native/e2e/mocha.opts)
-* Create `init.js` file with this [content](examples/demo-react-native/e2e/init.js)
-* Create your first test! `myFirstTest.spec.js` with content similar to [this](examples/demo-react-native/e2e/example.spec.js)
+* Create `mocha.opts` file with this [content](/examples/demo-react-native/e2e/mocha.opts)
+* Create `init.js` file with this [content](/examples/demo-react-native/e2e/init.js)
+* Create your first test! `myFirstTest.spec.js` with content similar to [this](/examples/demo-react-native/e2e/example.spec.js)
 
 <br>
 
