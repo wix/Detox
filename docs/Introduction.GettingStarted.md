@@ -13,7 +13,7 @@ Running detox (on iOS) requires the following:
 * Mac with macOS (at least macOS El Capitan 10.11)
 
 * Xcode 8.2+ with Xcode command line tools
-> TIP: Verify Xcode command line tools is installed by typing `gcc -v` in the terminal
+> TIP: Verify Xcode command line tools is installed by typing `gcc -v` in terminal (shows a popup if not installed)
 
 * A working [React Native](https://facebook.github.io/react-native/docs/getting-started.html) app you want to test
 
