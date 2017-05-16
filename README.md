@@ -1,6 +1,6 @@
 # Detox
 
-Graybox End-to-End Tests and Automation Library for Mobile Apps
+Gray box end-to-end testing and automation library for mobile apps.
 
 [![NPM Version](https://img.shields.io/npm/v/detox.svg?style=flat)](https://www.npmjs.com/package/detox)
 [![Build Status](https://travis-ci.org/wix/detox.svg?branch=master)](https://travis-ci.org/wix/detox)
@@ -13,7 +13,7 @@ Graybox End-to-End Tests and Automation Library for Mobile Apps
 
 <img width="799" height="449" src="http://i.imgur.com/eoaDEYp.gif">
 
-## What does a detox test look like?
+## What does a Detox test look like?
 
 This is a test for a login screen, it runs on a device/simulator like an actual user:
 
@@ -39,7 +39,7 @@ describe('Login flow', () => {
 
 High velocity native mobile development requires us to adopt continuous integration workflows, which means our reliance on manual QA has to drop significantly. Detox tests your mobile app running in a real device/simulator, interacting with it as a user would.
 
-The most difficult part of automated testing on mobile is the tip of the testing pyramid - E2E. The core problem with E2E tests is flakiness - tests are usually not deterministic. We believe the only way to tackle flakiness head on is by moving from blackbox testing to graybox testing and that's where detox comes into play.
+The most difficult part of automated testing on mobile is the tip of the testing pyramid - E2E. The core problem with E2E tests is flakiness - tests are usually not deterministic. We believe the only way to tackle flakiness head on is by moving from blackbox testing to gray box testing and that's where Detox comes into play.
 
 * **Cross Platform:** Write cross-platform tests in JavaScript. Currently supports iOS, Android will follow soon.
 * **Runs on Simulators:** Gain confidence to ship by testing your app on a device/simulator just like a real user.
@@ -51,11 +51,11 @@ The most difficult part of automated testing on mobile is the tip of the testing
 
 ## Getting Started
 
-Read the [Getting Started Guide](/docs/Introduction.GettingStarted.md) to get detox running on your app in less than 10 minutes.
+Read the [Getting Started Guide](/docs/Introduction.GettingStarted.md) to get Detox running on your app in less than 10 minutes.
 
 ## Documentation
 
-Learn everything about using detox from the [documentation](/docs/README.md).
+Learn everything about using Detox from the [documentation](/docs/README.md).
 
 ## See it in Action
 
@@ -66,7 +66,7 @@ Not using React Native? we now have a [pure native demo project](/examples/demo-
 
 Open source from the first commit. If you're interested in helping out with our roadmap or you have a new feature to suggest, contact us and we'd love to get you on board.
 
-Dive into detox core by reading the [Detox Contribution Guide](/docs/Guide.Contributing.md).
+Dive into Detox core by reading the [Detox Contribution Guide](/docs/Guide.Contributing.md).
 
 ## License
 
