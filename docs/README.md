@@ -24,7 +24,7 @@
 
 - [Troubleshooting Detox Installation](Troubleshooting.Installation.md)
 - [Troubleshooting a Test That Keeps Failing](Troubleshooting.RunningTests.md)
-- [Troubleshooting a Flaky Test](Troubleshooting.Flakiness.md)
+- [Dealing With Flakiness in Tests](Troubleshooting.Flakiness.md)
 
 ## Guides
 
