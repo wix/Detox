@@ -42,7 +42,7 @@ The packager instance will reload the JavaScript bundle of your app when you pre
 
 <br>
 
-## Step 3: Run detox tests
+## Step 3: Run Detox tests
 
 Type the following inside your project root:
 
