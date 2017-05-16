@@ -20,13 +20,13 @@ There are multiple ways to build your app, let's find the alternative you like b
   react-native run-ios
   ```
 
-> TIP: Running `react-native run-ios` will also start a simulator and install your app on it, running `detox test` later will possibly start a different simulator, so you'll find yourself with two open simulators. You can safely close the simulator started by `react-native`, everything will continue working as expected.
-
 * **I like to build my app with `detox build`**<br>During the installation instructions, we provided detox configuration in `package.json` with a command line to build your app executable. We can execute this build command by going to the project root and typing `detox build`. Please make sure that you're using a detox configuration that builds a debug version of your app. The default we specified in the getting started tutorial should work.
 
   ```sh
   detox build
   ```
+
+> TIP: Running `react-native run-ios` will also start a simulator and install your app on it, running `detox test` later will possibly start a different simulator, so you'll find yourself with two open simulators. You can safely close the simulator started by `react-native`, everything will continue working as expected.
 
 <br>
 
