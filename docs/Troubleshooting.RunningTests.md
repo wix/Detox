@@ -1,13 +1,13 @@
 # Troubleshooting a Test That Keeps Failing
 
-* [Enable verbose mode]()
-* [Syntax Error: Unxpected Token]()
-* [Can't find my component even though I added testID to its props]()
-* [detox build or detox test are failing to run]()
-* [Debug view hierarchy]()
-* [Compare to a working setup]()
-* [Take a look at past issues]()
-* [How to open a new issue]()
+* [Enable verbose mode](#enable-verbose-mode)
+* [Syntax Error: Unxpected Token](#syntax-error-unxpected-token)
+* [Can't find my component even though I added testID to its props](#cant-find-my-component-even-though-i-added-testid-to-its-props)
+* [detox build or detox test are failing to run](#detox-build-or-detox-test-are-failing-to-run)
+* [Debug view hierarchy](#debug-view-hierarchy)
+* [Compare to a working setup](#compare-to-a-working-setup)
+* [Take a look at past issues](#take-a-look-at-past-issues)
+* [How to open a new issue](#how-to-open-a-new-issue)
 
 <br>
 
@@ -55,9 +55,8 @@ SyntaxError: Unexpected token (
 child_process.js:531
     throw err;
 ```
-**Solution:**
 
-This error means that your version of Node does not support `async-await` syntax. You should do one of the two:
+**Solution:** This error means that your version of Node does not support `async-await` syntax. You should do one of the two:
 
 1. Update Node to a version **higher than 7.6.0**, this versions will provide native support for async-await, and will spare the need to babel the test code (**recommended**, as it will save babel setup boilerplate, and make it easier to debug you tests).
 
@@ -89,7 +88,7 @@ Error Trace: [
 ]
 ```
 
-**Solution:**: React Native only supports the `testID` prop on the native built-in components. If you've created a custom composite component, you will have to support this prop yourself. You should probably propagate the `testID` prop to one of your rendered children (a built-in component):
+**Solution:** React Native only supports the `testID` prop on the native built-in components. If you've created a custom composite component, you will have to support this prop yourself. You should probably propagate the `testID` prop to one of your rendered children (a built-in component):
 
 ```jsx
 export class MyCompositeComponent extends Component {
