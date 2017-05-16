@@ -3,6 +3,8 @@
 * [Can't install fbsimctl](#cant-install-fbsimctl)
 * [No simulators found](#no-simulators-found)
 
+<br>
+
 ### Can't install fbsimctl
 
 [fbsimctl](https://github.com/facebook/FBSimulatorControl) is an open source tool by Facebook for controlling iOS simulators from the command line with greater flexibility than Apple's own command line solution. This is a 3rd party tool that is normally installed with `brew`. Installation with `brew` actually takes the current master from GitHub and builds it on your machine using Xcode command line tools. This process is somewhat fragile and might fail.
@@ -10,6 +12,8 @@
 The best way to troubleshoot fbsimctl installation is to search for similar issues. This tool has been available for quite some time and has a loyal following. Start by searching the [GitHub issues](https://github.com/facebook/FBSimulatorControl/issues?utf8=%E2%9C%93&q=is%3Aissue) of the project. If you're certain the problem is with fbsimctl itself, please open a new issue in its [GitHub page](https://github.com/facebook/FBSimulatorControl).
 
 Sometimes the problem is with `brew` itself. There are a number of common troubleshooting steps to fix common `brew` issues, you can find them [here](https://github.com/Homebrew/brew/blob/master/docs/Troubleshooting.md). Another official list of common issues is available [here](http://docs.brew.sh/Common-Issues.html). Once your `brew` is back in order, remove fbsimctl with `brew remove fbsimctl` and try installing it again.
+
+<br>
 
 ### No simulators found
 
