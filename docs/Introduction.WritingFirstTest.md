@@ -1,7 +1,7 @@
 
 # Writing Your First Passing Test
 
-This tutorial assumes you've already installed detox successfully on a working React Native project.
+This tutorial assumes you've already installed Detox successfully on a working React Native project.
 
 > TIP: You can also check out this [awesome tutorial](https://medium.com/@bogomolnyelad/how-to-test-your-react-native-app-like-a-real-user-ecfc72e9b6bc) on Medium with video by [@bogomolnyelad](https://medium.com/@bogomolnyelad)
 
@@ -9,7 +9,7 @@ This tutorial assumes you've already installed detox successfully on a working R
 
 ## Step 1: Prepare a JavaScript file to hold your scenario (spec)
 
-Every detox test scenario is usually placed in its own JavaScript file. If you've followed the [installation tutorial](Introduction.GettingStarted.md), these files are located in `/e2e/*.spec.js` under your React Native project root. Feel free to place these files wherever you like, this directory structure is just a recommendation.
+Every Detox test scenario is usually placed in its own JavaScript file. If you've followed the [installation tutorial](Introduction.GettingStarted.md), these files are located in `/e2e/*.spec.js` under your React Native project root. Feel free to place these files wherever you like, this directory structure is just a recommendation.
 
 If you're using Mocha as your test runner, these files will simply be executed one by one when you run your tests.
 
