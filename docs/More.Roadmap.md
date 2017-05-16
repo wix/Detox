@@ -21,30 +21,14 @@ Expect your E2E scenario to use a specific amount of resources.
 * **Compare measurements to previous builds.**
 Know exactly when the regression have happened
 
+#### (Partial) list of measurments we'd like to have:
+network bandwidth/calls, thread count, js thread cpu ticks, memory cpu, size on disk, binary size, react component render count, message count on the bridge, disk I/O
+
 
 ### Failed test artifacts
 
 Add the following to an artifact directory for each failed test
 
 1. Video of the test from start to finish
-2. Device log 
-
-
-Tap support
-
-perf probing
-network bandwidth/calls
-thread count
-js thread cpu ticks
-memory cpu
-size on disk
-binary size
-react component render count
-message count on the bridge
-disk IO
-
-video recording - can we ?
-tap xy - can we ?
-Print hierarchy with testIDs
-
-
+2. Device log
+3. Print hierarchy with testIDs
