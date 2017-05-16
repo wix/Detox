@@ -1,36 +1,54 @@
-# Running on CI
+# Running Tests on CI (like Travis)
 
+> When your test suite is finally ready, it should be set up to run automatically on your CI server on every git push. This will alert you if new changes to the app break existing functionality.
 
 Running detox on CI is not that different from running it locally. There are two main differences:
+1. We will test a release build rather than a debug build
+2. We will tell Detox to shut down the simulator when test is over 
 
-1. It is recommended to test a release build on CI, rather than a debug build, this means you will need to create a [release device configuration for detox](/docs/APIRef.Configuration.md#device-configuration)<br>
-**example:**
+<br>
 
-	```json
-	"detox": {
-		...
-	    "configurations": {
-	      "ios.sim.release": {
-	        "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-	        "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Release -sdk iphonesimulator -derivedDataPath ios/build",
-	        "type": "ios.simulator",
-	        "name": "iPhone 7 Plus"
-	      }
-	    }
-	  }
-	```
-2. Once the release configuration is done, add build and test commands to your CI script.<br> 
-	Adding `--cleanup` flag to the test command will make sure detox exits cleanly by shutting down the simulator when test is over.
-	
-	```sh
-	detox build --configuration ios.sim.release
-	detox test --configuration ios.sim.release --cleanup
-	```
+## Step 1: Prepare a release configuration for your app
 
-### Running detox in Travis-CI
-detox's own build is running on Travis, check out detox's [.travis.yml](/.travis.yml) file if you want to run detox tests on Travis as well.
+We will need to create a [release device configuration for Detox](/docs/APIRef.Configuration.md#device-configuration) inside `package.json` under the `detox` section.
 
-This is a simple example configuration to get you started with detox on Travis:
+**Example:**
+
+```json
+"detox": {
+  "configurations": {
+    "ios.sim.release": {
+      "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+      "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Release -sdk iphonesimulator -derivedDataPath ios/build",
+      "type": "ios.simulator",
+      "name": "iPhone 7"
+    }
+  }
+}
+```
+
+> TIP: Notice that the name `example` above should be replaced with your actual project name.
+
+<br>
+
+## Step 2: Add build and test commands to your CI script
+
+Assuming your CI is executing some sort of shell script, add the following commands that should run inside the project root:
+
+```sh
+detox build --configuration ios.sim.release
+detox test --configuration ios.sim.release --cleanup
+```
+
+> TIP: Adding `--cleanup` to the test command will make sure detox exits cleanly by shutting down the simulator when the test is over.
+
+<br>
+
+## Appendix: Running Detox on Travis-CI
+
+Detox's own build is running on Travis, check out Detox's [.travis.yml](/.travis.yml) file to see how it's done.
+
+This is a simple example configuration to get you started with Detox on Travis:
 
 ```yaml
 language: objective-c
@@ -60,6 +78,5 @@ install:
 script:
 - detox build --configuration ios.sim.release
 - detox test --configuration ios.sim.release --cleanup
-
 
 ```
