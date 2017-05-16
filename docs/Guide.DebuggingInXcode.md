@@ -1,7 +1,7 @@
-# Debugging detox in Xcode
+# Debugging Detox in Xcode
 
 1. Drag `Detox.framework` from `node_modules/detox/Detox.framework` to your project.
-2. Edit your project scheme and add the following arguments to **Arguments Passes On Launch**:
+2. Edit your project scheme and add the following arguments to **Arguments Passed On Launch**:
 	
 	```
 	-detoxServer
@@ -20,6 +20,7 @@
         "name": "iPhone 7 Plus"
       }
 	```
+	>NOTE: Apps should not be submitted to the AppStore with the Detox framework linked. Follow this guide only to debug Detox issues in your project. Once finished, make sure to remove `Detox.framework` from your project.
 	>NOTE: This configuration will not handle simulator and application lifecycle, they will have to be provided manually (via Xcode play button, or `react-native run-ios`).
 4. Run detox server manually `detox run-server`
 5. Run `detox test --configuration xcode`
