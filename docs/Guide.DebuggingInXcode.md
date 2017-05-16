@@ -6,7 +6,7 @@
 	```
 	-detoxServer
 	ws://localhost:8099
-	-setoxSessionId
+	-detoxSessionId
 	test
 	```
 3. Edit detox config in package.json: [add a custom session](/docs/APIRef.Configuration.md#server-configuration)
