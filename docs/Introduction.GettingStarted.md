@@ -125,17 +125,17 @@ Or you can do this manually instead by following these steps:
 
 #### 1. Build your app
 
-Use the detox command line tools to build your project easily:
+Use the Detox command line tools to build your project easily:
 
 ```sh
 detox build
 ```
 
-> TIP: Notice that the actual build command was specified in the detox configuration above
+> TIP: Notice that the actual build command was specified in the Detox configuration above
 
 #### 2. Run the tests (finally)
 
-Use the detox command line tools to test your project easily:
+Use the Detox command line tools to test your project easily:
 
 ```sh
 detox test
