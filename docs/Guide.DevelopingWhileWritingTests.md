@@ -4,7 +4,7 @@
 Detox can (and should) be integrated in the development workflow.<br>
 This guide will go over the recommended workflow of developing alongside writing tests.
 
-Build a debug configuration of your app (more about building your app [here](/docs/APIRef.Configuration.md#build-configuration)).
+### 1. Build a debug configuration of your app (more about building your app [here](/docs/APIRef.Configuration.md#build-configuration)).
 
 ```sh
 detox build
@@ -16,7 +16,9 @@ react-native run-ios
 
 >NOTE: running `react-native run-ios` will start a simulator and install your app on it, running `detox test` will also start possibly a different simulator, so you'll find yourself with two open simulators. You can safely close the simulator started by react-native, everything will continue working as expected.
 
-Once the app is compiled you can start running detox tests. 
+### 2. Make sure your react-native packager is running.
+
+### 3. Once the app is compiled you can start running detox tests. 
 
 ```sh
 detox test
