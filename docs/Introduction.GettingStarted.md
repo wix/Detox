@@ -84,14 +84,14 @@ The basic configuration for Detox should be in your `package.json` file under th
 ```json
 "detox": {
   "configurations": {
-      "ios.sim.debug": {
-	"binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
-	"build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
-	"type": "ios.simulator",
-	"name": "iPhone 7"
-      }
-    } 
-  }
+    "ios.sim.debug": {
+      "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
+      "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
+      "type": "ios.simulator",
+      "name": "iPhone 7"
+    }
+  } 
+}
 ```
 	
 In the above configuration example, change `example` to your actual project name. Under the key `"binaryPath"`, `example.app` should be `<your_project_name>.app`. Under the key `"build"`, `example.xcodeproj` should be `<your_project_name>.xcodeproj` and `-scheme example` should be `-scheme <your_project_name>`.
