@@ -1,6 +1,6 @@
 # Getting Started
 
-This is a step-by-step guide for adding detox to your React Native project.
+This is a step-by-step guide for adding Detox to your React Native project.
 
 > TIP: You can also check out this [awesome tutorial](https://medium.com/@bogomolnyelad/how-to-test-your-react-native-app-like-a-real-user-ecfc72e9b6bc) on Medium with video by [@bogomolnyelad](https://medium.com/@bogomolnyelad)
 
@@ -8,7 +8,7 @@ This is a step-by-step guide for adding detox to your React Native project.
 
 ## Prerequisites
 
-Running detox (on iOS) requires the following:
+Running Detox (on iOS) requires the following:
 
 * Mac with macOS (at least macOS El Capitan 10.11)
 
@@ -29,7 +29,7 @@ Homebrew is a package manager for macOS, we'll need it to install other command 
 
 #### 2. Install [Node.js](https://nodejs.org/en/)
 
-Node is the JavaScript runtime detox will run on. **Install Node 7.6.0 or above for native async-await support**
+Node is the JavaScript runtime Detox will run on. **Install Node 7.6.0 or above for native async-await support**
 	
  ```sh
  brew update && brew install node 
@@ -39,7 +39,7 @@ Node is the JavaScript runtime detox will run on. **Install Node 7.6.0 or above 
 
 #### 3. Install [fbsimctl](https://github.com/facebook/FBSimulatorControl/tree/master/fbsimctl)
 
-This tool by Facebook helps detox manage and automate iOS Simulators.
+This tool by Facebook helps Detox manage and automate iOS Simulators.
 
  ```sh 
  brew tap facebook/fb
@@ -48,9 +48,9 @@ This tool by Facebook helps detox manage and automate iOS Simulators.
 	 
 > TIP: Verify it works by typing in terminal `fbsimctl list` to output the list of available simulators
 	 
-#### 4. Install detox command line tools (detox-cli)
+#### 4. Install Detox command line tools (detox-cli)
 
-This package makes it easier to operate detox from the command line. `detox-cli` should be installed globally, enabling usage of the command line tools outside of your npm scripts.
+This package makes it easier to operate Detox from the command line. `detox-cli` should be installed globally, enabling usage of the command line tools outside of your npm scripts.
 
   ```sh
   npm install -g detox-cli
@@ -59,7 +59,7 @@ This package makes it easier to operate detox from the command line. `detox-cli`
 
 <br>
 
-## Step 2: Add detox to your project
+## Step 2: Add Detox to your project
 
 #### 1. Install detox
 
@@ -77,9 +77,9 @@ You can use any JavaScript test runner, [Mocha](https://mochajs.org/) is a good 
 npm install mocha --save-dev
 ``` 
 
-#### 3. Add detox config to package.json
+#### 3. Add Detox config to package.json
 
-The basic configuration for detox should be in your `package.json` file under the `detox` property:
+The basic configuration for Detox should be in your `package.json` file under the `detox` property:
 	
 ```json
 "detox": {
@@ -117,11 +117,11 @@ Or you can do this manually instead by following these steps:
 * Create `init.js` file inside with this [content](/examples/demo-react-native/e2e/init.js)
 * Create your first test `firstTest.spec.js` inside with content similar to [this](/examples/demo-react-native/e2e/example.spec.js)
 
-> TIP: Detox is not tightly coupled to Mocha or this directory structure, both are just a recommendation and are easy to replace without touching the internal implementation of detox itself.
+> TIP: Detox is not tightly coupled to Mocha or this directory structure, both are just a recommendation and are easy to replace without touching the internal implementation of Detox itself.
 
 <br>
 
-## Step 4: Build your app and run detox tests
+## Step 4: Build your app and run Detox tests
 
 #### 1. Build your app
 
@@ -141,6 +141,6 @@ Use the detox command line tools to test your project easily:
 detox test
 ```
 
-That's it. Your first failing detox test is running! 
+That's it. Your first failing Detox test is running! 
 
 Next, we'll go over usage and how to make this test [actually pass](Introduction.WritingFirstTest.md).
