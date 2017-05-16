@@ -30,7 +30,7 @@
 
 - [Running Tests Locally on Your Machine](Guide.RunningLocally.md)
 - [Developing Your App While Writing Tests](Guide.DevelopingWhileWritingTests.md)
-- [Running Tests in CI (like Travis)](Guide.RunningOnCI.md)
+- [Running Tests on CI (like Travis)](Guide.RunningOnCI.md)
 - [Debugging Apps in Xcode During a Test](Guide.DebuggingInXcode.md)
 - [Advanced Mocking With Detox](Guide.Mocking.md)
 - [Migration Between Detox Versions](Guide.Migration.md)
