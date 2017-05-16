@@ -1,31 +1,71 @@
 # Developing Your App While Writing Tests
 
-Detox can (and should) be integrated with the development workflow.<br>
-This guide will go over the recommended workflow of developing alongside writing tests.
+> If your app requires active development, such as adding testID fields for tests, this is a good workflow. It allows you to work both on your app and your tests at the same time.
 
-### 1. Build a debug configuration of your app (more about building your app [here](/docs/APIRef.Configuration.md#build-configuration))
+The main idea behind this workflow is to run your app in debug with detox on a simulator. Once the app is up and running, it will still be connected to the React Native packager. This means that you'll be able to do JavaScript code modifications in your app codebase and press CMD+R to reload the bundle inside the detox simulator.
+
+<br>
+
+## Step 1: Build your app in debug
+
+Detox is going to need the executable for your app. This means we need to build it first. Since we want a build that's connected to the live React Native packager (to update bundle changes), we're going to need a *debug* build.
+
+There are multiple ways to build your app, let's find the alternative you like best:
+
+* **I like to build my app by clicking "Play" in Xcode**<br>This isn't a great approach here because using Xcode IDE to build your app will place the executable in an internal directory which path that is difficult to predict (`~/Library/Developer/Xcode/DerivedData/...`). This means we won't be able to tell detox where to find it. Although you can change the default derivedData path by altering your Xcode settings, we encourge you to try the alternative ways to build.
+
+* **I like to build my app with `react-native run-ios`**<br>The official React Native command line tools provide a script to build your app from terminal. Go to your project root and type `react-native run-ios`. This will build the app in debug and place the executable in the folder `ios/build/Build/Products/Debug-iphonesimulator`. This is a great way to build because it's easy to specify this path in detox configuration inside `package.json`. This is actually the path we specified in the getting started tutorial.
+
+  ```sh
+  react-native run-ios
+  ```
+
+> TIP: Running `react-native run-ios` will also start a simulator and install your app on it, running `detox test` later will possibly start a different simulator, so you'll find yourself with two open simulators. You can safely close the simulator started by `react-native`, everything will continue working as expected.
+
+* **I like to build my app with `detox build`**<br>During the installation instructions, we provided detox configuration in `package.json` with a command line to build your app executable. We can execute this build command by going to the project root and typing `detox build`. Please make sure that you're using a detox configuration that builds a debug version of your app. The default we specified in the getting started tutorial should work.
+
+  ```sh
+  detox build
+  ```
+
+<br>
+
+## Step 2: Make sure your react-native packager is running
+
+If you can't see a React Native packager instance running in a terminal, you can run it manually by typing:
 
 ```sh
-react-native run-ios
+react-native start
 ```
 
-If you prefer working from Xcode, you will need to set the output path for the built app file, since the defalt is set to build the app to a directory external to the project `~/Library/Developer/Xcode/DerivedData`. Although you can change the default derivedData path, we encourge using the supplied command line tools (either `react-native run-ios` or `detox build`).
+The packager instance will reload the JavaScript bundle of your app when you press CMD+R in the simulator window. This will allow you to make modifications in your app codebase.
 
-  
->NOTE: running `react-native run-ios` / running from Xcode will start a simulator and install your app on it, running `detox test` will also start possibly a different simulator, so you'll find yourself with two open simulators. You can safely close the simulator started by react-native, everything will continue working as expected.
+<br>
 
-### 2. Make sure your react-native packager is running
+## Step 3: Run detox tests
 
-### 3. Once the app is compiled you can start running detox tests
+Type the following inside your project root:
 
 ```sh
 detox test
 ```
 
-If you only make changes in your JS code, the packager will take care of updating your bundle, using ⌘ + R will reload the bundle in your app, so you won't need to compile and install your application over and over again. **When the app is already installed on your device**, you can use `--reuse` flag for faster runs, this will keep the installed application on the device between tests.
+This will use detox to find the app executable we've built in step 1, install it on a simulator and run detox tests against it.
+
+<br>
+
+## Step 4: Make changes to your app codebase as usual
+
+You can keep working on the JavaScript codebase of your app as usual. As long as you keep the simulator from step 3 running, you'll be able to press CMD+R inside and reload your app with the new changes.
+
+<br>
+
+## Step 5: Re-run detox tests without re-installing the app
+
+You can make changes to your detox tests as well. When you want to run your tests on the simulator, we recommed using the following command:
 
 ```sh
 detox test --reuse
 ```
 
-
+The reuse option will prevent detox from compiling and re-installing your app again in the simulator. The tests will simply run against the current app instance currently running in the simulator. This will make the process much faster.
