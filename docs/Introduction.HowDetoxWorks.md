@@ -2,7 +2,7 @@
 
 Detox is an end-to-end testing framework. This means it runs your app on an actual device/simulator and interacts with it just like a real user would. This type of tests can give a lot of confidence for releasing your app and help automate a manual QA process. If you're coming from a web background, it's very similar in concept to [protractor](http://www.protractortest.org/#/).
 
-When a detox test executes, you actually have two different parts running side by side:
+When a Detox test executes, you actually have two different parts running side by side:
 
 * **The mobile app itself.** Usually running on a simulator. Real devices will also be supported soon. A regular native build of your app is installed and executed on the device. Your app is usually built once before the tests start running.
 
@@ -10,11 +10,11 @@ When a detox test executes, you actually have two different parts running side b
 
 The two parts are usually running in separate processes on your machine. It is also possible to run the two parts on different machines. Communication between the two parts takes place over the network using a websocket.
 
-In practice, to make the communication more resilient, both parts are implemented as clients and communicate with a detox server that acts as proxy. This allows some nice behaviors like allowing one side to disconnect (during a simulator boot for example or app restart) without disconnecting the other side and losing its state.
+In practice, to make the communication more resilient, both parts are implemented as clients and communicate with a Detox server that acts as proxy. This allows some nice behaviors like allowing one side to disconnect (during a simulator boot for example or app restart) without disconnecting the other side and losing its state.
 
 ### How Detox Automatically Synchronizes With Your App
 
-One of the key features of detox is its ability to automatically synchronize the test execution with your app. The most annoying aspect of end-to-end tests is flakiness - tests sometimes fail without anything changing. Flakiness happens because tests are nondeterministic. Every time a test is running, things take place in a slightly different order inside your app. 
+One of the key features of Detox is its ability to automatically synchronize the test execution with your app. The most annoying aspect of end-to-end tests is flakiness - tests sometimes fail without anything changing. Flakiness happens because tests are nondeterministic. Every time a test is running, things take place in a slightly different order inside your app. 
 
 Consider a scenario where the app is making multiple network requests at the same time. What is the order of execution? It depends on which request completes first. This is an external concern depending on network congestion and how busy the server is.
 
