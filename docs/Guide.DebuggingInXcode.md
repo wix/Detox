@@ -1,6 +1,6 @@
 # Debugging Detox in Xcode
 
-	>NOTE: Apps should not be submitted to the AppStore with the Detox framework linked. Follow this guide only to debug Detox issues in your project. Once finished, make sure to remove `Detox.framework` from your project.
+>NOTE: Apps should not be submitted to the AppStore with the Detox framework linked. Follow this guide only to debug Detox issues in your project. Once finished, make sure to remove `Detox.framework` from your project.
 
 1. Drag `Detox.framework` from `node_modules/detox/Detox.framework` to your project.
 2. Edit your project scheme and add the following arguments to **Arguments Passed On Launch**:
