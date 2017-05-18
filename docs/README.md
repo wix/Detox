@@ -35,6 +35,10 @@
 - [Advanced Mocking With Detox](Guide.Mocking.md)
 - [Migration Between Detox Versions](Guide.Migration.md)
 
+## Under The Hood
+
+- [Detox Design Principles](More.DesignPrinciples.md)
+
 ## Contributing to Detox
 
 - [Detox Contribution Guide](Guide.Contributing.md)
