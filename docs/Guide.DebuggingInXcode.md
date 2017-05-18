@@ -50,8 +50,7 @@ Edit Detox config in `package.json` by adding a new configuration with type `ios
 "detox": {
   "configurations": {
     "xcode": {
-      "type": "ios.none",
-      "name": "iPhone 7"
+      "type": "ios.none"
     }
   }
 }
