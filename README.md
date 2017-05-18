@@ -43,7 +43,7 @@ The most difficult part of automated testing on mobile is the tip of the testing
 
 * **Cross Platform:** Write cross-platform tests in JavaScript. Currently supports iOS, Android following soon.
 * **Runs on Devices:** Gain confidence to ship by testing your app on a device/simulator just like a real user.
-* **Automatically Synchronized:** Stops flakiness at the core by monitoring asynchronous processes in your app.
+* **Automatically Synchronized:** Stops flakiness at the core by monitoring asynchronous operations in your app.
 * **React Native Support:** Built from the ground up to support React Native projects as well as pure native ones.
 * **Made For CI:** Execute your E2E tests on CI platforms like Travis without grief. 
 * **Test Runner Independent:** Use Mocha, AVA, or any other JavaScript test runner you like.
