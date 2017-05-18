@@ -11,7 +11,7 @@ Gray box end-to-end testing and automation library for mobile apps.
 - [Getting Started](/docs/Introduction.GettingStarted.md)
 - [Documentation](/docs/README.md)
 
-<img width="799" height="449" src="http://i.imgur.com/eoaDEYp.gif">
+<img src="http://i.imgur.com/eoaDEYp.gif">
 
 ## What does a Detox test look like?
 
@@ -37,12 +37,12 @@ describe('Login flow', () => {
 
 ## About
 
-High velocity native mobile development requires us to adopt continuous integration workflows, which means our reliance on manual QA has to drop significantly. Detox tests your mobile app running in a real device/simulator, interacting with it as a user would.
+High velocity native mobile development requires us to adopt continuous integration workflows, which means our reliance on manual QA has to drop significantly. Detox tests your mobile app while it's running in a real device/simulator, interacting with it just like a real user.
 
-The most difficult part of automated testing on mobile is the tip of the testing pyramid - E2E. The core problem with E2E tests is flakiness - tests are usually not deterministic. We believe the only way to tackle flakiness head on is by moving from blackbox testing to gray box testing and that's where Detox comes into play.
+The most difficult part of automated testing on mobile is the tip of the testing pyramid - E2E. The core problem with E2E tests is flakiness - tests are usually not deterministic. We believe the only way to tackle flakiness head on is by moving from black box testing to gray box testing. That's where Detox comes into play.
 
-* **Cross Platform:** Write cross-platform tests in JavaScript. Currently supports iOS, Android will follow soon.
-* **Runs on Simulators:** Gain confidence to ship by testing your app on a device/simulator just like a real user.
+* **Cross Platform:** Write cross-platform tests in JavaScript. Currently supports iOS, Android following soon.
+* **Runs on Devices:** Gain confidence to ship by testing your app on a device/simulator just like a real user.
 * **Automatically Synchronized:** Stops flakiness at the core by monitoring asynchronous processes in your app.
 * **React Native Support:** Built from the ground up to support React Native projects as well as pure native ones.
 * **Made For CI:** Execute your E2E tests on CI platforms like Travis without grief. 
@@ -59,8 +59,9 @@ Learn everything about using Detox from the [documentation](/docs/README.md).
 
 ## See it in Action
 
-Open the [React Native demo project](/examples/demo-react-native) and follow the instructions.<br>
-Not using React Native? we now have a [pure native demo project](/examples/demo-native-ios) too.
+Open the [React Native demo project](/examples/demo-react-native) and follow the instructions.
+
+Not using React Native? we have a [pure native demo project](/examples/demo-native-ios) too.
 
 ## Contributing to Detox
 
