@@ -63,6 +63,10 @@ Open the [React Native demo project](/examples/demo-react-native) and follow the
 
 Not using React Native? we have a [pure native demo project](/examples/demo-native-ios) too.
 
+## Rethinking Core Principles
+
+We believe that the only way to address the core difficulties with mobile end-to-end testing is by rethinking some of the  principles of the entire approach. See what Detox [does differently](/docs/More.DesignPrinciples.md).
+
 ## Contributing to Detox
 
 Open source from the first commit. If you're interested in helping out with our roadmap or you have a new feature to suggest, contact us and we'd love to get you on board.
