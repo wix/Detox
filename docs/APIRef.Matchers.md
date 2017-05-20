@@ -52,7 +52,7 @@ await element(by.type('RCTImageView'));
 Find an element with an accessibility trait.
 
 ```js
-await element(by.traits(['button']);
+await element(by.traits(['button']));
 ```
 
 #### Advanced
