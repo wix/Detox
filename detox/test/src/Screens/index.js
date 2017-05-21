@@ -6,6 +6,7 @@ import WaitForScreen from './WaitForScreen';
 import StressScreen from './StressScreen';
 import SwitchRootScreen from './SwitchRootScreen';
 import TimeoutsScreen from './TimeoutsScreen';
+import Orientation from './Orientation';
 
 export {
   SanityScreen,
@@ -15,5 +16,6 @@ export {
   WaitForScreen,
   StressScreen,
   SwitchRootScreen,
-  TimeoutsScreen
+  TimeoutsScreen,
+  Orientation
 };
