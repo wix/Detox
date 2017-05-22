@@ -1,4 +1,4 @@
-# waitFor
+# Manual Synchronization Using `waitFor`
 Test async code with waitFor.<br>
 **Hang the test until an expectation is met.**
 
@@ -14,13 +14,14 @@ Test async code with waitFor.<br>
 - [`.whileElement()`](#whileelement)
 
 
+>NOTE: Every `waitFor` call must set a timeout using `withTimeout()`. Calling `waitFor` without setting a timeout will behave like `expect`.
 
 ### `toBeVisible()`
 Similar to [`expect.toBeVisible()`](APIRef.Expect.md#tobevisible), but test will hang until expectation is met<br>
 Wait for the view to be at least 75% visible.
 
 ```js
-await waitFor(element(by.id('UniqueId204'))).toBeVisible();
+await waitFor(element(by.id('UniqueId204'))).toBeVisible().withTimeout(2000);
 ```
 
 ### `toBeNotVisible()`
@@ -28,7 +29,7 @@ Similar to [`expect.toBeNotVisible()`](APIRef.Expect.md#tobenotvisible), but tes
 Wait for the view to not be visible.
 
 ```js
-await waitFor(element(by.id('UniqueId205'))).toBeNotVisible();
+await waitFor(element(by.id('UniqueId205'))).toBeNotVisible().withTimeout(2000);
 ```
 
 ### `toExist()`
@@ -36,7 +37,7 @@ Similar to [`expect.toExist()`](APIRef.Expect.md#toexist), but test will hang un
 Wait for the view to exist in the UI hierarchy.
 
 ```js
-await waitFor(element(by.id('UniqueId205'))).toExist();
+await waitFor(element(by.id('UniqueId205'))).toExist().withTimeout(2000);
 ```
 
 ### `toNotExist()`
@@ -44,7 +45,7 @@ Similar to [`expect.toNotExist()`](APIRef.Expect.md#tonotexist), but test will h
 Wait for the view to not exist in the UI hierarchy.
 
 ```js
-await waitFor(element(by.id('RandomJunk959'))).toNotExist();
+await waitFor(element(by.id('RandomJunk959'))).toNotExist().withTimeout(2000);
 ```
 
 ### `toHaveText(text)`
@@ -54,7 +55,7 @@ Similar to [`expect.toHaveText()`](APIRef.Expect.md#tohavetexttext), but test wi
 - In native iOS apps, expect UI elements of type UIButton, UILabel, UITextField or UITextViewIn to have inputText with text.
 
 ```js
-await waitFor(element(by.id('UniqueId204'))).toHaveText('I contain some text');
+await waitFor(element(by.id('UniqueId204'))).toHaveText('I contain some text').withTimeout(2000);
 ```
 
 ### `toHaveId(id)`
@@ -64,7 +65,7 @@ Similar to [`expect.toExist()`](APIRef.Expect.md#toexist), but test will hang un
 - In native iOS apps, expect UI element to have accesibilityLabel with that id.
 
 ```js
-await waitFor(element(by.text('I contain some text'))).toHaveId('UniqueId204');
+await waitFor(element(by.text('I contain some text'))).toHaveId('UniqueId204').withTimeout(2000);
 ```
 
 
