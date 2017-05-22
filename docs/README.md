@@ -10,8 +10,8 @@
 ## API Reference
 
 - [Detox Configuration](APIRef.Configuration.md)
-- [The detox object](APIRef.DetoxObjectAPI.md)
-- [The device object](APIRef.DeviceObjectAPI.md)
+- [The `detox` Object](APIRef.DetoxObjectAPI.md)
+- [The `device` Object](APIRef.DeviceObjectAPI.md)
 - [Test Lifecycle](APIRef.TestLifecycle.md)
 - [Matchers](APIRef.Matchers.md)
 - [Actions](APIRef.ActionsOnElement.md)
