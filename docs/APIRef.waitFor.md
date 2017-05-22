@@ -62,7 +62,7 @@ await waitFor(element(by.id('UniqueId204'))).toHaveText('I contain some text').w
 Similar to [`expect.toExist()`](APIRef.Expect.md#toexist), but test will hang until expectation is met or a timeout has occurred<br>
 
 - In React Native apps, expect UI component to have [`testID`](https://facebook.github.io/react-native/docs/view.html#testid) with that id.
-- In native iOS apps, expect UI element to have accesibilityLabel with that id.
+- In native iOS apps, expect UI element to have accesibilityIdentifier with that id.
 
 ```js
 await waitFor(element(by.text('I contain some text'))).toHaveId('UniqueId204').withTimeout(2000);
