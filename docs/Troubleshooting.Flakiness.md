@@ -1,5 +1,9 @@
 # Dealing With Flakiness in Tests
 
+> What is a flaky test?
+
+A flaky test is a test that passes most of the time, and sometimes without any appearant reason and without any changes to your app - it fails. This can even happen only on certain machines. For example, on your own machine it always passes, but on a different slower machine, like the CI, it fails.
+
 ### 1. We Feel Your Pain
 
 Flakiness is the greatest challenge in E2E. The good news is that Detox was designed with this mission in mind: dealing with flakiness head on.
