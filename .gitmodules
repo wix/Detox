@@ -6,11 +6,3 @@
 	path = detox/ios/EarlGrey
 	url = https://github.com/google/EarlGrey.git
 	ignore = dirty
-[submodule "detox/scripts/Xcodeproj"]
-	path = detox/scripts/Xcodeproj
-	url = https://github.com/CocoaPods/Xcodeproj.git
-	ignore = dirty
-[submodule "detox/scripts/Nanaimo"]
-	path = detox/scripts/Nanaimo
-	url = https://github.com/CocoaPods/Nanaimo.git
-	ignore = dirty
