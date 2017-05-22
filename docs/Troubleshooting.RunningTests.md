@@ -4,6 +4,7 @@
 * [Syntax Error: Unxpected Token](#syntax-error-unxpected-token)
 * [Can't find my component even though I added testID to its props](#cant-find-my-component-even-though-i-added-testid-to-its-props)
 * [Test tries to find my component before it's created](#test-tries-to-find-my-component-before-its-created)
+* [Can't synchronize the test with my app](#cant-synchronize-the-test-with-my-app)
 * [detox build or detox test are failing to run](#detox-build-or-detox-test-are-failing-to-run)
 * [Debug view hierarchy](#debug-view-hierarchy)
 * [Compare to a working setup](#compare-to-a-working-setup)
@@ -134,6 +135,12 @@ Full documentation about `waitFor` is available [here](/docs/APIRef.waitFor.md).
 await element(by.label('Login')).tap();
 await waitFor(element(by.label('Welcome'))).toBeVisible().withTimeout(2000);
 ```
+
+<br>
+
+### Can't synchronize the test with my app
+
+If you suspect that the test is failing because Detox fails to synchronize the test steps with your app, take a look at this in-depth [synchronization troubleshooting tutorial](/docs/Troubleshooting.Synchronization.md).
 
 <br>
 
