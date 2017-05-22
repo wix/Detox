@@ -12,7 +12,7 @@
 @protocol TestRunnerDelegate <NSObject>
 
 - (void)testRunnerOnTestFailed:(NSString*)details;
-- (void)testRunnerOnInvokeResult:(id)res withInvocationId:(NSString*)invocationId;
+- (void)testRunnerOnInvokeResult:(id)res withMessageId:(NSNumber*)messageId;
 - (void)testRunnerOnError:(NSString*)error;
 
 @end
@@ -21,7 +21,7 @@
 
 @property (nonatomic, assign) id<TestRunnerDelegate> delegate;
 
-- (void) invoke:(NSDictionary*)params;
+- (void) invoke:(NSDictionary*)params withMessageId:(NSNumber*) messageId;
 - (void) cleanup;
 
 @end

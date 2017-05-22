@@ -10,7 +10,7 @@ class AsyncWebSocket {
   }
 
   async open() {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async(resolve, reject) => {
       this.ws = new WebSocket(this.url);
       this.ws.onopen = (response) => {
         log.verbose(`ws`, `onOpen ${response}`);
@@ -37,7 +37,7 @@ class AsyncWebSocket {
       throw new Error(`Can't send a message on a closed websocket, init the by calling 'open()'`);
     }
 
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async(resolve, reject) => {
       log.verbose(`ws`, `send: ${message}`);
       this.inFlightPromise.resolve = resolve;
       this.inFlightPromise.reject = reject;
@@ -46,7 +46,7 @@ class AsyncWebSocket {
   }
 
   async close() {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async(resolve, reject) => {
       if (this.ws) {
         this.ws.onclose = (message) => {
           this.ws = null;

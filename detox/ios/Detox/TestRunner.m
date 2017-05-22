@@ -13,7 +13,7 @@
 @interface TestRunner()
 
 @property (nonatomic, retain) TestFailureHandler *failureHandler;
-@property (nonatomic, retain) NSString *currentInvocationId;
+@property (nonatomic, retain) NSNumber *currentInvocationId;
 
 @end
 
@@ -62,9 +62,9 @@
     }
 }
 
-- (void) invoke:(NSDictionary*)params
+- (void) invoke:(NSDictionary*)params withMessageId: (NSNumber *)messageId
 {
-    self.currentInvocationId = [params objectForKey:@"id"];
+	self.currentInvocationId = messageId;
     grey_execute_async(^{
         id res = [MethodInvocation invoke:params onError:^(NSString *error)
         {
@@ -72,7 +72,7 @@
         }];
         if (self.currentInvocationId != nil)
         {
-            if (self.delegate) [self.delegate testRunnerOnInvokeResult:res withInvocationId:self.currentInvocationId];
+            if (self.delegate) [self.delegate testRunnerOnInvokeResult:res withMessageId:messageId];
             self.currentInvocationId = nil;
         }
     });

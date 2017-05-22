@@ -39,8 +39,8 @@ class Client {
   }
 
   async sendAction(action) {
-    const id = this.actionId++;
-    action.params.id = id.toString();
+    action.messageId = this.actionId++;
+    //action.messageId = action.messageId.toString();
     const response = await this.ws.send(JSON.stringify(action));
     await action.handle(JSON.parse(response));
     return response;

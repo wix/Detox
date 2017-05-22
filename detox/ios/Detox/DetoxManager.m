@@ -65,7 +65,7 @@ static void detoxConditionalInit()
 	
 	if([ReactNativeSupport isReactNativeApp])
 	{
-		[self _waitForRNLoadWithId:nil];
+		[self _waitForRNLoadWithId:@0];
 	}
 	
 	return self;
@@ -81,33 +81,31 @@ static void detoxConditionalInit()
 	if (![ReactNativeSupport isReactNativeApp])
 	{
 		_isReady = YES;
-		[self.websocket sendAction:@"ready" withParams:@{}];
+		[self.websocket sendAction:@"ready" withParams:@{} withMessageId: 0];
 	}
 }
 
-- (void) websocketDidReceiveAction:(NSString *)type withParams:(NSDictionary *)params
+- (void) websocketDidReceiveAction:(NSString *)type withParams:(NSDictionary *)params withMessageId:(NSNumber *)messageId
 {
-	id actionId = params[@"id"];
-	
-	NSAssert(actionId != nil, @"Got action with a null id");
+	NSAssert(messageId != nil, @"Got action with a null messageId");
 	
 	if([type isEqualToString:@"invoke"])
 	{
-		[self.testRunner invoke:params];
+		[self.testRunner invoke:params withMessageId: messageId];
 		return;
 	}
 	else if([type isEqualToString:@"isReady"])
 	{
 		if(_isReady)
 		{
-			[self.websocket sendAction:@"ready" withParams:@{@"id": actionId}];
+			[self.websocket sendAction:@"ready" withParams:@{} withMessageId: messageId];
 		}
 		return;
 	}
 	else if([type isEqualToString:@"cleanup"])
 	{
 		[self.testRunner cleanup];
-		[self.websocket sendAction:@"cleanupDone" withParams:@{@"id": actionId}];
+		[self.websocket sendAction:@"cleanupDone" withParams:@{} withMessageId: messageId];
 		return;
 	}
 	else if([type isEqualToString:@"userNotification"])
@@ -115,55 +113,55 @@ static void detoxConditionalInit()
 		NSURL* userNotificationDataURL = [NSURL fileURLWithPath:params[@"detoxUserNotificationDataURL"]];
 		DetoxUserNotificationDispatcher* dispatcher = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationDataURL:userNotificationDataURL];
 		[dispatcher dispatchOnAppDelegate:DetoxAppDelegateProxy.currentAppDelegateProxy.originalAppDelegate simulateDuringLaunch:NO];
-		[self.websocket sendAction:@"userNotificationDone" withParams:@{@"id": actionId}];
+		[self.websocket sendAction:@"userNotificationDone" withParams:@{} withMessageId: messageId];
 	}
 	else if([type isEqualToString:@"reactNativeReload"])
 	{
 		_isReady = NO;
 		[ReactNativeSupport reloadApp];
 		
-		[self _waitForRNLoadWithId:actionId];
+		[self _waitForRNLoadWithId:messageId];
 		
 		return;
 	}
 	else if([type isEqualToString:@"currentStatus"])
 	{
 		NSMutableDictionary* statsStatus = [[[EarlGreyStatistics sharedInstance] currentStatus] mutableCopy];
-		statsStatus[@"id"] = actionId;
+		statsStatus[@"messageId"] = messageId;
 		
-		[self.websocket sendAction:@"currentStatusResult" withParams:statsStatus];
+		[self.websocket sendAction:@"currentStatusResult" withParams:statsStatus withMessageId: messageId];
 	}
 }
 
-- (void)_waitForRNLoadWithId:(id)actionId
+- (void)_waitForRNLoadWithId:(id)messageId
 {
 	__weak __typeof(self) weakSelf = self;
 	[ReactNativeSupport waitForReactNativeLoadWithCompletionHandler:^{
 		weakSelf.isReady = YES;
-		[weakSelf.websocket sendAction:@"ready" withParams:actionId == nil ? @{} : @{@"id": actionId}];
+		[weakSelf.websocket sendAction:@"ready" withParams:@{} withMessageId: messageId];
 	}];
 }
 
-- (void)testRunnerOnInvokeResult:(id)res withInvocationId:(NSString *)invocationId
+- (void)testRunnerOnInvokeResult:(id)res withMessageId:(NSNumber *)messageId
 {
 	if (res == nil) res = @"(null)";
 	if (![res isKindOfClass:[NSString class]] && ![res isKindOfClass:[NSNumber class]])
 	{
 		res = [NSString stringWithFormat:@"(%@)", NSStringFromClass([res class])];
 	}
-	[self.websocket sendAction:@"invokeResult" withParams:@{@"id": invocationId, @"result": res}];
+	[self.websocket sendAction:@"invokeResult" withParams:@{@"result": res} withMessageId: messageId];
 }
 
-- (void)testRunnerOnTestFailed:(NSString *)details
+- (void)testRunnerOnTestFailed:(NSString *)details withMessageId:(NSNumber *) messageId
 {
 	if (details == nil) details = @"";
-	[self.websocket sendAction:@"testFailed" withParams:@{@"details": details}];
+	[self.websocket sendAction:@"testFailed" withParams:@{@"details": details} withMessageId: messageId];
 }
 
-- (void)testRunnerOnError:(NSString *)error
+- (void)testRunnerOnError:(NSString *)error withMessageId:(NSNumber *) messageId
 {
 	if (error == nil) error = @"";
-	[self.websocket sendAction:@"error" withParams:@{@"error": error}];
+	[self.websocket sendAction:@"error" withParams:@{@"error": error} withMessageId: messageId];
 }
 
 @end

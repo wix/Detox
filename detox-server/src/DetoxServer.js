@@ -34,10 +34,10 @@ class DetoxServer {
             }
           } else if (sessionId && role) {
             log.log('wss', `${now()}:`, `role=${role} action=${action.type} (sessionId=${sessionId})`);
-            this.sendToOtherRole(sessionId, role, action.type, action.params);
+            this.sendToOtherRole(sessionId, role, action);
           }
         } catch (error) {
-          log.log('wss', `Invalid JSON received, cannot parse`);
+          log.log('wss', `Invalid JSON received, cannot parse`, error);
         }
       });
 
@@ -50,18 +50,17 @@ class DetoxServer {
     });
   }
 
-  sendAction(ws, type, params) {
-    ws.send(JSON.stringify({
-      type: type,
-      params: params
-    }) + '\n ');
+  sendAction(ws, action) {
+    ws.send(JSON.stringify(
+      action
+    ) + '\n ');
   }
 
-  sendToOtherRole(sessionId, role, type, params) {
+  sendToOtherRole(sessionId, role, action) {
     const otherRole = role === 'testee' ? 'tester' : 'testee';
     const ws = _.get(this.sessions, [sessionId, otherRole]);
     if (ws) {
-      this.sendAction(ws, type, params);
+      this.sendAction(ws, action);
     } else {
       log.log('wss', `${now()}:`, `role=${otherRole} not connected, cannot fw action (sessionId=${sessionId})`);
     }

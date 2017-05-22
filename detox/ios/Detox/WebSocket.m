@@ -1,4 +1,4 @@
-//
+	//
 //  WebSocket.m
 //  Detox
 //
@@ -31,9 +31,9 @@
     [self.websocket open];
 }
 
-- (void) sendAction:(NSString*)type withParams:(NSDictionary*)params
+- (void) sendAction:(NSString*)type withParams:(NSDictionary*)params withMessageId:(NSNumber*)messageId
 {
-    NSDictionary *data = @{@"type": type, @"params": params};
+    NSDictionary *data = @{@"type": type, @"params": params, @"messageId": messageId};
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:data options:kNilOptions error:&error];
     if (jsonData == nil)
@@ -68,13 +68,19 @@
         NSLog(@"☣️ DETOX:: Error: receiveAction invalid params");
         return;
     }
+	NSNumber *messageId = [data objectForKey:@"messageId"];
+	if (messageId != nil && ![messageId isKindOfClass:[NSNumber class]])
+	{
+		NSLog(@"☣️ DETOX:: Error: receiveAction invalid messageId");
+		return;
+	}
     NSLog(@"☣️ DETOX:: Detox Action Received: %@", type);
-    if (self.delegate) [self.delegate websocketDidReceiveAction:type withParams:params];
+	if (self.delegate) [self.delegate websocketDidReceiveAction:type withParams:params withMessageId:messageId];
 }
 
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket
 {
-    [self sendAction:@"login" withParams:@{@"sessionId": self.sessionId, @"role": @"testee"}];
+    [self sendAction:@"login" withParams:@{@"sessionId": self.sessionId, @"role": @"testee"} withMessageId:@0];
     if (self.delegate) [self.delegate websocketDidConnect];
 }
 

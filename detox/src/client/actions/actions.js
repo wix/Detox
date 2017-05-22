@@ -2,6 +2,7 @@ class Action {
   constructor(type, params = {}) {
     this.type = type;
     this.params = params;
+    this.messageId;
   }
 
   expectResponseOfType(response, type) {
