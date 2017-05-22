@@ -3,6 +3,7 @@
 * [Enable verbose mode](#enable-verbose-mode)
 * [Syntax Error: Unxpected Token](#syntax-error-unxpected-token)
 * [Can't find my component even though I added testID to its props](#cant-find-my-component-even-though-i-added-testid-to-its-props)
+* [Test tries to find my component before it's created](#test-tries-to-find-my-component-before-its-created)
 * [detox build or detox test are failing to run](#detox-build-or-detox-test-are-failing-to-run)
 * [Debug view hierarchy](#debug-view-hierarchy)
 * [Compare to a working setup](#compare-to-a-working-setup)
@@ -110,6 +111,28 @@ Now, adding `testID` to your composite component should work:
 render() {
   return <MyCompositeComponent testID='MyUniqueId123' />;
 }
+```
+
+<br>
+
+### Test tries to find my component before it's created
+
+**Issue:** Due to a synchronization issue, the test tries to perform an expectation and fails because it runs the expectation too soon. Consider this example:
+
+```js
+await element(by.label('Login')).tap();
+await expect(element(by.label('Welcome'))).toBeVisible();
+```
+
+In the test above, after tapping the Login button, the app performs several complex asynchronous operations until the Welcome message is displayed post-login. These can include querying a server, waiting for a response and then running an animated transition to the Welcome screen. Detox attempts to simplify your test code by synchronizing *automatically* with these asynchronous operations. What happens if for some reason the automatic synchronization doesn't work? As a result, Detox will not wait correctly until the Welcome screen appears and instead will continue immediately to the next line and try to run the expectation. Since the screen is not there yet, the test will fail.
+
+**Solution:** When you suspect that automatic synchronization didn't work, you have a fail-safe by synchronizing manually with `waitFor`. Using `waitFor` will poll until the expectation is met. This isn't a recommended approach so please use it as a workaround and open and issue to resolve the synchronization issue.
+
+Full documentation about `waitFor` is available [here](/docs/APIRef.waitFor.md). This is what the fixed test would look like:
+
+```js
+await element(by.label('Login')).tap();
+await waitFor(element(by.label('Welcome'))).toBeVisible().withTimeout(2000);
 ```
 
 <br>
