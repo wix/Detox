@@ -1,6 +1,7 @@
 const fs = require('fs');
 const _ = require('lodash');
 const argparse = require('../utils/argparse');
+const invoke = require('../invoke');
 
 class Device {
   constructor(client, session, deviceConfig) {
@@ -40,6 +41,16 @@ class Device {
 
   async sendUserNotification(params) {
     await this.client.sendUserNotification(params);
+  }
+
+  async setOrientation(orientation) {
+    // orientation is 'landscape' (meaning left side portrait) or 'portrait' (non-reversed)
+    const call = invoke.call(
+      invoke.IOS.EarlGrey(''),
+      'rotateDeviceToOrientation:errorOrNil:',
+      invoke.IOS.UIDeviceOrientation(orientation)
+    );
+    await new invoke.InvocationManager(this.client).execute(call);
   }
 
   async shutdown() {
