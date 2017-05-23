@@ -12,7 +12,7 @@ Test async code with waitFor.<br>
 - [`.toExist()`](#toexist)
 - [`.toNotExist()`](#tonotexist)
 - [`.toHaveText()`](#tohavetexttext)
-- [`.toHaveId()`](#tohaveidid)
+- [`.toHaveValue()`](#tohavevaluevalue)
 - [`.withTimeout()`](#withtimeoutmillis)
 - [`.whileElement()`](#whileelement)
 
@@ -51,7 +51,7 @@ await waitFor(element(by.id('RandomJunk959'))).toNotExist().withTimeout(2000);
 ```
 
 ### `toHaveText(text)`
-Similar to [`expect.toHaveText()`](APIRef.Expect.md#tohavetexttext), but test will hang until expectation is met or a timeout has occurred<br> 
+Similar to [`expect.toHaveText(text)`](APIRef.Expect.md#tohavetexttext), but test will hang until expectation is met or a timeout has occurred<br> 
 - In React Native apps, expect UI component of type `<Text>` to have text.
 
 - In native iOS apps, expect UI elements of type UIButton, UILabel, UITextField or UITextViewIn to have inputText with text.
@@ -60,14 +60,14 @@ Similar to [`expect.toHaveText()`](APIRef.Expect.md#tohavetexttext), but test wi
 await waitFor(element(by.id('UniqueId204'))).toHaveText('I contain some text').withTimeout(2000);
 ```
 
-### `toHaveId(id)`
-Similar to [`expect.toExist()`](APIRef.Expect.md#toexist), but test will hang until expectation is met or a timeout has occurred<br>
+### `toHaveValue(value)`
+Similar to [`expect.toHaveValue(value)`](APIRef.Expect.md#tohavevaluevalue), but test will hang until expectation is met or a timeout has occurred<br>
 
 - In React Native apps, expect UI component to have [`testID`](https://facebook.github.io/react-native/docs/view.html#testid) with that id.
 - In native iOS apps, expect UI element to have accesibilityIdentifier with that id.
 
 ```js
-await waitFor(element(by.text('I contain some text'))).toHaveId('UniqueId204').withTimeout(2000);
+await waitFor(element(by.id('uniqueId'))).toHaveValue('Some value').withTimeout(2000);
 ```
 
 
