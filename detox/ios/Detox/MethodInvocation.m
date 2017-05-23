@@ -80,6 +80,24 @@
         if (![value isKindOfClass:[NSDictionary class]]) return nil;
         return [MethodInvocation invoke:value onError:onError];
     }
+	if ([type isEqualToString:@"UIDeviceOrientation"])
+	{
+		if (value == nil) {
+			return nil;
+		}
+		
+		if ([value isEqualToString:@"landscape"])
+		{
+			return [NSNumber numberWithLong:UIDeviceOrientationLandscapeLeft];
+		}
+		
+		if ([value isEqualToString:@"portrait"])
+		{
+			return [NSNumber numberWithLong:UIDeviceOrientationPortrait];
+		}
+		
+		return nil;
+	}
     return nil;
 }
 
