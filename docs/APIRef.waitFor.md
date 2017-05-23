@@ -16,7 +16,7 @@ Test async code with waitFor.<br>
 - [`.withTimeout()`](#withtimeoutmillis)
 - [`.whileElement()`](#whileelement)
 
->NOTE: Every `waitFor` call must set a timeout using `withTimeout()`. Calling `waitFor` without setting a timeout will behave like `expect`.
+>NOTE: Every `waitFor` call must set a timeout using `withTimeout()`. Calling `waitFor` without setting a timeout **will do nothing**.
 
 ### `toBeVisible()`
 Similar to [`expect.toBeVisible()`](APIRef.Expect.md#tobevisible), but test will hang until expectation is met or a timeout has occurred<br>
