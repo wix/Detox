@@ -6,7 +6,18 @@ describe('expect', async () => {
     e.setInvocationManager(new MockExecutor());
   });
 
-  it(`element by label`, async () => {
+  it(`element by accessibilityLabel`, async () => {
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeVisible();
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeNotVisible();
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).toExist();
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotExist();
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveText('text');
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveLabel('label');
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveId('id');
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveValue('value');
+  });
+
+  it(`element by label (for backwards compat)`, async () => {
     await e.expect(e.element(e.by.label('test'))).toBeVisible();
     await e.expect(e.element(e.by.label('test'))).toBeNotVisible();
     await e.expect(e.element(e.by.label('test'))).toExist();
@@ -64,6 +75,7 @@ describe('expect', async () => {
     await e.waitFor(e.element(e.by.id('id'))).toExist();
     await e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout(0);
     await e.waitFor(e.element(e.by.id('id'))).toNotExist().withTimeout(0);
+    await e.waitFor(e.element(e.by.id('id'))).toHaveText('text');
     await e.waitFor(e.element(e.by.id('id'))).toHaveValue('value');
     await e.waitFor(e.element(e.by.id('id'))).toNotHaveValue('value');
 
