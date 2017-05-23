@@ -31,7 +31,7 @@ describe('Background push notification', () => {
 Use the `sendUserNotification()` method to send notification to running app.
 
 ```js
-device.sendUserNotification(notification)
+await device.sendUserNotification(notification)
 ```
 
 **Example:**
@@ -41,7 +41,7 @@ device.sendUserNotification(notification)
 describe('Foreground user notifications', () => {
 
 beforeEach(async () => {
-  device.relaunchApp();
+  await device.relaunchApp();
 });
 
 it('Local notification from inside the app', async () => {
