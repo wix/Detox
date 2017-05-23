@@ -8,6 +8,7 @@
 
 #import "GREYMatchers+Detox.h"
 #import "EarlGreyExtensions.h"
+#import "ReactNativeSupport.h"
 
 @implementation GREYMatchers (Detox)
 
@@ -21,9 +22,30 @@
     
     // in React Native RCTText the accessibilityLabel is hardwired to be the text inside
     return grey_anyOf(grey_text(text),
-                      grey_allOf(grey_anyOf(grey_kindOfClass(RN_RCTText), nil),
-                                 hasProperty(@"accessibilityLabel", text), nil), nil);
+                      grey_allOf(grey_kindOfClass(RN_RCTText),
+                                 hasProperty(@"accessibilityLabel", text),
+								 nil),
+					  nil);
     
+}
+
+//all(label, not_decendant(all(RCTText, with-label))
+
++ (id<GREYMatcher>)detox_matcherForAccessibilityLabel:(NSString *)label {
+	if (![ReactNativeSupport isReactNativeApp])
+	{
+		return  [self matcherForAccessibilityLabel:label];
+	}
+	else
+	{
+		Class RN_RCTText = NSClassFromString(@"RCTText");
+		return grey_allOf(grey_accessibilityLabel(label),
+						  grey_not(grey_descendant(grey_allOf(grey_kindOfClass(RN_RCTText),
+															  grey_accessibilityLabel(label),
+															  nil))),
+						  nil);
+	}
+	
 }
 
 + (id<GREYMatcher>)detoxMatcherForScrollChildOfMatcher:(id<GREYMatcher>)matcher
