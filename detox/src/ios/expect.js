@@ -322,6 +322,9 @@ class WaitForElement extends WaitFor {
   toNotExist() {
     return new WaitForInteraction(this._element, new ExistsMatcher())._not();
   }
+  toHaveText(text) {
+    return new WaitForInteraction(this._element, new TextMatcher(text));
+  }
   toHaveValue(value) {
     return new WaitForInteraction(this._element, new ValueMatcher(value));
   }
