@@ -29,3 +29,7 @@ Uninstall the app defined in the current [`configuration`](APIRef.Configuration.
 
 
 ### `device.sendUserNotification(params)`
+
+### `device.setOrientation(orientation)`
+Takes `"portrait"` or `"landscape"` and rotates the device to the given orientation.
+Currently only available in the iOS Simulator.
