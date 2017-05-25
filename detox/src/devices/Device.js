@@ -44,11 +44,18 @@ class Device {
   }
 
   async setOrientation(orientation) {
-    // orientation is 'landscape' (meaning left side portrait) or 'portrait' (non-reversed)
-    const call = invoke.call(
-      invoke.IOS.EarlGrey(''),
+    // keys are possible orientations
+    const orientationMapping = {
+      landscape: 3, // top at left side landscape
+      portrait: 1  // non-reversed portrait
+    };
+    if (!Object.keys(orientationMapping).includes(orientation)) {
+      throw new Error(`setOrientation failed: provided orientation ${orientation} is not part of supported orientations: ${Object.keys(orientationMapping)}`)
+    }
+
+    const call = invoke.EarlGrey.call(
       'rotateDeviceToOrientation:errorOrNil:',
-      invoke.IOS.UIDeviceOrientation(orientation)
+      invoke.IOS.NSInteger(orientationMapping[orientation])
     );
     await new invoke.InvocationManager(this.client).execute(call);
   }
