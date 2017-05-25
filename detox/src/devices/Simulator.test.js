@@ -204,7 +204,7 @@ describe('Simulator', () => {
 
     await simulator.setOrientation('portrait');
     expect(client.execute).toHaveBeenCalled();
-    const call = client.execute.mock.calls[client.execute.mock.calls.length - 1][0]
+    const call = client.execute.mock.calls[client.execute.mock.calls.length - 1][0]();
     expect(call.target.type).toBe('EarlGrey');
     expect(call.method).toBe('rotateDeviceToOrientation:errorOrNil:');
     expect(call.args[0].value).toBe(1);
@@ -215,7 +215,7 @@ describe('Simulator', () => {
 
     await simulator.setOrientation('landscape');
     expect(client.execute).toHaveBeenCalled();
-    const call = client.execute.mock.calls[client.execute.mock.calls.length - 1][0]
+    const call = client.execute.mock.calls[client.execute.mock.calls.length - 1][0]();
     expect(call.target.type).toBe('EarlGrey');
     expect(call.method).toBe('rotateDeviceToOrientation:errorOrNil:');
     expect(call.args[0].value).toBe(3);

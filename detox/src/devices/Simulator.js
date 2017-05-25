@@ -109,7 +109,7 @@ class Simulator extends IosNoneDevice {
       throw new Error(`setOrientation failed: provided orientation ${orientation} is not part of supported orientations: ${Object.keys(orientationMapping)}`)
     }
 
-    const call = invoke.EarlGrey.call(
+    const call = invoke.call(invoke.EarlGrey.instance,
       'rotateDeviceToOrientation:errorOrNil:',
       invoke.IOS.NSInteger(orientationMapping[orientation])
     );
