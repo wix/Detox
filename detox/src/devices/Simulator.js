@@ -7,6 +7,7 @@ const IosNoneDevice = require('./IosNoneDevice');
 const FBsimctl = require('./Fbsimctl');
 const configuration = require('../configuration');
 const argparse = require('../utils/argparse');
+const invoke = require('../invoke');
 
 class Simulator extends IosNoneDevice {
 
@@ -96,6 +97,23 @@ class Simulator extends IosNoneDevice {
 
   async shutdown() {
     await this._fbsimctl.shutdown(this._simulatorUdid);
+  }
+
+  async setOrientation(orientation) {
+    // keys are possible orientations
+    const orientationMapping = {
+      landscape: 3, // top at left side landscape
+      portrait: 1  // non-reversed portrait
+    };
+    if (!Object.keys(orientationMapping).includes(orientation)) {
+      throw new Error(`setOrientation failed: provided orientation ${orientation} is not part of supported orientations: ${Object.keys(orientationMapping)}`)
+    }
+
+    const call = invoke.call(invoke.EarlGrey.instance,
+      'rotateDeviceToOrientation:errorOrNil:',
+      invoke.IOS.NSInteger(orientationMapping[orientation])
+    );
+    await new invoke.InvocationManager(this.client).execute(call);
   }
 }
 
