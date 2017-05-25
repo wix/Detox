@@ -1,7 +1,6 @@
 const fs = require('fs');
 const _ = require('lodash');
 const argparse = require('../utils/argparse');
-const invoke = require('../invoke');
 
 class Device {
   constructor(client, session, deviceConfig) {
@@ -41,23 +40,6 @@ class Device {
 
   async sendUserNotification(params) {
     await this.client.sendUserNotification(params);
-  }
-
-  async setOrientation(orientation) {
-    // keys are possible orientations
-    const orientationMapping = {
-      landscape: 3, // top at left side landscape
-      portrait: 1  // non-reversed portrait
-    };
-    if (!Object.keys(orientationMapping).includes(orientation)) {
-      throw new Error(`setOrientation failed: provided orientation ${orientation} is not part of supported orientations: ${Object.keys(orientationMapping)}`)
-    }
-
-    const call = invoke.EarlGrey.call(
-      'rotateDeviceToOrientation:errorOrNil:',
-      invoke.IOS.NSInteger(orientationMapping[orientation])
-    );
-    await new invoke.InvocationManager(this.client).execute(call);
   }
 
   async shutdown() {
