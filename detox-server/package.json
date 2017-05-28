@@ -4,7 +4,7 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "version": "1.2.2",
+  "version": "1.2.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/wix/detox.git"
@@ -25,8 +25,8 @@
   "license": "MIT",
   "dependencies": {
     "lodash": "^4.13.1",
-    "ws": "^1.1.0",
-    "npmlog": "^4.0.2"
+    "npmlog": "^4.0.2",
+    "ws": "^1.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.8.0",
