@@ -1,6 +1,5 @@
 const cp = require('child_process');
 const p = require('path');
-const semver = require('semver');
 
 function execSync(cmd) {
   cp.execSync(cmd, { stdio: ['inherit', 'inherit', 'inherit'] });
