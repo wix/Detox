@@ -38,6 +38,7 @@ function setupGit() {
   const remoteUrl = new RegExp(`https?://(\\S+)`).exec(execSyncRead(`git remote -v`))[1];
   execSyncSilently(`git remote remove origin`);
   execSyncSilently(`git remote add origin "https://${process.env.GIT_USER}:${process.env.GIT_TOKEN}@${remoteUrl}"`);
+  execSync(`git checkout master`);
 }
 
 function copyNpmRc() {
