@@ -37,13 +37,17 @@ function setupGit() {
   execSyncSilently(`git config --global user.email "${process.env.GIT_EMAIL}"`);
   execSyncSilently(`git config --global user.name "${process.env.GIT_USER}"`);
   const remoteUrl = new RegExp(`https?://(\\S+)`).exec(execSyncRead(`git remote -v`))[1];
-  execSyncSilently(`git remote add deploy "https://${process.env.GIT_USER}:${process.env.GIT_TOKEN}@${remoteUrl}"`);
-  execSync(`git checkout master`);
+  execSyncSilently(`git remote remove origin`);
+  execSyncSilently(`git remote add origin "https://${process.env.GIT_USER}:${process.env.GIT_TOKEN}@${remoteUrl}"`);
 }
 
 function copyNpmRc() {
   const npmrcPath = p.resolve(`${__dirname}/.npmrc`);
   execSync(`cp -rf ${npmrcPath} .`);
+}
+
+function release() {
+  execSync(`lerna publish --cd-version patch --yes`);
 }
 
 function run() {
@@ -52,6 +56,8 @@ function run() {
   }
   setupGit();
   copyNpmRc();
+
+  release();
 }
 
 run();
