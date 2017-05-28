@@ -1,5 +1,9 @@
 {
   "devDependencies": {
     "lerna": "2.0.0-rc.4"
+  },
+  "scripts": {
+    "release":"node scripts/release.js",
+    "e2e": "pushd detox/test && npm run e2e && popd"
   }
 }

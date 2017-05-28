@@ -4,7 +4,5 @@ lerna bootstrap
 lerna run --ignore detox-demo*  build
 lerna run --ignore detox-demo*  test
 
-cd detox/test
 npm run e2e
-
-node scripts/release.js
+npm run release
