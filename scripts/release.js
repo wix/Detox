@@ -47,7 +47,7 @@ function copyNpmRc() {
 }
 
 function release() {
-  execSync(`lerna publish --cd-version patch --yes`);
+  execSync(`lerna publish -m "[skip ci] Publish" --cd-version patch --yes`);
 }
 
 function run() {
