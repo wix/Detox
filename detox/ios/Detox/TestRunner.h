@@ -11,9 +11,9 @@
 
 @protocol TestRunnerDelegate <NSObject>
 
-- (void)testRunnerOnTestFailed:(NSString*)details;
+- (void)testRunnerOnTestFailed:(NSString*)details withMessageId:(NSNumber*)messageId;
 - (void)testRunnerOnInvokeResult:(id)res withMessageId:(NSNumber*)messageId;
-- (void)testRunnerOnError:(NSString*)error;
+- (void)testRunnerOnError:(NSString*)error withMessageId:(NSNumber*)messageId;
 
 @end
 
