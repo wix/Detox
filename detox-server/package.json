@@ -14,7 +14,8 @@
   },
   "scripts": {
     "build": "BABEL_ENV=test babel src -d lib",
-    "start": "node lib/cli.js"
+    "start": "node lib/cli.js",
+    "prepublish": "npm run build"
   },
   "bugs": {
     "url": "https://github.com/wix/detox/issues"
