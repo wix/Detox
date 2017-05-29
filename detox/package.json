@@ -4,7 +4,7 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "version": "5.0.11",
+  "version": "5.0.12",
   "bin": {
     "detox": "local-cli/detox.js"
   },
@@ -49,7 +49,7 @@
   "dependencies": {
     "child-process-promise": "^2.2.0",
     "commander": "^2.9.0",
-    "detox-server": "^2.0.1",
+    "detox-server": "^2.0.2",
     "get-port": "^2.1.0",
     "lodash": "^4.14.1",
     "npmlog": "^4.0.2",
