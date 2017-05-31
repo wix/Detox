@@ -1,6 +1,6 @@
 # The `device` Object
 
-`device` is globally available in every test file, it enables control over the current attached device (currently only simulatoris supported).
+`device` is globally available in every test file, it enables control over the current attached device (currently only simulators are supported).
 
 ### Methods
 
