@@ -5,7 +5,6 @@ class Client {
   constructor(config) {
     this.configuration = config;
     this.ws = new AsyncWebSocket(config.server);
-    this.actionId = 0;
   }
 
   async connect() {
@@ -14,7 +13,7 @@ class Client {
   }
 
   async reloadReactNative() {
-    await this.sendAction(new actions.ReloadReactNative());
+    await this.sendAction(new actions.ReloadReactNative(), -1000);
   }
 
   async sendUserNotification(params) {
@@ -22,7 +21,7 @@ class Client {
   }
 
   async waitUntilReady() {
-    await this.sendAction(new actions.Ready());
+    await this.sendAction(new actions.Ready(), -1000);
   }
 
   async cleanup() {
@@ -38,10 +37,8 @@ class Client {
     await this.sendAction(new actions.Invoke(invocation));
   }
 
-  async sendAction(action) {
-    action.messageId = this.actionId++;
-    //action.messageId = action.messageId.toString();
-    const response = await this.ws.send(JSON.stringify(action));
+  async sendAction(action, messageId) {
+    const response = await this.ws.send(action, messageId);
     await action.handle(JSON.parse(response));
     return response;
   }

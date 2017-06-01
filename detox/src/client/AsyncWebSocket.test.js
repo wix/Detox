@@ -17,7 +17,7 @@ describe('AsyncWebSocket', () => {
   });
 
   it(`new AsyncWebSocket - websocket onOpen should resolve`, async () => {
-    const response = {response: 'onopen'};
+    const response = generateResponse('onmessage', 0);
     const promise = client.open();
     client.ws.onopen(response);
     expect(await promise).toEqual(response);
@@ -26,9 +26,9 @@ describe('AsyncWebSocket', () => {
   it(`new AsyncWebSocket - websocket onError should reject`, async () => {
     const error = new Error();
     const promise = client.open();
-    client.ws.onerror(error);
 
     try {
+      client.ws.onerror(error);
       await promise;
     } catch (ex) {
       expect(ex).toEqual(error);
@@ -37,28 +37,79 @@ describe('AsyncWebSocket', () => {
 
   it(`send message on a closed connection should throw`, async () => {
     try {
-      await client.send({message: 'a message'});
+      await client.send(generateRequest());
     } catch (ex) {
       expect(ex).toBeDefined();
     }
   });
 
-  it(`send message should resolve upon returning message`, async () => {
-    const response = {data: {response: 'onmessage'}};
+  it(`messaged should have subsequent messageIds`, async () => {
     await connect(client);
 
-    const promise = client.send({message: 'a message'});
+    const request = generateRequest();
+    const firstResponse = generateResponse('onmessage', 0);
+    const secondResponse = generateResponse('onmessage', 1);
+
+    const first = client.send(request);
+    expect(request.messageId).toEqual(0);
+    client.ws.onmessage(firstResponse);
+    expect(await first).toEqual(firstResponse.data);
+
+    const second = client.send(request);
+    expect(request.messageId).toEqual(1);
+    client.ws.onmessage(secondResponse);
+    expect(await second).toEqual(secondResponse.data);
+});
+
+  it(`messaged should have subsequent messageIds`, async () => {
+    await connect(client);
+
+    const request = generateRequest();
+    const firstResponse = generateResponse('onmessage', 0);
+    const secondResponse = generateResponse('onmessage', 1);
+
+    const first = client.send(request);
+    expect(request.messageId).toEqual(0);
+
+    const second = client.send(request);
+    expect(request.messageId).toEqual(1);
+
+    client.ws.onmessage(secondResponse);
+    client.ws.onmessage(firstResponse);
+
+    expect(await second).toEqual(secondResponse.data);
+    expect(await first).toEqual(firstResponse.data);
+  });
+
+  it(`send message should resolve upon returning message`, async () => {
+    await connect(client);
+    const response = generateResponse('onmessage', 0);
+
+    const promise = client.send(generateRequest());
     client.ws.onmessage(response);
     expect(await promise).toEqual(response.data);
   });
 
-  it(`send message should reject upon error`, async () => {
+  it(`send message should reject upon error if there's only one message in flight`, async () => {
     await connect(client);
     const error = new Error();
-    const promise = client.send({message: 'a message'});
+    const message = client.send(generateRequest());
     client.ws.onerror(error);
     try {
-      await promise;
+      await message;
+    } catch (ex) {
+      expect(ex).toEqual(error);
+    }
+  });
+
+  it(`send message should throw upon error if there's more than one message in flight`, async () => {
+    await connect(client);
+    const error = new Error();
+    const message1 = client.send(generateRequest());
+    const message2 = client.send(generateRequest());
+
+    try {
+      client.ws.onerror(error);
     } catch (ex) {
       expect(ex).toEqual(error);
     }
@@ -108,5 +159,13 @@ describe('AsyncWebSocket', () => {
     const promise = client.open();
     client.ws.onopen(result);
     await promise;
+  }
+
+  function generateRequest(message) {
+    return {message: 'a message'};
+  }
+
+  function generateResponse(message, messageId) {
+    return {data: JSON.stringify({response: message, messageId: messageId})};
   }
 });

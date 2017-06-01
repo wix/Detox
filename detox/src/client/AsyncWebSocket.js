@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const log = require('npmlog');
 const WebSocket = require('ws');
 
@@ -6,7 +7,8 @@ class AsyncWebSocket {
   constructor(url) {
     this.url = url;
     this.ws = undefined;
-    this.inFlightPromise = {};
+    this.inFlightPromises = {};
+    this.messageIdCounter = 0;
   }
 
   async open() {
@@ -19,29 +21,37 @@ class AsyncWebSocket {
 
       this.ws.onerror = (error) => {
         log.error(`ws`, `onError: ${error}`);
-        this.inFlightPromise.reject(error);
+
+        if (_.size(this.inFlightPromises) === 1) {
+          _.values(this.inFlightPromises)[0].reject(error);
+          this.inFlightPromises = {};
+        } else {
+          throw error;
+        }
       };
 
       this.ws.onmessage = (response) => {
         log.verbose(`ws`, `onMessage: ${response.data}`);
-        this.inFlightPromise.resolve(response.data);
+        let pendingId = JSON.parse(response.data).messageId;
+        let pendingPromise = this.inFlightPromises[pendingId];
+        pendingPromise.resolve(response.data);
+        delete this.inFlightPromises[pendingId];
       };
 
-      this.inFlightPromise.resolve = resolve;
-      this.inFlightPromise.reject = reject;
+      this.inFlightPromises[this.messageIdCounter] = {resolve, reject};
     });
   }
 
-  async send(message) {
+  async send(message, messageId) {
     if (!this.ws) {
       throw new Error(`Can't send a message on a closed websocket, init the by calling 'open()'`);
     }
 
     return new Promise(async(resolve, reject) => {
+      message.messageId = messageId || this.messageIdCounter++;
+      this.inFlightPromises[message.messageId] = {resolve, reject};
       log.verbose(`ws`, `send: ${message}`);
-      this.inFlightPromise.resolve = resolve;
-      this.inFlightPromise.reject = reject;
-      this.ws.send(message);
+      this.ws.send((JSON.stringify(message)));
     });
   }
 

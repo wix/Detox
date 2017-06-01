@@ -81,7 +81,7 @@ static void detoxConditionalInit()
 	if (![ReactNativeSupport isReactNativeApp])
 	{
 		_isReady = YES;
-		[self.websocket sendAction:@"ready" withParams:@{} withMessageId: 0];
+		[self.websocket sendAction:@"ready" withParams:@{} withMessageId: @-1000];
 	}
 }
 
@@ -98,7 +98,7 @@ static void detoxConditionalInit()
 	{
 		if(_isReady)
 		{
-			[self.websocket sendAction:@"ready" withParams:@{} withMessageId: messageId];
+			[self.websocket sendAction:@"ready" withParams:@{} withMessageId: @-1000];
 		}
 		return;
 	}
@@ -138,7 +138,7 @@ static void detoxConditionalInit()
 	__weak __typeof(self) weakSelf = self;
 	[ReactNativeSupport waitForReactNativeLoadWithCompletionHandler:^{
 		weakSelf.isReady = YES;
-		[weakSelf.websocket sendAction:@"ready" withParams:@{} withMessageId: messageId];
+		[weakSelf.websocket sendAction:@"ready" withParams:@{} withMessageId: @-1000];
 	}];
 }
 
