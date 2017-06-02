@@ -1,85 +1,84 @@
 {
-  "name": "detox",
-  "description": "E2E tests and automation for mobile",
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
-  },
-  "version": "5.0.12",
-  "bin": {
-    "detox": "local-cli/detox.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/wix/detox.git"
-  },
-  "nativePackage": true,
-  "bugs": {
-    "url": "https://github.com/wix/detox/issues"
-  },
-  "homepage": "https://github.com/wix/detox/detox",
-  "main": "./lib/index.js",
-  "author": "Tal Kol <talkol@gmail.com>",
-  "license": "MIT",
-  "scripts": {
-    "build": "scripts/build.sh",
-    "lint": "eslint src",
-    "unit": "jest --coverage --verbose",
-    "unit:ios": "set -o pipefail && xcodebuild -project ios/Detox.xcodeproj -scheme Detox -configuration Debug test -destination 'platform=iOS Simulator,name=iPhone 7 Plus' | xcpretty",
-    "test": "npm run unit && npm run unit:ios",
-    "unit:watch": "jest --watch --trace-warnings --coverage --verbose",
-    "postinstall": "scripts/postinstall.sh",
-    "prepublish": "npm run build"
-  },
-  "devDependencies": {
-    "babel-cli": "^6.8.0",
-    "babel-core": "^6.8.0",
-    "babel-eslint": "^6.0.4",
-    "babel-polyfill": "^6.8.0",
-    "babel-preset-latest": "^6.22.0",
-    "babel-register": "^6.8.0",
-    "colors": "^1.1.2",
-    "eslint": "3.x.x",
-    "eslint-plugin-babel": "4.x.x",
-    "eslint-plugin-promise": "^3.4.2",
-    "jest": "^18.1.0",
-    "minimist": "^1.2.0",
-    "shelljs": "^0.7.3",
-    "ttab": "^0.3.1"
-  },
-  "dependencies": {
-    "child-process-promise": "^2.2.0",
-    "commander": "^2.9.0",
-    "detox-server": "^2.0.2",
-    "get-port": "^2.1.0",
-    "lodash": "^4.14.1",
-    "npmlog": "^4.0.2",
-    "react-native-invoke": "^0.2.1",
-    "ws": "^1.1.1"
-  },
-  "babel": {
-    "env": {
-      "test": {
-        "presets": [
-          "latest"
-        ],
-        "retainLines": true
-      }
-    }
-  },
-  "jest": {
-    "testPathDirs": [
-      "node_modules",
-      "src"
-    ],
-    "resetMocks": true,
-    "resetModules": true,
-    "coverageThreshold": {
-      "global": {
-        "statements": 100,
-        "branches": 100,
-        "functions": 100,
-        "lines": 100
-      }
-    }
-  }
+	"name": "detox",
+	"description": "E2E tests and automation for mobile",
+	"publishConfig": {
+		"registry": "https://registry.npmjs.org/"
+	},
+	"version": "5.0.12",
+	"bin": {
+		"detox": "local-cli/detox.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/wix/detox.git"
+	},
+	"nativePackage": true,
+	"bugs": {
+		"url": "https://github.com/wix/detox/issues"
+	},
+	"homepage": "https://github.com/wix/detox/detox",
+	"main": "./lib/index.js",
+	"author": "Tal Kol <talkol@gmail.com>",
+	"license": "MIT",
+	"scripts": {
+		"build": "scripts/build.sh",
+		"lint": "eslint src",
+		"unit": "jest --coverage --verbose",
+		"test": "npm run unit",
+		"unit:watch": "jest --watch --trace-warnings --coverage --verbose",
+		"postinstall": "scripts/postinstall.sh",
+		"prepublish": "npm run build"
+	},
+	"devDependencies": {
+		"babel-cli": "^6.8.0",
+		"babel-core": "^6.8.0",
+		"babel-eslint": "^6.0.4",
+		"babel-polyfill": "^6.8.0",
+		"babel-preset-latest": "^6.22.0",
+		"babel-register": "^6.8.0",
+		"colors": "^1.1.2",
+		"eslint": "3.x.x",
+		"eslint-plugin-babel": "4.x.x",
+		"eslint-plugin-promise": "^3.4.2",
+		"jest": "^18.1.0",
+		"minimist": "^1.2.0",
+		"shelljs": "^0.7.3",
+		"ttab": "^0.3.1"
+	},
+	"dependencies": {
+		"child-process-promise": "^2.2.0",
+		"commander": "^2.9.0",
+		"detox-server": "^2.0.2",
+		"get-port": "^2.1.0",
+		"lodash": "^4.14.1",
+		"npmlog": "^4.0.2",
+		"react-native-invoke": "^0.2.1",
+		"ws": "^1.1.1"
+	},
+	"babel": {
+		"env": {
+			"test": {
+				"presets": [
+					"latest"
+				],
+				"retainLines": true
+			}
+		}
+	},
+	"jest": {
+		"testPathDirs": [
+			"node_modules",
+			"src"
+		],
+		"resetMocks": true,
+		"resetModules": true,
+		"coverageThreshold": {
+			"global": {
+				"statements": 100,
+				"branches": 100,
+				"functions": 100,
+				"lines": 100
+			}
+		}
+	}
 }
