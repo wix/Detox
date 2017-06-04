@@ -14,6 +14,7 @@
 #import "WXRunLoopIdlingResource.h"
 #import "WXJSDisplayLinkIdlingResource.h"
 #import "WXJSTimerObservationIdlingResource.h"
+#import "WXAnimatedDisplayLinkIdlingResource.h"
 
 @import ObjectiveC;
 @import Darwin;
@@ -84,8 +85,10 @@ void setupForTests()
 //	m = class_getInstanceMethod(cls, NSSelectorFromString(@"addToRunLoop:"));
 //	orig_addToRunLoop = (void(*)(id, SEL, NSRunLoop*))method_getImplementation(m);
 //	method_setImplementation(m, (IMP)swz_addToRunLoop);
-	
+
 	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[WXJSTimerObservationIdlingResource new]];
+	
+	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[WXAnimatedDisplayLinkIdlingResource new]];
 }
 
 @implementation ReactNativeSupport
