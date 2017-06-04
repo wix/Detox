@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "lodash": "^4.14.1",
-    "react": "~15.4.0-rc.4",
-    "react-native": "0.40.0"
+    "react": "16.0.0-alpha.6",
+    "react-native": "~0.44.0"
   },
   "devDependencies": {
     "mocha": "^3.2.0",
