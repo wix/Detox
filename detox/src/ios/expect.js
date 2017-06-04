@@ -322,6 +322,9 @@ class WaitForElement extends WaitFor {
   toNotExist() {
     return new WaitForInteraction(this._element, new ExistsMatcher())._not();
   }
+  toHaveText(text) {
+    return new WaitForInteraction(this._element, new TextMatcher(text));
+  }
   toHaveValue(value) {
     return new WaitForInteraction(this._element, new ValueMatcher(value));
   }
@@ -345,6 +348,7 @@ function element(matcher) {
 }
 
 const by = {
+  accessibilityLabel: (value) => new LabelMatcher(value),
   label: (value) => new LabelMatcher(value),
   id: (value) => new IdMatcher(value),
   type: (value) => new TypeMatcher(value),

@@ -12,6 +12,7 @@ Expect verifies if a certain value is as expected to be.
 - [`.toNotExist()`](#tonotexist)
 - [`.toHaveText()`](#tohavetexttext)
 - [`.toHaveId()`](#tohaveidid)
+- [`.toHaveValue()`](#tohavevaluevalue)
 
 
 ### `toBeVisible()`
@@ -53,8 +54,15 @@ await expect(element(by.id('UniqueId204'))).toHaveText('I contain some text');
 
 ### `toHaveId(id)`
 - In React Native apps, expect UI component to have [`testID`](https://facebook.github.io/react-native/docs/view.html#testid) with that id.
-- In native iOS apps, expect UI element to have accesibilityLabel with that id.
+- In native iOS apps, expect UI element to have accesibilityIdentifier with that id.
 
 ```js
 await expect(element(by.text('I contain some text'))).toHaveId('UniqueId204');
+```
+
+### `toHaveValue(value)`
+Expect components like a Switch to have a value ('0' for off, '1' for on).
+
+```js
+await expect(element(by.id('UniqueId533'))).toHaveValue('0');
 ```

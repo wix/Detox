@@ -187,6 +187,39 @@ describe('Simulator', () => {
     await simulator.openURL(url);
     expect(simulator._fbsimctl.open).toHaveBeenCalledWith(simulator._simulatorUdid, url);
   });
+
+  it(`setOrientation() should throw an error if give wrong input `, async() => {
+    expect.assertions(1);
+    simulator = validSimulator();
+
+    try {
+      await simulator.setOrientation('UpsideDown');
+    } catch(e) {
+      expect(e.message).toMatch('setOrientation failed: provided orientation UpsideDown is not part of supported orientations: landscape,portrait');
+    }
+  });
+
+  it(`setOrientation() should set the orientation to portrait`, async() => {
+    simulator = validSimulator();
+
+    await simulator.setOrientation('portrait');
+    expect(client.execute).toHaveBeenCalled();
+    const call = client.execute.mock.calls[client.execute.mock.calls.length - 1][0]();
+    expect(call.target.type).toBe('EarlGrey');
+    expect(call.method).toBe('rotateDeviceToOrientation:errorOrNil:');
+    expect(call.args[0].value).toBe(1);
+  });
+
+  it(`setOrientation() should set the orientation to landscape`, async() => {
+    simulator = validSimulator();
+
+    await simulator.setOrientation('landscape');
+    expect(client.execute).toHaveBeenCalled();
+    const call = client.execute.mock.calls[client.execute.mock.calls.length - 1][0]();
+    expect(call.target.type).toBe('EarlGrey');
+    expect(call.method).toBe('rotateDeviceToOrientation:errorOrNil:');
+    expect(call.args[0].value).toBe(3);
+  });
 });
 
 const notification = {

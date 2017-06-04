@@ -4,7 +4,7 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "version": "1.2.2",
+  "version": "2.0.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/wix/detox.git"
@@ -14,7 +14,8 @@
   },
   "scripts": {
     "build": "BABEL_ENV=test babel src -d lib",
-    "start": "node lib/cli.js"
+    "start": "node lib/cli.js",
+    "prepublish": "npm run build"
   },
   "bugs": {
     "url": "https://github.com/wix/detox/issues"
@@ -25,8 +26,8 @@
   "license": "MIT",
   "dependencies": {
     "lodash": "^4.13.1",
-    "ws": "^1.1.0",
-    "npmlog": "^4.0.2"
+    "npmlog": "^4.0.2",
+    "ws": "^1.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.8.0",

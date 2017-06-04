@@ -1,6 +1,6 @@
 # The `device` Object
 
-`device` is globally available in every test file, it enables control over the current attached device (currently only simulatoris supported).
+`device` is globally available in every test file, it enables control over the current attached device (currently only simulators are supported).
 
 ### Methods
 
@@ -29,3 +29,7 @@ Uninstall the app defined in the current [`configuration`](APIRef.Configuration.
 
 
 ### `device.sendUserNotification(params)`
+
+### `device.setOrientation(orientation)`
+Takes `"portrait"` or `"landscape"` and rotates the device to the given orientation.
+Currently only available in the iOS Simulator.
