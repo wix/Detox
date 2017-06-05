@@ -28,3 +28,22 @@ Detox eliminates flakiness by automatically synchronizing your tests with the ap
 * Keeping track of the React Native bridge which carries asynchronous messages
 * Keeping track of asynchronous React Native layout and the shadow queue
 * Keeping track of the JavaScript event loop which may contain pending asynchronous actions
+
+
+### Architecture
+The sequence diagram below shows the general communication scheme between the components in Detox.
+![architecture overview](img/action-sequence.mmd.png)
+
+To understand this topic more thoroughly we need to have a look at an example action in detail. The numbers in the listing below correlate with the ones in the diagram.
+
+### Action (`element.tap`)
+
+1. `element.tap()` in your test case is invoked.
+2. `TapAction` in [`expect.js`](https://github.com/wix/detox/blob/master/detox/src/ios/expect.js) gets invoked
+3.  `TapAction` instance gets passed to [`invoke.js`](https://github.com/wix/detox/blob/master/detox/src/invoke.js), where it gets transformed to JSON. The resulting JSON correlates more with the native code than with the JS code for better extensibility.
+4. JSON gets send to detox-server by [`Client.js`](https://github.com/wix/detox/blob/master/detox/src/client/Client.js)
+6. detox-server forwards it to the testee in [`DetoxServer.js`](https://github.com/wix/detox/blob/master/detox-server/src/DetoxServer.js)
+7. [`DetoxManager.m`](https://github.com/wix/detox/blob/master/detox/ios/Detox/DetoxManager.m) invokes the [`TestRunner.m`](https://github.com/wix/detox/blob/master/detox/ios/Detox/TestRunner.m). `TestRunner.m` uses [`MethodInvocation.m`](https://github.com/wix/detox/blob/master/detox/ios/Detox/MethodInvocation.m) to map the JSON representation of the native commands into the actual native command and executes it. *(8)*
+
+
+*NOTE: the images can be updated with [mermaid](http://knsv.github.io/mermaid/#mermaid). The files can be found under `img-src`*
