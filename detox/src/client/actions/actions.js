@@ -86,11 +86,25 @@ class SendUserNotification extends Action {
   }
 }
 
+class CurrentStatus extends Action {
+  constructor(params) {
+    super('currentStatus', params);
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'currentStatusResult');
+    //return JSON.stringify(response, null, 2);
+    console.log("res:" + JSON.stringify(response, null, 2));
+    return response;
+  }
+}
+
 module.exports = {
   Login,
   Ready,
   Invoke,
   ReloadReactNative,
   Cleanup,
-  SendUserNotification
+  SendUserNotification,
+  CurrentStatus
 };
