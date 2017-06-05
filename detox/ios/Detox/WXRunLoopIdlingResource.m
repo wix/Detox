@@ -10,7 +10,7 @@
 
 @implementation WXRunLoopIdlingResource
 {
-	CFRunLoopRef _runLoop;
+	id _runLoop;
 	dispatch_queue_t _dateSerialQueue;
 	BOOL _isBusy;
 }
@@ -40,10 +40,10 @@
 	self = [super init];
 	if(self)
 	{
-		_runLoop = runLoop;
+		_runLoop = (__bridge id)(runLoop);
 		_dateSerialQueue = dispatch_queue_create("_dateSerialQueue", NULL);
 		
-		CFRunLoopAddObserver(_runLoop, CFRunLoopObserverCreateWithHandler(NULL, kCFRunLoopExit | kCFRunLoopBeforeWaiting | kCFRunLoopAfterWaiting, YES, 0, ^(CFRunLoopObserverRef observer, CFRunLoopActivity activity) {
+		CFRunLoopAddObserver((__bridge CFRunLoopRef)_runLoop, CFRunLoopObserverCreateWithHandler(NULL, kCFRunLoopExit | kCFRunLoopBeforeWaiting | kCFRunLoopAfterWaiting, YES, 0, ^(CFRunLoopObserverRef observer, CFRunLoopActivity activity) {
 			dispatch_sync(_dateSerialQueue, ^{
 //				NSLog(@"☣️ DETOX:: Current runloop activity: %@", [self translateRunLoopActivity: activity]);
 				if(activity == kCFRunLoopBeforeWaiting || activity == kCFRunLoopExit)
