@@ -58,32 +58,54 @@ void swz_addToRunLoop(id self, SEL _cmd, NSRunLoop* runloop)
 	orig_addToRunLoop(self, _cmd, runloop);
 }
 
+static NSMutableArray* __observedQueues;
+
 __attribute__((constructor))
 void setupForTests()
 {
 	__currentIdlingResourceSerialQueue = dispatch_queue_create("__currentIdlingResourceSerialQueue", NULL);
-	
-	//Cannot just extern this function - we are not linked with RN, so linker will fail. Instead, look for symbol in runtime.
-	dispatch_queue_t (*RCTGetUIManagerQueue)(void) = dlsym(RTLD_DEFAULT, "RCTGetUIManagerQueue");
-	
-	if(RCTGetUIManagerQueue == NULL)
+
+	Class cls = NSClassFromString(@"RCTModuleData");
+	if(cls == nil)
 	{
 		return;
 	}
 	
+	__observedQueues = [NSMutableArray new];
+	
+	//Add an idling resource for each module queue.
+	Method m = class_getInstanceMethod(cls, NSSelectorFromString(@"setUpMethodQueue"));
+	void(*orig_setUpMethodQueue_imp)(id, SEL) = (void(*)(id, SEL))method_getImplementation(m);
+	method_setImplementation(m, imp_implementationWithBlock(^(id _self) {
+		orig_setUpMethodQueue_imp(_self, NSSelectorFromString(@"setUpMethodQueue"));
+		
+		dispatch_queue_t queue = object_getIvar(_self, class_getInstanceVariable(cls, "_methodQueue"));
+		
+		if(queue != nil && [queue isKindOfClass:[NSNull class]] == NO && queue != dispatch_get_main_queue() && [__observedQueues containsObject:queue] == NO)
+		{
+			NSString* queueName = [[NSString alloc] initWithUTF8String:dispatch_queue_get_label(queue) ?: ""];
+			
+			[__observedQueues addObject:queue];
+			
+			NSLog(@"☣️ Adding idling resource for queue: %@", queue);
+			
+			
+			[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[GREYDispatchQueueIdlingResource resourceWithDispatchQueue:queue name:queueName ?: @"SomeReactQueue"]];
+		}
+	}));
+	
+	//Cannot just extern this function - we are not linked with RN, so linker will fail. Instead, look for symbol in runtime.
+	dispatch_queue_t (*RCTGetUIManagerQueue)(void) = dlsym(RTLD_DEFAULT, "RCTGetUIManagerQueue");
+	
 	//Must be performed in +load and not in +setUp in order to correctly catch the ui queue, runloop and display link initialization by RN.
 	dispatch_queue_t queue = RCTGetUIManagerQueue();
+	[__observedQueues addObject:queue];
 	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[GREYDispatchQueueIdlingResource resourceWithDispatchQueue:queue name:@"RCTUIManagerQueue"]];
 	
-	Class cls = NSClassFromString(@"RCTJSCExecutor");
-	Method m = class_getClassMethod(cls, NSSelectorFromString(@"runRunLoopThread"));
+	cls = NSClassFromString(@"RCTJSCExecutor");
+	m = class_getClassMethod(cls, NSSelectorFromString(@"runRunLoopThread"));
 	orig_runRunLoopThread = (void(*)(id, SEL))method_getImplementation(m);
 	method_setImplementation(m, (IMP)swz_runRunLoopThread);
-	
-//	cls = NSClassFromString(@"RCTDisplayLink");
-//	m = class_getInstanceMethod(cls, NSSelectorFromString(@"addToRunLoop:"));
-//	orig_addToRunLoop = (void(*)(id, SEL, NSRunLoop*))method_getImplementation(m);
-//	method_setImplementation(m, (IMP)swz_addToRunLoop);
 	
 	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[WXJSTimerObservationIdlingResource new]];
 }

@@ -9,7 +9,7 @@ describe.only('Network Synchronization', () => {
     await expect(element(by.label('Short Network Request Working!!!'))).toBeVisible();
   });
 
-  it('Sync with long network requests - 3000ms', async () => {
+  it.only('Sync with long network requests - 3000ms', async () => {
     await element(by.id('LongNetworkRequest')).tap();
     await expect(element(by.label('Long Network Request Working!!!'))).toBeVisible();
   });
