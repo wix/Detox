@@ -15,6 +15,7 @@
   "scripts": {
     "build": "BABEL_ENV=test babel src -d lib",
     "start": "node lib/cli.js",
+    "test": ":",
     "prepublish": "npm run build"
   },
   "bugs": {
