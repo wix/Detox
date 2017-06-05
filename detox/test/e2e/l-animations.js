@@ -1,46 +1,31 @@
 let _ = require('lodash');
 
-describe('Animations', () => {
+describe.only('Animations', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
     await element(by.label('Animations')).tap();
   });
 
-  async function _startTest(driver, loops, duration, delay) {
-    async function typeTextToInput(inputId, text) {
-      let input = await element(by.id(inputId));
-      await expect(input).toExist();
-      await input.tap();
-      await input.typeText(String(text) + '\n');
-    }
-
-    let driverControlMatcher = by.id('UniqueId_AnimationsScreen_useNativeDriver');
-    let driverControlElement = await element(driverControlMatcher);
-    let driverControlSegment = await element(by.text(driver).withAncestor(driverControlMatcher));
-    await expect(driverControlSegment).toExist();
+  async function _startTest(driver, options = {}) {
+    let driverControlSegment = element(by.text(driver).withAncestor(by.id('UniqueId_AnimationsScreen_useNativeDriver')));
     await driverControlSegment.tap();
-    // await expect(driverControlElement).toHaveValue(driver === 'JS' ? '0' : '1');
 
-    if(loops !== undefined) {
-      let loopSwitch = await element(by.id('UniqueId_AnimationsScreen_enableLoop'));
-      await expect(loopSwitch).toExist();
+    if(options.loops !== undefined) {
+      let loopSwitch = element(by.id('UniqueId_AnimationsScreen_enableLoop'));
       await loopSwitch.tap();
       await expect(loopSwitch).toHaveValue('1');
-
-      await typeTextToInput('UniqueId_AnimationsScreen_numberOfIterations', loops);
+      await element(by.id('UniqueId_AnimationsScreen_numberOfIterations')).replaceText(String(options.loops));
     }
 
-    if(duration !== undefined) {
-      await typeTextToInput('UniqueId_AnimationsScreen_duration', duration);
+    if(options.duration !== undefined) {
+      await element(by.id('UniqueId_AnimationsScreen_duration')).replaceText(String(options.duration));
     }
 
-    if(delay !== undefined) {
-      await typeTextToInput('UniqueId_AnimationsScreen_delay', delay);
+    if(options.delay !== undefined) {
+      await element(by.id('UniqueId_AnimationsScreen_delay')).replaceText(String(options.delay));
     }
 
-    let startButton = await element(by.id('UniqueId_AnimationsScreen_startButton'));
-    await expect(startButton).toExist();
-    await startButton.tap();
+    await element(by.id('UniqueId_AnimationsScreen_startButton')).tap();
   }
 
   _.forEach(['JS', 'Native'], (driver) => {
@@ -50,22 +35,22 @@ describe('Animations', () => {
     });
 
     it(`should detect loops with final number of iterations (driver: ${driver})`, async () => {
-      await _startTest(driver, 4);
+      await _startTest(driver, {loops: 4});
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toBeVisible();
     });
 
     it.skip(`should not wait for infinite animations (driver: ${driver})`, async() => {
-      await _startTest(driver, -1);
+      await _startTest(driver, {loops: -1});
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toBeVisible();
     });
 
     it(`should not wait during delays longer than 1.5s (driver: ${driver})`, async () => {
-      await _startTest(driver, undefined, 400, 3000);
+      await _startTest(driver, {delay: 1501});
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toNotExist();
     });
     
     it(`should wait during delays shorter than 1.5s (driver: ${driver})`, async () => {
-      await _startTest(driver, undefined, 400, 500);
+      await _startTest(driver, {delay: 500});
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toExist();
     });
     

@@ -102,7 +102,7 @@ export default class AnimationsScreen extends Component {
 
     let numOfIterationsColor = this.state.enableLoop ? 'black' : 'grey';
     return (
-      <View style={{ flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'stretch' }}>
+      <View style={{ flex: 1, paddingTop: 20, paddingLeft: 20, paddingRight: 20, justifyContent: 'center', alignItems: 'stretch' }}>
         <View>
           <Text>Driver:</Text>
           <SegmentedControlIOS

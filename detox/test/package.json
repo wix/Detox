@@ -9,13 +9,13 @@
     "build": "detox build --configuration ios.sim.release"
   },
   "dependencies": {
-    "lodash": "^4.14.1",
     "react": "16.0.0-alpha.6",
     "react-native": "0.44.0"
   },
   "devDependencies": {
     "detox": "^5.0.0",
-    "mocha": "^3.2.0"
+    "mocha": "^3.2.0",
+    "lodash": "^4.14.1"
   },
   "detox": {
     "specs": "e2e",
@@ -31,6 +31,5 @@
         "name": "iPhone 7 Plus"
       }
     }
-
   }
 }
