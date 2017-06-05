@@ -20,7 +20,7 @@
 
 - (NSString *)idlingResourceDescription
 {
-	return @"Monitors CADisplayLink objects created by React Native AnimatedAnimated";
+	return @"Monitors CADisplayLink objects created by React Native Animated";
 }
 
 - (BOOL)isIdleNow

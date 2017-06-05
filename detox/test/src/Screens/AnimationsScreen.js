@@ -23,7 +23,6 @@ class AnimationsComponent extends Component {
   }
 
   componentDidMount() {
-    console.log("props: ", this.props);
     let fadeInAnimation = Animated.timing(this._faidInValue, {
       toValue: 1,
       duration: this.props.duration,
@@ -91,7 +90,6 @@ export default class AnimationsScreen extends Component {
 
   render() {
     if (this.state.testStarted) {
-      console.warn("state: ", this.state);
       return (
         <AnimationsComponent
           useNativeDriver={this.state.useNativeDriver}
