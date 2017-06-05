@@ -111,7 +111,7 @@ export default class AnimationsScreen extends Component {
             testID="UniqueId_AnimationsScreen_useNativeDriver"
             values={['JS', 'Native']}
             selectedIndex={-1}
-            onValueChange={(value) => this.setState({ useNativeDriver: value })}
+            onValueChange={(value) => this.setState({ useNativeDriver: value === 'Native' })}
           />
         </View>
         <View style={{paddingTop: 20}}>
