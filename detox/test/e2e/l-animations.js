@@ -1,6 +1,6 @@
 let _ = require('lodash');
 
-describe.only('Animations', () => {
+describe('Animations', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
     await element(by.label('Animations')).tap();
@@ -45,7 +45,7 @@ describe.only('Animations', () => {
     });
 
     it(`should not wait during delays longer than 1.5s (driver: ${driver})`, async () => {
-      await _startTest(driver, {delay: 1501});
+      await _startTest(driver, {delay: 1600});
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toNotExist();
     });
     
