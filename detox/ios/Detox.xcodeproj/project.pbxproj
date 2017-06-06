@@ -72,6 +72,8 @@
 		39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */; };
 		468731A51E6C6D0500F151BE /* EarlGrey+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 468731A31E6C6D0500F151BE /* EarlGrey+Detox.h */; };
 		468731A61E6C6D0500F151BE /* EarlGrey+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 468731A41E6C6D0500F151BE /* EarlGrey+Detox.m */; };
+		A7F76A151ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F76A131ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.h */; };
+		A7F76A161ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.m in Sources */ = {isa = PBXBuildFile; fileRef = A7F76A141ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -217,6 +219,8 @@
 		39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetoxUserNotificationDispatcher.swift; sourceTree = "<group>"; };
 		468731A31E6C6D0500F151BE /* EarlGrey+Detox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "EarlGrey+Detox.h"; sourceTree = "<group>"; };
 		468731A41E6C6D0500F151BE /* EarlGrey+Detox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "EarlGrey+Detox.m"; sourceTree = "<group>"; };
+		A7F76A131ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXAnimatedDisplayLinkIdlingResource.h; sourceTree = "<group>"; };
+		A7F76A141ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXAnimatedDisplayLinkIdlingResource.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -353,6 +357,8 @@
 				394767CA1DBF98D900D72256 /* WXJSTimerObservationIdlingResource.m */,
 				394767CB1DBF98D900D72256 /* WXRunLoopIdlingResource.h */,
 				394767CC1DBF98D900D72256 /* WXRunLoopIdlingResource.m */,
+				A7F76A131ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.h */,
+				A7F76A141ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.m */,
 			);
 			name = ReactNativeSupport;
 			sourceTree = "<group>";
@@ -400,6 +406,7 @@
 				391FA5E91E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.h in Headers */,
 				39A34C711E30F10D00BEBB59 /* DetoxAppDelegateProxy.h in Headers */,
 				397EC9B51E7EDE0B00D5F2BB /* EarlGreyStatistics.h in Headers */,
+				A7F76A151ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.h in Headers */,
 				394767AE1DBF987E00D72256 /* DetoxManager.h in Headers */,
 				468731A51E6C6D0500F151BE /* EarlGrey+Detox.h in Headers */,
 				394767CD1DBF98D900D72256 /* ReactNativeHeaders.h in Headers */,
@@ -631,6 +638,7 @@
 				394767B51DBF987E00D72256 /* TestRunner.m in Sources */,
 				394767D31DBF98D900D72256 /* WXJSTimerObservationIdlingResource.m in Sources */,
 				394767C01DBF98A700D72256 /* GREYCondition+Detox.m in Sources */,
+				A7F76A161ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.m in Sources */,
 				394767D11DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.m in Sources */,
 				39A34C721E30F10D00BEBB59 /* DetoxAppDelegateProxy.m in Sources */,
 				394767B11DBF987E00D72256 /* MethodInvocation.m in Sources */,
