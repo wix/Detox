@@ -50,8 +50,9 @@ class AsyncWebSocket {
     return new Promise(async(resolve, reject) => {
       message.messageId = messageId || this.messageIdCounter++;
       this.inFlightPromises[message.messageId] = {resolve, reject};
-      log.verbose(`ws`, `send: ${message}`);
-      this.ws.send((JSON.stringify(message)));
+      const messageAsString = JSON.stringify(message);
+      log.verbose(`ws`, `send: ${messageAsString}`);
+      this.ws.send(messageAsString);
     });
   }
 

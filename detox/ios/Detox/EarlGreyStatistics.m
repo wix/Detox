@@ -11,6 +11,11 @@
 #import <EarlGrey/GREYAppStateTracker.h>
 #import "GREYIdlingResourcePrettyPrint.h"
 
+NSDictionary<NSString*, NSDictionary*(^)(id<GREYIdlingResource>)>* _prettyPrinters;
+NSDictionary<NSString*, NSString*>* _prettyNames;
+
+#define CLS_STR(__cls) NSStringFromClass([__cls class])
+
 @import ObjectiveC;
 
 NSArray *WXClassesConformingToProtocol(Protocol* protocol)
@@ -46,18 +51,19 @@ void WXFixupIdlingResourceClasses()
 			
 			if(rv == NO)
 			{
-				NSLog(@"☣️ DETOX:: %@ -> busy", NSStringFromClass([_self class]));
+//				NSLog(@"☣️ DETOX:: %@ -> busy", NSStringFromClass([_self class]));
+				NSString* prettyName = _prettyNames[CLS_STR(_self)] ?: _self.idlingResourceName;
+				NSDictionary* (^prettyPrinter)(id<GREYIdlingResource>) = _prettyPrinters[CLS_STR(_self)] ?: ^ (id<GREYIdlingResource> res) { return @{}; };
+
+				NSLog(@"☣️☣️ DETOX:: %@ -> busy %@", prettyName, prettyPrinter(_self)[@"prettyPrint"]);
+				
+//				[resources addObject:@{@"name": prettyName, @"info": prettyPrinter(obj)}];
 			}
 			
 			return rv;
 		}));
 	}];
 }
-
-NSDictionary<NSString*, NSDictionary*(^)(id<GREYIdlingResource>)>* _prettyPrinters;
-NSDictionary<NSString*, NSString*>* _prettyNames;
-
-#define CLS_STR(__cls) NSStringFromClass([__cls class])
 
 @implementation EarlGreyStatistics
 

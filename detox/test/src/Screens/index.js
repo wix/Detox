@@ -7,6 +7,7 @@ import StressScreen from './StressScreen';
 import SwitchRootScreen from './SwitchRootScreen';
 import TimeoutsScreen from './TimeoutsScreen';
 import Orientation from './Orientation';
+import NetworkScreen from './NetworkScreen';
 import AnimationsScreen from './AnimationsScreen';
 
 export {
@@ -19,5 +20,6 @@ export {
   SwitchRootScreen,
   TimeoutsScreen,
   Orientation,
+  NetworkScreen,
   AnimationsScreen
 };

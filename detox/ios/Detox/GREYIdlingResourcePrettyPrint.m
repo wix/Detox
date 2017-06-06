@@ -73,6 +73,7 @@ NSDictionary* _prettyPrintAppStateTracker(GREYAppStateTracker* tracker)
 	
 	NSString* stateString = _prettyPrintAppState(tracker.currentState);
 	rv[@"appState"] = stateString;
+	rv[@"prettyPrint"] = stateString;
 	
 	@try {
 		NSHashTable* elements = [tracker valueForKey:@"elementIDs"];
@@ -90,6 +91,7 @@ NSDictionary* _prettyPrintDispatchQueueIdlingResource(GREYDispatchQueueIdlingRes
 {
 	NSMutableDictionary* rv = [NSMutableDictionary new];
 	rv[@"queue"] = [queue valueForKeyPath:@"dispatchQueueTracker.dispatchQueue.debugDescription"];
+	rv[@"prettyPrint"] = [[NSString alloc] initWithUTF8String:dispatch_queue_get_label([queue valueForKeyPath:@"dispatchQueueTracker.dispatchQueue"])];
 	
 	return rv;
 }
@@ -98,6 +100,7 @@ NSDictionary* _prettyPrintManagedObjectContextIdlingResource(GREYManagedObjectCo
 {
 	NSMutableDictionary* rv = [NSMutableDictionary new];
 	rv[@"managedObjectContext"] = [[ctx valueForKeyPath:@"managedObjectContext"] debugDescription];
+	rv[@"prettyPrint"] = [[ctx valueForKeyPath:@"managedObjectContext"] debugDescription];
 	
 	return rv;
 }
@@ -108,6 +111,7 @@ NSDictionary* _prettyPrintTimerIdlingResource(GREYNSTimerIdlingResource* timer)
 	rv[@"timer"] = [[timer valueForKeyPath:@"trackedTimer"] debugDescription];
 	rv[@"name"] = [timer valueForKeyPath:@"name"];
 	rv[@"nextFireDate"] = [[timer valueForKeyPath:@"trackedTimer.fireDate"] descriptionWithLocale:[NSLocale currentLocale]];
+	rv[@"prettyPrint"] = rv[@"name"];
 	
 	return rv;
 }
@@ -117,6 +121,7 @@ NSDictionary* _prettyPrintOperationQueueIdlingResource(GREYOperationQueueIdlingR
 	NSMutableDictionary* rv = [NSMutableDictionary new];
 	rv[@"operationQueue"] = [[opQ valueForKeyPath:@"operationQueue"] debugDescription];
 	rv[@"name"] = [opQ valueForKeyPath:@"operationQueueName"];
+	rv[@"prettyPrint"] = rv[@"name"];
 	
 	return rv;
 }
@@ -128,6 +133,7 @@ NSDictionary* _prettyPrintTimedIdlingResource(GREYTimedIdlingResource* timed)
 	rv[@"name"] = [timed valueForKeyPath:@"name"];
 	rv[@"duration"] = [timed valueForKeyPath:@"duration"];
 	rv[@"endTrackingDate"] = [[NSDate dateWithTimeIntervalSince1970:[[timed valueForKeyPath:@"endTrackingTime"] doubleValue]] descriptionWithLocale:[NSLocale currentLocale]];
+	rv[@"prettyPrint"] = rv[@"name"];
 	
 	return rv;
 }
@@ -137,6 +143,7 @@ NSDictionary* _prettyPrintWebViewIdlingResource(id webview)
 	NSMutableDictionary* rv = [NSMutableDictionary new];
 	rv[@"webView"] = [[webview valueForKeyPath:@"webView"] debugDescription];
 	rv[@"name"] = [webview valueForKeyPath:@"webViewName"];
+	rv[@"prettyPrint"] = rv[@"name"];
 	
 	return rv;
 }
@@ -145,6 +152,7 @@ NSDictionary* _prettyPrintJSTimerObservationIdlingResource(WXJSTimerObservationI
 {
 	NSMutableDictionary* rv = [NSMutableDictionary new];
 	rv[@"javascriptTimerIDs"] = [jsTimer valueForKeyPath:@"observations.objectEnumerator.allObjects.@unionOfObjects.observedTimers"];
+	rv[@"prettyPrint"] = rv[@"javascriptTimerIDs"];
 	
 	return rv;
 }
@@ -153,6 +161,7 @@ NSDictionary* _prettyPrintRunLoopIdlingResource(WXRunLoopIdlingResource* runLoop
 {
 	NSMutableDictionary* rv = [NSMutableDictionary new];
 	rv[@"runLoop"] = [[runLoop valueForKeyPath:@"runLoop"] debugDescription];
+	rv[@"prettyPrint"] = rv[@"runLoop"];
 	
 	return rv;
 }
