@@ -1,4 +1,16 @@
+const MockServer = require('../mock-server/mock-server');
+
 describe.only('Network Synchronization', () => {
+  let mockServer = new MockServer();
+
+  before(() => {
+    mockServer.init();
+  });
+
+  after( () => {
+    mockServer.close();
+  });
+
   beforeEach(async () => {
     await device.reloadReactNative();
     await element(by.label('Network')).tap();

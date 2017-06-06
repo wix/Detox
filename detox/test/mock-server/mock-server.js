@@ -1,26 +1,42 @@
 const express = require('express');
-const app = express();
 const bodyParser = require('body-parser');
 
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json());
 
-const port = process.env.PORT || 9001;
+class Mockserver {
 
-const router = express.Router();
+  constructor() {
+    this.app = express();
+    this.server = null;
+  }
 
-router.get('/', (req, res) => {
-  res.json({message: 'hello world!'});
-});
+  init() {
+    this.app.use(bodyParser.urlencoded({extended: true}));
+    this.app.use(bodyParser.json());
 
-router.route('/delay/:delay')
-      .get(async(req, res) => {
-        setTimeout(() => {
-          res.json({message:`Response was delayed by ${req.params.delay}ms`});
-        }, req.params.delay);
-      });
+    const port = process.env.PORT || 9001;
 
-app.use('/', router);
+    const router = express.Router();
 
-app.listen(port);
-console.log('Mock server listening on port ' + port);
+    router.get('/', (req, res) => {
+      res.json({message: 'hello world!'});
+    });
+
+    router.route('/delay/:delay')
+          .get((req, res) => {
+            setTimeout(() => {
+              res.json({message: `Response was delayed by ${req.params.delay}ms`});
+            }, req.params.delay);
+          });
+
+    this.app.use('/', router);
+
+    this.server = this.app.listen(port);
+    console.log('Mock server listening on port ' + port);
+  }
+
+  close() {
+    this.server.close();
+  }
+}
+
+module.exports = Mockserver;
