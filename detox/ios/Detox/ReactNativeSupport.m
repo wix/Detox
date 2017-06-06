@@ -16,6 +16,8 @@
 #import "WXJSTimerObservationIdlingResource.h"
 #import "WXAnimatedDisplayLinkIdlingResource.h"
 
+#include <dlfcn.h>
+#include <fishhook.h>
 @import ObjectiveC;
 @import Darwin;
 
@@ -61,9 +63,33 @@ void swz_addToRunLoop(id self, SEL _cmd, NSRunLoop* runloop)
 
 static NSMutableArray* __observedQueues;
 
+static dispatch_queue_t (*wx_original_dispatch_queue_create)(const char *_Nullable label, dispatch_queue_attr_t _Nullable attr);
+
+dispatch_queue_t wx_dispatch_queue_create(const char *_Nullable label, dispatch_queue_attr_t _Nullable attr)
+{
+	dispatch_queue_t rv = wx_original_dispatch_queue_create(label, attr);
+	
+	if(label != NULL && strncmp(label, "com.apple.NSURLSession-work", strlen("com.apple.NSURLSession-work")) == 0)
+	{
+		[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[GREYDispatchQueueIdlingResource resourceWithDispatchQueue:rv name:@"com.apple.NSURLSession-work"]];
+	}
+	
+	return rv;
+}
+
 __attribute__((constructor))
 void setupForTests()
 {
+	wx_original_dispatch_queue_create = dlsym(RTLD_DEFAULT, "dispatch_queue_create");
+	
+	// Rebind symbols dispatch_* to point to our own implementation.
+	struct rebinding rebindings[] = {
+		{"dispatch_queue_create", wx_dispatch_queue_create, NULL}
+	};
+	GREY_UNUSED_VARIABLE int failure =
+	rebind_symbols(rebindings, sizeof(rebindings) / sizeof(rebindings[0]));
+	NSCAssert(!failure, @"rebinding symbols failed");
+	
 	__currentIdlingResourceSerialQueue = dispatch_queue_create("__currentIdlingResourceSerialQueue", NULL);
 
 	Class cls = NSClassFromString(@"RCTModuleData");

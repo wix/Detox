@@ -1,6 +1,6 @@
 const MockServer = require('../mock-server/mock-server');
 
-describe.only('Network Synchronization', () => {
+describe('Network Synchronization', () => {
   let mockServer = new MockServer();
 
   before(() => {
@@ -21,7 +21,7 @@ describe.only('Network Synchronization', () => {
     await expect(element(by.label('Short Network Request Working!!!'))).toBeVisible();
   });
 
-  it.only('Sync with long network requests - 3000ms', async () => {
+  it('Sync with long network requests - 3000ms', async () => {
     await element(by.id('LongNetworkRequest')).tap();
     await expect(element(by.label('Long Network Request Working!!!'))).toBeVisible();
   });
