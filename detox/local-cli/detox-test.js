@@ -11,7 +11,9 @@ program
                                                         + 'if not supplied, and there\'s only one configuration, detox will default to it')
   .option('-r, --reuse', 'Reuse existing installed app (do not delete and re-install) for a faster run.', false)
   .option('-u, --cleanup', 'shutdown simulator when test is over, useful for CI scripts, to make sure detox exists cleanly with no residue', false)
-  .option('-d, --debug-slow-invocations [value]', '', 3000)
+  .option('-d, --debug-synchronization [value]',
+    'When an action/expectation takes a significant amount of time use this option to print device synchronization status. '
+    + 'The status will be printed if the action takes more than [value]ms to complete')
   .parse(process.argv);
 
 const config = require(path.join(process.cwd(), 'package.json')).detox;
@@ -21,12 +23,17 @@ const loglevel = program.loglevel ? `--loglevel ${program.loglevel}` : '';
 const configuration = program.configuration ? `--configuration ${program.configuration}` : '';
 const cleanup = program.cleanup ? `--cleanup` : '';
 const reuse = program.reuse ? `--reuse` : '';
-const debugSlowInvocations = program.debugSlowInvocations ? `--debug-slow-invocations ${program.debugSlowInvocations}` : '';
+
+if (typeof program.debugSynchronization === "boolean") {
+  program.debugSynchronization = 3000;
+}
+let debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
+
 
 let command;
 switch (program.runner) {
   case 'mocha':
-    command = `node_modules/.bin/${program.runner} ${testFolder} --opts ${testFolder}/${program.runnerConfig} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSlowInvocations}`;
+    command = `node_modules/.bin/${program.runner} ${testFolder} --opts ${testFolder}/${program.runnerConfig} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization}`;
     break;
   default:
     throw new Error(`${program.runner} is not supported in detox cli tools. You can still run your tests with the runner's own cli tool`);
