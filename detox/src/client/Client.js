@@ -7,6 +7,7 @@ class Client {
     this.configuration = config;
     this.ws = new AsyncWebSocket(config.server);
     this.slowInvocationStatusHandler = null;
+    this.slowInvocationTimeout = argparse.getArgValue('debug-slow-invocations');
   }
 
   async connect() {
@@ -41,7 +42,7 @@ class Client {
       invocation = invocation();
     }
 
-    if (argparse.getArgValue('debug-slow-invocations')) {
+    if (this.slowInvocationTimeout) {
       this.slowInvocationStatusHandler = this.slowInvocationStatus();
     }
     await this.sendAction(new actions.Invoke(invocation));
@@ -56,15 +57,10 @@ class Client {
   }
 
   slowInvocationStatus() {
-    return setTimeout(async () => {
+    return setTimeout( async () => {
       const status = await this.currentStatus();
-      console.log(status);
       this.slowInvocationStatusHandler = this.slowInvocationStatus();
-    }, argparse.getArgValue('debug-slow-invocations'));
-  }
-
-  async timeout(resolve, ms) {
-    return new Promise(() => setTimeout(resolve, ms));
+    }, this.slowInvocationTimeout);
   }
 }
 

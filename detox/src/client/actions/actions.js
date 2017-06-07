@@ -71,7 +71,7 @@ class Invoke extends Action {
       case 'error':
         throw new Error(response.params.error);
       default:
-        throw new Error(`got an unsupported message from testee: ${JSON.stringify(response)}`);
+        throw new Error(`tried to invoke an action on testee, got an unsupported response: ${JSON.stringify(response)}`);
     }
   }
 }
