@@ -81,7 +81,7 @@ describe('Client', () => {
     await connect();
 
     client.ws.send.mockReturnValueOnce(timeout(invocationTime).then(()=> response("invokeResult", {result:"(GREYElementInteraction)"}, 1)))
-                  .mockReturnValueOnce(response("currentStatusResult", {}, 2));
+                  .mockReturnValueOnce(response("currentStatusResult", {"state":"busy","resources":[{"name":"App State","info":{"prettyPrint":"Waiting for network requests to finish.","elements":["__NSCFLocalDataTask:0x7fc95d72b6c0"],"appState":"Waiting for network requests to finish."}},{"name":"Dispatch Queue","info":{"queue":"OS_dispatch_queue_main: com.apple.main-thread[0x10805ea80] = { xrefcnt = 0x80000000, refcnt = 0x80000000, target = com.apple.root.default-qos.overcommit[0x10805f1c0], width = 0x1, state = 0x000fffe000000403, in-flight = 0, thread = 0x403 }","prettyPrint":"com.apple.main-thread"}}]}, 2));
 
     const call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityLabel:', 'test');
     await client.execute(call);

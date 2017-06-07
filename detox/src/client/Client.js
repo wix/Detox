@@ -7,7 +7,7 @@ class Client {
     this.configuration = config;
     this.ws = new AsyncWebSocket(config.server);
     this.slowInvocationStatusHandler = null;
-    this.slowInvocationTimeout = argparse.getArgValue('debug-slow-invocations');
+    this.slowInvocationTimeout = argparse.getArgValue('debug-synchronization');
   }
 
   async connect() {

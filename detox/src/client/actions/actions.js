@@ -1,3 +1,6 @@
+const _ = require('lodash');
+const log = require('npmlog');
+
 class Action {
   constructor(type, params = {}) {
     this.type = type;
@@ -93,8 +96,11 @@ class CurrentStatus extends Action {
 
   async handle(response) {
     this.expectResponseOfType(response, 'currentStatusResult');
-    //return JSON.stringify(response, null, 2);
-    console.log("res:" + JSON.stringify(response, null, 2));
+
+    //console.log("res:" + JSON.stringify(response, null, 2));
+    _.forEach(response.params.resources, (resource) => {
+      log.info(`Sync`, `${resource.name}: ${resource.info.prettyPrint}`);
+    });
     return response;
   }
 }
