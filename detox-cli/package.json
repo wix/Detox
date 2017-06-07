@@ -1,6 +1,6 @@
 {
   "name": "detox-cli",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "detox CLI tool wrapper",
   "main": "index.js",
   "scripts": {
@@ -23,8 +23,8 @@
     "url": "https://github.com/wix/detox/issues"
   },
   "dependencies": {
-    "minimist": "^1.2.0",
-    "commander": "^2.9.0"
+    "commander": "^2.9.0",
+    "minimist": "^1.2.0"
   },
   "devDependencies": {
     "babel-jest": "*",
