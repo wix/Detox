@@ -93,15 +93,8 @@
         id value = [p objectForKey:@"value"];
         return [MethodInvocation getValue:value withType:type onError:onError];
     }
-    if ([param isKindOfClass:[NSString class]])
-    {
-        return param;
-    }
-    if ([param isKindOfClass:[NSNumber class]])
-    {
-        return param;
-    }
-    return nil;
+	
+    return param;
 }
 
 + (NSArray*) getArray:(id)param
