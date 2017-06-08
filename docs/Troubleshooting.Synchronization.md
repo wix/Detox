@@ -68,7 +68,7 @@ This makes sense only if we're not waiting enough (or if we've disabled automati
 
 <br>
 
-### Tweeking and fine-tuning the sychronization mechanisms
+### Tweaking and fine-tuning the synchronization mechanisms
 
 > This isn't exposed yet, TBD
 
