@@ -136,7 +136,9 @@ void setupForTests()
 	
 	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[WXJSTimerObservationIdlingResource new]];
 	
-	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[WXAnimatedDisplayLinkIdlingResource new]];
+	if([WXAnimatedDisplayLinkIdlingResource isAvailable]) {
+		[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[WXAnimatedDisplayLinkIdlingResource new]];
+	}
 }
 
 @implementation ReactNativeSupport
