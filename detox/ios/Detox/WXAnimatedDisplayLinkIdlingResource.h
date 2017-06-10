@@ -11,4 +11,6 @@
 
 @interface WXAnimatedDisplayLinkIdlingResource : NSObject <GREYIdlingResource>
 
++ (BOOL)isAvailable;
+
 @end
