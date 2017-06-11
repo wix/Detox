@@ -5,10 +5,21 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.Espresso;
+import android.support.test.espresso.EspressoException;
 import android.util.Log;
 
 import java.util.Collections;
 import java.util.Map;
+
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+
 
 /**
  * Created by rotemm on 04/01/2017.
@@ -60,7 +71,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     void stop() {
         Log.i(LOG_TAG, "Stopping Detox.");
-        handler.post(new Runnable() {
+        handler.postAtFrontOfQueue(new Runnable() {
             @Override
             public void run() {
                 // TODO
@@ -92,17 +103,69 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                         }
                         */
                         break;
-                    case "stop":
-                        stop();
-                        break;
                     case "isReady":
+                        // It's always ready, because reload, waitForRn are both synchronous.
                         wsClient.sendAction("ready", Collections.emptyMap());
                         break;
                     case "cleanup":
                         wsClient.sendAction("cleanupDone", Collections.emptyMap());
+                        stop();
                         break;
                     case "reactNativeReload":
                         ReactNativeSupport.reloadApp(reactNativeHostHolder);
+                        break;
+                    // TODO
+                    // Remove these test* commands later.
+                    case "testInvoke1":
+                        try {
+                            Espresso.onView(withTagValue(is((Object)"hello_button"))).check(matches(isDisplayed()));
+                        } catch (RuntimeException e) {
+                            if (e instanceof EspressoException) {
+                                Log.i(LOG_TAG, "Test exception", e);
+                                wsClient.sendAction("TEST_FAIL", Collections.emptyMap());
+                            } else {
+                                wsClient.sendAction("EXCEPTION", Collections.emptyMap());
+                                Log.e(LOG_TAG, "Exception", e);
+                            }
+                            stop();
+                            break;
+                        }
+                        wsClient.sendAction("TEST_OK", Collections.emptyMap());
+                        break;
+                    case "testInvokeNeg1":
+                        try {
+                            Espresso.onView(withTagValue(is((Object)"hello_button"))).check(matches(not(isDisplayed())));
+                        } catch (RuntimeException e) {
+                            if (e instanceof EspressoException) {
+                                Log.i(LOG_TAG, "Test exception", e);
+                                wsClient.sendAction("TEST_FAIL", Collections.emptyMap());
+                            } else {
+                                wsClient.sendAction("EXCEPTION", Collections.emptyMap());
+                                Log.e(LOG_TAG, "Exception", e);
+                            }
+                            stop();
+                            break;
+                        }
+                        wsClient.sendAction("TEST_OK", Collections.emptyMap());
+                        break;
+                    case "testPush":
+                        Espresso.onView(withTagValue(is((Object) "hello_button"))).perform(click());
+                        break;
+                    case "testInvoke2":
+                        try {
+                            Espresso.onView(withText("Hello!!!")).check(matches(isDisplayed()));
+                        } catch (RuntimeException e) {
+                            if (e instanceof EspressoException) {
+                                Log.i(LOG_TAG, "Test exception", e);
+                                wsClient.sendAction("TEST_FAIL", Collections.emptyMap());
+                            } else {
+                                wsClient.sendAction("EXCEPTION", Collections.emptyMap());
+                                Log.e(LOG_TAG, "Exception", e);
+                            }
+                            stop();
+                            break;
+                        }
+                        wsClient.sendAction("TEST_OK", Collections.emptyMap());
                         break;
                 }
             }

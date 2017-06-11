@@ -16,6 +16,7 @@ import org.joor.ReflectException;
 
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by simonracz on 15/05/2017.
@@ -252,26 +253,31 @@ class ReactNativeSupport {
     private static ArrayList<IdlingResource> looperIdlingResources = new ArrayList<>();
 
     private static void setupReactNativeQueueInterrogators(@NonNull Object reactContext) {
-        setupRNQueueInterrogator(reactContext, FIELD_UI_MSG_QUEUE);
-        setupRNQueueInterrogator(reactContext, FIELD_UI_BG_MSG_QUEUE);
-        setupRNQueueInterrogator(reactContext, FIELD_JS_MSG_QUEUE);
-        setupRNQueueInterrogator(reactContext, FIELD_NATIVE_MODULES_MSG_QUEUE);
+        HashSet<Looper> excludedLoopers = new HashSet<>();
+        excludedLoopers.add(InstrumentationRegistry.getTargetContext().getMainLooper());
+        setupRNQueueInterrogator(reactContext, FIELD_UI_MSG_QUEUE, excludedLoopers);
+        setupRNQueueInterrogator(reactContext, FIELD_UI_BG_MSG_QUEUE, excludedLoopers);
+        setupRNQueueInterrogator(reactContext, FIELD_JS_MSG_QUEUE, excludedLoopers);
+        setupRNQueueInterrogator(reactContext, FIELD_NATIVE_MODULES_MSG_QUEUE, excludedLoopers);
     }
 
-    private static void setupRNQueueInterrogator(@NonNull Object reactContext, String field) {
+    private static void setupRNQueueInterrogator(
+            @NonNull Object reactContext,
+            @NonNull String field,
+            @NonNull HashSet<Looper> excludedLoopers) {
         Object queue;
         Object looper;
-        Looper mainLooper = InstrumentationRegistry.getTargetContext().getMainLooper();
 
         try {
             if ((queue = Reflect.on(reactContext).field(field).get()) != null) {
                 if ((looper = Reflect.on(queue).call(METHOD_GET_LOOPER).get()) != null) {
-                    if (looper != mainLooper) {
+                    if (!excludedLoopers.contains(looper)) {
                         IdlingResource looperIdlingResource =
                                 Reflect.on(CLASS_ESPRESSO_LOOPER_IDLING_RESOURCE).create(looper, false).get();
 
                         looperIdlingResources.add(looperIdlingResource);
                         Espresso.registerIdlingResources(looperIdlingResource);
+                        excludedLoopers.add((Looper)looper);
                     }
                 }
             }
@@ -279,7 +285,9 @@ class ReactNativeSupport {
             // The mUiBackgroundMessageQueueThread field is stripped at runtime
             // in the current RN release.
             // We should still keep trying to grab it to be future proof.
-            Log.d(LOG_TAG, "Ignore, if it's about mUiBackgroundMessageQueueThread.", e);
+            if (!field.equals("mUiBackgroundMessageQueueThread")) {
+                Log.d(LOG_TAG, "Can't set up monitoring for " + field, e);
+            }
         }
     }
 

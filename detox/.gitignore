@@ -7,6 +7,8 @@ ios/EarlGrey/Tests/UnitTests/TestRig/Resources
 ios/EarlGrey/Tests/FunctionalTests/TestRig/Resources
 Detox.framework
 Detox.framework.tar
+detox-debug.aar
+detox-release.aar
 
 lib
 
