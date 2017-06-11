@@ -81,11 +81,12 @@ await element(by.id('scrollView')).scrollTo('bottom');
 await element(by.id('scrollView')).scrollTo('top');
 ```
 
-### `swipe(direction, speed)`
+### `swipe(direction, speed, percentage)`
 
 direction - left/right/up/down<br>
 speed - fast/slow
+percentage - (optional) screen percentage to swipe as float
 
 ```js
-await element(by.id('scrollView')).swipe('down', 'fast');
+await element(by.id('scrollView')).swipe('down', 'fast', 0.5);
 ```
