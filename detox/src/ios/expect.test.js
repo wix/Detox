@@ -115,6 +115,10 @@ describe('expect', async () => {
     await e.element(e.by.id('ScrollView799')).swipe('up', 'slow');
     await e.element(e.by.id('ScrollView799')).swipe('left', 'fast');
     await e.element(e.by.id('ScrollView799')).swipe('right', 'slow');
+    await e.element(e.by.id('ScrollView799')).swipe('down', 'fast', 0.9);
+    await e.element(e.by.id('ScrollView799')).swipe('up', 'slow', 0.9);
+    await e.element(e.by.id('ScrollView799')).swipe('left', 'fast', 0.9);
+    await e.element(e.by.id('ScrollView799')).swipe('right', 'slow', 0.9);
     await e.element(e.by.id('ScrollView799')).atIndex(1);
   });
 
@@ -131,6 +135,7 @@ describe('expect', async () => {
     await expectToThrow(() => e.element(e.by.id('ScrollView799')).swipe('noDirection', 0));
     await expectToThrow(() => e.element(e.by.id('ScrollView799')).swipe('noDirection', 'fast'));
     await expectToThrow(() => e.element(e.by.id('ScrollView799')).swipe('down', 'NotFastNorSlow'));
+    await expectToThrow(() => e.element(e.by.id('ScrollView799')).swipe('down', 'NotFastNorSlow', 0.9));
     await expectToThrow(() => e.element(e.by.id('ScrollView799')).atIndex('NaN'));
   });
 
