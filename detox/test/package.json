@@ -14,9 +14,11 @@
 	},
 	"devDependencies": {
 		"detox": "^5.0.0",
-		"mocha": "^3.2.0",
+		"express": "^4.15.3",
 		"lodash": "^4.14.1",
-		"express": "^4.15.3"
+		"mocha": "^3.2.0",
+		"wsrelay": "^1.0.0",
+		"wscat": "^1.0.0"
 	},
 	"detox": {
 		"specs": "e2e",
