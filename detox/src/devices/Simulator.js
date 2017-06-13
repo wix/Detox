@@ -115,6 +115,10 @@ class Simulator extends IosNoneDevice {
     );
     await new invoke.InvocationManager(this.client).execute(call);
   }
+
+  async setLocation(lat, lon) {
+    await this._fbsimctl.setLocation(this._simulatorUdid, lat, lon);
+  }
 }
 
 module.exports = Simulator;

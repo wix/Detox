@@ -52,4 +52,8 @@ describe('Device', () => {
   it(`openURL() - should be defined`, async () => {
     expect(await device.openURL()).toBeDefined();
   });
+
+  it(`setLocation() - should be defined`, async () => {
+    expect(await device.setLocation()).toBeDefined();
+  });
 });

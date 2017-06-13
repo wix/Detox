@@ -109,6 +109,10 @@ describe('Fbsimctl', () => {
     expect(isDeviceBooted).toBe(false);
   });
 
+  it(`setLocation() - is triggering fbsimctl set_location`, async() => {
+    await validateFbsimctlisCalledOn(fbsimctl, async () => fbsimctl.setLocation(simUdid));
+  });
+
   it(`exec simulator command successfully`, async() => {
     const result = returnSuccessfulWithValue("");
     exec.mockReturnValue(Promise.resolve(result));

@@ -10,6 +10,7 @@
 - [`device.uninstallApp()`](#deviceuninstallapp)
 - [`device.openURL(url)`](#deviceopenurl)
 - [`device.sendUserNotification(params)`](#devicesendusernotifications)
+- [`device.setLocation(lat, lon)`](#devicesetlocation)
 
 ### `device.relaunchApp()`
 Kill and relaunch the app defined in the current [`configuration`](APIRef.Configuration.md).
@@ -33,3 +34,6 @@ Uninstall the app defined in the current [`configuration`](APIRef.Configuration.
 ### `device.setOrientation(orientation)`
 Takes `"portrait"` or `"landscape"` and rotates the device to the given orientation.
 Currently only available in the iOS Simulator.
+
+### `device.setLocation(lat, lon)`
+Sets the simulator location to the given latitude and longitude.

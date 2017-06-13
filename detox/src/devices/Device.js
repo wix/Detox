@@ -33,6 +33,10 @@ class Device {
   async openURL() {
     return await Promise.resolve('');
   }
+  
+  async setLocation(lat, lon) {
+    return await Promise.resolve('');
+  }
 
   async reloadReactNative() {
     return await this.client.reloadReactNative();
