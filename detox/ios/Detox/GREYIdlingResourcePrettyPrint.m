@@ -73,7 +73,7 @@ NSDictionary* _prettyPrintAppStateTracker(GREYAppStateTracker* tracker)
 	
 	NSString* stateString = _prettyPrintAppState(tracker.currentState);
 	rv[@"appState"] = stateString;
-	rv[@"prettyPrint"] = stateString;
+	
 	
 	NSHashTable* elements = [tracker valueForKey:@"elementIDs"];
 	NSArray* allElements = [elements allObjects];
@@ -82,14 +82,29 @@ NSDictionary* _prettyPrintAppStateTracker(GREYAppStateTracker* tracker)
 	NSMutableArray* URLs = [NSMutableArray new];
 	
 	[allElements enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+		__unused NSString* aa = tracker.description;
 		@try {
 			[elems addObject:[obj debugDescription]];
 		}
 		@catch(NSException* exception) {} //NOOP
 		
-		if([obj isKindOfClass:[NSURLSessionTask class]])
-		{
-			[URLs addObject:[obj valueForKeyPath:@"originalRequest.URL.absoluteString"]];
+		@try {
+			NSArray<NSString*>* strs = [obj componentsSeparatedByString:@":"];
+			Class cls = NSClassFromString(strs.firstObject);
+			
+			if([cls isSubclassOfClass:[NSURLSessionTask class]])
+			{
+				NSScanner* hexScanner = [NSScanner scannerWithString:strs.lastObject];
+				
+				unsigned long long val;
+				[hexScanner scanHexLongLong:&val];
+				void* ptr = (void*)val;
+				NSURLSessionTask* task = (__bridge id)ptr;
+				[URLs addObject:task.originalRequest.URL.absoluteString];
+			}
+			
+		} @catch (NSException *exception) {
+			
 		}
 	}];
 	
@@ -101,8 +116,10 @@ NSDictionary* _prettyPrintAppStateTracker(GREYAppStateTracker* tracker)
 	if(URLs.count > 0)
 	{
 		rv[@"urls"] = URLs;
+		rv[@"prettyPrint"]  = [NSString stringWithFormat:@"%@: %@", stateString, URLs];
 	}
 	
+
 	return rv;
 }
 
