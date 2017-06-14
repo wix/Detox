@@ -83,12 +83,9 @@ NSDictionary* _prettyPrintAppStateTracker(GREYAppStateTracker* tracker)
 	
 	[allElements enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
 		@try {
-			
+			[elems addObject:[obj debugDescription]];
 		}
-		@catch(NSException* exception)
-		{
-			//noop
-		}
+		@catch(NSException* exception) {} //NOOP
 		
 		if([obj isKindOfClass:[NSURLSessionTask class]])
 		{
