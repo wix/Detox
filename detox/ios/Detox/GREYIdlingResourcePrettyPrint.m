@@ -75,13 +75,35 @@ NSDictionary* _prettyPrintAppStateTracker(GREYAppStateTracker* tracker)
 	rv[@"appState"] = stateString;
 	rv[@"prettyPrint"] = stateString;
 	
-	@try {
-		NSHashTable* elements = [tracker valueForKey:@"elementIDs"];
-		rv[@"elements"] = [[elements allObjects] valueForKey:@"debugDescription"];
-	}
-	@catch(NSException* exception)
+	NSHashTable* elements = [tracker valueForKey:@"elementIDs"];
+	NSArray* allElements = [elements allObjects];
+	
+	NSMutableArray* elems = [NSMutableArray new];
+	NSMutableArray* URLs = [NSMutableArray new];
+	
+	[allElements enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+		@try {
+			
+		}
+		@catch(NSException* exception)
+		{
+			//noop
+		}
+		
+		if([obj isKindOfClass:[NSURLSessionTask class]])
+		{
+			[URLs addObject:[obj valueForKeyPath:@"originalRequest.URL.absoluteString"]];
+		}
+	}];
+	
+	if(elems.count > 0)
 	{
-		//noop
+		rv[@"elements"] = elems;
+	}
+	
+	if(URLs.count > 0)
+	{
+		rv[@"urls"] = URLs;
 	}
 	
 	return rv;
