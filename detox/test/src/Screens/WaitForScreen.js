@@ -35,7 +35,7 @@ export default class WaitForScreen extends Component {
       <View style={{flex: 1, paddingTop: 40, justifyContent: 'flex-start'}}>
 
         {!this.state.showsUp ? false :
-          <Text testID='UniqueId336' style={{marginBottom: 20, textAlign: 'center'}}>I appear after 1 sec</Text>
+          <Text testID='createdAndVisibleText' style={{marginBottom: 20, textAlign: 'center'}}>I am being created after 1 sec</Text>
         }
 
         <View style={{height: 100, borderColor: '#c0c0c0', borderWidth: 1, backgroundColor: '#f8f8ff', marginBottom: 20}}>
@@ -52,10 +52,10 @@ export default class WaitForScreen extends Component {
         </View>
 
         {this.state.showsUp ? false :
-          <Text testID='UniqueId085' style={{marginBottom: 20, textAlign: 'center', color: 'red'}}>I disappear after 1 sec</Text>
+          <Text testID='deletedFromHierarchyText' style={{marginBottom: 20, textAlign: 'center', color: 'red'}}>I am being removed after 1 sec</Text>
         }
 
-        <Animated.Text testID='UniqueId521' style={{marginBottom: 20, textAlign: 'center', color: 'green', left: this.state.becomeVisibleLeft}}>I move in after 1 sec</Animated.Text>
+        <Animated.Text testID='invisibleBecomingVisibleText' style={{marginBottom: 20, textAlign: 'center', color: 'green', left: this.state.becomeVisibleLeft}}>I become visible after 1 sec</Animated.Text>
 
       </View>
     );
