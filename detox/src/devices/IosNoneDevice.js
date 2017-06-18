@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const Device = require('./Device');
+const GREYConfiguration = require('./../ios/earlgreyapi/GREYConfiguration');
 
 class IosNoneDevice extends Device {
 
@@ -29,6 +30,18 @@ class IosNoneDevice extends Device {
   async sendUserNotification(notification) {
     const notificationFilePath = this.createPushNotificationJson(notification);
     await super.sendUserNotification({detoxUserNotificationDataURL: notificationFilePath});
+  }
+
+  async setURLBlacklist(urlList) {
+    await this.client.execute(GREYConfiguration.setURLBlacklist(urlList));
+  }
+
+  async enableSynchronization() {
+    await this.client.execute(GREYConfiguration.enableSynchronization());
+  }
+
+  async disableSynchronization() {
+    await this.client.execute(GREYConfiguration.disableSynchronization());
   }
 }
 

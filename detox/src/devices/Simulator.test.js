@@ -225,11 +225,29 @@ describe('Simulator', () => {
     const coordinate = {
       lat: 30.000,
       lon: 40.000
-    }
+    };
 
     simulator = validSimulator();
     await simulator.setLocation(coordinate.lat, coordinate.lon);
     expect(simulator._fbsimctl.setLocation).toHaveBeenCalledWith(simulator._simulatorUdid, coordinate.lat, coordinate.lon);
+  });
+
+  it(`setURLBlacklist() should execute`, async() => {
+    simulator = validSimulator();
+    await simulator.setURLBlacklist(['.*127.0.0.1.*']);
+    expect(simulator.client.execute).toHaveBeenCalledTimes(1);
+  });
+
+  it(`enableSynchronization() should execute`, async() => {
+    simulator = validSimulator();
+    await simulator.enableSynchronization();
+    expect(simulator.client.execute).toHaveBeenCalledTimes(1);
+  });
+
+  it(`disableSynchronization() should execute`, async() => {
+    simulator = validSimulator();
+    await simulator.disableSynchronization();
+    expect(simulator.client.execute).toHaveBeenCalledTimes(1);
   });
 });
 

@@ -50,6 +50,18 @@ class Device {
     return await Promise.resolve('');
   }
 
+  async setURLBlacklist(urlList) {
+    return await Promise.resolve('');
+  }
+
+  async enableSynchronization() {
+    return await Promise.resolve('');
+  }
+
+  async disableSynchronization() {
+    return await Promise.resolve('');
+  }
+
   _prepareLaunchArgs(additionalLaunchArgs) {
     let args = ['-detoxServer', this._session.server, '-detoxSessionId', this._session.sessionId];
     if (additionalLaunchArgs) {

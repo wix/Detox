@@ -113,7 +113,7 @@ class Simulator extends IosNoneDevice {
       'rotateDeviceToOrientation:errorOrNil:',
       invoke.IOS.NSInteger(orientationMapping[orientation])
     );
-    await new invoke.InvocationManager(this.client).execute(call);
+    await this.client.execute(call);
   }
 
   async setLocation(lat, lon) {
