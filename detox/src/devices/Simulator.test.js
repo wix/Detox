@@ -228,8 +228,19 @@ describe('Simulator', () => {
     }
 
     simulator = validSimulator();
-    await simulator.setLocation(coordinate.lat, coordinate.lon);
+    simulator.setLocation(coordinate.lat, coordinate.lon);
     expect(simulator._fbsimctl.setLocation).toHaveBeenCalledWith(simulator._simulatorUdid, coordinate.lat, coordinate.lon);
+  });
+
+  it(`setLocationPermission() should trigger appleSimUtils.setLocationPermission`, async () => {
+    const permission = "always";
+
+    simulator = validSimulator();
+    simulator._simulatorUdid = "3148B5E8-6774-4858-B67A-DA6AC911DA4C";
+    simulator._bundleId = "org.reactjs.native.example.example";
+
+    await simulator.setLocationPermission(permission);
+    expect(simulator._appleSimUtils.setLocationPermission).toHaveBeenCalledWith(simulator._simulatorUdid, simulator._bundleId, permission);
   });
 });
 

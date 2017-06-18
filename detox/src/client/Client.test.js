@@ -33,6 +33,12 @@ describe('Client', () => {
     }
   });
 
+  it(`locationStatus() - should return location status`, async () => {
+    await connect();
+    client.ws.send.mockReturnValueOnce(response("locationStatusResult", {}, 1));
+    await client.locationStatus();
+  });
+
   it(`sendUserNotification() - should receive ready from device and resolve`, async () => {
     await connect();
     client.ws.send.mockReturnValueOnce(response("userNotificationDone", {}, 1));

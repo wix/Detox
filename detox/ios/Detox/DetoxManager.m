@@ -11,6 +11,7 @@
 #import "DetoxAppDelegateProxy.h"
 #import "EarlGreyExtensions.h"
 #import "EarlGreyStatistics.h"
+#import "LocationHelper.h"
 
 @interface DetoxManager()
 
@@ -114,6 +115,10 @@ static void detoxConditionalInit()
 		DetoxUserNotificationDispatcher* dispatcher = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationDataURL:userNotificationDataURL];
 		[dispatcher dispatchOnAppDelegate:DetoxAppDelegateProxy.currentAppDelegateProxy.originalAppDelegate simulateDuringLaunch:NO];
 		[self.websocket sendAction:@"userNotificationDone" withParams:@{} withMessageId: messageId];
+	}
+	else if([type isEqualToString:@"locationStatus"])
+	{
+		[self.websocket sendAction:@"locationStatusResult" withParams:[LocationHelper locationStatusDictionary] withMessageId: messageId];
 	}
 	else if([type isEqualToString:@"reactNativeReload"])
 	{

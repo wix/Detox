@@ -23,6 +23,10 @@ class Client {
     await this.sendAction(new actions.SendUserNotification(params));
   }
 
+  async locationStatus(params) {
+    return await this.sendAction(new actions.LocationStatus(params));
+  }
+
   async waitUntilReady() {
     await this.sendAction(new actions.Ready(), -1000);
   }

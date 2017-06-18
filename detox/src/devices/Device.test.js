@@ -56,4 +56,14 @@ describe('Device', () => {
   it(`setLocation() - should be defined`, async () => {
     expect(await device.setLocation()).toBeDefined();
   });
+
+  it(`setLocationPermission() - should be defined`, async () => {
+    expect(await device.setLocationPermission()).toBeDefined();
+  });
+  
+  it(`locationStatus() - should trigger locationStatus in websocket client`, async () => {
+    const permission = "always";
+    device.locationStatus(permission);
+    expect(device.client.locationStatus).toHaveBeenCalledWith(permission);
+  });
 });

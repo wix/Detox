@@ -5,6 +5,7 @@ const os = require('os');
 const _ = require('lodash');
 const IosNoneDevice = require('./IosNoneDevice');
 const FBsimctl = require('./Fbsimctl');
+const AppleSimUtils = require('./AppleSimUtils');
 const configuration = require('../configuration');
 const argparse = require('../utils/argparse');
 const invoke = require('../invoke');
@@ -14,6 +15,7 @@ class Simulator extends IosNoneDevice {
   constructor(client, session, deviceConfig) {
     super(client, session, deviceConfig);
     this._fbsimctl = new FBsimctl();
+    this._appleSimUtils = new AppleSimUtils();
     this._simulatorUdid = "";
     this.sim = "";
   }
@@ -118,6 +120,10 @@ class Simulator extends IosNoneDevice {
 
   async setLocation(lat, lon) {
     await this._fbsimctl.setLocation(this._simulatorUdid, lat, lon);
+  }
+
+  async setLocationPermission(permission) {
+    await this._appleSimUtils.setLocationPermission(this._simulatorUdid, this._bundleId, permission);
   }
 }
 

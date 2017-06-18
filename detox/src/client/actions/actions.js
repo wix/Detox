@@ -89,6 +89,17 @@ class SendUserNotification extends Action {
   }
 }
 
+class LocationStatus extends Action {
+  constructor(params) {
+    super('locationStatus', params);
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'locationStatusResult');
+    return response;
+  }
+}
+
 class CurrentStatus extends Action {
   constructor(params) {
     super('currentStatus', params);
@@ -112,5 +123,6 @@ module.exports = {
   ReloadReactNative,
   Cleanup,
   SendUserNotification,
-  CurrentStatus
+  CurrentStatus,
+  LocationStatus
 };

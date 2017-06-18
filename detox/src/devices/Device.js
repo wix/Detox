@@ -38,6 +38,14 @@ class Device {
     return await Promise.resolve('');
   }
 
+  async setLocationPermission(permission) {
+    return await Promise.resolve('');
+  }
+
+  async locationStatus(params) {
+    return await this.client.locationStatus(params);
+   }
+
   async reloadReactNative() {
     return await this.client.reloadReactNative();
   }

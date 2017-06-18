@@ -72,6 +72,8 @@
 		39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */; };
 		468731A51E6C6D0500F151BE /* EarlGrey+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 468731A31E6C6D0500F151BE /* EarlGrey+Detox.h */; };
 		468731A61E6C6D0500F151BE /* EarlGrey+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 468731A41E6C6D0500F151BE /* EarlGrey+Detox.m */; };
+		5094D7951EF479C000C88216 /* LocationHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 5094D7931EF479C000C88216 /* LocationHelper.h */; };
+		5094D7961EF479C000C88216 /* LocationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 5094D7941EF479C000C88216 /* LocationHelper.m */; };
 		A7F76A151ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F76A131ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.h */; };
 		A7F76A161ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.m in Sources */ = {isa = PBXBuildFile; fileRef = A7F76A141ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.m */; };
 /* End PBXBuildFile section */
@@ -219,6 +221,8 @@
 		39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetoxUserNotificationDispatcher.swift; sourceTree = "<group>"; };
 		468731A31E6C6D0500F151BE /* EarlGrey+Detox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "EarlGrey+Detox.h"; sourceTree = "<group>"; };
 		468731A41E6C6D0500F151BE /* EarlGrey+Detox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "EarlGrey+Detox.m"; sourceTree = "<group>"; };
+		5094D7931EF479C000C88216 /* LocationHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationHelper.h; sourceTree = "<group>"; };
+		5094D7941EF479C000C88216 /* LocationHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationHelper.m; sourceTree = "<group>"; };
 		A7F76A131ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXAnimatedDisplayLinkIdlingResource.h; sourceTree = "<group>"; };
 		A7F76A141ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXAnimatedDisplayLinkIdlingResource.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -309,6 +313,8 @@
 				3947679A1DBF985400D72256 /* Detox.h */,
 				394767A41DBF987E00D72256 /* DetoxManager.h */,
 				394767A51DBF987E00D72256 /* DetoxManager.m */,
+				5094D7931EF479C000C88216 /* LocationHelper.h */,
+				5094D7941EF479C000C88216 /* LocationHelper.m */,
 				39A34C6F1E30F10D00BEBB59 /* DetoxAppDelegateProxy.h */,
 				39A34C701E30F10D00BEBB59 /* DetoxAppDelegateProxy.m */,
 				39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */,
@@ -414,6 +420,7 @@
 				394767BF1DBF98A700D72256 /* GREYCondition+Detox.h in Headers */,
 				390D1C9C1E3A45F1007F5F46 /* UNNotification+PrivateHeaders.h in Headers */,
 				394767B21DBF987E00D72256 /* TestFailureHandler.h in Headers */,
+				5094D7951EF479C000C88216 /* LocationHelper.h in Headers */,
 				394767CE1DBF98D900D72256 /* ReactNativeSupport.h in Headers */,
 				394767B61DBF987E00D72256 /* WebSocket.h in Headers */,
 				394767BE1DBF98A700D72256 /* EarlGreyExtensions.h in Headers */,
@@ -632,6 +639,7 @@
 				394767B71DBF987E00D72256 /* WebSocket.m in Sources */,
 				394767D51DBF98D900D72256 /* WXRunLoopIdlingResource.m in Sources */,
 				468731A61E6C6D0500F151BE /* EarlGrey+Detox.m in Sources */,
+				5094D7961EF479C000C88216 /* LocationHelper.m in Sources */,
 				397EC9B61E7EDE0B00D5F2BB /* EarlGreyStatistics.m in Sources */,
 				391FA5EA1E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.m in Sources */,
 				394767CF1DBF98D900D72256 /* ReactNativeSupport.m in Sources */,
