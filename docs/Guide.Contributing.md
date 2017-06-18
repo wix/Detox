@@ -1,6 +1,5 @@
 # Contributing to detox
 
-
 ### Clone detox and submodules
 
 ```sh
@@ -26,7 +25,7 @@ npm install -g react-native-cli
 
 For all the internal projects (detox, detox-server, detox-cli, demos, test) `lerna` will create symbolic links in `node_modules` instead of `npm` copying the content of the projects. This way, any change you do on any code is there immediately. There is no need to update node modules or copy files between projects.
 
-### Install `fbsimctl` 
+### Install `fbsimctl`
 
 ```sh
 brew tap facebook/fb
@@ -58,7 +57,7 @@ lerna run test
 
 Detox JS code is 100% test covered and is set to break the build if coverage gets below, so make sure you run unit tests (`lerna run test`) locally before pushing.
 
-Alternatively, to run only the JS tests, run the following from the `detox/detox` directory: 
+Alternatively, to run only the JS tests, run the following from the `detox/detox` directory:
 
 ```sh
 npm run unit
@@ -93,5 +92,3 @@ To run the e2e tests, after the application was built.
 ```sh
 npm run e2e
 ```
-
-**NOTE: The updated flow can always be found in [our CI build script](../scripts/ci.sh)**
