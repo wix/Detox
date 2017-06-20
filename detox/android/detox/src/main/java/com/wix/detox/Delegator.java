@@ -8,9 +8,7 @@ import java.lang.reflect.Method;
 
 /**
  * Created by simonracz on 29/05/2017.
- */
 
-/**
  * <p>
  * Helper class for InvocationHandlers, which delegates equals, hashCode and toString
  * calls to Object.
@@ -94,7 +92,7 @@ public class Delegator implements InvocationHandler {
     }
 
     protected Integer proxyHashCode(Object proxy) {
-        return new Integer(System.identityHashCode(proxy));
+        return System.identityHashCode(proxy);
     }
 
     protected Boolean proxyEquals(Object proxy, Object other) {
