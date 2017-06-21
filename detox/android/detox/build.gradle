@@ -4,7 +4,7 @@ apply plugin: 'com.palantir.jacoco-full-report'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    buildToolsVersion '25.0.3'
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 25
@@ -58,6 +58,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.google.code.findbugs'
+        exclude group: 'com.android.support', module: 'support-annotations'
     })
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
