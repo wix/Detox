@@ -22,6 +22,11 @@ describe('Device', () => {
     expect(device.client.reloadReactNative).toHaveBeenCalledTimes(1);
   });
 
+  it(`takeScreenshot() - should trigger takeScreenshot in websocket client`, () => {
+    device.takeScreenshot();
+    expect(device.client.takeScreenshot).toHaveBeenCalledTimes(1);
+  });
+
   it(`sendUserNotification() - should trigger sendUserNotification in websocket client`, () => {
     const params = {some: "params"};
     device.sendUserNotification(params);

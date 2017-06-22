@@ -50,6 +50,16 @@ class ReloadReactNative extends Action {
   }
 }
 
+class TakeScreenshot extends Action {
+  constructor() {
+    super('takeScreenshot');
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'screenshotResult');
+  }
+}
+
 class Cleanup extends Action {
   constructor() {
     super('cleanup');
@@ -110,6 +120,7 @@ module.exports = {
   Ready,
   Invoke,
   ReloadReactNative,
+  TakeScreenshot,
   Cleanup,
   SendUserNotification,
   CurrentStatus

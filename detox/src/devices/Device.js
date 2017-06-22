@@ -33,7 +33,7 @@ class Device {
   async openURL() {
     return await Promise.resolve('');
   }
-  
+
   async setLocation(lat, lon) {
     return await Promise.resolve('');
   }
@@ -52,6 +52,10 @@ class Device {
 
   async setURLBlacklist(urlList) {
     return await Promise.resolve('');
+  }
+
+  async takeScreenshot() {
+    return await this.client.takeScreenshot();
   }
 
   async enableSynchronization() {
