@@ -19,6 +19,11 @@ class Client {
     await this.sendAction(new actions.ReloadReactNative(), -1000);
   }
 
+  async takeScreenshot() {
+    const {params} = await this.sendAction(new actions.TakeScreenshot(), -1000);
+    return params.result;
+  }
+
   async sendUserNotification(params) {
     await this.sendAction(new actions.SendUserNotification(params));
   }

@@ -1,3 +1,5 @@
+const chai = require('chai');
+
 describe('Sanity', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
@@ -21,5 +23,10 @@ describe('Sanity', () => {
   it('should show world screen after tap', async () => {
     await element(by.label('Say World')).tap();
     await expect(element(by.label('World!!!'))).toBeVisible();
+  });
+
+  it('should take screenshot', async () => {
+    const image = await device.takeScreenshot();
+    chai.expect(image).to.be.a('string');
   });
 });

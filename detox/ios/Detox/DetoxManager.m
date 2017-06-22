@@ -124,6 +124,13 @@ static void detoxConditionalInit()
 		
 		return;
 	}
+	else if([type isEqualToString:@"takeScreenshot"])
+	{
+		UIImage *screenshot = [GREYScreenshotUtil takeScreenshot];
+		NSString *result = [UIImagePNGRepresentation(screenshot) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+
+		[self.websocket sendAction:@"screenshotResult" withParams:@{@"result": result} withMessageId: messageId];
+	}
 	else if([type isEqualToString:@"currentStatus"])
 	{
 		NSMutableDictionary* statsStatus = [[[EarlGreyStatistics sharedInstance] currentStatus] mutableCopy];

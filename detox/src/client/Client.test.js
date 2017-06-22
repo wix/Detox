@@ -33,6 +33,12 @@ describe('Client', () => {
     }
   });
 
+  it(`takeScreenshot() - should receive base64 image from device and resolve`, async () => {
+    await connect();
+    client.ws.send.mockReturnValueOnce(response("screenshotResult", {}, 1));
+    await client.takeScreenshot();
+  });
+
   it(`sendUserNotification() - should receive ready from device and resolve`, async () => {
     await connect();
     client.ws.send.mockReturnValueOnce(response("userNotificationDone", {}, 1));
