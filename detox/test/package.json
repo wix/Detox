@@ -41,8 +41,12 @@
 			},
 			"ios.none": {
 				"type": "ios.none",
-				"name": "iPhone 7 Plus"
-			}
+				"name": "iPhone 7 Plus",
+				"session": {
+					"server": "ws://localhost:8099",
+					"sessionId": "test"
+				}
+	    }
 		}
 	}
 }

@@ -20,33 +20,30 @@ class Detox {
       throw new Error(`No configuration was passed to detox, make sure you pass a config when calling 'detox.init(config)'`);
     }
 
-    this.client = null;
     this.userConfig = userConfig;
-    this.detoxConfig = {};
+    this.client = null;
+    this.device = null;
   }
 
-  async config() {
+  async init() {
     if (!(this.userConfig.configurations && _.size(this.userConfig.configurations) >= 1)) {
       throw new Error(`no configured devices`);
     }
 
-    this.detoxConfig.configurations = this.userConfig.configurations;
+    const deviceConfig = await this._getDeviceConfig();
+    const [session, shouldStartServer] = await this._chooseSession(deviceConfig);
+    const deviceClass = await this._chooseDeviceClass(deviceConfig);
 
-    if (this.userConfig.session) {
-      configuration.validateSession(this.userConfig.session);
-      this.detoxConfig.session = this.userConfig.session;
-    } else {
-      this.detoxConfig.session = await configuration.defaultSession();
-      const server = new DetoxServer(new URL(this.detoxConfig.session.server).port);
+    if(shouldStartServer) {
+      this.server = new DetoxServer(new URL(session.server).port);
     }
-    return this.detoxConfig;
-  }
 
-  async init() {
-    await this.config();
-    this.client = new Client(this.detoxConfig.session);
-    await this.client.connect();
-    await this.initConfiguration();
+    const client = new Client(session);
+    await client.connect();
+    await this._initIosExpectations(client);
+    await this._setDevice(session, deviceClass, deviceConfig, client);
+
+    this.client = client
   }
 
   async cleanup() {
@@ -59,53 +56,65 @@ class Detox {
     }
   }
 
-  async initConfiguration() {
+  async _chooseSession(deviceConfig) {
+    var session = deviceConfig.session;
+    var shouldStartServer = false;
+
+    if(!session) {
+      session = this.userConfig.session;
+    }
+
+    if(!session) {
+      session = await configuration.defaultSession();
+      shouldStartServer = true;
+    }
+
+    configuration.validateSession(session);
+
+    return [session, shouldStartServer];
+  }
+
+  async _getDeviceConfig() {
     const configurationName = argparse.getArgValue('configuration');
+    const configurations = this.userConfig.configurations;
 
     let deviceConfig;
-    if (!configurationName && _.size(this.detoxConfig.configurations) === 1) {
-      deviceConfig = _.values(this.detoxConfig.configurations)[0];
+    if (!configurationName && _.size(configurations) === 1) {
+      deviceConfig = _.values(configurations)[0];
     } else {
-      deviceConfig = this.detoxConfig.configurations[configurationName];
+      deviceConfig = configurations[configurationName];
     }
 
     if (!deviceConfig) {
       throw new Error(`Cannot determine which configuration to use. use --configuration to choose one of the following: 
-                      ${Object.keys(this.detoxConfig.configurations)}`);
+                      ${Object.keys(configurations)}`);
     }
 
+    return deviceConfig;
+  }
+
+  async _chooseDeviceClass(deviceConfig)
+  {
     switch (deviceConfig.type) {
       case "ios.simulator":
-        await this.initIosSimulator(deviceConfig);
-        break;
+        return Simulator;
       case "ios.none":
-        await this.initIosNoneDevice(deviceConfig);
-        break;
+        return IosNoneDevice;
       default:
         throw new Error('only simulator is supported currently');
     }
   }
 
-  async setDevice(device, deviceConfig) {
-    this.device = new device(this.client, this.detoxConfig.session, deviceConfig);
+  async _setDevice(session, deviceClass, deviceConfig, client) {
+    this.device = new deviceClass(client, session, deviceConfig);
     await this.device.prepare();
     global.device = this.device;
   }
 
-  async initIosExpectations() {
+  async _initIosExpectations(client) {
     this.expect = require('./ios/expect');
     this.expect.exportGlobals();
-    this.expect.setInvocationManager(new InvocationManager(this.client));
-  }
-
-  async initIosSimulator(deviceConfig) {
-    await this.initIosExpectations();
-    await this.setDevice(Simulator, deviceConfig);
-  }
-
-  async initIosNoneDevice(deviceConfig) {
-    await this.initIosExpectations();
-    await this.setDevice(IosNoneDevice, deviceConfig);
+    this.expect.setInvocationManager(new InvocationManager(client));
   }
 }
 
