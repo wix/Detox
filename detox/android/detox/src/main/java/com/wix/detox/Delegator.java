@@ -26,10 +26,10 @@ public class Delegator implements InvocationHandler {
     private static Method toStringMethod;
     static {
         try {
-            hashCodeMethod = Object.class.getMethod("hashCode", null);
+            hashCodeMethod = Object.class.getMethod("hashCode");
             equalsMethod =
                     Object.class.getMethod("equals", new Class[] { Object.class });
-            toStringMethod = Object.class.getMethod("toString", null);
+            toStringMethod = Object.class.getMethod("toString");
         } catch (NoSuchMethodException e) {
             throw new NoSuchMethodError(e.getMessage());
         }
