@@ -1,4 +1,4 @@
-rootProject.name = 'example'
+rootProject.name = 'DetoxTest'
 
 include ':app'
 

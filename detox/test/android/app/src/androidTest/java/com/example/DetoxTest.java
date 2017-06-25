@@ -1,15 +1,16 @@
 package com.example;
 
+import android.content.Context;
 import android.support.test.filters.LargeTest;
-import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.wix.detox.Detox;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 
 /**
  * Created by simonracz on 28/05/2017.
@@ -19,12 +20,16 @@ import org.junit.runner.RunWith;
 @LargeTest
 public class DetoxTest {
 
-    @Rule
-    public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule(MainActivity.class);
+    @Before
+    public void startDefaultActivity() {
+        final Context targetContext = getInstrumentation().getTargetContext();
+        targetContext.startActivity(targetContext.getPackageManager().getLaunchIntentForPackage(targetContext.getPackageName()));
+
+    }
 
     @Before
     public void setUpCustomEspressoIdlingResources() {
-        // empty
+
     }
 
     @Test

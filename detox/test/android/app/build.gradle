@@ -1,7 +1,5 @@
 apply plugin: "com.android.application"
 
-import com.android.build.OutputFile
-
 apply from: "../../node_modules/react-native/react.gradle"
 
 android {
@@ -9,9 +7,9 @@ android {
     buildToolsVersion '25.0.3'
 
     defaultConfig {
-        applicationId "com.example"
-        minSdkVersion 16
-        targetSdkVersion 25
+        applicationId "com.wix.detox.test"
+        minSdkVersion 18
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
         ndk {
@@ -23,32 +21,13 @@ android {
                 'detoxSessionId': 'test'
         ]
     }
-    splits {
-        abi {
-            reset()
-            enable false
-            universalApk false  // If true, also generate a universal APK
-            include "armeabi-v7a", "x86"
-        }
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-        }
-    }
-    // applicationVariants are e.g. debug, release
-    applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            // For each separate APK per architecture, set a unique version code as described here:
-            // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-            def versionCodes = ["armeabi-v7a":1, "x86":2]
-            def abi = output.getFilter(OutputFile.ABI)
-            if (abi != null) {  // null for the universal-debug, universal-release variants
-                output.versionCodeOverride =
-                        versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
-            }
-        }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
     }
 }
 
@@ -58,10 +37,9 @@ dependencies {
     compile "com.facebook.react:react-native:+"  // From node_modules
 
     testCompile 'junit:junit:4.12'
-    androidTestCompile project(":detox")
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+
+    androidTestCompile(project(":detox"), {
         exclude group: 'com.android.support', module: 'support-annotations'
-        exclude group: 'com.google.code.findbugs'
     })
 }
 

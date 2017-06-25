@@ -10,13 +10,12 @@ echo -e "\nStarting ws echo server"
 node_modules/wsrelay/cmd.js 8099 &>/dev/null &
 PROC_ID_WS=$!
 
-echo -e "\nInstalling app apk and test apk"
+echo -e "\nInstalling app apk"
 cd android
 ./gradlew installDebug
-./gradlew installDebugAndroidTest
 
 echo -e "\nStarting instrumentation test"
-./gradlew connectedAndroidTest &>/dev/null &
+./gradlew connectedAndroidTest 2>&1 &
 PROC_ID_INST=$!
 cd ..
 
