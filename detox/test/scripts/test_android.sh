@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # This is a helper script for testing *manually* detox Android
 # Prerequisites:
