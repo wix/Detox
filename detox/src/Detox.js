@@ -38,10 +38,12 @@ class Detox {
       this.server = new DetoxServer(new URL(session.server).port);
     }
 
-    await this._initIosExpectations();
-    this.client = new Client(session);
-    await this.client.connect();
-    await this._setDevice(session, deviceClass, deviceConfig, this.client);
+    const client = new Client(session);
+    await client.connect();
+    await this._initIosExpectations(client);
+    await this._setDevice(session, deviceClass, deviceConfig, client);
+
+    this.client = client
   }
 
   async cleanup() {
@@ -109,10 +111,10 @@ class Detox {
     global.device = this.device;
   }
 
-  async _initIosExpectations() {
+  async _initIosExpectations(client) {
     this.expect = require('./ios/expect');
     this.expect.exportGlobals();
-    this.expect.setInvocationManager(new InvocationManager(this.client));
+    this.expect.setInvocationManager(new InvocationManager(client));
   }
 }
 
