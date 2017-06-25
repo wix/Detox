@@ -129,10 +129,25 @@ void setupForTests()
 	[__observedQueues addObject:queue];
 	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[GREYDispatchQueueIdlingResource resourceWithDispatchQueue:queue name:@"RCTUIManagerQueue"]];
 	
-	cls = NSClassFromString(@"RCTJSCExecutor");
-	m = class_getClassMethod(cls, NSSelectorFromString(@"runRunLoopThread"));
-	orig_runRunLoopThread = (void(*)(id, SEL))method_getImplementation(m);
-	method_setImplementation(m, (IMP)swz_runRunLoopThread);
+	Class cls = NSClassFromString(@"RCTJSCExecutor");
+	m = NULL;
+	if(cls)
+	{
+		//Legacy RN
+		m = class_getClassMethod(cls, NSSelectorFromString(@"runRunLoopThread"));
+	}
+	else
+	{
+		//Modern RN
+		cls = NSClassFromString(@"RCTCxxBridge");
+		m = class_getInstanceMethod(cls, NSSelectorFromString(@"runJSRunLoop"));
+	}
+	
+	if(m != NULL)
+	{
+		orig_runRunLoopThread = (void(*)(id, SEL))method_getImplementation(m);
+		method_setImplementation(m, (IMP)swz_runRunLoopThread);
+	}
 	
 	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[WXJSTimerObservationIdlingResource new]];
 	
