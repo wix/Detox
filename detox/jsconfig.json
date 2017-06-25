@@ -1,9 +1,13 @@
 {
-    "compilerOptions": {
-        "allowJs": true,
-        "allowSyntheticDefaultImports": true
+    "compilerOptions": {        
+        "allowSyntheticDefaultImports": true,
+        "checkJs": true,
+        "target": "ES6"
     },
     "exclude": [
         "node_modules"
+    ],
+    "include": [
+        "src/**/*"
     ]
 }
