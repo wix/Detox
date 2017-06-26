@@ -10,9 +10,9 @@ import java.util.HashMap;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Invocation {
-    Target target;
-    String method;
-    Object[] args;
+    private Target target;
+    private String method;
+    private Object[] args;
 
     public Invocation() {
 
