@@ -129,9 +129,9 @@ void setupForTests()
 	[__observedQueues addObject:queue];
 	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[GREYDispatchQueueIdlingResource resourceWithDispatchQueue:queue name:@"RCTUIManagerQueue"]];
 	
-	Class cls = NSClassFromString(@"RCTJSCExecutor");
+	cls = NSClassFromString(@"RCTJSCExecutor");
 	m = NULL;
-	if(cls)
+	if(cls != NULL)
 	{
 		//Legacy RN
 		m = class_getClassMethod(cls, NSSelectorFromString(@"runRunLoopThread"));
