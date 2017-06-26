@@ -12,10 +12,13 @@ PROC_ID_WS=$!
 
 echo -e "\nInstalling app apk"
 cd android
-./gradlew installDebug
+./gradlew assembleDebug
+adb install -r -g app/build/outputs/apk/app-debug.apk
 
 echo -e "\nStarting instrumentation test"
-./gradlew connectedAndroidTest 2>&1 &
+detoxServer="ws://10.0.2.2:8099"
+detoxSessionId="test"
+./gradlew connectedAndroidTest -Pandroid.testInstrumentationRunnerArguments.detoxServer="${detoxServer}" -Pandroid.testInstrumentationRunnerArguments.detoxSessionId="${detoxSessionId}" 2>&1 &
 PROC_ID_INST=$!
 cd ..
 

@@ -9,17 +9,13 @@ android {
     defaultConfig {
         applicationId "com.wix.detox.test"
         minSdkVersion 18
-        targetSdkVersion 22
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        testInstrumentationRunnerArguments = [
-                'detoxServer': 'ws://10.0.2.2:8099',
-                'detoxSessionId': 'test'
-        ]
     }
 
     packagingOptions {
