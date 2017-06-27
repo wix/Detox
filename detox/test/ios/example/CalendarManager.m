@@ -4,7 +4,7 @@
 @implementation CalendarManager
 RCT_EXPORT_MODULE();
 
-RCT_EXPORT_METHOD(getSomeString:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(getAuthorizationStatus:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
     EKAuthorizationStatus status = [EKEventStore authorizationStatusForEntityType:EKEntityTypeEvent];
     NSString* permission;
