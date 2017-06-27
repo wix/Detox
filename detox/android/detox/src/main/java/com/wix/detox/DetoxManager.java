@@ -9,8 +9,9 @@ import android.support.test.espresso.Espresso;
 import android.support.test.espresso.EspressoException;
 import android.util.Log;
 
+import com.wix.invoke.MethodInvocation;
+
 import java.util.Collections;
-import java.util.Map;
 
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -83,25 +84,19 @@ class DetoxManager implements WebSocketClient.ActionHandler {
     }
 
     @Override
-    public void onAction(final String type, Map params) {
+    public void onAction(final String type, final String params) {
         Log.i(LOG_TAG, "onAction: type: " + type + " params: " + params);
         handler.post(new Runnable() {
             @Override
             public void run() {
                 switch (type) {
                     case "invoke":
-                        /*
                         try {
-                            Espresso.onView(withTagValue(is((Object)"hello_button"))).check(matches(isDisplayed()));
-                        } catch (RuntimeException e) {
-                            if (e instanceof EspressoException) {
-                                Log.i(LOG_TAG, "Test exception", e);
-                            } else {
-                                Log.e(LOG_TAG, "Exception", e);
-                            }
-                            stop();
+                            Object retVal = MethodInvocation.invoke(params);
+                            Log.d(LOG_TAG, "Invocation result: " + retVal);
+                        } catch (Exception ex) {
+                            Log.d(LOG_TAG, "Invocation failed: " + ex.toString());
                         }
-                        */
                         break;
                     case "isReady":
                         // It's always ready, because reload, waitForRn are both synchronous.
