@@ -7,15 +7,17 @@ import StressScreen from './StressScreen';
 import SwitchRootScreen from './SwitchRootScreen';
 import TimeoutsScreen from './TimeoutsScreen';
 import Orientation from './Orientation';
+import Permissions from './Permissions';
 
 export {
-  SanityScreen,
-  MatchersScreen,
-  ActionsScreen,
-  AssertionsScreen,
-  WaitForScreen,
-  StressScreen,
-  SwitchRootScreen,
-  TimeoutsScreen,
-  Orientation
+    SanityScreen,
+    MatchersScreen,
+    ActionsScreen,
+    AssertionsScreen,
+    WaitForScreen,
+    StressScreen,
+    SwitchRootScreen,
+    TimeoutsScreen,
+    Orientation,
+    Permissions
 };
