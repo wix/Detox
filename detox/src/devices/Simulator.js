@@ -71,6 +71,10 @@ class Simulator extends IosNoneDevice {
             await this._fbsimctl.terminate(this._simulatorUdid, this._bundleId);
         }
 
+        if(params.permissions) {
+            await this._applesimutils.setPermissions(this._simulatorUdid, this._bundleId, params.permissions);
+        }
+
         let additionalLaunchArgs;
         if (params.url) {
             additionalLaunchArgs = {'-detoxURLOverride': params.url};
@@ -100,12 +104,6 @@ class Simulator extends IosNoneDevice {
     async shutdown() {
         await this._fbsimctl.shutdown(this._simulatorUdid);
     }
-
-    async setPermissions(permissionsObj) {
-        await this._applesimutils.setPermissions(this._simulatorUdid, this._bundleId, permissionsObj);
-        await this.relaunchApp();
-    }
-
 
   async setOrientation(orientation) {
     // keys are possible orientations
