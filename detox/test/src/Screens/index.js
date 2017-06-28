@@ -10,14 +10,14 @@ import Orientation from './Orientation';
 import Permissions from './Permissions';
 
 export {
-    SanityScreen,
-    MatchersScreen,
-    ActionsScreen,
-    AssertionsScreen,
-    WaitForScreen,
-    StressScreen,
-    SwitchRootScreen,
-    TimeoutsScreen,
-    Orientation,
-    Permissions
+  SanityScreen,
+  MatchersScreen,
+  ActionsScreen,
+  AssertionsScreen,
+  WaitForScreen,
+  StressScreen,
+  SwitchRootScreen,
+  TimeoutsScreen,
+  Orientation,
+  Permissions
 };
