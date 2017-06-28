@@ -5,7 +5,7 @@ Detox uses **Matchers** to find UI `elements` in your app, **Actions** to emulat
 
 Matchers find elements in your app that match one or more properties.
 
-**NOTE: Whenever possible we recommend to match elements `by.id`, these are more resilient to layout restructuring and text/language chagnes**
+**NOTE: Whenever possible we recommend to match elements `by.id`, these are more resilient to layout restructuring and text/language changes**
 
 ### Methods
 
