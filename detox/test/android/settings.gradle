@@ -1,3 +1,6 @@
-rootProject.name = 'example'
+rootProject.name = 'DetoxTest'
 
 include ':app'
+
+include ':detox'
+project(':detox').projectDir = new File(rootProject.projectDir, '../../android/detox')

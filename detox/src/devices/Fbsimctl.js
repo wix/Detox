@@ -115,6 +115,11 @@ class Fbsimctl {
     return JSON.parse(result.stdout).subject.state !== 'Booted';
   }
 
+  async setLocation(udid, lat, lon) {
+    const options = {args: `${udid} set_location ${lat} ${lon}`};
+    await this._execFbsimctlCommand(options);
+  }
+
   async _execFbsimctlCommand(options, statusLogs, retries, interval) {
     const bin = `fbsimctl --json`;
     return await exec.execWithRetriesAndLogs(bin, options, statusLogs, retries, interval);

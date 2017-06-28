@@ -3,7 +3,8 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.2'
+        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.palantir:jacoco-coverage:0.4.0'
     }
 }
 
@@ -11,9 +12,5 @@ allprojects {
     repositories {
         mavenLocal()
         jcenter()
-//        maven {
-//            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-//            url "$rootDir/../node_modules/react-native/android"
-//        }
     }
 }

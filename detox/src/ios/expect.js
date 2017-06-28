@@ -119,7 +119,7 @@ class ScrollEdgeAction extends Action {
 }
 
 class SwipeAction extends Action {
-  constructor(direction, speed) {
+  constructor(direction, speed, percentage) {
     super();
     if (typeof direction !== 'string') throw new Error(`SwipeAction ctor 1st argument must be a string, got ${typeof direction}`);
     if (typeof speed !== 'string') throw new Error(`SwipeAction ctor 2nd argument must be a string, got ${typeof speed}`);
@@ -130,12 +130,29 @@ class SwipeAction extends Action {
       case 'down': direction = 4; break;
       default: throw new Error(`SwipeAction direction must be a 'left'/'right'/'up'/'down', got ${direction}`);
     }
-    if (speed == 'fast') {
-      this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForSwipeFastInDirection:', invoke.IOS.NSInteger(direction));
-    } else if (speed == 'slow') {
-      this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForSwipeSlowInDirection:', invoke.IOS.NSInteger(direction));
+    if (percentage) {
+      let x, y;
+      switch (direction) {
+        case 1: x = percentage, y = 0.0; break;
+        case 2: x = percentage, y = 0.0; break;
+        case 3: y = percentage, x = 0.0; break;
+        case 4: y = percentage, x = 0.0; break;
+      }
+      if (speed == 'fast') {
+        this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForSwipeFastInDirection:xOriginStartPercentage:yOriginStartPercentage:', invoke.IOS.NSInteger(direction), invoke.IOS.CGFloat(x), invoke.IOS.CGFloat(y));
+      } else if (speed == 'slow') {
+        this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForSwipeSlowInDirection:xOriginStartPercentage:yOriginStartPercentage:', invoke.IOS.NSInteger(direction), invoke.IOS.CGFloat(x), invoke.IOS.CGFloat(y));
+      } else {
+        throw new Error(`SwipeAction speed must be a 'fast'/'slow', got ${speed}`);
+      }
     } else {
-      throw new Error(`SwipeAction speed must be a 'fast'/'slow', got ${speed}`);
+      if (speed == 'fast') {
+        this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForSwipeFastInDirection:', invoke.IOS.NSInteger(direction));
+      } else if (speed == 'slow') {
+        this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForSwipeSlowInDirection:', invoke.IOS.NSInteger(direction));
+      } else {
+        throw new Error(`SwipeAction speed must be a 'fast'/'slow', got ${speed}`);
+      }
     }
   }
 }
@@ -188,7 +205,7 @@ class WaitForInteraction extends Interaction {
     if (this._notCondition) {
       _conditionCall = invoke.call(invoke.IOS.Class('GREYCondition'), 'detoxConditionForNotElementMatched:', this._element._call);
     }
-    this._call = invoke.call(_conditionCall, 'waitWithTimeout:', invoke.IOS.CGFloat(timeout));
+    this._call = invoke.call(_conditionCall, 'waitWithTimeout:', invoke.IOS.CGFloat(timeout/1000));
     await this.execute();
   }
   whileElement(searchMatcher) {
@@ -262,10 +279,10 @@ class Element {
     this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
     return await new ActionInteraction(this, new ScrollEdgeAction(edge)).execute();
   }
-  async swipe(direction, speed = 'fast') {
+  async swipe(direction, speed = 'fast', percentage = 0) {
     // override the user's element selection with an extended matcher that avoids RN issues with RCTScrollView
     this._selectElementWithMatcher(this._originalMatcher._avoidProblematicReactNativeElements());
-    return await new ActionInteraction(this, new SwipeAction(direction, speed)).execute();
+    return await new ActionInteraction(this, new SwipeAction(direction, speed, percentage)).execute();
   }
 }
 

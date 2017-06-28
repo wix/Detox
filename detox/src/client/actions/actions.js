@@ -1,3 +1,6 @@
+const _ = require('lodash');
+const log = require('npmlog');
+
 class Action {
   constructor(type, params = {}) {
     this.type = type;
@@ -71,7 +74,7 @@ class Invoke extends Action {
       case 'error':
         throw new Error(response.params.error);
       default:
-        throw new Error(`got an unsupported message from testee: ${JSON.stringify(response)}`);
+        throw new Error(`tried to invoke an action on testee, got an unsupported response: ${JSON.stringify(response)}`);
     }
   }
 }
@@ -86,11 +89,28 @@ class SendUserNotification extends Action {
   }
 }
 
+class CurrentStatus extends Action {
+  constructor(params) {
+    super('currentStatus', params);
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'currentStatusResult');
+
+    //console.log("res:" + JSON.stringify(response, null, 2));
+    _.forEach(response.params.resources, (resource) => {
+      log.info(`Sync`, `${resource.name}: ${resource.info.prettyPrint}`);
+    });
+    return response;
+  }
+}
+
 module.exports = {
   Login,
   Ready,
   Invoke,
   ReloadReactNative,
   Cleanup,
-  SendUserNotification
+  SendUserNotification,
+  CurrentStatus
 };

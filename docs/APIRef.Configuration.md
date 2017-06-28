@@ -42,6 +42,22 @@ Detox can either initialize a server using a generated configuration, or can be 
 	}
 ```
 
+Session can also be set per configuration:
+```json
+  "detox": {
+	...
+    "configurations": {
+      "ios.sim.debug": {
+        ...
+	"session": {
+          "server": "ws://localhost:8099",
+          "sessionId": "YourProjectSessionId"
+        }
+      }
+    }
+  }
+```	
+
 ### Test Root Folder
 
 

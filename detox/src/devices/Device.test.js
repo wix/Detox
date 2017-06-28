@@ -52,4 +52,20 @@ describe('Device', () => {
   it(`openURL() - should be defined`, async () => {
     expect(await device.openURL()).toBeDefined();
   });
+
+  it(`setLocation() - should be defined`, async () => {
+    expect(await device.setLocation()).toBeDefined();
+  });
+
+  it(`setURLBlacklist() - should be defined`, async () => {
+    expect(await device.setURLBlacklist()).toBeDefined();
+  });
+
+  it(`enableSynchronization() - should be defined`, async () => {
+    expect(await device.enableSynchronization()).toBeDefined();
+  });
+
+  it(`disableSynchronization() - should be defined`, async () => {
+    expect(await device.disableSynchronization()).toBeDefined();
+  });
 });

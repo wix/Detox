@@ -8,6 +8,8 @@ import SwitchRootScreen from './SwitchRootScreen';
 import TimeoutsScreen from './TimeoutsScreen';
 import Orientation from './Orientation';
 import Permissions from './Permissions';
+import NetworkScreen from './NetworkScreen';
+import AnimationsScreen from './AnimationsScreen';
 
 export {
   SanityScreen,
@@ -19,5 +21,7 @@ export {
   SwitchRootScreen,
   TimeoutsScreen,
   Orientation,
-  Permissions
+  Permissions,
+  NetworkScreen,
+  AnimationsScreen
 };

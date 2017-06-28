@@ -14,7 +14,7 @@ const validOneIosNoneDeviceNoSession = {
       "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
       "type": "ios.none",
       "name": "iPhone 7 Plus, iOS 10.2"
-    }
+    },
   }
 };
 
@@ -101,6 +101,47 @@ const invalidOneDeviceTypeEmulatorNoSession = {
   }
 };
 
+const sessionPerConfiguration = {
+  "configurations": {
+    "ios.sim.none": {
+      "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+      "type": "ios.none",
+      "name": "iPhone 7 Plus, iOS 10.2",
+      "session": {
+        "server": "ws://localhost:1111",
+        "sessionId": "test_1111"
+      }
+    },
+    "ios.sim.release": {
+      "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+      "type": "ios.none",
+      "name": "iPhone 7 Plus, iOS 10.2",
+      "session": {
+        "server": "ws://localhost:2222",
+        "sessionId": "test_2222"
+      }
+    }
+  }
+};
+
+const sessionInCommonAndInConfiguration = {
+  "session": {
+    "server": "ws://localhost:1111",
+    "sessionId": "test_1"
+  },
+  "configurations": {
+    "ios.sim.none": {
+      "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+      "type": "ios.none",
+      "name": "iPhone 7 Plus, iOS 10.2",
+      "session": {
+        "server": "ws://localhost:2222",
+        "sessionId": "test_2"
+      }
+    }
+  }
+};
+
 module.exports = {
   validOneDeviceNoSession,
   validOneIosNoneDeviceNoSession,
@@ -112,5 +153,7 @@ module.exports = {
   validOneDeviceAndSession,
   invalidSessionNoSessionId,
   invalidSessionNoServer,
-  invalidOneDeviceTypeEmulatorNoSession
+  invalidOneDeviceTypeEmulatorNoSession,
+  sessionPerConfiguration,
+  sessionInCommonAndInConfiguration
 };

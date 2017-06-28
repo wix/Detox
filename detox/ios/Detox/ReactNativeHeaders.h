@@ -23,6 +23,8 @@ typedef void (^RN_RCTJavaScriptCallback)(id json, NSError *error);
 + (id<RN_RCTBridge>)currentBridge;
 - (void)requestReload;
 - (id<RN_RCTUIManager>) uiManager;
+- (id)moduleForName:(NSString *)moduleName;
+- (id)moduleForClass:(Class)moduleClass;
 @property (nonatomic, readonly, getter=isLoading) BOOL loading;
 @property (nonatomic, readonly, getter=isValid) BOOL valid;
 

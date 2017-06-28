@@ -33,6 +33,10 @@ class Device {
   async openURL() {
     return await Promise.resolve('');
   }
+  
+  async setLocation(lat, lon) {
+    return await Promise.resolve('');
+  }
 
   async reloadReactNative() {
     return await this.client.reloadReactNative();
@@ -43,6 +47,18 @@ class Device {
   }
 
   async shutdown() {
+    return await Promise.resolve('');
+  }
+
+  async setURLBlacklist(urlList) {
+    return await Promise.resolve('');
+  }
+
+  async enableSynchronization() {
+    return await Promise.resolve('');
+  }
+
+  async disableSynchronization() {
     return await Promise.resolve('');
   }
 

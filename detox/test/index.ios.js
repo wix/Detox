@@ -71,6 +71,8 @@ class example extends Component {
           {this.renderScreenButton('Timeouts', Screens.TimeoutsScreen)}
           {this.renderScreenButton('Orientation', Screens.Orientation)}
           {this.renderScreenButton('Permissions', Screens.Permissions)}
+          {this.renderScreenButton('Network', Screens.NetworkScreen)}
+          {this.renderScreenButton('Animations', Screens.AnimationsScreen)}
         </View>
       );
     }
