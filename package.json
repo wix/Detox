@@ -3,7 +3,7 @@
     "babel-generator": "^6.25.0",
     "babel-types": "^6.25.0",
     "lerna": "2.0.0-rc.4",
-    "objective-c-parser": "^1.0.0"
+    "objective-c-parser": "1.0.3"
   },
   "scripts": {
     "release": "node scripts/release.js",

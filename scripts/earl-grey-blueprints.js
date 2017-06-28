@@ -5,7 +5,7 @@ const t = require('babel-types');
 const generate = require('babel-generator').default;
 
 const files = {
-    './detox/ios/EarlGrey/EarlGrey/Action/GREYPickerAction.h': './demo.js',
+    './detox/ios/EarlGrey/EarlGrey/Action/GREYActions.h': './demo.js',
 };
 
 Object.entries(files).forEach(([inputFile, outputFile]) => {
@@ -15,9 +15,16 @@ Object.entries(files).forEach(([inputFile, outputFile]) => {
     const output = generate(ast);
 
     fs.writeFileSync(outputFile, output.code, 'utf8');
-
 });
 
 function createClass(json) {
-    return t.classDeclaration(t.identifier(json.name), null, t.classBody([]), []);
+    return t.classDeclaration(t.identifier(json.name), null, t.classBody(json.methods.map(createMethod)), []);
+}
+
+function createMethod(json) {
+    return t.classMethod("method", t.identifier(json.name.replace(/\:/g, '')), json.args.map(createArgument), t.blockStatement([]), false, true);
+}
+
+function createArgument(json) {
+    return t.identifier(json.name);
 }
