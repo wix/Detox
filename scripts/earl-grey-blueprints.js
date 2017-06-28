@@ -22,7 +22,18 @@ function createClass(json) {
 }
 
 function createMethod(json) {
-    return t.classMethod("method", t.identifier(json.name.replace(/\:/g, '')), json.args.map(createArgument), t.blockStatement([]), false, json.static);
+    const m = t.classMethod("method", t.identifier(json.name.replace(/\:/g, '')), json.args.map(createArgument), t.blockStatement([]), false, json.static);
+    
+    if (json.comment) {
+        const comment = {
+            type: json.comment.indexOf('\n') === -1 ? 'LineComment' : 'BlockComment',
+            value: json.comment + '\n'
+        };
+
+        m.leadingComments = m.leadingComments || [];
+        m.leadingComments.push(comment)
+    }
+    return m;
 }
 
 function createArgument(json) {
