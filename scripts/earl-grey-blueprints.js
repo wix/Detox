@@ -22,7 +22,7 @@ function createClass(json) {
 }
 
 function createMethod(json) {
-    return t.classMethod("method", t.identifier(json.name.replace(/\:/g, '')), json.args.map(createArgument), t.blockStatement([]), false, true);
+    return t.classMethod("method", t.identifier(json.name.replace(/\:/g, '')), json.args.map(createArgument), t.blockStatement([]), false, json.static);
 }
 
 function createArgument(json) {
