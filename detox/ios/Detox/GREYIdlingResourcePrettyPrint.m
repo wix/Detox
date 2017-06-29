@@ -188,7 +188,7 @@ NSDictionary* _prettyPrintJSTimerObservationIdlingResource(WXJSTimerObservationI
 {
 	NSMutableDictionary* rv = [NSMutableDictionary new];
 	rv[@"javascriptTimerIDs"] = [jsTimer valueForKeyPath:@"observations.objectEnumerator.allObjects.@unionOfObjects.observedTimers"];
-	rv[@"prettyPrint"] = rv[@"javascriptTimerIDs"];
+	rv[@"prettyPrint"] = [NSString stringWithFormat:@"Javascript Timers Ids: %@", rv[@"javascriptTimerIDs"]];
 	
 	return rv;
 }
@@ -197,7 +197,7 @@ NSDictionary* _prettyPrintRunLoopIdlingResource(WXRunLoopIdlingResource* runLoop
 {
 	NSMutableDictionary* rv = [NSMutableDictionary new];
 	rv[@"runLoop"] = [[runLoop valueForKeyPath:@"runLoop"] debugDescription];
-	rv[@"prettyPrint"] = rv[@"runLoop"];
+	rv[@"prettyPrint"] = @"React Native thread is busy.";
 	
 	return rv;
 }
