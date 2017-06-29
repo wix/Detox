@@ -17,7 +17,7 @@ describe('Simulator', () => {
   beforeEach(async () => {
     jest.mock('fs');
     fs = require('fs');
-
+    jest.mock('../ios/expect');
     jest.mock('child-process-promise');
     cpp = require('child-process-promise');
 

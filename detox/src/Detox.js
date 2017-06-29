@@ -1,8 +1,8 @@
 const log = require('npmlog');
 const IosNoneDevice = require('./devices/IosNoneDevice');
 const Simulator = require('./devices/Simulator');
+const Emulator = require('./devices/Emulator');
 const argparse = require('./utils/argparse');
-const InvocationManager = require('./invoke').InvocationManager;
 const configuration = require('./configuration');
 const Client = require('./client/Client');
 const DetoxServer = require('detox-server');
@@ -12,6 +12,12 @@ const _ = require('lodash');
 log.level = argparse.getArgValue('loglevel') || 'info';
 log.addLevel('wss', 999, {fg: 'blue', bg: 'black'}, 'wss');
 log.heading = 'detox';
+
+const DEVICE_CLASSES = {
+  'ios.simulator': Simulator,
+  'ios.none': IosNoneDevice,
+  'android.emulator': Emulator
+};
 
 class Detox {
 
@@ -32,18 +38,19 @@ class Detox {
 
     const deviceConfig = await this._getDeviceConfig();
     const [session, shouldStartServer] = await this._chooseSession(deviceConfig);
-    const deviceClass = await this._chooseDeviceClass(deviceConfig);
 
     if(shouldStartServer) {
       this.server = new DetoxServer(new URL(session.server).port);
     }
 
-    const client = new Client(session);
-    await client.connect();
-    await this._initIosExpectations(client);
-    await this._setDevice(session, deviceClass, deviceConfig, client);
+    this.client = new Client(session);
+    this.client.connect();
 
-    this.client = client
+    const deviceClass = DEVICE_CLASSES[deviceConfig.type];
+    if (!deviceClass) {
+      throw new Error('only simulator is supported currently');
+    }
+    await this._setDevice(session, deviceClass, deviceConfig, this.client);
   }
 
   async cleanup() {
@@ -57,8 +64,8 @@ class Detox {
   }
 
   async _chooseSession(deviceConfig) {
-    var session = deviceConfig.session;
-    var shouldStartServer = false;
+    let session = deviceConfig.session;
+    let shouldStartServer = false;
 
     if(!session) {
       session = this.userConfig.session;
@@ -93,28 +100,10 @@ class Detox {
     return deviceConfig;
   }
 
-  async _chooseDeviceClass(deviceConfig)
-  {
-    switch (deviceConfig.type) {
-      case "ios.simulator":
-        return Simulator;
-      case "ios.none":
-        return IosNoneDevice;
-      default:
-        throw new Error('only simulator is supported currently');
-    }
-  }
-
   async _setDevice(session, deviceClass, deviceConfig, client) {
     this.device = new deviceClass(client, session, deviceConfig);
     await this.device.prepare();
     global.device = this.device;
-  }
-
-  async _initIosExpectations(client) {
-    this.expect = require('./ios/expect');
-    this.expect.exportGlobals();
-    this.expect.setInvocationManager(new InvocationManager(client));
   }
 }
 

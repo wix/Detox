@@ -1,12 +1,17 @@
 const fs = require('fs');
 const path = require('path');
 const Device = require('./Device');
+const InvocationManager = require('../invoke').InvocationManager;
 const GREYConfiguration = require('./../ios/earlgreyapi/GREYConfiguration');
 
 class IosNoneDevice extends Device {
 
   constructor(client, session, deviceConfig) {
     super(client, session, deviceConfig);
+
+    const expect = require('../ios/expect');
+    expect.exportGlobals();
+    expect.setInvocationManager(new InvocationManager(client));
   }
 
   ensureDirectoryExistence(filePath) {
