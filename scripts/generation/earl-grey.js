@@ -12,6 +12,20 @@ function createClass(json) {
   );
 }
 
+function createExport(json) {
+  return t.expressionStatement(
+    t.assignmentExpression(
+      "=",
+      t.memberExpression(
+        t.identifier("module"),
+        t.identifier("exports"),
+        false
+      ),
+      t.identifier(json.name)
+    )
+  );
+}
+
 function createMethod(json) {
   const m = t.classMethod(
     "method",
@@ -147,14 +161,10 @@ function createTypeCheck(json) {
 module.exports = function(files) {
   Object.entries(files).forEach(([inputFile, outputFile]) => {
     const input = fs.readFileSync(inputFile, "utf8");
-    const json = objectiveCParser(input);
-    const ast = createClass(json);
-    const output = generate(ast);
 
-    const types = json.methods.reduce((carry, method) => {
-      carry.push(method.args);
-      return carry;
-    }, []);
+    const json = objectiveCParser(input);
+    const ast = t.program([createClass(json), createExport(json)]);
+    const output = generate(ast);
 
     fs.writeFileSync(outputFile, output.code, "utf8");
   });
