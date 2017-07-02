@@ -81,7 +81,7 @@ function createTypeCheck(json) {
 
   const typeCheckTestGenerator = typeAssertion => ({ name }) =>
     t.binaryExpression(
-      "===",
+      "!==",
       t.unaryExpression("typeof", t.identifier(name)),
       t.stringLiteral(typeAssertion)
     );
@@ -100,17 +100,24 @@ function createTypeCheck(json) {
     );
 
   const oneOfCheckTestGenerator = options => ({ name }) =>
-    t.callExpression(
-      t.memberExpression(
-        t.arrayExpression(options.map(option => t.stringLiteral(option))),
-        t.identifier("some")
-      ),
-      [
-        t.arrowFunctionExpression(
-          [t.identifier("option")],
-          t.binaryExpression("===", t.identifier("option"), t.identifier(name))
-        )
-      ]
+    t.unaryExpression(
+      "!",
+      t.callExpression(
+        t.memberExpression(
+          t.arrayExpression(options.map(option => t.stringLiteral(option))),
+          t.identifier("some")
+        ),
+        [
+          t.arrowFunctionExpression(
+            [t.identifier("option")],
+            t.binaryExpression(
+              "===",
+              t.identifier("option"),
+              t.identifier(name)
+            )
+          )
+        ]
+      )
     );
 
   const oneOfCheckErrorGenerator = options => ({ name }) =>

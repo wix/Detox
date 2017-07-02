@@ -1,0 +1,36 @@
+{
+  "name": "generation",
+  "version": "0.0.1",
+  "description": "Generate wrapper code for native dependencies",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "build": "./index.js",
+    "test": "jest"
+  },
+  "author": "DanielMSchmidt <danielmschmidt92@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-generator": "^6.25.0",
+    "babel-types": "^6.25.0",
+    "jest": "^20.0.4",
+    "lerna": "2.0.0-rc.4",
+    "objective-c-parser": "1.0.4",
+    "remove": "^0.1.5"
+  },
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/index.js"
+    ],
+    "resetMocks": true,
+    "resetModules": true,
+    "coverageThreshold": {
+      "global": {
+        "statements": 100,
+        "branches": 100,
+        "functions": 100,
+        "lines": 100
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`earl-grey generation Error handling should throw error for not in accepted range 1`] = `"direction should be one of [Left, Right, Up, Down], but got flipside"`;
+
+exports[`earl-grey generation Error handling should throw error for wrong type 1`] = `"count should be a number, but got foo"`;
+
+exports[`earl-grey generation Error handling should throw error for wrong type 2`] = `"point should be a object, but got 4"`;
