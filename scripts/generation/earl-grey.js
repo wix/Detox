@@ -1,26 +1,7 @@
-#!/usr/bin/env node
-const fs = require("fs");
-const objectiveCParser = require("objective-c-parser");
 const t = require("babel-types");
+const objectiveCParser = require("objective-c-parser");
 const generate = require("babel-generator").default;
-
-const files = {
-  "./detox/ios/EarlGrey/EarlGrey/Action/GREYActions.h": "./demo.js"
-};
-
-Object.entries(files).forEach(([inputFile, outputFile]) => {
-  const input = fs.readFileSync(inputFile, "utf8");
-  const json = objectiveCParser(input);
-  const ast = createClass(json);
-  const output = generate(ast);
-
-  const types = json.methods.reduce((carry, method) => {
-    carry.push(method.args);
-    return carry;
-  }, []);
-
-  fs.writeFileSync(outputFile, output.code, "utf8");
-});
+const fs = require("fs");
 
 function createClass(json) {
   return t.classDeclaration(
@@ -59,8 +40,8 @@ function createArgument(json) {
 
 function createMethodBody(json) {
   const typeChecks = createTypeChecks(json);
-  
-  return typeChecks.filter(check => typeof check === 'object');
+
+  return typeChecks.filter(check => typeof check === "object");
 }
 
 function createTypeChecks(json) {
@@ -77,13 +58,10 @@ function createTypeCheck(json) {
     type,
     name
   }) =>
-    t.ifStatement(   
+    t.ifStatement(
       checkGenerator({ type, name }),
       t.throwStatement(
-        t.newExpression(
-          t.identifier("Error"),
-          [errorStringGenerator({ name })]
-        )
+        t.newExpression(t.identifier("Error"), [errorStringGenerator({ name })])
       )
     );
 
@@ -108,16 +86,18 @@ function createTypeCheck(json) {
     );
 
   const oneOfCheckTestGenerator = options => ({ name }) =>
-      t.callExpression(
-        t.memberExpression(
-          t.arrayExpression(options.map(option => t.stringLiteral(option))),
-          t.identifier("some")
-        ),
-        [t.arrowFunctionExpression(
+    t.callExpression(
+      t.memberExpression(
+        t.arrayExpression(options.map(option => t.stringLiteral(option))),
+        t.identifier("some")
+      ),
+      [
+        t.arrowFunctionExpression(
           [t.identifier("option")],
           t.binaryExpression("===", t.identifier("option"), t.identifier(name))
-        )]
-      );
+        )
+      ]
+    );
 
   const oneOfCheckErrorGenerator = options => ({ name }) =>
     t.binaryExpression(
@@ -157,9 +137,25 @@ function createTypeCheck(json) {
 
   const typeCheckCreator = typeInterfaces[json.type];
   if (typeof typeCheckCreator !== "function") {
-      console.info('Could not find ', json)
+    console.info("Could not find ", json);
     return;
   }
 
   return typeCheckCreator(json);
 }
+
+module.exports = function(files) {
+  Object.entries(files).forEach(([inputFile, outputFile]) => {
+    const input = fs.readFileSync(inputFile, "utf8");
+    const json = objectiveCParser(input);
+    const ast = createClass(json);
+    const output = generate(ast);
+
+    const types = json.methods.reduce((carry, method) => {
+      carry.push(method.args);
+      return carry;
+    }, []);
+
+    fs.writeFileSync(outputFile, output.code, "utf8");
+  });
+};
