@@ -42,8 +42,6 @@ describe("earl-grey generation", () => {
   });
 
   describe("Error handling", () => {
-    it("should throw with too few arguments");
-    
     it("should throw error for wrong type", () => {
       expect(() => {
         ExampleClass.actionForMultipleTapsWithCount("foo");
