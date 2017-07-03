@@ -48,7 +48,11 @@ This tool by Facebook helps Detox manage and automate iOS Simulators.
 	 
 > TIP: Verify it works by typing in terminal `fbsimctl list` to output the list of available simulators
 	 
-#### 4. Install Detox command line tools (detox-cli)
+#### 4. Install [appleSimUtils](https://github.com/wix/AppleSimulatorUtils)
+	 
+A collection of utils for Apple simulators, Detox uses it to set (grant or deny) runtime permissions per application. 
+	 
+#### 5. Install Detox command line tools (detox-cli)
 
 This package makes it easier to operate Detox from the command line. `detox-cli` should be installed globally, enabling usage of the command line tools outside of your npm scripts.
 
