@@ -3,6 +3,7 @@ const fs = require('fs');
 const _ = require('lodash');
 const log = require('npmlog');
 const exec = require('../utils/exec');
+const retry = require('../utils/retry');
 
 // FBSimulatorControl command line docs
 // https://github.com/facebook/FBSimulatorControl/issues/250
@@ -39,13 +40,37 @@ class Fbsimctl {
   }
 
   async boot(udid) {
-    const statusLogs = {
-      trying: `trying to boot device...`,
-      successful: `device ${udid} booted`
-    };
+    let initialState;
+    await retry({retries: 10, interval: 1000}, async() => {
+      const initialStateCmdResult = await this._execFbsimctlCommand({args: `${udid} list`}, undefined, 1);
+      initialState = _.get(initialStateCmdResult, 'stdout', '') === '' ? undefined : _.get(JSON.parse(_.get(initialStateCmdResult, 'stdout')), 'subject.state');
+      if(initialState === 'Shutting Down') {
+        log.info(`Waiting until the device ${udid} shuts down`);
+        throw `The device is in 'Shutting Down' state`;
+      }
+    });
 
-    const options = {args: `--state=shutdown --state=shutting-down ${udid} boot`};
-    return await this._execFbsimctlCommand(options, statusLogs);
+    if(initialState === 'Booted') {
+      log.info(`The device ${udid} is already booted`);
+      return;
+    }
+    
+    if(initialState === 'Booting') {
+      log.info(`The device ${udid} is already booting`);
+    } else {
+      const launchBin = "bash -c '`xcode-select -p`/Applications/Simulator.app/Contents/MacOS/Simulator " +
+                        "--args -CurrentDeviceUDID EB9B3A90-621B-4F6E-815C-1E5C17ED5ABE -ConnectHardwareKeyboard 0 " +
+                        "-DeviceSetPath /Users/sergeyi/Library/Developer/CoreSimulator/Devices > /dev/null 2>&1 < /dev/null &'";
+      await exec.execWithRetriesAndLogs(launchBin, undefined, {
+        trying: `launching the simulator ${udid}...`,
+        successful: 'the device launch initiated'
+      }, 1);
+    }
+
+    return await this._execFbsimctlCommand({args: `--state booted ${udid} list`}, {
+      trying: `waiting for the device to boot...`,
+      successful: `device ${udid} booted`
+    });
   }
 
   async install(udid, absPath) {
