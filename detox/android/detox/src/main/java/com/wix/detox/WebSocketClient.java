@@ -156,7 +156,7 @@ public class WebSocketClient implements WebSocketListener {
                 return;
             }
 
-            Object params = object.get("params");
+            JSONObject params = (JSONObject) object.get("params");
             if (params != null && !(params instanceof Object)) {
                 Log.d(LOG_TAG, "Detox Error: receiveAction invalid params");
             }
@@ -164,7 +164,7 @@ public class WebSocketClient implements WebSocketListener {
             Log.d(LOG_TAG, "Detox Action Received: " + type);
             // TODO
             // This is just a dummy call now. Finish parsing params.
-            if (actionHandler != null) actionHandler.onAction(type, new HashMap());
+            if (actionHandler != null) actionHandler.onAction(type, params.toString());
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Detox Error: receiveAction decode - " + e.toString());
         }
@@ -176,7 +176,7 @@ public class WebSocketClient implements WebSocketListener {
      * @see <a href="https://medium.com/@jakewharton/listener-messages-are-called-on-a-background-thread-since-okhttp-is-agnostic-with-respect-to-5fdc5182e240">OkHTTP</a>
      */
     public interface ActionHandler {
-        void onAction(String type, Map params);
+        void onAction(String type, String params);
         void onConnect();
         void onClosed();
     }

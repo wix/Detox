@@ -55,7 +55,7 @@ public class Invocation {
                 } else if (type.equals("integer")) {
                     argument = (int) value;
                 } else if (type.equals("Float")) {
-                    argument = new Float((Double) value);
+                    argument = Float.valueOf(value.toString());
                 } else if (type.equals("Double")) {
                     argument = (double) value;
                 } else if (type.equals("String")) {

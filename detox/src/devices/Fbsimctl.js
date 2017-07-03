@@ -76,7 +76,7 @@ class Fbsimctl {
       successful: `${bundleId} launched`
     };
     const options = {
-      prefix: `export FBSIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${this._getFrameworkPath()}"`,
+      prefix: `export OS_ACTIVITY_DT_MODE=enable FBSIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${this._getFrameworkPath()}"`,
       args: `${udid} launch --stderr ${bundleId} ${launchArgs.join(' ')}`
     };
     const result = await this._execFbsimctlCommand(options, statusLogs);

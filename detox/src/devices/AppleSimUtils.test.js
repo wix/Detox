@@ -8,6 +8,8 @@ describe('AppleSimUtils', () => {
 
   beforeEach(() => {
     jest.mock('npmlog');
+    jest.mock('../utils/exec');
+    exec = require('../utils/exec');
 
     AppleSimUtils = require('./AppleSimUtils');
     appSimUtils = new AppleSimUtils();
@@ -15,9 +17,8 @@ describe('AppleSimUtils', () => {
 
 
   it(`appleSimUtils setPermissions`, async () => {
-      appSimUtils._execAppleSimUtilsCommand = jest.fn();
-      appSimUtils.setPermissions(bundleId, simUdid, {permissions: {calendar: "YES"}})
-      expect(appSimUtils._execAppleSimUtilsCommand).toHaveBeenCalledTimes(1);
+      appSimUtils.setPermissions(bundleId, simUdid, {permissions: {calendar: "YES"}});
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
     });
 });
 
