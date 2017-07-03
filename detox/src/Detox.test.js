@@ -26,7 +26,7 @@ describe('Detox', () => {
     minimist = require('minimist');
     jest.mock('./ios/expect');
     setCustomMock('./client/Client', clientMockData);
-    setCustomMock('./devices/DeviceDriverBase', deviceMockData);
+    setCustomMock('./devices/Device', deviceMockData);
 
     jest.mock('./devices/IosDriver');
     jest.mock('./devices/SimulatorDriver');
@@ -97,13 +97,13 @@ describe('Detox', () => {
     expect(clientMockData.lastConstructorArguments[0]).toBe(schemes.validOneDeviceAndSession.session);
   });
 
-  xit(`Two valid devices, detox should init with the device passed in '--configuration' cli option`, async () => {
+  it(`Two valid devices, detox should init with the device passed in '--configuration' cli option`, async () => {
     mockCommandLineArgs({configuration: 'ios.sim.debug'});
     Detox = require('./Detox');
 
     detox = new Detox(schemes.validTwoDevicesNoSession);
     await detox.init();
-    expect(deviceMockData.lastConstructorArguments[2]).toEqual(schemes.validTwoDevicesNoSession.configurations['ios.sim.debug']);
+    expect(deviceMockData.lastConstructorArguments[0]).toEqual(schemes.validTwoDevicesNoSession.configurations['ios.sim.debug']);
   });
 
   it(`Two valid devices, detox should throw if device passed in '--configuration' cli option doesn't exist`, async () => {
