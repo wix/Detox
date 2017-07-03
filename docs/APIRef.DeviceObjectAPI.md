@@ -42,7 +42,7 @@ await device.relaunchApp({userNotification: notification});
 Read more in [Mocking User Notifications](APIRef.MockingUserNotifications.md) section.
 
 ##### 4. Launch into a fresh installation 
-A flag that enables relaunching into a fresh installation of the app (it will uninstall and install te binary again), default is `false`.
+A flag that enables relaunching into a fresh installation of the app (it will uninstall and install the binary again), default is `false`.
 
 ```js
 await device.relaunchApp({delete: true});
