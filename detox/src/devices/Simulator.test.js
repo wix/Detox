@@ -22,6 +22,7 @@ describe('Simulator', () => {
     cpp = require('child-process-promise');
 
     jest.mock('./Fbsimctl');
+    jest.mock('./AppleSimUtils');
 
     jest.mock('../client/Client');
     jest.mock('../utils/argparse');
@@ -89,6 +90,7 @@ describe('Simulator', () => {
       ["-detoxServer", "ws://localhost:8099", "-detoxSessionId", "test"]);
   });
 
+
   it(`relaunchApp() with delete=true`, async() => {
     simulator = validSimulator();
     fs.existsSync.mockReturnValue(true);
@@ -102,6 +104,13 @@ describe('Simulator', () => {
       ["-detoxServer", "ws://localhost:8099", "-detoxSessionId", "test"]);
   });
 
+  it(`relaunchApp() with permissions`, async() => {
+    simulator = validSimulator();
+
+    await simulator.relaunchApp({permissions: permissions});
+
+    expect(simulator._applesimutils.setPermissions).toHaveBeenCalled();
+  });
 
   it(`relaunchApp() without delete when reuse is enabled should not uninstall and install`, async() => {
     simulator = validSimulator();
@@ -269,4 +278,8 @@ const notification = {
   "user-text": "Hi there!",
   "content-available": 0,
   "action-identifier": "default2"
+};
+
+const permissions = {
+  calendar: "YES"
 };

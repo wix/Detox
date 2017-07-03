@@ -16,6 +16,7 @@ describe('Fbsimctl', () => {
     fs = require('fs');
     jest.mock('../utils/exec');
     exec = require('../utils/exec').execWithRetriesAndLogs;
+
     Fbsimctl = require('./Fbsimctl');
     fbsimctl = new Fbsimctl();
   });
