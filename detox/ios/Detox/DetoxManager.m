@@ -117,7 +117,7 @@ static void detoxConditionalInit()
 	}
 	else if([type isEqualToString:@"openURL"])
 	{
-		NSURL* URLToOpen = [NSURL fileURLWithPath:params[@"url"]];
+		NSURL* URLToOpen = [NSURL URLWithString:params[@"url"]];
 		
 		NSParameterAssert(URLToOpen != nil);
 		

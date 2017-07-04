@@ -55,7 +55,7 @@ class example extends Component {
   componentWillMount() {
     PushNotificationIOS.addEventListener('notification', (notification) => this._onNotification(notification));
     PushNotificationIOS.addEventListener('localNotification', (notification) => this._onNotification(notification));
-    Linking.addEventListener('url', (url) => this._handleOpenURL(url));
+    Linking.addEventListener('url', (params) => this._handleOpenURL(params));
   }
 
   render() {
@@ -98,8 +98,8 @@ class example extends Component {
     this.setState({notification: notification.getAlert()});
   }
 
-  _handleOpenURL(url) {
-    this.setState({url: url});
+  _handleOpenURL(params) {
+    this.setState({url: params.url});
   }
 }
 

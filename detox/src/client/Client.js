@@ -37,6 +37,10 @@ class Client {
     await this.sendAction(new actions.CurrentStatus());
   }
 
+  async openURL(params) {
+    await this.sendAction(new actions.openURL(params));
+  }
+
   async execute(invocation) {
     if (typeof invocation === 'function') {
       invocation = invocation();

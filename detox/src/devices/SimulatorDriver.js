@@ -34,10 +34,6 @@ class SimulatorDriver extends IosDriver {
     await this._fbsimctl.terminate(deviceId, bundleId);
   }
 
-  async openURL(deviceId, url) {
-    await this._fbsimctl.open(deviceId, url);
-  }
-
   async shutdown(deviceId) {
     await this._fbsimctl.shutdown(deviceId);
   }

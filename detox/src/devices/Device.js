@@ -37,6 +37,9 @@ class Device {
     let additionalLaunchArgs;
     if (params.url) {
       additionalLaunchArgs = {'detoxURLOverride': params.url};
+      if(params.sourceApp) {
+        additionalLaunchArgs['detoxSourceAppOverride'] = params.sourceApp;
+      }
     } else if (params.userNotification) {
       additionalLaunchArgs = {'detoxUserNotificationDataURL': this.deviceDriver.createPushNotificationJson(params.userNotification)};
     }
@@ -67,8 +70,12 @@ class Device {
     await this.deviceDriver.reloadReactNative();
   }
 
-  async openURL(url) {
-    await this.deviceDriver.openURL(this._deviceId, url);
+  async openURL(params) {
+    if(typeof params !== 'object' || !params.url) {
+      throw new Error(`openURL must be called with JSON params, and a value for 'url' key must be provided. example: await device.openURL({url: "url", sourceApp: "sourceAppBundleID"}`);
+    }
+
+    await this.deviceDriver.openURL(this._deviceId, params);
   }
 
   async shutdown() {

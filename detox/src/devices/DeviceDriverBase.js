@@ -31,7 +31,7 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async openURL() {
+  async openURL(params) {
     return await Promise.resolve('');
   }
 

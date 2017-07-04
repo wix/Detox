@@ -6,10 +6,16 @@ describe.only('Deep Links', () => {
     await expect(element(by.label(url))).toBeVisible();
   });
 
-  it('device.openURL(url) should', async () => {
+  it('device.openURL({url: url}) should', async () => {
     const url = 'detoxtesturlscheme://such-string';
     await device.relaunchApp();
-    await device.openURL(url);
+
+    await device.openURL({url: url});
     await expect(element(by.label(url))).toBeVisible();
   });
 });
+
+
+async function timeout(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}

@@ -41,6 +41,10 @@ class IosDriver extends DeviceDriverBase {
     await super.sendUserNotification({detoxUserNotificationDataURL: notificationFilePath});
   }
 
+  async openURL(deviceId, params) {
+    this.client.openURL(params);
+  }
+
   async setURLBlacklist(urlList) {
     await this.client.execute(GREYConfiguration.setURLBlacklist(urlList));
   }
