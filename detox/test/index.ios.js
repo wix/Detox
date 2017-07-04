@@ -4,7 +4,8 @@ import {
   Text,
   View,
   TouchableOpacity,
-  PushNotificationIOS
+  PushNotificationIOS,
+  Linking
 } from 'react-native';
 import * as Screens from './src/Screens';
 
@@ -14,6 +15,7 @@ class example extends Component {
     super(props);
     this.state = {
       screen: undefined,
+      url: undefined,
       notification: undefined
     };
   }
@@ -28,7 +30,7 @@ class example extends Component {
     );
   }
 
-  renderAfterPushNotification(text) {
+  renderText(text) {
     return (
       <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={{fontSize: 25}}>
@@ -39,20 +41,30 @@ class example extends Component {
   }
 
   async componentDidMount() {
-    const result = await PushNotificationIOS.getInitialNotification();
-    if (result) {
-      this.setState({notification: result.getAlert().title});
+    const notification = await PushNotificationIOS.getInitialNotification();
+    if (notification) {
+      this.setState({notification: notification.getAlert().title});
+    }
+
+    const url = await Linking.getInitialURL();
+    if (url) {
+      this.setState({url: url});
     }
   }
 
   componentWillMount() {
     PushNotificationIOS.addEventListener('notification', (notification) => this._onNotification(notification));
     PushNotificationIOS.addEventListener('localNotification', (notification) => this._onNotification(notification));
+    Linking.addEventListener('url', (url) => this._handleOpenURL(url));
   }
 
   render() {
     if (this.state.notification) {
-      return this.renderAfterPushNotification(this.state.notification);
+      return this.renderText(this.state.notification);
+    }
+
+    else if (this.state.url) {
+      return this.renderText(this.state.url);
     }
 
     if (!this.state.screen) {
@@ -84,6 +96,10 @@ class example extends Component {
 
   _onNotification(notification) {
     this.setState({notification: notification.getAlert()});
+  }
+
+  _handleOpenURL(url) {
+    this.setState({url: url});
   }
 }
 
