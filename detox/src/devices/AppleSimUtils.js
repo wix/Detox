@@ -6,7 +6,7 @@ class AppleSimUtils {
   async setPermissions(udid, bundleId, permissionsObj) {
     const statusLogs = {
       trying: `Trying to set permissions...`,
-      successful: 'Permissions sre set'
+      successful: 'Permissions are set'
     };
     let permissions = [];
     _.forEach(permissionsObj, function(shouldAllow, permission) {
