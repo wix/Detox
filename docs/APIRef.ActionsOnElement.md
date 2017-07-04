@@ -84,7 +84,7 @@ await element(by.id('scrollView')).scrollTo('top');
 ### `swipe(direction, speed, percentage)`
 
 direction - left/right/up/down<br>
-speed - fast/slow - default is fast
+speed - fast/slow - default is fast<br>
 percentage - (optional) screen percentage to swipe as float
 
 ```js
