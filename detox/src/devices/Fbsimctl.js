@@ -43,7 +43,12 @@ class Fbsimctl {
     let initialState;
     await retry({retries: 10, interval: 1000}, async() => {
       const initialStateCmdResult = await this._execFbsimctlCommand({args: `${udid} list`}, undefined, 1);
-      initialState = _.get(initialStateCmdResult, 'stdout', '') === '' ? undefined : _.get(JSON.parse(_.get(initialStateCmdResult, 'stdout')), 'subject.state');
+      initialState = _.get(initialStateCmdResult, 'stdout', '') === '' ? undefined :
+          _.get(JSON.parse(_.get(initialStateCmdResult, 'stdout')), 'subject.state');
+      if(initialState === undefined) {
+        log.info(`Couldn't get the state of ${udid}`);
+        throw `Couldn't get the state of the device`;
+      }
       if(initialState === 'Shutting Down') {
         log.info(`Waiting until the device ${udid} shuts down`);
         throw `The device is in 'Shutting Down' state`;
@@ -59,8 +64,8 @@ class Fbsimctl {
       log.info(`The device ${udid} is already booting`);
     } else {
       const launchBin = "bash -c '`xcode-select -p`/Applications/Simulator.app/Contents/MacOS/Simulator " +
-                        "--args -CurrentDeviceUDID EB9B3A90-621B-4F6E-815C-1E5C17ED5ABE -ConnectHardwareKeyboard 0 " +
-                        "-DeviceSetPath /Users/sergeyi/Library/Developer/CoreSimulator/Devices > /dev/null 2>&1 < /dev/null &'";
+                        `--args -CurrentDeviceUDID ${udid} -ConnectHardwareKeyboard 0 ` +
+                        "-DeviceSetPath ~/Library/Developer/CoreSimulator/Devices > /dev/null 2>&1 < /dev/null &'";
       await exec.execWithRetriesAndLogs(launchBin, undefined, {
         trying: `launching the simulator ${udid}...`,
         successful: 'the device launch initiated'
