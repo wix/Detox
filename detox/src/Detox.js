@@ -48,7 +48,7 @@ class Detox {
 
     const [sessionConfig, shouldStartServer] = await this._chooseSession(deviceConfig);
 
-    if(shouldStartServer) {
+    if (shouldStartServer) {
       this.server = new DetoxServer(new URL(sessionConfig.server).port);
     }
 
@@ -61,7 +61,6 @@ class Detox {
     }
     await this._setDevice(sessionConfig, deviceClass, deviceConfig, this.client);
   }
-
 
   async _setDevice(sessionConfig, deviceClass, deviceConfig, client) {
     const deviceDriver = new deviceClass(client);
@@ -85,11 +84,11 @@ class Detox {
     let session = deviceConfig.session;
     let shouldStartServer = false;
 
-    if(!session) {
+    if (!session) {
       session = this.userConfig.session;
     }
 
-    if(!session) {
+    if (!session) {
       session = await configuration.defaultSession();
       shouldStartServer = true;
     }

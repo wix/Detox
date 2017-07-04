@@ -118,9 +118,9 @@ describe('SimulatorDriver', () => {
 
   it(`openURL() should trigger fbsimctl.open `, async() => {
     simulatorDriver = validSimulator();
-    const url = 'url://poof';
+    const url = {url: 'url://poof'};
     await simulatorDriver.openURL(simulatorDriver._deviceId, url);
-    expect(simulatorDriver._fbsimctl.open).toHaveBeenCalledWith(simulatorDriver._deviceId, url);
+    expect(simulatorDriver.client.openURL).toHaveBeenCalledWith(url);
   });
 
   it(`setOrientation() should throw an error if give wrong input `, async() => {

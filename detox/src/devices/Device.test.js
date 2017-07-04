@@ -74,7 +74,6 @@ describe('Device', () => {
     device = validDevice();
     cpp.exec.mockReturnValue(()=> Promise.resolve());
     fs.existsSync.mockReturnValue(true);
-
     await device.prepare();
 
     expect(device.deviceDriver.boot).toHaveBeenCalledTimes(1);
@@ -140,6 +139,15 @@ describe('Device', () => {
     expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
       ["-detoxServer", "ws://localhost:8099", "-detoxSessionId", "test", "-detoxURLOverride", "scheme://some.url"]);
+  });
+
+  it(`relaunchApp() with url should send the url as a param in launchParams`, async() => {
+    device = await  validDevice();
+    await device.relaunchApp({url: `scheme://some.url`, sourceApp: 'sourceAppBundleId'});
+
+    expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
+      device._bundleId,
+      ["-detoxServer", "ws://localhost:8099", "-detoxSessionId", "test", "-detoxURLOverride", "scheme://some.url", "-detoxSourceAppOverride", "sourceAppBundleId"]);
   });
 
   it(`relaunchApp() with userNofitication should send the userNotification as a param in launchParams`, async() => {
@@ -215,11 +223,21 @@ describe('Device', () => {
     expect(device.deviceDriver.shutdown).toHaveBeenCalledTimes(1);
   });
 
-  it(`openURL() should pass to device driver`, async () => {
+  it(`openURL({url:url}) should pass to device driver`, async () => {
     device = validDevice();
-    await device.openURL('url');
+    await device.openURL({url:'url'});
 
-    expect(device.deviceDriver.openURL).toHaveBeenCalledWith(device._deviceId, 'url');
+    expect(device.deviceDriver.openURL).toHaveBeenCalledWith(device._deviceId, {url:'url'});
+  });
+
+  it(`openURL(notAnObject) should pass to device driver`, async () => {
+    device = validDevice();
+    try {
+      await device.openURL('url');
+      fail('should throw');
+    } catch (ex) {
+      expect(ex).toBeDefined();
+    }
   });
 
   it(`reloadReactNative() should pass to device driver`, async () => {
