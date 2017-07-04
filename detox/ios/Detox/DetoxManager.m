@@ -115,6 +115,27 @@ static void detoxConditionalInit()
 		[dispatcher dispatchOnAppDelegate:DetoxAppDelegateProxy.currentAppDelegateProxy.originalAppDelegate simulateDuringLaunch:NO];
 		[self.websocket sendAction:@"userNotificationDone" withParams:@{} withMessageId: messageId];
 	}
+	else if([type isEqualToString:@"openURL"])
+	{
+		NSURL* URLToOpen = [NSURL fileURLWithPath:params[@"url"]];
+		
+		NSParameterAssert(URLToOpen != nil);
+		
+		NSString* sourceApp = params[@"sourceApp"];
+		
+		NSMutableDictionary* options = [@{UIApplicationLaunchOptionsURLKey: URLToOpen} mutableCopy];
+		if(sourceApp != nil)
+		{
+			options[UIApplicationLaunchOptionsSourceApplicationKey] = sourceApp;
+		}
+		
+		if([[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:openURL:options:)])
+		{
+			[[UIApplication sharedApplication].delegate application:[UIApplication sharedApplication] openURL:URLToOpen options:options];
+		}
+		
+		[self.websocket sendAction:@"userNotificationDone" withParams:@{} withMessageId: messageId];
+	}
 	else if([type isEqualToString:@"reactNativeReload"])
 	{
 		_isReady = NO;
