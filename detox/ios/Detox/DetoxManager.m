@@ -134,7 +134,7 @@ static void detoxConditionalInit()
 			[[UIApplication sharedApplication].delegate application:[UIApplication sharedApplication] openURL:URLToOpen options:options];
 		}
 		
-		[self.websocket sendAction:@"userNotificationDone" withParams:@{} withMessageId: messageId];
+		[self.websocket sendAction:@"openURLDone" withParams:@{} withMessageId: messageId];
 	}
 	else if([type isEqualToString:@"reactNativeReload"])
 	{
