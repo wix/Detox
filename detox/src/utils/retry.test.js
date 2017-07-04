@@ -5,23 +5,23 @@ describe('retry', () => {
     retry = require('./retry');
   });
 
-  it(`a promise that rejects two times and then resolves, with default params`, async () => {
-    const mockFn = jest.fn()
-                       .mockReturnValueOnce(Promise.reject())
-                       .mockReturnValueOnce(Promise.resolve());
-    await retry(mockFn);
-    expect(mockFn).toHaveBeenCalledTimes(2);
+  it(`a promise that rejects two times and then resolves, with default params`, async() => {
+    const mockFnc = jest.fn()
+                        .mockReturnValueOnce(Promise.reject())
+                        .mockReturnValueOnce(Promise.resolve());
+    await retry(mockFnc);
+    expect(mockFnc).toHaveBeenCalledTimes(2);
   });
 
-  it(`a promise that rejects two times and then resolves, with custom params`, async () => {
-    const mockFn = jest.fn()
-                       .mockReturnValueOnce(Promise.reject())
-                       .mockReturnValueOnce(Promise.resolve());
-    await retry({retries: 2, interval: 1}, mockFn);
-    expect(mockFn).toHaveBeenCalledTimes(2);
+  it(`a promise that rejects two times and then resolves, with custom params`, async() => {
+    const mockFnc = jest.fn()
+                        .mockReturnValueOnce(Promise.reject())
+                        .mockReturnValueOnce(Promise.resolve());
+    await retry({retries: 2, interval: 1}, mockFnc);
+    expect(mockFnc).toHaveBeenCalledTimes(2);
   });
 
-  it(`a promise that rejects two times, with two retries`, async () => {
+  it(`a promise that rejects two times, with two retries`, async() => {
     const mockFn = jest.fn()
                        .mockReturnValueOnce(Promise.reject('a thing'))
                        .mockReturnValueOnce(Promise.reject('a thing'));
