@@ -50,31 +50,31 @@ class Fbsimctl {
         throw `Couldn't get the state of the device`;
       }
       if(initialState === 'Shutting Down') {
-        log.info(`Waiting until the device ${udid} shuts down`);
+        log.info(`Waiting for device ${udid} to shut down`);
         throw `The device is in 'Shutting Down' state`;
       }
     });
 
     if(initialState === 'Booted') {
-      log.info(`The device ${udid} is already booted`);
+      log.info(`Device ${udid} is already booted`);
       return;
     }
     
     if(initialState === 'Booting') {
-      log.info(`The device ${udid} is already booting`);
+      log.info(`Device ${udid} is already booting`);
     } else {
       const launchBin = "bash -c '`xcode-select -p`/Applications/Simulator.app/Contents/MacOS/Simulator " +
                         `--args -CurrentDeviceUDID ${udid} -ConnectHardwareKeyboard 0 ` +
                         "-DeviceSetPath ~/Library/Developer/CoreSimulator/Devices > /dev/null 2>&1 < /dev/null &'";
       await exec.execWithRetriesAndLogs(launchBin, undefined, {
-        trying: `launching the simulator ${udid}...`,
-        successful: 'the device launch initiated'
+        trying: `Launching device ${udid}...`,
+        successful: ''
       }, 1);
     }
 
     return await this._execFbsimctlCommand({args: `--state booted ${udid} list`}, {
-      trying: `waiting for the device to boot...`,
-      successful: `device ${udid} booted`
+      trying: `Waiting for device ${udid} to boot...`,
+      successful: `Device ${udid} booted`
     });
   }
 
