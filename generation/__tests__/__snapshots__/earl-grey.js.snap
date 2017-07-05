@@ -5,3 +5,42 @@ exports[`earl-grey generation Error handling should throw error for not in accep
 exports[`earl-grey generation Error handling should throw error for wrong type 1`] = `"count should be a number, but got foo"`;
 
 exports[`earl-grey generation Error handling should throw error for wrong type 2`] = `"point should be a object, but got 4"`;
+
+exports[`earl-grey generation Invocations should return the invocation object for methods 1`] = `
+Object {
+  "args": Array [
+    Object {
+      "type": "NSUInteger",
+      "value": 3,
+    },
+  ],
+  "method": "actionForMultipleTapsWithCount",
+  "target": Object {
+    "type": "Class",
+    "value": "GREYActions",
+  },
+}
+`;
+
+exports[`earl-grey generation Invocations should return the invocation object for methods with objects as args 1`] = `
+Object {
+  "args": Array [
+    Object {
+      "type": "NSUInteger",
+      "value": 3,
+    },
+    Object {
+      "type": "CGPoint",
+      "value": Object {
+        "x": 3,
+        "y": 4,
+      },
+    },
+  ],
+  "method": "actionForMultipleTapsWithCountatPoint",
+  "target": Object {
+    "type": "Class",
+    "value": "GREYActions",
+  },
+}
+`;

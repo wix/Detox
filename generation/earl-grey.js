@@ -7,7 +7,7 @@ function createClass(json) {
   return t.classDeclaration(
     t.identifier(json.name),
     null,
-    t.classBody(json.methods.map(createMethod)),
+    t.classBody(json.methods.map(createMethod.bind(null, json.name))),
     []
   );
 }
@@ -26,12 +26,12 @@ function createExport(json) {
   );
 }
 
-function createMethod(json) {
+function createMethod(className, json) {
   const m = t.classMethod(
     "method",
     t.identifier(json.name.replace(/\:/g, "")),
     json.args.map(createArgument),
-    t.blockStatement(createMethodBody(json)),
+    t.blockStatement(createMethodBody(className, json)),
     false,
     json.static
   );
@@ -52,16 +52,41 @@ function createArgument(json) {
   return t.identifier(json.name);
 }
 
-function createMethodBody(json) {
-  const typeChecks = createTypeChecks(json);
-
-  return typeChecks.filter(check => typeof check === "object");
+function createMethodBody(className, json) {
+  const typeChecks = createTypeChecks(json).filter(check => typeof check === "object");
+  const returnStatement = createReturnStatement(className, json);
+  return [...typeChecks, returnStatement]
 }
 
 function createTypeChecks(json) {
   const checks = json.args.map(createTypeCheck);
   checks.filter(check => Boolean(check));
   return checks;
+}
+
+function createReturnStatement(className, json) {
+  const args = json.args.map(arg => t.objectExpression([
+    t.objectProperty(t.identifier('type'), t.stringLiteral(arg.type)),
+    t.objectProperty(t.identifier('value'), t.identifier(arg.name)),
+  ]));
+
+  return t.returnStatement(t.objectExpression([
+    t.objectProperty(
+      t.identifier('target'), 
+      t.objectExpression([
+        t.objectProperty(t.identifier('type'), t.stringLiteral('Class')),
+        t.objectProperty(t.identifier('value'), t.stringLiteral(className)),
+      ])
+    ),
+    t.objectProperty(
+      t.identifier('method'), 
+      t.stringLiteral(json.name.replace(/\:/g, ""))
+    ),
+    t.objectProperty(
+      t.identifier('args'), 
+      t.arrayExpression(args)
+    ),
+  ]));
 }
 
 function createTypeCheck(json) {

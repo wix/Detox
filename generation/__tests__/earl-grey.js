@@ -81,6 +81,38 @@ describe("earl-grey generation", () => {
     });
   });
 
+  describe("Invocations", () => {
+    it("should return the invocation object for methods", () => {
+      const result = ExampleClass.actionForMultipleTapsWithCount(3);
+
+      expect(result.target.type).toBe('Class');
+      expect(result.target.value).toBe('GREYActions');
+
+      expect(result.method).toBe('actionForMultipleTapsWithCount');
+
+      expect(result.args.length).toBe(1);
+      expect(result.args[0].type).toBe('NSUInteger');
+      expect(result.args[0].value).toBe(3);
+      expect(result).toMatchSnapshot();
+    });
+
+    it("should return the invocation object for methods with objects as args", () => {
+      const result = ExampleClass.actionForMultipleTapsWithCountatPoint(3, {x: 3, y: 4});
+
+      expect(result.target.type).toBe('Class');
+      expect(result.target.value).toBe('GREYActions');
+
+      expect(result.method).toBe('actionForMultipleTapsWithCountatPoint');
+
+      expect(result.args.length).toBe(2);
+      expect(result.args[0].type).toBe('NSUInteger');
+      expect(result.args[0].value).toBe(3);
+      expect(result.args[1].type).toBe('CGPoint');
+      expect(result.args[1].value).toEqual({x: 3, y: 4});
+      expect(result).toMatchSnapshot();
+    });
+  });
+
   afterAll(() => {
     // Clean up
     remove.removeSync("./__tests__/generated");
