@@ -49,6 +49,13 @@ class TapAction extends Action {
   }
 }
 
+class TapAtPointAction extends Action {
+    constructor(value) {
+        super();
+        this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForTapAtPoint:', invoke.IOS.CGPoint(value));
+    }
+}
+
 class LongPressAction extends Action {
   constructor() {
     super();
@@ -253,6 +260,9 @@ class Element {
   }
   async tap() {
     return await new ActionInteraction(this, new TapAction()).execute();
+  }
+  async tapAtPoint(value) {
+    return await new ActionInteraction(this, new TapAtPointAction(value)).execute();
   }
   async longPress() {
     return await new ActionInteraction(this, new LongPressAction()).execute();
