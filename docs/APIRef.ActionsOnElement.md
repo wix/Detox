@@ -11,6 +11,7 @@ Actions are functions that emulate user behavior. They are being performed on ma
 - [`.tap()`](#tap)
 - [`.longPress()`](#longpress)
 - [`.multiTap()`](#multitaptimes)
+- [`.tapAtPoint()`](#tapatpoint)
 - [`.typeText()`](#typetexttext)
 - [`.replaceText()`](#replacetexttext)
 - [`.clearText()`](#cleartext)
@@ -38,6 +39,12 @@ Simulate multiple taps on an element.
 
 ```js
 await element(by.id('tappable')).multiTap(3);
+```
+### `tapAtPoint()`
+Simulate tap at a specific point on an element.
+
+```js
+await element(by.id('tappable')).tapAtPoint({x:5, y:10});
 ```
 
 ### `typeText(text)`
