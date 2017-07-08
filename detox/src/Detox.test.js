@@ -1,13 +1,12 @@
-import _ from 'lodash';
-
 const schemes = require('./configurations.mock');
 
 describe('Detox', () => {
+  let fs;
   let Detox;
   let detox;
   let minimist;
   let clientMockData = {lastConstructorArguments: null};
-  let simulatorMockData = {lastConstructorArguments: null};
+  let deviceMockData = {lastConstructorArguments: null};
 
   beforeEach(async () => {
     function setCustomMock(modulePath, dataObject) {
@@ -21,12 +20,19 @@ describe('Detox', () => {
       jest.setMock(modulePath, FinalMock);
     }
 
+    jest.mock('fs');
+    fs = require('fs');
     jest.mock('minimist');
     minimist = require('minimist');
     jest.mock('./ios/expect');
     setCustomMock('./client/Client', clientMockData);
-    setCustomMock('./devices/Simulator', simulatorMockData);
+    setCustomMock('./devices/Device', deviceMockData);
+
+    jest.mock('./devices/IosDriver');
+    jest.mock('./devices/SimulatorDriver');
+    jest.mock('./devices/Device');
     jest.mock('detox-server');
+    jest.mock('./client/Client');
   });
 
   it(`No config is passed to init, should throw`, async () => {
@@ -61,6 +67,7 @@ describe('Detox', () => {
   it(`Passing --cleanup should shutdown the currently running device`, async () => {
     mockCommandLineArgs({cleanup: true});
     Detox = require('./Detox');
+
     detox = new Detox(schemes.validOneDeviceNoSession);
     await detox.init();
     await detox.cleanup();
@@ -96,8 +103,7 @@ describe('Detox', () => {
 
     detox = new Detox(schemes.validTwoDevicesNoSession);
     await detox.init();
-
-    expect(simulatorMockData.lastConstructorArguments[2]).toEqual(schemes.validTwoDevicesNoSession.configurations['ios.sim.debug']);
+    expect(deviceMockData.lastConstructorArguments[0]).toEqual(schemes.validTwoDevicesNoSession.configurations['ios.sim.debug']);
   });
 
   it(`Two valid devices, detox should throw if device passed in '--configuration' cli option doesn't exist`, async () => {
@@ -121,6 +127,31 @@ describe('Detox', () => {
 
     try {
       await detox.init();
+    } catch (ex) {
+      expect(ex).toBeDefined();
+    }
+  });
+
+  it(`One invalid device (no device name), detox should throw`, async () => {
+    Detox = require('./Detox');
+
+    detox = new Detox(schemes.invalidDeviceNoDeviceName);
+
+    try {
+      await detox.init();
+    } catch (ex) {
+      expect(ex).toBeDefined();
+    }
+  });
+
+  it(`One invalid device (no binary configured), detox should throw`, async () => {
+    Detox = require('./Detox');
+
+    detox = new Detox(schemes.invalidDeviceNoBinary);
+
+    try {
+      await detox.init();
+      fail('should have thrown');
     } catch (ex) {
       expect(ex).toBeDefined();
     }
@@ -133,6 +164,7 @@ describe('Detox', () => {
 
     try {
       await detox.init();
+      fail('should have thrown');
     } catch (ex) {
       expect(ex).toBeDefined();
     }
@@ -141,7 +173,6 @@ describe('Detox', () => {
   it(`cleanup on a non initialized detox should not throw`, async () => {
     Detox = require('./Detox');
     detox = new Detox(schemes.invalidDeviceNoDeviceType);
-    //expect(detox.cleanup).not.toThrow();
     detox.cleanup();
   });
 

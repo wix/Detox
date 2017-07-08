@@ -89,6 +89,16 @@ class SendUserNotification extends Action {
   }
 }
 
+class openURL extends Action {
+  constructor(params) {
+    super('openURL', params);
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'openURLDone');
+  }
+}
+
 class CurrentStatus extends Action {
   constructor(params) {
     super('currentStatus', params);
@@ -111,6 +121,7 @@ module.exports = {
   Invoke,
   ReloadReactNative,
   Cleanup,
+  openURL,
   SendUserNotification,
   CurrentStatus
 };

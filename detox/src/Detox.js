@@ -1,6 +1,7 @@
 const log = require('npmlog');
-const IosNoneDevice = require('./devices/IosNoneDevice');
-const Simulator = require('./devices/Simulator');
+const Device = require('./devices/Device');
+const IosDriver = require('./devices/IosDriver');
+const SimulatorDriver = require('./devices/SimulatorDriver');
 const Emulator = require('./devices/Emulator');
 const argparse = require('./utils/argparse');
 const configuration = require('./configuration');
@@ -14,8 +15,8 @@ log.addLevel('wss', 999, {fg: 'blue', bg: 'black'}, 'wss');
 log.heading = 'detox';
 
 const DEVICE_CLASSES = {
-  'ios.simulator': Simulator,
-  'ios.none': IosNoneDevice,
+  'ios.simulator': SimulatorDriver,
+  'ios.none': IosDriver,
   'android.emulator': Emulator
 };
 
@@ -33,24 +34,40 @@ class Detox {
 
   async init() {
     if (!(this.userConfig.configurations && _.size(this.userConfig.configurations) >= 1)) {
-      throw new Error(`no configured devices`);
+      throw new Error(`No configured devices`);
     }
 
     const deviceConfig = await this._getDeviceConfig();
-    const [session, shouldStartServer] = await this._chooseSession(deviceConfig);
-
-    if(shouldStartServer) {
-      this.server = new DetoxServer(new URL(session.server).port);
+    if (!deviceConfig.binaryPath) {
+      configuration.throwOnEmptyBinaryPath();
     }
 
-    this.client = new Client(session);
+    if (!deviceConfig.name) {
+      configuration.throwOnEmptyName();
+    }
+
+    const [sessionConfig, shouldStartServer] = await this._chooseSession(deviceConfig);
+
+    if (shouldStartServer) {
+      this.server = new DetoxServer(new URL(sessionConfig.server).port);
+    }
+
+    this.client = new Client(sessionConfig);
     this.client.connect();
 
     const deviceClass = DEVICE_CLASSES[deviceConfig.type];
     if (!deviceClass) {
       throw new Error('only simulator is supported currently');
     }
-    await this._setDevice(session, deviceClass, deviceConfig, this.client);
+    await this._setDevice(sessionConfig, deviceClass, deviceConfig, this.client);
+  }
+
+  async _setDevice(sessionConfig, deviceClass, deviceConfig, client) {
+    const deviceDriver = new deviceClass(client);
+    this.device = new Device(deviceConfig, sessionConfig, deviceDriver);
+
+    await this.device.prepare();
+    global.device = this.device;
   }
 
   async cleanup() {
@@ -67,11 +84,11 @@ class Detox {
     let session = deviceConfig.session;
     let shouldStartServer = false;
 
-    if(!session) {
+    if (!session) {
       session = this.userConfig.session;
     }
 
-    if(!session) {
+    if (!session) {
       session = await configuration.defaultSession();
       shouldStartServer = true;
     }
@@ -98,12 +115,6 @@ class Detox {
     }
 
     return deviceConfig;
-  }
-
-  async _setDevice(session, deviceClass, deviceConfig, client) {
-    this.device = new deviceClass(client, session, deviceConfig);
-    await this.device.prepare();
-    global.device = this.device;
   }
 }
 

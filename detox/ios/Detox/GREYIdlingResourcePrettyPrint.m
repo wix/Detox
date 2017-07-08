@@ -188,7 +188,7 @@ NSDictionary* _prettyPrintJSTimerObservationIdlingResource(WXJSTimerObservationI
 {
 	NSMutableDictionary* rv = [NSMutableDictionary new];
 	rv[@"javascriptTimerIDs"] = [jsTimer valueForKeyPath:@"observations.objectEnumerator.allObjects.@unionOfObjects.observedTimers"];
-	rv[@"prettyPrint"] = [NSString stringWithFormat:@"Javascript Timers Ids: %@", rv[@"javascriptTimerIDs"]];
+	rv[@"prettyPrint"] = [NSString stringWithFormat:@"Javascript Timers Ids: %@", [rv[@"javascriptTimerIDs"] componentsJoinedByString:@", "]];
 	
 	return rv;
 }

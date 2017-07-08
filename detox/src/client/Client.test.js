@@ -41,6 +41,14 @@ describe('Client', () => {
     expect(client.ws.send).toHaveBeenCalledTimes(2);
   });
 
+  it(`openURL() - should send an 'openURL' action and resolve when 'openURLDone returns' `, async () => {
+    await connect();
+    client.ws.send.mockReturnValueOnce(response("openURLDone", {}, 1));
+    await client.openURL({url:'url'});
+
+    expect(client.ws.send).toHaveBeenCalledTimes(2);
+  });
+
   it(`waitUntilReady() - should receive ready from device and resolve`, async () => {
     await connect();
     client.ws.send.mockReturnValueOnce(response("ready", {}, 1));

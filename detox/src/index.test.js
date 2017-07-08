@@ -3,7 +3,7 @@ describe('index', () => {
   let detox;
   beforeEach(() => {
     jest.mock('detox-server');
-    jest.mock('./devices/Simulator');
+    jest.mock('./devices/Device');
     jest.mock('./client/Client');
     detox = require('./index');
   });

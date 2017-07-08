@@ -23,6 +23,9 @@
 __attribute__((constructor))
 static void detoxConditionalInit()
 {
+	//This forces accessibility support in the application.
+	[[[NSUserDefaults alloc] initWithSuiteName:@"com.apple.Accessibility"] setBool:YES forKey:@"ApplicationAccessibilityEnabled"];
+	
 	//Timeout will be regulated by mochaJS. Perhaps it would be best to somehow pass the timeout value from JS to here. For now, this will do.
 	[[GREYConfiguration sharedInstance] setDefaultValue:@(DBL_MAX) forConfigKey:kGREYConfigKeyInteractionTimeoutDuration];
 	
@@ -114,6 +117,27 @@ static void detoxConditionalInit()
 		DetoxUserNotificationDispatcher* dispatcher = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationDataURL:userNotificationDataURL];
 		[dispatcher dispatchOnAppDelegate:DetoxAppDelegateProxy.currentAppDelegateProxy.originalAppDelegate simulateDuringLaunch:NO];
 		[self.websocket sendAction:@"userNotificationDone" withParams:@{} withMessageId: messageId];
+	}
+	else if([type isEqualToString:@"openURL"])
+	{
+		NSURL* URLToOpen = [NSURL URLWithString:params[@"url"]];
+		
+		NSParameterAssert(URLToOpen != nil);
+		
+		NSString* sourceApp = params[@"sourceApp"];
+		
+		NSMutableDictionary* options = [@{UIApplicationLaunchOptionsURLKey: URLToOpen} mutableCopy];
+		if(sourceApp != nil)
+		{
+			options[UIApplicationLaunchOptionsSourceApplicationKey] = sourceApp;
+		}
+		
+		if([[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:openURL:options:)])
+		{
+			[[UIApplication sharedApplication].delegate application:[UIApplication sharedApplication] openURL:URLToOpen options:options];
+		}
+		
+		[self.websocket sendAction:@"openURLDone" withParams:@{} withMessageId: messageId];
 	}
 	else if([type isEqualToString:@"reactNativeReload"])
 	{
