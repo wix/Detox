@@ -38,12 +38,8 @@ class Detox {
     }
 
     const deviceConfig = await this._getDeviceConfig();
-    if (!deviceConfig.binaryPath) {
-      configuration.throwOnEmptyBinaryPath();
-    }
-
-    if (!deviceConfig.name) {
-      configuration.throwOnEmptyName();
+    if (!deviceConfig.type) {
+      configuration.throwOnEmptyType();
     }
 
     const [sessionConfig, shouldStartServer] = await this._chooseSession(deviceConfig);
@@ -53,11 +49,11 @@ class Detox {
     }
 
     this.client = new Client(sessionConfig);
-    this.client.connect();
+    await this.client.connect();
 
     const deviceClass = DEVICE_CLASSES[deviceConfig.type];
     if (!deviceClass) {
-      throw new Error('only simulator is supported currently');
+      throw new Error(`'${deviceConfig.type}' is not supported`);
     }
     await this._setDevice(sessionConfig, deviceClass, deviceConfig, this.client);
   }
@@ -65,7 +61,6 @@ class Detox {
   async _setDevice(sessionConfig, deviceClass, deviceConfig, client) {
     const deviceDriver = new deviceClass(client);
     this.device = new Device(deviceConfig, sessionConfig, deviceDriver);
-
     await this.device.prepare();
     global.device = this.device;
   }
