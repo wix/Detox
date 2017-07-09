@@ -111,7 +111,8 @@ describe('DeviceDriverBase', () => {
     expect(await deviceDriver.setPermissions()).toBeDefined();
   });
 
-  it(`createPushNotificationJson() - should be defined`, async() => {
+  it(`validateDeviceConfig() - should be defined`, async() => {
+    deviceDriver.validateDeviceConfig();
     expect(deviceDriver.validateDeviceConfig).toBeDefined();
   });
 });
