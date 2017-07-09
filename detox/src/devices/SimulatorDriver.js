@@ -1,6 +1,12 @@
+const exec = require('child-process-promise').exec;
+const path = require('path');
+const fs = require('fs');
+const os = require('os');
+const _ = require('lodash');
 const IosDriver = require('./IosDriver');
 const FBsimctl = require('./Fbsimctl');
 const AppleSimUtils = require('./AppleSimUtils');
+const configuration = require('../configuration');
 
 class SimulatorDriver extends IosDriver {
 
@@ -12,6 +18,15 @@ class SimulatorDriver extends IosDriver {
 
   async acquireFreeDevice(name) {
     return await this._fbsimctl.list(name);
+  }
+
+  async getBundleIdFromBinary(appPath) {
+    try {
+      const result = await exec(`/usr/libexec/PlistBuddy -c "Print CFBundleIdentifier" ${path.join(appPath, 'Info.plist')}`);
+      return _.trim(result.stdout);
+    } catch (ex) {
+      throw new Error(`field CFBundleIdentifier not found inside Info.plist of app binary at ${appPath}`);
+    }
   }
 
   async boot(deviceId) {
@@ -44,6 +59,16 @@ class SimulatorDriver extends IosDriver {
 
   async setPermissions(deviceId, bundleId, permissions) {
     await this._applesimutils.setPermissions(deviceId, bundleId, permissions);
+  }
+
+  validateDeviceConfig(deviceConfig) {
+    if (!deviceConfig.binaryPath) {
+      configuration.throwOnEmptyBinaryPath();
+    }
+
+    if (!deviceConfig.name) {
+      configuration.throwOnEmptyName();
+    }
   }
 }
 

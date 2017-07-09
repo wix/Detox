@@ -1,6 +1,9 @@
 const _ = require('lodash');
 const validScheme = require('../configurations.mock').validOneDeviceAndSession;
+const validIosNoneScheme = require('../configurations.mock').validOneIosNoneDeviceNoSession;
 
+const invalidDeviceNoBinary = require('../configurations.mock').invalidDeviceNoBinary;
+const invalidDeviceNoDeviceName = require('../configurations.mock').invalidDeviceNoDeviceName;
 
 describe('Device', () => {
   let fs;
@@ -8,13 +11,13 @@ describe('Device', () => {
   let cpp;
   let DeviceDriverBase;
   let SimulatorDriver;
+  let IosDriver;
   let Device;
   let device;
   let argparse;
 
   let Client;
   let client;
-
 
   beforeEach(async () => {
     Device = require('./Device');
@@ -35,6 +38,7 @@ describe('Device', () => {
     jest.mock('./DeviceDriverBase');
     DeviceDriverBase = require('./DeviceDriverBase');
     SimulatorDriver = require('./SimulatorDriver');
+    IosDriver = require('./IosDriver');
     Client = require('../client/Client');
 
     client = new Client(validScheme.session);
@@ -59,27 +63,40 @@ describe('Device', () => {
     return device;
   }
 
+  function validIosNone() {
+    const device = new Device(validIosNoneScheme.configurations['ios.none'], validScheme.session, new IosDriver(client));
+    fs.existsSync.mockReturnValue(true);
+    device.deviceDriver.acquireFreeDevice.mockReturnValue('mockDeviceId');
+
+    return device;
+  }
+
   it(`valid scheme, no binary, should throw`, async () => {
     device = validDevice();
     fs.existsSync.mockReturnValue(false);
     try {
       await device.prepare();
       fail('should throw')
-    } catch(ex) {
+    } catch (ex) {
       expect(ex).toBeDefined();
     }
   });
 
+  it(`valid scheme, no binary, should not throw`, async () => {
+    device = validIosNone();
+    await device.prepare();
+  });
+
   it(`prepare() should boot a device`, async () => {
     device = validDevice();
-    cpp.exec.mockReturnValue(()=> Promise.resolve());
+    cpp.exec.mockReturnValue(() => Promise.resolve());
     fs.existsSync.mockReturnValue(true);
     await device.prepare();
 
     expect(device.deviceDriver.boot).toHaveBeenCalledTimes(1);
   });
 
-  it(`relaunchApp()`, async() => {
+  it(`relaunchApp()`, async () => {
     device = validDevice();
 
     await device.relaunchApp();
@@ -90,7 +107,7 @@ describe('Device', () => {
       ["-detoxServer", "ws://localhost:8099", "-detoxSessionId", "test"]);
   });
 
-  it(`relaunchApp() with delete=true`, async() => {
+  it(`relaunchApp() with delete=true`, async () => {
     device = validDevice();
     fs.existsSync.mockReturnValue(true);
 
@@ -103,8 +120,7 @@ describe('Device', () => {
       ["-detoxServer", "ws://localhost:8099", "-detoxSessionId", "test"]);
   });
 
-
-  it(`relaunchApp() without delete when reuse is enabled should not uninstall and install`, async() => {
+  it(`relaunchApp() without delete when reuse is enabled should not uninstall and install`, async () => {
     device = validDevice();
     argparse.getArgValue.mockReturnValue(true);
     fs.existsSync.mockReturnValue(true);
@@ -118,7 +134,7 @@ describe('Device', () => {
       ["-detoxServer", "ws://localhost:8099", "-detoxSessionId", "test"]);
   });
 
-  it(`relaunchApp() without delete when reuse is enabled should not uninstall and install`, async() => {
+  it(`relaunchApp() without delete when reuse is enabled should not uninstall and install`, async () => {
     device = validSimulator();
     argparse.getArgValue.mockReturnValue(true);
     fs.existsSync.mockReturnValue(true);
@@ -132,7 +148,7 @@ describe('Device', () => {
       ["-detoxServer", "ws://localhost:8099", "-detoxSessionId", "test"]);
   });
 
-  it(`relaunchApp() with url should send the url as a param in launchParams`, async() => {
+  it(`relaunchApp() with url should send the url as a param in launchParams`, async () => {
     device = await  validDevice();
     await device.relaunchApp({url: `scheme://some.url`});
 
@@ -141,16 +157,17 @@ describe('Device', () => {
       ["-detoxServer", "ws://localhost:8099", "-detoxSessionId", "test", "-detoxURLOverride", "scheme://some.url"]);
   });
 
-  it(`relaunchApp() with url should send the url as a param in launchParams`, async() => {
+  it(`relaunchApp() with url should send the url as a param in launchParams`, async () => {
     device = await  validDevice();
     await device.relaunchApp({url: `scheme://some.url`, sourceApp: 'sourceAppBundleId'});
 
     expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
-      ["-detoxServer", "ws://localhost:8099", "-detoxSessionId", "test", "-detoxURLOverride", "scheme://some.url", "-detoxSourceAppOverride", "sourceAppBundleId"]);
+      ["-detoxServer", "ws://localhost:8099", "-detoxSessionId", "test", "-detoxURLOverride", "scheme://some.url", "-detoxSourceAppOverride",
+       "sourceAppBundleId"]);
   });
 
-  it(`relaunchApp() with userNofitication should send the userNotification as a param in launchParams`, async() => {
+  it(`relaunchApp() with userNofitication should send the userNotification as a param in launchParams`, async () => {
     device = validDevice();
     fs.existsSync.mockReturnValue(true);
     device.deviceDriver.createPushNotificationJson = jest.fn(() => 'url');
@@ -162,7 +179,7 @@ describe('Device', () => {
       ["-detoxServer", "ws://localhost:8099", "-detoxSessionId", "test", "-detoxUserNotificationDataURL", "url"]);
   });
 
-  it(`relaunchApp() with url and userNofitication should throw`, async() => {
+  it(`relaunchApp() with url and userNofitication should throw`, async () => {
     device = validDevice();
     try {
       await device.relaunchApp({url: "scheme://some.url", userNotification: 'notif'});
@@ -172,7 +189,7 @@ describe('Device', () => {
     }
   });
 
-  it(`relaunchApp() with permissions should send trigger setpermissions before app starts`, async() => {
+  it(`relaunchApp() with permissions should send trigger setpermissions before app starts`, async () => {
     device = await validDevice();
     await device.relaunchApp({permissions: {calendar: "YES"}});
 
@@ -207,7 +224,6 @@ describe('Device', () => {
     expect(device.deviceDriver.uninstallApp).toHaveBeenCalledWith(device._deviceId, 'newBundleId');
   });
 
-
   it(`uninstallApp() with no params should use the default path given in configuration`, async () => {
     device = validDevice();
 
@@ -225,9 +241,9 @@ describe('Device', () => {
 
   it(`openURL({url:url}) should pass to device driver`, async () => {
     device = validDevice();
-    await device.openURL({url:'url'});
+    await device.openURL({url: 'url'});
 
-    expect(device.deviceDriver.openURL).toHaveBeenCalledWith(device._deviceId, {url:'url'});
+    expect(device.deviceDriver.openURL).toHaveBeenCalledWith(device._deviceId, {url: 'url'});
   });
 
   it(`openURL(notAnObject) should pass to device driver`, async () => {
@@ -287,6 +303,24 @@ describe('Device', () => {
     await device.disableSynchronization();
 
     expect(device.deviceDriver.disableSynchronization).toHaveBeenCalledTimes(1);
+  });
+
+  it(``, async () => {
+    try {
+      new Device(invalidDeviceNoBinary.configurations['ios.sim.release'], validScheme.session, new SimulatorDriver(client));
+      fail('should throw');
+    } catch (ex) {
+      expect(ex).toBeDefined();
+    }
+  });
+
+  it(``, async () => {
+    try {
+      new Device(invalidDeviceNoDeviceName.configurations['ios.sim.release'], validScheme.session, new SimulatorDriver(client));
+      fail('should throw');
+    } catch (ex) {
+      expect(ex).toBeDefined();
+    }
   });
 
 });

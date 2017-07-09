@@ -101,6 +101,10 @@ class DeviceDriverBase {
   getBundleIdFromBinary(appPath) {
 
   }
+
+  validateDeviceConfig(deviceConfig) {
+
+  }
 }
 
 module.exports = DeviceDriverBase;

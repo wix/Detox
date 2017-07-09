@@ -10,8 +10,7 @@ const validOneDeviceNoSession = {
 
 const validOneIosNoneDeviceNoSession = {
   "configurations": {
-    "ios.sim.none": {
-      "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+    "ios.none": {
       "type": "ios.none",
       "name": "iPhone 7 Plus, iOS 10.2"
     },
