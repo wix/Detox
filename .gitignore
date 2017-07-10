@@ -213,6 +213,7 @@ ios.tar
 demo-native-ios/ModuleCache
 detox/ios/DetoxBuild
 Detox.framework.tbz
+Detox-ios-src.tbz
 
 detox-server/lib
 demo-native-ios/Build

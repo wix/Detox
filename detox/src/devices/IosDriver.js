@@ -7,7 +7,7 @@ const InvocationManager = require('../invoke').InvocationManager;
 const invoke = require('../invoke');
 const GREYConfiguration = require('./../ios/earlgreyapi/GREYConfiguration');
 const argparse = require('../utils/argparse');
-
+const exec = require('child-process-promise').exec;
 
 class IosDriver extends DeviceDriverBase {
 
@@ -24,6 +24,12 @@ class IosDriver extends DeviceDriverBase {
     this.ensureDirectoryExistence(notificationFilePath);
     fs.writeFileSync(notificationFilePath, JSON.stringify(notification, null, 2));
     return notificationFilePath;
+  }
+
+  async prepare() {
+    const version = require(path.join(__dirname, '../../package.json')).version;
+    const sha1 = await exec(`(echo "${version} && xcodebuild -version) | shasum | awk '{print $1}'`);
+    console.log(sha1);
   }
 
   async sendUserNotification(notification) {

@@ -3,8 +3,8 @@
 echo "###############################"
 echo "Extracting Detox.framework..."
 
-if [ -f Detox.framework.tbz ]; then
-  tar -xjf Detox.framework.tbz
-  rm -f Detox.framework.tbz
+if [ -f Detox.src.tbz ]; then
+  tar -xjf Detox.src.tbz
+  rm -f Detox.src.tbz
 fi
 echo "###############################"

@@ -3,11 +3,13 @@
 BABEL_ENV=test babel src -d lib
 if [ "$1" != "noframework" ]; then
 echo -e "\nBuilding Detox.framework"
-	rm -fr Detox.framework
-	xcodebuild build -project ios/Detox.xcodeproj -scheme DetoxFramework -configuration Release -derivedDataPath DetoxBuild > /dev/null
-	cp -fr DetoxBuild/Build/Products/Release-universal/Detox.framework .
-	rm -fr DetoxBuild
-	tar -cjf Detox.framework.tbz Detox.framework
+	rm -fr Detox-ios-src.tbz
+	#Prepare Earl Grey without building
+	ios/EarlGrey/Scripts/setup-earlgrey.sh > /dev/null
+	# xcodebuild build -project ios/Detox.xcodeproj -scheme DetoxFramework -configuration Release -derivedDataPath DetoxBuild > /dev/null
+	find ./ios -name build -type d -exec rm -rf {} \; > /dev/null
+	find ./ios -name Build -type d -exec rm -rf {} \; > /dev/null
+	tar -cjf Detox-ios-src.tbz ios
 fi
 
 if [ "$1" == "android" -o "$2" == "android" ] ; then

@@ -41,26 +41,26 @@ class Fbsimctl {
 
   async boot(udid) {
     let initialState;
-    await retry({retries: 10, interval: 1000}, async() => {
+    await retry({retries: 10, interval: 1000}, async () => {
       const initialStateCmdResult = await this._execFbsimctlCommand({args: `${udid} list`}, undefined, 1);
       initialState = _.get(initialStateCmdResult, 'stdout', '') === '' ? undefined :
-          _.get(JSON.parse(_.get(initialStateCmdResult, 'stdout')), 'subject.state');
-      if(initialState === undefined) {
+                     _.get(JSON.parse(_.get(initialStateCmdResult, 'stdout')), 'subject.state');
+      if (initialState === undefined) {
         log.info(`Couldn't get the state of ${udid}`);
         throw `Couldn't get the state of the device`;
       }
-      if(initialState === 'Shutting Down') {
+      if (initialState === 'Shutting Down') {
         log.info(`Waiting for device ${udid} to shut down`);
         throw `The device is in 'Shutting Down' state`;
       }
     });
 
-    if(initialState === 'Booted') {
+    if (initialState === 'Booted') {
       log.info(`Device ${udid} is already booted`);
       return;
     }
-    
-    if(initialState === 'Booting') {
+
+    if (initialState === 'Booting') {
       log.info(`Device ${udid} is already booting`);
     } else {
       const launchBin = "bash -c '`xcode-select -p`/Applications/Simulator.app/Contents/MacOS/Simulator " +

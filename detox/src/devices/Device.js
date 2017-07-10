@@ -19,6 +19,8 @@ class Device {
     this._deviceId = await this.deviceDriver.acquireFreeDevice(this._deviceConfig.name);
     this._bundleId = await this.deviceDriver.getBundleIdFromBinary(this._binaryPath);
 
+    await this.deviceDriver.prepare();
+
     await this.deviceDriver.boot(this._deviceId);
     await this.relaunchApp({delete: !argparse.getArgValue('reuse')});
   }
@@ -35,11 +37,10 @@ class Device {
       await this.deviceDriver.terminate(this._deviceId, this._bundleId);
     }
 
-
     let additionalLaunchArgs;
     if (params.url) {
       additionalLaunchArgs = {'detoxURLOverride': params.url};
-      if(params.sourceApp) {
+      if (params.sourceApp) {
         additionalLaunchArgs['detoxSourceAppOverride'] = params.sourceApp;
       }
     } else if (params.userNotification) {
@@ -57,7 +58,6 @@ class Device {
     await this.deviceDriver.waitUntilReady();
   }
 
-
   async installApp(binaryPath) {
     const _binaryPath = binaryPath || this._binaryPath;
     await this.deviceDriver.installApp(this._deviceId, _binaryPath);
@@ -73,7 +73,7 @@ class Device {
   }
 
   async openURL(params) {
-    if(typeof params !== 'object' || !params.url) {
+    if (typeof params !== 'object' || !params.url) {
       throw new Error(`openURL must be called with JSON params, and a value for 'url' key must be provided. example: await device.openURL({url: "url", sourceApp: "sourceAppBundleID"}`);
     }
 
