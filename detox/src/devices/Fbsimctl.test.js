@@ -106,12 +106,12 @@ describe('Fbsimctl', () => {
 
   it(`launch() - is triggering fbsimctl launch`, async() => {
     fs.existsSync.mockReturnValue(true);
-    await validateFbsimctlisCalledOn(fbsimctl, async () => fbsimctl.launch(simUdid, bundleId, []));
+    await fbsimctl.launch(simUdid, bundleId, []);
+    expect(exec).toHaveBeenCalledTimes(1);
   });
 
-  it(`launch() - is triggering fbsimctl launch when no Detox.framework exists`, async() => {
+  it(`launch() - should throw when no Detox.framework exists`, async() => {
     fs.existsSync.mockReturnValue(false);
-    fbsimctl._execFbsimctlCommand = jest.fn();
     try {
       await fbsimctl.launch(simUdid, bundleId, []);
       fail(`should fail when Detox.framework doesn't exist`);
