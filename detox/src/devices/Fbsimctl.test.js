@@ -104,7 +104,7 @@ describe('Fbsimctl', () => {
     await validateFbsimctlisCalledOn(fbsimctl, async () => fbsimctl.uninstall(simUdid, bundleId));
   });
 
-  it(`launch() - is triggering fbsimctl launch`, async() => {
+  it(`launch() - is triggering exec`, async() => {
     fs.existsSync.mockReturnValue(true);
     await fbsimctl.launch(simUdid, bundleId, []);
     expect(exec).toHaveBeenCalledTimes(1);
@@ -120,8 +120,9 @@ describe('Fbsimctl', () => {
     }
   });
 
-  it(`terminate() - is triggering fbsimctl terminate`, async() => {
-    await validateFbsimctlisCalledOn(fbsimctl, async () => fbsimctl.terminate(simUdid, bundleId));
+  it(`terminate() - is triggering exec`, async() => {
+    await fbsimctl.terminate(simUdid, bundleId);
+    expect(exec).toHaveBeenCalledTimes(1);
   });
 
   it(`shutdown() - is triggering fbsimctl shutdown`, async() => {

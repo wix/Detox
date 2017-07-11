@@ -118,18 +118,11 @@ class Fbsimctl {
   }
 
   async terminate(udid, bundleId) {
-    const statusLogs = {
+    const launchBin = `/usr/bin/xcrun simctl terminate ${udid} ${bundleId}`;
+    await exec.execWithRetriesAndLogs(launchBin, undefined, {
       trying: `Terminating ${bundleId}...`,
       successful: `${bundleId} terminated`
-    };
-    const options = {args: `${udid}  terminate ${bundleId}`};
-    try {
-      const result = await this._execFbsimctlCommand(options, statusLogs, 1);
-    } catch (ex) {
-      //this is ok
-    }
-    // in the future we'll allow expectations on logs and _listenOnAppLogfile will always run (remove if)
-    //this._listenOnAppLogfile(this._getAppLogfile(bundleId, result.stdout));
+    }, 1);
   }
 
   async shutdown(udid) {
