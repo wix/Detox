@@ -11,6 +11,7 @@ const ExistsMatcher = matchers.ExistsMatcher;
 const NotExistsMatcher = matchers.NotExistsMatcher;
 const TextMatcher = matchers.TextMatcher;
 const ValueMatcher = matchers.ValueMatcher;
+const GreyActions = require('./EarlGrey/GreyActions');
 
 let invocationManager;
 
@@ -45,7 +46,7 @@ class Action {}
 class TapAction extends Action {
   constructor() {
     super();
-    this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForTap');
+    this._call = invoke.callDirectly(GreyActions.actionForTap());
   }
 }
 
