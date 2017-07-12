@@ -85,6 +85,7 @@ class example extends Component {
           {this.renderScreenButton('Permissions', Screens.Permissions)}
           {this.renderScreenButton('Network', Screens.NetworkScreen)}
           {this.renderScreenButton('Animations', Screens.AnimationsScreen)}
+          {this.renderScreenButton('Location', Screens.LocationScreen)}
         </View>
       );
     }
