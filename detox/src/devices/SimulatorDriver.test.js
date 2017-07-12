@@ -37,28 +37,6 @@ describe('SimulatorDriver', () => {
     return new SimulatorDriver(client, validScheme.session, validScheme.configurations['ios.sim.release']);
   }
 
-  it(`prepare() with wrong app path should throw`, async () => {
-    simulatorDriver = validSimulator();
-    fs.existsSync.mockReturnValueOnce(false);
-
-    try {
-      await simulatorDriver.prepare();
-    } catch (ex) {
-      expect(ex).toBeDefined();
-    }
-  });
-
-  it(`prepare() with an app with no plist.info should throw`, async () => {
-    simulatorDriver = validSimulator();
-    fs.existsSync.mockReturnValueOnce(true);
-
-    try {
-      await simulatorDriver.prepare();
-    } catch (ex) {
-      expect(ex).toBeDefined();
-    }
-  });
-
   it(`acquireFreeDevice() should trigger fbsimctl.list`, async () => {
     simulatorDriver = validSimulator();
     await simulatorDriver.acquireFreeDevice();
