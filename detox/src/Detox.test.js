@@ -144,19 +144,6 @@ describe('Detox', () => {
     }
   });
 
-  it(`One invalid device (no binary configured), detox should throw`, async () => {
-    Detox = require('./Detox');
-
-    detox = new Detox(schemes.invalidDeviceNoBinary);
-
-    try {
-      await detox.init();
-      fail('should have thrown');
-    } catch (ex) {
-      expect(ex).toBeDefined();
-    }
-  });
-
   it(`One invalid device, detox should throw`, async () => {
     Detox = require('./Detox');
 

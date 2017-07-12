@@ -10,6 +10,8 @@ class Device {
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
     this.deviceDriver = deviceDriver;
+
+    this.deviceDriver.validateDeviceConfig(deviceConfig);
   }
 
   async prepare() {
@@ -131,6 +133,9 @@ class Device {
   }
 
   _getAbsolutePath(appPath) {
+    if (!appPath) {
+      return '';
+    }
     const absPath = path.join(process.cwd(), appPath);
     if (fs.existsSync(absPath)) {
       return absPath;

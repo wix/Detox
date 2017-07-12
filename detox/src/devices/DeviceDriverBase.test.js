@@ -80,7 +80,7 @@ describe('DeviceDriverBase', () => {
     expect(await deviceDriver.setURLBlacklist()).toBeDefined();
   });
 
-  it(`waitUntilReady() -  should trigger waitUntilReady in websocket client`, async() => {
+  it(`waitUntilReady() - should trigger waitUntilReady in websocket client`, async() => {
     await deviceDriver.waitUntilReady();
     expect(deviceDriver.client.waitUntilReady).toHaveBeenCalledTimes(1);
   });
@@ -106,7 +106,13 @@ describe('DeviceDriverBase', () => {
     deviceDriver.getBundleIdFromBinary();
     expect(deviceDriver.getBundleIdFromBinary).toBeDefined();
   });
-  it(`  setPermissions() - should be defined`, async() => {
+
+  it(`setPermissions() - should be defined`, async() => {
     expect(await deviceDriver.setPermissions()).toBeDefined();
+  });
+
+  it(`validateDeviceConfig() - should be defined`, async() => {
+    deviceDriver.validateDeviceConfig();
+    expect(deviceDriver.validateDeviceConfig).toBeDefined();
   });
 });

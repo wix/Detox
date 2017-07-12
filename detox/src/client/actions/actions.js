@@ -26,7 +26,7 @@ class Login extends Action {
   }
 
   async handle(response) {
-    this.expectResponseOfType(response, 'ready');
+    this.expectResponseOfType(response, 'loginSuccess');
   }
 }
 

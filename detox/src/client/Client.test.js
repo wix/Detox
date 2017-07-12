@@ -150,7 +150,7 @@ describe('Client', () => {
 
   async function connect() {
     client = new Client(config);
-    client.ws.send.mockReturnValueOnce(response("ready", {}, 1));
+    client.ws.send.mockReturnValueOnce(response("loginSuccess", {}, 1));
     await client.connect();
     client.ws.isOpen.mockReturnValue(true);
   }

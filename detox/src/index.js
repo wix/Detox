@@ -13,8 +13,6 @@ async function cleanup() {
   }
 }
 
-//// if there's an error thrown, close the websocket,
-//// if not, mocha will continue running until reaches timeout.
 //process.on('uncaughtException', (err) => {
 //  //client.close();
 //
@@ -22,8 +20,6 @@ async function cleanup() {
 //});
 //
 //process.on('unhandledRejection', (reason, p) => {
-//  //client.close();
-//
 //  throw reason;
 //});
 

@@ -1,4 +1,3 @@
-const exec = require('child-process-promise').exec;
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -18,15 +17,6 @@ class IosDriver extends DeviceDriverBase {
     const expect = require('../ios/expect');
     expect.exportGlobals();
     expect.setInvocationManager(new InvocationManager(client));
-  }
-  
-  async getBundleIdFromBinary(appPath) {
-    try {
-      const result = await exec(`/usr/libexec/PlistBuddy -c "Print CFBundleIdentifier" ${path.join(appPath, 'Info.plist')}`);
-      return _.trim(result.stdout);
-    } catch (ex) {
-      throw new Error(`field CFBundleIdentifier not found inside Info.plist of app binary at ${appPath}`);
-    }
   }
 
   createPushNotificationJson(notification) {
@@ -76,6 +66,10 @@ class IosDriver extends DeviceDriverBase {
 
   defaultLaunchArgsPrefix() {
     return '-';
+  }
+
+  validateDeviceConfig(config) {
+    //no validation
   }
 }
 

@@ -31,6 +31,9 @@ class DetoxServer {
               role = action.params.role;
               log.log('wss', `${now()}:`, `role=${role} login (sessionId=${sessionId})`);
               _.set(this.sessions, [sessionId, role], ws);
+              action.type = 'loginSuccess';
+              this.sendAction(ws, action);
+              log.log('wss', `${now()}:`, `role=${role} action=${action.type} (sessionId=${sessionId})`);
             }
           } else if (sessionId && role) {
             log.log('wss', `${now()}:`, `role=${role} action=${action.type} (sessionId=${sessionId})`);
