@@ -41,7 +41,8 @@ Simulate multiple taps on an element.
 await element(by.id('tappable')).multiTap(3);
 ```
 ### `tapAtPoint()`
-Simulate tap at a specific point on an element.
+Simulate tap at a specific point on an element.<br><br>
+Note: The point coordinates are relative to the matched element and the element size could changes on different devices or even when changing the device font size.   
 
 ```js
 await element(by.id('tappable')).tapAtPoint({x:5, y:10});
