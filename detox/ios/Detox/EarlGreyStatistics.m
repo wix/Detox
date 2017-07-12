@@ -51,7 +51,7 @@ void WXFixupIdlingResourceClasses()
 			
 			if(rv == NO)
 			{
-				NSLog(@"☣️ DETOX:: %@ -> busy", NSStringFromClass([_self class]));
+				//NSLog(@"☣️ DETOX:: %@ -> busy", NSStringFromClass([_self class]));
 //				NSString* prettyName = _prettyNames[CLS_STR(_self)] ?: _self.idlingResourceName;
 //				NSDictionary* (^prettyPrinter)(id<GREYIdlingResource>) = _prettyPrinters[CLS_STR(_self)] ?: ^ (id<GREYIdlingResource> res) { return @{}; };
 //

@@ -63,7 +63,7 @@ class Fbsimctl {
     if(initialState === 'Booting') {
       log.info(`Device ${udid} is already booting`);
     } else {
-      const launchBin = "bash -c '`xcode-select -p`/Applications/Simulator.app/Contents/MacOS/Simulator " +
+      const launchBin = "/bin/bash -c '`xcode-select -p`/Applications/Simulator.app/Contents/MacOS/Simulator " +
                         `--args -CurrentDeviceUDID ${udid} -ConnectHardwareKeyboard 0 ` +
                         "-DeviceSetPath ~/Library/Developer/CoreSimulator/Devices > /dev/null 2>&1 < /dev/null &'";
       await exec.execWithRetriesAndLogs(launchBin, undefined, {
@@ -101,32 +101,28 @@ class Fbsimctl {
   }
 
   async launch(udid, bundleId, launchArgs) {
-    const statusLogs = {
+    const logPrefix = '/tmp/detox.last_launch_app_log.';
+    const stdout = logPrefix + 'out';
+    const stderr = logPrefix + 'err';
+    const simDataRoot = `~/Library/Developer/CoreSimulator/Devices/${udid}/data`;
+    
+    const launchBin = `/bin/cat /dev/null >${simDataRoot}${stdout} 2>${simDataRoot}${stderr} && ` +
+                      `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${this._getFrameworkPath()}" ` +
+                      `/usr/bin/xcrun simctl launch --stdout=${stdout} --stderr=${stderr} ` +
+                      `${udid} ${bundleId} --args ${launchArgs.join(' ')}`;
+    await exec.execWithRetriesAndLogs(launchBin, undefined, {
       trying: `Launching ${bundleId}...`,
-      successful: `${bundleId} launched`
-    };
-    const options = {
-      prefix: `export OS_ACTIVITY_DT_MODE=enable FBSIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${this._getFrameworkPath()}"`,
-      args: `${udid} launch --stderr ${bundleId} ${launchArgs.join(' ')}`
-    };
-    const result = await this._execFbsimctlCommand(options, statusLogs);
-    // in the future we'll allow expectations on logs and _listenOnAppLogfile will always run (remove if)
-    //this._listenOnAppLogfile(this._getAppLogfile(bundleId, result.stdout));
+      successful: `${bundleId} launched. The stdout and stderr logs were recreated, you can watch them with:\n` +
+                  `        tail -F ${simDataRoot}${logPrefix}{out,err}`
+    }, 1);
   }
 
   async terminate(udid, bundleId) {
-    const statusLogs = {
+    const launchBin = `/usr/bin/xcrun simctl terminate ${udid} ${bundleId}`;
+    await exec.execWithRetriesAndLogs(launchBin, undefined, {
       trying: `Terminating ${bundleId}...`,
       successful: `${bundleId} terminated`
-    };
-    const options = {args: `${udid}  terminate ${bundleId}`};
-    try {
-      const result = await this._execFbsimctlCommand(options, statusLogs, 1);
-    } catch (ex) {
-      //this is ok
-    }
-    // in the future we'll allow expectations on logs and _listenOnAppLogfile will always run (remove if)
-    //this._listenOnAppLogfile(this._getAppLogfile(bundleId, result.stdout));
+    }, 1);
   }
 
   async shutdown(udid) {
