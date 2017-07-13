@@ -57,7 +57,8 @@ Install the app file defined in the current [`configuration`](APIRef.Configurati
 ### `device.uninstallApp()`
 Uninstall the app defined in the current [`configuration`](APIRef.Configuration.md).
 
-### `device.openURL(url)`
+### `device.openURL({url, sourceApp})`
+Open the url. `sourceApp` is an optional parameter to specify source application bundle id
 
 
 ### `device.sendUserNotification(params)`
