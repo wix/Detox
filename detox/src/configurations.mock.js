@@ -141,6 +141,16 @@ const sessionInCommonAndInConfiguration = {
   }
 };
 
+const validOneEmulator = {
+  "configurations": {
+    "android.emu.release": {
+      "binaryPath": "android/app/build/outputs/apk/app-debug.apk",
+      "type": "android.emulator",
+      "name": "Nexus 5X"
+    }
+  }
+};
+
 module.exports = {
   validOneDeviceNoSession,
   validOneIosNoneDeviceNoSession,
@@ -154,5 +164,6 @@ module.exports = {
   invalidSessionNoServer,
   invalidOneDeviceTypeEmulatorNoSession,
   sessionPerConfiguration,
-  sessionInCommonAndInConfiguration
+  sessionInCommonAndInConfiguration,
+  validOneEmulator
 };

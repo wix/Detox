@@ -101,13 +101,18 @@ class Fbsimctl {
   }
 
   async launch(udid, bundleId, launchArgs) {
+    const args = [];
+    _.forEach(launchArgs, (value, key) => {
+      args.push(`${key} ${value}`);
+    });
+
     const statusLogs = {
       trying: `Launching ${bundleId}...`,
       successful: `${bundleId} launched`
     };
     const options = {
       prefix: `export OS_ACTIVITY_DT_MODE=enable FBSIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${this._getFrameworkPath()}"`,
-      args: `${udid} launch --stderr ${bundleId} ${launchArgs.join(' ')}`
+      args: `${udid} launch --stderr ${bundleId} ${args.join(' ')}`
     };
     const result = await this._execFbsimctlCommand(options, statusLogs);
     // in the future we'll allow expectations on logs and _listenOnAppLogfile will always run (remove if)

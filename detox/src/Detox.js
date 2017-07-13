@@ -2,7 +2,7 @@ const log = require('npmlog');
 const Device = require('./devices/Device');
 const IosDriver = require('./devices/IosDriver');
 const SimulatorDriver = require('./devices/SimulatorDriver');
-const Emulator = require('./devices/Emulator');
+const EmulatorDriver = require('./devices/EmulatorDriver');
 const argparse = require('./utils/argparse');
 const configuration = require('./configuration');
 const Client = require('./client/Client');
@@ -17,7 +17,7 @@ log.heading = 'detox';
 const DEVICE_CLASSES = {
   'ios.simulator': SimulatorDriver,
   'ios.none': IosDriver,
-  'android.emulator': Emulator
+  'android.emulator': EmulatorDriver
 };
 
 class Detox {

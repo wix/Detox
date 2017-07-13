@@ -128,8 +128,8 @@ class Device {
     let args = [];
     const merged = _.merge(this._defaultLaunchArgs(), additionalLaunchArgs);
     const launchArgs = this._addPrefixToDefaultLaunchArgs(merged);
-    args = args.concat(_.flatten(Object.entries(launchArgs)));
-    return args;
+    //args = args.concat(_.flatten(Object.entries(launchArgs)));
+    return launchArgs;
   }
 
   _getAbsolutePath(appPath) {

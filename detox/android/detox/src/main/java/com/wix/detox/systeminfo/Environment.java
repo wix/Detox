@@ -3,9 +3,9 @@ package com.wix.detox.systeminfo;
 import android.os.Build;
 
 public class Environment {
-    public static final String EMULATOR_LOCALHOST = "ws://10.0.2.2:8099";
-    public static final String GENYMOTION_LOCALHOST = "ws://10.0.3.2:8099";
-    public static final String DEVICE_LOCALHOST = "ws://localhost:8099";
+    public static final String EMULATOR_LOCALHOST = "ws://10.0.2.2";
+    public static final String GENYMOTION_LOCALHOST = "ws://10.0.3.2";
+    public static final String DEVICE_LOCALHOST = "ws://localhost";
 
     private static boolean isRunningOnGenymotion() {
         return Build.FINGERPRINT.contains("vbox");

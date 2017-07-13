@@ -9,6 +9,7 @@ import android.support.test.espresso.Espresso;
 import android.support.test.espresso.EspressoException;
 import android.util.Log;
 
+import com.wix.detox.systeminfo.Environment;
 import com.wix.invoke.MethodInvocation;
 
 import java.util.Collections;
@@ -46,7 +47,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
         handler = new Handler();
 
         Bundle arguments = InstrumentationRegistry.getArguments();
-        detoxServerUrl = arguments.getString(DETOX_SERVER_ARG_KEY);
+        detoxServerUrl = arguments.getString(DETOX_SERVER_ARG_KEY).replace(Environment.DEVICE_LOCALHOST, Environment.getServerHost());
         detoxSessionId = arguments.getString(DETOX_SESSION_ID_ARG_KEY);
 
         if (detoxServerUrl == null || detoxSessionId == null) {
@@ -84,7 +85,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
     }
 
     @Override
-    public void onAction(final String type, final String params) {
+    public void onAction(final String type, final String params, final long messageId) {
         Log.i(LOG_TAG, "onAction: type: " + type + " params: " + params);
         handler.post(new Runnable() {
             @Override
@@ -100,14 +101,15 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                         break;
                     case "isReady":
                         // It's always ready, because reload, waitForRn are both synchronous.
-                        wsClient.sendAction("ready", Collections.emptyMap());
+                        wsClient.sendAction("ready", Collections.emptyMap(), messageId);
                         break;
                     case "cleanup":
-                        wsClient.sendAction("cleanupDone", Collections.emptyMap());
+                        wsClient.sendAction("cleanupDone", Collections.emptyMap(), messageId);
                         stop();
                         break;
                     case "reactNativeReload":
                         ReactNativeSupport.reloadApp(reactNativeHostHolder);
+                        wsClient.sendAction("ready", Collections.emptyMap(), messageId);
                         break;
                     // TODO
                     // Remove these test* commands later.
@@ -117,15 +119,15 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                         } catch (RuntimeException e) {
                             if (e instanceof EspressoException) {
                                 Log.i(LOG_TAG, "Test exception", e);
-                                wsClient.sendAction("TEST_FAIL", Collections.emptyMap());
+                                wsClient.sendAction("TEST_FAIL", Collections.emptyMap(), messageId);
                             } else {
-                                wsClient.sendAction("EXCEPTION", Collections.emptyMap());
+                                wsClient.sendAction("EXCEPTION", Collections.emptyMap(), messageId);
                                 Log.e(LOG_TAG, "Exception", e);
                             }
                             stop();
                             break;
                         }
-                        wsClient.sendAction("TEST_OK", Collections.emptyMap());
+                        wsClient.sendAction("TEST_OK", Collections.emptyMap(), messageId);
                         break;
                     case "testInvokeNeg1":
                         try {
@@ -133,15 +135,15 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                         } catch (RuntimeException e) {
                             if (e instanceof EspressoException) {
                                 Log.i(LOG_TAG, "Test exception", e);
-                                wsClient.sendAction("TEST_FAIL", Collections.emptyMap());
+                                wsClient.sendAction("TEST_FAIL", Collections.emptyMap(), messageId);
                             } else {
-                                wsClient.sendAction("EXCEPTION", Collections.emptyMap());
+                                wsClient.sendAction("EXCEPTION", Collections.emptyMap(), messageId);
                                 Log.e(LOG_TAG, "Exception", e);
                             }
                             stop();
                             break;
                         }
-                        wsClient.sendAction("TEST_OK", Collections.emptyMap());
+                        wsClient.sendAction("TEST_OK", Collections.emptyMap(), messageId);
                         break;
                     case "testPush":
                         Espresso.onView(withTagValue(is((Object) "hello_button"))).perform(click());
@@ -152,15 +154,15 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                         } catch (RuntimeException e) {
                             if (e instanceof EspressoException) {
                                 Log.i(LOG_TAG, "Test exception", e);
-                                wsClient.sendAction("TEST_FAIL", Collections.emptyMap());
+                                wsClient.sendAction("TEST_FAIL", Collections.emptyMap(), messageId);
                             } else {
-                                wsClient.sendAction("EXCEPTION", Collections.emptyMap());
+                                wsClient.sendAction("EXCEPTION", Collections.emptyMap(), messageId);
                                 Log.e(LOG_TAG, "Exception", e);
                             }
                             stop();
                             break;
                         }
-                        wsClient.sendAction("TEST_OK", Collections.emptyMap());
+                        wsClient.sendAction("TEST_OK", Collections.emptyMap(), messageId);
                         break;
                 }
             }
@@ -169,7 +171,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     @Override
     public void onConnect() {
-        wsClient.sendAction("ready", Collections.emptyMap());
+        wsClient.sendAction("ready", Collections.emptyMap(), -1000L);
     }
 
     @Override

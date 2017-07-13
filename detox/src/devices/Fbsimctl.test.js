@@ -106,7 +106,7 @@ describe('Fbsimctl', () => {
 
   it(`launch() - is triggering fbsimctl launch`, async() => {
     fs.existsSync.mockReturnValue(true);
-    await validateFbsimctlisCalledOn(fbsimctl, async () => fbsimctl.launch(simUdid, bundleId, []));
+    await validateFbsimctlisCalledOn(fbsimctl, async () => fbsimctl.launch(simUdid, bundleId, [{param: "param1"}]));
   });
 
   it(`launch() - is triggering fbsimctl launch when no Detox.framework exists`, async() => {
