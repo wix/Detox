@@ -15,12 +15,19 @@ describe('Device', () => {
   let Device;
   let device;
   let argparse;
+  let sh;
 
   let Client;
   let client;
 
   beforeEach(async () => {
     Device = require('./Device');
+
+    jest.mock('npmlog');
+
+    jest.mock('../utils/sh');
+    sh = require('../utils/sh');
+    sh.cp = jest.fn();
 
     jest.mock('fs');
     fs = require('fs');
@@ -323,4 +330,36 @@ describe('Device', () => {
     }
   });
 
+  it(`setArtifactsDestination() should set _currentTestArtifactsDestination`, () => {
+    device = validDevice();
+    device.setArtifactsDestination('/tmp');
+    expect(device._currentTestArtifactsDestination).toBe('/tmp');
+  });
+
+  it(`finalizeArtifacts() should call cp`, async () => {
+    device = validDevice();
+    device.deviceDriver.getLogsPaths = () => ({stdout: '/t1', stderr: '/t2'});
+    device.setArtifactsDestination('/tmp');
+    await device.relaunchApp();
+    expect(sh.cp).toHaveBeenCalledTimes(0);
+    await device.finalizeArtifacts();
+    expect(sh.cp).toHaveBeenCalledTimes(2);
+  });
+
+  it(`finalizeArtifacts() should catch cp exception`, async () => {
+    device = validDevice();
+    device.deviceDriver.getLogsPaths = () => ({stdout: '/t1', stderr: '/t2'});
+    device.setArtifactsDestination('/tmp');
+    await device.relaunchApp();
+    sh.cp = jest.fn(() => {throw 'exception sent by mocked cp'});
+    await device.finalizeArtifacts();
+  });
+
+  it(`finalizeArtifacts() should not cp if setArtifactsDestination wasn't called`, async () => {
+    device = validDevice();
+    device.deviceDriver.getLogsPaths = () => ({stdout: '/t1', stderr: '/t2'});
+    await device.relaunchApp();
+    await device.finalizeArtifacts();
+    expect(sh.cp).toHaveBeenCalledTimes(0);
+  });
 });

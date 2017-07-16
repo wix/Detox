@@ -9,6 +9,7 @@ const Client = require('./client/Client');
 const DetoxServer = require('detox-server');
 const URL = require('url').URL;
 const _ = require('lodash');
+const ArtifactsPathsProvider = require('./utils/ArtifactsPathsProvider');
 
 log.level = argparse.getArgValue('loglevel') || 'info';
 log.addLevel('wss', 999, {fg: 'blue', bg: 'black'}, 'wss');
@@ -30,6 +31,18 @@ class Detox {
     this.userConfig = userConfig;
     this.client = null;
     this.device = null;
+    this._currentTestNumber = 0;
+    const artifactsLocation = argparse.getArgValue('artifacts-location');
+    if(artifactsLocation !== undefined) {
+      try {
+        this._artifactsPathsProvider = new ArtifactsPathsProvider(artifactsLocation);
+      } catch(ex) {
+        log.warn(ex);
+      }
+    }
+
+    this.beforeEach = this.beforeEach.bind(this);
+    this.afterEach = this.afterEach.bind(this);
   }
 
   async init() {
@@ -70,8 +83,22 @@ class Detox {
       await this.client.cleanup();
     }
 
-    if (argparse.getArgValue('cleanup')) {
+    if (argparse.getArgValue('cleanup') && this.device) {
       await this.device.shutdown();
+    }
+  }
+
+  async beforeEach(...testNameComponents) {
+    this._currentTestNumber++;
+    if(this._artifactsPathsProvider !== undefined) {
+      const testArtifactsPath = this._artifactsPathsProvider.createPathForTest(this._currentTestNumber, ...testNameComponents)
+      this.device.setArtifactsDestination(testArtifactsPath);
+    }
+  }
+
+  async afterEach(suiteName, testName) {
+    if(this._artifactsPathsProvider !== undefined) {
+      await this.device.finalizeArtifacts();
     }
   }
 

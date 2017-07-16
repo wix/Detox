@@ -13,6 +13,18 @@ async function cleanup() {
   }
 }
 
+async function beforeEach() {
+  if (detox) {
+    await detox.beforeEach.apply(this, arguments);
+  }
+}
+
+async function afterEach() {
+  if (detox) {
+    await detox.afterEach.apply(this, arguments);
+  }
+}
+
 //process.on('uncaughtException', (err) => {
 //  //client.close();
 //
@@ -25,5 +37,7 @@ async function cleanup() {
 
 module.exports = {
   init,
-  cleanup
+  cleanup,
+  beforeEach,
+  afterEach
 };

@@ -3,6 +3,8 @@ const path = require('path');
 const _ = require('lodash');
 const argparse = require('../utils/argparse');
 const configuration = require('../configuration');
+const sh = require('../utils/sh');
+const log = require('npmlog');
 
 class Device {
 
@@ -10,8 +12,17 @@ class Device {
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
     this.deviceDriver = deviceDriver;
+    this._currentLaunchNumber = 0;
+    this._currentTestArtifactsDestination = undefined;
 
     this.deviceDriver.validateDeviceConfig(deviceConfig);
+
+    this.relaunchApp = this.relaunchApp.bind(this);
+    this.reloadReactNative = this.reloadReactNative.bind(this);
+    this.setArtifactsDestination = this.setArtifactsDestination.bind(this);
+    this._copyArtifacts = this._copyArtifacts.bind(this);
+    this._handleArtifactsOnRelaunch = this._handleArtifactsOnRelaunch.bind(this);
+    this.finalizeArtifacts = this.finalizeArtifacts.bind(this);
   }
 
   async prepare() {
@@ -23,7 +34,52 @@ class Device {
     await this.relaunchApp({delete: !argparse.getArgValue('reuse')});
   }
 
+  async _copyArtifacts() {
+    if(this._currentLaunchNumber === 0) {
+      return;
+    }
+
+    const copy = async (sourcePath, destinationSuffix) => {
+      const destinationPath = `${this._currentTestArtifactsDestination}/${this._currentLaunchNumber}.${destinationSuffix}`;
+      try {
+        await sh.cp(`"${sourcePath}" "${destinationPath}"`);
+      } catch (ex) {
+        log.warn(`Couldn't copy '${sourcePath}' to '${destinationPath}'`);
+      }
+    }
+    
+    if(this._currentTestArtifactsDestination === undefined) {
+      return;
+    }
+
+    const {stdout, stderr} = this.deviceDriver.getLogsPaths(this._deviceId);
+
+    const pathsMapping = [
+      [stdout, 'out.log'],
+      [stderr, 'err.log']
+    ];
+    for (const [sourcePath, destinationSuffix] of pathsMapping) {
+      await copy(sourcePath, destinationSuffix);
+    }
+  }
+
+  async _handleArtifactsOnRelaunch() {
+    await this._copyArtifacts();
+    this._currentLaunchNumber++;
+  }
+
+  setArtifactsDestination(artifactsDestination) {
+    this._currentTestArtifactsDestination = artifactsDestination;
+  }
+
+  async finalizeArtifacts() {
+    await this._copyArtifacts();
+    this._currentLaunchNumber = 0;
+  }
+
   async relaunchApp(params = {}, bundleId) {
+    await this._handleArtifactsOnRelaunch();
+
     if (params.url && params.userNotification) {
       throw new Error(`detox can't understand this 'relaunchApp(${JSON.stringify(params)})' request, either request to launch with url or with userNotification, not both`);
     }
@@ -69,6 +125,7 @@ class Device {
   }
 
   async reloadReactNative() {
+    await this._handleArtifactsOnRelaunch();
     await this.deviceDriver.reloadReactNative();
   }
 

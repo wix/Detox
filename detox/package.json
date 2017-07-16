@@ -44,6 +44,7 @@
     "eslint-plugin-react-native": "^2.3.2",
     "jest": "^18.1.0",
     "minimist": "^1.2.0",
+    "mockdate": "^2.0.1",
     "shelljs": "^0.7.3",
     "ttab": "^0.3.1"
   },
@@ -81,6 +82,10 @@
         "functions": 100,
         "lines": 100
       }
-    }
+    },
+    "collectCoverageFrom___": [
+      "src/**/*.js",
+      "!src/index.js"
+    ]
   }
 }
