@@ -82,10 +82,6 @@
         "functions": 100,
         "lines": 100
       }
-    },
-    "collectCoverageFrom___": [
-      "src/**/*.js",
-      "!src/index.js"
-    ]
+    }
   }
 }

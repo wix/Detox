@@ -5,19 +5,19 @@ const log = require('npmlog');
 class ArtifactsPathsProvider {
   constructor(destinationParent) {
     if(!destinationParent) {
-      throw 'destinationParent should not be undefined';
+      throw new Error('destinationParent should not be undefined');
     }
     this._destinationRoot = `${destinationParent}/detox_artifacts.${new Date().toISOString()}`;
     try {
       fs.mkdirSync(this._destinationRoot);
     } catch (ex) {
-      throw `Could not create artifacts root dir: ${this._destinationRoot}`;
+      throw new Error(`Could not create artifacts root dir: ${this._destinationRoot}`);
     }
   }
 
   createPathForTest(number, ...nameComponents) {
     if(number !== parseInt(number) || number <= 0) {
-      throw 'The number should be a positive integer';
+      throw new Error('The number should be a positive integer');
     }
 
     const lastPathComponent = [number].concat(nameComponents).join('.');

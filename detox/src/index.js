@@ -15,13 +15,13 @@ async function cleanup() {
 
 async function beforeEach() {
   if (detox) {
-    await detox.beforeEach.apply(this, arguments);
+    await detox.beforeEach.apply(detox, arguments);
   }
 }
 
 async function afterEach() {
   if (detox) {
-    await detox.afterEach.apply(this, arguments);
+    await detox.afterEach.apply(detox, arguments);
   }
 }
 

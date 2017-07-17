@@ -330,18 +330,10 @@ describe('Device', () => {
     }
   });
 
-  it(`setArtifactsDestination() should set _currentTestArtifactsDestination`, () => {
-    device = validDevice();
-    device.setArtifactsDestination('/tmp');
-    expect(device._currentTestArtifactsDestination).toBe('/tmp');
-  });
-
   it(`finalizeArtifacts() should call cp`, async () => {
     device = validDevice();
     device.deviceDriver.getLogsPaths = () => ({stdout: '/t1', stderr: '/t2'});
     device.setArtifactsDestination('/tmp');
-    await device.relaunchApp();
-    expect(sh.cp).toHaveBeenCalledTimes(0);
     await device.finalizeArtifacts();
     expect(sh.cp).toHaveBeenCalledTimes(2);
   });

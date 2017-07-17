@@ -9,7 +9,7 @@ const Client = require('./client/Client');
 const DetoxServer = require('detox-server');
 const URL = require('url').URL;
 const _ = require('lodash');
-const ArtifactsPathsProvider = require('./utils/ArtifactsPathsProvider');
+const ArtifactsPathsProvider = require('./artifacts/ArtifactsPathsProvider');
 
 log.level = argparse.getArgValue('loglevel') || 'info';
 log.addLevel('wss', 999, {fg: 'blue', bg: 'black'}, 'wss');
@@ -40,9 +40,6 @@ class Detox {
         log.warn(ex);
       }
     }
-
-    this.beforeEach = this.beforeEach.bind(this);
-    this.afterEach = this.afterEach.bind(this);
   }
 
   async init() {
