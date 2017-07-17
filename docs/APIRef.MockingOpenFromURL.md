@@ -5,7 +5,7 @@ You can mock opening the app from URL to test your app's deep link handling mech
 #### Mocking App Launch from a URL
 
 ```js
-await device.relaunchApp({url: url});
+await device.relaunchApp({url: url, sourceApp: bundleId}); //sourceApp is optional
 ```
 
 **Example:**
@@ -13,7 +13,7 @@ await device.relaunchApp({url: url});
 ```js
 describe('relaunchApp', () => {
     before(async () => {
-      await device.relaunchApp({url: 'scheme://some.url'});
+      await device.relaunchApp({url: 'scheme://some.url', sourceApp: 'com.apple.mobilesafari'});
     });
 
     it('should tap successfully', async () => {
@@ -24,5 +24,9 @@ describe('relaunchApp', () => {
 
 #### Mocking Opening URL on a Launched App
 ```js
-await device.openURL('scheme://some.url');
+await device.openURL({url: 'scheme://some.url', sourceApp: 'com.apple.mobilesafari'});
 ```
+
+## iOS Requirements
+
+This API requires that the [`application:openURL:options:`](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1623112-application?language=objc) method is implemented in the application delegate. The legacy deprecated [`application:openURL:sourceApplication:annotation:`](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1623073-application?language=objc) method is not supported.
