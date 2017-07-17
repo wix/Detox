@@ -115,4 +115,8 @@ describe('DeviceDriverBase', () => {
     deviceDriver.validateDeviceConfig();
     expect(deviceDriver.validateDeviceConfig).toBeDefined();
   });
+
+  it(`getLogsPath() - should return default undefined paths`, () => {
+    expect(deviceDriver.getLogsPaths()).toEqual({stdout: undefined, stderr: undefined});
+  });
 });

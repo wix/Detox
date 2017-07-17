@@ -208,6 +208,12 @@ describe('SimulatorDriver', () => {
       expect(ex).toBeDefined();
     }
   });
+
+  it(`getLogsPaths() should return proper paths`, () => {
+    simulatorDriver = validSimulator();
+    simulatorDriver._fbsimctl.getLogsPaths = jest.fn(udid => ({a: `abc/${udid}`}));
+    expect(simulatorDriver.getLogsPaths(123)).toEqual({a: 'abc/123'});
+  });
 });
 
 const notification = {

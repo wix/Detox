@@ -20,6 +20,7 @@ describe('Detox', () => {
       jest.setMock(modulePath, FinalMock);
     }
 
+    jest.mock('npmlog');
     jest.mock('fs');
     fs = require('fs');
     jest.mock('minimist');
@@ -190,6 +191,47 @@ describe('Detox', () => {
 
     let expectedSession = schemes.sessionInCommonAndInConfiguration.configurations['ios.sim.none'].session;
     expect(clientMockData.lastConstructorArguments[0]).toBe(expectedSession);
+  });
+
+  it(`beforeEach() - should set device artifacts destination`, async () => {
+    mockCommandLineArgs({'artifacts-location': '/tmp'});
+    Detox = require('./Detox');
+    detox = new Detox(schemes.validOneDeviceAndSession);
+    await detox.init();
+    await detox.beforeEach('a', 'b', 'c');
+    expect(device.setArtifactsDestination).toHaveBeenCalledTimes(1);
+  });
+
+  it(`beforeEach() - should not set device artifacts destination if artifacts not set in cli args`, async () => {
+    Detox = require('./Detox');
+    detox = new Detox(schemes.validOneDeviceAndSession);
+    await detox.init();
+    await detox.beforeEach('a', 'b', 'c');
+    expect(device.setArtifactsDestination).toHaveBeenCalledTimes(0);
+  });
+
+  it(`afterEach() - should call device.finalizeArtifacts`, async () => {
+    mockCommandLineArgs({'artifacts-location': '/tmp'});
+    Detox = require('./Detox');
+    detox = new Detox(schemes.validOneDeviceAndSession);
+    await detox.init();
+    await detox.afterEach();
+    expect(device.finalizeArtifacts).toHaveBeenCalledTimes(1);
+  });
+
+  it(`afterEach() - should not call device.finalizeArtifacts if artifacts not set in cli arg`, async () => {
+    Detox = require('./Detox');
+    detox = new Detox(schemes.validOneDeviceAndSession);
+    await detox.init();
+    await detox.afterEach();
+    expect(device.finalizeArtifacts).toHaveBeenCalledTimes(0);
+  });
+
+  it(`the constructor should catch exception from ArtifactsPathsProvider`, async () => {
+    mockCommandLineArgs({'artifacts-location': '/tmp'});
+    fs.mkdirSync = jest.fn(() => {throw 'Could not create artifacts root dir'});
+    Detox = require('./Detox');
+    detox = new Detox(schemes.validOneDeviceAndSession);
   });
 
   function mockCommandLineArgs(args) {

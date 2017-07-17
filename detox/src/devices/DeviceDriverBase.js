@@ -105,6 +105,13 @@ class DeviceDriverBase {
   validateDeviceConfig(deviceConfig) {
 
   }
+
+  getLogsPaths(deviceId) {
+    return {
+      stdout: undefined,
+      stderr: undefined
+    };
+  }
 }
 
 module.exports = DeviceDriverBase;

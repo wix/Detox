@@ -70,6 +70,10 @@ class SimulatorDriver extends IosDriver {
       configuration.throwOnEmptyName();
     }
   }
+
+  getLogsPaths(deviceId) {
+    return this._fbsimctl.getLogsPaths(deviceId);
+  }
 }
 
 module.exports = SimulatorDriver;

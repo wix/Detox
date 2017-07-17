@@ -3,6 +3,9 @@ const path = require('path');
 const _ = require('lodash');
 const argparse = require('../utils/argparse');
 const configuration = require('../configuration');
+const sh = require('../utils/sh');
+const log = require('npmlog');
+const ArtifactsCopier = require('../artifacts/ArtifactsCopier');
 
 class Device {
 
@@ -10,6 +13,7 @@ class Device {
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
     this.deviceDriver = deviceDriver;
+    this._artifactsCopier = new ArtifactsCopier(deviceDriver);
 
     this.deviceDriver.validateDeviceConfig(deviceConfig);
   }
@@ -18,12 +22,23 @@ class Device {
     this._binaryPath = this._getAbsolutePath(this._deviceConfig.binaryPath);
     this._deviceId = await this.deviceDriver.acquireFreeDevice(this._deviceConfig.name);
     this._bundleId = await this.deviceDriver.getBundleIdFromBinary(this._binaryPath);
+    this._artifactsCopier.prepare(this._deviceId);
 
     await this.deviceDriver.boot(this._deviceId);
     await this.relaunchApp({delete: !argparse.getArgValue('reuse')});
   }
 
+  setArtifactsDestination(testArtifactsPath) {
+    this._artifactsCopier.setArtifactsDestination(testArtifactsPath);
+  }
+
+  async finalizeArtifacts() {
+    await this._artifactsCopier.finalizeArtifacts();
+  }
+
   async relaunchApp(params = {}, bundleId) {
+    await this._artifactsCopier.handleAppRelaunch();
+
     if (params.url && params.userNotification) {
       throw new Error(`detox can't understand this 'relaunchApp(${JSON.stringify(params)})' request, either request to launch with url or with userNotification, not both`);
     }

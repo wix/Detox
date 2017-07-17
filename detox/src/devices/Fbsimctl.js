@@ -9,6 +9,18 @@ const retry = require('../utils/retry');
 // https://github.com/facebook/FBSimulatorControl/issues/250
 // https://github.com/facebook/FBSimulatorControl/blob/master/fbsimctl/FBSimulatorControlKitTests/Tests/Unit/CommandParsersTests.swift
 
+class LogsInfo {
+  constructor(udid) {
+    const logPrefix = '/tmp/detox.last_launch_app_log.';
+    this.simStdout = logPrefix + 'out';
+    this.simStderr = logPrefix + 'err';
+    const simDataRoot = `$HOME/Library/Developer/CoreSimulator/Devices/${udid}/data`;
+    this.absStdout = simDataRoot + this.simStdout;
+    this.absStderr = simDataRoot + this.simStderr;
+    this.absJoined = `${simDataRoot}${logPrefix}{out,err}`
+  }
+}
+
 class Fbsimctl {
 
   constructor() {
@@ -65,7 +77,7 @@ class Fbsimctl {
     } else {
       const launchBin = "/bin/bash -c '`xcode-select -p`/Applications/Simulator.app/Contents/MacOS/Simulator " +
                         `--args -CurrentDeviceUDID ${udid} -ConnectHardwareKeyboard 0 ` +
-                        "-DeviceSetPath ~/Library/Developer/CoreSimulator/Devices > /dev/null 2>&1 < /dev/null &'";
+                        "-DeviceSetPath $HOME/Library/Developer/CoreSimulator/Devices > /dev/null 2>&1 < /dev/null &'";
       await exec.execWithRetriesAndLogs(launchBin, undefined, {
         trying: `Launching device ${udid}...`,
         successful: ''
@@ -101,20 +113,24 @@ class Fbsimctl {
   }
 
   async launch(udid, bundleId, launchArgs) {
-    const logPrefix = '/tmp/detox.last_launch_app_log.';
-    const stdout = logPrefix + 'out';
-    const stderr = logPrefix + 'err';
-    const simDataRoot = `~/Library/Developer/CoreSimulator/Devices/${udid}/data`;
-    
-    const launchBin = `/bin/cat /dev/null >${simDataRoot}${stdout} 2>${simDataRoot}${stderr} && ` +
+    const logsInfo = new LogsInfo(udid);
+    const launchBin = `/bin/cat /dev/null >${logsInfo.absStdout} 2>${logsInfo.absStderr} && ` +
                       `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${this._getFrameworkPath()}" ` +
-                      `/usr/bin/xcrun simctl launch --stdout=${stdout} --stderr=${stderr} ` +
+                      `/usr/bin/xcrun simctl launch --stdout=${logsInfo.simStdout} --stderr=${logsInfo.simStderr} ` +
                       `${udid} ${bundleId} --args ${launchArgs.join(' ')}`;
     await exec.execWithRetriesAndLogs(launchBin, undefined, {
       trying: `Launching ${bundleId}...`,
       successful: `${bundleId} launched. The stdout and stderr logs were recreated, you can watch them with:\n` +
-                  `        tail -F ${simDataRoot}${logPrefix}{out,err}`
+                  `        tail -F ${logsInfo.absJoined}`
     }, 1);
+  }
+
+  getLogsPaths(udid) {
+    const logsInfo = new LogsInfo(udid);
+    return {
+      stdout: logsInfo.absStdout,
+      stderr: logsInfo.absStderr
+    }
   }
 
   async terminate(udid, bundleId) {

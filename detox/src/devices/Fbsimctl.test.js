@@ -181,6 +181,13 @@ describe('Fbsimctl', () => {
     const options = {args: `an argument`};
     expect(await fbsimctl._execFbsimctlCommand(options, '', 10, 1)).toEqual(successfulResult);
   });
+
+  it(`getLogsPath() should return proper paths`, () => {
+    expect(fbsimctl.getLogsPaths('123')).toEqual({
+      stdout: '$HOME/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.out',
+      stderr: '$HOME/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.err'
+    })
+  });
 });
 
 async function validateFbsimctlisCalledOn(fbsimctl, func) {
