@@ -29,6 +29,16 @@ describe('Simulator', () => {
     await expect(element(by.label('Hello!!!'))).toBeVisible();
   });
 
+  it('launchApp({newInstance: true}) + sendToHome() + launchApp() - should bring up previous instance', async () => {
+    await device.launchApp({newInstance: true});
+    await element(by.label('Sanity')).tap();
+    await element(by.label('Say Hello')).tap();
+    await device.sendToHome();
+    await device.launchApp();
+
+    await expect(element(by.label('Hello!!!'))).toBeVisible();
+  });
+
   describe('device orientation', () => {
     beforeEach(async() => {
       await device.reloadReactNative();

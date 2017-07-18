@@ -48,6 +48,10 @@ describe('DeviceDriverBase', () => {
     expect(await deviceDriver.terminate()).toBeDefined();
   });
 
+  it(`sendToHome() - should be defined`, async() => {
+    expect(await deviceDriver.sendToHome()).toBeDefined();
+  });
+
   it(`relaunchApp() - should be defined`, async() => {
     expect(await deviceDriver.relaunchApp()).toBeDefined();
   });

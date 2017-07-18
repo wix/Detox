@@ -2,9 +2,9 @@ const Detox = require('./Detox');
 
 let detox;
 
-async function init(config) {
+async function init(config, params) {
   detox = new Detox(config);
-  await detox.init();
+  await detox.init(params);
 }
 
 async function cleanup() {

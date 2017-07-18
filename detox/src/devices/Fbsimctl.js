@@ -118,11 +118,17 @@ class Fbsimctl {
                       `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${this._getFrameworkPath()}" ` +
                       `/usr/bin/xcrun simctl launch --stdout=${logsInfo.simStdout} --stderr=${logsInfo.simStderr} ` +
                       `${udid} ${bundleId} --args ${launchArgs.join(' ')}`;
-    await exec.execWithRetriesAndLogs(launchBin, undefined, {
+    const result = await exec.execWithRetriesAndLogs(launchBin, undefined, {
       trying: `Launching ${bundleId}...`,
       successful: `${bundleId} launched. The stdout and stderr logs were recreated, you can watch them with:\n` +
                   `        tail -F ${logsInfo.absJoined}`
     }, 1);
+    return parseInt(result.stdout.trim().split(':')[1]);
+  }
+
+  async sendToHome(udid) {
+    const result = await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl launch ${udid} com.apple.springboard`);
+    return parseInt(result.stdout.trim().split(':')[1]);
   }
 
   getLogsPaths(udid) {

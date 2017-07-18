@@ -106,6 +106,7 @@ describe('Fbsimctl', () => {
 
   it(`launch() - is triggering exec`, async() => {
     fs.existsSync.mockReturnValue(true);
+    exec.mockReturnValue({stdout: "appId: 22 \n"});
     await fbsimctl.launch(simUdid, bundleId, []);
     expect(exec).toHaveBeenCalledTimes(1);
   });
@@ -118,6 +119,13 @@ describe('Fbsimctl', () => {
     } catch (ex) {
       expect(ex).toBeDefined();
     }
+  });
+
+  it(`sendToHome() - is triggering exec`, async() => {
+    fs.existsSync.mockReturnValue(true);
+    exec.mockReturnValue({stdout: "appId: 22 \n"});
+    await fbsimctl.sendToHome(simUdid, bundleId, []);
+    expect(exec).toHaveBeenCalledTimes(1);
   });
 
   it(`terminate() - is triggering exec`, async() => {

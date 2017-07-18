@@ -42,7 +42,7 @@ class Detox {
     }
   }
 
-  async init() {
+  async init(params = {launchApp: true}) {
     if (!(this.userConfig.configurations && _.size(this.userConfig.configurations) >= 1)) {
       throw new Error(`No configured devices`);
     }
@@ -65,13 +65,10 @@ class Detox {
     if (!deviceClass) {
       throw new Error(`'${deviceConfig.type}' is not supported`);
     }
-    await this._setDevice(sessionConfig, deviceClass, deviceConfig, this.client);
-  }
 
-  async _setDevice(sessionConfig, deviceClass, deviceConfig, client) {
-    const deviceDriver = new deviceClass(client);
+    const deviceDriver = new deviceClass(this.client);
     this.device = new Device(deviceConfig, sessionConfig, deviceDriver);
-    await this.device.prepare();
+    await this.device.prepare(params);
     global.device = this.device;
   }
 

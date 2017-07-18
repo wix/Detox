@@ -90,6 +90,12 @@ describe('SimulatorDriver', () => {
     expect(simulatorDriver._fbsimctl.launch).toHaveBeenCalledWith('deviceId', 'bundleId', 'someArgs');
   });
 
+  it(`sendToHome() should trigger fbsimctl.sendToHome`, async () => {
+    simulatorDriver = validSimulator();
+    await simulatorDriver.sendToHome('deviceId');
+    expect(simulatorDriver._fbsimctl.sendToHome).toHaveBeenCalled();
+  });
+
   it(`terminate() should trigger fbsimctl.terminate`, async () => {
     simulatorDriver = validSimulator();
     await simulatorDriver.terminate('deviceId', 'bundleId');
