@@ -124,7 +124,7 @@ class Device {
   }
 
   async openURL(params) {
-    if(typeof params !== 'object' || !params.url) {
+    if (typeof params !== 'object' || !params.url) {
       throw new Error(`openURL must be called with JSON params, and a value for 'url' key must be provided. example: await device.openURL({url: "url", sourceApp[optional]: "sourceAppBundleID"}`);
     }
 
@@ -175,7 +175,6 @@ class Device {
   }
 
   _prepareLaunchArgs(additionalLaunchArgs) {
-
     let args = [];
     const merged = _.merge(this._defaultLaunchArgs(), additionalLaunchArgs);
     const launchArgs = this._addPrefixToDefaultLaunchArgs(merged);

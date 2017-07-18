@@ -13,7 +13,7 @@ const validOneIosNoneDeviceNoSession = {
     "ios.none": {
       "type": "ios.none",
       "name": "iPhone 7 Plus, iOS 10.2"
-    },
+    }
   }
 };
 
