@@ -1,4 +1,4 @@
-describe('Simulator', () => {
+describe('Device', () => {
   it('reloadReactNative - should tap successfully', async () => {
     await device.reloadReactNative();
     await element(by.label('Sanity')).tap();
