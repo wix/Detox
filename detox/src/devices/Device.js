@@ -93,7 +93,10 @@ class Device {
   }
 
   /**deprecated */
-  async relaunchApp(params = {newInstance: true}, bundleId) {
+  async relaunchApp(params = {}, bundleId) {
+    if (params.newInstance === undefined) {
+      params['newInstance'] = true;
+    }
     await this.launchApp(params, bundleId);
   }
 
