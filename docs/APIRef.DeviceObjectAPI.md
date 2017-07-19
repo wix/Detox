@@ -87,7 +87,14 @@ A flag that enables relaunching into a fresh installation of the app (it will un
 await device.launchApp({delete: true});
 ```
 
+##### 6. Additional launch arguments
+Detox can start the app with additional launch arguments
 
+```js
+await device.launchApp({launchArgs: {arg1: 1, arg2: "2"}});
+```
+
+The added `launchArgs` will be passed through the launch command to the device and be accessible via `[[NSProcessInfo processInfo] arguments]`
 
 ### `device.relaunchApp(params)`
 **Deprecated** Use `device.launchApp(params)` instead. This method is now calling `launchApp({newInstance: true})` for backwards compatibility, it will be removed in Detox 6.X.X.<Br>
