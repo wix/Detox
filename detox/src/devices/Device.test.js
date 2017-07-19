@@ -144,6 +144,30 @@ describe('Device', () => {
       ["-detoxServer", "ws://localhost:8099", "-detoxSessionId", "test"]);
   });
 
+  it(`relaunchApp({newInstance: false}) should not terminate the app before launch`, async () => {
+    device = validDevice();
+
+    await device.relaunchApp({newInstance: false});
+
+    expect(device.deviceDriver.terminate).not.toHaveBeenCalled();
+  });
+
+  it(`relaunchApp({newInstance: true}) should terminate the app before launch`, async () => {
+    device = validDevice();
+
+    await device.relaunchApp({newInstance: true});
+
+    expect(device.deviceDriver.terminate).toHaveBeenCalled();
+  });
+
+  it(`relaunchApp() (no params) should terminate the app before launch - backwards compat`, async () => {
+    device = validDevice();
+
+    await device.relaunchApp();
+
+    expect(device.deviceDriver.terminate).toHaveBeenCalled();
+  });
+
   it(`relaunchApp() with delete=true`, async () => {
     device = validDevice();
     fs.existsSync.mockReturnValue(true);
