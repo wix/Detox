@@ -8,16 +8,16 @@
 - [`device.relaunchApp()` **Deprecated**](#devicerelaunchappparams)
 - [`device.terminateApp()`](#deviceterminateapp)
 - [`device.reloadReactNative()`](#devicereloadreactnative)
-- [`device.sendToHome()`](#device.sendToHome)
+- [`device.sendToHome()`](#devicesendtohome)
 - [`device.installApp()`](#deviceinstallapp)
 - [`device.uninstallApp()`](#deviceuninstallapp)
-- [`device.openURL(url)`](#deviceopenurlurl)
-- [`device.sendUserNotification(params)`](#devicesendusernotificationsparams)
+- [`device.openURL(url)`](#deviceopenurlurl-sourceappoptional)
+- [`device.sendUserNotification(params)`](#devicesendusernotificationparams)
 - [`device.setOrientation(orientation)`](#devicesetorientationorientation)
-- [`device.setLocation(lat, lon)`](#devicesetlocation)
-- [`device.setURLBlacklist([urls])`](deviceseturlblacklist)
-- [`device.enableSynchronization()`](deviceenablesynchronization)
-- [`device.disableSynchronization()`](devicedisablesynchronization)
+- [`device.setLocation(lat, lon)`](#devicesetlocationlat-lon)
+- [`device.setURLBlacklist([urls])`](#deviceseturlblacklisturls)
+- [`device.enableSynchronization()`](#deviceenablesynchronization)
+- [`device.disableSynchronization()`](#devicedisablesynchronization)
 
 ### `device.launchApp(params)`
 Launch the app defined in the current [`configuration`](APIRef.Configuration.md).
