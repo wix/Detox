@@ -38,7 +38,7 @@ Initiating your test suite
 
 
 
-| Option | Description |
+| Option| Description |
 | --- | --- |
 | -h, --help                                    | output usage information |
 | -r, --runner [runner]                         | Test runner (currently supports mocha) |
@@ -49,6 +49,7 @@ Initiating your test suite
 | -u, --cleanup                                 | shutdown simulator when test is over, useful for CI ipts, to make sure detox exists cleanly with no residue |
 | -d, --debug-synchronization \<value\>         | When an action/expectation takes a significant amount time use this option to print device synchronization status. The status will be printed if the ion takes more than [value]ms to complete |
 | -a, --artifacts-location \<path\>             | Artifacts destination path (currently contains only logs). For more details, please check the [Artifacts doc](APIRef.Artifacts.md#artifacts) |
+|&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;||
     
     
 
@@ -61,6 +62,7 @@ Run a command defined in 'configuration.build'
 | --- | --- |
 | -h, --help                            |  output usage information |
 | -c, --configuration \<device config\> |  Select a device configuration from your defined configurations,if not supplied, and there's only one configuration, detox will default to it |
+|&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;||
 
 
 ### run-server
