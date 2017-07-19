@@ -90,9 +90,6 @@ function createReturnStatement(className, json) {
 }
 
 function createTypeCheck(json) {
-  // if (typeof argName === 'number') {
-  //   throw new Error('argName should be a number, but got ' + argName);
-  // }
   const generateCheck = (checkGenerator, errorStringGenerator) => ({
     type,
     name
@@ -103,6 +100,10 @@ function createTypeCheck(json) {
         t.newExpression(t.identifier("Error"), [errorStringGenerator({ name })])
       )
     );
+
+  // if (typeof argName === 'number') {
+  //   throw new Error('argName should be a number, but got ' + argName + '(' + typeof argName +  ')');
+  // }
 
   const typeCheckTestGenerator = typeAssertion => ({ name }) =>
     t.binaryExpression(
@@ -115,9 +116,18 @@ function createTypeCheck(json) {
     t.binaryExpression(
       "+",
       t.stringLiteral(name + " should be a " + typeAssertion + ", but got "),
-      t.identifier(name)
+      t.binaryExpression("+", 
+        t.identifier(name), 
+        t.binaryExpression("+", 
+          t.stringLiteral(" ("), 
+          t.binaryExpression("+",
+            t.unaryExpression("typeof", t.identifier(name)),
+            t.stringLiteral(")")
+          )
+        )
+      ) 
     );
-
+ 
   const generateTypeCheck = typeAssertion =>
     generateCheck(
       typeCheckTestGenerator(typeAssertion),

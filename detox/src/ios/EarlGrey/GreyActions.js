@@ -1,7 +1,7 @@
 class GREYActions {
   /*@return A GREYAction that performs multiple taps of a specified @c count.
 */static actionForMultipleTapsWithCount(count) {
-    if (typeof count !== "number") throw new Error("count should be a number, but got " + count);
+    if (typeof count !== "number") throw new Error("count should be a number, but got " + (count + (" (" + (typeof count + ")"))));
     return {
       target: {
         type: "Class",
@@ -18,8 +18,8 @@ class GREYActions {
   /*@return A GREYAction that performs multiple taps of a specified @c count at a specified
 @c point.
 */static actionForMultipleTapsWithCountatPoint(count, point) {
-    if (typeof count !== "number") throw new Error("count should be a number, but got " + count);
-    if (typeof point !== "object") throw new Error("point should be a object, but got " + point);
+    if (typeof count !== "number") throw new Error("count should be a number, but got " + (count + (" (" + (typeof count + ")"))));
+    if (typeof point !== "object") throw new Error("point should be a object, but got " + (point + (" (" + (typeof point + ")"))));
     return {
       target: {
         type: "Class",
@@ -57,7 +57,7 @@ simulate a long press.
 
 @return A GREYAction that performs a long press on an element.
 */static actionForLongPressWithDuration(duration) {
-    if (typeof duration !== "number") throw new Error("duration should be a number, but got " + duration);
+    if (typeof duration !== "number") throw new Error("duration should be a number, but got " + (duration + (" (" + (typeof duration + ")"))));
     return {
       target: {
         type: "Class",
@@ -79,8 +79,8 @@ simulate a long press.
 
 @return A GREYAction that performs a long press on an element.
 */static actionForLongPressAtPointduration(point, duration) {
-    if (typeof point !== "object") throw new Error("point should be a object, but got " + point);
-    if (typeof duration !== "number") throw new Error("duration should be a number, but got " + duration);
+    if (typeof point !== "object") throw new Error("point should be a object, but got " + (point + (" (" + (typeof point + ")"))));
+    if (typeof duration !== "number") throw new Error("duration should be a number, but got " + (duration + (" (" + (typeof duration + ")"))));
     return {
       target: {
         type: "Class",
@@ -106,7 +106,7 @@ simulate a long press.
 @return A GREYAction that scrolls a scroll view in a given @c direction for a given @c amount.
 */static actionForScrollInDirectionamount(direction, amount) {
     if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
-    if (typeof amount !== "number") throw new Error("amount should be a number, but got " + amount);
+    if (typeof amount !== "number") throw new Error("amount should be a number, but got " + (amount + (" (" + (typeof amount + ")"))));
     return {
       target: {
         type: "Class",
@@ -141,9 +141,9 @@ exclusive, of the total height of the scrollable visible area.
 starting from the given start points.
 */static actionForScrollInDirectionamountxOriginStartPercentageyOriginStartPercentage(direction, amount, xOriginStartPercentage, yOriginStartPercentage) {
     if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
-    if (typeof amount !== "number") throw new Error("amount should be a number, but got " + amount);
-    if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + xOriginStartPercentage);
-    if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + yOriginStartPercentage);
+    if (typeof amount !== "number") throw new Error("amount should be a number, but got " + (amount + (" (" + (typeof amount + ")"))));
+    if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + (xOriginStartPercentage + (" (" + (typeof xOriginStartPercentage + ")"))));
+    if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + (yOriginStartPercentage + (" (" + (typeof yOriginStartPercentage + ")"))));
     return {
       target: {
         type: "Class",
@@ -199,8 +199,8 @@ exclusive, of the total height of the scrollable visible area.
 action starting from the given start point.
 */static actionForScrollToContentEdgexOriginStartPercentageyOriginStartPercentage(edge, xOriginStartPercentage, yOriginStartPercentage) {
     if (!["Left", "Right", "Top", "Bottom"].some(option => option === edge)) throw new Error("edge should be one of [Left, Right, Top, Bottom], but got " + edge);
-    if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + xOriginStartPercentage);
-    if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + yOriginStartPercentage);
+    if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + (xOriginStartPercentage + (" (" + (typeof xOriginStartPercentage + ")"))));
+    if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + (yOriginStartPercentage + (" (" + (typeof yOriginStartPercentage + ")"))));
     return {
       target: {
         type: "Class",
@@ -275,8 +275,8 @@ of the view. This must be between 0 and 1.
 the specified point.
 */static actionForSwipeFastInDirectionxOriginStartPercentageyOriginStartPercentage(direction, xOriginStartPercentage, yOriginStartPercentage) {
     if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
-    if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + xOriginStartPercentage);
-    if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + yOriginStartPercentage);
+    if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + (xOriginStartPercentage + (" (" + (typeof xOriginStartPercentage + ")"))));
+    if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + (yOriginStartPercentage + (" (" + (typeof yOriginStartPercentage + ")"))));
     return {
       target: {
         type: "Class",
@@ -309,8 +309,8 @@ of the view. This must be between 0 and 1.
 the specified point.
 */static actionForSwipeSlowInDirectionxOriginStartPercentageyOriginStartPercentage(direction, xOriginStartPercentage, yOriginStartPercentage) {
     if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
-    if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + xOriginStartPercentage);
-    if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + yOriginStartPercentage);
+    if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + (xOriginStartPercentage + (" (" + (typeof xOriginStartPercentage + ")"))));
+    if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + (yOriginStartPercentage + (" (" + (typeof yOriginStartPercentage + ")"))));
     return {
       target: {
         type: "Class",
@@ -340,7 +340,7 @@ the specified point.
 direction from the specified point.
 */static actionForMultiFingerSwipeSlowInDirectionnumberOfFingers(direction, numberOfFingers) {
     if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
-    if (typeof numberOfFingers !== "number") throw new Error("numberOfFingers should be a number, but got " + numberOfFingers);
+    if (typeof numberOfFingers !== "number") throw new Error("numberOfFingers should be a number, but got " + (numberOfFingers + (" (" + (typeof numberOfFingers + ")"))));
     return {
       target: {
         type: "Class",
@@ -367,7 +367,7 @@ direction from the specified point.
 direction from the specified point.
 */static actionForMultiFingerSwipeFastInDirectionnumberOfFingers(direction, numberOfFingers) {
     if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
-    if (typeof numberOfFingers !== "number") throw new Error("numberOfFingers should be a number, but got " + numberOfFingers);
+    if (typeof numberOfFingers !== "number") throw new Error("numberOfFingers should be a number, but got " + (numberOfFingers + (" (" + (typeof numberOfFingers + ")"))));
     return {
       target: {
         type: "Class",
@@ -394,9 +394,9 @@ direction from the specified point.
 direction from the specified point.
 */static actionForMultiFingerSwipeSlowInDirectionnumberOfFingersxOriginStartPercentageyOriginStartPercentage(direction, numberOfFingers, xOriginStartPercentage, yOriginStartPercentage) {
     if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
-    if (typeof numberOfFingers !== "number") throw new Error("numberOfFingers should be a number, but got " + numberOfFingers);
-    if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + xOriginStartPercentage);
-    if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + yOriginStartPercentage);
+    if (typeof numberOfFingers !== "number") throw new Error("numberOfFingers should be a number, but got " + (numberOfFingers + (" (" + (typeof numberOfFingers + ")"))));
+    if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + (xOriginStartPercentage + (" (" + (typeof xOriginStartPercentage + ")"))));
+    if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + (yOriginStartPercentage + (" (" + (typeof yOriginStartPercentage + ")"))));
     return {
       target: {
         type: "Class",
@@ -429,9 +429,9 @@ direction from the specified point.
 direction from the specified point.
 */static actionForMultiFingerSwipeFastInDirectionnumberOfFingersxOriginStartPercentageyOriginStartPercentage(direction, numberOfFingers, xOriginStartPercentage, yOriginStartPercentage) {
     if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
-    if (typeof numberOfFingers !== "number") throw new Error("numberOfFingers should be a number, but got " + numberOfFingers);
-    if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + xOriginStartPercentage);
-    if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + yOriginStartPercentage);
+    if (typeof numberOfFingers !== "number") throw new Error("numberOfFingers should be a number, but got " + (numberOfFingers + (" (" + (typeof numberOfFingers + ")"))));
+    if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + (xOriginStartPercentage + (" (" + (typeof xOriginStartPercentage + ")"))));
+    if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + (yOriginStartPercentage + (" (" + (typeof yOriginStartPercentage + ")"))));
     return {
       target: {
         type: "Class",
@@ -464,7 +464,7 @@ Use @c kGREYPinchAngleDefault for the default angle (currently set to
 @return A GREYAction that performs a fast pinch on the whole view in the specified @c direction.
 */static actionForPinchFastInDirectionwithAngle(pinchDirection, angle) {
     if (!["Outward", "Inward"].some(option => option === pinchDirection)) throw new Error("pinchDirection should be one of [Outward, Inward], but got " + pinchDirection);
-    if (typeof angle !== "number") throw new Error("angle should be a number, but got " + angle);
+    if (typeof angle !== "number") throw new Error("angle should be a number, but got " + (angle + (" (" + (typeof angle + ")"))));
     return {
       target: {
         type: "Class",
@@ -491,7 +491,7 @@ Use @c kGREYPinchAngleDefault for the default angle (currently set to
 @return A GREYAction that performs a slow pinch on the whole view in the specified @c direction.
 */static actionForPinchSlowInDirectionwithAngle(pinchDirection, angle) {
     if (!["Outward", "Inward"].some(option => option === pinchDirection)) throw new Error("pinchDirection should be one of [Outward, Inward], but got " + pinchDirection);
-    if (typeof angle !== "number") throw new Error("angle should be a number, but got " + angle);
+    if (typeof angle !== "number") throw new Error("angle should be a number, but got " + (angle + (" (" + (typeof angle + ")"))));
     return {
       target: {
         type: "Class",
@@ -518,7 +518,7 @@ that is closest to @c value.
 
 @return A GREYAction that moves a slider to a given @c value.
 */static actionForMoveSliderToValue(value) {
-    if (typeof value !== "number") throw new Error("value should be a number, but got " + value);
+    if (typeof value !== "number") throw new Error("value should be a number, but got " + (value + (" (" + (typeof value + ")"))));
     return {
       target: {
         type: "Class",
@@ -539,7 +539,7 @@ button multiple times.
 
 @return A GREYAction that sets the given @c value on a stepper.
 */static actionForSetStepperValue(value) {
-    if (typeof value !== "number") throw new Error("value should be a number, but got " + value);
+    if (typeof value !== "number") throw new Error("value should be a number, but got " + (value + (" (" + (typeof value + ")"))));
     return {
       target: {
         type: "Class",
@@ -575,7 +575,7 @@ element and it's position is relative to the origin of the element, as in
 
 @return A GREYAction to tap on an element at a specific point.
 */static actionForTapAtPoint(point) {
-    if (typeof point !== "object") throw new Error("point should be a object, but got " + point);
+    if (typeof point !== "object") throw new Error("point should be a object, but got " + (point + (" (" + (typeof point + ")"))));
     return {
       target: {
         type: "Class",
@@ -598,7 +598,7 @@ For Example: @"Helpo\b\bloWorld" will type HelloWorld in Objective-C.
 
 @return A GREYAction to type a specific text string in a text field.
 */static actionForTypeText(text) {
-    if (typeof text !== "string") throw new Error("text should be a string, but got " + text);
+    if (typeof text !== "string") throw new Error("text should be a string, but got " + (text + (" (" + (typeof text + ")"))));
     return {
       target: {
         type: "Class",
@@ -618,7 +618,7 @@ For Example: @"Helpo\b\bloWorld" will type HelloWorld in Objective-C.
 
 @return A GREYAction to type a specific text string in a text field.
 */static actionForReplaceText(text) {
-    if (typeof text !== "string") throw new Error("text should be a string, but got " + text);
+    if (typeof text !== "string") throw new Error("text should be a string, but got " + (text + (" (" + (typeof text + ")"))));
     return {
       target: {
         type: "Class",
@@ -651,7 +651,7 @@ implement the selector UISwitch::isOn and include UISwitch controls.
 
 @return A GREYAction to toggle a UISwitch.
 */static actionForTurnSwitchOn(on) {
-    if (typeof on !== "boolean") throw new Error("on should be a boolean, but got " + on);
+    if (typeof on !== "boolean") throw new Error("on should be a boolean, but got " + (on + (" (" + (typeof on + ")"))));
     return {
       target: {
         type: "Class",
@@ -671,7 +671,7 @@ implement the selector UISwitch::isOn and include UISwitch controls.
 
 @return A GREYAction that sets a given date/time on a UIDatePicker.
 */static actionForSetDate(date) {
-    if (typeof date !== "number") throw new Error("date should be a number, but got " + date);
+    if (typeof date !== "number") throw new Error("date should be a number, but got " + (date + (" (" + (typeof date + ")"))));
     return {
       target: {
         type: "Class",
@@ -692,8 +692,8 @@ implement the selector UISwitch::isOn and include UISwitch controls.
 
 @return A GREYAction to set the value of a specified column of a UIPickerView.
 */static actionForSetPickerColumntoValue(column, value) {
-    if (typeof column !== "number") throw new Error("column should be a number, but got " + column);
-    if (typeof value !== "string") throw new Error("value should be a string, but got " + value);
+    if (typeof column !== "number") throw new Error("column should be a number, but got " + (column + (" (" + (typeof column + ")"))));
+    if (typeof value !== "string") throw new Error("value should be a string, but got " + (value + (" (" + (typeof value + ")"))));
     return {
       target: {
         type: "Class",
@@ -718,7 +718,7 @@ implement the selector UISwitch::isOn and include UISwitch controls.
 
 @return A GREYAction that executes JavaScript code against a UIWebView.
 */static actionForJavaScriptExecutionoutput(js, outResult) {
-    if (typeof js !== "string") throw new Error("js should be a string, but got " + js);
+    if (typeof js !== "string") throw new Error("js should be a string, but got " + (js + (" (" + (typeof js + ")"))));
     return {
       target: {
         type: "Class",
