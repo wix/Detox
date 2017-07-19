@@ -36,13 +36,15 @@ Initiating your test suite
 
 `detox test [options]`
 
+
+
 | Option | Description |
 | --- | --- |
 | -h, --help                                    | output usage information |
 | -r, --runner [runner]                         | Test runner (currently supports mocha) |
 | -o, --runner-config \<config\>                | Test runner config file |
 | -l, --loglevel [value]                        | info, debug, verbose, silly, wss |
-| -c, --configuration \<device config\>         | Select a device configuration from your defined figurations,if not supplied, and there's only one configuration, detox will default to it |
+| -c, -configuration \<device config\>          | Select a device configuration from your defined figurations,if not supplied, and there's only one configuration, detox will default to it |
 | -r, --reuse                                   | Reuse existing installed app (do not delete and re-tall) for a faster run. |
 | -u, --cleanup                                 | shutdown simulator when test is over, useful for CI ipts, to make sure detox exists cleanly with no residue |
 | -d, --debug-synchronization \<value\>         | When an action/expectation takes a significant amount time use this option to print device synchronization status. The status will be printed if the ion takes more than [value]ms to complete |
@@ -57,8 +59,8 @@ Run a command defined in 'configuration.build'
 
 | Option | Description |
 | --- | --- |
-| -h <br> --help                                                           |  output usage information |
-| -c \<device config\> <br> <nobr>--configuration \<device config\></nobr> |  Select a device configuration from your defined configurations,if not supplied, and there's only one configuration, detox will default to it |
+| -h, --help                            |  output usage information |
+| -c, --configuration \<device config\> |  Select a device configuration from your defined configurations,if not supplied, and there's only one configuration, detox will default to it |
 
 
 ### run-server
@@ -68,7 +70,7 @@ Start a standalone detox server
 
 | Option | Description |
 | --- | --- |
-| -h <br> --help |  output usage information |
+| -h, --help |  output usage information |
 
 
 ### init
@@ -78,8 +80,8 @@ Create initial e2e tests folder
 
 | Option | Description |
 | --- | --- |
-| -h <br> --help |  output usage information |
-| -r \<runner\>  | <nobr>--runner \<runner\></nobr> Test runner (currently supports only `mocha`) |
+| -h, --help   |  output usage information |
+| -r, --runner | Test runner (currently supports only `mocha`) |
 
 ### help
 Display help for a command
