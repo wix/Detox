@@ -14,6 +14,8 @@ program
   .option('-d, --debug-synchronization [value]',
     'When an action/expectation takes a significant amount of time use this option to print device synchronization status. '
     + 'The status will be printed if the action takes more than [value]ms to complete')
+  .option('-a, --artifacts-location [path]', 'Artifacts destination path (currently will contain only logs). '
+                                             + 'If the destination already exists, it will be removed first')
   .parse(process.argv);
 
 const config = require(path.join(process.cwd(), 'package.json')).detox;
@@ -23,6 +25,7 @@ const loglevel = program.loglevel ? `--loglevel ${program.loglevel}` : '';
 const configuration = program.configuration ? `--configuration ${program.configuration}` : '';
 const cleanup = program.cleanup ? `--cleanup` : '';
 const reuse = program.reuse ? `--reuse` : '';
+const artifactsLocation = program.artifactsLocation ? `--artifacts-location ${program.artifactsLocation}` : '';
 
 if (typeof program.debugSynchronization === "boolean") {
   program.debugSynchronization = 3000;
@@ -33,7 +36,7 @@ let debugSynchronization = program.debugSynchronization ? `--debug-synchronizati
 let command;
 switch (program.runner) {
   case 'mocha':
-    command = `node_modules/.bin/${program.runner} ${testFolder} --opts ${testFolder}/${program.runnerConfig} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization}`;
+    command = `node_modules/.bin/${program.runner} ${testFolder} --opts ${testFolder}/${program.runnerConfig} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${artifactsLocation}`;
     break;
   default:
     throw new Error(`${program.runner} is not supported in detox cli tools. You can still run your tests with the runner's own cli tool`);

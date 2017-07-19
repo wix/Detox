@@ -188,7 +188,7 @@ Do the following:
 
 2. Open Xcode
 
-3. Attach you Xcode you your app's process
+3. Attach Xcode to your app's process
 <img src="img/attach-to-process.jpg">
 
 4. Press the `Debug View Hierarchy` button

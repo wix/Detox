@@ -4,7 +4,7 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "version": "5.3.0",
+  "version": "5.5.0",
   "bin": {
     "detox": "local-cli/detox.js"
   },
@@ -44,13 +44,14 @@
     "eslint-plugin-react-native": "^2.3.2",
     "jest": "^18.1.0",
     "minimist": "^1.2.0",
+    "mockdate": "^2.0.1",
     "shelljs": "^0.7.3",
     "ttab": "^0.3.1"
   },
   "dependencies": {
     "child-process-promise": "^2.2.0",
     "commander": "^2.9.0",
-    "detox-server": "^2.0.3",
+    "detox-server": "^2.0.4",
     "get-port": "^2.1.0",
     "lodash": "^4.14.1",
     "npmlog": "^4.0.2",

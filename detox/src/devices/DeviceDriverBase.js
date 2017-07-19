@@ -19,6 +19,10 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
+  async sendToHome() {
+    return await Promise.resolve('');
+  }
+
   async relaunchApp() {
     return await Promise.resolve('');
   }
@@ -104,6 +108,13 @@ class DeviceDriverBase {
 
   validateDeviceConfig(deviceConfig) {
 
+  }
+
+  getLogsPaths(deviceId) {
+    return {
+      stdout: undefined,
+      stderr: undefined
+    };
   }
 }
 

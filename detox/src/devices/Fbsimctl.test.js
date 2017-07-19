@@ -104,14 +104,15 @@ describe('Fbsimctl', () => {
     await validateFbsimctlisCalledOn(fbsimctl, async () => fbsimctl.uninstall(simUdid, bundleId));
   });
 
-  it(`launch() - is triggering fbsimctl launch`, async() => {
+  it(`launch() - is triggering exec`, async() => {
     fs.existsSync.mockReturnValue(true);
-    await validateFbsimctlisCalledOn(fbsimctl, async () => fbsimctl.launch(simUdid, bundleId, [{param: "param1"}]));
+    exec.mockReturnValue({stdout: "appId: 22 \n"});
+    await fbsimctl.launch(simUdid, bundleId, []);
+    expect(exec).toHaveBeenCalledTimes(1);
   });
 
-  it(`launch() - is triggering fbsimctl launch when no Detox.framework exists`, async() => {
+  it(`launch() - should throw when no Detox.framework exists`, async() => {
     fs.existsSync.mockReturnValue(false);
-    fbsimctl._execFbsimctlCommand = jest.fn();
     try {
       await fbsimctl.launch(simUdid, bundleId, []);
       fail(`should fail when Detox.framework doesn't exist`);
@@ -120,8 +121,16 @@ describe('Fbsimctl', () => {
     }
   });
 
-  it(`terminate() - is triggering fbsimctl terminate`, async() => {
-    await validateFbsimctlisCalledOn(fbsimctl, async () => fbsimctl.terminate(simUdid, bundleId));
+  it(`sendToHome() - is triggering exec`, async() => {
+    fs.existsSync.mockReturnValue(true);
+    exec.mockReturnValue({stdout: "appId: 22 \n"});
+    await fbsimctl.sendToHome(simUdid, bundleId, []);
+    expect(exec).toHaveBeenCalledTimes(1);
+  });
+
+  it(`terminate() - is triggering exec`, async() => {
+    await fbsimctl.terminate(simUdid, bundleId);
+    expect(exec).toHaveBeenCalledTimes(1);
   });
 
   it(`shutdown() - is triggering fbsimctl shutdown`, async() => {
@@ -179,6 +188,13 @@ describe('Fbsimctl', () => {
   
     const options = {args: `an argument`};
     expect(await fbsimctl._execFbsimctlCommand(options, '', 10, 1)).toEqual(successfulResult);
+  });
+
+  it(`getLogsPath() should return proper paths`, () => {
+    expect(fbsimctl.getLogsPaths('123')).toEqual({
+      stdout: '$HOME/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.out',
+      stderr: '$HOME/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.err'
+    })
   });
 });
 

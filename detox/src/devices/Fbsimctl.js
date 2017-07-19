@@ -9,6 +9,18 @@ const retry = require('../utils/retry');
 // https://github.com/facebook/FBSimulatorControl/issues/250
 // https://github.com/facebook/FBSimulatorControl/blob/master/fbsimctl/FBSimulatorControlKitTests/Tests/Unit/CommandParsersTests.swift
 
+class LogsInfo {
+  constructor(udid) {
+    const logPrefix = '/tmp/detox.last_launch_app_log.';
+    this.simStdout = logPrefix + 'out';
+    this.simStderr = logPrefix + 'err';
+    const simDataRoot = `$HOME/Library/Developer/CoreSimulator/Devices/${udid}/data`;
+    this.absStdout = simDataRoot + this.simStdout;
+    this.absStderr = simDataRoot + this.simStderr;
+    this.absJoined = `${simDataRoot}${logPrefix}{out,err}`
+  }
+}
+
 class Fbsimctl {
 
   constructor() {
@@ -63,9 +75,9 @@ class Fbsimctl {
     if(initialState === 'Booting') {
       log.info(`Device ${udid} is already booting`);
     } else {
-      const launchBin = "bash -c '`xcode-select -p`/Applications/Simulator.app/Contents/MacOS/Simulator " +
+      const launchBin = "/bin/bash -c '`xcode-select -p`/Applications/Simulator.app/Contents/MacOS/Simulator " +
                         `--args -CurrentDeviceUDID ${udid} -ConnectHardwareKeyboard 0 ` +
-                        "-DeviceSetPath ~/Library/Developer/CoreSimulator/Devices > /dev/null 2>&1 < /dev/null &'";
+                        "-DeviceSetPath $HOME/Library/Developer/CoreSimulator/Devices > /dev/null 2>&1 < /dev/null &'";
       await exec.execWithRetriesAndLogs(launchBin, undefined, {
         trying: `Launching device ${udid}...`,
         successful: ''
@@ -101,37 +113,38 @@ class Fbsimctl {
   }
 
   async launch(udid, bundleId, launchArgs) {
-    const args = [];
-    _.forEach(launchArgs, (value, key) => {
-      args.push(`${key} ${value}`);
-    });
-
-    const statusLogs = {
+    const logsInfo = new LogsInfo(udid);
+    const launchBin = `/bin/cat /dev/null >${logsInfo.absStdout} 2>${logsInfo.absStderr} && ` +
+                      `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${this._getFrameworkPath()}" ` +
+                      `/usr/bin/xcrun simctl launch --stdout=${logsInfo.simStdout} --stderr=${logsInfo.simStderr} ` +
+                      `${udid} ${bundleId} --args ${launchArgs.join(' ')}`;
+    const result = await exec.execWithRetriesAndLogs(launchBin, undefined, {
       trying: `Launching ${bundleId}...`,
-      successful: `${bundleId} launched`
-    };
-    const options = {
-      prefix: `export OS_ACTIVITY_DT_MODE=enable FBSIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${this._getFrameworkPath()}"`,
-      args: `${udid} launch --stderr ${bundleId} ${args.join(' ')}`
-    };
-    const result = await this._execFbsimctlCommand(options, statusLogs);
-    // in the future we'll allow expectations on logs and _listenOnAppLogfile will always run (remove if)
-    //this._listenOnAppLogfile(this._getAppLogfile(bundleId, result.stdout));
+      successful: `${bundleId} launched. The stdout and stderr logs were recreated, you can watch them with:\n` +
+                  `        tail -F ${logsInfo.absJoined}`
+    }, 1);
+    return parseInt(result.stdout.trim().split(':')[1]);
+  }
+
+  async sendToHome(udid) {
+    const result = await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl launch ${udid} com.apple.springboard`);
+    return parseInt(result.stdout.trim().split(':')[1]);
+  }
+
+  getLogsPaths(udid) {
+    const logsInfo = new LogsInfo(udid);
+    return {
+      stdout: logsInfo.absStdout,
+      stderr: logsInfo.absStderr
+    }
   }
 
   async terminate(udid, bundleId) {
-    const statusLogs = {
+    const launchBin = `/usr/bin/xcrun simctl terminate ${udid} ${bundleId}`;
+    await exec.execWithRetriesAndLogs(launchBin, undefined, {
       trying: `Terminating ${bundleId}...`,
       successful: `${bundleId} terminated`
-    };
-    const options = {args: `${udid}  terminate ${bundleId}`};
-    try {
-      const result = await this._execFbsimctlCommand(options, statusLogs, 1);
-    } catch (ex) {
-      //this is ok
-    }
-    // in the future we'll allow expectations on logs and _listenOnAppLogfile will always run (remove if)
-    //this._listenOnAppLogfile(this._getAppLogfile(bundleId, result.stdout));
+    }, 1);
   }
 
   async shutdown(udid) {
