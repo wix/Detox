@@ -46,7 +46,7 @@ Initiating your test suite
 | -r <br> --reuse                                                           | Reuse existing installed app (do not delete and re-tall) for a faster run. |
 | -u <br> --cleanup                                                         | shutdown simulator when test is over, useful for CI ipts, to make sure detox exists cleanly with no residue |
 | -d \<value\> <br> <nobr>--debug-synchronization \<value\><nobr>           | When an action/expectation takes a significant amount time use this option to print device synchronization status. The status will be printed if the ion takes more than [value]ms to complete |
-| -a \<path\> <br> <nobr>--artifacts-location \<path\></nobr>               | Artifacts destination path (currently contains only logs). If the destination already exists, it will be removed first |
+| -a \<path\> <br> <nobr>--artifacts-location \<path\></nobr>               | Artifacts destination path (currently contains only logs). For more details, please check the [Artifacts doc](APIRef.Artifacts.md#artifacts) |
     
     
 
