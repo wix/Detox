@@ -5,7 +5,7 @@
 	"scripts": {
 		"packager": "react-native start",
 		"detox-server": "detox run-server",
-		"e2e": "detox test --configuration ios.sim.release --debug-synchronization 500",
+		"e2e": "detox test --configuration ios.sim.release --debug-synchronization 3000",
 		"build": "detox build --configuration ios.sim.release"
 	},
 	"dependencies": {
