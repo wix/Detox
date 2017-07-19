@@ -14,5 +14,5 @@ beforeEach(async function() {
 });
 
 afterEach(async function() {
-  await detox.afterEach(this.currentTest.parent.title, this.currentTest.title);
+  await detox.afterEach();
 });

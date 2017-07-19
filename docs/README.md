@@ -19,6 +19,7 @@
 - [Manual Synchronization](APIRef.waitFor.md)
 - [Mocking Deep Links (App Launch From URL)](APIRef.MockingOpenFromURL.md)
 - [Mocking User Notifications](APIRef.MockingUserNotifications.md)
+- [Detox Command Line Tools (detox-cli)](APIRef.DetoxCLI.md)
 
 ## Troubleshooting
 
