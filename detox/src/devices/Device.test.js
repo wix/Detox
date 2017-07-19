@@ -130,7 +130,7 @@ describe('Device', () => {
 
     expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
-      ["-detoxServer", "ws://localhost:8099", "-detoxSessionId", "test"]);
+      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"});
   });
 
   it(`relaunchApp()`, async () => {
@@ -265,7 +265,7 @@ describe('Device', () => {
 
     expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
-      ["-detoxServer", "ws://localhost:8099", "-detoxSessionId", "test", "-arg1", "1", "-arg2", 2]);
+      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-arg1": "1", "-arg2": 2});
   });
 
   it(`sendToHome() should pass to device driver`, async () => {

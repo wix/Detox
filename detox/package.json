@@ -74,6 +74,10 @@
       "node_modules",
       "src"
     ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "EmulatorDriver.js"
+    ],
     "resetMocks": true,
     "resetModules": true,
     "coverageThreshold": {
