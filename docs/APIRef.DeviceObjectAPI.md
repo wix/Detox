@@ -15,6 +15,9 @@
 - [`device.sendUserNotification(params)`](#devicesendusernotificationsparams)
 - [`device.setOrientation(orientation)`](#devicesetorientationorientation)
 - [`device.setLocation(lat, lon)`](#devicesetlocation)
+- [`device.setURLBlacklist([urls])`](deviceseturlblacklist)
+- [`device.enableSynchronization()`](deviceenablesynchronization)
+- [`device.disableSynchronization()`](devicedisablesynchronization)
 
 ### `device.launchApp(params)`
 Launch the app defined in the current [`configuration`](APIRef.Configuration.md).
@@ -159,3 +162,32 @@ Check out Detox's [own test suite](../detox/test/e2e/f-device.js)
 
 ### `device.setLocation(lat, lon)`
 Sets the simulator location to the given latitude and longitude.
+
+
+### `device.setURLBlacklist([urls])`
+
+Disable [EarlGrey's network synchronization mechanism](https://github.com/google/EarlGrey/blob/master/docs/api.md#network) on preffered endpoints. Usful if you want to on skip over synchronizing on certain URLs.
+
+```js
+await device.setURLBlacklist(['.*127.0.0.1.*']);
+```
+
+```js
+await device.setURLBlacklist(['.*my.ignored.endpoint.*']);
+```
+
+### `device.enableSynchronization()`
+Enable [EarlGrey's synchronization mechanism](https://github.com/google/EarlGrey/blob/master/docs/api.md#synchronization
+) (enabled by default). **This is being reset on every new instance of the app.**
+```js
+await device.enableSynchronization();
+```
+
+
+### `device.disableSynchronization()`
+Disable [EarlGrey's synchronization mechanism](https://github.com/google/EarlGrey/blob/master/docs/api.md#synchronization
+) (enabled by default) **This is being reset on every new instance of the app.**
+
+```js
+await device.disableSynchronization();
+```
