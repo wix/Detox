@@ -19,27 +19,28 @@ function setInvocationManager(im) {
 }
 
 const ViewActions = 'android.support.test.espresso.action.ViewActions';
+const DetoxAction = 'com.wix.detox.espresso.DetoxAction';
 
 class Action {}
 
 class TapAction extends Action {
   constructor() {
     super();
-    this._call = invoke.call(invoke.Class(ViewActions), 'click');
+    this._call = invoke.call(invoke.Android.Class(ViewActions), 'click');
   }
 }
 
 class LongPressAction extends Action {
   constructor() {
     super();
-    this._call = invoke.call(invoke.Class(ViewActions), 'longClick');
+    this._call = invoke.call(invoke.Android.Class(ViewActions), 'longClick');
   }
 }
 
 class DoubleClickAction extends Action {
   constructor() {
     super();
-    this._call = invoke.call(invoke.Class(ViewActions), 'doubleClick');
+    this._call = invoke.call(invoke.Android.Class(ViewActions), 'doubleClick');
   }
 }
 
@@ -55,7 +56,7 @@ class ReplaceTextAction extends Action {
   constructor(value) {
     super();
     if (typeof value !== 'string') throw new Error(`ReplaceTextAction ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.Android.Class(ViewActions), 'replaceText:', value);
+    this._call = invoke.call(invoke.Android.Class(ViewActions), 'replaceText', value);
   }
 }
 
@@ -78,7 +79,7 @@ class ScrollAmountAction extends Action {
       default: throw new Error(`ScrollAmountAction direction must be a 'left'/'right'/'up'/'down', got ${direction}`);
     }
     if (typeof amount !== 'number') throw new Error(`ScrollAmountAction ctor 2nd argument must be a number, got ${typeof amount}`);
-    this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForScrollInDirection:amount:', invoke.IOS.NSInteger(direction), invoke.IOS.CGFloat(amount));
+    this._call = invoke.call(invoke.Android.Class(DetoxAction), 'scrollInDirection', invoke.Android.Integer(direction), invoke.Android.Integer(amount));
   }
 }
 
