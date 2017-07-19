@@ -38,15 +38,15 @@ Initiating your test suite
 
 | Option | Description |
 | --- | --- |
-| -h <br> --help                                                            | output usage information |
-| -r [runner] <br> <nobr>--runner [runner]</nobr>                           | Test runner (currently supports mocha) |
-| -o \<config\> <br> <nobr>--runner-config \<config\></nobr>                | Test runner config file |
-| -l [value] <br> <nobr>--loglevel [value]</nobr>                           | info, debug, verbose, silly, wss |
-| -c \<device config\> <br> <nobr>--configuration \<device config\></nobr>  | Select a device configuration from your defined figurations,if not supplied, and there's only one configuration, detox will default to it |
-| -r <br> --reuse                                                           | Reuse existing installed app (do not delete and re-tall) for a faster run. |
-| -u <br> --cleanup                                                         | shutdown simulator when test is over, useful for CI ipts, to make sure detox exists cleanly with no residue |
-| -d \<value\> <br> <nobr>--debug-synchronization \<value\><nobr>           | When an action/expectation takes a significant amount time use this option to print device synchronization status. The status will be printed if the ion takes more than [value]ms to complete |
-| -a \<path\> <br> <nobr>--artifacts-location \<path\></nobr>               | Artifacts destination path (currently contains only logs). For more details, please check the [Artifacts doc](APIRef.Artifacts.md#artifacts) |
+| -h, --help                                    | output usage information |
+| -r, --runner [runner]                         | Test runner (currently supports mocha) |
+| -o, --runner-config \<config\>                | Test runner config file |
+| -l, --loglevel [value]                        | info, debug, verbose, silly, wss |
+| -c, --configuration \<device config\>         | Select a device configuration from your defined figurations,if not supplied, and there's only one configuration, detox will default to it |
+| -r, --reuse                                   | Reuse existing installed app (do not delete and re-tall) for a faster run. |
+| -u, --cleanup                                 | shutdown simulator when test is over, useful for CI ipts, to make sure detox exists cleanly with no residue |
+| -d, --debug-synchronization \<value\>         | When an action/expectation takes a significant amount time use this option to print device synchronization status. The status will be printed if the ion takes more than [value]ms to complete |
+| -a, --artifacts-location \<path\>             | Artifacts destination path (currently contains only logs). For more details, please check the [Artifacts doc](APIRef.Artifacts.md#artifacts) |
     
     
 
