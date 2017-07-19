@@ -113,11 +113,16 @@ class Fbsimctl {
   }
 
   async launch(udid, bundleId, launchArgs) {
+    const args = [];
+    _.forEach(launchArgs, (value, key) => {
+      args.push(`${key} ${value}`);
+    });
+
     const logsInfo = new LogsInfo(udid);
     const launchBin = `/bin/cat /dev/null >${logsInfo.absStdout} 2>${logsInfo.absStderr} && ` +
                       `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${this._getFrameworkPath()}" ` +
                       `/usr/bin/xcrun simctl launch --stdout=${logsInfo.simStdout} --stderr=${logsInfo.simStderr} ` +
-                      `${udid} ${bundleId} --args ${launchArgs.join(' ')}`;
+                      `${udid} ${bundleId} --args ${args.join(' ')}`;
     const result = await exec.execWithRetriesAndLogs(launchBin, undefined, {
       trying: `Launching ${bundleId}...`,
       successful: `${bundleId} launched. The stdout and stderr logs were recreated, you can watch them with:\n` +

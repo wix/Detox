@@ -111,6 +111,13 @@ describe('Fbsimctl', () => {
     expect(exec).toHaveBeenCalledTimes(1);
   });
 
+  it(`launch() - is triggering exec with custom launch args`, async() => {
+    fs.existsSync.mockReturnValue(true);
+    exec.mockReturnValue({stdout: "appId: 22 \n"});
+    await fbsimctl.launch(simUdid, bundleId, [{param: "param1"}]);
+    expect(exec).toHaveBeenCalledTimes(1);
+  });
+
   it(`launch() - should throw when no Detox.framework exists`, async() => {
     fs.existsSync.mockReturnValue(false);
     try {
