@@ -43,7 +43,7 @@ class Device {
   }
 
   async launchApp(params = {newInstance: false}, bundleId) {
-  await this._artifactsCopier.handleAppRelaunch();
+    await this._artifactsCopier.handleAppRelaunch();
 
     if (params.url && params.userNotification) {
       throw new Error(`detox can't understand this 'relaunchApp(${JSON.stringify(params)})' request, either request to launch with url or with userNotification, not both`);
@@ -57,7 +57,7 @@ class Device {
     }
 
     let baseLaunchArgs = {};
-    if(params.launchArgs) {
+    if (params.launchArgs) {
       baseLaunchArgs = params.launchArgs;
     }
 

@@ -8,11 +8,18 @@ public class Environment {
     public static final String DEVICE_LOCALHOST = "ws://localhost";
 
     private static boolean isRunningOnGenymotion() {
-        return Build.FINGERPRINT.contains("vbox");
+        return Build.FINGERPRINT.contains("vbox")
+                || Build.MANUFACTURER.contains("Genymotion");
     }
 
     private static boolean isRunningOnStockEmulator() {
-        return Build.FINGERPRINT.contains("generic");
+        return Build.FINGERPRINT.startsWith("generic")
+                || Build.FINGERPRINT.startsWith("unknown")
+                || Build.MODEL.contains("google_sdk")
+                || Build.MODEL.contains("Emulator")
+                || Build.MODEL.contains("Android SDK built for x86")
+                || (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic"))
+                || "google_sdk".equals(Build.PRODUCT);
     }
 
     public static String getServerHost() {

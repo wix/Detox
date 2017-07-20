@@ -8,7 +8,6 @@ const invoke = require('../invoke');
 const GREYConfiguration = require('./../ios/earlgreyapi/GREYConfiguration');
 const argparse = require('../utils/argparse');
 
-
 class IosDriver extends DeviceDriverBase {
 
   constructor(client) {
