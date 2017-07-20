@@ -1,5 +1,7 @@
 package com.wix.invoke.types;
 
+import android.util.Log;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Arrays;
@@ -64,6 +66,11 @@ public class Invocation {
                     argument = ((Boolean) value);
                 } else if (type.equals("boolean")) {
                     argument = ((Boolean) value).booleanValue();
+                } else if (type.equals("Invocation")) {
+                    // TODO
+                    Log.e("detox", "invocation is not handled as an argument yet");
+                } else {
+                    throw new RuntimeException("Unhandled invocation type" + type);
                 }
 
                 args[i] = argument;

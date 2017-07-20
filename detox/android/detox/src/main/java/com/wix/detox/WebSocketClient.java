@@ -157,8 +157,8 @@ public class WebSocketClient implements WebSocketListener {
                 return;
             }
 
-            JSONObject params = (JSONObject) object.get("params");
-            if (params != null && !(params instanceof Object)) {
+            Object params = (JSONObject) object.get("params");
+            if (params != null && !(params instanceof JSONObject)) {
                 Log.d(LOG_TAG, "Detox Error: receiveAction invalid params");
             }
             long messageId = object.getLong("messageId");

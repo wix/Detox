@@ -13,6 +13,7 @@ import com.wix.detox.systeminfo.Environment;
 import com.wix.invoke.MethodInvocation;
 
 import java.util.Collections;
+import java.util.HashMap;
 
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -95,8 +96,19 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                         try {
                             Object retVal = MethodInvocation.invoke(params);
                             Log.d(LOG_TAG, "Invocation result: " + retVal);
-                        } catch (Exception ex) {
-                            Log.d(LOG_TAG, "Invocation failed: " + ex.toString());
+                        } catch (Exception e) {
+                            if (e instanceof EspressoException) {
+                                Log.i(LOG_TAG, "Test exception", e);
+                                HashMap m = new HashMap();
+                                m.put("details", e.getMessage());
+                                wsClient.sendAction("testFailed", m, messageId);
+                            } else {
+                                Log.e(LOG_TAG, "Exception", e);
+                                HashMap m = new HashMap();
+                                m.put("error", e.getMessage());
+                                wsClient.sendAction("error", m, messageId);
+                            }
+                            stop();
                         }
                         break;
                     case "isReady":
@@ -110,59 +122,6 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                     case "reactNativeReload":
                         ReactNativeSupport.reloadApp(reactNativeHostHolder);
                         wsClient.sendAction("ready", Collections.emptyMap(), messageId);
-                        break;
-                    // TODO
-                    // Remove these test* commands later.
-                    case "testInvoke1":
-                        try {
-                            Espresso.onView(withTagValue(is((Object)"hello_button"))).check(matches(isDisplayed()));
-                        } catch (RuntimeException e) {
-                            if (e instanceof EspressoException) {
-                                Log.i(LOG_TAG, "Test exception", e);
-                                wsClient.sendAction("TEST_FAIL", Collections.emptyMap(), messageId);
-                            } else {
-                                wsClient.sendAction("EXCEPTION", Collections.emptyMap(), messageId);
-                                Log.e(LOG_TAG, "Exception", e);
-                            }
-                            stop();
-                            break;
-                        }
-                        wsClient.sendAction("TEST_OK", Collections.emptyMap(), messageId);
-                        break;
-                    case "testInvokeNeg1":
-                        try {
-                            Espresso.onView(withTagValue(is((Object)"hello_button"))).check(matches(not(isDisplayed())));
-                        } catch (RuntimeException e) {
-                            if (e instanceof EspressoException) {
-                                Log.i(LOG_TAG, "Test exception", e);
-                                wsClient.sendAction("TEST_FAIL", Collections.emptyMap(), messageId);
-                            } else {
-                                wsClient.sendAction("EXCEPTION", Collections.emptyMap(), messageId);
-                                Log.e(LOG_TAG, "Exception", e);
-                            }
-                            stop();
-                            break;
-                        }
-                        wsClient.sendAction("TEST_OK", Collections.emptyMap(), messageId);
-                        break;
-                    case "testPush":
-                        Espresso.onView(withTagValue(is((Object) "hello_button"))).perform(click());
-                        break;
-                    case "testInvoke2":
-                        try {
-                            Espresso.onView(withText("Hello!!!")).check(matches(isDisplayed()));
-                        } catch (RuntimeException e) {
-                            if (e instanceof EspressoException) {
-                                Log.i(LOG_TAG, "Test exception", e);
-                                wsClient.sendAction("TEST_FAIL", Collections.emptyMap(), messageId);
-                            } else {
-                                wsClient.sendAction("EXCEPTION", Collections.emptyMap(), messageId);
-                                Log.e(LOG_TAG, "Exception", e);
-                            }
-                            stop();
-                            break;
-                        }
-                        wsClient.sendAction("TEST_OK", Collections.emptyMap(), messageId);
                         break;
                 }
             }
