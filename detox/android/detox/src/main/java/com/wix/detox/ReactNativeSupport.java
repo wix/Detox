@@ -203,8 +203,6 @@ class ReactNativeSupport {
             }
         }
 
-        // We could call waitForBridgeAndUIIDle(..) here, but
-        // Espresso will do that for us either way.
         setupEspressoIdlingResources(reactNativeHostHolder, reactContextHolder[0]);
     }
 
@@ -284,7 +282,7 @@ class ReactNativeSupport {
         } catch (ReflectException e) {
             // The mUiBackgroundMessageQueueThread field is stripped at runtime
             // in the current RN release.
-            // We should still keep trying to grab it to be future proof.
+            // We still keep trying to grab it to be future proof.
             if (!field.equals("mUiBackgroundMessageQueueThread")) {
                 Log.d(LOG_TAG, "Can't set up monitoring for " + field, e);
             }

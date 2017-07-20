@@ -15,10 +15,9 @@ describe('AppleSimUtils', () => {
     appSimUtils = new AppleSimUtils();
   });
 
-
   it(`appleSimUtils setPermissions`, async () => {
-      appSimUtils.setPermissions(bundleId, simUdid, {permissions: {calendar: "YES"}});
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
-    });
+    appSimUtils.setPermissions(bundleId, simUdid, {permissions: {calendar: "YES"}});
+    expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+  });
 });
 

@@ -1,6 +1,7 @@
 const exec = require('./../utils/exec').execWithRetriesAndLogs;
 const _ = require('lodash');
 const adb = require('adbkit');
+const InvocationManager = require('../invoke').InvocationManager;
 const DeviceDriverBase = require('./DeviceDriverBase');
 
 class EmulatorDriver extends DeviceDriverBase {
@@ -8,6 +9,9 @@ class EmulatorDriver extends DeviceDriverBase {
   constructor(client) {
     super(client);
     this._adb = adb.createClient();
+    const expect = require('../android/expect');
+    expect.exportGlobals();
+    expect.setInvocationManager(new InvocationManager(client));
   }
 
   async acquireFreeDevice(name) {
@@ -33,6 +37,7 @@ class EmulatorDriver extends DeviceDriverBase {
 
   async uninstallApp(deviceId, bundleId) {
     await this.adbCmd(deviceId, `uninstall ${bundleId}`);
+    await this.adbCmd(deviceId, `uninstall ${bundleId}.test`);
   }
 
   async launch(deviceId, bundleId, launchArgs) {
@@ -41,7 +46,7 @@ class EmulatorDriver extends DeviceDriverBase {
       args.push(`${key} ${value}`);
     });
 
-    this.adbCmd(deviceId, `shell am instrument -w -r ${args.join(' ')} -e debug false ${bundleId}.test/android.support.test.runner.AndroidJUnitRunner`)
+    this.adbCmd(deviceId, `shell am instrument -w -r ${args.join(' ')} -e debug false ${bundleId}.test/android.support.test.runner.AndroidJUnitRunner`);
   }
 
   async terminate(deviceId, bundleId) {
@@ -56,7 +61,7 @@ class EmulatorDriver extends DeviceDriverBase {
   async adbCmd(deviceId, params) {
     await exec(`adb wait-for-device`);
     const cmd = `adb ${deviceId ? `-s ${deviceId}` : ''} ${params}`;
-    await exec(cmd)
+    await exec(cmd);
   }
 }
 
