@@ -48,6 +48,7 @@ describe('expect', async () => {
     await e.expect(e.element(e.by.id('test').withDescendant(e.by.id('descendant')))).toBeVisible();
     await e.expect(e.element(e.by.id('test').and(e.by.type('type')))).toBeVisible();
     await e.expect(e.element(e.by.id('test').not())).toBeVisible();
+    await e.expect(e.element(e.by.id('test').or(e.by.id('test2')))).toBeVisible();
   });
 
   it(`expect with wrong parameters should throw`, async () => {
@@ -66,6 +67,7 @@ describe('expect', async () => {
     await expectToThrow(() => e.element(e.by.id('test').withAncestor('notAMatcher')));
     await expectToThrow(() => e.element(e.by.id('test').withDescendant('notAMatcher')));
     await expectToThrow(() => e.element(e.by.id('test').and('notAMatcher')));
+    await expectToThrow(() => e.element(e.by.id('test').or('notAMatcher')));
   });
 
   it(`waitFor (element)`, async () => {

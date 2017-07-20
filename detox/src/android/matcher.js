@@ -25,10 +25,11 @@ class Matcher {
     if (!(matcher instanceof Matcher)) throw new Error(`Matcher and argument must be a valid Matcher, got ${typeof matcher}`);
     const _originalMatcherCall = this._call;
     this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForOr', _originalMatcherCall, matcher._call);
+    return this;
   }
   not() {
     const _originalMatcherCall = this._call;
-    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForNot:', _originalMatcherCall);
+    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForNot', _originalMatcherCall);
     return this;
   }
   
@@ -105,7 +106,7 @@ class TextMatcher extends Matcher {
   constructor(value) {
     super();
     if (typeof value !== 'string') throw new Error(`TextMatcher ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForText:', value);
+    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForText', value);
   }
 }
 
