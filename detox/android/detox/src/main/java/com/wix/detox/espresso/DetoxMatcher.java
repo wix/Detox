@@ -2,6 +2,8 @@ package com.wix.detox.espresso;
 
 import android.view.View;
 
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.core.IsAnything;
 
@@ -70,7 +72,17 @@ public class DetoxMatcher {
         } catch (ClassNotFoundException e) {
             // empty
         }
-        return not(new IsAnything<View>());
+        return new BaseMatcher<View>() {
+            @Override
+            public boolean matches(Object item) {
+                return false;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("This matcher doesn't match anything on purpose.");
+            }
+        };
     }
 
     public static Matcher<View> matcherForSufficientlyVisible() {
@@ -87,6 +99,32 @@ public class DetoxMatcher {
 
     public static Matcher<View> matcherForNull() {
         return nullValue(android.view.View.class);
+    }
+
+    public static Matcher<View> matcherForAtIndex(final int index, final Matcher<View> innerMatcher) {
+        return new BaseMatcher<View>() {
+            int count = 0;
+            @Override
+            public boolean matches(Object item) {
+                if (!innerMatcher.matches(item)) return false;
+
+                if (count == index) {
+                    count = 0;
+                    return true;
+                }
+                ++count;
+                return false;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("matches " + index + "th view.");
+            }
+        };
+    }
+
+    public static Matcher<View> matcherForAnything() {
+        return isAssignableFrom(View.class);
     }
 
 }

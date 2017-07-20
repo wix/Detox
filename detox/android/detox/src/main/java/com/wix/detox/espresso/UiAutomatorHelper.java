@@ -73,7 +73,7 @@ public class UiAutomatorHelper {
         return context.getResources().getDisplayMetrics().density;
     }
 
-    public static int convertDiptoPix(int dip){
+    public static int convertDiptoPix(float dip){
         return (int) (dip * getDensity() + 0.5f);
     }
 

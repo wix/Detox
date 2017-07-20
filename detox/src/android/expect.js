@@ -19,6 +19,7 @@ function setInvocationManager(im) {
 }
 
 const ViewActions = 'android.support.test.espresso.action.ViewActions';
+const DetoxMatcher = 'com.wix.detox.espresso.DetoxMatcher';
 const DetoxAction = 'com.wix.detox.espresso.DetoxAction';
 
 class Action {}
@@ -79,7 +80,7 @@ class ScrollAmountAction extends Action {
       default: throw new Error(`ScrollAmountAction direction must be a 'left'/'right'/'up'/'down', got ${direction}`);
     }
     if (typeof amount !== 'number') throw new Error(`ScrollAmountAction ctor 2nd argument must be a number, got ${typeof amount}`);
-    this._call = invoke.call(invoke.Android.Class(DetoxAction), 'scrollInDirection', invoke.Android.Integer(direction), invoke.Android.Integer(amount));
+    this._call = invoke.call(invoke.Android.Class(DetoxAction), 'scrollInDirection', invoke.Android.Integer(direction), invoke.Android.Float(amount));
   }
 }
 
@@ -88,13 +89,13 @@ class ScrollEdgeAction extends Action {
     super();
     if (typeof edge !== 'string') throw new Error(`ScrollEdgeAction ctor 1st argument must be a string, got ${typeof edge}`);
     switch (edge) {
-      case 'left': edge = 0; break;
-      case 'right': edge = 1; break;
-      case 'top': edge = 2; break;
-      case 'bottom': edge = 3; break;
+      case 'left': edge = 1; break;
+      case 'right': edge = 2; break;
+      case 'top': edge = 3; break;
+      case 'bottom': edge = 4; break;
       default: throw new Error(`ScrollEdgeAction edge must be a 'left'/'right'/'top'/'bottom', got ${edge}`);
     }
-    this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForScrollToContentEdge:', invoke.IOS.NSInteger(edge));
+    this._call = invoke.call(invoke.Android.Class(DetoxAction), 'scrollToEdge', invoke.Android.Integer(edge));
   }
 }
 
@@ -149,7 +150,7 @@ class ActionInteraction extends Interaction {
     super();
     //if (!(element instanceof Element)) throw new Error(`ActionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
     //if (!(action instanceof Action)) throw new Error(`ActionInteraction ctor 2nd argument must be a valid Action, got ${typeof action}`);
-    this._call = invoke.call(element._call, 'performAction:', action._call);
+    this._call = invoke.call(element._call, 'perform', action._call);
     // TODO: move this.execute() here from the caller
   }
 }
@@ -159,7 +160,7 @@ class MatcherAssertionInteraction extends Interaction {
     super();
     //if (!(element instanceof Element)) throw new Error(`MatcherAssertionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
     //if (!(matcher instanceof Matcher)) throw new Error(`MatcherAssertionInteraction ctor 2nd argument must be a valid Matcher, got ${typeof matcher}`);
-    this._call = invoke.call(element._call, 'assertWithMatcher:', matcher._call);
+    this._call = invoke.call(element._call, 'check', invoke.call(invoke.Espresso, 'matches', matcher._call));
     // TODO: move this.execute() here from the caller
   }
 }
@@ -223,12 +224,13 @@ class Element {
   }
   _selectElementWithMatcher(matcher) {
     if (!(matcher instanceof Matcher)) throw new Error(`Element _selectElementWithMatcher argument must be a valid Matcher, got ${typeof matcher}`);
-    this._call = invoke.call(invoke.EarlGrey.instance, 'detox_selectElementWithMatcher:', matcher._call);
+    this._call = invoke.call(invoke.Espresso, 'onView', matcher._call);
   }
   atIndex(index) {
     if (typeof index !== 'number') throw new Error(`Element atIndex argument must be a number, got ${typeof index}`);
-    const _originalCall = this._call;
-    this._call = invoke.call(_originalCall, 'atIndex:', invoke.IOS.NSInteger(index));
+    const matcher = this._originalMatcher;
+    this._originalMatcher._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matherForAtIndex', invoke.Android.Integer(index), matcher._call);
+    this._selectElementWithMatcher(this._originalMatcher);
     return this;
   }
   async tap() {

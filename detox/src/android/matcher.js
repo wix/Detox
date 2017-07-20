@@ -31,18 +31,22 @@ class Matcher {
     this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForNot:', _originalMatcherCall);
     return this;
   }
-  /*
+  
   _avoidProblematicReactNativeElements() {
+    /*
     const _originalMatcherCall = this._call;
     this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherAvoidingProblematicReactNativeElements:', _originalMatcherCall);
+    */
     return this;
   }
   _extendToDescendantScrollViews() {
+    /*
     const _originalMatcherCall = this._call;
     this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForScrollChildOfMatcher:', _originalMatcherCall);
+    */
     return this;
   }
-  */
+  
 }
 
 class LabelMatcher extends Matcher {
@@ -110,6 +114,17 @@ class ValueMatcher extends Matcher {
     super();
     if (typeof value !== 'string') throw new Error(`ValueMatcher ctor argument must be a string, got ${typeof value}`);
     this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForContentDescription', value);
+  }
+}
+
+// TODO
+// Please be aware, that this is just a dummy matcher
+class TraitsMatcher extends Matcher {
+  constructor(value) {
+    super();
+    if ((typeof value !== 'object') || (!value instanceof Array)) throw new Error(`TraitsMatcher ctor argument must be an array, got ${typeof value}`);
+    
+    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForAnything');
   }
 }
 

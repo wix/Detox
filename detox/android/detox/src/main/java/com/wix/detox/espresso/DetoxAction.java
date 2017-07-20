@@ -6,9 +6,11 @@ import android.util.Log;
 import android.view.View;
 
 import org.hamcrest.Matcher;
+import static org.hamcrest.Matchers.allOf;
 import org.joor.Reflect;
 
 import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 
 
 /**
@@ -45,11 +47,11 @@ public class DetoxAction {
      * @param direction Direction to scroll
      * @param amountInDP Density Independent Pixels
      */
-    public static ViewAction scrollInDirection(final int direction, final int amountInDP) {
+    public static ViewAction scrollInDirection(final int direction, final float amountInDP) {
         return new ViewAction() {
             @Override
             public Matcher<View> getConstraints() {
-                return isAssignableFrom(View.class);
+                return allOf(isAssignableFrom(View.class), isDisplayed());
             }
 
             @Override
