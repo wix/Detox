@@ -72,14 +72,17 @@ class DetoxManager implements WebSocketClient.ActionHandler {
         }
     }
 
+    boolean stopping = false;
+
     void stop() {
         Log.i(LOG_TAG, "Stopping Detox.");
         handler.postAtFrontOfQueue(new Runnable() {
             @Override
             public void run() {
-                // TODO
-                // Close the websocket
+                if (stopping) return;
+                stopping = true;
                 ReactNativeSupport.removeEspressoIdlingResources(reactNativeHostHolder);
+                wsClient.close();
                 Looper.myLooper().quit();
             }
         });

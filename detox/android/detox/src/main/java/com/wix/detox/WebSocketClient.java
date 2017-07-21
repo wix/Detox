@@ -89,6 +89,14 @@ public class WebSocketClient implements WebSocketListener {
         actionHandler.onClosed();
     }
 
+    public void close() {
+        try {
+            websocket.close(NORMAL_CLOSURE_STATUS, null);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "WS close", e);
+        }
+    }
+
     private static final String LOG_TAG = "WebSocketClient";
 
     private String url;
