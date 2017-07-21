@@ -111,7 +111,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                                 m.put("error", e.getMessage());
                                 wsClient.sendAction("error", m, messageId);
                             }
-                            stop();
+                            // stop();
                         }
                         break;
                     case "isReady":
