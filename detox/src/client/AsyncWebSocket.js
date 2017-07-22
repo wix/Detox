@@ -34,8 +34,10 @@ class AsyncWebSocket {
         log.verbose(`ws`, `onMessage: ${response.data}`);
         let pendingId = JSON.parse(response.data).messageId;
         let pendingPromise = this.inFlightPromises[pendingId];
-        pendingPromise.resolve(response.data);
-        delete this.inFlightPromises[pendingId];
+        if (pendingPromise) {
+          pendingPromise.resolve(response.data);
+          delete this.inFlightPromises[pendingId];
+        }
       };
 
       this.inFlightPromises[this.messageIdCounter] = {resolve, reject};
