@@ -99,6 +99,14 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                         try {
                             Object retVal = MethodInvocation.invoke(params);
                             Log.d(LOG_TAG, "Invocation result: " + retVal);
+                            String retStr = "(null)";
+                            if (retVal != null) {
+                                // TODO
+                                // handle supported types
+                            }
+                            HashMap m = new HashMap();
+                            m.put("result", retStr);
+                            wsClient.sendAction("invokeResult", m, messageId);
                         } catch (Exception e) {
                             if (e instanceof EspressoException) {
                                 Log.i(LOG_TAG, "Test exception", e);
