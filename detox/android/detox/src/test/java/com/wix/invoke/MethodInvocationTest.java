@@ -1,5 +1,9 @@
 package com.wix.invoke;
 
+import android.support.test.espresso.Espresso;
+import android.support.test.espresso.action.ViewActions;
+
+import com.wix.detox.espresso.DetoxMatcher;
 import com.wix.invoke.exceptions.EmptyInvocationInstructionException;
 import com.wix.invoke.types.ClassTarget;
 import com.wix.invoke.types.Invocation;
@@ -111,6 +115,15 @@ public class MethodInvocationTest {
         Invocation intermediateInvocation = new Invocation(new InvocationTarget(innerInvocation), "concat", "c");
         Invocation outerInvocation = new Invocation(new InvocationTarget(intermediateInvocation), "length");
         assertThat(MethodInvocation.invoke(outerInvocation)).isEqualTo(3);
+    }
+
+    @Test
+    public void invokeMethodsWhenInvocationIsAnArgumentOfOtherInvocation() {
+        //Espresso.onView(DetoxMatcher.matcherForContentDescription("Sanity")).perform(ViewActions.click());
+        //String.valueOf(Integer.toString(1));
+        Invocation integerToString = new Invocation(new ClassTarget("java.lang.Integer"), "toString", 1);
+        Invocation stringValueOf = new Invocation(new ClassTarget("java.lang.String"), "valueOf", integerToString);
+        assertThat(MethodInvocation.invoke(stringValueOf)).isEqualTo("1");
     }
 
     @Test

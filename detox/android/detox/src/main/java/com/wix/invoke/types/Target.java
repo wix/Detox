@@ -37,6 +37,14 @@ public abstract class Target {
             Invocation innerInvocation = (Invocation) this.value;
             this.value = innerInvocation.getTarget().invoke(innerInvocation);
         }
+
+        Object[] args = invocation.getArgs();
+        for (int i = 0; i < args.length; i++) {
+            if (args[i] instanceof Invocation) {
+                Invocation innerInvocation = (Invocation) args[i];
+                args[i] = innerInvocation.getTarget().invoke(innerInvocation);
+            }
+        }
         return execute(invocation);
     }
 
