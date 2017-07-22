@@ -45,7 +45,7 @@ public class MethodInvocation {
         }
     }
 
-    private static JsonParser getParserWithExtendedParsableTargetTypes(Class<?> extendWith) {
+    public static JsonParser getParserWithExtendedParsableTargetTypes(Class<?> extendWith) {
         JsonParser parser = new JsonParser();
         parser.addMixInAnnotations(Target.class, extendWith);
         return parser;

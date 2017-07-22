@@ -1,7 +1,5 @@
 package com.wix.invoke.types;
 
-import android.util.Log;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wix.invoke.MethodInvocation;
 import com.wix.invoke.parser.JsonParser;
@@ -69,14 +67,10 @@ public class Invocation {
                 } else if (type.equals("boolean")) {
                     argument = ((Boolean) value).booleanValue();
                 } else if (type.equals("Invocation")) {
-                    Log.e("detox", "invocation is not handled as an argument yet");
-                    /*
                     JsonParser parser = MethodInvocation.getParserWithExtendedParsableTargetTypes(null);
-                    Invocation innerInvocation = parser.parse(value, Invocation.class);
-                    argument = innerInvocation.getTarget().invoke(innerInvocation);
-                    */
+                    argument = parser.parse(value, Invocation.class);
                 } else {
-                    throw new RuntimeException("Unhandled invocation type" + type);
+                    throw new RuntimeException("Unhandled arg type" + type);
                 }
 
                 args[i] = argument;

@@ -45,6 +45,7 @@ public abstract class Target {
                 args[i] = innerInvocation.getTarget().invoke(innerInvocation);
             }
         }
+        invocation.setArgs(args);
         return execute(invocation);
     }
 
