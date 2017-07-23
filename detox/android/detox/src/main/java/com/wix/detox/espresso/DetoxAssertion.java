@@ -1,9 +1,11 @@
 package com.wix.detox.espresso;
 
 import android.support.test.espresso.ViewInteraction;
+import android.view.View;
+
+import org.hamcrest.Matcher;
 
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 
 /**
  * Created by simonracz on 10/07/2017.
@@ -15,7 +17,7 @@ public class DetoxAssertion {
         // static class
     }
 
-    public static void assertVisible(ViewInteraction i) {
-        i.check(matches(isDisplayed()));
+    public static ViewInteraction assertMatcher(ViewInteraction i, Matcher<View> m) {
+        return i.check(matches(m));
     }
 }

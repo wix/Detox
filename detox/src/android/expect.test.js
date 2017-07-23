@@ -35,14 +35,14 @@ describe('expect', async () => {
   it(`element by type`, async () => {
     await e.expect(e.element(e.by.type('test'))).toBeVisible();
   });
-  /*
+  
   it(`element by traits`, async () => {
     await e.expect(e.element(e.by.traits(['button', 'link', 'header', 'search']))).toBeVisible();
     await e.expect(e.element(e.by.traits(['image', 'selected', 'plays', 'key']))).toBeNotVisible();
     await e.expect(e.element(e.by.traits(['text', 'summary', 'disabled', 'frequentUpdates']))).toBeNotVisible();
     await e.expect(e.element(e.by.traits(['startsMedia', 'adjustable', 'allowsDirectInteraction', 'pageTurn']))).toBeNotVisible();
   });
-  */
+  
   it(`matcher helpers`, async () => {
     await e.expect(e.element(e.by.id('test').withAncestor(e.by.id('ancestor')))).toBeVisible();
     await e.expect(e.element(e.by.id('test').withDescendant(e.by.id('descendant')))).toBeVisible();

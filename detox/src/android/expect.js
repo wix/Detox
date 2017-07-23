@@ -22,6 +22,7 @@ const ViewActions = 'android.support.test.espresso.action.ViewActions';
 const ViewAssertions = 'android.support.test.espresso.assertion.ViewAssertions';
 const DetoxMatcher = 'com.wix.detox.espresso.DetoxMatcher';
 const DetoxAction = 'com.wix.detox.espresso.DetoxAction';
+const DetoxAssertion = 'com.wix.detox.espresso.DetoxAssertion';
 
 class Action {}
 
@@ -161,7 +162,8 @@ class MatcherAssertionInteraction extends Interaction {
     super();
     //if (!(element instanceof Element)) throw new Error(`MatcherAssertionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
     //if (!(matcher instanceof Matcher)) throw new Error(`MatcherAssertionInteraction ctor 2nd argument must be a valid Matcher, got ${typeof matcher}`);
-    this._call = invoke.call(element._call, 'check', invoke.call(invoke.Android.Class(ViewAssertions), 'matches', matcher._call));
+    // this._call = invoke.call(element._call, 'check', invoke.call(invoke.Android.Class(ViewAssertions), 'matches', matcher._call));    
+    this._call = invoke.call(invoke.Android.Class(DetoxAssertion), 'assertMatcher', element._call, matcher._call);
     // TODO: move this.execute() here from the caller
   }
 }
