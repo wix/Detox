@@ -6,7 +6,6 @@ import com.wix.invoke.types.Invocation;
 import com.wix.invoke.types.InvocationTarget;
 
 import org.junit.Test;
-
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
 /**
@@ -44,6 +43,20 @@ public class JsonParserTest {
 
         assertThat(parse("targetInvocationEspresso.json")).isEqualToComparingFieldByFieldRecursively(perform);
     }
+
+
+    @Test
+    public void fromJsonTargetInvocationEspressoDetox() {
+//        EspressoDetox.perform(Espresso.onView(DetoxMatcher.matcherForContentDescription("Sanity")), ViewActions.click());
+
+        Invocation matcher = new Invocation(new ClassTarget("com.wix.detox.espresso.DetoxMatcher"), "matcherForContentDescription", "Sanity");
+        Invocation onView = new Invocation(new ClassTarget("android.support.test.espresso.Espresso"), "onView", matcher);
+        Invocation click = new Invocation(new ClassTarget("android.support.test.espresso.action.ViewActions"), "click");
+        Invocation perform = new Invocation(new ClassTarget("com.wix.detox.espresso.EspressoDetox"), "perform", onView, click);
+
+        assertThat(parse("targetInvocationEspressoDetox.json")).isEqualToComparingFieldByFieldRecursively(perform);
+    }
+
 
     public Invocation parse(String filePath) {
         String jsonData = TestUtils.jsonFileToString(filePath);

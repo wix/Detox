@@ -5,23 +5,14 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.Espresso;
-import android.support.test.espresso.EspressoException;
 import android.util.Log;
 
 import com.wix.detox.systeminfo.Environment;
 import com.wix.invoke.MethodInvocation;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashMap;
-
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 
 
 /**
@@ -102,25 +93,23 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                             String retStr = "(null)";
                             if (retVal != null) {
                                 // TODO
-                                // handle supported types
+                                // handle supported typesmatcherForContentDescription
                             }
                             HashMap m = new HashMap();
                             m.put("result", retStr);
                             wsClient.sendAction("invokeResult", m, messageId);
-                        } catch (Exception e) {
-                            if (e instanceof EspressoException) {
-                                Log.i(LOG_TAG, "Test exception", e);
-                                HashMap m = new HashMap();
-                                m.put("details", e.getMessage());
-                                wsClient.sendAction("testFailed", m, messageId);
-                            } else {
+                        } catch (InvocationTargetException e) {
                                 Log.e(LOG_TAG, "Exception", e);
                                 HashMap m = new HashMap();
-                                m.put("error", e.getMessage());
+                                m.put("error", e.getTargetException().getMessage());
                                 wsClient.sendAction("error", m, messageId);
-                            }
-                            // stop();
+                        } catch (Exception e) {
+                            Log.i(LOG_TAG, "Test exception", e);
+                            HashMap m = new HashMap();
+                            m.put("details", e.getMessage());
+                            wsClient.sendAction("testFailed", m, messageId);
                         }
+                        // stop();
                         break;
                     case "isReady":
                         // It's always ready, because reload, waitForRn are both synchronous.
@@ -132,7 +121,13 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                         break;
                     case "reactNativeReload":
                         ReactNativeSupport.reloadApp(reactNativeHostHolder);
-                        wsClient.sendAction("ready", Collections.emptyMap(), messageId);
+                        //TODO - This is a temp hack, there are issues with synchronizing react native reload.
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                wsClient.sendAction("ready", Collections.emptyMap(), messageId);
+                            }
+                        },400);
                         break;
                 }
             }

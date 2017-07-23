@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.apache.commons.lang3.reflect.MethodUtils;
 
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * Created by rotemm on 20/10/2016.
  */
@@ -17,7 +19,7 @@ public class ClassTarget extends Target {
     }
 
     @Override
-    public Object execute(Invocation invocation) throws Exception {
+    public Object execute(Invocation invocation) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         return MethodUtils.invokeStaticMethod(Class.forName(getValue().toString()), invocation.getMethod(), invocation.getArgs());
     }
 }

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * Created by rotemm on 10/10/2016.
  */
@@ -32,7 +34,7 @@ public abstract class Target {
         this.value = value;
     }
 
-    public Object invoke(Invocation invocation) throws Exception {
+    public Object invoke(Invocation invocation) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         if (this.value instanceof Invocation) {
             Invocation innerInvocation = (Invocation) this.value;
             this.value = innerInvocation.getTarget().invoke(innerInvocation);
@@ -49,7 +51,7 @@ public abstract class Target {
         return execute(invocation);
     }
 
-    public abstract Object execute(Invocation invocation) throws Exception;
+    public abstract Object execute(Invocation invocation) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
 
     @Override
     public boolean equals(Object o) {

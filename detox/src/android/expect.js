@@ -23,6 +23,7 @@ const ViewAssertions = 'android.support.test.espresso.assertion.ViewAssertions';
 const DetoxMatcher = 'com.wix.detox.espresso.DetoxMatcher';
 const DetoxAction = 'com.wix.detox.espresso.DetoxAction';
 const DetoxAssertion = 'com.wix.detox.espresso.DetoxAssertion';
+const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
 
 class Action {}
 
@@ -152,7 +153,8 @@ class ActionInteraction extends Interaction {
     super();
     //if (!(element instanceof Element)) throw new Error(`ActionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
     //if (!(action instanceof Action)) throw new Error(`ActionInteraction ctor 2nd argument must be a valid Action, got ${typeof action}`);
-    this._call = invoke.call(element._call, 'perform', action._call);
+    //this._call = invoke.call(element._call, 'perform', action._call);
+    this._call = invoke.call(invoke.Android.Class(EspressoDetox), 'perform', element._call, action._call);
     // TODO: move this.execute() here from the caller
   }
 }
@@ -355,7 +357,7 @@ function element(matcher) {
 
 const by = {
   accessibilityLabel: (value) => new LabelMatcher(value),
-  label: (value) => new LabelMatcher(value),
+  label: (value) => new TextMatcher(value),
   id: (value) => new IdMatcher(value),
   type: (value) => new TypeMatcher(value),
   traits: (value) => new TraitsMatcher(value),
