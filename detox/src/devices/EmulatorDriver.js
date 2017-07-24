@@ -27,18 +27,6 @@ class EmulatorDriver extends DeviceDriverBase {
 
   async acquireFreeDevice(name) {
     return (await exec(`adb devices | awk 'NR>1 {print $1}'`, undefined, undefined, 1)).stdout.trim();
-    //return '192.168.60.101:5555';
-    //const output = await exec(`$ANDROID_HOME/tools/emulator --list-avds`);
-    //const output = await exec(`$ANDROID_HOME/tools/bin/avdmanager list avd -c`);
-    //const list = _.split(output.stdout.trim(), '\n');
-    //
-    ////const list = await this._adb.listDevices();
-    ////if (_.isEmpty(list)) {
-    ////  throw new Error('There are no Android devices attached to ADB, please start an emulator or connect a device');
-    ////}
-    //
-    //console.log(list);
-    //return list[0].id;
   }
 
   async getBundleIdFromBinary(appPath) {
