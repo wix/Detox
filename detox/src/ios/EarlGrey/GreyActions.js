@@ -20,6 +20,8 @@ class GREYActions {
 */static actionForMultipleTapsWithCountatPoint(count, point) {
     if (typeof count !== "number") throw new Error("count should be a number, but got " + (count + (" (" + (typeof count + ")"))));
     if (typeof point !== "object") throw new Error("point should be a object, but got " + (point + (" (" + (typeof point + ")"))));
+    if (typeof point.x !== "number") throw new Error("point.x should be a number, but got " + (point.x + (" (" + (typeof point.x + ")"))));
+    if (typeof point.y !== "number") throw new Error("point.y should be a number, but got " + (point.y + (" (" + (typeof point.y + ")"))));
     return {
       target: {
         type: "Class",
@@ -80,6 +82,8 @@ simulate a long press.
 @return A GREYAction that performs a long press on an element.
 */static actionForLongPressAtPointduration(point, duration) {
     if (typeof point !== "object") throw new Error("point should be a object, but got " + (point + (" (" + (typeof point + ")"))));
+    if (typeof point.x !== "number") throw new Error("point.x should be a number, but got " + (point.x + (" (" + (typeof point.x + ")"))));
+    if (typeof point.y !== "number") throw new Error("point.y should be a number, but got " + (point.y + (" (" + (typeof point.y + ")"))));
     if (typeof duration !== "number") throw new Error("duration should be a number, but got " + (duration + (" (" + (typeof duration + ")"))));
     return {
       target: {
@@ -576,6 +580,8 @@ element and it's position is relative to the origin of the element, as in
 @return A GREYAction to tap on an element at a specific point.
 */static actionForTapAtPoint(point) {
     if (typeof point !== "object") throw new Error("point should be a object, but got " + (point + (" (" + (typeof point + ")"))));
+    if (typeof point.x !== "number") throw new Error("point.x should be a number, but got " + (point.x + (" (" + (typeof point.x + ")"))));
+    if (typeof point.y !== "number") throw new Error("point.y should be a number, but got " + (point.y + (" (" + (typeof point.y + ")"))));
     return {
       target: {
         type: "Class",

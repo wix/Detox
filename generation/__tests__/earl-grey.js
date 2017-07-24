@@ -79,6 +79,20 @@ describe("earl-grey generation", () => {
         );
       });
     });
+
+    it("should thow error for CGPoint with wrong x and y values", () => {
+      expect(() => {
+        ExampleClass.actionForMultipleTapsWithCountatPoint(3, {x: 3, y: 4});
+      }).not.toThrow();
+      
+      expect(() => {
+        ExampleClass.actionForMultipleTapsWithCountatPoint(3, {x: "3", y: 4});
+      }).toThrowErrorMatchingSnapshot();
+
+      expect(() => {
+        ExampleClass.actionForMultipleTapsWithCountatPoint(3, {x: 3});
+      }).toThrowErrorMatchingSnapshot();
+    });
   });
 
   describe("Invocations", () => {

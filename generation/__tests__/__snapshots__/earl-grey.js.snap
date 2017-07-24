@@ -1,10 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`earl-grey generation Error handling should thow error for CGPoint with wrong x and y values 1`] = `"point.x should be a number, but got 3 (string)"`;
+
+exports[`earl-grey generation Error handling should thow error for CGPoint with wrong x and y values 2`] = `"point.y should be a number, but got undefined (undefined)"`;
+
 exports[`earl-grey generation Error handling should throw error for not in accepted range 1`] = `"direction should be one of [Left, Right, Up, Down], but got flipside"`;
 
-exports[`earl-grey generation Error handling should throw error for wrong type 1`] = `"count should be a number, but got foo"`;
+exports[`earl-grey generation Error handling should throw error for wrong type 1`] = `"count should be a number, but got foo (string)"`;
 
-exports[`earl-grey generation Error handling should throw error for wrong type 2`] = `"point should be a object, but got 4"`;
+exports[`earl-grey generation Error handling should throw error for wrong type 2`] = `"point should be a object, but got 4 (number)"`;
 
 exports[`earl-grey generation Invocations should return the invocation object for methods 1`] = `
 Object {

@@ -53,7 +53,8 @@ function createArgument(json) {
 }
 
 function createMethodBody(className, json) {
-  const typeChecks = createTypeChecks(json).filter(check => typeof check === "object");
+  const allTypeChecks = createTypeChecks(json).reduce((carry, item) => item instanceof Array ? [...carry, ...item] : [...carry, item], []);
+  const typeChecks = allTypeChecks.filter(check => typeof check === "object");
   const returnStatement = createReturnStatement(className, json);
   return [...typeChecks, returnStatement]
 }
@@ -105,33 +106,39 @@ function createTypeCheck(json) {
   //   throw new Error('argName should be a number, but got ' + argName + '(' + typeof argName +  ')');
   // }
 
-  const typeCheckTestGenerator = typeAssertion => ({ name }) =>
+  const typeCheckTestGenerator = (typeAssertion, options) => ({ name }) =>
     t.binaryExpression(
       "!==",
-      t.unaryExpression("typeof", t.identifier(name)),
+      t.unaryExpression("typeof", options.selector ? t.memberExpression(t.identifier(name), t.identifier(options.selector)) : t.identifier(name)),
       t.stringLiteral(typeAssertion)
     );
 
-  const typeCheckErrorGenerator = typeAssertion => ({ name }) =>
-    t.binaryExpression(
+  const typeCheckErrorGenerator = (typeAssertion, options) => ({ name }) => {
+    const nameString = options.selector ? `${name}.${options.selector}` : name;
+    const nameAst = options.selector ? 
+      t.memberExpression(t.identifier(name), t.identifier(options.selector)) : 
+      t.identifier(name);
+    
+    return t.binaryExpression(
       "+",
-      t.stringLiteral(name + " should be a " + typeAssertion + ", but got "),
+      t.stringLiteral(nameString + " should be a " + typeAssertion + ", but got "),
       t.binaryExpression("+", 
-        t.identifier(name), 
+        nameAst, 
         t.binaryExpression("+", 
           t.stringLiteral(" ("), 
           t.binaryExpression("+",
-            t.unaryExpression("typeof", t.identifier(name)),
+            t.unaryExpression("typeof", nameAst),
             t.stringLiteral(")")
           )
         )
       ) 
     );
+  }
  
-  const generateTypeCheck = typeAssertion =>
+  const generateTypeCheck = (typeAssertion, options={}) =>
     generateCheck(
-      typeCheckTestGenerator(typeAssertion),
-      typeCheckErrorGenerator(typeAssertion)
+      typeCheckTestGenerator(typeAssertion, options),
+      typeCheckErrorGenerator(typeAssertion, options)
     );
 
   const oneOfCheckTestGenerator = options => ({ name }) =>
@@ -167,7 +174,12 @@ function createTypeCheck(json) {
   const isNumber = generateTypeCheck("number");
   const isString = generateTypeCheck("string");
   const isBoolean = generateTypeCheck("boolean");
-  const isPoint = generateTypeCheck("object"); //(x, y) => isNumber(x) && isNumber(y);
+  const isPoint = [
+    generateTypeCheck("object"), 
+    generateTypeCheck("number", {selector: 'x'}), 
+    generateTypeCheck("number", {selector: 'y'})
+  ];
+  
   const isOneOf = options =>
     generateCheck(
       oneOfCheckTestGenerator(options),
@@ -192,12 +204,16 @@ function createTypeCheck(json) {
   };
 
   const typeCheckCreator = typeInterfaces[json.type];
-  if (typeof typeCheckCreator !== "function") {
+  const isListOfChecks = typeCheckCreator instanceof Array;
+
+  if (typeof typeCheckCreator !== "function" && !isListOfChecks) {
     console.info("Could not find ", json);
     return;
   }
 
-  return typeCheckCreator(json);
+  return isListOfChecks ? 
+    typeCheckCreator.map(singleCheck => singleCheck(json)) : 
+    typeCheckCreator(json);
 }
 
 module.exports = function(files) {
