@@ -30,7 +30,7 @@ function createMethod(className, json) {
   const m = t.classMethod(
     "method",
     t.identifier(json.name.replace(/\:/g, "")),
-    json.args.map(createArgument),
+    json.args.map(({ name }) => t.identifier(name)),
     t.blockStatement(createMethodBody(className, json)),
     false,
     json.static
@@ -46,10 +46,6 @@ function createMethod(className, json) {
     m.leadingComments.push(comment);
   }
   return m;
-}
-
-function createArgument(json) {
-  return t.identifier(json.name);
 }
 
 function createMethodBody(className, json) {
