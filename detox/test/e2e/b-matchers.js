@@ -15,11 +15,11 @@ describe('Matchers', () => {
   });
 
   it('should match elements by type (native class)', async () => {
-    const type = device.getPlatform() === 'ios' ? by.type('RCTImageView') : by.type('ReactImageView');
+    const byType = device.getPlatform() === 'ios' ? by.type('RCTImageView') : by.type('com.facebook.react.views.image.ReactImageView');
 
-    await expect(element(type)).toBeVisible();
-    await element(type).tap();
-    await expect(type).toBeNotVisible();
+    await expect(element(byType)).toBeVisible();
+    await element(byType).tap();
+    await expect(element(byType)).toBeNotVisible();
   });
 
   // https://facebook.github.io/react-native/docs/accessibility.html#accessibilitytraits-ios
