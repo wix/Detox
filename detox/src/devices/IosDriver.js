@@ -46,7 +46,7 @@ class IosDriver extends DeviceDriverBase {
     await this.client.execute(GREYConfiguration.disableSynchronization());
   }
 
-  async setOrientation(orientation) {
+  async setOrientation(deviceId, orientation) {
     // keys are possible orientations
     const orientationMapping = {
       landscape: 3, // top at left side landscape

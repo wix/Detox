@@ -136,7 +136,7 @@ class Device {
   }
 
   async setOrientation(orientation) {
-    await this.deviceDriver.setOrientation(orientation);
+    await this.deviceDriver.setOrientation(this._deviceId, orientation);
   }
 
   async setLocation(lat, lon) {

@@ -93,6 +93,14 @@ class EmulatorDriver extends DeviceDriverBase {
     return 'android';
   }
 
+  async setOrientation(deviceId, orientation) {
+    const orientationMapping = {
+      landscape: 0, // top at left side landscape
+      portrait: 1  // non-reversed portrait
+    };
+    await this.adbCmd(deviceId,`shell settings put system accelerometer_rotation ${orientationMapping[orientation]}`)
+  }
+
   async adbCmd(deviceId, params) {
     const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
     await exec(`adb ${serial} wait-for-device`, undefined, undefined, 1);

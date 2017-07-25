@@ -44,7 +44,7 @@ describe('Device', () => {
       await device.reloadReactNative();
       await element(by.label('Orientation')).tap();
 
-      // Check if the element whichs input we will test actually exists
+      // Check if the element which input we will test actually exists
       await expect(element(by.id('currentOrientation'))).toExist();
     });
 
