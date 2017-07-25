@@ -351,7 +351,7 @@ describe('Device', () => {
     device = validDevice();
     await device.setOrientation('param');
 
-    expect(device.deviceDriver.setOrientation).toHaveBeenCalledWith('param');
+    expect(device.deviceDriver.setOrientation).toHaveBeenCalledWith(device._deviceId, 'param');
   });
 
   it(`sendUserNotification() should pass to device driver`, async () => {
