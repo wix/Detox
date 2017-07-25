@@ -1,4 +1,4 @@
-describe.only('Matchers', () => {
+describe('Matchers', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
     await element(by.label('Matchers')).tap();
