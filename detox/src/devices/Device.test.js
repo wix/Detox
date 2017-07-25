@@ -389,6 +389,20 @@ describe('Device', () => {
     expect(device.deviceDriver.disableSynchronization).toHaveBeenCalledTimes(1);
   });
 
+  it(`getPlatform() should pass to device driver`, async () => {
+    device = validDevice();
+    device.getPlatform();
+
+    expect(device.deviceDriver.getPlatform).toHaveBeenCalledTimes(1);
+  });
+
+  it(`getPlatform() should pass to device driver`, async () => {
+    device = validSimulator();
+    device.getPlatform();
+
+    expect(device.deviceDriver.getPlatform).toHaveBeenCalledTimes(1);
+  });
+
   it(`new Device() with invalid device config (no binary) should throw`, async () => {
     try {
       new Device(invalidDeviceNoBinary.configurations['ios.sim.release'], validScheme.session, new SimulatorDriver(client));

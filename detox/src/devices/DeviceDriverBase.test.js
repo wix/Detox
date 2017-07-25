@@ -21,14 +21,14 @@ describe('DeviceDriverBase', () => {
     deviceDriver = new DeviceDriverBase(new Client(), validScheme);
   });
 
-  it(`reloadReactNative() - should trigger reloadReactNative in websocket client`, () => {
-    deviceDriver.reloadReactNative();
+  it(`reloadReactNative() - should trigger reloadReactNative in websocket client`, async () => {
+    await deviceDriver.reloadReactNative();
     expect(deviceDriver.client.reloadReactNative).toHaveBeenCalledTimes(1);
   });
 
-  it(`sendUserNotification() - should trigger sendUserNotification in websocket client`, () => {
+  it(`sendUserNotification() - should trigger sendUserNotification in websocket client`, async () => {
     const params = {some: "params"};
-    deviceDriver.sendUserNotification(params);
+    await deviceDriver.sendUserNotification(params);
     expect(deviceDriver.client.sendUserNotification).toHaveBeenCalledWith(params);
   });
 
@@ -122,5 +122,9 @@ describe('DeviceDriverBase', () => {
 
   it(`getLogsPath() - should return default undefined paths`, () => {
     expect(deviceDriver.getLogsPaths()).toEqual({stdout: undefined, stderr: undefined});
+  });
+
+  it(`getPlatform() - should be defined`, async() => {
+    expect(deviceDriver.getPlatform).toBeDefined();
   });
 });
