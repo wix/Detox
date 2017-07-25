@@ -76,7 +76,8 @@
     ],
     "coveragePathIgnorePatterns": [
       "/node_modules/",
-      "EmulatorDriver.js"
+      "EmulatorDriver.js",
+      "DeviceDriverBase.js"
     ],
     "resetMocks": true,
     "resetModules": true,
