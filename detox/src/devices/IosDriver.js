@@ -70,6 +70,10 @@ class IosDriver extends DeviceDriverBase {
   validateDeviceConfig(config) {
     //no validation
   }
+
+  getPlatform() {
+    return 'ios';
+  }
 }
 
 module.exports = IosDriver;

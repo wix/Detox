@@ -110,6 +110,10 @@ class DeviceDriverBase {
 
   }
 
+  getPlatform() {
+
+  }
+
   getLogsPaths(deviceId) {
     return {
       stdout: undefined,

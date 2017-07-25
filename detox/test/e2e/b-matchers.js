@@ -1,9 +1,6 @@
-describe('Matchers', () => {
+describe.only('Matchers', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
-  });
-
-  beforeEach(async () => {
     await element(by.label('Matchers')).tap();
   });
 
@@ -18,9 +15,11 @@ describe('Matchers', () => {
   });
 
   it('should match elements by type (native class)', async () => {
-    await expect(element(by.type('RCTImageView'))).toBeVisible();
-    await element(by.type('RCTImageView')).tap();
-    await expect(element(by.type('RCTImageView'))).toBeNotVisible();
+    const type = device.getPlatform() === 'ios' ? by.type('RCTImageView') : by.type('ReactImageView');
+
+    await expect(element(type)).toBeVisible();
+    await element(type).tap();
+    await expect(type).toBeNotVisible();
   });
 
   // https://facebook.github.io/react-native/docs/accessibility.html#accessibilitytraits-ios

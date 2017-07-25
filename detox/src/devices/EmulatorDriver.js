@@ -89,6 +89,10 @@ class EmulatorDriver extends DeviceDriverBase {
     return '-e ';
   }
 
+  getPlatform() {
+    return 'android';
+  }
+
   async adbCmd(deviceId, params) {
     const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
     await exec(`adb ${serial} wait-for-device`, undefined, undefined, 1);

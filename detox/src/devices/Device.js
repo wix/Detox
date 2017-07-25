@@ -159,6 +159,10 @@ class Device {
     await this.deviceDriver.disableSynchronization();
   }
 
+  getPlatform() {
+    return this.deviceDriver.getPlatform(this._deviceId);
+  }
+
   _defaultLaunchArgs() {
     return {
       'detoxServer': this._sessionConfig.server,
