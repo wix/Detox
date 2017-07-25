@@ -95,10 +95,11 @@ class EmulatorDriver extends DeviceDriverBase {
 
   async setOrientation(deviceId, orientation) {
     const orientationMapping = {
-      landscape: 0, // top at left side landscape
-      portrait: 1  // non-reversed portrait
+      landscape: 1, // top at left side landscape
+      portrait: 0  // non-reversed portrait
     };
-    await this.adbCmd(deviceId,`shell settings put system accelerometer_rotation ${orientationMapping[orientation]}`)
+    await this.adbCmd(deviceId,`shell settings put system accelerometer_rotation 0`);
+    await this.adbCmd(deviceId,`shell settings put system user_rotation ${orientationMapping[orientation]}`);
   }
 
   async adbCmd(deviceId, params) {
