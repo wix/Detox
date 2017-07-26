@@ -65,7 +65,7 @@ public class DetoxMatcher {
         return allOf(m, hasDescendant(descendantMatcher));
     }
 
-    public static Matcher<View> matcherForClass(String className) {
+    public static Matcher<View> matcherForClass(final String className) {
         try {
             Class cls = Class.forName(className);
             return isAssignableFrom(cls);
@@ -80,7 +80,7 @@ public class DetoxMatcher {
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("This matcher doesn't match anything on purpose.");
+                description.appendText("Class " + className + " not found on classpath. Are you using full class name?");
             }
         };
     }

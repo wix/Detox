@@ -19,7 +19,7 @@ import java.util.PriorityQueue;
  * </p>
  *
  * <p>
- * Hooks up to React Native internals, grabbing the Timers from it.
+ * Hooks up to React Native internals to grab the timers queue from it.
  * </p>
  * <p>
  * This resource is considered idle if the Timers priority queue is empty or
