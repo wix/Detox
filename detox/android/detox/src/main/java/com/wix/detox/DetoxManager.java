@@ -124,13 +124,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                         break;
                     case "reactNativeReload":
                         ReactNativeSupport.reloadApp(reactNativeHostHolder);
-                        //TODO - This is a temp hack, there are issues with synchronizing react native reload.
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                wsClient.sendAction("ready", Collections.emptyMap(), messageId);
-                            }
-                        },400);
+                        wsClient.sendAction("ready", Collections.emptyMap(), messageId);
                         break;
                 }
             }

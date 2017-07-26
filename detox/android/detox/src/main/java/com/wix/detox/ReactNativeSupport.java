@@ -7,9 +7,12 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingResource;
 import android.util.Log;
+import android.view.Choreographer;
 
 import com.wix.detox.espresso.ReactBridgeIdlingResource;
 import com.wix.detox.espresso.ReactNativeTimersIdlingResource;
+import com.wix.detox.espresso.ReactNativeUIModuleIdlingResource;
+import com.wix.detox.espresso.UiAutomatorHelper;
 
 import org.joor.Reflect;
 import org.joor.ReflectException;
@@ -17,6 +20,8 @@ import org.joor.ReflectException;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by simonracz on 15/05/2017.
@@ -201,7 +206,11 @@ class ReactNativeSupport {
                     }
                 }
             }
+        } else {
+            Log.i(LOG_TAG, "Got react context directly!!!.");
         }
+
+        // getViewTreeObserver().addOnGlobalLayoutListener(getCustomGlobalLayoutListener());
 
         setupEspressoIdlingResources(reactNativeHostHolder, reactContextHolder[0]);
     }
@@ -229,6 +238,7 @@ class ReactNativeSupport {
 
     private static ReactNativeTimersIdlingResource rnTimerIdlingResource = null;
     private static ReactBridgeIdlingResource rnBridgeIdlingResource = null;
+    private static ReactNativeUIModuleIdlingResource rnUIModuleIdlingResource = null;
 
     private static void setupEspressoIdlingResources(
             @NonNull Object reactNativeHostHolder,
@@ -244,8 +254,12 @@ class ReactNativeSupport {
                 .call(METHOD_ADD_DEBUG_BRIDGE_LISTENER, bridgeIdleSignaler);
 
         rnTimerIdlingResource = new ReactNativeTimersIdlingResource(reactContext);
+        rnUIModuleIdlingResource = new ReactNativeUIModuleIdlingResource(reactContext);
 
-        Espresso.registerIdlingResources(rnTimerIdlingResource, rnBridgeIdlingResource);
+        Espresso.registerIdlingResources(
+                rnTimerIdlingResource,
+                rnBridgeIdlingResource,
+                rnUIModuleIdlingResource);
     }
 
     private static ArrayList<IdlingResource> looperIdlingResources = new ArrayList<>();
@@ -305,10 +319,15 @@ class ReactNativeSupport {
 
         Log.i(LOG_TAG, "Removing Espresso IdlingResources for React Native.");
 
-        if (rnBridgeIdlingResource != null && rnTimerIdlingResource != null) {
-            Espresso.unregisterIdlingResources(rnTimerIdlingResource, rnBridgeIdlingResource);
+        if (rnBridgeIdlingResource != null &&
+                rnTimerIdlingResource != null && rnUIModuleIdlingResource != null) {
+            Espresso.unregisterIdlingResources(
+                    rnTimerIdlingResource,
+                    rnBridgeIdlingResource,
+                    rnUIModuleIdlingResource);
             rnTimerIdlingResource = null;
             rnBridgeIdlingResource = null;
+            rnUIModuleIdlingResource = null;
         }
 
         removeReactNativeQueueInterrogators();
@@ -334,4 +353,5 @@ class ReactNativeSupport {
         }
         looperIdlingResources.clear();
     }
+
 }
