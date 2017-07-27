@@ -39,7 +39,10 @@ class DetoxManager implements WebSocketClient.ActionHandler {
         handler = new Handler();
 
         Bundle arguments = InstrumentationRegistry.getArguments();
-        detoxServerUrl = arguments.getString(DETOX_SERVER_ARG_KEY).replace(Environment.DEVICE_LOCALHOST, Environment.getServerHost());
+        detoxServerUrl = arguments.getString(DETOX_SERVER_ARG_KEY);
+        if (detoxServerUrl != null) {
+            detoxServerUrl = detoxServerUrl.replace(Environment.DEVICE_LOCALHOST, Environment.getServerHost());
+        }
         detoxSessionId = arguments.getString(DETOX_SESSION_ID_ARG_KEY);
 
         if (detoxServerUrl == null || detoxSessionId == null) {
