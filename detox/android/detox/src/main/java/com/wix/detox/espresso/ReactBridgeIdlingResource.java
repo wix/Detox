@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ReactBridgeIdlingResource implements IdlingResource {
     private static final String LOG_TAG = "Detox";
 
-    private AtomicBoolean idleNow = new AtomicBoolean(true);
+    private AtomicBoolean idleNow = new AtomicBoolean(false);
     private ResourceCallback callback = null;
 
     @Override
