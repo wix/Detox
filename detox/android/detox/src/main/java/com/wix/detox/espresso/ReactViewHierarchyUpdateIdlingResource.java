@@ -24,7 +24,6 @@ public class ReactViewHierarchyUpdateIdlingResource implements IdlingResource {
     public final static String METHOD_SET_VIEW_LISTENER = "setViewHierarchyUpdateDebugListener";
 
     private AtomicBoolean idleNow = new AtomicBoolean(false);
-    private AtomicBoolean wasAlreadyAsked = new AtomicBoolean(false);
     private ResourceCallback callback = null;
 
     @Override
@@ -35,14 +34,6 @@ public class ReactViewHierarchyUpdateIdlingResource implements IdlingResource {
     @Override
     public boolean isIdleNow() {
         boolean ret = idleNow.get();
-        if (ret) {
-            ret = wasAlreadyAsked.getAndSet(true);
-            if (!ret) {
-                if (callback != null) {
-                    callback.onTransitionToIdle();
-                }
-            }
-        }
         Log.i(LOG_TAG, "UI Module is idle : " + String.valueOf(ret));
         return ret;
     }
@@ -55,13 +46,15 @@ public class ReactViewHierarchyUpdateIdlingResource implements IdlingResource {
     // Proxy calls it
     public void onViewHierarchyUpdateFinished() {
         idleNow.set(true);
+        if (callback != null) {
+            callback.onTransitionToIdle();
+        }
         Log.i(LOG_TAG, "UI Module transitions to idle.");
     }
 
     //Proxy calls it
     public void onViewHierarchyUpdateEnqueued() {
         idleNow.set(false);
-        wasAlreadyAsked.set(false);
         Log.i(LOG_TAG, "UI Module transitions to busy.");
     }
 }
