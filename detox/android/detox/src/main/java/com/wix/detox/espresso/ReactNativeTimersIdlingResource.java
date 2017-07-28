@@ -36,6 +36,7 @@ public class ReactNativeTimersIdlingResource implements IdlingResource {
     private final static String METHOD_HAS_NATIVE_MODULE = "hasNativeModule";
     private final static String FIELD_TIMERS = "mTimers";
     private final static String FIELD_TARGET_TIME = "mTargetTime";
+    private final static String LOCK_TIMER = "mTimerGuard";
 
     private static final long LOOK_AHEAD_MS = 15; // like Espresso
 
@@ -88,28 +89,31 @@ public class ReactNativeTimersIdlingResource implements IdlingResource {
             }
 
             Object timingModule = Reflect.on(reactContext).call(METHOD_GET_NATIVE_MODULE, timingClass).get();
-            PriorityQueue<?> timers = Reflect.on(timingModule).field(FIELD_TIMERS).get();
-            if (timers.isEmpty()) {
-                if (callback != null) {
-                    callback.onTransitionToIdle();
+            Object timerLock = Reflect.on(timingModule).field(LOCK_TIMER).get();
+            synchronized (timerLock) {
+                PriorityQueue<?> timers = Reflect.on(timingModule).field(FIELD_TIMERS).get();
+                if (timers.isEmpty()) {
+                    if (callback != null) {
+                        callback.onTransitionToIdle();
+                    }
+                    return true;
                 }
-                return true;
-            }
 
-            Log.i(LOG_TAG, "Num of Timers : " + timers.size());
+                Log.i(LOG_TAG, "Num of Timers : " + timers.size());
 
-            long targetTime = Reflect.on(timers.peek()).field(FIELD_TARGET_TIME).get();
-            long currentTimeMS = System.nanoTime() / 1000000;
+                long targetTime = Reflect.on(timers.peek()).field(FIELD_TARGET_TIME).get();
+                long currentTimeMS = System.nanoTime() / 1000000;
 
-            Log.i(LOG_TAG, "targetTime " + targetTime + " currentTime " + currentTimeMS);
+                Log.i(LOG_TAG, "targetTime " + targetTime + " currentTime " + currentTimeMS);
 
-            if (targetTime - currentTimeMS > LOOK_AHEAD_MS || targetTime < currentTimeMS) {
-                // Timer is too far in the future. Mark it as OK for now.
-                // This is similar to what Espresso does internally.
-                if (callback != null) {
-                    callback.onTransitionToIdle();
+                if (targetTime - currentTimeMS > LOOK_AHEAD_MS || targetTime < currentTimeMS) {
+                    // Timer is too far in the future. Mark it as OK for now.
+                    // This is similar to what Espresso does internally.
+                    if (callback != null) {
+                        callback.onTransitionToIdle();
+                    }
+                    return true;
                 }
-                return true;
             }
 
             return false;
