@@ -21,10 +21,6 @@ static DetoxAppDelegateProxy* _currentAppDelegateProxy;
 @end
 
 @implementation DetoxAppDelegateProxy
-{
-	NSObject<UIApplicationDelegate>* _originalAppDelegate;
-	DetoxUserNotificationDispatcher* _notificationDispatcher;
-}
 
 + (instancetype)currentAppDelegateProxy
 {
@@ -36,44 +32,30 @@ static DetoxAppDelegateProxy* _currentAppDelegateProxy;
 	Method m = class_getInstanceMethod([UIApplication class], @selector(setDelegate:));
 	void (*orig)(id, SEL, id<UIApplicationDelegate>) = (void*)method_getImplementation(m);
 	method_setImplementation(m, imp_implementationWithBlock(^ (id _self, id<UIApplicationDelegate> origDelegate) {
-		_currentAppDelegateProxy = [[DetoxAppDelegateProxy alloc] initWithOriginalAppDelegate:origDelegate];
-		orig(_self, @selector(setDelegate:), _currentAppDelegateProxy);
+		NSString* clsName = [NSString stringWithFormat:@"%@(%@)", NSStringFromClass([origDelegate class]), NSStringFromClass([DetoxAppDelegateProxy class])];
+		Class cls = objc_getClass(clsName.UTF8String);
+		
+		if(cls == nil)
+		{
+			cls = objc_duplicateClass([DetoxAppDelegateProxy class], clsName.UTF8String, 0);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated"
+			class_setSuperclass(cls, origDelegate.class);
+#pragma clang diagnostic pop
+		}
+		
+		object_setClass(origDelegate, cls);
+		
+		_currentAppDelegateProxy = origDelegate;
+		orig(_self, @selector(setDelegate:), origDelegate);
+		
+		[[NSNotificationCenter defaultCenter] addObserver:origDelegate selector:@selector(__dtx_applicationDidLaunchNotification:) name:UIApplicationDidFinishLaunchingNotification object:nil];
 	}));
 }
 
-- (instancetype)initWithOriginalAppDelegate:(id<UIApplicationDelegate>)originalAppDelegate
+- (void)__dtx_applicationDidLaunchNotification:(NSNotification*)notification
 {
-	_originalAppDelegate = originalAppDelegate;
-	
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidLaunchNotification:) name:UIApplicationDidFinishLaunchingNotification object:nil];
-	
-	return self;
-}
-
-- (id<UIApplicationDelegate>)originalAppDelegate
-{
-	return _originalAppDelegate;
-}
-
-- (void)_applicationDidLaunchNotification:(NSNotification*)notification
-{
-	[self.userNotificationDispatcher dispatchOnAppDelegate:_originalAppDelegate simulateDuringLaunch:YES];
-}
-
-- (BOOL)respondsToSelector:(SEL)aSelector
-{
-	return [_originalAppDelegate respondsToSelector:aSelector];
-}
-
-- (NSMethodSignature *)methodSignatureForSelector:(SEL)sel
-{
-	NSMethodSignature* ms = [super methodSignatureForSelector:sel];
-	return ms ?: [_originalAppDelegate methodSignatureForSelector:sel];
-}
-
-- (void)forwardInvocation:(NSInvocation *)invocation
-{
-	[invocation invokeWithTarget:_originalAppDelegate];
+	[self.userNotificationDispatcher dispatchOnAppDelegate:self simulateDuringLaunch:YES];
 }
 
 - (NSURL*)_userNotificationDataURL
@@ -125,31 +107,47 @@ static DetoxAppDelegateProxy* _currentAppDelegateProxy;
 
 - (DetoxUserNotificationDispatcher*)userNotificationDispatcher
 {
-	if(_notificationDispatcher) { return _notificationDispatcher; }
+	DetoxUserNotificationDispatcher* rv = objc_getAssociatedObject(self, _cmd);
 	
-	if([self _userNotificationDataURL]) {
-		_notificationDispatcher = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationDataURL:[self _userNotificationDataURL]];
+	if([self _userNotificationDataURL])
+	{
+		rv = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationDataURL:[self _userNotificationDataURL]];
+		objc_setAssociatedObject(self, _cmd, rv, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 	}
 	
-	return _notificationDispatcher;
+	return rv;
 }
 
 - (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(nullable NSDictionary<UIApplicationLaunchOptionsKey, id>*)launchOptions
 {
 	launchOptions = [self _prepareLaunchOptions:launchOptions userNotificationDispatcher:self.userNotificationDispatcher];
 	
-	return [_originalAppDelegate application:application willFinishLaunchingWithOptions:launchOptions];
+	BOOL rv = YES;
+	if([class_getSuperclass(object_getClass(self)) instancesRespondToSelector:_cmd])
+	{
+		struct objc_super super = {.receiver = self, .super_class = class_getSuperclass(object_getClass(self))};
+		BOOL (*super_class)(struct objc_super*, SEL, id, id) = (void*)objc_msgSendSuper;
+		rv = super_class(&super, _cmd, application, launchOptions);
+	}
+	
+	return rv;
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(nullable NSDictionary<UIApplicationLaunchOptionsKey, id> *)launchOptions
 {
 	launchOptions = [self _prepareLaunchOptions:launchOptions userNotificationDispatcher:self.userNotificationDispatcher];
 	
-	BOOL rv = [_originalAppDelegate application:application didFinishLaunchingWithOptions:launchOptions];
-	
-	if(self.userNotificationDispatcher == nil && [self _URLOverride] && [_originalAppDelegate respondsToSelector:@selector(application:openURL:options:)])
+	BOOL rv = YES;
+	if([class_getSuperclass(object_getClass(self)) instancesRespondToSelector:_cmd])
 	{
-		[_originalAppDelegate application:[UIApplication sharedApplication] openURL:[self _URLOverride] options:launchOptions];
+		struct objc_super super = {.receiver = self, .super_class = class_getSuperclass(object_getClass(self))};
+		BOOL (*super_class)(struct objc_super*, SEL, id, id) = (void*)objc_msgSendSuper;
+		rv = super_class(&super, _cmd, application, launchOptions);
+	}
+	
+	if(self.userNotificationDispatcher == nil && [self _URLOverride] && [class_getSuperclass(object_getClass(self)) instancesRespondToSelector:@selector(application:openURL:options:)])
+	{
+		[self application:application openURL:[self _URLOverride] options:launchOptions];
 	}
 	
 	return rv;

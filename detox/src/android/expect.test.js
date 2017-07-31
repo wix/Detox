@@ -58,6 +58,7 @@ describe('expect', async () => {
 
   it(`matchers with wrong parameters should throw`, async () => {
     await expectToThrow(() => e.element(e.by.label(5)));
+    await expectToThrow(() => e.element(e.by.accessibilityLabel(5)));
     await expectToThrow(() => e.element(e.by.id(5)));
     await expectToThrow(() => e.element(e.by.type(0)));
     await expectToThrow(() => e.by.traits(1));

@@ -351,7 +351,7 @@ describe('Device', () => {
     device = validDevice();
     await device.setOrientation('param');
 
-    expect(device.deviceDriver.setOrientation).toHaveBeenCalledWith('param');
+    expect(device.deviceDriver.setOrientation).toHaveBeenCalledWith(device._deviceId, 'param');
   });
 
   it(`sendUserNotification() should pass to device driver`, async () => {
@@ -387,6 +387,20 @@ describe('Device', () => {
     await device.disableSynchronization();
 
     expect(device.deviceDriver.disableSynchronization).toHaveBeenCalledTimes(1);
+  });
+
+  it(`getPlatform() should pass to device driver`, async () => {
+    device = validDevice();
+    device.getPlatform();
+
+    expect(device.deviceDriver.getPlatform).toHaveBeenCalledTimes(1);
+  });
+
+  it(`getPlatform() should pass to device driver`, async () => {
+    device = validSimulator();
+    device.getPlatform();
+
+    expect(device.deviceDriver.getPlatform).toHaveBeenCalledTimes(1);
   });
 
   it(`new Device() with invalid device config (no binary) should throw`, async () => {

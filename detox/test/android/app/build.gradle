@@ -16,10 +16,10 @@ android {
             abiFilters "armeabi-v7a", "x86"
         }
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-//        testInstrumentationRunnerArguments = [
-//                'detoxServer': 'ws://localhost:8099',
-//                'detoxSessionId': 'test'
-//        ]
+        testInstrumentationRunnerArguments = [
+                'detoxServer': 'ws://localhost:8099',
+                'detoxSessionId': 'test'
+        ]
 
     }
 

@@ -71,7 +71,7 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async setOrientation(urlList) {
+  async setOrientation(deviceId, orientation) {
     return await Promise.resolve('');
   }
 
@@ -107,6 +107,10 @@ class DeviceDriverBase {
   }
 
   validateDeviceConfig(deviceConfig) {
+
+  }
+
+  getPlatform() {
 
   }
 

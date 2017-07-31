@@ -43,9 +43,9 @@ This tool by Facebook helps Detox manage and automate iOS Simulators.
 
  ```sh 
  brew tap facebook/fb
- export CODE_SIGNING_REQUIRED=NO && brew install fbsimctl --HEAD
+ export CODE_SIGNING_REQUIRED=NO && brew install fbsimctl
  ```
-	 
+Make sure you install a stable version, **do not** use `brew install fbsimctl --HEAD` as instructed in the original repo.
 > TIP: Verify it works by typing in terminal `fbsimctl list` to output the list of available simulators
 	 
 #### 4. Install [appleSimUtils](https://github.com/wix/AppleSimulatorUtils)
