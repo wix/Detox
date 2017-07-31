@@ -21,7 +21,10 @@ import java.util.PriorityQueue;
  * <p>
  * Hooks up to React Native internals to grab the pending ui operations from it.
  * </p>
+ *
+ * @deprecated in favor of {@link ReactViewHierarchyUpdateIdlingResource}
  */
+@Deprecated
 public class ReactNativeUIModuleIdlingResource implements IdlingResource {
     private static final String LOG_TAG = "Detox";
 

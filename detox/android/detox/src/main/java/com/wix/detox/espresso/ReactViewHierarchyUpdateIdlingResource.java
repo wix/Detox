@@ -4,6 +4,7 @@ import android.support.test.espresso.IdlingResource;
 import android.util.Log;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by simonracz on 28/07/2017.
@@ -23,7 +24,13 @@ public class ReactViewHierarchyUpdateIdlingResource implements IdlingResource {
     public final static String METHOD_GET_UI_OPERATION_QUEUE = "getUIViewOperationQueue";
     public final static String METHOD_SET_VIEW_LISTENER = "setViewHierarchyUpdateDebugListener";
 
-    private AtomicBoolean idleNow = new AtomicBoolean(false);
+    private AtomicBoolean idleNow = new AtomicBoolean(true);
+    // The flag should probably be a counter
+    // instead of a boolean. However we can't set
+    // up our listener before the first messages
+    // arrive. We might have to fix this somehow later.
+    // Currently we only log it, to gather data.
+    private AtomicInteger debugCounter = new AtomicInteger(0);
     private ResourceCallback callback = null;
 
     @Override
@@ -45,16 +52,17 @@ public class ReactViewHierarchyUpdateIdlingResource implements IdlingResource {
 
     // Proxy calls it
     public void onViewHierarchyUpdateFinished() {
+
         idleNow.set(true);
         if (callback != null) {
             callback.onTransitionToIdle();
         }
-        Log.i(LOG_TAG, "UI Module transitions to idle.");
+        Log.i(LOG_TAG, "UI Module transitions to idle. DebugCounter : " + debugCounter.decrementAndGet());
     }
 
     //Proxy calls it
     public void onViewHierarchyUpdateEnqueued() {
         idleNow.set(false);
-        Log.i(LOG_TAG, "UI Module transitions to busy.");
+        Log.i(LOG_TAG, "UI Module transitions to busy. DebugCounter : " + debugCounter.incrementAndGet());
     }
 }
