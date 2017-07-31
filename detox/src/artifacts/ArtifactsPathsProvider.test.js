@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-describe.only('ArtifactsPathsProvider', () => {
+describe('ArtifactsPathsProvider', () => {
   let ArtifactsPathsProvider;
   let fs;
   let mockedDateString = '2017-07-13T06:31:48.544Z';
