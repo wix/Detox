@@ -389,6 +389,13 @@ describe('Device', () => {
     expect(device.deviceDriver.disableSynchronization).toHaveBeenCalledTimes(1);
   });
 
+  it(`resetContentAndSettings() should pass to device driver`, async () => {
+    device = validDevice();
+    await device.resetContentAndSettings();
+
+    expect(device.deviceDriver.resetContentAndSettings).toHaveBeenCalledTimes(1);
+  });
+
   it(`getPlatform() should pass to device driver`, async () => {
     device = validDevice();
     device.getPlatform();

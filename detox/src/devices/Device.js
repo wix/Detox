@@ -159,6 +159,10 @@ class Device {
     await this.deviceDriver.disableSynchronization();
   }
 
+  async resetContentAndSettings() {
+    await this.deviceDriver.resetContentAndSettings(this._deviceId);
+  }
+
   getPlatform() {
     return this.deviceDriver.getPlatform(this._deviceId);
   }

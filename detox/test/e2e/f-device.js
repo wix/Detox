@@ -1,4 +1,4 @@
-describe('Device', () => {
+describe.only('Device', () => {
   it('reloadReactNative - should tap successfully', async () => {
     await device.reloadReactNative();
     await element(by.label('Sanity')).tap();
@@ -36,6 +36,15 @@ describe('Device', () => {
     await device.sendToHome();
     await device.launchApp();
 
+    await expect(element(by.label('Hello!!!'))).toBeVisible();
+  });
+
+  it('resetContentAndSettings() + install() + relaunch() - should tap successfully', async () => {
+    await device.resetContentAndSettings();
+    await device.installApp();
+    await device.launchApp({ newInstance: true });
+    await element(by.label('Sanity')).tap();
+    await element(by.label('Say Hello')).tap();
     await expect(element(by.label('Hello!!!'))).toBeVisible();
   });
 
