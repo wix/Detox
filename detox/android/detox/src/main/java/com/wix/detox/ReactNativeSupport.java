@@ -220,6 +220,7 @@ class ReactNativeSupport {
     }
 
     private static Object bridgeIdleSignaler = null;
+    private static ReactBridgeIdlingResource rnBridgeIdlingResource = null;
 
     private static void createBridgeIdleSignaler() {
         Class<?> bridgeIdleDebugListener = null;
@@ -241,6 +242,7 @@ class ReactNativeSupport {
     }
 
     private static Object viewHierarchyUpdateListener = null;
+    private static ReactViewHierarchyUpdateIdlingResource rnViewHierarchyIdlingResource = null;
 
     private static void createViewHierarchyUpdateListener() {
         Class<?> listenerClass = null;
@@ -262,9 +264,6 @@ class ReactNativeSupport {
     }
 
     private static ReactNativeTimersIdlingResource rnTimerIdlingResource = null;
-    private static ReactBridgeIdlingResource rnBridgeIdlingResource = null;
-    private static ReactViewHierarchyUpdateIdlingResource rnViewHierarchyIdlingResource = null;
-    // private static ReactNativeUIModuleIdlingResource rnUIModuleIdlingResource = null;
 
     private static void setupEspressoIdlingResources(
             @NonNull Object reactNativeHostHolder,
