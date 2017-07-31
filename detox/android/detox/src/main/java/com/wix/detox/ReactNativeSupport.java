@@ -9,6 +9,7 @@ import android.support.test.espresso.IdlingResource;
 import android.util.Log;
 import android.view.Choreographer;
 
+import com.wix.detox.espresso.LooperIdlingResource;
 import com.wix.detox.espresso.ReactBridgeIdlingResource;
 import com.wix.detox.espresso.ReactNativeTimersIdlingResource;
 import com.wix.detox.espresso.ReactNativeUIModuleIdlingResource;
@@ -21,6 +22,7 @@ import org.joor.ReflectException;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -323,8 +325,12 @@ class ReactNativeSupport {
             if ((queue = Reflect.on(reactContext).field(field).get()) != null) {
                 if ((looper = Reflect.on(queue).call(METHOD_GET_LOOPER).get()) != null) {
                     if (!excludedLoopers.contains(looper)) {
+                        // TODO!!!
+                        /*
                         IdlingResource looperIdlingResource =
                                 Reflect.on(CLASS_ESPRESSO_LOOPER_IDLING_RESOURCE).create(looper, false).get();
+                        */
+                        LooperIdlingResource looperIdlingResource = new LooperIdlingResource((Looper)looper, false);
 
                         looperIdlingResources.add(looperIdlingResource);
                         Espresso.registerIdlingResources(looperIdlingResource);

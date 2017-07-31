@@ -120,7 +120,8 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                         break;
                     case "cleanup":
                         wsClient.sendAction("cleanupDone", Collections.emptyMap(), messageId);
-                        stop();
+                        // TODO!!!
+                        // stop();
                         break;
                     case "reactNativeReload":
                         ReactNativeSupport.reloadApp(reactNativeHostHolder);
