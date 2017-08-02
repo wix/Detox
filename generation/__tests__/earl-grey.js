@@ -105,7 +105,7 @@ describe("earl-grey generation", () => {
       expect(result.method).toBe('actionForMultipleTapsWithCount');
 
       expect(result.args.length).toBe(1);
-      expect(result.args[0].type).toBe('NSUInteger');
+      expect(result.args[0].type).toBe('NSInteger');
       expect(result.args[0].value).toBe(3);
       expect(result).toMatchSnapshot();
     });
@@ -119,12 +119,19 @@ describe("earl-grey generation", () => {
       expect(result.method).toBe('actionForMultipleTapsWithCountatPoint');
 
       expect(result.args.length).toBe(2);
-      expect(result.args[0].type).toBe('NSUInteger');
+      expect(result.args[0].type).toBe('NSInteger');
       expect(result.args[0].value).toBe(3);
       expect(result.args[1].type).toBe('CGPoint');
       expect(result.args[1].value).toEqual({x: 3, y: 4});
       expect(result).toMatchSnapshot();
     });
+
+    it("should return the invocation object for methods with strings", () => {
+      const result = ExampleClass.actionForTypeText("Foo");
+
+      expect(result.args[0].type).toBe('NSString');
+      expect(result).toMatchSnapshot();
+    })
   });
 
   afterAll(() => {

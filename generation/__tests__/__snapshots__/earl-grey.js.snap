@@ -14,7 +14,7 @@ exports[`earl-grey generation Invocations should return the invocation object fo
 Object {
   "args": Array [
     Object {
-      "type": "NSUInteger",
+      "type": "NSInteger",
       "value": 3,
     },
   ],
@@ -30,7 +30,7 @@ exports[`earl-grey generation Invocations should return the invocation object fo
 Object {
   "args": Array [
     Object {
-      "type": "NSUInteger",
+      "type": "NSInteger",
       "value": 3,
     },
     Object {
@@ -42,6 +42,22 @@ Object {
     },
   ],
   "method": "actionForMultipleTapsWithCountatPoint",
+  "target": Object {
+    "type": "Class",
+    "value": "GREYActions",
+  },
+}
+`;
+
+exports[`earl-grey generation Invocations should return the invocation object for methods with strings 1`] = `
+Object {
+  "args": Array [
+    Object {
+      "type": "NSString",
+      "value": "Foo",
+    },
+  ],
+  "method": "actionForTypeText",
   "target": Object {
     "type": "Class",
     "value": "GREYActions",

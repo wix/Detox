@@ -55,10 +55,29 @@ function createMethod(className, json) {
   return m;
 }
 
+
+const supportedTypesMap = {
+  'NSUInteger': 'NSInteger',
+  'NSString *': 'NSString',
+};
+
+function sanitizeArgument(json) {
+  if (supportedTypesMap[json.type]) {
+    return Object.assign({}, json, {
+      type: supportedTypesMap[json.type],
+    });
+  }
+  return json;
+}
+
 function createMethodBody(className, json) {
-  const allTypeChecks = createTypeChecks(json).reduce((carry, item) => item instanceof Array ? [...carry, ...item] : [...carry, item], []);
+  const sanitizedJson = Object.assign({}, json, { 
+    args: json.args.map(argJson => sanitizeArgument(argJson)),
+  });
+
+  const allTypeChecks = createTypeChecks(sanitizedJson).reduce((carry, item) => item instanceof Array ? [...carry, ...item] : [...carry, item], []);
   const typeChecks = allTypeChecks.filter(check => typeof check === "object");
-  const returnStatement = createReturnStatement(className, json);
+  const returnStatement = createReturnStatement(className, sanitizedJson);
   return [...typeChecks, returnStatement]
 }
 
@@ -95,7 +114,6 @@ function createReturnStatement(className, json) {
 
 function createTypeCheck(json) {
   const typeInterfaces = {
-    NSUInteger: isNumber,
     NSInteger: isNumber,
     CGFloat: isNumber,
     CGPoint: isPoint,
@@ -103,7 +121,6 @@ function createTypeCheck(json) {
     double: isNumber,
     float: isNumber,
     NSString: isString,
-    "NSString *": isString,
     BOOL: isBoolean,
     "NSDate *": isNumber,
     GREYDirection: isOneOf(["Left", "Right", "Up", "Down"]),

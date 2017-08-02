@@ -9,7 +9,7 @@ class GREYActions {
       },
       method: "actionForMultipleTapsWithCount",
       args: [{
-        type: "NSUInteger",
+        type: "NSInteger",
         value: count
       }]
     };
@@ -29,7 +29,7 @@ class GREYActions {
       },
       method: "actionForMultipleTapsWithCountatPoint",
       args: [{
-        type: "NSUInteger",
+        type: "NSInteger",
         value: count
       }, {
         type: "CGPoint",
@@ -355,7 +355,7 @@ direction from the specified point.
         type: "GREYDirection",
         value: direction
       }, {
-        type: "NSUInteger",
+        type: "NSInteger",
         value: numberOfFingers
       }]
     };
@@ -382,7 +382,7 @@ direction from the specified point.
         type: "GREYDirection",
         value: direction
       }, {
-        type: "NSUInteger",
+        type: "NSInteger",
         value: numberOfFingers
       }]
     };
@@ -411,7 +411,7 @@ direction from the specified point.
         type: "GREYDirection",
         value: direction
       }, {
-        type: "NSUInteger",
+        type: "NSInteger",
         value: numberOfFingers
       }, {
         type: "CGFloat",
@@ -446,7 +446,7 @@ direction from the specified point.
         type: "GREYDirection",
         value: direction
       }, {
-        type: "NSUInteger",
+        type: "NSInteger",
         value: numberOfFingers
       }, {
         type: "CGFloat",
@@ -612,7 +612,7 @@ For Example: @"Helpo\b\bloWorld" will type HelloWorld in Objective-C.
       },
       method: "actionForTypeText",
       args: [{
-        type: "NSString *",
+        type: "NSString",
         value: text
       }]
     };
@@ -632,7 +632,7 @@ For Example: @"Helpo\b\bloWorld" will type HelloWorld in Objective-C.
       },
       method: "actionForReplaceText",
       args: [{
-        type: "NSString *",
+        type: "NSString",
         value: text
       }]
     };
@@ -710,7 +710,7 @@ implement the selector UISwitch::isOn and include UISwitch controls.
         type: "NSInteger",
         value: column
       }, {
-        type: "NSString *",
+        type: "NSString",
         value: value
       }]
     };
@@ -732,7 +732,7 @@ implement the selector UISwitch::isOn and include UISwitch controls.
       },
       method: "actionForJavaScriptExecutionoutput",
       args: [{
-        type: "NSString *",
+        type: "NSString",
         value: js
       }, {
         type: "out __strong NSString **",
