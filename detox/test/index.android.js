@@ -1,4 +1,6 @@
 import example from './src/app';
+import MessageQueue from 'react-native/Libraries/BatchedBridge/MessageQueue'
+MessageQueue.spy(true);
 
 import {
   AppRegistry,
