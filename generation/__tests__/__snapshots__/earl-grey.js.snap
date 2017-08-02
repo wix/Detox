@@ -18,7 +18,7 @@ Object {
       "value": 3,
     },
   ],
-  "method": "actionForMultipleTapsWithCount",
+  "method": "actionForMultipleTapsWithCount:",
   "target": Object {
     "type": "Class",
     "value": "GREYActions",
@@ -41,7 +41,7 @@ Object {
       },
     },
   ],
-  "method": "actionForMultipleTapsWithCountatPoint",
+  "method": "actionForMultipleTapsWithCount:atPoint:",
   "target": Object {
     "type": "Class",
     "value": "GREYActions",
@@ -57,7 +57,7 @@ Object {
       "value": "Foo",
     },
   ],
-  "method": "actionForTypeText",
+  "method": "actionForTypeText:",
   "target": Object {
     "type": "Class",
     "value": "GREYActions",

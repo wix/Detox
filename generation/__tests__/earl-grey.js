@@ -52,17 +52,17 @@ describe("earl-grey generation", () => {
       }).not.toThrow();
 
       expect(() => {
-        ExampleClass.actionForMultipleTapsWithCountatPoint(3, 4);
+        ExampleClass.actionForMultipleTapsWithCountAtPoint(3, 4);
       }).toThrowErrorMatchingSnapshot();
 
       expect(() => {
-        ExampleClass.actionForMultipleTapsWithCountatPoint(42, { x: 1, y: 2 });
+        ExampleClass.actionForMultipleTapsWithCountAtPoint(42, { x: 1, y: 2 });
       }).not.toThrow();
     });
 
     it("should throw error for not in accepted range", () => {
       expect(() => {
-        ExampleClass.actionForScrollInDirectionamountxOriginStartPercentageyOriginStartPercentage(
+        ExampleClass.actionForScrollInDirectionAmountXOriginStartPercentageYOriginStartPercentage(
           "flipside",
           3,
           4,
@@ -71,7 +71,7 @@ describe("earl-grey generation", () => {
       }).toThrowErrorMatchingSnapshot();
 
       expect(() => {
-        ExampleClass.actionForScrollInDirectionamountxOriginStartPercentageyOriginStartPercentage(
+        ExampleClass.actionForScrollInDirectionAmountXOriginStartPercentageYOriginStartPercentage(
           "down",
           3,
           4,
@@ -82,15 +82,15 @@ describe("earl-grey generation", () => {
 
     it("should thow error for CGPoint with wrong x and y values", () => {
       expect(() => {
-        ExampleClass.actionForMultipleTapsWithCountatPoint(3, {x: 3, y: 4});
+        ExampleClass.actionForMultipleTapsWithCountAtPoint(3, {x: 3, y: 4});
       }).not.toThrow();
       
       expect(() => {
-        ExampleClass.actionForMultipleTapsWithCountatPoint(3, {x: "3", y: 4});
+        ExampleClass.actionForMultipleTapsWithCountAtPoint(3, {x: "3", y: 4});
       }).toThrowErrorMatchingSnapshot();
 
       expect(() => {
-        ExampleClass.actionForMultipleTapsWithCountatPoint(3, {x: 3});
+        ExampleClass.actionForMultipleTapsWithCountAtPoint(3, {x: 3});
       }).toThrowErrorMatchingSnapshot();
     });
   });
@@ -102,7 +102,7 @@ describe("earl-grey generation", () => {
       expect(result.target.type).toBe('Class');
       expect(result.target.value).toBe('GREYActions');
 
-      expect(result.method).toBe('actionForMultipleTapsWithCount');
+      expect(result.method).toBe('actionForMultipleTapsWithCount:');
 
       expect(result.args.length).toBe(1);
       expect(result.args[0].type).toBe('NSInteger');
@@ -111,12 +111,12 @@ describe("earl-grey generation", () => {
     });
 
     it("should return the invocation object for methods with objects as args", () => {
-      const result = ExampleClass.actionForMultipleTapsWithCountatPoint(3, {x: 3, y: 4});
+      const result = ExampleClass.actionForMultipleTapsWithCountAtPoint(3, {x: 3, y: 4});
 
       expect(result.target.type).toBe('Class');
       expect(result.target.value).toBe('GREYActions');
 
-      expect(result.method).toBe('actionForMultipleTapsWithCountatPoint');
+      expect(result.method).toBe('actionForMultipleTapsWithCount:atPoint:');
 
       expect(result.args.length).toBe(2);
       expect(result.args[0].type).toBe('NSInteger');

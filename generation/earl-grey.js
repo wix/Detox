@@ -33,10 +33,21 @@ function createExport(json) {
   );
 }
 
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+function methodNameToSnakeCase(name) {
+  return name
+          .split(':')
+          .map((item, index) => 
+            index === 0 ? item : capitalizeFirstLetter(item)
+          ).join('');
+}
+
 function createMethod(className, json) {
   const m = t.classMethod(
     "method",
-    t.identifier(json.name.replace(/\:/g, "")),
+    t.identifier(methodNameToSnakeCase(json.name)),
     json.args.map(({ name }) => t.identifier(name)),
     t.blockStatement(createMethodBody(className, json)),
     false,
@@ -103,7 +114,7 @@ function createReturnStatement(className, json) {
     ),
     t.objectProperty(
       t.identifier('method'), 
-      t.stringLiteral(json.name.replace(/\:/g, ""))
+      t.stringLiteral(json.name)
     ),
     t.objectProperty(
       t.identifier('args'), 

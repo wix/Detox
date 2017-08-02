@@ -7,7 +7,7 @@ class GREYActions {
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForMultipleTapsWithCount",
+      method: "actionForMultipleTapsWithCount:",
       args: [{
         type: "NSInteger",
         value: count
@@ -17,7 +17,7 @@ class GREYActions {
 
   /*@return A GREYAction that performs multiple taps of a specified @c count at a specified
 @c point.
-*/static actionForMultipleTapsWithCountatPoint(count, point) {
+*/static actionForMultipleTapsWithCountAtPoint(count, point) {
     if (typeof count !== "number") throw new Error("count should be a number, but got " + (count + (" (" + (typeof count + ")"))));
     if (typeof point !== "object") throw new Error("point should be a object, but got " + (point + (" (" + (typeof point + ")"))));
     if (typeof point.x !== "number") throw new Error("point.x should be a number, but got " + (point.x + (" (" + (typeof point.x + ")"))));
@@ -27,7 +27,7 @@ class GREYActions {
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForMultipleTapsWithCountatPoint",
+      method: "actionForMultipleTapsWithCount:atPoint:",
       args: [{
         type: "NSInteger",
         value: count
@@ -65,7 +65,7 @@ simulate a long press.
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForLongPressWithDuration",
+      method: "actionForLongPressWithDuration:",
       args: [{
         type: "CFTimeInterval",
         value: duration
@@ -80,7 +80,7 @@ simulate a long press.
 @param duration The duration of the long press.
 
 @return A GREYAction that performs a long press on an element.
-*/static actionForLongPressAtPointduration(point, duration) {
+*/static actionForLongPressAtPointDuration(point, duration) {
     if (typeof point !== "object") throw new Error("point should be a object, but got " + (point + (" (" + (typeof point + ")"))));
     if (typeof point.x !== "number") throw new Error("point.x should be a number, but got " + (point.x + (" (" + (typeof point.x + ")"))));
     if (typeof point.y !== "number") throw new Error("point.y should be a number, but got " + (point.y + (" (" + (typeof point.y + ")"))));
@@ -90,7 +90,7 @@ simulate a long press.
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForLongPressAtPointduration",
+      method: "actionForLongPressAtPoint:duration:",
       args: [{
         type: "CGPoint",
         value: point
@@ -108,7 +108,7 @@ simulate a long press.
 @param amount    The amount of points in CGPoints to scroll.
 
 @return A GREYAction that scrolls a scroll view in a given @c direction for a given @c amount.
-*/static actionForScrollInDirectionamount(direction, amount) {
+*/static actionForScrollInDirectionAmount(direction, amount) {
     if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
     if (typeof amount !== "number") throw new Error("amount should be a number, but got " + (amount + (" (" + (typeof amount + ")"))));
     return {
@@ -116,7 +116,7 @@ simulate a long press.
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForScrollInDirectionamount",
+      method: "actionForScrollInDirection:amount:",
       args: [{
         type: "GREYDirection",
         value: direction
@@ -143,7 +143,7 @@ exclusive, of the total height of the scrollable visible area.
 
 @return A GREYAction that scrolls a scroll view in a given @c direction for a given @c amount
 starting from the given start points.
-*/static actionForScrollInDirectionamountxOriginStartPercentageyOriginStartPercentage(direction, amount, xOriginStartPercentage, yOriginStartPercentage) {
+*/static actionForScrollInDirectionAmountXOriginStartPercentageYOriginStartPercentage(direction, amount, xOriginStartPercentage, yOriginStartPercentage) {
     if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
     if (typeof amount !== "number") throw new Error("amount should be a number, but got " + (amount + (" (" + (typeof amount + ")"))));
     if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + (xOriginStartPercentage + (" (" + (typeof xOriginStartPercentage + ")"))));
@@ -153,7 +153,7 @@ starting from the given start points.
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForScrollInDirectionamountxOriginStartPercentageyOriginStartPercentage",
+      method: "actionForScrollInDirection:amount:xOriginStartPercentage:yOriginStartPercentage:",
       args: [{
         type: "GREYDirection",
         value: direction
@@ -178,7 +178,7 @@ starting from the given start points.
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForScrollToContentEdge",
+      method: "actionForScrollToContentEdge:",
       args: [{
         type: "GREYContentEdge",
         value: edge
@@ -201,7 +201,7 @@ exclusive, of the total height of the scrollable visible area.
 
 @return A GREYAction that scrolls to the given content @c edge of a scroll view with the scroll
 action starting from the given start point.
-*/static actionForScrollToContentEdgexOriginStartPercentageyOriginStartPercentage(edge, xOriginStartPercentage, yOriginStartPercentage) {
+*/static actionForScrollToContentEdgeXOriginStartPercentageYOriginStartPercentage(edge, xOriginStartPercentage, yOriginStartPercentage) {
     if (!["Left", "Right", "Top", "Bottom"].some(option => option === edge)) throw new Error("edge should be one of [Left, Right, Top, Bottom], but got " + edge);
     if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + (xOriginStartPercentage + (" (" + (typeof xOriginStartPercentage + ")"))));
     if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + (yOriginStartPercentage + (" (" + (typeof yOriginStartPercentage + ")"))));
@@ -210,7 +210,7 @@ action starting from the given start point.
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForScrollToContentEdgexOriginStartPercentageyOriginStartPercentage",
+      method: "actionForScrollToContentEdge:xOriginStartPercentage:yOriginStartPercentage:",
       args: [{
         type: "GREYContentEdge",
         value: edge
@@ -237,7 +237,7 @@ chosen to achieve the maximum the swipe possible to the other edge.
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForSwipeFastInDirection",
+      method: "actionForSwipeFastInDirection:",
       args: [{
         type: "GREYDirection",
         value: direction
@@ -258,7 +258,7 @@ chosen to achieve maximum the swipe possible to the other edge.
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForSwipeSlowInDirection",
+      method: "actionForSwipeSlowInDirection:",
       args: [{
         type: "GREYDirection",
         value: direction
@@ -277,7 +277,7 @@ of the view. This must be between 0 and 1.
 
 @return A GREYAction that performs a fast swipe through a view in a specific direction from
 the specified point.
-*/static actionForSwipeFastInDirectionxOriginStartPercentageyOriginStartPercentage(direction, xOriginStartPercentage, yOriginStartPercentage) {
+*/static actionForSwipeFastInDirectionXOriginStartPercentageYOriginStartPercentage(direction, xOriginStartPercentage, yOriginStartPercentage) {
     if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
     if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + (xOriginStartPercentage + (" (" + (typeof xOriginStartPercentage + ")"))));
     if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + (yOriginStartPercentage + (" (" + (typeof yOriginStartPercentage + ")"))));
@@ -286,7 +286,7 @@ the specified point.
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForSwipeFastInDirectionxOriginStartPercentageyOriginStartPercentage",
+      method: "actionForSwipeFastInDirection:xOriginStartPercentage:yOriginStartPercentage:",
       args: [{
         type: "GREYDirection",
         value: direction
@@ -311,7 +311,7 @@ of the view. This must be between 0 and 1.
 
 @return A GREYAction that performs a slow swipe through a view in a specific direction from
 the specified point.
-*/static actionForSwipeSlowInDirectionxOriginStartPercentageyOriginStartPercentage(direction, xOriginStartPercentage, yOriginStartPercentage) {
+*/static actionForSwipeSlowInDirectionXOriginStartPercentageYOriginStartPercentage(direction, xOriginStartPercentage, yOriginStartPercentage) {
     if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
     if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + (xOriginStartPercentage + (" (" + (typeof xOriginStartPercentage + ")"))));
     if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + (yOriginStartPercentage + (" (" + (typeof yOriginStartPercentage + ")"))));
@@ -320,7 +320,7 @@ the specified point.
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForSwipeSlowInDirectionxOriginStartPercentageyOriginStartPercentage",
+      method: "actionForSwipeSlowInDirection:xOriginStartPercentage:yOriginStartPercentage:",
       args: [{
         type: "GREYDirection",
         value: direction
@@ -342,7 +342,7 @@ the specified point.
 
 @return A GREYAction that performs a multi-finger slow swipe through a view in a specific
 direction from the specified point.
-*/static actionForMultiFingerSwipeSlowInDirectionnumberOfFingers(direction, numberOfFingers) {
+*/static actionForMultiFingerSwipeSlowInDirectionNumberOfFingers(direction, numberOfFingers) {
     if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
     if (typeof numberOfFingers !== "number") throw new Error("numberOfFingers should be a number, but got " + (numberOfFingers + (" (" + (typeof numberOfFingers + ")"))));
     return {
@@ -350,7 +350,7 @@ direction from the specified point.
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForMultiFingerSwipeSlowInDirectionnumberOfFingers",
+      method: "actionForMultiFingerSwipeSlowInDirection:numberOfFingers:",
       args: [{
         type: "GREYDirection",
         value: direction
@@ -369,7 +369,7 @@ direction from the specified point.
 
 @return A GREYAction that performs a multi-finger fast swipe through a view in a specific
 direction from the specified point.
-*/static actionForMultiFingerSwipeFastInDirectionnumberOfFingers(direction, numberOfFingers) {
+*/static actionForMultiFingerSwipeFastInDirectionNumberOfFingers(direction, numberOfFingers) {
     if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
     if (typeof numberOfFingers !== "number") throw new Error("numberOfFingers should be a number, but got " + (numberOfFingers + (" (" + (typeof numberOfFingers + ")"))));
     return {
@@ -377,7 +377,7 @@ direction from the specified point.
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForMultiFingerSwipeFastInDirectionnumberOfFingers",
+      method: "actionForMultiFingerSwipeFastInDirection:numberOfFingers:",
       args: [{
         type: "GREYDirection",
         value: direction
@@ -396,7 +396,7 @@ direction from the specified point.
 
 @return A GREYAction that performs a multi-finger slow swipe through a view in a specific
 direction from the specified point.
-*/static actionForMultiFingerSwipeSlowInDirectionnumberOfFingersxOriginStartPercentageyOriginStartPercentage(direction, numberOfFingers, xOriginStartPercentage, yOriginStartPercentage) {
+*/static actionForMultiFingerSwipeSlowInDirectionNumberOfFingersXOriginStartPercentageYOriginStartPercentage(direction, numberOfFingers, xOriginStartPercentage, yOriginStartPercentage) {
     if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
     if (typeof numberOfFingers !== "number") throw new Error("numberOfFingers should be a number, but got " + (numberOfFingers + (" (" + (typeof numberOfFingers + ")"))));
     if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + (xOriginStartPercentage + (" (" + (typeof xOriginStartPercentage + ")"))));
@@ -406,7 +406,7 @@ direction from the specified point.
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForMultiFingerSwipeSlowInDirectionnumberOfFingersxOriginStartPercentageyOriginStartPercentage",
+      method: "actionForMultiFingerSwipeSlowInDirection:numberOfFingers:xOriginStartPercentage:yOriginStartPercentage:",
       args: [{
         type: "GREYDirection",
         value: direction
@@ -431,7 +431,7 @@ direction from the specified point.
 
 @return A GREYAction that performs a multi-finger fast swipe through a view in a specific
 direction from the specified point.
-*/static actionForMultiFingerSwipeFastInDirectionnumberOfFingersxOriginStartPercentageyOriginStartPercentage(direction, numberOfFingers, xOriginStartPercentage, yOriginStartPercentage) {
+*/static actionForMultiFingerSwipeFastInDirectionNumberOfFingersXOriginStartPercentageYOriginStartPercentage(direction, numberOfFingers, xOriginStartPercentage, yOriginStartPercentage) {
     if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
     if (typeof numberOfFingers !== "number") throw new Error("numberOfFingers should be a number, but got " + (numberOfFingers + (" (" + (typeof numberOfFingers + ")"))));
     if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + (xOriginStartPercentage + (" (" + (typeof xOriginStartPercentage + ")"))));
@@ -441,7 +441,7 @@ direction from the specified point.
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForMultiFingerSwipeFastInDirectionnumberOfFingersxOriginStartPercentageyOriginStartPercentage",
+      method: "actionForMultiFingerSwipeFastInDirection:numberOfFingers:xOriginStartPercentage:yOriginStartPercentage:",
       args: [{
         type: "GREYDirection",
         value: direction
@@ -466,7 +466,7 @@ Use @c kGREYPinchAngleDefault for the default angle (currently set to
 30 degrees).
 
 @return A GREYAction that performs a fast pinch on the whole view in the specified @c direction.
-*/static actionForPinchFastInDirectionwithAngle(pinchDirection, angle) {
+*/static actionForPinchFastInDirectionWithAngle(pinchDirection, angle) {
     if (!["Outward", "Inward"].some(option => option === pinchDirection)) throw new Error("pinchDirection should be one of [Outward, Inward], but got " + pinchDirection);
     if (typeof angle !== "number") throw new Error("angle should be a number, but got " + (angle + (" (" + (typeof angle + ")"))));
     return {
@@ -474,7 +474,7 @@ Use @c kGREYPinchAngleDefault for the default angle (currently set to
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForPinchFastInDirectionwithAngle",
+      method: "actionForPinchFastInDirection:withAngle:",
       args: [{
         type: "GREYPinchDirection",
         value: pinchDirection
@@ -493,7 +493,7 @@ Use @c kGREYPinchAngleDefault for the default angle (currently set to
 30 degrees).
 
 @return A GREYAction that performs a slow pinch on the whole view in the specified @c direction.
-*/static actionForPinchSlowInDirectionwithAngle(pinchDirection, angle) {
+*/static actionForPinchSlowInDirectionWithAngle(pinchDirection, angle) {
     if (!["Outward", "Inward"].some(option => option === pinchDirection)) throw new Error("pinchDirection should be one of [Outward, Inward], but got " + pinchDirection);
     if (typeof angle !== "number") throw new Error("angle should be a number, but got " + (angle + (" (" + (typeof angle + ")"))));
     return {
@@ -501,7 +501,7 @@ Use @c kGREYPinchAngleDefault for the default angle (currently set to
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForPinchSlowInDirectionwithAngle",
+      method: "actionForPinchSlowInDirection:withAngle:",
       args: [{
         type: "GREYPinchDirection",
         value: pinchDirection
@@ -528,7 +528,7 @@ that is closest to @c value.
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForMoveSliderToValue",
+      method: "actionForMoveSliderToValue:",
       args: [{
         type: "float",
         value: value
@@ -549,7 +549,7 @@ button multiple times.
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForSetStepperValue",
+      method: "actionForSetStepperValue:",
       args: [{
         type: "double",
         value: value
@@ -587,7 +587,7 @@ element and it's position is relative to the origin of the element, as in
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForTapAtPoint",
+      method: "actionForTapAtPoint:",
       args: [{
         type: "CGPoint",
         value: point
@@ -610,7 +610,7 @@ For Example: @"Helpo\b\bloWorld" will type HelloWorld in Objective-C.
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForTypeText",
+      method: "actionForTypeText:",
       args: [{
         type: "NSString",
         value: text
@@ -630,7 +630,7 @@ For Example: @"Helpo\b\bloWorld" will type HelloWorld in Objective-C.
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForReplaceText",
+      method: "actionForReplaceText:",
       args: [{
         type: "NSString",
         value: text
@@ -663,7 +663,7 @@ implement the selector UISwitch::isOn and include UISwitch controls.
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForTurnSwitchOn",
+      method: "actionForTurnSwitchOn:",
       args: [{
         type: "BOOL",
         value: on
@@ -683,7 +683,7 @@ implement the selector UISwitch::isOn and include UISwitch controls.
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForSetDate",
+      method: "actionForSetDate:",
       args: [{
         type: "NSDate *",
         value: date
@@ -697,7 +697,7 @@ implement the selector UISwitch::isOn and include UISwitch controls.
 @param value  The value to set the UIPickerView.
 
 @return A GREYAction to set the value of a specified column of a UIPickerView.
-*/static actionForSetPickerColumntoValue(column, value) {
+*/static actionForSetPickerColumnToValue(column, value) {
     if (typeof column !== "number") throw new Error("column should be a number, but got " + (column + (" (" + (typeof column + ")"))));
     if (typeof value !== "string") throw new Error("value should be a string, but got " + (value + (" (" + (typeof value + ")"))));
     return {
@@ -705,7 +705,7 @@ implement the selector UISwitch::isOn and include UISwitch controls.
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForSetPickerColumntoValue",
+      method: "actionForSetPickerColumn:toValue:",
       args: [{
         type: "NSInteger",
         value: column
@@ -723,14 +723,14 @@ implement the selector UISwitch::isOn and include UISwitch controls.
 @param outResult The result of the code execution.
 
 @return A GREYAction that executes JavaScript code against a UIWebView.
-*/static actionForJavaScriptExecutionoutput(js, outResult) {
+*/static actionForJavaScriptExecutionOutput(js, outResult) {
     if (typeof js !== "string") throw new Error("js should be a string, but got " + (js + (" (" + (typeof js + ")"))));
     return {
       target: {
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForJavaScriptExecutionoutput",
+      method: "actionForJavaScriptExecution:output:",
       args: [{
         type: "NSString",
         value: js
@@ -752,7 +752,7 @@ implement the selector UISwitch::isOn and include UISwitch controls.
         type: "Class",
         value: "GREYActions"
       },
-      method: "actionForSnapshot",
+      method: "actionForSnapshot:",
       args: [{
         type: "out __strong UIImage **",
         value: outImage
