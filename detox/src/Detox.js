@@ -77,6 +77,8 @@ class Detox {
       await this.client.cleanup();
     }
 
+    await this.device._cleanup();
+
     if (argparse.getArgValue('cleanup') && this.device) {
       await this.device.shutdown();
     }
