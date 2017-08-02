@@ -20,7 +20,23 @@ android {
                 'detoxServer': 'ws://localhost:8099',
                 'detoxSessionId': 'test'
         ]
+    }
 
+    //unremark to generate app-release-androidTest.apk for release tests
+    //testBuildType "release"
+
+    signingConfigs {
+        release {
+            storeFile file("keystore.jks")
+            storePassword "12345678"
+            keyAlias "key0"
+            keyPassword "12345678"
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
     }
 
     packagingOptions {

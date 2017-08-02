@@ -54,6 +54,16 @@
           "server": "ws://localhost:8099",
           "sessionId": "test"
         }
+      },
+      "android.emu.release": {
+        "binaryPath": "android/app/build/outputs/apk/app-release.apk",
+        "build": "pushd android && ./gradlew assembleRelease assembleAndroidTest && popd",
+        "type": "android.emulator",
+        "name": "Nexus_5X_API_24_-_GPlay",
+        "session": {
+          "server": "ws://localhost:8099",
+          "sessionId": "test"
+        }
       }
       
     }
