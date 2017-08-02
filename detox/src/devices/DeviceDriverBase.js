@@ -114,6 +114,10 @@ class DeviceDriverBase {
 
   }
 
+  async cleanup(deviceId, bundleId) {
+    return await Promise.resolve('');
+  }
+
   getLogsPaths(deviceId) {
     return {
       stdout: undefined,

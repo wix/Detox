@@ -1,5 +1,5 @@
 const exec = require('./../utils/exec').execWithRetriesAndLogs;
-const spawn = require('child-process-promise').spawn;
+const { spawn } = require('child_process');
 const _ = require('lodash');
 const InvocationManager = require('../invoke').InvocationManager;
 
@@ -12,6 +12,7 @@ class EmulatorDriver extends DeviceDriverBase {
 
   constructor(client) {
     super(client);
+    let instrumentationProcess;
     const expect = require('../android/expect');
     expect.exportGlobals();
     expect.setInvocationManager(new InvocationManager(client));
@@ -60,29 +61,43 @@ class EmulatorDriver extends DeviceDriverBase {
       args.push(`${key} ${value}`);
     });
 
-    const instrument = spawn(`adb`, [`-s`, `${deviceId}`, `shell` ,`am`, `instrument`, `-w` ,`-r`, `${args.join(' ')}`,`-e`, `debug`, `false` ,`${bundleId}.test/android.support.test.runner.AndroidJUnitRunner`]);
-    const childProcess = instrument.childProcess;
+    this.instrumentationProcess = spawn(`adb`, [`-s`, `${deviceId}`, `shell` ,`am`, `instrument`, `-w` ,`-r`, `${args.join(' ')}`,`-e`, `debug`, `false` ,`${bundleId}.test/android.support.test.runner.AndroidJUnitRunner`]);
 
-    console.log('[spawn] childProcess.pid: ', childProcess.pid);
-    childProcess.stdout.on('data', function (data) {
+    console.log('[spawn] childProcess.pid: ', this.instrumentationProcess.pid);
+    this.instrumentationProcess.stdout.on('data', function (data) {
       console.log('[spawn] stdout: ', data.toString());
     });
-    childProcess.stderr.on('data', function (data) {
+    this.instrumentationProcess.stderr.on('data', function (data) {
       console.log('[spawn] stderr: ', data.toString());
     });
 
-    instrument.then(function () {
-      console.log('[spawn] done!');
-    }).catch(function (err) {
-      console.error('[spawn] ERROR: ', err);
-      throw err;
+    this.instrumentationProcess.on('close', (code, signal) => {
+      console.log(
+        `instrumentationProcess terminated due to receipt of signal ${signal}`);
     });
+    //this.instrumentationProcess.then(function () {
+    //  console.log('[spawn] done!');
+    //}).catch(function (err) {
+    //  console.error('[spawn] ERROR: ', err);
+    //  throw err;
+    //});
   }
 
 
   async terminate(deviceId, bundleId) {
+    console.log('terminate instrumentation');
+    if (this.instrumentationProcess) {
+      this.instrumentationProcess.kill('SIGHUP');
+
+      //console.log(this.instrumentationProcess)
+    }
+    console.log('terminate app');
     await this.adbCmd(deviceId, `shell am force-stop ${bundleId}`);
     //await exec(`adb -s ${deviceId} shell am force-stop ${bundleId}`);
+  }
+
+  async cleanup(deviceId, bundleId) {
+    await this.terminate(deviceId, bundleId);
   }
 
   defaultLaunchArgsPrefix() {
@@ -96,7 +111,7 @@ class EmulatorDriver extends DeviceDriverBase {
   async setOrientation(deviceId, orientation) {
     const orientationMapping = {
       landscape: 1, // top at left side landscape
-      portrait: 0  // non-reversed portrait
+      portrait: 0  // non-reversed portrait.
     };
     await this.adbCmd(deviceId,`shell settings put system accelerometer_rotation 0`);
     await this.adbCmd(deviceId,`shell settings put system user_rotation ${orientationMapping[orientation]}`);

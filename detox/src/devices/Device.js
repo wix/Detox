@@ -165,6 +165,10 @@ class Device {
     return this.deviceDriver.getPlatform(this._deviceId);
   }
 
+  async _cleanup() {
+    await this.deviceDriver.cleanup(this._deviceId, this._bundleId);
+  }
+
   _defaultLaunchArgs() {
     return {
       'detoxServer': this._sessionConfig.server,
