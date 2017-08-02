@@ -214,6 +214,9 @@ class ReactNativeSupport {
             }
         } else {
             Log.i(LOG_TAG, "Got react context directly!!!.");
+            // TODO
+            // We have never landed in this branch so far, but
+            // we should check whether the ReactContext is already initialized.
         }
 
         // getViewTreeObserver().addOnGlobalLayoutListener(getCustomGlobalLayoutListener());

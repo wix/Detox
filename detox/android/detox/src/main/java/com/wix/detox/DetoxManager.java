@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.util.Log;
 
+import com.wix.detox.espresso.UiAutomatorHelper;
 import com.wix.detox.systeminfo.Environment;
 import com.wix.invoke.MethodInvocation;
 
@@ -124,6 +125,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                         // stop();
                         break;
                     case "reactNativeReload":
+                        UiAutomatorHelper.espressoSync();
                         ReactNativeSupport.reloadApp(reactNativeHostHolder);
                         wsClient.sendAction("ready", Collections.emptyMap(), messageId);
                         break;
