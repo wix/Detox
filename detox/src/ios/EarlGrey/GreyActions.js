@@ -1,3 +1,7 @@
+/*
+	This code is generated.
+	For more information see generation/README.md.
+*/
 class GREYActions {
   /*@return A GREYAction that performs multiple taps of a specified @c count.
 */static actionForMultipleTapsWithCount(count) {

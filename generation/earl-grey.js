@@ -158,7 +158,9 @@ module.exports = function(files) {
 
     const json = objectiveCParser(input);
     const ast = t.program([createClass(json), createExport(json)]);
-    const output = generate(ast);
+    const output = generate(ast, {
+      auxiliaryCommentBefore: '\n\tThis code is generated.\n\tFor more information see generation/README.md.\n'
+    });
 
     fs.writeFileSync(outputFile, output.code, "utf8");
   });
