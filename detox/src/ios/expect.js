@@ -53,22 +53,21 @@ class TapAction extends Action {
 class TapAtPointAction extends Action {
     constructor(value) {
         super();
-        this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForTapAtPoint:', invoke.IOS.CGPoint(value));
+        this._call = invoke.callDirectly(GreyActions.actionForTapAtPoint(value));
     }
 }
 
 class LongPressAction extends Action {
   constructor() {
     super();
-    this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForLongPress');
+    this._call = invoke.callDirectly(GreyActions.actionForLongPress());
   }
 }
 
 class MultiTapAction extends Action {
   constructor(value) {
     super();
-    if (typeof value !== 'number') throw new Error(`MultiTapAction ctor argument must be a number, got ${typeof value}`);
-    this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForMultipleTapsWithCount:', invoke.IOS.NSInteger(value));
+    this._call = invoke.callDirectly(GreyActions.actionForMultipleTapsWithCount(value));
   }
 }
 
