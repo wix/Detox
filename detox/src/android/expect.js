@@ -48,6 +48,13 @@ class DoubleClickAction extends Action {
   }
 }
 
+class MultiClickAction extends Action {
+  constructor(times) {
+    super();
+    this._call = invoke.call(invoke.Android.Class(DetoxAction), 'multiClick', invoke.Android.Integer(times));
+  }
+}
+
 class TypeTextAction extends Action {
   constructor(value) {
     super();
@@ -244,12 +251,12 @@ class Element {
   async longPress() {
     return await new ActionInteraction(this, new LongPressAction()).execute();
   }
-  async multiTap(value) {
+  async multiTap(times) {
     // TODO
     // This is only a doubleClick for now
     // useful link for later
     // https://github.com/android/platform_frameworks_base/blob/master/core/tests/coretests/src/android/widget/espresso/ViewClickAction.java
-    return await new ActionInteraction(this, new DoubleClickAction()).execute();
+    return await new ActionInteraction(this, new MultiClickAction(times)).execute();
   }
   async typeText(value) {
     return await new ActionInteraction(this, new TypeTextAction(value)).execute();

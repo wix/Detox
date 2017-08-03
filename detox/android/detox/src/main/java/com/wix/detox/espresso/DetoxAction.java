@@ -2,15 +2,19 @@ package com.wix.detox.espresso;
 
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
+import android.support.test.espresso.action.GeneralClickAction;
+import android.support.test.espresso.action.GeneralLocation;
+import android.support.test.espresso.action.Press;
 import android.util.Log;
 import android.view.View;
 
 import org.hamcrest.Matcher;
-import static org.hamcrest.Matchers.allOf;
 import org.joor.Reflect;
 
+import static android.support.test.espresso.action.ViewActions.actionWithAssertions;
 import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static org.hamcrest.Matchers.allOf;
 
 
 /**
@@ -33,6 +37,11 @@ public class DetoxAction {
 
     private DetoxAction() {
         // static class
+    }
+
+
+    public static ViewAction multiClick(int times) {
+        return actionWithAssertions(new GeneralClickAction(new MultiTap(times), GeneralLocation.CENTER, Press.FINGER, 0, 0));
     }
 
     /**
