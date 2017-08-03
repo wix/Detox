@@ -85,19 +85,19 @@ class EmulatorDriver extends DeviceDriverBase {
 
 
   async terminate(deviceId, bundleId) {
-    console.log('terminate instrumentation');
-    if (this.instrumentationProcess) {
-      this.instrumentationProcess.kill('SIGHUP');
-
-      //console.log(this.instrumentationProcess)
-    }
-    console.log('terminate app');
+    this.terminateInstrumentation();
     await this.adbCmd(deviceId, `shell am force-stop ${bundleId}`);
     //await exec(`adb -s ${deviceId} shell am force-stop ${bundleId}`);
   }
 
   async cleanup(deviceId, bundleId) {
-    await this.terminate(deviceId, bundleId);
+    this.terminateInstrumentation();
+  }
+
+  terminateInstrumentation() {
+    if (this.instrumentationProcess) {
+      this.instrumentationProcess.kill('SIGHUP');
+    }
   }
 
   defaultLaunchArgsPrefix() {
