@@ -97,6 +97,13 @@ class EmulatorDriver extends DeviceDriverBase {
   terminateInstrumentation() {
     if (this.instrumentationProcess) {
       this.instrumentationProcess.kill('SIGHUP');
+      /*
+      try {
+        console.log('killing instrumentation process succeded: ', this.instrumentationProcess.kill('SIGTERM'));
+      } catch (e) {
+        console.log('killing instrumentation process failed', e);
+      }
+      */
     }
   }
 

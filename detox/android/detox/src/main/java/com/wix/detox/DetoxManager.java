@@ -30,7 +30,6 @@ class DetoxManager implements WebSocketClient.ActionHandler {
     private String detoxSessionId = null;
 
     private WebSocketClient wsClient;
-    // private TestRunner testRunner;
     private Handler handler;
 
     private Object reactNativeHostHolder = null;
@@ -61,7 +60,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
             if (ReactNativeSupport.isReactNativeApp()) {
                 ReactNativeSupport.waitForReactNativeLoad(reactNativeHostHolder);
             }
-            // testRunner = new TestRunner(this);
+
             wsClient = new WebSocketClient(this);
             wsClient.connectToServer(detoxServerUrl, detoxSessionId);
         }
@@ -97,7 +96,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                             String retStr = "(null)";
                             if (retVal != null) {
                                 // TODO
-                                // handle supported typesmatcherForContentDescription
+                                // handle supported types
                             }
                             HashMap m = new HashMap();
                             m.put("result", retStr);
@@ -113,7 +112,6 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                             m.put("details", e.getMessage());
                             wsClient.sendAction("testFailed", m, messageId);
                         }
-                        // stop();
                         break;
                     case "isReady":
                         // It's always ready, because reload, waitForRn are both synchronous.
@@ -121,8 +119,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                         break;
                     case "cleanup":
                         wsClient.sendAction("cleanupDone", Collections.emptyMap(), messageId);
-                        // TODO!!!
-                        // stop();
+                        stop();
                         break;
                     case "reactNativeReload":
                         UiAutomatorHelper.espressoSync();

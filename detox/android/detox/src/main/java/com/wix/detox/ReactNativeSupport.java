@@ -7,14 +7,11 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingResource;
 import android.util.Log;
-import android.view.Choreographer;
 
 import com.wix.detox.espresso.LooperIdlingResource;
 import com.wix.detox.espresso.ReactBridgeIdlingResource;
 import com.wix.detox.espresso.ReactNativeTimersIdlingResource;
-import com.wix.detox.espresso.ReactNativeUIModuleIdlingResource;
 import com.wix.detox.espresso.ReactViewHierarchyUpdateIdlingResource;
-import com.wix.detox.espresso.UiAutomatorHelper;
 
 import org.joor.Reflect;
 import org.joor.ReflectException;
@@ -22,9 +19,6 @@ import org.joor.ReflectException;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by simonracz on 15/05/2017.
@@ -204,6 +198,9 @@ class ReactNativeSupport {
                 }
                 while (true) {
                     try {
+                        // TODO
+                        // Dont wait indefinitely
+                        // Maybe reactContext was created before the listener is set
                         instanceManager.wait();
                         break;
                     } catch (InterruptedException e) {
@@ -216,7 +213,7 @@ class ReactNativeSupport {
             Log.i(LOG_TAG, "Got react context directly!!!.");
             // TODO
             // We have never landed in this branch so far, but
-            // we should check whether the ReactContext is already initialized.
+            // we should check whether the ReactContext is already properly initialized.
         }
 
         // getViewTreeObserver().addOnGlobalLayoutListener(getCustomGlobalLayoutListener());
