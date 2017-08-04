@@ -297,7 +297,7 @@ class ExpectElement extends Expect {
     return await new MatcherAssertionInteraction(this._element, new ExistsMatcher()).execute();
   }
   async toNotExist() {
-    return await new MatcherAssertionInteraction(this._element, new NotExistsMatcher()).execute();
+    return await invocationManager.execute(invoke.call(invoke.Android.Class(DetoxAssertion), 'assertNotExists', this._element._call));
   }
   async toHaveText(value) {
     return await new MatcherAssertionInteraction(this._element, new TextMatcher(value)).execute();

@@ -34,4 +34,8 @@ public class DetoxAssertion {
             return ret;
         }
     }
+
+    public static ViewInteraction assertNotExists(ViewInteraction i) {
+        return i.check(doesNotExist());
+    }
 }
