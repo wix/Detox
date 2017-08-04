@@ -252,10 +252,6 @@ class Element {
     return await new ActionInteraction(this, new LongPressAction()).execute();
   }
   async multiTap(times) {
-    // TODO
-    // This is only a doubleClick for now
-    // useful link for later
-    // https://github.com/android/platform_frameworks_base/blob/master/core/tests/coretests/src/android/widget/espresso/ViewClickAction.java
     return await new ActionInteraction(this, new MultiClickAction(times)).execute();
   }
   async typeText(value) {
@@ -295,7 +291,7 @@ class ExpectElement extends Expect {
     return await new MatcherAssertionInteraction(this._element, new VisibleMatcher()).execute();
   }
   async toBeNotVisible() {
-    return await new MatcherAssertionInteraction(this._element, new NotVisibleMatcher()).execute();
+    return await invocationManager.execute(invoke.call(invoke.Android.Class(DetoxAssertion), 'assertNotVisible', this._element._call));
   }
   async toExist() {
     return await new MatcherAssertionInteraction(this._element, new ExistsMatcher()).execute();

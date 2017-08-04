@@ -88,6 +88,8 @@ public class DetoxMatcher {
         return isDisplayingAtLeast(75);
     }
 
+    // Special ViewAssertion is needed for GONE views
+    @Deprecated
     public static Matcher<View> matcherForNotVisible() {
         return not(isDisplayed());
     }
