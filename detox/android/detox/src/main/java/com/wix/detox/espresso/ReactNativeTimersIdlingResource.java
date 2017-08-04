@@ -3,6 +3,7 @@ package com.wix.detox.espresso;
 import android.support.annotation.NonNull;
 import android.support.test.espresso.IdlingResource;
 import android.util.Log;
+import android.view.Choreographer;
 
 import org.joor.Reflect;
 import org.joor.ReflectException;
@@ -26,7 +27,7 @@ import java.util.PriorityQueue;
  * the one scheduled the soonest is still too far in the future.
  * </p>
  */
-public class ReactNativeTimersIdlingResource implements IdlingResource {
+public class ReactNativeTimersIdlingResource implements IdlingResource, Choreographer.FrameCallback {
     private static final String LOG_TAG = "Detox";
 
     private final static String CLASS_TIMING = "com.facebook.react.modules.core.Timing";
@@ -55,10 +56,6 @@ public class ReactNativeTimersIdlingResource implements IdlingResource {
 
     @Override
     public boolean isIdleNow() {
-        // This is not a proper Espresso IdlingResource yet,
-        // as it is driven by the isIdleNow() method.
-        // This will be marked as a Racy Resource internally.
-        // It'll cause no problem though.
         Class<?> timingClass = null;
         Class<?> timerClass = null;
         try {
@@ -99,12 +96,12 @@ public class ReactNativeTimersIdlingResource implements IdlingResource {
                     return true;
                 }
 
-                Log.i(LOG_TAG, "Num of Timers : " + timers.size());
+                // Log.i(LOG_TAG, "Num of Timers : " + timers.size());
 
                 long targetTime = Reflect.on(timers.peek()).field(FIELD_TARGET_TIME).get();
                 long currentTimeMS = System.nanoTime() / 1000000;
 
-                Log.i(LOG_TAG, "targetTime " + targetTime + " currentTime " + currentTimeMS);
+                // Log.i(LOG_TAG, "targetTime " + targetTime + " currentTime " + currentTimeMS);
 
                 if (targetTime - currentTimeMS > LOOK_AHEAD_MS || targetTime < currentTimeMS) {
                     // Timer is too far in the future. Mark it as OK for now.
@@ -112,10 +109,13 @@ public class ReactNativeTimersIdlingResource implements IdlingResource {
                     if (callback != null) {
                         callback.onTransitionToIdle();
                     }
+                    Log.i(LOG_TAG, "JS Timer is idle: true");
                     return true;
                 }
             }
 
+            Choreographer.getInstance().postFrameCallback(this);
+            Log.i(LOG_TAG, "JS Timer is idle: false");
             return false;
         } catch (ReflectException e) {
             Log.e(LOG_TAG, "Can't set up RN timer listener", e.getCause());
@@ -130,5 +130,12 @@ public class ReactNativeTimersIdlingResource implements IdlingResource {
     @Override
     public void registerIdleTransitionCallback(ResourceCallback callback) {
         this.callback = callback;
+
+        Choreographer.getInstance().postFrameCallback(this);
+    }
+
+    @Override
+    public void doFrame(long frameTimeNanos) {
+        isIdleNow();
     }
 }
