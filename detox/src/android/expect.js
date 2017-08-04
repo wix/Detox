@@ -303,7 +303,7 @@ class ExpectElement extends Expect {
     return await new MatcherAssertionInteraction(this._element, new TextMatcher(value)).execute();
   }
   async toHaveLabel(value) {
-    return await new MatcherAssertionInteraction(this._element, new LabelMatcher(value)).execute();
+    return await new MatcherAssertionInteraction(this._element, new TextMatcher(value)).execute();
   }
   async toHaveId(value) {
     return await new MatcherAssertionInteraction(this._element, new IdMatcher(value)).execute();
