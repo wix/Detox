@@ -3,6 +3,7 @@ package com.wix.detox.espresso;
 import android.support.annotation.NonNull;
 import android.support.test.espresso.IdlingResource;
 import android.util.Log;
+import android.view.Choreographer;
 
 import org.joor.Reflect;
 import org.joor.ReflectException;
@@ -21,11 +22,8 @@ import java.util.PriorityQueue;
  * <p>
  * Hooks up to React Native internals to grab the pending ui operations from it.
  * </p>
- *
- * @deprecated in favor of {@link ReactViewHierarchyUpdateIdlingResource}
  */
-@Deprecated
-public class ReactNativeUIModuleIdlingResource implements IdlingResource {
+public class ReactNativeUIModuleIdlingResource implements IdlingResource , Choreographer.FrameCallback {
     private static final String LOG_TAG = "Detox";
 
     private final static String CLASS_UI_MANAGER_MODULE = "com.facebook.react.uimanager.UIManagerModule";
@@ -115,11 +113,12 @@ public class ReactNativeUIModuleIdlingResource implements IdlingResource {
                 if (callback != null) {
                     callback.onTransitionToIdle();
                 }
+                Log.i(LOG_TAG, "UIManagerModule is idle.");
                 return true;
             }
 
             Log.i(LOG_TAG, "UIManagerModule is busy.");
-
+            Choreographer.getInstance().postFrameCallback(this);
             return false;
         } catch (ReflectException e) {
             Log.e(LOG_TAG, "Can't set up RN UIModule listener", e.getCause());
@@ -134,5 +133,12 @@ public class ReactNativeUIModuleIdlingResource implements IdlingResource {
     @Override
     public void registerIdleTransitionCallback(ResourceCallback callback) {
         this.callback = callback;
+
+        Choreographer.getInstance().postFrameCallback(this);
+    }
+
+    @Override
+    public void doFrame(long frameTimeNanos) {
+        isIdleNow();
     }
 }

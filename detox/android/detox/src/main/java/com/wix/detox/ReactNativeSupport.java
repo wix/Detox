@@ -11,6 +11,7 @@ import android.util.Log;
 import com.wix.detox.espresso.LooperIdlingResource;
 import com.wix.detox.espresso.ReactBridgeIdlingResource;
 import com.wix.detox.espresso.ReactNativeTimersIdlingResource;
+import com.wix.detox.espresso.ReactNativeUIModuleIdlingResource;
 import com.wix.detox.espresso.ReactViewHierarchyUpdateIdlingResource;
 
 import org.joor.Reflect;
@@ -243,29 +244,8 @@ class ReactNativeSupport {
         );
     }
 
-    private static Object viewHierarchyUpdateListener = null;
-    private static ReactViewHierarchyUpdateIdlingResource rnViewHierarchyIdlingResource = null;
-
-    private static void createViewHierarchyUpdateListener() {
-        Class<?> listenerClass = null;
-        try {
-            listenerClass = Class.forName(INTERFACE_VIEW_HIERARCHY_UPDATE_LISTENER);
-        } catch (ClassNotFoundException e) {
-            Log.e(LOG_TAG, "Can't find ReactBridgeIdleSignaler()", e);
-            return;
-        }
-
-        rnViewHierarchyIdlingResource = new ReactViewHierarchyUpdateIdlingResource();
-
-        Class[] proxyInterfaces = new Class[]{listenerClass};
-        viewHierarchyUpdateListener = Proxy.newProxyInstance(
-                listenerClass.getClassLoader(),
-                proxyInterfaces,
-                new Delegator(proxyInterfaces, new Object[] { rnViewHierarchyIdlingResource })
-        );
-    }
-
     private static ReactNativeTimersIdlingResource rnTimerIdlingResource = null;
+    private static ReactNativeUIModuleIdlingResource rnUIModuleIdlingResource = null;
 
     private static void setupEspressoIdlingResources(
             @NonNull Object reactNativeHostHolder,
@@ -280,27 +260,13 @@ class ReactNativeSupport {
                 .call(METHOD_GET_CATALYST_INSTANCE)
                 .call(METHOD_ADD_DEBUG_BRIDGE_LISTENER, bridgeIdleSignaler);
 
-        createViewHierarchyUpdateListener();
-
-        Class<?> uiModuleClass = null;
-        try {
-            uiModuleClass = Class.forName(ReactViewHierarchyUpdateIdlingResource.CLASS_UI_MANAGER_MODULE);
-        } catch (ClassNotFoundException e) {
-            Log.e(LOG_TAG, "UIManagerModule is not on classpath.");
-        }
-
-        Reflect.on(reactContext)
-                .call(ReactViewHierarchyUpdateIdlingResource.METHOD_GET_NATIVE_MODULE, uiModuleClass)
-                .call(ReactViewHierarchyUpdateIdlingResource.METHOD_GET_UI_IMPLEMENTATION)
-                .call(ReactViewHierarchyUpdateIdlingResource.METHOD_GET_UI_OPERATION_QUEUE)
-                .call(ReactViewHierarchyUpdateIdlingResource.METHOD_SET_VIEW_LISTENER, viewHierarchyUpdateListener);
-
         rnTimerIdlingResource = new ReactNativeTimersIdlingResource(reactContext);
+        rnUIModuleIdlingResource = new ReactNativeUIModuleIdlingResource(reactContext);
 
         Espresso.registerIdlingResources(
                 rnTimerIdlingResource,
                 rnBridgeIdlingResource,
-                rnViewHierarchyIdlingResource);
+                rnUIModuleIdlingResource);
     }
 
     private static ArrayList<IdlingResource> looperIdlingResources = new ArrayList<>();
@@ -365,14 +331,14 @@ class ReactNativeSupport {
         Log.i(LOG_TAG, "Removing Espresso IdlingResources for React Native.");
 
         if (rnBridgeIdlingResource != null &&
-                rnTimerIdlingResource != null && rnViewHierarchyIdlingResource != null) {
+                rnTimerIdlingResource != null && rnUIModuleIdlingResource != null) {
             Espresso.unregisterIdlingResources(
                     rnTimerIdlingResource,
                     rnBridgeIdlingResource,
-                    rnViewHierarchyIdlingResource);
+                    rnUIModuleIdlingResource);
             rnTimerIdlingResource = null;
             rnBridgeIdlingResource = null;
-            rnViewHierarchyIdlingResource = null;
+            rnUIModuleIdlingResource = null;
         }
 
         removeReactNativeQueueInterrogators();
@@ -389,24 +355,6 @@ class ReactNativeSupport {
                         .call(METHOD_REMOVE_DEBUG_BRIDGE_LISTENER, bridgeIdleSignaler);
             }
             bridgeIdleSignaler = null;
-        }
-
-        if (viewHierarchyUpdateListener != null) {
-            if (reactContext != null) {
-                Class<?> uiModuleClass = null;
-                try {
-                    uiModuleClass = Class.forName(ReactViewHierarchyUpdateIdlingResource.CLASS_UI_MANAGER_MODULE);
-                } catch (ClassNotFoundException e) {
-                    Log.e(LOG_TAG, "UIManagerModule is not on classpath.");
-                }
-
-                Reflect.on(reactContext)
-                        .call(ReactViewHierarchyUpdateIdlingResource.METHOD_GET_NATIVE_MODULE, uiModuleClass)
-                        .call(ReactViewHierarchyUpdateIdlingResource.METHOD_GET_UI_IMPLEMENTATION)
-                        .call(ReactViewHierarchyUpdateIdlingResource.METHOD_GET_UI_OPERATION_QUEUE)
-                        .call(ReactViewHierarchyUpdateIdlingResource.METHOD_SET_VIEW_LISTENER, (Object)null);
-            }
-            viewHierarchyUpdateListener = null;
         }
     }
 

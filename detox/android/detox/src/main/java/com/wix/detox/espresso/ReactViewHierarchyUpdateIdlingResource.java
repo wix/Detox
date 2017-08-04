@@ -13,8 +13,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * <p>
  * IdlingResource for Espresso, which monitors the UI Module's state.
+ *
  * </p>
+ *
+ * Deprecated in favor of the updated {@link ReactNativeUIModuleIdlingResource}
  */
+@Deprecated
 public class ReactViewHierarchyUpdateIdlingResource implements IdlingResource {
     private static final String LOG_TAG = "Detox";
 
