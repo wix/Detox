@@ -43,7 +43,7 @@ describe('AsyncWebSocket', () => {
     }
   });
 
-  it(`messaged should have subsequent messageIds`, async () => {
+  it(`message should have subsequent messageIds`, async () => {
     await connect(client);
 
     const request = generateRequest();
@@ -61,7 +61,7 @@ describe('AsyncWebSocket', () => {
     expect(await second).toEqual(secondResponse.data);
 });
 
-  it(`messaged should have subsequent messageIds`, async () => {
+  it(`message response should resolve the calling request`, async () => {
     await connect(client);
 
     const request = generateRequest();
@@ -79,6 +79,17 @@ describe('AsyncWebSocket', () => {
 
     expect(await second).toEqual(secondResponse.data);
     expect(await first).toEqual(firstResponse.data);
+  });
+
+  it(`message should be ignored if has no pending request`, async () => {
+    await connect(client);
+
+    const initialInflightPromisesSize = _.size(client.inFlightPromises);
+    const response = generateResponse('onmessage', 123);
+    client.ws.onmessage(response);
+
+    const finalInflightPromisesSize = _.size(client.inFlightPromises);
+    expect(initialInflightPromisesSize).toEqual(finalInflightPromisesSize);
   });
 
   it(`send message should resolve upon returning message`, async () => {

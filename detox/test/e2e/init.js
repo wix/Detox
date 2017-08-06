@@ -8,3 +8,11 @@ before(async () => {
 after(async () => {
   await detox.cleanup();
 });
+
+beforeEach(async function() {
+  await detox.beforeEach(this.currentTest.parent.title, this.currentTest.title);
+});
+
+afterEach(async function() {
+  await detox.afterEach();
+});

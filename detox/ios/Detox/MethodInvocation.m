@@ -65,6 +65,14 @@
         CGFloat v = [value doubleValue];
         return [NSNumber numberWithDouble:v];
     }
+	if ([type isEqualToString:@"CGPoint"])
+	{
+		if (![value isKindOfClass:[NSDictionary class]]) return nil;
+		NSDictionary *v = (NSDictionary*)value;
+		CGFloat x = [[v objectForKey:@"x"] floatValue];
+		CGFloat y = [[v objectForKey:@"y"] floatValue];
+		return [NSValue valueWithCGPoint:CGPointMake(x, y)];
+	}
     if ([type isEqualToString:@"CGRect"])
     {
         if (![value isKindOfClass:[NSDictionary class]]) return nil;

@@ -62,7 +62,7 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile 'com.squareup.okhttp3:okhttp-ws:3.4.1'
 
-    compile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    compile('com.android.support.test.espresso:espresso-core:3.0.0', {
         exclude group: 'com.google.code.findbugs'
     })
 

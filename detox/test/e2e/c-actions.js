@@ -22,6 +22,11 @@ describe('Actions', () => {
     await expect(element(by.id('UniqueId819'))).toHaveLabel('Taps: 3');
   });
 
+  it('should tap on an element at point', async () => {
+    await element(by.id('View7990')).tapAtPoint({x:180, y:140});
+    await expect(element(by.id('UniqueId819'))).toHaveLabel('Taps: 1');
+  });
+
   // Backspace is supported by using "\b" in the string. Return key is supported with "\n"
   it('should type in an element', async () => {
     await element(by.id('UniqueId937')).tap();

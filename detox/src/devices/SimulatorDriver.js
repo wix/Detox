@@ -42,11 +42,15 @@ class SimulatorDriver extends IosDriver {
   }
 
   async launch(deviceId, bundleId, launchArgs) {
-    await this._fbsimctl.launch(deviceId, bundleId, launchArgs);
+    return await this._fbsimctl.launch(deviceId, bundleId, launchArgs);
   }
 
   async terminate(deviceId, bundleId) {
     await this._fbsimctl.terminate(deviceId, bundleId);
+  }
+
+  async sendToHome(deviceId) {
+    return await this._fbsimctl.sendToHome(deviceId);
   }
 
   async shutdown(deviceId) {
@@ -69,6 +73,10 @@ class SimulatorDriver extends IosDriver {
     if (!deviceConfig.name) {
       configuration.throwOnEmptyName();
     }
+  }
+
+  getLogsPaths(deviceId) {
+    return this._fbsimctl.getLogsPaths(deviceId);
   }
 }
 

@@ -19,6 +19,10 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
+  async sendToHome() {
+    return await Promise.resolve('');
+  }
+
   async relaunchApp() {
     return await Promise.resolve('');
   }
@@ -67,7 +71,7 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async setOrientation(urlList) {
+  async setOrientation(deviceId, orientation) {
     return await Promise.resolve('');
   }
 
@@ -104,6 +108,21 @@ class DeviceDriverBase {
 
   validateDeviceConfig(deviceConfig) {
 
+  }
+
+  getPlatform() {
+
+  }
+
+  async cleanup(deviceId, bundleId) {
+    return await Promise.resolve('');
+  }
+
+  getLogsPaths(deviceId) {
+    return {
+      stdout: undefined,
+      stderr: undefined
+    };
   }
 }
 

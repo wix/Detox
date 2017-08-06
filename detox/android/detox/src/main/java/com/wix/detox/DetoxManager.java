@@ -5,21 +5,15 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.Espresso;
-import android.support.test.espresso.EspressoException;
 import android.util.Log;
 
+import com.wix.detox.espresso.UiAutomatorHelper;
+import com.wix.detox.systeminfo.Environment;
 import com.wix.invoke.MethodInvocation;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
-
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import java.util.HashMap;
 
 
 /**
@@ -36,7 +30,6 @@ class DetoxManager implements WebSocketClient.ActionHandler {
     private String detoxSessionId = null;
 
     private WebSocketClient wsClient;
-    // private TestRunner testRunner;
     private Handler handler;
 
     private Object reactNativeHostHolder = null;
@@ -47,6 +40,9 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
         Bundle arguments = InstrumentationRegistry.getArguments();
         detoxServerUrl = arguments.getString(DETOX_SERVER_ARG_KEY);
+        if (detoxServerUrl != null) {
+            detoxServerUrl = detoxServerUrl.replace(Environment.DEVICE_LOCALHOST, Environment.getServerHost());
+        }
         detoxSessionId = arguments.getString(DETOX_SESSION_ID_ARG_KEY);
 
         if (detoxServerUrl == null || detoxSessionId == null) {
@@ -64,27 +60,30 @@ class DetoxManager implements WebSocketClient.ActionHandler {
             if (ReactNativeSupport.isReactNativeApp()) {
                 ReactNativeSupport.waitForReactNativeLoad(reactNativeHostHolder);
             }
-            // testRunner = new TestRunner(this);
+
             wsClient = new WebSocketClient(this);
             wsClient.connectToServer(detoxServerUrl, detoxSessionId);
         }
     }
+
+    boolean stopping = false;
 
     void stop() {
         Log.i(LOG_TAG, "Stopping Detox.");
         handler.postAtFrontOfQueue(new Runnable() {
             @Override
             public void run() {
-                // TODO
-                // Close the websocket
+                if (stopping) return;
+                stopping = true;
                 ReactNativeSupport.removeEspressoIdlingResources(reactNativeHostHolder);
+                wsClient.close();
                 Looper.myLooper().quit();
             }
         });
     }
 
     @Override
-    public void onAction(final String type, final String params) {
+    public void onAction(final String type, final String params, final long messageId) {
         Log.i(LOG_TAG, "onAction: type: " + type + " params: " + params);
         handler.post(new Runnable() {
             @Override
@@ -94,73 +93,38 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                         try {
                             Object retVal = MethodInvocation.invoke(params);
                             Log.d(LOG_TAG, "Invocation result: " + retVal);
-                        } catch (Exception ex) {
-                            Log.d(LOG_TAG, "Invocation failed: " + ex.toString());
+                            String retStr = "(null)";
+                            if (retVal != null) {
+                                // TODO
+                                // handle supported types
+                            }
+                            HashMap m = new HashMap();
+                            m.put("result", retStr);
+                            wsClient.sendAction("invokeResult", m, messageId);
+                        } catch (InvocationTargetException e) {
+                                Log.e(LOG_TAG, "Exception", e);
+                                HashMap m = new HashMap();
+                                m.put("error", e.getTargetException().getMessage());
+                                wsClient.sendAction("error", m, messageId);
+                        } catch (Exception e) {
+                            Log.i(LOG_TAG, "Test exception", e);
+                            HashMap m = new HashMap();
+                            m.put("details", e.getMessage());
+                            wsClient.sendAction("testFailed", m, messageId);
                         }
                         break;
                     case "isReady":
                         // It's always ready, because reload, waitForRn are both synchronous.
-                        wsClient.sendAction("ready", Collections.emptyMap());
+                        wsClient.sendAction("ready", Collections.emptyMap(), messageId);
                         break;
                     case "cleanup":
-                        wsClient.sendAction("cleanupDone", Collections.emptyMap());
+                        wsClient.sendAction("cleanupDone", Collections.emptyMap(), messageId);
                         stop();
                         break;
                     case "reactNativeReload":
+                        UiAutomatorHelper.espressoSync();
                         ReactNativeSupport.reloadApp(reactNativeHostHolder);
-                        break;
-                    // TODO
-                    // Remove these test* commands later.
-                    case "testInvoke1":
-                        try {
-                            Espresso.onView(withTagValue(is((Object)"hello_button"))).check(matches(isDisplayed()));
-                        } catch (RuntimeException e) {
-                            if (e instanceof EspressoException) {
-                                Log.i(LOG_TAG, "Test exception", e);
-                                wsClient.sendAction("TEST_FAIL", Collections.emptyMap());
-                            } else {
-                                wsClient.sendAction("EXCEPTION", Collections.emptyMap());
-                                Log.e(LOG_TAG, "Exception", e);
-                            }
-                            stop();
-                            break;
-                        }
-                        wsClient.sendAction("TEST_OK", Collections.emptyMap());
-                        break;
-                    case "testInvokeNeg1":
-                        try {
-                            Espresso.onView(withTagValue(is((Object)"hello_button"))).check(matches(not(isDisplayed())));
-                        } catch (RuntimeException e) {
-                            if (e instanceof EspressoException) {
-                                Log.i(LOG_TAG, "Test exception", e);
-                                wsClient.sendAction("TEST_FAIL", Collections.emptyMap());
-                            } else {
-                                wsClient.sendAction("EXCEPTION", Collections.emptyMap());
-                                Log.e(LOG_TAG, "Exception", e);
-                            }
-                            stop();
-                            break;
-                        }
-                        wsClient.sendAction("TEST_OK", Collections.emptyMap());
-                        break;
-                    case "testPush":
-                        Espresso.onView(withTagValue(is((Object) "hello_button"))).perform(click());
-                        break;
-                    case "testInvoke2":
-                        try {
-                            Espresso.onView(withText("Hello!!!")).check(matches(isDisplayed()));
-                        } catch (RuntimeException e) {
-                            if (e instanceof EspressoException) {
-                                Log.i(LOG_TAG, "Test exception", e);
-                                wsClient.sendAction("TEST_FAIL", Collections.emptyMap());
-                            } else {
-                                wsClient.sendAction("EXCEPTION", Collections.emptyMap());
-                                Log.e(LOG_TAG, "Exception", e);
-                            }
-                            stop();
-                            break;
-                        }
-                        wsClient.sendAction("TEST_OK", Collections.emptyMap());
+                        wsClient.sendAction("ready", Collections.emptyMap(), messageId);
                         break;
                 }
             }
@@ -169,7 +133,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     @Override
     public void onConnect() {
-        wsClient.sendAction("ready", Collections.emptyMap());
+        wsClient.sendAction("ready", Collections.emptyMap(), -1000L);
     }
 
     @Override

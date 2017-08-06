@@ -3,6 +3,7 @@ package com.wix.detox.espresso;
 import android.support.annotation.NonNull;
 import android.support.test.espresso.IdlingResource;
 import android.util.Log;
+import android.view.Choreographer;
 
 import org.joor.Reflect;
 import org.joor.ReflectException;
@@ -19,14 +20,14 @@ import java.util.PriorityQueue;
  * </p>
  *
  * <p>
- * Hooks up to React Native internals, grabbing the Timers from it.
+ * Hooks up to React Native internals to grab the timers queue from it.
  * </p>
  * <p>
  * This resource is considered idle if the Timers priority queue is empty or
  * the one scheduled the soonest is still too far in the future.
  * </p>
  */
-public class ReactNativeTimersIdlingResource implements IdlingResource {
+public class ReactNativeTimersIdlingResource implements IdlingResource, Choreographer.FrameCallback {
     private static final String LOG_TAG = "Detox";
 
     private final static String CLASS_TIMING = "com.facebook.react.modules.core.Timing";
@@ -36,6 +37,7 @@ public class ReactNativeTimersIdlingResource implements IdlingResource {
     private final static String METHOD_HAS_NATIVE_MODULE = "hasNativeModule";
     private final static String FIELD_TIMERS = "mTimers";
     private final static String FIELD_TARGET_TIME = "mTargetTime";
+    private final static String LOCK_TIMER = "mTimerGuard";
 
     private static final long LOOK_AHEAD_MS = 15; // like Espresso
 
@@ -54,10 +56,6 @@ public class ReactNativeTimersIdlingResource implements IdlingResource {
 
     @Override
     public boolean isIdleNow() {
-        // This is not a proper Espresso IdlingResource yet,
-        // as it is driven by the isIdleNow() method.
-        // This will be marked as a Racy Resource internally.
-        // It'll cause no problem though.
         Class<?> timingClass = null;
         Class<?> timerClass = null;
         try {
@@ -88,30 +86,36 @@ public class ReactNativeTimersIdlingResource implements IdlingResource {
             }
 
             Object timingModule = Reflect.on(reactContext).call(METHOD_GET_NATIVE_MODULE, timingClass).get();
-            PriorityQueue<?> timers = Reflect.on(timingModule).field(FIELD_TIMERS).get();
-            if (timers.isEmpty()) {
-                if (callback != null) {
-                    callback.onTransitionToIdle();
+            Object timerLock = Reflect.on(timingModule).field(LOCK_TIMER).get();
+            synchronized (timerLock) {
+                PriorityQueue<?> timers = Reflect.on(timingModule).field(FIELD_TIMERS).get();
+                if (timers.isEmpty()) {
+                    if (callback != null) {
+                        callback.onTransitionToIdle();
+                    }
+                    return true;
                 }
-                return true;
+
+                // Log.i(LOG_TAG, "Num of Timers : " + timers.size());
+
+                long targetTime = Reflect.on(timers.peek()).field(FIELD_TARGET_TIME).get();
+                long currentTimeMS = System.nanoTime() / 1000000;
+
+                // Log.i(LOG_TAG, "targetTime " + targetTime + " currentTime " + currentTimeMS);
+
+                if (targetTime - currentTimeMS > LOOK_AHEAD_MS || targetTime < currentTimeMS) {
+                    // Timer is too far in the future. Mark it as OK for now.
+                    // This is similar to what Espresso does internally.
+                    if (callback != null) {
+                        callback.onTransitionToIdle();
+                    }
+                    Log.i(LOG_TAG, "JS Timer is idle: true");
+                    return true;
+                }
             }
 
-            Log.i(LOG_TAG, "Num of Timers : " + timers.size());
-
-            long targetTime = Reflect.on(timers.peek()).field(FIELD_TARGET_TIME).get();
-            long currentTimeMS = System.nanoTime() / 1000000;
-
-            Log.i(LOG_TAG, "targetTime " + targetTime + " currentTime " + currentTimeMS);
-
-            if (targetTime - currentTimeMS > LOOK_AHEAD_MS || targetTime < currentTimeMS) {
-                // Timer is too far in the future. Mark it as OK for now.
-                // This is similar to what Espresso does internally.
-                if (callback != null) {
-                    callback.onTransitionToIdle();
-                }
-                return true;
-            }
-
+            Choreographer.getInstance().postFrameCallback(this);
+            Log.i(LOG_TAG, "JS Timer is idle: false");
             return false;
         } catch (ReflectException e) {
             Log.e(LOG_TAG, "Can't set up RN timer listener", e.getCause());
@@ -126,5 +130,12 @@ public class ReactNativeTimersIdlingResource implements IdlingResource {
     @Override
     public void registerIdleTransitionCallback(ResourceCallback callback) {
         this.callback = callback;
+
+        Choreographer.getInstance().postFrameCallback(this);
+    }
+
+    @Override
+    public void doFrame(long frameTimeNanos) {
+        isIdleNow();
     }
 }

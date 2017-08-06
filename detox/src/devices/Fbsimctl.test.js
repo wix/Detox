@@ -106,7 +106,15 @@ describe('Fbsimctl', () => {
 
   it(`launch() - is triggering exec`, async() => {
     fs.existsSync.mockReturnValue(true);
+    exec.mockReturnValue({stdout: "appId: 22 \n"});
     await fbsimctl.launch(simUdid, bundleId, []);
+    expect(exec).toHaveBeenCalledTimes(1);
+  });
+
+  it(`launch() - is triggering exec with custom launch args`, async() => {
+    fs.existsSync.mockReturnValue(true);
+    exec.mockReturnValue({stdout: "appId: 22 \n"});
+    await fbsimctl.launch(simUdid, bundleId, [{param: "param1"}]);
     expect(exec).toHaveBeenCalledTimes(1);
   });
 
@@ -118,6 +126,13 @@ describe('Fbsimctl', () => {
     } catch (ex) {
       expect(ex).toBeDefined();
     }
+  });
+
+  it(`sendToHome() - is triggering exec`, async() => {
+    fs.existsSync.mockReturnValue(true);
+    exec.mockReturnValue({stdout: "appId: 22 \n"});
+    await fbsimctl.sendToHome(simUdid, bundleId, []);
+    expect(exec).toHaveBeenCalledTimes(1);
   });
 
   it(`terminate() - is triggering exec`, async() => {
@@ -180,6 +195,13 @@ describe('Fbsimctl', () => {
   
     const options = {args: `an argument`};
     expect(await fbsimctl._execFbsimctlCommand(options, '', 10, 1)).toEqual(successfulResult);
+  });
+
+  it(`getLogsPath() should return proper paths`, () => {
+    expect(fbsimctl.getLogsPaths('123')).toEqual({
+      stdout: '$HOME/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.out',
+      stderr: '$HOME/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.err'
+    })
   });
 });
 

@@ -8,8 +8,11 @@ import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingResource;
 import android.util.Log;
 
+import com.wix.detox.espresso.LooperIdlingResource;
 import com.wix.detox.espresso.ReactBridgeIdlingResource;
 import com.wix.detox.espresso.ReactNativeTimersIdlingResource;
+import com.wix.detox.espresso.ReactNativeUIModuleIdlingResource;
+import com.wix.detox.espresso.ReactViewHierarchyUpdateIdlingResource;
 
 import org.joor.Reflect;
 import org.joor.ReflectException;
@@ -40,6 +43,9 @@ class ReactNativeSupport {
 
     private static final String INTERFACE_BRIDGE_IDLE_DEBUG_LISTENER =
             "com.facebook.react.bridge.NotThreadSafeBridgeIdleDebugListener";
+
+    private static final String INTERFACE_VIEW_HIERARCHY_UPDATE_LISTENER =
+            "com.facebook.react.uimanager.debug.NotThreadSafeViewHierarchyUpdateDebugListener";
 
     private static final String FIELD_UI_MSG_QUEUE = "mUiMessageQueueThread";
     private static final String FIELD_UI_BG_MSG_QUEUE = "mUiBackgroundMessageQueueThread";
@@ -193,6 +199,9 @@ class ReactNativeSupport {
                 }
                 while (true) {
                     try {
+                        // TODO
+                        // Dont wait indefinitely
+                        // Maybe reactContext was created before the listener is set
                         instanceManager.wait();
                         break;
                     } catch (InterruptedException e) {
@@ -201,14 +210,20 @@ class ReactNativeSupport {
                     }
                 }
             }
+        } else {
+            Log.i(LOG_TAG, "Got react context directly!!!.");
+            // TODO
+            // We have never landed in this branch so far, but
+            // we should check whether the ReactContext is already properly initialized.
         }
 
-        // We could call waitForBridgeAndUIIDle(..) here, but
-        // Espresso will do that for us either way.
+        // getViewTreeObserver().addOnGlobalLayoutListener(getCustomGlobalLayoutListener());
+
         setupEspressoIdlingResources(reactNativeHostHolder, reactContextHolder[0]);
     }
 
     private static Object bridgeIdleSignaler = null;
+    private static ReactBridgeIdlingResource rnBridgeIdlingResource = null;
 
     private static void createBridgeIdleSignaler() {
         Class<?> bridgeIdleDebugListener = null;
@@ -230,7 +245,7 @@ class ReactNativeSupport {
     }
 
     private static ReactNativeTimersIdlingResource rnTimerIdlingResource = null;
-    private static ReactBridgeIdlingResource rnBridgeIdlingResource = null;
+    private static ReactNativeUIModuleIdlingResource rnUIModuleIdlingResource = null;
 
     private static void setupEspressoIdlingResources(
             @NonNull Object reactNativeHostHolder,
@@ -246,8 +261,12 @@ class ReactNativeSupport {
                 .call(METHOD_ADD_DEBUG_BRIDGE_LISTENER, bridgeIdleSignaler);
 
         rnTimerIdlingResource = new ReactNativeTimersIdlingResource(reactContext);
+        rnUIModuleIdlingResource = new ReactNativeUIModuleIdlingResource(reactContext);
 
-        Espresso.registerIdlingResources(rnTimerIdlingResource, rnBridgeIdlingResource);
+        Espresso.registerIdlingResources(
+                rnTimerIdlingResource,
+                rnBridgeIdlingResource,
+                rnUIModuleIdlingResource);
     }
 
     private static ArrayList<IdlingResource> looperIdlingResources = new ArrayList<>();
@@ -272,8 +291,12 @@ class ReactNativeSupport {
             if ((queue = Reflect.on(reactContext).field(field).get()) != null) {
                 if ((looper = Reflect.on(queue).call(METHOD_GET_LOOPER).get()) != null) {
                     if (!excludedLoopers.contains(looper)) {
+                        // TODO!!!
+                        /*
                         IdlingResource looperIdlingResource =
                                 Reflect.on(CLASS_ESPRESSO_LOOPER_IDLING_RESOURCE).create(looper, false).get();
+                        */
+                        LooperIdlingResource looperIdlingResource = new LooperIdlingResource((Looper)looper, false);
 
                         looperIdlingResources.add(looperIdlingResource);
                         Espresso.registerIdlingResources(looperIdlingResource);
@@ -284,7 +307,7 @@ class ReactNativeSupport {
         } catch (ReflectException e) {
             // The mUiBackgroundMessageQueueThread field is stripped at runtime
             // in the current RN release.
-            // We should still keep trying to grab it to be future proof.
+            // We still keep trying to grab it to be future proof.
             if (!field.equals("mUiBackgroundMessageQueueThread")) {
                 Log.d(LOG_TAG, "Can't set up monitoring for " + field, e);
             }
@@ -307,10 +330,15 @@ class ReactNativeSupport {
 
         Log.i(LOG_TAG, "Removing Espresso IdlingResources for React Native.");
 
-        if (rnBridgeIdlingResource != null && rnTimerIdlingResource != null) {
-            Espresso.unregisterIdlingResources(rnTimerIdlingResource, rnBridgeIdlingResource);
+        if (rnBridgeIdlingResource != null &&
+                rnTimerIdlingResource != null && rnUIModuleIdlingResource != null) {
+            Espresso.unregisterIdlingResources(
+                    rnTimerIdlingResource,
+                    rnBridgeIdlingResource,
+                    rnUIModuleIdlingResource);
             rnTimerIdlingResource = null;
             rnBridgeIdlingResource = null;
+            rnUIModuleIdlingResource = null;
         }
 
         removeReactNativeQueueInterrogators();
@@ -336,4 +364,5 @@ class ReactNativeSupport {
         }
         looperIdlingResources.clear();
     }
+
 }

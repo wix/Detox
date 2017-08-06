@@ -4,7 +4,7 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "version": "5.4.0",
+  "version": "5.5.1",
   "bin": {
     "detox": "local-cli/detox.js"
   },
@@ -25,25 +25,27 @@
     "lint": "eslint src",
     "unit": "jest --coverage --verbose",
     "test": "npm run unit",
-    "unit:watch": "jest --watch --trace-warnings --coverage --verbose",
+    "unit:watch": "jest --watch --coverage --verbose",
     "postinstall": "scripts/postinstall.sh",
     "prepublish": "npm run build"
   },
   "devDependencies": {
     "babel-cli": "^6.8.0",
     "babel-core": "^6.8.0",
-    "babel-eslint": "^6.0.4",
+    "babel-eslint": "^7.2.3",
     "babel-polyfill": "^6.8.0",
     "babel-preset-latest": "^6.22.0",
     "babel-register": "^6.8.0",
     "colors": "^1.1.2",
-    "eslint": "4.x.x",
+    "eslint": "^4.1.1",
     "eslint-plugin-babel": "4.x.x",
     "eslint-plugin-promise": "^3.4.2",
     "eslint-plugin-react": "^7.1.0",
     "eslint-plugin-react-native": "^2.3.2",
-    "jest": "^18.1.0",
+    "eslint-plugin-jest": "^20.0.3",
+    "jest": "^20.0.4",
     "minimist": "^1.2.0",
+    "mockdate": "^2.0.1",
     "shelljs": "^0.7.3",
     "ttab": "^0.3.1"
   },
@@ -68,9 +70,15 @@
     }
   },
   "jest": {
-    "testPathDirs": [
+    "roots": [
       "node_modules",
       "src"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      ".*Driver.js",
+      "DeviceDriverBase.js",
+      "GREYConfiguration.js"
     ],
     "resetMocks": true,
     "resetModules": true,
