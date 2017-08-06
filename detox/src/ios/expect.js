@@ -11,7 +11,7 @@ const ExistsMatcher = matchers.ExistsMatcher;
 const NotExistsMatcher = matchers.NotExistsMatcher;
 const TextMatcher = matchers.TextMatcher;
 const ValueMatcher = matchers.ValueMatcher;
-const GreyActions = require('./EarlGrey/GreyActions');
+const GreyActions = require('./earlgreyapi/GREYActions');
 
 let invocationManager;
 

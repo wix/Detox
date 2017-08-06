@@ -228,8 +228,8 @@ action starting from the given start point.
     };
   }
 
-  /*Returns an action that fast swipes through the whole view. The start point of the swipe is
-chosen to achieve the maximum the swipe possible to the other edge.
+  /*Returns an action that fast swipes through the view. The start point of the swipe is chosen to
+achieve the maximum the swipe possible to the other edge.
 
 @param direction The direction of the swipe.
 
@@ -249,8 +249,8 @@ chosen to achieve the maximum the swipe possible to the other edge.
     };
   }
 
-  /*Returns an action that slow swipes through the whole view. The start point of the swipe is
-chosen to achieve maximum the swipe possible to the other edge.
+  /*Returns an action that slow swipes through the view. The start point of the swipe is chosen to
+achieve maximum the swipe possible to the other edge.
 
 @param direction The direction of the swipe.
 
@@ -462,14 +462,14 @@ direction from the specified point.
     };
   }
 
-  /*Returns an action that pinches whole view quickly in the specified @c direction and @c angle.
+  /*Returns an action that pinches view quickly in the specified @c direction and @c angle.
 
 @param  pinchDirection The direction of the pinch action.
 @param  angle          The angle of the pinch action in radians.
 Use @c kGREYPinchAngleDefault for the default angle (currently set to
 30 degrees).
 
-@return A GREYAction that performs a fast pinch on the whole view in the specified @c direction.
+@return A GREYAction that performs a fast pinch on the view in the specified @c direction.
 */static actionForPinchFastInDirectionWithAngle(pinchDirection, angle) {
     if (!["Outward", "Inward"].some(option => option === pinchDirection)) throw new Error("pinchDirection should be one of [Outward, Inward], but got " + pinchDirection);
     if (typeof angle !== "number") throw new Error("angle should be a number, but got " + (angle + (" (" + (typeof angle + ")"))));
@@ -489,14 +489,14 @@ Use @c kGREYPinchAngleDefault for the default angle (currently set to
     };
   }
 
-  /*Returns an action that pinches whole view slowly in the specified @c direction and @c angle.
+  /*Returns an action that pinches view slowly in the specified @c direction and @c angle.
 
 @param  pinchDirection The direction of the pinch action.
 @param  angle          The angle of the pinch action in radians.
 Use @c kGREYPinchAngleDefault for the default angle (currently set to
 30 degrees).
 
-@return A GREYAction that performs a slow pinch on the whole view in the specified @c direction.
+@return A GREYAction that performs a slow pinch on the view in the specified @c direction.
 */static actionForPinchSlowInDirectionWithAngle(pinchDirection, angle) {
     if (!["Outward", "Inward"].some(option => option === pinchDirection)) throw new Error("pinchDirection should be one of [Outward, Inward], but got " + pinchDirection);
     if (typeof angle !== "number") throw new Error("angle should be a number, but got " + (angle + (" (" + (typeof angle + ")"))));
