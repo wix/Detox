@@ -13,8 +13,10 @@ describe("earl-grey generation", () => {
       "./fixtures/example.h": "./__tests__/generated/example.js"
     };
 
+    console.log('==> generating earl grey files');
     earlGreyGenerator(files);
 
+    console.log('==> loading earl grey files');
     // Load
     ExampleClass = require("./generated/example.js");
     exampleContent = fs.readFileSync(
