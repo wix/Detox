@@ -32,5 +32,8 @@
         "lines": 100
       }
     }
+  },
+  "dependencies": {
+    "babel-generate-guard-clauses": "^0.1.0"
   }
 }

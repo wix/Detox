@@ -2,16 +2,25 @@ const t = require("babel-types");
 const objectiveCParser = require("objective-c-parser");
 const generate = require("babel-generator").default;
 const fs = require("fs");
-const {
-  isNumber,
-  isString,
-  isBoolean,
-  isPoint,
-  isOneOf,
-} = require('./type-checks');
+
 const {
   methodNameToSnakeCase,
 } = require('./helpers');
+
+const {
+  generateTypeCheck,
+  generateIsOneOfCheck,
+} = require("babel-generate-guard-clauses");
+
+const isNumber = generateTypeCheck("number");
+const isString = generateTypeCheck("string");
+const isBoolean = generateTypeCheck("boolean");
+const isPoint = [
+  generateTypeCheck("object"),
+  generateTypeCheck("number", { selector: "x" }),
+  generateTypeCheck("number", { selector: "y" })
+];
+const isOneOf = generateIsOneOfCheck;
 
 /**
  * the input provided by objective-c-parser looks like this:
