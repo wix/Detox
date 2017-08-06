@@ -10,6 +10,35 @@ const {
   isOneOf,
 } = require('./type-checks');
 
+/**
+ * the input provided by objective-c-parser looks like this:
+ * {
+ *   "name": "BasicName",
+ *   "methods": [
+ *     {
+ *       "args": [],
+ *       "comment": "This is the comment of basic method one",
+ *       "name": "basicMethodOne",
+ *       "returnType": "NSInteger"
+ *     },
+ *     {
+ *       "args": [
+ *         {
+ *           "type": "NSInteger",
+ *           "name": "argOne"
+ *         },
+ *         {
+ *           "type": "NSString",
+ *           "name": "argTwo"
+ *         }
+ *       ],
+ *       "comment": "This is the comment of basic method two.\nIt has multiple lines",
+ *       "name": "basicMethodTwoWithArgOneAndArgTwo",
+ *       "returnType": "NSString"
+ *     }
+ *   ]
+ * }
+ */
 function createClass(json) {
   return t.classDeclaration(
     t.identifier(json.name),
