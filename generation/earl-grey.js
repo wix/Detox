@@ -9,6 +9,9 @@ const {
   isPoint,
   isOneOf,
 } = require('./type-checks');
+const {
+  methodNameToSnakeCase,
+} = require('./helpers');
 
 /**
  * the input provided by objective-c-parser looks like this:
@@ -60,17 +63,6 @@ function createExport(json) {
       t.identifier(json.name)
     )
   );
-}
-
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
-function methodNameToSnakeCase(name) {
-  return name
-          .split(':')
-          .map((item, index) => 
-            index === 0 ? item : capitalizeFirstLetter(item)
-          ).join('');
 }
 
 function createMethod(className, json) {
