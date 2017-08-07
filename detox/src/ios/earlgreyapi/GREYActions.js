@@ -113,7 +113,7 @@ simulate a long press.
 
 @return A GREYAction that scrolls a scroll view in a given @c direction for a given @c amount.
 */static actionForScrollInDirectionAmount(direction, amount) {
-    if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
+    if (!["left", "right", "up", "down"].some(option => option === direction)) throw new Error("direction should be one of [left, right, up, down], but got " + direction);
     if (typeof amount !== "number") throw new Error("amount should be a number, but got " + (amount + (" (" + (typeof amount + ")"))));
     return {
       target: {
@@ -148,7 +148,7 @@ exclusive, of the total height of the scrollable visible area.
 @return A GREYAction that scrolls a scroll view in a given @c direction for a given @c amount
 starting from the given start points.
 */static actionForScrollInDirectionAmountXOriginStartPercentageYOriginStartPercentage(direction, amount, xOriginStartPercentage, yOriginStartPercentage) {
-    if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
+    if (!["left", "right", "up", "down"].some(option => option === direction)) throw new Error("direction should be one of [left, right, up, down], but got " + direction);
     if (typeof amount !== "number") throw new Error("amount should be a number, but got " + (amount + (" (" + (typeof amount + ")"))));
     if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + (xOriginStartPercentage + (" (" + (typeof xOriginStartPercentage + ")"))));
     if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + (yOriginStartPercentage + (" (" + (typeof yOriginStartPercentage + ")"))));
@@ -176,7 +176,7 @@ starting from the given start points.
 
   /*@return A GREYAction that scrolls to the given content @c edge of a scroll view.
 */static actionForScrollToContentEdge(edge) {
-    if (!["Left", "Right", "Top", "Bottom"].some(option => option === edge)) throw new Error("edge should be one of [Left, Right, Top, Bottom], but got " + edge);
+    if (!["left", "right", "top", "bottom"].some(option => option === edge)) throw new Error("edge should be one of [left, right, top, bottom], but got " + edge);
     return {
       target: {
         type: "Class",
@@ -206,7 +206,7 @@ exclusive, of the total height of the scrollable visible area.
 @return A GREYAction that scrolls to the given content @c edge of a scroll view with the scroll
 action starting from the given start point.
 */static actionForScrollToContentEdgeXOriginStartPercentageYOriginStartPercentage(edge, xOriginStartPercentage, yOriginStartPercentage) {
-    if (!["Left", "Right", "Top", "Bottom"].some(option => option === edge)) throw new Error("edge should be one of [Left, Right, Top, Bottom], but got " + edge);
+    if (!["left", "right", "top", "bottom"].some(option => option === edge)) throw new Error("edge should be one of [left, right, top, bottom], but got " + edge);
     if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + (xOriginStartPercentage + (" (" + (typeof xOriginStartPercentage + ")"))));
     if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + (yOriginStartPercentage + (" (" + (typeof yOriginStartPercentage + ")"))));
     return {
@@ -235,7 +235,7 @@ achieve the maximum the swipe possible to the other edge.
 
 @return A GREYAction that performs a fast swipe in the given direction.
 */static actionForSwipeFastInDirection(direction) {
-    if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
+    if (!["left", "right", "up", "down"].some(option => option === direction)) throw new Error("direction should be one of [left, right, up, down], but got " + direction);
     return {
       target: {
         type: "Class",
@@ -256,7 +256,7 @@ achieve maximum the swipe possible to the other edge.
 
 @return A GREYAction that performs a slow swipe in the given direction.
 */static actionForSwipeSlowInDirection(direction) {
-    if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
+    if (!["left", "right", "up", "down"].some(option => option === direction)) throw new Error("direction should be one of [left, right, up, down], but got " + direction);
     return {
       target: {
         type: "Class",
@@ -282,7 +282,7 @@ of the view. This must be between 0 and 1.
 @return A GREYAction that performs a fast swipe through a view in a specific direction from
 the specified point.
 */static actionForSwipeFastInDirectionXOriginStartPercentageYOriginStartPercentage(direction, xOriginStartPercentage, yOriginStartPercentage) {
-    if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
+    if (!["left", "right", "up", "down"].some(option => option === direction)) throw new Error("direction should be one of [left, right, up, down], but got " + direction);
     if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + (xOriginStartPercentage + (" (" + (typeof xOriginStartPercentage + ")"))));
     if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + (yOriginStartPercentage + (" (" + (typeof yOriginStartPercentage + ")"))));
     return {
@@ -316,7 +316,7 @@ of the view. This must be between 0 and 1.
 @return A GREYAction that performs a slow swipe through a view in a specific direction from
 the specified point.
 */static actionForSwipeSlowInDirectionXOriginStartPercentageYOriginStartPercentage(direction, xOriginStartPercentage, yOriginStartPercentage) {
-    if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
+    if (!["left", "right", "up", "down"].some(option => option === direction)) throw new Error("direction should be one of [left, right, up, down], but got " + direction);
     if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + (xOriginStartPercentage + (" (" + (typeof xOriginStartPercentage + ")"))));
     if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + (yOriginStartPercentage + (" (" + (typeof yOriginStartPercentage + ")"))));
     return {
@@ -347,7 +347,7 @@ the specified point.
 @return A GREYAction that performs a multi-finger slow swipe through a view in a specific
 direction from the specified point.
 */static actionForMultiFingerSwipeSlowInDirectionNumberOfFingers(direction, numberOfFingers) {
-    if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
+    if (!["left", "right", "up", "down"].some(option => option === direction)) throw new Error("direction should be one of [left, right, up, down], but got " + direction);
     if (typeof numberOfFingers !== "number") throw new Error("numberOfFingers should be a number, but got " + (numberOfFingers + (" (" + (typeof numberOfFingers + ")"))));
     return {
       target: {
@@ -374,7 +374,7 @@ direction from the specified point.
 @return A GREYAction that performs a multi-finger fast swipe through a view in a specific
 direction from the specified point.
 */static actionForMultiFingerSwipeFastInDirectionNumberOfFingers(direction, numberOfFingers) {
-    if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
+    if (!["left", "right", "up", "down"].some(option => option === direction)) throw new Error("direction should be one of [left, right, up, down], but got " + direction);
     if (typeof numberOfFingers !== "number") throw new Error("numberOfFingers should be a number, but got " + (numberOfFingers + (" (" + (typeof numberOfFingers + ")"))));
     return {
       target: {
@@ -401,7 +401,7 @@ direction from the specified point.
 @return A GREYAction that performs a multi-finger slow swipe through a view in a specific
 direction from the specified point.
 */static actionForMultiFingerSwipeSlowInDirectionNumberOfFingersXOriginStartPercentageYOriginStartPercentage(direction, numberOfFingers, xOriginStartPercentage, yOriginStartPercentage) {
-    if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
+    if (!["left", "right", "up", "down"].some(option => option === direction)) throw new Error("direction should be one of [left, right, up, down], but got " + direction);
     if (typeof numberOfFingers !== "number") throw new Error("numberOfFingers should be a number, but got " + (numberOfFingers + (" (" + (typeof numberOfFingers + ")"))));
     if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + (xOriginStartPercentage + (" (" + (typeof xOriginStartPercentage + ")"))));
     if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + (yOriginStartPercentage + (" (" + (typeof yOriginStartPercentage + ")"))));
@@ -436,7 +436,7 @@ direction from the specified point.
 @return A GREYAction that performs a multi-finger fast swipe through a view in a specific
 direction from the specified point.
 */static actionForMultiFingerSwipeFastInDirectionNumberOfFingersXOriginStartPercentageYOriginStartPercentage(direction, numberOfFingers, xOriginStartPercentage, yOriginStartPercentage) {
-    if (!["Left", "Right", "Up", "Down"].some(option => option === direction)) throw new Error("direction should be one of [Left, Right, Up, Down], but got " + direction);
+    if (!["left", "right", "up", "down"].some(option => option === direction)) throw new Error("direction should be one of [left, right, up, down], but got " + direction);
     if (typeof numberOfFingers !== "number") throw new Error("numberOfFingers should be a number, but got " + (numberOfFingers + (" (" + (typeof numberOfFingers + ")"))));
     if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + (xOriginStartPercentage + (" (" + (typeof xOriginStartPercentage + ")"))));
     if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + (yOriginStartPercentage + (" (" + (typeof yOriginStartPercentage + ")"))));
@@ -471,7 +471,7 @@ Use @c kGREYPinchAngleDefault for the default angle (currently set to
 
 @return A GREYAction that performs a fast pinch on the view in the specified @c direction.
 */static actionForPinchFastInDirectionWithAngle(pinchDirection, angle) {
-    if (!["Outward", "Inward"].some(option => option === pinchDirection)) throw new Error("pinchDirection should be one of [Outward, Inward], but got " + pinchDirection);
+    if (!["outward", "inward"].some(option => option === pinchDirection)) throw new Error("pinchDirection should be one of [outward, inward], but got " + pinchDirection);
     if (typeof angle !== "number") throw new Error("angle should be a number, but got " + (angle + (" (" + (typeof angle + ")"))));
     return {
       target: {
@@ -498,7 +498,7 @@ Use @c kGREYPinchAngleDefault for the default angle (currently set to
 
 @return A GREYAction that performs a slow pinch on the view in the specified @c direction.
 */static actionForPinchSlowInDirectionWithAngle(pinchDirection, angle) {
-    if (!["Outward", "Inward"].some(option => option === pinchDirection)) throw new Error("pinchDirection should be one of [Outward, Inward], but got " + pinchDirection);
+    if (!["outward", "inward"].some(option => option === pinchDirection)) throw new Error("pinchDirection should be one of [outward, inward], but got " + pinchDirection);
     if (typeof angle !== "number") throw new Error("angle should be a number, but got " + (angle + (" (" + (typeof angle + ")"))));
     return {
       target: {

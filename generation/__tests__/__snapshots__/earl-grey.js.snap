@@ -4,7 +4,7 @@ exports[`earl-grey generation Error handling should thow error for CGPoint with 
 
 exports[`earl-grey generation Error handling should thow error for CGPoint with wrong x and y values 2`] = `"point.y should be a number, but got undefined (undefined)"`;
 
-exports[`earl-grey generation Error handling should throw error for not in accepted range 1`] = `"direction should be one of [Left, Right, Up, Down], but got flipside"`;
+exports[`earl-grey generation Error handling should throw error for not in accepted range 1`] = `"direction should be one of [left, right, up, down], but got flipside"`;
 
 exports[`earl-grey generation Error handling should throw error for wrong type 1`] = `"count should be a number, but got foo (string)"`;
 

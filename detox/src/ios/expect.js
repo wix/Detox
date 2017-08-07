@@ -51,10 +51,10 @@ class TapAction extends Action {
 }
 
 class TapAtPointAction extends Action {
-    constructor(value) {
-        super();
-        this._call = invoke.callDirectly(GreyActions.actionForTapAtPoint(value));
-    }
+  constructor(value) {
+    super();
+    this._call = invoke.callDirectly(GreyActions.actionForTapAtPoint(value));
+  }
 }
 
 class LongPressAction extends Action {

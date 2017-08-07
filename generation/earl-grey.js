@@ -102,7 +102,7 @@ const supportedTypesMap = {
   'NSString *': 'NSString',
 };
 
-function sanitizeArgument(json) {
+function sanitizeArgumentType(json) {
   if (supportedTypesMap[json.type]) {
     return Object.assign({}, json, {
       type: supportedTypesMap[json.type],
@@ -113,10 +113,12 @@ function sanitizeArgument(json) {
 
 function createMethodBody(className, json) {
   const sanitizedJson = Object.assign({}, json, { 
-    args: json.args.map(argJson => sanitizeArgument(argJson)),
+    args: json.args.map(argJson => sanitizeArgumentType(argJson)),
   });
 
-  const allTypeChecks = createTypeChecks(sanitizedJson).reduce((carry, item) => item instanceof Array ? [...carry, ...item] : [...carry, item], []);
+  const allTypeChecks = createTypeChecks(sanitizedJson).reduce(
+    (carry, item) => item instanceof Array ? [...carry, ...item] : [...carry, item], []
+  );
   const typeChecks = allTypeChecks.filter(check => typeof check === "object");
   const returnStatement = createReturnStatement(className, sanitizedJson);
   return [...typeChecks, returnStatement]
@@ -164,9 +166,9 @@ function createTypeCheck(json) {
     NSString: isString,
     BOOL: isBoolean,
     "NSDate *": isNumber,
-    GREYDirection: isOneOf(["Left", "Right", "Up", "Down"]),
-    GREYContentEdge: isOneOf(["Left", "Right", "Top", "Bottom"]),
-    GREYPinchDirection: isOneOf(["Outward", "Inward"])
+    GREYDirection: isOneOf(["left", "right", "up", "down"]),
+    GREYContentEdge: isOneOf(["left", "right", "top", "bottom"]),
+    GREYPinchDirection: isOneOf(["outward", "inward"])
   };
 
   const typeCheckCreator = typeInterfaces[json.type];
