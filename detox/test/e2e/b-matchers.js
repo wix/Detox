@@ -24,7 +24,7 @@ describe('Matchers', () => {
 
   // https://facebook.github.io/react-native/docs/accessibility.html#accessibilitytraits-ios
   // Accessibility Inspector in the simulator can help investigate traits
-  it('should match elements by accesibility trait', async () => {
+  it(':ios: should match elements by accesibility trait', async () => {
     await element(by.traits(['button', 'text'])).tap();
     await expect(element(by.label('Traits Working!!!'))).toBeVisible();
   });
