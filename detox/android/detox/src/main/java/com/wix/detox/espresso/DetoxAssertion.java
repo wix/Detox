@@ -3,6 +3,8 @@ package com.wix.detox.espresso;
 import android.support.test.espresso.ViewInteraction;
 import android.view.View;
 
+import junit.framework.AssertionFailedError;
+
 import org.hamcrest.Matcher;
 
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
@@ -29,7 +31,7 @@ public class DetoxAssertion {
         try {
             ret = i.check(doesNotExist());
             return ret;
-        } catch (RuntimeException e) {
+        } catch (AssertionFailedError e) {
             ret = i.check(matches(not(isDisplayed())));
             return ret;
         }

@@ -7,7 +7,6 @@ import android.support.test.espresso.action.GeneralClickAction;
 import android.support.test.espresso.action.GeneralLocation;
 import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Tap;
-import android.support.test.espresso.action.ViewActions;
 import android.util.Log;
 import android.view.InputDevice;
 import android.view.MotionEvent;
@@ -113,7 +112,6 @@ public class DetoxAction {
                         upX = x + marginX;
                         upY = y + view.getHeight() / 2;
                         break;
-                    // FINISH 2, 3, 4
                     case 2:
                         downX = x + marginX;
                         downY = y + view.getHeight() / 2;
@@ -135,6 +133,7 @@ public class DetoxAction {
                     default:
                         throw new RuntimeException("Scrolldirection can go from 1 to 4");
                 }
+                Log.d(LOG_TAG, "scroll downx: " + downX + " downy: " + downY + " upx: " + upX + " upy: " + upY);
                 boolean ret = Reflect.on(UiAutomatorHelper.getInteractionController())
                         .call(METHOD_SCROLL_SWIPE, downX, downY, upX, upY, SCROLL_STEPS).get();
                 Log.v(LOG_TAG, "ScrollSwipe; scroll ended : " + String.valueOf(ret));
@@ -142,10 +141,12 @@ public class DetoxAction {
 
             @Override
             public void perform(UiController uiController, View view) {
-                int adjWidth = (int) (view.getWidth() * 2 * DEFAULT_DEADZONE_PERCENT);
-                int adjHeight = (int) (view.getHeight() * 2 * DEFAULT_DEADZONE_PERCENT);
+                int adjWidth = (int) (view.getWidth() * (1 - 2 * DEFAULT_DEADZONE_PERCENT));
+                int adjHeight = (int) (view.getHeight() * (1 - 2 * DEFAULT_DEADZONE_PERCENT));
 
                 int amountInPX = UiAutomatorHelper.convertDiptoPix(amountInDP);
+
+                Log.d(LOG_TAG, "Amount in px: " + amountInPX);
 
                 int times;
                 int remainder;
@@ -160,6 +161,8 @@ public class DetoxAction {
                     remainder = amountInPX % adjHeight;
                     fullAmount = adjHeight;
                 }
+
+                Log.d(LOG_TAG, "Scroll times: " + times + " rem: " + remainder + " full: " +fullAmount);
 
                 for (int i = 0; i < times; ++i) {
                     doScroll(uiController, view, fullAmount);
