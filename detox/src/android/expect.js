@@ -34,6 +34,13 @@ class TapAction extends Action {
   }
 }
 
+class TapAtPointAction extends Action {
+  constructor(value) {
+    super();
+    this._call = invoke.call(invoke.Android.Class(DetoxAction), 'tapAtLocation', invoke.Android.Integer(value.x), invoke.Android.Integer(value.y));
+  }
+}
+
 class LongPressAction extends Action {
   constructor() {
     super();
@@ -247,6 +254,9 @@ class Element {
   }
   async tap() {
     return await new ActionInteraction(this, new TapAction()).execute();
+  }
+  async tapAtPoint(value) {
+    return await new ActionInteraction(this, new TapAtPointAction(value)).execute();
   }
   async longPress() {
     return await new ActionInteraction(this, new LongPressAction()).execute();

@@ -2,10 +2,15 @@ package com.wix.detox.espresso;
 
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
+import android.support.test.espresso.action.CoordinatesProvider;
 import android.support.test.espresso.action.GeneralClickAction;
 import android.support.test.espresso.action.GeneralLocation;
 import android.support.test.espresso.action.Press;
+import android.support.test.espresso.action.Tap;
+import android.support.test.espresso.action.ViewActions;
 import android.util.Log;
+import android.view.InputDevice;
+import android.view.MotionEvent;
 import android.view.View;
 
 import org.hamcrest.Matcher;
@@ -43,6 +48,25 @@ public class DetoxAction {
     public static ViewAction multiClick(int times) {
         return actionWithAssertions(new GeneralClickAction(new MultiTap(times), GeneralLocation.CENTER, Press.FINGER, 0, 0));
     }
+
+    public static ViewAction tapAtLocation(final int x, final int y) {
+        final int px = UiAutomatorHelper.convertDiptoPix(x);
+        final int py = UiAutomatorHelper.convertDiptoPix(y);
+        CoordinatesProvider c = new CoordinatesProvider() {
+            @Override
+            public float[] calculateCoordinates(View view) {
+                final int[] xy = new int[2];
+                view.getLocationOnScreen(xy);
+                final float fx = xy[0] + px;
+                final float fy = xy[1] + py;
+                float[] coordinates = {fx, fy};
+                return coordinates;
+            }
+        };
+        return actionWithAssertions(new GeneralClickAction(
+                Tap.SINGLE, c, Press.FINGER, InputDevice.SOURCE_UNKNOWN, MotionEvent.BUTTON_PRIMARY));
+    }
+
 
     /**
      * Scrolls the View in a direction by the Density Independent Pixel amount.
