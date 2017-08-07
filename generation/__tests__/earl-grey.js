@@ -79,7 +79,7 @@ describe("earl-grey generation", () => {
           4,
           5
         );
-      });
+      }).not.toThrow();
     });
 
     it("should thow error for CGPoint with wrong x and y values", () => {
@@ -133,7 +133,20 @@ describe("earl-grey generation", () => {
 
       expect(result.args[0].type).toBe('NSString');
       expect(result).toMatchSnapshot();
-    })
+    });
+
+    it("should sanitize the directions", () => {
+      const result = ExampleClass.actionForScrollInDirectionAmountXOriginStartPercentageYOriginStartPercentage(
+        "down",
+        3,
+        4,
+        5
+      );
+
+      expect(result.args[0].type).toBe("GREYDirection");
+      expect(result.args[0].value).toBe(4);
+      expect(result).toMatchSnapshot();
+    });
   });
 
   afterAll(() => {

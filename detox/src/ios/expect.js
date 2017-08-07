@@ -130,34 +130,41 @@ class SwipeAction extends Action {
     super();
     if (typeof direction !== 'string') throw new Error(`SwipeAction ctor 1st argument must be a string, got ${typeof direction}`);
     if (typeof speed !== 'string') throw new Error(`SwipeAction ctor 2nd argument must be a string, got ${typeof speed}`);
-    switch (direction) {
-      case 'left': direction = 1; break;
-      case 'right': direction = 2; break;
-      case 'up': direction = 3; break;
-      case 'down': direction = 4; break;
-      default: throw new Error(`SwipeAction direction must be a 'left'/'right'/'up'/'down', got ${direction}`);
-    }
+
     if (percentage) {
       let x, y;
       const eps = 10 ** -8;
       switch (direction) {
-        case 1: x = percentage, y = eps; break;
-        case 2: x = percentage, y = eps; break;
-        case 3: y = percentage, x = eps; break;
-        case 4: y = percentage, x = eps; break;
+        case "left":
+          x = percentage, y = eps;
+          break;
+        case "right":
+          x = percentage, y = eps;
+          break;
+        case "up":
+          y = percentage, x = eps;
+          break;
+        case "down":
+          y = percentage, x = eps;
+          break;
       }
+
       if (speed == 'fast') {
-        this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForSwipeFastInDirection:xOriginStartPercentage:yOriginStartPercentage:', invoke.IOS.NSInteger(direction), invoke.IOS.CGFloat(x), invoke.IOS.CGFloat(y));
+        this._call = invoke.callDirectly(
+          GreyActions.actionForSwipeFastInDirectionXOriginStartPercentageYOriginStartPercentage(direction, x, y)
+        );
       } else if (speed == 'slow') {
-        this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForSwipeSlowInDirection:xOriginStartPercentage:yOriginStartPercentage:', invoke.IOS.NSInteger(direction), invoke.IOS.CGFloat(x), invoke.IOS.CGFloat(y));
+        this._call = invoke.callDirectly(
+          GreyActions.actionForSwipeSlowInDirectionXOriginStartPercentageYOriginStartPercentage(direction, x, y)
+        );
       } else {
         throw new Error(`SwipeAction speed must be a 'fast'/'slow', got ${speed}`);
       }
     } else {
       if (speed == 'fast') {
-        this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForSwipeFastInDirection:', invoke.IOS.NSInteger(direction));
+        this._call = invoke.callDirectly(GreyActions.actionForSwipeFastInDirection(direction));
       } else if (speed == 'slow') {
-        this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForSwipeSlowInDirection:', invoke.IOS.NSInteger(direction));
+        this._call = invoke.callDirectly(GreyActions.actionForSwipeSlowInDirection(direction));
       } else {
         throw new Error(`SwipeAction speed must be a 'fast'/'slow', got ${speed}`);
       }

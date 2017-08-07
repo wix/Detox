@@ -129,11 +129,27 @@ function createTypeChecks(json) {
   return checks;
 }
 
+const callGlobal = sanitizerName => argIdentifier =>
+  t.callExpression(t.identifier(sanitizerName), [t.identifier(argIdentifier)]);
+const supportedContentSanitizersMap = {
+  GREYDirection: callGlobal("sanitize_greyDirection")
+};
+function addArgumentContentSanitizerCall(json) {
+  if (supportedContentSanitizersMap[json.type]) {
+    return supportedContentSanitizersMap[json.type](json.name);
+  }
+
+  return t.identifier(json.name);
+}
+
 function createReturnStatement(className, json) {
   const args = json.args.map(arg =>
     t.objectExpression([
       t.objectProperty(t.identifier("type"), t.stringLiteral(arg.type)),
-      t.objectProperty(t.identifier("value"), t.identifier(arg.name))
+      t.objectProperty(
+        t.identifier("value"),
+        addArgumentContentSanitizerCall(arg)
+      )
     ])
   );
 
@@ -187,11 +203,15 @@ module.exports = function(files) {
 
     const json = objectiveCParser(input);
     const ast = t.program([createClass(json), createExport(json)]);
-    const output = generate(ast, {
-      auxiliaryCommentBefore:
-        "\n\tThis code is generated.\n\tFor more information see generation/README.md.\n"
-    });
+    const output = generate(ast);
 
-    fs.writeFileSync(outputFile, output.code, "utf8");
+    const commentBefore = "/**\n\n\tThis code is generated.\n\tFor more information see generation/README.md.\n*/\n\n";
+
+    // Add global helper functions
+    const globalFunctionsSource = fs.readFileSync(__dirname + "/global-functions.js", "utf8");
+    const globalFunctions = globalFunctionsSource.substr(0, globalFunctionsSource.indexOf("module.exports"));
+
+    const code = [commentBefore, globalFunctions, output.code].join('\n');
+    fs.writeFileSync(outputFile, code, "utf8");
   });
 };

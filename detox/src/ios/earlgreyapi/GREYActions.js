@@ -1,7 +1,29 @@
-/*
+/**
+
 	This code is generated.
 	For more information see generation/README.md.
 */
+
+
+// Globally declared helpers
+
+function sanitize_greyDirection(action) {
+  switch (action) {
+    case "left":
+      return 1;
+    case "right":
+      return 2;
+    case "up":
+      return 3;
+    case "down":
+      return 4;
+      
+    default:
+      throw new Error(`GREYAction.GREYDirection must be a 'left'/'right'/'up'/'down', got ${action}`);
+  }
+}
+
+
 class GREYActions {
   /*@return A GREYAction that performs multiple taps of a specified @c count.
 */static actionForMultipleTapsWithCount(count) {
@@ -123,7 +145,7 @@ simulate a long press.
       method: "actionForScrollInDirection:amount:",
       args: [{
         type: "GREYDirection",
-        value: direction
+        value: sanitize_greyDirection(direction)
       }, {
         type: "CGFloat",
         value: amount
@@ -160,7 +182,7 @@ starting from the given start points.
       method: "actionForScrollInDirection:amount:xOriginStartPercentage:yOriginStartPercentage:",
       args: [{
         type: "GREYDirection",
-        value: direction
+        value: sanitize_greyDirection(direction)
       }, {
         type: "CGFloat",
         value: amount
@@ -244,7 +266,7 @@ achieve the maximum the swipe possible to the other edge.
       method: "actionForSwipeFastInDirection:",
       args: [{
         type: "GREYDirection",
-        value: direction
+        value: sanitize_greyDirection(direction)
       }]
     };
   }
@@ -265,7 +287,7 @@ achieve maximum the swipe possible to the other edge.
       method: "actionForSwipeSlowInDirection:",
       args: [{
         type: "GREYDirection",
-        value: direction
+        value: sanitize_greyDirection(direction)
       }]
     };
   }
@@ -293,7 +315,7 @@ the specified point.
       method: "actionForSwipeFastInDirection:xOriginStartPercentage:yOriginStartPercentage:",
       args: [{
         type: "GREYDirection",
-        value: direction
+        value: sanitize_greyDirection(direction)
       }, {
         type: "CGFloat",
         value: xOriginStartPercentage
@@ -327,7 +349,7 @@ the specified point.
       method: "actionForSwipeSlowInDirection:xOriginStartPercentage:yOriginStartPercentage:",
       args: [{
         type: "GREYDirection",
-        value: direction
+        value: sanitize_greyDirection(direction)
       }, {
         type: "CGFloat",
         value: xOriginStartPercentage
@@ -357,7 +379,7 @@ direction from the specified point.
       method: "actionForMultiFingerSwipeSlowInDirection:numberOfFingers:",
       args: [{
         type: "GREYDirection",
-        value: direction
+        value: sanitize_greyDirection(direction)
       }, {
         type: "NSInteger",
         value: numberOfFingers
@@ -384,7 +406,7 @@ direction from the specified point.
       method: "actionForMultiFingerSwipeFastInDirection:numberOfFingers:",
       args: [{
         type: "GREYDirection",
-        value: direction
+        value: sanitize_greyDirection(direction)
       }, {
         type: "NSInteger",
         value: numberOfFingers
@@ -413,7 +435,7 @@ direction from the specified point.
       method: "actionForMultiFingerSwipeSlowInDirection:numberOfFingers:xOriginStartPercentage:yOriginStartPercentage:",
       args: [{
         type: "GREYDirection",
-        value: direction
+        value: sanitize_greyDirection(direction)
       }, {
         type: "NSInteger",
         value: numberOfFingers
@@ -448,7 +470,7 @@ direction from the specified point.
       method: "actionForMultiFingerSwipeFastInDirection:numberOfFingers:xOriginStartPercentage:yOriginStartPercentage:",
       args: [{
         type: "GREYDirection",
-        value: direction
+        value: sanitize_greyDirection(direction)
       }, {
         type: "NSInteger",
         value: numberOfFingers

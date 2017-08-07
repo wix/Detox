@@ -64,3 +64,31 @@ Object {
   },
 }
 `;
+
+exports[`earl-grey generation Invocations should sanitize the directions 1`] = `
+Object {
+  "args": Array [
+    Object {
+      "type": "GREYDirection",
+      "value": 4,
+    },
+    Object {
+      "type": "CGFloat",
+      "value": 3,
+    },
+    Object {
+      "type": "CGFloat",
+      "value": 4,
+    },
+    Object {
+      "type": "CGFloat",
+      "value": 5,
+    },
+  ],
+  "method": "actionForScrollInDirection:amount:xOriginStartPercentage:yOriginStartPercentage:",
+  "target": Object {
+    "type": "Class",
+    "value": "GREYActions",
+  },
+}
+`;
