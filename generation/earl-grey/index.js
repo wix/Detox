@@ -3,13 +3,11 @@ const objectiveCParser = require("objective-c-parser");
 const generate = require("babel-generator").default;
 const fs = require("fs");
 
-const {
-  methodNameToSnakeCase,
-} = require('./helpers');
+const { methodNameToSnakeCase } = require("../helpers");
 
 const {
   generateTypeCheck,
-  generateIsOneOfCheck,
+  generateIsOneOfCheck
 } = require("babel-generate-guard-clauses");
 
 const isNumber = generateTypeCheck("number");
@@ -96,32 +94,33 @@ function createMethod(className, json) {
   return m;
 }
 
-
 const supportedTypesMap = {
-  'NSUInteger': 'NSInteger',
-  'NSString *': 'NSString',
+  NSUInteger: "NSInteger",
+  "NSString *": "NSString"
 };
 
 function sanitizeArgumentType(json) {
   if (supportedTypesMap[json.type]) {
     return Object.assign({}, json, {
-      type: supportedTypesMap[json.type],
+      type: supportedTypesMap[json.type]
     });
   }
   return json;
 }
 
 function createMethodBody(className, json) {
-  const sanitizedJson = Object.assign({}, json, { 
-    args: json.args.map(argJson => sanitizeArgumentType(argJson)),
+  const sanitizedJson = Object.assign({}, json, {
+    args: json.args.map(argJson => sanitizeArgumentType(argJson))
   });
 
   const allTypeChecks = createTypeChecks(sanitizedJson).reduce(
-    (carry, item) => item instanceof Array ? [...carry, ...item] : [...carry, item], []
+    (carry, item) =>
+      item instanceof Array ? [...carry, ...item] : [...carry, item],
+    []
   );
   const typeChecks = allTypeChecks.filter(check => typeof check === "object");
   const returnStatement = createReturnStatement(className, sanitizedJson);
-  return [...typeChecks, returnStatement]
+  return [...typeChecks, returnStatement];
 }
 
 function createTypeChecks(json) {
@@ -131,28 +130,26 @@ function createTypeChecks(json) {
 }
 
 function createReturnStatement(className, json) {
-  const args = json.args.map(arg => t.objectExpression([
-    t.objectProperty(t.identifier('type'), t.stringLiteral(arg.type)),
-    t.objectProperty(t.identifier('value'), t.identifier(arg.name)),
-  ]));
+  const args = json.args.map(arg =>
+    t.objectExpression([
+      t.objectProperty(t.identifier("type"), t.stringLiteral(arg.type)),
+      t.objectProperty(t.identifier("value"), t.identifier(arg.name))
+    ])
+  );
 
-  return t.returnStatement(t.objectExpression([
-    t.objectProperty(
-      t.identifier('target'), 
-      t.objectExpression([
-        t.objectProperty(t.identifier('type'), t.stringLiteral('Class')),
-        t.objectProperty(t.identifier('value'), t.stringLiteral(className)),
-      ])
-    ),
-    t.objectProperty(
-      t.identifier('method'), 
-      t.stringLiteral(json.name)
-    ),
-    t.objectProperty(
-      t.identifier('args'), 
-      t.arrayExpression(args)
-    ),
-  ]));
+  return t.returnStatement(
+    t.objectExpression([
+      t.objectProperty(
+        t.identifier("target"),
+        t.objectExpression([
+          t.objectProperty(t.identifier("type"), t.stringLiteral("Class")),
+          t.objectProperty(t.identifier("value"), t.stringLiteral(className))
+        ])
+      ),
+      t.objectProperty(t.identifier("method"), t.stringLiteral(json.name)),
+      t.objectProperty(t.identifier("args"), t.arrayExpression(args))
+    ])
+  );
 }
 
 function createTypeCheck(json) {
@@ -179,9 +176,9 @@ function createTypeCheck(json) {
     return;
   }
 
-  return isListOfChecks ? 
-    typeCheckCreator.map(singleCheck => singleCheck(json)) : 
-    typeCheckCreator(json);
+  return isListOfChecks
+    ? typeCheckCreator.map(singleCheck => singleCheck(json))
+    : typeCheckCreator(json);
 }
 
 module.exports = function(files) {
@@ -191,7 +188,8 @@ module.exports = function(files) {
     const json = objectiveCParser(input);
     const ast = t.program([createClass(json), createExport(json)]);
     const output = generate(ast, {
-      auxiliaryCommentBefore: '\n\tThis code is generated.\n\tFor more information see generation/README.md.\n'
+      auxiliaryCommentBefore:
+        "\n\tThis code is generated.\n\tFor more information see generation/README.md.\n"
     });
 
     fs.writeFileSync(outputFile, output.code, "utf8");
