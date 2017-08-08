@@ -48,13 +48,6 @@ class LongPressAction extends Action {
   }
 }
 
-class DoubleClickAction extends Action {
-  constructor() {
-    super();
-    this._call = invoke.call(invoke.Android.Class(ViewActions), 'doubleClick');
-  }
-}
-
 class MultiClickAction extends Action {
   constructor(times) {
     super();
@@ -275,7 +268,7 @@ class Element {
   }
   async scroll(amount, direction = 'down') {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
-    this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
+    // this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
     return await new ActionInteraction(this, new ScrollAmountAction(direction, amount)).execute();
   }
   async scrollTo(edge) {
