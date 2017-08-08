@@ -1,9 +1,6 @@
 describe('Matchers', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
-  });
-
-  beforeEach(async () => {
     await element(by.label('Matchers')).tap();
   });
 
@@ -18,14 +15,16 @@ describe('Matchers', () => {
   });
 
   it('should match elements by type (native class)', async () => {
-    await expect(element(by.type('RCTImageView'))).toBeVisible();
-    await element(by.type('RCTImageView')).tap();
-    await expect(element(by.type('RCTImageView'))).toBeNotVisible();
+    const byType = device.getPlatform() === 'ios' ? by.type('RCTImageView') : by.type('android.widget.ImageView');
+
+    await expect(element(byType)).toBeVisible();
+    await element(byType).tap();
+    await expect(element(byType)).toBeNotVisible();
   });
 
   // https://facebook.github.io/react-native/docs/accessibility.html#accessibilitytraits-ios
   // Accessibility Inspector in the simulator can help investigate traits
-  it('should match elements by accesibility trait', async () => {
+  it(':ios: should match elements by accesibility trait', async () => {
     await element(by.traits(['button', 'text'])).tap();
     await expect(element(by.label('Traits Working!!!'))).toBeVisible();
   });

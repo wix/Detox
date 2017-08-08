@@ -24,7 +24,7 @@ export default class ActionsScreen extends Component {
   render() {
     if (this.state.greeting) return this.renderAfterButton();
     return (
-      <View style={{ flex: 1, paddingTop: 40, justifyContent: 'flex-start' }}>
+      <View testID='View7990' style={{ flex: 1, paddingTop: 40, justifyContent: 'flex-start' }}>
 
         <TouchableOpacity onPress={this.onButtonPress.bind(this, 'Tap Working')}
           onLongPress={this.onButtonPress.bind(this, 'Long Press Working')}

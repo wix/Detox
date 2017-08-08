@@ -7,6 +7,7 @@
 //
 
 #import "GREYIdlingResourcePrettyPrint.h"
+@import Darwin;
 
 NSString* _prettyPrintAppState(GREYAppState state)
 {
@@ -67,6 +68,23 @@ NSString* _prettyPrintAppState(GREYAppState state)
 	return [eventStateString componentsJoinedByString:@"\n"];
 }
 
+static inline int __copySafely(const void* restrict const src, void* restrict const dst, const int byteCount)
+{
+	vm_size_t bytesCopied = 0;
+	kern_return_t result = vm_read_overwrite(mach_task_self(),
+											 (vm_address_t)src,
+											 (vm_size_t)byteCount,
+											 (vm_address_t)dst,
+											 &bytesCopied);
+	if(result != KERN_SUCCESS)
+	{
+		return 0;
+	}
+	return (int)bytesCopied;
+}
+
+
+
 NSDictionary* _prettyPrintAppStateTracker(GREYAppStateTracker* tracker)
 {
 	NSMutableDictionary* rv = [NSMutableDictionary new];
@@ -99,6 +117,13 @@ NSDictionary* _prettyPrintAppStateTracker(GREYAppStateTracker* tracker)
 				unsigned long long val;
 				[hexScanner scanHexLongLong:&val];
 				void* ptr = (void*)val;
+				void* safePtr;
+				if(__copySafely(ptr, safePtr, sizeof(id)) == 0)
+				{
+					[URLs addObject:@"<Unreadable>"];
+					return;
+				}
+				
 				NSURLSessionTask* task = (__bridge id)ptr;
 				[URLs addObject:task.originalRequest.URL.absoluteString];
 			}

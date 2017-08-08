@@ -1,6 +1,8 @@
 package com.wix.invoke.types;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.wix.invoke.MethodInvocation;
+import com.wix.invoke.parser.JsonParser;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -64,6 +66,11 @@ public class Invocation {
                     argument = ((Boolean) value);
                 } else if (type.equals("boolean")) {
                     argument = ((Boolean) value).booleanValue();
+                } else if (type.equals("Invocation")) {
+                    JsonParser parser = MethodInvocation.getParserWithExtendedParsableTargetTypes(null);
+                    argument = parser.parse(value, Invocation.class);
+                } else {
+                    throw new RuntimeException("Unhandled arg type" + type);
                 }
 
                 args[i] = argument;

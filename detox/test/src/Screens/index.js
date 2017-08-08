@@ -10,6 +10,7 @@ import Orientation from './Orientation';
 import Permissions from './Permissions';
 import NetworkScreen from './NetworkScreen';
 import AnimationsScreen from './AnimationsScreen';
+import LocationScreen from './LocationScreen';
 
 export {
   SanityScreen,
@@ -23,5 +24,6 @@ export {
   Orientation,
   Permissions,
   NetworkScreen,
-  AnimationsScreen
+  AnimationsScreen,
+  LocationScreen
 };

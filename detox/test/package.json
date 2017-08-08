@@ -5,7 +5,7 @@
 	"scripts": {
 		"packager": "react-native start",
 		"detox-server": "detox run-server",
-		"e2e": "detox test --configuration ios.sim.release --debug-synchronization 500",
+		"e2e": "detox test --configuration ios.sim.release --debug-synchronization 3000",
 		"build": "detox build --configuration ios.sim.release"
 	},
 	"dependencies": {
@@ -16,9 +16,7 @@
 		"detox": "^5.0.0",
 		"express": "^4.15.3",
 		"lodash": "^4.14.1",
-		"mocha": "^3.2.0",
-		"wsrelay": "^1.0.0",
-		"wscat": "^1.0.0"
+		"mocha": "^3.2.0"
 	},
 	"detox": {
 		"specs": "e2e",
@@ -46,7 +44,28 @@
 					"server": "ws://localhost:8099",
 					"sessionId": "test"
 				}
-	    }
-		}
+	    },
+      "android.emu.debug": {
+        "binaryPath": "android/app/build/outputs/apk/app-debug.apk",
+        "build": "pushd android && ./gradlew assembleDebug assembleAndroidTest && popd",
+        "type": "android.emulator",
+        "name": "Nexus_5X_API_24_-_GPlay",
+        "session": {
+          "server": "ws://localhost:8099",
+          "sessionId": "test"
+        }
+      },
+      "android.emu.release": {
+        "binaryPath": "android/app/build/outputs/apk/app-release.apk",
+        "build": "pushd android && ./gradlew assembleRelease assembleAndroidTest && popd",
+        "type": "android.emulator",
+        "name": "Nexus_5X_API_24_-_GPlay",
+        "session": {
+          "server": "ws://localhost:8099",
+          "sessionId": "test"
+        }
+      }
+      
+    }
 	}
 }

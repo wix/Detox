@@ -3,6 +3,7 @@
     "es6": true,
     "node": true
   },
+  "parser": "babel-eslint",
   "parserOptions": {
     "ecmaVersion": 8,
     "sourceType": "module",
@@ -16,7 +17,8 @@
     "react",
     "react-native",
     "babel",
-    "promise"
+    "promise",
+    "jest"
   ],
   "rules": {
     /*
@@ -328,13 +330,14 @@
     "sort-imports": 0,
     "sort-vars": 0,
     "space-before-blocks": [
-      "error",
+      "warn",
       "always"
     ],
-    "space-before-function-paren": [
-      "error",
-      "never"
-    ],
+    "space-before-function-paren": ["error", {
+      "anonymous": "never",
+      "named": "never",
+      "asyncArrow": "always"
+    }],
     "space-in-parens": [
       "error",
       "never"

@@ -9,7 +9,7 @@ import android.support.test.InstrumentationRegistry;
  * <p>Static class.</p>
  *
  * <p>To start Detox tests, call runTests() from a JUnit test.
- * This test must use AndroidJUnitTestRunner or a subclass of it, as Detox uses Espresso internally.
+ * This test must use AndroidJUnitRunner or a subclass of it, as Detox uses Espresso internally.
  * All non-standard async code must be wrapped in an Espresso
  * <a href="https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/">IdlingResource</a>.</p>
  *

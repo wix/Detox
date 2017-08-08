@@ -1,17 +1,24 @@
 describe('User Notifications', () => {
-  it('Background push notification - push notification from background', async () => {
-    await device.relaunchApp({userNotification: userNotificationPushTrigger});
+  it('Init from user notification', async () => {
+    await device.launchApp({newInstance:true, userNotification: userNotificationPushTrigger});
     await expect(element(by.label('From push'))).toBeVisible();
   });
 
+  it('Background user notification', async () => {
+    await device.launchApp({newInstance:true});
+    await device.sendToHome();
+    await device.launchApp({newInstance:false, userNotification: userNotificationCalendarTrigger});
+    await expect(element(by.label('From calendar'))).toBeVisible();
+  });
+
   it('Foreground user notifications - local notification from inside the app - async', async () => {
-    await device.relaunchApp();
+    await device.launchApp();
     await device.sendUserNotification(userNotificationCalendarTrigger);
     await expect(element(by.label('From calendar'))).toBeVisible();
   });
 
   it('Foreground user notifications - local notification from inside the app - promises + callback', (done) => {
-    device.relaunchApp()
+    device.launchApp()
           .then(() => device.sendUserNotification(userNotificationCalendarTrigger)
           .then(() => expect(element(by.label('From calendar'))).toBeVisible()))
           .then(done);

@@ -2,13 +2,14 @@ const log = require('npmlog');
 const Device = require('./devices/Device');
 const IosDriver = require('./devices/IosDriver');
 const SimulatorDriver = require('./devices/SimulatorDriver');
-const Emulator = require('./devices/Emulator');
+const EmulatorDriver = require('./devices/EmulatorDriver');
 const argparse = require('./utils/argparse');
 const configuration = require('./configuration');
 const Client = require('./client/Client');
 const DetoxServer = require('detox-server');
 const URL = require('url').URL;
 const _ = require('lodash');
+const ArtifactsPathsProvider = require('./artifacts/ArtifactsPathsProvider');
 
 log.level = argparse.getArgValue('loglevel') || 'info';
 log.addLevel('wss', 999, {fg: 'blue', bg: 'black'}, 'wss');
@@ -17,7 +18,7 @@ log.heading = 'detox';
 const DEVICE_CLASSES = {
   'ios.simulator': SimulatorDriver,
   'ios.none': IosDriver,
-  'android.emulator': Emulator
+  'android.emulator': EmulatorDriver
 };
 
 class Detox {
@@ -30,9 +31,18 @@ class Detox {
     this.userConfig = userConfig;
     this.client = null;
     this.device = null;
+    this._currentTestNumber = 0;
+    const artifactsLocation = argparse.getArgValue('artifacts-location');
+    if(artifactsLocation !== undefined) {
+      try {
+        this._artifactsPathsProvider = new ArtifactsPathsProvider(artifactsLocation);
+      } catch(ex) {
+        log.warn(ex);
+      }
+    }
   }
 
-  async init() {
+  async init(params = {launchApp: true}) {
     if (!(this.userConfig.configurations && _.size(this.userConfig.configurations) >= 1)) {
       throw new Error(`No configured devices`);
     }
@@ -55,13 +65,10 @@ class Detox {
     if (!deviceClass) {
       throw new Error(`'${deviceConfig.type}' is not supported`);
     }
-    await this._setDevice(sessionConfig, deviceClass, deviceConfig, this.client);
-  }
 
-  async _setDevice(sessionConfig, deviceClass, deviceConfig, client) {
-    const deviceDriver = new deviceClass(client);
+    const deviceDriver = new deviceClass(this.client);
     this.device = new Device(deviceConfig, sessionConfig, deviceDriver);
-    await this.device.prepare();
+    await this.device.prepare(params);
     global.device = this.device;
   }
 
@@ -70,8 +77,24 @@ class Detox {
       await this.client.cleanup();
     }
 
-    if (argparse.getArgValue('cleanup')) {
+    await this.device._cleanup();
+
+    if (argparse.getArgValue('cleanup') && this.device) {
       await this.device.shutdown();
+    }
+  }
+
+  async beforeEach(...testNameComponents) {
+    this._currentTestNumber++;
+    if(this._artifactsPathsProvider !== undefined) {
+      const testArtifactsPath = this._artifactsPathsProvider.createPathForTest(this._currentTestNumber, ...testNameComponents)
+      this.device.setArtifactsDestination(testArtifactsPath);
+    }
+  }
+
+  async afterEach(suiteName, testName) {
+    if(this._artifactsPathsProvider !== undefined) {
+      await this.device.finalizeArtifacts();
     }
   }
 

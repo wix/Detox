@@ -1,27 +1,17 @@
 package com.wix.detox.espresso;
 
-import android.view.View;
-
-import org.hamcrest.Matcher;
-
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import android.support.test.espresso.ViewAction;
+import android.support.test.espresso.ViewInteraction;
 
 /**
  * Created by rotemm on 26/12/2016.
  */
 
 public class EspressoDetox {
+    private static final String LOG_TAG = "detox";
 
-    public static void assertViewExists(String text) {
-        onView(withText(text)).check(matches(isDisplayed()));
+    public static ViewInteraction perform(ViewInteraction interaction, ViewAction action) {
+        return interaction.perform(action);
     }
-
-    public static Matcher<View> matcherForText(String text) {
-        return withText(text);
-    }
-
-
 }
+

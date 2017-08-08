@@ -43,15 +43,22 @@ This tool by Facebook helps Detox manage and automate iOS Simulators.
 
  ```sh 
  brew tap facebook/fb
- export CODE_SIGNING_REQUIRED=NO && brew install fbsimctl --HEAD
+ export CODE_SIGNING_REQUIRED=NO && brew install fbsimctl
  ```
-	 
+Make sure you install a stable version, **do not** use `brew install fbsimctl --HEAD` as instructed in the original repo.
 > TIP: Verify it works by typing in terminal `fbsimctl list` to output the list of available simulators
 	 
 #### 4. Install [appleSimUtils](https://github.com/wix/AppleSimulatorUtils)
 	 
 A collection of utils for Apple simulators, Detox uses it to set (grant or deny) runtime permissions per application. 
-	 
+
+```sh
+brew tap wix/brew
+brew install --HEAD applesimutils
+```
+
+> TIP: Verify it works by typing in terminal `applesimutils` to output the tool help screen
+
 #### 5. Install Detox command line tools (detox-cli)
 
 This package makes it easier to operate Detox from the command line. `detox-cli` should be installed globally, enabling usage of the command line tools outside of your npm scripts.

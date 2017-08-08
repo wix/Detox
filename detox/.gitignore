@@ -177,8 +177,6 @@ android/captures/
 # Intellij
 *.iml
 
-# Keystore files
-*.jks
 
 ##################
 # React-Native

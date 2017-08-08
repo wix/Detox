@@ -38,7 +38,7 @@ public class WebSocketClient implements WebSocketListener {
         HashMap params = new HashMap();
         params.put("sessionId", sessionId);
         params.put("role", "testee");
-        sendAction("login", params);
+        sendAction("login", params, 0L);
         actionHandler.onConnect();
     }
 
@@ -89,6 +89,14 @@ public class WebSocketClient implements WebSocketListener {
         actionHandler.onClosed();
     }
 
+    public void close() {
+        try {
+            websocket.close(NORMAL_CLOSURE_STATUS, null);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "WS close", e);
+        }
+    }
+
     private static final String LOG_TAG = "WebSocketClient";
 
     private String url;
@@ -128,11 +136,12 @@ public class WebSocketClient implements WebSocketListener {
         client.dispatcher().executorService().shutdown();
     }
 
-    public void sendAction(String type, Map params) {
+    public void sendAction(String type, Map params, Long messageId) {
         Log.i(LOG_TAG, "At sendAction");
         HashMap data = new HashMap();
         data.put("type", type);
         data.put("params", params);
+        data.put("messageId", messageId);
 
         JSONObject json = new JSONObject(data);
         try {
@@ -156,15 +165,16 @@ public class WebSocketClient implements WebSocketListener {
                 return;
             }
 
-            JSONObject params = (JSONObject) object.get("params");
-            if (params != null && !(params instanceof Object)) {
+            Object params = (JSONObject) object.get("params");
+            if (params != null && !(params instanceof JSONObject)) {
                 Log.d(LOG_TAG, "Detox Error: receiveAction invalid params");
             }
+            long messageId = object.getLong("messageId");
 
             Log.d(LOG_TAG, "Detox Action Received: " + type);
             // TODO
             // This is just a dummy call now. Finish parsing params.
-            if (actionHandler != null) actionHandler.onAction(type, params.toString());
+            if (actionHandler != null) actionHandler.onAction(type, params.toString(), messageId);
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Detox Error: receiveAction decode - " + e.toString());
         }
@@ -176,7 +186,7 @@ public class WebSocketClient implements WebSocketListener {
      * @see <a href="https://medium.com/@jakewharton/listener-messages-are-called-on-a-background-thread-since-okhttp-is-agnostic-with-respect-to-5fdc5182e240">OkHTTP</a>
      */
     public interface ActionHandler {
-        void onAction(String type, String params);
+        void onAction(String type, String params, long messageId);
         void onConnect();
         void onClosed();
     }
