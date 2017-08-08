@@ -139,11 +139,12 @@ class SwipeAction extends Action {
     }
     if (percentage) {
       let x, y;
+      const eps = 10 ** -8;
       switch (direction) {
-        case 1: x = percentage, y = 0.0; break;
-        case 2: x = percentage, y = 0.0; break;
-        case 3: y = percentage, x = 0.0; break;
-        case 4: y = percentage, x = 0.0; break;
+        case 1: x = percentage, y = eps; break;
+        case 2: x = percentage, y = eps; break;
+        case 3: y = percentage, x = eps; break;
+        case 4: y = percentage, x = eps; break;
       }
       if (speed == 'fast') {
         this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForSwipeFastInDirection:xOriginStartPercentage:yOriginStartPercentage:', invoke.IOS.NSInteger(direction), invoke.IOS.CGFloat(x), invoke.IOS.CGFloat(y));
