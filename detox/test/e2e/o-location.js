@@ -11,6 +11,8 @@ describe('location', () => {
     await device.setLocation(20, 20);
     await element(by.label('Location')).tap();
     await element(by.id('getLocationButton')).tap();
+    await waitFor(element(by.text('Latitude: 20'))).toBeVisible().withTimeout(3000);
+
     await expect(element(by.text('Latitude: 20'))).toBeVisible();
     await expect(element(by.text('Longitude: 20'))).toBeVisible();
   });
