@@ -138,6 +138,6 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     @Override
     public void onClosed() {
-        stop();
+//        stop();
     }
 }
