@@ -112,7 +112,7 @@ public class DetoxAction {
                     uiController.loopMainThreadUntilIdle();
                     return;
                 } else {
-                    throw new RuntimeException("Only descendants of AbsListView are supported");
+                    throw new RuntimeException("Only descendants of AbsListView, ScrollView, HorizontalScrollView are supported");
                 }
             }
         });
