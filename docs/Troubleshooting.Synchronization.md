@@ -64,7 +64,13 @@ This makes sense only if we're not waiting enough (or if we've disabled automati
 
 ### Identifying which synchronization mechanism causes us to wait too much
 
-> This isn't exposed yet, TBD
+Interactions with the application are synchronized, meaning that they will not execute unless the app is idle. You may encounter situations where the tests just hang. 
+When an action/expectation takes a significant amount of time use this option to print device synchronization status.
+The status will be printed if the action takes more than [value]ms to complete
+
+```
+detox test --debug-synchronization [value in ms]
+```
 
 <br>
 
