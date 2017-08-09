@@ -11,6 +11,8 @@ import android.view.InputDevice;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.HorizontalScrollView;
+import android.widget.ScrollView;
 
 import org.hamcrest.Matcher;
 
@@ -53,6 +55,8 @@ public class DetoxAction {
                 Tap.SINGLE, c, Press.FINGER, InputDevice.SOURCE_UNKNOWN, MotionEvent.BUTTON_PRIMARY));
     }
 
+    private final static int DEFAULT_SCROLL_DP = 100;
+
     /**
      * Scrolls to the edge of the given scrollable view.
      *
@@ -82,10 +86,31 @@ public class DetoxAction {
                 if (view instanceof AbsListView) {
                     RNScrollListener l = new RNScrollListener((AbsListView) view);
                     do {
-                        ScrollHelper.perform(uiController, view, edge, 100);
+                        ScrollHelper.perform(uiController, view, edge, DEFAULT_SCROLL_DP);
                     } while (l.didScroll());
                     l.cleanup();
                     uiController.loopMainThreadUntilIdle();
+                    return;
+                } if (view instanceof ScrollView) {
+                    int prevScrollY = view.getScrollY();
+                    while (true) {
+                        ScrollHelper.perform(uiController, view, edge, DEFAULT_SCROLL_DP);
+                        int currentScrollY = view.getScrollY();
+                        if (currentScrollY == prevScrollY) break;
+                        prevScrollY = currentScrollY;
+                    }
+                    uiController.loopMainThreadUntilIdle();
+                    return;
+                } if (view instanceof HorizontalScrollView) {
+                    int prevScrollX = view.getScrollX();
+                    while (true) {
+                        ScrollHelper.perform(uiController, view, edge, DEFAULT_SCROLL_DP);
+                        int currentScrollX = view.getScrollX();
+                        if (currentScrollX == prevScrollX) break;
+                        prevScrollX = currentScrollX;
+                    }
+                    uiController.loopMainThreadUntilIdle();
+                    return;
                 } else {
                     throw new RuntimeException("Only descendants of AbsListView are supported");
                 }
