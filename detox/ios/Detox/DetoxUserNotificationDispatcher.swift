@@ -48,7 +48,7 @@ private struct DetoxUserNotificationKeys {
 
 @objc(DetoxUserNotificationDispatcher)
 public class DetoxUserNotificationDispatcher: NSObject {
-	let userNotificationData : [String: Any]
+	@objc let userNotificationData : [String: Any]
 	
 	@objc(initWithUserNotificationDataURL:)
 	public init(userNotificationDataUrl: URL) {
@@ -161,7 +161,7 @@ public class DetoxUserNotificationDispatcher: NSObject {
 		return jsonObject
 	}
 	
-	public lazy var localNotification : UILocalNotification? = {
+	@objc public lazy var localNotification : UILocalNotification? = {
 		[unowned self] in
 		guard self.userNotificationData[DetoxUserNotificationKeys.absoluteTriggerType] as! String != DetoxUserNotificationKeys.TriggerTypes.push else {
 			return nil;
@@ -201,7 +201,7 @@ public class DetoxUserNotificationDispatcher: NSObject {
 		return rv
 	}()
 	
-	public lazy var remoteNotification : [String: Any]? = {
+	@objc public lazy var remoteNotification : [String: Any]? = {
 		[unowned self] in
 		guard self.userNotificationData[DetoxUserNotificationKeys.absoluteTriggerType] as! String == DetoxUserNotificationKeys.TriggerTypes.push else {
 			return nil;
@@ -282,7 +282,7 @@ public class DetoxUserNotificationDispatcher: NSObject {
 		return region
 	}
 	
-	@available(iOS 10.0, *)
+	@objc @available(iOS 10.0, *)
 	public func userNotificationResponse() -> UNNotificationResponse {
 		let notificationContent = UNMutableNotificationContent()
 		notificationContent.badge = userNotificationData[DetoxUserNotificationKeys.badge] as? NSNumber
