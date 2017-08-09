@@ -1,6 +1,7 @@
 package com.wix.detox.espresso;
 
 import android.os.SystemClock;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.action.MotionEvents;
 import android.util.Log;
@@ -37,13 +38,25 @@ public class ScrollHelper {
      *
      */
     public static void perform(UiController uiController, View view, int direction, float amountInDP) {
-        // TODO
-        // Max scroll should go the the edge of the screen, not just to the
-        // edge of the View! It will make the tests faster.
-        int adjWidth = (int) (view.getWidth() * (1 - 2 * DEFAULT_DEADZONE_PERCENT));
-        int adjHeight = (int) (view.getHeight() * (1 - 2 * DEFAULT_DEADZONE_PERCENT));
+        int adjWidth = 0;
+        int adjHeight = 0;
+
+        int[] pos = new int[2];
+        view.getLocationInWindow(pos);
 
         int amountInPX = UiAutomatorHelper.convertDiptoPix(amountInDP);
+
+        float[] screenSize = UiAutomatorHelper.getScreenSizeInPX();
+
+        if (direction == 1) {
+            adjWidth = (int) ((screenSize[0] - pos[0]) * (1 - 2 * DEFAULT_DEADZONE_PERCENT));
+        } else if (direction == 2) {
+            adjWidth = (int) ((pos[0] + view.getWidth()) * (1 - 2 * DEFAULT_DEADZONE_PERCENT));
+        } else if (direction == 3) {
+            adjHeight = (int) ((screenSize[1] - pos[1]) * (1 - 2 * DEFAULT_DEADZONE_PERCENT));
+        } else {
+            adjHeight = (int) ((pos[1] + view.getHeight()) * (1 - 2 * DEFAULT_DEADZONE_PERCENT));
+        }
 
         Log.d(LOG_TAG, "Amount in px: " + amountInPX);
 
@@ -88,28 +101,28 @@ public class ScrollHelper {
 
         switch (direction) {
             case 2:
-                downX = x + marginX + amount;
+                downX = x + view.getWidth() - marginX;
                 downY = y + view.getHeight() / 2;
-                upX = x + marginX;
+                upX = downX - amount;
                 upY = y + view.getHeight() / 2;
                 break;
             case 1:
                 downX = x + marginX;
                 downY = y + view.getHeight() / 2;
-                upX = x + marginX + amount;
+                upX = downX + amount;
                 upY = y + view.getHeight() / 2;
                 break;
             case 4:
                 downX = x + view.getWidth() / 2;
-                downY = y + marginY + amount;
+                downY = y + view.getHeight() - marginY;
                 upX = x + view.getWidth() / 2;
-                upY = y + marginY;
+                upY = downY - amount;
                 break;
             case 3:
                 downX = x + view.getWidth() / 2;
                 downY = y + marginY;
                 upX = x + view.getWidth() / 2;
-                upY = y + marginY + amount;
+                upY = downY + amount;
                 break;
             default:
                 throw new RuntimeException("Scrolldirection can go from 1 to 4");

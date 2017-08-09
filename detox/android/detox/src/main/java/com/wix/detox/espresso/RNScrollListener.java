@@ -50,13 +50,17 @@ public class RNScrollListener implements AbsListView.OnScrollListener {
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-        savedListener.onScrollStateChanged(view, scrollState);
+        if (savedListener != null) {
+            savedListener.onScrollStateChanged(view, scrollState);
+        }
     }
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         Log.d(LOG_TAG, "onScroll called");
         scrolled.set(true);
-        savedListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+        if (savedListener != null) {
+            savedListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+        }
     }
 }

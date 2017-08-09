@@ -7,6 +7,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.uiautomator.InstrumentationUiAutomatorBridge;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Choreographer;
 import android.view.View;
@@ -84,6 +85,12 @@ public class UiAutomatorHelper {
 
     public static int convertPixtoDip(int pixel){
         return (int)((pixel - 0.5f) / getDensity());
+    }
+
+    public static float[] getScreenSizeInPX() {
+        DisplayMetrics metrics = InstrumentationRegistry.getTargetContext()
+                .getApplicationContext().getResources().getDisplayMetrics();
+        return new float[] {metrics.widthPixels, metrics.heightPixels};
     }
 
     /**

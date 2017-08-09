@@ -55,7 +55,7 @@ public class DetoxAction {
                 Tap.SINGLE, c, Press.FINGER, InputDevice.SOURCE_UNKNOWN, MotionEvent.BUTTON_PRIMARY));
     }
 
-    private final static int DEFAULT_SCROLL_DP = 100;
+    private final static int DEFAULT_SCROLL_DP = 500;
 
     /**
      * Scrolls to the edge of the given scrollable view.
