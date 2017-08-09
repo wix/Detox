@@ -141,6 +141,12 @@ class ReactNativeSupport {
      * </p>
      */
     static void waitForReactNativeLoad(@NonNull Object reactNativeHostHolder) {
+        // TODO
+        // This method should be refactored to always call
+        // getCurrentReactContext() on the UI Thread.
+        // That will take care of every timing issues we experience
+        // sometimes.
+
         if (!isReactNativeApp()) {
             return;
         }
