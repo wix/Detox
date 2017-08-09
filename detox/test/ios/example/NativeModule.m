@@ -1,6 +1,6 @@
 #import "NativeModule.h"
 #import <UIKit/UIKit.h>
-#import "RCTRootView.h"
+#import <React/RCTRootView.h>
 
 static int CALL_COUNTER = 0;
 
