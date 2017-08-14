@@ -12,7 +12,6 @@ import com.wix.detox.espresso.LooperIdlingResource;
 import com.wix.detox.espresso.ReactBridgeIdlingResource;
 import com.wix.detox.espresso.ReactNativeTimersIdlingResource;
 import com.wix.detox.espresso.ReactNativeUIModuleIdlingResource;
-import com.wix.detox.espresso.ReactViewHierarchyUpdateIdlingResource;
 
 import org.joor.Reflect;
 import org.joor.ReflectException;

@@ -1,5 +1,6 @@
 package com.wix.detox.espresso;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
@@ -22,7 +23,7 @@ public class RNScrollListener implements AbsListView.OnScrollListener {
     public AtomicBoolean scrolled = new AtomicBoolean(false);
 
     /**
-     * Returns whether the AbsListview have scrolled since the last time this
+     * Returns whether the AbsListview has scrolled since the last time this
      * method was called.
      *
      * It resets the scrolled state on each call.
@@ -42,7 +43,7 @@ public class RNScrollListener implements AbsListView.OnScrollListener {
         listView.setOnScrollListener(savedListener);
     }
 
-    public RNScrollListener(AbsListView listView) {
+    public RNScrollListener(@NonNull AbsListView listView) {
         this.listView = listView;
         savedListener = Reflect.on(listView).field(FIELD_SCROLL_LISTENER).get();
         listView.setOnScrollListener(this);

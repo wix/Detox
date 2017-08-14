@@ -83,6 +83,12 @@ public class DetoxAction {
 
             @Override
             public void perform(UiController uiController, View view) {
+                Class<?> recyclerViewClass = null;
+                try {
+                    recyclerViewClass = Class.forName(RecyclerViewScrollListener.CLASS_RECYCLERVIEW);
+                } catch (ClassNotFoundException e) {
+                    // ok
+                }
                 if (view instanceof AbsListView) {
                     RNScrollListener l = new RNScrollListener((AbsListView) view);
                     do {
@@ -111,9 +117,17 @@ public class DetoxAction {
                     }
                     uiController.loopMainThreadUntilIdle();
                     return;
+                } else if (recyclerViewClass != null && recyclerViewClass.isInstance(view)) {
+                    RecyclerViewScrollListener l = new RecyclerViewScrollListener(view);
+                    do {
+                        ScrollHelper.perform(uiController, view, edge, DEFAULT_SCROLL_DP);
+                    } while (l.didScroll());
+                    l.cleanup();
+                    uiController.loopMainThreadUntilIdle();
+                    return;
                 } else {
                     throw new RuntimeException(
-                            "Only descendants of AbsListView, ScrollView and HorizontalScrollView are supported");
+                            "Only descendants of AbsListView, ScrollView, HorizontalScrollView and RecyclerView are supported");
                 }
             }
         });
