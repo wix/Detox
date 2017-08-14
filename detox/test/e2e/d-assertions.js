@@ -39,7 +39,7 @@ describe('Assertions', () => {
   });
 
   // for example, the value of a UISwitch in the "on" state is "1"
-  it('should assert an element has (accesibility) value', async () => {
+  it(':ios: should assert an element has (accesibility) value', async () => {
     await expect(element(by.id('UniqueId146'))).toHaveValue('0');
     await element(by.id('UniqueId146')).tap();
     await expect(element(by.id('UniqueId146'))).toHaveValue('1');
