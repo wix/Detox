@@ -29,17 +29,17 @@ describe('Assertions', () => {
     await expect(element(by.id('UniqueId204'))).toHaveText('I contain some text');
   });
 
-  // matches by accesibility label, this might not be the specific displayed text but is much more generic
-  it('should assert an element has (accesibility) label', async () => {
+  // matches by accessibility label, this might not be the specific displayed text but is much more generic
+  it('should assert an element has (accessibility) label', async () => {
     await expect(element(by.id('UniqueId204'))).toHaveLabel('I contain some text');
   });
 
-  it('should assert an element has (accesibility) id', async () => {
+  it('should assert an element has (accessibility) id', async () => {
     await expect(element(by.label('I contain some text'))).toHaveId('UniqueId204');
   });
 
   // for example, the value of a UISwitch in the "on" state is "1"
-  it(':ios: should assert an element has (accesibility) value', async () => {
+  it(':ios: should assert an element has (accessibility) value', async () => {
     await expect(element(by.id('UniqueId146'))).toHaveValue('0');
     await element(by.id('UniqueId146')).tap();
     await expect(element(by.id('UniqueId146'))).toHaveValue('1');
