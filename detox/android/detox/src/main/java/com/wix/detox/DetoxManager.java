@@ -11,6 +11,9 @@ import com.wix.detox.espresso.UiAutomatorHelper;
 import com.wix.detox.systeminfo.Environment;
 import com.wix.invoke.MethodInvocation;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -119,7 +122,14 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                         break;
                     case "cleanup":
                         wsClient.sendAction("cleanupDone", Collections.emptyMap(), messageId);
-                        stop();
+                        try {
+                            boolean stopRunner = new JSONObject(params).getBoolean("stopRunner");
+                            if (stopRunner) {
+                                stop();
+                            }
+                        } catch (JSONException e) {
+                            Log.e(LOG_TAG, "cleanup cmd doesn't have stopRunner param");
+                        }
                         break;
                     case "reactNativeReload":
                         UiAutomatorHelper.espressoSync();
@@ -138,6 +148,6 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     @Override
     public void onClosed() {
-//        stop();
+        stop();
     }
 }

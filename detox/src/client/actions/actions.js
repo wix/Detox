@@ -13,7 +13,6 @@ class Action {
       throw new Error(`was expecting '${type}' , got ${JSON.stringify(response)}`);
     }
   }
-
 }
 
 class Login extends Action {
@@ -51,8 +50,11 @@ class ReloadReactNative extends Action {
 }
 
 class Cleanup extends Action {
-  constructor() {
-    super('cleanup');
+  constructor(stopRunner = true) {
+    const params = {
+      stopRunner: stopRunner
+    };
+    super('cleanup', params);
   }
 
   async handle(response) {
