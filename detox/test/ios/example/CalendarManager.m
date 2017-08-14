@@ -9,9 +9,13 @@ RCT_EXPORT_METHOD(getAuthorizationStatus:(RCTPromiseResolveBlock)resolve rejecte
     EKAuthorizationStatus status = [EKEventStore authorizationStatusForEntityType:EKEntityTypeEvent];
     NSString* permission;
     if (status == EKAuthorizationStatusAuthorized)
+	{
         permission = @"granted";
+	}
     else
+	{
         permission = @"denied";
+	}
 
     resolve(permission);
 }

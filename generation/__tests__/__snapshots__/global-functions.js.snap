@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`globals sanitize_greyDirection should fail with unknown value 1`] = `"GREYAction.GREYDirection must be a 'left'/'right'/'up'/'down', got kittens"`;

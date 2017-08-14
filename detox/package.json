@@ -4,7 +4,7 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "version": "5.6.0",
+  "version": "5.6.1",
   "bin": {
     "detox": "local-cli/detox.js"
   },
@@ -78,7 +78,8 @@
       "/node_modules/",
       ".*Driver.js",
       "DeviceDriverBase.js",
-      "GREYConfiguration.js"
+      "GREYConfiguration.js",
+      "src/ios/earlgreyapi"
     ],
     "resetMocks": true,
     "resetModules": true,

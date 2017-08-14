@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  TouchableOpacity,
-  TextInput,
   ScrollView,
   Animated,
   NativeModules

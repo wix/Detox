@@ -2,7 +2,6 @@ package com.wix.detox;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.util.Log;
@@ -77,7 +76,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                 stopping = true;
                 ReactNativeSupport.removeEspressoIdlingResources(reactNativeHostHolder);
                 wsClient.close();
-                Looper.myLooper().quit();
+//                Looper.myLooper().quit();
             }
         });
     }
@@ -138,6 +137,6 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     @Override
     public void onClosed() {
-        stop();
+//        stop();
     }
 }

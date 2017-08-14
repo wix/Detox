@@ -80,11 +80,6 @@ public class WebSocketClient implements WebSocketListener {
     @Override
     public void onClose(int code, String reason) {
         Log.i(LOG_TAG, "At onClose");
-        try {
-            websocket.close(NORMAL_CLOSURE_STATUS, null);
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "WS close", e);
-        }
         Log.d(LOG_TAG, "Detox Closed: " + code + " " + reason);
         actionHandler.onClosed();
     }
