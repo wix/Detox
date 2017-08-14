@@ -8,6 +8,7 @@ class Client {
     this.ws = new AsyncWebSocket(config.server);
     this.slowInvocationStatusHandler = null;
     this.slowInvocationTimeout = argparse.getArgValue('debug-synchronization');
+    this.successfulTestRun = true; // flag for cleanup
   }
 
   async connect() {
@@ -29,7 +30,7 @@ class Client {
 
   async cleanup() {
     if (this.ws.isOpen()) {
-      await this.sendAction(new actions.Cleanup());
+      await this.sendAction(new actions.Cleanup(this.successfulTestRun));
     }
   }
 
@@ -49,7 +50,9 @@ class Client {
     if (this.slowInvocationTimeout) {
       this.slowInvocationStatusHandler = this.slowInvocationStatus();
     }
-    await this.sendAction(new actions.Invoke(invocation));
+    await this.sendAction(new actions.Invoke(invocation)).catch(() => {
+      this.successfulTestRun = false;
+    });
     clearTimeout(this.slowInvocationStatusHandler);
   }
 
@@ -61,7 +64,7 @@ class Client {
   }
 
   slowInvocationStatus() {
-    return setTimeout( async () => {
+    return setTimeout(async () => {
       const status = await this.currentStatus();
       this.slowInvocationStatusHandler = this.slowInvocationStatus();
     }, this.slowInvocationTimeout);
