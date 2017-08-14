@@ -132,20 +132,33 @@ function createTypeChecks(json) {
 const callGlobal = sanitizerName => argIdentifier =>
   t.callExpression(t.identifier(sanitizerName), [t.identifier(argIdentifier)]);
 const supportedContentSanitizersMap = {
-  GREYDirection: callGlobal("sanitize_greyDirection")
+  GREYDirection: {
+    type: 'NSInteger',
+    value: callGlobal("sanitize_greyDirection"),
+  },
 };
 function addArgumentContentSanitizerCall(json) {
   if (supportedContentSanitizersMap[json.type]) {
-    return supportedContentSanitizersMap[json.type](json.name);
+    return supportedContentSanitizersMap[json.type].value(json.name);
   }
 
   return t.identifier(json.name);
+}
+function addArgumentTypeSanitizer(json) {
+  if (supportedContentSanitizersMap[json.type]) {
+    return supportedContentSanitizersMap[json.type].type;
+  }
+
+  return json.type;
 }
 
 function createReturnStatement(className, json) {
   const args = json.args.map(arg =>
     t.objectExpression([
-      t.objectProperty(t.identifier("type"), t.stringLiteral(arg.type)),
+      t.objectProperty(
+        t.identifier("type"),
+        t.stringLiteral(addArgumentTypeSanitizer(arg))
+      ),
       t.objectProperty(
         t.identifier("value"),
         addArgumentContentSanitizerCall(arg)

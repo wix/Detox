@@ -144,7 +144,7 @@ simulate a long press.
       },
       method: "actionForScrollInDirection:amount:",
       args: [{
-        type: "GREYDirection",
+        type: "NSInteger",
         value: sanitize_greyDirection(direction)
       }, {
         type: "CGFloat",
@@ -181,7 +181,7 @@ starting from the given start points.
       },
       method: "actionForScrollInDirection:amount:xOriginStartPercentage:yOriginStartPercentage:",
       args: [{
-        type: "GREYDirection",
+        type: "NSInteger",
         value: sanitize_greyDirection(direction)
       }, {
         type: "CGFloat",
@@ -265,7 +265,7 @@ achieve the maximum the swipe possible to the other edge.
       },
       method: "actionForSwipeFastInDirection:",
       args: [{
-        type: "GREYDirection",
+        type: "NSInteger",
         value: sanitize_greyDirection(direction)
       }]
     };
@@ -286,7 +286,7 @@ achieve maximum the swipe possible to the other edge.
       },
       method: "actionForSwipeSlowInDirection:",
       args: [{
-        type: "GREYDirection",
+        type: "NSInteger",
         value: sanitize_greyDirection(direction)
       }]
     };
@@ -314,7 +314,7 @@ the specified point.
       },
       method: "actionForSwipeFastInDirection:xOriginStartPercentage:yOriginStartPercentage:",
       args: [{
-        type: "GREYDirection",
+        type: "NSInteger",
         value: sanitize_greyDirection(direction)
       }, {
         type: "CGFloat",
@@ -348,7 +348,7 @@ the specified point.
       },
       method: "actionForSwipeSlowInDirection:xOriginStartPercentage:yOriginStartPercentage:",
       args: [{
-        type: "GREYDirection",
+        type: "NSInteger",
         value: sanitize_greyDirection(direction)
       }, {
         type: "CGFloat",
@@ -378,7 +378,7 @@ direction from the specified point.
       },
       method: "actionForMultiFingerSwipeSlowInDirection:numberOfFingers:",
       args: [{
-        type: "GREYDirection",
+        type: "NSInteger",
         value: sanitize_greyDirection(direction)
       }, {
         type: "NSInteger",
@@ -405,7 +405,7 @@ direction from the specified point.
       },
       method: "actionForMultiFingerSwipeFastInDirection:numberOfFingers:",
       args: [{
-        type: "GREYDirection",
+        type: "NSInteger",
         value: sanitize_greyDirection(direction)
       }, {
         type: "NSInteger",
@@ -434,7 +434,7 @@ direction from the specified point.
       },
       method: "actionForMultiFingerSwipeSlowInDirection:numberOfFingers:xOriginStartPercentage:yOriginStartPercentage:",
       args: [{
-        type: "GREYDirection",
+        type: "NSInteger",
         value: sanitize_greyDirection(direction)
       }, {
         type: "NSInteger",
@@ -469,7 +469,7 @@ direction from the specified point.
       },
       method: "actionForMultiFingerSwipeFastInDirection:numberOfFingers:xOriginStartPercentage:yOriginStartPercentage:",
       args: [{
-        type: "GREYDirection",
+        type: "NSInteger",
         value: sanitize_greyDirection(direction)
       }, {
         type: "NSInteger",
