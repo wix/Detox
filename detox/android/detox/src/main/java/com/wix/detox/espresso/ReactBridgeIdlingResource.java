@@ -29,7 +29,9 @@ public class ReactBridgeIdlingResource implements IdlingResource {
     @Override
     public boolean isIdleNow() {
         boolean ret = idleNow.get();
-        Log.i(LOG_TAG, "JS Bridge is idle : " + String.valueOf(ret));
+        if (!ret) {
+            Log.i(LOG_TAG, "JS Bridge is busy");
+        }
         return ret;
     }
 
@@ -44,7 +46,7 @@ public class ReactBridgeIdlingResource implements IdlingResource {
         if (callback != null) {
             callback.onTransitionToIdle();
         }
-        Log.i(LOG_TAG, "JS Bridge transitions to idle.");
+        // Log.i(LOG_TAG, "JS Bridge transitions to idle.");
     }
 
     //Proxy calls it

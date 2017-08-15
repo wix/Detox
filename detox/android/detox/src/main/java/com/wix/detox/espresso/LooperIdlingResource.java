@@ -51,8 +51,11 @@ final public class LooperIdlingResource implements IdlingResource {
                 resourceCallback.onTransitionToIdle();
             }
         }
-        Log.i(LOG_TAG, getName() + " looper is idle : " + String.valueOf(idle || idleWait));
-        return idle || idleWait;
+        idle = idle || idleWait;
+        if (!idle) {
+            Log.i(LOG_TAG, getName() + " looper is busy");
+        }
+        return idle;
     }
 
     @Override
