@@ -55,8 +55,6 @@ public class DetoxAction {
                 Tap.SINGLE, c, Press.FINGER, InputDevice.SOURCE_UNKNOWN, MotionEvent.BUTTON_PRIMARY));
     }
 
-    private final static int DEFAULT_SCROLL_DP = 500;
-
     /**
      * Scrolls to the edge of the given scrollable view.
      *
@@ -92,39 +90,31 @@ public class DetoxAction {
                 if (view instanceof AbsListView) {
                     RNScrollListener l = new RNScrollListener((AbsListView) view);
                     do {
-                        ScrollHelper.perform(uiController, view, edge, DEFAULT_SCROLL_DP);
+                        ScrollHelper.performOnce(uiController, view, edge);
                     } while (l.didScroll());
                     l.cleanup();
-                    uiController.loopMainThreadUntilIdle();
-                    return;
-                } if (view instanceof ScrollView) {
+                } else if (view instanceof ScrollView) {
                     int prevScrollY = view.getScrollY();
                     while (true) {
-                        ScrollHelper.perform(uiController, view, edge, DEFAULT_SCROLL_DP);
+                        ScrollHelper.performOnce(uiController, view, edge);
                         int currentScrollY = view.getScrollY();
                         if (currentScrollY == prevScrollY) break;
                         prevScrollY = currentScrollY;
                     }
-                    uiController.loopMainThreadUntilIdle();
-                    return;
-                } if (view instanceof HorizontalScrollView) {
+                } else if (view instanceof HorizontalScrollView) {
                     int prevScrollX = view.getScrollX();
                     while (true) {
-                        ScrollHelper.perform(uiController, view, edge, DEFAULT_SCROLL_DP);
+                        ScrollHelper.performOnce(uiController, view, edge);
                         int currentScrollX = view.getScrollX();
                         if (currentScrollX == prevScrollX) break;
                         prevScrollX = currentScrollX;
                     }
-                    uiController.loopMainThreadUntilIdle();
-                    return;
                 } else if (recyclerViewClass != null && recyclerViewClass.isInstance(view)) {
                     RecyclerViewScrollListener l = new RecyclerViewScrollListener(view);
                     do {
-                        ScrollHelper.perform(uiController, view, edge, DEFAULT_SCROLL_DP);
+                        ScrollHelper.performOnce(uiController, view, edge);
                     } while (l.didScroll());
                     l.cleanup();
-                    uiController.loopMainThreadUntilIdle();
-                    return;
                 } else {
                     throw new RuntimeException(
                             "Only descendants of AbsListView, ScrollView, HorizontalScrollView and RecyclerView are supported");

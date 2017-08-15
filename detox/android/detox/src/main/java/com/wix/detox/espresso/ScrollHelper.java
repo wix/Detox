@@ -175,4 +175,44 @@ public class ScrollHelper {
 
         return res;
     }
+
+    /**
+     * Scrolls the View in a direction once by the maximum amount possible. (Till the edge
+     * of the screen.)
+     *
+     * Direction
+     * 1 -> left
+     * 2 -> Right
+     * 3 -> Up
+     * 4 -> Down
+     *
+     * @param direction Direction to scroll
+     */
+    public static void performOnce(UiController uiController, View view, int direction) {
+        int adjWidth = 0;
+        int adjHeight = 0;
+
+        int[] pos = new int[2];
+        view.getLocationInWindow(pos);
+
+        float[] screenSize = UiAutomatorHelper.getScreenSizeInPX();
+
+        if (direction == 1) {
+            adjWidth = (int) ((screenSize[0] - pos[0]) * (1 - 2 * DEFAULT_DEADZONE_PERCENT));
+        } else if (direction == 2) {
+            adjWidth = (int) ((pos[0] + view.getWidth()) * (1 - 2 * DEFAULT_DEADZONE_PERCENT));
+        } else if (direction == 3) {
+            adjHeight = (int) ((screenSize[1] - pos[1]) * (1 - 2 * DEFAULT_DEADZONE_PERCENT));
+        } else {
+            adjHeight = (int) ((pos[1] + view.getHeight()) * (1 - 2 * DEFAULT_DEADZONE_PERCENT));
+        }
+
+        if (direction == 1 || direction == 2) {
+            doScroll(uiController, view, direction, adjWidth);
+        } else {
+            doScroll(uiController, view, direction, adjHeight);
+        }
+
+        uiController.loopMainThreadUntilIdle();
+    }
 }
