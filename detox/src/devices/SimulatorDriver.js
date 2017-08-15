@@ -65,6 +65,10 @@ class SimulatorDriver extends IosDriver {
     await this._applesimutils.setPermissions(deviceId, bundleId, permissions);
   }
 
+  async resetContentAndSettings(deviceId) {
+    return await this._fbsimctl.resetContentAndSettings(deviceId);
+  }
+
   validateDeviceConfig(deviceConfig) {
     if (!deviceConfig.binaryPath) {
       configuration.throwOnEmptyBinaryPath();

@@ -18,6 +18,7 @@
 - [`device.setURLBlacklist([urls])`](#deviceseturlblacklisturls)
 - [`device.enableSynchronization()`](#deviceenablesynchronization)
 - [`device.disableSynchronization()`](#devicedisablesynchronization)
+- [`device.resetContentAndSettings()`](#resetcontentandsettings)
 
 ### `device.launchApp(params)`
 Launch the app defined in the current [`configuration`](APIRef.Configuration.md).
@@ -190,4 +191,13 @@ Disable [EarlGrey's synchronization mechanism](https://github.com/google/EarlGre
 
 ```js
 await device.disableSynchronization();
+```
+
+
+### `device.resetContentAndSettings()`
+Resets the Simulator to clean state (like the Simulator > Reset Content and Settings... menu item), especially removing
+previously set permissions.
+
+```js
+await device.resetContentAndSettings();
 ```
