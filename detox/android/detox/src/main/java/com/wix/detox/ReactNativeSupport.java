@@ -274,7 +274,7 @@ class ReactNativeSupport {
                 rnUIModuleIdlingResource);
     }
 
-    private static ArrayList<IdlingResource> looperIdlingResources = new ArrayList<>();
+    private static ArrayList<LooperIdlingResource> looperIdlingResources = new ArrayList<>();
 
     private static void setupReactNativeQueueInterrogators(@NonNull Object reactContext) {
         HashSet<Looper> excludedLoopers = new HashSet<>();
@@ -364,7 +364,8 @@ class ReactNativeSupport {
     }
 
     private static void removeReactNativeQueueInterrogators() {
-        for (IdlingResource res : looperIdlingResources) {
+        for (LooperIdlingResource res : looperIdlingResources) {
+            res.stop();
             Espresso.unregisterIdlingResources(res);
         }
         looperIdlingResources.clear();
