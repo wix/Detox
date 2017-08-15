@@ -83,14 +83,27 @@ class EmulatorDriver extends DeviceDriverBase {
     //});
   }
 
-
-  async terminate(deviceId, bundleId) {    
+  async terminate(deviceId, bundleId) {
+    this.terminateInstrumentation();
     await this.adbCmd(deviceId, `shell am force-stop ${bundleId}`);
     //await exec(`adb -s ${deviceId} shell am force-stop ${bundleId}`);
   }
 
+  terminateInstrumentation() {
+    if (this.instrumentationProcess) {
+      this.instrumentationProcess.kill('SIGHUP');
+      /*
+      try {
+        console.log('killing instrumentation process succeded: ', this.instrumentationProcess.kill('SIGTERM'));
+      } catch (e) {
+        console.log('killing instrumentation process failed', e);
+      }
+      */
+    }
+  }
+
   async cleanup(deviceId, bundleId) {
-    // empty
+    this.terminateInstrumentation();
   }
 
   defaultLaunchArgsPrefix() {

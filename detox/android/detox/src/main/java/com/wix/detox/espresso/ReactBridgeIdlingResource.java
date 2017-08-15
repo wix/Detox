@@ -52,6 +52,6 @@ public class ReactBridgeIdlingResource implements IdlingResource {
     //Proxy calls it
     public void onTransitionToBridgeBusy() {
         idleNow.set(false);
-        Log.i(LOG_TAG, "JS Bridge transitions to busy.");
+        // Log.i(LOG_TAG, "JS Bridge transitions to busy.");
     }
 }
