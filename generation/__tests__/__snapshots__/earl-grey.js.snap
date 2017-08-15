@@ -69,7 +69,7 @@ exports[`earl-grey generation Invocations should sanitize the directions 1`] = `
 Object {
   "args": Array [
     Object {
-      "type": "GREYDirection",
+      "type": "NSInteger",
       "value": 4,
     },
     Object {

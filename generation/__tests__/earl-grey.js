@@ -143,7 +143,7 @@ describe("earl-grey generation", () => {
         5
       );
 
-      expect(result.args[0].type).toBe("GREYDirection");
+      expect(result.args[0].type).toBe("NSInteger");
       expect(result.args[0].value).toBe(4);
       expect(result).toMatchSnapshot();
     });
