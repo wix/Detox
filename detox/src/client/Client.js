@@ -50,9 +50,12 @@ class Client {
     if (this.slowInvocationTimeout) {
       this.slowInvocationStatusHandler = this.slowInvocationStatus();
     }
-    await this.sendAction(new actions.Invoke(invocation)).catch(() => {
+    try {
+      await this.sendAction(new actions.Invoke(invocation));
+    } catch (err) {
       this.successfulTestRun = false;
-    });
+      throw new Error(err);
+    }
     clearTimeout(this.slowInvocationStatusHandler);
   }
 
