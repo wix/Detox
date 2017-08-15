@@ -109,13 +109,13 @@ public class ReactNativeTimersIdlingResource implements IdlingResource, Choreogr
                     if (callback != null) {
                         callback.onTransitionToIdle();
                     }
-                    Log.i(LOG_TAG, "JS Timer is idle: true");
+                    // Log.i(LOG_TAG, "JS Timer is idle: true");
                     return true;
                 }
             }
 
             Choreographer.getInstance().postFrameCallback(this);
-            Log.i(LOG_TAG, "JS Timer is idle: false");
+            Log.i(LOG_TAG, "JS Timer is busy");
             return false;
         } catch (ReflectException e) {
             Log.e(LOG_TAG, "Can't set up RN timer listener", e.getCause());
