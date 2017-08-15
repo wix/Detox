@@ -1,7 +1,13 @@
 package com.example;
 
+import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
+import android.view.Gravity;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
+import android.widget.TextView;
 
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -25,6 +31,17 @@ public class NativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void echoWithoutResponse(String string) {
+        Log.d(NAME, string);
+    }
+
+    @ReactMethod
+    public void echoWithResponse(String string, final Callback callback) {
+        Log.d(NAME, string);
+        callback.invoke(string);
+    }
+
+    @ReactMethod
     public void nativeSetTimeout(int delay, final Callback callback) {
 //        HashMap paramsMap = ((ReadableNativeMap) params).toHashMap();
         Handler handler = new Handler(Looper.getMainLooper());
@@ -34,6 +51,38 @@ public class NativeModule extends ReactContextBaseJavaModule {
             public void run() {
                 callback.invoke();
             }
-        },delay);
+        }, delay);
+    }
+
+    @ReactMethod
+    public void switchToNativeRoot() {
+        reactContext.getCurrentActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Activity currentActivity = getCurrentActivity();
+
+                LinearLayout layout = new LinearLayout(currentActivity);
+                layout.setGravity(Gravity.CENTER);
+                LinearLayout.LayoutParams llp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+
+                TextView tv = new TextView(currentActivity);
+                tv.setText("this is a new native root");
+                LinearLayout.LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                tv.setLayoutParams(lp);
+
+                layout.addView(tv);
+                currentActivity.setContentView(layout, llp);
+            }
+        });
+    }
+
+    @ReactMethod
+    public void switchToMultipleReactRoots() {
+        reactContext.getCurrentActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
     }
 }
