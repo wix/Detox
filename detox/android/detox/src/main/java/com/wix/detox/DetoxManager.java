@@ -126,6 +126,8 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                             boolean stopRunner = new JSONObject(params).getBoolean("stopRunner");
                             if (stopRunner) {
                                 stop();
+                            } else {
+                                ReactNativeSupport.removeEspressoIdlingResources(reactNativeHostHolder);
                             }
                         } catch (JSONException e) {
                             Log.e(LOG_TAG, "cleanup cmd doesn't have stopRunner param");
