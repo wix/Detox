@@ -86,7 +86,7 @@ class Detox {
 
   async beforeEach(...testNameComponents) {
     this._currentTestNumber++;
-    if(this._artifactsPathsProvider !== undefined) {
+    if (this._artifactsPathsProvider !== undefined) {
       const testArtifactsPath = this._artifactsPathsProvider.createPathForTest(this._currentTestNumber, ...testNameComponents)
       this.device.setArtifactsDestination(testArtifactsPath);
     }

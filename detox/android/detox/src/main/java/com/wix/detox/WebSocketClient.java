@@ -95,7 +95,9 @@ public class WebSocketClient implements WebSocketListener {
         try {
             websocket.close(NORMAL_CLOSURE_STATUS, null);
         } catch (IOException e) {
-            Log.e(LOG_TAG, "WS close", e);
+            Log.i(LOG_TAG, "WS close", e);
+        } catch (IllegalStateException e) {
+            Log.i(LOG_TAG, "WS close", e);
         }
     }
 
