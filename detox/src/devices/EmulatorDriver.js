@@ -121,6 +121,7 @@ class EmulatorDriver extends DeviceDriverBase {
     };
     await this.adbCmd(deviceId,`shell settings put system accelerometer_rotation 0`);
     await this.adbCmd(deviceId,`shell settings put system user_rotation ${orientationMapping[orientation]}`);
+    // TODO
   }
 
   async adbCmd(deviceId, params) {
