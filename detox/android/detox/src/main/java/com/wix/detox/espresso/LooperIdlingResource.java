@@ -97,6 +97,9 @@ final public class LooperIdlingResource implements IdlingResource {
 
         @Override
         public boolean queueIdle() {
+            if (stop) {
+                return false;
+            }
             // invoked on the monitored looper thread.
             QueueState queueState = myInterrogator.determineQueueState();
             if (queueState == QueueState.EMPTY || queueState == QueueState.TASK_DUE_LONG) {
