@@ -133,6 +133,8 @@ public class ReactNativeSupport {
         waitForReactNativeLoad(reactNativeHostHolder);
     }
 
+    // Ideally we would not store this at all.
+    // It is used as a workaround now to get access to the Activity.
     public static Object currentReactContext = null;
 
     /**

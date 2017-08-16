@@ -124,8 +124,6 @@ class EmulatorDriver extends DeviceDriverBase {
     const invoke = require('../invoke');
     let call = invoke.call(invoke.Android.Class(EspressoDetox), 'changeOrientation', invoke.Android.Integer(orientationMapping[orientation]));
     await this.invocationManager.execute(call);
-    // await this.adbCmd(deviceId,`shell settings put system accelerometer_rotation 0`);
-    // await this.adbCmd(deviceId,`shell settings put system user_rotation ${orientationMapping[orientation]}`);
   }
 
   async adbCmd(deviceId, params) {
