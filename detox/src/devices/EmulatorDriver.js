@@ -15,7 +15,8 @@ class EmulatorDriver extends DeviceDriverBase {
     let instrumentationProcess;
     const expect = require('../android/expect');
     expect.exportGlobals();
-    expect.setInvocationManager(new InvocationManager(client));
+    this.invocationManager = new InvocationManager(client);
+    expect.setInvocationManager(this.invocationManager);
   }
 
   //async boot(deviceId) {
@@ -119,9 +120,12 @@ class EmulatorDriver extends DeviceDriverBase {
       landscape: 1, // top at left side landscape
       portrait: 0  // non-reversed portrait.
     };
-    await this.adbCmd(deviceId,`shell settings put system accelerometer_rotation 0`);
-    await this.adbCmd(deviceId,`shell settings put system user_rotation ${orientationMapping[orientation]}`);
-    // TODO
+    const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
+    const invoke = require('../invoke');
+    let call = invoke.call(invoke.Android.Class(EspressoDetox), 'changeOrientation', invoke.Android.Integer(orientationMapping[orientation]));
+    await this.invocationManager.execute(call);
+    // await this.adbCmd(deviceId,`shell settings put system accelerometer_rotation 0`);
+    // await this.adbCmd(deviceId,`shell settings put system user_rotation ${orientationMapping[orientation]}`);
   }
 
   async adbCmd(deviceId, params) {

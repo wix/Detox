@@ -5,7 +5,6 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.Espresso;
-import android.support.test.espresso.IdlingResource;
 import android.util.Log;
 
 import com.wix.detox.espresso.LooperIdlingResource;
@@ -24,7 +23,7 @@ import java.util.HashSet;
  * Created by simonracz on 15/05/2017.
  */
 
-class ReactNativeSupport {
+public class ReactNativeSupport {
     private static final String LOG_TAG = "Detox";
     private static final String METHOD_GET_RN_HOST = "getReactNativeHost";
     private static final String METHOD_GET_INSTANCE_MANAGER = "getReactInstanceManager";
@@ -79,7 +78,7 @@ class ReactNativeSupport {
      * @param reactNativeHostHolder the object that has a getReactNativeHost() method
      * @return Returns the instanceManager as an Object or null
      */
-    private static Object getInstanceManager(@NonNull Object reactNativeHostHolder) {
+    public static Object getInstanceManager(@NonNull Object reactNativeHostHolder) {
         Object instanceManager = null;
         try {
             instanceManager = Reflect.on(reactNativeHostHolder)
@@ -110,6 +109,7 @@ class ReactNativeSupport {
             return;
         }
         Log.i(LOG_TAG, "Reloading React Native");
+        currentReactContext = null;
 
         removeEspressoIdlingResources(reactNativeHostHolder);
 
@@ -132,6 +132,8 @@ class ReactNativeSupport {
 
         waitForReactNativeLoad(reactNativeHostHolder);
     }
+
+    public static Object currentReactContext = null;
 
     /**
      * <p>
@@ -221,9 +223,7 @@ class ReactNativeSupport {
             // We have never landed in this branch so far, but
             // we should check whether the ReactContext is already properly initialized.
         }
-
-        // getViewTreeObserver().addOnGlobalLayoutListener(getCustomGlobalLayoutListener());
-
+        currentReactContext = reactContextHolder[0];
         setupEspressoIdlingResources(reactNativeHostHolder, reactContextHolder[0]);
     }
 

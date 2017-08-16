@@ -10,7 +10,10 @@ import android.support.test.espresso.ViewInteraction;
 import android.util.Log;
 import android.view.View;
 
+import com.wix.detox.ReactNativeSupport;
+
 import org.hamcrest.Matcher;
+import org.joor.Reflect;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
@@ -22,16 +25,21 @@ import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 public class EspressoDetox {
     private static final String LOG_TAG = "detox";
 
+    private static final String METHOD_GET_ACTIVITY = "getCurrentActivity";
+
     public static ViewInteraction perform(ViewInteraction interaction, ViewAction action) {
         return interaction.perform(action);
     }
 
     public static Activity getActivity(Context context) {
+        if (context instanceof Activity) {
+            return (Activity) context;
+        }
         while (context instanceof ContextWrapper) {
             if (context instanceof Activity) {
-                return (Activity)context;
+                return (Activity) context;
             }
-            context = ((ContextWrapper)context).getBaseContext();
+            context = ((ContextWrapper) context).getBaseContext();
         }
         return null;
     }
@@ -50,7 +58,15 @@ public class EspressoDetox {
 
             @Override
             public void perform(UiController uiController, View view) {
-                final Activity activity = getActivity(view.getContext());
+                final Activity activity;
+                if (ReactNativeSupport.currentReactContext != null) {
+                    activity = Reflect.on(ReactNativeSupport.currentReactContext).call(METHOD_GET_ACTIVITY).get();
+                } else {
+                    activity = getActivity(view.getContext());
+                }
+                if (activity == null) {
+                    throw new RuntimeException("Couldn't get ahold of Activity");
+                }
                 switch (orientation) {
                     case 0:
                         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

@@ -78,6 +78,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
             public void run() {
                 if (stopping) return;
                 stopping = true;
+                ReactNativeSupport.currentReactContext = null;
                 ReactNativeSupport.removeEspressoIdlingResources(reactNativeHostHolder);
                 wsClient.close();
                 Looper.myLooper().quit();
@@ -121,7 +122,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                         wsClient.sendAction("ready", Collections.emptyMap(), messageId);
                         break;
                     case "cleanup":
-                        wsClient.sendAction("cleanupDone", Collections.emptyMap(), messageId);
+                        ReactNativeSupport.currentReactContext = null;
                         try {
                             boolean stopRunner = new JSONObject(params).getBoolean("stopRunner");
                             if (stopRunner) {
@@ -132,6 +133,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                         } catch (JSONException e) {
                             Log.e(LOG_TAG, "cleanup cmd doesn't have stopRunner param");
                         }
+                        wsClient.sendAction("cleanupDone", Collections.emptyMap(), messageId);
                         break;
                     case "reactNativeReload":
                         UiAutomatorHelper.espressoSync();
