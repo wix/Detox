@@ -50,7 +50,7 @@ class ReloadReactNative extends Action {
 }
 
 class Cleanup extends Action {
-  constructor(stopRunner = true) {
+  constructor(stopRunner) {
     const params = {
       stopRunner: stopRunner
     };

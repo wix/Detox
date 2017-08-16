@@ -44,7 +44,7 @@ describe('Client', () => {
   it(`openURL() - should send an 'openURL' action and resolve when 'openURLDone returns' `, async () => {
     await connect();
     client.ws.send.mockReturnValueOnce(response("openURLDone", {}, 1));
-    await client.openURL({url:'url'});
+    await client.openURL({url: 'url'});
 
     expect(client.ws.send).toHaveBeenCalledTimes(2);
   });
@@ -75,7 +75,7 @@ describe('Client', () => {
 
   it(`execute() - "invokeResult" on an invocation object should resolve`, async () => {
     await connect();
-    client.ws.send.mockReturnValueOnce(response("invokeResult", {result:"(GREYElementInteraction)"}, 1));
+    client.ws.send.mockReturnValueOnce(response("invokeResult", {result: "(GREYElementInteraction)"}, 1));
 
     const call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityLabel:', 'test');
     await client.execute(call());
@@ -107,7 +107,7 @@ describe('Client', () => {
 
   it(`execute() - "invokeResult" on an invocation function should resolve`, async () => {
     await connect();
-    client.ws.send.mockReturnValueOnce(response("invokeResult", {result:"(GREYElementInteraction)"} ,1));
+    client.ws.send.mockReturnValueOnce(response("invokeResult", {result: "(GREYElementInteraction)"}, 1));
 
     const call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityLabel:', 'test');
     await client.execute(call);
@@ -158,14 +158,13 @@ describe('Client', () => {
   function response(type, params, messageId) {
     return Promise.resolve(
       JSON.stringify({
-      type: type,
-      params: params,
-      messageId: messageId
-    })
-  )}
+        type: type,
+        params: params,
+        messageId: messageId
+      }));
+  }
 
   async function timeout(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
-
 });
