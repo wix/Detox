@@ -79,54 +79,6 @@ simulate a long press.
     };
   }
 
-  /*Returns an action that holds down finger for specified @c duration to simulate a long press.
-
-@param duration The duration of the long press.
-
-@return A GREYAction that performs a long press on an element.
-*/static actionForLongPressWithDuration(duration) {
-    if (typeof duration !== "number") throw new Error("duration should be a number, but got " + (duration + (" (" + (typeof duration + ")"))));
-    return {
-      target: {
-        type: "Class",
-        value: "GREYActions"
-      },
-      method: "actionForLongPressWithDuration:",
-      args: [{
-        type: "CFTimeInterval",
-        value: duration
-      }]
-    };
-  }
-
-  /*Returns an action that holds down finger for specified @c duration at the specified @c point
-(interpreted as being relative to the element) to simulate a long press.
-
-@param point    The point that should be tapped.
-@param duration The duration of the long press.
-
-@return A GREYAction that performs a long press on an element.
-*/static actionForLongPressAtPointDuration(point, duration) {
-    if (typeof point !== "object") throw new Error("point should be a object, but got " + (point + (" (" + (typeof point + ")"))));
-    if (typeof point.x !== "number") throw new Error("point.x should be a number, but got " + (point.x + (" (" + (typeof point.x + ")"))));
-    if (typeof point.y !== "number") throw new Error("point.y should be a number, but got " + (point.y + (" (" + (typeof point.y + ")"))));
-    if (typeof duration !== "number") throw new Error("duration should be a number, but got " + (duration + (" (" + (typeof duration + ")"))));
-    return {
-      target: {
-        type: "Class",
-        value: "GREYActions"
-      },
-      method: "actionForLongPressAtPoint:duration:",
-      args: [{
-        type: "CGPoint",
-        value: point
-      }, {
-        type: "CFTimeInterval",
-        value: duration
-      }]
-    };
-  }
-
   /*Returns an action that scrolls a @c UIScrollView by @c amount (in points) in the specified
 @c direction.
 
@@ -186,60 +138,6 @@ starting from the given start points.
       }, {
         type: "CGFloat",
         value: amount
-      }, {
-        type: "CGFloat",
-        value: xOriginStartPercentage
-      }, {
-        type: "CGFloat",
-        value: yOriginStartPercentage
-      }]
-    };
-  }
-
-  /*@return A GREYAction that scrolls to the given content @c edge of a scroll view.
-*/static actionForScrollToContentEdge(edge) {
-    if (!["left", "right", "top", "bottom"].some(option => option === edge)) throw new Error("edge should be one of [left, right, top, bottom], but got " + edge);
-    return {
-      target: {
-        type: "Class",
-        value: "GREYActions"
-      },
-      method: "actionForScrollToContentEdge:",
-      args: [{
-        type: "GREYContentEdge",
-        value: edge
-      }]
-    };
-  }
-
-  /*A GREYAction that scrolls to the given content @c edge of a scroll view with the scroll action
-starting from the given start point specified as percentages. @c xOriginStartPercentage is the x
-start position as a percentage of the total width of the scrollable visible area,
-@c yOriginStartPercentage is the y start position as a percentage of the total height of the
-scrollable visible area. @c xOriginStartPercentage and @c yOriginStartPercentage must be between
-0 and 1, exclusive.
-
-@param edge                   The edge towards which the scrolling is to take place.
-@param xOriginStartPercentage X coordinate of the start point specified as a percentage (0, 1)
-exclusive, of the total width of the scrollable visible area.
-@param yOriginStartPercentage Y coordinate of the start point specified as a percentage (0, 1)
-exclusive, of the total height of the scrollable visible area.
-
-@return A GREYAction that scrolls to the given content @c edge of a scroll view with the scroll
-action starting from the given start point.
-*/static actionForScrollToContentEdgeXOriginStartPercentageYOriginStartPercentage(edge, xOriginStartPercentage, yOriginStartPercentage) {
-    if (!["left", "right", "top", "bottom"].some(option => option === edge)) throw new Error("edge should be one of [left, right, top, bottom], but got " + edge);
-    if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + (xOriginStartPercentage + (" (" + (typeof xOriginStartPercentage + ")"))));
-    if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + (yOriginStartPercentage + (" (" + (typeof yOriginStartPercentage + ")"))));
-    return {
-      target: {
-        type: "Class",
-        value: "GREYActions"
-      },
-      method: "actionForScrollToContentEdge:xOriginStartPercentage:yOriginStartPercentage:",
-      args: [{
-        type: "GREYContentEdge",
-        value: edge
       }, {
         type: "CGFloat",
         value: xOriginStartPercentage
@@ -484,105 +382,6 @@ direction from the specified point.
     };
   }
 
-  /*Returns an action that pinches view quickly in the specified @c direction and @c angle.
-
-@param  pinchDirection The direction of the pinch action.
-@param  angle          The angle of the pinch action in radians.
-Use @c kGREYPinchAngleDefault for the default angle (currently set to
-30 degrees).
-
-@return A GREYAction that performs a fast pinch on the view in the specified @c direction.
-*/static actionForPinchFastInDirectionWithAngle(pinchDirection, angle) {
-    if (!["outward", "inward"].some(option => option === pinchDirection)) throw new Error("pinchDirection should be one of [outward, inward], but got " + pinchDirection);
-    if (typeof angle !== "number") throw new Error("angle should be a number, but got " + (angle + (" (" + (typeof angle + ")"))));
-    return {
-      target: {
-        type: "Class",
-        value: "GREYActions"
-      },
-      method: "actionForPinchFastInDirection:withAngle:",
-      args: [{
-        type: "GREYPinchDirection",
-        value: pinchDirection
-      }, {
-        type: "double",
-        value: angle
-      }]
-    };
-  }
-
-  /*Returns an action that pinches view slowly in the specified @c direction and @c angle.
-
-@param  pinchDirection The direction of the pinch action.
-@param  angle          The angle of the pinch action in radians.
-Use @c kGREYPinchAngleDefault for the default angle (currently set to
-30 degrees).
-
-@return A GREYAction that performs a slow pinch on the view in the specified @c direction.
-*/static actionForPinchSlowInDirectionWithAngle(pinchDirection, angle) {
-    if (!["outward", "inward"].some(option => option === pinchDirection)) throw new Error("pinchDirection should be one of [outward, inward], but got " + pinchDirection);
-    if (typeof angle !== "number") throw new Error("angle should be a number, but got " + (angle + (" (" + (typeof angle + ")"))));
-    return {
-      target: {
-        type: "Class",
-        value: "GREYActions"
-      },
-      method: "actionForPinchSlowInDirection:withAngle:",
-      args: [{
-        type: "GREYPinchDirection",
-        value: pinchDirection
-      }, {
-        type: "double",
-        value: angle
-      }]
-    };
-  }
-
-  /*Returns an action that attempts to move slider to within 1.0e-6f values of @c value.
-
-@param value The value to which the slider should be moved. If this is not attainable after a
-reasonable number of attempts (currently 10) we assume that the @c value is
-unattainable for a user (it is probably the case this value resides between two
-pixels). In this case, the slider will end up at a user attainable value
-that is closest to @c value.
-
-@return A GREYAction that moves a slider to a given @c value.
-*/static actionForMoveSliderToValue(value) {
-    if (typeof value !== "number") throw new Error("value should be a number, but got " + (value + (" (" + (typeof value + ")"))));
-    return {
-      target: {
-        type: "Class",
-        value: "GREYActions"
-      },
-      method: "actionForMoveSliderToValue:",
-      args: [{
-        type: "float",
-        value: value
-      }]
-    };
-  }
-
-  /*Returns an action that changes the value of UIStepper to @c value by tapping the appropriate
-button multiple times.
-
-@param value The value to change the UIStepper to.
-
-@return A GREYAction that sets the given @c value on a stepper.
-*/static actionForSetStepperValue(value) {
-    if (typeof value !== "number") throw new Error("value should be a number, but got " + (value + (" (" + (typeof value + ")"))));
-    return {
-      target: {
-        type: "Class",
-        value: "GREYActions"
-      },
-      method: "actionForSetStepperValue:",
-      args: [{
-        type: "double",
-        value: value
-      }]
-    };
-  }
-
   /*Returns an action that taps on an element at the activation point of the element.
 
 @return A GREYAction to tap on an element.
@@ -676,47 +475,6 @@ For Example: @"Helpo\b\bloWorld" will type HelloWorld in Objective-C.
     };
   }
 
-  /*Returns an action that toggles a switch control. This action is applicable to all elements that
-implement the selector UISwitch::isOn and include UISwitch controls.
-
-@param on The switch control state.
-
-@return A GREYAction to toggle a UISwitch.
-*/static actionForTurnSwitchOn(on) {
-    if (typeof on !== "boolean") throw new Error("on should be a boolean, but got " + (on + (" (" + (typeof on + ")"))));
-    return {
-      target: {
-        type: "Class",
-        value: "GREYActions"
-      },
-      method: "actionForTurnSwitchOn:",
-      args: [{
-        type: "BOOL",
-        value: on
-      }]
-    };
-  }
-
-  /*Returns an action that injects dates/times into UIDatePickers.
-
-@param date The date to set the UIDatePicker.
-
-@return A GREYAction that sets a given date/time on a UIDatePicker.
-*/static actionForSetDate(date) {
-    if (typeof date !== "number") throw new Error("date should be a number, but got " + (date + (" (" + (typeof date + ")"))));
-    return {
-      target: {
-        type: "Class",
-        value: "GREYActions"
-      },
-      method: "actionForSetDate:",
-      args: [{
-        type: "NSDate *",
-        value: date
-      }]
-    };
-  }
-
   /*Returns an action that selects @c value on the given @c column of a UIPickerView.
 
 @param column The UIPickerView column being set.
@@ -738,50 +496,6 @@ implement the selector UISwitch::isOn and include UISwitch controls.
       }, {
         type: "NSString",
         value: value
-      }]
-    };
-  }
-
-  /*Returns an action that executes JavaScript against a UIWebView and sets the return value to
-@c outResult if provided.
-
-@param js        The Javascript code to be executed.
-@param outResult The result of the code execution.
-
-@return A GREYAction that executes JavaScript code against a UIWebView.
-*/static actionForJavaScriptExecutionOutput(js, outResult) {
-    if (typeof js !== "string") throw new Error("js should be a string, but got " + (js + (" (" + (typeof js + ")"))));
-    return {
-      target: {
-        type: "Class",
-        value: "GREYActions"
-      },
-      method: "actionForJavaScriptExecution:output:",
-      args: [{
-        type: "NSString",
-        value: js
-      }, {
-        type: "out __strong NSString **",
-        value: outResult
-      }]
-    };
-  }
-
-  /*Returns an action that takes a snapshot of the selected element.
-
-@param outImage The UIImage where the image content is stored.
-
-@return A GREYAction that takes a snapshot of an UI element.
-*/static actionForSnapshot(outImage) {
-    return {
-      target: {
-        type: "Class",
-        value: "GREYActions"
-      },
-      method: "actionForSnapshot:",
-      args: [{
-        type: "out __strong UIImage **",
-        value: outImage
       }]
     };
   }
