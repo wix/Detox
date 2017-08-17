@@ -9,6 +9,7 @@ import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.ViewInteraction;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.wix.detox.ReactNativeSupport;
 
@@ -58,14 +59,21 @@ public class EspressoDetox {
 
             @Override
             public void perform(UiController uiController, View view) {
-                final Activity activity;
+                Activity activity;
                 if (ReactNativeSupport.currentReactContext != null) {
                     activity = Reflect.on(ReactNativeSupport.currentReactContext).call(METHOD_GET_ACTIVITY).get();
                 } else {
                     activity = getActivity(view.getContext());
+                    if (activity == null && view instanceof ViewGroup) {
+                        ViewGroup v = (ViewGroup)view;
+                        int c = v.getChildCount();
+                        for (int i = 0; i < c && activity == null; ++i) {
+                            activity = getActivity(v.getChildAt(i).getContext());
+                        }
+                    }
                 }
                 if (activity == null) {
-                    throw new RuntimeException("Couldn't get ahold of Activity");
+                    throw new RuntimeException("Couldn't get a hold of the Activity");
                 }
                 switch (orientation) {
                     case 0:
@@ -74,10 +82,10 @@ public class EspressoDetox {
                     case 1:
                         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                         break;
-                    case 3:
+                    case 2:
                         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
                         break;
-                    case 4:
+                    case 3:
                         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
                         break;
                     default:
