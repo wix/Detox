@@ -94,15 +94,15 @@ function createMethod(className, json) {
   return m;
 }
 
-const supportedTypesMap = {
+const renameTypesMap = {
   NSUInteger: "NSInteger",
   "NSString *": "NSString"
 };
 
 function sanitizeArgumentType(json) {
-  if (supportedTypesMap[json.type]) {
+  if (renameTypesMap[json.type]) {
     return Object.assign({}, json, {
-      type: supportedTypesMap[json.type]
+      type: renameTypesMap[json.type]
     });
   }
   return json;
