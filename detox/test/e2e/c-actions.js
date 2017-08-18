@@ -34,6 +34,12 @@ describe('Actions', () => {
     await expect(element(by.label('Type Working!!!'))).toBeVisible();
   });
 
+  it('should type in an element twice', async () => {
+    await element(by.id('UniqueId937')).typeText('passcode 1');
+    await element(by.id('UniqueId937')).typeText('passcode');
+    await expect(element(by.label('Type Working!!!'))).toBeVisible();
+  });
+
   it('should clear text in an element', async () => {
     await element(by.id('UniqueId005')).tap();
     await element(by.id('UniqueId005')).clearText();
