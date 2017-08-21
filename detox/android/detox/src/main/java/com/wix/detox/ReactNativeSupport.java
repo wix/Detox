@@ -206,16 +206,21 @@ public class ReactNativeSupport {
             }
         });
 
-        for (int i = 0; i < 15; ) {
+        for (int i = 0; ; ) {
             try {
                 if (!countDownLatch.await(1, TimeUnit.SECONDS)) {
                     i++;
-                    if (i >= 15) {
-                        throw new RuntimeException("waited 15 seconds for new reactContext");
+                    if (i >= 60) {
+                        // First load can take a lot of time. (packager)
+                        // Loads afterwards should take less than a second.
+                        throw new RuntimeException("waited a minute for the new reactContext");
                     }
                 } else {
                     break;
                 }
+                // Due to an ugly timing issue in RN
+                // it is possible that our listener won't be ever called
+                // That's why we have to check the reactContext regularly.
                 reactContextHolder[0] = Reflect.on(instanceManager).call(METHOD_GET_REACT_CONTEXT).get();
                 if (reactContextHolder[0] != null) {
                     Log.d(LOG_TAG, "Got reactContext directly");
