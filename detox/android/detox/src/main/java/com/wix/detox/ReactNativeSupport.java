@@ -18,6 +18,8 @@ import org.joor.ReflectException;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by simonracz on 15/05/2017.
@@ -42,9 +44,6 @@ public class ReactNativeSupport {
     private static final String INTERFACE_BRIDGE_IDLE_DEBUG_LISTENER =
             "com.facebook.react.bridge.NotThreadSafeBridgeIdleDebugListener";
 
-    private static final String INTERFACE_VIEW_HIERARCHY_UPDATE_LISTENER =
-            "com.facebook.react.uimanager.debug.NotThreadSafeViewHierarchyUpdateDebugListener";
-
     private static final String FIELD_UI_MSG_QUEUE = "mUiMessageQueueThread";
     private static final String FIELD_UI_BG_MSG_QUEUE = "mUiBackgroundMessageQueueThread";
     private static final String FIELD_NATIVE_MODULES_MSG_QUEUE = "mNativeModulesMessageQueueThread";
@@ -55,6 +54,10 @@ public class ReactNativeSupport {
     // BUT, they don't give you back a handle to them.
     // Therefore you can't unregister them.
     // We create the LooperIdlingResources by ourselves to keep a handle to them.
+    // UPDATE: The reason why Espresso doesn't expose this publicly
+    // is that they don't support removing Loopers at all.
+    // We are using our own LooperIdlingResource currently, that
+    // can be stopped properly.
     private static final String CLASS_ESPRESSO_LOOPER_IDLING_RESOURCE =
             "android.support.test.espresso.base.LooperIdlingResource";
 
@@ -139,16 +142,11 @@ public class ReactNativeSupport {
 
     /**
      * <p>
-     * The rendering of RN views are NOT guaranteed to be finished after this call.
-     * However, calling Espresso methods are safe from this point.
+     * Waits for a ReactContext to be created. Can be called any time.
      * </p>
+     * @param reactNativeHostHolder the object that has a getReactNativeHost() method
      */
     static void waitForReactNativeLoad(@NonNull Object reactNativeHostHolder) {
-        // TODO
-        // This method should be refactored to always call
-        // getCurrentReactContext() on the UI Thread.
-        // That will take care of every timing issues we experience
-        // sometimes.
 
         if (!isReactNativeApp()) {
             return;
@@ -156,21 +154,30 @@ public class ReactNativeSupport {
 
         final Object instanceManager = getInstanceManager(reactNativeHostHolder);
         if (instanceManager == null) {
-            return;
+            throw new RuntimeException("ReactInstanceManager is null");
         }
 
+        final Class<?> listenerClass;
+        try {
+            listenerClass = Class.forName(INTERFACE_REACT_INSTANCE_EVENT_LISTENER);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Can't find class ReactInstanceEventListener", e);
+        }
+
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
         final Object[] reactContextHolder = new Object[1];
-        reactContextHolder[0] = Reflect.on(instanceManager).call(METHOD_GET_REACT_CONTEXT).get();
-        if (reactContextHolder[0] == null) {
-            Class<?> listener;
-            try {
-                listener = Class.forName(INTERFACE_REACT_INSTANCE_EVENT_LISTENER);
-            } catch (ClassNotFoundException e) {
-                Log.e(LOG_TAG, "Can't find ReactInstanceEventListener()", e);
-                return;
-            }
-            synchronized (instanceManager) {
-                Class[] proxyInterfaces = new Class[]{listener};
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(
+                new Runnable() {
+            @Override
+            public void run() {
+                reactContextHolder[0] = Reflect.on(instanceManager).call(METHOD_GET_REACT_CONTEXT).get();
+                if (reactContextHolder[0] != null) {
+                    Log.d(LOG_TAG, "Got reactContext directly");
+                    countDownLatch.countDown();
+                    return;
+                }
+
+                Class[] proxyInterfaces = new Class[]{listenerClass};
                 final Proxy[] proxyHolder = new Proxy[1];
                 final Delegator delegator = new Delegator(proxyInterfaces, new Object[] {new ReactInstanceEventListenerProxy() {
                     @Override
@@ -178,53 +185,47 @@ public class ReactNativeSupport {
                         Log.i(LOG_TAG, "Got react context through listener.");
                         reactContextHolder[0] = reactContext;
                         Reflect.on(instanceManager).call(METHOD_REMOVE_REACT_INSTANCE_LISTENER, (Object) proxyHolder[0]);
-                        synchronized (instanceManager) {
-                            instanceManager.notify();
-                        }
+                        countDownLatch.countDown();
                     }
                 }});
                 proxyHolder[0] = (Proxy) Proxy.newProxyInstance(
-                        listener.getClassLoader(),
+                        listenerClass.getClassLoader(),
                         proxyInterfaces,
                         delegator);
                 Reflect.on(instanceManager).call(
                         METHOD_ADD_REACT_INSTANCE_LISTENER,
                         proxyHolder[0]);
                 if (!(boolean) Reflect.on(instanceManager).call(METHOD_HAS_STARTED_CREAT_CTX).get()) {
-                    // Must be called on the UI thread!
-                    Handler handler = new Handler(InstrumentationRegistry.getTargetContext().getMainLooper());
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                Reflect.on(instanceManager).call(METHOD_CREAT_RN_CTX_IN_BG);
-                            } catch (ReflectException e) {
-                                Log.e(LOG_TAG, "Problem calling createReactContextInBackground()",
-                                        e.getCause());
-                            }
-                        }
-                    });
-
-                }
-                while (true) {
                     try {
-                        // TODO
-                        // Dont wait indefinitely
-                        // Maybe reactContext was created before the listener is set
-                        instanceManager.wait();
-                        break;
-                    } catch (InterruptedException e) {
-                        Log.i(LOG_TAG, "Got interrupted.", e);
-                        // go on
+                        Reflect.on(instanceManager).call(METHOD_CREAT_RN_CTX_IN_BG);
+                    } catch (ReflectException e) {
+                        Log.e(LOG_TAG, "Problem calling createReactContextInBackground()",
+                                e.getCause());
                     }
                 }
             }
-        } else {
-            Log.i(LOG_TAG, "Got react context directly!!!.");
-            // TODO
-            // We have never landed in this branch so far, but
-            // we should check whether the ReactContext is already properly initialized.
+        });
+
+        for (int i = 0; i < 15; ) {
+            try {
+                if (!countDownLatch.await(1, TimeUnit.SECONDS)) {
+                    i++;
+                    if (i >= 15) {
+                        throw new RuntimeException("waited 15 seconds for new reactContext");
+                    }
+                } else {
+                    break;
+                }
+                reactContextHolder[0] = Reflect.on(instanceManager).call(METHOD_GET_REACT_CONTEXT).get();
+                if (reactContextHolder[0] != null) {
+                    Log.d(LOG_TAG, "Got reactContext directly");
+                    break;
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException("waiting for reactContext got interrupted", e);
+            }
         }
+
         currentReactContext = reactContextHolder[0];
         setupEspressoIdlingResources(reactNativeHostHolder, reactContextHolder[0]);
     }
