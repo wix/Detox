@@ -36,7 +36,7 @@ public class ScrollHelper {
      * @param amountInDP Density Independent Pixels
      *
      */
-    public static void perform(UiController uiController, View view, int direction, float amountInDP) {
+    public static void perform(UiController uiController, View view, int direction, double amountInDP) {
         int adjWidth = 0;
         int adjHeight = 0;
 

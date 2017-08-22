@@ -142,7 +142,7 @@ public class DetoxAction {
      * @param amountInDP Density Independent Pixels
      *
      */
-    public static ViewAction scrollInDirection(final int direction, final float amountInDP) {
+    public static ViewAction scrollInDirection(final int direction, final double amountInDP) {
         return actionWithAssertions(new ViewAction() {
             @Override
             public Matcher<View> getConstraints() {

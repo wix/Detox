@@ -90,7 +90,7 @@ class ScrollAmountAction extends Action {
       default: throw new Error(`ScrollAmountAction direction must be a 'left'/'right'/'up'/'down', got ${direction}`);
     }
     if (typeof amount !== 'number') throw new Error(`ScrollAmountAction ctor 2nd argument must be a number, got ${typeof amount}`);
-    this._call = invoke.call(invoke.Android.Class(DetoxAction), 'scrollInDirection', invoke.Android.Integer(direction), invoke.Android.Float(amount));
+    this._call = invoke.call(invoke.Android.Class(DetoxAction), 'scrollInDirection', invoke.Android.Integer(direction), invoke.Android.Double(amount));
   }
 }
 
