@@ -121,29 +121,12 @@ class SwipeAction extends Action {
       case 'down': direction = 4; break;
       default: throw new Error(`SwipeAction direction must be a 'left'/'right'/'up'/'down', got ${direction}`);
     }
-    if (percentage) {
-      let x, y;
-      switch (direction) {
-        case 1: x = percentage, y = 0.0; break;
-        case 2: x = percentage, y = 0.0; break;
-        case 3: y = percentage, x = 0.0; break;
-        case 4: y = percentage, x = 0.0; break;
-      }
-      if (speed == 'fast') {
-        this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForSwipeFastInDirection:xOriginStartPercentage:yOriginStartPercentage:', invoke.IOS.NSInteger(direction), invoke.IOS.CGFloat(x), invoke.IOS.CGFloat(y));
-      } else if (speed == 'slow') {
-        this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForSwipeSlowInDirection:xOriginStartPercentage:yOriginStartPercentage:', invoke.IOS.NSInteger(direction), invoke.IOS.CGFloat(x), invoke.IOS.CGFloat(y));
-      } else {
-        throw new Error(`SwipeAction speed must be a 'fast'/'slow', got ${speed}`);
-      }
+    if (speed === 'fast') {
+      this._call = invoke.call(invoke.Android.Class(DetoxAction), 'swipeInDirection', invoke.Android.Integer(direction), invoke.Android.Boolean(true));
+    } else if (speed === 'slow') {
+      this._call = invoke.call(invoke.Android.Class(DetoxAction), 'swipeInDirection', invoke.Android.Integer(direction), invoke.Android.Boolean(false));
     } else {
-      if (speed == 'fast') {
-        this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForSwipeFastInDirection:', invoke.IOS.NSInteger(direction));
-      } else if (speed == 'slow') {
-        this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForSwipeSlowInDirection:', invoke.IOS.NSInteger(direction));
-      } else {
-        throw new Error(`SwipeAction speed must be a 'fast'/'slow', got ${speed}`);
-      }
+      throw new Error(`SwipeAction speed must be a 'fast'/'slow', got ${speed}`);
     }
   }
 }

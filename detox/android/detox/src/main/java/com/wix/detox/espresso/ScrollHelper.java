@@ -1,7 +1,6 @@
 package com.wix.detox.espresso;
 
 import android.os.SystemClock;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.action.MotionEvents;
 import android.util.Log;
@@ -16,7 +15,13 @@ public class ScrollHelper {
     private static final String LOG_TAG = "detox";
 
     private static final int SCROLL_STEPS = 50;
-    private static final int SCROLL_DURATION_MS = 100;
+    private static final int SCROLL_DURATION_MS = 275;
+
+    /*
+    private static final int SWIPE_STEPS = 10;
+    private static final int FAST_SWIPE_DURATION_MS = 100;
+    private static final int SLOW_SWIPE_DURATION_MS = 1500;
+    */
 
     private static final double DEFAULT_DEADZONE_PERCENT = 0.05;
 
