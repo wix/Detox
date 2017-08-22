@@ -1,20 +1,20 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-describe('argparse', () => {
+describe("argparse", () => {
   let argparse;
 
   beforeEach(() => {
-    jest.mock('minimist');
-    const minimist = require('minimist');
-    minimist.mockReturnValue({test: 'a value'});
-    argparse = require('./argparse');
+    jest.mock("minimist");
+    const minimist = require("minimist");
+    minimist.mockReturnValue({ test: "a value" });
+    argparse = require("./argparse");
   });
 
   it(`nonexistent key should return undefined result`, () => {
-    expect(argparse.getArgValue('blah')).not.toBeDefined();
+    expect(argparse.getArgValue("blah")).not.toBeDefined();
   });
 
   it(`existing key should return a result`, () => {
-    expect(argparse.getArgValue('test')).toBe('a value');
+    expect(argparse.getArgValue("test")).toBe("a value");
   });
 });

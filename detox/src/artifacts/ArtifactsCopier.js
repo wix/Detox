@@ -1,5 +1,5 @@
-const log = require('npmlog');
-const sh = require('../utils/sh')
+const log = require("npmlog");
+const sh = require("../utils/sh");
 
 class ArtifactsCopier {
   constructor(deviceDriver) {
@@ -28,29 +28,26 @@ class ArtifactsCopier {
 
   async _copyArtifacts() {
     const copy = async (sourcePath, destinationSuffix) => {
-      const destinationPath = `${this._currentTestArtifactsDestination}/${this._currentLaunchNumber}.${destinationSuffix}`;
+      const destinationPath = `${this._currentTestArtifactsDestination}/${this
+        ._currentLaunchNumber}.${destinationSuffix}`;
       const cpArgs = `"${sourcePath}" "${destinationPath}"`;
       try {
         await sh.cp(cpArgs);
       } catch (ex) {
         log.warn(`Couldn't copy (cp ${cpArgs})`);
       }
-    }
-    
-    if(this._currentTestArtifactsDestination === undefined) {
+    };
+
+    if (this._currentTestArtifactsDestination === undefined) {
       return;
     }
 
-    const {stdout, stderr} = this._deviceDriver.getLogsPaths(this._deviceId);
-    const pathsMapping = [
-      [stdout, 'out.log'],
-      [stderr, 'err.log']
-    ];
+    const { stdout, stderr } = this._deviceDriver.getLogsPaths(this._deviceId);
+    const pathsMapping = [[stdout, "out.log"], [stderr, "err.log"]];
     for (const [sourcePath, destinationSuffix] of pathsMapping) {
       await copy(sourcePath, destinationSuffix);
     }
   }
-
 }
 
 module.exports = ArtifactsCopier;

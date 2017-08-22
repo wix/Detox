@@ -1,12 +1,11 @@
-const fs = require('fs');
-const path = require('path');
-const _ = require('lodash');
-const argparse = require('../utils/argparse');
-const configuration = require('../configuration');
-const ArtifactsCopier = require('../artifacts/ArtifactsCopier');
+const fs = require("fs");
+const path = require("path");
+const _ = require("lodash");
+const argparse = require("../utils/argparse");
+const configuration = require("../configuration");
+const ArtifactsCopier = require("../artifacts/ArtifactsCopier");
 
 class Device {
-
   constructor(deviceConfig, sessionConfig, deviceDriver) {
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
@@ -18,19 +17,23 @@ class Device {
 
   async prepare(params = {}) {
     this._binaryPath = this._getAbsolutePath(this._deviceConfig.binaryPath);
-    this._deviceId = await this.deviceDriver.acquireFreeDevice(this._deviceConfig.name);
-    this._bundleId = await this.deviceDriver.getBundleIdFromBinary(this._binaryPath);
+    this._deviceId = await this.deviceDriver.acquireFreeDevice(
+      this._deviceConfig.name
+    );
+    this._bundleId = await this.deviceDriver.getBundleIdFromBinary(
+      this._binaryPath
+    );
     this._artifactsCopier.prepare(this._deviceId);
 
     await this.deviceDriver.boot(this._deviceId);
 
-    if (!argparse.getArgValue('reuse')) {
+    if (!argparse.getArgValue("reuse")) {
       await this.deviceDriver.uninstallApp(this._deviceId, this._bundleId);
       await this.deviceDriver.installApp(this._deviceId, this._binaryPath);
     }
 
     if (params.launchApp) {
-      await this.launchApp({newInstance: true});
+      await this.launchApp({ newInstance: true });
     }
   }
 
@@ -42,11 +45,15 @@ class Device {
     await this._artifactsCopier.finalizeArtifacts();
   }
 
-  async launchApp(params = {newInstance: false}, bundleId) {
+  async launchApp(params = { newInstance: false }, bundleId) {
     await this._artifactsCopier.handleAppRelaunch();
 
     if (params.url && params.userNotification) {
-      throw new Error(`detox can't understand this 'relaunchApp(${JSON.stringify(params)})' request, either request to launch with url or with userNotification, not both`);
+      throw new Error(
+        `detox can't understand this 'relaunchApp(${JSON.stringify(
+          params
+        )})' request, either request to launch with url or with userNotification, not both`
+      );
     }
 
     if (params.delete) {
@@ -62,22 +69,34 @@ class Device {
     }
 
     if (params.url) {
-      baseLaunchArgs['detoxURLOverride'] = params.url;
-      if(params.sourceApp) {
-        baseLaunchArgs['detoxSourceAppOverride'] = params.sourceApp;
+      baseLaunchArgs["detoxURLOverride"] = params.url;
+      if (params.sourceApp) {
+        baseLaunchArgs["detoxSourceAppOverride"] = params.sourceApp;
       }
     } else if (params.userNotification) {
-      baseLaunchArgs = {'detoxUserNotificationDataURL': this.deviceDriver.createPushNotificationJson(params.userNotification)};
+      baseLaunchArgs = {
+        detoxUserNotificationDataURL: this.deviceDriver.createPushNotificationJson(
+          params.userNotification
+        )
+      };
     }
 
     if (params.permissions) {
-      await this.deviceDriver.setPermissions(this._deviceId, this._bundleId, params.permissions);
+      await this.deviceDriver.setPermissions(
+        this._deviceId,
+        this._bundleId,
+        params.permissions
+      );
     }
 
     this._addPrefixToDefaultLaunchArgs(baseLaunchArgs);
 
     const _bundleId = bundleId || this._bundleId;
-    const processId = await this.deviceDriver.launch(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs));
+    const processId = await this.deviceDriver.launch(
+      this._deviceId,
+      _bundleId,
+      this._prepareLaunchArgs(baseLaunchArgs)
+    );
 
     if (this._processes[_bundleId] === processId) {
       if (params.url) {
@@ -95,7 +114,7 @@ class Device {
   /**deprecated */
   async relaunchApp(params = {}, bundleId) {
     if (params.newInstance === undefined) {
-      params['newInstance'] = true;
+      params["newInstance"] = true;
     }
     await this.launchApp(params, bundleId);
   }
@@ -124,8 +143,10 @@ class Device {
   }
 
   async openURL(params) {
-    if (typeof params !== 'object' || !params.url) {
-      throw new Error(`openURL must be called with JSON params, and a value for 'url' key must be provided. example: await device.openURL({url: "url", sourceApp[optional]: "sourceAppBundleID"}`);
+    if (typeof params !== "object" || !params.url) {
+      throw new Error(
+        `openURL must be called with JSON params, and a value for 'url' key must be provided. example: await device.openURL({url: "url", sourceApp[optional]: "sourceAppBundleID"}`
+      );
     }
 
     await this.deviceDriver.openURL(this._deviceId, params);
@@ -140,8 +161,8 @@ class Device {
   }
 
   async setLocation(lat, lon) {
-    lat = String(lat).replace('.', ',');
-    lon = String(lon).replace('.', ',');
+    lat = String(lat).replace(".", ",");
+    lon = String(lon).replace(".", ",");
     await this.deviceDriver.setLocation(this._deviceId, lat, lon);
   }
 
@@ -175,8 +196,8 @@ class Device {
 
   _defaultLaunchArgs() {
     return {
-      'detoxServer': this._sessionConfig.server,
-      'detoxSessionId': this._sessionConfig.sessionId
+      detoxServer: this._sessionConfig.server,
+      detoxSessionId: this._sessionConfig.sessionId
     };
   }
 
@@ -198,13 +219,15 @@ class Device {
 
   _getAbsolutePath(appPath) {
     if (!appPath) {
-      return '';
+      return "";
     }
     const absPath = path.join(process.cwd(), appPath);
     if (fs.existsSync(absPath)) {
       return absPath;
     } else {
-      throw new Error(`app binary not found at '${absPath}', did you build it?`);
+      throw new Error(
+        `app binary not found at '${absPath}', did you build it?`
+      );
     }
   }
 }

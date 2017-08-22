@@ -1,4 +1,4 @@
-const mochaOptsContent= '--recursive --timeout 120000 --bail'
+const mochaOptsContent = "--recursive --timeout 120000 --bail";
 const firstTestContent = `describe('Example', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
@@ -17,7 +17,7 @@ const firstTestContent = `describe('Example', () => {
     await element(by.id('world_button')).tap();
     await expect(element(by.label('World!!!'))).toBeVisible();
   });
-})`
+})`;
 const initjsContent = `require('babel-polyfill');
 const detox = require('detox');
 const config = require('../package.json').detox;
@@ -28,8 +28,8 @@ before(async () => {
 
 after(async () => {
   await detox.cleanup();
-});`
+});`;
 
-exports.initjs = initjsContent
-exports.firstTest = firstTestContent
-exports.runnerConfig = mochaOptsContent
+exports.initjs = initjsContent;
+exports.firstTest = firstTestContent;
+exports.runnerConfig = mochaOptsContent;

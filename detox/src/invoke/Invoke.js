@@ -1,15 +1,15 @@
 function call(target, method, ...args) {
   return function() {
-    if (typeof target === 'function') {
+    if (typeof target === "function") {
       target = {
-        type: 'Invocation',
+        type: "Invocation",
         value: target()
       };
     }
     for (let i = 0; i < args.length; i++) {
-      if (typeof args[i] === 'function') {
+      if (typeof args[i] === "function") {
         args[i] = {
-          type: 'Invocation',
+          type: "Invocation",
           value: args[i]()
         };
       }
@@ -24,25 +24,27 @@ function call(target, method, ...args) {
 
 function callDirectly(json) {
   return {
-    type: 'Invocation',
+    type: "Invocation",
     value: json
   };
 }
 
-const genericInvokeObject = new Proxy({},
+const genericInvokeObject = new Proxy(
+  {},
   {
     get: (target, prop) => {
-      return (p) => {
+      return p => {
         return {
           type: prop,
           value: p
         };
       };
     }
-  });
+  }
+);
 
 module.exports = {
   call,
   callDirectly,
-  genericInvokeObject,
+  genericInvokeObject
 };
