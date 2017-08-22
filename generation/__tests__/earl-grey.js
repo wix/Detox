@@ -149,6 +149,16 @@ describe("earl-grey generation", () => {
     });
   });
 
+  describe("filter functions with unknown arguments", () => {
+    it("should not have a function with one unkown type", () => {
+      expect(ExampleClass.actionWithUnknownType).not.toBeDefined();
+    });
+
+    it("should not have a function with one kown and one unknown type", () => {
+      expect(ExampleClass.actionWithKnownAndUnknownType).not.toBeDefined();
+    });
+  });
+
   afterAll(() => {
     // Clean up
     remove.removeSync("./__tests__/generated");

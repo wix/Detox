@@ -20,6 +20,17 @@ const isPoint = [
 ];
 const isOneOf = generateIsOneOfCheck;
 
+// Constants
+const SUPPORTED_TYPES = [
+  "CGFloat",
+  "CGPoint",
+  "GREYDirection",
+  "NSInteger",
+  "NSString *",
+  "NSString",
+  "NSUInteger"
+];
+
 /**
  * the input provided by objective-c-parser looks like this:
  * {
@@ -53,9 +64,13 @@ function createClass(json) {
   return t.classDeclaration(
     t.identifier(json.name),
     null,
-    t.classBody(json.methods.map(createMethod.bind(null, json.name))),
+    t.classBody(json.methods.filter(filterMethodsWithUnsupportedParams).map(createMethod.bind(null, json.name))),
     []
   );
+}
+
+function filterMethodsWithUnsupportedParams(method) {
+  return method.args.reduce((carry, methodArg) => carry && SUPPORTED_TYPES.includes(methodArg.type), true);
 }
 
 function createExport(json) {
@@ -94,15 +109,15 @@ function createMethod(className, json) {
   return m;
 }
 
-const supportedTypesMap = {
+const renameTypesMap = {
   NSUInteger: "NSInteger",
   "NSString *": "NSString"
 };
 
 function sanitizeArgumentType(json) {
-  if (supportedTypesMap[json.type]) {
+  if (renameTypesMap[json.type]) {
     return Object.assign({}, json, {
-      type: supportedTypesMap[json.type]
+      type: renameTypesMap[json.type]
     });
   }
   return json;
@@ -226,5 +241,12 @@ module.exports = function(files) {
 
     const code = [commentBefore, globalFunctions, output.code].join('\n');
     fs.writeFileSync(outputFile, code, "utf8");
+
+    // Output methods that were not created due to missing argument support
+    console.log(`Could not generate the following methods for ${json.name}`);
+    const unsupportedMethods = json.methods.filter(x => !filterMethodsWithUnsupportedParams(x)).forEach(method => {
+      const methodArgs = method.args.filter(methodArg => !SUPPORTED_TYPES.includes(methodArg.type)).map(methodArg => methodArg.type);
+      console.log(`\t ${method.name} misses ${methodArgs}`);
+    });
   });
 };
