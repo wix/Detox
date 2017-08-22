@@ -110,6 +110,7 @@ class ScrollEdgeAction extends Action {
 }
 
 class SwipeAction extends Action {
+  // This implementation ignores the percentage parameter
   constructor(direction, speed, percentage) {
     super();
     if (typeof direction !== 'string') throw new Error(`SwipeAction ctor 1st argument must be a string, got ${typeof direction}`);
