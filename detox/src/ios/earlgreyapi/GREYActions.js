@@ -23,6 +23,23 @@ function sanitize_greyDirection(action) {
   }
 }
 
+function sanitize_greyContentEdge(action) {
+  switch (action) {
+    case "left":
+      return 0;
+    case "right":
+      return 1;
+    case "top":
+      return 2;
+    case "bottom":
+      return 3;
+
+    default:
+      throw new Error(`GREYAction.GREYContentEdge must be a 'left'/'right'/'top'/'bottom', got ${action}`);
+  }
+}
+
+
 
 class GREYActions {
   /*@return A GREYAction that performs multiple taps of a specified @c count.
@@ -138,6 +155,60 @@ starting from the given start points.
       }, {
         type: "CGFloat",
         value: amount
+      }, {
+        type: "CGFloat",
+        value: xOriginStartPercentage
+      }, {
+        type: "CGFloat",
+        value: yOriginStartPercentage
+      }]
+    };
+  }
+
+  /*@return A GREYAction that scrolls to the given content @c edge of a scroll view.
+*/static actionForScrollToContentEdge(edge) {
+    if (!["left", "right", "top", "bottom"].some(option => option === edge)) throw new Error("edge should be one of [left, right, top, bottom], but got " + edge);
+    return {
+      target: {
+        type: "Class",
+        value: "GREYActions"
+      },
+      method: "actionForScrollToContentEdge:",
+      args: [{
+        type: "NSInteger",
+        value: sanitize_greyContentEdge(edge)
+      }]
+    };
+  }
+
+  /*A GREYAction that scrolls to the given content @c edge of a scroll view with the scroll action
+starting from the given start point specified as percentages. @c xOriginStartPercentage is the x
+start position as a percentage of the total width of the scrollable visible area,
+@c yOriginStartPercentage is the y start position as a percentage of the total height of the
+scrollable visible area. @c xOriginStartPercentage and @c yOriginStartPercentage must be between
+0 and 1, exclusive.
+
+@param edge                   The edge towards which the scrolling is to take place.
+@param xOriginStartPercentage X coordinate of the start point specified as a percentage (0, 1)
+exclusive, of the total width of the scrollable visible area.
+@param yOriginStartPercentage Y coordinate of the start point specified as a percentage (0, 1)
+exclusive, of the total height of the scrollable visible area.
+
+@return A GREYAction that scrolls to the given content @c edge of a scroll view with the scroll
+action starting from the given start point.
+*/static actionForScrollToContentEdgeXOriginStartPercentageYOriginStartPercentage(edge, xOriginStartPercentage, yOriginStartPercentage) {
+    if (!["left", "right", "top", "bottom"].some(option => option === edge)) throw new Error("edge should be one of [left, right, top, bottom], but got " + edge);
+    if (typeof xOriginStartPercentage !== "number") throw new Error("xOriginStartPercentage should be a number, but got " + (xOriginStartPercentage + (" (" + (typeof xOriginStartPercentage + ")"))));
+    if (typeof yOriginStartPercentage !== "number") throw new Error("yOriginStartPercentage should be a number, but got " + (yOriginStartPercentage + (" (" + (typeof yOriginStartPercentage + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "GREYActions"
+      },
+      method: "actionForScrollToContentEdge:xOriginStartPercentage:yOriginStartPercentage:",
+      args: [{
+        type: "NSInteger",
+        value: sanitize_greyContentEdge(edge)
       }, {
         type: "CGFloat",
         value: xOriginStartPercentage

@@ -147,6 +147,13 @@ describe("earl-grey generation", () => {
       expect(result.args[0].value).toBe(4);
       expect(result).toMatchSnapshot();
     });
+
+    it("should sanitize the content edge", () => {
+      const result = ExampleClass.actionForScrollToContentEdge("bottom");
+      
+      expect(result.args[0].type).toBe("NSInteger");
+      expect(result.args[0].value).toBe(3);
+    });
   });
 
   describe("filter functions with unknown arguments", () => {

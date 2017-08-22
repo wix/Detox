@@ -24,11 +24,12 @@ const isOneOf = generateIsOneOfCheck;
 const SUPPORTED_TYPES = [
   "CGFloat",
   "CGPoint",
+  "GREYContentEdge",
   "GREYDirection",
   "NSInteger",
   "NSString *",
   "NSString",
-  "NSUInteger"
+  "NSUInteger",
 ];
 
 /**
@@ -148,9 +149,13 @@ const callGlobal = sanitizerName => argIdentifier =>
   t.callExpression(t.identifier(sanitizerName), [t.identifier(argIdentifier)]);
 const supportedContentSanitizersMap = {
   GREYDirection: {
-    type: 'NSInteger',
-    value: callGlobal("sanitize_greyDirection"),
+    type: "NSInteger",
+    value: callGlobal("sanitize_greyDirection")
   },
+  GREYContentEdge: {
+    type: "NSInteger",
+    value: callGlobal("sanitize_greyContentEdge")
+  }
 };
 function addArgumentContentSanitizerCall(json) {
   if (supportedContentSanitizersMap[json.type]) {
