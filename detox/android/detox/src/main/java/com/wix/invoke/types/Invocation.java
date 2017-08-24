@@ -49,7 +49,7 @@ public class Invocation {
     public void setArgs(Object[] args) {
         for (int i = 0; i < args.length; i++) {
             Object argument = args[i];
-            if (argument instanceof HashMap) {
+            if (argument instanceof HashMap && !((HashMap) argument).isEmpty()) {
                 String type = (String) ((HashMap) argument).get("type");
                 Object value = ((HashMap) argument).get("value");
                 if (type.equals("Integer")) {
