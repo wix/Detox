@@ -53,3 +53,6 @@
  *  @return A GREYAction to type a specific text string in a text field.
  */
 + (id<GREYAction>)actionForTypeText:(NSString *)text;
+
++ (id<GREYAction>)actionWithUnknownType:(WTFType *)wat;
++ (id<GREYAction>)actionWithKnown:(NSUInteger)iknowdis andUnknownType:(WTFTypalike *)wat;
