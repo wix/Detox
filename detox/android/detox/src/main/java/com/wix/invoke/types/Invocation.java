@@ -59,7 +59,7 @@ public class Invocation {
                 } else if (type.equals("Float")) {
                     argument = Float.valueOf(value.toString());
                 } else if (type.equals("Double")) {
-                    argument = (double) value;
+                    argument = Double.valueOf(value.toString());
                 } else if (type.equals("String")) {
                     argument = (String) value;
                 }else if (type.equals("Boolean")) {

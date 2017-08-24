@@ -1,7 +1,5 @@
 package com.wix.detox.espresso;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.test.espresso.IdlingResource;
@@ -15,6 +13,12 @@ import okhttp3.Dispatcher;
  * Created by simonracz on 24/08/2017.
  */
 
+
+/**
+ * Idling Resource which monitors React Native's OkHttpClient.
+ *
+ * Must call stop() on it, before removing it from Espresso.
+ */
 public class ReactNativeNetworkIdlingResource implements IdlingResource {
 
     private static final String LOG_TAG = "Detox";
@@ -30,7 +34,7 @@ public class ReactNativeNetworkIdlingResource implements IdlingResource {
 
     @Override
     public String getName() {
-        return "ReactNativeNetworkIR";
+        return ReactNativeNetworkIdlingResource.class.getName();
     }
 
     @Override
@@ -73,7 +77,7 @@ public class ReactNativeNetworkIdlingResource implements IdlingResource {
                 rootIdleCallback.run();
             }
         }
-        public Runnable getRootIdleCallback() {
+        Runnable getRootIdleCallback() {
             return rootIdleCallback;
         }
     }

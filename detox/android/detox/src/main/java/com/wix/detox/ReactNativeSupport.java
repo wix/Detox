@@ -1,6 +1,5 @@
 package com.wix.detox;
 
-import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
@@ -389,6 +388,9 @@ public class ReactNativeSupport {
 
     private static boolean networkSyncEnabled = true;
     public static void enableNetworkSynchronization(boolean enable) {
+        if (!isReactNativeApp()) {
+            return;
+        }
         if (enable) {
             setupNetworkIdlingResource();
         } else {
