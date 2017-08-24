@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.test.espresso.IdlingResource;
+import android.util.Log;
 
 import org.joor.Reflect;
 
@@ -37,6 +38,9 @@ public class ReactNativeNetworkIdlingResource implements IdlingResource {
         boolean idle = dispatcher.runningCallsCount() == 0;
         if (idle && resourceCallback != null) {
             resourceCallback.onTransitionToIdle();
+        }
+        if (!idle) {
+            Log.i(LOG_TAG, "Network is busy");
         }
         return idle;
     }
