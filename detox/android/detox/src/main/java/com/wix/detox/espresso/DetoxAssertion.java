@@ -58,9 +58,9 @@ public class DetoxAssertion {
                 break;
             } catch (Exception e) {
                 if (e instanceof EspressoException) {
-                    UiAutomatorHelper.espressoSync(16);
+                    UiAutomatorHelper.espressoSync();
                 } else {
-                    throw new RuntimeException("Exception during waitFor", e);
+                    throw e;
                 }
             }
         }

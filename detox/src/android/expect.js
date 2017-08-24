@@ -171,20 +171,15 @@ class WaitForInteraction extends Interaction {
     // we need to override the original matcher for the element and add matcher to it as well
     this._element._selectElementWithMatcher(this._element._originalMatcher.and(this._originalMatcher));
   }
-  _not() {
-    this._notCondition = true;
-    return this;
-  }
+
   async withTimeout(timeout) {
     if (typeof timeout !== 'number') throw new Error(`WaitForInteraction withTimeout argument must be a number, got ${typeof timeout}`);
     if (timeout < 0) throw new Error('timeout must be larger than 0');
-    let _conditionCall = invoke.call(invoke.IOS.Class('GREYCondition'), 'detoxConditionForElementMatched:', this._element._call);
-    if (this._notCondition) {
-      _conditionCall = invoke.call(invoke.IOS.Class('GREYCondition'), 'detoxConditionForNotElementMatched:', this._element._call);
-    }
-    this._call = invoke.call(_conditionCall, 'waitWithTimeout:', invoke.IOS.CGFloat(timeout/1000));
+
+    this._call = invoke.call(invoke.IOS.Class(DetoxAssertion), 'waitForAssertMatcher', this._element._call, this._originalMatcher._call, invoke.Android.Double(timeout/1000));
     await this.execute();
   }
+
   whileElement(searchMatcher) {
     return new WaitForActionInteraction(this._element, this._originalMatcher, searchMatcher);
   }
@@ -312,13 +307,13 @@ class WaitForElement extends WaitFor {
     return new WaitForInteraction(this._element, new VisibleMatcher());
   }
   toBeNotVisible() {
-    return new WaitForInteraction(this._element, new VisibleMatcher())._not();
+    return new WaitForInteraction(this._element, new NotVisibleMatcher());
   }
   toExist() {
     return new WaitForInteraction(this._element, new ExistsMatcher());
   }
   toNotExist() {
-    return new WaitForInteraction(this._element, new ExistsMatcher())._not();
+    return new WaitForInteraction(this._element, new NotExistsMatcher());
   }
   toHaveText(text) {
     return new WaitForInteraction(this._element, new TextMatcher(text));
@@ -327,7 +322,7 @@ class WaitForElement extends WaitFor {
     return new WaitForInteraction(this._element, new ValueMatcher(value));
   }
   toNotHaveValue(value) {
-    return new WaitForInteraction(this._element, new ValueMatcher(value))._not();
+    return new WaitForInteraction(this._element, new ValueMatcher(value).not());
   }
 }
 
