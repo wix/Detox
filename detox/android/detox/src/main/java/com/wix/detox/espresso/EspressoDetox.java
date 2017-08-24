@@ -95,5 +95,9 @@ public class EspressoDetox {
             }
         });
     }
+
+    public static void setSynchronization(boolean enabled) {
+        ReactNativeSupport.enableNetworkSynchronization(enabled);
+    }
 }
 

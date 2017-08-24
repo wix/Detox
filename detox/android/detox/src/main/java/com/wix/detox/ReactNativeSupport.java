@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.wix.detox.espresso.LooperIdlingResource;
 import com.wix.detox.espresso.ReactBridgeIdlingResource;
+import com.wix.detox.espresso.ReactNativeNetworkIdlingResource;
 import com.wix.detox.espresso.ReactNativeTimersIdlingResource;
 import com.wix.detox.espresso.ReactNativeUIModuleIdlingResource;
 
@@ -20,6 +21,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
 
 /**
  * Created by simonracz on 15/05/2017.
@@ -137,7 +140,6 @@ public class ReactNativeSupport {
     }
 
     // Ideally we would not store this at all.
-    // It is used as a workaround now to get access to the Activity.
     public static Object currentReactContext = null;
 
     /**
@@ -276,6 +278,10 @@ public class ReactNativeSupport {
         rnTimerIdlingResource = new ReactNativeTimersIdlingResource(reactContext);
         rnUIModuleIdlingResource = new ReactNativeUIModuleIdlingResource(reactContext);
 
+        if (networkSyncEnabled) {
+            setupNetworkIdlingResource();
+        }
+
         Espresso.registerIdlingResources(
                 rnTimerIdlingResource,
                 rnBridgeIdlingResource,
@@ -334,6 +340,8 @@ public class ReactNativeSupport {
             reactContext = Reflect.on(instanceManager).call(METHOD_GET_REACT_CONTEXT).get();
         }
 
+        removeNetworkIdlingResource();
+
         removeEspressoIdlingResources(reactNativeHostHolder, reactContext);
     }
 
@@ -378,5 +386,60 @@ public class ReactNativeSupport {
         }
         looperIdlingResources.clear();
     }
+
+    private static boolean networkSyncEnabled = true;
+    public static void enableNetworkSynchronization(boolean enable) {
+        if (enable) {
+            setupNetworkIdlingResource();
+        } else {
+            removeNetworkIdlingResource();
+        }
+        networkSyncEnabled = enable;
+    }
+
+    private static ReactNativeNetworkIdlingResource networkIR = null;
+    private final static String CLASS_NETWORK_MODULE = "com.facebook.react.modules.network.NetworkingModule";
+    private final static String METHOD_GET_NATIVE_MODULE = "getNativeModule";
+    private final static String METHOD_HAS_NATIVE_MODULE = "hasNativeModule";
+    private final static String FIELD_OKHTTP_CLIENT = "mClient";
+
+    private static void setupNetworkIdlingResource() {
+        Class<?> networkModuleClass;
+        try {
+            networkModuleClass = Class.forName(CLASS_NETWORK_MODULE);
+        } catch (ClassNotFoundException e) {
+            Log.e(LOG_TAG, "NetworkingModule is not on classpath.");
+            return;
+        }
+
+        if (currentReactContext == null) {
+            return;
+        }
+
+        try {
+            if (!(boolean) Reflect.on(currentReactContext).call(METHOD_HAS_NATIVE_MODULE, networkModuleClass).get()) {
+                Log.e(LOG_TAG, "Can't find Networking Module.");
+                return;
+            }
+
+            OkHttpClient client = Reflect.on(currentReactContext)
+                    .call(METHOD_GET_NATIVE_MODULE, networkModuleClass)
+                    .field(FIELD_OKHTTP_CLIENT)
+                    .get();
+            networkIR = new ReactNativeNetworkIdlingResource(client.dispatcher());
+            Espresso.registerIdlingResources(networkIR);
+        } catch (ReflectException e) {
+            Log.e(LOG_TAG, "Can't set up Networking Module listener", e.getCause());
+        }
+    }
+
+    private static void removeNetworkIdlingResource() {
+        if (networkIR != null) {
+            networkIR.stop();
+            Espresso.unregisterIdlingResources(networkIR);
+            networkIR = null;
+        }
+    }
+
 
 }

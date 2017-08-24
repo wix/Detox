@@ -27,6 +27,7 @@ public class ReactNativeUIModuleIdlingResource implements IdlingResource , Chore
     private static final String LOG_TAG = "Detox";
 
     private final static String CLASS_UI_MANAGER_MODULE = "com.facebook.react.uimanager.UIManagerModule";
+
     private final static String METHOD_HAS_CATALYST_INSTANCE = "hasActiveCatalystInstance";
     private final static String METHOD_GET_NATIVE_MODULE = "getNativeModule";
     private final static String METHOD_HAS_NATIVE_MODULE = "hasNativeModule";

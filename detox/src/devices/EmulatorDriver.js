@@ -115,6 +115,18 @@ class EmulatorDriver extends DeviceDriverBase {
     return 'android';
   }
 
+  async enableSynchronization() {
+    const invoke = require('../invoke');
+    let call = invoke.call(invoke.Android.Class(EspressoDetox), 'setSynchronization', invoke.Android.Boolean(true));
+    await this.invocationManager.execute(call);
+  }
+
+  async disableSynchronization() {
+    const invoke = require('../invoke');
+    let call = invoke.call(invoke.Android.Class(EspressoDetox), 'setSynchronization', invoke.Android.Boolean(false));
+    await this.invocationManager.execute(call);
+  }
+
   async setOrientation(deviceId, orientation) {
     const orientationMapping = {
       landscape: 1, // top at left side landscape
