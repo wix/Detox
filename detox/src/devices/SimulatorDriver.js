@@ -1,15 +1,14 @@
-const exec = require('child-process-promise').exec;
-const path = require('path');
-const fs = require('fs');
-const os = require('os');
-const _ = require('lodash');
-const IosDriver = require('./IosDriver');
-const FBsimctl = require('./Fbsimctl');
-const AppleSimUtils = require('./AppleSimUtils');
-const configuration = require('../configuration');
+const exec = require("child-process-promise").exec;
+const path = require("path");
+const fs = require("fs");
+const os = require("os");
+const _ = require("lodash");
+const IosDriver = require("./IosDriver");
+const FBsimctl = require("./Fbsimctl");
+const AppleSimUtils = require("./AppleSimUtils");
+const configuration = require("../configuration");
 
 class SimulatorDriver extends IosDriver {
-
   constructor(client) {
     super(client);
     this._fbsimctl = new FBsimctl();
@@ -22,10 +21,17 @@ class SimulatorDriver extends IosDriver {
 
   async getBundleIdFromBinary(appPath) {
     try {
-      const result = await exec(`/usr/libexec/PlistBuddy -c "Print CFBundleIdentifier" ${path.join(appPath, 'Info.plist')}`);
+      const result = await exec(
+        `/usr/libexec/PlistBuddy -c "Print CFBundleIdentifier" ${path.join(
+          appPath,
+          "Info.plist"
+        )}`
+      );
       return _.trim(result.stdout);
     } catch (ex) {
-      throw new Error(`field CFBundleIdentifier not found inside Info.plist of app binary at ${appPath}`);
+      throw new Error(
+        `field CFBundleIdentifier not found inside Info.plist of app binary at ${appPath}`
+      );
     }
   }
 

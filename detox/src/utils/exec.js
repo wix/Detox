@@ -1,15 +1,23 @@
-const log = require('npmlog');
-const retry = require('../utils/retry');
-const exec = require('child-process-promise').exec;
+const log = require("npmlog");
+const retry = require("../utils/retry");
+const exec = require("child-process-promise").exec;
 
 let _operationCounter = 0;
 
-async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, interval = 1000) {
+async function execWithRetriesAndLogs(
+  bin,
+  options,
+  statusLogs,
+  retries = 10,
+  interval = 1000
+) {
   _operationCounter++;
 
   let cmd;
   if (options) {
-    cmd = `${options.prefix ? options.prefix + ' && ' : ''}${bin} ${options.args}`;
+    cmd = `${options.prefix
+      ? options.prefix + " && "
+      : ""}${bin} ${options.args}`;
   } else {
     cmd = bin;
   }
@@ -17,14 +25,16 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
   log.verbose(`${_operationCounter}: ${cmd}`);
 
   let result;
-  await retry({retries, interval}, async() => {
+  await retry({ retries, interval }, async () => {
     if (statusLogs && statusLogs.trying) {
       log.info(`${_operationCounter}: ${statusLogs.trying}`);
     }
     result = await exec(cmd);
   });
   if (result === undefined) {
-    throw new Error(`${_operationCounter}: running "${cmd}" returned undefined`);
+    throw new Error(
+      `${_operationCounter}: running "${cmd}" returned undefined`
+    );
   }
 
   if (result.stdout) {
@@ -50,4 +60,3 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
 module.exports = {
   execWithRetriesAndLogs
 };
-

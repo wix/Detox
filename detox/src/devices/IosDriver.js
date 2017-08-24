@@ -1,33 +1,42 @@
-const path = require('path');
-const fs = require('fs');
-const os = require('os');
-const _ = require('lodash');
-const DeviceDriverBase = require('./DeviceDriverBase');
-const InvocationManager = require('../invoke').InvocationManager;
-const invoke = require('../invoke');
-const GREYConfiguration = require('./../ios/earlgreyapi/GREYConfiguration');
-const argparse = require('../utils/argparse');
+const path = require("path");
+const fs = require("fs");
+const os = require("os");
+const _ = require("lodash");
+const DeviceDriverBase = require("./DeviceDriverBase");
+const InvocationManager = require("../invoke").InvocationManager;
+const invoke = require("../invoke");
+const GREYConfiguration = require("./../ios/earlgreyapi/GREYConfiguration");
+const argparse = require("../utils/argparse");
 
 class IosDriver extends DeviceDriverBase {
-
   constructor(client) {
     super(client);
 
-    const expect = require('../ios/expect');
+    const expect = require("../ios/expect");
     expect.exportGlobals();
     expect.setInvocationManager(new InvocationManager(client));
   }
 
   createPushNotificationJson(notification) {
-    const notificationFilePath = path.join(__dirname, `detox`, `notifications`, `notification.json`);
+    const notificationFilePath = path.join(
+      __dirname,
+      `detox`,
+      `notifications`,
+      `notification.json`
+    );
     this.ensureDirectoryExistence(notificationFilePath);
-    fs.writeFileSync(notificationFilePath, JSON.stringify(notification, null, 2));
+    fs.writeFileSync(
+      notificationFilePath,
+      JSON.stringify(notification, null, 2)
+    );
     return notificationFilePath;
   }
 
   async sendUserNotification(notification) {
     const notificationFilePath = this.createPushNotificationJson(notification);
-    await super.sendUserNotification({detoxUserNotificationDataURL: notificationFilePath});
+    await super.sendUserNotification({
+      detoxUserNotificationDataURL: notificationFilePath
+    });
   }
 
   async openURL(deviceId, params) {
@@ -50,21 +59,26 @@ class IosDriver extends DeviceDriverBase {
     // keys are possible orientations
     const orientationMapping = {
       landscape: 3, // top at left side landscape
-      portrait: 1  // non-reversed portrait
+      portrait: 1 // non-reversed portrait
     };
     if (!Object.keys(orientationMapping).includes(orientation)) {
-      throw new Error(`setOrientation failed: provided orientation ${orientation} is not part of supported orientations: ${Object.keys(orientationMapping)}`)
+      throw new Error(
+        `setOrientation failed: provided orientation ${orientation} is not part of supported orientations: ${Object.keys(
+          orientationMapping
+        )}`
+      );
     }
 
-    const call = invoke.call(invoke.EarlGrey.instance,
-      'rotateDeviceToOrientation:errorOrNil:',
+    const call = invoke.call(
+      invoke.EarlGrey.instance,
+      "rotateDeviceToOrientation:errorOrNil:",
       invoke.IOS.NSInteger(orientationMapping[orientation])
     );
     await this.client.execute(call);
   }
 
   defaultLaunchArgsPrefix() {
-    return '-';
+    return "-";
   }
 
   validateDeviceConfig(config) {
@@ -72,7 +86,7 @@ class IosDriver extends DeviceDriverBase {
   }
 
   getPlatform() {
-    return 'ios';
+    return "ios";
   }
 }
 

@@ -1,13 +1,13 @@
-const AsyncWebSocket = require('./AsyncWebSocket');
-const actions = require('./actions/actions');
-const argparse = require('../utils/argparse');
+const AsyncWebSocket = require("./AsyncWebSocket");
+const actions = require("./actions/actions");
+const argparse = require("../utils/argparse");
 
 class Client {
   constructor(config) {
     this.configuration = config;
     this.ws = new AsyncWebSocket(config.server);
     this.slowInvocationStatusHandler = null;
-    this.slowInvocationTimeout = argparse.getArgValue('debug-synchronization');
+    this.slowInvocationTimeout = argparse.getArgValue("debug-synchronization");
     this.successfulTestRun = true; // flag for cleanup
   }
 
@@ -43,7 +43,7 @@ class Client {
   }
 
   async execute(invocation) {
-    if (typeof invocation === 'function') {
+    if (typeof invocation === "function") {
       invocation = invocation();
     }
 

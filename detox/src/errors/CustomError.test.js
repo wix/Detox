@@ -1,7 +1,7 @@
-describe('CustomError', () => {
+describe("CustomError", () => {
   let CustomError;
   beforeEach(() => {
-    CustomError = require('./CustomError');
+    CustomError = require("./CustomError");
   });
 
   it(`new CustomError should be defined`, () => {

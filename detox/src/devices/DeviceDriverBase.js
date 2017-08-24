@@ -1,6 +1,6 @@
-const _ = require('lodash');
-const fs = require('fs');
-const path = require('path');
+const _ = require("lodash");
+const fs = require("fs");
+const path = require("path");
 
 class DeviceDriverBase {
   constructor(client) {
@@ -8,39 +8,39 @@ class DeviceDriverBase {
   }
 
   async acquireFreeDevice(name) {
-    return await Promise.resolve('');
+    return await Promise.resolve("");
   }
 
   async boot() {
-    return await Promise.resolve('');
+    return await Promise.resolve("");
   }
 
   async launch() {
-    return await Promise.resolve('');
+    return await Promise.resolve("");
   }
 
   async sendToHome() {
-    return await Promise.resolve('');
+    return await Promise.resolve("");
   }
 
   async relaunchApp() {
-    return await Promise.resolve('');
+    return await Promise.resolve("");
   }
 
   async installApp() {
-    return await Promise.resolve('');
+    return await Promise.resolve("");
   }
 
   async uninstallApp() {
-    return await Promise.resolve('');
+    return await Promise.resolve("");
   }
 
   async openURL(params) {
-    return await Promise.resolve('');
+    return await Promise.resolve("");
   }
 
   async setLocation(lat, lon) {
-    return await Promise.resolve('');
+    return await Promise.resolve("");
   }
 
   async waitUntilReady() {
@@ -55,44 +55,42 @@ class DeviceDriverBase {
     await this.client.sendUserNotification(params);
   }
 
-  createPushNotificationJson(notification) {
-
-  }
+  createPushNotificationJson(notification) {}
 
   async setPermissions(deviceId, bundleId, permissions) {
-    return await Promise.resolve('');
+    return await Promise.resolve("");
   }
 
   async terminate(deviceId, bundleId) {
-    return await Promise.resolve('');
+    return await Promise.resolve("");
   }
 
   async shutdown() {
-    return await Promise.resolve('');
+    return await Promise.resolve("");
   }
 
   async setOrientation(deviceId, orientation) {
-    return await Promise.resolve('');
+    return await Promise.resolve("");
   }
 
   async setURLBlacklist(urlList) {
-    return await Promise.resolve('');
+    return await Promise.resolve("");
   }
 
   async enableSynchronization() {
-    return await Promise.resolve('');
+    return await Promise.resolve("");
   }
 
   async disableSynchronization() {
-    return await Promise.resolve('');
+    return await Promise.resolve("");
   }
 
   async resetContentAndSettings() {
-    return await Promise.resolve('');
+    return await Promise.resolve("");
   }
 
   defaultLaunchArgsPrefix() {
-    return '';
+    return "";
   }
 
   ensureDirectoryExistence(filePath) {
@@ -106,20 +104,14 @@ class DeviceDriverBase {
     return true;
   }
 
-  getBundleIdFromBinary(appPath) {
+  getBundleIdFromBinary(appPath) {}
 
-  }
+  validateDeviceConfig(deviceConfig) {}
 
-  validateDeviceConfig(deviceConfig) {
-
-  }
-
-  getPlatform() {
-
-  }
+  getPlatform() {}
 
   async cleanup(deviceId, bundleId) {
-    return await Promise.resolve('');
+    return await Promise.resolve("");
   }
 
   getLogsPaths(deviceId) {

@@ -65,6 +65,12 @@ npm run unit
 npm run unit:watch
 ```
 
+#### Code Styling
+
+We rely on [prettier](https://github.com/prettier/prettier) for automatic code styling of our Javascript code.
+To format your code please run `npm run format` from the project root, please do so before commiting your changes.
+
+
 #### How to read the coverage report
 After running the tests, jest will create a coverage report.
 

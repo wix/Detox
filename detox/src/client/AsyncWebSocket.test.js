@@ -1,23 +1,24 @@
-const _ = require('lodash');
-const config = require('../configurations.mock').validOneDeviceAndSession.session;
+const _ = require("lodash");
+const config = require("../configurations.mock").validOneDeviceAndSession
+  .session;
 
-describe('AsyncWebSocket', () => {
+describe("AsyncWebSocket", () => {
   let AsyncWebSocket;
   let WebSocket;
   let client;
 
   beforeEach(() => {
-    jest.mock('npmlog');
-    WebSocket = jest.mock('ws');
+    jest.mock("npmlog");
+    WebSocket = jest.mock("ws");
     WebSocket.OPEN = 1;
     WebSocket.CLOSED = 3;
 
-    AsyncWebSocket = require('./AsyncWebSocket');
+    AsyncWebSocket = require("./AsyncWebSocket");
     client = new AsyncWebSocket(config.server);
   });
 
   it(`new AsyncWebSocket - websocket onOpen should resolve`, async () => {
-    const response = generateResponse('onmessage', 0);
+    const response = generateResponse("onmessage", 0);
     const promise = client.open();
     client.ws.onopen(response);
     expect(await promise).toEqual(response);
@@ -47,8 +48,8 @@ describe('AsyncWebSocket', () => {
     await connect(client);
 
     const request = generateRequest();
-    const firstResponse = generateResponse('onmessage', 0);
-    const secondResponse = generateResponse('onmessage', 1);
+    const firstResponse = generateResponse("onmessage", 0);
+    const secondResponse = generateResponse("onmessage", 1);
 
     const first = client.send(request);
     expect(request.messageId).toEqual(0);
@@ -59,14 +60,14 @@ describe('AsyncWebSocket', () => {
     expect(request.messageId).toEqual(1);
     client.ws.onmessage(secondResponse);
     expect(await second).toEqual(secondResponse.data);
-});
+  });
 
   it(`message response should resolve the calling request`, async () => {
     await connect(client);
 
     const request = generateRequest();
-    const firstResponse = generateResponse('onmessage', 0);
-    const secondResponse = generateResponse('onmessage', 1);
+    const firstResponse = generateResponse("onmessage", 0);
+    const secondResponse = generateResponse("onmessage", 1);
 
     const first = client.send(request);
     expect(request.messageId).toEqual(0);
@@ -85,7 +86,7 @@ describe('AsyncWebSocket', () => {
     await connect(client);
 
     const initialInflightPromisesSize = _.size(client.inFlightPromises);
-    const response = generateResponse('onmessage', 123);
+    const response = generateResponse("onmessage", 123);
     client.ws.onmessage(response);
 
     const finalInflightPromisesSize = _.size(client.inFlightPromises);
@@ -94,7 +95,7 @@ describe('AsyncWebSocket', () => {
 
   it(`send message should resolve upon returning message`, async () => {
     await connect(client);
-    const response = generateResponse('onmessage', 0);
+    const response = generateResponse("onmessage", 0);
 
     const promise = client.send(generateRequest());
     client.ws.onmessage(response);
@@ -173,10 +174,12 @@ describe('AsyncWebSocket', () => {
   }
 
   function generateRequest(message) {
-    return {message: 'a message'};
+    return { message: "a message" };
   }
 
   function generateResponse(message, messageId) {
-    return {data: JSON.stringify({response: message, messageId: messageId})};
+    return {
+      data: JSON.stringify({ response: message, messageId: messageId })
+    };
   }
 });
