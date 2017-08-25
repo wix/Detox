@@ -176,7 +176,7 @@ class WaitForInteraction extends Interaction {
     if (typeof timeout !== 'number') throw new Error(`WaitForInteraction withTimeout argument must be a number, got ${typeof timeout}`);
     if (timeout < 0) throw new Error('timeout must be larger than 0');
 
-    this._call = invoke.call(invoke.IOS.Class(DetoxAssertion), 'waitForAssertMatcher', this._element._call, this._originalMatcher._call, invoke.Android.Double(timeout/1000));
+    this._call = invoke.call(invoke.Android.Class(DetoxAssertion), 'waitForAssertMatcher', this._element._call, this._originalMatcher._call, invoke.Android.Double(timeout/1000));
     await this.execute();
   }
 
@@ -197,13 +197,11 @@ class WaitForActionInteraction extends Interaction {
   }
   async _execute(searchAction) {
     //if (!searchAction instanceof Action) throw new Error(`WaitForActionInteraction _execute argument must be a valid Action, got ${typeof searchAction}`);
-    const _interactionCall = invoke.call(this._element._call, 'usingSearchAction:onElementWithMatcher:', searchAction._call, this._searchMatcher._call);
-    this._call = invoke.call(_interactionCall, 'assertWithMatcher:', this._originalMatcher._call);
+    this._call = invoke.call(invoke.Android.Class(DetoxAssertion), 'waitForAssertMatcherWithSearchAction',
+      this._element._call, this._originalMatcher._call, searchAction._call, this._searchMatcher._call);
     await this.execute();
   }
   async scroll(amount, direction = 'down') {
-    // override the user's element selection with an extended matcher that looks for UIScrollView children
-    this._searchMatcher = this._searchMatcher._extendToDescendantScrollViews();
     await this._execute(new ScrollAmountAction(direction, amount));
   }
 }
