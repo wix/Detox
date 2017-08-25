@@ -6,6 +6,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.Espresso;
 import android.util.Log;
 
+import com.wix.detox.espresso.AnimatedModuleIdlingResource;
 import com.wix.detox.espresso.LooperIdlingResource;
 import com.wix.detox.espresso.ReactBridgeIdlingResource;
 import com.wix.detox.espresso.ReactNativeNetworkIdlingResource;
@@ -260,6 +261,7 @@ public class ReactNativeSupport {
 
     private static ReactNativeTimersIdlingResource rnTimerIdlingResource = null;
     private static ReactNativeUIModuleIdlingResource rnUIModuleIdlingResource = null;
+    private static AnimatedModuleIdlingResource animIdlingResource = null;
 
     private static void setupEspressoIdlingResources(
             @NonNull Object reactNativeHostHolder,
@@ -276,15 +278,17 @@ public class ReactNativeSupport {
 
         rnTimerIdlingResource = new ReactNativeTimersIdlingResource(reactContext);
         rnUIModuleIdlingResource = new ReactNativeUIModuleIdlingResource(reactContext);
-
-        if (networkSyncEnabled) {
-            setupNetworkIdlingResource();
-        }
+        animIdlingResource = new AnimatedModuleIdlingResource(reactContext);
 
         Espresso.registerIdlingResources(
                 rnTimerIdlingResource,
                 rnBridgeIdlingResource,
-                rnUIModuleIdlingResource);
+                rnUIModuleIdlingResource,
+                animIdlingResource);
+
+        if (networkSyncEnabled) {
+            setupNetworkIdlingResource();
+        }
     }
 
     private static ArrayList<LooperIdlingResource> looperIdlingResources = new ArrayList<>();
@@ -309,11 +313,6 @@ public class ReactNativeSupport {
             if ((queue = Reflect.on(reactContext).field(field).get()) != null) {
                 if ((looper = Reflect.on(queue).call(METHOD_GET_LOOPER).get()) != null) {
                     if (!excludedLoopers.contains(looper)) {
-                        // TODO!!!
-                        /*
-                        IdlingResource looperIdlingResource =
-                                Reflect.on(CLASS_ESPRESSO_LOOPER_IDLING_RESOURCE).create(looper, false).get();
-                        */
                         LooperIdlingResource looperIdlingResource = new LooperIdlingResource((Looper)looper, false);
 
                         looperIdlingResources.add(looperIdlingResource);
@@ -350,15 +349,19 @@ public class ReactNativeSupport {
 
         Log.i(LOG_TAG, "Removing Espresso IdlingResources for React Native.");
 
-        if (rnBridgeIdlingResource != null &&
-                rnTimerIdlingResource != null && rnUIModuleIdlingResource != null) {
+        if (rnBridgeIdlingResource != null
+                && rnTimerIdlingResource != null
+                && rnUIModuleIdlingResource != null
+                && animIdlingResource != null) {
             Espresso.unregisterIdlingResources(
                     rnTimerIdlingResource,
                     rnBridgeIdlingResource,
-                    rnUIModuleIdlingResource);
+                    rnUIModuleIdlingResource,
+                    animIdlingResource);
             rnTimerIdlingResource = null;
             rnBridgeIdlingResource = null;
             rnUIModuleIdlingResource = null;
+            animIdlingResource = null;
         }
 
         removeReactNativeQueueInterrogators();
@@ -388,9 +391,9 @@ public class ReactNativeSupport {
 
     private static boolean networkSyncEnabled = true;
     public static void enableNetworkSynchronization(boolean enable) {
-        if (!isReactNativeApp()) {
-            return;
-        }
+        if (!isReactNativeApp()) return;
+        if (networkSyncEnabled == enable) return;
+
         if (enable) {
             setupNetworkIdlingResource();
         } else {

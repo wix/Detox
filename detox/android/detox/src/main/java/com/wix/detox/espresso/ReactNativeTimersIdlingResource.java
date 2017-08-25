@@ -45,7 +45,6 @@ public class ReactNativeTimersIdlingResource implements IdlingResource, Choreogr
     private Object reactContext = null;
 
     public ReactNativeTimersIdlingResource(@NonNull Object reactContext) {
-        super();
         this.reactContext = reactContext;
     }
 

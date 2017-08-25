@@ -8,22 +8,20 @@ import android.view.Choreographer;
 import org.joor.Reflect;
 import org.joor.ReflectException;
 
-import java.util.PriorityQueue;
-
 /**
  * Created by simonracz on 26/07/2017.
  */
 
 /**
  * <p>
- * Espresso IdlingResource for React Native UI Module.
+ * Espresso IdlingResource for React Native's UI Module.
  * </p>
  *
  * <p>
  * Hooks up to React Native internals to grab the pending ui operations from it.
  * </p>
  */
-public class ReactNativeUIModuleIdlingResource implements IdlingResource , Choreographer.FrameCallback {
+public class ReactNativeUIModuleIdlingResource implements IdlingResource, Choreographer.FrameCallback {
     private static final String LOG_TAG = "Detox";
 
     private final static String CLASS_UI_MANAGER_MODULE = "com.facebook.react.uimanager.UIManagerModule";
@@ -43,7 +41,6 @@ public class ReactNativeUIModuleIdlingResource implements IdlingResource , Chore
     private Object reactContext = null;
 
     public ReactNativeUIModuleIdlingResource(@NonNull Object reactContext) {
-        super();
         this.reactContext = reactContext;
     }
 
@@ -54,12 +51,6 @@ public class ReactNativeUIModuleIdlingResource implements IdlingResource , Chore
 
     @Override
     public boolean isIdleNow() {
-        // This is not a proper Espresso IdlingResource yet,
-        // as it is driven by the isIdleNow() method.
-        // This will be marked as a Racy Resource internally.
-        // It'll cause no problem though.
-
-
         Class<?> uiModuleClass = null;
         try {
             uiModuleClass = Class.forName(CLASS_UI_MANAGER_MODULE);

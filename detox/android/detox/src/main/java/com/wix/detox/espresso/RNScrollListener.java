@@ -2,7 +2,6 @@ package com.wix.detox.espresso;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.view.View;
 import android.widget.AbsListView;
 
 import org.joor.Reflect;

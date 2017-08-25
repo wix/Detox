@@ -57,7 +57,7 @@ public class ScrollHelper {
             adjHeight = (int) ((pos[1] + view.getHeight()) * (1 - 2 * DEFAULT_DEADZONE_PERCENT));
         }
 
-        Log.d(LOG_TAG, "Amount in px: " + amountInPX);
+        // Log.d(LOG_TAG, "Amount in px: " + amountInPX);
 
         int times;
         int remainder;
@@ -73,7 +73,7 @@ public class ScrollHelper {
             fullAmount = adjHeight;
         }
 
-        Log.d(LOG_TAG, "Scroll times: " + times + " rem: " + remainder + " full: " +fullAmount);
+        // Log.d(LOG_TAG, "Scroll times: " + times + " rem: " + remainder + " full: " +fullAmount);
 
         for (int i = 0; i < times; ++i) {
             doScroll(uiController, view, direction, fullAmount);
@@ -126,7 +126,7 @@ public class ScrollHelper {
             default:
                 throw new RuntimeException("Scrolldirection can go from 1 to 4");
         }
-        Log.d(LOG_TAG, "scroll downx: " + downX + " downy: " + downY + " upx: " + upX + " upy: " + upY);
+        // Log.d(LOG_TAG, "scroll downx: " + downX + " downy: " + downY + " upx: " + upX + " upy: " + upY);
         return sendScrollEvent(uiController, downX, downY, upX, upY);
     }
 
