@@ -23,7 +23,7 @@ NSArray *WXClassesConformingToProtocol(Protocol* protocol)
 	NSMutableArray* rv = [NSMutableArray new];
 	
 	int numberOfClasses = objc_getClassList(NULL, 0);
-	Class classList[numberOfClasses];
+	Class* classList = malloc(sizeof(Class) * numberOfClasses);
 	numberOfClasses = objc_getClassList(classList, numberOfClasses);
 	
 	for (int idx = 0; idx < numberOfClasses; idx++)
@@ -34,6 +34,8 @@ NSArray *WXClassesConformingToProtocol(Protocol* protocol)
 			[rv addObject:class];
 		}
 	}
+	
+	free(classList);
 	
 	return rv;
 }
