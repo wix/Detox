@@ -28,7 +28,11 @@ class EmulatorDriver extends DeviceDriverBase {
   }
 
   async acquireFreeDevice(name) {
-    return (await exec(`adb devices | awk 'NR>1 {print $1}'`, undefined, undefined, 1)).stdout.trim();
+    const deviceId = (await exec(`adb devices | awk 'NR>1 {print $1}'`, undefined, undefined, 1)).stdout.trim();
+    if (!deviceId) {
+      throw new Error(`ADB could not find an attached device`);
+    }
+    return deviceId;
   }
 
   async getBundleIdFromBinary(appPath) {
