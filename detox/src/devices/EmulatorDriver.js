@@ -1,6 +1,7 @@
 const exec = require('./../utils/exec').execWithRetriesAndLogs;
 const { spawn } = require('child_process');
 const _ = require('lodash');
+const log = require('npmlog');
 const InvocationManager = require('../invoke').InvocationManager;
 
 const DeviceDriverBase = require('./DeviceDriverBase');
@@ -68,24 +69,17 @@ class EmulatorDriver extends DeviceDriverBase {
 
     this.instrumentationProcess = spawn(`adb`, [`-s`, `${deviceId}`, `shell` ,`am`, `instrument`, `-w` ,`-r`, `${args.join(' ')}`,`-e`, `debug`, `false` ,`${bundleId}.test/android.support.test.runner.AndroidJUnitRunner`]);
 
-    console.log('[spawn] childProcess.pid: ', this.instrumentationProcess.pid);
+    log.verbose('Instrumentation spawned, childProcess.pid: ', this.instrumentationProcess.pid);
     this.instrumentationProcess.stdout.on('data', function (data) {
-      console.log('[spawn] stdout: ', data.toString());
+      log.verbose('Instrumentation stdout: ', data.toString());
     });
     this.instrumentationProcess.stderr.on('data', function (data) {
-      console.log('[spawn] stderr: ', data.toString());
+      log.verbose('Instrumentation stderr: ', data.toString());
     });
 
     this.instrumentationProcess.on('close', (code, signal) => {
-      console.log(
-        `instrumentationProcess terminated due to receipt of signal ${signal}`);
+      log.verbose(`instrumentationProcess terminated due to receipt of signal ${signal}`);
     });
-    //this.instrumentationProcess.then(function () {
-    //  console.log('[spawn] done!');
-    //}).catch(function (err) {
-    //  console.error('[spawn] ERROR: ', err);
-    //  throw err;
-    //});
   }
 
   async terminate(deviceId, bundleId) {
@@ -97,13 +91,6 @@ class EmulatorDriver extends DeviceDriverBase {
   terminateInstrumentation() {
     if (this.instrumentationProcess) {
       this.instrumentationProcess.kill('SIGHUP');
-      /*
-      try {
-        console.log('killing instrumentation process succeded: ', this.instrumentationProcess.kill('SIGTERM'));
-      } catch (e) {
-        console.log('killing instrumentation process failed', e);
-      }
-      */
     }
   }
 
@@ -144,7 +131,7 @@ class EmulatorDriver extends DeviceDriverBase {
 
   async adbCmd(deviceId, params) {
     const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
-    await exec(`adb ${serial} wait-for-device`, undefined, undefined, 1);
+    //await exec(`adb ${serial} wait-for-device`, undefined, undefined, 1);
     const cmd = `adb ${serial} ${params}`;
     await exec(cmd, undefined, undefined, 1);
   }
