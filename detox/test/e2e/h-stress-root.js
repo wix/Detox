@@ -16,7 +16,7 @@ describe('StressRoot', () => {
     await expect(element(by.label('this is a new native root'))).toBeVisible();
   });
 
-  it('should switch root view controller from RN to RN', async () => {
+  it(':ios: should switch root view controller from RN to RN', async () => {
     await element(by.label('Switch to multiple react roots')).tap();
     await expect(element(by.label('Choose a test'))).toBeVisible();
   });
