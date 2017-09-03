@@ -69,6 +69,8 @@ class EmulatorDriver extends DeviceDriverBase {
     });
 
     if (this.instrumentationProcess) {
+      let call = invoke.call(invoke.Android.Class("com.wix.detox.Detox"), 'launchMainActivity');
+      await this.invocationManager.execute(call);
       return this.instrumentationProcess.pid;
     }
 

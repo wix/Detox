@@ -50,6 +50,7 @@ class Device {
     }
 
     if (params.delete) {
+      await this.deviceDriver.terminate(this._deviceId, this._bundleId);
       await this.deviceDriver.uninstallApp(this._deviceId, this._bundleId);
       await this.deviceDriver.installApp(this._deviceId, this._binaryPath);
     } else if (params.newInstance) {

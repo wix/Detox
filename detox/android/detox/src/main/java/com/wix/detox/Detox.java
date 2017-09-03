@@ -1,14 +1,19 @@
 package com.wix.detox;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.Keep;
+import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
+import android.support.test.uiautomator.UiDevice;
+import android.support.test.uiautomator.UiObject;
+import android.support.test.uiautomator.UiObjectNotFoundException;
+import android.support.test.uiautomator.UiSelector;
 
 /**
  * <p>Static class.</p>
@@ -138,17 +143,38 @@ public final class Detox {
         }
     }
 
-    public static void startActivity(Intent intent) {
+    public static void launchActivity(Intent intent) {
         sActivityTestRule.launchActivity(intent);
     }
 
     public static void startActivityFromUrl(String url) {
-        startActivity(intentWithUrl(url));
+        launchActivity(intentWithUrl(url));
     }
 
     public static Intent intentWithUrl(String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(url));
         return intent;
+    }
+
+
+    // TODO: Can't get to launch the app back to previous instance using only intents from inside instrumentation (not sure why).
+    // this is a (hopefully) temp solution. Should use intents instead.
+    public static void launchMainActivity() throws RemoteException, UiObjectNotFoundException {
+        Context targetContext = InstrumentationRegistry.getTargetContext();
+
+//        Intent intent = targetContext.getPackageManager().getLaunchIntentForPackage(targetContext.getPackageName());
+//        intent.setPackage(null);
+//        intent.removeCategory(Intent.CATEGORY_LAUNCHER);;
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+//        Log.d("Detox", intent.toString());
+//        launchActivity(intent);
+
+        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        device.pressRecentApps();
+        UiSelector selector = new UiSelector();
+        String appName = targetContext.getApplicationInfo().loadLabel(targetContext.getPackageManager()).toString();
+        UiObject recentApp = device.findObject(selector.descriptionContains(appName));
+        recentApp.click();
     }
 }
