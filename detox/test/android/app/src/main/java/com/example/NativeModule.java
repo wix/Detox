@@ -36,9 +36,8 @@ public class NativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void echoWithResponse(String string, final Callback callback) {
+    public void echoWithResponse(String string) {
         Log.d(NAME, string);
-        callback.invoke(string);
     }
 
     @ReactMethod
