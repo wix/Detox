@@ -1,9 +1,14 @@
 package com.wix.detox;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.rule.ActivityTestRule;
 
 /**
  * <p>Static class.</p>
@@ -59,9 +64,9 @@ import android.support.test.InstrumentationRegistry;
  * <p>If not set, then Detox tests are no ops. So it's safe to mix it with other tests.</p>
  */
 public final class Detox {
-    private Detox() {
-        // static class
-    }
+    static ActivityTestRule sActivityTestRule;
+
+    private Detox() {}
 
     /**
      * <p>
@@ -73,9 +78,9 @@ public final class Detox {
      * {@link Detox#runTests(Object)}.
      * </p>
      */
-    public static void runTests() {
+    public static void runTests(ActivityTestRule activityTestRule) {
         Object appContext = InstrumentationRegistry.getTargetContext().getApplicationContext();
-        runTests(appContext);
+        runTests(activityTestRule, appContext);
     }
 
     /**
@@ -84,7 +89,7 @@ public final class Detox {
      * doesn't implement ReactApplication.
      * </p>
      *
-     * Call {@link Detox#runTests()} in every other case.
+     * Call {@link Detox#runTests(ActivityTestRule)} )} in every other case.
      *
      * <p>
      * The only requirement is that the passed in object must have
@@ -94,7 +99,18 @@ public final class Detox {
      *
      * @param reactActivityDelegate an object that has a {@code getReactNativeHost()} method
      */
-    public static void runTests(@NonNull final Object reactActivityDelegate) {
+    public static void runTests(ActivityTestRule activityTestRule, @NonNull final Object reactActivityDelegate) {
+        sActivityTestRule = activityTestRule;
+        Intent intent = null;
+        Bundle arguments = InstrumentationRegistry.getArguments();
+        String detoxURLOverride = arguments.getString("detoxURLOverride");
+        if (detoxURLOverride != null) {
+            intent = intentWithUrl(detoxURLOverride);
+        }
+
+        activityTestRule.launchActivity(intent);
+
+
         // Kicks off another thread and attaches a Looper to that.
         // The goal is to keep the test thread intact,
         // as Loopers can't run on a thread twice.
@@ -120,5 +136,19 @@ public final class Detox {
             Thread.currentThread().interrupt();
             throw new RuntimeException("Got interrupted", e);
         }
+    }
+
+    public static void startActivity(Intent intent) {
+        sActivityTestRule.launchActivity(intent);
+    }
+
+    public static void startActivityFromUrl(String url) {
+        startActivity(intentWithUrl(url));
+    }
+
+    public static Intent intentWithUrl(String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        return intent;
     }
 }

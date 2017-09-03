@@ -2,7 +2,9 @@ const exec = require('./../utils/exec').execWithRetriesAndLogs;
 const { spawn } = require('child_process');
 const _ = require('lodash');
 const log = require('npmlog');
-const InvocationManager = require('../invoke').InvocationManager;
+
+const invoke = require('../invoke');
+const InvocationManager = invoke.InvocationManager;
 
 const DeviceDriverBase = require('./DeviceDriverBase');
 
@@ -13,7 +15,6 @@ class EmulatorDriver extends DeviceDriverBase {
 
   constructor(client) {
     super(client);
-    let instrumentationProcess;
     const expect = require('../android/expect');
     expect.exportGlobals();
     this.invocationManager = new InvocationManager(client);
@@ -67,8 +68,12 @@ class EmulatorDriver extends DeviceDriverBase {
       args.push(`${key} ${value}`);
     });
 
-    this.instrumentationProcess = spawn(`adb`, [`-s`, `${deviceId}`, `shell` ,`am`, `instrument`, `-w` ,`-r`, `${args.join(' ')}`,`-e`, `debug`, `false` ,`${bundleId}.test/android.support.test.runner.AndroidJUnitRunner`]);
+    if (this.instrumentationProcess) {
+      return this.instrumentationProcess.pid;
+    }
 
+    this.instrumentationProcess = spawn(`adb`, [`-s`, `${deviceId}`, `shell` ,`am`, `instrument`, `-w` ,`-r`, `${args.join(' ')}`,`-e`, `debug`, `false` ,`${bundleId}.test/android.support.test.runner.AndroidJUnitRunner`]);
+    log.verbose(this.instrumentationProcess.spawnargs.join(" "));
     log.verbose('Instrumentation spawned, childProcess.pid: ', this.instrumentationProcess.pid);
     this.instrumentationProcess.stdout.on('data', function (data) {
       log.verbose('Instrumentation stdout: ', data.toString());
@@ -80,17 +85,30 @@ class EmulatorDriver extends DeviceDriverBase {
     this.instrumentationProcess.on('close', (code, signal) => {
       log.verbose(`instrumentationProcess terminated due to receipt of signal ${signal}`);
     });
+
+    return this.instrumentationProcess.pid;
+  }
+
+  async openURL(deviceId, params) {
+    let call = invoke.call(invoke.Android.Class("com.wix.detox.Detox"), 'startActivityFromUrl', invoke.Android.String(params.url));
+    await this.invocationManager.execute(call);
+  }
+
+  async sendToHome(deviceId, params) {
+    let uiDevice = invoke.call(invoke.Android.Class("com.wix.detox.uiautomator.UiAutomator"), 'uiDevice');
+    let call = invoke.call(uiDevice, 'pressHome');
+    await this.invocationManager.execute(call);
   }
 
   async terminate(deviceId, bundleId) {
     this.terminateInstrumentation();
     await this.adbCmd(deviceId, `shell am force-stop ${bundleId}`);
-    //await exec(`adb -s ${deviceId} shell am force-stop ${bundleId}`);
   }
 
   terminateInstrumentation() {
     if (this.instrumentationProcess) {
       this.instrumentationProcess.kill('SIGHUP');
+      this.instrumentationProcess = null;
     }
   }
 
@@ -107,13 +125,11 @@ class EmulatorDriver extends DeviceDriverBase {
   }
 
   async enableSynchronization() {
-    const invoke = require('../invoke');
     let call = invoke.call(invoke.Android.Class(EspressoDetox), 'setSynchronization', invoke.Android.Boolean(true));
     await this.invocationManager.execute(call);
   }
 
   async disableSynchronization() {
-    const invoke = require('../invoke');
     let call = invoke.call(invoke.Android.Class(EspressoDetox), 'setSynchronization', invoke.Android.Boolean(false));
     await this.invocationManager.execute(call);
   }

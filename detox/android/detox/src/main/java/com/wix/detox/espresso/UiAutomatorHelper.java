@@ -101,34 +101,34 @@ public class UiAutomatorHelper {
         return interactionController;
     }
 
-    public static float getDensity(){
+    public static float getDensity() {
         Context context = InstrumentationRegistry.getTargetContext().getApplicationContext();
         return context.getResources().getDisplayMetrics().density;
     }
 
-    public static int convertDiptoPix(double dip){
+    public static int convertDiptoPix(double dip) {
         return (int) (dip * getDensity() + 0.5f);
     }
 
-    public static int convertPixtoDip(int pixel){
-        return (int)((pixel - 0.5f) / getDensity());
+    public static int convertPixtoDip(int pixel) {
+        return (int) ((pixel - 0.5f) / getDensity());
     }
 
     public static float[] getScreenSizeInPX() {
         DisplayMetrics metrics = InstrumentationRegistry.getTargetContext()
                 .getApplicationContext().getResources().getDisplayMetrics();
-        return new float[] {metrics.widthPixels, metrics.heightPixels};
+        return new float[]{metrics.widthPixels, metrics.heightPixels};
     }
 
     /**
      * Waits for some Choreographer calls.
-     *
+     * <p>
      * React Native uses Choreographer callbacks. Those are invisible to Espresso.
      * One of them is UIModule, UIViewOperationQueue.
-     *
+     * <p>
      * After everything idled out, we should still wait for UIModule to initiate it's changes
      * on the UI by waiting out its Choreographer frame.
-     *
+     * <p>
      * TODO:
      * Find a way to wrap up the UIModule in an Espresso IdlingResource, similar to JS Timers.
      */
