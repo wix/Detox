@@ -4,10 +4,11 @@ import {
   View,
   Animated,
   Button,
-  SegmentedControlIOS,
+  Platform
   Switch,
   TextInput
 } from 'react-native';
+import SegmentedControl from '../Views/SegmentedControl.js';
 import _ from 'lodash';
 
 
@@ -105,7 +106,7 @@ export default class AnimationsScreen extends Component {
       <View style={{ flex: 1, paddingTop: 20, paddingLeft: 20, paddingRight: 20, justifyContent: 'center', alignItems: 'stretch' }}>
         <View>
           <Text>Driver:</Text>
-          <SegmentedControlIOS
+          <SegmentedControl
             testID="UniqueId_AnimationsScreen_useNativeDriver"
             values={['JS', 'Native']}
             selectedIndex={-1}
@@ -120,7 +121,7 @@ export default class AnimationsScreen extends Component {
             onValueChange={(value) => this.setState({enableLoop: value})}
           />
           <Text style={{color: numOfIterationsColor}}>Number of iterations:</Text>
-          <TextInput style={{color: numOfIterationsColor, height: 20}}
+          <TextInput style={{color: numOfIterationsColor, height: Platform.OS == 'android' ? 40 : 20}}
             testID="UniqueId_AnimationsScreen_numberOfIterations"
             editable={this.state.enableLoop}
             onChangeText={(value) => this.setState({numberOfIterations: Number(value)})}
@@ -129,7 +130,7 @@ export default class AnimationsScreen extends Component {
         </View>
         <View style={{paddingTop: 20}}>
           <Text>Duration:</Text>
-          <TextInput style={{height: 20}}
+          <TextInput style={{height: Platform.OS == 'android' ? 40 : 20}}
             testID="UniqueId_AnimationsScreen_duration"
             onChangeText={(value) => this.setState({duration: Number(value)})}
             placeholder={String(this.state.duration)}
@@ -137,7 +138,7 @@ export default class AnimationsScreen extends Component {
         </View>
         <View style={{paddingTop: 20}}>
           <Text>Delay:</Text>
-          <TextInput style={{height: 20}}
+          <TextInput style={{height: Platform.OS == 'android' ? 40 : 20}}
             testID="UniqueId_AnimationsScreen_delay"
             onChangeText={(value) => this.setState({delay: Number(value)})}
             placeholder={String(this.state.delay)}
