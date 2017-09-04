@@ -55,7 +55,7 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
 
-    androidTestCompile(project(":detox"), {
+    androidTestCompile(project(path: ":detox", configuration: "oldOkhttpDebug"), {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 }

@@ -4,7 +4,7 @@ import {
   View,
   Animated,
   Button,
-  Platform
+  Platform,
   Switch,
   TextInput
 } from 'react-native';

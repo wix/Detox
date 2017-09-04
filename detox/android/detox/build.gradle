@@ -14,6 +14,15 @@ android {
 
     publishNonDefault true
 
+    productFlavors {
+        oldOkhttp {
+
+        }
+        newOkhttp {
+
+        }
+    }
+
     testOptions {
         unitTests.returnDefaultValues = true
         unitTests.all {
@@ -59,8 +68,11 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
 
-    compile 'com.squareup.okhttp3:okhttp:3.4.1'
-    compile 'com.squareup.okhttp3:okhttp-ws:3.4.1'
+    oldOkhttpCompile 'com.squareup.okhttp3:okhttp:3.4.1'
+    oldOkhttpCompile 'com.squareup.okhttp3:okhttp-ws:3.4.1'
+
+    newOkhttpCompile 'com.squareup.okhttp3:okhttp:3.6.0'
+    newOkhttpCompile 'com.squareup.okio:okio:1.13.0'
 
     compile('com.android.support.test.espresso:espresso-core:3.0.0', {
         exclude group: 'com.google.code.findbugs'
