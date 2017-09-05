@@ -12,12 +12,16 @@ fi
 
 if [ "$1" == "android" -o "$2" == "android" ] ; then
 	echo -e "\nBuilding Detox aars"
-	rm -fr detox-debug.aar
-	rm -fr detox-release.aar
+	rm -fr detox-oldOkhttp-debug.aar
+        rm -fr detox-newOkhttp-debug.aar
+        rm -fr detox-oldOkhttp-release.aar
+        rm -fr detox-newOkhttp-release.aar
 	cd android
 	./gradlew assembleDebug
 	./gradlew assembleRelease
 	cd ..
-	cp -fr android/detox/build/outputs/aar/detox-debug.aar .
-	cp -fr android/detox/build/outputs/aar/detox-release.aar .
+	cp -fr android/detox/build/outputs/aar/detox-oldOkhttp-debug.aar .
+        cp -fr android/detox/build/outputs/aar/detox-newOkhttp-debug.aar .
+	cp -fr android/detox/build/outputs/aar/detox-oldOkhttp-release.aar .
+        cp -fr android/detox/build/outputs/aar/detox-newOkhttp-release.aar .
 fi
