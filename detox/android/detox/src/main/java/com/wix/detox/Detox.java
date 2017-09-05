@@ -80,8 +80,9 @@ public final class Detox {
      *
      * <p>
      * In case you have a non-standard React Native application, consider using
-     * {@link Detox#runTests(Object)}.
+     * {@link Detox#runTests(ActivityTestRule, Object)}}.
      * </p>
+     * @param activityTestRule the activityTestRule
      */
     public static void runTests(ActivityTestRule activityTestRule) {
         Object appContext = InstrumentationRegistry.getTargetContext().getApplicationContext();
@@ -102,6 +103,7 @@ public final class Detox {
      * <blockquote>{@code ReactNativeHost getReactNativeHost();}</blockquote>
      * </p>
      *
+     * @param activityTestRule the activityTestRule
      * @param reactActivityDelegate an object that has a {@code getReactNativeHost()} method
      */
     public static void runTests(ActivityTestRule activityTestRule, @NonNull final Object reactActivityDelegate) {

@@ -16,10 +16,12 @@ android {
             abiFilters "armeabi-v7a", "x86"
         }
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        /*
         testInstrumentationRunnerArguments = [
                 'detoxServer': 'ws://localhost:8099',
                 'detoxSessionId': 'test'
         ]
+        */
     }
 
     //unremark to generate app-release-androidTest.apk for release tests
