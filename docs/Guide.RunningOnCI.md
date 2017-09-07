@@ -1,4 +1,4 @@
-# Running Tests on CI (like Travis)
+# Running Tests on CI (Travis or Bitrise)
 
 > When your test suite is finally ready, it should be set up to run automatically on your CI server on every git push. This will alert you if new changes to the app break existing functionality.
 
@@ -44,7 +44,9 @@ detox test --configuration ios.sim.release --cleanup
 
 <br>
 
-## Appendix: Running Detox on Travis-CI
+## Appendix
+
+### • Running Detox on [Travis CI](https://travis-ci.org/)
 
 Detox's own build is running on Travis, check out Detox's [.travis.yml](/.travis.yml) file to see how it's done.
 
@@ -79,4 +81,83 @@ script:
 - detox build --configuration ios.sim.release
 - detox test --configuration ios.sim.release --cleanup
 
+```
+
+### • Running Detox on [Bitrise](https://www.bitrise.io/)
+
+Bitrise is a popular CI service for automating React Native apps. If you are looking to get started with Bitrise, check out [this](http://blog.bitrise.io/2017/07/25/how-to-set-up-a-react-native-app-on-bitrise.html) guide.
+
+You can run Detox on Bitrise by creating a new workflow. Below is an example of the Bitrise **.yml** file for a workflow called `tests`. 
+
+Additionally, you can use a [webhook](http://devcenter.bitrise.io/webhooks/) on Bitrise to post the build status directly into your Slack channel.
+
+```yml
+---
+format_version: 1.1.0
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+trigger_map:
+- push_branch: "*"
+  workflow: tests
+workflows:
+  _tests_setup:
+    steps:
+    - activate-ssh-key: {}
+    - git-clone:
+        inputs:
+        - clone_depth: ''
+        title: Git Clone Repo
+    - script:
+        inputs:
+        - content: |-
+            #!/bin/bash
+
+            npm cache verify
+
+            npm install
+        title: Install NPM Packages
+    before_run:
+    after_run:
+  _detox_tests:
+    before_run: []
+    after_run: []
+    steps:
+    - npm:
+        inputs:
+        - command: install -g detox-cli
+        title: Install Detox CLI
+    - npm:
+        inputs:
+        - command: install -g react-native-cli
+        title: Install React Native CLI
+    - script:
+        inputs:
+        - content: |-
+            #!/bin/bash
+
+            brew tap facebook/fb
+            export CODE_SIGNING_REQUIRED=NO
+            brew install fbsimctl
+
+            brew tap wix/brew
+            brew install applesimutils --HEAD
+        title: Install Detox Utils
+    - script:
+        inputs:
+        - content: |-
+            #!/bin/bash
+
+            detox build --configuration ios.sim.release
+        title: Detox - Build Release App
+    - script:
+        inputs:
+        - content: |-
+            #!/bin/bash
+
+            detox test --configuration ios.sim.release --cleanup
+        title: Detox - Run E2E Tests
+  tests:
+    before_run:
+    - _tests_setup
+    - _detox_tests
+    after_run: []
 ```
