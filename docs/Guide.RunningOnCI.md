@@ -87,12 +87,17 @@ script:
 
 Bitrise is a popular CI service for automating React Native apps. If you are looking to get started with Bitrise, check out [this](http://blog.bitrise.io/2017/07/25/how-to-set-up-a-react-native-app-on-bitrise.html) guide.
 
-You can run Detox on Bitrise by adding a `tests` workflow. Here's what the Bitrise **.yml** file looks like for doing so:
+You can run Detox on Bitrise by creating a new workflow. Below is an example of the Bitrise **.yml** file for a workflow called `tests`. 
+
+Additionally, you can use a [webhook](http://devcenter.bitrise.io/webhooks/) on Bitrise to post the build status directly into your Slack channel.
 
 ```yml
 ---
 format_version: 1.1.0
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+trigger_map:
+- push_branch: "*"
+  workflow: tests
 workflows:
   _tests_setup:
     steps:
@@ -100,15 +105,18 @@ workflows:
     - git-clone:
         inputs:
         - clone_depth: ''
-    - script@1.1.4:
+        title: Git Clone Repo
+    - script:
         inputs:
         - content: |-
             #!/bin/bash
+
             npm cache verify
+
             npm install
-        title: Install Packages
-    before_run: 
-    after_run: 
+        title: Install NPM Packages
+    before_run:
+    after_run:
   _detox_tests:
     before_run: []
     after_run: []
@@ -117,7 +125,7 @@ workflows:
         inputs:
         - command: install -g detox-cli
         title: Install Detox CLI
-    - npm@0.9.0:
+    - npm:
         inputs:
         - command: install -g react-native-cli
         title: Install React Native CLI
@@ -125,52 +133,31 @@ workflows:
         inputs:
         - content: |-
             #!/bin/bash
+
             brew tap facebook/fb
             export CODE_SIGNING_REQUIRED=NO
             brew install fbsimctl
+
             brew tap wix/brew
             brew install applesimutils --HEAD
         title: Install Detox Utils
-    - script@1.1.4:
-        title: Start Packager in Background
-        inputs:
-        - content: |-
-            #!/bin/bash
-            npm run start &
     - script:
         inputs:
         - content: |-
             #!/bin/bash
+
             detox build --configuration ios.sim.release
-        title: Build Detox app
+        title: Detox - Build Release App
     - script:
         inputs:
         - content: |-
             #!/bin/bash
-            detox test --configuration ios.sim.release
-        - is_debug: 'yes'
-        title: Run Detox Integration Tests
+
+            detox test --configuration ios.sim.release --cleanup
+        title: Detox - Run E2E Tests
   tests:
     before_run:
     - _tests_setup
     - _detox_tests
-    steps:
-    - slack@2.6.2:
-        inputs:
-        - webhook_url: ##SLACK_WEBHOOK_URL
-        - channel: "#builds"
-        - from_username_on_error: Bitrise CI - Tests Shall Not Pass!!
-        - from_username: Bitrise CI - Integration & Unit Tests Passing
-        - message: |-
-            *Build succeeded*: $BITRISE_GIT_MESSAGE
-            *Branch*: $BITRISE_GIT_BRANCH
-
-            Fuck it! Ship it!
-        - message_on_error: |-
-            *Build failed*: $BITRISE_GIT_MESSAGE
-            *Branch*: $BITRISE_GIT_BRANCH
-
-            _I believe in you!! Please try again._
-        - emoji: ":shipit:"
-        - emoji_on_error: ":bug:"
+    after_run: []
 ```
