@@ -54,5 +54,10 @@
  */
 + (id<GREYAction>)actionForTypeText:(NSString *)text;
 
+/**
+ *  @return A GREYAction that scrolls to the given content @c edge of a scroll view.
+ */
++ (id<GREYAction>)actionForScrollToContentEdge:(GREYContentEdge)edge;
+
 + (id<GREYAction>)actionWithUnknownType:(WTFType *)wat;
 + (id<GREYAction>)actionWithKnown:(NSUInteger)iknowdis andUnknownType:(WTFTypalike *)wat;

@@ -113,15 +113,8 @@ class ScrollAmountAction extends Action {
 class ScrollEdgeAction extends Action {
   constructor(edge) {
     super();
-    if (typeof edge !== 'string') throw new Error(`ScrollEdgeAction ctor 1st argument must be a string, got ${typeof edge}`);
-    switch (edge) {
-      case 'left': edge = 0; break;
-      case 'right': edge = 1; break;
-      case 'top': edge = 2; break;
-      case 'bottom': edge = 3; break;
-      default: throw new Error(`ScrollEdgeAction edge must be a 'left'/'right'/'top'/'bottom', got ${edge}`);
-    }
-    this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForScrollToContentEdge:', invoke.IOS.NSInteger(edge));
+
+    this._call = invoke.callDirectly(GreyActions.actionForScrollToContentEdge(edge));
   }
 }
 
