@@ -28,11 +28,11 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
   }
 
   if (result.stdout) {
-    log.silly(`${_operationCounter}: stdout:`, result.stdout);
+    log.verbose(`${_operationCounter}: stdout:`, result.stdout);
   }
 
   if (result.stderr) {
-    log.silly(`${_operationCounter}: stderr:`, result.stderr);
+    log.verbose(`${_operationCounter}: stderr:`, result.stderr);
   }
 
   if (statusLogs && statusLogs.successful) {
