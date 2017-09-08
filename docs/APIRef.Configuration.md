@@ -1,16 +1,45 @@
 # Configuration Options
 
 ## Configuring package.json 
+
+### App Name
+`appName` holds the name of your app as it's named in your file system, e.g. `/some/path/example.app` would have the appName `example`
+
+**Example:**
+
+```json
+	...
+	"detox": {
+		"appName": "example"
+	}
+```
+
+### Binary
+`binary` configures where detox searches for your binaries for each platform.
+
+**Example:**
+
+```json
+	...
+	"detox": {
+		"binary": {
+			"ios": "ios/build/Build/Products" // default
+		}
+	}
+```
+
+
 ### Device Configuration
 `configurations` holds all the device configurations, if there is only one configuration in `configurations` `detox build` and `detox test` will default to it, to choose a specific configuration use `--configuration` param<br>
 	
 
 |Configuration Params|Details|
 |---|---|
-|`binaryPath`|relative path to the ipa/app due to be  tested (make sure you build the app in a project relative path)|
+|`binaryPath`| **[optional]** relative path to the ipa/app due to be  tested (make sure you build the app in a project relative path)|
 |`type`|device type, currently only `ios.simulator` is supported|
 |`name`|device name, aligns to the device list avaliable through `fbsimctl list` for example, this is one line of the output of `fbsimctl list`: `A3C93900-6D17-4830-8FBE-E102E4BBCBB9  iPhone 7  Shutdown  iPhone 7  iOS 10.2`, ir order to choose the first `iPhone 7` regardless of OS version, use `iPhone 7`. <br>To be OS specific use `iPhone 7, iOS 10.2`|
 |`build`| **[optional]** build command (either `xcodebuild`, `react-native run-ios`, etc...), will be later available through detox CLI tool.|
+|`release`| **[optional]** use the release version (defaults to `false`)|
 	
 **Example:**
 

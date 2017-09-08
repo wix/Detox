@@ -52,37 +52,44 @@ describe('Device', () => {
 
   });
 
-  function validDevice() {
-    const device = new Device(validScheme.configurations['ios.sim.release'], validScheme.session, new DeviceDriverBase(client));
-    fs.existsSync.mockReturnValue(true);
-    device.deviceDriver.defaultLaunchArgsPrefix.mockReturnValue('-');
-    device.deviceDriver.acquireFreeDevice.mockReturnValue('mockDeviceId');
+  function validDevice(buildExists = true) {
+    fs.existsSync.mockReturnValue(buildExists);
+    const driver = new DeviceDriverBase(client);
+    driver.getBinaryPath.mockReturnValue("/computed/path/to/binary");
+    driver.defaultLaunchArgsPrefix.mockReturnValue('-');
+    driver.acquireFreeDevice.mockReturnValue('mockDeviceId');
+    const device = new Device(validScheme.configurations['ios.sim.release'], validScheme.session, driver, validScheme.appName, validScheme.binary);
 
+    device.deviceDriver.getPlatform.mockReset();
     return device;
   }
 
   function validSimulator() {
-    const device = new Device(validScheme.configurations['ios.sim.release'], validScheme.session, new SimulatorDriver(client));
     fs.existsSync.mockReturnValue(true);
-    device.deviceDriver.acquireFreeDevice.mockReturnValue('mockDeviceId');
+    const driver = new SimulatorDriver(client);
+    driver.getBinaryPath.mockReturnValue("/computed/path/to/binary");
+    driver.acquireFreeDevice.mockReturnValue('mockDeviceId');
+    const device = new Device(validScheme.configurations['ios.sim.release'], validScheme.session, driver, validScheme.appName, validScheme.binary);
 
+    device.deviceDriver.getPlatform.mockReset();
     return device;
   }
 
   function validIosNone() {
-    const device = new Device(validIosNoneScheme.configurations['ios.none'], validScheme.session, new IosDriver(client));
     fs.existsSync.mockReturnValue(true);
-    device.deviceDriver.acquireFreeDevice.mockReturnValue('mockDeviceId');
+    const driver = new IosDriver(client);
+    driver.getBinaryPath.mockReturnValue("/computed/path/to/binary");
+    driver.acquireFreeDevice.mockReturnValue('mockDeviceId');
+    const device = new Device(validIosNoneScheme.configurations['ios.none'], validScheme.session, driver, validIosNoneScheme.appName, validIosNoneScheme.binary);
 
+    device.deviceDriver.getPlatform.mockReset();
     return device;
   }
 
   it(`valid scheme, no binary, should throw`, async () => {
-    device = validDevice();
-    fs.existsSync.mockReturnValue(false);
     try {
-      await device.prepare();
-      fail('should throw')
+      device = validDevice(false);
+      fail('should throw');
     } catch (ex) {
       expect(ex).toBeDefined();
     }
@@ -310,10 +317,9 @@ describe('Device', () => {
 
   it(`uninstallApp() with no params should use the default path given in configuration`, async () => {
     device = validDevice();
-
     await device.uninstallApp();
 
-    expect(device.deviceDriver.uninstallApp).toHaveBeenCalledWith(device._deviceId, device._binaryPath);
+    expect(device.deviceDriver.uninstallApp).toHaveBeenCalledWith(device._deviceId, device._bundleId);
   });
 
   it(`shutdown() should pass to device driver`, async () => {
@@ -528,5 +534,10 @@ describe('Device', () => {
     await device.launchApp(launchParams);
 
     expect(device.deviceDriver.sendUserNotification).toHaveBeenCalledTimes(0);
+  });
+
+  it(`_getAbsolutePath should return a blank string if no relativePath was given`, () => {
+    device = validDevice();
+    expect(device._getAbsolutePath()).toBe('');
   });
 });

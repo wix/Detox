@@ -33,6 +33,26 @@ describe('configuration', () => {
     testFaultySession(schemes.invalidSessionNoSessionId.session);
   });
 
+  describe("externally invoked errors", () => {
+    it(`should throw appName missing error`, () => {
+      try {
+        configuration.throwOnEmptyName();
+        fail("No error thrown");
+      } catch (ex) {
+        expect(ex).toBeDefined();
+      }
+    });
+
+    it(`should throw empty build path error`, () => {
+      try {
+        configuration.throwOnEmptyBinaryPath();
+        fail("No error thrown");
+      } catch (ex) {
+        expect(ex).toBeDefined();
+      }
+    });
+  });
+
   function testFaultySession(config) {
     try {
       configuration.validateSession(config);

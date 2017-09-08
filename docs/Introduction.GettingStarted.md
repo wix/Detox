@@ -94,9 +94,9 @@ The basic configuration for Detox should be in your `package.json` file under th
 	
 ```json
 "detox": {
+  "appName": "example",
   "configurations": {
     "ios.sim.debug": {
-      "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
       "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
       "type": "ios.simulator",
       "name": "iPhone 7"
@@ -104,12 +104,12 @@ The basic configuration for Detox should be in your `package.json` file under th
   } 
 }
 ```
-	
-In the above configuration example, change `example` to your actual project name. Under the key `"binaryPath"`, `example.app` should be `<your_project_name>.app`. Under the key `"build"`, `example.xcodeproj` should be `<your_project_name>.xcodeproj` and `-scheme example` should be `-scheme <your_project_name>`.
+
+In the above configuration example, change `example` to your actual project name. Under the key `"appName"`, `example` should be `<your_project_name>`, exactly as the built `.app` file is called. Under the key `"build"`, `example.xcodeproj` should be `<your_project_name>.xcodeproj` and `-scheme example` should be `-scheme <your_project_name>`.
 
 Also make sure the simulator model specified under the key `"name"` (`iPhone 7` above) is actually available on your machine (it was installed by Xcode). Check this by typing `fbsimctl list` in terminal to display all available simulators.
 
-> TIP: To test a release version, replace 'Debug' with 'Release' in the binaryPath and build properties. For full configuration options see Configuration under the API Reference.
+> TIP: To test a release version, add `"release": true` to your configuration. For full configuration options see Configuration under the API Reference.
 
 <br>
 

@@ -55,6 +55,17 @@ describe('Detox', () => {
     }
   });
 
+  it(`Config with no appName, should throw`, async () => {
+    Detox = require('./Detox');
+    try {
+      detox = new Detox(schemes.invalidNoAppName);
+      await detox.init();
+      fail("Did not throw");
+    } catch (ex) {
+      expect(ex).toBeDefined();
+    }
+  });
+
   it(`Config with emulator, should throw`, async () => {
     Detox = require('./Detox');
     try {

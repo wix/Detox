@@ -66,8 +66,13 @@ class Detox {
       throw new Error(`'${deviceConfig.type}' is not supported`);
     }
 
+    const appName = this.userConfig.appName;
+    if (!appName) {
+      configuration.throwOnEmptyAppName();
+    }
+
     const deviceDriver = new deviceClass(this.client);
-    this.device = new Device(deviceConfig, sessionConfig, deviceDriver);
+    this.device = new Device(deviceConfig, sessionConfig, deviceDriver, appName, this.userConfig.binary);
     await this.device.prepare(params);
     global.device = this.device;
   }

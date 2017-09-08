@@ -26,6 +26,9 @@ function validateSession(session) {
 function throwOnEmptyName() {
   throw new DetoxConfigError(`'name' property is missing, should hold the device name to run on (e.g. "iPhone 7", "iPhone 7, iOS 10.2"`);
 }
+function throwOnEmptyAppName() {
+  throw new DetoxConfigError(`'appName' property is missing, should hold the application name used in the build process (e.g. "facebook", "demoApp")`);
+}
 
 function throwOnEmptyType() {
   throw new DetoxConfigError(`'type' property is missing, should hold the device type to test on (currently only simulator is supported: ios.simulator or ios.none)`);
@@ -44,5 +47,6 @@ module.exports = {
   validateSession,
   throwOnEmptyName,
   throwOnEmptyType,
-  throwOnEmptyBinaryPath
+  throwOnEmptyBinaryPath,
+  throwOnEmptyAppName
 };
