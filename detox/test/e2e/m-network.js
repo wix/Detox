@@ -39,7 +39,7 @@ describe('Network Synchronization', () => {
 
 
   it('setURLBlacklist() should disable synchronization for given endpoint', async () => {
-    await device.setURLBlacklist(['.*127.0.0.1.*']);
+    await device.setURLBlacklist(['.*localhost.*']);
 
     await element(by.id('LongNetworkRequest')).tap();
     await expect(element(by.label('Long Network Request Working!!!'))).toBeNotVisible();
