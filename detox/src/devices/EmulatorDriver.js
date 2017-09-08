@@ -8,6 +8,7 @@ const InvocationManager = invoke.InvocationManager;
 
 const DeviceDriverBase = require('./DeviceDriverBase');
 
+const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
 //ANDROID_SDK_ROOT
 const ANDROID_HOME = process.env.ANDROID_HOME;
 
