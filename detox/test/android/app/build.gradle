@@ -15,6 +15,7 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
+        testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         /*
         testInstrumentationRunnerArguments = [
