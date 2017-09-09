@@ -6,8 +6,8 @@
     "start": "react-native start"
   },
   "dependencies": {
-    "react": "*",
-    "react-native": "^0.44.0"
+    "react": "16.0.0-alpha.6",
+    "react-native": "0.44.0"
   },
   "devDependencies": {
     "mocha": "^3.2.0",
