@@ -10,6 +10,7 @@ const DetoxServer = require('detox-server');
 const URL = require('url').URL;
 const _ = require('lodash');
 const ArtifactsPathsProvider = require('./artifacts/ArtifactsPathsProvider');
+const appContext = require('./utils/appContext');
 
 log.level = argparse.getArgValue('loglevel') || 'info';
 log.addLevel('wss', 999, {fg: 'blue', bg: 'black'}, 'wss');
@@ -65,13 +66,19 @@ class Detox {
     if (!deviceClass) {
       throw new Error(`'${deviceConfig.type}' is not supported`);
     }
+    const deviceDriver = new deviceClass(this.client);
 
-    const appName = this.userConfig.appName;
+    let appName = this.userConfig.appName;
     if (!appName) {
-      configuration.throwOnEmptyAppName();
+      log.info("appName was not found in config, we will set it for you");
+      try {
+        appName = await appContext.getAppName(deviceDriver.getPlatform());
+        log.info(`Got the appName, its "${appName}". If this is wrong, please set the appName config property`);
+      } catch (e) {
+        throw new Error("You neither set the appName, nor could we find it anywhere. Please set it in your configuration.");
+      }
     }
 
-    const deviceDriver = new deviceClass(this.client);
     this.device = new Device(deviceConfig, sessionConfig, deviceDriver, appName, this.userConfig.binary);
     await this.device.prepare(params);
     global.device = this.device;

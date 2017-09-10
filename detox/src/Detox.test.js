@@ -55,8 +55,26 @@ describe('Detox', () => {
     }
   });
 
-  it(`Config with no appName, should throw`, async () => {
+  it(`Config with no appName, should not throw but find the right app name`, async () => {
     Detox = require('./Detox');
+    const Device = require('./devices/Device');
+    const appContext = require('./utils/appContext');
+    appContext.getAppName = jest.fn(() => "fancyApp");
+
+    detox = new Detox(schemes.invalidNoAppName);
+    await detox.init();
+
+    expect(Device).toHaveBeenCalled();
+    const appName = Device.mock.calls[0][3];
+    expect(appName).toBe("fancyApp");
+  });
+
+  it(`Config with no appName should throw if appName could not be found`, async () => {
+    Detox = require('./Detox');
+    const Device = require('./devices/Device');
+    const appContext = require('./utils/appContext');
+    appContext.getAppName = jest.fn(() => { throw new Error("Not found") });
+
     try {
       detox = new Detox(schemes.invalidNoAppName);
       await detox.init();
