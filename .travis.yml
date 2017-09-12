@@ -10,6 +10,7 @@ install:
 - brew install yarn
 - brew tap facebook/fb
 - export CODE_SIGNING_REQUIRED=NO
+- brew update
 - brew install fbsimctl
 - brew tap wix/brew
 - brew install applesimutils --HEAD
