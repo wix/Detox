@@ -36,7 +36,32 @@ We always have the fail-safe of turning off automatic synchronization and waitin
 
 This makes sense only if we're waiting too much. 
 
-> This API isn't exposed yet, TBD
+##### [Controlling the entire synchronization mechanism](https://github.com/wix/detox/blob/master/docs/APIRef.DeviceObjectAPI.md#devicedisablesynchronization)
+The synchronization mechanism can be shut down using
+
+```js
+await device.disableSynchronization();
+```
+
+to turn it on again use
+
+```js
+await device.enableSynchronization();
+```
+
+##### [Controlling network synchronization](https://github.com/wix/detox/blob/master/docs/APIRef.DeviceObjectAPI.md#deviceseturlblacklisturls) 
+You can skip over synchronizing on certain URLs (for long polling tasks, or websocket connections)
+
+```js
+await device.setURLBlacklist(['.*127.0.0.1.*']);
+```
+
+In order to gain sync back on an endpoint, just remove it from the blacklist
+
+```js
+await device.setURLBlacklist([]);
+```
+
 
 #### How do we wait manually?
 
