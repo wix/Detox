@@ -10,8 +10,7 @@ install:
 - brew install yarn
 - brew tap facebook/fb
 - export CODE_SIGNING_REQUIRED=NO
-- brew update
-- brew install fbsimctl
+- brew install fbsimctl --HEAD
 - brew tap wix/brew
 - brew install applesimutils --HEAD
 - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
