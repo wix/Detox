@@ -36,7 +36,32 @@ We always have the fail-safe of turning off automatic synchronization and waitin
 
 This makes sense only if we're waiting too much. 
 
-> This API isn't exposed yet, TBD
+##### [Controlling the entire synchronization mechanism](https://github.com/wix/detox/blob/master/docs/APIRef.DeviceObjectAPI.md#devicedisablesynchronization)
+The synchronization mechanism can be shut down using
+
+```js
+await device.disableSynchronization();
+```
+
+to turn it on again use
+
+```js
+await device.enableSynchronization();
+```
+
+##### [Controlling network synchronization](https://github.com/wix/detox/blob/master/docs/APIRef.DeviceObjectAPI.md#deviceseturlblacklisturls) 
+You can skip over synchronizing on certain URLs (for long polling tasks, or websocket connections)
+
+```js
+await device.setURLBlacklist(['.*127.0.0.1.*']);
+```
+
+In order to gain sync back on an endpoint, just remove it from the blacklist
+
+```js
+await device.setURLBlacklist([]);
+```
+
 
 #### How do we wait manually?
 
@@ -64,7 +89,13 @@ This makes sense only if we're not waiting enough (or if we've disabled automati
 
 ### Identifying which synchronization mechanism causes us to wait too much
 
-> This isn't exposed yet, TBD
+Interactions with the application are synchronized, meaning that they will not execute unless the app is idle. You may encounter situations where the tests just hang. 
+When an action/expectation takes a significant amount of time use this option to print device synchronization status.
+The status will be printed if the action takes more than [value]ms to complete
+
+```
+detox test --debug-synchronization [value in ms]
+```
 
 <br>
 

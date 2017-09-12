@@ -168,6 +168,17 @@ describe('Fbsimctl', () => {
     await validateFbsimctlisCalledOn(fbsimctl, async () => fbsimctl.setLocation(simUdid));
   });
 
+  it(`resetContentAndSettings() - is triggering shutdown, exec and boot`, async() => {
+    fs.existsSync.mockReturnValue(true);
+    exec.mockReturnValue({stdout: "appId: 22 \n"});
+    fbsimctl.shutdown = jest.fn();
+    fbsimctl.boot = jest.fn();
+    await fbsimctl.resetContentAndSettings(simUdid);
+    expect(fbsimctl.shutdown).toHaveBeenCalledTimes(1);
+    expect(exec).toHaveBeenCalledTimes(1);
+    expect(fbsimctl.boot).toHaveBeenCalledTimes(1);
+  });
+
   it(`exec simulator command successfully`, async() => {
     const result = returnSuccessfulWithValue("");
     exec.mockReturnValue(Promise.resolve(result));

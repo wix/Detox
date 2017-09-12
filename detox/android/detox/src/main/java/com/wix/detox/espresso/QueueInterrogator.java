@@ -4,19 +4,18 @@ package com.wix.detox.espresso;
  * Created by simonracz on 31/07/2017.
  */
 
-        import android.os.Handler;
-        import android.os.Looper;
-        import android.os.Message;
-        import android.os.MessageQueue;
-        import android.os.SystemClock;
-        import android.util.Log;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.os.MessageQueue;
+import android.os.SystemClock;
+import android.util.Log;
 
-        import java.lang.reflect.Field;
-
-        import java.lang.reflect.Method;
-        import java.util.concurrent.Callable;
-        import java.util.concurrent.ExecutionException;
-        import java.util.concurrent.FutureTask;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 /**
  * Isolates the nasty details of touching the message queue.

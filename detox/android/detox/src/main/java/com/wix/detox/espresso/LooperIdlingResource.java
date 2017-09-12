@@ -25,10 +25,21 @@ final public class LooperIdlingResource implements IdlingResource {
 
     private ResourceCallback resourceCallback;
 
+    private ResourceCallbackIdleHandler resIdleHandler = null;
+
     public LooperIdlingResource(Looper monitoredLooper, boolean considerWaitIdle) {
         this.monitoredLooper = monitoredLooper;
         this.monitoredHandler = new Handler(monitoredLooper);
         this.considerWaitIdle = considerWaitIdle;
+    }
+
+    /**
+     * Call this to properly stop the LooperIR.
+     */
+    public void stop() {
+        if (resIdleHandler != null) {
+            resIdleHandler.stop = true;
+        }
     }
 
     // Only assigned and read from the main loop.
@@ -51,8 +62,11 @@ final public class LooperIdlingResource implements IdlingResource {
                 resourceCallback.onTransitionToIdle();
             }
         }
-        Log.i(LOG_TAG, getName() + " looper is idle : " + String.valueOf(idle || idleWait));
-        return idle || idleWait;
+        idle = idle || idleWait;
+        if (!idle) {
+            Log.i(LOG_TAG, getName() + " looper is busy");
+        }
+        return idle;
     }
 
     @Override
@@ -62,16 +76,17 @@ final public class LooperIdlingResource implements IdlingResource {
         queueInterrogator = new QueueInterrogator(monitoredLooper);
 
         // must load idle handlers from monitored looper thread.
-        IdleHandler idleHandler = new ResourceCallbackIdleHandler(resourceCallback, queueInterrogator,
+        resIdleHandler = new ResourceCallbackIdleHandler(resourceCallback, queueInterrogator,
                 monitoredHandler);
 
-        monitoredHandler.postAtFrontOfQueue(new Initializer(idleHandler));
+        monitoredHandler.postAtFrontOfQueue(new Initializer(resIdleHandler));
     }
 
     private static class ResourceCallbackIdleHandler implements IdleHandler {
         private final ResourceCallback resourceCallback;
         private final QueueInterrogator myInterrogator;
         private final Handler myHandler;
+        public volatile boolean stop = false;
 
         ResourceCallbackIdleHandler(ResourceCallback resourceCallback,
                                     QueueInterrogator myInterrogator, Handler myHandler) {
@@ -82,6 +97,9 @@ final public class LooperIdlingResource implements IdlingResource {
 
         @Override
         public boolean queueIdle() {
+            if (stop) {
+                return false;
+            }
             // invoked on the monitored looper thread.
             QueueState queueState = myInterrogator.determineQueueState();
             if (queueState == QueueState.EMPTY || queueState == QueueState.TASK_DUE_LONG) {
@@ -93,7 +111,7 @@ final public class LooperIdlingResource implements IdlingResource {
                 myHandler.sendEmptyMessage(-1);
             }
 
-            return true;
+            return !stop;
         }
     }
 

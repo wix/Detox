@@ -11,6 +11,9 @@ import com.wix.detox.espresso.UiAutomatorHelper;
 import com.wix.detox.systeminfo.Environment;
 import com.wix.invoke.MethodInvocation;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -75,6 +78,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
             public void run() {
                 if (stopping) return;
                 stopping = true;
+                ReactNativeSupport.currentReactContext = null;
                 ReactNativeSupport.removeEspressoIdlingResources(reactNativeHostHolder);
                 wsClient.close();
                 Looper.myLooper().quit();
@@ -96,7 +100,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                             String retStr = "(null)";
                             if (retVal != null) {
                                 // TODO
-                                // handle supported types
+                                // handle supported return types
                             }
                             HashMap m = new HashMap();
                             m.put("result", retStr);
@@ -118,8 +122,18 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                         wsClient.sendAction("ready", Collections.emptyMap(), messageId);
                         break;
                     case "cleanup":
+                        ReactNativeSupport.currentReactContext = null;
+                        try {
+                            boolean stopRunner = new JSONObject(params).getBoolean("stopRunner");
+                            if (stopRunner) {
+                                stop();
+                            } else {
+                                ReactNativeSupport.removeEspressoIdlingResources(reactNativeHostHolder);
+                            }
+                        } catch (JSONException e) {
+                            Log.e(LOG_TAG, "cleanup cmd doesn't have stopRunner param");
+                        }
                         wsClient.sendAction("cleanupDone", Collections.emptyMap(), messageId);
-                        stop();
                         break;
                     case "reactNativeReload":
                         UiAutomatorHelper.espressoSync();

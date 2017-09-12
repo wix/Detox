@@ -15,11 +15,14 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
+        testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        /*
         testInstrumentationRunnerArguments = [
                 'detoxServer': 'ws://localhost:8099',
                 'detoxSessionId': 'test'
         ]
+        */
     }
 
     //unremark to generate app-release-androidTest.apk for release tests
@@ -55,7 +58,7 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
 
-    androidTestCompile(project(":detox"), {
+    androidTestCompile(project(path: ":detox", configuration: "oldOkhttpDebug"), {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 }

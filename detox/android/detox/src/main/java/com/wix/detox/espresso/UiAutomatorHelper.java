@@ -7,6 +7,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.uiautomator.InstrumentationUiAutomatorBridge;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Choreographer;
 import android.view.View;
@@ -28,6 +29,11 @@ public class UiAutomatorHelper {
     private static final String CLASS_INTERACTION_CONTROLLER =
             "android.support.test.uiautomator.InteractionController";
 
+    private static final String FIELD_UI_CONTROLLER = "uiController";
+
+    private static final String METHOD_LOOP_UNTIL_IDLE = "loopMainThreadUntilIdle";
+    private static final String METHOD_LOOP_AT_LEAST = "loopMainThreadForAtLeast";
+
     /**
      * This triggers a full Espresso sync. It's intended use is to sync UIAutomator calls.
      */
@@ -40,7 +46,29 @@ public class UiAutomatorHelper {
             @Override
             public void run() {
                 try {
-                    Reflect.on(interaction).field("uiController").call("loopMainThreadUntilIdle");
+                    Reflect.on(interaction).field(FIELD_UI_CONTROLLER).call(METHOD_LOOP_UNTIL_IDLE);
+                } catch (ReflectException e) {
+                    Log.e(LOG_TAG, "Failed to sync Espresso manually.", e.getCause());
+                }
+            }
+        });
+    }
+
+    /**
+     * This triggers a full Espresso sync. Waits at least millis amount of time.
+     *
+     * @param millis waits at least this amount of time
+     */
+    public static void espressoSync(final long millis) {
+        // I want to invoke Espresso's sync mechanism manually.
+        // This turned out to be amazingly difficult. This below is the
+        // nicest solution I could come up with.
+        final ViewInteraction interaction = Espresso.onView(new IsAnything<View>());
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Reflect.on(interaction).field(FIELD_UI_CONTROLLER).call(METHOD_LOOP_AT_LEAST, millis);
                 } catch (ReflectException e) {
                     Log.e(LOG_TAG, "Failed to sync Espresso manually.", e.getCause());
                 }
@@ -73,28 +101,34 @@ public class UiAutomatorHelper {
         return interactionController;
     }
 
-    public static float getDensity(){
+    public static float getDensity() {
         Context context = InstrumentationRegistry.getTargetContext().getApplicationContext();
         return context.getResources().getDisplayMetrics().density;
     }
 
-    public static int convertDiptoPix(float dip){
+    public static int convertDiptoPix(double dip) {
         return (int) (dip * getDensity() + 0.5f);
     }
 
-    public static int convertPixtoDip(int pixel){
-        return (int)((pixel - 0.5f) / getDensity());
+    public static int convertPixtoDip(int pixel) {
+        return (int) ((pixel - 0.5f) / getDensity());
+    }
+
+    public static float[] getScreenSizeInPX() {
+        DisplayMetrics metrics = InstrumentationRegistry.getTargetContext()
+                .getApplicationContext().getResources().getDisplayMetrics();
+        return new float[]{metrics.widthPixels, metrics.heightPixels};
     }
 
     /**
      * Waits for some Choreographer calls.
-     *
+     * <p>
      * React Native uses Choreographer callbacks. Those are invisible to Espresso.
      * One of them is UIModule, UIViewOperationQueue.
-     *
+     * <p>
      * After everything idled out, we should still wait for UIModule to initiate it's changes
      * on the UI by waiting out its Choreographer frame.
-     *
+     * <p>
      * TODO:
      * Find a way to wrap up the UIModule in an Espresso IdlingResource, similar to JS Timers.
      */

@@ -52,6 +52,7 @@ class Device {
     }
 
     if (params.delete) {
+      await this.deviceDriver.terminate(this._deviceId, this._bundleId);
       await this.deviceDriver.uninstallApp(this._deviceId, this._bundleId);
       await this.deviceDriver.installApp(this._deviceId, this._binaryPath);
     } else if (params.newInstance) {
@@ -161,6 +162,10 @@ class Device {
 
   async disableSynchronization() {
     await this.deviceDriver.disableSynchronization();
+  }
+
+  async resetContentAndSettings() {
+    await this.deviceDriver.resetContentAndSettings(this._deviceId);
   }
 
   getPlatform() {

@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  Image,
-  TouchableOpacity
+  TouchableOpacity,
+  Platform
 } from 'react-native';
+
+const HOST = Platform.OS === 'ios' ? 'localhost': '10.0.2.2';
 
 export default class NetworkScreen extends Component {
 
@@ -43,7 +45,7 @@ export default class NetworkScreen extends Component {
 
   async onNetworkButtonPress(greeting, delayMs) {
     try {
-      let response = await fetch(`http://127.0.0.1:9001/delay/${delayMs}`);
+      let response = await fetch(`http://${HOST}:9001/delay/${delayMs}`);
       let responseJson = await response.json();
       console.log(responseJson.message);
 

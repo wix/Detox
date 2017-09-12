@@ -1,10 +1,14 @@
 const exec = require('./../utils/exec').execWithRetriesAndLogs;
 const { spawn } = require('child_process');
 const _ = require('lodash');
-const InvocationManager = require('../invoke').InvocationManager;
+const log = require('npmlog');
+
+const invoke = require('../invoke');
+const InvocationManager = invoke.InvocationManager;
 
 const DeviceDriverBase = require('./DeviceDriverBase');
 
+const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
 //ANDROID_SDK_ROOT
 const ANDROID_HOME = process.env.ANDROID_HOME;
 
@@ -12,10 +16,10 @@ class EmulatorDriver extends DeviceDriverBase {
 
   constructor(client) {
     super(client);
-    let instrumentationProcess;
     const expect = require('../android/expect');
     expect.exportGlobals();
-    expect.setInvocationManager(new InvocationManager(client));
+    this.invocationManager = new InvocationManager(client);
+    expect.setInvocationManager(this.invocationManager);
   }
 
   //async boot(deviceId) {
@@ -27,7 +31,11 @@ class EmulatorDriver extends DeviceDriverBase {
   }
 
   async acquireFreeDevice(name) {
-    return (await exec(`adb devices | awk 'NR>1 {print $1}'`, undefined, undefined, 1)).stdout.trim();
+    const deviceId = (await exec(`adb devices | awk 'NR>1 {print $1}'`, undefined, undefined, 1)).stdout.trim();
+    if (!deviceId) {
+      throw new Error(`ADB could not find an attached device`);
+    }
+    return deviceId;
   }
 
   async getBundleIdFromBinary(appPath) {
@@ -61,50 +69,54 @@ class EmulatorDriver extends DeviceDriverBase {
       args.push(`${key} ${value}`);
     });
 
-    this.instrumentationProcess = spawn(`adb`, [`-s`, `${deviceId}`, `shell` ,`am`, `instrument`, `-w` ,`-r`, `${args.join(' ')}`,`-e`, `debug`, `false` ,`${bundleId}.test/android.support.test.runner.AndroidJUnitRunner`]);
+    if (this.instrumentationProcess) {
+      let call = invoke.call(invoke.Android.Class("com.wix.detox.Detox"), 'launchMainActivity');
+      await this.invocationManager.execute(call);
+      return this.instrumentationProcess.pid;
+    }
 
-    console.log('[spawn] childProcess.pid: ', this.instrumentationProcess.pid);
+    this.instrumentationProcess = spawn(`adb`, [`-s`, `${deviceId}`, `shell` ,`am`, `instrument`, `-w` ,`-r`, `${args.join(' ')}`,`-e`, `debug`, `false` ,`${bundleId}.test/android.support.test.runner.AndroidJUnitRunner`]);
+    log.verbose(this.instrumentationProcess.spawnargs.join(" "));
+    log.verbose('Instrumentation spawned, childProcess.pid: ', this.instrumentationProcess.pid);
     this.instrumentationProcess.stdout.on('data', function (data) {
-      console.log('[spawn] stdout: ', data.toString());
+      log.verbose('Instrumentation stdout: ', data.toString());
     });
     this.instrumentationProcess.stderr.on('data', function (data) {
-      console.log('[spawn] stderr: ', data.toString());
+      log.verbose('Instrumentation stderr: ', data.toString());
     });
 
     this.instrumentationProcess.on('close', (code, signal) => {
-      console.log(
-        `instrumentationProcess terminated due to receipt of signal ${signal}`);
+      log.verbose(`instrumentationProcess terminated due to receipt of signal ${signal}`);
     });
-    //this.instrumentationProcess.then(function () {
-    //  console.log('[spawn] done!');
-    //}).catch(function (err) {
-    //  console.error('[spawn] ERROR: ', err);
-    //  throw err;
-    //});
+
+    return this.instrumentationProcess.pid;
   }
 
+  async openURL(deviceId, params) {
+    let call = invoke.call(invoke.Android.Class("com.wix.detox.Detox"), 'startActivityFromUrl', invoke.Android.String(params.url));
+    await this.invocationManager.execute(call);
+  }
+
+  async sendToHome(deviceId, params) {
+    let uiDevice = invoke.call(invoke.Android.Class("com.wix.detox.uiautomator.UiAutomator"), 'uiDevice');
+    let call = invoke.call(uiDevice, 'pressHome');
+    await this.invocationManager.execute(call);
+  }
 
   async terminate(deviceId, bundleId) {
     this.terminateInstrumentation();
     await this.adbCmd(deviceId, `shell am force-stop ${bundleId}`);
-    //await exec(`adb -s ${deviceId} shell am force-stop ${bundleId}`);
-  }
-
-  async cleanup(deviceId, bundleId) {
-    this.terminateInstrumentation();
   }
 
   terminateInstrumentation() {
     if (this.instrumentationProcess) {
       this.instrumentationProcess.kill('SIGHUP');
-      /*
-      try {
-        console.log('killing instrumentation process succeded: ', this.instrumentationProcess.kill('SIGTERM'));
-      } catch (e) {
-        console.log('killing instrumentation process failed', e);
-      }
-      */
+      this.instrumentationProcess = null;
     }
+  }
+
+  async cleanup(deviceId, bundleId) {
+    this.terminateInstrumentation();
   }
 
   defaultLaunchArgsPrefix() {
@@ -115,18 +127,30 @@ class EmulatorDriver extends DeviceDriverBase {
     return 'android';
   }
 
+  async enableSynchronization() {
+    let call = invoke.call(invoke.Android.Class(EspressoDetox), 'setSynchronization', invoke.Android.Boolean(true));
+    await this.invocationManager.execute(call);
+  }
+
+  async disableSynchronization() {
+    let call = invoke.call(invoke.Android.Class(EspressoDetox), 'setSynchronization', invoke.Android.Boolean(false));
+    await this.invocationManager.execute(call);
+  }
+
   async setOrientation(deviceId, orientation) {
     const orientationMapping = {
       landscape: 1, // top at left side landscape
       portrait: 0  // non-reversed portrait.
     };
-    await this.adbCmd(deviceId,`shell settings put system accelerometer_rotation 0`);
-    await this.adbCmd(deviceId,`shell settings put system user_rotation ${orientationMapping[orientation]}`);
+    const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
+    const invoke = require('../invoke');
+    let call = invoke.call(invoke.Android.Class(EspressoDetox), 'changeOrientation', invoke.Android.Integer(orientationMapping[orientation]));
+    await this.invocationManager.execute(call);
   }
 
   async adbCmd(deviceId, params) {
     const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
-    await exec(`adb ${serial} wait-for-device`, undefined, undefined, 1);
+    //await exec(`adb ${serial} wait-for-device`, undefined, undefined, 1);
     const cmd = `adb ${serial} ${params}`;
     await exec(cmd, undefined, undefined, 1);
   }

@@ -77,7 +77,9 @@ class Detox {
       await this.client.cleanup();
     }
 
-    await this.device._cleanup();
+    if (this.device) {
+      await this.device._cleanup();
+    }
 
     if (argparse.getArgValue('cleanup') && this.device) {
       await this.device.shutdown();
@@ -86,7 +88,7 @@ class Detox {
 
   async beforeEach(...testNameComponents) {
     this._currentTestNumber++;
-    if(this._artifactsPathsProvider !== undefined) {
+    if (this._artifactsPathsProvider !== undefined) {
       const testArtifactsPath = this._artifactsPathsProvider.createPathForTest(this._currentTestNumber, ...testNameComponents)
       this.device.setArtifactsDestination(testArtifactsPath);
     }

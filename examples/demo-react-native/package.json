@@ -6,8 +6,8 @@
     "start": "react-native start"
   },
   "dependencies": {
-    "react": "*",
-    "react-native": "^0.40.0"
+    "react": "16.0.0-alpha.6",
+    "react-native": "0.44.0"
   },
   "devDependencies": {
     "mocha": "^3.2.0",
@@ -27,7 +27,20 @@
         "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
         "type": "ios.simulator",
         "name": "iPhone 7 Plus"
+      },
+      "android.emu.debug": {
+        "binaryPath": "android/app/build/outputs/apk/app-debug.apk",
+        "build": "pushd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && popd",
+        "type": "android.emulator",
+        "name": "Nexus_5X_API_24_-_GPlay"
+      },
+      "android.emu.release": {
+        "binaryPath": "android/app/build/outputs/apk/app-release.apk",
+        "build": "pushd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && popd",
+        "type": "android.emulator",
+        "name": "Nexus_5X_API_24_-_GPlay"
       }
+  
     }
   }
 }

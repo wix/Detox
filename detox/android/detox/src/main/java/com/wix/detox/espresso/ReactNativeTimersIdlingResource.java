@@ -39,13 +39,12 @@ public class ReactNativeTimersIdlingResource implements IdlingResource, Choreogr
     private final static String FIELD_TARGET_TIME = "mTargetTime";
     private final static String LOCK_TIMER = "mTimerGuard";
 
-    private static final long LOOK_AHEAD_MS = 15; // like Espresso
+    private static final long LOOK_AHEAD_MS = 1500;
 
     private ResourceCallback callback = null;
     private Object reactContext = null;
 
     public ReactNativeTimersIdlingResource(@NonNull Object reactContext) {
-        super();
         this.reactContext = reactContext;
     }
 
@@ -109,13 +108,13 @@ public class ReactNativeTimersIdlingResource implements IdlingResource, Choreogr
                     if (callback != null) {
                         callback.onTransitionToIdle();
                     }
-                    Log.i(LOG_TAG, "JS Timer is idle: true");
+                    // Log.i(LOG_TAG, "JS Timer is idle: true");
                     return true;
                 }
             }
 
             Choreographer.getInstance().postFrameCallback(this);
-            Log.i(LOG_TAG, "JS Timer is idle: false");
+            Log.i(LOG_TAG, "JS Timer is busy");
             return false;
         } catch (ReflectException e) {
             Log.e(LOG_TAG, "Can't set up RN timer listener", e.getCause());

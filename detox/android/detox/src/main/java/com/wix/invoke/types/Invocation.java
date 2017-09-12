@@ -49,7 +49,7 @@ public class Invocation {
     public void setArgs(Object[] args) {
         for (int i = 0; i < args.length; i++) {
             Object argument = args[i];
-            if (argument instanceof HashMap) {
+            if (argument instanceof HashMap && !((HashMap) argument).isEmpty()) {
                 String type = (String) ((HashMap) argument).get("type");
                 Object value = ((HashMap) argument).get("value");
                 if (type.equals("Integer")) {
@@ -59,7 +59,7 @@ public class Invocation {
                 } else if (type.equals("Float")) {
                     argument = Float.valueOf(value.toString());
                 } else if (type.equals("Double")) {
-                    argument = (double) value;
+                    argument = Double.valueOf(value.toString());
                 } else if (type.equals("String")) {
                     argument = (String) value;
                 }else if (type.equals("Boolean")) {

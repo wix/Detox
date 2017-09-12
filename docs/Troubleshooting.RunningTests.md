@@ -24,15 +24,7 @@ detox test --loglevel verbose
 
 ### Enable deugging of synchronization issues
 
-Interactions with the application are synchronized, meaning that they will not execute unless the app is idle. You may encounter situations where the tests just hang. 
-When an action/expectation takes a significant amount of time use this option to print device synchronization status.
-The status will be printed if the action takes more than [value]ms to complete
-
-```
-detox test --debug-synchronization [value in ms]
-```
-
-<br>
+See [here](https://github.com/wix/detox/blob/master/docs/Troubleshooting.Synchronization.md#identifying-which-synchronization-mechanism-causes-us-to-wait-too-much).
 
 ### Syntax Error: Unexpected Token
 

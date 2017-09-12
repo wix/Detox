@@ -105,6 +105,7 @@ public class DetoxMatcher {
     public static Matcher<View> matcherForAtIndex(final int index, final Matcher<View> innerMatcher) {
         return new BaseMatcher<View>() {
             int count = 0;
+
             @Override
             public boolean matches(Object item) {
                 if (!innerMatcher.matches(item)) return false;

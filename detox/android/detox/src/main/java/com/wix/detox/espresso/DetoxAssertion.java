@@ -1,12 +1,17 @@
 package com.wix.detox.espresso;
 
+import android.support.test.espresso.Espresso;
+import android.support.test.espresso.EspressoException;
+import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.ViewInteraction;
 import android.view.View;
 
 import junit.framework.AssertionFailedError;
 
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 
+import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -39,5 +44,49 @@ public class DetoxAssertion {
 
     public static ViewInteraction assertNotExists(ViewInteraction i) {
         return i.check(doesNotExist());
+    }
+
+    public static void waitForAssertMatcher(final ViewInteraction i, final Matcher<View> m, double timeoutSeconds) {
+        long originTime = System.nanoTime();
+        long currentTime;
+
+        while (true) {
+            currentTime = System.nanoTime();
+            long elapsed = currentTime - originTime;
+            double seconds = (double)elapsed / 1000000000.0;
+            if (seconds >= timeoutSeconds) {
+                return;
+            }
+            try {
+                i.check(matches(m));
+                break;
+            } catch (Exception e) {
+                if (e instanceof EspressoException) {
+                    UiAutomatorHelper.espressoSync();
+                } else {
+                    throw e;
+                }
+            }
+        }
+    }
+
+    public static void waitForAssertMatcherWithSearchAction(
+            final ViewInteraction i,
+            final Matcher<View> m,
+            final ViewAction searchAction,
+            final Matcher<View> searchMatcher) {
+
+        while (true) {
+            try {
+                i.check(matches(m));
+                break;
+            } catch (Exception e) {
+                if (e instanceof EspressoException) {
+                    onView(searchMatcher).perform(searchAction);
+                } else {
+                    throw e;
+                }
+            }
+        }
     }
 }

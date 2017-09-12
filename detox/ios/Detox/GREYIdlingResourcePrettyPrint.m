@@ -7,7 +7,50 @@
 //
 
 #import "GREYIdlingResourcePrettyPrint.h"
-@import Darwin;
+@import ObjectiveC;
+
+static NSMapTable<NSString*, id>* __tarckedObjectsMapping;
+
+@interface GREYAppStateTracker (PrettyPrint) @end
+
+@implementation GREYAppStateTracker (PrettyPrint)
+
+- (NSString *)_pp__trackState:(GREYAppState)state forElement:(id)element;
+{
+	NSString* rv = [self _pp__trackState:state forElement:element];
+	
+	[__tarckedObjectsMapping setObject:element forKey:rv];
+	
+	return rv;
+}
+
+- (void)_pp__untrackState:(GREYAppState)state forElementWithID:(NSString *)elementID;
+{
+	[self _pp__untrackState:state forElementWithID:elementID];
+	
+	[__tarckedObjectsMapping removeObjectForKey:elementID];
+}
+
+
++ (void)load
+{
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		__tarckedObjectsMapping = [NSMapTable mapTableWithKeyOptions:NSMapTableStrongMemory valueOptions:NSMapTableWeakMemory];
+		
+		Method m1 = class_getInstanceMethod(self, @selector(trackState:forElement:));
+		Method m2 = class_getInstanceMethod(self, @selector(_pp__trackState:forElement:));
+		
+		method_exchangeImplementations(m1, m2);
+		
+		m1 = class_getInstanceMethod(self, @selector(untrackState:forElementWithID:));
+		m2 = class_getInstanceMethod(self, @selector(_pp__untrackState:forElementWithID:));
+		
+		method_exchangeImplementations(m1, m2);
+	});
+}
+
+@end
 
 NSString* _prettyPrintAppState(GREYAppState state)
 {
@@ -68,23 +111,6 @@ NSString* _prettyPrintAppState(GREYAppState state)
 	return [eventStateString componentsJoinedByString:@"\n"];
 }
 
-static inline int __copySafely(const void* restrict const src, void* restrict const dst, const int byteCount)
-{
-	vm_size_t bytesCopied = 0;
-	kern_return_t result = vm_read_overwrite(mach_task_self(),
-											 (vm_address_t)src,
-											 (vm_size_t)byteCount,
-											 (vm_address_t)dst,
-											 &bytesCopied);
-	if(result != KERN_SUCCESS)
-	{
-		return 0;
-	}
-	return (int)bytesCopied;
-}
-
-
-
 NSDictionary* _prettyPrintAppStateTracker(GREYAppStateTracker* tracker)
 {
 	NSMutableDictionary* rv = [NSMutableDictionary new];
@@ -100,36 +126,18 @@ NSDictionary* _prettyPrintAppStateTracker(GREYAppStateTracker* tracker)
 	NSMutableArray* URLs = [NSMutableArray new];
 	
 	[allElements enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-		__unused NSString* aa = tracker.description;
-		@try {
-			[elems addObject:[obj debugDescription]];
-		}
-		@catch(NSException* exception) {} //NOOP
+		id actualElement = [__tarckedObjectsMapping objectForKey:obj];
 		
-		@try {
-			NSArray<NSString*>* strs = [obj componentsSeparatedByString:@":"];
-			Class cls = NSClassFromString(strs.firstObject);
-			
-			if([cls isSubclassOfClass:[NSURLSessionTask class]])
-			{
-				NSScanner* hexScanner = [NSScanner scannerWithString:strs.lastObject];
-				
-				unsigned long long val;
-				[hexScanner scanHexLongLong:&val];
-				void* ptr = (void*)val;
-				void* safePtr;
-				if(__copySafely(ptr, safePtr, sizeof(id)) == 0)
-				{
-					[URLs addObject:@"<Unreadable>"];
-					return;
-				}
-				
-				NSURLSessionTask* task = (__bridge id)ptr;
-				[URLs addObject:task.originalRequest.URL.absoluteString];
-			}
-			
-		} @catch (NSException *exception) {
-			
+		if(actualElement == nil)
+		{
+			return;
+		}
+		
+		[elems addObject:[actualElement description]];
+		
+		if([actualElement isKindOfClass:[NSURLSessionTask class]])
+		{
+			[URLs addObject:[(NSURLSessionTask*)actualElement originalRequest].URL.absoluteString];
 		}
 	}];
 	
@@ -144,7 +152,7 @@ NSDictionary* _prettyPrintAppStateTracker(GREYAppStateTracker* tracker)
 		rv[@"prettyPrint"]  = [NSString stringWithFormat:@"%@: %@", stateString, URLs];
 	}
 	
-
+	
 	return rv;
 }
 
@@ -213,7 +221,7 @@ NSDictionary* _prettyPrintJSTimerObservationIdlingResource(WXJSTimerObservationI
 {
 	NSMutableDictionary* rv = [NSMutableDictionary new];
 	rv[@"javascriptTimerIDs"] = [[jsTimer valueForKeyPath:@"observations.objectEnumerator.allObjects.@distinctUnionOfArrays.observedTimers"] sortedArrayUsingSelector:@selector(compare:)];
-	rv[@"prettyPrint"] = [NSString stringWithFormat:@"Javascript Timers Ids: %@", [rv[@"javascriptTimerIDs"] componentsJoinedByString:@", "]];	
+	rv[@"prettyPrint"] = [NSString stringWithFormat:@"Javascript Timers Ids: %@", [rv[@"javascriptTimerIDs"] componentsJoinedByString:@", "]];
 	return rv;
 }
 

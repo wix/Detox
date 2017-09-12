@@ -1,9 +1,19 @@
 package com.wix.detox;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.uiautomator.UiDevice;
+import android.support.test.uiautomator.UiObject;
+import android.support.test.uiautomator.UiObjectNotFoundException;
+import android.support.test.uiautomator.UiSelector;
 
 /**
  * <p>Static class.</p>
@@ -59,9 +69,9 @@ import android.support.test.InstrumentationRegistry;
  * <p>If not set, then Detox tests are no ops. So it's safe to mix it with other tests.</p>
  */
 public final class Detox {
-    private Detox() {
-        // static class
-    }
+    static ActivityTestRule sActivityTestRule;
+
+    private Detox() {}
 
     /**
      * <p>
@@ -70,12 +80,13 @@ public final class Detox {
      *
      * <p>
      * In case you have a non-standard React Native application, consider using
-     * {@link Detox#runTests(Object)}.
+     * {@link Detox#runTests(ActivityTestRule, Object)}}.
      * </p>
+     * @param activityTestRule the activityTestRule
      */
-    public static void runTests() {
+    public static void runTests(ActivityTestRule activityTestRule) {
         Object appContext = InstrumentationRegistry.getTargetContext().getApplicationContext();
-        runTests(appContext);
+        runTests(activityTestRule, appContext);
     }
 
     /**
@@ -84,7 +95,7 @@ public final class Detox {
      * doesn't implement ReactApplication.
      * </p>
      *
-     * Call {@link Detox#runTests()} in every other case.
+     * Call {@link Detox#runTests(ActivityTestRule)} )} in every other case.
      *
      * <p>
      * The only requirement is that the passed in object must have
@@ -92,9 +103,21 @@ public final class Detox {
      * <blockquote>{@code ReactNativeHost getReactNativeHost();}</blockquote>
      * </p>
      *
+     * @param activityTestRule the activityTestRule
      * @param reactActivityDelegate an object that has a {@code getReactNativeHost()} method
      */
-    public static void runTests(@NonNull final Object reactActivityDelegate) {
+    public static void runTests(ActivityTestRule activityTestRule, @NonNull final Object reactActivityDelegate) {
+        sActivityTestRule = activityTestRule;
+        Intent intent = null;
+        Bundle arguments = InstrumentationRegistry.getArguments();
+        String detoxURLOverride = arguments.getString("detoxURLOverride");
+        if (detoxURLOverride != null) {
+            intent = intentWithUrl(detoxURLOverride);
+        }
+
+        activityTestRule.launchActivity(intent);
+
+
         // Kicks off another thread and attaches a Looper to that.
         // The goal is to keep the test thread intact,
         // as Loopers can't run on a thread twice.
@@ -120,5 +143,40 @@ public final class Detox {
             Thread.currentThread().interrupt();
             throw new RuntimeException("Got interrupted", e);
         }
+    }
+
+    public static void launchActivity(Intent intent) {
+        sActivityTestRule.launchActivity(intent);
+    }
+
+    public static void startActivityFromUrl(String url) {
+        launchActivity(intentWithUrl(url));
+    }
+
+    public static Intent intentWithUrl(String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        return intent;
+    }
+
+
+    // TODO: Can't get to launch the app back to previous instance using only intents from inside instrumentation (not sure why).
+    // this is a (hopefully) temp solution. Should use intents instead.
+    public static void launchMainActivity() throws RemoteException, UiObjectNotFoundException {
+        Context targetContext = InstrumentationRegistry.getTargetContext();
+
+//        Intent intent = targetContext.getPackageManager().getLaunchIntentForPackage(targetContext.getPackageName());
+//        intent.setPackage(null);
+//        intent.removeCategory(Intent.CATEGORY_LAUNCHER);;
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+//        Log.d("Detox", intent.toString());
+//        launchActivity(intent);
+
+        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        device.pressRecentApps();
+        UiSelector selector = new UiSelector();
+        String appName = targetContext.getApplicationInfo().loadLabel(targetContext.getPackageManager()).toString();
+        UiObject recentApp = device.findObject(selector.descriptionContains(appName));
+        recentApp.click();
     }
 }

@@ -77,23 +77,27 @@ public class WebSocketClient implements WebSocketListener {
         // empty
     }
 
+    private volatile boolean closing = false;
+
     @Override
     public void onClose(int code, String reason) {
         Log.i(LOG_TAG, "At onClose");
-        try {
-            websocket.close(NORMAL_CLOSURE_STATUS, null);
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "WS close", e);
-        }
         Log.d(LOG_TAG, "Detox Closed: " + code + " " + reason);
+        closing = true;
         actionHandler.onClosed();
     }
 
     public void close() {
+        if (closing) {
+            return;
+        }
+        closing = true;
         try {
             websocket.close(NORMAL_CLOSURE_STATUS, null);
         } catch (IOException e) {
-            Log.e(LOG_TAG, "WS close", e);
+            Log.i(LOG_TAG, "WS close", e);
+        } catch (IllegalStateException e) {
+            Log.i(LOG_TAG, "WS close", e);
         }
     }
 
@@ -106,9 +110,6 @@ public class WebSocketClient implements WebSocketListener {
     private ActionHandler actionHandler;
 
     private static final int NORMAL_CLOSURE_STATUS = 1000;
-
-    // TODO
-    // Need an API to stop the websocket from DetoxManager
 
     public WebSocketClient(ActionHandler actionHandler) {
         this.actionHandler = actionHandler;
@@ -165,15 +166,14 @@ public class WebSocketClient implements WebSocketListener {
                 return;
             }
 
-            Object params = (JSONObject) object.get("params");
+            Object params = object.get("params");
             if (params != null && !(params instanceof JSONObject)) {
                 Log.d(LOG_TAG, "Detox Error: receiveAction invalid params");
             }
             long messageId = object.getLong("messageId");
 
             Log.d(LOG_TAG, "Detox Action Received: " + type);
-            // TODO
-            // This is just a dummy call now. Finish parsing params.
+
             if (actionHandler != null) actionHandler.onAction(type, params.toString(), messageId);
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Detox Error: receiveAction decode - " + e.toString());

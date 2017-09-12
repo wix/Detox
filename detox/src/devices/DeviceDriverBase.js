@@ -91,6 +91,10 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
+  async resetContentAndSettings() {
+    return await Promise.resolve('');
+  }
+
   defaultLaunchArgsPrefix() {
     return '';
   }

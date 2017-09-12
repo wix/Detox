@@ -173,6 +173,14 @@ class Fbsimctl {
     await this._execFbsimctlCommand(options);
   }
 
+  async resetContentAndSettings(udid) {
+    await this.shutdown(udid);
+    const result = await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl erase ${udid}`);
+    const resultCode = parseInt(result.stdout.trim().split(':')[1]);
+    await this.boot(udid);
+    return resultCode;
+  }
+
   async _execFbsimctlCommand(options, statusLogs, retries, interval) {
     const bin = `fbsimctl --json`;
     return await exec.execWithRetriesAndLogs(bin, options, statusLogs, retries, interval);

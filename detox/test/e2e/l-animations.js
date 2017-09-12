@@ -13,7 +13,9 @@ describe('Animations', () => {
     if(options.loops !== undefined) {
       let loopSwitch = element(by.id('UniqueId_AnimationsScreen_enableLoop'));
       await loopSwitch.tap();
-      await expect(loopSwitch).toHaveValue('1');
+      if (device.getPlatform() === 'ios') {
+        await expect(loopSwitch).toHaveValue('1');
+      }
       await element(by.id('UniqueId_AnimationsScreen_numberOfIterations')).replaceText(String(options.loops));
     }
 
@@ -49,7 +51,7 @@ describe('Animations', () => {
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toNotExist();
     });
     
-    it(`should wait during delays shorter than 1.5s (driver: ${driver})`, async () => {
+    it(`:ios: should wait during delays shorter than 1.5s (driver: ${driver})`, async () => {
       await _startTest(driver, {delay: 500});
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toExist();
     });

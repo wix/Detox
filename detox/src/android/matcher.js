@@ -80,14 +80,13 @@ class VisibleMatcher extends Matcher {
     this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForSufficientlyVisible');
   }
 }
-/*
+
 class NotVisibleMatcher extends Matcher {
   constructor() {
     super();
     this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForNotVisible');
   }
 }
-*/
 
 class ExistsMatcher extends Matcher {
   constructor() {
@@ -96,14 +95,12 @@ class ExistsMatcher extends Matcher {
   }
 }
 
-/*
 class NotExistsMatcher extends Matcher {
   constructor() {
     super();
     this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForNull');
   }
 }
-*/
 
 class TextMatcher extends Matcher {
   constructor(value) {
@@ -139,7 +136,9 @@ module.exports = {
   TypeMatcher,
   TraitsMatcher,
   VisibleMatcher,
+  NotVisibleMatcher,
   ExistsMatcher,
+  NotExistsMatcher,
   TextMatcher,
   ValueMatcher
 };

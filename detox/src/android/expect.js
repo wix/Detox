@@ -90,7 +90,7 @@ class ScrollAmountAction extends Action {
       default: throw new Error(`ScrollAmountAction direction must be a 'left'/'right'/'up'/'down', got ${direction}`);
     }
     if (typeof amount !== 'number') throw new Error(`ScrollAmountAction ctor 2nd argument must be a number, got ${typeof amount}`);
-    this._call = invoke.call(invoke.Android.Class(DetoxAction), 'scrollInDirection', invoke.Android.Integer(direction), invoke.Android.Float(amount));
+    this._call = invoke.call(invoke.Android.Class(DetoxAction), 'scrollInDirection', invoke.Android.Integer(direction), invoke.Android.Double(amount));
   }
 }
 
@@ -110,6 +110,7 @@ class ScrollEdgeAction extends Action {
 }
 
 class SwipeAction extends Action {
+  // This implementation ignores the percentage parameter
   constructor(direction, speed, percentage) {
     super();
     if (typeof direction !== 'string') throw new Error(`SwipeAction ctor 1st argument must be a string, got ${typeof direction}`);
@@ -121,29 +122,12 @@ class SwipeAction extends Action {
       case 'down': direction = 4; break;
       default: throw new Error(`SwipeAction direction must be a 'left'/'right'/'up'/'down', got ${direction}`);
     }
-    if (percentage) {
-      let x, y;
-      switch (direction) {
-        case 1: x = percentage, y = 0.0; break;
-        case 2: x = percentage, y = 0.0; break;
-        case 3: y = percentage, x = 0.0; break;
-        case 4: y = percentage, x = 0.0; break;
-      }
-      if (speed == 'fast') {
-        this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForSwipeFastInDirection:xOriginStartPercentage:yOriginStartPercentage:', invoke.IOS.NSInteger(direction), invoke.IOS.CGFloat(x), invoke.IOS.CGFloat(y));
-      } else if (speed == 'slow') {
-        this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForSwipeSlowInDirection:xOriginStartPercentage:yOriginStartPercentage:', invoke.IOS.NSInteger(direction), invoke.IOS.CGFloat(x), invoke.IOS.CGFloat(y));
-      } else {
-        throw new Error(`SwipeAction speed must be a 'fast'/'slow', got ${speed}`);
-      }
+    if (speed === 'fast') {
+      this._call = invoke.call(invoke.Android.Class(DetoxAction), 'swipeInDirection', invoke.Android.Integer(direction), invoke.Android.Boolean(true));
+    } else if (speed === 'slow') {
+      this._call = invoke.call(invoke.Android.Class(DetoxAction), 'swipeInDirection', invoke.Android.Integer(direction), invoke.Android.Boolean(false));
     } else {
-      if (speed == 'fast') {
-        this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForSwipeFastInDirection:', invoke.IOS.NSInteger(direction));
-      } else if (speed == 'slow') {
-        this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForSwipeSlowInDirection:', invoke.IOS.NSInteger(direction));
-      } else {
-        throw new Error(`SwipeAction speed must be a 'fast'/'slow', got ${speed}`);
-      }
+      throw new Error(`SwipeAction speed must be a 'fast'/'slow', got ${speed}`);
     }
   }
 }
@@ -187,20 +171,15 @@ class WaitForInteraction extends Interaction {
     // we need to override the original matcher for the element and add matcher to it as well
     this._element._selectElementWithMatcher(this._element._originalMatcher.and(this._originalMatcher));
   }
-  _not() {
-    this._notCondition = true;
-    return this;
-  }
+
   async withTimeout(timeout) {
     if (typeof timeout !== 'number') throw new Error(`WaitForInteraction withTimeout argument must be a number, got ${typeof timeout}`);
     if (timeout < 0) throw new Error('timeout must be larger than 0');
-    let _conditionCall = invoke.call(invoke.IOS.Class('GREYCondition'), 'detoxConditionForElementMatched:', this._element._call);
-    if (this._notCondition) {
-      _conditionCall = invoke.call(invoke.IOS.Class('GREYCondition'), 'detoxConditionForNotElementMatched:', this._element._call);
-    }
-    this._call = invoke.call(_conditionCall, 'waitWithTimeout:', invoke.IOS.CGFloat(timeout/1000));
+
+    this._call = invoke.call(invoke.Android.Class(DetoxAssertion), 'waitForAssertMatcher', this._element._call, this._originalMatcher._call, invoke.Android.Double(timeout/1000));
     await this.execute();
   }
+
   whileElement(searchMatcher) {
     return new WaitForActionInteraction(this._element, this._originalMatcher, searchMatcher);
   }
@@ -218,13 +197,11 @@ class WaitForActionInteraction extends Interaction {
   }
   async _execute(searchAction) {
     //if (!searchAction instanceof Action) throw new Error(`WaitForActionInteraction _execute argument must be a valid Action, got ${typeof searchAction}`);
-    const _interactionCall = invoke.call(this._element._call, 'usingSearchAction:onElementWithMatcher:', searchAction._call, this._searchMatcher._call);
-    this._call = invoke.call(_interactionCall, 'assertWithMatcher:', this._originalMatcher._call);
+    this._call = invoke.call(invoke.Android.Class(DetoxAssertion), 'waitForAssertMatcherWithSearchAction',
+      this._element._call, this._originalMatcher._call, searchAction._call, this._searchMatcher._call);
     await this.execute();
   }
   async scroll(amount, direction = 'down') {
-    // override the user's element selection with an extended matcher that looks for UIScrollView children
-    this._searchMatcher = this._searchMatcher._extendToDescendantScrollViews();
     await this._execute(new ScrollAmountAction(direction, amount));
   }
 }
@@ -328,13 +305,13 @@ class WaitForElement extends WaitFor {
     return new WaitForInteraction(this._element, new VisibleMatcher());
   }
   toBeNotVisible() {
-    return new WaitForInteraction(this._element, new VisibleMatcher())._not();
+    return new WaitForInteraction(this._element, new NotVisibleMatcher());
   }
   toExist() {
     return new WaitForInteraction(this._element, new ExistsMatcher());
   }
   toNotExist() {
-    return new WaitForInteraction(this._element, new ExistsMatcher())._not();
+    return new WaitForInteraction(this._element, new NotExistsMatcher());
   }
   toHaveText(text) {
     return new WaitForInteraction(this._element, new TextMatcher(text));
@@ -343,7 +320,7 @@ class WaitForElement extends WaitFor {
     return new WaitForInteraction(this._element, new ValueMatcher(value));
   }
   toNotHaveValue(value) {
-    return new WaitForInteraction(this._element, new ValueMatcher(value))._not();
+    return new WaitForInteraction(this._element, new ValueMatcher(value).not());
   }
 }
 
