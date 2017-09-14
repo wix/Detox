@@ -7,16 +7,14 @@ const ArtifactsCopier = require('../artifacts/ArtifactsCopier');
 
 class Device {
 
-  constructor(deviceConfig, sessionConfig, deviceDriver, appName, binaryPaths = {}) {
+  constructor(deviceConfig, sessionConfig, deviceDriver, binaryPath) {
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
     this.deviceDriver = deviceDriver;
     this._processes = {};
     this._artifactsCopier = new ArtifactsCopier(deviceDriver);
-    const defaultBinaryPathOverwrite = binaryPaths[this.deviceDriver.getPlatform()];
-    const binaryPath = this._getAbsolutePath(this.deviceDriver.getBinaryPath(appName, deviceConfig.release, defaultBinaryPathOverwrite));
-    this._binaryPath = deviceConfig.binaryPath || binaryPath;
     this.deviceDriver.validateDeviceConfig(deviceConfig);
+    this._binaryPath = this._getAbsolutePath(binaryPath);
   }
 
   async prepare(params = {}) {

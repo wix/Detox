@@ -58,7 +58,8 @@ describe('Device', () => {
     driver.getBinaryPath.mockReturnValue("/computed/path/to/binary");
     driver.defaultLaunchArgsPrefix.mockReturnValue('-');
     driver.acquireFreeDevice.mockReturnValue('mockDeviceId');
-    const device = new Device(validScheme.configurations['ios.sim.release'], validScheme.session, driver, validScheme.appName, validScheme.binary);
+    const binaryPath = "./Path/to/binary";
+    const device = new Device(validScheme.configurations['ios.sim.release'], validScheme.session, driver, binaryPath);
 
     device.deviceDriver.getPlatform.mockReset();
     return device;
@@ -69,7 +70,8 @@ describe('Device', () => {
     const driver = new SimulatorDriver(client);
     driver.getBinaryPath.mockReturnValue("/computed/path/to/binary");
     driver.acquireFreeDevice.mockReturnValue('mockDeviceId');
-    const device = new Device(validScheme.configurations['ios.sim.release'], validScheme.session, driver, validScheme.appName, validScheme.binary);
+    const binaryPath = "./Path/to/binary";
+    const device = new Device(validScheme.configurations['ios.sim.release'], validScheme.session, driver, binaryPath);
 
     device.deviceDriver.getPlatform.mockReset();
     return device;
@@ -80,13 +82,14 @@ describe('Device', () => {
     const driver = new IosDriver(client);
     driver.getBinaryPath.mockReturnValue("/computed/path/to/binary");
     driver.acquireFreeDevice.mockReturnValue('mockDeviceId');
-    const device = new Device(validIosNoneScheme.configurations['ios.none'], validScheme.session, driver, validIosNoneScheme.appName, validIosNoneScheme.binary);
+    const binaryPath = "./Path/to/binary";
+    const device = new Device(validIosNoneScheme.configurations['ios.none'], validScheme.session, driver, binaryPath);
 
     device.deviceDriver.getPlatform.mockReset();
     return device;
   }
 
-  it(`valid scheme, no binary, should throw`, async () => {
+  it(`valid scheme, no binary, build doesn't exist should throw`, async () => {
     try {
       device = validDevice(false);
       fail('should throw');
@@ -425,7 +428,7 @@ describe('Device', () => {
 
   it(`new Device() with invalid device config (no binary) should throw`, async () => {
     try {
-      new Device(invalidDeviceNoBinary.configurations['ios.sim.release'], validScheme.session, new SimulatorDriver(client));
+      new Device(invalidDeviceNoBinary.configurations['ios.sim.release'], validScheme.session, new SimulatorDriver(client), "./relative/bin/path");
       fail('should throw');
     } catch (ex) {
       expect(ex).toBeDefined();
@@ -434,7 +437,7 @@ describe('Device', () => {
 
   it(`new Device() with invalid device config (no device name) should throw`, async () => {
     try {
-      new Device(invalidDeviceNoDeviceName.configurations['ios.sim.release'], validScheme.session, new SimulatorDriver(client));
+      new Device(invalidDeviceNoDeviceName.configurations['ios.sim.release'], validScheme.session, new SimulatorDriver(client), "./relative/bin/path");
       fail('should throw');
     } catch (ex) {
       expect(ex).toBeDefined();

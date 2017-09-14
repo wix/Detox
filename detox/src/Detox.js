@@ -67,21 +67,38 @@ class Detox {
       throw new Error(`'${deviceConfig.type}' is not supported`);
     }
     const deviceDriver = new deviceClass(this.client);
+    const binaryPath = await this._getBinaryPath(deviceConfig, deviceDriver);
 
-    let appName = this.userConfig.appName;
-    if (!appName) {
-      log.info("appName was not found in config, we will set it for you");
-      try {
-        appName = await appContext.getAppName(deviceDriver.getPlatform());
-        log.info(`Got the appName, its "${appName}". If this is wrong, please set the appName config property`);
-      } catch (e) {
-        throw new Error("You neither set the appName, nor could we find it anywhere. Please set it in your configuration.");
-      }
-    }
-
-    this.device = new Device(deviceConfig, sessionConfig, deviceDriver, appName, this.userConfig.binary);
+    this.device = new Device(deviceConfig, sessionConfig, deviceDriver, binaryPath);
     await this.device.prepare(params);
     global.device = this.device;
+  }
+
+  async _getAppName(deviceDriver) {
+    if (this.userConfig.appName) {
+      return this.userConfig.appName;
+    }
+
+    log.info("appName was not found in config, we will set it for you");
+    const platform = deviceDriver.getPlatform();
+    try {
+      const appName = await appContext.getAppName(platform);
+      log.info(`Got the appName, its "${appName}". If this is wrong, please set the appName config property`);
+      return appName;
+    } catch (e) {
+      throw new Error("You neither set the appName, nor could we find it anywhere. Please set it in your configuration.");
+    }
+  }
+
+  async _getBinaryPath(deviceConfig, deviceDriver) {
+    if (deviceConfig.binaryPath) {
+      return deviceConfig.binaryPath;
+    }
+
+    const binaryPaths = this.userConfig.binary || {};
+    const defaultBinaryPathOverwrite = binaryPaths[deviceDriver.getPlatform()];
+    const appName = await this._getAppName(deviceDriver);
+    return deviceDriver.getBinaryPath(appName, deviceConfig.release, defaultBinaryPathOverwrite);
   }
 
   async cleanup() {
