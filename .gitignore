@@ -219,3 +219,4 @@ examples/demo-native-ios/Build
 examples/demo-native-ios/ModuleCache
 
 yarn.lock
+detox/ios_src

@@ -1,9 +1,8 @@
-const path = require('path');
-const fs = require('fs');
 const _ = require('lodash');
 const log = require('npmlog');
 const exec = require('../utils/exec');
 const retry = require('../utils/retry');
+const environment = require('../utils/environment');
 
 // FBSimulatorControl command line docs
 // https://github.com/facebook/FBSimulatorControl/issues/250
@@ -120,7 +119,7 @@ class Fbsimctl {
 
     const logsInfo = new LogsInfo(udid);
     const launchBin = `/bin/cat /dev/null >${logsInfo.absStdout} 2>${logsInfo.absStderr} && ` +
-                      `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${this._getFrameworkPath()}" ` +
+                      `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${await environment.getFrameworkPath()}/Detox" ` +
                       `/usr/bin/xcrun simctl launch --stdout=${logsInfo.simStdout} --stderr=${logsInfo.simStderr} ` +
                       `${udid} ${bundleId} --args ${args.join(' ')}`;
     const result = await exec.execWithRetriesAndLogs(launchBin, undefined, {
@@ -184,14 +183,6 @@ class Fbsimctl {
   async _execFbsimctlCommand(options, statusLogs, retries, interval) {
     const bin = `fbsimctl --json`;
     return await exec.execWithRetriesAndLogs(bin, options, statusLogs, retries, interval);
-  }
-
-  _getFrameworkPath() {
-    const frameworkPath = path.join(__dirname, `/../../Detox.framework/Detox`);
-    if (!fs.existsSync(frameworkPath)) {
-      throw new Error(`Detox.framework not found at ${frameworkPath}`);
-    }
-    return frameworkPath;
   }
 
   _getQueryFromDevice(device) {

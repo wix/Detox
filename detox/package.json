@@ -26,7 +26,6 @@
     "unit": "jest --coverage --verbose",
     "test": "npm run unit",
     "unit:watch": "jest --watch --coverage --verbose",
-    "postinstall": "scripts/postinstall.sh",
     "prepublish": "npm run build"
   },
   "devDependencies": {

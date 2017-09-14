@@ -1,13 +1,12 @@
+const log = require('npmlog');
 const path = require('path');
 const fs = require('fs');
-const os = require('os');
-const _ = require('lodash');
 const DeviceDriverBase = require('./DeviceDriverBase');
 const InvocationManager = require('../invoke').InvocationManager;
 const invoke = require('../invoke');
 const GREYConfiguration = require('./../ios/earlgreyapi/GREYConfiguration');
-const argparse = require('../utils/argparse');
 const exec = require('child-process-promise').exec;
+const environment = require('../utils/environment');
 
 class IosDriver extends DeviceDriverBase {
 
@@ -26,10 +25,22 @@ class IosDriver extends DeviceDriverBase {
     return notificationFilePath;
   }
 
+  //TODO:In order to support sharding, we need to create a device factory, and move prepare()
+  // to that factory, to only have a single instance of it.
   async prepare() {
-    const version = require(path.join(__dirname, '../../package.json')).version;
-    const sha1 = await exec(`(echo "${version} && xcodebuild -version) | shasum | awk '{print $1}'`);
-    console.log(sha1);
+    const detoxIosSourceTarballDirPath = path.join(__dirname, '../..');
+    const detoxFrameworkPath = await environment.getFrameworkPath();
+    const detoxFrameworkDirPath = path.parse(detoxFrameworkPath).dir;
+
+
+    if (fs.existsSync(detoxFrameworkDirPath)) {
+      if(!fs.existsSync(`${detoxFrameworkPath}`)) {
+        throw  new Error(`is it currently building ?`);
+      }
+    } else {
+      log.info(`Building Detox.framework (${environment.getDetoxVersion()}) into ${detoxFrameworkDirPath}...`);
+      await exec(path.join(__dirname, `../../scripts/build_framework.ios.sh "${detoxIosSourceTarballDirPath}" "${detoxFrameworkDirPath}"`));
+    }
   }
 
   async sendUserNotification(notification) {

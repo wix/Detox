@@ -15,6 +15,7 @@ Detox.framework/
 
 
 src/**/*.test.js
+ios_src
 
 #################
 # from .gitignore
