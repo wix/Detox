@@ -19,14 +19,10 @@
 		"mocha": "^3.2.0"
 	},
 	"detox": {
-		"appName": "example",
 		"specs": "e2e",
 		"__session": {
 			"server": "ws://localhost:8099",
 			"sessionId": "test"
-		},
-		"binary": {
-			"ios": "ios/build/Build/Products/"
 		},
 		"configurations": {
 			"ios.sim.debug": {
