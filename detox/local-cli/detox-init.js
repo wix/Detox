@@ -1,36 +1,37 @@
 const fs = require('fs');
 const program = require('commander');
-const mochaTemplates = require('./templates/mocha.js')
+const mochaTemplates = require('./templates/mocha.js');
 
 program
   .option('-r, --runner [runner]', 'Test runner (currently supports mocha)', 'mocha')
   .parse(process.argv);
 
 function createFile(dir, content) {
-    try {
+  try {
     fs.writeFileSync(dir, content);
     console.log(`A file was created in "${dir}" `);
-    } catch(err){
-        return err;
-    }
+  } catch (err) {
+    return err;
+  }
 }
 
 const dir = './e2e';
+
 function createFolder(firstTestContent, runnerConfig, initjsContent) {
-    if (!fs.existsSync(dir)){
-        fs.mkdirSync(dir);
-        createFile("./e2e/mocha.opts", runnerConfig)
-        createFile("./e2e/init.js", initjsContent)
-        createFile("./e2e/firstTest.spec.js", firstTestContent)
-    } else {
-        return console.log('e2e folder already exists')
-    }
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+    createFile("./e2e/mocha.opts", runnerConfig);
+    createFile("./e2e/init.js", initjsContent);
+    createFile("./e2e/firstTest.spec.js", firstTestContent)
+  } else {
+    return console.log('e2e folder already exists')
+  }
 }
 
 switch (program.runner) {
   case 'mocha':
-    createFolder(mochaTemplates.firstTest, mochaTemplates.runnerConfig, mochaTemplates.initjs)
+    createFolder(mochaTemplates.firstTest, mochaTemplates.runnerConfig, mochaTemplates.initjs);
     break;
   default:
-    createFolder(mochaTemplates.firstTest, mochaTemplates.runnerConfig, mochaTemplates.initjs)
+    createFolder(mochaTemplates.firstTest, mochaTemplates.runnerConfig, mochaTemplates.initjs);
 }

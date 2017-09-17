@@ -1,14 +1,18 @@
-#!/bin/bash
+#!/bin/bash -e
 
+echo -e "\nTranspiling JavaScript sources"
 BABEL_ENV=test babel src -d lib
-if [ "$1" != "noframework" ]; then
-echo -e "\nBuilding Detox.framework"
-	rm -fr Detox.framework
-	xcodebuild build -project ios/Detox.xcodeproj -scheme DetoxFramework -configuration Release -derivedDataPath DetoxBuild > /dev/null
-	cp -fr DetoxBuild/Build/Products/Release-universal/Detox.framework .
-	rm -fr DetoxBuild
-	tar -cjf Detox.framework.tbz Detox.framework
-fi
+
+echo -e "\nPackaging Detox iOS sources"
+rm -fr Detox-ios-src.tbz
+#Prepare Earl Grey without building
+ios/EarlGrey/Scripts/setup-earlgrey.sh > /dev/null
+find ./ios -name Build -type d -exec rm -rf {} \; > /dev/null
+
+cd ios
+tar -cjf ../Detox-ios-src.tbz .
+cd ..
+
 
 if [ "$1" == "android" -o "$2" == "android" ] ; then
 	echo -e "\nBuilding Detox aars"

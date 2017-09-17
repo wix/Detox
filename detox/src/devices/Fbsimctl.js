@@ -1,9 +1,8 @@
-const path = require('path');
-const fs = require('fs');
 const _ = require('lodash');
 const log = require('npmlog');
 const exec = require('../utils/exec');
 const retry = require('../utils/retry');
+const environment = require('../utils/environment');
 
 // FBSimulatorControl command line docs
 // https://github.com/facebook/FBSimulatorControl/issues/250
@@ -53,26 +52,26 @@ class Fbsimctl {
 
   async boot(udid) {
     let initialState;
-    await retry({retries: 10, interval: 1000}, async() => {
+    await retry({retries: 10, interval: 1000}, async () => {
       const initialStateCmdResult = await this._execFbsimctlCommand({args: `${udid} list`}, undefined, 1);
       initialState = _.get(initialStateCmdResult, 'stdout', '') === '' ? undefined :
-          _.get(JSON.parse(_.get(initialStateCmdResult, 'stdout')), 'subject.state');
-      if(initialState === undefined) {
+                     _.get(JSON.parse(_.get(initialStateCmdResult, 'stdout')), 'subject.state');
+      if (initialState === undefined) {
         log.info(`Couldn't get the state of ${udid}`);
         throw `Couldn't get the state of the device`;
       }
-      if(initialState === 'Shutting Down') {
+      if (initialState === 'Shutting Down') {
         log.info(`Waiting for device ${udid} to shut down`);
         throw `The device is in 'Shutting Down' state`;
       }
     });
 
-    if(initialState === 'Booted') {
+    if (initialState === 'Booted') {
       log.info(`Device ${udid} is already booted`);
       return;
     }
-    
-    if(initialState === 'Booting') {
+
+    if (initialState === 'Booting') {
       log.info(`Device ${udid} is already booting`);
     } else {
       const launchBin = "/bin/bash -c '`xcode-select -p`/Applications/Simulator.app/Contents/MacOS/Simulator " +
@@ -120,7 +119,7 @@ class Fbsimctl {
 
     const logsInfo = new LogsInfo(udid);
     const launchBin = `/bin/cat /dev/null >${logsInfo.absStdout} 2>${logsInfo.absStderr} && ` +
-                      `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${this._getFrameworkPath()}" ` +
+                      `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${await environment.getFrameworkPath()}/Detox" ` +
                       `/usr/bin/xcrun simctl launch --stdout=${logsInfo.simStdout} --stderr=${logsInfo.simStderr} ` +
                       `${udid} ${bundleId} --args ${args.join(' ')}`;
     const result = await exec.execWithRetriesAndLogs(launchBin, undefined, {
@@ -184,14 +183,6 @@ class Fbsimctl {
   async _execFbsimctlCommand(options, statusLogs, retries, interval) {
     const bin = `fbsimctl --json`;
     return await exec.execWithRetriesAndLogs(bin, options, statusLogs, retries, interval);
-  }
-
-  _getFrameworkPath() {
-    const frameworkPath = path.join(__dirname, `/../../Detox.framework/Detox`);
-    if (!fs.existsSync(frameworkPath)) {
-      throw new Error(`Detox.framework not found at ${frameworkPath}`);
-    }
-    return frameworkPath;
   }
 
   _getQueryFromDevice(device) {

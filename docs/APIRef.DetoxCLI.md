@@ -21,6 +21,7 @@ detox [options] [command]
 | [build](#build)            | Run the command defined in `configuration.build` |
 | [run-server](#run-server)  | Starts a standalone detox server |
 | [init](#init)              | Create initial e2e tests folder |
+| clean-framework-cache | Delete all compiled framework binaries from ~/Library/Detox, they will be rebuilt when running 'detox test'
 | [help](#help)              | Display help for specific command |
 
 ## Options:

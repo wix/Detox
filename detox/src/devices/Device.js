@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
 const argparse = require('../utils/argparse');
-const configuration = require('../configuration');
 const ArtifactsCopier = require('../artifacts/ArtifactsCopier');
 
 class Device {
@@ -21,6 +20,8 @@ class Device {
     this._deviceId = await this.deviceDriver.acquireFreeDevice(this._deviceConfig.name);
     this._bundleId = await this.deviceDriver.getBundleIdFromBinary(this._binaryPath);
     this._artifactsCopier.prepare(this._deviceId);
+
+    await this.deviceDriver.prepare();
 
     await this.deviceDriver.boot(this._deviceId);
 
@@ -190,17 +191,12 @@ class Device {
   }
 
   _prepareLaunchArgs(additionalLaunchArgs) {
-    let args = [];
     const merged = _.merge(this._defaultLaunchArgs(), additionalLaunchArgs);
     const launchArgs = this._addPrefixToDefaultLaunchArgs(merged);
-    //args = args.concat(_.flatten(Object.entries(launchArgs)));
     return launchArgs;
   }
 
   _getAbsolutePath(appPath) {
-    if (!appPath) {
-      return '';
-    }
     const absPath = path.join(process.cwd(), appPath);
     if (fs.existsSync(absPath)) {
       return absPath;
