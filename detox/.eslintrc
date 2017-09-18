@@ -16,7 +16,12 @@
     "react",
     "react-native",
     "promise",
+    "prettier",
     "jest"
+  ],
+  "extends": [
+    "prettier",
+    "prettier/react"
   ],
   "rules": {
     /*
@@ -203,13 +208,6 @@
     "id-blacklist": 0,
     "id-length": 0,
     "id-match": 0,
-    "indent": [
-      "error",
-      2,
-      {
-        "SwitchCase": 1
-      }
-    ],
     "jsx-quotes": "error",
     "key-spacing": [
       "error",
@@ -293,17 +291,9 @@
     "no-underscore-dangle": 0,
     "no-unneeded-ternary": "error",
     "no-whitespace-before-property": "error",
-    "object-curly-spacing": [
-      "error",
-      "never"
-    ],
     "one-var": 0,
     "one-var-declaration-per-line": 0,
     "operator-assignment": 0,
-    "operator-linebreak": [
-      "error",
-      "before"
-    ],
     "padded-blocks": [
       "error",
       "never"
@@ -348,10 +338,6 @@
      *                             ECMAScript 6
      */
     "arrow-body-style": 0,
-    "arrow-parens": [
-      "error",
-      "always"
-    ],
     "arrow-spacing": [
       "error",
       {
@@ -388,6 +374,19 @@
     "yield-star-spacing": [
       "error",
       "after"
+    ],
+    /*
+     *                              babel plugin
+     */
+    "babel/object-shorthand": 0,
+    "babel/no-await-in-loop": 0,
+    /*
+     *                              prettier plugin
+     */
+    "prettier/prettier": [
+      "error", {
+        "useTabs": true
+      }
     ],
     /*
      *                              promise
