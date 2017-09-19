@@ -32,26 +32,33 @@ static DetoxAppDelegateProxy* _currentAppDelegateProxy;
 	Method m = class_getInstanceMethod([UIApplication class], @selector(setDelegate:));
 	void (*orig)(id, SEL, id<UIApplicationDelegate>) = (void*)method_getImplementation(m);
 	method_setImplementation(m, imp_implementationWithBlock(^ (id _self, id<UIApplicationDelegate> origDelegate) {
-		NSString* clsName = [NSString stringWithFormat:@"%@(%@)", NSStringFromClass([origDelegate class]), NSStringFromClass([DetoxAppDelegateProxy class])];
-		Class cls = objc_getClass(clsName.UTF8String);
-		
-		if(cls == nil)
+		//Only create a dupe class if the provided instance is not already a dupe class.
+		if([origDelegate respondsToSelector:@selector(__dtx_canaryInTheCoalMine)] == NO)
 		{
-			cls = objc_duplicateClass([DetoxAppDelegateProxy class], clsName.UTF8String, 0);
+			
+			NSString* clsName = [NSString stringWithFormat:@"%@(%@)", NSStringFromClass([origDelegate class]), NSStringFromClass([DetoxAppDelegateProxy class])];
+			Class cls = objc_getClass(clsName.UTF8String);
+			
+			if(cls == nil)
+			{
+				cls = objc_duplicateClass([DetoxAppDelegateProxy class], clsName.UTF8String, 0);
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated"
-			class_setSuperclass(cls, origDelegate.class);
+				class_setSuperclass(cls, origDelegate.class);
 #pragma clang diagnostic pop
+			}
+			
+			object_setClass(origDelegate, cls);
+			
+			[[NSNotificationCenter defaultCenter] addObserver:origDelegate selector:@selector(__dtx_applicationDidLaunchNotification:) name:UIApplicationDidFinishLaunchingNotification object:nil];
 		}
-		
-		object_setClass(origDelegate, cls);
 		
 		_currentAppDelegateProxy = origDelegate;
 		orig(_self, @selector(setDelegate:), origDelegate);
-		
-		[[NSNotificationCenter defaultCenter] addObserver:origDelegate selector:@selector(__dtx_applicationDidLaunchNotification:) name:UIApplicationDidFinishLaunchingNotification object:nil];
 	}));
 }
+
+- (void)__dtx_canaryInTheCoalMine {}
 
 - (void)__dtx_applicationDidLaunchNotification:(NSNotification*)notification
 {
