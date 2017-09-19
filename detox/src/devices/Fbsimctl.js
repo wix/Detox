@@ -23,49 +23,40 @@ class LogsInfo {
 
 class Fbsimctl {
 
-  constructor() {
-    this._operationCounter = 0;
-  }
-
-  async list(device) {
-    const AppleSimUtils = require('./AppleSimUtils');
-    return new AppleSimUtils().findDeviceUUID(device);
-  }
-
   async boot(udid) {
     let initialState;
-    await retry({retries: 10, interval: 1000}, async() => {
-      const initialStateCmdResult = await this._execFbsimctlCommand({args: `${udid} list`}, undefined, 1);
+    await retry({ retries: 10, interval: 1000 }, async () => {
+      const initialStateCmdResult = await this._execFbsimctlCommand({ args: `${udid} list` }, undefined, 1);
       initialState = _.get(initialStateCmdResult, 'stdout', '') === '' ? undefined :
-          _.get(JSON.parse(_.get(initialStateCmdResult, 'stdout')), 'subject.state');
-      if(initialState === undefined) {
+        _.get(JSON.parse(_.get(initialStateCmdResult, 'stdout')), 'subject.state');
+      if (initialState === undefined) {
         log.info(`Couldn't get the state of ${udid}`);
         throw `Couldn't get the state of the device`;
       }
-      if(initialState === 'Shutting Down') {
+      if (initialState === 'Shutting Down') {
         log.info(`Waiting for device ${udid} to shut down`);
         throw `The device is in 'Shutting Down' state`;
       }
     });
 
-    if(initialState === 'Booted') {
+    if (initialState === 'Booted') {
       log.info(`Device ${udid} is already booted`);
       return;
     }
 
-    if(initialState === 'Booting') {
+    if (initialState === 'Booting') {
       log.info(`Device ${udid} is already booting`);
     } else {
       const launchBin = "/bin/bash -c '`xcode-select -p`/Applications/Simulator.app/Contents/MacOS/Simulator " +
-                        `--args -CurrentDeviceUDID ${udid} -ConnectHardwareKeyboard 0 ` +
-                        "-DeviceSetPath $HOME/Library/Developer/CoreSimulator/Devices > /dev/null 2>&1 < /dev/null &'";
+        `--args -CurrentDeviceUDID ${udid} -ConnectHardwareKeyboard 0 ` +
+        "-DeviceSetPath $HOME/Library/Developer/CoreSimulator/Devices > /dev/null 2>&1 < /dev/null &'";
       await exec.execWithRetriesAndLogs(launchBin, undefined, {
         trying: `Launching device ${udid}...`,
         successful: ''
       }, 1);
     }
 
-    return await this._execFbsimctlCommand({args: `--state booted ${udid} list`}, {
+    return await this._execFbsimctlCommand({ args: `--state booted ${udid} list` }, {
       trying: `Waiting for device ${udid} to boot...`,
       successful: `Device ${udid} booted`
     });
@@ -76,7 +67,7 @@ class Fbsimctl {
       trying: `Installing ${absPath}...`,
       successful: `${absPath} installed`
     };
-    const options = {args: `${udid} install ${absPath}`};
+    const options = { args: `${udid} install ${absPath}` };
     return await this._execFbsimctlCommand(options, statusLogs);
   }
 
@@ -85,7 +76,7 @@ class Fbsimctl {
       trying: `Uninstalling ${bundleId}...`,
       successful: `${bundleId} uninstalled`
     };
-    const options = {args: `${udid} uninstall ${bundleId}`};
+    const options = { args: `${udid} uninstall ${bundleId}` };
     try {
       await this._execFbsimctlCommand(options, statusLogs, 1);
     } catch (ex) {
@@ -101,13 +92,13 @@ class Fbsimctl {
 
     const logsInfo = new LogsInfo(udid);
     const launchBin = `/bin/cat /dev/null >${logsInfo.absStdout} 2>${logsInfo.absStderr} && ` +
-                      `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${this._getFrameworkPath()}" ` +
-                      `/usr/bin/xcrun simctl launch --stdout=${logsInfo.simStdout} --stderr=${logsInfo.simStderr} ` +
-                      `${udid} ${bundleId} --args ${args.join(' ')}`;
+      `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${this._getFrameworkPath()}" ` +
+      `/usr/bin/xcrun simctl launch --stdout=${logsInfo.simStdout} --stderr=${logsInfo.simStderr} ` +
+      `${udid} ${bundleId} --args ${args.join(' ')}`;
     const result = await exec.execWithRetriesAndLogs(launchBin, undefined, {
       trying: `Launching ${bundleId}...`,
       successful: `${bundleId} launched. The stdout and stderr logs were recreated, you can watch them with:\n` +
-                  `        tail -F ${logsInfo.absJoined}`
+      `        tail -F ${logsInfo.absJoined}`
     }, 1);
     return parseInt(result.stdout.trim().split(':')[1]);
   }
@@ -134,23 +125,23 @@ class Fbsimctl {
   }
 
   async shutdown(udid) {
-    const options = {args: `${udid} shutdown`};
+    const options = { args: `${udid} shutdown` };
     await this._execFbsimctlCommand(options);
   }
 
   async open(udid, url) {
-    const options = {args: `${udid} open ${url}`};
+    const options = { args: `${udid} open ${url}` };
     await this._execFbsimctlCommand(options);
   }
 
   async isDeviceBooted(udid) {
-    const options = {args: `${udid} list`};
+    const options = { args: `${udid} list` };
     const result = await this._execFbsimctlCommand(options);
     return JSON.parse(result.stdout).subject.state !== 'Booted';
   }
 
   async setLocation(udid, lat, lon) {
-    const options = {args: `${udid} set_location ${lat} ${lon}`};
+    const options = { args: `${udid} set_location ${lat} ${lon}` };
     await this._execFbsimctlCommand(options);
   }
 

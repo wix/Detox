@@ -20,11 +20,11 @@ describe('AppleSimUtils', () => {
     expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
   });
 
-  describe('findDeviceUUID', () => {
+  describe('findDeviceUDID', () => {
     it('correct params', async () => {
       expect(exec.execWithRetriesAndLogs).not.toHaveBeenCalled();
       try {
-        await appSimUtils.findDeviceUUID('iPhone 6');
+        await appSimUtils.findDeviceUDID('iPhone 6');
       } catch (e) { }
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith('applesimutils', {
@@ -34,7 +34,7 @@ describe('AppleSimUtils', () => {
 
     it('adapted to new api with optional OS', async () => {
       try {
-        await appSimUtils.findDeviceUUID('iPhone 6 , iOS 10.3');
+        await appSimUtils.findDeviceUDID('iPhone 6 , iOS 10.3');
       } catch (e) { }
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith('applesimutils', {
         args: `--list "iPhone 6, OS=iOS 10.3" --maxResults=1`
@@ -59,7 +59,7 @@ describe('AppleSimUtils', () => {
           }
         ])
       }));
-      const result = await appSimUtils.findDeviceUUID('iPhone 7');
+      const result = await appSimUtils.findDeviceUDID('iPhone 7');
       expect(result).toEqual('the uuid');
     });
 
@@ -76,7 +76,7 @@ describe('AppleSimUtils', () => {
         it(`invalid input ${JSON.stringify(arg)}`, async () => {
           exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve(arg));
           try {
-            await appSimUtils.findDeviceUUID('iPhone 6, iOS 10');
+            await appSimUtils.findDeviceUDID('iPhone 6, iOS 10');
             fail('should throw');
           } catch (e) {
             expect(e.message).toMatch(`Can't find a simulator to match with "iPhone 6, iOS 10"`);

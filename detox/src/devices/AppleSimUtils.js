@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const exec = require('../utils/exec');
+const log = require('npmlog');
 
 class AppleSimUtils {
 
@@ -17,7 +18,7 @@ class AppleSimUtils {
     }, statusLogs, 1);
   }
 
-  async findDeviceUUID(query) {
+  async findDeviceUDID(query) {
     const statusLogs = {
       trying: `Searching for device matching ${query}...`
     };

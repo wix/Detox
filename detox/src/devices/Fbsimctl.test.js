@@ -23,32 +23,6 @@ describe('Fbsimctl', () => {
     fbsimctl = new Fbsimctl();
   });
 
-  it(`list() - specify an invalid simulator should throw an Error`, async() => {
-    const returnValue = {};
-    const result = returnSuccessfulWithValue(returnValue);
-    exec.mockReturnValue(Promise.resolve(result));
-
-    try {
-      await fbsimctl.list('iPhone 7');
-      fail('expected list() to throw');
-    } catch (object) {
-      expect(object).toBeDefined();
-    }
-  });
-
-  it(`list() - when something goes wrong in the list retrival process, log the given error error`, async() => {
-    const returnValue = {};
-    const result = returnErrorWithValue(returnValue);
-    exec.mockReturnValue(Promise.reject(result));
-
-    try {
-      await fbsimctl.list('iPhone 7');
-      fail('expected list() to throw');
-    } catch (object) {
-      expect(object).toBeDefined();
-    }
-  });
-
   it(`boot() - when shutting down, should wait for the device`, async() => {
     fbsimctl._execFbsimctlCommand = jest.fn(() => ({stdout: `{"subject": {"state": "Shutting Down"}}`}));
 
