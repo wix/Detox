@@ -22,9 +22,9 @@ class AppleSimUtils {
     const statusLogs = {
       trying: `Searching for device matching ${query}...`
     };
-    let correctQuery = correctQueryWithOS(query);
+    let correctQuery = this._correctQueryWithOS(query);
     const response = await this._execAppleSimUtilsCommand({ args: `--list "${correctQuery}" --maxResults=1` }, statusLogs, 1);
-    const parsed = parseStdout(response);
+    const parsed = this._parseStdout(response);
     const udid = _.get(parsed, [0, 'udid']);
     if (!udid) {
       throw new Error(`Can't find a simulator to match with "${query}", run 'xcrun simctl list' to list your supported devices.
@@ -37,23 +37,23 @@ class AppleSimUtils {
     const bin = `applesimutils`;
     return await exec.execWithRetriesAndLogs(bin, options, statusLogs, retries, interval);
   }
-}
 
-function correctQueryWithOS(query) {
-  let correctQuery = query;
-  if (_.includes(query, ',')) {
-    const parts = _.split(query, ',');
-    correctQuery = `${parts[0].trim()}, OS=${parts[1].trim()}`;
+  _correctQueryWithOS(query) {
+    let correctQuery = query;
+    if (_.includes(query, ',')) {
+      const parts = _.split(query, ',');
+      correctQuery = `${parts[0].trim()}, OS=${parts[1].trim()}`;
+    }
+    return correctQuery;
   }
-  return correctQuery;
-}
 
-function parseStdout(response) {
-  const stdout = _.get(response, 'stdout');
-  if (_.isEmpty(stdout)) {
-    return [];
+  _parseStdout(response) {
+    const stdout = _.get(response, 'stdout');
+    if (_.isEmpty(stdout)) {
+      return [];
+    }
+    return JSON.parse(stdout);
   }
-  return JSON.parse(stdout);
 }
 
 module.exports = AppleSimUtils;

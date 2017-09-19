@@ -134,12 +134,6 @@ class Fbsimctl {
     await this._execFbsimctlCommand(options);
   }
 
-  async isDeviceBooted(udid) {
-    const options = { args: `${udid} list` };
-    const result = await this._execFbsimctlCommand(options);
-    return JSON.parse(result.stdout).subject.state !== 'Booted';
-  }
-
   async setLocation(udid, lat, lon) {
     const options = { args: `${udid} set_location ${lat} ${lon}` };
     await this._execFbsimctlCommand(options);

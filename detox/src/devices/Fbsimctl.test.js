@@ -115,22 +115,6 @@ describe('Fbsimctl', () => {
     await validateFbsimctlisCalledOn(fbsimctl, async () => fbsimctl.open(simUdid, bundleId));
   });
 
-  it(`isDeviceBooted() - specify a shutdown simulator`, async() => {
-    fbsimctl._execFbsimctlCommand = jest.fn(() => {
-      return returnSuccessfulWithValue(listAsimUdidAtState(simUdid, `Shutdown`));
-    });
-    const isDeviceBooted = await fbsimctl.isDeviceBooted(simUdid);
-    expect(isDeviceBooted).toBe(true);
-  });
-
-  it(`isDeviceBooted() - specify a booted simulator`, async() => {
-    fbsimctl._execFbsimctlCommand = jest.fn(() => {
-      return returnSuccessfulWithValue(listAsimUdidAtState(simUdid, `Booted`));
-    });
-    const isDeviceBooted = await fbsimctl.isDeviceBooted(simUdid);
-    expect(isDeviceBooted).toBe(false);
-  });
-
   it(`setLocation() - is triggering fbsimctl set_location`, async() => {
     await validateFbsimctlisCalledOn(fbsimctl, async () => fbsimctl.setLocation(simUdid));
   });
