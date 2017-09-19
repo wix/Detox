@@ -28,27 +28,8 @@ class Fbsimctl {
   }
 
   async list(device) {
-    const statusLogs = {
-      trying: `Listing devices...`
-    };
-    const query = this._getQueryFromDevice(device);
-    const options = {args: `${query} --first 1 --simulators list`};
-    let result = {};
-    let simId;
-    try {
-      result = await this._execFbsimctlCommand(options, statusLogs, 1);
-      const parsedJson = JSON.parse(result.stdout);
-      simId = _.get(parsedJson, 'subject.udid');
-    } catch (ex) {
-      log.error(ex);
-    }
-
-    if (!simId) {
-      throw new Error('Can\'t find a simulator to match with \'' + device + '\', run \'fbsimctl list\' to list your supported devices.\n'
-                      + 'It is advised to only state a device type, and not to state iOS version, e.g. \'iPhone 7\'');
-    }
-
-    return simId;
+    const AppleSimUtils = require('./AppleSimUtils');
+    return new AppleSimUtils().findDeviceUUID(device);
   }
 
   async boot(udid) {
@@ -71,7 +52,7 @@ class Fbsimctl {
       log.info(`Device ${udid} is already booted`);
       return;
     }
-    
+
     if(initialState === 'Booting') {
       log.info(`Device ${udid} is already booting`);
     } else {
@@ -192,15 +173,6 @@ class Fbsimctl {
       throw new Error(`Detox.framework not found at ${frameworkPath}`);
     }
     return frameworkPath;
-  }
-
-  _getQueryFromDevice(device) {
-    let res = '';
-    const deviceParts = device.split(',');
-    for (let i = 0; i < deviceParts.length; i++) {
-      res += `"${deviceParts[i].trim()}" `;
-    }
-    return res.trim();
   }
 }
 
