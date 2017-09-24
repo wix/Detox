@@ -103,9 +103,7 @@ class AppleSimUtils {
       `/usr/bin/xcrun simctl launch --stdout=${logsInfo.simStdout} --stderr=${logsInfo.simStderr} ` +
       `${udid} ${bundleId} --args ${args}`;
     const result = await exec.execWithRetriesAndLogs(launchBin, undefined, statusLogs, 1);
-    // return parseInt(result.stdout.trim().split(':')[1]);
-    // exec.mockReturnValue({stdout: "appId: 22 \n"});
-
+    return parseInt(_.get(result, 'stdout', ':').trim().split(':')[1]);
   }
 
   async terminate() {

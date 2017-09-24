@@ -232,6 +232,12 @@ describe('AppleSimUtils', () => {
         expect(e).toBeDefined();
       }
     });
+
+    it('returns the parsed id', async () => {
+      exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({stdout: 'appId: 12345 \n'}));
+      const result = await uut.launch('udid', 'theBundleId');
+      expect(result).toEqual(12345);
+    });
   });
 });
 
