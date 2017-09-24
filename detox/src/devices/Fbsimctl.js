@@ -22,27 +22,7 @@ class LogsInfo {
 
 class Fbsimctl {
 
-  async install(udid, absPath) {
-    const statusLogs = {
-      trying: `Installing ${absPath}...`,
-      successful: `${absPath} installed`
-    };
-    const options = { args: `${udid} install ${absPath}` };
-    return await this._execFbsimctlCommand(options, statusLogs);
-  }
 
-  async uninstall(udid, bundleId) {
-    const statusLogs = {
-      trying: `Uninstalling ${bundleId}...`,
-      successful: `${bundleId} uninstalled`
-    };
-    const options = { args: `${udid} uninstall ${bundleId}` };
-    try {
-      await this._execFbsimctlCommand(options, statusLogs, 1);
-    } catch (ex) {
-      //that's ok
-    }
-  }
 
   async launch(udid, bundleId, launchArgs) {
     const args = [];

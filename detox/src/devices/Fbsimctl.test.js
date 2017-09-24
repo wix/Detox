@@ -1,7 +1,7 @@
 
 const _ = require('lodash');
 
-describe('Fbsimctl', () => {
+xdescribe('Fbsimctl', () => {
   let Fbsimctl;
   let fbsimctl;
   let exec;

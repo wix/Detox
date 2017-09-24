@@ -64,6 +64,36 @@ class AppleSimUtils {
     await this.waitForDeviceState(udid, 'Booted');
   }
 
+  async install(udid, absPath) {
+    const statusLogs = {
+      trying: `Installing ${absPath}...`,
+      successful: `${absPath} installed`
+    };
+    const cmd = `/usr/bin/xcrun simctl install ${udid} ${absPath}`;
+    await exec.execWithRetriesAndLogs(cmd, undefined, statusLogs, 1);
+  }
+
+  async uninstall(udid, bundleId) {
+    const statusLogs = {
+      trying: `Uninstalling ${bundleId}...`,
+      successful: `${bundleId} uninstalled`
+    };
+    const cmd = `/usr/bin/xcrun simctl uninstall ${udid} ${bundleId}`;
+    try {
+      await exec.execWithRetriesAndLogs(cmd, undefined, statusLogs, 1);
+    } catch (e) {
+      // that's fine
+    }
+  }
+
+  async terminate() {
+    fail();
+  }
+
+  async launch() {
+    fail();
+  }
+
   async _execAppleSimUtils(options, statusLogs, retries, interval) {
     const bin = `applesimutils`;
     return await exec.execWithRetriesAndLogs(bin, options, statusLogs, retries, interval);

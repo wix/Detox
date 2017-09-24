@@ -157,5 +157,34 @@ describe('AppleSimUtils', () => {
       expect(exec.execWithRetriesAndLogs).not.toHaveBeenCalled();
     });
   });
+
+  describe('install', () => {
+    it('calls xcrun', async () => {
+      await uut.install('udid', 'somePath');
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
+        `/usr/bin/xcrun simctl install udid somePath`,
+        undefined,
+        expect.anything(),
+        1);
+    });
+  });
+
+  describe('uninstall', () => {
+    it('calls xcrun', async () => {
+      await uut.uninstall('udid', 'theBundleId');
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
+        `/usr/bin/xcrun simctl uninstall udid theBundleId`,
+        undefined,
+        expect.anything(),
+        1);
+    });
+
+    it('does not throw', async () => {
+      exec.execWithRetriesAndLogs.mockImplementation(() => Promise.reject('some reason'));
+      await uut.uninstall('udid', 'theBundleId');
+    });
+  });
 });
 
