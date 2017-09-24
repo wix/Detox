@@ -34,6 +34,8 @@ describe('Device', () => {
     jest.mock('child-process-promise');
     cpp = require('child-process-promise');
 
+    jest.mock('../utils/environment');
+
     jest.mock('./Fbsimctl');
     jest.mock('./AppleSimUtils');
 
@@ -89,7 +91,7 @@ describe('Device', () => {
   });
 
   it(`valid scheme, no binary, should not throw`, async () => {
-    device = validIosNone();
+    device = validDevice()
     await device.prepare();
   });
 

@@ -8,6 +8,10 @@ class DeviceDriverBase {
   }
 
   async acquireFreeDevice(name) {
+    await Promise.resolve('');
+  }
+
+  async prepare() {
     return await Promise.resolve('');
   }
 
