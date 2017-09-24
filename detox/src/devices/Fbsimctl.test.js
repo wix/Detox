@@ -23,46 +23,6 @@ describe('Fbsimctl', () => {
     fbsimctl = new Fbsimctl();
   });
 
-  it(`boot() - when shutting down, should wait for the device`, async() => {
-    fbsimctl._execFbsimctlCommand = jest.fn(() => ({stdout: `{"subject": {"state": "Shutting Down"}}`}));
-
-    try {
-      await fbsimctl.boot(simUdid);
-      fail('should throw');
-    } catch (ex) {
-      expect(ex).toBe("The device is in 'Shutting Down' state");
-    }
-  });
-
-  it(`boot() - when state is undefined, should wait for the device`, async() => {
-    fbsimctl._execFbsimctlCommand = jest.fn(() => ({}));
-
-    try {
-      await fbsimctl.boot(simUdid);
-      fail('should throw');
-    } catch (ex) {
-      expect(ex).toBe("Couldn't get the state of the device");
-    }
-  });
-
-  it(`boot() - when booted, should not wait for the device to boot`, async() => {
-    fbsimctl._execFbsimctlCommand = jest.fn(() => ({stdout: `{"subject": {"state": "Booted"}}`}));
-    await fbsimctl.boot(simUdid);
-    expect(exec).toHaveBeenCalledTimes(0);
-  });
-
-  it(`boot() - when booting, should not call exec`, async() => {
-    fbsimctl._execFbsimctlCommand = jest.fn(() => ({stdout: `{"subject": {"state": "Booting"}}`}));
-    await fbsimctl.boot(simUdid);
-    expect(exec).toHaveBeenCalledTimes(0);
-  });
-
-  it(`boot() - when shutdown, should call exec`, async() => {
-    fbsimctl._execFbsimctlCommand = jest.fn(() => ({stdout: `{"subject": {"state": "Shutdown"}}`}));
-    await fbsimctl.boot(simUdid);
-    expect(exec).toHaveBeenCalledTimes(1);
-  });
-
   it(`install() - is triggering fbsimctl install`, async() => {
     await validateFbsimctlisCalledOn(fbsimctl, async () => fbsimctl.install(simUdid, bundleId, {}));
   });

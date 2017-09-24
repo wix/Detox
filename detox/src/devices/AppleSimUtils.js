@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const exec = require('../utils/exec');
-const log = require('npmlog');
+const retry = require('../utils/retry');
 
 class AppleSimUtils {
 
@@ -13,7 +13,7 @@ class AppleSimUtils {
     _.forEach(permissionsObj, function (shouldAllow, permission) {
       permissions.push(permission + '=' + shouldAllow);
     });
-    await this._execAppleSimUtilsCommand({
+    await this._execAppleSimUtils({
       args: `--simulator ${udid} --bundle ${bundleId} --setPermissions ${_.join(permissions, ',')}`
     }, statusLogs, 1);
   }
@@ -23,7 +23,7 @@ class AppleSimUtils {
       trying: `Searching for device matching ${query}...`
     };
     let correctQuery = this._correctQueryWithOS(query);
-    const response = await this._execAppleSimUtilsCommand({ args: `--list "${correctQuery}" --maxResults=1` }, statusLogs, 1);
+    const response = await this._execAppleSimUtils({ args: `--list "${correctQuery}" --maxResults=1` }, statusLogs, 1);
     const parsed = this._parseStdout(response);
     const udid = _.get(parsed, [0, 'udid']);
     if (!udid) {
@@ -33,7 +33,38 @@ class AppleSimUtils {
     return udid;
   }
 
-  async _execAppleSimUtilsCommand(options, statusLogs, retries, interval) {
+  async findDeviceByUDID(udid) {
+    const response = await this._execAppleSimUtils({ args: `--list` }, undefined, 1);
+    const parsed = this._parseStdout(response);
+    const device = _.find(parsed, (device) => _.isEqual(device.udid, udid));
+    if (!device) {
+      throw new Error(`Can't find device ${udid}`);
+    }
+    return device;
+  }
+
+  async waitForDeviceState(udid, state) {
+    let device;
+    await retry({ retries: 10, interval: 1000 }, async () => {
+      device = await this.findDeviceByUDID(udid);
+      if (!_.isEqual(device.state, state)) {
+        throw new Error(`device is in state '${device.state}'`);
+      }
+    });
+    return device;
+  }
+
+  async boot(udid) {
+    const device = await this.findDeviceByUDID(udid);
+    if (_.isEqual(device.state, 'Booted') || _.isEqual(device.state, 'Booting')) {
+      return false;
+    }
+    await this.waitForDeviceState(udid, 'Shutdown');
+    await this._bootDeviceMagically(udid);
+    await this.waitForDeviceState(udid, 'Booted');
+  }
+
+  async _execAppleSimUtils(options, statusLogs, retries, interval) {
     const bin = `applesimutils`;
     return await exec.execWithRetriesAndLogs(bin, options, statusLogs, retries, interval);
   }
@@ -50,9 +81,16 @@ class AppleSimUtils {
   _parseStdout(response) {
     const stdout = _.get(response, 'stdout');
     if (_.isEmpty(stdout)) {
-      return [];
+      return undefined;
     }
     return JSON.parse(stdout);
+  }
+
+  async _bootDeviceMagically(udid) {
+    const cmd = "/bin/bash -c '`xcode-select -p`/Applications/Simulator.app/Contents/MacOS/Simulator " +
+      `--args -CurrentDeviceUDID ${udid} -ConnectHardwareKeyboard 0 ` +
+      "-DeviceSetPath $HOME/Library/Developer/CoreSimulator/Devices > /dev/null 2>&1 < /dev/null &'";
+    await exec.execWithRetriesAndLogs(cmd, undefined, { trying: `Launching device ${udid}...` }, 1);
   }
 }
 

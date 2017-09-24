@@ -23,45 +23,6 @@ class LogsInfo {
 
 class Fbsimctl {
 
-  async boot(udid) {
-    let initialState;
-    await retry({ retries: 10, interval: 1000 }, async () => {
-      const initialStateCmdResult = await this._execFbsimctlCommand({ args: `${udid} list` }, undefined, 1);
-      initialState = _.get(initialStateCmdResult, 'stdout', '') === '' ? undefined :
-        _.get(JSON.parse(_.get(initialStateCmdResult, 'stdout')), 'subject.state');
-      if (initialState === undefined) {
-        log.info(`Couldn't get the state of ${udid}`);
-        throw `Couldn't get the state of the device`;
-      }
-      if (initialState === 'Shutting Down') {
-        log.info(`Waiting for device ${udid} to shut down`);
-        throw `The device is in 'Shutting Down' state`;
-      }
-    });
-
-    if (initialState === 'Booted') {
-      log.info(`Device ${udid} is already booted`);
-      return;
-    }
-
-    if (initialState === 'Booting') {
-      log.info(`Device ${udid} is already booting`);
-    } else {
-      const launchBin = "/bin/bash -c '`xcode-select -p`/Applications/Simulator.app/Contents/MacOS/Simulator " +
-        `--args -CurrentDeviceUDID ${udid} -ConnectHardwareKeyboard 0 ` +
-        "-DeviceSetPath $HOME/Library/Developer/CoreSimulator/Devices > /dev/null 2>&1 < /dev/null &'";
-      await exec.execWithRetriesAndLogs(launchBin, undefined, {
-        trying: `Launching device ${udid}...`,
-        successful: ''
-      }, 1);
-    }
-
-    return await this._execFbsimctlCommand({ args: `--state booted ${udid} list` }, {
-      trying: `Waiting for device ${udid} to boot...`,
-      successful: `Device ${udid} booted`
-    });
-  }
-
   async install(udid, absPath) {
     const statusLogs = {
       trying: `Installing ${absPath}...`,
