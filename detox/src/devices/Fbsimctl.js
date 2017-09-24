@@ -111,14 +111,6 @@ class Fbsimctl {
     const bin = `fbsimctl --json`;
     return await exec.execWithRetriesAndLogs(bin, options, statusLogs, retries, interval);
   }
-
-  _getFrameworkPath() {
-    const frameworkPath = path.join(__dirname, `/../../Detox.framework/Detox`);
-    if (!fs.existsSync(frameworkPath)) {
-      throw new Error(`Detox.framework not found at ${frameworkPath}`);
-    }
-    return frameworkPath;
-  }
 }
 
 module.exports = Fbsimctl;
