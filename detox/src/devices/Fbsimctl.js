@@ -2,46 +2,16 @@ const _ = require('lodash');
 const log = require('npmlog');
 const exec = require('../utils/exec');
 const retry = require('../utils/retry');
-const environment = require('../utils/environment');
 
 // FBSimulatorControl command line docs
 // https://github.com/facebook/FBSimulatorControl/issues/250
 // https://github.com/facebook/FBSimulatorControl/blob/master/fbsimctl/FBSimulatorControlKitTests/Tests/Unit/CommandParsersTests.swift
 
-class LogsInfo {
-  constructor(udid) {
-    const logPrefix = '/tmp/detox.last_launch_app_log.';
-    this.simStdout = logPrefix + 'out';
-    this.simStderr = logPrefix + 'err';
-    const simDataRoot = `$HOME/Library/Developer/CoreSimulator/Devices/${udid}/data`;
-    this.absStdout = simDataRoot + this.simStdout;
-    this.absStderr = simDataRoot + this.simStderr;
-    this.absJoined = `${simDataRoot}${logPrefix}{out,err}`
-  }
-}
+
 
 class Fbsimctl {
 
 
-
-  async launch(udid, bundleId, launchArgs) {
-    const args = [];
-    _.forEach(launchArgs, (value, key) => {
-      args.push(`${key} ${value}`);
-    });
-
-    const logsInfo = new LogsInfo(udid);
-    const launchBin = `/bin/cat /dev/null >${logsInfo.absStdout} 2>${logsInfo.absStderr} && ` +
-                      `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${await environment.getFrameworkPath()}/Detox" ` +
-                      `/usr/bin/xcrun simctl launch --stdout=${logsInfo.simStdout} --stderr=${logsInfo.simStderr} ` +
-                      `${udid} ${bundleId} --args ${args.join(' ')}`;
-    const result = await exec.execWithRetriesAndLogs(launchBin, undefined, {
-      trying: `Launching ${bundleId}...`,
-      successful: `${bundleId} launched. The stdout and stderr logs were recreated, you can watch them with:\n` +
-      `        tail -F ${logsInfo.absJoined}`
-    }, 1);
-    return parseInt(result.stdout.trim().split(':')[1]);
-  }
 
   async sendToHome(udid) {
     const result = await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl launch ${udid} com.apple.springboard`);

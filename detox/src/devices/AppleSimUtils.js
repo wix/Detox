@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const exec = require('../utils/exec');
 const retry = require('../utils/retry');
+const environment = require('../utils/environment');
 
 class AppleSimUtils {
 
@@ -86,11 +87,28 @@ class AppleSimUtils {
     }
   }
 
-  async terminate() {
-    fail();
+  async launch(udid, bundleId, launchArgs) {
+    const frameworkPath = await environment.getFrameworkPath();
+    const logsInfo = new LogsInfo(udid);
+    const args = _.map(launchArgs, (v, k) => `${k} ${v}`).join(' ').trim();
+
+    const statusLogs = {
+      trying: `Launching ${bundleId}...`,
+      successful: `${bundleId} launched. The stdout and stderr logs were recreated, you can watch them with:\n` +
+      `        tail -F ${logsInfo.absJoined}`
+    };
+
+    const launchBin = `/bin/cat /dev/null >${logsInfo.absStdout} 2>${logsInfo.absStderr} && ` +
+      `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${frameworkPath}/Detox" ` +
+      `/usr/bin/xcrun simctl launch --stdout=${logsInfo.simStdout} --stderr=${logsInfo.simStderr} ` +
+      `${udid} ${bundleId} --args ${args}`;
+    const result = await exec.execWithRetriesAndLogs(launchBin, undefined, statusLogs, 1);
+    // return parseInt(result.stdout.trim().split(':')[1]);
+    // exec.mockReturnValue({stdout: "appId: 22 \n"});
+
   }
 
-  async launch() {
+  async terminate() {
     fail();
   }
 
@@ -121,6 +139,18 @@ class AppleSimUtils {
       `--args -CurrentDeviceUDID ${udid} -ConnectHardwareKeyboard 0 ` +
       "-DeviceSetPath $HOME/Library/Developer/CoreSimulator/Devices > /dev/null 2>&1 < /dev/null &'";
     await exec.execWithRetriesAndLogs(cmd, undefined, { trying: `Launching device ${udid}...` }, 1);
+  }
+}
+
+class LogsInfo {
+  constructor(udid) {
+    const logPrefix = '/tmp/detox.last_launch_app_log.';
+    this.simStdout = logPrefix + 'out';
+    this.simStderr = logPrefix + 'err';
+    const simDataRoot = `$HOME/Library/Developer/CoreSimulator/Devices/${udid}/data`;
+    this.absStdout = simDataRoot + this.simStdout;
+    this.absStderr = simDataRoot + this.simStderr;
+    this.absJoined = `${simDataRoot}${logPrefix}{out,err}`
   }
 }
 

@@ -2,7 +2,6 @@
 const _ = require('lodash');
 
 xdescribe('Fbsimctl', () => {
-  let Fbsimctl;
   let fbsimctl;
   let exec;
   let fs;
@@ -11,48 +10,14 @@ xdescribe('Fbsimctl', () => {
   const bundleId = 'bundle.id';
 
   beforeEach(() => {
-    jest.mock('npmlog');
-    jest.mock('fs');
-    fs = require('fs');
-    jest.mock('../utils/exec');
-    exec = require('../utils/exec').execWithRetriesAndLogs;
-    jest.setMock('../utils/retry', async (options, func) => {
-      return await func(1);
-    });
-    Fbsimctl = require('./Fbsimctl');
-    fbsimctl = new Fbsimctl();
-  });
-
-  it(`install() - is triggering fbsimctl install`, async() => {
-    await validateFbsimctlisCalledOn(fbsimctl, async () => fbsimctl.install(simUdid, bundleId, {}));
-  });
-
-  it(`uninstall() - is triggering fbsimctl uninstall`, async() => {
-    await validateFbsimctlisCalledOn(fbsimctl, async () => fbsimctl.uninstall(simUdid, bundleId));
-  });
-
-  it(`launch() - is triggering exec`, async() => {
-    fs.existsSync.mockReturnValue(true);
-    exec.mockReturnValue({stdout: "appId: 22 \n"});
-    await fbsimctl.launch(simUdid, bundleId, []);
-    expect(exec).toHaveBeenCalledTimes(1);
-  });
-
-  it(`launch() - is triggering exec with custom launch args`, async() => {
-    fs.existsSync.mockReturnValue(true);
-    exec.mockReturnValue({stdout: "appId: 22 \n"});
-    await fbsimctl.launch(simUdid, bundleId, [{param: "param1"}]);
-    expect(exec).toHaveBeenCalledTimes(1);
-  });
-
-  it(`launch() - should throw when no Detox.framework exists`, async() => {
-    fs.existsSync.mockReturnValue(false);
-    try {
-      await fbsimctl.launch(simUdid, bundleId, []);
-      fail(`should fail when Detox.framework doesn't exist`);
-    } catch (ex) {
-      expect(ex).toBeDefined();
-    }
+    // jest.mock('npmlog');
+    // jest.mock('fs');
+    // fs = require('fs');
+    // jest.mock('../utils/exec');
+    // exec = require('../utils/exec').execWithRetriesAndLogs;
+    // jest.setMock('../utils/retry', async (options, func) => {
+    //   return await func(1);
+    // });
   });
 
   it(`sendToHome() - is triggering exec`, async() => {
@@ -127,45 +92,45 @@ xdescribe('Fbsimctl', () => {
   });
 });
 
-async function validateFbsimctlisCalledOn(fbsimctl, func) {
-  fbsimctl._execFbsimctlCommand = jest.fn();
-  func();
-  expect(fbsimctl._execFbsimctlCommand).toHaveBeenCalledTimes(1);
-}
+// async function validateFbsimctlisCalledOn(fbsimctl, func) {
+//   fbsimctl._execFbsimctlCommand = jest.fn();
+//   func();
+//   expect(fbsimctl._execFbsimctlCommand).toHaveBeenCalledTimes(1);
+// }
 
-function listAsimUdidAtState(udid, state) {
-  return {
-    "event_type": "discrete",
-    "timestamp": 1485328213,
-    "subject": {
-      "state": state,
-      "os": "iOS 10.1",
-      "name": "iPhone 7",
-      "udid": udid,
-      "device-name": "iPhone 7"
-    },
-    "event_name": "list"
-  };
-}
+// function listAsimUdidAtState(udid, state) {
+//   return {
+//     "event_type": "discrete",
+//     "timestamp": 1485328213,
+//     "subject": {
+//       "state": state,
+//       "os": "iOS 10.1",
+//       "name": "iPhone 7",
+//       "udid": udid,
+//       "device-name": "iPhone 7"
+//     },
+//     "event_name": "list"
+//   };
+// }
 
-function returnSuccessfulWithValue(value) {
-  const result = {
-    stdout: JSON.stringify(value),
-    stderr: "",
-    childProcess: {
-      exitCode: 0
-    }
-  };
-  return result;
-}
+// function returnSuccessfulWithValue(value) {
+//   const result = {
+//     stdout: JSON.stringify(value),
+//     stderr: "",
+//     childProcess: {
+//       exitCode: 0
+//     }
+//   };
+//   return result;
+// }
 
-function returnErrorWithValue(value) {
-  const result = {
-    stdout: "",
-    stderr: value,
-    childProcess: {
-      exitCode: 1
-    }
-  };
-  return result;
-}
+// function returnErrorWithValue(value) {
+//   const result = {
+//     stdout: "",
+//     stderr: value,
+//     childProcess: {
+//       exitCode: 1
+//     }
+//   };
+//   return result;
+// }

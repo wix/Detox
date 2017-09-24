@@ -3,6 +3,7 @@ describe('AppleSimUtils', () => {
   let uut;
   let exec;
   let retry;
+  let environment;
 
   const simUdid = `9C9ABE4D-70C7-49DC-A396-3CB1D0E82846`;
   const bundleId = 'bundle.id';
@@ -13,6 +14,8 @@ describe('AppleSimUtils', () => {
     exec = require('../utils/exec');
     jest.mock('../utils/retry');
     retry = require('../utils/retry');
+    jest.mock('../utils/environment');
+    environment = require('../utils/environment');
 
     AppleSimUtils = require('./AppleSimUtils');
     uut = new AppleSimUtils();
@@ -184,6 +187,50 @@ describe('AppleSimUtils', () => {
     it('does not throw', async () => {
       exec.execWithRetriesAndLogs.mockImplementation(() => Promise.reject('some reason'));
       await uut.uninstall('udid', 'theBundleId');
+    });
+  });
+
+  describe('launch', () => {
+    it('launches magically', async () => {
+      await uut.launch('udid', 'theBundleId');
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringMatching(/^.*xcrun simctl launch.*$/),
+        undefined,
+        expect.anything(),
+        1);
+    });
+
+    it('concats args', async () => {
+      await uut.launch('udid', 'theBundleId', { 'foo': 'bar', 'bob': 'yourUncle' });
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringMatching(/^.*xcrun simctl launch.* --args foo bar bob yourUncle$/),
+        undefined,
+        expect.anything(),
+        1);
+    });
+
+    it('asks environment for frameworkPath', async () => {
+      environment.getFrameworkPath.mockReturnValueOnce(Promise.resolve('thePathToFrameworks'));
+      await uut.launch('udid', 'theBundleId');
+      expect(environment.getFrameworkPath).toHaveBeenCalledTimes(1);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringMatching(/^.*thePathToFrameworks\/Detox.*xcrun simctl launch.*$/),
+        undefined,
+        expect.anything(),
+        1);
+    });
+
+    it('should fail when cant locate framework path', async () => {
+      environment.getFrameworkPath.mockReturnValueOnce(Promise.reject('cant find anything'));
+      try {
+        await uut.launch('udid', 'theBundleId');
+        fail(`should throw`);
+      } catch (e) {
+        expect(e).toBeDefined();
+      }
     });
   });
 });
