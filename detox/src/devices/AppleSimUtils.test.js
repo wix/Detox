@@ -256,5 +256,17 @@ describe('AppleSimUtils', () => {
       })
     });
   });
+
+  describe('terminate', () => {
+    it('calls xcrun simctl', async () => {
+      await uut.terminate('theUdid', 'thebundleId');
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringMatching(/.*xcrun simctl terminate theUdid thebundleId.*/),
+        undefined,
+        expect.anything(),
+        1);
+    });
+  });
 });
 

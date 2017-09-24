@@ -20,23 +20,6 @@ xdescribe('Fbsimctl', () => {
     // });
   });
 
-  it(`terminate() - is triggering exec`, async() => {
-    await fbsimctl.terminate(simUdid, bundleId);
-    expect(exec).toHaveBeenCalledTimes(1);
-  });
-
-  it(`shutdown() - is triggering fbsimctl shutdown`, async() => {
-    await validateFbsimctlisCalledOn(fbsimctl, async () => fbsimctl.shutdown(simUdid));
-  });
-
-  it(`open() - is triggering fbsimctl open`, async() => {
-    await validateFbsimctlisCalledOn(fbsimctl, async () => fbsimctl.open(simUdid, bundleId));
-  });
-
-  it(`setLocation() - is triggering fbsimctl set_location`, async() => {
-    await validateFbsimctlisCalledOn(fbsimctl, async () => fbsimctl.setLocation(simUdid));
-  });
-
   it(`resetContentAndSettings() - is triggering shutdown, exec and boot`, async() => {
     fs.existsSync.mockReturnValue(true);
     exec.mockReturnValue({stdout: "appId: 22 \n"});

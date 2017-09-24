@@ -13,13 +13,7 @@ class Fbsimctl {
 
 
 
-  async terminate(udid, bundleId) {
-    const launchBin = `/usr/bin/xcrun simctl terminate ${udid} ${bundleId}`;
-    await exec.execWithRetriesAndLogs(launchBin, undefined, {
-      trying: `Terminating ${bundleId}...`,
-      successful: `${bundleId} terminated`
-    }, 1);
-  }
+
 
   async shutdown(udid) {
     const options = { args: `${udid} shutdown` };

@@ -108,8 +108,13 @@ class AppleSimUtils {
     }
   }
 
-  async terminate() {
-    fail();
+  async terminate(udid, bundleId) {
+    const statusLogs = {
+      trying: `Terminating ${bundleId}...`,
+      successful: `${bundleId} terminated`
+    };
+    const launchBin = `/usr/bin/xcrun simctl terminate ${udid} ${bundleId}`;
+    await exec.execWithRetriesAndLogs(launchBin, undefined, statusLogs, 1);
   }
 
   async _execAppleSimUtils(options, statusLogs, retries, interval) {
