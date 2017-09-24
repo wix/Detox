@@ -90,20 +90,14 @@ class AppleSimUtils {
   async launch(udid, bundleId, launchArgs) {
     const frameworkPath = await environment.getFrameworkPath();
     const logsInfo = new LogsInfo(udid);
-    const args = _.map(launchArgs, (v, k) => `${k} ${v}`).join(' ').trim();
+    const args = this._joinLaunchArgs(launchArgs);
 
-    const statusLogs = {
-      trying: `Launching ${bundleId}...`,
-      successful: `${bundleId} launched. The stdout and stderr logs were recreated, you can watch them with:\n` +
-      `        tail -F ${logsInfo.absJoined}`
-    };
+    const result = await this._launchMagically(frameworkPath, logsInfo, udid, bundleId, args);
+    return this._parseLaunchId(result);
+  }
 
-    const launchBin = `/bin/cat /dev/null >${logsInfo.absStdout} 2>${logsInfo.absStderr} && ` +
-      `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${frameworkPath}/Detox" ` +
-      `/usr/bin/xcrun simctl launch --stdout=${logsInfo.simStdout} --stderr=${logsInfo.simStderr} ` +
-      `${udid} ${bundleId} --args ${args}`;
-    const result = await exec.execWithRetriesAndLogs(launchBin, undefined, statusLogs, 1);
-    return parseInt(_.get(result, 'stdout', ':').trim().split(':')[1]);
+  async sendToHome(udid) {
+    await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl launch ${udid} com.apple.springboard`);
   }
 
   async terminate() {
@@ -137,6 +131,29 @@ class AppleSimUtils {
       `--args -CurrentDeviceUDID ${udid} -ConnectHardwareKeyboard 0 ` +
       "-DeviceSetPath $HOME/Library/Developer/CoreSimulator/Devices > /dev/null 2>&1 < /dev/null &'";
     await exec.execWithRetriesAndLogs(cmd, undefined, { trying: `Launching device ${udid}...` }, 1);
+  }
+
+  _joinLaunchArgs(launchArgs) {
+    return _.map(launchArgs, (v, k) => `${k} ${v}`).join(' ').trim();
+  }
+
+  async _launchMagically(frameworkPath, logsInfo, udid, bundleId, args) {
+    const statusLogs = {
+      trying: `Launching ${bundleId}...`,
+      successful: `${bundleId} launched. The stdout and stderr logs were recreated, you can watch them with:\n` +
+      `        tail -F ${logsInfo.absJoined}`
+    };
+
+    const launchBin = `/bin/cat /dev/null >${logsInfo.absStdout} 2>${logsInfo.absStderr} && ` +
+      `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${frameworkPath}/Detox" ` +
+      `/usr/bin/xcrun simctl launch --stdout=${logsInfo.simStdout} --stderr=${logsInfo.simStderr} ` +
+      `${udid} ${bundleId} --args ${args}`;
+
+    return await exec.execWithRetriesAndLogs(launchBin, undefined, statusLogs, 1);
+  }
+
+  _parseLaunchId(result) {
+    return parseInt(_.get(result, 'stdout', ':').trim().split(':')[1]);
   }
 }
 

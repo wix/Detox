@@ -11,13 +11,6 @@ const retry = require('../utils/retry');
 
 class Fbsimctl {
 
-
-
-  async sendToHome(udid) {
-    const result = await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl launch ${udid} com.apple.springboard`);
-    return parseInt(result.stdout.trim().split(':')[1]);
-  }
-
   getLogsPaths(udid) {
     const logsInfo = new LogsInfo(udid);
     return {

@@ -234,10 +234,19 @@ describe('AppleSimUtils', () => {
     });
 
     it('returns the parsed id', async () => {
-      exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({stdout: 'appId: 12345 \n'}));
+      exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({ stdout: 'appId: 12345 \n' }));
       const result = await uut.launch('udid', 'theBundleId');
       expect(result).toEqual(12345);
     });
   });
+
+  describe('sendToHome', () => {
+    it('calls xcrun', async () => {
+      await uut.sendToHome('theUdid');
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(expect.stringMatching(/.*xcrun simctl launch theUdid.*/));
+    });
+  });
+
 });
 
