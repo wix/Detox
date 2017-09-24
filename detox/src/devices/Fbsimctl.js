@@ -11,13 +11,7 @@ const retry = require('../utils/retry');
 
 class Fbsimctl {
 
-  getLogsPaths(udid) {
-    const logsInfo = new LogsInfo(udid);
-    return {
-      stdout: logsInfo.absStdout,
-      stderr: logsInfo.absStderr
-    }
-  }
+
 
   async terminate(udid, bundleId) {
     const launchBin = `/usr/bin/xcrun simctl terminate ${udid} ${bundleId}`;

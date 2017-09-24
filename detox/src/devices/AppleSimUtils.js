@@ -100,6 +100,14 @@ class AppleSimUtils {
     await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl launch ${udid} com.apple.springboard`);
   }
 
+  getLogsPaths(udid) {
+    const logsInfo = new LogsInfo(udid);
+    return {
+      stdout: logsInfo.absStdout,
+      stderr: logsInfo.absStderr
+    }
+  }
+
   async terminate() {
     fail();
   }
