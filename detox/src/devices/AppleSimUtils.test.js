@@ -167,7 +167,7 @@ describe('AppleSimUtils', () => {
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
         `/usr/bin/xcrun simctl install udid somePath`,
-        undefined,
+        expect.anything(),
         expect.anything(),
         1);
     });
@@ -179,7 +179,7 @@ describe('AppleSimUtils', () => {
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
         `/usr/bin/xcrun simctl uninstall udid theBundleId`,
-        undefined,
+        expect.anything(),
         expect.anything(),
         1);
     });
@@ -244,7 +244,12 @@ describe('AppleSimUtils', () => {
     it('calls xcrun', async () => {
       await uut.sendToHome('theUdid');
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(expect.stringMatching(/.*xcrun simctl launch theUdid.*/));
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringMatching(/.*xcrun simctl launch theUdid.*/),
+        expect.anything(),
+        expect.anything(),
+        10
+      );
     });
   });
 
@@ -263,10 +268,73 @@ describe('AppleSimUtils', () => {
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
         expect.stringMatching(/.*xcrun simctl terminate theUdid thebundleId.*/),
-        undefined,
+        expect.anything(),
         expect.anything(),
         1);
     });
   });
+
+  describe('shutdown', () => {
+    it('calls xcrun simctl', async () => {
+      await uut.shutdown('theUdid');
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringMatching(/.*xcrun simctl shutdown theUdid.*/),
+        expect.anything(),
+        expect.anything(),
+        1);
+    });
+  });
+
+  describe('openUrl', () => {
+    it('calls xcrun simctl', async () => {
+      await uut.openUrl('theUdid', 'someUrl');
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringMatching(/.*xcrun simctl openurl theUdid someUrl.*/),
+        expect.anything(),
+        expect.anything(),
+        1);
+    });
+  });
+
+  describe('setLocation', () => {
+    it('throws when no fbsimctl installed', async () => {
+      try {
+        await uut.setLocation('theUdid', 123.456, 789.123);
+        fail(`should throw`);
+      } catch (e) {
+        expect(e.message).toMatch(/.*Install fbsimctl using.*/);
+        expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+      }
+    });
+
+    it('calls fbsimctl set_location', async () => {
+      exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({ stdout: `true` }));
+      await uut.setLocation('theUdid', 123.456, 789.123);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(2);
+      expect(exec.execWithRetriesAndLogs.mock.calls[1][0])
+        .toMatch(/.*fbsimctl theUdid set_location 123.456 789.123.*/);
+    });
+  });
+
+  describe('resetContentAndSettings', () => {
+    it('shutdown, simctl erase, then boot', async () => {
+      uut.shutdown = jest.fn();
+      uut.boot = jest.fn();
+      expect(uut.shutdown).not.toHaveBeenCalled();
+      expect(uut.boot).not.toHaveBeenCalled();
+      await uut.resetContentAndSettings('theUdid');
+      expect(uut.shutdown).toHaveBeenCalledTimes(1);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringMatching(/.*xcrun simctl erase theUdid.*/),
+        expect.anything(),
+        expect.anything(),
+        1);
+      expect(uut.boot).toHaveBeenCalledTimes(1);
+    });
+  });
+
 });
 

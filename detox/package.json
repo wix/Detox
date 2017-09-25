@@ -78,7 +78,8 @@
       ".*Driver.js",
       "DeviceDriverBase.js",
       "GREYConfiguration.js",
-      "src/ios/earlgreyapi"
+      "src/ios/earlgreyapi",
+      "src/utils/environment.js"
     ],
     "resetMocks": true,
     "resetModules": true,

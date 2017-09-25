@@ -2,7 +2,6 @@ const os = require('os');
 const path = require('path');
 const exec = require('child-process-promise').exec;
 
-
 function getDetoxVersion() {
   return require(path.join(__dirname, '../../package.json')).version;
 }

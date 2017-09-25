@@ -70,8 +70,7 @@ class AppleSimUtils {
       trying: `Installing ${absPath}...`,
       successful: `${absPath} installed`
     };
-    const cmd = `/usr/bin/xcrun simctl install ${udid} ${absPath}`;
-    await exec.execWithRetriesAndLogs(cmd, undefined, statusLogs, 1);
+    await this._execSimctl({ cmd: `install ${udid} ${absPath}`, statusLogs });
   }
 
   async uninstall(udid, bundleId) {
@@ -79,9 +78,8 @@ class AppleSimUtils {
       trying: `Uninstalling ${bundleId}...`,
       successful: `${bundleId} uninstalled`
     };
-    const cmd = `/usr/bin/xcrun simctl uninstall ${udid} ${bundleId}`;
     try {
-      await exec.execWithRetriesAndLogs(cmd, undefined, statusLogs, 1);
+      await this._execSimctl({ cmd: `uninstall ${udid} ${bundleId}`, statusLogs });
     } catch (e) {
       // that's fine
     }
@@ -97,7 +95,7 @@ class AppleSimUtils {
   }
 
   async sendToHome(udid) {
-    await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl launch ${udid} com.apple.springboard`);
+    await this._execSimctl({ cmd: `launch ${udid} com.apple.springboard`, retries: 10 });
   }
 
   getLogsPaths(udid) {
@@ -113,13 +111,45 @@ class AppleSimUtils {
       trying: `Terminating ${bundleId}...`,
       successful: `${bundleId} terminated`
     };
-    const launchBin = `/usr/bin/xcrun simctl terminate ${udid} ${bundleId}`;
-    await exec.execWithRetriesAndLogs(launchBin, undefined, statusLogs, 1);
+    await this._execSimctl({ cmd: `terminate ${udid} ${bundleId}`, statusLogs });
+  }
+
+  async shutdown(udid) {
+    const statusLogs = {
+      trying: `Shutting down ${udid}...`,
+      successful: `${udid} shut down`
+    };
+    await this._execSimctl({ cmd: `shutdown ${udid}`, statusLogs });
+  }
+
+  async openUrl(udid, url) {
+    await this._execSimctl({ cmd: `openurl ${udid} ${url}` });
+  }
+
+  async setLocation(udid, lat, lon) {
+    const result = await exec.execWithRetriesAndLogs(`which fbsimctl`, {}, {}, 1);
+    if (_.get(result, 'stdout')) {
+      await exec.execWithRetriesAndLogs(`fbsimctl ${udid} set_location ${lat} ${lon}`, {}, {}, 1);
+    } else {
+      throw new Error(`setLocation currently supported only through fbsimctl.
+      Install fbsimctl using:
+      "brew tap facebook/fb && export CODE_SIGNING_REQUIRED=NO && brew install fbsimctl"`);
+    }
+  }
+
+  async resetContentAndSettings(udid) {
+    await this.shutdown(udid);
+    await this._execSimctl({ cmd: `erase ${udid}` });
+    await this.boot(udid);
   }
 
   async _execAppleSimUtils(options, statusLogs, retries, interval) {
     const bin = `applesimutils`;
     return await exec.execWithRetriesAndLogs(bin, options, statusLogs, retries, interval);
+  }
+
+  async _execSimctl({ cmd, statusLogs = {}, retries = 1 }) {
+    return await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl ${cmd}`, {}, statusLogs, retries);
   }
 
   _correctQueryWithOS(query) {
