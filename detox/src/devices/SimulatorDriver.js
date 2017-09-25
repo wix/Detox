@@ -21,7 +21,11 @@ class SimulatorDriver extends IosDriver {
   async getBundleIdFromBinary(appPath) {
     try {
       const result = await exec(`/usr/libexec/PlistBuddy -c "Print CFBundleIdentifier" ${path.join(appPath, 'Info.plist')}`);
-      return _.trim(result.stdout);
+      const bundleId = _.trim(result.stdout);
+      if (_.isEmpty(bundleId)) {
+        throw new Error();
+      }
+      return bundleId;
     } catch (ex) {
       throw new Error(`field CFBundleIdentifier not found inside Info.plist of app binary at ${appPath}`);
     }

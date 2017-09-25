@@ -22,7 +22,8 @@ describe('AppleSimUtils', () => {
   });
 
   it(`appleSimUtils setPermissions`, async () => {
-    uut.setPermissions(bundleId, simUdid, { permissions: { calendar: "YES" } });
+    uut.setPermissions(bundleId, simUdid, { permissions:
+      { calendar: "YES" } });
     expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
   });
 
@@ -50,6 +51,28 @@ describe('AppleSimUtils', () => {
     it('returns udid from found device', async () => {
       exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({
         stdout: JSON.stringify([
+          {
+            "state": "Shutdown",
+            "availability": "(available)",
+            "name": "iPhone 6",
+            "udid": "the uuid",
+            "os": {
+              "version": "10.3.1",
+              "availability": "(available)",
+              "name": "iOS 10.3",
+              "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-10-3",
+              "buildversion": "14E8301"
+            }
+          }
+        ])
+      }));
+      const result = await uut.findDeviceUDID('iPhone 7');
+      expect(result).toEqual('the uuid');
+    });
+
+    it('handles stderr as if stdout', async () => {
+      exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({
+        stderr: JSON.stringify([
           {
             "state": "Shutdown",
             "availability": "(available)",
@@ -167,7 +190,7 @@ describe('AppleSimUtils', () => {
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
         `/usr/bin/xcrun simctl install udid somePath`,
-        expect.anything(),
+        undefined,
         expect.anything(),
         1);
     });
@@ -179,7 +202,7 @@ describe('AppleSimUtils', () => {
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
         `/usr/bin/xcrun simctl uninstall udid theBundleId`,
-        expect.anything(),
+        undefined,
         expect.anything(),
         1);
     });
@@ -246,7 +269,7 @@ describe('AppleSimUtils', () => {
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
         expect.stringMatching(/.*xcrun simctl launch theUdid.*/),
-        expect.anything(),
+        undefined,
         expect.anything(),
         10
       );
@@ -268,7 +291,7 @@ describe('AppleSimUtils', () => {
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
         expect.stringMatching(/.*xcrun simctl terminate theUdid thebundleId.*/),
-        expect.anything(),
+        undefined,
         expect.anything(),
         1);
     });
@@ -280,7 +303,7 @@ describe('AppleSimUtils', () => {
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
         expect.stringMatching(/.*xcrun simctl shutdown theUdid.*/),
-        expect.anything(),
+        undefined,
         expect.anything(),
         1);
     });
@@ -292,7 +315,7 @@ describe('AppleSimUtils', () => {
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
         expect.stringMatching(/.*xcrun simctl openurl theUdid someUrl.*/),
-        expect.anything(),
+        undefined,
         expect.anything(),
         1);
     });
@@ -329,7 +352,7 @@ describe('AppleSimUtils', () => {
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
         expect.stringMatching(/.*xcrun simctl erase theUdid.*/),
-        expect.anything(),
+        undefined,
         expect.anything(),
         1);
       expect(uut.boot).toHaveBeenCalledTimes(1);

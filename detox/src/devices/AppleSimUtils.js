@@ -25,7 +25,7 @@ class AppleSimUtils {
     };
     let correctQuery = this._correctQueryWithOS(query);
     const response = await this._execAppleSimUtils({ args: `--list "${correctQuery}" --maxResults=1` }, statusLogs, 1);
-    const parsed = this._parseStdout(response);
+    const parsed = this._parseResponseFromAppleSimUtils(response);
     const udid = _.get(parsed, [0, 'udid']);
     if (!udid) {
       throw new Error(`Can't find a simulator to match with "${query}", run 'xcrun simctl list' to list your supported devices.
@@ -36,7 +36,7 @@ class AppleSimUtils {
 
   async findDeviceByUDID(udid) {
     const response = await this._execAppleSimUtils({ args: `--list` }, undefined, 1);
-    const parsed = this._parseStdout(response);
+    const parsed = this._parseResponseFromAppleSimUtils(response);
     const device = _.find(parsed, (device) => _.isEqual(device.udid, udid));
     if (!device) {
       throw new Error(`Can't find device ${udid}`);
@@ -149,7 +149,7 @@ class AppleSimUtils {
   }
 
   async _execSimctl({ cmd, statusLogs = {}, retries = 1 }) {
-    return await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl ${cmd}`, {}, statusLogs, retries);
+    return await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl ${cmd}`, undefined, statusLogs, retries);
   }
 
   _correctQueryWithOS(query) {
@@ -161,12 +161,15 @@ class AppleSimUtils {
     return correctQuery;
   }
 
-  _parseStdout(response) {
-    const stdout = _.get(response, 'stdout');
-    if (_.isEmpty(stdout)) {
+  _parseResponseFromAppleSimUtils(response) {
+    let out = _.get(response, 'stdout');
+    if (_.isEmpty(out)) {
+      out = _.get(response, 'stderr');
+    }
+    if (_.isEmpty(out)) {
       return undefined;
     }
-    return JSON.parse(stdout);
+    return JSON.parse(out);
   }
 
   async _bootDeviceMagically(udid) {
