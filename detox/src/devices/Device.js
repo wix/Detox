@@ -23,8 +23,6 @@ class Device {
 
     await this.deviceDriver.prepare();
 
-    await this.deviceDriver.boot(this._deviceId);
-
     if (!argparse.getArgValue('reuse')) {
       await this.deviceDriver.uninstallApp(this._deviceId, this._bundleId);
       await this.deviceDriver.installApp(this._deviceId, this._binaryPath);
