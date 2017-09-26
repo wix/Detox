@@ -180,7 +180,16 @@ class AppleSimUtils {
     if (_.isEmpty(out)) {
       return undefined;
     }
-    return JSON.parse(out);
+
+    let parsed;
+    try {
+      parsed = JSON.parse(out);
+
+    } catch (ex) {
+      throw new Error(`Could not parse response from applesimutils, please update applesimutils and try again.
+      'brew uninstall applesimutils && brew tap wix/brew && brew install --HEAD applesimutils'`);
+    }
+    return parsed;
   }
 
   async _bootDeviceByXcodeVersion(udid) {

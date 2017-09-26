@@ -113,7 +113,18 @@ describe('AppleSimUtils', () => {
             expect(e.message).toMatch(`Can't find a simulator to match with "iPhone 6, iOS 10"`);
           }
         });
-      })
+      });
+
+      it('invalid input, not parseable', async () => {
+        exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({ stdout: '/' }));
+        try {
+          await uut.findDeviceUDID('iPhone 6, iOS 10');
+          fail('should throw');
+        } catch (e) {
+          expect(e.message).toMatch(`Could not parse response from applesimutils, please update applesimutils and try again.
+      'brew uninstall applesimutils && brew tap wix/brew && brew install --HEAD applesimutils'`);
+        }
+      });
     });
   });
 
