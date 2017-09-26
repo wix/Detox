@@ -4,7 +4,7 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "version": "5.6.2",
+  "version": "5.7.0",
   "bin": {
     "detox": "local-cli/detox.js"
   },
@@ -25,7 +25,7 @@
     "lint": "eslint src",
     "unit": "jest --coverage --verbose",
     "test": "npm run unit",
-    "unit:watch": "jest --watch --coverage --verbose",
+    "unit:watch": "jest --watch",
     "prepublish": "npm run build"
   },
   "devDependencies": {
@@ -80,7 +80,8 @@
       "Emulator.js",
       "DeviceDriverBase.js",
       "GREYConfiguration.js",
-      "src/ios/earlgreyapi"
+      "src/ios/earlgreyapi",
+      "src/utils/environment.js"
     ],
     "resetMocks": true,
     "resetModules": true,

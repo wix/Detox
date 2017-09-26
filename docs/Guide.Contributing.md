@@ -25,13 +25,6 @@ npm install -g react-native-cli
 
 For all the internal projects (detox, detox-server, detox-cli, demos, test) `lerna` will create symbolic links in `node_modules` instead of `npm` copying the content of the projects. This way, any change you do on any code is there immediately. There is no need to update node modules or copy files between projects.
 
-### Install `fbsimctl`
-
-```sh
-brew tap facebook/fb
-export CODE_SIGNING_REQUIRED=NO && brew install fbsimctl --HEAD
-```
-
 ### Install `xcpretty`
 
 ```sh

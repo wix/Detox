@@ -4,7 +4,6 @@ const fs = require('fs');
 const os = require('os');
 const _ = require('lodash');
 const IosDriver = require('./IosDriver');
-const FBsimctl = require('./Fbsimctl');
 const AppleSimUtils = require('./AppleSimUtils');
 const configuration = require('../configuration');
 
@@ -12,55 +11,58 @@ class SimulatorDriver extends IosDriver {
 
   constructor(client) {
     super(client);
-    this._fbsimctl = new FBsimctl();
     this._applesimutils = new AppleSimUtils();
   }
 
   async acquireFreeDevice(name) {
-    const deviceId = await this._fbsimctl.list(name);
-    await this._fbsimctl.boot(deviceId);
-    return deviceId
+    const deviceId = await this._applesimutils.findDeviceUDID(name);
+    await this.boot(deviceId);
+    return deviceId;
   }
 
   async getBundleIdFromBinary(appPath) {
     try {
       const result = await exec(`/usr/libexec/PlistBuddy -c "Print CFBundleIdentifier" ${path.join(appPath, 'Info.plist')}`);
-      return _.trim(result.stdout);
+      const bundleId = _.trim(result.stdout);
+      if (_.isEmpty(bundleId)) {
+        throw new Error();
+      }
+      return bundleId;
     } catch (ex) {
       throw new Error(`field CFBundleIdentifier not found inside Info.plist of app binary at ${appPath}`);
     }
   }
 
   async boot(deviceId) {
-    await this._fbsimctl.boot(deviceId);
+    await this._applesimutils.boot(deviceId);
   }
 
   async installApp(deviceId, binaryPath) {
-    await this._fbsimctl.install(deviceId, binaryPath);
+    await this._applesimutils.install(deviceId, binaryPath);
   }
 
   async uninstallApp(deviceId, bundleId) {
-    await this._fbsimctl.uninstall(deviceId, bundleId);
+    await this._applesimutils.uninstall(deviceId, bundleId);
   }
 
   async launch(deviceId, bundleId, launchArgs) {
-    return await this._fbsimctl.launch(deviceId, bundleId, launchArgs);
+    return await this._applesimutils.launch(deviceId, bundleId, launchArgs);
   }
 
   async terminate(deviceId, bundleId) {
-    await this._fbsimctl.terminate(deviceId, bundleId);
+    await this._applesimutils.terminate(deviceId, bundleId);
   }
 
   async sendToHome(deviceId) {
-    return await this._fbsimctl.sendToHome(deviceId);
+    return await this._applesimutils.sendToHome(deviceId);
   }
 
   async shutdown(deviceId) {
-    await this._fbsimctl.shutdown(deviceId);
+    await this._applesimutils.shutdown(deviceId);
   }
 
   async setLocation(deviceId, lat, lon) {
-    await this._fbsimctl.setLocation(deviceId, lat, lon);
+    await this._applesimutils.setLocation(deviceId, lat, lon);
   }
 
   async setPermissions(deviceId, bundleId, permissions) {
@@ -68,7 +70,7 @@ class SimulatorDriver extends IosDriver {
   }
 
   async resetContentAndSettings(deviceId) {
-    return await this._fbsimctl.resetContentAndSettings(deviceId);
+    return await this._applesimutils.resetContentAndSettings(deviceId);
   }
 
   validateDeviceConfig(deviceConfig) {
@@ -82,7 +84,7 @@ class SimulatorDriver extends IosDriver {
   }
 
   getLogsPaths(deviceId) {
-    return this._fbsimctl.getLogsPaths(deviceId);
+    return this._applesimutils.getLogsPaths(deviceId);
   }
 }
 

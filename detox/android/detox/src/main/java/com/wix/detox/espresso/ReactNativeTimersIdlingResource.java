@@ -39,7 +39,7 @@ public class ReactNativeTimersIdlingResource implements IdlingResource, Choreogr
     private final static String FIELD_TARGET_TIME = "mTargetTime";
     private final static String LOCK_TIMER = "mTimerGuard";
 
-    private static final long LOOK_AHEAD_MS = 1500;
+    private static final long LOOK_AHEAD_MS = 15;
 
     private ResourceCallback callback = null;
     private Object reactContext = null;

@@ -36,7 +36,6 @@ describe('Device', () => {
 
     jest.mock('../utils/environment');
 
-    jest.mock('./Fbsimctl');
     jest.mock('./AppleSimUtils');
 
     jest.mock('../client/Client');
