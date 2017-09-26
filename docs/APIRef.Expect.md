@@ -11,6 +11,7 @@ Expect verifies if a certain value is as expected to be.
 - [`.toExist()`](#toexist)
 - [`.toNotExist()`](#tonotexist)
 - [`.toHaveText()`](#tohavetexttext)
+- [`.toHaveLabel()`](#tohavelabellabel)
 - [`.toHaveId()`](#tohaveidid)
 - [`.toHaveValue()`](#tohavevaluevalue)
 
@@ -50,6 +51,13 @@ await expect(element(by.id('RandomJunk959'))).toNotExist();
 
 ```js
 await expect(element(by.id('UniqueId204'))).toHaveText('I contain some text');
+```
+
+### `toHaveLabel(label)`
+- Similar to `toHaveText(text)`, but searches by accessibilityLabel (iOS) or by contentDescription (Android)
+
+```js
+await expect(element(by.id('UniqueId204'))).toHaveLabel('Done');
 ```
 
 ### `toHaveId(id)`

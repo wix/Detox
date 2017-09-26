@@ -11,6 +11,7 @@ Matchers find elements in your app that match one or more properties.
 
 - [`by.id()`](#byidid)
 - [`by.text()`](#bytexttext)
+- [`by.label()`](#bylabellabel)
 - [`by.type()`](#bytypenativeviewtype)
 - [`by.traits()`](#bytraitstraits)
 
@@ -42,6 +43,14 @@ Find an element by text, useful for text fields, buttons.
 ```js
 await element(by.text('Tap Me'));
 ```
+
+#### `by.label(label)`
+Find an element by accessibilityLabel(iOS) or contentDescription(Android), useful for text fields, buttons.
+
+```js
+await element(by.label('Welcome'));
+```
+
 #### `by.type(nativeViewType)`
 Find an element by native view type.
 
@@ -49,7 +58,7 @@ Find an element by native view type.
 await element(by.type('RCTImageView'));
 ```
 #### `by.traits([traits])`
-Find an element with an accessibility trait.
+Find an element with an accessibility trait. (iOS only)
 
 ```js
 await element(by.traits(['button']));
