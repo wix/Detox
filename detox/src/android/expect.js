@@ -340,7 +340,7 @@ function element(matcher) {
 
 const by = {
   accessibilityLabel: (value) => new LabelMatcher(value),
-  label: (value) => new TextMatcher(value),
+  label: (value) => new LabelMatcher(value),
   id: (value) => new IdMatcher(value),
   type: (value) => new TypeMatcher(value),
   traits: (value) => new TraitsMatcher(value),

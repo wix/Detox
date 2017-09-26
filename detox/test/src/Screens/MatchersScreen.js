@@ -21,11 +21,11 @@ export default class MatchersScreen extends Component {
       <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
 
         <TouchableOpacity onPress={this.onButtonPress.bind(this, 'Label Working')}>
-          <Text style={{color: 'blue', marginBottom: 20}}>Label</Text>
+          <Text style={{color: 'blue', marginBottom: 20}} accessibilityLabel={'Label'}>Label</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={this.onButtonPress.bind(this, 'ID Working')}>
-          <Text testID='UniqueId345' style={{color: 'blue', marginBottom: 20}}>ID</Text>
+          <Text testID='UniqueId345' style={{color: 'blue', marginBottom: 20}} accessibilityLabel={'ID'}>ID</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={this.onButtonPress.bind(this, 'Traits Working')} accessible={true} accessibilityTraits={['button', 'text']}>

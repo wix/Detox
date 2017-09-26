@@ -29,7 +29,7 @@ export default class ActionsScreen extends Component {
         <TouchableOpacity onPress={this.onButtonPress.bind(this, 'Tap Working')}
           onLongPress={this.onButtonPress.bind(this, 'Long Press Working')}
           >
-          <Text style={{ color: 'blue', marginBottom: 20, textAlign: 'center' }}>Tap Me</Text>
+          <Text style={{ color: 'blue', marginBottom: 20, textAlign: 'center' }} acccessibilityLabel={'Tap Me'}>Tap Me</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={this.onLongTimeout.bind(this)}

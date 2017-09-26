@@ -6,12 +6,12 @@ describe('Matchers', () => {
 
   it('should match elements by (accesibility) label', async () => {
     await element(by.label('Label')).tap();
-    await expect(element(by.label('Label Working!!!'))).toBeVisible();
+    await expect(element(by.text('Label Working!!!'))).toBeVisible();
   });
 
   it('should match elements by (accesibility) id', async () => {
     await element(by.id('UniqueId345')).tap();
-    await expect(element(by.label('ID Working!!!'))).toBeVisible();
+    await expect(element(by.text('ID Working!!!'))).toBeVisible();
   });
 
   it('should match elements by type (native class)', async () => {
