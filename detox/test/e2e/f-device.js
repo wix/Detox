@@ -3,21 +3,21 @@ describe('Device', () => {
     await device.reloadReactNative();
     await element(by.label('Sanity')).tap();
     await element(by.label('Say Hello')).tap();
-    await expect(element(by.label('Hello!!!'))).toBeVisible();
+    await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
 
   it('relaunchApp - should tap successfully', async () => {
     await device.relaunchApp();
     await element(by.label('Sanity')).tap();
     await element(by.label('Say Hello')).tap();
-    await expect(element(by.label('Hello!!!'))).toBeVisible();
+    await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
 
   it('relaunchApp({delete: true}) - should tap successfully', async () => {
     await device.relaunchApp({delete: true});
     await element(by.label('Sanity')).tap();
     await element(by.label('Say Hello')).tap();
-    await expect(element(by.label('Hello!!!'))).toBeVisible();
+    await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
 
   it('uninstall() + install() + relaunch() - should tap successfully', async () => {
@@ -26,7 +26,7 @@ describe('Device', () => {
     await device.relaunchApp();
     await element(by.label('Sanity')).tap();
     await element(by.label('Say Hello')).tap();
-    await expect(element(by.label('Hello!!!'))).toBeVisible();
+    await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
 
   it('launchApp({newInstance: true}) + sendToHome() + launchApp() - should bring up previous instance', async () => {
@@ -36,7 +36,7 @@ describe('Device', () => {
     await device.sendToHome();
     await device.launchApp();
 
-    await expect(element(by.label('Hello!!!'))).toBeVisible();
+    await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
 
   it('resetContentAndSettings() + install() + relaunch() - should tap successfully', async () => {
@@ -45,7 +45,7 @@ describe('Device', () => {
     await device.launchApp({ newInstance: true });
     await element(by.label('Sanity')).tap();
     await element(by.label('Say Hello')).tap();
-    await expect(element(by.label('Hello!!!'))).toBeVisible();
+    await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
 
   describe('device orientation', () => {

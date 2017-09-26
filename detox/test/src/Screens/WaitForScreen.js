@@ -38,14 +38,14 @@ export default class WaitForScreen extends Component {
 
         <View style={{height: 100, borderColor: '#c0c0c0', borderWidth: 1, backgroundColor: '#f8f8ff', marginBottom: 20}}>
           <ScrollView testID='ScrollView630'>
-            <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}}>Text1</Text>
-            <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}}>Text2</Text>
-            <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}}>Text3</Text>
-            <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}}>Text4</Text>
-            <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}}>Text5</Text>
-            <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}}>Text6</Text>
-            <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}}>Text7</Text>
-            <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}}>Text8</Text>
+            <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}} accessibilityLabel={'Text1'}>Text1</Text>
+            <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}} accessibilityLabel={'Text2'}>Text2</Text>
+            <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}} accessibilityLabel={'Text3'}>Text3</Text>
+            <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}} accessibilityLabel={'Text4'}>Text4</Text>
+            <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}} accessibilityLabel={'Text5'}>Text5</Text>
+            <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}} accessibilityLabel={'Text6'}>Text6</Text>
+            <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}} accessibilityLabel={'Text7'}>Text7</Text>
+            <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}} accessibilityLabel={'Text8'}>Text8</Text>
           </ScrollView>
         </View>
 
