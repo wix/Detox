@@ -22,8 +22,10 @@ describe('AppleSimUtils', () => {
   });
 
   it(`appleSimUtils setPermissions`, async () => {
-    uut.setPermissions(bundleId, simUdid, { permissions:
-      { calendar: "YES" } });
+    uut.setPermissions(bundleId, simUdid, {
+      permissions:
+      { calendar: "YES" }
+    });
     expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
   });
 
@@ -154,6 +156,16 @@ describe('AppleSimUtils', () => {
       expect(uut.findDeviceByUDID).toHaveBeenCalledTimes(1);
       expect(retry).toHaveBeenCalledTimes(1);
       expect(retry).toHaveBeenCalledWith({ retries: 10, interval: 1000 }, expect.any(Function));
+    });
+  });
+
+  describe('getXcodeVersion', () => {
+    it('returns xcode version', async () => {
+      exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({ stdout: 'Xcode 123.456\nBuild version 123abc123\n' }));
+      const result = await uut.getXcodeVersion();
+      expect(result).toEqual('123.456');
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+      expect(exec.execWithRetriesAndLogs).toBeCalledWith(`xcodebuild -version`, undefined, undefined, 1);
     });
   });
 

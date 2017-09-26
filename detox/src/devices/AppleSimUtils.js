@@ -143,6 +143,13 @@ class AppleSimUtils {
     await this.boot(udid);
   }
 
+  async getXcodeVersion() {
+    const raw = await exec.execWithRetriesAndLogs(`xcodebuild -version`, undefined, undefined, 1);
+    const stdout = _.get(raw, 'stdout', '');
+    const version = /^Xcode (\S+)\s+/.exec(stdout)[1];
+    return version;
+  }
+
   async _execAppleSimUtils(options, statusLogs, retries, interval) {
     const bin = `applesimutils`;
     return await exec.execWithRetriesAndLogs(bin, options, statusLogs, retries, interval);
