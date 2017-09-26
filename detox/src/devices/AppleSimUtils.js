@@ -61,7 +61,7 @@ class AppleSimUtils {
       return false;
     }
     await this.waitForDeviceState(udid, 'Shutdown');
-    await this._bootDeviceMagically(udid);
+    await this._bootDeviceByXcodeVersion(udid);
     await this.waitForDeviceState(udid, 'Booted');
   }
 
@@ -145,9 +145,13 @@ class AppleSimUtils {
 
   async getXcodeVersion() {
     const raw = await exec.execWithRetriesAndLogs(`xcodebuild -version`, undefined, undefined, 1);
-    const stdout = _.get(raw, 'stdout', '');
-    const version = /^Xcode (\S+)\s+/.exec(stdout)[1];
-    return version;
+    const stdout = _.get(raw, 'stdout', 'undefined');
+    const match = /^Xcode (\S+)\.*\S*\s*/.exec(stdout);
+    const majorVersion = parseInt(_.get(match, '[1]'));
+    if (!_.isInteger(majorVersion) || majorVersion < 1) {
+      throw new Error(`Can't read Xcode version, got: ${stdout}`);
+    }
+    return majorVersion;
   }
 
   async _execAppleSimUtils(options, statusLogs, retries, interval) {
@@ -177,6 +181,16 @@ class AppleSimUtils {
       return undefined;
     }
     return JSON.parse(out);
+  }
+
+  async _bootDeviceByXcodeVersion(udid) {
+    const xcodeVersion = await this.getXcodeVersion();
+    if (xcodeVersion >= 9) {
+      const statusLogs = { trying: `Booting device ${udid}` };
+      await this._execSimctl({ cmd: `boot ${udid}`, statusLogs, retries: 10 });
+    } else {
+      await this._bootDeviceMagically(udid);
+    }
   }
 
   async _bootDeviceMagically(udid) {

@@ -160,12 +160,37 @@ describe('AppleSimUtils', () => {
   });
 
   describe('getXcodeVersion', () => {
-    it('returns xcode version', async () => {
+    it('returns xcode major version', async () => {
       exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({ stdout: 'Xcode 123.456\nBuild version 123abc123\n' }));
       const result = await uut.getXcodeVersion();
-      expect(result).toEqual('123.456');
+      expect(result).toEqual(123);
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
       expect(exec.execWithRetriesAndLogs).toBeCalledWith(`xcodebuild -version`, undefined, undefined, 1);
+    });
+
+    it('handles all sorts of results', async () => {
+      exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({ stdout: 'Xcode 999' }));
+      const result = await uut.getXcodeVersion();
+      expect(result).toEqual(999);
+    });
+
+    it('throws when cant read version', async () => {
+      try {
+        await uut.getXcodeVersion();
+        fail(`should throw`);
+      } catch (e) {
+        expect(e).toEqual(new Error(`Can't read Xcode version, got: undefined`));
+      }
+    });
+
+    it('throws when invalid version', async () => {
+      exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({ stdout: 'Xcode bla' }));
+      try {
+        await uut.getXcodeVersion();
+        fail(`should throw`);
+      } catch (e) {
+        expect(e).toEqual(new Error(`Can't read Xcode version, got: Xcode bla`));
+      }
     });
   });
 
@@ -173,6 +198,7 @@ describe('AppleSimUtils', () => {
     it('waits for device by udid to be Shutdown, boots magically, then waits for state to be Booted', async () => {
       uut.findDeviceByUDID = jest.fn(() => Promise.resolve({ state: 'unknown' }));
       uut.waitForDeviceState = jest.fn(() => Promise.resolve(true));
+      uut.getXcodeVersion = jest.fn(() => Promise.resolve(1));
       expect(exec.execWithRetriesAndLogs).not.toHaveBeenCalled();
       await uut.boot('some udid');
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(expect.stringMatching('xcode-select -p'), undefined, expect.anything(), 1);
@@ -183,6 +209,7 @@ describe('AppleSimUtils', () => {
 
     it('skips if device state was already Booted', async () => {
       uut.findDeviceByUDID = jest.fn(() => Promise.resolve({ state: 'Booted' }));
+      uut.getXcodeVersion = jest.fn(() => Promise.resolve(1));
       await uut.boot('udid');
       expect(uut.findDeviceByUDID).toHaveBeenCalledTimes(1);
       expect(exec.execWithRetriesAndLogs).not.toHaveBeenCalled();
@@ -190,9 +217,20 @@ describe('AppleSimUtils', () => {
 
     it('skips if device state was already Booting', async () => {
       uut.findDeviceByUDID = jest.fn(() => Promise.resolve({ state: 'Booting' }));
+      uut.getXcodeVersion = jest.fn(() => Promise.resolve(1));
       await uut.boot('udid');
       expect(uut.findDeviceByUDID).toHaveBeenCalledTimes(1);
       expect(exec.execWithRetriesAndLogs).not.toHaveBeenCalled();
+    });
+
+    it('boots with xcrun simctl boot when xcode version >= 9', async () => {
+      uut.findDeviceByUDID = jest.fn(() => Promise.resolve({ state: 'unknown' }));
+      uut.getXcodeVersion = jest.fn(() => Promise.resolve(9));
+      await uut.boot('udid');
+      expect(uut.getXcodeVersion).toHaveBeenCalledTimes(1);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(expect.stringMatching('xcrun simctl boot udid'), undefined, expect.anything(), 10);
+
     });
   });
 
