@@ -6,6 +6,7 @@ import {
   Platform
 } from 'react-native';
 
+// TODO Use 10.0.3.2 for Genymotion
 const HOST = Platform.OS === 'ios' ? 'localhost': '10.0.2.2';
 
 export default class NetworkScreen extends Component {
@@ -23,11 +24,11 @@ export default class NetworkScreen extends Component {
       <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
 
         <TouchableOpacity onPress={this.onNetworkButtonPress.bind(this, 'Short Network Request Working', 100)}>
-          <Text testID='ShortNetworkRequest' style={{color: 'blue', marginBottom: 20}}>Short Network Request</Text>
+          <Text testID='ShortNetworkRequest' style={{color: 'blue', marginBottom: 20}} accessibilityLabel={'Short Network Request'}>Short Network Request</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={this.onNetworkButtonPress.bind(this, 'Long Network Request Working', 3000)}>
-          <Text testID='LongNetworkRequest' style={{color: 'blue', marginBottom: 20}}>Long Network Request</Text>
+          <Text testID='LongNetworkRequest' style={{color: 'blue', marginBottom: 20}} accessibilityLabel={'Long Network Request'}>Long Network Request</Text>
         </TouchableOpacity>
       </View>
     );

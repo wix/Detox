@@ -61,7 +61,7 @@ export default class StressScreen extends Component {
   renderTestButton(label, onPress) {
     return (
       <TouchableOpacity onPress={onPress}>
-        <Text style={{color: 'blue', marginBottom: 20}}>{label}</Text>
+        <Text style={{color: 'blue', marginBottom: 20}} accessibilityLabel={label}>{label}</Text>
       </TouchableOpacity>
     )
   }
@@ -100,7 +100,7 @@ export default class StressScreen extends Component {
     return (
       <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
         <TouchableOpacity onPress={this.onButtonPress.bind(this)}>
-          <Text style={{color: 'blue', marginBottom: 20}}>Next</Text>
+          <Text style={{color: 'blue', marginBottom: 20}} accessibilityLabel={'Next'}>Next</Text>
         </TouchableOpacity>
       </View>
     );

@@ -9,41 +9,41 @@ describe('Actions', () => {
 
   it('should tap on an element', async () => {
     await element(by.label('Tap Me')).tap();
-    await expect(element(by.label('Tap Working!!!'))).toBeVisible();
+    await expect(element(by.text('Tap Working!!!'))).toBeVisible();
   });
 
   it('should long press on an element', async () => {
     await element(by.label('Tap Me')).longPress();
-    await expect(element(by.label('Long Press Working!!!'))).toBeVisible();
+    await expect(element(by.text('Long Press Working!!!'))).toBeVisible();
   });
 
   it('should multi tap on an element', async () => {
     await element(by.id('UniqueId819')).multiTap(3);
-    await expect(element(by.id('UniqueId819'))).toHaveLabel('Taps: 3');
+    await expect(element(by.id('UniqueId819'))).toHaveText('Taps: 3');
   });
 
   it('should tap on an element at point', async () => {
     await element(by.id('View7990')).tapAtPoint({x:180, y:140});
-    await expect(element(by.id('UniqueId819'))).toHaveLabel('Taps: 1');
+    await expect(element(by.id('UniqueId819'))).toHaveText('Taps: 1');
   });
 
   // Backspace is supported by using "\b" in the string. Return key is supported with "\n"
   it('should type in an element', async () => {
     await element(by.id('UniqueId937')).tap();
     await element(by.id('UniqueId937')).typeText('passcode');
-    await expect(element(by.label('Type Working!!!'))).toBeVisible();
+    await expect(element(by.text('Type Working!!!'))).toBeVisible();
   });
 
   it('should clear text in an element', async () => {
     await element(by.id('UniqueId005')).tap();
     await element(by.id('UniqueId005')).clearText();
-    await expect(element(by.label('Clear Working!!!'))).toBeVisible();
+    await expect(element(by.text('Clear Working!!!'))).toBeVisible();
   });
 
   it('should replace text in an element', async () => {
     await element(by.id('UniqueId006')).tap();
     await element(by.id('UniqueId006')).replaceText('replaced_text');
-    await expect(element(by.label('Replace Working!!!'))).toBeVisible();
+    await expect(element(by.text('Replace Working!!!'))).toBeVisible();
   });
 
   // directions: 'up'/'down'/'left'/'right'
@@ -78,7 +78,7 @@ describe('Actions', () => {
   // directions: 'up'/'down'/'left'/'right', speed: 'fast'/'slow'
   xit('should swipe down until pull to reload is triggered', async () => {
     await element(by.id('ScrollView799')).swipe('down', 'slow');
-    await expect(element(by.label('PullToReload Working!!!'))).toBeVisible();
+    await expect(element(by.text('PullToReload Working!!!'))).toBeVisible();
   });
 
   it('should wait for long timeout', async () => {

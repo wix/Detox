@@ -21,27 +21,27 @@ export default class TimeoutsScreen extends Component {
       <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
 
         <TouchableOpacity onPress={this.onTimeoutButtonPress.bind(this, 'Short Timeout Working', 600)}>
-          <Text testID='TimeoutShort' style={{color: 'blue', marginBottom: 20}}>Short Timeout</Text>
+          <Text testID='TimeoutShort' style={{color: 'blue', marginBottom: 20}} accessibilityLabel={'Short Timeout'}>Short Timeout</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={this.onTimeoutButtonPress.bind(this, 'Zero Timeout Working', 0)}>
-          <Text testID='TimeoutZero' style={{color: 'blue', marginBottom: 20}}>Zero Timeout</Text>
+          <Text testID='TimeoutZero' style={{color: 'blue', marginBottom: 20}} accessibilityLabel={'Zero Timeout'}>Zero Timeout</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={this.onTimeoutIgnoreButtonPress.bind(this, 'Short Timeout Ignored', 600)}>
-          <Text testID='TimeoutIgnoreShort' style={{color: 'blue', marginBottom: 20}}>Short Timeout Ignore</Text>
+          <Text testID='TimeoutIgnoreShort' style={{color: 'blue', marginBottom: 20}} accessibilityLabel={'Short Timeout Ignore'}>Short Timeout Ignore</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={this.onTimeoutIgnoreButtonPress.bind(this, 'Long Timeout Ignored', 100000)}>
-          <Text testID='TimeoutIgnoreLong' style={{color: 'blue', marginBottom: 20}}>Long Timeout Ignore</Text>
+          <Text testID='TimeoutIgnoreLong' style={{color: 'blue', marginBottom: 20}} accessibilityLabel={'Long Timeout Ignore'}>Long Timeout Ignore</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={this.onImmediateButtonPress.bind(this, 'Immediate Working')}>
-          <Text testID='Immediate' style={{color: 'blue', marginBottom: 20}}>Immediate</Text>
+          <Text testID='Immediate' style={{color: 'blue', marginBottom: 20}} accessibilityLabel={'Immediate'}>Immediate</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={this.onIntervalIgnoreButtonPress.bind(this, 'Interval Ignored', 1000)}>
-          <Text testID='IntervalIgnore' style={{color: 'blue', marginBottom: 20}}>Interval Ignore</Text>
+          <Text testID='IntervalIgnore' style={{color: 'blue', marginBottom: 20}} accessibilityLabel={'Interval Ignored'}>Interval Ignore</Text>
         </TouchableOpacity>
 
       </View>
