@@ -65,10 +65,6 @@ env:
   - NODE_VERSION=stable
 
 install:
-- brew tap facebook/fb
-- export CODE_SIGNING_REQUIRED=NO
-- brew install fbsimctl --HEAD
-
 - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
 - export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 - nvm install $NODE_VERSION
@@ -133,10 +129,6 @@ workflows:
         inputs:
         - content: |-
             #!/bin/bash
-
-            brew tap facebook/fb
-            export CODE_SIGNING_REQUIRED=NO
-            brew install fbsimctl
 
             brew tap wix/brew
             brew install applesimutils --HEAD

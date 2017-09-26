@@ -25,7 +25,7 @@
     "lint": "eslint src",
     "unit": "jest --coverage --verbose",
     "test": "npm run unit",
-    "unit:watch": "jest --watch --coverage --verbose",
+    "unit:watch": "jest --watch",
     "prepublish": "npm run build"
   },
   "devDependencies": {
@@ -78,7 +78,8 @@
       ".*Driver.js",
       "DeviceDriverBase.js",
       "GREYConfiguration.js",
-      "src/ios/earlgreyapi"
+      "src/ios/earlgreyapi",
+      "src/utils/environment.js"
     ],
     "resetMocks": true,
     "resetModules": true,

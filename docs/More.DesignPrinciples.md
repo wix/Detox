@@ -12,7 +12,7 @@ Traditionally, end-to-end tests on mobile are riddled with inherent issues, maki
 
 * **Friendly Protractor-like API for tests**<br><br>Tests in Detox are implemented in human-readable JavaScript and can even be shared between platforms. This easy to use API completely abstracts the complex native driver invocations taking place under the hood.
 
-* **Detox controls devices through low-level APIs**<br><br>Let's take iOS simulators for example, which are difficult to control efficiently since multiple concurrent instances aren't supported. Detox uses fbsimctl by Facebook to work around these issues and support test sharding.
+* **Detox controls devices through low-level APIs**<br><br>Let's take iOS simulators for example, which are difficult to control efficiently since multiple concurrent instances aren't supported. Detox uses [AppleSimulatorUtils](https://github.com/wix/AppleSimulatorUtils) (another opensource library by Wix) to work around these issues and support test sharding.
 
 * **Built from the ground up for mobile and React Native**<br><br>Detox is inspired by web testing methodologies but is not a direct translation of a solution designed for a different platform. Detox is built from the ground up for native mobile and has deep first-class support for React Native apps.
 
