@@ -36,19 +36,8 @@ Node is the JavaScript runtime Detox will run on. **Install Node 7.6.0 or above 
  ```
 
 > TIP: Verify it works by typing in terminal `node -v` to output current node version, should be higher than 7.6.0
-
-#### 3. Install [fbsimctl](https://github.com/facebook/FBSimulatorControl/tree/master/fbsimctl)
-
-This tool by Facebook helps Detox manage and automate iOS Simulators.
-
- ```sh 
- brew tap facebook/fb
- export CODE_SIGNING_REQUIRED=NO && brew install fbsimctl
- ```
-Make sure you install a stable version, **do not** use `brew install fbsimctl --HEAD` as instructed in the original repo.
-> TIP: Verify it works by typing in terminal `fbsimctl list` to output the list of available simulators
 	 
-#### 4. Install [appleSimUtils](https://github.com/wix/AppleSimulatorUtils)
+#### 3. Install [appleSimUtils](https://github.com/wix/AppleSimulatorUtils)
 	 
 A collection of utils for Apple simulators, Detox uses it to set (grant or deny) runtime permissions per application. 
 
@@ -59,7 +48,7 @@ brew install --HEAD applesimutils
 
 > TIP: Verify it works by typing in terminal `applesimutils` to output the tool help screen
 
-#### 5. Install Detox command line tools (detox-cli)
+#### 4. Install Detox command line tools (detox-cli)
 
 This package makes it easier to operate Detox from the command line. `detox-cli` should be installed globally, enabling usage of the command line tools outside of your npm scripts.
 
@@ -107,7 +96,7 @@ The basic configuration for Detox should be in your `package.json` file under th
 	
 In the above configuration example, change `example` to your actual project name. Under the key `"binaryPath"`, `example.app` should be `<your_project_name>.app`. Under the key `"build"`, `example.xcodeproj` should be `<your_project_name>.xcodeproj` and `-scheme example` should be `-scheme <your_project_name>`.
 
-Also make sure the simulator model specified under the key `"name"` (`iPhone 7` above) is actually available on your machine (it was installed by Xcode). Check this by typing `fbsimctl list` in terminal to display all available simulators.
+Also make sure the simulator model specified under the key `"name"` (`iPhone 7` above) is actually available on your machine (it was installed by Xcode). Check this by typing `xcrun simctl list` in terminal to display all available simulators.
 
 > TIP: To test a release version, replace 'Debug' with 'Release' in the binaryPath and build properties. For full configuration options see Configuration under the API Reference.
 
