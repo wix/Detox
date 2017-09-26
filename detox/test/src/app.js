@@ -24,7 +24,7 @@ class example extends Component {
       <TouchableOpacity onPress={() => {
         this.setState({screen: component});
       }}>
-        <Text style={{color: 'blue', marginBottom: 20}}>{title}</Text>
+        <Text style={{color: 'blue', marginBottom: 20}} accessibilityLabel={title}>{title}</Text>
       </TouchableOpacity>
     );
   }

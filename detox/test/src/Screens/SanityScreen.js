@@ -18,7 +18,7 @@ export default class SanityScreen extends Component {
   renderTestButton(label, onPress) {
     return (
       <TouchableOpacity onPress={onPress}>
-        <Text style={{color: 'blue', marginBottom: 20}}>{label}</Text>
+        <Text style={{color: 'blue', marginBottom: 20}} accessibilityLabel={label}>{label}</Text>
       </TouchableOpacity>
     )
   }
@@ -27,7 +27,7 @@ export default class SanityScreen extends Component {
     if (this.state.greeting) return this.renderAfterButton();
     return (
       <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
-        <Text style={{fontSize: 25, marginBottom: 30}}>
+        <Text style={{fontSize: 25, marginBottom: 30}} accessibilityLabel={'Welcome'}>
           Welcome
         </Text>
         {this.renderTestButton('Say Hello', this.onButtonPress.bind(this, 'Hello'))}
