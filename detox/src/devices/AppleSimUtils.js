@@ -127,9 +127,9 @@ class AppleSimUtils {
   }
 
   async setLocation(udid, lat, lon) {
-    const result = await exec.execWithRetriesAndLogs(`which fbsimctl`, {}, {}, 1);
+    const result = await exec.execWithRetriesAndLogs(`which fbsimctl`, undefined, undefined, 1);
     if (_.get(result, 'stdout')) {
-      await exec.execWithRetriesAndLogs(`fbsimctl ${udid} set_location ${lat} ${lon}`, {}, {}, 1);
+      await exec.execWithRetriesAndLogs(`fbsimctl ${udid} set_location ${lat} ${lon}`, undefined, undefined, 1);
     } else {
       throw new Error(`setLocation currently supported only through fbsimctl.
       Install fbsimctl using:
