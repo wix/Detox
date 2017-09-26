@@ -125,7 +125,7 @@ render() {
 
 ```js
 await element(by.label('Login')).tap();
-await expect(element(by.label('Welcome'))).toBeVisible();
+await expect(element(by.text('Welcome'))).toBeVisible();
 ```
 
 In the test above, after tapping the Login button, the app performs several complex asynchronous operations until the Welcome message is displayed post-login. These can include querying a server, waiting for a response and then running an animated transition to the Welcome screen. Detox attempts to simplify your test code by synchronizing *automatically* with these asynchronous operations. What happens if for some reason the automatic synchronization doesn't work? As a result, Detox will not wait correctly until the Welcome screen appears and instead will continue immediately to the next line and try to run the expectation. Since the screen is not there yet, the test will fail.
@@ -136,7 +136,7 @@ Full documentation about `waitFor` is available [here](/docs/APIRef.waitFor.md).
 
 ```js
 await element(by.label('Login')).tap();
-await waitFor(element(by.label('Welcome'))).toBeVisible().withTimeout(2000);
+await waitFor(element(by.text('Welcome'))).toBeVisible().withTimeout(2000);
 ```
 
 <br>

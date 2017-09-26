@@ -28,7 +28,7 @@ describe('Login flow', () => {
     await element(by.id('password')).typeText('123456');
     await element(by.label('Login')).tap();
       
-    await expect(element(by.label('Welcome'))).toBeVisible();
+    await expect(element(by.text('Welcome'))).toBeVisible();
     await expect(element(by.id('email'))).toNotExist();
   });
   
