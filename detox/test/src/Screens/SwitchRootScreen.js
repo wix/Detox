@@ -13,10 +13,10 @@ export default class SwitchRootScreen extends Component {
     return (
       <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
         <TouchableOpacity onPress={() => NativeModule.switchToNativeRoot()}>
-          <Text style={{color: 'blue', marginBottom: 20}} accessibilityLabel={'Switch to a new native root'}>{`Switch to a new native root`}</Text>
+          <Text style={{color: 'blue', marginBottom: 20}}>{`Switch to a new native root`}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => NativeModule.switchToMultipleReactRoots()}>
-          <Text style={{color: 'blue', marginBottom: 20}} accessibilityLabel={'Switch to multiple react roots'}>{`Switch to multiple react roots`}</Text>
+          <Text style={{color: 'blue', marginBottom: 20}}>{`Switch to multiple react roots`}</Text>
         </TouchableOpacity>
       </View>
     );

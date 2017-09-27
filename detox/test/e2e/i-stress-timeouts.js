@@ -4,7 +4,7 @@ describe('StressTimeouts', () => {
   });
 
   beforeEach(async () => {
-    await element(by.label('Timeouts')).tap();
+    await element(by.text('Timeouts')).tap();
   });
 
   it(':ios: should handle a short timeout', async () => {

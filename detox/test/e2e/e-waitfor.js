@@ -1,7 +1,7 @@
 describe('WaitFor', () => {
   beforeEach(async() => {
     await device.reloadReactNative();
-    await element(by.label('WaitFor')).tap();
+    await element(by.text('WaitFor')).tap();
   });
 
   it('should wait until an element is created and exists in layout', async () => {
@@ -23,9 +23,9 @@ describe('WaitFor', () => {
   });
 
   it('should find element by scrolling until it is visible', async() => {
-    await expect(element(by.label('Text5'))).toBeNotVisible();
-    await waitFor(element(by.label('Text5'))).toBeVisible().whileElement(by.id('ScrollView630')).scroll(50, 'down');
-    await expect(element(by.label('Text5'))).toBeVisible();
+    await expect(element(by.text('Text5'))).toBeNotVisible();
+    await waitFor(element(by.text('Text5'))).toBeVisible().whileElement(by.id('ScrollView630')).scroll(50, 'down');
+    await expect(element(by.text('Text5'))).toBeVisible();
   });
 
 });

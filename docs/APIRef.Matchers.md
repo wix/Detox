@@ -45,7 +45,7 @@ await element(by.text('Tap Me'));
 ```
 
 #### `by.label(label)`
-Find an element by accessibilityLabel(iOS) or contentDescription(Android), useful for text fields, buttons.
+Find an element by `accessibilityLabel` on iOS, or by `contentDescription` on Android.
 
 ```js
 await element(by.label('Welcome'));

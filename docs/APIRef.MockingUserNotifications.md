@@ -21,7 +21,7 @@ describe('Background push notification', () => {
 	});
 
 	it('push notification from background', async () => {
-	  await expect(element(by.label('From push'))).toBeVisible();
+	  await expect(element(by.text('From push'))).toBeVisible();
 	});
 });
 ```
@@ -46,7 +46,7 @@ beforeEach(async () => {
 
 it('Local notification from inside the app', async () => {
   await device.sendUserNotification(localNotification);
-  await expect(element(by.label('from local notificaton'))).toBeVisible();
+  await expect(element(by.text('from local notificaton'))).toBeVisible();
  });
 });
 ```

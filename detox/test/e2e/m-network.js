@@ -13,7 +13,7 @@ describe('Network Synchronization', () => {
 
   beforeEach(async () => {
     await device.reloadReactNative();
-    await element(by.label('Network')).tap();
+    await element(by.text('Network')).tap();
   });
 
   it('Sync with short network requests - 100ms', async () => {

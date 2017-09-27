@@ -17,7 +17,7 @@ describe('relaunchApp', () => {
     });
 
     it('should tap successfully', async () => {
-      await expect(element(by.label('a label'))).toBeVisible();
+      await expect(element(by.text('a label'))).toBeVisible();
     });
   });
 ```

@@ -54,7 +54,9 @@ await expect(element(by.id('UniqueId204'))).toHaveText('I contain some text');
 ```
 
 ### `toHaveLabel(label)`
-- Similar to `toHaveText(text)`, but searches by accessibilityLabel (iOS) or by contentDescription (Android)
+- It searches by accessibilityLabel on iOS, or by contentDescription on Android.
+
+- In React Native it can be set for both platforms by defining an [`accessibilityLabel`](https://facebook.github.io/react-native/docs/view.html#accessibilitylabel) on the view.
 
 ```js
 await expect(element(by.id('UniqueId204'))).toHaveLabel('Done');
