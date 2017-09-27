@@ -35,7 +35,6 @@
     "babel-polyfill": "^6.8.0",
     "babel-preset-latest": "^6.22.0",
     "babel-register": "^6.8.0",
-    "colors": "^1.1.2",
     "eslint": "^4.1.1",
     "eslint-plugin-babel": "4.x.x",
     "eslint-plugin-jest": "^20.0.3",
@@ -52,10 +51,11 @@
     "child-process-promise": "^2.2.0",
     "commander": "^2.9.0",
     "detox-server": "^2.0.4",
+    "fs-extra": "^4.0.2",
     "get-port": "^2.1.0",
     "lodash": "^4.14.1",
     "npmlog": "^4.0.2",
-    "react-native-invoke": "^0.2.1",
+    "telnet-client": "0.15.3",
     "ws": "^1.1.1"
   },
   "babel": {
@@ -76,6 +76,8 @@
     "coveragePathIgnorePatterns": [
       "/node_modules/",
       ".*Driver.js",
+      "EmulatorTelnet.js",
+      "Emulator.js",
       "DeviceDriverBase.js",
       "GREYConfiguration.js",
       "src/ios/earlgreyapi",

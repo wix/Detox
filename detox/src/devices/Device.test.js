@@ -90,26 +90,8 @@ describe('Device', () => {
   });
 
   it(`valid scheme, no binary, should not throw`, async () => {
-    device = validDevice()
-    await device.prepare();
-  });
-
-  it(`prepare() should boot a device`, async () => {
     device = validDevice();
-    cpp.exec.mockReturnValue(() => Promise.resolve());
-    fs.existsSync.mockReturnValue(true);
     await device.prepare();
-
-    expect(device.deviceDriver.boot).toHaveBeenCalledTimes(1);
-  });
-
-  it(`prepare() should boot a device`, async () => {
-    device = validDevice();
-    cpp.exec.mockReturnValue(() => Promise.resolve());
-    fs.existsSync.mockReturnValue(true);
-    await device.prepare();
-
-    expect(device.deviceDriver.boot).toHaveBeenCalledTimes(1);
   });
 
   it(`prepare() with when reuse is enabled should not uninstall and install`, async () => {

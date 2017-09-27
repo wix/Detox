@@ -15,7 +15,9 @@ class SimulatorDriver extends IosDriver {
   }
 
   async acquireFreeDevice(name) {
-    return await this._applesimutils.findDeviceUDID(name);
+    const deviceId = await this._applesimutils.findDeviceUDID(name);
+    await this.boot(deviceId);
+    return deviceId;
   }
 
   async getBundleIdFromBinary(appPath) {
