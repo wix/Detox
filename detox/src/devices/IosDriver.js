@@ -35,7 +35,8 @@ class IosDriver extends DeviceDriverBase {
 
     if (fs.existsSync(detoxFrameworkDirPath)) {
       if(!fs.existsSync(`${detoxFrameworkPath}`)) {
-        throw  new Error(`is it currently building ?`);
+        throw new Error(`${detoxFrameworkDirPath} was found, but could not find Detox.framework inside it. This means that the Detox framework build process was interrupted.
+        To solve this, either delete ${detoxFrameworkDirPath} or run 'detox clean-framework-cache'`);
       }
     } else {
       log.info(`Building Detox.framework (${environment.getDetoxVersion()}) into ${detoxFrameworkDirPath}...`);
