@@ -4,16 +4,16 @@ describe('Actions', () => {
   });
 
   beforeEach(async () => {
-    await element(by.label('Actions')).tap();
+    await element(by.text('Actions')).tap();
   });
 
   it('should tap on an element', async () => {
-    await element(by.label('Tap Me')).tap();
+    await element(by.text('Tap Me')).tap();
     await expect(element(by.text('Tap Working!!!'))).toBeVisible();
   });
 
   it('should long press on an element', async () => {
-    await element(by.label('Tap Me')).longPress();
+    await element(by.text('Tap Me')).longPress();
     await expect(element(by.text('Long Press Working!!!'))).toBeVisible();
   });
 
@@ -48,30 +48,30 @@ describe('Actions', () => {
 
   // directions: 'up'/'down'/'left'/'right'
   it('should scroll for a small amount in direction', async () => {
-    await expect(element(by.label('Text1'))).toBeVisible();
-    await expect(element(by.label('Text4'))).toBeNotVisible();
+    await expect(element(by.text('Text1'))).toBeVisible();
+    await expect(element(by.text('Text4'))).toBeNotVisible();
     await expect(element(by.id('ScrollView161'))).toBeVisible();
     await element(by.id('ScrollView161')).scroll(100, 'down');
-    await expect(element(by.label('Text1'))).toBeNotVisible();
-    await expect(element(by.label('Text4'))).toBeVisible();
+    await expect(element(by.text('Text1'))).toBeNotVisible();
+    await expect(element(by.text('Text4'))).toBeVisible();
     await element(by.id('ScrollView161')).scroll(100, 'up');
-    await expect(element(by.label('Text1'))).toBeVisible();
-    await expect(element(by.label('Text4'))).toBeNotVisible();
+    await expect(element(by.text('Text1'))).toBeVisible();
+    await expect(element(by.text('Text4'))).toBeNotVisible();
   });
 
   it('should scroll for a large amount in direction', async () => {
-    await expect(element(by.label('Text6'))).toBeNotVisible();
+    await expect(element(by.text('Text6'))).toBeNotVisible();
     await element(by.id('ScrollView161')).scroll(200, 'down');
-    await expect(element(by.label('Text6'))).toBeVisible();
+    await expect(element(by.text('Text6'))).toBeVisible();
   });
 
   // edges: 'top'/'bottom'/'left'/'right'
   it('should scroll to edge', async () => {
-    await expect(element(by.label('Text8'))).toBeNotVisible();
+    await expect(element(by.text('Text8'))).toBeNotVisible();
     await element(by.id('ScrollView161')).scrollTo('bottom');
-    await expect(element(by.label('Text8'))).toBeVisible();
+    await expect(element(by.text('Text8'))).toBeVisible();
     await element(by.id('ScrollView161')).scrollTo('top');
-    await expect(element(by.label('Text1'))).toBeVisible();
+    await expect(element(by.text('Text1'))).toBeVisible();
   });
 
   // TODO - swipe is not good enough for triggering pull to refresh. need to come up with something better

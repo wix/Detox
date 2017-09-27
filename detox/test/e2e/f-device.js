@@ -1,22 +1,22 @@
 describe('Device', () => {
   it('reloadReactNative - should tap successfully', async () => {
     await device.reloadReactNative();
-    await element(by.label('Sanity')).tap();
-    await element(by.label('Say Hello')).tap();
+    await element(by.text('Sanity')).tap();
+    await element(by.text('Say Hello')).tap();
     await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
 
   it('relaunchApp - should tap successfully', async () => {
     await device.relaunchApp();
-    await element(by.label('Sanity')).tap();
-    await element(by.label('Say Hello')).tap();
+    await element(by.text('Sanity')).tap();
+    await element(by.text('Say Hello')).tap();
     await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
 
   it('relaunchApp({delete: true}) - should tap successfully', async () => {
     await device.relaunchApp({delete: true});
-    await element(by.label('Sanity')).tap();
-    await element(by.label('Say Hello')).tap();
+    await element(by.text('Sanity')).tap();
+    await element(by.text('Say Hello')).tap();
     await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
 
@@ -24,15 +24,15 @@ describe('Device', () => {
     await device.uninstallApp();
     await device.installApp();
     await device.relaunchApp();
-    await element(by.label('Sanity')).tap();
-    await element(by.label('Say Hello')).tap();
+    await element(by.text('Sanity')).tap();
+    await element(by.text('Say Hello')).tap();
     await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
 
   it('launchApp({newInstance: true}) + sendToHome() + launchApp() - should bring up previous instance', async () => {
     await device.launchApp({newInstance: true});
-    await element(by.label('Sanity')).tap();
-    await element(by.label('Say Hello')).tap();
+    await element(by.text('Sanity')).tap();
+    await element(by.text('Say Hello')).tap();
     await device.sendToHome();
     await device.launchApp();
 
@@ -43,15 +43,15 @@ describe('Device', () => {
     await device.resetContentAndSettings();
     await device.installApp();
     await device.launchApp({ newInstance: true });
-    await element(by.label('Sanity')).tap();
-    await element(by.label('Say Hello')).tap();
+    await element(by.text('Sanity')).tap();
+    await element(by.text('Say Hello')).tap();
     await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
 
   describe('device orientation', () => {
     beforeEach(async() => {
       await device.reloadReactNative();
-      await element(by.label('Orientation')).tap();
+      await element(by.text('Orientation')).tap();
 
       // Check if the element which input we will test actually exists
       await expect(element(by.id('currentOrientation'))).toExist();

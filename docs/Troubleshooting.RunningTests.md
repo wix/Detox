@@ -124,7 +124,7 @@ render() {
 **Issue:** Due to a synchronization issue, the test tries to perform an expectation and fails because it runs the expectation too soon. Consider this example:
 
 ```js
-await element(by.label('Login')).tap();
+await element(by.text('Login')).tap();
 await expect(element(by.text('Welcome'))).toBeVisible();
 ```
 
@@ -135,7 +135,7 @@ In the test above, after tapping the Login button, the app performs several comp
 Full documentation about `waitFor` is available [here](/docs/APIRef.waitFor.md). This is what the fixed test would look like:
 
 ```js
-await element(by.label('Login')).tap();
+await element(by.text('Login')).tap();
 await waitFor(element(by.text('Welcome'))).toBeVisible().withTimeout(2000);
 ```
 

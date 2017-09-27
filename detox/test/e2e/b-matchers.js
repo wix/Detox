@@ -1,7 +1,7 @@
 describe('Matchers', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
-    await element(by.label('Matchers')).tap();
+    await element(by.text('Matchers')).tap();
   });
 
   it('should match elements by (accesibility) label', async () => {
@@ -26,7 +26,7 @@ describe('Matchers', () => {
   // Accessibility Inspector in the simulator can help investigate traits
   it(':ios: should match elements by accesibility trait', async () => {
     await element(by.traits(['button', 'text'])).tap();
-    await expect(element(by.label('Traits Working!!!'))).toBeVisible();
+    await expect(element(by.text('Traits Working!!!'))).toBeVisible();
   });
 
   it('should match elements with ancenstor (parent)', async () => {
@@ -48,13 +48,13 @@ describe('Matchers', () => {
   });
 
   it('should match elements by using two matchers together with and', async () => {
-    await expect(element(by.id('UniqueId345').and(by.label('ID')))).toExist();
-    await expect(element(by.id('UniqueId345').and(by.label('RandomJunk')))).toNotExist();
+    await expect(element(by.id('UniqueId345').and(by.text('ID')))).toExist();
+    await expect(element(by.id('UniqueId345').and(by.text('RandomJunk')))).toNotExist();
   });
 
   // waiting to upgrade EarlGrey version in order to test this (not supported in our current one)
   it.skip('should choose from multiple elements matching the same matcher using index', async () => {
-    await expect(element(by.label('Product')).atIndex(2)).toHaveId('ProductId002');
+    await expect(element(by.text('Product')).atIndex(2)).toHaveId('ProductId002');
   });
 
 });

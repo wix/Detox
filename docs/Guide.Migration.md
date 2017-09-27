@@ -16,7 +16,7 @@ Here's an example of async call to tap an element
 ```js
 // <=4.x.x
 beforeEach(() => {
-  element(by.label('Sanity')).tap();
+  element(by.text('Sanity')).tap();
 });		    
 
 ```
@@ -24,7 +24,7 @@ beforeEach(() => {
 ```js
 // 5.x.x
 beforeEach(async () => {
-  await element(by.label('Sanity')).tap();
+  await element(by.text('Sanity')).tap();
 });
 ```
 
@@ -33,18 +33,18 @@ Same thing with expectations
 ```js 
 // <=4.x.x
 it('should have welcome screen', () => {
-  expect(element(by.label('Welcome'))).toBeVisible();
-  expect(element(by.label('Say Hello'))).toBeVisible(); 
-  expect(element(by.label('Say World'))).toBeVisible();
+  expect(element(by.text('Welcome'))).toBeVisible();
+  expect(element(by.text('Say Hello'))).toBeVisible(); 
+  expect(element(by.text('Say World'))).toBeVisible();
 };
 ```
 
 ```js
 // 5.x.x
 it('should have welcome screen', async () => {
-  await expect(element(by.label('Welcome'))).toBeVisible();
-  await expect(element(by.label('Say Hello'))).toBeVisible();
-  await expect(element(by.label('Say World'))).toBeVisible();
+  await expect(element(by.text('Welcome'))).toBeVisible();
+  await expect(element(by.text('Say Hello'))).toBeVisible();
+  await expect(element(by.text('Say World'))).toBeVisible();
 });
 ```
 

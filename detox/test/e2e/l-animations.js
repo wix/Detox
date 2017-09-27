@@ -3,7 +3,7 @@ let _ = require('lodash');
 describe('Animations', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
-    await element(by.label('Animations')).tap();
+    await element(by.text('Animations')).tap();
   });
 
   async function _startTest(driver, options = {}) {

@@ -4,7 +4,7 @@ describe('Assertions', () => {
   });
 
   beforeEach(async () => {
-    await element(by.label('Assertions')).tap();
+    await element(by.text('Assertions')).tap();
   });
 
   it('should assert an element is visible', async () => {
@@ -35,7 +35,7 @@ describe('Assertions', () => {
   });
 
   it('should assert an element has (accessibility) id', async () => {
-    await expect(element(by.label('I contain some text'))).toHaveId('UniqueId204');
+    await expect(element(by.text('I contain some text'))).toHaveId('UniqueId204');
   });
 
   // for example, the value of a UISwitch in the "on" state is "1"
