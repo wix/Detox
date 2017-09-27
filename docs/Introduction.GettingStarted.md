@@ -39,7 +39,7 @@ Node is the JavaScript runtime Detox will run on. **Install Node 7.6.0 or above 
 	 
 #### 3. Install [appleSimUtils](https://github.com/wix/AppleSimulatorUtils)
 	 
-A collection of utils for Apple simulators, Detox uses it to set (grant or deny) runtime permissions per application. 
+A collection of utils for Apple simulators, Detox uses it communicate with the simulator. 
 
 ```sh
 brew tap wix/brew
