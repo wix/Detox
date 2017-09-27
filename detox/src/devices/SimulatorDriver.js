@@ -72,10 +72,6 @@ class SimulatorDriver extends IosDriver {
   }
 
   validateDeviceConfig(deviceConfig) {
-    if (!deviceConfig.binaryPath) {
-      configuration.throwOnEmptyBinaryPath();
-    }
-
     if (!deviceConfig.name) {
       configuration.throwOnEmptyName();
     }

@@ -1,7 +1,20 @@
 const validOneDeviceNoSession = {
+  "appName": "example",
+  "binary": {
+    "ios": "ios/build/Build/Products/"
+  },
   "configurations": {
     "ios.sim.release": {
-      "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+      "type": "ios.simulator",
+      "name": "iPhone 7 Plus, iOS 10.2"
+    }
+  }
+};
+
+const validOneDeviceNoSessionNoBinary = {
+  "appName": "example",
+  "configurations": {
+    "ios.sim.release": {
       "type": "ios.simulator",
       "name": "iPhone 7 Plus, iOS 10.2"
     }
@@ -9,6 +22,7 @@ const validOneDeviceNoSession = {
 };
 
 const validOneIosNoneDeviceNoSession = {
+  "appName": "example",
   "configurations": {
     "ios.none": {
       "type": "ios.none",
@@ -18,6 +32,7 @@ const validOneIosNoneDeviceNoSession = {
 };
 
 const validTwoDevicesNoSession = {
+  "appName": "example",
   "configurations": {
     "ios.sim.release": {
       "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
@@ -33,6 +48,7 @@ const validTwoDevicesNoSession = {
 };
 
 const invalidDeviceNoBinary = {
+  "appName": "example",
   "configurations": {
     "ios.sim.release": {
       "type": "ios.simulator",
@@ -42,11 +58,13 @@ const invalidDeviceNoBinary = {
 };
 
 const invalidNoDevice = {
+  "appName": "example",
   "configurations": {
   }
 };
 
 const invalidDeviceNoDeviceType = {
+  "appName": "example",
   "configurations": {
     "ios.sim.release": {
       "binaryPath": "here",
@@ -55,7 +73,17 @@ const invalidDeviceNoDeviceType = {
   }
 };
 
+const invalidNoAppName = {
+  "configurations": {
+    "ios.sim.release": {
+      "type": "ios.simulator",
+      "name": "iPhone 7 Plus, iOS 10.2"
+    }
+  }
+};
+
 const invalidDeviceNoDeviceName = {
+  "appName": "example",
   "configurations": {
     "ios.sim.release": {
       "binaryPath": "here",
@@ -65,6 +93,7 @@ const invalidDeviceNoDeviceName = {
 };
 
 const validOneDeviceAndSession = {
+  "appName": "example",
   "session": {
     "server": "ws://localhost:8099",
     "sessionId": "test"
@@ -79,18 +108,21 @@ const validOneDeviceAndSession = {
 };
 
 const invalidSessionNoSessionId = {
+  "appName": "example",
   "session": {
     "server": "ws://localhost:8099"
   }
 };
 
 const invalidSessionNoServer = {
+  "appName": "example",
   "session": {
     "sessionId": "test"
   }
 };
 
 const invalidOneDeviceTypeEmulatorNoSession = {
+  "appName": "example",
   "configurations": {
     "ios.sim.release": {
       "binaryPath": "some.apk",
@@ -101,6 +133,7 @@ const invalidOneDeviceTypeEmulatorNoSession = {
 };
 
 const sessionPerConfiguration = {
+  "appName": "example",
   "configurations": {
     "ios.sim.none": {
       "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
@@ -124,6 +157,7 @@ const sessionPerConfiguration = {
 };
 
 const sessionInCommonAndInConfiguration = {
+  "appName": "example",
   "session": {
     "server": "ws://localhost:1111",
     "sessionId": "test_1"
@@ -142,6 +176,7 @@ const sessionInCommonAndInConfiguration = {
 };
 
 const validOneEmulator = {
+  "appName": "example",
   "configurations": {
     "android.emu.release": {
       "binaryPath": "android/app/build/outputs/apk/app-debug.apk",
@@ -163,6 +198,7 @@ module.exports = {
   invalidSessionNoSessionId,
   invalidSessionNoServer,
   invalidOneDeviceTypeEmulatorNoSession,
+  invalidNoAppName,
   sessionPerConfiguration,
   sessionInCommonAndInConfiguration,
   validOneEmulator

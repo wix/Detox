@@ -114,11 +114,15 @@ class DeviceDriverBase {
 
   }
 
-  validateDeviceConfig(deviceConfig) {
+  getBinaryPath(name, release, basePath) {
 
   }
 
   getPlatform() {
+
+  }
+
+  validateDeviceConfig(deviceConfig) {
 
   }
 

@@ -11,6 +11,7 @@ const DeviceDriverBase = require('./DeviceDriverBase');
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
 //ANDROID_SDK_ROOT
 const ANDROID_HOME = process.env.ANDROID_HOME;
+const DEFAULT_BASE_BUILD_PATH = "android/app/build/outputs/apk";
 
 class EmulatorDriver extends DeviceDriverBase {
 
@@ -125,6 +126,12 @@ class EmulatorDriver extends DeviceDriverBase {
 
   getPlatform() {
     return 'android';
+  }
+
+  getBinaryPath(name, release, basePath = DEFAULT_BASE_BUILD_PATH) {
+    // TODO: find the right output path for android
+    // android/app/build/outputs/apk
+    // return `${basePath}/${release ? 'Release' : 'Debug'}-iphonesimulator/${name}.app`;
   }
 
   async enableSynchronization() {

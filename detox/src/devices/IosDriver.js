@@ -8,6 +8,8 @@ const GREYConfiguration = require('./../ios/earlgreyapi/GREYConfiguration');
 const exec = require('child-process-promise').exec;
 const environment = require('../utils/environment');
 
+const DEFAULT_BASE_BUILD_PATH = "ios/build/Build/Products";
+
 class IosDriver extends DeviceDriverBase {
 
   constructor(client) {
@@ -91,6 +93,11 @@ class IosDriver extends DeviceDriverBase {
 
   getPlatform() {
     return 'ios';
+  }
+
+  getBinaryPath(name, release, basePath = DEFAULT_BASE_BUILD_PATH) {
+    // ios/build/Build/Products/Release-iphonesimulator/example.app
+    return `${basePath}/${release ? 'Release' : 'Debug'}-iphonesimulator/${name}.app`;
   }
 }
 

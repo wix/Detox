@@ -55,6 +55,37 @@ describe('Detox', () => {
     }
   });
 
+  it(`Config with no appName, should not throw but find the right app name`, async () => {
+    Detox = require('./Detox');
+    const Device = require('./devices/Device');
+    const SimulatorDriver = require('./devices/SimulatorDriver');
+    const appContext = require('./utils/appContext');
+    appContext.getAppName = jest.fn(() => "fancyApp");
+
+    detox = new Detox(schemes.invalidNoAppName);
+    await detox.init();
+
+    expect(Device).toHaveBeenCalled();
+    expect(SimulatorDriver.mock.instances.length).toBe(1);
+    expect(SimulatorDriver.mock.instances[0].getBinaryPath.mock.calls.length).toBe(1);
+    expect(SimulatorDriver.mock.instances[0].getBinaryPath.mock.calls[0][0]).toBe("fancyApp");
+  });
+
+  it(`Config with no appName should throw if appName could not be found`, async () => {
+    Detox = require('./Detox');
+    const Device = require('./devices/Device');
+    const appContext = require('./utils/appContext');
+    appContext.getAppName = jest.fn(() => { throw new Error("Not found") });
+
+    try {
+      detox = new Detox(schemes.invalidNoAppName);
+      await detox.init();
+      fail("Did not throw");
+    } catch (ex) {
+      expect(ex).toBeDefined();
+    }
+  });
+
   it(`Config with emulator, should throw`, async () => {
     Detox = require('./Detox');
     try {

@@ -6,17 +6,17 @@ const ArtifactsCopier = require('../artifacts/ArtifactsCopier');
 
 class Device {
 
-  constructor(deviceConfig, sessionConfig, deviceDriver) {
+  constructor(deviceConfig, sessionConfig, deviceDriver, binaryPath) {
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
     this.deviceDriver = deviceDriver;
     this._processes = {};
     this._artifactsCopier = new ArtifactsCopier(deviceDriver);
     this.deviceDriver.validateDeviceConfig(deviceConfig);
+    this._binaryPath = this._getAbsolutePath(binaryPath);
   }
 
   async prepare(params = {}) {
-    this._binaryPath = this._getAbsolutePath(this._deviceConfig.binaryPath);
     this._deviceId = await this.deviceDriver.acquireFreeDevice(this._deviceConfig.name);
     this._bundleId = await this.deviceDriver.getBundleIdFromBinary(this._binaryPath);
     this._artifactsCopier.prepare(this._deviceId);
