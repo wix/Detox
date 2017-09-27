@@ -213,8 +213,10 @@ class WaitForInteraction extends Interaction {
     if (this._notCondition) {
       _conditionCall = invoke.call(invoke.IOS.Class('GREYCondition'), 'detoxConditionForNotElementMatched:', this._element._call);
     }
+
     this._call = invoke.call(_conditionCall, 'waitWithTimeout:', invoke.IOS.CGFloat(timeout/1000));
     await this.execute();
+    await new MatcherAssertionInteraction(this._element, this._originalMatcher).execute();
   }
   whileElement(searchMatcher) {
     return new WaitForActionInteraction(this._element, this._originalMatcher, searchMatcher);
