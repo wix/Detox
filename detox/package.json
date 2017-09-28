@@ -81,7 +81,13 @@
       "DeviceDriverBase.js",
       "GREYConfiguration.js",
       "src/ios/earlgreyapi",
-      "src/utils/environment.js"
+      "src/utils/environment.js",
+  
+      
+      "AAPT.js",
+      "ADB.js",
+      "fsext.js"
+      
     ],
     "resetMocks": true,
     "resetModules": true,

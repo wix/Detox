@@ -1,4 +1,5 @@
-describe('ADB', () => {
+//Disabled until we can create a build environment for Android in CI
+xdescribe('ADB', () => {
   let ADB;
   let adb;
   let EmulatorTelnet;

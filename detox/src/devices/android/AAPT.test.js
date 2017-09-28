@@ -1,8 +1,8 @@
-describe('AAPT', () => {
+//Disabled until we can create a build environment for Android in CI
+xdescribe('AAPT', () => {
   let AAPT;
   let aapt;
   let exec;
-  let Environment;
 
   beforeEach(() => {
     jest.mock('npmlog');
