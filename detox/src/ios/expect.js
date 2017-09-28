@@ -74,23 +74,21 @@ class MultiTapAction extends Action {
 class TypeTextAction extends Action {
   constructor(value) {
     super();
-    if (typeof value !== 'string') throw new Error(`TypeTextAction ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForTypeText:', value);
+    this._call = invoke.callDirectly(GreyActions.actionForTypeText(value));
   }
 }
 
 class ReplaceTextAction extends Action {
   constructor(value) {
     super();
-    if (typeof value !== 'string') throw new Error(`ReplaceTextAction ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForReplaceText:', value);
+    this._call = invoke.callDirectly(GreyActions.actionForReplaceText(value));
   }
 }
 
 class ClearTextAction extends Action {
   constructor() {
     super();
-    this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForClearText');
+    this._call = invoke.callDirectly(GreyActions.actionForClearText());
   }
 }
 
