@@ -45,3 +45,4 @@
 
 - [Detox Contribution Guide](Guide.Contributing.md)
 - [Detox Development Roadmap](More.Roadmap.md)
+- [Android Support - Current Status](More.AndroidSupportStatus.md)
