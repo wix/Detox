@@ -95,16 +95,7 @@ class ClearTextAction extends Action {
 class ScrollAmountAction extends Action {
   constructor(direction, amount) {
     super();
-    if (typeof direction !== 'string') throw new Error(`ScrollAmountAction ctor 1st argument must be a string, got ${typeof direction}`);
-    switch (direction) {
-      case 'left': direction = 1; break;
-      case 'right': direction = 2; break;
-      case 'up': direction = 3; break;
-      case 'down': direction = 4; break;
-      default: throw new Error(`ScrollAmountAction direction must be a 'left'/'right'/'up'/'down', got ${direction}`);
-    }
-    if (typeof amount !== 'number') throw new Error(`ScrollAmountAction ctor 2nd argument must be a number, got ${typeof amount}`);
-    this._call = invoke.call(invoke.IOS.Class('GREYActions'), 'actionForScrollInDirection:amount:', invoke.IOS.NSInteger(direction), invoke.IOS.CGFloat(amount));
+    this._call = invoke.callDirectly(GreyActions.actionForScrollInDirectionAmount(direction, amount));
   }
 }
 
