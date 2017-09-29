@@ -41,7 +41,7 @@ High velocity native mobile development requires us to adopt continuous integrat
 
 The most difficult part of automated testing on mobile is the tip of the testing pyramid - E2E. The core problem with E2E tests is flakiness - tests are usually not deterministic. We believe the only way to tackle flakiness head on is by moving from black box testing to gray box testing. That's where Detox comes into play.
 
-* **Cross Platform:** Write cross-platform tests in JavaScript. Currently supports iOS, Android following soon.
+* **Cross Platform:** Write cross-platform tests in JavaScript. Currently supports iOS, [Android support is coming - status page](/docs/More.AndroidSupportStatus.md).
 * **Runs on Devices:** Gain confidence to ship by testing your app on a device/simulator just like a real user.
 * **Automatically Synchronized:** Stops flakiness at the core by monitoring asynchronous operations in your app.
 * **React Native Support:** Built from the ground up to support React Native projects as well as pure native ones.
