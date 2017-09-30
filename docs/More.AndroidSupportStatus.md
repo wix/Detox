@@ -23,7 +23,7 @@ For a technical reason related to React Native, Detox can not synchronize with n
 Core APIs are implemented.
 
 ## Emulator control
-1. **Emulators** are fully supported, to choose an emulator to run your tests on check `emulator -list-avds`. If non exist, create one.
+1. **Emulators** are fully supported, to choose an emulator to run your tests on check `emulator -list-avds`. If none exist, create one.
 2. **Devices** - Coming soon!
 3. **Genymotion** -  Coming a bit later...
 
