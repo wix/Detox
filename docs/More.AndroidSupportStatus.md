@@ -34,7 +34,7 @@ Core APIs are implemented.
 
 ## Debugging
 1. `--loglevel verbose` can give you pretty good insight on what going on.
-2. `--debug-synchronization`, our tool to idnetify synchronization issues, is still missing
+2. `--debug-synchronization`, our tool to identify synchronization issues, is still missing
 
 ## Cross platform support
 Detox is being developed on Macs, but there is no Mac specifc command on any of the Android drivers, or anything related to Android. Detox should work on both Linux and Windows.
