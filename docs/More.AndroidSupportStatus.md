@@ -13,7 +13,7 @@ Setup is not fully figured out yet, we want to make the setup with as little con
 - Add the detox Android project as an androidTestCompile dependency.
 - Add an androidTest type test to your test suite. [Example.](../examples/demo-react-native/android/app/src/androidTest/java/com/example/DetoxTest.java)
 
-```
+```gradle
 androidTestCompile(project(path: ":detox", configuration: "oldOkhttpDebug"), {
    exclude group: 'com.android.support', module: 'support-annotations'
 })
@@ -25,7 +25,7 @@ Detox Android is a standard Android integration test. Although, it is completely
 
 It uses Espresso internally, therefore you have to use an AndroidJUnitRunner as your test runner (or a subclass of it).
 
-```
+```gradle
 android {
     defaultConfig {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
