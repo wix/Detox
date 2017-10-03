@@ -12,11 +12,6 @@ branches:
   global:
   - NODE_VERSION=stable
 install:
-- defaults read loginwindow SystemVersionStampAsString
-- xcodebuild -version
-- brew -v
-- brew update
-- brew -v
 - brew install yarn
 - export CODE_SIGNING_REQUIRED=NO
 - brew tap wix/brew
