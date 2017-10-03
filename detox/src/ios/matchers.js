@@ -1,4 +1,5 @@
 const invoke = require('../invoke');
+const GreyMatchers = require('./earlgreyapi/GREYMatchers');
 const GreyMatchersDetox = require('./earlgreyapi/GREYMatchers+Detox');
 
 class Matcher {
@@ -48,8 +49,7 @@ class LabelMatcher extends Matcher {
 class IdMatcher extends Matcher {
   constructor(value) {
     super();
-    if (typeof value !== 'string') throw new Error(`IdMatcher ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityID:', value);
+    this._call = invoke.callDirectly(GreyMatchers.matcherForAccessibilityID(value));
   }
 }
 
@@ -93,28 +93,28 @@ class TraitsMatcher extends Matcher {
 class VisibleMatcher extends Matcher {
   constructor() {
     super();
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForSufficientlyVisible');
+    this._call = invoke.callDirectly(GreyMatchers.matcherForSufficientlyVisible());
   }
 }
 
 class NotVisibleMatcher extends Matcher {
   constructor() {
     super();
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForNotVisible');
+    this._call = invoke.callDirectly(GreyMatchers.matcherForNotVisible());
   }
 }
 
 class ExistsMatcher extends Matcher {
   constructor() {
     super();
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForNotNil');
+    this._call = invoke.callDirectly(GreyMatchers.matcherForNotNil());
   }
 }
 
 class NotExistsMatcher extends Matcher {
   constructor() {
     super();
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForNil');
+    this._call = invoke.callDirectly(GreyMatchers.matcherForNil());
   }
 }
 
@@ -128,8 +128,7 @@ class TextMatcher extends Matcher {
 class ValueMatcher extends Matcher {
   constructor(value) {
     super();
-    if (typeof value !== 'string') throw new Error(`ValueMatcher ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityValue:', value);
+    this._call = invoke.callDirectly(GreyMatchers.matcherForAccessibilityValue(value));
   }
 }
 
