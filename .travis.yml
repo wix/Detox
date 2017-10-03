@@ -12,6 +12,8 @@ branches:
   global:
   - NODE_VERSION=stable
 install:
+- defaults read loginwindow SystemVersionStampAsString
+- xcodebuild -version
 - brew -v
 - brew update
 - brew -v
