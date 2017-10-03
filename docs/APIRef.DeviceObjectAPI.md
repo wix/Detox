@@ -162,8 +162,11 @@ Currently only available in the iOS Simulator.<br>
 Check out Detox's [own test suite](../detox/test/e2e/f-device.js)
 
 ### `device.setLocation(lat, lon)`
+>Note: `setLocation` is dependent on `fbsimctl`. if `fbsimctl` is not installed, the command will fail, asking for it to be installed.
 Sets the simulator location to the given latitude and longitude.
-
+```js
+await device.setLocation(32.0853, 34.7818);
+```
 
 ### `device.setURLBlacklist([urls])`
 
