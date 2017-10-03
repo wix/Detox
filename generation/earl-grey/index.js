@@ -243,10 +243,13 @@ module.exports = function(files) {
     fs.writeFileSync(outputFile, code, "utf8");
 
     // Output methods that were not created due to missing argument support
-    console.log(`Could not generate the following methods for ${json.name}`);
-    const unsupportedMethods = json.methods.filter(x => !filterMethodsWithUnsupportedParams(x)).forEach(method => {
-      const methodArgs = method.args.filter(methodArg => !SUPPORTED_TYPES.includes(methodArg.type)).map(methodArg => methodArg.type);
-      console.log(`\t ${method.name} misses ${methodArgs}`);
-    });
+    const unsupportedMethods = json.methods.filter(x => !filterMethodsWithUnsupportedParams(x));
+    if (unsupportedMethods.length) {
+      console.log(`Could not generate the following methods for ${json.name}`);
+      unsupportedMethods.forEach(method => {
+        const methodArgs = method.args.filter(methodArg => !SUPPORTED_TYPES.includes(methodArg.type)).map(methodArg => methodArg.type);
+        console.log(`\t ${method.name} misses ${methodArgs}`);
+      });
+    }
   });
 };
