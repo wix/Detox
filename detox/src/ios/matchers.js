@@ -1,4 +1,5 @@
 const invoke = require('../invoke');
+const GreyMatchersDetox = require('./earlgreyapi/GREYMatchers+Detox');
 
 class Matcher {
   withAncestor(matcher) {
@@ -55,8 +56,7 @@ class IdMatcher extends Matcher {
 class TypeMatcher extends Matcher {
   constructor(value) {
     super();
-    if (typeof value !== 'string') throw new Error(`TypeMatcher ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForClass:', value);
+    this._call = invoke.callDirectly(GreyMatchersDetox.detoxMatcherForClass(value));
   }
 }
 
@@ -121,8 +121,7 @@ class NotExistsMatcher extends Matcher {
 class TextMatcher extends Matcher {
   constructor(value) {
     super();
-    if (typeof value !== 'string') throw new Error(`TextMatcher ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForText:', value);
+    this._call = invoke.callDirectly(GreyMatchersDetox.detoxMatcherForText(value));
   }
 }
 
