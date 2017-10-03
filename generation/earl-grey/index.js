@@ -220,11 +220,6 @@ function createTypeCheck(json) {
   const typeCheckCreator = typeInterfaces[json.type];
   const isListOfChecks = typeCheckCreator instanceof Array;
 
-  if (typeof typeCheckCreator !== "function" && !isListOfChecks) {
-    console.info("Could not find ", json);
-    return;
-  }
-
   return isListOfChecks
     ? typeCheckCreator.map(singleCheck => singleCheck(json))
     : typeCheckCreator(json);
