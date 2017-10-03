@@ -9,8 +9,7 @@ branches:
   only:
   - master
   - buildmatrix
-  global:
-  - NODE_VERSION=stable
+
 install:
 - brew install yarn
 - export CODE_SIGNING_REQUIRED=NO
@@ -18,8 +17,8 @@ install:
 - brew install applesimutils --HEAD
 - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
 - export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-- nvm install $NODE_VERSION
-- nvm use $NODE_VERSION
+- nvm install stable
+- nvm use stable
 - npm install -g lerna@2.1.2 >/dev/null 2>&1
 - npm install -g react-native-cli >/dev/null 2>&1
 - npm install -g detox-cli >/dev/null 2>&1
