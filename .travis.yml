@@ -10,9 +10,14 @@ branches:
   - master
   - buildmatrix
 env:
+  - REACT_NATIVE_VERSION=0.44.2
+  - REACT_NATIVE_VERSION=0.48.4
   global:
   - NODE_VERSION=stable
 install:
+- brew -v
+- brew update
+- brew -v
 - brew install yarn
 - export CODE_SIGNING_REQUIRED=NO
 - brew tap wix/brew
