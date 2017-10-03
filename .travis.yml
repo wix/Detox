@@ -5,10 +5,14 @@ matrix:
     - osx_image: xcode8.3
       env:
         - REACT_NATIVE_VERSION="0.44.2"
+    - osx_image: xcode8.3
+      env:
         - REACT_NATIVE_VERSION="0.48.4"
     - osx_image: xcode9
       env:
         - REACT_NATIVE_VERSION="0.44.2"
+    - osx_image: xcode9
+      env:
         - REACT_NATIVE_VERSION="0.48.4"
 
 
