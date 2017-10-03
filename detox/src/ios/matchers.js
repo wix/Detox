@@ -4,36 +4,33 @@ const GreyMatchersDetox = require('./earlgreyapi/GREYMatchers+Detox');
 
 class Matcher {
   withAncestor(matcher) {
-    if (!(matcher instanceof Matcher)) throw new Error(`Matcher withAncestor argument must be a valid Matcher, got ${typeof matcher}`);
     const _originalMatcherCall = this._call;
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForBoth:andAncestorMatcher:', _originalMatcherCall, matcher._call);
+    this._call = invoke.callDirectly(GreyMatchersDetox.detoxMatcherForBothAndAncestorMatcher(_originalMatcherCall, matcher._call));
     return this;
   }
   withDescendant(matcher) {
-    if (!(matcher instanceof Matcher)) throw new Error(`Matcher withDescendant argument must be a valid Matcher, got ${typeof matcher}`);
     const _originalMatcherCall = this._call;
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForBoth:andDescendantMatcher:', _originalMatcherCall, matcher._call);
+    this._call = invoke.callDirectly(GreyMatchersDetox.detoxMatcherForBothAndDescendantMatcher(_originalMatcherCall, matcher._call));
     return this;
   }
   and(matcher) {
-    if (!(matcher instanceof Matcher)) throw new Error(`Matcher and argument must be a valid Matcher, got ${typeof matcher}`);
     const _originalMatcherCall = this._call;
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForBoth:and:', _originalMatcherCall, matcher._call);
+    this._call = invoke.callDirectly(GreyMatchersDetox.detoxMatcherForBothAnd(_originalMatcherCall, matcher._call));
     return this;
   }
   not() {
     const _originalMatcherCall = this._call;
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForNot:', _originalMatcherCall);
+    this._call = invoke.callDirectly(GreyMatchersDetox.detoxMatcherForNot(_originalMatcherCall));
     return this;
   }
   _avoidProblematicReactNativeElements() {
     const _originalMatcherCall = this._call;
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherAvoidingProblematicReactNativeElements:', _originalMatcherCall);
+    this._call = invoke.callDirectly(GreyMatchersDetox.detoxMatcherAvoidingProblematicReactNativeElements(_originalMatcherCall));
     return this;
   }
   _extendToDescendantScrollViews() {
     const _originalMatcherCall = this._call;
-    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForScrollChildOfMatcher:', _originalMatcherCall);
+    this._call = invoke.callDirectly(GreyMatchersDetox.detoxMatcherForScrollChildOfMatcher(_originalMatcherCall));
     return this;
   }
 }

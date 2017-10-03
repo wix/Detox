@@ -287,6 +287,72 @@ is visible.</li>
     };
   }
 
+  /*Matcher for matching UIProgressView's values. Use greaterThan, greaterThanOrEqualTo,
+lessThan etc to create @c comparisonMatcher. For example, to match the UIProgressView
+elements that have progress value greater than 50.2, use
+@code [GREYMatchers matcherForProgress:grey_greaterThan(@(50.2))] @endcode. In case if an
+unimplemented matcher is required, please implement it similar to @c grey_closeTo.
+
+@param comparisonMatcher The matcher with the value to check the progress against.
+
+@return A matcher for checking a UIProgessView's value.
+*/static matcherForProgress(comparisonMatcher) {
+    if (typeof comparisonMatcher !== "object" || comparisonMatcher.type !== "Invocation" || typeof comparisonMatcher.value !== "object" || typeof comparisonMatcher.value.target !== "object" || comparisonMatcher.value.target.value !== "GREYMatchers") {
+      throw new Error('comparisonMatcher should be a GREYMatcher, but got ' + JSON.stringify(comparisonMatcher));
+    }
+
+    return {
+      target: {
+        type: "Class",
+        value: "GREYMatchers"
+      },
+      method: "matcherForProgress:",
+      args: [comparisonMatcher]
+    };
+  }
+
+  /*Matcher that matches UI element based on the presence of an ancestor in its hierarchy.
+The given matcher is used to match decendants.
+
+@param ancestorMatcher The ancestor UI element whose descendants are to be matched.
+
+@return A matcher to check if a UI element is the descendant of another.
+*/static matcherForAncestor(ancestorMatcher) {
+    if (typeof ancestorMatcher !== "object" || ancestorMatcher.type !== "Invocation" || typeof ancestorMatcher.value !== "object" || typeof ancestorMatcher.value.target !== "object" || ancestorMatcher.value.target.value !== "GREYMatchers") {
+      throw new Error('ancestorMatcher should be a GREYMatcher, but got ' + JSON.stringify(ancestorMatcher));
+    }
+
+    return {
+      target: {
+        type: "Class",
+        value: "GREYMatchers"
+      },
+      method: "matcherForAncestor:",
+      args: [ancestorMatcher]
+    };
+  }
+
+  /*Matcher that matches any UI element with a descendant matching the given matcher.
+
+@param descendantMatcher A matcher being checked to be a descendant
+of the UI element being checked.
+
+@return A matcher to check if a the specified element is in a descendant of another UI element.
+*/static matcherForDescendant(descendantMatcher) {
+    if (typeof descendantMatcher !== "object" || descendantMatcher.type !== "Invocation" || typeof descendantMatcher.value !== "object" || typeof descendantMatcher.value.target !== "object" || descendantMatcher.value.target.value !== "GREYMatchers") {
+      throw new Error('descendantMatcher should be a GREYMatcher, but got ' + JSON.stringify(descendantMatcher));
+    }
+
+    return {
+      target: {
+        type: "Class",
+        value: "GREYMatchers"
+      },
+      method: "matcherForDescendant:",
+      args: [descendantMatcher]
+    };
+  }
+
   /*Matcher that matches UIButton that has title label as @c text.
 
 @param title The title to be checked on the UIButtons being matched.
@@ -327,6 +393,33 @@ matched.
         type: "CGPoint",
         value: offset
       }]
+    };
+  }
+
+  /*Matcher that matches a UISlider's value.
+
+@param valueMatcher A matcher for the UISlider's value. You must provide a valid
+@c valueMatcher for the floating point value comparison. The
+@c valueMatcher should be of the type @c closeTo, @c greaterThan,
+@c lessThan, @c lessThanOrEqualTo, @c greaterThanOrEqualTo. The
+value matchers should account for any loss in precision for the given
+floating point value. If you are using @c grey_closeTo, use delta diff as
+@c kGREYAcceptableFloatDifference. In case if an unimplemented matcher
+is required, please implement it similar to @c grey_closeTo.
+
+@return A matcher for checking a UISlider's value.
+*/static matcherForSliderValueMatcher(valueMatcher) {
+    if (typeof valueMatcher !== "object" || valueMatcher.type !== "Invocation" || typeof valueMatcher.value !== "object" || typeof valueMatcher.value.target !== "object" || valueMatcher.value.target.value !== "GREYMatchers") {
+      throw new Error('valueMatcher should be a GREYMatcher, but got ' + JSON.stringify(valueMatcher));
+    }
+
+    return {
+      target: {
+        type: "Class",
+        value: "GREYMatchers"
+      },
+      method: "matcherForSliderValueMatcher:",
+      args: [valueMatcher]
     };
   }
 

@@ -1,4 +1,5 @@
 const t = require("babel-types");
+const template = require("babel-template");
 const objectiveCParser = require("objective-c-parser");
 const generate = require("babel-generator").default;
 const fs = require("fs");
@@ -19,6 +20,19 @@ const isPoint = [
   generateTypeCheck("number", { selector: "y" })
 ];
 const isOneOf = generateIsOneOfCheck;
+const isGreyMatcher = ({ name }) => template(`
+  if (
+    typeof ARG !== "object" || 
+    ARG.type !== "Invocation" ||
+    typeof ARG.value !== "object" || 
+    typeof ARG.value.target !== "object" ||
+    ARG.value.target.value !== "GREYMatchers"
+  ) {
+    throw new Error('${name} should be a GREYMatcher, but got ' + JSON.stringify(ARG));
+  }
+`)({
+    ARG: t.identifier(name)
+  })
 
 // Constants
 const SUPPORTED_TYPES = [
@@ -30,6 +44,7 @@ const SUPPORTED_TYPES = [
   "NSString *",
   "NSString",
   "NSUInteger",
+  "id<GREYMatcher>"
 ];
 
 /**
@@ -172,8 +187,13 @@ function addArgumentTypeSanitizer(json) {
   return json.type;
 }
 
+// These types need no wrapping with {type: ..., value: }
+const plainArgumentTypes = ["id<GREYMatcher>"];
+function shouldBeWrapped({ type }) {
+  return !plainArgumentTypes.includes(type);
+}
 function createReturnStatement(className, json) {
-  const args = json.args.map(arg =>
+  const args = json.args.map(arg => shouldBeWrapped(arg) ?
     t.objectExpression([
       t.objectProperty(
         t.identifier("type"),
@@ -183,7 +203,7 @@ function createReturnStatement(className, json) {
         t.identifier("value"),
         addArgumentContentSanitizerCall(arg)
       )
-    ])
+    ]) : addArgumentContentSanitizerCall(arg)
   );
 
   return t.returnStatement(
@@ -214,7 +234,8 @@ function createTypeCheck(json) {
     "NSDate *": isNumber,
     GREYDirection: isOneOf(["left", "right", "up", "down"]),
     GREYContentEdge: isOneOf(["left", "right", "top", "bottom"]),
-    GREYPinchDirection: isOneOf(["outward", "inward"])
+    GREYPinchDirection: isOneOf(["outward", "inward"]),
+    "id<GREYMatcher>": isGreyMatcher,
   };
 
   const typeCheckCreator = typeInterfaces[json.type];

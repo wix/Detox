@@ -92,3 +92,9 @@ Object {
   },
 }
 `;
+
+exports[`earl-grey generation special case: id<GREYMatcher> should fail with wrongly formatted matchers 1`] = `"firstMatcher should be a GREYMatcher, but got {\\"type\\":\\"Invocation\\",\\"value\\":{\\"target\\":{\\"type\\":\\"Class\\",\\"value\\":\\"GREYAction\\"},\\"method\\":\\"matcherForAccessibilityID:\\",\\"args\\":[\\"Grandfather883\\"]}}"`;
+
+exports[`earl-grey generation special case: id<GREYMatcher> should fail with wrongly formatted matchers 2`] = `"ancestorMatcher should be a GREYMatcher, but got {\\"type\\":\\"Invocation\\",\\"value\\":{\\"target\\":{\\"type\\":\\"Class\\",\\"value\\":\\"GREYAction\\"},\\"method\\":\\"matcherForAccessibilityID:\\",\\"args\\":[\\"Grandson883\\"]}}"`;
+
+exports[`earl-grey generation special case: id<GREYMatcher> should fail with wrongly formatted matchers 3`] = `"firstMatcher should be a GREYMatcher, but got {\\"type\\":\\"Invocation\\",\\"value\\":{\\"method\\":\\"matcherForAccessibilityID:\\",\\"args\\":[\\"Grandfather883\\"]}}"`;
