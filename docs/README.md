@@ -36,6 +36,7 @@
 - [Debugging Apps in Xcode During a Test](Guide.DebuggingInXcode.md)
 - [Advanced Mocking With Detox](Guide.Mocking.md)
 - [Migration Between Detox Versions](Guide.Migration.md)
+- [Use Jest as Test Runner](Guide.Jest.md)
 
 ## Under The Hood
 
