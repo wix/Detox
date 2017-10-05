@@ -4,6 +4,7 @@
 
 - [Getting Started](Introduction.GettingStarted.md)
 - [Writing You First Passing Test](Introduction.WritingFirstTest.md)
+- [Adding Android](Introduction.Android.md)
 - [How Detox Works](Introduction.HowDetoxWorks.md)
 - [Recommended Workflows With Detox](Introduction.Workflows.md)
 
