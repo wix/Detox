@@ -4,6 +4,8 @@
 
 ### 0. Do the initial setup described in the Getting Started Guide
 
+- [Getting Started](Introduction.GettingStarted.md)
+
 ### 1. Add the detox Android project as an androidTestCompile dependency
 
 You need to add this into your `android/settings.gradle`:
@@ -39,7 +41,7 @@ maven {
 }
 ```
 
-### 2. Introduce [Espresso](https://developer.android.com/training/testing/espresso/index.html) test runner
+### 3. Introduce [Espresso](https://developer.android.com/training/testing/espresso/index.html) test runner
 
 Detox Android is a standard Android integration test. Although, it is completely asynchronous.
 
@@ -54,11 +56,11 @@ android {
 }
 ```
 
-### 3. Create Android Test class
+### 4. Create Android Test class
 
 You need to add the file `android/app/src/androidTest/java/com/[your.package]/DetoxTest.java` and fill it like [this](../detox/test/android/app/src/androidTest/java/com/example/DetoxTest.java), expect that you need to change the package to your projects name.
 
-### 4. Add Android configuration
+### 5. Add Android configuration
 
 Add this part to your `package.json`:
 
@@ -75,7 +77,7 @@ Add this part to your `package.json`:
 }
 ```
 
-### 5. Run the tests
+### 6. Run the tests
 
 For this you need to specify the configuration (if you have a second one already) like this: `detox test -c android.emu.debug`
 

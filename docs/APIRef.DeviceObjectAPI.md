@@ -19,6 +19,7 @@
 - [`device.enableSynchronization()`](#deviceenablesynchronization)
 - [`device.disableSynchronization()`](#devicedisablesynchronization)
 - [`device.resetContentAndSettings()`](#resetcontentandsettings)
+- [`device.getPlatform()`](#devicegetplatform)
 
 ### `device.launchApp(params)`
 Launch the app defined in the current [`configuration`](APIRef.Configuration.md).
@@ -203,4 +204,13 @@ previously set permissions.
 
 ```js
 await device.resetContentAndSettings();
+```
+
+### `device.getPlatform()`
+Returns the current device, `ios` or `android`.
+
+```js
+if (device.getPlatform() === 'ios') {
+  await expect(loopSwitch).toHaveValue('1');
+}
 ```
