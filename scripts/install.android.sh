@@ -1,4 +1,4 @@
 #!/bin/bash -e
 
-./scripts/install.sh
+$(dirname "$0")/install.sh
 

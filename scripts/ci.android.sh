@@ -1,3 +1,3 @@
 #!/bin/bash -e
 
-./ci.sh
+$(dirname "$0")/ci.sh
