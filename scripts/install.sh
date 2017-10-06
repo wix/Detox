@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 source ~/.nvm/nvm.sh
 nvm install stable
