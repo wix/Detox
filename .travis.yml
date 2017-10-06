@@ -23,6 +23,19 @@ matrix:
       osx_image: xcode9
       env:
         - REACT_NATIVE_VERSION="0.48.4"
+    - language: android
+      os: linux
+      jdk: oraclejdk8
+      env:
+        - REACT_NATIVE_VERSION="0.48.4"
+      android:
+        components:
+          - build-tools-25.0.3
+          - android-25
+          - extra-android-m2repository
+          - extra-google-google_play_services
+          - extra-google-m2repository
+          - sys-img-armeabi-v7a-android-26
 
 branches:
   only:
@@ -30,6 +43,8 @@ branches:
   - buildmatrix
 
 install:
+- nvm install stable
+
 - export CODE_SIGNING_REQUIRED=NO
 - brew tap wix/brew
 - brew install applesimutils --HEAD
