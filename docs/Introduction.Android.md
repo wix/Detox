@@ -4,6 +4,8 @@
 
 ### 0. Do the initial setup described in the Getting Started Guide
 
+[Getting Started](Introduction.GettingStarted.md)
+
 ### 1. Add the detox Android project as an androidTestCompile dependency
 
 You need to add this into your `android/settings.gradle`:
