@@ -1,6 +1,8 @@
 #!/bin/bash -e
 
+source ~/.nvm/nvm.sh
 nvm install stable
+node --version
 
 npm install -g lerna@2.1.2 >/dev/null 2>&1
 npm install -g react-native-cli >/dev/null 2>&1
