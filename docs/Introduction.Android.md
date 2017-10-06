@@ -2,11 +2,11 @@
 
 ## Setup
 
-### 0. Do the initial setup described in the Getting Started Guide
+### 1. Do the initial setup described in the Getting Started Guide
 
 - [Getting Started](Introduction.GettingStarted.md)
 
-### 1. Add the detox Android project as an androidTestCompile dependency
+### 2. Add the detox Android project as an androidTestCompile dependency
 
 You need to add this into your `android/settings.gradle`:
 ```gradle
@@ -26,7 +26,7 @@ androidTestCompile(project(path: ":detox", configuration: "newOkhttpDebug"), {
 
 Please be aware that the `minSdkVersion` needs to be at least 18.
 
-### 2. Add `jacoco-coverage` as dependency in the buildscript
+### 3. Add `jacoco-coverage` as dependency in the buildscript
 
 You need to add this to `android/build.gradle` into `buildscript > dependencies`:
 
@@ -41,7 +41,7 @@ maven {
 }
 ```
 
-### 3. Introduce [Espresso](https://developer.android.com/training/testing/espresso/index.html) test runner
+### 4. Introduce [Espresso](https://developer.android.com/training/testing/espresso/index.html) test runner
 
 Detox Android is a standard Android integration test. Although, it is completely asynchronous.
 
@@ -56,11 +56,11 @@ android {
 }
 ```
 
-### 4. Create Android Test class
+### 5. Create Android Test class
 
 You need to add the file `android/app/src/androidTest/java/com/[your.package]/DetoxTest.java` and fill it like [this](../detox/test/android/app/src/androidTest/java/com/example/DetoxTest.java), expect that you need to change the package to your projects name.
 
-### 5. Add Android configuration
+### 6. Add Android configuration
 
 Add this part to your `package.json`:
 
@@ -77,13 +77,17 @@ Add this part to your `package.json`:
 }
 ```
 
-### 6. Run the tests
+### 7. Run the tests
 
-For this you need to specify the configuration (if you have a second one already) like this: `detox test -c android.emu.debug`
+Using the `android.emu.debug` configuration from above, you can invoke it in the standard way.
+
+```sh
+detox test -c android.emu.debug
+```
 
 ## Troubleshooting
 
-### Problem: Duplicate files copied in ...
+### Problem: `Duplicate files copied in ...`
 
 If you get an error like this:
 
@@ -100,7 +104,7 @@ packagingOptions {
 }
 ```
 
-### Problem: Conflict with dependency ...
+### Problem: `Conflict with dependency ...`
 
 If you get an error like this:
 
