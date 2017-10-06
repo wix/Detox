@@ -1,11 +1,11 @@
-# Android Support - Current Status
+# Android Support - Status Page
 
 As we are wrapping up Android support for Detox, there's already a pretty hefty chunk of Detox for Android already implemented, we decided to start releasing it as we go along, just like we did with the iOS implementation.
+
 This page should give an updated status of what's working and what's not (yet)...
 
-
 ## Setup & Configuration
-Setup is not fully figured out yet, we want to make the setup with as little configuration as possible, and this will probably be the last stage of the initial Android release.
+Setup is not fully figured out yet. Our goal is to make it dead simple for pure React Native projects. We are not there yet.
 
 ### Step by step guide
 
@@ -23,9 +23,9 @@ androidTestCompile(project(path: ":detox", configuration: "oldOkhttpDebug"), {
 })
 ```
 
-### Longer version
+### Details
 
-Detox Android is a standard Android integration test. It has many twists though, for example, it is completely asynchronous. The test cases are not compiled, they come through a websocket from the JS test runner via a json protocol.
+Detox Android is a standard Android integration test with many twists. For example, it is completely asynchronous. The test cases are not compiled, they come through a websocket from the JS test runner via a json protocol. They are evaulated inside the app and the result along with a possible debug informations are sent back to the JS test runner.
 
 It uses Espresso internally, therefore you must use an AndroidJUnitRunner as your test runner (or a subclass of it).
 
@@ -37,15 +37,13 @@ android {
 }
 ```
 
-Please take a look at the [demo-react-native](../examples/demo-react-native) project to see a full example with Android e2e tests.
+Please take a look at the [demo-react-native](../examples/demo-react-native) project to see a minimal project set up for Android. If you want to browse a more complex example you can take a look at detox's internal test suite [here.](https://github.com/wix/detox/tree/master/detox/test/e2e)
 
 In case your project's RN version is at least 0.46.0 change the `oldOkhttp` configuration string to `newOkhttp`, in the `app/build.gradle` [here.](../examples/demo-react-native/android/app/build.gradle#L65)
 
-It's sad, that we had to expose this okhttp flag, the reason behind this quite long to describe here. 
+It's sad, that we had to expose this okhttp flag, the reason behind this too long to describe here.
 
-Of course, this example is not the final way we're going to package and ship Android support in the future, so expect breakage.
-
-### Hybrid apps
+## Hybrid apps
 
 Detox test is a NO-OP in case it's not triggered by detox itself. So, it's safe to add it to your existing test suite.
 
@@ -76,8 +74,9 @@ Detox is being developed on Macs, but there is no Mac specifc command on any of 
 
 ## Differences between iOS and Android
 - Detox Android doesn't wait for Timers scheduled less than 1.5sec in the future. Its look ahead threshold is only 15ms.
-- Contrary to iOS, synchronization can not be completely turned off by [device.disablesynchronization()](https://github.com/wix/detox/blob/master/docs/APIRef.DeviceObjectAPI.md#devicedisablesynchronization). It turns off only the monitoring of the network. This feature will never be fully implemented as Espresso syncs can not be turned off completely. Atlhough, Animation sync might be added to this later.
+- Contrary to iOS, synchronization can not be completely turned off by [device.disablesynchronization()](https://github.com/wix/detox/blob/master/docs/APIRef.DeviceObjectAPI.md#devicedisablesynchronization). It turns off only the monitoring of the network operation at the moment. This feature will never be fully implemented as Espresso syncs can not be turned off completely. It is planned to tie the Animation syncronization too to it.
 - Detox Android doesn't wait for delayed animations. (iOS waits for 1.5sec for delayed animations)
+- Setting up [setURLBlackist](https://github.com/wix/detox/blob/master/docs/APIRef.DeviceObjectAPI.md#deviceseturlblacklisturls) is not supported on Android yet. (Coming soon!)
 
 ## General remarks
 - For a technical reason related to React Native, Detox can not synchronize with native driver animations prior to RN 45.
