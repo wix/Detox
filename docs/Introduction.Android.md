@@ -4,7 +4,7 @@
 
 ### 0. Do the initial setup described in the Getting Started Guide
 
-[Getting Started](Introduction.GettingStarted.md)
+- [Getting Started](Introduction.GettingStarted.md)
 
 ### 1. Add the detox Android project as an androidTestCompile dependency
 
@@ -24,6 +24,8 @@ androidTestCompile(project(path: ":detox", configuration: "newOkhttpDebug"), {
 })
 ```
 
+Please be aware that the `minSdkVersion` needs to be at least 18.
+
 ### 2. Add `jacoco-coverage` as dependency in the buildscript
 
 You need to add this to `android/build.gradle` into `buildscript > dependencies`:
@@ -39,7 +41,7 @@ maven {
 }
 ```
 
-### 2. Introduce [Espresso](https://developer.android.com/training/testing/espresso/index.html) test runner
+### 3. Introduce [Espresso](https://developer.android.com/training/testing/espresso/index.html) test runner
 
 Detox Android is a standard Android integration test. Although, it is completely asynchronous.
 
@@ -54,11 +56,11 @@ android {
 }
 ```
 
-### 3. Create Android Test class
+### 4. Create Android Test class
 
 You need to add the file `android/app/src/androidTest/java/com/[your.package]/DetoxTest.java` and fill it like [this](../detox/test/android/app/src/androidTest/java/com/example/DetoxTest.java), expect that you need to change the package to your projects name.
 
-### 4. Add Android configuration
+### 5. Add Android configuration
 
 Add this part to your `package.json`:
 
@@ -75,7 +77,7 @@ Add this part to your `package.json`:
 }
 ```
 
-### 5. Run the tests
+### 6. Run the tests
 
 For this you need to specify the configuration (if you have a second one already) like this: `detox test -c android.emu.debug`
 
@@ -96,4 +98,21 @@ You need to add this to the `packagingOptions` of your `android/app/build.gradle
 packagingOptions {
     exclude 'META-INF/LICENSE'
 }
+```
+
+### Problem: Conflict with dependency ...
+
+If you get an error like this:
+
+```sh
+Conflict with dependency 'com.fasterxml.jackson.core:jackson-core'. Resolved versions for app (2.8.7) and test app (2.2.3) differ. See http://g.co/androidstudio/app-test-app-conflict for details.
+```
+
+You need to exclude it from the `android/app/build.gradle`:
+
+```gradle
+ androidTestCompile(project(path: ":detox", configuration: "newOkhttpDebug"), {
+    exclude group: 'com.android.support', module: 'support-annotations'
+    exclude group: 'com.fasterxml.jackson.core' // <- add this
+})
 ```
