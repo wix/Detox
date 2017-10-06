@@ -22,6 +22,8 @@ androidTestCompile(project(path: ":detox", configuration: "newOkhttpDebug"), {
 })
 ```
 
+Please be aware that the `minSdkVersion` needs to be at least 18.
+
 ### 2. Add `jacoco-coverage` as dependency in the buildscript
 
 You need to add this to `android/build.gradle` into `buildscript > dependencies`:
@@ -94,4 +96,21 @@ You need to add this to the `packagingOptions` of your `android/app/build.gradle
 packagingOptions {
     exclude 'META-INF/LICENSE'
 }
+```
+
+### Problem: Conflict with dependency ...
+
+If you get an error like this:
+
+```sh
+Conflict with dependency 'com.fasterxml.jackson.core:jackson-core'. Resolved versions for app (2.8.7) and test app (2.2.3) differ. See http://g.co/androidstudio/app-test-app-conflict for details.
+```
+
+You need to exclude it from the `android/app/build.gradle`:
+
+```gradle
+ androidTestCompile(project(path: ":detox", configuration: "newOkhttpDebug"), {
+    exclude group: 'com.android.support', module: 'support-annotations'
+    exclude group: 'com.fasterxml.jackson.core' // <- add this
+})
 ```
