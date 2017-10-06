@@ -155,7 +155,7 @@ class MatcherAssertionInteraction extends Interaction {
     super();
     //if (!(element instanceof Element)) throw new Error(`MatcherAssertionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
     //if (!(matcher instanceof Matcher)) throw new Error(`MatcherAssertionInteraction ctor 2nd argument must be a valid Matcher, got ${typeof matcher}`);
-    // this._call = invoke.call(element._call, 'check', invoke.call(invoke.Android.Class(ViewAssertions), 'matches', matcher._call));    
+    // this._call = invoke.call(element._call, 'check', invoke.call(invoke.Android.Class(ViewAssertions), 'matches', matcher._call));
     this._call = invoke.call(invoke.Android.Class(DetoxAssertion), 'assertMatcher', element._call, matcher._call);
     // TODO: move this.execute() here from the caller
   }
@@ -218,7 +218,7 @@ class Element {
   atIndex(index) {
     if (typeof index !== 'number') throw new Error(`Element atIndex argument must be a number, got ${typeof index}`);
     const matcher = this._originalMatcher;
-    this._originalMatcher._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matherForAtIndex', invoke.Android.Integer(index), matcher._call);
+    this._originalMatcher._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForAtIndex', invoke.Android.Integer(index), matcher._call);
     this._selectElementWithMatcher(this._originalMatcher);
     return this;
   }
