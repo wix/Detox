@@ -1,3 +1,3 @@
 #!/bin/bash -e
 
-lerna bootstrap
+./ci.sh
