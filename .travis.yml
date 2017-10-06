@@ -14,17 +14,16 @@ matrix:
       osx_image: xcode8.3
       env:
         - REACT_NATIVE_VERSION="0.48.4"
-   - language: objective-c
+    - language: objective-c
       os: osx
       osx_image: xcode9
       env:
         - REACT_NATIVE_VERSION="0.44.2"
-   - language: objective-c
+    - language: objective-c
       os: osx
       osx_image: xcode9
       env:
         - REACT_NATIVE_VERSION="0.48.4"
-
 
 branches:
   only:
