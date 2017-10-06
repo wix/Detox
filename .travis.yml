@@ -61,7 +61,8 @@ branches:
   only:
   - master
   - buildmatrix
-
+before_install:
+  - nvm install latest
 notifications:
   email: true
   slack:
