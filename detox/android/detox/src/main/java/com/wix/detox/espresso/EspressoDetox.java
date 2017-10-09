@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.pm.ActivityInfo;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.ViewInteraction;
@@ -15,6 +16,8 @@ import com.wix.detox.ReactNativeSupport;
 
 import org.hamcrest.Matcher;
 import org.joor.Reflect;
+
+import java.util.ArrayList;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
@@ -98,6 +101,15 @@ public class EspressoDetox {
 
     public static void setSynchronization(boolean enabled) {
         ReactNativeSupport.enableNetworkSynchronization(enabled);
+    }
+
+    public static void setURLBlacklist(final ArrayList<String> urls) {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                RNExperimentalNetworkIR.setURLBlacklist(urls);
+            }
+        });
     }
 }
 

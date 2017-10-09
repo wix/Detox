@@ -9,6 +9,7 @@ import org.joor.Reflect;
 import org.joor.ReflectException;
 
 import java.util.PriorityQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by simonracz on 23/05/2017.
@@ -39,6 +40,8 @@ public class ReactNativeTimersIdlingResource implements IdlingResource, Choreogr
     private final static String FIELD_TARGET_TIME = "mTargetTime";
     private final static String LOCK_TIMER = "mTimerGuard";
 
+    private AtomicBoolean stopped = new AtomicBoolean(false);
+
     private static final long LOOK_AHEAD_MS = 15;
 
     private ResourceCallback callback = null;
@@ -55,6 +58,12 @@ public class ReactNativeTimersIdlingResource implements IdlingResource, Choreogr
 
     @Override
     public boolean isIdleNow() {
+        if (stopped.get()) {
+            if (callback != null) {
+                callback.onTransitionToIdle();
+            }
+            return true;
+        }
         Class<?> timingClass = null;
         Class<?> timerClass = null;
         try {
@@ -136,5 +145,9 @@ public class ReactNativeTimersIdlingResource implements IdlingResource, Choreogr
     @Override
     public void doFrame(long frameTimeNanos) {
         isIdleNow();
+    }
+
+    public void stop() {
+        stopped.set(true);
     }
 }

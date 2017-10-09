@@ -44,5 +44,5 @@ const genericInvokeObject = new Proxy({},
 module.exports = {
   call,
   callDirectly,
-  genericInvokeObject,
+  genericInvokeObject
 };

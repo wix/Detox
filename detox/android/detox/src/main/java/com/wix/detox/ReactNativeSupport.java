@@ -9,7 +9,7 @@ import android.util.Log;
 import com.wix.detox.espresso.AnimatedModuleIdlingResource;
 import com.wix.detox.espresso.LooperIdlingResource;
 import com.wix.detox.espresso.ReactBridgeIdlingResource;
-import com.wix.detox.espresso.ReactNativeNetworkIdlingResource;
+import com.wix.detox.espresso.RNExperimentalNetworkIR;
 import com.wix.detox.espresso.ReactNativeTimersIdlingResource;
 import com.wix.detox.espresso.ReactNativeUIModuleIdlingResource;
 
@@ -27,6 +27,8 @@ import okhttp3.OkHttpClient;
 /**
  * Created by simonracz on 15/05/2017.
  */
+
+//TODO Dear reader, if you get this far and find this class messy you are not alone. :) It needs a refactor.
 
 public class ReactNativeSupport {
     private static final String LOG_TAG = "Detox";
@@ -402,7 +404,7 @@ public class ReactNativeSupport {
         networkSyncEnabled = enable;
     }
 
-    private static ReactNativeNetworkIdlingResource networkIR = null;
+    private static RNExperimentalNetworkIR networkIR = null;
     private final static String CLASS_NETWORK_MODULE = "com.facebook.react.modules.network.NetworkingModule";
     private final static String METHOD_GET_NATIVE_MODULE = "getNativeModule";
     private final static String METHOD_HAS_NATIVE_MODULE = "hasNativeModule";
@@ -431,7 +433,7 @@ public class ReactNativeSupport {
                     .call(METHOD_GET_NATIVE_MODULE, networkModuleClass)
                     .field(FIELD_OKHTTP_CLIENT)
                     .get();
-            networkIR = new ReactNativeNetworkIdlingResource(client.dispatcher());
+            networkIR = new RNExperimentalNetworkIR(client.dispatcher());
             Espresso.registerIdlingResources(networkIR);
         } catch (ReflectException e) {
             Log.e(LOG_TAG, "Can't set up Networking Module listener", e.getCause());

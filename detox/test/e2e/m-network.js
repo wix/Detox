@@ -38,8 +38,8 @@ describe('Network Synchronization', () => {
   });
 
 
-  it(':ios: setURLBlacklist() should disable synchronization for given endpoint', async () => {
-    const url = device.getPlatform() === 'ios' ? '.*localhost.*' : '*10.0.2.2*';
+  it('setURLBlacklist() should disable synchronization for given endpoint', async () => {
+    const url = device.getPlatform() === 'ios' ? '.*localhost.*' : '.*10.0.2.2.*';
     await device.setURLBlacklist([url]);
 
     await element(by.id('LongNetworkRequest')).tap();

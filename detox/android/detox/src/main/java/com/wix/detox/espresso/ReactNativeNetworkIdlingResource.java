@@ -7,6 +7,10 @@ import android.util.Log;
 
 import org.joor.Reflect;
 
+import java.util.ArrayList;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
 import okhttp3.Dispatcher;
 
 /**
@@ -18,6 +22,7 @@ import okhttp3.Dispatcher;
  * Idling Resource which monitors React Native's OkHttpClient.
  *
  * Must call stop() on it, before removing it from Espresso.
+ * @deprecated Please use RNExperimentalNetworkIR
  */
 public class ReactNativeNetworkIdlingResource implements IdlingResource {
 

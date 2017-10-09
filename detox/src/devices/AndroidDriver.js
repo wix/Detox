@@ -9,7 +9,6 @@ const DeviceDriverBase = require('./DeviceDriverBase');
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
 
 class AndroidDriver extends DeviceDriverBase {
-
   constructor(client) {
     super(client);
     const expect = require('../android/expect');
@@ -19,7 +18,6 @@ class AndroidDriver extends DeviceDriverBase {
 
     this.adb = new ADB();
   }
-
 
   async getBundleIdFromBinary(apkPath) {
     return await this.aapt.getPackageName(apkPath);
@@ -52,7 +50,7 @@ class AndroidDriver extends DeviceDriverBase {
     });
 
     if (this.instrumentationProcess) {
-      let call = invoke.call(invoke.Android.Class("com.wix.detox.Detox"), 'launchMainActivity');
+      const call = invoke.call(invoke.Android.Class("com.wix.detox.Detox"), 'launchMainActivity');
       await this.invocationManager.execute(call);
       return this.instrumentationProcess.pid;
     }
@@ -76,13 +74,13 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async openURL(deviceId, params) {
-    let call = invoke.call(invoke.Android.Class("com.wix.detox.Detox"), 'startActivityFromUrl', invoke.Android.String(params.url));
+    const call = invoke.call(invoke.Android.Class("com.wix.detox.Detox"), 'startActivityFromUrl', invoke.Android.String(params.url));
     await this.invocationManager.execute(call);
   }
 
   async sendToHome(deviceId, params) {
-    let uiDevice = invoke.call(invoke.Android.Class("com.wix.detox.uiautomator.UiAutomator"), 'uiDevice');
-    let call = invoke.call(uiDevice, 'pressHome');
+    const uiDevice = invoke.call(invoke.Android.Class("com.wix.detox.uiautomator.UiAutomator"), 'uiDevice');
+    const call = invoke.call(uiDevice, 'pressHome');
     await this.invocationManager.execute(call);
   }
 
@@ -110,24 +108,28 @@ class AndroidDriver extends DeviceDriverBase {
     return 'android';
   }
 
+  async setURLBlacklist(urlList) {
+    const call = invoke.call(invoke.Android.Class(EspressoDetox), 'setURLBlacklist', urlList);
+    await this.invocationManager.execute(call);
+  }
+
   async enableSynchronization() {
-    let call = invoke.call(invoke.Android.Class(EspressoDetox), 'setSynchronization', invoke.Android.Boolean(true));
+    const call = invoke.call(invoke.Android.Class(EspressoDetox), 'setSynchronization', invoke.Android.Boolean(true));
     await this.invocationManager.execute(call);
   }
 
   async disableSynchronization() {
-    let call = invoke.call(invoke.Android.Class(EspressoDetox), 'setSynchronization', invoke.Android.Boolean(false));
+    const call = invoke.call(invoke.Android.Class(EspressoDetox), 'setSynchronization', invoke.Android.Boolean(false));
     await this.invocationManager.execute(call);
   }
 
   async setOrientation(deviceId, orientation) {
     const orientationMapping = {
       landscape: 1, // top at left side landscape
-      portrait: 0  // non-reversed portrait.
+      portrait: 0 // non-reversed portrait.
     };
-    const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
-    const invoke = require('../invoke');
-    let call = invoke.call(invoke.Android.Class(EspressoDetox), 'changeOrientation', invoke.Android.Integer(orientationMapping[orientation]));
+    
+    const call = invoke.call(invoke.Android.Class(EspressoDetox), 'changeOrientation', invoke.Android.Integer(orientationMapping[orientation]));
     await this.invocationManager.execute(call);
   }
 }
