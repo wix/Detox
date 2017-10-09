@@ -76,7 +76,6 @@ Detox is being developed on Macs, but there is no Mac specifc command on any of 
 - Detox Android doesn't wait for Timers scheduled less than 1.5sec in the future. Its look ahead threshold is only 15ms.
 - Contrary to iOS, synchronization can not be completely turned off by [device.disablesynchronization()](https://github.com/wix/detox/blob/master/docs/APIRef.DeviceObjectAPI.md#devicedisablesynchronization). It turns off only the monitoring of the network operation at the moment. This feature will never be fully implemented as Espresso syncs can not be turned off completely. It is planned to tie the Animation syncronization too to it.
 - Detox Android doesn't wait for delayed animations. (iOS waits for 1.5sec for delayed animations)
-- Setting up [setURLBlackist](https://github.com/wix/detox/blob/master/docs/APIRef.DeviceObjectAPI.md#deviceseturlblacklisturls) is not supported on Android yet. (Coming soon!)
 
 ## General remarks
 - For a technical reason related to React Native, Detox can not synchronize with native driver animations prior to RN 45.
