@@ -19,32 +19,39 @@ You should remove `e2e/mocha.opts`, you no longer need it.
 ### 3. Write a detox setup file
 
 ```js
+// ./jest/setup/
 const detox = require('detox');
 const config = require('../package.json').detox;
 
 // Set the default timeout
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 120000;
 
-beforeAll(async () => {
-  await detox.init(config);
-});
+// setup detox only when running e2e tests
+if (process.argv[2].includes('__e2e__')) {
+  beforeAll(async () => {
+    await detox.init(config);
+  });
 
-afterAll(async () => {
-  await detox.cleanup();
-});
+  afterAll(async () => {
+    await detox.cleanup();
+  });
 
-// optional, you may remove this part
-beforeEach(async () => {
-  await device.reloadReactNative();
-});
+  beforeEach(async () => {
+    await device.reloadReactNative();
+  });
+}
 ```
 
 ### 4. Run jest
 
 Add this part to your `package.json`:
 ```json
+"jest": {
+  "preset": "react-native",
+  "setupTestFrameworkScriptFile": "<rootDir>/jest/setup.js"
+},
 "scripts": {
-    "test:e2e": "jest e2e --setupTestFrameworkScriptFile=./jest/setup-e2e-tests.js --runInBand"
+    "test:e2e": "detox build && jest __e2e__ --runInBand"
 }
 ```
 
@@ -59,5 +66,5 @@ There are some things you should notice:
 
 ## How to run unit test and E2E tests in the same project
 
-- If you have a setup file for the unit tests pass it into jest by passing `--setupTestFrameworkScriptFile=./path/to/setup-unit-tests.js` to your jest unit test call. You need to remove this option from your `jest` configuration in the package.json.
+- If you have a setup file for the unit tests pass `./jest/setup` implementation into your unit setup.
 - Call your E2E tests like mentioned above
