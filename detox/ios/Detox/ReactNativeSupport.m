@@ -140,7 +140,11 @@ void setupForTests()
 	{
 		//Modern RN
 		cls = NSClassFromString(@"RCTCxxBridge");
-		m = class_getInstanceMethod(cls, NSSelectorFromString(@"runJSRunLoop"));
+		m = class_getClassMethod(cls, NSSelectorFromString(@"runRunLoop"));
+		if(m == NULL)
+		{
+			m = class_getInstanceMethod(cls, NSSelectorFromString(@"runJSRunLoop"));
+		}
 	}
 	
 	if(m != NULL)
