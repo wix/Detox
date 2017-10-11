@@ -38,6 +38,9 @@ switch (program.runner) {
   case 'mocha':
     command = `node_modules/.bin/${program.runner} ${testFolder} --opts ${testFolder}/${program.runnerConfig} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${artifactsLocation}`;
     break;
+  case 'jest':
+    command = `node_modules/.bin/${program.runner} ${testFolder}`;
+    break;
   default:
     throw new Error(`${program.runner} is not supported in detox cli tools. You can still run your tests with the runner's own cli tool`);
 }
