@@ -19,27 +19,24 @@ You should remove `e2e/mocha.opts`, you no longer need it.
 ### 3. Write a detox setup file
 
 ```js
-// ./jest/setup/
+// ./jest/setup/e2e.js
 const detox = require('detox');
 const config = require('../package.json').detox;
 
 // Set the default timeout
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 120000;
 
-// setup detox only when running e2e tests
-if (process.argv[2].includes('__e2e__')) {
-  beforeAll(async () => {
-    await detox.init(config);
-  });
+beforeAll(async () => {
+  await detox.init(config);
+});
 
-  afterAll(async () => {
-    await detox.cleanup();
-  });
+afterAll(async () => {
+  await detox.cleanup();
+});
 
-  beforeEach(async () => {
-    await device.reloadReactNative();
-  });
-}
+beforeEach(async () => {
+  await device.reloadReactNative();
+});
 ```
 
 ### 4. Run jest
@@ -47,11 +44,11 @@ if (process.argv[2].includes('__e2e__')) {
 Add this part to your `package.json`:
 ```json
 "jest": {
-  "preset": "react-native",
   "setupTestFrameworkScriptFile": "<rootDir>/jest/setup.js"
 },
 "scripts": {
-    "test:e2e": "detox build && jest __e2e__ --runInBand"
+    "test:e2e": "jest __e2e__ --setupTestFrameworkScriptFile=./jest/setup/e2e-tests.js --runInBand",
+    "test:e2e:build": "detox build"
 }
 ```
 
