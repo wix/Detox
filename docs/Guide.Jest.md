@@ -16,10 +16,9 @@ npm install --save-dev jest
 
 You should remove `e2e/mocha.opts`, you no longer need it.
 
-### 3. Write a detox setup file
+### 3. Replace generated detox setup file (e2e/init.js)
 
 ```js
-// ./jest/setup/e2e.js
 const detox = require('detox');
 const config = require('../package.json').detox;
 
@@ -44,15 +43,13 @@ beforeEach(async () => {
 Add this part to your `package.json`:
 ```json
 "jest": {
-  "setupTestFrameworkScriptFile": "<rootDir>/jest/setup.js"
+  "setupTestFrameworkScriptFile": "./e2e/init.js"
 },
 "scripts": {
-    "test:e2e": "jest __e2e__ --setupTestFrameworkScriptFile=./jest/setup/e2e-tests.js --runInBand",
+    "test:e2e": "detox test -r jest",
     "test:e2e:build": "detox build"
 }
 ```
-
-We need the `--runInBand` as detox doesn't support parallelism yet.
 
 ### Writing Tests
 
