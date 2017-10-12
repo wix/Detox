@@ -4,7 +4,7 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "version": "5.8.1",
+  "version": "5.8.2",
   "bin": {
     "detox": "local-cli/detox.js"
   },
@@ -82,12 +82,9 @@
       "GREYConfiguration.js",
       "src/ios/earlgreyapi",
       "src/utils/environment.js",
-  
-      
       "AAPT.js",
       "ADB.js",
       "fsext.js"
-      
     ],
     "resetMocks": true,
     "resetModules": true,
