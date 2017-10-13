@@ -53,6 +53,7 @@
     "get-port": "^2.1.0",
     "lodash": "^4.14.1",
     "npmlog": "^4.0.2",
+    "shell-utils": "^1.0.9",
     "telnet-client": "0.15.3",
     "ws": "^1.1.1"
   },
