@@ -14,7 +14,6 @@
     "babel-generator": "^6.25.0",
     "babel-types": "^6.25.0",
     "jest": "^20.0.4",
-    "lerna": "2.0.0-rc.4",
     "objective-c-parser": "1.1.0",
     "remove": "^0.1.5"
   },

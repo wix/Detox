@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "test": ":",
     "packager": "react-native start",
     "detox-server": "detox run-server",
     "e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization 10000",
@@ -57,7 +58,7 @@
         "binaryPath": "android/app/build/outputs/apk/app-release.apk",
         "build": "pushd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && popd",
         "type": "android.emulator",
-        "name": "Nexus_5X_API_24"
+        "name": "Nexus_5X_API_26"
       }
     }
   }
