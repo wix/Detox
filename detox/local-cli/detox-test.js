@@ -21,22 +21,19 @@ program
 const config = require(path.join(process.cwd(), 'package.json')).detox;
 const testFolder = config.specs || 'e2e';
 
-const loglevel = program.loglevel ? `--loglevel ${program.loglevel}` : '';
-const configuration = program.configuration ? `--configuration ${program.configuration}` : '';
-const cleanup = program.cleanup ? `--cleanup` : '';
-const reuse = program.reuse ? `--reuse` : '';
-const artifactsLocation = program.artifactsLocation ? `--artifacts-location ${program.artifactsLocation}` : '';
-
-if (typeof program.debugSynchronization === "boolean") {
-  program.debugSynchronization = 3000;
-}
-let debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
-
-
 let command;
+const {
+  configuration,
+  loglevel,
+  cleanup,
+  reuse,
+  debugSynchronization,
+  artifactsLocation,
+} = program;
+
 switch (program.runner) {
   case 'mocha':
-    command = `node_modules/.bin/${program.runner} ${testFolder} --opts ${testFolder}/${program.runnerConfig} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${artifactsLocation}`;
+    command = `node_modules/.bin/${program.runner} ${testFolder} --opts ${testFolder}/${program.runnerConfig}`;
     break;
   case 'jest':
     command = `node_modules/.bin/${program.runner} ${testFolder} --runInBand`;
@@ -46,4 +43,14 @@ switch (program.runner) {
 }
 
 console.log(command);
-cp.execSync(command, {stdio: 'inherit'});
+cp.execSync(command, {
+  stdio: 'inherit',
+  env: {
+    configuration,
+    loglevel,
+    cleanup,
+    reuse,
+    debugSynchronization,
+    artifactsLocation,
+  },
+});

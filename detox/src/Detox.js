@@ -32,7 +32,7 @@ class Detox {
     this.client = null;
     this.device = null;
     this._currentTestNumber = 0;
-    const artifactsLocation = argparse.getArgValue('artifacts-location');
+    const artifactsLocation = argparse.getArgValue('artifactsLocation');
     if(artifactsLocation !== undefined) {
       try {
         this._artifactsPathsProvider = new ArtifactsPathsProvider(artifactsLocation);
@@ -130,7 +130,7 @@ class Detox {
     }
 
     if (!deviceConfig) {
-      throw new Error(`Cannot determine which configuration to use. use --configuration to choose one of the following: 
+      throw new Error(`Cannot determine which configuration to use. use --configuration to choose one of the following:
                       ${Object.keys(configurations)}`);
     }
 
