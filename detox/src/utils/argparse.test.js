@@ -1,12 +1,10 @@
-const _ = require('lodash');
+jest.unmock('process');
 
 describe('argparse', () => {
   let argparse;
 
   beforeEach(() => {
-    jest.mock('minimist');
-    const minimist = require('minimist');
-    minimist.mockReturnValue({test: 'a value'});
+    process.env.test = 'a value';
     argparse = require('./argparse');
   });
 

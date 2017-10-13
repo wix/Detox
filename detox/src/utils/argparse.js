@@ -1,5 +1,5 @@
 function getArgValue(key) {
-  process.env[key];
+  return process.env[key];
 }
 
 module.exports = {
