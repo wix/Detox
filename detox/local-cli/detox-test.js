@@ -46,6 +46,7 @@ console.log(command);
 cp.execSync(command, {
   stdio: 'inherit',
   env: {
+    ...process.env,
     configuration,
     loglevel,
     cleanup,
