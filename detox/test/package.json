@@ -51,9 +51,9 @@
         "type": "android.emulator",
         "name": "Nexus_5X_API_24",
         "session": {
-					"server": "ws://localhost:8099",
-					"sessionId": "test"
-				}
+			"server": "ws://localhost:8099",
+			"sessionId": "test"
+		}
       },
       "android.emu.release": {
         "binaryPath": "android/app/build/outputs/apk/app-release.apk",
@@ -61,9 +61,9 @@
         "type": "android.emulator",
         "name": "Nexus_5X_API_24",
         "session": {
-					"server": "ws://localhost:8099",
-					"sessionId": "test"
-				}
+			"server": "ws://localhost:8099",
+			"sessionId": "test"
+		}
       }
     }
 	}
