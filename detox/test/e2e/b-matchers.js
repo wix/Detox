@@ -50,6 +50,7 @@ describe('Matchers', () => {
   it('should match elements by using two matchers together with and', async () => {
     await expect(element(by.id('UniqueId345').and(by.text('ID')))).toExist();
     await expect(element(by.id('UniqueId345').and(by.text('RandomJunk')))).toNotExist();
+    await expect(element(by.id('UniqueId345').and(by.label('RandomJunk')))).toNotExist();
   });
 
   // waiting to upgrade EarlGrey version in order to test this (not supported in our current one)
