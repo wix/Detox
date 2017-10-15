@@ -4,7 +4,7 @@ const program = require('commander');
 const path = require('path');
 const cp = require('child_process');
 program
-  .option('-r, --runner [runner]', 'Test runner (currently supports mocha)', 'mocha')
+  .option('-r, --runner [runner]', 'Test runner (currently supports mocha)')
   .option('-o, --runner-config [config]', 'Test runner config file', 'mocha.opts')
   .option('-l, --loglevel [value]', 'info, debug, verbose, silly, wss')
   .option('-c, --configuration [device configuration]', 'Select a device configuration from your defined configurations,'
@@ -21,6 +21,12 @@ program
 const config = require(path.join(process.cwd(), 'package.json')).detox;
 const testFolder = config.specs || 'e2e';
 
+let runner = config.runner || 'mocha';
+
+if (program.runner) {
+  runner = program.runner;
+}
+
 let command;
 const {
   configuration,
@@ -31,15 +37,15 @@ const {
   artifactsLocation,
 } = program;
 
-switch (program.runner) {
+switch (runner) {
   case 'mocha':
-    command = `node_modules/.bin/${program.runner} ${testFolder} --opts ${testFolder}/${program.runnerConfig}`;
+    command = `node_modules/.bin/${runner} ${testFolder} --opts ${testFolder}/${program.runnerConfig}`;
     break;
   case 'jest':
-    command = `node_modules/.bin/${program.runner} ${testFolder} --runInBand`;
+    command = `node_modules/.bin/${runner} ${testFolder} --runInBand`;
     break;
   default:
-    throw new Error(`${program.runner} is not supported in detox cli tools. You can still run your tests with the runner's own cli tool`);
+    throw new Error(`${runner} is not supported in detox cli tools. You can still run your tests with the runner's own cli tool`);
 }
 
 console.log(command);
