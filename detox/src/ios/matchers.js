@@ -38,7 +38,8 @@ class Matcher {
 class LabelMatcher extends Matcher {
   constructor(value) {
     super();
-    this._call = invoke.callDirectly(GreyMatchersDetox.detox_matcherForAccessibilityLabel(value));
+    if (typeof value !== 'string') throw new Error(`LabelMatcher ctor argument must be a string, got ${typeof value}`);
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detox_matcherForAccessibilityLabel:', value);
   }
 }
 
