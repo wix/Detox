@@ -5,7 +5,7 @@ describe('argparse', () => {
     let argparse;
 
     beforeEach(() => {
-      process.env.test = 'a value';
+      process.env.fooBar = 'a value';
       argparse = require('./argparse');
     });
 
@@ -14,7 +14,7 @@ describe('argparse', () => {
     });
 
     it(`existing key should return a result`, () => {
-      expect(argparse.getArgValue('test')).toBe('a value');
+      expect(argparse.getArgValue('foo-bar')).toBe('a value');
     });
   });
 
@@ -24,7 +24,7 @@ describe('argparse', () => {
     beforeEach(() => {
       jest.mock('minimist');
       const minimist = require('minimist');
-      minimist.mockReturnValue({test: 'a value'});
+      minimist.mockReturnValue({'kebab-case-key': 'a value'});
       argparse = require('./argparse');
     });
 
@@ -33,7 +33,7 @@ describe('argparse', () => {
     });
 
     it(`existing key should return a result`, () => {
-      expect(argparse.getArgValue('test')).toBe('a value');
+      expect(argparse.getArgValue('kebab-case-key')).toBe('a value');
     });
   });
 });

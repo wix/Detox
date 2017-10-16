@@ -22,7 +22,6 @@ const DEVICE_CLASSES = {
 };
 
 class Detox {
-
   constructor(userConfig) {
     if (!userConfig) {
       throw new Error(`No configuration was passed to detox, make sure you pass a config when calling 'detox.init(config)'`);
@@ -32,11 +31,11 @@ class Detox {
     this.client = null;
     this.device = null;
     this._currentTestNumber = 0;
-    const artifactsLocation = argparse.getArgValue('artifactsLocation');
-    if(artifactsLocation !== undefined) {
+    const artifactsLocation = argparse.getArgValue('artifacts-location');
+    if (artifactsLocation !== undefined) {
       try {
         this._artifactsPathsProvider = new ArtifactsPathsProvider(artifactsLocation);
-      } catch(ex) {
+      } catch (ex) {
         log.warn(ex);
       }
     }

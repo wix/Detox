@@ -1,7 +1,16 @@
 const argv = require('minimist')(process.argv.slice(2));
 
 function getArgValue(key) {
-  return (argv && argv[key]) ? argv[key] : process.env[key];
+  let value;
+
+  if (argv && argv[key]) {
+    value = argv[key];
+  } else {
+    const camelCasedKey = key.replace(/(\-\w)/g, (m) => m[1].toUpperCase());
+    value = process.env[camelCasedKey];
+  }
+
+  return value;
 }
 
 module.exports = {
