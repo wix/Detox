@@ -34,30 +34,37 @@ const {
   cleanup,
   reuse,
   debugSynchronization,
-  artifactsLocation,
+  artifactsLocation
 } = program;
 
 switch (runner) {
   case 'mocha':
-    command = `node_modules/.bin/${runner} ${testFolder} --opts ${testFolder}/${program.runnerConfig}`;
+    const loglevel = program.loglevel ? `--loglevel ${program.loglevel}` : '';		 +let runner = config.runner || 'mocha';
+    const configuration = program.configuration ? `--configuration ${program.configuration}` : '';
+    const cleanup = program.cleanup ? `--cleanup` : '';
+    const reuse = program.reuse ? `--reuse` : '';
+    const artifactsLocation = program.artifactsLocation ? `--artifacts-location ${program.artifactsLocation}` : '';
+    command = `node_modules/.bin/${program.runner} ${testFolder} --opts ${testFolder}/${program.runnerConfig} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${artifactsLocation}`;
+
+    console.log(command);
+    cp.execSync(command, { stdio: 'inherit' });
     break;
-  case 'jest':
-    command = `node_modules/.bin/${runner} ${testFolder} --runInBand`;
-    break;
-  default:
+    case 'jest':
+      command = `node_modules/.bin/${runner} ${testFolder} --runInBand`;
+      console.log(command);
+      cp.execSync(command, {
+        stdio: 'inherit',
+        env: {
+          ...process.env,
+          configuration,
+          loglevel,
+          cleanup,
+          reuse,
+          debugSynchronization,
+          artifactsLocation
+        }
+      });
+      break;
+    default:
     throw new Error(`${runner} is not supported in detox cli tools. You can still run your tests with the runner's own cli tool`);
 }
-
-console.log(command);
-cp.execSync(command, {
-  stdio: 'inherit',
-  env: {
-    ...process.env,
-    configuration,
-    loglevel,
-    cleanup,
-    reuse,
-    debugSynchronization,
-    artifactsLocation,
-  },
-});

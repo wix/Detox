@@ -42,6 +42,7 @@
     "eslint-plugin-react": "^7.1.0",
     "eslint-plugin-react-native": "^2.3.2",
     "jest": "^20.0.4",
+    "minimist": "^1.2.0",
     "mockdate": "^2.0.1",
     "shelljs": "^0.7.3",
     "ttab": "^0.3.1"
