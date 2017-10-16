@@ -27,44 +27,42 @@ if (program.runner) {
   runner = program.runner;
 }
 
-let command;
-const {
-  configuration,
-  loglevel,
-  cleanup,
-  reuse,
-  debugSynchronization,
-  artifactsLocation
-} = program;
+function runMocha() {
+  const loglevel = program.loglevel ? `--loglevel ${program.loglevel}` : '';
+  const configuration = program.configuration ? `--configuration ${program.configuration}` : '';
+  const cleanup = program.cleanup ? `--cleanup` : '';
+  const reuse = program.reuse ? `--reuse` : '';
+  const artifactsLocation = program.artifactsLocation ? `--artifacts-location ${program.artifactsLocation}` : '';
+  const command = `node_modules/.bin/${program.runner} ${testFolder} --opts ${testFolder}/${program.runnerConfig} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${artifactsLocation}`;
+
+  console.log(command);
+  cp.execSync(command, {stdio: 'inherit'});
+}
+
+function runJest() {
+  const command = `node_modules/.bin/${runner} ${testFolder} --runInBand`;
+  console.log(command);
+  cp.execSync(command, {
+    stdio: 'inherit',
+    env: {
+      ...process.env,
+      configuration: program.configuration,
+      loglevel: program.loglevel,
+      cleanup: program.cleanup,
+      reuse: program.reuse,
+      debugSynchronization: program.debugSynchronization,
+      artifactsLocation: program.artifactsLocation
+    }
+  });
+}
 
 switch (runner) {
   case 'mocha':
-    const loglevel = program.loglevel ? `--loglevel ${program.loglevel}` : '';		 +let runner = config.runner || 'mocha';
-    const configuration = program.configuration ? `--configuration ${program.configuration}` : '';
-    const cleanup = program.cleanup ? `--cleanup` : '';
-    const reuse = program.reuse ? `--reuse` : '';
-    const artifactsLocation = program.artifactsLocation ? `--artifacts-location ${program.artifactsLocation}` : '';
-    command = `node_modules/.bin/${program.runner} ${testFolder} --opts ${testFolder}/${program.runnerConfig} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${artifactsLocation}`;
-
-    console.log(command);
-    cp.execSync(command, { stdio: 'inherit' });
+    runMocha();
     break;
-    case 'jest':
-      command = `node_modules/.bin/${runner} ${testFolder} --runInBand`;
-      console.log(command);
-      cp.execSync(command, {
-        stdio: 'inherit',
-        env: {
-          ...process.env,
-          configuration,
-          loglevel,
-          cleanup,
-          reuse,
-          debugSynchronization,
-          artifactsLocation
-        }
-      });
-      break;
-    default:
+  case 'jest':
+    runJest();
+    break;
+  default:
     throw new Error(`${runner} is not supported in detox cli tools. You can still run your tests with the runner's own cli tool`);
 }
