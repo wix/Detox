@@ -4,17 +4,16 @@ describe('Detox', () => {
   let fs;
   let Detox;
   let detox;
-  let minimist;
-  let clientMockData = {lastConstructorArguments: null};
-  let deviceMockData = {lastConstructorArguments: null};
+  const clientMockData = {lastConstructorArguments: null};
+  const deviceMockData = {lastConstructorArguments: null};
 
   beforeEach(async () => {
     function setCustomMock(modulePath, dataObject) {
       const JestMock = jest.genMockFromModule(modulePath);
       class FinalMock extends JestMock {
-        constructor() {
-          super(...arguments);
-          dataObject.lastConstructorArguments = arguments;
+        constructor(...rest) {
+          super(rest);
+          dataObject.lastConstructorArguments = rest;
         }
       }
       jest.setMock(modulePath, FinalMock);
@@ -23,11 +22,11 @@ describe('Detox', () => {
     jest.mock('npmlog');
     jest.mock('fs');
     fs = require('fs');
-    jest.mock('minimist');
-    minimist = require('minimist');
     jest.mock('./ios/expect');
     setCustomMock('./client/Client', clientMockData);
     setCustomMock('./devices/Device', deviceMockData);
+
+    process.env = {};
 
     jest.mock('./devices/IosDriver');
     jest.mock('./devices/SimulatorDriver');
@@ -66,7 +65,7 @@ describe('Detox', () => {
   });
 
   it(`Passing --cleanup should shutdown the currently running device`, async () => {
-    mockCommandLineArgs({cleanup: true});
+    process.env.cleanup = true;
     Detox = require('./Detox');
 
     detox = new Detox(schemes.validOneDeviceNoSession);
@@ -99,7 +98,7 @@ describe('Detox', () => {
   });
 
   it(`Two valid devices, detox should init with the device passed in '--configuration' cli option`, async () => {
-    mockCommandLineArgs({configuration: 'ios.sim.debug'});
+    process.env.configuration = 'ios.sim.debug';
     Detox = require('./Detox');
 
     detox = new Detox(schemes.validTwoDevicesNoSession);
@@ -108,7 +107,7 @@ describe('Detox', () => {
   });
 
   it(`Two valid devices, detox should throw if device passed in '--configuration' cli option doesn't exist`, async () => {
-    mockCommandLineArgs({configuration: 'nonexistent'});
+    process.env.configuration = 'nonexistent';
     Detox = require('./Detox');
 
     detox = new Detox(schemes.validTwoDevicesNoSession);
@@ -121,7 +120,7 @@ describe('Detox', () => {
   });
 
   it(`Two valid devices, detox should throw if device passed in '--configuration' cli option doesn't exist`, async () => {
-    mockCommandLineArgs({configuration: 'nonexistent'});
+    process.env.configuration = 'nonexistent';
     Detox = require('./Detox');
 
     detox = new Detox(schemes.validTwoDevicesNoSession);
@@ -165,22 +164,22 @@ describe('Detox', () => {
   });
 
   it(`Detox should use session defined per configuration - none`, async () => {
-    mockCommandLineArgs({configuration: 'ios.sim.none'});
+    process.env.configuration = 'ios.sim.none';
     Detox = require('./Detox');
     detox = new Detox(schemes.sessionPerConfiguration);
     await detox.init();
 
-    let expectedSession = schemes.sessionPerConfiguration.configurations['ios.sim.none'].session;
+    const expectedSession = schemes.sessionPerConfiguration.configurations['ios.sim.none'].session;
     expect(clientMockData.lastConstructorArguments[0]).toBe(expectedSession);
   });
 
   it(`Detox should use session defined per configuration - release`, async () => {
-    mockCommandLineArgs({configuration: 'ios.sim.release'});
+    process.env.configuration = 'ios.sim.release';
     Detox = require('./Detox');
     detox = new Detox(schemes.sessionPerConfiguration);
     await detox.init();
 
-    let expectedSession = schemes.sessionPerConfiguration.configurations['ios.sim.release'].session;
+    const expectedSession = schemes.sessionPerConfiguration.configurations['ios.sim.release'].session;
     expect(clientMockData.lastConstructorArguments[0]).toBe(expectedSession);
   });
 
@@ -189,12 +188,12 @@ describe('Detox', () => {
     detox = new Detox(schemes.sessionInCommonAndInConfiguration);
     await detox.init();
 
-    let expectedSession = schemes.sessionInCommonAndInConfiguration.configurations['ios.sim.none'].session;
+    const expectedSession = schemes.sessionInCommonAndInConfiguration.configurations['ios.sim.none'].session;
     expect(clientMockData.lastConstructorArguments[0]).toBe(expectedSession);
   });
 
   it(`beforeEach() - should set device artifacts destination`, async () => {
-    mockCommandLineArgs({'artifacts-location': '/tmp'});
+    process.env.artifactsLocation = '/tmp';
     Detox = require('./Detox');
     detox = new Detox(schemes.validOneDeviceAndSession);
     await detox.init();
@@ -211,7 +210,7 @@ describe('Detox', () => {
   });
 
   it(`afterEach() - should call device.finalizeArtifacts`, async () => {
-    mockCommandLineArgs({'artifacts-location': '/tmp'});
+    process.env.artifactsLocation = '/tmp';
     Detox = require('./Detox');
     detox = new Detox(schemes.validOneDeviceAndSession);
     await detox.init();
@@ -228,13 +227,11 @@ describe('Detox', () => {
   });
 
   it(`the constructor should catch exception from ArtifactsPathsProvider`, async () => {
-    mockCommandLineArgs({'artifacts-location': '/tmp'});
-    fs.mkdirSync = jest.fn(() => {throw 'Could not create artifacts root dir'});
+    process.env.artifactsLocation = '/tmp';
+    fs.mkdirSync = jest.fn(() => {
+      throw Error('Could not create artifacts root dir');
+    });
     Detox = require('./Detox');
     detox = new Detox(schemes.validOneDeviceAndSession);
   });
-
-  function mockCommandLineArgs(args) {
-    minimist.mockReturnValue(args);
-  }
 });

@@ -1,20 +1,39 @@
-const _ = require('lodash');
+jest.unmock('process');
 
 describe('argparse', () => {
-  let argparse;
+  describe('using env variables', () => {
+    let argparse;
 
-  beforeEach(() => {
-    jest.mock('minimist');
-    const minimist = require('minimist');
-    minimist.mockReturnValue({test: 'a value'});
-    argparse = require('./argparse');
+    beforeEach(() => {
+      process.env.fooBar = 'a value';
+      argparse = require('./argparse');
+    });
+
+    it(`nonexistent key should return undefined result`, () => {
+      expect(argparse.getArgValue('blah')).not.toBeDefined();
+    });
+
+    it(`existing key should return a result`, () => {
+      expect(argparse.getArgValue('foo-bar')).toBe('a value');
+    });
   });
 
-  it(`nonexistent key should return undefined result`, () => {
-    expect(argparse.getArgValue('blah')).not.toBeDefined();
-  });
+  describe('using arguments', () => {
+    let argparse;
 
-  it(`existing key should return a result`, () => {
-    expect(argparse.getArgValue('test')).toBe('a value');
+    beforeEach(() => {
+      jest.mock('minimist');
+      const minimist = require('minimist');
+      minimist.mockReturnValue({'kebab-case-key': 'a value'});
+      argparse = require('./argparse');
+    });
+
+    it(`nonexistent key should return undefined result`, () => {
+      expect(argparse.getArgValue('blah')).not.toBeDefined();
+    });
+
+    it(`existing key should return a result`, () => {
+      expect(argparse.getArgValue('kebab-case-key')).toBe('a value');
+    });
   });
 });
