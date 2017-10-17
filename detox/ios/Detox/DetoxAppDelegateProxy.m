@@ -33,7 +33,7 @@ static DetoxAppDelegateProxy* _currentAppDelegateProxy;
 	void (*orig)(id, SEL, id<UIApplicationDelegate>) = (void*)method_getImplementation(m);
 	method_setImplementation(m, imp_implementationWithBlock(^ (id _self, id<UIApplicationDelegate> origDelegate) {
 		//Only create a dupe class if the provided instance is not already a dupe class.
-		if([origDelegate respondsToSelector:@selector(__dtx_canaryInTheCoalMine)] == NO)
+		if(origDelegate != nil && [origDelegate respondsToSelector:@selector(__dtx_canaryInTheCoalMine)] == NO)
 		{
 			
 			NSString* clsName = [NSString stringWithFormat:@"%@(%@)", NSStringFromClass([origDelegate class]), NSStringFromClass([DetoxAppDelegateProxy class])];

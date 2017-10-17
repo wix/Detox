@@ -1,36 +1,37 @@
 const invoke = require('../invoke');
-const GreyMatchers = require('./earlgreyapi/GREYMatchers');
-const GreyMatchersDetox = require('./earlgreyapi/GREYMatchers+Detox');
 
 class Matcher {
   withAncestor(matcher) {
+    if (!(matcher instanceof Matcher)) throw new Error(`Matcher withAncestor argument must be a valid Matcher, got ${typeof matcher}`);
     const _originalMatcherCall = this._call;
-    this._call = invoke.callDirectly(GreyMatchersDetox.detoxMatcherForBothAndAncestorMatcher(_originalMatcherCall, matcher._call));
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForBoth:andAncestorMatcher:', _originalMatcherCall, matcher._call);
     return this;
   }
   withDescendant(matcher) {
+    if (!(matcher instanceof Matcher)) throw new Error(`Matcher withDescendant argument must be a valid Matcher, got ${typeof matcher}`);
     const _originalMatcherCall = this._call;
-    this._call = invoke.callDirectly(GreyMatchersDetox.detoxMatcherForBothAndDescendantMatcher(_originalMatcherCall, matcher._call));
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForBoth:andDescendantMatcher:', _originalMatcherCall, matcher._call);
     return this;
   }
   and(matcher) {
+    if (!(matcher instanceof Matcher)) throw new Error(`Matcher and argument must be a valid Matcher, got ${typeof matcher}`);
     const _originalMatcherCall = this._call;
-    this._call = invoke.callDirectly(GreyMatchersDetox.detoxMatcherForBothAnd(_originalMatcherCall, matcher._call));
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForBoth:and:', _originalMatcherCall, matcher._call);
     return this;
   }
   not() {
     const _originalMatcherCall = this._call;
-    this._call = invoke.callDirectly(GreyMatchersDetox.detoxMatcherForNot(_originalMatcherCall));
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForNot:', _originalMatcherCall);
     return this;
   }
   _avoidProblematicReactNativeElements() {
     const _originalMatcherCall = this._call;
-    this._call = invoke.callDirectly(GreyMatchersDetox.detoxMatcherAvoidingProblematicReactNativeElements(_originalMatcherCall));
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherAvoidingProblematicReactNativeElements:', _originalMatcherCall);
     return this;
   }
   _extendToDescendantScrollViews() {
     const _originalMatcherCall = this._call;
-    this._call = invoke.callDirectly(GreyMatchersDetox.detoxMatcherForScrollChildOfMatcher(_originalMatcherCall));
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForScrollChildOfMatcher:', _originalMatcherCall);
     return this;
   }
 }
@@ -46,14 +47,16 @@ class LabelMatcher extends Matcher {
 class IdMatcher extends Matcher {
   constructor(value) {
     super();
-    this._call = invoke.callDirectly(GreyMatchers.matcherForAccessibilityID(value));
+    if (typeof value !== 'string') throw new Error(`IdMatcher ctor argument must be a string, got ${typeof value}`);
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityID:', value);
   }
 }
 
 class TypeMatcher extends Matcher {
   constructor(value) {
     super();
-    this._call = invoke.callDirectly(GreyMatchersDetox.detoxMatcherForClass(value));
+    if (typeof value !== 'string') throw new Error(`TypeMatcher ctor argument must be a string, got ${typeof value}`);
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForClass:', value);
   }
 }
 
@@ -90,42 +93,44 @@ class TraitsMatcher extends Matcher {
 class VisibleMatcher extends Matcher {
   constructor() {
     super();
-    this._call = invoke.callDirectly(GreyMatchers.matcherForSufficientlyVisible());
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForSufficientlyVisible');
   }
 }
 
 class NotVisibleMatcher extends Matcher {
   constructor() {
     super();
-    this._call = invoke.callDirectly(GreyMatchers.matcherForNotVisible());
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForNotVisible');
   }
 }
 
 class ExistsMatcher extends Matcher {
   constructor() {
     super();
-    this._call = invoke.callDirectly(GreyMatchers.matcherForNotNil());
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForNotNil');
   }
 }
 
 class NotExistsMatcher extends Matcher {
   constructor() {
     super();
-    this._call = invoke.callDirectly(GreyMatchers.matcherForNil());
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForNil');
   }
 }
 
 class TextMatcher extends Matcher {
   constructor(value) {
     super();
-    this._call = invoke.callDirectly(GreyMatchersDetox.detoxMatcherForText(value));
+    if (typeof value !== 'string') throw new Error(`TextMatcher ctor argument must be a string, got ${typeof value}`);
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForText:', value);
   }
 }
 
 class ValueMatcher extends Matcher {
   constructor(value) {
     super();
-    this._call = invoke.callDirectly(GreyMatchers.matcherForAccessibilityValue(value));
+    if (typeof value !== 'string') throw new Error(`ValueMatcher ctor argument must be a string, got ${typeof value}`);
+    this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityValue:', value);
   }
 }
 

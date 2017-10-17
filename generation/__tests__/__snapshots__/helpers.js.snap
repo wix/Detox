@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`helpers methodNameToSnakeCase should return the correct snake case method name 1`] = `"actionForScrollInDirectionAmountXOriginStartPercentageYOriginStartPercentage"`;
