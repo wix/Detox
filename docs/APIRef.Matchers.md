@@ -107,6 +107,8 @@ await element(by.id('UniqueId345').and(by.text('some text')));
 ```
 ##### Choose from multiple elements matching the same matcher using index
 
+The first valid index is 0.
+
 ```js
 await element(by.text('Product')).atIndex(2);
 ```
