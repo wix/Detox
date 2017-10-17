@@ -39,14 +39,14 @@ function runMocha() {
   }
 
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
-  const command = `node_modules/.bin/${program.runner} ${testFolder} --opts ${testFolder}/${program.runnerConfig} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${artifactsLocation}`;
+  const command = `node_modules/.bin/mocha ${testFolder} --opts ${testFolder}/${program.runnerConfig} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${artifactsLocation}`;
 
   console.log(command);
   cp.execSync(command, {stdio: 'inherit'});
 }
 
 function runJest() {
-  const command = `node_modules/.bin/${runner} ${testFolder} --runInBand`;
+  const command = `node_modules/.bin/jest ${testFolder} --runInBand`;
   console.log(command);
   cp.execSync(command, {
     stdio: 'inherit',
