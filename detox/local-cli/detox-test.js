@@ -34,10 +34,6 @@ function runMocha() {
   const reuse = program.reuse ? `--reuse` : '';
   const artifactsLocation = program.artifactsLocation ? `--artifacts-location ${program.artifactsLocation}` : '';
 
-  if (typeof program.debugSynchronization === "boolean") {
-    program.debugSynchronization = 3000;
-  }
-
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
   const command = `node_modules/.bin/mocha ${testFolder} --opts ${testFolder}/${program.runnerConfig} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${artifactsLocation}`;
 
@@ -56,10 +52,14 @@ function runJest() {
       loglevel: program.loglevel,
       cleanup: program.cleanup,
       reuse: program.reuse,
-      debugSynchronization: program.debugSynchronization ? 3000 : '',
+      debugSynchronization: program.debugSynchronization,
       artifactsLocation: program.artifactsLocation
     }
   });
+}
+
+if (typeof program.debugSynchronization === "boolean") {
+  program.debugSynchronization = 3000;
 }
 
 switch (runner) {
