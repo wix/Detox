@@ -5,16 +5,22 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.Espresso;
+import android.support.test.espresso.IdlingResource;
 import android.util.Log;
 
 import com.wix.detox.espresso.UiAutomatorHelper;
 import com.wix.detox.systeminfo.Environment;
 import com.wix.invoke.MethodInvocation;
 
+import org.joor.Reflect;
+import org.joor.ReflectException;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -140,9 +146,66 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                         ReactNativeSupport.reloadApp(reactNativeHostHolder);
                         wsClient.sendAction("ready", Collections.emptyMap(), messageId);
                         break;
+                    case "currentStatus":
+                        // Ugly, deeply nested, because have to follow
+                        // EarlGrey/Detox iOS here.
+                        ArrayList<IdlingResource> l = getBusyEspressoResources();
+                        HashMap m = new HashMap();
+                        if (l.isEmpty()) {
+                            m.put("state", "idle");
+                            wsClient.sendAction("currentStatusResult", m, messageId);
+                            break;
+                        }
+                        m.put("state", "busy");
+                        JSONArray resources = new JSONArray();
+                        for (IdlingResource res : l) {
+                            JSONObject obj = new JSONObject();
+                            try {
+                                obj.put("name", res.getClass().getSimpleName());
+                                JSONObject prettyPrint = new JSONObject();
+                                prettyPrint.put("prettyPrint", res.getName());
+                                obj.put("info", prettyPrint);
+                                resources.put(obj);
+                            } catch (JSONException je) {
+                                Log.d(LOG_TAG, "Couldn't collect busy resources.", je);
+                            }
+                        }
+                        m.put("resources", resources);
+                        wsClient.sendAction("currentStatusResult", m, messageId);
+                        break;
                 }
             }
         });
+    }
+
+    private ArrayList<IdlingResource> getBusyEspressoResources() {
+        // We do this in this complicated way for two reasons
+        // 1. we want to use postAtFrontOfQueue()
+        // 2. we want it to be synchronous
+        final ArrayList<IdlingResource> busyResources = new ArrayList<>();
+        Handler handler = new Handler(InstrumentationRegistry.getTargetContext().getMainLooper());
+        SyncRunnable sr = new SyncRunnable(new Runnable() {
+            @Override
+            public void run() {
+                // The following snippet works only in Espresso 3.0
+                try {
+                    ArrayList<Object> idlingStates = Reflect.on(Espresso.class)
+                            .field("baseRegistry")
+                            .field("idlingStates")
+                            .get();
+                    for (int i = 0; i < idlingStates.size(); ++i) {
+                        if (!(boolean)Reflect.on(idlingStates.get(i)).field("idle").get()) {
+                            busyResources.add((IdlingResource)Reflect.on(idlingStates.get(i)).field("resource").get());
+                        }
+                    }
+                } catch (ReflectException e) {
+                    Log.d(LOG_TAG, "Couldn't get busy resources", e);
+                }
+            }
+        });
+        handler.postAtFrontOfQueue(sr);
+        sr.waitForComplete();
+        return busyResources;
     }
 
     @Override
@@ -153,5 +216,33 @@ class DetoxManager implements WebSocketClient.ActionHandler {
     @Override
     public void onClosed() {
         stop();
+    }
+
+    private static final class SyncRunnable implements Runnable {
+        private final Runnable mTarget;
+        private boolean mComplete;
+
+        public SyncRunnable(Runnable target) {
+            mTarget = target;
+        }
+
+        public void run() {
+            mTarget.run();
+            synchronized (this) {
+                mComplete = true;
+                notifyAll();
+            }
+        }
+
+        public void waitForComplete() {
+            synchronized (this) {
+                while (!mComplete) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                    }
+                }
+            }
+        }
     }
 }
