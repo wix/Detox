@@ -30,4 +30,15 @@ describe("globals", () => {
       }).toThrowErrorMatchingSnapshot();
     });
   });
+
+  describe("sanitize_uiAccessibilityTraits", () => {
+    it("should return numbers for traits", () => {
+      expect(globals.sanitize_uiAccessibilityTraits(["button", "link"])).toBe(3);
+      expect(globals.sanitize_uiAccessibilityTraits(["summary", "allowsDirectInteraction"])).toBe(16896);
+    });
+
+    it("should throw if unknown trait is accessed", () => {
+      expect(() => globals.sanitize_uiAccessibilityTraits(["unknown"])).toThrowErrorMatchingSnapshot();
+    });
+  });
 });

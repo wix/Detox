@@ -32,7 +32,18 @@ const isGreyMatcher = ({ name }) => template(`
   }
 `)({
     ARG: t.identifier(name)
-  })
+  });
+const isArray = ({ name }) => template(`
+if (
+  (typeof ARG !== 'object') || 
+  (!ARG instanceof Array)
+) {
+    throw new Error('TraitsMatcher ctor argument must be an array, got ' + typeof ARG);
+  }
+`)({
+    ARG: t.identifier(name)
+  });
+
 
 // Constants
 const SUPPORTED_TYPES = [
@@ -44,7 +55,8 @@ const SUPPORTED_TYPES = [
   "NSString *",
   "NSString",
   "NSUInteger",
-  "id<GREYMatcher>"
+  "id<GREYMatcher>",
+  "UIAccessibilityTraits"
 ];
 
 /**
@@ -170,6 +182,10 @@ const supportedContentSanitizersMap = {
   GREYContentEdge: {
     type: "NSInteger",
     value: callGlobal("sanitize_greyContentEdge")
+  },
+  UIAccessibilityTraits: {
+    type: "NSInteger",
+    value: callGlobal("sanitize_uiAccessibilityTraits")
   }
 };
 function addArgumentContentSanitizerCall(json) {
@@ -236,6 +252,7 @@ function createTypeCheck(json) {
     GREYContentEdge: isOneOf(["left", "right", "top", "bottom"]),
     GREYPinchDirection: isOneOf(["outward", "inward"]),
     "id<GREYMatcher>": isGreyMatcher,
+    UIAccessibilityTraits: isArray,
   };
 
   const typeCheckCreator = typeInterfaces[json.type];
