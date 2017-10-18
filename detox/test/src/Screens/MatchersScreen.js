@@ -53,6 +53,16 @@ export default class MatchersScreen extends Component {
           <Text testID='ProductId003' style={{margin: 10}}>Product</Text>
         </View>
 
+        <TouchableOpacity onPress={this.onButtonPress.bind(this, 'First button pressed')}>
+          <Text style={{color: 'brown', marginBottom: 20}}>Index</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={this.onButtonPress.bind(this, 'Second button pressed')}>
+          <Text style={{color: 'brown', marginBottom: 20}}>Index</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={this.onButtonPress.bind(this, 'Third button pressed')}>
+          <Text style={{color: 'brown', marginBottom: 20}}>Index</Text>
+        </TouchableOpacity>        
+
       </View>
     );
   }

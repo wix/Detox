@@ -61,4 +61,3 @@
 
 + (id<GREYAction>)actionWithUnknownType:(WTFType *)wat;
 + (id<GREYAction>)actionWithKnown:(NSUInteger)iknowdis andUnknownType:(WTFTypalike *)wat;
-+ (id<GREYMatcher>)detoxMatcherForBoth:(id<GREYMatcher>)firstMatcher andAncestorMatcher:(id<GREYMatcher>)ancestorMatcher;

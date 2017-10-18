@@ -14,7 +14,8 @@
     "babel-generator": "^6.25.0",
     "babel-types": "^6.25.0",
     "jest": "^20.0.4",
-    "objective-c-parser": "1.1.0",
+    "lerna": "2.0.0-rc.4",
+    "objective-c-parser": "1.0.4",
     "remove": "^0.1.5"
   },
   "jest": {
@@ -33,7 +34,6 @@
     }
   },
   "dependencies": {
-    "babel-generate-guard-clauses": "^2.0.0",
-    "babel-template": "^6.26.0"
+    "babel-generate-guard-clauses": "^0.1.0"
   }
 }

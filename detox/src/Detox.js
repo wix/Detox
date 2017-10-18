@@ -22,7 +22,6 @@ const DEVICE_CLASSES = {
 };
 
 class Detox {
-
   constructor(userConfig) {
     if (!userConfig) {
       throw new Error(`No configuration was passed to detox, make sure you pass a config when calling 'detox.init(config)'`);
@@ -33,10 +32,10 @@ class Detox {
     this.device = null;
     this._currentTestNumber = 0;
     const artifactsLocation = argparse.getArgValue('artifacts-location');
-    if(artifactsLocation !== undefined) {
+    if (artifactsLocation !== undefined) {
       try {
         this._artifactsPathsProvider = new ArtifactsPathsProvider(artifactsLocation);
-      } catch(ex) {
+      } catch (ex) {
         log.warn(ex);
       }
     }
@@ -130,7 +129,7 @@ class Detox {
     }
 
     if (!deviceConfig) {
-      throw new Error(`Cannot determine which configuration to use. use --configuration to choose one of the following: 
+      throw new Error(`Cannot determine which configuration to use. use --configuration to choose one of the following:
                       ${Object.keys(configurations)}`);
     }
 
