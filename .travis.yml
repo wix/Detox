@@ -60,7 +60,6 @@ matrix:
 branches:
   only:
   - master
-  - buildmatrix
 before_install:
   - nvm install stable
 notifications:
