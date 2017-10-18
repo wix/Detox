@@ -1,0 +1,262 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`android matcher snapshots 1`] = `
+Object {
+  "args": Array [
+    "mySelector",
+  ],
+  "method": "matcherForContentDescription",
+  "target": Object {
+    "type": "Class",
+    "value": "com.wix.detox.espresso.DetoxMatcher",
+  },
+}
+`;
+
+exports[`android matcher snapshots 2`] = `
+Object {
+  "args": Array [
+    "mySelector",
+  ],
+  "method": "matcherForTestId",
+  "target": Object {
+    "type": "Class",
+    "value": "com.wix.detox.espresso.DetoxMatcher",
+  },
+}
+`;
+
+exports[`android matcher snapshots 3`] = `
+Object {
+  "args": Array [
+    "mySelector",
+  ],
+  "method": "matcherForClass",
+  "target": Object {
+    "type": "Class",
+    "value": "com.wix.detox.espresso.DetoxMatcher",
+  },
+}
+`;
+
+exports[`android matcher snapshots 4`] = `
+Object {
+  "args": Array [
+    "mySelector",
+  ],
+  "method": "matcherForText",
+  "target": Object {
+    "type": "Class",
+    "value": "com.wix.detox.espresso.DetoxMatcher",
+  },
+}
+`;
+
+exports[`android matcher snapshots 5`] = `
+Object {
+  "args": Array [
+    "mySelector",
+  ],
+  "method": "matcherForContentDescription",
+  "target": Object {
+    "type": "Class",
+    "value": "com.wix.detox.espresso.DetoxMatcher",
+  },
+}
+`;
+
+exports[`android matcher snapshots 6`] = `
+Object {
+  "args": Array [
+    Object {
+      "type": "Invocation",
+      "value": Object {
+        "args": Array [
+          "mySelector",
+        ],
+        "method": "matcherForContentDescription",
+        "target": Object {
+          "type": "Class",
+          "value": "com.wix.detox.espresso.DetoxMatcher",
+        },
+      },
+    },
+    Object {
+      "type": "Invocation",
+      "value": Object {
+        "args": Array [
+          "myOtherSelector",
+        ],
+        "method": "matcherForContentDescription",
+        "target": Object {
+          "type": "Class",
+          "value": "com.wix.detox.espresso.DetoxMatcher",
+        },
+      },
+    },
+  ],
+  "method": "matcherWithAncestor",
+  "target": Object {
+    "type": "Class",
+    "value": "com.wix.detox.espresso.DetoxMatcher",
+  },
+}
+`;
+
+exports[`android matcher snapshots 7`] = `
+Object {
+  "args": Array [
+    Object {
+      "type": "Invocation",
+      "value": Object {
+        "args": Array [
+          "mySelector",
+        ],
+        "method": "matcherForContentDescription",
+        "target": Object {
+          "type": "Class",
+          "value": "com.wix.detox.espresso.DetoxMatcher",
+        },
+      },
+    },
+    Object {
+      "type": "Invocation",
+      "value": Object {
+        "args": Array [
+          "myOtherSelector",
+        ],
+        "method": "matcherForContentDescription",
+        "target": Object {
+          "type": "Class",
+          "value": "com.wix.detox.espresso.DetoxMatcher",
+        },
+      },
+    },
+  ],
+  "method": "matcherWithDescendant",
+  "target": Object {
+    "type": "Class",
+    "value": "com.wix.detox.espresso.DetoxMatcher",
+  },
+}
+`;
+
+exports[`android matcher snapshots 8`] = `
+Object {
+  "args": Array [
+    Object {
+      "type": "Invocation",
+      "value": Object {
+        "args": Array [
+          "mySelector",
+        ],
+        "method": "matcherForContentDescription",
+        "target": Object {
+          "type": "Class",
+          "value": "com.wix.detox.espresso.DetoxMatcher",
+        },
+      },
+    },
+    Object {
+      "type": "Invocation",
+      "value": Object {
+        "args": Array [
+          "myOtherSelector",
+        ],
+        "method": "matcherForContentDescription",
+        "target": Object {
+          "type": "Class",
+          "value": "com.wix.detox.espresso.DetoxMatcher",
+        },
+      },
+    },
+  ],
+  "method": "matcherForAnd",
+  "target": Object {
+    "type": "Class",
+    "value": "com.wix.detox.espresso.DetoxMatcher",
+  },
+}
+`;
+
+exports[`android matcher snapshots 9`] = `
+Object {
+  "args": Array [
+    Object {
+      "type": "Invocation",
+      "value": Object {
+        "args": Array [
+          "mySelector",
+        ],
+        "method": "matcherForContentDescription",
+        "target": Object {
+          "type": "Class",
+          "value": "com.wix.detox.espresso.DetoxMatcher",
+        },
+      },
+    },
+    Object {
+      "type": "Invocation",
+      "value": Object {
+        "args": Array [
+          "myOtherSelector",
+        ],
+        "method": "matcherForContentDescription",
+        "target": Object {
+          "type": "Class",
+          "value": "com.wix.detox.espresso.DetoxMatcher",
+        },
+      },
+    },
+  ],
+  "method": "matcherForOr",
+  "target": Object {
+    "type": "Class",
+    "value": "com.wix.detox.espresso.DetoxMatcher",
+  },
+}
+`;
+
+exports[`android matcher snapshots 10`] = `
+Object {
+  "args": Array [],
+  "method": "matcherForSufficientlyVisible",
+  "target": Object {
+    "type": "Class",
+    "value": "com.wix.detox.espresso.DetoxMatcher",
+  },
+}
+`;
+
+exports[`android matcher snapshots 11`] = `
+Object {
+  "args": Array [],
+  "method": "matcherForNotVisible",
+  "target": Object {
+    "type": "Class",
+    "value": "com.wix.detox.espresso.DetoxMatcher",
+  },
+}
+`;
+
+exports[`android matcher snapshots 12`] = `
+Object {
+  "args": Array [],
+  "method": "matcherForNotNull",
+  "target": Object {
+    "type": "Class",
+    "value": "com.wix.detox.espresso.DetoxMatcher",
+  },
+}
+`;
+
+exports[`android matcher snapshots 13`] = `
+Object {
+  "args": Array [],
+  "method": "matcherForNull",
+  "target": Object {
+    "type": "Class",
+    "value": "com.wix.detox.espresso.DetoxMatcher",
+  },
+}
+`;
