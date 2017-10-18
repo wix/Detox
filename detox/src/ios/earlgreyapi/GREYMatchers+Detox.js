@@ -57,6 +57,21 @@ class GREYMatchers {
     };
   }
 
+  static detox_matcherForAccessibilityLabel(label) {
+    if (typeof label !== "string") throw new Error("label should be a string, but got " + (label + (" (" + (typeof label + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "GREYMatchers"
+      },
+      method: "detox_matcherForAccessibilityLabel:",
+      args: [{
+        type: "NSString",
+        value: label
+      }]
+    };
+  }
+
   static detoxMatcherForScrollChildOfMatcher(matcher) {
     if (typeof matcher !== "object" || matcher.type !== "Invocation" || typeof matcher.value !== "object" || typeof matcher.value.target !== "object" || matcher.value.target.value !== "GREYMatchers") {
       throw new Error('matcher should be a GREYMatcher, but got ' + JSON.stringify(matcher));
