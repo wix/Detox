@@ -1,10 +1,7 @@
 {
   "scripts": {
-    "build": "pushd detox && npm run build && popd",
-    "test": "npm run test:lerna && npm run test:e2e && npm run test:generation",
-    "test:lerna": "lerna run --ignore detox-demo*  build && lerna run --ignore detox-demo*  test",
-    "test:e2e": "pushd detox/test && npm run e2e && popd",
-    "test:generation": "pushd generation && npm run test && popd",
+    "test:e2e:ios": "pushd detox/test && npm run e2e:ios && popd",
+    "test:e2e:android": "pushd detox/test && npm run e2e:android && popd",
     "release": "node scripts/release.js"
   }
 }

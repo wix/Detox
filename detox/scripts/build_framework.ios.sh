@@ -22,7 +22,7 @@ echo "###############################"
 echo "###############################"
 echo "Extracting Detox sources..."
 
-xcodebuild build -project "${detoxSourcePath}"/Detox.xcodeproj -scheme DetoxFramework -configuration Release -derivedDataPath "${detoxFrameworkDirPath}"/DetoxBuild > /dev/null
+xcodebuild build -project "${detoxSourcePath}"/Detox.xcodeproj -scheme DetoxFramework -configuration Release -derivedDataPath "${detoxFrameworkDirPath}"/DetoxBuild
 mv "${detoxFrameworkDirPath}"/DetoxBuild/Build/Products/Release-universal/Detox.framework "${detoxFrameworkDirPath}"
 rm -fr "${detoxFrameworkDirPath}"/DetoxBuild
 

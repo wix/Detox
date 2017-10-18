@@ -43,9 +43,7 @@
     "eslint-plugin-react-native": "^2.3.2",
     "jest": "^20.0.4",
     "minimist": "^1.2.0",
-    "mockdate": "^2.0.1",
-    "shelljs": "^0.7.3",
-    "ttab": "^0.3.1"
+    "mockdate": "^2.0.1"
   },
   "dependencies": {
     "child-process-promise": "^2.2.0",
@@ -55,6 +53,7 @@
     "get-port": "^2.1.0",
     "lodash": "^4.14.1",
     "npmlog": "^4.0.2",
+    "shell-utils": "^1.0.9",
     "telnet-client": "0.15.3",
     "ws": "^1.1.1"
   },

@@ -5,7 +5,7 @@ const DeviceDriverBase = require('./DeviceDriverBase');
 const InvocationManager = require('../invoke').InvocationManager;
 const invoke = require('../invoke');
 const GREYConfiguration = require('./../ios/earlgreyapi/GREYConfiguration');
-const exec = require('child-process-promise').exec;
+const exec = require('shell-utils').exec;
 const environment = require('../utils/environment');
 
 class IosDriver extends DeviceDriverBase {
@@ -40,7 +40,7 @@ class IosDriver extends DeviceDriverBase {
       }
     } else {
       log.info(`Building Detox.framework (${environment.getDetoxVersion()}) into ${detoxFrameworkDirPath}...`);
-      await exec(path.join(__dirname, `../../scripts/build_framework.ios.sh "${detoxIosSourceTarballDirPath}" "${detoxFrameworkDirPath}"`));
+      await exec.execAsync(path.join(__dirname, `../../scripts/build_framework.ios.sh "${detoxIosSourceTarballDirPath}" "${detoxFrameworkDirPath}"`));
     }
   }
 
