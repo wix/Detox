@@ -14,6 +14,12 @@ describe('Matchers', () => {
     await expect(element(by.text('ID Working!!!'))).toBeVisible();
   });
 
+  it('should match elements by index', async () => {
+    const index = device.getPlatform() === 'ios' ? 0 : 2;
+    await element(by.text('Index')).atIndex(index).tap();
+    await expect(element(by.text('Third button pressed!!!'))).toBeVisible();
+  });
+
   it('should match elements by type (native class)', async () => {
     const byType = device.getPlatform() === 'ios' ? by.type('RCTImageView') : by.type('android.widget.ImageView');
 
