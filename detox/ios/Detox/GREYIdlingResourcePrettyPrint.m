@@ -9,26 +9,26 @@
 #import "GREYIdlingResourcePrettyPrint.h"
 @import ObjectiveC;
 
-static NSMapTable<NSString*, id>* __tarckedObjectsMapping;
+static NSMapTable<GREYAppStateTrackerObject*, id>* __tarckedObjectsMapping;
 
 @interface GREYAppStateTracker (PrettyPrint) @end
 
 @implementation GREYAppStateTracker (PrettyPrint)
 
-- (NSString *)_pp__trackState:(GREYAppState)state forElement:(id)element;
+- (GREYAppStateTrackerObject *)_pp__trackState:(GREYAppState)state forObject:(id)element;
 {
-	NSString* rv = [self _pp__trackState:state forElement:element];
+	GREYAppStateTrackerObject* rv = [self _pp__trackState:state forObject:element];
 	
 	[__tarckedObjectsMapping setObject:element forKey:rv];
 	
 	return rv;
 }
 
-- (void)_pp__untrackState:(GREYAppState)state forElementWithID:(NSString *)elementID;
+- (void)_pp__untrackState:(GREYAppState)state forObject:(GREYAppStateTrackerObject*)obj;
 {
-	[self _pp__untrackState:state forElementWithID:elementID];
+	[self _pp__untrackState:state forObject:obj];
 	
-	[__tarckedObjectsMapping removeObjectForKey:elementID];
+	[__tarckedObjectsMapping removeObjectForKey:obj];
 }
 
 
@@ -38,13 +38,13 @@ static NSMapTable<NSString*, id>* __tarckedObjectsMapping;
 	dispatch_once(&onceToken, ^{
 		__tarckedObjectsMapping = [NSMapTable mapTableWithKeyOptions:NSMapTableStrongMemory valueOptions:NSMapTableWeakMemory];
 		
-		Method m1 = class_getInstanceMethod(self, @selector(trackState:forElement:));
-		Method m2 = class_getInstanceMethod(self, @selector(_pp__trackState:forElement:));
+		Method m1 = class_getInstanceMethod(self, @selector(trackState:forObject:));
+		Method m2 = class_getInstanceMethod(self, @selector(_pp__trackState:forObject:));
 		
 		method_exchangeImplementations(m1, m2);
 		
-		m1 = class_getInstanceMethod(self, @selector(untrackState:forElementWithID:));
-		m2 = class_getInstanceMethod(self, @selector(_pp__untrackState:forElementWithID:));
+		m1 = class_getInstanceMethod(self, @selector(untrackState:forObject:));
+		m2 = class_getInstanceMethod(self, @selector(_pp__untrackState:forObject:));
 		
 		method_exchangeImplementations(m1, m2);
 	});
