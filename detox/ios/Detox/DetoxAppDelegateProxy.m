@@ -27,6 +27,38 @@ static DetoxAppDelegateProxy* _currentAppDelegateProxy;
 	return _currentAppDelegateProxy;
 }
 
+static void __copyMethods(Class orig, Class target)
+{
+	//Copy class methods
+	Class targetMetaclass = object_getClass(target);
+	
+	unsigned int methodCount = 0;
+	Method *methods = class_copyMethodList(object_getClass(orig), &methodCount);
+	
+	for (unsigned int i = 0; i < methodCount; i++)
+	{
+		Method method = methods[i];
+		if(strcmp(sel_getName(method_getName(method)), "load") == 0 || strcmp(sel_getName(method_getName(method)), "initialize") == 0)
+		{
+			continue;
+		}
+		class_addMethod(targetMetaclass, method_getName(method), method_getImplementation(method), method_getTypeEncoding(method));
+	}
+	
+	free(methods);
+	
+	//Copy instance methods
+	methods = class_copyMethodList(orig, &methodCount);
+	
+	for (unsigned int i = 0; i < methodCount; i++)
+	{
+		Method method = methods[i];
+		class_addMethod(target, method_getName(method), method_getImplementation(method), method_getTypeEncoding(method));
+	}
+	
+	free(methods);
+}
+
 + (void)load
 {
 	Method m = class_getInstanceMethod([UIApplication class], @selector(setDelegate:));
@@ -35,17 +67,14 @@ static DetoxAppDelegateProxy* _currentAppDelegateProxy;
 		//Only create a dupe class if the provided instance is not already a dupe class.
 		if(origDelegate != nil && [origDelegate respondsToSelector:@selector(__dtx_canaryInTheCoalMine)] == NO)
 		{
-			
 			NSString* clsName = [NSString stringWithFormat:@"%@(%@)", NSStringFromClass([origDelegate class]), NSStringFromClass([DetoxAppDelegateProxy class])];
 			Class cls = objc_getClass(clsName.UTF8String);
 			
 			if(cls == nil)
 			{
-				cls = objc_duplicateClass([DetoxAppDelegateProxy class], clsName.UTF8String, 0);
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated"
-				class_setSuperclass(cls, origDelegate.class);
-#pragma clang diagnostic pop
+				cls = objc_allocateClassPair(origDelegate.class, clsName.UTF8String, 0);
+				__copyMethods([DetoxAppDelegateProxy class], cls);
+				objc_registerClassPair(cls);
 			}
 			
 			object_setClass(origDelegate, cls);
@@ -62,7 +91,7 @@ static DetoxAppDelegateProxy* _currentAppDelegateProxy;
 
 - (void)__dtx_applicationDidLaunchNotification:(NSNotification*)notification
 {
-	[self.userNotificationDispatcher dispatchOnAppDelegate:self simulateDuringLaunch:YES];
+	[self.__dtx_userNotificationDispatcher dispatchOnAppDelegate:self simulateDuringLaunch:YES];
 }
 
 - (NSURL*)_userNotificationDataURL
@@ -112,7 +141,7 @@ static DetoxAppDelegateProxy* _currentAppDelegateProxy;
 	return rv;
 }
 
-- (DetoxUserNotificationDispatcher*)userNotificationDispatcher
+- (DetoxUserNotificationDispatcher*)__dtx_userNotificationDispatcher
 {
 	DetoxUserNotificationDispatcher* rv = objc_getAssociatedObject(self, _cmd);
 	
@@ -127,7 +156,7 @@ static DetoxAppDelegateProxy* _currentAppDelegateProxy;
 
 - (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(nullable NSDictionary<UIApplicationLaunchOptionsKey, id>*)launchOptions
 {
-	launchOptions = [self _prepareLaunchOptions:launchOptions userNotificationDispatcher:self.userNotificationDispatcher];
+	launchOptions = [self _prepareLaunchOptions:launchOptions userNotificationDispatcher:self.__dtx_userNotificationDispatcher];
 	
 	BOOL rv = YES;
 	if([class_getSuperclass(object_getClass(self)) instancesRespondToSelector:_cmd])
@@ -142,7 +171,7 @@ static DetoxAppDelegateProxy* _currentAppDelegateProxy;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(nullable NSDictionary<UIApplicationLaunchOptionsKey, id> *)launchOptions
 {
-	launchOptions = [self _prepareLaunchOptions:launchOptions userNotificationDispatcher:self.userNotificationDispatcher];
+	launchOptions = [self _prepareLaunchOptions:launchOptions userNotificationDispatcher:self.__dtx_userNotificationDispatcher];
 	
 	BOOL rv = YES;
 	if([class_getSuperclass(object_getClass(self)) instancesRespondToSelector:_cmd])
@@ -152,7 +181,7 @@ static DetoxAppDelegateProxy* _currentAppDelegateProxy;
 		rv = super_class(&super, _cmd, application, launchOptions);
 	}
 	
-	if(self.userNotificationDispatcher == nil && [self _URLOverride] && [class_getSuperclass(object_getClass(self)) instancesRespondToSelector:@selector(application:openURL:options:)])
+	if(self.__dtx_userNotificationDispatcher == nil && [self _URLOverride] && [class_getSuperclass(object_getClass(self)) instancesRespondToSelector:@selector(application:openURL:options:)])
 	{
 		[self application:application openURL:[self _URLOverride] options:launchOptions];
 	}
