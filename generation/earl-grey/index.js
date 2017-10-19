@@ -1,4 +1,5 @@
 const t = require("babel-types");
+const template = require("babel-template");
 const objectiveCParser = require("objective-c-parser");
 const generate = require("babel-generator").default;
 const fs = require("fs");
@@ -19,6 +20,30 @@ const isPoint = [
   generateTypeCheck("number", { selector: "y" })
 ];
 const isOneOf = generateIsOneOfCheck;
+const isGreyMatcher = ({ name }) => template(`
+  if (
+    typeof ARG !== "object" || 
+    ARG.type !== "Invocation" ||
+    typeof ARG.value !== "object" || 
+    typeof ARG.value.target !== "object" ||
+    ARG.value.target.value !== "GREYMatchers"
+  ) {
+    throw new Error('${name} should be a GREYMatcher, but got ' + JSON.stringify(ARG));
+  }
+`)({
+    ARG: t.identifier(name)
+  });
+const isArray = ({ name }) => template(`
+if (
+  (typeof ARG !== 'object') || 
+  (!ARG instanceof Array)
+) {
+    throw new Error('TraitsMatcher ctor argument must be an array, got ' + typeof ARG);
+  }
+`)({
+    ARG: t.identifier(name)
+  });
+
 
 // Constants
 const SUPPORTED_TYPES = [
@@ -30,6 +55,8 @@ const SUPPORTED_TYPES = [
   "NSString *",
   "NSString",
   "NSUInteger",
+  "id<GREYMatcher>",
+  "UIAccessibilityTraits"
 ];
 
 /**
@@ -155,6 +182,10 @@ const supportedContentSanitizersMap = {
   GREYContentEdge: {
     type: "NSInteger",
     value: callGlobal("sanitize_greyContentEdge")
+  },
+  UIAccessibilityTraits: {
+    type: "NSInteger",
+    value: callGlobal("sanitize_uiAccessibilityTraits")
   }
 };
 function addArgumentContentSanitizerCall(json) {
@@ -172,8 +203,13 @@ function addArgumentTypeSanitizer(json) {
   return json.type;
 }
 
+// These types need no wrapping with {type: ..., value: }
+const plainArgumentTypes = ["id<GREYMatcher>"];
+function shouldBeWrapped({ type }) {
+  return !plainArgumentTypes.includes(type);
+}
 function createReturnStatement(className, json) {
-  const args = json.args.map(arg =>
+  const args = json.args.map(arg => shouldBeWrapped(arg) ?
     t.objectExpression([
       t.objectProperty(
         t.identifier("type"),
@@ -183,7 +219,7 @@ function createReturnStatement(className, json) {
         t.identifier("value"),
         addArgumentContentSanitizerCall(arg)
       )
-    ])
+    ]) : addArgumentContentSanitizerCall(arg)
   );
 
   return t.returnStatement(
@@ -214,16 +250,13 @@ function createTypeCheck(json) {
     "NSDate *": isNumber,
     GREYDirection: isOneOf(["left", "right", "up", "down"]),
     GREYContentEdge: isOneOf(["left", "right", "top", "bottom"]),
-    GREYPinchDirection: isOneOf(["outward", "inward"])
+    GREYPinchDirection: isOneOf(["outward", "inward"]),
+    "id<GREYMatcher>": isGreyMatcher,
+    UIAccessibilityTraits: isArray,
   };
 
   const typeCheckCreator = typeInterfaces[json.type];
   const isListOfChecks = typeCheckCreator instanceof Array;
-
-  if (typeof typeCheckCreator !== "function" && !isListOfChecks) {
-    console.info("Could not find ", json);
-    return;
-  }
 
   return isListOfChecks
     ? typeCheckCreator.map(singleCheck => singleCheck(json))
@@ -248,10 +281,13 @@ module.exports = function(files) {
     fs.writeFileSync(outputFile, code, "utf8");
 
     // Output methods that were not created due to missing argument support
-    console.log(`Could not generate the following methods for ${json.name}`);
-    const unsupportedMethods = json.methods.filter(x => !filterMethodsWithUnsupportedParams(x)).forEach(method => {
-      const methodArgs = method.args.filter(methodArg => !SUPPORTED_TYPES.includes(methodArg.type)).map(methodArg => methodArg.type);
-      console.log(`\t ${method.name} misses ${methodArgs}`);
-    });
+    const unsupportedMethods = json.methods.filter(x => !filterMethodsWithUnsupportedParams(x));
+    if (unsupportedMethods.length) {
+      console.log(`Could not generate the following methods for ${json.name}`);
+      unsupportedMethods.forEach(method => {
+        const methodArgs = method.args.filter(methodArg => !SUPPORTED_TYPES.includes(methodArg.type)).map(methodArg => methodArg.type);
+        console.log(`\t ${method.name} misses ${methodArgs}`);
+      });
+    }
   });
 };

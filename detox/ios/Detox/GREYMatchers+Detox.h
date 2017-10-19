@@ -12,6 +12,8 @@
 
 + (id<GREYMatcher>)detoxMatcherForText:(NSString *)text;
 
++ (id<GREYMatcher>)detox_matcherForAccessibilityLabel:(NSString *)label;
+
 + (id<GREYMatcher>)detoxMatcherForScrollChildOfMatcher:(id<GREYMatcher>)matcher;
 
 + (id<GREYMatcher>)detoxMatcherAvoidingProblematicReactNativeElements:(id<GREYMatcher>)matcher;
