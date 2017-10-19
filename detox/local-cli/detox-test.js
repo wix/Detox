@@ -27,6 +27,21 @@ if (program.runner) {
   runner = program.runner;
 }
 
+if (typeof program.debugSynchronization === "boolean") {
+  program.debugSynchronization = 3000;
+}
+
+switch (runner) {
+  case 'mocha':
+    runMocha();
+    break;
+  case 'jest':
+    runJest();
+    break;
+  default:
+    throw new Error(`${runner} is not supported in detox cli tools. You can still run your tests with the runner's own cli tool`);
+}
+
 function runMocha() {
   const loglevel = program.loglevel ? `--loglevel ${program.loglevel}` : '';
   const configuration = program.configuration ? `--configuration ${program.configuration}` : '';
@@ -44,31 +59,17 @@ function runMocha() {
 function runJest() {
   const command = `node_modules/.bin/jest ${testFolder} --runInBand`;
   console.log(command);
+
   cp.execSync(command, {
     stdio: 'inherit',
-    env: {
-      ...process.env,
-      configuration: program.configuration,
-      loglevel: program.loglevel,
-      cleanup: program.cleanup,
-      reuse: program.reuse,
-      debugSynchronization: program.debugSynchronization,
-      artifactsLocation: program.artifactsLocation
-    }
+    env: Object.assign({},
+      process.env,{
+        configuration: program.configuration,
+        loglevel: program.loglevel,
+        cleanup: program.cleanup,
+        reuse: program.reuse,
+        debugSynchronization: program.debugSynchronization,
+        artifactsLocation: program.artifactsLocation
+      })
   });
-}
-
-if (typeof program.debugSynchronization === "boolean") {
-  program.debugSynchronization = 3000;
-}
-
-switch (runner) {
-  case 'mocha':
-    runMocha();
-    break;
-  case 'jest':
-    runJest();
-    break;
-  default:
-    throw new Error(`${runner} is not supported in detox cli tools. You can still run your tests with the runner's own cli tool`);
 }
