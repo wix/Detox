@@ -46,12 +46,14 @@ Add this part to your `package.json`:
   "setupTestFrameworkScriptFile": "./e2e/init.js"
 },
 "scripts": {
-    "test:e2e": "detox test",
+    "test:e2e": "detox test -c ios.sim.debug -a e2e",
     "test:e2e:build": "detox build"
+},
+"detox": {
+  "runner": "jest",
+  ...
 }
 ```
-
-In the `detox` part of your `package.json`, add `"runner": "jest"` to tell detox that you want to use jest runner instead of mocha.
 
 ### Writing Tests
 
