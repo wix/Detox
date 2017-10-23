@@ -46,7 +46,7 @@ Add this part to your `package.json`:
   "setupTestFrameworkScriptFile": "./e2e/init.js"
 },
 "scripts": {
-    "test:e2e": "detox test -c ios.sim.debug -a e2e",
+    "test:e2e": "detox test -c ios.sim.debug",
     "test:e2e:build": "detox build"
 },
 "detox": {
