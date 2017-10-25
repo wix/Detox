@@ -4,13 +4,13 @@ const program = require('commander');
 const path = require('path');
 const cp = require('child_process');
 program
-  .option('-r, --runner [runner]', 'Test runner (currently supports mocha)')
+  .option('-r, --runner [runner]', 'Test runner (supports mocha and jest)')
   .option('-o, --runner-config [config]', 'Test runner config file', 'mocha.opts')
   .option('-l, --loglevel [value]', 'info, debug, verbose, silly, wss')
   .option('-c, --configuration [device configuration]', 'Select a device configuration from your defined configurations,'
                                                         + 'if not supplied, and there\'s only one configuration, detox will default to it')
   .option('-r, --reuse', 'Reuse existing installed app (do not delete and re-install) for a faster run.', false)
-  .option('-u, --cleanup', 'shutdown simulator when test is over, useful for CI scripts, to make sure detox exists cleanly with no residue', false)
+  .option('-u, --cleanup', 'Shutdown simulator when test is over, useful for CI scripts, to make sure detox exists cleanly with no residue', false)
   .option('-d, --debug-synchronization [value]',
     'When an action/expectation takes a significant amount of time use this option to print device synchronization status. '
     + 'The status will be printed if the action takes more than [value]ms to complete')
@@ -62,14 +62,13 @@ function runJest() {
 
   cp.execSync(command, {
     stdio: 'inherit',
-    env: Object.assign({},
-      process.env,{
-        configuration: program.configuration,
-        loglevel: program.loglevel,
-        cleanup: program.cleanup,
-        reuse: program.reuse,
-        debugSynchronization: program.debugSynchronization,
-        artifactsLocation: program.artifactsLocation
-      })
+    env: Object.assign({}, process.env, {
+      configuration: program.configuration,
+      loglevel: program.loglevel,
+      cleanup: program.cleanup,
+      reuse: program.reuse,
+      debugSynchronization: program.debugSynchronization,
+      artifactsLocation: program.artifactsLocation
+    })
   });
 }
