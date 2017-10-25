@@ -63,12 +63,12 @@ function runJest() {
   cp.execSync(command, {
     stdio: 'inherit',
     env: Object.assign({}, process.env, {
-      configuration: program.configuration,
-      loglevel: program.loglevel,
-      cleanup: program.cleanup,
-      reuse: program.reuse,
-      debugSynchronization: program.debugSynchronization,
-      artifactsLocation: program.artifactsLocation
+      configuration: program.configuration || '',
+      loglevel: program.loglevel || '',
+      cleanup: program.cleanup || '',
+      reuse: program.reuse || '',
+      debugSynchronization: program.debugSynchronization || '',
+      artifactsLocation: program.artifactsLocation || ''
     })
   });
 }
