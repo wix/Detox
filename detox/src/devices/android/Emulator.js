@@ -12,7 +12,7 @@ class Emulator {
   }
 
   async boot(emulatorName) {
-    await this.spawnEmulator(`-verbose -gpu host -no-audio @${emulatorName}`);
+    await this.spawnEmulator(`-verbose -gpu host @${emulatorName}`);
   }
 
   async listAvds() {
