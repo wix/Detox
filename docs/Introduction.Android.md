@@ -96,7 +96,7 @@ Execution failed for task ':app:transformResourcesWithMergeJavaResForDebug'.
 > com.android.build.api.transform.TransformException: com.android.builder.packaging.DuplicateFileException: Duplicate files copied in APK META-INF/LICENSE
 ```
 
-You need to add this to the `packagingOptions` of your `android/app/build.gradle`:
+You need to add this to the `android` section of your `android/app/build.gradle`:
 
 ```gradle
 packagingOptions {
@@ -104,19 +104,25 @@ packagingOptions {
 }
 ```
 
-### Problem: `Conflict with dependency ...`
 
-If you get an error like this:
+
+### Problem: `Conflict with dependency 'com.fasterxml.jackson.core:jackson-core'.`
+
+You might encounter version conflicts with dependencies, an error may look like this:
 
 ```sh
 Conflict with dependency 'com.fasterxml.jackson.core:jackson-core'. Resolved versions for app (2.8.7) and test app (2.2.3) differ. See http://g.co/androidstudio/app-test-app-conflict for details.
 ```
 
-You need to exclude it from the `android/app/build.gradle`:
+The easiest way to solve these is by replacing the dependency, meaning excluding the dependency versions from detox and re-adding the versions that caused the conflict.
+You need to replace some parts in the `android/app/build.gradle`:
 
 ```gradle
- androidTestCompile(project(path: ":detox", configuration: "newOkhttpDebug"), {
+androidTestCompile(project(path: ":detox", configuration: "newOkhttpDebug"), {
     exclude group: 'com.android.support', module: 'support-annotations'
-    exclude group: 'com.fasterxml.jackson.core' // <- add this
+    exclude group: 'com.fasterxml.jackson.core', module: 'jackson-core'
+    exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
 })
+androidTestCompile 'com.fasterxml.jackson.core:jackson-core:2.8.7'
+androidTestCompile 'com.fasterxml.jackson.core:jackson-databind:2.8.7'
 ```
