@@ -86,6 +86,16 @@ To run the e2e tests, after the application was built.
 npm run e2e
 ```
 
+### Native Tests
+
+We got native tests for our client code, here is how you execute it
+
+#### Android
+
+0. Install Java and Android SDK 25
+1. In `detox/android` run `./gradlew install`
+2. Run `./gradlew test` to run the tests
+
 ### Code Generation
 
 We are using a code generator based on `babel` and `objective-c-parser` to generate a Javascript Interface for `EarlGrey` (the testing library we use on iOS).
