@@ -25,22 +25,12 @@ class IosDriver extends DeviceDriverBase {
     return notificationFilePath;
   }
 
-  //TODO:In order to support sharding, we need to create a device factory, and move prepare()
-  // to that factory, to only have a single instance of it.
   async prepare() {
-    const detoxIosSourceTarballDirPath = path.join(__dirname, '../..');
     const detoxFrameworkPath = await environment.getFrameworkPath();
-    const detoxFrameworkDirPath = path.parse(detoxFrameworkPath).dir;
 
-
-    if (fs.existsSync(detoxFrameworkDirPath)) {
-      if(!fs.existsSync(`${detoxFrameworkPath}`)) {
-        throw new Error(`${detoxFrameworkDirPath} was found, but could not find Detox.framework inside it. This means that the Detox framework build process was interrupted.
-        To solve this, either delete ${detoxFrameworkDirPath} or run 'detox clean-framework-cache'`);
-      }
-    } else {
-      log.info(`Building Detox.framework (${environment.getDetoxVersion()}) into ${detoxFrameworkDirPath}...`);
-      await exec.execAsync(path.join(__dirname, `../../scripts/build_framework.ios.sh "${detoxIosSourceTarballDirPath}" "${detoxFrameworkDirPath}"`));
+    if (!fs.existsSync(detoxFrameworkPath)) {
+      throw new Error(`${detoxFrameworkPath} could not be found, this means either you changed a version of Xcode or Detox postinstall script was unsuccessful. 
+      To attempt a fix try running 'detox clean-framework-cache && detox build-framework-cache'`);
     }
   }
 
