@@ -1,9 +1,12 @@
 const Detox = require('./Detox');
+const platform = require('./platform');
+const exportWrapper = require('./exportWrapper');
 
 let detox;
 
 async function init(config, params) {
   detox = new Detox(config);
+  platform.set(config.type, detox.device);
   await detox.init(params);
 }
 
@@ -39,5 +42,6 @@ module.exports = {
   init,
   cleanup,
   beforeEach,
-  afterEach
+  afterEach,
+  ...exportWrapper,
 };

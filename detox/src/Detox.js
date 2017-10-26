@@ -41,7 +41,7 @@ class Detox {
     }
   }
 
-  async init(params = {launchApp: true}) {
+  async init(params = {launchApp: true, initGlobals: true}) {
     if (!(this.userConfig.configurations && _.size(this.userConfig.configurations) >= 1)) {
       throw new Error(`No configured devices`);
     }
@@ -68,7 +68,11 @@ class Detox {
     const deviceDriver = new deviceClass(this.client);
     this.device = new Device(deviceConfig, sessionConfig, deviceDriver);
     await this.device.prepare(params);
-    global.device = this.device;
+
+    if (params.initGlobals) {
+      deviceDriver.exportGlobals();
+      global.device = this.device;
+    }
   }
 
   async cleanup() {
