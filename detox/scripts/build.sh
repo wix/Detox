@@ -3,16 +3,17 @@
 echo -e "\nTranspiling JavaScript sources"
 BABEL_ENV=test babel src -d lib
 
-echo -e "\nPackaging Detox iOS sources"
-rm -fr Detox-ios-src.tbz
-#Prepare Earl Grey without building
-ios/EarlGrey/Scripts/setup-earlgrey.sh > /dev/null
-find ./ios -name Build -type d -exec rm -rf {} \; > /dev/null
+if [ `uname` == "Darwin" ]; then
+  echo -e "\nPackaging Detox iOS sources"
+  rm -fr Detox-ios-src.tbz
+  #Prepare Earl Grey without building
+  ios/EarlGrey/Scripts/setup-earlgrey.sh > /dev/null
+  find ./ios -name Build -type d -exec rm -rf {} \; > /dev/null
 
-cd ios
-tar -cjf ../Detox-ios-src.tbz .
-cd ..
-
+  cd ios
+  tar -cjf ../Detox-ios-src.tbz .
+  cd ..
+fi
 
 if [ "$1" == "android" -o "$2" == "android" ] ; then
 	echo -e "\nBuilding Detox aars"
