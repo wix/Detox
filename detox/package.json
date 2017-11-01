@@ -26,7 +26,8 @@
     "unit": "jest --coverage --verbose",
     "test": "npm run unit",
     "unit:watch": "jest --watch",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "postinstall": "scripts/postinstall.sh"
   },
   "devDependencies": {
     "babel-cli": "^6.8.0",

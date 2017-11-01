@@ -1,14 +1,6 @@
-# Contributing to detox
+# Contributing to Detox
 
-### Clone detox and submodules
-
-```sh
-git clone git@github.com:wix/detox.git
-cd detox
-git submodule update --init --recursive
-```
-(this makes sure all git submodule dependencies are properly checked out)
-
+## Prerequisites
 
 ### Install `node` v7.6 or higher (to support async-await natively)
 
@@ -30,10 +22,24 @@ For all the internal projects (detox, detox-server, detox-cli, demos, test) `ler
 ```sh
 gem install xcpretty
 ```
-### Installing
+
+Alternatively, run `scripts/install.ios.sh` / `scripts/android.sh` to install all prerequisites.
+
+## Detox
+
+### Clone Detox and submodules
 
 ```sh
-lerna bootstrap
+git clone git@github.com:wix/detox.git
+cd detox
+git submodule update --init --recursive
+```
+(this makes sure all git submodule dependencies are properly checked out)
+
+### Installing and linking internal projects
+
+```sh
+scripts/bootstrap.sh
 ```
 
 ### Building
@@ -66,8 +72,8 @@ cd detox
 open coverage/lcov-report/index.html
 ```
 
-### Running detox e2e covarage tests
-Detox has a suite of e2e tests to test its own API while developing (and for regression). The way we do is is by maintaining a special application that is "tested" against detox's API, but essentially, it's the API that is tested, not the app.
+### Running Detox e2e covarage tests
+Detox has a suite of e2e tests to test its own API while developing (and for regression). The way we do is is by maintaining a special application that is "tested" against Detox's API, but essentially, it's the API that is tested, not the app.
 To run the e2e tests, go to `detox/detox/test`
 
 ```sh
@@ -83,14 +89,11 @@ npm run build
 To run the e2e tests, after the application was built.
 
 ```sh
-npm run e2e
+npm run build:ios
+npm run e2e:ios
 ```
 
-### Native Tests
-
-We got native tests for our client code, here is how you execute it
-
-#### Android
+### Android Native tests
 
 0. Install Java and Android SDK 25
 1. In `detox/android` run `./gradlew install`
