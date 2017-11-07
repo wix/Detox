@@ -129,29 +129,31 @@ void setupForTests()
 	[__observedQueues addObject:queue];
 	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[GREYDispatchQueueIdlingResource resourceWithDispatchQueue:queue name:@"RCTUIManagerQueue"]];
 	
-	cls = NSClassFromString(@"RCTJSCExecutor");
-	m = NULL;
-	if(cls != NULL)
-	{
-		//Legacy RN
-		m = class_getClassMethod(cls, NSSelectorFromString(@"runRunLoopThread"));
-	}
-	else
-	{
-		//Modern RN
-		cls = NSClassFromString(@"RCTCxxBridge");
-		m = class_getClassMethod(cls, NSSelectorFromString(@"runRunLoop"));
-		if(m == NULL)
+	dispatch_async(dispatch_get_main_queue(), ^{
+		Class cls = NSClassFromString(@"RCTJSCExecutor");
+		Method m = NULL;
+		if(cls != NULL)
 		{
-			m = class_getInstanceMethod(cls, NSSelectorFromString(@"runJSRunLoop"));
+			//Legacy RN
+			m = class_getClassMethod(cls, NSSelectorFromString(@"runRunLoopThread"));
 		}
-	}
-	
-	if(m != NULL)
-	{
-		orig_runRunLoopThread = (void(*)(id, SEL))method_getImplementation(m);
-		method_setImplementation(m, (IMP)swz_runRunLoopThread);
-	}
+		else
+		{
+			//Modern RN
+			cls = NSClassFromString(@"RCTCxxBridge");
+			m = class_getClassMethod(cls, NSSelectorFromString(@"runRunLoop"));
+			if(m == NULL)
+			{
+				m = class_getInstanceMethod(cls, NSSelectorFromString(@"runJSRunLoop"));
+			}
+		}
+		
+		if(m != NULL)
+		{
+			orig_runRunLoopThread = (void(*)(id, SEL))method_getImplementation(m);
+			method_setImplementation(m, (IMP)swz_runRunLoopThread);
+		}
+	});
 	
 	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[WXJSTimerObservationIdlingResource new]];
 	
