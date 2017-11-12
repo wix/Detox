@@ -31,6 +31,7 @@ class Client {
   async cleanup() {
     if (this.ws.isOpen()) {
       await this.sendAction(new actions.Cleanup(this.successfulTestRun));
+      await this.ws.close();
     }
   }
 
