@@ -80,6 +80,10 @@ class Detox {
       await this.device._cleanup();
     }
 
+    if (this.server) {
+      this.server.close();
+    }
+
     if (argparse.getArgValue('cleanup') && this.device) {
       await this.device.shutdown();
     }
@@ -88,7 +92,7 @@ class Detox {
   async beforeEach(...testNameComponents) {
     this._currentTestNumber++;
     if (this._artifactsPathsProvider !== undefined) {
-      const testArtifactsPath = this._artifactsPathsProvider.createPathForTest(this._currentTestNumber, ...testNameComponents)
+      const testArtifactsPath = this._artifactsPathsProvider.createPathForTest(this._currentTestNumber, ...testNameComponents);
       this.device.setArtifactsDestination(testArtifactsPath);
     }
   }

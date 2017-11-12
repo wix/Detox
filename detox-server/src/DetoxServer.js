@@ -68,6 +68,10 @@ class DetoxServer {
       log.log('wss', `${now()}:`, `role=${otherRole} not connected, cannot fw action (sessionId=${sessionId})`);
     }
   }
+
+  close() {
+    this.wss.close();
+  }
 }
 
 function now() {
