@@ -77,8 +77,8 @@ dispatch_queue_t wx_dispatch_queue_create(const char *_Nullable label, dispatch_
 	return rv;
 }
 
-int (*WX_UIApplicationMain_orig)(int argc, char * _Nonnull * _Null_unspecified argv, NSString * _Nullable principalClassName, NSString * _Nullable delegateClassName);
-int WX_UIApplicationMain(int argc, char * _Nonnull * _Null_unspecified argv, NSString * _Nullable principalClassName, NSString * _Nullable delegateClassName)
+static int (*__WX_UIApplicationMain_orig)(int argc, char * _Nonnull * _Null_unspecified argv, NSString * _Nullable principalClassName, NSString * _Nullable delegateClassName);
+static int __WX_UIApplicationMain(int argc, char * _Nonnull * _Null_unspecified argv, NSString * _Nullable principalClassName, NSString * _Nullable delegateClassName)
 {
 	Class cls = NSClassFromString(@"RCTJSCExecutor");
 	Method m = NULL;
@@ -104,7 +104,7 @@ int WX_UIApplicationMain(int argc, char * _Nonnull * _Null_unspecified argv, NSS
 		method_setImplementation(m, (IMP)swz_runRunLoopThread);
 	}
 	
-	return WX_UIApplicationMain_orig(argc, argv, principalClassName, delegateClassName);
+	return __WX_UIApplicationMain_orig(argc, argv, principalClassName, delegateClassName);
 }
 
 __attribute__((constructor))
@@ -159,9 +159,8 @@ void setupForTests()
 	[__observedQueues addObject:queue];
 	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[GREYDispatchQueueIdlingResource resourceWithDispatchQueue:queue name:@"RCTUIManagerQueue"]];
 	
-	WX_UIApplicationMain_orig = dlsym(RTLD_DEFAULT, "UIApplicationMain");
 	struct rebinding rebindings2[] = {
-		{"UIApplicationMain", WX_UIApplicationMain, NULL}
+		{"UIApplicationMain", __WX_UIApplicationMain, (void*)&__WX_UIApplicationMain_orig}
 	};
 	rebind_symbols(rebindings2, sizeof(rebindings2) / sizeof(rebindings2[0]));
 	
