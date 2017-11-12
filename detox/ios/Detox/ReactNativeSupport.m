@@ -77,6 +77,36 @@ dispatch_queue_t wx_dispatch_queue_create(const char *_Nullable label, dispatch_
 	return rv;
 }
 
+int (*WX_UIApplicationMain_orig)(int argc, char * _Nonnull * _Null_unspecified argv, NSString * _Nullable principalClassName, NSString * _Nullable delegateClassName);
+int WX_UIApplicationMain(int argc, char * _Nonnull * _Null_unspecified argv, NSString * _Nullable principalClassName, NSString * _Nullable delegateClassName)
+{
+	Class cls = NSClassFromString(@"RCTJSCExecutor");
+	Method m = NULL;
+	if(cls != NULL)
+	{
+		//Legacy RN
+		m = class_getClassMethod(cls, NSSelectorFromString(@"runRunLoopThread"));
+	}
+	else
+	{
+		//Modern RN
+		cls = NSClassFromString(@"RCTCxxBridge");
+		m = class_getClassMethod(cls, NSSelectorFromString(@"runRunLoop"));
+		if(m == NULL)
+		{
+			m = class_getInstanceMethod(cls, NSSelectorFromString(@"runJSRunLoop"));
+		}
+	}
+	
+	if(m != NULL)
+	{
+		orig_runRunLoopThread = (void(*)(id, SEL))method_getImplementation(m);
+		method_setImplementation(m, (IMP)swz_runRunLoopThread);
+	}
+	
+	return WX_UIApplicationMain_orig(argc, argv, principalClassName, delegateClassName);
+}
+
 __attribute__((constructor))
 void setupForTests()
 {
@@ -129,31 +159,11 @@ void setupForTests()
 	[__observedQueues addObject:queue];
 	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[GREYDispatchQueueIdlingResource resourceWithDispatchQueue:queue name:@"RCTUIManagerQueue"]];
 	
-	dispatch_async(dispatch_get_main_queue(), ^{
-		Class cls = NSClassFromString(@"RCTJSCExecutor");
-		Method m = NULL;
-		if(cls != NULL)
-		{
-			//Legacy RN
-			m = class_getClassMethod(cls, NSSelectorFromString(@"runRunLoopThread"));
-		}
-		else
-		{
-			//Modern RN
-			cls = NSClassFromString(@"RCTCxxBridge");
-			m = class_getClassMethod(cls, NSSelectorFromString(@"runRunLoop"));
-			if(m == NULL)
-			{
-				m = class_getInstanceMethod(cls, NSSelectorFromString(@"runJSRunLoop"));
-			}
-		}
-		
-		if(m != NULL)
-		{
-			orig_runRunLoopThread = (void(*)(id, SEL))method_getImplementation(m);
-			method_setImplementation(m, (IMP)swz_runRunLoopThread);
-		}
-	});
+	WX_UIApplicationMain_orig = dlsym(RTLD_DEFAULT, "UIApplicationMain");
+	struct rebinding rebindings2[] = {
+		{"UIApplicationMain", WX_UIApplicationMain, NULL}
+	};
+	rebind_symbols(rebindings2, sizeof(rebindings2) / sizeof(rebindings2[0]));
 	
 	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[WXJSTimerObservationIdlingResource new]];
 	
