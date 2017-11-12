@@ -1,12 +1,9 @@
-const log = require('npmlog');
 const path = require('path');
 const fs = require('fs');
 const DeviceDriverBase = require('./DeviceDriverBase');
 const InvocationManager = require('../invoke').InvocationManager;
 const invoke = require('../invoke');
 const GREYConfiguration = require('./../ios/earlgreyapi/GREYConfiguration');
-const exec = require('shell-utils').exec;
-const environment = require('../utils/environment');
 
 class IosDriver extends DeviceDriverBase {
 
@@ -23,15 +20,6 @@ class IosDriver extends DeviceDriverBase {
     this.ensureDirectoryExistence(notificationFilePath);
     fs.writeFileSync(notificationFilePath, JSON.stringify(notification, null, 2));
     return notificationFilePath;
-  }
-
-  async prepare() {
-    const detoxFrameworkPath = await environment.getFrameworkPath();
-
-    if (!fs.existsSync(detoxFrameworkPath)) {
-      throw new Error(`${detoxFrameworkPath} could not be found, this means either you changed a version of Xcode or Detox postinstall script was unsuccessful. 
-      To attempt a fix try running 'detox clean-framework-cache && detox build-framework-cache'`);
-    }
   }
 
   async sendUserNotification(notification) {
