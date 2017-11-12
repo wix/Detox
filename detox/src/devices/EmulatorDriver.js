@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const path = require('path');
-const AAPT = require('./android/AAPT');
 const Emulator = require('./android/Emulator');
 const EmulatorTelnet = require('./android/EmulatorTelnet');
 const Environment = require('../utils/environment');
@@ -11,7 +10,6 @@ class EmulatorDriver extends AndroidDriver {
   constructor(client) {
     super(client);
 
-    this.aapt = new AAPT();
     this.emulator = new Emulator();
   }
 
