@@ -195,6 +195,10 @@ class Device {
   }
 
   _getAbsolutePath(appPath) {
+    if(path.isAbsolute(appPath)) {
+      return appPath;
+    }
+    
     const absPath = path.join(process.cwd(), appPath);
     if (fs.existsSync(absPath)) {
       return absPath;
