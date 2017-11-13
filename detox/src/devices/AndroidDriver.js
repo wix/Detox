@@ -4,6 +4,7 @@ const log = require('npmlog');
 const invoke = require('../invoke');
 const InvocationManager = invoke.InvocationManager;
 const ADB = require('./android/ADB');
+const AAPT = require('./android/AAPT');
 const DeviceDriverBase = require('./DeviceDriverBase');
 
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
@@ -17,6 +18,7 @@ class AndroidDriver extends DeviceDriverBase {
     expect.setInvocationManager(this.invocationManager);
 
     this.adb = new ADB();
+    this.aapt = new AAPT();
   }
 
   async getBundleIdFromBinary(apkPath) {

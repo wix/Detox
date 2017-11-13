@@ -1,17 +1,18 @@
 #!/bin/bash -e
 
-detoxVersion=`node -p "require('./package.json').version"`
-detoxIosSourceTarballDirPath="$(dirname $(dirname ${0}))"
+detoxRootPath="$(dirname $(dirname ${0}))"
+detoxVersion=`node -p "require('${detoxRootPath}/package.json').version"`
+
 sha1=`(echo "${detoxVersion}" && xcodebuild -version) | shasum | awk '{print $1}' #"${2}"`
 detoxFrameworkDirPath="$HOME/Library/Detox/ios/${sha1}"
 detoxFrameworkPath="${detoxFrameworkDirPath}/Detox.framework"
-detoxSourcePath="${detoxIosSourceTarballDirPath}"/ios_src
+detoxSourcePath="${detoxRootPath}"/ios_src
 
 function buildFramework {
   echo "Extracting Detox sources..."
 
   mkdir -p "${detoxSourcePath}"
-  tar -xjf "${detoxIosSourceTarballDirPath}"/Detox-ios-src.tbz -C "${detoxSourcePath}"
+  tar -xjf "${detoxRootPath}"/Detox-ios-src.tbz -C "${detoxSourcePath}"
 
   echo "Building Detox.framework..."
 
