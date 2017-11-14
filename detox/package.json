@@ -30,18 +30,15 @@
     "postinstall": "scripts/postinstall.sh"
   },
   "devDependencies": {
-    "babel-cli": "^6.8.0",
-    "babel-core": "^6.8.0",
-    "babel-eslint": "^7.2.3",
-    "babel-polyfill": "^6.8.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-register": "^6.8.0",
-    "eslint": "^4.1.1",
-    "eslint-plugin-babel": "4.x.x",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.0.2",
+    "eslint": "^4.11.0",
+    "eslint-plugin-babel": "^4.1.2",
     "eslint-plugin-jest": "^20.0.3",
     "eslint-plugin-promise": "^3.4.2",
     "eslint-plugin-react": "^7.1.0",
-    "eslint-plugin-react-native": "^2.3.2",
+    "eslint-plugin-react-native": "^3.1.0",
     "jest": "^20.0.4",
     "minimist": "^1.2.0",
     "mockdate": "^2.0.1"
@@ -57,15 +54,6 @@
     "shell-utils": "^1.0.9",
     "telnet-client": "0.15.3",
     "ws": "^1.1.1"
-  },
-  "babel": {
-    "presets": [
-      ["env", {
-        "targets": {
-          "node": "current"
-        }
-      }]
-    ]
   },
   "jest": {
     "roots": [

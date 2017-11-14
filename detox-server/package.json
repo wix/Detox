@@ -31,20 +31,7 @@
     "ws": "^1.1.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.8.0",
-    "babel-core": "^6.8.0",
-    "babel-eslint": "^6.0.4",
-    "babel-polyfill": "^6.8.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-register": "^6.8.0"
-  },
-  "babel": {
-    "presets": [
-      ["env", {
-        "targets": {
-          "node": "current"
-        }
-      }]
-    ]
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0"
   }
 }
