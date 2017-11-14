@@ -52,7 +52,7 @@
 - Set Environment Variable [\#343](https://github.com/wix/detox/issues/343)
 - Example of Using Contact Picker, Date Picker [\#332](https://github.com/wix/detox/issues/332)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - Move Detox.framework compilation to postinstall [\#373](https://github.com/wix/detox/pull/373) ([rotemmiz](https://github.com/rotemmiz))
 - Add documentation for android unit tests [\#365](https://github.com/wix/detox/pull/365) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
@@ -77,7 +77,7 @@
 
 - Element Can't Find/Can't perform Action [\#290](https://github.com/wix/detox/issues/290)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - Re-add matcher generation commits and add traits matcher to generated code [\#348](https://github.com/wix/detox/pull/348) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 
@@ -101,7 +101,7 @@
 - Update the README Screenshot to use the latest version of EarlGrey. [\#145](https://github.com/wix/detox/issues/145)
 - Please add ability to write custom logs [\#118](https://github.com/wix/detox/issues/118)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - Add snapshot tests for matchers [\#347](https://github.com/wix/detox/pull/347) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 - Create a build matrix to support multiple version of React Native and OSs [\#345](https://github.com/wix/detox/pull/345) ([rotemmiz](https://github.com/rotemmiz))
@@ -125,7 +125,7 @@
 - "before all" hook Timeout exceeded when run the provided example test [\#340](https://github.com/wix/detox/issues/340)
 - Android feedback [\#334](https://github.com/wix/detox/issues/334)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - Update README for required Xcode version [\#339](https://github.com/wix/detox/pull/339) ([MoOx](https://github.com/MoOx))
 
@@ -160,7 +160,7 @@
 - Detox test through ssh mount [\#286](https://github.com/wix/detox/issues/286)
 - React Native 0.47.2 timeout issues [\#267](https://github.com/wix/detox/issues/267)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - Improvements in setup of jest runner. Update GettingStarted documentation. [\#329](https://github.com/wix/detox/pull/329) ([dsznajder](https://github.com/dsznajder))
 - Fix Android atIndex matcher by fixing typo [\#321](https://github.com/wix/detox/pull/321) ([pietropizzi](https://github.com/pietropizzi))
@@ -192,7 +192,7 @@
 - Detox testing with Facebook Login [\#287](https://github.com/wix/detox/issues/287)
 - App Terminated Immediately After install and start running - RN 0.48.3 [\#281](https://github.com/wix/detox/issues/281)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - High grade Android Emulator/Device control [\#295](https://github.com/wix/detox/pull/295) ([rotemmiz](https://github.com/rotemmiz))
 - No more fb pains [\#292](https://github.com/wix/detox/pull/292) ([DanielZlotin](https://github.com/DanielZlotin))
@@ -212,7 +212,7 @@
 - React Native Can't run detox tests [\#271](https://github.com/wix/detox/issues/271)
 - TypeError: device.resetContentAndSettings is not a function [\#265](https://github.com/wix/detox/issues/265)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - Swift support [\#277](https://github.com/wix/detox/pull/277) ([rotemmiz](https://github.com/rotemmiz))
 
@@ -245,7 +245,7 @@
 - Generated GREYAction JS wrapper uses unsupported variable types [\#228](https://github.com/wix/detox/issues/228)
 - Safari callback [\#213](https://github.com/wix/detox/issues/213)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - Updated Guide.RunningOnCI to include Bitrise instructions [\#264](https://github.com/wix/detox/pull/264) ([Monte9](https://github.com/Monte9))
 - Add support for GreyAction contentEdge to generated code [\#243](https://github.com/wix/detox/pull/243) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
@@ -274,7 +274,7 @@
 - TypeError: device.launchApp is not a function [\#211](https://github.com/wix/detox/issues/211)
 - Is it possible to send "Done" or "Go" to the keyboard? [\#209](https://github.com/wix/detox/issues/209)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - Uimodule [\#221](https://github.com/wix/detox/pull/221) ([simonracz](https://github.com/simonracz))
 - Adjust non-swiping direction start percentage to be above 0 [\#220](https://github.com/wix/detox/pull/220) ([yedidyak](https://github.com/yedidyak))
@@ -309,7 +309,7 @@
 - Confirming system messages [\#194](https://github.com/wix/detox/issues/194)
 - How to tap on an action on actionsheet? [\#190](https://github.com/wix/detox/issues/190)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - Update APIRef.ActionsOnElement.md [\#203](https://github.com/wix/detox/pull/203) ([isnifer](https://github.com/isnifer))
 - App logs [\#200](https://github.com/wix/detox/pull/200) ([silyevsk](https://github.com/silyevsk))
@@ -344,7 +344,7 @@
 - Page Object Pattern Suggestion [\#179](https://github.com/wix/detox/issues/179)
 - replaceText does not trigger TextInput's onChangeText event [\#151](https://github.com/wix/detox/issues/151)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - Fix typo sre =\> are [\#185](https://github.com/wix/detox/pull/185) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 
@@ -356,7 +356,7 @@
 - Test for item within ListView [\#183](https://github.com/wix/detox/issues/183)
 - `lerna run build` failing [\#182](https://github.com/wix/detox/issues/182)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - Switched to booting the device directly \(related to https://github.co… [\#184](https://github.com/wix/detox/pull/184) ([silyevsk](https://github.com/silyevsk))
 - Fix type on APIRef.Matchers.md [\#177](https://github.com/wix/detox/pull/177) ([xcarpentier](https://github.com/xcarpentier))
@@ -369,7 +369,7 @@
 
 - \[feature\] Take a screenshot [\#93](https://github.com/wix/detox/issues/93)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - Session per configuration [\#173](https://github.com/wix/detox/pull/173) ([silyevsk](https://github.com/silyevsk))
 - Upgraded eslint, added plugins. [\#168](https://github.com/wix/detox/pull/168) ([simonracz](https://github.com/simonracz))
@@ -379,7 +379,7 @@
 ## [detox@5.1.3](https://github.com/wix/detox/tree/detox@5.1.3) (2017-06-18)
 [Full Changelog](https://github.com/wix/detox/compare/detox@5.1.2...detox@5.1.3)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - Document percentage parameter in swipe action [\#163](https://github.com/wix/detox/pull/163) ([yedidyak](https://github.com/yedidyak))
 - Android support. Phase I. [\#148](https://github.com/wix/detox/pull/148) ([simonracz](https://github.com/simonracz))
@@ -387,14 +387,14 @@
 ## [detox@5.1.2](https://github.com/wix/detox/tree/detox@5.1.2) (2017-06-11)
 [Full Changelog](https://github.com/wix/detox/compare/detox@5.1.1...detox@5.1.2)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - Added optional percentage parameter to swipe action [\#162](https://github.com/wix/detox/pull/162) ([yedidyak](https://github.com/yedidyak))
 
 ## [detox@5.1.1](https://github.com/wix/detox/tree/detox@5.1.1) (2017-06-11)
 [Full Changelog](https://github.com/wix/detox/compare/detox-server@2.0.3...detox@5.1.1)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - fixed the crash on older react native versions where there’s no `\_nod… [\#160](https://github.com/wix/detox/pull/160) ([silyevsk](https://github.com/silyevsk))
 
@@ -431,7 +431,7 @@
 - expose a method that returns the hierarchy for a given element [\#76](https://github.com/wix/detox/issues/76)
 - Potential flakiness issue with detox "should scroll for a small amount in direction" - travis failed [\#67](https://github.com/wix/detox/issues/67)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - Animations issue [\#150](https://github.com/wix/detox/pull/150) ([silyevsk](https://github.com/silyevsk))
 
@@ -462,7 +462,7 @@
 - Add support for React Native 0.44 [\#137](https://github.com/wix/detox/issues/137)
 - Detox tests are flaky in CI [\#126](https://github.com/wix/detox/issues/126)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - Device Orientation Manipulation  [\#133](https://github.com/wix/detox/pull/133) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 
@@ -479,7 +479,7 @@
 - Can't test custom keyboards [\#119](https://github.com/wix/detox/issues/119)
 -  detox test - command doesn't work without additional params [\#111](https://github.com/wix/detox/issues/111)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - Update APIRef.Matchers.md [\#135](https://github.com/wix/detox/pull/135) ([isnifer](https://github.com/isnifer))
 - Update APIRef.Element.md - fix broken links [\#125](https://github.com/wix/detox/pull/125) ([isnifer](https://github.com/isnifer))
@@ -497,7 +497,7 @@
 - Missed command npm install [\#109](https://github.com/wix/detox/issues/109)
 - Xcode configuratio are incorrect [\#108](https://github.com/wix/detox/issues/108)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - changed detox-init writeFileSync [\#122](https://github.com/wix/detox/pull/122) ([bogobogo](https://github.com/bogobogo))
 - HW - Fix typos in README [\#121](https://github.com/wix/detox/pull/121) ([HanWax](https://github.com/HanWax))
@@ -514,7 +514,7 @@
 - typeText and clearText sometimes fail due to keyboard sync [\#39](https://github.com/wix/detox/issues/39)
 - what's the best way to match tabs in iOS? [\#12](https://github.com/wix/detox/issues/12)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - Add a create-e2e command [\#115](https://github.com/wix/detox/pull/115) ([bogobogo](https://github.com/bogobogo))
 - Usage [\#114](https://github.com/wix/detox/pull/114) ([bogobogo](https://github.com/bogobogo))
@@ -582,7 +582,7 @@
 - Support es6 \(import, async await etc\) [\#62](https://github.com/wix/detox/issues/62)
 - simulator.deleteAndRelaunchApp with fbsimctl is still slower than apple's [\#19](https://github.com/wix/detox/issues/19)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - Need to tap fb keg for fbsimctl install via homebrew [\#89](https://github.com/wix/detox/pull/89) ([brentvatne](https://github.com/brentvatne))
 
@@ -594,7 +594,7 @@
 - Simulate push notification [\#75](https://github.com/wix/detox/issues/75)
 - Potential flakiness issue with detox 4 - Doron [\#66](https://github.com/wix/detox/issues/66)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - fix: ReferenceError: loglevel is not defined [\#88](https://github.com/wix/detox/pull/88) ([doronpr](https://github.com/doronpr))
 
@@ -663,7 +663,7 @@
 - Fast type text [\#64](https://github.com/wix/detox/issues/64)
 - Remote testing [\#59](https://github.com/wix/detox/issues/59)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - Timer observation overhaul [\#74](https://github.com/wix/detox/pull/74) ([LeoNatan](https://github.com/LeoNatan))
 - document a gotcha we ran into [\#69](https://github.com/wix/detox/pull/69) ([doronpr](https://github.com/doronpr))
@@ -716,7 +716,7 @@
 
 - ability to select non-accessible elements [\#31](https://github.com/wix/detox/issues/31)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - Merge 4.0.0 branch into master [\#48](https://github.com/wix/detox/pull/48) ([LeoNatan](https://github.com/LeoNatan))
 
@@ -748,7 +748,7 @@
 - reason for test failure stopped being reported [\#5](https://github.com/wix/detox/issues/5)
 - error trying to run e2e tests [\#4](https://github.com/wix/detox/issues/4)
 
-**Merged pull requests:**
+**Merged Pull Requests**
 
 - added match by type [\#40](https://github.com/wix/detox/pull/40) ([doronpr](https://github.com/doronpr))
 - Added Tests of stressful conditions [\#21](https://github.com/wix/detox/pull/21) ([EtgarSH](https://github.com/EtgarSH))
