@@ -54,6 +54,9 @@
     "shell-utils": "^1.0.9",
     "telnet-client": "0.15.3",
     "ws": "^1.1.1"
+  },  
+  "engines": {
+    "node": ">=7.6"
   },
   "jest": {
     "roots": [
