@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
 echo -e "\nTranspiling JavaScript sources"
-BABEL_ENV=test babel src -d lib
 
 if [ `uname` == "Darwin" ]; then
   echo -e "\nPackaging Detox iOS sources"

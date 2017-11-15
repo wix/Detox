@@ -10,11 +10,11 @@
     "url": "https://github.com/wix/detox.git"
   },
   "bin": {
-    "detox-server": "lib/cli.js"
+    "detox-server": "src/cli.js"
   },
   "scripts": {
-    "build": "BABEL_ENV=test babel src -d lib",
-    "start": "node lib/cli.js",
+    "build": "node src -d lib",
+    "start": "node src/cli.js",
     "test": ":",
     "prepublish": "npm run build"
   },
@@ -29,9 +29,5 @@
     "lodash": "^4.13.1",
     "npmlog": "^4.0.2",
     "ws": "^1.1.0"
-  },
-  "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0"
   }
 }
