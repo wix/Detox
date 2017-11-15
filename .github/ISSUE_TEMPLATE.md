@@ -1,8 +1,10 @@
+### This is not a support group. For usage help, ask a question on Stack Overflow with the `detox` tag. The issues section of the project is meant for opening bug reports and enhancement requests of Detox.
+
+### IMPORTANT: Use search before opening an issue. Duplicate issues will simply be closed.
+
 <!---
 Please fill this template before submitting an issue. This helps determine the issue cause much quicker.
 If you are filing an enhancement request, you only need to fill the description section and can safely remove the other sections.
-
-IMPORTANT: Use search before opening an issue. Duplicate issues will simply be closed.
 -->
 
 #### Description
