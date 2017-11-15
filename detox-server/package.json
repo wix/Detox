@@ -14,8 +14,7 @@
   },
   "scripts": {
     "start": "node src/cli.js",
-    "test": ":",
-    "prepublish": "npm run build"
+    "test": ":"
   },
   "bugs": {
     "url": "https://github.com/wix/detox/issues"
