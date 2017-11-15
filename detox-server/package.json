@@ -13,7 +13,6 @@
     "detox-server": "src/cli.js"
   },
   "scripts": {
-    "build": "node src -d lib",
     "start": "node src/cli.js",
     "test": ":",
     "prepublish": "npm run build"

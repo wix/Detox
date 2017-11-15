@@ -1,7 +1,5 @@
 #!/bin/bash -e
 
-echo -e "\nTranspiling JavaScript sources"
-
 if [ `uname` == "Darwin" ]; then
   echo -e "\nPackaging Detox iOS sources"
   rm -fr Detox-ios-src.tbz
