@@ -79,7 +79,6 @@ dependencies {
     })
 
     compile 'org.apache.commons:commons-lang3:3.4'
-    compile 'org.json:json:20140107'
 
     compile 'com.android.support.test:runner:1.0'
     compile 'com.android.support.test:rules:1.0'
