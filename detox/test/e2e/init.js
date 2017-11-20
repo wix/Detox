@@ -1,4 +1,4 @@
-const detox = require('../../src/index');
+const detox = require('detox');
 const config = require('../package.json').detox;
 
 before(async () => {
