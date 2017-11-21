@@ -1,5 +1,6 @@
 const invoke = require('../invoke');
 const matchers = require('./matcher');
+const DetoxActionApi = require('./espressoapi/DetoxAction');
 const Matcher = matchers.Matcher;
 const LabelMatcher = matchers.LabelMatcher;
 const IdMatcher = matchers.IdMatcher;
@@ -51,7 +52,7 @@ class LongPressAction extends Action {
 class MultiClickAction extends Action {
   constructor(times) {
     super();
-    this._call = invoke.call(invoke.Android.Class(DetoxAction), 'multiClick', invoke.Android.Integer(times));
+    this._call = invoke.callDirectly(DetoxActionApi.multiClick(times));
   }
 }
 

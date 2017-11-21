@@ -71,11 +71,12 @@
       "Emulator.js",
       "DeviceDriverBase.js",
       "GREYConfiguration.js",
-      "src/ios/earlgreyapi",
       "src/utils/environment.js",
       "AAPT.js",
       "ADB.js",
-      "fsext.js"
+      "fsext.js",
+      "src/ios/earlgreyapi",
+      "src/android/espressoapi"
     ],
     "resetMocks": true,
     "resetModules": true,
