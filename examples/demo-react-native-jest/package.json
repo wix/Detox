@@ -1,12 +1,12 @@
 {
-  "name": "DemoReactNativeJest",
+  "name": "demo-react-native-jest",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
     "test-ios": "detox build --configuration ios.sim.debug && detox test --configuration ios.sim.debug",
-    "test-android": "detox build --configuration android.emu.debug && detox test --configuration android.emu.debug"
+    "test-android": "detox build --configuration android.emu.debug && detox test --configuration android.emu.debug -l verbose"
   },
   "dependencies": {
     "react": "16.0.0-beta.5",
@@ -19,11 +19,9 @@
     "jest": "21.2.1",
     "react-test-renderer": "16.0.0-beta.5"
   },
-  "jest": {
-    "setupTestFrameworkScriptFile": "./e2e/init.js"
-  },
   "detox": {
-    "runner": "jest",
+    "test-runner": "jest",
+    "runner-config": "./e2e/config.json",
     "specs": "e2e",
     "configurations": {
       "ios.sim.release": {

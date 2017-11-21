@@ -8,6 +8,9 @@ function getArgValue(key) {
   } else {
     const camelCasedKey = key.replace(/(\-\w)/g, (m) => m[1].toUpperCase());
     value = process.env[camelCasedKey];
+    if (value === 'undefined') {
+      value = undefined;
+    }
   }
 
   return value;
