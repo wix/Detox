@@ -4,6 +4,7 @@ const argparse = require('../utils/argparse');
 
 class Client {
   constructor(config) {
+    this.isConnected = false;
     this.configuration = config;
     this.ws = new AsyncWebSocket(config.server);
     this.slowInvocationStatusHandler = null;
@@ -26,11 +27,17 @@ class Client {
 
   async waitUntilReady() {
     await this.sendAction(new actions.Ready(), -1000);
+    this.isConnected = true;
   }
 
   async cleanup() {
-    if (this.ws.isOpen()) {
+    console.log(this.isConnected);
+    if (this.isConnected) {
       await this.sendAction(new actions.Cleanup(this.successfulTestRun));
+      this.isConnected = false;
+    }
+
+    if (this.ws.isOpen()) {
       await this.ws.close();
     }
   }

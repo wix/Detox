@@ -59,10 +59,12 @@ describe('Client', () => {
 
   it(`cleanup() - if connected should send cleanup action and close websocket`, async () => {
     await connect();
-    client.ws.send.mockReturnValueOnce(response("cleanupDone", {}, 1));
+    client.ws.send.mockReturnValueOnce(response("ready", {}, 1));
+    await client.waitUntilReady();
+    client.ws.send.mockReturnValueOnce(response("cleanupDone", {}, 2));
     await client.cleanup();
 
-    expect(client.ws.send).toHaveBeenCalledTimes(2);
+    expect(client.ws.send).toHaveBeenCalledTimes(3);
   });
 
   it(`cleanup() - if not connected should do nothing`, async () => {
