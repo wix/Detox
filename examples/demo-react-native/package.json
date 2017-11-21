@@ -14,7 +14,9 @@
     "detox": "^5.0.0"
   },
   "detox": {
+    "test-runner": "mocha",
     "specs": "e2e",
+    "runner-config": "e2e/mocha.opts",
     "configurations": {
       "ios.sim.release": {
         "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",

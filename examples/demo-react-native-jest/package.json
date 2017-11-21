@@ -21,7 +21,7 @@
   },
   "detox": {
     "test-runner": "jest",
-    "runner-config": "./e2e/config.json",
+    
     "specs": "e2e",
     "configurations": {
       "ios.sim.release": {

@@ -4,7 +4,7 @@ const program = require('commander');
 const path = require('path');
 const cp = require('child_process');
 program
-  .option('-o, --runner-config [config]', 'Test runner config file', 'mocha.opts')
+  .option('-o, --runner-config [config]', 'Test runner config file')
   .option('-l, --loglevel [value]', 'info, debug, verbose, silly, wss')
   .option('-c, --configuration [device configuration]', 'Select a device configuration from your defined configurations,'
                                                         + 'if not supplied, and there\'s only one configuration, detox will default to it')
@@ -18,13 +18,10 @@ program
   .parse(process.argv);
 
 const config = require(path.join(process.cwd(), 'package.json')).detox;
-const testFolder = config.specs || 'e2e';
 
+const testFolder = config.specs || 'e2e';
 const runner = config['test-runner'] || 'mocha';
-let runnerConfig = config['runner-config'];
-if (program.runnerConfig) {
-  runnerConfig = program.runnerConfig;
-}
+const runnerConfig = program.runnerConfig || config['runner-config'] || getDefaultRunnerConfig();
 
 if (typeof program.debugSynchronization === "boolean") {
   program.debugSynchronization = 3000;
@@ -71,4 +68,18 @@ function runJest() {
       artifactsLocation: program.artifactsLocation
     })
   });
+}
+
+
+function getDefaultRunnerConfig() {
+  let defaultConfig;
+  switch (runner) {
+    case 'mocha':
+      defaultConfig = 'e2e/mocha.opts';
+      break;
+    case 'jest':
+      defaultConfig = 'e2e/config.json'
+  }
+  console.log(`Missing 'runner-config' value in detox config in package.json, using '${defaultConfig}' as default for ${runner}`);
+  return defaultConfig;
 }
