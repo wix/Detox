@@ -4,7 +4,7 @@ const program = require('commander');
 const path = require('path');
 const cp = require('child_process');
 program
-  .option('-o, --runner-config [config]', 'Test runner config file')
+  .option('-o, --runner-config [config]', `Test runner config file, defaults to e2e/mocha.opts for mocha and e2e/config.json' for jest`)
   .option('-l, --loglevel [value]', 'info, debug, verbose, silly, wss')
   .option('-c, --configuration [device configuration]', 'Select a device configuration from your defined configurations,'
                                                         + 'if not supplied, and there\'s only one configuration, detox will default to it')

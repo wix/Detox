@@ -43,8 +43,7 @@ Initiating your test suite
 | Option| Description |
 | --- | --- |
 | -h, --help                                    | output usage information |
-| -r, --runner [runner]                         | Test runner (supports mocha and jest) |
-| -o, --runner-config \<config\>                | Test runner config file |
+| -o, --runner-config \<config\>                | Test runner config file, defaults to 'e2e/mocha.opts' for mocha and 'e2e/config.json' for jest |
 | -l, --loglevel [value]                        | info, debug, verbose, silly, wss |
 | -c, -configuration \<device config\>          | Select a device configuration from your defined figurations,if not supplied, and there's only one configuration, detox will default to it |
 | -r, --reuse                                   | Reuse existing installed app (do not delete and re-tall) for a faster run. |
