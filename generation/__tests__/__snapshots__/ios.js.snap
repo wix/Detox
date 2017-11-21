@@ -1,0 +1,100 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`iOS generation Error handling should thow error for CGPoint with wrong x and y values 1`] = `"point.x should be a number, but got 3 (string)"`;
+
+exports[`iOS generation Error handling should thow error for CGPoint with wrong x and y values 2`] = `"point.y should be a number, but got undefined (undefined)"`;
+
+exports[`iOS generation Error handling should throw error for not in accepted range 1`] = `"direction should be one of [left, right, up, down], but got flipside"`;
+
+exports[`iOS generation Error handling should throw error for wrong type 1`] = `"count should be a number, but got foo (string)"`;
+
+exports[`iOS generation Error handling should throw error for wrong type 2`] = `"point should be a object, but got 4 (number)"`;
+
+exports[`iOS generation Invocations should return the invocation object for methods 1`] = `
+Object {
+  "args": Array [
+    Object {
+      "type": "NSInteger",
+      "value": 3,
+    },
+  ],
+  "method": "actionForMultipleTapsWithCount:",
+  "target": Object {
+    "type": "Class",
+    "value": "GREYActions",
+  },
+}
+`;
+
+exports[`iOS generation Invocations should return the invocation object for methods with objects as args 1`] = `
+Object {
+  "args": Array [
+    Object {
+      "type": "NSInteger",
+      "value": 3,
+    },
+    Object {
+      "type": "CGPoint",
+      "value": Object {
+        "x": 3,
+        "y": 4,
+      },
+    },
+  ],
+  "method": "actionForMultipleTapsWithCount:atPoint:",
+  "target": Object {
+    "type": "Class",
+    "value": "GREYActions",
+  },
+}
+`;
+
+exports[`iOS generation Invocations should return the invocation object for methods with strings 1`] = `
+Object {
+  "args": Array [
+    Object {
+      "type": "NSString",
+      "value": "Foo",
+    },
+  ],
+  "method": "actionForTypeText:",
+  "target": Object {
+    "type": "Class",
+    "value": "GREYActions",
+  },
+}
+`;
+
+exports[`iOS generation Invocations should sanitize the directions 1`] = `
+Object {
+  "args": Array [
+    Object {
+      "type": "NSInteger",
+      "value": 4,
+    },
+    Object {
+      "type": "CGFloat",
+      "value": 3,
+    },
+    Object {
+      "type": "CGFloat",
+      "value": 4,
+    },
+    Object {
+      "type": "CGFloat",
+      "value": 5,
+    },
+  ],
+  "method": "actionForScrollInDirection:amount:xOriginStartPercentage:yOriginStartPercentage:",
+  "target": Object {
+    "type": "Class",
+    "value": "GREYActions",
+  },
+}
+`;
+
+exports[`iOS generation special case: id<GREYMatcher> should fail with wrongly formatted matchers 1`] = `"firstMatcher should be a GREYMatcher, but got {\\"type\\":\\"Invocation\\",\\"value\\":{\\"target\\":{\\"type\\":\\"Class\\",\\"value\\":\\"GREYAction\\"},\\"method\\":\\"matcherForAccessibilityID:\\",\\"args\\":[\\"Grandfather883\\"]}}"`;
+
+exports[`iOS generation special case: id<GREYMatcher> should fail with wrongly formatted matchers 2`] = `"ancestorMatcher should be a GREYMatcher, but got {\\"type\\":\\"Invocation\\",\\"value\\":{\\"target\\":{\\"type\\":\\"Class\\",\\"value\\":\\"GREYAction\\"},\\"method\\":\\"matcherForAccessibilityID:\\",\\"args\\":[\\"Grandson883\\"]}}"`;
+
+exports[`iOS generation special case: id<GREYMatcher> should fail with wrongly formatted matchers 3`] = `"firstMatcher should be a GREYMatcher, but got {\\"type\\":\\"Invocation\\",\\"value\\":{\\"method\\":\\"matcherForAccessibilityID:\\",\\"args\\":[\\"Grandfather883\\"]}}"`;

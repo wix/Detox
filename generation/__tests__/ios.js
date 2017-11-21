@@ -1,26 +1,26 @@
 const fs = require("fs");
 const remove = require("remove");
-const earlGreyGenerator = require("../earl-grey");
+const iosGenerator = require("../adapters/ios");
 
-describe("earl-grey generation", () => {
+describe("iOS generation", () => {
   let ExampleClass;
   let exampleContent;
   beforeAll(() => {
     // Generate the code to test
-    fs.mkdirSync("./__tests__/generated");
+    fs.mkdirSync("./__tests__/generated-ios");
 
     const files = {
-      "./fixtures/example.h": "./__tests__/generated/example.js"
+      "./fixtures/example.h": "./__tests__/generated-ios/example.js"
     };
 
     console.log('==> generating earl grey files');
-    earlGreyGenerator(files);
+    iosGenerator(files);
 
     console.log('==> loading earl grey files');
     // Load
-    ExampleClass = require("./generated/example.js");
+    ExampleClass = require("./generated-ios/example.js");
     exampleContent = fs.readFileSync(
-      "./__tests__/generated/example.js",
+      "./__tests__/generated-ios/example.js",
       "utf8"
     );
   });
@@ -324,6 +324,6 @@ describe("earl-grey generation", () => {
 
   afterAll(() => {
     // Clean up
-    remove.removeSync("./__tests__/generated");
+    remove.removeSync("./__tests__/generated-ios");
   });
 });
