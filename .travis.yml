@@ -43,6 +43,7 @@ matrix:
       os: linux
       jdk: oraclejdk8
       env:
+        - NAME=Example Projects
         - REACT_NATIVE_VERSION=0.49.3
       android:
         components:
