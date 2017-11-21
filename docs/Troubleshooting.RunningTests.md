@@ -63,9 +63,7 @@ child_process.js:531
 
 **Solution:** This error means that your version of Node does not support `async-await` syntax. You should do one of the two:
 
-1. Update Node to a version **higher than 7.6.0**, this versions will provide native support for async-await, and will spare the need to babel the test code (**recommended**, as it will save babel setup boilerplate, and make it easier to debug you tests).
-
-2. If you can't use a newer version of Node, you'll need to babel your test code, read more about it [here](https://babeljs.io/)
+1. Update Node to a version **higher than 7.6.0**, these versions will provide native support for async-await.
 
 <br>
 

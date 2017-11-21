@@ -17,7 +17,7 @@
     "url": "https://github.com/wix/detox/issues"
   },
   "homepage": "https://github.com/wix/detox/detox",
-  "main": "./lib/index.js",
+  "main": "./src/index.js",
   "author": "Tal Kol <talkol@gmail.com>",
   "license": "MIT",
   "scripts": {
@@ -30,18 +30,11 @@
     "postinstall": "scripts/postinstall.sh"
   },
   "devDependencies": {
-    "babel-cli": "^6.8.0",
-    "babel-core": "^6.8.0",
-    "babel-eslint": "^7.2.3",
-    "babel-polyfill": "^6.8.0",
-    "babel-preset-latest": "^6.22.0",
-    "babel-register": "^6.8.0",
-    "eslint": "^4.1.1",
-    "eslint-plugin-babel": "4.x.x",
+    "eslint": "^4.11.0",
     "eslint-plugin-jest": "^20.0.3",
     "eslint-plugin-promise": "^3.4.2",
     "eslint-plugin-react": "^7.1.0",
-    "eslint-plugin-react-native": "^2.3.2",
+    "eslint-plugin-react-native": "^3.1.0",
     "jest": "^20.0.4",
     "minimist": "^1.2.0",
     "mockdate": "^2.0.1"
@@ -58,15 +51,8 @@
     "telnet-client": "0.15.3",
     "ws": "^1.1.1"
   },
-  "babel": {
-    "env": {
-      "test": {
-        "presets": [
-          "latest"
-        ],
-        "retainLines": true
-      }
-    }
+  "engines": {
+    "node": ">=7.6"
   },
   "jest": {
     "roots": [

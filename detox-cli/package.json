@@ -27,10 +27,6 @@
     "minimist": "^1.2.0"
   },
   "devDependencies": {
-    "babel-jest": "*",
-    "babel-plugin-transform-async-to-generator": "^6.5.0",
-    "babel-polyfill": "*",
-    "babel-preset-es2015": "*",
     "jest": "*"
   },
   "homepage": "https://github.com/wix/detox#readme",

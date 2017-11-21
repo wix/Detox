@@ -8,7 +8,6 @@
 .*/node_modules/node-haste/.*
 
 # Ugh
-.*/node_modules/babel.*
 .*/node_modules/babylon.*
 .*/node_modules/invariant.*
 
