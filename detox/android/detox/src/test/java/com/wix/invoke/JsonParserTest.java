@@ -7,6 +7,8 @@ import com.wix.invoke.types.InvocationTarget;
 
 import org.junit.Test;
 import static org.assertj.core.api.Java6Assertions.assertThat;
+import org.json.JSONObject;
+import org.json.JSONException;
 
 /**
  * Created by rotemm on 13/10/2016.
@@ -60,6 +62,12 @@ public class JsonParserTest {
 
     public Invocation parse(String filePath) {
         String jsonData = TestUtils.jsonFileToString(filePath);
-        return new JsonParser().parse(jsonData, Invocation.class);
+        JSONObject json = new JsonParser().parse(jsonData);
+        try {
+            return new Invocation(json);
+        } catch (JSONException e) {
+            System.err.println("Could not parse json, got error: " + e.getMessage());
+            return new Invocation();
+        }
     }
 }

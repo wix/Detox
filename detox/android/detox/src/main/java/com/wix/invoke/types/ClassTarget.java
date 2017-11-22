@@ -1,9 +1,7 @@
 package com.wix.invoke.types;
 
 import android.util.Log;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+;
 
 import org.apache.commons.lang3.reflect.MethodUtils;
 
@@ -15,9 +13,7 @@ import java.util.Arrays;
  */
 public class ClassTarget extends Target {
 
-
-    @JsonCreator
-    public ClassTarget(@JsonProperty("value") Object value) {
+    public ClassTarget(Object value) {
         super(value);
     }
 

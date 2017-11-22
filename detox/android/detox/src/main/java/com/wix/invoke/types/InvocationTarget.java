@@ -1,8 +1,5 @@
 package com.wix.invoke.types;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import org.apache.commons.lang3.reflect.MethodUtils;
 
 import java.lang.reflect.InvocationTargetException;
@@ -12,8 +9,7 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class InvocationTarget extends Target {
 
-    @JsonCreator
-    public InvocationTarget(@JsonProperty("value") Invocation value) {
+    public InvocationTarget(Invocation value) {
         super(value);
     }
 

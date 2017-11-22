@@ -1,26 +1,34 @@
 package com.wix.invoke.types;
 
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 import java.lang.reflect.InvocationTargetException;
+import org.json.JSONObject;
+import org.json.JSONException;
 
 /**
  * Created by rotemm on 10/10/2016.
  */
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = ClassTarget.class, name = "Class"),
-        @JsonSubTypes.Type(value = InvocationTarget.class, name = "Invocation"),
-        @JsonSubTypes.Type(value = ObjectInstanceTarget.class, name = "Espresso"),
-})
-@JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Target {
 
     Object value;
+
+    public static Target getTarget(JSONObject target) throws JSONException {
+        String type = target.getString("type");
+
+        if (type.equals("Invocation")) {
+            JSONObject objectValue = target.getJSONObject("value");
+            return new InvocationTarget(new Invocation(objectValue));
+        }
+
+        if (type.equals("Espresso")) {
+            String stringValue = target.getString("value");
+            return new ObjectInstanceTarget(stringValue);
+        }
+
+        // Default to Class
+        String value = target.getString("value");
+        return new ClassTarget(value);
+    }
 
     public Target(Object value) {
         this.value = value;

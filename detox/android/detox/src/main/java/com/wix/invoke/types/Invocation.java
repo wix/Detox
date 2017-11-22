@@ -1,16 +1,17 @@
 package com.wix.invoke.types;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wix.invoke.MethodInvocation;
 import com.wix.invoke.parser.JsonParser;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import org.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 /**
  * Created by rotemm on 10/10/2016.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Invocation {
     private Target target;
     private String method;
@@ -24,6 +25,17 @@ public class Invocation {
         this.target = target;
         this.method = method;
         this.args = args;
+    }
+
+    public Invocation(JSONObject json) throws JSONException {
+        this.target = Target.getTarget(json.getJSONObject("target"));
+        this.method = json.getString("method");
+        JSONArray args = json.getJSONArray("args");
+        try {
+            this.setArgs(args);
+        } catch (JSONException e) {
+            throw new RuntimeException("Unable to convert args");
+        }
     }
 
     public String getMethod() {
@@ -44,6 +56,43 @@ public class Invocation {
 
     public Object[] getArgs() {
         return args;
+    }
+
+    public void setArgs(JSONArray args) throws JSONException {
+        Object[] outputArgs = new Object[args.length()];
+        for (int i = 0; i < args.length(); i++) {
+            Object argument = null;
+            if (args.get(i).getClass() == "".getClass()) {
+                argument = args.get(i);
+            } else {
+                JSONObject jsonArgument = args.optJSONObject(i);
+                if (jsonArgument != null && jsonArgument.optString("type") != null) {
+                    String type = jsonArgument.optString("type");
+                    if (type.equals("Integer")) {
+                        argument = jsonArgument.optInt("value");
+                    } else if (type.equals("integer")) {
+                        argument = jsonArgument.optInt("value");
+                    } else if (type.equals("Float")) {
+                        argument = Float.valueOf(jsonArgument.optString("value"));
+                    } else if (type.equals("Double")) {
+                        argument = jsonArgument.optDouble("value");
+                    } else if (type.equals("String")) {
+                        argument = jsonArgument.optString("value");
+                    } else if (type.equals("Boolean")) {
+                        argument = jsonArgument.optBoolean("value");
+                    } else if (type.equals("boolean")) {
+                        argument = jsonArgument.optBoolean("value");
+                    } else if (type.equals("Invocation")) {
+                        argument = new Invocation(jsonArgument.optJSONObject("value"));                        
+                    } else {
+                        throw new RuntimeException("Unhandled arg type" + type);
+                    }
+                }
+            }
+            outputArgs[i] = argument;
+        }
+
+        this.args = outputArgs;
     }
 
     public void setArgs(Object[] args) {
@@ -67,8 +116,8 @@ public class Invocation {
                 } else if (type.equals("boolean")) {
                     argument = ((Boolean) value).booleanValue();
                 } else if (type.equals("Invocation")) {
-                    JsonParser parser = MethodInvocation.getParserWithExtendedParsableTargetTypes(null);
-                    argument = parser.parse(value, Invocation.class);
+                    JsonParser parser = new JsonParser();
+                    argument = parser.parse((String)value);
                 } else {
                     throw new RuntimeException("Unhandled arg type" + type);
                 }
