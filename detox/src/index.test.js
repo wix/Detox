@@ -11,16 +11,23 @@ describe('index', () => {
   };
 
   beforeEach(() => {
-    jest.mock('detox-server');
-    jest.mock('./devices/Device');
-    jest.mock('./client/Client');
-    jest.mock('./Detox', () => jest.fn(() => mockDetox));
-    jest.mock('./platform');
+    jest
+      .mock('detox-server')
+      .mock('./devices/Device')
+      .mock('./client/Client')
+      .mock('./Detox', () => jest.fn(() => mockDetox))
+      .mock('./platform');
     detox = require('./index');
   });
 
   afterEach(() => {
     process.env = {};
+    jest
+      .unmock('detox-server')
+      .unmock('./devices/Device')
+      .unmock('./client/Client')
+      .unmock('./Detox')
+      .unmock('./platform');
   });
 
   it(`throws if there was no config passed`, async () => {

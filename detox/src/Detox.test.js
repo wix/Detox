@@ -72,7 +72,7 @@ describe('Detox', () => {
     try {
       Detox = require('./Detox');
       detox = new Detox({deviceConfig: invalidDeviceTypeConfig});
-      detox.init();
+      await detox.init();
     } catch (e) {
       exception = e;
     }
