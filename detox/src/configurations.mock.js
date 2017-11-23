@@ -78,6 +78,25 @@ const validOneDeviceAndSession = {
   }
 };
 
+const pathsTests = {
+  "session": {
+    "server": "ws://localhost:8099",
+    "sessionId": "test"
+  },
+  "configurations": {
+    "absolutePath": {
+      "binaryPath": "/tmp/abcdef/123",
+      "type": "ios.simulator",
+      "name": "iPhone 7 Plus, iOS 10.2"
+    },
+    "relativePath": {
+      "binaryPath": "abcdef/123",
+      "type": "ios.simulator",
+      "name": "iPhone 7 Plus, iOS 10.2"
+    }
+  }
+};
+
 const invalidSessionNoSessionId = {
   "session": {
     "server": "ws://localhost:8099"
@@ -165,5 +184,6 @@ module.exports = {
   invalidOneDeviceTypeEmulatorNoSession,
   sessionPerConfiguration,
   sessionInCommonAndInConfiguration,
-  validOneEmulator
+  validOneEmulator,
+  pathsTests
 };

@@ -1,0 +1,9 @@
+issues-wo-labels=false
+exclude-labels=type: stack overflow,type: invalid/not a bug,type: invalid/apple bug,type: invalid/duplicate,type: invalid/wontfix,type: invalid/missing info
+bugs-label=**Fixed Bugs**
+enhancement-label=**Enhancements**
+issues-label=**Closed Issues**
+pr-label=**Merged Pull Requests**
+verbose=false
+bug-labels=type: accepted/bug
+enhancement-labels=type: accepted/enhancement

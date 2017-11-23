@@ -3,6 +3,7 @@ const Device = require('./devices/Device');
 const IosDriver = require('./devices/IosDriver');
 const SimulatorDriver = require('./devices/SimulatorDriver');
 const EmulatorDriver = require('./devices/EmulatorDriver');
+const AttachedAndroidDriver = require('./devices/AttachedAndroidDriver');
 const argparse = require('./utils/argparse');
 const configuration = require('./configuration');
 const Client = require('./client/Client');
@@ -18,7 +19,8 @@ log.heading = 'detox';
 const DEVICE_CLASSES = {
   'ios.simulator': SimulatorDriver,
   'ios.none': IosDriver,
-  'android.emulator': EmulatorDriver
+  'android.emulator': EmulatorDriver,
+  'android.attached': AttachedAndroidDriver,
 };
 
 class Detox {
@@ -84,6 +86,10 @@ class Detox {
       await this.device._cleanup();
     }
 
+    if (this.server) {
+      this.server.close();
+    }
+
     if (argparse.getArgValue('cleanup') && this.device) {
       await this.device.shutdown();
     }
@@ -92,7 +98,7 @@ class Detox {
   async beforeEach(...testNameComponents) {
     this._currentTestNumber++;
     if (this._artifactsPathsProvider !== undefined) {
-      const testArtifactsPath = this._artifactsPathsProvider.createPathForTest(this._currentTestNumber, ...testNameComponents)
+      const testArtifactsPath = this._artifactsPathsProvider.createPathForTest(this._currentTestNumber, ...testNameComponents);
       this.device.setArtifactsDestination(testArtifactsPath);
     }
   }

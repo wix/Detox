@@ -1,17 +1,26 @@
 const exec = require('child-process-promise').exec;
 const path = require('path');
 const fs = require('fs');
-const os = require('os');
 const _ = require('lodash');
 const IosDriver = require('./IosDriver');
 const AppleSimUtils = require('./AppleSimUtils');
 const configuration = require('../configuration');
+const environment = require('../utils/environment');
 
 class SimulatorDriver extends IosDriver {
 
   constructor(client) {
     super(client);
     this._applesimutils = new AppleSimUtils();
+  }
+
+  async prepare() {
+    const detoxFrameworkPath = await environment.getFrameworkPath();
+
+    if (!fs.existsSync(detoxFrameworkPath)) {
+      throw new Error(`${detoxFrameworkPath} could not be found, this means either you changed a version of Xcode or Detox postinstall script was unsuccessful. 
+      To attempt a fix try running 'detox clean-framework-cache && detox build-framework-cache'`);
+    }
   }
 
   async acquireFreeDevice(name) {

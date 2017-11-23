@@ -19,7 +19,7 @@
     "detox": "^5.0.0",
     "express": "^4.15.3",
     "lodash": "^4.14.1",
-    "mocha": "^3.2.0"
+    "mocha": "^4.0.0"
   },
   "detox": {
     "specs": "e2e",

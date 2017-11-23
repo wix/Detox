@@ -7,6 +7,7 @@ case "$REACT_NATIVE_VERSION" in
           ;;
 esac
 
-lerna bootstrap
+$(dirname "$0")/bootstrap.sh
+
 lerna run --ignore detox-demo* build
 lerna run --ignore detox-demo* test

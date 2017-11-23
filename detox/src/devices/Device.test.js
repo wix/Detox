@@ -1,9 +1,11 @@
 const _ = require('lodash');
-const validScheme = require('../configurations.mock').validOneDeviceAndSession;
-const validIosNoneScheme = require('../configurations.mock').validOneIosNoneDeviceNoSession;
+const configurationsMock = require('../configurations.mock');
 
-const invalidDeviceNoBinary = require('../configurations.mock').invalidDeviceNoBinary;
-const invalidDeviceNoDeviceName = require('../configurations.mock').invalidDeviceNoDeviceName;
+const validScheme = configurationsMock.validOneDeviceAndSession;
+const validIosNoneScheme = configurationsMock.validOneIosNoneDeviceNoSession;
+
+const invalidDeviceNoBinary = configurationsMock.invalidDeviceNoBinary;
+const invalidDeviceNoDeviceName = configurationsMock.invalidDeviceNoDeviceName;
 
 describe('Device', () => {
   let fs;
@@ -511,5 +513,28 @@ describe('Device', () => {
     await device.launchApp(launchParams);
 
     expect(device.deviceDriver.sendUserNotification).toHaveBeenCalledTimes(0);
+  });
+
+  async function launchAndTestBinaryPath(configuration) {
+    const scheme = configurationsMock.pathsTests;
+    const device = new Device(scheme.configurations[configuration], scheme.session, new DeviceDriverBase(client));
+    fs.existsSync.mockReturnValue(true);
+    device.deviceDriver.defaultLaunchArgsPrefix.mockReturnValue('-');
+    device.deviceDriver.acquireFreeDevice.mockReturnValue('mockDeviceId');
+
+    await device.prepare();
+    await device.launchApp();
+
+    return device.deviceDriver.installApp.mock.calls[0][1];
+  }
+
+  it(`should accept absolute path for binary`, async () => {
+    const actualPath = await launchAndTestBinaryPath('absolutePath');
+    expect(actualPath).toEqual('/tmp/abcdef/123');
+  });
+
+  it(`should accept relative path for binary`, async () => {
+    const actualPath = await launchAndTestBinaryPath('relativePath');
+    expect(actualPath).toEqual(`${process.cwd()}/abcdef/123`);
   });
 });

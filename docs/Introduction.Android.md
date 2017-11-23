@@ -77,6 +77,13 @@ Add this part to your `package.json`:
 }
 ```
 
+Following device types could be used to control Android devices:
+
+`android.emulator`. Boot stock SDK emulator with provided `name`, for example `Nexus_5X_API_25`. After booting connect to it.
+
+`android.attached`. Connect to already-attached android device. The device should be listed in the output of `adb devices` command under provided `name`.
+Use this type to connect to Genymotion emulator.
+
 ### 7. Run the tests
 
 Using the `android.emu.debug` configuration from above, you can invoke it in the standard way.

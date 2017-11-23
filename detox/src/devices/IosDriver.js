@@ -1,12 +1,9 @@
-const log = require('npmlog');
 const path = require('path');
 const fs = require('fs');
 const DeviceDriverBase = require('./DeviceDriverBase');
 const InvocationManager = require('../invoke').InvocationManager;
 const invoke = require('../invoke');
 const GREYConfiguration = require('./../ios/earlgreyapi/GREYConfiguration');
-const exec = require('shell-utils').exec;
-const environment = require('../utils/environment');
 
 class IosDriver extends DeviceDriverBase {
 
@@ -26,25 +23,6 @@ class IosDriver extends DeviceDriverBase {
     this.ensureDirectoryExistence(notificationFilePath);
     fs.writeFileSync(notificationFilePath, JSON.stringify(notification, null, 2));
     return notificationFilePath;
-  }
-
-  //TODO:In order to support sharding, we need to create a device factory, and move prepare()
-  // to that factory, to only have a single instance of it.
-  async prepare() {
-    const detoxIosSourceTarballDirPath = path.join(__dirname, '../..');
-    const detoxFrameworkPath = await environment.getFrameworkPath();
-    const detoxFrameworkDirPath = path.parse(detoxFrameworkPath).dir;
-
-
-    if (fs.existsSync(detoxFrameworkDirPath)) {
-      if(!fs.existsSync(`${detoxFrameworkPath}`)) {
-        throw new Error(`${detoxFrameworkDirPath} was found, but could not find Detox.framework inside it. This means that the Detox framework build process was interrupted.
-        To solve this, either delete ${detoxFrameworkDirPath} or run 'detox clean-framework-cache'`);
-      }
-    } else {
-      log.info(`Building Detox.framework (${environment.getDetoxVersion()}) into ${detoxFrameworkDirPath}...`);
-      await exec.execAsync(path.join(__dirname, `../../scripts/build_framework.ios.sh "${detoxIosSourceTarballDirPath}" "${detoxFrameworkDirPath}"`));
-    }
   }
 
   async sendUserNotification(notification) {

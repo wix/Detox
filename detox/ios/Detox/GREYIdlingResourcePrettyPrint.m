@@ -9,6 +9,12 @@
 #import "GREYIdlingResourcePrettyPrint.h"
 @import ObjectiveC;
 
+@interface NSMapTable<KeyType, ObjectType> ()
+
+- (NSArray<ObjectType>*)allValues;
+
+@end
+
 static NSMapTable<GREYAppStateTrackerObject*, id>* __tarckedObjectsMapping;
 
 @interface GREYAppStateTracker (PrettyPrint) @end
@@ -119,20 +125,12 @@ NSDictionary* _prettyPrintAppStateTracker(GREYAppStateTracker* tracker)
 	rv[@"appState"] = stateString;
 	
 	
-	NSHashTable* elements = [tracker valueForKey:@"elementIDs"];
-	NSArray* allElements = [elements allObjects];
+	NSArray* allElements = __tarckedObjectsMapping.allValues;
 	
 	NSMutableArray* elems = [NSMutableArray new];
 	NSMutableArray* URLs = [NSMutableArray new];
 	
-	[allElements enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-		id actualElement = [__tarckedObjectsMapping objectForKey:obj];
-		
-		if(actualElement == nil)
-		{
-			return;
-		}
-		
+	[allElements enumerateObjectsUsingBlock:^(id  _Nonnull actualElement, NSUInteger idx, BOOL * _Nonnull stop) {
 		[elems addObject:[actualElement description]];
 		
 		if([actualElement isKindOfClass:[NSURLSessionTask class]])

@@ -58,7 +58,19 @@ All Core APIs are 100% implemented.
 ## Emulator control
 1. **Emulators** are fully supported, to choose an emulator to run your tests on check `emulator -list-avds`. If none exist, create one.
 2. **Devices** - Coming soon!
-3. **Genymotion** -  Coming a bit later...
+3. **Genymotion**
+To utilize Genymotion you should use 'android.attached' as configuration type parameter and Genymotion emulator name as configuration name parameter. For example,
+
+```json
+"android": {
+    "binaryPath": "./android/app/build/outputs/apk/app-debug.apk",
+    "build": "pushd ./android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && popd",
+    "type": "android.attached",
+    "name": "192.168.57.101:5555"
+}
+```
+
+Type 'android.attached' could be used to connect to any of already attached devices that are visible through 'adb devices' command.
 
 ## Mocking
 1. Deep Links - Done
