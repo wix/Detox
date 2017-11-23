@@ -24,12 +24,9 @@ const DEVICE_CLASSES = {
 };
 
 class Detox {
-  constructor(userConfig) {
-    if (!userConfig) {
-      throw new Error(`No configuration was passed to detox, make sure you pass a config when calling 'detox.init(config)'`);
-    }
-
-    this.userConfig = userConfig;
+  constructor({deviceConfig, session}) {
+    this.deviceConfig = deviceConfig;
+    this.userSession = deviceConfig.session || session;
     this.client = null;
     this.device = null;
     this._currentTestNumber = 0;
@@ -44,31 +41,23 @@ class Detox {
   }
 
   async init(params = {launchApp: true, initGlobals: true}) {
-    if (!(this.userConfig.configurations && _.size(this.userConfig.configurations) >= 1)) {
-      throw new Error(`No configured devices`);
-    }
+    const sessionConfig = await this._getSessionConfig();
 
-    const deviceConfig = await this._getDeviceConfig();
-    if (!deviceConfig.type) {
-      configuration.throwOnEmptyType();
-    }
-
-    const [sessionConfig, shouldStartServer] = await this._chooseSession(deviceConfig);
-
-    if (shouldStartServer) {
+    if (!this.userSession) {
       this.server = new DetoxServer(new URL(sessionConfig.server).port);
     }
 
     this.client = new Client(sessionConfig);
     await this.client.connect();
 
-    const deviceClass = DEVICE_CLASSES[deviceConfig.type];
+    const deviceClass = DEVICE_CLASSES[this.deviceConfig.type];
+
     if (!deviceClass) {
-      throw new Error(`'${deviceConfig.type}' is not supported`);
+      throw new Error(`'${this.deviceConfig.type}' is not supported`);
     }
 
     const deviceDriver = new deviceClass(this.client);
-    this.device = new Device(deviceConfig, sessionConfig, deviceDriver);
+    this.device = new Device(this.deviceConfig, sessionConfig, deviceDriver);
     await this.device.prepare(params);
 
     if (params.initGlobals) {
@@ -109,41 +98,12 @@ class Detox {
     }
   }
 
-  async _chooseSession(deviceConfig) {
-    let session = deviceConfig.session;
-    let shouldStartServer = false;
-
-    if (!session) {
-      session = this.userConfig.session;
-    }
-
-    if (!session) {
-      session = await configuration.defaultSession();
-      shouldStartServer = true;
-    }
+  async _getSessionConfig() {
+    const session = this.userSession || await configuration.defaultSession();
 
     configuration.validateSession(session);
 
-    return [session, shouldStartServer];
-  }
-
-  async _getDeviceConfig() {
-    const configurationName = argparse.getArgValue('configuration');
-    const configurations = this.userConfig.configurations;
-
-    let deviceConfig;
-    if (!configurationName && _.size(configurations) === 1) {
-      deviceConfig = _.values(configurations)[0];
-    } else {
-      deviceConfig = configurations[configurationName];
-    }
-
-    if (!deviceConfig) {
-      throw new Error(`Cannot determine which configuration to use. use --configuration to choose one of the following:
-                      ${Object.keys(configurations)}`);
-    }
-
-    return deviceConfig;
+    return session;
   }
 }
 

@@ -14,4 +14,4 @@ class Platform {
   }
 }
 
-module.exports = {platform: new Platform()};
+module.exports = new Platform();

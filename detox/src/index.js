@@ -1,12 +1,47 @@
 const Detox = require('./Detox');
 const platform = require('./platform');
 const exportWrapper = require('./exportWrapper');
+const argparse = require('./utils/argparse');
+const configuration = require('./configuration');
+const _ = require('lodash');
 
 let detox;
 
+function getDeviceConfig(configurations) {
+  const configurationName = argparse.getArgValue('configuration');
+
+  const deviceConfig = (!configurationName && _.size(configurations) === 1)
+    ? _.values(configurations)[0]
+    : configurations[configurationName];
+
+  if (!deviceConfig) {
+    throw new Error(`Cannot determine which configuration to use. use --configuration to choose one of the following:
+                      ${Object.keys(configurations)}`);
+  }
+  if (!deviceConfig.type) {
+    configuration.throwOnEmptyType();
+  }
+
+  if (!deviceConfig.name) {
+    configuration.throwOnEmptyName();
+  }
+
+  return deviceConfig;
+}
+
 async function init(config, params) {
-  detox = new Detox(config);
-  platform.set(config.type, detox.device);
+  if (!config) {
+    throw new Error(`No configuration was passed to detox, make sure you pass a config when calling 'detox.init(config)'`);
+  }
+
+  if (!(config.configurations && _.size(config.configurations) >= 1)) {
+    throw new Error(`No configured devices`);
+  }
+
+  const deviceConfig = getDeviceConfig(config.configurations);
+
+  detox = new Detox({deviceConfig, session: config.session});
+  platform.set(deviceConfig.type, detox.device);
   await detox.init(params);
 }
 
@@ -38,10 +73,9 @@ async function afterEach() {
 //  throw reason;
 //});
 
-module.exports = {
+module.exports = Object.assign({
   init,
   cleanup,
   beforeEach,
   afterEach,
-  ...exportWrapper,
-};
+}, exportWrapper);

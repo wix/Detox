@@ -21,15 +21,14 @@ const exportMap = {
   }
 };
 
-const exports = new Proxy(exportMap, {
+const localExports = new Proxy(exportMap, {
   get(map, funcName) {
     return (...args) => map[funcName][platform.get('name')](...args);
   }
 });
 
-module.exports = {
-  ...exports,
+module.exports = Object.assign(localExports, {
   get device() {
     return platform.get('device');
   }
-};
+});
