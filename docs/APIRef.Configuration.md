@@ -43,6 +43,7 @@ Detox can either initialize a server using a generated configuration, or can be 
 ```
 
 Session can also be set per configuration:
+
 ```json
   "detox": {
 	...
@@ -58,19 +59,30 @@ Session can also be set per configuration:
   }
 ```	
 
-### Test Root Folder
+### Test Runner Configuration
 
-
-##### Optional: setting a custom test root folder
-Applies when using `detox-cli` by running `detox test` command, default is `e2e`.
-	
+##### Optional: setting a test runner (Mocha as default, Jest is supported)
+##### Mocha
 ```json
 	"detox": {
 	  ...
-	  "specs": "path/to/tests"
+	  "test-runner": "mocha"
+	  "runner-config": "path/to/mocha.opts"
+	  "specs": "path/to/tests/root"
 	}
 ```
+`mocha.opts` refers to `--opts` in https://mochajs.org/#mochaopts
 
+##### Jest
+```json
+	"detox": {
+	  ...
+	  "test-runner": "jest"
+	  "runner-config": "path/to/config.json"
+	}
+```
+`config.json` refers to `--config` in https://facebook.github.io/jest/docs/en/configuration.html
+>NOTE: jest tests will run in band, as Detox does not currently supports parallelization. 
 
 ## detox-cli
 ### Build Configuration

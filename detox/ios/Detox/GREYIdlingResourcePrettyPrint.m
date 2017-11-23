@@ -9,13 +9,39 @@
 #import "GREYIdlingResourcePrettyPrint.h"
 @import ObjectiveC;
 
+@interface __DTXDeallocSafeProxy : NSObject
+
+@property (nonatomic, unsafe_unretained) id object;
+
+@end
+
+@implementation __DTXDeallocSafeProxy
+
+- (void)dealloc
+{
+	self.object = nil;
+}
+
+- (instancetype)initWithObject:(id)object
+{
+	self = [super init];
+	if(self)
+	{
+		object = object;
+		objc_setAssociatedObject(object, "__DTXDeallocSafeProxy", self, OBJC_ASSOCIATION_RETAIN);
+	}
+	return self;
+}
+
+@end
+
 @interface NSMapTable<KeyType, ObjectType> ()
 
 - (NSArray<ObjectType>*)allValues;
 
 @end
 
-static NSMapTable<GREYAppStateTrackerObject*, id>* __tarckedObjectsMapping;
+static NSMapTable<GREYAppStateTrackerObject*, __DTXDeallocSafeProxy*>* __tarckedObjectsMapping;
 
 @interface GREYAppStateTracker (PrettyPrint) @end
 
@@ -25,7 +51,8 @@ static NSMapTable<GREYAppStateTrackerObject*, id>* __tarckedObjectsMapping;
 {
 	GREYAppStateTrackerObject* rv = [self _pp__trackState:state forObject:element];
 	
-	[__tarckedObjectsMapping setObject:element forKey:rv];
+	__DTXDeallocSafeProxy* proxy = [[__DTXDeallocSafeProxy alloc] initWithObject:element];
+	[__tarckedObjectsMapping setObject:proxy forKey:rv];
 	
 	return rv;
 }
@@ -125,17 +152,24 @@ NSDictionary* _prettyPrintAppStateTracker(GREYAppStateTracker* tracker)
 	rv[@"appState"] = stateString;
 	
 	
-	NSArray* allElements = __tarckedObjectsMapping.allValues;
+	NSArray<__DTXDeallocSafeProxy*>* allElements = __tarckedObjectsMapping.allValues;
 	
 	NSMutableArray* elems = [NSMutableArray new];
 	NSMutableArray* URLs = [NSMutableArray new];
 	
-	[allElements enumerateObjectsUsingBlock:^(id  _Nonnull actualElement, NSUInteger idx, BOOL * _Nonnull stop) {
-		[elems addObject:[actualElement description]];
-		
-		if([actualElement isKindOfClass:[NSURLSessionTask class]])
+	[allElements enumerateObjectsUsingBlock:^(__DTXDeallocSafeProxy* _Nonnull actualElement, NSUInteger idx, BOOL * _Nonnull stop) {
+		id actualObject = actualElement.object;
+		if(actualObject == nil)
 		{
-			[URLs addObject:[(NSURLSessionTask*)actualElement originalRequest].URL.absoluteString];
+			NSLog(@"");
+			return;
+		}
+		
+		[elems addObject:[actualObject description]];
+		
+		if([actualObject isKindOfClass:[NSURLSessionTask class]])
+		{
+			[URLs addObject:[(NSURLSessionTask*)actualObject originalRequest].URL.absoluteString];
 		}
 	}];
 	

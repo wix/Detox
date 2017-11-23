@@ -32,25 +32,29 @@ beforeAll(async () => {
 afterAll(async () => {
   await detox.cleanup();
 });
-
-beforeEach(async () => {
-  await device.reloadReactNative();
-});
 ```
 
-### 4. Run jest
+### 4. Configure Detox to run with Jest
 
-Add this part to your `package.json`:
+Add a Jest config file `e2e/config.json`:
+
 ```json
-"jest": {
-  "setupTestFrameworkScriptFile": "./e2e/init.js"
-},
+{
+  "setupTestFrameworkScriptFile" : "./init.js"
+}
+```
+
+
+In `package.json`:
+
+```json
 "scripts": {
     "test:e2e": "detox test -c ios.sim.debug",
     "test:e2e:build": "detox build"
 },
 "detox": {
-  "runner": "jest",
+  "test-runner": "jest",
+  "runner-config": "e2e/config.json"
   ...
 }
 ```
@@ -65,4 +69,4 @@ There are some things you should notice:
 ## How to run unit test and E2E tests in the same project
 
 - If you have a setup file for the unit tests pass `./jest/setup` implementation into your unit setup.
-- Call your E2E tests like mentioned above
+- Call your E2E tests using `detox-cli`: `detox test`

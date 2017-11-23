@@ -6,6 +6,7 @@ describe('argparse', () => {
 
     beforeEach(() => {
       process.env.fooBar = 'a value';
+      process.env.testUndefinedProp = 'undefined';
       argparse = require('./argparse');
     });
 
@@ -15,6 +16,10 @@ describe('argparse', () => {
 
     it(`existing key should return a result`, () => {
       expect(argparse.getArgValue('foo-bar')).toBe('a value');
+    });
+
+    it('should return undefiend if process.env contain something with a string of undefiend' ,() => {
+      expect(argparse.getArgValue('testUndefinedProp')).toBe(undefined);
     });
   });
 

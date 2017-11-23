@@ -56,12 +56,22 @@ matrix:
       - ./scripts/install.android.sh
       script:
       - ./scripts/ci.android.sh
+    # Example Projects
+    - language: objective-c
+      os: osx
+      osx_image: xcode9
+      env:
+        - REACT_NATIVE_VERSION=0.49.3
+      install:
+      - ./scripts/install.ios.sh
+      script:
+      - ./scripts/demo-projects.ios.sh
 
 branches:
   only:
   - master
 before_install:
-  - nvm install stable
+  - nvm install 8
 notifications:
   email: true
   slack:
