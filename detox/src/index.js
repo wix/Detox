@@ -29,7 +29,7 @@ function getDeviceConfig(configurations) {
   return deviceConfig;
 }
 
-async function init(config, params) {
+function validateConfig(config) {
   if (!config) {
     throw new Error(`No configuration was passed to detox, make sure you pass a config when calling 'detox.init(config)'`);
   }
@@ -37,12 +37,19 @@ async function init(config, params) {
   if (!(config.configurations && _.size(config.configurations) >= 1)) {
     throw new Error(`No configured devices`);
   }
+}
 
-  const deviceConfig = getDeviceConfig(config.configurations);
+async function initializeDetox({configurations, session}, params) {
+  const deviceConfig = getDeviceConfig(configurations);
 
-  detox = new Detox({deviceConfig, session: config.session});
+  detox = new Detox({deviceConfig, session});
   platform.set(deviceConfig.type, detox.device);
   await detox.init(params);
+}
+
+async function init(config, params) {
+  validateConfig(config);
+  await initializeDetox(config, params);
 }
 
 async function cleanup() {
