@@ -1,11 +1,15 @@
-#!/usr/bin/env bash
+#!/bin/bash -e
 
-$(dirname "$0")/bootstrap.sh
+source $(dirname "$0")/travis_logger.sh
 
-cd examples/demo-react-native
-detox build -c ios.sim.release
-detox test -c ios.sim.release
+run_f "$(dirname "$0")/bootstrap.sh"
 
-cd examples/demo-react-native-jest
-detox build -c ios.sim.release
-detox test -c ios.sim.release
+pushd examples/demo-react-native
+run_f "detox build -c ios.sim.release"
+run_f "detox test -c ios.sim.release"
+popd
+
+pushd examples/demo-react-native-jest
+run_f "detox build -c ios.sim.release"
+run_f "detox test -c ios.sim.release"
+popd
