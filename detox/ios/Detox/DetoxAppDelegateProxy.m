@@ -10,15 +10,43 @@
 @import ObjectiveC;
 @import UIKit;
 @import UserNotifications;
+@import COSTouchVisualizer;
 
 #import <Detox/Detox-Swift.h>
 
 @class DetoxAppDelegateProxy;
 
 static DetoxAppDelegateProxy* _currentAppDelegateProxy;
+static COSTouchVisualizerWindow* _touchVisualizerWindow;
 
-@interface DetoxAppDelegateProxy () <UIApplicationDelegate>
+@interface UIWindow (DTXEventProxy) @end
+
+@implementation UIWindow (DTXEventProxy)
+
++ (void)load
+{
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		Method m1 = class_getInstanceMethod(self, @selector(sendEvent:));
+		Method m2 = class_getInstanceMethod(self, @selector(__dtx_sendEvent:));
+		method_exchangeImplementations(m1, m2);
+	});
+}
+
+- (void)__dtx_sendEvent:(UIEvent *)event
+{
+	if([self isKindOfClass:[COSTouchVisualizerWindow class]])
+	{
+		return;
+	}
+	
+	[_touchVisualizerWindow sendEvent:event];
+	[self __dtx_sendEvent:event];
+}
+
 @end
+
+@interface DetoxAppDelegateProxy () <UIApplicationDelegate, COSTouchVisualizerWindowDelegate> @end
 
 @implementation DetoxAppDelegateProxy
 
@@ -63,7 +91,7 @@ static void __copyMethods(Class orig, Class target)
 {
 	Method m = class_getInstanceMethod([UIApplication class], @selector(setDelegate:));
 	void (*orig)(id, SEL, id<UIApplicationDelegate>) = (void*)method_getImplementation(m);
-	method_setImplementation(m, imp_implementationWithBlock(^ (id _self, id<UIApplicationDelegate> origDelegate) {
+	method_setImplementation(m, imp_implementationWithBlock(^ (id _self, id<UIApplicationDelegate, COSTouchVisualizerWindowDelegate> origDelegate) {
 		//Only create a dupe class if the provided instance is not already a dupe class.
 		if(origDelegate != nil && [origDelegate respondsToSelector:@selector(__dtx_canaryInTheCoalMine)] == NO)
 		{
@@ -92,6 +120,15 @@ static void __copyMethods(Class orig, Class target)
 - (void)__dtx_applicationDidLaunchNotification:(NSNotification*)notification
 {
 	[self.__dtx_userNotificationDispatcher dispatchOnAppDelegate:self simulateDuringLaunch:YES];
+
+	dispatch_async(dispatch_get_main_queue(), ^{
+		_touchVisualizerWindow = [[COSTouchVisualizerWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+		_touchVisualizerWindow.windowLevel = 100000000000;
+		_touchVisualizerWindow.backgroundColor = [UIColor.greenColor colorWithAlphaComponent:0.0];
+		_touchVisualizerWindow.hidden = NO;
+		_touchVisualizerWindow.touchVisualizerWindowDelegate = self;
+		_touchVisualizerWindow.userInteractionEnabled = NO;
+	});
 }
 
 - (NSURL*)_userNotificationDataURL
@@ -187,6 +224,11 @@ static void __copyMethods(Class orig, Class target)
 	}
 	
 	return rv;
+}
+
+- (BOOL)touchVisualizerWindowShouldAlwaysShowFingertip:(COSTouchVisualizerWindow *)window
+{
+	return YES;
 }
 
 @end

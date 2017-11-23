@@ -6,3 +6,6 @@
 	path = detox/ios/EarlGrey
 	url = https://github.com/google/EarlGrey.git
 	ignore = dirty
+[submodule "detox/ios/COSTouchVisualizer"]
+	path = detox/ios/COSTouchVisualizer
+	url = https://github.com/conopsys/COSTouchVisualizer

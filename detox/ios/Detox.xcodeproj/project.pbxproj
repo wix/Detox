@@ -35,6 +35,7 @@
 		3928EFBE1E475E4C00C19B6E /* user_notification_calendar_trigger.json in Resources */ = {isa = PBXBuildFile; fileRef = 3928EFBA1E475E4C00C19B6E /* user_notification_calendar_trigger.json */; };
 		3928EFBF1E475E4C00C19B6E /* user_notification_push_trigger.json in Resources */ = {isa = PBXBuildFile; fileRef = 3928EFBB1E475E4C00C19B6E /* user_notification_push_trigger.json */; };
 		3928EFC21E47673800C19B6E /* LegacyApiAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3928EFC11E47673800C19B6E /* LegacyApiAppDelegate.swift */; };
+		393E66ED1FC5F3F40092EE89 /* COSTouchVisualizer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 393E66E61FC5F3E90092EE89 /* COSTouchVisualizer.framework */; };
 		3947679C1DBF985400D72256 /* Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 3947679A1DBF985400D72256 /* Detox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		394767AE1DBF987E00D72256 /* DetoxManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767A41DBF987E00D72256 /* DetoxManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		394767AF1DBF987E00D72256 /* DetoxManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767A51DBF987E00D72256 /* DetoxManager.m */; };
@@ -84,6 +85,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 394767961DBF985400D72256;
 			remoteInfo = Detox;
+		};
+		393E66E51FC5F3E90092EE89 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 393E66E11FC5F3E90092EE89 /* COSTouchVisualizer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A71946A71C7EF890003B7C4A;
+			remoteInfo = COSTouchVisualizer;
 		};
 		394767DB1DBF991E00D72256 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -182,6 +190,7 @@
 		3928EFBA1E475E4C00C19B6E /* user_notification_calendar_trigger.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = user_notification_calendar_trigger.json; sourceTree = "<group>"; };
 		3928EFBB1E475E4C00C19B6E /* user_notification_push_trigger.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = user_notification_push_trigger.json; sourceTree = "<group>"; };
 		3928EFC11E47673800C19B6E /* LegacyApiAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LegacyApiAppDelegate.swift; sourceTree = "<group>"; };
+		393E66E11FC5F3E90092EE89 /* COSTouchVisualizer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = COSTouchVisualizer.xcodeproj; path = COSTouchVisualizer/Classes/COSTouchVisualizer.xcodeproj; sourceTree = "<group>"; };
 		394767971DBF985400D72256 /* Detox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Detox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3947679A1DBF985400D72256 /* Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.h; sourceTree = "<group>"; };
 		3947679B1DBF985400D72256 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -239,6 +248,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				393E66ED1FC5F3F40092EE89 /* COSTouchVisualizer.framework in Frameworks */,
 				394767F71DBF994500D72256 /* EarlGrey.framework in Frameworks */,
 				394767F61DBF994200D72256 /* SocketRocket.framework in Frameworks */,
 			);
@@ -282,6 +292,14 @@
 				3928EFBB1E475E4C00C19B6E /* user_notification_push_trigger.json */,
 			);
 			name = UserNotificationTestInputs;
+			sourceTree = "<group>";
+		};
+		393E66E21FC5F3E90092EE89 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				393E66E61FC5F3E90092EE89 /* COSTouchVisualizer.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		3947678D1DBF985400D72256 = {
@@ -371,6 +389,7 @@
 		394767D61DBF990F00D72256 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				393E66E11FC5F3E90092EE89 /* COSTouchVisualizer.xcodeproj */,
 				394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */,
 				394767D71DBF991E00D72256 /* EarlGrey.xcodeproj */,
 			);
@@ -510,6 +529,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = 393E66E21FC5F3E90092EE89 /* Products */;
+					ProjectRef = 393E66E11FC5F3E90092EE89 /* COSTouchVisualizer.xcodeproj */;
+				},
+				{
 					ProductGroup = 394767D81DBF991E00D72256 /* Products */;
 					ProjectRef = 394767D71DBF991E00D72256 /* EarlGrey.xcodeproj */;
 				},
@@ -528,6 +551,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		393E66E61FC5F3E90092EE89 /* COSTouchVisualizer.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = COSTouchVisualizer.framework;
+			remoteRef = 393E66E51FC5F3E90092EE89 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		394767DC1DBF991E00D72256 /* EarlGrey.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
