@@ -93,6 +93,13 @@
 			remoteGlobalIDString = A71946A71C7EF890003B7C4A;
 			remoteInfo = COSTouchVisualizer;
 		};
+		393E67011FC728360092EE89 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 393E66E11FC5F3E90092EE89 /* COSTouchVisualizer.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A71946A61C7EF890003B7C4A;
+			remoteInfo = COSTouchVisualizer;
+		};
 		394767DB1DBF991E00D72256 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 394767D71DBF991E00D72256 /* EarlGrey.xcodeproj */;
@@ -483,6 +490,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				393E67021FC728360092EE89 /* PBXTargetDependency */,
 				394767F51DBF993900D72256 /* PBXTargetDependency */,
 				394767F31DBF993400D72256 /* PBXTargetDependency */,
 			);
@@ -691,6 +699,11 @@
 			isa = PBXTargetDependency;
 			target = 394767961DBF985400D72256 /* Detox */;
 			targetProxy = 3928EFAB1E47404900C19B6E /* PBXContainerItemProxy */;
+		};
+		393E67021FC728360092EE89 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = COSTouchVisualizer;
+			targetProxy = 393E67011FC728360092EE89 /* PBXContainerItemProxy */;
 		};
 		394767F31DBF993400D72256 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
