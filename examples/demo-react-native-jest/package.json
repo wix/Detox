@@ -25,7 +25,7 @@
     "configurations": {
       "ios.sim.release": {
         "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/DemoReactNativeJest.app",
-        "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/DemoReactNativeJest.xcodeproj -scheme DemoReactNativeJest -configuration Release -sdk iphonesimulator -derivedDataPath ios/build",
+        "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/DemoReactNativeJest.xcodeproj -scheme DemoReactNativeJest -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet",
         "type": "ios.simulator",
         "name": "iPhone 7 Plus"
       },
