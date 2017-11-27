@@ -18,8 +18,8 @@ class ADB {
   async parseAdbDevicesConsoleOutput(input) {
     const outputToList = input.trim().split('\n');
     const devicesList = _.takeRight(outputToList, outputToList.length - 1);
-    let devices = [];
-    for (let deviceString of devicesList) {
+    const devices = [];
+    for (const deviceString of devicesList) {
       const deviceParams = deviceString.split('\t');
       const deviceAdbName = deviceParams[0];
       let device;
@@ -29,13 +29,13 @@ class ADB {
         await telnet.connect(port);
         const name = await telnet.avdName();
         device = {type: 'emulator', name: name, adbName: deviceAdbName, port: port};
+        await telnet.quit();
       } else if (this.isGenymotion(deviceAdbName)) {
         device = {type: 'genymotion', name: deviceAdbName, adbName: deviceAdbName};
       } else {
         device = {type: 'device', name: deviceAdbName, adbName: deviceAdbName};
       }
       devices.push(device);
-
     }
     return devices;
   }
@@ -65,13 +65,32 @@ class ADB {
   }
 
   async shell(deviceId, cmd) {
-    await this.adbCmd(deviceId, `shell ${cmd}`)
+    return (await this.adbCmd(deviceId, `shell ${cmd}`)).stdout.trim();
+  }
+
+  async waitForBootComplete(deviceId) {
+    try {
+      const bootComplete = await this.shell(deviceId, `getprop dev.bootcomplete`);
+      if (bootComplete === '1') {
+        return true;
+      } else {
+        await this.sleep(2000);
+        return await this.waitForBootComplete(deviceId);
+      }
+    } catch (ex) {
+      await this.sleep(2000);
+      return await this.waitForBootComplete(deviceId);
+    }
   }
 
   async adbCmd(deviceId, params) {
     const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
     const cmd = `${this.adbBin} ${serial} ${params}`;
     return await exec(cmd, undefined, undefined, 1);
+  }
+
+  async sleep(ms = 0) {
+    return new Promise((resolve, reject) => setTimeout(resolve, ms));
   }
 }
 

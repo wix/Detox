@@ -4,6 +4,9 @@ const exec = require('child-process-promise').exec;
 
 let _operationCounter = 0;
 
+/**
+
+ */
 async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, interval = 1000) {
   _operationCounter++;
 
@@ -17,7 +20,7 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
   log.verbose(`${_operationCounter}: ${cmd}`);
 
   let result;
-  await retry({ retries, interval }, async () => {
+  await retry({retries, interval}, async () => {
     if (statusLogs && statusLogs.trying) {
       log.info(`${_operationCounter}: ${statusLogs.trying}`);
     }

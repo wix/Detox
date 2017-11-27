@@ -3,16 +3,13 @@ const exec = require('../../utils/exec').execWithRetriesAndLogs;
 const spawn = require('child-process-promise').spawn;
 const _ = require('lodash');
 const log = require('npmlog');
+const fs = require('fs');
 const Environment = require('../../utils/environment');
+const Tail = require('tail').Tail;
 
 class Emulator {
-
   constructor() {
     this.emulatorBin = path.join(Environment.getAndroidSDKPath(), 'tools', 'emulator');
-  }
-
-  async boot(emulatorName) {
-    await this.spawnEmulator(`-verbose -gpu host -no-audio @${emulatorName}`);
   }
 
   async listAvds() {
@@ -25,27 +22,43 @@ class Emulator {
     return (await exec(`${this.emulatorBin} ${cmd}`)).stdout;
   }
 
-  async spawnEmulator(cmd) {
-    const promise = spawn(this.emulatorBin, _.split(cmd, ' '));
+  async boot(emulatorName) {
+    const cmd = `-verbose -gpu host -no-audio @${emulatorName}`;
+    log.verbose(this.emulatorBin, cmd);
+    const tempLog = `./${emulatorName}.log`;
+    const stdout = fs.openSync(tempLog, 'a');
+    const stderr = fs.openSync(tempLog, 'a');
+    const tail = new Tail(tempLog);
+    const promise = spawn(this.emulatorBin, _.split(cmd, ' '), {detached: true, stdio: ['ignore', stdout, stderr]});
 
     const childProcess = promise.childProcess;
-    childProcess.stdout.on('data', function(data) {
-      log.verbose('Emulator stdout: ', data.toString());
-      const output = data.toString();
-      if (output.includes('Adb connected, start proxing data')) {
-        promise._cpResolve();
+    childProcess.unref();
+
+    tail.on("line", function(data) {
+      if (data.includes('Adb connected, start proxing data')) {
+        detach();
       }
-      if (output.includes(`There's another emulator instance running with the current AVD`)) {
-        promise._cpResolve();
+      if (data.includes(`There's another emulator instance running with the current AVD`)) {
+        detach();
       }
     });
-    childProcess.stderr.on('data', function(data) {
-      log.verbose('Emulator stderr: ', data.toString());
+
+    tail.on("error", function(error) {
+      detach();
+      log.verbose('Emulator stderr: ', error);
     });
 
     promise.catch(function(err) {
       log.error('Emulator ERROR: ', err);
     });
+
+    function detach() {
+      tail.unwatch();
+      fs.closeSync(stdout);
+      fs.closeSync(stderr);
+      fs.unlink(tempLog);
+      promise._cpResolve();
+    }
 
     return promise;
   }

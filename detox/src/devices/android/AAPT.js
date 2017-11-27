@@ -22,7 +22,7 @@ class AAPT {
   async getPackageName(apkPath) {
     await this._prepare();
     const process = await exec(`${this.aaptBin} dump badging "${apkPath}"`);
-    let packageName = new RegExp(/package: name='([^']+)'/g).exec(process.stdout);
+    const packageName = new RegExp(/package: name='([^']+)'/g).exec(process.stdout);
     return packageName[1];
   }
 }
