@@ -23,6 +23,6 @@
       ]
     }
   },
-  "version": "independent",
+  "version": "5.10.0",
   "npmClient": "npm"
 }
