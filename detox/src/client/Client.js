@@ -31,7 +31,8 @@ class Client {
   }
 
   async cleanup() {
-    console.log(this.isConnected);
+    clearTimeout(this.slowInvocationStatusHandler);
+
     if (this.isConnected) {
       await this.sendAction(new actions.Cleanup(this.successfulTestRun));
       this.isConnected = false;
