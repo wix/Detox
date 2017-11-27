@@ -177,4 +177,4 @@ index 8b12dc2..91fceae 100644
 +    "react": "16.0.0-alpha.6"
    },
    "devDependencies": {
-     "detox": "^5.0.0",
+     "detox": "^6.0.0",
