@@ -58,7 +58,7 @@ class AndroidDriver extends DeviceDriverBase {
     }
 
     this.instrumentationProcess = spawn(`adb`, [`-s`, `${deviceId}`, `shell`, `am`, `instrument`, `-w`, `-r`, `${args.join(' ')}`, `-e`, `debug`,
-                                                `false`, `${bundleId}.test/android.support.test.runner.AndroidJUnitRunner`]);
+      `false`, `${bundleId}.test/android.support.test.runner.AndroidJUnitRunner`]);
     log.verbose(this.instrumentationProcess.spawnargs.join(" "));
     log.verbose('Instrumentation spawned, childProcess.pid: ', this.instrumentationProcess.pid);
     this.instrumentationProcess.stdout.on('data', function(data) {
@@ -93,7 +93,7 @@ class AndroidDriver extends DeviceDriverBase {
 
   terminateInstrumentation() {
     if (this.instrumentationProcess) {
-      this.instrumentationProcess.kill('SIGHUP');
+      this.instrumentationProcess.kill();
       this.instrumentationProcess = null;
     }
   }
