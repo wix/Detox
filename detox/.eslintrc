@@ -1,4 +1,7 @@
 {
+  "extends": [
+    "prettier"
+  ],
   "env": {
     "es6": true,
     "node": true
@@ -16,6 +19,7 @@
     "react",
     "react-native",
     "promise",
+    "prettier",
     "jest"
   ],
   "rules": {
@@ -157,6 +161,10 @@
     "no-process-exit": "error",
     "no-restricted-modules": 0,
     "no-sync": 0,
+    /*
+     *                          prettier
+     */
+    "prettier/prettier": "warn",
     /*
      *                          style
      */
