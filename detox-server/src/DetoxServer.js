@@ -15,7 +15,6 @@ class DetoxServer {
     this._setup();
   }
 
-  
   _setup() {
     this.wss.on('connection', (ws) => {
       let sessionId;
