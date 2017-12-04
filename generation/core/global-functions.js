@@ -1,4 +1,6 @@
 // Globally declared helpers
+// Each function needs to end with }// END function_name so that it can be
+// dynamically included while generating
 
 function sanitize_greyDirection(action) {
   switch (action) {
@@ -14,7 +16,7 @@ function sanitize_greyDirection(action) {
     default:
       throw new Error(`GREYAction.GREYDirection must be a 'left'/'right'/'up'/'down', got ${action}`);
   }
-}
+}// END sanitize_greyDirection
 
 function sanitize_greyContentEdge(action) {
   switch (action) {
@@ -30,7 +32,7 @@ function sanitize_greyContentEdge(action) {
     default:
       throw new Error(`GREYAction.GREYContentEdge must be a 'left'/'right'/'top'/'bottom', got ${action}`);
   }
-}
+}// END sanitize_greyContentEdge
 
 function sanitize_uiAccessibilityTraits(value) {
   let traits = 0;
@@ -57,7 +59,7 @@ function sanitize_uiAccessibilityTraits(value) {
   }
 
   return traits;
-}
+}// END sanitize_uiAccessibilityTraits
 
 
 module.exports = {

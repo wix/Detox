@@ -322,6 +322,18 @@ describe("iOS generation", () => {
     });
   });
 
+  describe("helper functions", () => {
+    it("should include them, if they are used", () => {
+      // GREYDirection is included, so sanitize_greyDirection should be there
+      expect(exampleContent.indexOf("function sanitize_greyDirection")).not.toBe(-1);
+    });
+
+    it("should not include them, if they are unused", () => {
+      // UIAccessibilityTraits is not included, so sanitize_uiAccessibilityTraits should not be there
+      expect(exampleContent.indexOf("function sanitize_uiAccessibilityTraits")).toBe(-1);
+    });
+  });
+
   afterAll(() => {
     // Clean up
     remove.removeSync("./__tests__/generated-ios");
