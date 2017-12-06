@@ -72,6 +72,7 @@
 		39C3C3511DBF9A13008177E1 /* EarlGrey.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 394767DC1DBF991E00D72256 /* EarlGrey.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		39C3C3531DBF9A19008177E1 /* SocketRocket.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 394767E91DBF992400D72256 /* SocketRocket.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */; };
+		39FFD9471FD730A600C97030 /* DetoxCrashHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FFD9451FD730A600C97030 /* DetoxCrashHandler.m */; };
 		468731A51E6C6D0500F151BE /* EarlGrey+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 468731A31E6C6D0500F151BE /* EarlGrey+Detox.h */; };
 		468731A61E6C6D0500F151BE /* EarlGrey+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 468731A41E6C6D0500F151BE /* EarlGrey+Detox.m */; };
 		46A6A63D1EF697BB00E3AA79 /* GREYConfiguration+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 46A6A63B1EF697BB00E3AA79 /* GREYConfiguration+Detox.m */; };
@@ -236,6 +237,7 @@
 		39A34C6F1E30F10D00BEBB59 /* DetoxAppDelegateProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetoxAppDelegateProxy.h; sourceTree = "<group>"; };
 		39A34C701E30F10D00BEBB59 /* DetoxAppDelegateProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetoxAppDelegateProxy.m; sourceTree = "<group>"; };
 		39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetoxUserNotificationDispatcher.swift; sourceTree = "<group>"; };
+		39FFD9451FD730A600C97030 /* DetoxCrashHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetoxCrashHandler.m; sourceTree = "<group>"; };
 		468731A31E6C6D0500F151BE /* EarlGrey+Detox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "EarlGrey+Detox.h"; sourceTree = "<group>"; };
 		468731A41E6C6D0500F151BE /* EarlGrey+Detox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "EarlGrey+Detox.m"; sourceTree = "<group>"; };
 		46A6A6341EF696B600E3AA79 /* GREYConfiguration+Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GREYConfiguration+Detox.h"; sourceTree = "<group>"; };
@@ -339,6 +341,7 @@
 				3947679A1DBF985400D72256 /* Detox.h */,
 				394767A41DBF987E00D72256 /* DetoxManager.h */,
 				394767A51DBF987E00D72256 /* DetoxManager.m */,
+				39FFD9451FD730A600C97030 /* DetoxCrashHandler.m */,
 				39A34C6F1E30F10D00BEBB59 /* DetoxAppDelegateProxy.h */,
 				39A34C701E30F10D00BEBB59 /* DetoxAppDelegateProxy.m */,
 				39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */,
@@ -690,6 +693,7 @@
 				39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */,
 				394767C21DBF98A700D72256 /* GREYMatchers+Detox.m in Sources */,
 				394767AF1DBF987E00D72256 /* DetoxManager.m in Sources */,
+				39FFD9471FD730A600C97030 /* DetoxCrashHandler.m in Sources */,
 				46A6A63D1EF697BB00E3AA79 /* GREYConfiguration+Detox.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -13,7 +13,9 @@
 
 @interface DetoxManager : NSObject<WebSocketDelegate, TestRunnerDelegate>
 
-+ (instancetype)sharedInstance;
-- (void) connectToServer:(NSString*)url withSessionId:(NSString*)sessionId;
++ (instancetype)sharedManager;
+- (void)connectToServer:(NSString*)url withSessionId:(NSString*)sessionId;
+
+- (void)notifyOnCrashWithDetails:(NSDictionary*)details;
 
 @end
