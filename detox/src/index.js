@@ -129,6 +129,8 @@ const a = {
     }
   },
 
+  //TODO trofima: the same should be done for each method of by and device.
+
   element() {
     return exportMap.element[platform.get('name')].apply(null, arguments);
   },
