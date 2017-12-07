@@ -1,5 +1,5 @@
 //
-//  DetoxCrashHandler.m
+//  DetoxCrashHandler.mm
 //  Detox
 //
 //  Created by Leo Natan (Wix) on 12/5/17.
