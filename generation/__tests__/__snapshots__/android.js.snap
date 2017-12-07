@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Android generation methods should generate type checks 1`] = `"times should be a number, but got FOO (string)"`;
+
+exports[`Android generation methods should return adapter calls 1`] = `
+Object {
+  "args": Array [
+    Object {
+      "type": "Integer",
+      "value": 3,
+    },
+  ],
+  "method": "multiClick",
+  "target": Object {
+    "type": "Class",
+    "value": "com.wix.detox.espresso.DetoxAction",
+  },
+}
+`;

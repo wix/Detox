@@ -4,7 +4,7 @@
 	"private": true,
 	"devDependencies": {
 		"mocha": "^3.2.0",
-		"detox": "^5.0.0"
+		"detox": "^6.0.0"
 	},
 	"detox": {
 		"specs": "e2e",

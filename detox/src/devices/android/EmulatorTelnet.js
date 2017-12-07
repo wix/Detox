@@ -4,13 +4,12 @@ const os = require('os');
 const fs = require('fs-extra');
 
 class EmulatorTelnet {
-
   constructor() {
     this.connection = new Telnet();
   }
 
   async connect(port) {
-    let params = {
+    const params = {
       host: 'localhost',
       port: port,
       shellPrompt: /^OK$/m,
@@ -24,7 +23,6 @@ class EmulatorTelnet {
     await this.connection.connect(params);
     const auth = await fs.readFile(path.join(os.homedir(), '.emulator_console_auth_token'), 'utf8');
     await this.exec(`auth ${auth}`);
-
   }
 
   async exec(command) {
@@ -38,11 +36,11 @@ class EmulatorTelnet {
       this.connection.shell((error, stream) => {
         stream.write(`${command}\n`);
         stream.on('data', (data) => {
-            const result = data.toString();
-            if (result.includes('\n')) {
-              resolve(result);
-            }
+          const result = data.toString();
+          if (result.includes('\n')) {
+            resolve(result);
           }
+        }
         );
       });
     });

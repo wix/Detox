@@ -6,8 +6,8 @@
 		"test": ":",
 		"packager": "react-native start",
 		"detox-server": "detox run-server",
-		"e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization 10000",
-		"e2e:android": "detox test --configuration android.emu.release --loglevel verbose",
+		"e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization 10000 --platform ios",
+		"e2e:android": "detox test --configuration android.emu.release --loglevel verbose --platform android",
 		"build:ios": "detox build --configuration ios.sim.release",
 		"build:android": "detox build --configuration android.emu.release"
 	},
@@ -16,7 +16,7 @@
 		"react-native": "^0.49.3"
 	},
 	"devDependencies": {
-		"detox": "^5.0.0",
+		"detox": "^6.0.0",
 		"express": "^4.15.3",
 		"lodash": "^4.14.1",
 		"mocha": "^4.0.0"

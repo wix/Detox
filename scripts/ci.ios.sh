@@ -2,7 +2,7 @@
 
 source $(dirname "$0")/ci.sh
 
-$(dirname "$0")/unit.ios.sh
+run_f "$(dirname "$0")/unit.ios.sh"
 
 pushd detox/test
 run_f "npm run build:ios"

@@ -1,4 +1,4 @@
-### This is not a support group. For usage help, ask a question on Stack Overflow with the `detox` tag. The issues section of the project is meant for opening bug reports and enhancement requests of Detox.
+### For usage help, ask a question on Stack Overflow with the `detox` tag. The issues section of the project is meant for opening bug reports and enhancement requests of Detox. We use it to automatically track the [change log](https://github.com/wix/detox/blob/master/CHANGELOG.md)
 
 ### IMPORTANT: Use search before opening an issue. Duplicate issues will simply be closed.
 
