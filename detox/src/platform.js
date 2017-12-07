@@ -9,9 +9,12 @@ class Platform {
   }
 
   set(type, device) {
+    console.log('set', type.split('.')[0]);
     this.name = type.split('.')[0];
     this.device = device;
   }
 }
 
-module.exports = new Platform();
+const platform = new Platform();
+
+module.exports = platform;

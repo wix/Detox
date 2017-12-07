@@ -23,6 +23,7 @@ const exportMap = {
 
 module.exports = new Proxy(exportMap, {
   get(map, name) {
+    console.log(name);
     return (name === 'device')
       ? platform.get('device')
       : map[name][platform.get('name')];
