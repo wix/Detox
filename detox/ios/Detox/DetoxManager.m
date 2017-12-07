@@ -7,12 +7,17 @@
 //
 
 #import "DetoxManager.h"
+
+#import "WebSocket.h"
+#import "TestRunner.h"
+#import "ReactNativeSupport.h"
+
 #import <Detox/Detox-Swift.h>
 #import "DetoxAppDelegateProxy.h"
 #import "EarlGreyExtensions.h"
 #import "EarlGreyStatistics.h"
 
-@interface DetoxManager()
+@interface DetoxManager() <WebSocketDelegate, TestRunnerDelegate>
 
 @property (nonatomic) BOOL isReady;
 @property (nonatomic, strong) WebSocket *webSocket;
