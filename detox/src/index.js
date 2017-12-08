@@ -1,6 +1,6 @@
 const Detox = require('./Detox');
-// const platform = require('./platform');
-// const exportWrapper = require('./exportWrapper');
+const platform = require('./platform');
+const exportWrapper = require('./exportWrapper');
 const argparse = require('./utils/argparse');
 const configuration = require('./configuration');
 const _ = require('lodash');
@@ -70,97 +70,9 @@ async function afterEach() {
   }
 }
 
-//process.on('uncaughtException', (err) => {
-//  //client.close();
-//
-//  throw err;
-//});
-//
-//process.on('unhandledRejection', (reason, p) => {
-//  throw reason;
-//});
-
-// console.log(exportWrapper);
-
-const platform = require('./platform');
-const iosExports = require('./ios/expect');
-const androidExports = require('./android/expect');
-
-const exportMap = {
-  expect: {
-    ios: iosExports.expect,
-    android: androidExports.expect,
-  },
-  element: {
-    ios: iosExports.element,
-    android: androidExports.element,
-  },
-  waitFor: {
-    ios: iosExports.waitFor,
-    android: androidExports.waitFor,
-  },
-  by: {
-    ios: iosExports.by,
-    android: androidExports.by,
-  }
-};
-
-const a = {
-  async init(config, params) {
-    validateConfig(config);
-    await initializeDetox(config, params);
-  },
-
-  async cleanup() {
-    if (detox) {
-      await detox.cleanup();
-    }
-  },
-
-  async beforeEach() {
-    if (detox) {
-      await detox.beforeEach.apply(detox, arguments);
-    }
-  },
-
-  async afterEach() {
-    if (detox) {
-      await detox.afterEach.apply(detox, arguments);
-    }
-  },
-
-  //TODO trofima: the same should be done for each method of by and device.
-
-  element() {
-    return exportMap.element[platform.get('name')].apply(null, arguments);
-  },
-
-  expect() {
-    return exportMap.expect[platform.get('name')].apply(null, arguments);
-  },
-
-  waitFor() {
-    return exportMap.waitFor[platform.get('name')].apply(null, arguments);
-  },
-};
-
-module.exports = new Proxy(a, {
-  get(map, name) {
-    console.log(name);
-
-    if (name === 'by')
-      return exportMap.by[platform.get('name')];
-    if (name === 'device')
-      return platform.get('device');
-
-    return map[name];
-  }
-});
-
-
-// module.exports = Object.assign({
-//   init,
-//   cleanup,
-//   beforeEach,
-//   afterEach,
-// }, exportWrapper);
+module.exports = Object.assign({
+  init,
+  cleanup,
+  beforeEach,
+  afterEach,
+}, exportWrapper);

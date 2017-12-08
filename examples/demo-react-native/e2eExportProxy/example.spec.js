@@ -1,22 +1,22 @@
-const detox = require('detox');
-const {expect, element} = detox;
+const {device, expect, element, by, waitFor} = require('detox');
 
 describe('Example', () => {
   beforeEach(async () => {
-    await detox.device.reloadReactNative();
+    await device.reloadReactNative();
   });
   
   it('should have welcome screen', async () => {
-    await expect(element(detox.by.id('welcome'))).toBeVisible();
+    await waitFor(element(by.id('welcome'))).toExist().withTimeout(2000);
+    await expect(element(by.id('welcome'))).toBeVisible();
   });
   
   it('should show hello screen after tap', async () => {
-    await element(detox.by.id('hello_button')).tap();
-    await expect(element(detox.by.text('Hello!!!'))).toBeVisible();
+    await element(by.id('hello_button')).tap();
+    await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
   
   it('should show world screen after tap', async () => {
-    await element(detox.by.id('world_button')).tap();
-    await expect(element(detox.by.text('World!!!'))).toBeVisible();
+    await element(by.id('world_button')).tap();
+    await expect(element(by.text('World!!!'))).toBeVisible();
   });
 });
