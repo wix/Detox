@@ -8,6 +8,7 @@
 
 #import "GREYIdlingResourcePrettyPrint.h"
 @import ObjectiveC;
+#include <os/log.h>
 
 @interface __DTXDeallocSafeProxy : NSObject
 
@@ -16,6 +17,16 @@
 @end
 
 @implementation __DTXDeallocSafeProxy
+
+- (NSString *)description
+{
+	return [self.object description];
+}
+
+- (NSString *)debugDescription
+{
+	return [self.object debugDescription];
+}
 
 - (void)dealloc
 {

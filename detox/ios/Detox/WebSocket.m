@@ -1,4 +1,4 @@
-	//
+//
 //  WebSocket.m
 //  Detox
 //
@@ -7,6 +7,8 @@
 //
 
 #import "WebSocket.h"
+
+DTX_CREATE_LOG(WebSocket);
 
 @interface WebSocket()
 
@@ -20,83 +22,83 @@
 
 - (void) connectToServer:(NSString*)url withSessionId:(NSString*)sessionId
 {
-    if (self.websocket)
-    {
-        [self.websocket close];
-        self.websocket = nil;
-    }
-    self.sessionId = sessionId;
-    self.websocket = [[SRWebSocket alloc] initWithURL:[NSURL URLWithString:url]];
-    self.websocket.delegate = self;
-    [self.websocket open];
+	if (self.websocket)
+	{
+		[self.websocket close];
+		self.websocket = nil;
+	}
+	self.sessionId = sessionId;
+	self.websocket = [[SRWebSocket alloc] initWithURL:[NSURL URLWithString:url]];
+	self.websocket.delegate = self;
+	[self.websocket open];
 }
 
 - (void) sendAction:(NSString*)type withParams:(NSDictionary*)params withMessageId:(NSNumber*)messageId
 {
-    NSDictionary *data = @{@"type": type, @"params": params, @"messageId": messageId};
-    NSError *error;
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:data options:kNilOptions error:&error];
-    if (jsonData == nil)
-    {
-        NSLog(@"☣️ DETOX:: Error: sendAction encode - %@", error);
-        return;
-    }
-    NSLog(@"☣️ DETOX:: Detox Action Sent: %@", type);
-    NSString *json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    [self.websocket sendString:json error:NULL];
+	NSDictionary *data = @{@"type": type, @"params": params, @"messageId": messageId};
+	NSError *error;
+	NSData *jsonData = [NSJSONSerialization dataWithJSONObject:data options:kNilOptions error:&error];
+	if (jsonData == nil)
+	{
+		dtx_log_error(@"Error decoding sendAction encode - %@", error);
+		return;
+	}
+	dtx_log_info(@"Action Sent: %@", type);
+	NSString *json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+	[self.websocket sendString:json error:NULL];
 }
 
 - (void) receiveAction:(NSString*)json
 {
-    NSError *error;
-    NSData *jsonData = [json dataUsingEncoding:NSUTF8StringEncoding];
-    NSDictionary *data = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:&error];
-    if (data == nil)
-    {
-        NSLog(@"☣️ DETOX:: Error: receiveAction decode - %@", error);
-        return;
-    }
-    NSString *type = [data objectForKey:@"type"];
-    if (type == nil)
-    {
-        NSLog(@"☣️ DETOX:: Error: receiveAction missing type");
-        return;
-    }
-    NSDictionary *params = [data objectForKey:@"params"];
-    if (params != nil && ![params isKindOfClass:[NSDictionary class]])
-    {
-        NSLog(@"☣️ DETOX:: Error: receiveAction invalid params");
-        return;
-    }
+	NSError *error;
+	NSData *jsonData = [json dataUsingEncoding:NSUTF8StringEncoding];
+	NSDictionary *data = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:&error];
+	if (data == nil)
+	{
+		dtx_log_error(@"Error decoding receiveAction decode - %@", error);
+		return;
+	}
+	NSString *type = [data objectForKey:@"type"];
+	if (type == nil)
+	{
+		dtx_log_error(@"receiveAction missing type");
+		return;
+	}
+	NSDictionary *params = [data objectForKey:@"params"];
+	if (params != nil && ![params isKindOfClass:[NSDictionary class]])
+	{
+		dtx_log_error(@"receiveAction invalid params");
+		return;
+	}
 	NSNumber *messageId = [data objectForKey:@"messageId"];
 	if (messageId != nil && ![messageId isKindOfClass:[NSNumber class]])
 	{
-		NSLog(@"☣️ DETOX:: Error: receiveAction invalid messageId");
+		dtx_log_error(@"receiveAction invalid messageId");
 		return;
 	}
-    NSLog(@"☣️ DETOX:: Detox Action Received: %@", type);
+	dtx_log_info(@"Action Received: %@", type);
 	if (self.delegate) [self.delegate websocketDidReceiveAction:type withParams:params withMessageId:messageId];
 }
 
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket
 {
-    [self sendAction:@"login" withParams:@{@"sessionId": self.sessionId, @"role": @"testee"} withMessageId:@0];
-    if (self.delegate) [self.delegate websocketDidConnect];
+	[self sendAction:@"login" withParams:@{@"sessionId": self.sessionId, @"role": @"testee"} withMessageId:@0];
+	if (self.delegate) [self.delegate websocketDidConnect];
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessageWithString:(NSString *)string
 {
-    [self receiveAction:string];
+	[self receiveAction:string];
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error
 {
-    NSLog(@"☣️ DETOX:: Error: %@", error);
+	dtx_log_error(@"Socket failed with error: %@", error);
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean
 {
-    NSLog(@"☣️ DETOX:: Closed: %@", reason);
+	dtx_log_info(@"Socket closed: %@", reason);
 }
 
 @end
