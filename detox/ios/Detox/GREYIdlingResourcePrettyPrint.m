@@ -27,7 +27,7 @@
 	self = [super init];
 	if(self)
 	{
-		object = object;
+		self.object = object;
 		objc_setAssociatedObject(object, "__DTXDeallocSafeProxy", self, OBJC_ASSOCIATION_RETAIN);
 	}
 	return self;
@@ -161,7 +161,6 @@ NSDictionary* _prettyPrintAppStateTracker(GREYAppStateTracker* tracker)
 		id actualObject = actualElement.object;
 		if(actualObject == nil)
 		{
-			NSLog(@"");
 			return;
 		}
 		
