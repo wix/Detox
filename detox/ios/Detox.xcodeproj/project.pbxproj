@@ -72,6 +72,8 @@
 		39C3C3511DBF9A13008177E1 /* EarlGrey.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 394767DC1DBF991E00D72256 /* EarlGrey.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		39C3C3531DBF9A19008177E1 /* SocketRocket.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 394767E91DBF992400D72256 /* SocketRocket.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */; };
+		39F642281FDD5EB100468FED /* DTXLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 39F642201FDD5EB000468FED /* DTXLogging.h */; };
+		39F642291FDD5EB100468FED /* DTXLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 39F642271FDD5EB000468FED /* DTXLogging.m */; };
 		468731A51E6C6D0500F151BE /* EarlGrey+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 468731A31E6C6D0500F151BE /* EarlGrey+Detox.h */; };
 		468731A61E6C6D0500F151BE /* EarlGrey+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 468731A41E6C6D0500F151BE /* EarlGrey+Detox.m */; };
 		46A6A63D1EF697BB00E3AA79 /* GREYConfiguration+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 46A6A63B1EF697BB00E3AA79 /* GREYConfiguration+Detox.m */; };
@@ -236,6 +238,10 @@
 		39A34C6F1E30F10D00BEBB59 /* DetoxAppDelegateProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetoxAppDelegateProxy.h; sourceTree = "<group>"; };
 		39A34C701E30F10D00BEBB59 /* DetoxAppDelegateProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetoxAppDelegateProxy.m; sourceTree = "<group>"; };
 		39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetoxUserNotificationDispatcher.swift; sourceTree = "<group>"; };
+		39F642201FDD5EB000468FED /* DTXLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTXLogging.h; path = DTXLoggingInfra/DTXLogging.h; sourceTree = SOURCE_ROOT; };
+		39F642271FDD5EB000468FED /* DTXLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DTXLogging.m; path = DTXLoggingInfra/DTXLogging.m; sourceTree = SOURCE_ROOT; };
+		39F6422A1FDD5EEC00468FED /* Detox.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.pch; sourceTree = "<group>"; };
+		39F6422B1FDD5F3300468FED /* DTXLoggingSubsystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXLoggingSubsystem.h; sourceTree = "<group>"; };
 		468731A31E6C6D0500F151BE /* EarlGrey+Detox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "EarlGrey+Detox.h"; sourceTree = "<group>"; };
 		468731A41E6C6D0500F151BE /* EarlGrey+Detox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "EarlGrey+Detox.m"; sourceTree = "<group>"; };
 		46A6A6341EF696B600E3AA79 /* GREYConfiguration+Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GREYConfiguration+Detox.h"; sourceTree = "<group>"; };
@@ -334,6 +340,9 @@
 		394767991DBF985400D72256 /* Detox */ = {
 			isa = PBXGroup;
 			children = (
+				39F642201FDD5EB000468FED /* DTXLogging.h */,
+				39F642271FDD5EB000468FED /* DTXLogging.m */,
+				39F6422B1FDD5F3300468FED /* DTXLoggingSubsystem.h */,
 				390D1C981E3A2893007F5F46 /* Detox.xcconfig */,
 				390D1C661E3A1480007F5F46 /* UserNotificationsPrivate */,
 				3947679A1DBF985400D72256 /* Detox.h */,
@@ -353,6 +362,7 @@
 				394767B81DBF988C00D72256 /* EarlGreyExtensions */,
 				394767C31DBF98B100D72256 /* ReactNativeSupport */,
 				3947679B1DBF985400D72256 /* Info.plist */,
+				39F6422A1FDD5EEC00468FED /* Detox.pch */,
 			);
 			path = Detox;
 			sourceTree = "<group>";
@@ -438,6 +448,7 @@
 				390D1C691E3A14EF007F5F46 /* UNNotificationResponse+PrivateHeaders.h in Headers */,
 				391FA5E91E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.h in Headers */,
 				39A34C711E30F10D00BEBB59 /* DetoxAppDelegateProxy.h in Headers */,
+				39F642281FDD5EB100468FED /* DTXLogging.h in Headers */,
 				397EC9B51E7EDE0B00D5F2BB /* EarlGreyStatistics.h in Headers */,
 				A7F76A151ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.h in Headers */,
 				394767AE1DBF987E00D72256 /* DetoxManager.h in Headers */,
@@ -673,6 +684,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39F642291FDD5EB100468FED /* DTXLogging.m in Sources */,
 				394767B31DBF987E00D72256 /* TestFailureHandler.m in Sources */,
 				394767B71DBF987E00D72256 /* WebSocket.m in Sources */,
 				394767D51DBF98D900D72256 /* WXRunLoopIdlingResource.m in Sources */,
@@ -893,6 +905,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = Detox/Detox.pch;
 				HEADER_SEARCH_PATHS = EarlGrey/fishhook;
 				INFOPLIST_FILE = Detox/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -922,6 +935,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
+				GCC_PREFIX_HEADER = Detox/Detox.pch;
 				HEADER_SEARCH_PATHS = EarlGrey/fishhook;
 				INFOPLIST_FILE = Detox/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
