@@ -15,7 +15,7 @@
   },
   "detox": {
     "test-runner": "mocha",
-    "specs": "e2eExportProxy",
+    "specs": "e2e",
     "runner-config": "e2e/mocha.opts",
     "configurations": {
       "ios.sim.release": {
