@@ -272,16 +272,19 @@ class Element {
   async scroll(amount, direction = 'down') {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
     this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
+    this.atIndex(0);
     return await new ActionInteraction(this, new ScrollAmountAction(direction, amount)).execute();
   }
   async scrollTo(edge) {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
     this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
+    this.atIndex(0);
     return await new ActionInteraction(this, new ScrollEdgeAction(edge)).execute();
   }
   async swipe(direction, speed = 'fast', percentage = 0) {
     // override the user's element selection with an extended matcher that avoids RN issues with RCTScrollView
     this._selectElementWithMatcher(this._originalMatcher._avoidProblematicReactNativeElements());
+    this.atIndex(0);
     return await new ActionInteraction(this, new SwipeAction(direction, speed, percentage)).execute();
   }
 }
