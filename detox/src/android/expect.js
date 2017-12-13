@@ -143,9 +143,6 @@ class Interaction {
 class ActionInteraction extends Interaction {
   constructor(element, action) {
     super();
-    //if (!(element instanceof Element)) throw new Error(`ActionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
-    //if (!(action instanceof Action)) throw new Error(`ActionInteraction ctor 2nd argument must be a valid Action, got ${typeof action}`);
-    //this._call = invoke.call(element._call, 'perform', action._call);
     this._call = invoke.call(invoke.Android.Class(EspressoDetox), 'perform', element._call, action._call);
     // TODO: move this.execute() here from the caller
   }
@@ -154,9 +151,6 @@ class ActionInteraction extends Interaction {
 class MatcherAssertionInteraction extends Interaction {
   constructor(element, matcher) {
     super();
-    //if (!(element instanceof Element)) throw new Error(`MatcherAssertionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
-    //if (!(matcher instanceof Matcher)) throw new Error(`MatcherAssertionInteraction ctor 2nd argument must be a valid Matcher, got ${typeof matcher}`);
-    // this._call = invoke.call(element._call, 'check', invoke.call(invoke.Android.Class(ViewAssertions), 'matches', matcher._call));
     this._call = invoke.call(invoke.Android.Class(DetoxAssertion), 'assertMatcher', element._call, matcher._call);
     // TODO: move this.execute() here from the caller
   }
@@ -165,8 +159,6 @@ class MatcherAssertionInteraction extends Interaction {
 class WaitForInteraction extends Interaction {
   constructor(element, matcher) {
     super();
-    //if (!(element instanceof Element)) throw new Error(`WaitForInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
-    //if (!(matcher instanceof Matcher)) throw new Error(`WaitForInteraction ctor 2nd argument must be a valid Matcher, got ${typeof matcher}`);
     this._element = element;
     this._originalMatcher = matcher;
     // we need to override the original matcher for the element and add matcher to it as well
