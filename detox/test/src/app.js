@@ -78,6 +78,7 @@ class example extends Component {
           {this.renderScreenButton('Network', Screens.NetworkScreen)}
           {this.renderScreenButton('Animations', Screens.AnimationsScreen)}
           {this.renderScreenButton('Location', Screens.LocationScreen)}
+          {this.renderScreenButton('Nested ScrollView', Screens.NestedScrollViewScreen)}
         </View>
       );
     }
