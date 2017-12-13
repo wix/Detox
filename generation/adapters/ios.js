@@ -31,14 +31,17 @@ const typeCheckInterfaces = {
 const supportedContentSanitizersMap = {
   GREYDirection: {
     type: "NSInteger",
+    name: "sanitize_greyDirection",
     value: callGlobal("sanitize_greyDirection")
   },
   GREYContentEdge: {
     type: "NSInteger",
+    name: "sanitize_greyContentEdge",
     value: callGlobal("sanitize_greyContentEdge")
   },
   UIAccessibilityTraits: {
     type: "NSInteger",
+    name: "sanitize_uiAccessibilityTraits",
     value: callGlobal("sanitize_uiAccessibilityTraits")
   }
 };

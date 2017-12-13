@@ -6,7 +6,7 @@ const generate = require("babel-generator").default;
 const fs = require("fs");
 
 const { methodNameToSnakeCase } = require("../helpers");
-
+let globalFunctionUsage = {};
 module.exports = function ({ typeCheckInterfaces, renameTypesMap, supportedTypes, classValue, supportedContentSanitizersMap }) {
   /**
    * the input provided by objective-c-parser looks like this:
@@ -118,6 +118,7 @@ module.exports = function ({ typeCheckInterfaces, renameTypesMap, supportedTypes
 
   function addArgumentContentSanitizerCall(json) {
     if (supportedContentSanitizersMap[json.type]) {
+      globalFunctionUsage[supportedContentSanitizersMap[json.type].name] = true;
       return supportedContentSanitizersMap[json.type].value(json.name);
     }
 
@@ -175,6 +176,7 @@ module.exports = function ({ typeCheckInterfaces, renameTypesMap, supportedTypes
 
   return function (files) {
     Object.entries(files).forEach(([inputFile, outputFile]) => {
+      globalFunctionUsage = {};
       const input = fs.readFileSync(inputFile, "utf8");
       const isObjectiveC = inputFile[inputFile.length - 1] === 'h';
 
@@ -185,8 +187,16 @@ module.exports = function ({ typeCheckInterfaces, renameTypesMap, supportedTypes
       const commentBefore = "/**\n\n\tThis code is generated.\n\tFor more information see generation/README.md.\n*/\n\n";
 
       // Add global helper functions
-      const globalFunctionsSource = fs.readFileSync(__dirname + "/global-functions.js", "utf8");
-      const globalFunctions = globalFunctionsSource.substr(0, globalFunctionsSource.indexOf("module.exports"));
+      const globalFunctionsStr = fs.readFileSync(__dirname + "/global-functions.js", "utf8")
+      const globalFunctionsSource = globalFunctionsStr.substr(0, globalFunctionsStr.indexOf("module.exports"));
+
+      // Only include global functions that are actually used
+      const usedGlobalFunctions = Object.entries(globalFunctionUsage).filter(([key, value]) => value).map(([key]) => key);
+      const globalFunctions = usedGlobalFunctions.map(name => {
+        const start = globalFunctionsSource.indexOf(`function ${name}`);
+        const end = globalFunctionsSource.indexOf(`// END ${name}`);
+        return globalFunctionsSource.substr(start, end - start);
+      }).join('\n');
 
       const code = [commentBefore, globalFunctions, output.code].join('\n');
       fs.writeFileSync(outputFile, code, "utf8");
