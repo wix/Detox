@@ -38,7 +38,7 @@ class TapAction extends Action {
 class TapAtPointAction extends Action {
   constructor(value) {
     super();
-    this._call = invoke.call(invoke.Android.Class(DetoxAction), 'tapAtLocation', invoke.Android.Integer(value.x), invoke.Android.Integer(value.y));
+    this._call = invoke.callDirectly(DetoxActionApi.tapAtLocation(value.x, value.y));
   }
 }
 
