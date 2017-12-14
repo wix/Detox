@@ -119,26 +119,3 @@ packagingOptions {
     exclude 'META-INF/LICENSE'
 }
 ```
-
-
-
-### Problem: `Conflict with dependency 'com.fasterxml.jackson.core:jackson-core'.`
-
-You might encounter version conflicts with dependencies, an error may look like this:
-
-```sh
-Conflict with dependency 'com.fasterxml.jackson.core:jackson-core'. Resolved versions for app (2.8.7) and test app (2.2.3) differ. See http://g.co/androidstudio/app-test-app-conflict for details.
-```
-
-The easiest way to solve these is by replacing the dependency, meaning excluding the dependency versions from detox and re-adding the versions that caused the conflict.
-You need to replace some parts in the `android/app/build.gradle`:
-
-```gradle
-androidTestCompile(project(path: ":detox", configuration: "newOkhttpDebug"), {
-    exclude group: 'com.android.support', module: 'support-annotations'
-    exclude group: 'com.fasterxml.jackson.core', module: 'jackson-core'
-    exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
-})
-androidTestCompile 'com.fasterxml.jackson.core:jackson-core:2.8.7'
-androidTestCompile 'com.fasterxml.jackson.core:jackson-databind:2.8.7'
-```
