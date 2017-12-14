@@ -51,6 +51,7 @@ For this you need to modify your `android/app/build.gradle`:
 ```gradle 
 android {
     defaultConfig {
+        testBuildType System.getProperty('testBuildType', 'debug') //this will later be used to control the test apk build type
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 }
@@ -72,10 +73,18 @@ Add this part to your `package.json`:
             "build": "pushd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && popd",
             "type": "android.emulator",
             "name": "Nexus_5X_API_25"
-        }        
+        },
+        "android.emu.release": {
+           "binaryPath": "android/app/build/outputs/apk/app-debug.apk",
+           "build": "pushd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && popd",
+           "type": "android.emulator",
+           "name": "Nexus_5X_API_25"
+        } 
     }
 }
 ```
+Pay attention to `-DtestBuildType`, set either to `debug` or `release` according to the main apk type.
+
 
 Following device types could be used to control Android devices:
 
