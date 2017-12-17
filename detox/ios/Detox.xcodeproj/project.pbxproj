@@ -202,6 +202,68 @@
 		3928EFBB1E475E4C00C19B6E /* user_notification_push_trigger.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = user_notification_push_trigger.json; sourceTree = "<group>"; };
 		3928EFC11E47673800C19B6E /* LegacyApiAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LegacyApiAppDelegate.swift; sourceTree = "<group>"; };
 		393E66E11FC5F3E90092EE89 /* COSTouchVisualizer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = COSTouchVisualizer.xcodeproj; path = COSTouchVisualizer/Classes/COSTouchVisualizer.xcodeproj; sourceTree = "<group>"; };
+		39408DF51FE6369A00C20BD5 /* configuration.test.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = configuration.test.js; path = ../src/configuration.test.js; sourceTree = "<group>"; };
+		39408DF61FE6369A00C20BD5 /* configurations.mock.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = configurations.mock.js; path = ../src/configurations.mock.js; sourceTree = "<group>"; };
+		39408DF81FE6369A00C20BD5 /* sh.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = sh.js; sourceTree = "<group>"; };
+		39408DF91FE6369A00C20BD5 /* exec.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = exec.js; sourceTree = "<group>"; };
+		39408DFA1FE6369A00C20BD5 /* environment.test.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = environment.test.js; sourceTree = "<group>"; };
+		39408DFB1FE6369A00C20BD5 /* sh.test.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = sh.test.js; sourceTree = "<group>"; };
+		39408DFC1FE6369A00C20BD5 /* exec.test.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = exec.test.js; sourceTree = "<group>"; };
+		39408DFD1FE6369A00C20BD5 /* fsext.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = fsext.js; sourceTree = "<group>"; };
+		39408DFE1FE6369A00C20BD5 /* retry.test.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = retry.test.js; sourceTree = "<group>"; };
+		39408DFF1FE6369A00C20BD5 /* uuid.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = uuid.js; sourceTree = "<group>"; };
+		39408E001FE6369A00C20BD5 /* retry.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = retry.js; sourceTree = "<group>"; };
+		39408E011FE6369A00C20BD5 /* argparse.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = argparse.js; sourceTree = "<group>"; };
+		39408E021FE6369A00C20BD5 /* argparse.test.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = argparse.test.js; sourceTree = "<group>"; };
+		39408E031FE6369A00C20BD5 /* environment.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = environment.js; sourceTree = "<group>"; };
+		39408E051FE6369A00C20BD5 /* Client.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Client.js; sourceTree = "<group>"; };
+		39408E061FE6369A00C20BD5 /* Client.test.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Client.test.js; sourceTree = "<group>"; };
+		39408E081FE6369A00C20BD5 /* actions.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = actions.js; sourceTree = "<group>"; };
+		39408E091FE6369A00C20BD5 /* AsyncWebSocket.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = AsyncWebSocket.js; sourceTree = "<group>"; };
+		39408E0A1FE6369A00C20BD5 /* AsyncWebSocket.test.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = AsyncWebSocket.test.js; sourceTree = "<group>"; };
+		39408E0B1FE6369A00C20BD5 /* configuration.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = configuration.js; path = ../src/configuration.js; sourceTree = "<group>"; };
+		39408E0C1FE6369A00C20BD5 /* index.test.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = index.test.js; path = ../src/index.test.js; sourceTree = "<group>"; };
+		39408E0E1FE6369A00C20BD5 /* ArtifactsPathsProvider.test.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = ArtifactsPathsProvider.test.js; sourceTree = "<group>"; };
+		39408E0F1FE6369A00C20BD5 /* ArtifactsPathsProvider.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = ArtifactsPathsProvider.js; sourceTree = "<group>"; };
+		39408E101FE6369A00C20BD5 /* ArtifactsCopier.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = ArtifactsCopier.js; sourceTree = "<group>"; };
+		39408E111FE6369A00C20BD5 /* index.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = index.js; path = ../src/index.js; sourceTree = "<group>"; };
+		39408E121FE6369A00C20BD5 /* invoke.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = invoke.js; path = ../src/invoke.js; sourceTree = "<group>"; };
+		39408E141FE6369A00C20BD5 /* expect.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = expect.js; sourceTree = "<group>"; };
+		39408E151FE6369A00C20BD5 /* expect.test.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = expect.test.js; sourceTree = "<group>"; };
+		39408E161FE6369A00C20BD5 /* matchers.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = matchers.js; sourceTree = "<group>"; };
+		39408E181FE6369A00C20BD5 /* GREYConfiguration.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = GREYConfiguration.js; sourceTree = "<group>"; };
+		39408E191FE6369A00C20BD5 /* GREYActions.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = GREYActions.js; sourceTree = "<group>"; };
+		39408E1A1FE6369A00C20BD5 /* GREYMatchers+Detox.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "GREYMatchers+Detox.js"; sourceTree = "<group>"; };
+		39408E1B1FE6369A00C20BD5 /* GREYMatchers.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = GREYMatchers.js; sourceTree = "<group>"; };
+		39408E1C1FE6369A00C20BD5 /* Detox.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = Detox.js; path = ../src/Detox.js; sourceTree = "<group>"; };
+		39408E1E1FE6369A00C20BD5 /* CustomError.test.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = CustomError.test.js; sourceTree = "<group>"; };
+		39408E1F1FE6369A00C20BD5 /* CustomError.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = CustomError.js; sourceTree = "<group>"; };
+		39408E211FE6369A00C20BD5 /* expect.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = expect.js; sourceTree = "<group>"; };
+		39408E221FE6369A00C20BD5 /* matcher.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = matcher.js; sourceTree = "<group>"; };
+		39408E231FE6369A00C20BD5 /* expect.test.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = expect.test.js; sourceTree = "<group>"; };
+		39408E251FE6369A00C20BD5 /* DetoxAction.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = DetoxAction.js; sourceTree = "<group>"; };
+		39408E271FE6369A00C20BD5 /* Espresso.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Espresso.js; sourceTree = "<group>"; };
+		39408E281FE6369A00C20BD5 /* EarlGrey.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = EarlGrey.js; sourceTree = "<group>"; };
+		39408E291FE6369A00C20BD5 /* Invoke.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Invoke.js; sourceTree = "<group>"; };
+		39408E2A1FE6369A00C20BD5 /* invoke.test.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = invoke.test.js; path = ../src/invoke.test.js; sourceTree = "<group>"; };
+		39408E2C1FE6369A00C20BD5 /* AppleSimUtils.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = AppleSimUtils.js; sourceTree = "<group>"; };
+		39408E2D1FE6369A00C20BD5 /* Device.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Device.js; sourceTree = "<group>"; };
+		39408E2E1FE6369A00C20BD5 /* Device.test.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Device.test.js; sourceTree = "<group>"; };
+		39408E2F1FE6369A00C20BD5 /* IosDriver.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = IosDriver.js; sourceTree = "<group>"; };
+		39408E301FE6369A00C20BD5 /* EmulatorDriver.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = EmulatorDriver.js; sourceTree = "<group>"; };
+		39408E311FE6369A00C20BD5 /* AppleSimUtils.test.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = AppleSimUtils.test.js; sourceTree = "<group>"; };
+		39408E321FE6369A00C20BD5 /* SimulatorDriver.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = SimulatorDriver.js; sourceTree = "<group>"; };
+		39408E351FE6369A00C20BD5 /* notification.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = notification.json; sourceTree = "<group>"; };
+		39408E371FE6369A00C20BD5 /* AAPT.test.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = AAPT.test.js; sourceTree = "<group>"; };
+		39408E381FE6369A00C20BD5 /* ADB.test.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = ADB.test.js; sourceTree = "<group>"; };
+		39408E391FE6369A00C20BD5 /* AAPT.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = AAPT.js; sourceTree = "<group>"; };
+		39408E3A1FE6369A00C20BD5 /* Emulator.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Emulator.js; sourceTree = "<group>"; };
+		39408E3B1FE6369A00C20BD5 /* ADB.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = ADB.js; sourceTree = "<group>"; };
+		39408E3C1FE6369A00C20BD5 /* EmulatorTelnet.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = EmulatorTelnet.js; sourceTree = "<group>"; };
+		39408E3D1FE6369A00C20BD5 /* AttachedAndroidDriver.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = AttachedAndroidDriver.js; sourceTree = "<group>"; };
+		39408E3E1FE6369A00C20BD5 /* AndroidDriver.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = AndroidDriver.js; sourceTree = "<group>"; };
+		39408E3F1FE6369A00C20BD5 /* DeviceDriverBase.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = DeviceDriverBase.js; sourceTree = "<group>"; };
+		39408E401FE6369B00C20BD5 /* Detox.test.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = Detox.test.js; path = ../src/Detox.test.js; sourceTree = "<group>"; };
 		394767971DBF985400D72256 /* Detox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Detox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3947679A1DBF985400D72256 /* Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.h; sourceTree = "<group>"; };
 		3947679B1DBF985400D72256 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -317,6 +379,195 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		39408DEE1FE6368100C20BD5 /* JS */ = {
+			isa = PBXGroup;
+			children = (
+				39408E201FE6369A00C20BD5 /* android */,
+				39408E0D1FE6369A00C20BD5 /* artifacts */,
+				39408E041FE6369A00C20BD5 /* client */,
+				39408E0B1FE6369A00C20BD5 /* configuration.js */,
+				39408DF51FE6369A00C20BD5 /* configuration.test.js */,
+				39408DF61FE6369A00C20BD5 /* configurations.mock.js */,
+				39408E1C1FE6369A00C20BD5 /* Detox.js */,
+				39408E401FE6369B00C20BD5 /* Detox.test.js */,
+				39408E2B1FE6369A00C20BD5 /* devices */,
+				39408E1D1FE6369A00C20BD5 /* errors */,
+				39408E111FE6369A00C20BD5 /* index.js */,
+				39408E0C1FE6369A00C20BD5 /* index.test.js */,
+				39408E261FE6369A00C20BD5 /* invoke */,
+				39408E121FE6369A00C20BD5 /* invoke.js */,
+				39408E2A1FE6369A00C20BD5 /* invoke.test.js */,
+				39408E131FE6369A00C20BD5 /* ios */,
+				39408DF71FE6369A00C20BD5 /* utils */,
+			);
+			name = JS;
+			sourceTree = "<group>";
+		};
+		39408DF71FE6369A00C20BD5 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				39408DF81FE6369A00C20BD5 /* sh.js */,
+				39408DF91FE6369A00C20BD5 /* exec.js */,
+				39408DFA1FE6369A00C20BD5 /* environment.test.js */,
+				39408DFB1FE6369A00C20BD5 /* sh.test.js */,
+				39408DFC1FE6369A00C20BD5 /* exec.test.js */,
+				39408DFD1FE6369A00C20BD5 /* fsext.js */,
+				39408DFE1FE6369A00C20BD5 /* retry.test.js */,
+				39408DFF1FE6369A00C20BD5 /* uuid.js */,
+				39408E001FE6369A00C20BD5 /* retry.js */,
+				39408E011FE6369A00C20BD5 /* argparse.js */,
+				39408E021FE6369A00C20BD5 /* argparse.test.js */,
+				39408E031FE6369A00C20BD5 /* environment.js */,
+			);
+			name = utils;
+			path = ../src/utils;
+			sourceTree = "<group>";
+		};
+		39408E041FE6369A00C20BD5 /* client */ = {
+			isa = PBXGroup;
+			children = (
+				39408E051FE6369A00C20BD5 /* Client.js */,
+				39408E061FE6369A00C20BD5 /* Client.test.js */,
+				39408E071FE6369A00C20BD5 /* actions */,
+				39408E091FE6369A00C20BD5 /* AsyncWebSocket.js */,
+				39408E0A1FE6369A00C20BD5 /* AsyncWebSocket.test.js */,
+			);
+			name = client;
+			path = ../src/client;
+			sourceTree = "<group>";
+		};
+		39408E071FE6369A00C20BD5 /* actions */ = {
+			isa = PBXGroup;
+			children = (
+				39408E081FE6369A00C20BD5 /* actions.js */,
+			);
+			path = actions;
+			sourceTree = "<group>";
+		};
+		39408E0D1FE6369A00C20BD5 /* artifacts */ = {
+			isa = PBXGroup;
+			children = (
+				39408E0E1FE6369A00C20BD5 /* ArtifactsPathsProvider.test.js */,
+				39408E0F1FE6369A00C20BD5 /* ArtifactsPathsProvider.js */,
+				39408E101FE6369A00C20BD5 /* ArtifactsCopier.js */,
+			);
+			name = artifacts;
+			path = ../src/artifacts;
+			sourceTree = "<group>";
+		};
+		39408E131FE6369A00C20BD5 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				39408E141FE6369A00C20BD5 /* expect.js */,
+				39408E151FE6369A00C20BD5 /* expect.test.js */,
+				39408E161FE6369A00C20BD5 /* matchers.js */,
+				39408E171FE6369A00C20BD5 /* earlgreyapi */,
+			);
+			name = ios;
+			path = ../src/ios;
+			sourceTree = "<group>";
+		};
+		39408E171FE6369A00C20BD5 /* earlgreyapi */ = {
+			isa = PBXGroup;
+			children = (
+				39408E181FE6369A00C20BD5 /* GREYConfiguration.js */,
+				39408E191FE6369A00C20BD5 /* GREYActions.js */,
+				39408E1A1FE6369A00C20BD5 /* GREYMatchers+Detox.js */,
+				39408E1B1FE6369A00C20BD5 /* GREYMatchers.js */,
+			);
+			path = earlgreyapi;
+			sourceTree = "<group>";
+		};
+		39408E1D1FE6369A00C20BD5 /* errors */ = {
+			isa = PBXGroup;
+			children = (
+				39408E1E1FE6369A00C20BD5 /* CustomError.test.js */,
+				39408E1F1FE6369A00C20BD5 /* CustomError.js */,
+			);
+			name = errors;
+			path = ../src/errors;
+			sourceTree = "<group>";
+		};
+		39408E201FE6369A00C20BD5 /* android */ = {
+			isa = PBXGroup;
+			children = (
+				39408E211FE6369A00C20BD5 /* expect.js */,
+				39408E221FE6369A00C20BD5 /* matcher.js */,
+				39408E231FE6369A00C20BD5 /* expect.test.js */,
+				39408E241FE6369A00C20BD5 /* espressoapi */,
+			);
+			name = android;
+			path = ../src/android;
+			sourceTree = "<group>";
+		};
+		39408E241FE6369A00C20BD5 /* espressoapi */ = {
+			isa = PBXGroup;
+			children = (
+				39408E251FE6369A00C20BD5 /* DetoxAction.js */,
+			);
+			path = espressoapi;
+			sourceTree = "<group>";
+		};
+		39408E261FE6369A00C20BD5 /* invoke */ = {
+			isa = PBXGroup;
+			children = (
+				39408E271FE6369A00C20BD5 /* Espresso.js */,
+				39408E281FE6369A00C20BD5 /* EarlGrey.js */,
+				39408E291FE6369A00C20BD5 /* Invoke.js */,
+			);
+			name = invoke;
+			path = ../src/invoke;
+			sourceTree = "<group>";
+		};
+		39408E2B1FE6369A00C20BD5 /* devices */ = {
+			isa = PBXGroup;
+			children = (
+				39408E2C1FE6369A00C20BD5 /* AppleSimUtils.js */,
+				39408E2D1FE6369A00C20BD5 /* Device.js */,
+				39408E2E1FE6369A00C20BD5 /* Device.test.js */,
+				39408E2F1FE6369A00C20BD5 /* IosDriver.js */,
+				39408E301FE6369A00C20BD5 /* EmulatorDriver.js */,
+				39408E311FE6369A00C20BD5 /* AppleSimUtils.test.js */,
+				39408E321FE6369A00C20BD5 /* SimulatorDriver.js */,
+				39408E331FE6369A00C20BD5 /* detox */,
+				39408E361FE6369A00C20BD5 /* android */,
+				39408E3D1FE6369A00C20BD5 /* AttachedAndroidDriver.js */,
+				39408E3E1FE6369A00C20BD5 /* AndroidDriver.js */,
+				39408E3F1FE6369A00C20BD5 /* DeviceDriverBase.js */,
+			);
+			name = devices;
+			path = ../src/devices;
+			sourceTree = "<group>";
+		};
+		39408E331FE6369A00C20BD5 /* detox */ = {
+			isa = PBXGroup;
+			children = (
+				39408E341FE6369A00C20BD5 /* notifications */,
+			);
+			path = detox;
+			sourceTree = "<group>";
+		};
+		39408E341FE6369A00C20BD5 /* notifications */ = {
+			isa = PBXGroup;
+			children = (
+				39408E351FE6369A00C20BD5 /* notification.json */,
+			);
+			path = notifications;
+			sourceTree = "<group>";
+		};
+		39408E361FE6369A00C20BD5 /* android */ = {
+			isa = PBXGroup;
+			children = (
+				39408E371FE6369A00C20BD5 /* AAPT.test.js */,
+				39408E381FE6369A00C20BD5 /* ADB.test.js */,
+				39408E391FE6369A00C20BD5 /* AAPT.js */,
+				39408E3A1FE6369A00C20BD5 /* Emulator.js */,
+				39408E3B1FE6369A00C20BD5 /* ADB.js */,
+				39408E3C1FE6369A00C20BD5 /* EmulatorTelnet.js */,
+			);
+			path = android;
+			sourceTree = "<group>";
+		};
 		3947678D1DBF985400D72256 = {
 			isa = PBXGroup;
 			children = (
@@ -324,6 +575,7 @@
 				3928EFA61E47404900C19B6E /* DetoxUserNotificationTests */,
 				394767D61DBF990F00D72256 /* Frameworks */,
 				394767981DBF985400D72256 /* Products */,
+				39408DEE1FE6368100C20BD5 /* JS */,
 			);
 			sourceTree = "<group>";
 			usesTabs = 1;
