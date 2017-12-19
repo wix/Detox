@@ -59,8 +59,7 @@ class MultiClickAction extends Action {
 class TypeTextAction extends Action {
   constructor(value) {
     super();
-    if (typeof value !== 'string') throw new Error(`TypeTextAction ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.Android.Class(ViewActions), 'typeText', value);
+    this._call = invoke.callDirectly(DetoxActionApi.typeText(value));
   }
 }
 
