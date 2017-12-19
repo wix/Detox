@@ -1,6 +1,7 @@
 const invoke = require('../invoke');
 const matchers = require('./matcher');
 const DetoxActionApi = require('./espressoapi/DetoxAction');
+const ViewActionsApi = require('./espressoapi/ViewActions');
 const Matcher = matchers.Matcher;
 const LabelMatcher = matchers.LabelMatcher;
 const IdMatcher = matchers.IdMatcher;
@@ -30,7 +31,7 @@ class Action {}
 class TapAction extends Action {
   constructor() {
     super();
-    this._call = invoke.call(invoke.Android.Class(ViewActions), 'click');
+    this._call = invoke.callDirectly(ViewActionsApi.click());
   }
 }
 
@@ -44,7 +45,7 @@ class TapAtPointAction extends Action {
 class LongPressAction extends Action {
   constructor() {
     super();
-    this._call = invoke.call(invoke.Android.Class(ViewActions), 'longClick');
+    this._call = invoke.callDirectly(ViewActionsApi.longClick());
   }
 }
 
@@ -74,7 +75,7 @@ class ReplaceTextAction extends Action {
 class ClearTextAction extends Action {
   constructor() {
     super();
-    this._call = invoke.call(invoke.Android.Class(ViewActions), 'clearText');
+    this._call = invoke.callDirectly(DetoxActionApi.clearText());
   }
 }
 
