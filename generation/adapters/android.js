@@ -34,8 +34,8 @@ const contentSanitizersForFunction = {
 
 module.exports = generator({
 	typeCheckInterfaces,
+	contentSanitizersForType: {},
 	contentSanitizersForFunction,
-	supportedContentSanitizersMap: {},
 	supportedTypes: ["Integer", "int", "double", "String"],
 	renameTypesMap: {
 		int: "Integer", // TODO: add test

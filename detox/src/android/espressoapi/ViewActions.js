@@ -206,6 +206,21 @@ class ViewActions {
     };
   }
 
+  static replaceText(stringToBeSet) {
+    if (typeof stringToBeSet !== "string") throw new Error("stringToBeSet should be a string, but got " + (stringToBeSet + (" (" + (typeof stringToBeSet + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "android.support.test.espresso.action.ViewActions"
+      },
+      method: "replaceText",
+      args: [{
+        type: "String",
+        value: stringToBeSet
+      }]
+    };
+  }
+
   static openLinkWithText(linkText) {
     if (typeof linkText !== "string") throw new Error("linkText should be a string, but got " + (linkText + (" (" + (typeof linkText + ")"))));
     return {

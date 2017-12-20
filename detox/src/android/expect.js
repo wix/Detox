@@ -20,7 +20,6 @@ function setInvocationManager(im) {
   invocationManager = im;
 }
 
-const ViewActions = 'android.support.test.espresso.action.ViewActions';
 const ViewAssertions = 'android.support.test.espresso.assertion.ViewAssertions';
 const DetoxMatcher = 'com.wix.detox.espresso.DetoxMatcher';
 const DetoxAssertion = 'com.wix.detox.espresso.DetoxAssertion';
@@ -66,8 +65,7 @@ class TypeTextAction extends Action {
 class ReplaceTextAction extends Action {
   constructor(value) {
     super();
-    if (typeof value !== 'string') throw new Error(`ReplaceTextAction ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.Android.Class(ViewActions), 'replaceText', value);
+    this._call = invoke.callDirectly(ViewActionsApi.replaceText(value));
   }
 }
 
