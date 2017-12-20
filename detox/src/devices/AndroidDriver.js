@@ -1,4 +1,6 @@
 const {spawn} = require('child_process');
+const path = require('path');
+const fs = require('fs');
 const _ = require('lodash');
 const log = require('npmlog');
 const invoke = require('../invoke');
@@ -27,8 +29,20 @@ class AndroidDriver extends DeviceDriverBase {
 
   async installApp(deviceId, binaryPath) {
     await this.adb.install(deviceId, binaryPath);
-    const testApkPath = binaryPath.split('.apk')[0] + '-androidTest.apk';
-    await this.adb.install(deviceId, testApkPath);
+    await this.adb.install(deviceId, this.getTestApkPath(binaryPath));
+  }
+
+  getTestApkPath(originalApkPath) {
+    const originalApkPathObj = path.parse(originalApkPath);
+    let splitPath = originalApkPathObj.dir.split(path.sep);
+    splitPath.splice(splitPath.length-1 , 0, 'androidTest');
+    const testApkPath = path.join(splitPath.join(path.sep), `${originalApkPathObj.name}-androidTest${originalApkPathObj.ext}`);
+
+    if (!fs.existsSync(testApkPath)) {
+      throw new Error(`'${testApkPath}' could not be found, did you run './gradlew assembleAndroidTest' ?`);
+    }
+
+    return testApkPath;
   }
 
   async uninstallApp(deviceId, bundleId) {
