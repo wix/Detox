@@ -35,9 +35,9 @@ In `android/app/build.gradle` add this to `defaultConfig` section:
 Please be aware that the `minSdkVersion` needs to be at least 18.
 
 > ###### Choosing the right build type (in missingDimensionStrategy)
-Detox runs on multiple React Native versions, choose the correct build type to support the version you use.<br>
-**Available versions:**
-
+>Detox runs on multiple React Native versions, choose the correct build type to support the version you use.<br>
+>**Available versions:**
+>
 >* `minReactNative44`: Support for React Native 0.44-0.45
 >* `minReactNative46`: Support for React Native 0.46+
 
