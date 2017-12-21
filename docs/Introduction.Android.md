@@ -39,7 +39,7 @@ Detox runs on multiple React Native versions, choose the correct build type to s
 **Available versions:**
 
 >* `minReactNative44`: Support for React Native 0.44-0.45
-* `minReactNative46`: Support for React Native 0.46+
+>* `minReactNative46`: Support for React Native 0.46+
 
 
 In `android/app/build.gradle` add this in `dependencies` section:
