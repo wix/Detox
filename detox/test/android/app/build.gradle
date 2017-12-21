@@ -26,9 +26,6 @@ android {
         */
     }
 
-    //unremark to generate app-release-androidTest.apk for release tests
-    //testBuildType "release"
-
     signingConfigs {
         release {
             storeFile file("keystore.jks")
@@ -56,12 +53,8 @@ dependencies {
     implementation "com.android.support:appcompat-v7:27.0.2"
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
-    testImplementation 'junit:junit:4.12'
-
-    androidTestImplementation(project(path: ":detox"), {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-
+    androidTestImplementation(project(path: ":detox"))
+    androidTestImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test:rules:1.0.1'
 }
