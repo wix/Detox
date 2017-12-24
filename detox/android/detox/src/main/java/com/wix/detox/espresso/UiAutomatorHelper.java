@@ -1,12 +1,10 @@
 package com.wix.detox.espresso;
 
-import android.app.UiAutomation;
 import android.content.Context;
 import android.os.Handler;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.ViewInteraction;
-import android.support.test.uiautomator.InstrumentationUiAutomatorBridge;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Choreographer;
@@ -25,9 +23,6 @@ import java.util.concurrent.TimeUnit;
 
 public class UiAutomatorHelper {
     private static final String LOG_TAG = "detox";
-
-    private static final String CLASS_INTERACTION_CONTROLLER =
-            "android.support.test.uiautomator.InteractionController";
 
     private static final String FIELD_UI_CONTROLLER = "uiController";
 
@@ -74,31 +69,6 @@ public class UiAutomatorHelper {
                 }
             }
         });
-    }
-
-    private static Object interactionController = null;
-
-    public static Object getInteractionController() {
-        if (interactionController != null) {
-            return interactionController;
-        }
-        UiAutomation uiAutomation;
-        if (android.os.Build.VERSION.SDK_INT >= 24) {
-            uiAutomation = InstrumentationRegistry.getInstrumentation().getUiAutomation(UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES);
-        } else {
-            uiAutomation = InstrumentationRegistry.getInstrumentation().getUiAutomation();
-        }
-        Context ctx = InstrumentationRegistry.getContext();
-        InstrumentationUiAutomatorBridge bridge = new InstrumentationUiAutomatorBridge(ctx, uiAutomation);
-        Class<?> interActionControllerClass;
-        try {
-            interActionControllerClass = Class.forName(CLASS_INTERACTION_CONTROLLER);
-        } catch (ClassNotFoundException e) {
-            Log.e(LOG_TAG, "Can't find InteractionController class. UiAutomator is not on classpath?", e);
-            throw new RuntimeException(e);
-        }
-        interactionController = Reflect.on(interActionControllerClass).create(bridge).get();
-        return interactionController;
     }
 
     public static float getDensity() {

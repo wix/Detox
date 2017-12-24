@@ -3,13 +3,13 @@ apply plugin: "com.android.application"
 apply from: "../../node_modules/react-native/react.gradle"
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.3'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.2'
 
     defaultConfig {
         applicationId "com.wix.detox.test"
         minSdkVersion 18
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         ndk {
@@ -17,6 +17,7 @@ android {
         }
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        missingDimensionStrategy "minReactNative", "minReactNative46"
         /*
         testInstrumentationRunnerArguments = [
                 'detoxServer': 'ws://localhost:8099',
@@ -24,9 +25,6 @@ android {
         ]
         */
     }
-
-    //unremark to generate app-release-androidTest.apk for release tests
-    //testBuildType "release"
 
     signingConfigs {
         release {
@@ -52,15 +50,13 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: "libs", include: ["*.jar"])
-    compile "com.android.support:appcompat-v7:25.3.1"
-    compile "com.facebook.react:react-native:+"  // From node_modules
+    implementation "com.android.support:appcompat-v7:27.0.2"
+    implementation "com.facebook.react:react-native:+"  // From node_modules
 
-    testCompile 'junit:junit:4.12'
-
-    androidTestCompile(project(path: ":detox", configuration: "newOkhttpDebug"), {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+    androidTestImplementation(project(path: ":detox"))
+    androidTestImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test:rules:1.0.1'
 }
 
 // Run this once to be able to run the application with BUCK
