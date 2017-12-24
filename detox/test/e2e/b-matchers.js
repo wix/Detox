@@ -57,7 +57,9 @@ describe('Matchers', () => {
     await expect(element(by.id('UniqueId345').and(by.text('ID')))).toExist();
     await expect(element(by.id('UniqueId345').and(by.text('RandomJunk')))).toNotExist();
     await expect(element(by.id('UniqueId345').and(by.label('RandomJunk')))).toNotExist();
-    await expect(element(by.id('UniqueId345').and(by.traits(['button'])))).toNotExist();
+    if (device.getPlatform() === 'ios') {
+      await expect(element(by.id('UniqueId345').and(by.traits(['button'])))).toNotExist();
+    }
   });
 
   // waiting to upgrade EarlGrey version in order to test this (not supported in our current one)

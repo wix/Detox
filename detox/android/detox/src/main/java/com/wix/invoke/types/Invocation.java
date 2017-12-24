@@ -1,13 +1,15 @@
 package com.wix.invoke.types;
 
-import com.wix.invoke.MethodInvocation;
 import com.wix.invoke.parser.JsonParser;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by rotemm on 10/10/2016.
@@ -34,7 +36,7 @@ public class Invocation {
         try {
             this.setArgs(args);
         } catch (JSONException e) {
-            throw new RuntimeException("Unable to convert args");
+            throw new RuntimeException("Unable to convert args: " + e);
         }
     }
 
@@ -62,8 +64,15 @@ public class Invocation {
         Object[] outputArgs = new Object[args.length()];
         for (int i = 0; i < args.length(); i++) {
             Object argument = null;
-            if (args.get(i).getClass() == "".getClass()) {
+            if (args.get(i).getClass() == String.class) {
                 argument = args.get(i);
+            } else if(args.get(i).getClass() == JSONArray.class) {
+                JSONArray jsonArray = (JSONArray) args.get(i);
+                List<String> list = new ArrayList<>();
+                for (int j = 0; j < jsonArray.length(); j++) {
+                    list.add(jsonArray.getString(j));
+                }
+                argument = list;
             } else {
                 JSONObject jsonArgument = args.optJSONObject(i);
                 if (jsonArgument != null && jsonArgument.optString("type") != null) {
