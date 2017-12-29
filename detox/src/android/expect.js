@@ -22,7 +22,6 @@ function setInvocationManager(im) {
 const ViewActions = 'android.support.test.espresso.action.ViewActions';
 const ViewAssertions = 'android.support.test.espresso.assertion.ViewAssertions';
 const DetoxMatcher = 'com.wix.detox.espresso.DetoxMatcher';
-const DetoxAction = 'com.wix.detox.espresso.DetoxAction';
 const DetoxAssertion = 'com.wix.detox.espresso.DetoxAssertion';
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
 
@@ -82,31 +81,15 @@ class ClearTextAction extends Action {
 class ScrollAmountAction extends Action {
   constructor(direction, amount) {
     super();
-    if (typeof direction !== 'string') throw new Error(`ScrollAmountAction ctor 1st argument must be a string, got ${typeof direction}`);
-    switch (direction) {
-      case 'left': direction = 1; break;
-      case 'right': direction = 2; break;
-      case 'up': direction = 3; break;
-      case 'down': direction = 4; break;
-      default: throw new Error(`ScrollAmountAction direction must be a 'left'/'right'/'up'/'down', got ${direction}`);
-    }
-    if (typeof amount !== 'number') throw new Error(`ScrollAmountAction ctor 2nd argument must be a number, got ${typeof amount}`);
-    this._call = invoke.call(invoke.Android.Class(DetoxAction), 'scrollInDirection', invoke.Android.Integer(direction), invoke.Android.Double(amount));
+    this._call = invoke.callDirectly(DetoxActionApi.scrollInDirection(direction, amount));
   }
 }
 
 class ScrollEdgeAction extends Action {
   constructor(edge) {
     super();
-    if (typeof edge !== 'string') throw new Error(`ScrollEdgeAction ctor 1st argument must be a string, got ${typeof edge}`);
-    switch (edge) {
-      case 'left': edge = 1; break;
-      case 'right': edge = 2; break;
-      case 'top': edge = 3; break;
-      case 'bottom': edge = 4; break;
-      default: throw new Error(`ScrollEdgeAction edge must be a 'left'/'right'/'top'/'bottom', got ${edge}`);
-    }
-    this._call = invoke.call(invoke.Android.Class(DetoxAction), 'scrollToEdge', invoke.Android.Integer(edge));
+
+    this._call = invoke.callDirectly(DetoxActionApi.scrollToEdge(edge));
   }
 }
 
@@ -114,19 +97,10 @@ class SwipeAction extends Action {
   // This implementation ignores the percentage parameter
   constructor(direction, speed, percentage) {
     super();
-    if (typeof direction !== 'string') throw new Error(`SwipeAction ctor 1st argument must be a string, got ${typeof direction}`);
-    if (typeof speed !== 'string') throw new Error(`SwipeAction ctor 2nd argument must be a string, got ${typeof speed}`);
-    switch (direction) {
-      case 'left': direction = 1; break;
-      case 'right': direction = 2; break;
-      case 'up': direction = 3; break;
-      case 'down': direction = 4; break;
-      default: throw new Error(`SwipeAction direction must be a 'left'/'right'/'up'/'down', got ${direction}`);
-    }
     if (speed === 'fast') {
-      this._call = invoke.call(invoke.Android.Class(DetoxAction), 'swipeInDirection', invoke.Android.Integer(direction), invoke.Android.Boolean(true));
+      this._call = invoke.callDirectly(DetoxActionApi.swipeInDirection(direction, true));
     } else if (speed === 'slow') {
-      this._call = invoke.call(invoke.Android.Class(DetoxAction), 'swipeInDirection', invoke.Android.Integer(direction), invoke.Android.Boolean(false));
+      this._call = invoke.callDirectly(DetoxActionApi.swipeInDirection(direction, false));
     } else {
       throw new Error(`SwipeAction speed must be a 'fast'/'slow', got ${speed}`);
     }
