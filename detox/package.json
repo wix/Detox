@@ -24,6 +24,7 @@
     "build": "scripts/build.sh",
     "lint": "eslint src",
     "unit": "jest --coverage --verbose",
+    "pretest": "npm run lint",
     "test": "npm run unit",
     "unit:watch": "jest --watch",
     "prepublish": "npm run build",
