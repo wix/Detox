@@ -18,16 +18,16 @@ describe("ArtifactsPathsProvider", () => {
 
 	it("constructor - should throw on undefined destinationRoot", () => {
 		expect(() => {
-			new ArtifactsPathsProvider();
+			new ArtifactsPathsProvider(); // eslint-disable-line no-new
 		}).toThrowError(/undefined/);
 	});
 
 	it("constructor - should throw if can't create run directory in the destination", () => {
 		fs.mkdirSync = jest.fn(() => {
-			throw "some";
+			throw "some"; // eslint-disable-line no-throw-literal
 		});
 		expect(() => {
-			new ArtifactsPathsProvider("/tmp");
+			new ArtifactsPathsProvider("/tmp"); // eslint-disable-line no-new
 		}).toThrowError(/Could not create artifacts root dir/);
 	});
 
@@ -65,7 +65,7 @@ describe("ArtifactsPathsProvider", () => {
 	it("createPathsForTest() - should catch mkdirSync exception", () => {
 		const artifactsPathsProvider = new ArtifactsPathsProvider("/tmp");
 		fs.mkdirSync = jest.fn(() => {
-			throw "some";
+			throw "some"; // eslint-disable-line no-throw-literal
 		});
 		artifactsPathsProvider.createPathForTest(1);
 		expect(log.warn).toHaveBeenCalledWith(

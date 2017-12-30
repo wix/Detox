@@ -98,14 +98,15 @@ class ClearTextAction extends Action {
 }
 
 class ScrollAmountAction extends Action {
-	constructor(direction, amount) {
+	constructor(directionName, amount) {
 		super();
-		if (typeof direction !== "string") {
+		if (typeof directionName !== "string") {
 			throw new Error(
-				`ScrollAmountAction ctor 1st argument must be a string, got ${typeof direction}`
+				`ScrollAmountAction ctor 1st argument must be a string, got ${typeof directionName}`
 			);
 		}
-		switch (direction) {
+		let direction;
+		switch (directionName) {
 			case "left":
 				direction = 1;
 				break;
@@ -138,14 +139,15 @@ class ScrollAmountAction extends Action {
 }
 
 class ScrollEdgeAction extends Action {
-	constructor(edge) {
+	constructor(edgeName) {
 		super();
-		if (typeof edge !== "string") {
+		if (typeof edgeName !== "string") {
 			throw new Error(
-				`ScrollEdgeAction ctor 1st argument must be a string, got ${typeof edge}`
+				`ScrollEdgeAction ctor 1st argument must be a string, got ${typeof edgeName}`
 			);
 		}
-		switch (edge) {
+		let edge;
+		switch (edgeName) {
 			case "left":
 				edge = 1;
 				break;
@@ -173,11 +175,11 @@ class ScrollEdgeAction extends Action {
 
 class SwipeAction extends Action {
 	// This implementation ignores the percentage parameter
-	constructor(direction, speed, percentage) {
+	constructor(directionName, speed, percentage) {
 		super();
-		if (typeof direction !== "string") {
+		if (typeof directionName !== "string") {
 			throw new Error(
-				`SwipeAction ctor 1st argument must be a string, got ${typeof direction}`
+				`SwipeAction ctor 1st argument must be a string, got ${typeof directionName}`
 			);
 		}
 		if (typeof speed !== "string") {
@@ -185,7 +187,8 @@ class SwipeAction extends Action {
 				`SwipeAction ctor 2nd argument must be a string, got ${typeof speed}`
 			);
 		}
-		switch (direction) {
+		let direction;
+		switch (directionName) {
 			case "left":
 				direction = 1;
 				break;

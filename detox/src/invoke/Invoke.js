@@ -1,7 +1,8 @@
 function call(target, method, ...args) {
 	return function() {
+		let targetResult = target;
 		if (typeof target === "function") {
-			target = {
+			targetResult = {
 				type: "Invocation",
 				value: target()
 			};
@@ -15,7 +16,7 @@ function call(target, method, ...args) {
 			}
 		}
 		return {
-			target: target,
+			target: targetResult,
 			method: method,
 			args: args
 		};

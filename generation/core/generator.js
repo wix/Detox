@@ -206,6 +206,7 @@ module.exports = function({
 			const ast = t.program([createClass(json), createExport(json)]);
 			const output = generate(ast);
 
+			const eslintDisableComment = "/* eslint-disable */";
 			const commentBefore =
 				"/**\n\n\tThis code is generated.\n\tFor more information see generation/README.md.\n*/\n\n";
 
@@ -231,7 +232,12 @@ module.exports = function({
 				})
 				.join("\n");
 
-			const code = [commentBefore, globalFunctions, output.code].join("\n");
+			const code = [
+				eslintDisableComment,
+				commentBefore,
+				globalFunctions,
+				output.code
+			].join("\n");
 			fs.writeFileSync(outputFile, code, "utf8");
 
 			// Output methods that were not created due to missing argument support

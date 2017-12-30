@@ -259,8 +259,9 @@ async function expectToThrow(func) {
 
 class MockExecutor {
 	async execute(invocation) {
+		let invoke = invocation;
 		if (typeof invocation === "function") {
-			invocation = invocation();
+			invoke = invocation();
 		}
 		expect(invocation.target).toBeDefined();
 		expect(invocation.target.type).toBeDefined();

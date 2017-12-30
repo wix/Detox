@@ -61,7 +61,7 @@ class ADB {
 	}
 
 	isGenymotion(string) {
-		return (/^((1?\d?\d|25[0-5]|2[0-4]\d)(\.|:)){4}[0-9]{4}/).test(string);
+		return /^((1?\d?\d|25[0-5]|2[0-4]\d)(\.|:)){4}[0-9]{4}/.test(string);
 	}
 
 	async install(deviceId, apkPath) {

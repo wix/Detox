@@ -163,13 +163,11 @@ class AndroidDriver extends DeviceDriverBase {
 		let adbName;
 		switch (filteredDevices.length) {
 			case 1:
-				const adbDevice = filteredDevices[0];
-				adbName = adbDevice.adbName;
+				adbName = filteredDevices[0].adbName;
 				break;
 			case 0:
 				throw new Error(`Could not find '${name}' on the currently ADB attached devices, 
       try restarting adb 'adb kill-server && adb start-server'`);
-				break;
 			default:
 				throw new Error(
 					`Got more than one device corresponding to the name: ${name}`

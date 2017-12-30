@@ -59,6 +59,7 @@ class DeviceDriverBase {
 		await this.client.sendUserNotification(params);
 	}
 
+	// eslint-disable-next-line no-empty-function
 	createPushNotificationJson(notification) {}
 
 	async setPermissions(deviceId, bundleId, permissions) {
@@ -108,10 +109,13 @@ class DeviceDriverBase {
 		return true;
 	}
 
+	// eslint-disable-next-line no-empty-function
 	getBundleIdFromBinary(appPath) {}
 
+	// eslint-disable-next-line no-empty-function
 	validateDeviceConfig(deviceConfig) {}
 
+	// eslint-disable-next-line no-empty-function
 	getPlatform() {}
 
 	async cleanup(deviceId, bundleId) {

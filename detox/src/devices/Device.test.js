@@ -481,6 +481,7 @@ describe("Device", () => {
 
 	it(`new Device() with invalid device config (no binary) should throw`, async () => {
 		try {
+			// eslint-disable-next-line no-new
 			new Device(
 				invalidDeviceNoBinary.configurations["ios.sim.release"],
 				validScheme.session,
@@ -494,6 +495,7 @@ describe("Device", () => {
 
 	it(`new Device() with invalid device config (no device name) should throw`, async () => {
 		try {
+			// eslint-disable-next-line no-new
 			new Device(
 				invalidDeviceNoDeviceName.configurations["ios.sim.release"],
 				validScheme.session,
@@ -519,7 +521,7 @@ describe("Device", () => {
 		device.setArtifactsDestination("/tmp");
 		await device.relaunchApp();
 		sh.cp = jest.fn(() => {
-			throw "exception sent by mocked cp";
+			throw "exception sent by mocked cp"; // eslint-disable-line no-throw-literal
 		});
 		await device.finalizeArtifacts();
 	});

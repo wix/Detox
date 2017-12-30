@@ -193,7 +193,7 @@ class AppleSimUtils {
 			1
 		);
 		const stdout = _.get(raw, "stdout", "undefined");
-		const match = /^Xcode (\S+)\.*\S*\s*/.exec(stdout);
+		const match = /^Xcode·(\S+)\.*\S*\s*/.exec(stdout);
 		const majorVersion = parseInt(_.get(match, "[1]"));
 		if (!_.isInteger(majorVersion) || majorVersion < 1) {
 			throw new Error(`Can't read Xcode version, got: '${stdout}'`);

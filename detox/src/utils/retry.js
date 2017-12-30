@@ -2,25 +2,28 @@ const DEFAULT_RETRIES = 10;
 const DEFAULT_INTERVAL = 500;
 
 async function retry(options, func) {
+	let fun = func;
+	let opts = options;
+
 	if (typeof options === "function") {
-		func = options;
-		options = {};
+		fun = options;
+		opts = {};
 	}
 
-	let { retries, interval } = options;
+	let { retries, interval } = opts;
 	retries = retries || DEFAULT_RETRIES;
 	interval = interval || DEFAULT_INTERVAL;
 
 	let currentRetry = 0;
 	while (currentRetry++ < retries) {
 		try {
-			return await func(currentRetry);
+			return await fun(currentRetry);
 		} catch (e) {
 			if (currentRetry === retries) {
 				throw e;
 			} else {
 				const sleep = currentRetry * interval;
-				await new Promise(accept => setTimeout(accept, sleep));
+				await new Promise(resolve => setTimeout(resolve, sleep));
 			}
 		}
 	}
