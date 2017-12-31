@@ -1,4 +1,7 @@
-# Running Tests on CI (Travis or Bitrise)
+---
+id: Guide.RunningOnCI
+title: Running On CI
+---
 
 > When your test suite is finally ready, it should be set up to run automatically on your CI server on every git push. This will alert you if new changes to the app break existing functionality.
 

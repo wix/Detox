@@ -1,4 +1,7 @@
-# Jest as Test Runner
+---
+id: Guide.Jest
+title: Jest
+---
 
 ## Usage
 

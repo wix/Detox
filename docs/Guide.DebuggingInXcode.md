@@ -1,4 +1,7 @@
-# Debugging Apps in Xcode During a Test
+---
+id: Guide.DebuggingInXcode
+title: Debugging Apps in Xcode During a Test
+---
 
 > Advanced users might need to natively debug their app inside Xcode during a Detox test. This is mostly useful for invesigating weird crahses or when contributing to Detox itself.
 

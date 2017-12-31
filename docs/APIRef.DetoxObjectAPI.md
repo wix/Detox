@@ -1,4 +1,7 @@
-# The `detox` Object
+---
+id: APIRef.DetoxObjectAPI
+title: The `detox` Object
+---
 
 `detox` is globally available in every test file, though currently it is only used in the setup/init file.
 

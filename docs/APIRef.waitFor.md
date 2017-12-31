@@ -1,4 +1,7 @@
-# Manual Synchronization Using `waitFor`
+---
+id: APIRef.waitFor
+title: Manual Synchronization Using `waitFor`
+---
 
 In most cases, tests should be automatically synchronized with the app. When synchronization doesn't work, you have a fail-safe by using `waitFor`. This API polls using the given expectation continuously until the expectation is met. Use manual synchronization with `waitFor` only as a **last resort**. Polling for expectations isn't exactly a best practice.
 
