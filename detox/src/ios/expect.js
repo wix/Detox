@@ -107,7 +107,7 @@ class ScrollEdgeAction extends Action {
   }
 }
 
-class PushBackButton extends Action {
+class PushBackButtonAction extends Action {
     constructor() {
         super();
         // back button does not exists on iOS
@@ -292,7 +292,7 @@ class Element {
     return await new ActionInteraction(this, new SwipeAction(direction, speed, percentage)).execute();
   }
   async pushBackButton() {
-    return await new ActionInteraction(this, new PushButtonAction()).execute();
+    return await new ActionInteraction(this, new PushBackButtonAction()).execute();
   }
 }
 
