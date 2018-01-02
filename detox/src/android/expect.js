@@ -133,6 +133,13 @@ class SwipeAction extends Action {
   }
 }
 
+class PushBackButtonAction extends Action {
+    constructor() {
+        super();
+        this._call = invoke.call(invoke.Android.Class(ViewActions), 'pressBack');
+    }
+}
+
 class Interaction {
   async execute() {
     //if (!this._call) throw new Error(`Interaction.execute cannot find a valid _call, got ${typeof this._call}`);
@@ -250,6 +257,9 @@ class Element {
     // override the user's element selection with an extended matcher that avoids RN issues with RCTScrollView
     this._selectElementWithMatcher(this._originalMatcher._avoidProblematicReactNativeElements());
     return await new ActionInteraction(this, new SwipeAction(direction, speed, percentage)).execute();
+  }
+  async pushBackButton() {
+     return await new ActionInteraction(this, new PushBackButtonAction()).execute();
   }
 }
 

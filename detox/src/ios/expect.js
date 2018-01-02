@@ -107,6 +107,13 @@ class ScrollEdgeAction extends Action {
   }
 }
 
+class PushBackButton extends Action {
+    constructor() {
+        super();
+        // back button does not exists on iOS
+    }
+}
+
 class SwipeAction extends Action {
   constructor(direction, speed, percentage) {
     super();
@@ -283,6 +290,9 @@ class Element {
     // override the user's element selection with an extended matcher that avoids RN issues with RCTScrollView
     this._selectElementWithMatcher(this._originalMatcher._avoidProblematicReactNativeElements());
     return await new ActionInteraction(this, new SwipeAction(direction, speed, percentage)).execute();
+  }
+  async pushBackButton() {
+    return await new ActionInteraction(this, new PushButtonAction()).execute();
   }
 }
 
