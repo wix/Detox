@@ -184,10 +184,7 @@ class ViewActions {
         value: "android.support.test.espresso.action.ViewActions"
       },
       method: "typeTextIntoFocusedView",
-      args: [{
-        type: "String",
-        value: stringToBeTyped
-      }]
+      args: [stringToBeTyped]
     };
   }
 
@@ -199,10 +196,7 @@ class ViewActions {
         value: "android.support.test.espresso.action.ViewActions"
       },
       method: "typeText",
-      args: [{
-        type: "String",
-        value: stringToBeTyped
-      }]
+      args: [stringToBeTyped]
     };
   }
 
@@ -214,10 +208,7 @@ class ViewActions {
         value: "android.support.test.espresso.action.ViewActions"
       },
       method: "replaceText",
-      args: [{
-        type: "String",
-        value: stringToBeSet
-      }]
+      args: [stringToBeSet]
     };
   }
 
@@ -229,10 +220,7 @@ class ViewActions {
         value: "android.support.test.espresso.action.ViewActions"
       },
       method: "openLinkWithText",
-      args: [{
-        type: "String",
-        value: linkText
-      }]
+      args: [linkText]
     };
   }
 
@@ -244,10 +232,7 @@ class ViewActions {
         value: "android.support.test.espresso.action.ViewActions"
       },
       method: "openLinkWithUri",
-      args: [{
-        type: "String",
-        value: uri
-      }]
+      args: [uri]
     };
   }
 

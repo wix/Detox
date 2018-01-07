@@ -5,32 +5,23 @@ const DetoxMatcher = 'com.wix.detox.espresso.DetoxMatcher';
 
 class Matcher {
   withAncestor(matcher) {
-    if (!(matcher instanceof Matcher)) throw new Error(`Matcher withAncestor argument must be a valid Matcher, got ${typeof matcher}`);
-    const _originalMatcherCall = this._call;
-    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherWithAncestor', _originalMatcherCall, matcher._call);
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherWithAncestor(this, matcher));
     return this;
   }
   withDescendant(matcher) {
-    if (!(matcher instanceof Matcher)) throw new Error(`Matcher withDescendant argument must be a valid Matcher, got ${typeof matcher}`);
-    const _originalMatcherCall = this._call;
-    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherWithDescendant', _originalMatcherCall, matcher._call);
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherWithDescendant(this, matcher));
     return this;
   }
   and(matcher) {
-    if (!(matcher instanceof Matcher)) throw new Error(`Matcher and argument must be a valid Matcher, got ${typeof matcher}`);
-    const _originalMatcherCall = this._call;
-    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForAnd', _originalMatcherCall, matcher._call);
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForAnd(this, matcher));
     return this;
   }
   or(matcher) {
-    if (!(matcher instanceof Matcher)) throw new Error(`Matcher and argument must be a valid Matcher, got ${typeof matcher}`);
-    const _originalMatcherCall = this._call;
-    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForOr', _originalMatcherCall, matcher._call);
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForOr(this, matcher));
     return this;
   }
   not() {
-    const _originalMatcherCall = this._call;
-    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForNot', _originalMatcherCall);
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForNot(this));
     return this;
   }
   
@@ -62,16 +53,14 @@ class LabelMatcher extends Matcher {
 class IdMatcher extends Matcher {
   constructor(value) {
     super();
-    if (typeof value !== 'string') throw new Error(`IdMatcher ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForTestId', value);
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForTestId(value));
   }
 }
 
 class TypeMatcher extends Matcher {
   constructor(value) {
     super();
-    if (typeof value !== 'string') throw new Error(`TypeMatcher ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForClass', value);
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForClass(value));
   }
 }
 
@@ -106,16 +95,14 @@ class NotExistsMatcher extends Matcher {
 class TextMatcher extends Matcher {
   constructor(value) {
     super();
-    if (typeof value !== 'string') throw new Error(`TextMatcher ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForText', value);
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForText(value));
   }
 }
 
 class ValueMatcher extends Matcher {
   constructor(value) {
     super();
-    if (typeof value !== 'string') throw new Error(`ValueMatcher ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForContentDescription', value);
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForContentDescription(value));
   }
 }
 
