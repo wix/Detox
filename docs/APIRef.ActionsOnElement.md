@@ -55,6 +55,7 @@ Use the builtin keyboard to type text into a text field.
 await element(by.id('textField')).typeText('passcode');
 ```
 
+Note: *when hardware keyboard is attached, software keyboard will not toggle, causing detox to fail when trying to type text*. This is relevant from *XCode 9*, which runs headless simulators by default and you are able to open it at will. When the simulator window is open, you can either toggle software keyboard or attach hardware keyboard at will.
 ### `replaceText(text)`
 Paste text into a text field.
 
