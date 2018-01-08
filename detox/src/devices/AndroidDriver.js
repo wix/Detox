@@ -135,14 +135,14 @@ class AndroidDriver extends DeviceDriverBase {
         adbName = adbDevice.adbName;
         break;
       case 0:
-        log.verbose(`Could not find ${filter.name} on the currently ADB attached devices`);
-        log.verbose(`Current ADB attached devices : ${JSON.stringify(adbDevices)}`);
+        log.error(`Could not find ${filter.name} on the currently ADB attached devices`);
+        log.error(`Current ADB attached devices : ${JSON.stringify(adbDevices)}`);
         throw new Error(`Could not find '${filter.name}' on the currently ADB attached devices, 
       try restarting adb 'adb kill-server && adb start-server'`);
         break;
       default:
-        log.verbose(`Got more than one device corresponding to the name: ${filter.name}`);
-        log.verbose(`Current ADB attached devices : ${JSON.stringify(adbDevices)}`);
+        log.error(`Got more than one device corresponding to the name: ${filter.name}`);
+        log.error(`Current ADB attached devices : ${JSON.stringify(adbDevices)}`);
         throw new Error(`Got more than one device corresponding to the name: ${filter.name}`);
     }
 
