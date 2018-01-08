@@ -1,29 +1,29 @@
 //Disabled until we can create a build environment for Android in CI
-xdescribe('AAPT', () => {
-  let AAPT;
-  let aapt;
-  let exec;
+xdescribe("AAPT", () => {
+	let AAPT;
+	let aapt;
+	let exec;
 
-  beforeEach(() => {
-    jest.mock('npmlog');
-    jest.mock('child-process-promise');
-    exec = require('child-process-promise').exec;
+	beforeEach(() => {
+		jest.mock("npmlog");
+		jest.mock("child-process-promise");
+		exec = require("child-process-promise").exec;
 
-    AAPT = require('./AAPT');
-    aapt = new AAPT();
-  });
+		AAPT = require("./AAPT");
+		aapt = new AAPT();
+	});
 
-  it(`Parse 'aapt dump badging' output`, async () => {
-    exec.mockReturnValueOnce(Promise.resolve({stdout: AAPTOutputMock}));
-    const pacakageName = await aapt.getPackageName('path/to/file.apk');
-    expect(pacakageName).toEqual('com.wix.detox.test');
-  });
+	it(`Parse 'aapt dump badging' output`, async () => {
+		exec.mockReturnValueOnce(Promise.resolve({ stdout: AAPTOutputMock }));
+		const pacakageName = await aapt.getPackageName("path/to/file.apk");
+		expect(pacakageName).toEqual("com.wix.detox.test");
+	});
 
-  it(`Configure aaptBin only once`, async () => {
-    exec.mockReturnValue(Promise.resolve({stdout: AAPTOutputMock}));
-    await aapt.getPackageName('path/to/file.apk');
-    await aapt.getPackageName('path/to/file.apk');
-  });
+	it(`Configure aaptBin only once`, async () => {
+		exec.mockReturnValue(Promise.resolve({ stdout: AAPTOutputMock }));
+		await aapt.getPackageName("path/to/file.apk");
+		await aapt.getPackageName("path/to/file.apk");
+	});
 });
 
 const AAPTOutputMock = `package: name='com.wix.detox.test' versionCode='1' versionName='1.0' platformBuildVersionName='7.1.1'
