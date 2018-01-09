@@ -86,12 +86,6 @@ export default class ActionsScreen extends Component {
           }>
           </ScrollView>
         </View>
-
-        {this.state.backPressed ?
-          <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}}>Back Pressed</Text>
-          : null
-        }
-        
       </View>
     );
   }
