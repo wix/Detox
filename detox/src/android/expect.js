@@ -1,6 +1,7 @@
 const invoke = require('../invoke');
 const matchers = require('./matcher');
 const DetoxActionApi = require('./espressoapi/DetoxAction');
+const ViewActionsApi = require('./espressoapi/ViewActions');
 const Matcher = matchers.Matcher;
 const LabelMatcher = matchers.LabelMatcher;
 const IdMatcher = matchers.IdMatcher;
@@ -19,7 +20,6 @@ function setInvocationManager(im) {
   invocationManager = im;
 }
 
-const ViewActions = 'android.support.test.espresso.action.ViewActions';
 const ViewAssertions = 'android.support.test.espresso.assertion.ViewAssertions';
 const DetoxMatcher = 'com.wix.detox.espresso.DetoxMatcher';
 const DetoxAssertion = 'com.wix.detox.espresso.DetoxAssertion';
@@ -30,7 +30,7 @@ class Action {}
 class TapAction extends Action {
   constructor() {
     super();
-    this._call = invoke.call(invoke.Android.Class(ViewActions), 'click');
+    this._call = invoke.callDirectly(ViewActionsApi.click());
   }
 }
 
@@ -44,7 +44,7 @@ class TapAtPointAction extends Action {
 class LongPressAction extends Action {
   constructor() {
     super();
-    this._call = invoke.call(invoke.Android.Class(ViewActions), 'longClick');
+    this._call = invoke.callDirectly(ViewActionsApi.longClick());
   }
 }
 
@@ -58,23 +58,21 @@ class MultiClickAction extends Action {
 class TypeTextAction extends Action {
   constructor(value) {
     super();
-    if (typeof value !== 'string') throw new Error(`TypeTextAction ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.Android.Class(ViewActions), 'typeText', value);
+    this._call = invoke.callDirectly(ViewActionsApi.typeText(value));
   }
 }
 
 class ReplaceTextAction extends Action {
   constructor(value) {
     super();
-    if (typeof value !== 'string') throw new Error(`ReplaceTextAction ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.Android.Class(ViewActions), 'replaceText', value);
+    this._call = invoke.callDirectly(ViewActionsApi.replaceText(value));
   }
 }
 
 class ClearTextAction extends Action {
   constructor() {
     super();
-    this._call = invoke.call(invoke.Android.Class(ViewActions), 'clearText');
+    this._call = invoke.callDirectly(ViewActionsApi.clearText());
   }
 }
 

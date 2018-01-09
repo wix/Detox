@@ -10,9 +10,24 @@ const iosFiles = {
 };
 
 generateIOSAdapters(iosFiles);
+const externalFilesToDownload = {
+	"android.support.test.espresso.action.ViewActions":
+		"../detox/src/android/espressoapi/ViewActions.js"
+};
 
 const generateAndroidAdapters = require("./adapters/android");
+const downloadEspressoFileByClass = require("./utils/downloadEspresso");
+const downloadedAndroidFilesMap = Object.entries(
+	externalFilesToDownload
+).reduce(
+	(obj, [fullyQualifiedClass, dest]) => ({
+		...obj,
+		[downloadEspressoFileByClass(fullyQualifiedClass)]: dest
+	}),
+	{}
+);
 const androidFiles = {
+	...downloadedAndroidFilesMap,
 	"../detox/android/detox/src/main/java/com/wix/detox/espresso/DetoxAction.java":
 		"../detox/src/android/espressoapi/DetoxAction.js",
 	"../detox/android/detox/src/main/java/com/wix/detox/espresso/DetoxMatcher.java":
