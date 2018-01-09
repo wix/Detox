@@ -50,5 +50,19 @@ describe("Android generation", () => {
 
 			expect(result).toMatchSnapshot();
 		});
+
+		it("should add a sanitizer for the function with the correct name", () => {
+			const fn = ExampleClass.scrollInDirection;
+
+			expect(() => {
+				fn(3, 42);
+			}).toThrowError();
+
+			expect(() => {
+				fn("down", 42);
+			}).not.toThrowError();
+
+			expect(fn("down", 42)).toMatchSnapshot();
+		});
 	});
 });
