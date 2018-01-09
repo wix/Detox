@@ -28,12 +28,13 @@ matrix:
         - REACT_NATIVE_VERSION=0.49.3
       android:
         components:
-          - build-tools-25.0.3
-          - android-25
+          - build-tools-27.0.2
+          - build-tools-26.0.2
+          - android-27
           - extra-android-m2repository
           - extra-google-google_play_services
           - extra-google-m2repository
-          - sys-img-armeabi-v7a-android-26
+          - sys-img-armeabi-v7a-android-27
       install:
       - ./scripts/install.android.sh
       script:

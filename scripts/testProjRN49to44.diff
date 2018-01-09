@@ -1,16 +1,16 @@
 diff --git a/detox/test/android/app/build.gradle b/detox/test/android/app/build.gradle
-index 5d80387..dceb441 100644
+index 30858e5..1a62967 100644
 --- a/detox/test/android/app/build.gradle
 +++ b/detox/test/android/app/build.gradle
-@@ -58,7 +58,7 @@ dependencies {
- 
-     testCompile 'junit:junit:4.12'
- 
--    androidTestCompile(project(path: ":detox", configuration: "newOkhttpDebug"), {
-+    androidTestCompile(project(path: ":detox", configuration: "oldOkhttpDebug"), {
-         exclude group: 'com.android.support', module: 'support-annotations'
-     })
- }
+@@ -17,7 +17,7 @@ android {
+         }
+         testBuildType System.getProperty('testBuildType', 'debug')
+         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+-        missingDimensionStrategy "minReactNative", "minReactNative46"
++        missingDimensionStrategy "minReactNative", "minReactNative44"
+         /*
+         testInstrumentationRunnerArguments = [
+                 'detoxServer': 'ws://localhost:8099',
 diff --git a/detox/test/android/app/src/main/java/com/example/NativeModulePackage.java b/detox/test/android/app/src/main/java/com/example/NativeModulePackage.java
 index 83bc447..410b8fc 100644
 --- a/detox/test/android/app/src/main/java/com/example/NativeModulePackage.java

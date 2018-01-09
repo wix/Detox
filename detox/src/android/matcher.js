@@ -1,4 +1,5 @@
 const invoke = require('../invoke');
+const DetoxMatcherApi = require('./espressoapi/DetoxMatcher');
 
 const DetoxMatcher = 'com.wix.detox.espresso.DetoxMatcher';
 
@@ -77,28 +78,28 @@ class TypeMatcher extends Matcher {
 class VisibleMatcher extends Matcher {
   constructor() {
     super();
-    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForSufficientlyVisible');
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForSufficientlyVisible());
   }
 }
 
 class NotVisibleMatcher extends Matcher {
   constructor() {
     super();
-    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForNotVisible');
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForNotVisible());
   }
 }
 
 class ExistsMatcher extends Matcher {
   constructor() {
     super();
-    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForNotNull');
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForNotNull());
   }
 }
 
 class NotExistsMatcher extends Matcher {
   constructor() {
     super();
-    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForNull');
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForNull());
   }
 }
 
@@ -124,8 +125,8 @@ class TraitsMatcher extends Matcher {
   constructor(value) {
     super();
     if ((typeof value !== 'object') || (!value instanceof Array)) throw new Error(`TraitsMatcher ctor argument must be an array, got ${typeof value}`);
-    
-    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForAnything');
+
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForAnything());
   }
 }
 

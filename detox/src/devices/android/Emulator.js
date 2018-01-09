@@ -56,7 +56,7 @@ class Emulator {
       tail.unwatch();
       fs.closeSync(stdout);
       fs.closeSync(stderr);
-      fs.unlink(tempLog);
+      fs.unlink(tempLog, () => {});
       promise._cpResolve();
     }
 

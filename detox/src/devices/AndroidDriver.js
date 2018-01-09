@@ -1,4 +1,6 @@
 const {spawn} = require('child_process');
+const path = require('path');
+const fs = require('fs');
 const _ = require('lodash');
 const log = require('npmlog');
 const invoke = require('../invoke');
@@ -27,8 +29,20 @@ class AndroidDriver extends DeviceDriverBase {
 
   async installApp(deviceId, binaryPath) {
     await this.adb.install(deviceId, binaryPath);
-    const testApkPath = binaryPath.split('.apk')[0] + '-androidTest.apk';
-    await this.adb.install(deviceId, testApkPath);
+    await this.adb.install(deviceId, this.getTestApkPath(binaryPath));
+  }
+
+  getTestApkPath(originalApkPath) {
+    const originalApkPathObj = path.parse(originalApkPath);
+    let splitPath = originalApkPathObj.dir.split(path.sep);
+    splitPath.splice(splitPath.length-1 , 0, 'androidTest');
+    const testApkPath = path.join(splitPath.join(path.sep), `${originalApkPathObj.name}-androidTest${originalApkPathObj.ext}`);
+
+    if (!fs.existsSync(testApkPath)) {
+      throw new Error(`'${testApkPath}' could not be found, did you run './gradlew assembleAndroidTest' ?`);
+    }
+
+    return testApkPath;
   }
 
   async uninstallApp(deviceId, bundleId) {
@@ -121,11 +135,11 @@ class AndroidDriver extends DeviceDriverBase {
         adbName = adbDevice.adbName;
         break;
       case 0:
-        throw new Error(`Could not find '${name}' on the currently ADB attached devices, 
+        throw new Error(`Could not find '${filter.name}' on the currently ADB attached devices: '${JSON.stringify(adbDevices)}', 
       try restarting adb 'adb kill-server && adb start-server'`);
         break;
       default:
-        throw new Error(`Got more than one device corresponding to the name: ${name}`);
+        throw new Error(`Got more than one device corresponding to the name: ${filter.name}. Current ADB attached devices: ${JSON.stringify(adbDevices)}`);
     }
 
     return adbName;

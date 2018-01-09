@@ -9,12 +9,12 @@ import {
 const NativeModule = NativeModules.NativeModule;
 
 const BRIDGE_ONEWAY_CALLS = 400;
-const BRIDGE_ONEWAY_STR_CHUNK_LEN = 10000;
+const BRIDGE_ONEWAY_STR_CHUNK_LEN = 1000;
 const BRIDGE_TWOWAY_CALLS = 400;
-const BRIDGE_TWOWAY_STR_CHUNK_LEN = 10000;
-const BRIDGE_SETSTATE_STR_CHUNK_LEN = 10000;
+const BRIDGE_TWOWAY_STR_CHUNK_LEN = 1000;
+const BRIDGE_SETSTATE_STR_CHUNK_LEN = 1000;
 const EVENT_LOOP_COUNT = 5000;
-const EVENT_LOOP_STR_CHUNK_LEN = 10000;
+const EVENT_LOOP_STR_CHUNK_LEN = 1000;
 
 function getStringByLength(chunks) {
   const buffers = [

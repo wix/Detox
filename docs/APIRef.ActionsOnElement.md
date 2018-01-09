@@ -55,6 +55,10 @@ Use the builtin keyboard to type text into a text field.
 await element(by.id('textField')).typeText('passcode');
 ```
 
+> **Note:** Make sure hardware keyboard is disconnected. Otherwise, Detox may fail when attempting to type text.
+> 
+> To make sure hardware keybaord is disconnected, open the simulator from Xcode and make sure **Hardware** -> **Keyboard** -> **Connect Hardware Keyboard** is deselected (or press ⇧⌘K).
+
 ### `replaceText(text)`
 Paste text into a text field.
 

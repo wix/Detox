@@ -61,7 +61,7 @@ describe('Actions', () => {
 
   it('should scroll for a large amount in direction', async () => {
     await expect(element(by.text('Text6'))).toBeNotVisible();
-    await element(by.id('ScrollView161')).scroll(200, 'down');
+    await element(by.id('ScrollView161')).scroll(220, 'down');
     await expect(element(by.text('Text6'))).toBeVisible();
   });
 
