@@ -20,6 +20,7 @@
 - [`device.disableSynchronization()`](#devicedisablesynchronization)
 - [`device.resetContentAndSettings()`](#resetcontentandsettings)
 - [`device.getPlatform()`](#devicegetplatform)
+- [`device.pushBackButton()`](#devicepushbackbutton)
 
 ### `device.launchApp(params)`
 Launch the app defined in the current [`configuration`](APIRef.Configuration.md).
@@ -213,4 +214,11 @@ Returns the current device, `ios` or `android`.
 if (device.getPlatform() === 'ios') {
   await expect(loopSwitch).toHaveValue('1');
 }
+```
+
+### `device.pushBackButton()`
+Simulate press back button (Android only).
+
+```js
+await device.pushBackButton();
 ```
