@@ -71,4 +71,18 @@ describe('Device', () => {
       await expect(element(by.id('currentOrientation'))).toHaveText('Portrait');
     });
   });
+
+  describe('device button', () => {
+    beforeEach(async() => {
+      await device.reloadReactNative();
+      await element(by.text('Actions')).tap();
+    });
+
+    it(':android: should show popup back pressed when back button is pressed', async () => {
+      await device.pushBackButton();
+      await expect(element(by.text('Back pressed !'))).toBeVisible();
+    });
+  });
+
+
 });

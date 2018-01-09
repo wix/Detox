@@ -173,6 +173,10 @@ class Device {
     await this.deviceDriver.cleanup(this._deviceId, this._bundleId);
   }
 
+  async pushBackButton() {
+    await this.deviceDriver.pushBackButton(this._deviceId);
+  }
+
   _defaultLaunchArgs() {
     return {
       'detoxServer': this._sessionConfig.server,

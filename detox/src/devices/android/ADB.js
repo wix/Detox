@@ -92,6 +92,10 @@ class ADB {
   async sleep(ms = 0) {
     return new Promise((resolve, reject) => setTimeout(resolve, ms));
   }
+
+  async pushBackButton(deviceId) {
+    await this.shell(deviceId, `input keyevent 4`);
+  }
 }
 
 module.exports = ADB;
