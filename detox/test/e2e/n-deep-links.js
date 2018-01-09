@@ -1,4 +1,7 @@
 describe('Deep Links', () => {
+  after(async () => {
+    await device.launchApp({newInstance: true});
+  });
 
   it('device.launchApp({{newInstance: true, url: url}) should launch app and trigger handling of deep links in app', async () => {
     const url = 'detoxtesturlscheme://such-string';
