@@ -1,7 +1,33 @@
 {
-  "scripts": {
-    "test:e2e:ios": "pushd detox/test && npm run e2e:ios && popd",
-    "test:e2e:android": "pushd detox/test && npm run e2e:android && popd",
-    "release": "node scripts/release.js"
-  }
+    "name": "detox",
+    "description": "E2E tests and automation for mobile",
+    "version" : "6.0.4",
+    "main": "./detox/src/index.js",
+    "homepage": "https://github.com/wix/detox",
+    "bin": {
+        "detox": "./detox/local-cli/detox.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/wix/detox.git"
+    },
+    "scripts": {
+        "test:e2e:ios": "pushd detox/test && npm run e2e:ios && popd",
+        "test:e2e:android": "pushd detox/test && npm run e2e:android && popd",
+        "release": "node scripts/release.js"
+    },
+    "dependencies": {
+        "child-process-promise": "^2.2.0",
+        "commander": "^2.9.0",
+        "detox-server": "^6.0.2",
+        "fs-extra": "^4.0.2",
+        "get-port": "^2.1.0",
+        "ini": "^1.3.4",
+        "lodash": "^4.14.1",
+        "npmlog": "^4.0.2",
+        "shell-utils": "^1.0.9",
+        "tail": "^1.2.3",
+        "telnet-client": "0.15.3",
+        "ws": "^1.1.1"
+    }
 }
