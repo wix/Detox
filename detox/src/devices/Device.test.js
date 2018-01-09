@@ -537,4 +537,11 @@ describe('Device', () => {
     const actualPath = await launchAndTestBinaryPath('relativePath');
     expect(actualPath).toEqual(`${process.cwd()}/abcdef/123`);
   });
+
+  it(`pushBackButton() should be called`, async () => {
+    device = validSimulator();
+    device.pushBackButton();
+
+    expect(device.deviceDriver.pushBackButton).toHaveBeenCalledTimes(1);
+  });
 });
