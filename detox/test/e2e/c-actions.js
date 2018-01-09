@@ -86,4 +86,9 @@ describe('Actions', () => {
     await expect(element(by.id('WhyDoAllTheTestIDsHaveTheseStrangeNames'))).toBeVisible();
   });
 
+  it(':android: should show backPressed text when back button is pressed', async () => {
+    await element(by.id('WhyDoAllTheTestIDsHaveTheseStrangeNames')).pushBackButton();
+    await expect(element(by.text('Back pressed !'))).toBeVisible();
+  });
+
 });
