@@ -22,11 +22,13 @@ program
   .option('-p, --platform [ios/android]',
     'Run platform specific tests. Runs tests with invert grep on \':platform:\', '
     + 'e.g test with substring \':ios:\' in its name will not run when passing \'--platform android\'')
+  .option('-f, --file [path]',
+    'Specify test file to run')
   .parse(process.argv);
 
 const config = require(path.join(process.cwd(), 'package.json')).detox;
 
-const testFolder = config.specs || 'e2e';
+const testFolder = program.file || config.specs || 'e2e';
 const runner = config['test-runner'] || 'mocha';
 const runnerConfig = program.runnerConfig || config['runner-config'] || getDefaultRunnerConfig();
 
