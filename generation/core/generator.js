@@ -12,7 +12,8 @@ module.exports = function({
 	renameTypesMap,
 	supportedTypes,
 	classValue,
-	supportedContentSanitizersMap
+	contentSanitizersForFunction,
+	contentSanitizersForType
 }) {
 	/**
 	 * the input provided by objective-c-parser looks like this:
@@ -114,7 +115,10 @@ module.exports = function({
 			args: json.args.map(argJson => sanitizeArgumentType(argJson))
 		});
 
-		const allTypeChecks = createTypeChecks(sanitizedJson).reduce(
+		const allTypeChecks = createTypeChecks(
+			sanitizedJson,
+			sanitizedJson.name
+		).reduce(
 			(carry, item) =>
 				item instanceof Array ? [...carry, ...item] : [...carry, item],
 			[]
@@ -124,23 +128,33 @@ module.exports = function({
 		return [...typeChecks, returnStatement];
 	}
 
-	function createTypeChecks(json) {
-		const checks = json.args.map(createTypeCheck);
+	function createTypeChecks(json, functionName) {
+		const checks = json.args.map(arg => createTypeCheck(arg, functionName));
 		checks.filter(check => Boolean(check));
 		return checks;
 	}
 
-	function addArgumentContentSanitizerCall(json) {
-		if (supportedContentSanitizersMap[json.type]) {
-			globalFunctionUsage[supportedContentSanitizersMap[json.type].name] = true;
-			return supportedContentSanitizersMap[json.type].value(json.name);
+	function addArgumentContentSanitizerCall(json, functionName) {
+		if (contentSanitizersForType[json.type]) {
+			globalFunctionUsage[contentSanitizersForType[json.type].name] = true;
+			return contentSanitizersForType[json.type].value(json.name);
+		}
+
+		if (
+			contentSanitizersForFunction[functionName] &&
+			contentSanitizersForFunction[functionName].argumentName === json.name
+		) {
+			globalFunctionUsage[
+				contentSanitizersForFunction[functionName].name
+			] = true;
+			return contentSanitizersForFunction[functionName].value(json.name);
 		}
 
 		return t.identifier(json.name);
 	}
 	function addArgumentTypeSanitizer(json) {
-		if (supportedContentSanitizersMap[json.type]) {
-			return supportedContentSanitizersMap[json.type].type;
+		if (contentSanitizersForType[json.type]) {
+			return contentSanitizersForType[json.type].type;
 		}
 
 		return json.type;
@@ -162,10 +176,10 @@ module.exports = function({
 							),
 							t.objectProperty(
 								t.identifier("value"),
-								addArgumentContentSanitizerCall(arg)
+								addArgumentContentSanitizerCall(arg, json.name)
 							)
 						])
-					: addArgumentContentSanitizerCall(arg)
+					: addArgumentContentSanitizerCall(arg, json.name)
 		);
 
 		return t.returnStatement(
@@ -186,8 +200,13 @@ module.exports = function({
 		);
 	}
 
-	function createTypeCheck(json) {
-		const typeCheckCreator = typeCheckInterfaces[json.type];
+	function createTypeCheck(json, functionName) {
+		const optionalSanitizer = contentSanitizersForFunction[functionName];
+		const type =
+			optionalSanitizer && optionalSanitizer.argumentName === json.name
+				? optionalSanitizer.newType
+				: json.type;
+		const typeCheckCreator = typeCheckInterfaces[type];
 		const isListOfChecks = typeCheckCreator instanceof Array;
 		return isListOfChecks
 			? typeCheckCreator.map(singleCheck => singleCheck(json))

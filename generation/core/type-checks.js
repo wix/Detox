@@ -34,7 +34,7 @@ if (
   (typeof ARG !== 'object') || 
   (!ARG instanceof Array)
 ) {
-    throw new Error('TraitsMatcher ctor argument must be an array, got ' + typeof ARG);
+    throw new Error('${name} must be an array, got ' + typeof ARG);
   }
 `)({
 		ARG: t.identifier(name)

@@ -190,7 +190,7 @@ describe('AppleSimUtils', () => {
         await uut.getXcodeVersion();
         fail(`should throw`);
       } catch (e) {
-        expect(e).toEqual(new Error(`Can't read Xcode version, got: undefined`));
+        expect(e).toEqual(new Error(`Can't read Xcode version, got: 'undefined'`));
       }
     });
 
@@ -200,7 +200,7 @@ describe('AppleSimUtils', () => {
         await uut.getXcodeVersion();
         fail(`should throw`);
       } catch (e) {
-        expect(e).toEqual(new Error(`Can't read Xcode version, got: Xcode bla`));
+        expect(e).toEqual(new Error(`Can't read Xcode version, got: 'Xcode bla'`));
       }
     });
   });
