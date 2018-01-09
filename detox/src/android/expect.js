@@ -58,7 +58,7 @@ class MultiClickAction extends Action {
 class TypeTextAction extends Action {
   constructor(value) {
     super();
-    this._call = invoke.callDirectly(DetoxActionApi.typeText(value));
+    this._call = invoke.callDirectly(ViewActionsApi.typeText(value));
   }
 }
 
@@ -72,7 +72,7 @@ class ReplaceTextAction extends Action {
 class ClearTextAction extends Action {
   constructor() {
     super();
-    this._call = invoke.callDirectly(DetoxActionApi.clearText());
+    this._call = invoke.callDirectly(ViewActionsApi.clearText());
   }
 }
 
