@@ -121,7 +121,6 @@ describe('expect', async () => {
     await e.element(e.by.id('ScrollView799')).swipe('left', 'fast', 0.9);
     await e.element(e.by.id('ScrollView799')).swipe('right', 'slow', 0.9);
     await e.element(e.by.id('ScrollView799')).atIndex(1);
-    await e.element(e.by.label('Tap Me')).pushBackButton();
   });
 
   it(`interactions with wrong parameters should throw`, async () => {

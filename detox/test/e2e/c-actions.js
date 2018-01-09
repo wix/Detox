@@ -85,4 +85,5 @@ describe('Actions', () => {
     await element(by.id('WhyDoAllTheTestIDsHaveTheseStrangeNames')).tap();
     await expect(element(by.id('WhyDoAllTheTestIDsHaveTheseStrangeNames'))).toBeVisible();
   });
+
 });

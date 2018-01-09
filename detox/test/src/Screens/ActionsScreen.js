@@ -91,8 +91,7 @@ export default class ActionsScreen extends Component {
           <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}}>Back Pressed</Text>
           : null
         }
-
-
+        
       </View>
     );
   }

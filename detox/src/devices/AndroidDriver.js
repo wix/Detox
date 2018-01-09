@@ -174,7 +174,6 @@ class AndroidDriver extends DeviceDriverBase {
     await this.invocationManager.execute(call);
   }
 
-
 }
 
 module.exports = AndroidDriver;
