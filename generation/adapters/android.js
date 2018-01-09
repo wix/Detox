@@ -36,7 +36,7 @@ module.exports = generator({
 	typeCheckInterfaces,
 	contentSanitizersForType: {},
 	contentSanitizersForFunction,
-	supportedTypes: ["Integer", "int", "double", "String"],
+	supportedTypes: ["Integer", "int", "double", "String", "boolean"],
 	renameTypesMap: {
 		int: "Integer", // TODO: add test
 		double: "Double"
