@@ -71,6 +71,10 @@ class IosDriver extends DeviceDriverBase {
   getPlatform() {
     return 'ios';
   }
+
+  async pushBackButton(deviceId) {
+    // back button does not exist on iOS
+  }
 }
 
 module.exports = IosDriver;

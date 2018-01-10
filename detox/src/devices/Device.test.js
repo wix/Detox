@@ -539,9 +539,9 @@ describe('Device', () => {
   });
 
   it(`pushBackButton() should be called`, async () => {
-    device = validSimulator();
-    device.pushBackButton();
+    device = validDevice();
+    await device.pushBackButton();
 
-    expect(device.deviceDriver.pushBackButton).toHaveBeenCalledTimes(1);
+    expect(device.deviceDriver.pushBackButton).toHaveBeenCalledWith(device._deviceId);
   });
 });
