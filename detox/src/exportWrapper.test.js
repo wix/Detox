@@ -1,12 +1,24 @@
-const exportWrapper = require('./exportWrapper');
-const platform = require('./platform');
-jest.mock('./ios/expect');
-jest.mock('./android/expect');
-const iosExports = require('./ios/expect');
-const androidExports = require('./android/expect');
+let exportWrapper;
+let platform;
+let iosExports;
+let androidExports;
 
 describe('exportWrapper', () => {
   const mockDevice = {method: jest.fn()};
+
+  beforeAll(async() => {
+    jest.mock('./ios/expect');
+    jest.mock('./android/expect');
+    exportWrapper = require('./exportWrapper');
+    platform = require('./platform');
+    iosExports = require('./ios/expect');
+    androidExports = require('./android/expect');
+  });
+
+  afterAll(async() => {
+    jest.unmock('./ios/expect');
+    jest.unmock('./android/expect');
+  });
 
   it(`proxies ios specific objects`, async () => {
     const arg1 = 1;
