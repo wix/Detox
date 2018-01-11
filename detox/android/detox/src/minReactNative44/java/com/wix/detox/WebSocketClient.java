@@ -49,7 +49,7 @@ public class WebSocketClient implements WebSocketListener {
         //OKHttp won't recover from failure if it got ConnectException,
         // this is a workaround to make the websocket client try reconnecting when failed.
         try {
-            Thread.sleep(1000);
+            Thread.sleep(3000);
         } catch (InterruptedException e2) {
             Log.d(LOG_TAG, "interrupted", e2);
         }

@@ -24,7 +24,7 @@ Matchers find elements in your app that match one or more properties.
 In a React Native component add testID like so:
 
 ```js
-<TouchableOpacity testID={'tap_me'}}>
+<TouchableOpacity testID={'tap_me'}>
 ...
 ```
 

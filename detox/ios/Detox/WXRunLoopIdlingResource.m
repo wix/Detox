@@ -45,7 +45,7 @@
 		
 		CFRunLoopAddObserver((__bridge CFRunLoopRef)_runLoop, CFRunLoopObserverCreateWithHandler(NULL, kCFRunLoopExit | kCFRunLoopBeforeWaiting | kCFRunLoopAfterWaiting, YES, 0, ^(CFRunLoopObserverRef observer, CFRunLoopActivity activity) {
 			dispatch_sync(_syncSerialQueue, ^{
-//				NSLog(@"☣️ DETOX:: Current runloop activity: %@", [self translateRunLoopActivity: activity]);
+//				dtx_log_info(@"Current runloop activity: %@", [self translateRunLoopActivity: activity]);
 				if(activity == kCFRunLoopBeforeWaiting || activity == kCFRunLoopExit)
 				{
 					_isBusy = NO;

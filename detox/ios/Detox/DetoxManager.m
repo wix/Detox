@@ -12,6 +12,8 @@
 #import "EarlGreyExtensions.h"
 #import "EarlGreyStatistics.h"
 
+DTX_CREATE_LOG(DetoxManager)
+
 @interface DetoxManager()
 
 @property (nonatomic) BOOL isReady;
@@ -35,7 +37,7 @@ static void detoxConditionalInit()
 	NSString *detoxSessionId = [options stringForKey:@"detoxSessionId"];
 	if (!detoxServer || !detoxSessionId)
 	{
-		NSLog(@"☣️ DETOX:: Either 'detoxServer' and/or 'detoxSessionId' arguments are missing; failing Detox.");
+		dtx_log_error(@"Either 'detoxServer' and/or 'detoxSessionId' arguments are missing; failing Detox.");
 		// if these args were not provided as part of options, don't start Detox at all!
 		return;
 	}

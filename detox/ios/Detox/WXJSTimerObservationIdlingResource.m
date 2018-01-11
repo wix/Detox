@@ -9,6 +9,8 @@
 #import "WXJSTimerObservationIdlingResource.h"
 @import ObjectiveC;
 
+DTX_CREATE_LOG(WXJSTimerObservationIdlingResource)
+
 @interface _WXJSTimingObservationWrapper : NSObject @end
 @implementation _WXJSTimingObservationWrapper
 {
@@ -59,7 +61,7 @@
 {
 	if([_observedTimers containsObject:aKey])
 	{
-		NSLog(@"☣️ DETOX:: Removing observed timer %@", aKey);
+		dtx_log_info(@"Removing observed timer %@", aKey);
 		[_observedTimers removeObject:aKey];
 	}
 	
@@ -130,13 +132,13 @@
 				
 				if(duration > 0 && duration <= _durationThreshold && repeats == NO)
 				{
-					NSLog(@"☣️ DETOX:: Observing timer: %@ d: %@ r: %@", timerID, @(duration), @(repeats));
+					dtx_log_info(@"Observing timer: %@ d: %@ r: %@", timerID, @(duration), @(repeats));
 					
 					[_observationWrapper addObservedTimer:timerID];
 				}
 				else
 				{
-					NSLog(@"☣️ DETOX:: Ignoring timer: %@ failure reason: \"%@\"", timerID, [strongSelf failuireReasonForDuration:duration repeats:repeats]);
+					dtx_log_info(@"Ignoring timer: %@ failure reason: \"%@\"", timerID, [strongSelf failuireReasonForDuration:duration repeats:repeats]);
 				}
 			});
 			

@@ -12,8 +12,8 @@
 		"build:android": "detox build --configuration android.emu.release"
 	},
 	"dependencies": {
-		"react": "^16.0.0-beta.5",
-		"react-native": "^0.49.3"
+    "react": "^16.0.0-beta.5",
+    "react-native": "^0.49.3"
 	},
 	"devDependencies": {
 		"detox": "^6.0.0",
@@ -32,31 +32,31 @@
 				"binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
 				"build": "set -o pipefail && xcodebuild -project ios/example.xcodeproj -scheme example_ci -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build | xcpretty",
 				"type": "ios.simulator",
-				"name": "iPhone 7 Plus"
+				"name": "iPhone 8 Plus"
 			},
 			"ios.sim.release": {
 				"binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
 				"build": "set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -scheme example_ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build | xcpretty",
 				"type": "ios.simulator",
-				"name": "iPhone 7 Plus"
+				"name": "iPhone 8 Plus"
 			},
 			"ios.none": {
 				"binaryPath": "ios",
 				"type": "ios.none",
-				"name": "iPhone 7 Plus",
+				"name": "iPhone 8 Plus",
 				"session": {
 					"server": "ws://localhost:8099",
 					"sessionId": "test"
 				}
 			},
 			"android.emu.debug": {
-				"binaryPath": "android/app/build/outputs/apk/app-debug.apk",
+				"binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
 				"build": "cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
 				"type": "android.emulator",
-				"name": "Nexus_5X_API_24"
+				"name": "Nexus_5X_API_26"
 			},
 			"android.emu.release": {
-				"binaryPath": "android/app/build/outputs/apk/app-release.apk",
+				"binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
 				"build": "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd ..",
 				"type": "android.emulator",
 				"name": "Nexus_5X_API_26"
