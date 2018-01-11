@@ -1,6 +1,5 @@
 package com.wix.detox.espresso;
 
-import android.support.test.espresso.Espresso;
 import android.support.test.espresso.EspressoException;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.ViewInteraction;
@@ -9,7 +8,6 @@ import android.view.View;
 import junit.framework.AssertionFailedError;
 
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
@@ -60,8 +58,8 @@ public class DetoxAssertion {
             try {
                 i.check(matches(m));
                 break;
-            } catch (Exception e) {
-                if (e instanceof EspressoException) {
+            } catch (Throwable e) {
+                if (e instanceof EspressoException || e instanceof AssertionError) {
                     UiAutomatorHelper.espressoSync();
                 } else {
                     throw e;
