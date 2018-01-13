@@ -18,7 +18,7 @@ const users = [
 const siteConfig = {
   title: 'Detox' /* title for your website */,
   tagline: 'Gray Box E2E Tests and Automation Library for Mobile Apps',
-  url: 'https://wix.github.io/detox' /* your website url */,
+  url: 'https://wix.github.io' /* your website url */,
   baseUrl: '/detox/' /* base url for your project */,
   projectName: 'detox',
   headerLinks: [
