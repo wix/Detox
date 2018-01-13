@@ -252,7 +252,13 @@ module.exports = function({
 				})
 				.join("\n");
 
-			const code = [commentBefore, globalFunctions, output.code].join("\n");
+			const eslintDisableComment = "/* eslint-disable */";
+			const code = [
+				eslintDisableComment,
+				commentBefore,
+				globalFunctions,
+				output.code
+			].join("\n");
 			fs.writeFileSync(outputFile, code, "utf8");
 
 			// Output methods that were not created due to missing argument support
