@@ -18,7 +18,7 @@
 - [`device.setURLBlacklist([urls])`](#deviceseturlblacklisturls)
 - [`device.enableSynchronization()`](#deviceenablesynchronization)
 - [`device.disableSynchronization()`](#devicedisablesynchronization)
-- [`device.resetContentAndSettings()`](#resetcontentandsettings)
+- [`device.resetContentAndSettings()`](#deviceresetcontentandsettings)
 - [`device.getPlatform()`](#devicegetplatform)
 
 ### `device.launchApp(params)`
