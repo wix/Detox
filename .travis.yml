@@ -60,6 +60,9 @@ matrix:
       - git config --global user.name "Daniel Schmidt"
       - echo "machine github.com login $GIT_USER password $GIT_TOKEN" > ~/.netrc
       - cd website && npm install && GIT_USER=$GIT_USER CURRENT_BRANCH=docusaurus npm run publish-gh-pages
+      branches:
+        only:
+          - master
 
 branches:
   only:
