@@ -62,16 +62,14 @@ class LabelMatcher extends Matcher {
 class IdMatcher extends Matcher {
   constructor(value) {
     super();
-    if (typeof value !== 'string') throw new Error(`IdMatcher ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForTestId', value);
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForTestId(value));
   }
 }
 
 class TypeMatcher extends Matcher {
   constructor(value) {
     super();
-    if (typeof value !== 'string') throw new Error(`TypeMatcher ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForClass', value);
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForClass(value));
   }
 }
 
@@ -106,16 +104,14 @@ class NotExistsMatcher extends Matcher {
 class TextMatcher extends Matcher {
   constructor(value) {
     super();
-    if (typeof value !== 'string') throw new Error(`TextMatcher ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForText', value);
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForText(value));
   }
 }
 
 class ValueMatcher extends Matcher {
   constructor(value) {
     super();
-    if (typeof value !== 'string') throw new Error(`ValueMatcher ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForContentDescription', value);
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForContentDescription(value));
   }
 }
 
