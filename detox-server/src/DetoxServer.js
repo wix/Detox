@@ -7,11 +7,11 @@ log.heading = 'detox-server';
 log.loglevel = 'wss';
 
 class DetoxServer {
-  constructor(port) {
-    this.wss = new WebSocketServer({port: port});
+  constructor(port, host) {
+    this.wss = new WebSocketServer({port: port, host: host});
     this.sessions = {};
 
-    log.log('info', `${now()}:`, `server listening on localhost:${this.wss.options.port}...`);
+    log.log('info', `${now()}:`, `server listening on ${this.wss.options.host}:${this.wss.options.port}...`);
     this._setup();
   }
 
