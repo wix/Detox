@@ -16,7 +16,7 @@
   "bugs": {
     "url": "https://github.com/wix/detox/issues"
   },
-  "homepage": "https://github.com/wix/detox/detox",
+  "homepage": "https://github.com/wix/detox#readme",
   "main": "./src/index.js",
   "author": "Tal Kol <talkol@gmail.com>",
   "license": "MIT",
