@@ -140,8 +140,8 @@ class Device {
   }
 
   async setLocation(lat, lon) {
-    lat = String(lat).replace('.', ',');
-    lon = String(lon).replace('.', ',');
+    lat = String(lat);
+    lon = String(lon);
     await this.deviceDriver.setLocation(this._deviceId, lat, lon);
   }
 
@@ -198,7 +198,7 @@ class Device {
     if(path.isAbsolute(appPath)) {
       return appPath;
     }
-    
+
     const absPath = path.join(process.cwd(), appPath);
     if (fs.existsSync(absPath)) {
       return absPath;
