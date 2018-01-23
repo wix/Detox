@@ -1,4 +1,7 @@
-# Migration Guide
+---
+id: Guide.Migration
+title: Migration Guide
+---
 
 We are improving detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense and. These migration guides refer to breaking changes.
 

@@ -1,4 +1,7 @@
-# Android Support - Status Page
+---
+id: More.AndroidSupportStatus
+title: Android Support - Status Page
+---
 
 As we are wrapping up Android support for Detox, there's already a pretty hefty chunk of Detox for Android already implemented, we decided to start releasing it as we go along, just like we did with the iOS implementation.
 
