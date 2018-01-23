@@ -14,7 +14,7 @@ Test async code with waitFor.<br>
 - [`.toHaveText()`](#tohavetexttext)
 - [`.toHaveValue()`](#tohavevaluevalue)
 - [`.withTimeout()`](#withtimeoutmillis)
-- [`.whileElement()`](#whileelement)
+- [`.whileElement()`](#whileelementelement)
 
 >NOTE: Every `waitFor` call must set a timeout using `withTimeout()`. Calling `waitFor` without setting a timeout **will do nothing**.
 
