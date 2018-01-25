@@ -1,4 +1,7 @@
-# Contributing to Detox
+---
+id: Guide.Contributing
+title: Contributing
+---
 
 ## Prerequisites
 
@@ -23,7 +26,7 @@ For all the internal projects (detox, detox-server, detox-cli, demos, test) `ler
 gem install xcpretty
 ```
 
-Alternatively, run `scripts/install.ios.sh` / `scripts/android.sh` to install all prerequisites.
+Alternatively, run `scripts/install.ios.sh` / `scripts/install.android.sh` to install all prerequisites.
 
 ## Detox
 

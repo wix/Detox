@@ -1,4 +1,7 @@
-# Detox for Android
+---
+id: Introduction.Android
+title: Detox for Android
+---
 
 ## Setup
 Detox 7 was updated to support Android gradle plugin 3.0.0. This is a breaking change that makes it impossible to support previous Android gradle plugin versions.

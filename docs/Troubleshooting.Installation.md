@@ -1,4 +1,7 @@
-# Troubleshooting Detox Installation
+---
+id: Troubleshooting.Installation
+title: Installation
+---
 
 * [No simulators found](#no-simulators-found)
 
