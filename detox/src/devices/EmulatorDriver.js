@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const path = require('path');
+const tempfile = require('tempfile');
 const Emulator = require('./android/Emulator');
 const EmulatorTelnet = require('./android/EmulatorTelnet');
 const Environment = require('../utils/environment');
@@ -80,6 +81,66 @@ class EmulatorDriver extends AndroidDriver {
     const telnet = new EmulatorTelnet();
     await telnet.connect(port);
     await telnet.kill();
+  }
+
+  async takeScreenshot(deviceId) {
+    const dst = tempfile('.png');
+    const src = '/sdcard/screenshot.png';
+    await this.adb.adbCmd(deviceId, `shell screencap ${src}`);
+    await this.adb.adbCmd(deviceId, `pull ${src} ${dst}`);
+    return dst;
+  }
+
+  async startVideo(deviceId) {
+    const adb = this.adb;
+
+    await adb.adbCmd(deviceId, `shell rm -f /sdcard/recording.mp4`);
+    let {width, height} = await adb.getScreenSize();
+    let promise = spawnRecording(width *= 2, height *= 2);
+    promise.catch(handleRecordingTermination);
+
+    let recording = false;
+    let size = 0;
+    while (!recording) {
+      size = 0;
+      recording = true;
+      // console.log('>>> waiting for recording to start');
+      try {
+        size = await adb.getFileSize(deviceId, '/sdcard/recording.mp4');
+        if (size < 1) {
+          recording = false;
+        }
+      } catch (e) {
+        recording = false;
+      }
+    }
+
+    this._video = promise.childProcess;
+
+    function spawnRecording(width, height) {
+      return adb.spawn(deviceId, [
+        'shell', 'screenrecord', '--size', width + 'x' + height, '--verbose', '/sdcard/recording.mp4'
+      ]);
+    }
+
+    function handleRecordingTermination(result) {
+      const proc = result.childProcess;
+      if (proc.exitCode !== 0 && proc.signalCode !== 'SIGINT') {
+        promise = spawnRecording(width >>= 1, height >>= 1);
+        promise.catch(handleRecordingTermination);
+      }
+    }
+  }
+
+  async stopVideo(deviceId) {
+    if (this._video) {
+      this._video.kill(2);
+      await this.adb.adbCmd(deviceId, 'shell sleep 1');
+      const dest = tempfile('.mp4');
+      await this.adb.adbCmd(deviceId, `pull /sdcard/recording.mp4 ${dest}`);
+      await this.adb.adbCmd(deviceId, `shell rm /sdcard/recording.mp4`);
+      return dest;
+    }
   }
 }
 

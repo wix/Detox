@@ -12,6 +12,8 @@ class SimulatorDriver extends IosDriver {
   constructor(client) {
     super(client);
     this._applesimutils = new AppleSimUtils();
+    this._video = null;
+    this._videoFile = null;
   }
 
   async prepare() {
@@ -94,6 +96,22 @@ class SimulatorDriver extends IosDriver {
 
   getLogsPaths(deviceId) {
     return this._applesimutils.getLogsPaths(deviceId);
+  }
+
+  async takeScreenshot(deviceId) {
+    return await this._applesimutils.takeScreenshot(deviceId);
+  }
+
+  async startVideo(deviceId) {
+    this._video = await this._applesimutils.startVideo(deviceId);
+  }
+
+  async stopVideo(deviceId) {
+    if (this._video) {
+      const video = await this._applesimutils.stopVideo(deviceId, this._video);
+      this._video = null;
+      return video;
+    }
   }
 }
 

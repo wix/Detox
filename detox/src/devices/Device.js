@@ -37,7 +37,14 @@ class Device {
     this._artifactsCopier.setArtifactsDestination(testArtifactsPath);
   }
 
+  async prepareArtifacts() {
+    await this._takeScreenshot('screenshot-before');
+    await this._startVideo();
+  }
+
   async finalizeArtifacts() {
+    await this._stopVideo();
+    await this._takeScreenshot('screenshot-after');
     await this._artifactsCopier.finalizeArtifacts();
   }
 
@@ -171,6 +178,28 @@ class Device {
 
   async _cleanup() {
     await this.deviceDriver.cleanup(this._deviceId, this._bundleId);
+  }
+
+  async _takeScreenshot(name) {
+    if (this._deviceConfig.takeScreenshots) {
+      const screenshotFilePath = await this.deviceDriver.takeScreenshot(this._deviceId);
+      this._artifactsCopier.addArtifact(screenshotFilePath, name);
+    }
+  }
+
+  async _startVideo() {
+    if (this._deviceConfig.recordVideos) {
+      await this.deviceDriver.startVideo(this._deviceId);
+    }
+  }
+
+  async _stopVideo() {
+    if (this._deviceConfig.recordVideos) {
+      const video = await this.deviceDriver.stopVideo(this._deviceId);
+      if (video) {
+        this._artifactsCopier.addArtifact(video, 'recording');
+      }
+    }
   }
 
   _defaultLaunchArgs() {

@@ -1,15 +1,21 @@
+const path = require('path');
 const log = require('npmlog');
-const sh = require('../utils/sh')
+const sh = require('../utils/sh');
 
 class ArtifactsCopier {
   constructor(deviceDriver) {
     this._deviceDriver = deviceDriver;
     this._currentLaunchNumber = 0;
     this._currentTestArtifactsDestination = undefined;
+    this._artifacts = [];
   }
 
   prepare(deviceId) {
     this._deviceId = deviceId;
+  }
+
+  addArtifact(source, destName) {
+    this._artifacts.push([source, destName + path.extname(source)]);
   }
 
   setArtifactsDestination(artifactsDestination) {
@@ -35,8 +41,8 @@ class ArtifactsCopier {
       } catch (ex) {
         log.warn(`Couldn't copy (cp ${cpArgs})`);
       }
-    }
-    
+    };
+
     if(this._currentTestArtifactsDestination === undefined) {
       return;
     }
@@ -48,6 +54,10 @@ class ArtifactsCopier {
     ];
     for (const [sourcePath, destinationSuffix] of pathsMapping) {
       await copy(sourcePath, destinationSuffix);
+    }
+
+    for (const [source, dest] of this._artifacts) {
+      await copy(source, dest);
     }
   }
 

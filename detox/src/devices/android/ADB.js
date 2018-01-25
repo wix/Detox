@@ -1,5 +1,6 @@
 const path = require('path');
 const exec = require('../../utils/exec').execWithRetriesAndLogs;
+const spawn = require('child-process-promise').spawn;
 const _ = require('lodash');
 const EmulatorTelnet = require('./EmulatorTelnet');
 const Environment = require('../../utils/environment');
@@ -101,6 +102,29 @@ class ADB {
 
   async sleep(ms = 0) {
     return new Promise((resolve, reject) => setTimeout(resolve, ms));
+  }
+
+  spawn(deviceId, params) {
+    const serial = deviceId ? ['-s', deviceId] : [];
+    // console.log(`>>> ${this.adbBin} ${serial.join(' ')} ${params.join(' ')}`);
+    return spawn(this.adbBin, [...serial, ...params], {
+      detached: true,
+      stdio: 'inherit'
+    });
+  }
+
+  async getScreenSize(deviceId) {
+    const {stdout} = await this.adbCmd(deviceId, `shell wm size`);
+    const [width, height] = stdout.split(' ').pop().split('x');
+    return {
+      width: parseInt(width, 10),
+      height: parseInt(height, 10)
+    };
+  }
+
+  async getFileSize(deviceId, path) {
+    const {stdout} = await this.adbCmd(deviceId, `shell wc -c ${path}`);
+    return parseInt(stdout, 10);
   }
 }
 

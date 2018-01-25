@@ -21,7 +21,9 @@ program
     'Artifacts destination path (currently will contain only logs). If the destination already exists, it will be removed first')
   .option('-p, --platform [ios/android]',
     'Run platform specific tests. Runs tests with invert grep on \':platform:\', '
-    + 'e.g test with substring \':ios:\' in its name will not run when passing \'--platform android\'')
+          + 'e.g test with substring \':ios:\' in its name will not run when passing \'--platform android\'')
+  .option('--take-screenshots', '')
+  .option('--record-videos', '')
   .parse(process.argv);
 
 const config = require(path.join(process.cwd(), 'package.json')).detox;
@@ -53,9 +55,11 @@ function runMocha() {
   const artifactsLocation = program.artifactsLocation ? `--artifacts-location ${program.artifactsLocation}` : '';
   const configFile = runnerConfig ? `--opts ${runnerConfig}` : '';
   const platform = program.platform ? `--grep ${getPlatformSpecificString(program.platform)} --invert` : '';
+  const screenshots = program.takeScreenshots ? `--take-screenshots` : '';
+  const videos = program.recordVideos ? `--record-videos` : '';
 
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
-  const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platform} ${artifactsLocation}`;
+  const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platform} ${artifactsLocation} ${screenshots} ${videos}`;
 
   console.log(command);
   cp.execSync(command, {stdio: 'inherit'});

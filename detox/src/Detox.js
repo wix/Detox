@@ -96,6 +96,7 @@ class Detox {
     if (this._artifactsPathsProvider !== undefined) {
       const testArtifactsPath = this._artifactsPathsProvider.createPathForTest(this._currentTestNumber, ...testNameComponents);
       this.device.setArtifactsDestination(testArtifactsPath);
+      await this.device.prepareArtifacts();
     }
   }
 
@@ -137,6 +138,14 @@ class Detox {
     if (!deviceConfig) {
       throw new Error(`Cannot determine which configuration to use. use --configuration to choose one of the following:
                       ${Object.keys(configurations)}`);
+    }
+
+    if (!('takeScreenshots' in deviceConfig)) {
+      deviceConfig.takeScreenshots = argparse.getFlag('take-screenshots');
+    }
+
+    if (!('recordVideos' in deviceConfig)) {
+      deviceConfig.recordVideos = argparse.getFlag('record-videos');
     }
 
     return deviceConfig;
