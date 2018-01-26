@@ -133,7 +133,7 @@ class DeviceDriverBase {
     };
   }
 
-  async pushBackButton() {
+  async pressBack() {
     return await Promise.resolve('');
   }
 }

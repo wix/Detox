@@ -79,7 +79,7 @@ describe('Device', () => {
     });
 
     it(':android: should show popup back pressed when back button is pressed', async () => {
-      await device.pushBackButton();
+      await device.pressBack();
       await expect(element(by.text('Back pressed !'))).toBeVisible();
     });
   });

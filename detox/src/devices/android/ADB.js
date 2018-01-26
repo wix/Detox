@@ -93,7 +93,7 @@ class ADB {
     return new Promise((resolve, reject) => setTimeout(resolve, ms));
   }
 
-  async pushBackButton(deviceId) {
+  async pressBack(deviceId) {
     await this.shell(deviceId, `input keyevent 4`);
   }
 }

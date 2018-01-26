@@ -538,10 +538,10 @@ describe('Device', () => {
     expect(actualPath).toEqual(`${process.cwd()}/abcdef/123`);
   });
 
-  it(`pushBackButton() should be called`, async () => {
+  it(`pressBack() should be called`, async () => {
     device = validDevice();
-    await device.pushBackButton();
+    await device.pressBack();
 
-    expect(device.deviceDriver.pushBackButton).toHaveBeenCalledWith(device._deviceId);
+    expect(device.deviceDriver.pressBack).toHaveBeenCalledWith(device._deviceId);
   });
 });

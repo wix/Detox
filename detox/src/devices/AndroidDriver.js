@@ -32,8 +32,8 @@ class AndroidDriver extends DeviceDriverBase {
     await this.adb.install(deviceId, this.getTestApkPath(binaryPath));
   }
 
-  async pushBackButton(deviceId) {
-    await this.adb.pushBackButton(deviceId, `input keyevent 4`);
+  async pressBack(deviceId) {
+    await this.adb.pressBack(deviceId);
   }
 
   getTestApkPath(originalApkPath) {

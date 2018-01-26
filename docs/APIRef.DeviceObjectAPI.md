@@ -20,7 +20,7 @@
 - [`device.disableSynchronization()`](#devicedisablesynchronization)
 - [`device.resetContentAndSettings()`](#resetcontentandsettings)
 - [`device.getPlatform()`](#devicegetplatform)
-- [`device.pushBackButton()`](#devicepushbackbutton)
+- [`device.pressBack()`](#devicepressback)
 
 ### `device.launchApp(params)`
 Launch the app defined in the current [`configuration`](APIRef.Configuration.md).
@@ -216,9 +216,9 @@ if (device.getPlatform() === 'ios') {
 }
 ```
 
-### `device.pushBackButton()`
+### `device.pressBack()`
 Simulate press back button (Android only).
 
 ```js
-await device.pushBackButton();
+await device.pressBack();
 ```

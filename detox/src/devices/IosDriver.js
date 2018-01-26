@@ -4,6 +4,7 @@ const DeviceDriverBase = require('./DeviceDriverBase');
 const InvocationManager = require('../invoke').InvocationManager;
 const invoke = require('../invoke');
 const GREYConfiguration = require('./../ios/earlgreyapi/GREYConfiguration');
+const log = require('npmlog');
 
 class IosDriver extends DeviceDriverBase {
 
@@ -72,8 +73,8 @@ class IosDriver extends DeviceDriverBase {
     return 'ios';
   }
 
-  async pushBackButton(deviceId) {
-    // back button does not exist on iOS
+  async pressBack(deviceId) {
+    log.warn('pressBack is an android specific function, make sure you create an android specific test for this scenario');
   }
 }
 

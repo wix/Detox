@@ -173,8 +173,8 @@ class Device {
     await this.deviceDriver.cleanup(this._deviceId, this._bundleId);
   }
 
-  async pushBackButton() {
-    await this.deviceDriver.pushBackButton(this._deviceId);
+  async pressBack() {
+    await this.deviceDriver.pressBack(this._deviceId);
   }
 
   _defaultLaunchArgs() {
