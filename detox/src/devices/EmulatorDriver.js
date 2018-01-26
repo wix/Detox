@@ -9,11 +9,14 @@ const ini = require('ini');
 const fs = require('fs');
 const os = require('os');
 
+const SCREENSHOT_PATH = '/sdcard/screenshot.png';
+const VIDEO_PATH = '/sdcard/recording.mp4';
+
 class EmulatorDriver extends AndroidDriver {
   constructor(client) {
     super(client);
-
     this.emulator = new Emulator();
+    this._recordings = {};
   }
 
   async _fixEmulatorConfigIniSkinName(name) {
@@ -85,42 +88,71 @@ class EmulatorDriver extends AndroidDriver {
 
   async takeScreenshot(deviceId) {
     const dst = tempfile('.png');
-    const src = '/sdcard/screenshot.png';
-    await this.adb.adbCmd(deviceId, `shell screencap ${src}`);
-    await this.adb.adbCmd(deviceId, `pull ${src} ${dst}`);
+    await this.adb.adbCmd(deviceId, `shell screencap ${SCREENSHOT_PATH}`);
+    await this.adb.adbCmd(deviceId, `pull ${SCREENSHOT_PATH} ${dst}`);
     return dst;
   }
 
   async startVideo(deviceId) {
     const adb = this.adb;
+    await adb.adbCmd(deviceId, `shell rm -f ${VIDEO_PATH}`);
 
+    let {width, height} = await adb.getScreenSize();
     let promise = spawnRecording();
     promise.catch(handleRecordingTermination);
 
-    this._video = promise.childProcess;
-
-    function spawnRecording() {
-      return adb.spawn(deviceId, [
-        'shell', 'screenrecord', '--verbose', '/sdcard/recording.mp4'
-      ]);
+    // XXX: ugly loop to make sure we continue only if recording has begun.
+    let recording = false;
+    let size = 0;
+    while (!recording) {
+      size = 0;
+      recording = true;
+      try {
+        size = await adb.getFileSize(deviceId, VIDEO_PATH);
+        if (size < 1) {
+          recording = false;
+        }
+      } catch (e) {
+        recording = false;
+      }
     }
+
+    this._recordings[deviceId] = promise.childProcess;
 
     function handleRecordingTermination(result) {
       const proc = result.childProcess;
-      if (proc.exitCode !== 0 && proc.signalCode !== 'SIGINT') {
-        promise = spawnRecording(width >>= 1, height >>= 1);
+      // XXX: error code -38 (= 218) means that encoder was not able to create
+      // video of current size, let's try smaller resolution.
+      if (proc.exitCode === 218) {
+        width >>= 1;
+        height >>= 1;
+        promise = spawnRecording();
         promise.catch(handleRecordingTermination);
       }
+    }
+
+    function spawnRecording() {
+      return adb.screenrecord(deviceId, VIDEO_PATH, width, height);
     }
   }
 
   async stopVideo(deviceId) {
-    if (this._video) {
-      this._video.kill(2);
-      await this.adb.adbCmd(deviceId, 'shell sleep 1');
+    if (this._recordings[deviceId]) {
+      const adb = this.adb;
+      this._recordings[deviceId].kill(2);
+      delete this._recordings[deviceId];
+
+      // XXX: need to wait a little before pulling file from emulator, otherwise
+      // file might be corrupt.
+      //
+      // TODO: each test should have it's own video file, which would be queued
+      // to be copied after all the tests have run. This should help to prevent
+      // file corruption and avoid 1 second delay per test.
+      await adb.adbCmd(deviceId, 'shell sleep 1');
+
       const dest = tempfile('.mp4');
-      await this.adb.adbCmd(deviceId, `pull /sdcard/recording.mp4 ${dest}`);
-      await this.adb.adbCmd(deviceId, `shell rm /sdcard/recording.mp4`);
+      await adb.adbCmd(deviceId, `pull ${VIDEO_PATH} ${dest}`);
+      await adb.adbCmd(deviceId, `shell rm ${VIDEO_PATH}`);
       return dest;
     }
   }

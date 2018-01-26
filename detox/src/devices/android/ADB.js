@@ -1,6 +1,5 @@
 const path = require('path');
-const exec = require('../../utils/exec').execWithRetriesAndLogs;
-const spawn = require('child-process-promise').spawn;
+const {execWithRetriesAndLogs, spawnAndLog} = require('../../utils/exec');
 const _ = require('lodash');
 const EmulatorTelnet = require('./EmulatorTelnet');
 const Environment = require('../../utils/environment');
@@ -55,7 +54,7 @@ class ADB {
       await this.adbCmd(deviceId, `install -r -g ${apkPath}`);
     } else {
       await this.adbCmd(deviceId, `install -rg ${apkPath}`);
-    }    
+    }
   }
 
   async uninstall(deviceId, appId) {
@@ -97,20 +96,11 @@ class ADB {
   async adbCmd(deviceId, params) {
     const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
     const cmd = `${this.adbBin} ${serial} ${params}`;
-    return await exec(cmd, undefined, undefined, 1);
+    return await execWithRetriesAndLogs(cmd, undefined, undefined, 1);
   }
 
   async sleep(ms = 0) {
     return new Promise((resolve, reject) => setTimeout(resolve, ms));
-  }
-
-  spawn(deviceId, params) {
-    const serial = deviceId ? ['-s', deviceId] : [];
-    // console.log(`>>> ${this.adbBin} ${serial.join(' ')} ${params.join(' ')}`);
-    return spawn(this.adbBin, [...serial, ...params], {
-      detached: true,
-      stdio: 'inherit'
-    });
   }
 
   async getScreenSize(deviceId) {
@@ -125,6 +115,20 @@ class ADB {
   async getFileSize(deviceId, path) {
     const {stdout} = await this.adbCmd(deviceId, `shell wc -c ${path}`);
     return parseInt(stdout, 10);
+  }
+
+  screencap(deviceId, path) {
+    return this.adb.adbCmd(deviceId, `shell screencap ${path}`);
+  }
+
+  screenrecord(deviceId, path, width, height) {
+    const params = width && height ? ['--size', width + 'x' + height] : [];
+    return this.spawn(deviceId, ['shell', 'screenrecord', ...params, path]);
+  }
+
+  spawn(deviceId, params) {
+    const serial = deviceId ? ['-s', deviceId] : [];
+    return spawnAndLog(this.adbBin, [...serial, ...params]);
   }
 }
 

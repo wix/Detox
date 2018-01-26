@@ -164,18 +164,14 @@ class AppleSimUtils {
 
   async startVideo(udid = 'booted') {
     const dest = tempfile('.mp4');
-    const promise = cpp.spawn('/usr/bin/xcrun', ['simctl', 'io', udid, 'recordVideo', dest], {
-      detached: true,
-      stdio: 'inherit'
-    });
-    const cp = promise.childProcess;
-    cp.dest = dest;
-    return cp;
+    const promise = exec.spawnAndLog('/usr/bin/xcrun', ['simctl', 'io', udid, 'recordVideo', dest]);
+    const process = promise.childProcess;
+    return {process, dest};
   }
 
-  async stopVideo(udid = 'booted', process) {
+  async stopVideo(udid = 'booted', {process, dest}) {
     process.kill(2);
-    return process.dest;
+    return dest;
   }
 
   async _execAppleSimUtils(options, statusLogs, retries, interval) {

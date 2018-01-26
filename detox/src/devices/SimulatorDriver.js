@@ -12,8 +12,7 @@ class SimulatorDriver extends IosDriver {
   constructor(client) {
     super(client);
     this._applesimutils = new AppleSimUtils();
-    this._video = null;
-    this._videoFile = null;
+    this._recordings = {};
   }
 
   async prepare() {
@@ -103,13 +102,14 @@ class SimulatorDriver extends IosDriver {
   }
 
   async startVideo(deviceId) {
-    this._video = await this._applesimutils.startVideo(deviceId);
+    this._recordings[deviceId] = await this._applesimutils.startVideo(deviceId);
   }
 
   async stopVideo(deviceId) {
-    if (this._video) {
-      const video = await this._applesimutils.stopVideo(deviceId, this._video);
-      this._video = null;
+    let recording = this._recordings[deviceId];
+    if (recording) {
+      const video = await this._applesimutils.stopVideo(deviceId, recording);
+      delete this._recordings[deviceId];
       return video;
     }
   }

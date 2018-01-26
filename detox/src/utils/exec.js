@@ -1,6 +1,6 @@
 const log = require('npmlog');
 const retry = require('../utils/retry');
-const exec = require('child-process-promise').exec;
+const {exec, spawn} = require('child-process-promise');
 
 let _operationCounter = 0;
 
@@ -50,7 +50,29 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
   return result;
 }
 
+function spawnAndLog(command, flags) {
+  let stdout = '';
+  let stderr = '';
+  const result = spawn(command, flags, {stdio: ['ignore', 'pipe', 'pipe'], deatched: true});
+
+  log.verbose(`${command} ${flags.join(' ')}`);
+
+  result.childProcess.stdout.on('data', (chunk) => stdout += chunk.toString());
+  result.childProcess.stderr.on('data', (chunk) => stderr += chunk.toString());
+
+  if (stdout) {
+    log.verbose('stdout:', stdout);
+  }
+
+  if (stderr) {
+    log.verbose('stderr:', stderr);
+  }
+
+  return result;
+}
+
 module.exports = {
-  execWithRetriesAndLogs
+  execWithRetriesAndLogs,
+  spawnAndLog
 };
 

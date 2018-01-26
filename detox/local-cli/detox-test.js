@@ -18,12 +18,14 @@ program
     'When an action/expectation takes a significant amount of time use this option to print device synchronization status.'
     + 'The status will be printed if the action takes more than [value]ms to complete')
   .option('-a, --artifacts-location [path]',
-    'Artifacts destination path (currently will contain only logs). If the destination already exists, it will be removed first')
+    'Artifacts destination path. If the destination already exists, it will be removed first')
   .option('-p, --platform [ios/android]',
     'Run platform specific tests. Runs tests with invert grep on \':platform:\', '
           + 'e.g test with substring \':ios:\' in its name will not run when passing \'--platform android\'')
-  .option('--take-screenshots', '')
-  .option('--record-videos', '')
+  .option('--take-screenshots',
+    'Save screenshots before and after each test to artifacts directory.')
+  .option('--record-videos',
+    'Save screen recordings of each test to artifacts directory.')
   .parse(process.argv);
 
 const config = require(path.join(process.cwd(), 'package.json')).detox;
