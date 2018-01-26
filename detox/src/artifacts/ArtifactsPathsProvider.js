@@ -10,7 +10,10 @@ class ArtifactsPathsProvider {
     try {
       fs.ensureDirSync(this._destinationRoot);
     } catch (ex) {
-      throw new Error(ex, `Could not create artifacts root dir: ${this._destinationRoot}`);
+      throw new Error(
+        `Could not create artifacts root dir: ${this._destinationRoot}` +
+          `\nbecause of: ` + ex.toString()
+      );
     }
   }
 

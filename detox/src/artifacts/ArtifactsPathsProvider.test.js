@@ -7,8 +7,8 @@ describe('ArtifactsPathsProvider', () => {
   let log;
 
   beforeEach(() => {
-    jest.mock('fs');
-    fs = require('fs');
+    jest.mock('fs-extra');
+    fs = require('fs-extra');
     jest.mock('npmlog');
     log = require('npmlog');
 
@@ -23,7 +23,7 @@ describe('ArtifactsPathsProvider', () => {
   });
 
   it('constructor - should throw if can\'t create run directory in the destination', () => {
-    fs.mkdirSync = jest.fn(() => {throw 'some'});
+    fs.ensureDirSync = jest.fn(() => {throw 'some'});
     expect(() => {
       new ArtifactsPathsProvider('/tmp');
     }).toThrowError(/Could not create artifacts root dir/);
@@ -59,8 +59,11 @@ describe('ArtifactsPathsProvider', () => {
 
   it('createPathsForTest() - should catch mkdirSync exception', () => {
     const artifactsPathsProvider = new ArtifactsPathsProvider('/tmp');
-    fs.mkdirSync = jest.fn(() => {throw 'some'});
+    fs.ensureDirSync = jest.fn(() => {throw 'some'});
     artifactsPathsProvider.createPathForTest(1);
-    expect(log.warn).toHaveBeenCalledWith('Could not create artifacts test dir: /tmp/detox_artifacts.2017-07-13T06:31:48.544Z/1');
+    expect(log.warn).toHaveBeenCalledWith(
+      `some`,
+      'Could not create artifacts test dir: /tmp/detox_artifacts.2017-07-13T06:31:48.544Z/1'
+    );
   });
 });
