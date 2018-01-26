@@ -121,6 +121,61 @@ describe('exec', () => {
   });
 });
 
+describe('spawn', () => {
+  let exec;
+  let cpp;
+  let log;
+
+  beforeEach(() => {
+    jest.mock('npmlog');
+    jest.mock('child-process-promise');
+    cpp = require('child-process-promise');
+    exec = require('./exec');
+    log = require('npmlog');
+    cpp.spawn.mockReturnValue({});
+  });
+
+  it('spawns detached command with ignored input and piped output', () => {
+    const command = 'command';
+    const flags = ['--some', '--value', Math.random()];
+
+    exec.spawnAndLog(command, flags);
+
+    expect(cpp.spawn).toBeCalledWith(command, flags, {
+      stdio: ['ignore', 'pipe', 'pipe'],
+      detached: true
+    });
+  });
+
+  it('should collect output and log it', async () => {
+    cpp.spawn.mockReturnValue({
+      childProcess: {
+        stdout: toStream('hello'),
+        stderr: toStream('world')
+      }
+    });
+
+    exec.spawnAndLog('command', []);
+    await nextCycle();
+
+    expect(log.verbose).toBeCalledWith('stdout:', 'hello');
+    expect(log.verbose).toBeCalledWith('stderr:', 'world');
+  });
+});
+
+function nextCycle() {
+  return new Promise(resolve => setTimeout(resolve));
+}
+
+function toStream(string) {
+  const {Readable} = require('stream');
+  const stream = new Readable();
+  stream._read = () => {};
+  stream.push(string);
+  stream.push(null);
+  return stream;
+}
+
 function returnSuccessfulWithValue(value) {
   const result = {
     stdout: JSON.stringify(value),

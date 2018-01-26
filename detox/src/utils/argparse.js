@@ -17,7 +17,6 @@ function getArgValue(key) {
 }
 
 function getFlag(key) {
-  // console.log('key', key, argv);
   if (argv && argv[key]) {
     return true;
   }

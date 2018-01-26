@@ -48,12 +48,11 @@ class ArtifactsCopier {
     }
 
     const {stdout, stderr} = this._deviceDriver.getLogsPaths(this._deviceId);
-    const pathsMapping = [
-      [stdout, 'out.log'],
-      [stderr, 'err.log']
-    ];
-    for (const [sourcePath, destinationSuffix] of pathsMapping) {
-      await copy(sourcePath, destinationSuffix);
+    if (stdout) {
+      await copy(stdout, 'out.log');
+    }
+    if (stderr) {
+      await copy(stderr, 'err.log');
     }
 
     for (const [source, dest] of this._artifacts) {

@@ -51,21 +51,20 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
 }
 
 function spawnAndLog(command, flags) {
-  let stdout = '';
-  let stderr = '';
-  const result = spawn(command, flags, {stdio: ['ignore', 'pipe', 'pipe'], deatched: true});
+  let out = '';
+  let err = '';
+  const result = spawn(command, flags, {stdio: ['ignore', 'pipe', 'pipe'], detached: true});
 
   log.verbose(`${command} ${flags.join(' ')}`);
 
-  result.childProcess.stdout.on('data', (chunk) => stdout += chunk.toString());
-  result.childProcess.stderr.on('data', (chunk) => stderr += chunk.toString());
+  if (result.childProcess) {
+    const {stdout, stderr} = result.childProcess;
 
-  if (stdout) {
-    log.verbose('stdout:', stdout);
-  }
+    stdout.on('data', (chunk) => out += chunk.toString());
+    stderr.on('data', (chunk) => err += chunk.toString());
 
-  if (stderr) {
-    log.verbose('stderr:', stderr);
+    stdout.on('end', () => out && log.verbose('stdout:', out));
+    stderr.on('end', () => err && log.verbose('stderr:', err));
   }
 
   return result;

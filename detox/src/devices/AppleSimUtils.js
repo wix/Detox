@@ -156,20 +156,20 @@ class AppleSimUtils {
     return majorVersion;
   }
 
-  async takeScreenshot(udid = 'booted') {
+  async takeScreenshot(udid) {
     const dest = tempfile('.png');
     await this._execSimctl({cmd: `io ${udid} screenshot ${dest}`});
     return dest;
   }
 
-  async startVideo(udid = 'booted') {
+  startVideo(udid) {
     const dest = tempfile('.mp4');
     const promise = exec.spawnAndLog('/usr/bin/xcrun', ['simctl', 'io', udid, 'recordVideo', dest]);
     const process = promise.childProcess;
     return {process, dest};
   }
 
-  async stopVideo(udid = 'booted', {process, dest}) {
+  stopVideo(udid, {process, dest}) {
     process.kill(2);
     return dest;
   }

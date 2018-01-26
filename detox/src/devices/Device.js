@@ -194,11 +194,9 @@ class Device {
   }
 
   async _stopVideo() {
-    if (this._deviceConfig.recordVideos) {
-      const video = await this.deviceDriver.stopVideo(this._deviceId);
-      if (video) {
-        this._artifactsCopier.addArtifact(video, 'recording');
-      }
+    const video = await this.deviceDriver.stopVideo(this._deviceId);
+    if (video) {
+      this._artifactsCopier.addArtifact(video, 'recording');
     }
   }
 
