@@ -94,32 +94,14 @@ class EmulatorDriver extends AndroidDriver {
   async startVideo(deviceId) {
     const adb = this.adb;
 
-    await adb.adbCmd(deviceId, `shell rm -f /sdcard/recording.mp4`);
-    let {width, height} = await adb.getScreenSize();
-    let promise = spawnRecording(width *= 2, height *= 2);
+    let promise = spawnRecording();
     promise.catch(handleRecordingTermination);
-
-    let recording = false;
-    let size = 0;
-    while (!recording) {
-      size = 0;
-      recording = true;
-      // console.log('>>> waiting for recording to start');
-      try {
-        size = await adb.getFileSize(deviceId, '/sdcard/recording.mp4');
-        if (size < 1) {
-          recording = false;
-        }
-      } catch (e) {
-        recording = false;
-      }
-    }
 
     this._video = promise.childProcess;
 
-    function spawnRecording(width, height) {
+    function spawnRecording() {
       return adb.spawn(deviceId, [
-        'shell', 'screenrecord', '--size', width + 'x' + height, '--verbose', '/sdcard/recording.mp4'
+        'shell', 'screenrecord', '--verbose', '/sdcard/recording.mp4'
       ]);
     }
 

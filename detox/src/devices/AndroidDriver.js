@@ -22,7 +22,6 @@ class AndroidDriver extends DeviceDriverBase {
 
     this.adb = new ADB();
     this.aapt = new AAPT();
-    this.apkPath = new APKPath();
   }
 
   async getBundleIdFromBinary(apkPath) {
