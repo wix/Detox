@@ -1,5 +1,7 @@
-# Troubleshooting a Test That Keeps Failing
-
+---
+id: Troubleshooting.RunningTests
+title: Failing Tests
+---
 * [Enable verbose mode](#enable-verbose-mode)
 * [Syntax Error: Unxpected Token](#syntax-error-unxpected-token)
 * [Can't find my component even though I added testID to its props](#cant-find-my-component-even-though-i-added-testid-to-its-props)
@@ -159,10 +161,10 @@ Error: Cannot determine which configuration to use. use --configuration to choos
 
 **Solution:** You have configured more than one configuration in your package.json and detox cannot understand which one of them you want to run. The error will print a list of available configurations, choose one by using `--configuration` option.
 
-Run your commands with one of these configrations, for example:
+Run your commands with one of these configurations, for example:
 
-`detox build --configration ios.sim.debug`<br>
-`detox test --configration ios.sim.debug`
+`detox build --configuration ios.sim.debug`<br>
+`detox test --configuration ios.sim.debug`
 
 <br>
 

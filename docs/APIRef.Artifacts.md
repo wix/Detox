@@ -1,4 +1,7 @@
-# Artifacts
+---
+id: APIRef.Artifacts
+title: Artifacts
+---
 
 Artifacts currently include only logs from the app process.
 

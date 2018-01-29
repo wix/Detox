@@ -1,4 +1,7 @@
-# Actions on Element
+---
+id: APIRef.ActionsOnElement
+title: Actions on Element
+---
 
 Detox uses **Matchers** to find UI `elements` in your app, **Actions** to emulate user interaction with those `elements` and **Expectations** to verify values on those `elements`.
 
@@ -54,6 +57,10 @@ Use the builtin keyboard to type text into a text field.
 ```js
 await element(by.id('textField')).typeText('passcode');
 ```
+
+> **Note:** Make sure hardware keyboard is disconnected. Otherwise, Detox may fail when attempting to type text.
+> 
+> To make sure hardware keybaord is disconnected, open the simulator from Xcode and make sure **Hardware** -> **Keyboard** -> **Connect Hardware Keyboard** is deselected (or press ⇧⌘K).
 
 ### `replaceText(text)`
 Paste text into a text field.

@@ -1,8 +1,11 @@
-# Detox Development Roadmap
+---
+id: More.Roadmap
+title: Roadmap
+---
 
 We have some very interesting plans for Detox, this is the place to discuss and share them.
 
-### Android support - read more [here](More.AndroidSupportStatus.md
+### Android support - read more [here](More.AndroidSupportStatus.md)
 The current API supports addition of multiple platforms, Android is next. This is the biggest feature we'll be working on in the near future. Supporting both Android emulators and devices. Our plan is to use both Espresso and UIAutomator as drivers. Espresso for core in-app interactions and synchronization with react-native, and UIAutomator for peripherals (notification panel, permission dialogs etc.). This will grant us both the speed and precision of Espresso, and the flexibility of UIAutomator.
 
 ### iOS physical device support

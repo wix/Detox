@@ -6,13 +6,13 @@ import android.util.Log;
 import android.view.Choreographer;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import okhttp3.Dispatcher;
 import okhttp3.Call;
-import java.util.List;
+import okhttp3.Dispatcher;
 
 /**
  * Created by simonracz on 09/10/2017.
@@ -28,10 +28,6 @@ public class RNExperimentalNetworkIR implements IdlingResource, Choreographer.Fr
 
     private static final String LOG_TAG = "Detox";
 
-    // private static final String FIELD_RUNNING_ASYNC_CALLS = "runningAsyncCalls";
-    // private static final String FIELD_RUNNING_SYNC_CALLS = "runningSyncCalls";
-    // private static final String FIELD_READY_ASYNC_CALLS = "readyAsyncCalls";
-
     private AtomicBoolean stopped = new AtomicBoolean(false);
 
     private ResourceCallback callback;
@@ -46,6 +42,8 @@ public class RNExperimentalNetworkIR implements IdlingResource, Choreographer.Fr
      */
     public static void setURLBlacklist(ArrayList<String> urls) {
         blacklist.clear();
+        if (urls == null) return;
+
         for (String url : urls) {
             try {
                 blacklist.add(Pattern.compile(url));

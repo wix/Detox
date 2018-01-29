@@ -1,4 +1,7 @@
-# Contributing to Detox
+---
+id: Guide.Contributing
+title: Contributing
+---
 
 ## Prerequisites
 
@@ -23,7 +26,7 @@ For all the internal projects (detox, detox-server, detox-cli, demos, test) `ler
 gem install xcpretty
 ```
 
-Alternatively, run `scripts/install.ios.sh` / `scripts/android.sh` to install all prerequisites.
+Alternatively, run `scripts/install.ios.sh` / `scripts/install.android.sh` to install all prerequisites.
 
 ## Detox
 
@@ -50,6 +53,8 @@ lerna run build
 
 ### Testing
 
+### 1. Unit tests
+
 ```sh
 lerna run test
 ```
@@ -72,7 +77,7 @@ cd detox
 open coverage/lcov-report/index.html
 ```
 
-### Running Detox e2e covarage tests
+### 2. Running Detox e2e coverage tests
 Detox has a suite of e2e tests to test its own API while developing (and for regression). The way we do is is by maintaining a special application that is "tested" against Detox's API, but essentially, it's the API that is tested, not the app.
 To run the e2e tests, go to `detox/detox/test`
 
@@ -80,7 +85,6 @@ To run the e2e tests, go to `detox/detox/test`
 cd detox/test
 ```
 
-To build the application (if you already ran `lerna run build` you're covered)
 
 ```sh
 npm run build
@@ -88,18 +92,28 @@ npm run build
 
 To run the e2e tests, after the application was built.
 
+#### iOS
 ```sh
 npm run build:ios
 npm run e2e:ios
 ```
 
-### Android Native tests
+#### Android
+```sh
+npm run build:android
+npm run e2e:android
+```
+
+### 3. Android Native tests
 
 0. Install Java and Android SDK 25
-1. In `detox/android` run `./gradlew install`
-2. Run `./gradlew test` to run the tests
+1. In `detox/android` run `./gradlew install` run
 
-### Code Generation
+	```sh
+	./gradlew test
+	```
+
+### 4. Code Generation
 
 We are using a code generator based on `babel` and `objective-c-parser` to generate a Javascript Interface for `EarlGrey` (the testing library we use on iOS).
 This interface allows us to call Objective-C methods through the WebSocket connection directly on the testing device. 

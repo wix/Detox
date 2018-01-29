@@ -1,4 +1,7 @@
-# Test Lifecycle
+---
+id: APIRef.TestLifecycle
+title: Test Lifecycle
+---
 
 Detox is test runner independent, and we encourge you to choose your own test runner, but for the sake of demonstration we will use `mocha`'s syntax.
 

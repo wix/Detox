@@ -1,4 +1,7 @@
-# Getting Started
+---
+id: Introduction.GettingStarted
+title: Getting Started
+---
 
 This is a step-by-step guide for adding Detox to your React Native project.
 

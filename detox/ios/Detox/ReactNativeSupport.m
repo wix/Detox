@@ -21,6 +21,8 @@
 @import ObjectiveC;
 @import Darwin;
 
+DTX_CREATE_LOG(ReactNativeSupport);
+
 NSString *const RCTReloadNotification = @"RCTReloadNotification";
 
 static dispatch_queue_t __currentIdlingResourceSerialQueue;
@@ -144,7 +146,7 @@ void setupForTests()
 			
 			[__observedQueues addObject:queue];
 			
-			NSLog(@"☣️ Adding idling resource for queue: %@", queue);
+			dtx_log_info(@"Adding idling resource for queue: %@", queue);
 			
 			
 			[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[GREYDispatchQueueIdlingResource resourceWithDispatchQueue:queue name:queueName ?: @"SomeReactQueue"]];

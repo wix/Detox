@@ -1,4 +1,7 @@
-# Matchers
+---
+id: APIRef.Matchers
+title: Matchers
+---
 
 Detox uses **Matchers** to find UI `elements` in your app, **Actions** to emulate user interaction with those `elements` and **Expectations** to verify values on those `elements`.
 
@@ -24,7 +27,7 @@ Matchers find elements in your app that match one or more properties.
 In a React Native component add testID like so:
 
 ```js
-<TouchableOpacity testID={'tap_me'}}>
+<TouchableOpacity testID={'tap_me'}>
 ...
 ```
 

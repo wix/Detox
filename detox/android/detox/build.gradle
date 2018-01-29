@@ -1,10 +1,8 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.palantir.jacoco-coverage'
-apply plugin: 'com.palantir.jacoco-full-report'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.3'
+    buildToolsVersion '26.0.2'
     defaultConfig {
         minSdkVersion 18
         targetSdkVersion 25
@@ -12,25 +10,19 @@ android {
         versionName "1.0"
     }
 
-    publishNonDefault true
-
     productFlavors {
-        oldOkhttp {
+        flavorDimensions "minReactNative"
+        minReactNative44 {
+            dimension "minReactNative"
 
         }
-        newOkhttp {
-
+        minReactNative46 {
+            dimension "minReactNative"
         }
     }
 
     testOptions {
         unitTests.returnDefaultValues = true
-        unitTests.all {
-            jacoco {
-                includeNoLocationClasses = true
-            }
-        }
-
 
         unitTests.all { t ->
             reports {
@@ -65,27 +57,21 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    minReactNative44Implementation 'com.squareup.okhttp3:okhttp:3.4.1'
+    minReactNative44Implementation 'com.squareup.okhttp3:okhttp-ws:3.4.1'
 
+    minReactNative46Implementation 'com.squareup.okhttp3:okhttp:3.6.0'
+    minReactNative46Implementation 'com.squareup.okio:okio:1.13.0'
 
-    oldOkhttpCompile 'com.squareup.okhttp3:okhttp:3.4.1'
-    oldOkhttpCompile 'com.squareup.okhttp3:okhttp-ws:3.4.1'
-
-    newOkhttpCompile 'com.squareup.okhttp3:okhttp:3.6.0'
-    newOkhttpCompile 'com.squareup.okio:okio:1.13.0'
-
-    compile('com.android.support.test.espresso:espresso-core:3.0.0', {
+    implementation('com.android.support.test.espresso:espresso-core:3.0.0', {
         exclude group: 'com.google.code.findbugs'
     })
 
-    compile 'org.apache.commons:commons-lang3:3.4'
+    implementation 'org.apache.commons:commons-lang3:3.4'
+    implementation 'com.android.support.test.uiautomator:uiautomator-v18:2.1.3'
 
-    compile 'com.android.support.test:runner:1.0'
-    compile 'com.android.support.test:rules:1.0'
-    compile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
-
-    testCompile 'org.json:json:20140107'
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.assertj:assertj-core:3.5.2'
-    testCompile 'org.apache.commons:commons-io:1.3.2'
+    testImplementation 'org.json:json:20140107'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.assertj:assertj-core:3.5.2'
+    testImplementation 'org.apache.commons:commons-io:1.3.2'
 }

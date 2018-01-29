@@ -1,10 +1,12 @@
 const {spawn} = require('child_process');
+const fs = require('fs');
 const _ = require('lodash');
 const log = require('npmlog');
 const invoke = require('../invoke');
 const InvocationManager = invoke.InvocationManager;
 const ADB = require('./android/ADB');
 const AAPT = require('./android/AAPT');
+const APKPath = require('./android/APKPath');
 const DeviceDriverBase = require('./DeviceDriverBase');
 
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
@@ -12,13 +14,17 @@ const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
 class AndroidDriver extends DeviceDriverBase {
   constructor(client) {
     super(client);
-    const expect = require('../android/expect');
-    expect.exportGlobals();
+    this.expect = require('../android/expect');
     this.invocationManager = new InvocationManager(client);
-    expect.setInvocationManager(this.invocationManager);
+    this.expect.setInvocationManager(this.invocationManager);
 
     this.adb = new ADB();
     this.aapt = new AAPT();
+    this.apkPath = new APKPath();
+  }
+
+  exportGlobals() {
+    this.expect.exportGlobals();
   }
 
   async getBundleIdFromBinary(apkPath) {
@@ -27,8 +33,17 @@ class AndroidDriver extends DeviceDriverBase {
 
   async installApp(deviceId, binaryPath) {
     await this.adb.install(deviceId, binaryPath);
-    const testApkPath = binaryPath.split('.apk')[0] + '-androidTest.apk';
-    await this.adb.install(deviceId, testApkPath);
+    await this.adb.install(deviceId, this.getTestApkPath(binaryPath));
+  }
+
+  getTestApkPath(originalApkPath) {
+    const testApkPath = APKPath.getTestApkPath(originalApkPath);
+
+    if (!fs.existsSync(testApkPath)) {
+      throw new Error(`'${testApkPath}' could not be found, did you run './gradlew assembleAndroidTest' ?`);
+    }
+
+    return testApkPath;
   }
 
   async uninstallApp(deviceId, bundleId) {
@@ -121,11 +136,11 @@ class AndroidDriver extends DeviceDriverBase {
         adbName = adbDevice.adbName;
         break;
       case 0:
-        throw new Error(`Could not find '${name}' on the currently ADB attached devices, 
+        throw new Error(`Could not find '${filter.name}' on the currently ADB attached devices: '${JSON.stringify(adbDevices)}', 
       try restarting adb 'adb kill-server && adb start-server'`);
         break;
       default:
-        throw new Error(`Got more than one device corresponding to the name: ${name}`);
+        throw new Error(`Got more than one device corresponding to the name: ${filter.name}. Current ADB attached devices: ${JSON.stringify(adbDevices)}`);
     }
 
     return adbName;

@@ -1,4 +1,7 @@
-# The `device` Object
+---
+id: APIRef.DeviceObjectAPI
+title: The `device` Object
+---
 
 `device` is globally available in every test file, it enables control over the current attached device (currently only simulators are supported).
 
@@ -18,7 +21,7 @@
 - [`device.setURLBlacklist([urls])`](#deviceseturlblacklisturls)
 - [`device.enableSynchronization()`](#deviceenablesynchronization)
 - [`device.disableSynchronization()`](#devicedisablesynchronization)
-- [`device.resetContentAndSettings()`](#resetcontentandsettings)
+- [`device.resetContentAndSettings()`](#deviceresetcontentandsettings)
 - [`device.getPlatform()`](#devicegetplatform)
 
 ### `device.launchApp(params)`

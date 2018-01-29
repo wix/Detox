@@ -8,16 +8,18 @@
 
 #import "TestFailureHandler.h"
 
+DTX_CREATE_LOG(TestFailureHandler)
+
 @implementation TestFailureHandler
 
 - (void)handleException:(GREYFrameworkException *)exception details:(NSString *)details
 {
     NSString *description = [NSString stringWithFormat:@"%@\n%@", [exception description], details];
-    
-    NSLog(@"☣️ DETOX:: Test Failed:\n%@", description);
+	
+	dtx_log_error(@"Test Failed:\n%@", description);
     
     UIWindow* window = [[UIApplication sharedApplication] keyWindow];
-    NSLog(@"☣️ DETOX:: UI Hierarchy on test failure:\n%@", [GREYElementHierarchy hierarchyStringForElement:window]);
+    dtx_log_error(@"UI Hierarchy on test failure:\n%@", [GREYElementHierarchy hierarchyStringForElement:window]);
     
     if (self.delegate) [self.delegate onTestFailed:description];
 }
