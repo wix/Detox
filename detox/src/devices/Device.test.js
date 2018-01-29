@@ -18,6 +18,7 @@ describe('Device', () => {
   let device;
   let argparse;
   let sh;
+  let FileArtifact;
 
   let Client;
   let client;
@@ -29,6 +30,8 @@ describe('Device', () => {
     jest.mock('../utils/sh');
     sh = require('../utils/sh');
     sh.cp = jest.fn();
+
+    FileArtifact = require('../artifacts/FileArtifact');
 
     jest.mock('fs');
     fs = require('fs');
@@ -469,11 +472,15 @@ describe('Device', () => {
     beforeEach(() => {
       device = validDevice();
       jest.spyOn(device._artifactsCopier, 'addArtifact').mockReturnValueOnce();
+      jest.spyOn(device._artifactsCopier, 'queueArtifact').mockReturnValueOnce();
       device._deviceConfig.takeScreenshots = false;
       device._deviceConfig.recordVideos = false;
-      device.deviceDriver.getLogsPaths = () => ({stdout: '/t1', stderr: '/t2'});
-      screenshot = '/' + Math.random() + '.png';
-      video = '/' + Math.random() + '.mp4';
+      device.deviceDriver.getLogsPaths = () => ({
+        stdout: new FileArtifact('/t1'),
+        stderr: new FileArtifact('/t2')
+      });
+      screenshot = new FileArtifact('/' + Math.random() + '.png');
+      video = new FileArtifact('/' + Math.random() + '.mp4');
       device.deviceDriver.takeScreenshot.mockReturnValue(screenshot);
       device.deviceDriver.stopVideo.mockReturnValue(video);
     });
@@ -481,7 +488,7 @@ describe('Device', () => {
     it(`should call cp`, async () => {
       device.setArtifactsDestination('/tmp');
       await device.finalizeArtifacts();
-      expect(sh.cp).toHaveBeenCalledTimes(2);
+      expect(sh.cp).toHaveBeenCalled();
     });
 
     it(`should catch cp exception`, async () => {
@@ -501,7 +508,7 @@ describe('Device', () => {
       device._deviceConfig.recordVideos = true;
       await device.finalizeArtifacts();
       expect(device.deviceDriver.stopVideo).toBeCalledWith(device._deviceId);
-      expect(device._artifactsCopier.addArtifact).toBeCalledWith(video, 'recording');
+      expect(device._artifactsCopier.queueArtifact).toBeCalledWith(video, 'recording');
     });
 
     it(`should not try to add video artifact if it was not recorded`, async () => {

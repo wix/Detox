@@ -6,6 +6,7 @@ const IosDriver = require('./IosDriver');
 const AppleSimUtils = require('./AppleSimUtils');
 const configuration = require('../configuration');
 const environment = require('../utils/environment');
+const FileArtifact = require('../artifacts/FileArtifact');
 
 class SimulatorDriver extends IosDriver {
 
@@ -94,11 +95,15 @@ class SimulatorDriver extends IosDriver {
   }
 
   getLogsPaths(deviceId) {
-    return this._applesimutils.getLogsPaths(deviceId);
+    const {stdout, stderr} = this._applesimutils.getLogsPaths(deviceId);
+    return {
+      stdout: new FileArtifact(stdout),
+      stderr: new FileArtifact(stderr)
+    };
   }
 
   async takeScreenshot(deviceId) {
-    return await this._applesimutils.takeScreenshot(deviceId);
+    return new FileArtifact(await this._applesimutils.takeScreenshot(deviceId));
   }
 
   async startVideo(deviceId) {
@@ -110,7 +115,7 @@ class SimulatorDriver extends IosDriver {
     if (recording) {
       const video = await this._applesimutils.stopVideo(deviceId, recording);
       delete this._recordings[deviceId];
-      return video;
+      return new FileArtifact(video);
     }
   }
 }

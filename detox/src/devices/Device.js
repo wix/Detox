@@ -178,6 +178,7 @@ class Device {
 
   async _cleanup() {
     await this.deviceDriver.cleanup(this._deviceId, this._bundleId);
+    await this._artifactsCopier.processQueue(true);
   }
 
   async _takeScreenshot(name) {
@@ -196,7 +197,7 @@ class Device {
   async _stopVideo() {
     const video = await this.deviceDriver.stopVideo(this._deviceId);
     if (video) {
-      this._artifactsCopier.addArtifact(video, 'recording');
+      this._artifactsCopier.queueArtifact(video, 'recording');
     }
   }
 
@@ -225,7 +226,7 @@ class Device {
     if(path.isAbsolute(appPath)) {
       return appPath;
     }
-    
+
     const absPath = path.join(process.cwd(), appPath);
     if (fs.existsSync(absPath)) {
       return absPath;

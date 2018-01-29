@@ -8,14 +8,13 @@ const AndroidDriver = require('./AndroidDriver');
 const ini = require('ini');
 const fs = require('fs');
 const os = require('os');
-
-const SCREENSHOT_PATH = '/sdcard/screenshot.png';
-const VIDEO_PATH = '/sdcard/recording.mp4';
+const AndroidArtifact = require('./android/AndroidArtifact');
 
 class EmulatorDriver extends AndroidDriver {
   constructor(client) {
     super(client);
     this.emulator = new Emulator();
+    this._uniqueId = 1;
     this._recordings = {};
   }
 
@@ -87,16 +86,14 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async takeScreenshot(deviceId) {
-    const dst = tempfile('.png');
-    await this.adb.adbCmd(deviceId, `shell screencap ${SCREENSHOT_PATH}`);
-    await this.adb.adbCmd(deviceId, `pull ${SCREENSHOT_PATH} ${dst}`);
-    return dst;
+    const screenshotPath = this._getScreenshotPath(this._nextId());
+    await this.adb.screencap(deviceId, screenshotPath);
+    return new AndroidArtifact(screenshotPath, this.adb, deviceId);
   }
 
   async startVideo(deviceId) {
     const adb = this.adb;
-    await adb.adbCmd(deviceId, `shell rm -f ${VIDEO_PATH}`);
-
+    const videoPath = this._getVideoPath(this._nextId());
     let {width, height} = await adb.getScreenSize();
     let promise = spawnRecording();
     promise.catch(handleRecordingTermination);
@@ -108,7 +105,7 @@ class EmulatorDriver extends AndroidDriver {
       size = 0;
       recording = true;
       try {
-        size = await adb.getFileSize(deviceId, VIDEO_PATH);
+        size = await adb.getFileSize(deviceId, videoPath);
         if (size < 1) {
           recording = false;
         }
@@ -117,8 +114,11 @@ class EmulatorDriver extends AndroidDriver {
       }
     }
 
-    this._recordings[deviceId] = promise.childProcess;
-
+    this._recordings[deviceId] = {
+      process: promise.childProcess,
+      videoPath
+    };
+ 
     function handleRecordingTermination(result) {
       const proc = result.childProcess;
       // XXX: error code -38 (= 218) means that encoder was not able to create
@@ -132,29 +132,29 @@ class EmulatorDriver extends AndroidDriver {
     }
 
     function spawnRecording() {
-      return adb.screenrecord(deviceId, VIDEO_PATH, width, height);
+      return adb.screenrecord(deviceId, videoPath, width, height);
     }
   }
 
   async stopVideo(deviceId) {
     if (this._recordings[deviceId]) {
-      const adb = this.adb;
-      this._recordings[deviceId].kill(2);
+      const {process, videoPath} = this._recordings[deviceId];
       delete this._recordings[deviceId];
-
-      // XXX: need to wait a little before pulling file from emulator, otherwise
-      // file might be corrupt.
-      //
-      // TODO: each test should have it's own video file, which would be queued
-      // to be copied after all the tests have run. This should help to prevent
-      // file corruption and avoid 1 second delay per test.
-      await adb.adbCmd(deviceId, 'shell sleep 1');
-
-      const dest = tempfile('.mp4');
-      await adb.adbCmd(deviceId, `pull ${VIDEO_PATH} ${dest}`);
-      await adb.adbCmd(deviceId, `shell rm ${VIDEO_PATH}`);
-      return dest;
+      process.kill(2);
+      return new AndroidArtifact(videoPath, this.adb, deviceId);
     }
+  }
+
+  _nextId() {
+    return this._uniqueId++;
+  }
+
+  _getVideoPath(id) {
+    return `/sdcard/recording-${id}.mp4`;
+  }
+
+  _getScreenshotPath(id) {
+    return `/sdcard/screenshot-${id}.png`;
   }
 }
 

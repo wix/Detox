@@ -118,12 +118,20 @@ class ADB {
   }
 
   screencap(deviceId, path) {
-    return this.adb.adbCmd(deviceId, `shell screencap ${path}`);
+    return this.adbCmd(deviceId, `shell screencap ${path}`);
   }
 
   screenrecord(deviceId, path, width, height) {
     const params = width && height ? ['--size', width + 'x' + height] : [];
     return this.spawn(deviceId, ['shell', 'screenrecord', ...params, path]);
+  }
+
+  pull(deviceId, src, dst = '') {
+    return this.adbCmd(deviceId, `pull "${src}" "${dst}"`);
+  }
+
+  rm(deviceId, path, force = false) {
+    return this.adbCmd(deviceId, `shell rm ${force ? '-f' : ''} "${path}"`);
   }
 
   spawn(deviceId, params) {
