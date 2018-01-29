@@ -49,20 +49,16 @@ matrix:
       - ./scripts/install.ios.sh
       script:
       - ./scripts/demo-projects.ios.sh
-
-    # Website
-    - language: node_js
-      env:
-        - NAME='Website - master'
-      node_js: 8
+      # Deploy website
+    - branches:
+      only:
+      - master
+      - stable
       script:
       - git config --global user.email "$GIT_USER@users.noreply.github.com"
       - git config --global user.name "Wix"
       - echo "machine github.com login $GIT_USER password $GIT_TOKEN" > ~/.netrc
       - cd website && npm install && GIT_USER=$GIT_USER CURRENT_BRANCH=master npm run publish-gh-pages
-      branches:
-        only:
-          - master
 
 branches:
   only:
