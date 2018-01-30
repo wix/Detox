@@ -116,6 +116,7 @@ class EmulatorDriver extends AndroidDriver {
 
     this._recordings[deviceId] = {
       process: promise.childProcess,
+      promise,
       videoPath
     };
  
@@ -136,13 +137,18 @@ class EmulatorDriver extends AndroidDriver {
     }
   }
 
-  async stopVideo(deviceId) {
+  stopVideo(deviceId) {
     if (this._recordings[deviceId]) {
-      const {process, videoPath} = this._recordings[deviceId];
+      const {process, promise, videoPath} = this._recordings[deviceId];
       delete this._recordings[deviceId];
-      process.kill(2);
-      return new AndroidArtifact(videoPath, this.adb, deviceId);
+      return new Promise((resolve) => {
+        promise.catch(() => resolve(
+          new AndroidArtifact(videoPath, this.adb, deviceId)
+        ));
+        process.kill(2);
+      });
     }
+    return Promise.resolve(null);
   }
 
   _nextId() {
