@@ -58,12 +58,6 @@ dependencies {
 }
 ```
 
-In `android/build.gradle` add this to`buildscript > dependencies`:
-
-```gradle
-classpath 'com.palantir:jacoco-coverage:0.4.0'
-```
-
 And in the same file you need to add this under `allprojects > repositories`:
 
 ```gradle
