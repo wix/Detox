@@ -91,7 +91,9 @@ function runJest() {
       cleanup: program.cleanup,
       reuse: program.reuse,
       debugSynchronization: program.debugSynchronization,
-      artifactsLocation: program.artifactsLocation
+      artifactsLocation: program.artifactsLocation,
+      takeScreenshot: program.takeScreenshot,
+      recordVideos: program.recordVideos
     })
   });
 }
