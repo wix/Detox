@@ -37,6 +37,10 @@ class Detox {
       } catch (ex) {
         log.warn(ex);
       }
+    } else {
+      if (deviceConfig.takeScreenshots || deviceConfig.recordVideos) {
+        log.warn('--take-screenshots and --record-videos is a no-op without --artifacts-location.');
+      }
     }
   }
 
