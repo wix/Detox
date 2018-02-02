@@ -1,5 +1,6 @@
 const path = require('path');
 const _ = require('lodash');
+const string = require('../../utils/string');
 
 class APKPath {
 
@@ -12,9 +13,14 @@ class APKPath {
     const flavorDimensions = _.slice(splitFileName, 1, splitFileName.length - 1);
 
     tempPath = _.dropRight(tempPath, 1); //buildType
-    tempPath = _.dropRight(tempPath, flavorDimensions.length); //flavorDimensions
 
-    const testApkPath = path.join(tempPath.join(path.sep), 'androidTest', flavorDimensions.join(path.sep), buildType, `${originalApkPathObj.name}-androidTest${originalApkPathObj.ext}`);
+    let flavorDimensionsPath = '';
+    if (flavorDimensions.length > 0) {
+      flavorDimensionsPath = string.lowerCamelCaseJoin(flavorDimensions);
+      tempPath = _.dropRight(tempPath, 1); //flavorDimensions
+    }
+
+    const testApkPath = path.join(tempPath.join(path.sep), 'androidTest', flavorDimensionsPath, buildType, `${originalApkPathObj.name}-androidTest${originalApkPathObj.ext}`);
     return testApkPath;
   }
 }
