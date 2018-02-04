@@ -21,7 +21,6 @@ ws://localhost:8099
 <project_name>
 ```
 
-
 > NOTE: Add each line as a separate line in Xcode.
 
 ### Add 'None' Configuration to Detox Section
@@ -49,8 +48,6 @@ Run the following command in your project root directory:
 ```sh
 detox run-server
 ```
-
-<br>
 
 ### Run Your Application
 
