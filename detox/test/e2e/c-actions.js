@@ -83,7 +83,7 @@ describe('Actions', () => {
 
   it('should wait for long timeout', async () => {
     await element(by.id('WhyDoAllTheTestIDsHaveTheseStrangeNames')).tap();
-    await expect(element(by.id('WhyDoAllTheTestIDsHaveTheseStrangeNames'))).toBeVisible();
+    await expect(element(by.text('Long Timeout Done!!!'))).toBeVisible();
   });
 
 });
