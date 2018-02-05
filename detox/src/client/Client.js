@@ -51,9 +51,10 @@ class Client {
 		await this.sendAction(new actions.openURL(params));
 	}
 
-	async execute(invocation) {
-		if (typeof invocation === "function") {
-			invocation = invocation();
+	async execute(invokeThunk) {
+		let invocation = invokeThunk;
+		if (typeof invokeThunk === "function") {
+			invocation = invokeThunk();
 		}
 
 		if (this.slowInvocationTimeout) {

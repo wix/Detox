@@ -67,7 +67,7 @@ class Emulator {
 			tail.unwatch();
 			fs.closeSync(stdout);
 			fs.closeSync(stderr);
-			fs.unlink(tempLog, () => {});
+			fs.unlink(tempLog, () => {}); // eslint-disable-line no-empty-function
 			promise._cpResolve();
 		}
 

@@ -61,15 +61,15 @@ async function cleanup() {
 	}
 }
 
-async function beforeEach() {
+async function beforeEach(...args) {
 	if (detox) {
-		await detox.beforeEach(...arguments);
+		await detox.beforeEach(...args);
 	}
 }
 
-async function afterEach() {
+async function afterEach(...args) {
 	if (detox) {
-		await detox.afterEach(...arguments);
+		await detox.afterEach(...args);
 	}
 }
 

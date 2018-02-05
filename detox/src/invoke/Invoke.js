@@ -1,9 +1,10 @@
-function call(target, method, ...args) {
+function call(targetThunk, method, ...args) {
 	return function() {
-		if (typeof target === "function") {
+		let target = targetThunk;
+		if (typeof targetThunk === "function") {
 			target = {
 				type: "Invocation",
-				value: target()
+				value: targetThunk()
 			};
 		}
 		for (let i = 0; i < args.length; i++) {

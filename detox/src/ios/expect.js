@@ -132,20 +132,26 @@ class SwipeAction extends Action {
 			const eps = 10 ** -8;
 			switch (direction) {
 				case "left":
-					(x = percentage), (y = eps);
+					x = percentage;
+					y = eps;
 					break;
 				case "right":
-					(x = percentage), (y = eps);
+					x = percentage;
+					y = eps;
 					break;
 				case "up":
-					(y = percentage), (x = eps);
+					y = percentage;
+					x = eps;
 					break;
 				case "down":
-					(y = percentage), (x = eps);
+					y = percentage;
+					x = eps;
 					break;
+				default:
+					throw new Error("Unknown direction: ", direction);
 			}
 
-			if (speed == "fast") {
+			if (speed === "fast") {
 				this._call = invoke.callDirectly(
 					GreyActions.actionForSwipeFastInDirectionXOriginStartPercentageYOriginStartPercentage(
 						direction,
@@ -153,7 +159,7 @@ class SwipeAction extends Action {
 						y
 					)
 				);
-			} else if (speed == "slow") {
+			} else if (speed === "slow") {
 				this._call = invoke.callDirectly(
 					GreyActions.actionForSwipeSlowInDirectionXOriginStartPercentageYOriginStartPercentage(
 						direction,
@@ -166,11 +172,11 @@ class SwipeAction extends Action {
 					`SwipeAction speed must be a 'fast'/'slow', got ${speed}`
 				);
 			}
-		} else if (speed == "fast") {
+		} else if (speed === "fast") {
 			this._call = invoke.callDirectly(
 				GreyActions.actionForSwipeFastInDirection(direction)
 			);
-		} else if (speed == "slow") {
+		} else if (speed === "slow") {
 			this._call = invoke.callDirectly(
 				GreyActions.actionForSwipeSlowInDirection(direction)
 			);

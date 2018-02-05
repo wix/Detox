@@ -33,7 +33,7 @@ describe("AppleSimUtils", () => {
 			expect(exec.execWithRetriesAndLogs).not.toHaveBeenCalled();
 			try {
 				await uut.findDeviceUDID("iPhone 6");
-			} catch (e) {}
+			} catch (e) {} // eslint-disable-line no-empty
 			expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
 			expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
 				"applesimutils",
@@ -49,7 +49,7 @@ describe("AppleSimUtils", () => {
 		it("adapted to new api with optional OS", async () => {
 			try {
 				await uut.findDeviceUDID("iPhone 6 , iOS 10.3");
-			} catch (e) {}
+			} catch (e) {} // eslint-disable-line no-empty
 			expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
 				"applesimutils",
 				{

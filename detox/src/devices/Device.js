@@ -161,9 +161,9 @@ class Device {
 	}
 
 	async setLocation(lat, lon) {
-		lat = String(lat).replace(".", ",");
-		lon = String(lon).replace(".", ",");
-		await this.deviceDriver.setLocation(this._deviceId, lat, lon);
+		const latitude = String(lat).replace(".", ",");
+		const longitude = String(lon).replace(".", ",");
+		await this.deviceDriver.setLocation(this._deviceId, latitude, longitude);
 	}
 
 	async sendUserNotification(params) {

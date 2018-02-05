@@ -59,8 +59,6 @@ class DeviceDriverBase {
 		await this.client.sendUserNotification(params);
 	}
 
-	createPushNotificationJson(notification) {}
-
 	async setPermissions(deviceId, bundleId, permissions) {
 		return await Promise.resolve("");
 	}
@@ -107,12 +105,6 @@ class DeviceDriverBase {
 		fs.mkdirSync(dirname);
 		return true;
 	}
-
-	getBundleIdFromBinary(appPath) {}
-
-	validateDeviceConfig(deviceConfig) {}
-
-	getPlatform() {}
 
 	async cleanup(deviceId, bundleId) {
 		return await Promise.resolve("");

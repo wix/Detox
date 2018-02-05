@@ -26,16 +26,16 @@ function applyToPlatformSpecific(name, args) {
 }
 
 module.exports = {
-	element() {
-		return applyToPlatformSpecific("element", arguments);
+	element(...args) {
+		return applyToPlatformSpecific("element", args);
 	},
 
-	expect() {
-		return applyToPlatformSpecific("expect", arguments);
+	expect(...args) {
+		return applyToPlatformSpecific("expect", args);
 	},
 
-	waitFor() {
-		return applyToPlatformSpecific("waitFor", arguments);
+	waitFor(...args) {
+		return applyToPlatformSpecific("waitFor", args);
 	},
 
 	by: new Proxy(
