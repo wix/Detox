@@ -208,7 +208,7 @@ static void detoxConditionalInit()
 //TODO: Replace once Earl Grey has accepted PR to add this there.
 - (void)_sendShakeNotification
 {
-	//This sends a Darwin notification which 
+	//This sends a Darwin notification which triggers a shake event in UIApplication.
 	notify_post("com.apple.UIKit.SimulatorShake");
 }
 
