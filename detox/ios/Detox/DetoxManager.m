@@ -76,12 +76,12 @@ static void detoxConditionalInit()
 	return self;
 }
 
-- (void) connectToServer:(NSString*)url withSessionId:(NSString*)sessionId
+- (void)connectToServer:(NSString*)url withSessionId:(NSString*)sessionId
 {
 	[self.websocket connectToServer:url withSessionId:sessionId];
 }
 
-- (void) websocketDidConnect
+- (void)websocketDidConnect
 {
 	if (![ReactNativeSupport isReactNativeApp])
 	{
@@ -90,7 +90,7 @@ static void detoxConditionalInit()
 	}
 }
 
-- (void) websocketDidReceiveAction:(NSString *)type withParams:(NSDictionary *)params withMessageId:(NSNumber *)messageId
+- (void)websocketDidReceiveAction:(NSString *)type withParams:(NSDictionary *)params withMessageId:(NSNumber *)messageId
 {
 	NSAssert(messageId != nil, @"Got action with a null messageId");
 	
@@ -115,36 +115,46 @@ static void detoxConditionalInit()
 	}
 	else if([type isEqualToString:@"userNotification"])
 	{
-		NSURL* userNotificationDataURL = [NSURL fileURLWithPath:params[@"detoxUserNotificationDataURL"]];
-		DetoxUserNotificationDispatcher* dispatcher = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationDataURL:userNotificationDataURL];
-		[dispatcher dispatchOnAppDelegate:DetoxAppDelegateProxy.currentAppDelegateProxy simulateDuringLaunch:NO];
-		[self.websocket sendAction:@"userNotificationDone" withParams:@{} withMessageId: messageId];
+		[EarlGrey detox_safeExecuteSync:^{
+			NSURL* userNotificationDataURL = [NSURL fileURLWithPath:params[@"detoxUserNotificationDataURL"]];
+			DetoxUserNotificationDispatcher* dispatcher = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationDataURL:userNotificationDataURL];
+			[dispatcher dispatchOnAppDelegate:DetoxAppDelegateProxy.currentAppDelegateProxy simulateDuringLaunch:NO];
+			[self.websocket sendAction:@"userNotificationDone" withParams:@{} withMessageId: messageId];
+		}];
 	}
 	else if([type isEqualToString:@"openURL"])
 	{
-		NSURL* URLToOpen = [NSURL URLWithString:params[@"url"]];
+		[EarlGrey detox_safeExecuteSync:^{
+			NSURL* URLToOpen = [NSURL URLWithString:params[@"url"]];
+			
+			NSParameterAssert(URLToOpen != nil);
+			
+			NSString* sourceApp = params[@"sourceApp"];
+			
+			NSMutableDictionary* options = [@{UIApplicationLaunchOptionsURLKey: URLToOpen} mutableCopy];
+			if(sourceApp != nil)
+			{
+				options[UIApplicationLaunchOptionsSourceApplicationKey] = sourceApp;
+			}
+			
+			if([[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:openURL:options:)])
+			{
+				[[UIApplication sharedApplication].delegate application:[UIApplication sharedApplication] openURL:URLToOpen options:options];
+			}
+			
+			[self.websocket sendAction:@"openURLDone" withParams:@{} withMessageId: messageId];
+		}];
+	}
+	else if([type isEqualToString:@"shakeDevice"])
+	{
 		
-		NSParameterAssert(URLToOpen != nil);
-		
-		NSString* sourceApp = params[@"sourceApp"];
-		
-		NSMutableDictionary* options = [@{UIApplicationLaunchOptionsURLKey: URLToOpen} mutableCopy];
-		if(sourceApp != nil)
-		{
-			options[UIApplicationLaunchOptionsSourceApplicationKey] = sourceApp;
-		}
-		
-		if([[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:openURL:options:)])
-		{
-			[[UIApplication sharedApplication].delegate application:[UIApplication sharedApplication] openURL:URLToOpen options:options];
-		}
-		
-		[self.websocket sendAction:@"openURLDone" withParams:@{} withMessageId: messageId];
 	}
 	else if([type isEqualToString:@"reactNativeReload"])
 	{
 		_isReady = NO;
-		[ReactNativeSupport reloadApp];
+		[EarlGrey detox_safeExecuteSync:^{
+			[ReactNativeSupport reloadApp];
+		}];
 		
 		[self _waitForRNLoadWithId:messageId];
 		
