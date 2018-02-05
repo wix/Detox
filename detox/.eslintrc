@@ -65,7 +65,7 @@
     "array-callback-return": 0,
     "block-scoped-var": "error",
     "complexity": 0,
-    "consistent-return": "error",
+    "consistent-return": "warn",
     "curly": [
       "error",
       "all"
@@ -142,7 +142,7 @@
     "no-delete-var": "error",
     "no-label-var": "error",
     "no-restricted-globals": "error",
-    "no-shadow": "error",
+    "no-shadow": 1,
     "no-shadow-restricted-names": "error",
     "no-undef": 0,
     "no-undef-init": "error",
@@ -246,7 +246,7 @@
     ],
     "max-nested-callbacks": [
       "error",
-      4
+      5
     ],
     "max-params": [
       "error",
@@ -333,7 +333,7 @@
     "space-infix-ops": "error",
     "space-unary-ops": "error",
     "spaced-comment": 0,
-    "wrap-regex": "error",
+    "wrap-regex": 0,
     /*
      *                             ECMAScript 6
      */
