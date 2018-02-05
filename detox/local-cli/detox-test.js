@@ -24,10 +24,13 @@ program
   .option('-p, --platform [ios/android]',
     'Run platform specific tests. Runs tests with invert grep on \':platform:\', '
           + 'e.g test with substring \':ios:\' in its name will not run when passing \'--platform android\'')
-  .option('--take-screenshots',
-    'Save screenshots before and after each test to artifacts directory.')
-  .option('--record-videos',
-    'Save screen recordings of each test to artifacts directory.')
+  .option(
+    '--take-screenshots [value]',
+    'Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only.'
+  )
+  .option(
+    '--record-videos [value]',
+    'Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only.')
   .parse(process.argv);
 
 const config = require(path.join(process.cwd(), 'package.json')).detox;
@@ -68,8 +71,8 @@ function runMocha() {
   const artifactsLocation = program.artifactsLocation ? `--artifacts-location ${program.artifactsLocation}` : '';
   const configFile = runnerConfig ? `--opts ${runnerConfig}` : '';
   const platform = program.platform ? `--grep ${getPlatformSpecificString(program.platform)} --invert` : '';
-  const screenshots = program.takeScreenshots ? `--take-screenshots` : '';
-  const videos = program.recordVideos ? `--record-videos` : '';
+  const screenshots = program.takeScreenshots ? `--take-screenshots ${program.takeScreenshots}` : '';
+  const videos = program.recordVideos ? `--record-videos ${program.recordVideos}` : '';
 
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
   const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platform} ${artifactsLocation} ${screenshots} ${videos}`;
@@ -92,8 +95,8 @@ function runJest() {
       reuse: program.reuse,
       debugSynchronization: program.debugSynchronization,
       artifactsLocation: program.artifactsLocation,
-      takeScreenshot: program.takeScreenshot,
-      recordVideos: program.recordVideos
+      takeScreenshots: program.takeScreenshots,
+      recordVideos: program.recordVideos,
     })
   });
 }

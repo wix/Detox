@@ -111,7 +111,7 @@ class SimulatorDriver extends IosDriver {
   }
 
   async stopVideo(deviceId) {
-    let recording = this._recordings[deviceId];
+    const recording = this._recordings[deviceId];
     if (recording) {
       const video = await this._applesimutils.stopVideo(deviceId, recording);
       delete this._recordings[deviceId];

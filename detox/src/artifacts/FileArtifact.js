@@ -9,6 +9,10 @@ class FileArtifact extends ArtifactBase {
   async move(destination) {
     await sh.mv(`"${this._source}" "${destination}"`);
   }
+
+  async remove() {
+    await sh.rm(`"${this._source}"`);
+  }
 }
 
 module.exports = FileArtifact;

@@ -166,12 +166,14 @@ class AppleSimUtils {
     const dest = tempfile('.mp4');
     const promise = exec.spawnAndLog('/usr/bin/xcrun', ['simctl', 'io', udid, 'recordVideo', dest]);
     const process = promise.childProcess;
-    return {process, dest};
+    return {promise, process, dest};
   }
 
-  stopVideo(udid, {process, dest}) {
-    process.kill(2);
-    return dest;
+  stopVideo(udid, {promise, process, dest}) {
+    return new Promise((resolve) => {
+      promise.then(() => resolve(dest));
+      process.kill(2);
+    });
   }
 
   async _execAppleSimUtils(options, statusLogs, retries, interval) {

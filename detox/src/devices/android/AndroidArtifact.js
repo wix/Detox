@@ -15,6 +15,10 @@ class AndroidArtifact extends ArtifactBase {
     await this.copy(destination);
     await this._adb.rm(this._deviceId, this._source, true);
   }
+
+  async remove() {
+    await this._adb.rm(this._deviceId, this._source, true);
+  }
 }
 
 module.exports = AndroidArtifact;

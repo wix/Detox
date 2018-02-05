@@ -26,14 +26,6 @@ function getDeviceConfig(configurations) {
     configuration.throwOnEmptyName();
   }
 
-  if (!('takeScreenshots' in deviceConfig)) {
-    deviceConfig.takeScreenshots = argparse.getFlag('take-screenshots');
-  }
-
-  if (!('recordVideos' in deviceConfig)) {
-    deviceConfig.recordVideos = argparse.getFlag('record-videos');
-  }
-
   return deviceConfig;
 }
 

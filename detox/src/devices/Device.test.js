@@ -30,6 +30,7 @@ describe('Device', () => {
     jest.mock('../utils/sh');
     sh = require('../utils/sh');
     sh.cp = jest.fn();
+    sh.rm = jest.fn();
 
     FileArtifact = require('../artifacts/FileArtifact');
 
@@ -473,6 +474,7 @@ describe('Device', () => {
       device = validDevice();
       jest.spyOn(device._artifactsCopier, 'addArtifact').mockReturnValueOnce();
       jest.spyOn(device._artifactsCopier, 'queueArtifact').mockReturnValueOnce();
+      jest.spyOn(device._artifactsCopier, 'dropArtifacts').mockReturnValueOnce();
       device._deviceConfig.takeScreenshots = false;
       device._deviceConfig.recordVideos = false;
       device.deviceDriver.getLogsPaths = () => ({
@@ -505,7 +507,7 @@ describe('Device', () => {
     });
 
     it(`should stop recording video`, async () => {
-      device._deviceConfig.recordVideos = true;
+      device._deviceConfig.recordVideos = 'true';
       await device.finalizeArtifacts();
       expect(device.deviceDriver.stopVideo).toBeCalledWith(device._deviceId);
       expect(device._artifactsCopier.queueArtifact).toBeCalledWith(video, 'recording');
@@ -519,10 +521,29 @@ describe('Device', () => {
     });
 
     it(`should take "after" screenshot`, async () => {
-      device._deviceConfig.takeScreenshots = true;
+      device._deviceConfig.takeScreenshots = 'true';
       await device.finalizeArtifacts();
       expect(device.deviceDriver.takeScreenshot).toBeCalledWith(device._deviceId);
       expect(device._artifactsCopier.addArtifact).toBeCalledWith(screenshot, 'screenshot-after');
+    });
+
+    it(`should drop, remove, not add artifacts given "true" (test success indication) when set to record on failing`, async () => {
+      device._deviceConfig.takeScreenshots = 'failing';
+      device._deviceConfig.recordVideos = 'failing';
+      await device.finalizeArtifacts(true);
+      expect(device._artifactsCopier.addArtifact).not.toBeCalled();
+      expect(device._artifactsCopier.queueArtifact).not.toBeCalled();
+      expect(device._artifactsCopier.dropArtifacts).toBeCalled();
+      expect(sh.rm).toBeCalledWith(`"${video.toString()}"`);
+    });
+
+    it(`should save artifacts given "false" (test success indication) when set to record on failing`, async () => {
+      device._deviceConfig.takeScreenshots = 'failing';
+      device._deviceConfig.recordVideos = 'failing';
+      await device.finalizeArtifacts(false);
+      expect(device._artifactsCopier.addArtifact).toBeCalled();
+      expect(device._artifactsCopier.queueArtifact).toBeCalled();
+      expect(device._artifactsCopier.dropArtifacts).not.toBeCalled();
     });
   });
 

@@ -444,10 +444,11 @@ describe('AppleSimUtils', () => {
   describe('startVideo', () => {
     it('spawns simctl process with recordVideo command', async () => {
       const childProcess = Math.random();
+      const promise = {childProcess};
       const udid = Math.random();
       const dest = '/tmp/' + Math.random();
       tempfile.mockReturnValueOnce(dest);
-      exec.spawnAndLog.mockReturnValueOnce({childProcess});
+      exec.spawnAndLog.mockReturnValueOnce(promise);
 
       const result = uut.startVideo(udid);
 
@@ -458,16 +459,23 @@ describe('AppleSimUtils', () => {
       );
       expect(result).toEqual({
         process: childProcess,
+        promise,
         dest
       });
     });
   });
 
   describe('stopVideo', () => {
-    it('interupts process and returns destination', () => {
+    it('interupts process and returns destination', async () => {
+      let process = {};
+      const promise = new Promise((resolve) => {
+        process.kill = jest.fn(() => {
+          resolve();
+        });
+      });
       const dest = Math.random();
-      const process = {kill: jest.fn()};
-      expect(uut.stopVideo('', {process, dest})).toEqual(dest);
+
+      expect(await uut.stopVideo('', {promise, process, dest})).toEqual(dest);
       expect(process.kill).toBeCalledWith(2);
     });
   });

@@ -4,6 +4,8 @@ describe('Detox', () => {
   let fs;
   let Detox;
   let detox;
+  let log;
+  let argparse, ARGS;
   const validDeviceConfig = schemes.validOneDeviceNoSession.configurations['ios.sim.release'];
   const validDeviceConfigWithSession = schemes.sessionPerConfiguration.configurations['ios.sim.none'];
   const invalidDeviceConfig = schemes.invalidDeviceNoDeviceType.configurations['ios.sim.release'];
@@ -24,14 +26,20 @@ describe('Detox', () => {
       jest.setMock(modulePath, FinalMock);
     }
 
+    ARGS = {};
+    jest.mock('./utils/argparse');
+    argparse = require('./utils/argparse');
+    argparse.getArgValue.mockImplementation(name => ARGS[name]);
+
     jest.mock('npmlog');
+    log = require('npmlog');
+
     jest.mock('fs');
     fs = require('fs');
     jest.mock('./ios/expect');
     setCustomMock('./client/Client', clientMockData);
     setCustomMock('./devices/Device', deviceMockData);
 
-    process.env = {};
     global.device = undefined;
 
     jest.mock('./devices/IosDriver');
@@ -42,7 +50,7 @@ describe('Detox', () => {
   });
 
   it(`Passing --cleanup should shutdown the currently running device`, async () => {
-    process.env.cleanup = true;
+    ARGS.cleanup = true;
     Detox = require('./Detox');
 
     detox = new Detox({deviceConfig: validDeviceConfig});
@@ -95,7 +103,7 @@ describe('Detox', () => {
   });
 
   it(`Detox should use session defined per configuration `, async () => {
-    process.env.configuration = 'ios.sim.none';
+    ARGS.configuration = 'ios.sim.none';
     Detox = require('./Detox');
     detox = new Detox({deviceConfig: validDeviceConfigWithSession});
     await detox.init();
@@ -114,7 +122,7 @@ describe('Detox', () => {
   });
 
   it(`beforeEach() - should set device artifacts destination`, async () => {
-    process.env.artifactsLocation = '/tmp';
+    ARGS['artifacts-location'] = '/tmp';
     Detox = require('./Detox');
     detox = new Detox({deviceConfig: validDeviceConfigWithSession});
     await detox.init();
@@ -130,8 +138,22 @@ describe('Detox', () => {
     expect(device.setArtifactsDestination).toHaveBeenCalledTimes(0);
   });
 
+  it(`beforeEach() - should warn when --take-screenshots is no-op`, () => {
+    ARGS['take-screenshots'] = true;
+    Detox = require('./Detox');
+    detox = new Detox({deviceConfig: validDeviceConfigWithSession});
+    expect(log.warn).toBeCalledWith(expect.stringContaining('--take-screenshots is a no-op'));
+  });
+
+  it(`beforeEach() - should warn when --record-videos is no-op`, () => {
+    ARGS['record-videos'] = true;
+    Detox = require('./Detox');
+    detox = new Detox({deviceConfig: validDeviceConfigWithSession});
+    expect(log.warn).toBeCalledWith(expect.stringContaining('--record-videos is a no-op'));
+  });
+
   it(`afterEach() - should call device.finalizeArtifacts`, async () => {
-    process.env.artifactsLocation = '/tmp';
+    ARGS['artifacts-location'] = '/tmp';
     Detox = require('./Detox');
     detox = new Detox({deviceConfig: validDeviceConfigWithSession});
     await detox.init();
@@ -147,13 +169,16 @@ describe('Detox', () => {
     expect(device.finalizeArtifacts).toHaveBeenCalledTimes(0);
   });
 
-  it(`the constructor should catch exception from ArtifactsPathsProvider`, async () => {
-    process.env.artifactsLocation = '/tmp';
+  it(`the constructor should catch exception from ArtifactsPathsProvider`, () => {
+    ARGS['artifacts-location'] = '/tmp';
     fs.mkdirSync = jest.fn(() => {
       throw Error('Could not create artifacts root dir');
     });
     Detox = require('./Detox');
     detox = new Detox({deviceConfig: validDeviceConfigWithSession});
+    expect(log.warn).toHaveBeenCalledWith(expect.objectContaining({
+      message: expect.stringContaining('Could not create artifacts root dir')
+    }));
   });
 
   it('exports globals by default', async () => {

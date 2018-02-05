@@ -9,6 +9,7 @@ class ArtifactsCopier {
     this._currentTestArtifactsDestination = undefined;
     this._artifacts = [];
     this._queue = [];
+    this._currentTestQueue = [];
   }
 
   prepare(deviceId) {
@@ -20,12 +21,26 @@ class ArtifactsCopier {
   }
 
   queueArtifact(source, destName) {
-    this._queue.push([
+    this._currentTestQueue.push([
       this._currentTestArtifactsDestination,
       this._currentLaunchNumber,
       source,
       destName + path.extname(source.toString())
     ]);
+  }
+
+  async dropArtifacts() {
+    for (const [source] of this._artifacts) {
+      await source.remove();
+    }
+    for (const [_, __, source] of this._queue) {
+      await source.remove();
+    }
+    for (const [_, __, source] of this._currentTestQueue) {
+      await source.remove();
+    }
+    this._artifacts.splice(0);
+    this._currentTestQueue.splice(0);
   }
 
   setArtifactsDestination(artifactsDestination) {
@@ -39,6 +54,8 @@ class ArtifactsCopier {
   }
 
   async finalizeArtifacts() {
+    this._queue.push.apply(this._queue, this._currentTestQueue);
+    this._currentTestQueue.splice(0);
     await this._copyArtifacts();
   }
 
@@ -87,12 +104,12 @@ class ArtifactsCopier {
   }
 
   async processQueue() {
+    await this.finalizeArtifacts();
     for (const [destDir, launchNumber, source, destName] of this._queue) {
       await this._move(source, destName, launchNumber, destDir);
     }
     this._queue.splice(0);
   }
-
 }
 
 module.exports = ArtifactsCopier;

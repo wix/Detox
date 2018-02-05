@@ -24,6 +24,12 @@ describe('AndroidArtifact', () => {
     expect(adb.adbCmd).toBeCalledWith(deviceId, `shell rm -f "/sdcard/a.txt"`);
   });
 
+  it('removes file', async () => {
+    const aa = androidArtifact('/sdcard/a.txt');
+    await aa.remove();
+    expect(adb.adbCmd).toBeCalledWith(deviceId, `shell rm -f "/sdcard/a.txt"`);
+  });
+
   function androidArtifact(path) {
     return new AndroidArtifact(path, adb, deviceId);
   }

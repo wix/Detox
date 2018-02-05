@@ -69,7 +69,49 @@ describe('ArtifactsCopier', () => {
 
     expect(exec).toHaveBeenCalledTimes(1);
   });
+
+  it('drops all current artifacts', async () => {
+    const ac = copier('/some/place');
+    const a1 = artifact('/tmp/' + Math.random());
+    const a2 = artifact('/tmp/' + Math.random());
+
+    ac.queueArtifact(a1, 'a');
+    ac.addArtifact(a2, 'b');
+
+    await ac.dropArtifacts();
+    await ac.processQueue();
+
+    expect(a1.remove).toBeCalled();
+    expect(a2.remove).toBeCalled();
+    expect(a1.move).not.toBeCalled();
+    expect(a2.move).not.toBeCalled();
+  });
+
+  it('does not drop previously queued artifact', async () => {
+    const ac = copier('/some/place');
+    const a1 = artifact('/tmp/' + Math.random());
+    const a2 = artifact('/tmp/' + Math.random());
+
+    ac.queueArtifact(a1, 'a1');
+    await ac.finalizeArtifacts();
+
+    ac.queueArtifact(a2, 'a2');
+    await ac.dropArtifacts();
+
+    await ac.processQueue();
+
+    expect(a1.move).toBeCalled();
+    expect(a2.remove).toBeCalled();
+  });
 });
+
+function artifact(src, dst) {
+  const a = new FileArtifact(src, dst);
+  jest.spyOn(a, 'remove').mockReturnValue();
+  jest.spyOn(a, 'move').mockReturnValue();
+  jest.spyOn(a, 'copy').mockReturnValue();
+  return a;
+}
 
 function copier(dest, logs) {
   const ac = new ArtifactsCopier(deviceDriver(logs));
