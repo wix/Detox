@@ -11,6 +11,7 @@
 #import "DetoxAppDelegateProxy.h"
 #import "EarlGreyExtensions.h"
 #import "EarlGreyStatistics.h"
+#import <notify.h>
 
 DTX_CREATE_LOG(DetoxManager)
 
@@ -147,7 +148,11 @@ static void detoxConditionalInit()
 	}
 	else if([type isEqualToString:@"shakeDevice"])
 	{
-		
+		[EarlGrey detox_safeExecuteSync:^{
+			[self _sendShakeNotification];
+			
+			[self.websocket sendAction:@"shakeDeviceDone" withParams:@{} withMessageId: messageId];
+		}];
 	}
 	else if([type isEqualToString:@"reactNativeReload"])
 	{
@@ -198,6 +203,13 @@ static void detoxConditionalInit()
 {
 	if (error == nil) error = @"";
 	[self.websocket sendAction:@"error" withParams:@{@"error": error} withMessageId: messageId];
+}
+
+//TODO: Replace once Earl Grey has accepted PR to add this there.
+- (void)_sendShakeNotification
+{
+	//This sends a Darwin notification which 
+	notify_post("com.apple.UIKit.SimulatorShake");
 }
 
 @end
