@@ -20,7 +20,7 @@ DTX_CREATE_LOG(WebSocket);
 
 @implementation WebSocket
 
-- (void) connectToServer:(NSString*)url withSessionId:(NSString*)sessionId
+- (void)connectToServer:(NSString*)url withSessionId:(NSString*)sessionId
 {
 	if (self.websocket)
 	{
@@ -33,7 +33,7 @@ DTX_CREATE_LOG(WebSocket);
 	[self.websocket open];
 }
 
-- (void) sendAction:(NSString*)type withParams:(NSDictionary*)params withMessageId:(NSNumber*)messageId
+- (void)sendAction:(NSString*)type withParams:(NSDictionary*)params withMessageId:(NSNumber*)messageId
 {
 	NSDictionary *data = @{@"type": type, @"params": params, @"messageId": messageId};
 	NSError *error;
@@ -48,7 +48,7 @@ DTX_CREATE_LOG(WebSocket);
 	[self.websocket sendString:json error:NULL];
 }
 
-- (void) receiveAction:(NSString*)json
+- (void)receiveAction:(NSString*)json
 {
 	NSError *error;
 	NSData *jsonData = [json dataUsingEncoding:NSUTF8StringEncoding];

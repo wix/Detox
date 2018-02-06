@@ -347,6 +347,8 @@
 		399B4E061ED587120098D2AC /* example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39A077861E5450E700A53A07 /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
 		39B0445B1DAED76400431EC5 /* Detox.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Detox.xcodeproj; path = ../../ios/Detox.xcodeproj; sourceTree = "<group>"; };
+		39FC9D23202899F90033C11A /* e2e */ = {isa = PBXFileReference; lastKnownFileType = folder; name = e2e; path = ../e2e; sourceTree = "<group>"; };
+		39FC9D24202899F90033C11A /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; name = src; path = ../src; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		CC17D3301D60A24300267B0C /* NativeModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NativeModule.h; path = example/NativeModule.h; sourceTree = "<group>"; };
@@ -524,6 +526,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		39FC9CFD202899D10033C11A /* JS */ = {
+			isa = PBXGroup;
+			children = (
+				39FC9D23202899F90033C11A /* e2e */,
+				39FC9D24202899F90033C11A /* src */,
+			);
+			name = JS;
+			sourceTree = "<group>";
+		};
 		78C398B11ACF4ADC00677621 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -565,6 +576,7 @@
 			isa = PBXGroup;
 			children = (
 				13B07FAE1A68108700A75B9A /* example */,
+				39FC9CFD202899D10033C11A /* JS */,
 				CCFA7DE41D11D22600E15EDF /* Frameworks */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,

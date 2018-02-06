@@ -21,7 +21,7 @@
 @interface WebSocket : NSObject<SRWebSocketDelegate>
 
 @property (nonatomic, assign) id<WebSocketDelegate> delegate;
-- (void) connectToServer:(NSString*)url withSessionId:(NSString*)sessionId;
-- (void) sendAction:(NSString*)type withParams:(NSDictionary*)params withMessageId:(NSNumber*)messageId;
+- (void)connectToServer:(NSString*)url withSessionId:(NSString*)sessionId;
+- (void)sendAction:(NSString*)type withParams:(NSDictionary*)params withMessageId:(NSNumber*)messageId;
 
 @end
