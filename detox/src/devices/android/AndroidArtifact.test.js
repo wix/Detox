@@ -4,11 +4,18 @@ const ADB = require('./ADB');
 describe('AndroidArtifact', () => {
   let adb;
   let deviceId;
+  let ANDROID_HOME;
 
   beforeEach(() => {
+    ANDROID_HOME = process.env.ANDROID_HOME;
+    process.env.ANDROID_HOME = '/tmp/android';
     deviceId = Math.random();
     adb = new ADB();
     jest.spyOn(adb, 'adbCmd').mockReturnValue();
+  });
+
+  afterEach(() => {
+    process.env.ANDROID_HOME = ANDROID_HOME;
   });
 
   it('copies file by pulling', async () => {
