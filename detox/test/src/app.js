@@ -19,14 +19,20 @@ class example extends Component {
     };
   }
 
-  renderScreenButton(title, component) {
+  renderButton(title, onPressCallback) {
     return (
       <TouchableOpacity onPress={() => {
-        this.setState({screen: component});
+        onPressCallback();
       }}>
         <Text style={{color: 'blue', marginBottom: 20}}>{title}</Text>
       </TouchableOpacity>
     );
+  }
+
+  renderScreenButton(title, component) {
+    return this.renderButton(title, () => {
+        this.setState({screen: component});
+      });
   }
 
   renderText(text) {
@@ -78,6 +84,7 @@ class example extends Component {
           {this.renderScreenButton('Network', Screens.NetworkScreen)}
           {this.renderScreenButton('Animations', Screens.AnimationsScreen)}
           {this.renderScreenButton('Location', Screens.LocationScreen)}
+          {this.renderButton('Crash', () => {throw new Error('Simulated Crash')})}
         </View>
       );
     }

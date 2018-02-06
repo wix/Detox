@@ -165,6 +165,16 @@ describe('AsyncWebSocket', () => {
     }
   });
 
+  it(`eventCallback should be triggered on a registered messageId when sent from testee`, async () => {
+    const mockCallback = jest.fn();
+    const mockedResponse = generateResponse('onmessage', -10000);
+    await connect(client);
+    client.setEventCallback(-10000, mockCallback);
+
+    client.ws.onmessage(mockedResponse);
+    expect(mockCallback).toHaveBeenCalledWith(mockedResponse.data);
+  });
+
   async function connect(client) {
     const result = {};
     const promise = client.open();

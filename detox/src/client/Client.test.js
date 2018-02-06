@@ -1,3 +1,4 @@
+const DetoxError = require('./DetoxError');
 const config = require('../configurations.mock').validOneDeviceAndSession.session;
 const invoke = require('../invoke');
 
@@ -148,6 +149,19 @@ describe('Client', () => {
     } catch (ex) {
       expect(ex).toBeDefined();
     }
+  });
+
+  it(`Throw error if AppWillTerminateWithError event is sent to tester`, async () => {
+    client.ws.setEventCallback = jest.fn();
+    await connect();
+
+    const event = JSON.stringify({
+      type: "AppWillTerminateWithError",
+      params: {errorDetails: "someDetails"},
+      messageId: -10000
+    });
+
+    expect(() => client.ws.setEventCallback.mock.calls[0][1](event)).toThrow();
   });
 
   async function connect() {
