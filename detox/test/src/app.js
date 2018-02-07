@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -22,17 +22,17 @@ class example extends Component {
   renderScreenButton(title, component) {
     return (
       <TouchableOpacity onPress={() => {
-        this.setState({screen: component});
+        this.setState({ screen: component });
       }}>
-        <Text style={{color: 'blue', marginBottom: 20}}>{title}</Text>
+        <Text style={{ color: 'blue', marginBottom: 20 }}>{title}</Text>
       </TouchableOpacity>
     );
   }
 
   renderText(text) {
     return (
-      <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
-        <Text style={{fontSize: 25}}>
+      <View style={{ flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ fontSize: 25 }}>
           {text}
         </Text>
       </View>
@@ -42,7 +42,7 @@ class example extends Component {
   async componentDidMount() {
     const url = await Linking.getInitialURL();
     if (url) {
-      this.setState({url: url});
+      this.setState({ url: url });
     }
   }
 
@@ -61,8 +61,8 @@ class example extends Component {
 
     if (!this.state.screen) {
       return (
-        <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
-          <Text style={{fontSize: 20, marginBottom: 30}}>
+        <View style={{ flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ fontSize: 20, marginBottom: 30 }}>
             Choose a test
           </Text>
           {this.renderScreenButton('Sanity', Screens.SanityScreen)}
@@ -78,6 +78,7 @@ class example extends Component {
           {this.renderScreenButton('Network', Screens.NetworkScreen)}
           {this.renderScreenButton('Animations', Screens.AnimationsScreen)}
           {this.renderScreenButton('Location', Screens.LocationScreen)}
+          {this.renderScreenButton('Shake', Screens.ShakeScreen)}
         </View>
       );
     }
@@ -88,11 +89,11 @@ class example extends Component {
   }
 
   _onNotification(notification) {
-    this.setState({notification: notification.getAlert()});
+    this.setState({ notification: notification.getAlert() });
   }
 
   _handleOpenURL(params) {
-    this.setState({url: params.url});
+    this.setState({ url: params.url });
   }
 }
 
