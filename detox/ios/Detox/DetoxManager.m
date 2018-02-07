@@ -205,7 +205,7 @@ static void detoxConditionalInit()
 	[self.websocket sendAction:@"error" withParams:@{@"error": error} withMessageId: messageId];
 }
 
-//TODO: Replace once Earl Grey has accepted PR to add this there.
+//TODO: Replace once Earl Grey has accepted PR to add this there: https://github.com/google/EarlGrey/pull/679
 - (void)_sendShakeNotification
 {
 	//This sends a Darwin notification which triggers a shake event in UIApplication.
