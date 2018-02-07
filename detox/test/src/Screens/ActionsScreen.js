@@ -100,9 +100,9 @@ export default class ActionsScreen extends Component {
     });
   }
 
-  onLongTimeout(greeting) {
+  onLongTimeout() {
     setTimeout(() => {
-      greeting: 'Long Timeout Done'
+      this.setState({ greeting: 'Long Timeout Done' })
     }, 4000);
   }
 
