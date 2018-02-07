@@ -30,12 +30,23 @@ class Detox {
     this.client = null;
     this.device = null;
     this._currentTestNumber = 0;
+    const takeScreenshots = argparse.getArgValue('take-screenshots');
+    const recordVideos = argparse.getArgValue('record-videos');
     const artifactsLocation = argparse.getArgValue('artifacts-location');
     if (artifactsLocation !== undefined) {
       try {
         this._artifactsPathsProvider = new ArtifactsPathsProvider(artifactsLocation);
+        this.deviceConfig.takeScreenshots = takeScreenshots;
+        this.deviceConfig.recordVideos = recordVideos;
       } catch (ex) {
         log.warn(ex);
+      }
+    } else {
+      if (takeScreenshots) {
+        log.warn('--take-screenshots is a no-op without --artifacts-location.');
+      }
+      if (recordVideos) {
+        log.warn('--record-videos is a no-op without --artifacts-location.');
       }
     }
   }
@@ -91,12 +102,13 @@ class Detox {
     if (this._artifactsPathsProvider !== undefined) {
       const testArtifactsPath = this._artifactsPathsProvider.createPathForTest(this._currentTestNumber, ...testNameComponents);
       this.device.setArtifactsDestination(testArtifactsPath);
+      await this.device.prepareArtifacts();
     }
   }
 
-  async afterEach(suiteName, testName) {
+  async afterEach(success = true) {
     if(this._artifactsPathsProvider !== undefined) {
-      await this.device.finalizeArtifacts();
+      await this.device.finalizeArtifacts(success);
     }
   }
 

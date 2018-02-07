@@ -54,6 +54,7 @@
     "shell-utils": "^1.0.9",
     "tail": "^1.2.3",
     "telnet-client": "0.15.3",
+    "tempfile": "^2.0.0",
     "ws": "^1.1.1"
   },
   "engines": {
@@ -70,6 +71,7 @@
       "EmulatorTelnet.js",
       "Emulator.js",
       "DeviceDriverBase.js",
+      "ArtifactBase.js",
       "GREYConfiguration.js",
       "src/utils/environment.js",
       "AAPT.js",

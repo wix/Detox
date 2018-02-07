@@ -1,5 +1,5 @@
 const path = require('path');
-const exec = require('../../utils/exec').execWithRetriesAndLogs;
+const {execWithRetriesAndLogs, spawnAndLog} = require('../../utils/exec');
 const _ = require('lodash');
 const EmulatorTelnet = require('./EmulatorTelnet');
 const Environment = require('../../utils/environment');
@@ -54,7 +54,7 @@ class ADB {
       await this.adbCmd(deviceId, `install -r -g ${apkPath}`);
     } else {
       await this.adbCmd(deviceId, `install -rg ${apkPath}`);
-    }    
+    }
   }
 
   async uninstall(deviceId, appId) {
@@ -96,11 +96,47 @@ class ADB {
   async adbCmd(deviceId, params) {
     const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
     const cmd = `${this.adbBin} ${serial} ${params}`;
-    return await exec(cmd, undefined, undefined, 1);
+    return await execWithRetriesAndLogs(cmd, undefined, undefined, 1);
   }
 
   async sleep(ms = 0) {
     return new Promise((resolve, reject) => setTimeout(resolve, ms));
+  }
+
+  async getScreenSize(deviceId) {
+    const {stdout} = await this.adbCmd(deviceId, `shell wm size`);
+    const [width, height] = stdout.split(' ').pop().split('x');
+    return {
+      width: parseInt(width, 10),
+      height: parseInt(height, 10)
+    };
+  }
+
+  async getFileSize(deviceId, path) {
+    const {stdout} = await this.adbCmd(deviceId, `shell wc -c ${path}`);
+    return parseInt(stdout, 10);
+  }
+
+  screencap(deviceId, path) {
+    return this.adbCmd(deviceId, `shell screencap ${path}`);
+  }
+
+  screenrecord(deviceId, path, width, height) {
+    const params = width && height ? ['--size', width + 'x' + height] : [];
+    return this.spawn(deviceId, ['shell', 'screenrecord', ...params, path]);
+  }
+
+  pull(deviceId, src, dst = '') {
+    return this.adbCmd(deviceId, `pull "${src}" "${dst}"`);
+  }
+
+  rm(deviceId, path, force = false) {
+    return this.adbCmd(deviceId, `shell rm ${force ? '-f' : ''} "${path}"`);
+  }
+
+  spawn(deviceId, params) {
+    const serial = deviceId ? ['-s', deviceId] : [];
+    return spawnAndLog(this.adbBin, [...serial, ...params]);
   }
 }
 

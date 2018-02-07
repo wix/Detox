@@ -8,6 +8,7 @@ const ADB = require('./android/ADB');
 const AAPT = require('./android/AAPT');
 const APKPath = require('./android/APKPath');
 const DeviceDriverBase = require('./DeviceDriverBase');
+const AndroidArtifact = require('./android/AndroidArtifact');
 
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
 
@@ -17,10 +18,11 @@ class AndroidDriver extends DeviceDriverBase {
     this.expect = require('../android/expect');
     this.invocationManager = new InvocationManager(client);
     this.expect.setInvocationManager(this.invocationManager);
+    this._uniqueId = 1;
+    this._recordings = {};
 
     this.adb = new ADB();
     this.aapt = new AAPT();
-    this.apkPath = new APKPath();
   }
 
   exportGlobals() {
@@ -169,6 +171,84 @@ class AndroidDriver extends DeviceDriverBase {
     
     const call = invoke.call(invoke.Android.Class(EspressoDetox), 'changeOrientation', invoke.Android.Integer(orientationMapping[orientation]));
     await this.invocationManager.execute(call);
+  }
+
+  async takeScreenshot(deviceId) {
+    const screenshotPath = this._getScreenshotPath(this._nextId());
+    await this.adb.screencap(deviceId, screenshotPath);
+    return new AndroidArtifact(screenshotPath, this.adb, deviceId);
+  }
+
+  async startVideo(deviceId) {
+    const adb = this.adb;
+    const videoPath = this._getVideoPath(this._nextId());
+    let {width, height} = await adb.getScreenSize();
+    let promise = spawnRecording();
+    promise.catch(handleRecordingTermination);
+
+    // XXX: ugly loop to make sure we continue only if recording has begun.
+    let recording = false;
+    let size = 0;
+    while (!recording) {
+      size = 0;
+      recording = true;
+      try {
+        size = await adb.getFileSize(deviceId, videoPath);
+        if (size < 1) {
+          recording = false;
+        }
+      } catch (e) {
+        recording = false;
+      }
+    }
+
+    this._recordings[deviceId] = {
+      process: promise.childProcess,
+      promise,
+      videoPath
+    };
+
+    function handleRecordingTermination(result) {
+      const proc = result.childProcess;
+      // XXX: error code -38 (= 218) means that encoder was not able to create
+      // video of current size, let's try smaller resolution.
+      if (proc.exitCode === 218) {
+        width >>= 1;
+        height >>= 1;
+        promise = spawnRecording();
+        promise.catch(handleRecordingTermination);
+      }
+    }
+
+    function spawnRecording() {
+      return adb.screenrecord(deviceId, videoPath, width, height);
+    }
+  }
+
+  stopVideo(deviceId) {
+    if (this._recordings[deviceId]) {
+      const {process, promise, videoPath} = this._recordings[deviceId];
+      delete this._recordings[deviceId];
+      return new Promise((resolve) => {
+        promise.catch(() => resolve(
+          new AndroidArtifact(videoPath, this.adb, deviceId)
+        ));
+        process.kill(2);
+      });
+    }
+    return Promise.resolve(null);
+  }
+
+  _nextId() {
+    return this._uniqueId++;
+  }
+
+  _getVideoPath(id) {
+    return `/sdcard/recording-${id}.mp4`;
+  }
+
+  _getScreenshotPath(id) {
+    return `/sdcard/screenshot-${id}.png`;
   }
 }
 

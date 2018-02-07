@@ -37,7 +37,29 @@ class Device {
     this._artifactsCopier.setArtifactsDestination(testArtifactsPath);
   }
 
-  async finalizeArtifacts() {
+  async prepareArtifacts() {
+    await this._takeScreenshot('screenshot-before');
+    await this._startVideo();
+  }
+
+  async finalizeArtifacts(success = true) {
+    const takeScreenshot = (
+      (this._deviceConfig.takeScreenshots === 'failing' && !success) ||
+        this._deviceConfig.takeScreenshots === 'true'
+    );
+    const recordVideo = (
+      (this._deviceConfig.recordVideos === 'failing' && !success) ||
+        this._deviceConfig.recordVideos === 'true'
+    );
+
+    await this._stopVideo(!recordVideo);
+
+    if (takeScreenshot) {
+      await this._takeScreenshot('screenshot-after');
+    } else {
+      await this._artifactsCopier.dropArtifacts();
+    }
+
     await this._artifactsCopier.finalizeArtifacts();
   }
 
@@ -171,6 +193,33 @@ class Device {
 
   async _cleanup() {
     await this.deviceDriver.cleanup(this._deviceId, this._bundleId);
+    await this._artifactsCopier.processQueue(true);
+  }
+
+  async _takeScreenshot(name) {
+    if (this._deviceConfig.takeScreenshots) {
+      this._artifactsCopier.addArtifact(
+        await this.deviceDriver.takeScreenshot(this._deviceId),
+        name
+      );
+    }
+  }
+
+  async _startVideo() {
+    if (this._deviceConfig.recordVideos) {
+      await this.deviceDriver.startVideo(this._deviceId);
+    }
+  }
+
+  async _stopVideo(drop) {
+    const video = await this.deviceDriver.stopVideo(this._deviceId);
+    if (video) {
+      if (drop) {
+        await video.remove();
+      } else {
+        this._artifactsCopier.queueArtifact(video, 'recording');
+      }
+    }
   }
 
   _defaultLaunchArgs() {
@@ -198,7 +247,7 @@ class Device {
     if(path.isAbsolute(appPath)) {
       return appPath;
     }
-    
+
     const absPath = path.join(process.cwd(), appPath);
     if (fs.existsSync(absPath)) {
       return absPath;

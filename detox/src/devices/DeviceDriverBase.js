@@ -132,6 +132,15 @@ class DeviceDriverBase {
       stderr: undefined
     };
   }
+
+  async takeScreenshot() {
+  }
+
+  async startVideo() {
+  }
+
+  async stopVideo() {
+  }
 }
 
 module.exports = DeviceDriverBase;

@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const path = require('path');
+const tempfile = require('tempfile');
 const Emulator = require('./android/Emulator');
 const EmulatorTelnet = require('./android/EmulatorTelnet');
 const Environment = require('../utils/environment');
@@ -11,8 +12,9 @@ const os = require('os');
 class EmulatorDriver extends AndroidDriver {
   constructor(client) {
     super(client);
-
     this.emulator = new Emulator();
+    this._uniqueId = 1;
+    this._recordings = {};
   }
 
   async _fixEmulatorConfigIniSkinName(name) {

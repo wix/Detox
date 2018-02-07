@@ -14,5 +14,5 @@ beforeEach(async function() {
 });
 
 afterEach(async function() {
-  await detox.afterEach();
+  await detox.afterEach(this.currentTest.state === 'passed');
 });

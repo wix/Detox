@@ -4,6 +4,7 @@ describe('AppleSimUtils', () => {
   let exec;
   let retry;
   let environment;
+  let tempfile;
 
   const simUdid = `9C9ABE4D-70C7-49DC-A396-3CB1D0E82846`;
   const bundleId = 'bundle.id';
@@ -16,6 +17,8 @@ describe('AppleSimUtils', () => {
     retry = require('../utils/retry');
     jest.mock('../utils/environment');
     environment = require('../utils/environment');
+    jest.mock('tempfile');
+    tempfile = require('tempfile');
 
     AppleSimUtils = require('./AppleSimUtils');
     uut = new AppleSimUtils();
@@ -420,5 +423,61 @@ describe('AppleSimUtils', () => {
     });
   });
 
+  describe('takeScreenshot', () => {
+    it('executes simctl screenshot command', async () => {
+      const udid = Math.random();
+      const dest = '/tmp/' + Math.random();
+      tempfile.mockReturnValueOnce(dest);
+
+      await uut.takeScreenshot(udid);
+
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringMatching(new RegExp(`xcrun simctl io ${udid} screenshot ${dest}`)),
+        undefined,
+        expect.anything(),
+        1
+      );
+    });
+  });
+
+  describe('startVideo', () => {
+    it('spawns simctl process with recordVideo command', async () => {
+      const childProcess = Math.random();
+      const promise = {childProcess};
+      const udid = Math.random();
+      const dest = '/tmp/' + Math.random();
+      tempfile.mockReturnValueOnce(dest);
+      exec.spawnAndLog.mockReturnValueOnce(promise);
+
+      const result = uut.startVideo(udid);
+
+      expect(exec.spawnAndLog).toHaveBeenCalledTimes(1);
+      expect(exec.spawnAndLog).toHaveBeenCalledWith(
+        expect.stringMatching(/xcrun/),
+        ['simctl', 'io', udid, 'recordVideo', dest]
+      );
+      expect(result).toEqual({
+        process: childProcess,
+        promise,
+        dest
+      });
+    });
+  });
+
+  describe('stopVideo', () => {
+    it('interupts process and returns destination', async () => {
+      let process = {};
+      const promise = new Promise((resolve) => {
+        process.kill = jest.fn(() => {
+          resolve();
+        });
+      });
+      const dest = Math.random();
+
+      expect(await uut.stopVideo('', {promise, process, dest})).toEqual(dest);
+      expect(process.kill).toBeCalledWith(2);
+    });
+  });
 });
 

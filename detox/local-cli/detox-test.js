@@ -20,10 +20,17 @@ program
     'When an action/expectation takes a significant amount of time use this option to print device synchronization status.'
     + 'The status will be printed if the action takes more than [value]ms to complete')
   .option('-a, --artifacts-location [path]',
-    'Artifacts destination path (currently will contain only logs). If the destination already exists, it will be removed first')
+    'Artifacts destination path. If the destination already exists, it will be removed first')
   .option('-p, --platform [ios/android]',
     'Run platform specific tests. Runs tests with invert grep on \':platform:\', '
-    + 'e.g test with substring \':ios:\' in its name will not run when passing \'--platform android\'')
+          + 'e.g test with substring \':ios:\' in its name will not run when passing \'--platform android\'')
+  .option(
+    '--take-screenshots [value]',
+    'Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only.'
+  )
+  .option(
+    '--record-videos [value]',
+    'Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only.')
   .parse(process.argv);
 
 const config = require(path.join(process.cwd(), 'package.json')).detox;
@@ -64,9 +71,11 @@ function runMocha() {
   const artifactsLocation = program.artifactsLocation ? `--artifacts-location ${program.artifactsLocation}` : '';
   const configFile = runnerConfig ? `--opts ${runnerConfig}` : '';
   const platform = program.platform ? `--grep ${getPlatformSpecificString(program.platform)} --invert` : '';
+  const screenshots = program.takeScreenshots ? `--take-screenshots ${program.takeScreenshots}` : '';
+  const videos = program.recordVideos ? `--record-videos ${program.recordVideos}` : '';
 
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
-  const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platform} ${artifactsLocation}`;
+  const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platform} ${artifactsLocation} ${screenshots} ${videos}`;
 
   console.log(command);
   cp.execSync(command, {stdio: 'inherit'});
@@ -85,7 +94,9 @@ function runJest() {
       cleanup: program.cleanup,
       reuse: program.reuse,
       debugSynchronization: program.debugSynchronization,
-      artifactsLocation: program.artifactsLocation
+      artifactsLocation: program.artifactsLocation,
+      takeScreenshots: program.takeScreenshots,
+      recordVideos: program.recordVideos,
     })
   });
 }
