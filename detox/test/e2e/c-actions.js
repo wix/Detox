@@ -23,7 +23,7 @@ describe('Actions', () => {
   });
 
   it('should tap on an element at point', async () => {
-    await element(by.id('View7990')).tapAtPoint({x:180, y:140});
+    await element(by.id('View7990')).tapAtPoint({ x: 180, y: 140 });
     await expect(element(by.id('UniqueId819'))).toHaveText('Taps: 1');
   });
 
@@ -81,7 +81,7 @@ describe('Actions', () => {
     await expect(element(by.text('PullToReload Working!!!'))).toBeVisible();
   });
 
-  it('should wait for long timeout', async () => {
+  it.only('should not wait for long timeout (>1.5s)', async () => {
     await element(by.id('WhyDoAllTheTestIDsHaveTheseStrangeNames')).tap();
     await expect(element(by.id('WhyDoAllTheTestIDsHaveTheseStrangeNames'))).toBeVisible();
   });

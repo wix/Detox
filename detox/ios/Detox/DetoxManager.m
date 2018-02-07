@@ -27,9 +27,8 @@ DTX_CREATE_LOG(DetoxManager)
 
 @end
 
-@implementation DetoxManager
-
-+ (void)load
+__attribute__((constructor))
+static void detoxConditionalInit()
 {
 	//This forces accessibility support in the application.
 	[[[NSUserDefaults alloc] initWithSuiteName:@"com.apple.Accessibility"] setBool:YES forKey:@"ApplicationAccessibilityEnabled"];
@@ -50,6 +49,8 @@ DTX_CREATE_LOG(DetoxManager)
 	
 	[[DetoxManager sharedManager] connectToServer:detoxServer withSessionId:detoxSessionId];
 }
+
+@implementation DetoxManager
 
 + (instancetype)sharedManager
 {
@@ -118,36 +119,44 @@ DTX_CREATE_LOG(DetoxManager)
 	}
 	else if([type isEqualToString:@"userNotification"])
 	{
-		NSURL* userNotificationDataURL = [NSURL fileURLWithPath:params[@"detoxUserNotificationDataURL"]];
-		DetoxUserNotificationDispatcher* dispatcher = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationDataURL:userNotificationDataURL];
-		[dispatcher dispatchOnAppDelegate:DetoxAppDelegateProxy.currentAppDelegateProxy simulateDuringLaunch:NO];
-		[self.webSocket sendAction:@"userNotificationDone" withParams:@{} withMessageId:messageId];
+		[EarlGrey detox_safeExecuteSync:^{
+			NSURL* userNotificationDataURL = [NSURL fileURLWithPath:params[@"detoxUserNotificationDataURL"]];
+			DetoxUserNotificationDispatcher* dispatcher = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationDataURL:userNotificationDataURL];
+			[dispatcher dispatchOnAppDelegate:DetoxAppDelegateProxy.currentAppDelegateProxy simulateDuringLaunch:NO];
+			[self.webSocket sendAction:@"userNotificationDone" withParams:@{} withMessageId: messageId];
+		}];
 	}
 	else if([type isEqualToString:@"openURL"])
 	{
-		NSURL* URLToOpen = [NSURL URLWithString:params[@"url"]];
-		
-		NSParameterAssert(URLToOpen != nil);
-		
-		NSString* sourceApp = params[@"sourceApp"];
-		
-		NSMutableDictionary* options = [@{UIApplicationLaunchOptionsURLKey: URLToOpen} mutableCopy];
-		if(sourceApp != nil)
-		{
-			options[UIApplicationLaunchOptionsSourceApplicationKey] = sourceApp;
-		}
-		
-		if([[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:openURL:options:)])
-		{
-			[[UIApplication sharedApplication].delegate application:[UIApplication sharedApplication] openURL:URLToOpen options:options];
-		}
-		
-		[self.webSocket sendAction:@"openURLDone" withParams:@{} withMessageId:messageId];
+		[EarlGrey detox_safeExecuteSync:^{
+			NSURL* URLToOpen = [NSURL URLWithString:params[@"url"]];
+			
+			NSParameterAssert(URLToOpen != nil);
+			
+			NSString* sourceApp = params[@"sourceApp"];
+			
+			NSMutableDictionary* options = [@{UIApplicationLaunchOptionsURLKey: URLToOpen} mutableCopy];
+			if(sourceApp != nil)
+			{
+				options[UIApplicationLaunchOptionsSourceApplicationKey] = sourceApp;
+			}
+			
+			if([[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:openURL:options:)])
+			{
+				[[UIApplication sharedApplication].delegate application:[UIApplication sharedApplication] openURL:URLToOpen options:options];
+			}
+			
+			[self.webSocket sendAction:@"openURLDone" withParams:@{} withMessageId: messageId];
+		}];
 	}
+	else if([type isEqualToString:@"shakeDevice"])
+	{	}
 	else if([type isEqualToString:@"reactNativeReload"])
 	{
 		_isReady = NO;
-		[ReactNativeSupport reloadApp];
+		[EarlGrey detox_safeExecuteSync:^{
+			[ReactNativeSupport reloadApp];
+		}];
 		
 		[self _waitForRNLoadWithId:messageId];
 		
