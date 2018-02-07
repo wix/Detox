@@ -115,7 +115,7 @@ describe('Device', () => {
 
     expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
-      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"});
+      { "-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test" });
   });
 
   it(`relaunchApp()`, async () => {
@@ -126,13 +126,13 @@ describe('Device', () => {
     expect(device.deviceDriver.terminate).toHaveBeenCalled();
     expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
-      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"});
+      { "-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test" });
   });
 
   it(`relaunchApp({newInstance: false}) should not terminate the app before launch`, async () => {
     device = validDevice();
 
-    await device.relaunchApp({newInstance: false});
+    await device.relaunchApp({ newInstance: false });
 
     expect(device.deviceDriver.terminate).not.toHaveBeenCalled();
   });
@@ -140,7 +140,7 @@ describe('Device', () => {
   it(`relaunchApp({newInstance: true}) should terminate the app before launch`, async () => {
     device = validDevice();
 
-    await device.relaunchApp({newInstance: true});
+    await device.relaunchApp({ newInstance: true });
 
     expect(device.deviceDriver.terminate).toHaveBeenCalled();
   });
@@ -157,13 +157,13 @@ describe('Device', () => {
     device = validDevice();
     fs.existsSync.mockReturnValue(true);
 
-    await device.relaunchApp({delete: true});
+    await device.relaunchApp({ delete: true });
 
     expect(device.deviceDriver.uninstallApp).toHaveBeenCalled();
     expect(device.deviceDriver.installApp).toHaveBeenCalled();
     expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
-      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"});
+      { "-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test" });
   });
 
   it(`relaunchApp() without delete when reuse is enabled should not uninstall and install`, async () => {
@@ -177,7 +177,7 @@ describe('Device', () => {
     expect(device.deviceDriver.installApp).not.toHaveBeenCalled();
     expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
-      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"});
+      { "-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test" });
   });
 
   it(`relaunchApp() without delete when reuse is enabled should not uninstall and install`, async () => {
@@ -191,26 +191,28 @@ describe('Device', () => {
     expect(device.deviceDriver.installApp).not.toHaveBeenCalled();
     expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
-      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"});
+      { "-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test" });
   });
 
   it(`relaunchApp() with url should send the url as a param in launchParams`, async () => {
-    device = await  validDevice();
-    await device.relaunchApp({url: `scheme://some.url`});
+    device = await validDevice();
+    await device.relaunchApp({ url: `scheme://some.url` });
 
     expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
-      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-detoxURLOverride": "scheme://some.url"});
+      { "-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-detoxURLOverride": "scheme://some.url" });
   });
 
   it(`relaunchApp() with url should send the url as a param in launchParams`, async () => {
-    device = await  validDevice();
-    await device.relaunchApp({url: `scheme://some.url`, sourceApp: 'sourceAppBundleId'});
+    device = await validDevice();
+    await device.relaunchApp({ url: `scheme://some.url`, sourceApp: 'sourceAppBundleId' });
 
     expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
-      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-detoxURLOverride": "scheme://some.url", "-detoxSourceAppOverride":
-        "sourceAppBundleId"});
+      {
+        "-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-detoxURLOverride": "scheme://some.url", "-detoxSourceAppOverride":
+          "sourceAppBundleId"
+      });
   });
 
   it(`relaunchApp() with userNofitication should send the userNotification as a param in launchParams`, async () => {
@@ -218,17 +220,17 @@ describe('Device', () => {
     fs.existsSync.mockReturnValue(true);
     device.deviceDriver.createPushNotificationJson = jest.fn(() => 'url');
 
-    await device.relaunchApp({userNotification: 'json'});
+    await device.relaunchApp({ userNotification: 'json' });
 
     expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
-      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-detoxUserNotificationDataURL": "url"});
+      { "-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-detoxUserNotificationDataURL": "url" });
   });
 
   it(`relaunchApp() with url and userNofitication should throw`, async () => {
     device = validDevice();
     try {
-      await device.relaunchApp({url: "scheme://some.url", userNotification: 'notif'});
+      await device.relaunchApp({ url: "scheme://some.url", userNotification: 'notif' });
       fail('should fail');
     } catch (ex) {
       expect(ex).toBeDefined();
@@ -237,20 +239,20 @@ describe('Device', () => {
 
   it(`relaunchApp() with permissions should send trigger setpermissions before app starts`, async () => {
     device = await validDevice();
-    await device.relaunchApp({permissions: {calendar: "YES"}});
+    await device.relaunchApp({ permissions: { calendar: "YES" } });
 
     expect(device.deviceDriver.setPermissions).toHaveBeenCalledWith(device._deviceId,
-      device._bundleId, {calendar: "YES"});
+      device._bundleId, { calendar: "YES" });
   });
 
   it(`launchApp({launchArgs: }) should pass to native as launch args`, async () => {
     device = validDevice();
 
-    await device.launchApp({launchArgs: {arg1: "1", arg2: 2}});
+    await device.launchApp({ launchArgs: { arg1: "1", arg2: 2 } });
 
     expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
-      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-arg1": "1", "-arg2": 2});
+      { "-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-arg1": "1", "-arg2": 2 });
   });
 
   it(`sendToHome() should pass to device driver`, async () => {
@@ -258,6 +260,13 @@ describe('Device', () => {
     await device.sendToHome();
 
     expect(device.deviceDriver.sendToHome).toHaveBeenCalledTimes(1);
+  });
+
+  it(`shake() should pass to device driver`, async () => {
+    device = validDevice();
+    await device.shake();
+
+    expect(device.deviceDriver.shake).toHaveBeenCalledTimes(1);
   });
 
   it(`terminateApp() should pass to device driver`, async () => {
@@ -310,9 +319,9 @@ describe('Device', () => {
 
   it(`openURL({url:url}) should pass to device driver`, async () => {
     device = validDevice();
-    await device.openURL({url: 'url'});
+    await device.openURL({ url: 'url' });
 
-    expect(device.deviceDriver.openURL).toHaveBeenCalledWith(device._deviceId, {url: 'url'});
+    expect(device.deviceDriver.openURL).toHaveBeenCalledWith(device._deviceId, { url: 'url' });
   });
 
   it(`openURL(notAnObject) should pass to device driver`, async () => {
@@ -422,7 +431,7 @@ describe('Device', () => {
 
   it(`finalizeArtifacts() should call cp`, async () => {
     device = validDevice();
-    device.deviceDriver.getLogsPaths = () => ({stdout: '/t1', stderr: '/t2'});
+    device.deviceDriver.getLogsPaths = () => ({ stdout: '/t1', stderr: '/t2' });
     device.setArtifactsDestination('/tmp');
     await device.finalizeArtifacts();
     expect(sh.cp).toHaveBeenCalledTimes(2);
@@ -430,16 +439,16 @@ describe('Device', () => {
 
   it(`finalizeArtifacts() should catch cp exception`, async () => {
     device = validDevice();
-    device.deviceDriver.getLogsPaths = () => ({stdout: '/t1', stderr: '/t2'});
+    device.deviceDriver.getLogsPaths = () => ({ stdout: '/t1', stderr: '/t2' });
     device.setArtifactsDestination('/tmp');
     await device.relaunchApp();
-    sh.cp = jest.fn(() => {throw 'exception sent by mocked cp'});
+    sh.cp = jest.fn(() => { throw 'exception sent by mocked cp' });
     await device.finalizeArtifacts();
   });
 
   it(`finalizeArtifacts() should not cp if setArtifactsDestination wasn't called`, async () => {
     device = validDevice();
-    device.deviceDriver.getLogsPaths = () => ({stdout: '/t1', stderr: '/t2'});
+    device.deviceDriver.getLogsPaths = () => ({ stdout: '/t1', stderr: '/t2' });
     await device.relaunchApp();
     await device.finalizeArtifacts();
     expect(sh.cp).toHaveBeenCalledTimes(0);
@@ -451,14 +460,14 @@ describe('Device', () => {
     device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
     device.deviceDriver.launch.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
 
-    await device.prepare({launchApp: true});
-    await device.launchApp({url: 'url://me'});
+    await device.prepare({ launchApp: true });
+    await device.launchApp({ url: 'url://me' });
 
     expect(device.deviceDriver.openURL).toHaveBeenCalledTimes(1);
   });
 
   it(`launchApp({url:url}) should check if process is in background and if not use launch args`, async () => {
-    const launchParams = {url: 'url://me'};
+    const launchParams = { url: 'url://me' };
     const processId = 1;
     const newProcessId = 2;
 
@@ -473,35 +482,35 @@ describe('Device', () => {
   });
 
   it(`launchApp({url:url}) should check if process is in background and use openURL() instead of launch args`, async () => {
-    const launchParams = {url: 'url://me'};
+    const launchParams = { url: 'url://me' };
     const processId = 1;
 
     device = validDevice();
     device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
     device.deviceDriver.launch.mockReturnValue(processId);
 
-    await device.prepare({launchApp: true});
+    await device.prepare({ launchApp: true });
     await device.launchApp(launchParams);
 
     expect(device.deviceDriver.openURL).toHaveBeenCalledTimes(1);
   });
 
   it(`launchApp({userNotification:userNotification}) should check if process is in background and if it is use sendUserNotification`, async () => {
-    const launchParams = {userNotification: 'notification'};
+    const launchParams = { userNotification: 'notification' };
     const processId = 1;
 
     device = validDevice();
     device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
     device.deviceDriver.launch.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
 
-    await device.prepare({launchApp: true});
+    await device.prepare({ launchApp: true });
     await device.launchApp(launchParams);
 
     expect(device.deviceDriver.sendUserNotification).toHaveBeenCalledWith(launchParams.userNotification);
   });
 
   it(`launchApp({userNotification:userNotification}) should check if process is in background and if not use launch args`, async () => {
-    const launchParams = {userNotification: 'notification'};
+    const launchParams = { userNotification: 'notification' };
     const processId = 1;
     const newProcessId = 2;
 

@@ -27,6 +27,10 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
+  async shake() {
+    return await Promise.resolve('');
+  }
+
   async relaunchApp() {
     return await Promise.resolve('');
   }

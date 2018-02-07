@@ -27,7 +27,7 @@ class IosDriver extends DeviceDriverBase {
 
   async sendUserNotification(notification) {
     const notificationFilePath = this.createPushNotificationJson(notification);
-    await super.sendUserNotification({detoxUserNotificationDataURL: notificationFilePath});
+    await super.sendUserNotification({ detoxUserNotificationDataURL: notificationFilePath });
   }
 
   async openURL(deviceId, params) {
@@ -44,6 +44,10 @@ class IosDriver extends DeviceDriverBase {
 
   async disableSynchronization() {
     await this.client.execute(GREYConfiguration.disableSynchronization());
+  }
+
+  async shake(deviceId) {
+    return await this.client.shake();
   }
 
   async setOrientation(deviceId, orientation) {

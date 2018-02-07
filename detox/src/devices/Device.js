@@ -29,7 +29,7 @@ class Device {
     }
 
     if (params.launchApp) {
-      await this.launchApp({newInstance: true});
+      await this.launchApp({ newInstance: true });
     }
   }
 
@@ -41,7 +41,7 @@ class Device {
     await this._artifactsCopier.finalizeArtifacts();
   }
 
-  async launchApp(params = {newInstance: false}, bundleId) {
+  async launchApp(params = { newInstance: false }, bundleId) {
     await this._artifactsCopier.handleAppRelaunch();
 
     if (params.url && params.userNotification) {
@@ -63,11 +63,11 @@ class Device {
 
     if (params.url) {
       baseLaunchArgs['detoxURLOverride'] = params.url;
-      if(params.sourceApp) {
+      if (params.sourceApp) {
         baseLaunchArgs['detoxSourceAppOverride'] = params.sourceApp;
       }
     } else if (params.userNotification) {
-      baseLaunchArgs = {'detoxUserNotificationDataURL': this.deviceDriver.createPushNotificationJson(params.userNotification)};
+      baseLaunchArgs = { 'detoxUserNotificationDataURL': this.deviceDriver.createPushNotificationJson(params.userNotification) };
     }
 
     if (params.permissions) {
@@ -102,6 +102,10 @@ class Device {
 
   async sendToHome() {
     await this.deviceDriver.sendToHome(this._deviceId);
+  }
+
+  async shake() {
+    await this.deviceDriver.shake(this._deviceId);
   }
 
   async terminateApp(bundleId) {
@@ -195,10 +199,10 @@ class Device {
   }
 
   _getAbsolutePath(appPath) {
-    if(path.isAbsolute(appPath)) {
+    if (path.isAbsolute(appPath)) {
       return appPath;
     }
-    
+
     const absPath = path.join(process.cwd(), appPath);
     if (fs.existsSync(absPath)) {
       return absPath;
