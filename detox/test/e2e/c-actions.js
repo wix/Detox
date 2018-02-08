@@ -81,7 +81,7 @@ describe('Actions', () => {
     await expect(element(by.text('PullToReload Working!!!'))).toBeVisible();
   });
 
-  it.only('should not wait for long timeout (>1.5s)', async () => {
+  it('should not wait for long timeout (>1.5s)', async () => {
     await element(by.id('WhyDoAllTheTestIDsHaveTheseStrangeNames')).tap();
     await expect(element(by.id('WhyDoAllTheTestIDsHaveTheseStrangeNames'))).toBeVisible();
   });

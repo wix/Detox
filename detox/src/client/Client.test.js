@@ -150,6 +150,25 @@ describe('Client', () => {
     }
   });
 
+  it(`save a pending error if AppWillTerminateWithError event is sent to tester`, async () => {
+    client.ws.setEventCallback = jest.fn();
+    await connect();
+
+    triggerAppWillTerminateWithError();
+
+    expect(client.getPendingCrashAndReset()).toBeDefined();
+
+    function triggerAppWillTerminateWithError() {
+      const event = JSON.stringify({
+        type: "AppWillTerminateWithError",
+        params: {errorDetails: "someDetails"},
+        messageId: -10000
+      });
+
+      client.ws.setEventCallback.mock.calls[0][1](event);
+    }
+  });
+
   async function connect() {
     client = new Client(config);
     client.ws.send.mockReturnValueOnce(response("loginSuccess", {}, 1));
