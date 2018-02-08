@@ -8,6 +8,7 @@ class AsyncWebSocket {
     this.url = url;
     this.ws = undefined;
     this.inFlightPromises = {};
+    this.eventCallbacks = {};
     this.messageIdCounter = 0;
   }
 
@@ -32,11 +33,15 @@ class AsyncWebSocket {
 
       this.ws.onmessage = (response) => {
         log.verbose(`ws`, `onMessage: ${response.data}`);
-        let pendingId = JSON.parse(response.data).messageId;
-        let pendingPromise = this.inFlightPromises[pendingId];
+        let messageId = JSON.parse(response.data).messageId;
+        let pendingPromise = this.inFlightPromises[messageId];
         if (pendingPromise) {
           pendingPromise.resolve(response.data);
-          delete this.inFlightPromises[pendingId];
+          delete this.inFlightPromises[messageId];
+        }
+        let eventCallback = this.eventCallbacks[messageId];
+        if (eventCallback) {
+          eventCallback(response.data);
         }
       };
 
@@ -56,6 +61,10 @@ class AsyncWebSocket {
       log.verbose(`ws`, `send: ${messageAsString}`);
       this.ws.send(messageAsString);
     });
+  }
+
+  setEventCallback(eventId, callback) {
+    this.eventCallbacks[eventId] = callback;
   }
 
   async close() {
@@ -82,6 +91,16 @@ class AsyncWebSocket {
       return false;
     }
     return this.ws.readyState === WebSocket.OPEN;
+  }
+
+  rejectAll(error) {
+    _.forEach(this.inFlightPromises, (promise, messageId) => {
+      let pendingPromise = this.inFlightPromises[messageId];
+      pendingPromise.reject(error);
+      delete this.inFlightPromises[messageId];
+    });
+
+
   }
 }
 

@@ -32,6 +32,7 @@ class Login extends Action {
 class Ready extends Action {
   constructor() {
     super('isReady');
+    this.messageId = -1000;
   }
 
   async handle(response) {
@@ -52,6 +53,7 @@ class Shake extends Action {
 class ReloadReactNative extends Action {
   constructor() {
     super('reactNativeReload');
+    this.messageId = -1000;
   }
 
   async handle(response) {
@@ -127,6 +129,18 @@ class CurrentStatus extends Action {
   }
 }
 
+class AppWillTerminateWithError extends Action {
+  constructor(params) {
+    super(params);
+    this.messageId = -10000;
+  }
+
+  handle(response) {
+    this.expectResponseOfType(response, 'AppWillTerminateWithError');
+    return response.params.errorDetails;
+  }
+}
+
 module.exports = {
   Login,
   Ready,
@@ -135,6 +149,7 @@ module.exports = {
   Cleanup,
   openURL,
   SendUserNotification,
-  CurrentStatus,
+  CurrentStatus
   Shake
+  AppWillTerminateWithError
 };

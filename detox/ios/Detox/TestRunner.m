@@ -61,7 +61,7 @@
     }
 }
 
-- (void)invoke:(NSDictionary*)params withMessageId: (NSNumber *)messageId
+- (void)invoke:(NSDictionary*)params withMessageId:(NSNumber *)messageId
 {
 	self.currentMessageId = messageId;
     grey_execute_async(^{

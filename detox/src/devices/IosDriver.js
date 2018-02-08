@@ -31,7 +31,7 @@ class IosDriver extends DeviceDriverBase {
   }
 
   async openURL(deviceId, params) {
-    this.client.openURL(params);
+    await this.client.openURL(params);
   }
 
   async setURLBlacklist(urlList) {
