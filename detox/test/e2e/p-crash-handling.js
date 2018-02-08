@@ -1,17 +1,13 @@
-
-describe.only('Crash Handling, not to be ran on CI', () => {
-
-  beforeEach(async () => {
-    await device.launchApp({newInstance: false});
-  });
+describe(':ios: Crash Handling', () => {
 
   it('Should throw error upon app crash', async () => {
+    await device.reloadReactNative();
     let failed = false;
 
-    await element(by.text('Crash')).tap();
     try {
-      await expect(element(by.text('Crash'))).toBeVisible();
-    } catch(ex) {
+      await element(by.text('Crash')).tap();
+      await element(by.text('Crash')).tap();
+    } catch (ex) {
       failed = true;
     }
 
@@ -19,6 +15,7 @@ describe.only('Crash Handling, not to be ran on CI', () => {
   });
 
   it('Should recover from app crash', async () => {
+    await device.launchApp({newInstance: false});
     await expect(element(by.text('Sanity'))).toBeVisible();
   });
 });
