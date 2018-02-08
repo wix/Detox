@@ -149,7 +149,7 @@ module.exports = {
   Cleanup,
   openURL,
   SendUserNotification,
-  CurrentStatus
-  Shake
+  CurrentStatus,
+  Shake,
   AppWillTerminateWithError
 };
