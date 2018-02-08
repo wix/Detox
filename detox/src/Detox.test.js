@@ -169,4 +169,13 @@ describe('Detox', () => {
     await detox.init({initGlobals: false});
     expect(global.device).not.toBeDefined();
   });
+
+  it(`handleAppCrash if client has a pending crash`, async () => {
+    Detox = require('./Detox');
+    detox = new Detox({deviceConfig: validDeviceConfigWithSession});
+    await detox.init();
+    detox.client.getPendingCrashAndReset.mockReturnValueOnce('crash');
+    await detox.afterEach();
+    expect(device.launchApp).toHaveBeenCalledTimes(1);
+  });
 });

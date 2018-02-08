@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const log = require('npmlog');
-const DetoxError = require('../DetoxError');
 
 class Action {
   constructor(type, params = {}) {

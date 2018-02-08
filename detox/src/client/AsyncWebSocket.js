@@ -96,10 +96,8 @@ class AsyncWebSocket {
   rejectAll(error) {
     _.forEach(this.inFlightPromises, (promise, messageId) => {
       let pendingPromise = this.inFlightPromises[messageId];
-      if (pendingPromise) {
-        pendingPromise.reject(error);
-        delete this.inFlightPromises[messageId];
-      }
+      pendingPromise.reject(error);
+      delete this.inFlightPromises[messageId];
     });
 
 

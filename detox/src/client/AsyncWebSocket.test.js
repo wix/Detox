@@ -175,6 +175,17 @@ describe('AsyncWebSocket', () => {
     expect(mockCallback).toHaveBeenCalledWith(mockedResponse.data);
   });
 
+  it(`rejectAll should throw error to all pending promises`, async () => {
+    const error = new Error('error');
+    await connect(client);
+    const message1 = client.send(generateRequest());
+    const message2 = client.send(generateRequest());
+
+    client.rejectAll(error);
+    await expect(message1).rejects.toEqual(error);
+    await expect(message2).rejects.toEqual(error);
+  });
+
   async function connect(client) {
     const result = {};
     const promise = client.open();

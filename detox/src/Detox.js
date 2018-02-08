@@ -1,5 +1,4 @@
 const log = require('npmlog');
-const DetoxError = require('./client/DetoxError');
 const Device = require('./devices/Device');
 const IosDriver = require('./devices/IosDriver');
 const SimulatorDriver = require('./devices/SimulatorDriver');
