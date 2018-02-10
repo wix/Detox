@@ -537,4 +537,13 @@ describe('Device', () => {
     const actualPath = await launchAndTestBinaryPath('relativePath');
     expect(actualPath).toEqual(`${process.cwd()}/abcdef/123`);
   });
+
+  it('should call `takeScreenshot` on `deviceDriver`', async () => {
+    device = validDevice();
+    device.setArtifactsDestination('test')
+    await device.takeScreenshot('output.png')
+
+    expect(device.deviceDriver.takeScreenshot).toHaveBeenCalledTimes(1);
+    expect(device.deviceDriver.takeScreenshot).toBeCalledWith("test/1.output.png")
+  })
 });

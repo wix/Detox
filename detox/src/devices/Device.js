@@ -173,6 +173,12 @@ class Device {
     await this.deviceDriver.cleanup(this._deviceId, this._bundleId);
   }
 
+  async takeScreenshot(outputPath) {
+    await this.deviceDriver.takeScreenshot(
+      this._artifactsCopier.destinationForFile(outputPath)
+    );
+  }
+
   _defaultLaunchArgs() {
     return {
       'detoxServer': this._sessionConfig.server,

@@ -154,6 +154,10 @@ class AppleSimUtils {
     return majorVersion;
   }
 
+  async takeScreenshot(outputPath) {
+    await this._execSimctl({cmd: `io booted screenshot "${outputPath}"`})
+  }
+
   async _execAppleSimUtils(options, statusLogs, retries, interval) {
     const bin = `applesimutils`;
     return await exec.execWithRetriesAndLogs(bin, options, statusLogs, retries, interval);

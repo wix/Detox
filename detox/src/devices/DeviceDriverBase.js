@@ -95,6 +95,10 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
+  async takeScreenshot(outputPath) {
+    return await Promise.resolve('');
+  }
+
   defaultLaunchArgsPrefix() {
     return '';
   }

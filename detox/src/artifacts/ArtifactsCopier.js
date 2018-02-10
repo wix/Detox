@@ -26,9 +26,13 @@ class ArtifactsCopier {
     await this._copyArtifacts();
   }
 
+  destinationForFile(filename) {
+      return `${this._currentTestArtifactsDestination}/${this._currentLaunchNumber}.${filename}`;
+  }
+
   async _copyArtifacts() {
     const copy = async (sourcePath, destinationSuffix) => {
-      const destinationPath = `${this._currentTestArtifactsDestination}/${this._currentLaunchNumber}.${destinationSuffix}`;
+      const destinationPath = this.destinationForFile(destinationSuffix);
       const cpArgs = `"${sourcePath}" "${destinationPath}"`;
       try {
         await sh.cp(cpArgs);

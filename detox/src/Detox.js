@@ -91,6 +91,7 @@ class Detox {
     if (this._artifactsPathsProvider !== undefined) {
       const testArtifactsPath = this._artifactsPathsProvider.createPathForTest(this._currentTestNumber, ...testNameComponents);
       this.device.setArtifactsDestination(testArtifactsPath);
+      await this.device.takeScreenshot('before.png')
     }
 
     await this._handleAppCrash(testNameComponents[1]);
@@ -98,6 +99,7 @@ class Detox {
 
   async afterEach(suiteName, testName) {
     if(this._artifactsPathsProvider !== undefined) {
+      await this.device.takeScreenshot('after.png')
       await this.device.finalizeArtifacts();
     }
 
