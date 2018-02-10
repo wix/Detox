@@ -155,7 +155,7 @@ static void detoxConditionalInit()
 		[EarlGrey detox_safeExecuteSync:^{
 			[self _sendShakeNotification];
 			
-			[self.websocket sendAction:@"shakeDeviceDone" withParams:@{} withMessageId: messageId];
+			[self.webSocket sendAction:@"shakeDeviceDone" withParams:@{} withMessageId: messageId];
 		}];
 	}
 	else if([type isEqualToString:@"reactNativeReload"])
