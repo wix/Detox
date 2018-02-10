@@ -420,5 +420,17 @@ describe('AppleSimUtils', () => {
     });
   });
 
+  describe('captupeScreenshot', () => {
+    it('calls xcrun simctl', async () => {
+      await uut.takeScreenshot("output.png");
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringMatching(/.*xcrun simctl io booted screenshot "output.png".*/),
+        undefined,
+        expect.anything(),
+        1);
+    });
+  });
+
 });
 

@@ -92,6 +92,10 @@ class SimulatorDriver extends IosDriver {
     }
   }
 
+  takeScreenshot(outputPath) {
+    this._applesimutils.takeScreenshot(outputPath)
+  }
+
   getLogsPaths(deviceId) {
     return this._applesimutils.getLogsPaths(deviceId);
   }
