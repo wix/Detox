@@ -48,7 +48,7 @@ Initiating your test suite
 | -h, --help                                    | output usage information |
 | -o, --runner-config \<config\>                | Test runner config file, defaults to 'e2e/mocha.opts' for mocha and 'e2e/config.json' for jest |
 | -l, --loglevel [value]                        | info, debug, verbose, silly, wss |
-| -c, -configuration \<device config\>          | Select a device configuration from your defined figurations,if not supplied, and there's only one configuration, detox will default to it |
+| -c, -configuration \<device config\>          | Select a device configuration from your defined configurations,if not supplied, and there's only one configuration, detox will default to it |
 | -r, --reuse                                   | Reuse existing installed app (do not delete and re-tall) for a faster run. |
 | -u, --cleanup                                 | Shutdown simulator when test is over, useful for CI ipts, to make sure detox exists cleanly with no residue |
 | -d, --debug-synchronization \<value\>         | When an action/expectation takes a significant amount time use this option to print device synchronization status. The status will be printed if the ion takes more than [value]ms to complete |

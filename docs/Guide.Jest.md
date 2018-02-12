@@ -25,8 +25,8 @@ You should remove `e2e/mocha.opts`, you no longer need it.
 const detox = require('detox');
 const config = require('../package.json').detox;
 
-// Set the default timeout
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 120000;
+// Set the default test timeout of 120s
+jest.setTimeout(120000);
 
 beforeAll(async () => {
   await detox.init(config);

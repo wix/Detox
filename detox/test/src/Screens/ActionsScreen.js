@@ -28,12 +28,12 @@ export default class ActionsScreen extends Component {
 
         <TouchableOpacity onPress={this.onButtonPress.bind(this, 'Tap Working')}
           onLongPress={this.onButtonPress.bind(this, 'Long Press Working')}
-          >
+        >
           <Text style={{ color: 'blue', marginBottom: 20, textAlign: 'center' }}>Tap Me</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={this.onLongTimeout.bind(this)}
-          >
+        >
           <Text testID='WhyDoAllTheTestIDsHaveTheseStrangeNames' style={{ color: 'blue', marginBottom: 20, textAlign: 'center' }}>Tap Me For Long Timeout</Text>
         </TouchableOpacity>
 
@@ -46,19 +46,19 @@ export default class ActionsScreen extends Component {
           onChangeText={this.onChangeTypeText.bind(this)}
           value={this.state.typeText}
           testID='UniqueId937'
-          />
+        />
 
         <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }}
           onChangeText={this.onChangeClearText.bind(this)}
           value={this.state.clearText}
           testID='UniqueId005'
-          />
+        />
 
         <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }}
           onChangeText={this.onReplaceText.bind(this)}
           value={this.state.replaceText}
           testID='UniqueId006'
-          />
+        />
 
         <View style={{ height: 100, borderColor: '#c0c0c0', borderWidth: 1, backgroundColor: '#f8f8ff', marginBottom: 20 }}>
           <ScrollView testID='ScrollView161'>
@@ -100,9 +100,11 @@ export default class ActionsScreen extends Component {
     });
   }
 
-  onLongTimeout(greeting) {
+  onLongTimeout() {
     setTimeout(() => {
-      greeting: 'Long Timeout Done'
+      this.setState({
+        greeting: "After Long Timeout"
+      });
     }, 4000);
   }
 

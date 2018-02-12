@@ -10,6 +10,12 @@ class Client {
     this.slowInvocationStatusHandler = null;
     this.slowInvocationTimeout = argparse.getArgValue('debug-synchronization');
     this.successfulTestRun = true; // flag for cleanup
+    this.pandingAppCrash;
+
+    this.setActionListener(new actions.AppWillTerminateWithError(), (response) => {
+      this.pandingAppCrash = response.params.errorDetails;
+      this.ws.rejectAll(this.pandingAppCrash);
+    });
   }
 
   async connect() {
@@ -18,7 +24,7 @@ class Client {
   }
 
   async reloadReactNative() {
-    await this.sendAction(new actions.ReloadReactNative(), -1000);
+    await this.sendAction(new actions.ReloadReactNative());
   }
 
   async sendUserNotification(params) {
@@ -26,14 +32,13 @@ class Client {
   }
 
   async waitUntilReady() {
-    await this.sendAction(new actions.Ready(), -1000);
+    await this.sendAction(new actions.Ready());
     this.isConnected = true;
   }
 
   async cleanup() {
     clearTimeout(this.slowInvocationStatusHandler);
-
-    if (this.isConnected) {
+    if (this.isConnected && !this.pandingAppCrash) {
       await this.sendAction(new actions.Cleanup(this.successfulTestRun));
       this.isConnected = false;
     }
@@ -68,8 +73,27 @@ class Client {
     clearTimeout(this.slowInvocationStatusHandler);
   }
 
-  async sendAction(action, messageId) {
-    const response = await this.ws.send(action, messageId);
+  getPendingCrashAndReset() {
+    const crash = this.pandingAppCrash;
+    this.pandingAppCrash = undefined;
+
+    return crash;
+  }
+
+  setActionListener(action, clientCallback) {
+    this.ws.setEventCallback(action.messageId, (response) => {
+      const parsedResponse = JSON.parse(response);
+      action.handle(parsedResponse);
+
+      /* istanbul ignore next */
+      if (clientCallback) {
+        clientCallback(parsedResponse);
+      }
+    });
+  }
+
+  async sendAction(action) {
+    const response = await this.ws.send(action, action.messageId);
     const parsedResponse = JSON.parse(response);
     await action.handle(parsedResponse);
     return parsedResponse;
