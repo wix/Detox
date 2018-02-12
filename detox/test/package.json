@@ -6,14 +6,14 @@
 		"test": ":",
 		"packager": "react-native start",
 		"detox-server": "detox run-server",
-		"e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization 10000 --platform ios",
+		"e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization 10000 --platform ios --artifacts-location ./artifacts",
 		"e2e:android": "detox test --configuration android.emu.release --loglevel verbose --platform android",
 		"build:ios": "detox build --configuration ios.sim.release",
 		"build:android": "detox build --configuration android.emu.release"
 	},
 	"dependencies": {
-    "react": "^16.0.0-beta.5",
-    "react-native": "^0.49.3"
+		"react": "^16.0.0-beta.5",
+		"react-native": "^0.49.3"
 	},
 	"devDependencies": {
 		"detox": "^7.0.0",
