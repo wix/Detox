@@ -348,9 +348,9 @@ describe('Device', () => {
 
   it(`setLocation() should pass to device driver`, async () => {
     device = validDevice();
-    await device.setLocation(30, 30);
+    await device.setLocation(30.1, 30.2);
 
-    expect(device.deviceDriver.setLocation).toHaveBeenCalledWith(device._deviceId, '30', '30');
+    expect(device.deviceDriver.setLocation).toHaveBeenCalledWith(device._deviceId, '30.1', '30.2');
   });
 
   it(`setURLBlacklist() should pass to device driver`, async () => {
