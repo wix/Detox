@@ -29,7 +29,7 @@ class AppleSimUtils {
       trying: `Searching for device matching ${query}...`
     };
     let correctQuery = this._correctQueryWithOS(query);
-    const response = await this._execAppleSimUtils({ args: `--list "${correctQuery}" --maxResults=1` }, statusLogs, 1);
+    const response = await this._execAppleSimUtils({ args: `--list "${correctQuery}"` }, statusLogs, 1);
     const parsed = this._parseResponseFromAppleSimUtils(response);
     const udids = _.map(parsed, 'udid');
     if (!udids || !udids.length || !udids[0]) {
