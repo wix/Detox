@@ -44,25 +44,15 @@ class AppleSimUtils {
     return device;
   }
 
-  async waitForDeviceState(udid, state) {
-    let device;
-    await retry({ retries: 10, interval: 1000 }, async () => {
-      device = await this.findDeviceByUDID(udid);
-      if (!_.isEqual(device.state, state)) {
-        throw new Error(`device is in state '${device.state}'`);
-      }
-    });
-    return device;
+  async boot(udid) {
+    if (!await this.isBooted(udid)) {
+      await this._bootDeviceByXcodeVersion(udid);
+    }
   }
 
-  async boot(udid) {
+  async isBooted(udid) {
     const device = await this.findDeviceByUDID(udid);
-    if (_.isEqual(device.state, 'Booted') || _.isEqual(device.state, 'Booting')) {
-      return false;
-    }
-    await this.waitForDeviceState(udid, 'Shutdown');
-    await this._bootDeviceByXcodeVersion(udid);
-    await this.waitForDeviceState(udid, 'Booted');
+    return (_.isEqual(device.state, 'Booted') || _.isEqual(device.state, 'Booting'));
   }
 
   async install(udid, absPath) {
@@ -200,6 +190,7 @@ class AppleSimUtils {
     } else {
       await this._bootDeviceMagically(udid);
     }
+    await this._execSimctl({ cmd: `bootstatus ${udid}`, retries: 1 });
   }
 
   async _bootDeviceMagically(udid) {
