@@ -20,22 +20,27 @@ class AppleSimUtils {
   }
 
   async findDeviceUDID(query) {
+    const udids = await this.findDevicesUDID(query);
+    return udids ? udids[0] : undefined;
+  }
+
+  async findDevicesUDID(query) {
     const statusLogs = {
       trying: `Searching for device matching ${query}...`
     };
     let correctQuery = this._correctQueryWithOS(query);
     const response = await this._execAppleSimUtils({ args: `--list "${correctQuery}" --maxResults=1` }, statusLogs, 1);
     const parsed = this._parseResponseFromAppleSimUtils(response);
-    const udid = _.get(parsed, [0, 'udid']);
-    if (!udid) {
+    const udids = _.map(parsed, 'udid');
+    if (!udids || !udids.length || !udids[0]) {
       throw new Error(`Can't find a simulator to match with "${query}", run 'xcrun simctl list' to list your supported devices.
       It is advised to only state a device type, and not to state iOS version, e.g. "iPhone 7"`);
     }
-    return udid;
+    return udids;
   }
 
   async findDeviceByUDID(udid) {
-    const response = await this._execAppleSimUtils({ args: `--list` }, undefined, 1);
+    const response = await this._execAppleSimUtils({args: `--list --byId "${udid}"`}, undefined, 1);
     const parsed = this._parseResponseFromAppleSimUtils(response);
     const device = _.find(parsed, (device) => _.isEqual(device.udid, udid));
     if (!device) {
