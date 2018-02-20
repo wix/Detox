@@ -72,21 +72,21 @@ function runMocha() {
   cp.execSync(command, {stdio: 'inherit'});
 }
 
-function runJest() {
+function runJest(maxWorkers = 1) {
   const configFile = runnerConfig ? `--config=${runnerConfig}` : '';
   const platform = program.platform ? `--testNamePattern='^((?!${getPlatformSpecificString(program.platform)}).)*$'` : '';
-  const command = `node_modules/.bin/jest ${testFolder} ${configFile} --runInBand ${platform}`;
-  console.log(command);
+  const command = `node_modules/.bin/jest ${testFolder} ${configFile} --maxWorkers=${maxWorkers} ${platform} --verbose`;
+  const env = Object.assign({}, process.env, {
+    configuration: program.configuration,
+    loglevel: program.loglevel,
+    cleanup: program.cleanup,
+    reuse: program.reuse,
+    debugSynchronization: program.debugSynchronization,
+    artifactsLocation: program.artifactsLocation
+  });
   cp.execSync(command, {
     stdio: 'inherit',
-    env: Object.assign({}, process.env, {
-      configuration: program.configuration,
-      loglevel: program.loglevel,
-      cleanup: program.cleanup,
-      reuse: program.reuse,
-      debugSynchronization: program.debugSynchronization,
-      artifactsLocation: program.artifactsLocation
-    })
+    env
   });
 }
 

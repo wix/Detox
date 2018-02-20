@@ -29,6 +29,45 @@ describe('AppleSimUtils', () => {
     expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
   });
 
+  describe('findDevicesUDID', () => {
+
+    it('return multiple devices', async () => {
+      exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({
+        stdout: JSON.stringify([
+          {
+            "state": "Shutdown",
+            "availability": "(available)",
+            "name": "iPhone 6",
+            "udid": "the uuid1",
+            "os": {
+              "version": "10.3.1",
+              "availability": "(available)",
+              "name": "iOS 10.3",
+              "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-10-3",
+              "buildversion": "14E8301"
+            }
+          },
+          {
+            "state": "Shutdown",
+            "availability": "(available)",
+            "name": "iPhone 6",
+            "udid": "the uuid2",
+            "os": {
+              "version": "10.3.1",
+              "availability": "(available)",
+              "name": "iOS 10.3",
+              "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-10-3",
+              "buildversion": "14E8301"
+            }
+          }
+        ])
+      }));
+      const result = await uut.findDevicesUDID('iPhone 7');
+      expect(result).toEqual(['the uuid1', 'the uuid2']);
+    });
+  });
+
+
   describe('findDeviceUDID', () => {
     it('correct params', async () => {
       expect(exec.execWithRetriesAndLogs).not.toHaveBeenCalled();
@@ -37,7 +76,7 @@ describe('AppleSimUtils', () => {
       } catch (e) { }
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith('applesimutils', {
-        args: `--list "iPhone 6" --maxResults=1`
+        args: `--list "iPhone 6"`
       }, expect.anything(), 1, undefined);
     });
 
@@ -46,7 +85,7 @@ describe('AppleSimUtils', () => {
         await uut.findDeviceUDID('iPhone 6 , iOS 10.3');
       } catch (e) { }
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith('applesimutils', {
-        args: `--list "iPhone 6, OS=iOS 10.3" --maxResults=1`
+        args: `--list "iPhone 6, OS=iOS 10.3"`
       }, expect.anything(), 1, undefined);
     });
 
