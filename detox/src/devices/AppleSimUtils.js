@@ -21,7 +21,7 @@ class AppleSimUtils {
 
   async findDeviceUDID(query) {
     const udids = await this.findDevicesUDID(query);
-    return udids ? udids[0] : undefined;
+    return udids && udids.length ? udids[0] : undefined;
   }
 
   async findDevicesUDID(query) {
