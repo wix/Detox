@@ -17,7 +17,7 @@
     "APIRef.TestLifecycle": "Test Lifecycle",
     "APIRef.waitFor": "Manual Synchronization Using `waitFor`",
     "Guide.Contributing": "Contributing",
-    "Guide.DebuggingInXcode": "Debugging Apps in Xcode During a Test",
+    "Guide.DebuggingInXcode": "Guide.DebuggingInXcode",
     "Guide.DevelopingWhileWritingTests": "Developing Your App While Writing Tests",
     "Guide.Jest": "Jest",
     "Guide.Migration": "Migration Guide",
