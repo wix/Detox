@@ -2,8 +2,7 @@
 
 set -e
 
-BRANCH=$(git rev-parse --abbrev-ref HEAD)
-if [[ "$BRANCH" != "master" ]]; then 
+if [[ "$TRAVIS_BRANCH" != "master" ]]; then 
   echo 'Not deploying the website'; 
   exit 0; 
 else
