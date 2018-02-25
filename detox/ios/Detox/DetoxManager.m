@@ -16,7 +16,13 @@
 #import "DetoxAppDelegateProxy.h"
 #import "EarlGreyExtensions.h"
 #import "EarlGreyStatistics.h"
-#import <notify.h>
+
+@interface UIApplication ()
+
+- (void)_sendMotionBegan:(UIEventSubtype)arg;
+- (void)_sendMotionEnded:(UIEventSubtype)arg;
+
+@end
 
 DTX_CREATE_LOG(DetoxManager)
 
@@ -217,8 +223,9 @@ static void detoxConditionalInit()
 //TODO: Replace once Earl Grey has accepted PR to add this there: https://github.com/google/EarlGrey/pull/679
 - (void)_sendShakeNotification
 {
-	//This sends a Darwin notification which triggers a shake event in UIApplication.
-	notify_post("com.apple.UIKit.SimulatorShake");
+	//This behaves exactly in the same manner that UIApplication handles the simulator "Shake Gesture" menu command.
+	[[UIApplication sharedApplication] _sendMotionBegan:UIEventSubtypeMotionShake];
+	[[UIApplication sharedApplication] _sendMotionEnded:UIEventSubtypeMotionShake];
 }
 
 @end
