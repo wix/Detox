@@ -1,5 +1,6 @@
 {
   "setupTestFrameworkScriptFile" : "./helpers/init.js",
+  "testEnvironment": "node",
   "bail": true,
   "verbose": true,
   "forceExit": true

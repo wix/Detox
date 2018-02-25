@@ -13,7 +13,11 @@ class SimulatorDriver extends IosDriver {
   constructor(client) {
     super(client);
     this._applesimutils = new AppleSimUtils();
-    this.deviceRegistry = new DeviceRegistry({getDeviceIdsByType: async type => await this._applesimutils.findDevicesUDID(type)});
+    this.deviceRegistry = new DeviceRegistry({
+      maxTestRunners: global.process.env.maxTestRunners,
+      getDeviceIdsByType: async type => await this._applesimutils.findDevicesUDID(type),
+      createDevice: type => this._applesimutils.create(type),
+    });
   }
 
   async prepare() {
@@ -31,7 +35,11 @@ class SimulatorDriver extends IosDriver {
 
   async acquireFreeDevice(name) {
     const deviceId = await this.deviceRegistry.getDevice(name);
-    await this.boot(deviceId);
+    if (deviceId) {
+      await this.boot(deviceId);
+    } else {
+      console.error('Unable to acquire free device ', name);
+    }
     return deviceId;
   }
 
