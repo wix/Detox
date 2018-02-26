@@ -28,6 +28,8 @@ program
     `Number of test workers (default is 1)`)
   .parse(process.argv);
 
+clearDeviceRegistryLockFile();
+
 const config = require(path.join(process.cwd(), 'package.json')).detox;
 
 const testFolder = getConfigFor('specs', 'e2e');
@@ -78,7 +80,7 @@ function runJest() {
   const configFile = runnerConfig ? `--config=${runnerConfig}` : '';
   const platform = program.platform ? `--testNamePattern='^((?!${getPlatformSpecificString(program.platform)}).)*$'` : '';
   const maxTestWorkers = getConfigFor('maxTestWorkers', 1);
-  const command = `node_modules/.bin/jest ${testFolder} ${configFile} --maxWorkers=${maxTestWorkers} ${platform} --verbose  --bail`;
+  const command = `node_modules/.bin/jest ${testFolder} ${configFile} --maxWorkers=${maxTestWorkers} ${platform}`;
   const env = Object.assign({}, process.env, {
     configuration: program.configuration,
     loglevel: program.loglevel,
@@ -120,3 +122,10 @@ function getPlatformSpecificString(platform) {
 
   return platformRevertString;
 }
+
+function clearDeviceRegistryLockFile() {
+  const fs = require('fs');
+  const LOCK_FILE = './device.registry.state.lock';
+  fs.writeFileSync(LOCK_FILE, '[]');
+}
+

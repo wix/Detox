@@ -5,13 +5,15 @@ describe('device registry', () => {
   let registry;
   const createDevice = jest.fn();
 
-  function initRegistry({maxTestRunners, numberOfDevicesPerType = 1} = {}) {
+  function initRegistry({maxTestRunners = 1, numberOfDevicesPerType = 1} = {}) {
     const devicesIds = Array.from(Array(numberOfDevicesPerType).keys());
     const getDeviceIdsByType = type => devicesIds.map(deviceId => `id-${deviceId}-of-type-${type}`);
     return new DeviceRegistry({getDeviceIdsByType, maxTestRunners, createDevice});
   }
 
-  describe('device creation', () => {
+  describe('create device', () => {
+
+    beforeEach(DeviceRegistry.clear);
 
     it('should create devices if they are not available', async () => {
       const maxTestRunners = 4;
@@ -35,6 +37,24 @@ describe('device registry', () => {
       }
 
       expect(createDevice).not.toHaveBeenCalled();
+    });
+
+  });
+
+
+  describe('free device', () => {
+
+    beforeEach(DeviceRegistry.clear);
+
+    it('should free device', async () => {
+      registry = initRegistry({});
+      await registry.getDevice('iPhoneX');
+
+      expect(await tryGetDevice('iPhoneX')).toEqual(undefined);
+
+      await registry.freeDevice('id-0-of-type-iPhoneX');
+
+      expect(await registry.getDevice('iPhoneX')).toEqual('id-0-of-type-iPhoneX');
     });
 
   });

@@ -14,7 +14,7 @@ class SimulatorDriver extends IosDriver {
     super(client);
     this._applesimutils = new AppleSimUtils();
     this.deviceRegistry = new DeviceRegistry({
-      maxTestRunners: global.process.env.maxTestRunners,
+      maxTestRunners: global.process.env.maxTestWorkers,
       getDeviceIdsByType: async type => await this._applesimutils.findDevicesUDID(type),
       createDevice: type => this._applesimutils.create(type),
     });
@@ -30,6 +30,7 @@ class SimulatorDriver extends IosDriver {
   }
 
   async cleanup(deviceId, bundleId) {
+    await DeviceRegistry.freeDevice(deviceId);
     return super.cleanup(deviceId, bundleId);
   }
 
