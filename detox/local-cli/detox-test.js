@@ -3,6 +3,8 @@
 const program = require('commander');
 const path = require('path');
 const cp = require('child_process');
+const _ = require('lodash');
+
 program
   .option('-o, --runner-config [config]',
     `Test runner config file, defaults to e2e/mocha.opts for mocha and e2e/config.json' for jest`)
@@ -77,9 +79,10 @@ function runMocha() {
 }
 
 function runJest() {
+  const currentConfiguration = config.configurations && config.configurations[program.configuration];
+  const maxTestWorkers = _.get(currentConfiguration, 'maxTestWorkers', 1);
   const configFile = runnerConfig ? `--config=${runnerConfig}` : '';
   const platform = program.platform ? `--testNamePattern='^((?!${getPlatformSpecificString(program.platform)}).)*$'` : '';
-  const maxTestWorkers = getConfigFor('maxTestWorkers', 1);
   const command = `node_modules/.bin/jest ${testFolder} ${configFile} --maxWorkers=${maxTestWorkers} ${platform}`;
   const env = Object.assign({}, process.env, {
     configuration: program.configuration,
