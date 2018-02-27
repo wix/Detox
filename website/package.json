@@ -8,8 +8,11 @@
     "version": "docusaurus-version",
     "rename-version": "docusaurus-rename-version",
     "precommit": "lint-staged",
-    "format": "prettier --write ./**/*.{js,json,css,md}",
-    "test": "jest"
+    "format":
+      "prettier --write ./**/*.{js,json,css,md} && prettier --write ./**/__tests__/*.{js,json,css,md} ",
+    "test": "jest",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "lint-staged": {
     "*.{js,json,css,md}": ["prettier --write", "git add"]
@@ -24,6 +27,12 @@
     "lint-staged": "^7.0.0",
     "prettier": "1.11.0",
     "react": "^16.2.0",
-    "react-test-renderer": "^16.2.0"
-  }
+    "react-test-renderer": "^16.2.0",
+    "@storybook/react": "^3.3.14",
+    "@storybook/addon-actions": "^3.3.14",
+    "@storybook/addon-links": "^3.3.14",
+    "@storybook/addons": "^3.3.14",
+    "babel-core": "^6.26.0"
+  },
+  "dependencies": {}
 }
