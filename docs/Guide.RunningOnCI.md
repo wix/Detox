@@ -68,6 +68,8 @@ env:
   - NODE_VERSION=stable
 
 install:
+- brew tap wix/brew
+- brew install --HEAD applesimutils
 - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
 - export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 - nvm install $NODE_VERSION
