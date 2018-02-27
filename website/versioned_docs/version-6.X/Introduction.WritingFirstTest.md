@@ -32,13 +32,13 @@ Our scenario is made from multiple different test cases (`it()` clauses). We usu
 
 ## Step 3: Add testIDs to your app to assist in matching elements
 
-Most test cases start by finding a UI element on screen (*matching*) and performing some user interaction on it (*action*). To assist in finding the correct UI element, it's recommended to mark it in some way. The best practice is to use the [`testID`](https://facebook.github.io/react-native/docs/view.html#testid) prop for this purpose. This means we'll modify the app code and add these props to various elements.
+Most test cases start by finding a UI element on screen (_matching_) and performing some user interaction on it (_action_). To assist in finding the correct UI element, it's recommended to mark it in some way. The best practice is to use the [`testID`](https://facebook.github.io/react-native/docs/view.html#testid) prop for this purpose. This means we'll modify the app code and add these props to various elements.
 
 Note that not all React components support this prop. Most of the built-in native components in React Native like `View`, `Text`, `TextInput`, `Switch`, `ScrollView` have support though. If you create your own composite components, you will have to propagate this prop manually to the correct native component.
 
 ```jsx
 <View>
-  <TouchableOpacity testID='MyUniqueId123'>
+  <TouchableOpacity testID="MyUniqueId123">
     <Text>Some button</Text>
   </TouchableOpacity>
 </View>

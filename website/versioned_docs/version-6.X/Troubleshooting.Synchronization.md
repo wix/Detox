@@ -8,7 +8,7 @@ Traditionally, one of the most difficult aspects of E2E testing is synchronizing
 
 Synchronizing manually with `sleep()` commands is a bad idea. It's flaky, complicates the tests, behaves differently on different machines and makes tests needlessly slow.
 
-Instead, Detox tries to synchronize the test with the app completely *automatically*.
+Instead, Detox tries to synchronize the test with the app completely _automatically_.
 
 When this works it's like magic. You simply execute actions one after the other without worrying about timing, and Detox waits for the app to stabilize before moving to the next test line. If there's an in-flight request to a server, for example, the test will not move forward until the request completes.
 
@@ -38,9 +38,10 @@ We always have the fail-safe of turning off automatic synchronization and waitin
 
 #### How do we turn off automatic synchronization?
 
-This makes sense only if we're waiting too much. 
+This makes sense only if we're waiting too much.
 
 ##### [Controlling the entire synchronization mechanism](https://github.com/wix/detox/blob/master/docs/APIRef.DeviceObjectAPI.md#devicedisablesynchronization)
+
 The synchronization mechanism can be shut down using
 
 ```js
@@ -53,7 +54,8 @@ to turn it on again use
 await device.enableSynchronization();
 ```
 
-##### [Controlling network synchronization](https://github.com/wix/detox/blob/master/docs/APIRef.DeviceObjectAPI.md#deviceseturlblacklisturls) 
+##### [Controlling network synchronization](https://github.com/wix/detox/blob/master/docs/APIRef.DeviceObjectAPI.md#deviceseturlblacklisturls)
+
 You can skip over synchronizing on certain URLs (for long polling tasks, or websocket connections)
 
 ```js
@@ -65,7 +67,6 @@ In order to gain sync back on an endpoint, just remove it from the blacklist
 ```js
 await device.setURLBlacklist([]);
 ```
-
 
 #### How do we wait manually?
 
@@ -93,7 +94,7 @@ This makes sense only if we're not waiting enough (or if we've disabled automati
 
 ### Identifying which synchronization mechanism causes us to wait too much
 
-Interactions with the application are synchronized, meaning that they will not execute unless the app is idle. You may encounter situations where the tests just hang. 
+Interactions with the application are synchronized, meaning that they will not execute unless the app is idle. You may encounter situations where the tests just hang.
 When an action/expectation takes a significant amount of time use this option to print device synchronization status.
 The status will be printed if the action takes more than [value]ms to complete
 

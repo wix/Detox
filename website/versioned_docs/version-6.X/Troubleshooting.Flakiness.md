@@ -26,9 +26,7 @@ It's important to identify the various sources of flakiness in Detox tests.
 
 In order to identify the source of flakiness you're suffering from you need more data. If you catch a failing test that should be passing, you need to record as much information as possible in order to investigate.
 
-* Enable verbose mode in Detox. This will output a lot of information about what happening during the test.<br>
-	1. `exec` commands
-	2. All communication going over the websocket, both from tester and testee
+* Enable verbose mode in Detox. This will output a lot of information about what happening during the test.<br> 1. `exec` commands 2. All communication going over the websocket, both from tester and testee
 
 To enable verbose mode run your tests in verbose log mode:
 

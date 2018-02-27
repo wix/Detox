@@ -6,9 +6,24 @@
     "publish-gh-pages": "docusaurus-publish",
     "write-translations": "docusaurus-write-translations",
     "version": "docusaurus-version",
-    "rename-version": "docusaurus-rename-version"
+    "rename-version": "docusaurus-rename-version",
+    "precommit": "lint-staged",
+    "format": "prettier --write ./**/*.{js,json,css,md}",
+    "test": "jest"
+  },
+  "lint-staged": {
+    "*.{js,json,css,md}": ["prettier --write", "git add"]
   },
   "devDependencies": {
-    "docusaurus": "^1.0.4"
+    "babel-jest": "^22.4.1",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "docusaurus": "^1.0.4",
+    "husky": "^0.14.3",
+    "jest": "^22.4.2",
+    "lint-staged": "^7.0.0",
+    "prettier": "1.11.0",
+    "react": "^16.2.0",
+    "react-test-renderer": "^16.2.0"
   }
 }

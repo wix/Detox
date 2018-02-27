@@ -15,18 +15,22 @@ await device.relaunchApp({url: url, sourceApp: bundleId}); //sourceApp is option
 **Example:**
 
 ```js
-describe('relaunchApp', () => {
-    before(async () => {
-      await device.relaunchApp({url: 'scheme://some.url', sourceApp: 'com.apple.mobilesafari'});
-    });
-
-    it('should tap successfully', async () => {
-      await expect(element(by.text('a label'))).toBeVisible();
+describe("relaunchApp", () => {
+  before(async () => {
+    await device.relaunchApp({
+      url: "scheme://some.url",
+      sourceApp: "com.apple.mobilesafari"
     });
   });
+
+  it("should tap successfully", async () => {
+    await expect(element(by.text("a label"))).toBeVisible();
+  });
+});
 ```
 
 #### Mocking Opening URL on a Launched App
+
 ```js
 await device.openURL({url: 'scheme://some.url', sourceApp: 'com.apple.mobilesafari'});
 ```

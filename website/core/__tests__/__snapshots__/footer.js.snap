@@ -1,0 +1,158 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Footer renders with icon 1`] = `
+<footer
+  className="nav-footer"
+  id="footer"
+>
+  <section
+    className="sitemap"
+  >
+    <a
+      className="nav-home"
+      href="http://unicorns"
+    >
+      <img
+        alt="detox is awesome"
+        height="58"
+        src="http://unicorns/img/footer.png"
+        width="66"
+      />
+    </a>
+    <div>
+      <h5>
+        Docs
+      </h5>
+      <a
+        href="http://unicornsdocs/Introduction.GettingStarted.html"
+      >
+        Getting Started
+      </a>
+      <a
+        href="http://unicornsdocs/Guide.Contributing.html"
+      >
+        Contributing
+      </a>
+    </div>
+    <div>
+      <h5>
+        Community
+      </h5>
+      <a
+        href="http://unicornsusers.html"
+      >
+        User Showcase
+      </a>
+      <a
+        href="http://stackoverflow.com/questions/tagged/detox"
+        target="_blank"
+      >
+        Stack Overflow
+      </a>
+    </div>
+    <div>
+      <h5>
+        More
+      </h5>
+      <a
+        href="https://github.com/wix/detox"
+      >
+        GitHub
+      </a>
+      <a
+        aria-label="Star this project on GitHub"
+        className="github-button"
+        data-count-aria-label="# stargazers on GitHub"
+        data-count-href="/wix/detox/stargazers"
+        data-icon="octicon-star"
+        data-show-count={true}
+        href="https://github.com/wix/detox/"
+      >
+        Star
+      </a>
+    </div>
+  </section>
+  <section
+    className="copyright"
+  >
+    Copyright © 
+    2018
+     Wix.com Ltd.
+  </section>
+</footer>
+`;
+
+exports[`Footer renders without icon 1`] = `
+<footer
+  className="nav-footer"
+  id="footer"
+>
+  <section
+    className="sitemap"
+  >
+    <a
+      className="nav-home"
+      href="http://unicorns"
+    />
+    <div>
+      <h5>
+        Docs
+      </h5>
+      <a
+        href="http://unicornsdocs/Introduction.GettingStarted.html"
+      >
+        Getting Started
+      </a>
+      <a
+        href="http://unicornsdocs/Guide.Contributing.html"
+      >
+        Contributing
+      </a>
+    </div>
+    <div>
+      <h5>
+        Community
+      </h5>
+      <a
+        href="http://unicornsusers.html"
+      >
+        User Showcase
+      </a>
+      <a
+        href="http://stackoverflow.com/questions/tagged/detox"
+        target="_blank"
+      >
+        Stack Overflow
+      </a>
+    </div>
+    <div>
+      <h5>
+        More
+      </h5>
+      <a
+        href="https://github.com/wix/detox"
+      >
+        GitHub
+      </a>
+      <a
+        aria-label="Star this project on GitHub"
+        className="github-button"
+        data-count-aria-label="# stargazers on GitHub"
+        data-count-href="/wix/detox/stargazers"
+        data-icon="octicon-star"
+        data-show-count={true}
+        href="https://github.com/wix/detox/"
+      >
+        Star
+      </a>
+    </div>
+  </section>
+  <section
+    className="copyright"
+  >
+    Copyright © 
+    2018
+     Wix.com Ltd.
+  </section>
+</footer>
+`;

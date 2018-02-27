@@ -18,7 +18,8 @@
     "APIRef.waitFor": "Manual Synchronization Using `waitFor`",
     "Guide.Contributing": "Contributing",
     "Guide.DebuggingInXcode": "Guide.DebuggingInXcode",
-    "Guide.DevelopingWhileWritingTests": "Developing Your App While Writing Tests",
+    "Guide.DevelopingWhileWritingTests":
+      "Developing Your App While Writing Tests",
     "Guide.Jest": "Jest",
     "Guide.Migration": "Migration Guide",
     "Guide.Mocking": "Mocking",
@@ -38,7 +39,8 @@
     "Troubleshooting.Flakiness": "Dealing With Flakiness in Tests",
     "Troubleshooting.Installation": "Installation",
     "Troubleshooting.RunningTests": "Failing Tests",
-    "Troubleshooting.Synchronization": "Dealing With Synchronization Issues in Tests",
+    "Troubleshooting.Synchronization":
+      "Dealing With Synchronization Issues in Tests",
     "Getting Started": "Getting Started",
     "GitHub": "GitHub",
     "Introduction": "Introduction",
@@ -49,8 +51,10 @@
     "Contributing to Detox": "Contributing to Detox"
   },
   "pages-strings": {
-    "Help Translate|recruit community translators for your project": "Help Translate",
+    "Help Translate|recruit community translators for your project":
+      "Help Translate",
     "Edit this Doc|recruitment message asking to edit the doc source": "Edit",
-    "Translate this Doc|recruitment message asking to translate the docs": "Translate"
+    "Translate this Doc|recruitment message asking to translate the docs":
+      "Translate"
   }
 }
