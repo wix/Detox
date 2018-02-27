@@ -14,15 +14,15 @@
 
 + (id<GREYMatcher>)detoxMatcherForText:(NSString *)text
 {
-    Class RN_RCTText = NSClassFromString(@"RCTText");
-    if (!RN_RCTText)
+	Class RCTTextViewClass = NSClassFromString(@"RCTTextView") ?: NSClassFromString(@"RCTText");
+    if (!RCTTextViewClass)
     {
         return grey_text(text);
     }
     
     // in React Native RCTText the accessibilityLabel is hardwired to be the text inside
     return grey_anyOf(grey_text(text),
-                      grey_allOf(grey_kindOfClass(RN_RCTText),
+                      grey_allOf(grey_kindOfClass(RCTTextViewClass),
                                  hasProperty(@"accessibilityLabel", text),
 								 nil),
 					  nil);
@@ -38,9 +38,9 @@
 	}
 	else
 	{
-		Class RN_RCTText = NSClassFromString(@"RCTText");
+		Class RCTTextViewClass = NSClassFromString(@"RCTTextView") ?: NSClassFromString(@"RCTText");
 		return grey_allOf(grey_accessibilityLabel(label),
-						  grey_not(grey_descendant(grey_allOf(grey_kindOfClass(RN_RCTText),
+						  grey_not(grey_descendant(grey_allOf(grey_kindOfClass(RCTTextViewClass),
 															  grey_accessibilityLabel(label),
 															  nil))),
 						  nil);
