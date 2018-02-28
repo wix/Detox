@@ -1,0 +1,9 @@
+* @rotemmiz
+*.java @rotemmiz
+detox/ios/* @leonatan
+detox/test/ios/* @leonatan
+*.h @leonatan
+*.m @leonatan
+*.mm @leonatan
+*.cpp @leonatan
+*.sh @leonatan @rotemmiz
