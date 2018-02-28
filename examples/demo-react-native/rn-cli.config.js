@@ -1,7 +1,7 @@
-const blacklist = require('react-native/packager/blacklist');
+const metroBundler = require('metro-bundler');
 
 module.exports = {
-  getBlacklistRE: () => blacklist([
-    /test\/.*/,
-  ]),
+  getBlacklistRE: function() {
+    return metroBundler.createBlacklist([/test\/.*/]);
+  }
 };
