@@ -7,7 +7,7 @@ matrix:
       os: osx
       osx_image: xcode9
       env:
-        - REACT_NATIVE_VERSION=0.44.2
+        - REACT_NATIVE_VERSION=0.53.3
       install:
       - ./scripts/install.ios.sh
       script:
