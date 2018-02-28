@@ -1,9 +1,13 @@
 * @rotemmiz
 *.java @rotemmiz
-detox/ios/* @leonatan
-detox/test/ios/* @leonatan
-*.h @leonatan
-*.m @leonatan
-*.mm @leonatan
-*.cpp @leonatan
-*.sh @leonatan @rotemmiz
+
+#Trollolo:
+*.js @rotemmiz
+
+detox/ios/* @LeoNatan
+detox/test/ios/* @LeoNatan
+*.h @LeoNatan
+*.m @LeoNatan
+*.mm @LeoNatan
+*.cpp @LeoNatan
+*.sh @LeoNatan @rotemmiz
