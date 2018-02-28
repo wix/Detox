@@ -6,8 +6,8 @@
     "start": "react-native start"
   },
   "dependencies": {
-    "react": "16.0.0-alpha.6",
-    "react-native": "0.44.0"
+    "react": "16.0.0",
+    "react-native": "0.52.0"
   },
   "devDependencies": {
     "mocha": "^4.0.1",
@@ -32,15 +32,15 @@
       },
       "android.emu.debug": {
         "binaryPath": "android/app/build/outputs/apk/app-debug.apk",
-        "build": "pushd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && popd",
+        "build": "cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
         "type": "android.emulator",
         "name": "Nexus_5X_API_24_-_GPlay"
       },
       "android.emu.release": {
-        "binaryPath": "android/app/build/outputs/apk/app-release.apk",
-        "build": "pushd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && popd",
+        "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
+        "build": "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd ..",
         "type": "android.emulator",
-        "name": "Nexus_5X_API_24_-_GPlay"
+        "name": "Nexus_5X_API_25_x86"
       }
   
     }
