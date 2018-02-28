@@ -6,8 +6,8 @@
     "start": "react-native start"
   },
   "dependencies": {
-    "react": "16.2.0",
-    "react-native": "0.53.3"
+    "react": "16.0.0-alpha.6",
+    "react-native": "0.44.0"
   },
   "devDependencies": {
     "mocha": "^4.0.1",
@@ -42,7 +42,6 @@
         "type": "android.emulator",
         "name": "Nexus_5X_API_24_-_GPlay"
       }
-  
     }
   }
 }
