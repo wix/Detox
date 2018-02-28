@@ -14,7 +14,7 @@
 
 + (id<GREYMatcher>)detoxMatcherForText:(NSString *)text
 {
-	Class RCTTextViewClass = NSClassFromString(@"RCTTextView") ?: NSClassFromString(@"RCTText");
+	Class RCTTextViewClass = NSClassFromString(@"RCTText") ?: NSClassFromString(@"RCTTextView");
     if (!RCTTextViewClass)
     {
         return grey_text(text);
@@ -38,7 +38,7 @@
 	}
 	else
 	{
-		Class RCTTextViewClass = NSClassFromString(@"RCTTextView") ?: NSClassFromString(@"RCTText");
+		Class RCTTextViewClass = NSClassFromString(@"RCTText") ?: NSClassFromString(@"RCTTextView");
 		return grey_allOf(grey_accessibilityLabel(label),
 						  grey_not(grey_descendant(grey_allOf(grey_kindOfClass(RCTTextViewClass),
 															  grey_accessibilityLabel(label),
