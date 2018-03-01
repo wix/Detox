@@ -10,9 +10,12 @@ class IosDriver extends DeviceDriverBase {
   constructor(client) {
     super(client);
 
-    const expect = require('../ios/expect');
-    expect.exportGlobals();
-    expect.setInvocationManager(new InvocationManager(client));
+    this.expect = require('../ios/expect');
+    this.expect.setInvocationManager(new InvocationManager(client));
+  }
+
+  exportGlobals() {
+    this.expect.exportGlobals();
   }
 
   createPushNotificationJson(notification) {
@@ -28,7 +31,7 @@ class IosDriver extends DeviceDriverBase {
   }
 
   async openURL(deviceId, params) {
-    this.client.openURL(params);
+    await this.client.openURL(params);
   }
 
   async setURLBlacklist(urlList) {

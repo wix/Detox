@@ -1,5 +1,4 @@
 const {spawn} = require('child_process');
-const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
 const log = require('npmlog');
@@ -7,6 +6,7 @@ const invoke = require('../invoke');
 const InvocationManager = invoke.InvocationManager;
 const ADB = require('./android/ADB');
 const AAPT = require('./android/AAPT');
+const APKPath = require('./android/APKPath');
 const DeviceDriverBase = require('./DeviceDriverBase');
 
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
@@ -14,13 +14,17 @@ const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
 class AndroidDriver extends DeviceDriverBase {
   constructor(client) {
     super(client);
-    const expect = require('../android/expect');
-    expect.exportGlobals();
+    this.expect = require('../android/expect');
     this.invocationManager = new InvocationManager(client);
-    expect.setInvocationManager(this.invocationManager);
+    this.expect.setInvocationManager(this.invocationManager);
 
     this.adb = new ADB();
     this.aapt = new AAPT();
+    this.apkPath = new APKPath();
+  }
+
+  exportGlobals() {
+    this.expect.exportGlobals();
   }
 
   async getBundleIdFromBinary(apkPath) {
@@ -33,10 +37,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   getTestApkPath(originalApkPath) {
-    const originalApkPathObj = path.parse(originalApkPath);
-    let splitPath = originalApkPathObj.dir.split(path.sep);
-    splitPath.splice(splitPath.length-1 , 0, 'androidTest');
-    const testApkPath = path.join(splitPath.join(path.sep), `${originalApkPathObj.name}-androidTest${originalApkPathObj.ext}`);
+    const testApkPath = APKPath.getTestApkPath(originalApkPath);
 
     if (!fs.existsSync(testApkPath)) {
       throw new Error(`'${testApkPath}' could not be found, did you run './gradlew assembleAndroidTest' ?`);

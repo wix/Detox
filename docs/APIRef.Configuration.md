@@ -1,4 +1,7 @@
-# Configuration Options
+---
+id: APIRef.Configuration
+title: Configuration Options
+---
 
 ## Configuring package.json 
 ### Device Configuration

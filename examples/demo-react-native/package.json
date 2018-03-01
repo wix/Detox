@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "mocha": "^4.0.1",
-    "detox": "^6.0.0"
+    "detox": "^7.0.0"
   },
   "detox": {
     "test-runner": "mocha",
