@@ -42,7 +42,7 @@
       },
       "android.emu.release": {
         "binaryPath": "android/app/build/outputs/apk/app-release.apk",
-        "build": "pushd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && popd",
+        "build": "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd ..",
         "type": "android.emulator",
         "name": "Nexus_5X_API_26"
       }

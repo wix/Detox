@@ -4,15 +4,18 @@ import com.android.build.OutputFile
 apply from: "../../node_modules/react-native/react.gradle"
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '25.0.3'
+    compileSdkVersion 25
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "com.detox.rn.example"
         minSdkVersion 18
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
+        testBuildType System.getProperty('testBuildType', 'debug')  //this will later be used to control the test apk build type
+        missingDimensionStrategy "minReactNative", "minReactNative46" //read note
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -55,16 +58,33 @@ android {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
     }
+
+    signingConfigs {
+        release {
+            storeFile file('../debug.keystore')
+            storePassword 'android'
+            keyAlias 'debug'
+            keyPassword 'android'
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
 }
 
 dependencies {
     compile fileTree(dir: "libs", include: ["*.jar"])
-    compile "com.android.support:appcompat-v7:23.0.1"
+    compile "com.android.support:appcompat-v7:25.4.0"
     compile "com.facebook.react:react-native:+"  // From node_modules
 
-    androidTestCompile(project(path: ":detox", configuration: "oldOkhttpDebug"), {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+
+    androidTestImplementation(project(path: ":detox"))
+    androidTestImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test:rules:1.0.1'
 }
 
 // Run this once to be able to run the application with BUCK
