@@ -1,4 +1,4 @@
-const metroBundler = require('metro-bundler');
+const metroBundler = require('metro');
 
 module.exports = {
   getBlacklistRE: function() {
