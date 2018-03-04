@@ -29,7 +29,7 @@ class Device {
     }
 
     if (params.launchApp) {
-      await this.launchApp({ newInstance: true });
+      await this.launchApp({newInstance: true});
     }
   }
 
@@ -41,7 +41,7 @@ class Device {
     await this._artifactsCopier.finalizeArtifacts();
   }
 
-  async launchApp(params = { newInstance: false }, bundleId) {
+  async launchApp(params = {newInstance: false}, bundleId) {
     await this._artifactsCopier.handleAppRelaunch();
 
     if (params.url && params.userNotification) {
@@ -67,7 +67,7 @@ class Device {
         baseLaunchArgs['detoxSourceAppOverride'] = params.sourceApp;
       }
     } else if (params.userNotification) {
-      baseLaunchArgs = { 'detoxUserNotificationDataURL': this.deviceDriver.createPushNotificationJson(params.userNotification) };
+      baseLaunchArgs = {'detoxUserNotificationDataURL': this.deviceDriver.createPushNotificationJson(params.userNotification)};
     }
 
     if (params.permissions) {

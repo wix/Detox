@@ -13,7 +13,7 @@ const _ = require('lodash');
 const ArtifactsPathsProvider = require('./artifacts/ArtifactsPathsProvider');
 
 log.level = argparse.getArgValue('loglevel') || 'info';
-log.addLevel('wss', 999, { fg: 'blue', bg: 'black' }, 'wss');
+log.addLevel('wss', 999, {fg: 'blue', bg: 'black'}, 'wss');
 log.heading = 'detox';
 
 const DEVICE_CLASSES = {
@@ -24,7 +24,7 @@ const DEVICE_CLASSES = {
 };
 
 class Detox {
-  constructor({ deviceConfig, session }) {
+  constructor({deviceConfig, session}) {
     this.deviceConfig = deviceConfig;
     this.userSession = deviceConfig.session || session;
     this.client = null;
@@ -42,7 +42,7 @@ class Detox {
 
   async init(userParams) {
     const sessionConfig = await this._getSessionConfig();
-    const defaultParams = { launchApp: true, initGlobals: true };
+    const defaultParams = {launchApp: true, initGlobals: true};
     const params = Object.assign(defaultParams, userParams || {});
 
     if (!this.userSession) {
@@ -107,10 +107,11 @@ class Detox {
   async _handleAppCrash(testName) {
     const pendingAppCrash = this.client.getPendingCrashAndReset();
     if (pendingAppCrash) {
-      log.error('',`App crashed in test '${testName}', here's the native stack trace: \n${pendingAppCrash}`);
-      await this.device.launchApp({newInstance:true});
+      log.error('', `App crashed in test '${testName}', here's the native stack trace: \n${pendingAppCrash}`);
+      await this.device.launchApp({newInstance: true});
     }
   }
+
   async _getSessionConfig() {
     const session = this.userSession || await configuration.defaultSession();
 
