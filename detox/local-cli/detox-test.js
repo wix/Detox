@@ -26,8 +26,6 @@ program
   .option('-p, --platform [ios/android]',
     'Run platform specific tests. Runs tests with invert grep on \':platform:\', '
     + 'e.g test with substring \':ios:\' in its name will not run when passing \'--platform android\'')
-  .option('-w, --max-test-workers [value]',
-    `Number of test workers (default is 1)`)
   .parse(process.argv);
 
 clearDeviceRegistryLockFile();
@@ -74,7 +72,6 @@ function runMocha() {
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
   const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platform} ${artifactsLocation}`;
 
-  console.log(command);
   cp.execSync(command, {stdio: 'inherit'});
 }
 
