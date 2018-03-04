@@ -1,5 +1,25 @@
 # Change Log
 
+## [7.1.0](https://github.com/wix/detox/tree/7.1.0) (2018-02-12)
+[Full Changelog](https://github.com/wix/detox/compare/7.0.1...7.1.0)
+
+**Enhancements**
+
+- Fix doc generation to only run from master [\#542](https://github.com/wix/detox/issues/542)
+- export globals [\#275](https://github.com/wix/detox/issues/275)
+- Look for a way to catch app crashes and report to the user, rather than have test stuck until timeout [\#161](https://github.com/wix/detox/issues/161)
+- Android Support [\#96](https://github.com/wix/detox/issues/96)
+- Add exception and signal handling for iOS [\#453](https://github.com/wix/detox/pull/453) ([LeoNatan](https://github.com/LeoNatan))
+
+**Fixed Bugs**
+
+- openURL API is broken [\#561](https://github.com/wix/detox/issues/561)
+
+**Merged Pull Requests**
+
+- Minor typo in Introduction.GettingStarted.md [\#555](https://github.com/wix/detox/pull/555) ([orta](https://github.com/orta))
+- Website build only run on master [\#544](https://github.com/wix/detox/pull/544) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
+
 ## [7.0.1](https://github.com/wix/detox/tree/7.0.1) (2018-01-29)
 [Full Changelog](https://github.com/wix/detox/compare/7.0.0...7.0.1)
 
@@ -134,7 +154,7 @@
 - Add change log generation when publishing a version [\#409](https://github.com/wix/detox/issues/409)
 
 ## [5.10.1](https://github.com/wix/detox/tree/5.10.1) (2017-11-15)
-[Full Changelog](https://github.com/wix/detox/compare/detox-server@2.1.0...5.10.1)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.10.0...5.10.1)
 
 **Fixed Bugs**
 
@@ -144,11 +164,11 @@
 
 - New demo project for react native jest [\#370](https://github.com/wix/detox/pull/370) ([SMJ93](https://github.com/SMJ93))
 
-## [detox-server@2.1.0](https://github.com/wix/detox/tree/detox-server@2.1.0) (2017-11-13)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.10.0...detox-server@2.1.0)
-
 ## [detox@5.10.0](https://github.com/wix/detox/tree/detox@5.10.0) (2017-11-13)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.9.3...detox@5.10.0)
+[Full Changelog](https://github.com/wix/detox/compare/detox-server@2.1.0...detox@5.10.0)
+
+## [detox-server@2.1.0](https://github.com/wix/detox/tree/detox-server@2.1.0) (2017-11-13)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.9.3...detox-server@2.1.0)
 
 **Enhancements**
 
@@ -556,6 +576,7 @@
 **Closed Issues**
 
 - \[iOS\] Fail to type text with azerty Keyboard  [\#92](https://github.com/wix/detox/issues/92)
+- Support es6 \(import, async await etc\) [\#62](https://github.com/wix/detox/issues/62)
 
 **Merged Pull Requests**
 

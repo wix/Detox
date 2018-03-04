@@ -20,6 +20,7 @@ function buildFramework {
   xcodebuild build -project "${detoxSourcePath}"/Detox.xcodeproj -scheme DetoxFramework -configuration Release -derivedDataPath "${detoxFrameworkDirPath}"/DetoxBuild BUILD_DIR="${detoxFrameworkDirPath}"/DetoxBuild/Build/Products &> "${detoxFrameworkDirPath}"/detox_ios.log
   mv "${detoxFrameworkDirPath}"/DetoxBuild/Build/Products/Release-universal/Detox.framework "${detoxFrameworkDirPath}"
   rm -fr "${detoxFrameworkDirPath}"/DetoxBuild
+  rm -fr "${detoxSourcePath}"
 
   echo "Done"
 }

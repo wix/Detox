@@ -144,8 +144,8 @@ class Device {
   }
 
   async setLocation(lat, lon) {
-    lat = String(lat).replace('.', ',');
-    lon = String(lon).replace('.', ',');
+    lat = String(lat);
+    lon = String(lon);
     await this.deviceDriver.setLocation(this._deviceId, lat, lon);
   }
 

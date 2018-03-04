@@ -58,7 +58,7 @@ dependencies {
 }
 ```
 
-And in the same file you need to add this under `allprojects > repositories`:
+And in `android/build.gradle` you need to add this under `allprojects > repositories`:
 
 ```gradle
 buildscript {

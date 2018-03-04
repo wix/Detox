@@ -122,7 +122,7 @@ describe('AppleSimUtils', () => {
           fail('should throw');
         } catch (e) {
           expect(e.message).toMatch(`Could not parse response from applesimutils, please update applesimutils and try again.
-      'brew uninstall applesimutils && brew tap wix/brew && brew install --HEAD applesimutils'`);
+      'brew uninstall applesimutils && brew tap wix/brew && brew install applesimutils'`);
         }
       });
     });
