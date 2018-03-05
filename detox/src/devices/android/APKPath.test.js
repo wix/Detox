@@ -17,5 +17,10 @@ describe('APKPath', () => {
     expect(APKPath.getTestApkPath(inputApkPath)).toEqual(expectedTestApkPath);
   });
 
-});
+  it(`path for a gradle build with multiple flavors`, async () => {
+    const inputApkPath = '~/android/app/build/outputs/apk/pocPlayStore/debug/app-poc-playStore-debug.apk';
+    const expectedTestApkPath = '~/android/app/build/outputs/apk/androidTest/pocPlayStore/debug/app-poc-playStore-debug-androidTest.apk';
+    expect(APKPath.getTestApkPath(inputApkPath)).toEqual(expectedTestApkPath);
+  });
 
+});

@@ -2,12 +2,9 @@
 
 source $(dirname "$0")/travis_logger.sh
 
-case "$REACT_NATIVE_VERSION" in
-     0.44.2)
-          echo "Applying git patch to convert React Native version in test project to $REACT_NATIVE_VERSION"
-          git apply scripts/testProjRN49to44.diff --ignore-whitespace
-          ;;
-esac
+if [[ -z "${REACT_NATIVE_VERSION}" ]]; then
+  node scripts/change_react_native_version.js "detox/test" "$REACT_NATIVE_VERSION"
+fi
 
 run_f "$(dirname "$0")/bootstrap.sh"
 

@@ -1,16 +1,17 @@
 apply plugin: "com.android.application"
 
 import com.android.build.OutputFile
+
 apply from: "../../node_modules/react-native/react.gradle"
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '25.0.3'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.2'
 
     defaultConfig {
         applicationId "com.detox.rn.example"
         minSdkVersion 18
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         ndk {
@@ -19,6 +20,7 @@ android {
 
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        missingDimensionStrategy "minReactNative", "minReactNative46"
     }
     splits {
         abi {
@@ -28,10 +30,19 @@ android {
             include "armeabi-v7a", "x86"
         }
     }
+    signingConfigs {
+        release {
+            storeFile file("keystore.jks")
+            storePassword "12345678"
+            keyAlias "key0"
+            keyPassword "12345678"
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release
@@ -39,7 +50,7 @@ android {
         variant.outputs.each { output ->
             // For each separate APK per architecture, set a unique version code as described here:
             // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-            def versionCodes = ["armeabi-v7a":1, "x86":2]
+            def versionCodes = ["armeabi-v7a": 1, "x86": 2]
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
@@ -58,18 +69,18 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: "libs", include: ["*.jar"])
-    compile "com.android.support:appcompat-v7:23.0.1"
-    compile "com.facebook.react:react-native:+"  // From node_modules
+    implementation "com.android.support:appcompat-v7:27.0.2"
+    implementation "com.facebook.react:react-native:+"  // From node_modules
 
-    androidTestCompile(project(path: ":detox", configuration: "oldOkhttpDebug"), {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+    androidTestImplementation(project(path: ":detox"))
+    androidTestImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test:rules:1.0.1'
 }
 
 // Run this once to be able to run the application with BUCK
 // puts all compile dependencies into folder libs for BUCK to use
 task copyDownloadableDepsToLibs(type: Copy) {
-  from configurations.compile
-  into 'libs'
+    from configurations.compile
+    into 'libs'
 }
