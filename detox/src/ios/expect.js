@@ -154,7 +154,7 @@ class SwipeAction extends Action {
   }
 }
 
-class ChangeValueAtColumnAction extends Action {
+class ScrollColumnToValue extends Action {
   constructor(column,value) {
     super();
     this._call = invoke.callDirectly(GreyActions.actionForSetPickerColumnToValue(column,value))
@@ -292,7 +292,7 @@ class Element {
     return await new ActionInteraction(this, new SwipeAction(direction, speed, percentage)).execute();
   }
   async setColumnToValue(column,value) {
-    return await new ActionInteraction(this, new ChangeValueAtColumnAction(column, value)).execute();
+    return await new ActionInteraction(this, new ScrollColumnToValue(column, value)).execute();
   }
 }
 

@@ -113,5 +113,6 @@ await element(by.id('scrollView')).swipe('down', 'fast', 0.5);
 Scroll ios Picker at defined column to required value
 
 ```js
-await element(by.type('UIPickerView')).setColumnToValue(0,'22');
+await element(by.type('UIPickerView')).setColumnToValue(1,"6")
+await element(by.type('UIPickerView')).setColumnToValue(2,"34")
 ```
