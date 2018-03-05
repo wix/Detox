@@ -21,7 +21,7 @@ Actions are functions that emulate user behavior. They are being performed on ma
 - [`.scroll()`](#scrollpixels-direction)
 - [`.scrollTo()`](#scrolltoedge)
 - [`.swipe()`](#swipedirection-speed-percentage)
-- [`.scrollDatePickerAtColumnToValue()`](#scrolldatepickeratcolumn)
+- [`.setColumnToValue()`](#set-column-to-value)
 
 
 ### `tap()`
@@ -109,9 +109,9 @@ await element(by.id('scrollView')).swipe('down', 'fast');
 await element(by.id('scrollView')).swipe('down', 'fast', 0.5);
 ```
 
-### `scrollDatePickerAtColumnToValue(column,value)`
-Scroll Date Picker at defined column to required value
+### `setColumnToValue(column,value)`
+Scroll ios Picker at defined column to required value
 
 ```js
-await element(by.type('UIPickerView')).scrollDatePickerAtColumnToValue(0,'22');
+await element(by.type('UIPickerView')).setColumnToValue(0,'22');
 ```

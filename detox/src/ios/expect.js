@@ -291,7 +291,7 @@ class Element {
     this._selectElementWithMatcher(this._originalMatcher._avoidProblematicReactNativeElements());
     return await new ActionInteraction(this, new SwipeAction(direction, speed, percentage)).execute();
   }
-  async scrollDatePickerAtColumnToValue(column,value) {
+  async setColumnToValue(column,value) {
     return await new ActionInteraction(this, new ChangeValueAtColumnAction(column, value)).execute();
   }
 }
