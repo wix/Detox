@@ -9,7 +9,7 @@ android {
     buildToolsVersion '27.0.2'
 
     defaultConfig {
-        applicationId "com.detox.rn.example"
+        applicationId "com.example"
         minSdkVersion 18
         targetSdkVersion 26
         versionCode 1
