@@ -119,35 +119,51 @@ static void detoxConditionalInit()
 	}
 	else if([type isEqualToString:@"userNotification"])
 	{
-		[EarlGrey detox_safeExecuteSync:^{
-			NSURL* userNotificationDataURL = [NSURL fileURLWithPath:params[@"detoxUserNotificationDataURL"]];
-			DetoxUserNotificationDispatcher* dispatcher = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationDataURL:userNotificationDataURL];
-			[dispatcher dispatchOnAppDelegate:DetoxAppDelegateProxy.currentAppDelegateProxy simulateDuringLaunch:NO];
+		NSURL* userNotificationDataURL = [NSURL fileURLWithPath:params[@"detoxUserNotificationDataURL"]];
+		BOOL delay = [params[@"delayPayload"] boolValue];
+		
+		void (^block)(void) = ^{
+			[DetoxAppDelegateProxy.currentAppDelegateProxy dispatchUserNotificationFromDataURL:userNotificationDataURL delayUntilActive:delay];
+			
 			[self.webSocket sendAction:@"userNotificationDone" withParams:@{} withMessageId: messageId];
-		}];
+		};
+		
+		if(delay == YES)
+		{
+			block();
+			return;
+		}
+		
+		[EarlGrey detox_safeExecuteSync:block];
 	}
 	else if([type isEqualToString:@"openURL"])
 	{
-		[EarlGrey detox_safeExecuteSync:^{
-			NSURL* URLToOpen = [NSURL URLWithString:params[@"url"]];
-			
-			NSParameterAssert(URLToOpen != nil);
-			
-			NSString* sourceApp = params[@"sourceApp"];
-			
-			NSMutableDictionary* options = [@{UIApplicationLaunchOptionsURLKey: URLToOpen} mutableCopy];
-			if(sourceApp != nil)
-			{
-				options[UIApplicationLaunchOptionsSourceApplicationKey] = sourceApp;
-			}
-			
-			if([[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:openURL:options:)])
-			{
-				[[UIApplication sharedApplication].delegate application:[UIApplication sharedApplication] openURL:URLToOpen options:options];
-			}
+		NSURL* URLToOpen = [NSURL URLWithString:params[@"url"]];
+		BOOL delay = [params[@"delayPayload"] boolValue];
+		
+		NSParameterAssert(URLToOpen != nil);
+		
+		NSString* sourceApp = params[@"sourceApp"];
+		
+		NSMutableDictionary* options = [@{UIApplicationLaunchOptionsURLKey: URLToOpen} mutableCopy];
+		if(sourceApp != nil)
+		{
+			options[UIApplicationLaunchOptionsSourceApplicationKey] = sourceApp;
+		}
+		
+		void (^block)(void) = ^{
+			[DetoxAppDelegateProxy.currentAppDelegateProxy dispatchOpenURL:URLToOpen options:options delayUntilActive:delay];
 			
 			[self.webSocket sendAction:@"openURLDone" withParams:@{} withMessageId: messageId];
-		}];
+		};
+		
+		if(delay == YES)
+		{
+			block();
+			return;
+		}
+		
+		[EarlGrey detox_safeExecuteSync:block];
 	}
 	else if([type isEqualToString:@"shakeDevice"])
 	{	}

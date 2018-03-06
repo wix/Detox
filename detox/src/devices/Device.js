@@ -29,7 +29,7 @@ class Device {
     }
 
     if (params.launchApp) {
-      await this.launchApp({newInstance: true});
+      await this.launchApp({ newInstance: true });
     }
   }
 
@@ -41,19 +41,26 @@ class Device {
     await this._artifactsCopier.finalizeArtifacts();
   }
 
-  async launchApp(params = {newInstance: false}, bundleId) {
+  async launchApp(params = { newInstance: false }, bundleId) {
     await this._artifactsCopier.handleAppRelaunch();
 
     if (params.url && params.userNotification) {
-      throw new Error(`detox can't understand this 'relaunchApp(${JSON.stringify(params)})' request, either request to launch with url or with userNotification, not both`);
+      throw new Error(`Call to 'launchApp(${JSON.stringify(params)})' cannot contain both url and userNotification payloads.`);
     }
 
+    if (params.delete === true && params.newInstance === false) {
+      throw new Error(`Call to 'launchApp(${JSON.stringify(params)})' cannot contain both delete=true and newInstance=false.`);
+    }
+
+    let didTerminate = false;
     if (params.delete) {
       await this.deviceDriver.terminate(this._deviceId, this._bundleId);
       await this.deviceDriver.uninstallApp(this._deviceId, this._bundleId);
       await this.deviceDriver.installApp(this._deviceId, this._binaryPath);
+      didTerminate = true;
     } else if (params.newInstance) {
       await this.deviceDriver.terminate(this._deviceId, this._bundleId);
+      didTerminate = true;
     }
 
     let baseLaunchArgs = {};
@@ -61,31 +68,36 @@ class Device {
       baseLaunchArgs = params.launchArgs;
     }
 
+    const notificationFilePath = this.deviceDriver.createPushNotificationJson(params.userNotification);
+    const userNotificationReady = { 'detoxUserNotificationDataURL': notificationFilePath };
+
     if (params.url) {
       baseLaunchArgs['detoxURLOverride'] = params.url;
-      if(params.sourceApp) {
+      if (params.sourceApp) {
         baseLaunchArgs['detoxSourceAppOverride'] = params.sourceApp;
       }
     } else if (params.userNotification) {
-      baseLaunchArgs = {'detoxUserNotificationDataURL': this.deviceDriver.createPushNotificationJson(params.userNotification)};
+      baseLaunchArgs = userNotificationReady;
     }
 
     if (params.permissions) {
       await this.deviceDriver.setPermissions(this._deviceId, this._bundleId, params.permissions);
     }
 
+    if (didTerminate === false) {
+      if (params.url) {
+        await this._debugSleep(30000);
+        await this.openURL({ ...params, delayPayload: true });
+      } else if (params.userNotification) {
+        await this._debugSleep(30000);
+        await this._sendUserNotificationFile({ ...userNotificationReady, delayPayload: true });
+      }
+    }
+
     this._addPrefixToDefaultLaunchArgs(baseLaunchArgs);
 
     const _bundleId = bundleId || this._bundleId;
     const processId = await this.deviceDriver.launch(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs));
-
-    if (this._processes[_bundleId] === processId) {
-      if (params.url) {
-        await this.openURL(params);
-      } else if (params.userNotification) {
-        await this.sendUserNotification(params.userNotification);
-      }
-    }
 
     this._processes[_bundleId] = processId;
 
@@ -146,6 +158,11 @@ class Device {
   }
 
   async sendUserNotification(params) {
+    const notificationFilePath = this.deviceDriver.createPushNotificationJson(params);
+    await this._sendUserNotificationFile({ 'detoxUserNotificationDataURL': notificationFilePath });
+  }
+
+  async _sendUserNotificationFile(params) {
     await this.deviceDriver.sendUserNotification(params);
   }
 
@@ -195,7 +212,7 @@ class Device {
   }
 
   _getAbsolutePath(appPath) {
-    if(path.isAbsolute(appPath)) {
+    if (path.isAbsolute(appPath)) {
       return appPath;
     }
 
