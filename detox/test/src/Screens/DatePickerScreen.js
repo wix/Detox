@@ -15,10 +15,9 @@ export default class DatePickerScreen extends Component {
   render() {
     return (
       <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
-        <DatePickerIOS testID = {'CustomDatePicker'}
+        <DatePickerIOS 
          style = {styles.datePicker}
-         date = {new Date()}//{this.state.chosenDate}
-         //onDateChange={this._setDate}
+         date = {new Date()}
         />
       </View>
     );
