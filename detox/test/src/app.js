@@ -84,6 +84,7 @@ class example extends Component {
           {this.renderScreenButton('Network', Screens.NetworkScreen)}
           {this.renderScreenButton('Animations', Screens.AnimationsScreen)}
           {this.renderScreenButton('Location', Screens.LocationScreen)}
+          {this.renderScreenButton('DatePicker', Screens.DatePickerScreen)}
           {this.renderButton('Crash', () => {throw new Error('Simulated Crash')})}
         </View>
       );
