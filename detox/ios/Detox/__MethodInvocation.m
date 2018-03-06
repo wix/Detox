@@ -6,32 +6,32 @@
 //  Copyright © 2016 Wix. All rights reserved.
 //
 
-#import "MethodInvocation.h"
+#import "__MethodInvocation.h"
 @import EarlGrey;
 
-@implementation MethodInvocation
+@implementation __MethodInvocation
 
-+ (id) getTarget:(id)param onError:(void (^)(NSString*))onError
++ (id)getTarget:(id)param onError:(void (^)(NSString*))onError
 {
     if (param == nil) return nil;
     if ([param isKindOfClass:[NSDictionary class]])
     {
         NSDictionary *p = (NSDictionary*)param;
-        NSString *type = [MethodInvocation getString:[p objectForKey:@"type"]];
+        NSString *type = [__MethodInvocation getString:[p objectForKey:@"type"]];
         id value = [p objectForKey:@"value"];
-        return [MethodInvocation getValue:value withType:type onError:onError];
+        return [__MethodInvocation getValue:value withType:type onError:onError];
     }
     return nil;
 }
 
-+ (NSString*) getString:(id)param
++ (NSString*)getString:(id)param
 {
     if (param == nil) return nil;
     if ([param isKindOfClass:[NSString class]]) return param;
     return nil;
 }
 
-+ (id) getValue:(id)value withType:(id)type onError:(void (^)(NSString*))onError
++ (id)getValue:(id)value withType:(id)type onError:(void (^)(NSString*))onError
 {
     if (type == nil || value == nil) return nil;
     if ([type isEqualToString:@"EarlGrey"])
@@ -86,33 +86,33 @@
     if ([type isEqualToString:@"Invocation"])
     {
         if (![value isKindOfClass:[NSDictionary class]]) return nil;
-        return [MethodInvocation invoke:value onError:onError];
+        return [__MethodInvocation invoke:value onError:onError];
     }
     return nil;
 }
 
-+ (id) getArgValue:(id)param onError:(void (^)(NSString*))onError
++ (id)getArgValue:(id)param onError:(void (^)(NSString*))onError
 {
     if (param == nil) return nil;
     if ([param isKindOfClass:[NSDictionary class]])
     {
         NSDictionary *p = (NSDictionary*)param;
-        NSString *type = [MethodInvocation getString:[p objectForKey:@"type"]];
+        NSString *type = [__MethodInvocation getString:[p objectForKey:@"type"]];
         id value = [p objectForKey:@"value"];
-        return [MethodInvocation getValue:value withType:type onError:onError];
+        return [__MethodInvocation getValue:value withType:type onError:onError];
     }
 	
     return param;
 }
 
-+ (NSArray*) getArray:(id)param
++ (NSArray*)getArray:(id)param
 {
     if (param == nil) return nil;
     if ([param isKindOfClass:[NSArray class]]) return param;
     return nil;
 }
 
-+ (id) getReturnValue:(NSInvocation*)invocation
++ (id)getReturnValue:(NSInvocation*)invocation
 {
     id res = nil;
     NSString *type = [NSString stringWithUTF8String:invocation.methodSignature.methodReturnType];
@@ -139,7 +139,7 @@
     return res;
 }
 
-+ (id) serializeValue:(id)value onError:(void (^)(NSString*))onError
++ (id)serializeValue:(id)value onError:(void (^)(NSString*))onError
 {
     if (value == nil) return nil;
     if ([value isKindOfClass:[NSValue class]])
@@ -160,7 +160,7 @@
     return value;
 }
 
-+ (void) invocation:(NSInvocation*)invocation setNonPointerArg:(NSValue*)value atIndex:(NSInteger)idx
++ (void)invocation:(NSInvocation*)invocation setNonPointerArg:(NSValue*)value atIndex:(NSInteger)idx
 {
     NSString *type = [NSString stringWithUTF8String:value.objCType];
     if ([type isEqualToString:@"q"])
@@ -185,21 +185,21 @@
     }
 }
 
-+ (id) invoke:(NSDictionary*)params onError:(void (^)(NSString*))onError
++ (id)invoke:(NSDictionary*)params onError:(void (^)(NSString*))onError
 {
-    id target = [MethodInvocation getTarget:[params objectForKey:@"target"] onError:onError];
+    id target = [__MethodInvocation getTarget:[params objectForKey:@"target"] onError:onError];
     if (target == nil)
     {
         onError(@"target is invalid");
         return nil;
     }
-    NSString *method = [MethodInvocation getString:[params objectForKey:@"method"]];
+    NSString *method = [__MethodInvocation getString:[params objectForKey:@"method"]];
     if (method == nil)
     {
         onError(@"method is not a string");
         return nil;
     }
-    NSArray *args = [MethodInvocation getArray:[params objectForKey:@"args"]];
+    NSArray *args = [__MethodInvocation getArray:[params objectForKey:@"args"]];
     if (args == nil)
     {
         onError(@"args is not an array");
@@ -219,7 +219,7 @@
     for (int i = 0; i<[args count]; i++)
     {
         id arg = args[i];
-        id argValue = [MethodInvocation getArgValue:arg onError:onError];
+        id argValue = [__MethodInvocation getArgValue:arg onError:onError];
         if (argValue == nil)
         {
             onError([NSString stringWithFormat:@"invalid arg value %d", i]);
@@ -231,11 +231,11 @@
         }
         else
         {
-            [MethodInvocation invocation:invocation setNonPointerArg:argValue atIndex:i + 2];
+            [__MethodInvocation invocation:invocation setNonPointerArg:argValue atIndex:i + 2];
         }
     }
     [invocation invoke];
-    return [MethodInvocation getReturnValue:invocation];
+    return [__MethodInvocation getReturnValue:invocation];
 }
 
 @end

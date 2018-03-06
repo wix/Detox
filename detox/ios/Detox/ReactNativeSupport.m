@@ -180,7 +180,7 @@ void setupForTests()
     return (NSClassFromString(@"RCTBridge") != nil);
 }
 
-+ (void) reloadApp
++ (void)reloadApp
 {
 	if(NSClassFromString(@"RCTBridge") == nil)
 	{
