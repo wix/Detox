@@ -58,7 +58,7 @@ class example extends Component {
 
   render() {
     if (this.state.notification) {
-      return this.renderText(this.state.notification);
+      return this.renderText(this.state.notification.title);
     }
 
     else if (this.state.url) {
