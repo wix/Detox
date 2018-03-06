@@ -18,11 +18,13 @@
   "devDependencies": {
     "detox": "^7.0.0",
     "express": "^4.15.3",
+    "jest": "^22.3.0",
     "lodash": "^4.14.1",
     "mocha": "^4.0.0"
   },
   "detox": {
     "specs": "e2e",
+    "test-runner": "jest",
     "__session": {
       "server": "ws://localhost:8099",
       "sessionId": "test"

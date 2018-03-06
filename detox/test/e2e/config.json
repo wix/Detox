@@ -1,0 +1,6 @@
+{
+  "setupTestFrameworkScriptFile" : "./helpers/init.js",
+  "bail": true,
+  "verbose": true,
+  "forceExit": true
+}
