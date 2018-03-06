@@ -86,10 +86,8 @@ class Device {
 
     if (didTerminate === false) {
       if (params.url) {
-        await this._debugSleep(30000);
         await this.openURL({ ...params, delayPayload: true });
       } else if (params.userNotification) {
-        await this._debugSleep(30000);
         await this._sendUserNotificationFile({ ...userNotificationReady, delayPayload: true });
       }
     }
