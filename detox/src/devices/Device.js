@@ -206,6 +206,10 @@ class Device {
       throw new Error(`app binary not found at '${absPath}', did you build it?`);
     }
   }
+
+  async _debugSleep(ms = 0) {
+    return new Promise((resolve, reject) => setTimeout(resolve, ms));
+  }
 }
 
 module.exports = Device;
