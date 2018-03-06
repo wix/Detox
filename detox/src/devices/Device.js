@@ -84,7 +84,9 @@ class Device {
       await this.deviceDriver.setPermissions(this._deviceId, this._bundleId, params.permissions);
     }
 
-    if (didTerminate === false) {
+    const _bundleId = bundleId || this._bundleId;
+
+    if (didTerminate === false && this._processes[_bundleId] != undefined) {
       if (params.url) {
         await this.openURL({ ...params, delayPayload: true });
       } else if (params.userNotification) {
@@ -94,7 +96,6 @@ class Device {
 
     this._addPrefixToDefaultLaunchArgs(baseLaunchArgs);
 
-    const _bundleId = bundleId || this._bundleId;
     const processId = await this.deviceDriver.launch(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs));
 
     this._processes[_bundleId] = processId;
