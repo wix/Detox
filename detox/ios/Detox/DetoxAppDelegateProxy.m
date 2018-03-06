@@ -237,11 +237,6 @@ static void __copyMethods(Class orig, Class target)
 	return rv;
 }
 
-- (void)applicationWillResignActive:(UIApplication *)application
-{
-	NSLog(@"%@", @(UIApplication.sharedApplication.applicationState));
-}
-
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
 	if([class_getSuperclass(object_getClass(self)) instancesRespondToSelector:_cmd])
