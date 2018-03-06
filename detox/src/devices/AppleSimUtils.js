@@ -60,6 +60,18 @@ class AppleSimUtils {
     return (_.isEqual(device.state, 'Booted') || _.isEqual(device.state, 'Booting'));
   }
 
+  async create(type) {
+    const result = await this._execSimctl({ cmd: `list runtimes -j` });
+    const stdout = _.get(result, 'stdout');
+    const runtimes = JSON.parse(stdout);
+    const newestRuntime = _.maxBy(runtimes.runtimes, r => Number(r.version));
+    if (newestRuntime) {
+      console.log('Creating simulator', `create "${type}" "${type}" "${newestRuntime.identifier}"`)
+      await this._execSimctl({cmd: `create "${type}" "${type}" "${newestRuntime.identifier}"`});
+      return true;
+    }
+  }
+
   async install(udid, absPath) {
     const statusLogs = {
       trying: `Installing ${absPath}...`,

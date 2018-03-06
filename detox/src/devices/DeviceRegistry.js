@@ -16,7 +16,7 @@ class DeviceRegistry {
   async getDevice(deviceType) {
     await retry(() => plockfile.lockSync(LOCK_FILE));
     const deviceIds = await this.getDeviceIdsByType(deviceType);
-    await this._createDeviceIfNecessary({deviceIds});
+    await this._createDeviceIfNecessary({deviceIds, deviceType});
 
     const unlockedDeviceId = getFirstUnlocked(deviceIds);
     if (unlockedDeviceId) {
@@ -27,11 +27,12 @@ class DeviceRegistry {
       return unlockedDeviceId;
     }
     plockfile.unlockSync(LOCK_FILE);
+    throw new Error(`Unable to find unlocked device ${deviceType}`);
   }
 
-  async _createDeviceIfNecessary ({deviceIds}) {
+  async _createDeviceIfNecessary ({deviceIds, deviceType}) {
     const numberOfDevicesNeededToCreate = Math.max(this.maxTestRunners - deviceIds.length, 0);
-    _.times(numberOfDevicesNeededToCreate, async () => await this.createDevice());
+    _.times(numberOfDevicesNeededToCreate, async () => await this.createDevice(deviceType));
   }
 
   static clear() {

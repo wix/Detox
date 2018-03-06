@@ -258,6 +258,74 @@ describe('AppleSimUtils', () => {
     });
   });
 
+  describe('create', () => {
+    it('calls xcrun', async () => {
+      exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({stdout: "{}"}));
+
+      const created = await uut.create('name');
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
+        `/usr/bin/xcrun simctl list runtimes -j`,
+        undefined,
+        expect.anything(),
+        1);
+      expect(created).toEqual(undefined);
+    });
+
+    it('creates using the newest runtime version', async () => {
+      const runtimes = {
+        "runtimes" : [
+          {
+            "buildversion" : "13C75",
+            "availability" : "(available)",
+            "name" : "iOS 9.2",
+            "identifier" : "com.apple.CoreSimulator.SimRuntime.iOS-9-2",
+            "version" : "9.2"
+          },
+          {
+            "buildversion" : "13E233",
+            "availability" : "(available)",
+            "name" : "iOS 9.3",
+            "identifier" : "com.apple.CoreSimulator.SimRuntime.iOS-9-3",
+            "version" : "9.3"
+          },
+          {
+            "buildversion" : "15C107",
+            "availability" : "(available)",
+            "name" : "iOS 11.2",
+            "identifier" : "com.apple.CoreSimulator.SimRuntime.iOS-11-2",
+            "version" : "11.2"
+          },
+          {
+            "buildversion" : "15K104",
+            "availability" : "(available)",
+            "name" : "tvOS 11.2",
+            "identifier" : "com.apple.CoreSimulator.SimRuntime.tvOS-11-2",
+            "version" : "11.2"
+          },
+          {
+            "buildversion" : "15S100",
+            "availability" : "(available)",
+            "name" : "watchOS 4.2",
+            "identifier" : "com.apple.CoreSimulator.SimRuntime.watchOS-4-2",
+            "version" : "4.2"
+          }
+        ]
+      };
+      exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({stdout: JSON.stringify(runtimes)}));
+
+      const created = await uut.create('iPhone 8 Plus');
+
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
+        `/usr/bin/xcrun simctl create "iPhone 8 Plus" "iPhone 8 Plus" "com.apple.CoreSimulator.SimRuntime.iOS-11-2"`,
+        undefined,
+        expect.anything(),
+        1);
+      expect(created).toEqual(true);
+    });
+  });
+
+
   describe('install', () => {
     it('calls xcrun', async () => {
       await uut.install('udid', 'somePath');
