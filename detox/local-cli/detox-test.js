@@ -3,6 +3,8 @@
 const program = require('commander');
 const path = require('path');
 const cp = require('child_process');
+const _ = require('lodash');
+
 program
   .option('-o, --runner-config [config]',
     `Test runner config file, defaults to e2e/mocha.opts for mocha and e2e/config.json' for jest`)
@@ -25,6 +27,8 @@ program
     'Run platform specific tests. Runs tests with invert grep on \':platform:\', '
     + 'e.g test with substring \':ios:\' in its name will not run when passing \'--platform android\'')
   .parse(process.argv);
+
+clearDeviceRegistryLockFile();
 
 const config = require(path.join(process.cwd(), 'package.json')).detox;
 
@@ -68,25 +72,27 @@ function runMocha() {
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
   const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platform} ${artifactsLocation}`;
 
-  console.log(command);
   cp.execSync(command, {stdio: 'inherit'});
 }
 
 function runJest() {
+  const currentConfiguration = config.configurations && config.configurations[program.configuration];
+  const maxTestWorkers = _.get(currentConfiguration, 'maxTestWorkers', 1);
   const configFile = runnerConfig ? `--config=${runnerConfig}` : '';
   const platform = program.platform ? `--testNamePattern='^((?!${getPlatformSpecificString(program.platform)}).)*$'` : '';
-  const command = `node_modules/.bin/jest ${testFolder} ${configFile} --runInBand ${platform}`;
-  console.log(command);
+  const command = `node_modules/.bin/jest ${testFolder} ${configFile} --maxWorkers=${maxTestWorkers} ${platform}`;
+  const env = Object.assign({}, process.env, {
+    configuration: program.configuration,
+    loglevel: program.loglevel,
+    cleanup: program.cleanup,
+    reuse: program.reuse,
+    debugSynchronization: program.debugSynchronization,
+    artifactsLocationartifactsLocation: program.artifactsLocation,
+    maxTestWorkers,
+  });
   cp.execSync(command, {
     stdio: 'inherit',
-    env: Object.assign({}, process.env, {
-      configuration: program.configuration,
-      loglevel: program.loglevel,
-      cleanup: program.cleanup,
-      reuse: program.reuse,
-      debugSynchronization: program.debugSynchronization,
-      artifactsLocation: program.artifactsLocation
-    })
+    env
   });
 }
 
@@ -116,3 +122,10 @@ function getPlatformSpecificString(platform) {
 
   return platformRevertString;
 }
+
+function clearDeviceRegistryLockFile() {
+  const fs = require('fs');
+  const LOCK_FILE = './device.registry.state.lock';
+  fs.writeFileSync(LOCK_FILE, '[]');
+}
+
