@@ -6,12 +6,14 @@ const IosDriver = require('./IosDriver');
 const AppleSimUtils = require('./AppleSimUtils');
 const configuration = require('../configuration');
 const environment = require('../utils/environment');
+const DeviceRegistry = require('./DeviceRegistry');
 
 class SimulatorDriver extends IosDriver {
 
   constructor(client) {
     super(client);
     this._applesimutils = new AppleSimUtils();
+    this.deviceRegistry = new DeviceRegistry({getDeviceIdsByType: async type => await this._applesimutils.findDevicesUDID(type)});
   }
 
   async prepare() {
@@ -23,8 +25,12 @@ class SimulatorDriver extends IosDriver {
     }
   }
 
+  async cleanup(deviceId, bundleId) {
+    return super.cleanup(deviceId, bundleId);
+  }
+
   async acquireFreeDevice(name) {
-    const deviceId = await this._applesimutils.findDeviceUDID(name);
+    const deviceId = await this.deviceRegistry.getDevice(name);
     await this.boot(deviceId);
     return deviceId;
   }
