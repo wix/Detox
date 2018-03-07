@@ -51,27 +51,29 @@ class DeviceRegistry {
 
 }
 
-const createEmptyLockFileIfNeeded = () => {
+function createEmptyLockFileIfNeeded() {
   if (!fs.existsSync(LOCK_FILE)) {
     writeLockedDevices([]);
   }
-};
+}
 
-const writeLockedDevices = lockedDevices => fs.writeFileSync(LOCK_FILE, JSON.stringify(lockedDevices));
+function writeLockedDevices(lockedDevices) {
+  fs.writeFileSync(LOCK_FILE, JSON.stringify(lockedDevices));
+}
 
-const getLockedDevices = () => {
+function getLockedDevices() {
   createEmptyLockFileIfNeeded();
   const lockFileContent = fs.readFileSync(LOCK_FILE, 'utf-8');
   return JSON.parse(lockFileContent);
-};
+}
 
-const getFirstUnlocked = deviceIds => {
+function getFirstUnlocked(deviceIds) {
   for (let i=0; i < deviceIds.length; i++) {
     let deviceId = deviceIds[i];
     if (!getLockedDevices().includes(deviceId)) {
       return deviceId;
     }
   }
-};
+}
 
 module.exports = DeviceRegistry;
