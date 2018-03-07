@@ -66,9 +66,11 @@ class AppleSimUtils {
     const runtimes = JSON.parse(stdout);
     const newestRuntime = _.maxBy(runtimes.runtimes, r => Number(r.version));
     if (newestRuntime) {
-      console.log('Creating simulator', `create "${type}" "${type}" "${newestRuntime.identifier}"`)
+      console.log('Creating simulator', `create "${type}" "${type}" "${newestRuntime.identifier}"`);
       await this._execSimctl({cmd: `create "${type}" "${type}" "${newestRuntime.identifier}"`});
       return true;
+    } else {
+      throw new Error(`Unable to create device. No runtime found for ${type}`);
     }
   }
 
