@@ -127,4 +127,3 @@ function clearDeviceRegistryLockFile() {
   const LOCK_FILE = './device.registry.state.lock';
   fs.writeFileSync(LOCK_FILE, '[]');
 }
-
