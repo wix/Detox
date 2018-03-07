@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 if [ "$__DETOX_DEV" = true ]; then
   echo "Running postinstall for detox dev mode, exiting"
