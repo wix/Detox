@@ -1,9 +1,9 @@
-const os = require('os');
 const fs = require('fs');
 const plockfile = require('proper-lockfile');
 const _ = require('lodash');
 const retry = require('../utils/retry');
-const LOCK_FILE = `${os.homedir()}/Library/Detox/device.registry.state.lock`;
+const {DETOX_LIBRARY_ROOT_PATH} = require('../utils/environment');
+const LOCK_FILE = `${DETOX_LIBRARY_ROOT_PATH}/device.registry.state.lock`;
 const LOCK_RETRY_OPTIONS = {retries: Number.MAX_SAFE_INTEGER, interval: 5};
 
 class DeviceRegistry {
