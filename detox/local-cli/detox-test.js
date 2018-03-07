@@ -3,7 +3,6 @@
 const program = require('commander');
 const path = require('path');
 const cp = require('child_process');
-const _ = require('lodash');
 
 program
   .option('-o, --runner-config [config]',
@@ -77,7 +76,7 @@ function runMocha() {
 
 function runJest() {
   const currentConfiguration = config.configurations && config.configurations[program.configuration];
-  const maxTestWorkers = _.get(currentConfiguration, 'maxTestWorkers', 1);
+  const maxTestWorkers = currentConfiguration.maxTestWorkers || 1;
   const configFile = runnerConfig ? `--config=${runnerConfig}` : '';
   const platform = program.platform ? `--testNamePattern='^((?!${getPlatformSpecificString(program.platform)}).)*$'` : '';
   const command = `node_modules/.bin/jest ${testFolder} ${configFile} --maxWorkers=${maxTestWorkers} ${platform}`;
