@@ -4,6 +4,7 @@ const plockfile = require('proper-lockfile');
 const _ = require('lodash');
 const retry = require('../utils/retry');
 const LOCK_FILE = `${os.homedir()}/Library/Detox/device.registry.state.lock`;
+const LOCK_RETRY_OPTIONS = {retries: Number.MAX_SAFE_INTEGER, interval: 5};
 
 class DeviceRegistry {
 
@@ -15,7 +16,7 @@ class DeviceRegistry {
   }
 
   async getDevice(deviceType) {
-    await retry(() => plockfile.lockSync(LOCK_FILE));
+  await retry(LOCK_RETRY_OPTIONS, () => plockfile.lockSync(LOCK_FILE));
     const deviceIds = await this.getDeviceIdsByType(deviceType);
     await this._createDeviceIfNecessary({deviceIds, deviceType});
 
@@ -32,7 +33,7 @@ class DeviceRegistry {
   }
 
   static async freeDevice(deviceId) {
-    await retry(() => plockfile.lockSync(LOCK_FILE));
+    await retry(LOCK_RETRY_OPTIONS, () => plockfile.lockSync(LOCK_FILE));
     const lockedDevices = getLockedDevices();
     _.remove(lockedDevices, lockedDeviceId => lockedDeviceId === deviceId);
     writeLockedDevices(lockedDevices);
