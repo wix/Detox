@@ -1,7 +1,7 @@
 const os = require('os');
 const path = require('path');
 const exec = require('child-process-promise').exec;
-const DETOX_LIBRARY_ROOT_PATH = `${os.homedir()}/Library/Detox`;
+const DETOX_LIBRARY_ROOT_PATH = os.homedir();
 
 function getAndroidSDKPath() {
   let sdkPath = process.env.ANDROID_SDK_ROOT || process.env.ANDROID_HOME;
