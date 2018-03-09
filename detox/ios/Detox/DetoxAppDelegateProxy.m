@@ -97,8 +97,6 @@ static void __copyMethods(Class orig, Class target)
 		_pendingOpenURLs = [NSMutableArray new];
 		_pendingUserNotifications = [NSMutableArray new];
 		
-		[_pendingOpenURLs addObject:@{@"URL": [NSURL URLWithString:@"http://ynet.co.il/"], @"options": @{}}];
-		
 		Method m = class_getInstanceMethod([UIApplication class], @selector(setDelegate:));
 		void (*orig)(id, SEL, id<UIApplicationDelegate>) = (void*)method_getImplementation(m);
 		method_setImplementation(m, imp_implementationWithBlock(^ (id _self, id<UIApplicationDelegate, COSTouchVisualizerWindowDelegate> origDelegate) {

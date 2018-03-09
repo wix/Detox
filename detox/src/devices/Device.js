@@ -48,19 +48,12 @@ class Device {
       throw new Error(`Call to 'launchApp(${JSON.stringify(params)})' cannot contain both url and userNotification payloads.`);
     }
 
-    if (params.delete === true && params.newInstance === false) {
-      throw new Error(`Call to 'launchApp(${JSON.stringify(params)})' cannot contain both delete=true and newInstance=false.`);
-    }
-
-    let didTerminate = false;
     if (params.delete) {
       await this.deviceDriver.terminate(this._deviceId, this._bundleId);
       await this.deviceDriver.uninstallApp(this._deviceId, this._bundleId);
       await this.deviceDriver.installApp(this._deviceId, this._binaryPath);
-      didTerminate = true;
     } else if (params.newInstance) {
       await this.deviceDriver.terminate(this._deviceId, this._bundleId);
-      didTerminate = true;
     }
 
     let baseLaunchArgs = {};
@@ -68,16 +61,14 @@ class Device {
       baseLaunchArgs = params.launchArgs;
     }
 
-    const notificationFilePath = this.deviceDriver.createPushNotificationJson(params.userNotification);
-    const userNotificationReady = { 'detoxUserNotificationDataURL': notificationFilePath };
-
     if (params.url) {
       baseLaunchArgs['detoxURLOverride'] = params.url;
       if (params.sourceApp) {
         baseLaunchArgs['detoxSourceAppOverride'] = params.sourceApp;
       }
     } else if (params.userNotification) {
-      baseLaunchArgs = userNotificationReady;
+      const notificationFilePath = this.deviceDriver.createPushNotificationJson(params.userNotification);
+      baseLaunchArgs['detoxUserNotificationDataURL'] = notificationFilePath;
     }
 
     if (params.permissions) {
@@ -85,22 +76,22 @@ class Device {
     }
 
     const _bundleId = bundleId || this._bundleId;
-
-    if (didTerminate === false && this._processes[_bundleId] != undefined) {
+    if (this._isAppInBackground(params, _bundleId)) {
       if (params.url) {
         await this.openURL({ ...params, delayPayload: true });
       } else if (params.userNotification) {
-        await this._sendUserNotificationFile({ ...userNotificationReady, delayPayload: true });
+        await this.deviceDriver.sendUserNotification({ ...baseLaunchArgs, delayPayload: true });
       }
     }
 
-    this._addPrefixToDefaultLaunchArgs(baseLaunchArgs);
-
     const processId = await this.deviceDriver.launch(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs));
-
     this._processes[_bundleId] = processId;
 
     await this.deviceDriver.waitUntilReady();
+  }
+
+  _isAppInBackground(params, _bundleId) {
+    return !params.delete && !params.newInstance && this._processes[_bundleId];
   }
 
   /**deprecated */
@@ -158,11 +149,7 @@ class Device {
 
   async sendUserNotification(params) {
     const notificationFilePath = this.deviceDriver.createPushNotificationJson(params);
-    await this._sendUserNotificationFile({ 'detoxUserNotificationDataURL': notificationFilePath });
-  }
-
-  async _sendUserNotificationFile(params) {
-    await this.deviceDriver.sendUserNotification(params);
+    await this.deviceDriver.sendUserNotification({ 'detoxUserNotificationDataURL': notificationFilePath });
   }
 
   async setURLBlacklist(urlList) {
