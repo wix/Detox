@@ -85,6 +85,7 @@ class AndroidDriver extends DeviceDriverBase {
 
     this.instrumentationProcess.on('close', (code, signal) => {
       log.verbose(`instrumentationProcess terminated due to receipt of signal ${signal}`);
+      this.terminateInstrumentation();
     });
 
     return this.instrumentationProcess.pid;

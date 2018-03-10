@@ -57,7 +57,7 @@ class Client {
   }
 
   async openURL(params) {
-    await this.sendAction(new actions.openURL(params));
+    await this.sendAction(new actions.OpenURL(params));
   }
 
   async execute(invocation) {
