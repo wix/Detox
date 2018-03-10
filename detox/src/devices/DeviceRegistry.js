@@ -76,3 +76,4 @@ function getFirstUnlocked(deviceIds) {
 }
 
 module.exports = DeviceRegistry;
+
