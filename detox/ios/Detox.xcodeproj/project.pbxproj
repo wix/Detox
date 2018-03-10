@@ -40,8 +40,8 @@
 		3947679C1DBF985400D72256 /* Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 3947679A1DBF985400D72256 /* Detox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		394767AE1DBF987E00D72256 /* DetoxManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767A41DBF987E00D72256 /* DetoxManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		394767AF1DBF987E00D72256 /* DetoxManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767A51DBF987E00D72256 /* DetoxManager.m */; };
-		394767B01DBF987E00D72256 /* __MethodInvocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767A61DBF987E00D72256 /* __MethodInvocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		394767B11DBF987E00D72256 /* __MethodInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767A71DBF987E00D72256 /* __MethodInvocation.m */; };
+		394767B01DBF987E00D72256 /* DTXMethodInvocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767A61DBF987E00D72256 /* DTXMethodInvocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		394767B11DBF987E00D72256 /* DTXMethodInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767A71DBF987E00D72256 /* DTXMethodInvocation.m */; };
 		394767B21DBF987E00D72256 /* TestFailureHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767A81DBF987E00D72256 /* TestFailureHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		394767B31DBF987E00D72256 /* TestFailureHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767A91DBF987E00D72256 /* TestFailureHandler.m */; };
 		394767B41DBF987E00D72256 /* TestRunner.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767AA1DBF987E00D72256 /* TestRunner.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -208,8 +208,8 @@
 		3947679B1DBF985400D72256 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		394767A41DBF987E00D72256 /* DetoxManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetoxManager.h; sourceTree = "<group>"; };
 		394767A51DBF987E00D72256 /* DetoxManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetoxManager.m; sourceTree = "<group>"; };
-		394767A61DBF987E00D72256 /* __MethodInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = __MethodInvocation.h; sourceTree = "<group>"; };
-		394767A71DBF987E00D72256 /* __MethodInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = __MethodInvocation.m; sourceTree = "<group>"; };
+		394767A61DBF987E00D72256 /* DTXMethodInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTXMethodInvocation.h; sourceTree = "<group>"; };
+		394767A71DBF987E00D72256 /* DTXMethodInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTXMethodInvocation.m; sourceTree = "<group>"; };
 		394767A81DBF987E00D72256 /* TestFailureHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFailureHandler.h; sourceTree = "<group>"; };
 		394767A91DBF987E00D72256 /* TestFailureHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestFailureHandler.m; sourceTree = "<group>"; };
 		394767AA1DBF987E00D72256 /* TestRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestRunner.h; sourceTree = "<group>"; };
@@ -364,8 +364,8 @@
 				39A34C6F1E30F10D00BEBB59 /* DetoxAppDelegateProxy.h */,
 				39A34C701E30F10D00BEBB59 /* DetoxAppDelegateProxy.m */,
 				39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */,
-				394767A61DBF987E00D72256 /* __MethodInvocation.h */,
-				394767A71DBF987E00D72256 /* __MethodInvocation.m */,
+				394767A61DBF987E00D72256 /* DTXMethodInvocation.h */,
+				394767A71DBF987E00D72256 /* DTXMethodInvocation.m */,
 				394767A81DBF987E00D72256 /* TestFailureHandler.h */,
 				394767A91DBF987E00D72256 /* TestFailureHandler.m */,
 				394767AA1DBF987E00D72256 /* TestRunner.h */,
@@ -477,7 +477,7 @@
 				394767B41DBF987E00D72256 /* TestRunner.h in Headers */,
 				390D1CA01E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h in Headers */,
 				394767D01DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.h in Headers */,
-				394767B01DBF987E00D72256 /* __MethodInvocation.h in Headers */,
+				394767B01DBF987E00D72256 /* DTXMethodInvocation.h in Headers */,
 				394767C11DBF98A700D72256 /* GREYMatchers+Detox.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -711,7 +711,7 @@
 				A7F76A161ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.m in Sources */,
 				394767D11DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.m in Sources */,
 				39A34C721E30F10D00BEBB59 /* DetoxAppDelegateProxy.m in Sources */,
-				394767B11DBF987E00D72256 /* __MethodInvocation.m in Sources */,
+				394767B11DBF987E00D72256 /* DTXMethodInvocation.m in Sources */,
 				39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */,
 				394767C21DBF98A700D72256 /* GREYMatchers+Detox.m in Sources */,
 				394767AF1DBF987E00D72256 /* DetoxManager.m in Sources */,

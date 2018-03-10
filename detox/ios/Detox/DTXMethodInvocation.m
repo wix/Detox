@@ -6,10 +6,10 @@
 //  Copyright © 2016 Wix. All rights reserved.
 //
 
-#import "__MethodInvocation.h"
+#import "DTXMethodInvocation.h"
 @import EarlGrey;
 
-@implementation __MethodInvocation
+@implementation DTXMethodInvocation
 
 + (id)getTarget:(id)param onError:(void (^)(NSString*))onError
 {
@@ -17,9 +17,9 @@
     if ([param isKindOfClass:[NSDictionary class]])
     {
         NSDictionary *p = (NSDictionary*)param;
-        NSString *type = [__MethodInvocation getString:[p objectForKey:@"type"]];
+        NSString *type = [DTXMethodInvocation getString:[p objectForKey:@"type"]];
         id value = [p objectForKey:@"value"];
-        return [__MethodInvocation getValue:value withType:type onError:onError];
+        return [DTXMethodInvocation getValue:value withType:type onError:onError];
     }
     return nil;
 }
@@ -86,7 +86,7 @@
     if ([type isEqualToString:@"Invocation"])
     {
         if (![value isKindOfClass:[NSDictionary class]]) return nil;
-        return [__MethodInvocation invoke:value onError:onError];
+        return [DTXMethodInvocation invoke:value onError:onError];
     }
     return nil;
 }
@@ -97,9 +97,9 @@
     if ([param isKindOfClass:[NSDictionary class]])
     {
         NSDictionary *p = (NSDictionary*)param;
-        NSString *type = [__MethodInvocation getString:[p objectForKey:@"type"]];
+        NSString *type = [DTXMethodInvocation getString:[p objectForKey:@"type"]];
         id value = [p objectForKey:@"value"];
-        return [__MethodInvocation getValue:value withType:type onError:onError];
+        return [DTXMethodInvocation getValue:value withType:type onError:onError];
     }
 	
     return param;
@@ -187,19 +187,19 @@
 
 + (id)invoke:(NSDictionary*)params onError:(void (^)(NSString*))onError
 {
-    id target = [__MethodInvocation getTarget:[params objectForKey:@"target"] onError:onError];
+    id target = [DTXMethodInvocation getTarget:[params objectForKey:@"target"] onError:onError];
     if (target == nil)
     {
         onError(@"target is invalid");
         return nil;
     }
-    NSString *method = [__MethodInvocation getString:[params objectForKey:@"method"]];
+    NSString *method = [DTXMethodInvocation getString:[params objectForKey:@"method"]];
     if (method == nil)
     {
         onError(@"method is not a string");
         return nil;
     }
-    NSArray *args = [__MethodInvocation getArray:[params objectForKey:@"args"]];
+    NSArray *args = [DTXMethodInvocation getArray:[params objectForKey:@"args"]];
     if (args == nil)
     {
         onError(@"args is not an array");
@@ -219,7 +219,7 @@
     for (int i = 0; i<[args count]; i++)
     {
         id arg = args[i];
-        id argValue = [__MethodInvocation getArgValue:arg onError:onError];
+        id argValue = [DTXMethodInvocation getArgValue:arg onError:onError];
         if (argValue == nil)
         {
             onError([NSString stringWithFormat:@"invalid arg value %d", i]);
@@ -231,11 +231,11 @@
         }
         else
         {
-            [__MethodInvocation invocation:invocation setNonPointerArg:argValue atIndex:i + 2];
+            [DTXMethodInvocation invocation:invocation setNonPointerArg:argValue atIndex:i + 2];
         }
     }
     [invocation invoke];
-    return [__MethodInvocation getReturnValue:invocation];
+    return [DTXMethodInvocation getReturnValue:invocation];
 }
 
 @end
