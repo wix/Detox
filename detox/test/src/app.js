@@ -31,8 +31,8 @@ class example extends Component {
 
   renderScreenButton(title, component) {
     return this.renderButton(title, () => {
-        this.setState({screen: component});
-      });
+      this.setState({screen: component});
+    });
   }
 
   renderText(text) {
@@ -91,13 +91,16 @@ class example extends Component {
           {this.renderScreenButton('Network', Screens.NetworkScreen)}
           {this.renderScreenButton('Animations', Screens.AnimationsScreen)}
           {this.renderScreenButton('Location', Screens.LocationScreen)}
-          {this.renderButton('Crash', () => {throw new Error('Simulated Crash')})}
+          {this.renderButton('Crash', () => {
+            throw new Error('Simulated Crash')
+          })}
+          {this.renderScreenButton('Shake', Screens.ShakeScreen)}
         </View>
       );
     }
     const Screen = this.state.screen;
     return (
-      <Screen />
+      <Screen/>
     );
   }
 

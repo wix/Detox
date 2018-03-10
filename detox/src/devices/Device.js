@@ -106,6 +106,10 @@ class Device {
     await this.deviceDriver.sendToHome(this._deviceId);
   }
 
+  async shake() {
+    await this.deviceDriver.shake(this._deviceId);
+  }
+
   async terminateApp(bundleId) {
     const _bundleId = bundleId || this._bundleId;
     await this.deviceDriver.terminate(this._deviceId, _bundleId);

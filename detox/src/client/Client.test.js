@@ -41,10 +41,18 @@ describe('Client', () => {
     expect(client.ws.send).toHaveBeenCalledTimes(2);
   });
 
-  it(`openURL() - should send an 'openURL' action and resolve when 'openURLDone returns' `, async () => {
+  it(`openURL() - should send an 'openURL' action and resolve when 'openURLDone' returns`, async () => {
     await connect();
     client.ws.send.mockReturnValueOnce(response("openURLDone", {}, 1));
     await client.openURL({url: 'url'});
+
+    expect(client.ws.send).toHaveBeenCalledTimes(2);
+  });
+
+  it(`shake() - should send a 'shake' action and resolve when 'shakeDeviceDone' returns`, async () => {
+    await connect();
+    client.ws.send.mockReturnValueOnce(response("shakeDeviceDone", {}, 1));
+    await client.shake();
 
     expect(client.ws.send).toHaveBeenCalledTimes(2);
   });

@@ -262,6 +262,13 @@ describe('Device', () => {
     expect(device.deviceDriver.sendToHome).toHaveBeenCalledTimes(1);
   });
 
+  it(`shake() should pass to device driver`, async () => {
+    device = validDevice();
+    await device.shake();
+
+    expect(device.deviceDriver.shake).toHaveBeenCalledTimes(1);
+  });
+
   it(`terminateApp() should pass to device driver`, async () => {
     device = validDevice();
     await device.terminateApp();
