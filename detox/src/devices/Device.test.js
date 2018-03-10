@@ -448,11 +448,25 @@ describe('Device', () => {
     expect(sh.cp).toHaveBeenCalledTimes(0);
   });
 
+  it(`launchApp({newInstance: false}) should check if process is in background and reopen it`, async () => {
+    const processId = 1;
+    device = validDevice();
+    device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
+    device.deviceDriver.launch.mockReturnValue(processId);
+
+    await device.prepare({ launchApp: true });
+    await device.launchApp({ newInstance: false });
+
+    expect(device.deviceDriver.openURL).not.toHaveBeenCalled();
+    expect(device.deviceDriver.sendUserNotification).not.toHaveBeenCalled();
+  });
+
+
   it(`launchApp({url: url}) should check if process is in background and use openURL() instead of launch args`, async () => {
     const processId = 1;
     device = validDevice();
     device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
-    device.deviceDriver.launch.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
+    device.deviceDriver.launch.mockReturnValue(processId);
 
     await device.prepare({ launchApp: true });
     await device.launchApp({ url: 'url://me' });
