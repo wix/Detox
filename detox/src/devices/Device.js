@@ -29,7 +29,7 @@ class Device {
     }
 
     if (params.launchApp) {
-      await this.launchApp({ newInstance: true });
+      await this.launchApp({newInstance: true});
     }
   }
 
@@ -41,7 +41,7 @@ class Device {
     await this._artifactsCopier.finalizeArtifacts();
   }
 
-  async launchApp(params = { newInstance: false }, bundleId) {
+  async launchApp(params = {newInstance: false}, bundleId) {
     await this._artifactsCopier.handleAppRelaunch();
 
     if (params.url && params.userNotification) {
@@ -78,9 +78,9 @@ class Device {
     const _bundleId = bundleId || this._bundleId;
     if (this._isAppInBackground(params, _bundleId)) {
       if (params.url) {
-        await this.openURL({ ...params, delayPayload: true });
+        await this.openURL({...params, delayPayload: true});
       } else if (params.userNotification) {
-        await this.deviceDriver.sendUserNotification({ ...baseLaunchArgs, delayPayload: true });
+        await this.deviceDriver.sendUserNotification({...baseLaunchArgs, delayPayload: true});
       }
     }
 
@@ -149,7 +149,7 @@ class Device {
 
   async sendUserNotification(params) {
     const notificationFilePath = this.deviceDriver.createPushNotificationJson(params);
-    await this.deviceDriver.sendUserNotification({ 'detoxUserNotificationDataURL': notificationFilePath });
+    await this.deviceDriver.sendUserNotification({'detoxUserNotificationDataURL': notificationFilePath});
   }
 
   async setURLBlacklist(urlList) {
