@@ -25,11 +25,6 @@ class IosDriver extends DeviceDriverBase {
     return notificationFilePath;
   }
 
-  async sendUserNotification(notification) {
-    const notificationFilePath = this.createPushNotificationJson(notification);
-    await super.sendUserNotification({detoxUserNotificationDataURL: notificationFilePath});
-  }
-
   async openURL(deviceId, params) {
     await this.client.openURL(params);
   }

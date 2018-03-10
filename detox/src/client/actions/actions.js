@@ -93,7 +93,7 @@ class SendUserNotification extends Action {
   }
 }
 
-class openURL extends Action {
+class OpenURL extends Action {
   constructor(params) {
     super('openURL', params);
   }
@@ -137,7 +137,7 @@ module.exports = {
   Invoke,
   ReloadReactNative,
   Cleanup,
-  openURL,
+  OpenURL,
   SendUserNotification,
   CurrentStatus,
   AppWillTerminateWithError

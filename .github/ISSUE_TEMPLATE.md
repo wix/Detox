@@ -24,6 +24,7 @@ Provide the macOS and Xcode versions you are using, and the device / simulator y
 -->
 
 * Detox:
+* React Native:
 * Node:
 * Device:
 * Xcode:
