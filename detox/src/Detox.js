@@ -97,7 +97,7 @@ class Detox {
   }
 
   async afterEach(suiteName, testName) {
-    if(this._artifactsPathsProvider !== undefined) {
+    if (this._artifactsPathsProvider !== undefined) {
       await this.device.finalizeArtifacts();
     }
 
@@ -107,10 +107,11 @@ class Detox {
   async _handleAppCrash(testName) {
     const pendingAppCrash = this.client.getPendingCrashAndReset();
     if (pendingAppCrash) {
-      log.error('',`App crashed in test '${testName}', here's the native stack trace: \n${pendingAppCrash}`);
-      await this.device.launchApp({newInstance:true});
+      log.error('', `App crashed in test '${testName}', here's the native stack trace: \n${pendingAppCrash}`);
+      await this.device.launchApp({newInstance: true});
     }
   }
+
   async _getSessionConfig() {
     const session = this.userSession || await configuration.defaultSession();
 

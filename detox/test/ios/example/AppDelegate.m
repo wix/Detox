@@ -1,9 +1,56 @@
 #import "AppDelegate.h"
+#import <React/RCTEventDispatcher.h>
+#import <React/RCTBridgeModule.h>
 #import <React/RCTRootView.h>
 #import <React/RCTPushNotificationManager.h>
 #import <React/RCTLinkingManager.h>
 
 @import UserNotifications;
+
+@interface ShakeEventEmitter : RCTEventEmitter @end
+static ShakeEventEmitter* _instance;
+@implementation ShakeEventEmitter
+
+RCT_EXPORT_MODULE();
+
+- (instancetype)init
+{
+	self = [super init];
+	_instance = self;
+	return self;
+}
+
+- (NSArray<NSString *> *)supportedEvents
+{
+	return @[@"ShakeEvent"];
+}
+
+- (void)sendShakeEvent
+{
+	[self sendEventWithName:@"ShakeEvent" body:nil];
+}
+
+@end
+
+@interface ShakeDetectViewController : UIViewController
+@property (nonatomic, weak) RCTBridge* bridge;
+@end
+@implementation ShakeDetectViewController
+
+- (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event
+{
+	if(event.subtype == UIEventSubtypeMotionShake)
+	{
+		[_instance sendShakeEvent];
+	}
+	else
+	{
+		//This will disable RN dev menu even in debug as shake events are not passed further in responder chain.
+		[super motionEnded:motion withEvent:event];
+	}
+}
+
+@end
 
 @interface AppDelegate () <UNUserNotificationCenterDelegate>
 
@@ -33,7 +80,8 @@
 	rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
 	
 	self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-	UIViewController *rootViewController = [UIViewController new];
+	ShakeDetectViewController *rootViewController = [ShakeDetectViewController new];
+	rootViewController.bridge = rootView.bridge;
 	rootViewController.view = rootView;
 	self.window.rootViewController = rootViewController;
 	[self.window makeKeyAndVisible];
