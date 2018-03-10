@@ -7,7 +7,7 @@
 //
 
 #import "TestRunner.h"
-#import "MethodInvocation.h"
+#import "DTXMethodInvocation.h"
 #import "TestFailureHandler.h"
 
 @interface TestRunner()
@@ -65,7 +65,7 @@
 {
 	self.currentMessageId = messageId;
     grey_execute_async(^{
-        id res = [MethodInvocation invoke:params onError:^(NSString *error)
+        id res = [DTXMethodInvocation invoke:params onError:^(NSString *error)
         {
             if (self.delegate) [self.delegate testRunnerOnError:error withMessageId:messageId];
         }];
