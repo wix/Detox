@@ -1,5 +1,7 @@
-# Troubleshooting a Test That Keeps Failing
-
+---
+id: Troubleshooting.RunningTests
+title: Failing Tests
+---
 * [Enable verbose mode](#enable-verbose-mode)
 * [Syntax Error: Unxpected Token](#syntax-error-unxpected-token)
 * [Can't find my component even though I added testID to its props](#cant-find-my-component-even-though-i-added-testid-to-its-props)

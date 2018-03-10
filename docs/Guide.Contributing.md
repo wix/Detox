@@ -1,4 +1,7 @@
-# Contributing to Detox
+---
+id: Guide.Contributing
+title: Contributing
+---
 
 ## Prerequisites
 

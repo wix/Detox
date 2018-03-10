@@ -21,7 +21,7 @@
 
 @property (nonatomic, assign) id<TestRunnerDelegate> delegate;
 
-- (void) invoke:(NSDictionary*)params withMessageId:(NSNumber*) messageId;
-- (void) cleanup;
+- (void)invoke:(NSDictionary*)params withMessageId:(NSNumber*) messageId;
+- (void)cleanup;
 
 @end

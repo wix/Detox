@@ -1,4 +1,7 @@
-# The `detox` Object
+---
+id: APIRef.DetoxObjectAPI
+title: The `detox` Object
+---
 
 `detox` is globally available in every test file, though currently it is only used in the setup/init file.
 
@@ -22,7 +25,26 @@ before(async () => {
 });
 ```
 
-#### controlling first app intialization
+##### Explicit imports during initialization 
+Detox exports `device `, `expect`, `element`, `by` and `waitFor` as globals by default, if you want to control their initialization manually, set init detox with `initGlobals` set to `false`. This is useful when during E2E tests you also need to run regular expectations in node. jest `Expect` for instance, will not be overriden by Detox when this option is used.
+
+```js
+before(async () => {
+  await detox.init(config, {initGlobals: false});
+});
+```
+
+Then import them manually:
+
+```js
+const {device, expect, element, by, waitFor} = require('detox');
+```
+
+Use [this example](../examples/demo-react-native/e2eExplicitRequire) for initial setup
+
+
+
+#### Controlling first app intialization
 By default `await detox.init(config);` will launch the installed app. If you wish to control when your app is launched, add `{launchApp: false}` param to your init.
 
 ```js
@@ -33,7 +55,7 @@ before(async () => {
 });
 ```
 
->NOTE: Detox 6.X.X will introduce a **breaking change** , setting `launchApp` to `false` by default. In order to prevent any breaking changes to your tests when you upgrade (and if you still would like `init` to launch the app for you) do the following:
+>NOTE: Detox 6.X.X introduced a **breaking change** , setting `launchApp` to `false` by default. In order to prevent any breaking changes to your tests when you upgrade (and if you still would like `init` to launch the app for you) do the following:
 
 ```js
 before(async () => {

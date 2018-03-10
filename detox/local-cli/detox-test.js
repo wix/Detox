@@ -6,6 +6,8 @@ const cp = require('child_process');
 program
   .option('-o, --runner-config [config]',
     `Test runner config file, defaults to e2e/mocha.opts for mocha and e2e/config.json' for jest`)
+  .option('-s, --specs [relativePath]',
+    `Root of test folder`)
   .option('-l, --loglevel [value]',
     'info, debug, verbose, silly, wss')
   .option('-c, --configuration [device configuration]',
@@ -26,12 +28,21 @@ program
 
 const config = require(path.join(process.cwd(), 'package.json')).detox;
 
-const testFolder = config.specs || 'e2e';
-const runner = config['test-runner'] || 'mocha';
-const runnerConfig = program.runnerConfig || config['runner-config'] || getDefaultRunnerConfig();
+const testFolder = getConfigFor('specs', 'e2e');
+const runner = getConfigFor('testRunner', 'mocha');
+const runnerConfig = getConfigFor('runnerConfig', getDefaultRunnerConfig());
 
 if (typeof program.debugSynchronization === "boolean") {
   program.debugSynchronization = 3000;
+}
+
+function getConfigFor(key, defaults) {
+  const keyKebabCase = camelToKebabCase(key);
+  return program[key] || config[key] || config[keyKebabCase] || defaults;
+}
+
+function camelToKebabCase(string) {
+  return string.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 }
 
 switch (runner) {

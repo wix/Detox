@@ -165,6 +165,27 @@ describe('AsyncWebSocket', () => {
     }
   });
 
+  it(`eventCallback should be triggered on a registered messageId when sent from testee`, async () => {
+    const mockCallback = jest.fn();
+    const mockedResponse = generateResponse('onmessage', -10000);
+    await connect(client);
+    client.setEventCallback(-10000, mockCallback);
+
+    client.ws.onmessage(mockedResponse);
+    expect(mockCallback).toHaveBeenCalledWith(mockedResponse.data);
+  });
+
+  it(`rejectAll should throw error to all pending promises`, async () => {
+    const error = new Error('error');
+    await connect(client);
+    const message1 = client.send(generateRequest());
+    const message2 = client.send(generateRequest());
+
+    client.rejectAll(error);
+    await expect(message1).rejects.toEqual(error);
+    await expect(message2).rejects.toEqual(error);
+  });
+
   async function connect(client) {
     const result = {};
     const promise = client.open();

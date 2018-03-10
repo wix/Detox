@@ -1,5 +1,7 @@
-
-# Writing Your First Passing Test
+---
+id: Introduction.WritingFirstTest
+title: Writing Your First Test
+---
 
 This tutorial assumes you've already installed Detox successfully on a working React Native project.
 

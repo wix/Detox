@@ -7,6 +7,11 @@
 //
 
 #import "DetoxManager.h"
+
+#import "WebSocket.h"
+#import "TestRunner.h"
+#import "ReactNativeSupport.h"
+
 #import <Detox/Detox-Swift.h>
 #import "DetoxAppDelegateProxy.h"
 #import "EarlGreyExtensions.h"
@@ -14,11 +19,11 @@
 
 DTX_CREATE_LOG(DetoxManager)
 
-@interface DetoxManager()
+@interface DetoxManager() <WebSocketDelegate, TestRunnerDelegate>
 
 @property (nonatomic) BOOL isReady;
-@property (nonatomic, retain) WebSocket *websocket;
-@property (nonatomic, retain) TestRunner *testRunner;
+@property (nonatomic, strong) WebSocket *webSocket;
+@property (nonatomic, strong) TestRunner *testRunner;
 
 @end
 
@@ -41,14 +46,13 @@ static void detoxConditionalInit()
 		// if these args were not provided as part of options, don't start Detox at all!
 		return;
 	}
-
-	[[DetoxManager sharedInstance] connectToServer:detoxServer withSessionId:detoxSessionId];
+	
+	[[DetoxManager sharedManager] connectToServer:detoxServer withSessionId:detoxSessionId];
 }
-
 
 @implementation DetoxManager
 
-+ (instancetype)sharedInstance
++ (instancetype)sharedManager
 {
 	static DetoxManager *sharedInstance = nil;
 	static dispatch_once_t onceToken;
@@ -63,8 +67,8 @@ static void detoxConditionalInit()
 	self = [super init];
 	if (self == nil) return nil;
 	
-	self.websocket = [[WebSocket alloc] init];
-	self.websocket.delegate = self;
+	self.webSocket = [[WebSocket alloc] init];
+	self.webSocket.delegate = self;
 	self.testRunner = [[TestRunner alloc] init];
 	self.testRunner.delegate = self;
 	
@@ -76,53 +80,66 @@ static void detoxConditionalInit()
 	return self;
 }
 
-- (void) connectToServer:(NSString*)url withSessionId:(NSString*)sessionId
+- (void)connectToServer:(NSString*)url withSessionId:(NSString*)sessionId
 {
-	[self.websocket connectToServer:url withSessionId:sessionId];
+	[self.webSocket connectToServer:url withSessionId:sessionId];
 }
 
-- (void) websocketDidConnect
+- (void)websocketDidConnect
 {
 	if (![ReactNativeSupport isReactNativeApp])
 	{
 		_isReady = YES;
-		[self.websocket sendAction:@"ready" withParams:@{} withMessageId: @-1000];
+		[self.webSocket sendAction:@"ready" withParams:@{} withMessageId:@-1000];
 	}
 }
 
-- (void) websocketDidReceiveAction:(NSString *)type withParams:(NSDictionary *)params withMessageId:(NSNumber *)messageId
+- (void)websocketDidReceiveAction:(NSString *)type withParams:(NSDictionary *)params withMessageId:(NSNumber *)messageId
 {
 	NSAssert(messageId != nil, @"Got action with a null messageId");
 	
 	if([type isEqualToString:@"invoke"])
 	{
-		[self.testRunner invoke:params withMessageId: messageId];
+		[self.testRunner invoke:params withMessageId:messageId];
 		return;
 	}
 	else if([type isEqualToString:@"isReady"])
 	{
 		if(_isReady)
 		{
-			[self.websocket sendAction:@"ready" withParams:@{} withMessageId: @-1000];
+			[self.webSocket sendAction:@"ready" withParams:@{} withMessageId:@-1000];
 		}
 		return;
 	}
 	else if([type isEqualToString:@"cleanup"])
 	{
 		[self.testRunner cleanup];
-		[self.websocket sendAction:@"cleanupDone" withParams:@{} withMessageId: messageId];
+		[self.webSocket sendAction:@"cleanupDone" withParams:@{} withMessageId:messageId];
 		return;
 	}
 	else if([type isEqualToString:@"userNotification"])
 	{
 		NSURL* userNotificationDataURL = [NSURL fileURLWithPath:params[@"detoxUserNotificationDataURL"]];
-		DetoxUserNotificationDispatcher* dispatcher = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationDataURL:userNotificationDataURL];
-		[dispatcher dispatchOnAppDelegate:DetoxAppDelegateProxy.currentAppDelegateProxy simulateDuringLaunch:NO];
-		[self.websocket sendAction:@"userNotificationDone" withParams:@{} withMessageId: messageId];
+		BOOL delay = [params[@"delayPayload"] boolValue];
+		
+		void (^block)(void) = ^{
+			[DetoxAppDelegateProxy.currentAppDelegateProxy dispatchUserNotificationFromDataURL:userNotificationDataURL delayUntilActive:delay];
+			
+			[self.webSocket sendAction:@"userNotificationDone" withParams:@{} withMessageId: messageId];
+		};
+		
+		if(delay == YES)
+		{
+			block();
+			return;
+		}
+		
+		[EarlGrey detox_safeExecuteSync:block];
 	}
 	else if([type isEqualToString:@"openURL"])
 	{
 		NSURL* URLToOpen = [NSURL URLWithString:params[@"url"]];
+		BOOL delay = [params[@"delayPayload"] boolValue];
 		
 		NSParameterAssert(URLToOpen != nil);
 		
@@ -134,17 +151,28 @@ static void detoxConditionalInit()
 			options[UIApplicationLaunchOptionsSourceApplicationKey] = sourceApp;
 		}
 		
-		if([[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:openURL:options:)])
+		void (^block)(void) = ^{
+			[DetoxAppDelegateProxy.currentAppDelegateProxy dispatchOpenURL:URLToOpen options:options delayUntilActive:delay];
+			
+			[self.webSocket sendAction:@"openURLDone" withParams:@{} withMessageId: messageId];
+		};
+		
+		if(delay == YES)
 		{
-			[[UIApplication sharedApplication].delegate application:[UIApplication sharedApplication] openURL:URLToOpen options:options];
+			block();
+			return;
 		}
 		
-		[self.websocket sendAction:@"openURLDone" withParams:@{} withMessageId: messageId];
+		[EarlGrey detox_safeExecuteSync:block];
 	}
+	else if([type isEqualToString:@"shakeDevice"])
+	{	}
 	else if([type isEqualToString:@"reactNativeReload"])
 	{
 		_isReady = NO;
-		[ReactNativeSupport reloadApp];
+		[EarlGrey detox_safeExecuteSync:^{
+			[ReactNativeSupport reloadApp];
+		}];
 		
 		[self _waitForRNLoadWithId:messageId];
 		
@@ -155,7 +183,7 @@ static void detoxConditionalInit()
 		NSMutableDictionary* statsStatus = [[[EarlGreyStatistics sharedInstance] currentStatus] mutableCopy];
 		statsStatus[@"messageId"] = messageId;
 		
-		[self.websocket sendAction:@"currentStatusResult" withParams:statsStatus withMessageId: messageId];
+		[self.webSocket sendAction:@"currentStatusResult" withParams:statsStatus withMessageId:messageId];
 	}
 }
 
@@ -164,7 +192,7 @@ static void detoxConditionalInit()
 	__weak __typeof(self) weakSelf = self;
 	[ReactNativeSupport waitForReactNativeLoadWithCompletionHandler:^{
 		weakSelf.isReady = YES;
-		[weakSelf.websocket sendAction:@"ready" withParams:@{} withMessageId: @-1000];
+		[weakSelf.webSocket sendAction:@"ready" withParams:@{} withMessageId:@-1000];
 	}];
 }
 
@@ -175,19 +203,24 @@ static void detoxConditionalInit()
 	{
 		res = [NSString stringWithFormat:@"(%@)", NSStringFromClass([res class])];
 	}
-	[self.websocket sendAction:@"invokeResult" withParams:@{@"result": res} withMessageId: messageId];
+	[self.webSocket sendAction:@"invokeResult" withParams:@{@"result": res} withMessageId:messageId];
 }
 
 - (void)testRunnerOnTestFailed:(NSString *)details withMessageId:(NSNumber *) messageId
 {
 	if (details == nil) details = @"";
-	[self.websocket sendAction:@"testFailed" withParams:@{@"details": details} withMessageId: messageId];
+	[self.webSocket sendAction:@"testFailed" withParams:@{@"details": details} withMessageId:messageId];
 }
 
 - (void)testRunnerOnError:(NSString *)error withMessageId:(NSNumber *) messageId
 {
 	if (error == nil) error = @"";
-	[self.websocket sendAction:@"error" withParams:@{@"error": error} withMessageId: messageId];
+	[self.webSocket sendAction:@"error" withParams:@{@"error": error} withMessageId:messageId];
+}
+
+- (void)notifyOnCrashWithDetails:(NSDictionary*)details
+{
+	[self.webSocket sendAction:@"AppWillTerminateWithError" withParams:details withMessageId:@-10000];
 }
 
 @end

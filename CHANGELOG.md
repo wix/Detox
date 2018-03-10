@@ -1,5 +1,90 @@
 # Change Log
 
+## [7.1.0](https://github.com/wix/detox/tree/7.1.0) (2018-02-12)
+[Full Changelog](https://github.com/wix/detox/compare/7.0.1...7.1.0)
+
+**Enhancements**
+
+- Fix doc generation to only run from master [\#542](https://github.com/wix/detox/issues/542)
+- export globals [\#275](https://github.com/wix/detox/issues/275)
+- Look for a way to catch app crashes and report to the user, rather than have test stuck until timeout [\#161](https://github.com/wix/detox/issues/161)
+- Android Support [\#96](https://github.com/wix/detox/issues/96)
+- Add exception and signal handling for iOS [\#453](https://github.com/wix/detox/pull/453) ([LeoNatan](https://github.com/LeoNatan))
+
+**Fixed Bugs**
+
+- openURL API is broken [\#561](https://github.com/wix/detox/issues/561)
+
+**Merged Pull Requests**
+
+- Minor typo in Introduction.GettingStarted.md [\#555](https://github.com/wix/detox/pull/555) ([orta](https://github.com/orta))
+- Website build only run on master [\#544](https://github.com/wix/detox/pull/544) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
+
+## [7.0.1](https://github.com/wix/detox/tree/7.0.1) (2018-01-29)
+[Full Changelog](https://github.com/wix/detox/compare/7.0.0...7.0.1)
+
+**Merged Pull Requests**
+
+- Fixes broken AndroidDriver explicit exportGlobals flow [\#545](https://github.com/wix/detox/pull/545) ([rotemmiz](https://github.com/rotemmiz))
+
+## [7.0.0](https://github.com/wix/detox/tree/7.0.0) (2018-01-26)
+[Full Changelog](https://github.com/wix/detox/compare/v7.0.0-alpha.1...7.0.0)
+
+**Merged Pull Requests**
+
+- export platform specific objects through proxy [\#374](https://github.com/wix/detox/pull/374) ([trofima](https://github.com/trofima))
+
+## [v7.0.0-alpha.1](https://github.com/wix/detox/tree/v7.0.0-alpha.1) (2018-01-24)
+[Full Changelog](https://github.com/wix/detox/compare/v7.0.0-alpha.0...v7.0.0-alpha.1)
+
+**Fixed Bugs**
+
+- Android test apk build path not aligned when using flavors [\#522](https://github.com/wix/detox/issues/522)
+
+**Merged Pull Requests**
+
+- Fixed section link in doc [\#539](https://github.com/wix/detox/pull/539) ([Brianwebb22](https://github.com/Brianwebb22))
+- Fixes \#522: Android test apk path is now aligned with build flavors [\#537](https://github.com/wix/detox/pull/537) ([rotemmiz](https://github.com/rotemmiz))
+- Correct grammar in docs [\#533](https://github.com/wix/detox/pull/533) ([tharax](https://github.com/tharax))
+- Fix homepage in detox & detox-server package.json [\#531](https://github.com/wix/detox/pull/531) ([hectahertz](https://github.com/hectahertz))
+- Update docs to fix hyperlink [\#519](https://github.com/wix/detox/pull/519) ([tharax](https://github.com/tharax))
+- Fix wrong path to install Android script [\#514](https://github.com/wix/detox/pull/514) ([ygorbarboza](https://github.com/ygorbarboza))
+- Add docusaurus for website [\#491](https://github.com/wix/detox/pull/491) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
+
+## [v7.0.0-alpha.0](https://github.com/wix/detox/tree/v7.0.0-alpha.0) (2018-01-11)
+[Full Changelog](https://github.com/wix/detox/compare/6.0.4...v7.0.0-alpha.0)
+
+**Enhancements**
+
+- Code coverage reporting with other unit tests [\#470](https://github.com/wix/detox/issues/470)
+- Add automatic code formatting via prettier [\#223](https://github.com/wix/detox/issues/223)
+
+**Fixed Bugs**
+
+- atIndex\(\) seems to be broken on Android [\#498](https://github.com/wix/detox/issues/498)
+- Getting Started also requires adding babel-polyfill [\#481](https://github.com/wix/detox/issues/481)
+- Test release on Android: app-release-androidTest.apk: No such file or directory [\#455](https://github.com/wix/detox/issues/455)
+- Both Android and iOS e2e tests fail when following contribution guide [\#369](https://github.com/wix/detox/issues/369)
+- Problems on Android using Jest test runner [\#362](https://github.com/wix/detox/issues/362)
+- Detox failed to install apk files [\#274](https://github.com/wix/detox/issues/274)
+
+**Merged Pull Requests**
+
+- Added support for emulators \<= API lvl 23 [\#506](https://github.com/wix/detox/pull/506) ([simonracz](https://github.com/simonracz))
+- Fixed atIndex\(0\) for Android. [\#504](https://github.com/wix/detox/pull/504) ([simonracz](https://github.com/simonracz))
+- Mention running on iOS device is not yet supported [\#499](https://github.com/wix/detox/pull/499) ([fdnhkj](https://github.com/fdnhkj))
+- Update AndroidDriver.js [\#497](https://github.com/wix/detox/pull/497) ([Crash--](https://github.com/Crash--))
+- Fix error message to not state false information [\#495](https://github.com/wix/detox/pull/495) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
+- Add quotes around xcode version output [\#493](https://github.com/wix/detox/pull/493) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
+- Generation: Add Android Matchers to generated code [\#492](https://github.com/wix/detox/pull/492) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
+- Remove excessive curly bracket [\#490](https://github.com/wix/detox/pull/490) ([dluksza](https://github.com/dluksza))
+- Generation: Move DetoxAction invocations to generated code [\#479](https://github.com/wix/detox/pull/479) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
+- Fix typo in docs/Troubleshooting.RunningTests.md [\#475](https://github.com/wix/detox/pull/475) ([douglasnomizo](https://github.com/douglasnomizo))
+- FIxed broken setURLBlacklist on Android [\#474](https://github.com/wix/detox/pull/474) ([rotemmiz](https://github.com/rotemmiz))
+- \[BREAKING\] Upgrade to gradle 4.1 and android gradle plugin 3 [\#468](https://github.com/wix/detox/pull/468) ([rotemmiz](https://github.com/rotemmiz))
+- Generation: Add generation for external files [\#465](https://github.com/wix/detox/pull/465) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
+- Fix the link to Android Support Status page [\#461](https://github.com/wix/detox/pull/461) ([kkhaidukov](https://github.com/kkhaidukov))
+
 ## [6.0.4](https://github.com/wix/detox/tree/6.0.4) (2017-12-13)
 [Full Changelog](https://github.com/wix/detox/compare/6.0.2...6.0.4)
 
@@ -19,6 +104,7 @@
 
 - Add generation for tap at location [\#449](https://github.com/wix/detox/pull/449) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 - Generation: Remove unused helpers from generated code [\#448](https://github.com/wix/detox/pull/448) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
+- Add prettier formatting for code generation [\#446](https://github.com/wix/detox/pull/446) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 - Fix several spelling typos [\#442](https://github.com/wix/detox/pull/442) ([sdg9](https://github.com/sdg9))
 - Add support for generating android matchers [\#425](https://github.com/wix/detox/pull/425) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 - Add prettier to detox folder [\#278](https://github.com/wix/detox/pull/278) ([AlanFoster](https://github.com/AlanFoster))
@@ -284,13 +370,13 @@
 - Add support for tapAtPoint action [\#189](https://github.com/wix/detox/pull/189) ([blankg](https://github.com/blankg))
 
 ## [detox@5.4.0](https://github.com/wix/detox/tree/detox@5.4.0) (2017-07-11)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.3.1...detox@5.4.0)
-
-## [detox@5.3.1](https://github.com/wix/detox/tree/detox@5.3.1) (2017-07-10)
-[Full Changelog](https://github.com/wix/detox/compare/detox-server@2.0.4...detox@5.3.1)
+[Full Changelog](https://github.com/wix/detox/compare/detox-server@2.0.4...detox@5.4.0)
 
 ## [detox-server@2.0.4](https://github.com/wix/detox/tree/detox-server@2.0.4) (2017-07-10)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.3.0...detox-server@2.0.4)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.3.1...detox-server@2.0.4)
+
+## [detox@5.3.1](https://github.com/wix/detox/tree/detox@5.3.1) (2017-07-10)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.3.0...detox@5.3.1)
 
 **Enhancements**
 
@@ -355,13 +441,13 @@
 - fixed the crash on older react native versions where there’s no `\_nod… [\#160](https://github.com/wix/detox/pull/160) ([silyevsk](https://github.com/silyevsk))
 
 ## [detox-server@2.0.3](https://github.com/wix/detox/tree/detox-server@2.0.3) (2017-06-07)
-[Full Changelog](https://github.com/wix/detox/compare/detox-cli@1.0.2...detox-server@2.0.3)
-
-## [detox-cli@1.0.2](https://github.com/wix/detox/tree/detox-cli@1.0.2) (2017-06-07)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.1.0...detox-cli@1.0.2)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.1.0...detox-server@2.0.3)
 
 ## [detox@5.1.0](https://github.com/wix/detox/tree/detox@5.1.0) (2017-06-07)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.12...detox@5.1.0)
+[Full Changelog](https://github.com/wix/detox/compare/detox-cli@1.0.2...detox@5.1.0)
+
+## [detox-cli@1.0.2](https://github.com/wix/detox/tree/detox-cli@1.0.2) (2017-06-07)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.12...detox-cli@1.0.2)
 
 **Enhancements**
 
@@ -429,7 +515,7 @@
 - Update README.md [\#117](https://github.com/wix/detox/pull/117) ([dassir](https://github.com/dassir))
 
 ## [detox@5.0.6](https://github.com/wix/detox/tree/detox@5.0.6) (2017-04-20)
-[Full Changelog](https://github.com/wix/detox/compare/detox-server@1.2.2...detox@5.0.6)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.5...detox@5.0.6)
 
 **Closed Issues**
 
@@ -447,11 +533,11 @@
 - fix demo app config [\#104](https://github.com/wix/detox/pull/104) ([doronpr](https://github.com/doronpr))
 - wix mobile open source config file [\#101](https://github.com/wix/detox/pull/101) ([bogobogo](https://github.com/bogobogo))
 
-## [detox-server@1.2.2](https://github.com/wix/detox/tree/detox-server@1.2.2) (2017-03-23)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.5...detox-server@1.2.2)
-
 ## [detox@5.0.5](https://github.com/wix/detox/tree/detox@5.0.5) (2017-03-23)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.4...detox@5.0.5)
+[Full Changelog](https://github.com/wix/detox/compare/detox-server@1.2.2...detox@5.0.5)
+
+## [detox-server@1.2.2](https://github.com/wix/detox/tree/detox-server@1.2.2) (2017-03-23)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.4...detox-server@1.2.2)
 
 **Enhancements**
 
@@ -469,13 +555,13 @@
 [Full Changelog](https://github.com/wix/detox/compare/detox@5.0.2...detox@5.0.3)
 
 ## [detox@5.0.2](https://github.com/wix/detox/tree/detox@5.0.2) (2017-03-16)
-[Full Changelog](https://github.com/wix/detox/compare/detox-server@1.2.1...detox@5.0.2)
-
-## [detox-server@1.2.1](https://github.com/wix/detox/tree/detox-server@1.2.1) (2017-03-16)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.1...detox-server@1.2.1)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.1...detox@5.0.2)
 
 ## [detox@5.0.1](https://github.com/wix/detox/tree/detox@5.0.1) (2017-03-16)
-[Full Changelog](https://github.com/wix/detox/compare/detox-cli@1.0.1...detox@5.0.1)
+[Full Changelog](https://github.com/wix/detox/compare/detox-server@1.2.1...detox@5.0.1)
+
+## [detox-server@1.2.1](https://github.com/wix/detox/tree/detox-server@1.2.1) (2017-03-16)
+[Full Changelog](https://github.com/wix/detox/compare/detox-cli@1.0.1...detox-server@1.2.1)
 
 ## [detox-cli@1.0.1](https://github.com/wix/detox/tree/detox-cli@1.0.1) (2017-03-16)
 [Full Changelog](https://github.com/wix/detox/compare/detox@4.3.2...detox-cli@1.0.1)
@@ -490,6 +576,7 @@
 **Closed Issues**
 
 - \[iOS\] Fail to type text with azerty Keyboard  [\#92](https://github.com/wix/detox/issues/92)
+- Support es6 \(import, async await etc\) [\#62](https://github.com/wix/detox/issues/62)
 
 **Merged Pull Requests**
 

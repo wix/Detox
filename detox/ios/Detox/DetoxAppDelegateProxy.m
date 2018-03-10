@@ -17,6 +17,9 @@
 @class DetoxAppDelegateProxy;
 
 static DetoxAppDelegateProxy* _currentAppDelegateProxy;
+static NSMutableArray<NSDictionary*>* _pendingOpenURLs;
+static NSMutableArray<NSURL*>* _pendingUserNotifications;
+
 static COSTouchVisualizerWindow* _touchVisualizerWindow;
 
 @interface UIWindow (DTXEventProxy) @end
@@ -89,30 +92,36 @@ static void __copyMethods(Class orig, Class target)
 
 + (void)load
 {
-	Method m = class_getInstanceMethod([UIApplication class], @selector(setDelegate:));
-	void (*orig)(id, SEL, id<UIApplicationDelegate>) = (void*)method_getImplementation(m);
-	method_setImplementation(m, imp_implementationWithBlock(^ (id _self, id<UIApplicationDelegate, COSTouchVisualizerWindowDelegate> origDelegate) {
-		//Only create a dupe class if the provided instance is not already a dupe class.
-		if(origDelegate != nil && [origDelegate respondsToSelector:@selector(__dtx_canaryInTheCoalMine)] == NO)
-		{
-			NSString* clsName = [NSString stringWithFormat:@"%@(%@)", NSStringFromClass([origDelegate class]), NSStringFromClass([DetoxAppDelegateProxy class])];
-			Class cls = objc_getClass(clsName.UTF8String);
-			
-			if(cls == nil)
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		_pendingOpenURLs = [NSMutableArray new];
+		_pendingUserNotifications = [NSMutableArray new];
+		
+		Method m = class_getInstanceMethod([UIApplication class], @selector(setDelegate:));
+		void (*orig)(id, SEL, id<UIApplicationDelegate>) = (void*)method_getImplementation(m);
+		method_setImplementation(m, imp_implementationWithBlock(^ (id _self, id<UIApplicationDelegate, COSTouchVisualizerWindowDelegate> origDelegate) {
+			//Only create a dupe class if the provided instance is not already a dupe class.
+			if(origDelegate != nil && [origDelegate respondsToSelector:@selector(__dtx_canaryInTheCoalMine)] == NO)
 			{
-				cls = objc_allocateClassPair(origDelegate.class, clsName.UTF8String, 0);
-				__copyMethods([DetoxAppDelegateProxy class], cls);
-				objc_registerClassPair(cls);
+				NSString* clsName = [NSString stringWithFormat:@"%@(%@)", NSStringFromClass([origDelegate class]), NSStringFromClass([DetoxAppDelegateProxy class])];
+				Class cls = objc_getClass(clsName.UTF8String);
+				
+				if(cls == nil)
+				{
+					cls = objc_allocateClassPair(origDelegate.class, clsName.UTF8String, 0);
+					__copyMethods([DetoxAppDelegateProxy class], cls);
+					objc_registerClassPair(cls);
+				}
+				
+				object_setClass(origDelegate, cls);
+				
+				[[NSNotificationCenter defaultCenter] addObserver:origDelegate selector:@selector(__dtx_applicationDidLaunchNotification:) name:UIApplicationDidFinishLaunchingNotification object:nil];
 			}
 			
-			object_setClass(origDelegate, cls);
-			
-			[[NSNotificationCenter defaultCenter] addObserver:origDelegate selector:@selector(__dtx_applicationDidLaunchNotification:) name:UIApplicationDidFinishLaunchingNotification object:nil];
-		}
-		
-		_currentAppDelegateProxy = origDelegate;
-		orig(_self, @selector(setDelegate:), origDelegate);
-	}));
+			_currentAppDelegateProxy = origDelegate;
+			orig(_self, @selector(setDelegate:), origDelegate);
+		}));
+	});
 }
 
 - (void)__dtx_canaryInTheCoalMine {}
@@ -226,9 +235,71 @@ static void __copyMethods(Class orig, Class target)
 	return rv;
 }
 
+- (void)applicationWillEnterForeground:(UIApplication *)application
+{
+	if([class_getSuperclass(object_getClass(self)) instancesRespondToSelector:_cmd])
+	{
+		struct objc_super super = {.receiver = self, .super_class = class_getSuperclass(object_getClass(self))};
+		void (*super_class)(struct objc_super*, SEL, id) = (void*)objc_msgSendSuper;
+		super_class(&super, _cmd, application);
+	}
+	
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[_pendingOpenURLs enumerateObjectsUsingBlock:^(NSDictionary * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+			[self _actualDispatchOpenURL:obj];
+		}];
+		[_pendingOpenURLs removeAllObjects];
+		
+		[_pendingUserNotifications enumerateObjectsUsingBlock:^(NSURL * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+			[self _actualDispatchUserNotificationFromDataURL:obj];
+		}];
+		[_pendingUserNotifications removeAllObjects];
+	});
+}
+
 - (BOOL)touchVisualizerWindowShouldAlwaysShowFingertip:(COSTouchVisualizerWindow *)window
 {
 	return YES;
+}
+
+- (void)_actualDispatchUserNotificationFromDataURL:(NSURL*)userNotificationDataURL
+{
+	DetoxUserNotificationDispatcher* dispatcher = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationDataURL:userNotificationDataURL];
+	[dispatcher dispatchOnAppDelegate:self simulateDuringLaunch:NO];
+}
+
+- (void)dispatchUserNotificationFromDataURL:(NSURL*)userNotificationDataURL delayUntilActive:(BOOL)delay
+{
+	if(delay)
+	{
+		[_pendingUserNotifications addObject:userNotificationDataURL];
+	}
+	else
+	{
+		[self _actualDispatchUserNotificationFromDataURL:userNotificationDataURL];
+	}
+}
+
+- (void)_actualDispatchOpenURL:(NSDictionary*)URLAndOptions
+{
+	if([self respondsToSelector:@selector(application:openURL:options:)])
+	{
+		[self application:[UIApplication sharedApplication] openURL:URLAndOptions[@"URL"] options:URLAndOptions[@"options"]];
+	}
+}
+
+- (void)dispatchOpenURL:(NSURL*)URL options:(NSDictionary*)options delayUntilActive:(BOOL)delay
+{
+	NSDictionary* payload = NSDictionaryOfVariableBindings(URL, options);
+	
+	if(delay)
+	{
+		[_pendingOpenURLs addObject:payload];
+	}
+	else
+	{
+		[self _actualDispatchOpenURL:payload];
+	}
 }
 
 @end

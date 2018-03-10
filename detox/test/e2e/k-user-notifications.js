@@ -1,27 +1,38 @@
 describe(':ios: User Notifications', () => {
-  it('Init from user notification', async () => {
-    await device.launchApp({newInstance:true, userNotification: userNotificationPushTrigger});
+  it('Init from push notification', async () => {
+    await device.launchApp({newInstance: true, userNotification: userNotificationPushTrigger});
     await expect(element(by.text('From push'))).toBeVisible();
   });
 
-  it('Background user notification', async () => {
-    await device.launchApp({newInstance:true});
-    await device.sendToHome();
-    await device.launchApp({newInstance:false, userNotification: userNotificationCalendarTrigger});
+  xit('Init from calendar notification', async () => {
+    await device.launchApp({newInstance: true, userNotification: userNotificationCalendarTrigger});
     await expect(element(by.text('From calendar'))).toBeVisible();
   });
 
-  it('Foreground user notifications - local notification from inside the app - async', async () => {
-    await device.launchApp();
+  it('Background push notification', async () => {
+    await device.launchApp({newInstance: true});
+    await device.sendToHome();
+    await device.launchApp({newInstance: false, userNotification: userNotificationPushTrigger});
+    await expect(element(by.text('From push'))).toBeVisible();
+  });
+
+  it('Background calendar notification', async () => {
+    await device.launchApp({newInstance: true});
+    await device.sendToHome();
+    await device.launchApp({newInstance: false, userNotification: userNotificationCalendarTrigger});
+    await expect(element(by.text('From calendar'))).toBeVisible();
+  });
+
+  it('Foreground push notifications', async () => {
+    await device.launchApp({newInstance: true});
     await device.sendUserNotification(userNotificationCalendarTrigger);
     await expect(element(by.text('From calendar'))).toBeVisible();
   });
 
-  it('Foreground user notifications - local notification from inside the app - promises + callback', (done) => {
-    device.launchApp()
-          .then(() => device.sendUserNotification(userNotificationCalendarTrigger)
-          .then(() => expect(element(by.text('From calendar'))).toBeVisible()))
-          .then(done);
+  it('Foreground calendar notifications', async () => {
+    await device.launchApp({newInstance: true});
+    await device.sendUserNotification(userNotificationCalendarTrigger);
+    await expect(element(by.text('From calendar'))).toBeVisible();
   });
 });
 

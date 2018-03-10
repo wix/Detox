@@ -1,4 +1,7 @@
-# Advanced Mocking With Detox 
+---
+id: Guide.Mocking
+title: Mocking
+---
 
 Mocking is an important part of testing. You may want to alter some behavior of your app during test and replace it with a mock. Here are some example reasons why this could be useful:
 
