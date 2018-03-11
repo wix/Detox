@@ -61,7 +61,6 @@ class AppleSimUtils {
   }
 
   async create(type) {
-    await this._execSimctl({ cmd: `list devices -j` });
     const result = await this._execSimctl({ cmd: `list runtimes -j` });
     const stdout = _.get(result, 'stdout');
     const runtimes = JSON.parse(stdout);

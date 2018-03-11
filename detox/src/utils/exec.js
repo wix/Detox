@@ -17,7 +17,7 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
     cmd = bin;
   }
 
-  log.info(`${_operationCounter}: ${cmd}`);
+  log.verbose(`${_operationCounter}: ${cmd}`);
 
   let result;
   await retry({retries, interval}, async () => {
@@ -31,11 +31,11 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
   }
 
   if (result.stdout) {
-    log.info(`${_operationCounter}: stdout:`, result.stdout);
+    log.verbose(`${_operationCounter}: stdout:`, result.stdout);
   }
 
   if (result.stderr) {
-    log.info(`${_operationCounter}: stderr:`, result.stderr);
+    log.verbose(`${_operationCounter}: stderr:`, result.stderr);
   }
 
   if (statusLogs && statusLogs.successful) {
