@@ -79,12 +79,15 @@ static void detoxConditionalInit()
 	self.testRunner = [[TestRunner alloc] init];
 	self.testRunner.delegate = self;
 	
-	if([ReactNativeSupport isReactNativeApp])
-	{
-		[self _waitForRNLoadWithId:@0];
-	}
+	self.isReady = YES;
+	[self _sendGeneralReadyMessage];
 	
 	return self;
+}
+
+- (void)_sendGeneralReadyMessage
+{
+	[self.webSocket sendAction:@"ready" withParams:@{} withMessageId:@-1000];
 }
 
 - (void)connectToServer:(NSString*)url withSessionId:(NSString*)sessionId
@@ -205,7 +208,7 @@ static void detoxConditionalInit()
 	__weak __typeof(self) weakSelf = self;
 	[ReactNativeSupport waitForReactNativeLoadWithCompletionHandler:^{
 		weakSelf.isReady = YES;
-		[weakSelf.webSocket sendAction:@"ready" withParams:@{} withMessageId:@-1000];
+		[weakSelf _sendGeneralReadyMessage];
 	}];
 }
 

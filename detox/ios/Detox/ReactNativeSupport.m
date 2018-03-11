@@ -114,13 +114,8 @@ void setupForTests()
 {
 	wx_original_dispatch_queue_create = dlsym(RTLD_DEFAULT, "dispatch_queue_create");
 	
-	// Rebind symbols dispatch_* to point to our own implementation.
-	struct rebinding rebindings[] = {
-		{"dispatch_queue_create", wx_dispatch_queue_create, NULL}
-	};
-	GREY_UNUSED_VARIABLE int failure =
-	rebind_symbols(rebindings, sizeof(rebindings) / sizeof(rebindings[0]));
-	NSCAssert(!failure, @"rebinding symbols failed");
+	// Rebind symbols dispatch_queue_create to point to our own implementation.
+	rebind_symbols((struct rebinding[]){"dispatch_queue_create", wx_dispatch_queue_create, NULL}, 1);
 	
 	__currentIdlingResourceSerialQueue = dispatch_queue_create("__currentIdlingResourceSerialQueue", NULL);
 
