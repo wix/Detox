@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const _ = require("lodash");
 const generateIOSAdapters = require("./adapters/ios");
 const iosFiles = {
 	"../detox/ios/EarlGrey/EarlGrey/Action/GREYActions.h":
@@ -10,22 +11,23 @@ const iosFiles = {
 };
 
 generateIOSAdapters(iosFiles);
+
 const externalFilesToDownload = {
-	"android.support.test.espresso.action.ViewActions":
-		"../detox/src/android/espressoapi/ViewActions.js"
+	"https://android.googlesource.com/platform/frameworks/testing/+/android-support-test/espresso/core/src/main/java/android/support/test/espresso/action/ViewActions.java?format=TEXT":
+		"../detox/src/android/espressoapi/ViewActions.js",
+	"https://android.googlesource.com/platform/frameworks/uiautomator/+/master/src/com/android/uiautomator/core/UiDevice.java?format=TEXT":
+		"../detox/src/android/uiautomator/UiDevice.js"
 };
 
 const generateAndroidAdapters = require("./adapters/android");
-const downloadEspressoFileByClass = require("./utils/downloadEspresso");
-const downloadedAndroidFilesMap = Object.entries(
-	externalFilesToDownload
-).reduce(
-	(obj, [fullyQualifiedClass, dest]) => ({
-		...obj,
-		[downloadEspressoFileByClass(fullyQualifiedClass)]: dest
-	}),
-	{}
-);
+const downloadFile = require("./utils/downloadFile");
+
+let downloadedAndroidFilesMap = {};
+_.forEach(externalFilesToDownload, function(value, key) {
+	const tempFilePath = downloadFile(key);
+	downloadedAndroidFilesMap[tempFilePath] = value;
+});
+
 const androidFiles = {
 	...downloadedAndroidFilesMap,
 	"../detox/android/detox/src/main/java/com/wix/detox/espresso/DetoxAction.java":
