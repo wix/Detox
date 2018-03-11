@@ -30,17 +30,23 @@ program
 
 const config = require(path.join(process.cwd(), 'package.json')).detox;
 
-const testFolder = getConfigFor('file', 'specs', 'e2e');
-const runner = getConfigFor('testRunner', 'mocha');
-const runnerConfig = getConfigFor('runnerConfig', getDefaultRunnerConfig());
+const testFolder = getConfigFor(['file', 'specs'], 'e2e');
+const runner = getConfigFor(['testRunner'], 'mocha');
+const runnerConfig = getConfigFor(['runnerConfig'], getDefaultRunnerConfig());
 
 if (typeof program.debugSynchronization === "boolean") {
   program.debugSynchronization = 3000;
 }
 
-function getConfigFor(key, defaults) {
-  const keyKebabCase = camelToKebabCase(key);
-  return program[key] || config[key] || config[keyKebabCase] || defaults;
+function getConfigFor(keys, fallback) {
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    const keyKebabCase = camelToKebabCase(key);
+    const result = program[key] || config[key] || config[keyKebabCase];
+    if (result) return result;
+  }
+
+  return fallback;
 }
 
 function camelToKebabCase(string) {
