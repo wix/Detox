@@ -8,6 +8,7 @@ const ADB = require('./android/ADB');
 const AAPT = require('./android/AAPT');
 const APKPath = require('./android/APKPath');
 const DeviceDriverBase = require('./DeviceDriverBase');
+const UIDevice = require('../android/uiautomator/UiDevice');
 
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
 

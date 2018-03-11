@@ -253,6 +253,7 @@ module.exports = function({
 				.join("\n");
 
 			const code = [commentBefore, globalFunctions, output.code].join("\n");
+			console.log(`writing file to: ${outputFile}`);
 			fs.writeFileSync(outputFile, code, "utf8");
 
 			// Output methods that were not created due to missing argument support
