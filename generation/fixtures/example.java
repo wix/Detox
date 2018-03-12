@@ -226,4 +226,8 @@ public class DetoxAction {
         };
     }
 
+    public static Matcher<View> matcherForAnd(Matcher<View> m1, Matcher<View> m2) {
+        return allOf(m1, m2);
+    }
+
 }

@@ -65,4 +65,40 @@ describe("Android generation", () => {
 			expect(fn("down", 42)).toMatchSnapshot();
 		});
 	});
+
+	describe("validation", () => {
+		describe("Matcher<View>", () => {
+			it("should fail getting no object", () => {
+				expect(() => {
+					ExampleClass.matcherForAnd("I am a string", "I am one too");
+				}).toThrowErrorMatchingSnapshot();
+			});
+
+			it("should fail with a wrong class", () => {
+				class AnotherClass {}
+				const x = new AnotherClass();
+
+				expect(() => {
+					ExampleClass.matcherForAnd(x, x);
+				}).toThrowErrorMatchingSnapshot();
+			});
+
+			it("should succeed with the 'right' class", () => {
+				// stub for matcher class
+				class Matcher {
+					_call() {
+						return {
+							target: { type: "Class", value: "Detox.Matcher" },
+							method: "matchNicely"
+						};
+					}
+				}
+
+				const m = new Matcher();
+				expect(() => {
+					ExampleClass.matcherForAnd(m, m);
+				}).not.toThrow();
+			});
+		});
+	});
 });

@@ -136,10 +136,17 @@ function sanitize_uiAccessibilityTraits(value) {
 	return traits;
 } // END sanitize_uiAccessibilityTraits
 
+function sanitize_matcher(matcher) {
+	const originalMatcher =
+		typeof matcher._call === "function" ? matcher._call() : matcher._call;
+	return originalMatcher.type ? originalMatcher.value : originalMatcher;
+} // END sanitize_matcher
+
 module.exports = {
 	sanitize_greyDirection,
 	sanitize_greyContentEdge,
 	sanitize_uiAccessibilityTraits,
 	sanitize_android_direction,
-	sanitize_android_edge
+	sanitize_android_edge,
+	sanitize_matcher
 };

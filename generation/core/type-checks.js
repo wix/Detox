@@ -40,6 +40,22 @@ if (
 		ARG: t.identifier(name)
 	});
 
+const isOfClass = className => ({ name }) =>
+	template(`
+	if (
+		typeof ARG !== 'object' ||
+		typeof ARG.constructor !== 'function' ||
+		ARG.constructor.name.indexOf('${className}') === -1
+	) {
+		const isObject = typeof ARG === 'object';
+		const additionalErrorInfo = isObject ? (typeof ARG.constructor === 'object' ? 'the constructor is no object' : 'it has a wrong class name: "' + ARG.constructor.name +'"') : 'it is no object';
+
+		throw new Error('${name} should be an instance of ${className}, got "' + ARG + '", it appears that ' + additionalErrorInfo);
+	}
+	`)({
+		ARG: t.identifier(name)
+	});
+
 module.exports = {
 	isNumber,
 	isString,
@@ -47,5 +63,6 @@ module.exports = {
 	isPoint,
 	isOneOf,
 	isGreyMatcher,
-	isArray
+	isArray,
+	isOfClass
 };
