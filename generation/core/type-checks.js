@@ -26,8 +26,33 @@ const isGreyMatcher = ({ name }) =>
     throw new Error('${name} should be a GREYMatcher, but got ' + JSON.stringify(ARG));
   }
 `)({
-		ARG: t.identifier(name)
-	});
+			ARG: t.identifier(name)
+		});
+const isGreyAction = ({ name }) =>
+	template(`
+  if (
+    typeof ARG !== "object" || 
+    ARG.type !== "Invocation" ||
+    typeof ARG.value !== "object" || 
+    typeof ARG.value.target !== "object" ||
+    ARG.value.target.value !== "GREYActions"
+  ) {
+    throw new Error('${name} should be a GREYAction, but got ' + JSON.stringify(ARG));
+    }
+`)({
+			ARG: t.identifier(name)
+		});
+const isGreyElementInteraction = ({ name }) =>
+	template(`
+  if (
+    typeof ARG !== "object"
+  ) {
+		// TODO: This currently only checks for object, we should add more fine grained checks here
+    throw new Error('${name} should be a GREYElementInteraction, but got ' + JSON.stringify(ARG));
+  }
+`)({
+			ARG: t.identifier(name)
+		});
 const isArray = ({ name }) =>
 	template(`
 if (
@@ -37,8 +62,8 @@ if (
     throw new Error('${name} must be an array, got ' + typeof ARG);
   }
 `)({
-		ARG: t.identifier(name)
-	});
+			ARG: t.identifier(name)
+		});
 
 const isOfClass = className => ({ name }) =>
 	template(`
@@ -53,8 +78,8 @@ const isOfClass = className => ({ name }) =>
 		throw new Error('${name} should be an instance of ${className}, got "' + ARG + '", it appears that ' + additionalErrorInfo);
 	}
 	`)({
-		ARG: t.identifier(name)
-	});
+			ARG: t.identifier(name)
+		});
 
 module.exports = {
 	isNumber,
@@ -62,7 +87,9 @@ module.exports = {
 	isBoolean,
 	isPoint,
 	isOneOf,
+	isGreyAction,
 	isGreyMatcher,
 	isArray,
-	isOfClass
+	isOfClass,
+	isGreyElementInteraction,
 };

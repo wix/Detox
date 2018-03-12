@@ -127,7 +127,7 @@ function sanitize_uiAccessibilityTraits(value) {
 			default:
 				throw new Error(
 					`Unknown trait '${
-						value[i]
+					value[i]
 					}', see list in https://facebook.github.io/react-native/docs/accessibility.html#accessibilitytraits-ios`
 				);
 		}
@@ -142,11 +142,20 @@ function sanitize_matcher(matcher) {
 	return originalMatcher.type ? originalMatcher.value : originalMatcher;
 } // END sanitize_matcher
 
+
+function sanitize_greyElementInteraction(value) {
+	return {
+		type: "Invocation",
+		value
+	};
+} // END sanitize_greyElementInteraction
+
 module.exports = {
 	sanitize_greyDirection,
 	sanitize_greyContentEdge,
 	sanitize_uiAccessibilityTraits,
 	sanitize_android_direction,
 	sanitize_android_edge,
-	sanitize_matcher
+	sanitize_matcher,
+	sanitize_greyElementInteraction
 };
