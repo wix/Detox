@@ -5,7 +5,6 @@
 
 **Enhancements**
 
-- Generate JSDoc comments for generated code [\#521](https://github.com/wix/detox/issues/521)
 - Clean up after build\_framework [\#577](https://github.com/wix/detox/pull/577) ([MatthieuLemoine](https://github.com/MatthieuLemoine))
 
 **Fixed Bugs**
@@ -14,7 +13,6 @@
 - Starting application from background with notification happens in foreground \(iOS\) [\#590](https://github.com/wix/detox/issues/590)
 - Find element by text doesn't function with minimal project on latest version of RN and detox [\#572](https://github.com/wix/detox/issues/572)
 - Detox failed to start testing in my react native project [\#548](https://github.com/wix/detox/issues/548)
-- Detox is flaky on Travis CI [\#452](https://github.com/wix/detox/issues/452)
 - xcodebuild puts binaries in different locations than expected [\#330](https://github.com/wix/detox/issues/330)
 - reason for test failure stopped being reported [\#5](https://github.com/wix/detox/issues/5)
 
