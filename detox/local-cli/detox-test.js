@@ -124,6 +124,7 @@ function getPlatformSpecificString(platform) {
 
 function clearDeviceRegistryLockFile() {
   const fs = require('fs');
-  const LOCK_FILE = './device.registry.state.lock';
+  const os = require('os');
+  const LOCK_FILE = path.join(os.homedir(),'device.registry.state.lock');
   fs.writeFileSync(LOCK_FILE, '[]');
 }
