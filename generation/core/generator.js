@@ -163,7 +163,7 @@ module.exports = function({
 	}
 
 	// These types need no wrapping with {type: ..., value: }
-	const plainArgumentTypes = ["id<GREYMatcher>"];
+	const plainArgumentTypes = ["id<GREYMatcher>", "String"];
 	function shouldBeWrapped({ type }) {
 		return !plainArgumentTypes.includes(type);
 	}
@@ -180,7 +180,7 @@ module.exports = function({
 								t.identifier("value"),
 								addArgumentContentSanitizerCall(arg, json.name)
 							)
-						])
+					  ])
 					: addArgumentContentSanitizerCall(arg, json.name)
 		);
 

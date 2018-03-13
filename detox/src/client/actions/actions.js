@@ -40,6 +40,16 @@ class Ready extends Action {
   }
 }
 
+class Shake extends Action {
+  constructor() {
+    super('shakeDevice');
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'shakeDeviceDone');
+  }
+}
+
 class ReloadReactNative extends Action {
   constructor() {
     super('reactNativeReload');
@@ -93,7 +103,7 @@ class SendUserNotification extends Action {
   }
 }
 
-class openURL extends Action {
+class OpenURL extends Action {
   constructor(params) {
     super('openURL', params);
   }
@@ -137,8 +147,9 @@ module.exports = {
   Invoke,
   ReloadReactNative,
   Cleanup,
-  openURL,
+  OpenURL,
   SendUserNotification,
   CurrentStatus,
+  Shake,
   AppWillTerminateWithError
 };

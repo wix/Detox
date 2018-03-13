@@ -52,8 +52,12 @@ class Client {
     await this.sendAction(new actions.CurrentStatus());
   }
 
+  async shake() {
+    await this.sendAction(new actions.Shake());
+  }
+
   async openURL(params) {
-    await this.sendAction(new actions.openURL(params));
+    await this.sendAction(new actions.OpenURL(params));
   }
 
   async execute(invocation) {

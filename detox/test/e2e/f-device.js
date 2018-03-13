@@ -48,6 +48,13 @@ describe('Device', () => {
     await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
 
+  it(':ios: shake() should shake screen', async () => {
+    await device.reloadReactNative();
+    await element(by.text('Shake')).tap();
+    await device.shake();
+    await expect(element(by.text('Shaken, not stirred'))).toBeVisible();
+  });
+
   describe('device orientation', () => {
     beforeEach(async() => {
       await device.reloadReactNative();

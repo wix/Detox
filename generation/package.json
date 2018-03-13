@@ -19,7 +19,6 @@
 		"babel-generator": "^6.25.0",
 		"babel-types": "^6.25.0",
 		"download-file-sync": "^1.0.4",
-		"husky": "^0.14.3",
 		"jest": "^20.0.4",
 		"lerna": "2.0.0-rc.4",
 		"lint-staged": "^6.0.0",

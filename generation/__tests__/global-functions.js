@@ -103,4 +103,39 @@ describe("globals", () => {
 			).toThrowErrorMatchingSnapshot();
 		});
 	});
+
+	const matcherInvocation = {
+		target: { type: "Class", value: "Detox.Matcher" },
+		method: "matchNicely"
+	};
+	describe("sanitize_matcher", () => {
+		it("should return the object if it's no function", () => {
+			expect(globals.sanitize_matcher({ _call: matcherInvocation })).toEqual(
+				matcherInvocation
+			);
+		});
+
+		it("should return the ._call property if it's a function", () => {
+			const matcherLikeObj = { _call: () => matcherInvocation };
+			expect(globals.sanitize_matcher(matcherLikeObj)).toEqual(
+				matcherInvocation
+			);
+		});
+
+		it("should unwrap the object if it's in an invocation", () => {
+			const invoke = { type: "Invocation", value: matcherInvocation };
+			const invokeCalled = { _call: invoke };
+			const invokeThunk = { _call: () => invoke };
+
+			expect(globals.sanitize_matcher(invokeCalled)).toEqual(matcherInvocation);
+			expect(globals.sanitize_matcher(invokeThunk)).toEqual(matcherInvocation);
+		});
+
+		it("should not call on string", () => {
+			const matcherLikeObj = {
+				_call: "I am a call"
+			};
+			expect(globals.sanitize_matcher(matcherLikeObj)).toBe("I am a call");
+		});
+	});
 });
