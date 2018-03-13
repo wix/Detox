@@ -9,8 +9,8 @@ describe('DatePicker', () => {
     
     it('check and scroll datePicker', async () => {
         await expect(element(by.type('UIPickerView'))).toBeVisible();
-        await expect(element(by.type('UIPickerView')).setColumnToValue(1,"6"));
-        await expect(element(by.type('UIPickerView')).setColumnToValue(2,"34"));
+        await element(by.type('UIPickerView')).setColumnToValue(1,"6");
+        await element(by.type('UIPickerView')).setColumnToValue(2,"34");
     });
 
   });
