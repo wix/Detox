@@ -23,7 +23,7 @@ describe(':ios: User Notifications', () => {
     await expect(element(by.text('From calendar'))).toBeVisible();
   });
 
-  it.only('Foreground push notifications', async () => {
+  it('Foreground push notifications', async () => {
     await device.launchApp({newInstance: true});
     await device.sendUserNotification(userNotificationCalendarTrigger);
     await expect(element(by.text('From calendar'))).toBeVisible();
