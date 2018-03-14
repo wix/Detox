@@ -124,45 +124,48 @@ static void detoxConditionalInit()
 		[self.webSocket sendAction:@"cleanupDone" withParams:@{} withMessageId:messageId];
 		return;
 	}
-	else if([type isEqualToString:@"userNotification"])
+	else if([type isEqualToString:@"deliverPayload"])
 	{
-		NSURL* userNotificationDataURL = [NSURL fileURLWithPath:params[@"detoxUserNotificationDataURL"]];
 		BOOL delay = [params[@"delayPayload"] boolValue];
 		
-		void (^block)(void) = ^{
-			[DetoxAppDelegateProxy.currentAppDelegateProxy dispatchUserNotificationFromDataURL:userNotificationDataURL delayUntilActive:delay];
-			
-			[self.webSocket sendAction:@"userNotificationDone" withParams:@{} withMessageId: messageId];
+		void (^block)(void);
+		//Send webSocket and messageId as params so the block is of global type, instead of being allocated on every message.
+		void (^sendDoneAction)(WebSocket* webSocket, NSNumber* messageId) = ^ (WebSocket* webSocket, NSNumber* messageId) {
+			[webSocket sendAction:@"deliverPayloadDone" withParams:@{} withMessageId: messageId];
 		};
 		
-		if(delay == YES)
+		if(params[@"url"])
 		{
-			block();
-			return;
-		}
-		
-		[EarlGrey detox_safeExecuteSync:block];
-	}
-	else if([type isEqualToString:@"openURL"])
-	{
-		NSURL* URLToOpen = [NSURL URLWithString:params[@"url"]];
-		BOOL delay = [params[@"delayPayload"] boolValue];
-		
-		NSParameterAssert(URLToOpen != nil);
-		
-		NSString* sourceApp = params[@"sourceApp"];
-		
-		NSMutableDictionary* options = [@{UIApplicationLaunchOptionsURLKey: URLToOpen} mutableCopy];
-		if(sourceApp != nil)
-		{
-			options[UIApplicationLaunchOptionsSourceApplicationKey] = sourceApp;
-		}
-		
-		void (^block)(void) = ^{
-			[DetoxAppDelegateProxy.currentAppDelegateProxy dispatchOpenURL:URLToOpen options:options delayUntilActive:delay];
+			NSURL* URLToOpen = [NSURL URLWithString:params[@"url"]];
 			
-			[self.webSocket sendAction:@"openURLDone" withParams:@{} withMessageId: messageId];
-		};
+			NSParameterAssert(URLToOpen != nil);
+			
+			NSString* sourceApp = params[@"sourceApp"];
+			
+			NSMutableDictionary* options = [@{UIApplicationLaunchOptionsURLKey: URLToOpen} mutableCopy];
+			if(sourceApp != nil)
+			{
+				options[UIApplicationLaunchOptionsSourceApplicationKey] = sourceApp;
+			}
+			
+			block = ^{
+				[DetoxAppDelegateProxy.currentAppDelegateProxy dispatchOpenURL:URLToOpen options:options delayUntilActive:delay];
+				
+				sendDoneAction(self.webSocket, messageId);
+			};
+		}
+		else if(params[@"detoxUserNotificationDataURL"])
+		{
+			NSURL* userNotificationDataURL = [NSURL fileURLWithPath:params[@"detoxUserNotificationDataURL"]];
+			
+			NSParameterAssert(userNotificationDataURL != nil);
+			
+			block = ^{
+				[DetoxAppDelegateProxy.currentAppDelegateProxy dispatchUserNotificationFromDataURL:userNotificationDataURL delayUntilActive:delay];
+				
+				sendDoneAction(self.webSocket, messageId);
+			};
+		}
 		
 		if(delay == YES)
 		{

@@ -43,8 +43,8 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async openURL(params) {
-    return await Promise.resolve('');
+  async deliverPayload(params) {
+    return await this.client.deliverPayload(params);
   }
 
   async setLocation(lat, lon) {
@@ -57,10 +57,6 @@ class DeviceDriverBase {
 
   async reloadReactNative() {
     return await this.client.reloadReactNative();
-  }
-
-  async sendUserNotification(params) {
-    await this.client.sendUserNotification(params);
   }
 
   createPushNotificationJson(notification) {

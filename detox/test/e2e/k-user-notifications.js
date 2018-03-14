@@ -9,14 +9,14 @@ describe(':ios: User Notifications', () => {
     await expect(element(by.text('From calendar'))).toBeVisible();
   });
 
-  it('Background push notification', async () => {
+  it.only('Background push notification', async () => {
     await device.launchApp({newInstance: true});
     await device.sendToHome();
     await device.launchApp({newInstance: false, userNotification: userNotificationPushTrigger});
     await expect(element(by.text('From push'))).toBeVisible();
   });
 
-  it('Background calendar notification', async () => {
+  it.only('Background calendar notification', async () => {
     await device.launchApp({newInstance: true});
     await device.sendToHome();
     await device.launchApp({newInstance: false, userNotification: userNotificationCalendarTrigger});

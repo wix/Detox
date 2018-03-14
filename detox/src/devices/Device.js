@@ -43,9 +43,18 @@ class Device {
 
   async launchApp(params = {newInstance: false}, bundleId) {
     await this._artifactsCopier.handleAppRelaunch();
+	
+	let paramsCounter = 0;
+	
+	const singleParams = ['url', 'userNotification'];
+	singleParams.forEach((item) => {
+		if(params[item]) {
+			paramsCounter += 1;
+		}
+	})
 
-    if (params.url && params.userNotification) {
-      throw new Error(`Call to 'launchApp(${JSON.stringify(params)})' cannot contain both url and userNotification payloads.`);
+    if (paramsCounter > 1) {
+      throw new Error(`Call to 'launchApp(${JSON.stringify(params)})' must contain only one of ${JSON.stringify(singleParams)}.`);
     }
 
     if (params.delete) {
@@ -69,6 +78,9 @@ class Device {
     } else if (params.userNotification) {
       const notificationFilePath = this.deviceDriver.createPushNotificationJson(params.userNotification);
       baseLaunchArgs['detoxUserNotificationDataURL'] = notificationFilePath;
+	  //`params` will be used later for `deliverPayload`, so remove the actual notification and add the file URL
+	  delete params.userNotification;
+	  params.detoxUserNotificationDataURL = notificationFilePath;
     }
 
     if (params.permissions) {
@@ -77,11 +89,9 @@ class Device {
 
     const _bundleId = bundleId || this._bundleId;
     if (this._isAppInBackground(params, _bundleId)) {
-      if (params.url) {
-        await this.openURL({...params, delayPayload: true});
-      } else if (params.userNotification) {
-        await this.deviceDriver.sendUserNotification({...baseLaunchArgs, delayPayload: true});
-      }
+      if (params.url || params.detoxUserNotificationDataURL) {
+        await this.deviceDriver.deliverPayload({...params, delayPayload: true});
+	  }
     }
 
     const processId = await this.deviceDriver.launch(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs));
@@ -134,7 +144,7 @@ class Device {
       throw new Error(`openURL must be called with JSON params, and a value for 'url' key must be provided. example: await device.openURL({url: "url", sourceApp[optional]: "sourceAppBundleID"}`);
     }
 
-    await this.deviceDriver.openURL(this._deviceId, params);
+    await this.deviceDriver.deliverPayload(params);
   }
 
   async shutdown() {
@@ -153,7 +163,7 @@ class Device {
 
   async sendUserNotification(params) {
     const notificationFilePath = this.deviceDriver.createPushNotificationJson(params);
-    await this.deviceDriver.sendUserNotification({'detoxUserNotificationDataURL': notificationFilePath});
+    await this.deviceDriver.deliverPayload({'detoxUserNotificationDataURL': notificationFilePath});
   }
 
   async setURLBlacklist(urlList) {

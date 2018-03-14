@@ -25,10 +25,6 @@ class IosDriver extends DeviceDriverBase {
     return notificationFilePath;
   }
 
-  async openURL(deviceId, params) {
-    await this.client.openURL(params);
-  }
-
   async setURLBlacklist(urlList) {
     await this.client.execute(GREYConfiguration.setURLBlacklist(urlList));
   }
