@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 
 class DeviceDriverBase {
@@ -59,7 +60,7 @@ class DeviceDriverBase {
     return await this.client.reloadReactNative();
   }
 
-  createPushNotificationJson(notification) {
+  createUserNotificationFile(notification) {
 
   }
 
@@ -98,16 +99,46 @@ class DeviceDriverBase {
   defaultLaunchArgsPrefix() {
     return '';
   }
-
-  ensureDirectoryExistence(filePath) {
-    const dirname = path.dirname(filePath);
-    if (fs.existsSync(dirname)) {
-      return true;
+  
+  createRandomDirectory() {
+    const randomDir = fs.mkdtempSync(path.join(os.tmpdir(), 'detoxrand-'));
+    this.ensureDirectoryExistence(randomDir);
+    return randomDir;
+  }
+  
+  cleanupRandomDirectory(fileOrDir) {
+    if(path.basename(fileOrDir).startsWith('detoxrand-')) {
+      this._whyIsThereNoRMRFInNode(fileOrDir);
+      return
     }
+    
+    this.cleanupRandomDirectory(path.dirname(fileOrDir));
+  }
+  
+  _whyIsThereNoRMRFInNode(path) {
+    if(fs.existsSync(path)) {
+      fs.readdirSync(path).forEach(function(file, index){
+        var curPath = path + "/" + file;
+        if (fs.lstatSync(curPath).isDirectory()) {
+          _whyIsThereNoRMRFInNode(curPath);
+        } else {
+          fs.unlinkSync(curPath);
+        }
+      });
+      fs.rmdirSync(path);
+    }
+  }
 
-    this.ensureDirectoryExistence(dirname);
-    fs.mkdirSync(dirname);
-    return true;
+  ensureDirectoryExistence(dirPath) {
+    if (fs.existsSync(dirPath)) {
+      return;
+    }
+	
+    const dirOfDir = path.dirname(dirPath);
+
+    this.ensureDirectoryExistence(dirOfDir);
+    fs.mkdirSync(dirOfDir);
+    return;
   }
 
   getBundleIdFromBinary(appPath) {

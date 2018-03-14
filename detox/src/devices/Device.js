@@ -44,14 +44,14 @@ class Device {
   async launchApp(params = {newInstance: false}, bundleId) {
     await this._artifactsCopier.handleAppRelaunch();
 	
-	let paramsCounter = 0;
+    let paramsCounter = 0;
 	
-	const singleParams = ['url', 'userNotification'];
-	singleParams.forEach((item) => {
-		if(params[item]) {
-			paramsCounter += 1;
-		}
-	})
+    const singleParams = ['url', 'userNotification'];
+    singleParams.forEach((item) => {
+      if(params[item]) {
+        paramsCounter += 1;
+      }
+    })
 
     if (paramsCounter > 1) {
       throw new Error(`Call to 'launchApp(${JSON.stringify(params)})' must contain only one of ${JSON.stringify(singleParams)}.`);
@@ -76,11 +76,11 @@ class Device {
         baseLaunchArgs['detoxSourceAppOverride'] = params.sourceApp;
       }
     } else if (params.userNotification) {
-      const notificationFilePath = this.deviceDriver.createPushNotificationJson(params.userNotification);
+      const notificationFilePath = this.deviceDriver.createUserNotificationFile(params.userNotification);
       baseLaunchArgs['detoxUserNotificationDataURL'] = notificationFilePath;
-	  //`params` will be used later for `deliverPayload`, so remove the actual notification and add the file URL
-	  delete params.userNotification;
-	  params.detoxUserNotificationDataURL = notificationFilePath;
+      //`params` will be used later for `deliverPayload`, so remove the actual notification and add the file URL
+      delete params.userNotification;
+      params.detoxUserNotificationDataURL = notificationFilePath;
     }
 
     if (params.permissions) {
@@ -90,14 +90,18 @@ class Device {
     const _bundleId = bundleId || this._bundleId;
     if (this._isAppInBackground(params, _bundleId)) {
       if (params.url || params.detoxUserNotificationDataURL) {
-        await this.deviceDriver.deliverPayload({...params, delayPayload: true});
-	  }
+        await this.deviceDriver.deliverPayload({...params, delayPayload: true});        
+      }
     }
 
     const processId = await this.deviceDriver.launch(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs));
     this._processes[_bundleId] = processId;
 
     await this.deviceDriver.waitUntilReady();
+    
+    if(params.detoxUserNotificationDataURL) {
+      this.deviceDriver.cleanupRandomDirectory(params.detoxUserNotificationDataURL);
+    }
   }
 
   _isAppInBackground(params, _bundleId) {
@@ -162,8 +166,9 @@ class Device {
   }
 
   async sendUserNotification(params) {
-    const notificationFilePath = this.deviceDriver.createPushNotificationJson(params);
+    const notificationFilePath = this.deviceDriver.createUserNotificationFile(params);
     await this.deviceDriver.deliverPayload({'detoxUserNotificationDataURL': notificationFilePath});
+    this.deviceDriver.cleanupRandomDirectory(notificationFilePath);
   }
 
   async setURLBlacklist(urlList) {

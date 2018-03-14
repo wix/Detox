@@ -218,7 +218,7 @@ describe('Device', () => {
   it(`relaunchApp() with userNofitication should send the userNotification as a param in launchParams`, async () => {
     device = validDevice();
     fs.existsSync.mockReturnValue(true);
-    device.deviceDriver.createPushNotificationJson = jest.fn(() => 'url');
+    device.deviceDriver.createUserNotificationFile = jest.fn(() => 'url');
 
     await device.relaunchApp({userNotification: 'json'});
 
@@ -352,7 +352,7 @@ describe('Device', () => {
     device = validDevice();
     await device.sendUserNotification('notif');
 
-    expect(device.deviceDriver.createPushNotificationJson).toHaveBeenCalledTimes(1)
+    expect(device.deviceDriver.createUserNotificationFile).toHaveBeenCalledTimes(1)
     expect(device.deviceDriver.deliverPayload).toHaveBeenCalledTimes(1);
   });
 
@@ -517,7 +517,7 @@ describe('Device', () => {
     device = validDevice();
     device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
     device.deviceDriver.launch.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
-	device.deviceDriver.createPushNotificationJson = () => "url";
+	device.deviceDriver.createUserNotificationFile = () => "url";
 
     await device.prepare({launchApp: true});
     await device.launchApp(launchParams);

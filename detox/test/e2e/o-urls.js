@@ -13,7 +13,7 @@ describe('Open URLs', () => {
     await expect(element(by.text(url))).toBeVisible();
   });
 
-  it.only('device.launchApp({url: url}) should trigger open url handling in app when app is in background', async () => {
+  it('device.launchApp({url: url}) should trigger open url handling in app when app is in background', async () => {
     const url = 'detoxtesturlscheme://such-string';
     await device.launchApp({newInstance: true});
     await device.sendToHome();
