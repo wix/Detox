@@ -18,7 +18,7 @@ class SimulatorDriver extends IosDriver {
     const detoxFrameworkPath = await environment.getFrameworkPath();
 
     if (!fs.existsSync(detoxFrameworkPath)) {
-      throw new Error(`${detoxFrameworkPath} could not be found, this means either you changed a version of Xcode or Detox postinstall script was unsuccessful. 
+      throw new Error(`${detoxFrameworkPath} could not be found, this means either you changed a version of Xcode or Detox postinstall script was unsuccessful.
       To attempt a fix try running 'detox clean-framework-cache && detox build-framework-cache'`);
     }
   }
@@ -31,7 +31,7 @@ class SimulatorDriver extends IosDriver {
 
   async getBundleIdFromBinary(appPath) {
     try {
-      const result = await exec(`/usr/libexec/PlistBuddy -c "Print CFBundleIdentifier" ${path.join(appPath, 'Info.plist')}`);
+      const result = await exec(`/usr/libexec/PlistBuddy -c "Print CFBundleIdentifier" "${path.join(appPath, 'Info.plist')}"`);
       const bundleId = _.trim(result.stdout);
       if (_.isEmpty(bundleId)) {
         throw new Error();
