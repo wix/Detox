@@ -28,6 +28,6 @@ export {
   NetworkScreen,
   AnimationsScreen,
   LocationScreen,
-  ShakeScreen
+  ShakeScreen,
   DatePickerScreen
 };
