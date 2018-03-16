@@ -250,7 +250,7 @@ describe('AppleSimUtils', () => {
       await uut.install('udid', 'somePath');
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
-        `/usr/bin/xcrun simctl install udid somePath`,
+        `/usr/bin/xcrun simctl install udid "somePath"`,
         undefined,
         expect.anything(),
         1);
