@@ -169,12 +169,6 @@ static void __copyMethods(Class orig, Class target)
 - (void)__dtx_applicationDidLaunchNotification:(NSNotification*)notification
 {
 	dispatch_async(dispatch_get_main_queue(), ^{
-		[_pendingLaunchUserNotificationDispatcher dispatchOnAppDelegate:self simulateDuringLaunch:YES];
-		[_pendingLaunchUserActivityDispatcher dispatchOnAppDelegate:self];
-		
-		_pendingLaunchUserNotificationDispatcher = nil;
-		_pendingLaunchUserActivityDispatcher = nil;
-		
 		_touchVisualizerWindow = [[COSTouchVisualizerWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
 		_touchVisualizerWindow.windowLevel = 100000000000;
 		_touchVisualizerWindow.backgroundColor = [UIColor.greenColor colorWithAlphaComponent:0.0];
@@ -256,6 +250,12 @@ static void __copyMethods(Class orig, Class target)
 		BOOL (*super_class)(struct objc_super*, SEL, id, id) = (void*)objc_msgSendSuper;
 		rv = super_class(&super, _cmd, application, launchOptions);
 	}
+	
+	[_pendingLaunchUserNotificationDispatcher dispatchOnAppDelegate:self simulateDuringLaunch:YES];
+	[_pendingLaunchUserActivityDispatcher dispatchOnAppDelegate:self];
+	
+	_pendingLaunchUserNotificationDispatcher = nil;
+	_pendingLaunchUserActivityDispatcher = nil;
 	
 	if([self __dtx_URLOverride] && [class_getSuperclass(object_getClass(self)) instancesRespondToSelector:@selector(application:openURL:options:)])
 	{
