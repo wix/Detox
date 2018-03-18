@@ -355,6 +355,14 @@ describe('Device', () => {
     expect(device.deviceDriver.createUserNotificationFile).toHaveBeenCalledTimes(1)
     expect(device.deviceDriver.deliverPayload).toHaveBeenCalledTimes(1);
   });
+  
+  it(`sendUserActivity() should pass to device driver`, async () => {
+    device = validDevice();
+    await device.sendUserActivity('notif');
+
+    expect(device.deviceDriver.createUserNotificationFile).toHaveBeenCalledTimes(1)
+    expect(device.deviceDriver.deliverPayload).toHaveBeenCalledTimes(1);
+  });
 
   it(`setLocation() should pass to device driver`, async () => {
     device = validDevice();
@@ -510,7 +518,7 @@ describe('Device', () => {
     expect(device.deviceDriver.deliverPayload).toHaveBeenCalledTimes(1);
   });
 
-  it(`launchApp({userNotification:userNotification}) should check if process is in background and if it is use deliverPayload`, async () => {
+  it(`launchApp({userNotification: userNotification}) should check if process is in background and if it is use deliverPayload`, async () => {
     const launchParams = {userNotification: 'notification'};
     const processId = 1;
 

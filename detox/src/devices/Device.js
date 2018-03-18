@@ -46,7 +46,7 @@ class Device {
 	
     let paramsCounter = 0;
 	
-    const singleParams = ['url', 'userNotification'];
+    const singleParams = ['url', 'userNotification', 'userActivity'];
     singleParams.forEach((item) => {
       if(params[item]) {
         paramsCounter += 1;
@@ -56,6 +56,8 @@ class Device {
     if (paramsCounter > 1) {
       throw new Error(`Call to 'launchApp(${JSON.stringify(params)})' must contain only one of ${JSON.stringify(singleParams)}.`);
     }
+    
+    params.deliverPayload = paramsCounter == 1;
 
     if (params.delete) {
       await this.deviceDriver.terminate(this._deviceId, this._bundleId);
@@ -81,6 +83,11 @@ class Device {
       //`params` will be used later for `deliverPayload`, so remove the actual notification and add the file URL
       delete params.userNotification;
       params.detoxUserNotificationDataURL = notificationFilePath;
+    } else if (params.userActivity) {
+      const notificationFilePath = this.deviceDriver.createUserNotificationFile(params.userActivity);
+      baseLaunchArgs['detoxUserActivityDataURL'] = notificationFilePath;
+      delete params.userActivity;
+      params.detoxUserActivityDataURL = notificationFilePath;
     }
 
     if (params.permissions) {
@@ -89,7 +96,7 @@ class Device {
 
     const _bundleId = bundleId || this._bundleId;
     if (this._isAppInBackground(params, _bundleId)) {
-      if (params.url || params.detoxUserNotificationDataURL) {
+      if (params.deliverPayload) {
         await this.deviceDriver.deliverPayload({...params, delayPayload: true});        
       }
     }
@@ -101,6 +108,9 @@ class Device {
     
     if(params.detoxUserNotificationDataURL) {
       this.deviceDriver.cleanupRandomDirectory(params.detoxUserNotificationDataURL);
+    }
+    if(params.detoxUserActivityDataURL) {
+      this.deviceDriver.cleanupRandomDirectory(params.detoxUserActivityDataURL);
     }
   }
 
@@ -163,6 +173,17 @@ class Device {
     lat = String(lat);
     lon = String(lon);
     await this.deviceDriver.setLocation(this._deviceId, lat, lon);
+  }
+
+  //Do not remove this, it is very important for our customers!
+  async __debug_sleep(ms) {
+    return new Promise(resolve => setTimeout(() => resolve(), ms));
+  }
+
+  async sendUserActivity(params) {
+    const userActivityFilePath = this.deviceDriver.createUserNotificationFile(params);
+    await this.deviceDriver.deliverPayload({'detoxUserActivityDataURL': userActivityFilePath});
+    this.deviceDriver.cleanupRandomDirectory(userActivityFilePath);
   }
 
   async sendUserNotification(params) {

@@ -149,7 +149,7 @@ static void detoxConditionalInit()
 			}
 			
 			block = ^{
-				[DetoxAppDelegateProxy.currentAppDelegateProxy dispatchOpenURL:URLToOpen options:options delayUntilActive:delay];
+				[DetoxAppDelegateProxy.currentAppDelegateProxy __dtx_dispatchOpenURL:URLToOpen options:options delayUntilActive:delay];
 				
 				sendDoneAction(self.webSocket, messageId);
 			};
@@ -161,7 +161,19 @@ static void detoxConditionalInit()
 			NSParameterAssert(userNotificationDataURL != nil);
 			
 			block = ^{
-				[DetoxAppDelegateProxy.currentAppDelegateProxy dispatchUserNotificationFromDataURL:userNotificationDataURL delayUntilActive:delay];
+				[DetoxAppDelegateProxy.currentAppDelegateProxy __dtx_dispatchUserNotificationFromDataURL:userNotificationDataURL delayUntilActive:delay];
+				
+				sendDoneAction(self.webSocket, messageId);
+			};
+		}
+		else if(params[@"detoxUserActivityDataURL"])
+		{
+			NSURL* userActivityDataURL = [NSURL fileURLWithPath:params[@"detoxUserActivityDataURL"]];
+			
+			NSParameterAssert(userActivityDataURL != nil);
+			
+			block = ^{
+				[DetoxAppDelegateProxy.currentAppDelegateProxy __dtx_dispatchUserActivityFromDataURL:userActivityDataURL delayUntilActive:delay];
 				
 				sendDoneAction(self.webSocket, messageId);
 			};
