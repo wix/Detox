@@ -40,6 +40,18 @@ class Device {
   async finalizeArtifacts() {
     await this._artifactsCopier.finalizeArtifacts();
   }
+  
+  createPayloadFileAndUpdatesParamsObject(key, launchKey, params, baseLaunchArgs) {
+    const payloadFilePath = this.deviceDriver.createPayloadFile(params[key]);
+    baseLaunchArgs[launchKey] = payloadFilePath;
+    //`params` will be used later for `deliverPayload`, so remove the actual notification and add the file URL
+    delete params[key];
+    params[launchKey] = payloadFilePath;
+  }
+  
+  cleanupPayloadFile(launchKey, params) {
+    this.deviceDriver.cleanupRandomDirectory(params[launchKey]);
+  }
 
   async launchApp(params = {newInstance: false}, bundleId) {
     await this._artifactsCopier.handleAppRelaunch();
@@ -78,16 +90,9 @@ class Device {
         baseLaunchArgs['detoxSourceAppOverride'] = params.sourceApp;
       }
     } else if (params.userNotification) {
-      const notificationFilePath = this.deviceDriver.createUserNotificationFile(params.userNotification);
-      baseLaunchArgs['detoxUserNotificationDataURL'] = notificationFilePath;
-      //`params` will be used later for `deliverPayload`, so remove the actual notification and add the file URL
-      delete params.userNotification;
-      params.detoxUserNotificationDataURL = notificationFilePath;
+      this.createPayloadFileAndUpdatesParamsObject('userNotification', 'detoxUserNotificationDataURL', params, baseLaunchArgs);
     } else if (params.userActivity) {
-      const notificationFilePath = this.deviceDriver.createUserNotificationFile(params.userActivity);
-      baseLaunchArgs['detoxUserActivityDataURL'] = notificationFilePath;
-      delete params.userActivity;
-      params.detoxUserActivityDataURL = notificationFilePath;
+      this.createPayloadFileAndUpdatesParamsObject('userActivity', 'detoxUserActivityDataURL', params, baseLaunchArgs);
     }
 
     if (params.permissions) {
@@ -107,10 +112,10 @@ class Device {
     await this.deviceDriver.waitUntilReady();
     
     if(params.detoxUserNotificationDataURL) {
-      this.deviceDriver.cleanupRandomDirectory(params.detoxUserNotificationDataURL);
+      this.cleanupPayloadFile('detoxUserNotificationDataURL', params);
     }
     if(params.detoxUserActivityDataURL) {
-      this.deviceDriver.cleanupRandomDirectory(params.detoxUserActivityDataURL);
+      this.cleanupPayloadFile('detoxUserActivityDataURL', params);
     }
   }
 
@@ -180,16 +185,18 @@ class Device {
     return new Promise(resolve => setTimeout(() => resolve(), ms));
   }
 
+  async _sendPayload(key, params) {
+    const payloadFilePath = this.deviceDriver.createPayloadFile(params);
+    await this.deviceDriver.deliverPayload({key: payloadFilePath});
+    this.deviceDriver.cleanupRandomDirectory(payloadFilePath);
+  }
+
   async sendUserActivity(params) {
-    const userActivityFilePath = this.deviceDriver.createUserNotificationFile(params);
-    await this.deviceDriver.deliverPayload({'detoxUserActivityDataURL': userActivityFilePath});
-    this.deviceDriver.cleanupRandomDirectory(userActivityFilePath);
+    await this._sendPayload('detoxUserActivityDataURL', params);
   }
 
   async sendUserNotification(params) {
-    const notificationFilePath = this.deviceDriver.createUserNotificationFile(params);
-    await this.deviceDriver.deliverPayload({'detoxUserNotificationDataURL': notificationFilePath});
-    this.deviceDriver.cleanupRandomDirectory(notificationFilePath);
+    await this._sendPayload('detoxUserNotificationDataURL', params);
   }
 
   async setURLBlacklist(urlList) {

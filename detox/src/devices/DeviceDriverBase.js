@@ -60,7 +60,7 @@ class DeviceDriverBase {
     return await this.client.reloadReactNative();
   }
 
-  createUserNotificationFile(notification) {
+  createPayloadFile(notification) {
 
   }
 
