@@ -3,19 +3,14 @@
 // Javascript for windows support.
 
 const fs = require('fs-extra');
-const Path = require('path');
 const childProcess = require('child_process');
-
-function resolve(path) {
-    return Path.resolve(__dirname, '..', path);
-}
 
 if (process.platform === 'darwin') {
     console.log("\nPackaging Detox iOS sources");
 
-    fs.removeSync(resolve('Detox-ios-src.tbz'));
+    fs.removeSync('Detox-ios-src.tbz');
     // Prepare Earl Grey without building
-    childProcess.execFileSync(resolve('ios/EarlGrey/Scripts/setup-earlgrey.sh'), {
+    childProcess.execFileSync('ios/EarlGrey/Scripts/setup-earlgrey.sh', {
         stdio: ['ignore', 'ignore', 'inherit'],
     });
     childProcess.execSync('find ./ios -name Build -type d -exec rm -rf {} \\;', {
@@ -37,18 +32,16 @@ if (process.argv[2] === 'android' || process.argv[3] === 'android') {
         'detox-minReactNative46-release.aar',
     ];
     aars.forEach(aar => {
-        fs.removeSync(resolve(aar));
+        fs.removeSync(aar);
     });
 
-    childProcess.execFileSync(resolve('android/gradlew'), ['assembleDebug', 'assembleRelease'], {
+    childProcess.execFileSync('android/gradlew', ['assembleDebug', 'assembleRelease'], {
         cwd: 'android',
         stdio: 'inherit',
         shell: true,
     });
 
     aars.forEach(aar => {
-        fs.copySync(
-            resolve(`android/detox/build/outputs/aar/${aar}`),
-            resolve(aar));
+        fs.copySync(`android/detox/build/outputs/aar/${aar}`, aar);
     });
 }
