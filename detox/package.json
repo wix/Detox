@@ -22,7 +22,7 @@
   "license": "MIT",
   "scripts": {
     "build": "node scripts/build.js",
-    "lint": "eslint src",
+    "lint": "eslint src scripts",
     "unit": "jest --coverage --verbose",
     "test": "npm run unit",
     "unit:watch": "jest --watch",
