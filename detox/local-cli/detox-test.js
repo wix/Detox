@@ -74,7 +74,7 @@ function runMocha() {
   const platform = program.platform ? `--grep ${getPlatformSpecificString(program.platform)} --invert` : '';
 
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
-  const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platform} ${artifactsLocation}`;
+  const command = `mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platform} ${artifactsLocation}`;
 
   console.log(command);
   cp.execSync(command, {stdio: 'inherit'});
@@ -83,7 +83,7 @@ function runMocha() {
 function runJest() {
   const configFile = runnerConfig ? `--config=${runnerConfig}` : '';
   const platform = program.platform ? `--testNamePattern='^((?!${getPlatformSpecificString(program.platform)}).)*$'` : '';
-  const command = `node_modules/.bin/jest ${testFolder} ${configFile} --runInBand ${platform}`;
+  const command = `jest ${testFolder} ${configFile} --runInBand ${platform}`;
   console.log(command);
   cp.execSync(command, {
     stdio: 'inherit',
