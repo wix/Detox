@@ -18,7 +18,7 @@ if (process.platform === 'darwin') {
     childProcess.execFileSync(resolve('ios/EarlGrey/Scripts/setup-earlgrey.sh'), {
         stdio: ['ignore', 'ignore', 'inherit'],
     });
-    childProcess.execSync('find ./ios -name Build -type d -exec rm -rf {} \;', {
+    childProcess.execSync('find ./ios -name Build -type d -exec rm -rf {} \\;', {
         stdio: ['ignore', 'ignore', 'inherit'],
     });
 
