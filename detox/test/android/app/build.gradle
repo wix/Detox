@@ -26,6 +26,16 @@ android {
         */
     }
 
+    productFlavors {
+        flavorDimensions "compileRNFromSource"
+        fromSource {
+            dimension "compileRNFromSource"
+        }
+        fromBin {
+            dimension "compileRNFromSource"
+        }
+    }
+
     signingConfigs {
         release {
             storeFile file("keystore.jks")
@@ -51,7 +61,9 @@ android {
 
 dependencies {
     implementation "com.android.support:appcompat-v7:27.0.2"
-    implementation "com.facebook.react:react-native:+"  // From node_modules
+
+    fromSourceImplementation(project(path: ":ReactAndroid"))
+    fromBinImplementation "com.facebook.react:react-native:+"
 
     androidTestImplementation(project(path: ":detox"))
     androidTestImplementation 'junit:junit:4.12'
