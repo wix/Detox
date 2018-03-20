@@ -4,3 +4,6 @@ include ':app'
 
 include ':detox'
 project(':detox').projectDir = new File(rootProject.projectDir, '../../android/detox')
+
+include ':ReactAndroid'
+project(':ReactAndroid').projectDir = new File(rootProject.projectDir, '../node_modules/react-native/ReactAndroid')
