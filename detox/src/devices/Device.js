@@ -187,7 +187,10 @@ class Device {
 
   async _sendPayload(key, params) {
     const payloadFilePath = this.deviceDriver.createPayloadFile(params);
-    await this.deviceDriver.deliverPayload({key: payloadFilePath});
+    let payload = {};
+    //JS does not support {key: "asd"} JSON generation where the `key` is a variable 🤦‍♂️
+    payload[key] = payloadFilePath;
+    await this.deviceDriver.deliverPayload(payload);
     this.deviceDriver.cleanupRandomDirectory(payloadFilePath);
   }
 

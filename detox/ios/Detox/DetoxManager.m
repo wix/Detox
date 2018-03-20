@@ -179,6 +179,8 @@ static void detoxConditionalInit()
 			};
 		}
 		
+		NSAssert(block != nil, @"Logic error, no block was generated for payload: %@", params);
+		
 		if(delay == YES)
 		{
 			block();
