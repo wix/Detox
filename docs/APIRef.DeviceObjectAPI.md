@@ -23,7 +23,7 @@ title: The `device` Object
 - [`device.disableSynchronization()`](#devicedisablesynchronization)
 - [`device.resetContentAndSettings()`](#deviceresetcontentandsettings)
 - [`device.getPlatform()`](#devicegetplatform)
-- [`device.shake()`](#deviceshake)
+- [`device.shake()` **iOS Only**](#deviceshake)
 
 ### `device.launchApp(params)`
 Launch the app defined in the current [`configuration`](APIRef.Configuration.md).
@@ -218,7 +218,6 @@ if (device.getPlatform() === 'ios') {
   await expect(loopSwitch).toHaveValue('1');
 }
 ```
-
-### `device.shake()`
-**iOS Only**
+ 
+### `device.shake()` **iOS Only**
 Simulate shake 
