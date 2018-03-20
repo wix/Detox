@@ -21,7 +21,7 @@ Actions are functions that emulate user behavior. They are being performed on ma
 - [`.scroll()`](#scrollpixels-direction)
 - [`.scrollTo()`](#scrolltoedge)
 - [`.swipe()`](#swipedirection-speed-percentage)
-- [`.setColumnToValue()`](#set-column-to-value)
+- [`.setColumnToValue()`](#set-column-to-value)  iOS only
 
 
 ### `tap()`
@@ -108,7 +108,7 @@ await element(by.id('scrollView')).swipe('down');
 await element(by.id('scrollView')).swipe('down', 'fast');
 await element(by.id('scrollView')).swipe('down', 'fast', 0.5);
 ```
-### `setColumnToValue(column,value)`
+### `setColumnToValue(column,value)`  iOS only
 
 column - number of datepicker column (starts from 0)
 value - string value in setted column (must be correct)
