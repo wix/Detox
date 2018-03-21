@@ -3,6 +3,7 @@ const path = require('path');
 const _ = require('lodash');
 const argparse = require('../utils/argparse');
 const ArtifactsCopier = require('../artifacts/ArtifactsCopier');
+const debug = require('../utils/debug'); //debug utils, leave here even if unused
 
 class Device {
 
@@ -13,6 +14,7 @@ class Device {
     this._processes = {};
     this._artifactsCopier = new ArtifactsCopier(deviceDriver);
     this.deviceDriver.validateDeviceConfig(deviceConfig);
+    this.debug = debug;
   }
 
   async prepare(params = {}) {
@@ -55,21 +57,9 @@ class Device {
 
   async launchApp(params = {newInstance: false}, bundleId) {
     await this._artifactsCopier.handleAppRelaunch();
-	
-    let paramsCounter = 0;
-	
-    const singleParams = ['url', 'userNotification', 'userActivity'];
-    singleParams.forEach((item) => {
-      if(params[item]) {
-        paramsCounter += 1;
-      }
-    })
 
-    if (paramsCounter > 1) {
-      throw new Error(`Call to 'launchApp(${JSON.stringify(params)})' must contain only one of ${JSON.stringify(singleParams)}.`);
-    }
-    
-    params.deliverPayload = paramsCounter == 1;
+    const singleParams = ['url', 'userNotification', 'userActivity'];
+    const hasPayload = this._assertHasSingleParam(singleParams, params);
 
     if (params.delete) {
       await this.deviceDriver.terminate(this._deviceId, this._bundleId);
@@ -101,7 +91,7 @@ class Device {
 
     const _bundleId = bundleId || this._bundleId;
     if (this._isAppInBackground(params, _bundleId)) {
-      if (params.deliverPayload) {
+      if (hasPayload) {
         await this.deviceDriver.deliverPayload({...params, delayPayload: true});        
       }
     }
@@ -121,6 +111,20 @@ class Device {
 
   _isAppInBackground(params, _bundleId) {
     return !params.delete && !params.newInstance && this._processes[_bundleId];
+  }
+
+  _assertHasSingleParam(singleParams, params) {
+    let paramsCounter = 0;
+
+    singleParams.forEach((item) => {
+      if(params[item]) {
+        paramsCounter += 1;
+      }
+    });
+    if (paramsCounter > 1) {
+      throw new Error(`Call to 'launchApp(${JSON.stringify(params)})' must contain only one of ${JSON.stringify(singleParams)}.`);
+    }
+    return (paramsCounter === 1);
   }
 
   /**deprecated */
@@ -180,15 +184,10 @@ class Device {
     await this.deviceDriver.setLocation(this._deviceId, lat, lon);
   }
 
-  //Do not remove this, it is very important for our customers!
-  async __debug_sleep(ms) {
-    return new Promise(resolve => setTimeout(() => resolve(), ms));
-  }
-
   async _sendPayload(key, params) {
     const payloadFilePath = this.deviceDriver.createPayloadFile(params);
     let payload = {};
-    //JS does not support {key: "asd"} JSON generation where the `key` is a variable 🤦‍♂️
+    //JS does not support {key: "asd"} JSON generation where the `key` is a variable
     payload[key] = payloadFilePath;
     await this.deviceDriver.deliverPayload(payload);
     this.deviceDriver.cleanupRandomDirectory(payloadFilePath);

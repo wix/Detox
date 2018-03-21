@@ -75,10 +75,19 @@
       "AAPT.js",
       "ADB.js",
       "fsext.js",
+      "debug.js",
       "src/ios/earlgreyapi",
       "src/android/espressoapi"
     ],
     "resetMocks": true,
-    "resetModules": true
+    "resetModules": true,
+    "coverageThreshold": {
+      "global": {
+        "statements": 100,
+        "branches": 100,
+        "functions": 100,
+        "lines": 100
+      }
+    }
   }
 }
