@@ -226,9 +226,11 @@ class WaitForActionInteraction extends Interaction {
     this._call = invoke.call(_interactionCall, 'assertWithMatcher:', this._originalMatcher._call);
     await this.execute();
   }
-  async scroll(amount, direction = 'down') {
-    // override the user's element selection with an extended matcher that looks for UIScrollView children
-    this._searchMatcher = this._searchMatcher._extendToDescendantScrollViews();
+  async scroll(amount, direction = 'down', extendToDescendants = true) {
+    if(extendToDescendants === true) {
+      // override the user's element selection with an extended matcher that looks for UIScrollView children
+      this._searchMatcher = this._searchMatcher._extendToDescendantScrollViews();
+    }
     await this._execute(new ScrollAmountAction(direction, amount));
   }
 }

@@ -208,9 +208,11 @@ class Element {
   async clearText() {
     return await new ActionInteraction(this, new ClearTextAction()).execute();
   }
-  async scroll(amount, direction = 'down') {
-    // override the user's element selection with an extended matcher that looks for UIScrollView children
-    // this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
+  async scroll(amount, direction = 'down', extendToDescendants = false) {
+    if(extendToDescendants === true) {
+     // override the user's element selection with an extended matcher that looks for UIScrollView children
+     this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
+    }
     return await new ActionInteraction(this, new ScrollAmountAction(direction, amount)).execute();
   }
   async scrollTo(edge) {

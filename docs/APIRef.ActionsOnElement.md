@@ -76,14 +76,15 @@ Clear text from a text field.
 await element(by.id('textField')).clearText();
 ```
 
-### `scroll(pixels, direction)`
+### `scroll(pixels, direction, extendToDescendants)`
 Scroll amount of pixels.<br>
 pixels - independent device pixels.<br>
-direction - left/right/top/bottom
+direction - left/right/up/down<br>
+extendToDescendants - boolean if the scroll action should attempt to automatically find a scrollview in your selected element to scroll. (Set this to `false` if you have nested scrollviews. on iOS this defaults to true)
 
 ```js
-await element(by.id('scrollView')).scroll(100, 'down');
-await element(by.id('scrollView')).scroll(100, 'up');
+await element(by.id('scrollView')).scroll(100, 'down', false);
+await element(by.id('scrollView')).scroll(100, 'up', false);
 ```
 
 ### `scrollTo(edge)`
