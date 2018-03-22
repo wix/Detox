@@ -54,8 +54,8 @@ class Device {
   async launchApp(params = {newInstance: false}, bundleId) {
     await this._artifactsCopier.handleAppRelaunch();
 
-    const singleParams = ['url', 'userNotification', 'userActivity'];
-    const hasPayload = this._assertHasSingleParam(singleParams, params);
+    const payloadParams = ['url', 'userNotification', 'userActivity'];
+    const hasPayload = this._assertHasSingleParam(payloadParams, params);
 
     if (params.delete) {
       await this.deviceDriver.terminate(this._deviceId, this._bundleId);
