@@ -51,19 +51,19 @@
       },
       "android.emu.debug": {
         "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
-        "build": "cd android && ./gradlew assembleFromBinDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
+        "build": "cd android && ./gradlew assembleFromBinDebug assembleFromBinDebugAndroidTest -DtestBuildType=debug && cd ..",
         "type": "android.emulator",
         "name": "Nexus_5X_API_26"
       },
       "android.emu.release": {
         "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
-        "build": "cd android && ./gradlew assembleFromBinRelease assembleAndroidTest -DtestBuildType=release && cd ..",
+        "build": "cd android && ./gradlew assembleFromBinRelease assembleFromBinReleaseAndroidTest -DtestBuildType=release && cd ..",
         "type": "android.emulator",
         "name": "Nexus_5X_API_26"
       },
       "android.emu.debug.fromSource": {
         "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
-        "build": "cd android && ./gradlew assembleFromSourceDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
+        "build": "cd android && ./gradlew assembleFromSourceDebug assembleFromSourceDebugAndroidTest -DtestBuildType=debug && cd ..",
         "type": "android.emulator",
         "name": "Nexus_5X_API_26"
       }
