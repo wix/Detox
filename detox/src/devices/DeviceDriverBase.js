@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const fs = require('fs');
+const fs = require('fs-extra');
 const os = require('os');
 const path = require('path');
 
@@ -102,43 +102,14 @@ class DeviceDriverBase {
   
   createRandomDirectory() {
     const randomDir = fs.mkdtempSync(path.join(os.tmpdir(), 'detoxrand-'));
-    this.ensureDirectoryExistence(randomDir);
+    fs.ensureDirSync(randomDir);
     return randomDir;
   }
   
   cleanupRandomDirectory(fileOrDir) {
     if(path.basename(fileOrDir).startsWith('detoxrand-')) {
-      this._whyIsThereNoRMRFInNode(fileOrDir);
-      return
+      fs.removeSync(fileOrDir);
     }
-    
-    this.cleanupRandomDirectory(path.dirname(fileOrDir));
-  }
-  
-  _whyIsThereNoRMRFInNode(path) {
-    if(fs.existsSync(path)) {
-      fs.readdirSync(path).forEach(function(file, index){
-        var curPath = path + "/" + file;
-        if (fs.lstatSync(curPath).isDirectory()) {
-          _whyIsThereNoRMRFInNode(curPath);
-        } else {
-          fs.unlinkSync(curPath);
-        }
-      });
-      fs.rmdirSync(path);
-    }
-  }
-
-  ensureDirectoryExistence(dirPath) {
-    if (fs.existsSync(dirPath)) {
-      return;
-    }
-	
-    const dirOfDir = path.dirname(dirPath);
-
-    this.ensureDirectoryExistence(dirOfDir);
-    fs.mkdirSync(dirOfDir);
-    return;
   }
 
   getBundleIdFromBinary(appPath) {

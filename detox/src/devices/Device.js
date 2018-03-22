@@ -50,10 +50,6 @@ class Device {
     delete params[key];
     params[launchKey] = payloadFilePath;
   }
-  
-  cleanupPayloadFile(launchKey, params) {
-    this.deviceDriver.cleanupRandomDirectory(params[launchKey]);
-  }
 
   async launchApp(params = {newInstance: false}, bundleId) {
     await this._artifactsCopier.handleAppRelaunch();
@@ -102,10 +98,11 @@ class Device {
     await this.deviceDriver.waitUntilReady();
     
     if(params.detoxUserNotificationDataURL) {
-      this.cleanupPayloadFile('detoxUserNotificationDataURL', params);
+      await this.deviceDriver.cleanupRandomDirectory(params.detoxUserNotificationDataURL);
     }
+
     if(params.detoxUserActivityDataURL) {
-      this.cleanupPayloadFile('detoxUserActivityDataURL', params);
+      await this.deviceDriver.cleanupRandomDirectory(params.detoxUserActivityDataURL);
     }
   }
 
@@ -187,7 +184,6 @@ class Device {
   async _sendPayload(key, params) {
     const payloadFilePath = this.deviceDriver.createPayloadFile(params);
     let payload = {};
-    //JS does not support {key: "asd"} JSON generation where the `key` is a variable
     payload[key] = payloadFilePath;
     await this.deviceDriver.deliverPayload(payload);
     this.deviceDriver.cleanupRandomDirectory(payloadFilePath);
