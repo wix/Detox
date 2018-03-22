@@ -18,8 +18,8 @@ Actions are functions that emulate user behavior. They are being performed on ma
 - [`.typeText()`](#typetexttext)
 - [`.replaceText()`](#replacetexttext)
 - [`.clearText()`](#cleartext)
-- [`.scroll()`](#scrollpixels-direction)
-- [`.scrollTo()`](#scrolltoedge)
+- [`.scroll()`](#scrollpixels-direction-extendtodescendants)
+- [`.scrollTo()`](#scrolltoedge-extendtodescendants)
 - [`.swipe()`](#swipedirection-speed-percentage)
 
 
@@ -59,7 +59,7 @@ await element(by.id('textField')).typeText('passcode');
 ```
 
 > **Note:** Make sure hardware keyboard is disconnected. Otherwise, Detox may fail when attempting to type text.
-> 
+>
 > To make sure hardware keybaord is disconnected, open the simulator from Xcode and make sure **Hardware** -> **Keyboard** -> **Connect Hardware Keyboard** is deselected (or press ⇧⌘K).
 
 ### `replaceText(text)`
@@ -80,21 +80,22 @@ await element(by.id('textField')).clearText();
 Scroll amount of pixels.<br>
 pixels - independent device pixels.<br>
 direction - left/right/up/down<br>
-extendToDescendants - boolean if the scroll action should attempt to automatically find a scrollview in your selected element to scroll. (Set this to `false` if you have nested scrollviews. on iOS this defaults to true)
+extendToDescendants - boolean if the scroll action should attempt to automatically find a scrollview in your selected element to scroll. (Set this to `false` if you have nested scrollable elements. on iOS this defaults to true)
 
 ```js
 await element(by.id('scrollView')).scroll(100, 'down', false);
 await element(by.id('scrollView')).scroll(100, 'up', false);
 ```
 
-### `scrollTo(edge)`
+### `scrollTo(edge, extendToDescendants)`
 Scroll to edge.
 
 edge - left/right/top/bottom
+extendToDescendants - boolean if the scroll action should attempt to automatically find a scrollview in your selected element to scroll. (Set this to `false` if you have nested scrollviews. By default it is true)
 
 ```js
-await element(by.id('scrollView')).scrollTo('bottom');
-await element(by.id('scrollView')).scrollTo('top');
+await element(by.id('scrollView')).scrollTo('bottom', true);
+await element(by.id('scrollView')).scrollTo('top', true);
 ```
 
 ### `swipe(direction, speed, percentage)`
