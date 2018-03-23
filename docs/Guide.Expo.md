@@ -20,8 +20,8 @@ title: Expo
 }
 ```
 
-- Download the Expo app from [Expo.io/tools](https://expo.io/tools). (Scroll down to the bottom).
-- Unzip the iOS IPA and **rename the folder** to `Exponent.app` (it'll now have a file icon)
+- Download the Expo app from [Expo.io/tools](https://expo.io/tools).
+- Unzip the iOS IPA and **rename the folder** to `Exponent.app`. It'll have a file icon but will still be a folder.
 - Create `bin` folder in your project and put `Exponent.app` inside so it matches the binaryPath you set above.
 - Create an `e2e` and copy over the settings from [the example app](https://github.com/expo/with-detox-tests/tree/master/e2e)
 
