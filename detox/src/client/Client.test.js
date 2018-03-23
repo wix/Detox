@@ -33,18 +33,10 @@ describe('Client', () => {
     }
   });
 
-  it(`sendUserNotification() - should receive ready from device and resolve`, async () => {
+  it(`deliverPayload() - should send an 'deliverPayload' action and resolve when 'deliverPayloadDone' returns`, async () => {
     await connect();
-    client.ws.send.mockReturnValueOnce(response("userNotificationDone", {}, 1));
-    await client.sendUserNotification();
-
-    expect(client.ws.send).toHaveBeenCalledTimes(2);
-  });
-
-  it(`openURL() - should send an 'openURL' action and resolve when 'openURLDone' returns`, async () => {
-    await connect();
-    client.ws.send.mockReturnValueOnce(response("openURLDone", {}, 1));
-    await client.openURL({url: 'url'});
+    client.ws.send.mockReturnValueOnce(response("deliverPayloadDone", {}, 1));
+    await client.deliverPayload({url: 'url'});
 
     expect(client.ws.send).toHaveBeenCalledTimes(2);
   });
