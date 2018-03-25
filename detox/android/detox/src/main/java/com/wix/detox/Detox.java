@@ -85,7 +85,7 @@ public final class Detox {
      * @param activityTestRule the activityTestRule
      */
     public static void runTests(ActivityTestRule activityTestRule) {
-        Object appContext = InstrumentationRegistry.getTargetContext().getApplicationContext();
+        Context appContext = InstrumentationRegistry.getTargetContext().getApplicationContext();
         runTests(activityTestRule, appContext);
     }
 
@@ -106,7 +106,7 @@ public final class Detox {
      * @param activityTestRule the activityTestRule
      * @param reactActivityDelegate an object that has a {@code getReactNativeHost()} method
      */
-    public static void runTests(ActivityTestRule activityTestRule, @NonNull final Object reactActivityDelegate) {
+    public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context reactActivityDelegate) {
         sActivityTestRule = activityTestRule;
         Intent intent = null;
         Bundle arguments = InstrumentationRegistry.getArguments();
@@ -162,7 +162,7 @@ public final class Detox {
 
     // TODO: Can't get to launch the app back to previous instance using only intents from inside instrumentation (not sure why).
     // this is a (hopefully) temp solution. Should use intents instead.
-    public static void launchMainActivity() throws RemoteException, UiObjectNotFoundException {
+    public static void launchMainActivity() {
         Context targetContext = InstrumentationRegistry.getTargetContext();
 
 //        Intent intent = targetContext.getPackageManager().getLaunchIntentForPackage(targetContext.getPackageName());
@@ -173,10 +173,18 @@ public final class Detox {
 //        launchActivity(intent);
 
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-        device.pressRecentApps();
+        try {
+            device.pressRecentApps();
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
         UiSelector selector = new UiSelector();
         String appName = targetContext.getApplicationInfo().loadLabel(targetContext.getPackageManager()).toString();
         UiObject recentApp = device.findObject(selector.descriptionContains(appName));
-        recentApp.click();
+        try {
+            recentApp.click();
+        } catch (UiObjectNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
