@@ -27,7 +27,7 @@ class EmulatorTelnet {
 
   async exec(command) {
     let res = await this.connection.exec(`${command}`);
-    res = res.split('\n')[0];
+    res = res.split('\n')[1];
     return res;
   }
 
