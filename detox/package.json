@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "child-process-promise": "^2.2.0",
-    "commander": "^2.9.0",
+    "commander": "^2.15.1",
     "detox-server": "^7.0.0",
     "fs-extra": "^4.0.2",
     "get-port": "^2.1.0",
