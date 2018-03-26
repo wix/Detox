@@ -1,4 +1,7 @@
-# Contributing to Detox
+---
+id: Guide.Contributing
+title: Contributing
+---
 
 ## Prerequisites
 
@@ -23,7 +26,7 @@ For all the internal projects (detox, detox-server, detox-cli, demos, test) `ler
 gem install xcpretty
 ```
 
-Alternatively, run `scripts/install.ios.sh` / `scripts/android.sh` to install all prerequisites.
+Alternatively, run `scripts/install.ios.sh` / `scripts/install.android.sh` to install all prerequisites.
 
 ## Detox
 
@@ -39,7 +42,7 @@ git submodule update --init --recursive
 ### Installing and linking internal projects
 
 ```sh
-scripts/bootstrap.sh
+lerna bootstrap
 ```
 
 ### Building
@@ -100,6 +103,22 @@ npm run e2e:ios
 npm run build:android
 npm run e2e:android
 ```
+
+Android test project includes two flavors: 
+`fromBin` - uses the precompiled aar from `node_moudles` just like a standard RN project.
+`fromSource` - compiles the project with RN sources from `node_modules`, this is useful when developing and debugging Espresso idle resource. 
+[Here](https://facebook.github.io/react-native/docs/building-from-source.html#android) are the prerequisites to compiling React Native from source.
+
+Each build can be triggered separately by running its assemble task:
+`./gradlew assembleFromSourceDebug` or `./gradlew assembleFromBinDebug`.
+
+To run from Android Studio, React native `react.gradle` script requires `node` to be in path.
+on macOS environment variables can be exported to desktop applications by adding the following to your `.bashrc`/`.zshrc`:
+
+```sh
+launchctl setenv PATH $PATH
+```
+
 
 ### 3. Android Native tests
 

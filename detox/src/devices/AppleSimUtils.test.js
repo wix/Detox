@@ -122,7 +122,7 @@ describe('AppleSimUtils', () => {
           fail('should throw');
         } catch (e) {
           expect(e.message).toMatch(`Could not parse response from applesimutils, please update applesimutils and try again.
-      'brew uninstall applesimutils && brew tap wix/brew && brew install --HEAD applesimutils'`);
+      'brew uninstall applesimutils && brew tap wix/brew && brew install applesimutils'`);
         }
       });
     });
@@ -250,7 +250,7 @@ describe('AppleSimUtils', () => {
       await uut.install('udid', 'somePath');
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
-        `/usr/bin/xcrun simctl install udid somePath`,
+        `/usr/bin/xcrun simctl install udid "somePath"`,
         undefined,
         expect.anything(),
         1);

@@ -1,81 +1,66 @@
-# Debugging Apps in Xcode During a Test
+# Debugging in Xcode During Detox Tests
 
-> Advanced users might need to natively debug their app inside Xcode during a Detox test. This is mostly useful for invesigating weird crahses or when contributing to Detox itself.
+> This is mostly useful for investigating weird crashes or when contributing to Detox itself. **This workflow isn't standard. Don't use it unless you have a good reason.**
 
-This workflow isn't standard. Don't use it unless you have a good reason.
+### Add Detox Framework to Your Project
 
-<br>
+* Go to `node_modules/detox` and extract `Detox-ios-src.tbz`
+* Drag `Detox-ios-src/Detox.xcodeproj` into your Xcode project
+* Go to your project settings -> **General** and add **Detox.framework** to **Embedded Binaries**
 
-## Step 1: Add Detox framework to your project
+> NOTE: Apps should not be submitted to the App Store with the Detox framework linked. Follow this guide only to debug Detox issues in your project. Once finished, make sure to remove **Detox.framework** from your project.
 
-Open your Xcode project and drag `Detox.framework` from `node_modules/detox/Detox.framework` to your project.
+### Add launch arguments
 
-> NOTE: Apps should not be submitted to the App Store with the Detox framework linked. Follow this guide only to debug Detox issues in your project. Once finished, make sure to remove `Detox.framework` from your project.
+Under **Product** menu select **Scheme** -> **Edit Scheme** and select **Run** -> **Arguments** tab and add the following launch arguments to **Arguments Passed On Launch**:
 
-<br>
-
-## Step 2: Add launch arguments
-
-Edit your project scheme and add the following arguments to **Arguments Passed On Launch**:
-	
 ```
 -detoxServer
 ws://localhost:8099
 -detoxSessionId
-test
+<project_name>
 ```
 
-<br>
+> NOTE: Add each line as a separate line in Xcode.
 
-## Step 3: Add custom session to Detox config
+### Add 'None' Configuration to Detox Section
 
-Edit Detox config in `package.json` to [add a custom session](/docs/APIRef.Configuration.md#server-configuration) by adding the `session` key under the `detox` section:
-
-```json
-"detox": {
-  "session": {
-    "server": "ws://localhost:8099",
-    "sessionId": "test"
-  }
-}
-```
-
-<br>
-
-## Step 4: Add a special xcode configuration to Detox config
-
-Edit Detox config in `package.json` by adding a new configuration with type `ios.none` to the `configurations` key under the `detox` section:
+Edit the Detox section in `package.json` to add the following configuration:
 
 ```json
-"detox": {
-  "configurations": {
-    "xcode": {
-      "type": "ios.none"
+"ios.none": {
+    "binaryPath": "ios",
+    "type": "ios.none",
+    "name": "iPhone 8 Plus",
+    "session": {
+        "server": "ws://localhost:8099",
+        "sessionId": "<project_name>"
     }
-  }
 }
 ```
 
-> NOTE: This configuration will not handle simulator and application lifecycle, they will have to be provided manually (via Xcode "Play" button or `react-native run-ios`).
+> NOTE: This configuration will not handle simulator and application lifecycle, they will have to be provided manually (via running your application from Xcode).
 
-<br>
+### Run Detox Server Manually
 
-## Step 5: Run Detox server manually
-
-Type the following inside your project root:
+Run the following command in your project root directory:
 
 ```sh
 detox run-server
 ```
 
-<br>
+### Run Your Application
 
-## Step 6: Run Detox tests
+> NOTE: Before running, place breakpoints you wish to debug.
 
-Type the following inside your project root:
+Run your application from Xcode as you normally do.
+
+### Run Detox Tests
+
+Run the following command in your project root directory:
 
 ```sh
-detox test --configuration xcode
+detox test --configuration ios.none
 ```
 
-> NOTE: Tests that expect the app to be restarted via `device.relaunchApp()` will fail.
+> NOTE: Tests that call `device.relaunchApp()` may fail as this API is unavailable when using `ios.none` configuration types. Instead, use `it.only` to run specific tests and restart your app from Xcode.

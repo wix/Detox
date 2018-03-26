@@ -1,4 +1,7 @@
-# Detox for Android
+---
+id: Introduction.Android
+title: Detox for Android
+---
 
 ## Setup
 Detox 7 was updated to support Android gradle plugin 3.0.0. This is a breaking change that makes it impossible to support previous Android gradle plugin versions.
@@ -55,13 +58,7 @@ dependencies {
 }
 ```
 
-In `android/build.gradle` add this to`buildscript > dependencies`:
-
-```gradle
-classpath 'com.palantir:jacoco-coverage:0.4.0'
-```
-
-And in the same file you need to add this under `allprojects > repositories`:
+And in `android/build.gradle` you need to add this under `allprojects > repositories`:
 
 ```gradle
 buildscript {

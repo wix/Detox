@@ -1,4 +1,7 @@
-# Detox Development Roadmap
+---
+id: More.Roadmap
+title: Roadmap
+---
 
 We have some very interesting plans for Detox, this is the place to discuss and share them.
 

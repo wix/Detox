@@ -1,4 +1,7 @@
-# Developing Your App While Writing Tests
+---
+id: Guide.DevelopingWhileWritingTests
+title: Developing Your App While Writing Tests
+---
 
 > If your app requires active development, such as adding testID fields for tests, this is a good workflow. It allows you to work both on your app and your tests at the same time.
 

@@ -19,14 +19,20 @@ class example extends Component {
     };
   }
 
-  renderScreenButton(title, component) {
+  renderButton(title, onPressCallback) {
     return (
       <TouchableOpacity onPress={() => {
-        this.setState({screen: component});
+        onPressCallback();
       }}>
         <Text style={{color: 'blue', marginBottom: 20}}>{title}</Text>
       </TouchableOpacity>
     );
+  }
+
+  renderScreenButton(title, component) {
+    return this.renderButton(title, () => {
+      this.setState({screen: component});
+    });
   }
 
   renderText(text) {
@@ -52,10 +58,17 @@ class example extends Component {
 
   render() {
     if (this.state.notification) {
-      return this.renderText(this.state.notification);
+      console.log("notification:", this.state.notification);
+      if (this.state.notification.title) {
+        return this.renderText(this.state.notification.title);
+      } else {
+        return this.renderText(this.state.notification);
+      }
+
     }
 
     else if (this.state.url) {
+      console.log("url:", this.state.url);
       return this.renderText(this.state.url);
     }
 
@@ -78,20 +91,27 @@ class example extends Component {
           {this.renderScreenButton('Network', Screens.NetworkScreen)}
           {this.renderScreenButton('Animations', Screens.AnimationsScreen)}
           {this.renderScreenButton('Location', Screens.LocationScreen)}
+          {this.renderScreenButton('DatePicker', Screens.DatePickerScreen)}
+          {this.renderButton('Crash', () => {
+            throw new Error('Simulated Crash')
+          })}
+          {this.renderScreenButton('Shake', Screens.ShakeScreen)}
         </View>
       );
     }
     const Screen = this.state.screen;
     return (
-      <Screen />
+      <Screen/>
     );
   }
 
   _onNotification(notification) {
+    console.log("onNotification:", notification);
     this.setState({notification: notification.getAlert()});
   }
 
   _handleOpenURL(params) {
+    console.log("handleOpenURL:", params);
     this.setState({url: params.url});
   }
 }

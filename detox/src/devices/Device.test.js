@@ -2,18 +2,13 @@ const _ = require('lodash');
 const configurationsMock = require('../configurations.mock');
 
 const validScheme = configurationsMock.validOneDeviceAndSession;
-const validIosNoneScheme = configurationsMock.validOneIosNoneDeviceNoSession;
-
 const invalidDeviceNoBinary = configurationsMock.invalidDeviceNoBinary;
 const invalidDeviceNoDeviceName = configurationsMock.invalidDeviceNoDeviceName;
 
 describe('Device', () => {
   let fs;
-  let ws;
-  let cpp;
   let DeviceDriverBase;
   let SimulatorDriver;
-  let IosDriver;
   let Device;
   let device;
   let argparse;
@@ -23,22 +18,14 @@ describe('Device', () => {
   let client;
 
   beforeEach(async () => {
+    jest.mock('fs');
+    fs = require('fs');
+
     Device = require('./Device');
-    jest.mock('npmlog');
 
     jest.mock('../utils/sh');
     sh = require('../utils/sh');
     sh.cp = jest.fn();
-
-    jest.mock('fs');
-    fs = require('fs');
-    jest.mock('../ios/expect');
-    jest.mock('child-process-promise');
-    cpp = require('child-process-promise');
-
-    jest.mock('../utils/environment');
-
-    jest.mock('./AppleSimUtils');
 
     jest.mock('../client/Client');
     jest.mock('../utils/argparse');
@@ -47,7 +34,6 @@ describe('Device', () => {
     jest.mock('./DeviceDriverBase');
     DeviceDriverBase = require('./DeviceDriverBase');
     SimulatorDriver = require('./SimulatorDriver');
-    IosDriver = require('./IosDriver');
     Client = require('../client/Client');
 
     client = new Client(validScheme.session);
@@ -59,22 +45,6 @@ describe('Device', () => {
     const device = new Device(validScheme.configurations['ios.sim.release'], validScheme.session, new DeviceDriverBase(client));
     fs.existsSync.mockReturnValue(true);
     device.deviceDriver.defaultLaunchArgsPrefix.mockReturnValue('-');
-    device.deviceDriver.acquireFreeDevice.mockReturnValue('mockDeviceId');
-
-    return device;
-  }
-
-  function validSimulator() {
-    const device = new Device(validScheme.configurations['ios.sim.release'], validScheme.session, new SimulatorDriver(client));
-    fs.existsSync.mockReturnValue(true);
-    device.deviceDriver.acquireFreeDevice.mockReturnValue('mockDeviceId');
-
-    return device;
-  }
-
-  function validIosNone() {
-    const device = new Device(validIosNoneScheme.configurations['ios.none'], validScheme.session, new IosDriver(client));
-    fs.existsSync.mockReturnValue(true);
     device.deviceDriver.acquireFreeDevice.mockReturnValue('mockDeviceId');
 
     return device;
@@ -98,7 +68,6 @@ describe('Device', () => {
 
   it(`prepare() with when reuse is enabled should not uninstall and install`, async () => {
     device = validDevice();
-    cpp.exec.mockReturnValue(() => Promise.resolve());
     fs.existsSync.mockReturnValue(true);
     argparse.getArgValue.mockReturnValue(true);
 
@@ -180,22 +149,8 @@ describe('Device', () => {
       {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"});
   });
 
-  it(`relaunchApp() without delete when reuse is enabled should not uninstall and install`, async () => {
-    device = validSimulator();
-    argparse.getArgValue.mockReturnValue(true);
-    fs.existsSync.mockReturnValue(true);
-
-    await device.relaunchApp();
-
-    expect(device.deviceDriver.uninstallApp).not.toHaveBeenCalled();
-    expect(device.deviceDriver.installApp).not.toHaveBeenCalled();
-    expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
-      device._bundleId,
-      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"});
-  });
-
   it(`relaunchApp() with url should send the url as a param in launchParams`, async () => {
-    device = await  validDevice();
+    device = await validDevice();
     await device.relaunchApp({url: `scheme://some.url`});
 
     expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
@@ -204,19 +159,21 @@ describe('Device', () => {
   });
 
   it(`relaunchApp() with url should send the url as a param in launchParams`, async () => {
-    device = await  validDevice();
+    device = await validDevice();
     await device.relaunchApp({url: `scheme://some.url`, sourceApp: 'sourceAppBundleId'});
 
     expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
-      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-detoxURLOverride": "scheme://some.url", "-detoxSourceAppOverride":
-        "sourceAppBundleId"});
+      {
+        "-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-detoxURLOverride": "scheme://some.url", "-detoxSourceAppOverride":
+        "sourceAppBundleId"
+      });
   });
 
   it(`relaunchApp() with userNofitication should send the userNotification as a param in launchParams`, async () => {
     device = validDevice();
     fs.existsSync.mockReturnValue(true);
-    device.deviceDriver.createPushNotificationJson = jest.fn(() => 'url');
+    device.deviceDriver.createPayloadFile = jest.fn(() => 'url');
 
     await device.relaunchApp({userNotification: 'json'});
 
@@ -258,6 +215,13 @@ describe('Device', () => {
     await device.sendToHome();
 
     expect(device.deviceDriver.sendToHome).toHaveBeenCalledTimes(1);
+  });
+
+  it(`shake() should pass to device driver`, async () => {
+    device = validDevice();
+    await device.shake();
+
+    expect(device.deviceDriver.shake).toHaveBeenCalledTimes(1);
   });
 
   it(`terminateApp() should pass to device driver`, async () => {
@@ -312,7 +276,7 @@ describe('Device', () => {
     device = validDevice();
     await device.openURL({url: 'url'});
 
-    expect(device.deviceDriver.openURL).toHaveBeenCalledWith(device._deviceId, {url: 'url'});
+    expect(device.deviceDriver.deliverPayload).toHaveBeenCalledWith({url: 'url'});
   });
 
   it(`openURL(notAnObject) should pass to device driver`, async () => {
@@ -343,14 +307,23 @@ describe('Device', () => {
     device = validDevice();
     await device.sendUserNotification('notif');
 
-    expect(device.deviceDriver.sendUserNotification).toHaveBeenCalledWith('notif');
+    expect(device.deviceDriver.createPayloadFile).toHaveBeenCalledTimes(1);
+    expect(device.deviceDriver.deliverPayload).toHaveBeenCalledTimes(1);
+  });
+  
+  it(`sendUserActivity() should pass to device driver`, async () => {
+    device = validDevice();
+    await device.sendUserActivity('notif');
+
+    expect(device.deviceDriver.createPayloadFile).toHaveBeenCalledTimes(1);
+    expect(device.deviceDriver.deliverPayload).toHaveBeenCalledTimes(1);
   });
 
   it(`setLocation() should pass to device driver`, async () => {
     device = validDevice();
-    await device.setLocation(30, 30);
+    await device.setLocation(30.1, 30.2);
 
-    expect(device.deviceDriver.setLocation).toHaveBeenCalledWith(device._deviceId, '30', '30');
+    expect(device.deviceDriver.setLocation).toHaveBeenCalledWith(device._deviceId, '30.1', '30.2');
   });
 
   it(`setURLBlacklist() should pass to device driver`, async () => {
@@ -383,13 +356,6 @@ describe('Device', () => {
 
   it(`getPlatform() should pass to device driver`, async () => {
     device = validDevice();
-    device.getPlatform();
-
-    expect(device.deviceDriver.getPlatform).toHaveBeenCalledTimes(1);
-  });
-
-  it(`getPlatform() should pass to device driver`, async () => {
-    device = validSimulator();
     device.getPlatform();
 
     expect(device.deviceDriver.getPlatform).toHaveBeenCalledTimes(1);
@@ -433,7 +399,9 @@ describe('Device', () => {
     device.deviceDriver.getLogsPaths = () => ({stdout: '/t1', stderr: '/t2'});
     device.setArtifactsDestination('/tmp');
     await device.relaunchApp();
-    sh.cp = jest.fn(() => {throw 'exception sent by mocked cp'});
+    sh.cp = jest.fn(() => {
+      throw 'exception sent by mocked cp'
+    });
     await device.finalizeArtifacts();
   });
 
@@ -445,19 +413,31 @@ describe('Device', () => {
     expect(sh.cp).toHaveBeenCalledTimes(0);
   });
 
-  it(`launchApp({url:url}) should check if process is in background and use openURL() instead of launch args`, async () => {
+  it(`launchApp({newInstance: false}) should check if process is in background and reopen it`, async () => {
     const processId = 1;
     device = validDevice();
     device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
-    device.deviceDriver.launch.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
+    device.deviceDriver.launch.mockReturnValue(processId);
+
+    await device.prepare({launchApp: true});
+    await device.launchApp({newInstance: false});
+
+    expect(device.deviceDriver.deliverPayload).not.toHaveBeenCalled();
+  });
+
+  it(`launchApp({url: url}) should check if process is in background and use openURL() instead of launch args`, async () => {
+    const processId = 1;
+    device = validDevice();
+    device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
+    device.deviceDriver.launch.mockReturnValue(processId);
 
     await device.prepare({launchApp: true});
     await device.launchApp({url: 'url://me'});
 
-    expect(device.deviceDriver.openURL).toHaveBeenCalledTimes(1);
+    expect(device.deviceDriver.deliverPayload).toHaveBeenCalledTimes(1);
   });
 
-  it(`launchApp({url:url}) should check if process is in background and if not use launch args`, async () => {
+  it(`launchApp({url: url}) should check if process is in background and if not use launch args`, async () => {
     const launchParams = {url: 'url://me'};
     const processId = 1;
     const newProcessId = 2;
@@ -469,10 +449,10 @@ describe('Device', () => {
     await device.prepare();
     await device.launchApp(launchParams);
 
-    expect(device.deviceDriver.openURL).toHaveBeenCalledTimes(0);
+    expect(device.deviceDriver.deliverPayload).not.toHaveBeenCalled();
   });
 
-  it(`launchApp({url:url}) should check if process is in background and use openURL() instead of launch args`, async () => {
+  it(`launchApp({url: url}) should check if process is in background and use openURL() instead of launch args`, async () => {
     const launchParams = {url: 'url://me'};
     const processId = 1;
 
@@ -483,24 +463,41 @@ describe('Device', () => {
     await device.prepare({launchApp: true});
     await device.launchApp(launchParams);
 
-    expect(device.deviceDriver.openURL).toHaveBeenCalledTimes(1);
+    expect(device.deviceDriver.deliverPayload).toHaveBeenCalledWith({delayPayload: true, url: "url://me"});
   });
 
-  it(`launchApp({userNotification:userNotification}) should check if process is in background and if it is use sendUserNotification`, async () => {
+  it(`launchApp({userActivity: userActivity}) should check if process is in background and if it is use deliverPayload`, async () => {
+    const launchParams = {userActivity: 'userActivity'};
+    const processId = 1;
+
+    device = validDevice();
+    device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
+    device.deviceDriver.launch.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
+    device.deviceDriver.createPayloadFile = () => "url";
+
+    await device.prepare({launchApp: true});
+    await device.launchApp(launchParams);
+
+    expect(device.deviceDriver.deliverPayload).toHaveBeenCalledWith({delayPayload: true, detoxUserActivityDataURL: "url"});
+  });
+
+
+  it(`launchApp({userNotification: userNotification}) should check if process is in background and if it is use deliverPayload`, async () => {
     const launchParams = {userNotification: 'notification'};
     const processId = 1;
 
     device = validDevice();
     device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
     device.deviceDriver.launch.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
+	device.deviceDriver.createPayloadFile = () => "url";
 
     await device.prepare({launchApp: true});
     await device.launchApp(launchParams);
 
-    expect(device.deviceDriver.sendUserNotification).toHaveBeenCalledWith(launchParams.userNotification);
+    expect(device.deviceDriver.deliverPayload).toHaveBeenCalledTimes(1);
   });
 
-  it(`launchApp({userNotification:userNotification}) should check if process is in background and if not use launch args`, async () => {
+  it(`launchApp({userNotification: userNotification}) should check if process is in background and if not use launch args`, async () => {
     const launchParams = {userNotification: 'notification'};
     const processId = 1;
     const newProcessId = 2;
@@ -512,7 +509,27 @@ describe('Device', () => {
     await device.prepare();
     await device.launchApp(launchParams);
 
-    expect(device.deviceDriver.sendUserNotification).toHaveBeenCalledTimes(0);
+    expect(device.deviceDriver.deliverPayload).not.toHaveBeenCalled();
+  });
+  
+  it(`launchApp({userNotification: userNotification, url: url}) should fail`, async () => {
+    const launchParams = {userNotification: 'notification', url: 'url://me'};
+    const processId = 1;
+
+    device = validDevice();
+    device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
+    device.deviceDriver.launch.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
+
+    await device.prepare();
+	
+    try {
+      await device.launchApp(launchParams);
+      fail('should throw');
+    } catch (ex) {
+      expect(ex).toBeDefined();
+    }
+
+    expect(device.deviceDriver.deliverPayload).not.toHaveBeenCalled();
   });
 
   async function launchAndTestBinaryPath(configuration) {

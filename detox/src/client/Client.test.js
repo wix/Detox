@@ -33,18 +33,18 @@ describe('Client', () => {
     }
   });
 
-  it(`sendUserNotification() - should receive ready from device and resolve`, async () => {
+  it(`deliverPayload() - should send an 'deliverPayload' action and resolve when 'deliverPayloadDone' returns`, async () => {
     await connect();
-    client.ws.send.mockReturnValueOnce(response("userNotificationDone", {}, 1));
-    await client.sendUserNotification();
+    client.ws.send.mockReturnValueOnce(response("deliverPayloadDone", {}, 1));
+    await client.deliverPayload({url: 'url'});
 
     expect(client.ws.send).toHaveBeenCalledTimes(2);
   });
 
-  it(`openURL() - should send an 'openURL' action and resolve when 'openURLDone returns' `, async () => {
+  it(`shake() - should send a 'shake' action and resolve when 'shakeDeviceDone' returns`, async () => {
     await connect();
-    client.ws.send.mockReturnValueOnce(response("openURLDone", {}, 1));
-    await client.openURL({url: 'url'});
+    client.ws.send.mockReturnValueOnce(response("shakeDeviceDone", {}, 1));
+    await client.shake();
 
     expect(client.ws.send).toHaveBeenCalledTimes(2);
   });
@@ -147,6 +147,25 @@ describe('Client', () => {
       await client.execute(call);
     } catch (ex) {
       expect(ex).toBeDefined();
+    }
+  });
+
+  it(`save a pending error if AppWillTerminateWithError event is sent to tester`, async () => {
+    client.ws.setEventCallback = jest.fn();
+    await connect();
+
+    triggerAppWillTerminateWithError();
+
+    expect(client.getPendingCrashAndReset()).toBeDefined();
+
+    function triggerAppWillTerminateWithError() {
+      const event = JSON.stringify({
+        type: "AppWillTerminateWithError",
+        params: {errorDetails: "someDetails"},
+        messageId: -10000
+      });
+
+      client.ws.setEventCallback.mock.calls[0][1](event);
     }
   });
 

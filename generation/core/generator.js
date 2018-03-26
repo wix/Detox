@@ -58,10 +58,12 @@ module.exports = function({
 	}
 
 	function filterMethodsWithUnsupportedParams(method) {
-		return method.args.reduce(
-			(carry, methodArg) => carry && supportedTypes.includes(methodArg.type),
-			true
-		);
+		return method.args.reduce((carry, methodArg) => {
+			if (methodArg === null) {
+				console.error(method);
+			}
+			return carry && supportedTypes.includes(methodArg.type);
+		}, true);
 	}
 
 	function createExport(json) {
@@ -161,7 +163,7 @@ module.exports = function({
 	}
 
 	// These types need no wrapping with {type: ..., value: }
-	const plainArgumentTypes = ["id<GREYMatcher>"];
+	const plainArgumentTypes = ["id<GREYMatcher>", "String"];
 	function shouldBeWrapped({ type }) {
 		return !plainArgumentTypes.includes(type);
 	}
@@ -178,7 +180,7 @@ module.exports = function({
 								t.identifier("value"),
 								addArgumentContentSanitizerCall(arg, json.name)
 							)
-						])
+					  ])
 					: addArgumentContentSanitizerCall(arg, json.name)
 		);
 

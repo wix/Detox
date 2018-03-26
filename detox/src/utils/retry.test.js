@@ -23,8 +23,7 @@ describe('retry', () => {
 
   it(`a promise that rejects two times, with two retries`, async() => {
     const mockFn = jest.fn()
-                       .mockReturnValueOnce(Promise.reject('a thing'))
-                       .mockReturnValueOnce(Promise.reject('a thing'));
+                       .mockReturnValue(Promise.reject(new Error('a thing')));
     try {
       await retry({retries: 2, interval: 1}, mockFn);
       fail('expected retry to fail to throw');

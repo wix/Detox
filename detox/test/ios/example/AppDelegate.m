@@ -1,9 +1,57 @@
 #import "AppDelegate.h"
+#import <React/RCTEventDispatcher.h>
+#import <React/RCTBridgeModule.h>
 #import <React/RCTRootView.h>
 #import <React/RCTPushNotificationManager.h>
 #import <React/RCTLinkingManager.h>
+@import CoreSpotlight;
 
 @import UserNotifications;
+
+@interface ShakeEventEmitter : RCTEventEmitter @end
+static ShakeEventEmitter* _instance;
+@implementation ShakeEventEmitter
+
+RCT_EXPORT_MODULE();
+
+- (instancetype)init
+{
+	self = [super init];
+	_instance = self;
+	return self;
+}
+
+- (NSArray<NSString *> *)supportedEvents
+{
+	return @[@"ShakeEvent"];
+}
+
+- (void)sendShakeEvent
+{
+	[self sendEventWithName:@"ShakeEvent" body:nil];
+}
+
+@end
+
+@interface ShakeDetectViewController : UIViewController
+@property (nonatomic, weak) RCTBridge* bridge;
+@end
+@implementation ShakeDetectViewController
+
+- (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event
+{
+	if(event.subtype == UIEventSubtypeMotionShake)
+	{
+		[_instance sendShakeEvent];
+	}
+	else
+	{
+		//This will disable RN dev menu even in debug as shake events are not passed further in responder chain.
+		[super motionEnded:motion withEvent:event];
+	}
+}
+
+@end
 
 @interface AppDelegate () <UNUserNotificationCenterDelegate>
 
@@ -33,7 +81,8 @@
 	rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
 	
 	self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-	UIViewController *rootViewController = [UIViewController new];
+	ShakeDetectViewController *rootViewController = [ShakeDetectViewController new];
+	rootViewController.bridge = rootView.bridge;
 	rootViewController.view = rootView;
 	self.window.rootViewController = rootViewController;
 	[self.window makeKeyAndVisible];
@@ -45,23 +94,36 @@
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options
 {
-    return [RCTLinkingManager application:application openURL:url
+    return [RCTLinkingManager application:application
+								  openURL:url
                         sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
                                annotation:options[UIApplicationOpenURLOptionsAnnotationKey]];
-	return YES;
 }
 
-// Required for the notification event. You must call the completion handler after handling the remote notification.
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
-fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
 	[RCTPushNotificationManager didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
 }
 
-// Required for the localNotification event.
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
 {
 	[RCTPushNotificationManager didReceiveLocalNotification:notification];
+}
+
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler
+{
+	if([userActivity.activityType isEqualToString:CSSearchableItemActionType])
+	{
+		NSString* identifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];
+		
+		//Fake it here as if it is a URL, but actually it's a searchable item identifier.
+		return [RCTLinkingManager application:application
+									  openURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", identifier]]
+							sourceApplication:nil
+								   annotation:nil];
+	}
+	
+	return [RCTLinkingManager application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
 }
 
 @end

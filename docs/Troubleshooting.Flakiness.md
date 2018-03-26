@@ -1,4 +1,7 @@
-# Dealing With Flakiness in Tests
+---
+id: Troubleshooting.Flakiness
+title: Dealing With Flakiness in Tests
+---
 
 > What is a flaky test?
 

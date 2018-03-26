@@ -11,25 +11,18 @@ class IosDriver extends DeviceDriverBase {
   constructor(client) {
     super(client);
 
-    const expect = require('../ios/expect');
-    expect.exportGlobals();
-    expect.setInvocationManager(new InvocationManager(client));
+    this.expect = require('../ios/expect');
+    this.expect.setInvocationManager(new InvocationManager(client));
   }
 
-  createPushNotificationJson(notification) {
-    const notificationFilePath = path.join(__dirname, `detox`, `notifications`, `notification.json`);
-    this.ensureDirectoryExistence(notificationFilePath);
+  exportGlobals() {
+    this.expect.exportGlobals();
+  }
+
+  createPayloadFile(notification) {
+    const notificationFilePath = path.join(this.createRandomDirectory(), `payload.json`);
     fs.writeFileSync(notificationFilePath, JSON.stringify(notification, null, 2));
     return notificationFilePath;
-  }
-
-  async sendUserNotification(notification) {
-    const notificationFilePath = this.createPushNotificationJson(notification);
-    await super.sendUserNotification({detoxUserNotificationDataURL: notificationFilePath});
-  }
-
-  async openURL(deviceId, params) {
-    this.client.openURL(params);
   }
 
   async setURLBlacklist(urlList) {
@@ -42,6 +35,10 @@ class IosDriver extends DeviceDriverBase {
 
   async disableSynchronization() {
     await this.client.execute(GREYConfiguration.disableSynchronization());
+  }
+
+  async shake(deviceId) {
+    return await this.client.shake();
   }
 
   async setOrientation(deviceId, orientation) {

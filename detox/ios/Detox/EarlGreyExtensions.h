@@ -7,6 +7,7 @@
 //
 
 #import <EarlGrey/EarlGrey.h>
+#import "EarlGrey+Detox.h"
 
 /**
  Expose provate Earl Grey methods

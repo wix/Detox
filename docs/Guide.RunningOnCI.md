@@ -1,4 +1,7 @@
-# Running Tests on CI (Travis or Bitrise)
+---
+id: Guide.RunningOnCI
+title: Running On CI
+---
 
 > When your test suite is finally ready, it should be set up to run automatically on your CI server on every git push. This will alert you if new changes to the app break existing functionality.
 
@@ -65,6 +68,8 @@ env:
   - NODE_VERSION=stable
 
 install:
+- brew tap wix/brew
+- brew install applesimutils
 - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
 - export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 - nvm install $NODE_VERSION
@@ -131,7 +136,7 @@ workflows:
             #!/bin/bash
 
             brew tap wix/brew
-            brew install applesimutils --HEAD
+            brew install applesimutils
         title: Install Detox Utils
     - script:
         inputs:

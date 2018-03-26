@@ -7,7 +7,7 @@
 //
 
 #import "TestRunner.h"
-#import "MethodInvocation.h"
+#import "DTXMethodInvocation.h"
 #import "TestFailureHandler.h"
 
 @interface TestRunner()
@@ -20,14 +20,14 @@
 
 @implementation TestRunner
 
-- (void) initEarlGrey
+- (void)initEarlGrey
 {
     [EarlGrey setFailureHandler:self.failureHandler];
     [[GREYConfiguration sharedInstance] setValue:@(NO) forConfigKey:kGREYConfigKeyAnalyticsEnabled];
     //[[GREYConfiguration sharedInstance] setValue:@".*localhost.*" forConfigKey:kGREYConfigKeyURLBlacklistRegex];
 }
 
-- (void) cleanupEarlGrey
+- (void)cleanupEarlGrey
 {
     // this triggers grey_tearDown in GREYAutomationSetup
     [[NSNotificationCenter defaultCenter] postNotificationName:@"GREYXCTestCaseInstanceDidFinish"
@@ -48,7 +48,7 @@
     return self;
 }
 
-- (void) cleanup
+- (void)cleanup
 {
     [self cleanupEarlGrey];
 }
@@ -61,11 +61,11 @@
     }
 }
 
-- (void) invoke:(NSDictionary*)params withMessageId: (NSNumber *)messageId
+- (void)invoke:(NSDictionary*)params withMessageId:(NSNumber *)messageId
 {
 	self.currentMessageId = messageId;
     grey_execute_async(^{
-        id res = [MethodInvocation invoke:params onError:^(NSString *error)
+        id res = [DTXMethodInvocation invoke:params onError:^(NSString *error)
         {
             if (self.delegate) [self.delegate testRunnerOnError:error withMessageId:messageId];
         }];

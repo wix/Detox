@@ -49,7 +49,12 @@ class ADB {
   }
 
   async install(deviceId, apkPath) {
-    await this.adbCmd(deviceId, `install -r -g ${apkPath}`);
+    const apiLvl = await this.apiLevel(deviceId);
+    if (apiLvl >= 24) {
+      await this.adbCmd(deviceId, `install -r -g ${apkPath}`);
+    } else {
+      await this.adbCmd(deviceId, `install -rg ${apkPath}`);
+    }    
   }
 
   async uninstall(deviceId, appId) {
@@ -81,6 +86,11 @@ class ADB {
       await this.sleep(2000);
       return await this.waitForBootComplete(deviceId);
     }
+  }
+
+  async apiLevel(deviceId) {
+    const lvl = await this.shell(deviceId, `getprop ro.build.version.sdk`);
+    return Number(lvl);
   }
 
   async adbCmd(deviceId, params) {

@@ -4,7 +4,7 @@ const _ = require('lodash');
 const program = require('commander');
 const path = require('path');
 const cp = require('child_process');
-program.description(`[convince method] run the command defined in 'configuration.build'`)
+program.description(`[convenience method] run the command defined in 'configuration.build'`)
        .option('-c, --configuration [device configuration]', 'Select a device configuration from your defined configurations,'
                                                              + 'if not supplied, and there\'s only one configuration, detox will default to it')
   .parse(process.argv);
