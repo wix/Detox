@@ -3,7 +3,7 @@ id: Guide.Expo
 title: Expo
 ---
 
-## Usage with Expo
+## Usage with Expo (iOS)
 
 - Install `detox` and `detox-expo-helpers` (yarn or npm)
 - Add `detox` configuration to [package.json](https://github.com/expo/with-detox-tests/blob/master/package.json#L21-L29):
@@ -36,6 +36,10 @@ beforeEach(async () => {
 ```
 
 That's it! The rest of what you do should be similar to normal detox settings. If you have questions, [tweet @peterpme](https://twitter.com/peterpme)
+
+## Usage with Expo (Android)
+
+- TBD
 
 ### Example App
 The [example app](https://github.com/expo/with-detox-tests) is outdated but the code is exactly the same. I have a PR open that'll make it runnable again.
