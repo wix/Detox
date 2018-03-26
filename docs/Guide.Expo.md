@@ -39,7 +39,7 @@ That's it! The rest of what you do should be similar to normal detox settings. I
 
 ## Usage with Expo (Android)
 
-- TBD
+- We haven't personally tried getting this to work on Android. If you have, feel free to open up a PR!
 
 ### Example App
 The [example app](https://github.com/expo/with-detox-tests) is outdated but the code is exactly the same. I have a PR open that'll make it runnable again.
