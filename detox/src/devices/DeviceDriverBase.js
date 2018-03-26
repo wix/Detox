@@ -1,5 +1,6 @@
 const _ = require('lodash');
-const fs = require('fs');
+const fs = require('fs-extra');
+const os = require('os');
 const path = require('path');
 
 class DeviceDriverBase {
@@ -43,8 +44,8 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async openURL(params) {
-    return await Promise.resolve('');
+  async deliverPayload(params) {
+    return await this.client.deliverPayload(params);
   }
 
   async setLocation(lat, lon) {
@@ -59,11 +60,7 @@ class DeviceDriverBase {
     return await this.client.reloadReactNative();
   }
 
-  async sendUserNotification(params) {
-    await this.client.sendUserNotification(params);
-  }
-
-  createPushNotificationJson(notification) {
+  createPayloadFile(notification) {
 
   }
 
@@ -102,16 +99,17 @@ class DeviceDriverBase {
   defaultLaunchArgsPrefix() {
     return '';
   }
-
-  ensureDirectoryExistence(filePath) {
-    const dirname = path.dirname(filePath);
-    if (fs.existsSync(dirname)) {
-      return true;
+  
+  createRandomDirectory() {
+    const randomDir = fs.mkdtempSync(path.join(os.tmpdir(), 'detoxrand-'));
+    fs.ensureDirSync(randomDir);
+    return randomDir;
+  }
+  
+  cleanupRandomDirectory(fileOrDir) {
+    if(path.basename(fileOrDir).startsWith('detoxrand-')) {
+      fs.removeSync(fileOrDir);
     }
-
-    this.ensureDirectoryExistence(dirname);
-    fs.mkdirSync(dirname);
-    return true;
   }
 
   getBundleIdFromBinary(appPath) {

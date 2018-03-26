@@ -91,9 +91,13 @@ class AndroidDriver extends DeviceDriverBase {
     return this.instrumentationProcess.pid;
   }
 
-  async openURL(deviceId, params) {
-    const call = invoke.call(invoke.Android.Class("com.wix.detox.Detox"), 'startActivityFromUrl', invoke.Android.String(params.url));
-    await this.invocationManager.execute(call);
+  async deliverPayload(params) {
+    if(params.url) {
+      const call = invoke.call(invoke.Android.Class("com.wix.detox.Detox"), 'startActivityFromUrl', invoke.Android.String(params.url));
+      await this.invocationManager.execute(call);
+    }
+    
+    //The other types are not yet supported.
   }
 
   async sendToHome(deviceId, params) {

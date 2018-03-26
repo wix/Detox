@@ -27,10 +27,6 @@ class Client {
     await this.sendAction(new actions.ReloadReactNative());
   }
 
-  async sendUserNotification(params) {
-    await this.sendAction(new actions.SendUserNotification(params));
-  }
-
   async waitUntilReady() {
     await this.sendAction(new actions.Ready());
     this.isConnected = true;
@@ -56,8 +52,8 @@ class Client {
     await this.sendAction(new actions.Shake());
   }
 
-  async openURL(params) {
-    await this.sendAction(new actions.OpenURL(params));
+  async deliverPayload(params) {
+    await this.sendAction(new actions.DeliverPayload(params));
   }
 
   async execute(invocation) {

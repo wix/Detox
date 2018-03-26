@@ -75,6 +75,7 @@
       "AAPT.js",
       "ADB.js",
       "fsext.js",
+      "debug.js",
       "src/ios/earlgreyapi",
       "src/android/espressoapi"
     ],
