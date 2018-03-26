@@ -34,7 +34,7 @@ describe('expect', async () => {
 
   it(`element by type`, async () => {
     await e.expect(e.element(e.by.type('test'))).toBeVisible();
-    await e.expect(e.element(e.by.type('UIPickerView')).setColumnToValue(1,"6"));
+    await e.element(e.by.type('UIPickerView')).setColumnToValue(1,"6");
   });
 
   it(`element by traits`, async () => {
