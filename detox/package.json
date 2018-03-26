@@ -4,7 +4,7 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "version": "7.2.0",
+  "version": "7.3.0",
   "bin": {
     "detox": "local-cli/detox.js"
   },
