@@ -46,7 +46,7 @@ Grant or deny runtime permissions for your application.
 await device.launchApp({permissions: {calendar: 'YES'}});
 ```
 Detox uses [AppleSimUtils](https://github.com/wix/AppleSimulatorUtils) on iOS to support this functionality. Read about the different types of permissions and how to set them in AppleSimUtils' Readme.
-Check out Detox's [own test suite](../detox/test/e2e/l-permissions.js)
+Check out Detox's [own test suite](../detox/test/e2e/13-permissions.js)
 
 ##### 3. Launch from URL
 Mock opening the app from URL to test your app's deep link handling mechanism.
@@ -143,14 +143,14 @@ await device.terminateApp('other.bundle.id');
 ### `device.sendToHome()`
 Send application to background by bringing `com.apple.springboard` to the foreground.<br>
 Combining `sendToHome()` with `launchApp({newInstance: false})` will simulate app coming back from background.<br>
-Check out Detox's [own test suite](../detox/test/e2e/f-simulator.js)
+Check out Detox's [own test suite](../detox/test/e2e/6-device.js)
 
 ```js
 await device.sendToHome();
 await device.launchApp({newInstance: false});
 // app returned from background, do stuff
 ```
-Check out Detox's [own test suite](../detox/test/e2e/f-device.js)
+Check out Detox's [own test suite](../detox/test/e2e/6-device.js)
 
 ### `device.reloadReactNative()`
 If this is a React Native app, reload the React Native JS bundle. This action is much faster than `device.launchApp()`, and can be used if you just need to reset your React Native logic.
@@ -178,12 +178,12 @@ await device.installApp('other.bundle.id');
 ### `device.openURL({url, sourceApp[optional]})`
 Mock opening the app from URL. `sourceApp` is an optional parameter to specify source application bundle id.<br>
 Read more in [Mocking Open From URL](APIRef.MockingOpenFromURL.md) section.<br>
-Check out Detox's [own test suite](../detox/test/e2e/n-deep-links.js)
+Check out Detox's [own test suite](../detox/test/e2e/15-urls.js)
 
 ### `device.sendUserNotification(params)`
 Mock handling of received user notification when app is in foreground.<br>
 Read more in [Mocking User Notifications](APIRef.MockingUserNotifications.md) section.<br>
-Check out Detox's [own test suite](../detox/test/e2e/k-user-notifications.js)
+Check out Detox's [own test suite](../detox/test/e2e/11-user-notifications.js)
 
 ### `device.sendUserActivity(params)`
 Mock handling of received user activity when app is in foreground.<br>
@@ -193,7 +193,7 @@ Check out Detox's [own test suite](../detox/test/e2e/17-user-activities.js)
 ### `device.setOrientation(orientation)`
 Takes `"portrait"` or `"landscape"` and rotates the device to the given orientation.
 Currently only available in the iOS Simulator.<br>
-Check out Detox's [own test suite](../detox/test/e2e/f-device.js)
+Check out Detox's [own test suite](../detox/test/e2e/6-device.js)
 
 ### `device.setLocation(lat, lon)`
 >Note: `setLocation` is dependent on `fbsimctl`. if `fbsimctl` is not installed, the command will fail, asking for it to be installed.
