@@ -7,7 +7,6 @@
 //
 
 #import "ReactNativeSupport.h"
-#import "ReactNativeHeaders.h"
 
 #import "EarlGreyExtensions.h"
 
@@ -82,24 +81,14 @@ dispatch_queue_t wx_dispatch_queue_create(const char *_Nullable label, dispatch_
 static int (*__WX_UIApplicationMain_orig)(int argc, char * _Nonnull * _Null_unspecified argv, NSString * _Nullable principalClassName, NSString * _Nullable delegateClassName);
 static int __WX_UIApplicationMain(int argc, char * _Nonnull * _Null_unspecified argv, NSString * _Nullable principalClassName, NSString * _Nullable delegateClassName)
 {
-	Class cls = NSClassFromString(@"RCTJSCExecutor");
-	Method m = NULL;
-	if(cls != NULL)
+	//Modern RN
+	Class cls = NSClassFromString(@"RCTCxxBridge");
+	Method m = class_getClassMethod(cls, NSSelectorFromString(@"runRunLoop"));
+	if(m == NULL)
 	{
-		//Legacy RN
-		m = class_getClassMethod(cls, NSSelectorFromString(@"runRunLoopThread"));
+		m = class_getInstanceMethod(cls, NSSelectorFromString(@"runJSRunLoop"));
 	}
-	else
-	{
-		//Modern RN
-		cls = NSClassFromString(@"RCTCxxBridge");
-		m = class_getClassMethod(cls, NSSelectorFromString(@"runRunLoop"));
-		if(m == NULL)
-		{
-			m = class_getInstanceMethod(cls, NSSelectorFromString(@"runJSRunLoop"));
-		}
-	}
-	
+
 	if(m != NULL)
 	{
 		orig_runRunLoopThread = (void(*)(id, SEL))method_getImplementation(m);
@@ -183,21 +172,20 @@ void setupForTests()
 		return;
 	}
 	
-	id<RN_RCTBridge> bridge = [NSClassFromString(@"RCTBridge") valueForKey:@"currentBridge"];
+	id bridge = [NSClassFromString(@"RCTBridge") valueForKey:@"currentBridge"];
 	
-	SEL reqRelSel = NSSelectorFromString(@"requestReload");
+	SEL reqRelSel = NSSelectorFromString(@"reload");
 	if([bridge respondsToSelector:reqRelSel])
 	{
 		//Call RN public API to request reload.
-		[bridge requestReload];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+		[bridge performSelector:reqRelSel];
+#pragma clang diagnostic pop
+		return;
 	}
-	else
-	{
-		//Legacy call to reload RN.
-		[[NSNotificationCenter defaultCenter] postNotificationName:RCTReloadNotification
-															object:nil
-														  userInfo:nil];
-	}
+
+	NSAssert(false, @"Unable to reload due to missing API.");
 }
 
 + (void)waitForReactNativeLoadWithCompletionHandler:(void (^)(void))handler

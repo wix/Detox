@@ -162,8 +162,7 @@ NSDictionary* _prettyPrintAppStateTracker(GREYAppStateTracker* tracker)
 	NSString* stateString = _prettyPrintAppState(tracker.currentState);
 	rv[@"appState"] = stateString;
 	
-	
-	NSArray<__DTXDeallocSafeProxy*>* allElements = __tarckedObjectsMapping.allValues;
+	NSArray<__DTXDeallocSafeProxy*>* allElements = [__tarckedObjectsMapping.allValues copy];
 	
 	NSMutableArray* elems = [NSMutableArray new];
 	NSMutableArray* URLs = [NSMutableArray new];
