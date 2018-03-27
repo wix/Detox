@@ -6,8 +6,6 @@
 //  Copyright © 2018 Wix. All rights reserved.
 //
 
-#if swift(>=3.2)
-
 import UIKit
 
 private struct DetoxUserActivityKeys {
@@ -71,5 +69,3 @@ public class DetoxUserActivityDispatcher: NSObject {
 		_ = appDelegate.application?(UIApplication.shared, continue: userActivity) { objects in }
 	}
 }
-
-#endif
