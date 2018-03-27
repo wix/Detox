@@ -13,7 +13,9 @@
 
 @property (class, nonatomic, strong, readonly) DetoxAppDelegateProxy* currentAppDelegateProxy;
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_10_3
 - (void)__dtx_dispatchUserActivityFromDataURL:(NSURL*)userActivityDataURL delayUntilActive:(BOOL)delay;
+#endif
 - (void)__dtx_dispatchUserNotificationFromDataURL:(NSURL*)userNotificationDataURL delayUntilActive:(BOOL)delay;
 - (void)__dtx_dispatchOpenURL:(NSURL*)URL options:(NSDictionary*)options delayUntilActive:(BOOL)delay;
 

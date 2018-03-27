@@ -5,7 +5,7 @@ matrix:
   include:
     - language: objective-c
       os: osx
-      osx_image: xcode9
+      osx_image: xcode9.2
       env:
         - REACT_NATIVE_VERSION=0.53.3
       install:
@@ -14,7 +14,7 @@ matrix:
       - ./scripts/ci.ios.sh
     - language: objective-c
       os: osx
-      osx_image: xcode9
+      osx_image: xcode9.2
       env:
         - REACT_NATIVE_VERSION=0.49.3
       install:
