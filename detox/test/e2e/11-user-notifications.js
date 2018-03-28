@@ -1,44 +1,47 @@
-describe(':ios: User Notifications', () => {
+const DetoxConstants = require('detox').DetoxConstants;
+const debug = require('detox').Debug;
+
+describe.only(':ios: User Notifications', () => {
   it('Init from push notification', async () => {
     await device.launchApp({newInstance: true, userNotification: userNotificationPushTrigger});
-    await expect(element(by.text('From push'))).toBeVisible();
+    await expect(element(by.text('https://push.detox.dtx'))).toBeVisible();
   });
 
   xit('Init from calendar notification', async () => {
     await device.launchApp({newInstance: true, userNotification: userNotificationCalendarTrigger});
-    await expect(element(by.text('From calendar'))).toBeVisible();
+    await expect(element(by.text('https://calendar.detox.dtx'))).toBeVisible();
   });
 
   it('Background push notification', async () => {
     await device.launchApp({newInstance: true});
     await device.sendToHome();
     await device.launchApp({newInstance: false, userNotification: userNotificationPushTrigger});
-    await expect(element(by.text('From push'))).toBeVisible();
+    await expect(element(by.text('https://push.detox.dtx'))).toBeVisible();
   });
 
   it('Background calendar notification', async () => {
     await device.launchApp({newInstance: true});
     await device.sendToHome();
     await device.launchApp({newInstance: false, userNotification: userNotificationCalendarTrigger});
-    await expect(element(by.text('From calendar'))).toBeVisible();
+    await expect(element(by.text('https://calendar.detox.dtx'))).toBeVisible();
   });
 
   it('Foreground push notifications', async () => {
     await device.launchApp({newInstance: true});
-    await device.sendUserNotification(userNotificationCalendarTrigger);
-    await expect(element(by.text('From calendar'))).toBeVisible();
+    await device.sendUserNotification(userNotificationPushTrigger);
+    await expect(element(by.text('https://push.detox.dtx'))).toBeVisible();
   });
 
   it('Foreground calendar notifications', async () => {
     await device.launchApp({newInstance: true});
     await device.sendUserNotification(userNotificationCalendarTrigger);
-    await expect(element(by.text('From calendar'))).toBeVisible();
+    await expect(element(by.text('https://calendar.detox.dtx'))).toBeVisible();
   });
 });
 
 const userNotificationPushTrigger = {
   "trigger": {
-    "type": "push"
+    "type": DetoxConstants.userNotificationTriggers.push,
   },
   "title": "From push",
   "subtitle": "Subtitle",
@@ -55,7 +58,7 @@ const userNotificationPushTrigger = {
 
 const userNotificationCalendarTrigger = {
   "trigger": {
-    "type": "calendar",
+    "type": DetoxConstants.userNotificationTriggers.calendar,
     "date-components": {
       "era": 1,
       "year": 2017,

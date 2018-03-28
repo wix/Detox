@@ -54,6 +54,9 @@ RCT_EXPORT_MODULE();
 @end
 
 @interface AppDelegate () <UNUserNotificationCenterDelegate>
+{
+	RCTRootView* _rootView;
+}
 
 @end
 
@@ -74,16 +77,16 @@ RCT_EXPORT_MODULE();
 	jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
 	
-	RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
+	_rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
 														moduleName:@"example"
 												 initialProperties:nil
 													 launchOptions:launchOptions];
-	rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
 	
+	_rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
 	self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 	ShakeDetectViewController *rootViewController = [ShakeDetectViewController new];
-	rootViewController.bridge = rootView.bridge;
-	rootViewController.view = rootView;
+	rootViewController.bridge = _rootView.bridge;
+	rootViewController.view = _rootView;
 	self.window.rootViewController = rootViewController;
 	[self.window makeKeyAndVisible];
 	
@@ -96,18 +99,42 @@ RCT_EXPORT_MODULE();
 {
     return [RCTLinkingManager application:application
 								  openURL:url
-                        sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
-                               annotation:options[UIApplicationOpenURLOptionsAnnotationKey]];
+								  options:options];
 }
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
+- (void)_fakeItWithAWebUserActivityForString:(NSString*)string
 {
-	[RCTPushNotificationManager didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
+	NSUserActivity* fakeActivity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
+	fakeActivity.webpageURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://%@.detox.dtx", string]];
+	
+	void (^sendIt)(void) = ^ {
+		[RCTLinkingManager application:UIApplication.sharedApplication continueUserActivity:fakeActivity restorationHandler:nil];
+	};
+	
+	if(_rootView.bridge.isLoading)
+	{
+		//React Native is buggy
+		__block __weak id observer;
+		observer = [[NSNotificationCenter defaultCenter] addObserverForName:@"itFinallyRegistered" object:nil queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
+			sendIt();
+			[[NSNotificationCenter defaultCenter] removeObserver:observer];
+		}];
+	}
+	else
+	{
+		sendIt();
+	}
 }
 
-- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)(void))completionHandler
 {
-	[RCTPushNotificationManager didReceiveLocalNotification:notification];
+	NSString* triggerClassName = NSStringFromClass(response.notification.request.trigger.class);
+	NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"UN(.*)NotificationTrigger" options:0 error:NULL];
+	NSArray* matches = [regex matchesInString:triggerClassName options:0 range:NSMakeRange(0, triggerClassName.length)];
+	NSString* string = [[triggerClassName substringWithRange:[matches.firstObject rangeAtIndex:1]] lowercaseString];
+	
+	[self _fakeItWithAWebUserActivityForString:string];
+	completionHandler();
 }
 
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler

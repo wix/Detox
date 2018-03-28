@@ -114,7 +114,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Users/lnatan/Desktop/user_notification.json"
+            argument = "/private/var/folders/d0/q423mrk13bn_bx8wr416nsq40rv2wb/T/detoxrand-jN1HVo/payload.json"
             isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>

@@ -1,5 +1,5 @@
 //
-//  HacksBecauseRN.m
+//  ReallyHacksBecauseRN.m
 //  example
 //
 //  Created by Leo Natan (Wix) on 3/28/18.
@@ -9,9 +9,9 @@
 @import Foundation;
 @import ObjectiveC;
 
-@interface HacksBecauseRN : NSObject @end
+@interface ReallyHacksBecauseRN : NSObject @end
 
-@implementation HacksBecauseRN
+@implementation ReallyHacksBecauseRN
 
 + (void)load
 {

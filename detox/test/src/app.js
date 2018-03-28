@@ -105,11 +105,6 @@ class example extends Component {
     );
   }
 
-  _onNotification(notification) {
-    console.log("onNotification:", notification);
-    this.setState({notification: notification.getAlert()});
-  }
-
   _handleOpenURL(params) {
     console.log("handleOpenURL:", params);
     this.setState({url: params.url});
