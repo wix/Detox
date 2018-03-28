@@ -4,7 +4,11 @@ const program = require('commander');
 const path = require('path');
 const cp = require('child_process');
 const _ = require('lodash');
+const CustomError = require('../src/errors/CustomError');
 const config = require(path.join(process.cwd(), 'package.json')).detox;
+
+class DetoxConfigError extends CustomError {}
+
 
 
 program
@@ -15,7 +19,7 @@ program
   .option('-l, --loglevel [value]',
     'info, debug, verbose, silly, wss')
   .option('-c, --configuration [device configuration]',
-    'Select a device configuration from your defined configurations, if not supplied, and there\'s only one configuration, detox will default to it', determineConfiguration())
+    'Select a device configuration from your defined configurations, if not supplied, and there\'s only one configuration, detox will default to it', getDefaultConfiguration())
   .option('-r, --reuse',
     'Reuse existing installed app (do not delete and re-install) for a faster run.')
   .option('-u, --cleanup',
@@ -31,6 +35,16 @@ program
   .option('-f, --file [path]',
     'Specify test file to run')
   .parse(process.argv);
+
+if (program.configuration) {
+  if (!config.configurations[program.configuration]) {
+    throw new DetoxConfigError(`Cannot determine configuration '${program.configuration}'. 
+    Available configurations: ${_.keys(config.configurations).join(', ')}`);
+  }
+} else if(!program.configuration) {
+  throw new DetoxConfigError(`Cannot determine which configuration to use. 
+  Use --configuration to choose one of the following: ${_.keys(config.configurations).join(', ')}`);
+}
 
 const testFolder = getConfigFor(['file', 'specs'], 'e2e');
 const runner = getConfigFor(['testRunner'], 'mocha');
@@ -133,14 +147,10 @@ function getPlatformSpecificString(platform) {
   return platformRevertString;
 }
 
-function determineConfiguration() {
-  if (program.configuration) {
-    return program.configuration;
-  } else if (_.size(config.configurations) === 1) {
+function getDefaultConfiguration() {
+  if (_.size(config.configurations) === 1) {
     return _.keys(config.configurations)[0];
-  } else {
-    throw new Error(`Cannot determine which configuration to use. use --configuration to choose one of the following: 
-                      ${Object.keys(config.configurations)}`);
   }
 }
+
 
