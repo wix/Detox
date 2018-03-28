@@ -253,7 +253,7 @@ static void __copyMethods(Class orig, Class target)
 		rv = super_class(&super, _cmd, application, launchOptions);
 	}
 	
-	[_pendingLaunchUserNotificationDispatcher dispatchOnAppDelegate:self simulateDuringLaunch:YES];
+	[_pendingLaunchUserNotificationDispatcher dispatchOnAppDelegate:self];
 	[_pendingLaunchUserActivityDispatcher dispatchOnAppDelegate:self];
 	
 	_pendingLaunchUserNotificationDispatcher = nil;
@@ -320,7 +320,7 @@ static void __copyMethods(Class orig, Class target)
 
 - (void)__dtx_actualDispatchUserNotificationWithDispatcher:(DetoxUserNotificationDispatcher*)dispatcher
 {
-	[dispatcher dispatchOnAppDelegate:self simulateDuringLaunch:NO];
+	[dispatcher dispatchOnAppDelegate:self];
 }
 
 - (void)__dtx_dispatchUserNotificationFromDataURL:(NSURL*)userNotificationDataURL delayUntilActive:(BOOL)delay

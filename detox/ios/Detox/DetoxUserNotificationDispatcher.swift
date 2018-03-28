@@ -57,13 +57,28 @@ public class DetoxUserNotificationDispatcher: NSObject {
 		super.init()
 	}
 	
-	@objc(dispatchOnAppDelegate:simulateDuringLaunch:)
-	public func dispatch(on appDelegate: UIApplicationDelegate, simulateDuringLaunch: Bool) {
-			guard let userNotificationsDelegate = UNUserNotificationCenter.current().delegate, let actualDelegateMethod = userNotificationsDelegate.userNotificationCenter(_:didReceive:withCompletionHandler:) else {
-				return
-			}
-
-			actualDelegateMethod(UNUserNotificationCenter.current(), userNotificationResponse(), {})
+	@objc(dispatchOnAppDelegate:)
+	public func dispatch(on appDelegate: UIApplicationDelegate) {
+		let response = userNotificationResponse()
+		
+		let body = userNotificationData[DetoxUserNotificationKeys.body] as? String
+		let subtitle = userNotificationData[DetoxUserNotificationKeys.subtitle] as? String
+		let title = userNotificationData[DetoxUserNotificationKeys.title] as? String
+		
+		//Silent notifications with push trigger go through the old UIApplicationDelegate API.
+		if let pushTrigger = response.notification.request.trigger as? UNPushNotificationTrigger,
+			let os7Method = appDelegate.application(_:didReceiveRemoteNotification:fetchCompletionHandler:),
+			pushTrigger.isContentAvailable == true && body == nil && subtitle == nil && title == nil {
+			os7Method(UIApplication.shared, remoteNotification!, { (_) in })
+			
+			return
+		}
+		
+		guard let userNotificationsDelegate = UNUserNotificationCenter.current().delegate, let actualDelegateMethod = userNotificationsDelegate.userNotificationCenter(_:didReceive:withCompletionHandler:) else {
+			return
+		}
+		
+		actualDelegateMethod(UNUserNotificationCenter.current(), response, {})
 	}
 	
 	private static let supportedTriggerTypes = [DetoxUserNotificationKeys.TriggerTypes.push, DetoxUserNotificationKeys.TriggerTypes.calendar, DetoxUserNotificationKeys.TriggerTypes.location, DetoxUserNotificationKeys.TriggerTypes.timeInterval]

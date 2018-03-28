@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UNPushNotificationTrigger ()
 
+@property (nonatomic, readonly) BOOL isContentAvailable;
 + (instancetype)triggerWithContentAvailable:(BOOL)arg1 mutableContent:(BOOL)arg2;
 
 @end
