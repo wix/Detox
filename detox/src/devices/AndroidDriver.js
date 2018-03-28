@@ -72,7 +72,7 @@ class AndroidDriver extends DeviceDriverBase {
       return this.instrumentationProcess.pid;
     }
 
-    this.instrumentationProcess = spawn(`adb`, [`-s`, `${deviceId}`, `shell`, `am`, `instrument`, `-w`, `-r`, `${args.join(' ')}`, `-e`, `debug`,
+    this.instrumentationProcess = spawn(this.adb.adbBin, [`-s`, `${deviceId}`, `shell`, `am`, `instrument`, `-w`, `-r`, `${args.join(' ')}`, `-e`, `debug`,
       `false`, `${bundleId}.test/android.support.test.runner.AndroidJUnitRunner`]);
     log.verbose(this.instrumentationProcess.spawnargs.join(" "));
     log.verbose('Instrumentation spawned, childProcess.pid: ', this.instrumentationProcess.pid);
