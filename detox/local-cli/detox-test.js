@@ -3,6 +3,9 @@
 const program = require('commander');
 const path = require('path');
 const cp = require('child_process');
+const _ = require('lodash');
+const config = require(path.join(process.cwd(), 'package.json')).detox;
+
 
 program
   .option('-o, --runner-config [config]',
@@ -12,7 +15,7 @@ program
   .option('-l, --loglevel [value]',
     'info, debug, verbose, silly, wss')
   .option('-c, --configuration [device configuration]',
-    'Select a device configuration from your defined configurations, if not supplied, and there\'s only one configuration, detox will default to it')
+    'Select a device configuration from your defined configurations, if not supplied, and there\'s only one configuration, detox will default to it', determineConfiguration())
   .option('-r, --reuse',
     'Reuse existing installed app (do not delete and re-install) for a faster run.')
   .option('-u, --cleanup',
@@ -28,8 +31,6 @@ program
   .option('-f, --file [path]',
     'Specify test file to run')
   .parse(process.argv);
-
-const config = require(path.join(process.cwd(), 'package.json')).detox;
 
 const testFolder = getConfigFor(['file', 'specs'], 'e2e');
 const runner = getConfigFor(['testRunner'], 'mocha');
@@ -131,3 +132,15 @@ function getPlatformSpecificString(platform) {
 
   return platformRevertString;
 }
+
+function determineConfiguration() {
+  if (program.configuration) {
+    return program.configuration;
+  } else if (_.size(config.configurations) === 1) {
+    return _.keys(config.configurations)[0];
+  } else {
+    throw new Error(`Cannot determine which configuration to use. use --configuration to choose one of the following: 
+                      ${Object.keys(config.configurations)}`);
+  }
+}
+
