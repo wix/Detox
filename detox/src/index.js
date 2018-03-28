@@ -5,6 +5,7 @@ const exportWrapper = require('./exportWrapper');
 const argparse = require('./utils/argparse');
 const configuration = require('./configuration');
 const _ = require('lodash');
+const Debug = require('./utils/debug.js');
 
 let detox;
 
@@ -76,5 +77,6 @@ module.exports = Object.assign({
   cleanup,
   beforeEach,
   afterEach,
-  DetoxConstants
+  DetoxConstants,
+  Debug
 }, exportWrapper);
