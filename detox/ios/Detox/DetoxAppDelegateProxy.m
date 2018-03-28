@@ -195,9 +195,9 @@ static void __copyMethods(Class orig, Class target)
 {
 	NSMutableDictionary* rv = [launchOptions mutableCopy] ?: [NSMutableDictionary new];
 	
-	if(notificationDispatcher)
+	if(notificationDispatcher && [notificationDispatcher remoteNotificationDictionary])
 	{
-		rv[UIApplicationLaunchOptionsRemoteNotificationKey] = [notificationDispatcher remoteNotification];
+		rv[UIApplicationLaunchOptionsRemoteNotificationKey] = [notificationDispatcher remoteNotificationDictionary];
 	}
 	
 	if(activityDispatcher)

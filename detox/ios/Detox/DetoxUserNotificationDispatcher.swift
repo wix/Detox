@@ -57,19 +57,24 @@ public class DetoxUserNotificationDispatcher: NSObject {
 		super.init()
 	}
 	
-	@objc(dispatchOnAppDelegate:)
-	public func dispatch(on appDelegate: UIApplicationDelegate) {
-		let response = userNotificationResponse()
-		
+	private func silentRemoteOnlyGate() -> Bool {
 		let body = userNotificationData[DetoxUserNotificationKeys.body] as? String
 		let subtitle = userNotificationData[DetoxUserNotificationKeys.subtitle] as? String
 		let title = userNotificationData[DetoxUserNotificationKeys.title] as? String
 		
 		//Silent notifications with push trigger go through the old UIApplicationDelegate API.
-		if let pushTrigger = response.notification.request.trigger as? UNPushNotificationTrigger,
-			let os7Method = appDelegate.application(_:didReceiveRemoteNotification:fetchCompletionHandler:),
+		if let pushTrigger = userNotificationResponse.notification.request.trigger as? UNPushNotificationTrigger,
 			pushTrigger.isContentAvailable == true && body == nil && subtitle == nil && title == nil {
-			os7Method(UIApplication.shared, remoteNotification!, { (_) in })
+			return true
+		}
+		
+		return false
+	}
+	
+	@objc(dispatchOnAppDelegate:)
+	public func dispatch(on appDelegate: UIApplicationDelegate) {
+		if let os7Method = appDelegate.application(_:didReceiveRemoteNotification:fetchCompletionHandler:), silentRemoteOnlyGate() == true {
+			os7Method(UIApplication.shared, remoteNotificationDictionary!, { (_) in })
 			
 			return
 		}
@@ -78,7 +83,7 @@ public class DetoxUserNotificationDispatcher: NSObject {
 			return
 		}
 		
-		actualDelegateMethod(UNUserNotificationCenter.current(), response, {})
+		actualDelegateMethod(UNUserNotificationCenter.current(), userNotificationResponse, {})
 	}
 	
 	private static let supportedTriggerTypes = [DetoxUserNotificationKeys.TriggerTypes.push, DetoxUserNotificationKeys.TriggerTypes.calendar, DetoxUserNotificationKeys.TriggerTypes.location, DetoxUserNotificationKeys.TriggerTypes.timeInterval]
@@ -102,7 +107,7 @@ public class DetoxUserNotificationDispatcher: NSObject {
 		return jsonObject
 	}
 	
-	@objc public lazy var remoteNotification : [String: Any]? = {
+	@objc public lazy var remoteNotificationDictionary : [String: Any]? = {
 		[unowned self] in
 		guard self.userNotificationData[DetoxUserNotificationKeys.absoluteTriggerType] as! String == DetoxUserNotificationKeys.TriggerTypes.push else {
 			return nil;
@@ -179,7 +184,7 @@ public class DetoxUserNotificationDispatcher: NSObject {
 	}
 	
 	@objc @available(iOS 10.0, *)
-	public func userNotificationResponse() -> UNNotificationResponse {
+	public lazy var userNotificationResponse : UNNotificationResponse = {
 		let notificationContent = UNMutableNotificationContent()
 		notificationContent.badge = userNotificationData[DetoxUserNotificationKeys.badge] as? NSNumber
 		notificationContent.body = userNotificationData[DetoxUserNotificationKeys.body] as? String ?? ""
@@ -238,7 +243,6 @@ public class DetoxUserNotificationDispatcher: NSObject {
 		}
 		
 		return rv
-		
-	}
+	}()
 }
 

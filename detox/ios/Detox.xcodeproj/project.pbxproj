@@ -29,12 +29,10 @@
 		3928EFA81E47404900C19B6E /* DetoxUserNotificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3928EFA71E47404900C19B6E /* DetoxUserNotificationTests.swift */; };
 		3928EFAA1E47404900C19B6E /* Detox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 394767971DBF985400D72256 /* Detox.framework */; };
 		3928EFB51E47571500C19B6E /* TestableAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3928EFB41E47571500C19B6E /* TestableAppDelegate.swift */; };
-		3928EFB71E475C1F00C19B6E /* UNApiAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3928EFB61E475C1F00C19B6E /* UNApiAppDelegate.swift */; };
 		3928EFBC1E475E4C00C19B6E /* user_notification_timeInterval_trigger.json in Resources */ = {isa = PBXBuildFile; fileRef = 3928EFB81E475E4C00C19B6E /* user_notification_timeInterval_trigger.json */; };
 		3928EFBD1E475E4C00C19B6E /* user_notification_location_trigger.json in Resources */ = {isa = PBXBuildFile; fileRef = 3928EFB91E475E4C00C19B6E /* user_notification_location_trigger.json */; };
 		3928EFBE1E475E4C00C19B6E /* user_notification_calendar_trigger.json in Resources */ = {isa = PBXBuildFile; fileRef = 3928EFBA1E475E4C00C19B6E /* user_notification_calendar_trigger.json */; };
 		3928EFBF1E475E4C00C19B6E /* user_notification_push_trigger.json in Resources */ = {isa = PBXBuildFile; fileRef = 3928EFBB1E475E4C00C19B6E /* user_notification_push_trigger.json */; };
-		3928EFC21E47673800C19B6E /* LegacyApiAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3928EFC11E47673800C19B6E /* LegacyApiAppDelegate.swift */; };
 		39319D7A1FCA0DA70045BC17 /* COSTouchVisualizer.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 393E66E61FC5F3E90092EE89 /* COSTouchVisualizer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		393E66ED1FC5F3F40092EE89 /* COSTouchVisualizer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 393E66E61FC5F3E90092EE89 /* COSTouchVisualizer.framework */; };
 		3947679C1DBF985400D72256 /* Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 3947679A1DBF985400D72256 /* Detox.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -64,6 +62,7 @@
 		394767F61DBF994200D72256 /* SocketRocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 394767E71DBF992400D72256 /* SocketRocket.framework */; };
 		394767F71DBF994500D72256 /* EarlGrey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 394767DC1DBF991E00D72256 /* EarlGrey.framework */; };
 		394D589C1E50B59400556DB9 /* NSBundle+TestsFix.m in Sources */ = {isa = PBXBuildFile; fileRef = 394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */; };
+		3951816A206BD36900A06CFF /* user_notification_push_trigger_silent.json in Resources */ = {isa = PBXBuildFile; fileRef = 39518169206BD36800A06CFF /* user_notification_push_trigger_silent.json */; };
 		397EC9B51E7EDE0B00D5F2BB /* EarlGreyStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 397EC9B31E7EDE0B00D5F2BB /* EarlGreyStatistics.h */; };
 		397EC9B61E7EDE0B00D5F2BB /* EarlGreyStatistics.m in Sources */ = {isa = PBXBuildFile; fileRef = 397EC9B41E7EDE0B00D5F2BB /* EarlGreyStatistics.m */; };
 		39A34C711E30F10D00BEBB59 /* DetoxAppDelegateProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39A34C6F1E30F10D00BEBB59 /* DetoxAppDelegateProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -196,12 +195,10 @@
 		3928EFA71E47404900C19B6E /* DetoxUserNotificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxUserNotificationTests.swift; sourceTree = "<group>"; };
 		3928EFA91E47404900C19B6E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3928EFB41E47571500C19B6E /* TestableAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestableAppDelegate.swift; sourceTree = "<group>"; };
-		3928EFB61E475C1F00C19B6E /* UNApiAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UNApiAppDelegate.swift; sourceTree = "<group>"; };
 		3928EFB81E475E4C00C19B6E /* user_notification_timeInterval_trigger.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = user_notification_timeInterval_trigger.json; sourceTree = "<group>"; };
 		3928EFB91E475E4C00C19B6E /* user_notification_location_trigger.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = user_notification_location_trigger.json; sourceTree = "<group>"; };
 		3928EFBA1E475E4C00C19B6E /* user_notification_calendar_trigger.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = user_notification_calendar_trigger.json; sourceTree = "<group>"; };
 		3928EFBB1E475E4C00C19B6E /* user_notification_push_trigger.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = user_notification_push_trigger.json; sourceTree = "<group>"; };
-		3928EFC11E47673800C19B6E /* LegacyApiAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LegacyApiAppDelegate.swift; sourceTree = "<group>"; };
 		393E66E11FC5F3E90092EE89 /* COSTouchVisualizer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = COSTouchVisualizer.xcodeproj; path = COSTouchVisualizer/Classes/COSTouchVisualizer.xcodeproj; sourceTree = "<group>"; };
 		394767971DBF985400D72256 /* Detox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Detox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3947679A1DBF985400D72256 /* Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.h; sourceTree = "<group>"; };
@@ -233,6 +230,7 @@
 		394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SocketRocket.xcodeproj; path = SocketRocket/SocketRocket.xcodeproj; sourceTree = "<group>"; };
 		394D589A1E50B59400556DB9 /* NSBundle+TestsFix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+TestsFix.h"; sourceTree = "<group>"; };
 		394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+TestsFix.m"; sourceTree = "<group>"; };
+		39518169206BD36800A06CFF /* user_notification_push_trigger_silent.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = user_notification_push_trigger_silent.json; sourceTree = "<group>"; };
 		3975C78220272ED500C59ED8 /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; name = src; path = ../src; sourceTree = "<group>"; };
 		397EC9B31E7EDE0B00D5F2BB /* EarlGreyStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EarlGreyStatistics.h; sourceTree = "<group>"; };
 		397EC9B41E7EDE0B00D5F2BB /* EarlGreyStatistics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EarlGreyStatistics.m; sourceTree = "<group>"; };
@@ -291,10 +289,8 @@
 			isa = PBXGroup;
 			children = (
 				3928EFC01E475E5500C19B6E /* UserNotificationTestInputs */,
-				3928EFA71E47404900C19B6E /* DetoxUserNotificationTests.swift */,
 				3928EFB41E47571500C19B6E /* TestableAppDelegate.swift */,
-				3928EFB61E475C1F00C19B6E /* UNApiAppDelegate.swift */,
-				3928EFC11E47673800C19B6E /* LegacyApiAppDelegate.swift */,
+				3928EFA71E47404900C19B6E /* DetoxUserNotificationTests.swift */,
 				3928EFA91E47404900C19B6E /* Info.plist */,
 				394D589A1E50B59400556DB9 /* NSBundle+TestsFix.h */,
 				394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */,
@@ -309,6 +305,7 @@
 				3928EFB91E475E4C00C19B6E /* user_notification_location_trigger.json */,
 				3928EFBA1E475E4C00C19B6E /* user_notification_calendar_trigger.json */,
 				3928EFBB1E475E4C00C19B6E /* user_notification_push_trigger.json */,
+				39518169206BD36800A06CFF /* user_notification_push_trigger_silent.json */,
 			);
 			name = UserNotificationTestInputs;
 			sourceTree = "<group>";
@@ -533,7 +530,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = Wix;
 				TargetAttributes = {
 					3928EFA41E47404900C19B6E = {
@@ -651,6 +648,7 @@
 			files = (
 				3928EFBC1E475E4C00C19B6E /* user_notification_timeInterval_trigger.json in Resources */,
 				3928EFBE1E475E4C00C19B6E /* user_notification_calendar_trigger.json in Resources */,
+				3951816A206BD36900A06CFF /* user_notification_push_trigger_silent.json in Resources */,
 				3928EFBF1E475E4C00C19B6E /* user_notification_push_trigger.json in Resources */,
 				3928EFBD1E475E4C00C19B6E /* user_notification_location_trigger.json in Resources */,
 			);
@@ -689,8 +687,6 @@
 				394D589C1E50B59400556DB9 /* NSBundle+TestsFix.m in Sources */,
 				3928EFA81E47404900C19B6E /* DetoxUserNotificationTests.swift in Sources */,
 				3928EFB51E47571500C19B6E /* TestableAppDelegate.swift in Sources */,
-				3928EFC21E47673800C19B6E /* LegacyApiAppDelegate.swift in Sources */,
-				3928EFB71E475C1F00C19B6E /* UNApiAppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -804,6 +800,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -866,6 +863,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
