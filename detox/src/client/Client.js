@@ -1,6 +1,7 @@
 const AsyncWebSocket = require('./AsyncWebSocket');
 const actions = require('./actions/actions');
 const argparse = require('../utils/argparse');
+const retry = require('../utils/retry');
 
 class Client {
   constructor(config) {
@@ -65,7 +66,7 @@ class Client {
       this.slowInvocationStatusHandler = this.slowInvocationStatus();
     }
     try {
-      await this.sendAction(new actions.Invoke(invocation));
+      await retry({retries: 3, interval: 200}, async() => await this.sendAction(new actions.Invoke(invocation)));
     } catch (err) {
       this.successfulTestRun = false;
       throw new Error(err);
