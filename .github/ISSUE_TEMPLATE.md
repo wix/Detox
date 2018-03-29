@@ -32,5 +32,6 @@ Provide the macOS and Xcode versions you are using, and the device / simulator y
 
 #### Device and verbose Detox logs
 <!---
-Provide the device and verbose Detox logs so we can understand what happened.
+Provide the device and verbose Detox logs so we can understand what happened. You can obtain them by passing the loglevel param: `detox test --loglevel verbose`
+
 -->

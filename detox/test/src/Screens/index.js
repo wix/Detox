@@ -12,6 +12,7 @@ import NetworkScreen from './NetworkScreen';
 import AnimationsScreen from './AnimationsScreen';
 import LocationScreen from './LocationScreen';
 import ShakeScreen from './ShakeScreen';
+import DatePickerScreen from './DatePickerScreen'
 import PasteBoardScreen from './PasteBoardScreen';
 
 export {
@@ -29,5 +30,6 @@ export {
   AnimationsScreen,
   LocationScreen,
   ShakeScreen,
+  DatePickerScreen,
   PasteBoardScreen
 };

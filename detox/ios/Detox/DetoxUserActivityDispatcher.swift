@@ -6,6 +6,8 @@
 //  Copyright © 2018 Wix. All rights reserved.
 //
 
+#if swift(>=3.2)
+
 import UIKit
 
 private struct DetoxUserActivityKeys {
@@ -38,7 +40,7 @@ public class DetoxUserActivityDispatcher: NSObject {
 		return jsonObject
 	}
 	
-	public lazy var userActivity: NSUserActivity = {
+	@objc public lazy var userActivity: NSUserActivity = {
 		guard let activityType = self.userActivityData[DetoxUserActivityKeys.activityType] as? String, activityType.count > 0 else {
 			Swift.fatalError("Missing or invalid activity type")
 		}
@@ -70,8 +72,4 @@ public class DetoxUserActivityDispatcher: NSObject {
 	}
 }
 
-//extension NSUserActivity {
-//	@objc override open func setValue(_ value: Any?, forUndefinedKey key: String) {
-//		
-//	}
-//}
+#endif

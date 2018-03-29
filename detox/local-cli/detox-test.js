@@ -3,6 +3,14 @@
 const program = require('commander');
 const path = require('path');
 const cp = require('child_process');
+const _ = require('lodash');
+const CustomError = require('../src/errors/CustomError');
+const config = require(path.join(process.cwd(), 'package.json')).detox;
+
+class DetoxConfigError extends CustomError {}
+
+
+
 program
   .option('-o, --runner-config [config]',
     `Test runner config file, defaults to e2e/mocha.opts for mocha and e2e/config.json' for jest`)
@@ -11,7 +19,7 @@ program
   .option('-l, --loglevel [value]',
     'info, debug, verbose, silly, wss')
   .option('-c, --configuration [device configuration]',
-    'Select a device configuration from your defined configurations, if not supplied, and there\'s only one configuration, detox will default to it')
+    'Select a device configuration from your defined configurations, if not supplied, and there\'s only one configuration, detox will default to it', getDefaultConfiguration())
   .option('-r, --reuse',
     'Reuse existing installed app (do not delete and re-install) for a faster run.')
   .option('-u, --cleanup',
@@ -22,20 +30,45 @@ program
   .option('-a, --artifacts-location [path]',
     'Artifacts destination path (currently will contain only logs). If the destination already exists, it will be removed first')
   .option('-p, --platform [ios/android]',
-    'Run platform specific tests. Runs tests with invert grep on \':platform:\', '
+    '[DEPRECATED], platform is deduced automatically. Run platform specific tests. Runs tests with invert grep on \':platform:\', '
     + 'e.g test with substring \':ios:\' in its name will not run when passing \'--platform android\'')
   .option('-f, --file [path]',
     'Specify test file to run')
   .parse(process.argv);
 
-const config = require(path.join(process.cwd(), 'package.json')).detox;
+if (program.configuration) {
+  if (!config.configurations[program.configuration]) {
+    throw new DetoxConfigError(`Cannot determine configuration '${program.configuration}'. 
+    Available configurations: ${_.keys(config.configurations).join(', ')}`);
+  }
+} else if(!program.configuration) {
+  throw new DetoxConfigError(`Cannot determine which configuration to use. 
+  Use --configuration to choose one of the following: ${_.keys(config.configurations).join(', ')}`);
+}
 
 const testFolder = getConfigFor(['file', 'specs'], 'e2e');
 const runner = getConfigFor(['testRunner'], 'mocha');
 const runnerConfig = getConfigFor(['runnerConfig'], getDefaultRunnerConfig());
+const platform = (config.configurations[program.configuration].type).split('.')[0];
+
+run();
+
 
 if (typeof program.debugSynchronization === "boolean") {
   program.debugSynchronization = 3000;
+}
+
+function run() {
+  switch (runner) {
+    case 'mocha':
+      runMocha();
+      break;
+    case 'jest':
+      runJest();
+      break;
+    default:
+      throw new Error(`${runner} is not supported in detox cli tools. You can still run your tests with the runner's own cli tool`);
+  }
 }
 
 function getConfigFor(keys, fallback) {
@@ -53,17 +86,6 @@ function camelToKebabCase(string) {
   return string.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 }
 
-switch (runner) {
-  case 'mocha':
-    runMocha();
-    break;
-  case 'jest':
-    runJest();
-    break;
-  default:
-    throw new Error(`${runner} is not supported in detox cli tools. You can still run your tests with the runner's own cli tool`);
-}
-
 function runMocha() {
   const loglevel = program.loglevel ? `--loglevel ${program.loglevel}` : '';
   const configuration = program.configuration ? `--configuration ${program.configuration}` : '';
@@ -71,10 +93,10 @@ function runMocha() {
   const reuse = program.reuse ? `--reuse` : '';
   const artifactsLocation = program.artifactsLocation ? `--artifacts-location ${program.artifactsLocation}` : '';
   const configFile = runnerConfig ? `--opts ${runnerConfig}` : '';
-  const platform = program.platform ? `--grep ${getPlatformSpecificString(program.platform)} --invert` : '';
+  const platformString = platform ? `--grep ${getPlatformSpecificString(platform)} --invert` : '';
 
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
-  const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platform} ${artifactsLocation}`;
+  const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${artifactsLocation}`;
 
   console.log(command);
   cp.execSync(command, {stdio: 'inherit'});
@@ -82,8 +104,8 @@ function runMocha() {
 
 function runJest() {
   const configFile = runnerConfig ? `--config=${runnerConfig}` : '';
-  const platform = program.platform ? `--testNamePattern='^((?!${getPlatformSpecificString(program.platform)}).)*$'` : '';
-  const command = `node_modules/.bin/jest ${testFolder} ${configFile} --runInBand ${platform}`;
+  const platformString = platform ? `--testNamePattern='^((?!${getPlatformSpecificString(platform)}).)*$'` : '';
+  const command = `node_modules/.bin/jest ${testFolder} ${configFile} --runInBand ${platformString}`;
   console.log(command);
   cp.execSync(command, {
     stdio: 'inherit',
@@ -124,3 +146,11 @@ function getPlatformSpecificString(platform) {
 
   return platformRevertString;
 }
+
+function getDefaultConfiguration() {
+  if (_.size(config.configurations) === 1) {
+    return _.keys(config.configurations)[0];
+  }
+}
+
+

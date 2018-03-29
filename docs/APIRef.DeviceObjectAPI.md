@@ -46,7 +46,7 @@ Grant or deny runtime permissions for your application.
 await device.launchApp({permissions: {calendar: 'YES'}});
 ```
 Detox uses [AppleSimUtils](https://github.com/wix/AppleSimulatorUtils) on iOS to support this functionality. Read about the different types of permissions and how to set them in AppleSimUtils' Readme.
-Check out Detox's [own test suite](../detox/test/e2e/l-permissions.js)
+Check out Detox's [own test suite](../detox/test/e2e/m-permissions.js)
 
 ##### 3. Launch from URL
 Mock opening the app from URL to test your app's deep link handling mechanism.
