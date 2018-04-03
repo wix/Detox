@@ -66,7 +66,7 @@ class Client {
       this.slowInvocationStatusHandler = this.slowInvocationStatus();
     }
     try {
-      await retry({retries: 3, interval: 200}, async() => await this.sendAction(new actions.Invoke(invocation)));
+      await this.sendAction(new actions.Invoke(invocation));
     } catch (err) {
       this.successfulTestRun = false;
       throw new Error(err);
