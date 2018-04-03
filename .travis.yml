@@ -16,7 +16,7 @@ matrix:
       os: osx
       osx_image: xcode9.2
       env:
-        - REACT_NATIVE_VERSION=0.49.3
+        - REACT_NATIVE_VERSION=0.51.1
       install:
       - ./scripts/install.ios.sh
       script:
@@ -25,7 +25,7 @@ matrix:
       os: linux
       jdk: oraclejdk8
       env:
-        - REACT_NATIVE_VERSION=0.49.3
+        - REACT_NATIVE_VERSION=0.51.1
       android:
         components:
           - build-tools-27.0.2
@@ -44,7 +44,7 @@ matrix:
       os: osx
       osx_image: xcode9
       env:
-        - REACT_NATIVE_VERSION=0.49.3
+        - REACT_NATIVE_VERSION=0.51.1
       install:
       - ./scripts/install.ios.sh
       script:
