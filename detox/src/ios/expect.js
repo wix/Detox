@@ -85,6 +85,13 @@ class ReplaceTextAction extends Action {
   }
 }
 
+class CopyToPasteBoardAction extends Action {
+  constructor() {
+    super();
+    this._call = invoke.callDirectly(GreyActions.actionForCopyTextToPasteboard);
+  }
+}
+
 class ClearTextAction extends Action {
   constructor() {
     super();
@@ -272,6 +279,9 @@ class Element {
   }
   async replaceText(value) {
     return await new ActionInteraction(this, new ReplaceTextAction(value)).execute();
+  }
+  async copyTextToPasteboard() {
+    return await new ActionInteraction(this, new CopyToPasteBoardAction()).execute();
   }
   async clearText() {
     return await new ActionInteraction(this, new ClearTextAction()).execute();
