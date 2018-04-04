@@ -138,7 +138,7 @@ public class ReactNativeSupport {
             }
         });
 
-        waitForReactNativeLoad(reactNativeHostHolder);
+        ReactNativeCompat.waitForReactNativeLoad(reactNativeHostHolder);
     }
 
     // Ideally we would not store this at all.

@@ -67,7 +67,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
     void start() {
         if (detoxServerUrl != null && detoxSessionId != null) {
             if (ReactNativeSupport.isReactNativeApp()) {
-                ReactNativeSupport.waitForReactNativeLoad(reactNativeHostHolder);
+                ReactNativeCompat.waitForReactNativeLoad(reactNativeHostHolder);
             }
 
             wsClient = new WebSocketClient(this);
@@ -124,7 +124,6 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                         }
                         break;
                     case "isReady":
-                        // It's always ready, because reload, waitForRn are both synchronous.
                         wsClient.sendAction("ready", Collections.emptyMap(), messageId);
                         break;
                     case "cleanup":
