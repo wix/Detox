@@ -3,7 +3,7 @@ id: Introduction.Android
 title: Detox for Android
 ---
 
-**Detox for Android is currently incompatible with React Native >= 0.50.** See [#608](https://github.com/wix/detox/issues/608) for more info.
+**Detox for Android currently has several compatibility issues with React Native >= 0.50.** See [#608](https://github.com/wix/detox/issues/608) for details.
 
 ## Setup
 Detox 7 was updated to support Android gradle plugin 3.0.0. This is a breaking change that makes it impossible to support previous Android gradle plugin versions.
