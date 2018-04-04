@@ -112,7 +112,7 @@ public class AnimatedModuleIdlingResource implements IdlingResource, Choreograph
         if (callback != null) {
             callback.onTransitionToIdle();
         }
-        Log.i(LOG_TAG, "AnimatedModule is idle.");
+//        Log.i(LOG_TAG, "AnimatedModule is idle.");
         return true;
     }
 
@@ -124,7 +124,7 @@ public class AnimatedModuleIdlingResource implements IdlingResource, Choreograph
             if (callback != null) {
                 callback.onTransitionToIdle();
             }
-            Log.i(LOG_TAG, "AnimatedModule is idle, no operations");
+//            Log.i(LOG_TAG, "AnimatedModule is idle, no operations");
             return true;
         }
         return false;
@@ -173,7 +173,7 @@ public class AnimatedModuleIdlingResource implements IdlingResource, Choreograph
             if (callback != null) {
                 callback.onTransitionToIdle();
             }
-            Log.i(LOG_TAG, "AnimatedModule is idle.");
+//            Log.i(LOG_TAG, "AnimatedModule is idle.");
             return true;
         }
         return false;
