@@ -8,7 +8,13 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  NativeModules,
+  processColor,
+  Alert
 } from 'react-native';
+import ImgToBase64 from 'react-native-image-base64';
+
+const { NativeModule } = NativeModules;
 
 export default class PasteBoardScreen extends Component {
 
@@ -55,15 +61,22 @@ export default class PasteBoardScreen extends Component {
   onPressCheckButton() {
     var message = "Pasteboard haven't any result"
     if (this.state.stringValue != undefined) {
+        NativeModule.clipValueToPasteboard({string : this.state.stringValue});
         message = "Pasteboard have string : " + this.state.stringValue
     }
     if (this.state.urlValue != undefined) {
+        NativeModule.clipValueToPasteboard({ url : this.state.urlValue});
         message = "Pasteboard have url : " + this.state.urlValue
     }
     if (this.state.choosenImage != undefined) {
-        message = "Pasteboard have image : " + this.state.choosenImage
+      ImgToBase64.getBase64String(this.state.choosenImage)
+        .then(base64String => NativeModule.clipValueToPasteboard({image : base64String}))
+        .catch(err => Alert.alert(err));
+      
+      message = "Pasteboard have image : " + this.state.choosenImage
     }
     if (this.state.choosenColor != undefined) {
+        NativeModule.clipValueToPasteboard({color : processColor(this.state.choosenColor)});
         message = "Pasteboard have color : " + this.state.choosenColor
     }
     window.alert(message)
@@ -93,7 +106,7 @@ export default class PasteBoardScreen extends Component {
          <Text style = {styles.titleText}> Choose image: </Text>
          <View style = {styles.collectionImages}>
             <TouchableOpacity style = {styles.imageButton} onPress = {(e) => {
-                this.setImage(e, 'Simpson icon')
+                this.setImage(e, '../assets/11.png')
             }}>
                <Image source={require('../assets/11.png')} />
             </TouchableOpacity>
