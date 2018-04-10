@@ -86,7 +86,9 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                 stopping = true;
                 ReactNativeSupport.currentReactContext = null;
                 ReactNativeSupport.removeEspressoIdlingResources(reactNativeHostHolder);
-                wsClient.close();
+                if (wsClient != null) {
+                    wsClient.close();
+                }
                 Looper.myLooper().quit();
             }
         });
