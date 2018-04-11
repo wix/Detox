@@ -105,6 +105,13 @@ class ValueMatcher extends Matcher {
   }
 }
 
+class InteractableMatcher extends Matcher {
+  constructor() {
+    super();
+    this._call = invoke.callDirectly(GreyMatchers.matcherForInteractable());
+  }
+}
+
 module.exports = {
   Matcher,
   LabelMatcher,
@@ -116,5 +123,6 @@ module.exports = {
   ExistsMatcher,
   NotExistsMatcher,
   TextMatcher,
-  ValueMatcher
+  ValueMatcher,
+  InteractableMatcher
 };

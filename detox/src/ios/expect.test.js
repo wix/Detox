@@ -44,6 +44,10 @@ describe('expect', async () => {
     await e.expect(e.element(e.by.traits(['startsMedia', 'adjustable', 'allowsDirectInteraction', 'pageTurn']))).toBeNotVisible();
   });
 
+  it(`element by interactable`, async () => {
+    await e.expect(e.element(e.by.interactable())).toExist();
+  });
+
   it(`matcher helpers`, async () => {
     await e.expect(e.element(e.by.id('test').withAncestor(e.by.id('ancestor')))).toBeVisible();
     await e.expect(e.element(e.by.id('test').withDescendant(e.by.id('descendant')))).toBeVisible();
