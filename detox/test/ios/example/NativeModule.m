@@ -88,7 +88,10 @@ RCT_EXPORT_METHOD(clipValueToPasteboard:(NSDictionary *)clippedDict) {
             pb.string = clippedDict[@"string"];
         }
         if (clippedDict[@"image"]) {
-            //pb.image = clippedValue;
+            NSURL *imageURL = [NSURL URLWithString:clippedDict[@"image"]];
+            NSData *imageData = [NSData dataWithContentsOfURL:imageURL];
+            UIImage *aImage = [UIImage imageWithData:imageData];
+            pb.image = aImage;
         }
         if (clippedDict[@"color"]) {
             UIColor * aColor = [RCTConvert UIColor:clippedDict[@"color"]];

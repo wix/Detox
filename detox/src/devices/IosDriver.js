@@ -40,6 +40,10 @@ class IosDriver extends DeviceDriverBase {
     return await this.client.shake();
   }
 
+  async pasteboardInfo() {
+    return await this.client.pasteboardInfo()
+  }
+
   async setOrientation(deviceId, orientation) {
     // keys are possible orientations
     const orientationMapping = {

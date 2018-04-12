@@ -81,6 +81,8 @@
 		46A6A63D1EF697BB00E3AA79 /* GREYConfiguration+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 46A6A63B1EF697BB00E3AA79 /* GREYConfiguration+Detox.m */; };
 		A7F76A151ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F76A131ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.h */; };
 		A7F76A161ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.m in Sources */ = {isa = PBXBuildFile; fileRef = A7F76A141ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.m */; };
+		D5F165A5207B9A0500412F62 /* DTXPasteboardInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = D5F165A3207B9A0500412F62 /* DTXPasteboardInfo.h */; };
+		D5F165A6207B9A0600412F62 /* DTXPasteboardInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = D5F165A4207B9A0500412F62 /* DTXPasteboardInfo.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -254,6 +256,8 @@
 		46A6A63B1EF697BB00E3AA79 /* GREYConfiguration+Detox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GREYConfiguration+Detox.m"; sourceTree = "<group>"; };
 		A7F76A131ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXAnimatedDisplayLinkIdlingResource.h; sourceTree = "<group>"; };
 		A7F76A141ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXAnimatedDisplayLinkIdlingResource.m; sourceTree = "<group>"; };
+		D5F165A3207B9A0500412F62 /* DTXPasteboardInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXPasteboardInfo.h; sourceTree = "<group>"; };
+		D5F165A4207B9A0500412F62 /* DTXPasteboardInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DTXPasteboardInfo.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -364,6 +368,8 @@
 				3947679A1DBF985400D72256 /* Detox.h */,
 				394767A41DBF987E00D72256 /* DetoxManager.h */,
 				394767A51DBF987E00D72256 /* DetoxManager.m */,
+				D5F165A3207B9A0500412F62 /* DTXPasteboardInfo.h */,
+				D5F165A4207B9A0500412F62 /* DTXPasteboardInfo.m */,
 				39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */,
 				39A34C6F1E30F10D00BEBB59 /* DetoxAppDelegateProxy.h */,
 				39A34C701E30F10D00BEBB59 /* DetoxAppDelegateProxy.m */,
@@ -479,6 +485,7 @@
 				394767CE1DBF98D900D72256 /* ReactNativeSupport.h in Headers */,
 				394767B61DBF987E00D72256 /* WebSocket.h in Headers */,
 				394767BE1DBF98A700D72256 /* EarlGreyExtensions.h in Headers */,
+				D5F165A5207B9A0500412F62 /* DTXPasteboardInfo.h in Headers */,
 				394767B41DBF987E00D72256 /* TestRunner.h in Headers */,
 				390D1CA01E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h in Headers */,
 				394767D01DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.h in Headers */,
@@ -717,6 +724,7 @@
 				A7F76A161ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.m in Sources */,
 				394767D11DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.m in Sources */,
 				39A34C721E30F10D00BEBB59 /* DetoxAppDelegateProxy.m in Sources */,
+				D5F165A6207B9A0600412F62 /* DTXPasteboardInfo.m in Sources */,
 				394767B11DBF987E00D72256 /* DTXMethodInvocation.m in Sources */,
 				39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */,
 				394767C21DBF98A700D72256 /* GREYMatchers+Detox.m in Sources */,

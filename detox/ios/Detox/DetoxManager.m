@@ -16,6 +16,7 @@
 #import "DetoxAppDelegateProxy.h"
 #import "EarlGreyExtensions.h"
 #import "EarlGreyStatistics.h"
+#import "DTXPasteboardInfo.h"
 
 @interface UIApplication ()
 
@@ -31,6 +32,7 @@ DTX_CREATE_LOG(DetoxManager)
 @property (nonatomic) BOOL isReady;
 @property (nonatomic, strong) WebSocket *webSocket;
 @property (nonatomic, strong) TestRunner *testRunner;
+@property (nonatomic, strong) DTXPasteboardInfo *pasteboardInfo;
 
 @end
 
@@ -78,6 +80,7 @@ static void detoxConditionalInit()
 	self.webSocket.delegate = self;
 	self.testRunner = [[TestRunner alloc] init];
 	self.testRunner.delegate = self;
+	self.pasteboardInfo = [[DTXPasteboardInfo alloc] init];
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidLaunch:) name:UIApplicationDidFinishLaunchingNotification object:nil];
 	
@@ -226,6 +229,9 @@ static void detoxConditionalInit()
 		statsStatus[@"messageId"] = messageId;
 		
 		[self.webSocket sendAction:@"currentStatusResult" withParams:statsStatus withMessageId:messageId];
+	}
+	else if ([type isEqualToString:@"pasteboardInfo"]) {
+		NSLog(@"\n\n\ninvoke pasteboardInfo methods\n\n\n")
 	}
 }
 

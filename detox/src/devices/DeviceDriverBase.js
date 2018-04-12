@@ -32,6 +32,10 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
+  async pasteboardInfo() {
+    return await Promise.resolve('');
+  }
+
   async relaunchApp() {
     return await Promise.resolve('');
   }
