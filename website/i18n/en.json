@@ -13,6 +13,7 @@
     "APIRef.Expect": "Expect",
     "APIRef.Matchers": "Matchers",
     "APIRef.MockingOpenFromURL": "Mocking Open from URL (Deep Links)",
+    "APIRef.MockingUserActivity": "Mocking User Activity",
     "APIRef.MockingUserNotifications": "Mocking User Notifications",
     "APIRef.TestLifecycle": "Test Lifecycle",
     "APIRef.waitFor": "Manual Synchronization Using `waitFor`",
