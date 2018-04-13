@@ -53,7 +53,7 @@ class Client {
   }
 
   async pasteboardInfo() {
-    await this.sendAction(new actions.pasteboardInfo());
+    await this.sendAction(new actions.PasteBoardInfo());
   }
 
   async deliverPayload(params) {

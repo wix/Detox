@@ -141,7 +141,7 @@ class Device {
   }
 
   async pasteboardInfo() {
-    await this.deviceDriver.pasteboardInfo();
+    await this.deviceDriver.pasteboardInfo(this._deviceId);
   }
 
   async terminateApp(bundleId) {

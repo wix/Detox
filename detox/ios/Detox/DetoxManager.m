@@ -231,7 +231,8 @@ static void detoxConditionalInit()
 		[self.webSocket sendAction:@"currentStatusResult" withParams:statsStatus withMessageId:messageId];
 	}
 	else if ([type isEqualToString:@"pasteboardInfo"]) {
-		NSLog(@"\n\n\ninvoke pasteboardInfo methods\n\n\n")
+		NSLog(@"\n\n\ninvoke pasteboardInfo methods\n\n\n");
+		[self.webSocket sendAction:@"pasteboardInfoDone" withParams:@{} withMessageId:messageId];
 	}
 }
 

@@ -40,7 +40,7 @@ class IosDriver extends DeviceDriverBase {
     return await this.client.shake();
   }
 
-  async pasteboardInfo() {
+  async pasteboardInfo(deviceId) {
     return await this.client.pasteboardInfo()
   }
 

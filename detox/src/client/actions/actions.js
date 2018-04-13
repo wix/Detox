@@ -56,7 +56,7 @@ class PasteBoardInfo extends Action {
   }
 
   async handle(response) {
-    this.expectResponseOfType(response, 'pasteboardInfo');
+    this.expectResponseOfType(response, 'pasteboardInfoDone');
   }
 }
 
@@ -150,5 +150,6 @@ module.exports = {
   DeliverPayload,
   CurrentStatus,
   Shake,
+  PasteBoardInfo,
   AppWillTerminateWithError
 };
