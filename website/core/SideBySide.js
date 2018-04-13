@@ -1,7 +1,27 @@
 import React from "react";
+import styled from "styled-components";
+
+const Option = styled.div``;
+const ControlPanel = styled.div`
+  border-bottom: 1px solid #333;
+  margin-bottom: 1em;
+  margin-top: 1em;
+  padding-bottom: 0.1em;
+`;
+const Control = styled.a`
+  background-color: ${props => (props.active ? "#F2F2F2" : "white")};
+  border: 1px solid #333;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-block;
+  font-weight: bold;
+  font-size: 1.5em;
+  padding: 0.3em;
+  margin-right: 0.5em;
+`;
 
 export function SideBySideOption({ children }) {
-  return <div>{children}</div>;
+  return <Option>{children}</Option>;
 }
 
 export default class SideBySide extends React.Component {
@@ -18,20 +38,24 @@ export default class SideBySide extends React.Component {
     });
   }
 
-  renderControls() {
+  renderControls(selectedOption) {
     const options = React.Children.map(
       this.props.children,
       child => child.props.name
     );
 
     return (
-      <div className="side-by-side-controls">
+      <ControlPanel>
         {options.map(option => (
-          <a key={option} onClick={this.selectOption.bind(this, option)}>
+          <Control
+            key={option}
+            active={selectedOption === option}
+            onClick={this.selectOption.bind(this, option)}
+          >
             {option}
-          </a>
+          </Control>
         ))}
-      </div>
+      </ControlPanel>
     );
   }
 
@@ -44,7 +68,7 @@ export default class SideBySide extends React.Component {
 
     return (
       <div>
-        {this.renderControls()}
+        {this.renderControls(selectedOption || children[0].props.name)}
         <div>{selectedChild}</div>
       </div>
     );
