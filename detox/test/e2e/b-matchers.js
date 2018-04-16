@@ -67,4 +67,9 @@ describe('Matchers', () => {
     await expect(element(by.text('Product')).atIndex(2)).toHaveId('ProductId002');
   });
 
+  it(':ios: should match elements by (interactable)', async () => {
+    await element(by.id('duplicate-testID').and(by.interactable())).tap();
+    await expect(element(by.text('Interactable Working!!!'))).toBeVisible();
+  });
+
 });

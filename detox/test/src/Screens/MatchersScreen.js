@@ -61,8 +61,16 @@ export default class MatchersScreen extends Component {
         </TouchableOpacity>
         <TouchableOpacity onPress={this.onButtonPress.bind(this, 'Third button pressed')}>
           <Text style={{color: 'brown', marginBottom: 20}}>Index</Text>
-        </TouchableOpacity>        
+        </TouchableOpacity>
 
+        <View style={{margin: 30, position: 'relative'}}>
+          <TouchableOpacity testID='duplicate-testID' onPress={this.onButtonPress.bind(this, 'Interactable Not Working')} style={{padding: 20}}>
+            <Text>overlapped</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity testID='duplicate-testID' onPress={this.onButtonPress.bind(this, 'Interactable Working')} style={{padding: 40, backgroundColor: 'gray', position: 'absolute', left: 0, right: 0}}>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
