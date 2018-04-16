@@ -1,7 +1,7 @@
 const DetoxConstants = require('detox').DetoxConstants;
 const debug = require('detox').Debug;
 
-describe.only(':ios: User Notifications', () => {
+describe(':ios: User Notifications', () => {
   it('Init from push notification', async () => {
     await device.launchApp({newInstance: true, userNotification: userNotificationPushTrigger});
     await expect(element(by.text('https://push.detox.dtx'))).toBeVisible();
