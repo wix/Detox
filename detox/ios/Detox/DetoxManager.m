@@ -32,7 +32,6 @@ DTX_CREATE_LOG(DetoxManager)
 @property (nonatomic) BOOL isReady;
 @property (nonatomic, strong) WebSocket *webSocket;
 @property (nonatomic, strong) TestRunner *testRunner;
-@property (nonatomic, strong) DTXPasteboardInfo *pasteboardInfo;
 
 @end
 
@@ -80,7 +79,6 @@ static void detoxConditionalInit()
 	self.webSocket.delegate = self;
 	self.testRunner = [[TestRunner alloc] init];
 	self.testRunner.delegate = self;
-	self.pasteboardInfo = [[DTXPasteboardInfo alloc] init];
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidLaunch:) name:UIApplicationDidFinishLaunchingNotification object:nil];
 	
@@ -231,7 +229,7 @@ static void detoxConditionalInit()
 		[self.webSocket sendAction:@"currentStatusResult" withParams:statsStatus withMessageId:messageId];
 	}
 	else if ([type isEqualToString:@"pasteboardInfo"]) {
-		NSDictionary *response = [self.pasteboardInfo pasteboardHaveSomeValue];
+		NSDictionary *response = [DTXPasteboardInfo pasteboardInfo];
 		[self.webSocket sendAction:@"pasteboardInfoDone" withParams:response withMessageId:messageId];
 	}
 }

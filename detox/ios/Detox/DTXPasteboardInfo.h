@@ -10,6 +10,6 @@
 
 @interface DTXPasteboardInfo : NSObject
 
-- (NSDictionary *)pasteboardHaveSomeValue;
++ (NSDictionary *)pasteboardInfo;
 
 @end

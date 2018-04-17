@@ -11,7 +11,7 @@
 
 @implementation DTXPasteboardInfo
 
-- (NSDictionary *)pasteboardHaveSomeValue {
++ (NSDictionary *)pasteboardInfo {
 	NSMutableDictionary *response = [[NSMutableDictionary alloc] init];
 	UIPasteboard * pb = [UIPasteboard generalPasteboard];
 	if (pb.hasStrings) {
@@ -24,7 +24,7 @@
 		[response setValue:[NSString stringWithFormat:@"%@", pb.image] forKey:@"pbImage"];
 	}
 	if (pb.hasColors) {
-		[response setValue:pb.color forKey:@"pbColor"];
+		[response setValue:[NSString stringWithFormat:@"%@", pb.color] forKey:@"pbColor"];
 	}
 	return response;
 }
