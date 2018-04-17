@@ -49,6 +49,14 @@ describe('Client', () => {
     expect(client.ws.send).toHaveBeenCalledTimes(2);
   });
 
+  it(`pasteboardInfo() - should send pasteboardInfo action when 'pasteboardInfoDone' returns`, async() => {
+    await connect();
+    client.ws.send.mockReturnValueOnce(response("pasteboardInfoDone",{},1));
+    await client.pasteboardInfo();
+
+    expect(client.ws.send).toHaveBeenCalledTimes(2);
+  });
+
   it(`waitUntilReady() - should receive ready from device and resolve`, async () => {
     await connect();
     client.ws.send.mockReturnValueOnce(response("ready", {}, 1));
