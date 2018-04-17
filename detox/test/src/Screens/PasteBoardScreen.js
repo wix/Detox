@@ -97,7 +97,7 @@ export default class PasteBoardScreen extends Component {
     return (
       <View style={styles.container} >
         <Text style = {styles.titleText}> Set some string: </Text>
-        <TextInput
+        <TextInput  testID = "stringValueInput"
              style = {styles.stringTF}
              placeholder = {'set string...'}
              autoCorrect = {false}
