@@ -140,10 +140,7 @@ module.exports = function getGenerator({
 			[]
 		);
 		const typeChecks = allTypeChecks.filter(check => typeof check === "object");
-		const returnStatement = createReturnStatement(
-			classJson,
-			sanitizedJson
-		);
+		const returnStatement = createReturnStatement(classJson, sanitizedJson);
 		return [...typeChecks, returnStatement];
 	}
 
@@ -197,15 +194,15 @@ module.exports = function getGenerator({
 			arg =>
 				shouldBeWrapped(arg)
 					? t.objectExpression([
-						t.objectProperty(
-							t.identifier("type"),
-							t.stringLiteral(addArgumentTypeSanitizer(arg))
-						),
-						t.objectProperty(
-							t.identifier("value"),
-							addArgumentContentSanitizerCall(arg, json.name)
-						)
-					])
+							t.objectProperty(
+								t.identifier("type"),
+								t.stringLiteral(addArgumentTypeSanitizer(arg))
+							),
+							t.objectProperty(
+								t.identifier("value"),
+								addArgumentContentSanitizerCall(arg, json.name)
+							)
+					  ])
 					: addArgumentContentSanitizerCall(arg, json.name)
 		);
 
@@ -214,7 +211,10 @@ module.exports = function getGenerator({
 				t.objectProperty(
 					t.identifier("target"),
 					t.objectExpression([
-						t.objectProperty(t.identifier("type"), t.stringLiteral(json.static ? "Class" : "Invocation")),
+						t.objectProperty(
+							t.identifier("type"),
+							t.stringLiteral(json.static ? "Class" : "Invocation")
+						),
 						t.objectProperty(
 							t.identifier("value"),
 							json.static
@@ -239,7 +239,9 @@ module.exports = function getGenerator({
 		const isListOfChecks = typeCheckCreator instanceof Array;
 		return isListOfChecks
 			? typeCheckCreator.map(singleCheck => singleCheck(json))
-			: (typeof typeCheckCreator === "function" ? typeCheckCreator(json) : t.emptyStatement());
+			: typeof typeCheckCreator === "function"
+				? typeCheckCreator(json)
+				: t.emptyStatement();
 	}
 
 	return function generator(files) {

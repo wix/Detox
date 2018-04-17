@@ -127,7 +127,7 @@ function sanitize_uiAccessibilityTraits(value) {
 			default:
 				throw new Error(
 					`Unknown trait '${
-					value[i]
+						value[i]
 					}', see list in https://facebook.github.io/react-native/docs/accessibility.html#accessibilitytraits-ios`
 				);
 		}
@@ -141,7 +141,6 @@ function sanitize_matcher(matcher) {
 		typeof matcher._call === "function" ? matcher._call() : matcher._call;
 	return originalMatcher.type ? originalMatcher.value : originalMatcher;
 } // END sanitize_matcher
-
 
 function sanitize_greyElementInteraction(value) {
 	return {

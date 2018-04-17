@@ -136,7 +136,6 @@ describe("globals", () => {
 				_call: "I am a call"
 			};
 			expect(globals.sanitize_matcher(matcherLikeObj)).toBe("I am a call");
-
 		});
 	});
 
