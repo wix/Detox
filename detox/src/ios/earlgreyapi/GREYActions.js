@@ -531,17 +531,6 @@ For Example: @"Helpo\b\bloWorld" will type HelloWorld in Objective-C.
       }]
     };
   }
-  /* Action for Copy text to Pasteboard
-  */static actionForCopyTextToPasteboard() {
-    return {
-      target: {
-        type: "Class",
-        value: "GREYActions"
-      },
-      method: "grey_actionForCopyTextToPasteboard",
-      args: []
-    };
-  }
 
   /*@return A GREYAction that clears a text field by injecting back-spaces.
 */static actionForClearText() {
