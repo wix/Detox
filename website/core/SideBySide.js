@@ -1,27 +1,7 @@
-import React from "react";
-import styled from "styled-components";
-
-const Option = styled.div``;
-const ControlPanel = styled.div`
-  border-bottom: 1px solid #333;
-  margin-bottom: 1em;
-  margin-top: 1em;
-  padding-bottom: 0.1em;
-`;
-const Control = styled.a`
-  background-color: ${props => (props.active ? "#F2F2F2" : "white")};
-  border: 1px solid #333;
-  border-radius: 5px;
-  cursor: pointer;
-  display: inline-block;
-  font-weight: bold;
-  font-size: 1.5em;
-  padding: 0.3em;
-  margin-right: 0.5em;
-`;
+const React = require("react");
 
 export function SideBySideOption({ children }) {
-  return <Option>{children}</Option>;
+  return <div>{children}</div>;
 }
 
 export default class SideBySide extends React.Component {
@@ -33,6 +13,7 @@ export default class SideBySide extends React.Component {
   }
 
   selectOption(name) {
+    console.log("FOOO");
     this.setState({
       selectedOption: name
     });
@@ -45,17 +26,35 @@ export default class SideBySide extends React.Component {
     );
 
     return (
-      <ControlPanel>
+      <div
+        style={{
+          borderBottom: "1px solid #333",
+          marginBottom: "1em",
+          marginTop: "1em",
+          paddingBottom: "0.1em"
+        }}
+      >
         {options.map(option => (
-          <Control
+          <a
             key={option}
-            active={selectedOption === option}
             onClick={this.selectOption.bind(this, option)}
+            style={{
+              backgroundColor: selectedOption === option ? "#F2F2F2" : "white",
+              border: "1px solid #333",
+              borderRadius: "5px",
+              cursor: "pointer",
+              display: "inline-block",
+              fontWeight: "bold",
+              fontSize: "1.5em",
+              padding: "0.3em",
+              marginRight: "0.5em",
+              userSelect: "none"
+            }}
           >
             {option}
-          </Control>
+          </a>
         ))}
-      </ControlPanel>
+      </div>
     );
   }
 

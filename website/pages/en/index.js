@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import React from "react";
+const React = require("react");
 const SideBySide = require(process.cwd() + "/core/SideBySide").default;
 const SideBySideOption = require(process.cwd() + "/core/SideBySide")
   .SideBySideOption;

@@ -33,8 +33,5 @@
     "@storybook/addon-links": "3.3.14",
     "@storybook/addons": "3.3.14",
     "babel-core": "6.26.0"
-  },
-  "dependencies": {
-    "styled-components": "3.2.5"
   }
 }
