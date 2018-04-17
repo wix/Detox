@@ -273,7 +273,10 @@ class Element {
   async replaceText(value) {
     return await new ActionInteraction(this, new ReplaceTextAction(value)).execute();
   }
+<<<<<<< HEAD
  
+=======
+>>>>>>> parent of 6d589f6... work with pasteboard
   async clearText() {
     return await new ActionInteraction(this, new ClearTextAction()).execute();
   }
