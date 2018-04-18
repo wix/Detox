@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-// Javascript for windows support.
-
 if (process.argv[2] === "android" || process.argv[3] === "android") {
 	console.log("\nBuilding Detox aars");
 	const aars = [

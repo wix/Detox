@@ -59,10 +59,11 @@ class EmulatorDriver extends AndroidDriver {
     // If it's not already running, start it now.
     if (!filteredDevices.length) {
       await this.emulator.boot(name);
-    }
 
-    adbDevices = await this.adb.devices();
-    filteredDevices = _.filter(adbDevices, {type: 'emulator', name: name});
+      // Refresh devices after boot completes.
+      adbDevices = await this.adb.devices();
+      filteredDevices = _.filter(adbDevices, {type: 'emulator', name: name});
+    }
 
     let adbName;
     switch (filteredDevices.length) {
