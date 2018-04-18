@@ -6,7 +6,7 @@ import {
   Text,
   StyleSheet
 } from 'react-native';
-import PasteBoardScreen from './PasteBoardScreen';
+import PasteboardScreen from './PasteboardScreen';
 
 export default class CheckingScreen extends Component {
 
@@ -24,7 +24,7 @@ export default class CheckingScreen extends Component {
     }
     return (
         <View style  = {styles.container}>
-        <TouchableOpacity testID = "backButton" onPress={(() => this.setState({example : PasteBoardScreen}))}>
+        <TouchableOpacity testID = "backButton" onPress={(() => this.setState({example : PasteboardScreen}))}>
             <Text style={styles.buttonText}>
               Back button
             </Text>

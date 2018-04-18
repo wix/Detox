@@ -230,7 +230,12 @@ static void detoxConditionalInit()
 	}
 	else if ([type isEqualToString:@"pasteboardInfo"]) {
 		NSDictionary *response = [DTXPasteboardInfo pasteboardInfo];
-		[self.webSocket sendAction:@"pasteboardInfoDone" withParams:response withMessageId:messageId];
+		if (response != nil) {
+			[self.webSocket sendAction:@"pasteboardInfoDone" withParams:response withMessageId:messageId];
+		} else {
+			[self testRunnerOnTestFailed:@"pasteboard have not any value" withMessageId:messageId];
+		}
+		
 	}
 }
 

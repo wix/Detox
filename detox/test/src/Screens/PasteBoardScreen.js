@@ -20,7 +20,7 @@ const boyImage = 'http://img.draugas.lt/forumas/veidukai/973676.gif'
 const redPandaImage = 'https://orig00.deviantart.net/ee08/f/2009/073/e/d/free_red_panda_icon_100x100_by_supertuffpinkpuff.png'
 const supermanImage = 'https://a.facdn.net/1484483600/perkalator445.gif'//'http://it.avatarstock.com/img/Superman-Logo_5194.jpg'
 
-export default class PasteBoardScreen extends Component {
+export default class PasteboardScreen extends Component {
 
   constructor(props) {
     super(props)

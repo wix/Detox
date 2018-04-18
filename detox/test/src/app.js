@@ -92,7 +92,7 @@ class example extends Component {
           {this.renderScreenButton('Animations', Screens.AnimationsScreen)}
           {this.renderScreenButton('Location', Screens.LocationScreen)}
           {this.renderScreenButton('DatePicker', Screens.DatePickerScreen)}
-          {this.renderScreenButton('Pasteboard', Screens.PasteBoardScreen)}
+          {this.renderScreenButton('Pasteboard', Screens.PasteboardScreen)}
           {this.renderButton('Crash', () => {
             throw new Error('Simulated Crash')
           })}

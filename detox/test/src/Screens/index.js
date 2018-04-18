@@ -13,7 +13,7 @@ import AnimationsScreen from './AnimationsScreen';
 import LocationScreen from './LocationScreen';
 import ShakeScreen from './ShakeScreen';
 import DatePickerScreen from './DatePickerScreen'
-import PasteBoardScreen from './PasteBoardScreen';
+import PasteboardScreen from './PasteboardScreen';
 
 export {
   SanityScreen,
@@ -31,5 +31,5 @@ export {
   LocationScreen,
   ShakeScreen,
   DatePickerScreen,
-  PasteBoardScreen
+  PasteboardScreen
 };

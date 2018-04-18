@@ -12,21 +12,20 @@
 @implementation DTXPasteboardInfo
 
 + (NSDictionary *)pasteboardInfo {
-	NSMutableDictionary *response = [[NSMutableDictionary alloc] init];
 	UIPasteboard * pb = [UIPasteboard generalPasteboard];
 	if (pb.hasStrings) {
-		[response setValue:pb.string forKey:@"pbString"];
+		return @{@"pbString" : pb.string};
 	}
 	if (pb.hasURLs) {
-		[response setValue:[NSString stringWithFormat:@"%@", pb.URL] forKey:@"pbURL"];
+		return  @{@"pbURL" : [NSString stringWithFormat:@"%@", pb.URL]};
 	}
 	if (pb.hasImages) {
-		[response setValue:[NSString stringWithFormat:@"%@", pb.image] forKey:@"pbImage"];
+		return @{@"pbImage" : [NSString stringWithFormat:@"%@", pb.image]};
 	}
 	if (pb.hasColors) {
-		[response setValue:[NSString stringWithFormat:@"%@", pb.color] forKey:@"pbColor"];
+		return @{@"pbColor" : [NSString stringWithFormat:@"%@", pb.color]};
 	}
-	return response;
+	return nil;
 }
 
 @end
