@@ -54,7 +54,7 @@ class ADB {
       await this.adbCmd(deviceId, `install -r -g ${apkPath}`);
     } else {
       await this.adbCmd(deviceId, `install -rg ${apkPath}`);
-    }    
+    }
   }
 
   async uninstall(deviceId, appId) {
@@ -101,6 +101,10 @@ class ADB {
 
   async sleep(ms = 0) {
     return new Promise((resolve, reject) => setTimeout(resolve, ms));
+  }
+
+  async listInstrumentation(deviceId) {
+    return await this.shell(deviceId, 'pm list instrumentation');
   }
 }
 

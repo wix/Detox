@@ -55,5 +55,10 @@ xdescribe('ADB', () => {
     await adb.unlockScreen('deviceId');
     expect(exec).toHaveBeenCalledTimes(1);
   });
+
+  it('listInstrumentation', async () => {
+    await adb.listInstrumentation('deviceId');
+    expect(exec).toHaveBeenCalledTimes(1);
+  });
 });
 
