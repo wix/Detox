@@ -180,7 +180,7 @@ module.exports = function({
 								t.identifier("value"),
 								addArgumentContentSanitizerCall(arg, json.name)
 							)
-						])
+					  ])
 					: addArgumentContentSanitizerCall(arg, json.name)
 		);
 

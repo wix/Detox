@@ -4,6 +4,7 @@
 #import <React/RCTRootView.h>
 #import <React/RCTPushNotificationManager.h>
 #import <React/RCTLinkingManager.h>
+@import CoreSpotlight;
 
 @import UserNotifications;
 
@@ -93,23 +94,36 @@ RCT_EXPORT_MODULE();
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options
 {
-    return [RCTLinkingManager application:application openURL:url
+    return [RCTLinkingManager application:application
+								  openURL:url
                         sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
                                annotation:options[UIApplicationOpenURLOptionsAnnotationKey]];
-	return YES;
 }
 
-// Required for the notification event. You must call the completion handler after handling the remote notification.
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
-fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
 	[RCTPushNotificationManager didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
 }
 
-// Required for the localNotification event.
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
 {
 	[RCTPushNotificationManager didReceiveLocalNotification:notification];
+}
+
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler
+{
+	if([userActivity.activityType isEqualToString:CSSearchableItemActionType])
+	{
+		NSString* identifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];
+		
+		//Fake it here as if it is a URL, but actually it's a searchable item identifier.
+		return [RCTLinkingManager application:application
+									  openURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", identifier]]
+							sourceApplication:nil
+								   annotation:nil];
+	}
+	
+	return [RCTLinkingManager application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
 }
 
 @end

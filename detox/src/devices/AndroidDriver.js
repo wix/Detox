@@ -72,7 +72,7 @@ class AndroidDriver extends DeviceDriverBase {
       return this.instrumentationProcess.pid;
     }
 
-    this.instrumentationProcess = spawn(`adb`, [`-s`, `${deviceId}`, `shell`, `am`, `instrument`, `-w`, `-r`, `${args.join(' ')}`, `-e`, `debug`,
+    this.instrumentationProcess = spawn(this.adb.adbBin, [`-s`, `${deviceId}`, `shell`, `am`, `instrument`, `-w`, `-r`, `${args.join(' ')}`, `-e`, `debug`,
       `false`, `${bundleId}.test/android.support.test.runner.AndroidJUnitRunner`]);
     log.verbose(this.instrumentationProcess.spawnargs.join(" "));
     log.verbose('Instrumentation spawned, childProcess.pid: ', this.instrumentationProcess.pid);
@@ -91,9 +91,13 @@ class AndroidDriver extends DeviceDriverBase {
     return this.instrumentationProcess.pid;
   }
 
-  async openURL(deviceId, params) {
-    const call = invoke.call(invoke.Android.Class("com.wix.detox.Detox"), 'startActivityFromUrl', invoke.Android.String(params.url));
-    await this.invocationManager.execute(call);
+  async deliverPayload(params) {
+    if(params.url) {
+      const call = invoke.call(invoke.Android.Class("com.wix.detox.Detox"), 'startActivityFromUrl', invoke.Android.String(params.url));
+      await this.invocationManager.execute(call);
+    }
+    
+    //The other types are not yet supported.
   }
 
   async sendToHome(deviceId, params) {

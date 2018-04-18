@@ -16,6 +16,7 @@ title: The `device` Object
 - [`device.uninstallApp()`](#deviceuninstallapp)
 - [`device.openURL(url)`](#deviceopenurlurl-sourceappoptional)
 - [`device.sendUserNotification(params)`](#devicesendusernotificationparams)
+- [`device.sendUserActivity(params)`](#devicesenduseracitivityparams)
 - [`device.setOrientation(orientation)`](#devicesetorientationorientation)
 - [`device.setLocation(lat, lon)`](#devicesetlocationlat-lon)
 - [`device.setURLBlacklist([urls])`](#deviceseturlblacklisturls)
@@ -23,7 +24,7 @@ title: The `device` Object
 - [`device.disableSynchronization()`](#devicedisablesynchronization)
 - [`device.resetContentAndSettings()`](#deviceresetcontentandsettings)
 - [`device.getPlatform()`](#devicegetplatform)
-- [`device.shake()`](#deviceshake)
+- [`device.shake()` **iOS Only**](#deviceshake)
 
 ### `device.launchApp(params)`
 Launch the app defined in the current [`configuration`](APIRef.Configuration.md).
@@ -45,7 +46,7 @@ Grant or deny runtime permissions for your application.
 await device.launchApp({permissions: {calendar: 'YES'}});
 ```
 Detox uses [AppleSimUtils](https://github.com/wix/AppleSimulatorUtils) on iOS to support this functionality. Read about the different types of permissions and how to set them in AppleSimUtils' Readme.
-Check out Detox's [own test suite](../detox/test/e2e/l-permissions.js)
+Check out Detox's [own test suite](../detox/test/e2e/m-permissions.js)
 
 ##### 3. Launch from URL
 Mock opening the app from URL to test your app's deep link handling mechanism.
@@ -68,7 +69,7 @@ This will launch the app from background and handle the deep link.
 
 Read more in [Mocking Open From URL](APIRef.MockingOpenFromURL.md) section.
 
-##### 4. Launch from user notifications
+##### 4. Launch with user notifications
 
 ```js
 await device.launchApp({userNotification: notification});
@@ -89,14 +90,35 @@ This will launch the app from background and handle the notification.
 
 Read more in [Mocking User Notifications](APIRef.MockingUserNotifications.md) section.
 
-##### 5. Launch into a fresh installation 
+##### 5. Launch with user activity
+
+```js
+await device.launchApp({userActivity: activity});
+```
+
+###### Mock receiving an activity when app is not running
+```js
+await device.launchApp({userActivity: activity, newInstance: true});
+```
+This will launch a new instance of the app and handle the activity.
+
+######  Mock receiving an activity when app is in background
+
+```js
+await device.launchApp({userActivity: activity, newInstance: false});
+```
+This will launch the app from background and handle the activity.
+
+Read more in [Mocking User Activity](APIRef.MockingUserActivity.md) section.
+
+##### 6. Launch into a fresh installation 
 A flag that enables relaunching into a fresh installation of the app (it will uninstall and install the binary again), default is `false`.
 
 ```js
 await device.launchApp({delete: true});
 ```
 
-##### 6. Additional launch arguments
+##### 7. Additional launch arguments
 Detox can start the app with additional launch arguments
 
 ```js
@@ -131,7 +153,9 @@ await device.launchApp({newInstance: false});
 Check out Detox's [own test suite](../detox/test/e2e/f-device.js)
 
 ### `device.reloadReactNative()`
-If this is a react native app, reload react native JS bundle. This action is much faster than `device.relaunchApp()`, and is recommended if you just need to reset your react native logic.
+If this is a React Native app, reload the React Native JS bundle. This action is much faster than `device.launchApp()`, and can be used if you just need to reset your React Native logic.
+
+<i>**Note:** This functionality does not work without faults. Under certain conditions, the system may not behave as expected and/or even crash. In these cases, use `device.launchApp()` to launch the app cleanly instead of only reloading the JS bundle.</i>
 
 ### `device.installApp()`
 By default, `installApp()` with no params will install the app file defined in the current [`configuration`](APIRef.Configuration.md).
@@ -160,6 +184,11 @@ Check out Detox's [own test suite](../detox/test/e2e/n-deep-links.js)
 Mock handling of received user notification when app is in foreground.<br>
 Read more in [Mocking User Notifications](APIRef.MockingUserNotifications.md) section.<br>
 Check out Detox's [own test suite](../detox/test/e2e/k-user-notifications.js)
+
+### `device.sendUserActivity(params)`
+Mock handling of received user activity when app is in foreground.<br>
+Read more in [Mocking User Activities](APIRef.MockingUserActivities.md) section.<br>
+Check out Detox's [own test suite](../detox/test/e2e/17-user-activities.js)
 
 ### `device.setOrientation(orientation)`
 Takes `"portrait"` or `"landscape"` and rotates the device to the given orientation.
@@ -218,7 +247,6 @@ if (device.getPlatform() === 'ios') {
   await expect(loopSwitch).toHaveValue('1');
 }
 ```
-
-### `device.shake()`
-**iOS Only**
+ 
+### `device.shake()` **iOS Only**
 Simulate shake 

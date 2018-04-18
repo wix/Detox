@@ -79,12 +79,22 @@ static void detoxConditionalInit()
 	self.testRunner = [[TestRunner alloc] init];
 	self.testRunner.delegate = self;
 	
-	if([ReactNativeSupport isReactNativeApp])
-	{
-		[self _waitForRNLoadWithId:@0];
-	}
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidLaunch:) name:UIApplicationDidFinishLaunchingNotification object:nil];
 	
 	return self;
+}
+
+- (void)_appDidLaunch:(NSNotification*)note
+{
+	[EarlGrey detox_safeExecuteSync:^{
+		self.isReady = YES;
+		[self _sendGeneralReadyMessage];
+	}];
+}
+
+- (void)_sendGeneralReadyMessage
+{
+	[self.webSocket sendAction:@"ready" withParams:@{} withMessageId:@-1000];
 }
 
 - (void)connectToServer:(NSString*)url withSessionId:(NSString*)sessionId
@@ -124,45 +134,64 @@ static void detoxConditionalInit()
 		[self.webSocket sendAction:@"cleanupDone" withParams:@{} withMessageId:messageId];
 		return;
 	}
-	else if([type isEqualToString:@"userNotification"])
+	else if([type isEqualToString:@"deliverPayload"])
 	{
-		NSURL* userNotificationDataURL = [NSURL fileURLWithPath:params[@"detoxUserNotificationDataURL"]];
 		BOOL delay = [params[@"delayPayload"] boolValue];
 		
-		void (^block)(void) = ^{
-			[DetoxAppDelegateProxy.currentAppDelegateProxy dispatchUserNotificationFromDataURL:userNotificationDataURL delayUntilActive:delay];
-			
-			[self.webSocket sendAction:@"userNotificationDone" withParams:@{} withMessageId: messageId];
+		void (^block)(void);
+		//Send webSocket and messageId as params so the block is of global type, instead of being allocated on every message.
+		void (^sendDoneAction)(WebSocket* webSocket, NSNumber* messageId) = ^ (WebSocket* webSocket, NSNumber* messageId) {
+			[webSocket sendAction:@"deliverPayloadDone" withParams:@{} withMessageId: messageId];
 		};
 		
-		if(delay == YES)
+		if(params[@"url"])
 		{
-			block();
-			return;
-		}
-		
-		[EarlGrey detox_safeExecuteSync:block];
-	}
-	else if([type isEqualToString:@"openURL"])
-	{
-		NSURL* URLToOpen = [NSURL URLWithString:params[@"url"]];
-		BOOL delay = [params[@"delayPayload"] boolValue];
-		
-		NSParameterAssert(URLToOpen != nil);
-		
-		NSString* sourceApp = params[@"sourceApp"];
-		
-		NSMutableDictionary* options = [@{UIApplicationLaunchOptionsURLKey: URLToOpen} mutableCopy];
-		if(sourceApp != nil)
-		{
-			options[UIApplicationLaunchOptionsSourceApplicationKey] = sourceApp;
-		}
-		
-		void (^block)(void) = ^{
-			[DetoxAppDelegateProxy.currentAppDelegateProxy dispatchOpenURL:URLToOpen options:options delayUntilActive:delay];
+			NSURL* URLToOpen = [NSURL URLWithString:params[@"url"]];
 			
-			[self.webSocket sendAction:@"openURLDone" withParams:@{} withMessageId: messageId];
-		};
+			NSParameterAssert(URLToOpen != nil);
+			
+			NSString* sourceApp = params[@"sourceApp"];
+			
+			NSMutableDictionary* options = [@{UIApplicationLaunchOptionsURLKey: URLToOpen} mutableCopy];
+			if(sourceApp != nil)
+			{
+				options[UIApplicationLaunchOptionsSourceApplicationKey] = sourceApp;
+			}
+			
+			block = ^{
+				[DetoxAppDelegateProxy.currentAppDelegateProxy __dtx_dispatchOpenURL:URLToOpen options:options delayUntilActive:delay];
+				
+				sendDoneAction(self.webSocket, messageId);
+			};
+		}
+		else if(params[@"detoxUserNotificationDataURL"])
+		{
+			NSURL* userNotificationDataURL = [NSURL fileURLWithPath:params[@"detoxUserNotificationDataURL"]];
+			
+			NSParameterAssert(userNotificationDataURL != nil);
+			
+			block = ^{
+				[DetoxAppDelegateProxy.currentAppDelegateProxy __dtx_dispatchUserNotificationFromDataURL:userNotificationDataURL delayUntilActive:delay];
+				
+				sendDoneAction(self.webSocket, messageId);
+			};
+		}
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_10_3
+		else if(params[@"detoxUserActivityDataURL"])
+		{
+			NSURL* userActivityDataURL = [NSURL fileURLWithPath:params[@"detoxUserActivityDataURL"]];
+			
+			NSParameterAssert(userActivityDataURL != nil);
+			
+			block = ^{
+				[DetoxAppDelegateProxy.currentAppDelegateProxy __dtx_dispatchUserActivityFromDataURL:userActivityDataURL delayUntilActive:delay];
+				
+				sendDoneAction(self.webSocket, messageId);
+			};
+		}
+#endif
+		
+		NSAssert(block != nil, @"Logic error, no block was generated for payload: %@", params);
 		
 		if(delay == YES)
 		{
@@ -205,7 +234,7 @@ static void detoxConditionalInit()
 	__weak __typeof(self) weakSelf = self;
 	[ReactNativeSupport waitForReactNativeLoadWithCompletionHandler:^{
 		weakSelf.isReady = YES;
-		[weakSelf.webSocket sendAction:@"ready" withParams:@{} withMessageId:@-1000];
+		[weakSelf _sendGeneralReadyMessage];
 	}];
 }
 

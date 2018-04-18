@@ -18,15 +18,10 @@ class IosDriver extends DeviceDriverBase {
     this.expect.exportGlobals();
   }
 
-  createPushNotificationJson(notification) {
-    const notificationFilePath = path.join(__dirname, `detox`, `notifications`, `notification.json`);
-    this.ensureDirectoryExistence(notificationFilePath);
+  createPayloadFile(notification) {
+    const notificationFilePath = path.join(this.createRandomDirectory(), `payload.json`);
     fs.writeFileSync(notificationFilePath, JSON.stringify(notification, null, 2));
     return notificationFilePath;
-  }
-
-  async openURL(deviceId, params) {
-    await this.client.openURL(params);
   }
 
   async setURLBlacklist(urlList) {

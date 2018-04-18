@@ -93,23 +93,13 @@ class Invoke extends Action {
   }
 }
 
-class SendUserNotification extends Action {
+class DeliverPayload extends Action {
   constructor(params) {
-    super('userNotification', params);
+    super('deliverPayload', params);
   }
 
   async handle(response) {
-    this.expectResponseOfType(response, 'userNotificationDone');
-  }
-}
-
-class OpenURL extends Action {
-  constructor(params) {
-    super('openURL', params);
-  }
-
-  async handle(response) {
-    this.expectResponseOfType(response, 'openURLDone');
+    this.expectResponseOfType(response, 'deliverPayloadDone');
   }
 }
 
@@ -147,8 +137,7 @@ module.exports = {
   Invoke,
   ReloadReactNative,
   Cleanup,
-  OpenURL,
-  SendUserNotification,
+  DeliverPayload,
   CurrentStatus,
   Shake,
   AppWillTerminateWithError

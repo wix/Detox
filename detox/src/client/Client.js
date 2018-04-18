@@ -1,6 +1,7 @@
 const AsyncWebSocket = require('./AsyncWebSocket');
 const actions = require('./actions/actions');
 const argparse = require('../utils/argparse');
+const retry = require('../utils/retry');
 
 class Client {
   constructor(config) {
@@ -25,10 +26,6 @@ class Client {
 
   async reloadReactNative() {
     await this.sendAction(new actions.ReloadReactNative());
-  }
-
-  async sendUserNotification(params) {
-    await this.sendAction(new actions.SendUserNotification(params));
   }
 
   async waitUntilReady() {
@@ -56,8 +53,8 @@ class Client {
     await this.sendAction(new actions.Shake());
   }
 
-  async openURL(params) {
-    await this.sendAction(new actions.OpenURL(params));
+  async deliverPayload(params) {
+    await this.sendAction(new actions.DeliverPayload(params));
   }
 
   async execute(invocation) {
