@@ -110,8 +110,8 @@ await element(by.id('scrollView')).swipe('down', 'fast', 0.5);
 ```
 ### `setColumnToValue(column,value)`  iOS only
 
-column - number of datepicker column (starts from 0)
-value - string value in setted column (must be correct)
+column - date picker column index<br>
+value - string value to set in column<br>
 
 ```js
 await expect(element(by.type('UIPickerView'))).toBeVisible();
