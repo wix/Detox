@@ -6,14 +6,19 @@ describe('ADB', () => {
 
   beforeEach(() => {
     jest.mock('npmlog');
+    jest.mock('../../utils/environment', () => ({
+      getAndroidSDKPath: () => '/dev/null',
+    }));
+
     ADB = require('./ADB');
 
     jest.mock('./EmulatorTelnet');
     EmulatorTelnet = require('./EmulatorTelnet');
 
+
     jest.mock('../../utils/exec', () => {
       const exec = jest.fn();
-      exec.mockReturnValue({ stdout: '' })
+      exec.mockReturnValue({ stdout: '' });
       return { execWithRetriesAndLogs: exec };
     });
     exec = require('../../utils/exec').execWithRetriesAndLogs;
