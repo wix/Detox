@@ -60,13 +60,6 @@ class AndroidDriver extends DeviceDriverBase {
     }
   }
 
-  async getInstrumentationRunner(deviceId, bundleId) {
-    const instrumentationRunners = await this.adb.listInstrumentation(deviceId);
-    const expr = new RegExp(`^instrumentation:(.*) \\(target=${bundleId.replace(new RegExp('\\.', 'g'), "\\.")}\\)$`, 'gm');
-    const regexRes = expr.exec(instrumentationRunners);
-    return regexRes[1];
-  }
-
   async launch(deviceId, bundleId, launchArgs) {
     const args = [];
     _.forEach(launchArgs, (value, key) => {
@@ -79,10 +72,10 @@ class AndroidDriver extends DeviceDriverBase {
       return this.instrumentationProcess.pid;
     }
 
-    const testRunner = await this.adb.getInstrumentationRunner(deviceId, bundleId)
+    const testRunner = await this.adb.getInstrumentationRunner(deviceId, bundleId);
 
     this.instrumentationProcess = spawn(this.adb.adbBin, [`-s`, `${deviceId}`, `shell`, `am`, `instrument`, `-w`, `-r`, `${args.join(' ')}`, `-e`, `debug`,
-      `false`, `${bundleId}.test/android.support.test.runner.AndroidJUnitRunner`]);
+      `false`, testRunner]);
     log.verbose(this.instrumentationProcess.spawnargs.join(" "));
     log.verbose('Instrumentation spawned, childProcess.pid: ', this.instrumentationProcess.pid);
     this.instrumentationProcess.stdout.on('data', function(data) {

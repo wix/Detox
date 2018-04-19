@@ -106,6 +106,13 @@ class ADB {
   async listInstrumentation(deviceId) {
     return await this.shell(deviceId, 'pm list instrumentation');
   }
+
+  async getInstrumentationRunner(deviceId, bundleId) {
+      const instrumentationRunners = await this.listInstrumentation(deviceId);
+      const expr = new RegExp(`^instrumentation:(.*) \\(target=${bundleId.replace(new RegExp('\\.', 'g'), "\\.")}\\)$`, 'gm');
+      const regexRes = expr.exec(instrumentationRunners);
+      return regexRes[1];
+  }
 }
 
 module.exports = ADB;
