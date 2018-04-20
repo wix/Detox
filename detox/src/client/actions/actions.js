@@ -57,6 +57,7 @@ class PasteBoardInfo extends Action {
 
   async handle(response) {
     this.expectResponseOfType(response, 'pasteboardInfoDone');
+    return response
   }
 }
 

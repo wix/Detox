@@ -54,7 +54,8 @@ class Client {
   }
 
   async pasteboardInfo() {
-    await this.sendAction(new actions.PasteBoardInfo());
+    let responseParams = await this.sendAction(new actions.PasteBoardInfo());
+    return responseParams
   }
 
   async deliverPayload(params) {

@@ -15,6 +15,7 @@ class Device {
     this._artifactsCopier = new ArtifactsCopier(deviceDriver);
     this.deviceDriver.validateDeviceConfig(deviceConfig);
     this.debug = debug;
+    this.pasteboardInfoValue = {};
   }
 
   async prepare(params = {}) {
@@ -141,7 +142,42 @@ class Device {
   }
 
   async pasteboardInfo() {
-    await this.deviceDriver.pasteboardInfo(this._deviceId);
+    let responseParams = await this.deviceDriver.pasteboardInfo(this._deviceId);
+    this.pasteboardInfoValue = _.get(responseParams, 'params', {});
+  }
+
+  async expect_pasteboardHaveString(string) {
+    await this.pasteboardInfo()
+    if (_.isEmpty(this.pasteboardInfoValue.pbString)) {
+      throw new Error(`pasteboard have not string value`);
+    }
+    if (!_.isEqual(this.pasteboardInfoValue.pbString, string)) {
+      throw new Error(`value is not equal to pasteboard string value`);
+    }    
+  }
+   
+  async expect_pasteboardHaveUrl(url) {
+    await this.pasteboardInfo()
+    if (_.isEmpty(this.pasteboardInfoValue.pbString)) {
+      throw new Error(`pasteboard have not URL value`);
+    }
+    if (!_.isEqual(this.pasteboardInfoValue.pbString, url)) {
+      throw new Error(`URL is not equal to pasteboard URL value`);
+    } 
+  }
+
+  async expect_pasteboardHaveImage() {
+    await this.pasteboardInfo()
+    if (_.isEmpty(this.pasteboardInfoValue.pbImage)) {
+      throw new Error(`pasteboard have not image`);
+    }
+  }
+
+  async expect_pasteboardHaveColor() {
+    await this.pasteboardInfo()
+    if (_.isEmpty(this.pasteboardInfoValue.pbColor)) {
+      throw new Error(`pasteboard have not color`);
+    }
   }
 
   async terminateApp(bundleId) {
