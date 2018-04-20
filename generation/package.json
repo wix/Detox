@@ -6,6 +6,7 @@
 	"private": true,
 	"scripts": {
 		"build": "./index.js",
+		"pretest": "./check-for-git-changes.sh",
 		"test": "jest",
 		"precommit": "lint-staged",
 		"format": "prettier ./**/*.{js,json,css,md} --write"
