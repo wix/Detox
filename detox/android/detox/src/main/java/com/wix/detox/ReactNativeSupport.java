@@ -88,16 +88,31 @@ public class ReactNativeSupport {
      */
     public static Object getInstanceManager(@NonNull Object reactNativeHostHolder) {
         Object instanceManager = null;
-        try {
-            instanceManager = Reflect.on(reactNativeHostHolder)
-                    .call(METHOD_GET_RN_HOST)
-                    .call(METHOD_GET_INSTANCE_MANAGER)
-                    .get();
-        } catch (ReflectException e) {
-            Log.e(LOG_TAG, "Problem calling getInstanceManager()", e.getCause());
+        // If we are not in main thread and instanceManager has not been created, creation will fail
+        if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+            try {
+                instanceManager = Reflect.on(reactNativeHostHolder)
+                        .call(METHOD_GET_RN_HOST)
+                        .call(METHOD_GET_INSTANCE_MANAGER)
+                        .get();
+            } catch (ReflectException e) {
+                Log.e(LOG_TAG, "Problem calling getInstanceManager()", e.getCause());
+            }
+        } else {
+            instanceManager = getInstanceManagerFromOtherThread(reactNativeHostHolder);
         }
-
         return instanceManager;
+    }
+
+    private static Object getInstanceManagerFromOtherThread(@NonNull final Object reactNativeHostHolder) {
+        final Object[] instanceManager = {null};
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                instanceManager[0] = getInstanceManager(reactNativeHostHolder);
+            }
+        });
+        return instanceManager[0];
     }
 
     /**
