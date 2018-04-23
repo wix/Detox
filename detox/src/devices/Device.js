@@ -143,7 +143,8 @@ class Device {
 
   async pasteboardInfo() {
     let responseParams = await this.deviceDriver.pasteboardInfo(this._deviceId);
-    this.pasteboardInfoValue = _.get(responseParams, 'params', {});
+    let pasteboardInfoValue = _.get(responseParams, 'params', {});
+    return pasteboardInfoValue;
   }
 
   async expect_pasteboardHaveString(string) {

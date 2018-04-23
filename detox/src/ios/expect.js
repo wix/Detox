@@ -15,6 +15,8 @@ const GreyActions = require('./earlgreyapi/GREYActions');
 const GreyInteraction = require('./earlgreyapi/GREYInteraction');
 const GreyCondition = require('./earlgreyapi/GREYCondition');
 const GreyConditionDetox = require('./earlgreyapi/GREYConditionDetox');
+const Device = require('../devices/Device')
+const _ = require('lodash');
 
 let invocationManager;
 
@@ -303,7 +305,45 @@ class Element {
   }
 }
 
+
 class Expect { }
+
+class ExpectDevice extends Expect {
+  constructor(device) {
+    super();
+    this._currentDevice = device;
+  }
+  async pasteboardToHaveString(value) {
+    let data = await this._currentDevice.pasteboardInfo();
+    if (_.isEmpty(data.pbString)) {
+      throw new Error(`pasteboard have not string value`);
+    }
+    if (!_.isEqual(data.pbString, value)) {
+      throw new Error(`value is not equal to pasteboard string value`);
+    }  
+  }
+  async pasteboardToHaveImage() {
+    let data = await this._currentDevice.pasteboardInfo();
+    if (_.isEmpty(data.pbImage)) {
+      throw new Error(`pasteboard have not image`);
+    }
+  }
+  async pasteboardToHaveColor() {
+    let data = await this._currentDevice.pasteboardInfo();
+    if (_.isEmpty(data.pbColor)) {
+      throw new Error(`pasteboard have not color`);
+    }
+  }
+  async pasteboardToHaveURL(value) {
+    let data = await this._currentDevice.pasteboardInfo();
+    if (_.isEmpty(data.pbString)) {
+      throw new Error(`pasteboard have not URL value`);
+    }
+    if (!_.isEqual(data.pbString, value)) {
+      throw new Error(`URL is not equal to pasteboard URL value`);
+    } 
+  }
+}
 
 class ExpectElement extends Expect {
   constructor(element) {
@@ -369,6 +409,7 @@ class WaitForElement extends WaitFor {
 
 function expect(element) {
   if (element instanceof Element) return new ExpectElement(element);
+  if (element instanceof Device) return new ExpectDevice(element);
   throw new Error(`expect() argument is invalid, got ${typeof element}`);
 }
 

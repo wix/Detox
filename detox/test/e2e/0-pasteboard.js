@@ -10,14 +10,14 @@ describe('Pasteboard', () => {
   it('should have stringTextInput', async () => {
     await element(by.id('stringValueInput')).typeText('exampleString\n');
     await element(by.id('CheckButton')).tap();
-    await device.expect_pasteboardHaveString('exampleString');
+    await expect(device).pasteboardToHaveString('exampleString');
     await element(by.id('backButton')).tap();
   });
 
   it('should have imageValue', async () => {
     await element(by.id('testImageValue')).tap()
     await element(by.id('CheckButton')).tap()
-    await device.expect_pasteboardHaveImage()
+    await expect(device).pasteboardToHaveImage();
     await element(by.id('backButton')).tap()
   });
 
@@ -25,14 +25,14 @@ describe('Pasteboard', () => {
     await element(by.id('testURLValue')).tap();
     await element(by.id('testURLValue')).typeText('exampleURL\n');
     await element(by.id('CheckButton')).tap();
-    await device.expect_pasteboardHaveUrl('exampleURL');
+    await expect(device).pasteboardToHaveURL('exampleURL');
     await element(by.id('backButton')).tap();
   });
 
   it('should have color', async () => {
     await element(by.id('testColorValue')).tap();
     await element(by.id('CheckButton')).tap();
-    await device.expect_pasteboardHaveColor();
+    await expect(device).pasteboardToHaveColor();
     await element(by.id('backButton')).tap();
   });
 
