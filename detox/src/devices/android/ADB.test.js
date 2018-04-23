@@ -51,9 +51,13 @@ describe('ADB', () => {
     expect(exec).toHaveBeenCalledTimes(1);
   });
 
-  it(`listInstrumentation`, async () => {
-    await adb.listInstrumentation('deviceId');
-    expect(exec).toHaveBeenCalledTimes(1);
+  it(`listInstrumentation passes the right deviceId`, async () => {
+    const deviceId = 'aDeviceId';
+    const spyShell = jest.spyOn(adb, 'shell');
+
+    await adb.listInstrumentation(deviceId);
+
+    expect(spyShell).toBeCalledWith(deviceId, expect.any(String));
   });
 
   it(`Parse 'adb device' output`, async () => {
@@ -77,18 +81,29 @@ describe('ADB', () => {
     expect(actual).toEqual(parsedDevices);
   });
 
-  it(`getInstrumentationRunner`, async () => {
-    const adbShellPmListInstrumentationOutput =
+  it(`getInstrumentationRunner passes the right deviceId`, async () => {
+    const deviceId = 'aDeviceId';
+    const spyRunnerForBundle = jest.spyOn(adb, 'instrumentationRunnerForBundleId');
+    spyRunnerForBundle.mockReturnValue('');
+    const spyShell = jest.spyOn(adb, 'shell');
+
+    await adb.getInstrumentationRunner(deviceId, 'com.whatever.package');
+
+    expect(spyShell).toBeCalledWith(deviceId, expect.any(String));
+  });
+
+  it(`instrumentationRunnerForBundleId parses the correct runner for the package`, async () => {
+    const expectedRunner = "com.example.android.apis/.app.LocalSampleInstrumentation";
+    const expectedPackage = "com.example.android.apis";
+    const instrumentationRunnersShellOutput =
       "instrumentation:com.android.emulator.smoketests/android.support.test.runner.AndroidJUnitRunner (target=com.android.emulator.smoketests)\n" +
       "instrumentation:com.android.smoketest.tests/com.android.smoketest.SmokeTestRunner (target=com.android.smoketest)\n" +
-      "instrumentation:com.example.android.apis/.app.LocalSampleInstrumentation (target=com.example.android.apis)\n" +
+      `instrumentation:${expectedRunner} (target=${expectedPackage})\n` +
       "instrumentation:org.chromium.webview_shell/.WebViewLayoutTestRunner (target=org.chromium.webview_shell)\n";
 
-    const spyListInstrumentation = jest.spyOn(adb, 'listInstrumentation');
-    spyListInstrumentation.mockReturnValue(Promise.resolve(adbShellPmListInstrumentationOutput));
+    const result = await adb.instrumentationRunnerForBundleId(instrumentationRunnersShellOutput, expectedPackage);
 
-    const result = await adb.getInstrumentationRunner("deviceId", "com.example.android.apis");
-    expect(result).toEqual("com.example.android.apis/.app.LocalSampleInstrumentation");
+    expect(result).toEqual(expectedRunner);
   });
 });
 
