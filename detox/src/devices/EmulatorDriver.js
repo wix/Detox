@@ -34,7 +34,7 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async boot(deviceId) {
-    await this.emulator.boot(deviceId);
+    //await this.emulator.boot(deviceId);
     await this.adb.waitForBootComplete(deviceId);
   }
 
