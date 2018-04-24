@@ -23,7 +23,8 @@ class Emulator {
   }
 
   async boot(emulatorName) {
-    const cmd = `-verbose -gpu host -no-audio @${emulatorName}`;
+    // const cmd = `-verbose -gpu host -no-audio @${emulatorName}`;
+    const cmd = `echo "hello"`;
     log.verbose(this.emulatorBin, cmd);
     const tempLog = `./${emulatorName}.log`;
     const stdout = fs.openSync(tempLog, 'a');
