@@ -22,7 +22,9 @@ class EmulatorTelnet {
 
     await this.connection.connect(params);
     const auth = await fs.readFile(path.join(os.homedir(), '.emulator_console_auth_token'), 'utf8');
-    await this.exec(`auth ${auth}`);
+    if (auth) {
+      await this.exec(`auth ${auth}`);
+    }
   }
 
   async exec(command) {
