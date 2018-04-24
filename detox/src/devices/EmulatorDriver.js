@@ -34,7 +34,7 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async boot(deviceId) {
-    // await this.emulator.boot(deviceId);
+    await this.emulator.boot(deviceId);
     await this.adb.waitForBootComplete(deviceId);
   }
 
@@ -52,7 +52,7 @@ class EmulatorDriver extends AndroidDriver {
     }
 
     await this._fixEmulatorConfigIniSkinName(name);
-    // await this.emulator.boot(name);
+    await this.emulator.boot(name);
 
     const adbDevices = await this.adb.devices();
     const filteredDevices = _.filter(adbDevices, {type: 'emulator', name: name});
