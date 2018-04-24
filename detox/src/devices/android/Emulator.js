@@ -23,14 +23,14 @@ class Emulator {
   }
 
   async boot(emulatorName) {
-    // const cmd = `-verbose -gpu host -no-audio @${emulatorName}`;
-    const cmd = `echo "hello"`;
+    const cmd = `-verbose -gpu host -no-audio @${emulatorName}`;
     log.verbose(this.emulatorBin, cmd);
     const tempLog = `./${emulatorName}.log`;
     const stdout = fs.openSync(tempLog, 'a');
     const stderr = fs.openSync(tempLog, 'a');
     const tail = new Tail(tempLog);
-    const promise = spawn(this.emulatorBin, _.split(cmd, ' '), {detached: true, stdio: ['ignore', stdout, stderr]});
+    // const promise = spawn(this.emulatorBin, _.split(cmd, ' '), {detached: true, stdio: ['ignore', stdout, stderr]});
+    const promise = spawn('echo "hello"', {detached: true, stdio: ['ignore', stdout, stderr]});
 
     const childProcess = promise.childProcess;
     childProcess.unref();
