@@ -231,34 +231,6 @@ describe('Device', () => {
     expect(device.deviceDriver.pasteboardInfo).toHaveBeenCalledTimes(1);
   })
 
-  // it (`expect_pasteboardHaveString(string)`, async => {
-  //   device = validDevice();
-  //   device.expect_pasteboardHaveString('string');
-
-  //   expect(device.deviceDriver.expect_pasteboardHaveString).toHaveBeenCalledWith("string")
-  // })
-
-  // it (`expect_pasteboardHaveUrl(url)`, async => {
-  //   device = validDevice();
-  //   device.expect_pasteboardHaveUrl('url');
-
-  //   expect(device.deviceDriver.expect_pasteboardHaveUrl).toHaveBeenCalledWith("url");
-  // })
-
-  // it (`expect_pasteboardHaveImage()`, async => {
-  //   device = validDevice();
-  //   device.expect_pasteboardHaveImage();
-
-  //   expect(device.deviceDriver.expect_pasteboardHaveImage).toHaveBeenCalledTimes(1);
-  // })
-   
-  // it (`expect_pasteboardHaveColor()`, async => {
-  //   device = validDevice();
-  //   device.expect_pasteboardHaveColor();
-
-  //   expect(device.deviceDriver.expect_pasteboardHaveColor).toHaveBeenCalledTimes(1);
-  // })
-
   it(`terminateApp() should pass to device driver`, async () => {
     device = validDevice();
     await device.terminateApp();

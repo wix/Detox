@@ -316,7 +316,7 @@ class ExpectDevice extends Expect {
   async pasteboardToHaveString(value) {
     let data = await this._currentDevice.pasteboardInfo();
     if (_.isEmpty(data.pbString)) {
-      throw new Error(`pasteboard have not string value`);
+      throw new Error(`pasteboard doesn't have string value`);
     }
     if (!_.isEqual(data.pbString, value)) {
       throw new Error(`value is not equal to pasteboard string value`);

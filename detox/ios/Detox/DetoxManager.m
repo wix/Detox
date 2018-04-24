@@ -233,7 +233,7 @@ static void detoxConditionalInit()
 		if (response != nil) {
 			[self.webSocket sendAction:@"pasteboardInfoDone" withParams:response withMessageId:messageId];
 		} else {
-			[self testRunnerOnTestFailed:@"pasteboard have not any value" withMessageId:messageId];
+			[self testRunnerOnTestFailed:@"pasteboard doesn't have any value" withMessageId:messageId];
 		}
 		
 	}
