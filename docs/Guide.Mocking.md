@@ -3,6 +3,8 @@ id: Guide.Mocking
 title: Mocking
 ---
 
+# Mocking 
+
 Mocking is an important part of testing. You may want to alter some behavior of your app during test and replace it with a mock. Here are some example reasons why this could be useful:
 
 * Change server endpoints to point to a mock/staging server instead of the regular production server
@@ -26,13 +28,13 @@ This replacement mechanism provides a lot of flexibility to change implementatio
 0. For RN < 0.55, setup `react-native-repackager` in your library.
 1. Configure Metro by creating `rn-cli.config.js` to root dir and setting `getSourceExts()` to prioritize any given source extension over the default one, by triggering each of these commands the bundler will take `e2e.js` over `.js`
 
-```js
-module.exports = {
-  getSourceExts: () => process.env.RN_SRC_EXT ? 
-                       process.env.RN_SRC_EXT.split(',') : []
-};
+    ```js
+    module.exports = {
+      getSourceExts: () => process.env.RN_SRC_EXT ? 
+                           process.env.RN_SRC_EXT.split(',') : []
+    };
 
-```
+    ```
 
 2. Create `anyfile.e2e.js` alongside `anyfile.js`
 
