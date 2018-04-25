@@ -9,7 +9,8 @@ const {
 	isGreyAction,
 	isGreyMatcher,
 	isGreyElementInteraction,
-	isArray
+	isArray,
+	isDefined
 } = require("../core/type-checks");
 const { callGlobal } = require("../helpers");
 
@@ -29,7 +30,8 @@ const typeCheckInterfaces = {
 	"id<GREYAction>": isGreyAction,
 	"id<GREYMatcher>": isGreyMatcher,
 	"GREYElementInteraction*": isGreyElementInteraction,
-	UIAccessibilityTraits: isArray
+	UIAccessibilityTraits: isArray,
+	id: isDefined,
 };
 
 const contentSanitizersForType = {
@@ -72,7 +74,8 @@ module.exports = generator({
 		"id<GREYAction>",
 		"id<GREYMatcher>",
 		"CFTimeInterval",
-		"UIAccessibilityTraits"
+		"UIAccessibilityTraits",
+		"id"
 	],
 	renameTypesMap: {
 		NSUInteger: "NSInteger",

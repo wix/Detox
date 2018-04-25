@@ -598,6 +598,61 @@ is required, please implement it similar to @c grey_closeTo.
     };
   }
 
+  /*A Matcher that checks if a provided object is equal to the specified @c value. The equality is
+determined by calling the @c isEqual: method of the object being examined. In case the @c
+value is @c nil, then the object itself is checked to be @c nil.
+
+@param value  The value to be checked for equality. Please ensure that scalar types are
+passed in as boxed (object) values.
+
+@return A matcher that checks if an object is equal to the provided one.
+*/static matcherForEqualTo(value) {
+    return {
+      target: {
+        type: "Class",
+        value: "GREYMatchers"
+      },
+      method: "matcherForEqualTo:",
+      args: [value]
+    };
+  }
+
+  /*A Matcher that checks if a provided object is less than a specified @c value. The comparison
+is made by calling the @c compare: method of the object being examined.
+
+@param value The value to be compared, which should return @c NSOrderedDescending. Please
+ensure that scalar values are passed in as boxed (object) values.
+
+@return A matcher that checks an object is lesser than another provided @c value.
+*/static matcherForLessThan(value) {
+    return {
+      target: {
+        type: "Class",
+        value: "GREYMatchers"
+      },
+      method: "matcherForLessThan:",
+      args: [value]
+    };
+  }
+
+  /*A Matcher that checks if a provided object is greater than a specified @c value. The comparison
+is made by calling the @c compare: method of the object being examined.
+
+@param value The value to be compared, which should return @c NSOrderedAscending. Please
+ensure that scalar values are passed in as boxed (object) values.
+
+@return A matcher that checks an object is greater than another provided @c value.
+*/static matcherForGreaterThan(value) {
+    return {
+      target: {
+        type: "Class",
+        value: "GREYMatchers"
+      },
+      method: "matcherForGreaterThan:",
+      args: [value]
+    };
+  }
+
   /*Matcher that matches a UIScrollView scrolled to content @c edge.
 
 @param edge The content edge UIScrollView should be scrolled to.

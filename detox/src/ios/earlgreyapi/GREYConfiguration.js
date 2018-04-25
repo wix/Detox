@@ -1,5 +1,5 @@
-
-const invoke = require('../../invoke');
+const GREYConfigurationApi = require('../earlgreyapi/GREYConfigurationApi');
+const GREYConfigurationDetox = require("../earlgreyapi/GREYConfigurationDetox");
 
 /**
  * An 'invoke' wrapper for https://github.com/google/EarlGrey/blob/master/EarlGrey/Common/GREYConfiguration.h
@@ -16,20 +16,20 @@ function setURLBlacklist(blacklist) {
 
 function enableSynchronization() {
   //return setValueForConfigKey(invoke.IOS.Boolean(true), 'kGREYConfigKeySynchronizationEnabled');
-  return invoke.call(GREYConfigurationInstance(), 'enableSynchronization');
+  return GREYConfigurationDetox.enableSynchronization(GREYConfigurationInstance());
 }
 
 function disableSynchronization() {
   //return setValueForConfigKey(invoke.IOS.Boolean(false), 'kGREYConfigKeySynchronizationEnabled');
-  return invoke.call(GREYConfigurationInstance(), 'disableSynchronization');
+  return GREYConfigurationDetox.disableSynchronization(GREYConfigurationInstance());
 }
 
 function setValueForConfigKey(value, configKey) {
-  return invoke.call(GREYConfigurationInstance(), 'setValue:forConfigKey:', value, configKey);
+  return GREYConfigurationApi.setValueForConfigKey(GREYConfigurationInstance(), value, configKey);
 }
 
 function GREYConfigurationInstance() {
-  return invoke.call(invoke.IOS.Class('GREYConfiguration'), 'sharedInstance');
+  return GREYConfigurationApi.sharedInstance();
 }
 
 module.exports = {
