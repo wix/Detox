@@ -2,6 +2,7 @@
 const fs = require("fs-extra");
 const git = require("nodegit");
 const execSync = require('child_process').execSync;
+const { major } = require("semver");
 const REPO_URL = "https://github.com/wix/detox.git"
 
 // From https://gist.github.com/joerx/3296d972735adc5b4ec1
@@ -11,17 +12,14 @@ function clearRequireCache() {
   });
 }
 
-function getMajorVersion(tag) {
-  return parseInt(tag.split('.')[0], 10)
-}
-
 async function getVersions() {
   const tmp = fs.mkdtempSync('detox-versions');
   const repo = await git.Clone(REPO_URL, tmp);
   const tags = await git.Tag.list(repo);
 
   const semverTags = tags
-    .filter(tag => tag.split('.').length === 3 && getMajorVersion(tag) >= 6)
+    .filter(tag => !tag.includes("@"))
+    .filter(tag => tag.split(".").length === 3 && major(tag) >= 6)
     .sort()
     .reverse();
   await fs.remove(tmp);
