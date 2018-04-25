@@ -8,8 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@import SocketRocket;
-
 @protocol WebSocketDelegate <NSObject>
 
 - (void)websocketDidConnect;
@@ -18,7 +16,7 @@
 @end
 
 
-@interface WebSocket : NSObject<SRWebSocketDelegate>
+@interface WebSocket : NSObject
 
 @property (nonatomic, assign) id<WebSocketDelegate> delegate;
 - (void)connectToServer:(NSString*)url withSessionId:(NSString*)sessionId;
