@@ -94,6 +94,54 @@ simulate a long press.
     };
   }
 
+  /*Returns an action that holds down finger for specified @c duration to simulate a long press.
+
+@param duration The duration of the long press.
+
+@return A GREYAction that performs a long press on an element.
+*/static actionForLongPressWithDuration(duration) {
+    if (typeof duration !== "number") throw new Error("duration should be a number, but got " + (duration + (" (" + (typeof duration + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "GREYActions"
+      },
+      method: "actionForLongPressWithDuration:",
+      args: [{
+        type: "CGFloat",
+        value: duration
+      }]
+    };
+  }
+
+  /*Returns an action that holds down finger for specified @c duration at the specified @c point
+(interpreted as being relative to the element) to simulate a long press.
+
+@param point    The point that should be tapped.
+@param duration The duration of the long press.
+
+@return A GREYAction that performs a long press on an element.
+*/static actionForLongPressAtPointDuration(point, duration) {
+    if (typeof point !== "object") throw new Error("point should be a object, but got " + (point + (" (" + (typeof point + ")"))));
+    if (typeof point.x !== "number") throw new Error("point.x should be a number, but got " + (point.x + (" (" + (typeof point.x + ")"))));
+    if (typeof point.y !== "number") throw new Error("point.y should be a number, but got " + (point.y + (" (" + (typeof point.y + ")"))));
+    if (typeof duration !== "number") throw new Error("duration should be a number, but got " + (duration + (" (" + (typeof duration + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "GREYActions"
+      },
+      method: "actionForLongPressAtPoint:duration:",
+      args: [{
+        type: "CGPoint",
+        value: point
+      }, {
+        type: "CGFloat",
+        value: duration
+      }]
+    };
+  }
+
   /*Returns an action that scrolls a @c UIScrollView by @c amount (in points) in the specified
 @c direction.
 

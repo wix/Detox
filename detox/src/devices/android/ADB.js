@@ -54,7 +54,7 @@ class ADB {
       await this.adbCmd(deviceId, `install -r -g ${apkPath}`);
     } else {
       await this.adbCmd(deviceId, `install -rg ${apkPath}`);
-    }    
+    }
   }
 
   async uninstall(deviceId, appId) {
@@ -105,6 +105,22 @@ class ADB {
 
   async pressBack(deviceId) {
     await this.shell(deviceId, `input keyevent 4`);
+  }
+
+  async listInstrumentation(deviceId) {
+    return await this.shell(deviceId, 'pm list instrumentation');
+  }
+
+  instrumentationRunnerForBundleId(instrumentationRunners, bundleId) {
+    const runnerForBundleRegEx = new RegExp(`^instrumentation:(.*) \\(target=${bundleId.replace(new RegExp('\\.', 'g'), "\\.")}\\)$`, 'gm');
+    return _.get(runnerForBundleRegEx.exec(instrumentationRunners), [1], 'undefined');
+  }
+
+  async getInstrumentationRunner(deviceId, bundleId) {
+    const instrumentationRunners = await this.listInstrumentation(deviceId);
+    const instrumentationRunner = this.instrumentationRunnerForBundleId(instrumentationRunners, bundleId);
+    if (instrumentationRunner === 'undefined') throw new Error(`No instrumentation runner found on device ${deviceId} for package ${bundleId}`);
+    return instrumentationRunner;
   }
 }
 

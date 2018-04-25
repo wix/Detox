@@ -7,13 +7,14 @@ const fs = require("fs");
 
 const { methodNameToSnakeCase } = require("../helpers");
 let globalFunctionUsage = {};
-module.exports = function({
+module.exports = function getGenerator({
 	typeCheckInterfaces,
 	renameTypesMap,
 	supportedTypes,
 	classValue,
 	contentSanitizersForFunction,
-	contentSanitizersForType
+	contentSanitizersForType,
+	blacklistedFunctionNames = []
 }) {
 	/**
 	 * the input provided by objective-c-parser looks like this:
@@ -51,9 +52,16 @@ module.exports = function({
 			t.classBody(
 				json.methods
 					.filter(filterMethodsWithUnsupportedParams)
+					.filter(filterMethodsWithBlacklistedName)
 					.map(createMethod.bind(null, json))
 			),
 			[]
+		);
+	}
+
+	function filterMethodsWithBlacklistedName({ name }) {
+		return !blacklistedFunctionNames.find(
+			blacklisted => name.indexOf(blacklisted) !== -1
 		);
 	}
 
@@ -81,13 +89,19 @@ module.exports = function({
 	}
 
 	function createMethod(classJson, json) {
+		const args = json.args.map(({ name }) => t.identifier(name));
+
+		if (!json.static) {
+			args.unshift(t.identifier("element"));
+		}
+
 		const m = t.classMethod(
 			"method",
 			t.identifier(methodNameToSnakeCase(json.name)),
-			json.args.map(({ name }) => t.identifier(name)),
+			args,
 			t.blockStatement(createMethodBody(classJson, json)),
 			false,
-			json.static
+			true
 		);
 
 		if (json.comment) {
@@ -154,6 +168,7 @@ module.exports = function({
 
 		return t.identifier(json.name);
 	}
+
 	function addArgumentTypeSanitizer(json) {
 		if (contentSanitizersForType[json.type]) {
 			return contentSanitizersForType[json.type].type;
@@ -163,10 +178,17 @@ module.exports = function({
 	}
 
 	// These types need no wrapping with {type: ..., value: }
-	const plainArgumentTypes = ["id<GREYMatcher>", "String"];
+	const plainArgumentTypes = [
+		"id<GREYAction>",
+		"id<GREYMatcher>",
+		"GREYElementInteraction*",
+		"String"
+	];
+
 	function shouldBeWrapped({ type }) {
 		return !plainArgumentTypes.includes(type);
 	}
+
 	function createReturnStatement(classJson, json) {
 		const args = json.args.map(
 			arg =>
@@ -189,10 +211,15 @@ module.exports = function({
 				t.objectProperty(
 					t.identifier("target"),
 					t.objectExpression([
-						t.objectProperty(t.identifier("type"), t.stringLiteral("Class")),
+						t.objectProperty(
+							t.identifier("type"),
+							t.stringLiteral(json.static ? "Class" : "Invocation")
+						),
 						t.objectProperty(
 							t.identifier("value"),
-							t.stringLiteral(classValue(classJson))
+							json.static
+								? t.stringLiteral(classValue(classJson))
+								: t.identifier("element")
 						)
 					])
 				),
@@ -212,10 +239,12 @@ module.exports = function({
 		const isListOfChecks = typeCheckCreator instanceof Array;
 		return isListOfChecks
 			? typeCheckCreator.map(singleCheck => singleCheck(json))
-			: typeCheckCreator(json);
+			: typeof typeCheckCreator === "function"
+				? typeCheckCreator(json)
+				: t.emptyStatement();
 	}
 
-	return function(files) {
+	return function generator(files) {
 		Object.entries(files).forEach(([inputFile, outputFile]) => {
 			globalFunctionUsage = {};
 			const input = fs.readFileSync(inputFile, "utf8");
@@ -224,6 +253,12 @@ module.exports = function({
 			const json = isObjectiveC
 				? objectiveCParser(input)
 				: javaMethodParser(input);
+
+			// set default name
+			if (!json.name) {
+				const pathFragments = outputFile.split("/");
+				json.name = pathFragments[pathFragments.length - 1].replace(".js", "");
+			}
 			const ast = t.program([createClass(json), createExport(json)]);
 			const output = generate(ast);
 

@@ -12,11 +12,18 @@ const NotExistsMatcher = matchers.NotExistsMatcher;
 const TextMatcher = matchers.TextMatcher;
 const ValueMatcher = matchers.ValueMatcher;
 const GreyActions = require('./earlgreyapi/GREYActions');
+const GreyInteraction = require('./earlgreyapi/GREYInteraction');
+const GreyCondition = require('./earlgreyapi/GREYCondition');
+const GreyConditionDetox = require('./earlgreyapi/GREYConditionDetox');
 
 let invocationManager;
 
 function setInvocationManager(im) {
   invocationManager = im;
+}
+
+function callThunk(element) {
+  return typeof element._call === 'function' ? element._call() : element._call;
 }
 
 //// examples
@@ -41,7 +48,7 @@ detox.invoke.execute(_getInteraction2);
 
 */
 
-class Action {}
+class Action { }
 
 class TapAction extends Action {
   constructor() {
@@ -171,20 +178,15 @@ class Interaction {
 class ActionInteraction extends Interaction {
   constructor(element, action) {
     super();
-    //if (!(element instanceof Element)) throw new Error(`ActionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
-    //if (!(action instanceof Action)) throw new Error(`ActionInteraction ctor 2nd argument must be a valid Action, got ${typeof action}`);
-    this._call = invoke.call(element._call, 'performAction:', action._call);
-    // TODO: move this.execute() here from the caller
+
+    this._call = GreyInteraction.performAction(callThunk(element), callThunk(action));
   }
 }
 
 class MatcherAssertionInteraction extends Interaction {
   constructor(element, matcher) {
     super();
-    //if (!(element instanceof Element)) throw new Error(`MatcherAssertionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
-    //if (!(matcher instanceof Matcher)) throw new Error(`MatcherAssertionInteraction ctor 2nd argument must be a valid Matcher, got ${typeof matcher}`);
-    this._call = invoke.call(element._call, 'assertWithMatcher:', matcher._call);
-    // TODO: move this.execute() here from the caller
+    this._call = GreyInteraction.assertWithMatcher(callThunk(element), callThunk(matcher));
   }
 }
 
@@ -205,11 +207,15 @@ class WaitForInteraction extends Interaction {
   async withTimeout(timeout) {
     if (typeof timeout !== 'number') throw new Error(`WaitForInteraction withTimeout argument must be a number, got ${typeof timeout}`);
     if (timeout < 0) throw new Error('timeout must be larger than 0');
-    let _conditionCall = invoke.call(invoke.IOS.Class('GREYCondition'), 'detoxConditionForElementMatched:', this._element._call);
-    if (this._notCondition) {
-      _conditionCall = invoke.call(invoke.IOS.Class('GREYCondition'), 'detoxConditionForNotElementMatched:', this._element._call);
+
+    let _conditionCall;
+    if (!this._notCondition) {
+      _conditionCall = GreyConditionDetox.detoxConditionForElementMatched(callThunk(this._element));
+    } else {
+      _conditionCall = GreyConditionDetox.detoxConditionForNotElementMatched(callThunk(this._element));
     }
-    this._call = invoke.call(_conditionCall, 'waitWithTimeout:', invoke.IOS.CGFloat(timeout/1000));
+
+    this._call = GreyCondition.waitWithTimeout(_conditionCall, timeout / 1000)
     await this.execute();
   }
   whileElement(searchMatcher) {
@@ -227,10 +233,11 @@ class WaitForActionInteraction extends Interaction {
     this._originalMatcher = matcher;
     this._searchMatcher = searchMatcher;
   }
+
   async _execute(searchAction) {
-    //if (!searchAction instanceof Action) throw new Error(`WaitForActionInteraction _execute argument must be a valid Action, got ${typeof searchAction}`);
-    const _interactionCall = invoke.call(this._element._call, 'usingSearchAction:onElementWithMatcher:', searchAction._call, this._searchMatcher._call);
-    this._call = invoke.call(_interactionCall, 'assertWithMatcher:', this._originalMatcher._call);
+    const _interactionCall = GreyInteraction.usingSearchActionOnElementWithMatcher(callThunk(this._element), callThunk(searchAction), callThunk(this._searchMatcher));
+
+    this._call = GreyInteraction.assertWithMatcher(_interactionCall, callThunk(this._originalMatcher));
     await this.execute();
   }
   async scroll(amount, direction = 'down') {
@@ -296,7 +303,7 @@ class Element {
   }
 }
 
-class Expect {}
+class Expect { }
 
 class ExpectElement extends Expect {
   constructor(element) {
@@ -329,7 +336,7 @@ class ExpectElement extends Expect {
   }
 }
 
-class WaitFor {}
+class WaitFor { }
 
 class WaitForElement extends WaitFor {
   constructor(element) {

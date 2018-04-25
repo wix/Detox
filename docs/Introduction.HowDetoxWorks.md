@@ -46,7 +46,7 @@ To understand this topic more thoroughly we need to have a look at an example ac
 3.  `TapAction` instance gets passed to [`invoke.js`](https://github.com/wix/detox/blob/master/detox/src/invoke.js), where it gets transformed to JSON. The resulting JSON correlates more with the native code than with the JS code for better extensibility.
 4. JSON gets send to detox-server by [`Client.js`](https://github.com/wix/detox/blob/master/detox/src/client/Client.js)
 6. detox-server forwards it to the testee in [`DetoxServer.js`](https://github.com/wix/detox/blob/master/detox-server/src/DetoxServer.js)
-7. [`DetoxManager.m`](https://github.com/wix/detox/blob/master/detox/ios/Detox/DetoxManager.m) invokes the [`TestRunner.m`](https://github.com/wix/detox/blob/master/detox/ios/Detox/TestRunner.m). `TestRunner.m` uses [`MethodInvocation.m`](https://github.com/wix/detox/blob/master/detox/ios/Detox/MethodInvocation.m) to map the JSON representation of the native commands into the actual native command and executes it. *(8)*
+7. [`DetoxManager.m`](https://github.com/wix/detox/blob/master/detox/ios/Detox/DetoxManager.m) invokes the [`TestRunner.m`](https://github.com/wix/detox/blob/master/detox/ios/Detox/TestRunner.m). `TestRunner.m` uses [`DTXMethodInvocation.m`](https://github.com/wix/detox/blob/master/detox/ios/Detox/DTXMethodInvocation.m) to map the JSON representation of the native commands into the actual native command and executes it. *(8)*
 
 
 *NOTE: the images can be updated with [mermaid](http://knsv.github.io/mermaid/#mermaid). The files can be found under `img-src`*

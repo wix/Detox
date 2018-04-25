@@ -12,8 +12,8 @@
     "build:android": "detox build --configuration android.emu.release"
   },
   "dependencies": {
-    "react": "16.0.0-beta.5",
-    "react-native": "0.49.3"
+    "react": "16.0.0",
+    "react-native": "0.51.x"
   },
   "devDependencies": {
     "detox": "^7.0.0",
@@ -50,19 +50,19 @@
         }
       },
       "android.emu.debug": {
-        "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
+        "binaryPath": "android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk",
         "build": "cd android && ./gradlew assembleFromBinDebug assembleFromBinDebugAndroidTest -DtestBuildType=debug && cd ..",
         "type": "android.emulator",
         "name": "Nexus_5X_API_26"
       },
       "android.emu.release": {
-        "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
+        "binaryPath": "android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk",
         "build": "cd android && ./gradlew assembleFromBinRelease assembleFromBinReleaseAndroidTest -DtestBuildType=release && cd ..",
         "type": "android.emulator",
         "name": "Nexus_5X_API_26"
       },
       "android.emu.debug.fromSource": {
-        "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
+        "binaryPath": "android/app/build/outputs/apk/fromSource/debug/app-fromSource-debug.apk",
         "build": "cd android && ./gradlew assembleFromSourceDebug assembleFromSourceDebugAndroidTest -DtestBuildType=debug && cd ..",
         "type": "android.emulator",
         "name": "Nexus_5X_API_26"

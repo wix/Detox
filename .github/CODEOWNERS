@@ -10,4 +10,4 @@ detox/test/ios/* @LeoNatan
 *.m @LeoNatan
 *.mm @LeoNatan
 *.cpp @LeoNatan
-*.sh @LeoNatan @rotemmiz
+*.sh @rotemmiz
