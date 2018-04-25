@@ -34,7 +34,7 @@ program
     + 'e.g test with substring \':ios:\' in its name will not run when passing \'--platform android\'')
   .option('-f, --file [path]',
     'Specify test file to run')
-  .option('-nw, --nowindow',
+  .option('-W, --nowindow',
     'Run Android without window')
   .parse(process.argv);
 
