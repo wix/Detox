@@ -3,14 +3,14 @@ const fs = require('fs');
 const DeviceDriverBase = require('./DeviceDriverBase');
 const InvocationManager = require('../invoke').InvocationManager;
 const invoke = require('../invoke');
-const GREYConfigurationApi = require('./../ios/earlgreyapi/GREYConfigurationApi');
-const GREYConfigurationDetox = require("./../ios/earlgreyapi/GREYConfigurationDetox");
+const GREYConfigurationApi = require('./../ios/earlgreyapi/GREYConfiguration');
+const GREYConfigurationDetox = require('./../ios/earlgreyapi/GREYConfigurationDetox');
 
 class IosDriver extends DeviceDriverBase {
   constructor(client) {
     super(client);
 
-    this.expect = require("../ios/expect");
+    this.expect = require('../ios/expect');
     this.expect.setInvocationManager(new InvocationManager(client));
   }
 
@@ -19,14 +19,8 @@ class IosDriver extends DeviceDriverBase {
   }
 
   createPayloadFile(notification) {
-    const notificationFilePath = path.join(
-      this.createRandomDirectory(),
-      `payload.json`
-    );
-    fs.writeFileSync(
-      notificationFilePath,
-      JSON.stringify(notification, null, 2)
-    );
+    const notificationFilePath = path.join(this.createRandomDirectory(), `payload.json`);
+    fs.writeFileSync(notificationFilePath, JSON.stringify(notification, null, 2));
     return notificationFilePath;
   }
 
@@ -67,23 +61,18 @@ class IosDriver extends DeviceDriverBase {
       portrait: 1 // non-reversed portrait
     };
     if (!Object.keys(orientationMapping).includes(orientation)) {
-      throw new Error(
-        `setOrientation failed: provided orientation ${orientation} is not part of supported orientations: ${Object.keys(
-          orientationMapping
-        )}`
-      );
+      throw new Error(`setOrientation failed: provided orientation ${orientation} is not part of supported orientations: ${Object.keys(orientationMapping)}`);
     }
 
-    const call = invoke.call(
-      invoke.EarlGrey.instance,
-      "rotateDeviceToOrientation:errorOrNil:",
+    const call = invoke.call(invoke.EarlGrey.instance,
+      'rotateDeviceToOrientation:errorOrNil:',
       invoke.IOS.NSInteger(orientationMapping[orientation])
     );
     await this.client.execute(call);
   }
 
   defaultLaunchArgsPrefix() {
-    return "-";
+    return '-';
   }
 
   validateDeviceConfig(config) {
@@ -91,7 +80,7 @@ class IosDriver extends DeviceDriverBase {
   }
 
   getPlatform() {
-    return "ios";
+    return 'ios';
   }
 }
 
