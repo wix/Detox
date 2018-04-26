@@ -24,7 +24,7 @@ class Emulator {
   }
 
   async boot(emulatorName) {
-    const nowindow = argparse.getArgValue('nowindow') ? '-no-window' : '';
+    const nowindow = argparse.getArgValue('noWindow') ? '-no-window' : '';
     const cmd = `-verbose -gpu host -no-audio ${nowindow} @${emulatorName}`;
     log.verbose(this.emulatorBin, cmd);
     const tempLog = `./${emulatorName}.log`;

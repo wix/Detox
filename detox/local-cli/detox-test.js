@@ -34,8 +34,8 @@ program
     + 'e.g test with substring \':ios:\' in its name will not run when passing \'--platform android\'')
   .option('-f, --file [path]',
     'Specify test file to run')
-  .option('-W, --nowindow',
-    'Run Android without window')
+  .option('-n, --noWindow',
+    '[Android Only] Launch Emulator in headless mode. Useful when running on CI.')
   .parse(process.argv);
 
 if (program.configuration) {
@@ -96,7 +96,7 @@ function runMocha() {
   const artifactsLocation = program.artifactsLocation ? `--artifacts-location ${program.artifactsLocation}` : '';
   const configFile = runnerConfig ? `--opts ${runnerConfig}` : '';
   const platformString = platform ? `--grep ${getPlatformSpecificString(platform)} --invert` : '';
-  const nowindow = program.nowindow ? `--nowindow` : '';
+  const nowindow = program.nowindow ? `--noWindow` : '';
 
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
   const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${artifactsLocation} ${nowindow}`;
@@ -119,7 +119,7 @@ function runJest() {
       reuse: program.reuse,
       debugSynchronization: program.debugSynchronization,
       artifactsLocation: program.artifactsLocation,
-      nowindow: program.nowindow
+      nowindow: program.noWindow
     })
   });
 }
