@@ -2,8 +2,6 @@
 
 source $(dirname "$0")/travis_logger.sh
 
-run_f "lerna bootstrap"
-
 pushd examples/demo-react-native
 run_f "detox build -c ios.sim.release"
 run_f "detox test -c ios.sim.release"
