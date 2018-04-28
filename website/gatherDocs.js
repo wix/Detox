@@ -28,13 +28,9 @@ async function cleanupExistingVersions() {
   await fs.emptyDir("./versioned_sidebars");
 }
 
-async function checkoutVersion(version) {
-  const tempDir = fs.mkdtempSync(`detox-${version}`);
-  const repo = await git.Clone(REPO_URL, tempDir);
-
+async function checkoutVersion(repo, version) {
   console.log("Checking out version", version);
   await repo.checkoutBranch(version);
-  return tempDir;
 }
 
 function applyTemporalFix(tempDir) {
@@ -80,14 +76,16 @@ async function cleanUp(tempDir) {
   await cleanupExistingVersions();
 
   fs.writeFileSync("./versions.json", JSON.stringify(versions), "utf8");
+  const tempDir = fs.mkdtempSync("detox-documentation-generation");
+  const repo = await git.Clone(REPO_URL, tempDir);
 
   for (let version of versions) {
     console.log("Clone repository into tmp directory");
-    const tempDir = await checkoutVersion(version);
+    await checkoutVersion(repo, version);
     applyTemporalFix(tempDir);
     generateAndCopyDocusaurusVersion(tempDir, version);
-
-    await cleanUp(tempDir);
+    repo.cleanup(tempDir);
     console.log(`Done with ${version}\n\n`);
   }
+  await cleanUp(tempDir);
 })();
