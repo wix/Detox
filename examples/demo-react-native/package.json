@@ -6,7 +6,7 @@
     "start": "react-native start"
   },
   "dependencies": {
-    "react": "16.0.0-beta.5",
+    "react": "16.0.0",
     "react-native": "0.51.1"
   },
   "devDependencies": {
