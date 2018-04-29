@@ -7,10 +7,23 @@
 //
 
 #import "WebSocket.h"
+@import SocketRocket;
+
+//Legacy API for apps that use old SocketRocket.
+@interface SRWebSocket ()
+
+- (void)send:(id)data;
+- (BOOL)sendString:(NSString *)string error:(NSError **)error NS_SWIFT_NAME(send(string:));
+
+@end
+
 
 DTX_CREATE_LOG(WebSocket);
 
-@interface WebSocket()
+@interface WebSocket() <SRWebSocketDelegate>
+{
+	BOOL _isModern;
+}
 
 @property (nonatomic, retain) NSString *sessionId;
 @property (nonatomic, retain) SRWebSocket *websocket;
@@ -31,6 +44,8 @@ DTX_CREATE_LOG(WebSocket);
 	self.websocket = [[SRWebSocket alloc] initWithURL:[NSURL URLWithString:url]];
 	self.websocket.delegate = self;
 	[self.websocket open];
+	
+	_isModern = [self.websocket respondsToSelector:@selector(sendString:error:)];
 }
 
 - (void)sendAction:(NSString*)type withParams:(NSDictionary*)params withMessageId:(NSNumber*)messageId
@@ -45,7 +60,18 @@ DTX_CREATE_LOG(WebSocket);
 	}
 	dtx_log_info(@"Action Sent: %@", type);
 	NSString *json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-	[self.websocket sendString:json error:NULL];
+	
+	if(_isModern)
+	{
+		[self.websocket sendString:json error:NULL];
+	}
+	else
+	{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+		[self.websocket send:json];
+#pragma GCC diagnostic pop
+	}
 }
 
 - (void)receiveAction:(NSString*)json
@@ -100,5 +126,18 @@ DTX_CREATE_LOG(WebSocket);
 {
 	dtx_log_info(@"Socket closed: %@", reason);
 }
+
+- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message {
+	if(_isModern == YES)
+	{
+		return;
+	}
+	
+	if([message isKindOfClass:[NSString class]])
+	{
+		[self receiveAction:message];
+	}
+}
+
 
 @end
