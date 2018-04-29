@@ -24,8 +24,8 @@ class Emulator {
   }
 
   async boot(emulatorName) {
-    const nowindow = argparse.getArgValue('headless') ? '-no-window' : '';
-    const cmd = `-verbose -gpu host -no-audio ${nowindow} @${emulatorName}`;
+    const headless = argparse.getArgValue('headless') ? '-no-window' : '';
+    const cmd = `-verbose -gpu host -no-audio ${headless} @${emulatorName}`;
     log.verbose(this.emulatorBin, cmd);
     const tempLog = `./${emulatorName}.log`;
     const stdout = fs.openSync(tempLog, 'a');
