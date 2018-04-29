@@ -34,7 +34,7 @@ program
     + 'e.g test with substring \':ios:\' in its name will not run when passing \'--platform android\'')
   .option('-f, --file [path]',
     'Specify test file to run')
-  .option('-n, --noWindow',
+  .option('-H, --headless',
     '[Android Only] Launch Emulator in headless mode. Useful when running on CI.')
   .parse(process.argv);
 
@@ -96,10 +96,10 @@ function runMocha() {
   const artifactsLocation = program.artifactsLocation ? `--artifacts-location ${program.artifactsLocation}` : '';
   const configFile = runnerConfig ? `--opts ${runnerConfig}` : '';
   const platformString = platform ? `--grep ${getPlatformSpecificString(platform)} --invert` : '';
-  const nowindow = program.nowindow ? `--noWindow` : '';
+  const headless = program.headless ? `--headless` : '';
 
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
-  const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${artifactsLocation} ${nowindow}`;
+  const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${artifactsLocation} ${headless}`;
 
   console.log(command);
   cp.execSync(command, {stdio: 'inherit'});
@@ -119,7 +119,7 @@ function runJest() {
       reuse: program.reuse,
       debugSynchronization: program.debugSynchronization,
       artifactsLocation: program.artifactsLocation,
-      nowindow: program.noWindow
+      noWindow: program.headless
     })
   });
 }
