@@ -15,5 +15,5 @@ mv node_modules/react-native/ReactAndroid/release.gradle node_modules/react-nati
 cp extras/release.gradle node_modules/react-native/ReactAndroid/
 
 npm run build:android
-npm run e2e:android -- --headless
+npm run e2e:android
 popd
