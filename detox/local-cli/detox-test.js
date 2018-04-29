@@ -119,7 +119,7 @@ function runJest() {
       reuse: program.reuse,
       debugSynchronization: program.debugSynchronization,
       artifactsLocation: program.artifactsLocation,
-      noWindow: program.headless
+      headless: program.headless
     })
   });
 }
