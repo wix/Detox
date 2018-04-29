@@ -2,6 +2,10 @@
 
 $(dirname "$0")/ci.sh
 
+rm -rf detox/test/android/app/build
+
+lerna bootstrap
+
 pushd detox/android
 ./gradlew test
 popd
