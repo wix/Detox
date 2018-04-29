@@ -1,5 +1,26 @@
 # Change Log
 
+## [7.3.4](https://github.com/wix/detox/tree/7.3.4) (2018-04-25)
+[Full Changelog](https://github.com/wix/detox/compare/7.3.3...7.3.4)
+
+**Fixed Bugs**
+
+- \[iOS\] Tests stall in detox.init, error: \[SRWebSocket sendString:error:\]: unrecognized selector sent to instance [\#689](https://github.com/wix/detox/issues/689)
+- Detox Android incompatible with RN \>= 50 [\#608](https://github.com/wix/detox/issues/608)
+
+**Closed Issues**
+
+- TextInput label/id not getting picked up in detox [\#667](https://github.com/wix/detox/issues/667)
+
+**Merged Pull Requests**
+
+- docs: fix missing article name in table of contents [\#685](https://github.com/wix/detox/pull/685) ([noomorph](https://github.com/noomorph))
+- \[Android\] Ensure main thread when doing getInstanceManager [\#681](https://github.com/wix/detox/pull/681) ([wiyarmir](https://github.com/wiyarmir))
+- \[Android\] Enable usage of custom instrumentation test runners [\#675](https://github.com/wix/detox/pull/675) ([wiyarmir](https://github.com/wiyarmir))
+- Avoid NPE when DetoxServerUrl and DetoxSessionId are not set [\#666](https://github.com/wix/detox/pull/666) ([wiyarmir](https://github.com/wiyarmir))
+- Change 'deugging' to 'debugging' in TroubleShooting\#RunningTests docs [\#662](https://github.com/wix/detox/pull/662) ([johnbayne](https://github.com/johnbayne))
+- Add generation for GREYInteraction [\#564](https://github.com/wix/detox/pull/564) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
+
 ## [7.3.3](https://github.com/wix/detox/tree/7.3.3) (2018-04-04)
 [Full Changelog](https://github.com/wix/detox/compare/7.3.2...7.3.3)
 
