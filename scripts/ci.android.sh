@@ -1,10 +1,8 @@
 #!/bin/bash -e
 
-$(dirname "$0")/ci.sh
-
 rm -rf detox/test/android/app/build
 
-lerna bootstrap
+$(dirname "$0")/ci.sh
 
 pushd detox/android
 ./gradlew test
