@@ -3,6 +3,7 @@ id: version-6.X-Troubleshooting.RunningTests
 title: Failing Tests
 original_id: Troubleshooting.RunningTests
 ---
+
 * [Enable verbose mode](#enable-verbose-mode)
 * [Syntax Error: Unxpected Token](#syntax-error-unxpected-token)
 * [Can't find my component even though I added testID to its props](#cant-find-my-component-even-though-i-added-testid-to-its-props)
@@ -23,7 +24,6 @@ It's a good idea to get as much information as possible about what's going on. W
 ```
 detox test --loglevel verbose
 ```
-
 
 ### Enable deugging of synchronization issues
 
@@ -66,7 +66,7 @@ child_process.js:531
 
 **Solution:** This error means that your version of Node does not support `async-await` syntax. You should do one of the two:
 
-1. Update Node to a version **higher than 7.6.0**, these versions will provide native support for async-await.
+1.  Update Node to a version **higher than 7.6.0**, these versions will provide native support for async-await.
 
 <br>
 
@@ -129,7 +129,7 @@ await element(by.text('Login')).tap();
 await expect(element(by.text('Welcome'))).toBeVisible();
 ```
 
-In the test above, after tapping the Login button, the app performs several complex asynchronous operations until the Welcome message is displayed post-login. These can include querying a server, waiting for a response and then running an animated transition to the Welcome screen. Detox attempts to simplify your test code by synchronizing *automatically* with these asynchronous operations. What happens if for some reason the automatic synchronization doesn't work? As a result, Detox will not wait correctly until the Welcome screen appears and instead will continue immediately to the next line and try to run the expectation. Since the screen is not there yet, the test will fail.
+In the test above, after tapping the Login button, the app performs several complex asynchronous operations until the Welcome message is displayed post-login. These can include querying a server, waiting for a response and then running an animated transition to the Welcome screen. Detox attempts to simplify your test code by synchronizing _automatically_ with these asynchronous operations. What happens if for some reason the automatic synchronization doesn't work? As a result, Detox will not wait correctly until the Welcome screen appears and instead will continue immediately to the next line and try to run the expectation. Since the screen is not there yet, the test will fail.
 
 **Solution:** When you suspect that automatic synchronization didn't work, you have a fail-safe by synchronizing manually with `waitFor`. Using `waitFor` will poll until the expectation is met. This isn't a recommended approach so please use it as a workaround and open and issue to resolve the synchronization issue.
 
@@ -175,27 +175,29 @@ Run your commands with one of these configurations, for example:
 
 **Solution:** You can investigate the app's native view hierarchy, this might shed some light on how the app's view hierarchy is laid out.
 
-Do the following: 
+Do the following:
 
-1. Start a debuggable app (not a release build) in your simulator
+1.  Start a debuggable app (not a release build) in your simulator
 
-2. Open Xcode
+2.  Open Xcode
 
-3. Attach Xcode to your app's process
-<img src="img/attach-to-process.jpg">
+3.  Attach Xcode to your app's process
+    <img src="img/attach-to-process.jpg">
 
-4. Press the `Debug View Hierarchy` button
-<img src="img/debug-view-hierarchy.jpg">
+4.  Press the `Debug View Hierarchy` button
+    <img src="img/debug-view-hierarchy.jpg">
 
-5. This will open the hierarchy viewer, and will show a breakdown of your app's native view hierarchy. Here you can browse through the views
+5.  This will open the hierarchy viewer, and will show a breakdown of your app's native view hierarchy. Here you can browse through the views
 
-6. React Native testIDs are manifested as *accessibility indentifiers* in the native view hierarchy 
+6.  React Native testIDs are manifested as _accessibility indentifiers_ in the native view hierarchy
 
 Let's see an example. We will find the following view in the native hierarchy:
 
 ```jsx
-<TouchableOpacity onPress={this.onButtonPress.bind(this, 'ID Working')}>
-  <Text testID='UniqueId345' style={{color: 'blue', marginBottom: 20}}>ID</Text>
+<TouchableOpacity onPress={this.onButtonPress.bind(this, "ID Working")}>
+  <Text testID="UniqueId345" style={{ color: "blue", marginBottom: 20 }}>
+    ID
+  </Text>
 </TouchableOpacity>
 ```
 
@@ -227,10 +229,10 @@ Before opening a new issue, please follow the entire troubleshooting guide and g
 
 Include the following information in your issue to increase the chances of resolving it:
 
-1. Versions of all dependencies - iOS version you're working on, simulator model, React Native version, Detox version, etc
+1.  Versions of all dependencies - iOS version you're working on, simulator model, React Native version, Detox version, etc
 
-2. The verbose log of the test (see above)
+2.  The verbose log of the test (see above)
 
-3. Source code of your test scenario
+3.  Source code of your test scenario
 
-4. If possible, try to extract a reproducable example of your issue in a git repo that you can share
+4.  If possible, try to extract a reproducable example of your issue in a git repo that you can share

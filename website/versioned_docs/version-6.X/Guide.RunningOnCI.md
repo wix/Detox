@@ -7,8 +7,9 @@ original_id: Guide.RunningOnCI
 > When your test suite is finally ready, it should be set up to run automatically on your CI server on every git push. This will alert you if new changes to the app break existing functionality.
 
 Running detox on CI is not that different from running it locally. There are two main differences:
-1. We will test a release build rather than a debug build
-2. We will tell Detox to shut down the simulator when test is over 
+
+1.  We will test a release build rather than a debug build
+2.  We will tell Detox to shut down the simulator when test is over
 
 <br>
 
@@ -80,14 +81,13 @@ install:
 script:
 - detox build --configuration ios.sim.release
 - detox test --configuration ios.sim.release --cleanup
-
 ```
 
 ### • Running Detox on [Bitrise](https://www.bitrise.io/)
 
 Bitrise is a popular CI service for automating React Native apps. If you are looking to get started with Bitrise, check out [this](http://blog.bitrise.io/2017/07/25/how-to-set-up-a-react-native-app-on-bitrise.html) guide.
 
-You can run Detox on Bitrise by creating a new workflow. Below is an example of the Bitrise **.yml** file for a workflow called `tests`. 
+You can run Detox on Bitrise by creating a new workflow. Below is an example of the Bitrise **.yml** file for a workflow called `tests`.
 
 Additionally, you can use a [webhook](http://devcenter.bitrise.io/webhooks/) on Bitrise to post the build status directly into your Slack channel.
 

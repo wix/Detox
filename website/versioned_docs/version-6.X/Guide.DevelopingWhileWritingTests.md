@@ -12,7 +12,7 @@ The main idea behind this workflow is to run your app in debug with Detox on a s
 
 ## Step 1: Build your app in debug
 
-Detox is going to need the executable for your app. This means we need to build it first. Since we want a build that's connected to the live React Native packager (to update bundle changes), we're going to need a *debug* build.
+Detox is going to need the executable for your app. This means we need to build it first. Since we want a build that's connected to the live React Native packager (to update bundle changes), we're going to need a _debug_ build.
 
 There are multiple ways to build your app, let's find the alternative you like best:
 

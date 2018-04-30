@@ -5,6 +5,7 @@ original_id: Introduction.Android
 ---
 
 ## Setup
+
 Detox 7 was updated to support Android gradle plugin 3.0.0. This is a breaking change that makes it impossible to support previous Android gradle plugin versions.
 
 https://developer.android.com/studio/build/gradle-plugin-3-0-0-migration.html
@@ -14,7 +15,7 @@ For older Android gradle plugin support use `detox@6.x.x` instead ([previous set
 
 ### 1. Do the initial setup described in the Getting Started Guide
 
-- [Getting Started](Introduction.GettingStarted.md)
+* [Getting Started](Introduction.GettingStarted.md)
 
 ### 2. Add Detox dependency to an Android project
 
@@ -36,15 +37,15 @@ In `android/app/build.gradle` add this to `defaultConfig` section:
       ...
   }
 ```
+
 Please be aware that the `minSdkVersion` needs to be at least 18.
 
 > ###### Choosing the right build type (in missingDimensionStrategy)
->Detox runs on multiple React Native versions, choose the correct build type to support the version you use.<br>
->**Available versions:**
 >
->* `minReactNative44`: Support for React Native 0.44-0.45
->* `minReactNative46`: Support for React Native 0.46+
-
+> Detox runs on multiple React Native versions, choose the correct build type to support the version you use.<br> >**Available versions:**
+>
+> * `minReactNative44`: Support for React Native 0.44-0.45
+> * `minReactNative46`: Support for React Native 0.46+
 
 In `android/app/build.gradle` add this in `dependencies` section:
 
@@ -105,8 +106,8 @@ Add this part to your `package.json`:
     }
 }
 ```
-Pay attention to `-DtestBuildType`, set either to `debug` or `release` according to the main apk type.
 
+Pay attention to `-DtestBuildType`, set either to `debug` or `release` according to the main apk type.
 
 Following device types could be used to control Android devices:
 

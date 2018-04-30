@@ -17,7 +17,8 @@ Running Detox (on iOS) requires the following:
 * Mac with macOS (at least macOS El Capitan 10.11)
 
 * Xcode 8.3+ with Xcode command line tools
-> TIP: Verify Xcode command line tools is installed by typing `gcc -v` in terminal (shows a popup if not installed)
+
+  > TIP: Verify Xcode command line tools is installed by typing `gcc -v` in terminal (shows a popup if not installed)
 
 * A working [React Native](https://facebook.github.io/react-native/docs/getting-started.html) app you want to test
 
@@ -35,9 +36,9 @@ Homebrew is a package manager for macOS, we'll need it to install other command 
 
 Node is the JavaScript runtime Detox will run on. **Install Node 7.6.0 or above for native async-await support**
 
- ```sh
- brew update && brew install node
- ```
+```sh
+brew update && brew install node
+```
 
 > TIP: Verify it works by typing in terminal `node -v` to output current node version, should be higher than 7.6.0
 
@@ -56,9 +57,10 @@ brew install --HEAD applesimutils
 
 This package makes it easier to operate Detox from the command line. `detox-cli` should be installed globally, enabling usage of the command line tools outside of your npm scripts.
 
-  ```sh
-  npm install -g detox-cli
-  ```
+```sh
+npm install -g detox-cli
+```
+
 > TIP: Verify it works by typing in terminal `detox -h` to output the list of available commands
 
 <br>
@@ -76,8 +78,9 @@ npm install detox --save-dev
 #### 2. Install mocha
 
 You can use any JavaScript test runner
-- [Jest](Guide.Jest.md)
-- [Mocha](https://mochajs.org/) is a good one we recommend:
+
+* [Jest](Guide.Jest.md)
+* [Mocha](https://mochajs.org/) is a good one we recommend:
 
 ```sh
 npm install mocha --save-dev

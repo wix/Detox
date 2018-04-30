@@ -35,9 +35,7 @@
       "version-6.X-Troubleshooting.Synchronization",
       "version-6.X-Troubleshooting.Flakiness"
     ],
-    "Under the Hood": [
-      "version-6.X-More.DesignPrinciples"
-    ],
+    "Under the Hood": ["version-6.X-More.DesignPrinciples"],
     "Contributing to Detox": [
       "version-6.X-Guide.Contributing",
       "version-6.X-More.Roadmap",

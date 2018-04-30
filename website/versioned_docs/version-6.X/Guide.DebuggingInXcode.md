@@ -21,7 +21,7 @@ Open your Xcode project and drag `Detox.framework` from `node_modules/detox/Deto
 ## Step 2: Add launch arguments
 
 Edit your project scheme and add the following arguments to **Arguments Passed On Launch**:
-	
+
 ```
 -detoxServer
 ws://localhost:8099

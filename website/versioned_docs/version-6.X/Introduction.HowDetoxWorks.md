@@ -18,7 +18,7 @@ In practice, to make the communication more resilient, both parts are implemente
 
 ### How Detox Automatically Synchronizes With Your App
 
-One of the key features of Detox is its ability to automatically synchronize the test execution with your app. The most annoying aspect of end-to-end tests is flakiness - tests sometimes fail without anything changing. Flakiness happens because tests are nondeterministic. Every time a test is running, things take place in a slightly different order inside your app. 
+One of the key features of Detox is its ability to automatically synchronize the test execution with your app. The most annoying aspect of end-to-end tests is flakiness - tests sometimes fail without anything changing. Flakiness happens because tests are nondeterministic. Every time a test is running, things take place in a slightly different order inside your app.
 
 Consider a scenario where the app is making multiple network requests at the same time. What is the order of execution? It depends on which request completes first. This is an external concern depending on network congestion and how busy the server is.
 
@@ -33,8 +33,8 @@ Detox eliminates flakiness by automatically synchronizing your tests with the ap
 * Keeping track of asynchronous React Native layout and the shadow queue
 * Keeping track of the JavaScript event loop which may contain pending asynchronous actions
 
-
 ### Architecture
+
 The sequence diagram below shows the general communication scheme between the components in Detox.
 ![architecture overview](img/action-sequence.mmd.png)
 
@@ -42,12 +42,11 @@ To understand this topic more thoroughly we need to have a look at an example ac
 
 ### Action (`element.tap`)
 
-1. `element.tap()` in your test case is invoked.
-2. `TapAction` in [`expect.js`](https://github.com/wix/detox/blob/master/detox/src/ios/expect.js) gets invoked
+1.  `element.tap()` in your test case is invoked.
+2.  `TapAction` in [`expect.js`](https://github.com/wix/detox/blob/master/detox/src/ios/expect.js) gets invoked
 3.  `TapAction` instance gets passed to [`invoke.js`](https://github.com/wix/detox/blob/master/detox/src/invoke.js), where it gets transformed to JSON. The resulting JSON correlates more with the native code than with the JS code for better extensibility.
-4. JSON gets send to detox-server by [`Client.js`](https://github.com/wix/detox/blob/master/detox/src/client/Client.js)
-6. detox-server forwards it to the testee in [`DetoxServer.js`](https://github.com/wix/detox/blob/master/detox-server/src/DetoxServer.js)
-7. [`DetoxManager.m`](https://github.com/wix/detox/blob/master/detox/ios/Detox/DetoxManager.m) invokes the [`TestRunner.m`](https://github.com/wix/detox/blob/master/detox/ios/Detox/TestRunner.m). `TestRunner.m` uses [`MethodInvocation.m`](https://github.com/wix/detox/blob/master/detox/ios/Detox/MethodInvocation.m) to map the JSON representation of the native commands into the actual native command and executes it. *(8)*
+4.  JSON gets send to detox-server by [`Client.js`](https://github.com/wix/detox/blob/master/detox/src/client/Client.js)
+5.  detox-server forwards it to the testee in [`DetoxServer.js`](https://github.com/wix/detox/blob/master/detox-server/src/DetoxServer.js)
+6.  [`DetoxManager.m`](https://github.com/wix/detox/blob/master/detox/ios/Detox/DetoxManager.m) invokes the [`TestRunner.m`](https://github.com/wix/detox/blob/master/detox/ios/Detox/TestRunner.m). `TestRunner.m` uses [`MethodInvocation.m`](https://github.com/wix/detox/blob/master/detox/ios/Detox/MethodInvocation.m) to map the JSON representation of the native commands into the actual native command and executes it. _(8)_
 
-
-*NOTE: the images can be updated with [mermaid](http://knsv.github.io/mermaid/#mermaid). The files can be found under `img-src`*
+_NOTE: the images can be updated with [mermaid](http://knsv.github.io/mermaid/#mermaid). The files can be found under `img-src`_

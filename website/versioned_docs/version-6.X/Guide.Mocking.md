@@ -14,7 +14,7 @@ Note that mocking in end-to-end tests like in Detox is very different from mocki
 
 We'll only concentrate on mocking by changing JavaScript files under React Native apps.
 
-[`react-native-repackager`](https://github.com/wix/react-native-repackager) is a great tool for this job. It extends the React Native packager’s ability to override JavaScript files with different extensions. Just like you can create `myFile.ios.js` and `myFile.android.js`, you'll be able to create `myFile.e2e.js` that will take over during Detox tests. This even works under `node_modules` which means we can publish libraries that contain ready-made mock implementations. 
+[`react-native-repackager`](https://github.com/wix/react-native-repackager) is a great tool for this job. It extends the React Native packager’s ability to override JavaScript files with different extensions. Just like you can create `myFile.ios.js` and `myFile.android.js`, you'll be able to create `myFile.e2e.js` that will take over during Detox tests. This even works under `node_modules` which means we can publish libraries that contain ready-made mock implementations.
 
 This replacement mechanism provides a lot of flexibility to change implementations for testing without affecting your production code. For more information and detailed usage instructions, [read the docs](https://github.com/wix/react-native-repackager/blob/master/README.md).
 

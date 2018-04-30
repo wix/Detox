@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SideBySide should render first option if none is selected 1`] = `
+<div>
+  <div
+    className="side-by-side-controls"
+  >
+    <a
+      onClick={[Function]}
+    >
+      ios
+    </a>
+    <a
+      onClick={[Function]}
+    >
+      android
+    </a>
+  </div>
+  <div>
+    <div>
+      iOS Content
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SideBySide should render the option that was selected 1`] = `
+<div>
+  <div
+    className="side-by-side-controls"
+  >
+    <a
+      onClick={[Function]}
+    >
+      ios
+    </a>
+    <a
+      onClick={[Function]}
+    >
+      android
+    </a>
+  </div>
+  <div>
+    <div>
+      Android Content
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SideBySide should throw without children 1`] = `"received is not a function"`;

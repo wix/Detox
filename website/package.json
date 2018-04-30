@@ -6,9 +6,32 @@
     "publish-gh-pages": "docusaurus-publish",
     "write-translations": "docusaurus-write-translations",
     "version": "docusaurus-version",
-    "rename-version": "docusaurus-rename-version"
+    "rename-version": "docusaurus-rename-version",
+    "precommit": "lint-staged",
+    "format":
+      "prettier --write ./**/*.{js,json,css,md} && prettier --write ./**/__tests__/*.{js,json,css,md} ",
+    "test": "jest",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "lint-staged": {
+    "*.{js,json,css,md}": ["prettier --write", "git add"]
   },
   "devDependencies": {
-    "docusaurus": "^1.0.4"
+    "babel-jest": "22.4.1",
+    "babel-preset-env": "1.6.1",
+    "babel-preset-react": "6.24.1",
+    "docusaurus": "1.0.4",
+    "husky": "0.14.3",
+    "jest": "22.4.2",
+    "lint-staged": "7.0.0",
+    "prettier": "1.11.0",
+    "react": "15.6.2",
+    "react-test-renderer": "15.6.2",
+    "@storybook/react": "3.3.14",
+    "@storybook/addon-actions": "3.3.14",
+    "@storybook/addon-links": "3.3.14",
+    "@storybook/addons": "3.3.14",
+    "babel-core": "6.26.0"
   }
 }
