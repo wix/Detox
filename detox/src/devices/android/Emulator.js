@@ -25,12 +25,11 @@ class Emulator {
 
   async boot(emulatorName) {
     const cmd = _.compact([
-        '-verbose',
-        '-gpu',
-        'host',
-        '-no-audio',
-        argparse.getArgValue('headless') ? '-no-window' : '',
-        `@${emulatorName}`
+      '-verbose',
+      '-gpu', 'auto',
+      '-no-audio',
+      argparse.getArgValue('headless') ? '-no-window' : '',
+      `@${emulatorName}`
     ]).join(' ');
 
     log.verbose(this.emulatorBin, cmd);
@@ -51,30 +50,30 @@ class Emulator {
     });
 
     function detach() {
-        tail.unwatch();
-        fs.closeSync(stdout);
-        fs.closeSync(stderr);
-        fs.unlink(tempLog, () => {});
+      tail.unwatch();
+      fs.closeSync(stdout);
+      fs.closeSync(stderr);
+      fs.unlink(tempLog, () => {});
     }
 
-      return promise.catch(function(err) {
-          const output = fs.readFileSync(tempLog, 'utf8');
+    return promise.catch(function(err) {
+      const output = fs.readFileSync(tempLog, 'utf8');
 
-          if (output.includes(`There's another emulator instance running with the current AVD`)) {
-              log.verbose('stdout', '%s', output);
-              return;
-          }
+      if (output.includes(`There's another emulator instance running with the current AVD`)) {
+        log.verbose('stdout', '%s', output);
+        return;
+      }
 
-          if (log.level === 'verbose') {
-              log.error('ChildProcessError', '%j', err);
-          } else {
-              log.error('ChildProcessError', '%s', err.message);
-          }
+      if (log.level === 'verbose') {
+        log.error('ChildProcessError', '%j', err);
+      } else {
+        log.error('ChildProcessError', '%s', err.message);
+      }
 
-          log.error('stderr', '%s', output);
-          detach();
-          throw err;
-      });
+      log.error('stderr', '%s', output);
+      detach();
+      throw err;
+    });
   }
 }
 
