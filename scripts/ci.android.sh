@@ -1,7 +1,5 @@
 #!/bin/bash -e
 
-rm -rf detox/test/android/app/build
-
 $(dirname "$0")/ci.sh
 
 pushd detox/android
