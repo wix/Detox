@@ -24,7 +24,7 @@ detox test --loglevel verbose
 ```
 
 
-### Enable deugging of synchronization issues
+### Enable debugging of synchronization issues
 
 See [here](https://github.com/wix/detox/blob/master/docs/Troubleshooting.Synchronization.md#identifying-which-synchronization-mechanism-causes-us-to-wait-too-much).
 

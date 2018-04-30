@@ -53,14 +53,12 @@ brew install applesimutils
 
 #### 4. Install Detox command line tools (detox-cli)
 
-This package makes it easier to operate Detox from the command line. `detox-cli` should be installed globally, enabling usage of the command line tools outside of your npm scripts.
+This package makes it easier to operate Detox from the command line. `detox-cli` should be installed globally, enabling usage of the command line tools outside of your npm scripts. `detox-cli` is merely a script that passes commands through to a the command line tool shipped inside `detox` package (in `node_modules/.bin/detox`).
 
   ```sh
   npm install -g detox-cli
   ```
-> TIP: Verify it works by typing in terminal `detox -h` to output the list of available commands
 
-<br>
 
 ## Step 2: Add Detox to your project
 

@@ -36,7 +36,7 @@ public class WebSocketClient extends WebSocketListener {
 
     @Override
     public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-        Log.e(LOG_TAG, "Detox Error: ", t);
+//        Log.e(LOG_TAG, "Detox Error: ", t);
 
         //OKHttp won't recover from failure if it got ConnectException,
         // this is a workaround to make the websocket client try reconnecting when failed.

@@ -3,6 +3,13 @@
 const program = require('commander');
 const path = require('path');
 const cp = require('child_process');
+const _ = require('lodash');
+const CustomError = require('../src/errors/CustomError');
+const config = require(path.join(process.cwd(), 'package.json')).detox;
+
+class DetoxConfigError extends CustomError {}
+
+
 
 program
   .option('-o, --runner-config [config]',
@@ -12,7 +19,7 @@ program
   .option('-l, --loglevel [value]',
     'info, debug, verbose, silly, wss')
   .option('-c, --configuration [device configuration]',
-    'Select a device configuration from your defined configurations, if not supplied, and there\'s only one configuration, detox will default to it')
+    'Select a device configuration from your defined configurations, if not supplied, and there\'s only one configuration, detox will default to it', getDefaultConfiguration())
   .option('-r, --reuse',
     'Reuse existing installed app (do not delete and re-install) for a faster run.')
   .option('-u, --cleanup',
@@ -27,9 +34,19 @@ program
     + 'e.g test with substring \':ios:\' in its name will not run when passing \'--platform android\'')
   .option('-f, --file [path]',
     'Specify test file to run')
+  .option('-H, --headless',
+    '[Android Only] Launch Emulator in headless mode. Useful when running on CI.')
   .parse(process.argv);
 
-const config = require(path.join(process.cwd(), 'package.json')).detox;
+if (program.configuration) {
+  if (!config.configurations[program.configuration]) {
+    throw new DetoxConfigError(`Cannot determine configuration '${program.configuration}'. 
+    Available configurations: ${_.keys(config.configurations).join(', ')}`);
+  }
+} else if(!program.configuration) {
+  throw new DetoxConfigError(`Cannot determine which configuration to use. 
+  Use --configuration to choose one of the following: ${_.keys(config.configurations).join(', ')}`);
+}
 
 const testFolder = getConfigFor(['file', 'specs'], 'e2e');
 const runner = getConfigFor(['testRunner'], 'mocha');
@@ -79,9 +96,10 @@ function runMocha() {
   const artifactsLocation = program.artifactsLocation ? `--artifacts-location ${program.artifactsLocation}` : '';
   const configFile = runnerConfig ? `--opts ${runnerConfig}` : '';
   const platformString = platform ? `--grep ${getPlatformSpecificString(platform)} --invert` : '';
+  const headless = program.headless ? `--headless` : '';
 
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
-  const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${artifactsLocation}`;
+  const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${artifactsLocation} ${headless}`;
 
   console.log(command);
   cp.execSync(command, {stdio: 'inherit'});
@@ -100,7 +118,8 @@ function runJest() {
       cleanup: program.cleanup,
       reuse: program.reuse,
       debugSynchronization: program.debugSynchronization,
-      artifactsLocation: program.artifactsLocation
+      artifactsLocation: program.artifactsLocation,
+      headless: program.headless
     })
   });
 }
@@ -131,3 +150,11 @@ function getPlatformSpecificString(platform) {
 
   return platformRevertString;
 }
+
+function getDefaultConfiguration() {
+  if (_.size(config.configurations) === 1) {
+    return _.keys(config.configurations)[0];
+  }
+}
+
+

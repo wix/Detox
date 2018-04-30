@@ -1,52 +1,46 @@
 {
-  "name": "generation",
-  "version": "0.0.1",
-  "description": "Generate wrapper code for native dependencies",
-  "main": "index.js",
-  "private": true,
-  "scripts": {
-    "build": "./index.js",
-    "test": "jest",
-    "precommit": "lint-staged",
-    "format": "prettier ./**/*.{js,json,css,md} --write"
-  },
-  "author": "DanielMSchmidt <danielmschmidt92@gmail.com>",
-  "license": "MIT",
-  "lint-staged": {
-    "*.{js,json,css,md}": [
-      "prettier --write",
-      "git add"
-    ]
-  },
-  "devDependencies": {
-    "babel-generator": "^6.25.0",
-    "babel-types": "^6.25.0",
-    "download-file-sync": "^1.0.4",
-    "jest": "^20.0.4",
-    "lerna": "2.0.0-rc.4",
-    "lint-staged": "^6.0.0",
-    "objective-c-parser": "1.1.0",
-    "prettier": "^1.8.2",
-    "remove": "^0.1.5"
-  },
-  "jest": {
-    "coveragePathIgnorePatterns": [
-      "<rootDir>/index.js"
-    ],
-    "resetMocks": true,
-    "resetModules": true,
-    "coverageThreshold": {
-      "global": {
-        "statements": 100,
-        "branches": 100,
-        "functions": 100,
-        "lines": 100
-      }
-    }
-  },
-  "dependencies": {
-    "babel-generate-guard-clauses": "^2.0.0",
-    "babel-template": "^6.26.0",
-    "java-method-parser": "^0.4.5"
-  }
+	"name": "generation",
+	"version": "0.0.1",
+	"description": "Generate wrapper code for native dependencies",
+	"main": "index.js",
+	"private": true,
+	"scripts": {
+		"build": "./index.js",
+		"test": "jest",
+		"precommit": "lint-staged",
+		"format": "prettier ./**/*.{js,json,css,md} --write"
+	},
+	"author": "DanielMSchmidt <danielmschmidt92@gmail.com>",
+	"license": "MIT",
+	"lint-staged": {
+		"*.{js,json,css,md}": ["prettier --write", "git add"]
+	},
+	"dependencies": {
+		"babel-generate-guard-clauses": "2.0.5",
+		"babel-generator": "6.26.1",
+		"babel-types": "6.25.0",
+		"download-file-sync": "1.0.4",
+		"babel-template": "6.26.0",
+		"objective-c-parser": "1.2.3",
+		"java-method-parser": "0.4.5",
+		"remove": "0.1.5"
+	},
+	"devDependencies": {
+		"jest": "^20.0.4",
+		"lint-staged": "^6.0.0",
+		"prettier": "^1.8.2"
+	},
+	"jest": {
+		"coveragePathIgnorePatterns": ["<rootDir>/index.js"],
+		"resetMocks": true,
+		"resetModules": true,
+		"coverageThreshold": {
+			"global": {
+				"statements": 100,
+				"branches": 100,
+				"functions": 100,
+				"lines": 100
+			}
+		}
+	}
 }
