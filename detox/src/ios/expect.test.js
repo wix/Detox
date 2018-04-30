@@ -1,5 +1,50 @@
+const configurationsMock = require('../configurations.mock');
+const validScheme = configurationsMock.validOneDeviceAndSession;
 describe('expect', async () => {
   let e;
+  let fs;
+  let DeviceDriverBase;
+  let SimulatorDriver;
+  let Device;
+  let device;
+  let argparse;
+  let sh;
+
+  let Client;
+  let client;
+
+  async function prepareClient() {
+    jest.mock('fs');
+    fs = require('fs');
+
+    Device = require('../devices/Device');
+
+    jest.mock('../utils/sh');
+    sh = require('../utils/sh');
+    sh.cp = jest.fn();
+
+    jest.mock('../client/Client');
+    jest.mock('../utils/argparse');
+    argparse = require('../utils/argparse');
+
+    jest.mock('../devices/DeviceDriverBase');
+    DeviceDriverBase = require('../devices/DeviceDriverBase');
+    SimulatorDriver = require('../devices/SimulatorDriver');
+    Client = require('../client/Client');
+
+    client = new Client(validScheme.session);
+    await client.connect();
+
+  }
+
+  function validDevice() {
+    const device = new Device(validScheme.configurations['ios.sim.release'], validScheme.session, new DeviceDriverBase(client));
+    fs.existsSync.mockReturnValue(true);
+    device.deviceDriver.defaultLaunchArgsPrefix.mockReturnValue('-');
+    device.deviceDriver.acquireFreeDevice.mockReturnValue('mockDeviceId');
+
+    return device;
+  }
 
   beforeEach(() => {
     e = require('./expect');
@@ -26,6 +71,16 @@ describe('expect', async () => {
     await e.expect(e.element(e.by.label('test'))).toHaveLabel('label');
     await e.expect(e.element(e.by.label('test'))).toHaveId('id');
     await e.expect(e.element(e.by.label('test'))).toHaveValue('value');
+  });
+
+  it('pasteboard tests', async() => {
+    await prepareClient();
+    let device = validDevice();
+    await e.expect(device);
+    // await e.expect(device).pasteboardToHaveImage();
+    // await e.expect(device).pasteboardToHaveColor();
+    // await e.expect(device).pasteboardToHaveURL('test');
+    
   });
 
   it(`element by id`, async () => {
