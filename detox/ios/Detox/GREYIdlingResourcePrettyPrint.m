@@ -53,6 +53,7 @@
 @end
 
 static NSMapTable<GREYAppStateTrackerObject*, __DTXDeallocSafeProxy*>* __tarckedObjectsMapping;
+static dispatch_queue_t __tarckedObjectsQueue;
 
 @interface GREYAppStateTracker (PrettyPrint) @end
 
@@ -63,7 +64,10 @@ static NSMapTable<GREYAppStateTrackerObject*, __DTXDeallocSafeProxy*>* __tarcked
 	GREYAppStateTrackerObject* rv = [self _pp__trackState:state forObject:element];
 	
 	__DTXDeallocSafeProxy* proxy = [[__DTXDeallocSafeProxy alloc] initWithObject:element];
-	[__tarckedObjectsMapping setObject:proxy forKey:rv];
+	
+	dispatch_sync(__tarckedObjectsQueue, ^{
+		[__tarckedObjectsMapping setObject:proxy forKey:rv];
+	});
 	
 	return rv;
 }
@@ -72,7 +76,9 @@ static NSMapTable<GREYAppStateTrackerObject*, __DTXDeallocSafeProxy*>* __tarcked
 {
 	[self _pp__untrackState:state forObject:obj];
 	
-	[__tarckedObjectsMapping removeObjectForKey:obj];
+	dispatch_sync(__tarckedObjectsQueue, ^{
+		[__tarckedObjectsMapping removeObjectForKey:obj];
+	});
 }
 
 
@@ -81,6 +87,7 @@ static NSMapTable<GREYAppStateTrackerObject*, __DTXDeallocSafeProxy*>* __tarcked
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
 		__tarckedObjectsMapping = [NSMapTable mapTableWithKeyOptions:NSMapTableStrongMemory valueOptions:NSMapTableWeakMemory];
+		__tarckedObjectsQueue = dispatch_queue_create("com.wix.tarckedObjectsQueue", DISPATCH_QUEUE_SERIAL);
 		
 		Method m1 = class_getInstanceMethod(self, @selector(trackState:forObject:));
 		Method m2 = class_getInstanceMethod(self, @selector(_pp__trackState:forObject:));
@@ -162,8 +169,11 @@ NSDictionary* _prettyPrintAppStateTracker(GREYAppStateTracker* tracker)
 	NSString* stateString = _prettyPrintAppState(tracker.currentState);
 	rv[@"appState"] = stateString;
 	
-	
-	NSArray<__DTXDeallocSafeProxy*>* allElements = __tarckedObjectsMapping.allValues;
+	__block NSArray<__DTXDeallocSafeProxy*>* allElements;
+	dispatch_sync(__tarckedObjectsQueue, ^{
+		allElements = [__tarckedObjectsMapping.allValues copy];
+	});
+
 	
 	NSMutableArray* elems = [NSMutableArray new];
 	NSMutableArray* URLs = [NSMutableArray new];

@@ -1,5 +1,6 @@
 issues-wo-labels=false
-exclude-labels=type: stack overflow,type: invalid/not a bug,type: invalid/apple bug,type: invalid/duplicate,type: invalid/wontfix,type: invalid/missing info
+issues=true
+exclude-labels=type: question/stack overflow,type: invalid/not a bug,type: invalid/apple bug,type: invalid/duplicate,type: invalid/wontfix,type: invalid/missing info,type: internal,type: documentation,user: more info needed,🏚 stale
 bugs-label=**Fixed Bugs**
 enhancement-label=**Enhancements**
 issues-label=**Closed Issues**

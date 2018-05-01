@@ -6,6 +6,7 @@ const log = require('npmlog');
 const fs = require('fs');
 const Environment = require('../../utils/environment');
 const Tail = require('tail').Tail;
+const argparse = require('../../utils/argparse');
 
 class Emulator {
   constructor() {
@@ -23,7 +24,8 @@ class Emulator {
   }
 
   async boot(emulatorName) {
-    const cmd = `-verbose -gpu host -no-audio @${emulatorName}`;
+    const headless = argparse.getArgValue('headless') ? '-no-window' : '';
+    const cmd = `-verbose -gpu host -no-audio ${headless} @${emulatorName}`;
     log.verbose(this.emulatorBin, cmd);
     const tempLog = `./${emulatorName}.log`;
     const stdout = fs.openSync(tempLog, 'a');

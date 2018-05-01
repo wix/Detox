@@ -18,9 +18,40 @@
 
 static DetoxAppDelegateProxy* _currentAppDelegateProxy;
 static NSMutableArray<NSDictionary*>* _pendingOpenURLs;
-static NSMutableArray<NSURL*>* _pendingUserNotifications;
+static NSMutableArray<DetoxUserNotificationDispatcher*>* _pendingUserNotificationDispatchers;
+static DetoxUserNotificationDispatcher* _pendingLaunchUserNotificationDispatcher;
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_10_3
+static NSMutableArray<DetoxUserActivityDispatcher*>* _pendingUserActivityDispatchers;
+static DetoxUserActivityDispatcher* _pendingLaunchUserActivityDispatcher;
+#endif
 
 static COSTouchVisualizerWindow* _touchVisualizerWindow;
+
+static NSURL* _launchUserNotificationDataURL()
+{
+	NSString* userNotificationDataPath = [[NSUserDefaults standardUserDefaults] objectForKey:@"detoxUserNotificationDataURL"];
+	
+	if(userNotificationDataPath == nil)
+	{
+		return nil;
+	}
+	
+	return [NSURL fileURLWithPath:userNotificationDataPath];
+}
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_10_3
+static NSURL* _launchUserActivityDataURL()
+{
+	NSString* userActivityDataPath = [[NSUserDefaults standardUserDefaults] objectForKey:@"detoxUserActivityDataURL"];
+	
+	if(userActivityDataPath == nil)
+	{
+		return nil;
+	}
+	
+	return [NSURL fileURLWithPath:userActivityDataPath];
+}
+#endif
 
 @interface UIWindow (DTXEventProxy) @end
 
@@ -95,7 +126,25 @@ static void __copyMethods(Class orig, Class target)
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
 		_pendingOpenURLs = [NSMutableArray new];
-		_pendingUserNotifications = [NSMutableArray new];
+		_pendingUserNotificationDispatchers = [NSMutableArray new];
+		
+		NSURL* url;
+		
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_10_3
+		_pendingUserActivityDispatchers = [NSMutableArray new];
+		
+		url = _launchUserActivityDataURL();
+		if(url)
+		{
+			_pendingLaunchUserActivityDispatcher = [[DetoxUserActivityDispatcher alloc] initWithUserActivityDataURL:url];
+		}
+#endif
+		
+		url = _launchUserNotificationDataURL();
+		if(url)
+		{
+			_pendingLaunchUserNotificationDispatcher = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationDataURL:url];
+		}
 		
 		Method m = class_getInstanceMethod([UIApplication class], @selector(setDelegate:));
 		void (*orig)(id, SEL, id<UIApplicationDelegate>) = (void*)method_getImplementation(m);
@@ -128,8 +177,6 @@ static void __copyMethods(Class orig, Class target)
 
 - (void)__dtx_applicationDidLaunchNotification:(NSNotification*)notification
 {
-	[self.__dtx_userNotificationDispatcher dispatchOnAppDelegate:self simulateDuringLaunch:YES];
-
 	dispatch_async(dispatch_get_main_queue(), ^{
 		_touchVisualizerWindow = [[COSTouchVisualizerWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
 		_touchVisualizerWindow.windowLevel = 100000000000;
@@ -140,61 +187,51 @@ static void __copyMethods(Class orig, Class target)
 	});
 }
 
-- (NSURL*)_userNotificationDataURL
-{
-	NSString* userNotificationDataPath = [[NSUserDefaults standardUserDefaults] objectForKey:@"detoxUserNotificationDataURL"];
-	
-	if(userNotificationDataPath == nil)
-	{
-		return nil;
-	}
-	
-	return [NSURL fileURLWithPath:userNotificationDataPath];
-}
-
-- (NSURL*)_URLOverride
+- (NSURL*)__dtx_URLOverride
 {
 	return [NSURL URLWithString:[[NSUserDefaults standardUserDefaults] objectForKey:@"detoxURLOverride"]];
 }
 
-- (NSString*)_sourceAppOverride
+- (NSString*)__dtx_sourceAppOverride
 {
 	return [[NSUserDefaults standardUserDefaults] objectForKey:@"detoxSourceAppOverride"];
 }
 
-- (NSDictionary*)_prepareLaunchOptions:(NSDictionary*)launchOptions userNotificationDispatcher:(DetoxUserNotificationDispatcher*)dispatcher
+- (NSDictionary*)__dtx_prepareLaunchOptions:(NSDictionary*)launchOptions userNotificationDispatcher:(DetoxUserNotificationDispatcher*)notificationDispatcher
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_10_3
+					 userActivityDispatcher:(DetoxUserActivityDispatcher*)activityDispatcher
+#endif
 {
 	NSMutableDictionary* rv = [launchOptions mutableCopy] ?: [NSMutableDictionary new];
 	
-	if(dispatcher)
+	if(notificationDispatcher)
 	{
-		rv[UIApplicationLaunchOptionsRemoteNotificationKey] = [dispatcher remoteNotification];
-	}
-	else
-	{
-		NSURL* openURLOverride = [self _URLOverride];
-		if(openURLOverride)
-		{
-			rv[UIApplicationLaunchOptionsURLKey] = openURLOverride;
-		}
-		NSString* originalAppOverride = [self _sourceAppOverride];
-		if(originalAppOverride)
-		{
-			rv[UIApplicationLaunchOptionsSourceApplicationKey] = originalAppOverride;
-		}
+		rv[UIApplicationLaunchOptionsRemoteNotificationKey] = [notificationDispatcher remoteNotification];
 	}
 	
-	return rv;
-}
-
-- (DetoxUserNotificationDispatcher*)__dtx_userNotificationDispatcher
-{
-	DetoxUserNotificationDispatcher* rv = objc_getAssociatedObject(self, _cmd);
-	
-	if([self _userNotificationDataURL])
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_10_3
+	if(activityDispatcher)
 	{
-		rv = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationDataURL:[self _userNotificationDataURL]];
-		objc_setAssociatedObject(self, _cmd, rv, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+		NSUserActivity* userActivity = [activityDispatcher userActivity];
+		
+		NSDictionary* userActivityDictionary = @{
+												 @"UIApplicationLaunchOptionsUserActivityKey": userActivity,
+												 UIApplicationLaunchOptionsUserActivityTypeKey: userActivity.activityType,
+												 };
+		
+		rv[UIApplicationLaunchOptionsUserActivityDictionaryKey] = userActivityDictionary;
+	}
+#endif
+	
+	NSURL* openURLOverride = [self __dtx_URLOverride];
+	if(openURLOverride)
+	{
+		rv[UIApplicationLaunchOptionsURLKey] = openURLOverride;
+	}
+	NSString* originalAppOverride = [self __dtx_sourceAppOverride];
+	if(originalAppOverride)
+	{
+		rv[UIApplicationLaunchOptionsSourceApplicationKey] = originalAppOverride;
 	}
 	
 	return rv;
@@ -202,7 +239,11 @@ static void __copyMethods(Class orig, Class target)
 
 - (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(nullable NSDictionary<UIApplicationLaunchOptionsKey, id>*)launchOptions
 {
-	launchOptions = [self _prepareLaunchOptions:launchOptions userNotificationDispatcher:self.__dtx_userNotificationDispatcher];
+	launchOptions = [self __dtx_prepareLaunchOptions:launchOptions userNotificationDispatcher:_pendingLaunchUserNotificationDispatcher
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_10_3
+							  userActivityDispatcher:_pendingLaunchUserActivityDispatcher
+#endif
+					 ];
 	
 	BOOL rv = YES;
 	if([class_getSuperclass(object_getClass(self)) instancesRespondToSelector:_cmd])
@@ -217,7 +258,11 @@ static void __copyMethods(Class orig, Class target)
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(nullable NSDictionary<UIApplicationLaunchOptionsKey, id> *)launchOptions
 {
-	launchOptions = [self _prepareLaunchOptions:launchOptions userNotificationDispatcher:self.__dtx_userNotificationDispatcher];
+	launchOptions = [self __dtx_prepareLaunchOptions:launchOptions userNotificationDispatcher:_pendingLaunchUserNotificationDispatcher
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_10_3
+							  userActivityDispatcher:_pendingLaunchUserActivityDispatcher
+#endif
+					 ];
 	
 	BOOL rv = YES;
 	if([class_getSuperclass(object_getClass(self)) instancesRespondToSelector:_cmd])
@@ -227,9 +272,19 @@ static void __copyMethods(Class orig, Class target)
 		rv = super_class(&super, _cmd, application, launchOptions);
 	}
 	
-	if(self.__dtx_userNotificationDispatcher == nil && [self _URLOverride] && [class_getSuperclass(object_getClass(self)) instancesRespondToSelector:@selector(application:openURL:options:)])
+	[_pendingLaunchUserNotificationDispatcher dispatchOnAppDelegate:self simulateDuringLaunch:YES];
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_10_3
+	[_pendingLaunchUserActivityDispatcher dispatchOnAppDelegate:self];
+#endif
+	
+	_pendingLaunchUserNotificationDispatcher = nil;
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_10_3
+	_pendingLaunchUserActivityDispatcher = nil;
+#endif
+	
+	if([self __dtx_URLOverride] && [class_getSuperclass(object_getClass(self)) instancesRespondToSelector:@selector(application:openURL:options:)])
 	{
-		[self application:application openURL:[self _URLOverride] options:launchOptions];
+		[self application:application openURL:[self __dtx_URLOverride] options:launchOptions];
 	}
 	
 	return rv;
@@ -246,14 +301,21 @@ static void __copyMethods(Class orig, Class target)
 	
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[_pendingOpenURLs enumerateObjectsUsingBlock:^(NSDictionary * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-			[self _actualDispatchOpenURL:obj];
+			[self __dtx_actualDispatchOpenURL:obj];
 		}];
 		[_pendingOpenURLs removeAllObjects];
 		
-		[_pendingUserNotifications enumerateObjectsUsingBlock:^(NSURL * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-			[self _actualDispatchUserNotificationFromDataURL:obj];
+		[_pendingUserNotificationDispatchers enumerateObjectsUsingBlock:^(DetoxUserNotificationDispatcher * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+			[self __dtx_actualDispatchUserNotificationWithDispatcher:obj];
 		}];
-		[_pendingUserNotifications removeAllObjects];
+		[_pendingUserNotificationDispatchers removeAllObjects];
+		
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_10_3
+		[_pendingUserActivityDispatchers enumerateObjectsUsingBlock:^(DetoxUserActivityDispatcher * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+			[self __dtx_actualDispatchUserActivityWithDispatcher:obj];
+		}];
+		[_pendingUserActivityDispatchers removeAllObjects];
+#endif
 	});
 }
 
@@ -262,25 +324,47 @@ static void __copyMethods(Class orig, Class target)
 	return YES;
 }
 
-- (void)_actualDispatchUserNotificationFromDataURL:(NSURL*)userNotificationDataURL
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_10_3
+- (void)__dtx_actualDispatchUserActivityWithDispatcher:(DetoxUserActivityDispatcher*)dispatcher
 {
-	DetoxUserNotificationDispatcher* dispatcher = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationDataURL:userNotificationDataURL];
-	[dispatcher dispatchOnAppDelegate:self simulateDuringLaunch:NO];
+	[dispatcher dispatchOnAppDelegate:self];
 }
 
-- (void)dispatchUserNotificationFromDataURL:(NSURL*)userNotificationDataURL delayUntilActive:(BOOL)delay
+- (void)__dtx_dispatchUserActivityFromDataURL:(NSURL*)userActivityDataURL delayUntilActive:(BOOL)delay
 {
+	DetoxUserActivityDispatcher* dispatcher = [[DetoxUserActivityDispatcher alloc] initWithUserActivityDataURL:userActivityDataURL];
+	
 	if(delay)
 	{
-		[_pendingUserNotifications addObject:userNotificationDataURL];
+		[_pendingUserActivityDispatchers addObject:dispatcher];
 	}
 	else
 	{
-		[self _actualDispatchUserNotificationFromDataURL:userNotificationDataURL];
+		[self __dtx_actualDispatchUserActivityWithDispatcher:dispatcher];
+	}
+}
+#endif
+
+- (void)__dtx_actualDispatchUserNotificationWithDispatcher:(DetoxUserNotificationDispatcher*)dispatcher
+{
+	[dispatcher dispatchOnAppDelegate:self simulateDuringLaunch:NO];
+}
+
+- (void)__dtx_dispatchUserNotificationFromDataURL:(NSURL*)userNotificationDataURL delayUntilActive:(BOOL)delay
+{
+	DetoxUserNotificationDispatcher* dispatcher = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationDataURL:userNotificationDataURL];
+	
+	if(delay)
+	{
+		[_pendingUserNotificationDispatchers addObject:dispatcher];
+	}
+	else
+	{
+		[self __dtx_actualDispatchUserNotificationWithDispatcher:dispatcher];
 	}
 }
 
-- (void)_actualDispatchOpenURL:(NSDictionary*)URLAndOptions
+- (void)__dtx_actualDispatchOpenURL:(NSDictionary*)URLAndOptions
 {
 	if([self respondsToSelector:@selector(application:openURL:options:)])
 	{
@@ -288,7 +372,7 @@ static void __copyMethods(Class orig, Class target)
 	}
 }
 
-- (void)dispatchOpenURL:(NSURL*)URL options:(NSDictionary*)options delayUntilActive:(BOOL)delay
+- (void)__dtx_dispatchOpenURL:(NSURL*)URL options:(NSDictionary*)options delayUntilActive:(BOOL)delay
 {
 	NSDictionary* payload = NSDictionaryOfVariableBindings(URL, options);
 	
@@ -298,7 +382,7 @@ static void __copyMethods(Class orig, Class target)
 	}
 	else
 	{
-		[self _actualDispatchOpenURL:payload];
+		[self __dtx_actualDispatchOpenURL:payload];
 	}
 }
 

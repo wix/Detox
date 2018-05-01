@@ -62,3 +62,9 @@
 + (id<GREYAction>)actionWithUnknownType:(WTFType *)wat;
 + (id<GREYAction>)actionWithKnown:(NSUInteger)iknowdis andUnknownType:(WTFTypalike *)wat;
 + (id<GREYMatcher>)detoxMatcherForBoth:(id<GREYMatcher>)firstMatcher andAncestorMatcher:(id<GREYMatcher>)ancestorMatcher;
+
+
+// This method is an instance method
+// For us this means that we don't set the class type, but let it be set from the outside
+// This is an assumption based on our current experience with EarlGrey, we might need to rework this at some point
+- (instancetype)performAction:(NSString *)action;

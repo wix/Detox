@@ -333,6 +333,28 @@ describe("iOS generation", () => {
 		});
 	});
 
+	describe("instance methods", () => {
+		it("should expose the instance methods as static ones", () => {
+			expect(ExampleClass.performAction).toBeInstanceOf(Function);
+		});
+
+		it("should have the first arg set as invocation", () => {
+			expect(ExampleClass.performAction("MyClass", "Foo")).toEqual({
+				target: {
+					type: "Invocation",
+					value: "MyClass"
+				},
+				method: "performAction:",
+				args: [
+					{
+						type: "NSString",
+						value: "Foo"
+					}
+				]
+			});
+		});
+	});
+
 	afterAll(() => {
 		// Clean up
 		remove.removeSync("./__tests__/generated-ios");

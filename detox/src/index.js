@@ -1,4 +1,5 @@
 const Detox = require('./Detox');
+const DetoxConstants = require('./DetoxConstants');
 const platform = require('./platform');
 const exportWrapper = require('./exportWrapper');
 const argparse = require('./utils/argparse');
@@ -75,4 +76,5 @@ module.exports = Object.assign({
   cleanup,
   beforeEach,
   afterEach,
+  DetoxConstants
 }, exportWrapper);

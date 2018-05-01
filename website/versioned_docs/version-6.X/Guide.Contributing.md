@@ -43,7 +43,7 @@ git submodule update --init --recursive
 ### Installing and linking internal projects
 
 ```sh
-scripts/bootstrap.sh
+lerna bootstrap
 ```
 
 ### Building

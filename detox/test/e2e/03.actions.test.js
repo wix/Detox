@@ -1,9 +1,6 @@
 describe('Actions', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
-  });
-
-  beforeEach(async () => {
     await element(by.text('Actions')).tap();
   });
 
