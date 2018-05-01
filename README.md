@@ -78,4 +78,3 @@ Dive into Detox core by reading the [Detox Contribution Guide](/docs/Guide.Contr
 * Detox by itself and all original source code in this repo is MIT
 * Detox relies on some important dependencies, their respective licenses are:
   * [EarlGrey](https://github.com/google/EarlGrey/blob/master/LICENSE)
-
