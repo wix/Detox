@@ -1,4 +1,4 @@
-const invoke = require('../invoke');
+  const invoke = require('../invoke');
 const matchers = require('./matchers');
 const Matcher = matchers.Matcher;
 const LabelMatcher = matchers.LabelMatcher;
@@ -284,7 +284,7 @@ class Element {
   }
   async clearText() {
     return await new ActionInteraction(this, new ClearTextAction()).execute();
-  }
+  } 
   async scroll(amount, direction = 'down') {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
     this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
@@ -308,38 +308,33 @@ class Element {
 
 class Expect { }
 
-class ExpectDevice extends Expect {
-  constructor(device) {
-    super();
-    this._currentDevice = device;
+class PasteboardInfo {
+  constructor(data) {
+    this._currentData = data;
   }
-  async pasteboardToHaveString(value) {
-    let data = await this._currentDevice.pasteboardInfo();
-    if (_.isEmpty(data.pbString)) {
+  async toHaveString(value) {
+    if (_.isEmpty(this._currentData.pbString)) {
       throw new Error(`pasteboard doesn't have string value`);
     }
-    if (!_.isEqual(data.pbString, value)) {
+    if (!_.isEqual(this._currentData.pbString, value)) {
       throw new Error(`value is not equal to pasteboard string value`);
     }  
   }
-  async pasteboardToHaveImage() {
-    let data = await this._currentDevice.pasteboardInfo();
-    if (_.isEmpty(data.pbImage)) {
+  async toHaveImage() {
+    if (_.isEmpty(this._currentData.pbImage)) {
       throw new Error(`pasteboard have not image`);
     }
   }
-  async pasteboardToHaveColor() {
-    let data = await this._currentDevice.pasteboardInfo();
-    if (_.isEmpty(data.pbColor)) {
+  async toHaveColor() {
+    if (_.isEmpty(this._currentData.pbColor)) {
       throw new Error(`pasteboard have not color`);
     }
   }
-  async pasteboardToHaveURL(value) {
-    let data = await this._currentDevice.pasteboardInfo();
-    if (_.isEmpty(data.pbString)) {
+  async toHaveURL(value) {
+    if (_.isEmpty(this._currentData.pbString)) {
       throw new Error(`pasteboard have not URL value`);
     }
-    if (!_.isEqual(data.pbString, value)) {
+    if (!_.isEqual(this._currentData.pbString, value)) {
       throw new Error(`URL is not equal to pasteboard URL value`);
     } 
   }
@@ -408,9 +403,13 @@ class WaitForElement extends WaitFor {
 }
 
 function expect(element) {
-  if (element instanceof Element) return new ExpectElement(element);
-  if (element instanceof Device) return new ExpectDevice(element);
-  throw new Error(`expect() argument is invalid, got ${typeof element}`);
+  if (element instanceof Element) {
+    return new ExpectElement(element);
+  } else {
+    debugger;
+    
+    return element;
+  }
 }
 
 function waitFor(element) {
@@ -445,5 +444,6 @@ module.exports = {
   expect,
   waitFor,
   element,
+  PasteboardInfo,
   by
 };

@@ -4,6 +4,8 @@ const _ = require('lodash');
 const argparse = require('../utils/argparse');
 const ArtifactsCopier = require('../artifacts/ArtifactsCopier');
 const debug = require('../utils/debug'); //debug utils, leave here even if unused
+const {PasteboardInfo} = require('../ios/expect')
+
 
 class Device {
 
@@ -140,10 +142,10 @@ class Device {
     await this.deviceDriver.shake(this._deviceId);
   }
 
-  async pasteboardInfo() {
+  async pasteboard() {
     let responseParams = await this.deviceDriver.pasteboardInfo(this._deviceId);
     let pasteboardInfoValue = _.get(responseParams, 'params', {});
-    return pasteboardInfoValue;
+    return new PasteboardInfo(pasteboardInfoValue);
   }
 
   async terminateApp(bundleId) {

@@ -224,9 +224,9 @@ describe('Device', () => {
     expect(device.deviceDriver.shake).toHaveBeenCalledTimes(1);
   });
 
-  it (`pasteboardInfo() should pass to device driver`, async() => {
+  it (`pasteboard() should pass to device driver`, async() => {
     device = validDevice();
-    await device.pasteboardInfo();
+    await device.pasteboard();
 
     expect(device.deviceDriver.pasteboardInfo).toHaveBeenCalledTimes(1);
   })
