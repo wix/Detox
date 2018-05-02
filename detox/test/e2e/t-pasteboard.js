@@ -11,28 +11,24 @@ describe('Pasteboard', () => {
     await element(by.id('stringValueInput')).typeText('exampleString\n');
     await element(by.id('CheckButton')).tap();
     await expect(await device.pasteboard()).toHaveString('exampleString');
-    await element(by.id('backButton')).tap();
   });
 
   it('should have imageValue', async () => {
     await element(by.id('testImageValue')).tap()
     await element(by.id('CheckButton')).tap()
     await expect(await device.pasteboard()).toHaveImage();
-    await element(by.id('backButton')).tap()
   });
 
   it('should have urlValue', async () => {
     await element(by.id('testURLValue')).tap();
-    await element(by.id('testURLValue')).typeText('exampleURL\n');
+    await element(by.id('testURLValue')).typeText('https://www.wix.com\n');
     await element(by.id('CheckButton')).tap();
-    await expect(await device.pasteboard()).toHaveURL('exampleURL');
-    await element(by.id('backButton')).tap();
+    await expect(await device.pasteboard()).toHaveURL('https://www.wix.com');
   });
 
   it('should have color', async () => {
     await element(by.id('testColorValue')).tap();
     await element(by.id('CheckButton')).tap();
     await expect(await device.pasteboard()).toHaveColor();
-    await element(by.id('backButton')).tap();
   });
 });

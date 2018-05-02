@@ -15,8 +15,7 @@ const GreyActions = require('./earlgreyapi/GREYActions');
 const GreyInteraction = require('./earlgreyapi/GREYInteraction');
 const GreyCondition = require('./earlgreyapi/GREYCondition');
 const GreyConditionDetox = require('./earlgreyapi/GREYConditionDetox');
-const Device = require('../devices/Device')
-const _ = require('lodash');
+
 
 let invocationManager;
 
@@ -307,39 +306,6 @@ class Element {
 
 
 class Expect { }
-
-class PasteboardInfo {
-  constructor(data) {
-    this._currentData = data;
-  }
-  async toHaveString(value) {
-    if (_.isEmpty(this._currentData.pbString)) {
-      throw new Error(`pasteboard doesn't have string value`);
-    }
-    if (!_.isEqual(this._currentData.pbString, value)) {
-      throw new Error(`value is not equal to pasteboard string value`);
-    }  
-  }
-  async toHaveImage() {
-    if (_.isEmpty(this._currentData.pbImage)) {
-      throw new Error(`pasteboard have not image`);
-    }
-  }
-  async toHaveColor() {
-    if (_.isEmpty(this._currentData.pbColor)) {
-      throw new Error(`pasteboard have not color`);
-    }
-  }
-  async toHaveURL(value) {
-    if (_.isEmpty(this._currentData.pbString)) {
-      throw new Error(`pasteboard have not URL value`);
-    }
-    if (!_.isEqual(this._currentData.pbString, value)) {
-      throw new Error(`URL is not equal to pasteboard URL value`);
-    } 
-  }
-}
-
 class ExpectElement extends Expect {
   constructor(element) {
     super();
@@ -406,8 +372,6 @@ function expect(element) {
   if (element instanceof Element) {
     return new ExpectElement(element);
   } else {
-    debugger;
-    
     return element;
   }
 }
@@ -444,6 +408,5 @@ module.exports = {
   expect,
   waitFor,
   element,
-  PasteboardInfo,
   by
 };
