@@ -24,55 +24,54 @@ class Emulator {
   }
 
   async boot(emulatorName) {
-    const cmd = _.compact([
+    const emulatorArgs = _.compact([
       '-verbose',
       '-gpu', 'auto',
       '-no-audio',
       argparse.getArgValue('headless') ? '-no-window' : '',
       `@${emulatorName}`
-    ]).join(' ');
+    ]);
 
-    log.verbose(this.emulatorBin, cmd);
+    let childProcessOutput;
     const tempLog = `./${emulatorName}.log`;
     const stdout = fs.openSync(tempLog, 'a');
     const stderr = fs.openSync(tempLog, 'a');
-    const tail = new Tail(tempLog);
-    const promise = spawn(this.emulatorBin, _.split(cmd, ' '), {detached: true, stdio: ['ignore', stdout, stderr]});
-
-    const childProcess = promise.childProcess;
-    childProcess.unref();
-
-    tail.on("line", function(line) {
+    const tail = new Tail(tempLog).on("line", (line) => {
       if (line.includes('Adb connected, start proxing data')) {
-        detach();
-        promise._cpResolve();
+        childProcessPromise._cpResolve();
       }
     });
 
     function detach() {
-      tail.unwatch();
-      fs.closeSync(stdout);
-      fs.closeSync(stderr);
-      fs.unlink(tempLog, () => {});
-    }
-
-    return promise.catch(function(err) {
-      const output = fs.readFileSync(tempLog, 'utf8');
-
-      if (output.includes(`There's another emulator instance running with the current AVD`)) {
-        log.verbose('stdout', '%s', output);
+      if (childProcessOutput) {
         return;
       }
 
-      if (log.level === 'verbose') {
-        log.error('ChildProcessError', '%j', err);
-      } else {
-        log.error('ChildProcessError', '%s', err.message);
+      childProcessOutput = fs.readFileSync(tempLog, 'utf8');
+
+      tail.unwatch();
+      fs.closeSync(stdout);
+      fs.closeSync(stderr);
+      fs.unlink(tempLog, _.noop);
+    }
+
+    log.verbose(this.emulatorBin, ...emulatorArgs);
+    const childProcessPromise = spawn(this.emulatorBin, emulatorArgs, { detached: true, stdio: ['ignore', stdout, stderr] });
+    childProcessPromise.childProcess.unref();
+
+    return childProcessPromise.catch((err) => {
+      detach();
+
+      if (childProcessOutput.includes(`There's another emulator instance running with the current AVD`)) {
+        return;
       }
 
-      log.error('stderr', '%s', output);
-      detach();
+      log.error('ChildProcessError', '%s', err.message);
+      log.error('stderr', '%s', childProcessOutput);
       throw err;
+    }).then(() => {
+      detach();
+      log.verbose('stdout', '%s', childProcessOutput);
     });
   }
 }
