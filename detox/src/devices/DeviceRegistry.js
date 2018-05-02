@@ -47,7 +47,6 @@ class DeviceRegistry {
   static clear() {
     writeLockedDevices([]);
   }
-
 }
 
 function createEmptyLockFileIfNeeded() {
@@ -76,4 +75,3 @@ function getFirstUnlocked(deviceIds) {
 }
 
 module.exports = DeviceRegistry;
-

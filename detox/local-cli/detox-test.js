@@ -42,7 +42,6 @@ program
 
 clearDeviceRegistryLockFile();
 
-const config = require(path.join(process.cwd(), 'package.json')).detox;
 
 if (program.configuration) {
   if (!config.configurations[program.configuration]) {
@@ -124,8 +123,7 @@ function runJest() {
     reuse: program.reuse,
     debugSynchronization: program.debugSynchronization,
     artifactsLocation: program.artifactsLocation,
-    headless: program.headless,
-    maxTestWorkers,
+    headless: program.headless
   });
 
   cp.execSync(command, {

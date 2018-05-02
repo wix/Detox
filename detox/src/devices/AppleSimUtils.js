@@ -60,17 +60,30 @@ class AppleSimUtils {
     return (_.isEqual(device.state, 'Booted') || _.isEqual(device.state, 'Booting'));
   }
 
-  async create(type) {
-    const result = await this._execSimctl({ cmd: `list runtimes -j` });
+  async create(name) {
+
+    const IPHONES = {
+      "iPhone 8": "iPhone2017-A",
+      "iPhone 8 Plus": "iPhone2017-B",
+      "iPhone X": "iPhone2017-C"
+    };
+
+    if (IPHONES[name]) {
+      name = IPHONES[name];
+    }
+
+    const result = await this._execSimctl({ cmd: `list -j` });
     const stdout = _.get(result, 'stdout');
-    const runtimes = JSON.parse(stdout);
-    const newestRuntime = _.maxBy(runtimes.runtimes, r => Number(r.version));
+    const output = JSON.parse(stdout);
+    const deviceType = _.filter(output.devicetypes, { 'name': name})[0];
+    const newestRuntime = _.maxBy(output.runtimes, r => Number(r.version));
+
     if (newestRuntime) {
-      console.log('Creating simulator', `create "${type}" "${type}" "${newestRuntime.identifier}"`);
-      await this._execSimctl({cmd: `create "${type}" "${type}" "${newestRuntime.identifier}"`});
+      //console.log(`create "${name}-Detox" "${deviceType.identifier}" "${newestRuntime.identifier}"`);
+      await this._execSimctl({cmd: `create "${name}-Detox" "${deviceType.identifier}" "${newestRuntime.identifier}"`});
       return true;
     } else {
-      throw new Error(`Unable to create device. No runtime found for ${type}`);
+      throw new Error(`Unable to create device. No runtime found for ${name}`);
     }
   }
 
