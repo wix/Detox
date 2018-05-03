@@ -188,7 +188,7 @@ Check out Detox's [own test suite](../detox/test/e2e/k-user-notifications.js)
 ### `device.sendUserActivity(params)`
 Mock handling of received user activity when app is in foreground.<br>
 Read more in [Mocking User Activities](APIRef.MockingUserActivities.md) section.<br>
-Check out Detox's [own test suite](../detox/test/e2e/17-user-activities.js)
+Check out Detox's [own test suite](../detox/test/e2e/t-user-activities.js)
 
 ### `device.setOrientation(orientation)`
 Takes `"portrait"` or `"landscape"` and rotates the device to the given orientation.

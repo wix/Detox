@@ -2,7 +2,12 @@
 
 source $(dirname "$0")/travis_logger.sh
 
-run_f "lerna bootstrap"
+if [ ! -z ${REACT_NATIVE_VERSION} ]; then
+  node scripts/change_react_native_version.js "examples/demo-react-native" ${REACT_NATIVE_VERSION}
+  node scripts/change_react_native_version.js "examples/demo-react-native-jest" ${REACT_NATIVE_VERSION}
+fi
+
+lerna bootstrap
 
 pushd examples/demo-react-native
 run_f "detox build -c ios.sim.release"

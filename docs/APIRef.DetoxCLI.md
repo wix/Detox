@@ -54,6 +54,7 @@ Initiating your test suite
 | -d, --debug-synchronization \<value\>         | When an action/expectation takes a significant amount time use this option to print device synchronization status. The status will be printed if the ion takes more than [value]ms to complete |
 | -a, --artifacts-location \<path\>             | Artifacts destination path (currently contains only logs). For more details, please check the [Artifacts doc](APIRef.Artifacts.md#artifacts) |
 |-p, --platform [ios/android]		           | Run platform specific tests. Runs tests with invert grep on `:platform:`, e.g test with substring `:ios:` in its name will not run when passing `--platform android`
+| -H, --headless                                   | [Android Only] Launch Emulator in headless mode. Useful when running on CI. |
 |&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;||
 
 

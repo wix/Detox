@@ -72,8 +72,10 @@ class AndroidDriver extends DeviceDriverBase {
       return this.instrumentationProcess.pid;
     }
 
+    const testRunner = await this.adb.getInstrumentationRunner(deviceId, bundleId);
+
     this.instrumentationProcess = spawn(this.adb.adbBin, [`-s`, `${deviceId}`, `shell`, `am`, `instrument`, `-w`, `-r`, `${args.join(' ')}`, `-e`, `debug`,
-      `false`, `${bundleId}.test/android.support.test.runner.AndroidJUnitRunner`]);
+      `false`, testRunner]);
     log.verbose(this.instrumentationProcess.spawnargs.join(" "));
     log.verbose('Instrumentation spawned, childProcess.pid: ', this.instrumentationProcess.pid);
     this.instrumentationProcess.stdout.on('data', function(data) {
@@ -96,7 +98,7 @@ class AndroidDriver extends DeviceDriverBase {
       const call = invoke.call(invoke.Android.Class("com.wix.detox.Detox"), 'startActivityFromUrl', invoke.Android.String(params.url));
       await this.invocationManager.execute(call);
     }
-    
+
     //The other types are not yet supported.
   }
 
@@ -171,7 +173,7 @@ class AndroidDriver extends DeviceDriverBase {
       landscape: 1, // top at left side landscape
       portrait: 0 // non-reversed portrait.
     };
-    
+
     const call = invoke.call(invoke.Android.Class(EspressoDetox), 'changeOrientation', invoke.Android.Integer(orientationMapping[orientation]));
     await this.invocationManager.execute(call);
   }
