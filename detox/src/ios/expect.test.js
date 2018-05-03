@@ -29,13 +29,6 @@ describe('expect', async () => {
     await e.expect(e.element(e.by.label('test'))).toHaveValue('value');
   });
 
-  it('pasteboard tests', async() => {
-    await e.expect(new e.PasteboardInfo({pbString : 'test'})).toHaveString('test');
-    await e.expect(new e.PasteboardInfo({pbImage : 'Image'})).toHaveImage();
-    await e.expect(new e.PasteboardInfo({pbColor : 'Color'})).toHaveColor();
-    await e.expect(new e.PasteboardInfo({pbString : 'test'})).toHaveURL('test');
-    
-  });
 
   it(`element by id`, async () => {
     await e.expect(e.element(e.by.id('test'))).toBeVisible();
