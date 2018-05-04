@@ -63,9 +63,9 @@ child_process.js:531
     throw err;
 ```
 
-**Solution:** This error means that your version of Node does not support `async-await` syntax. You should do one of the two:
+**Solution:** This error means that your version of Node does not support `async-await` syntax. You should do the following:
 
-1. Update Node to a version **higher than 7.6.0**, these versions will provide native support for async-await.
+1. Update Node to a version **8.3.0 or higher**.
 
 <br>
 

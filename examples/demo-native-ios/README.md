@@ -6,7 +6,7 @@
 
 * make sure you have Xcode installed (tested with v8.1-8.2)
 * iPhone 7 Plus simulator is installed
-* make sure you have node installed (`brew install node`, node 7.6.0 and up is prefered, for native async-await support)
+* make sure you have node installed (`brew install node`, node 8.3.0 and up is prefered, for native async-await support)
 
 ### Step 1: Npm install
 * Make sure you're in folder `examples/demo-native-ios`
