@@ -2,7 +2,7 @@
 const fs = require("fs-extra");
 const git = require("nodegit");
 const execSync = require("child_process").execSync;
-const { major } = require("semver");
+const { major, lt } = require("semver");
 const REPO_URL = "https://github.com/wix/detox.git";
 
 async function getVersions() {
@@ -12,7 +12,7 @@ async function getVersions() {
 
   const semverTags = tags
     .filter(tag => !tag.includes("@"))
-    .filter(tag => tag.split(".").length === 3 && major(tag) >= 6)
+    .filter(tag => tag.split(".").length === 3 && major(tag) >= 7)
     .sort()
     .reverse();
   await fs.remove(tmp);
@@ -54,7 +54,7 @@ async function checkoutVersion(repo, version) {
   await checkOutTag(repo, version);
 }
 
-function applyTemporalFix(tempDir) {
+function fixMarkdownForPre7_3_4_versions(tempDir) {
   // We need to do this as we forgot the header in this one file, but added git tags with it included
   console.log("Temporary fix for Guide.DebuggingInXcode");
   const header =
@@ -103,7 +103,9 @@ async function cleanUp(tempDir) {
   for (let version of versions) {
     console.log("Clone repository into tmp directory");
     await checkoutVersion(repo, version);
-    applyTemporalFix(tempDir);
+    if (lt(version, "7.3.4")) {
+      fixMarkdownForPre7_3_4_versions(tempDir);
+    }
     generateAndCopyDocusaurusVersion(tempDir, version);
     repo.cleanup(tempDir);
     console.log(`Done with ${version}\n\n`);
