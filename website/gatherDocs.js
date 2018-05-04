@@ -28,23 +28,25 @@ async function cleanupExistingVersions() {
   await fs.emptyDir("./versioned_sidebars");
 }
 
-// https://stackoverflow.com/questions/29569913/switch-branch-tag-with-nodegit?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+// https://stackoverflow.com/a/46140283/1559386
 function checkOutTag(repo, tag) {
-  return git.Reference
-    .dwim(repo, "refs/tags/" + tag)
-    .then(function (ref) {
+  return git.Reference.dwim(repo, "refs/tags/" + tag)
+    .then(function(ref) {
       return ref.peel(git.Object.TYPE.COMMIT);
     })
-    .then(function (ref) {
+    .then(function(ref) {
       return repo.getCommit(ref);
     })
-    .then(function (commit) {
-      return git.Checkout
-        .tree(repo, commit, { checkoutStrategy: git.Checkout.STRATEGY.FORCE })
-        .then(function () {
-          return repo.setHeadDetached(commit, repo.defaultSignature,
-            "Checkout: HEAD " + commit.id());
-        })
+    .then(function(commit) {
+      return git.Checkout.tree(repo, commit, {
+        checkoutStrategy: git.Checkout.STRATEGY.FORCE
+      }).then(function() {
+        return repo.setHeadDetached(
+          commit,
+          repo.defaultSignature,
+          "Checkout: HEAD " + commit.id()
+        );
+      });
     });
 }
 
