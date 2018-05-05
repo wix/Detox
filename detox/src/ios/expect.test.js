@@ -101,6 +101,7 @@ describe('expect', async () => {
     await e.element(e.by.label('Tap Me')).tap();
     await e.element(e.by.label('Tap Me')).tapAtPoint({x: 10, y:10});
     await e.element(e.by.label('Tap Me')).longPress();
+    await e.element(e.by.label('Tap Me')).longPress(2000);
     await e.element(e.by.id('UniqueId819')).multiTap(3);
     await e.element(e.by.id('UniqueId937')).typeText('passcode');
     await e.element(e.by.id('UniqueId005')).clearText();
