@@ -32,6 +32,13 @@ export default class ActionsScreen extends Component {
           <Text style={{ color: 'blue', marginBottom: 20, textAlign: 'center' }}>Tap Me</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity
+          delayLongPress={1200}
+          onLongPress={this.onButtonPress.bind(this, 'Long Press With Duration Working')}
+        >
+          <Text style={{ color: 'blue', marginBottom: 20, textAlign: 'center' }}>Long Press Me 1.5s</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity onPress={this.onLongTimeout.bind(this)}
         >
           <Text testID='WhyDoAllTheTestIDsHaveTheseStrangeNames' style={{ color: 'blue', marginBottom: 20, textAlign: 'center' }}>Tap Me For Long Timeout</Text>

@@ -21,7 +21,7 @@ There is some work done for running Detox on Windows, but it's still fairly unte
 ### Expectations on device logs
 One of our most wanted features, being able to assert log outputs.
 
-### Performance probing - [DetoxInstruments](https://github.com/wix/detoxinstruments)
+### Performance probing - [Detox Instruments](https://github.com/wix/detoxinstruments)
 Maintaining performance is hard, The main issue with it is that by the time you notice there's a degradation in performance there's already so much changed it's hard to find a clear culprit for this regression (probably many small ones). Just like in BI, you won’t know if your change degrades or improves performance unless it is measured.
 
 * **Measure vital signs while running tests.**

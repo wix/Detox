@@ -31,8 +31,9 @@ Simulate tap on an element.
 await element(by.id('tappable')).tap();
 ```
 
-### `longPress()`
-Simulate long press on an element.
+### `longPress(duration)`
+Simulate long press on an element.<br>
+duration - long press time interval. (iOS only)<br>
 
 ```js
 await element(by.id('tappable')).longPress();
