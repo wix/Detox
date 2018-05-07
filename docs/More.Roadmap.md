@@ -12,7 +12,7 @@ The current API supports addition of multiple platforms, Android is next. This i
 Currently detox only supports running on iOS simulators, we plan on adding support for running on devices as well.
 
 ### Windows support
-There is some work done for running detox on Windows, but it's still fairly untested. Please open issues for anything you run into, but be aware of these limitations:
+There is some work done for running Detox on Windows, but it's still fairly untested. Please open issues for anything you run into, but be aware of these limitations:
 
 - Apple doesn't support iOS apps on Windows, obviously, so you're limited to the in-progress Android support.
 - `binaryPath` can be left as a relative path with `/`, or use `\\` if you don't need cross-platform support.
