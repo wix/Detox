@@ -9,15 +9,14 @@ We have some very interesting plans for Detox, this is the place to discuss and 
 The current API supports addition of multiple platforms, Android is next. This is the biggest feature we'll be working on in the near future. Supporting both Android emulators and devices. Our plan is to use both Espresso and UIAutomator as drivers. Espresso for core in-app interactions and synchronization with react-native, and UIAutomator for peripherals (notification panel, permission dialogs etc.). This will grant us both the speed and precision of Espresso, and the flexibility of UIAutomator.
 
 ### iOS physical device support
-Currently detox only supports running on iOS simulators, we plan on adding support for running on devices as well.
+Currently Detox only supports running on iOS simulators, we plan on adding support for running on devices as well.
 
 ### Windows support
 There is some work done for running Detox on Windows, but it's still fairly untested. Please open issues for anything you run into, but be aware of these limitations:
 
-- Apple doesn't support iOS apps on Windows, obviously, so you're limited to the in-progress Android support.
+- Apple doesn't support iOS apps on Windows, so you're limited to the in-progress Android support.
 - `binaryPath` can be left as a relative path with `/`, or use `\\` if you don't need cross-platform support.
-- `build` should not use `./gradlew ...`, but simply `gradlew ...` - you may prefer scripting the build outside of
-  detox if you want to maintain cross-platform support - or simply have two configurations!
+- `build` should not use `./gradlew ...`, but simply `gradlew ...` - you may prefer scripting the build outside of Detox if you want to maintain cross-platform support - or simply have two configurations!
 
 ### Expectations on device logs
 One of our most wanted features, being able to assert log outputs.
