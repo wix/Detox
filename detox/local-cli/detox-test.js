@@ -111,11 +111,11 @@ function runMocha() {
 
 function runJest() {
   const currentConfiguration = config.configurations && config.configurations[program.configuration];
-  const maxTestWorkers = currentConfiguration.maxTestWorkers || 1;
+  const maxWorkers = currentConfiguration.maxWorkers || 1;
   const configFile = runnerConfig ? `--config=${runnerConfig}` : '';
 
   const platform = program.platform ? `--testNamePattern='^((?!${getPlatformSpecificString(program.platform)}).)*$'` : '';
-  const command = `node_modules/.bin/jest ${testFolder} ${configFile} --maxWorkers=${maxTestWorkers} ${platform}`;
+  const command = `node_modules/.bin/jest ${testFolder} ${configFile} --maxWorkers=${maxWorkers} ${platform}`;
   const env = Object.assign({}, process.env, {
     configuration: program.configuration,
     loglevel: program.loglevel,

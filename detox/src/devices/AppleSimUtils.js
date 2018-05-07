@@ -1,3 +1,4 @@
+const process = require('process');
 const _ = require('lodash');
 const exec = require('../utils/exec');
 const retry = require('../utils/retry');
@@ -29,7 +30,7 @@ class AppleSimUtils {
       trying: `Searching for device matching ${query}...`
     };
     let correctQuery = this._correctQueryWithOS(query);
-    const response = await this._execAppleSimUtils({ args: `--list "${correctQuery}"` }, statusLogs, 1);
+    const response = await this._execAppleSimUtils({ args: `--list --byType "${correctQuery}"` }, statusLogs, 1);
     const parsed = this._parseResponseFromAppleSimUtils(response);
     const udids = _.map(parsed, 'udid');
     if (!udids || !udids.length || !udids[0]) {
@@ -61,17 +62,6 @@ class AppleSimUtils {
   }
 
   async create(name) {
-
-    const IPHONES = {
-      "iPhone 8": "iPhone2017-A",
-      "iPhone 8 Plus": "iPhone2017-B",
-      "iPhone X": "iPhone2017-C"
-    };
-
-    if (IPHONES[name]) {
-      name = IPHONES[name];
-    }
-
     const result = await this._execSimctl({ cmd: `list -j` });
     const stdout = _.get(result, 'stdout');
     const output = JSON.parse(stdout);
@@ -79,9 +69,10 @@ class AppleSimUtils {
     const newestRuntime = _.maxBy(output.runtimes, r => Number(r.version));
 
     if (newestRuntime) {
-      //console.log(`create "${name}-Detox" "${deviceType.identifier}" "${newestRuntime.identifier}"`);
-      await this._execSimctl({cmd: `create "${name}-Detox" "${deviceType.identifier}" "${newestRuntime.identifier}"`});
-      return true;
+      console.log(process.pid, `create "${name}-Detox" "${deviceType.identifier}" "${newestRuntime.identifier}"`);
+      const result = await this._execSimctl({cmd: `create "${name}-Detox" "${deviceType.identifier}" "${newestRuntime.identifier}"`});
+      const udid = _.get(result, 'stdout').trim();
+      return udid;
     } else {
       throw new Error(`Unable to create device. No runtime found for ${name}`);
     }
@@ -193,6 +184,20 @@ class AppleSimUtils {
     }
     return correctQuery;
   }
+
+  //convertXcode9(name) {
+  //  const IPHONES = {
+  //    "iPhone 8": "iPhone2017-A",
+  //    "iPhone 8 Plus": "iPhone2017-B",
+  //    "iPhone X": "iPhone2017-C"
+  //  };
+  //
+  //  if (IPHONES[name]) {
+  //    return IPHONES[name];
+  //  } else {
+  //    return name;
+  //  }
+  //}
 
   _parseResponseFromAppleSimUtils(response) {
     let out = _.get(response, 'stdout');

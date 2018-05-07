@@ -3,11 +3,11 @@ const MockServer = require('../mock-server/mock-server');
 describe('Network Synchronization', () => {
   let mockServer = new MockServer();
 
-  beforeAll(async () => {
+  beforeAll(() => {
     mockServer.init();
   });
 
-  afterAll( () => {
+  afterAll(() => {
     mockServer.close();
   });
 

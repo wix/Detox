@@ -5,10 +5,10 @@ describe('device registry', () => {
   let registry;
   const createDevice = jest.fn();
 
-  function initRegistry({maxTestRunners = 1, numberOfDevicesPerType = 1} = {}) {
+  function initRegistry({numberOfDevicesPerType = 1} = {}) {
     const devicesIds = Array.from(Array(numberOfDevicesPerType).keys());
     const getDeviceIdsByType = type => devicesIds.map(deviceId => `id-${deviceId}-of-type-${type}`);
-    return new DeviceRegistry({getDeviceIdsByType, maxTestRunners, createDevice});
+    return new DeviceRegistry({getDeviceIdsByType, createDevice});
   }
 
   describe('create device', () => {
@@ -16,22 +16,20 @@ describe('device registry', () => {
     beforeEach(DeviceRegistry.clear);
 
     it('should create devices if they are not available', async () => {
-      const maxTestRunners = 4;
       const numberOfDevicesPerType = 1;
 
-      registry = initRegistry({maxTestRunners, numberOfDevicesPerType});
-      await registry.getDevice('iPhoneX');
+      registry = initRegistry({numberOfDevicesPerType});
+      await registry.getDevice('iPhone X');
 
-      expect(createDevice).toHaveBeenCalledTimes(maxTestRunners - numberOfDevicesPerType);
-      expect(createDevice).toHaveBeenCalledWith('iPhoneX');
+      expect(createDevice).toHaveBeenCalledTimes(numberOfDevicesPerType);
+      expect(createDevice).toHaveBeenCalledWith('iPhone X');
     });
 
     it('should not create devices if there is no need', async () => {
-      const maxTestRunners = 1;
       const numberOfDevicesPerType = 1;
-      registry = initRegistry({numberOfDevicesPerType, maxTestRunners});
+      registry = initRegistry({numberOfDevicesPerType});
       try {
-        await registry.getDevice('iPhoneX');
+        await registry.getDevice('iPhone X');
       }
       catch (e) {
       }

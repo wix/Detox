@@ -3,49 +3,46 @@ const plockfile = require('proper-lockfile');
 const _ = require('lodash');
 const retry = require('../utils/retry');
 const {DEVICE_LOCK_FILE_PATH} = require('../utils/environment');
-const LOCK_RETRY_OPTIONS = {retries: Number.MAX_SAFE_INTEGER, interval: 5};
+const LOCK_RETRY_OPTIONS = {retries: 100, interval: 5};
 
 class DeviceRegistry {
 
-  constructor({getDeviceIdsByType, maxTestRunners = 1, createDevice}) {
+  constructor({getDeviceIdsByType, createDevice}) {
     this.getDeviceIdsByType = getDeviceIdsByType;
-    this.maxTestRunners = maxTestRunners;
     this.createDevice = createDevice;
     createEmptyLockFileIfNeeded();
   }
 
-  async getDevice(deviceType) {
-  await retry(LOCK_RETRY_OPTIONS, () => plockfile.lockSync(DEVICE_LOCK_FILE_PATH));
-    const deviceIds = await this.getDeviceIdsByType(deviceType);
-    await this._createDeviceIfNecessary({deviceIds, deviceType});
-
-    const unlockedDeviceId = getFirstUnlocked(deviceIds);
-    if (unlockedDeviceId) {
-      const lockedDevices = getLockedDevices();
-      lockedDevices.push(unlockedDeviceId);
-      writeLockedDevices(lockedDevices);
-      plockfile.unlockSync(DEVICE_LOCK_FILE_PATH);
-      return unlockedDeviceId;
-    }
-    plockfile.unlockSync(DEVICE_LOCK_FILE_PATH);
-    throw new Error(`Unable to find unlocked device ${deviceType}`);
+  async lock() {
+    await retry(LOCK_RETRY_OPTIONS, () => plockfile.lockSync(DEVICE_LOCK_FILE_PATH));
   }
 
-  static async freeDevice(deviceId) {
-    await retry(LOCK_RETRY_OPTIONS, () => plockfile.lockSync(DEVICE_LOCK_FILE_PATH));
+  async unlock() {
+    await plockfile.unlockSync(DEVICE_LOCK_FILE_PATH);
+  }
+
+  async freeDevice(deviceId) {
+    await this.lock();
     const lockedDevices = getLockedDevices();
     _.remove(lockedDevices, lockedDeviceId => lockedDeviceId === deviceId);
     writeLockedDevices(lockedDevices);
-    plockfile.unlockSync(DEVICE_LOCK_FILE_PATH);
+    await this.unlock();
   }
 
-  async _createDeviceIfNecessary ({deviceIds, deviceType}) {
-    const numberOfDevicesNeededToCreate = Math.max(this.maxTestRunners - deviceIds.length, 0);
-    _.times(numberOfDevicesNeededToCreate, async () => await this.createDevice(deviceType));
-  }
+  async getDevice(deviceType) {
+    await this.lock();
+    const deviceIds = await this.getDeviceIdsByType(deviceType);
 
-  static clear() {
-    writeLockedDevices([]);
+    let deviceId = getFirstUnlocked(deviceIds);
+    if (!deviceId) {
+      deviceId = await this.createDevice(deviceType);
+    }
+
+    const lockedDevices = getLockedDevices();
+    lockedDevices.push(deviceId);
+    writeLockedDevices(lockedDevices);
+    await this.unlock();
+    return deviceId;
   }
 }
 
@@ -66,9 +63,11 @@ function getLockedDevices() {
 }
 
 function getFirstUnlocked(deviceIds) {
-  for (let i=0; i < deviceIds.length; i++) {
+  console.log(`getFirstUnlocked ${deviceIds}`);
+  for (let i = 0; i < deviceIds.length; i++) {
     let deviceId = deviceIds[i];
     if (!getLockedDevices().includes(deviceId)) {
+      console.log(`getFirstUnlocked return ${deviceId}`);
       return deviceId;
     }
   }
