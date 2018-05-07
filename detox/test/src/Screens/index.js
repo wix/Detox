@@ -30,6 +30,6 @@ export {
   AnimationsScreen,
   LocationScreen,
   ShakeScreen,
-  DatePickerScreen,
-  PasteboardScreen
+  PasteboardScreen,
+  DatePickerScreen
 };
