@@ -9,3 +9,10 @@ website/node_modules
 
 website/i18n/*
 !website/i18n/en.json
+
+versioned_docs/*
+!versioned_docs/.gitkeep
+
+versioned_sidebars/*
+!versioned_sidebars/.gitkeep
+versions.json
