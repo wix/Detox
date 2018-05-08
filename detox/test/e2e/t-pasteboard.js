@@ -1,4 +1,4 @@
-describe('Pasteboard', () => {
+describe(':ios: Pasteboard', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
   });
