@@ -69,7 +69,6 @@ class AppleSimUtils {
     const newestRuntime = _.maxBy(output.runtimes, r => Number(r.version));
 
     if (newestRuntime) {
-      console.log(process.pid, `create "${name}-Detox" "${deviceType.identifier}" "${newestRuntime.identifier}"`);
       const result = await this._execSimctl({cmd: `create "${name}-Detox" "${deviceType.identifier}" "${newestRuntime.identifier}"`});
       const udid = _.get(result, 'stdout').trim();
       return udid;

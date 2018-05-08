@@ -1,110 +1,62 @@
 const DeviceRegistry = require('./DeviceRegistry');
 
-describe('device registry', () => {
-
+describe('DeviceRegistry', () => {
   let registry;
-  const createDevice = jest.fn();
+  let createDevice = jest.fn();
+  let getDeviceIdsByType = jest.fn();
 
-  function initRegistry({numberOfDevicesPerType = 1} = {}) {
-    const devicesIds = Array.from(Array(numberOfDevicesPerType).keys());
-    const getDeviceIdsByType = type => devicesIds.map(deviceId => `id-${deviceId}-of-type-${type}`);
-    return new DeviceRegistry({getDeviceIdsByType, createDevice});
+  function mockDeviceList(type, length) {
+    const devicesIds = Array.from(Array(length).keys());
+    return devicesIds.map(deviceId => `id-${deviceId}-of-type-${type}`);
   }
 
-  describe('create device', () => {
+  beforeEach(() => {
+    createDevice = jest.fn();
+    getDeviceIdsByType = jest.fn();
+    registry = new DeviceRegistry({getDeviceIdsByType, createDevice});
+    registry.clear();
+  });
 
-    beforeEach(DeviceRegistry.clear);
+  describe(`create device`, () => {
 
-    it('should create devices if they are not available', async () => {
-      const numberOfDevicesPerType = 1;
+    it(`should create device if there's no device available`, async () => {
+      getDeviceIdsByType.mockReturnValue([]);
 
-      registry = initRegistry({numberOfDevicesPerType});
       await registry.getDevice('iPhone X');
 
-      expect(createDevice).toHaveBeenCalledTimes(numberOfDevicesPerType);
+      expect(createDevice).toHaveBeenCalledTimes(1);
       expect(createDevice).toHaveBeenCalledWith('iPhone X');
     });
 
-    it('should not create devices if there is no need', async () => {
-      const numberOfDevicesPerType = 1;
-      registry = initRegistry({numberOfDevicesPerType});
-      try {
-        await registry.getDevice('iPhone X');
-      }
-      catch (e) {
-      }
+    it(`should not create device if there's no device available`, async () => {
+      getDeviceIdsByType.mockReturnValue(mockDeviceList('iPhone X', 1));
 
-      expect(createDevice).not.toHaveBeenCalled();
+      await registry.getDevice('iPhone X');
+
+      expect(createDevice).toHaveBeenCalledTimes(0);
     });
 
-  });
+    it(`should create device if all available devices are busy`, async () => {
+      getDeviceIdsByType.mockReturnValue(mockDeviceList('iPhone X', 1));
 
+      await registry.getDevice('iPhone X');
+      await registry.getDevice('iPhone X');
+
+      expect(createDevice).toHaveBeenCalledTimes(1);
+    });
+  });
 
   describe('free device', () => {
-
-    beforeEach(DeviceRegistry.clear);
-
     it('should free device', async () => {
-      registry = initRegistry({});
+      const deviceList = mockDeviceList('iPhone X', 1);
+      const deviceId = deviceList[0];
+      getDeviceIdsByType.mockReturnValue(deviceList);
+
       await registry.getDevice('iPhoneX');
+      expect(await registry.isBusy(deviceId)).toBe(true);
 
-      expect(await tryGetDevice('iPhoneX')).toEqual(undefined);
-
-      await DeviceRegistry.freeDevice('id-0-of-type-iPhoneX');
-
-      expect(await registry.getDevice('iPhoneX')).toEqual('id-0-of-type-iPhoneX');
+      await registry.freeDevice(deviceId);
+      expect(await registry.isBusy(deviceId)).toBe(false);
     });
-
   });
-
-  it('should return a device id for a given type', async () => {
-    registry = initRegistry();
-    DeviceRegistry.clear();
-
-    const ret = await registry.getDevice('iPhoneX');
-
-    expect(ret).toEqual('id-0-of-type-iPhoneX');
-  });
-
-  it('should return a device id for a given type when the registry contains multiple ids', async () => {
-    registry = initRegistry({numberOfDevicesPerType: 2});
-    DeviceRegistry.clear();
-    const ret = await registry.getDevice('iPhoneX');
-
-    expect(ret).toEqual('id-0-of-type-iPhoneX');
-  });
-
-  it('should not return a device id for a given type if the device is locked', async () => {
-    registry = initRegistry();
-    await tryGetDevice('iPhoneX');
-    const ret = await tryGetDevice('iPhoneX');
-
-    expect(ret).toEqual(undefined);
-  });
-
-  it('should not return a device id for a given type if the device is locked in a different registry', async () => {
-    registry = initRegistry();
-    const registry2 = initRegistry();
-    try {
-      await registry2.getDevice('iPhoneX');
-    }
-    catch (e) {
-      // ignore
-    }
-
-    const ret = await tryGetDevice('iPhoneX');
-
-    expect(ret).toEqual(undefined);
-  });
-
-  const tryGetDevice = async name => {
-    try {
-      await registry.getDevice(name);
-    }
-    catch (e) {
-      // ignore
-    }
-  }
-
-
 });

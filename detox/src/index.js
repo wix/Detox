@@ -78,6 +78,3 @@ module.exports = Object.assign({
   afterEach,
   DetoxConstants
 }, exportWrapper);
-
-
-process.on('unhandledRejection', up => { throw up })
