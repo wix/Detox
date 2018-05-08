@@ -145,7 +145,6 @@ class AndroidDriver extends DeviceDriverBase {
       case 0:
         throw new Error(`Could not find '${filter.name}' on the currently ADB attached devices: '${JSON.stringify(adbDevices)}', 
       try restarting adb 'adb kill-server && adb start-server'`);
-        break;
       default:
         throw new Error(`Got more than one device corresponding to the name: ${filter.name}. Current ADB attached devices: ${JSON.stringify(adbDevices)}`);
     }

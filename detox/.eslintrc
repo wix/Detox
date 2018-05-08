@@ -27,7 +27,7 @@
     /*
      *                          possible errors
      */
-    "comma-dangle": "error",
+    "comma-dangle": "warn",
     "no-cond-assign": [
       "error",
       "except-parens"
@@ -39,7 +39,7 @@
     "no-dupe-args": "error",
     "no-dupe-keys": "error",
     "no-duplicate-case": "error",
-    "no-empty": "error",
+    "no-empty": "warn",
     "no-empty-character-class": "error",
     "no-ex-assign": "error",
     "no-extra-boolean-cast": "error",
@@ -65,25 +65,25 @@
     "array-callback-return": 0,
     "block-scoped-var": "error",
     "complexity": 0,
-    "consistent-return": "error",
+    "consistent-return": "warn",
     "curly": [
-      "error",
+      "warn",
       "all"
     ],
-    "default-case": "error",
+    "default-case": "warn",
     "dot-location": [
-      "error",
+      "warn",
       "property"
     ],
-    "dot-notation": "error",
-    "eqeqeq": "error",
+    "dot-notation": "warn",
+    "eqeqeq": "warn",
     "guard-for-in": "error",
     "no-alert": "error",
     "no-caller": "error",
-    "no-case-declarations": "error",
+    "no-case-declarations": "warn",
     "no-div-regex": 0,
     "no-else-return": 0,
-    "no-empty-function": "error",
+    "no-empty-function": "warn",
     "no-empty-pattern": "error",
     "no-eq-null": "error",
     "no-eval": "error",
@@ -101,25 +101,25 @@
     "no-lone-blocks": "error",
     "no-loop-func": "error",
     "no-magic-numbers": 0,
-    "no-multi-spaces": "error",
+    "no-multi-spaces": "warn",
     "no-multi-str": 0,
     "no-native-reassign": "error",
-    "no-new": "error",
+    "no-new": "warn",
     "no-new-func": "error",
     "no-new-wrappers": "error",
     "no-octal": "error",
     "no-octal-escape": "error",
-    "no-param-reassign": "error",
+    "no-param-reassign": "warn",
     "no-proto": "error",
     "no-redeclare": 0,
     "no-return-assign": 0,
     "no-script-url": "error",
     "no-self-assign": "error",
     "no-self-compare": "error",
-    "no-sequences": "error",
-    "no-throw-literal": "error",
+    "no-sequences": "warn",
+    "no-throw-literal": "warn",
     "no-unmodified-loop-condition": 0,
-    "no-unused-expressions": "error",
+    "no-unused-expressions": "warn",
     "no-unused-labels": 0,
     "no-useless-call": "error",
     "no-useless-concat": "error",
@@ -142,10 +142,10 @@
     "no-delete-var": "error",
     "no-label-var": "error",
     "no-restricted-globals": "error",
-    "no-shadow": "error",
+    "no-shadow": 1,
     "no-shadow-restricted-names": "error",
     "no-undef": 0,
-    "no-undef-init": "error",
+    "no-undef-init": "warn",
     "no-undefined": 0,
     "no-unused-vars": 0,
     "no-use-before-define": 0,
@@ -169,19 +169,19 @@
       "error",
       "never"
     ],
-    "block-spacing": "error",
+    "block-spacing": "warn",
     "brace-style": [
-      "error",
+      "warn",
       "1tbs"
     ],
     "camelcase": [
-      "error",
+      "warn",
       {
         "properties": "never"
       }
     ],
     "comma-spacing": [
-      "error",
+      "warn",
       {
         "before": false,
         "after": true
@@ -200,7 +200,7 @@
       "self"
     ],
     "eol-last": [
-      "error",
+      "warn",
       "unix"
     ],
     "func-names": 0,
@@ -210,7 +210,7 @@
     "id-match": 0,
     "jsx-quotes": "error",
     "key-spacing": [
-      "error",
+      "warn",
       {
         "singleLine": {
           "beforeColon": false,
@@ -225,7 +225,7 @@
       }
     ],
     "keyword-spacing": [
-      "error",
+      "warn",
       {
         "before": true,
         "after": true
@@ -246,7 +246,7 @@
     ],
     "max-nested-callbacks": [
       "error",
-      4
+      5
     ],
     "max-params": [
       "error",
@@ -267,23 +267,23 @@
     "no-bitwise": 0,
     "no-continue": 0,
     "no-inline-comments": 0,
-    "no-lonely-if": "error",
+    "no-lonely-if": "warn",
     "no-mixed-spaces-and-tabs": 0,
     "no-multiple-empty-lines": [
-      "error",
+      "warn",
       {
         "max": 1
       }
     ],
     "no-negated-condition": 0,
-    "no-nested-ternary": "error",
+    "no-nested-ternary": "warn",
     "no-new-object": "error",
     "no-plusplus": 0,
     "no-restricted-syntax": 0,
     "no-spaced-func": "error",
     "no-ternary": 0,
     "no-trailing-spaces": [
-      "error",
+      "warn",
       {
         "skipBlankLines": true
       }
@@ -295,7 +295,7 @@
     "one-var-declaration-per-line": 0,
     "operator-assignment": 0,
     "padded-blocks": [
-      "error",
+      "warn",
       "never"
     ],
     "quote-props": [
@@ -305,7 +305,7 @@
     "quotes": 0,
     "require-jsdoc": 0,
     "semi": [
-      "error",
+      "warn",
       "always"
     ],
     "semi-spacing": [
@@ -321,7 +321,7 @@
       "warn",
       "always"
     ],
-    "space-before-function-paren": ["error", {
+    "space-before-function-paren": ["warn", {
       "anonymous": "never",
       "named": "never",
       "asyncArrow": "always"
@@ -330,16 +330,16 @@
       "error",
       "never"
     ],
-    "space-infix-ops": "error",
+    "space-infix-ops": "warn",
     "space-unary-ops": "error",
     "spaced-comment": 0,
-    "wrap-regex": "error",
+    "wrap-regex": 0,
     /*
      *                             ECMAScript 6
      */
     "arrow-body-style": 0,
     "arrow-spacing": [
-      "error",
+      "warn",
       {
         "before": true,
         "after": true
@@ -361,10 +361,10 @@
     "no-var": "error",
     "object-shorthand": 0,
     "prefer-arrow-callback": 0,
-    "prefer-const": "error",
+    "prefer-const": "warn",
     "prefer-reflect": 0,
-    "prefer-rest-params": "error",
-    "prefer-spread": "error",
+    "prefer-rest-params": "warn",
+    "prefer-spread": "warn",
     "prefer-template": 0,
     "require-yield": 0,
     "template-curly-spacing": [
@@ -384,7 +384,7 @@
      *                              prettier plugin
      */
     "prettier/prettier": [
-      "error", {
+      "warn", {
         "useTabs": true
       }
     ],
@@ -393,7 +393,7 @@
      */
     "promise/always-return": "off",
     "promise/no-return-wrap": "error",
-    "promise/param-names": "error",
+    "promise/param-names": "warn",
     "promise/catch-or-return": "off",
     "promise/no-native": "off",
     "promise/no-nesting": "error",
