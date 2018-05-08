@@ -49,7 +49,7 @@
         "build": "set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -scheme example_ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build | xcpretty",
         "type": "ios.simulator",
         "name": "iPhone 8 Plus",
-        "maxWorkers": 3
+        "maxWorkers": 2
       },
       "ios.none": {
         "binaryPath": "ios",
