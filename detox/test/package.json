@@ -6,7 +6,7 @@
     "test": ":",
     "packager": "react-native start",
     "detox-server": "detox run-server",
-    "e2e:ios-multi": "detox test --configuration ios.sim.release-multi --debug-synchronization 10000 --loglevel info",
+    "e2e:ios-multi": "detox test --configuration ios.sim.release-multi --debug-synchronization 10000",
     "e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization 10000",
     "e2e:android": "detox test --configuration android.emu.release --loglevel verbose",
 
