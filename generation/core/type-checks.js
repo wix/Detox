@@ -89,6 +89,16 @@ function isOfClass(className) {
 		});
 }
 
+function isDefined() {
+	return ({ name }) => template(`
+	if (!ARG) {
+		throw new Error('${name} should be truthy, but it is "' + ARG + '"');
+	}
+	`)({ 
+		ARG: t.identifier(name)
+	});
+}
+
 module.exports = {
 	isNumber,
 	isString,
@@ -99,5 +109,6 @@ module.exports = {
 	isGreyMatcher,
 	isArray,
 	isOfClass,
-	isGreyElementInteraction
+	isGreyElementInteraction,
+	isDefined
 };
