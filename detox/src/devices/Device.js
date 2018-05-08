@@ -19,6 +19,9 @@ class Device {
 
   async prepare(params = {}) {
     this._binaryPath = this._getAbsolutePath(this._deviceConfig.binaryPath);
+    if (this._deviceConfig.testBinaryPath != null) {
+      this._testBinaryPath = this._getAbsolutePath(this._deviceConfig.testBinaryPath);
+    }
     this._deviceId = await this.deviceDriver.acquireFreeDevice(this._deviceConfig.name);
     this._bundleId = await this.deviceDriver.getBundleIdFromBinary(this._binaryPath);
     this._artifactsCopier.prepare(this._deviceId);
@@ -27,7 +30,7 @@ class Device {
 
     if (!argparse.getArgValue('reuse')) {
       await this.deviceDriver.uninstallApp(this._deviceId, this._bundleId);
-      await this.deviceDriver.installApp(this._deviceId, this._binaryPath);
+      await this.deviceDriver.installApp(this._deviceId, this._binaryPath, this._testBinaryPath);
     }
 
     if (params.launchApp) {
