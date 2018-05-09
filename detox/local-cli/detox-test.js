@@ -114,8 +114,8 @@ function runJest() {
   const maxWorkers = currentConfiguration.maxWorkers || 1;
   const configFile = runnerConfig ? `--config=${runnerConfig}` : '';
 
-  const platform = program.platform ? `--testNamePattern='^((?!${getPlatformSpecificString(program.platform)}).)*$'` : '';
-  const command = `node_modules/.bin/jest ${testFolder} ${configFile} --maxWorkers=${maxWorkers} ${platform}`;
+  const platformString = program.platform ? `--testNamePattern='^((?!${getPlatformSpecificString(platform)}).)*$'` : '';
+  const command = `node_modules/.bin/jest ${testFolder} ${configFile} --maxWorkers=${maxWorkers} ${platformString}`;
   const env = Object.assign({}, process.env, {
     configuration: program.configuration,
     loglevel: program.loglevel,
