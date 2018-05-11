@@ -27,7 +27,7 @@
     "test": "npm run unit",
     "unit:watch": "jest --watch",
     "prepublish": "npm run build",
-    "postinstall": "scripts/postinstall.sh"
+    "postinstall": "./scripts/postinstall.sh"
   },
   "devDependencies": {
     "eslint": "^4.11.0",

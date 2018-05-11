@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/sh -e
 
 if [ `uname` == "Darwin" ]; then
   source "$(dirname ${0})/build_framework.ios.sh"
