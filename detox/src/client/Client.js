@@ -104,7 +104,6 @@ class Client {
 
   slowInvocationStatus() {
     return setTimeout(async () => {
-      console.log(this.ws.isOpen())
       if (this.ws.isOpen()) {
         const status = await this.currentStatus();
         this.slowInvocationStatusHandler = this.slowInvocationStatus();
