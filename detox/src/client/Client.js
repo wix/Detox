@@ -104,8 +104,11 @@ class Client {
 
   slowInvocationStatus() {
     return setTimeout(async () => {
-      const status = await this.currentStatus();
-      this.slowInvocationStatusHandler = this.slowInvocationStatus();
+      console.log(this.ws.isOpen())
+      if (this.ws.isOpen()) {
+        const status = await this.currentStatus();
+        this.slowInvocationStatusHandler = this.slowInvocationStatus();
+      }
     }, this.slowInvocationTimeout);
   }
 }
