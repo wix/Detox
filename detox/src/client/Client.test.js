@@ -75,6 +75,17 @@ describe('Client', () => {
     expect(client.ws.send).not.toHaveBeenCalled();
   });
 
+  it(`cleanup() - if "connected" but ws is closed should do nothing`, async () => {
+    await connect();
+    client.ws.send.mockReturnValueOnce(response("ready", {}, 1));
+    await client.waitUntilReady();
+
+    client.ws.isOpen.mockReturnValue(false);
+    await client.cleanup();
+
+    expect(client.ws.send).toHaveBeenCalledTimes(2);
+  });
+
   it(`execute() - "invokeResult" on an invocation object should resolve`, async () => {
     await connect();
     client.ws.send.mockReturnValueOnce(response("invokeResult", {result: "(GREYElementInteraction)"}, 1));
