@@ -6,6 +6,7 @@ const cp = require('child_process');
 
 const _ = require('lodash');
 const CustomError = require('../src/errors/CustomError');
+const environment = require('../src/utils/environment');
 const config = require(path.join(process.cwd(), 'package.json')).detox;
 
 class DetoxConfigError extends CustomError {}
@@ -162,9 +163,7 @@ function getPlatformSpecificString(platform) {
 
 function clearDeviceRegistryLockFile() {
   const fs = require('fs');
-  const os = require('os');
-  const LOCK_FILE = path.join(os.homedir(),'device.registry.state.lock');
-  fs.writeFileSync(LOCK_FILE, '[]');
+  fs.writeFileSync(environment.getDeviceLockFilePath(), '[]');
 }
 
 function getDefaultConfiguration() {

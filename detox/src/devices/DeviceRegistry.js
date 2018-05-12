@@ -1,10 +1,9 @@
 const fs = require('fs');
-const path = require('path');
 const plockfile = require('proper-lockfile');
 const _ = require('lodash');
 const retry = require('../utils/retry');
 const environment = require('../utils/environment');
-const DEVICE_LOCK_FILE_PATH = path.join(environment.getDetoxLibraryRootPath(), 'device.registry.state.lock');
+const DEVICE_LOCK_FILE_PATH = environment.getDeviceLockFilePath();
 
 const LOCK_RETRY_OPTIONS = {retries: 100, interval: 5};
 

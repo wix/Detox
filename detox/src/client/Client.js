@@ -36,7 +36,9 @@ class Client {
   async cleanup() {
     clearTimeout(this.slowInvocationStatusHandler);
     if (this.isConnected && !this.pandingAppCrash) {
-      await this.sendAction(new actions.Cleanup(this.successfulTestRun));
+      if(this.ws.isOpen()) {
+        await this.sendAction(new actions.Cleanup(this.successfulTestRun));
+      }
       this.isConnected = false;
     }
 
