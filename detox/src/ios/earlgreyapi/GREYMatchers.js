@@ -9,59 +9,57 @@ function sanitize_uiAccessibilityTraits(value) {
 	let traits = 0;
 	for (let i = 0; i < value.length; i++) {
 		switch (value[i]) {
-			case "button":
+			case 'button':
 				traits |= 1;
 				break;
-			case "link":
+			case 'link':
 				traits |= 2;
 				break;
-			case "header":
+			case 'header':
 				traits |= 4;
 				break;
-			case "search":
+			case 'search':
 				traits |= 8;
 				break;
-			case "image":
+			case 'image':
 				traits |= 16;
 				break;
-			case "selected":
+			case 'selected':
 				traits |= 32;
 				break;
-			case "plays":
+			case 'plays':
 				traits |= 64;
 				break;
-			case "key":
+			case 'key':
 				traits |= 128;
 				break;
-			case "text":
+			case 'text':
 				traits |= 256;
 				break;
-			case "summary":
+			case 'summary':
 				traits |= 512;
 				break;
-			case "disabled":
+			case 'disabled':
 				traits |= 1024;
 				break;
-			case "frequentUpdates":
+			case 'frequentUpdates':
 				traits |= 2048;
 				break;
-			case "startsMedia":
+			case 'startsMedia':
 				traits |= 4096;
 				break;
-			case "adjustable":
+			case 'adjustable':
 				traits |= 8192;
 				break;
-			case "allowsDirectInteraction":
+			case 'allowsDirectInteraction':
 				traits |= 16384;
 				break;
-			case "pageTurn":
+			case 'pageTurn':
 				traits |= 32768;
 				break;
 			default:
 				throw new Error(
-					`Unknown trait '${
-						value[i]
-					}', see list in https://facebook.github.io/react-native/docs/accessibility.html#accessibilitytraits-ios`
+					`Unknown trait '${value[i]}', see list in https://facebook.github.io/react-native/docs/accessibility.html#accessibilitytraits-ios`
 				);
 		}
 	}
@@ -70,19 +68,17 @@ function sanitize_uiAccessibilityTraits(value) {
 } 
 function sanitize_greyContentEdge(action) {
 	switch (action) {
-		case "left":
+		case 'left':
 			return 0;
-		case "right":
+		case 'right':
 			return 1;
-		case "top":
+		case 'top':
 			return 2;
-		case "bottom":
+		case 'bottom':
 			return 3;
 
 		default:
-			throw new Error(
-				`GREYAction.GREYContentEdge must be a 'left'/'right'/'top'/'bottom', got ${action}`
-			);
+			throw new Error(`GREYAction.GREYContentEdge must be a 'left'/'right'/'top'/'bottom', got ${action}`);
 	}
 } 
 class GREYMatchers {
