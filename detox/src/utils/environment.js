@@ -1,7 +1,8 @@
-const os = require('os');
 const path = require('path');
 const exec = require('child-process-promise').exec;
-const DETOX_LIBRARY_ROOT_PATH = path.join(os.homedir(), 'Library', 'Detox');
+const appdatapath = require('./appdatapath');
+
+const DETOX_LIBRARY_ROOT_PATH = path.join(appdatapath.appDataPath(), 'Detox');
 const DEVICE_LOCK_FILE_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'device.registry.state.lock');
 
 function getAndroidSDKPath() {

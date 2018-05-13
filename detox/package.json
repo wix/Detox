@@ -79,6 +79,7 @@
       "debug.js",
       "src/ios/earlgreyapi",
       "src/android/espressoapi",
+      "appdatapath.js",
       ".test.js",
       ".mock.js"
     ],
