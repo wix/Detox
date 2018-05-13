@@ -105,7 +105,7 @@ public class ReactNativeUIModuleIdlingResource implements IdlingResource, Choreo
                 if (callback != null) {
                     callback.onTransitionToIdle();
                 }
-                // Log.i(LOG_TAG, "UIManagerModule is idle.");
+                 Log.i(LOG_TAG, "UIManagerModule is idle.");
                 return true;
             }
 
@@ -117,8 +117,10 @@ public class ReactNativeUIModuleIdlingResource implements IdlingResource, Choreo
         }
 
         if (callback != null) {
+            Log.i(LOG_TAG, "UIManagerModule is idle. (callback)");
             callback.onTransitionToIdle();
         }
+        Log.i(LOG_TAG, "UIManagerModule is idle.");
         return true;
     }
 

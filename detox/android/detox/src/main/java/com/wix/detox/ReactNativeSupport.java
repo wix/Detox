@@ -3,13 +3,13 @@ package com.wix.detox;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.Espresso;
+import android.support.test.espresso.IdlingRegistry;
 import android.util.Log;
 
 import com.wix.detox.espresso.AnimatedModuleIdlingResource;
 import com.wix.detox.espresso.LooperIdlingResource;
-import com.wix.detox.espresso.ReactBridgeIdlingResource;
 import com.wix.detox.espresso.RNExperimentalNetworkIR;
+import com.wix.detox.espresso.ReactBridgeIdlingResource;
 import com.wix.detox.espresso.ReactNativeTimersIdlingResource;
 import com.wix.detox.espresso.ReactNativeUIModuleIdlingResource;
 
@@ -70,7 +70,7 @@ public class ReactNativeSupport {
         // static class
     }
 
-    static boolean isReactNativeApp() {
+    public static boolean isReactNativeApp() {
         Class<?> found = null;
         try {
             found = Class.forName("com.facebook.react.ReactApplication");
@@ -127,7 +127,7 @@ public class ReactNativeSupport {
      *
      * @param reactNativeHostHolder the object that has a getReactNativeHost() method
      */
-    static void reloadApp(@NonNull Object reactNativeHostHolder) {
+    public static void reloadApp(@NonNull Object reactNativeHostHolder) {
         if (!isReactNativeApp()) {
             return;
         }
@@ -165,7 +165,7 @@ public class ReactNativeSupport {
      * </p>
      * @param reactNativeHostHolder the object that has a getReactNativeHost() method
      */
-    static void waitForReactNativeLoad(@NonNull Object reactNativeHostHolder) {
+    public static void  waitForReactNativeLoad(@NonNull Object reactNativeHostHolder) {
 
         if (!isReactNativeApp()) {
             return;
@@ -297,7 +297,7 @@ public class ReactNativeSupport {
         rnUIModuleIdlingResource = new ReactNativeUIModuleIdlingResource(reactContext);
         animIdlingResource = new AnimatedModuleIdlingResource(reactContext);
 
-        Espresso.registerIdlingResources(
+        IdlingRegistry.getInstance().register(
                 rnTimerIdlingResource,
                 rnBridgeIdlingResource,
                 rnUIModuleIdlingResource,
@@ -333,7 +333,7 @@ public class ReactNativeSupport {
                         LooperIdlingResource looperIdlingResource = new LooperIdlingResource((Looper)looper, false);
 
                         looperIdlingResources.add(looperIdlingResource);
-                        Espresso.registerIdlingResources(looperIdlingResource);
+                        IdlingRegistry.getInstance().register(looperIdlingResource);
                         excludedLoopers.add((Looper)looper);
                     }
                 }
@@ -370,7 +370,7 @@ public class ReactNativeSupport {
                 && rnTimerIdlingResource != null
                 && rnUIModuleIdlingResource != null
                 && animIdlingResource != null) {
-            Espresso.unregisterIdlingResources(
+            IdlingRegistry.getInstance().unregister(
                     rnTimerIdlingResource,
                     rnBridgeIdlingResource,
                     rnUIModuleIdlingResource,
@@ -401,7 +401,7 @@ public class ReactNativeSupport {
     private static void removeReactNativeQueueInterrogators() {
         for (LooperIdlingResource res : looperIdlingResources) {
             res.stop();
-            Espresso.unregisterIdlingResources(res);
+            IdlingRegistry.getInstance().unregister(res);
         }
         looperIdlingResources.clear();
     }
@@ -449,7 +449,7 @@ public class ReactNativeSupport {
                     .field(FIELD_OKHTTP_CLIENT)
                     .get();
             networkIR = new RNExperimentalNetworkIR(client.dispatcher());
-            Espresso.registerIdlingResources(networkIR);
+            IdlingRegistry.getInstance().register(networkIR);
         } catch (ReflectException e) {
             Log.e(LOG_TAG, "Can't set up Networking Module listener", e.getCause());
         }
@@ -458,7 +458,7 @@ public class ReactNativeSupport {
     private static void removeNetworkIdlingResource() {
         if (networkIR != null) {
             networkIR.stop();
-            Espresso.unregisterIdlingResources(networkIR);
+            IdlingRegistry.getInstance().unregister(networkIR);
             networkIR = null;
         }
     }

@@ -1,5 +1,9 @@
 apply plugin: "com.android.application"
 
+project.ext.react = [
+        nodeExecutableAndArgs : ["/usr/local/bin/node"]
+];
+
 apply from: "../../node_modules/react-native/react.gradle"
 
 android {
@@ -62,7 +66,7 @@ android {
 dependencies {
     implementation "com.android.support:appcompat-v7:27.0.2"
 
-    fromSourceImplementation(project(path: ":ReactAndroid"))
+//    fromSourceImplementation(project(path: ":ReactAndroid"))
     fromBinImplementation "com.facebook.react:react-native:+"
 
     androidTestImplementation(project(path: ":detox"))

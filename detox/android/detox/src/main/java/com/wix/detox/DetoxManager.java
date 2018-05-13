@@ -1,5 +1,6 @@
 package com.wix.detox;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -41,9 +42,9 @@ class DetoxManager implements WebSocketClient.ActionHandler {
     private WebSocketClient wsClient;
     private Handler handler;
 
-    private Object reactNativeHostHolder = null;
+    private Context reactNativeHostHolder = null;
 
-    DetoxManager(@NonNull Object reactNativeHostHolder) {
+    DetoxManager(@NonNull Context reactNativeHostHolder) {
         this.reactNativeHostHolder = reactNativeHostHolder;
         handler = new Handler();
 
@@ -54,14 +55,14 @@ class DetoxManager implements WebSocketClient.ActionHandler {
         }
         detoxSessionId = arguments.getString(DETOX_SESSION_ID_ARG_KEY);
 
-        if (detoxServerUrl == null || detoxSessionId == null) {
-            Log.i(LOG_TAG, "Missing arguments : detoxServer and/or detoxSession. Detox quits.");
-            stop();
-            return;
+        if (detoxServerUrl == null) {
+            throw new RuntimeException("Missing argument: session.server");
+        } else if (detoxSessionId == null) {
+            throw new RuntimeException("Missing argument: session.sessionId");
         }
 
-        Log.i(LOG_TAG, "DetoxServerUrl : " + detoxServerUrl);
-        Log.i(LOG_TAG, "DetoxSessionId : " + detoxSessionId);
+        Log.i(LOG_TAG, "DetoxServerUrl: " + detoxServerUrl);
+        Log.i(LOG_TAG, "DetoxSessionId: " + detoxSessionId);
     }
 
     void start() {
@@ -223,7 +224,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
         private final Runnable mTarget;
         private boolean mComplete;
 
-        public SyncRunnable(Runnable target) {
+        SyncRunnable(Runnable target) {
             mTarget = target;
         }
 
@@ -235,7 +236,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
             }
         }
 
-        public void waitForComplete() {
+        void waitForComplete() {
             synchronized (this) {
                 while (!mComplete) {
                     try {
