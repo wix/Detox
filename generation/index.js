@@ -12,7 +12,11 @@ const iosFiles = {
 	"../detox/ios/Detox/GREYCondition+Detox.h":
 		"../detox/src/ios/earlgreyapi/GREYConditionDetox.js",
 	"../detox/ios/EarlGrey/EarlGrey/Synchronization/GREYCondition.h":
-		"../detox/src/ios/earlgreyapi/GREYCondition.js"
+		"../detox/src/ios/earlgreyapi/GREYCondition.js",
+	"../detox/ios/Detox/GREYConfiguration+Detox.h":
+		"../detox/src/ios/earlgreyapi/GREYConfigurationDetox.js",
+	"../detox/ios/EarlGrey/EarlGrey/Common/GREYConfiguration.h":
+		"../detox/src/ios/earlgreyapi/GREYConfiguration.js"
 };
 
 generateIOSAdapters(iosFiles);

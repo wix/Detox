@@ -32,13 +32,13 @@ Homebrew is a package manager for macOS, we'll need it to install other command 
 
 #### 2. Install [Node.js](https://nodejs.org/en/)
 
-Node is the JavaScript runtime Detox will run on. **Install Node 7.6.0 or above for native async-await support**
+Node is the JavaScript runtime Detox will run on. **Install Node 8.3.0 or above**
 
  ```sh
  brew update && brew install node
  ```
 
-> TIP: Verify it works by typing in terminal `node -v` to output current node version, should be higher than 7.6.0
+> TIP: Verify it works by typing in terminal `node -v` to output current node version, should be 8.3.0 or higher
 
 #### 3. Install [appleSimUtils](https://github.com/wix/AppleSimulatorUtils)
 

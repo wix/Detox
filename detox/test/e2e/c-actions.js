@@ -17,13 +17,18 @@ describe('Actions', () => {
     await expect(element(by.text('Long Press Working!!!'))).toBeVisible();
   });
 
+  it(':ios: should long press with duration on an element', async () => {
+    await element(by.text('Long Press Me 1.5s')).longPress(1500);
+    await expect(element(by.text('Long Press With Duration Working!!!'))).toBeVisible();
+  });
+
   it('should multi tap on an element', async () => {
     await element(by.id('UniqueId819')).multiTap(3);
     await expect(element(by.id('UniqueId819'))).toHaveText('Taps: 3');
   });
 
   it('should tap on an element at point', async () => {
-    await element(by.id('View7990')).tapAtPoint({ x: 180, y: 140 });
+    await element(by.id('View7990')).tapAtPoint({ x: 180, y: 160 });
     await expect(element(by.id('UniqueId819'))).toHaveText('Taps: 1');
   });
 
