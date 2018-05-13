@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('fs-extra');
 const plockfile = require('proper-lockfile');
 const _ = require('lodash');
 const retry = require('../utils/retry');
@@ -60,6 +60,7 @@ class DeviceRegistry {
 
   _createEmptyLockFileIfNeeded() {
     if (!fs.existsSync(DEVICE_LOCK_FILE_PATH)) {
+      fs.ensureFileSync(DEVICE_LOCK_FILE_PATH);
       this._writeBusyDevicesToLockFile([]);
     }
   }
