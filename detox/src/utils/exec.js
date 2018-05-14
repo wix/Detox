@@ -28,10 +28,8 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
       }
       result = await exec(cmd);
     });
-  } catch(ex) {
-    if (ex.stderr) {
-      log.error(`${_operationCounter}: ${ex.stderr.trim()}, exited with code ${ex.code}`);
-    }
+  } catch (ex) {
+    log.error(`${_operationCounter}: ${ex.stderr.trim()}, exited with code ${ex.code}`);
   }
 
   if (result === undefined) {
