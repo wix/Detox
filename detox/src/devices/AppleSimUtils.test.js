@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const simctlList = require('./xcrunSimctlList.mock.json');
 
 describe('AppleSimUtils', () => {
   let AppleSimUtils;
@@ -34,7 +35,10 @@ describe('AppleSimUtils', () => {
   describe('findDevicesUDID', () => {
 
     it('return multiple devices', async () => {
-      exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({
+      exec.execWithRetriesAndLogs
+          .mockReturnValueOnce(Promise.resolve({
+            stdout: JSON.stringify(simctlList)}))
+          .mockReturnValueOnce(Promise.resolve({
         stdout: JSON.stringify([
           {
             "state": "Shutdown",
@@ -71,50 +75,46 @@ describe('AppleSimUtils', () => {
 
 
   describe('findDeviceUDID', () => {
-    it('correct params', async () => {
-      expect(exec.execWithRetriesAndLogs).not.toHaveBeenCalled();
-      try {
-        await uut.findDeviceUDID('iPhone 6');
-      } catch (e) { }
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith('applesimutils', {
-        args: `--list --byType "iPhone 6"`
-      }, expect.anything(), 1, undefined);
-    });
 
     it('adapted to new api with optional OS', async () => {
       try {
         await uut.findDeviceUDID('iPhone 6 , iOS 10.3');
       } catch (e) { }
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith('applesimutils', {
-        args: `--list --byType "iPhone 6, OS=iOS 10.3"`
+        args: `--list --byType "iPhone 6" --byOS "iOS 10.3"`
       }, expect.anything(), 1, undefined);
     });
 
     it('returns udid from found device', async () => {
-      exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({
-        stdout: JSON.stringify([
-          {
-            "state": "Shutdown",
-            "availability": "(available)",
-            "name": "iPhone 6",
-            "udid": "the uuid",
-            "os": {
-              "version": "10.3.1",
-              "availability": "(available)",
-              "name": "iOS 10.3",
-              "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-10-3",
-              "buildversion": "14E8301"
-            }
-          }
-        ])
-      }));
+      exec.execWithRetriesAndLogs
+          .mockReturnValueOnce(Promise.resolve({
+            stdout: JSON.stringify(simctlList)}))
+          .mockReturnValueOnce(Promise.resolve({
+            stdout: JSON.stringify([
+              {
+                "state": "Shutdown",
+                "availability": "(available)",
+                "name": "iPhone 6",
+                "udid": "the uuid",
+                "os": {
+                  "version": "10.3.1",
+                  "availability": "(available)",
+                  "name": "iOS 10.3",
+                  "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-10-3",
+                  "buildversion": "14E8301"
+                }
+              }
+            ])
+          }));
       const result = await uut.findDeviceUDID('iPhone 7');
       expect(result).toEqual('the uuid');
     });
 
     it('handles stderr as if stdout', async () => {
-      exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({
+      exec.execWithRetriesAndLogs
+          .mockReturnValueOnce(Promise.resolve({
+            stdout: JSON.stringify(simctlList)}))
+          .mockReturnValueOnce(Promise.resolve({
         stderr: JSON.stringify([
           {
             "state": "Shutdown",
@@ -263,7 +263,6 @@ describe('AppleSimUtils', () => {
   describe('create', () => {
 
     it('calls xcrun to get a list of runtimes/devicetypes/devices', async () => {
-      const simctlList = require('./xcrunSimctlList.mock.json');
       exec.execWithRetriesAndLogs.mockReturnValue(Promise.resolve({stdout: JSON.stringify(simctlList)}));
 
       const created = await uut.create('iPhone X');

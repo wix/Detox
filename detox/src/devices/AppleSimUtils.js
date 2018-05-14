@@ -29,8 +29,20 @@ class AppleSimUtils {
     const statusLogs = {
       trying: `Searching for device matching ${query}...`
     };
-    let correctQuery = this._correctQueryWithOS(query);
-    const response = await this._execAppleSimUtils({ args: `--list --byType "${correctQuery}"` }, statusLogs, 1);
+
+    let type;
+    let os;
+    if (_.includes(query, ',')) {
+      const parts = _.split(query, ',');
+      type = parts[0].trim();
+      os = parts[1].trim();
+    } else {
+      type = query;
+      const deviceInfo = await this.deviceTypeAndNewestRuntimeFor(query);
+      os = deviceInfo.newestRuntime.version;
+    }
+
+    const response = await this._execAppleSimUtils({ args: `--list --byType "${type}" --byOS "${os}"`}, statusLogs, 1);
     const parsed = this._parseResponseFromAppleSimUtils(response);
     const udids = _.map(parsed, 'udid');
     if (!udids || !udids.length || !udids[0]) {
@@ -61,15 +73,19 @@ class AppleSimUtils {
     return (_.isEqual(device.state, 'Booted') || _.isEqual(device.state, 'Booting'));
   }
 
-  async create(name) {
+  async deviceTypeAndNewestRuntimeFor(name) {
     const result = await this._execSimctl({ cmd: `list -j` });
     const stdout = _.get(result, 'stdout');
     const output = JSON.parse(stdout);
     const deviceType = _.filter(output.devicetypes, { 'name': name})[0];
     const newestRuntime = _.maxBy(output.runtimes, r => Number(r.version));
+    return { deviceType, newestRuntime };
+  }
+  async create(name) {
+    const deviceInfo = await this.deviceTypeAndNewestRuntimeFor(name);
 
-    if (newestRuntime) {
-      const result = await this._execSimctl({cmd: `create "${name}-Detox" "${deviceType.identifier}" "${newestRuntime.identifier}"`});
+    if (deviceInfo.newestRuntime) {
+      const result = await this._execSimctl({cmd: `create "${name}-Detox" "${deviceInfo.deviceType.identifier}" "${deviceInfo.newestRuntime.identifier}"`});
       const udid = _.get(result, 'stdout').trim();
       return udid;
     } else {
@@ -174,29 +190,6 @@ class AppleSimUtils {
   async _execSimctl({ cmd, statusLogs = {}, retries = 1 }) {
     return await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl ${cmd}`, undefined, statusLogs, retries);
   }
-
-  _correctQueryWithOS(query) {
-    let correctQuery = query;
-    if (_.includes(query, ',')) {
-      const parts = _.split(query, ',');
-      correctQuery = `${parts[0].trim()}, OS=${parts[1].trim()}`;
-    }
-    return correctQuery;
-  }
-
-  //convertXcode9(name) {
-  //  const IPHONES = {
-  //    "iPhone 8": "iPhone2017-A",
-  //    "iPhone 8 Plus": "iPhone2017-B",
-  //    "iPhone X": "iPhone2017-C"
-  //  };
-  //
-  //  if (IPHONES[name]) {
-  //    return IPHONES[name];
-  //  } else {
-  //    return name;
-  //  }
-  //}
 
   _parseResponseFromAppleSimUtils(response) {
     let out = _.get(response, 'stdout');
