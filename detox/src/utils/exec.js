@@ -55,4 +55,3 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
 module.exports = {
   execWithRetriesAndLogs
 };
-
