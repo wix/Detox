@@ -4,12 +4,8 @@ const program = require('commander');
 const path = require('path');
 const cp = require('child_process');
 const _ = require('lodash');
-const CustomError = require('../src/errors/CustomError');
+const DetoxConfigError = require('../src/errors/DetoxConfigError');
 const config = require(path.join(process.cwd(), 'package.json')).detox;
-
-class DetoxConfigError extends CustomError {}
-
-
 
 program
   .option('-o, --runner-config [config]',
@@ -28,7 +24,13 @@ program
     'When an action/expectation takes a significant amount of time use this option to print device synchronization status.'
     + 'The status will be printed if the action takes more than [value]ms to complete')
   .option('-a, --artifacts-location [path]',
-    'Artifacts destination path (currently will contain only logs). If the destination already exists, it will be removed first')
+    'Artifacts destination path. If the destination already exists, it will be removed first')
+  .option(
+    '--take-screenshots [value]',
+    'Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only.')
+  .option(
+    '--record-videos [value]',
+    'Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only.')
   .option('-p, --platform [ios/android]',
     '[DEPRECATED], platform is deduced automatically. Run platform specific tests. Runs tests with invert grep on \':platform:\', '
     + 'e.g test with substring \':ios:\' in its name will not run when passing \'--platform android\'')
@@ -43,7 +45,7 @@ if (program.configuration) {
     throw new DetoxConfigError(`Cannot determine configuration '${program.configuration}'. 
     Available configurations: ${_.keys(config.configurations).join(', ')}`);
   }
-} else if(!program.configuration) {
+} else if (!program.configuration) {
   throw new DetoxConfigError(`Cannot determine which configuration to use. 
   Use --configuration to choose one of the following: ${_.keys(config.configurations).join(', ')}`);
 }
@@ -96,10 +98,12 @@ function runMocha() {
   const artifactsLocation = program.artifactsLocation ? `--artifacts-location ${program.artifactsLocation}` : '';
   const configFile = runnerConfig ? `--opts ${runnerConfig}` : '';
   const platformString = platform ? `--grep ${getPlatformSpecificString(platform)} --invert` : '';
+  const screenshots = program.takeScreenshots ? `--take-screenshots ${program.takeScreenshots}` : '';
+  const videos = program.recordVideos ? `--record-videos ${program.recordVideos}` : '';
   const headless = program.headless ? `--headless` : '';
 
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
-  const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${artifactsLocation} ${headless}`;
+  const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${artifactsLocation} ${screenshots} ${videos} ${headless}`;
 
   console.log(command);
   cp.execSync(command, {stdio: 'inherit'});
@@ -119,6 +123,8 @@ function runJest() {
       reuse: program.reuse,
       debugSynchronization: program.debugSynchronization,
       artifactsLocation: program.artifactsLocation,
+      takeScreenshots: program.takeScreenshots,
+      recordVideos: program.recordVideos,
       headless: program.headless
     })
   });
@@ -156,5 +162,3 @@ function getDefaultConfiguration() {
     return _.keys(config.configurations)[0];
   }
 }
-
-

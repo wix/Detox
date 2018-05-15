@@ -53,22 +53,22 @@ async function init(config, params) {
   await initializeDetox(config, params);
 }
 
+async function beforeEach(testSummary) {
+  if (detox) {
+    await detox.beforeEach(testSummary);
+  }
+}
+
+async function afterEach(testSummary) {
+  if (detox) {
+    await detox.afterEach(testSummary);
+  }
+}
+
 async function cleanup() {
-  if (detox) {
-    await detox.cleanup();
-  }
-}
-
-async function beforeEach() {
-  if (detox) {
-    await detox.beforeEach.apply(detox, arguments);
-  }
-}
-
-async function afterEach() {
-  if (detox) {
-    await detox.afterEach.apply(detox, arguments);
-  }
+    if (detox) {
+        await detox.cleanup();
+    }
 }
 
 module.exports = Object.assign({

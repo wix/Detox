@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
 const argparse = require('../utils/argparse');
-const ArtifactsCopier = require('../artifacts/ArtifactsCopier');
 const debug = require('../utils/debug'); //debug utils, leave here even if unused
 
 class Device {
@@ -12,7 +11,6 @@ class Device {
     this._sessionConfig = sessionConfig;
     this.deviceDriver = deviceDriver;
     this._processes = {};
-    this._artifactsCopier = new ArtifactsCopier(deviceDriver);
     this.deviceDriver.validateDeviceConfig(deviceConfig);
     this.debug = debug;
   }
@@ -21,7 +19,6 @@ class Device {
     this._binaryPath = this._getAbsolutePath(this._deviceConfig.binaryPath);
     this._deviceId = await this.deviceDriver.acquireFreeDevice(this._deviceConfig.name);
     this._bundleId = await this.deviceDriver.getBundleIdFromBinary(this._binaryPath);
-    this._artifactsCopier.prepare(this._deviceId);
 
     await this.deviceDriver.prepare();
 
@@ -35,14 +32,6 @@ class Device {
     }
   }
 
-  setArtifactsDestination(testArtifactsPath) {
-    this._artifactsCopier.setArtifactsDestination(testArtifactsPath);
-  }
-
-  async finalizeArtifacts() {
-    await this._artifactsCopier.finalizeArtifacts();
-  }
-  
   createPayloadFileAndUpdatesParamsObject(key, launchKey, params, baseLaunchArgs) {
     const payloadFilePath = this.deviceDriver.createPayloadFile(params[key]);
     baseLaunchArgs[launchKey] = payloadFilePath;
@@ -52,8 +41,6 @@ class Device {
   }
 
   async launchApp(params = {newInstance: false}, bundleId) {
-    await this._artifactsCopier.handleAppRelaunch();
-
     const payloadParams = ['url', 'userNotification', 'userActivity'];
     const hasPayload = this._assertHasSingleParam(payloadParams, params);
 
@@ -96,7 +83,7 @@ class Device {
     this._processes[_bundleId] = processId;
 
     await this.deviceDriver.waitUntilReady();
-    
+
     if(params.detoxUserNotificationDataURL) {
       await this.deviceDriver.cleanupRandomDirectory(params.detoxUserNotificationDataURL);
     }

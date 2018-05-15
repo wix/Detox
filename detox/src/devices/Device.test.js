@@ -310,7 +310,7 @@ describe('Device', () => {
     expect(device.deviceDriver.createPayloadFile).toHaveBeenCalledTimes(1);
     expect(device.deviceDriver.deliverPayload).toHaveBeenCalledTimes(1);
   });
-  
+
   it(`sendUserActivity() should pass to device driver`, async () => {
     device = validDevice();
     await device.sendUserActivity('notif');
@@ -384,33 +384,6 @@ describe('Device', () => {
     } catch (ex) {
       expect(ex).toBeDefined();
     }
-  });
-
-  it(`finalizeArtifacts() should call cp`, async () => {
-    device = validDevice();
-    device.deviceDriver.getLogsPaths = () => ({stdout: '/t1', stderr: '/t2'});
-    device.setArtifactsDestination('/tmp');
-    await device.finalizeArtifacts();
-    expect(sh.cp).toHaveBeenCalledTimes(2);
-  });
-
-  it(`finalizeArtifacts() should catch cp exception`, async () => {
-    device = validDevice();
-    device.deviceDriver.getLogsPaths = () => ({stdout: '/t1', stderr: '/t2'});
-    device.setArtifactsDestination('/tmp');
-    await device.relaunchApp();
-    sh.cp = jest.fn(() => {
-      throw 'exception sent by mocked cp'
-    });
-    await device.finalizeArtifacts();
-  });
-
-  it(`finalizeArtifacts() should not cp if setArtifactsDestination wasn't called`, async () => {
-    device = validDevice();
-    device.deviceDriver.getLogsPaths = () => ({stdout: '/t1', stderr: '/t2'});
-    await device.relaunchApp();
-    await device.finalizeArtifacts();
-    expect(sh.cp).toHaveBeenCalledTimes(0);
   });
 
   it(`launchApp({newInstance: false}) should check if process is in background and reopen it`, async () => {
@@ -511,7 +484,7 @@ describe('Device', () => {
 
     expect(device.deviceDriver.deliverPayload).not.toHaveBeenCalled();
   });
-  
+
   it(`launchApp({userNotification: userNotification, url: url}) should fail`, async () => {
     const launchParams = {userNotification: 'notification', url: 'url://me'};
     const processId = 1;
@@ -521,7 +494,7 @@ describe('Device', () => {
     device.deviceDriver.launch.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
 
     await device.prepare();
-	
+
     try {
       await device.launchApp(launchParams);
       fail('should throw');

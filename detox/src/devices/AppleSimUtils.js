@@ -1,4 +1,6 @@
 const _ = require('lodash');
+const tempfile = require('tempfile');
+const cpp = require('child-process-promise');
 const exec = require('../utils/exec');
 const retry = require('../utils/retry');
 const environment = require('../utils/environment');
@@ -152,6 +154,14 @@ class AppleSimUtils {
       throw new Error(`Can't read Xcode version, got: '${stdout}'`);
     }
     return majorVersion;
+  }
+
+  async takeScreenshot(udid, destination) {
+    await this._execSimctl({cmd: `io ${udid} screenshot ${destination}`});
+  }
+
+  recordVideo(udid, destination) {
+    return exec.spawnAndLog('/usr/bin/xcrun', ['simctl', 'io', udid, 'recordVideo', destination]);
   }
 
   async _execAppleSimUtils(options, statusLogs, retries, interval) {

@@ -26,6 +26,7 @@ describe('Detox', () => {
 
     jest.mock('npmlog');
     jest.mock('fs');
+    jest.mock('fs-extra');
     fs = require('fs');
     jest.mock('./ios/expect');
     setCustomMock('./client/Client', clientMockData);
@@ -113,49 +114,6 @@ describe('Detox', () => {
     expect(clientMockData.lastConstructorArguments[0]).toBe(expectedSession);
   });
 
-  it(`beforeEach() - should set device artifacts destination`, async () => {
-    process.env.artifactsLocation = '/tmp';
-    Detox = require('./Detox');
-    detox = new Detox({deviceConfig: validDeviceConfigWithSession});
-    await detox.init();
-    await detox.beforeEach('a', 'b', 'c');
-    expect(device.setArtifactsDestination).toHaveBeenCalledTimes(1);
-  });
-
-  it(`beforeEach() - should not set device artifacts destination if artifacts not set in cli args`, async () => {
-    Detox = require('./Detox');
-    detox = new Detox({deviceConfig: validDeviceConfigWithSession});
-    await detox.init();
-    await detox.beforeEach('a', 'b', 'c');
-    expect(device.setArtifactsDestination).toHaveBeenCalledTimes(0);
-  });
-
-  it(`afterEach() - should call device.finalizeArtifacts`, async () => {
-    process.env.artifactsLocation = '/tmp';
-    Detox = require('./Detox');
-    detox = new Detox({deviceConfig: validDeviceConfigWithSession});
-    await detox.init();
-    await detox.afterEach();
-    expect(device.finalizeArtifacts).toHaveBeenCalledTimes(1);
-  });
-
-  it(`afterEach() - should not call device.finalizeArtifacts if artifacts not set in cli arg`, async () => {
-    Detox = require('./Detox');
-    detox = new Detox({deviceConfig: validDeviceConfigWithSession});
-    await detox.init();
-    await detox.afterEach();
-    expect(device.finalizeArtifacts).toHaveBeenCalledTimes(0);
-  });
-
-  it(`the constructor should catch exception from ArtifactsPathsProvider`, async () => {
-    process.env.artifactsLocation = '/tmp';
-    fs.mkdirSync = jest.fn(() => {
-      throw Error('Could not create artifacts root dir');
-    });
-    Detox = require('./Detox');
-    detox = new Detox({deviceConfig: validDeviceConfigWithSession});
-  });
-
   it('exports globals by default', async () => {
     Detox = require('./Detox');
     detox = new Detox({deviceConfig: validDeviceConfigWithSession});
@@ -175,7 +133,7 @@ describe('Detox', () => {
     detox = new Detox({deviceConfig: validDeviceConfigWithSession});
     await detox.init();
     detox.client.getPendingCrashAndReset.mockReturnValueOnce('crash');
-    await detox.afterEach();
+    await detox.afterEach({ title: 'a', fullName: 'b', status: 'failed' });
     expect(device.launchApp).toHaveBeenCalledTimes(1);
   });
 });
