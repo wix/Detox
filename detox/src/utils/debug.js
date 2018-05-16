@@ -1,6 +1,8 @@
+const _sleep = require('./sleep');
+
 class Debug {
   async sleep(ms) {
-    return new Promise(resolve => setTimeout(() => resolve(), ms));
+    await _sleep(ms);
   }
 }
 

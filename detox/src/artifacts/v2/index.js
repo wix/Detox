@@ -48,11 +48,11 @@ const resolve = {
 
     screenshotter: {
       none: _.once(() => new NoopScreenshotter()),
-      ios: () => _.once((api) => new AppleSimUtilsScreenshotter({
+      ios: _.once((api) => new AppleSimUtilsScreenshotter({
         appleSimUtils: resolve.appleSimUtils(api),
         udid: api.getDeviceId(),
       })),
-      android: () => _.once((api) => new ADBScreenshotter({
+      android: _.once((api) => new ADBScreenshotter({
         adb: resolve.adb(api),
         deviceId: api.getDeviceId(),
       })),
@@ -98,7 +98,7 @@ const resolve = {
 
         return new LoggerHooks({
           enabled: recordLogs !== 'none',
-          keepOnlyFailedTestLogs: recordLogs === 'failed',
+          keepOnlyFailedTestLogs: recordLogs === 'failing',
           logger: resolve.artifacts.logger.default(api),
           pathStrategy: resolve.artifacts.pathStrategy(api),
         });
@@ -109,7 +109,7 @@ const resolve = {
 
         return new ScreenshotterHooks({
           enabled: takeScreenshots !== 'none',
-          keepOnlyFailedTestScreenshots: takeScreenshots === 'failed',
+          keepOnlyFailedTestScreenshots: takeScreenshots === 'failing',
           screenshotter: resolve.artifacts.screenshotter.default(api),
           pathStrategy: resolve.artifacts.pathStrategy(api),
         });
@@ -120,7 +120,7 @@ const resolve = {
 
         return new VideoRecorderHooks({
           enabled: recordVideos !== 'none',
-          keepOnlyFailedTestRecordings: recordVideos === 'failed',
+          keepOnlyFailedTestRecordings: recordVideos === 'failing',
           recorder: resolve.artifacts.videoRecorder.default(api),
           pathStrategy: resolve.artifacts.pathStrategy(api),
         });

@@ -4,7 +4,7 @@ class NoopScreenshotHandle {
 }
 
 class NoopScreenshotter {
-  takeScreenshot() {
+  async takeScreenshot() {
     return new NoopScreenshotHandle();
   }
 }

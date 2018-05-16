@@ -71,8 +71,10 @@ class Detox {
   _createPluginApi({ deviceId, deviceClass }) {
     return {
       _config: Object.freeze({
-        artifactsLocation: argparse.getArgValue('artifacts-location') || './artifacts',
-        recordVideos: argparse.getArgValue('record-videos') || 'none',
+        artifactsLocation: argparse.getArgValue('artifacts-location'),
+        recordLogs: argparse.getArgValue('record-logs'),
+        takeScreenshots: argparse.getArgValue('take-screenshots'),
+        recordVideos: argparse.getArgValue('record-videos'),
       }),
 
       getDeviceId() {

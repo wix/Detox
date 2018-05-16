@@ -4,10 +4,10 @@ const MAX_FILE_LENGTH = 255;
 /*
   Trim filename to match filesystem limits (usually, not longer than 255 chars)
  */
-function trimFilename(prefix = '', trimmable = '', suffix = '') {
+function constructSafeFilename(prefix = '', trimmable = '', suffix = '') {
   const nonTrimmableLength = prefix.length + suffix.length;
 
-  if (nonTrimmableLength.length >= MAX_FILE_LENGTH) {
+  if (nonTrimmableLength >= MAX_FILE_LENGTH) {
     throw new DetoxRuntimeError({
       message: `cannot trim filename to match filesystem limits because prefix and/or suffix are exceed ${MAX_FILE_LENGTH} chars limit`,
       debugInfo: `prefix = ${JSON.stringify(prefix)} (${prefix.length} chars), suffix = ${JSON.stringify(suffix)} (${suffix.length}chars)`,
@@ -18,4 +18,13 @@ function trimFilename(prefix = '', trimmable = '', suffix = '') {
   return prefix + trimmed + suffix;
 }
 
-module.exports = trimFilename;
+module.exports = function constructSafeFilenameMultimethod() {
+  const a = arguments;
+
+  switch (a.length) {
+    case 0: return constructSafeFilename('', '', '');
+    case 1: return constructSafeFilename('', a[0], '');
+    case 2: return constructSafeFilename(a[0], a[1], '');
+    default: return constructSafeFilename.apply(this, arguments);
+  }
+};

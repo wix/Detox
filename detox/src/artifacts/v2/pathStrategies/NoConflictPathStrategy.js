@@ -1,12 +1,15 @@
 const path = require('path');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
-const trimFilename = require('../../../utils/trimFilename');
+const constructSafeFilename = require('../../../utils/constructSafeFilename');
 
 class NoConflictPathStrategy {
-  constructor({ artifactsRootDir }) {
+  constructor({
+    artifactsRootDir,
+    getUniqueSubdirectory = NoConflictPathStrategy.generateTimestampBasedSubdirectoryName
+  }) {
     this._nextIndex = 0;
     this._testIndices = new WeakMap();
-    this._currentTestRunDir = path.join(artifactsRootDir, `detox_artifacts.${new Date().toISOString()}`);
+    this._currentTestRunDir = path.join(artifactsRootDir, getUniqueSubdirectory());
   }
 
   get rootDir() {
@@ -15,8 +18,8 @@ class NoConflictPathStrategy {
 
   constructPathForTestArtifact(testSummary, artifactName) {
     const testIndexPrefix = this._getTestIndex(testSummary) + '. ';
-    const testArtifactsDirname = trimFilename(testIndexPrefix, testSummary.fullName);
-    const artifactFilename = trimFilename('', artifactName);
+    const testArtifactsDirname = constructSafeFilename(testIndexPrefix, testSummary.fullName);
+    const artifactFilename = constructSafeFilename(artifactName);
 
     const artifactPath = path.join(
       this._currentTestRunDir,
@@ -51,6 +54,6 @@ class NoConflictPathStrategy {
   }
 }
 
-NoConflictPathStrategy.IS_OUTSIDE = /^\.\.[/\\]/g;
+NoConflictPathStrategy.generateTimestampBasedSubdirectoryName = () => `detox_artifacts.${new Date().toISOString()}`;
 
 module.exports = NoConflictPathStrategy;

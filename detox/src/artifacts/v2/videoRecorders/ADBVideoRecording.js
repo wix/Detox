@@ -49,12 +49,12 @@ class ADBVideoRecording {
   }
 
   async _delayWhileVideoFileIsEmpty() {
-    let size = await this._getVideoFileSizeOnDevice();
+    let size = -1;
 
-    while (size < 1) {
-      await sleep(50);
+    do {
+      await sleep(300);
       size = await this._getVideoFileSizeOnDevice();
-    }
+    } while (size < 1);
   }
 
   async _getVideoFileSizeOnDevice() {
@@ -68,12 +68,12 @@ class ADBVideoRecording {
   }
 
   async _delayWhileVideoFileIsBusy() {
-    let busy = await this._isVideoFileOnDeviceBusy();
+    let busy = true;
 
-    while (busy) {
-      await sleep(50);
+    do {
+      await sleep(500);
       busy = await this._isVideoFileOnDeviceBusy();
-    }
+    } while (busy);
   }
 
   async _isVideoFileOnDeviceBusy() {

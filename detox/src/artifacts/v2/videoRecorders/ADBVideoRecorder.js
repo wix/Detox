@@ -12,8 +12,8 @@ class ADBVideoRecorder {
   recordVideo(artifactPath) {
     return new AndroidVideoRecording({
       adb: this.adb,
-      artifactPath: this._addExtension(artifactPath),
-      pathToVideoOnDevice: ensureExtension(artifactPath, '.mp4'),
+      artifactPath: ensureExtension(artifactPath, '.mp4'),
+      pathToVideoOnDevice: this._generatePathOnDevice(),
       deviceId: this.deviceId,
       screenRecordOptions: this.screenRecordOptions,
     });

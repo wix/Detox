@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`constructSafeFilename should throw exception when non-trimmable prefix and suffix occupy too much space 1`] = `"cannot trim filename to match filesystem limits because prefix and/or suffix are exceed 255 chars limit"`;
