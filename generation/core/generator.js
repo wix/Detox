@@ -169,20 +169,28 @@ module.exports = function getGenerator({
 			(arg) =>
 				shouldBeWrapped(arg)
 					? t.objectExpression([
-							t.objectProperty(t.identifier('type'), t.stringLiteral(addArgumentTypeSanitizer(arg))),
-							t.objectProperty(t.identifier('value'), addArgumentContentSanitizerCall(arg, json.name))
-					  ])
+						t.objectProperty(t.identifier('type'), t.stringLiteral(addArgumentTypeSanitizer(arg))),
+						t.objectProperty(t.identifier('value'), addArgumentContentSanitizerCall(arg, json.name))
+					])
 					: addArgumentContentSanitizerCall(arg, json.name)
 		);
 
 		return t.returnStatement(
 			t.objectExpression([
 				t.objectProperty(
-					t.identifier('target'),
-					t.objectExpression([
-						t.objectProperty(t.identifier('type'), t.stringLiteral(json.static ? 'Class' : 'Invocation')),
-						t.objectProperty(t.identifier('value'), json.static ? t.stringLiteral(classValue(classJson)) : t.identifier('element'))
-					])
+					t.identifier("target"),
+					json.static
+						? t.objectExpression([
+							t.objectProperty(
+								t.identifier("type"),
+								t.stringLiteral("Class")
+							),
+							t.objectProperty(
+								t.identifier("value"),
+								t.stringLiteral(classValue(classJson))
+							)
+						])
+						: t.identifier("element")
 				),
 				t.objectProperty(t.identifier('method'), t.stringLiteral(json.name)),
 				t.objectProperty(t.identifier('args'), t.arrayExpression(args))

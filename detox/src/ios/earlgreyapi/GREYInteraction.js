@@ -20,10 +20,7 @@ will be performed on.
     }
 
     return {
-      target: {
-        type: "Invocation",
-        value: element
-      },
+      target: element,
       method: "inRoot:",
       args: [rootMatcher]
     };
@@ -60,10 +57,7 @@ performAction:grey_tap()] // This should be separately called for the action.
     }
 
     return {
-      target: {
-        type: "Invocation",
-        value: element
-      },
+      target: element,
       method: "usingSearchAction:onElementWithMatcher:",
       args: [action, matcher]
     };
@@ -81,10 +75,7 @@ performAction:grey_tap()] // This should be separately called for the action.
     }
 
     return {
-      target: {
-        type: "Invocation",
-        value: element
-      },
+      target: element,
       method: "performAction:",
       args: [action]
     };
@@ -101,10 +92,7 @@ performAction:grey_tap()] // This should be separately called for the action.
     }
 
     return {
-      target: {
-        type: "Invocation",
-        value: element
-      },
+      target: element,
       method: "assertWithMatcher:",
       args: [matcher]
     };
@@ -129,10 +117,7 @@ specified index in the list of matched elements.
 */static atIndex(element, index) {
     if (typeof index !== "number") throw new Error("index should be a number, but got " + (index + (" (" + (typeof index + ")"))));
     return {
-      target: {
-        type: "Invocation",
-        value: element
-      },
+      target: element,
       method: "atIndex:",
       args: [{
         type: "NSInteger",

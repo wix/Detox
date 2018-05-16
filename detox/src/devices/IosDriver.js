@@ -27,7 +27,7 @@ class IosDriver extends DeviceDriverBase {
   async setURLBlacklist(urlList) {
     await this.client.execute(
       GREYConfigurationApi.setValueForConfigKey(
-        GREYConfigurationApi.sharedInstance(),
+        invoke.callDirectly(GREYConfigurationApi.sharedInstance()),
         urlList,
         "GREYConfigKeyURLBlacklistRegex"
       )
@@ -37,7 +37,7 @@ class IosDriver extends DeviceDriverBase {
   async enableSynchronization() {
     await this.client.execute(
       GREYConfigurationDetox.enableSynchronization(
-        GREYConfigurationApi.sharedInstance()
+        invoke.callDirectly(GREYConfigurationApi.sharedInstance())
       )
     );
   }
@@ -45,7 +45,7 @@ class IosDriver extends DeviceDriverBase {
   async disableSynchronization() {
     await this.client.execute(
       GREYConfigurationDetox.disableSynchronization(
-        GREYConfigurationApi.sharedInstance()
+        invoke.callDirectly(GREYConfigurationApi.sharedInstance())
       )
     );
   }
