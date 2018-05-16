@@ -78,7 +78,13 @@ module.exports = function getGenerator({
 		);
 	}
 
+	const blacklistedArgumentTypes = ["__strong NSError **"];
+	function filterBlacklistedArguments(arg) {
+		return !blacklistedArgumentTypes.includes(arg.type);
+	}
+
 	function createMethod(classJson, json) {
+		json.args = json.args.filter(filterBlacklistedArguments);
 		const args = json.args.map(({ name }) => t.identifier(name));
 
 		if (!json.static) {
