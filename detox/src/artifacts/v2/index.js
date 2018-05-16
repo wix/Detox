@@ -28,7 +28,9 @@ const resolve = {
   adb: _.once(() => new ADB()),
   appleSimUtils: _.once(() => new AppleSimUtils()),
   artifacts: {
-    pathStrategy: _.once(() => new NoConflictPathStrategy()),
+    pathStrategy: _.once((api) => new NoConflictPathStrategy({
+      artifactsRootDir: api.getConfig().artifactsLocation,
+    })),
 
     logger: {
       none: _.once(() => new NoopLogger()),

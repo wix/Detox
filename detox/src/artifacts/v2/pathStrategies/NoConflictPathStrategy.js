@@ -1,12 +1,16 @@
 const path = require('path');
+const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 const trimFilename = require('../../../utils/trimFilename');
 
 class NoConflictPathStrategy {
   constructor({ artifactsRootDir }) {
     this._nextIndex = 0;
     this._testIndices = new WeakMap();
-    this._artifactsRootDir = artifactsRootDir;
-    this._currentTestRunDir = `detox_artifacts.${new Date().toISOString()}`;
+    this._currentTestRunDir = path.join(artifactsRootDir, `detox_artifacts.${new Date().toISOString()}`);
+  }
+
+  get rootDir() {
+    return this._currentTestRunDir;
   }
 
   constructPathForTestArtifact(testSummary, artifactName) {
@@ -15,23 +19,24 @@ class NoConflictPathStrategy {
     const artifactFilename = trimFilename('', artifactName);
 
     const artifactPath = path.join(
-      this._artifactsRootDir,
       this._currentTestRunDir,
       testArtifactsDirname,
       artifactFilename
     );
 
-    this._assertConstructedPathIsStillInsideArtifactsRootDir(artifactPath)
+    this._assertConstructedPathIsStillInsideArtifactsRootDir(artifactPath, testSummary);
     return artifactPath;
   }
 
   _assertConstructedPathIsStillInsideArtifactsRootDir(artifactPath, testSummary) {
-    const pathRelativeToArtifactsRootDir = path.relative(this._artifactsRootDir, artifactPath);
+    const absoluteRootPath = path.resolve(this._currentTestRunDir);
+    const absoluteArtifactPath = path.resolve(artifactPath);
 
-    if (NoConflictPathStrategy.IS_OUTSIDE.test(pathRelativeToArtifactsRootDir)) {
+    if (!absoluteArtifactPath.startsWith(absoluteRootPath)) {
       throw new DetoxRuntimeError({
-        message: `Given artifact location (${pathRelativeToArtifactsRootDir}) was resolved outside of artifacts root directory (${this._artifactsRootDir})`,
+        message: `Given artifact location (${path.resolve(artifactPath)}) was resolved outside of current test run directory (${this._currentTestRunDir})`,
         hint: `Make sure that test name (${JSON.stringify(testSummary.fullName)}) does not contain ".." fragments inside.`,
+        debugInfo: `Resolved artifact location was: ${absoluteArtifactPath}`
       });
     }
   }

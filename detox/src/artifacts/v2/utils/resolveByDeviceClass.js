@@ -17,3 +17,5 @@ function resolveByDeviceClass(mapping, createErrorMessage) {
     return resolver(detoxApi);
   };
 }
+
+module.exports = resolveByDeviceClass;

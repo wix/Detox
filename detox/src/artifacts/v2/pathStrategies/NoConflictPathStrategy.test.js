@@ -6,15 +6,29 @@ describe(NoConflictPathStrategy, () => {
   let strategy;
 
   beforeEach(() => {
-    strategy = new NoConflictPathStrategy();
+    strategy = new NoConflictPathStrategy({
+      artifactsRootDir: '/tmp'
+    });
+  });
+
+  it('should give paths inside a timestamp-based subdirectory inside artifacts root', () => {
+    expect(strategy.rootDir).toMatch(/^[\\/]tmp[\\/]detox_artifacts\.\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d\d\dZ$/);
   });
 
   it('should provide indexed and nested path for test artifact', () => {
-    const test1 = {title: 'test 1', fullName: 'some test 1'};
+    const test1 = {title: 'test 1', fullName: 'some test 1', status: 'running' };
     const artifactPath1 = strategy.constructPathForTestArtifact(test1, '1.log');
-    const expectedPath1 = path.join(strategy.artifactsRootDir, '0. ' + test1.fullName, '1.log');
+    const expectedPath1 = path.join(strategy.rootDir, '0. ' + test1.fullName, '1.log');
 
     expect(artifactPath1).toBe(expectedPath1);
+  });
+
+  it('should defend against accidental resolving outside of root directory', () => {
+    const maliciousName = 'some/../../../../../../home/build-server';
+
+    expect(() => strategy.constructPathForTestArtifact({ title: '', fullName: maliciousName }, '.bashrc')).toThrowErrorMatchingSnapshot();
+    expect(() => strategy.constructPathForTestArtifact({ title: '', fullName: 'test' }, maliciousName)).toThrowErrorMatchingSnapshot();
+    expect(() => strategy.constructPathForTestArtifact({ title: '', fullName: maliciousName }, maliciousName)).toThrowErrorMatchingSnapshot();
   });
 
   it('should give different indices for different test objects', () => {
@@ -39,7 +53,7 @@ describe(NoConflictPathStrategy, () => {
 
   it('should trim too long filenames', () => {
     const actualPath = strategy.constructPathForTestArtifact({ title: 'test', fullName: '1'.repeat(512) }, '2'.repeat(256));
-    const expectedPath = path.join(strategy.artifactsRootDir, '0. ' + '1'.repeat(252), '2'.repeat(255));
+    const expectedPath = path.join(strategy.rootDir, '0. ' + '1'.repeat(252), '2'.repeat(255));
 
     expect(actualPath).toBe(expectedPath);
   });
