@@ -9,6 +9,7 @@ class AppleSimUtilsScreenshotter {
 
   async takeScreenshot(artifactPath) {
     const pngArtifactPath = ensureExtension(artifactPath, '.png');
+    await fs.ensureFile(pngArtifactPath);
     await this.appleSimUtils.takeScreenshot(this.udid, pngArtifactPath);
 
     return new AppleSimUtilsScreenshotHandle({

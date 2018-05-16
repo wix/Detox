@@ -1,3 +1,5 @@
+const fs = require('fs-extra');
+
 class ADBScreenshotHandle {
   constructor(config) {
     this.adb = config.adb;
@@ -7,6 +9,7 @@ class ADBScreenshotHandle {
   }
 
   async save() {
+    await fs.ensureFile(this.artifactPath);
     await this.adb.pull(this.deviceId, this.pathToScreenshotOnDevice, this.artifactPath);
     await this.adb.rm(this.deviceId, this.pathToScreenshotOnDevice);
   }

@@ -10,6 +10,7 @@ class AppleSimUtilsVideoRecording {
   }
 
   async start() {
+    await fs.ensureFile(mp4ArtifactPath);
     this.processPromise = this.appleSimUtils.recordVideo(this.udid, this.artifactPath);
     this.process = this.processPromise.childProcess;
   }

@@ -69,7 +69,7 @@ class Detox {
   }
 
   _createPluginApi({ deviceId, deviceClass }) {
-    return {
+    return Object.freeze({
       _config: Object.freeze({
         artifactsLocation: argparse.getArgValue('artifacts-location') || 'artifacts',
         recordLogs: argparse.getArgValue('record-logs') || 'none',
@@ -88,7 +88,7 @@ class Detox {
       getConfig() {
         return this._config;
       },
-    };
+    });
   }
 
   async cleanup() {

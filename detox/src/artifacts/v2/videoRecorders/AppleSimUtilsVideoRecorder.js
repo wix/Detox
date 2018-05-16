@@ -12,8 +12,6 @@ class AppleSimUtilsVideoRecorder {
       appleSimUtils: this.appleSimUtils,
       artifactPath: ensureExtension(artifactPath, '.mp4'),
       udid: this.udid,
-      videoId: String(this._recordingCounter++),
-      screenRecordOptions: this.screenRecordOptions,
     });
   }
 }

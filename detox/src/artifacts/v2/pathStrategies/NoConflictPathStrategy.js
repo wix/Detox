@@ -7,8 +7,8 @@ class NoConflictPathStrategy {
     artifactsRootDir,
     getUniqueSubdirectory = NoConflictPathStrategy.generateTimestampBasedSubdirectoryName
   }) {
-    this._nextIndex = 0;
-    this._testIndices = new WeakMap();
+    this._nextIndex = -1;
+    this._lastTestTitle = undefined;
     this._currentTestRunDir = path.join(artifactsRootDir, getUniqueSubdirectory());
   }
 
@@ -45,12 +45,12 @@ class NoConflictPathStrategy {
   }
 
   _getTestIndex(testSummary) {
-    if (!this._testIndices.has(testSummary)) {
-      this._testIndices.set(testSummary, this._nextIndex);
-      return this._nextIndex++;
+    if (this._lastTestTitle !== testSummary.fullName) {
+      this._nextIndex++;
+      this._lastTestTitle = testSummary.fullName;
     }
 
-    return this._testIndices.get(testSummary);
+    return this._nextIndex;
   }
 }
 

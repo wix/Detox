@@ -24,22 +24,23 @@ describe(NoConflictPathStrategy, () => {
       expect(artifactPath1).toBe(expectedPath1);
     });
 
-    it('should give different indices for different test objects', () => {
-      const createTestSummary = () => ({ title: 'test', fullName: 'suite - test' });
+    it('should give different indices for different tests', () => {
+      const createTestSummary = (i) => ({ title: `test ${i}`, fullName: `suite - test ${i}` });
 
-      const path1 = strategy.constructPathForTestArtifact(createTestSummary(), 'artifact');
-      const path2 = strategy.constructPathForTestArtifact(createTestSummary(), 'artifact');
+      const path1 = strategy.constructPathForTestArtifact(createTestSummary(0), 'artifact');
+      const path2 = strategy.constructPathForTestArtifact(createTestSummary(1), 'artifact');
 
       expect(path1).not.toBe(path2);
-      expect(path1).toMatch(/0\. suite - test[/\\]artifact$/);
-      expect(path2).toMatch(/1\. suite - test[/\\]artifact$/);
+      expect(path1).toMatch(/0\. suite - test 0[/\\]artifact$/);
+      expect(path2).toMatch(/1\. suite - test 1[/\\]artifact$/);
     });
 
-    it('should give same indices for same tests', () => {
-      const testSummary = { title: 'test', fullName: 'suite - test' };
+    it('should give same indices for same test (even if refs are different)', () => {
+      const testSummary1 = { title: 'test', fullName: 'suite - test' };
+      const testSummary2 = { title: 'test', fullName: 'suite - test' };
 
-      const path1 = strategy.constructPathForTestArtifact(testSummary, 'artifact');
-      const path2 = strategy.constructPathForTestArtifact(testSummary, 'artifact');
+      const path1 = strategy.constructPathForTestArtifact(testSummary1, 'artifact');
+      const path2 = strategy.constructPathForTestArtifact(testSummary2, 'artifact');
 
       expect(path1).toBe(path2);
     });
