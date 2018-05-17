@@ -23,7 +23,11 @@ const sidebars = [];
 
 async function cleanupExistingVersions() {
   console.log("Cleanup versioned docs");
-  await fs.remove("./versions.json");
+  try {
+    await fs.remove("./versions.json");
+  } catch (err) {
+    // that's OK
+  }
   await fs.emptyDir("./versioned_docs");
   await fs.emptyDir("./versioned_sidebars");
 }
