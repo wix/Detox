@@ -157,7 +157,7 @@ class AppleSimUtils {
   }
 
   async takeScreenshot(udid, destination) {
-    await this._execSimctl({cmd: `io ${udid} screenshot ${destination}`});
+    await this._execSimctl({cmd: `io ${udid} screenshot "${destination}"`});
   }
 
   recordVideo(udid, destination) {

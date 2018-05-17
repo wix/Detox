@@ -1,3 +1,4 @@
+const fs = require('fs-extra');
 const ensureExtension = require('../utils/ensureExtension');
 const AppleSimUtilsScreenshotHandle = require('./AppleSimUtilsScreenshotHandle');
 

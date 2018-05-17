@@ -432,7 +432,7 @@ describe('AppleSimUtils', () => {
 
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
-        expect.stringMatching(new RegExp(`xcrun simctl io ${udid} screenshot ${dest}`)),
+        expect.stringMatching(new RegExp(`xcrun simctl io ${udid} screenshot "${dest}"`)),
         undefined,
         expect.anything(),
         1
