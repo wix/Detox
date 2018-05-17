@@ -1,4 +1,4 @@
-const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
+const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 
 function resolveByDeviceClass(mapping, createErrorMessage) {
   const supportedDeviceClasses = Object.keys(mapping).join(', ');

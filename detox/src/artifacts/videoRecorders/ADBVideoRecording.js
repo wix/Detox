@@ -1,5 +1,5 @@
 const fs = require('fs-extra');
-const sleep = require('../../../utils/sleep');
+const sleep = require('../../utils/sleep');
 
 class ADBVideoRecording {
   constructor(config) {

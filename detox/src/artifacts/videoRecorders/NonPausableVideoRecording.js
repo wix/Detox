@@ -1,4 +1,4 @@
-const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
+const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 
 class NonPausableVideoRecording {
   constructor(recording) {

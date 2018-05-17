@@ -1,8 +1,8 @@
 const _ = require('lodash');
 const resolveByDeviceClass = require('./utils/resolveByDeviceClass');
 
-const ADB = require('../../devices/android/ADB');
-const AppleSimUtils = require('../../devices/AppleSimUtils');
+const ADB = require('../devices/android/ADB');
+const AppleSimUtils = require('../devices/AppleSimUtils');
 
 const ADBLogcatLogger = require('./loggers/ADBLogcatLogger');
 const AppleSimUtilsLogger = require('./loggers/AppleSimUtilsLogger');

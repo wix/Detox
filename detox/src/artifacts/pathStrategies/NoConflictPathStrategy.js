@@ -1,6 +1,6 @@
 const path = require('path');
-const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
-const constructSafeFilename = require('../../../utils/constructSafeFilename');
+const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
+const constructSafeFilename = require('../../utils/constructSafeFilename');
 
 class NoConflictPathStrategy {
   constructor({
