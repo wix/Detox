@@ -2,7 +2,18 @@
 
 set -e
 
-git stash
+isGitClean=true
+if [ -z "$(git status --porcelain)" ]; then
+  isGitClean=true
+else
+  isGitClean=false
+fi
+
+if [ "isGitClean" = true ] ; then
+    git stash
+fi
+
+
 npm run build
 
 if [[ $TRAVIS && $(git diff) ]]; then
@@ -15,8 +26,13 @@ if [[ $TRAVIS && $(git diff) ]]; then
     echo "You should not be doing this, please change the source of the generated code and not the code itself."
     printf "\n"
     echo "$(git diff)"
-    git stash pop
+
+    if [ "isGitClean" = true ] ; then
+      git stash pop
+    fi
     exit 1
 else
-    git stash pop
+    if [ "isGitClean" = true ] ; then
+      git stash pop
+    fi
 fi
