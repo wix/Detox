@@ -1,20 +1,23 @@
 const fs = require('fs-extra');
+const tempfile = require('tempfile');
 const ensureExtension = require('../utils/ensureExtension');
 const AppleSimUtilsScreenshotHandle = require('./AppleSimUtilsScreenshotHandle');
 
 class AppleSimUtilsScreenshotter {
   constructor(config) {
     this.appleSimUtils = config.appleSimUtils;
+    this.temporaryFilePath = config.temporaryFilePath;
     this.udid = config.udid;
   }
 
   async takeScreenshot(artifactPath) {
-    const pngArtifactPath = ensureExtension(artifactPath, '.png');
-    await fs.ensureFile(pngArtifactPath);
-    await this.appleSimUtils.takeScreenshot(this.udid, pngArtifactPath);
+    const temporaryPngPath = tempfile('.png');
+    await fs.ensureFile(temporaryPngPath);
+    await this.appleSimUtils.takeScreenshot(this.udid, temporaryPngPath);
 
     return new AppleSimUtilsScreenshotHandle({
-      artifactPath: pngArtifactPath,
+      temporaryFilePath: temporaryPngPath,
+      artifactPath: ensureExtension(artifactPath, '.png'),
     });
   }
 }

@@ -73,7 +73,7 @@ const resolve = {
       })),
       ios: _.once((api) => new AppleSimUtilsVideoRecorder({
         appleSimUtils: resolve.appleSimUtils(api),
-        deviceId: api.getDeviceId(),
+        udid: api.getDeviceId(),
       })),
       actual: _.once(resolveByDeviceClass({
         'ios.none': (api) => resolve.artifacts.videoRecorder.none(api),

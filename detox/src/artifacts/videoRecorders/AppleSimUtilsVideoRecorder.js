@@ -1,3 +1,4 @@
+const tempfile = require('tempfile');
 const ensureExtension = require('../utils/ensureExtension');
 const IosVideoRecording = require('./AppleSimUtilsVideoRecording');
 
@@ -10,8 +11,9 @@ class AppleSimUtilsVideoRecorder {
   recordVideo(artifactPath) {
     return new IosVideoRecording({
       appleSimUtils: this.appleSimUtils,
-      artifactPath: ensureExtension(artifactPath, '.mp4'),
       udid: this.udid,
+      artifactPath: ensureExtension(artifactPath, '.mp4'),
+      temporaryFilePath: tempfile('.mp4'),
     });
   }
 }

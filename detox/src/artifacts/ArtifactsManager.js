@@ -24,7 +24,6 @@ class ArtifactsManager {
   }
 
   async onStart() {
-    await fs.ensureDir(this.artifactsRootDir);
     await Promise.all(this.hooks.map(hook => hook.onStart()));
   }
 
