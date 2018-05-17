@@ -7,7 +7,7 @@
 
 function sanitize_greyElementInteraction(value) {
 	return {
-		type: "Invocation",
+		type: 'Invocation',
 		value
 	};
 } 

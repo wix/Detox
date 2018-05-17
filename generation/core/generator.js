@@ -1,11 +1,11 @@
-const t = require("babel-types");
-const template = require("babel-template");
-const objectiveCParser = require("objective-c-parser");
-const javaMethodParser = require("java-method-parser");
-const generate = require("babel-generator").default;
-const fs = require("fs");
+const t = require('babel-types');
+const template = require('babel-template');
+const objectiveCParser = require('objective-c-parser');
+const javaMethodParser = require('java-method-parser');
+const generate = require('babel-generator').default;
+const fs = require('fs');
 
-const { methodNameToSnakeCase } = require("../helpers");
+const { methodNameToSnakeCase } = require('../helpers');
 let globalFunctionUsage = {};
 module.exports = function getGenerator({
 	typeCheckInterfaces,
@@ -60,9 +60,7 @@ module.exports = function getGenerator({
 	}
 
 	function filterMethodsWithBlacklistedName({ name }) {
-		return !blacklistedFunctionNames.find(
-			blacklisted => name.indexOf(blacklisted) !== -1
-		);
+		return !blacklistedFunctionNames.find((blacklisted) => name.indexOf(blacklisted) !== -1);
 	}
 
 	function filterMethodsWithUnsupportedParams(method) {
@@ -76,15 +74,7 @@ module.exports = function getGenerator({
 
 	function createExport(json) {
 		return t.expressionStatement(
-			t.assignmentExpression(
-				"=",
-				t.memberExpression(
-					t.identifier("module"),
-					t.identifier("exports"),
-					false
-				),
-				t.identifier(json.name)
-			)
+			t.assignmentExpression('=', t.memberExpression(t.identifier('module'), t.identifier('exports'), false), t.identifier(json.name))
 		);
 	}
 
@@ -92,11 +82,11 @@ module.exports = function getGenerator({
 		const args = json.args.map(({ name }) => t.identifier(name));
 
 		if (!json.static) {
-			args.unshift(t.identifier("element"));
+			args.unshift(t.identifier('element'));
 		}
 
 		const m = t.classMethod(
-			"method",
+			'method',
 			t.identifier(methodNameToSnakeCase(json.name)),
 			args,
 			t.blockStatement(createMethodBody(classJson, json)),
@@ -106,9 +96,8 @@ module.exports = function getGenerator({
 
 		if (json.comment) {
 			const comment = {
-				type:
-					json.comment.indexOf("\n") === -1 ? "LineComment" : "BlockComment",
-				value: json.comment + "\n"
+				type: json.comment.indexOf('\n') === -1 ? 'LineComment' : 'BlockComment',
+				value: json.comment + '\n'
 			};
 
 			m.leadingComments = m.leadingComments || [];
@@ -128,25 +117,21 @@ module.exports = function getGenerator({
 
 	function createMethodBody(classJson, json) {
 		const sanitizedJson = Object.assign({}, json, {
-			args: json.args.map(argJson => sanitizeArgumentType(argJson))
+			args: json.args.map((argJson) => sanitizeArgumentType(argJson))
 		});
 
-		const allTypeChecks = createTypeChecks(
-			sanitizedJson,
-			sanitizedJson.name
-		).reduce(
-			(carry, item) =>
-				item instanceof Array ? [...carry, ...item] : [...carry, item],
+		const allTypeChecks = createTypeChecks(sanitizedJson, sanitizedJson.name).reduce(
+			(carry, item) => (item instanceof Array ? [...carry, ...item] : [...carry, item]),
 			[]
 		);
-		const typeChecks = allTypeChecks.filter(check => typeof check === "object");
+		const typeChecks = allTypeChecks.filter((check) => typeof check === 'object');
 		const returnStatement = createReturnStatement(classJson, sanitizedJson);
 		return [...typeChecks, returnStatement];
 	}
 
 	function createTypeChecks(json, functionName) {
-		const checks = json.args.map(arg => createTypeCheck(arg, functionName));
-		checks.filter(check => Boolean(check));
+		const checks = json.args.map((arg) => createTypeCheck(arg, functionName));
+		checks.filter((check) => Boolean(check));
 		return checks;
 	}
 
@@ -156,13 +141,8 @@ module.exports = function getGenerator({
 			return contentSanitizersForType[json.type].value(json.name);
 		}
 
-		if (
-			contentSanitizersForFunction[functionName] &&
-			contentSanitizersForFunction[functionName].argumentName === json.name
-		) {
-			globalFunctionUsage[
-				contentSanitizersForFunction[functionName].name
-			] = true;
+		if (contentSanitizersForFunction[functionName] && contentSanitizersForFunction[functionName].argumentName === json.name) {
+			globalFunctionUsage[contentSanitizersForFunction[functionName].name] = true;
 			return contentSanitizersForFunction[functionName].value(json.name);
 		}
 
@@ -178,13 +158,7 @@ module.exports = function getGenerator({
 	}
 
 	// These types need no wrapping with {type: ..., value: }
-	const plainArgumentTypes = [
-		"id",
-		"id<GREYAction>",
-		"id<GREYMatcher>",
-		"GREYElementInteraction*",
-		"String"
-	];
+	const plainArgumentTypes = ['id', 'id<GREYAction>', 'id<GREYMatcher>', 'GREYElementInteraction*', 'String'];
 
 	function shouldBeWrapped({ type }) {
 		return !plainArgumentTypes.includes(type);
@@ -192,17 +166,11 @@ module.exports = function getGenerator({
 
 	function createReturnStatement(classJson, json) {
 		const args = json.args.map(
-			arg =>
+			(arg) =>
 				shouldBeWrapped(arg)
 					? t.objectExpression([
-							t.objectProperty(
-								t.identifier("type"),
-								t.stringLiteral(addArgumentTypeSanitizer(arg))
-							),
-							t.objectProperty(
-								t.identifier("value"),
-								addArgumentContentSanitizerCall(arg, json.name)
-							)
+							t.objectProperty(t.identifier('type'), t.stringLiteral(addArgumentTypeSanitizer(arg))),
+							t.objectProperty(t.identifier('value'), addArgumentContentSanitizerCall(arg, json.name))
 					  ])
 					: addArgumentContentSanitizerCall(arg, json.name)
 		);
@@ -210,37 +178,26 @@ module.exports = function getGenerator({
 		return t.returnStatement(
 			t.objectExpression([
 				t.objectProperty(
-					t.identifier("target"),
+					t.identifier('target'),
 					t.objectExpression([
-						t.objectProperty(
-							t.identifier("type"),
-							t.stringLiteral(json.static ? "Class" : "Invocation")
-						),
-						t.objectProperty(
-							t.identifier("value"),
-							json.static
-								? t.stringLiteral(classValue(classJson))
-								: t.identifier("element")
-						)
+						t.objectProperty(t.identifier('type'), t.stringLiteral(json.static ? 'Class' : 'Invocation')),
+						t.objectProperty(t.identifier('value'), json.static ? t.stringLiteral(classValue(classJson)) : t.identifier('element'))
 					])
 				),
-				t.objectProperty(t.identifier("method"), t.stringLiteral(json.name)),
-				t.objectProperty(t.identifier("args"), t.arrayExpression(args))
+				t.objectProperty(t.identifier('method'), t.stringLiteral(json.name)),
+				t.objectProperty(t.identifier('args'), t.arrayExpression(args))
 			])
 		);
 	}
 
 	function createTypeCheck(json, functionName) {
 		const optionalSanitizer = contentSanitizersForFunction[functionName];
-		const type =
-			optionalSanitizer && optionalSanitizer.argumentName === json.name
-				? optionalSanitizer.newType
-				: json.type;
+		const type = optionalSanitizer && optionalSanitizer.argumentName === json.name ? optionalSanitizer.newType : json.type;
 		const typeCheckCreator = typeCheckInterfaces[type];
 		const isListOfChecks = typeCheckCreator instanceof Array;
 		return isListOfChecks
-			? typeCheckCreator.map(singleCheck => singleCheck(json))
-			: typeof typeCheckCreator === "function"
+			? typeCheckCreator.map((singleCheck) => singleCheck(json))
+			: typeof typeCheckCreator === 'function'
 				? typeCheckCreator(json)
 				: t.emptyStatement();
 	}
@@ -248,61 +205,46 @@ module.exports = function getGenerator({
 	return function generator(files) {
 		Object.entries(files).forEach(([inputFile, outputFile]) => {
 			globalFunctionUsage = {};
-			const input = fs.readFileSync(inputFile, "utf8");
-			const isObjectiveC = inputFile[inputFile.length - 1] === "h";
+			const input = fs.readFileSync(inputFile, 'utf8');
+			const isObjectiveC = inputFile[inputFile.length - 1] === 'h';
 
-			const json = isObjectiveC
-				? objectiveCParser(input)
-				: javaMethodParser(input);
+			const json = isObjectiveC ? objectiveCParser(input) : javaMethodParser(input);
 
 			// set default name
 			if (!json.name) {
-				const pathFragments = outputFile.split("/");
-				json.name = pathFragments[pathFragments.length - 1].replace(".js", "");
+				const pathFragments = outputFile.split('/');
+				json.name = pathFragments[pathFragments.length - 1].replace('.js', '');
 			}
 			const ast = t.program([createClass(json), createExport(json)]);
 			const output = generate(ast);
 
-			const commentBefore =
-				"/**\n\n\tThis code is generated.\n\tFor more information see generation/README.md.\n*/\n\n";
+			const commentBefore = '/**\n\n\tThis code is generated.\n\tFor more information see generation/README.md.\n*/\n\n';
 
 			// Add global helper functions
-			const globalFunctionsStr = fs.readFileSync(
-				__dirname + "/global-functions.js",
-				"utf8"
-			);
-			const globalFunctionsSource = globalFunctionsStr.substr(
-				0,
-				globalFunctionsStr.indexOf("module.exports")
-			);
+			const globalFunctionsStr = fs.readFileSync(__dirname + '/global-functions.js', 'utf8');
+			const globalFunctionsSource = globalFunctionsStr.substr(0, globalFunctionsStr.indexOf('module.exports'));
 
 			// Only include global functions that are actually used
 			const usedGlobalFunctions = Object.entries(globalFunctionUsage)
 				.filter(([key, value]) => value)
 				.map(([key]) => key);
 			const globalFunctions = usedGlobalFunctions
-				.map(name => {
+				.map((name) => {
 					const start = globalFunctionsSource.indexOf(`function ${name}`);
 					const end = globalFunctionsSource.indexOf(`// END ${name}`);
 					return globalFunctionsSource.substr(start, end - start);
 				})
-				.join("\n");
+				.join('\n');
 
-			const code = [commentBefore, globalFunctions, output.code].join("\n");
-			fs.writeFileSync(outputFile, code, "utf8");
+			const code = [commentBefore, globalFunctions, output.code].join('\n');
+			fs.writeFileSync(outputFile, code, 'utf8');
 
 			// Output methods that were not created due to missing argument support
-			const unsupportedMethods = json.methods.filter(
-				x => !filterMethodsWithUnsupportedParams(x)
-			);
+			const unsupportedMethods = json.methods.filter((x) => !filterMethodsWithUnsupportedParams(x));
 			if (unsupportedMethods.length) {
-				console.log(
-					`Could not generate the following methods for ${json.name}`
-				);
-				unsupportedMethods.forEach(method => {
-					const methodArgs = method.args
-						.filter(methodArg => !supportedTypes.includes(methodArg.type))
-						.map(methodArg => methodArg.type);
+				console.log(`Could not generate the following methods for ${json.name}`);
+				unsupportedMethods.forEach((method) => {
+					const methodArgs = method.args.filter((methodArg) => !supportedTypes.includes(methodArg.type)).map((methodArg) => methodArg.type);
 					console.log(`\t ${method.name} misses ${methodArgs}`);
 				});
 			}
