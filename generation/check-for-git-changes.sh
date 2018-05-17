@@ -16,7 +16,7 @@ fi
 
 npm run build
 
-if [[ $TRAVIS && $(git diff) ]]; then
+if [[ $(git diff -- . ':(exclude)/*package.json') ]]; then
     printf "\n\n"
     echo "There seem to be changes after running the code generation."
     echo "This might be because you updated a native dependency and forgot to run the code generation."
