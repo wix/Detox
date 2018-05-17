@@ -76,7 +76,7 @@ function fixMarkdownForPre7_3_4_versions(tempDir) {
 function generateAndCopyDocusaurusVersion(tempDir, version) {
   console.log("Generating versioned doc for", version);
   execSync(
-    `npm install && rm versions.json && rm -rf {versioned_docs,versioned_sidebars} && npm run version ${version}`,
+    `npm install && rm -f versions.json && rm -rf {versioned_docs,versioned_sidebars} && npm run version ${version}`,
     { cwd: tempDir + "/website" }
   );
 
