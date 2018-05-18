@@ -24,7 +24,13 @@ class AppleSimUtilsVideoRecording extends RecordingArtifact {
     }
 
     this.process.kill('SIGINT');
-    await this.processPromise;
+    await this.processPromise.catch(e => {
+      if (e.exitCode == null && e.childProcess.killed) {
+        return;
+      }
+
+      throw e;
+    });
   }
 
   async doSave(artifactPath) {

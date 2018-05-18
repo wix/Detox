@@ -1,5 +1,5 @@
-const Snapshotter = require('../../core/factory/Snapshotter');
 const tempfile = require('tempfile');
+const Snapshotter = require('../../core/factory/Snapshotter');
 const SimulatorScreenshot = require('./SimulatorScreenshot');
 
 class SimulatorScreenshotter extends Snapshotter {
@@ -10,7 +10,7 @@ class SimulatorScreenshotter extends Snapshotter {
     this.udid = config.udid;
   }
 
-  async snapshot() {
+  async createSnapshot() {
     return new SimulatorScreenshot({
       appleSimUtils: this.appleSimUtils,
       udid: this.udid,
@@ -19,4 +19,4 @@ class SimulatorScreenshotter extends Snapshotter {
   }
 }
 
-module.exports = SimulatorScreenshot;
+module.exports = SimulatorScreenshotter;

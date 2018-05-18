@@ -27,7 +27,7 @@ class SimulatorDriver extends IosDriver {
         appleSimUtils,
         udid
       }),
-      screen: (config) => new SimulatorScreenshotter({
+      screenshot: (config) => new SimulatorScreenshotter({
         ...config,
         appleSimUtils,
         udid,

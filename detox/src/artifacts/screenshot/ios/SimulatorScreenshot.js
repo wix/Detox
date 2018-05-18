@@ -5,6 +5,8 @@ const SnapshotArtifact = require('../../core/artifact/SnapshotArtifact');
 class SimulatorScreenshot extends SnapshotArtifact {
   constructor(config) {
     super();
+    this.appleSimUtils = config.appleSimUtils;
+    this.udid = config.udid;
     this.temporaryFilePath = config.temporaryFilePath;
   }
 

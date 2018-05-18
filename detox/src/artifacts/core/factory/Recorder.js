@@ -1,12 +1,12 @@
 class Recorder {
   constructor({ artifactsRegistry }) {
-    this.artifactsRegistry = artifactsRegistry;
+    this._artifactsRegistry = artifactsRegistry;
   }
 
   record() {
     const recording = this.createRecording();
 
-    this.artifactsRegistry.registerArtifact(recording);
+    this._artifactsRegistry.registerArtifact(recording);
     return recording;
   }
 

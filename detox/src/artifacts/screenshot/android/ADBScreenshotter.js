@@ -10,7 +10,7 @@ class ADBScreenshotter extends Snapshotter {
     this._screenshotsCounter = 0;
   }
 
-  async snapshot() {
+  async createSnapshot() {
     return new ADBScreenshot({
       adb: this.adb,
       deviceId: this.deviceId,

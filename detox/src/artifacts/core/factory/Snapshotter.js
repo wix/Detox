@@ -1,12 +1,12 @@
 class Snapshotter {
   constructor({ artifactsRegistry }) {
-    this.artifactsRegistry = artifactsRegistry;
+    this._artifactsRegistry = artifactsRegistry;
   }
 
   snapshot() {
     const snapshot = this.createSnapshot();
 
-    this.artifactsRegistry._registerArtifact(snapshot);
+    this._artifactsRegistry.registerArtifact(snapshot);
     return snapshot;
   }
 
