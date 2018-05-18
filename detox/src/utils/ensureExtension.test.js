@@ -12,5 +12,9 @@ describe(ensureExtension, () => {
   it('should not append extension to filename if it is there already', () => {
     expect(ensureExtension('filename.mp4', '.mp4')).toBe('filename.mp4');
   });
+
+  it('should not append extension to filename if there is no extension given', () => {
+    expect(ensureExtension('filename.mp4')).toBe('filename.mp4');
+  });
 });
 

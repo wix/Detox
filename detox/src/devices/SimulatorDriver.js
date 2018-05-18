@@ -25,7 +25,7 @@ class SimulatorDriver extends IosDriver {
       log: (config) => new SimulatorLogRecorder({
         ...config,
         appleSimUtils,
-        udid
+        udid,
       }),
       screenshot: (config) => new SimulatorScreenshotter({
         ...config,

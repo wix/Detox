@@ -248,7 +248,7 @@ class LogsInfo {
     const logPrefix = '/tmp/detox.last_launch_app_log.';
     this.simStdout = logPrefix + 'out';
     this.simStderr = logPrefix + 'err';
-    const simDataRoot = `$HOME/Library/Developer/CoreSimulator/Devices/${udid}/data`;
+    const simDataRoot = `${process.env.HOME}/Library/Developer/CoreSimulator/Devices/${udid}/data`;
     this.absStdout = simDataRoot + this.simStdout;
     this.absStderr = simDataRoot + this.simStderr;
     this.absJoined = `${simDataRoot}${logPrefix}{out,err}`

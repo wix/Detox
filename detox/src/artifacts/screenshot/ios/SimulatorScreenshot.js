@@ -1,5 +1,5 @@
 const fs = require('fs-extra');
-const ensureExtension = require('../../../utils/ensureExtension');
+const ensureMove = require('../../../utils/ensureMove');
 const SnapshotArtifact = require('../../core/artifact/SnapshotArtifact');
 
 class SimulatorScreenshot extends SnapshotArtifact {
@@ -16,10 +16,7 @@ class SimulatorScreenshot extends SnapshotArtifact {
   }
 
   async doSave(artifactPath) {
-    const pngArtifactPath = ensureExtension(artifactPath, '.png');
-
-    await fs.ensureFile(pngArtifactPath);
-    await fs.move(this.temporaryFilePath, pngArtifactPath, { overwrite: true });
+    await ensureMove(this.temporaryFilePath, artifactPath, '.png');
   }
 
   async doDiscard() {

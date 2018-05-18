@@ -98,12 +98,15 @@ function runMocha() {
   const artifactsLocation = program.artifactsLocation ? `--artifacts-location ${program.artifactsLocation}` : '';
   const configFile = runnerConfig ? `--opts ${runnerConfig}` : '';
   const platformString = platform ? `--grep ${getPlatformSpecificString(platform)} --invert` : '';
+  const logs = program.recordLogs ? `--record-logs ${program.recordLogs}` : '';
   const screenshots = program.takeScreenshots ? `--take-screenshots ${program.takeScreenshots}` : '';
   const videos = program.recordVideos ? `--record-videos ${program.recordVideos}` : '';
   const headless = program.headless ? `--headless` : '';
 
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
-  const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${artifactsLocation} ${screenshots} ${videos} ${headless}`;
+  const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ` +
+    `${reuse} ${debugSynchronization} ${platformString} ${headless} ` +
+    `${logs} ${screenshots} ${videos} ${artifactsLocation}`;
 
   console.log(command);
   cp.execSync(command, {stdio: 'inherit'});
@@ -123,6 +126,7 @@ function runJest() {
       reuse: program.reuse,
       debugSynchronization: program.debugSynchronization,
       artifactsLocation: program.artifactsLocation,
+      recordLogs: program.recordLogs,
       takeScreenshots: program.takeScreenshots,
       recordVideos: program.recordVideos,
       headless: program.headless

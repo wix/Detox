@@ -342,9 +342,10 @@ describe('AppleSimUtils', () => {
 
   describe('getLogsPaths', () => {
     it('returns correct paths', () => {
+      const HOME = process.env.HOME;
       expect(uut.getLogsPaths('123')).toEqual({
-        stdout: '$HOME/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.out',
-        stderr: '$HOME/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.err'
+        stdout: `${HOME}/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.out`,
+        stderr: `${HOME}/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.err`,
       })
     });
   });

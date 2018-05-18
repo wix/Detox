@@ -1,5 +1,5 @@
 const fs = require('fs-extra');
-const ensureExtension = require('../../../utils/ensureExtension');
+const ensureMove = require('../../../utils/ensureMove');
 const RecordingArtifact = require('../../core/artifact/RecordingArtifact');
 
 class AppleSimUtilsVideoRecording extends RecordingArtifact {
@@ -34,12 +34,7 @@ class AppleSimUtilsVideoRecording extends RecordingArtifact {
   }
 
   async doSave(artifactPath) {
-    const mp4ArtifactPath = ensureExtension(artifactPath, '.mp4');
-
-    await fs.ensureFile(mp4ArtifactPath);
-    await fs.move(this.temporaryFilePath, mp4ArtifactPath, {
-      overwrite: true
-    });
+    await ensureMove(this.temporaryFilePath, artifactPath, '.mp4');
   }
 
   async doDiscard() {
