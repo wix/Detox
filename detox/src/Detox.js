@@ -10,7 +10,7 @@ const Client = require('./client/Client');
 const DetoxServer = require('detox-server');
 const URL = require('url').URL;
 const _ = require('lodash');
-const createArtifactsManager = require('./artifacts/index');
+const ArtifactsManager = require('./artifacts/ArtifactsManager');
 
 log.level = argparse.getArgValue('loglevel') || 'info';
 log.addLevel('wss', 999, {fg: 'blue', bg: 'black'}, 'wss');
@@ -59,36 +59,11 @@ class Detox {
       global.device = this.device;
     }
 
-    this.pluginApi = this._createPluginApi({
-      deviceId: this.device._deviceId,
-      deviceClass: this.deviceConfig.type,
+    this.artifactsManager = new ArtifactsManager({
+      artifactCapabilities: deviceDriver.getArtifactCapabilities(this.device.id),
     });
 
-    this.artifactsManager = createArtifactsManager(this.pluginApi);
     await this.artifactsManager.onStart();
-  }
-
-  _createPluginApi({ deviceId, deviceClass }) {
-    return Object.freeze({
-      _config: Object.freeze({
-        artifactsLocation: argparse.getArgValue('artifacts-location') || 'artifacts',
-        recordLogs: argparse.getArgValue('record-logs') || 'none',
-        takeScreenshots: argparse.getArgValue('take-screenshots') || 'none',
-        recordVideos: argparse.getArgValue('record-videos') || 'none',
-      }),
-
-      getDeviceId() {
-        return deviceId;
-      },
-
-      getDeviceClass() {
-        return deviceClass;
-      },
-
-      getConfig() {
-        return this._config;
-      },
-    });
   }
 
   async cleanup() {
@@ -109,6 +84,11 @@ class Detox {
     if (argparse.getArgValue('cleanup') && this.device) {
       await this.device.shutdown();
     }
+  }
+
+  async shutdown() {
+    console.error('emergency detox shutdown');
+    await this.artifactsManager.onShutdown();
   }
 
   async beforeEach(testSummary) {

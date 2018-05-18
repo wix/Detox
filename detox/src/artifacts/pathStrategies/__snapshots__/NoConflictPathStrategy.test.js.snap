@@ -1,7 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`NoConflictPathStrategy edge cases should defend against accidental resolving outside of root directory 1`] = `"Given artifact location (/home/build-server/.bashrc) was resolved outside of current test run directory (/tmp/subdir)"`;
-
-exports[`NoConflictPathStrategy edge cases should defend against accidental resolving outside of root directory 2`] = `"Given artifact location (/home/build-server) was resolved outside of current test run directory (/tmp/subdir)"`;
-
-exports[`NoConflictPathStrategy edge cases should defend against accidental resolving outside of root directory 3`] = `"Given artifact location (/home/build-server) was resolved outside of current test run directory (/tmp/subdir)"`;

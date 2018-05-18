@@ -9,6 +9,10 @@ const AAPT = require('./android/AAPT');
 const APKPath = require('./android/APKPath');
 const DeviceDriverBase = require('./DeviceDriverBase');
 
+const ADBLogcatRecorder = require('../artifacts/log/ADBLogcatRecorder');
+const ADBScreenshotter = require('../artifacts/screenshot/ADBScreenshotter');
+const ADBVideoRecorder = require('../artifacts/video/ADBVideoRecorder');
+
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
 
 class AndroidDriver extends DeviceDriverBase {
@@ -20,6 +24,16 @@ class AndroidDriver extends DeviceDriverBase {
 
     this.adb = new ADB();
     this.aapt = new AAPT();
+  }
+
+  getArtifactCapabilities(deviceId) {
+    const adb = this.adb;
+
+    return {
+      log: () => new ADBVideoRecorder({ adb, deviceId }),
+      screenshot: () => new ADBScreenshotter({ adb, deviceId }),
+      video: () => new ADBVideoRecorder({ adb, deviceId }),
+    };
   }
 
   exportGlobals() {

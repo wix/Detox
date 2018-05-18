@@ -7,11 +7,25 @@ const AppleSimUtils = require('./AppleSimUtils');
 const configuration = require('../configuration');
 const environment = require('../utils/environment');
 
+const SimulatorLogRecorder = require('../artifacts/log/SimulatorLogRecorder');
+const SimulatorScreenshotter = require('../artifacts/screenshot/SimulatorScreenshotter');
+const SimulatorVideoRecorder = require('../artifacts/video/SimulatorVideoRecorder');
+
 class SimulatorDriver extends IosDriver {
 
   constructor(client) {
     super(client);
     this._applesimutils = new AppleSimUtils();
+  }
+
+  getArtifactCapabilities(udid) {
+    const appleSimUtils = this._applesimutils;
+
+    return {
+      log: () => new SimulatorLogRecorder({ appleSimUtils, udid }),
+      screen: () => new SimulatorScreenshotter({ appleSimUtils, udid }),
+      video: () => new SimulatorVideoRecorder({ appleSimUtils, udid }),
+    };
   }
 
   async prepare() {

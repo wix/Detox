@@ -15,6 +15,10 @@ class Device {
     this.debug = debug;
   }
 
+  get id() {
+    return this._deviceId;
+  }
+
   async prepare(params = {}) {
     this._binaryPath = this._getAbsolutePath(this._deviceConfig.binaryPath);
     this._deviceId = await this.deviceDriver.acquireFreeDevice(this._deviceConfig.name);
