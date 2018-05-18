@@ -2,23 +2,27 @@ const tempfile = require('tempfile');
 const Recorder = require('../../core/factory/Recorder');
 const SimulatorLogRecording = require('./SimulatorLogRecording');
 
-// TODO: implement
 class SimulatorLogRecorder extends Recorder {
   constructor(config) {
     super(config);
 
     this.appleSimUtils = config.appleSimUtils;
     this.udid = config.udid;
+    this.started = false;
   }
 
   createRecording() {
     const { stdout, stderr } = this.appleSimUtils.getLogsPaths(this.udid);
 
-    return new SimulatorLogRecording({
+    const recording = new SimulatorLogRecording({
       stdoutPath: stdout,
       stderrPath: stderr,
       temporaryLogPath: tempfile('.log'),
+      fromBeginning: !this.started,
     });
+
+    this.started = true;
+    return recording;
   }
 }
 

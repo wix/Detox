@@ -9,12 +9,14 @@ class SimulatorLogRecording extends RecordingArtifact {
     stdoutPath,
     stderrPath,
     temporaryLogPath,
+    fromBeginning,
   }) {
     super();
 
     this._logPath = temporaryLogPath;
     this._stdoutPath = stdoutPath;
     this._stderrPath = stderrPath;
+    this._fromBeginning = fromBeginning;
 
     this._logStream = null;
     this._stdoutTail = null;
@@ -44,7 +46,7 @@ class SimulatorLogRecording extends RecordingArtifact {
 
   _createTail(file, prefix) {
     const tail = new Tail(file, {
-      fromBeginning: true,
+      fromBeginning: this._fromBeginning,
       logger: {
         info: (...args) => npmlog.verbose(`simulator-log-${prefix}`, ...args),
         error: (...args) => npmlog.error(`simulator-log-${prefix}`, ...args),
@@ -53,8 +55,18 @@ class SimulatorLogRecording extends RecordingArtifact {
       this._appendLine(prefix, line);
     });
 
-    tail.watchEvent.call(tail, "change");
+    if (this._fromBeginning) {
+      this._triggerTailReadUsingHack(tail);
+    }
+
     return tail;
+  }
+
+  /***
+   * @link https://github.com/lucagrulla/node-tail/issues/40
+   */
+  _triggerTailReadUsingHack(tail) {
+    tail.watchEvent.call(tail, "change");
   }
 
   _appendLine(prefix, line) {
