@@ -69,6 +69,7 @@
       "DeviceDriverBase.js",
       "GREYConfiguration.js",
       "src/utils/environment.js",
+      "src/utils/sleep.js",
       "AAPT.js",
       "ADB.js",
       "fsext.js",
