@@ -1,6 +1,6 @@
 const path = require('path');
-const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
-const constructSafeFilename = require('../../utils/constructSafeFilename');
+const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
+const constructSafeFilename = require('../../../../utils/constructSafeFilename');
 
 class ArtifactPathBuilder {
   constructor({
@@ -39,8 +39,8 @@ class ArtifactPathBuilder {
       return '';
     }
 
-    const testIndexPrefix = this._getTestIndex(testSummary) + '. ';
-    const testArtifactsDirname = constructSafeFilename(testIndexPrefix, testSummary.fullName);
+    const testDirectoryPrefix = this._buildTestDirectoryPrefix(testSummary);
+    const testArtifactsDirname = constructSafeFilename(testDirectoryPrefix, testSummary.fullName);
 
     return testArtifactsDirname;
   }
@@ -55,6 +55,21 @@ class ArtifactPathBuilder {
         hint: `Make sure that test name (${JSON.stringify(testSummary.fullName)}) does not contain ".." fragments inside.`,
         debugInfo: `Resolved artifact location was: ${absoluteArtifactPath}`
       });
+    }
+  }
+
+  _buildTestDirectoryPrefix(testSummary) {
+    const status = this._getStatusSign(testSummary);
+    const index = this._getTestIndex(testSummary);
+
+    return `${status}${index}. `;
+  }
+
+  _getStatusSign(testSummary) {
+    switch (testSummary.status) {
+      case 'passed': return '✓ ';
+      case 'failed': return '✗ ';
+      default: return '';
     }
   }
 

@@ -13,46 +13,48 @@ class SnapshotterLifecycle {
 
   async onStart() {}
 
-  async onBeforeTest(testSummary) {
-    await this._takeSnapshot(testSummary, 0, 'before');
+  async onBeforeTest() {
+    await this._takeSnapshot(0);
   }
 
   async onAfterTest(testSummary) {
     if (this._shouldKeepSnapshots(testSummary)) {
-      await this._takeSnapshot(testSummary, 1, 'after');
-      this._startSavingSnapshot(0);
-      this._startSavingSnapshot(1);
+      await this._takeSnapshot(1);
+
+      this._startSavingSnapshot(testSummary, 0, 'before');
+      this._startSavingSnapshot(testSummary, 1, 'after');
     } else {
       this._startDiscardingSnapshot(0);
     }
 
-    this._resetSnapshotHandles();
+    this._clearSnapshotReferences();
   }
 
   async onExit() {
-    this._resetSnapshotHandles();
     await Promise.all(this._finalizationTasks);
   }
 
-  async _takeSnapshot(testSummary, index, title) {
-    const pathToSnapshot = this._pathBuilder.buildPathForTestArtifact(testSummary, title);
-    const snapshot =  await this._snapshotter.snapshot(pathToSnapshot);
+  async _takeSnapshot(index) {
+    const snapshot =  await this._snapshotter.snapshot();
 
     this._snapshots[index] = snapshot;
     await snapshot.create();
   }
 
-  _startSavingSnapshot(index) {
-    const handle = this._snapshots[index];
-    this._finalizationTasks.push(handle.save());
+  _startSavingSnapshot(testSummary, index, title) {
+    const snapshotArtifactPath = this._pathBuilder.buildPathForTestArtifact(testSummary, title);
+    const snapshot = this._snapshots[index];
+    const savingTask = snapshot.save(snapshotArtifactPath);
+    this._finalizationTasks.push(savingTask);
   }
 
   _startDiscardingSnapshot(index) {
-    const handle = this._snapshots[index];
-    this._finalizationTasks.push(handle.discard());
+    const snapshot = this._snapshots[index];
+    const discardingTask = snapshot.discard();
+    this._finalizationTasks.push(discardingTask);
   }
 
-  _resetSnapshotHandles() {
+  _clearSnapshotReferences() {
     this._snapshots[0] = null;
     this._snapshots[1] = null;
   }

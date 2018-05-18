@@ -1,8 +1,8 @@
-const RecordingArtifact = require('../core/RecordingArtifact');
+const RecordingArtifact = require('../../core/artifact/RecordingArtifact');
 
 // TODO: implement
 class ADBLogcatRecording extends RecordingArtifact {
-  constructor({ artifactPath }) {
+  constructor({}) {
     super();
   }
 
@@ -14,7 +14,7 @@ class ADBLogcatRecording extends RecordingArtifact {
 
   }
 
-  async doSave() {
+  async doSave(artifactPath) {
 
   }
 

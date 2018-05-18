@@ -1,5 +1,6 @@
 const fs = require('fs-extra');
-const SnapshotArtifact = require('../core/SnapshotArtifact');
+const ensureExtension = require('../../../utils/ensureExtension');
+const SnapshotArtifact = require('../../core/artifact/SnapshotArtifact');
 
 class ADBScreenshot extends SnapshotArtifact {
   constructor(config) {
@@ -7,8 +8,6 @@ class ADBScreenshot extends SnapshotArtifact {
 
     this.adb = config.adb;
     this.deviceId = config.deviceId;
-
-    this.artifactPath = config.artifactPath;
     this.pathToScreenshotOnDevice = config.pathToScreenshotOnDevice;
   }
 
@@ -16,9 +15,11 @@ class ADBScreenshot extends SnapshotArtifact {
     await this.adb.screencap(this.deviceId, this.pathToScreenshotOnDevice);
   }
 
-  async doSave() {
-    await fs.ensureFile(this.artifactPath);
-    await this.adb.pull(this.deviceId, this.pathToScreenshotOnDevice, this.artifactPath);
+  async doSave(artifactPath) {
+    const pngArtifactPath = ensureExtension(artifactPath, '.png');
+
+    await fs.ensureFile(pngArtifactPath);
+    await this.adb.pull(this.deviceId, this.pathToScreenshotOnDevice, pngArtifactPath);
     await this.adb.rm(this.deviceId, this.pathToScreenshotOnDevice);
   }
 

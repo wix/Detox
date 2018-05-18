@@ -12,12 +12,12 @@ class SnapshotArtifact {
     return this._createPromise;
   }
 
-  save() {
+  save(artifactPath) {
     this._assertArtifactWasCreated('save');
     this._assertArtifactIsNotBeingDiscarded();
 
     if (!this._savePromise) {
-      this._savePromise = this.doSave();
+      this._savePromise = this.doSave(artifactPath);
     }
 
     return this._savePromise;
@@ -36,7 +36,7 @@ class SnapshotArtifact {
 
   async doCreate() {}
 
-  async doSave() {}
+  async doSave(artifactPath) {}
 
   async doDiscard() {}
 

@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
-const sleep = require('../../utils/sleep');
-const RecordingArtifact = require('../core/RecordingArtifact');
+const ensureExtension = require('../../../utils/ensureExtension');
+const sleep = require('../../../utils/sleep');
+const RecordingArtifact = require('../../core/artifact/RecordingArtifact');
 
 class ADBVideoRecording extends RecordingArtifact {
   constructor(config) {
@@ -8,7 +9,6 @@ class ADBVideoRecording extends RecordingArtifact {
 
     this.adb = config.adb;
     this.deviceId = config.deviceId;
-    this.artifactPath = config.artifactPath;
     this.pathToVideoOnDevice = config.pathToVideoOnDevice;
     this.screenRecordOptions = { ...config.screenRecordOptions };
 
@@ -38,10 +38,12 @@ class ADBVideoRecording extends RecordingArtifact {
     });
   }
 
-  async doSave() {
+  async doSave(artifactPath) {
+    const mp4ArtifactPath = ensureExtension(artifactPath, '.mp4');
+
     await this._delayWhileVideoFileIsBusy();
-    await fs.ensureFileSync(this.artifactPath);
-    await this.adb.pull(this.deviceId, this.pathToVideoOnDevice, this.artifactPath);
+    await fs.ensureFileSync(mp4ArtifactPath);
+    await this.adb.pull(this.deviceId, this.pathToVideoOnDevice, mp4ArtifactPath);
     await this.adb.rm(this.deviceId, this.pathToVideoOnDevice);
   }
 

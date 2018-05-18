@@ -1,11 +1,11 @@
 const fs = require('fs-extra');
-const RecordingArtifact = require('../core/RecordingArtifact');
+const ensureExtension = require('../../../utils/ensureExtension');
+const RecordingArtifact = require('../../core/artifact/RecordingArtifact');
 
 class AppleSimUtilsVideoRecording extends RecordingArtifact {
   constructor(config) {
     super();
     this.appleSimUtils = config.appleSimUtils;
-    this.artifactPath = config.artifactPath;
     this.temporaryFilePath = config.temporaryFilePath;
     this.udid = config.udid;
     this.processPromise = null;
@@ -27,9 +27,11 @@ class AppleSimUtilsVideoRecording extends RecordingArtifact {
     await this.processPromise;
   }
 
-  async doSave() {
-    await fs.ensureFile(this.artifactPath);
-    await fs.move(this.temporaryFilePath, this.artifactPath, {
+  async doSave(artifactPath) {
+    const mp4ArtifactPath = ensureExtension(artifactPath, '.mp4');
+
+    await fs.ensureFile(mp4ArtifactPath);
+    await fs.move(this.temporaryFilePath, mp4ArtifactPath, {
       overwrite: true
     });
   }

@@ -1,10 +1,10 @@
 const fs = require('fs-extra');
-const SnapshotArtifact = require('../core/SnapshotArtifact');
+const ensureExtension = require('../../../utils/ensureExtension');
+const SnapshotArtifact = require('../../core/artifact/SnapshotArtifact');
 
 class SimulatorScreenshot extends SnapshotArtifact {
   constructor(config) {
     super();
-    this.artifactPath = config.artifactPath;
     this.temporaryFilePath = config.temporaryFilePath;
   }
 
@@ -13,9 +13,11 @@ class SimulatorScreenshot extends SnapshotArtifact {
     await this.appleSimUtils.takeScreenshot(this.udid, this.temporaryFilePath);
   }
 
-  async doSave() {
-    await fs.ensureFile(this.artifactPath);
-    await fs.move(this.temporaryFilePath, this.artifactPath, { overwrite: true });
+  async doSave(artifactPath) {
+    const pngArtifactPath = ensureExtension(artifactPath, '.png');
+
+    await fs.ensureFile(pngArtifactPath);
+    await fs.move(this.temporaryFilePath, pngArtifactPath, { overwrite: true });
   }
 
   async doDiscard() {

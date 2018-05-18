@@ -7,9 +7,9 @@ const AppleSimUtils = require('./AppleSimUtils');
 const configuration = require('../configuration');
 const environment = require('../utils/environment');
 
-const SimulatorLogRecorder = require('../artifacts/log/SimulatorLogRecorder');
-const SimulatorScreenshotter = require('../artifacts/screenshot/SimulatorScreenshotter');
-const SimulatorVideoRecorder = require('../artifacts/video/SimulatorVideoRecorder');
+const SimulatorLogRecorder = require('../artifacts/log/ios/SimulatorLogRecorder');
+const SimulatorScreenshotter = require('../artifacts/screenshot/ios/SimulatorScreenshotter');
+const SimulatorVideoRecorder = require('../artifacts/video/ios/SimulatorVideoRecorder');
 
 class SimulatorDriver extends IosDriver {
 
@@ -22,9 +22,21 @@ class SimulatorDriver extends IosDriver {
     const appleSimUtils = this._applesimutils;
 
     return {
-      log: () => new SimulatorLogRecorder({ appleSimUtils, udid }),
-      screen: () => new SimulatorScreenshotter({ appleSimUtils, udid }),
-      video: () => new SimulatorVideoRecorder({ appleSimUtils, udid }),
+      log: (config) => new SimulatorLogRecorder({
+        ...config,
+        appleSimUtils,
+        udid
+      }),
+      screen: (config) => new SimulatorScreenshotter({
+        ...config,
+        appleSimUtils,
+        udid,
+      }),
+      video: (config) => new SimulatorVideoRecorder({
+        ...config,
+        appleSimUtils,
+        udid,
+      }),
     };
   }
 

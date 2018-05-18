@@ -1,20 +1,21 @@
-const ensureExtension = require('../../utils/ensureExtension');
-const AndroidVideoRecording = require('./AndroidVideoRecording');
+const Recorder = require('../../core/factory/Recorder');
+const AndroidVideoRecording = require('./ADBVideoRecording');
 
-class ADBVideoRecorder {
+class ADBVideoRecorder extends Recorder {
   constructor(config) {
+    super(config);
+
     this.adb = config.adb;
     this.deviceId = config.deviceId;
     this.screenRecordOptions = config.screenRecordOptions;
     this._videosCounter = 0;
   }
 
-  record(artifactPath) {
+  createRecording() {
     return new AndroidVideoRecording({
       adb: this.adb,
-      artifactPath: ensureExtension(artifactPath, '.mp4'),
-      pathToVideoOnDevice: this._generatePathOnDevice(),
       deviceId: this.deviceId,
+      pathToVideoOnDevice: this._generatePathOnDevice(),
       screenRecordOptions: this.screenRecordOptions,
     });
   }

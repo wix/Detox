@@ -1,4 +1,4 @@
-const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
+const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 
 class RecordingArtifact {
   constructor() {
@@ -28,11 +28,11 @@ class RecordingArtifact {
     return this._stopPromise;
   }
 
-  save() {
+  save(artifactPath) {
     this._assertRecordingIsNotBeingDiscarded();
 
     if (!this._savePromise) {
-      this._savePromise = this.stop().then(() => this.doSave());
+      this._savePromise = this.stop().then(() => this.doSave(artifactPath));
     }
 
     return this._savePromise;
@@ -52,7 +52,7 @@ class RecordingArtifact {
 
   async doStop() {}
 
-  async doSave() {}
+  async doSave(artifactPath) {}
 
   async doDiscard() {}
 

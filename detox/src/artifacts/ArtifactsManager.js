@@ -1,28 +1,21 @@
 const _ = require('lodash');
 const argparse = require('../utils/argparse');
 
-const ArtifactPathBuilder =  require('./core/ArtifactPathBuilder');
-const RecorderLifecycle = require('./core/RecorderLifecycle');
-const SnapshotterLifecycle = require('./core/SnapshotterLifecycle');
+const ArtifactPathBuilder =  require('./core/lifecycle/utils/ArtifactPathBuilder');
+const RecorderLifecycle = require('./core/lifecycle/RecorderLifecycle');
+const SnapshotterLifecycle = require('./core/lifecycle/SnapshotterLifecycle');
 
 class ArtifactsManager {
   constructor({ artifactCapabilities }) {
     this._hooks = [];
-    this._recordings = [];
-    this._registerRecording = this._registerRecording.bind(this);
+    this._artifacts = [];
 
     this._pathBuilder = new ArtifactPathBuilder({
       artifactsRootDir: argparse.getArgValue('artifacts-location') || 'artifacts',
     });
 
     if (artifactCapabilities) {
-      const { log, screenshot, video } = artifactCapabilities;
-
-      this._hooks = _.compact([
-        this._createLogRecorderLifecycle(log()),
-        this._createScreenshotterLifecycle(screenshot()),
-        this._createVideoRecorderLifecycle(video()),
-      ]);
+      this._registerArtifactLifecycles(artifactCapabilities);
     }
   }
 
@@ -43,7 +36,23 @@ class ArtifactsManager {
   }
 
   async onShutdown() {
-    await Promise.all(this._recordings.map(r => r.stop()));
+    await Promise.all(this._artifacts.map(r => r.discard()));
+  }
+
+  _registerArtifactLifecycles({ log, screenshot, video }) {
+    const artifactsRegistry = {
+      registerArtifact: this._registerArtifact.bind(this),
+    };
+
+    const logRecorder = log({ artifactsRegistry });
+    const screenshotter = screenshot({ artifactsRegistry });
+    const videoRecorder = video({ artifactsRegistry });
+
+    this._hooks = _.compact([
+      this._createLogRecorderLifecycle(logRecorder),
+      this._createScreenshotterLifecycle(screenshotter),
+      this._createVideoRecorderLifecycle(videoRecorder),
+    ]);
   }
 
   _createLogRecorderLifecycle(logRecorder) {
@@ -61,7 +70,6 @@ class ArtifactsManager {
       shouldRecordStartup: true,
       keepOnlyFailedTestsRecordings: recordLogs === 'failing',
       pathBuilder: this._pathBuilder,
-      registerRecording: this._registerRecording,
       recorder: logRecorder,
     });
   }
@@ -99,13 +107,12 @@ class ArtifactsManager {
       shouldRecordStartup: true,
       keepOnlyFailedTestsRecordings: recordVideos === 'failing',
       pathBuilder: this._pathBuilder,
-      registerRecording: this._registerRecording,
       recorder: videoRecorder,
     });
   }
 
-  _registerRecording(recording) {
-    this._recordings.push(recording);
+  _registerArtifact(artifact) {
+    this._artifacts.push(artifact);
   }
 }
 
