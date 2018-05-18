@@ -63,6 +63,7 @@
     ],
     "coveragePathIgnorePatterns": [
       "/node_modules/",
+      "src/artifacts",
       ".*Driver.js",
       "EmulatorTelnet.js",
       "Emulator.js",

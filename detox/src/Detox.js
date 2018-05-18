@@ -67,7 +67,9 @@ class Detox {
   }
 
   async cleanup() {
-    await this.artifactsManager.onExit();
+    if (this.artifactsManager) {
+      await this.artifactsManager.onExit();
+    }
 
     if (this.client) {
       await this.client.cleanup();
@@ -86,8 +88,7 @@ class Detox {
     }
   }
 
-  async shutdown() {
-    console.error('emergency detox shutdown');
+  async emergencyExit() {
     await this.artifactsManager.onShutdown();
   }
 

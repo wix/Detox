@@ -52,6 +52,40 @@ describe('Detox', () => {
     expect(detox.device.shutdown).toHaveBeenCalledTimes(1);
   });
 
+  it(`Calling detox.cleanup() before .init() should pass without exceptions`, async () => {
+    process.env.cleanup = true;
+    Detox = require('./Detox');
+
+    detox = new Detox({deviceConfig: validDeviceConfig});
+    expect(() => detox.cleanup()).not.toThrowError();
+  });
+
+  it(`Calling .emergencyExit() will trigger artifacts manager shutdown`, async () => {
+    Detox = require('./Detox');
+
+    detox = new Detox({deviceConfig: validDeviceConfig});
+    await detox.init();
+
+    detox.artifactsManager.onShutdown = jest.fn();
+    await detox.emergencyExit();
+
+    expect(detox.artifactsManager.onShutdown).toHaveBeenCalledTimes(1);
+  });
+
+  it(`Calling .beforeEach() will trigger artifacts manager .onBeforeTest`, async () => {
+    Detox = require('./Detox');
+
+    detox = new Detox({deviceConfig: validDeviceConfig});
+    await detox.init();
+
+    detox.artifactsManager.onBeforeTest = jest.fn();
+
+    const testSummary = { title: 'test', fullName: 'suite - test', status: 'running' };
+    await detox.beforeEach(testSummary);
+
+    expect(detox.artifactsManager.onBeforeTest).toHaveBeenCalledWith(testSummary);
+  });
+
   it(`Not passing --cleanup should keep the currently running device up`, async () => {
     Detox = require('./Detox');
     detox = new Detox({deviceConfig: validDeviceConfig});

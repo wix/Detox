@@ -46,7 +46,6 @@ async function initializeDetox({configurations, session}, params) {
   detox = new Detox({deviceConfig, session});
   await detox.init(params);
   platform.set(deviceConfig.type, detox.device);
-  process.on('SIGINT', () => detox.shutdown()); // TODO: check if this actually works
 }
 
 async function init(config, params) {

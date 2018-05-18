@@ -66,6 +66,12 @@ describe('Device', () => {
     await device.prepare();
   });
 
+  it('should provide device.id', async () => {
+    device = validDevice();
+    await device.prepare();
+    expect(device.id).toBe('mockDeviceId');
+  });
+
   it(`prepare() with when reuse is enabled should not uninstall and install`, async () => {
     device = validDevice();
     fs.existsSync.mockReturnValue(true);
