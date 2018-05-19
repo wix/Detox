@@ -5,6 +5,14 @@
 */
 
 
+function sanitize_matcher(matcher) {
+  if (!matcher._call) {
+    return matcher;
+  }
+
+  const originalMatcher = typeof matcher._call === 'function' ? matcher._call() : matcher._call;
+  return originalMatcher.type ? originalMatcher.value : originalMatcher;
+} 
 class ViewActions {
   static clearGlobalAssertions() {
     return {
@@ -14,6 +22,17 @@ class ViewActions {
       },
       method: "clearGlobalAssertions",
       args: []
+    };
+  }
+
+  static actionWithAssertions(viewAction) {
+    return {
+      target: {
+        type: "Class",
+        value: "android.support.test.espresso.action.ViewActions"
+      },
+      method: "actionWithAssertions",
+      args: [viewAction]
     };
   }
 
@@ -29,14 +48,35 @@ class ViewActions {
   }
 
   static click() {
-    return {
-      target: {
-        type: "Class",
-        value: "com.wix.detox.espresso.DetoxViewActions"
-      },
-      method: "click",
-      args: []
-    };
+    function click0() {
+      return {
+        target: {
+          type: "Class",
+          value: "android.support.test.espresso.action.ViewActions"
+        },
+        method: "click",
+        args: []
+      };
+    }
+
+    function click1(rollbackAction) {
+      return {
+        target: {
+          type: "Class",
+          value: "android.support.test.espresso.action.ViewActions"
+        },
+        method: "click",
+        args: [rollbackAction]
+      };
+    }
+
+    if (arguments.length === 0) {
+      return click0.apply(null, arguments);
+    }
+
+    if (arguments.length === 1) {
+      return click1.apply(null, arguments);
+    }
   }
 
   static swipeLeft() {
@@ -232,6 +272,24 @@ class ViewActions {
       },
       method: "openLinkWithUri",
       args: [uri]
+    };
+  }
+
+  static repeatedlyUntil(action, desiredStateMatcher, maxAttempts) {
+    if (typeof maxAttempts !== "number") throw new Error("maxAttempts should be a number, but got " + (maxAttempts + (" (" + (typeof maxAttempts + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "android.support.test.espresso.action.ViewActions"
+      },
+      method: "repeatedlyUntil",
+      args: [action, {
+        type: "Invocation",
+        value: sanitize_matcher(desiredStateMatcher)
+      }, {
+        type: "Integer",
+        value: maxAttempts
+      }]
     };
   }
 
