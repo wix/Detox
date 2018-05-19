@@ -9,10 +9,7 @@
 class DetoxTest {
   static setUpCustomEspressoIdlingResources(element) {
     return {
-      target: {
-        type: "Invocation",
-        value: element
-      },
+      target: element,
       method: "setUpCustomEspressoIdlingResources",
       args: []
     };
@@ -20,10 +17,7 @@ class DetoxTest {
 
   static runDetoxTests(element) {
     return {
-      target: {
-        type: "Invocation",
-        value: element
-      },
+      target: element,
       method: "runDetoxTests",
       args: []
     };

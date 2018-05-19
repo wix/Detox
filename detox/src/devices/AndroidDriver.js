@@ -10,6 +10,8 @@ const APKPath = require('./android/APKPath');
 const DeviceDriverBase = require('./DeviceDriverBase');
 const DetoxApi = require('../android/espressoapi/Detox');
 const EspressoDetoxApi = require('../android/espressoapi/EspressoDetox');
+const UIAutomatorAPI = require('../android/espressoapi/UIAutomator');
+const UIDevice = require('../android/espressoapi/UIDevice');
 
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
 
@@ -69,7 +71,7 @@ class AndroidDriver extends DeviceDriverBase {
     });
 
     if (this.instrumentationProcess) {
-      const call = invoke.call(invoke.Android.Class("com.wix.detox.Detox"), 'launchMainActivity');
+      const call = DetoxApi.launchMainActivity();
       await this.invocationManager.execute(call);
       return this.instrumentationProcess.pid;
     }
@@ -97,7 +99,7 @@ class AndroidDriver extends DeviceDriverBase {
 
   async deliverPayload(params) {
     if(params.url) {
-      const call = invoke.callDirectly(DetoxApi.startActivityFromUrl(params.url));
+      const call = DetoxApi.startActivityFromUrl(params.url);
       await this.invocationManager.execute(call);
     }
 
@@ -105,8 +107,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async sendToHome(deviceId, params) {
-    const uiDevice = invoke.call(invoke.Android.Class("com.wix.detox.uiautomator.UiAutomator"), 'uiDevice');
-    const call = invoke.call(uiDevice, 'pressHome');
+    const call = UIDevice.pressHome(invoke.callDirectly(UIAutomatorAPI.uiDevice()));
     await this.invocationManager.execute(call);
   }
 
@@ -156,17 +157,17 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async setURLBlacklist(urlList) {
-    const call = invoke.callDirectly(EspressoDetoxApi.setURLBlacklist(urlList));
+    const call = EspressoDetoxApi.setURLBlacklist(urlList);
     await this.invocationManager.execute(call);
   }
 
   async enableSynchronization() {
-    const call = invoke.callDirectly(EspressoDetoxApi.setSynchronization(true));
+    const call = EspressoDetoxApi.setSynchronization(true);
     await this.invocationManager.execute(call);
   }
 
   async disableSynchronization() {
-    const call = invoke.callDirectly(EspressoDetoxApi.setSynchronization(false));
+    const call = EspressoDetoxApi.setSynchronization(false);
     await this.invocationManager.execute(call);
   }
 
@@ -176,7 +177,7 @@ class AndroidDriver extends DeviceDriverBase {
       portrait: 0 // non-reversed portrait.
     };
 
-    const call = invoke.callDirectly(EspressoDetoxApi.changeOrientation(orientationMapping[orientation]));
+    const call = EspressoDetoxApi.changeOrientation(orientationMapping[orientation]);
     await this.invocationManager.execute(call);
   }
 }

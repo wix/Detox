@@ -48,10 +48,7 @@ class EspressoDetox {
         value: "com.wix.detox.espresso.EspressoDetox"
       },
       method: "setURLBlacklist",
-      args: [{
-        type: "ArrayList<String>",
-        value: urls
-      }]
+      args: [urls]
     };
   }
 

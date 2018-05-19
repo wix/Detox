@@ -6,12 +6,12 @@
 
 
 function sanitize_uiDeviceOrientation(value) {
-	const orientationMapping = {
-		landscape: 3, // top at left side landscape
-		portrait: 1 // non-reversed portrait
-	};
+  const orientationMapping = {
+    landscape: 3, // top at left side landscape
+    portrait: 1 // non-reversed portrait
+  };
 
-	return orientationMapping[value];
+  return orientationMapping[value];
 } 
 class EarlGreyImpl {
   /*Provides the file name and line number of the code that is calling into EarlGrey.
