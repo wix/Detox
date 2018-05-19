@@ -2,7 +2,7 @@
 const generateIOSAdapters = require("./adapters/ios");
 const generateAndroidAdapters = require("./adapters/android");
 const downloadEspressoFileByClass = require("./utils/downloadEspresso");
-const downloadJavaFile = require("./utils/downloadJava");
+const downloadFile = require("./utils/downloadFile");
 
 const iosFiles = {
 	"../detox/ios/EarlGrey/EarlGrey/Action/GREYActions.h":
@@ -50,7 +50,7 @@ const downloadedAndroidFilesMap = Object.entries(
 ).reduce(
 	(obj, [url, dest]) => ({
 		...obj,
-		[downloadJavaFile(url)]: dest
+		[downloadFile(url)]: dest
 	}),
 	{}
 );
