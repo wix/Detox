@@ -3,6 +3,8 @@ const matchers = require('./matcher');
 const DetoxActionApi = require('./espressoapi/DetoxAction');
 const ViewActionsApi = require('./espressoapi/ViewActions');
 const DetoxAssertionApi = require('./espressoapi/DetoxAssertion');
+const EspressoDetoxApi = require('./espressoapi/EspressoDetox');
+const DetoxMatcherApi = require('./espressoapi/DetoxMatcher');
 const Matcher = matchers.Matcher;
 const LabelMatcher = matchers.LabelMatcher;
 const IdMatcher = matchers.IdMatcher;
@@ -17,13 +19,13 @@ const ValueMatcher = matchers.ValueMatcher;
 
 let invocationManager;
 
-function setInvocationManager(im) {
-  invocationManager = im;
-}
-
 const DetoxMatcher = 'com.wix.detox.espresso.DetoxMatcher';
 const DetoxAssertion = 'com.wix.detox.espresso.DetoxAssertion';
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
+
+function setInvocationManager(im) {
+  invocationManager = im;
+}
 
 class Action {}
 
@@ -114,7 +116,7 @@ class Interaction {
 class ActionInteraction extends Interaction {
   constructor(element, action) {
     super();
-    this._call = invoke.call(invoke.Android.Class(EspressoDetox), 'perform', element._call, action._call);
+    this._call = EspressoDetoxApi.perform(element._call, action._call);
     // TODO: move this.execute() here from the caller
   }
 }
@@ -122,7 +124,7 @@ class ActionInteraction extends Interaction {
 class MatcherAssertionInteraction extends Interaction {
   constructor(element, matcher) {
     super();
-    this._call = invoke.callDirectly(DetoxAssertionApi.assertMatcher(element._call,matcher._call));
+    this._call = DetoxAssertionApi.assertMatcher(element._call, matcher._call);
     // TODO: move this.execute() here from the caller
   }
 }
@@ -140,7 +142,7 @@ class WaitForInteraction extends Interaction {
     if (typeof timeout !== 'number') throw new Error(`WaitForInteraction withTimeout argument must be a number, got ${typeof timeout}`);
     if (timeout < 0) throw new Error('timeout must be larger than 0');
 
-    this._call = invoke.callDirectly(DetoxAssertionApi.waitForAssertMatcher(this._element._call, this._originalMatcher._call, timeout/1000))
+    this._call = DetoxAssertionApi.waitForAssertMatcher(this._element._call, this._originalMatcher._call, timeout / 1000);
     await this.execute();
   }
 
@@ -154,7 +156,8 @@ class WaitForActionInteraction extends Interaction {
     super();
     //if (!(element instanceof Element)) throw new Error(`WaitForActionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
     //if (!(matcher instanceof Matcher)) throw new Error(`WaitForActionInteraction ctor 2nd argument must be a valid Matcher, got ${typeof matcher}`);
-    if (!(searchMatcher instanceof Matcher)) throw new Error(`WaitForActionInteraction ctor 3rd argument must be a valid Matcher, got ${typeof searchMatcher}`);
+    if (!(searchMatcher instanceof Matcher))
+      throw new Error(`WaitForActionInteraction ctor 3rd argument must be a valid Matcher, got ${typeof searchMatcher}`);
     this._element = element;
     this._originalMatcher = matcher;
     this._searchMatcher = searchMatcher;
@@ -162,12 +165,12 @@ class WaitForActionInteraction extends Interaction {
   async _execute(searchAction) {
     //if (!searchAction instanceof Action) throw new Error(`WaitForActionInteraction _execute argument must be a valid Action, got ${typeof searchAction}`);
 
-    this._call = invoke.callDirectly(DetoxAssertionApi.waitForAssertMatcherWithSearchAction(
-      this._element._call, 
-      this._originalMatcher._call, 
-      searchAction._call, 
+    this._call = DetoxAssertionApi.waitForAssertMatcherWithSearchAction(
+      this._element._call,
+      this._originalMatcher._call,
+      searchAction._call,
       this._searchMatcher._call
-    ));
+    );
     await this.execute();
   }
   async scroll(amount, direction = 'down') {
@@ -181,13 +184,14 @@ class Element {
     this._selectElementWithMatcher(this._originalMatcher);
   }
   _selectElementWithMatcher(matcher) {
-    if (!(matcher instanceof Matcher)) throw new Error(`Element _selectElementWithMatcher argument must be a valid Matcher, got ${typeof matcher}`);
+    if (!(matcher instanceof Matcher))
+      throw new Error(`Element _selectElementWithMatcher argument must be a valid Matcher, got ${typeof matcher}`);
     this._call = invoke.call(invoke.Espresso, 'onView', matcher._call);
   }
   atIndex(index) {
     if (typeof index !== 'number') throw new Error(`Element atIndex argument must be a number, got ${typeof index}`);
     const matcher = this._originalMatcher;
-    this._originalMatcher._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForAtIndex', invoke.Android.Integer(index), matcher._call);
+    this._originalMatcher._call = DetoxMatcherApi.matcherForAtIndex(index, matcher._call);
     this._selectElementWithMatcher(this._originalMatcher);
     return this;
   }
@@ -240,13 +244,13 @@ class ExpectElement extends Expect {
     return await new MatcherAssertionInteraction(this._element, new VisibleMatcher()).execute();
   }
   async toBeNotVisible() {
-    return await invocationManager.execute(invoke.callDirectly(DetoxAssertionApi.assertNotVisible(this._element._call)));
+    return await invocationManager.execute(DetoxAssertionApi.assertNotVisible(this._element._call));
   }
   async toExist() {
     return await new MatcherAssertionInteraction(this._element, new ExistsMatcher()).execute();
   }
   async toNotExist() {
-    return await invocationManager.execute(invoke.callDirectly(DetoxAssertionApi.assertNotExists(this._element._call)));
+    return await invocationManager.execute(DetoxAssertionApi.assertNotExists(this._element._call));
   }
   async toHaveText(value) {
     return await new MatcherAssertionInteraction(this._element, new TextMatcher(value)).execute();
@@ -308,13 +312,13 @@ function element(matcher) {
 }
 
 const by = {
-  accessibilityLabel: (value) => new LabelMatcher(value),
-  label: (value) => new LabelMatcher(value),
-  id: (value) => new IdMatcher(value),
-  type: (value) => new TypeMatcher(value),
-  traits: (value) => new TraitsMatcher(value),
-  value: (value) => new ValueMatcher(value),
-  text: (value) => new TextMatcher(value)
+  accessibilityLabel: value => new LabelMatcher(value),
+  label: value => new LabelMatcher(value),
+  id: value => new IdMatcher(value),
+  type: value => new TypeMatcher(value),
+  traits: value => new TraitsMatcher(value),
+  value: value => new ValueMatcher(value),
+  text: value => new TextMatcher(value)
 };
 
 const exportGlobals = () => {
