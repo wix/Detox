@@ -2,15 +2,17 @@ const t = require('babel-types');
 const generator = require('../core/generator');
 const { callGlobal } = require('../helpers');
 
-const { isNumber, isString, isBoolean, isOfClass, isArray } = require('../core/type-checks');
+const { isNumber, isString, isBoolean, isOfClass, isArray, isDefined } = require('../core/type-checks');
 
 const typeCheckInterfaces = {
-  Integer: isNumber,
-  Double: isNumber,
-  String: isString,
-  boolean: isBoolean,
+  'ArrayList<String>': isArray,
   'Matcher<View>': isOfClass('Matcher'),
-  'ArrayList<String>': isArray
+  boolean: isBoolean,
+  Double: isNumber,
+  Integer: isNumber,
+  String: isString,
+  ViewAction: isDefined,
+  ViewInteraction: isDefined
 };
 
 const contentSanitizersForFunction = {
@@ -51,7 +53,18 @@ module.exports = generator({
   typeCheckInterfaces,
   contentSanitizersForFunction,
   contentSanitizersForType,
-  supportedTypes: ['Integer', 'int', 'double', 'Double', 'boolean', 'String', 'Matcher<View>', 'ArrayList<String>'],
+  supportedTypes: [
+    'ArrayList<String>',
+    'boolean',
+    'double',
+    'Double',
+    'int',
+    'Integer',
+    'Matcher<View>',
+    'String',
+    'ViewAction',
+    'ViewInteraction'
+  ],
   renameTypesMap: {
     int: 'Integer', // TODO: add test
     double: 'Double'

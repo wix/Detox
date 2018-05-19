@@ -5,7 +5,10 @@
 */
 
 
-
+function sanitize_matcher(matcher) {
+  const originalMatcher = typeof matcher._call === 'function' ? matcher._call() : matcher._call;
+  return originalMatcher.type ? originalMatcher.value : originalMatcher;
+} 
 class ViewActions {
   static clearGlobalAssertions() {
     return {
@@ -15,6 +18,20 @@ class ViewActions {
       },
       method: "clearGlobalAssertions",
       args: []
+    };
+  }
+
+  static actionWithAssertions(viewAction) {
+    return {
+      target: {
+        type: "Class",
+        value: "android.support.test.espresso.action.ViewActions"
+      },
+      method: "actionWithAssertions",
+      args: [{
+        type: "ViewAction",
+        value: viewAction
+      }]
     };
   }
 
@@ -37,6 +54,20 @@ class ViewActions {
       },
       method: "click",
       args: []
+    };
+  }
+
+  static click(rollbackAction) {
+    return {
+      target: {
+        type: "Class",
+        value: "android.support.test.espresso.action.ViewActions"
+      },
+      method: "click",
+      args: [{
+        type: "ViewAction",
+        value: rollbackAction
+      }]
     };
   }
 
@@ -233,6 +264,33 @@ class ViewActions {
       },
       method: "openLinkWithUri",
       args: [uri]
+    };
+  }
+
+  static repeatedlyUntil(action, desiredStateMatcher, maxAttempts) {
+    if (typeof desiredStateMatcher !== 'object' || typeof desiredStateMatcher.constructor !== 'function' || desiredStateMatcher.constructor.name.indexOf('Matcher') === -1) {
+      const isObject = typeof desiredStateMatcher === 'object';
+      const additionalErrorInfo = isObject ? typeof desiredStateMatcher.constructor === 'object' ? 'the constructor is no object' : 'it has a wrong class name: "' + desiredStateMatcher.constructor.name + '"' : 'it is no object';
+      throw new Error('desiredStateMatcher should be an instance of Matcher, got "' + desiredStateMatcher + '", it appears that ' + additionalErrorInfo);
+    }
+
+    if (typeof maxAttempts !== "number") throw new Error("maxAttempts should be a number, but got " + (maxAttempts + (" (" + (typeof maxAttempts + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "android.support.test.espresso.action.ViewActions"
+      },
+      method: "repeatedlyUntil",
+      args: [{
+        type: "ViewAction",
+        value: action
+      }, {
+        type: "Invocation",
+        value: sanitize_matcher(desiredStateMatcher)
+      }, {
+        type: "Integer",
+        value: maxAttempts
+      }]
     };
   }
 

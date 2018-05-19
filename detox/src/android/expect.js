@@ -2,6 +2,7 @@ const invoke = require('../invoke');
 const matchers = require('./matcher');
 const DetoxActionApi = require('./espressoapi/DetoxAction');
 const ViewActionsApi = require('./espressoapi/ViewActions');
+const DetoxAssertionApi = require('./espressoapi/DetoxAssertion');
 const Matcher = matchers.Matcher;
 const LabelMatcher = matchers.LabelMatcher;
 const IdMatcher = matchers.IdMatcher;
@@ -121,7 +122,7 @@ class ActionInteraction extends Interaction {
 class MatcherAssertionInteraction extends Interaction {
   constructor(element, matcher) {
     super();
-    this._call = invoke.call(invoke.Android.Class(DetoxAssertion), 'assertMatcher', element._call, matcher._call);
+    this._call = invoke.callDirectly(DetoxAssertionApi.assertMatcher(element._call,matcher._call));
     // TODO: move this.execute() here from the caller
   }
 }
@@ -139,7 +140,7 @@ class WaitForInteraction extends Interaction {
     if (typeof timeout !== 'number') throw new Error(`WaitForInteraction withTimeout argument must be a number, got ${typeof timeout}`);
     if (timeout < 0) throw new Error('timeout must be larger than 0');
 
-    this._call = invoke.call(invoke.Android.Class(DetoxAssertion), 'waitForAssertMatcher', this._element._call, this._originalMatcher._call, invoke.Android.Double(timeout/1000));
+    this._call = invoke.callDirectly(DetoxAssertionApi.waitForAssertMatcher(this._element._call, this._originalMatcher._call, timeout/1000))
     await this.execute();
   }
 
@@ -160,8 +161,13 @@ class WaitForActionInteraction extends Interaction {
   }
   async _execute(searchAction) {
     //if (!searchAction instanceof Action) throw new Error(`WaitForActionInteraction _execute argument must be a valid Action, got ${typeof searchAction}`);
-    this._call = invoke.call(invoke.Android.Class(DetoxAssertion), 'waitForAssertMatcherWithSearchAction',
-      this._element._call, this._originalMatcher._call, searchAction._call, this._searchMatcher._call);
+
+    this._call = invoke.callDirectly(DetoxAssertionApi.waitForAssertMatcherWithSearchAction(
+      this._element._call, 
+      this._originalMatcher._call, 
+      searchAction._call, 
+      this._searchMatcher._call
+    ));
     await this.execute();
   }
   async scroll(amount, direction = 'down') {
@@ -234,13 +240,13 @@ class ExpectElement extends Expect {
     return await new MatcherAssertionInteraction(this._element, new VisibleMatcher()).execute();
   }
   async toBeNotVisible() {
-    return await invocationManager.execute(invoke.call(invoke.Android.Class(DetoxAssertion), 'assertNotVisible', this._element._call));
+    return await invocationManager.execute(invoke.callDirectly(DetoxAssertionApi.assertNotVisible(this._element._call)));
   }
   async toExist() {
     return await new MatcherAssertionInteraction(this._element, new ExistsMatcher()).execute();
   }
   async toNotExist() {
-    return await invocationManager.execute(invoke.call(invoke.Android.Class(DetoxAssertion), 'assertNotExists', this._element._call));
+    return await invocationManager.execute(invoke.callDirectly(DetoxAssertionApi.assertNotExists(this._element._call)));
   }
   async toHaveText(value) {
     return await new MatcherAssertionInteraction(this._element, new TextMatcher(value)).execute();
