@@ -39,10 +39,10 @@ const downloadedAndroidFilesMap = Object.entries(
 	{}
 );
 const androidFiles = {
-	...downloadedAndroidFilesMap,
-	"../detox/android/detox/src/main/java/com/wix/detox/espresso/DetoxAction.java":
-		"../detox/src/android/espressoapi/DetoxAction.js",
-	"../detox/android/detox/src/main/java/com/wix/detox/espresso/DetoxMatcher.java":
-		"../detox/src/android/espressoapi/DetoxMatcher.js"
+  ...downloadedAndroidFilesMap,
+  '../detox/android/detox/src/main/java/com/wix/detox/espresso/DetoxAction.java': '../detox/src/android/espressoapi/DetoxAction.js',
+  '../detox/android/detox/src/main/java/com/wix/detox/espresso/DetoxMatcher.java': '../detox/src/android/espressoapi/DetoxMatcher.js',
+  '../detox/android/detox/src/main/java/com/wix/detox/Detox.java': '../detox/src/android/espressoapi/Detox.js',
+  '../detox/android/detox/src/main/java/com/wix/detox/espresso/EspressoDetox.java': '../detox/src/android/espressoapi/EspressoDetox.js',
 };
 generateAndroidAdapters(androidFiles);

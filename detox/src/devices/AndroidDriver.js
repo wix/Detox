@@ -8,6 +8,8 @@ const ADB = require('./android/ADB');
 const AAPT = require('./android/AAPT');
 const APKPath = require('./android/APKPath');
 const DeviceDriverBase = require('./DeviceDriverBase');
+const DetoxApi = require('../android/espressoapi/Detox');
+const EspressoDetoxApi = require('../android/espressoapi/EspressoDetox');
 
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
 
@@ -95,7 +97,7 @@ class AndroidDriver extends DeviceDriverBase {
 
   async deliverPayload(params) {
     if(params.url) {
-      const call = invoke.call(invoke.Android.Class("com.wix.detox.Detox"), 'startActivityFromUrl', invoke.Android.String(params.url));
+      const call = invoke.callDirectly(DetoxApi.startActivityFromUrl(params.url));
       await this.invocationManager.execute(call);
     }
 
@@ -154,17 +156,17 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async setURLBlacklist(urlList) {
-    const call = invoke.call(invoke.Android.Class(EspressoDetox), 'setURLBlacklist', urlList);
+    const call = invoke.callDirectly(EspressoDetoxApi.setURLBlacklist(urlList));
     await this.invocationManager.execute(call);
   }
 
   async enableSynchronization() {
-    const call = invoke.call(invoke.Android.Class(EspressoDetox), 'setSynchronization', invoke.Android.Boolean(true));
+    const call = invoke.callDirectly(EspressoDetoxApi.setSynchronization(true));
     await this.invocationManager.execute(call);
   }
 
   async disableSynchronization() {
-    const call = invoke.call(invoke.Android.Class(EspressoDetox), 'setSynchronization', invoke.Android.Boolean(false));
+    const call = invoke.callDirectly(EspressoDetoxApi.setSynchronization(false));
     await this.invocationManager.execute(call);
   }
 
@@ -174,7 +176,7 @@ class AndroidDriver extends DeviceDriverBase {
       portrait: 0 // non-reversed portrait.
     };
 
-    const call = invoke.call(invoke.Android.Class(EspressoDetox), 'changeOrientation', invoke.Android.Integer(orientationMapping[orientation]));
+    const call = invoke.callDirectly(EspressoDetoxApi.changeOrientation(orientationMapping[orientation]));
     await this.invocationManager.execute(call);
   }
 }
