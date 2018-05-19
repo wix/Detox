@@ -154,5 +154,6 @@ module.exports = {
   sanitize_android_direction,
   sanitize_android_edge,
   sanitize_matcher,
-  sanitize_greyElementInteraction
+  sanitize_greyElementInteraction,
+  sanitize_uiDeviceOrientation
 };
