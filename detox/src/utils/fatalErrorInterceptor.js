@@ -5,13 +5,13 @@ function subscribe(process) {
   process.on('uncaughtException', function (err) {
     npmlog.error('detox', 'Uncaught exception.');
     logDetoxRuntimeError(err);
-    process.exit(1);
+    process.exit(1); // eslint-disable-line
   });
 
   process.on('unhandledRejection', function (reason) {
     npmlog.error('detox', 'Unhandled rejection.');
     logDetoxRuntimeError(reason);
-    process.exit(1);
+    process.exit(1); // eslint-disable-line
   });
 }
 

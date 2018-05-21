@@ -7,8 +7,6 @@ class ArtifactPathBuilder {
     artifactsRootDir,
     getUniqueSubdirectory = ArtifactPathBuilder.generateTimestampBasedSubdirectoryName
   }) {
-    this._nextIndex = -1;
-    this._lastTestTitle = undefined;
     this._currentTestRunDir = path.join(artifactsRootDir, getUniqueSubdirectory());
   }
 
@@ -59,10 +57,7 @@ class ArtifactPathBuilder {
   }
 
   _buildTestDirectoryPrefix(testSummary) {
-    const status = this._getStatusSign(testSummary);
-    const index = this._getTestIndex(testSummary);
-
-    return `${status}${index}. `;
+    return this._getStatusSign(testSummary);
   }
 
   _getStatusSign(testSummary) {
@@ -71,15 +66,6 @@ class ArtifactPathBuilder {
       case 'failed': return '✗ ';
       default: return '';
     }
-  }
-
-  _getTestIndex(testSummary) {
-    if (this._lastTestTitle !== testSummary.fullName) {
-      this._nextIndex++;
-      this._lastTestTitle = testSummary.fullName;
-    }
-
-    return this._nextIndex;
   }
 }
 
