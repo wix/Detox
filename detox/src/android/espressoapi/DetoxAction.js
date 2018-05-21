@@ -7,34 +7,30 @@
 
 function sanitize_android_edge(edge) {
 	switch (edge) {
-		case "left":
+		case 'left':
 			return 1;
-		case "right":
+		case 'right':
 			return 2;
-		case "top":
+		case 'top':
 			return 3;
-		case "bottom":
+		case 'bottom':
 			return 4;
 		default:
-			throw new Error(
-				`edge must be a 'left'/'right'/'top'/'bottom', got ${edge}`
-			);
+			throw new Error(`edge must be a 'left'/'right'/'top'/'bottom', got ${edge}`);
 	}
 } 
 function sanitize_android_direction(direction) {
 	switch (direction) {
-		case "left":
+		case 'left':
 			return 1;
-		case "right":
+		case 'right':
 			return 2;
-		case "up":
+		case 'up':
 			return 3;
-		case "down":
+		case 'down':
 			return 4;
 		default:
-			throw new Error(
-				`direction must be a 'left'/'right'/'up'/'down', got ${direction}`
-			);
+			throw new Error(`direction must be a 'left'/'right'/'up'/'down', got ${direction}`);
 	}
 } 
 class DetoxAction {
