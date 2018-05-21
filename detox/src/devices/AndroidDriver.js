@@ -8,6 +8,7 @@ const ADB = require('./android/ADB');
 const AAPT = require('./android/AAPT');
 const APKPath = require('./android/APKPath');
 const DeviceDriverBase = require('./DeviceDriverBase');
+const sleep = require('../utils/sleep');
 
 const ADBLogcatRecorder = require('../artifacts/log/android/ADBLogcatRecorder');
 const ADBScreenshotter = require('../artifacts/screenshot/android/ADBScreenshotter');
@@ -26,7 +27,7 @@ class AndroidDriver extends DeviceDriverBase {
     this.aapt = new AAPT();
   }
 
-  getArtifactCapabilities({ deviceId, bundleId }) {
+  getArtifactCapabilities({ deviceId, processId }) {
     const adb = this.adb;
 
     return {
@@ -34,7 +35,7 @@ class AndroidDriver extends DeviceDriverBase {
         ...config,
         adb,
         deviceId,
-        bundleId,
+        processId,
       }),
       screenshot: (config) => new ADBScreenshotter({
         ...config,
@@ -95,7 +96,7 @@ class AndroidDriver extends DeviceDriverBase {
     if (this.instrumentationProcess) {
       const call = invoke.call(invoke.Android.Class("com.wix.detox.Detox"), 'launchMainActivity');
       await this.invocationManager.execute(call);
-      return this.instrumentationProcess.pid;
+      return this._queryPID(deviceId, bundleId);
     }
 
     const testRunner = await this.adb.getInstrumentationRunner(deviceId, bundleId);
@@ -116,7 +117,25 @@ class AndroidDriver extends DeviceDriverBase {
       this.terminateInstrumentation();
     });
 
-    return this.instrumentationProcess.pid;
+    return this._queryPID(deviceId, bundleId);
+  }
+
+  async _queryPID(deviceId, bundleId, waitAtStart = true) {
+    if (waitAtStart) {
+      await sleep(500);
+    }
+
+    for (let attempts = 5; attempts > 0; attempts--) {
+      const PID = await this.adb.pidof(deviceId, bundleId);
+
+      if (PID > 0) {
+        return PID;
+      }
+
+      await sleep(1000);
+    }
+
+    return NaN;
   }
 
   async deliverPayload(params) {

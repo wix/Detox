@@ -72,11 +72,12 @@ describe('Device', () => {
     expect(device.id).toBe('mockDeviceId');
   });
 
-  it('should provide device.bundleId', async () => {
+  it('should provide device.processId', async () => {
     device = validDevice();
     device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
-    await device.prepare();
-    expect(device.bundleId).toBe('test.bundle');
+    device.deviceDriver.launch.mockReturnValue('fakeId');
+    await device.prepare({ launchApp: true });
+    expect(device.processId).toBe('fakeId');
   });
 
   it(`prepare() with when reuse is enabled should not uninstall and install`, async () => {

@@ -49,12 +49,30 @@ class ADBVideoRecording extends RecordingArtifact {
 
   async _delayWhileVideoFileIsEmpty() {
     await sleep(300); // wait while video is most likely empty
-    await this.adb.waitForFileRecording(this.deviceId, this.pathToVideoOnDevice);
+    await this._waitForFileRecording();
   }
 
   async _delayWhileVideoFileIsBusy() {
     await this.waitWhileVideoIsMostLikelyBusy;
-    await this.adb.waitForFileRelease(this.deviceId, this.pathToVideoOnDevice);
+    await this._waitForFileRelease();
+  }
+
+  async _waitForFileRecording() {
+    let size;
+
+    do {
+      size = await this.adb.getFileSize(this.deviceId, this.pathToVideoOnDevice);
+      await sleep(100);
+    } while (size < 1);
+  }
+
+  async _waitForFileRelease() {
+    let isFileOpen;
+
+    do {
+      isFileOpen = await this.adb.isFileOpen(this.deviceId, this.pathToVideoOnDevice);
+      await sleep(500);
+    } while (isFileOpen);
   }
 }
 

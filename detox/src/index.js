@@ -1,10 +1,11 @@
+const _ = require('lodash');
 const Detox = require('./Detox');
+const fatalErrorInterceptor = require('./utils/fatalErrorInterceptor');
 const DetoxConstants = require('./DetoxConstants');
 const platform = require('./platform');
 const exportWrapper = require('./exportWrapper');
 const argparse = require('./utils/argparse');
 const configuration = require('./configuration');
-const _ = require('lodash');
 
 let detox;
 
@@ -70,6 +71,8 @@ async function cleanup() {
         await detox.cleanup();
     }
 }
+
+fatalErrorInterceptor(process);
 
 module.exports = Object.assign({
   init,

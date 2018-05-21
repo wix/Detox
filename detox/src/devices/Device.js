@@ -19,8 +19,8 @@ class Device {
     return this._deviceId;
   }
 
-  get bundleId() {
-    return this._bundleId;
+  get processId() {
+    return this._processes[this._bundleId];
   }
 
   async prepare(params = {}) {

@@ -2,7 +2,9 @@ const _ = require('lodash');
 const path = require('path');
 const Emulator = require('./android/Emulator');
 const EmulatorTelnet = require('./android/EmulatorTelnet');
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const Environment = require('../utils/environment');
+const sleep = require('../utils/sleep');
 const AndroidDriver = require('./AndroidDriver');
 const ini = require('ini');
 const fs = require('fs');
@@ -35,7 +37,7 @@ class EmulatorDriver extends AndroidDriver {
 
   async boot(deviceId) {
     await this.emulator.boot(deviceId);
-    await this.adb.waitForBootComplete(deviceId);
+    await this._waitForBootToComplete(deviceId);
   }
 
   async acquireFreeDevice(name) {
@@ -70,9 +72,28 @@ class EmulatorDriver extends AndroidDriver {
         throw new Error(`Got more than one device corresponding to the name: ${name}`);
     }
 
-    await this.adb.waitForBootComplete(adbName);
+    await this._waitForBootToComplete(adbName);
     await this.adb.unlockScreen(adbName);
     return adbName;
+  }
+
+  async _waitForBootToComplete(deviceId) {
+    const start = Date.now();
+    const maxTimeToBoot = 10 * 60 * 1000;
+
+    while (Date.now() - start < maxTimeToBoot) {
+      const isBootComplete = await this.adb.isBootComplete(deviceId);
+
+      if (isBootComplete) {
+        return;
+      }
+
+      sleep(2000);
+    }
+
+    throw new DetoxRuntimeError({
+      message: `Failed to wait enough time for boot to complete on device: ${deviceId}`,
+    });
   }
 
   async shutdown(deviceId) {
