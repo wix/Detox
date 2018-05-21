@@ -19,6 +19,10 @@ class Device {
     return this._deviceId;
   }
 
+  get bundleId() {
+    return this._bundleId;
+  }
+
   async prepare(params = {}) {
     this._binaryPath = this._getAbsolutePath(this._deviceConfig.binaryPath);
     this._deviceId = await this.deviceDriver.acquireFreeDevice(this._deviceConfig.name);

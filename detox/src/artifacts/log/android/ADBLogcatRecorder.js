@@ -6,10 +6,22 @@ class ADBLogcatRecorder extends Recorder {
     super(config);
 
     this.adb = config.adb;
+    this.bundleId = config.bundleId;
+    this.deviceId = config.deviceId;
+    this._logsCounter = 0;
   }
 
   createRecording() {
-    return new ADBLogcatRecording({});
+    return new ADBLogcatRecording({
+      adb: this.adb,
+      bundleId: this.bundleId,
+      deviceId: this.deviceId,
+      pathToLogOnDevice: this._generatePathOnDevice(),
+    });
+  }
+
+  _generatePathOnDevice() {
+    return `/sdcard/${this._logsCounter++}.log`;
   }
 }
 

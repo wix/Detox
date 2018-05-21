@@ -4,18 +4,19 @@ class RecorderLifecycle {
     keepOnlyFailedTestsRecordings,
     recorder,
     pathBuilder,
+    enqueueFinalizationTask,
   }) {
     this._shouldRecordStartup = shouldRecordStartup;
     this._keepOnlyFailedTestsRecordings = keepOnlyFailedTestsRecordings;
     this._recorder = recorder;
     this._pathBuilder = pathBuilder;
+    this._enqueueFinalizationTask = enqueueFinalizationTask;
 
     this._startupRecording = null;
     this._testRecording = null;
 
     this._isRecordingStartup = false;
     this._hasFailingTests = false;
-    this._finalizationTasks = [];
   }
 
   async onStart() {
@@ -44,8 +45,6 @@ class RecorderLifecycle {
     if (this._startupRecording !== null) {
       this._finalizeStartupRecording();
     }
-
-    await Promise.all(this._finalizationTasks);
   }
 
   async _beginRecordingStartup() {
@@ -80,15 +79,15 @@ class RecorderLifecycle {
   }
 
   _startSavingStartupRecording() {
+    const startupRecording = this._startupRecording;
     const startupRecordingPath = this._pathBuilder.buildPathForRunArtifact('startup');
-    const savingTask = this._startupRecording.save(startupRecordingPath);
-    this._enqueue(savingTask);
+    this._enqueueFinalizationTask(() => startupRecording.save(startupRecordingPath));
     this._startupRecording = null;
   }
 
   _startDiscardingStartupRecording() {
-    const discardingTask = this._startupRecording.discard();
-    this._enqueue(discardingTask);
+    const startupRecording = this._startupRecording;
+    this._enqueueFinalizationTask(() => startupRecording.discard());
     this._startupRecording = null;
   }
 
@@ -119,20 +118,16 @@ class RecorderLifecycle {
   }
 
   _startSavingTestRecording(testSummary) {
+    const testRecording = this._testRecording;
     const recordingArtifactPath = this._pathBuilder.buildPathForTestArtifact(testSummary, 'test');
-    const savingTask = this._testRecording.save(recordingArtifactPath);
-    this._enqueue(savingTask);
+    this._enqueueFinalizationTask(() => testRecording.save(recordingArtifactPath));
     this._testRecording = null;
   }
 
   _startDiscardingTestRecording() {
-    const discardingTask = this._testRecording.discard();
-    this._enqueue(discardingTask);
+    const testRecording = this._testRecording;
+    this._enqueueFinalizationTask(() => testRecording.discard());
     this._testRecording = null;
-  }
-
-  _enqueue(finalizationTaskPromise) {
-    this._finalizationTasks.push(finalizationTaskPromise);
   }
 }
 

@@ -3,11 +3,12 @@ class SnapshotterLifecycle {
     keepOnlyFailedTestsSnapshots,
     pathBuilder,
     snapshotter,
+    enqueueFinalizationTask,
   }) {
     this._keepOnlyFailedTestsSnapshots = keepOnlyFailedTestsSnapshots;
     this._pathBuilder = pathBuilder;
     this._snapshotter = snapshotter;
-    this._finalizationTasks = [];
+    this._enqueueFinalizationTask = enqueueFinalizationTask;
     this._snapshots = [null, null];
   }
 
@@ -30,9 +31,7 @@ class SnapshotterLifecycle {
     this._clearSnapshotReferences();
   }
 
-  async onExit() {
-    await Promise.all(this._finalizationTasks);
-  }
+  async onExit() {}
 
   async _takeSnapshot(index) {
     const snapshot =  await this._snapshotter.snapshot();
@@ -44,14 +43,14 @@ class SnapshotterLifecycle {
   _startSavingSnapshot(testSummary, index, title) {
     const snapshotArtifactPath = this._pathBuilder.buildPathForTestArtifact(testSummary, title);
     const snapshot = this._snapshots[index];
-    const savingTask = snapshot.save(snapshotArtifactPath);
-    this._finalizationTasks.push(savingTask);
+
+    this._enqueueFinalizationTask(() => snapshot.save(snapshotArtifactPath));
   }
 
   _startDiscardingSnapshot(index) {
     const snapshot = this._snapshots[index];
-    const discardingTask = snapshot.discard();
-    this._finalizationTasks.push(discardingTask);
+
+    this._enqueueFinalizationTask(() => snapshot.discard());
   }
 
   _clearSnapshotReferences() {

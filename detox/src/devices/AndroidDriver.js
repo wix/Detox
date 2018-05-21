@@ -26,7 +26,7 @@ class AndroidDriver extends DeviceDriverBase {
     this.aapt = new AAPT();
   }
 
-  getArtifactCapabilities(deviceId) {
+  getArtifactCapabilities({ deviceId, bundleId }) {
     const adb = this.adb;
 
     return {
@@ -34,6 +34,7 @@ class AndroidDriver extends DeviceDriverBase {
         ...config,
         adb,
         deviceId,
+        bundleId,
       }),
       screenshot: (config) => new ADBScreenshotter({
         ...config,

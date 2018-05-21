@@ -1,6 +1,7 @@
+const _ = require('lodash');
 const path = require('path');
 const {execWithRetriesAndLogs, spawnAndLog} = require('../../utils/exec');
-const _ = require('lodash');
+const sleep = require('../../utils/sleep');
 const EmulatorTelnet = require('./EmulatorTelnet');
 const Environment = require('../../utils/environment');
 
@@ -73,6 +74,35 @@ class ADB {
     return (await this.adbCmd(deviceId, `shell ${cmd}`)).stdout.trim();
   }
 
+  async waitForFileRecording(deviceId, filename, strict = true) {
+    let size = -1;
+    const min = strict ? 1 : 0
+
+    do {
+      size = await this._getFileSize(deviceId, filename);
+      await sleep(100);
+    } while (size < min);
+  }
+
+  async waitForFileRelease(deviceId, filename) {
+    let openedByProcesses = '';
+
+    do {
+      openedByProcesses = await this.shell(deviceId, 'lsof ' + filename);
+      await sleep(500);
+    } while (openedByProcesses.length > 0);
+  }
+
+  async _getFileSize(deviceId, filename) {
+    const { stdout, stderr } = await this.adbCmd(deviceId, 'shell wc -c ' + filename).catch(e => e);
+
+    if (stderr.includes('No such file or directory')) {
+      return -1;
+    }
+
+    return Number(stdout.slice(0, stdout.indexOf(' ')));
+  }
+
   async waitForBootComplete(deviceId) {
     try {
       const bootComplete = await this.shell(deviceId, `getprop dev.bootcomplete`);
@@ -140,6 +170,27 @@ class ADB {
     const screenRecordArgs = [..._size, ..._bitRate, ..._timeLimit, ..._verbose, path];
 
     return this.spawn(deviceId, ['shell', 'screenrecord', ...screenRecordArgs]);
+  }
+
+  logcat(deviceId, { expression, file, time }) {
+    const logcatArgs = [];
+
+    if (expression) {
+      logcatArgs.push('-e');
+      logcatArgs.push(expression);
+    }
+
+    if (file) {
+      logcatArgs.push('-f');
+      logcatArgs.push(file);
+    }
+
+    if (time) {
+      logcatArgs.push('-T');
+      logcatArgs.push(time);
+    }
+
+    return this.spawn(deviceId, ['logcat', ...logcatArgs]);
   }
 
   pull(deviceId, src, dst = '') {

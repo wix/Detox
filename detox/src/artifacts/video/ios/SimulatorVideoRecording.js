@@ -1,15 +1,15 @@
 const fs = require('fs-extra');
-const ensureMove = require('../../../utils/ensureMove');
 const RecordingArtifact = require('../../core/artifact/RecordingArtifact');
+const ensureMove = require('../../../utils/ensureMove');
+const interruptProcess = require('../../../utils/interruptProcess');
 
-class AppleSimUtilsVideoRecording extends RecordingArtifact {
+class SimulatorVideoRecording extends RecordingArtifact {
   constructor(config) {
     super();
     this.appleSimUtils = config.appleSimUtils;
     this.temporaryFilePath = config.temporaryFilePath;
     this.udid = config.udid;
     this.processPromise = null;
-    this.process = null;
   }
 
   async doStart() {
@@ -19,18 +19,9 @@ class AppleSimUtilsVideoRecording extends RecordingArtifact {
   }
 
   async doStop() {
-    if (!this.process) {
-      return;
+    if (this.processPromise) {
+      await interruptProcess(this.processPromise);
     }
-
-    this.process.kill('SIGINT');
-    await this.processPromise.catch(e => {
-      if (e.exitCode == null && e.childProcess.killed) {
-        return;
-      }
-
-      throw e;
-    });
   }
 
   async doSave(artifactPath) {
@@ -42,4 +33,4 @@ class AppleSimUtilsVideoRecording extends RecordingArtifact {
   }
 }
 
-module.exports = AppleSimUtilsVideoRecording;
+module.exports = SimulatorVideoRecording;

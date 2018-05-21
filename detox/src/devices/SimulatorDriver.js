@@ -18,7 +18,7 @@ class SimulatorDriver extends IosDriver {
     this._applesimutils = new AppleSimUtils();
   }
 
-  getArtifactCapabilities(udid) {
+  getArtifactCapabilities({ deviceId: udid }) {
     const appleSimUtils = this._applesimutils;
 
     return {

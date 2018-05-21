@@ -1,7 +1,8 @@
 const fs = require('fs-extra');
-const ensureExtension = require('../../../utils/ensureExtension');
-const sleep = require('../../../utils/sleep');
 const RecordingArtifact = require('../../core/artifact/RecordingArtifact');
+const ensureExtension = require('../../../utils/ensureExtension');
+const interruptProcess = require('../../../utils/interruptProcess');
+const sleep = require('../../../utils/sleep');
 
 class ADBVideoRecording extends RecordingArtifact {
   constructor(config) {
@@ -13,7 +14,7 @@ class ADBVideoRecording extends RecordingArtifact {
     this.screenRecordOptions = { ...config.screenRecordOptions };
 
     this.processPromise = null;
-    this.process = null;
+    this.waitWhileVideoIsMostLikelyBusy = null;
   }
 
   async doStart() {
@@ -22,27 +23,21 @@ class ADBVideoRecording extends RecordingArtifact {
       path: this.pathToVideoOnDevice
     });
 
-    this.process = this.processPromise.childProcess;
     await this._delayWhileVideoFileIsEmpty();
   }
 
   async doStop() {
-    this.process.kill('SIGINT');
-
-    await this.processPromise.catch(e => {
-      if (e.exitCode == null && e.childProcess.killed) {
-        return;
-      }
-
-      throw e;
-    });
+    if (this.processPromise) {
+      await interruptProcess(this.processPromise);
+      this.waitWhileVideoIsMostLikelyBusy = sleep(500);
+    }
   }
 
   async doSave(artifactPath) {
     const mp4ArtifactPath = ensureExtension(artifactPath, '.mp4');
 
     await this._delayWhileVideoFileIsBusy();
-    await fs.ensureFileSync(mp4ArtifactPath);
+    await fs.ensureFile(mp4ArtifactPath);
     await this.adb.pull(this.deviceId, this.pathToVideoOnDevice, mp4ArtifactPath);
     await this.adb.rm(this.deviceId, this.pathToVideoOnDevice);
   }
@@ -53,36 +48,13 @@ class ADBVideoRecording extends RecordingArtifact {
   }
 
   async _delayWhileVideoFileIsEmpty() {
-    let size = -1;
-
-    do {
-      await sleep(300);
-      size = await this._getVideoFileSizeOnDevice();
-    } while (size < 1);
-  }
-
-  async _getVideoFileSizeOnDevice() {
-    const { stdout, stderr } = await this.adb.adbCmd(this.deviceId, 'shell wc -c ' + this.pathToVideoOnDevice).catch(e => e);
-
-    if (stderr.includes('No such file or directory')) {
-      return -1;
-    }
-
-    return Number(stdout.slice(0, stdout.indexOf(' ')));
+    await sleep(300); // wait while video is most likely empty
+    await this.adb.waitForFileRecording(this.deviceId, this.pathToVideoOnDevice);
   }
 
   async _delayWhileVideoFileIsBusy() {
-    let busy = true;
-
-    do {
-      await sleep(500);
-      busy = await this._isVideoFileOnDeviceBusy();
-    } while (busy);
-  }
-
-  async _isVideoFileOnDeviceBusy() {
-    const output = await this.adb.shell(this.deviceId, 'lsof ' + this.pathToVideoOnDevice);
-    return output.length > 0;
+    await this.waitWhileVideoIsMostLikelyBusy;
+    await this.adb.waitForFileRelease(this.deviceId, this.pathToVideoOnDevice);
   }
 }
 

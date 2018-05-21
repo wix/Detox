@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const npmlog = require('npmlog');
 const argparse = require('../utils/argparse');
 
 const ArtifactPathBuilder =  require('./core/lifecycle/utils/ArtifactPathBuilder');
@@ -9,6 +10,7 @@ class ArtifactsManager {
   constructor({ artifactCapabilities }) {
     this._hooks = [];
     this._artifacts = [];
+    this._finalizationPromise = Promise.resolve();
 
     this._pathBuilder = new ArtifactPathBuilder({
       artifactsRootDir: argparse.getArgValue('artifacts-location') || 'artifacts',
@@ -33,6 +35,7 @@ class ArtifactsManager {
 
   async onExit() {
     await Promise.all(this._hooks.map(hook => hook.onExit()));
+    await this._finalizationPromise;
   }
 
   async onShutdown() {
@@ -71,6 +74,7 @@ class ArtifactsManager {
       keepOnlyFailedTestsRecordings: recordLogs === 'failing',
       pathBuilder: this._pathBuilder,
       recorder: logRecorder,
+      enqueueFinalizationTask: this._enqueueFinalizationTask.bind(this),
     });
   }
 
@@ -89,6 +93,7 @@ class ArtifactsManager {
       keepOnlyFailedTestsSnapshots: takeScreenshots === 'failing',
       pathBuilder: this._pathBuilder,
       snapshotter: screenshotter,
+      enqueueFinalizationTask: this._enqueueFinalizationTask.bind(this),
     });
   }
 
@@ -104,15 +109,28 @@ class ArtifactsManager {
     }
 
     return new RecorderLifecycle({
-      shouldRecordStartup: true,
+      shouldRecordStartup: false,
       keepOnlyFailedTestsRecordings: recordVideos === 'failing',
       pathBuilder: this._pathBuilder,
       recorder: videoRecorder,
+      enqueueFinalizationTask: this._enqueueFinalizationTask.bind(this),
     });
   }
 
   _registerArtifact(artifact) {
     this._artifacts.push(artifact);
+  }
+
+  _enqueueFinalizationTask(finalizationFunction) {
+    this._finalizationPromise = this._finalizationPromise
+      .then(finalizationFunction)
+      .catch(this._suppressFinalizationError);
+
+    return this._finalizationPromise;
+  }
+
+  _suppressFinalizationError(e) {
+    npmlog.error('ArtifactsManager', 'Finalization error:\n%j', e);
   }
 }
 

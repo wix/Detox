@@ -60,7 +60,10 @@ class Detox {
     }
 
     this.artifactsManager = new ArtifactsManager({
-      artifactCapabilities: deviceDriver.getArtifactCapabilities(this.device.id),
+      artifactCapabilities: deviceDriver.getArtifactCapabilities({
+        deviceId: this.device.id,
+        bundleId: this.device.bundleId,
+      }),
     });
 
     await this.artifactsManager.onStart();

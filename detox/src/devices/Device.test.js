@@ -72,6 +72,13 @@ describe('Device', () => {
     expect(device.id).toBe('mockDeviceId');
   });
 
+  it('should provide device.bundleId', async () => {
+    device = validDevice();
+    device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
+    await device.prepare();
+    expect(device.bundleId).toBe('test.bundle');
+  });
+
   it(`prepare() with when reuse is enabled should not uninstall and install`, async () => {
     device = validDevice();
     fs.existsSync.mockReturnValue(true);
