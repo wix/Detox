@@ -9,12 +9,12 @@ We have some very interesting plans for Detox, this is the place to discuss and 
 The current API supports addition of multiple platforms, Android is next. This is the biggest feature we'll be working on in the near future. Supporting both Android emulators and devices. Our plan is to use both Espresso and UIAutomator as drivers. Espresso for core in-app interactions and synchronization with react-native, and UIAutomator for peripherals (notification panel, permission dialogs etc.). This will grant us both the speed and precision of Espresso, and the flexibility of UIAutomator.
 
 ### iOS physical device support
-Currently detox only supports running on iOS simulators, we plan on adding support for running on devices as well.
+Currently Detox only supports running on iOS simulators, we plan on adding support for running on devices as well.
 
 ### Expectations on device logs
 One of our most wanted features, being able to assert log outputs.
 
-### Performance probing - [DetoxInstruments](https://github.com/wix/detoxinstruments)
+### Performance probing - [Detox Instruments](https://github.com/wix/detoxinstruments)
 Maintaining performance is hard, The main issue with it is that by the time you notice there's a degradation in performance there's already so much changed it's hard to find a clear culprit for this regression (probably many small ones). Just like in BI, you won’t know if your change degrades or improves performance unless it is measured.
 
 * **Measure vital signs while running tests.**
