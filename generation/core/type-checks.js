@@ -1,17 +1,14 @@
-const t = require("babel-types");
-const template = require("babel-template");
-const {
-	generateTypeCheck,
-	generateIsOneOfCheck
-} = require("babel-generate-guard-clauses");
+const t = require('babel-types');
+const template = require('babel-template');
+const { generateTypeCheck, generateIsOneOfCheck } = require('babel-generate-guard-clauses');
 
-const isNumber = generateTypeCheck("number");
-const isString = generateTypeCheck("string");
-const isBoolean = generateTypeCheck("boolean");
+const isNumber = generateTypeCheck('number');
+const isString = generateTypeCheck('string');
+const isBoolean = generateTypeCheck('boolean');
 const isPoint = [
-	generateTypeCheck("object"),
-	generateTypeCheck("number", { selector: "x" }),
-	generateTypeCheck("number", { selector: "y" })
+	generateTypeCheck('object'),
+	generateTypeCheck('number', { selector: 'x' }),
+	generateTypeCheck('number', { selector: 'y' })
 ];
 const isOneOf = generateIsOneOfCheck;
 function isGreyMatcher({ name }) {
@@ -89,6 +86,17 @@ function isOfClass(className) {
 		});
 }
 
+function isDefined() {
+	return ({ name }) =>
+		template(`
+	if (!ARG) {
+		throw new Error('${name} should be truthy, but it is "' + ARG + '"');
+	}
+	`)({
+			ARG: t.identifier(name)
+		});
+}
+
 module.exports = {
 	isNumber,
 	isString,
@@ -99,5 +107,6 @@ module.exports = {
 	isGreyMatcher,
 	isArray,
 	isOfClass,
-	isGreyElementInteraction
+	isGreyElementInteraction,
+	isDefined
 };

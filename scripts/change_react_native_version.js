@@ -1,5 +1,5 @@
-let fs = require('fs');
-let path = require('path');
+const fs = require('fs');
+const path = require('path');
 const https = require('https');
 
 
@@ -12,7 +12,7 @@ async function run() {
 
   let packageJson = require(filePath);
 
-  const data = await fetch(`https://registry.npmjs.org/react-native/${reactNativeVersion}/`);
+  const data = await fetch(`https://registry.npmjs.org/react-native/${reactNativeVersion}`);
   const reactVersion = data.peerDependencies.react;
 
   console.log(`Changed dependencies: 
