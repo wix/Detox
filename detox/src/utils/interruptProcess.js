@@ -1,9 +1,9 @@
-const npmlog = require('npmlog');
+const log = require('npmlog');
 
 async function interruptProcess(childProcessPromise, signal = 'SIGINT') {
   const process = childProcessPromise.childProcess;
 
-  npmlog.verbose('interruptProcess', 'sending %s to pid %s (%j)',
+  log.verbose('interruptProcess', 'sending %s to pid %s (%j)',
     signal,
     childProcessPromise.childProcess.pid,
     process.spawnargs

@@ -126,10 +126,10 @@ class AndroidDriver extends DeviceDriverBase {
     }
 
     for (let attempts = 5; attempts > 0; attempts--) {
-      const PID = await this.adb.pidof(deviceId, bundleId);
+      const pid = await this.adb.pidof(deviceId, bundleId);
 
-      if (PID > 0) {
-        return PID;
+      if (pid > 0) {
+        return pid;
       }
 
       await sleep(1000);

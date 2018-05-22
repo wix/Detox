@@ -32,11 +32,11 @@ class DetoxJestAdapter /* implements JasmineReporter */ {
       return;
     }
 
-    const spec = Object.freeze({
+    const spec = {
       title: result.description,
       fullName: result.fullName,
       status: 'running',
-    });
+    };
 
     this._currentSpec = spec;
   }
@@ -46,11 +46,11 @@ class DetoxJestAdapter /* implements JasmineReporter */ {
       return;
     }
 
-    const spec = Object.freeze({
+    const spec = {
       title: result.description,
       fullName: result.fullName,
       status: result.status,
-    });
+    };
 
     this._enqueue(() => this._afterEach(spec));
   }

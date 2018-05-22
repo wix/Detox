@@ -4,19 +4,19 @@ class DetoxMochaAdapter {
   }
 
   async beforeEach(context) {
-    await this.detox.beforeEach(Object.freeze({
+    await this.detox.beforeEach({
       title: context.currentTest.title,
       fullName: context.currentTest.fullTitle(),
       status: this._mapStatus(context, false),
-    }));
+    });
   }
 
   async afterEach(context) {
-    await this.detox.afterEach(Object.freeze({
+    await this.detox.afterEach({
       title: context.currentTest.title,
       fullName: context.currentTest.fullTitle(),
       status: this._mapStatus(context, true),
-    }));
+    });
   }
 
   _mapStatus(context, isAfterTest) {

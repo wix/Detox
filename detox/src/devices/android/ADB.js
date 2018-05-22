@@ -120,21 +120,13 @@ class ADB {
     return Number(lvl);
   }
 
-  async adbCmd(deviceId, params) {
-    const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
-    const cmd = `${this.adbBin} ${serial} ${params}`;
-    return await execWithRetriesAndLogs(cmd, undefined, undefined, 1);
-  }
-
-  async getFileSize(deviceId, path) {
-    const {stdout} = await this.adbCmd(deviceId, `shell wc -c ${path}`);
-    return parseInt(stdout, 10);
-  }
-
-  screencap(deviceId, path) {
+  async screencap(deviceId, path) {
     return this.adbCmd(deviceId, `shell screencap ${path}`);
   }
 
+  /***
+   * @returns ChildProcessPromise
+   */
   screenrecord(deviceId, { path, size, bitRate, timeLimit, verbose }) {
     const [ width = 0, height = 0 ] = size || [];
 
@@ -156,6 +148,9 @@ class ADB {
     return this.spawn(deviceId, ['shell', 'screenrecord', ...screenRecordArgs]);
   }
 
+  /***
+   * @returns ChildProcessPromise
+   */
   logcat(deviceId, { expression, file, pid, time }) {
     const logcatArgs = [];
 
@@ -181,14 +176,23 @@ class ADB {
     return this.spawn(deviceId, ['logcat', ...logcatArgs]);
   }
 
-  pull(deviceId, src, dst = '') {
+  async pull(deviceId, src, dst = '') {
     return this.adbCmd(deviceId, `pull "${src}" "${dst}"`);
   }
 
-  rm(deviceId, path, force = false) {
+  async rm(deviceId, path, force = false) {
     return this.adbCmd(deviceId, `shell rm ${force ? '-f' : ''} "${path}"`);
   }
 
+  async adbCmd(deviceId, params) {
+    const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
+    const cmd = `${this.adbBin} ${serial} ${params}`;
+    return await execWithRetriesAndLogs(cmd, undefined, undefined, 1);
+  }
+
+  /***
+   * @returns ChildProcessPromise
+   */
   spawn(deviceId, params) {
     const serial = deviceId ? ['-s', deviceId] : [];
     return spawnAndLog(this.adbBin, [...serial, ...params]);

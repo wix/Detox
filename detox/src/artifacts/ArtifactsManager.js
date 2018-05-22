@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const npmlog = require('npmlog');
+const log = require('npmlog');
 const argparse = require('../utils/argparse');
 
 const ArtifactPathBuilder =  require('./core/lifecycle/utils/ArtifactPathBuilder');
@@ -130,7 +130,7 @@ class ArtifactsManager {
   }
 
   _suppressFinalizationError(e) {
-    npmlog.error('ArtifactsManager', 'Finalization error:\n%j', e);
+    log.error('ArtifactsManager', 'Finalization error:\n%j', e);
   }
 }
 

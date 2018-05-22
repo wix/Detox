@@ -1,5 +1,5 @@
 const fs = require('fs-extra');
-const npmlog = require('npmlog');
+const log = require('npmlog');
 const { Tail } = require('tail');
 const ensureMove = require('../../../utils/ensureMove');
 const RecordingArtifact = require('../../core/artifact/RecordingArtifact');
@@ -48,8 +48,8 @@ class SimulatorLogRecording extends RecordingArtifact {
     const tail = new Tail(file, {
       fromBeginning: this._fromBeginning,
       logger: {
-        info: (...args) => npmlog.verbose(`simulator-log-${prefix}`, ...args),
-        error: (...args) => npmlog.error(`simulator-log-${prefix}`, ...args),
+        info: (...args) => log.verbose(`simulator-log-${prefix}`, ...args),
+        error: (...args) => log.error(`simulator-log-${prefix}`, ...args),
       },
     }).on('line', (line) => {
       this._appendLine(prefix, line);
