@@ -9,8 +9,6 @@ class RecordingArtifact {
   }
 
   start() {
-    this._assertRecordingIsNotBeingResumed();
-
     if (!this._startPromise) {
       this._startPromise = this.doStart();
     }
@@ -19,19 +17,27 @@ class RecordingArtifact {
   }
 
   stop() {
-    this._assertRecordingHasBeenStarted();
-
     if (!this._stopPromise) {
-      this._stopPromise = this.doStop();
+      if (this._startPromise) {
+        this._stopPromise = this._startPromise.then(() => this.doStop());
+      } else {
+        this._stopPromise = this._startPromise = Promise.resolve();
+      }
     }
 
     return this._stopPromise;
   }
 
   save(artifactPath) {
-    this._assertRecordingIsNotBeingDiscarded();
-
     if (!this._savePromise) {
+      let error = null;
+      error = error || this._assertRecordingIsNotBeingDiscarded();
+      error = error || this._assertRecordingHasBeenStarted();
+
+      if (error) {
+        return Promise.reject(error);
+      }
+
       this._savePromise = this.stop().then(() => this.doSave(artifactPath));
     }
 
@@ -39,10 +45,14 @@ class RecordingArtifact {
   }
 
   discard() {
-    this._assertRecordingIsNotBeingSaved();
-
     if (!this._discardPromise) {
-      this._discardPromise = this.stop().then(() => this.doDiscard());
+      if (this._savePromise) {
+        this._discardPromise = this._savePromise;
+      } else if (this._startPromise) {
+        this._discardPromise = this.stop().then(() => this.doDiscard());
+      } else {
+        this._discardPromise = this._stopPromise = this._startPromise = Promise.resolve();
+      }
     }
 
     return this._discardPromise;
@@ -56,38 +66,20 @@ class RecordingArtifact {
 
   async doDiscard() {}
 
-  _assertRecordingIsNotBeingResumed() {
-    if (this._stopPromise) {
-      throw new DetoxRuntimeError({
-        message: 'Resuming recording after .stop() is not supported',
-        hint: 'Consider creating new recording instead of .stop().start()',
-      });
-    }
-  }
-
-  _assertRecordingHasBeenStarted() {
-    if (!this._startPromise) {
-      throw new DetoxRuntimeError({
-        message: 'Cannot stop recording if it has never been started',
-        hint: 'This error is not supposed to happen, open an issue on Github if you see it.',
-      });
-    }
-  }
-
   _assertRecordingIsNotBeingDiscarded() {
     if (this._discardPromise) {
-      throw new DetoxRuntimeError({
+      return new DetoxRuntimeError({
         message: 'Cannot save recording because it is already being discarded',
         hint: 'Make sure you did not call .discard() method earlier',
       });
     }
   }
 
-  _assertRecordingIsNotBeingSaved() {
-    if (this._savePromise) {
-      throw new DetoxRuntimeError({
-        message: 'Cannot discard recording because it is already being saved',
-        hint: 'Make sure you did not call .save() method earlier',
+  _assertRecordingHasBeenStarted() {
+    if (!this._startPromise) {
+      return new DetoxRuntimeError({
+        message: 'Cannot save recording if it has never been started',
+        hint: 'This error is not supposed to happen, open an issue on Github if you see it.',
       });
     }
   }

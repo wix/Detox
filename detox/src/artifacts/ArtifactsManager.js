@@ -52,19 +52,14 @@ class ArtifactsManager {
     const videoRecorder = video({ artifactsRegistry });
 
     this._hooks = _.compact([
-      this._createLogRecorderLifecycle(logRecorder),
-      this._createScreenshotterLifecycle(screenshotter),
-      this._createVideoRecorderLifecycle(videoRecorder),
+      logRecorder ? this._createLogRecorderLifecycle(logRecorder) : null,
+      screenshotter ? this._createScreenshotterLifecycle(screenshotter) : null,
+      videoRecorder ? this._createVideoRecorderLifecycle(videoRecorder) : null,
     ]);
   }
 
   _createLogRecorderLifecycle(logRecorder) {
-    if (!logRecorder) {
-      return null;
-    }
-
     const recordLogs = argparse.getArgValue('record-logs') || 'none';
-
     if (recordLogs === 'none') {
       return null;
     }
@@ -79,12 +74,7 @@ class ArtifactsManager {
   }
 
   _createScreenshotterLifecycle(screenshotter) {
-    if (!screenshotter) {
-      return null;
-    }
-
     const takeScreenshots = argparse.getArgValue('take-screenshots') || 'none';
-
     if (takeScreenshots === 'none') {
       return null;
     }
@@ -98,12 +88,7 @@ class ArtifactsManager {
   }
 
   _createVideoRecorderLifecycle(videoRecorder) {
-    if (!videoRecorder) {
-      return null;
-    }
-
     const recordVideos = argparse.getArgValue('record-videos') || 'none';
-
     if (recordVideos === 'none') {
       return null;
     }
