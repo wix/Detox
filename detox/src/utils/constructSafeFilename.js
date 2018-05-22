@@ -2,7 +2,7 @@ const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const MAX_FILE_LENGTH = 255;
 
 /*
-  Trim filename to match filesystem limits (usually, not longer than 255 chars)
+  Escape filename and trim it to match filesystem limits (usually, not longer than 255 chars)
  */
 function constructSafeFilename(prefix = '', trimmable = '', suffix = '') {
   const nonTrimmableLength = prefix.length + suffix.length;
@@ -15,16 +15,10 @@ function constructSafeFilename(prefix = '', trimmable = '', suffix = '') {
   }
 
   const trimmed = trimmable.slice(-MAX_FILE_LENGTH + nonTrimmableLength);
-  return prefix + trimmed + suffix;
+  const unsafe = prefix + trimmed + suffix;
+  const sanitized = unsafe.replace(/[\\\/]/g, '_');
+
+  return sanitized;
 }
 
-module.exports = function constructSafeFilenameMultimethod() {
-  const a = arguments;
-
-  switch (a.length) {
-    case 0: return constructSafeFilename('', '', '');
-    case 1: return constructSafeFilename('', a[0], '');
-    case 2: return constructSafeFilename(a[0], a[1], '');
-    default: return constructSafeFilename.apply(this, arguments);
-  }
-};
+module.exports = constructSafeFilename;

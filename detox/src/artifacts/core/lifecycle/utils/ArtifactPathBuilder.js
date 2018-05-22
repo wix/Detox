@@ -1,5 +1,4 @@
 const path = require('path');
-const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const constructSafeFilename = require('../../../../utils/constructSafeFilename');
 
 class ArtifactPathBuilder {
@@ -17,7 +16,7 @@ class ArtifactPathBuilder {
   buildPathForRunArtifact(artifactName) {
     return path.join(
       this._currentTestRunDir,
-      constructSafeFilename(artifactName),
+      constructSafeFilename('', artifactName),
     );
   }
 
@@ -25,10 +24,9 @@ class ArtifactPathBuilder {
     const testArtifactPath = path.join(
       this._currentTestRunDir,
       this._constructDirectoryNameForCurrentRunningTest(testSummary),
-      constructSafeFilename(artifactName),
+      constructSafeFilename('', artifactName),
     );
 
-    this._assertConstructedPathIsStillInsideArtifactsRootDir(testArtifactPath, testSummary);
     return testArtifactPath;
   }
 
@@ -41,19 +39,6 @@ class ArtifactPathBuilder {
     const testArtifactsDirname = constructSafeFilename(testDirectoryPrefix, testSummary.fullName);
 
     return testArtifactsDirname;
-  }
-
-  _assertConstructedPathIsStillInsideArtifactsRootDir(artifactPath, testSummary) {
-    const absoluteRootPath = path.resolve(this._currentTestRunDir);
-    const absoluteArtifactPath = path.resolve(artifactPath);
-
-    if (!absoluteArtifactPath.startsWith(absoluteRootPath)) {
-      throw new DetoxRuntimeError({
-        message: `Given artifact location (${path.resolve(artifactPath)}) was resolved outside of current test run directory (${this._currentTestRunDir})`,
-        hint: `Make sure that test name (${JSON.stringify(testSummary.fullName)}) does not contain ".." fragments inside.`,
-        debugInfo: `Resolved artifact location was: ${absoluteArtifactPath}`
-      });
-    }
   }
 
   _buildTestDirectoryPrefix(testSummary) {

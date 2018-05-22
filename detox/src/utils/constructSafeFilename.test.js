@@ -9,7 +9,7 @@ describe('constructSafeFilename', () => {
   });
 
   it('should trim filename to 255 chars', () => {
-    const actual = constructSafeFilename('1'.repeat(256));
+    const actual = constructSafeFilename('', '1'.repeat(256), '');
     const expected = '1'.repeat(255);
 
     expect(actual).toBe(expected);

@@ -43,9 +43,9 @@ describe(ArtifactPathBuilder, () => {
     it('should defend against accidental resolving outside of root directory', () => {
       const maliciousName = 'some/../../../../../../home/build-server';
 
-      expect(() => strategy.buildPathForTestArtifact({ title: '', fullName: maliciousName }, '.bashrc')).toThrowErrorMatchingSnapshot();
-      expect(() => strategy.buildPathForTestArtifact({ title: '', fullName: 'test' }, maliciousName)).toThrowErrorMatchingSnapshot();
-      expect(() => strategy.buildPathForTestArtifact({ title: '', fullName: maliciousName }, maliciousName)).toThrowErrorMatchingSnapshot();
+      expect(strategy.buildPathForTestArtifact({ title: '', fullName: maliciousName }, '.bashrc')).toMatchSnapshot();
+      expect(strategy.buildPathForTestArtifact({ title: '', fullName: 'test' }, maliciousName)).toMatchSnapshot();
+      expect(strategy.buildPathForTestArtifact({ title: '', fullName: maliciousName }, maliciousName)).toMatchSnapshot();
     });
 
     it('should trim too long filenames', () => {
