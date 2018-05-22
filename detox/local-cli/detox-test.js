@@ -10,41 +10,33 @@ const config = require(path.join(process.cwd(), 'package.json')).detox;
 
 class DetoxConfigError extends CustomError {}
 
+
+
 program
-  .option(
-    '-o, --runner-config [config]',
-    `Test runner config file, defaults to e2e/mocha.opts for mocha and e2e/config.json' for jest`,
-  )
-  .option('-s, --specs [relativePath]', `Root of test folder`)
-  .option('-l, --loglevel [value]', 'info, debug, verbose, silly, wss')
-  .option(
-    '-c, --configuration [device configuration]',
-    "Select a device configuration from your defined configurations, if not supplied, and there's only one configuration, detox will default to it",
-    getDefaultConfiguration(),
-  )
-  .option(
-    '-r, --reuse',
-    'Reuse existing installed app (do not delete and re-install) for a faster run.',
-  )
-  .option(
-    '-u, --cleanup',
-    'Shutdown simulator when test is over, useful for CI scripts, to make sure detox exists cleanly with no residue',
-  )
-  .option(
-    '-d, --debug-synchronization [value]',
-    'When an action/expectation takes a significant amount of time use this option to print device synchronization status.' +
-      'The status will be printed if the action takes more than [value]ms to complete',
-  )
-  .option(
-    '-a, --artifacts-location [path]',
-    'Artifacts destination path (currently will contain only logs). If the destination already exists, it will be removed first',
-  )
-  .option(
-    '-p, --platform [ios/android]',
-    "[DEPRECATED], platform is deduced automatically. Run platform specific tests. Runs tests with invert grep on ':platform:', " +
-      "e.g test with substring ':ios:' in its name will not run when passing '--platform android'",
-  )
-  .option('-f, --file [path]', 'Specify test file to run')
+  .option('-o, --runner-config [config]',
+    `Test runner config file, defaults to e2e/mocha.opts for mocha and e2e/config.json' for jest`)
+  .option('-s, --specs [relativePath]',
+    `Root of test folder`)
+  .option('-l, --loglevel [value]',
+    'info, debug, verbose, silly, wss')
+  .option('-c, --configuration [device configuration]',
+    'Select a device configuration from your defined configurations, if not supplied, and there\'s only one configuration, detox will default to it', getDefaultConfiguration())
+  .option('-r, --reuse',
+    'Reuse existing installed app (do not delete and re-install) for a faster run.')
+  .option('-u, --cleanup',
+    'Shutdown simulator when test is over, useful for CI scripts, to make sure detox exists cleanly with no residue')
+  .option('-d, --debug-synchronization [value]',
+    'When an action/expectation takes a significant amount of time use this option to print device synchronization status.'
+    + 'The status will be printed if the action takes more than [value]ms to complete')
+  .option('-a, --artifacts-location [path]',
+    'Artifacts destination path (currently will contain only logs). If the destination already exists, it will be removed first')
+  .option('-p, --platform [ios/android]',
+    '[DEPRECATED], platform is deduced automatically. Run platform specific tests. Runs tests with invert grep on \':platform:\', '
+    + 'e.g test with substring \':ios:\' in its name will not run when passing \'--platform android\'')
+  .option('-f, --file [path]',
+    'Specify test file to run')
+  .option('-H, --headless',
+    '[Android Only] Launch Emulator in headless mode. Useful when running on CI.')
   .parse(process.argv);
 
 if (program.configuration) {
@@ -52,23 +44,20 @@ if (program.configuration) {
     throw new DetoxConfigError(`Cannot determine configuration '${program.configuration}'.
     Available configurations: ${_.keys(config.configurations).join(', ')}`);
   }
-} else if (!program.configuration) {
-  throw new DetoxConfigError(`Cannot determine which configuration to use.
-  Use --configuration to choose one of the following: ${_.keys(
-    config.configurations,
-  ).join(', ')}`);
+} else if(!program.configuration) {
+  throw new DetoxConfigError(`Cannot determine which configuration to use. 
+  Use --configuration to choose one of the following: ${_.keys(config.configurations).join(', ')}`);
 }
 
 const testFolder = getConfigFor(['file', 'specs'], 'e2e');
 const runner = getConfigFor(['testRunner'], 'mocha');
 const runnerConfig = getConfigFor(['runnerConfig'], getDefaultRunnerConfig());
-const platform = config.configurations[program.configuration].type.split(
-  '.',
-)[0];
+const platform = (config.configurations[program.configuration].type).split('.')[0];
 
 run();
 
-if (typeof program.debugSynchronization === 'boolean') {
+
+if (typeof program.debugSynchronization === "boolean") {
   program.debugSynchronization = 3000;
 }
 
@@ -81,9 +70,7 @@ function run() {
       runJest();
       break;
     default:
-      throw new Error(
-        `${runner} is not supported in detox cli tools. You can still run your tests with the runner's own cli tool`,
-      );
+      throw new Error(`${runner} is not supported in detox cli tools. You can still run your tests with the runner's own cli tool`);
   }
 }
 
@@ -101,8 +88,6 @@ function getConfigFor(keys, fallback) {
 function camelToKebabCase(string) {
   return string.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 }
-
-function readMochaOpts() {}
 
 function getMochaOpts() {
   try {
@@ -125,19 +110,13 @@ function getMochaOpts() {
 
 function runMocha() {
   const loglevel = program.loglevel ? `--loglevel ${program.loglevel}` : '';
-  const configuration = program.configuration
-    ? `--configuration ${program.configuration}`
-    : '';
+  const configuration = program.configuration ? `--configuration ${program.configuration}` : '';
   const cleanup = program.cleanup ? `--cleanup` : '';
   const reuse = program.reuse ? `--reuse` : '';
-  const artifactsLocation = program.artifactsLocation
-    ? `--artifacts-location ${program.artifactsLocation}`
-    : '';
+  const artifactsLocation = program.artifactsLocation ? `--artifacts-location ${program.artifactsLocation}` : '';
   const headless = program.headless ? `--headless` : '';
   const opts = getMochaOpts();
-  const debugSynchronization = program.debugSynchronization
-    ? `--debug-synchronization ${program.debugSynchronization}`
-    : '';
+  const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
   const command = `node_modules/.bin/mocha ${testFolder} ${opts} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${artifactsLocation} ${headless}`;
 
   console.log(command);
