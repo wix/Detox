@@ -2,7 +2,7 @@
   "name": "detox",
   "version": "7.3.7",
   "bin": {
-    "detox": "local-cli/detox.js"
+    "detox": "detox/local-cli/detox.js"
   },
   "repository": {
     "type": "git",
