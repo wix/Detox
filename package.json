@@ -1,5 +1,5 @@
 {
-  "name": "Detox",
+  "name": "detox",
   "version": "7.3.4",
   "scripts": {
     "test:e2e:ios": "pushd detox/test && npm run e2e:ios && popd",
