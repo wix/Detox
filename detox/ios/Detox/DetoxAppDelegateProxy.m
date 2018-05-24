@@ -27,6 +27,8 @@ static DetoxUserActivityDispatcher* _pendingLaunchUserActivityDispatcher;
 
 static COSTouchVisualizerWindow* _touchVisualizerWindow;
 
+static BOOL _disableTouchIndicator;
+
 static NSURL* _launchUserNotificationDataURL()
 {
 	NSString* userNotificationDataPath = [[NSUserDefaults standardUserDefaults] objectForKey:@"detoxUserNotificationDataURL"];
@@ -127,6 +129,8 @@ static void __copyMethods(Class orig, Class target)
 	dispatch_once(&onceToken, ^{
 		_pendingOpenURLs = [NSMutableArray new];
 		_pendingUserNotificationDispatchers = [NSMutableArray new];
+		
+		_disableTouchIndicator = [NSUserDefaults.standardUserDefaults boolForKey:@"disableTouchIndicator"];
 		
 		NSURL* url;
 		
@@ -321,7 +325,7 @@ static void __copyMethods(Class orig, Class target)
 
 - (BOOL)touchVisualizerWindowShouldAlwaysShowFingertip:(COSTouchVisualizerWindow *)window
 {
-	return YES;
+	return _disableTouchIndicator == NO;
 }
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_10_3
