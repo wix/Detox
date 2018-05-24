@@ -69,7 +69,9 @@ Session can also be set per configuration:
 ```json
 	"detox": {
 	  ...
-	  "test-runner": "mocha"
+		"test-runner": "mocha"
+		//optional
+		"test-runner-path": "path/to/mocha", //defaults to ./node_modules/bin/mocha
 	  "runner-config": "path/to/mocha.opts"
 	  "specs": "path/to/tests/root"
 	}
@@ -80,7 +82,9 @@ Session can also be set per configuration:
 ```json
 	"detox": {
 	  ...
-	  "test-runner": "jest"
+		"test-runner": "jest"
+		//optional
+		"test-runner-path": "path/to/jest", //defaults to ./node_modules/bin/jest
 	  "runner-config": "path/to/config.json"
 	}
 ```
