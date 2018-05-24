@@ -52,6 +52,12 @@ matrix:
 
     # Website
     - language: node_js
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - libstdc++-4.9-dev
       env:
         - NAME='Website - master'
       node_js: 8
