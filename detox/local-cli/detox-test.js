@@ -50,6 +50,7 @@ if (program.configuration) {
 
 const testFolder = getConfigFor(['file', 'specs'], 'e2e');
 const runner = getConfigFor(['testRunner'], 'mocha');
+const runnerPath = getConfigFor(['testRunner'], `node_modules/.bin/${runner}`);
 const runnerConfig = getConfigFor(['runnerConfig'], getDefaultRunnerConfig());
 const platform = (config.configurations[program.configuration].type).split('.')[0];
 
@@ -99,7 +100,7 @@ function runMocha() {
   const headless = program.headless ? `--headless` : '';
 
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
-  const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${artifactsLocation} ${headless}`;
+  const command = `${runnerPath} ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${artifactsLocation} ${headless}`;
 
   console.log(command);
   cp.execSync(command, {stdio: 'inherit'});
@@ -108,7 +109,7 @@ function runMocha() {
 function runJest() {
   const configFile = runnerConfig ? `--config=${runnerConfig}` : '';
   const platformString = platform ? `--testNamePattern='^((?!${getPlatformSpecificString(platform)}).)*$'` : '';
-  const command = `node_modules/.bin/jest ${testFolder} ${configFile} --runInBand ${platformString}`;
+  const command = `${runnerPath} ${testFolder} ${configFile} --runInBand ${platformString}`;
   console.log(command);
   cp.execSync(command, {
     stdio: 'inherit',
