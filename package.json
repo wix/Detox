@@ -1,7 +1,91 @@
 {
+  "name": "detox",
+  "description": "E2E tests and automation for mobile",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "version": "7.3.7",
+  "bin": {
+    "detox": "detox/local-cli/detox.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wix/detox.git"
+  },
+  "nativePackage": true,
+  "bugs": {
+    "url": "https://github.com/wix/detox/issues"
+  },
+  "homepage": "https://github.com/wix/detox#readme",
+  "main": "./src/index.js",
+  "author": "Tal Kol <talkol@gmail.com>",
+  "license": "MIT",
   "scripts": {
-    "test:e2e:ios": "pushd detox/test && npm run e2e:ios && popd",
-    "test:e2e:android": "pushd detox/test && npm run e2e:android && popd",
-    "release": "node scripts/release.js"
+    "build": "./detox/scripts/build.sh",
+    "lint": "eslint src",
+    "unit": "jest --coverage --verbose",
+    "pretest": "npm run lint",
+    "test": "npm run unit",
+    "unit:watch": "jest --watch",
+    "prepublish": "npm run build",
+    "postinstall": "./detox/scripts/postinstall.sh"
+  },
+  "devDependencies": {
+    "eslint": "^4.11.0",
+    "eslint-plugin-node": "^6.0.1",
+    "jest": "22.x.x",
+    "mockdate": "^2.0.1",
+    "prettier": "1.7.0"
+  },
+  "dependencies": {
+    "child-process-promise": "^2.2.0",
+    "commander": "^2.15.1",
+    "detox-server": "^7.0.0",
+    "fs-extra": "^4.0.2",
+    "get-port": "^2.1.0",
+    "ini": "^1.3.4",
+    "lodash": "^4.14.1",
+    "minimist": "^1.2.0",
+    "npmlog": "^4.0.2",
+    "shell-utils": "^1.0.9",
+    "tail": "^1.2.3",
+    "telnet-client": "0.15.3",
+    "ws": "^1.1.1"
+  },
+  "engines": {
+    "node": ">=8.3.0"
+  },
+  "jest": {
+    "roots": [
+      "node_modules",
+      "src"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      ".*Driver.js",
+      "EmulatorTelnet.js",
+      "Emulator.js",
+      "DeviceDriverBase.js",
+      "GREYConfiguration.js",
+      "src/utils/environment.js",
+      "AAPT.js",
+      "ADB.js",
+      "fsext.js",
+      "debug.js",
+      "src/ios/earlgreyapi",
+      "src/android/espressoapi",
+      ".test.js",
+      ".mock.js"
+    ],
+    "resetMocks": true,
+    "resetModules": true,
+    "coverageThreshold": {
+      "global": {
+        "statements": 100,
+        "branches": 100,
+        "functions": 100,
+        "lines": 100
+      }
+    }
   }
 }

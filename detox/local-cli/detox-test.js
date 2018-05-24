@@ -2,6 +2,7 @@
 
 const program = require('commander');
 const path = require('path');
+const fs = require('fs');
 const cp = require('child_process');
 const _ = require('lodash');
 const CustomError = require('../src/errors/CustomError');
@@ -40,7 +41,7 @@ program
 
 if (program.configuration) {
   if (!config.configurations[program.configuration]) {
-    throw new DetoxConfigError(`Cannot determine configuration '${program.configuration}'. 
+    throw new DetoxConfigError(`Cannot determine configuration '${program.configuration}'.
     Available configurations: ${_.keys(config.configurations).join(', ')}`);
   }
 } else if(!program.configuration) {
@@ -88,18 +89,35 @@ function camelToKebabCase(string) {
   return string.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 }
 
+function getMochaOpts() {
+  try {
+    const opts = fs
+      .readFileSync(runnerConfig, 'utf8')
+      .replace(/^#.*$/gm, '')
+      .replace(/\\\s/g, '%20')
+      .split(/\s/)
+      .filter(Boolean)
+      .map(value => value.replace(/%20/g, ' '));
+    const grepIndex = opts.findIndex(el => el === '--grep');
+    const customOpts = grepIndex !== -1 ? `${opts[grepIndex + 1]}|` : '';
+    opts[grepIndex + 1] = `"${customOpts}:${platform}:"`;
+    return opts.join(' ');
+  } catch (err) {
+    console.error('mocha opts file is not in the correct format');
+    return ' ';
+  }
+}
+
 function runMocha() {
   const loglevel = program.loglevel ? `--loglevel ${program.loglevel}` : '';
   const configuration = program.configuration ? `--configuration ${program.configuration}` : '';
   const cleanup = program.cleanup ? `--cleanup` : '';
   const reuse = program.reuse ? `--reuse` : '';
   const artifactsLocation = program.artifactsLocation ? `--artifacts-location ${program.artifactsLocation}` : '';
-  const configFile = runnerConfig ? `--opts ${runnerConfig}` : '';
-  const platformString = platform ? `--grep ${getPlatformSpecificString(platform)} --invert` : '';
   const headless = program.headless ? `--headless` : '';
-
+  const opts = getMochaOpts();
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
-  const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${artifactsLocation} ${headless}`;
+  const command = `node_modules/.bin/mocha ${testFolder} ${opts} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${artifactsLocation} ${headless}`;
 
   console.log(command);
   cp.execSync(command, {stdio: 'inherit'});
@@ -156,5 +174,3 @@ function getDefaultConfiguration() {
     return _.keys(config.configurations)[0];
   }
 }
-
-
