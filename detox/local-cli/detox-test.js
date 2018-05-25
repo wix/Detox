@@ -104,7 +104,8 @@ function runMocha() {
   const headless = program.headless ? `--headless` : '';
 
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
-  const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ` +
+  const binPath = path.join('node_modules', '.bin', 'mocha');
+  const command = `${binPath} ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ` +
     `${reuse} ${debugSynchronization} ${platformString} ${headless} ` +
     `${logs} ${screenshots} ${videos} ${artifactsLocation}`;
 
@@ -114,8 +115,10 @@ function runMocha() {
 
 function runJest() {
   const configFile = runnerConfig ? `--config=${runnerConfig}` : '';
+  const platform = program.platform ? `--testNamePattern='^((?!${getPlatformSpecificString(program.platform)}).)*$'` : '';
+  const binPath = path.join('node_modules', '.bin', 'jest');
   const platformString = platform ? `--testNamePattern='^((?!${getPlatformSpecificString(platform)}).)*$'` : '';
-  const command = `node_modules/.bin/jest ${testFolder} ${configFile} --runInBand ${platformString}`;
+  const command = `${binPath} ${testFolder} ${configFile} --runInBand ${platformString}`;
   console.log(command);
   cp.execSync(command, {
     stdio: 'inherit',

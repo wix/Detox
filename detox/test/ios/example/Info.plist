@@ -61,7 +61,7 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
+	<true/>
 	<key>WKBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

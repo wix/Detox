@@ -2,14 +2,11 @@
 
 const program = require('commander');
 const cp = require('child_process');
-const fs = require('fs');
 const path = require('path');
 
 program.parse(process.argv);
 
-if (fs.existsSync(path.join(process.cwd(), 'node_modules/.bin/detox-server'))) {
-  cp.execSync('node_modules/.bin/detox-server', {stdio: 'inherit'});
-} else {
-  cp.execSync('node_modules/detox/node_modules/.bin/detox-server', {stdio: 'inherit'});
-}
-
+const serverPackagePath = require.resolve('detox-server/package.json');
+const cli = require(serverPackagePath).bin['detox-server'];
+const binPath = path.join(path.dirname(serverPackagePath), cli);
+cp.execFileSync('node', [binPath], {stdio: 'inherit'});
