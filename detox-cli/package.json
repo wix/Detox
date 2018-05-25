@@ -7,7 +7,7 @@
     "test": ":"
   },
   "bin": {
-    "detox": "./cli.sh"
+    "detox": "./cli.js"
   },
   "repository": {
     "type": "git",

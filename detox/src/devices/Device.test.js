@@ -1,5 +1,6 @@
-const _ = require('lodash');
 const configurationsMock = require('../configurations.mock');
+
+const path = require('path');
 
 const validScheme = configurationsMock.validOneDeviceAndSession;
 const invalidDeviceNoBinary = configurationsMock.invalidDeviceNoBinary;
@@ -547,11 +548,11 @@ describe('Device', () => {
 
   it(`should accept absolute path for binary`, async () => {
     const actualPath = await launchAndTestBinaryPath('absolutePath');
-    expect(actualPath).toEqual('/tmp/abcdef/123');
+    expect(actualPath).toEqual(process.platform === 'win32' ? 'C:\\Temp\\abcdef\\123' : '/tmp/abcdef/123');
   });
 
   it(`should accept relative path for binary`, async () => {
     const actualPath = await launchAndTestBinaryPath('relativePath');
-    expect(actualPath).toEqual(`${process.cwd()}/abcdef/123`);
+    expect(actualPath).toEqual(path.join(process.cwd(), 'abcdef/123'));
   });
 });

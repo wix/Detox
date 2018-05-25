@@ -50,7 +50,7 @@ if (program.configuration) {
 
 const testFolder = getConfigFor(['file', 'specs'], 'e2e');
 const runner = getConfigFor(['testRunner'], 'mocha');
-const runnerPath = getConfigFor(['testRunner'], `node_modules/.bin/${runner}`);
+const runnerPath = getConfigFor(['testRunnerPath'], path.join('node_modules', '.bin', runner));
 const runnerConfig = getConfigFor(['runnerConfig'], getDefaultRunnerConfig());
 const platform = (config.configurations[program.configuration].type).split('.')[0];
 
@@ -108,6 +108,8 @@ function runMocha() {
 
 function runJest() {
   const configFile = runnerConfig ? `--config=${runnerConfig}` : '';
+  const platform = program.platform ? `--testNamePattern='^((?!${getPlatformSpecificString(program.platform)}).)*$'` : '';
+  const binPath = path.join('node_modules', '.bin', 'jest');
   const platformString = platform ? `--testNamePattern='^((?!${getPlatformSpecificString(platform)}).)*$'` : '';
   const command = `${runnerPath} ${testFolder} ${configFile} --runInBand ${platformString}`;
   console.log(command);
