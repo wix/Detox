@@ -5,6 +5,12 @@ const MAX_FILE_LENGTH = 255;
   Escape filename and trim it to match filesystem limits (usually, not longer than 255 chars)
  */
 function constructSafeFilename(prefix = '', trimmable = '', suffix = '') {
+  if (!trimmable) {
+    throw new DetoxRuntimeError({
+      message: 'no filename was given',
+    });
+  }
+
   const nonTrimmableLength = prefix.length + suffix.length;
 
   if (nonTrimmableLength >= MAX_FILE_LENGTH) {

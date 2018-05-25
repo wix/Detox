@@ -5,7 +5,7 @@ const ArtifactPathBuilder = require('./ArtifactPathBuilder');
 describe(ArtifactPathBuilder, () => {
   let strategy;
 
-  describe('happy paths', () => {
+  describe('precise tests', () => {
     beforeEach(() => {
       strategy = new ArtifactPathBuilder({
         artifactsRootDir: '/tmp'
@@ -17,7 +17,7 @@ describe(ArtifactPathBuilder, () => {
     });
 
     it('should provide path for unique (per test runner run) artifacts', () => {
-      const artifactPath1 = strategy.buildPathForRunArtifact('before-tests-began.log');
+      const artifactPath1 = strategy.buildPathForTestArtifact('before-tests-began.log');
       const expectedPath1 = path.join(strategy.rootDir, 'before-tests-began.log');
 
       expect(artifactPath1).toBe(expectedPath1);
@@ -25,14 +25,14 @@ describe(ArtifactPathBuilder, () => {
 
     it('should provide nested path for test artifact', () => {
       const test1 = {title: 'test 1', fullName: 'some test 1', status: 'running' };
-      const artifactPath1 = strategy.buildPathForTestArtifact(test1, '1.log');
+      const artifactPath1 = strategy.buildPathForTestArtifact('1.log', test1);
       const expectedPath1 = path.join(strategy.rootDir, test1.fullName, '1.log');
 
       expect(artifactPath1).toBe(expectedPath1);
     });
   });
 
-  describe('edge cases', () => {
+  describe('snapshot tests', () => {
     beforeEach(() => {
       strategy = new ArtifactPathBuilder({
         artifactsRootDir: '/tmp',
@@ -43,16 +43,30 @@ describe(ArtifactPathBuilder, () => {
     it('should defend against accidental resolving outside of root directory', () => {
       const maliciousName = 'some/../../../../../../home/build-server';
 
-      expect(strategy.buildPathForTestArtifact({ title: '', fullName: maliciousName }, '.bashrc')).toMatchSnapshot();
-      expect(strategy.buildPathForTestArtifact({ title: '', fullName: 'test' }, maliciousName)).toMatchSnapshot();
-      expect(strategy.buildPathForTestArtifact({ title: '', fullName: maliciousName }, maliciousName)).toMatchSnapshot();
+      expect(strategy.buildPathForTestArtifact('.bashrc', { title: '', fullName: maliciousName })).toMatchSnapshot();
+      expect(strategy.buildPathForTestArtifact(maliciousName, { title: '', fullName: 'test' })).toMatchSnapshot();
+      expect(strategy.buildPathForTestArtifact(maliciousName, { title: '', fullName: maliciousName })).toMatchSnapshot();
     });
 
     it('should trim too long filenames', () => {
-      const actualPath = strategy.buildPathForTestArtifact({ title: 'test', fullName: '1'.repeat(512) }, '2'.repeat(256));
+      const actualPath = strategy.buildPathForTestArtifact('2'.repeat(256), { title: 'test', fullName: '1'.repeat(512) });
       const expectedPath = path.join(strategy.rootDir, '1'.repeat(255), '2'.repeat(255));
 
       expect(actualPath).toBe(expectedPath);
+    });
+
+    it('should prepend checkmark to an artifact of a passed test', () => {
+      const testSummary = {title: '', fullName: 'test', status: 'passed' };
+      const artifactPath = strategy.buildPathForTestArtifact('1.log', testSummary);
+
+      expect(artifactPath).toMatchSnapshot();
+    });
+
+    it('should prepend x sign to an artifact of a failed test', () => {
+      const testSummary = {title: '', fullName: 'test', status: 'failed' };
+      const artifactPath = strategy.buildPathForTestArtifact('1.log', testSummary);
+
+      expect(artifactPath).toMatchSnapshot();
     });
   });
 });

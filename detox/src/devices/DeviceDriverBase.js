@@ -8,12 +8,8 @@ class DeviceDriverBase {
     this.client = client;
   }
 
-  getArtifactCapabilities() {
-    return {
-      log: _.noop,
-      screenshot: _.noop,
-      video: _.noop,
-    };
+  declareArtifactPlugins() {
+    return {};
   }
 
   async acquireFreeDevice(name) {

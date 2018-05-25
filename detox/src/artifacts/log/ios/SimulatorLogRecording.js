@@ -1,61 +1,86 @@
+const _ = require('lodash');
 const fs = require('fs-extra');
 const log = require('npmlog');
 const { Tail } = require('tail');
-const ensureMove = require('../../../utils/ensureMove');
-const RecordingArtifact = require('../../core/artifact/RecordingArtifact');
 
-class SimulatorLogRecording extends RecordingArtifact {
+class SimulatorLogRecording {
   constructor({
-    stdoutPath,
-    stderrPath,
+    logStderr,
+    logStdout,
+    readFromBeginning,
     temporaryLogPath,
-    fromBeginning,
   }) {
-    super();
-
+    this._readFromBeginning = readFromBeginning;
     this._logPath = temporaryLogPath;
-    this._stdoutPath = stdoutPath;
-    this._stderrPath = stderrPath;
-    this._fromBeginning = fromBeginning;
+    this._stdoutPath = logStdout;
+    this._stderrPath = logStderr;
 
     this._logStream = null;
     this._stdoutTail = null;
     this._stderrTail = null;
   }
 
-  async doStart() {
-    await fs.ensureFile(this._logPath);
+  async start() {
     this._logStream = fs.createWriteStream(this._logPath, { flags: 'w' });
     this._stdoutTail = this._createTail(this._stdoutPath, 'stdout');
     this._stderrTail = this._createTail(this._stderrPath, 'stderr');
   }
 
-  async doStop() {
-    this._stdoutTail.unwatch();
-    this._stderrTail.unwatch();
-    this._logStream.end();
+  async stop() {
+    this._close();
   }
 
-  async doSave(artifactPath) {
-    await ensureMove(this._logPath, artifactPath, '.log');
+  async restart() {
+    this._close();
+    await this.start();
   }
 
-  async doDiscard() {
+  async save(artifactPath) {
+    await fs.move(this._logPath, artifactPath);
+  }
+
+  async discard() {
     await fs.remove(this._logPath);
+  }
+
+  _close() {
+    if (this._stdoutTail) {
+      this._stdoutTail.unwatch();
+    }
+
+    this._stdoutTail = null;
+
+    if (this._stderrTail) {
+      this._stderrTail.unwatch();
+    }
+
+    this._stderrTail = null;
+
+    if (this._logStream) {
+      this._logStream.end();
+    }
+
+    this._logStream = null;
+  }
+
+  kill() {
+    this._close();
+    fs.removeSync(this._logPath);
   }
 
   _createTail(file, prefix) {
     const tail = new Tail(file, {
-      fromBeginning: this._fromBeginning,
+      follow: true,
+      fromBeginning: this._readFromBeginning,
       logger: {
-        info: (...args) => log.verbose(`simulator-log-${prefix}`, ...args),
-        error: (...args) => log.error(`simulator-log-${prefix}`, ...args),
+        info: _.noop,
+        error: (...args) => log.error(`simulator-log-error`, ...args),
       },
     }).on('line', (line) => {
       this._appendLine(prefix, line);
     });
 
-    if (this._fromBeginning) {
+    if (this._readFromBeginning) {
       this._triggerTailReadUsingHack(tail);
     }
 

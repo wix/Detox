@@ -63,11 +63,10 @@
     ],
     "coveragePathIgnorePatterns": [
       "/node_modules/",
-      "src/artifacts/core/factory",
-      "src/artifacts/core/lifecycle",
       "src/artifacts/log",
       "src/artifacts/screenshot",
       "src/artifacts/video",
+      "src/artifacts/templates",
       "src/artifacts/ArtifactsManager.js",
       ".*Driver.js",
       "EmulatorTelnet.js",

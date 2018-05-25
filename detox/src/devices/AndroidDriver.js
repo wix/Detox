@@ -10,9 +10,9 @@ const APKPath = require('./android/APKPath');
 const DeviceDriverBase = require('./DeviceDriverBase');
 const sleep = require('../utils/sleep');
 
-const ADBLogcatRecorder = require('../artifacts/log/android/ADBLogcatRecorder');
-const ADBScreenshotter = require('../artifacts/screenshot/android/ADBScreenshotter');
-const ADBVideoRecorder = require('../artifacts/video/android/ADBVideoRecorder');
+const ADBLogcatPlugin = require('../artifacts/log/android/ADBLogcatPlugin');
+const ADBScreencapPlugin = require('../artifacts/screenshot/ADBScreencapPlugin');
+const ADBScreenrecorderPlugin = require('../artifacts/video/ADBScreenrecorderPlugin');
 
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
 
@@ -27,26 +27,13 @@ class AndroidDriver extends DeviceDriverBase {
     this.aapt = new AAPT();
   }
 
-  getArtifactCapabilities({ deviceId, processId }) {
+  declareArtifactPlugins() {
     const adb = this.adb;
 
     return {
-      log: (config) => new ADBLogcatRecorder({
-        ...config,
-        adb,
-        deviceId,
-        processId,
-      }),
-      screenshot: (config) => new ADBScreenshotter({
-        ...config,
-        adb,
-        deviceId,
-      }),
-      video: (config) => new ADBVideoRecorder({
-        ...config,
-        adb,
-        deviceId,
-      }),
+      log: (api) => new ADBLogcatPlugin({ api, adb }),
+      screenshot: (api) => new ADBScreencapPlugin({ api, adb }),
+      video: (api) => new ADBScreenrecorderPlugin({ api, adb }),
     };
   }
 

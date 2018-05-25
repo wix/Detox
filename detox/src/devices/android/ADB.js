@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const child_process = require('child_process');
 const path = require('path');
 const {execWithRetriesAndLogs, spawnAndLog} = require('../../utils/exec');
 const EmulatorTelnet = require('./EmulatorTelnet');
@@ -184,6 +185,11 @@ class ADB {
     return this.adbCmd(deviceId, `shell rm ${force ? '-f' : ''} "${path}"`);
   }
 
+  rmSync(deviceId, path) {
+    const cmd = `${this.adbBin} -s ${deviceId} shell rm -rf "${path}"`;
+    child_process.execSync(cmd);
+  }
+
   async adbCmd(deviceId, params) {
     const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
     const cmd = `${this.adbBin} ${serial} ${params}`;
@@ -191,7 +197,7 @@ class ADB {
   }
 
   /***
-   * @returns ChildProcessPromise
+   * @returns {ChildProcessPromise}
    */
   spawn(deviceId, params) {
     const serial = deviceId ? ['-s', deviceId] : [];

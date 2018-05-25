@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const Detox = require('./Detox');
-const fatalErrorInterceptor = require('./utils/fatalErrorInterceptor');
 const DetoxConstants = require('./DetoxConstants');
 const platform = require('./platform');
 const exportWrapper = require('./exportWrapper');
@@ -72,7 +71,10 @@ async function cleanup() {
     }
 }
 
-fatalErrorInterceptor(process);
+/* istanbul ignore next */
+const _terminate = _.once(() => detox && detox.terminate());
+process.on('SIGINT', _terminate);
+process.on('SIGTERM', _terminate);
 
 module.exports = Object.assign({
   init,

@@ -1,11 +1,13 @@
 const constructSafeFilename = require('./constructSafeFilename');
 
 describe('constructSafeFilename', () => {
-  it('should return empty string if no arguments passed', () => {
+  it('should throw if no arguments passed', () => {
     let prefix, name, suffix;
 
-    expect(constructSafeFilename()).toBe('');
-    expect(constructSafeFilename(prefix, name, suffix)).toBe('');
+    expect(() => constructSafeFilename())
+      .toThrowErrorMatchingSnapshot();
+    expect(() => constructSafeFilename(prefix, name, suffix))
+      .toThrowErrorMatchingSnapshot();
   });
 
   it('should trim filename to 255 chars', () => {
@@ -30,6 +32,6 @@ describe('constructSafeFilename', () => {
   });
 
   it('should throw exception when non-trimmable prefix and suffix occupy too much space', () => {
-    expect(() => constructSafeFilename('0'.repeat(127), '', '2'.repeat(128))).toThrowErrorMatchingSnapshot();
+    expect(() => constructSafeFilename('0'.repeat(127), '1', '2'.repeat(128))).toThrowErrorMatchingSnapshot();
   });
 });

@@ -20,6 +20,11 @@ describe('Detox', () => {
           super(rest);
           dataObject.lastConstructorArguments = rest;
         }
+        on(event, callback) {
+          if (event === 'launchApp') {
+            callback({});
+          }
+        }
       }
       jest.setMock(modulePath, FinalMock);
     }
@@ -60,16 +65,16 @@ describe('Detox', () => {
     expect(() => detox.cleanup()).not.toThrowError();
   });
 
-  it(`Calling .emergencyExit() will trigger artifacts manager shutdown`, async () => {
+  it(`Calling .terminate() will trigger artifacts manager .onTerminate()`, async () => {
     Detox = require('./Detox');
 
     detox = new Detox({deviceConfig: validDeviceConfig});
     await detox.init();
 
-    detox.artifactsManager.onShutdown = jest.fn();
-    await detox.emergencyExit();
+    detox.artifactsManager.onTerminate = jest.fn();
+    await detox.terminate();
 
-    expect(detox.artifactsManager.onShutdown).toHaveBeenCalledTimes(1);
+    expect(detox.artifactsManager.onTerminate).toHaveBeenCalledTimes(1);
   });
 
   it(`Calling .beforeEach() will trigger artifacts manager .onBeforeTest`, async () => {

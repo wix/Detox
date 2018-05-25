@@ -88,7 +88,7 @@ class EmulatorDriver extends AndroidDriver {
         return;
       }
 
-      sleep(2000);
+      await sleep(2000);
     }
 
     throw new DetoxRuntimeError({

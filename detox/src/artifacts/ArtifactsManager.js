@@ -1,122 +1,168 @@
 const _ = require('lodash');
+const fs = require('fs-extra');
+const path = require('path');
 const log = require('npmlog');
 const argparse = require('../utils/argparse');
-
-const ArtifactPathBuilder =  require('./core/lifecycle/utils/ArtifactPathBuilder');
-const RecorderLifecycle = require('./core/lifecycle/RecorderLifecycle');
-const SnapshotterLifecycle = require('./core/lifecycle/SnapshotterLifecycle');
+const logError = require('../utils/logError');
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+const ArtifactPathBuilder = require('./utils/ArtifactPathBuilder');
 
 class ArtifactsManager {
-  constructor({ artifactCapabilities }) {
-    this._hooks = [];
-    this._artifacts = [];
-    this._finalizationPromise = Promise.resolve();
+  constructor() {
+    this._idlePromise = Promise.resolve();
+    this._activeArtifacts = [];
+    this._artifactPlugins = [];
 
-    this._pathBuilder = new ArtifactPathBuilder({
+    this._deviceId = '';
+    this._bundleId = '';
+    this._pid = NaN;
+    this._terminated = false;
+
+    const pathBuilder = new ArtifactPathBuilder({
       artifactsRootDir: argparse.getArgValue('artifacts-location') || 'artifacts',
     });
 
-    if (artifactCapabilities) {
-      this._registerArtifactLifecycles(artifactCapabilities);
+    this.artifactsApi = {
+      getDeviceId: () => {
+        if (!this._deviceId) {
+          throw new DetoxRuntimeError({
+            message: 'Detox Artifacts API had no deviceId at the time of calling',
+          });
+        }
+
+        return this._deviceId;
+      },
+
+      getBundleId: () => {
+        if (!this._bundleId) {
+          throw new DetoxRuntimeError({
+            message: 'Detox Artifacts API had no bundleId at the time of calling',
+          });
+        }
+
+        return this._bundleId;
+      },
+
+      getPid: () => {
+        if (!this._pid) {
+          throw new DetoxRuntimeError({
+            message: 'Detox Artifacts API had no app pid at the time of calling',
+          });
+        }
+
+        return this._pid;
+      },
+
+      preparePathForArtifact: async (artifactName, testSummary) => {
+        const artifactPath = pathBuilder.buildPathForTestArtifact(artifactName, testSummary);
+        const artifactDir = path.dirname(artifactPath);
+        await fs.ensureDir(artifactDir);
+
+        return artifactPath;
+      },
+
+      trackArtifact: (artifact) => {
+        this._activeArtifacts.push(artifact);
+      },
+
+      untrackArtifact(artifact) {
+        _.pull(this._activeArtifacts, artifact);
+      },
+
+      requestIdleCallback: (callback) => {
+        this._idlePromise = this._idlePromise
+          .then(callback)
+          .catch(e => this._errorHandler(e, {
+            plugin: { name: 'unknown '},
+            methodName: 'onIdleCallback',
+            args: []
+          }));
+      },
+    };
+  }
+
+  registerArtifactPlugins(artifactPluginFactoriesMap = {}) {
+    const artifactPluginFactories = Object.values(artifactPluginFactoriesMap);
+    this._artifactPlugins = artifactPluginFactories.map(factory => factory(this.artifactsApi));
+  }
+
+  subscribeToDeviceEvents(device) {
+    device.on('beforeResetDevice', async (e) => this.onBeforeResetDevice(e));
+    device.on('resetDevice', async (e) => this.onResetDevice(e));
+    device.on('launchApp', async (e) => this.onLaunchApp(e));
+  }
+
+  async onLaunchApp({ deviceId, bundleId, pid }) {
+    const isFirstTime = !this._deviceId;
+
+    this._deviceId = deviceId;
+    this._bundleId = bundleId;
+    this._pid = pid;
+
+    if (!isFirstTime) {
+      await this._emit('onRelaunchApp', [{ deviceId, bundleId, pid}]);
     }
   }
 
-  async onStart() {
-    await Promise.all(this._hooks.map(hook => hook.onStart()));
+  async onBeforeAll() {
+    await this._emit('onBeforeAll', []);
   }
 
   async onBeforeTest(testSummary) {
-    await Promise.all(this._hooks.map(hook => hook.onBeforeTest(testSummary)));
+    await this._emit('onBeforeTest', [testSummary]);
+  }
+
+  async onBeforeResetDevice({ deviceId }) {
+    await this._emit('onBeforeResetDevice', [{ deviceId }]);
+  }
+
+  async onResetDevice({ deviceId }) {
+    await this._emit('onResetDevice', [{ deviceId }]);
   }
 
   async onAfterTest(testSummary) {
-    await Promise.all(this._hooks.map(hook => hook.onAfterTest(testSummary)));
+    await this._emit('onAfterTest', [testSummary]);
   }
 
-  async onExit() {
-    await Promise.all(this._hooks.map(hook => hook.onExit()));
-    await this._finalizationPromise;
+  async onAfterAll() {
+    await this._emit('onAfterAll', []);
+    await this._idlePromise;
+    log.verbose('ArtifactsManager', 'finalized artifacts successfully');
   }
 
-  async onShutdown() {
-    await Promise.all(this._artifacts.map(r => r.discard()));
-  }
-
-  _registerArtifactLifecycles({ log, screenshot, video }) {
-    const artifactsRegistry = {
-      registerArtifact: this._registerArtifact.bind(this),
-    };
-
-    const logRecorder = log({ artifactsRegistry });
-    const screenshotter = screenshot({ artifactsRegistry });
-    const videoRecorder = video({ artifactsRegistry });
-
-    this._hooks = _.compact([
-      logRecorder ? this._createLogRecorderLifecycle(logRecorder) : null,
-      screenshotter ? this._createScreenshotterLifecycle(screenshotter) : null,
-      videoRecorder ? this._createVideoRecorderLifecycle(videoRecorder) : null,
-    ]);
-  }
-
-  _createLogRecorderLifecycle(logRecorder) {
-    const recordLogs = argparse.getArgValue('record-logs') || 'none';
-    if (recordLogs === 'none') {
-      return null;
+  onTerminate() {
+    if (this._terminated) {
+      return;
     }
 
-    return new RecorderLifecycle({
-      shouldRecordStartup: true,
-      keepOnlyFailedTestsRecordings: recordLogs === 'failing',
-      pathBuilder: this._pathBuilder,
-      recorder: logRecorder,
-      enqueueFinalizationTask: this._enqueueFinalizationTask.bind(this),
-    });
-  }
+    this._terminated = true;
 
-  _createScreenshotterLifecycle(screenshotter) {
-    const takeScreenshots = argparse.getArgValue('take-screenshots') || 'none';
-    if (takeScreenshots === 'none') {
-      return null;
+    for (const artifact of this._artifactPlugins) {
+      artifact.onTerminate();
     }
 
-    return new SnapshotterLifecycle({
-      keepOnlyFailedTestsSnapshots: takeScreenshots === 'failing',
-      pathBuilder: this._pathBuilder,
-      snapshotter: screenshotter,
-      enqueueFinalizationTask: this._enqueueFinalizationTask.bind(this),
-    });
-  }
-
-  _createVideoRecorderLifecycle(videoRecorder) {
-    const recordVideos = argparse.getArgValue('record-videos') || 'none';
-    if (recordVideos === 'none') {
-      return null;
+    for (const artifact of this._activeArtifacts) {
+      artifact.kill();
     }
 
-    return new RecorderLifecycle({
-      shouldRecordStartup: false,
-      keepOnlyFailedTestsRecordings: recordVideos === 'failing',
-      pathBuilder: this._pathBuilder,
-      recorder: videoRecorder,
-      enqueueFinalizationTask: this._enqueueFinalizationTask.bind(this),
-    });
+    log.info('ArtifactsManager', 'terminated all artifacts');
   }
 
-  _registerArtifact(artifact) {
-    this._artifacts.push(artifact);
+  async _emit(methodName, args) {
+    await Promise.all(this._artifactPlugins.map(async (plugin) => {
+      try {
+        await plugin[methodName](...args);
+      } catch (e) {
+        this._errorHandler(e, { plugin, methodName, args });
+      }
+    }));
   }
 
-  _enqueueFinalizationTask(finalizationFunction) {
-    this._finalizationPromise = this._finalizationPromise
-      .then(finalizationFunction)
-      .catch(this._suppressFinalizationError);
-
-    return this._finalizationPromise;
-  }
-
-  _suppressFinalizationError(e) {
-    log.error('ArtifactsManager', 'Finalization error:\n%j', e);
+  _errorHandler(e, { plugin, methodName }) {
+    log.error('ArtifactsManager', 'Caught exception inside plugin (%s) at phase %s', plugin.name || 'unknown', methodName);
+    logError(e, 'ArtifactsManager');
   }
 }
+
 
 module.exports = ArtifactsManager;

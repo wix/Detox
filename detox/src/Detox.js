@@ -51,7 +51,11 @@ class Detox {
     }
 
     const deviceDriver = new deviceClass(this.client);
+    this.artifactsManager = new ArtifactsManager();
+    this.artifactsManager.registerArtifactPlugins(deviceDriver.declareArtifactPlugins());
     this.device = new Device(this.deviceConfig, sessionConfig, deviceDriver);
+    this.artifactsManager.subscribeToDeviceEvents(this.device);
+
     await this.device.prepare(params);
 
     if (params.initGlobals) {
@@ -59,19 +63,12 @@ class Detox {
       global.device = this.device;
     }
 
-    this.artifactsManager = new ArtifactsManager({
-      artifactCapabilities: deviceDriver.getArtifactCapabilities({
-        deviceId: this.device.id,
-        processId: this.device.processId,
-      }),
-    });
-
-    await this.artifactsManager.onStart();
+    await this.artifactsManager.onBeforeAll();
   }
 
   async cleanup() {
     if (this.artifactsManager) {
-      await this.artifactsManager.onExit();
+      await this.artifactsManager.onAfterAll();
     }
 
     if (this.client) {
@@ -91,8 +88,8 @@ class Detox {
     }
   }
 
-  async emergencyExit() {
-    await this.artifactsManager.onShutdown();
+  terminate() {
+    this.artifactsManager.onTerminate();
   }
 
   async beforeEach(testSummary) {

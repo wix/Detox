@@ -1,73 +1,110 @@
-const fs = require('fs-extra');
-const RecordingArtifact = require('../../core/artifact/RecordingArtifact');
-const ensureExtension = require('../../../utils/ensureExtension');
+const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 const interruptProcess = require('../../../utils/interruptProcess');
+const retry = require('../../../utils/retry');
 const sleep = require('../../../utils/sleep');
 
-class ADBLogcatRecording extends RecordingArtifact {
+class ADBLogcatRecording {
   constructor({
     adb,
     deviceId,
+    pid,
     pathToLogOnDevice,
-    processId,
   }) {
-    super();
-
     this.adb = adb;
+
     this.deviceId = deviceId;
+    this.pid = pid;
+
     this.pathToLogOnDevice = pathToLogOnDevice;
-    this.processId = processId;
     this.processPromise = null;
+
+    this._waitUntilLogFileIsCreated = null;
+    this._waitWhileLogIsOpenedByLogcat = null;
+    this._killed = false;
   }
 
-  async doStart() {
+  async start() {
     const now = await this.adb.shell(this.deviceId, `date "+\\"%Y-%m-%d %T.000\\""`);
 
     this.processPromise = this.adb.logcat(this.deviceId, {
       file: this.pathToLogOnDevice,
-      pid: this.processId,
+      pid: this.pid,
       time: now,
     });
 
-    await this._waitUntilLogFileIsCreated();
+    this._waitUntilLogFileIsCreated = sleep(300).then(() => {
+      return retry(() => this._assertLogIsCreated());
+    });
   }
 
-  async doStop() {
+  async restart({ pid }) {
     if (this.processPromise) {
-      await interruptProcess(this.processPromise);
+      await this.stop();
+    }
+
+    this.pid = pid;
+    await this.start();
+  }
+
+  async stop() {
+    try {
+      await this._waitUntilLogFileIsCreated;
+    } finally {
+      if (this.processPromise) {
+        await interruptProcess(this.processPromise);
+        this.processPromise = null;
+
+        this._waitWhileLogIsOpenedByLogcat = sleep(300).then(() => {
+          return retry(() => this._assertLogIsNotOpenedByApps());
+        });
+      }
     }
   }
 
-  async doSave(artifactPath) {
-    const logArtifactPath = ensureExtension(artifactPath, '.log');
-
-    await fs.ensureFile(logArtifactPath);
-    await this._waitWhileLogIsOpenedByLogcat();
-    await this.adb.pull(this.deviceId, this.pathToLogOnDevice, logArtifactPath);
+  async save(artifactPath) {
+    await this._waitWhileLogIsOpenedByLogcat;
+    await this.adb.pull(this.deviceId, this.pathToLogOnDevice, artifactPath);
     await this.adb.rm(this.deviceId, this.pathToLogOnDevice);
   }
 
-  async doDiscard() {
-    await this._waitWhileLogIsOpenedByLogcat();
+  async discard() {
+    await this._waitWhileLogIsOpenedByLogcat;
     await this.adb.rm(this.deviceId, this.pathToLogOnDevice);
   }
 
-  async _waitUntilLogFileIsCreated() {
-    let size;
+  kill() {
+    this._killed = true;
 
-    do {
-      size = await this.adb.getFileSize(this.deviceId, this.pathToLogOnDevice);
-      await sleep(100);
-    } while (size === -1);
+    if (this.processPromise) {
+      interruptProcess(this.processPromise, 'SIGTERM');
+      this.processPromise = null;
+    }
+
+    this.adb.rmSync(this.deviceId, this.pathToLogOnDevice);
   }
 
-  async _waitWhileLogIsOpenedByLogcat() {
-    let isFileOpen;
+  async _assertLogIsCreated() {
+    if (this._killed) return;
 
-    do {
-      isFileOpen = await this.adb.isFileOpen(this.deviceId, this.pathToLogOnDevice);
-      await sleep(500);
-    } while (isFileOpen);
+    const size = await this.adb.getFileSize(this.deviceId, this.pathToLogOnDevice);
+
+    if (size < 0) {
+      throw new DetoxRuntimeError({
+        message: `The log is not being recorded on device (${this.deviceId}) at path: ${this.pathToLogOnDevice}`,
+      });
+    }
+  }
+
+  async _assertLogIsNotOpenedByApps() {
+    if (this._killed) return;
+
+    const isFileOpen = await this.adb.isFileOpen(this.deviceId, this.pathToLogOnDevice);
+
+    if (isFileOpen) {
+      throw new DetoxRuntimeError({
+        message: `The log is still being opened on device (${this.deviceId}) at path: ${this.pathToLogOnDevice}`,
+      });
+    }
   }
 }
 

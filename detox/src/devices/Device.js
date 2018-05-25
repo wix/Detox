@@ -1,8 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
+const log = require('npmlog');
 const argparse = require('../utils/argparse');
 const debug = require('../utils/debug'); //debug utils, leave here even if unused
+const logError = require('../utils/logError');
 
 class Device {
 
@@ -13,14 +15,29 @@ class Device {
     this._processes = {};
     this.deviceDriver.validateDeviceConfig(deviceConfig);
     this.debug = debug;
+    this._listeners = {
+      beforeResetDevice: [],
+      resetDevice: [],
+      launchApp: [],
+    };
   }
 
-  get id() {
-    return this._deviceId;
+  async emit(eventName, eventObj) {
+    const fire = async (fn) => fn(eventObj);
+    const logEmitError = (err) => {
+      log.error('detox-device', 'device.emit("%s", %j) error', eventName, eventObj);
+      logError(err, 'detox-device');
+    };
+
+    await Promise.all(this._listeners[eventName].map(fn => fire(fn).catch(logEmitError)));
   }
 
-  get processId() {
-    return this._processes[this._bundleId];
+  on(eventName, callback) {
+    this._listeners[eventName].push(callback);
+  }
+
+  off(eventName, callback) {
+    _.pull(this._listeners[eventName], callback);
   }
 
   async prepare(params = {}) {
@@ -89,6 +106,12 @@ class Device {
 
     const processId = await this.deviceDriver.launch(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs));
     this._processes[_bundleId] = processId;
+
+    await this.emit('launchApp', {
+      deviceId: this._deviceId,
+      bundleId: this._bundleId,
+      pid: processId,
+    });
 
     await this.deviceDriver.waitUntilReady();
 
@@ -205,7 +228,9 @@ class Device {
   }
 
   async resetContentAndSettings() {
+    await this.emit('beforeResetDevice', { deviceId: this._deviceId });
     await this.deviceDriver.resetContentAndSettings(this._deviceId);
+    await this.emit('resetDevice', { deviceId: this._deviceId });
   }
 
   getPlatform() {
