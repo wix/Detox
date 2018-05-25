@@ -20,22 +20,25 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
   log.verbose(`${_operationCounter}: ${cmd}`);
 
   let result;
-  await retry({retries, interval}, async () => {
-    if (statusLogs && statusLogs.trying) {
-      log.info(`${_operationCounter}: ${statusLogs.trying}`);
-    }
-    result = await exec(cmd);
-  });
+
+  try {
+    await retry({retries, interval}, async () => {
+      if (statusLogs && statusLogs.trying) {
+        log.info(`${_operationCounter}: ${statusLogs.trying}`);
+      }
+      result = await exec(cmd);
+    });
+  } catch (err) {
+    log.error(`${_operationCounter}: running "${cmd}" returned ${err.code}`);
+    log.error(`${_operationCounter}: stderr: ${err.stderr}`);
+  }
+
   if (result === undefined) {
     throw new Error(`${_operationCounter}: running "${cmd}" returned undefined`);
   }
 
   if (result.stdout) {
-    log.verbose(`${_operationCounter}: stdout:`, result.stdout);
-  }
-
-  if (result.stderr) {
-    log.verbose(`${_operationCounter}: stderr:`, result.stderr);
+    log.verbose(`${_operationCounter}: stdout: ${result.stdout}`);
   }
 
   if (statusLogs && statusLogs.successful) {
