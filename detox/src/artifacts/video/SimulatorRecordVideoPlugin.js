@@ -1,4 +1,5 @@
 const fs = require('fs-extra');
+const log = require('npmlog');
 const tempfile = require('tempfile');
 const VideoArtifactPlugin = require('./VideoArtifactPlugin');
 const interruptProcess = require('../../utils/interruptProcess');
@@ -16,18 +17,28 @@ class SimulatorRecordVideoPlugin extends VideoArtifactPlugin {
     let processPromise = null;
 
     return {
-      async start() {
+      start: async () => {
         processPromise = appleSimUtils.recordVideo(api.getDeviceId(), temporaryFilePath);
       },
-      async stop() {
+      stop: async () => {
         if (processPromise) {
           await interruptProcess(processPromise);
         }
+
+        const stderr = processPromise.childProcess.stderr || '';
+
+        if (stderr.contains('Video recording requires hardware Metal capability')) {
+          this.disable('the system does not have hardware Metal capability');
+        }
       },
-      async save(artifactPath) {
-        await fs.move(temporaryFilePath, artifactPath);
+      save: async (artifactPath) => {
+        if (await fs.exists(temporaryFilePath)) {
+          await fs.move(temporaryFilePath, artifactPath);
+        } else {
+          log.error('SimulatorRecordVideoPlugin', 'could not find temporary file at: %s', temporaryFilePath);
+        }
       },
-      async discard() {
+      discard: async () => {
         await fs.remove(temporaryFilePath);
       },
       kill() {
