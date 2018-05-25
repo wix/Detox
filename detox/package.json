@@ -21,14 +21,14 @@
   "author": "Tal Kol <talkol@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "scripts/build.sh",
-    "lint": "eslint src",
+    "build": "node scripts/build.js",
+    "lint": "eslint src scripts",
     "unit": "jest --coverage --verbose",
     "pretest": "npm run lint",
     "test": "npm run unit",
     "unit:watch": "jest --watch",
     "prepublish": "npm run build",
-    "postinstall": "scripts/postinstall.sh"
+    "postinstall": "node scripts/postinstall.js"
   },
   "devDependencies": {
     "eslint": "^4.11.0",
