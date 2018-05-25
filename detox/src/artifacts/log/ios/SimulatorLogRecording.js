@@ -36,7 +36,14 @@ class SimulatorLogRecording {
   }
 
   async save(artifactPath) {
-    await fs.move(this._logPath, artifactPath);
+    const tempLogPath = this._logPath;
+
+    if (await fs.exists(tempLogPath)) {
+      log.verbose('SimulatorLogRecording', 'moving %s to %s', tempLogPath, artifactPath);
+      await fs.move(tempLogPath, artifactPath);
+    } else {
+      log.error('SimulatorLogRecording', 'did not find temporary log file: %s', tempLogPath, artifactPath);
+    }
   }
 
   async discard() {
@@ -70,10 +77,9 @@ class SimulatorLogRecording {
 
   _createTail(file, prefix) {
     const tail = new Tail(file, {
-      follow: true,
       fromBeginning: this._readFromBeginning,
       logger: {
-        info: _.noop,
+        info: (...args) => log.verbose(`simulator-log-info`, ...args),
         error: (...args) => log.error(`simulator-log-error`, ...args),
       },
     }).on('line', (line) => {

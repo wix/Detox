@@ -24,13 +24,13 @@ program
     'When an action/expectation takes a significant amount of time use this option to print device synchronization status.'
     + 'The status will be printed if the action takes more than [value]ms to complete')
   .option('-a, --artifacts-location [path]',
-    'Artifacts (logs, screenshots, etc) root directory.', 'artifacts')
+    '[EXPERIMENTAL] Artifacts (logs, screenshots, etc) root directory.', 'artifacts')
   .option('--record-logs [failing|all|none]',
-    'Save logs during each test to artifacts directory. Pass "failing" to save logs of failing tests only.', 'none')
+    '[EXPERIMENTAL] Save logs during each test to artifacts directory. Pass "failing" to save logs of failing tests only.')
   .option('--take-screenshots [failing|all|none]',
-    'Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only.', 'none')
+    '[EXPERIMENTAL] Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only.')
   .option('--record-videos [failing|all|none]',
-    'Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only.', 'none')
+    '[EXPERIMENTAL] Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only.')
   .option('-p, --platform [ios/android]',
     '[DEPRECATED], platform is deduced automatically. Run platform specific tests. Runs tests with invert grep on \':platform:\', '
     + 'e.g test with substring \':ios:\' in its name will not run when passing \'--platform android\'')
