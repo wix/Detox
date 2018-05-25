@@ -6,8 +6,8 @@
     "test": ":",
     "packager": "react-native start",
     "detox-server": "detox run-server",
-    "e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization 10000 --take-screenshots all --record-videos all --record-logs all --loglevel verbose",
-    "e2e:android": "detox test --configuration android.emu.release --take-screenshots all --record-videos all --record-logs all --loglevel verbose",
+    "e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization 10000",
+    "e2e:android": "detox test --configuration android.emu.release --loglevel verbose",
     "build:ios": "detox build --configuration ios.sim.release",
     "build:android": "detox build --configuration android.emu.release"
   },
