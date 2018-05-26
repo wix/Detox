@@ -35,13 +35,6 @@ class SimulatorRecordVideoPlugin extends VideoArtifactPlugin {
       discard: async () => {
         await fs.remove(temporaryFilePath);
       },
-      kill() {
-        if (processPromise) {
-          interruptProcess(processPromise, 'SIGTERM');
-        }
-
-        fs.removeSync(temporaryFilePath);
-      },
     };
   }
 }

@@ -70,11 +70,6 @@ class SimulatorLogRecording {
     this._logStream = null;
   }
 
-  kill() {
-    this._close();
-    fs.removeSync(this._logPath);
-  }
-
   _createTail(file, prefix) {
     const tail = new Tail(file, {
       fromBeginning: this._readFromBeginning,

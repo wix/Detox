@@ -12,7 +12,6 @@ class ADBVideoRecording {
 
     this.processPromise = null;
     this._waitWhileVideoIsBusy = null;
-    this._killed = false;
   }
 
   async start() {
@@ -47,20 +46,7 @@ class ADBVideoRecording {
     await this.adb.rm(this.deviceId, this.pathToVideoOnDevice);
   }
 
-  kill() {
-    this._killed = true;
-
-    if (this.processPromise) {
-      interruptProcess(this.processPromise, 'SIGTERM');
-      this.processPromise = null;
-    }
-
-    this.adb.rmSync(this.deviceId, this.pathToVideoOnDevice);
-  }
-
   async _assertVideoIsBeingRecorded() {
-    if (this._killed) return;
-
     const size = await this.adb.getFileSize(this.deviceId, this.pathToVideoOnDevice);
 
     if (size < 1) {
@@ -71,8 +57,6 @@ class ADBVideoRecording {
   }
 
   async _assertVideoIsNotOpenedByProcesses() {
-    if (this._killed) return;
-
     const size = await this.adb.getFileSize(this.deviceId, this.pathToVideoOnDevice);
 
     if (size < 1) {

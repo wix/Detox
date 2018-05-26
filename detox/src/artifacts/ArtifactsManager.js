@@ -9,14 +9,16 @@ const ArtifactPathBuilder = require('./utils/ArtifactPathBuilder');
 
 class ArtifactsManager {
   constructor() {
+    this.onTerminate = _.once(this.onTerminate.bind(this));
+
     this._idlePromise = Promise.resolve();
+    this._onIdleCallbacks = [];
     this._activeArtifacts = [];
     this._artifactPlugins = [];
 
     this._deviceId = '';
     this._bundleId = '';
     this._pid = NaN;
-    this._terminated = false;
 
     const pathBuilder = new ArtifactPathBuilder({
       artifactsRootDir: argparse.getArgValue('artifacts-location') || 'artifacts',
@@ -69,16 +71,36 @@ class ArtifactsManager {
         _.pull(this._activeArtifacts, artifact);
       },
 
-      requestIdleCallback: (callback) => {
+      requestIdleCallback: (callback, caller) => {
+        callback._from = caller.name;
+        this._onIdleCallbacks.push(callback);
+
         this._idlePromise = this._idlePromise
-          .then(callback)
-          .catch(e => this._errorHandler(e, {
-            plugin: { name: 'unknown '},
-            methodName: 'onIdleCallback',
-            args: []
-          }));
+          .then(() => this._terminated
+            ? this._runAllIdleTasks()
+            : this._runNextIdleTask());
       },
     };
+  }
+
+  async _runNextIdleTask() {
+    const onIdleCallback = this._onIdleCallbacks.shift();
+
+    if (onIdleCallback) {
+      return Promise.resolve().then(onIdleCallback).catch(e => {
+        this._idleCallbackErrorHandle(e, onIdleCallback);
+      });
+    }
+  }
+
+  async _runAllIdleTasks() {
+    const onIdleCallbacks = this._onIdleCallbacks.splice(0);
+
+    return Promise.all(onIdleCallbacks.map((onIdleCallback) => {
+      return Promise.resolve().then(onIdleCallback).catch(e => {
+        return this._idleCallbackErrorHandle(e, onIdleCallback);
+      });
+    }));
   }
 
   registerArtifactPlugins(artifactPluginFactoriesMap = {}) {
@@ -130,21 +152,9 @@ class ArtifactsManager {
     log.verbose('ArtifactsManager', 'finalized artifacts successfully');
   }
 
-  onTerminate() {
-    if (this._terminated) {
-      return;
-    }
-
-    this._terminated = true;
-
-    for (const artifact of this._artifactPlugins) {
-      artifact.onTerminate();
-    }
-
-    for (const artifact of this._activeArtifacts) {
-      artifact.kill();
-    }
-
+  async onTerminate() {
+    await Promise.all(this._artifactPlugins.map(plugin => plugin.onTerminate()));
+    await Promise.all(this._activeArtifacts.map(artifact => artifact.discard()));
     log.info('ArtifactsManager', 'terminated all artifacts');
   }
 
@@ -161,6 +171,14 @@ class ArtifactsManager {
   _errorHandler(e, { plugin, methodName }) {
     log.error('ArtifactsManager', 'Caught exception inside plugin (%s) at phase %s', plugin.name || 'unknown', methodName);
     logError(e, 'ArtifactsManager');
+  }
+
+  _idleCallbackErrorHandle(e, callback) {
+    this._errorHandler(e, {
+      plugin: { name: callback._from },
+      methodName: 'onIdleCallback',
+      args: []
+    })
   }
 }
 

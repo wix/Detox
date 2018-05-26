@@ -20,7 +20,6 @@ class ADBLogcatRecording {
 
     this._waitUntilLogFileIsCreated = null;
     this._waitWhileLogIsOpenedByLogcat = null;
-    this._killed = false;
   }
 
   async start() {
@@ -72,20 +71,7 @@ class ADBLogcatRecording {
     await this.adb.rm(this.deviceId, this.pathToLogOnDevice);
   }
 
-  kill() {
-    this._killed = true;
-
-    if (this.processPromise) {
-      interruptProcess(this.processPromise, 'SIGTERM');
-      this.processPromise = null;
-    }
-
-    this.adb.rmSync(this.deviceId, this.pathToLogOnDevice);
-  }
-
   async _assertLogIsCreated() {
-    if (this._killed) return;
-
     const size = await this.adb.getFileSize(this.deviceId, this.pathToLogOnDevice);
 
     if (size < 0) {
@@ -96,8 +82,6 @@ class ADBLogcatRecording {
   }
 
   async _assertLogIsNotOpenedByApps() {
-    if (this._killed) return;
-
     const isFileOpen = await this.adb.isFileOpen(this.deviceId, this.pathToLogOnDevice);
 
     if (isFileOpen) {

@@ -26,10 +26,6 @@ class ADBScreencapPlugin extends ScreenshotArtifactPlugin {
       async discard() {
         await adb.rm(deviceId, pathToScreenshotOnDevice);
       },
-
-      kill() {
-        adb.rmSync(deviceId, pathToScreenshotOnDevice);
-      }
     };
   }
 }

@@ -28,11 +28,6 @@ class SimulatorScreenshotter extends ScreenshotArtifactPlugin {
         log.verbose('SimulatorScreenshotter', 'removing temp file: %s', temporaryFilePath);
         await fs.remove(temporaryFilePath);
       },
-
-      kill() {
-        log.verbose('SimulatorScreenshotter', 'removing temp file: %s', temporaryFilePath);
-        fs.removeSync(temporaryFilePath);
-      },
     };
   }
 }

@@ -120,7 +120,7 @@ class ArtifactPlugin {
    *
    * @abstract
    * @protected
-   * @return {Killable} - an object with synchronous .kill() method
+   * @return {Artifact} - an object with synchronous .discard() and .save(path) methods
    */
   createTestArtifact() {}
 

@@ -52,7 +52,7 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
       const snapshotArtifactPath = await this.preparePathForSnapshot(testSummary, index);
       await snapshot.save(snapshotArtifactPath);
       this.api.untrackArtifact(snapshot);
-    });
+    }, this);
   }
 
   _startDiscardingSnapshot(index) {
@@ -64,7 +64,7 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
     this.api.requestIdleCallback(async () => {
       await snapshot.discard();
       this.api.untrackArtifact(snapshot);
-    });
+    }, this);
   }
 
   _clearSnapshotReferences() {

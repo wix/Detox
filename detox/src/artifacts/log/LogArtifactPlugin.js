@@ -1,5 +1,5 @@
 const argparse = require('../../utils/argparse');
-const StartupAndTestRecorderPlugin = require('../templates/StartupAndTestRecorderPlugin');
+const StartupAndTestRecorderPlugin = require('../templates/plugin/StartupAndTestRecorderPlugin');
 
 /***
  * @abstract
