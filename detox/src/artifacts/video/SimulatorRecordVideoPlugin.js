@@ -22,11 +22,7 @@ class SimulatorRecordVideoPlugin extends VideoArtifactPlugin {
       },
       stop: async () => {
         if (processPromise) {
-          const { stderr } = await interruptProcess(processPromise);
-
-          if ((stderr || '').contains('Video recording requires hardware Metal capability')) {
-            this.disable('the system does not have hardware Metal capability');
-          }
+          await interruptProcess(processPromise);
         }
       },
       save: async (artifactPath) => {

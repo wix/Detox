@@ -10,7 +10,7 @@ async function interruptProcess(childProcessPromise, signal = 'SIGINT') {
   );
 
   childProcessPromise.childProcess.kill(signal);
-  return childProcessPromise.catch(e => {
+  await childProcessPromise.catch(e => {
     /* istanbul ignore if */
     if (e.exitCode != null) {
       throw e;
