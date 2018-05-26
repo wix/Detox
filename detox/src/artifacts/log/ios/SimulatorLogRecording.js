@@ -21,16 +21,19 @@ class SimulatorLogRecording {
   }
 
   async start() {
+    log.verbose('SimulatorLogPlugin', 'starting to log');
     this._logStream = fs.createWriteStream(this._logPath, { flags: 'w' });
     this._stdoutTail = this._createTail(this._stdoutPath, 'stdout');
     this._stderrTail = this._createTail(this._stderrPath, 'stderr');
   }
 
   async stop() {
+    log.verbose('SimulatorLogPlugin', 'stopping to watch');
     this._close();
   }
 
   async restart() {
+    log.verbose('SimulatorLogPlugin', 'restarting');
     this._close();
     await this.start();
   }
@@ -101,10 +104,12 @@ class SimulatorLogRecording {
   }
 
   _appendLine(prefix, line) {
-    this._logStream.write(prefix);
-    this._logStream.write(': ');
-    this._logStream.write(line);
-    this._logStream.write('\n');
+    if (this._logStream) {
+      this._logStream.write(prefix);
+      this._logStream.write(': ');
+      this._logStream.write(line);
+      this._logStream.write('\n');
+    }
   }
 }
 
