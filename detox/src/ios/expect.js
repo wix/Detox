@@ -183,14 +183,14 @@ class ActionInteraction extends Interaction {
   constructor(element, action) {
     super();
 
-    this._call = GreyInteraction.performAction(callThunk(element), callThunk(action));
+    this._call = GreyInteraction.performAction(invoke.callDirectly(callThunk(element)), callThunk(action));
   }
 }
 
 class MatcherAssertionInteraction extends Interaction {
   constructor(element, matcher) {
     super();
-    this._call = GreyInteraction.assertWithMatcher(callThunk(element), callThunk(matcher));
+    this._call = GreyInteraction.assertWithMatcher(invoke.callDirectly(callThunk(element)), callThunk(matcher));
   }
 }
 
@@ -219,7 +219,7 @@ class WaitForInteraction extends Interaction {
       _conditionCall = GreyConditionDetox.detoxConditionForNotElementMatched(callThunk(this._element));
     }
 
-    this._call = GreyCondition.waitWithTimeout(_conditionCall, timeout / 1000)
+    this._call = GreyCondition.waitWithTimeout(invoke.callDirectly(_conditionCall), timeout / 1000)
     await this.execute();
   }
   whileElement(searchMatcher) {
@@ -239,9 +239,9 @@ class WaitForActionInteraction extends Interaction {
   }
 
   async _execute(searchAction) {
-    const _interactionCall = GreyInteraction.usingSearchActionOnElementWithMatcher(callThunk(this._element), callThunk(searchAction), callThunk(this._searchMatcher));
+    const _interactionCall = GreyInteraction.usingSearchActionOnElementWithMatcher(invoke.callDirectly(callThunk(this._element)), callThunk(searchAction), callThunk(this._searchMatcher));
 
-    this._call = GreyInteraction.assertWithMatcher(_interactionCall, callThunk(this._originalMatcher));
+    this._call = GreyInteraction.assertWithMatcher(invoke.callDirectly(_interactionCall), callThunk(this._originalMatcher));
     await this.execute();
   }
   async scroll(amount, direction = 'down') {

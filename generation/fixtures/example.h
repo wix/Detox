@@ -68,3 +68,7 @@
 // For us this means that we don't set the class type, but let it be set from the outside
 // This is an assumption based on our current experience with EarlGrey, we might need to rework this at some point
 - (instancetype)performAction:(NSString *)action;
+
+// This method has a blacklisted argument type, so it should only have one arg
++ (BOOL)rotateDeviceToOrientation:(UIDeviceOrientation)deviceOrientation
+                       errorOrNil:(__strong NSError **)errorOrNil;

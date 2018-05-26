@@ -31,7 +31,8 @@ const typeCheckInterfaces = {
 	'id<GREYMatcher>': isGreyMatcher,
 	'GREYElementInteraction*': isGreyElementInteraction,
 	UIAccessibilityTraits: isArray,
-	id: isDefined
+	id: isDefined,
+	UIDeviceOrientation: isOneOf(["landscape", "portrait"])
 };
 
 const contentSanitizersForType = {
@@ -50,10 +51,15 @@ const contentSanitizersForType = {
 		name: 'sanitize_uiAccessibilityTraits',
 		value: callGlobal('sanitize_uiAccessibilityTraits')
 	},
-	'GREYElementInteraction*': {
-		type: 'Invocation',
-		name: 'sanitize_greyElementInteraction',
-		value: callGlobal('sanitize_greyElementInteraction')
+	"GREYElementInteraction*": {
+		type: "Invocation",
+		name: "sanitize_greyElementInteraction",
+		value: callGlobal("sanitize_greyElementInteraction")
+	},
+	UIDeviceOrientation: {
+		type: "NSInteger",
+		name: "sanitize_uiDeviceOrientation",
+		value: callGlobal("sanitize_uiDeviceOrientation")
 	}
 };
 
@@ -62,20 +68,36 @@ module.exports = generator({
 	contentSanitizersForFunction: {},
 	contentSanitizersForType,
 	supportedTypes: [
+		'CFTimeInterval',
 		'CGFloat',
 		'CGPoint',
 		'GREYContentEdge',
 		'GREYDirection',
 		'GREYElementInteraction*',
+		'id',
+		'id<GREYAction>',
+		'id<GREYMatcher>',
 		'NSInteger',
 		'NSString *',
 		'NSString',
 		'NSUInteger',
-		'id<GREYAction>',
-		'id<GREYMatcher>',
-		'CFTimeInterval',
 		'UIAccessibilityTraits',
-		'id'
+		"__strong NSError **",
+		"CFTimeInterval",
+		"CGFloat",
+		"CGPoint",
+		"GREYContentEdge",
+		"GREYDirection",
+		"GREYElementInteraction*",
+		"id",
+		"id<GREYAction>",
+		"id<GREYMatcher>",
+		"NSInteger",
+		"NSString *",
+		"NSString",
+		"NSUInteger",
+		"UIAccessibilityTraits",
+		"UIDeviceOrientation",
 	],
 	renameTypesMap: {
 		NSUInteger: 'NSInteger',

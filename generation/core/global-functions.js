@@ -138,6 +138,15 @@ function sanitize_greyElementInteraction(value) {
 	};
 } // END sanitize_greyElementInteraction
 
+function sanitize_uiDeviceOrientation(value) {
+	const orientationMapping = {
+		landscape: 3, // top at left side landscape
+		portrait: 1 // non-reversed portrait
+	};
+
+	return orientationMapping[value];
+} // END sanitize_uiDeviceOrientation
+
 module.exports = {
 	sanitize_greyDirection,
 	sanitize_greyContentEdge,
@@ -145,5 +154,6 @@ module.exports = {
 	sanitize_android_direction,
 	sanitize_android_edge,
 	sanitize_matcher,
-	sanitize_greyElementInteraction
+	sanitize_greyElementInteraction,
+	sanitize_uiDeviceOrientation
 };

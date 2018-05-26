@@ -31,10 +31,7 @@ NSInvalidArgumentException is raised.
 */static valueForConfigKey(element, configKey) {
     if (typeof configKey !== "string") throw new Error("configKey should be a string, but got " + (configKey + (" (" + (typeof configKey + ")"))));
     return {
-      target: {
-        type: "Invocation",
-        value: element
-      },
+      target: element,
       method: "valueForConfigKey:",
       args: [{
         type: "NSString",
@@ -55,10 +52,7 @@ raised.
 */static boolValueForConfigKey(element, configKey) {
     if (typeof configKey !== "string") throw new Error("configKey should be a string, but got " + (configKey + (" (" + (typeof configKey + ")"))));
     return {
-      target: {
-        type: "Invocation",
-        value: element
-      },
+      target: element,
       method: "boolValueForConfigKey:",
       args: [{
         type: "NSString",
@@ -79,10 +73,7 @@ raised.
 */static integerValueForConfigKey(element, configKey) {
     if (typeof configKey !== "string") throw new Error("configKey should be a string, but got " + (configKey + (" (" + (typeof configKey + ")"))));
     return {
-      target: {
-        type: "Invocation",
-        value: element
-      },
+      target: element,
       method: "integerValueForConfigKey:",
       args: [{
         type: "NSString",
@@ -103,10 +94,7 @@ raised.
 */static doubleValueForConfigKey(element, configKey) {
     if (typeof configKey !== "string") throw new Error("configKey should be a string, but got " + (configKey + (" (" + (typeof configKey + ")"))));
     return {
-      target: {
-        type: "Invocation",
-        value: element
-      },
+      target: element,
       method: "doubleValueForConfigKey:",
       args: [{
         type: "NSString",
@@ -121,10 +109,7 @@ raised.
 are not reset.
 */static reset(element) {
     return {
-      target: {
-        type: "Invocation",
-        value: element
-      },
+      target: element,
       method: "reset",
       args: []
     };
@@ -140,10 +125,7 @@ Overwrites any previous value for the configuration.
 */static setValueForConfigKey(element, value, configKey) {
     if (typeof configKey !== "string") throw new Error("configKey should be a string, but got " + (configKey + (" (" + (typeof configKey + ")"))));
     return {
-      target: {
-        type: "Invocation",
-        value: element
-      },
+      target: element,
       method: "setValue:forConfigKey:",
       args: [value, {
         type: "NSString",
@@ -162,10 +144,7 @@ Overwrites any previous value for the configuration.
 */static setDefaultValueForConfigKey(element, value, configKey) {
     if (typeof configKey !== "string") throw new Error("configKey should be a string, but got " + (configKey + (" (" + (typeof configKey + ")"))));
     return {
-      target: {
-        type: "Invocation",
-        value: element
-      },
+      target: element,
       method: "setDefaultValue:forConfigKey:",
       args: [value, {
         type: "NSString",
