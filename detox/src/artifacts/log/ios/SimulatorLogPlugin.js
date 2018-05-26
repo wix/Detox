@@ -18,11 +18,15 @@ class SimulatorLogPlugin extends LogArtifactPlugin {
   }
 
   async onBeforeResetDevice() {
-    await this.currentRecording.stop();
+    if (this.currentRecording) {
+      await this.currentRecording.stop();
+    }
   }
 
   async onRelaunchApp() {
-    await this.currentRecording.restart();
+    if (this.currentRecording) {
+      await this.currentRecording.restart();
+    }
   }
 
   _createRecording(readFromBeginning) {
