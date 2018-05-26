@@ -109,7 +109,6 @@ function runMocha() {
 function runJest() {
   const configFile = runnerConfig ? `--config=${runnerConfig}` : '';
   const platform = program.platform ? `--testNamePattern='^((?!${getPlatformSpecificString(program.platform)}).)*$'` : '';
-  const binPath = path.join('node_modules', '.bin', 'jest');
   const platformString = platform ? `--testNamePattern='^((?!${getPlatformSpecificString(platform)}).)*$'` : '';
   const command = `${runnerPath} ${testFolder} ${configFile} --runInBand ${platformString}`;
   console.log(command);
