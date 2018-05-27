@@ -1,4 +1,5 @@
 const ScreenshotArtifactPlugin = require('./ScreenshotArtifactPlugin');
+const Artifact = require('../templates/artifact/Artifact');
 
 class ADBScreencapPlugin extends ScreenshotArtifactPlugin {
   constructor(config) {
@@ -13,8 +14,8 @@ class ADBScreencapPlugin extends ScreenshotArtifactPlugin {
     const deviceId = this.api.getDeviceId();
     const pathToScreenshotOnDevice = `/sdcard/${this._screenshotsCounter++}.png`;
 
-    return {
-      async take() {
+    return new Artifact({
+      async start() {
         await adb.screencap(deviceId, pathToScreenshotOnDevice);
       },
 
@@ -26,7 +27,7 @@ class ADBScreencapPlugin extends ScreenshotArtifactPlugin {
       async discard() {
         await adb.rm(deviceId, pathToScreenshotOnDevice);
       },
-    };
+    });
   }
 }
 

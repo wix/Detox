@@ -2,9 +2,12 @@ const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const interruptProcess = require('../../utils/interruptProcess');
 const retry = require('../../utils/retry');
 const sleep = require('../../utils/sleep');
+const Artifact = require('../templates/artifact/Artifact');
 
-class ADBVideoRecording {
+class ADBVideoRecording extends Artifact {
   constructor(config) {
+    super(config);
+
     this.adb = config.adb;
     this.deviceId = config.deviceId;
     this.pathToVideoOnDevice = config.pathToVideoOnDevice;
@@ -14,7 +17,7 @@ class ADBVideoRecording {
     this._waitWhileVideoIsBusy = null;
   }
 
-  async start() {
+  async doStart() {
     this.processPromise = this.adb.screenrecord(this.deviceId, {
       ...this.screenRecordOptions,
       path: this.pathToVideoOnDevice
@@ -24,7 +27,7 @@ class ADBVideoRecording {
     await retry(() => this._assertVideoIsBeingRecorded());
   }
 
-  async stop() {
+  async doStop() {
     if (this.processPromise) {
       await interruptProcess(this.processPromise);
       this.processPromise = null;
@@ -35,13 +38,13 @@ class ADBVideoRecording {
     }
   }
 
-  async save(artifactPath) {
+  async doSave(artifactPath) {
     await this._waitWhileVideoIsBusy;
     await this.adb.pull(this.deviceId, this.pathToVideoOnDevice, artifactPath);
     await this.adb.rm(this.deviceId, this.pathToVideoOnDevice);
   }
 
-  async discard() {
+  async doDiscard() {
     await this._waitWhileVideoIsBusy;
     await this.adb.rm(this.deviceId, this.pathToVideoOnDevice);
   }

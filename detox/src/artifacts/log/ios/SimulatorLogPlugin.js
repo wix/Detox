@@ -22,7 +22,7 @@ class SimulatorLogPlugin extends LogArtifactPlugin {
   }
 
   async onRelaunchApp() {
-    await this.currentRecording.restart();
+    await this.currentRecording.start();
   }
 
   _createRecording(readFromBeginning) {

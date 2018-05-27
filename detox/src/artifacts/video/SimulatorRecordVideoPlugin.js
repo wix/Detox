@@ -2,6 +2,7 @@ const fs = require('fs-extra');
 const log = require('npmlog');
 const tempfile = require('tempfile');
 const VideoArtifactPlugin = require('./VideoArtifactPlugin');
+const Artifact = require('../templates/artifact/Artifact');
 const interruptProcess = require('../../utils/interruptProcess');
 
 class SimulatorRecordVideoPlugin extends VideoArtifactPlugin {
@@ -16,7 +17,7 @@ class SimulatorRecordVideoPlugin extends VideoArtifactPlugin {
     const temporaryFilePath = tempfile('.mp4');
     let processPromise = null;
 
-    return {
+    return new Artifact({
       start: async () => {
         processPromise = appleSimUtils.recordVideo(api.getDeviceId(), temporaryFilePath);
       },
@@ -35,7 +36,7 @@ class SimulatorRecordVideoPlugin extends VideoArtifactPlugin {
       discard: async () => {
         await fs.remove(temporaryFilePath);
       },
-    };
+    });
   }
 }
 

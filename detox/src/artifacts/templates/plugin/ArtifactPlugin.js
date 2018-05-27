@@ -42,7 +42,7 @@ class ArtifactPlugin {
    * @param {number} event.pid - Process id of the running app
    * @return {Promise<void>} - when done
    */
-  async onRelaunchApp() {}
+  async onRelaunchApp(event) {}
 
   /**
    * Hook that is called before any test begins

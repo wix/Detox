@@ -37,7 +37,8 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
     }
 
     const snapshot = this.createTestArtifact();
-    await snapshot.take();
+    await snapshot.start();
+    await snapshot.stop();
     this._snapshots[index] = snapshot;
     this.api.trackArtifact(snapshot);
   }

@@ -1,15 +1,17 @@
+const Artifact = require('../../templates/artifact/Artifact');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 const interruptProcess = require('../../../utils/interruptProcess');
 const retry = require('../../../utils/retry');
 const sleep = require('../../../utils/sleep');
 
-class ADBLogcatRecording {
+class ADBLogcatRecording extends Artifact {
   constructor({
     adb,
     deviceId,
     pid,
     pathToLogOnDevice,
   }) {
+    super();
     this.adb = adb;
 
     this.deviceId = deviceId;
@@ -22,7 +24,11 @@ class ADBLogcatRecording {
     this._waitWhileLogIsOpenedByLogcat = null;
   }
 
-  async start() {
+  async doStart({ pid } = {}) {
+    if (pid) {
+      this.pid = pid;
+    }
+
     const now = await this.adb.shell(this.deviceId, `date "+\\"%Y-%m-%d %T.000\\""`);
 
     this.processPromise = this.adb.logcat(this.deviceId, {
@@ -36,16 +42,7 @@ class ADBLogcatRecording {
     });
   }
 
-  async restart({ pid }) {
-    if (this.processPromise) {
-      await this.stop();
-    }
-
-    this.pid = pid;
-    await this.start();
-  }
-
-  async stop() {
+  async doStop() {
     try {
       await this._waitUntilLogFileIsCreated;
     } finally {
@@ -60,13 +57,13 @@ class ADBLogcatRecording {
     }
   }
 
-  async save(artifactPath) {
+  async doSave(artifactPath) {
     await this._waitWhileLogIsOpenedByLogcat;
     await this.adb.pull(this.deviceId, this.pathToLogOnDevice, artifactPath);
     await this.adb.rm(this.deviceId, this.pathToLogOnDevice);
   }
 
-  async discard() {
+  async doDiscard() {
     await this._waitWhileLogIsOpenedByLogcat;
     await this.adb.rm(this.deviceId, this.pathToLogOnDevice);
   }
