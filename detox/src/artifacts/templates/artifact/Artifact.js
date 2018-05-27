@@ -54,17 +54,14 @@ class Artifact {
 
   save(artifactPath, ...args) {
     if (!this._savePromise) {
-      let error = this._assertRecordingHasBeenStarted();
-      if (error) {
-        return Promise.reject(error);
-      }
-
       if (this._discardPromise) {
-        log.warn('detox', 'cannot save an already discarded artifact to: %s', artifactPath);
-        return this._discardPromise;
+        log.warn('detox-artifacts', 'cannot save an already discarded artifact to: %s', artifactPath);
+        this._savePromise = this._discardPromise;
+      } else if (this._startPromise) {
+        this._savePromise = this.stop().then(() => this.doSave(artifactPath, ...args));
+      } else {
+        this._savePromise = this._stopPromise = this._startPromise = Promise.resolve();
       }
-
-      this._savePromise = this.stop().then(() => this.doSave(artifactPath, ...args));
     }
 
     return this._savePromise;
@@ -91,24 +88,6 @@ class Artifact {
   async doSave(artifactPath) {}
 
   async doDiscard() {}
-
-  _assertRecordingIsNotBeingDiscarded() {
-    if (this._discardPromise) {
-      return new DetoxRuntimeError({
-        message: 'Cannot save recording because it is already being discarded',
-        hint: 'Make sure you did not call .discard() method earlier',
-      });
-    }
-  }
-
-  _assertRecordingHasBeenStarted() {
-    if (!this._startPromise) {
-      return new DetoxRuntimeError({
-        message: 'Cannot save recording if it has never been started',
-        hint: 'This error is not supposed to happen, open an issue on Github if you see it.',
-      });
-    }
-  }
 }
 
 module.exports = Artifact;

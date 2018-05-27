@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const log = require('npmlog');
 
 /***
@@ -113,6 +114,15 @@ class ArtifactPlugin {
    */
   onTerminate() {
     this.disable('it was terminated by SIGINT or SIGTERM');
+
+    this.onTerminate = _.noop;
+    this.onRelaunchApp = _.noop;
+    this.onBeforeResetDevice = _.noop;
+    this.onResetDevice = _.noop;
+    this.onBeforeAll = _.noop;
+    this.onBeforeTest = _.noop;
+    this.onAfterTest = _.noop;
+    this.onAfterAll = _.noop;
   }
 
   /***

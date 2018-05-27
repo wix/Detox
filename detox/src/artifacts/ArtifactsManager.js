@@ -10,6 +10,7 @@ const ArtifactPathBuilder = require('./utils/ArtifactPathBuilder');
 class ArtifactsManager {
   constructor() {
     this.onTerminate = _.once(this.onTerminate.bind(this));
+    this._executeIdleCallback = this._executeIdleCallback.bind(this);
 
     this._idlePromise = Promise.resolve();
     this._onIdleCallbacks = [];
@@ -75,32 +76,20 @@ class ArtifactsManager {
         callback._from = caller.name;
         this._onIdleCallbacks.push(callback);
 
-        this._idlePromise = this._idlePromise
-          .then(() => this._terminated
-            ? this._runAllIdleTasks()
-            : this._runNextIdleTask());
+        this._idlePromise = this._idlePromise.then(() => {
+          const nextCallback = this._onIdleCallbacks.shift();
+          return this._executeIdleCallback(nextCallback);
+        });
       },
     };
   }
 
-  async _runNextIdleTask() {
-    const onIdleCallback = this._onIdleCallbacks.shift();
-
-    if (onIdleCallback) {
-      return Promise.resolve().then(onIdleCallback).catch(e => {
-        this._idleCallbackErrorHandle(e, onIdleCallback);
-      });
+  _executeIdleCallback(callback) {
+    if (callback) {
+      return Promise.resolve()
+        .then(callback)
+        .catch(e => this._idleCallbackErrorHandle(e, callback));
     }
-  }
-
-  async _runAllIdleTasks() {
-    const onIdleCallbacks = this._onIdleCallbacks.splice(0);
-
-    return Promise.all(onIdleCallbacks.map((onIdleCallback) => {
-      return Promise.resolve().then(onIdleCallback).catch(e => {
-        return this._idleCallbackErrorHandle(e, onIdleCallback);
-      });
-    }));
   }
 
   registerArtifactPlugins(artifactPluginFactoriesMap = {}) {
@@ -153,9 +142,14 @@ class ArtifactsManager {
   }
 
   async onTerminate() {
+    log.info('ArtifactsManager', 'finalizing all artifacts, this can take some time');
     await Promise.all(this._artifactPlugins.map(plugin => plugin.onTerminate()));
+    await Promise.all(this._onIdleCallbacks.splice().map(this._executeIdleCallback));
+    await this._idlePromise;
+
     await Promise.all(this._activeArtifacts.map(artifact => artifact.discard()));
-    log.info('ArtifactsManager', 'terminated all artifacts');
+    await this._idlePromise;
+    log.info('ArtifactsManager', 'finalized all artifacts');
   }
 
   async _emit(methodName, args) {
