@@ -6,7 +6,7 @@
 
 
 
-class DetoxTest {
+class Detox {
   static setUpCustomEspressoIdlingResources(element) {
     return {
       target: element,
@@ -28,7 +28,7 @@ class DetoxTest {
     return {
       target: {
         type: "Class",
-        value: "com.wix.detox.DetoxTest"
+        value: "com.wix.detox.Detox"
       },
       method: "startActivityFromUrl",
       args: [url]
@@ -40,7 +40,7 @@ class DetoxTest {
     return {
       target: {
         type: "Class",
-        value: "com.wix.detox.DetoxTest"
+        value: "com.wix.detox.Detox"
       },
       method: "intentWithUrl",
       args: [url]
@@ -51,7 +51,7 @@ class DetoxTest {
     return {
       target: {
         type: "Class",
-        value: "com.wix.detox.DetoxTest"
+        value: "com.wix.detox.Detox"
       },
       method: "launchMainActivity",
       args: []
@@ -60,4 +60,4 @@ class DetoxTest {
 
 }
 
-module.exports = DetoxTest;
+module.exports = Detox;
