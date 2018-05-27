@@ -1,5 +1,5 @@
 const argparse = require('../../utils/argparse');
-const TwoSnapshotsPerTestPlugin = require('../templates/TwoSnapshotsPerTestPlugin');
+const TwoSnapshotsPerTestPlugin = require('../templates/plugin/TwoSnapshotsPerTestPlugin');
 
 /***
  * @abstract

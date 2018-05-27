@@ -25,7 +25,7 @@ class SimulatorLogPlugin extends LogArtifactPlugin {
 
   async onRelaunchApp() {
     if (this.currentRecording) {
-      await this.currentRecording.restart();
+      await this.currentRecording.start();
     }
   }
 

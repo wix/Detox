@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const log = require('npmlog');
 const tempfile = require('tempfile');
+const Artifact = require('../templates/artifact/Artifact');
 const ScreenshotArtifactPlugin = require('./ScreenshotArtifactPlugin');
 
 class SimulatorScreenshotter extends ScreenshotArtifactPlugin {
@@ -14,8 +15,8 @@ class SimulatorScreenshotter extends ScreenshotArtifactPlugin {
     const { api, appleSimUtils } = this;
     const temporaryFilePath = tempfile('.png');
 
-    return {
-      async take() {
+    return new Artifact({
+      async start() {
         await appleSimUtils.takeScreenshot(api.getDeviceId(), temporaryFilePath);
       },
 
@@ -28,12 +29,7 @@ class SimulatorScreenshotter extends ScreenshotArtifactPlugin {
         log.verbose('SimulatorScreenshotter', 'removing temp file: %s', temporaryFilePath);
         await fs.remove(temporaryFilePath);
       },
-
-      kill() {
-        log.verbose('SimulatorScreenshotter', 'removing temp file: %s', temporaryFilePath);
-        fs.removeSync(temporaryFilePath);
-      },
-    };
+    });
   }
 }
 

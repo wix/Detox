@@ -2,9 +2,12 @@ const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const interruptProcess = require('../../utils/interruptProcess');
 const retry = require('../../utils/retry');
 const sleep = require('../../utils/sleep');
+const Artifact = require('../templates/artifact/Artifact');
 
-class ADBVideoRecording {
+class ADBVideoRecording extends Artifact {
   constructor(config) {
+    super(config);
+
     this.adb = config.adb;
     this.deviceId = config.deviceId;
     this.pathToVideoOnDevice = config.pathToVideoOnDevice;
@@ -12,10 +15,9 @@ class ADBVideoRecording {
 
     this.processPromise = null;
     this._waitWhileVideoIsBusy = null;
-    this._killed = false;
   }
 
-  async start() {
+  async doStart() {
     this.processPromise = this.adb.screenrecord(this.deviceId, {
       ...this.screenRecordOptions,
       path: this.pathToVideoOnDevice
@@ -25,7 +27,7 @@ class ADBVideoRecording {
     await retry(() => this._assertVideoIsBeingRecorded());
   }
 
-  async stop() {
+  async doStop() {
     if (this.processPromise) {
       await interruptProcess(this.processPromise);
       this.processPromise = null;
@@ -36,31 +38,18 @@ class ADBVideoRecording {
     }
   }
 
-  async save(artifactPath) {
+  async doSave(artifactPath) {
     await this._waitWhileVideoIsBusy;
     await this.adb.pull(this.deviceId, this.pathToVideoOnDevice, artifactPath);
     await this.adb.rm(this.deviceId, this.pathToVideoOnDevice);
   }
 
-  async discard() {
+  async doDiscard() {
     await this._waitWhileVideoIsBusy;
     await this.adb.rm(this.deviceId, this.pathToVideoOnDevice);
   }
 
-  kill() {
-    this._killed = true;
-
-    if (this.processPromise) {
-      interruptProcess(this.processPromise, 'SIGTERM');
-      this.processPromise = null;
-    }
-
-    this.adb.rmSync(this.deviceId, this.pathToVideoOnDevice);
-  }
-
   async _assertVideoIsBeingRecorded() {
-    if (this._killed) return;
-
     const size = await this.adb.getFileSize(this.deviceId, this.pathToVideoOnDevice);
 
     if (size < 1) {
@@ -71,8 +60,6 @@ class ADBVideoRecording {
   }
 
   async _assertVideoIsNotOpenedByProcesses() {
-    if (this._killed) return;
-
     const size = await this.adb.getFileSize(this.deviceId, this.pathToVideoOnDevice);
 
     if (size < 1) {

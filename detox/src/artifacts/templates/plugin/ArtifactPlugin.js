@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const log = require('npmlog');
 
 /***
@@ -42,7 +43,7 @@ class ArtifactPlugin {
    * @param {number} event.pid - Process id of the running app
    * @return {Promise<void>} - when done
    */
-  async onRelaunchApp() {}
+  async onRelaunchApp(event) {}
 
   /**
    * Hook that is called before any test begins
@@ -113,6 +114,15 @@ class ArtifactPlugin {
    */
   onTerminate() {
     this.disable('it was terminated by SIGINT or SIGTERM');
+
+    this.onTerminate = _.noop;
+    this.onRelaunchApp = _.noop;
+    this.onBeforeResetDevice = _.noop;
+    this.onResetDevice = _.noop;
+    this.onBeforeAll = _.noop;
+    this.onBeforeTest = _.noop;
+    this.onAfterTest = _.noop;
+    this.onAfterAll = _.noop;
   }
 
   /***
@@ -120,7 +130,7 @@ class ArtifactPlugin {
    *
    * @abstract
    * @protected
-   * @return {Killable} - an object with synchronous .kill() method
+   * @return {Artifact} - an object with synchronous .discard() and .save(path) methods
    */
   createTestArtifact() {}
 

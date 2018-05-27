@@ -2,14 +2,17 @@ const _ = require('lodash');
 const fs = require('fs-extra');
 const log = require('npmlog');
 const { Tail } = require('tail');
+const Artifact = require('../../templates/artifact/Artifact');
 
-class SimulatorLogRecording {
+class SimulatorLogRecording extends Artifact {
   constructor({
     logStderr,
     logStdout,
     readFromBeginning,
     temporaryLogPath,
   }) {
+    super();
+
     this._readFromBeginning = readFromBeginning;
     this._logPath = temporaryLogPath;
     this._stdoutPath = logStdout;
@@ -20,25 +23,19 @@ class SimulatorLogRecording {
     this._stderrTail = null;
   }
 
-  async start() {
-    log.verbose('SimulatorLogPlugin', 'starting to log');
+  async doStart() {
+    log.verbose('SimulatorLogPlugin', 'starting to watch log');
     this._logStream = fs.createWriteStream(this._logPath, { flags: 'w' });
     this._stdoutTail = this._createTail(this._stdoutPath, 'stdout');
     this._stderrTail = this._createTail(this._stderrPath, 'stderr');
   }
 
-  async stop() {
-    log.verbose('SimulatorLogPlugin', 'stopping to watch');
+  async doStop() {
+    log.verbose('SimulatorLogPlugin', 'stopping to watch log');
     this._close();
   }
 
-  async restart() {
-    log.verbose('SimulatorLogPlugin', 'restarting');
-    this._close();
-    await this.start();
-  }
-
-  async save(artifactPath) {
+  async doSave(artifactPath) {
     const tempLogPath = this._logPath;
 
     if (await fs.exists(tempLogPath)) {
@@ -49,7 +46,7 @@ class SimulatorLogRecording {
     }
   }
 
-  async discard() {
+  async doDiscard() {
     await fs.remove(this._logPath);
   }
 
@@ -71,11 +68,6 @@ class SimulatorLogRecording {
     }
 
     this._logStream = null;
-  }
-
-  kill() {
-    this._close();
-    fs.removeSync(this._logPath);
   }
 
   _createTail(file, prefix) {
@@ -109,6 +101,8 @@ class SimulatorLogRecording {
       this._logStream.write(': ');
       this._logStream.write(line);
       this._logStream.write('\n');
+    } else {
+      log.warn('SimulatorLogRecording', 'failed to add line to log: %s', line);
     }
   }
 }

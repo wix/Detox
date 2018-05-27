@@ -9,14 +9,17 @@ const ArtifactPathBuilder = require('./utils/ArtifactPathBuilder');
 
 class ArtifactsManager {
   constructor() {
+    this.onTerminate = _.once(this.onTerminate.bind(this));
+    this._executeIdleCallback = this._executeIdleCallback.bind(this);
+
     this._idlePromise = Promise.resolve();
+    this._onIdleCallbacks = [];
     this._activeArtifacts = [];
     this._artifactPlugins = [];
 
     this._deviceId = '';
     this._bundleId = '';
     this._pid = NaN;
-    this._terminated = false;
 
     const pathBuilder = new ArtifactPathBuilder({
       artifactsRootDir: argparse.getArgValue('artifacts-location') || 'artifacts',
@@ -69,16 +72,24 @@ class ArtifactsManager {
         _.pull(this._activeArtifacts, artifact);
       },
 
-      requestIdleCallback: (callback) => {
-        this._idlePromise = this._idlePromise
-          .then(callback)
-          .catch(e => this._errorHandler(e, {
-            plugin: { name: 'unknown '},
-            methodName: 'onIdleCallback',
-            args: []
-          }));
+      requestIdleCallback: (callback, caller) => {
+        callback._from = caller.name;
+        this._onIdleCallbacks.push(callback);
+
+        this._idlePromise = this._idlePromise.then(() => {
+          const nextCallback = this._onIdleCallbacks.shift();
+          return this._executeIdleCallback(nextCallback);
+        });
       },
     };
+  }
+
+  _executeIdleCallback(callback) {
+    if (callback) {
+      return Promise.resolve()
+        .then(callback)
+        .catch(e => this._idleCallbackErrorHandle(e, callback));
+    }
   }
 
   registerArtifactPlugins(artifactPluginFactoriesMap = {}) {
@@ -130,22 +141,15 @@ class ArtifactsManager {
     log.verbose('ArtifactsManager', 'finalized artifacts successfully');
   }
 
-  onTerminate() {
-    if (this._terminated) {
-      return;
-    }
+  async onTerminate() {
+    log.info('ArtifactsManager', 'finalizing all artifacts, this can take some time');
+    await Promise.all(this._artifactPlugins.map(plugin => plugin.onTerminate()));
+    await Promise.all(this._onIdleCallbacks.splice().map(this._executeIdleCallback));
+    await this._idlePromise;
 
-    this._terminated = true;
-
-    for (const artifact of this._artifactPlugins) {
-      artifact.onTerminate();
-    }
-
-    for (const artifact of this._activeArtifacts) {
-      artifact.kill();
-    }
-
-    log.info('ArtifactsManager', 'terminated all artifacts');
+    await Promise.all(this._activeArtifacts.map(artifact => artifact.discard()));
+    await this._idlePromise;
+    log.info('ArtifactsManager', 'finalized all artifacts');
   }
 
   async _emit(methodName, args) {
@@ -161,6 +165,14 @@ class ArtifactsManager {
   _errorHandler(e, { plugin, methodName }) {
     log.error('ArtifactsManager', 'Caught exception inside plugin (%s) at phase %s', plugin.name || 'unknown', methodName);
     logError(e, 'ArtifactsManager');
+  }
+
+  _idleCallbackErrorHandle(e, callback) {
+    this._errorHandler(e, {
+      plugin: { name: callback._from },
+      methodName: 'onIdleCallback',
+      args: []
+    })
   }
 }
 

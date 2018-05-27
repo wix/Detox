@@ -1,15 +1,17 @@
+const Artifact = require('../../templates/artifact/Artifact');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 const interruptProcess = require('../../../utils/interruptProcess');
 const retry = require('../../../utils/retry');
 const sleep = require('../../../utils/sleep');
 
-class ADBLogcatRecording {
+class ADBLogcatRecording extends Artifact {
   constructor({
     adb,
     deviceId,
     pid,
     pathToLogOnDevice,
   }) {
+    super();
     this.adb = adb;
 
     this.deviceId = deviceId;
@@ -20,10 +22,13 @@ class ADBLogcatRecording {
 
     this._waitUntilLogFileIsCreated = null;
     this._waitWhileLogIsOpenedByLogcat = null;
-    this._killed = false;
   }
 
-  async start() {
+  async doStart({ pid } = {}) {
+    if (pid) {
+      this.pid = pid;
+    }
+
     const now = await this.adb.shell(this.deviceId, `date "+\\"%Y-%m-%d %T.000\\""`);
 
     this.processPromise = this.adb.logcat(this.deviceId, {
@@ -37,16 +42,7 @@ class ADBLogcatRecording {
     });
   }
 
-  async restart({ pid }) {
-    if (this.processPromise) {
-      await this.stop();
-    }
-
-    this.pid = pid;
-    await this.start();
-  }
-
-  async stop() {
+  async doStop() {
     try {
       await this._waitUntilLogFileIsCreated;
     } finally {
@@ -61,31 +57,18 @@ class ADBLogcatRecording {
     }
   }
 
-  async save(artifactPath) {
+  async doSave(artifactPath) {
     await this._waitWhileLogIsOpenedByLogcat;
     await this.adb.pull(this.deviceId, this.pathToLogOnDevice, artifactPath);
     await this.adb.rm(this.deviceId, this.pathToLogOnDevice);
   }
 
-  async discard() {
+  async doDiscard() {
     await this._waitWhileLogIsOpenedByLogcat;
     await this.adb.rm(this.deviceId, this.pathToLogOnDevice);
   }
 
-  kill() {
-    this._killed = true;
-
-    if (this.processPromise) {
-      interruptProcess(this.processPromise, 'SIGTERM');
-      this.processPromise = null;
-    }
-
-    this.adb.rmSync(this.deviceId, this.pathToLogOnDevice);
-  }
-
   async _assertLogIsCreated() {
-    if (this._killed) return;
-
     const size = await this.adb.getFileSize(this.deviceId, this.pathToLogOnDevice);
 
     if (size < 0) {
@@ -96,8 +79,6 @@ class ADBLogcatRecording {
   }
 
   async _assertLogIsNotOpenedByApps() {
-    if (this._killed) return;
-
     const isFileOpen = await this.adb.isFileOpen(this.deviceId, this.pathToLogOnDevice);
 
     if (isFileOpen) {

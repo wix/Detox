@@ -1,5 +1,5 @@
 const argparse = require('../../utils/argparse');
-const WholeTestRecorderPlugin = require('../templates/WholeTestRecorderPlugin');
+const WholeTestRecorderPlugin = require('../templates/plugin/WholeTestRecorderPlugin');
 
 class VideoArtifactPlugin extends WholeTestRecorderPlugin {
   constructor(config) {
