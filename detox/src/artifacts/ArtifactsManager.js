@@ -19,6 +19,7 @@ class ArtifactsManager {
     this._idlePromise = Promise.resolve();
     this._onIdleCallbacks = [];
     this._activeArtifacts = [];
+    this._artifactPluginsFactories = [];
     this._artifactPlugins = [];
 
     this._deviceId = '';
@@ -97,8 +98,7 @@ class ArtifactsManager {
   }
 
   registerArtifactPlugins(artifactPluginFactoriesMap = {}) {
-    const artifactPluginFactories = Object.values(artifactPluginFactoriesMap);
-    this._artifactPlugins = artifactPluginFactories.map(factory => factory(this.artifactsApi));
+    this._artifactPluginsFactories = Object.values(artifactPluginFactoriesMap);
   }
 
   subscribeToDeviceEvents(device) {
@@ -126,6 +126,10 @@ class ArtifactsManager {
   }
 
   async onBeforeAll() {
+    this._artifactPlugins = this._artifactPluginsFactories.map((factory) => {
+      return factory(this.artifactsApi);
+    });
+
     await this._emit('onBeforeAll', []);
   }
 
@@ -152,6 +156,10 @@ class ArtifactsManager {
   }
 
   async onTerminate() {
+    if (this._artifactPlugins.length === 0) {
+      return;
+    }
+
     log.info('ArtifactsManager', 'finalizing all artifacts, this can take some time');
     await Promise.all(this._artifactPlugins.map(plugin => plugin.onTerminate()));
     await Promise.all(this._onIdleCallbacks.splice().map(this._executeIdleCallback));
