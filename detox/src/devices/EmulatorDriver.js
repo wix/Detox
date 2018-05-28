@@ -52,10 +52,18 @@ class EmulatorDriver extends AndroidDriver {
     }
 
     await this._fixEmulatorConfigIniSkinName(name);
-    await this.emulator.boot(name);
 
-    const adbDevices = await this.adb.devices();
-    const filteredDevices = _.filter(adbDevices, {type: 'emulator', name: name});
+    let adbDevices = await this.adb.devices();
+    let filteredDevices = _.filter(adbDevices, {type: 'emulator', name: name});
+
+    // If it's not already running, start it now.
+    if (!filteredDevices.length) {
+      await this.emulator.boot(name);
+
+      // Refresh devices after boot completes.
+      adbDevices = await this.adb.devices();
+      filteredDevices = _.filter(adbDevices, {type: 'emulator', name: name});
+    }
 
     let adbName;
     switch (filteredDevices.length) {

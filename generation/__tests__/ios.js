@@ -300,8 +300,16 @@ describe('iOS generation', () => {
 			expect(ExampleClass.performAction).toBeInstanceOf(Function);
 		});
 
-		it('should have the first arg set as invocation', () => {
-			expect(ExampleClass.performAction('MyClass', 'Foo')).toEqual({
+		it("should have the first arg set as invocation", () => {
+			expect(
+				ExampleClass.performAction(
+					{
+						type: "Invocation",
+						value: "MyClass"
+					},
+					"Foo"
+				)
+			).toEqual({
 				target: {
 					type: 'Invocation',
 					value: 'MyClass'
@@ -314,6 +322,13 @@ describe('iOS generation', () => {
 					}
 				]
 			});
+		});
+	});
+
+	describe("filtered argument types", () => {
+		it("should remove them from the method", () => {
+			// gets the expected arguments
+			expect(ExampleClass.rotateDeviceToOrientationErrorOrNil.length).toBe(1);
 		});
 	});
 

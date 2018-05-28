@@ -59,9 +59,6 @@ const runner = getConfigFor(['testRunner'], 'mocha');
 const runnerConfig = getConfigFor(['runnerConfig'], getDefaultRunnerConfig());
 const platform = (config.configurations[program.configuration].type).split('.')[0];
 
-run();
-
-
 if (typeof program.debugSynchronization === "boolean") {
   program.debugSynchronization = 3000;
 }
@@ -105,7 +102,8 @@ function runMocha() {
   const headless = program.headless ? `--headless` : '';
 
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
-  const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${artifactsLocation} ${headless}`;
+  const binPath = path.join('node_modules', '.bin', 'mocha');
+  const command = `${binPath} ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${artifactsLocation} ${headless}`;
 
   cp.execSync(command, {stdio: 'inherit'});
 }
@@ -116,7 +114,8 @@ function runJest() {
   const configFile = runnerConfig ? `--config=${runnerConfig}` : '';
 
   const platformString = platform ? `--testNamePattern='^((?!${getPlatformSpecificString(platform)}).)*$'` : '';
-  const command = `node_modules/.bin/jest ${testFolder} ${configFile} --maxWorkers=${maxWorkers} ${platformString}`;
+  const binPath = path.join('node_modules', '.bin', 'jest');
+  const command = `${binPath} ${testFolder} ${configFile} --maxWorkers=${maxWorkers} ${platformString}`;
   const env = Object.assign({}, process.env, {
     configuration: program.configuration,
     loglevel: program.loglevel,
@@ -126,6 +125,8 @@ function runJest() {
     artifactsLocation: program.artifactsLocation,
     headless: program.headless
   });
+
+  console.log(command);
 
   cp.execSync(command, {
     stdio: 'inherit',
@@ -172,3 +173,4 @@ function getDefaultConfiguration() {
   }
 }
 
+run();
