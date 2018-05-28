@@ -162,11 +162,12 @@ class ArtifactsManager {
 
     log.info('ArtifactsManager', 'finalizing all artifacts, this can take some time');
     await Promise.all(this._artifactPlugins.map(plugin => plugin.onTerminate()));
-    await Promise.all(this._onIdleCallbacks.splice().map(this._executeIdleCallback));
+    await Promise.all(this._onIdleCallbacks.splice(0).map(this._executeIdleCallback));
     await this._idlePromise;
 
     await Promise.all(this._activeArtifacts.map(artifact => artifact.discard()));
     await this._idlePromise;
+    this._artifactPlugins.splice(0);
     log.info('ArtifactsManager', 'finalized all artifacts');
   }
 

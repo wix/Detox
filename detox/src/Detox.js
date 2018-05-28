@@ -86,8 +86,9 @@ class Detox {
     }
   }
 
-  terminate() {
-    this.artifactsManager.onTerminate();
+  async terminate() {
+    await this.artifactsManager.onTerminate();
+    await this.cleanup();
   }
 
   async beforeEach(testSummary) {
