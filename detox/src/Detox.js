@@ -29,7 +29,7 @@ class Detox {
     this.userSession = deviceConfig.session || session;
     this.client = null;
     this.device = null;
-    this.artifactsManager = null;
+    this.artifactsManager = new ArtifactsManager();
   }
 
   async init(userParams) {
@@ -51,7 +51,6 @@ class Detox {
     }
 
     const deviceDriver = new deviceClass(this.client);
-    this.artifactsManager = new ArtifactsManager();
     this.artifactsManager.registerArtifactPlugins(deviceDriver.declareArtifactPlugins());
     this.device = new Device(this.deviceConfig, sessionConfig, deviceDriver);
     this.artifactsManager.subscribeToDeviceEvents(this.device);
@@ -67,15 +66,14 @@ class Detox {
   }
 
   async cleanup() {
-    if (this.artifactsManager) {
-      await this.artifactsManager.onAfterAll();
-    }
+    await this.artifactsManager.onAfterAll();
 
     if (this.client) {
       await this.client.cleanup();
     }
 
     if (this.device) {
+      this.artifactsManager.unsubscribeFromDeviceEvents(this.device);
       await this.device._cleanup();
     }
 

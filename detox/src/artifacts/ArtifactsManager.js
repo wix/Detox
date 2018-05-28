@@ -9,8 +9,12 @@ const ArtifactPathBuilder = require('./utils/ArtifactPathBuilder');
 
 class ArtifactsManager {
   constructor() {
-    this.onTerminate = _.once(this.onTerminate.bind(this));
+    this.onBeforeResetDevice = this.onBeforeResetDevice.bind(this);
+    this.onResetDevice = this.onResetDevice.bind(this);
+    this.onLaunchApp = this.onLaunchApp.bind(this);
     this._executeIdleCallback = this._executeIdleCallback.bind(this);
+
+    this.onTerminate = _.once(this.onTerminate.bind(this));
 
     this._idlePromise = Promise.resolve();
     this._onIdleCallbacks = [];
@@ -98,9 +102,15 @@ class ArtifactsManager {
   }
 
   subscribeToDeviceEvents(device) {
-    device.on('beforeResetDevice', async (e) => this.onBeforeResetDevice(e));
-    device.on('resetDevice', async (e) => this.onResetDevice(e));
-    device.on('launchApp', async (e) => this.onLaunchApp(e));
+    device.on('beforeResetDevice', this.onBeforeResetDevice);
+    device.on('resetDevice', this.onResetDevice);
+    device.on('launchApp', this.onLaunchApp);
+  }
+
+  unsubscribeFromDeviceEvents(device) {
+    device.off('beforeResetDevice', this.onBeforeResetDevice);
+    device.off('resetDevice', this.onResetDevice);
+    device.off('launchApp', this.onLaunchApp);
   }
 
   async onLaunchApp({ deviceId, bundleId, pid }) {

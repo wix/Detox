@@ -65,32 +65,6 @@ describe('Detox', () => {
     expect(() => detox.cleanup()).not.toThrowError();
   });
 
-  it(`Calling .terminate() will trigger artifacts manager .onTerminate()`, async () => {
-    Detox = require('./Detox');
-
-    detox = new Detox({deviceConfig: validDeviceConfig});
-    await detox.init();
-
-    detox.artifactsManager.onTerminate = jest.fn();
-    await detox.terminate();
-
-    expect(detox.artifactsManager.onTerminate).toHaveBeenCalledTimes(1);
-  });
-
-  it(`Calling .beforeEach() will trigger artifacts manager .onBeforeEach`, async () => {
-    Detox = require('./Detox');
-
-    detox = new Detox({deviceConfig: validDeviceConfig});
-    await detox.init();
-
-    detox.artifactsManager.onBeforeEach = jest.fn();
-
-    const testSummary = { title: 'test', fullName: 'suite - test', status: 'running' };
-    await detox.beforeEach(testSummary);
-
-    expect(detox.artifactsManager.onBeforeEach).toHaveBeenCalledWith(testSummary);
-  });
-
   it(`Not passing --cleanup should keep the currently running device up`, async () => {
     Detox = require('./Detox');
     detox = new Detox({deviceConfig: validDeviceConfig});
@@ -174,5 +148,62 @@ describe('Detox', () => {
     detox.client.getPendingCrashAndReset.mockReturnValueOnce('crash');
     await detox.afterEach({ title: 'a', fullName: 'b', status: 'failed' });
     expect(device.launchApp).toHaveBeenCalledTimes(1);
+  });
+
+  describe('.artifactsManager', () => {
+    it(`Calling detox.init() should trigger artifactsManager.beforeAll()`, async () => {
+      Detox = require('./Detox');
+
+      detox = new Detox({deviceConfig: validDeviceConfig});
+      detox.artifactsManager.onBeforeAll = jest.fn();
+      await detox.init();
+      expect(detox.artifactsManager.onBeforeAll).toHaveBeenCalledTimes(1);
+    });
+
+    it(`Calling .beforeEach() will trigger artifacts manager .onBeforeEach`, async () => {
+      Detox = require('./Detox');
+
+      detox = new Detox({deviceConfig: validDeviceConfig});
+      detox.artifactsManager.onBeforeEach = jest.fn();
+
+      await detox.init();
+      const testSummary = { title: 'test', fullName: 'suite - test', status: 'running' };
+      await detox.beforeEach(testSummary);
+
+      expect(detox.artifactsManager.onBeforeEach).toHaveBeenCalledWith(testSummary);
+    });
+
+    it(`Calling .afterEach() will trigger artifacts manager .onAfterEach`, async () => {
+      Detox = require('./Detox');
+
+      detox = new Detox({deviceConfig: validDeviceConfig});
+      detox.artifactsManager.onAfterEach = jest.fn();
+
+      await detox.init();
+      const testSummary = { title: 'test', fullName: 'suite - test', status: 'passed' };
+      await detox.afterEach(testSummary);
+
+      expect(detox.artifactsManager.onAfterEach).toHaveBeenCalledWith(testSummary);
+    });
+
+    it(`Calling detox.cleanup() should trigger artifactsManager.afterAll()`, async () => {
+      Detox = require('./Detox');
+
+      detox = new Detox({deviceConfig: validDeviceConfig});
+      await detox.init();
+      detox.artifactsManager.onAfterAll = jest.fn();
+      await detox.cleanup();
+      expect(detox.artifactsManager.onAfterAll).toHaveBeenCalledTimes(1);
+    });
+
+    it(`Calling .terminate() will trigger artifacts manager .onTerminate()`, async () => {
+      Detox = require('./Detox');
+
+      detox = new Detox({deviceConfig: validDeviceConfig});
+      detox.artifactsManager.onTerminate = jest.fn();
+
+      await detox.terminate();
+      expect(detox.artifactsManager.onTerminate).toHaveBeenCalledTimes(1);
+    });
   });
 });
