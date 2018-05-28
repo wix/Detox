@@ -77,18 +77,18 @@ describe('Detox', () => {
     expect(detox.artifactsManager.onTerminate).toHaveBeenCalledTimes(1);
   });
 
-  it(`Calling .beforeEach() will trigger artifacts manager .onBeforeTest`, async () => {
+  it(`Calling .beforeEach() will trigger artifacts manager .onBeforeEach`, async () => {
     Detox = require('./Detox');
 
     detox = new Detox({deviceConfig: validDeviceConfig});
     await detox.init();
 
-    detox.artifactsManager.onBeforeTest = jest.fn();
+    detox.artifactsManager.onBeforeEach = jest.fn();
 
     const testSummary = { title: 'test', fullName: 'suite - test', status: 'running' };
     await detox.beforeEach(testSummary);
 
-    expect(detox.artifactsManager.onBeforeTest).toHaveBeenCalledWith(testSummary);
+    expect(detox.artifactsManager.onBeforeEach).toHaveBeenCalledWith(testSummary);
   });
 
   it(`Not passing --cleanup should keep the currently running device up`, async () => {

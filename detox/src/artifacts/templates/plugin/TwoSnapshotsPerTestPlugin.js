@@ -9,11 +9,11 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
     this._snapshots = [null, null];
   }
 
-  async onBeforeTest() {
+  async onBeforeEach() {
     await this._takeSnapshot(0);
   }
 
-  async onAfterTest(testSummary) {
+  async onAfterEach(testSummary) {
     if (this.shouldKeepArtifactOfTest(testSummary)) {
       await this._takeSnapshot(1);
       this._startSavingSnapshot(testSummary, 0);

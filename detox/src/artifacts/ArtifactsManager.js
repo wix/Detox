@@ -119,8 +119,8 @@ class ArtifactsManager {
     await this._emit('onBeforeAll', []);
   }
 
-  async onBeforeTest(testSummary) {
-    await this._emit('onBeforeTest', [testSummary]);
+  async onBeforeEach(testSummary) {
+    await this._emit('onBeforeEach', [testSummary]);
   }
 
   async onBeforeResetDevice({ deviceId }) {
@@ -131,8 +131,8 @@ class ArtifactsManager {
     await this._emit('onResetDevice', [{ deviceId }]);
   }
 
-  async onAfterTest(testSummary) {
-    await this._emit('onAfterTest', [testSummary]);
+  async onAfterEach(testSummary) {
+    await this._emit('onAfterEach', [testSummary]);
   }
 
   async onAfterAll() {

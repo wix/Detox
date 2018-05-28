@@ -34,21 +34,21 @@ class StartupAndTestRecorderPlugin extends WholeTestRecorderPlugin {
     await super.onBeforeAll();
   }
 
-  async onBeforeTest(testSummary) {
+  async onBeforeEach(testSummary) {
     if (this._isRecordingStartup) {
       await this.startupRecording.stop();
       this._isRecordingStartup = false;
     }
 
-    await super.onBeforeTest(testSummary);
+    await super.onBeforeEach(testSummary);
   }
 
-  async onAfterTest(testSummary) {
+  async onAfterEach(testSummary) {
     if (testSummary.status === 'failed') {
       this._hasFailingTests = true;
     }
 
-    await super.onAfterTest(testSummary);
+    await super.onAfterEach(testSummary);
 
     if (this.startupRecording) {
       this._tryToFinalizeStartupRecording(false);

@@ -66,7 +66,7 @@ class ArtifactPlugin {
    * @param {TestSummary} testSummary - has name of currently running test
    * @return {Promise<void>} - when done
    */
-  async onBeforeTest(testSummary) {}
+  async onBeforeEach(testSummary) {}
 
   /**
    * Hook that is called before device.resetContentAndSettings() is called
@@ -94,7 +94,7 @@ class ArtifactPlugin {
    * @param {TestSummary} testSummary - has name and status of test that ran
    * @return {Promise<void>} - when done
    */
-  async onAfterTest(testSummary) {}
+  async onAfterEach(testSummary) {}
 
   /**
    * Hook that is called after all tests run
@@ -120,8 +120,8 @@ class ArtifactPlugin {
     this.onBeforeResetDevice = _.noop;
     this.onResetDevice = _.noop;
     this.onBeforeAll = _.noop;
-    this.onBeforeTest = _.noop;
-    this.onAfterTest = _.noop;
+    this.onBeforeEach = _.noop;
+    this.onAfterEach = _.noop;
     this.onAfterAll = _.noop;
   }
 

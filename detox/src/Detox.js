@@ -94,11 +94,11 @@ class Detox {
 
   async beforeEach(testSummary) {
     await this._handleAppCrashIfAny(testSummary.fullName);
-    await this.artifactsManager.onBeforeTest(testSummary);
+    await this.artifactsManager.onBeforeEach(testSummary);
   }
 
   async afterEach(testSummary) {
-    await this.artifactsManager.onAfterTest(testSummary);
+    await this.artifactsManager.onAfterEach(testSummary);
     await this._handleAppCrashIfAny(testSummary.fullName);
   }
 

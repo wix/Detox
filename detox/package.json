@@ -81,7 +81,6 @@
       "debug.js",
       "src/ios/earlgreyapi",
       "src/android/espressoapi",
-      "src/utils/fatalErrorInterceptor",
       ".test.js",
       ".mock.js"
     ],
