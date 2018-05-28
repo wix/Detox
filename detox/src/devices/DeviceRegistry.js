@@ -5,7 +5,7 @@ const retry = require('../utils/retry');
 const environment = require('../utils/environment');
 const DEVICE_LOCK_FILE_PATH = environment.getDeviceLockFilePath();
 
-const LOCK_RETRY_OPTIONS = {retries: 100, interval: 5};
+const LOCK_RETRY_OPTIONS = {retries: 10000, interval: 5};
 
 class DeviceRegistry {
 
