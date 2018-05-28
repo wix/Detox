@@ -11,6 +11,7 @@ const ExistsMatcher = matchers.ExistsMatcher;
 const NotExistsMatcher = matchers.NotExistsMatcher;
 const TextMatcher = matchers.TextMatcher;
 const ValueMatcher = matchers.ValueMatcher;
+const InteractableMatcher = matchers.InteractableMatcher;
 const GreyActions = require('./earlgreyapi/GREYActions');
 const GreyInteraction = require('./earlgreyapi/GREYInteraction');
 const GreyCondition = require('./earlgreyapi/GREYCondition');
@@ -392,7 +393,8 @@ const by = {
   type: (value) => new TypeMatcher(value),
   traits: (value) => new TraitsMatcher(value),
   value: (value) => new ValueMatcher(value),
-  text: (value) => new TextMatcher(value)
+  text: (value) => new TextMatcher(value),
+  interactable: () => new InteractableMatcher()
 };
 
 const exportGlobals = () => {
