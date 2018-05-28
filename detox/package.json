@@ -47,6 +47,7 @@
     "lodash": "^4.14.1",
     "minimist": "^1.2.0",
     "npmlog": "^4.0.2",
+    "proper-lockfile": "^3.0.2",
     "shell-utils": "^1.0.9",
     "tail": "^1.2.3",
     "telnet-client": "0.15.3",
@@ -74,6 +75,7 @@
       "debug.js",
       "src/ios/earlgreyapi",
       "src/android/espressoapi",
+      "appdatapath.js",
       ".test.js",
       ".mock.js"
     ],

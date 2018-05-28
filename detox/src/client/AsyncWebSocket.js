@@ -51,7 +51,7 @@ class AsyncWebSocket {
 
   async send(message, messageId) {
     if (!this.ws) {
-      throw new Error(`Can't send a message on a closed websocket, init the by calling 'open()'`);
+      throw new Error(`Can't send a message on a closed websocket, init the by calling 'open()'. Message:  ${JSON.stringify(message)}`);
     }
 
     return new Promise(async(resolve, reject) => {

@@ -1,6 +1,9 @@
-const os = require('os');
 const path = require('path');
 const exec = require('child-process-promise').exec;
+const appdatapath = require('./appdatapath');
+
+const DETOX_LIBRARY_ROOT_PATH = path.join(appdatapath.appDataPath(), 'Detox');
+const DEVICE_LOCK_FILE_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'device.registry.state.lock');
 
 function getAndroidSDKPath() {
   let sdkPath = process.env.ANDROID_SDK_ROOT || process.env.ANDROID_HOME;
@@ -18,11 +21,21 @@ function getDetoxVersion() {
 async function getFrameworkPath() {
   const detoxVersion = this.getDetoxVersion();
   const sha1 = (await exec(`(echo "${detoxVersion}" && xcodebuild -version) | shasum | awk '{print $1}'`)).stdout.trim();
-  return `${os.homedir()}/Library/Detox/ios/${sha1}/Detox.framework`;
+  return `${DETOX_LIBRARY_ROOT_PATH}/ios/${sha1}/Detox.framework`;
+}
+
+function getDetoxLibraryRootPath() {
+  return DETOX_LIBRARY_ROOT_PATH;
+}
+
+function getDeviceLockFilePath() {
+  return DEVICE_LOCK_FILE_PATH;
 }
 
 module.exports = {
   getDetoxVersion,
   getFrameworkPath,
-  getAndroidSDKPath
+  getAndroidSDKPath,
+  getDetoxLibraryRootPath,
+  getDeviceLockFilePath
 };

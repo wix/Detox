@@ -6,8 +6,10 @@
     "test": ":",
     "packager": "react-native start",
     "detox-server": "detox run-server",
+    "e2e:ios-multi": "detox test --configuration ios.sim.release-multi --debug-synchronization 10000 --loglevel verbose",
     "e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization 10000",
     "e2e:android": "detox test --configuration android.emu.release --loglevel verbose",
+
     "build:ios": "detox build --configuration ios.sim.release",
     "build:android": "detox build --configuration android.emu.release"
   },
@@ -18,11 +20,13 @@
   "devDependencies": {
     "detox": "^7.0.0",
     "express": "^4.15.3",
+    "jest": "^22.3.0",
     "lodash": "^4.14.1",
     "mocha": "^4.0.0"
   },
   "detox": {
     "specs": "e2e",
+    "test-runner": "jest",
     "__session": {
       "server": "ws://localhost:8099",
       "sessionId": "test"
@@ -39,6 +43,13 @@
         "build": "set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -scheme example_ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build | xcpretty",
         "type": "ios.simulator",
         "name": "iPhone 8 Plus"
+      },
+      "ios.sim.release-multi": {
+        "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+        "build": "set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -scheme example_ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build | xcpretty",
+        "type": "ios.simulator",
+        "name": "iPhone 8 Plus",
+        "maxWorkers": 2
       },
       "ios.none": {
         "binaryPath": "ios",
