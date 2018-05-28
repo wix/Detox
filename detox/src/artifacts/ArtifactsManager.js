@@ -120,16 +120,16 @@ class ArtifactsManager {
     this._bundleId = bundleId;
     this._pid = pid;
 
-    if (!isFirstTime) {
-      await this._emit('onRelaunchApp', [{ deviceId, bundleId, pid}]);
+    if (isFirstTime) {
+      this._artifactPlugins = this._artifactPluginsFactories.map((factory) => {
+        return factory(this.artifactsApi);
+      });
+    } else {
+      await this._emit('onRelaunchApp', [{ deviceId, bundleId, pid }]);
     }
   }
 
   async onBeforeAll() {
-    this._artifactPlugins = this._artifactPluginsFactories.map((factory) => {
-      return factory(this.artifactsApi);
-    });
-
     await this._emit('onBeforeAll', []);
   }
 
