@@ -3,6 +3,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const log = require('npmlog');
 const argparse = require('../utils/argparse');
+const environment = require('../utils/environment');
 const logError = require('../utils/logError');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const ArtifactPathBuilder = require('./utils/ArtifactPathBuilder');
@@ -28,6 +29,22 @@ class ArtifactsManager {
 
     const pathBuilder = new ArtifactPathBuilder({
       artifactsRootDir: argparse.getArgValue('artifacts-location') || 'artifacts',
+      getUniqueSubdirectory: () => {
+        const configuration = argparse.getArgValue('configuration') || 'detox_artifacts';
+        const deviceLockFilePath = environment.getDeviceLockFilePath();
+
+        let lockFileCreatedDate = _.attempt(() => fs.statSync(deviceLockFilePath).ctime);
+        if (_.isError(lockFileCreatedDate)) {
+          log.warn('detox-artifacts', 'could not read file attributes of device lock file: %s', deviceLockFilePath);
+          lockFileCreatedDate = new Date();
+        }
+
+        const timestamp = lockFileCreatedDate.toISOString()
+          .replace(/T/, ' ')
+          .replace(/\..+/, '');
+
+        return `${configuration}.${timestamp}`;
+      },
     });
 
     this.artifactsApi = {
