@@ -108,6 +108,9 @@ Also make sure the simulator model specified under the key `"name"` (`iPhone 7` 
 If you want to use `Jest` instead of `Mocha`, you need to change a little bit this json like that:
 
 ```json
+"jest": {
+  "setupTestFrameworkScriptFile": "./e2e/init.js",
+},
 "detox": {
   "test-runner": "jest",
   "specs": "e2e",
@@ -145,6 +148,9 @@ If you're using `Jest`:
     "setupTestFrameworkScriptFile" : "./init.js"
 }
 ```
+
+* Remove `mocha.opts` if you use `detox init`
+* Change the content of `init.js` to this [content](/examples/demo-react-native-jest/e2e/init.js)
 
 <br>
 
