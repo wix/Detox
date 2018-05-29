@@ -10,8 +10,6 @@ describe('ADB', () => {
       getAndroidSDKPath: () => '/dev/null',
     }));
 
-    ADB = require('./ADB');
-
     jest.mock('./EmulatorTelnet');
     EmulatorTelnet = require('./EmulatorTelnet');
 
@@ -23,6 +21,7 @@ describe('ADB', () => {
     });
     exec = require('../../utils/exec').execWithRetriesAndLogs;
 
+    ADB = require('./ADB');
     adb = new ADB();
   });
 

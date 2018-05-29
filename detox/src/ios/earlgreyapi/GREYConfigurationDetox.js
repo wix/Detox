@@ -9,10 +9,7 @@
 class GREYConfiguration {
   static enableSynchronization(element) {
     return {
-      target: {
-        type: "Invocation",
-        value: element
-      },
+      target: element,
       method: "enableSynchronization",
       args: []
     };
@@ -20,10 +17,7 @@ class GREYConfiguration {
 
   static disableSynchronization(element) {
     return {
-      target: {
-        type: "Invocation",
-        value: element
-      },
+      target: element,
       method: "disableSynchronization",
       args: []
     };

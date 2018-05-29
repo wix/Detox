@@ -36,7 +36,9 @@ class Client {
   async cleanup() {
     clearTimeout(this.slowInvocationStatusHandler);
     if (this.isConnected && !this.pandingAppCrash) {
-      await this.sendAction(new actions.Cleanup(this.successfulTestRun));
+      if(this.ws.isOpen()) {
+        await this.sendAction(new actions.Cleanup(this.successfulTestRun));
+      }
       this.isConnected = false;
     }
 
@@ -102,8 +104,10 @@ class Client {
 
   slowInvocationStatus() {
     return setTimeout(async () => {
-      const status = await this.currentStatus();
-      this.slowInvocationStatusHandler = this.slowInvocationStatus();
+      if (this.ws.isOpen()) {
+        const status = await this.currentStatus();
+        this.slowInvocationStatusHandler = this.slowInvocationStatus();
+      }
     }, this.slowInvocationTimeout);
   }
 }

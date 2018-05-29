@@ -13,6 +13,7 @@ module.exports = function(wallaby) {
     files: [
       'package.json',
       'src/**/*.js',
+      'src/**/*.mock.*',
       '!src/**/*.test.js',
     ],
 

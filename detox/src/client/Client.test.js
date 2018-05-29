@@ -10,10 +10,11 @@ describe('Client', () => {
   beforeEach(() => {
     jest.mock('npmlog');
     WebSocket = jest.mock('./AsyncWebSocket');
-    Client = require('./Client');
 
     jest.mock('../utils/argparse');
     argparse = require('../utils/argparse');
+
+    Client = require('./Client');
   });
 
   it(`reloadReactNative() - should receive ready from device and resolve`, async () => {
@@ -75,6 +76,17 @@ describe('Client', () => {
     expect(client.ws.send).not.toHaveBeenCalled();
   });
 
+  it(`cleanup() - if "connected" but ws is closed should do nothing`, async () => {
+    await connect();
+    client.ws.send.mockReturnValueOnce(response("ready", {}, 1));
+    await client.waitUntilReady();
+
+    client.ws.isOpen.mockReturnValue(false);
+    await client.cleanup();
+
+    expect(client.ws.send).toHaveBeenCalledTimes(2);
+  });
+
   it(`execute() - "invokeResult" on an invocation object should resolve`, async () => {
     await connect();
     client.ws.send.mockReturnValueOnce(response("invokeResult", {result: "(GREYElementInteraction)"}, 1));
@@ -85,26 +97,29 @@ describe('Client', () => {
     expect(client.ws.send).toHaveBeenCalledTimes(2);
   });
 
-  async function executeWithSlowInvocation(invocationTime) {
-    argparse.getArgValue.mockReturnValue(2); // set debug-slow-invocations
-
-    await connect();
-
-    client.ws.send.mockReturnValueOnce(timeout(invocationTime).then(()=> response("invokeResult", {result:"(GREYElementInteraction)"}, 1)))
-                  .mockReturnValueOnce(response("currentStatusResult", {"state":"busy","resources":[{"name":"App State","info":{"prettyPrint":"Waiting for network requests to finish.","elements":["__NSCFLocalDataTask:0x7fc95d72b6c0"],"appState":"Waiting for network requests to finish."}},{"name":"Dispatch Queue","info":{"queue":"OS_dispatch_queue_main: com.apple.main-thread[0x10805ea80] = { xrefcnt = 0x80000000, refcnt = 0x80000000, target = com.apple.root.default-qos.overcommit[0x10805f1c0], width = 0x1, state = 0x000fffe000000403, in-flight = 0, thread = 0x403 }","prettyPrint":"com.apple.main-thread"}}]}, 2));
-
-    const call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityLabel:', 'test');
-    await client.execute(call);
-  }
-
   it(`execute() - fast invocation should not trigger "slowInvocationStatus"`, async () => {
+    argparse.getArgValue.mockReturnValue(2); // set debug-slow-invocations
+    await connect();
     await executeWithSlowInvocation(1);
     expect(client.ws.send).toHaveBeenLastCalledWith({"params": {"args": ["test"], "method": "matcherForAccessibilityLabel:", "target": {"type": "Class", "value": "GREYMatchers"}}, "type": "invoke"}, undefined);
+    expect(client.ws.send).toHaveBeenCalledTimes(2);
   });
 
   it(`execute() - slow invocation should trigger "slowInvocationStatus:`, async () => {
+    argparse.getArgValue.mockReturnValue(2); // set debug-slow-invocations
+    await connect();
     await executeWithSlowInvocation(4);
     expect(client.ws.send).toHaveBeenLastCalledWith({"params": {}, "type": "currentStatus"}, undefined);
+    expect(client.ws.send).toHaveBeenCalledTimes(3);
+  });
+
+  it(`execute() - slow invocation should do nothing if ws was closed`, async () => {
+    argparse.getArgValue.mockReturnValue(2); // set debug-slow-invocations
+    await connect();
+    client.ws.isOpen.mockReturnValue(false);
+    await executeWithSlowInvocation(4);
+
+    expect(client.ws.send).toHaveBeenCalledTimes(2);
   });
 
   it(`execute() - "invokeResult" on an invocation function should resolve`, async () => {
@@ -183,6 +198,14 @@ describe('Client', () => {
         params: params,
         messageId: messageId
       }));
+  }
+
+  async function executeWithSlowInvocation(invocationTime) {
+    client.ws.send.mockReturnValueOnce(timeout(invocationTime).then(()=> response("invokeResult", {result:"(GREYElementInteraction)"}, 1)))
+          .mockReturnValueOnce(response("currentStatusResult", {"state":"busy","resources":[{"name":"App State","info":{"prettyPrint":"Waiting for network requests to finish.","elements":["__NSCFLocalDataTask:0x7fc95d72b6c0"],"appState":"Waiting for network requests to finish."}},{"name":"Dispatch Queue","info":{"queue":"OS_dispatch_queue_main: com.apple.main-thread[0x10805ea80] = { xrefcnt = 0x80000000, refcnt = 0x80000000, target = com.apple.root.default-qos.overcommit[0x10805f1c0], width = 0x1, state = 0x000fffe000000403, in-flight = 0, thread = 0x403 }","prettyPrint":"com.apple.main-thread"}}]}, 2));
+
+    const call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityLabel:', 'test');
+    await client.execute(call);
   }
 
   async function timeout(ms) {

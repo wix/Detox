@@ -6,6 +6,7 @@ const IosDriver = require('./IosDriver');
 const AppleSimUtils = require('./AppleSimUtils');
 const configuration = require('../configuration');
 const environment = require('../utils/environment');
+const DeviceRegistry = require('./DeviceRegistry');
 
 const SimulatorLogPlugin = require('../artifacts/log/ios/SimulatorLogPlugin');
 const SimulatorScreenshotPlugin = require('../artifacts/screenshot/SimulatorScreenshotPlugin');
@@ -16,6 +17,10 @@ class SimulatorDriver extends IosDriver {
   constructor(client) {
     super(client);
     this._applesimutils = new AppleSimUtils();
+    this.deviceRegistry = new DeviceRegistry({
+      getDeviceIdsByType: async type => await this._applesimutils.findDevicesUDID(type),
+      createDevice: type => this._applesimutils.create(type),
+    });
   }
 
   declareArtifactPlugins() {
@@ -37,9 +42,18 @@ class SimulatorDriver extends IosDriver {
     }
   }
 
+  async cleanup(deviceId, bundleId) {
+    await this.deviceRegistry.freeDevice(deviceId);
+    return super.cleanup(deviceId, bundleId);
+  }
+
   async acquireFreeDevice(name) {
-    const deviceId = await this._applesimutils.findDeviceUDID(name);
-    await this.boot(deviceId);
+    const deviceId = await this.deviceRegistry.getDevice(name);
+    if (deviceId) {
+      await this.boot(deviceId);
+    } else {
+      console.error('Unable to acquire free device ', name);
+    }
     return deviceId;
   }
 
