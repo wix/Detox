@@ -105,6 +105,18 @@ Also make sure the simulator model specified under the key `"name"` (`iPhone 7` 
 
 > TIP: To test a release version, replace 'Debug' with 'Release' in the binaryPath and build properties. For full configuration options see Configuration under the API Reference.
 
+If you want to use `Jest` instead of `Mocha`, you need to change a little bit this json like that:
+
+```json
+"detox": {
+  "test-runner": "jest",
+  "specs": "e2e",
+  "configurations": {
+     ...
+  }
+}
+```
+
 <br>
 
 ## Step 3: Create your first test (using mocha test runner)
@@ -123,6 +135,16 @@ Or you can do this manually instead by following these steps:
 * Create your first test `firstTest.spec.js` inside with content similar to [this](/examples/demo-react-native/e2e/example.spec.js)
 
 > TIP: Detox is not tightly coupled to Mocha or this directory structure, both are just a recommendation and are easy to replace without touching the internal implementation of Detox itself.
+
+If you're using `Jest`:
+
+* Create `config.json` file inside `e2e` folder with this content:
+
+```json
+{
+    "setupTestFrameworkScriptFile" : "./init.js"
+}
+```
 
 <br>
 
