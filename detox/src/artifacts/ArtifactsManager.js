@@ -12,6 +12,7 @@ class ArtifactsManager {
   constructor() {
     this.onBeforeResetDevice = this.onBeforeResetDevice.bind(this);
     this.onResetDevice = this.onResetDevice.bind(this);
+    this.onBeforeLaunchApp = this.onBeforeLaunchApp.bind(this);
     this.onLaunchApp = this.onLaunchApp.bind(this);
     this._executeIdleCallback = this._executeIdleCallback.bind(this);
 
@@ -121,6 +122,7 @@ class ArtifactsManager {
   subscribeToDeviceEvents(device) {
     device.on('beforeResetDevice', this.onBeforeResetDevice);
     device.on('resetDevice', this.onResetDevice);
+    device.on('beforeLaunchApp', this.onBeforeLaunchApp);
     device.on('launchApp', this.onLaunchApp);
   }
 
@@ -130,18 +132,30 @@ class ArtifactsManager {
     device.off('launchApp', this.onLaunchApp);
   }
 
-  async onLaunchApp({ deviceId, bundleId, pid }) {
+  async onBeforeLaunchApp({ deviceId, bundleId }) {
     const isFirstTime = !this._deviceId;
 
     this._deviceId = deviceId;
     this._bundleId = bundleId;
-    this._pid = pid;
 
     if (isFirstTime) {
       this._artifactPlugins = this._artifactPluginsFactories.map((factory) => {
         return factory(this.artifactsApi);
       });
     } else {
+      // TODO: implement this lifecycle event
+      // await this._emit('onBeforeRelaunchApp', [{ deviceId, bundleId }]);
+    }
+  }
+
+  async onLaunchApp({ deviceId, bundleId, pid }) {
+    const isFirstTime = isNaN(this._pid);
+
+    this._deviceId = deviceId;
+    this._bundleId = bundleId;
+    this._pid = pid;
+
+    if (!isFirstTime) {
       await this._emit('onRelaunchApp', [{ deviceId, bundleId, pid }]);
     }
   }

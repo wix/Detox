@@ -32,10 +32,11 @@ class SimulatorLogRecording extends Artifact {
 
   async doStop() {
     log.verbose('SimulatorLogPlugin', 'stopping to watch log');
-    this._close();
+    this._unwatch();
   }
 
   async doSave(artifactPath) {
+    this._close();
     const tempLogPath = this._logPath;
 
     if (await fs.exists(tempLogPath)) {
@@ -47,10 +48,11 @@ class SimulatorLogRecording extends Artifact {
   }
 
   async doDiscard() {
+    this._close();
     await fs.remove(this._logPath);
   }
 
-  _close() {
+  _unwatch() {
     if (this._stdoutTail) {
       this._stdoutTail.unwatch();
     }
@@ -62,7 +64,9 @@ class SimulatorLogRecording extends Artifact {
     }
 
     this._stderrTail = null;
+  }
 
+  _close() {
     if (this._logStream) {
       this._logStream.end();
     }

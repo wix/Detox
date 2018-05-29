@@ -18,6 +18,7 @@ class Device {
     this._listeners = {
       beforeResetDevice: [],
       resetDevice: [],
+      beforeLaunchApp: [],
       launchApp: [],
     };
   }
@@ -98,6 +99,12 @@ class Device {
     }
 
     const _bundleId = bundleId || this._bundleId;
+
+    await this.emit('beforeLaunchApp', {
+      deviceId: this._deviceId,
+      bundleId: _bundleId,
+    });
+
     if (this._isAppInBackground(params, _bundleId)) {
       if (hasPayload) {
         await this.deviceDriver.deliverPayload({...params, delayPayload: true});
@@ -106,12 +113,6 @@ class Device {
 
     const processId = await this.deviceDriver.launch(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs));
     this._processes[_bundleId] = processId;
-
-    await this.emit('launchApp', {
-      deviceId: this._deviceId,
-      bundleId: this._bundleId,
-      pid: processId,
-    });
 
     await this.deviceDriver.waitUntilReady();
 
@@ -122,6 +123,12 @@ class Device {
     if(params.detoxUserActivityDataURL) {
       await this.deviceDriver.cleanupRandomDirectory(params.detoxUserActivityDataURL);
     }
+
+    await this.emit('launchApp', {
+      deviceId: this._deviceId,
+      bundleId: _bundleId,
+      pid: processId,
+    });
   }
 
   _isAppInBackground(params, _bundleId) {
