@@ -101,13 +101,7 @@ module.exports = function getGenerator({
     );
 
     if (json.comment) {
-      const comment = {
-        type: json.comment.indexOf('\n') === -1 ? 'LineComment' : 'BlockComment',
-        value: json.comment + '\n'
-      };
-
-      m.leadingComments = m.leadingComments || [];
-      m.leadingComments.push(comment);
+      t.addComment(m, 'leading', json.comment);
     }
     return m;
   }
