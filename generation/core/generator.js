@@ -1,8 +1,8 @@
-const t = require('babel-types');
-const template = require('babel-template');
+const t = require('@babel/types');
+const template = require('@babel/template').default;
+const generate = require('@babel/generator').default;
 const objectiveCParser = require('objective-c-parser');
 const javaMethodParser = require('java-method-parser');
-const generate = require('babel-generator').default;
 const fs = require('fs');
 
 const { methodNameToSnakeCase } = require('../helpers');
