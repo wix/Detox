@@ -3,8 +3,10 @@
 const program = require('commander');
 const path = require('path');
 const cp = require('child_process');
+
 const _ = require('lodash');
 const CustomError = require('../src/errors/CustomError');
+const environment = require('../src/utils/environment');
 const config = require(path.join(process.cwd(), 'package.json')).detox;
 
 class DetoxConfigError extends CustomError {}
@@ -38,6 +40,10 @@ program
     '[Android Only] Launch Emulator in headless mode. Useful when running on CI.')
   .parse(process.argv);
 
+
+clearDeviceRegistryLockFile();
+
+
 if (program.configuration) {
   if (!config.configurations[program.configuration]) {
     throw new DetoxConfigError(`Cannot determine configuration '${program.configuration}'. 
@@ -53,9 +59,6 @@ const runner = getConfigFor(['testRunner'], 'mocha');
 const runnerPath = getConfigFor(['testRunnerPath'], path.join('node_modules', '.bin', runner));
 const runnerConfig = getConfigFor(['runnerConfig'], getDefaultRunnerConfig());
 const platform = (config.configurations[program.configuration].type).split('.')[0];
-
-run();
-
 
 if (typeof program.debugSynchronization === "boolean") {
   program.debugSynchronization = 3000;
@@ -102,27 +105,29 @@ function runMocha() {
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
   const command = `${runnerPath} ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${artifactsLocation} ${headless}`;
 
-  console.log(command);
   cp.execSync(command, {stdio: 'inherit'});
 }
 
 function runJest() {
+  const currentConfiguration = config.configurations && config.configurations[program.configuration];
+  const maxWorkers = currentConfiguration.maxWorkers || 1;
   const configFile = runnerConfig ? `--config=${runnerConfig}` : '';
-  const platform = program.platform ? `--testNamePattern='^((?!${getPlatformSpecificString(program.platform)}).)*$'` : '';
   const platformString = platform ? `--testNamePattern='^((?!${getPlatformSpecificString(platform)}).)*$'` : '';
-  const command = `${runnerPath} ${testFolder} ${configFile} --runInBand ${platformString}`;
+  const command = `${runnerPath} ${testFolder} ${configFile} --maxWorkers=${maxWorkers} ${platformString}`;
+  const env = Object.assign({}, process.env, {
+    configuration: program.configuration,
+    loglevel: program.loglevel,
+    cleanup: program.cleanup,
+    reuse: program.reuse,
+    debugSynchronization: program.debugSynchronization,
+    artifactsLocation: program.artifactsLocation,
+    headless: program.headless
+  });
   console.log(command);
+
   cp.execSync(command, {
     stdio: 'inherit',
-    env: Object.assign({}, process.env, {
-      configuration: program.configuration,
-      loglevel: program.loglevel,
-      cleanup: program.cleanup,
-      reuse: program.reuse,
-      debugSynchronization: program.debugSynchronization,
-      artifactsLocation: program.artifactsLocation,
-      headless: program.headless
-    })
+    env
   });
 }
 
@@ -153,10 +158,16 @@ function getPlatformSpecificString(platform) {
   return platformRevertString;
 }
 
+
+function clearDeviceRegistryLockFile() {
+  const fs = require('fs');
+  fs.writeFileSync(environment.getDeviceLockFilePath(), '[]');
+}
+
 function getDefaultConfiguration() {
   if (_.size(config.configurations) === 1) {
     return _.keys(config.configurations)[0];
   }
 }
 
-
+run();

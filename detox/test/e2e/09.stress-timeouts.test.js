@@ -1,9 +1,6 @@
 describe('StressTimeouts', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
-  });
-
-  beforeEach(async () => {
     await element(by.text('Timeouts')).tap();
   });
 
