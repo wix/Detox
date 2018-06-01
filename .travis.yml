@@ -12,6 +12,7 @@ matrix:
       - ./scripts/install.ios.sh
       script:
       - ./scripts/ci.ios.sh
+      - ./scripts/upload_artifact.sh
     - language: objective-c
       os: osx
       osx_image: xcode9.3
@@ -21,6 +22,7 @@ matrix:
       - ./scripts/install.ios.sh
       script:
       - ./scripts/ci.ios.sh
+      - ./scripts/upload_artifact.sh
     - language: android
       os: linux
       jdk: oraclejdk8
