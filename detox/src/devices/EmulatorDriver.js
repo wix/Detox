@@ -4,6 +4,7 @@ const Emulator = require('./android/Emulator');
 const EmulatorTelnet = require('./android/EmulatorTelnet');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const Environment = require('../utils/environment');
+const retry = require('../utils/retry');
 const sleep = require('../utils/sleep');
 const AndroidDriver = require('./AndroidDriver');
 const ini = require('ini');
@@ -86,21 +87,14 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async _waitForBootToComplete(deviceId) {
-    const start = Date.now();
-    const maxTimeToBoot = 10 * 60 * 1000;
-
-    while (Date.now() - start < maxTimeToBoot) {
+    await retry({ retries: 120, interval: 5000 }, async () => {
       const isBootComplete = await this.adb.isBootComplete(deviceId);
 
-      if (isBootComplete) {
-        return;
+      if (!isBootComplete) {
+        throw new DetoxRuntimeError({
+          message: `Android device ${deviceId} has not completed its boot yet.`,
+        });
       }
-
-      await sleep(2000);
-    }
-
-    throw new DetoxRuntimeError({
-      message: `Failed to wait enough time for boot to complete on device: ${deviceId}`,
     });
   }
 
