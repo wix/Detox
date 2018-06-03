@@ -11,11 +11,11 @@
     "gatherDocs": "node ./gatherDocs"
   },
   "devDependencies": {
-    "docusaurus": "^1.0.4"
+    "docusaurus": "^1.1.5"
   },
   "dependencies": {
     "fs-extra": "^5.0.0",
-    "nodegit": "^0.21.0",
+    "nodegit": "^0.21.1",
     "semver": "^5.5.0"
   }
 }
