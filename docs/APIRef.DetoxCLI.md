@@ -55,6 +55,7 @@ Initiating your test suite
 | -a, --artifacts-location \<path\>             | Artifacts destination path (currently contains only logs). For more details, please check the [Artifacts doc](APIRef.Artifacts.md#artifacts) |
 |-p, --platform [ios/android]		           | Run platform specific tests. Runs tests with invert grep on `:platform:`, e.g test with substring `:ios:` in its name will not run when passing `--platform android`
 | -H, --headless                                   | [Android Only] Launch Emulator in headless mode. Useful when running on CI. |
+| -w, --workers                                   | [iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest) |
 |&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;||
 
 
