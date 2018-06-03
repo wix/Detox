@@ -21,7 +21,8 @@ describe("downloadEspresso", () => {
 	it("should save the base64 decoded content to the temp dir file", () => {
 		expect(fs.writeFileSync).toHaveBeenCalled();
 		const call = fs.writeFileSync.mock.calls[0];
-		expect(call[0]).toBe("/tmp/ponies/download.java");
+		expect(call[0]).toContain("/tmp/ponies/");
+		expect(call[0]).toContain(".java");
 		expect(call[1]).toEqual(
 			expect.stringContaining("public final class Espresso {")
 		);
