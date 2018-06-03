@@ -11,7 +11,6 @@ matrix:
       install:
       - ./scripts/install.ios.sh
       - pip install --user awscli
-      - pip3 install --user awscli
       script:
       - ./scripts/ci.ios.sh
       - ./scripts/upload_artifact.sh
@@ -23,7 +22,6 @@ matrix:
       install:
       - ./scripts/install.ios.sh
       - pip install --user awscli
-      - pip3 install --user awscli
       script:
       - ./scripts/ci.ios.sh
       - ./scripts/upload_artifact.sh
