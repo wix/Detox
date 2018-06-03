@@ -10,6 +10,7 @@ matrix:
         - REACT_NATIVE_VERSION=0.53.3
       install:
       - ./scripts/install.ios.sh
+      - pip install --user awscli
       script:
       - ./scripts/ci.ios.sh
       - ./scripts/upload_artifact.sh
@@ -20,6 +21,7 @@ matrix:
         - REACT_NATIVE_VERSION=0.51.1
       install:
       - ./scripts/install.ios.sh
+      - pip install --user awscli
       script:
       - ./scripts/ci.ios.sh
       - ./scripts/upload_artifact.sh
