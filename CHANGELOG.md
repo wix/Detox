@@ -1,11 +1,10 @@
 # Change Log
 
-## [7.4.0](https://github.com/wix/detox/tree/7.4.0) (2018-06-04)
+## [7.4.0](https://github.com/wix/detox/tree/7.4.0) (2018-06-03)
 [Full Changelog](https://github.com/wix/detox/compare/7.3.7...7.4.0)
 
 **Enhancements**
 
-- Parallel Simulator support [\#97](https://github.com/wix/detox/issues/97)
 - Support parallel test execution [\#609](https://github.com/wix/detox/pull/609) ([doronpr](https://github.com/doronpr))
 
 **Fixed Bugs**
@@ -14,10 +13,6 @@
 
 **Closed Issues**
 
-- Website publishing is not stable [\#765](https://github.com/wix/detox/issues/765)
-- Unusual gradle error while running e2e tests in detox/test directory.  [\#759](https://github.com/wix/detox/issues/759)
-- Is there any way to prioritise or sequencing the test file  [\#754](https://github.com/wix/detox/issues/754)
-- Missing ability to pass argument when not using Mocha/Jest [\#735](https://github.com/wix/detox/issues/735)
 - Detox hangs on circleci [\#717](https://github.com/wix/detox/issues/717)
 
 **Merged Pull Requests**
