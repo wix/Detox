@@ -44,10 +44,19 @@ The most difficult part of automated testing on mobile is the tip of the testing
 * **Cross Platform:** Write cross-platform tests in JavaScript. Currently supports iOS, Android is nearly complete.  View the [Android status page](/docs/More.AndroidSupportStatus.md).
 * **Runs on Devices** (not yet supported on iOS): Gain confidence to ship by testing your app on a device/simulator just like a real user.
 * **Automatically Synchronized:** Stops flakiness at the core by monitoring asynchronous operations in your app.
-* **React Native Support:** Built from the ground up to support React Native projects as well as pure native ones. Currently, React Native versions 0.44 and above are supported.
 * **Made For CI:** Execute your E2E tests on CI platforms like Travis without grief. 
 * **Test Runner Independent:** Use Mocha, AVA, or any other JavaScript test runner you like.
 * **Debuggable:** Modern async-await API allows breakpoints in asynchronous tests to work as expected.
+
+## Supported React Native versions
+
+Detox is built from the ground up to support React Native projects as well as pure native ones.
+
+|RN version| support |
+|--|--|
+| <= 0.50 | both platforms |
+| > 0.50 | iOS only |
+
 
 ## Getting Started
 
