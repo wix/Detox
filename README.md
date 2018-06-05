@@ -55,8 +55,8 @@ Detox is built from the ground up to support React Native projects as well as pu
 |RN version| support |
 |--|--|
 | <= 0.51 | both platforms |
-| >= 0.52 | iOS only |
-
+| >= 0.52 <= 0.55 | iOS only |
+| newer | please report |
 
 ## Getting Started
 
