@@ -38,6 +38,8 @@ program
     'Specify test file to run')
   .option('-H, --headless',
     '[Android Only] Launch Emulator in headless mode. Useful when running on CI.')
+  .option('-w, --workers <n>',
+    '[iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest)', 1)
   .parse(process.argv);
 
 
@@ -59,6 +61,10 @@ const runner = getConfigFor(['testRunner'], 'mocha');
 const runnerPath = getConfigFor(['testRunnerPath'], path.join('node_modules', '.bin', runner));
 const runnerConfig = getConfigFor(['runnerConfig'], getDefaultRunnerConfig());
 const platform = (config.configurations[program.configuration].type).split('.')[0];
+
+if (platform === 'android' && program.workers !== 1) {
+  throw new DetoxConfigError('Can not use -w, --workers. Parallel test execution is only supported on iOS currently');
+}
 
 if (typeof program.debugSynchronization === "boolean") {
   program.debugSynchronization = 3000;
@@ -109,8 +115,6 @@ function runMocha() {
 }
 
 function runJest() {
-  const currentConfiguration = config.configurations && config.configurations[program.configuration];
-  const maxWorkers = currentConfiguration.maxWorkers || 1;
   const configFile = runnerConfig ? `--config=${runnerConfig}` : '';
   const platformString = platform ? `--testNamePattern='^((?!${getPlatformSpecificString(platform)}).)*$'` : '';
   const command = `${runnerPath} ${testFolder} ${configFile} --maxWorkers=${maxWorkers} ${platformString}`;

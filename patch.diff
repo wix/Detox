@@ -1,0 +1,209 @@
+diff --git a/detox/local-cli/detox-test.js b/detox/local-cli/detox-test.js
+index 7497cb86..b7d81a2c 100644
+--- a/detox/local-cli/detox-test.js
++++ b/detox/local-cli/detox-test.js
+@@ -1,6 +1,6 @@
+ #!/usr/bin/env node
+ 
+-const program = require('commander');
++const { ArgumentParser } = require('argparse');
+ const path = require('path');
+ const cp = require('child_process');
+ 
+@@ -12,44 +12,61 @@ const config = require(path.join(process.cwd(), 'package.json')).detox;
+ class DetoxConfigError extends CustomError {}
+ 
+ 
+-
+-program
+-  .option('-o, --runner-config [config]',
+-    `Test runner config file, defaults to e2e/mocha.opts for mocha and e2e/config.json' for jest`)
+-  .option('-s, --specs [relativePath]',
+-    `Root of test folder`)
+-  .option('-l, --loglevel [value]',
+-    'info, debug, verbose, silly, wss')
+-  .option('-c, --configuration [device configuration]',
+-    'Select a device configuration from your defined configurations, if not supplied, and there\'s only one configuration, detox will default to it', getDefaultConfiguration())
+-  .option('-r, --reuse',
+-    'Reuse existing installed app (do not delete and re-install) for a faster run.')
+-  .option('-u, --cleanup',
+-    'Shutdown simulator when test is over, useful for CI scripts, to make sure detox exists cleanly with no residue')
+-  .option('-d, --debug-synchronization [value]',
+-    'When an action/expectation takes a significant amount of time use this option to print device synchronization status.'
+-    + 'The status will be printed if the action takes more than [value]ms to complete')
+-  .option('-a, --artifacts-location [path]',
+-    'Artifacts destination path (currently will contain only logs). If the destination already exists, it will be removed first')
+-  .option('-p, --platform [ios/android]',
+-    '[DEPRECATED], platform is deduced automatically. Run platform specific tests. Runs tests with invert grep on \':platform:\', '
+-    + 'e.g test with substring \':ios:\' in its name will not run when passing \'--platform android\'')
+-  .option('-f, --file [path]',
+-    'Specify test file to run')
+-  .option('-H, --headless',
+-    '[Android Only] Launch Emulator in headless mode. Useful when running on CI.')
+-  .parse(process.argv);
+-
++const parser = new ArgumentParser({
++     description: 'Detox CLI'
++});
++
++parser.addArgument(['-o', '--runner-config'], {
++  help: `Test runner config file, defaults to e2e/mocha.opts for mocha and e2e/config.json' for jest`
++});
++parser.addArgument(['-s', '--specs'], {
++  help: `Root of test folder`
++});
++parser.addArgument(['-l', '--loglevel'], {
++  help: `info, debug, verbose, silly, wss`
++});
++parser.addArgument(['-c', '--configuration'], {
++  help: `Select a device configuration from your defined configurations, if not supplied, and there's only one configuration, detox will default to it`,
++  defaultValue:  getDefaultConfiguration()
++});
++parser.addArgument(['-r', '--reuse'], {
++  help: `Reuse existing installed app (do not delete and re-install) for a faster run`
++});
++parser.addArgument(['-u', '--cleanup'], {
++  help: `Shutdown simulator when test is over, useful for CI scripts, to make sure detox exists cleanly with no residue`
++});
++parser.addArgument(['-d', '--debug-synchronization'], {
++  help: 'When an action/expectation takes a significant amount of time use this option to print device synchronization status.'
++    + 'The status will be printed if the action takes more than <ms> to complete',
++  type: 'int'
++});
++parser.addArgument(['-a', '--artifacts-location'], {
++  help: `Artifacts destination path (currently will contain only logs). If the destination already exists, it will be removed first`
++});
++parser.addArgument(['-f', '--file'], {
++  help: `Artifacts destination path (currently will contain only logs). If the destination already exists, it will be removed first`,
++  metavar: 'FILENAME'
++});
++parser.addArgument(['-H', '--headless'], {
++  help: `[Android Only] Launch Emulator in headless mode. Useful when running on CI`
++});
++parser.addArgument(['-w', '--workers'], {
++  help: `[iOS Only] Specifies number of workers test runner should spawn, requires test runner with parallel execution support (Detox CLI currently supports Jest)`,
++  type: 'int',
++  defaultValue: 1
++});
++
++const args = parser.parseArgs();
+ 
+ clearDeviceRegistryLockFile();
+ 
+ 
+-if (program.configuration) {
+-  if (!config.configurations[program.configuration]) {
+-    throw new DetoxConfigError(`Cannot determine configuration '${program.configuration}'. 
++if (args.configuration) {
++  if (!config.configurations[args.configuration]) {
++    throw new DetoxConfigError(`Cannot determine configuration '${args.configuration}'. 
+     Available configurations: ${_.keys(config.configurations).join(', ')}`);
+   }
+-} else if(!program.configuration) {
++} else if(!args.configuration) {
+   throw new DetoxConfigError(`Cannot determine which configuration to use. 
+   Use --configuration to choose one of the following: ${_.keys(config.configurations).join(', ')}`);
+ }
+@@ -57,10 +74,10 @@ if (program.configuration) {
+ const testFolder = getConfigFor(['file', 'specs'], 'e2e');
+ const runner = getConfigFor(['testRunner'], 'mocha');
+ const runnerConfig = getConfigFor(['runnerConfig'], getDefaultRunnerConfig());
+-const platform = (config.configurations[program.configuration].type).split('.')[0];
++const platform = (config.configurations[args.configuration].type).split('.')[0];
+ 
+-if (typeof program.debugSynchronization === "boolean") {
+-  program.debugSynchronization = 3000;
++if (typeof args.debugSynchronization === "boolean") {
++  args.debugSynchronization = 3000;
+ }
+ 
+ function run() {
+@@ -80,7 +97,7 @@ function getConfigFor(keys, fallback) {
+   for (let i = 0; i < keys.length; i++) {
+     const key = keys[i];
+     const keyKebabCase = camelToKebabCase(key);
+-    const result = program[key] || config[key] || config[keyKebabCase];
++    const result = args[key] || config[key] || config[keyKebabCase];
+     if (result) return result;
+   }
+ 
+@@ -92,16 +109,16 @@ function camelToKebabCase(string) {
+ }
+ 
+ function runMocha() {
+-  const loglevel = program.loglevel ? `--loglevel ${program.loglevel}` : '';
+-  const configuration = program.configuration ? `--configuration ${program.configuration}` : '';
+-  const cleanup = program.cleanup ? `--cleanup` : '';
+-  const reuse = program.reuse ? `--reuse` : '';
+-  const artifactsLocation = program.artifactsLocation ? `--artifacts-location ${program.artifactsLocation}` : '';
++  const loglevel = args.loglevel ? `--loglevel ${args.loglevel}` : '';
++  const configuration = args.configuration ? `--configuration ${args.configuration}` : '';
++  const cleanup = args.cleanup ? `--cleanup` : '';
++  const reuse = args.reuse ? `--reuse` : '';
++  const artifactsLocation = args.artifactsLocation ? `--artifacts-location ${args.artifactsLocation}` : '';
+   const configFile = runnerConfig ? `--opts ${runnerConfig}` : '';
+   const platformString = platform ? `--grep ${getPlatformSpecificString(platform)} --invert` : '';
+-  const headless = program.headless ? `--headless` : '';
++  const headless = args.headless ? `--headless` : '';
+ 
+-  const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
++  const debugSynchronization = args.debugSynchronization ? `--debug-synchronization ${args.debugSynchronization}` : '';
+   const binPath = path.join('node_modules', '.bin', 'mocha');
+   const command = `${binPath} ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${artifactsLocation} ${headless}`;
+ 
+@@ -109,29 +126,28 @@ function runMocha() {
+ }
+ 
+ function runJest() {
+-  const currentConfiguration = config.configurations && config.configurations[program.configuration];
+-  const maxWorkers = currentConfiguration.maxWorkers || 1;
++  const currentConfiguration = config.configurations && config.configurations[args.configuration];
+   const configFile = runnerConfig ? `--config=${runnerConfig}` : '';
+ 
+   const platformString = platform ? `--testNamePattern='^((?!${getPlatformSpecificString(platform)}).)*$'` : '';
+   const binPath = path.join('node_modules', '.bin', 'jest');
+-  const command = `${binPath} ${testFolder} ${configFile} --maxWorkers=${maxWorkers} ${platformString}`;
++  const command = `${binPath} ${testFolder} ${configFile} --maxWorkers=${args.workers} ${platformString}`;
+   const env = Object.assign({}, process.env, {
+-    configuration: program.configuration,
+-    loglevel: program.loglevel,
+-    cleanup: program.cleanup,
+-    reuse: program.reuse,
+-    debugSynchronization: program.debugSynchronization,
+-    artifactsLocation: program.artifactsLocation,
+-    headless: program.headless
++    configuration: args.configuration,
++    loglevel: args.loglevel,
++    cleanup: args.cleanup,
++    reuse: args.reuse,
++    debugSynchronization: args.debugSynchronization,
++    artifactsLocation: args.artifactsLocation,
++    headless: args.headless
+   });
+ 
+   console.log(command);
+ 
+-  cp.execSync(command, {
+-    stdio: 'inherit',
+-    env
+-  });
++  //cp.execSync(command, {
++  //  stdio: 'inherit',
++  //  env
++  //});
+ }
+ 
+ function getDefaultRunnerConfig() {
+diff --git a/detox/package.json b/detox/package.json
+index 0b50e6e0..8b053c5d 100644
+--- a/detox/package.json
++++ b/detox/package.json
+@@ -39,7 +39,7 @@
+   },
+   "dependencies": {
+     "child-process-promise": "^2.2.0",
+-    "commander": "^2.15.1",
++    "argparse": "^1.0.10",
+     "detox-server": "^7.0.0",
+     "fs-extra": "^4.0.2",
+     "get-port": "^2.1.0",

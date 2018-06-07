@@ -33,15 +33,15 @@ public class DetoxMatcher {
 
     public static Matcher<View> matcherForText(String text) {
         // return anyOf(withText(text), withContentDescription(text));
-        return withText(text);
+        return allOf(withText(text), isDisplayed());
     }
 
     public static Matcher<View> matcherForContentDescription(String contentDescription) {
-        return withContentDescription(contentDescription);
+        return allOf(withContentDescription(contentDescription), isDisplayed());
     }
 
     public static Matcher<View> matcherForTestId(String testId) {
-        return withTagValue(is((Object) testId));
+        return allOf(withTagValue(is((Object) testId)), isDisplayed());
     }
 
     public static Matcher<View> matcherForAnd(Matcher<View> m1, Matcher<View> m2) {
@@ -67,7 +67,7 @@ public class DetoxMatcher {
     public static Matcher<View> matcherForClass(final String className) {
         try {
             Class cls = Class.forName(className);
-            return isAssignableFrom(cls);
+            return allOf(isAssignableFrom(cls), isDisplayed());
         } catch (ClassNotFoundException e) {
             // empty
         }
