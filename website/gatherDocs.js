@@ -88,17 +88,7 @@ function generateAndCopyDocusaurusVersion(tempDir, version) {
   );
 }
 
-async function cleanUp(tempDir) {
-  console.log('Cleanup temporary clone');
-  await fs.remove(tempDir);
-}
-
-(async function() {
-  const versions = await getVersions();
-  await cleanupExistingVersions();
-
-  fs.writeFileSync('./versions.json', JSON.stringify(versions), 'utf8');
-  const tempDir = fs.mkdtempSync('detox-documentation-generation');
+async function generateDocumentation(versions, tempDir) {
   const repo = await git.Clone(REPO_URL, tempDir);
 
   for (let version of versions) {
@@ -115,5 +105,19 @@ async function cleanUp(tempDir) {
     repo.cleanup(tempDir);
     console.log(`Done with ${version}\n\n`);
   }
+}
+
+async function cleanUp(tempDir) {
+  console.log('Cleanup temporary clone');
+  await fs.remove(tempDir);
+}
+
+(async function() {
+  const versions = await getVersions();
+  await cleanupExistingVersions();
+
+  fs.writeFileSync('./versions.json', JSON.stringify(versions), 'utf8');
+  const tempDir = fs.mkdtempSync('detox-documentation-generation');
+  await generateDocumentation(versions, tempDir)
   await cleanUp(tempDir);
 })();
