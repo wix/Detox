@@ -82,7 +82,7 @@ class Emulator {
     if (argparse.getArgValue('headless')) {
       switch (os.platform()) {
         case 'darwin':
-          return 'swiftshader_indirect';
+          return 'host';
         case 'linux':
           return 'swiftshader_indirect';
         case 'win32':
