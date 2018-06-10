@@ -3,7 +3,7 @@
 const program = require('commander');
 const path = require('path');
 const cp = require('child_process');
-
+const fs = require('fs-extra');
 const _ = require('lodash');
 const CustomError = require('../src/errors/CustomError');
 const environment = require('../src/utils/environment');
@@ -167,8 +167,9 @@ function getPlatformSpecificString(platform) {
 
 
 function clearDeviceRegistryLockFile() {
-  const fs = require('fs');
-  fs.writeFileSync(environment.getDeviceLockFilePath(), '[]');
+  const lockFilePath = environment.getDeviceLockFilePath();
+  fs.ensureFileSync(lockFilePath);
+  fs.writeFileSync(lockFilePath, '[]');
 }
 
 function getDefaultConfiguration() {
