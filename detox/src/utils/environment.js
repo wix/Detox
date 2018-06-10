@@ -3,7 +3,7 @@ const exec = require('child-process-promise').exec;
 const appdatapath = require('./appdatapath');
 
 const DETOX_LIBRARY_ROOT_PATH = path.join(appdatapath.appDataPath(), 'Detox');
-const DEVICE_LOCK_FILE_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'device.registry.state.lock');
+const DEVICE_LOCK_FILE_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, '#781k');
 
 function getAndroidSDKPath() {
   let sdkPath = process.env.ANDROID_SDK_ROOT || process.env.ANDROID_HOME;

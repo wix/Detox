@@ -1,5 +1,20 @@
 # Change Log
 
+## [7.4.1](https://github.com/wix/detox/tree/7.4.1) (2018-06-10)
+[Full Changelog](https://github.com/wix/detox/compare/7.4.0...7.4.1)
+
+**Fixed Bugs**
+
+- error in  clearDeviceRegistryLockFile\(\) when running detox test [\#771](https://github.com/wix/detox/issues/771)
+- Android: force matchers to ignore layouts with GONE visibility [\#761](https://github.com/wix/detox/issues/761)
+
+**Merged Pull Requests**
+
+- Android: Force emulator launch to use `-gpu host` instead of `-gpu auto` on macOS [\#782](https://github.com/wix/detox/pull/782) ([rotemmiz](https://github.com/rotemmiz))
+- Ensure device.registry.state.lock path exists before clearing it [\#781](https://github.com/wix/detox/pull/781) ([rotemmiz](https://github.com/rotemmiz))
+- Match only visible views [\#780](https://github.com/wix/detox/pull/780) ([rotemmiz](https://github.com/rotemmiz))
+- Android: force matchers to ignore layouts with GONE visibility [\#775](https://github.com/wix/detox/pull/775) ([rotemmiz](https://github.com/rotemmiz))
+
 ## [7.4.0](https://github.com/wix/detox/tree/7.4.0) (2018-06-03)
 [Full Changelog](https://github.com/wix/detox/compare/7.3.7...7.4.0)
 
