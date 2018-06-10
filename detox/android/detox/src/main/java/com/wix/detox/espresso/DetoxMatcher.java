@@ -1,11 +1,13 @@
 package com.wix.detox.espresso;
 
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.view.View;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
+import static android.support.test.espresso.matcher.ViewMatchers.Visibility;
 import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
@@ -33,15 +35,15 @@ public class DetoxMatcher {
 
     public static Matcher<View> matcherForText(String text) {
         // return anyOf(withText(text), withContentDescription(text));
-        return allOf(withText(text), isDisplayed());
+        return allOf(withText(text), ViewMatchers.withEffectiveVisibility(Visibility.VISIBLE));
     }
 
     public static Matcher<View> matcherForContentDescription(String contentDescription) {
-        return allOf(withContentDescription(contentDescription), isDisplayed());
+        return allOf(withContentDescription(contentDescription), ViewMatchers.withEffectiveVisibility(Visibility.VISIBLE));
     }
 
     public static Matcher<View> matcherForTestId(String testId) {
-        return allOf(withTagValue(is((Object) testId)), isDisplayed());
+        return allOf(withTagValue(is((Object) testId)), ViewMatchers.withEffectiveVisibility(Visibility.VISIBLE));
     }
 
     public static Matcher<View> matcherForAnd(Matcher<View> m1, Matcher<View> m2) {
@@ -67,7 +69,7 @@ public class DetoxMatcher {
     public static Matcher<View> matcherForClass(final String className) {
         try {
             Class cls = Class.forName(className);
-            return allOf(isAssignableFrom(cls), isDisplayed());
+            return allOf(isAssignableFrom(cls), ViewMatchers.withEffectiveVisibility(Visibility.VISIBLE));
         } catch (ClassNotFoundException e) {
             // empty
         }
