@@ -10,10 +10,10 @@ class DetoxJestAdapter /* implements JasmineReporter */ {
   async beforeEach() {
     if (!this._currentSpec) {
       throw new DetoxRuntimeError({
-        message: 'Detox adapter to Jest is malfunctioning.\n' +
-        `Make sure you register it as Jasmine reporter inside init.js:\n` +
-        `-------------------------------------------------------------\n` +
-        'jasmine.getEnv().addReporter(adapter);',
+        message: 'Detox adapter to Jest is malfunctioning.',
+        hint: `Make sure you register it as Jasmine reporter inside init.js:\n` +
+              `-------------------------------------------------------------\n` +
+              'jasmine.getEnv().addReporter(adapter);',
       });
     }
 

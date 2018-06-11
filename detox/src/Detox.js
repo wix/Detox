@@ -4,6 +4,7 @@ const IosDriver = require('./devices/IosDriver');
 const SimulatorDriver = require('./devices/SimulatorDriver');
 const EmulatorDriver = require('./devices/EmulatorDriver');
 const AttachedAndroidDriver = require('./devices/AttachedAndroidDriver');
+const DetoxRuntimeError = require('./errors/DetoxRuntimeError');
 const argparse = require('./utils/argparse');
 const configuration = require('./configuration');
 const Client = require('./client/Client');
@@ -92,6 +93,7 @@ class Detox {
   }
 
   async beforeEach(testSummary) {
+    this._validateTestSummary(testSummary);
     await this._handleAppCrashIfAny(testSummary.fullName);
     await this.artifactsManager.onBeforeEach(testSummary);
   }
@@ -99,6 +101,32 @@ class Detox {
   async afterEach(testSummary) {
     await this.artifactsManager.onAfterEach(testSummary);
     await this._handleAppCrashIfAny(testSummary.fullName);
+  }
+
+  _validateTestSummary(testSummary) {
+    if (!_.isPlainObject(testSummary)) {
+      throw new DetoxRuntimeError({
+        message: `Invalid test summary was passed to detox.beforeEach(testSummary)` +
+          '\nExpected to get an object of type: { title: string; fullName: string; status: "running" | "passed" | "failed"; }',
+        hint: 'Maybe you are still using an old undocumented signature detox.beforeEach(string, string, string) in init.js ?' +
+          '\nSee the article for the guidance: ' +
+          'https://github.com/wix/detox/blob/master/docs/APIRef.TestLifecycle.md',
+        debugInfo: `testSummary was: ${JSON.stringify(testSummary, null, 2)}`,
+      });
+    }
+
+    switch (testSummary.status) {
+      case 'running':
+      case 'passed':
+      case 'failed':
+        break;
+      default:
+        throw new DetoxRuntimeError({
+          message: `Invalid test summary status was passed to detox.beforeEach(testSummary). Valid values are: "running", "passed", "failed"`,
+          hint: "It seems like you've hit a Detox integration issue with a test runner. You are encouraged to report it.",
+          debugInfo: `testSummary was: ${JSON.stringify(testSummary, null, 2)}`,
+        });
+    }
   }
 
   async _handleAppCrashIfAny(testName) {
