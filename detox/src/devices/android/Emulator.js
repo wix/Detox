@@ -4,6 +4,7 @@ const spawn = require('child-process-promise').spawn;
 const _ = require('lodash');
 const log = require('npmlog');
 const fs = require('fs');
+const os = require('os');
 const Environment = require('../../utils/environment');
 const Tail = require('tail').Tail;
 const argparse = require('../../utils/argparse');
@@ -28,7 +29,7 @@ class Emulator {
   async boot(emulatorName) {
     const emulatorArgs = _.compact([
       '-verbose',
-      '-gpu', 'auto',
+      '-gpu', os.platform() === 'darwin' ? 'host' : 'auto',
       '-no-audio',
       argparse.getArgValue('headless') ? '-no-window' : '',
       `@${emulatorName}`
