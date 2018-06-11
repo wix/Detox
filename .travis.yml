@@ -7,9 +7,8 @@ matrix:
       os: osx
       osx_image: xcode9.3
       env:
+        - PATH=$PATH:~/Library/Python/2.7/bin
         - REACT_NATIVE_VERSION=0.53.3
-      before_install:
-        - sudo pip install awscli
       install:
         - ./scripts/install.ios.sh
       script:
@@ -20,8 +19,7 @@ matrix:
       osx_image: xcode9.3
       env:
         - REACT_NATIVE_VERSION=0.51.1
-      before_install:
-        - sudo pip install awscli
+        - PATH=$PATH:~/Library/Python/2.7/bin
       install:
         - ./scripts/install.ios.sh
       script:
@@ -75,6 +73,7 @@ branches:
   - master
 before_install:
   - nvm install 8
+  - pip install awscli --upgrade --user
 notifications:
   email: true
   slack:
