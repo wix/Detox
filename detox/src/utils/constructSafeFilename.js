@@ -7,7 +7,12 @@ const MAX_FILE_LENGTH = 255;
 function constructSafeFilename(prefix = '', trimmable = '', suffix = '') {
   if (!trimmable) {
     throw new DetoxRuntimeError({
-      message: 'no filename was given',
+      message: 'no filename was given to constructSafeFilename()',
+      debugInfo: 'the arguments were: ' + JSON.stringify({
+        prefix,
+        trimmable,
+        suffix,
+      }, null, 2),
     });
   }
 
@@ -16,7 +21,15 @@ function constructSafeFilename(prefix = '', trimmable = '', suffix = '') {
   if (nonTrimmableLength >= MAX_FILE_LENGTH) {
     throw new DetoxRuntimeError({
       message: `cannot trim filename to match filesystem limits because prefix and/or suffix are exceed ${MAX_FILE_LENGTH} chars limit`,
-      debugInfo: `prefix = ${JSON.stringify(prefix)} (${prefix.length} chars), suffix = ${JSON.stringify(suffix)} (${suffix.length}chars)`,
+      debugInfo: JSON.stringify({
+        prefix,
+        prefixLength: prefix.length,
+        trimmable,
+        trimmableLength: trimmable.length,
+        suffix,
+        suffixLength: suffix.length,
+        nonTrimmableLength,
+      }, null, 2),
     });
   }
 

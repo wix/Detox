@@ -6,16 +6,18 @@ class DetoxRuntimeError extends Error {
     this.hint = hint;
     this.debugInfo = debugInfo;
 
-    if (typeof jest !== 'undefined') {
+    if (DetoxRuntimeError.formatMessagesOnFly) {
       this.message = this.toString();
     }
   }
 
   toString() {
     return `${this.constructor.name}: ${this.message}` +
-      '\n\nHINT: ' + this.hint +
-      '\n\n' + this.debugInfo;
+      (!this.hint ? '' : '\n\nHINT: ' + this.hint) +
+      (!this.debugInfo ? '' : '\n\n' + this.debugInfo);
   }
 }
+
+DetoxRuntimeError.formatMessagesOnFly = typeof jest !== 'undefined';
 
 module.exports = DetoxRuntimeError;

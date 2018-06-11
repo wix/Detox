@@ -99,6 +99,7 @@ class Detox {
   }
 
   async afterEach(testSummary) {
+    this._validateTestSummary(testSummary);
     await this.artifactsManager.onAfterEach(testSummary);
     await this._handleAppCrashIfAny(testSummary.fullName);
   }
@@ -123,7 +124,7 @@ class Detox {
       default:
         throw new DetoxRuntimeError({
           message: `Invalid test summary status was passed to detox.beforeEach(testSummary). Valid values are: "running", "passed", "failed"`,
-          hint: "It seems like you've hit a Detox integration issue with a test runner. You are encouraged to report it.",
+          hint: "It seems like you've hit a Detox integration issue with a test runner. You are encouraged to report it in Detox issues on GitHub.",
           debugInfo: `testSummary was: ${JSON.stringify(testSummary, null, 2)}`,
         });
     }

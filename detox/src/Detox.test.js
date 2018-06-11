@@ -173,6 +173,40 @@ describe('Detox', () => {
       expect(detox.artifactsManager.onBeforeEach).toHaveBeenCalledWith(testSummary);
     });
 
+    it(`Calling .beforeEach() and .afterEach() with a deprecated signature will throw an exception`, async () => {
+      Detox = require('./Detox');
+
+      detox = new Detox({deviceConfig: validDeviceConfig});
+      detox.artifactsManager.onBeforeEach = jest.fn();
+      detox.artifactsManager.onAfterEach = jest.fn();
+
+      await detox.init();
+      const testSummary = { title: 'test', fullName: 'suite - test', status: 'running' };
+
+      await expect(detox.beforeEach(testSummary.title, testSummary.fullName, testSummary.status)).rejects.toThrowErrorMatchingSnapshot();
+      expect(detox.artifactsManager.onBeforeEach).not.toHaveBeenCalled();
+
+      await expect(detox.afterEach(testSummary.title, testSummary.fullName, testSummary.status)).rejects.toThrowErrorMatchingSnapshot();
+      expect(detox.artifactsManager.onAfterEach).not.toHaveBeenCalled();
+    });
+
+    it(`Calling .beforeEach() and .afterEach() with incorrect test status will throw an exception`, async () => {
+      Detox = require('./Detox');
+
+      detox = new Detox({deviceConfig: validDeviceConfig});
+      detox.artifactsManager.onBeforeEach = jest.fn();
+      detox.artifactsManager.onAfterEach = jest.fn();
+
+      await detox.init();
+      const testSummary = { title: 'test', fullName: 'suite - test', status: 'incorrect status' };
+
+      await expect(detox.beforeEach(testSummary)).rejects.toThrowErrorMatchingSnapshot();
+      expect(detox.artifactsManager.onBeforeEach).not.toHaveBeenCalled();
+
+      await expect(detox.beforeEach(testSummary)).rejects.toThrowErrorMatchingSnapshot();
+      expect(detox.artifactsManager.onAfterEach).not.toHaveBeenCalled();
+    });
+
     it(`Calling .afterEach() will trigger artifacts manager .onAfterEach`, async () => {
       Detox = require('./Detox');
 
