@@ -1,12 +1,22 @@
+const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
+
 class DetoxJestAdapter /* implements JasmineReporter */ {
   constructor(detox) {
     this.detox = detox;
     this._currentSpec = null;
     this._todos = [];
-    this.timeout = 30000;
   }
 
   async beforeEach() {
+    if (!this._currentSpec) {
+      throw new DetoxRuntimeError({
+        message: 'Detox adapter to Jest is malfunctioning.\n' +
+        `Make sure you register it as Jasmine reporter inside init.js:\n` +
+        `-------------------------------------------------------------\n` +
+        'jasmine.getEnv().addReporter(adapter);',
+      });
+    }
+
     await this._flush();
     await this.detox.beforeEach(this._currentSpec);
   }

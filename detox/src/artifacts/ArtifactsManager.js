@@ -42,7 +42,7 @@ class ArtifactsManager {
 
         const timestamp = lockFileCreatedDate.toISOString()
           .replace(/T/, ' ')
-          .replace(/\..+/, '');
+          .replace(/\.\d{3}/, '');
 
         return `${configuration}.${timestamp}`;
       },
