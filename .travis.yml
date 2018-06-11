@@ -8,23 +8,25 @@ matrix:
       osx_image: xcode9.3
       env:
         - REACT_NATIVE_VERSION=0.53.3
+      before_install:
+        - sudo pip install awscli
       install:
-      - ./scripts/install.ios.sh
-      - pip install --user awscli
+        - ./scripts/install.ios.sh
       script:
-      - ./scripts/ci.ios.sh
-      - ./scripts/upload_artifact.sh
+        - ./scripts/ci.ios.sh
+        - ./scripts/upload_artifact.sh
     - language: objective-c
       os: osx
       osx_image: xcode9.3
       env:
         - REACT_NATIVE_VERSION=0.51.1
+      before_install:
+        - sudo pip install awscli
       install:
-      - ./scripts/install.ios.sh
-      - pip install --user awscli
+        - ./scripts/install.ios.sh
       script:
-      - ./scripts/ci.ios.sh
-      - ./scripts/upload_artifact.sh
+        - ./scripts/ci.ios.sh
+        - ./scripts/upload_artifact.sh
     - language: android
       os: linux
       jdk: oraclejdk8
