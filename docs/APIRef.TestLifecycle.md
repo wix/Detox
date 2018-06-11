@@ -25,8 +25,7 @@ Despite being a recent and *still* an optional formation, `detox.beforeEach` and
 
 The newer features (including test artifacts: video recordings, screenshots, logs) are not expected to work without those calls.
 
-> **WARNING:** New version of Detox has a breaking change.  
-Signatures of `detox.beforeEach()` and `detox.afterEach()` used to be `(string, string, TestStatus)`, but in the new Detox version they expect an object like:  
+> **BREAKING CHANGE:** Signatures of `detox.beforeEach()` and `detox.afterEach()` used to be `(string, string, TestStatus)`, but in the new Detox version they expect an object like:  
  `{ title: string; fullName: string; status: "running" | "passed" | "failed"; }`.  
  
 > **TIP**: This API is still apt to change in future, thus to minimize the risks, you are encouraged to switch to the built-in adapters for `mocha` and `jest` like in examples here: [mocha adapter example](/examples/demo-react-native/e2e/init.js), [jest adapter example](/examples/demo-react-native-jest/e2e/init.js).
