@@ -6,7 +6,36 @@ const fs = require('fs');
 const detoxPath = path.join(process.cwd(), 'node_modules/detox');
 const detoxPackageJsonPath = path.join(detoxPath, 'package.json');
 
-if (fs.existsSync(detoxPackageJsonPath)) {
+const isDetoxInstalled = (() => {
+  if (fs.existsSync(detoxPackageJsonPath)) {
+    return true;
+  }
+  // Check if this repo is within a Yarn workspace
+  const monorepoPackageJsonPath = path.join(
+    path.resolve(process.cwd(), '..'),
+    'package.json'
+  );
+  if (!fs.existsSync(monorepoPackageJsonPath)) {
+    return false;
+  }
+  const monorepoPackageJson = require(monorepoPackageJsonPath);
+  const { workspaces } = monorepoPackageJson;
+  if (!workspaces || !workspaces.packages) {
+    return false;
+  }
+  const localProjectName = path.basename(process.cwd());
+  if (!workspaces.packages.includes(localProjectName)) {
+    return false;
+  }
+  const hoistedDetoxPath = path.join(
+    path.resolve(process.cwd(), '..'),
+    'node_modules/detox'
+  );
+  const hoistedDetoxPackageJsonPath = path.join(hoistedDetoxPath, 'package.json');
+  return fs.existsSync(hoistedDetoxPackageJsonPath);
+})();
+
+if (isDetoxInstalled) {
   // { shell: true } option seems to break quoting on windows? Otherwise this would be much simpler.
   if (process.platform === 'win32') {
     const result = cp.spawnSync(
