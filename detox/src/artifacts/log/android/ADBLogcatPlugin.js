@@ -5,8 +5,8 @@ class ADBLogcatPlugin extends LogArtifactPlugin {
   constructor(config) {
     super(config);
 
-    this.adb = config.adb;
-    this._logsCounter = 0;
+    this._adb = config.adb;
+    this._devicePathBuilder = config.devicePathBuilder;
   }
 
   async onRelaunchApp({ pid }) {
@@ -25,11 +25,11 @@ class ADBLogcatPlugin extends LogArtifactPlugin {
     const pid = this.api.getPid(bundleId);
 
     return new ADBLogcatRecording({
-      adb: this.adb,
+      adb: this._adb,
       deviceId,
       bundleId,
       pid,
-      pathToLogOnDevice:`/sdcard/${this._logsCounter++}.log`,
+      pathToLogOnDevice: this._devicePathBuilder.buildTemporaryArtifactPath('.log'),
     });
   }
 }

@@ -3,10 +3,10 @@ const log = require('npmlog');
 async function interruptProcess(childProcessPromise, signal = 'SIGINT') {
   const process = childProcessPromise.childProcess;
 
-  log.verbose('interruptProcess', 'sending %s to pid %s (%j)',
+  log.verbose('interruptProcess', 'sending %s to pid %s (%s)',
     signal,
     childProcessPromise.childProcess.pid,
-    process.spawnargs
+    process.spawnargs.join(' ')
   );
 
   childProcessPromise.childProcess.kill(signal);

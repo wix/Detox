@@ -31,6 +31,7 @@ class ADBLogcatRecording extends Artifact {
 
     const now = await this.adb.shell(this.deviceId, `date "+\\"%Y-%m-%d %T.000\\""`);
 
+    await this._waitWhileLogIsOpenedByLogcat; // in case if log recording restarted
     this.processPromise = this.adb.logcat(this.deviceId, {
       file: this.pathToLogOnDevice,
       pid: this.pid,

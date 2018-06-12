@@ -5,14 +5,14 @@ class ADBScreencapPlugin extends ScreenshotArtifactPlugin {
   constructor(config) {
     super(config);
 
-    this.adb = config.adb;
-    this._screenshotsCounter = 0;
+    this._adb = config.adb;
+    this._devicePathBuilder = config.devicePathBuilder;
   }
 
   createTestArtifact() {
-    const adb = this.adb;
+    const adb = this._adb;
     const deviceId = this.api.getDeviceId();
-    const pathToScreenshotOnDevice = `/sdcard/${this._screenshotsCounter++}.png`;
+    const pathToScreenshotOnDevice = this._devicePathBuilder.buildTemporaryArtifactPath('.png');
 
     return new Artifact({
       async start() {

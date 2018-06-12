@@ -15,6 +15,7 @@ const UIDevice = require('../android/espressoapi/UIDevice');
 const ADBLogcatPlugin = require('../artifacts/log/android/ADBLogcatPlugin');
 const ADBScreencapPlugin = require('../artifacts/screenshot/ADBScreencapPlugin');
 const ADBScreenrecorderPlugin = require('../artifacts/video/ADBScreenrecorderPlugin');
+const AndroidDevicePathBuilder = require('../artifacts/utils/AndroidDevicePathBuilder');
 const sleep = require('../utils/sleep');
 
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
@@ -32,11 +33,12 @@ class AndroidDriver extends DeviceDriverBase {
 
   declareArtifactPlugins() {
     const adb = this.adb;
+    const devicePathBuilder = new AndroidDevicePathBuilder();
 
     return {
-      log: (api) => new ADBLogcatPlugin({ api, adb }),
-      screenshot: (api) => new ADBScreencapPlugin({ api, adb }),
-      video: (api) => new ADBScreenrecorderPlugin({ api, adb }),
+      log: (api) => new ADBLogcatPlugin({ api, adb, devicePathBuilder }),
+      screenshot: (api) => new ADBScreencapPlugin({ api, adb, devicePathBuilder }),
+      video: (api) => new ADBScreenrecorderPlugin({ api, adb, devicePathBuilder }),
     };
   }
 

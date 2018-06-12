@@ -5,15 +5,15 @@ class ADBScreenrecorderPlugin extends VideoArtifactPlugin {
   constructor(config) {
     super(config);
 
-    this.adb = config.adb;
-    this._videosCounter = 0;
+    this._adb = config.adb;
+    this._devicePathBuilder = config.devicePathBuilder;
   }
 
   createTestRecording() {
     return new ADBScreenrecorderArtifact({
-      adb: this.adb,
+      adb: this._adb,
       deviceId: this.api.getDeviceId(),
-      pathToVideoOnDevice: `/sdcard/${this._videosCounter++}.mp4`,
+      pathToVideoOnDevice: this._devicePathBuilder.buildTemporaryArtifactPath('.mp4'),
     });
   }
 }
