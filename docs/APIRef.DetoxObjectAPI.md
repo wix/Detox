@@ -67,7 +67,7 @@ before(async () => {
 
 ### `detox.beforeEach()`
 
-This method should be called at the start of every test to let Detox's artifacts lifecycle know it is the time to start recording logs and videos, to take another `beforeEach.png` screenshot, as well as for any other feature that depends on this event. Although that is one of the few applications of `beforeEach,` Detox does not exclusively limit itself to those and may utilize calls to `beforeEach`  for an increasing number of purposes in the future.
+This method should be called at the start of every test to let Detox's artifacts lifecycle know it is the time to start recording logs and videos, or to take another `beforeEach.png` screenshot. Although this is one of usage of `beforeEach`, Detox does not limit itself to this usage and may utilize calls to `beforeEach` for additional purposes in the future.
 
 ```typescript
 declare function beforeEach(testSummary: {
