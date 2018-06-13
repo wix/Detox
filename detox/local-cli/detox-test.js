@@ -6,6 +6,7 @@ const cp = require('child_process');
 const fs = require('fs-extra');
 const _ = require('lodash');
 const environment = require('../src/utils/environment');
+const buildDefaultArtifactsRootDirpath = require('../src/artifacts/utils/buildDefaultArtifactsRootDirpath');
 const DetoxConfigError = require('../src/errors/DetoxConfigError');
 const config = require(path.join(process.cwd(), 'package.json')).detox;
 
@@ -26,7 +27,7 @@ program
     'When an action/expectation takes a significant amount of time use this option to print device synchronization status.'
     + 'The status will be printed if the action takes more than [value]ms to complete')
   .option('-a, --artifacts-location [path]',
-    '[EXPERIMENTAL] Artifacts (logs, screenshots, etc) root directory.', 'artifacts')
+    '[EXPERIMENTAL] Artifacts (logs, screenshots, etc) root directory.', buildDefaultArtifactsRootDirpath, buildDefaultArtifactsRootDirpath())
   .option('--record-logs [failing|all|none]',
     '[EXPERIMENTAL] Save logs during each test to artifacts directory. Pass "failing" to save logs of failing tests only.')
   .option('--take-screenshots [failing|all|none]',
@@ -47,15 +48,14 @@ program
 
 clearDeviceRegistryLockFile();
 
-
-if (program.configuration) {
-  if (!config.configurations[program.configuration]) {
-    throw new DetoxConfigError(`Cannot determine configuration '${program.configuration}'. 
-    Available configurations: ${_.keys(config.configurations).join(', ')}`);
-  }
-} else if (!program.configuration) {
-  throw new DetoxConfigError(`Cannot determine which configuration to use. 
+if (!program.configuration) {
+  throw new DetoxConfigError(`Cannot determine which configuration to use.
   Use --configuration to choose one of the following: ${_.keys(config.configurations).join(', ')}`);
+}
+
+if (!config.configurations[program.configuration]) {
+  throw new DetoxConfigError(`Cannot determine configuration '${program.configuration}'.
+    Available configurations: ${_.keys(config.configurations).join(', ')}`);
 }
 
 const testFolder = getConfigFor(['file', 'specs'], 'e2e');
@@ -104,7 +104,7 @@ function runMocha() {
   const configuration = program.configuration ? `--configuration ${program.configuration}` : '';
   const cleanup = program.cleanup ? `--cleanup` : '';
   const reuse = program.reuse ? `--reuse` : '';
-  const artifactsLocation = program.artifactsLocation ? `--artifacts-location ${program.artifactsLocation}` : '';
+  const artifactsLocation = program.artifactsLocation ? `--artifacts-location "${program.artifactsLocation}"` : '';
   const configFile = runnerConfig ? `--opts ${runnerConfig}` : '';
   const platformString = platform ? `--grep ${getPlatformSpecificString(platform)} --invert` : '';
   const logs = program.recordLogs ? `--record-logs ${program.recordLogs}` : '';

@@ -2,15 +2,12 @@ const path = require('path');
 const constructSafeFilename = require('../../utils/constructSafeFilename');
 
 class ArtifactPathBuilder {
-  constructor({
-    artifactsRootDir,
-    getUniqueSubdirectory = ArtifactPathBuilder.generateTimestampBasedSubdirectoryName
-  }) {
-    this._currentTestRunDir = path.join(artifactsRootDir, getUniqueSubdirectory());
+  constructor({ artifactsRootDir }) {
+    this._rootDir = artifactsRootDir;
   }
 
   get rootDir() {
-    return this._currentTestRunDir;
+    return this._rootDir;
   }
 
   buildPathForTestArtifact(artifactName, testSummary = null) {
@@ -19,7 +16,7 @@ class ArtifactPathBuilder {
     }
 
     const testArtifactPath = path.join(
-      this._currentTestRunDir,
+      this._rootDir,
       this._constructDirectoryNameForCurrentRunningTest(testSummary),
       constructSafeFilename('', artifactName),
     );
@@ -29,7 +26,7 @@ class ArtifactPathBuilder {
 
   _buildPathForRunArtifact(artifactName) {
     return path.join(
-      this._currentTestRunDir,
+      this._rootDir,
       constructSafeFilename('', artifactName),
     );
   }
@@ -53,7 +50,5 @@ class ArtifactPathBuilder {
     }
   }
 }
-
-ArtifactPathBuilder.generateTimestampBasedSubdirectoryName = () => `detox_artifacts.${new Date().toISOString()}`;
 
 module.exports = ArtifactPathBuilder;
