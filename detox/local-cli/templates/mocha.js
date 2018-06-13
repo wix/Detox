@@ -2,18 +2,17 @@ const firstTestContent = require('./firstTestContent');
 const mochaOptsContent = '--recursive --timeout 120000 --bail';
 const initjsContent = `const detox = require('detox');
 const config = require('../package.json').detox;
-const adapter = require('detox/src/runners/mocha/adapter');
 
 before(async () => {
   await detox.init(config);
 });
 
 beforeEach(async function () {
-  await adapter.beforeEach(this);
+  await adapter.beforeEach.mocha(this);
 });
 
 afterEach(async function () {
-  await adapter.afterEach(this);
+  await adapter.afterEach.mocha(this);
 });
 
 after(async () => {

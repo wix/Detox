@@ -5,7 +5,6 @@ const runnerConfig = `{
 
 const initjsContent = `const detox = require('detox');
 const config = require('../package.json').detox;
-const adapter = require('detox/src/runners/jest/adapter');
 
 jest.setTimeout(120000);
 jasmine.getEnv().addReporter(adapter);
@@ -15,12 +14,11 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  await adapter.beforeEach();
+  await adapter.beforeEach.jest();
 });
 
 afterAll(async () => {
-  await adapter.afterAll();
-  await detox.cleanup();
+  await detox.cleanup.jest();
 });`;
 
 exports.initjs = initjsContent;
