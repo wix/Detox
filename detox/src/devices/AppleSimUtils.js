@@ -197,7 +197,7 @@ class AppleSimUtils {
     return await exec.execWithRetriesAndLogs(bin, options, statusLogs, retries, interval);
   }
 
-  async _execSimctl({ cmd, statusLogs = {}, retries = 1, interval = 1000 }) {
+  async _execSimctl({ cmd, statusLogs = {}, retries = 1, interval }) {
     return await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl ${cmd}`, undefined, statusLogs, retries, interval);
   }
 
