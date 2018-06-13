@@ -233,7 +233,7 @@ describe('AppleSimUtils', () => {
       expect(exec.execWithRetriesAndLogs).not.toHaveBeenCalled();
       await uut.boot('some-udid');
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(expect.stringMatching('xcode-select -p'), undefined, expect.anything(), 1);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(expect.stringMatching('bootstatus some-udid'), undefined, expect.anything(), 1, undefined);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(expect.stringMatching('bootstatus some-udid'), undefined, expect.anything(), 1);
     });
 
     it('skips if device state was already Booted', async () => {
@@ -258,7 +258,8 @@ describe('AppleSimUtils', () => {
       uut.getXcodeVersion = jest.fn(() => Promise.resolve(9));
       await uut.boot('udid');
       expect(uut.getXcodeVersion).toHaveBeenCalledTimes(1);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(expect.stringMatching('xcrun simctl boot udid'), undefined, expect.anything(), 10, undefined);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(expect.stringMatching('xcrun simctl boot udid'), undefined, expect.anything(), 10);
+
     });
   });
 
@@ -273,8 +274,7 @@ describe('AppleSimUtils', () => {
         `/usr/bin/xcrun simctl list -j`,
         undefined,
         expect.anything(),
-        1,
-        undefined);
+        1);
     });
 
     it('errors when there is no runtime available', async () => {
@@ -312,8 +312,7 @@ describe('AppleSimUtils', () => {
         `/usr/bin/xcrun simctl install udid "somePath"`,
         undefined,
         expect.anything(),
-        1,
-        undefined);
+        1);
     });
   });
 
@@ -325,8 +324,7 @@ describe('AppleSimUtils', () => {
         `/usr/bin/xcrun simctl uninstall udid theBundleId`,
         undefined,
         expect.anything(),
-        1,
-        undefined);
+        1);
     });
 
     it('does not throw', async () => {
@@ -393,8 +391,7 @@ describe('AppleSimUtils', () => {
         expect.stringMatching(/.*xcrun simctl launch theUdid.*/),
         undefined,
         expect.anything(),
-        10,
-        undefined
+        10
       );
     });
   });
@@ -417,8 +414,7 @@ describe('AppleSimUtils', () => {
         expect.stringMatching(/.*xcrun simctl terminate theUdid thebundleId.*/),
         undefined,
         expect.anything(),
-        1,
-        undefined);
+        1);
     });
   });
 
@@ -430,8 +426,7 @@ describe('AppleSimUtils', () => {
         expect.stringMatching(/.*xcrun simctl shutdown theUdid.*/),
         undefined,
         expect.anything(),
-        1,
-        undefined);
+        1);
     });
   });
 
@@ -443,8 +438,7 @@ describe('AppleSimUtils', () => {
         expect.stringMatching(/.*xcrun simctl openurl theUdid someUrl.*/),
         undefined,
         expect.anything(),
-        1,
-        undefined);
+        1);
     });
   });
 
@@ -481,8 +475,7 @@ describe('AppleSimUtils', () => {
         expect.stringMatching(/.*xcrun simctl erase theUdid.*/),
         undefined,
         expect.anything(),
-        1,
-        undefined);
+        1);
       expect(uut.boot).toHaveBeenCalledTimes(1);
     });
   });
@@ -499,8 +492,7 @@ describe('AppleSimUtils', () => {
         expect.stringMatching(new RegExp(`xcrun simctl io ${udid} screenshot "${dest}"`)),
         undefined,
         expect.anything(),
-        2,
-        2000
+        1
       );
     });
   });
