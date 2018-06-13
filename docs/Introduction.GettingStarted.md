@@ -75,6 +75,11 @@ npm install detox --save-dev
 You can use any JavaScript test runner. At the moment, only two are documented:
 
 - [Jest](Guide.Jest.md)
+
+```sh
+npm install jest --save-dev
+```
+
 - [Mocha](https://mochajs.org/) is a good one we recommend:
 
 ```sh
