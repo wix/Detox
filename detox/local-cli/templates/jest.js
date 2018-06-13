@@ -7,7 +7,6 @@ const initjsContent = `const detox = require('detox');
 const config = require('../package.json').detox;
 
 jest.setTimeout(120000);
-jasmine.getEnv().addReporter(adapter);
 
 beforeAll(async () => {
   await detox.init(config);

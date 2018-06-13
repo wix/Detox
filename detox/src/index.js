@@ -6,7 +6,7 @@ const exportWrapper = require('./exportWrapper');
 const argparse = require('./utils/argparse');
 const configuration = require('./configuration');
 const mochaAdapter = require('./runners/mocha/adapter');
-const jestAdapter = require('./runners/jest/adapter');
+const jestAdapter = require('./runners/jest/adapter').tryToRegisterAsJasmineReporter();
 
 let detox;
 
@@ -78,6 +78,7 @@ async function cleanup() {
     }
 }
 
+/* istanbul ignore next */
 cleanup.jest = async () => {
   await jestAdapter.afterAll();
   await cleanup();
@@ -87,10 +88,6 @@ cleanup.jest = async () => {
 const _terminate = _.once(() => detox && detox.terminate());
 process.on('SIGINT', _terminate);
 process.on('SIGTERM', _terminate);
-
-if (typeof jasmine !== 'undefined') {
-  jasmine.getEnv().addReporter(jestAdapter);
-}
 
 module.exports = Object.assign({
   init,

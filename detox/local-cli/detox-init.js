@@ -100,6 +100,7 @@ function main({ runner }) {
   switch (runner) {
     case "mocha":
       createMochaFolderE2E();
+      patchTestRunnerFieldInPackageJSON("mocha");
       break;
     case "jest":
       createJestFolderE2E();
