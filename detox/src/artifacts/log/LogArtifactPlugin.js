@@ -1,5 +1,6 @@
 const argparse = require('../../utils/argparse');
 const StartupAndTestRecorderPlugin = require('../templates/plugin/StartupAndTestRecorderPlugin');
+const getTimeStampString = require('../utils/getTimeStampString');
 
 /***
  * @abstract
@@ -15,7 +16,10 @@ class LogArtifactPlugin extends StartupAndTestRecorderPlugin {
   }
 
   async preparePathForStartupArtifact() {
-    return this.api.preparePathForArtifact('startup.log');
+    const deviceId = this.api.getDeviceId();
+    const timestamp = getTimeStampString();
+
+    return this.api.preparePathForArtifact(`${deviceId} ${timestamp}.startup.log`);
   }
 
   async preparePathForTestArtifact(testSummary) {

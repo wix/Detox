@@ -1,21 +1,13 @@
 const path = require('path');
-const argparse = require('../../utils/argparse');
+const getTimeStampString = require('./getTimeStampString');
 
-function getUniqueSubdirectory() {
-  const configuration = argparse.getArgValue('configuration') || 'detox_artifacts';
-  const timestamp = new Date().toISOString()
-    .replace(/T/, ' ')
-    .replace(/\.\d{3}/, '');
-
-  return `${configuration}.${timestamp}`;
-}
-
-function buildDefaultArtifactsRootDirpath(rootDirName = 'artifacts') {
-  if (rootDirName.endsWith('/') || rootDirName.endsWith('\\')) {
-    return rootDirName;
+function buildDefaultRootForArtifactsRootDirpath(configuration, artifactsLocation) {
+  if (artifactsLocation.endsWith('/') || artifactsLocation.endsWith('\\')) {
+    return artifactsLocation;
   }
 
-  return path.join(rootDirName, getUniqueSubdirectory());
+  const subdir = `${configuration}.${getTimeStampString()}`;
+  return path.join(artifactsLocation, subdir);
 }
 
-module.exports = buildDefaultArtifactsRootDirpath;
+module.exports = buildDefaultRootForArtifactsRootDirpath;

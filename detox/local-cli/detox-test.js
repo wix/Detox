@@ -27,7 +27,7 @@ program
     'When an action/expectation takes a significant amount of time use this option to print device synchronization status.'
     + 'The status will be printed if the action takes more than [value]ms to complete')
   .option('-a, --artifacts-location [path]',
-    '[EXPERIMENTAL] Artifacts (logs, screenshots, etc) root directory.', buildDefaultArtifactsRootDirpath, buildDefaultArtifactsRootDirpath())
+    '[EXPERIMENTAL] Artifacts (logs, screenshots, etc) root directory.', 'artifacts')
   .option('--record-logs [failing|all|none]',
     '[EXPERIMENTAL] Save logs during each test to artifacts directory. Pass "failing" to save logs of failing tests only.')
   .option('--take-screenshots [failing|all|none]',
@@ -45,6 +45,7 @@ program
     '[iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest)', 1)
   .parse(process.argv);
 
+program.artifactsLocation = buildDefaultArtifactsRootDirpath(program.configuration, program.artifactsLocation);
 
 clearDeviceRegistryLockFile();
 
@@ -174,7 +175,6 @@ function getPlatformSpecificString(platform) {
 
   return platformRevertString;
 }
-
 
 function clearDeviceRegistryLockFile() {
   const lockFilePath = environment.getDeviceLockFilePath();
