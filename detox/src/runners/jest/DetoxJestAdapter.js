@@ -28,7 +28,9 @@ class DetoxJestAdapter /* implements JasmineReporter */ {
 
   tryToRegisterAsJasmineReporter() {
     if (typeof jasmine !== 'undefined' && typeof jest !== 'undefined') {
-      jasmine.getEnv().addReporter(this);
+      if (!process.env.DETOX_UNIT_TEST) {
+        jasmine.getEnv().addReporter(this);
+      }
     }
 
     return this;

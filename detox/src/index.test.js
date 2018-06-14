@@ -17,6 +17,8 @@ describe('index', () => {
       .mock('./client/Client')
       .mock('./Detox', () => jest.fn(() => mockDetox))
       .mock('./platform');
+
+    process.env.DETOX_UNIT_TEST = true;
     detox = require('./index');
   });
 
