@@ -3,81 +3,54 @@ id: APIRef.Artifacts
 title: Artifacts
 ---
 
-Artifacts currently include only logs from the app process.
+Artifacts are various recordings during tests including, but not limited to, device logs, device screenshots and screen recordings (videos).
 
 ## Enabling artifacts
 
 Artifacts are disabled by default. Two things are required to enable them:
 
-1. **Call `detox.beforeEach()` and `detox.afterEach()` before/after each test**:
-	In order for artifacts to work, you have to call `detox.beforeEach()` / `detox.afterEach()` before / after each test. The easiest way to do it is to add beforeEach / afterEach functions to init.js . The following example works with mocha:<br><br>
+1. **Call `detox.beforeEach` and `detox.afterEach` before/after each test**:
+	In order for artifacts to work, you have to call `detox.beforeEach(testSummary)` / `detox.afterEach(testSummary)` before / after each test. Their respective signatures are described in [detox object](APIRef.DetoxObjectAPI.md) documentation. As the interface (typing) of `testSummary` may change over the time, and in cases with some test runners it is not trivial to implement test title and status extraction (like with Jest), you are encouraged to use Detox adapter functions like in these examples: [mocha](/examples/demo-react-native/e2e/init.js), [jest](examples/demo-react-native-jest/e2e/init.js).
 
-	```js
-	beforeEach(async function() {
-	  await detox.beforeEach(this.currentTest.parent.title, this.currentTest.title);
-	});
-	
-	afterEach(async function() {
-	  await detox.afterEach();
-	});
-	``` 
+2. Specify via launch arguments which types of artifacts you want to record:
 
-	The arguments provided to beforeEach are optional name components. It's convenient to provide suite name and test name as the components in order to have them in the artifacts per-test folders. If not specified, the test folders will be named by the test numbers.
-	
-	**Note**: other test runners may have other ways to add the beforeEach/afterEach calls and to fetch test and suite titles.
+* To record `.log` files, add `--record-logs all` (or `--record-logs failing`, if you want to keep logs only for failing tests).
+* To record `.mp4` test run videos, add `--record-videos all` (or `--record-videos failing`, if you want to keep video recordings only for failing tests).
+* To record `.png` screenshots before and after each test, add `--take-screenshots all` (or `--take-screenshots failing`, if you want to keep only screenshots of failing tests).
+* To change artifacts root directory location (by default it is `./artifacts`), add `--artifacts-location <path>`.  
+**NOTE:** There is a slightly obscure convention. If you want to create automatically a subdirectory with timestamp and configuration name (to avoid file overwrites upon consquent re-runs), specify a path to directory that does not end with a slash. Otherwise, if you want to put artifacts straight to the specified directory (in a case where you make a single run only, e.g. on CI), add a slash (or a backslash) to the end.
 
-2. Provide artifacts location via launch arguments:
-`--artifacts-location <path>` specifies artifacts location and enables artifacts creation. If you use Detox CLI tools, then the following command will create the artifacts under `/tmp`:
-
-	```sh
-	detox test --artifacts-location /tmp
-	```
-
-	The provided path should be an existing directory with write permission. Detox will create a new folder `detox_artifacts.<timestamp>` under the provided location. In such way, every additional execution of detox with the same artifacts location will be saved separately.
+```sh
+detox test --artifacts-location /tmp/detox_artifacts  # will also append /android.emu.release.2018-06-14 08:54:11Z
+detox test --artifacts-location /tmp/detox_artifacts/ # won't append anything, hereby treating it as a root
+```
 
 ## Artifacts structure
 
-1. **Artifacts root folder** is created per detox run. If, for instance,`--artifacts-location tmp` is used, then the folder `/tmp/detox_artifacts.2017-07-18T09:02:11.094Z` is created.
+1. **Artifacts root folder** is created per detox test run. If, for instance,`--artifacts-location /tmp` is used with `--configuration ios.sim.release` configuration on 14th June 2018 at 11:02:11 GMT+02, then the folder `/tmp/ios.sim.release.2018-06-14 09:02:11Z` is created.
 
-2. **Test folder** is created per test inside the root folder. The folder name consists of the test number, and the name components provided to `detox.beforeEach()` as explained above - separated by dots. For instance, for the above example, the following folders will be created inside `/tmp/detox_artifacts.2017-07-18T09:02:11.094Z`:
+2. **Test folder** is created per test inside the root folder. The folder name consists of the test number, and the test's full name provided to `detox.afterEach(testSummary)` as explained above and in [detox object](APIRef.DetoxObjectAPI.md) documentation. For instance, for the above example, the following folders will be created inside `/tmp/ios.sim.release.2018-06-14 09:02:11Z`:
 
-	```
-	1.Sanity.should have welcome 
-	2.Sanity.should show hello 
-	3.Sanity.should show world 
-	4.Matchers.should match 
-	5.Matchers.should match 
-	6.Matchers.should match 
-	7.Matchers.should match 
-	8.Matchers.should match 
-	```
+```
+✗ Assertions should assert an element has (accessibility)
+✓ Network Synchronization Sync with short network requests - 100ms
+```
 
 3. **Artifacts files** are created inside the test folders. The files suffixes stand for the files types (currently there are .err.log and .out.log), and the files prefixes are the launch numbers of the application per test (if the app was executed more than once per test, you will have several artifacts of each type - one per launch). For instance, a test folder may contain the following artifacts files:
 
-	```
-	1.err.log
-	1.out.log
-	2.err.log
-	2.out.log
-	```
+```
+test.log
+test.mp4
+beforeEach.png
+afterEach.png
+```
 
 ### Example of the structure:
 
 ```
-/tmp/detox_artifacts.2017-07-18T09:02:11.094Z/1.Sanity.should have welcome screen/1.err.log
-/tmp/detox_artifacts.2017-07-18T09:02:11.094Z/1.Sanity.should have welcome screen/1.out.log
-/tmp/detox_artifacts.2017-07-18T09:02:11.094Z/2.Sanity.should show hello screen after tap/1.err.log
-/tmp/detox_artifacts.2017-07-18T09:02:11.094Z/2.Sanity.should show hello screen after tap/1.out.log
-/tmp/detox_artifacts.2017-07-18T09:02:11.094Z/3.Sanity.should show world screen after tap/1.err.log
-/tmp/detox_artifacts.2017-07-18T09:02:11.094Z/3.Sanity.should show world screen after tap/1.out.log
-/tmp/detox_artifacts.2017-07-18T09:02:11.094Z/4.Matchers.should match elements by (accesibility) label/1.err.log
-/tmp/detox_artifacts.2017-07-18T09:02:11.094Z/4.Matchers.should match elements by (accesibility) label/1.out.log
-/tmp/detox_artifacts.2017-07-18T09:02:11.094Z/5.Matchers.should match elements by (accesibility) id/1.err.log
-/tmp/detox_artifacts.2017-07-18T09:02:11.094Z/5.Matchers.should match elements by (accesibility) id/1.out.log
-/tmp/detox_artifacts.2017-07-18T09:02:11.094Z/6.Matchers.should match elements by type (native class)/1.err.log
-/tmp/detox_artifacts.2017-07-18T09:02:11.094Z/6.Matchers.should match elements by type (native class)/1.out.log
-/tmp/detox_artifacts.2017-07-18T09:02:11.094Z/7.Matchers.should match elements by accesibility trait/1.err.log
-/tmp/detox_artifacts.2017-07-18T09:02:11.094Z/7.Matchers.should match elements by accesibility trait/1.out.log
-/tmp/detox_artifacts.2017-07-18T09:02:11.094Z/8.Matchers.should match elements with ancenstor (parent)/1.err.log
-/tmp/detox_artifacts.2017-07-18T09:02:11.094Z/8.Matchers.should match elements with ancenstor (parent)/1.out.log
+artifacts/android.emu.release.2018-06-12 06:36:18Z/startup.log
+artifacts/android.emu.release.2018-06-12 06:36:18Z/✗ Assertions should assert an element has (accessibility) id/beforeEach.png
+artifacts/android.emu.release.2018-06-12 06:36:18Z/✗ Assertions should assert an element has (accessibility) id/test.log
+artifacts/android.emu.release.2018-06-12 06:36:18Z/✗ Assertions should assert an element has (accessibility) id/test.mp4
+artifacts/android.emu.release.2018-06-12 06:36:18Z/✗ Assertions should assert an element has (accessibility) id/afterEach.png
 ```
