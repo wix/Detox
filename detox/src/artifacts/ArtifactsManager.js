@@ -19,6 +19,7 @@ class ArtifactsManager {
     this.onTerminate = _.once(this.onTerminate.bind(this));
 
     this._idlePromise = Promise.resolve();
+    this._relaunchPromise = Promise.resolve();
     this._onIdleCallbacks = [];
     this._activeArtifacts = [];
     this._artifactPluginsFactories = [];
@@ -30,22 +31,6 @@ class ArtifactsManager {
 
     const pathBuilder = new ArtifactPathBuilder({
       artifactsRootDir: argparse.getArgValue('artifacts-location') || 'artifacts',
-      getUniqueSubdirectory: () => {
-        const configuration = argparse.getArgValue('configuration') || 'detox_artifacts';
-        const deviceLockFilePath = environment.getDeviceLockFilePath();
-
-        let lockFileCreatedDate = _.attempt(() => fs.statSync(deviceLockFilePath).ctime);
-        if (_.isError(lockFileCreatedDate)) {
-          log.warn('detox-artifacts', 'could not read file attributes of device lock file: %s', deviceLockFilePath);
-          lockFileCreatedDate = new Date();
-        }
-
-        const timestamp = lockFileCreatedDate.toISOString()
-          .replace(/T/, ' ')
-          .replace(/\.\d{3}/, '');
-
-        return `${configuration}.${timestamp}`;
-      },
     });
 
     this.artifactsApi = {
@@ -129,6 +114,7 @@ class ArtifactsManager {
   unsubscribeFromDeviceEvents(device) {
     device.off('beforeResetDevice', this.onBeforeResetDevice);
     device.off('resetDevice', this.onResetDevice);
+    device.off('beforeLaunchApp', this.onBeforeLaunchApp);
     device.off('launchApp', this.onLaunchApp);
   }
 
@@ -156,15 +142,21 @@ class ArtifactsManager {
     this._pid = pid;
 
     if (!isFirstTime) {
-      await this._emit('onRelaunchApp', [{ deviceId, bundleId, pid }]);
+      this._relaunchPromise = this._relaunchPromise.then(() => {
+        return this._emit('onRelaunchApp', [{ deviceId, bundleId, pid }]);
+      });
+
+      await this._relaunchPromise;
     }
   }
 
   async onBeforeAll() {
+    await this._relaunchPromise;
     await this._emit('onBeforeAll', []);
   }
 
   async onBeforeEach(testSummary) {
+    await this._relaunchPromise;
     await this._emit('onBeforeEach', [testSummary]);
   }
 
@@ -177,10 +169,12 @@ class ArtifactsManager {
   }
 
   async onAfterEach(testSummary) {
+    await this._relaunchPromise;
     await this._emit('onAfterEach', [testSummary]);
   }
 
   async onAfterAll() {
+    await this._relaunchPromise;
     await this._emit('onAfterAll', []);
     await this._idlePromise;
     log.verbose('ArtifactsManager', 'finalized artifacts successfully');
