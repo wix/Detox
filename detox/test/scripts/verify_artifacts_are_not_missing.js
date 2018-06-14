@@ -16,5 +16,5 @@ module.exports = function verify() {
     return filename;
   });
 
-  expect(artifacts).toMatchSnapshot(process.env.PLATFORM);
+  expect(artifacts).toMatchSnapshot();
 };
