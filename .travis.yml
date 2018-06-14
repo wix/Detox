@@ -7,8 +7,8 @@ matrix:
       os: osx
       osx_image: xcode9.3
       env:
-        - PATH=$PATH:~/Library/Python/2.7/bin
         - REACT_NATIVE_VERSION=0.53.3
+        - PATH=$PATH:~/Library/Python/2.7/bin
       install:
         - ./scripts/install.ios.sh
       script:
