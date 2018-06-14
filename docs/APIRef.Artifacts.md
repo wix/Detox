@@ -45,7 +45,7 @@ beforeEach.png
 afterEach.png
 ```
 
-### Example of the structure:
+##### Example of the structure:
 
 ```
 artifacts/android.emu.release.2018-06-12 06:36:18Z/startup.log
@@ -54,3 +54,5 @@ artifacts/android.emu.release.2018-06-12 06:36:18Z/✗ Assertions should assert 
 artifacts/android.emu.release.2018-06-12 06:36:18Z/✗ Assertions should assert an element has (accessibility) id/test.mp4
 artifacts/android.emu.release.2018-06-12 06:36:18Z/✗ Assertions should assert an element has (accessibility) id/afterEach.png
 ```
+
+## Troubleshooting
