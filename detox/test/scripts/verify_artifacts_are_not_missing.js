@@ -14,7 +14,7 @@ module.exports = function verify() {
     }
 
     return filename;
-  });
+  }).sort();
 
   expect(artifacts).toMatchSnapshot();
 };
