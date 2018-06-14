@@ -8,19 +8,23 @@ matrix:
       osx_image: xcode9.3
       env:
         - REACT_NATIVE_VERSION=0.53.3
+        - PATH=$PATH:~/Library/Python/2.7/bin
       install:
-      - ./scripts/install.ios.sh
+        - ./scripts/install.ios.sh
       script:
-      - ./scripts/ci.ios.sh
+        - ./scripts/ci.ios.sh
+        - ./scripts/upload_artifact.sh
     - language: objective-c
       os: osx
       osx_image: xcode9.3
       env:
         - REACT_NATIVE_VERSION=0.51.1
+        - PATH=$PATH:~/Library/Python/2.7/bin
       install:
-      - ./scripts/install.ios.sh
+        - ./scripts/install.ios.sh
       script:
-      - ./scripts/ci.ios.sh
+        - ./scripts/ci.ios.sh
+        - ./scripts/upload_artifact.sh
     - language: android
       os: linux
       jdk: oraclejdk8
@@ -69,6 +73,7 @@ branches:
   - master
 before_install:
   - nvm install 8
+  - pip install awscli --upgrade --user
 notifications:
   email: true
   slack:

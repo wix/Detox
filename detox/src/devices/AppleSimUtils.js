@@ -1,5 +1,7 @@
 const process = require('process');
 const _ = require('lodash');
+const tempfile = require('tempfile');
+const cpp = require('child-process-promise');
 const exec = require('../utils/exec');
 const retry = require('../utils/retry');
 const environment = require('../utils/environment');
@@ -182,6 +184,14 @@ class AppleSimUtils {
     return majorVersion;
   }
 
+  async takeScreenshot(udid, destination) {
+    await this._execSimctl({cmd: `io ${udid} screenshot "${destination}"`});
+  }
+
+  recordVideo(udid, destination) {
+    return exec.spawnAndLog('/usr/bin/xcrun', ['simctl', 'io', udid, 'recordVideo', destination]);
+  }
+
   async _execAppleSimUtils(options, statusLogs, retries, interval) {
     const bin = `applesimutils`;
     return await exec.execWithRetriesAndLogs(bin, options, statusLogs, retries, interval);
@@ -258,7 +268,7 @@ class LogsInfo {
     const logPrefix = '/tmp/detox.last_launch_app_log.';
     this.simStdout = logPrefix + 'out';
     this.simStderr = logPrefix + 'err';
-    const simDataRoot = `$HOME/Library/Developer/CoreSimulator/Devices/${udid}/data`;
+    const simDataRoot = `${process.env.HOME}/Library/Developer/CoreSimulator/Devices/${udid}/data`;
     this.absStdout = simDataRoot + this.simStdout;
     this.absStderr = simDataRoot + this.simStderr;
     this.absJoined = `${simDataRoot}${logPrefix}{out,err}`
