@@ -27,6 +27,7 @@
   },
   "detox": {
     "specs": "e2e",
+    "test-runner": "jest",
     "__session": {
       "server": "ws://localhost:8099",
       "sessionId": "test"
@@ -71,7 +72,6 @@
         "type": "android.emulator",
         "name": "Nexus_5X_API_26"
       }
-    },
-    "test-runner": "jest"
+    }
   }
 }
