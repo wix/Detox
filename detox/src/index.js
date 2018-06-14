@@ -4,6 +4,7 @@ const DetoxConstants = require('./DetoxConstants');
 const platform = require('./platform');
 const exportWrapper = require('./exportWrapper');
 const argparse = require('./utils/argparse');
+const onTerminate = require('./utils/onTerminate');
 const configuration = require('./configuration');
 
 let detox;
@@ -72,9 +73,7 @@ async function cleanup() {
 }
 
 /* istanbul ignore next */
-const _terminate = _.once(() => detox && detox.terminate());
-process.on('SIGINT', _terminate);
-process.on('SIGTERM', _terminate);
+onTerminate(() => detox && detox.terminate());
 
 module.exports = Object.assign({
   init,
