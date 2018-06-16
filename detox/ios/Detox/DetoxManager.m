@@ -16,6 +16,7 @@
 #import "DetoxAppDelegateProxy.h"
 #import "EarlGreyExtensions.h"
 #import "EarlGreyStatistics.h"
+#import "DTXPasteboardInfo.h"
 
 @interface UIApplication ()
 
@@ -226,6 +227,15 @@ static void detoxConditionalInit()
 		statsStatus[@"messageId"] = messageId;
 		
 		[self.webSocket sendAction:@"currentStatusResult" withParams:statsStatus withMessageId:messageId];
+	}
+	else if ([type isEqualToString:@"pasteboardInfo"]) {
+		NSDictionary *response = [DTXPasteboardInfo pasteboardInfo];
+		if (response != nil) {
+			[self.webSocket sendAction:@"pasteboardInfoDone" withParams:response withMessageId:messageId];
+		} else {
+			[self testRunnerOnTestFailed:@"pasteboard doesn't have any value" withMessageId:messageId];
+		}
+		
 	}
 }
 

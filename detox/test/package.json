@@ -15,10 +15,10 @@
   },
   "dependencies": {
     "react": "16.0.0",
-    "react-native": "0.51.x"
+    "react-native": "0.51.1"
   },
   "devDependencies": {
-    "detox": "^7.0.0",
+    "detox": "^7.3.3",
     "express": "^4.15.3",
     "jest": "^22.3.0",
     "lodash": "^4.14.1",

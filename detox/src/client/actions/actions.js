@@ -50,6 +50,17 @@ class Shake extends Action {
   }
 }
 
+class PasteBoardInfo extends Action {
+  constructor() {
+    super('pasteboardInfo')
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'pasteboardInfoDone');
+    return response
+  }
+}
+
 class ReloadReactNative extends Action {
   constructor() {
     super('reactNativeReload');
@@ -140,5 +151,6 @@ module.exports = {
   DeliverPayload,
   CurrentStatus,
   Shake,
+  PasteBoardInfo,
   AppWillTerminateWithError
 };

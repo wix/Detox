@@ -1,4 +1,4 @@
-const invoke = require('../invoke');
+  const invoke = require('../invoke');
 const matchers = require('./matchers');
 const Matcher = matchers.Matcher;
 const LabelMatcher = matchers.LabelMatcher;
@@ -15,6 +15,7 @@ const GreyActions = require('./earlgreyapi/GREYActions');
 const GreyInteraction = require('./earlgreyapi/GREYInteraction');
 const GreyCondition = require('./earlgreyapi/GREYCondition');
 const GreyConditionDetox = require('./earlgreyapi/GREYConditionDetox');
+
 
 let invocationManager;
 
@@ -286,7 +287,7 @@ class Element {
   }
   async clearText() {
     return await new ActionInteraction(this, new ClearTextAction()).execute();
-  }
+  } 
   async scroll(amount, direction = 'down') {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
     this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
@@ -307,8 +308,8 @@ class Element {
   }
 }
 
-class Expect { }
 
+class Expect { }
 class ExpectElement extends Expect {
   constructor(element) {
     super();
@@ -372,8 +373,11 @@ class WaitForElement extends WaitFor {
 }
 
 function expect(element) {
-  if (element instanceof Element) return new ExpectElement(element);
-  throw new Error(`expect() argument is invalid, got ${typeof element}`);
+  if (element instanceof Element) {
+    return new ExpectElement(element);
+  } else {
+    return element;
+  }
 }
 
 function waitFor(element) {

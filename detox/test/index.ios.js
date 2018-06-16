@@ -22,4 +22,5 @@ class exampleIos extends example {
   }
 }
 
+
 AppRegistry.registerComponent('example', () => exampleIos);

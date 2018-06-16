@@ -1,6 +1,7 @@
+
 describe('expect', async () => {
   let e;
-
+  
   beforeEach(() => {
     e = require('./expect');
     e.setInvocationManager(new MockExecutor());
@@ -27,6 +28,7 @@ describe('expect', async () => {
     await e.expect(e.element(e.by.label('test'))).toHaveId('id');
     await e.expect(e.element(e.by.label('test'))).toHaveValue('value');
   });
+
 
   it(`element by id`, async () => {
     await e.expect(e.element(e.by.id('test'))).toBeVisible();

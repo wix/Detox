@@ -55,6 +55,10 @@ class IosDriver extends DeviceDriverBase {
     return await this.client.shake();
   }
 
+  async pasteboardInfo(deviceId) {
+    return await this.client.pasteboardInfo()
+  }
+
   async setOrientation(deviceId, orientation) {
     const call = EarlyGrey.rotateDeviceToOrientationErrorOrNil(invoke.EarlGrey.instance,orientation);
 

@@ -1,6 +1,7 @@
 #import "NativeModule.h"
 #import <UIKit/UIKit.h>
 #import <React/RCTRootView.h>
+#import <React/RCTConvert.h>
 
 static int CALL_COUNTER = 0;
 
@@ -78,6 +79,28 @@ RCT_EXPORT_METHOD(switchToMultipleReactRoots)
     [[delegate window]setRootViewController:tbc];
     [[delegate window] makeKeyAndVisible];
   });
+}
+
+RCT_EXPORT_METHOD(clipValueToPasteboard:(NSDictionary *)clippedDict) {
+    if (clippedDict) {
+        UIPasteboard *pb = [UIPasteboard generalPasteboard];
+        if (clippedDict[@"string"]) {
+            pb.string = clippedDict[@"string"];
+        }
+        if (clippedDict[@"image"]) {
+            NSURL *imageURL = [NSURL URLWithString:clippedDict[@"image"]];
+            NSData *imageData = [NSData dataWithContentsOfURL:imageURL];
+            UIImage *aImage = [UIImage imageWithData:imageData];
+            pb.image = aImage;
+        }
+        if (clippedDict[@"color"]) {
+            UIColor * aColor = [RCTConvert UIColor:clippedDict[@"color"]];
+            pb.color = aColor;
+        }
+        if (clippedDict[@"url"]) {
+            pb.URL = [NSURL URLWithString:clippedDict[@"url"]];
+        }
+    }
 }
 
 @end
