@@ -19,7 +19,6 @@ class ArtifactsManager {
     this.onTerminate = _.once(this.onTerminate.bind(this));
 
     this._idlePromise = Promise.resolve();
-    this._relaunchPromise = Promise.resolve();
     this._onIdleCallbacks = [];
     this._activeArtifacts = [];
     this._artifactPluginsFactories = [];
@@ -142,21 +141,15 @@ class ArtifactsManager {
     this._pid = pid;
 
     if (!isFirstTime) {
-      this._relaunchPromise = this._relaunchPromise.then(() => {
-        return this._emit('onRelaunchApp', [{ deviceId, bundleId, pid }]);
-      });
-
-      await this._relaunchPromise;
+      await this._emit('onRelaunchApp', [{ deviceId, bundleId, pid }]);
     }
   }
 
   async onBeforeAll() {
-    await this._relaunchPromise;
     await this._emit('onBeforeAll', []);
   }
 
   async onBeforeEach(testSummary) {
-    await this._relaunchPromise;
     await this._emit('onBeforeEach', [testSummary]);
   }
 
@@ -169,12 +162,10 @@ class ArtifactsManager {
   }
 
   async onAfterEach(testSummary) {
-    await this._relaunchPromise;
     await this._emit('onAfterEach', [testSummary]);
   }
 
   async onAfterAll() {
-    await this._relaunchPromise;
     await this._emit('onAfterAll', []);
     await this._idlePromise;
     log.verbose('ArtifactsManager', 'finalized artifacts successfully');
