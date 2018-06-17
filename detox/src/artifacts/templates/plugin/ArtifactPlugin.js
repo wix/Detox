@@ -50,10 +50,6 @@ class ArtifactPlugin {
    *
    * @protected
    * @async
-   * @param {Object} event - Relaunch app event object
-   * @param {string} event.deviceId - Current deviceId
-   * @param {string} event.bundleId - Current bundleId
-   * @param {number} event.pid - Process id of the running app
    * @return {Promise<void>} - when done
    */
   async onBeforeAll() {}

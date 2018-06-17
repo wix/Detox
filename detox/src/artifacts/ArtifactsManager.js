@@ -30,22 +30,6 @@ class ArtifactsManager {
 
     const pathBuilder = new ArtifactPathBuilder({
       artifactsRootDir: argparse.getArgValue('artifacts-location') || 'artifacts',
-      getUniqueSubdirectory: () => {
-        const configuration = argparse.getArgValue('configuration') || 'detox_artifacts';
-        const deviceLockFilePath = environment.getDeviceLockFilePath();
-
-        let lockFileCreatedDate = _.attempt(() => fs.statSync(deviceLockFilePath).ctime);
-        if (_.isError(lockFileCreatedDate)) {
-          log.warn('detox-artifacts', 'could not read file attributes of device lock file: %s', deviceLockFilePath);
-          lockFileCreatedDate = new Date();
-        }
-
-        const timestamp = lockFileCreatedDate.toISOString()
-          .replace(/T/, ' ')
-          .replace(/\.\d{3}/, '');
-
-        return `${configuration}.${timestamp}`;
-      },
     });
 
     this.artifactsApi = {
@@ -129,6 +113,7 @@ class ArtifactsManager {
   unsubscribeFromDeviceEvents(device) {
     device.off('beforeResetDevice', this.onBeforeResetDevice);
     device.off('resetDevice', this.onResetDevice);
+    device.off('beforeLaunchApp', this.onBeforeLaunchApp);
     device.off('launchApp', this.onLaunchApp);
   }
 
