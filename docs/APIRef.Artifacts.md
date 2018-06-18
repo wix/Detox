@@ -10,7 +10,7 @@ Artifacts are various recordings during tests including, but not limited to, dev
 Artifacts are disabled by default. Two things are required to enable them:
 
 1. **Call `detox.beforeEach` and `detox.afterEach` before/after each test**:
-	In order for artifacts to work, you have to call `detox.beforeEach(testSummary)` / `detox.afterEach(testSummary)` before / after each test. Their respective signatures are described in [detox object](APIRef.DetoxObjectAPI.md) documentation. As the interface (typing) of `testSummary` may change over the time, and in cases with some test runners it is not trivial to implement test title and status extraction (like with Jest), you are encouraged to use Detox adapter functions like in these examples: [mocha](/examples/demo-react-native/e2e/init.js), [jest](examples/demo-react-native-jest/e2e/init.js).
+	In order for artifacts to work, you have to call `detox.beforeEach(testSummary)` / `detox.afterEach(testSummary)` before / after each test. Their respective signatures are described in [detox object](APIRef.DetoxObjectAPI.md) documentation. As the interface (typing) of `testSummary` may change over the time, and in cases with some test runners it is not trivial to implement test title and status extraction (like with Jest), you are encouraged to use Detox adapter functions like in these examples: [mocha](/examples/demo-react-native/e2e/init.js), [jest](/examples/demo-react-native-jest/e2e/init.js).
 
 2. Specify via launch arguments which types of artifacts you want to record:
 
@@ -56,3 +56,21 @@ artifacts/android.emu.release.2018-06-12 06:36:18Z/✗ Assertions should assert 
 ```
 
 ## Troubleshooting
+
+### Screenshots and videos do not appear in the artifacts folder
+
+Make sure you have `detox.beforeEach(testSummary)` and `detox.afterEach(testSummary)` calls in your `./e2e/init.js`. Check out the recommendations on how to do that for [mocha](/examples/demo-react-native/e2e/init.js) and [jest](/examples/demo-react-native-jest/e2e/init.js) using the out-of-the-box adapters.
+
+### Video recording issues on CI
+
+For iOS, you might be getting errors on CI similar to this:
+
+```Error: Error Domain=NSPOSIXErrorDomain Code=22 "Invalid argument" UserInfo={NSLocalizedDescription=Video recording requires hardware Metal capability.}.```
+
+Unfortunately, this error is beyond our reach. To fix it, you have to enable hardware acceleration on your build machine, or just disable video recording on CI if it is not possible to turn on the acceleration.
+
+There might be a similar issue on Android when the screenrecording process exits with an error on CI. While the solution might be identical to the one above, also you might try to experiment with other emulator devices and Android OS versions to see if it helps.
+
+### Ctrl+C does not terminate Detox+Jest tests correctly
+
+This is a known issue. Video or log recording process under Detox+Jest is apt to keep running even after you press Ctrl+C and stop the tests. Furthermore, some of temporary files won't get erased (e.g. `/sdcard/83541_0.mp4` on Android emulator, or `/private/var/folders/lm/thz8hdxs4v3fppjh0fjc2twhfl_3x2/T/f12a4fcb-0d1f-4d98-866c-e7cea4942ade.png` on your Mac). It cannot be solved quickly due to the constraints of Jest runner and how it works with its puppet processes. 
