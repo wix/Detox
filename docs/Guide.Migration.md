@@ -56,7 +56,7 @@ By default it dynamically creates `./artifacts/{configuration}.{timestamp}` dire
 
 Previously, to enable log recording you just had to specify `--artifact-location` arg. Currently, you need to tell that explicitly via a new CLI flag: `--record-logs all` or `--record-logs failing`.
 
-Notice that `--artifact-location` became sensitive to whether you end your directory path with a slash or not. It follows the next convention:
+Notice that `--artifact-location` became sensitive to whether you end your directory path with a slash or not. It has the next convention:
 
 * If you want to create automatically a subdirectory with timestamp and configuration name (to avoid file overwrites upon consquent re-runs), specify a path to directory that *does not end* with a slash.
 * Otherwise, if you want to put artifacts straight to the specified directory (in a case where you make a single run only, e.g. on CI), *add a slash* to the end.
