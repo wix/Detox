@@ -47,7 +47,7 @@ If you have reasons to make direct calls to `detox.beforeEach` and `detox.afterE
 	  await detox.cleanup();
 	});
 	```
-	This is caused by inability to do two things inside one place: to get current test status inside `afterEach` (you need a reporter for that) and to wait for asynchronous operation to complete inside `specDone` of a Jasmine reporter. So all `afterEach`-es get executed before every `beforeEach` (and `beforeEach`-es are executed after the previous test's `afterEach`) and in `afterAll` when it is the last test.
+	This is caused by inability to do two things inside one place: to get current test status inside `afterEach` (you need a reporter for that) and to wait for asynchronous operation to complete inside `specDone` of a Jasmine reporter (it is a synchronous method). That's why all `afterEach`-es physically get executed inside consquent `beforeEach`-es, just before the real `beforeEach` gets started, and we need `afterAll` to execute the last test's `afterEach`.
 
 #### Changes to `detox test` CLI
 
