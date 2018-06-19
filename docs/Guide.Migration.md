@@ -14,7 +14,7 @@ The new `detox@8` brings support for test artifacts (videos, screenshot, logs), 
 To make the artifacts feature work, you have to call `detox.beforeEach(testSummary)` and `detox.afterEach(testSummary)` with a current test summary object (test title, full test name, test status).
 
 As the API of the methods is a subject to change in the future versions and
-there is complexity behind composing test summary (as in the case with Jest test runner),
+there is complexity behind composing test summary objects (as in the case with Jest test runner),
 you are encouraged to reuse the examples of `./e2e/init.js` for  [mocha](/examples/demo-react-native/e2e/init.js) and [jest](/examples/demo-react-native-jest/e2e/init.js).
 
 If you have reasons to make direct calls to `detox.beforeEach` and `detox.afterEach` (e.g. you're adding support for another test runner), please refer to [detox object documentation](APIRef.DetoxObjectAPI.md).
