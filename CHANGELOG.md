@@ -1,5 +1,16 @@
 # Change Log
 
+## [7.4.3](https://github.com/wix/detox/tree/7.4.3) (2018-06-14)
+[Full Changelog](https://github.com/wix/detox/compare/7.4.2...7.4.3)
+
+**Merged Pull Requests**
+
+- Android: on headless mode, default to high-perf software renderes `swiftshader\_indirect` and `angle\_indirect` [\#784](https://github.com/wix/detox/pull/784) ([rotemmiz](https://github.com/rotemmiz))
+- Move android matchers to generated code [\#745](https://github.com/wix/detox/pull/745) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
+
+## [7.4.2](https://github.com/wix/detox/tree/7.4.2) (2018-06-10)
+[Full Changelog](https://github.com/wix/detox/compare/7.4.1...7.4.2)
+
 ## [7.4.1](https://github.com/wix/detox/tree/7.4.1) (2018-06-10)
 [Full Changelog](https://github.com/wix/detox/compare/7.4.0...7.4.1)
 
