@@ -35,11 +35,19 @@ beforeEach(function ( /* ... your content ... */ ) {});
 afterEach(function ( /* ... your content ... */ ) {});
 ```
 
-* **Jest.** While confusing, it is correct that instead of `afterEach` you [call the adapter](/examples/demo-react-native-jest/e2e/init.js) in `afterAll`. Also, make sure you register the adapter as a Jasmine reporter in `init.js` like this:
-
-```js
-jasmine.getEnv().addReporter(adapter);
-```
+* **Jest.**
+	* Make sure you register the adapter as a Jasmine reporter in `init.js` like this:
+	```js
+	jest.setTimeout(120000);
+	jasmine.getEnv().addReporter(adapter); // don't forget this line
+	```
+	* And yes, it is correct that instead of `afterEach` you [call the adapter](/examples/demo-react-native-jest/e2e/init.js#L18) in `afterAll`:
+	```js
+	afterAll(async () => {
+	  await adapter.afterAll();
+	  await detox.cleanup();
+	});
+	```
 
 #### Changes to `detox test` CLI
 
