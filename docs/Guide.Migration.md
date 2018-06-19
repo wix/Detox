@@ -5,6 +5,56 @@ title: Migration Guide
 
 We are improving detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense and. These migration guides refer to breaking changes.
 
+## Migrating from detox 7.x.x to 8.x.x
+
+The new `detox@8` brings support for test artifacts (videos, screenshot, logs), and to learn more about it you can refer to [Artifacts documentation](APIRef.Artifacts.md) and to [Detox CLI documentation](APIRef.DetoxCLI.md).
+
+#### Changes to e2e/init.js
+
+To make the artifacts feature work, you have to call `detox.beforeEach(testSummary)` and `detox.afterEach(testSummary)` with a current test summary object (test title, full test name, test status).
+
+As the API of the methods is a subject to change in the future version and
+there is a complexity behind composing test summary (as in the case with Jest test runner),
+you are encouraged to reuse the examples of `./e2e/init.js` for  [mocha](/examples/demo-react-native/e2e/init.js) and [jest](/examples/demo-react-native-jest/e2e/init.js).
+
+If you have reasons to make direct calls to `detox.beforeEach` and `detox.afterEach` (e.g. you're adding support for another test runner), please refer to [detox object documentation](APIRef.DetoxObjectAPI.md).
+
+##### Editing tips
+
+* **Mocha**. Make sure you use ES5 functions in `beforeEach` and `afterEach`.  If you erroneously use arrow functions, then inside you'll fail to get a correct **`this`**  to pass to the adapter.
+
+```js
+// ✗ INCORRECT
+
+beforeEach(() => { /* ... your content ... */ }); // won't work
+afterEach(() => { /* ... your content ... */ }); // won't work
+
+// CORRECT
+
+beforeEach(function ( /* ... your content ... */ ) {});
+afterEach(function ( /* ... your content ... */ ) {});
+```
+
+* **Jest.** While confusing, it is correct that instead of `afterEach` you [call the adapter](/examples/demo-react-native-jest/e2e/init.js) in `afterAll`. Also, make sure you register the adapter as a Jasmine reporter in `init.js` like this:
+
+```js
+jasmine.getEnv().addReporter(adapter);
+```
+
+#### Changes to `detox test` CLI
+
+The `--artifact-location` argument became optional for `detox test` in the version 8.0.0.
+By default it dynamically creates `./artifacts/{configuration}.{timestamp}` directory in the project folder as soon as it has to save a recorded artifact.
+
+Previously, to enable log recording you just had to specify `--artifact-location` arg. Currently, you need to tell that explicitly via a new CLI flag: `--record-logs all` or `--record-logs failing`.
+
+Notice that `--artifact-location` became sensitive to whether you end your directory path with a slash or not. It follows the next convention:
+
+* If you want to create automatically a subdirectory with timestamp and configuration name (to avoid file overwrites upon consquent re-runs), specify a path to directory that *does not end* with a slash.
+* Otherwise, if you want to put artifacts straight to the specified directory (in a case where you make a single run only, e.g. on CI), *add a slash* to the end.
+
+For more information see [CLI  documentation](APIRef.DetoxCLI.md).
+
 ## Migrating from detox 4.x.x to 5.x.x
 The clearest example for for the 4->5 API changes is the change log of detox's own test suite.
 Check [detox test change log](https://github.com/wix/detox/commit/c636e2281d83d07fe0b479681c1a8a6b809823ff#diff-bf5e338e4f0bb49210688c7691dc8589) for a real life example.
