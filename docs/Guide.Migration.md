@@ -3,55 +3,100 @@ id: Guide.Migration
 title: Migration Guide
 ---
 
-We are improving detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense and. These migration guides refer to breaking changes.
+We are improving detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes.
 
-## Migrating from detox 7.x.x to 8.x.x
+## Migrating from Detox 7.x.x to 8.x.x
 
-The new `detox@8` brings support for test artifacts (videos, screenshot, logs), and to learn more about it you can refer to [Artifacts documentation](APIRef.Artifacts.md) and to [Detox CLI documentation](APIRef.DetoxCLI.md).
+Detox 8.x.x brings support for test artifacts (videos, screenshot, logs), and to learn more about it you can refer to [Artifacts documentation](APIRef.Artifacts.md) and to [Detox CLI documentation](APIRef.DetoxCLI.md).
 
-#### Changes to e2e/init.js
+#### Changes to `e2e/init.js`
 
-To make the artifacts feature work, you have to call `detox.beforeEach(testSummary)` and `detox.afterEach(testSummary)` with a current test summary object (test title, full test name, test status).
+In order for Detox to be able to create artifacts, `detox.beforeEach(testSummary)` and `detox.afterEach(testSummary)` must be called with a current test summary object (test title, full test name, test status).
 
-As the API of the methods is a subject to change in the future versions and
-there is complexity behind composing test summary objects (as in the case with Jest test runner),
-you are encouraged to reuse the examples of `./e2e/init.js` for  [mocha](/examples/demo-react-native/e2e/init.js) and [jest](/examples/demo-react-native-jest/e2e/init.js).
+Detox 8 introduces adapters for both Mocha and Jest, wrapping the original `detox.beforeEach(testSummary)` and `detox.afterEach(testSummary)` functions, for easier integration.
 
-If you have reasons to make direct calls to `detox.beforeEach` and `detox.afterEach` (e.g. you're adding support for another test runner), please refer to [detox object documentation](APIRef.DetoxObjectAPI.md).
+you are encouraged to reuse the examples of `./e2e/init.js` for  [mocha](/examples/demo-react-native/e2e/init.js) and [jest](/examples/demo-react-native-jest/e2e/init.js). The gist is brought in the following sections:
 
-##### Editing tips
+##### *Mocha*
+```js
+const detox = require('detox');
+const config = require('../package.json').detox;
+const adapter = require('detox/runners/mocha/adapter');
 
-* **Mocha**. Make sure you use ES5 functions in `beforeEach` and `afterEach`.  If you erroneously use arrow functions, then inside you'll fail to get a correct **`this`**  to pass to the adapter.
-	```js
-	// ✗ INCORRECT
+before(async () => {
+  await detox.init(config);
+});
 
-	beforeEach(() => { /* ... your content ... */ }); // won't work
-	afterEach(() => { /* ... your content ... */ }); // won't work
+beforeEach(async function () {
+  await adapter.beforeEach(this);
+});
 
-	// CORRECT
+afterEach(async function () {
+  await adapter.afterEach(this);
+});
 
-	beforeEach(function ( /* ... your content ... */ ) {});
-	afterEach(function ( /* ... your content ... */ ) {});
-	```
+after(async () => {
+  await detox.cleanup();
+});
+```
+*NOTICE:*
+Make sure you use ES5 functions in `beforeEach` and `afterEach`. `this` referes to mocha's test object, using arrow functions will result with failure to to acquire a correct **`this`** inside the adapter.
 
-* **Jest.**
-	* Make sure you register the adapter as a Jasmine reporter in `init.js` like this:
-	```js
-	jest.setTimeout(120000);
-	jasmine.getEnv().addReporter(adapter); // don't forget this line
-	```
-	* And yes, it is correct that instead of `afterEach` you [call the adapter](/examples/demo-react-native-jest/e2e/init.js#L18) in `afterAll`:
-	```js
-	afterAll(async () => {
-	  await adapter.afterAll();
-	  await detox.cleanup();
-	});
-	```
-	This is caused by inability to do two things inside one place: to get current test status inside `afterEach` (you need a reporter for that) and to wait for asynchronous operation to complete inside `specDone` of a Jasmine reporter (it is a synchronous method). That's why all `afterEach`-es physically get executed inside consquent `beforeEach`-es, just before the real `beforeEach` gets started, and we need `afterAll` to execute the last test's `afterEach`.
+```js
+// ✗ INCORRECT
+
+beforeEach(() => { /* ... your content ... */ }); // won't work
+afterEach(() => { /* ... your content ... */ }); // won't work
+
+// CORRECT
+
+beforeEach(function ( /* ... your content ... */ ) {});
+afterEach(function ( /* ... your content ... */ ) {});
+```
+##### *Jest*
+
+```js
+const detox = require('detox');
+const config = require('../package.json').detox;
+const adapter = require('detox/runners/jest/adapter');
+
+jest.setTimeout(120000);
+jasmine.getEnv().addReporter(adapter); // don't forget this line
+
+beforeAll(async () => {
+  await detox.init(config);
+});
+
+beforeEach(async function() {
+  await adapter.beforeEach();
+});
+
+afterAll(async () => {
+  await adapter.afterAll();
+  await detox.cleanup();
+});
+```
+
+*NOTICE:*
+Make sure to register the adapter as a Jasmine reporter in `init.js` like this:
+```js
+jasmine.getEnv().addReporter(adapter);
+```
+* Jest adapter requires a hook to `afterAll`:
+
+```js
+afterAll(async () => {
+  await adapter.afterAll();
+  await detox.cleanup();
+});
+```
+
+##### Note regarding `detox.beforeEach` and `detox.afterEach`
+API of these methods is subject to change in future versions due to complexity behind composing test summary objects (as in the case with Jest test runner). If you have reasons to make direct calls to `detox.beforeEach` and `detox.afterEach` (e.g. you're adding support for another test runner), please refer to [detox object documentation](APIRef.DetoxObjectAPI.md).
 
 #### Changes to `detox test` CLI
 
-The `--artifact-location` argument became optional for `detox test` in the version 8.0.0.
+The `--artifact-location` argument became optional for `detox test` in the version 8.x.x.
 By default it dynamically creates `./artifacts/{configuration}.{timestamp}` directory in the project folder as soon as it has to save a recorded artifact.
 
 Previously, to enable log recording you just had to specify `--artifact-location` arg. Currently, you need to tell that explicitly via a new CLI flag: `--record-logs all` or `--record-logs failing`.
@@ -61,9 +106,9 @@ Notice that `--artifact-location` became sensitive to whether you end your direc
 * If you want to create automatically a subdirectory with timestamp and configuration name (to avoid file overwrites upon consquent re-runs), specify a path to directory that *does not end* with a slash.
 * Otherwise, if you want to put artifacts straight to the specified directory (in a case where you make a single run only, e.g. on CI), *add a slash* to the end.
 
-For more information see [CLI  documentation](APIRef.DetoxCLI.md).
+For more information see [CLI documentation](APIRef.DetoxCLI.md).
 
-## Migrating from detox 4.x.x to 5.x.x
+## Migrating from Detox 4.x.x to 5.x.x
 The clearest example for for the 4->5 API changes is the change log of detox's own test suite.
 Check [detox test change log](https://github.com/wix/detox/commit/c636e2281d83d07fe0b479681c1a8a6b809823ff#diff-bf5e338e4f0bb49210688c7691dc8589) for a real life example.
 
@@ -198,7 +243,7 @@ The new configuration holds a dictionary of `configurations`.
 #### 3.1 Start using detox-cli 
 You will now be able to run builds and tests from your command line `detox build` and `detox test`, read more about CLI tools [here]()
 
-## Migrating from detox 3.x.x to 4.x.x
+## Migrating from Detox 3.x.x to 4.x.x
 If you have integrated with detox in version 3.x.x, you will need to clean your project from previously generated targets.
 
 * Use the provided `cleanup_4.0.rb` to remove unneeded changes made with Detox 4.x.x.
