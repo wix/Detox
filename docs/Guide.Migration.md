@@ -39,7 +39,7 @@ after(async () => {
   await detox.cleanup();
 });
 ```
-*NOTICE:*
+>*NOTICE:*
 Make sure you use ES5 functions in `beforeEach` and `afterEach`. `this` referes to mocha's test object, using arrow functions will result with failure to to acquire a correct **`this`** inside the adapter.
 
 ```js
@@ -77,7 +77,7 @@ afterAll(async () => {
 });
 ```
 
-*NOTICE:*
+> *NOTICE:*
 Make sure to register the adapter as a Jasmine reporter in `init.js` like this:
 ```js
 jasmine.getEnv().addReporter(adapter);
