@@ -1,6 +1,7 @@
-const path = require('path');
-const exec = require('../../utils/exec').execWithRetriesAndLogs;
 const _ = require('lodash');
+const child_process = require('child_process');
+const path = require('path');
+const {execWithRetriesAndLogs, spawnAndLog} = require('../../utils/exec');
 const EmulatorTelnet = require('./EmulatorTelnet');
 const Environment = require('../../utils/environment');
 
@@ -69,22 +70,49 @@ class ADB {
     await this.shell(deviceId, `input keyevent 82`);
   }
 
+  async pidof(deviceId, bundleId) {
+    const processes = await this.shell(deviceId, `ps -AMo NAME,PID`);
+    const bundleIndex = processes.indexOf(bundleId + ' ');
+
+    if (bundleIndex === -1) {
+      return NaN;
+    }
+
+    const pidStart = bundleIndex + bundleId.length + 1;
+    const pidEnd = processes.indexOf('\n', pidStart);
+
+    const pidString = (pidEnd === -1)
+      ? processes.slice(pidStart)
+      : processes.slice(pidStart, pidEnd);
+
+    return parseInt(pidString, 10);
+  }
+
   async shell(deviceId, cmd) {
     return (await this.adbCmd(deviceId, `shell ${cmd}`)).stdout.trim();
   }
 
-  async waitForBootComplete(deviceId) {
+  async getFileSize(deviceId, filename) {
+    const { stdout, stderr } = await this.adbCmd(deviceId, 'shell wc -c ' + filename).catch(e => e);
+
+    if (stderr.includes('No such file or directory')) {
+      return -1;
+    }
+
+    return Number(stdout.slice(0, stdout.indexOf(' ')));
+  }
+
+  async isFileOpen(deviceId, filename) {
+    const openedByProcesses = await this.shell(deviceId, 'lsof ' + filename);
+    return openedByProcesses.length > 0;
+  }
+
+  async isBootComplete(deviceId) {
     try {
       const bootComplete = await this.shell(deviceId, `getprop dev.bootcomplete`);
-      if (bootComplete === '1') {
-        return true;
-      } else {
-        await this.sleep(2000);
-        return await this.waitForBootComplete(deviceId);
-      }
+      return (bootComplete === '1');
     } catch (ex) {
-      await this.sleep(2000);
-      return await this.waitForBootComplete(deviceId);
+      return false;
     }
   }
 
@@ -93,14 +121,87 @@ class ADB {
     return Number(lvl);
   }
 
+  async screencap(deviceId, path) {
+    return this.adbCmd(deviceId, `shell screencap ${path}`);
+  }
+
+  /***
+   * @returns ChildProcessPromise
+   */
+  screenrecord(deviceId, { path, size, bitRate, timeLimit, verbose }) {
+    const [ width = 0, height = 0 ] = size || [];
+
+    const _size = (width > 0) && (height > 0)
+      ? ['--size', `${width}x${height}`]
+      : [];
+
+    const _bitRate = (bitRate > 0)
+      ? ['--bit-rate', String(bitRate)]
+      : [];
+
+    const _timeLimit = (timeLimit > 0)
+      ? [`--time-limit`, timeLimit]
+      : [];
+
+    const _verbose = verbose ? ['--verbose'] : [];
+    const screenRecordArgs = [..._size, ..._bitRate, ..._timeLimit, ..._verbose, path];
+
+    return this.spawn(deviceId, ['shell', 'screenrecord', ...screenRecordArgs]);
+  }
+
+  /***
+   * @returns ChildProcessPromise
+   */
+  logcat(deviceId, { expression, file, pid, time }) {
+    const logcatArgs = [];
+
+    if (expression) {
+      logcatArgs.push('-e');
+      logcatArgs.push(expression);
+    }
+
+    if (file) {
+      logcatArgs.push('-f');
+      logcatArgs.push(file);
+    }
+
+    if (pid > 0) {
+      logcatArgs.push(`--pid=${pid}`);
+    }
+
+    if (time) {
+      logcatArgs.push('-T');
+      logcatArgs.push(time);
+    }
+
+    return this.spawn(deviceId, ['logcat', ...logcatArgs]);
+  }
+
+  async pull(deviceId, src, dst = '') {
+    return this.adbCmd(deviceId, `pull "${src}" "${dst}"`);
+  }
+
+  async rm(deviceId, path, force = false) {
+    return this.adbCmd(deviceId, `shell rm ${force ? '-f' : ''} "${path}"`);
+  }
+
+  rmSync(deviceId, path) {
+    const cmd = `${this.adbBin} -s ${deviceId} shell rm -rf "${path}"`;
+    child_process.execSync(cmd);
+  }
+
   async adbCmd(deviceId, params) {
     const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
     const cmd = `${this.adbBin} ${serial} ${params}`;
-    return await exec(cmd, undefined, undefined, 1);
+    return await execWithRetriesAndLogs(cmd, undefined, undefined, 1);
   }
 
-  async sleep(ms = 0) {
-    return new Promise((resolve, reject) => setTimeout(resolve, ms));
+  /***
+   * @returns {ChildProcessPromise}
+   */
+  spawn(deviceId, params) {
+    const serial = deviceId ? ['-s', deviceId] : [];
+    return spawnAndLog(this.adbBin, [...serial, ...params]);
   }
 
   async listInstrumentation(deviceId) {

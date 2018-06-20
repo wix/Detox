@@ -1,4 +1,4 @@
-describe.only('WaitFor', () => {
+describe('WaitFor', () => {
   beforeEach(async() => {
     await device.reloadReactNative();
     await element(by.text('WaitFor')).tap();

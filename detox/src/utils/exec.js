@@ -1,6 +1,6 @@
 const log = require('npmlog');
 const retry = require('../utils/retry');
-const exec = require('child-process-promise').exec;
+const {exec, spawn} = require('child-process-promise');
 
 let _operationCounter = 0;
 
@@ -28,8 +28,9 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
       }
       result = await exec(cmd);
     });
-  } catch (ex) {
-    log.error(`${_operationCounter}: ${ex.stderr.trim()}, exited with code ${ex.code}`);
+  } catch (err) {
+    log.error(`${_operationCounter}: running "${cmd}" returned ${err.code}`);
+    log.error(`${_operationCounter}: stderr: ${err.stderr}`);
   }
 
   if (result === undefined) {
@@ -62,7 +63,28 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
   return result;
 }
 
+function spawnAndLog(command, flags) {
+  let out = '';
+  let err = '';
+  const result = spawn(command, flags, {stdio: ['ignore', 'pipe', 'pipe'], detached: true});
+
+  log.verbose(`${command} ${flags.join(' ')}`);
+
+  if (result.childProcess) {
+    const {stdout, stderr} = result.childProcess;
+
+    stdout.on('data', (chunk) => out += chunk.toString());
+    stderr.on('data', (chunk) => err += chunk.toString());
+
+    stdout.on('end', () => out && log.verbose('stdout:', out));
+    stderr.on('end', () => err && log.verbose('stderr:', err));
+  }
+
+  return result;
+}
+
 module.exports = {
-  execWithRetriesAndLogs
+  execWithRetriesAndLogs,
+  spawnAndLog
 };
 

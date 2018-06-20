@@ -6,12 +6,13 @@
     "test": ":",
     "packager": "react-native start",
     "detox-server": "detox run-server",
-    "e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization",
+    "e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization --take-screenshots all --record-videos none --record-logs all",
     "e2e:ios-multi": "npm run e2e:ios -- -w 2",
-    "e2e:android": "detox test --configuration android.emu.release --loglevel verbose",
-
+    "e2e:android": "detox test --configuration android.emu.release --loglevel verbose --take-screenshots all --record-videos none --record-logs all",
     "build:ios": "detox build --configuration ios.sim.release",
-    "build:android": "detox build --configuration android.emu.release"
+    "build:android": "detox build --configuration android.emu.release",
+    "verify-artifacts:ios": "jest ./scripts/verify_artifacts_are_not_missing.ios.test.js",
+    "verify-artifacts:android": "jest ./scripts/verify_artifacts_are_not_missing.android.test.js"
   },
   "dependencies": {
     "react": "16.0.0",

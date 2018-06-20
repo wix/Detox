@@ -2,7 +2,10 @@ const _ = require('lodash');
 const path = require('path');
 const Emulator = require('./android/Emulator');
 const EmulatorTelnet = require('./android/EmulatorTelnet');
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const Environment = require('../utils/environment');
+const retry = require('../utils/retry');
+const sleep = require('../utils/sleep');
 const AndroidDriver = require('./AndroidDriver');
 const ini = require('ini');
 const fs = require('fs');
@@ -35,7 +38,7 @@ class EmulatorDriver extends AndroidDriver {
 
   async boot(deviceId) {
     await this.emulator.boot(deviceId);
-    await this.adb.waitForBootComplete(deviceId);
+    await this._waitForBootToComplete(deviceId);
   }
 
   async acquireFreeDevice(name) {
@@ -78,9 +81,21 @@ class EmulatorDriver extends AndroidDriver {
         throw new Error(`Got more than one device corresponding to the name: ${name}`);
     }
 
-    await this.adb.waitForBootComplete(adbName);
+    await this._waitForBootToComplete(adbName);
     await this.adb.unlockScreen(adbName);
     return adbName;
+  }
+
+  async _waitForBootToComplete(deviceId) {
+    await retry({ retries: 120, interval: 5000 }, async () => {
+      const isBootComplete = await this.adb.isBootComplete(deviceId);
+
+      if (!isBootComplete) {
+        throw new DetoxRuntimeError({
+          message: `Android device ${deviceId} has not completed its boot yet.`,
+        });
+      }
+    });
   }
 
   async shutdown(deviceId) {

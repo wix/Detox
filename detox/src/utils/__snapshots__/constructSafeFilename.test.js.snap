@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`constructSafeFilename should throw exception when non-trimmable prefix and suffix occupy too much space 1`] = `
+"DetoxRuntimeError: cannot trim filename to match filesystem limits because prefix and/or suffix are exceed 255 chars limit
+
+{
+  \\"prefix\\": \\"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\\",
+  \\"prefixLength\\": 127,
+  \\"trimmable\\": \\"1\\",
+  \\"trimmableLength\\": 1,
+  \\"suffix\\": \\"22222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222\\",
+  \\"suffixLength\\": 128,
+  \\"nonTrimmableLength\\": 255
+}"
+`;
+
+exports[`constructSafeFilename should throw if no arguments passed 1`] = `
+"DetoxRuntimeError: no filename was given to constructSafeFilename()
+
+the arguments were: {
+  \\"prefix\\": \\"\\",
+  \\"trimmable\\": \\"\\",
+  \\"suffix\\": \\"\\"
+}"
+`;
+
+exports[`constructSafeFilename should throw if no arguments passed 2`] = `
+"DetoxRuntimeError: no filename was given to constructSafeFilename()
+
+the arguments were: {
+  \\"prefix\\": \\"\\",
+  \\"trimmable\\": \\"\\",
+  \\"suffix\\": \\"\\"
+}"
+`;

@@ -7,6 +7,7 @@ describe('AppleSimUtils', () => {
   let exec;
   let retry;
   let environment;
+  let tempfile;
 
   const simUdid = `9C9ABE4D-70C7-49DC-A396-3CB1D0E82846`;
   const bundleId = 'bundle.id';
@@ -19,6 +20,8 @@ describe('AppleSimUtils', () => {
     retry = require('../utils/retry');
     jest.mock('../utils/environment');
     environment = require('../utils/environment');
+    jest.mock('tempfile');
+    tempfile = require('tempfile');
 
     AppleSimUtils = require('./AppleSimUtils');
     uut = new AppleSimUtils();
@@ -395,9 +398,10 @@ describe('AppleSimUtils', () => {
 
   describe('getLogsPaths', () => {
     it('returns correct paths', () => {
+      const HOME = process.env.HOME;
       expect(uut.getLogsPaths('123')).toEqual({
-        stdout: '$HOME/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.out',
-        stderr: '$HOME/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.err'
+        stdout: `${HOME}/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.out`,
+        stderr: `${HOME}/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.err`,
       })
     });
   });
@@ -476,5 +480,40 @@ describe('AppleSimUtils', () => {
     });
   });
 
+  describe('takeScreenshot', () => {
+    it('executes simctl screenshot command', async () => {
+      const udid = Math.random();
+      const dest = '/tmp/' + Math.random();
+
+      await uut.takeScreenshot(udid, dest);
+
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringMatching(new RegExp(`xcrun simctl io ${udid} screenshot "${dest}"`)),
+        undefined,
+        expect.anything(),
+        1
+      );
+    });
+  });
+
+  describe('recordVideo', () => {
+    it('spawns simctl process with recordVideo command', async () => {
+      const childProcessPromise = Object.assign(Promise.resolve(), { childProcess: {} });
+      const udid = Math.random();
+      const dest = '/tmp/' + Math.random();
+      exec.spawnAndLog.mockReturnValueOnce(childProcessPromise);
+
+      const result = uut.recordVideo(udid, dest);
+
+      expect(exec.spawnAndLog).toHaveBeenCalledTimes(1);
+      expect(exec.spawnAndLog).toHaveBeenCalledWith(
+        expect.stringMatching(/xcrun/),
+        ['simctl', 'io', udid, 'recordVideo', dest]
+      );
+
+      expect(result).toEqual(childProcessPromise);
+    });
+  });
 });
 

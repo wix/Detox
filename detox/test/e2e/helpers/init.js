@@ -1,21 +1,21 @@
 const detox = require('detox');
 const config = require('../../package.json').detox;
+const adapter = require('detox/runners/jest/adapter');
+
 jest.setTimeout(480000);
+jasmine.getEnv().addReporter(adapter);
 
 beforeAll(async () => {
   await detox.init(config);
 });
 
-afterAll(async () => {
-  await detox.cleanup();
-});
-
 beforeEach(async function() {
-  await detox.beforeEach(jasmine.testPath);
+  await adapter.beforeEach();
 });
 
-afterEach(async function() {
-  await detox.afterEach(jasmine.testPath);
+afterAll(async () => {
+  await adapter.afterAll();
+  await detox.cleanup();
 });
 
 process.on('unhandledRejection', (reason, p) => {

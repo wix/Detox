@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Detox .artifactsManager Calling .beforeEach() and .afterEach() with a deprecated signature will throw an exception 1`] = `
+"DetoxRuntimeError: Invalid test summary was passed to detox.beforeEach(testSummary)
+Expected to get an object of type: { title: string; fullName: string; status: \\"running\\" | \\"passed\\" | \\"failed\\"; }
+
+HINT: Maybe you are still using an old undocumented signature detox.beforeEach(string, string, string) in init.js ?
+See the article for the guidance: https://github.com/wix/detox/blob/master/docs/APIRef.TestLifecycle.md
+
+testSummary was: \\"test\\""
+`;
+
+exports[`Detox .artifactsManager Calling .beforeEach() and .afterEach() with a deprecated signature will throw an exception 2`] = `
+"DetoxRuntimeError: Invalid test summary was passed to detox.beforeEach(testSummary)
+Expected to get an object of type: { title: string; fullName: string; status: \\"running\\" | \\"passed\\" | \\"failed\\"; }
+
+HINT: Maybe you are still using an old undocumented signature detox.beforeEach(string, string, string) in init.js ?
+See the article for the guidance: https://github.com/wix/detox/blob/master/docs/APIRef.TestLifecycle.md
+
+testSummary was: \\"test\\""
+`;
+
+exports[`Detox .artifactsManager Calling .beforeEach() and .afterEach() with incorrect test status will throw an exception 1`] = `
+"DetoxRuntimeError: Invalid test summary status was passed to detox.beforeEach(testSummary). Valid values are: \\"running\\", \\"passed\\", \\"failed\\"
+
+HINT: It seems like you've hit a Detox integration issue with a test runner. You are encouraged to report it in Detox issues on GitHub.
+
+testSummary was: {
+  \\"title\\": \\"test\\",
+  \\"fullName\\": \\"suite - test\\",
+  \\"status\\": \\"incorrect status\\"
+}"
+`;
+
+exports[`Detox .artifactsManager Calling .beforeEach() and .afterEach() with incorrect test status will throw an exception 2`] = `
+"DetoxRuntimeError: Invalid test summary status was passed to detox.beforeEach(testSummary). Valid values are: \\"running\\", \\"passed\\", \\"failed\\"
+
+HINT: It seems like you've hit a Detox integration issue with a test runner. You are encouraged to report it in Detox issues on GitHub.
+
+testSummary was: {
+  \\"title\\": \\"test\\",
+  \\"fullName\\": \\"suite - test\\",
+  \\"status\\": \\"incorrect status\\"
+}"
+`;

@@ -22,7 +22,7 @@
   "license": "MIT",
   "scripts": {
     "build": "node scripts/build.js",
-    "lint": "eslint src scripts",
+    "lint": "eslint runners src scripts",
     "unit": "jest --coverage --verbose",
     "pretest": "npm run lint",
     "test": "npm run unit",
@@ -51,6 +51,7 @@
     "shell-utils": "^1.0.9",
     "tail": "^1.2.3",
     "telnet-client": "0.15.3",
+    "tempfile": "^2.0.0",
     "ws": "^1.1.1"
   },
   "engines": {
@@ -63,12 +64,19 @@
     ],
     "coveragePathIgnorePatterns": [
       "/node_modules/",
+      "src/artifacts/log",
+      "src/artifacts/screenshot",
+      "src/artifacts/video",
+      "src/artifacts/templates/plugin",
+      "src/artifacts/ArtifactsManager.js",
       ".*Driver.js",
       "EmulatorTelnet.js",
       "Emulator.js",
       "DeviceDriverBase.js",
       "GREYConfiguration.js",
       "src/utils/environment.js",
+      "src/utils/onTerminate.js",
+      "src/utils/sleep.js",
       "AAPT.js",
       "ADB.js",
       "fsext.js",
