@@ -22,7 +22,7 @@ title: Expo
 
 - Download the Expo app from [Expo.io/tools](https://expo.io/tools).
 - Unzip the iOS IPA and **rename the folder** to `Exponent.app`. It'll have a file icon but will still be a folder.
-- Create `bin` folder in your project and put `Exponent.app` inside so it matches the binaryPath you set above.
+- Create `bin` folder and put `Exponent.app` inside so it matches the binaryPath set above.
 - Create an `e2e` and copy over the settings from [the example app](https://github.com/expo/with-detox-tests/tree/master/e2e)
 
 The most important piece of this the `reloadApp` from `detox-expo-helpers`. Don't forget this.
@@ -35,11 +35,9 @@ beforeEach(async () => {
 });
 ```
 
-That's it! The rest of what you do should be similar to normal detox settings. If you have questions, [tweet @peterpme](https://twitter.com/peterpme)
-
 ## Usage with Expo (Android)
 
-- We haven't personally tried getting this to work on Android. If you have, feel free to open up a PR!
+- Usage with Android is currently TBD.
 
 ### Example App
 [expo/with-detox-tests](https://github.com/expo/with-detox-tests)
