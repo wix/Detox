@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ArtifactsManager .artifactsApi .requestIdleCallback() should catch errors, report them if callback fails, and move on  1`] = `
+Array [
+  Array [
+    "ArtifactsManager",
+    "Caught exception inside plugin (%s) at phase %s",
+    "testPlugin",
+    "onLaunchApp",
+  ],
+  Array [
+    "ArtifactsManager",
+    "",
+    [TypeError: plugin[methodName] is not a function],
+  ],
+  Array [
+    "ArtifactsManager",
+    "Caught exception inside plugin (%s) at phase %s",
+    "testPlugin",
+    "onIdleCallback",
+  ],
+  Array [
+    "ArtifactsManager",
+    "",
+    [Error],
+  ],
+]
+`;
+
+exports[`ArtifactsManager when created should provide partially working artifacts api, where .getBundleId() throws 1`] = `"DetoxRuntimeError: Detox Artifacts API had no bundleId at the time of calling"`;
+
+exports[`ArtifactsManager when created should provide partially working artifacts api, where .getDeviceId() throws 1`] = `"DetoxRuntimeError: Detox Artifacts API had no deviceId at the time of calling"`;
+
+exports[`ArtifactsManager when created should provide partially working artifacts api, where .getPid() throws 1`] = `"DetoxRuntimeError: Detox Artifacts API had no app PID at the time of calling"`;
+
+exports[`ArtifactsManager when plugin factory is registered and the app is about to be launched for the first time still should not be able to get PID from artifacts API 1`] = `"DetoxRuntimeError: Detox Artifacts API had no app PID at the time of calling"`;

@@ -42,9 +42,15 @@ describe(ArtifactPathBuilder, () => {
     it('should defend against accidental resolving outside of root directory', () => {
       const maliciousName = 'some/../../../../../../home/build-server';
 
-      expect(pathBuilder.buildPathForTestArtifact('.bashrc', { title: '', fullName: maliciousName })).toMatchSnapshot();
-      expect(pathBuilder.buildPathForTestArtifact(maliciousName, { title: '', fullName: 'test' })).toMatchSnapshot();
-      expect(pathBuilder.buildPathForTestArtifact(maliciousName, { title: '', fullName: maliciousName })).toMatchSnapshot();
+      const [path1, path2, path3] = [
+        pathBuilder.buildPathForTestArtifact('.bashrc', { title: '', fullName: maliciousName }),
+        pathBuilder.buildPathForTestArtifact(maliciousName, { title: '', fullName: 'test' }),
+        pathBuilder.buildPathForTestArtifact(maliciousName, { title: '', fullName: maliciousName }),
+      ].map(asPosixPath);
+
+      expect(path1).toMatchSnapshot();
+      expect(path2).toMatchSnapshot();
+      expect(path3).toMatchSnapshot();
     });
 
     it('should trim too long filenames', () => {
@@ -58,14 +64,20 @@ describe(ArtifactPathBuilder, () => {
       const testSummary = {title: '', fullName: 'test', status: 'passed' };
       const artifactPath = pathBuilder.buildPathForTestArtifact('1.log', testSummary);
 
-      expect(artifactPath).toMatchSnapshot();
+      expect(asPosixPath(artifactPath)).toMatchSnapshot();
     });
 
     it('should prepend x sign to an artifact of a failed test', () => {
       const testSummary = {title: '', fullName: 'test', status: 'failed' };
       const artifactPath = pathBuilder.buildPathForTestArtifact('1.log', testSummary);
 
-      expect(artifactPath).toMatchSnapshot();
+      expect(asPosixPath(artifactPath)).toMatchSnapshot();
     });
   });
+
+  function asPosixPath(maybeWin32Path) {
+    return maybeWin32Path.replace(asPosixPath.regexp, path.posix.sep);
+  }
+
+  asPosixPath.regexp = new RegExp('\\' + path.win32.sep, 'g');
 });
