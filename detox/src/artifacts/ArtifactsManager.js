@@ -149,8 +149,9 @@ class ArtifactsManager {
     this._bundleId = bundleId;
     this._pid = pid;
 
-    const eventName = isFirstTime ? 'onLaunchApp' : 'onRelaunchApp';
-    await this._emit(eventName, [{ deviceId, bundleId, pid }]);
+    if (!isFirstTime) {
+      await this._emit('onRelaunchApp', [{ deviceId, bundleId, pid }]);
+    }
   }
 
   async onBeforeAll() {

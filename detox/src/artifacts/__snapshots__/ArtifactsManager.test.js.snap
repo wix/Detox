@@ -6,17 +6,6 @@ Array [
     "ArtifactsManager",
     "Caught exception inside plugin (%s) at phase %s",
     "testPlugin",
-    "onLaunchApp",
-  ],
-  Array [
-    "ArtifactsManager",
-    "",
-    [TypeError: plugin[methodName] is not a function],
-  ],
-  Array [
-    "ArtifactsManager",
-    "Caught exception inside plugin (%s) at phase %s",
-    "testPlugin",
     "onIdleCallback",
   ],
   Array [
