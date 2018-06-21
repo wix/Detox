@@ -10,6 +10,7 @@ Gray box end-to-end testing and automation library for mobile apps.
 - [About](#about)
 - [Getting Started](/docs/Introduction.GettingStarted.md)
 - [Documentation](/docs/README.md)
+- [Usage with Expo](/docs/Guide.Expo.md)
 
 <img src="http://i.imgur.com/eoaDEYp.gif">
 
