@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ArtifactPlugin lifecycle hooks .onTerminate should disable plugin with a reason 1`] = `
+Array [
+  Array [
+    "it was terminated by SIGINT or SIGTERM",
+  ],
+]
+`;
+
+exports[`ArtifactPlugin when enabled if it is disabled with a reason should log warning to log with that reason 1`] = `
+Array [
+  Array [
+    "detox-artifacts",
+    "WARNING! Artifact plugin %s was disabled because %s",
+    "TestArtifactPlugin",
+    "a reason why it is disabled",
+  ],
+]
+`;

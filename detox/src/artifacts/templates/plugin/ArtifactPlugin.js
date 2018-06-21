@@ -120,11 +120,14 @@ class ArtifactPlugin {
    * Hook that is called on SIGINT and SIGTERM
    *
    * @protected
+   * @async
+   * @return {Promise<void>} - when done
    */
-  onTerminate() {
+  async onTerminate() {
     this.disable('it was terminated by SIGINT or SIGTERM');
 
     this.onTerminate = _.noop;
+    this.onBeforeRelaunchApp = _.noop;
     this.onRelaunchApp = _.noop;
     this.onBeforeResetDevice = _.noop;
     this.onResetDevice = _.noop;
