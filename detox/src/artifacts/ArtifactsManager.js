@@ -3,34 +3,31 @@ const fs = require('fs-extra');
 const path = require('path');
 const log = require('npmlog');
 const argparse = require('../utils/argparse');
-const environment = require('../utils/environment');
 const logError = require('../utils/logError');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const ArtifactPathBuilder = require('./utils/ArtifactPathBuilder');
 
 class ArtifactsManager {
-  constructor() {
+  constructor(pathBuilder) {
     this.onBeforeResetDevice = this.onBeforeResetDevice.bind(this);
     this.onResetDevice = this.onResetDevice.bind(this);
     this.onBeforeLaunchApp = this.onBeforeLaunchApp.bind(this);
     this.onLaunchApp = this.onLaunchApp.bind(this);
-    this._executeIdleCallback = this._executeIdleCallback.bind(this);
-
     this.onTerminate = _.once(this.onTerminate.bind(this));
+    this._executeIdleCallback = this._executeIdleCallback.bind(this);
 
     this._idlePromise = Promise.resolve();
     this._onIdleCallbacks = [];
     this._activeArtifacts = [];
     this._artifactPluginsFactories = [];
     this._artifactPlugins = [];
+    this._pathBuilder = pathBuilder || new ArtifactPathBuilder({
+      artifactsRootDir: argparse.getArgValue('artifacts-location') || 'artifacts',
+    });
 
     this._deviceId = '';
     this._bundleId = '';
     this._pid = NaN;
-
-    const pathBuilder = new ArtifactPathBuilder({
-      artifactsRootDir: argparse.getArgValue('artifacts-location') || 'artifacts',
-    });
 
     this.artifactsApi = {
       getDeviceId: () => {
@@ -54,9 +51,9 @@ class ArtifactsManager {
       },
 
       getPid: () => {
-        if (!this._pid) {
+        if (isNaN(this._pid)) {
           throw new DetoxRuntimeError({
-            message: 'Detox Artifacts API had no app pid at the time of calling',
+            message: 'Detox Artifacts API had no app PID at the time of calling',
           });
         }
 
@@ -64,7 +61,7 @@ class ArtifactsManager {
       },
 
       preparePathForArtifact: async (artifactName, testSummary) => {
-        const artifactPath = pathBuilder.buildPathForTestArtifact(artifactName, testSummary);
+        const artifactPath = this._pathBuilder.buildPathForTestArtifact(artifactName, testSummary);
         const artifactDir = path.dirname(artifactPath);
         await fs.ensureDir(artifactDir);
 
@@ -75,7 +72,7 @@ class ArtifactsManager {
         this._activeArtifacts.push(artifact);
       },
 
-      untrackArtifact(artifact) {
+      untrackArtifact: (artifact) => {
         _.pull(this._activeArtifacts, artifact);
       },
 
@@ -123,14 +120,26 @@ class ArtifactsManager {
     this._deviceId = deviceId;
     this._bundleId = bundleId;
 
-    if (isFirstTime) {
-      this._artifactPlugins = this._artifactPluginsFactories.map((factory) => {
-        return factory(this.artifactsApi);
-      });
-    } else {
-      // TODO: implement this lifecycle event
-      // await this._emit('onBeforeRelaunchApp', [{ deviceId, bundleId }]);
-    }
+    return isFirstTime
+      ? this._onBeforeLaunchAppFirstTime()
+      : this._onBeforeRelaunchApp({ deviceId, bundleId });
+  }
+
+  async _onBeforeLaunchAppFirstTime() {
+    this._artifactPlugins = this._instantiateArtifactPlugins();
+  }
+
+  _instantiateArtifactPlugins() {
+    return this._artifactPluginsFactories.map((factory) => {
+      return factory(this.artifactsApi);
+    });
+  }
+
+  async _onBeforeRelaunchApp() {
+    await this._emit('onBeforeRelaunchApp', [{
+      deviceId: this._deviceId,
+      bundleId: this._bundleId,
+    }]);
   }
 
   async onLaunchApp({ deviceId, bundleId, pid }) {
