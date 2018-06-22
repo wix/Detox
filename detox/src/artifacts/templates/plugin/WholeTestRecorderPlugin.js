@@ -38,6 +38,8 @@ class WholeTestRecorderPlugin extends ArtifactPlugin {
     }
   }
 
+  // TODO: check maybe some method is practically empty and redundant
+  // TODO: or createTestRecording, or createTestArtifact ???
   createTestArtifact() {
     return this.createTestRecording();
   }
