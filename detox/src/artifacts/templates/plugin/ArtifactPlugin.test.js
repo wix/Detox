@@ -139,13 +139,6 @@ describe(ArtifactPlugin, () => {
     });
   });
 
-  describe('.createTestArtifact()', () => {
-    it('should exist as a virtual method', () => {
-      expect(typeof plugin.createTestArtifact).toBe('function');
-      expect(plugin.createTestArtifact()).toBe(void 0);
-    });
-  });
-
   describe('.shouldKeepArtifactOfTest', () => {
     it('should by default have a setting to keep all', () => {
       expect(plugin.keepOnlyFailedTestsArtifacts).toBe(false);

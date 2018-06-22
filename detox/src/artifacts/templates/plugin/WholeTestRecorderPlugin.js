@@ -14,7 +14,7 @@ class WholeTestRecorderPlugin extends ArtifactPlugin {
     await super.onBeforeEach(testSummary);
 
     if (this.enabled) {
-      const recording = this.createTestArtifact(testSummary);
+      const recording = this.createTestRecording(testSummary);
       await recording.start();
 
       this.api.trackArtifact(recording);
@@ -36,12 +36,6 @@ class WholeTestRecorderPlugin extends ArtifactPlugin {
 
       this.testRecording = null;
     }
-  }
-
-  // TODO: check maybe some method is practically empty and redundant
-  // TODO: or createTestRecording, or createTestArtifact ???
-  createTestArtifact() {
-    return this.createTestRecording();
   }
 
   /***

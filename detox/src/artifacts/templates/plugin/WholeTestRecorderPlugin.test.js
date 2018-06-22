@@ -8,7 +8,7 @@ class FakeWholeTestRecorderPlugin extends WholeTestRecorderPlugin {
     super(...args);
 
     this.enabled = true;
-    this.createTestArtifact = jest.fn(this.createTestArtifact.bind(this));
+    this.createTestRecording = jest.fn(this.createTestRecording.bind(this));
     this.createdArtifacts = [];
   }
 
@@ -17,13 +17,12 @@ class FakeWholeTestRecorderPlugin extends WholeTestRecorderPlugin {
   }
 
   preparePathForTestArtifact(testSummary) {
-    super.preparePathForSnapshot(testSummary);
-    return `${testSummary.title}/fakeArtifact`;
+    super.preparePathForTestArtifact(testSummary);
+    return `/tmp/${testSummary.title}/fakeArtifact`;
   }
 
-  createTestArtifact() {
-    super.createTestArtifact();
-
+  createTestRecording() {
+    super.createTestRecording();
     const artifact = {
       start: jest.fn(),
       stop: jest.fn(),
@@ -51,15 +50,15 @@ describe('WholeTestRecorderPlugin', () => {
     describe('onBeforeEach', () => {
       beforeEach(async () => plugin.onBeforeEach(testSummaries.running()));
 
-      it('should not create artifact onBeforeEach', async () =>
-        expect(plugin.createTestArtifact).not.toHaveBeenCalled());
+      it('should not create recording onBeforeEach', async () =>
+        expect(plugin.createTestRecording).not.toHaveBeenCalled());
     });
 
     describe('onAfterEach', () => {
       beforeEach(async () => plugin.onAfterEach(testSummaries.passed()));
 
-      it('should not do create artifacts', async () =>
-        expect(plugin.createTestArtifact).not.toHaveBeenCalled());
+      it('should not create recording', async () =>
+        expect(plugin.createTestRecording).not.toHaveBeenCalled());
 
       it('should not do request idle callbacks', async () =>
         expect(api.requestIdleCallback).not.toHaveBeenCalled());
@@ -70,7 +69,7 @@ describe('WholeTestRecorderPlugin', () => {
     beforeEach(async () => plugin.onBeforeEach(testSummaries.running()));
 
     it('should create artifact', async () => {
-      expect(plugin.createTestArtifact).toHaveBeenCalled();
+      expect(plugin.createTestRecording).toHaveBeenCalled();
     });
 
     it('should start recording artifact', async () => {
@@ -99,7 +98,22 @@ describe('WholeTestRecorderPlugin', () => {
         expect(plugin.createdArtifacts[0].stop).toHaveBeenCalled();
       });
 
-      // TODO: add test about idle callback
+      it('should schedule a save operation and specify itself as an initiator', () => {
+        expect(api.requestIdleCallback).toHaveBeenCalledTimes(1);
+        expect(api.requestIdleCallback.mock.calls[0]).toEqual([expect.any(Function), plugin]);
+      });
+
+      it('should ultimately save the artifact and untrack it', async () => {
+        const [saveRequest] = api.requestIdleCallback.mock.calls[0];
+
+        expect(plugin.createdArtifacts[0].save).not.toHaveBeenCalled();
+        expect(api.untrackArtifact).not.toHaveBeenCalled();
+
+        await saveRequest();
+
+        expect(plugin.createdArtifacts[0].save).toBeCalledWith('/tmp/test/fakeArtifact');
+        expect(api.untrackArtifact).toBeCalledWith(plugin.createdArtifacts[0]);
+      })
     });
   });
 
@@ -116,7 +130,22 @@ describe('WholeTestRecorderPlugin', () => {
         expect(plugin.createdArtifacts[0].stop).toHaveBeenCalled();
       });
 
-      // TODO: add test about idle callback
+      it('should schedule a discard operation and specify itself as an initiator', () => {
+        expect(api.requestIdleCallback).toHaveBeenCalledTimes(1);
+        expect(api.requestIdleCallback.mock.calls[0]).toEqual([expect.any(Function), plugin]);
+      });
+
+      it('should ultimately discard the artifact and untrack it', async () => {
+        const [discardRequest] = api.requestIdleCallback.mock.calls[0];
+
+        expect(plugin.createdArtifacts[0].discard).not.toHaveBeenCalled();
+        expect(api.untrackArtifact).not.toHaveBeenCalled();
+
+        await discardRequest();
+
+        expect(plugin.createdArtifacts[0].discard).toBeCalled();
+        expect(api.untrackArtifact).toBeCalledWith(plugin.createdArtifacts[0]);
+      })
     });
   });
 });

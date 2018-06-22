@@ -137,15 +137,6 @@ class ArtifactPlugin {
     this.onAfterAll = _.noop;
   }
 
-  /***
-   * Creates a handle for a test artifact (video recording, log, etc.)
-   *
-   * @abstract
-   * @protected
-   * @return {Artifact} - an object with synchronous .discard() and .save(path) methods
-   */
-  createTestArtifact() {}
-
   _logDisableWarning() {
     if (!this.enabled && this._disableReason) {
       log.warn('detox-artifacts', 'WARNING! Artifact plugin %s was disabled because %s', this.constructor.name, this._disableReason);

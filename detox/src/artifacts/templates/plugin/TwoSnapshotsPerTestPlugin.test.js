@@ -144,7 +144,7 @@ describe('TwoSnapshotsPerTestPlugin', () => {
         expect(api.untrackArtifact).toBeCalledWith(plugin.createdArtifacts[0]);
       });
 
-      it('should schedule to save and untrack the second artifact', async () => {
+      it('should ultimately save and untrack the second artifact', async () => {
         const [saveRequest] = api.requestIdleCallback.mock.calls[1];
 
         expect(plugin.createdArtifacts[1].save).not.toHaveBeenCalled();
@@ -176,7 +176,7 @@ describe('TwoSnapshotsPerTestPlugin', () => {
         expect(api.requestIdleCallback.mock.calls[0]).toEqual([expect.any(Function), plugin]);
       });
 
-      it('should schedule to discard and untrack the first artifact', async () => {
+      it('should ultimately discard and untrack the first artifact', async () => {
         const [discardRequest] = api.requestIdleCallback.mock.calls[0];
 
         expect(plugin.createdArtifacts[0].discard).not.toHaveBeenCalled();
