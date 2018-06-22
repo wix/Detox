@@ -68,7 +68,6 @@
       "src/artifacts/screenshot",
       "src/artifacts/video",
       "src/artifacts/templates/plugin/StartupAndTestRecorderPlugin.js",
-      "src/artifacts/templates/plugin/TwoSnapshotsPerTestPlugin.js",
       "src/artifacts/templates/plugin/WholeTestRecorderPlugin.js",
       "src/artifacts/ArtifactsManager.js",
       ".*Driver.js",

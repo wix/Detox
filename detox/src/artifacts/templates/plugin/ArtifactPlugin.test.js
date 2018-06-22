@@ -1,6 +1,7 @@
 jest.mock('npmlog');
 const npmlog = require('npmlog');
 const ArtifactPlugin = require('./ArtifactPlugin');
+const testSummaries = require('./__mocks__/testSummaries.mock');
 
 class TestArtifactPlugin extends ArtifactPlugin {}
 
@@ -85,12 +86,10 @@ describe(ArtifactPlugin, () => {
     it('should have .onBeforeAll', async () =>
       await expect(plugin.onBeforeAll()).resolves.toBe(void 0));
 
-    it('should have .onBeforeEach', async () =>
-      await expect(plugin.onBeforeEach({
-        title: 'test',
-        fullName: 'suite test',
-        status: 'running'
-      })).resolves.toBe(void 0));
+    it('should have .onBeforeEach', async () => {
+      const testSummary = testSummaries.running();
+      await expect(plugin.onBeforeEach(testSummary)).resolves.toBe(void 0);
+    });
 
     it('should have .onBeforeResetDevice', async () =>
       await expect(plugin.onBeforeResetDevice({
@@ -103,11 +102,7 @@ describe(ArtifactPlugin, () => {
       })).resolves.toBe(void 0));
 
     it('should have .onAfterEach', async () =>
-      await expect(plugin.onAfterEach({
-        title: 'test',
-        fullName: 'suite test',
-        status: 'failed'
-      })).resolves.toBe(void 0));
+      await expect(plugin.onAfterEach(testSummaries.failed())).resolves.toBe(void 0));
 
     it('should have .onAfterAll', async () =>
       await expect(plugin.onAfterAll()).resolves.toBe(void 0));
@@ -162,25 +157,13 @@ describe(ArtifactPlugin, () => {
       });
 
       it('should return true for testSummary.status === running', () =>
-        expect(plugin.shouldKeepArtifactOfTest({
-          title: 'test',
-          fullName: 'suite test',
-          status: 'running'
-        })).toBe(true));
+        expect(plugin.shouldKeepArtifactOfTest(testSummaries.running())).toBe(true));
 
       it('should return true for testSummary.status === passed', () =>
-        expect(plugin.shouldKeepArtifactOfTest({
-          title: 'test',
-          fullName: 'suite test',
-          status: 'passed'
-        })).toBe(true));
+        expect(plugin.shouldKeepArtifactOfTest(testSummaries.passed())).toBe(true));
 
       it('should return true for testSummary.status === failed', () =>
-        expect(plugin.shouldKeepArtifactOfTest({
-          title: 'test',
-          fullName: 'suite test',
-          status: 'failed'
-        })).toBe(true));
+        expect(plugin.shouldKeepArtifactOfTest(testSummaries.failed())).toBe(true));
     });
 
     describe('if should keep only failed test artifacts', () => {
@@ -189,25 +172,13 @@ describe(ArtifactPlugin, () => {
       });
 
       it('should return false for testSummary.status === running', () =>
-        expect(plugin.shouldKeepArtifactOfTest({
-          title: 'test',
-          fullName: 'suite test',
-          status: 'running'
-        })).toBe(false));
+        expect(plugin.shouldKeepArtifactOfTest(testSummaries.running())).toBe(false));
 
       it('should return false for testSummary.status === passed', () =>
-        expect(plugin.shouldKeepArtifactOfTest({
-          title: 'test',
-          fullName: 'suite test',
-          status: 'passed'
-        })).toBe(false));
+        expect(plugin.shouldKeepArtifactOfTest(testSummaries.passed())).toBe(false));
 
       it('should return true for testSummary.status === failed', () =>
-        expect(plugin.shouldKeepArtifactOfTest({
-          title: 'test',
-          fullName: 'suite test',
-          status: 'failed'
-        })).toBe(true));
+        expect(plugin.shouldKeepArtifactOfTest(testSummaries.failed())).toBe(true));
     });
   });
 });

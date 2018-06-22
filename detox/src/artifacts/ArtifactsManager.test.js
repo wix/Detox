@@ -1,5 +1,6 @@
 const path = require('path');
 const sleep = require('../utils/sleep');
+const testSummaries = require('./templates/plugin/__mocks__/testSummaries.mock');
 
 describe('ArtifactsManager', () => {
   let proxy;
@@ -287,11 +288,7 @@ describe('ArtifactsManager', () => {
 
       describe('onBeforeEach', () => {
         it('should call onBeforeEach in plugins with the passed argument', async () => {
-          const testSummary = {
-            title: 'test',
-            fullName: 'Suite test',
-            status: 'running',
-          };
+          const testSummary = testSummaries.running();
 
           expect(testPlugin.onBeforeEach).not.toHaveBeenCalled();
           await artifactsManager.onBeforeEach(testSummary);
@@ -301,11 +298,7 @@ describe('ArtifactsManager', () => {
 
       describe('onAfterEach', () => {
         it('should call onAfterEach in plugins with the passed argument', async () => {
-          const testSummary = {
-            title: 'test',
-            fullName: 'Suite test',
-            status: 'passed',
-          };
+          const testSummary = testSummaries.passed();
 
           expect(testPlugin.onAfterEach).not.toHaveBeenCalled();
           await artifactsManager.onAfterEach(testSummary);
