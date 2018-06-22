@@ -23,6 +23,7 @@ class FakeWholeTestRecorderPlugin extends WholeTestRecorderPlugin {
 
   createTestRecording() {
     super.createTestRecording();
+
     const artifact = {
       start: jest.fn(),
       stop: jest.fn(),

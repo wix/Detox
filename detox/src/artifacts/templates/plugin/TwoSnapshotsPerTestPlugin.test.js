@@ -21,6 +21,8 @@ class FakeTwoSnapshotsPerTestPlugin extends TwoSnapshotsPerTestPlugin {
   }
 
   createTestArtifact() {
+    super.createTestArtifact();
+
     const artifact = {
       start: jest.fn(),
       stop: jest.fn(),
