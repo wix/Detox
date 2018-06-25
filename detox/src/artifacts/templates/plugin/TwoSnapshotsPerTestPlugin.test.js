@@ -3,38 +3,6 @@ const TwoSnapshotsPerTestPlugin = require('./TwoSnapshotsPerTestPlugin');
 const ArtifactsApi = require('./__mocks__/ArtifactsApi.mock');
 const testSummaries = require('./__mocks__/testSummaries.mock');
 
-class FakeTwoSnapshotsPerTestPlugin extends TwoSnapshotsPerTestPlugin {
-  constructor(...args) {
-    super(...args);
-    this.enabled = true;
-    this.createTestArtifact = jest.fn(this.createTestArtifact.bind(this));
-    this.createdArtifacts = [];
-  }
-
-  configureToKeepArtifacts(shouldKeep) {
-    this.shouldKeepArtifactOfTest = () => shouldKeep;
-  }
-
-  preparePathForSnapshot(testSummary, index) {
-    super.preparePathForSnapshot(testSummary, index);
-    return `${testSummary.title}/${index}.png`;
-  }
-
-  createTestArtifact() {
-    super.createTestArtifact();
-
-    const artifact = {
-      start: jest.fn(),
-      stop: jest.fn(),
-      save: jest.fn(),
-      discard: jest.fn(),
-    };
-
-    this.createdArtifacts.push(artifact);
-    return artifact;
-  }
-}
-
 describe('TwoSnapshotsPerTestPlugin', () => {
   let api;
   let plugin;
@@ -192,3 +160,35 @@ describe('TwoSnapshotsPerTestPlugin', () => {
     });
   });
 });
+
+class FakeTwoSnapshotsPerTestPlugin extends TwoSnapshotsPerTestPlugin {
+  constructor(...args) {
+    super(...args);
+    this.enabled = true;
+    this.createTestArtifact = jest.fn(this.createTestArtifact.bind(this));
+    this.createdArtifacts = [];
+  }
+
+  configureToKeepArtifacts(shouldKeep) {
+    this.shouldKeepArtifactOfTest = () => shouldKeep;
+  }
+
+  preparePathForSnapshot(testSummary, index) {
+    super.preparePathForSnapshot(testSummary, index);
+    return `${testSummary.title}/${index}.png`;
+  }
+
+  createTestArtifact() {
+    super.createTestArtifact();
+
+    const artifact = {
+      start: jest.fn(),
+      stop: jest.fn(),
+      save: jest.fn(),
+      discard: jest.fn(),
+    };
+
+    this.createdArtifacts.push(artifact);
+    return artifact;
+  }
+}

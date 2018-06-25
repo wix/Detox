@@ -3,39 +3,6 @@ const WholeTestRecorderPlugin = require('./WholeTestRecorderPlugin');
 const ArtifactsApi = require('./__mocks__/ArtifactsApi.mock');
 const testSummaries = require('./__mocks__/testSummaries.mock');
 
-class FakeWholeTestRecorderPlugin extends WholeTestRecorderPlugin {
-  constructor(...args) {
-    super(...args);
-
-    this.enabled = true;
-    this.createTestRecording = jest.fn(this.createTestRecording.bind(this));
-    this.createdArtifacts = [];
-  }
-
-  configureToKeepArtifacts(shouldKeep) {
-    this.shouldKeepArtifactOfTest = () => shouldKeep;
-  }
-
-  preparePathForTestArtifact(testSummary) {
-    super.preparePathForTestArtifact(testSummary);
-    return `/tmp/${testSummary.title}/fakeArtifact`;
-  }
-
-  createTestRecording() {
-    super.createTestRecording();
-
-    const artifact = {
-      start: jest.fn(),
-      stop: jest.fn(),
-      save: jest.fn(),
-      discard: jest.fn(),
-    };
-
-    this.createdArtifacts.push(artifact);
-    return artifact;
-  }
-}
-
 describe('WholeTestRecorderPlugin', () => {
   let api;
   let plugin;
@@ -150,3 +117,36 @@ describe('WholeTestRecorderPlugin', () => {
     });
   });
 });
+
+class FakeWholeTestRecorderPlugin extends WholeTestRecorderPlugin {
+  constructor(...args) {
+    super(...args);
+
+    this.enabled = true;
+    this.createTestRecording = jest.fn(this.createTestRecording.bind(this));
+    this.createdArtifacts = [];
+  }
+
+  configureToKeepArtifacts(shouldKeep) {
+    this.shouldKeepArtifactOfTest = () => shouldKeep;
+  }
+
+  preparePathForTestArtifact(testSummary) {
+    super.preparePathForTestArtifact(testSummary);
+    return `/tmp/${testSummary.title}/fakeArtifact`;
+  }
+
+  createTestRecording() {
+    super.createTestRecording();
+
+    const artifact = {
+      start: jest.fn(),
+      stop: jest.fn(),
+      save: jest.fn(),
+      discard: jest.fn(),
+    };
+
+    this.createdArtifacts.push(artifact);
+    return artifact;
+  }
+}

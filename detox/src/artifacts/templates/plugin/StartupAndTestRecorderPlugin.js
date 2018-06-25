@@ -83,7 +83,7 @@ class StartupAndTestRecorderPlugin extends WholeTestRecorderPlugin {
     return true;
   }
 
-  _tryToFinalizeStartupRecording(isExiting = false) {
+  _tryToFinalizeStartupRecording(isExiting) {
     if (this._shouldKeepStartupRecording()) {
       this._startSavingStartupRecording(this.startupRecording);
       this.startupRecording = null;
