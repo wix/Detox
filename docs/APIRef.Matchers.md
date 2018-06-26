@@ -17,7 +17,6 @@ Matchers find elements in your app that match one or more properties.
 - [`by.label()`](#bylabellabel)
 - [`by.type()`](#bytypenativeviewtype)
 - [`by.traits()`](#bytraitstraits)
-
 - [Advanced](#advanced)
 
 
@@ -55,39 +54,54 @@ await element(by.label('Welcome'));
 ```
 
 #### `by.type(nativeViewType)`
-Find an element by native view type.
+Find an element by native view type. **View types differ between iOS and Android.**
+
+on iOS:
 
 ```js
 await element(by.type('RCTImageView'));
 ```
+
+on Android, provide the class canonical name:
+
+```js
+await element(by.type('android.widget.ImageView'));
+```
+
 #### `by.traits([traits])`
-Find an element with an accessibility trait. (iOS only)
+Find an element with an [accessibility trait](https://developer.apple.com/documentation/uikit/accessibility/uiaccessibility/accessibility_traits). (iOS only)
 
 ```js
 await element(by.traits(['button']));
 ```
 
 #### Advanced
-##### By id and by parent id
+##### Multiple matchers
 
 ```js
-await element(by.id('Grandson883').withAncestor(by.id('Son883')));
+await element(by.id('uniqueId').and(by.text('some text')));
+```
+
+##### Match by id and by parent id
+
+```js
+await element(by.id('child').withAncestor(by.id('parent')));
 
 ```
-##### By id and by child id
+##### Match by id and by child id
 
 ```js
-await element(by.id('Son883').withDescendant(by.id('Grandson883')));
+await element(by.id('parent').withDescendant(by.id('child')));
 ```
 
 ###### Example
-- To find the view with the id `Son883`  
+- To find the view with the id `child`  
 
 	```jsx 
-	<View testID='Grandfather883' style={{padding: 8, backgroundColor: 'red', marginBottom: 10}}>
-	  <View testID='Father883' style={{padding: 8, backgroundColor: 'green'}}>
-	    <View testID='Son883' style={{padding: 8, backgroundColor: 'blue'}}>
-	      <View testID='Grandson883' style={{padding: 8, backgroundColor: 'purple'}} />
+	<View testID='grandparent' style={{padding: 8, backgroundColor: 'red', marginBottom: 10}}>
+	  <View testID='parent' style={{padding: 8, backgroundColor: 'green'}}>
+	    <View testID='child' style={{padding: 8, backgroundColor: 'blue'}}>
+	      <View testID='grandchild' style={{padding: 8, backgroundColor: 'purple'}} />
 	    </View>
 	  </View>
 	</View>
@@ -97,27 +111,61 @@ await element(by.id('Son883').withDescendant(by.id('Grandson883')));
 	
 	```js
 	// any of the following will work
-	await element(by.id('Son883'))
-	await element(by.id('Son883').withAncestor(by.id('Father883')))
-	await element(by.id('Son883').withDescendant(by.id('Grandson883')))
+	await element(by.id('child'));
+	await element(by.id('child').withAncestor(by.id('parent')));
+	await element(by.id('child').withDescendant(by.id('grandchild')));
 	```
+
+#### Dealing with multiple elements matching the same matcher
+When a matcher matches multiple views, there are three possible solutions:
+
+1. Use multiple matchers to narrow down the matched results.
+2. Add unique identifiers (testIDs) to the view which need to matched.<br>
+A common use-case, is adding identifiers to list items. testIDs for FlatList items can be assigned dynamically, by passing `index` in [`renderItem({item, index})`](https://facebook.github.io/react-native/docs/flatlist.html#renderitem) and using it in the component's render function.      
+
+	FlatList `renderItem` function:
 	
+	```jsx
+	renderItem({item, index}) {
+	  return (
+	       <CustomComponent
+	         index={index}
+	         ...
+	       />
+	  );
+	}
+	```
+	`CustomComponent`'s `render` function:
 
-##### Multiple matchers
+	```jsx
+	render() {
+	  return (
+	    <View>
+	      testID={'listitem' + this.props.index}
+	      ...
+	    </View>
+	  );
+	}
+	```
+3. Select a matched view from the matched view list using `atIndex`
+
+	```js
+	await element(by.text('Product')).atIndex(2);
+	```
+**Usage of `atIndex` is not recommended!**, since the order of matched views can not be guaranteed by the system. Recyclable views in [UITableView](https://developer.apple.com/documentation/uikit/uitableview) / [UICollectionView](https://developer.apple.com/documentation/uikit/uicollectionview) / [RecyclerView](https://developer.android.com/guide/topics/ui/layout/recyclerview) or any custom view may even change during scroll, while views are being recycled with new data. 
+	React Native FlatList items are being traveresed in different ways on the different platforms, causing `atIndex` to return the **opposite indexes on iOS than what it does on Android.**
+
+
+##### TIP: Finding the back button on iOS 
+
+on iOS 11:
 
 ```js
-await element(by.id('UniqueId345').and(by.text('some text')));
+await element(by.traits(['button']).and(by.label('Back')));
 ```
-##### Choose from multiple elements matching the same matcher using index
 
-The first valid index is 0.
-
-```js
-await element(by.text('Product')).atIndex(2);
-```
-
-**Tip**: To find the back button on iOS use: 
+on iOS 10:
 
 ```js
- await element(by.traits(['button']).and(by.label('Back')));
+await element(by.type('_UIModernBarButton').and(by.label('Back')));
 ```
