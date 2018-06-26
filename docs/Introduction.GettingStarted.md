@@ -85,6 +85,8 @@ Now run the following command:
 npm install detox --save-dev
 ```
 
+> TIP: Remember to add the "node_modules" folder to your git ignore.
+
 #### 2. Install test runner
 
 You can use any JavaScript test runner. At the moment, only two are documented:
