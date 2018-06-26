@@ -76,6 +76,6 @@ A good practice for testing in general is to have decoupled tests, meaning that 
 
 ```js
   beforeEach(async () => {
-    await device.relaunchApp();
+    await device.launchApp({newInstance: true});
   });
 ```
