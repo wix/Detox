@@ -13,6 +13,7 @@ import AnimationsScreen from './AnimationsScreen';
 import LocationScreen from './LocationScreen';
 import ShakeScreen from './ShakeScreen';
 import DatePickerScreen from './DatePickerScreen'
+import PickerScreen from './PickerScreen'
 
 export {
   SanityScreen,
@@ -29,5 +30,6 @@ export {
   AnimationsScreen,
   LocationScreen,
   ShakeScreen,
-  DatePickerScreen
+  DatePickerScreen,
+  PickerScreen,
 };
