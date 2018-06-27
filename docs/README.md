@@ -27,6 +27,7 @@ sidebar_label: Overview
 - [Mocking Deep Links (App Launch From URL)](APIRef.MockingOpenFromURL.md)
 - [Mocking User Notifications](APIRef.MockingUserNotifications.md)
 - [Detox Command Line Tools (detox-cli)](APIRef.DetoxCLI.md)
+- [Test Artifacts](APIRef.Artifacts.md)
 
 ## Troubleshooting
 
