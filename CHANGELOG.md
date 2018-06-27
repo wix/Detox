@@ -1,5 +1,12 @@
 # Change Log
 
+## [](https://github.com/wix/detox/tree/) (2018-06-27)
+[Full Changelog](https://github.com/wix/detox/compare/8.0.0...)
+
+**Closed Issues**
+
+- element.typeText\(\) will fail test when hardware keyboard connected [\#768](https://github.com/wix/detox/issues/768)
+
 ## [8.0.0](https://github.com/wix/detox/tree/8.0.0) (2018-06-27)
 [Full Changelog](https://github.com/wix/detox/compare/v8.0.0-alpha.1...8.0.0)
 
@@ -7,21 +14,14 @@
 
 - Add detox definitions [\#99](https://github.com/wix/detox/issues/99)
 
-**Fixed Bugs**
-
-- The contributing guide is out of date [\#576](https://github.com/wix/detox/issues/576)
-
 **Closed Issues**
 
-- Fix atIndex order on IOS [\#792](https://github.com/wix/detox/issues/792)
-- Detox timed out after run test [\#790](https://github.com/wix/detox/issues/790)
-- detox verb instrumentationProcess terminated due to receipt of signal null  [\#764](https://github.com/wix/detox/issues/764)
 - Detox 7.3.3 crashes when using bundle url [\#673](https://github.com/wix/detox/issues/673)
 
 **Merged Pull Requests**
 
 - Stack traces for failures now include caller's test code [\#786](https://github.com/wix/detox/pull/786) ([mikelovesrobots](https://github.com/mikelovesrobots))
-- \[WIP\] \[new\] Screenshots and screen recordings of tests  [\#734](https://github.com/wix/detox/pull/734) ([noomorph](https://github.com/noomorph))
+- Screenshots, logs and video recordings of tests  [\#734](https://github.com/wix/detox/pull/734) ([noomorph](https://github.com/noomorph))
 - Usage with Expo instructions [\#630](https://github.com/wix/detox/pull/630) ([peterpme](https://github.com/peterpme))
 
 ## [v8.0.0-alpha.1](https://github.com/wix/detox/tree/v8.0.0-alpha.1) (2018-06-18)
