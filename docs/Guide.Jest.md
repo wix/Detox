@@ -5,7 +5,7 @@ title: Jest
 
 ## Usage
 
-### 0. Use the [Getting Started](Introduction.GettingStarted.md) Guide to set up detox
+### 0. Use the [Getting Started](Introduction.GettingStarted.md) Guide to set up Detox
 
 ### 1. Install Jest
 
@@ -37,7 +37,7 @@ detox init -r jest
 
 There are some things you should notice:
 
-- Don't worry about mocks being used, detox works on the compiled version of your app.
+- Don't worry about mocks being used, Detox works on the compiled version of your app.
 - Detox exposes it's primitives (`expect`, `device`, ...) globally, it will override Jest's global `expect` object.
 
 ## How to run unit test and E2E tests in the same project

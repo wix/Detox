@@ -87,17 +87,18 @@ npm install detox --save-dev
 
 > TIP: Remember to add the "node_modules" folder to your git ignore.
 
-#### 2. Install test runner
+#### 2. Install a test runner
 
-You can use any JavaScript test runner. At the moment, only two are documented:
+You can use any JavaScript test runner. Detox CLI supports Jest and Mocha out of the box.
 
-- [Jest](Guide.Jest.md)
+- [Jest](http://jestjs.io/)
 
 ```sh
 npm install jest --save-dev
 ```
+Read the [Jest integration guide](Guide.Jest.md) for more details and gotchas.
 
-- [Mocha](https://mochajs.org/) is a good one we recommend:
+- [Mocha](https://mochajs.org/)
 
 ```sh
 npm install mocha --save-dev
