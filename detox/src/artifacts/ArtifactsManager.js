@@ -77,7 +77,10 @@ class ArtifactsManager {
       },
 
       requestIdleCallback: (callback, caller) => {
-        callback._from = caller.name;
+        if (caller) {
+          callback._from = caller.name;
+        }
+
         this._onIdleCallbacks.push(callback);
 
         this._idlePromise = this._idlePromise.then(() => {
@@ -186,7 +189,7 @@ class ArtifactsManager {
     }
 
     log.info('ArtifactsManager', 'finalizing all artifacts, this can take some time');
-    await Promise.all(this._artifactPlugins.map(plugin => plugin.onTerminate()));
+    await this._emit('onTerminate', []);
     await Promise.all(this._onIdleCallbacks.splice(0).map(this._executeIdleCallback));
     await this._idlePromise;
 

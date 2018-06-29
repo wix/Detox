@@ -250,7 +250,17 @@ describe('ArtifactsManager', () => {
 
       it('should catch errors, report them if callback fails, and move on ', async () => {
         artifactsApi.requestIdleCallback(callbacks[0], testPlugin); await sleep(0);
-        await rejects[0](new Error());
+        await rejects[0](new Error('test onIdleCallback error'));
+
+        expect(proxy.npmlog.error.mock.calls).toMatchSnapshot();
+
+        artifactsApi.requestIdleCallback(callbacks[1], testPlugin); await sleep(0);
+        expect(callbacks[1]).toHaveBeenCalled();
+      });
+
+      it('should gracefully handle a case when plugin object is not passed and use "unknown" as a name placeholder', async () => {
+        artifactsApi.requestIdleCallback(callbacks[0]); await sleep(0);
+        await rejects[0](new Error('test onIdleCallback error'));
 
         expect(proxy.npmlog.error.mock.calls).toMatchSnapshot();
 
@@ -278,6 +288,51 @@ describe('ArtifactsManager', () => {
     });
 
     describe('hooks', () => {
+      describe('error handling', () => {
+        function itShouldCatchErrorsOnPhase(eventNames, argFactory) {
+          const managerMethod = Array.isArray(eventNames) ? eventNames[0] : eventNames;
+          const pluginHook = Array.isArray(eventNames) ? eventNames[1] : eventNames;
+
+          it(`should catch .${pluginHook} errors`, async () => {
+            testPlugin[pluginHook].mockImplementation(() => {
+              throw new Error(`test ${pluginHook} error`);
+            });
+
+            await artifactsManager[managerMethod](argFactory());
+            expect(proxy.npmlog.error.mock.calls).toMatchSnapshot();
+          });
+        }
+
+        itShouldCatchErrorsOnPhase('onBeforeAll', () => undefined);
+
+        itShouldCatchErrorsOnPhase('onBeforeEach', () => testSummaries.running());
+
+        itShouldCatchErrorsOnPhase('onAfterEach', () => testSummaries.passed());
+
+        itShouldCatchErrorsOnPhase('onAfterAll', () => undefined);
+
+        itShouldCatchErrorsOnPhase('onTerminate', () => undefined);
+
+        itShouldCatchErrorsOnPhase('onBeforeResetDevice', () => ({
+          deviceId: 'testDeviceId'
+        }));
+
+        itShouldCatchErrorsOnPhase('onResetDevice', () => ({
+          deviceId: 'testDeviceId'
+        }));
+
+        itShouldCatchErrorsOnPhase(['onBeforeLaunchApp', 'onBeforeRelaunchApp'], () => ({
+          bundleId: 'testBundleId',
+          deviceId: 'testDeviceId',
+        }));
+
+        itShouldCatchErrorsOnPhase(['onLaunchApp', 'onRelaunchApp'], () => ({
+          bundleId: 'testBundleId',
+          deviceId: 'testDeviceId',
+          pid: 2018,
+        }));
+      });
+
       describe('onBeforeAll', () => {
         it('should call onBeforeAll in plugins', async () => {
           expect(testPlugin.onBeforeAll).not.toHaveBeenCalled();
