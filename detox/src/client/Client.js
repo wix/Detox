@@ -67,11 +67,17 @@ class Client {
     if (this.slowInvocationTimeout) {
       this.slowInvocationStatusHandler = this.slowInvocationStatus();
     }
+
+    // when this test run fails, we want a stack trace from up here where the
+    // $callee is still available, and not inside the catch block where it isn't
+    const potentialError = new Error()
+
     try {
       await this.sendAction(new actions.Invoke(invocation));
     } catch (err) {
       this.successfulTestRun = false;
-      throw new Error(err);
+      potentialError.message = err
+      throw potentialError;
     }
     clearTimeout(this.slowInvocationStatusHandler);
   }

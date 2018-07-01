@@ -1,5 +1,35 @@
 # Change Log
 
+## [](https://github.com/wix/detox/tree/) (2018-06-27)
+[Full Changelog](https://github.com/wix/detox/compare/8.0.0...)
+
+**Closed Issues**
+
+- element.typeText\(\) will fail test when hardware keyboard connected [\#768](https://github.com/wix/detox/issues/768)
+
+## [8.0.0](https://github.com/wix/detox/tree/8.0.0) (2018-06-27)
+[Full Changelog](https://github.com/wix/detox/compare/v8.0.0-alpha.1...8.0.0)
+
+**Enhancements**
+
+- Add detox definitions [\#99](https://github.com/wix/detox/issues/99)
+
+**Closed Issues**
+
+- Detox 7.3.3 crashes when using bundle url [\#673](https://github.com/wix/detox/issues/673)
+
+**Merged Pull Requests**
+
+- Stack traces for failures now include caller's test code [\#786](https://github.com/wix/detox/pull/786) ([mikelovesrobots](https://github.com/mikelovesrobots))
+- Screenshots, logs and video recordings of tests  [\#734](https://github.com/wix/detox/pull/734) ([noomorph](https://github.com/noomorph))
+- Usage with Expo instructions [\#630](https://github.com/wix/detox/pull/630) ([peterpme](https://github.com/peterpme))
+
+## [v8.0.0-alpha.1](https://github.com/wix/detox/tree/v8.0.0-alpha.1) (2018-06-18)
+[Full Changelog](https://github.com/wix/detox/compare/v8.0.0-alpha.0...v8.0.0-alpha.1)
+
+## [v8.0.0-alpha.0](https://github.com/wix/detox/tree/v8.0.0-alpha.0) (2018-06-14)
+[Full Changelog](https://github.com/wix/detox/compare/7.4.3...v8.0.0-alpha.0)
+
 ## [7.4.3](https://github.com/wix/detox/tree/7.4.3) (2018-06-14)
 [Full Changelog](https://github.com/wix/detox/compare/7.4.2...7.4.3)
 
@@ -550,13 +580,13 @@
 - Add support for tapAtPoint action [\#189](https://github.com/wix/detox/pull/189) ([blankg](https://github.com/blankg))
 
 ## [detox@5.4.0](https://github.com/wix/detox/tree/detox@5.4.0) (2017-07-11)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.3.1...detox@5.4.0)
-
-## [detox@5.3.1](https://github.com/wix/detox/tree/detox@5.3.1) (2017-07-10)
-[Full Changelog](https://github.com/wix/detox/compare/detox-server@2.0.4...detox@5.3.1)
+[Full Changelog](https://github.com/wix/detox/compare/detox-server@2.0.4...detox@5.4.0)
 
 ## [detox-server@2.0.4](https://github.com/wix/detox/tree/detox-server@2.0.4) (2017-07-10)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.3.0...detox-server@2.0.4)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.3.1...detox-server@2.0.4)
+
+## [detox@5.3.1](https://github.com/wix/detox/tree/detox@5.3.1) (2017-07-10)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.3.0...detox@5.3.1)
 
 **Enhancements**
 
@@ -614,20 +644,20 @@
 - Added optional percentage parameter to swipe action [\#162](https://github.com/wix/detox/pull/162) ([yedidyak](https://github.com/yedidyak))
 
 ## [detox@5.1.1](https://github.com/wix/detox/tree/detox@5.1.1) (2017-06-11)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.1.0...detox@5.1.1)
+[Full Changelog](https://github.com/wix/detox/compare/detox-cli@1.0.2...detox@5.1.1)
 
 **Merged Pull Requests**
 
 - fixed the crash on older react native versions where there’s no `\_nod… [\#160](https://github.com/wix/detox/pull/160) ([silyevsk](https://github.com/silyevsk))
 
-## [detox@5.1.0](https://github.com/wix/detox/tree/detox@5.1.0) (2017-06-07)
-[Full Changelog](https://github.com/wix/detox/compare/detox-cli@1.0.2...detox@5.1.0)
-
 ## [detox-cli@1.0.2](https://github.com/wix/detox/tree/detox-cli@1.0.2) (2017-06-07)
 [Full Changelog](https://github.com/wix/detox/compare/detox-server@2.0.3...detox-cli@1.0.2)
 
 ## [detox-server@2.0.3](https://github.com/wix/detox/tree/detox-server@2.0.3) (2017-06-07)
-[Full Changelog](https://github.com/wix/detox/compare/detox-server@2.0.2...detox-server@2.0.3)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.1.0...detox-server@2.0.3)
+
+## [detox@5.1.0](https://github.com/wix/detox/tree/detox@5.1.0) (2017-06-07)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.12...detox@5.1.0)
 
 **Enhancements**
 
@@ -648,23 +678,23 @@
 
 - Animations issue [\#150](https://github.com/wix/detox/pull/150) ([silyevsk](https://github.com/silyevsk))
 
-## [detox-server@2.0.2](https://github.com/wix/detox/tree/detox-server@2.0.2) (2017-05-29)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.12...detox-server@2.0.2)
-
 ## [detox@5.0.12](https://github.com/wix/detox/tree/detox@5.0.12) (2017-05-29)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.11...detox@5.0.12)
+[Full Changelog](https://github.com/wix/detox/compare/detox-server@2.0.2...detox@5.0.12)
 
-## [detox@5.0.11](https://github.com/wix/detox/tree/detox@5.0.11) (2017-05-29)
-[Full Changelog](https://github.com/wix/detox/compare/detox-server@2.0.1...detox@5.0.11)
+## [detox-server@2.0.2](https://github.com/wix/detox/tree/detox-server@2.0.2) (2017-05-29)
+[Full Changelog](https://github.com/wix/detox/compare/detox-server@2.0.1...detox-server@2.0.2)
 
 ## [detox-server@2.0.1](https://github.com/wix/detox/tree/detox-server@2.0.1) (2017-05-29)
-[Full Changelog](https://github.com/wix/detox/compare/detox-server@1.2.3...detox-server@2.0.1)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.11...detox-server@2.0.1)
 
-## [detox-server@1.2.3](https://github.com/wix/detox/tree/detox-server@1.2.3) (2017-05-28)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.10...detox-server@1.2.3)
+## [detox@5.0.11](https://github.com/wix/detox/tree/detox@5.0.11) (2017-05-29)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.10...detox@5.0.11)
 
 ## [detox@5.0.10](https://github.com/wix/detox/tree/detox@5.0.10) (2017-05-28)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.9...detox@5.0.10)
+[Full Changelog](https://github.com/wix/detox/compare/detox-server@1.2.3...detox@5.0.10)
+
+## [detox-server@1.2.3](https://github.com/wix/detox/tree/detox-server@1.2.3) (2017-05-28)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.9...detox-server@1.2.3)
 
 **Merged Pull Requests**
 
@@ -738,13 +768,13 @@
 [Full Changelog](https://github.com/wix/detox/compare/detox@5.0.1...detox@5.0.2)
 
 ## [detox@5.0.1](https://github.com/wix/detox/tree/detox@5.0.1) (2017-03-16)
-[Full Changelog](https://github.com/wix/detox/compare/detox-cli@1.0.1...detox@5.0.1)
-
-## [detox-cli@1.0.1](https://github.com/wix/detox/tree/detox-cli@1.0.1) (2017-03-16)
-[Full Changelog](https://github.com/wix/detox/compare/detox-server@1.2.1...detox-cli@1.0.1)
+[Full Changelog](https://github.com/wix/detox/compare/detox-server@1.2.1...detox@5.0.1)
 
 ## [detox-server@1.2.1](https://github.com/wix/detox/tree/detox-server@1.2.1) (2017-03-16)
-[Full Changelog](https://github.com/wix/detox/compare/detox@4.3.2...detox-server@1.2.1)
+[Full Changelog](https://github.com/wix/detox/compare/detox-cli@1.0.1...detox-server@1.2.1)
+
+## [detox-cli@1.0.1](https://github.com/wix/detox/tree/detox-cli@1.0.1) (2017-03-16)
+[Full Changelog](https://github.com/wix/detox/compare/detox@4.3.2...detox-cli@1.0.1)
 
 ## [detox@4.3.2](https://github.com/wix/detox/tree/detox@4.3.2) (2017-03-09)
 [Full Changelog](https://github.com/wix/detox/compare/detox@4.3.1...detox@4.3.2)
@@ -790,13 +820,13 @@
 [Full Changelog](https://github.com/wix/detox/compare/detox@4.1.2...detox@4.1.3)
 
 ## [detox@4.1.2](https://github.com/wix/detox/tree/detox@4.1.2) (2017-01-19)
-[Full Changelog](https://github.com/wix/detox/compare/detox@4.1.1...detox@4.1.2)
-
-## [detox@4.1.1](https://github.com/wix/detox/tree/detox@4.1.1) (2017-01-19)
-[Full Changelog](https://github.com/wix/detox/compare/detox-server@1.1.1...detox@4.1.1)
+[Full Changelog](https://github.com/wix/detox/compare/detox-server@1.1.1...detox@4.1.2)
 
 ## [detox-server@1.1.1](https://github.com/wix/detox/tree/detox-server@1.1.1) (2017-01-19)
-[Full Changelog](https://github.com/wix/detox/compare/v4.1.0...detox-server@1.1.1)
+[Full Changelog](https://github.com/wix/detox/compare/detox@4.1.1...detox-server@1.1.1)
+
+## [detox@4.1.1](https://github.com/wix/detox/tree/detox@4.1.1) (2017-01-19)
+[Full Changelog](https://github.com/wix/detox/compare/v4.1.0...detox@4.1.1)
 
 **Enhancements**
 

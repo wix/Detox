@@ -40,7 +40,7 @@ Node is the JavaScript runtime Detox will run on. **Install Node 8.3.0 or above*
 
 > TIP: Verify it works by typing in terminal `node -v` to output current node version, should be 8.3.0 or higher
 
-#### 3. Install [appleSimUtils](https://github.com/wix/AppleSimulatorUtils)
+#### 3. Install [applesimutils](https://github.com/wix/AppleSimulatorUtils)
 
 A collection of utils for Apple simulators, Detox uses it communicate with the simulator.
 
@@ -64,23 +64,41 @@ This package makes it easier to operate Detox from the command line. `detox-cli`
 
 #### 1. Install detox
 
-Go to the root folder of your React Native app (where `package.json` is found):
+If you have a React Native project, go to its root folder (where `package.json` is found) and type the following command.
 
 ```sh
 npm install detox --save-dev
 ```
 
-#### 2. Install test runner
+If you have a project without Node integration (such as a native project), add the following package.json file to the root folder of you project:
 
-You can use any JavaScript test runner. At the moment, only two are documented:
+```json
+{
+  "name": "<your_project_name>",
+  "version": "0.0.1"
+}
+```
 
-- [Jest](Guide.Jest.md)
+Now run the following command:
+
+```sh
+npm install detox --save-dev
+```
+
+> TIP: Remember to add the "node_modules" folder to your git ignore.
+
+#### 2. Install a test runner
+
+You can use any JavaScript test runner. Detox CLI supports Jest and Mocha out of the box.
+
+- [Jest](http://jestjs.io/)
 
 ```sh
 npm install jest --save-dev
 ```
+Read the [Jest integration guide](Guide.Jest.md) for more details and gotchas.
 
-- [Mocha](https://mochajs.org/) is a good one we recommend:
+- [Mocha](https://mochajs.org/)
 
 ```sh
 npm install mocha --save-dev

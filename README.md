@@ -77,7 +77,7 @@ We believe that the only way to address the core difficulties with mobile end-to
 
 ## Contributing to Detox
 
-Open source from the first commit. If you're interested in helping out with our roadmap, please see issues tagged marked with the [![ ](https://placehold.it/15/d93f0b/000000?text=+) looking for contributors](https://github.com/wix/detox/labels/user%3A%20looking%20for%20contributors) label. If you have encoutnered a bug or would like to suggest a new feature, please open an issue.
+Open source from the first commit. If you're interested in helping out with our roadmap, please see issues tagged marked with the [![ ](https://placehold.it/15/c4532d/000000?text=+) looking for contributors](https://github.com/wix/detox/labels/user%3A%20looking%20for%20contributors) label. If you have encoutnered a bug or would like to suggest a new feature, please open an issue.
 
 Dive into Detox core by reading the [Detox Contribution Guide](/docs/Guide.Contributing.md).
 

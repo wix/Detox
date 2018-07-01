@@ -27,6 +27,7 @@ sidebar_label: Overview
 - [Mocking Deep Links (App Launch From URL)](APIRef.MockingOpenFromURL.md)
 - [Mocking User Notifications](APIRef.MockingUserNotifications.md)
 - [Detox Command Line Tools (detox-cli)](APIRef.DetoxCLI.md)
+- [Test Artifacts](APIRef.Artifacts.md)
 
 ## Troubleshooting
 
@@ -44,6 +45,7 @@ sidebar_label: Overview
 - [Advanced Mocking With Detox](Guide.Mocking.md)
 - [Migration Between Detox Versions](Guide.Migration.md)
 - [Use Jest as Test Runner](Guide.Jest.md)
+- [Parallel Test Execution](Guide.ParallelTestExecution.md)
 
 ## Under The Hood
 

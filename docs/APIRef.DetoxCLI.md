@@ -32,7 +32,8 @@ detox [options] [command]
 
 | Options | Description |
 | --- | --- |
-| -h<br>--help | Output usage information |
+| -h, --help | Output usage information |
+
 
 ## Commands
 
