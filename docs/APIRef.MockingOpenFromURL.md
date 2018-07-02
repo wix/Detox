@@ -14,9 +14,9 @@ await device.launchApp({url: url, sourceApp: bundleId}); //sourceApp is optional
 **Example:**
 
 ```js
-describe('relaunchApp', () => {
+describe('launchApp', () => {
     before(async () => {
-      await device.relaunchApp({url: 'scheme://some.url', sourceApp: 'com.apple.mobilesafari'});
+      await device.launchApp({url: 'scheme://some.url', sourceApp: 'com.apple.mobilesafari'});
     });
 
     it('should tap successfully', async () => {
