@@ -31,6 +31,19 @@ class ArtifactPlugin {
   }
 
   /**
+   * Hook that is called inside device.launchApp() before
+   * the current app on the current device is relaunched.
+   *
+   * @protected
+   * @async
+   * @param {Object} event - Relaunch app event object
+   * @param {string} event.deviceId - Current deviceId
+   * @param {string} event.bundleId - Current bundleId
+   * @return {Promise<void>} - when done
+   */
+  async onBeforeRelaunchApp(event) {}
+
+  /**
    * Hook that is called inside device.launchApp() and
    * provides a new pid for the relaunched app for the
    * artifacts that are dependent on pid.
@@ -107,11 +120,14 @@ class ArtifactPlugin {
    * Hook that is called on SIGINT and SIGTERM
    *
    * @protected
+   * @async
+   * @return {Promise<void>} - when done
    */
-  onTerminate() {
+  async onTerminate() {
     this.disable('it was terminated by SIGINT or SIGTERM');
 
     this.onTerminate = _.noop;
+    this.onBeforeRelaunchApp = _.noop;
     this.onRelaunchApp = _.noop;
     this.onBeforeResetDevice = _.noop;
     this.onResetDevice = _.noop;
@@ -120,15 +136,6 @@ class ArtifactPlugin {
     this.onAfterEach = _.noop;
     this.onAfterAll = _.noop;
   }
-
-  /***
-   * Creates a handle for a test artifact (video recording, log, etc.)
-   *
-   * @abstract
-   * @protected
-   * @return {Artifact} - an object with synchronous .discard() and .save(path) methods
-   */
-  createTestArtifact() {}
 
   _logDisableWarning() {
     if (!this.enabled && this._disableReason) {

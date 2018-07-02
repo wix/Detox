@@ -31,6 +31,16 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
    */
   async preparePathForSnapshot(testSummary, index) {}
 
+
+  /***
+   * Creates a handle for a test artifact (video recording, log, etc.)
+   *
+   * @abstract
+   * @protected
+   * @return {Artifact} - an object with synchronous .discard() and .save(path) methods
+   */
+  createTestArtifact() {}
+
   async _takeSnapshot(index) {
     if (!this.enabled) {
       return;

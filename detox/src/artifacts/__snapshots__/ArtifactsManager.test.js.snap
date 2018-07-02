@@ -1,0 +1,185 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ArtifactsManager .artifactsApi .requestIdleCallback() should catch errors, report them if callback fails, and move on  1`] = `
+Array [
+  Array [
+    "ArtifactsManager",
+    "Caught exception inside plugin (%s) at phase %s",
+    "testPlugin",
+    "onIdleCallback",
+  ],
+  Array [
+    "ArtifactsManager",
+    "",
+    [Error: test onIdleCallback error],
+  ],
+]
+`;
+
+exports[`ArtifactsManager .artifactsApi .requestIdleCallback() should gracefully handle a case when plugin object is not passed and use "unknown" as a name placeholder 1`] = `
+Array [
+  Array [
+    "ArtifactsManager",
+    "Caught exception inside plugin (%s) at phase %s",
+    "unknown",
+    "onIdleCallback",
+  ],
+  Array [
+    "ArtifactsManager",
+    "",
+    [Error: test onIdleCallback error],
+  ],
+]
+`;
+
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onAfterAll errors 1`] = `
+Array [
+  Array [
+    "ArtifactsManager",
+    "Caught exception inside plugin (%s) at phase %s",
+    "testPlugin",
+    "onAfterAll",
+  ],
+  Array [
+    "ArtifactsManager",
+    "",
+    [Error: test onAfterAll error],
+  ],
+]
+`;
+
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onAfterEach errors 1`] = `
+Array [
+  Array [
+    "ArtifactsManager",
+    "Caught exception inside plugin (%s) at phase %s",
+    "testPlugin",
+    "onAfterEach",
+  ],
+  Array [
+    "ArtifactsManager",
+    "",
+    [Error: test onAfterEach error],
+  ],
+]
+`;
+
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onBeforeAll errors 1`] = `
+Array [
+  Array [
+    "ArtifactsManager",
+    "Caught exception inside plugin (%s) at phase %s",
+    "testPlugin",
+    "onBeforeAll",
+  ],
+  Array [
+    "ArtifactsManager",
+    "",
+    [Error: test onBeforeAll error],
+  ],
+]
+`;
+
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onBeforeEach errors 1`] = `
+Array [
+  Array [
+    "ArtifactsManager",
+    "Caught exception inside plugin (%s) at phase %s",
+    "testPlugin",
+    "onBeforeEach",
+  ],
+  Array [
+    "ArtifactsManager",
+    "",
+    [Error: test onBeforeEach error],
+  ],
+]
+`;
+
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onBeforeRelaunchApp errors 1`] = `
+Array [
+  Array [
+    "ArtifactsManager",
+    "Caught exception inside plugin (%s) at phase %s",
+    "testPlugin",
+    "onBeforeRelaunchApp",
+  ],
+  Array [
+    "ArtifactsManager",
+    "",
+    [Error: test onBeforeRelaunchApp error],
+  ],
+]
+`;
+
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onBeforeResetDevice errors 1`] = `
+Array [
+  Array [
+    "ArtifactsManager",
+    "Caught exception inside plugin (%s) at phase %s",
+    "testPlugin",
+    "onBeforeResetDevice",
+  ],
+  Array [
+    "ArtifactsManager",
+    "",
+    [Error: test onBeforeResetDevice error],
+  ],
+]
+`;
+
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onRelaunchApp errors 1`] = `
+Array [
+  Array [
+    "ArtifactsManager",
+    "Caught exception inside plugin (%s) at phase %s",
+    "testPlugin",
+    "onRelaunchApp",
+  ],
+  Array [
+    "ArtifactsManager",
+    "",
+    [Error: test onRelaunchApp error],
+  ],
+]
+`;
+
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onResetDevice errors 1`] = `
+Array [
+  Array [
+    "ArtifactsManager",
+    "Caught exception inside plugin (%s) at phase %s",
+    "testPlugin",
+    "onResetDevice",
+  ],
+  Array [
+    "ArtifactsManager",
+    "",
+    [Error: test onResetDevice error],
+  ],
+]
+`;
+
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onTerminate errors 1`] = `
+Array [
+  Array [
+    "ArtifactsManager",
+    "Caught exception inside plugin (%s) at phase %s",
+    "testPlugin",
+    "onTerminate",
+  ],
+  Array [
+    "ArtifactsManager",
+    "",
+    [Error: test onTerminate error],
+  ],
+]
+`;
+
+exports[`ArtifactsManager when created should provide partially working artifacts api, where .getBundleId() throws 1`] = `"DetoxRuntimeError: Detox Artifacts API had no bundleId at the time of calling"`;
+
+exports[`ArtifactsManager when created should provide partially working artifacts api, where .getDeviceId() throws 1`] = `"DetoxRuntimeError: Detox Artifacts API had no deviceId at the time of calling"`;
+
+exports[`ArtifactsManager when created should provide partially working artifacts api, where .getPid() throws 1`] = `"DetoxRuntimeError: Detox Artifacts API had no app PID at the time of calling"`;
+
+exports[`ArtifactsManager when plugin factory is registered and the app is about to be launched for the first time still should not be able to get PID from artifacts API 1`] = `"DetoxRuntimeError: Detox Artifacts API had no app PID at the time of calling"`;
