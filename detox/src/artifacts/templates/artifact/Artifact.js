@@ -10,16 +10,16 @@ class Artifact {
     this._discardPromise = null;
 
     if (template) {
-      if (_.isFunction(template.start)) {
+      if (typeof template.start === 'function') {
         this.doStart = template.start.bind(template);
       }
-      if (_.isFunction(template.stop)) {
+      if (typeof template.stop === 'function') {
         this.doStop = template.stop.bind(template);
       }
-      if (_.isFunction(template.save)) {
+      if (typeof template.save === 'function') {
         this.doSave = template.save.bind(template);
       }
-      if (_.isFunction(template.discard)) {
+      if (typeof template.discard === 'function') {
         this.doDiscard = template.discard.bind(template);
       }
     }
