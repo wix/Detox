@@ -1,5 +1,5 @@
-jest.mock('npmlog');
-const npmlog = require('npmlog');
+jest.mock('../../../utils/logger');
+const logger = require('../../../utils/logger');
 const ArtifactPlugin = require('./ArtifactPlugin');
 const testSummaries = require('./__mocks__/testSummaries.mock');
 
@@ -35,7 +35,7 @@ describe(ArtifactPlugin, () => {
       });
 
       it('should not write warnings to log', () => {
-        expect(npmlog.warn.mock.calls.length).toBe(0);
+        expect(logger.warn.mock.calls.length).toBe(0);
       });
     });
 
@@ -47,8 +47,8 @@ describe(ArtifactPlugin, () => {
       });
 
       it('should log warning to log with that reason', () => {
-        expect(npmlog.warn.mock.calls.length).toBe(1);
-        expect(npmlog.warn.mock.calls).toMatchSnapshot();
+        expect(logger.warn.mock.calls.length).toBe(1);
+        expect(logger.warn.mock.calls).toMatchSnapshot();
       });
     });
   });
@@ -64,7 +64,7 @@ describe(ArtifactPlugin, () => {
       });
 
       it('should not write any warnings to log', () => {
-        expect(npmlog.warn.mock.calls.length).toBe(0);
+        expect(logger.warn.mock.calls.length).toBe(0);
       });
     });
   });

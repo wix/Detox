@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const fs = require('fs-extra');
-const log = require('npmlog');
+const log = require('../../../utils/logger').child({ __filename });
 const { Tail } = require('tail');
 const Artifact = require('../../templates/artifact/Artifact');
 
@@ -24,14 +24,12 @@ class SimulatorLogRecording extends Artifact {
   }
 
   async doStart() {
-    log.verbose('SimulatorLogPlugin', 'starting to watch log');
     this._logStream = fs.createWriteStream(this._logPath, { flags: 'w' });
     this._stdoutTail = this._createTail(this._stdoutPath, 'stdout');
     this._stderrTail = this._createTail(this._stderrPath, 'stderr');
   }
 
   async doStop() {
-    log.verbose('SimulatorLogPlugin', 'stopping to watch log');
     this._unwatch();
   }
 
@@ -40,10 +38,10 @@ class SimulatorLogRecording extends Artifact {
     const tempLogPath = this._logPath;
 
     if (await fs.exists(tempLogPath)) {
-      log.verbose('SimulatorLogRecording', 'moving %s to %s', tempLogPath, artifactPath);
+      log.debug({ event: 'MOVE_FILE' }, `moving "${tempLogPath}" to ${artifactPath}`);
       await fs.move(tempLogPath, artifactPath);
     } else {
-      log.error('SimulatorLogRecording', 'did not find temporary log file: %s', tempLogPath, artifactPath);
+      log.error({ event: 'MOVE_FILE_ERROR'} , `did not find temporary log file: ${tempLogPath}`);
     }
   }
 
@@ -54,12 +52,14 @@ class SimulatorLogRecording extends Artifact {
 
   _unwatch() {
     if (this._stdoutTail) {
+      log.trace({ event: 'TAIL_UNWATCH' }, `unwatching stdout log`);
       this._stdoutTail.unwatch();
     }
 
     this._stdoutTail = null;
 
     if (this._stderrTail) {
+      log.trace({ event: 'TAIL_UNWATCH' }, `unwatching stderr log`);
       this._stderrTail.unwatch();
     }
 
@@ -75,11 +75,13 @@ class SimulatorLogRecording extends Artifact {
   }
 
   _createTail(file, prefix) {
+    log.trace({ event: 'TAIL_CREATE' }, `starting to watch ${prefix} log: ${file}`);
+
     const tail = new Tail(file, {
       fromBeginning: this._readFromBeginning,
       logger: {
-        info: (...args) => log.verbose(`simulator-log-info`, ...args),
-        error: (...args) => log.error(`simulator-log-error`, ...args),
+        info: (...args) => log.trace({ event: 'TAIL_INFO' }, ...args),
+        error: (...args) => log.error({ event: 'TAIL_ERROR' }, ...args),
       },
     }).on('line', (line) => {
       this._appendLine(prefix, line);
@@ -106,7 +108,7 @@ class SimulatorLogRecording extends Artifact {
       this._logStream.write(line);
       this._logStream.write('\n');
     } else {
-      log.warn('SimulatorLogRecording', 'failed to add line to log: %s', line);
+      log.warn({ event: 'LOG_WRITE_ERROR' }, 'failed to add line to log:\n' + line);
     }
   }
 }

@@ -1,14 +1,12 @@
-const log = require('npmlog');
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+const execLogger = require('../utils/logger').child({ __filename });
 const retry = require('../utils/retry');
 const {exec, spawn} = require('child-process-promise');
 
 let _operationCounter = 0;
 
-/**
-
- */
 async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, interval = 1000) {
-  _operationCounter++;
+  const sequentialId = _operationCounter++;
 
   let cmd;
   if (options) {
@@ -17,32 +15,42 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
     cmd = bin;
   }
 
-  log.verbose(`${_operationCounter}: ${cmd}`);
+  const log = execLogger.child({ fn: 'execWithRetriesAndLogs', cmd, sequentialId });
+  log.debug({ event: 'EXEC_CMD' }, `${cmd}`);
 
   let result;
 
   try {
-    await retry({retries, interval}, async () => {
+    await retry({retries, interval}, async (retryNumber) => {
       if (statusLogs && statusLogs.trying) {
-        log.info(`${_operationCounter}: ${statusLogs.trying}`);
+        log.info({ retryNumber }, statusLogs.trying);
       }
+
       result = await exec(cmd);
     });
   } catch (err) {
-    log.error(`${_operationCounter}: running "${cmd}" returned ${err.code}`);
-    log.error(`${_operationCounter}: stderr: ${err.stderr}`);
+    log.error({ event: 'EXEC_FAIL' }, `"${cmd}" failed with code = ${err.code}, stdout and stderr:\n`);
+    log.error({ event: 'EXEC_FAIL', stdout: true }, err.stdout);
+    log.error({ event: 'EXEC_FAIL', stderr: true }, err.stderr);
+
+    throw err;
   }
 
   if (result === undefined) {
-    throw new Error(`${_operationCounter}: running "${cmd}" returned undefined`);
+    log.error({ event: 'EXEC_UNDEFINED' }, `command returned undefined`);
+    throw new DetoxRuntimeError(`command ${cmd} returned undefined`);
   }
 
   if (result.stdout) {
-    log.verbose(`${_operationCounter}: stdout: ${result.stdout}`);
+    log.debug({ event: 'EXEC_SUCCESS', stdout: true }, result.stdout);
+  }
+
+  if (result.stderr) {
+    log.debug({ event: 'EXEC_SUCCESS', stderr: true }, result.stderr);
   }
 
   if (statusLogs && statusLogs.successful) {
-    log.info(`${_operationCounter}: ${statusLogs.successful}`);
+    log.info({ event: 'EXEC_SUCCESS' }, statusLogs.successful);
   }
 
   //if (result.childProcess.exitCode !== 0) {
@@ -63,21 +71,25 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
   return result;
 }
 
-function spawnAndLog(command, flags) {
-  let out = '';
-  let err = '';
-  const result = spawn(command, flags, {stdio: ['ignore', 'pipe', 'pipe'], detached: true});
+function spawnAndLog(command, flags, options) {
+  const sequentialId = _operationCounter++;
 
-  log.verbose(`${command} ${flags.join(' ')}`);
+  const cmd = `${command} ${flags.join(' ')}`;
+  let log = execLogger.child({ fn: 'spawnAndLog', cmd, sequentialId });
+  log.debug({ event: 'SPAWN_CMD' }, cmd);
+
+  const result = spawn(command, flags, {stdio: ['ignore', 'pipe', 'pipe'], detached: true, ...options});
 
   if (result.childProcess) {
-    const {stdout, stderr} = result.childProcess;
+    const {pid, stdout, stderr} = result.childProcess;
+    log = log.child({ child_pid: pid });
 
-    stdout.on('data', (chunk) => out += chunk.toString());
-    stderr.on('data', (chunk) => err += chunk.toString());
-
-    stdout.on('end', () => out && log.verbose('stdout:', out));
-    stderr.on('end', () => err && log.verbose('stderr:', err));
+    log.debug({ event: 'SPAWN_SUCCESS' }, `spawned child process with pid = ${pid}`);
+    stdout.on('data', (chunk) => log.debug({ stdout: true }, chunk.toString()));
+    stderr.on('data', (chunk) => log.debug({ stderr: true }, chunk.toString()));
+    result.childProcess.on('end', (code, signal) => {
+      log.debug({ event: 'SPAWN_END' }, `child process received signal ${signal} and exited with code = ${code}`);
+    })
   }
 
   return result;

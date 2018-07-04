@@ -42,7 +42,7 @@ describe('Detox', () => {
       jest.setMock(modulePath, FinalMock);
     }
 
-    jest.mock('npmlog');
+    jest.mock('./utils/logger');
     jest.mock('fs');
     jest.mock('fs-extra');
     fs = require('fs');

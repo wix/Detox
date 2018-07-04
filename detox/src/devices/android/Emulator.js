@@ -2,7 +2,7 @@ const path = require('path');
 const exec = require('../../utils/exec').execWithRetriesAndLogs;
 const spawn = require('child-process-promise').spawn;
 const _ = require('lodash');
-const log = require('npmlog');
+const unitLogger = require('../../utils/logger').child({ __filename });
 const fs = require('fs');
 const os = require('os');
 const Environment = require('../../utils/environment');
@@ -58,9 +58,11 @@ class Emulator {
       fs.unlink(tempLog, _.noop);
     }
 
-    log.verbose(this.emulatorBin, ...emulatorArgs);
+    let log = unitLogger.child({ fn: 'boot' });
+    log.debug({ event: 'SPAWN_CMD' }, this.emulatorBin, ...emulatorArgs);
     const childProcessPromise = spawn(this.emulatorBin, emulatorArgs, { detached: true, stdio: ['ignore', stdout, stderr] });
     childProcessPromise.childProcess.unref();
+    log = log.child({ child_pid: childProcessPromise.childProcess.pid });
 
     return childProcessPromise.catch((err) => {
       detach();
@@ -69,12 +71,12 @@ class Emulator {
         return;
       }
 
-      log.error('ChildProcessError', '%s', err.message);
-      log.error('stderr', '%s', childProcessOutput);
+      log.error({ event: 'SPAWN_FAIL', error: true, err }, err.message);
+      log.error({ event: 'SPAWN_FAIL', stderr: true }, childProcessOutput);
       throw err;
     }).then(() => {
       detach();
-      log.verbose('stdout', '%s', childProcessOutput);
+      log.debug({ event: 'SPAWN_SUCCESS', stdout: true }, childProcessOutput);
     });
   }
 

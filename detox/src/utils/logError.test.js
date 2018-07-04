@@ -1,36 +1,19 @@
 const { exec } = require('child-process-promise');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+const mockLogger = require('./__mocks__/logger');
+const logError = require('./logError');
 
 describe('logError', () => {
-  let npmlog;
-  let logError;
-
-  beforeEach(() => {
-    jest.mock('npmlog');
-    npmlog = require('npmlog');
-
-    logError = require('./logError');
-  });
-
   it('should not fail on nulls', () => {
-    logError(null);
-    expect(npmlog.error).toHaveBeenCalledWith('detox', expect.any(String));
-
-    logError(null, 'module');
-    expect(npmlog.error).toHaveBeenCalledWith('module', expect.any(String));
-
-    expect(npmlog.warn).not.toHaveBeenCalled();
-    expect(npmlog.verbose).not.toHaveBeenCalled();
+    logError(mockLogger, null);
+    expect(mockLogger.error.mock.calls).toMatchSnapshot();
   });
 
-  it('should log child process errors', async () => {
-    await exec('sdfhkdshfjksdhfjkhks').catch(logError);
-
-    expect(npmlog.error).toHaveBeenCalledWith('detox', '%s', expect.any(String));
-    expect(npmlog.verbose).toHaveBeenCalledWith('child-process-stdout', '%s', expect.any(String));
-    expect(npmlog.verbose).toHaveBeenCalledWith('child-process-stderr', '%s', expect.any(String));
-    expect(npmlog.warn).not.toHaveBeenCalled();
-  })
+  it('should skip child process errors', async () => {
+    await exec('sdfhkdshfjksdhfjkhks').catch((e) => logError(mockLogger, e));
+    expect(mockLogger.error).not.toHaveBeenCalled();
+    expect(mockLogger.warn).not.toHaveBeenCalled();
+  });
 
   it('should log long detox runtime errors', () => {
     const err = new DetoxRuntimeError({
@@ -38,30 +21,41 @@ describe('logError', () => {
       hint: 'hint',
       debugInfo: 'debugInfo',
     });
+    hideStack(err);
 
-    logError(err, 'module');
+    logError(mockLogger, err);
 
-    expect(npmlog.error).toHaveBeenCalledWith('module', '%s', expect.stringContaining('msg123'));
-    expect(npmlog.warn).toHaveBeenCalledWith('module', 'Hint: %s', 'hint');
-    expect(npmlog.warn).toHaveBeenCalledWith('module', 'See debug info below:\n%s', 'debugInfo');
-    expect(npmlog.verbose).not.toHaveBeenCalled();
-  })
+    expect(mockLogger.error.mock.calls).toMatchSnapshot();
+    expect(mockLogger.warn.mock.calls).toMatchSnapshot();
+  });
 
   it('should log short detox runtime errors', () => {
-    logError(new DetoxRuntimeError({ message: 'short' }));
+    const err = new DetoxRuntimeError({ message: 'short' });
+    hideStack(err);
+    logError(mockLogger, err);
 
-    expect(npmlog.error).toHaveBeenCalledWith('detox', '%s', expect.stringContaining('short'));
-    expect(npmlog.warn).not.toHaveBeenCalled();
-    expect(npmlog.verbose).not.toHaveBeenCalled();
-  })
+    expect(mockLogger.error.mock.calls).toMatchSnapshot();
+    expect(mockLogger.warn).not.toHaveBeenCalled();
+  });
 
-  it('should log oother errors', () => {
+  it('should log other errors', () => {
     const err = new Error('message');
-    logError(err);
+    hideStack(err);
+    logError(mockLogger, err);
 
-    expect(npmlog.error).toHaveBeenCalledWith('detox', '', err);
-    expect(npmlog.warn).not.toHaveBeenCalled();
-    expect(npmlog.verbose).not.toHaveBeenCalled();
-  })
+    expect(mockLogger.error).toHaveBeenCalledWith({ err }, err);
+    expect(mockLogger.warn).not.toHaveBeenCalled();
+  });
 });
 
+function hideStack(err) {
+  err.stack = replaceLinesAfterTheFirst(err.stack, '  at fake error stack');
+}
+
+function replaceLinesAfterTheFirst(str, replacement) {
+  const [first, ...rest] = str.split('\n');
+
+  return (rest.length > 0)
+    ? first + '\n' + replacement
+    : first;
+}

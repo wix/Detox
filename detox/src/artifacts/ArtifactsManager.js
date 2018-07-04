@@ -1,9 +1,8 @@
 const _ = require('lodash');
 const fs = require('fs-extra');
 const path = require('path');
-const log = require('npmlog');
+const log = require('../utils/logger').child({ __filename });
 const argparse = require('../utils/argparse');
-const logError = require('../utils/logError');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const ArtifactPathBuilder = require('./utils/ArtifactPathBuilder');
 
@@ -118,6 +117,8 @@ class ArtifactsManager {
   }
 
   async onBeforeLaunchApp({ deviceId, bundleId }) {
+    log.trace({ event: 'ARTIFACTS_MANAGER_BEFORE_LAUNCH_APP', deviceId, bundleId }, '');
+
     const isFirstTime = !this._deviceId;
 
     this._deviceId = deviceId;
@@ -146,6 +147,7 @@ class ArtifactsManager {
   }
 
   async onLaunchApp({ deviceId, bundleId, pid }) {
+    log.trace({ event: 'ARTIFACTS_MANAGER_LAUNCH_APP', deviceId, bundleId, pid }, '');
     const isFirstTime = isNaN(this._pid);
 
     this._deviceId = deviceId;
@@ -180,7 +182,8 @@ class ArtifactsManager {
   async onAfterAll() {
     await this._emit('onAfterAll', []);
     await this._idlePromise;
-    log.verbose('ArtifactsManager', 'finalized artifacts successfully');
+
+    log.trace({ event: 'ARTIFACTS_FINALIZED' }, '');
   }
 
   async onTerminate() {
@@ -188,7 +191,7 @@ class ArtifactsManager {
       return;
     }
 
-    log.info('ArtifactsManager', 'finalizing all artifacts, this can take some time');
+    log.info({ event: 'ARTIFACTS_FINALIZATION_START' }, 'finalizing the recorded artifacts...');
     await this._emit('onTerminate', []);
     await Promise.all(this._onIdleCallbacks.splice(0).map(this._executeIdleCallback));
     await this._idlePromise;
@@ -196,7 +199,7 @@ class ArtifactsManager {
     await Promise.all(this._activeArtifacts.map(artifact => artifact.discard()));
     await this._idlePromise;
     this._artifactPlugins.splice(0);
-    log.info('ArtifactsManager', 'finalized all artifacts');
+    log.trace({ event: 'ARTIFACTS_FINALIZED' }, 'done');
   }
 
   async _emit(methodName, args) {
@@ -209,9 +212,9 @@ class ArtifactsManager {
     }));
   }
 
-  _errorHandler(e, { plugin, methodName }) {
-    log.error('ArtifactsManager', 'Caught exception inside plugin (%s) at phase %s', plugin.name || 'unknown', methodName);
-    logError(e, 'ArtifactsManager');
+  _errorHandler(err, { plugin, methodName }) {
+    const eventObject = { event: 'ARTIFACT_PLUGIN_ERROR', plugin: plugin.name || 'unknown', methodName, err };
+    log.error(eventObject, `Caught exception inside plugin (${eventObject.plugin}) at phase ${methodName}`);
   }
 
   _idleCallbackErrorHandle(e, callback) {

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const log = require('npmlog');
+const log = require('../../../utils/logger').child({ __filename });
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 
 class Artifact {
@@ -55,7 +55,7 @@ class Artifact {
   save(artifactPath, ...args) {
     if (!this._savePromise) {
       if (this._discardPromise) {
-        log.warn('detox-artifacts', 'cannot save an already discarded artifact to: %s', artifactPath);
+        log.warn({ event: 'ARTIFACT_SAVE_ERROR' }, `cannot save an already discarded artifact to: ${artifactPath}`);
         this._savePromise = this._discardPromise;
       } else if (this._startPromise) {
         this._savePromise = this.stop().then(() => this.doSave(artifactPath, ...args));

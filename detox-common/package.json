@@ -1,0 +1,53 @@
+{
+  "name": "detox-common",
+  "description": "Shared functionality between detox-* packages",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "version": "8.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wix/detox.git"
+  },
+  "scripts": {
+    "test": "jest --verbose --coverage"
+  },
+  "bugs": {
+    "url": "https://github.com/wix/detox/issues"
+  },
+  "homepage": "https://github.com/wix/detox#readme",
+  "main": "./lib/index.js",
+  "author": "Rotem Mizrachi-Meidan <rotemm@wix.com>",
+  "license": "MIT",
+  "dependencies": {
+    "bunyan": "^1.8.12",
+    "bunyan-debug-stream": "^1.0.8",
+    "fs-extra": "^6.0.1",
+    "lodash": "^4.17.10",
+    "minimist": "^1.2.0"
+  },
+  "devDependencies": {
+    "jest": "^23.3.0"
+  },
+  "jest": {
+    "roots": [
+      "node_modules",
+      "lib"
+    ],
+    "coveragePathIgnorePatterns": [
+      "node_modules",
+      ".test.js",
+      ".mock.js"
+    ],
+    "resetMocks": true,
+    "resetModules": true,
+    "coverageThreshold": {
+      "global": {
+        "statements": 100,
+        "branches": 100,
+        "functions": 100,
+        "lines": 100
+      }
+    }
+  }
+}

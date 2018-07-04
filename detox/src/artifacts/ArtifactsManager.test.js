@@ -6,10 +6,10 @@ describe('ArtifactsManager', () => {
   let proxy;
 
   beforeEach(() => {
-    jest.mock('npmlog');
     jest.mock('fs-extra');
     jest.mock('./utils/ArtifactPathBuilder');
     jest.mock('../utils/argparse');
+    jest.mock('../utils/logger');
 
     proxy = {
       get ArtifactPathBuilder() {
@@ -18,8 +18,8 @@ describe('ArtifactsManager', () => {
       get ArtifactsManager() {
         return require('./ArtifactsManager');
       },
-      get npmlog() {
-        return require('npmlog');
+      get logger() {
+        return require('../utils/logger');
       },
       get fs() {
         return require('fs-extra');
@@ -252,7 +252,7 @@ describe('ArtifactsManager', () => {
         artifactsApi.requestIdleCallback(callbacks[0], testPlugin); await sleep(0);
         await rejects[0](new Error('test onIdleCallback error'));
 
-        expect(proxy.npmlog.error.mock.calls).toMatchSnapshot();
+        expect(proxy.logger.error.mock.calls).toMatchSnapshot();
 
         artifactsApi.requestIdleCallback(callbacks[1], testPlugin); await sleep(0);
         expect(callbacks[1]).toHaveBeenCalled();
@@ -262,7 +262,7 @@ describe('ArtifactsManager', () => {
         artifactsApi.requestIdleCallback(callbacks[0]); await sleep(0);
         await rejects[0](new Error('test onIdleCallback error'));
 
-        expect(proxy.npmlog.error.mock.calls).toMatchSnapshot();
+        expect(proxy.logger.error.mock.calls).toMatchSnapshot();
 
         artifactsApi.requestIdleCallback(callbacks[1], testPlugin); await sleep(0);
         expect(callbacks[1]).toHaveBeenCalled();
@@ -299,7 +299,7 @@ describe('ArtifactsManager', () => {
             });
 
             await artifactsManager[managerMethod](argFactory());
-            expect(proxy.npmlog.error.mock.calls).toMatchSnapshot();
+            expect(proxy.logger.error.mock.calls).toMatchSnapshot();
           });
         }
 

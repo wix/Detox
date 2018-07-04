@@ -1,4 +1,4 @@
-jest.mock('npmlog');
+jest.mock('../../../utils/logger.js');
 
 const _ = require('lodash');
 const Artifact = require('./Artifact');

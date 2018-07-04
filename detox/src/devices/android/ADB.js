@@ -216,7 +216,10 @@ class ADB {
   async getInstrumentationRunner(deviceId, bundleId) {
     const instrumentationRunners = await this.listInstrumentation(deviceId);
     const instrumentationRunner = this.instrumentationRunnerForBundleId(instrumentationRunners, bundleId);
-    if (instrumentationRunner === 'undefined') throw new Error(`No instrumentation runner found on device ${deviceId} for package ${bundleId}`);
+    if (instrumentationRunner === 'undefined') {
+      throw new Error(`No instrumentation runner found on device ${deviceId} for package ${bundleId}`);
+    }
+
     return instrumentationRunner;
   }
 }

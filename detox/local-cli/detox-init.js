@@ -1,10 +1,10 @@
 const _ = require("lodash");
-const log = require("npmlog");
 const fs = require("fs");
 const path = require("path");
 const program = require("commander");
 const mochaTemplates = require("./templates/mocha");
 const jestTemplates = require("./templates/jest");
+const log = require("../src/utils/logger");
 
 const PREFIX = "detox-init";
 
