@@ -1,5 +1,18 @@
 const schemes = require('./configurations.mock');
 
+const defaultPlatformEnv = {
+  darwin: {},
+  linux: {
+    // Not set by default on Ubuntu
+    // XDG_DATA_HOME: '/home/detox-user/.local/share',
+  },
+  win32: {
+    // Required for appdatapath.js
+    LOCALAPPDATA: 'C:\\Users\\detox-user\\AppData\\Local',
+    USERPROFILE: 'C:\\Users\\detox-user',
+  },
+};
+
 describe('Detox', () => {
   let fs;
   let Detox;
@@ -37,7 +50,8 @@ describe('Detox', () => {
     setCustomMock('./client/Client', clientMockData);
     setCustomMock('./devices/Device', deviceMockData);
 
-    process.env = {};
+    process.env = Object.assign({}, defaultPlatformEnv[process.platform]);
+
     global.device = undefined;
 
     jest.mock('./devices/IosDriver');

@@ -126,7 +126,7 @@ function runMocha() {
 function runJest() {
   const configFile = runnerConfig ? `--config=${runnerConfig}` : '';
 
-  const platformString = platform ? `--testNamePattern='^((?!${getPlatformSpecificString(platform)}).)*$'` : '';
+  const platformString = platform ? shellQuote(`--testNamePattern=^((?!${getPlatformSpecificString(platform)}).)*$`) : '';
   const binPath = path.join('node_modules', '.bin', 'jest');
   const command = `${binPath} ${testFolder} ${configFile} --maxWorkers=${program.workers} ${platformString}`;
   const env = Object.assign({}, process.env, {
@@ -186,6 +186,11 @@ function getDefaultConfiguration() {
   if (_.size(config.configurations) === 1) {
     return _.keys(config.configurations)[0];
   }
+}
+
+// This is very incomplete, don't use this for user input!
+function shellQuote(input) {
+  return process.platform !== 'win32' ? `'${input}'` : `"${input}"`;
 }
 
 run();
