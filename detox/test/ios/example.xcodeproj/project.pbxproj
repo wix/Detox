@@ -41,6 +41,12 @@
 		39A077AA1E5450FF00A53A07 /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 39A077981E5450E700A53A07 /* libRCTPushNotification.a */; };
 		39A34C791E30F3A000BEBB59 /* Detox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39B044621DAED76400431EC5 /* Detox.framework */; };
 		39B044651DAED76E00431EC5 /* Detox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 39B044621DAED76400431EC5 /* Detox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		50887D0820F4BA1D00D06111 /* CustomWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 50887D0720F4BA1D00D06111 /* CustomWindow.m */; };
+		50887D3520F4BAD000D06111 /* OverlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 50887D3320F4BAD000D06111 /* OverlayViewController.m */; };
+		50887D3620F4BAD000D06111 /* OverlayViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 50887D3420F4BAD000D06111 /* OverlayViewController.xib */; };
+		50887D3720F4BCAE00D06111 /* CustomWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 50887D0720F4BA1D00D06111 /* CustomWindow.m */; };
+		50887D3820F4BCD100D06111 /* OverlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 50887D3320F4BAD000D06111 /* OverlayViewController.m */; };
+		50887D3920F4BD1200D06111 /* OverlayViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 50887D3420F4BAD000D06111 /* OverlayViewController.xib */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		CC17D3321D60A24300267B0C /* NativeModule.m in Sources */ = {isa = PBXBuildFile; fileRef = CC17D3311D60A24300267B0C /* NativeModule.m */; };
 		E088C8F41F01585500CC48E9 /* CalendarManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E088C8F31F01585500CC48E9 /* CalendarManager.m */; };
@@ -244,20 +250,6 @@
 			remoteGlobalIDString = 394767961DBF985400D72256;
 			remoteInfo = Detox;
 		};
-		4613EAA72051F21100C6DF2D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = EBF21BDC1FC498900052F4D5;
-			remoteInfo = jsinspector;
-		};
-		4613EAA92051F21100C6DF2D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = EBF21BFA1FC4989A0052F4D5;
-			remoteInfo = "jsinspector-tvOS";
-		};
 		4613EAAB2051F21100C6DF2D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
@@ -377,6 +369,11 @@
 		39B0445B1DAED76400431EC5 /* Detox.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Detox.xcodeproj; path = ../../ios/Detox.xcodeproj; sourceTree = "<group>"; };
 		39FC9D23202899F90033C11A /* e2e */ = {isa = PBXFileReference; lastKnownFileType = folder; name = e2e; path = ../e2e; sourceTree = "<group>"; };
 		39FC9D24202899F90033C11A /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; name = src; path = ../src; sourceTree = "<group>"; };
+		50887D0620F4BA1D00D06111 /* CustomWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomWindow.h; sourceTree = "<group>"; };
+		50887D0720F4BA1D00D06111 /* CustomWindow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomWindow.m; sourceTree = "<group>"; };
+		50887D3220F4BAD000D06111 /* OverlayViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OverlayViewController.h; sourceTree = "<group>"; };
+		50887D3320F4BAD000D06111 /* OverlayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OverlayViewController.m; sourceTree = "<group>"; };
+		50887D3420F4BAD000D06111 /* OverlayViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OverlayViewController.xib; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		CC17D3301D60A24300267B0C /* NativeModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NativeModule.h; path = example/NativeModule.h; sourceTree = "<group>"; };
@@ -504,6 +501,11 @@
 				CC17D3311D60A24300267B0C /* NativeModule.m */,
 				E088C8F21F01585500CC48E9 /* CalendarManager.h */,
 				E088C8F31F01585500CC48E9 /* CalendarManager.m */,
+				50887D0620F4BA1D00D06111 /* CustomWindow.h */,
+				50887D0720F4BA1D00D06111 /* CustomWindow.m */,
+				50887D3220F4BAD000D06111 /* OverlayViewController.h */,
+				50887D3320F4BAD000D06111 /* OverlayViewController.m */,
+				50887D3420F4BAD000D06111 /* OverlayViewController.xib */,
 			);
 			name = example;
 			sourceTree = "<group>";
@@ -519,8 +521,6 @@
 				39A34C5D1E30ED3600BEBB59 /* libcxxreact.a */,
 				39A34C5F1E30ED3600BEBB59 /* libjschelpers.a */,
 				39A34C611E30ED3600BEBB59 /* libjschelpers.a */,
-				4613EAA82051F21100C6DF2D /* libjsinspector.a */,
-				4613EAAA2051F21100C6DF2D /* libjsinspector-tvOS.a */,
 				4644B8651F897583003223D4 /* libthird-party.a */,
 				4644B8671F897583003223D4 /* libthird-party.a */,
 				4644B8691F897583003223D4 /* libdouble-conversion.a */,
@@ -948,20 +948,6 @@
 			remoteRef = 39B044611DAED76400431EC5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		4613EAA82051F21100C6DF2D /* libjsinspector.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libjsinspector.a;
-			remoteRef = 4613EAA72051F21100C6DF2D /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4613EAAA2051F21100C6DF2D /* libjsinspector-tvOS.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libjsinspector-tvOS.a";
-			remoteRef = 4613EAA92051F21100C6DF2D /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		4613EAAC2051F21100C6DF2D /* libprivatedata.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1039,6 +1025,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50887D3620F4BAD000D06111 /* OverlayViewController.xib in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 			);
@@ -1048,6 +1035,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50887D3920F4BD1200D06111 /* OverlayViewController.xib in Resources */,
 				399B4DFE1ED587120098D2AC /* Images.xcassets in Resources */,
 				399B4DFF1ED587120098D2AC /* LaunchScreen.xib in Resources */,
 			);
@@ -1091,6 +1079,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50887D0820F4BA1D00D06111 /* CustomWindow.m in Sources */,
+				50887D3520F4BAD000D06111 /* OverlayViewController.m in Sources */,
 				CC17D3321D60A24300267B0C /* NativeModule.m in Sources */,
 				E088C8F41F01585500CC48E9 /* CalendarManager.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
@@ -1102,6 +1092,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50887D3820F4BCD100D06111 /* OverlayViewController.m in Sources */,
+				50887D3720F4BCAE00D06111 /* CustomWindow.m in Sources */,
 				399B4DEC1ED587120098D2AC /* NativeModule.m in Sources */,
 				E088C8F51F025DE900CC48E9 /* CalendarManager.m in Sources */,
 				399B4DED1ED587120098D2AC /* AppDelegate.m in Sources */,

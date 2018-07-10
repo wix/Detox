@@ -4,6 +4,8 @@
 #import <React/RCTRootView.h>
 #import <React/RCTPushNotificationManager.h>
 #import <React/RCTLinkingManager.h>
+#import "CustomWindow.h"
+#import "OverlayViewController.h"
 @import CoreSpotlight;
 
 @import UserNotifications;
@@ -87,6 +89,13 @@ RCT_EXPORT_MODULE();
 	self.window.rootViewController = rootViewController;
 	[self.window makeKeyAndVisible];
 	
+    
+    _additionalWindow = [[CustomWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    OverlayViewController* overlayViewController = [[OverlayViewController alloc] initWithNibName:@"OverlayViewController" bundle:nil];
+    [_additionalWindow setWindowLevel:UIWindowLevelStatusBar];
+    [_additionalWindow setRootViewController:overlayViewController];
+    [_additionalWindow setHidden:NO];
+    
 	[UNUserNotificationCenter currentNotificationCenter].delegate = self;
 	
 	return YES;
