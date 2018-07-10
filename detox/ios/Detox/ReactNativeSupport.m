@@ -64,6 +64,7 @@ void swz_addToRunLoop(id self, SEL _cmd, NSRunLoop* runloop)
 }
 
 static NSMutableArray* __observedQueues;
+static NSMutableArray* __currentDispatchQueueIdlingResources;
 
 static dispatch_queue_t (*wx_original_dispatch_queue_create)(const char *_Nullable label, dispatch_queue_attr_t _Nullable attr);
 
@@ -126,6 +127,7 @@ void setupForTests()
 	}
 	
 	__observedQueues = [NSMutableArray new];
+	__currentDispatchQueueIdlingResources = [NSMutableArray new];
 	
 	//Add an idling resource for each module queue.
 	Method m = class_getInstanceMethod(cls, NSSelectorFromString(@"setUpMethodQueue"));
@@ -135,17 +137,20 @@ void setupForTests()
 		
 		dispatch_queue_t queue = object_getIvar(_self, class_getInstanceVariable(cls, "_methodQueue"));
 		
-		if(queue != nil && [queue isKindOfClass:[NSNull class]] == NO && queue != dispatch_get_main_queue() && [__observedQueues containsObject:queue] == NO)
-		{
-			NSString* queueName = [[NSString alloc] initWithUTF8String:dispatch_queue_get_label(queue) ?: ""];
-			
-			[__observedQueues addObject:queue];
-			
-			dtx_log_info(@"Adding idling resource for queue: %@", queue);
-			
-			
-			[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[GREYDispatchQueueIdlingResource resourceWithDispatchQueue:queue name:queueName ?: @"SomeReactQueue"]];
-		}
+		dispatch_sync(__currentIdlingResourceSerialQueue, ^{
+			if(queue != nil && [queue isKindOfClass:[NSNull class]] == NO && queue != dispatch_get_main_queue() && [__observedQueues containsObject:queue] == NO)
+			{
+				NSString* queueName = [[NSString alloc] initWithUTF8String:dispatch_queue_get_label(queue) ?: ""];
+				
+				[__observedQueues addObject:queue];
+				
+				dtx_log_info(@"Adding idling resource for queue: %@", queue);
+				
+				GREYDispatchQueueIdlingResource* ir = [GREYDispatchQueueIdlingResource resourceWithDispatchQueue:queue name:queueName ?: @"SomeReactQueue"];
+				[__currentDispatchQueueIdlingResources addObject:ir];
+				[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:ir];
+			}
+		});
 	}));
 	
 	//Cannot just extern this function - we are not linked with RN, so linker will fail. Instead, look for symbol in runtime.
@@ -182,6 +187,15 @@ void setupForTests()
 		//Not RN app - noop.
 		return;
 	}
+	
+	dispatch_sync(__currentIdlingResourceSerialQueue, ^{
+		[__currentDispatchQueueIdlingResources enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+			[[GREYUIThreadExecutor sharedInstance] deregisterIdlingResource:obj];
+		}];
+		
+		[__currentDispatchQueueIdlingResources removeAllObjects];
+		[__observedQueues removeAllObjects];
+	});
 	
 	id<RN_RCTBridge> bridge = [NSClassFromString(@"RCTBridge") valueForKey:@"currentBridge"];
 	

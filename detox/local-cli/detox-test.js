@@ -3,13 +3,12 @@
 const program = require('commander');
 const path = require('path');
 const cp = require('child_process');
+const fs = require('fs-extra');
 const _ = require('lodash');
-const CustomError = require('../src/errors/CustomError');
+const environment = require('../src/utils/environment');
+const buildDefaultArtifactsRootDirpath = require('../src/artifacts/utils/buildDefaultArtifactsRootDirpath');
+const DetoxConfigError = require('../src/errors/DetoxConfigError');
 const config = require(path.join(process.cwd(), 'package.json')).detox;
-
-class DetoxConfigError extends CustomError {}
-
-
 
 program
   .option('-o, --runner-config [config]',
@@ -28,7 +27,13 @@ program
     'When an action/expectation takes a significant amount of time use this option to print device synchronization status.'
     + 'The status will be printed if the action takes more than [value]ms to complete')
   .option('-a, --artifacts-location [path]',
-    'Artifacts destination path (currently will contain only logs). If the destination already exists, it will be removed first')
+    '[EXPERIMENTAL] Artifacts (logs, screenshots, etc) root directory.', 'artifacts')
+  .option('--record-logs [failing|all|none]',
+    '[EXPERIMENTAL] Save logs during each test to artifacts directory. Pass "failing" to save logs of failing tests only.')
+  .option('--take-screenshots [failing|all|none]',
+    '[EXPERIMENTAL] Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only.')
+  .option('--record-videos [failing|all|none]',
+    '[EXPERIMENTAL] Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only.')
   .option('-p, --platform [ios/android]',
     '[DEPRECATED], platform is deduced automatically. Run platform specific tests. Runs tests with invert grep on \':platform:\', '
     + 'e.g test with substring \':ios:\' in its name will not run when passing \'--platform android\'')
@@ -36,16 +41,22 @@ program
     'Specify test file to run')
   .option('-H, --headless',
     '[Android Only] Launch Emulator in headless mode. Useful when running on CI.')
+  .option('-w, --workers <n>',
+    '[iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest)', 1)
   .parse(process.argv);
 
-if (program.configuration) {
-  if (!config.configurations[program.configuration]) {
-    throw new DetoxConfigError(`Cannot determine configuration '${program.configuration}'. 
-    Available configurations: ${_.keys(config.configurations).join(', ')}`);
-  }
-} else if(!program.configuration) {
-  throw new DetoxConfigError(`Cannot determine which configuration to use. 
+program.artifactsLocation = buildDefaultArtifactsRootDirpath(program.configuration, program.artifactsLocation);
+
+clearDeviceRegistryLockFile();
+
+if (!program.configuration) {
+  throw new DetoxConfigError(`Cannot determine which configuration to use.
   Use --configuration to choose one of the following: ${_.keys(config.configurations).join(', ')}`);
+}
+
+if (!config.configurations[program.configuration]) {
+  throw new DetoxConfigError(`Cannot determine configuration '${program.configuration}'.
+    Available configurations: ${_.keys(config.configurations).join(', ')}`);
 }
 
 const testFolder = getConfigFor(['file', 'specs'], 'e2e');
@@ -53,8 +64,9 @@ const runner = getConfigFor(['testRunner'], 'mocha');
 const runnerConfig = getConfigFor(['runnerConfig'], getDefaultRunnerConfig());
 const platform = (config.configurations[program.configuration].type).split('.')[0];
 
-run();
-
+if (platform === 'android' && program.workers !== 1) {
+  throw new DetoxConfigError('Can not use -w, --workers. Parallel test execution is only supported on iOS currently');
+}
 
 if (typeof program.debugSynchronization === "boolean") {
   program.debugSynchronization = 3000;
@@ -93,13 +105,19 @@ function runMocha() {
   const configuration = program.configuration ? `--configuration ${program.configuration}` : '';
   const cleanup = program.cleanup ? `--cleanup` : '';
   const reuse = program.reuse ? `--reuse` : '';
-  const artifactsLocation = program.artifactsLocation ? `--artifacts-location ${program.artifactsLocation}` : '';
+  const artifactsLocation = program.artifactsLocation ? `--artifacts-location "${program.artifactsLocation}"` : '';
   const configFile = runnerConfig ? `--opts ${runnerConfig}` : '';
   const platformString = platform ? `--grep ${getPlatformSpecificString(platform)} --invert` : '';
+  const logs = program.recordLogs ? `--record-logs ${program.recordLogs}` : '';
+  const screenshots = program.takeScreenshots ? `--take-screenshots ${program.takeScreenshots}` : '';
+  const videos = program.recordVideos ? `--record-videos ${program.recordVideos}` : '';
   const headless = program.headless ? `--headless` : '';
 
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
-  const command = `node_modules/.bin/mocha ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${artifactsLocation} ${headless}`;
+  const binPath = path.join('node_modules', '.bin', 'mocha');
+  const command = `${binPath} ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ` +
+    `${reuse} ${debugSynchronization} ${platformString} ${headless} ` +
+    `${logs} ${screenshots} ${videos} ${artifactsLocation}`;
 
   console.log(command);
   cp.execSync(command, {stdio: 'inherit'});
@@ -107,20 +125,27 @@ function runMocha() {
 
 function runJest() {
   const configFile = runnerConfig ? `--config=${runnerConfig}` : '';
-  const platformString = platform ? `--testNamePattern='^((?!${getPlatformSpecificString(platform)}).)*$'` : '';
-  const command = `node_modules/.bin/jest ${testFolder} ${configFile} --runInBand ${platformString}`;
+
+  const platformString = platform ? shellQuote(`--testNamePattern=^((?!${getPlatformSpecificString(platform)}).)*$`) : '';
+  const binPath = path.join('node_modules', '.bin', 'jest');
+  const command = `${binPath} ${testFolder} ${configFile} --maxWorkers=${program.workers} ${platformString}`;
+  const env = Object.assign({}, process.env, {
+    configuration: program.configuration,
+    loglevel: program.loglevel,
+    cleanup: program.cleanup,
+    reuse: program.reuse,
+    debugSynchronization: program.debugSynchronization,
+    headless: program.headless,
+    artifactsLocation: program.artifactsLocation,
+    recordLogs: program.recordLogs,
+    takeScreenshots: program.takeScreenshots,
+    recordVideos: program.recordVideos,
+  });
+
   console.log(command);
   cp.execSync(command, {
     stdio: 'inherit',
-    env: Object.assign({}, process.env, {
-      configuration: program.configuration,
-      loglevel: program.loglevel,
-      cleanup: program.cleanup,
-      reuse: program.reuse,
-      debugSynchronization: program.debugSynchronization,
-      artifactsLocation: program.artifactsLocation,
-      headless: program.headless
-    })
+    env,
   });
 }
 
@@ -151,10 +176,21 @@ function getPlatformSpecificString(platform) {
   return platformRevertString;
 }
 
+function clearDeviceRegistryLockFile() {
+  const lockFilePath = environment.getDeviceLockFilePath();
+  fs.ensureFileSync(lockFilePath);
+  fs.writeFileSync(lockFilePath, '[]');
+}
+
 function getDefaultConfiguration() {
   if (_.size(config.configurations) === 1) {
     return _.keys(config.configurations)[0];
   }
 }
 
+// This is very incomplete, don't use this for user input!
+function shellQuote(input) {
+  return process.platform !== 'win32' ? `'${input}'` : `"${input}"`;
+}
 
+run();

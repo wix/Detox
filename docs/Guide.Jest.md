@@ -5,9 +5,7 @@ title: Jest
 
 ## Usage
 
-### 0. Use the [Getting Started](Introduction.GettingStarted.md) Guide to set up detox
-
-Except that you need to skip the install mocha step.
+### 0. Use the [Getting Started](Introduction.GettingStarted.md) Guide to set up Detox
 
 ### 1. Install Jest
 
@@ -15,40 +13,13 @@ Except that you need to skip the install mocha step.
 npm install --save-dev jest
 ```
 
-### 2. Remove mocha specific files
+### 2. Run detox init
 
-You should remove `e2e/mocha.opts`, you no longer need it.
-
-### 3. Replace generated detox setup file (e2e/init.js)
-
-```js
-const detox = require('detox');
-const config = require('../package.json').detox;
-
-// Set the default test timeout of 120s
-jest.setTimeout(120000);
-
-beforeAll(async () => {
-  await detox.init(config);
-});
-
-afterAll(async () => {
-  await detox.cleanup();
-});
+```sh
+detox init -r jest
 ```
 
-### 4. Configure Detox to run with Jest
-
-Add a Jest config file `e2e/config.json`:
-
-```json
-{
-  "setupTestFrameworkScriptFile" : "./init.js"
-}
-```
-
-
-In `package.json`:
+### 3. Modify package.json
 
 ```json
 "scripts": {
@@ -66,7 +37,7 @@ In `package.json`:
 
 There are some things you should notice:
 
-- Don't worry about mocks being used, detox works on the compiled version of your app.
+- Don't worry about mocks being used, Detox works on the compiled version of your app.
 - Detox exposes it's primitives (`expect`, `device`, ...) globally, it will override Jest's global `expect` object.
 
 ## How to run unit test and E2E tests in the same project

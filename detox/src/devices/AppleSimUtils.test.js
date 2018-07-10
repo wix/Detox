@@ -1,9 +1,13 @@
+const _ = require('lodash');
+const simctlList = require('./xcrunSimctlList.mock.json');
+
 describe('AppleSimUtils', () => {
   let AppleSimUtils;
   let uut;
   let exec;
   let retry;
   let environment;
+  let tempfile;
 
   const simUdid = `9C9ABE4D-70C7-49DC-A396-3CB1D0E82846`;
   const bundleId = 'bundle.id';
@@ -16,6 +20,8 @@ describe('AppleSimUtils', () => {
     retry = require('../utils/retry');
     jest.mock('../utils/environment');
     environment = require('../utils/environment');
+    jest.mock('tempfile');
+    tempfile = require('tempfile');
 
     AppleSimUtils = require('./AppleSimUtils');
     uut = new AppleSimUtils();
@@ -29,35 +35,32 @@ describe('AppleSimUtils', () => {
     expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
   });
 
-  describe('findDeviceUDID', () => {
-    it('correct params', async () => {
-      expect(exec.execWithRetriesAndLogs).not.toHaveBeenCalled();
-      try {
-        await uut.findDeviceUDID('iPhone 6');
-      } catch (e) { }
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith('applesimutils', {
-        args: `--list "iPhone 6" --maxResults=1`
-      }, expect.anything(), 1, undefined);
-    });
+  describe('findDevicesUDID', () => {
 
-    it('adapted to new api with optional OS', async () => {
-      try {
-        await uut.findDeviceUDID('iPhone 6 , iOS 10.3');
-      } catch (e) { }
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith('applesimutils', {
-        args: `--list "iPhone 6, OS=iOS 10.3" --maxResults=1`
-      }, expect.anything(), 1, undefined);
-    });
-
-    it('returns udid from found device', async () => {
-      exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({
+    it('return multiple devices', async () => {
+      exec.execWithRetriesAndLogs
+          .mockReturnValueOnce(Promise.resolve({
+            stdout: JSON.stringify(simctlList)}))
+          .mockReturnValueOnce(Promise.resolve({
         stdout: JSON.stringify([
           {
             "state": "Shutdown",
             "availability": "(available)",
             "name": "iPhone 6",
-            "udid": "the uuid",
+            "udid": "the uuid1",
+            "os": {
+              "version": "10.3.1",
+              "availability": "(available)",
+              "name": "iOS 10.3",
+              "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-10-3",
+              "buildversion": "14E8301"
+            }
+          },
+          {
+            "state": "Shutdown",
+            "availability": "(available)",
+            "name": "iPhone 6",
+            "udid": "the uuid2",
             "os": {
               "version": "10.3.1",
               "availability": "(available)",
@@ -68,12 +71,53 @@ describe('AppleSimUtils', () => {
           }
         ])
       }));
+      const result = await uut.findDevicesUDID('iPhone 7');
+      expect(result).toEqual(['the uuid1', 'the uuid2']);
+    });
+  });
+
+
+  describe('findDeviceUDID', () => {
+
+    it('adapted to new api with optional OS', async () => {
+      try {
+        await uut.findDeviceUDID('iPhone 6 , iOS 10.3');
+      } catch (e) { }
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith('applesimutils', {
+        args: `--list --byType "iPhone 6" --byOS "iOS 10.3"`
+      }, expect.anything(), 1, undefined);
+    });
+
+    it('returns udid from found device', async () => {
+      exec.execWithRetriesAndLogs
+          .mockReturnValueOnce(Promise.resolve({
+            stdout: JSON.stringify(simctlList)}))
+          .mockReturnValueOnce(Promise.resolve({
+            stdout: JSON.stringify([
+              {
+                "state": "Shutdown",
+                "availability": "(available)",
+                "name": "iPhone 6",
+                "udid": "the uuid",
+                "os": {
+                  "version": "10.3.1",
+                  "availability": "(available)",
+                  "name": "iOS 10.3",
+                  "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-10-3",
+                  "buildversion": "14E8301"
+                }
+              }
+            ])
+          }));
       const result = await uut.findDeviceUDID('iPhone 7');
       expect(result).toEqual('the uuid');
     });
 
     it('handles stderr as if stdout', async () => {
-      exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({
+      exec.execWithRetriesAndLogs
+          .mockReturnValueOnce(Promise.resolve({
+            stdout: JSON.stringify(simctlList)}))
+          .mockReturnValueOnce(Promise.resolve({
         stderr: JSON.stringify([
           {
             "state": "Shutdown",
@@ -146,30 +190,6 @@ describe('AppleSimUtils', () => {
     });
   });
 
-  describe('waitForDeviceState', () => {
-    it('findsDeviceByUdid', async () => {
-      uut.findDeviceByUDID = jest.fn(() => Promise.resolve({ udid: 'the udid', state: 'the state' }));
-      retry.mockImplementation((opts, fn) => Promise.resolve(fn()));
-      const result = await uut.waitForDeviceState(`the udid`, `the state`);
-      expect(uut.findDeviceByUDID).toHaveBeenCalledTimes(1);
-      expect(result).toEqual({ udid: 'the udid', state: 'the state' });
-    });
-
-    it('waits for state to be equal', async () => {
-      uut.findDeviceByUDID = jest.fn(() => Promise.resolve({ udid: 'the udid', state: 'different state' }));
-      retry.mockImplementation((opts, fn) => Promise.resolve(fn()));
-      try {
-        await uut.waitForDeviceState(`the udid`, `the state`);
-        fail(`should throw`);
-      } catch (e) {
-        expect(e).toEqual(new Error(`device is in state 'different state'`));
-      }
-      expect(uut.findDeviceByUDID).toHaveBeenCalledTimes(1);
-      expect(retry).toHaveBeenCalledTimes(1);
-      expect(retry).toHaveBeenCalledWith({ retries: 10, interval: 1000 }, expect.any(Function));
-    });
-  });
-
   describe('getXcodeVersion', () => {
     it('returns xcode major version', async () => {
       exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({ stdout: 'Xcode 123.456\nBuild version 123abc123\n' }));
@@ -206,16 +226,14 @@ describe('AppleSimUtils', () => {
   });
 
   describe('boot', () => {
+
     it('waits for device by udid to be Shutdown, boots magically, then waits for state to be Booted', async () => {
       uut.findDeviceByUDID = jest.fn(() => Promise.resolve({ state: 'unknown' }));
-      uut.waitForDeviceState = jest.fn(() => Promise.resolve(true));
       uut.getXcodeVersion = jest.fn(() => Promise.resolve(1));
       expect(exec.execWithRetriesAndLogs).not.toHaveBeenCalled();
-      await uut.boot('some udid');
+      await uut.boot('some-udid');
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(expect.stringMatching('xcode-select -p'), undefined, expect.anything(), 1);
-      expect(uut.waitForDeviceState).toHaveBeenCalledTimes(2);
-      expect(uut.waitForDeviceState.mock.calls[0]).toEqual([`some udid`, `Shutdown`]);
-      expect(uut.waitForDeviceState.mock.calls[1]).toEqual([`some udid`, `Booted`]);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(expect.stringMatching('bootstatus some-udid'), undefined, expect.anything(), 1);
     });
 
     it('skips if device state was already Booted', async () => {
@@ -223,6 +241,7 @@ describe('AppleSimUtils', () => {
       uut.getXcodeVersion = jest.fn(() => Promise.resolve(1));
       await uut.boot('udid');
       expect(uut.findDeviceByUDID).toHaveBeenCalledTimes(1);
+      expect(uut.findDeviceByUDID).toHaveBeenCalledWith('udid');
       expect(exec.execWithRetriesAndLogs).not.toHaveBeenCalled();
     });
 
@@ -239,11 +258,51 @@ describe('AppleSimUtils', () => {
       uut.getXcodeVersion = jest.fn(() => Promise.resolve(9));
       await uut.boot('udid');
       expect(uut.getXcodeVersion).toHaveBeenCalledTimes(1);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(expect.stringMatching('xcrun simctl boot udid'), undefined, expect.anything(), 10);
 
     });
   });
+
+  describe('create', () => {
+
+    it('calls xcrun to get a list of runtimes/devicetypes/devices', async () => {
+      exec.execWithRetriesAndLogs.mockReturnValue(Promise.resolve({stdout: JSON.stringify(simctlList)}));
+
+      const created = await uut.create('iPhone X');
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(2);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
+        `/usr/bin/xcrun simctl list -j`,
+        undefined,
+        expect.anything(),
+        1);
+    });
+
+    it('errors when there is no runtime available', async () => {
+      exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({stdout: "{}"}));
+      try {
+        await uut.create('iPhone 7 Plus');
+        fail(`should throw`);
+      }
+      catch (e) {
+        expect(`${e}`).toEqual('Error: Unable to create device. No runtime found for iPhone 7 Plus');
+      }
+    });
+
+
+    xit('creates using the newest runtime version', async () => {
+      exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({stdout: JSON.stringify(simctlList)}));
+
+      const created = await uut.create('iPhone 7 Plus');
+
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
+        `/usr/bin/xcrun simctl create "iPhone  7 Plus" "iPhone 7 Plus" "com.apple.CoreSimulator.SimRuntime.iOS-11-3`,
+        undefined,
+        expect.anything(),
+        1);
+      expect(created).toEqual(true);
+    });
+  });
+
 
   describe('install', () => {
     it('calls xcrun', async () => {
@@ -339,9 +398,10 @@ describe('AppleSimUtils', () => {
 
   describe('getLogsPaths', () => {
     it('returns correct paths', () => {
+      const HOME = process.env.HOME;
       expect(uut.getLogsPaths('123')).toEqual({
-        stdout: '$HOME/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.out',
-        stderr: '$HOME/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.err'
+        stdout: `${HOME}/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.out`,
+        stderr: `${HOME}/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.err`,
       })
     });
   });
@@ -420,5 +480,40 @@ describe('AppleSimUtils', () => {
     });
   });
 
+  describe('takeScreenshot', () => {
+    it('executes simctl screenshot command', async () => {
+      const udid = Math.random();
+      const dest = '/tmp/' + Math.random();
+
+      await uut.takeScreenshot(udid, dest);
+
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringMatching(new RegExp(`xcrun simctl io ${udid} screenshot "${dest}"`)),
+        undefined,
+        expect.anything(),
+        1
+      );
+    });
+  });
+
+  describe('recordVideo', () => {
+    it('spawns simctl process with recordVideo command', async () => {
+      const childProcessPromise = Object.assign(Promise.resolve(), { childProcess: {} });
+      const udid = Math.random();
+      const dest = '/tmp/' + Math.random();
+      exec.spawnAndLog.mockReturnValueOnce(childProcessPromise);
+
+      const result = uut.recordVideo(udid, dest);
+
+      expect(exec.spawnAndLog).toHaveBeenCalledTimes(1);
+      expect(exec.spawnAndLog).toHaveBeenCalledWith(
+        expect.stringMatching(/xcrun/),
+        ['simctl', 'io', udid, 'recordVideo', dest]
+      );
+
+      expect(result).toEqual(childProcessPromise);
+    });
+  });
 });
 

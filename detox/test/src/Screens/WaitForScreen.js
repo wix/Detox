@@ -1,43 +1,28 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   Text,
   View,
   ScrollView,
   Animated,
-  NativeModules
+  TouchableOpacity
 } from 'react-native';
-
-const NativeModule = NativeModules.NativeModule;
 
 export default class WaitForScreen extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      greeting: undefined,
-      showsUp: false,
+      clicked: false,
       becomeVisibleLeft: new Animated.Value(-500)
     };
-    NativeModule.nativeSetTimeout(1000, () => {
-      this.setState({showsUp: true});
-    });
-
-    NativeModule.nativeSetTimeout(500, () => {
-      Animated.timing(this.state.becomeVisibleLeft, {toValue: 0, duration: 1000}).start();
-    });
   }
 
   render() {
-    if (this.state.greeting) return this.renderAfterButton();
     return (
       <View style={{flex: 1, paddingTop: 40, justifyContent: 'flex-start'}}>
 
-        {!this.state.showsUp ? false :
-          <Text testID='createdAndVisibleText' style={{marginBottom: 20, textAlign: 'center'}}>I am being created after 1 sec</Text>
-        }
-
         <View style={{height: 100, borderColor: '#c0c0c0', borderWidth: 1, backgroundColor: '#f8f8ff', marginBottom: 20}}>
-          <ScrollView testID='ScrollView630'>
+          <ScrollView testID='ScrollView'>
             <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}}>Text1</Text>
             <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}}>Text2</Text>
             <Text style={{height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10}}>Text3</Text>
@@ -49,24 +34,27 @@ export default class WaitForScreen extends Component {
           </ScrollView>
         </View>
 
-        {this.state.showsUp ? false :
-          <Text testID='deletedFromHierarchyText' style={{marginBottom: 20, textAlign: 'center', color: 'red'}}>I am being removed after 1 sec</Text>
+        {this.state.clicked ? false :
+         <Text testID='deletedFromHierarchyText' style={{marginBottom: 20, textAlign: 'center', color: 'red'}}>I am being removed 2 sec after click</Text>
         }
 
-        <Animated.Text testID='invisibleBecomingVisibleText' style={{marginBottom: 20, textAlign: 'center', color: 'green', left: this.state.becomeVisibleLeft}}>I become visible after 1 sec</Animated.Text>
+        {!this.state.clicked ? false :
+         <Text testID='createdAndVisibleText' style={{marginBottom: 20, textAlign: 'center'}}>I am being created 2 sec after click</Text>
+        }
+
+        <TouchableOpacity onPress={this.onGoButtonPress.bind(this)}>
+          <Text testID='GoButton' style={{color: 'blue', textAlign: 'center'}}>Go</Text>
+        </TouchableOpacity>
 
       </View>
     );
   }
 
-  renderAfterButton() {
-    return (
-      <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
-        <Text style={{fontSize: 25}}>
-          {this.state.greeting}!!!
-        </Text>
-      </View>
-    );
+  onGoButtonPress() {
+    setTimeout(() => {
+      this.setState({
+        clicked: true
+      });
+    }, 2000);
   }
-
 }

@@ -1,8 +1,6 @@
 const invoke = require('../invoke');
 const DetoxMatcherApi = require('./espressoapi/DetoxMatcher');
 
-const DetoxMatcher = 'com.wix.detox.espresso.DetoxMatcher';
-
 class Matcher {
   withAncestor(matcher) {
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherWithAncestor(this, matcher));
@@ -45,8 +43,7 @@ class Matcher {
 class LabelMatcher extends Matcher {
   constructor(value) {
     super();
-    if (typeof value !== 'string') throw new Error(`LabelMatcher ctor argument must be a string, got ${typeof value}`);
-    this._call = invoke.call(invoke.Android.Class(DetoxMatcher), 'matcherForContentDescription', value);
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForContentDescription(value));
   }
 }
 

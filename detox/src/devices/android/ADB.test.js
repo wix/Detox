@@ -10,8 +10,6 @@ describe('ADB', () => {
       getAndroidSDKPath: () => '/dev/null',
     }));
 
-    ADB = require('./ADB');
-
     jest.mock('./EmulatorTelnet');
     EmulatorTelnet = require('./EmulatorTelnet');
 
@@ -23,6 +21,7 @@ describe('ADB', () => {
     });
     exec = require('../../utils/exec').execWithRetriesAndLogs;
 
+    ADB = require('./ADB');
     adb = new ADB();
   });
 
@@ -44,6 +43,18 @@ describe('ADB', () => {
   it(`terminate`, async () => {
     await adb.terminate('com.package');
     expect(exec).toHaveBeenCalledTimes(1);
+  });
+
+  it(`pidof`, async () => {
+    adb.shell = async () => `
+com.google.android.apps.google.google.google.test.go 2245
+com.wix.detox.test                                  10670
+com.google.android.dialer                           17214`;
+
+    expect(await adb.pidof('', 'com.google.android.apps.google.google.google.test.go')).toBe(2245);
+    expect(await adb.pidof('', 'com.wix.detox.test')).toBe(10670);
+    expect(await adb.pidof('', 'com.google.android.dialer')).toBe(17214);
+    expect(await adb.pidof('', 'unexisting bundle')).toBe(NaN);
   });
 
   it(`unlockScreen`, async () => {

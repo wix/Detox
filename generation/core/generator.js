@@ -8,246 +8,254 @@ const fs = require('fs');
 const { methodNameToSnakeCase } = require('../helpers');
 let globalFunctionUsage = {};
 module.exports = function getGenerator({
-	typeCheckInterfaces,
-	renameTypesMap,
-	supportedTypes,
-	classValue,
-	contentSanitizersForFunction,
-	contentSanitizersForType,
-	blacklistedFunctionNames = []
+  typeCheckInterfaces,
+  renameTypesMap,
+  supportedTypes,
+  classValue,
+  contentSanitizersForFunction,
+  contentSanitizersForType,
+  blacklistedFunctionNames = []
 }) {
-	/**
-	 * the input provided by objective-c-parser looks like this:
-	 * {
-	 *   "name": "BasicName",
-	 *   "methods": [
-	 *     {
-	 *       "args": [],
-	 *       "comment": "This is the comment of basic method one",
-	 *       "name": "basicMethodOne",
-	 *       "returnType": "NSInteger"
-	 *     },
-	 *     {
-	 *       "args": [
-	 *         {
-	 *           "type": "NSInteger",
-	 *           "name": "argOne"
-	 *         },
-	 *         {
-	 *           "type": "NSString",
-	 *           "name": "argTwo"
-	 *         }
-	 *       ],
-	 *       "comment": "This is the comment of basic method two.\nIt has multiple lines",
-	 *       "name": "basicMethodTwoWithArgOneAndArgTwo",
-	 *       "returnType": "NSString"
-	 *     }
-	 *   ]
-	 * }
-	 */
-	function createClass(json) {
-		return t.classDeclaration(
-			t.identifier(json.name),
-			null,
-			t.classBody(
-				json.methods
-					.filter(filterMethodsWithUnsupportedParams)
-					.filter(filterMethodsWithBlacklistedName)
-					.map(createMethod.bind(null, json))
-			),
-			[]
-		);
-	}
+  /**
+   * the input provided by objective-c-parser looks like this:
+   * {
+   *   "name": "BasicName",
+   *   "methods": [
+   *     {
+   *       "args": [],
+   *       "comment": "This is the comment of basic method one",
+   *       "name": "basicMethodOne",
+   *       "returnType": "NSInteger"
+   *     },
+   *     {
+   *       "args": [
+   *         {
+   *           "type": "NSInteger",
+   *           "name": "argOne"
+   *         },
+   *         {
+   *           "type": "NSString",
+   *           "name": "argTwo"
+   *         }
+   *       ],
+   *       "comment": "This is the comment of basic method two.\nIt has multiple lines",
+   *       "name": "basicMethodTwoWithArgOneAndArgTwo",
+   *       "returnType": "NSString"
+   *     }
+   *   ]
+   * }
+   */
+  function createClass(json) {
+    return t.classDeclaration(
+      t.identifier(json.name),
+      null,
+      t.classBody(
+        json.methods
+          .filter(filterMethodsWithUnsupportedParams)
+          .filter(filterMethodsWithBlacklistedName)
+          .map(createMethod.bind(null, json))
+      ),
+      []
+    );
+  }
 
-	function filterMethodsWithBlacklistedName({ name }) {
-		return !blacklistedFunctionNames.find((blacklisted) => name.indexOf(blacklisted) !== -1);
-	}
+  function filterMethodsWithBlacklistedName({ name }) {
+    return !blacklistedFunctionNames.find((blacklisted) => name.indexOf(blacklisted) !== -1);
+  }
 
-	function filterMethodsWithUnsupportedParams(method) {
-		return method.args.reduce((carry, methodArg) => {
-			if (methodArg === null) {
-				console.error(method);
-			}
-			return carry && supportedTypes.includes(methodArg.type);
-		}, true);
-	}
+  function filterMethodsWithUnsupportedParams(method) {
+    return method.args.reduce((carry, methodArg) => {
+      if (methodArg === null) {
+        console.error(method);
+      }
+      return carry && supportedTypes.includes(methodArg.type);
+    }, true);
+  }
 
-	function createExport(json) {
-		return t.expressionStatement(
-			t.assignmentExpression('=', t.memberExpression(t.identifier('module'), t.identifier('exports'), false), t.identifier(json.name))
-		);
-	}
+  function createExport(json) {
+    return t.expressionStatement(
+      t.assignmentExpression('=', t.memberExpression(t.identifier('module'), t.identifier('exports'), false), t.identifier(json.name))
+    );
+  }
 
-	function createMethod(classJson, json) {
-		const args = json.args.map(({ name }) => t.identifier(name));
+  const blacklistedArgumentTypes = ['__strong NSError **'];
+  function filterBlacklistedArguments(arg) {
+    return !blacklistedArgumentTypes.includes(arg.type);
+  }
 
-		if (!json.static) {
-			args.unshift(t.identifier('element'));
-		}
+  function createMethod(classJson, json) {
+    json.args = json.args.filter(filterBlacklistedArguments);
+    const args = json.args.map(({ name }) => t.identifier(name));
 
-		const m = t.classMethod(
-			'method',
-			t.identifier(methodNameToSnakeCase(json.name)),
-			args,
-			t.blockStatement(createMethodBody(classJson, json)),
-			false,
-			true
-		);
+    if (!json.static) {
+      args.unshift(t.identifier('element'));
+    }
 
-		if (json.comment) {
-			const comment = {
-				type: json.comment.indexOf('\n') === -1 ? 'LineComment' : 'BlockComment',
-				value: json.comment + '\n'
-			};
+    const m = t.classMethod(
+      'method',
+      t.identifier(methodNameToSnakeCase(json.name)),
+      args,
+      t.blockStatement(createMethodBody(classJson, json)),
+      false,
+      true
+    );
 
-			m.leadingComments = m.leadingComments || [];
-			m.leadingComments.push(comment);
-		}
-		return m;
-	}
+    if (json.comment) {
+      const comment = {
+        type: json.comment.indexOf('\n') === -1 ? 'LineComment' : 'BlockComment',
+        value: json.comment + '\n'
+      };
 
-	function sanitizeArgumentType(json) {
-		if (renameTypesMap[json.type]) {
-			return Object.assign({}, json, {
-				type: renameTypesMap[json.type]
-			});
-		}
-		return json;
-	}
+      m.leadingComments = m.leadingComments || [];
+      m.leadingComments.push(comment);
+    }
+    return m;
+  }
 
-	function createMethodBody(classJson, json) {
-		const sanitizedJson = Object.assign({}, json, {
-			args: json.args.map((argJson) => sanitizeArgumentType(argJson))
-		});
+  function sanitizeArgumentType(json) {
+    if (renameTypesMap[json.type]) {
+      return Object.assign({}, json, {
+        type: renameTypesMap[json.type]
+      });
+    }
+    return json;
+  }
 
-		const allTypeChecks = createTypeChecks(sanitizedJson, sanitizedJson.name).reduce(
-			(carry, item) => (item instanceof Array ? [...carry, ...item] : [...carry, item]),
-			[]
-		);
-		const typeChecks = allTypeChecks.filter((check) => typeof check === 'object');
-		const returnStatement = createReturnStatement(classJson, sanitizedJson);
-		return [...typeChecks, returnStatement];
-	}
+  function createMethodBody(classJson, json) {
+    const sanitizedJson = Object.assign({}, json, {
+      args: json.args.map((argJson) => sanitizeArgumentType(argJson))
+    });
 
-	function createTypeChecks(json, functionName) {
-		const checks = json.args.map((arg) => createTypeCheck(arg, functionName));
-		checks.filter((check) => Boolean(check));
-		return checks;
-	}
+    const allTypeChecks = createTypeChecks(sanitizedJson, sanitizedJson.name).reduce(
+      (carry, item) => (item instanceof Array ? [...carry, ...item] : [...carry, item]),
+      []
+    );
+    const typeChecks = allTypeChecks.filter((check) => typeof check === 'object');
+    const returnStatement = createReturnStatement(classJson, sanitizedJson);
+    return [...typeChecks, returnStatement];
+  }
 
-	function addArgumentContentSanitizerCall(json, functionName) {
-		if (contentSanitizersForType[json.type]) {
-			globalFunctionUsage[contentSanitizersForType[json.type].name] = true;
-			return contentSanitizersForType[json.type].value(json.name);
-		}
+  function createTypeChecks(json, functionName) {
+    const checks = json.args.map((arg) => createTypeCheck(arg, functionName));
+    checks.filter((check) => Boolean(check));
+    return checks;
+  }
 
-		if (contentSanitizersForFunction[functionName] && contentSanitizersForFunction[functionName].argumentName === json.name) {
-			globalFunctionUsage[contentSanitizersForFunction[functionName].name] = true;
-			return contentSanitizersForFunction[functionName].value(json.name);
-		}
+  function addArgumentContentSanitizerCall(json, functionName) {
+    if (contentSanitizersForType[json.type]) {
+      globalFunctionUsage[contentSanitizersForType[json.type].name] = true;
+      return contentSanitizersForType[json.type].value(json.name);
+    }
 
-		return t.identifier(json.name);
-	}
+    if (contentSanitizersForFunction[functionName] && contentSanitizersForFunction[functionName].argumentName === json.name) {
+      globalFunctionUsage[contentSanitizersForFunction[functionName].name] = true;
+      return contentSanitizersForFunction[functionName].value(json.name);
+    }
 
-	function addArgumentTypeSanitizer(json) {
-		if (contentSanitizersForType[json.type]) {
-			return contentSanitizersForType[json.type].type;
-		}
+    return t.identifier(json.name);
+  }
 
-		return json.type;
-	}
+  function addArgumentTypeSanitizer(json) {
+    if (contentSanitizersForType[json.type]) {
+      return contentSanitizersForType[json.type].type;
+    }
 
-	// These types need no wrapping with {type: ..., value: }
-	const plainArgumentTypes = ['id', 'id<GREYAction>', 'id<GREYMatcher>', 'GREYElementInteraction*', 'String'];
+    return json.type;
+  }
 
-	function shouldBeWrapped({ type }) {
-		return !plainArgumentTypes.includes(type);
-	}
+  // These types need no wrapping with {type: ..., value: }
+  const plainArgumentTypes = ['id', 'id<GREYAction>', 'id<GREYMatcher>', 'GREYElementInteraction*', 'String', 'ArrayList<String>'];
 
-	function createReturnStatement(classJson, json) {
-		const args = json.args.map(
-			(arg) =>
-				shouldBeWrapped(arg)
-					? t.objectExpression([
-							t.objectProperty(t.identifier('type'), t.stringLiteral(addArgumentTypeSanitizer(arg))),
-							t.objectProperty(t.identifier('value'), addArgumentContentSanitizerCall(arg, json.name))
-					  ])
-					: addArgumentContentSanitizerCall(arg, json.name)
-		);
+  function shouldBeWrapped({ type }) {
+    return !plainArgumentTypes.includes(type);
+  }
 
-		return t.returnStatement(
-			t.objectExpression([
-				t.objectProperty(
-					t.identifier('target'),
-					t.objectExpression([
-						t.objectProperty(t.identifier('type'), t.stringLiteral(json.static ? 'Class' : 'Invocation')),
-						t.objectProperty(t.identifier('value'), json.static ? t.stringLiteral(classValue(classJson)) : t.identifier('element'))
-					])
-				),
-				t.objectProperty(t.identifier('method'), t.stringLiteral(json.name)),
-				t.objectProperty(t.identifier('args'), t.arrayExpression(args))
-			])
-		);
-	}
+  function createReturnStatement(classJson, json) {
+    const args = json.args.map(
+      (arg) =>
+        shouldBeWrapped(arg)
+          ? t.objectExpression([
+              t.objectProperty(t.identifier('type'), t.stringLiteral(addArgumentTypeSanitizer(arg))),
+              t.objectProperty(t.identifier('value'), addArgumentContentSanitizerCall(arg, json.name))
+            ])
+          : addArgumentContentSanitizerCall(arg, json.name)
+    );
 
-	function createTypeCheck(json, functionName) {
-		const optionalSanitizer = contentSanitizersForFunction[functionName];
-		const type = optionalSanitizer && optionalSanitizer.argumentName === json.name ? optionalSanitizer.newType : json.type;
-		const typeCheckCreator = typeCheckInterfaces[type];
-		const isListOfChecks = typeCheckCreator instanceof Array;
-		return isListOfChecks
-			? typeCheckCreator.map((singleCheck) => singleCheck(json))
-			: typeof typeCheckCreator === 'function'
-				? typeCheckCreator(json)
-				: t.emptyStatement();
-	}
+    return t.returnStatement(
+      t.objectExpression([
+        t.objectProperty(
+          t.identifier('target'),
+          json.static
+            ? t.objectExpression([
+                t.objectProperty(t.identifier('type'), t.stringLiteral('Class')),
+                t.objectProperty(t.identifier('value'), t.stringLiteral(classValue(classJson)))
+              ])
+            : t.identifier('element')
+        ),
+        t.objectProperty(t.identifier('method'), t.stringLiteral(json.name)),
+        t.objectProperty(t.identifier('args'), t.arrayExpression(args))
+      ])
+    );
+  }
 
-	return function generator(files) {
-		Object.entries(files).forEach(([inputFile, outputFile]) => {
-			globalFunctionUsage = {};
-			const input = fs.readFileSync(inputFile, 'utf8');
-			const isObjectiveC = inputFile[inputFile.length - 1] === 'h';
+  function createTypeCheck(json, functionName) {
+    const optionalSanitizer = contentSanitizersForFunction[functionName];
+    const type = optionalSanitizer && optionalSanitizer.argumentName === json.name ? optionalSanitizer.newType : json.type;
+    const typeCheckCreator = typeCheckInterfaces[type];
+    const isListOfChecks = typeCheckCreator instanceof Array;
+    return isListOfChecks
+      ? typeCheckCreator.map((singleCheck) => singleCheck(json))
+      : typeof typeCheckCreator === 'function'
+        ? typeCheckCreator(json)
+        : t.emptyStatement();
+  }
 
-			const json = isObjectiveC ? objectiveCParser(input) : javaMethodParser(input);
+  return function generator(files) {
+    Object.entries(files).forEach(([inputFile, outputFile]) => {
+      globalFunctionUsage = {};
+      const input = fs.readFileSync(inputFile, 'utf8');
+      const isObjectiveC = inputFile[inputFile.length - 1] === 'h';
 
-			// set default name
-			if (!json.name) {
-				const pathFragments = outputFile.split('/');
-				json.name = pathFragments[pathFragments.length - 1].replace('.js', '');
-			}
-			const ast = t.program([createClass(json), createExport(json)]);
-			const output = generate(ast);
+      const json = isObjectiveC ? objectiveCParser(input) : javaMethodParser(input);
 
-			const commentBefore = '/**\n\n\tThis code is generated.\n\tFor more information see generation/README.md.\n*/\n\n';
+      // set default name
+      if (!json.name) {
+        const pathFragments = outputFile.split('/');
+        json.name = pathFragments[pathFragments.length - 1].replace('.js', '');
+      }
+      const ast = t.program([createClass(json), createExport(json)]);
+      const output = generate(ast);
 
-			// Add global helper functions
-			const globalFunctionsStr = fs.readFileSync(__dirname + '/global-functions.js', 'utf8');
-			const globalFunctionsSource = globalFunctionsStr.substr(0, globalFunctionsStr.indexOf('module.exports'));
+      const commentBefore = '/**\n\n\tThis code is generated.\n\tFor more information see generation/README.md.\n*/\n\n';
 
-			// Only include global functions that are actually used
-			const usedGlobalFunctions = Object.entries(globalFunctionUsage)
-				.filter(([key, value]) => value)
-				.map(([key]) => key);
-			const globalFunctions = usedGlobalFunctions
-				.map((name) => {
-					const start = globalFunctionsSource.indexOf(`function ${name}`);
-					const end = globalFunctionsSource.indexOf(`// END ${name}`);
-					return globalFunctionsSource.substr(start, end - start);
-				})
-				.join('\n');
+      // Add global helper functions
+      const globalFunctionsStr = fs.readFileSync(__dirname + '/global-functions.js', 'utf8');
+      const globalFunctionsSource = globalFunctionsStr.substr(0, globalFunctionsStr.indexOf('module.exports'));
 
-			const code = [commentBefore, globalFunctions, output.code].join('\n');
-			fs.writeFileSync(outputFile, code, 'utf8');
+      // Only include global functions that are actually used
+      const usedGlobalFunctions = Object.entries(globalFunctionUsage)
+        .filter(([key, value]) => value)
+        .map(([key]) => key);
+      const globalFunctions = usedGlobalFunctions
+        .map((name) => {
+          const start = globalFunctionsSource.indexOf(`function ${name}`);
+          const end = globalFunctionsSource.indexOf(`// END ${name}`);
+          return globalFunctionsSource.substr(start, end - start);
+        })
+        .join('\n');
 
-			// Output methods that were not created due to missing argument support
-			const unsupportedMethods = json.methods.filter((x) => !filterMethodsWithUnsupportedParams(x));
-			if (unsupportedMethods.length) {
-				console.log(`Could not generate the following methods for ${json.name}`);
-				unsupportedMethods.forEach((method) => {
-					const methodArgs = method.args.filter((methodArg) => !supportedTypes.includes(methodArg.type)).map((methodArg) => methodArg.type);
-					console.log(`\t ${method.name} misses ${methodArgs}`);
-				});
-			}
-		});
-	};
+      const code = [commentBefore, globalFunctions, output.code].join('\n');
+      fs.writeFileSync(outputFile, code, 'utf8');
+
+      // Output methods that were not created due to missing argument support
+      const unsupportedMethods = json.methods.filter((x) => !filterMethodsWithUnsupportedParams(x));
+      if (unsupportedMethods.length) {
+        console.log(`Could not generate the following methods for ${json.name}`);
+        unsupportedMethods.forEach((method) => {
+          const methodArgs = method.args.filter((methodArg) => !supportedTypes.includes(methodArg.type)).map((methodArg) => methodArg.type);
+          console.log(`\t ${method.name} misses ${methodArgs}`);
+        });
+      }
+    });
+  };
 };

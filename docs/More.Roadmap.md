@@ -11,6 +11,13 @@ The current API supports addition of multiple platforms, Android is next. This i
 ### iOS physical device support
 Currently Detox only supports running on iOS simulators, we plan on adding support for running on devices as well.
 
+### Windows support
+There is some work done for running Detox on Windows, but it's still fairly untested. Please open issues for anything you run into, but be aware of these limitations:
+
+- Apple doesn't support iOS apps on Windows, so you're limited to the in-progress Android support.
+- `binaryPath` can be left as a relative path with `/`, or use `\\` if you don't need cross-platform support.
+- `build` should not use `./gradlew ...`, but simply `gradlew ...` - you may prefer scripting the build outside of Detox if you want to maintain cross-platform support - or simply have two configurations!
+
 ### Expectations on device logs
 One of our most wanted features, being able to assert log outputs.
 

@@ -6,10 +6,10 @@
 
 
 function sanitize_greyElementInteraction(value) {
-	return {
-		type: 'Invocation',
-		value
-	};
+  return {
+    type: 'Invocation',
+    value
+  };
 } 
 class GREYCondition {
   static detoxConditionForElementMatched(interaction) {

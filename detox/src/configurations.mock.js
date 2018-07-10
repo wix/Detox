@@ -85,7 +85,7 @@ const pathsTests = {
   },
   "configurations": {
     "absolutePath": {
-      "binaryPath": "/tmp/abcdef/123",
+      "binaryPath": process.platform === "win32" ? "C:\\Temp\\abcdef\\123" : "/tmp/abcdef/123",
       "type": "ios.simulator",
       "name": "iPhone 7 Plus, iOS 10.2"
     },

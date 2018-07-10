@@ -6,32 +6,32 @@
 
 
 function sanitize_android_edge(edge) {
-	switch (edge) {
-		case 'left':
-			return 1;
-		case 'right':
-			return 2;
-		case 'top':
-			return 3;
-		case 'bottom':
-			return 4;
-		default:
-			throw new Error(`edge must be a 'left'/'right'/'top'/'bottom', got ${edge}`);
-	}
+  switch (edge) {
+    case 'left':
+      return 1;
+    case 'right':
+      return 2;
+    case 'top':
+      return 3;
+    case 'bottom':
+      return 4;
+    default:
+      throw new Error(`edge must be a 'left'/'right'/'top'/'bottom', got ${edge}`);
+  }
 } 
 function sanitize_android_direction(direction) {
-	switch (direction) {
-		case 'left':
-			return 1;
-		case 'right':
-			return 2;
-		case 'up':
-			return 3;
-		case 'down':
-			return 4;
-		default:
-			throw new Error(`direction must be a 'left'/'right'/'up'/'down', got ${direction}`);
-	}
+  switch (direction) {
+    case 'left':
+      return 1;
+    case 'right':
+      return 2;
+    case 'up':
+      return 3;
+    case 'down':
+      return 4;
+    default:
+      throw new Error(`direction must be a 'left'/'right'/'up'/'down', got ${direction}`);
+  }
 } 
 class DetoxAction {
   static multiClick(times) {

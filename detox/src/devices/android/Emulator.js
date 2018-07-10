@@ -4,6 +4,7 @@ const spawn = require('child-process-promise').spawn;
 const _ = require('lodash');
 const log = require('npmlog');
 const fs = require('fs');
+const os = require('os');
 const Environment = require('../../utils/environment');
 const Tail = require('tail').Tail;
 const argparse = require('../../utils/argparse');
@@ -28,7 +29,7 @@ class Emulator {
   async boot(emulatorName) {
     const emulatorArgs = _.compact([
       '-verbose',
-      '-gpu', 'auto',
+      '-gpu', this.gpuMethod(),
       '-no-audio',
       argparse.getArgValue('headless') ? '-no-window' : '',
       `@${emulatorName}`
@@ -75,6 +76,23 @@ class Emulator {
       detach();
       log.verbose('stdout', '%s', childProcessOutput);
     });
+  }
+
+  gpuMethod() {
+    if (argparse.getArgValue('headless')) {
+      switch (os.platform()) {
+        case 'darwin':
+          return 'host';
+        case 'linux':
+          return 'swiftshader_indirect';
+        case 'win32':
+          return 'angle_indirect';
+        default:
+          return 'auto';
+      }
+    } else {
+      return 'host';
+    }
   }
 }
 

@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ArtifactPathBuilder snapshot tests should defend against accidental resolving outside of root directory 1`] = `"/tmp/subdir/some_.._.._.._.._.._.._home_build-server/.bashrc"`;
+
+exports[`ArtifactPathBuilder snapshot tests should defend against accidental resolving outside of root directory 2`] = `"/tmp/subdir/test/some_.._.._.._.._.._.._home_build-server"`;
+
+exports[`ArtifactPathBuilder snapshot tests should defend against accidental resolving outside of root directory 3`] = `"/tmp/subdir/some_.._.._.._.._.._.._home_build-server/some_.._.._.._.._.._.._home_build-server"`;
+
+exports[`ArtifactPathBuilder snapshot tests should prepend checkmark to an artifact of a passed test 1`] = `"/tmp/subdir/✓ test/1.log"`;
+
+exports[`ArtifactPathBuilder snapshot tests should prepend x sign to an artifact of a failed test 1`] = `"/tmp/subdir/✗ test/1.log"`;

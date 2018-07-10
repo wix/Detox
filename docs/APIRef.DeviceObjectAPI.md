@@ -47,7 +47,7 @@ Grant or deny runtime permissions for your application.
 await device.launchApp({permissions: {calendar: 'YES'}});
 ```
 Detox uses [AppleSimUtils](https://github.com/wix/AppleSimulatorUtils) on iOS to support this functionality. Read about the different types of permissions and how to set them in AppleSimUtils' Readme.
-Check out Detox's [own test suite](../detox/test/e2e/m-permissions.js)
+Check out Detox's [own test suite](../detox/test/e2e/13.permissions.test.js)
 
 ##### 3. Launch from URL
 Mock opening the app from URL to test your app's deep link handling mechanism.
@@ -189,7 +189,7 @@ Check out Detox's [own test suite](../detox/test/e2e/k-user-notifications.js)
 ### `device.sendUserActivity(params)`
 Mock handling of received user activity when app is in foreground.<br>
 Read more in [Mocking User Activities](APIRef.MockingUserActivities.md) section.<br>
-Check out Detox's [own test suite](../detox/test/e2e/t-user-activities.js)
+Check out Detox's [own test suite](../detox/test/e2e/t-user-activities.test.js)
 
 ### `device.setOrientation(orientation)`
 Takes `"portrait"` or `"landscape"` and rotates the device to the given orientation.

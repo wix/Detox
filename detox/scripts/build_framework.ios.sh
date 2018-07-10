@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -e -x
 
 detoxRootPath="$(dirname $(dirname ${0}))"
 detoxVersion=`node -p "require('${detoxRootPath}/package.json').version"`
@@ -32,7 +32,7 @@ function buildFramework () {
   detoxSourcePath="${1}"
   echo "Building Detox.framework from ${detoxSourcePath}..."
   mkdir -p "${detoxFrameworkDirPath}"
-  xcodebuild build -project "${detoxSourcePath}"/Detox.xcodeproj -scheme DetoxFramework -configuration Release -derivedDataPath "${detoxFrameworkDirPath}"/DetoxBuild BUILD_DIR="${detoxFrameworkDirPath}"/DetoxBuild/Build/Products &> "${detoxFrameworkDirPath}"/detox_ios.log
+  "${detoxRootPath}"/scripts/build_universal_framework.sh "${detoxSourcePath}"/Detox.xcodeproj "${detoxFrameworkDirPath}"/DetoxBuild &> "${detoxFrameworkDirPath}"/detox_ios.log
   mv "${detoxFrameworkDirPath}"/DetoxBuild/Build/Products/Release-universal/Detox.framework "${detoxFrameworkDirPath}"
   rm -fr "${detoxFrameworkDirPath}"/DetoxBuild
 }

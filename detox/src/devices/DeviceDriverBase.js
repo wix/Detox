@@ -8,6 +8,10 @@ class DeviceDriverBase {
     this.client = client;
   }
 
+  declareArtifactPlugins() {
+    return {};
+  }
+
   async acquireFreeDevice(name) {
     await Promise.resolve('');
   }
@@ -99,13 +103,13 @@ class DeviceDriverBase {
   defaultLaunchArgsPrefix() {
     return '';
   }
-  
+
   createRandomDirectory() {
     const randomDir = fs.mkdtempSync(path.join(os.tmpdir(), 'detoxrand-'));
     fs.ensureDirSync(randomDir);
     return randomDir;
   }
-  
+
   cleanupRandomDirectory(fileOrDir) {
     if(path.basename(fileOrDir).startsWith('detoxrand-')) {
       fs.removeSync(fileOrDir);

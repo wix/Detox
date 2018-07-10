@@ -4,7 +4,7 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "version": "7.3.7",
+  "version": "8.0.0",
   "bin": {
     "detox": "local-cli/detox.js"
   },
@@ -21,14 +21,14 @@
   "author": "Tal Kol <talkol@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "scripts/build.sh",
-    "lint": "eslint src",
+    "build": "node scripts/build.js",
+    "lint": "eslint runners src scripts",
     "unit": "jest --coverage --verbose",
     "pretest": "npm run lint",
     "test": "npm run unit",
     "unit:watch": "jest --watch",
     "prepublish": "npm run build",
-    "postinstall": "scripts/postinstall.sh"
+    "postinstall": "node scripts/postinstall.js"
   },
   "devDependencies": {
     "eslint": "^4.11.0",
@@ -44,12 +44,14 @@
     "fs-extra": "^4.0.2",
     "get-port": "^2.1.0",
     "ini": "^1.3.4",
-    "lodash": "^4.14.1",
+    "lodash": "^4.17.5",
     "minimist": "^1.2.0",
     "npmlog": "^4.0.2",
+    "proper-lockfile": "^3.0.2",
     "shell-utils": "^1.0.9",
     "tail": "^1.2.3",
     "telnet-client": "0.15.3",
+    "tempfile": "^2.0.0",
     "ws": "^1.1.1"
   },
   "engines": {
@@ -62,18 +64,24 @@
     ],
     "coveragePathIgnorePatterns": [
       "/node_modules/",
+      "src/artifacts/log",
+      "src/artifacts/screenshot",
+      "src/artifacts/video",
       ".*Driver.js",
       "EmulatorTelnet.js",
       "Emulator.js",
       "DeviceDriverBase.js",
       "GREYConfiguration.js",
       "src/utils/environment.js",
+      "src/utils/onTerminate.js",
+      "src/utils/sleep.js",
       "AAPT.js",
       "ADB.js",
       "fsext.js",
       "debug.js",
       "src/ios/earlgreyapi",
       "src/android/espressoapi",
+      "appdatapath.js",
       ".test.js",
       ".mock.js"
     ],

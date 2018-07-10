@@ -1,9 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
+const log = require('npmlog');
 const argparse = require('../utils/argparse');
-const ArtifactsCopier = require('../artifacts/ArtifactsCopier');
 const debug = require('../utils/debug'); //debug utils, leave here even if unused
+const logError = require('../utils/logError');
 
 class Device {
 
@@ -12,16 +13,38 @@ class Device {
     this._sessionConfig = sessionConfig;
     this.deviceDriver = deviceDriver;
     this._processes = {};
-    this._artifactsCopier = new ArtifactsCopier(deviceDriver);
     this.deviceDriver.validateDeviceConfig(deviceConfig);
     this.debug = debug;
+    this._listeners = {
+      beforeResetDevice: [],
+      resetDevice: [],
+      beforeLaunchApp: [],
+      launchApp: [],
+    };
+  }
+
+  async emit(eventName, eventObj) {
+    const fire = async (fn) => fn(eventObj);
+    const logEmitError = (err) => {
+      log.error('detox-device', 'device.emit("%s", %j) error', eventName, eventObj);
+      logError(err, 'detox-device');
+    };
+
+    await Promise.all(this._listeners[eventName].map(fn => fire(fn).catch(logEmitError)));
+  }
+
+  on(eventName, callback) {
+    this._listeners[eventName].push(callback);
+  }
+
+  off(eventName, callback) {
+    _.pull(this._listeners[eventName], callback);
   }
 
   async prepare(params = {}) {
     this._binaryPath = this._getAbsolutePath(this._deviceConfig.binaryPath);
     this._deviceId = await this.deviceDriver.acquireFreeDevice(this._deviceConfig.name);
     this._bundleId = await this.deviceDriver.getBundleIdFromBinary(this._binaryPath);
-    this._artifactsCopier.prepare(this._deviceId);
 
     await this.deviceDriver.prepare();
 
@@ -35,14 +58,6 @@ class Device {
     }
   }
 
-  setArtifactsDestination(testArtifactsPath) {
-    this._artifactsCopier.setArtifactsDestination(testArtifactsPath);
-  }
-
-  async finalizeArtifacts() {
-    await this._artifactsCopier.finalizeArtifacts();
-  }
-  
   createPayloadFileAndUpdatesParamsObject(key, launchKey, params, baseLaunchArgs) {
     const payloadFilePath = this.deviceDriver.createPayloadFile(params[key]);
     baseLaunchArgs[launchKey] = payloadFilePath;
@@ -52,8 +67,6 @@ class Device {
   }
 
   async launchApp(params = {newInstance: false}, bundleId) {
-    await this._artifactsCopier.handleAppRelaunch();
-
     const payloadParams = ['url', 'userNotification', 'userActivity'];
     const hasPayload = this._assertHasSingleParam(payloadParams, params);
 
@@ -86,6 +99,12 @@ class Device {
     }
 
     const _bundleId = bundleId || this._bundleId;
+
+    await this.emit('beforeLaunchApp', {
+      deviceId: this._deviceId,
+      bundleId: _bundleId,
+    });
+
     if (this._isAppInBackground(params, _bundleId)) {
       if (hasPayload) {
         await this.deviceDriver.deliverPayload({...params, delayPayload: true});
@@ -96,7 +115,7 @@ class Device {
     this._processes[_bundleId] = processId;
 
     await this.deviceDriver.waitUntilReady();
-    
+
     if(params.detoxUserNotificationDataURL) {
       await this.deviceDriver.cleanupRandomDirectory(params.detoxUserNotificationDataURL);
     }
@@ -104,6 +123,12 @@ class Device {
     if(params.detoxUserActivityDataURL) {
       await this.deviceDriver.cleanupRandomDirectory(params.detoxUserActivityDataURL);
     }
+
+    await this.emit('launchApp', {
+      deviceId: this._deviceId,
+      bundleId: _bundleId,
+      pid: processId,
+    });
   }
 
   _isAppInBackground(params, _bundleId) {
@@ -210,7 +235,9 @@ class Device {
   }
 
   async resetContentAndSettings() {
+    await this.emit('beforeResetDevice', { deviceId: this._deviceId });
     await this.deviceDriver.resetContentAndSettings(this._deviceId);
+    await this.emit('resetDevice', { deviceId: this._deviceId });
   }
 
   getPlatform() {

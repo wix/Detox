@@ -1,13 +1,13 @@
 {
   "name": "detox-cli",
-  "version": "7.2.0",
+  "version": "7.4.0",
   "description": "detox CLI tool wrapper",
   "main": "index.js",
   "scripts": {
     "test": ":"
   },
   "bin": {
-    "detox": "./cli.sh"
+    "detox": "./cli.js"
   },
   "repository": {
     "type": "git",

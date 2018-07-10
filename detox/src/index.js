@@ -1,10 +1,11 @@
+const _ = require('lodash');
 const Detox = require('./Detox');
 const DetoxConstants = require('./DetoxConstants');
 const platform = require('./platform');
 const exportWrapper = require('./exportWrapper');
 const argparse = require('./utils/argparse');
+const onTerminate = require('./utils/onTerminate');
 const configuration = require('./configuration');
-const _ = require('lodash');
 
 let detox;
 
@@ -53,23 +54,26 @@ async function init(config, params) {
   await initializeDetox(config, params);
 }
 
+async function beforeEach(testSummary) {
+  if (detox) {
+    await detox.beforeEach(testSummary);
+  }
+}
+
+async function afterEach(testSummary) {
+  if (detox) {
+    await detox.afterEach(testSummary);
+  }
+}
+
 async function cleanup() {
-  if (detox) {
-    await detox.cleanup();
-  }
+    if (detox) {
+        await detox.cleanup();
+    }
 }
 
-async function beforeEach() {
-  if (detox) {
-    await detox.beforeEach.apply(detox, arguments);
-  }
-}
-
-async function afterEach() {
-  if (detox) {
-    await detox.afterEach.apply(detox, arguments);
-  }
-}
+/* istanbul ignore next */
+onTerminate(() => detox && detox.terminate());
 
 module.exports = Object.assign({
   init,
