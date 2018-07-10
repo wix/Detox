@@ -204,10 +204,6 @@ class ADB {
     return spawnAndLog(this.adbBin, [...serial, ...params]);
   }
 
-  async pressBack(deviceId) {
-    await this.shell(deviceId, `input keyevent 4`);
-  }
-
   async listInstrumentation(deviceId) {
     return await this.shell(deviceId, 'pm list instrumentation');
   }

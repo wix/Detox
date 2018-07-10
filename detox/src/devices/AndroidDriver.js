@@ -56,7 +56,8 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async pressBack(deviceId) {
-    await this.adb.pressBack(deviceId);
+    const call = UIDevice.pressBack(invoke.callDirectly(UIAutomatorAPI.uiDevice()));
+    await this.invocationManager.execute(call);
   }
 
   getTestApkPath(originalApkPath) {
