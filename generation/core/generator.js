@@ -181,21 +181,16 @@ module.exports = function getGenerator({
           : addArgumentContentSanitizerCall(arg, json.name)
     );
 
-    return t.returnStatement(
-      t.objectExpression([
-        t.objectProperty(
-          t.identifier('target'),
-          json.static
-            ? t.objectExpression([
-                t.objectProperty(t.identifier('type'), t.stringLiteral('Class')),
-                t.objectProperty(t.identifier('value'), t.stringLiteral(classValue(classJson)))
-              ])
-            : t.identifier('element')
-        ),
-        t.objectProperty(t.identifier('method'), t.stringLiteral(json.name)),
-        t.objectProperty(t.identifier('args'), t.arrayExpression(args))
-      ])
-    );
+    return template(`
+      return {
+        target: ${json.static ? '{ type: "Class", value: CLASS_VALUE }' : 'element'},
+        method: "${json.name}",
+        args: ARGS
+      };
+    `)({
+      ARGS: t.arrayExpression(args),
+      CLASS_VALUE: t.stringLiteral(classValue(classJson))
+    });
   }
 
   function createTypeCheck(json, functionName) {
