@@ -65,19 +65,28 @@ describe('Android generation', () => {
 
   describe('validation', () => {
     describe('Matcher<View>', () => {
-      it('should fail getting no object', () => {
+      it('should log that it gets no object', () => {
+        const spy = jest.spyOn(console, "error");
         expect(() => {
           ExampleClass.matcherForAnd('I am a string', 'I am one too');
-        }).toThrowErrorMatchingSnapshot();
+        }).not.toThrow();
+
+        
+        expect(spy).toHaveBeenCalled();
+        spy.mockRestore();
       });
 
-      it('should fail with a wrong class', () => {
+      it('should log with a wrong class', () => {
+        const spy = jest.spyOn(console, "error");
         class AnotherClass {}
         const x = new AnotherClass();
 
         expect(() => {
           ExampleClass.matcherForAnd(x, x);
-        }).toThrowErrorMatchingSnapshot();
+        }).not.toThrow();
+
+        expect(spy).toHaveBeenCalled();
+        spy.mockRestore();
       });
 
       it("should succeed with the 'right' class", () => {
