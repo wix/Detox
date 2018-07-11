@@ -6,6 +6,10 @@
 
 
 function sanitize_matcher(matcher) {
+  if (!matcher._call) {
+    return matcher;
+  }
+
   const originalMatcher = typeof matcher._call === 'function' ? matcher._call() : matcher._call;
   return originalMatcher.type ? originalMatcher.value : originalMatcher;
 } 
