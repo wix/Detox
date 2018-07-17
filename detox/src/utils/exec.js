@@ -89,7 +89,7 @@ function spawnAndLog(command, flags, options) {
     stderr.on('data', (chunk) => log.debug({ stderr: true }, chunk.toString()));
     result.childProcess.on('end', (code, signal) => {
       log.debug({ event: 'SPAWN_END' }, `child process received signal ${signal} and exited with code = ${code}`);
-    })
+    });
   }
 
   return result;

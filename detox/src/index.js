@@ -1,9 +1,13 @@
 const _ = require('lodash');
+const fs = require('fs');
 const Detox = require('./Detox');
 const DetoxConstants = require('./DetoxConstants');
 const platform = require('./platform');
 const exportWrapper = require('./exportWrapper');
 const argparse = require('./utils/argparse');
+const log = require('./utils/logger').child({ __filename });
+const logError = require('./utils/logError');
+const sleep = require('./utils/sleep');
 const onTerminate = require('./utils/onTerminate');
 const configuration = require('./configuration');
 
@@ -51,7 +55,14 @@ async function initializeDetox({configurations, session}, params) {
 
 async function init(config, params) {
   validateConfig(config);
-  await initializeDetox(config, params);
+
+  try {
+    await initializeDetox(config, params);
+  } catch (e) {
+    logError(log, e);
+    await sleep(1000);
+    process.kill(process.pid, 'SIGTERM');
+  }
 }
 
 async function beforeEach(testSummary) {
