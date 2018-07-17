@@ -26,8 +26,6 @@
   "dependencies": {
     "detox-common": "^8.0.0",
     "lodash": "^4.13.1",
-    "npmlog": "^4.0.2",
-    "winston": "^3.0.0",
     "ws": "^1.1.0"
   }
 }
