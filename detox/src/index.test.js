@@ -15,6 +15,7 @@ describe('index', () => {
       .mock('detox-server')
       .mock('./devices/Device')
       .mock('./utils/onTerminate')
+      .mock('./utils/logError')
       .mock('./client/Client')
       .mock('./Detox', () => jest.fn(() => mockDetox))
       .mock('./platform');
