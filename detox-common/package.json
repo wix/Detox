@@ -37,7 +37,8 @@
     "coveragePathIgnorePatterns": [
       "node_modules",
       ".test.js",
-      ".mock.js"
+      ".mock.js",
+      "lib/logger.js"
     ],
     "resetMocks": true,
     "resetModules": true,
