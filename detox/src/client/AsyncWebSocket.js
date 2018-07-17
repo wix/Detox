@@ -18,7 +18,7 @@ class AsyncWebSocket {
     return new Promise(async(resolve, reject) => {
       this.ws = new WebSocket(this.url);
       this.ws.onopen = (response) => {
-        this.log.debug({ event: 'WEBSOCKET_OPEN', response: util.inspect(response) }, `opened web socket to: ${this.url}`);
+        this.log.trace({ event: 'WEBSOCKET_OPEN', response: util.inspect(response) }, `opened web socket to: ${this.url}`);
         resolve(response);
       };
 
@@ -34,7 +34,7 @@ class AsyncWebSocket {
       };
 
       this.ws.onmessage = (response) => {
-        this.log.debug({ event: 'WEBSOCKET_MESSAGE' }, `${response.data}`);
+        this.log.trace({ event: 'WEBSOCKET_MESSAGE' }, `${response.data}`);
 
         let messageId = JSON.parse(response.data).messageId;
         let pendingPromise = this.inFlightPromises[messageId];
@@ -61,7 +61,7 @@ class AsyncWebSocket {
       message.messageId = messageId || this.messageIdCounter++;
       this.inFlightPromises[message.messageId] = {resolve, reject};
       const messageAsString = JSON.stringify(message);
-      this.log.debug({ event: 'WEBSOCKET_SEND' }, `${messageAsString}`);
+      this.log.trace({ event: 'WEBSOCKET_SEND' }, `${messageAsString}`);
       this.ws.send(messageAsString);
     });
   }

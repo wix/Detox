@@ -25,14 +25,14 @@ class DetoxServer {
             if (action.params && action.params.sessionId && action.params.role) {
               sessionId = action.params.sessionId;
               role = action.params.role;
-              log.debug(`role=${role} login (sessionId=${sessionId})`);
+              log.trace(`role=${role} login (sessionId=${sessionId})`);
               _.set(this.sessions, [sessionId, role], ws);
               action.type = 'loginSuccess';
               this.sendAction(ws, action);
-              log.debug(`role=${role} action=${action.type} (sessionId=${sessionId})`);
+              log.trace(`role=${role} action=${action.type} (sessionId=${sessionId})`);
             }
           } else if (sessionId && role) {
-            log.debug(`role=${role} action=${action.type} (sessionId=${sessionId})`);
+            log.trace(`role=${role} action=${action.type} (sessionId=${sessionId})`);
             this.sendToOtherRole(sessionId, role, action);
           }
         } catch (error) {
@@ -42,7 +42,7 @@ class DetoxServer {
 
       ws.on('close', () => {
         if (sessionId && role) {
-          log.debug(`role=${role} disconnect (sessionId=${sessionId})`);
+          log.trace(`role=${role} disconnect (sessionId=${sessionId})`);
           _.set(this.sessions, [sessionId, role], undefined);
         }
       });
@@ -61,7 +61,7 @@ class DetoxServer {
     if (ws) {
       this.sendAction(ws, action);
     } else {
-      log.debug(`role=${otherRole} not connected, cannot fw action (sessionId=${sessionId})`);
+      log.trace(`role=${otherRole} not connected, cannot fw action (sessionId=${sessionId})`);
     }
   }
 
