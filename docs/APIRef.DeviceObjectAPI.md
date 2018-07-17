@@ -24,7 +24,7 @@ title: The `device` Object
 - [`device.disableSynchronization()`](#devicedisablesynchronization)
 - [`device.resetContentAndSettings()`](#deviceresetcontentandsettings)
 - [`device.getPlatform()`](#devicegetplatform)
-- [`device.pressBack()`](#devicepressback)
+- [`device.pressBack()` **Android Only**](#devicepressback)
 - [`device.shake()` **iOS Only**](#deviceshake)
 
 ### `device.launchApp(params)`
@@ -249,8 +249,8 @@ if (device.getPlatform() === 'ios') {
 }
 ```
 
-### `device.pressBack()`
-Simulate press back button (Android only).
+### `device.pressBack()` **Android Only**
+Simulate press back button.
 
 ```js
 await device.pressBack();
