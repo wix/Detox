@@ -21,7 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "bunyan": "^1.8.12",
-    "bunyan-debug-stream": "^1.0.8",
+    "bunyan-debug-stream": "noomorph/bunyan-debug-stream",
     "fs-extra": "^6.0.1",
     "lodash": "^4.17.10",
     "minimist": "^1.2.0"
