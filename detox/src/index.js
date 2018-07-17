@@ -60,8 +60,7 @@ async function init(config, params) {
     await initializeDetox(config, params);
   } catch (e) {
     logError(log, e);
-    await sleep(1000);
-    process.kill(process.pid, 'SIGTERM');
+    throw e;
   }
 }
 
