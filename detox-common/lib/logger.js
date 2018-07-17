@@ -35,13 +35,18 @@ const consoleStream = {
   level,
   type: 'raw',
   stream: bunyanDebugStream({
+    showDate: false,
+    showLoggerName: true,
+    showPid: false,
     showMetadata: false,
     trimOutput: true,
     basepath: __dirname,
     prefixers: {
-      '__filename': (filename, { entry }) => entry.event ? null : path.basename(filename),
-      '_operationCounter': counter => ` op #${counter}`,
-      'event': e => `${e}`,
+      '__filename': (filename, { entry }) => {
+        const suffix = entry.event ? `/${entry.event}` : '';
+        return path.basename(filename) + suffix;
+      },
+      'trackingId': id => ` #${id}`,
     },
   }),
   serializers: bunyanDebugStream.serializers,

@@ -6,7 +6,7 @@ const {exec, spawn} = require('child-process-promise');
 let _operationCounter = 0;
 
 async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, interval = 1000) {
-  const sequentialId = _operationCounter++;
+  const trackingId = _operationCounter++;
 
   let cmd;
   if (options) {
@@ -15,7 +15,7 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
     cmd = bin;
   }
 
-  const log = execLogger.child({ fn: 'execWithRetriesAndLogs', cmd, sequentialId });
+  const log = execLogger.child({ fn: 'execWithRetriesAndLogs', cmd, trackingId });
   log.debug({ event: 'EXEC_CMD' }, `${cmd}`);
 
   let result;
@@ -72,21 +72,26 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
 }
 
 function spawnAndLog(command, flags, options) {
-  const sequentialId = _operationCounter++;
-
+  const trackingId = _operationCounter++;
   const cmd = `${command} ${flags.join(' ')}`;
-  let log = execLogger.child({ fn: 'spawnAndLog', cmd, sequentialId });
-  log.debug({ event: 'SPAWN_CMD' }, cmd);
+  let log = execLogger.child({ fn: 'spawnAndLog', cmd, trackingId });
 
-  const result = spawn(command, flags, {stdio: ['ignore', 'pipe', 'pipe'], detached: true, ...options});
+  let result;
+  try {
+    result = spawn(command, flags, {stdio: ['ignore', 'pipe', 'pipe'], detached: true, ...options});
+
+    const child_pid = result.childProcess ? String(result.childProcess.pid) : 'unknown';
+    log.debug({ event: 'SPAWN_CMD' }, `[pid=${child_pid}] ${cmd}`);
+  } catch (e) {
+    log.error({ event: 'SPAWN_ERROR' }, `${cmd} failed. Error was:`, e);
+    throw e;
+  }
 
   if (result.childProcess) {
-    const {pid, stdout, stderr} = result.childProcess;
-    log = log.child({ child_pid: pid });
+    const {stdout, stderr} = result.childProcess;
 
-    log.debug({ event: 'SPAWN_SUCCESS' }, `spawned child process with pid = ${pid}`);
-    stdout.on('data', (chunk) => log.debug({ stdout: true }, chunk.toString()));
-    stderr.on('data', (chunk) => log.debug({ stderr: true }, chunk.toString()));
+    stdout.on('data', (chunk) => log.debug({ stdout: true, event: 'SPAWN_STDOUT' }, chunk.toString()));
+    stderr.on('data', (chunk) => log.debug({ stderr: true, event: 'SPAWN_STDERR' }, chunk.toString()));
     result.childProcess.on('end', (code, signal) => {
       log.debug({ event: 'SPAWN_END' }, `child process received signal ${signal} and exited with code = ${code}`);
     });
