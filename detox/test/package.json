@@ -6,23 +6,28 @@
     "test": ":",
     "packager": "react-native start",
     "detox-server": "detox run-server",
-    "e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization 10000 --platform ios",
-    "e2e:android": "detox test --configuration android.emu.release --loglevel verbose --platform android",
+    "e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization --take-screenshots all --record-videos none --record-logs all",
+    "e2e:ios-multi": "npm run e2e:ios -- -w 2",
+    "e2e:android": "detox test --configuration android.emu.release --loglevel verbose --take-screenshots all --record-videos none --record-logs all",
     "build:ios": "detox build --configuration ios.sim.release",
-    "build:android": "detox build --configuration android.emu.release"
+    "build:android": "detox build --configuration android.emu.release",
+    "verify-artifacts:ios": "jest ./scripts/verify_artifacts_are_not_missing.ios.test.js",
+    "verify-artifacts:android": "jest ./scripts/verify_artifacts_are_not_missing.android.test.js"
   },
   "dependencies": {
-    "react": "^16.0.0-beta.5",
-    "react-native": "^0.49.3"
+    "react": "16.0.0",
+    "react-native": "0.51.x"
   },
   "devDependencies": {
-    "detox": "^7.0.0",
+    "detox": "^8.0.0",
     "express": "^4.15.3",
+    "jest": "^22.3.0",
     "lodash": "^4.14.1",
     "mocha": "^4.0.0"
   },
   "detox": {
     "specs": "e2e",
+    "test-runner": "jest",
     "__session": {
       "server": "ws://localhost:8099",
       "sessionId": "test"
@@ -50,20 +55,20 @@
         }
       },
       "android.emu.debug": {
-        "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
-        "build": "cd android && ./gradlew assembleFromBinDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
+        "binaryPath": "android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk",
+        "build": "cd android && ./gradlew assembleFromBinDebug assembleFromBinDebugAndroidTest -DtestBuildType=debug && cd ..",
         "type": "android.emulator",
         "name": "Nexus_5X_API_26"
       },
       "android.emu.release": {
-        "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
-        "build": "cd android && ./gradlew assembleFromBinRelease assembleAndroidTest -DtestBuildType=release && cd ..",
+        "binaryPath": "android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk",
+        "build": "cd android && ./gradlew assembleFromBinRelease assembleFromBinReleaseAndroidTest -DtestBuildType=release && cd ..",
         "type": "android.emulator",
         "name": "Nexus_5X_API_26"
       },
       "android.emu.debug.fromSource": {
-        "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
-        "build": "cd android && ./gradlew assembleFromSourceDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
+        "binaryPath": "android/app/build/outputs/apk/fromSource/debug/app-fromSource-debug.apk",
+        "build": "cd android && ./gradlew assembleFromSourceDebug assembleFromSourceDebugAndroidTest -DtestBuildType=debug && cd ..",
         "type": "android.emulator",
         "name": "Nexus_5X_API_26"
       }

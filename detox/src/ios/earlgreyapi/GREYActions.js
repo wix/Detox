@@ -6,38 +6,34 @@
 
 
 function sanitize_greyDirection(action) {
-	switch (action) {
-		case "left":
-			return 1;
-		case "right":
-			return 2;
-		case "up":
-			return 3;
-		case "down":
-			return 4;
+  switch (action) {
+    case 'left':
+      return 1;
+    case 'right':
+      return 2;
+    case 'up':
+      return 3;
+    case 'down':
+      return 4;
 
-		default:
-			throw new Error(
-				`GREYAction.GREYDirection must be a 'left'/'right'/'up'/'down', got ${action}`
-			);
-	}
+    default:
+      throw new Error(`GREYAction.GREYDirection must be a 'left'/'right'/'up'/'down', got ${action}`);
+  }
 } 
 function sanitize_greyContentEdge(action) {
-	switch (action) {
-		case "left":
-			return 0;
-		case "right":
-			return 1;
-		case "top":
-			return 2;
-		case "bottom":
-			return 3;
+  switch (action) {
+    case 'left':
+      return 0;
+    case 'right':
+      return 1;
+    case 'top':
+      return 2;
+    case 'bottom':
+      return 3;
 
-		default:
-			throw new Error(
-				`GREYAction.GREYContentEdge must be a 'left'/'right'/'top'/'bottom', got ${action}`
-			);
-	}
+    default:
+      throw new Error(`GREYAction.GREYContentEdge must be a 'left'/'right'/'top'/'bottom', got ${action}`);
+  }
 } 
 class GREYActions {
   /*@return A GREYAction that performs multiple taps of a specified @c count.
@@ -91,6 +87,54 @@ simulate a long press.
       },
       method: "actionForLongPress",
       args: []
+    };
+  }
+
+  /*Returns an action that holds down finger for specified @c duration to simulate a long press.
+
+@param duration The duration of the long press.
+
+@return A GREYAction that performs a long press on an element.
+*/static actionForLongPressWithDuration(duration) {
+    if (typeof duration !== "number") throw new Error("duration should be a number, but got " + (duration + (" (" + (typeof duration + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "GREYActions"
+      },
+      method: "actionForLongPressWithDuration:",
+      args: [{
+        type: "CGFloat",
+        value: duration
+      }]
+    };
+  }
+
+  /*Returns an action that holds down finger for specified @c duration at the specified @c point
+(interpreted as being relative to the element) to simulate a long press.
+
+@param point    The point that should be tapped.
+@param duration The duration of the long press.
+
+@return A GREYAction that performs a long press on an element.
+*/static actionForLongPressAtPointDuration(point, duration) {
+    if (typeof point !== "object") throw new Error("point should be a object, but got " + (point + (" (" + (typeof point + ")"))));
+    if (typeof point.x !== "number") throw new Error("point.x should be a number, but got " + (point.x + (" (" + (typeof point.x + ")"))));
+    if (typeof point.y !== "number") throw new Error("point.y should be a number, but got " + (point.y + (" (" + (typeof point.y + ")"))));
+    if (typeof duration !== "number") throw new Error("duration should be a number, but got " + (duration + (" (" + (typeof duration + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "GREYActions"
+      },
+      method: "actionForLongPressAtPoint:duration:",
+      args: [{
+        type: "CGPoint",
+        value: point
+      }, {
+        type: "CGFloat",
+        value: duration
+      }]
     };
   }
 

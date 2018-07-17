@@ -1,6 +1,7 @@
 const AsyncWebSocket = require('./AsyncWebSocket');
 const actions = require('./actions/actions');
 const argparse = require('../utils/argparse');
+const retry = require('../utils/retry');
 
 class Client {
   constructor(config) {
@@ -27,10 +28,6 @@ class Client {
     await this.sendAction(new actions.ReloadReactNative());
   }
 
-  async sendUserNotification(params) {
-    await this.sendAction(new actions.SendUserNotification(params));
-  }
-
   async waitUntilReady() {
     await this.sendAction(new actions.Ready());
     this.isConnected = true;
@@ -39,7 +36,9 @@ class Client {
   async cleanup() {
     clearTimeout(this.slowInvocationStatusHandler);
     if (this.isConnected && !this.pandingAppCrash) {
-      await this.sendAction(new actions.Cleanup(this.successfulTestRun));
+      if(this.ws.isOpen()) {
+        await this.sendAction(new actions.Cleanup(this.successfulTestRun));
+      }
       this.isConnected = false;
     }
 
@@ -56,8 +55,8 @@ class Client {
     await this.sendAction(new actions.Shake());
   }
 
-  async openURL(params) {
-    await this.sendAction(new actions.OpenURL(params));
+  async deliverPayload(params) {
+    await this.sendAction(new actions.DeliverPayload(params));
   }
 
   async execute(invocation) {
@@ -68,11 +67,17 @@ class Client {
     if (this.slowInvocationTimeout) {
       this.slowInvocationStatusHandler = this.slowInvocationStatus();
     }
+
+    // when this test run fails, we want a stack trace from up here where the
+    // $callee is still available, and not inside the catch block where it isn't
+    const potentialError = new Error()
+
     try {
       await this.sendAction(new actions.Invoke(invocation));
     } catch (err) {
       this.successfulTestRun = false;
-      throw new Error(err);
+      potentialError.message = err
+      throw potentialError;
     }
     clearTimeout(this.slowInvocationStatusHandler);
   }
@@ -105,8 +110,10 @@ class Client {
 
   slowInvocationStatus() {
     return setTimeout(async () => {
-      const status = await this.currentStatus();
-      this.slowInvocationStatusHandler = this.slowInvocationStatus();
+      if (this.ws.isOpen()) {
+        const status = await this.currentStatus();
+        this.slowInvocationStatusHandler = this.slowInvocationStatus();
+      }
     }, this.slowInvocationTimeout);
   }
 }

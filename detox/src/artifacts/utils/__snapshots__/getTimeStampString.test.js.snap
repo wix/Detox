@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getTimeStampString should format date 1`] = `"2015-06-15 15:02:58Z"`;

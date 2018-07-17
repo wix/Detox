@@ -12,6 +12,7 @@ import NetworkScreen from './NetworkScreen';
 import AnimationsScreen from './AnimationsScreen';
 import LocationScreen from './LocationScreen';
 import ShakeScreen from './ShakeScreen';
+import DatePickerScreen from './DatePickerScreen'
 
 export {
   SanityScreen,
@@ -27,5 +28,6 @@ export {
   NetworkScreen,
   AnimationsScreen,
   LocationScreen,
-  ShakeScreen
+  ShakeScreen,
+  DatePickerScreen
 };

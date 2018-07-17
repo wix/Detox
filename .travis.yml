@@ -5,27 +5,31 @@ matrix:
   include:
     - language: objective-c
       os: osx
-      osx_image: xcode9
+      osx_image: xcode9.3
       env:
         - REACT_NATIVE_VERSION=0.53.3
+        - PATH=$PATH:~/Library/Python/2.7/bin
       install:
-      - ./scripts/install.ios.sh
+        - ./scripts/install.ios.sh
       script:
-      - ./scripts/ci.ios.sh
+        - ./scripts/ci.ios.sh
+        - ./scripts/upload_artifact.sh
     - language: objective-c
       os: osx
-      osx_image: xcode9
+      osx_image: xcode9.3
       env:
-        - REACT_NATIVE_VERSION=0.49.3
+        - REACT_NATIVE_VERSION=0.51.1
+        - PATH=$PATH:~/Library/Python/2.7/bin
       install:
-      - ./scripts/install.ios.sh
+        - ./scripts/install.ios.sh
       script:
-      - ./scripts/ci.ios.sh
+        - ./scripts/ci.ios.sh
+        - ./scripts/upload_artifact.sh
     - language: android
       os: linux
       jdk: oraclejdk8
       env:
-        - REACT_NATIVE_VERSION=0.49.3
+        - REACT_NATIVE_VERSION=0.51.1
       android:
         components:
           - build-tools-27.0.2
@@ -42,9 +46,9 @@ matrix:
     # Example Projects
     - language: objective-c
       os: osx
-      osx_image: xcode9
+      osx_image: xcode9.3
       env:
-        - REACT_NATIVE_VERSION=0.49.3
+        - REACT_NATIVE_VERSION=0.51.1
       install:
       - ./scripts/install.ios.sh
       script:
@@ -52,6 +56,12 @@ matrix:
 
     # Website
     - language: node_js
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - libstdc++-4.9-dev
       env:
         - NAME='Website - master'
       node_js: 8
@@ -63,6 +73,7 @@ branches:
   - master
 before_install:
   - nvm install 8
+  - pip install awscli --upgrade --user
 notifications:
   email: true
   slack:

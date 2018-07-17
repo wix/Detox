@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-source $(dirname "$0")/travis_logger.sh
+source $(dirname "$0")/logger.sh
 
 if [ ! -z ${REACT_NATIVE_VERSION} ]; then
   node scripts/change_react_native_version.js "detox/test" ${REACT_NATIVE_VERSION}

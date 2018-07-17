@@ -6,84 +6,80 @@
 
 
 function sanitize_uiAccessibilityTraits(value) {
-	let traits = 0;
-	for (let i = 0; i < value.length; i++) {
-		switch (value[i]) {
-			case "button":
-				traits |= 1;
-				break;
-			case "link":
-				traits |= 2;
-				break;
-			case "header":
-				traits |= 4;
-				break;
-			case "search":
-				traits |= 8;
-				break;
-			case "image":
-				traits |= 16;
-				break;
-			case "selected":
-				traits |= 32;
-				break;
-			case "plays":
-				traits |= 64;
-				break;
-			case "key":
-				traits |= 128;
-				break;
-			case "text":
-				traits |= 256;
-				break;
-			case "summary":
-				traits |= 512;
-				break;
-			case "disabled":
-				traits |= 1024;
-				break;
-			case "frequentUpdates":
-				traits |= 2048;
-				break;
-			case "startsMedia":
-				traits |= 4096;
-				break;
-			case "adjustable":
-				traits |= 8192;
-				break;
-			case "allowsDirectInteraction":
-				traits |= 16384;
-				break;
-			case "pageTurn":
-				traits |= 32768;
-				break;
-			default:
-				throw new Error(
-					`Unknown trait '${
-						value[i]
-					}', see list in https://facebook.github.io/react-native/docs/accessibility.html#accessibilitytraits-ios`
-				);
-		}
-	}
+  let traits = 0;
+  for (let i = 0; i < value.length; i++) {
+    switch (value[i]) {
+      case 'button':
+        traits |= 1;
+        break;
+      case 'link':
+        traits |= 2;
+        break;
+      case 'header':
+        traits |= 4;
+        break;
+      case 'search':
+        traits |= 8;
+        break;
+      case 'image':
+        traits |= 16;
+        break;
+      case 'selected':
+        traits |= 32;
+        break;
+      case 'plays':
+        traits |= 64;
+        break;
+      case 'key':
+        traits |= 128;
+        break;
+      case 'text':
+        traits |= 256;
+        break;
+      case 'summary':
+        traits |= 512;
+        break;
+      case 'disabled':
+        traits |= 1024;
+        break;
+      case 'frequentUpdates':
+        traits |= 2048;
+        break;
+      case 'startsMedia':
+        traits |= 4096;
+        break;
+      case 'adjustable':
+        traits |= 8192;
+        break;
+      case 'allowsDirectInteraction':
+        traits |= 16384;
+        break;
+      case 'pageTurn':
+        traits |= 32768;
+        break;
+      default:
+        throw new Error(
+          `Unknown trait '${value[i]}', see list in https://facebook.github.io/react-native/docs/accessibility.html#accessibilitytraits-ios`
+        );
+    }
+  }
 
-	return traits;
+  return traits;
 } 
 function sanitize_greyContentEdge(action) {
-	switch (action) {
-		case "left":
-			return 0;
-		case "right":
-			return 1;
-		case "top":
-			return 2;
-		case "bottom":
-			return 3;
+  switch (action) {
+    case 'left':
+      return 0;
+    case 'right':
+      return 1;
+    case 'top':
+      return 2;
+    case 'bottom':
+      return 3;
 
-		default:
-			throw new Error(
-				`GREYAction.GREYContentEdge must be a 'left'/'right'/'top'/'bottom', got ${action}`
-			);
-	}
+    default:
+      throw new Error(`GREYAction.GREYContentEdge must be a 'left'/'right'/'top'/'bottom', got ${action}`);
+  }
 } 
 class GREYMatchers {
   /*Matcher for application's key window.
@@ -595,6 +591,61 @@ is required, please implement it similar to @c grey_closeTo.
       },
       method: "matcherForAnything",
       args: []
+    };
+  }
+
+  /*A Matcher that checks if a provided object is equal to the specified @c value. The equality is
+determined by calling the @c isEqual: method of the object being examined. In case the @c
+value is @c nil, then the object itself is checked to be @c nil.
+
+@param value  The value to be checked for equality. Please ensure that scalar types are
+passed in as boxed (object) values.
+
+@return A matcher that checks if an object is equal to the provided one.
+*/static matcherForEqualTo(value) {
+    return {
+      target: {
+        type: "Class",
+        value: "GREYMatchers"
+      },
+      method: "matcherForEqualTo:",
+      args: [value]
+    };
+  }
+
+  /*A Matcher that checks if a provided object is less than a specified @c value. The comparison
+is made by calling the @c compare: method of the object being examined.
+
+@param value The value to be compared, which should return @c NSOrderedDescending. Please
+ensure that scalar values are passed in as boxed (object) values.
+
+@return A matcher that checks an object is lesser than another provided @c value.
+*/static matcherForLessThan(value) {
+    return {
+      target: {
+        type: "Class",
+        value: "GREYMatchers"
+      },
+      method: "matcherForLessThan:",
+      args: [value]
+    };
+  }
+
+  /*A Matcher that checks if a provided object is greater than a specified @c value. The comparison
+is made by calling the @c compare: method of the object being examined.
+
+@param value The value to be compared, which should return @c NSOrderedAscending. Please
+ensure that scalar values are passed in as boxed (object) values.
+
+@return A matcher that checks an object is greater than another provided @c value.
+*/static matcherForGreaterThan(value) {
+    return {
+      target: {
+        type: "Class",
+        value: "GREYMatchers"
+      },
+      method: "matcherForGreaterThan:",
+      args: [value]
     };
   }
 

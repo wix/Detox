@@ -34,6 +34,7 @@ describe('expect', async () => {
 
   it(`element by type`, async () => {
     await e.expect(e.element(e.by.type('test'))).toBeVisible();
+    await e.element(e.by.type('UIPickerView')).setColumnToValue(1,"6");
   });
 
   it(`element by traits`, async () => {
@@ -79,6 +80,8 @@ describe('expect', async () => {
     await e.waitFor(e.element(e.by.id('id'))).toHaveValue('value');
     await e.waitFor(e.element(e.by.id('id'))).toNotHaveValue('value');
 
+  
+
     await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50, 'down');
     await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50);
   });
@@ -98,6 +101,7 @@ describe('expect', async () => {
     await e.element(e.by.label('Tap Me')).tap();
     await e.element(e.by.label('Tap Me')).tapAtPoint({x: 10, y:10});
     await e.element(e.by.label('Tap Me')).longPress();
+    await e.element(e.by.label('Tap Me')).longPress(2000);
     await e.element(e.by.id('UniqueId819')).multiTap(3);
     await e.element(e.by.id('UniqueId937')).typeText('passcode');
     await e.element(e.by.id('UniqueId005')).clearText();

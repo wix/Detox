@@ -1,8 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
+const log = require('npmlog');
 const argparse = require('../utils/argparse');
-const ArtifactsCopier = require('../artifacts/ArtifactsCopier');
+const debug = require('../utils/debug'); //debug utils, leave here even if unused
+const logError = require('../utils/logError');
 
 class Device {
 
@@ -11,15 +13,38 @@ class Device {
     this._sessionConfig = sessionConfig;
     this.deviceDriver = deviceDriver;
     this._processes = {};
-    this._artifactsCopier = new ArtifactsCopier(deviceDriver);
     this.deviceDriver.validateDeviceConfig(deviceConfig);
+    this.debug = debug;
+    this._listeners = {
+      beforeResetDevice: [],
+      resetDevice: [],
+      beforeLaunchApp: [],
+      launchApp: [],
+    };
+  }
+
+  async emit(eventName, eventObj) {
+    const fire = async (fn) => fn(eventObj);
+    const logEmitError = (err) => {
+      log.error('detox-device', 'device.emit("%s", %j) error', eventName, eventObj);
+      logError(err, 'detox-device');
+    };
+
+    await Promise.all(this._listeners[eventName].map(fn => fire(fn).catch(logEmitError)));
+  }
+
+  on(eventName, callback) {
+    this._listeners[eventName].push(callback);
+  }
+
+  off(eventName, callback) {
+    _.pull(this._listeners[eventName], callback);
   }
 
   async prepare(params = {}) {
     this._binaryPath = this._getAbsolutePath(this._deviceConfig.binaryPath);
     this._deviceId = await this.deviceDriver.acquireFreeDevice(this._deviceConfig.name);
     this._bundleId = await this.deviceDriver.getBundleIdFromBinary(this._binaryPath);
-    this._artifactsCopier.prepare(this._deviceId);
 
     await this.deviceDriver.prepare();
 
@@ -33,20 +58,17 @@ class Device {
     }
   }
 
-  setArtifactsDestination(testArtifactsPath) {
-    this._artifactsCopier.setArtifactsDestination(testArtifactsPath);
-  }
-
-  async finalizeArtifacts() {
-    await this._artifactsCopier.finalizeArtifacts();
+  createPayloadFileAndUpdatesParamsObject(key, launchKey, params, baseLaunchArgs) {
+    const payloadFilePath = this.deviceDriver.createPayloadFile(params[key]);
+    baseLaunchArgs[launchKey] = payloadFilePath;
+    //`params` will be used later for `deliverPayload`, so remove the actual notification and add the file URL
+    delete params[key];
+    params[launchKey] = payloadFilePath;
   }
 
   async launchApp(params = {newInstance: false}, bundleId) {
-    await this._artifactsCopier.handleAppRelaunch();
-
-    if (params.url && params.userNotification) {
-      throw new Error(`Call to 'launchApp(${JSON.stringify(params)})' cannot contain both url and userNotification payloads.`);
-    }
+    const payloadParams = ['url', 'userNotification', 'userActivity'];
+    const hasPayload = this._assertHasSingleParam(payloadParams, params);
 
     if (params.delete) {
       await this.deviceDriver.terminate(this._deviceId, this._bundleId);
@@ -67,8 +89,9 @@ class Device {
         baseLaunchArgs['detoxSourceAppOverride'] = params.sourceApp;
       }
     } else if (params.userNotification) {
-      const notificationFilePath = this.deviceDriver.createPushNotificationJson(params.userNotification);
-      baseLaunchArgs['detoxUserNotificationDataURL'] = notificationFilePath;
+      this.createPayloadFileAndUpdatesParamsObject('userNotification', 'detoxUserNotificationDataURL', params, baseLaunchArgs);
+    } else if (params.userActivity) {
+      this.createPayloadFileAndUpdatesParamsObject('userActivity', 'detoxUserActivityDataURL', params, baseLaunchArgs);
     }
 
     if (params.permissions) {
@@ -76,11 +99,15 @@ class Device {
     }
 
     const _bundleId = bundleId || this._bundleId;
+
+    await this.emit('beforeLaunchApp', {
+      deviceId: this._deviceId,
+      bundleId: _bundleId,
+    });
+
     if (this._isAppInBackground(params, _bundleId)) {
-      if (params.url) {
-        await this.openURL({...params, delayPayload: true});
-      } else if (params.userNotification) {
-        await this.deviceDriver.sendUserNotification({...baseLaunchArgs, delayPayload: true});
+      if (hasPayload) {
+        await this.deviceDriver.deliverPayload({...params, delayPayload: true});
       }
     }
 
@@ -88,10 +115,38 @@ class Device {
     this._processes[_bundleId] = processId;
 
     await this.deviceDriver.waitUntilReady();
+
+    if(params.detoxUserNotificationDataURL) {
+      await this.deviceDriver.cleanupRandomDirectory(params.detoxUserNotificationDataURL);
+    }
+
+    if(params.detoxUserActivityDataURL) {
+      await this.deviceDriver.cleanupRandomDirectory(params.detoxUserActivityDataURL);
+    }
+
+    await this.emit('launchApp', {
+      deviceId: this._deviceId,
+      bundleId: _bundleId,
+      pid: processId,
+    });
   }
 
   _isAppInBackground(params, _bundleId) {
     return !params.delete && !params.newInstance && this._processes[_bundleId];
+  }
+
+  _assertHasSingleParam(singleParams, params) {
+    let paramsCounter = 0;
+
+    singleParams.forEach((item) => {
+      if(params[item]) {
+        paramsCounter += 1;
+      }
+    });
+    if (paramsCounter > 1) {
+      throw new Error(`Call to 'launchApp(${JSON.stringify(params)})' must contain only one of ${JSON.stringify(singleParams)}.`);
+    }
+    return (paramsCounter === 1);
   }
 
   /**deprecated */
@@ -134,7 +189,7 @@ class Device {
       throw new Error(`openURL must be called with JSON params, and a value for 'url' key must be provided. example: await device.openURL({url: "url", sourceApp[optional]: "sourceAppBundleID"}`);
     }
 
-    await this.deviceDriver.openURL(this._deviceId, params);
+    await this.deviceDriver.deliverPayload(params);
   }
 
   async shutdown() {
@@ -151,9 +206,20 @@ class Device {
     await this.deviceDriver.setLocation(this._deviceId, lat, lon);
   }
 
+  async _sendPayload(key, params) {
+    const payloadFilePath = this.deviceDriver.createPayloadFile(params);
+    let payload = {};
+    payload[key] = payloadFilePath;
+    await this.deviceDriver.deliverPayload(payload);
+    this.deviceDriver.cleanupRandomDirectory(payloadFilePath);
+  }
+
+  async sendUserActivity(params) {
+    await this._sendPayload('detoxUserActivityDataURL', params);
+  }
+
   async sendUserNotification(params) {
-    const notificationFilePath = this.deviceDriver.createPushNotificationJson(params);
-    await this.deviceDriver.sendUserNotification({'detoxUserNotificationDataURL': notificationFilePath});
+    await this._sendPayload('detoxUserNotificationDataURL', params);
   }
 
   async setURLBlacklist(urlList) {
@@ -169,7 +235,9 @@ class Device {
   }
 
   async resetContentAndSettings() {
+    await this.emit('beforeResetDevice', { deviceId: this._deviceId });
     await this.deviceDriver.resetContentAndSettings(this._deviceId);
+    await this.emit('resetDevice', { deviceId: this._deviceId });
   }
 
   getPlatform() {

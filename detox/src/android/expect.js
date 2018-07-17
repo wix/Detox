@@ -20,7 +20,6 @@ function setInvocationManager(im) {
   invocationManager = im;
 }
 
-const ViewAssertions = 'android.support.test.espresso.assertion.ViewAssertions';
 const DetoxMatcher = 'com.wix.detox.espresso.DetoxMatcher';
 const DetoxAssertion = 'com.wix.detox.espresso.DetoxAssertion';
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
@@ -107,7 +106,6 @@ class SwipeAction extends Action {
 
 class Interaction {
   async execute() {
-    //if (!this._call) throw new Error(`Interaction.execute cannot find a valid _call, got ${typeof this._call}`);
     await invocationManager.execute(this._call);
   }
 }

@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DetoxRuntimeError should format its fields to a single message if needed 1`] = `
+Object {
+  "empty object": "DetoxRuntimeError: ",
+  "message with debug info": "DetoxRuntimeError: message
+
+debugInfo",
+  "message with hint": "DetoxRuntimeError: message
+
+HINT: hint",
+  "message with hint and debug info": "DetoxRuntimeError: message
+
+HINT: hint
+
+debugInfo",
+  "no args": "DetoxRuntimeError: ",
+  "only message": "DetoxRuntimeError: message",
+}
+`;
+
+exports[`DetoxRuntimeError should have various ways to create it 1`] = `
+Object {
+  "empty object": Object {
+    "debugInfo": "",
+    "hint": "",
+    "message": "",
+  },
+  "message with debug info": Object {
+    "debugInfo": "debugInfo",
+    "hint": "",
+    "message": "message",
+  },
+  "message with hint": Object {
+    "debugInfo": "",
+    "hint": "hint",
+    "message": "message",
+  },
+  "message with hint and debug info": Object {
+    "debugInfo": "debugInfo",
+    "hint": "hint",
+    "message": "message",
+  },
+  "no args": Object {
+    "debugInfo": "",
+    "hint": "",
+    "message": "",
+  },
+  "only message": Object {
+    "debugInfo": "",
+    "hint": "",
+    "message": "message",
+  },
+}
+`;

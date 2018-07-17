@@ -1,4 +1,7 @@
-# Debugging in Xcode During Detox Tests
+---
+id: Guide.DebuggingInXcode
+title: Debugging in Xcode During Detox Tests
+---
 
 > This is mostly useful for investigating weird crashes or when contributing to Detox itself. **This workflow isn't standard. Don't use it unless you have a good reason.**
 
@@ -10,7 +13,7 @@
 
 > NOTE: Apps should not be submitted to the App Store with the Detox framework linked. Follow this guide only to debug Detox issues in your project. Once finished, make sure to remove **Detox.framework** from your project.
 
-### Add launch arguments
+### Add Launch Arguments
 
 Under **Product** menu select **Scheme** -> **Edit Scheme** and select **Run** -> **Arguments** tab and add the following launch arguments to **Arguments Passed On Launch**:
 
@@ -49,11 +52,11 @@ Run the following command in your project root directory:
 detox run-server
 ```
 
-### Run Your Application
-
-> NOTE: Before running, place breakpoints you wish to debug.
+### Run Your Application from Xcode
 
 Run your application from Xcode as you normally do.
+
+> NOTE: Before running, place breakpoints you wish to debug.
 
 ### Run Detox Tests
 
@@ -63,4 +66,4 @@ Run the following command in your project root directory:
 detox test --configuration ios.none
 ```
 
-> NOTE: Tests that call `device.relaunchApp()` may fail as this API is unavailable when using `ios.none` configuration types. Instead, use `it.only` to run specific tests and restart your app from Xcode.
+> NOTE: Tests that call `device.launchApp()` may fail as this API is unavailable when using `ios.none` configuration types. Instead, use `it.only` to run specific tests and restart your app from Xcode.

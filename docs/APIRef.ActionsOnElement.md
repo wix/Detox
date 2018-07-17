@@ -21,6 +21,7 @@ Actions are functions that emulate user behavior. They are being performed on ma
 - [`.scroll()`](#scrollpixels-direction-extendtodescendants)
 - [`.scrollTo()`](#scrolltoedge-extendtodescendants)
 - [`.swipe()`](#swipedirection-speed-percentage)
+- [`.setColumnToValue()`](#setcolumntovalue-column-value) **iOS only**
 
 
 ### `tap()`
@@ -30,8 +31,9 @@ Simulate tap on an element.
 await element(by.id('tappable')).tap();
 ```
 
-### `longPress()`
-Simulate long press on an element.
+### `longPress(duration)`
+Simulate long press on an element.<br>
+duration - long press time interval. (iOS only)<br>
 
 ```js
 await element(by.id('tappable')).longPress();
@@ -60,7 +62,7 @@ await element(by.id('textField')).typeText('passcode');
 
 > **Note:** Make sure hardware keyboard is disconnected. Otherwise, Detox may fail when attempting to type text.
 >
-> To make sure hardware keybaord is disconnected, open the simulator from Xcode and make sure **Hardware** -> **Keyboard** -> **Connect Hardware Keyboard** is deselected (or press ⇧⌘K).
+> To make sure hardware keyboard is disconnected, open the simulator from Xcode and make sure **Hardware** -> **Keyboard** -> **Connect Hardware Keyboard** is deselected (or press ⇧⌘K).
 
 ### `replaceText(text)`
 Paste text into a text field.
@@ -108,4 +110,14 @@ percentage - (optional) screen percentage to swipe as float
 await element(by.id('scrollView')).swipe('down');
 await element(by.id('scrollView')).swipe('down', 'fast');
 await element(by.id('scrollView')).swipe('down', 'fast', 0.5);
+```
+### `setColumnToValue(column,value)`  iOS only
+
+column - date picker column index<br>
+value - string value to set in column<br>
+
+```js
+await expect(element(by.type('UIPickerView'))).toBeVisible();
+await element(by.type('UIPickerView')).setColumnToValue(1,"6");
+await element(by.type('UIPickerView')).setColumnToValue(2,"34");
 ```
