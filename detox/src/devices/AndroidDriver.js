@@ -16,6 +16,7 @@ const ADBScreencapPlugin = require('../artifacts/screenshot/ADBScreencapPlugin')
 const ADBScreenrecorderPlugin = require('../artifacts/video/ADBScreenrecorderPlugin');
 const AndroidDevicePathBuilder = require('../artifacts/utils/AndroidDevicePathBuilder');
 const sleep = require('../utils/sleep');
+const interruptProcess = require('../utils/interruptProcess');
 const { spawnAndLog } = require('../utils/exec');
 
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
@@ -98,7 +99,7 @@ class AndroidDriver extends DeviceDriverBase {
       [`-s`, `${deviceId}`, `shell`, `am`, `instrument`, `-w`, `-r`, `${args.join(' ')}`, `-e`, `debug`, `false`, testRunner],
       { detached: false });
 
-    this.instrumentationProcess.on('close', () => this.terminateInstrumentation());
+    this.instrumentationProcess.childProcess.on('close', () => this.terminateInstrumentation());
 
     return this._queryPID(deviceId, bundleId);
   }
@@ -136,19 +137,19 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async terminate(deviceId, bundleId) {
-    this.terminateInstrumentation();
+    await this.terminateInstrumentation();
     await this.adb.terminate(deviceId, bundleId);
   }
 
-  terminateInstrumentation() {
+  async terminateInstrumentation() {
     if (this.instrumentationProcess) {
-      this.instrumentationProcess.kill();
+      await interruptProcess(this.instrumentationProcess);
       this.instrumentationProcess = null;
     }
   }
 
   async cleanup(deviceId, bundleId) {
-    this.terminateInstrumentation();
+    await this.terminateInstrumentation();
   }
 
   defaultLaunchArgsPrefix() {
