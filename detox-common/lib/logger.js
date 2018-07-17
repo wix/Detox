@@ -16,9 +16,9 @@ function mapLogLevel(level) {
       return level;
 
     case 'verbose':
-    case 'wss':
       return 'debug';
 
+    case 'wss':
     case 'silly':
       return 'trace';
 
