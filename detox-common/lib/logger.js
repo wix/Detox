@@ -45,7 +45,9 @@ function createPlainBunyanStream({ logPath, level }) {
 
   if (logPath) {
     options.colors = false;
-    options.out = fs.createWriteStream(logPath);
+    options.out = fs.createWriteStream(logPath, {
+      flags: 'a',
+    });
   }
 
   return {

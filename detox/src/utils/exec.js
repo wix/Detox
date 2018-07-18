@@ -78,16 +78,16 @@ function spawnAndLog(command, flags, options) {
 
   const result = spawn(command, flags, {stdio: ['ignore', 'pipe', 'pipe'], detached: true, ...options});
   const { childProcess } = result;
-  const { stdout, stderr } = childProcess;
+  const { exitCode, stdout, stderr } = childProcess;
 
   log.debug({ event: 'SPAWN_CMD' }, `[pid=${childProcess.pid}] ${cmd}`);
 
+  if (exitCode != null && exitCode !== 0) {
+    log.error({ event: 'SPAWN_ERROR' }, `${cmd} failed with code = ${exitCode}`);
+  }
+
   stdout.on('data', (chunk) => log.trace({ stdout: true, event: 'SPAWN_STDOUT' }, chunk.toString()));
   stderr.on('data', (chunk) => log.trace({ stderr: true, event: 'SPAWN_STDERR' }, chunk.toString()));
-
-  if (childProcess.exitCode != null && childProcess.exitCode !== 0) {
-    log.error({ event: 'SPAWN_ERROR' }, `${cmd} failed with code = ${e.code}.`);
-  }
 
   function onEnd(e) {
     const signal = e.childProcess.signalCode || '';
@@ -96,7 +96,8 @@ function spawnAndLog(command, flags, options) {
     log.trace({ event: 'SPAWN_END' }, `${cmd} ${action}`);
   }
 
-  return result.then(onEnd, onEnd);
+  result.then(onEnd, onEnd);
+  return result;
 }
 
 module.exports = {
