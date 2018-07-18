@@ -73,31 +73,24 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
 
 function spawnAndLog(command, flags, options) {
   const trackingId = _operationCounter++;
-  const cmd = `${command} ${flags.join(' ')}`;
-  let log = execLogger.child({ fn: 'spawnAndLog', cmd, trackingId });
+  const cmd = [command, ...flags].join(' ');
+  const log = execLogger.child({ fn: 'spawnAndLog', cmd, trackingId });
 
-  let result;
-  try {
-    result = spawn(command, flags, {stdio: ['ignore', 'pipe', 'pipe'], detached: true, ...options});
+  const result = spawn(command, flags, {stdio: ['ignore', 'pipe', 'pipe'], detached: true, ...options});
+  const { childProcess } = result;
+  const { stdout, stderr } = childProcess;
 
-    const child_pid = result.childProcess ? String(result.childProcess.pid) : 'unknown';
-    log.debug({ event: 'SPAWN_CMD' }, `[pid=${child_pid}] ${cmd}`);
-  } catch (e) {
-    log.error({ event: 'SPAWN_ERROR' }, `${cmd} failed. Error was:`, e);
-    throw e;
-  }
+  log.debug({ event: 'SPAWN_CMD' }, `[pid=${childProcess.pid}] ${cmd}`);
 
-  if (result.childProcess) {
-    const {stdout, stderr} = result.childProcess;
+  stdout.on('data', (chunk) => log.debug({ stdout: true, event: 'SPAWN_STDOUT' }, chunk.toString()));
+  stderr.on('data', (chunk) => log.debug({ stderr: true, event: 'SPAWN_STDERR' }, chunk.toString()));
 
-    stdout.on('data', (chunk) => log.debug({ stdout: true, event: 'SPAWN_STDOUT' }, chunk.toString()));
-    stderr.on('data', (chunk) => log.debug({ stderr: true, event: 'SPAWN_STDERR' }, chunk.toString()));
-    result.childProcess.on('end', (code, signal) => {
-      log.debug({ event: 'SPAWN_END' }, `child process received signal ${signal} and exited with code = ${code}`);
-    });
-  }
-
-  return result;
+  return result.then((e) => {
+    log.trace({ event: 'SPAWN_END' }, `${cmd} ended with code = ${e.code}`);
+  }).catch((e) => {
+    log.error({ event: 'SPAWN_ERROR' }, `${cmd} failed with code = ${e.code}. Error was:`, e);
+    return Promise.reject(e);
+  });
 }
 
 module.exports = {

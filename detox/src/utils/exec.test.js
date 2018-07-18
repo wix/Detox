@@ -132,7 +132,13 @@ describe('spawn', () => {
     cpp = require('child-process-promise');
     exec = require('./exec');
     log = require('./logger');
-    cpp.spawn.mockReturnValue({});
+    cpp.spawn.mockReturnValue(Object.assign(Promise.resolve({ code: 0 }), {
+      childProcess: {
+        pid: 2018,
+        stdout: toStream('hello'),
+        stderr: toStream('world'),
+      }
+    }));
   });
 
   it('spawns detached command with ignored input and piped output', () => {
@@ -148,24 +154,30 @@ describe('spawn', () => {
   });
 
   it('should collect output and log it', async () => {
-    cpp.spawn.mockReturnValue({
-      childProcess: {
-        stdout: toStream('hello'),
-        stderr: toStream('world'),
-        on: (eventName, listener) => {
-          if (eventName === 'end') {
-            listener(1, 'SIGTERM');
-          }
-        },
-      }
-    });
-
-    exec.spawnAndLog('command', []);
+    await exec.spawnAndLog('command', []);
     await nextCycle();
 
-    expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), expect.stringContaining('SIGTERM'));
-    expect(log.debug).toBeCalledWith(expect.objectContaining({ stdout: true }), 'hello');
-    expect(log.debug).toBeCalledWith(expect.objectContaining({ stderr: true }), 'world');
+    expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), '[pid=2018] command');
+    expect(log.trace).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'command ended with code = 0');
+    expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDOUT', stdout: true }), 'hello');
+    expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), 'world');
+  });
+
+  it('should log spawn errors too', async () => {
+    cpp.spawn.mockReturnValue(Object.assign(Promise.reject({ code: -2 }), {
+      childProcess: {
+        pid: 8102,
+        stdout: toStream(''),
+        stderr: toStream('Some error.'),
+      },
+    }));
+
+    await expect(exec.spawnAndLog('command', [])).rejects.toThrow();
+    await nextCycle();
+
+    expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), '[pid=8102] command');
+    expect(log.error).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_ERROR' }), 'command failed with code = -2. Error was:', { code: -2 });
+    expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), 'Some error.');
   });
 });
 
