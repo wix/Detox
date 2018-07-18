@@ -86,9 +86,9 @@ function spawnAndLog(command, flags, options) {
   stderr.on('data', (chunk) => log.debug({ stderr: true, event: 'SPAWN_STDERR' }, chunk.toString()));
 
   return result.then((e) => {
-    log.trace({ event: 'SPAWN_END' }, `${cmd} ended with code = ${e.code}`);
+    log.trace({ event: 'SPAWN_END' }, `${cmd} finished.`);
   }).catch((e) => {
-    log.error({ event: 'SPAWN_ERROR' }, `${cmd} failed with code = ${e.code}. Error was:`, e);
+    log.error({ event: 'SPAWN_ERROR' }, `${cmd} failed with code = ${e.code}.`);
     return Promise.reject(e);
   });
 }
