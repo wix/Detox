@@ -5,7 +5,7 @@ const bunyan = require('bunyan');
 const bunyanDebugStream = require('bunyan-debug-stream');
 const argparse = require('./argparse');
 
-function mapLogLevel(level) {
+function adaptOlderLogLevelName(level) {
   switch (level) {
     case 'fatal':
     case 'error':
@@ -27,19 +27,12 @@ function mapLogLevel(level) {
   }
 }
 
-const level = mapLogLevel(argparse.getArgValue('loglevel'));
-const logFilepath = path.join(argparse.getArgValue('artifacts-location') || '', 'detox.log');
-const shouldRecordLogs = ['failing', 'all'].indexOf(argparse.getArgValue('record-logs')) >= 0;
-
-const consoleStream = {
-  level,
-  type: 'raw',
-  stream: bunyanDebugStream({
+function createPlainBunyanStream({ logPath, level }) {
+  const options = {
     showDate: false,
     showLoggerName: true,
     showPid: false,
     showMetadata: false,
-    trimOutput: true,
     basepath: __dirname,
     prefixers: {
       '__filename': (filename, { entry }) => {
@@ -48,30 +41,52 @@ const consoleStream = {
       },
       'trackingId': id => ` #${id}`,
     },
-  }),
-  serializers: bunyanDebugStream.serializers,
-};
+  };
 
-const fileStream = shouldRecordLogs && logFilepath ? {
-  level,
-  path: logFilepath,
-} : null;
+  if (logPath) {
+    options.colors = false;
+    options.out = fs.createWriteStream(logPath);
+  }
 
-if (fileStream) {
-  fs.ensureFileSync(fileStream.path);
+  return {
+    level,
+    type: 'raw',
+    stream: bunyanDebugStream(options),
+    serializers: bunyanDebugStream.serializers,
+  };
 }
 
-const streams = _.compact([consoleStream, fileStream]);
+function init() {
+  const level = adaptOlderLogLevelName(argparse.getArgValue('loglevel'));
+  const logBaseFilename = path.join(argparse.getArgValue('artifacts-location') || '', 'detox');
+  const shouldRecordLogs = ['failing', 'all'].indexOf(argparse.getArgValue('record-logs')) >= 0;
 
-const detoxLogger = bunyan.createLogger({
-  name: 'detox',
-  streams
-});
+  const bunyanStreams = [createPlainBunyanStream({ level })];
+  if (shouldRecordLogs) {
+    const jsonFileStreamPath = logBaseFilename + '.json.log';
+    const plainFileStreamPath = logBaseFilename + '.log';
 
-const detoxServerLogger = bunyan.createLogger({
-  name: 'detox-server',
-  streams
-});
+    fs.ensureFileSync(jsonFileStreamPath);
+    fs.ensureFileSync(plainFileStreamPath);
 
+    bunyanStreams.push({
+      level,
+      path: jsonFileStreamPath,
+    });
+
+    bunyanStreams.push(createPlainBunyanStream({
+      level,
+      logPath: plainFileStreamPath,
+    }));
+  }
+
+  return ['detox', 'detox-server'].map(name => bunyan.createLogger({
+    name,
+    streams: bunyanStreams,
+  }));
+}
+
+const [detoxLogger, detoxServerLogger] = init();
 detoxLogger.server = detoxServerLogger;
+
 module.exports = detoxLogger;

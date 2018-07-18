@@ -23,7 +23,7 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
   try {
     await retry({retries, interval}, async (retryNumber) => {
       if (statusLogs && statusLogs.trying) {
-        log.info({ retryNumber }, statusLogs.trying);
+        log.debug({ event: 'EXEC_TRY', retryNumber }, statusLogs.trying);
       }
 
       result = await exec(cmd);
@@ -42,15 +42,15 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
   }
 
   if (result.stdout) {
-    log.debug({ event: 'EXEC_SUCCESS', stdout: true }, result.stdout);
+    log.trace({ event: 'EXEC_SUCCESS', stdout: true }, result.stdout);
   }
 
   if (result.stderr) {
-    log.debug({ event: 'EXEC_SUCCESS', stderr: true }, result.stderr);
+    log.trace({ event: 'EXEC_SUCCESS', stderr: true }, result.stderr);
   }
 
   if (statusLogs && statusLogs.successful) {
-    log.info({ event: 'EXEC_SUCCESS' }, statusLogs.successful);
+    log.debug({ event: 'EXEC_SUCCESS' }, statusLogs.successful);
   }
 
   //if (result.childProcess.exitCode !== 0) {
@@ -82,15 +82,21 @@ function spawnAndLog(command, flags, options) {
 
   log.debug({ event: 'SPAWN_CMD' }, `[pid=${childProcess.pid}] ${cmd}`);
 
-  stdout.on('data', (chunk) => log.debug({ stdout: true, event: 'SPAWN_STDOUT' }, chunk.toString()));
-  stderr.on('data', (chunk) => log.debug({ stderr: true, event: 'SPAWN_STDERR' }, chunk.toString()));
+  stdout.on('data', (chunk) => log.trace({ stdout: true, event: 'SPAWN_STDOUT' }, chunk.toString()));
+  stderr.on('data', (chunk) => log.trace({ stderr: true, event: 'SPAWN_STDERR' }, chunk.toString()));
 
-  return result.then((e) => {
-    log.trace({ event: 'SPAWN_END' }, `${cmd} finished.`);
-  }).catch((e) => {
+  if (childProcess.exitCode != null && childProcess.exitCode !== 0) {
     log.error({ event: 'SPAWN_ERROR' }, `${cmd} failed with code = ${e.code}.`);
-    return Promise.reject(e);
-  });
+  }
+
+  function onEnd(e) {
+    const signal = e.childProcess.signalCode || '';
+    const action = signal ? `terminated with ${signal}` : `finished with code = ${e.code}`;
+
+    log.trace({ event: 'SPAWN_END' }, `${cmd} ${action}`);
+  }
+
+  return result.then(onEnd, onEnd);
 }
 
 module.exports = {
