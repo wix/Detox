@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const fs = require('fs-extra');
 const log = require('npmlog');
 const tempfile = require('tempfile');
@@ -9,6 +10,19 @@ class SimulatorScreenshotter extends ScreenshotArtifactPlugin {
     super(config);
 
     this.appleSimUtils = config.appleSimUtils;
+  }
+
+  async onBeforeLaunchApp() {
+    await this._takeEmptyScreenshotToPreventFirstTimeErrorInRealScreenshots();
+  }
+
+  async onResetDevice() {
+    await this._takeEmptyScreenshotToPreventFirstTimeErrorInRealScreenshots();
+  }
+
+  async _takeEmptyScreenshotToPreventFirstTimeErrorInRealScreenshots() {
+    const udid = this.api.getDeviceId();
+    await this.appleSimUtils.takeScreenshot(udid, '/dev/null').catch(_.noop);
   }
 
   createTestArtifact() {

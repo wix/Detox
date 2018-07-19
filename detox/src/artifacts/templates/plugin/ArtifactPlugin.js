@@ -36,12 +36,12 @@ class ArtifactPlugin {
    *
    * @protected
    * @async
-   * @param {Object} event - Relaunch app event object
+   * @param {Object} event - Launch app event object
    * @param {string} event.deviceId - Current deviceId
    * @param {string} event.bundleId - Current bundleId
    * @return {Promise<void>} - when done
    */
-  async onBeforeRelaunchApp(event) {}
+  async onBeforeLaunchApp(event) {}
 
   /**
    * Hook that is called inside device.launchApp() and
@@ -50,13 +50,13 @@ class ArtifactPlugin {
    *
    * @protected
    * @async
-   * @param {Object} event - Relaunch app event object
+   * @param {Object} event - Launch app event object
    * @param {string} event.deviceId - Current deviceId
    * @param {string} event.bundleId - Current bundleId
    * @param {number} event.pid - Process id of the running app
    * @return {Promise<void>} - when done
    */
-  async onRelaunchApp(event) {}
+  async onLaunchApp(event) {}
 
   /**
    * Hook that is called before any test begins
@@ -127,8 +127,8 @@ class ArtifactPlugin {
     this.disable('it was terminated by SIGINT or SIGTERM');
 
     this.onTerminate = _.noop;
-    this.onBeforeRelaunchApp = _.noop;
-    this.onRelaunchApp = _.noop;
+    this.onBeforeLaunchApp = _.noop;
+    this.onLaunchApp = _.noop;
     this.onBeforeResetDevice = _.noop;
     this.onResetDevice = _.noop;
     this.onBeforeAll = _.noop;

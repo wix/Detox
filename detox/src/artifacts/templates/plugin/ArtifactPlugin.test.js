@@ -70,14 +70,14 @@ describe(ArtifactPlugin, () => {
   });
 
   describe('lifecycle hooks', () => {
-    it('should have .onBeforeRelaunchApp', async () =>
-      await expect(plugin.onBeforeRelaunchApp({
+    it('should have .onBeforeLaunchApp', async () =>
+      await expect(plugin.onBeforeLaunchApp({
         deviceId: 'testDeviceId',
         bundleId: 'testBundleId'
       })).resolves.toBe(void 0));
 
-    it('should have .onRelaunchApp', async () =>
-      await expect(plugin.onRelaunchApp({
+    it('should have .onLaunchApp', async () =>
+      await expect(plugin.onLaunchApp({
         deviceId: 'testDeviceId',
         bundleId: 'testBundleId',
         pid: 2018
@@ -117,8 +117,8 @@ describe(ArtifactPlugin, () => {
       it('should replace the other lifecycle hooks with the same noop function', async () => {
         await plugin.onTerminate();
 
-        expect(plugin.onBeforeRelaunchApp).toBe(plugin.onTerminate);
-        expect(plugin.onRelaunchApp).toBe(plugin.onTerminate);
+        expect(plugin.onBeforeLaunchApp).toBe(plugin.onTerminate);
+        expect(plugin.onLaunchApp).toBe(plugin.onTerminate);
         expect(plugin.onBeforeAll).toBe(plugin.onTerminate);
         expect(plugin.onBeforeEach).toBe(plugin.onTerminate);
         expect(plugin.onBeforeResetDevice).toBe(plugin.onTerminate);

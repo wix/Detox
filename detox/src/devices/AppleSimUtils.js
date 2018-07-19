@@ -229,7 +229,6 @@ class AppleSimUtils {
       await this._bootDeviceMagically(udid);
     }
     await this._execSimctl({ cmd: `bootstatus ${udid}`, retries: 1 });
-    await this.takeScreenshot(udid, '/dev/null').catch(_.noop); // fails but enables further headless screenshotting
   }
 
   async _bootDeviceMagically(udid) {

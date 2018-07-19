@@ -9,7 +9,7 @@ class ADBLogcatPlugin extends LogArtifactPlugin {
     this._devicePathBuilder = config.devicePathBuilder;
   }
 
-  async onRelaunchApp({ pid }) {
+  async onLaunchApp({ pid }) {
     if (this.currentRecording) {
       await this.currentRecording.start({ pid });
     }

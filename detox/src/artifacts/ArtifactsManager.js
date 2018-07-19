@@ -117,19 +117,20 @@ class ArtifactsManager {
     device.off('launchApp', this.onLaunchApp);
   }
 
-  async onBeforeLaunchApp({ deviceId, bundleId }) {
+  async onBeforeLaunchApp({ bundleId, deviceId }) {
     const isFirstTime = !this._deviceId;
 
-    this._deviceId = deviceId;
     this._bundleId = bundleId;
+    this._deviceId = deviceId;
 
-    return isFirstTime
-      ? this._onBeforeLaunchAppFirstTime()
-      : this._onBeforeRelaunchApp({ deviceId, bundleId });
-  }
+    if (isFirstTime) {
+      this._artifactPlugins = this._instantiateArtifactPlugins();
+    }
 
-  async _onBeforeLaunchAppFirstTime() {
-    this._artifactPlugins = this._instantiateArtifactPlugins();
+    await this._emit('onBeforeLaunchApp', [{
+      deviceId: this._deviceId,
+      bundleId: this._bundleId,
+    }]);
   }
 
   _instantiateArtifactPlugins() {
@@ -138,23 +139,16 @@ class ArtifactsManager {
     });
   }
 
-  async _onBeforeRelaunchApp() {
-    await this._emit('onBeforeRelaunchApp', [{
-      deviceId: this._deviceId,
-      bundleId: this._bundleId,
-    }]);
-  }
-
-  async onLaunchApp({ deviceId, bundleId, pid }) {
-    const isFirstTime = isNaN(this._pid);
-
-    this._deviceId = deviceId;
+  async onLaunchApp({ bundleId, deviceId, pid }) {
     this._bundleId = bundleId;
+    this._deviceId = deviceId;
     this._pid = pid;
 
-    if (!isFirstTime) {
-      await this._emit('onRelaunchApp', [{ deviceId, bundleId, pid }]);
-    }
+    await this._emit('onLaunchApp', [{
+      bundleId,
+      deviceId,
+      pid,
+    }]);
   }
 
   async onBeforeAll() {
