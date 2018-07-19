@@ -10,10 +10,11 @@ class SimulatorScreenshotter extends ScreenshotArtifactPlugin {
     super(config);
 
     this.appleSimUtils = config.appleSimUtils;
+    this._emptyScreenshotPromise = this._takeEmptyScreenshotToPreventFirstTimeErrorInRealScreenshots();
   }
 
   async onBeforeAll() {
-    await this._takeEmptyScreenshotToPreventFirstTimeErrorInRealScreenshots();
+    await this._emptyScreenshotPromise;
   }
 
   async onResetDevice() {
