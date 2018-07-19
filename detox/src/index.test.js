@@ -36,6 +36,7 @@ describe('index', () => {
   });
 
   it(`throws if there was no config passed`, async () => {
+    let logError = require('./utils/logError');
     let exception = undefined;
 
     try {
@@ -45,6 +46,7 @@ describe('index', () => {
     }
 
     expect(exception).toBeDefined();
+    expect(logError).toHaveBeenCalledWith(exception);
   });
 
   it(`throws if there is no devices in config`, async () => {
