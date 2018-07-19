@@ -22,7 +22,7 @@ class SimulatorScreenshotter extends ScreenshotArtifactPlugin {
 
   async _takeEmptyScreenshotToPreventFirstTimeErrorInRealScreenshots() {
     const udid = this.api.getDeviceId();
-    await this.takeScreenshot(udid, '/dev/null').catch(_.noop);
+    await this.appleSimUtils.takeScreenshot(udid, '/dev/null').catch(_.noop);
   }
 
   createTestArtifact() {
