@@ -46,7 +46,7 @@ describe('index', () => {
     }
 
     expect(exception).toBeDefined();
-    expect(logError).toHaveBeenCalledWith(exception);
+    expect(logError).toHaveBeenCalledWith(expect.anything(), exception);
   });
 
   it(`throws if there is no devices in config`, async () => {
