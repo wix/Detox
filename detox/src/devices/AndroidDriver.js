@@ -15,6 +15,7 @@ const ADBLogcatPlugin = require('../artifacts/log/android/ADBLogcatPlugin');
 const ADBScreencapPlugin = require('../artifacts/screenshot/ADBScreencapPlugin');
 const ADBScreenrecorderPlugin = require('../artifacts/video/ADBScreenrecorderPlugin');
 const AndroidDevicePathBuilder = require('../artifacts/utils/AndroidDevicePathBuilder');
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const sleep = require('../utils/sleep');
 const interruptProcess = require('../utils/interruptProcess');
 const { spawnAndLog } = require('../utils/exec');
@@ -101,7 +102,17 @@ class AndroidDriver extends DeviceDriverBase {
 
     this.instrumentationProcess.childProcess.on('close', () => this.terminateInstrumentation());
 
-    return this._queryPID(deviceId, bundleId);
+    const appPID = await this._queryPID(deviceId, bundleId);
+    if (isNaN(appPID)) {
+      log.warn(await this.adb.shell(deviceId, 'ps'));
+
+      throw new DetoxRuntimeError({
+        message: `Failed to find PID of the launched bundle: ${bundleId}`,
+        hint: `You might want to check "adb logcat" logs - maybe the app has crashed.`,
+      });
+    }
+
+    return appPID;
   }
 
   async _queryPID(deviceId, bundleId, waitAtStart = true) {

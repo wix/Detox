@@ -2,9 +2,9 @@ const _ = require('lodash');
 const child_process = require('child_process');
 const path = require('path');
 const {execWithRetriesAndLogs, spawnAndLog} = require('../../utils/exec');
+const regexEscape = require('../../utils/regexEscape');
 const EmulatorTelnet = require('./EmulatorTelnet');
 const Environment = require('../../utils/environment');
-
 class ADB {
 
   constructor() {
@@ -71,21 +71,12 @@ class ADB {
   }
 
   async pidof(deviceId, bundleId) {
-    const processes = await this.shell(deviceId, `ps -AMo NAME,PID`);
-    const bundleIndex = processes.indexOf(bundleId + ' ');
-
-    if (bundleIndex === -1) {
+    const processes = await this.shell(deviceId, `ps | grep "${regexEscape(bundleId)}\\s*$"`).catch(() => '');
+    if (!processes) {
       return NaN;
     }
 
-    const pidStart = bundleIndex + bundleId.length + 1;
-    const pidEnd = processes.indexOf('\n', pidStart);
-
-    const pidString = (pidEnd === -1)
-      ? processes.slice(pidStart)
-      : processes.slice(pidStart, pidEnd);
-
-    return parseInt(pidString, 10);
+    return parseInt(processes.split(' ').filter(Boolean)[1], 10);
   }
 
   async shell(deviceId, cmd) {
