@@ -66,6 +66,7 @@ class Device {
     params[launchKey] = payloadFilePath;
   }
 
+  
   async launchApp(params = {newInstance: false}, bundleId) {
     const payloadParams = ['url', 'userNotification', 'userActivity'];
     const hasPayload = this._assertHasSingleParam(payloadParams, params);
@@ -111,7 +112,7 @@ class Device {
       }
     }
 
-    const processId = await this.deviceDriver.launch(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs));
+    const processId = await this.deviceDriver.launch(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.language);
     this._processes[_bundleId] = processId;
 
     await this.deviceDriver.waitUntilReady();
