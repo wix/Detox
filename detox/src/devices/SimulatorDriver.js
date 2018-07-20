@@ -82,8 +82,8 @@ class SimulatorDriver extends IosDriver {
     await this._applesimutils.uninstall(deviceId, bundleId);
   }
 
-  async launch(deviceId, bundleId, launchArgs, language) {
-    return await this._applesimutils.launch(deviceId, bundleId, launchArgs, language);
+  async launch(deviceId, bundleId, launchArgs) {
+    return await this._applesimutils.launch(deviceId, bundleId, launchArgs);
   }
 
   async terminate(deviceId, bundleId) {
