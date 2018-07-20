@@ -114,12 +114,12 @@ class AppleSimUtils {
     }
   }
 
-  async launch(udid, bundleId, launchArgs) {
+  async launch(udid, bundleId, launchArgs, language) {
     const frameworkPath = await environment.getFrameworkPath();
     const logsInfo = new LogsInfo(udid);
     const args = this._joinLaunchArgs(launchArgs);
 
-    const result = await this._launchMagically(frameworkPath, logsInfo, udid, bundleId, args);
+    const result = await this._launchMagically(frameworkPath, logsInfo, udid, bundleId, args, language);
     return this._parseLaunchId(result);
   }
 
@@ -243,17 +243,19 @@ class AppleSimUtils {
     return _.map(launchArgs, (v, k) => `${k} ${v}`).join(' ').trim();
   }
 
-  async _launchMagically(frameworkPath, logsInfo, udid, bundleId, args) {
+  async _launchMagically(frameworkPath, logsInfo, udid, bundleId, args, language) {
     const statusLogs = {
       trying: `Launching ${bundleId}...`,
       successful: `${bundleId} launched. The stdout and stderr logs were recreated, you can watch them with:\n` +
       `        tail -F ${logsInfo.absJoined}`
     };
 
+    const languageFlag = !!language ? `-AppleLanguages "(${language})" ` : '';
+
     const launchBin = `/bin/cat /dev/null >${logsInfo.absStdout} 2>${logsInfo.absStderr} && ` +
       `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${frameworkPath}/Detox" ` +
       `/usr/bin/xcrun simctl launch --stdout=${logsInfo.simStdout} --stderr=${logsInfo.simStderr} ` +
-      `${udid} ${bundleId} --args ${args}`;
+      `${udid} ${bundleId} ${languageFlag}--args ${args}`;
 
     return await exec.execWithRetriesAndLogs(launchBin, undefined, statusLogs, 1);
   }
