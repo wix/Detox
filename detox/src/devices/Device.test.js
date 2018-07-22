@@ -86,7 +86,7 @@ describe('Device', () => {
       await device.prepare();
       fail('should throw')
     } catch (ex) {
-      expect(ex).toMatchSnapshot();
+      expect(ex.message).toMatch(/app binary not found at/)
     }
   });
 
