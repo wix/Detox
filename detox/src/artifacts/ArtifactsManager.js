@@ -9,8 +9,7 @@ const ArtifactPathBuilder = require('./utils/ArtifactPathBuilder');
 
 class ArtifactsManager {
   constructor(pathBuilder) {
-    this.onBeforeResetDevice = this.onBeforeResetDevice.bind(this);
-    this.onResetDevice = this.onResetDevice.bind(this);
+    this.onBootDevice = this.onBootDevice.bind(this);
     this.onBeforeLaunchApp = this.onBeforeLaunchApp.bind(this);
     this.onLaunchApp = this.onLaunchApp.bind(this);
     this.onTerminate = _.once(this.onTerminate.bind(this));
@@ -19,7 +18,6 @@ class ArtifactsManager {
     this._idlePromise = Promise.resolve();
     this._onIdleCallbacks = [];
     this._activeArtifacts = [];
-    this._artifactPluginsFactories = [];
     this._artifactPlugins = [];
     this._pathBuilder = pathBuilder || new ArtifactPathBuilder({
       artifactsRootDir: argparse.getArgValue('artifacts-location') || 'artifacts',
@@ -100,43 +98,42 @@ class ArtifactsManager {
   }
 
   registerArtifactPlugins(artifactPluginFactoriesMap = {}) {
-    this._artifactPluginsFactories = Object.values(artifactPluginFactoriesMap);
+    const api = this.artifactsApi;
+    const artifactPluginsFactories = Object.values(artifactPluginFactoriesMap);
+
+    this._artifactPlugins = artifactPluginsFactories.map(factory => factory(api));
   }
 
-  subscribeToDeviceEvents(device) {
-    device.on('beforeResetDevice', this.onBeforeResetDevice);
-    device.on('resetDevice', this.onResetDevice);
-    device.on('beforeLaunchApp', this.onBeforeLaunchApp);
-    device.on('launchApp', this.onLaunchApp);
+  subscribeToDetoxEvents(emitter) {
+    emitter.on('bootDevice', this.onBootDevice);
+    emitter.on('beforeLaunchApp', this.onBeforeLaunchApp);
+    emitter.on('launchApp', this.onLaunchApp);
   }
 
-  unsubscribeFromDeviceEvents(device) {
-    device.off('beforeResetDevice', this.onBeforeResetDevice);
-    device.off('resetDevice', this.onResetDevice);
-    device.off('beforeLaunchApp', this.onBeforeLaunchApp);
-    device.off('launchApp', this.onLaunchApp);
+  unsubscribeFromDetoxEvents(emitter) {
+    emitter.off('launchApp', this.onLaunchApp);
+    emitter.off('beforeLaunchApp', this.onBeforeLaunchApp);
+    emitter.off('bootDevice', this.onBootDevice);
   }
 
-  async onBeforeLaunchApp({ bundleId, deviceId }) {
-    const isFirstTime = !this._deviceId;
-
-    this._bundleId = bundleId;
+  async onBootDevice({ coldBoot, deviceId }) {
     this._deviceId = deviceId;
 
-    if (isFirstTime) {
-      this._artifactPlugins = this._instantiateArtifactPlugins();
-    }
-
-    await this._emit('onBeforeLaunchApp', [{
+    await this._emit('onBootDevice', [{
+      coldBoot,
       deviceId: this._deviceId,
-      bundleId: this._bundleId,
     }]);
   }
 
-  _instantiateArtifactPlugins() {
-    return this._artifactPluginsFactories.map((factory) => {
-      return factory(this.artifactsApi);
-    });
+  async onBeforeLaunchApp({ bundleId, deviceId }) {
+    this._bundleId = bundleId;
+    this._deviceId = deviceId;
+    this._pid = NaN;
+
+    await this._emit('onBeforeLaunchApp', [{
+      bundleId: this._bundleId,
+      deviceId: this._deviceId,
+    }]);
   }
 
   async onLaunchApp({ bundleId, deviceId, pid }) {
@@ -157,14 +154,6 @@ class ArtifactsManager {
 
   async onBeforeEach(testSummary) {
     await this._emit('onBeforeEach', [testSummary]);
-  }
-
-  async onBeforeResetDevice({ deviceId }) {
-    await this._emit('onBeforeResetDevice', [{ deviceId }]);
-  }
-
-  async onResetDevice({ deviceId }) {
-    await this._emit('onResetDevice', [{ deviceId }]);
   }
 
   async onAfterEach(testSummary) {

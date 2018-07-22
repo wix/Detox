@@ -17,6 +17,7 @@ describe('Detox', () => {
   let fs;
   let Detox;
   let detox;
+
   const validDeviceConfig = schemes.validOneDeviceNoSession.configurations['ios.sim.release'];
   const validDeviceConfigWithSession = schemes.sessionPerConfiguration.configurations['ios.sim.none'];
   const invalidDeviceConfig = schemes.invalidDeviceNoDeviceType.configurations['ios.sim.release'];
@@ -54,11 +55,25 @@ describe('Detox', () => {
 
     global.device = undefined;
 
+    jest.mock('detox-server');
     jest.mock('./devices/IosDriver');
     jest.mock('./devices/SimulatorDriver');
     jest.mock('./devices/Device');
-    jest.mock('detox-server');
     jest.mock('./client/Client');
+    jest.mock('./utils/logError');
+  });
+
+  it(`should use an AsyncEmitter emitter which logs errors in listeners`, async () => {
+    const logError = require('./utils/logError');
+    Detox = require('./Detox');
+
+    const { _emitter: emitter } = new Detox({deviceConfig: validDeviceConfig});
+    const error = new Error();
+
+    emitter.on('bootDevice', () => { throw error; })
+    await emitter.emit('bootDevice', { deviceId: '', coldBoot: true });
+
+    expect(logError).toHaveBeenCalledWith(error, 'detox');
   });
 
   it(`Passing --cleanup should shutdown the currently running device`, async () => {

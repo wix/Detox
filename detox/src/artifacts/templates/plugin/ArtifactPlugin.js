@@ -59,6 +59,18 @@ class ArtifactPlugin {
   async onLaunchApp(event) {}
 
   /**
+   * Hook that is supposed called from device.acquireFreeDevice()
+   *
+   * @protected
+   * @async
+   * @param {Object} event - Cold boot event object
+   * @param {string} event.deviceId - Current deviceId
+   * @param {boolean} event.coldBoot - true, if the device gets turned on from the shutdown state.
+   * @return {Promise<void>} - when done
+   */
+  async onBootDevice(event) {}
+
+  /**
    * Hook that is called before any test begins
    *
    * @protected
@@ -76,26 +88,6 @@ class ArtifactPlugin {
    * @return {Promise<void>} - when done
    */
   async onBeforeEach(testSummary) {}
-
-  /**
-   * Hook that is called before device.resetContentAndSettings() is called
-   *
-   * @protected
-   * @async
-   * @param {object} event - has .deviceId inside
-   * @return {Promise<void>} - when done
-   */
-  async onBeforeResetDevice({ deviceId }) {}
-
-  /**
-   * Hook that is called after device.resetContentAndSettings() is called
-   *
-   * @protected
-   * @async
-   * @param {object} event - has .deviceId inside
-   * @return {Promise<void>} - when done
-   */
-  async onResetDevice({ deviceId }) {}
 
   /***
    * @protected
@@ -127,10 +119,9 @@ class ArtifactPlugin {
     this.disable('it was terminated by SIGINT or SIGTERM');
 
     this.onTerminate = _.noop;
+    this.onBootDevice = _.noop;
     this.onBeforeLaunchApp = _.noop;
     this.onLaunchApp = _.noop;
-    this.onBeforeResetDevice = _.noop;
-    this.onResetDevice = _.noop;
     this.onBeforeAll = _.noop;
     this.onBeforeEach = _.noop;
     this.onAfterEach = _.noop;

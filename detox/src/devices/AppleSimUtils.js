@@ -63,10 +63,21 @@ class AppleSimUtils {
     return device;
   }
 
+  /***
+   * Boots the simulator if it is not booted already.
+   *
+   * @param {String} udid - device id
+   * @returns {Promise<boolean>} true, if device has been booted up from the shutdown state
+   */
   async boot(udid) {
-    if (!await this.isBooted(udid)) {
+    const isBooted = await this.isBooted(udid);
+
+    if (!isBooted) {
       await this._bootDeviceByXcodeVersion(udid);
+      return true;
     }
+
+    return false;
   }
 
   async isBooted(udid) {

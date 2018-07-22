@@ -77,6 +77,7 @@ class SimulatorLogRecording extends Artifact {
   _createTail(file, prefix) {
     const tail = new Tail(file, {
       fromBeginning: this._readFromBeginning,
+      follow: true,
       logger: {
         info: (...args) => log.verbose(`simulator-log-info`, ...args),
         error: (...args) => log.error(`simulator-log-error`, ...args),

@@ -83,6 +83,12 @@ describe(ArtifactPlugin, () => {
         pid: 2018
       })).resolves.toBe(void 0));
 
+    it('should have .onBootDevice', async () =>
+      await expect(plugin.onBootDevice({
+        deviceId: 'testDeviceId',
+        coldBoot: true,
+      })).resolves.toBe(void 0));
+
     it('should have .onBeforeAll', async () =>
       await expect(plugin.onBeforeAll()).resolves.toBe(void 0));
 
@@ -90,16 +96,6 @@ describe(ArtifactPlugin, () => {
       const testSummary = testSummaries.running();
       await expect(plugin.onBeforeEach(testSummary)).resolves.toBe(void 0);
     });
-
-    it('should have .onBeforeResetDevice', async () =>
-      await expect(plugin.onBeforeResetDevice({
-        deviceId: 'testDeviceId',
-      })).resolves.toBe(void 0));
-
-    it('should have .onResetDevice', async () =>
-      await expect(plugin.onResetDevice({
-        deviceId: 'testDeviceId',
-      })).resolves.toBe(void 0));
 
     it('should have .onAfterEach', async () =>
       await expect(plugin.onAfterEach(testSummaries.failed())).resolves.toBe(void 0));
@@ -117,12 +113,11 @@ describe(ArtifactPlugin, () => {
       it('should replace the other lifecycle hooks with the same noop function', async () => {
         await plugin.onTerminate();
 
+        expect(plugin.onBootDevice).toBe(plugin.onTerminate);
         expect(plugin.onBeforeLaunchApp).toBe(plugin.onTerminate);
         expect(plugin.onLaunchApp).toBe(plugin.onTerminate);
         expect(plugin.onBeforeAll).toBe(plugin.onTerminate);
         expect(plugin.onBeforeEach).toBe(plugin.onTerminate);
-        expect(plugin.onBeforeResetDevice).toBe(plugin.onTerminate);
-        expect(plugin.onResetDevice).toBe(plugin.onTerminate);
         expect(plugin.onAfterEach).toBe(plugin.onTerminate);
         expect(plugin.onAfterAll).toBe(plugin.onTerminate);
       });

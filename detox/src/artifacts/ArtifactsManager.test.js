@@ -76,8 +76,8 @@ describe('ArtifactsManager', () => {
       artifactsManager.registerArtifactPlugins({ mock: factory });
     });
 
-    it('should not get called immediately', () => {
-      expect(factory).not.toHaveBeenCalled();
+    it('should get called immediately', () => {
+      expect(factory).toHaveBeenCalledWith(artifactsManager.artifactsApi);
     });
 
     describe('and the app is about to be launched', function() {
@@ -133,12 +133,11 @@ describe('ArtifactsManager', () => {
         return (testPlugin = {
           name: 'testPlugin',
           disable: jest.fn(),
+          onBootDevice: jest.fn(),
           onBeforeLaunchApp: jest.fn(),
           onLaunchApp: jest.fn(),
           onBeforeAll: jest.fn(),
           onBeforeEach: jest.fn(),
-          onBeforeResetDevice: jest.fn(),
-          onResetDevice: jest.fn(),
           onAfterEach: jest.fn(),
           onAfterAll: jest.fn(),
           onTerminate: jest.fn(),
@@ -153,286 +152,253 @@ describe('ArtifactsManager', () => {
       artifactsManager.registerArtifactPlugins({ testPluginFactory });
     });
 
-    describe('', () => {
-      beforeEach(async () => {
-        await artifactsManager.onBeforeLaunchApp({
-          deviceId: 'testDeviceId',
-          bundleId: 'testBundleId',
-        });
+    describe('.preparePathForArtifact()', () => {
+      let argparse, fs;
 
-        await artifactsManager.onLaunchApp({
-          deviceId: 'testDeviceId',
-          bundleId: 'testBundleId',
-          pid: 2018,
-        });
+      beforeEach(() => {
+        argparse = require('../utils/argparse');
+        fs = require('fs-extra');
       });
 
-      describe('.preparePathForArtifact()', () => {
-        let argparse, fs;
+      it('should prepare directory for test artifact at given path', async () => {
+        const testSummary = {};
+        const givenArtifactPath = path.join('artifacts', 'something', 'startup.log');
+        pathBuilder.buildPathForTestArtifact.mockReturnValue(givenArtifactPath);
 
-        beforeEach(() => {
-          argparse = require('../utils/argparse');
-          fs = require('fs-extra');
-        });
+        const returnedArtifactPath = await artifactsApi.preparePathForArtifact('test', testSummary);
 
-        it('should prepare directory for test artifact at given path', async () => {
-          const testSummary = {};
-          const givenArtifactPath = path.join('artifacts', 'something', 'startup.log');
-          pathBuilder.buildPathForTestArtifact.mockReturnValue(givenArtifactPath);
-
-          const returnedArtifactPath = await artifactsApi.preparePathForArtifact('test', testSummary);
-
-          expect(pathBuilder.buildPathForTestArtifact).toHaveBeenCalledWith('test', testSummary);
-          expect(returnedArtifactPath).toBe(givenArtifactPath);
-          expect(fs.ensureDir).toHaveBeenCalledWith(path.join('artifacts', 'something'));
-        });
+        expect(pathBuilder.buildPathForTestArtifact).toHaveBeenCalledWith('test', testSummary);
+        expect(returnedArtifactPath).toBe(givenArtifactPath);
+        expect(fs.ensureDir).toHaveBeenCalledWith(path.join('artifacts', 'something'));
       });
+    });
 
-      describe('.trackArtifact()', () => {
-        it('should mark artifact to be discarded when Detox is being terminated', async () => {
-          const artifact = {
-            discard: jest.fn(),
-          };
+    describe('.trackArtifact()', () => {
+      it('should mark artifact to be discarded when Detox is being terminated', async () => {
+        const artifact = {
+          discard: jest.fn(),
+        };
 
-          artifactsApi.trackArtifact(artifact);
-          expect(artifact.discard).not.toHaveBeenCalled();
-          await artifactsManager.onTerminate();
-          expect(artifact.discard).toHaveBeenCalled();
-        });
+        artifactsApi.trackArtifact(artifact);
+        expect(artifact.discard).not.toHaveBeenCalled();
+        await artifactsManager.onTerminate();
+        expect(artifact.discard).toHaveBeenCalled();
       });
+    });
 
-      describe('.untrackArtifact()', () => {
-        it('should mark artifact as the one that does not have to be discarded when Detox is being terminated', async () => {
-          const artifact = {
-            discard: jest.fn(),
-          };
+    describe('.untrackArtifact()', () => {
+      it('should mark artifact as the one that does not have to be discarded when Detox is being terminated', async () => {
+        const artifact = {
+          discard: jest.fn(),
+        };
 
-          artifactsApi.trackArtifact(artifact);
-          artifactsApi.untrackArtifact(artifact);
+        artifactsApi.trackArtifact(artifact);
+        artifactsApi.untrackArtifact(artifact);
 
-          expect(artifact.discard).not.toHaveBeenCalled();
-          await artifactsManager.onTerminate();
-          expect(artifact.discard).not.toHaveBeenCalled();
-        });
+        expect(artifact.discard).not.toHaveBeenCalled();
+        await artifactsManager.onTerminate();
+        expect(artifact.discard).not.toHaveBeenCalled();
       });
+    });
 
-      describe('.requestIdleCallback()', () => {
-        let callbacks, resolves, rejects;
+    describe('.requestIdleCallback()', () => {
+      let callbacks, resolves, rejects;
 
-        beforeEach(() => {
-          callbacks = new Array(3);
-          resolves = new Array(3);
-          rejects = new Array(3);
+      beforeEach(() => {
+        callbacks = new Array(3);
+        resolves = new Array(3);
+        rejects = new Array(3);
 
-          [0, 1, 2].forEach((index) => {
-            callbacks[index] = jest.fn().mockImplementation(() => {
-              return new Promise((resolve, reject) => {
-                resolves[index] = async (value) => { resolve(value); await sleep(0); };
-                rejects[index] = async (value) => { reject(value); await sleep(0); };
-              });
+        [0, 1, 2].forEach((index) => {
+          callbacks[index] = jest.fn().mockImplementation(() => {
+            return new Promise((resolve, reject) => {
+              resolves[index] = async (value) => { resolve(value); await sleep(0); };
+              rejects[index] = async (value) => { reject(value); await sleep(0); };
             });
           });
         });
-
-        it('should enqueue an async operation to a queue that executes operations only one by one', async () => {
-          artifactsApi.requestIdleCallback(callbacks[0], testPlugin); await sleep(0);
-          expect(callbacks[0]).toHaveBeenCalled();
-
-          artifactsApi.requestIdleCallback(callbacks[1], testPlugin);
-          artifactsApi.requestIdleCallback(callbacks[2], testPlugin);
-
-          expect(callbacks[1]).not.toHaveBeenCalled();
-          expect(callbacks[2]).not.toHaveBeenCalled();
-
-          await resolves[0]();
-          expect(callbacks[1]).toHaveBeenCalled();
-          expect(callbacks[2]).not.toHaveBeenCalled();
-
-          await resolves[1]();
-          expect(callbacks[2]).toHaveBeenCalled();
-        });
-
-        it('should catch errors, report them if callback fails, and move on ', async () => {
-          artifactsApi.requestIdleCallback(callbacks[0], testPlugin); await sleep(0);
-          await rejects[0](new Error('test onIdleCallback error'));
-
-          expect(proxy.npmlog.error.mock.calls).toMatchSnapshot();
-
-          artifactsApi.requestIdleCallback(callbacks[1], testPlugin); await sleep(0);
-          expect(callbacks[1]).toHaveBeenCalled();
-        });
-
-        it('should gracefully handle a case when plugin object is not passed and use "unknown" as a name placeholder', async () => {
-          artifactsApi.requestIdleCallback(callbacks[0]); await sleep(0);
-          await rejects[0](new Error('test onIdleCallback error'));
-
-          expect(proxy.npmlog.error.mock.calls).toMatchSnapshot();
-
-          artifactsApi.requestIdleCallback(callbacks[1], testPlugin); await sleep(0);
-          expect(callbacks[1]).toHaveBeenCalled();
-        });
-
-        it('should work correctly even when operations are flushed on Detox termination', async () => {
-          artifactsApi.requestIdleCallback(callbacks[0], testPlugin);
-          artifactsApi.requestIdleCallback(callbacks[1], testPlugin);
-          artifactsApi.requestIdleCallback(callbacks[2], testPlugin);
-          artifactsManager.onTerminate();
-          await sleep(0);
-
-          expect(callbacks[0]).toHaveBeenCalledTimes(1);
-          expect(callbacks[1]).toHaveBeenCalledTimes(1);
-          expect(callbacks[2]).toHaveBeenCalledTimes(1);
-
-          await Promise.all(resolves.map(r => r()));
-
-          expect(callbacks[0]).toHaveBeenCalledTimes(1);
-          expect(callbacks[1]).toHaveBeenCalledTimes(1);
-          expect(callbacks[2]).toHaveBeenCalledTimes(1);
-        });
       });
 
-      describe('hooks', () => {
-        describe('error handling', () => {
-          function itShouldCatchErrorsOnPhase(hookName, argFactory) {
-            it(`should catch .${hookName} errors`, async () => {
-              testPlugin[hookName].mockImplementation(() => {
-                throw new Error(`test ${hookName} error`);
-              });
+      it('should enqueue an async operation to a queue that executes operations only one by one', async () => {
+        artifactsApi.requestIdleCallback(callbacks[0], testPlugin); await sleep(0);
+        expect(callbacks[0]).toHaveBeenCalled();
 
-              await artifactsManager[hookName](argFactory());
-              expect(proxy.npmlog.error.mock.calls).toMatchSnapshot();
-            });
-          }
+        artifactsApi.requestIdleCallback(callbacks[1], testPlugin);
+        artifactsApi.requestIdleCallback(callbacks[2], testPlugin);
 
-          itShouldCatchErrorsOnPhase('onBeforeAll', () => undefined);
+        expect(callbacks[1]).not.toHaveBeenCalled();
+        expect(callbacks[2]).not.toHaveBeenCalled();
 
-          itShouldCatchErrorsOnPhase('onBeforeEach', () => testSummaries.running());
+        await resolves[0]();
+        expect(callbacks[1]).toHaveBeenCalled();
+        expect(callbacks[2]).not.toHaveBeenCalled();
 
-          itShouldCatchErrorsOnPhase('onAfterEach', () => testSummaries.passed());
+        await resolves[1]();
+        expect(callbacks[2]).toHaveBeenCalled();
+      });
 
-          itShouldCatchErrorsOnPhase('onAfterAll', () => undefined);
+      it('should catch errors, report them if callback fails, and move on ', async () => {
+        artifactsApi.requestIdleCallback(callbacks[0], testPlugin); await sleep(0);
+        await rejects[0](new Error('test onIdleCallback error'));
 
-          itShouldCatchErrorsOnPhase('onTerminate', () => undefined);
+        expect(proxy.npmlog.error.mock.calls).toMatchSnapshot();
 
-          itShouldCatchErrorsOnPhase('onBeforeResetDevice', () => ({
-            deviceId: 'testDeviceId'
-          }));
+        artifactsApi.requestIdleCallback(callbacks[1], testPlugin); await sleep(0);
+        expect(callbacks[1]).toHaveBeenCalled();
+      });
 
-          itShouldCatchErrorsOnPhase('onResetDevice', () => ({
-            deviceId: 'testDeviceId'
-          }));
+      it('should gracefully handle a case when plugin object is not passed and use "unknown" as a name placeholder', async () => {
+        artifactsApi.requestIdleCallback(callbacks[0]); await sleep(0);
+        await rejects[0](new Error('test onIdleCallback error'));
 
-          itShouldCatchErrorsOnPhase('onBeforeLaunchApp', () => ({
-            bundleId: 'testBundleId',
-            deviceId: 'testDeviceId',
-          }));
+        expect(proxy.npmlog.error.mock.calls).toMatchSnapshot();
 
-          itShouldCatchErrorsOnPhase('onLaunchApp', () => ({
-            bundleId: 'testBundleId',
-            deviceId: 'testDeviceId',
-            pid: 2018,
-          }));
-        });
+        artifactsApi.requestIdleCallback(callbacks[1], testPlugin); await sleep(0);
+        expect(callbacks[1]).toHaveBeenCalled();
+      });
 
-        describe('onBeforeAll', () => {
-          it('should call onBeforeAll in plugins', async () => {
-            expect(testPlugin.onBeforeAll).not.toHaveBeenCalled();
-            await artifactsManager.onBeforeAll();
-            expect(testPlugin.onBeforeAll).toHaveBeenCalled();
-          });
-        });
+      it('should work correctly even when operations are flushed on Detox termination', async () => {
+        artifactsApi.requestIdleCallback(callbacks[0], testPlugin);
+        artifactsApi.requestIdleCallback(callbacks[1], testPlugin);
+        artifactsApi.requestIdleCallback(callbacks[2], testPlugin);
+        artifactsManager.onTerminate();
+        await sleep(0);
 
-        describe('onBeforeEach', () => {
-          it('should call onBeforeEach in plugins with the passed argument', async () => {
-            const testSummary = testSummaries.running();
+        expect(callbacks[0]).toHaveBeenCalledTimes(1);
+        expect(callbacks[1]).toHaveBeenCalledTimes(1);
+        expect(callbacks[2]).toHaveBeenCalledTimes(1);
 
-            expect(testPlugin.onBeforeEach).not.toHaveBeenCalled();
-            await artifactsManager.onBeforeEach(testSummary);
-            expect(testPlugin.onBeforeEach).toHaveBeenCalledWith(testSummary);
-          });
-        });
+        await Promise.all(resolves.map(r => r()));
 
-        describe('onAfterEach', () => {
-          it('should call onAfterEach in plugins with the passed argument', async () => {
-            const testSummary = testSummaries.passed();
-
-            expect(testPlugin.onAfterEach).not.toHaveBeenCalled();
-            await artifactsManager.onAfterEach(testSummary);
-            expect(testPlugin.onAfterEach).toHaveBeenCalledWith(testSummary);
-          });
-        });
-
-        describe('onAfterAll', () => {
-          it('should call onAfterAll in plugins', async () => {
-            expect(testPlugin.onAfterAll).not.toHaveBeenCalled();
-            await artifactsManager.onAfterAll();
-            expect(testPlugin.onAfterAll).toHaveBeenCalled();
-          });
-        });
-
-        describe('onTerminate', () => {
-          it('should call onTerminate in plugins', async () => {
-            expect(testPlugin.onTerminate).not.toHaveBeenCalled();
-            await artifactsManager.onTerminate();
-            expect(testPlugin.onTerminate).toHaveBeenCalled();
-          });
-        });
-
-        describe('onBeforeResetDevice', () => {
-          it('should call onBeforeResetDevice in plugins', async () => {
-            const resetInfo = {
-              deviceId: 'testDeviceId',
-            };
-
-            expect(testPlugin.onBeforeResetDevice).not.toHaveBeenCalled();
-            await artifactsManager.onBeforeResetDevice(resetInfo);
-            expect(testPlugin.onBeforeResetDevice).toHaveBeenCalledWith(resetInfo);
-          });
-        });
-
-        describe('onResetDevice', () => {
-          it('should call onResetDevice in plugins', async () => {
-            const resetInfo = {
-              deviceId: 'testDeviceId',
-            };
-
-            expect(testPlugin.onResetDevice).not.toHaveBeenCalled();
-            await artifactsManager.onResetDevice(resetInfo);
-            expect(testPlugin.onResetDevice).toHaveBeenCalledWith(resetInfo);
-          });
-        });
-
+        expect(callbacks[0]).toHaveBeenCalledTimes(1);
+        expect(callbacks[1]).toHaveBeenCalledTimes(1);
+        expect(callbacks[2]).toHaveBeenCalledTimes(1);
       });
     });
 
     describe('hooks', () => {
-      describe('onBeforeLaunchApp', () => {
-        it('should call onBeforeLaunchApp in plugins', async () => {
-          const launchInfo = {
-            deviceId: 'testDeviceId',
-            bundleId: 'testBundleId',
-          };
+      describe('error handling', () => {
+        function itShouldCatchErrorsOnPhase(hookName, argFactory) {
+          it(`should catch .${hookName} errors`, async () => {
+            testPlugin[hookName].mockImplementation(() => {
+              throw new Error(`test ${hookName} error`);
+            });
 
-          expect(testPlugin).toBe(null);
-          await artifactsManager.onBeforeLaunchApp(launchInfo);
-          expect(testPlugin.onBeforeLaunchApp).toHaveBeenCalledWith(launchInfo);
+            await artifactsManager[hookName](argFactory());
+            expect(proxy.npmlog.error.mock.calls).toMatchSnapshot();
+          });
+        }
+
+        itShouldCatchErrorsOnPhase('onBeforeAll', () => undefined);
+
+        itShouldCatchErrorsOnPhase('onBeforeEach', () => testSummaries.running());
+
+        itShouldCatchErrorsOnPhase('onAfterEach', () => testSummaries.passed());
+
+        itShouldCatchErrorsOnPhase('onAfterAll', () => undefined);
+
+        itShouldCatchErrorsOnPhase('onTerminate', () => undefined);
+
+        itShouldCatchErrorsOnPhase('onBootDevice', () => ({
+          deviceId: 'testDeviceId'
+        }));
+
+        itShouldCatchErrorsOnPhase('onBeforeLaunchApp', () => ({
+          bundleId: 'testBundleId',
+          deviceId: 'testDeviceId',
+        }));
+
+        itShouldCatchErrorsOnPhase('onLaunchApp', () => ({
+          bundleId: 'testBundleId',
+          deviceId: 'testDeviceId',
+          pid: 2018,
+        }));
+      });
+
+      describe('onBeforeAll', () => {
+        it('should call onBeforeAll in plugins', async () => {
+          expect(testPlugin.onBeforeAll).not.toHaveBeenCalled();
+          await artifactsManager.onBeforeAll();
+          expect(testPlugin.onBeforeAll).toHaveBeenCalled();
         });
       });
 
-      describe('onLaunchApp', () => {
-        it('should call onLaunchApp in plugins', async () => {
-          const launchInfo = {
+      describe('onBeforeEach', () => {
+        it('should call onBeforeEach in plugins with the passed argument', async () => {
+          const testSummary = testSummaries.running();
+
+          expect(testPlugin.onBeforeEach).not.toHaveBeenCalled();
+          await artifactsManager.onBeforeEach(testSummary);
+          expect(testPlugin.onBeforeEach).toHaveBeenCalledWith(testSummary);
+        });
+      });
+
+      describe('onAfterEach', () => {
+        it('should call onAfterEach in plugins with the passed argument', async () => {
+          const testSummary = testSummaries.passed();
+
+          expect(testPlugin.onAfterEach).not.toHaveBeenCalled();
+          await artifactsManager.onAfterEach(testSummary);
+          expect(testPlugin.onAfterEach).toHaveBeenCalledWith(testSummary);
+        });
+      });
+
+      describe('onAfterAll', () => {
+        it('should call onAfterAll in plugins', async () => {
+          expect(testPlugin.onAfterAll).not.toHaveBeenCalled();
+          await artifactsManager.onAfterAll();
+          expect(testPlugin.onAfterAll).toHaveBeenCalled();
+        });
+      });
+
+      describe('onTerminate', () => {
+        it('should call onTerminate in plugins', async () => {
+          expect(testPlugin.onTerminate).not.toHaveBeenCalled();
+          await artifactsManager.onTerminate();
+          expect(testPlugin.onTerminate).toHaveBeenCalled();
+        });
+      });
+
+      describe('onBootDevice', () => {
+        it('should call onBootDevice in plugins', async () => {
+          const bootInfo = {
+            coldBoot: false,
             deviceId: 'testDeviceId',
-            bundleId: 'testBundleId',
-            pid: 2018,
           };
 
-          await artifactsManager.onBeforeLaunchApp({ ...launchInfo, pid: NaN });
-
-          expect(testPlugin.onLaunchApp).not.toHaveBeenCalled();
-          await artifactsManager.onLaunchApp(launchInfo);
-          expect(testPlugin.onLaunchApp).toHaveBeenCalledWith(launchInfo);
+          expect(testPlugin.onBootDevice).not.toHaveBeenCalled();
+          await artifactsManager.onBootDevice(bootInfo);
+          expect(testPlugin.onBootDevice).toHaveBeenCalledWith(bootInfo);
         });
+      });
+    });
+
+    describe('onBeforeLaunchApp', () => {
+      it('should call onBeforeLaunchApp in plugins', async () => {
+        const launchInfo = {
+          deviceId: 'testDeviceId',
+          bundleId: 'testBundleId',
+        };
+
+        expect(testPlugin.onBeforeLaunchApp).not.toHaveBeenCalledWith(launchInfo);
+        await artifactsManager.onBeforeLaunchApp(launchInfo);
+        expect(testPlugin.onBeforeLaunchApp).toHaveBeenCalledWith(launchInfo);
+      });
+    });
+
+    describe('onLaunchApp', () => {
+      it('should call onLaunchApp in plugins', async () => {
+        const launchInfo = {
+          deviceId: 'testDeviceId',
+          bundleId: 'testBundleId',
+          pid: 2018,
+        };
+
+        await artifactsManager.onBeforeLaunchApp({ ...launchInfo, pid: NaN });
+
+        expect(testPlugin.onLaunchApp).not.toHaveBeenCalled();
+        await artifactsManager.onLaunchApp(launchInfo);
+        expect(testPlugin.onLaunchApp).toHaveBeenCalledWith(launchInfo);
       });
     });
   });

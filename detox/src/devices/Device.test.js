@@ -18,6 +18,9 @@ describe('Device', () => {
   let client;
   let npmlog;
   let logError;
+  let AsyncEmitter;
+  let onEmitError;
+  let asyncEmitter;
 
   beforeEach(async () => {
     jest.mock('fs');
@@ -42,19 +45,38 @@ describe('Device', () => {
     DeviceDriverBase = require('./DeviceDriverBase');
     SimulatorDriver = require('./SimulatorDriver');
     Client = require('../client/Client');
+    AsyncEmitter = require('../utils/AsyncEmitter');
+    asyncEmitter = new AsyncEmitter({
+      events: [
+        'bootDevice',
+        'beforeLaunchApp',
+        'launchApp',
+      ],
+      onError: (onEmitError = jest.fn()),
+    });
 
     client = new Client(validScheme.session);
     await client.connect();
 
   });
 
-  function validDevice() {
-    const device = new Device(validScheme.configurations['ios.sim.release'], validScheme.session, new DeviceDriverBase(client));
+  function schemeDevice(scheme, configuration) {
+    const device = new Device({
+      deviceConfig: scheme.configurations[configuration],
+      deviceDriver: new DeviceDriverBase(client),
+      sessionConfig: scheme.session,
+      emitter: asyncEmitter,
+    });
+
     fs.existsSync.mockReturnValue(true);
     device.deviceDriver.defaultLaunchArgsPrefix.mockReturnValue('-');
     device.deviceDriver.acquireFreeDevice.mockReturnValue('mockDeviceId');
 
     return device;
+  }
+
+  function validDevice() {
+    return schemeDevice(validScheme, 'ios.sim.release')
   }
 
   it(`valid scheme, no binary, should throw`, async () => {
@@ -64,7 +86,7 @@ describe('Device', () => {
       await device.prepare();
       fail('should throw')
     } catch (ex) {
-      expect(ex).toBeDefined();
+      expect(ex).toMatchSnapshot();
     }
   });
 
@@ -145,21 +167,23 @@ describe('Device', () => {
 
     await device.launchApp();
 
-    const eventObject = {
+    const eventObj = {
       deviceId: device._deviceId,
       bundleId: device._bundleId,
       pid: 2,
     };
 
-    expect(npmlog.error).toHaveBeenCalledWith(
-      'detox-device',
-      'device.emit("%s", %j) error',
-      'launchApp',
-      eventObject
-    );
+    expect(onEmitError).toHaveBeenCalledWith({
+      eventName: 'launchApp',
+      eventObj,
+      error: errorAsync,
+    });
 
-    expect(logError).toHaveBeenCalledWith(errorSync, 'detox-device');
-    expect(logError).toHaveBeenCalledWith(errorAsync, 'detox-device');
+    expect(onEmitError).toHaveBeenCalledWith({
+      eventName: 'launchApp',
+      eventObj,
+      error: errorSync,
+    });
   });
 
   it(`relaunchApp()`, async () => {
@@ -443,22 +467,22 @@ describe('Device', () => {
     expect(device.deviceDriver.cleanup).toHaveBeenCalledTimes(1);
   });
 
-  it(`new Device() with invalid device config (no binary) should throw`, async () => {
-    try {
-      new Device(invalidDeviceNoBinary.configurations['ios.sim.release'], validScheme.session, new SimulatorDriver(client));
-      fail('should throw');
-    } catch (ex) {
-      expect(ex).toBeDefined();
-    }
+  it(`new Device() with invalid device config (no binary) should throw`, () => {
+    expect(() => new Device({
+      deviceConfig: invalidDeviceNoBinary.configurations['ios.sim.release'],
+      deviceDriver: new SimulatorDriver(client),
+      sessionConfig: validScheme.session,
+      emitter: asyncEmitter,
+    })).toThrowErrorMatchingSnapshot();
   });
 
-  it(`new Device() with invalid device config (no device name) should throw`, async () => {
-    try {
-      new Device(invalidDeviceNoDeviceName.configurations['ios.sim.release'], validScheme.session, new SimulatorDriver(client));
-      fail('should throw');
-    } catch (ex) {
-      expect(ex).toBeDefined();
-    }
+  it(`new Device() with invalid device config (no device name) should throw`, () => {
+    expect(() => new Device({
+      deviceConfig: invalidDeviceNoDeviceName.configurations['ios.sim.release'],
+      deviceDriver: new SimulatorDriver(client),
+      sessionConfig: validScheme.session,
+      emitter: asyncEmitter,
+    })).toThrowErrorMatchingSnapshot();
   });
 
   it(`launchApp({newInstance: false}) should check if process is in background and reopen it`, async () => {
@@ -581,11 +605,7 @@ describe('Device', () => {
   });
 
   async function launchAndTestBinaryPath(configuration) {
-    const scheme = configurationsMock.pathsTests;
-    const device = new Device(scheme.configurations[configuration], scheme.session, new DeviceDriverBase(client));
-    fs.existsSync.mockReturnValue(true);
-    device.deviceDriver.defaultLaunchArgsPrefix.mockReturnValue('-');
-    device.deviceDriver.acquireFreeDevice.mockReturnValue('mockDeviceId');
+    const device = schemeDevice(configurationsMock.pathsTests, configuration);
 
     await device.prepare();
     await device.launchApp();

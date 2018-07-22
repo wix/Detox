@@ -66,15 +66,19 @@ class Emulator {
       detach();
 
       if (childProcessOutput.includes(`There's another emulator instance running with the current AVD`)) {
-        return;
+        return true;
       }
 
       log.error('ChildProcessError', '%s', err.message);
       log.error('stderr', '%s', childProcessOutput);
       throw err;
-    }).then(() => {
+    }).then((isAlreadyRunning) => {
+      const coldBoot = isAlreadyRunning !== true;
+
       detach();
       log.verbose('stdout', '%s', childProcessOutput);
+
+      return coldBoot;
     });
   }
 

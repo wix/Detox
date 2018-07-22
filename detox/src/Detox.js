@@ -12,6 +12,8 @@ const DetoxServer = require('detox-server');
 const URL = require('url').URL;
 const _ = require('lodash');
 const ArtifactsManager = require('./artifacts/ArtifactsManager');
+const AsyncEmitter = require('./utils/AsyncEmitter');
+const logError = require('./utils/logError');
 
 log.level = argparse.getArgValue('loglevel') || 'info';
 log.addLevel('wss', 999, {fg: 'blue', bg: 'black'}, 'wss');
@@ -30,6 +32,11 @@ class Detox {
     this.userSession = deviceConfig.session || session;
     this.client = null;
     this.device = null;
+    this._emitter = new AsyncEmitter({
+      events: ['beforeLaunchApp', 'launchApp', 'bootDevice'],
+      onError: _onEmitterError,
+    });
+
     this.artifactsManager = new ArtifactsManager();
   }
 
@@ -51,10 +58,20 @@ class Detox {
       throw new Error(`'${this.deviceConfig.type}' is not supported`);
     }
 
-    const deviceDriver = new deviceClass(this.client);
+    const deviceDriver = new deviceClass({
+      client: this.client,
+      emitter: this._emitter,
+    });
+
+    this.artifactsManager.subscribeToDetoxEvents(this._emitter);
     this.artifactsManager.registerArtifactPlugins(deviceDriver.declareArtifactPlugins());
-    this.device = new Device(this.deviceConfig, sessionConfig, deviceDriver);
-    this.artifactsManager.subscribeToDeviceEvents(this.device);
+
+    this.device = new Device({
+      deviceConfig: this.deviceConfig,
+      deviceDriver,
+      emitter: this._emitter,
+      sessionConfig,
+    });
 
     await this.device.prepare(params);
 
@@ -73,8 +90,9 @@ class Detox {
       await this.client.cleanup();
     }
 
+    this.artifactsManager.unsubscribeFromDetoxEvents(this._emitter);
+
     if (this.device) {
-      this.artifactsManager.unsubscribeFromDeviceEvents(this.device);
       await this.device._cleanup();
     }
 
@@ -146,6 +164,11 @@ class Detox {
 
     return session;
   }
+}
+
+function _onEmitterError({ error, eventName, eventObj }) {
+  log.error('detox', 'emit("%s", %j) error', eventName, eventObj);
+  logError(error, 'detox');
 }
 
 module.exports = Detox;

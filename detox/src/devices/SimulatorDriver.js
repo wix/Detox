@@ -14,8 +14,8 @@ const SimulatorRecordVideoPlugin = require('../artifacts/video/SimulatorRecordVi
 
 class SimulatorDriver extends IosDriver {
 
-  constructor(client) {
-    super(client);
+  constructor({ client, emitter }) {
+    super({ client, emitter });
     this._applesimutils = new AppleSimUtils();
     this.deviceRegistry = new DeviceRegistry({
       getDeviceIdsByType: async type => await this._applesimutils.findDevicesUDID(type),
@@ -71,7 +71,8 @@ class SimulatorDriver extends IosDriver {
   }
 
   async boot(deviceId) {
-    await this._applesimutils.boot(deviceId);
+    const coldBoot = await this._applesimutils.boot(deviceId);
+    await this.emitter.emit('bootDevice', { coldBoot, deviceId });
   }
 
   async installApp(deviceId, binaryPath) {
@@ -107,7 +108,8 @@ class SimulatorDriver extends IosDriver {
   }
 
   async resetContentAndSettings(deviceId) {
-    return await this._applesimutils.resetContentAndSettings(deviceId);
+    await this._applesimutils.resetContentAndSettings(deviceId);
+    await this._emitter.emit('bootDevice', { coldBoot: true, deviceId });
   }
 
   validateDeviceConfig(deviceConfig) {

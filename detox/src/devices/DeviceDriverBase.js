@@ -4,7 +4,7 @@ const os = require('os');
 const path = require('path');
 
 class DeviceDriverBase {
-  constructor(client) {
+  constructor({ client }) {
     this.client = client;
   }
 

@@ -8,37 +8,26 @@ const logError = require('../utils/logError');
 
 class Device {
 
-  constructor(deviceConfig, sessionConfig, deviceDriver) {
+  constructor({ deviceConfig, deviceDriver, emitter, sessionConfig }) {
     this._deviceConfig = deviceConfig;
+    this._emitter = emitter;
     this._sessionConfig = sessionConfig;
-    this.deviceDriver = deviceDriver;
     this._processes = {};
+    this.deviceDriver = deviceDriver;
     this.deviceDriver.validateDeviceConfig(deviceConfig);
     this.debug = debug;
-    this._listeners = {
-      beforeResetDevice: [],
-      resetDevice: [],
-      beforeLaunchApp: [],
-      launchApp: [],
-    };
   }
 
   async emit(eventName, eventObj) {
-    const fire = async (fn) => fn(eventObj);
-    const logEmitError = (err) => {
-      log.error('detox-device', 'device.emit("%s", %j) error', eventName, eventObj);
-      logError(err, 'detox-device');
-    };
-
-    await Promise.all(this._listeners[eventName].map(fn => fire(fn).catch(logEmitError)));
+    return this._emitter.emit(eventName, eventObj);
   }
 
   on(eventName, callback) {
-    this._listeners[eventName].push(callback);
+    return this._emitter.on(eventName, callback);
   }
 
   off(eventName, callback) {
-    _.pull(this._listeners[eventName], callback);
+    return this._emitter.off(eventName, callback);
   }
 
   async prepare(params = {}) {
@@ -235,9 +224,7 @@ class Device {
   }
 
   async resetContentAndSettings() {
-    await this.emit('beforeResetDevice', { deviceId: this._deviceId });
     await this.deviceDriver.resetContentAndSettings(this._deviceId);
-    await this.emit('resetDevice', { deviceId: this._deviceId });
   }
 
   getPlatform() {
