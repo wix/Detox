@@ -134,6 +134,7 @@ describe('ArtifactsManager', () => {
           name: 'testPlugin',
           disable: jest.fn(),
           onBootDevice: jest.fn(),
+          onShutdownDevice: jest.fn(),
           onBeforeLaunchApp: jest.fn(),
           onLaunchApp: jest.fn(),
           onBeforeAll: jest.fn(),
@@ -300,6 +301,11 @@ describe('ArtifactsManager', () => {
         itShouldCatchErrorsOnPhase('onTerminate', () => undefined);
 
         itShouldCatchErrorsOnPhase('onBootDevice', () => ({
+          coldBoot: false,
+          deviceId: 'testDeviceId',
+        }));
+
+        itShouldCatchErrorsOnPhase('onShutdownDevice', () => ({
           deviceId: 'testDeviceId'
         }));
 
@@ -369,6 +375,18 @@ describe('ArtifactsManager', () => {
           expect(testPlugin.onBootDevice).not.toHaveBeenCalled();
           await artifactsManager.onBootDevice(bootInfo);
           expect(testPlugin.onBootDevice).toHaveBeenCalledWith(bootInfo);
+        });
+      });
+
+      describe('onShutdownDevice', () => {
+        it('should call onShutdownDevice in plugins', async () => {
+          const shutdownInfo = {
+            deviceId: 'testDeviceId',
+          };
+
+          expect(testPlugin.onShutdownDevice).not.toHaveBeenCalled();
+          await artifactsManager.onShutdownDevice(shutdownInfo);
+          expect(testPlugin.onShutdownDevice).toHaveBeenCalledWith(shutdownInfo);
         });
       });
     });

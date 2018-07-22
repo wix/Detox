@@ -13,9 +13,8 @@ const os = require('os');
 
 class EmulatorDriver extends AndroidDriver {
   constructor({ client, emitter }) {
-    super({ client });
+    super({ client, emitter });
 
-    this.emitter = emitter;
     this.emulator = new Emulator();
   }
 
@@ -114,6 +113,7 @@ class EmulatorDriver extends AndroidDriver {
     const telnet = new EmulatorTelnet();
     await telnet.connect(port);
     await telnet.kill();
+    await this.emitter.emit('shutdownDevice', { deviceId });
   }
 }
 

@@ -18,18 +18,6 @@ class Device {
     this.debug = debug;
   }
 
-  async emit(eventName, eventObj) {
-    return this._emitter.emit(eventName, eventObj);
-  }
-
-  on(eventName, callback) {
-    return this._emitter.on(eventName, callback);
-  }
-
-  off(eventName, callback) {
-    return this._emitter.off(eventName, callback);
-  }
-
   async prepare(params = {}) {
     this._binaryPath = this._getAbsolutePath(this._deviceConfig.binaryPath);
     this._deviceId = await this.deviceDriver.acquireFreeDevice(this._deviceConfig.name);
@@ -89,7 +77,7 @@ class Device {
 
     const _bundleId = bundleId || this._bundleId;
 
-    await this.emit('beforeLaunchApp', {
+    await this._emitter.emit('beforeLaunchApp', {
       deviceId: this._deviceId,
       bundleId: _bundleId,
     });
@@ -113,7 +101,7 @@ class Device {
       await this.deviceDriver.cleanupRandomDirectory(params.detoxUserActivityDataURL);
     }
 
-    await this.emit('launchApp', {
+    await this._emitter.emit('launchApp', {
       deviceId: this._deviceId,
       bundleId: _bundleId,
       pid: processId,

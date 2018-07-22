@@ -97,6 +97,7 @@ class SimulatorDriver extends IosDriver {
 
   async shutdown(deviceId) {
     await this._applesimutils.shutdown(deviceId);
+    await this.emitter.emit('shutdownDevice', { deviceId });
   }
 
   async setLocation(deviceId, lat, lon) {
@@ -108,8 +109,9 @@ class SimulatorDriver extends IosDriver {
   }
 
   async resetContentAndSettings(deviceId) {
+    await this.shutdown(deviceId);
     await this._applesimutils.resetContentAndSettings(deviceId);
-    await this._emitter.emit('bootDevice', { coldBoot: true, deviceId });
+    await this.boot(deviceId);
   }
 
   validateDeviceConfig(deviceConfig) {

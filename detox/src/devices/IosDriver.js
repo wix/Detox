@@ -8,8 +8,8 @@ const GREYConfigurationDetox = require('./../ios/earlgreyapi/GREYConfigurationDe
 const EarlyGrey = require('./../ios/earlgreyapi/EarlGrey');
 
 class IosDriver extends DeviceDriverBase {
-  constructor({ client }) {
-    super({ client });
+  constructor({ client, emitter }) {
+    super({ client, emitter });
 
     this.expect = require('../ios/expect');
     this.expect.setInvocationManager(new InvocationManager(client));

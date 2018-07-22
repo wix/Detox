@@ -10,6 +10,7 @@ const ArtifactPathBuilder = require('./utils/ArtifactPathBuilder');
 class ArtifactsManager {
   constructor(pathBuilder) {
     this.onBootDevice = this.onBootDevice.bind(this);
+    this.onShutdownDevice = this.onShutdownDevice.bind(this);
     this.onBeforeLaunchApp = this.onBeforeLaunchApp.bind(this);
     this.onLaunchApp = this.onLaunchApp.bind(this);
     this.onTerminate = _.once(this.onTerminate.bind(this));
@@ -106,6 +107,7 @@ class ArtifactsManager {
 
   subscribeToDetoxEvents(emitter) {
     emitter.on('bootDevice', this.onBootDevice);
+    emitter.on('shutdownDevice', this.onShutdownDevice);
     emitter.on('beforeLaunchApp', this.onBeforeLaunchApp);
     emitter.on('launchApp', this.onLaunchApp);
   }
@@ -113,6 +115,7 @@ class ArtifactsManager {
   unsubscribeFromDetoxEvents(emitter) {
     emitter.off('launchApp', this.onLaunchApp);
     emitter.off('beforeLaunchApp', this.onBeforeLaunchApp);
+    emitter.off('shutdownDevice', this.onShutdownDevice);
     emitter.off('bootDevice', this.onBootDevice);
   }
 
@@ -122,6 +125,12 @@ class ArtifactsManager {
     await this._emit('onBootDevice', [{
       coldBoot,
       deviceId: this._deviceId,
+    }]);
+  }
+
+  async onShutdownDevice({ deviceId }) {
+    await this._emit('onShutdownDevice', [{
+      deviceId,
     }]);
   }
 

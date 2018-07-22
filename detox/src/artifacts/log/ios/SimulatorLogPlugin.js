@@ -9,6 +9,18 @@ class SimulatorLogPlugin extends LogArtifactPlugin {
     this.appleSimUtils = config.appleSimUtils;
   }
 
+  async onShutdownDevice() {
+    if (this.currentRecording) {
+      await this.currentRecording.stop();
+    }
+  }
+
+  async onLaunchApp() {
+    if (this.currentRecording) {
+      await this.currentRecording.start();
+    }
+  }
+
   createStartupRecording() {
     return this._createRecording(true);
   }

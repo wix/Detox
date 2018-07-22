@@ -49,6 +49,7 @@ describe('Device', () => {
     asyncEmitter = new AsyncEmitter({
       events: [
         'bootDevice',
+        'shutdownDevice',
         'beforeLaunchApp',
         'launchApp',
       ],
@@ -127,7 +128,7 @@ describe('Device', () => {
       })
     });
 
-    device.on('launchApp', onLaunchApp);
+    asyncEmitter.on('launchApp', onLaunchApp);
     await device.launchApp().then(() => {
       log.push('device.launchApp.end');
     });
@@ -142,48 +143,6 @@ describe('Device', () => {
       'listener.launchApp.end',
       'device.launchApp.end'
     ]);
-  });
-
-  it('launchApp() should not emit \'launchApp\' event for async listeners that unsubscribed', async () => {
-    device = validDevice();
-
-    const onLaunchApp = jest.fn();
-    device.on('launchApp', onLaunchApp);
-    device.off('launchApp', onLaunchApp);
-
-    await device.launchApp();
-    expect(onLaunchApp).not.toHaveBeenCalled();
-  });
-
-  it('launchApp() should emit \'launchApp\' event for async listeners and handle exceptions', async () => {
-    device = validDevice();
-    device.deviceDriver.launch.mockReturnValue(2);
-
-    const errorAsync = new Error('test error async');
-    const errorSync = new Error('test error sync');
-
-    device.on('launchApp', () => Promise.reject(errorAsync));
-    device.on('launchApp', () => { throw errorSync; });
-
-    await device.launchApp();
-
-    const eventObj = {
-      deviceId: device._deviceId,
-      bundleId: device._bundleId,
-      pid: 2,
-    };
-
-    expect(onEmitError).toHaveBeenCalledWith({
-      eventName: 'launchApp',
-      eventObj,
-      error: errorAsync,
-    });
-
-    expect(onEmitError).toHaveBeenCalledWith({
-      eventName: 'launchApp',
-      eventObj,
-      error: errorSync,
-    });
   });
 
   it(`relaunchApp()`, async () => {

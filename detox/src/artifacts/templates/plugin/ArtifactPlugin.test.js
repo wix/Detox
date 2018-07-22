@@ -89,6 +89,11 @@ describe(ArtifactPlugin, () => {
         coldBoot: true,
       })).resolves.toBe(void 0));
 
+    it('should have .onShutdownDevice', async () =>
+      await expect(plugin.onShutdownDevice({
+        deviceId: 'testDeviceId',
+      })).resolves.toBe(void 0));
+
     it('should have .onBeforeAll', async () =>
       await expect(plugin.onBeforeAll()).resolves.toBe(void 0));
 
@@ -114,6 +119,7 @@ describe(ArtifactPlugin, () => {
         await plugin.onTerminate();
 
         expect(plugin.onBootDevice).toBe(plugin.onTerminate);
+        expect(plugin.onShutdownDevice).toBe(plugin.onTerminate);
         expect(plugin.onBeforeLaunchApp).toBe(plugin.onTerminate);
         expect(plugin.onLaunchApp).toBe(plugin.onTerminate);
         expect(plugin.onBeforeAll).toBe(plugin.onTerminate);

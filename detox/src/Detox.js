@@ -33,7 +33,7 @@ class Detox {
     this.client = null;
     this.device = null;
     this._emitter = new AsyncEmitter({
-      events: ['beforeLaunchApp', 'launchApp', 'bootDevice'],
+      events: ['beforeLaunchApp', 'launchApp', 'bootDevice', 'shutdownDevice'],
       onError: _onEmitterError,
     });
 

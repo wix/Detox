@@ -4,8 +4,9 @@ const os = require('os');
 const path = require('path');
 
 class DeviceDriverBase {
-  constructor({ client }) {
+  constructor({ client, emitter }) {
     this.client = client;
+    this.emitter = emitter;
   }
 
   declareArtifactPlugins() {

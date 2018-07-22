@@ -59,7 +59,7 @@ class ArtifactPlugin {
   async onLaunchApp(event) {}
 
   /**
-   * Hook that is supposed called from device.acquireFreeDevice()
+   * Hook that is supposed to be called from device.boot()
    *
    * @protected
    * @async
@@ -69,6 +69,17 @@ class ArtifactPlugin {
    * @return {Promise<void>} - when done
    */
   async onBootDevice(event) {}
+
+  /**
+   * Hook that is supposed to be called from device.shutdown()
+   *
+   * @protected
+   * @async
+   * @param {Object} event - Cold boot event object
+   * @param {string} event.deviceId - Current deviceId
+   * @return {Promise<void>} - when done
+   */
+  async onShutdownDevice(event) {}
 
   /**
    * Hook that is called before any test begins
@@ -120,6 +131,7 @@ class ArtifactPlugin {
 
     this.onTerminate = _.noop;
     this.onBootDevice = _.noop;
+    this.onShutdownDevice = _.noop;
     this.onBeforeLaunchApp = _.noop;
     this.onLaunchApp = _.noop;
     this.onBeforeAll = _.noop;

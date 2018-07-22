@@ -464,19 +464,13 @@ describe('AppleSimUtils', () => {
 
   describe('resetContentAndSettings', () => {
     it('shutdown, simctl erase, then boot', async () => {
-      uut.shutdown = jest.fn();
-      uut.boot = jest.fn();
-      expect(uut.shutdown).not.toHaveBeenCalled();
-      expect(uut.boot).not.toHaveBeenCalled();
       await uut.resetContentAndSettings('theUdid');
-      expect(uut.shutdown).toHaveBeenCalledTimes(1);
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
       expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
         expect.stringMatching(/.*xcrun simctl erase theUdid.*/),
         undefined,
         expect.anything(),
         1);
-      expect(uut.boot).toHaveBeenCalledTimes(1);
     });
   });
 

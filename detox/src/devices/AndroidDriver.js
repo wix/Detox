@@ -22,8 +22,8 @@ const sleep = require('../utils/sleep');
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
 
 class AndroidDriver extends DeviceDriverBase {
-  constructor({ client }) {
-    super({ client });
+  constructor({ client, emitter }) {
+    super({ client, emitter });
     this.expect = require('../android/expect');
     this.invocationManager = new InvocationManager(client);
     this.expect.setInvocationManager(this.invocationManager);

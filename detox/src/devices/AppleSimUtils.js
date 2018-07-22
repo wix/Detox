@@ -178,9 +178,7 @@ class AppleSimUtils {
   }
 
   async resetContentAndSettings(udid) {
-    await this.shutdown(udid);
     await this._execSimctl({ cmd: `erase ${udid}` });
-    await this.boot(udid);
   }
 
   async getXcodeVersion() {
