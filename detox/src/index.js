@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const fs = require('fs');
 const Detox = require('./Detox');
 const DetoxConstants = require('./DetoxConstants');
 const platform = require('./platform');

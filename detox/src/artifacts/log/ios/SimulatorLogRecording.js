@@ -30,7 +30,7 @@ class SimulatorLogRecording extends Artifact {
   }
 
   _createWriteableStream() {
-    log.trace({ event: 'SIMULATOR_LOG_CREATE_STREAM '}, `creating append-only stream to: ${this._logPath}`);
+    log.trace({ event: 'CREATE_STREAM '}, `creating append-only stream to: ${this._logPath}`);
     this._logStream = fs.createWriteStream(this._logPath, { flags: 'a' });
   }
 
@@ -73,7 +73,7 @@ class SimulatorLogRecording extends Artifact {
 
   _close() {
     if (this._logStream) {
-      log.trace({ event: 'SIMULATOR_LOG_CLOSING_STREAM '}, `closing stream to: ${this._logPath}`);
+      log.trace({ event: 'CLOSING_STREAM '}, `closing stream to: ${this._logPath}`);
       this._logStream.end();
     }
 

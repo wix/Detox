@@ -31,7 +31,7 @@ class Artifact {
   }
 
   start(...args) {
-    log.trace({ event: 'ARTIFACT_START', class: this.name }, 'starting artifact recording', ...args);
+    log.trace({ event: 'START', class: this.name }, `starting ${this.name}`, ...args);
 
     if (this._savePromise) {
       this._startPromise = this._savePromise.then(() => this.doStart(...args));
@@ -49,7 +49,7 @@ class Artifact {
 
   stop(...args) {
     if (!this._stopPromise) {
-      log.trace({ event: 'ARTIFACT_STOP', class: this.name }, 'stopping artifact recording', ...args);
+      log.trace({ event: 'STOP', class: this.name }, `stopping ${this.name}`, ...args);
 
       if (this._startPromise) {
         this._stopPromise = this._startPromise.then(() => this.doStop(...args));
@@ -63,10 +63,10 @@ class Artifact {
 
   save(artifactPath, ...args) {
     if (!this._savePromise) {
-      log.trace({ event: 'ARTIFACT_SAVE', class: this.name }, `saving artifact to: ${artifactPath}`, ...args);
+      log.trace({ event: 'SAVE', class: this.name }, `saving ${this.name} to: ${artifactPath}`, ...args);
 
       if (this._discardPromise) {
-        log.warn({ event: 'ARTIFACT_SAVE_ERROR' }, `cannot save an already discarded artifact to: ${artifactPath}`);
+        log.warn({ event: 'SAVE_ERROR' }, `cannot save an already discarded artifact to: ${artifactPath}`);
         this._savePromise = this._discardPromise;
       } else if (this._startPromise) {
         this._savePromise = this.stop().then(() => this.doSave(artifactPath, ...args));
@@ -80,7 +80,7 @@ class Artifact {
 
   discard(...args) {
     if (!this._discardPromise) {
-      log.trace({ event: 'ARTIFACT_DISCARD', class: this.name }, `discarding artifact`, ...args);
+      log.trace({ event: 'DISCARD', class: this.name }, `discarding ${this.name}`, ...args);
 
       if (this._savePromise) {
         this._discardPromise = this._savePromise;

@@ -139,7 +139,7 @@ class ArtifactPlugin {
 
   _logDisableWarning() {
     if (!this.enabled && this._disableReason) {
-      log.warn({ event: 'ARTIFACT_PLUGIN_DISABLED' }, `Artifact plugin ${this.constructor.name} was disabled because ${this._disableReason}`);
+      log.warn({ event: 'PLUGIN_DISABLED' }, `Artifact plugin ${this.constructor.name} was disabled because ${this._disableReason}`);
     }
   }
 

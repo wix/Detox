@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const WebSocketServer = require('ws').Server;
-const log = require('detox-common').logger.server;
+const log = require('detox-common').logger.server.child({ __filename });
 
 class DetoxServer {
   constructor(port) {
@@ -25,24 +25,24 @@ class DetoxServer {
             if (action.params && action.params.sessionId && action.params.role) {
               sessionId = action.params.sessionId;
               role = action.params.role;
-              log.trace(`role=${role} login (sessionId=${sessionId})`);
+              log.debug({ event: 'LOGIN' }, `role=${role}, sessionId=${sessionId}`);
               _.set(this.sessions, [sessionId, role], ws);
               action.type = 'loginSuccess';
               this.sendAction(ws, action);
-              log.trace(`role=${role} action=${action.type} (sessionId=${sessionId})`);
+              log.debug({ event: 'LOGIN_SUCCESS' }, `role=${role}, sessionId=${sessionId}`);
             }
           } else if (sessionId && role) {
-            log.trace(`role=${role} action=${action.type} (sessionId=${sessionId})`);
+            log.trace({ event: 'MESSAGE', action: action.type }, `role=${role} action=${action.type} (sessionId=${sessionId})`);
             this.sendToOtherRole(sessionId, role, action);
           }
-        } catch (error) {
-          log.debug(`Invalid JSON received, cannot parse`, error);
+        } catch (err) {
+          log.debug({ event: 'ERROR', err }, `Invalid JSON received, cannot parse`, err);
         }
       });
 
       ws.on('close', () => {
         if (sessionId && role) {
-          log.trace(`role=${role} disconnect (sessionId=${sessionId})`);
+          log.debug({ event: 'DISCONNECT' }, `role=${role}, sessionId=${sessionId}`);
           _.set(this.sessions, [sessionId, role], undefined);
         }
       });
@@ -61,7 +61,7 @@ class DetoxServer {
     if (ws) {
       this.sendAction(ws, action);
     } else {
-      log.trace(`role=${otherRole} not connected, cannot fw action (sessionId=${sessionId})`);
+      log.debug({ event: 'CANNOT_FORWARD' }, `role=${otherRole} not connected, cannot fw action (sessionId=${sessionId})`);
     }
   }
 

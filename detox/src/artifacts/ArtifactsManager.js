@@ -117,8 +117,6 @@ class ArtifactsManager {
   }
 
   async onBeforeLaunchApp(launchInfo) {
-    log.trace({ event: 'ENTER_FUNCTION', fn: 'onBeforeLaunchApp' }, 'onBeforeLaunchApp', launchInfo);
-
     const { deviceId, bundleId } = launchInfo;
     const isFirstTime = !this._deviceId;
 
@@ -126,11 +124,12 @@ class ArtifactsManager {
     this._bundleId = bundleId;
 
     return isFirstTime
-      ? this._onBeforeLaunchAppFirstTime()
-      : this._onBeforeRelaunchApp({ deviceId, bundleId });
+      ? this._onBeforeLaunchAppFirstTime(launchInfo)
+      : this._onBeforeRelaunchApp();
   }
 
-  async _onBeforeLaunchAppFirstTime() {
+  async _onBeforeLaunchAppFirstTime(launchInfo) {
+    log.trace({ event: 'LIFECYCLE', fn: 'onBeforeLaunchApp' }, 'onBeforeLaunchApp', launchInfo);
     this._artifactPlugins = this._instantiateArtifactPlugins();
   }
 
@@ -148,11 +147,12 @@ class ArtifactsManager {
   }
 
   async onLaunchApp(launchInfo) {
-    log.trace({ event: 'ENTER_FUNCTION', fn: 'onLaunchApp' }, 'onLaunchApp', launchInfo);
+    const isFirstTime = isNaN(this._pid);
+    if (isFirstTime) {
+      log.trace({ event: 'LIFECYCLE', fn: 'onLaunchApp' }, 'onLaunchApp', launchInfo);
+    }
 
     const { deviceId, bundleId, pid } = launchInfo;
-    const isFirstTime = isNaN(this._pid);
-
     this._deviceId = deviceId;
     this._bundleId = bundleId;
     this._pid = pid;
@@ -192,7 +192,7 @@ class ArtifactsManager {
       return;
     }
 
-    log.info({ event: 'ENTER_FUNCTION', fn: 'onTerminate' }, 'finalizing the recorded artifacts, this can take some time...');
+    log.info({ event: 'TERMINATE_START' }, 'finalizing the recorded artifacts, this can take some time...');
 
     await this._emit('onTerminate', []);
     await Promise.all(this._onIdleCallbacks.splice(0).map(this._executeIdleCallback));
@@ -202,11 +202,11 @@ class ArtifactsManager {
     await this._idlePromise;
     this._artifactPlugins.splice(0);
 
-    log.info({ event: 'EXIT_FUNCTION', fn: 'onTerminate' }, 'done.');
+    log.info({ event: 'TERMINATE_SUCCESS' }, 'done.');
   }
 
   async _emit(methodName, args) {
-    log.trace({ event: 'EMIT', fn: methodName }, `${methodName}`, ...args);
+    log.trace(Object.assign({ event: 'LIFECYCLE', fn: methodName }, ...args), `${methodName}`);
 
     await Promise.all(this._artifactPlugins.map(async (plugin) => {
       try {
