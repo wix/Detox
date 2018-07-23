@@ -90,14 +90,20 @@ class Detox {
 
   async beforeEach(testSummary) {
     this._validateTestSummary(testSummary);
+    this._logTestRunCheckpoint('DETOX_BEFORE_EACH', testSummary);
     await this._handleAppCrashIfAny(testSummary.fullName);
     await this.artifactsManager.onBeforeEach(testSummary);
   }
 
   async afterEach(testSummary) {
     this._validateTestSummary(testSummary);
+    this._logTestRunCheckpoint('DETOX_AFTER_EACH', testSummary);
     await this.artifactsManager.onAfterEach(testSummary);
     await this._handleAppCrashIfAny(testSummary.fullName);
+  }
+
+  _logTestRunCheckpoint(event, { status, fullName }) {
+    log.trace({ event, status }, `${status} test: ${JSON.stringify(fullName)}`);
   }
 
   _validateTestSummary(testSummary) {
