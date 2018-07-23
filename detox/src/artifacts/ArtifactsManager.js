@@ -116,9 +116,10 @@ class ArtifactsManager {
     device.off('launchApp', this.onLaunchApp);
   }
 
-  async onBeforeLaunchApp({ deviceId, bundleId }) {
-    log.trace({ event: 'ARTIFACTS_MANAGER_BEFORE_LAUNCH_APP', deviceId, bundleId }, '');
+  async onBeforeLaunchApp(launchInfo) {
+    log.trace({ event: 'ENTER_FUNCTION', fn: 'onBeforeLaunchApp' }, 'onBeforeLaunchApp', launchInfo);
 
+    const { deviceId, bundleId } = launchInfo;
     const isFirstTime = !this._deviceId;
 
     this._deviceId = deviceId;
@@ -146,8 +147,10 @@ class ArtifactsManager {
     }]);
   }
 
-  async onLaunchApp({ deviceId, bundleId, pid }) {
-    log.trace({ event: 'ARTIFACTS_MANAGER_LAUNCH_APP', deviceId, bundleId, pid }, '');
+  async onLaunchApp(launchInfo) {
+    log.trace({ event: 'ENTER_FUNCTION', fn: 'onLaunchApp' }, 'onLaunchApp', launchInfo);
+
+    const { deviceId, bundleId, pid } = launchInfo;
     const isFirstTime = isNaN(this._pid);
 
     this._deviceId = deviceId;
@@ -182,8 +185,6 @@ class ArtifactsManager {
   async onAfterAll() {
     await this._emit('onAfterAll', []);
     await this._idlePromise;
-
-    log.trace({ event: 'ARTIFACTS_FINALIZED' }, '');
   }
 
   async onTerminate() {
@@ -191,7 +192,8 @@ class ArtifactsManager {
       return;
     }
 
-    log.info({ event: 'ARTIFACTS_FINALIZATION_START' }, 'finalizing the recorded artifacts...');
+    log.info({ event: 'ENTER_FUNCTION', fn: 'onTerminate' }, 'finalizing the recorded artifacts, this can take some time...');
+
     await this._emit('onTerminate', []);
     await Promise.all(this._onIdleCallbacks.splice(0).map(this._executeIdleCallback));
     await this._idlePromise;
@@ -199,10 +201,13 @@ class ArtifactsManager {
     await Promise.all(this._activeArtifacts.map(artifact => artifact.discard()));
     await this._idlePromise;
     this._artifactPlugins.splice(0);
-    log.trace({ event: 'ARTIFACTS_FINALIZED' }, 'done');
+
+    log.info({ event: 'EXIT_FUNCTION', fn: 'onTerminate' }, 'done.');
   }
 
   async _emit(methodName, args) {
+    log.trace({ event: 'EMIT', fn: methodName }, `${methodName}`, ...args);
+
     await Promise.all(this._artifactPlugins.map(async (plugin) => {
       try {
         await plugin[methodName](...args);
@@ -213,7 +218,7 @@ class ArtifactsManager {
   }
 
   _errorHandler(err, { plugin, methodName }) {
-    const eventObject = { event: 'ARTIFACT_PLUGIN_ERROR', plugin: plugin.name || 'unknown', methodName, err };
+    const eventObject = { event: 'PLUGIN_ERROR', plugin: plugin.name || 'unknown', methodName, err };
     log.error(eventObject, `Caught exception inside plugin (${eventObject.plugin}) at phase ${methodName}`);
   }
 
