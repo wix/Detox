@@ -5,7 +5,7 @@ Array [
   Array [
     Object {
       "err": [Error: test onIdleCallback error],
-      "event": "ARTIFACT_PLUGIN_ERROR",
+      "event": "PLUGIN_ERROR",
       "methodName": "onIdleCallback",
       "plugin": "testPlugin",
     },
@@ -19,7 +19,7 @@ Array [
   Array [
     Object {
       "err": [Error: test onIdleCallback error],
-      "event": "ARTIFACT_PLUGIN_ERROR",
+      "event": "PLUGIN_ERROR",
       "methodName": "onIdleCallback",
       "plugin": "unknown",
     },
@@ -33,7 +33,7 @@ Array [
   Array [
     Object {
       "err": [Error: test onAfterAll error],
-      "event": "ARTIFACT_PLUGIN_ERROR",
+      "event": "PLUGIN_ERROR",
       "methodName": "onAfterAll",
       "plugin": "testPlugin",
     },
@@ -47,7 +47,7 @@ Array [
   Array [
     Object {
       "err": [Error: test onAfterEach error],
-      "event": "ARTIFACT_PLUGIN_ERROR",
+      "event": "PLUGIN_ERROR",
       "methodName": "onAfterEach",
       "plugin": "testPlugin",
     },
@@ -61,7 +61,7 @@ Array [
   Array [
     Object {
       "err": [Error: test onBeforeAll error],
-      "event": "ARTIFACT_PLUGIN_ERROR",
+      "event": "PLUGIN_ERROR",
       "methodName": "onBeforeAll",
       "plugin": "testPlugin",
     },
@@ -75,7 +75,7 @@ Array [
   Array [
     Object {
       "err": [Error: test onBeforeEach error],
-      "event": "ARTIFACT_PLUGIN_ERROR",
+      "event": "PLUGIN_ERROR",
       "methodName": "onBeforeEach",
       "plugin": "testPlugin",
     },
@@ -89,7 +89,7 @@ Array [
   Array [
     Object {
       "err": [Error: test onBeforeRelaunchApp error],
-      "event": "ARTIFACT_PLUGIN_ERROR",
+      "event": "PLUGIN_ERROR",
       "methodName": "onBeforeRelaunchApp",
       "plugin": "testPlugin",
     },
@@ -103,7 +103,7 @@ Array [
   Array [
     Object {
       "err": [Error: test onBeforeResetDevice error],
-      "event": "ARTIFACT_PLUGIN_ERROR",
+      "event": "PLUGIN_ERROR",
       "methodName": "onBeforeResetDevice",
       "plugin": "testPlugin",
     },
@@ -117,7 +117,7 @@ Array [
   Array [
     Object {
       "err": [Error: test onRelaunchApp error],
-      "event": "ARTIFACT_PLUGIN_ERROR",
+      "event": "PLUGIN_ERROR",
       "methodName": "onRelaunchApp",
       "plugin": "testPlugin",
     },
@@ -131,7 +131,7 @@ Array [
   Array [
     Object {
       "err": [Error: test onResetDevice error],
-      "event": "ARTIFACT_PLUGIN_ERROR",
+      "event": "PLUGIN_ERROR",
       "methodName": "onResetDevice",
       "plugin": "testPlugin",
     },
@@ -145,7 +145,7 @@ Array [
   Array [
     Object {
       "err": [Error: test onTerminate error],
-      "event": "ARTIFACT_PLUGIN_ERROR",
+      "event": "PLUGIN_ERROR",
       "methodName": "onTerminate",
       "plugin": "testPlugin",
     },

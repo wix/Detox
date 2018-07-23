@@ -12,7 +12,7 @@ exports[`ArtifactPlugin when enabled if it is disabled with a reason should log 
 Array [
   Array [
     Object {
-      "event": "ARTIFACT_PLUGIN_DISABLED",
+      "event": "PLUGIN_DISABLED",
     },
     "Artifact plugin TestArtifactPlugin was disabled because a reason why it is disabled",
   ],
