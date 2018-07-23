@@ -57,7 +57,7 @@ describe('Detox', () => {
     jest.mock('./devices/IosDriver');
     jest.mock('./devices/SimulatorDriver');
     jest.mock('./devices/Device');
-    jest.mock('detox-server');
+    jest.mock('./server/DetoxServer');
     jest.mock('./client/Client');
   });
 

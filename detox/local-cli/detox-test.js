@@ -16,7 +16,7 @@ program
   .option('-s, --specs [relativePath]',
     `Root of test folder`)
   .option('-l, --loglevel [value]',
-    'info, debug, verbose, silly, wss')
+    'fatal, error, warn, info, debug, trace')
   .option('-c, --configuration [device configuration]',
     'Select a device configuration from your defined configurations, if not supplied, and there\'s only one configuration, detox will default to it', getDefaultConfiguration())
   .option('-r, --reuse',

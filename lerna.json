@@ -2,8 +2,6 @@
   "lerna": "2.4.0",
   "packages": [
     "detox",
-    "detox-common",
-    "detox-server",
     "detox-cli",
     "examples/demo-native-android",
     "examples/demo-native-ios",

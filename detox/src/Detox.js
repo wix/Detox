@@ -1,3 +1,5 @@
+const _ = require('lodash');
+const logger = require('./utils/logger');
 const log = require('./utils/logger').child({ __filename });
 const Device = require('./devices/Device');
 const IosDriver = require('./devices/IosDriver');
@@ -8,9 +10,8 @@ const DetoxRuntimeError = require('./errors/DetoxRuntimeError');
 const argparse = require('./utils/argparse');
 const configuration = require('./configuration');
 const Client = require('./client/Client');
-const DetoxServer = require('detox-server');
+const DetoxServer = require('./server/DetoxServer');
 const URL = require('url').URL;
-const _ = require('lodash');
 const ArtifactsManager = require('./artifacts/ArtifactsManager');
 
 const DEVICE_CLASSES = {
@@ -35,7 +36,10 @@ class Detox {
     const params = Object.assign(defaultParams, userParams || {});
 
     if (!this.userSession) {
-      this.server = new DetoxServer(new URL(sessionConfig.server).port);
+      this.server = new DetoxServer({
+        log: logger,
+        port: new URL(sessionConfig.server).port,
+      });
     }
 
     this.client = new Client(sessionConfig);
