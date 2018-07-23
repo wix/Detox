@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const log = require('../../../utils/logger').child({ __filename });
-const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 
 class Artifact {
   constructor(template) {
@@ -10,6 +9,8 @@ class Artifact {
     this._discardPromise = null;
 
     if (template) {
+      this._name = template.name || '';
+
       if (typeof template.start === 'function') {
         this.doStart = template.start.bind(template);
       }
@@ -25,7 +26,13 @@ class Artifact {
     }
   }
 
+  get name() {
+    return this._name || this.constructor.name;
+  }
+
   start(...args) {
+    log.trace({ event: 'ARTIFACT_START', class: this.name }, 'starting artifact recording', ...args);
+
     if (this._savePromise) {
       this._startPromise = this._savePromise.then(() => this.doStart(...args));
     } else if (this._discardPromise) {
@@ -42,6 +49,8 @@ class Artifact {
 
   stop(...args) {
     if (!this._stopPromise) {
+      log.trace({ event: 'ARTIFACT_STOP', class: this.name }, 'stopping artifact recording', ...args);
+
       if (this._startPromise) {
         this._stopPromise = this._startPromise.then(() => this.doStop(...args));
       } else {
@@ -54,6 +63,8 @@ class Artifact {
 
   save(artifactPath, ...args) {
     if (!this._savePromise) {
+      log.trace({ event: 'ARTIFACT_SAVE', class: this.name }, `saving artifact to: ${artifactPath}`, ...args);
+
       if (this._discardPromise) {
         log.warn({ event: 'ARTIFACT_SAVE_ERROR' }, `cannot save an already discarded artifact to: ${artifactPath}`);
         this._savePromise = this._discardPromise;
@@ -69,6 +80,8 @@ class Artifact {
 
   discard(...args) {
     if (!this._discardPromise) {
+      log.trace({ event: 'ARTIFACT_DISCARD', class: this.name }, `discarding artifact`, ...args);
+
       if (this._savePromise) {
         this._discardPromise = this._savePromise;
       } else if (this._startPromise) {

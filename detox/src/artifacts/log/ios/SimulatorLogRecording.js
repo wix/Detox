@@ -24,9 +24,14 @@ class SimulatorLogRecording extends Artifact {
   }
 
   async doStart() {
-    this._logStream = fs.createWriteStream(this._logPath, { flags: 'w' });
+    this._createWriteableStream();
     this._stdoutTail = this._createTail(this._stdoutPath, 'stdout');
     this._stderrTail = this._createTail(this._stderrPath, 'stderr');
+  }
+
+  _createWriteableStream() {
+    log.trace({ event: 'SIMULATOR_LOG_CREATE_STREAM '}, `creating append-only stream to: ${this._logPath}`);
+    this._logStream = fs.createWriteStream(this._logPath, { flags: 'a' });
   }
 
   async doStop() {
@@ -68,6 +73,7 @@ class SimulatorLogRecording extends Artifact {
 
   _close() {
     if (this._logStream) {
+      log.trace({ event: 'SIMULATOR_LOG_CLOSING_STREAM '}, `closing stream to: ${this._logPath}`);
       this._logStream.end();
     }
 
@@ -80,7 +86,7 @@ class SimulatorLogRecording extends Artifact {
     const tail = new Tail(file, {
       fromBeginning: this._readFromBeginning,
       logger: {
-        info: (...args) => log.trace({ event: 'TAIL_INFO' }, ...args),
+        info: _.noop,
         error: (...args) => log.error({ event: 'TAIL_ERROR' }, ...args),
       },
     }).on('line', (line) => {

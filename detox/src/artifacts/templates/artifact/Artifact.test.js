@@ -23,6 +23,10 @@ describe(Artifact, () => {
       artifact = new ArifactExtensionTest();
     });
 
+    it('should have a name', () => {
+      expect(artifact.name).toBe(ArifactExtensionTest.name);
+    });
+
     it('should pass a regular save flow', async () => {
       expect(artifact.doStart).not.toHaveBeenCalled();
       await artifact.start();
@@ -425,6 +429,11 @@ describe(Artifact, () => {
 
   describe('methods as constructor arg', () => {
     let artifact;
+
+    it('should replace protected .name with arg.name', () => {
+      artifact = new Artifact({ name: 'SomeName' });
+      expect(artifact.name).toBe('SomeName');
+    });
 
     it('should replace protected .doStart() with arg.start()', async () => {
       const start = jest.fn();

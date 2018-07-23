@@ -16,6 +16,8 @@ class SimulatorScreenshotter extends ScreenshotArtifactPlugin {
     const temporaryFilePath = tempfile('.png');
 
     return new Artifact({
+      name: 'SimulatorScreenshot',
+
       async start() {
         await appleSimUtils.takeScreenshot(api.getDeviceId(), temporaryFilePath);
       },

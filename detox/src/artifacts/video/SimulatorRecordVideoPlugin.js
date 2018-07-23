@@ -18,6 +18,7 @@ class SimulatorRecordVideoPlugin extends VideoArtifactPlugin {
     let processPromise = null;
 
     return new Artifact({
+      name: 'SimulatorVideoRecording',
       start: async () => {
         processPromise = appleSimUtils.recordVideo(api.getDeviceId(), temporaryFilePath);
       },
