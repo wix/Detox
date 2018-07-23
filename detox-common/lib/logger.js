@@ -60,7 +60,7 @@ function createPlainBunyanStream({ logPath, level }) {
 
 function init() {
   const level = adaptOlderLogLevelName(argparse.getArgValue('loglevel'));
-  const logBaseFilename = path.join(argparse.getArgValue('artifacts-location') || '', `detox_${process.pid}`);
+  const logBaseFilename = path.join(argparse.getArgValue('artifacts-location') || '', `detox_pid_${process.pid}`);
   const shouldRecordLogs = ['failing', 'all'].indexOf(argparse.getArgValue('record-logs')) >= 0;
 
   const bunyanStreams = [createPlainBunyanStream({ level })];
