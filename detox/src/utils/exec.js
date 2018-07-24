@@ -41,13 +41,7 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
     throw new DetoxRuntimeError(`command ${cmd} returned undefined`);
   }
 
-  if (result.stdout) {
-    log.trace({ event: 'EXEC_SUCCESS', stdout: true }, result.stdout);
-  }
-
-  if (result.stderr) {
-    log.trace({ event: 'EXEC_SUCCESS', stderr: true }, result.stderr);
-  }
+  _logExecOutput(log, result);
 
   if (statusLogs && statusLogs.successful) {
     log.debug({ event: 'EXEC_SUCCESS' }, statusLogs.successful);
@@ -58,17 +52,30 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
   //  log.error(`${_operationCounter}: stderr:`, result.stderr);
   //}
 
-  /* istanbul ignore next */
+  return result;
+}
+
+/* istanbul ignore next */
+function _logExecOutput(log, process) {
+  let stdout = process.stdout || '';
+  let stderr = process.stderr || '';
+
   if (process.platform === 'win32') {
-    if (result.stdout) {
-      result.stdout = result.stdout.replace(/\r\n/g, '\n');
-    }
-    if (result.stderr) {
-      result.stderr = result.stderr.replace(/\r\n/g, '\n');
-    }
+    stdout = stdout.replace(/\r\n/g, '\n');
+    stderr = stderr.replace(/\r\n/g, '\n');
   }
 
-  return result;
+  if (stdout) {
+    log.trace({ event: 'EXEC_SUCCESS', stdout: true }, stdout);
+  }
+
+  if (stderr) {
+    log.trace({ event: 'EXEC_SUCCESS', stderr: true }, stderr);
+  }
+
+  if (!stdout && !stderr) {
+    log.trace({ event: 'EXEC_SUCCESS' }, '');
+  }
 }
 
 function _composeCommand(bin, options) {

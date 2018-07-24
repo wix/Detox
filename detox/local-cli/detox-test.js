@@ -16,7 +16,9 @@ program
   .option('-s, --specs [relativePath]',
     `Root of test folder`)
   .option('-l, --loglevel [value]',
-    'fatal, error, warn, info, debug, trace')
+    'Log level: fatal, error, warn, info, debug, trace')
+  .option('--no-color',
+    'Disable colors in log output')
   .option('-c, --configuration [device configuration]',
     'Select a device configuration from your defined configurations, if not supplied, and there\'s only one configuration, detox will default to it', getDefaultConfiguration())
   .option('-r, --reuse',
@@ -112,11 +114,12 @@ function runMocha() {
   const screenshots = program.takeScreenshots ? `--take-screenshots ${program.takeScreenshots}` : '';
   const videos = program.recordVideos ? `--record-videos ${program.recordVideos}` : '';
   const headless = program.headless ? `--headless` : '';
+  const color = program.color ? '' : '--no-color';
 
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
   const binPath = path.join('node_modules', '.bin', 'mocha');
-  const command = `${binPath} ${testFolder} ${configFile} ${configuration} ${loglevel} ${cleanup} ` +
-    `${reuse} ${debugSynchronization} ${platformString} ${headless} ` +
+  const command = `${binPath} ${testFolder} ${configFile} ${configuration} ${loglevel} ${color} ` +
+    `${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${headless} ` +
     `${logs} ${screenshots} ${videos} ${artifactsLocation}`;
 
   console.log(command);
@@ -132,6 +135,7 @@ function runJest() {
   const detoxEnvironmentVariables = {
     configuration: program.configuration,
     loglevel: program.loglevel,
+    color: program.color,
     cleanup: program.cleanup,
     reuse: program.reuse,
     debugSynchronization: program.debugSynchronization,
