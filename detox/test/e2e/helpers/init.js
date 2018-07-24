@@ -6,7 +6,13 @@ jest.setTimeout(480000);
 jasmine.getEnv().addReporter(adapter);
 
 beforeAll(async () => {
-  await detox.init(config);
+  try {
+    await detox.init(config);
+  } catch (e) {
+    await detox.cleanup();
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    process.exit(1);
+  }
 });
 
 beforeEach(async function() {
