@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "bunyan": "^1.8.12",
-    "bunyan-debug-stream": "noomorph/bunyan-debug-stream",
+    "bunyan-debug-stream": "^1.1.0",
     "child-process-promise": "^2.2.0",
     "commander": "^2.15.1",
     "fs-extra": "^4.0.2",
