@@ -71,13 +71,7 @@ class ADB {
   }
 
   async unlockScreen(deviceId) {
-    const now = await this.now(deviceId);
-
-    try {
-      await this.shell(deviceId, `input keyevent 82`, { timeout: 10000 });
-    } catch (e) {
-      await this.adbCmd(deviceId, `logcat -T "${now}" -d`); // HACK: to debug CI error
-    }
+    await this.shell(deviceId, `input keyevent 82`, { timeout: 10000, retries: 5 });
   }
 
   async pidof(deviceId, bundleId) {
@@ -189,7 +183,10 @@ class ADB {
   async adbCmd(deviceId, params, options) {
     const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
     const cmd = `${this.adbBin} ${serial} ${params}`;
-    return await execWithRetriesAndLogs(cmd, options, undefined, 1);
+    const retries = _.get(options, 'retries', 1);
+    _.unset(options, 'retries');
+
+    return await execWithRetriesAndLogs(cmd, options, undefined, retries);
   }
 
   /***
