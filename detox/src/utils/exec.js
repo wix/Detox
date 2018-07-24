@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const execLogger = require('../utils/logger').child({ __filename });
 const retry = require('../utils/retry');
@@ -7,15 +8,10 @@ let _operationCounter = 0;
 
 async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, interval = 1000) {
   const trackingId = _operationCounter++;
-
-  let cmd;
-  if (options) {
-    cmd = `${options.prefix ? options.prefix + ' && ' : ''}${bin} ${options.args}`;
-  } else {
-    cmd = bin;
-  }
-
+  const cmd = _composeCommand(bin, options);
   const log = execLogger.child({ fn: 'execWithRetriesAndLogs', cmd, trackingId });
+  const timeout = _.get(options, 'timeout', 0);
+
   log.debug({ event: 'EXEC_CMD' }, `${cmd}`);
 
   let result;
@@ -26,10 +22,14 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
         log.debug({ event: 'EXEC_TRY', retryNumber }, statusLogs.trying);
       }
 
-      result = await exec(cmd);
+      result = await exec(cmd, { timeout });
     });
   } catch (err) {
-    log.error({ event: 'EXEC_FAIL' }, `"${cmd}" failed with code = ${err.code}, stdout and stderr:\n`);
+    const _failReason = err.code == null && timeout > 0
+      ? `timeout = ${timeout}ms`
+      : `code = ${err.code}`;
+
+    log.error({ event: 'EXEC_FAIL' }, `"${cmd}" failed with ${_failReason}, stdout and stderr:\n`);
     log.error({ event: 'EXEC_FAIL', stdout: true }, err.stdout);
     log.error({ event: 'EXEC_FAIL', stderr: true }, err.stderr);
 
@@ -69,6 +69,17 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
   }
 
   return result;
+}
+
+function _composeCommand(bin, options) {
+  if (!options) {
+    return bin;
+  }
+
+  const prefix = options.prefix ? `${options.prefix} && ` : '';
+  const args = options.args ? ` ${options.args}` : '';
+
+  return `${prefix}${bin}${args}`;
 }
 
 function spawnAndLog(command, flags, options) {

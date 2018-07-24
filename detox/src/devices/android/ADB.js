@@ -67,7 +67,7 @@ class ADB {
   }
 
   async unlockScreen(deviceId) {
-    await this.shell(deviceId, `input keyevent 82`);
+    await this.shell(deviceId, `input keyevent 82`, { timeout: 10000 });
   }
 
   async pidof(deviceId, bundleId) {
@@ -79,8 +79,8 @@ class ADB {
     return parseInt(processes.split(' ').filter(Boolean)[1], 10);
   }
 
-  async shell(deviceId, cmd) {
-    return (await this.adbCmd(deviceId, `shell ${cmd}`)).stdout.trim();
+  async shell(deviceId, cmd, options) {
+    return (await this.adbCmd(deviceId, `shell ${cmd}`, options)).stdout.trim();
   }
 
   async getFileSize(deviceId, filename) {
@@ -176,15 +176,10 @@ class ADB {
     return this.adbCmd(deviceId, `shell rm ${force ? '-f' : ''} "${path}"`);
   }
 
-  rmSync(deviceId, path) {
-    const cmd = `${this.adbBin} -s ${deviceId} shell rm -rf "${path}"`;
-    child_process.execSync(cmd);
-  }
-
-  async adbCmd(deviceId, params) {
+  async adbCmd(deviceId, params, options) {
     const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
     const cmd = `${this.adbBin} ${serial} ${params}`;
-    return await execWithRetriesAndLogs(cmd, undefined, undefined, 1);
+    return await execWithRetriesAndLogs(cmd, options, undefined, 1);
   }
 
   /***
