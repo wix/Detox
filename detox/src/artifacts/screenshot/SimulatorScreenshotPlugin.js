@@ -13,7 +13,7 @@ class SimulatorScreenshotter extends ScreenshotArtifactPlugin {
   }
 
   async onBootDevice({ coldBoot, deviceId }) {
-    if (coldBoot) {
+    if (this.enabled && coldBoot) {
       // NOTE: the line below is supposed to prevent an error, which tends to occur
       // when you take a screenshot for the first time on iOS Simulator running
       // in a hidden window mode or on CI. This is why we don't write the screenshot
