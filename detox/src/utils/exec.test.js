@@ -1,12 +1,14 @@
 const _ = require('lodash');
 
 describe('exec', () => {
+  let logger;
   let exec;
   let cpp;
 
   beforeEach(() => {
     jest.mock('./logger');
     jest.mock('child-process-promise');
+    logger = require('./logger');
     cpp = require('child-process-promise');
     exec = require('./exec');
   });
@@ -14,7 +16,7 @@ describe('exec', () => {
   it(`exec command with no arguments successfully`, async () => {
     mockCppSuccessful(cpp);
     await exec.execWithRetriesAndLogs('bin');
-    expect(cpp.exec).toHaveBeenCalledWith(`bin`);
+    expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
   });
 
   it(`exec command with no arguments successfully`, async () => {
@@ -22,7 +24,7 @@ describe('exec', () => {
     const resolvedPromise = Promise.resolve(successfulResult);
     cpp.exec.mockReturnValueOnce(resolvedPromise);
     await exec.execWithRetriesAndLogs('bin');
-    expect(cpp.exec).toHaveBeenCalledWith(`bin`);
+    expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
   });
 
   it(`exec command with arguments successfully`, async () => {
@@ -31,7 +33,7 @@ describe('exec', () => {
     const options = {args: `--argument 123`};
     await exec.execWithRetriesAndLogs('bin', options);
 
-    expect(cpp.exec).toHaveBeenCalledWith(`bin --argument 123`);
+    expect(cpp.exec).toHaveBeenCalledWith(`bin --argument 123`, { timeout: 0 });
   });
 
   it(`exec command with arguments and prefix successfully`, async () => {
@@ -43,7 +45,7 @@ describe('exec', () => {
     };
     await exec.execWithRetriesAndLogs('bin', options);
 
-    expect(cpp.exec).toHaveBeenCalledWith(`export MY_PREFIX && bin --argument 123`);
+    expect(cpp.exec).toHaveBeenCalledWith(`export MY_PREFIX && bin --argument 123`, { timeout: 0 });
   });
 
   it(`exec command with arguments and status logs successfully`, async () => {
@@ -56,7 +58,7 @@ describe('exec', () => {
     };
     await exec.execWithRetriesAndLogs('bin', options, statusLogs);
 
-    expect(cpp.exec).toHaveBeenCalledWith(`bin --argument 123`);
+    expect(cpp.exec).toHaveBeenCalledWith(`bin --argument 123`, { timeout: 0 });
   });
 
   it(`exec command with undefined return should throw`, async () => {
@@ -69,7 +71,7 @@ describe('exec', () => {
     }
   });
 
-  it(`exec command and fail`, async () => {
+  it(`exec command and fail with error code`, async () => {
     const errorResult = returnErrorWithValue('error result');
     const rejectedPromise = Promise.reject(errorResult);
     cpp.exec.mockReturnValueOnce(rejectedPromise);
@@ -78,8 +80,22 @@ describe('exec', () => {
       await exec.execWithRetriesAndLogs('bin', null, '', 1, 1);
       fail('expected execWithRetriesAndLogs() to throw');
     } catch (object) {
-      expect(cpp.exec).toHaveBeenCalledWith(`bin`);
-      expect(object).toBeDefined();
+      expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
+      expect(logger.error.mock.calls).toMatchSnapshot();
+    }
+  });
+
+  it(`exec command and fail with timeout`, async () => {
+    const errorResult = returnErrorWithValue('error result');
+    const rejectedPromise = Promise.reject(errorResult);
+    cpp.exec.mockReturnValueOnce(rejectedPromise);
+
+    try {
+      await exec.execWithRetriesAndLogs('bin', { timeout: 1 }, '', 1, 1);
+      fail('expected execWithRetriesAndLogs() to throw');
+    } catch (object) {
+      expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 1 });
+      expect(logger.error.mock.calls).toMatchSnapshot();
     }
   });
 
@@ -96,7 +112,7 @@ describe('exec', () => {
       await exec.execWithRetriesAndLogs('bin', null, '', 6, 1);
       fail('expected execWithRetriesAndLogs() to throw');
     } catch (object) {
-      expect(cpp.exec).toHaveBeenCalledWith(`bin`);
+      expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
       expect(cpp.exec).toHaveBeenCalledTimes(6);
       expect(object).toBeDefined();
     }
@@ -116,7 +132,7 @@ describe('exec', () => {
        .mockReturnValueOnce(resolvedPromise);
 
     await exec.execWithRetriesAndLogs('bin', null, '', 6, 1);
-    expect(cpp.exec).toHaveBeenCalledWith(`bin`);
+    expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
     expect(cpp.exec).toHaveBeenCalledTimes(6);
   });
 });
