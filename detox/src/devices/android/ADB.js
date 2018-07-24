@@ -77,7 +77,6 @@ class ADB {
       await this.shell(deviceId, `input keyevent 82`, { timeout: 10000 });
     } catch (e) {
       await this.adbCmd(deviceId, `logcat -T "${now}" -d`); // HACK: to debug CI error
-      throw e;
     }
   }
 
