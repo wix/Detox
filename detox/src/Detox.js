@@ -32,8 +32,11 @@ class Detox {
 
   async init(userParams) {
     const sessionConfig = await this._getSessionConfig();
-    const defaultParams = {launchApp: true, initGlobals: true};
-    const params = Object.assign(defaultParams, userParams || {});
+    const params = {
+      launchApp: true,
+      initGlobals: true,
+      ...userParams,
+    };
 
     if (!this.userSession) {
       this.server = new DetoxServer({
