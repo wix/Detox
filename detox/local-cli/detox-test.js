@@ -114,7 +114,7 @@ function runMocha() {
   const screenshots = program.takeScreenshots ? `--take-screenshots ${program.takeScreenshots}` : '';
   const videos = program.recordVideos ? `--record-videos ${program.recordVideos}` : '';
   const headless = program.headless ? `--headless` : '';
-  const color = program.color ? '' : '--no-color';
+  const color = program.color ? '' : '--no-colors';
 
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
   const binPath = path.join('node_modules', '.bin', 'mocha');
@@ -131,11 +131,11 @@ function runJest() {
 
   const platformString = platform ? shellQuote(`--testNamePattern=^((?!${getPlatformSpecificString(platform)}).)*$`) : '';
   const binPath = path.join('node_modules', '.bin', 'jest');
-  const command = `${binPath} ${testFolder} ${configFile} --maxWorkers=${program.workers} ${platformString}`;
+  const color = program.color ? '' : ' --no-color';
+  const command = `${binPath} ${testFolder} ${configFile}${color} --maxWorkers=${program.workers} ${platformString}`;
   const detoxEnvironmentVariables = {
     configuration: program.configuration,
     loglevel: program.loglevel,
-    color: program.color,
     cleanup: program.cleanup,
     reuse: program.reuse,
     debugSynchronization: program.debugSynchronization,
