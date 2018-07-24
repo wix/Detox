@@ -54,6 +54,7 @@ dependencies {
 	...
     androidTestImplementation(project(path: ":detox"))
     androidTestImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support:support-annotations:24.1.1
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test:rules:1.0.1'
     ...
