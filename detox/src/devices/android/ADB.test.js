@@ -57,7 +57,7 @@ describe('ADB', () => {
 
   it(`unlockScreen`, async () => {
     await adb.unlockScreen('deviceId');
-    expect(exec).toHaveBeenCalledTimes(1);
+    expect(exec).toHaveBeenCalledTimes(2);
   });
 
   it(`listInstrumentation passes the right deviceId`, async () => {

@@ -49,6 +49,10 @@ class ADB {
     return (/^((1?\d?\d|25[0-5]|2[0-4]\d)(\.|:)){4}[0-9]{4}/.test(string));
   }
 
+  async now(deviceId) {
+    return this.shell(deviceId, `date "+\\"%Y-%m-%d %T.000\\""`);
+  }
+
   async install(deviceId, apkPath) {
     const apiLvl = await this.apiLevel(deviceId);
     if (apiLvl >= 24) {
@@ -67,10 +71,12 @@ class ADB {
   }
 
   async unlockScreen(deviceId) {
+    const now = await this.now(deviceId);
+
     try {
       await this.shell(deviceId, `input keyevent 82`, { timeout: 10000 });
     } catch (e) {
-      await this.adbCmd(deviceId, `logcat -d`); // HACK: to debug CI error
+      await this.adbCmd(deviceId, `logcat -T "${now}" -d`); // HACK: to debug CI error
       throw e;
     }
   }
