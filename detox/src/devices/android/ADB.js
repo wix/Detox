@@ -67,7 +67,12 @@ class ADB {
   }
 
   async unlockScreen(deviceId) {
-    await this.shell(deviceId, `input keyevent 82`, { timeout: 10000 });
+    try {
+      await this.shell(deviceId, `input keyevent 82`, { timeout: 10000 });
+    } catch (e) {
+      await this.adbCmd(deviceId, `logcat -d`); // HACK: to debug CI error
+      throw e;
+    }
   }
 
   async pidof(deviceId, bundleId) {
