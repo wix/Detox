@@ -18,12 +18,23 @@ function adaptOlderLogLevelName(level) {
     case 'verbose':
       return 'debug';
 
-    case 'wss':
     case 'silly':
+    case 'wss':
       return 'trace';
 
     default:
       return 'info';
+  }
+}
+
+function isLogLevelNameDeprecated(level) {
+  switch (level) {
+    case 'verbose':
+    case 'silly':
+    case 'wss':
+      return true;
+    default:
+      return false;
   }
 }
 
@@ -63,7 +74,8 @@ function createPlainBunyanStream({ logPath, level }) {
 }
 
 function init() {
-  const level = adaptOlderLogLevelName(argparse.getArgValue('loglevel'));
+  const levelFromArg = argparse.getArgValue('loglevel');
+  const level = adaptOlderLogLevelName(levelFromArg);
   const logBaseFilename = path.join(argparse.getArgValue('artifacts-location') || '', `detox_pid_${process.pid}`);
   const shouldRecordLogs = ['failing', 'all'].indexOf(argparse.getArgValue('record-logs')) >= 0;
 
@@ -86,10 +98,16 @@ function init() {
     }));
   }
 
-  return bunyan.createLogger({
+  const logger = bunyan.createLogger({
     name: 'detox',
     streams: bunyanStreams,
   });
+
+  if (isLogLevelNameDeprecated(levelFromArg)) {
+    logger.warn(`--loglevel ${levelFromArg} is deprecated and will be removed in detox@9.0.0, use --loglevel ${level} instead`);
+  }
+
+  return logger;
 }
 
 module.exports = init();

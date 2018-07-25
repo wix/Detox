@@ -6,12 +6,14 @@ const logger = require('../src/utils/logger');
 
 program
   .name('detox run-server')
-  .description('Starts a standalone Detox server')
+  .description('Start a standalone Detox server')
   .option(
     '-p, --port [port]',
     'Port number',
     '8099'
   )
+  .option('-l, --loglevel [value]',
+    'Log level: fatal, error, warn, info, debug, trace', 'info')
   .option(
     '--no-color',
     'Disable colorful logs',
