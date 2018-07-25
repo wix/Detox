@@ -1,12 +1,11 @@
 const _ = require('lodash');
-const child_process = require('child_process');
 const path = require('path');
 const {execWithRetriesAndLogs, spawnAndLog} = require('../../utils/exec');
 const regexEscape = require('../../utils/regexEscape');
 const EmulatorTelnet = require('./EmulatorTelnet');
 const Environment = require('../../utils/environment');
-class ADB {
 
+class ADB {
   constructor() {
     this.adbBin = path.join(Environment.getAndroidSDKPath(), 'platform-tools', 'adb');
   }
