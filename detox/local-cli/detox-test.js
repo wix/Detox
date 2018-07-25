@@ -154,7 +154,7 @@ function runJest() {
 
 function printEnvironmentVariables(envObject) {
   return Object.entries(envObject).reduce((cli, [key, value]) => {
-    if (value == null) {
+    if (value === null || value === undefined || value === '') {
       return cli;
     }
 
