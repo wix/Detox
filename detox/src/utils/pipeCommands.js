@@ -36,11 +36,6 @@ function nixImplementation() {
   };
 }
 
-// istanbul ignore next
-module.exports = {
-  ...(process.platform === 'win32' ? win32Implementation() : nixImplementation()),
-
-  _win32: win32Implementation,
-  _nix: nixImplementation,
-};
-
+module.exports = process.platform === 'win32'
+  ? win32Implementation()
+  : nixImplementation();
