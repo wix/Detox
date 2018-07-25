@@ -5,7 +5,7 @@ describe('ADB', () => {
   let exec;
 
   beforeEach(() => {
-    jest.mock('npmlog');
+    jest.mock('../../utils/logger');
     jest.mock('../../utils/environment', () => ({
       getAndroidSDKPath: () => '/dev/null',
     }));

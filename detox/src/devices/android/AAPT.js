@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const exec = require('child-process-promise').exec;
 const Environment = require('../../utils/environment');
 const path = require('path');
+const exec = require('../../utils/exec').execWithRetriesAndLogs;
 const fsext = require('../../utils/fsext');
 
 class AAPT {
@@ -21,7 +21,7 @@ class AAPT {
 
   async getPackageName(apkPath) {
     await this._prepare();
-    const process = await exec(`${this.aaptBin} dump badging "${apkPath}"`);
+    const process = await exec(`${this.aaptBin} dump badging "${apkPath}" | grep package:.name=`);
     const packageName = new RegExp(/package: name='([^']+)'/g).exec(process.stdout);
     return packageName[1];
   }

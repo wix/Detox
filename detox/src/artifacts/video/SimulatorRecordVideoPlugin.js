@@ -1,5 +1,5 @@
 const fs = require('fs-extra');
-const log = require('npmlog');
+const log = require('../../utils/logger').child({ __filename });
 const tempfile = require('tempfile');
 const VideoArtifactPlugin = require('./VideoArtifactPlugin');
 const Artifact = require('../templates/artifact/Artifact');
@@ -18,6 +18,7 @@ class SimulatorRecordVideoPlugin extends VideoArtifactPlugin {
     let processPromise = null;
 
     return new Artifact({
+      name: 'SimulatorVideoRecording',
       start: async () => {
         processPromise = appleSimUtils.recordVideo(api.getDeviceId(), temporaryFilePath);
       },
@@ -30,7 +31,7 @@ class SimulatorRecordVideoPlugin extends VideoArtifactPlugin {
         if (await fs.exists(temporaryFilePath)) {
           await fs.move(temporaryFilePath, artifactPath);
         } else {
-          log.error('SimulatorRecordVideoPlugin', 'could not find temporary file at: %s', temporaryFilePath);
+          log.error({ event: 'MOVE_FILE_ERROR' }, `could not find temporary file at: "${temporaryFilePath}"`);
         }
       },
       discard: async () => {

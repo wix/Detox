@@ -1,4 +1,6 @@
-const log = require('npmlog');
+const _ = require('lodash');
+const logger = require('./utils/logger');
+const log = require('./utils/logger').child({ __filename });
 const Device = require('./devices/Device');
 const IosDriver = require('./devices/IosDriver');
 const SimulatorDriver = require('./devices/SimulatorDriver');
@@ -8,14 +10,9 @@ const DetoxRuntimeError = require('./errors/DetoxRuntimeError');
 const argparse = require('./utils/argparse');
 const configuration = require('./configuration');
 const Client = require('./client/Client');
-const DetoxServer = require('detox-server');
+const DetoxServer = require('./server/DetoxServer');
 const URL = require('url').URL;
-const _ = require('lodash');
 const ArtifactsManager = require('./artifacts/ArtifactsManager');
-
-log.level = argparse.getArgValue('loglevel') || 'info';
-log.addLevel('wss', 999, {fg: 'blue', bg: 'black'}, 'wss');
-log.heading = 'detox';
 
 const DEVICE_CLASSES = {
   'ios.simulator': SimulatorDriver,
@@ -35,11 +32,17 @@ class Detox {
 
   async init(userParams) {
     const sessionConfig = await this._getSessionConfig();
-    const defaultParams = {launchApp: true, initGlobals: true};
-    const params = Object.assign(defaultParams, userParams || {});
+    const params = {
+      launchApp: true,
+      initGlobals: true,
+      ...userParams,
+    };
 
     if (!this.userSession) {
-      this.server = new DetoxServer(new URL(sessionConfig.server).port);
+      this.server = new DetoxServer({
+        log: logger,
+        port: new URL(sessionConfig.server).port,
+      });
     }
 
     this.client = new Client(sessionConfig);
@@ -94,14 +97,20 @@ class Detox {
 
   async beforeEach(testSummary) {
     this._validateTestSummary(testSummary);
+    this._logTestRunCheckpoint('DETOX_BEFORE_EACH', testSummary);
     await this._handleAppCrashIfAny(testSummary.fullName);
     await this.artifactsManager.onBeforeEach(testSummary);
   }
 
   async afterEach(testSummary) {
     this._validateTestSummary(testSummary);
+    this._logTestRunCheckpoint('DETOX_AFTER_EACH', testSummary);
     await this.artifactsManager.onAfterEach(testSummary);
     await this._handleAppCrashIfAny(testSummary.fullName);
+  }
+
+  _logTestRunCheckpoint(event, { status, fullName }) {
+    log.trace({ event, status }, `${status} test: ${JSON.stringify(fullName)}`);
   }
 
   _validateTestSummary(testSummary) {
@@ -134,7 +143,7 @@ class Detox {
     const pendingAppCrash = this.client.getPendingCrashAndReset();
 
     if (pendingAppCrash) {
-      log.error('', `App crashed in test '${testName}', here's the native stack trace: \n${pendingAppCrash}`);
+      log.error({ event: 'APP_CRASH' }, `App crashed in test '${testName}', here's the native stack trace: \n${pendingAppCrash}`);
       await this.device.launchApp({ newInstance: true });
     }
   }

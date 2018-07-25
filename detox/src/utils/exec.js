@@ -1,48 +1,50 @@
-const log = require('npmlog');
+const _ = require('lodash');
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+const execLogger = require('../utils/logger').child({ __filename });
 const retry = require('../utils/retry');
 const {exec, spawn} = require('child-process-promise');
 
 let _operationCounter = 0;
 
-/**
-
- */
 async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, interval = 1000) {
-  _operationCounter++;
+  const trackingId = _operationCounter++;
+  const cmd = _composeCommand(bin, options);
+  const log = execLogger.child({ fn: 'execWithRetriesAndLogs', cmd, trackingId });
+  const timeout = _.get(options, 'timeout', 0);
 
-  let cmd;
-  if (options) {
-    cmd = `${options.prefix ? options.prefix + ' && ' : ''}${bin} ${options.args}`;
-  } else {
-    cmd = bin;
-  }
-
-  log.verbose(`${_operationCounter}: ${cmd}`);
+  log.debug({ event: 'EXEC_CMD' }, `${cmd}`);
 
   let result;
 
   try {
-    await retry({retries, interval}, async () => {
+    await retry({retries, interval}, async (retryNumber) => {
       if (statusLogs && statusLogs.trying) {
-        log.info(`${_operationCounter}: ${statusLogs.trying}`);
+        log.debug({ event: 'EXEC_TRY', retryNumber }, statusLogs.trying);
       }
-      result = await exec(cmd);
+
+      result = await exec(cmd, { timeout });
     });
   } catch (err) {
-    log.error(`${_operationCounter}: running "${cmd}" returned ${err.code}`);
-    log.error(`${_operationCounter}: stderr: ${err.stderr}`);
+    const _failReason = err.code == null && timeout > 0
+      ? `timeout = ${timeout}ms`
+      : `code = ${err.code}`;
+
+    log.error({ event: 'EXEC_FAIL' }, `"${cmd}" failed with ${_failReason}, stdout and stderr:\n`);
+    log.error({ event: 'EXEC_FAIL', stdout: true }, err.stdout);
+    log.error({ event: 'EXEC_FAIL', stderr: true }, err.stderr);
+
+    throw err;
   }
 
   if (result === undefined) {
-    throw new Error(`${_operationCounter}: running "${cmd}" returned undefined`);
+    log.error({ event: 'EXEC_UNDEFINED' }, `command returned undefined`);
+    throw new DetoxRuntimeError(`command ${cmd} returned undefined`);
   }
 
-  if (result.stdout) {
-    log.verbose(`${_operationCounter}: stdout: ${result.stdout}`);
-  }
+  _logExecOutput(log, result);
 
   if (statusLogs && statusLogs.successful) {
-    log.info(`${_operationCounter}: ${statusLogs.successful}`);
+    log.debug({ event: 'EXEC_SUCCESS' }, statusLogs.successful);
   }
 
   //if (result.childProcess.exitCode !== 0) {
@@ -50,36 +52,69 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
   //  log.error(`${_operationCounter}: stderr:`, result.stderr);
   //}
 
-  /* istanbul ignore next */
-  if (process.platform === 'win32') {
-    if (result.stdout) {
-      result.stdout = result.stdout.replace(/\r\n/g, '\n');
-    }
-    if (result.stderr) {
-      result.stderr = result.stderr.replace(/\r\n/g, '\n');
-    }
-  }
-
   return result;
 }
 
-function spawnAndLog(command, flags) {
-  let out = '';
-  let err = '';
-  const result = spawn(command, flags, {stdio: ['ignore', 'pipe', 'pipe'], detached: true});
+/* istanbul ignore next */
+function _logExecOutput(log, process) {
+  let stdout = process.stdout || '';
+  let stderr = process.stderr || '';
 
-  log.verbose(`${command} ${flags.join(' ')}`);
-
-  if (result.childProcess) {
-    const {stdout, stderr} = result.childProcess;
-
-    stdout.on('data', (chunk) => out += chunk.toString());
-    stderr.on('data', (chunk) => err += chunk.toString());
-
-    stdout.on('end', () => out && log.verbose('stdout:', out));
-    stderr.on('end', () => err && log.verbose('stderr:', err));
+  if (process.platform === 'win32') {
+    stdout = stdout.replace(/\r\n/g, '\n');
+    stderr = stderr.replace(/\r\n/g, '\n');
   }
 
+  if (stdout) {
+    log.trace({ event: 'EXEC_SUCCESS', stdout: true }, stdout);
+  }
+
+  if (stderr) {
+    log.trace({ event: 'EXEC_SUCCESS', stderr: true }, stderr);
+  }
+
+  if (!stdout && !stderr) {
+    log.trace({ event: 'EXEC_SUCCESS' }, '');
+  }
+}
+
+function _composeCommand(bin, options) {
+  if (!options) {
+    return bin;
+  }
+
+  const prefix = options.prefix ? `${options.prefix} && ` : '';
+  const args = options.args ? ` ${options.args}` : '';
+
+  return `${prefix}${bin}${args}`;
+}
+
+function spawnAndLog(command, flags, options) {
+  const trackingId = _operationCounter++;
+  const cmd = [command, ...flags].join(' ');
+  const log = execLogger.child({ fn: 'spawnAndLog', cmd, trackingId });
+
+  const result = spawn(command, flags, {stdio: ['ignore', 'pipe', 'pipe'], detached: true, ...options});
+  const { childProcess } = result;
+  const { exitCode, stdout, stderr } = childProcess;
+
+  log.debug({ event: 'SPAWN_CMD' }, `[pid=${childProcess.pid}] ${cmd}`);
+
+  if (exitCode != null && exitCode !== 0) {
+    log.error({ event: 'SPAWN_ERROR' }, `${cmd} failed with code = ${exitCode}`);
+  }
+
+  stdout.on('data', (chunk) => log.trace({ stdout: true, event: 'SPAWN_STDOUT' }, chunk.toString()));
+  stderr.on('data', (chunk) => log.trace({ stderr: true, event: 'SPAWN_STDERR' }, chunk.toString()));
+
+  function onEnd(e) {
+    const signal = e.childProcess.signalCode || '';
+    const action = signal ? `terminated with ${signal}` : `finished with code = ${e.code}`;
+
+    log.trace({ event: 'SPAWN_END' }, `${cmd} ${action}`);
+  }
+
+  result.then(onEnd, onEnd);
   return result;
 }
 

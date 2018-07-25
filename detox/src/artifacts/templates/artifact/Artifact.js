@@ -1,6 +1,5 @@
 const _ = require('lodash');
-const log = require('npmlog');
-const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
+const log = require('../../../utils/logger').child({ __filename });
 
 class Artifact {
   constructor(template) {
@@ -10,6 +9,8 @@ class Artifact {
     this._discardPromise = null;
 
     if (template) {
+      this._name = template.name || '';
+
       if (typeof template.start === 'function') {
         this.doStart = template.start.bind(template);
       }
@@ -25,7 +26,13 @@ class Artifact {
     }
   }
 
+  get name() {
+    return this._name || this.constructor.name;
+  }
+
   start(...args) {
+    log.trace({ event: 'START', class: this.name }, `starting ${this.name}`, ...args);
+
     if (this._savePromise) {
       this._startPromise = this._savePromise.then(() => this.doStart(...args));
     } else if (this._discardPromise) {
@@ -42,6 +49,8 @@ class Artifact {
 
   stop(...args) {
     if (!this._stopPromise) {
+      log.trace({ event: 'STOP', class: this.name }, `stopping ${this.name}`, ...args);
+
       if (this._startPromise) {
         this._stopPromise = this._startPromise.then(() => this.doStop(...args));
       } else {
@@ -54,8 +63,10 @@ class Artifact {
 
   save(artifactPath, ...args) {
     if (!this._savePromise) {
+      log.trace({ event: 'SAVE', class: this.name }, `saving ${this.name} to: ${artifactPath}`, ...args);
+
       if (this._discardPromise) {
-        log.warn('detox-artifacts', 'cannot save an already discarded artifact to: %s', artifactPath);
+        log.warn({ event: 'SAVE_ERROR' }, `cannot save an already discarded artifact to: ${artifactPath}`);
         this._savePromise = this._discardPromise;
       } else if (this._startPromise) {
         this._savePromise = this.stop().then(() => this.doSave(artifactPath, ...args));
@@ -69,6 +80,8 @@ class Artifact {
 
   discard(...args) {
     if (!this._discardPromise) {
+      log.trace({ event: 'DISCARD', class: this.name }, `discarding ${this.name}`, ...args);
+
       if (this._savePromise) {
         this._discardPromise = this._savePromise;
       } else if (this._startPromise) {

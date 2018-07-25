@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
-const log = require('npmlog');
+const log = require('../utils/logger').child({ __filename });
 const argparse = require('../utils/argparse');
 const debug = require('../utils/debug'); //debug utils, leave here even if unused
 const logError = require('../utils/logError');
@@ -26,8 +26,9 @@ class Device {
   async emit(eventName, eventObj) {
     const fire = async (fn) => fn(eventObj);
     const logEmitError = (err) => {
-      log.error('detox-device', 'device.emit("%s", %j) error', eventName, eventObj);
-      logError(err, 'detox-device');
+      const errorLogger = log.child({ event: 'DEVICE_EMIT_EVENT_ERROR', eventName });
+      errorLogger.error(`Caught an exception in: device.emit("${eventName}", ${JSON.stringify(eventObj)})`);
+      logError(errorLogger, err);
     };
 
     await Promise.all(this._listeners[eventName].map(fn => fire(fn).catch(logEmitError)));
@@ -100,16 +101,16 @@ class Device {
 
     const _bundleId = bundleId || this._bundleId;
 
-    await this.emit('beforeLaunchApp', {
-      deviceId: this._deviceId,
-      bundleId: _bundleId,
-    });
-
     if (this._isAppInBackground(params, _bundleId)) {
       if (hasPayload) {
         await this.deviceDriver.deliverPayload({...params, delayPayload: true});
       }
     }
+
+    await this.emit('beforeLaunchApp', {
+      deviceId: this._deviceId,
+      bundleId: _bundleId,
+    });
 
     const processId = await this.deviceDriver.launch(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs));
     this._processes[_bundleId] = processId;

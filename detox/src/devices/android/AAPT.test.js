@@ -5,7 +5,7 @@ xdescribe('AAPT', () => {
   let exec;
 
   beforeEach(() => {
-    jest.mock('npmlog');
+    jest.mock('../../utils/logger');
     jest.mock('child-process-promise');
     exec = require('child-process-promise').exec;
 
