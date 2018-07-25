@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const path = require('path');
 const {execWithRetriesAndLogs, spawnAndLog} = require('../../utils/exec');
-const regexEscape = require('../../utils/regexEscape');
+const pipeCommands = require('../../utils/pipeCommands');
 const EmulatorTelnet = require('./EmulatorTelnet');
 const Environment = require('../../utils/environment');
 
@@ -75,7 +75,10 @@ class ADB {
   }
 
   async pidof(deviceId, bundleId) {
-    const processes = await this.shell(deviceId, `ps | grep "${regexEscape(bundleId)}\\s*$"`).catch(() => '');
+    const bundleIdRegex = pipeCommands.escape.inQuotedRegexp(bundleId) + '\\s*$';
+    const grep = pipeCommands.search.regexp;
+
+    const processes = await this.shell(deviceId, `ps | ${grep(bundleIdRegex)}`).catch(() => '');
     if (!processes) {
       return NaN;
     }
