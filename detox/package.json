@@ -38,6 +38,7 @@
     "prettier": "1.7.0"
   },
   "dependencies": {
+    "argparse": "^1.0.10",
     "child-process-promise": "^2.2.0",
     "commander": "^2.15.1",
     "detox-server": "^7.0.0",
