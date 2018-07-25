@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pipeUtils escape in quoted regexp on *nix should escape [\\] 1`] = `"\\\\[kworker\\\\\\\\0:0\\\\]"`;
+
+exports[`pipeUtils escape in quoted regexp on *nix should escape ^*$ 1`] = `"\\\\^ma\\\\*tch\\\\$"`;
+
+exports[`pipeUtils escape in quoted regexp on *nix should escape dots 1`] = `"com\\\\.company\\\\.bundle"`;
+
+exports[`pipeUtils escape in quoted regexp on *nix should escape double quotes with slash 1`] = `"\\\\\\"a"`;
+
+exports[`pipeUtils escape in quoted regexp on *nix should not escape non-special characters 1`] = `"bundle_name"`;
+
+exports[`pipeUtils escape in quoted regexp on win32 should escape only double quotes 1`] = `"^Hello\\\\s \\"\\".*\\"\\"$"`;
+
+exports[`pipeUtils escape in quoted string on *nix should escape double quotes with slash 1`] = `"Says \\\\\\"Hello\\\\\\""`;
+
+exports[`pipeUtils escape in quoted string on win32 should escape double quotes with double quotes 1`] = `"Says \\"\\"Hello\\"\\""`;
+
+exports[`pipeUtils search by fragment pipe command on *nix should use grep -e "fragment" 1`] = `"grep -e \\"^Hello\\\\s \\\\\\".*\\\\\\"$\\""`;
+
+exports[`pipeUtils search by fragment pipe command on win32 should use findstr /C:"fragment" 1`] = `"findstr /C:\\"^Hello\\\\s \\"\\".*\\"\\"$\\""`;
+
+exports[`pipeUtils search by regexp pipe command on *nix should use grep "regexp" 1`] = `"grep \\"^Hello\\\\s \\\\\\".*\\\\\\"$\\""`;
+
+exports[`pipeUtils search by regexp pipe command on win32 should use findstr /R /C:"regexp" 1`] = `"findstr /R /C:\\"^Hello\\\\s \\"\\".*\\"\\"$\\""`;
