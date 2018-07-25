@@ -96,7 +96,7 @@ declare function afterEach(testSummary: {
 Normally, you are not supposed to write own implementation of this call, as mentioned earlier in the [detox.beforeEach()](#detox.beforeEach) documentation.
 
 ### `detox.cleanup()`
-The cleanup phase should happen after all the tests have finished. This is the phase where detox-server shuts down. The simulator will also shut itself down if `--cleanup` flag is added to `detox test`
+The cleanup phase should happen after all the tests have finished. This is the phase where detox server shuts down. The simulator will also shut itself down if `--cleanup` flag is added to `detox test`
 
 ##### (if you're using mocha) In your `init.js` add:
 
