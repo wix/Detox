@@ -71,7 +71,8 @@ class ADB {
   }
 
   async unlockScreen(deviceId) {
-    await this.shell(deviceId, `input keyevent 82`, { timeout: 10000, retries: 5 });
+    // TODO: figure out why in some rare cases this command completely stucks on CI
+    await this.shell(deviceId, `input keyevent 82`, { timeout: 2000, retries: 3 });
   }
 
   async pidof(deviceId, bundleId) {
