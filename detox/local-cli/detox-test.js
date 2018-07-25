@@ -129,7 +129,7 @@ function runJest() {
   const platformString = platform ? shellQuote(`--testNamePattern=^((?!${getPlatformSpecificString(platform)}).)*$`) : '';
   const binPath = path.join('node_modules', '.bin', 'jest');
   const command = `${binPath} ${testFolder} ${configFile} --maxWorkers=${program.workers} ${platformString}`;
-  const env = Object.assign({}, process.env, {
+  const detoxEnvironmentVariables = {
     configuration: program.configuration,
     loglevel: program.loglevel,
     cleanup: program.cleanup,
@@ -140,13 +140,26 @@ function runJest() {
     recordLogs: program.recordLogs,
     takeScreenshots: program.takeScreenshots,
     recordVideos: program.recordVideos,
-  });
+  };
 
-  console.log(command);
+  console.log(printEnvironmentVariables(detoxEnvironmentVariables) + command);
   cp.execSync(command, {
     stdio: 'inherit',
-    env,
+    env: {
+      ...process.env,
+      ...detoxEnvironmentVariables,
+    },
   });
+}
+
+function printEnvironmentVariables(envObject) {
+  return Object.entries(envObject).reduce((cli, [key, value]) => {
+    if (value === null || value === undefined || value === '') {
+      return cli;
+    }
+
+    return `${cli}${key}=${JSON.stringify(value)} `;
+  }, '');
 }
 
 function getDefaultRunnerConfig() {
