@@ -1,0 +1,12 @@
+build
+COSTouchVisualizer/ExampleObjC
+COSTouchVisualizer/ExampleSwift
+DetoxUserNotificationTests
+EarlGrey/Tests
+EarlGrey/Demo
+EarlGrey/docs
+EarlGrey/gem
+SocketRocket/TestChat
+SocketRocket/TestChatServer
+SocketRocket/Tests
+SocketRocket/TestSupport
