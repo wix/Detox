@@ -16,40 +16,10 @@ HINT: hint
 debugInfo",
   "no args": "DetoxRuntimeError: ",
   "only message": "DetoxRuntimeError: message",
-}
-`;
+  "toString": "DetoxRuntimeError: message
 
-exports[`DetoxRuntimeError should have various ways to create it 1`] = `
-Object {
-  "empty object": Object {
-    "debugInfo": "",
-    "hint": "",
-    "message": "",
-  },
-  "message with debug info": Object {
-    "debugInfo": "debugInfo",
-    "hint": "",
-    "message": "message",
-  },
-  "message with hint": Object {
-    "debugInfo": "",
-    "hint": "hint",
-    "message": "message",
-  },
-  "message with hint and debug info": Object {
-    "debugInfo": "debugInfo",
-    "hint": "hint",
-    "message": "message",
-  },
-  "no args": Object {
-    "debugInfo": "",
-    "hint": "",
-    "message": "",
-  },
-  "only message": Object {
-    "debugInfo": "",
-    "hint": "",
-    "message": "message",
-  },
+HINT: hint
+
+debugInfo",
 }
 `;

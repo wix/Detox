@@ -17,7 +17,6 @@ describe('Device', () => {
   let Client;
   let client;
   let logger;
-  let logError;
 
   beforeEach(async () => {
     jest.mock('fs');
@@ -26,9 +25,6 @@ describe('Device', () => {
     logger = require('../utils/logger');
 
     Device = require('./Device');
-
-    jest.mock('../utils/logError');
-    logError = require('../utils/logError');
 
     jest.mock('../utils/sh');
     sh = require('../utils/sh');
@@ -152,8 +148,8 @@ describe('Device', () => {
     };
 
     expect(logger.error).toHaveBeenCalledWith(`Caught an exception in: device.emit("launchApp", {"pid":2})`);
-    expect(logError).toHaveBeenCalledWith(logger, errorSync);
-    expect(logError).toHaveBeenCalledWith(logger, errorAsync);
+    expect(logger.error).toHaveBeenCalledWith({ err: errorSync }, errorSync);
+    expect(logger.error).toHaveBeenCalledWith({ err: errorAsync }, errorAsync);
   });
 
   it(`relaunchApp()`, async () => {
