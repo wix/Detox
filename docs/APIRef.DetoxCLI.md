@@ -60,7 +60,7 @@ Initiating your test suite
 | -H, --headless                                | [Android Only] Launch Emulator in headless mode. Useful when running on CI. |
 | -w, --workers                                 | [iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest) |
 
-> NOTE: such log levels as `verbose`, `silly`, `wss` are deprecated since detox@8.1.0 and will be removed in 9.0.0.
+> NOTE: such log levels as `silly` and `wss` are deprecated since detox@8.1.0 and will be removed in 9.0.0.
 
 ### build
 Run a command defined in 'configuration.build'
