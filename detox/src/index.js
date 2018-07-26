@@ -4,6 +4,8 @@ const DetoxConstants = require('./DetoxConstants');
 const platform = require('./platform');
 const exportWrapper = require('./exportWrapper');
 const argparse = require('./utils/argparse');
+const log = require('./utils/logger').child({ __filename });
+const logError = require('./utils/logError');
 const onTerminate = require('./utils/onTerminate');
 const configuration = require('./configuration');
 
@@ -31,7 +33,7 @@ function getDeviceConfig(configurations) {
   return deviceConfig;
 }
 
-function validateConfig(config) {
+async function initializeDetox(config, params) {
   if (!config) {
     throw new Error(`No configuration was passed to detox, make sure you pass a config when calling 'detox.init(config)'`);
   }
@@ -39,9 +41,8 @@ function validateConfig(config) {
   if (!(config.configurations && _.size(config.configurations) >= 1)) {
     throw new Error(`No configured devices`);
   }
-}
 
-async function initializeDetox({configurations, session}, params) {
+  const {configurations, session} = config;
   const deviceConfig = getDeviceConfig(configurations);
 
   detox = new Detox({deviceConfig, session});
@@ -50,8 +51,15 @@ async function initializeDetox({configurations, session}, params) {
 }
 
 async function init(config, params) {
-  validateConfig(config);
-  await initializeDetox(config, params);
+  try {
+    await initializeDetox(config, params);
+  } catch (err) {
+    logError(log, err);
+    await cleanup();
+
+    detox = null;
+    throw err;
+  }
 }
 
 async function beforeEach(testSummary) {

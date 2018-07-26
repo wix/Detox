@@ -5,7 +5,7 @@ describe('ADB', () => {
   let exec;
 
   beforeEach(() => {
-    jest.mock('npmlog');
+    jest.mock('../../utils/logger');
     jest.mock('../../utils/environment', () => ({
       getAndroidSDKPath: () => '/dev/null',
     }));
@@ -45,16 +45,14 @@ describe('ADB', () => {
     expect(exec).toHaveBeenCalledTimes(1);
   });
 
-  it(`pidof`, async () => {
-    adb.shell = async () => `
-com.google.android.apps.google.google.google.test.go 2245
-com.wix.detox.test                                  10670
-com.google.android.dialer                           17214`;
+  it(`pidof (success)`, async () => {
+    adb.shell = async () => `u0_a19        2199  1701 3554600  70264 0                   0 s com.google.android.ext.services `;
+    expect(await adb.pidof('', 'com.google.android.ext.services')).toBe(2199);
+  });
 
-    expect(await adb.pidof('', 'com.google.android.apps.google.google.google.test.go')).toBe(2245);
-    expect(await adb.pidof('', 'com.wix.detox.test')).toBe(10670);
-    expect(await adb.pidof('', 'com.google.android.dialer')).toBe(17214);
-    expect(await adb.pidof('', 'unexisting bundle')).toBe(NaN);
+  it(`pidof (failure)`, async () => {
+    adb.shell = async () => ``;
+    expect(await adb.pidof('', 'com.google.android.ext.services')).toBe(NaN);
   });
 
   it(`unlockScreen`, async () => {

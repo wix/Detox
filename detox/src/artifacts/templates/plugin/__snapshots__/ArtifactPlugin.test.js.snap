@@ -11,10 +11,10 @@ Array [
 exports[`ArtifactPlugin when enabled if it is disabled with a reason should log warning to log with that reason 1`] = `
 Array [
   Array [
-    "detox-artifacts",
-    "WARNING! Artifact plugin %s was disabled because %s",
-    "TestArtifactPlugin",
-    "a reason why it is disabled",
+    Object {
+      "event": "PLUGIN_DISABLED",
+    },
+    "Artifact plugin TestArtifactPlugin was disabled because a reason why it is disabled",
   ],
 ]
 `;

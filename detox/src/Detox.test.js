@@ -42,7 +42,7 @@ describe('Detox', () => {
       jest.setMock(modulePath, FinalMock);
     }
 
-    jest.mock('npmlog');
+    jest.mock('./utils/logger');
     jest.mock('fs');
     jest.mock('fs-extra');
     fs = require('fs');
@@ -57,7 +57,7 @@ describe('Detox', () => {
     jest.mock('./devices/IosDriver');
     jest.mock('./devices/SimulatorDriver');
     jest.mock('./devices/Device');
-    jest.mock('detox-server');
+    jest.mock('./server/DetoxServer');
     jest.mock('./client/Client');
   });
 

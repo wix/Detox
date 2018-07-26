@@ -16,14 +16,14 @@ describe('Device', () => {
   let sh;
   let Client;
   let client;
-  let npmlog;
+  let logger;
   let logError;
 
   beforeEach(async () => {
     jest.mock('fs');
-    jest.mock('npmlog');
+    jest.mock('../utils/logger');
     fs = require('fs');
-    npmlog = require('npmlog');
+    logger = require('../utils/logger');
 
     Device = require('./Device');
 
@@ -151,15 +151,9 @@ describe('Device', () => {
       pid: 2,
     };
 
-    expect(npmlog.error).toHaveBeenCalledWith(
-      'detox-device',
-      'device.emit("%s", %j) error',
-      'launchApp',
-      eventObject
-    );
-
-    expect(logError).toHaveBeenCalledWith(errorSync, 'detox-device');
-    expect(logError).toHaveBeenCalledWith(errorAsync, 'detox-device');
+    expect(logger.error).toHaveBeenCalledWith(`Caught an exception in: device.emit("launchApp", {"pid":2})`);
+    expect(logError).toHaveBeenCalledWith(logger, errorSync);
+    expect(logError).toHaveBeenCalledWith(logger, errorAsync);
   });
 
   it(`relaunchApp()`, async () => {

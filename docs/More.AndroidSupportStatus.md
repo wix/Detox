@@ -81,7 +81,7 @@ Type 'android.attached' could be used to connect to any of already attached devi
 3. Location - Coming soon
 
 ## Debugging
-1. `--loglevel verbose` can give you pretty good insight on what going on.
+1. `--loglevel trace` can give you pretty good insight on what going on.
 2. `--debug-synchronization [ms]`, our tool to identify synchronization issues works on Android too.
 
 ## Cross platform support

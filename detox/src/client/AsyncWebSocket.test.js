@@ -7,7 +7,7 @@ describe('AsyncWebSocket', () => {
   let client;
 
   beforeEach(() => {
-    jest.mock('npmlog');
+    jest.mock('../utils/logger');
     WebSocket = jest.mock('ws');
     WebSocket.OPEN = 1;
     WebSocket.CLOSED = 3;

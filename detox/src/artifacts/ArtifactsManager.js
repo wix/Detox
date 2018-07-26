@@ -1,9 +1,8 @@
 const _ = require('lodash');
 const fs = require('fs-extra');
 const path = require('path');
-const log = require('npmlog');
+const log = require('../utils/logger').child({ __filename });
 const argparse = require('../utils/argparse');
-const logError = require('../utils/logError');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const ArtifactPathBuilder = require('./utils/ArtifactPathBuilder');
 
@@ -117,18 +116,20 @@ class ArtifactsManager {
     device.off('launchApp', this.onLaunchApp);
   }
 
-  async onBeforeLaunchApp({ deviceId, bundleId }) {
+  async onBeforeLaunchApp(launchInfo) {
+    const { deviceId, bundleId } = launchInfo;
     const isFirstTime = !this._deviceId;
 
     this._deviceId = deviceId;
     this._bundleId = bundleId;
 
     return isFirstTime
-      ? this._onBeforeLaunchAppFirstTime()
-      : this._onBeforeRelaunchApp({ deviceId, bundleId });
+      ? this._onBeforeLaunchAppFirstTime(launchInfo)
+      : this._onBeforeRelaunchApp();
   }
 
-  async _onBeforeLaunchAppFirstTime() {
+  async _onBeforeLaunchAppFirstTime(launchInfo) {
+    log.trace({ event: 'LIFECYCLE', fn: 'onBeforeLaunchApp' }, 'onBeforeLaunchApp', launchInfo);
     this._artifactPlugins = this._instantiateArtifactPlugins();
   }
 
@@ -145,9 +146,13 @@ class ArtifactsManager {
     }]);
   }
 
-  async onLaunchApp({ deviceId, bundleId, pid }) {
+  async onLaunchApp(launchInfo) {
     const isFirstTime = isNaN(this._pid);
+    if (isFirstTime) {
+      log.trace({ event: 'LIFECYCLE', fn: 'onLaunchApp' }, 'onLaunchApp', launchInfo);
+    }
 
+    const { deviceId, bundleId, pid } = launchInfo;
     this._deviceId = deviceId;
     this._bundleId = bundleId;
     this._pid = pid;
@@ -180,7 +185,6 @@ class ArtifactsManager {
   async onAfterAll() {
     await this._emit('onAfterAll', []);
     await this._idlePromise;
-    log.verbose('ArtifactsManager', 'finalized artifacts successfully');
   }
 
   async onTerminate() {
@@ -188,7 +192,8 @@ class ArtifactsManager {
       return;
     }
 
-    log.info('ArtifactsManager', 'finalizing all artifacts, this can take some time');
+    log.info({ event: 'TERMINATE_START' }, 'finalizing the recorded artifacts, this can take some time...');
+
     await this._emit('onTerminate', []);
     await Promise.all(this._onIdleCallbacks.splice(0).map(this._executeIdleCallback));
     await this._idlePromise;
@@ -196,10 +201,13 @@ class ArtifactsManager {
     await Promise.all(this._activeArtifacts.map(artifact => artifact.discard()));
     await this._idlePromise;
     this._artifactPlugins.splice(0);
-    log.info('ArtifactsManager', 'finalized all artifacts');
+
+    log.info({ event: 'TERMINATE_SUCCESS' }, 'done.');
   }
 
   async _emit(methodName, args) {
+    log.trace(Object.assign({ event: 'LIFECYCLE', fn: methodName }, ...args), `${methodName}`);
+
     await Promise.all(this._artifactPlugins.map(async (plugin) => {
       try {
         await plugin[methodName](...args);
@@ -209,9 +217,9 @@ class ArtifactsManager {
     }));
   }
 
-  _errorHandler(e, { plugin, methodName }) {
-    log.error('ArtifactsManager', 'Caught exception inside plugin (%s) at phase %s', plugin.name || 'unknown', methodName);
-    logError(e, 'ArtifactsManager');
+  _errorHandler(err, { plugin, methodName }) {
+    const eventObject = { event: 'PLUGIN_ERROR', plugin: plugin.name || 'unknown', methodName, err };
+    log.error(eventObject, `Caught exception inside plugin (${eventObject.plugin}) at phase ${methodName}`);
   }
 
   _idleCallbackErrorHandle(e, callback) {

@@ -1,7 +1,6 @@
-const {spawn} = require('child_process');
 const fs = require('fs');
 const _ = require('lodash');
-const log = require('npmlog');
+const log = require('../utils/logger').child({ __filename });
 const invoke = require('../invoke');
 const InvocationManager = invoke.InvocationManager;
 const ADB = require('./android/ADB');
@@ -16,7 +15,10 @@ const ADBLogcatPlugin = require('../artifacts/log/android/ADBLogcatPlugin');
 const ADBScreencapPlugin = require('../artifacts/screenshot/ADBScreencapPlugin');
 const ADBScreenrecorderPlugin = require('../artifacts/video/ADBScreenrecorderPlugin');
 const AndroidDevicePathBuilder = require('../artifacts/utils/AndroidDevicePathBuilder');
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const sleep = require('../utils/sleep');
+const interruptProcess = require('../utils/interruptProcess');
+const { spawnAndLog } = require('../utils/exec');
 
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
 
@@ -93,28 +95,29 @@ class AndroidDriver extends DeviceDriverBase {
     if (this.instrumentationProcess) {
       const call = DetoxApi.launchMainActivity();
       await this.invocationManager.execute(call);
+
       return this._queryPID(deviceId, bundleId);
     }
 
     const testRunner = await this.adb.getInstrumentationRunner(deviceId, bundleId);
 
-    this.instrumentationProcess = spawn(this.adb.adbBin, [`-s`, `${deviceId}`, `shell`, `am`, `instrument`, `-w`, `-r`, `${args.join(' ')}`, `-e`, `debug`,
-      `false`, testRunner]);
-    log.verbose(this.instrumentationProcess.spawnargs.join(" "));
-    log.verbose('Instrumentation spawned, childProcess.pid: ', this.instrumentationProcess.pid);
-    this.instrumentationProcess.stdout.on('data', function(data) {
-      log.verbose('Instrumentation stdout: ', data.toString());
-    });
-    this.instrumentationProcess.stderr.on('data', function(data) {
-      log.verbose('Instrumentation stderr: ', data.toString());
-    });
+    this.instrumentationProcess = spawnAndLog(this.adb.adbBin,
+      [`-s`, `${deviceId}`, `shell`, `am`, `instrument`, `-w`, `-r`, `${args.join(' ')}`, `-e`, `debug`, `false`, testRunner],
+      { detached: false });
 
-    this.instrumentationProcess.on('close', (code, signal) => {
-      log.verbose(`instrumentationProcess terminated due to receipt of signal ${signal}`);
-      this.terminateInstrumentation();
-    });
+    this.instrumentationProcess.childProcess.on('close', () => this.terminateInstrumentation());
 
-    return this._queryPID(deviceId, bundleId);
+    const appPID = await this._queryPID(deviceId, bundleId);
+    if (isNaN(appPID)) {
+      log.warn(await this.adb.shell(deviceId, 'ps'));
+
+      throw new DetoxRuntimeError({
+        message: `Failed to find PID of the launched bundle: ${bundleId}`,
+        hint: `You might want to check "adb logcat" logs - maybe the app has crashed.`,
+      });
+    }
+
+    return appPID;
   }
 
   async _queryPID(deviceId, bundleId, waitAtStart = true) {
@@ -150,19 +153,19 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async terminate(deviceId, bundleId) {
-    this.terminateInstrumentation();
+    await this.terminateInstrumentation();
     await this.adb.terminate(deviceId, bundleId);
   }
 
-  terminateInstrumentation() {
+  async terminateInstrumentation() {
     if (this.instrumentationProcess) {
-      this.instrumentationProcess.kill();
+      await interruptProcess(this.instrumentationProcess);
       this.instrumentationProcess = null;
     }
   }
 
   async cleanup(deviceId, bundleId) {
-    this.terminateInstrumentation();
+    await this.terminateInstrumentation();
   }
 
   defaultLaunchArgsPrefix() {

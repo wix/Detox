@@ -1,13 +1,12 @@
-const log = require('npmlog');
+const log = require('./logger').child({ __filename });
 
 async function interruptProcess(childProcessPromise, signal = 'SIGINT') {
   const process = childProcessPromise.childProcess;
 
-  log.verbose('interruptProcess', 'sending %s to pid %s (%s)',
-    signal,
-    childProcessPromise.childProcess.pid,
-    process.spawnargs.join(' ')
-  );
+  const pid = childProcessPromise.childProcess.pid;
+  const spawnargs = process.spawnargs.join(' ');
+
+  log.debug({ event: 'KILL', signal, process_pid: pid }, `sending signal ${signal} to process (pid = ${pid}): ${spawnargs}`);
 
   childProcessPromise.childProcess.kill(signal);
   await childProcessPromise.catch(e => {

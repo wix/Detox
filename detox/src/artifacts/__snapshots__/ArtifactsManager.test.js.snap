@@ -3,15 +3,13 @@
 exports[`ArtifactsManager .artifactsApi .requestIdleCallback() should catch errors, report them if callback fails, and move on  1`] = `
 Array [
   Array [
-    "ArtifactsManager",
-    "Caught exception inside plugin (%s) at phase %s",
-    "testPlugin",
-    "onIdleCallback",
-  ],
-  Array [
-    "ArtifactsManager",
-    "",
-    [Error: test onIdleCallback error],
+    Object {
+      "err": [Error: test onIdleCallback error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onIdleCallback",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside plugin (testPlugin) at phase onIdleCallback",
   ],
 ]
 `;
@@ -19,15 +17,13 @@ Array [
 exports[`ArtifactsManager .artifactsApi .requestIdleCallback() should gracefully handle a case when plugin object is not passed and use "unknown" as a name placeholder 1`] = `
 Array [
   Array [
-    "ArtifactsManager",
-    "Caught exception inside plugin (%s) at phase %s",
-    "unknown",
-    "onIdleCallback",
-  ],
-  Array [
-    "ArtifactsManager",
-    "",
-    [Error: test onIdleCallback error],
+    Object {
+      "err": [Error: test onIdleCallback error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onIdleCallback",
+      "plugin": "unknown",
+    },
+    "Caught exception inside plugin (unknown) at phase onIdleCallback",
   ],
 ]
 `;
@@ -35,15 +31,13 @@ Array [
 exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onAfterAll errors 1`] = `
 Array [
   Array [
-    "ArtifactsManager",
-    "Caught exception inside plugin (%s) at phase %s",
-    "testPlugin",
-    "onAfterAll",
-  ],
-  Array [
-    "ArtifactsManager",
-    "",
-    [Error: test onAfterAll error],
+    Object {
+      "err": [Error: test onAfterAll error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onAfterAll",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside plugin (testPlugin) at phase onAfterAll",
   ],
 ]
 `;
@@ -51,15 +45,13 @@ Array [
 exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onAfterEach errors 1`] = `
 Array [
   Array [
-    "ArtifactsManager",
-    "Caught exception inside plugin (%s) at phase %s",
-    "testPlugin",
-    "onAfterEach",
-  ],
-  Array [
-    "ArtifactsManager",
-    "",
-    [Error: test onAfterEach error],
+    Object {
+      "err": [Error: test onAfterEach error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onAfterEach",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside plugin (testPlugin) at phase onAfterEach",
   ],
 ]
 `;
@@ -67,15 +59,13 @@ Array [
 exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onBeforeAll errors 1`] = `
 Array [
   Array [
-    "ArtifactsManager",
-    "Caught exception inside plugin (%s) at phase %s",
-    "testPlugin",
-    "onBeforeAll",
-  ],
-  Array [
-    "ArtifactsManager",
-    "",
-    [Error: test onBeforeAll error],
+    Object {
+      "err": [Error: test onBeforeAll error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onBeforeAll",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside plugin (testPlugin) at phase onBeforeAll",
   ],
 ]
 `;
@@ -83,15 +73,13 @@ Array [
 exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onBeforeEach errors 1`] = `
 Array [
   Array [
-    "ArtifactsManager",
-    "Caught exception inside plugin (%s) at phase %s",
-    "testPlugin",
-    "onBeforeEach",
-  ],
-  Array [
-    "ArtifactsManager",
-    "",
-    [Error: test onBeforeEach error],
+    Object {
+      "err": [Error: test onBeforeEach error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onBeforeEach",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside plugin (testPlugin) at phase onBeforeEach",
   ],
 ]
 `;
@@ -99,15 +87,13 @@ Array [
 exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onBeforeRelaunchApp errors 1`] = `
 Array [
   Array [
-    "ArtifactsManager",
-    "Caught exception inside plugin (%s) at phase %s",
-    "testPlugin",
-    "onBeforeRelaunchApp",
-  ],
-  Array [
-    "ArtifactsManager",
-    "",
-    [Error: test onBeforeRelaunchApp error],
+    Object {
+      "err": [Error: test onBeforeRelaunchApp error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onBeforeRelaunchApp",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside plugin (testPlugin) at phase onBeforeRelaunchApp",
   ],
 ]
 `;
@@ -115,15 +101,13 @@ Array [
 exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onBeforeResetDevice errors 1`] = `
 Array [
   Array [
-    "ArtifactsManager",
-    "Caught exception inside plugin (%s) at phase %s",
-    "testPlugin",
-    "onBeforeResetDevice",
-  ],
-  Array [
-    "ArtifactsManager",
-    "",
-    [Error: test onBeforeResetDevice error],
+    Object {
+      "err": [Error: test onBeforeResetDevice error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onBeforeResetDevice",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside plugin (testPlugin) at phase onBeforeResetDevice",
   ],
 ]
 `;
@@ -131,15 +115,13 @@ Array [
 exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onRelaunchApp errors 1`] = `
 Array [
   Array [
-    "ArtifactsManager",
-    "Caught exception inside plugin (%s) at phase %s",
-    "testPlugin",
-    "onRelaunchApp",
-  ],
-  Array [
-    "ArtifactsManager",
-    "",
-    [Error: test onRelaunchApp error],
+    Object {
+      "err": [Error: test onRelaunchApp error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onRelaunchApp",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside plugin (testPlugin) at phase onRelaunchApp",
   ],
 ]
 `;
@@ -147,15 +129,13 @@ Array [
 exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onResetDevice errors 1`] = `
 Array [
   Array [
-    "ArtifactsManager",
-    "Caught exception inside plugin (%s) at phase %s",
-    "testPlugin",
-    "onResetDevice",
-  ],
-  Array [
-    "ArtifactsManager",
-    "",
-    [Error: test onResetDevice error],
+    Object {
+      "err": [Error: test onResetDevice error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onResetDevice",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside plugin (testPlugin) at phase onResetDevice",
   ],
 ]
 `;
@@ -163,15 +143,13 @@ Array [
 exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onTerminate errors 1`] = `
 Array [
   Array [
-    "ArtifactsManager",
-    "Caught exception inside plugin (%s) at phase %s",
-    "testPlugin",
-    "onTerminate",
-  ],
-  Array [
-    "ArtifactsManager",
-    "",
-    [Error: test onTerminate error],
+    Object {
+      "err": [Error: test onTerminate error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onTerminate",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside plugin (testPlugin) at phase onTerminate",
   ],
 ]
 `;

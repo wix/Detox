@@ -17,7 +17,7 @@ if [ -d "detox/test/artifacts" ]; then
   if [ $JENKINS_CI ]; then
       echo "Jenkins has build in plugin"
   else
-      aws s3 cp ${ARTIFACTS_NAME} s3://detox-artifacts/
+      aws s3 cp ${ARTIFACTS_NAME} s3://detox-artifacts/ --region=us-east-1
   fi
 
   echo "The artifacts archive is available for download at:"
