@@ -1,5 +1,12 @@
 # Change Log
 
+## [8.1.1](https://github.com/wix/detox/tree/8.1.1) (2018-07-26)
+[Full Changelog](https://github.com/wix/detox/compare/8.1.0...8.1.1)
+
+**Merged Pull Requests**
+
+- hotfix: revert log level debug to verbose due to Mocha incompatibility [\#859](https://github.com/wix/detox/pull/859) ([noomorph](https://github.com/noomorph))
+
 ## [8.1.0](https://github.com/wix/detox/tree/8.1.0) (2018-07-26)
 [Full Changelog](https://github.com/wix/detox/compare/8.0.0...8.1.0)
 
@@ -16,7 +23,6 @@
 
 - fix: adds grep fallback for win32 [\#858](https://github.com/wix/detox/pull/858) ([noomorph](https://github.com/noomorph))
 - Printing environment variables before `jest` test command [\#852](https://github.com/wix/detox/pull/852) ([noomorph](https://github.com/noomorph))
-- Add region to s3 upload [\#847](https://github.com/wix/detox/pull/847) ([yershalom](https://github.com/yershalom))
 - Replace ":" with "-" in generated artifacts directories for better filesystem compatibility \(on Win and Mac\) [\#846](https://github.com/wix/detox/pull/846) ([noomorph](https://github.com/noomorph))
 - Make detox.init\(\) stricter - should log error as soon as it happens [\#840](https://github.com/wix/detox/pull/840) ([noomorph](https://github.com/noomorph))
 - Allow execution of post-install scripts on paths with space [\#824](https://github.com/wix/detox/pull/824) ([bltavares](https://github.com/bltavares))
