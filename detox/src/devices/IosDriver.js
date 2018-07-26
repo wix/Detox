@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const log = require('../utils/logger').child({ __filename });
 const DeviceDriverBase = require('./DeviceDriverBase');
 const InvocationManager = require('../invoke').InvocationManager;
 const invoke = require('../invoke');
