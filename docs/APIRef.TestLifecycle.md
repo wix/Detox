@@ -52,7 +52,7 @@ afterEach(async function () {
 ```
 
 ### Teardown
-The cleanup phase should happen after all the tests have finished, can be initiated using `detox.cleanup()`. This is the phase where detox-server shuts down. The simulator will also shut itself down if `--cleanup` flag is added to `detox test`
+The cleanup phase should happen after all the tests have finished, can be initiated using `detox.cleanup()`. This is the phase where detox server shuts down. The simulator will also shut itself down if `--cleanup` flag is added to `detox test`
 
 ```js
 after(async () => {

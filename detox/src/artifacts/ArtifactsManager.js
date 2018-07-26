@@ -1,9 +1,8 @@
 const _ = require('lodash');
 const fs = require('fs-extra');
 const path = require('path');
-const log = require('npmlog');
+const log = require('../utils/logger').child({ __filename });
 const argparse = require('../utils/argparse');
-const logError = require('../utils/logError');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const ArtifactPathBuilder = require('./utils/ArtifactPathBuilder');
 
@@ -24,41 +23,7 @@ class ArtifactsManager {
       artifactsRootDir: argparse.getArgValue('artifacts-location') || 'artifacts',
     });
 
-    this._deviceId = '';
-    this._bundleId = '';
-    this._pid = NaN;
-
     this.artifactsApi = {
-      getDeviceId: () => {
-        if (!this._deviceId) {
-          throw new DetoxRuntimeError({
-            message: 'Detox Artifacts API had no deviceId at the time of calling',
-          });
-        }
-
-        return this._deviceId;
-      },
-
-      getBundleId: () => {
-        if (!this._bundleId) {
-          throw new DetoxRuntimeError({
-            message: 'Detox Artifacts API had no bundleId at the time of calling',
-          });
-        }
-
-        return this._bundleId;
-      },
-
-      getPid: () => {
-        if (isNaN(this._pid)) {
-          throw new DetoxRuntimeError({
-            message: 'Detox Artifacts API had no app PID at the time of calling',
-          });
-        }
-
-        return this._pid;
-      },
-
       preparePathForArtifact: async (artifactName, testSummary) => {
         const artifactPath = this._pathBuilder.buildPathForTestArtifact(artifactName, testSummary);
         const artifactDir = path.dirname(artifactPath);
@@ -135,21 +100,13 @@ class ArtifactsManager {
   }
 
   async onBeforeLaunchApp({ bundleId, deviceId }) {
-    this._bundleId = bundleId;
-    this._deviceId = deviceId;
-    this._pid = NaN;
-
     await this._emit('onBeforeLaunchApp', [{
-      bundleId: this._bundleId,
-      deviceId: this._deviceId,
+      bundleId,
+      deviceId,
     }]);
   }
 
   async onLaunchApp({ bundleId, deviceId, pid }) {
-    this._bundleId = bundleId;
-    this._deviceId = deviceId;
-    this._pid = pid;
-
     await this._emit('onLaunchApp', [{
       bundleId,
       deviceId,
@@ -172,7 +129,6 @@ class ArtifactsManager {
   async onAfterAll() {
     await this._emit('onAfterAll', []);
     await this._idlePromise;
-    log.verbose('ArtifactsManager', 'finalized artifacts successfully');
   }
 
   async onTerminate() {
@@ -180,7 +136,8 @@ class ArtifactsManager {
       return;
     }
 
-    log.info('ArtifactsManager', 'finalizing all artifacts, this can take some time');
+    log.info({ event: 'TERMINATE_START' }, 'finalizing the recorded artifacts, this can take some time...');
+
     await this._emit('onTerminate', []);
     await Promise.all(this._onIdleCallbacks.splice(0).map(this._executeIdleCallback));
     await this._idlePromise;
@@ -188,10 +145,13 @@ class ArtifactsManager {
     await Promise.all(this._activeArtifacts.map(artifact => artifact.discard()));
     await this._idlePromise;
     this._artifactPlugins.splice(0);
-    log.info('ArtifactsManager', 'finalized all artifacts');
+
+    log.info({ event: 'TERMINATE_SUCCESS' }, 'done.');
   }
 
   async _emit(methodName, args) {
+    log.trace(Object.assign({ event: 'LIFECYCLE', fn: methodName }, ...args), `${methodName}`);
+
     await Promise.all(this._artifactPlugins.map(async (plugin) => {
       try {
         await plugin[methodName](...args);
@@ -201,9 +161,9 @@ class ArtifactsManager {
     }));
   }
 
-  _errorHandler(e, { plugin, methodName }) {
-    log.error('ArtifactsManager', 'Caught exception inside plugin (%s) at phase %s', plugin.name || 'unknown', methodName);
-    logError(e, 'ArtifactsManager');
+  _errorHandler(err, { plugin, methodName }) {
+    const eventObject = { event: 'PLUGIN_ERROR', plugin: plugin.name || 'unknown', methodName, err };
+    log.error(eventObject, `Caught exception inside plugin (${eventObject.plugin}) at phase ${methodName}`);
   }
 
   _idleCallbackErrorHandle(e, callback) {

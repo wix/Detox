@@ -46,7 +46,8 @@ Initiating your test suite
 | ---                                           | --- |
 | -h, --help                                    | output usage information |
 | -o, --runner-config \<config\>                | Test runner config file, defaults to 'e2e/mocha.opts' for mocha and 'e2e/config.json' for jest |
-| -l, --loglevel [value]                        | info, debug, verbose, silly, wss |
+| -l, --loglevel [value]                        | Log level: fatal, error, warn, info, debug, trace |
+| --no-color                                    | Disable colors in log output |
 | -c, -configuration \<device config\>          | Select a device configuration from your defined configurations,if not supplied, and there's only one configuration, detox will default to it |
 | -r, --reuse                                   | Reuse existing installed app (do not delete and re-tall) for a faster run. |
 | -u, --cleanup                                 | Shutdown simulator when test is over, useful for CI ipts, to make sure detox exists cleanly with no residue |
@@ -55,12 +56,11 @@ Initiating your test suite
 | --record-logs [failing/all/none]              | Save logs during each test to artifacts directory. Pass "failing" to save logs of failing tests only. The default value is **none**. |
 | --take-screenshots [failing/all/none]         | Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only. The default value is **none**. |
 | --record-videos [failing/all/none]            | Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only. The default value is **none**. |
-| -p, --platform [ios/android]		            | Run platform specific tests. Runs tests with invert grep on `:platform:`, e.g test with substring `:ios:` in its name will not run when passing `--platform android` |
+| -p, --platform [ios/android]                  | Run platform specific tests. Runs tests with invert grep on `:platform:`, e.g test with substring `:ios:` in its name will not run when passing `--platform android` |
 | -H, --headless                                | [Android Only] Launch Emulator in headless mode. Useful when running on CI. |
 | -w, --workers                                 | [iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest) |
-|&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;||
 
-
+> NOTE: such log levels as `verbose`, `silly`, `wss` are deprecated since detox@8.1.0 and will be removed in 9.0.0.
 
 ### build
 Run a command defined in 'configuration.build'
@@ -71,20 +71,23 @@ Run a command defined in 'configuration.build'
 | --- | --- |
 | -h, --help                            |  output usage information |
 | -c, --configuration \<device config\> |  Select a device configuration from your defined configurations,if not supplied, and there's only one configuration, detox will default to it |
-|&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;||
 
 
 ### run-server
-Start a standalone detox server
+
+Start a standalone Detox server
 
 `detox run-server [options]`
 
-| Option | Description |
+| Option                 | Description                                       |
 | --- | --- |
-| -h, --help |  output usage information |
-
+| -p, --port [port]      | Port number (default: 8099)                       |
+| -l, --loglevel [value] | Log level: fatal, error, warn, info, debug, trace |
+| --no-color             | Disable colorful logs                             |
+| -h, --help             | output usage information                          |
 
 ### init
+
 Scaffolds initial E2E test folder structure for a specific test runner
 
 `detox init -r <test-runner-name>`

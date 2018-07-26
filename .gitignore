@@ -212,7 +212,6 @@ detox/ios/DetoxBuild
 Detox.framework.tbz
 Detox-ios-src.tbz
 
-detox-server/lib
 demo-native-ios/Build
 detox/DetoxBuild
 examples/demo-native-ios/Build

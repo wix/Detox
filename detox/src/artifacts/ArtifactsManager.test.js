@@ -6,10 +6,10 @@ describe('ArtifactsManager', () => {
   let proxy;
 
   beforeEach(() => {
-    jest.mock('npmlog');
     jest.mock('fs-extra');
     jest.mock('./utils/ArtifactPathBuilder');
     jest.mock('../utils/argparse');
+    jest.mock('../utils/logger');
 
     proxy = {
       get ArtifactPathBuilder() {
@@ -18,8 +18,8 @@ describe('ArtifactsManager', () => {
       get ArtifactsManager() {
         return require('./ArtifactsManager');
       },
-      get npmlog() {
-        return require('npmlog');
+      get logger() {
+        return require('../utils/logger');
       },
       get fs() {
         return require('fs-extra');
@@ -39,18 +39,6 @@ describe('ArtifactsManager', () => {
       });
 
       artifactsManager = new proxy.ArtifactsManager();
-    });
-
-    it('should provide partially working artifacts api, where .getDeviceId() throws', () => {
-      expect(() => artifactsManager.artifactsApi.getDeviceId()).toThrowErrorMatchingSnapshot();
-    });
-
-    it('should provide partially working artifacts api, where .getBundleId() throws', () => {
-      expect(() => artifactsManager.artifactsApi.getBundleId()).toThrowErrorMatchingSnapshot();
-    });
-
-    it('should provide partially working artifacts api, where .getPid() throws', () => {
-      expect(() => artifactsManager.artifactsApi.getPid()).toThrowErrorMatchingSnapshot();
     });
 
     it('should provide artifacts location to path builder', async () => {
@@ -78,45 +66,6 @@ describe('ArtifactsManager', () => {
 
     it('should get called immediately', () => {
       expect(factory).toHaveBeenCalledWith(artifactsManager.artifactsApi);
-    });
-
-    describe('and the app is about to be launched', function() {
-      beforeEach(async () => {
-        await artifactsManager.onBeforeLaunchApp({
-          deviceId: 'testDeviceId',
-          bundleId: 'testBundleId',
-        });
-      });
-
-      it('(factory) should get called', () => {
-        expect(factory).toHaveBeenCalledWith(artifactsManager.artifactsApi);
-      });
-
-      it('should be able to get device id from artifacts API', () => {
-        expect(artifactsManager.artifactsApi.getDeviceId()).toBe('testDeviceId');
-      });
-
-      it('should be able to get bundle id from artifacts API', () => {
-        expect(artifactsManager.artifactsApi.getBundleId()).toBe('testBundleId');
-      });
-
-      it('still should not be able to get PID from artifacts API', () => {
-        expect(() => artifactsManager.artifactsApi.getPid()).toThrowErrorMatchingSnapshot();
-      });
-
-      describe('and it launched', () => {
-        beforeEach(async () => {
-          await artifactsManager.onLaunchApp({
-            deviceId: 'testDeviceId',
-            bundleId: 'testBundleId',
-            pid: 2018,
-          });
-        });
-
-        it('should be able to get PID from artifacts API', () => {
-          expect(artifactsManager.artifactsApi.getPid()).toBe(2018);
-        });
-      });
     });
   });
 
@@ -242,7 +191,7 @@ describe('ArtifactsManager', () => {
         artifactsApi.requestIdleCallback(callbacks[0], testPlugin); await sleep(0);
         await rejects[0](new Error('test onIdleCallback error'));
 
-        expect(proxy.npmlog.error.mock.calls).toMatchSnapshot();
+        expect(proxy.logger.error.mock.calls).toMatchSnapshot();
 
         artifactsApi.requestIdleCallback(callbacks[1], testPlugin); await sleep(0);
         expect(callbacks[1]).toHaveBeenCalled();
@@ -252,7 +201,7 @@ describe('ArtifactsManager', () => {
         artifactsApi.requestIdleCallback(callbacks[0]); await sleep(0);
         await rejects[0](new Error('test onIdleCallback error'));
 
-        expect(proxy.npmlog.error.mock.calls).toMatchSnapshot();
+        expect(proxy.logger.error.mock.calls).toMatchSnapshot();
 
         artifactsApi.requestIdleCallback(callbacks[1], testPlugin); await sleep(0);
         expect(callbacks[1]).toHaveBeenCalled();
@@ -286,7 +235,7 @@ describe('ArtifactsManager', () => {
             });
 
             await artifactsManager[hookName](argFactory());
-            expect(proxy.npmlog.error.mock.calls).toMatchSnapshot();
+            expect(proxy.logger.error.mock.calls).toMatchSnapshot();
           });
         }
 

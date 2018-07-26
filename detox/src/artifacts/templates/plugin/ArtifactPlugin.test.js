@@ -1,5 +1,5 @@
-jest.mock('npmlog');
-const npmlog = require('npmlog');
+jest.mock('../../../utils/logger');
+const logger = require('../../../utils/logger');
 const ArtifactPlugin = require('./ArtifactPlugin');
 const testSummaries = require('./__mocks__/testSummaries.mock');
 
@@ -14,13 +14,11 @@ describe(ArtifactPlugin, () => {
     plugin = new TestArtifactPlugin({ api });
   });
 
-  it('should have name', () => {
-    expect(plugin.name).toBe(TestArtifactPlugin.name);
-  });
+  it('should have name', () =>
+    expect(plugin.name).toBe(TestArtifactPlugin.name));
 
-  it('should be disabled by default', () => {
-    expect(plugin.enabled).toBe(false);
-  });
+  it('should be disabled by default', () =>
+    expect(plugin.enabled).toBe(false));
 
   describe('when enabled', () => {
     beforeEach(() => {
@@ -30,25 +28,22 @@ describe(ArtifactPlugin, () => {
     describe('when it is disabled with no reason', () => {
       beforeEach(() => plugin.disable());
 
-      it('should gain state .enabled = false', () => {
-        expect(plugin.enabled).toBe(false);
-      });
+      it('should gain state .enabled = false', () =>
+        expect(plugin.enabled).toBe(false));
 
-      it('should not write warnings to log', () => {
-        expect(npmlog.warn.mock.calls.length).toBe(0);
-      });
+      it('should not write warnings to log', () =>
+        expect(logger.warn.mock.calls.length).toBe(0));
     });
 
     describe('if it is disabled with a reason', () => {
       beforeEach(() => plugin.disable('a reason why it is disabled'));
 
-      it('should gain state .enabled = false', () => {
-        expect(plugin.enabled).toBe(false);
-      });
+      it('should gain state .enabled = false', () =>
+        expect(plugin.enabled).toBe(false));
 
       it('should log warning to log with that reason', () => {
-        expect(npmlog.warn.mock.calls.length).toBe(1);
-        expect(npmlog.warn.mock.calls).toMatchSnapshot();
+        expect(logger.warn.mock.calls.length).toBe(1);
+        expect(logger.warn.mock.calls).toMatchSnapshot();
       });
     });
   });
@@ -64,35 +59,54 @@ describe(ArtifactPlugin, () => {
       });
 
       it('should not write any warnings to log', () => {
-        expect(npmlog.warn.mock.calls.length).toBe(0);
+        expect(logger.warn.mock.calls.length).toBe(0);
       });
     });
   });
 
   describe('lifecycle hooks', () => {
-    it('should have .onBeforeLaunchApp', async () =>
+    beforeEach(() => {
+      plugin.context = {
+        deviceId: 'shouldNotBeInExpectSnapshots',
+        shouldNotBeDeletedFromContext: 'extraProperty'
+      };
+    });
+
+    it('should update context on .onBeforeLaunchApp', async () => {
       await expect(plugin.onBeforeLaunchApp({
         deviceId: 'testDeviceId',
         bundleId: 'testBundleId'
-      })).resolves.toBe(void 0));
+      }));
 
-    it('should have .onLaunchApp', async () =>
+      expect(plugin.context).toMatchSnapshot();
+    });
+
+    it('should have .onLaunchApp', async () => {
       await expect(plugin.onLaunchApp({
         deviceId: 'testDeviceId',
         bundleId: 'testBundleId',
         pid: 2018
-      })).resolves.toBe(void 0));
+      }));
 
-    it('should have .onBootDevice', async () =>
+      expect(plugin.context).toMatchSnapshot();
+    });
+
+    it('should have .onBootDevice', async () => {
       await expect(plugin.onBootDevice({
         deviceId: 'testDeviceId',
-        coldBoot: true,
-      })).resolves.toBe(void 0));
+        coldBoot: true
+      }));
 
-    it('should have .onShutdownDevice', async () =>
+      expect(plugin.context).toMatchSnapshot();
+    });
+
+    it('should have .onShutdownDevice', async () => {
       await expect(plugin.onShutdownDevice({
-        deviceId: 'testDeviceId',
-      })).resolves.toBe(void 0));
+        deviceId: 'testDeviceId'
+      }));
+
+      expect(plugin.context).toMatchSnapshot();
+    });
 
     it('should have .onBeforeAll', async () =>
       await expect(plugin.onBeforeAll()).resolves.toBe(void 0));

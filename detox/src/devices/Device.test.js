@@ -16,7 +16,7 @@ describe('Device', () => {
   let sh;
   let Client;
   let client;
-  let npmlog;
+  let logger;
   let logError;
   let AsyncEmitter;
   let onEmitError;
@@ -24,9 +24,9 @@ describe('Device', () => {
 
   beforeEach(async () => {
     jest.mock('fs');
-    jest.mock('npmlog');
+    jest.mock('../utils/logger');
     fs = require('fs');
-    npmlog = require('npmlog');
+    logger = require('../utils/logger');
 
     Device = require('./Device');
 

@@ -13,7 +13,7 @@ describe('AppleSimUtils', () => {
   const bundleId = 'bundle.id';
 
   beforeEach(() => {
-    jest.mock('npmlog');
+    jest.mock('../utils/logger');
     jest.mock('../utils/exec');
     exec = require('../utils/exec');
     jest.mock('../utils/retry');

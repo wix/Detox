@@ -30,7 +30,7 @@ class SimulatorLogPlugin extends LogArtifactPlugin {
   }
 
   _createRecording(readFromBeginning) {
-    const udid = this.api.getDeviceId();
+    const udid = this.context.deviceId;
     const { stdout, stderr } = this.appleSimUtils.getLogsPaths(udid);
 
     return new SimulatorLogRecording({

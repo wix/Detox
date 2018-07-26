@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const log = require('npmlog');
+const log = require('../../../utils/logger').child({ __filename });
 
 /***
  * Almost non-opinionated building block for any artifact type
@@ -11,6 +11,7 @@ const log = require('npmlog');
 class ArtifactPlugin {
   constructor({ api }) {
     this.api = api;
+    this.context = {};
     this.enabled = false;
     this.keepOnlyFailedTestsArtifacts = false;
     this._disableReason = '';
@@ -41,7 +42,12 @@ class ArtifactPlugin {
    * @param {string} event.bundleId - Current bundleId
    * @return {Promise<void>} - when done
    */
-  async onBeforeLaunchApp(event) {}
+  async onBeforeLaunchApp(event) {
+    Object.assign(this.context, {
+      bundleId: event.bundleId,
+      deviceId: event.deviceId,
+    });
+  }
 
   /**
    * Hook that is called inside device.launchApp() and
@@ -56,7 +62,13 @@ class ArtifactPlugin {
    * @param {number} event.pid - Process id of the running app
    * @return {Promise<void>} - when done
    */
-  async onLaunchApp(event) {}
+  async onLaunchApp(event) {
+    Object.assign(this.context, {
+      bundleId: event.bundleId,
+      deviceId: event.deviceId,
+      pid: event.pid,
+   });
+  }
 
   /**
    * Hook that is supposed to be called from device.boot()
@@ -68,7 +80,11 @@ class ArtifactPlugin {
    * @param {boolean} event.coldBoot - true, if the device gets turned on from the shutdown state.
    * @return {Promise<void>} - when done
    */
-  async onBootDevice(event) {}
+  async onBootDevice(event) {
+    Object.assign(this.context, {
+      deviceId: event.deviceId,
+    });
+  }
 
   /**
    * Hook that is supposed to be called from device.shutdown()
@@ -79,7 +95,11 @@ class ArtifactPlugin {
    * @param {string} event.deviceId - Current deviceId
    * @return {Promise<void>} - when done
    */
-  async onShutdownDevice(event) {}
+  async onShutdownDevice(event) {
+    Object.assign(this.context, {
+      deviceId: event.deviceId,
+    });
+  }
 
   /**
    * Hook that is called before any test begins
@@ -142,7 +162,7 @@ class ArtifactPlugin {
 
   _logDisableWarning() {
     if (!this.enabled && this._disableReason) {
-      log.warn('detox-artifacts', 'WARNING! Artifact plugin %s was disabled because %s', this.constructor.name, this._disableReason);
+      log.warn({ event: 'PLUGIN_DISABLED' }, `Artifact plugin ${this.constructor.name} was disabled because ${this._disableReason}`);
     }
   }
 

@@ -20,9 +20,7 @@ class ADBLogcatPlugin extends LogArtifactPlugin {
   }
 
   createTestRecording() {
-    const deviceId = this.api.getDeviceId();
-    const bundleId = this.api.getBundleId();
-    const pid = this.api.getPid(bundleId);
+    const { deviceId, bundleId, pid } = this.context;
 
     return new ADBLogcatRecording({
       adb: this._adb,
