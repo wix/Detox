@@ -29,7 +29,6 @@ function adaptOlderLogLevelName(level) {
 
 function isLogLevelNameDeprecated(level) {
   switch (level) {
-    case 'verbose':
     case 'silly':
     case 'wss':
       return true;

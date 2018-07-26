@@ -13,7 +13,7 @@ program
     '8099'
   )
   .option('-l, --loglevel [value]',
-    'Log level: fatal, error, warn, info, debug, trace', 'info')
+    'Log level: fatal, error, warn, info, verbose, trace', 'info')
   .option(
     '--no-color',
     'Disable colorful logs',
