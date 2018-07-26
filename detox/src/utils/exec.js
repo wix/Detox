@@ -1,8 +1,9 @@
 const _ = require('lodash');
-const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
-const execLogger = require('../utils/logger').child({ __filename });
-const retry = require('../utils/retry');
 const {exec, spawn} = require('child-process-promise');
+const execLogger = require('./logger').child({ __filename });
+const retry = require('./retry');
+const { escape } = require('./pipeCommands');
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
 let _operationCounter = 0;
 
@@ -91,7 +92,7 @@ function _composeCommand(bin, options) {
 
 function spawnAndLog(command, flags, options) {
   const trackingId = _operationCounter++;
-  const cmd = [command, ...flags].join(' ');
+  const cmd = _joinCommandAndFlags(command, flags);
   const log = execLogger.child({ fn: 'spawnAndLog', cmd, trackingId });
 
   const result = spawn(command, flags, {stdio: ['ignore', 'pipe', 'pipe'], detached: true, ...options});
@@ -115,6 +116,16 @@ function spawnAndLog(command, flags, options) {
   }
 
   result.then(onEnd, onEnd);
+  return result;
+}
+
+function _joinCommandAndFlags(command, flags) {
+  let result = command;
+
+  for (const flag of flags.map(String)) {
+    result += ' ' + (flag.indexOf(' ') === -1 ? flag : `"${escape.inQuotedString(flag)}"`);
+  }
+
   return result;
 }
 

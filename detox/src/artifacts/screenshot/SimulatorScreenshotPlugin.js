@@ -12,26 +12,28 @@ class SimulatorScreenshotter extends ScreenshotArtifactPlugin {
     this.appleSimUtils = config.appleSimUtils;
   }
 
-  async onBootDevice({ coldBoot, deviceId }) {
-    if (this.enabled && coldBoot) {
+  async onBootDevice(event) {
+    super.onBootDevice(event);
+
+    if (this.enabled && event.coldBoot) {
       // NOTE: the line below is supposed to prevent an error, which tends to occur
       // when you take a screenshot for the first time on iOS Simulator running
       // in a hidden window mode or on CI. This is why we don't write the screenshot
       // anywhere and ignore an error.
 
-      await this.appleSimUtils.takeScreenshot(deviceId, '/dev/null').catch(_.noop);
+      await this.appleSimUtils.takeScreenshot(event.deviceId, '/dev/null').catch(_.noop);
     }
   }
 
   createTestArtifact() {
-    const { api, appleSimUtils } = this;
+    const { context, appleSimUtils } = this;
     const temporaryFilePath = tempfile('.png');
 
     return new Artifact({
       name: 'SimulatorScreenshot',
 
       async start() {
-        await appleSimUtils.takeScreenshot(api.getDeviceId(), temporaryFilePath);
+        await appleSimUtils.takeScreenshot(context.deviceId, temporaryFilePath);
       },
 
       async save(artifactPath) {
