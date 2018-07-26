@@ -1,11 +1,43 @@
 # Change Log
 
-## [](https://github.com/wix/detox/tree/) (2018-06-27)
-[Full Changelog](https://github.com/wix/detox/compare/8.0.0...)
+## [8.1.0](https://github.com/wix/detox/tree/8.1.0) (2018-07-26)
+[Full Changelog](https://github.com/wix/detox/compare/8.0.0...8.1.0)
+
+**Enhancements**
+
+- After run detox test getting Device.js Unexpected token ... [\#663](https://github.com/wix/detox/issues/663)
+- Streamline Xcode Debug [\#556](https://github.com/wix/detox/issues/556)
+- Add support for test artifacts \(videos and screenshots\) [\#171](https://github.com/wix/detox/issues/171)
 
 **Closed Issues**
 
+- How to build Detox 8.0 on Android [\#857](https://github.com/wix/detox/issues/857)
+- build failes on CI \(app center\) with ` fatal error: 'Firebase.h' file not found` [\#838](https://github.com/wix/detox/issues/838)
+- detox build failes with "ld: library not found for -lDoubleConversion" [\#837](https://github.com/wix/detox/issues/837)
+- Should have functionality of pressing device back button [\#833](https://github.com/wix/detox/issues/833)
+- ADB.pidof\(deviceId, bundleId\) does not work consistently across Android versions [\#831](https://github.com/wix/detox/issues/831)
+- Detox not interacting with simulator  [\#823](https://github.com/wix/detox/issues/823)
+- Cannot launch app on Android \(instrumentationProcess terminated due to receipt of signal SIGTERM\) [\#822](https://github.com/wix/detox/issues/822)
+- Detox tests run so slow that element.tap\(\) interpreted as a longPress\(\) [\#818](https://github.com/wix/detox/issues/818)
+- Detox test failing: cannot hook the emulator [\#817](https://github.com/wix/detox/issues/817)
+- Last detox cli [\#800](https://github.com/wix/detox/issues/800)
 - element.typeText\(\) will fail test when hardware keyboard connected [\#768](https://github.com/wix/detox/issues/768)
+
+**Merged Pull Requests**
+
+- fix: adds grep fallback for win32 [\#858](https://github.com/wix/detox/pull/858) ([noomorph](https://github.com/noomorph))
+- Printing environment variables before `jest` test command [\#852](https://github.com/wix/detox/pull/852) ([noomorph](https://github.com/noomorph))
+- Add region to s3 upload [\#847](https://github.com/wix/detox/pull/847) ([yershalom](https://github.com/yershalom))
+- Replace ":" with "-" in generated artifacts directories for better filesystem compatibility \(on Win and Mac\) [\#846](https://github.com/wix/detox/pull/846) ([noomorph](https://github.com/noomorph))
+- Make detox.init\(\) stricter - should log error as soon as it happens [\#840](https://github.com/wix/detox/pull/840) ([noomorph](https://github.com/noomorph))
+- Resolves \#831 [\#839](https://github.com/wix/detox/pull/839) ([noomorph](https://github.com/noomorph))
+- \[WIP\] Provide queryable console logs in Detox [\#835](https://github.com/wix/detox/pull/835) ([noomorph](https://github.com/noomorph))
+- Allow execution of post-install scripts on paths with space [\#824](https://github.com/wix/detox/pull/824) ([bltavares](https://github.com/bltavares))
+- Bump Lodash dependency to ^4.17.5 [\#812](https://github.com/wix/detox/pull/812) ([noomorph](https://github.com/noomorph))
+- Closes \#805 - and prevents further bugs with older \_.isFunction [\#811](https://github.com/wix/detox/pull/811) ([noomorph](https://github.com/noomorph))
+- Improve dispatch queue idling resource handling [\#806](https://github.com/wix/detox/pull/806) ([LeoNatan](https://github.com/LeoNatan))
+- \[+coverage\] unit tests for ArtifactsManager.js and ArtifactPlugin.js [\#794](https://github.com/wix/detox/pull/794) ([noomorph](https://github.com/noomorph))
+- Follow-up windows changes [\#763](https://github.com/wix/detox/pull/763) ([simonbuchan](https://github.com/simonbuchan))
 
 ## [8.0.0](https://github.com/wix/detox/tree/8.0.0) (2018-06-27)
 [Full Changelog](https://github.com/wix/detox/compare/v8.0.0-alpha.1...8.0.0)
