@@ -596,4 +596,11 @@ describe('Device', () => {
     const actualPath = await launchAndTestBinaryPath('relativePath');
     expect(actualPath).toEqual(path.join(process.cwd(), 'abcdef/123'));
   });
+
+  it(`pressBack() should be called`, async () => {
+    device = validDevice();
+    await device.pressBack();
+
+    expect(device.deviceDriver.pressBack).toHaveBeenCalledWith(device._deviceId);
+  });
 });
