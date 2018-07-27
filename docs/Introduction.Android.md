@@ -60,7 +60,7 @@ dependencies {
 }
 ```
 
-And in `android/build.gradle` you need to add this under `allprojects > repositories`:
+And in `android/build.gradle` you need to add the `google()` repo under both `allprojects > repositories` and `buildscript > repositories`. In context, it looks something like the below. Remember you need to add it twice, once to each section.
 
 ```gradle
 buildscript {
