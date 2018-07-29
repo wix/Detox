@@ -46,7 +46,7 @@ describe('index', () => {
     }
 
     expect(exception).toBeDefined();
-    expect(logger.error).toHaveBeenCalledWith({ err: exception }, exception);
+    expect(logger.error).toHaveBeenCalledWith({ event: 'DETOX_INIT_ERROR' }, '\n', exception);
   });
 
   it(`throws if there is no devices in config`, async () => {

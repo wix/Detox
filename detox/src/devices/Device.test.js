@@ -141,15 +141,18 @@ describe('Device', () => {
 
     await device.launchApp();
 
-    const eventObject = {
-      deviceId: device._deviceId,
-      bundleId: device._bundleId,
-      pid: 2,
+    const extraLoggerFields = {
+      event: 'DEVICE_EMIT_EVENT_ERROR',
+      eventName: 'launchApp',
     };
 
-    expect(logger.error).toHaveBeenCalledWith(`Caught an exception in: device.emit("launchApp", {"pid":2})`);
-    expect(logger.error).toHaveBeenCalledWith({ err: errorSync }, errorSync);
-    expect(logger.error).toHaveBeenCalledWith({ err: errorAsync }, errorAsync);
+    expect(logger.error).toHaveBeenCalledWith(
+      extraLoggerFields, `Caught an exception in: device.emit("launchApp", {"pid":2})\n\n`, errorSync
+    );
+
+    expect(logger.error).toHaveBeenCalledWith(
+      extraLoggerFields, `Caught an exception in: device.emit("launchApp", {"pid":2})\n\n`, errorAsync
+    );
   });
 
   it(`relaunchApp()`, async () => {
