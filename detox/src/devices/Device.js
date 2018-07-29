@@ -1,10 +1,9 @@
+const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
-const _ = require('lodash');
 const log = require('../utils/logger').child({ __filename });
 const argparse = require('../utils/argparse');
 const debug = require('../utils/debug'); //debug utils, leave here even if unused
-const logError = require('../utils/logError');
 
 class Device {
 
@@ -26,9 +25,10 @@ class Device {
   async emit(eventName, eventObj) {
     const fire = async (fn) => fn(eventObj);
     const logEmitError = (err) => {
-      const errorLogger = log.child({ event: 'DEVICE_EMIT_EVENT_ERROR', eventName });
-      errorLogger.error(`Caught an exception in: device.emit("${eventName}", ${JSON.stringify(eventObj)})`);
-      logError(errorLogger, err);
+      log.error(
+        { event: 'DEVICE_EMIT_EVENT_ERROR', eventName },
+        `Caught an exception in: device.emit("${eventName}", ${JSON.stringify(eventObj)})\n\n`, err
+      );
     };
 
     await Promise.all(this._listeners[eventName].map(fn => fire(fn).catch(logEmitError)));
