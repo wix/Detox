@@ -57,6 +57,11 @@ class AndroidDriver extends DeviceDriverBase {
     await this.adb.install(deviceId, this.getTestApkPath(binaryPath));
   }
 
+  async pressBack(deviceId) {
+    const call = UIDevice.pressBack(invoke.callDirectly(UIAutomatorAPI.uiDevice()));
+    await this.invocationManager.execute(call);
+  }
+
   getTestApkPath(originalApkPath) {
     const testApkPath = APKPath.getTestApkPath(originalApkPath);
 
@@ -216,6 +221,7 @@ class AndroidDriver extends DeviceDriverBase {
     const call = EspressoDetoxApi.changeOrientation(orientationMapping[orientation]);
     await this.invocationManager.execute(call);
   }
+
 }
 
 module.exports = AndroidDriver;

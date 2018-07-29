@@ -30,9 +30,6 @@ describe('Device', () => {
 
     Device = require('./Device');
 
-    jest.mock('../utils/logError');
-    logError = require('../utils/logError');
-
     jest.mock('../utils/sh');
     sh = require('../utils/sh');
     sh.cp = jest.fn();
@@ -580,5 +577,12 @@ describe('Device', () => {
   it(`should accept relative path for binary`, async () => {
     const actualPath = await launchAndTestBinaryPath('relativePath');
     expect(actualPath).toEqual(path.join(process.cwd(), 'abcdef/123'));
+  });
+
+  it(`pressBack() should be called`, async () => {
+    device = validDevice();
+    await device.pressBack();
+
+    expect(device.deviceDriver.pressBack).toHaveBeenCalledWith(device._deviceId);
   });
 });

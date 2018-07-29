@@ -15,7 +15,7 @@ exports[`constructSafeFilename should throw exception when non-trimmable prefix 
 `;
 
 exports[`constructSafeFilename should throw if no arguments passed 1`] = `
-"DetoxRuntimeError: no filename was given to constructSafeFilename()
+"DetoxRuntimeError: no trimmable filename was given to constructSafeFilename(prefix, trimmable, suffix)
 
 the arguments were: {
   \\"prefix\\": \\"\\",
@@ -25,7 +25,7 @@ the arguments were: {
 `;
 
 exports[`constructSafeFilename should throw if no arguments passed 2`] = `
-"DetoxRuntimeError: no filename was given to constructSafeFilename()
+"DetoxRuntimeError: no trimmable filename was given to constructSafeFilename(prefix, trimmable, suffix)
 
 the arguments were: {
   \\"prefix\\": \\"\\",

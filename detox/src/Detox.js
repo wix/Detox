@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const util = require('util');
 const logger = require('./utils/logger');
 const log = require('./utils/logger').child({ __filename });
 const Device = require('./devices/Device');
@@ -14,7 +15,6 @@ const DetoxServer = require('./server/DetoxServer');
 const URL = require('url').URL;
 const ArtifactsManager = require('./artifacts/ArtifactsManager');
 const AsyncEmitter = require('./utils/AsyncEmitter');
-const logError = require('./utils/logError');
 
 const DEVICE_CLASSES = {
   'ios.simulator': SimulatorDriver,
@@ -139,7 +139,7 @@ class Detox {
         hint: 'Maybe you are still using an old undocumented signature detox.beforeEach(string, string, string) in init.js ?' +
           '\nSee the article for the guidance: ' +
           'https://github.com/wix/detox/blob/master/docs/APIRef.TestLifecycle.md',
-        debugInfo: `testSummary was: ${JSON.stringify(testSummary, null, 2)}`,
+        debugInfo: `testSummary was: ${util.inspect(testSummary)}`,
       });
     }
 
@@ -176,8 +176,11 @@ class Detox {
 }
 
 function _onEmitterError({ error, eventName, eventObj }) {
-  log.error('detox', 'emit("%s", %j) error', eventName, eventObj);
-  logError(error, 'detox');
+  log.error(
+    { event: 'DETOX_EMITTER_ERROR', eventName },
+    `Caught an exception in: emitter.emit("${eventName}", ${JSON.stringify(eventObj)})\n\n`,
+    error
+  );
 }
 
 module.exports = Detox;

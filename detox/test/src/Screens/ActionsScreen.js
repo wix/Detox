@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
   Text,
+  BackHandler,
   View,
   TouchableOpacity,
   TextInput,
@@ -17,12 +18,18 @@ export default class ActionsScreen extends Component {
       typeText: '',
       clearText: 'some stuff here..',
       numTaps: 0,
-      isRefreshing: false
+      isRefreshing: false,
+      backPressed: false,
     };
+  }
+
+  componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.backHandler.bind(this));
   }
 
   render() {
     if (this.state.greeting) return this.renderAfterButton();
+    if (this.state.backPressed) return this.renderPopupBackPressedDetected();
     return (
       <View testID='View7990' style={{ flex: 1, paddingTop: 40, justifyContent: 'flex-start' }}>
 
@@ -86,7 +93,6 @@ export default class ActionsScreen extends Component {
           }>
           </ScrollView>
         </View>
-
       </View>
     );
   }
@@ -96,6 +102,16 @@ export default class ActionsScreen extends Component {
       <View style={{ flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center' }}>
         <Text style={{ fontSize: 25 }}>
           {this.state.greeting}!!!
+        </Text>
+      </View>
+    );
+  }
+
+  renderPopupBackPressedDetected() {
+    return (
+      <View style={{ flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ fontSize: 25 }}>
+          Back pressed !
         </Text>
       </View>
     );
@@ -165,6 +181,11 @@ export default class ActionsScreen extends Component {
     }, 500);
   }
 
-
+  backHandler() {
+    this.setState({
+      backPressed: true
+    });
+    return true;
+  };
 
 }

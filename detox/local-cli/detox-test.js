@@ -16,7 +16,7 @@ program
   .option('-s, --specs [relativePath]',
     `Root of test folder`)
   .option('-l, --loglevel [value]',
-    'Log level: fatal, error, warn, info, debug, trace')
+    'Log level: fatal, error, warn, info, verbose, trace')
   .option('--no-color',
     'Disable colors in log output')
   .option('-c, --configuration [device configuration]',

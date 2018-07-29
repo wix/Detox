@@ -221,3 +221,4 @@ yarn.lock
 detox/ios_src
 package-lock.json
 /detox/src/devices/detox/notifications/notification.json
+detox/test/artifacts

@@ -46,7 +46,7 @@ Initiating your test suite
 | ---                                           | --- |
 | -h, --help                                    | output usage information |
 | -o, --runner-config \<config\>                | Test runner config file, defaults to 'e2e/mocha.opts' for mocha and 'e2e/config.json' for jest |
-| -l, --loglevel [value]                        | Log level: fatal, error, warn, info, debug, trace |
+| -l, --loglevel [value]                        | Log level: fatal, error, warn, info, verbose, trace |
 | --no-color                                    | Disable colors in log output |
 | -c, -configuration \<device config\>          | Select a device configuration from your defined configurations,if not supplied, and there's only one configuration, detox will default to it |
 | -r, --reuse                                   | Reuse existing installed app (do not delete and re-tall) for a faster run. |
@@ -60,7 +60,7 @@ Initiating your test suite
 | -H, --headless                                | [Android Only] Launch Emulator in headless mode. Useful when running on CI. |
 | -w, --workers                                 | [iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest) |
 
-> NOTE: such log levels as `verbose`, `silly`, `wss` are deprecated since detox@8.1.0 and will be removed in 9.0.0.
+> NOTE: such log levels as `silly` and `wss` are deprecated since detox@8.1.0 and will be removed in 9.0.0.
 
 ### build
 Run a command defined in 'configuration.build'
@@ -79,12 +79,12 @@ Start a standalone Detox server
 
 `detox run-server [options]`
 
-| Option                 | Description                                       |
+| Option                 | Description                                         |
 | --- | --- |
-| -p, --port [port]      | Port number (default: 8099)                       |
-| -l, --loglevel [value] | Log level: fatal, error, warn, info, debug, trace |
-| --no-color             | Disable colorful logs                             |
-| -h, --help             | output usage information                          |
+| -p, --port [port]      | Port number (default: 8099)                         |
+| -l, --loglevel [value] | Log level: fatal, error, warn, info, verbose, trace |
+| --no-color             | Disable colorful logs                               |
+| -h, --help             | output usage information                            |
 
 ### init
 
