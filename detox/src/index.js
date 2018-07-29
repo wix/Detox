@@ -53,7 +53,7 @@ async function init(config, params) {
   try {
     await initializeDetox(config, params);
   } catch (err) {
-    log.error({ err }, err);
+    log.error({ event: 'DETOX_INIT_ERROR' }, '\n', err);
     await cleanup();
 
     detox = null;

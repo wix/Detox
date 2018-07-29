@@ -25,9 +25,10 @@ class Device {
   async emit(eventName, eventObj) {
     const fire = async (fn) => fn(eventObj);
     const logEmitError = (err) => {
-      const errorLogger = log.child({ event: 'DEVICE_EMIT_EVENT_ERROR', eventName });
-      errorLogger.error(`Caught an exception in: device.emit("${eventName}", ${JSON.stringify(eventObj)})`);
-      log.error({ err }, err);
+      log.error(
+        { event: 'DEVICE_EMIT_EVENT_ERROR', eventName },
+        `Caught an exception in: device.emit("${eventName}", ${JSON.stringify(eventObj)})\n\n`, err
+      );
     };
 
     await Promise.all(this._listeners[eventName].map(fn => fire(fn).catch(logEmitError)));
