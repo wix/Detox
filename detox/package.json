@@ -58,6 +58,7 @@
     "node": ">=8.3.0"
   },
   "jest": {
+    "testEnvironment": "node",
     "roots": [
       "node_modules",
       "src"
