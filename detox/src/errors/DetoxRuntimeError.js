@@ -8,7 +8,7 @@ class DetoxRuntimeError extends Error {
   }
 
   toString() {
-    return super.toString().replace(/^Error: /, '');
+    return super.toString().replace(/^Error: /, '\n');
   }
 }
 
