@@ -8,5 +8,4 @@ exemptLabels: []
 lockLabel: false
 
 # Comment to post before locking. Set to `false` to disable
-lockComment: >
-  This thread has been automatically locked to prevent bumping of old threads. Instead, if you believe the issue still reproduces, please open a new issue and provide all the required information.
+lockComment: false
