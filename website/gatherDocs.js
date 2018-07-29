@@ -88,17 +88,7 @@ function generateAndCopyDocusaurusVersion(tempDir, version) {
   );
 }
 
-async function cleanUp(tempDir) {
-  console.log('Cleanup temporary clone');
-  await fs.remove(tempDir);
-}
-
-(async function() {
-  const versions = await getVersions();
-  await cleanupExistingVersions();
-
-  fs.writeFileSync('./versions.json', JSON.stringify(versions), 'utf8');
-  const tempDir = fs.mkdtempSync('detox-documentation-generation');
+async function generateDocumentation(versions, tempDir) {
   const repo = await git.Clone(REPO_URL, tempDir);
 
   for (let version of versions) {
@@ -115,5 +105,43 @@ async function cleanUp(tempDir) {
     repo.cleanup(tempDir);
     console.log(`Done with ${version}\n\n`);
   }
-  await cleanUp(tempDir);
+}
+
+async function generate(versions, currentAttempt = 1) {
+  const maxAttempts = 3;
+  let success;
+  const tempDir = fs.mkdtempSync('detox-documentation-generation');
+  try {
+    await generateDocumentation(versions, tempDir);
+    success = true;
+  } catch (e) {
+    console.log('Error while generating documentation', e);
+    success = false;
+  } finally {
+    await cleanUp(tempDir);
+  }
+
+  if (success) {
+    return;
+  }
+
+  if (currentAttempt < maxAttempts) {
+    await generate(versions, currentAttempt + 1);
+  } else {
+    console.error(`Generation failed ${maxAttempts} times, there seems to be a real problem, please file an issue`);
+    process.exit(1);
+  }
+}
+
+async function cleanUp(tempDir) {
+  console.log('Cleanup temporary clone');
+  await fs.remove(tempDir);
+}
+
+(async function() {
+  const versions = await getVersions();
+  await cleanupExistingVersions();
+  fs.writeFileSync('./versions.json', JSON.stringify(versions), 'utf8');
+
+  await generate(versions);
 })();

@@ -11,8 +11,8 @@
     "e2e:android": "detox test --configuration android.emu.release --take-screenshots all --record-videos none --record-logs all --loglevel verbose",
     "build:ios": "detox build --configuration ios.sim.release",
     "build:android": "detox build --configuration android.emu.release",
-    "verify-artifacts:ios": "jest ./scripts/verify_artifacts_are_not_missing.ios.test.js",
-    "verify-artifacts:android": "jest ./scripts/verify_artifacts_are_not_missing.android.test.js"
+    "verify-artifacts:ios": "jest ./scripts/verify_artifacts_are_not_missing.ios.test.js --testEnvironment node",
+    "verify-artifacts:android": "jest ./scripts/verify_artifacts_are_not_missing.android.test.js --testEnvironment node"
   },
   "dependencies": {
     "react": "16.0.0",

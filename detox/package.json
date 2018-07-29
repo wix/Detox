@@ -58,6 +58,8 @@
     "node": ">=8.3.0"
   },
   "jest": {
+    "testEnvironment": "node",
+    "testURL": "http://localhost/",
     "roots": [
       "node_modules",
       "src"

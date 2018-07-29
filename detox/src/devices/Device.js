@@ -249,6 +249,10 @@ class Device {
     await this.deviceDriver.cleanup(this._deviceId, this._bundleId);
   }
 
+  async pressBack() {
+    await this.deviceDriver.pressBack(this._deviceId);
+  }
+
   _defaultLaunchArgs() {
     return {
       'detoxServer': this._sessionConfig.server,
