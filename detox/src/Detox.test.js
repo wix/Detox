@@ -63,19 +63,6 @@ describe('Detox', () => {
     jest.mock('./utils/logger');
   });
 
-  it(`should use an AsyncEmitter emitter which logs errors in listeners`, async () => {
-    const log = require('./utils/logger');
-    Detox = require('./Detox');
-
-    const { _emitter: emitter } = new Detox({deviceConfig: validDeviceConfig});
-    const error = new Error();
-
-    emitter.on('bootDevice', () => { throw error; })
-    await emitter.emit('bootDevice', { deviceId: '', coldBoot: true });
-
-    expect(log.error.mock.calls).toMatchSnapshot();
-  });
-
   it(`Passing --cleanup should shutdown the currently running device`, async () => {
     process.env.cleanup = true;
     Detox = require('./Detox');

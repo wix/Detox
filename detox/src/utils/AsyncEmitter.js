@@ -16,6 +16,10 @@ class AsyncEmitter {
 
   async emit(eventName, eventObj) {
     const eventListeners = this._listeners[eventName];
+    if (_.isEmpty(eventListeners)) {
+      return;
+    }
+
     const fire = async (fn) => fn(eventObj);
     const onError = (error) => this._onError({ error, eventName, eventObj });
 
@@ -23,6 +27,11 @@ class AsyncEmitter {
   }
 
   off(eventName, callback) {
+    if (arguments.length === 0) {
+      this._listeners = {};
+      return;
+    }
+
     if (this._listeners.hasOwnProperty(eventName)) {
       _.pull(this._listeners[eventName], callback);
     } else {
@@ -37,7 +46,6 @@ class AsyncEmitter {
       throw new Error('AsyncEmitter.on() failed to subscribe to a non-existent event: ' + eventName);
     }
   }
-
 }
 
 module.exports = AsyncEmitter;

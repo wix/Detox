@@ -43,18 +43,3 @@ testSummary was: {
   \\"status\\": \\"incorrect status\\"
 }"
 `;
-
-exports[`Detox should use an AsyncEmitter emitter which logs errors in listeners 1`] = `
-Array [
-  Array [
-    Object {
-      "event": "DETOX_EMITTER_ERROR",
-      "eventName": "bootDevice",
-    },
-    "Caught an exception in: emitter.emit(\\"bootDevice\\", {\\"deviceId\\":\\"\\",\\"coldBoot\\":true})
-
-",
-    [Error],
-  ],
-]
-`;

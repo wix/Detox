@@ -6,10 +6,8 @@ const argparse = require('../utils/argparse');
 const debug = require('../utils/debug'); //debug utils, leave here even if unused
 
 class Device {
-
-  constructor({ deviceConfig, deviceDriver, emitter, sessionConfig }) {
+  constructor({ deviceConfig, deviceDriver, sessionConfig }) {
     this._deviceConfig = deviceConfig;
-    this._emitter = emitter;
     this._sessionConfig = sessionConfig;
     this._processes = {};
     this.deviceDriver = deviceDriver;
@@ -75,19 +73,13 @@ class Device {
     }
 
     const _bundleId = bundleId || this._bundleId;
-
-    await this._emitter.emit('beforeLaunchApp', {
-      deviceId: this._deviceId,
-      bundleId: _bundleId,
-    });
-
     if (this._isAppInBackground(params, _bundleId)) {
       if (hasPayload) {
         await this.deviceDriver.deliverPayload({...params, delayPayload: true});
       }
     }
 
-    const processId = await this.deviceDriver.launch(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs));
+    const processId = await this.deviceDriver.launchApp(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs));
     this._processes[_bundleId] = processId;
 
     await this.deviceDriver.waitUntilReady();
@@ -99,12 +91,6 @@ class Device {
     if(params.detoxUserActivityDataURL) {
       await this.deviceDriver.cleanupRandomDirectory(params.detoxUserActivityDataURL);
     }
-
-    await this._emitter.emit('launchApp', {
-      deviceId: this._deviceId,
-      bundleId: _bundleId,
-      pid: processId,
-    });
   }
 
   _isAppInBackground(params, _bundleId) {

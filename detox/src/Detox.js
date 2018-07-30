@@ -29,11 +29,6 @@ class Detox {
     this.userSession = deviceConfig.session || session;
     this.client = null;
     this.device = null;
-    this._emitter = new AsyncEmitter({
-      events: ['beforeLaunchApp', 'launchApp', 'bootDevice', 'shutdownDevice'],
-      onError: _onEmitterError,
-    });
-
     this.artifactsManager = new ArtifactsManager();
   }
 
@@ -55,24 +50,21 @@ class Detox {
     this.client = new Client(sessionConfig);
     await this.client.connect();
 
-    const deviceClass = DEVICE_CLASSES[this.deviceConfig.type];
-
-    if (!deviceClass) {
+    const DeviceDriverClass = DEVICE_CLASSES[this.deviceConfig.type];
+    if (!DeviceDriverClass) {
       throw new Error(`'${this.deviceConfig.type}' is not supported`);
     }
 
-    const deviceDriver = new deviceClass({
+    const deviceDriver = new DeviceDriverClass({
       client: this.client,
-      emitter: this._emitter,
     });
 
-    this.artifactsManager.subscribeToDetoxEvents(this._emitter);
+    this.artifactsManager.subscribeToDeviceEvents(deviceDriver);
     this.artifactsManager.registerArtifactPlugins(deviceDriver.declareArtifactPlugins());
 
     this.device = new Device({
       deviceConfig: this.deviceConfig,
       deviceDriver,
-      emitter: this._emitter,
       sessionConfig,
     });
 
@@ -92,8 +84,6 @@ class Detox {
     if (this.client) {
       await this.client.cleanup();
     }
-
-    this.artifactsManager.unsubscribeFromDetoxEvents(this._emitter);
 
     if (this.device) {
       await this.device._cleanup();
@@ -173,14 +163,6 @@ class Detox {
 
     return session;
   }
-}
-
-function _onEmitterError({ error, eventName, eventObj }) {
-  log.error(
-    { event: 'DETOX_EMITTER_ERROR', eventName },
-    `Caught an exception in: emitter.emit("${eventName}", ${JSON.stringify(eventObj)})\n\n`,
-    error
-  );
 }
 
 module.exports = Detox;

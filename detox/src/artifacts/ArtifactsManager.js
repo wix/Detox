@@ -70,18 +70,11 @@ class ArtifactsManager {
     this._artifactPlugins = artifactPluginsFactories.map(factory => factory(api));
   }
 
-  subscribeToDetoxEvents(emitter) {
-    emitter.on('bootDevice', this.onBootDevice);
-    emitter.on('shutdownDevice', this.onShutdownDevice);
-    emitter.on('beforeLaunchApp', this.onBeforeLaunchApp);
-    emitter.on('launchApp', this.onLaunchApp);
-  }
-
-  unsubscribeFromDetoxEvents(emitter) {
-    emitter.off('launchApp', this.onLaunchApp);
-    emitter.off('beforeLaunchApp', this.onBeforeLaunchApp);
-    emitter.off('shutdownDevice', this.onShutdownDevice);
-    emitter.off('bootDevice', this.onBootDevice);
+  subscribeToDeviceEvents(deviceEmitter) {
+    deviceEmitter.on('bootDevice', this.onBootDevice);
+    deviceEmitter.on('shutdownDevice', this.onShutdownDevice);
+    deviceEmitter.on('beforeLaunchApp', this.onBeforeLaunchApp);
+    deviceEmitter.on('launchApp', this.onLaunchApp);
   }
 
   async onBootDevice({ coldBoot, deviceId }) {

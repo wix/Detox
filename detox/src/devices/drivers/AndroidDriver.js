@@ -86,29 +86,18 @@ class AndroidDriver extends DeviceDriverBase {
     }
   }
 
-  async launch(deviceId, bundleId, launchArgs) {
-    const args = [];
-    _.forEach(launchArgs, (value, key) => {
-      args.push(`${key} ${value}`);
-    });
+  async launchApp(deviceId, bundleId, launchArgs) {
+    await this.emitter.emit('beforeLaunchApp', { deviceId, bundleId, launchArgs });
 
-    if (this.instrumentationProcess) {
-      const call = DetoxApi.launchMainActivity();
-      await this.invocationManager.execute(call);
-
-      return this._queryPID(deviceId, bundleId);
+    if (!this.instrumentationProcess) {
+      await this._launchInstrumentationProcess(deviceId, bundleId, launchArgs);
+    } else {
+      await this.invocationManager.execute(DetoxApi.launchMainActivity());
     }
 
-    const testRunner = await this.adb.getInstrumentationRunner(deviceId, bundleId);
+    const pid = await this._queryPID(deviceId, bundleId);
 
-    this.instrumentationProcess = spawnAndLog(this.adb.adbBin,
-      [`-s`, `${deviceId}`, `shell`, `am`, `instrument`, `-w`, `-r`, `${args.join(' ')}`, `-e`, `debug`, `false`, testRunner],
-      { detached: false });
-
-    this.instrumentationProcess.childProcess.on('close', () => this.terminateInstrumentation());
-
-    const appPID = await this._queryPID(deviceId, bundleId);
-    if (isNaN(appPID)) {
+    if (isNaN(pid)) {
       log.warn(await this.adb.shell(deviceId, 'ps'));
 
       throw new DetoxRuntimeError({
@@ -117,7 +106,22 @@ class AndroidDriver extends DeviceDriverBase {
       });
     }
 
-    return appPID;
+    await this.emitter.emit('launchApp', { deviceId, bundleId, launchArgs, pid });
+    return pid;
+  }
+
+  async _launchInstrumentationProcess(deviceId, bundleId, launchArgs) {
+    const testRunner = await this.adb.getInstrumentationRunner(deviceId, bundleId);
+    const args = [];
+    _.forEach(launchArgs, (value, key) => {
+      args.push(`${key} ${value}`);
+    });
+
+    this.instrumentationProcess = spawnAndLog(this.adb.adbBin,
+      [`-s`, `${deviceId}`, `shell`, `am`, `instrument`, `-w`, `-r`, `${args.join(' ')}`, `-e`, `debug`, `false`, testRunner],
+      { detached: false });
+
+    this.instrumentationProcess.childProcess.on('close', () => this._terminateInstrumentation());
   }
 
   async _queryPID(deviceId, bundleId, waitAtStart = true) {
@@ -153,11 +157,11 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async terminate(deviceId, bundleId) {
-    await this.terminateInstrumentation();
+    await this._terminateInstrumentation();
     await this.adb.terminate(deviceId, bundleId);
   }
 
-  async terminateInstrumentation() {
+  async _terminateInstrumentation() {
     if (this.instrumentationProcess) {
       await interruptProcess(this.instrumentationProcess);
       this.instrumentationProcess = null;
@@ -165,7 +169,8 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async cleanup(deviceId, bundleId) {
-    await this.terminateInstrumentation();
+    await super.cleanup(deviceId, bundleId);
+    await this._terminateInstrumentation();
   }
 
   defaultLaunchArgsPrefix() {

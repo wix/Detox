@@ -18,9 +18,6 @@ describe('Device', () => {
   let client;
   let logger;
   let logError;
-  let AsyncEmitter;
-  let onEmitError;
-  let asyncEmitter;
 
   beforeEach(async () => {
     jest.mock('fs');
@@ -42,20 +39,9 @@ describe('Device', () => {
     DeviceDriverBase = require('./drivers/DeviceDriverBase');
     SimulatorDriver = require('./drivers/SimulatorDriver');
     Client = require('../client/Client');
-    AsyncEmitter = require('../utils/AsyncEmitter');
-    asyncEmitter = new AsyncEmitter({
-      events: [
-        'bootDevice',
-        'shutdownDevice',
-        'beforeLaunchApp',
-        'launchApp',
-      ],
-      onError: (onEmitError = jest.fn()),
-    });
-
     client = new Client(validScheme.session);
-    await client.connect();
 
+    await client.connect();
   });
 
   function schemeDevice(scheme, configuration) {
@@ -63,7 +49,6 @@ describe('Device', () => {
       deviceConfig: scheme.configurations[configuration],
       deviceDriver: new DeviceDriverBase(client),
       sessionConfig: scheme.session,
-      emitter: asyncEmitter,
     });
 
     fs.existsSync.mockReturnValue(true);
@@ -109,37 +94,9 @@ describe('Device', () => {
 
     await device.launchApp();
 
-    expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
+    expect(device.deviceDriver.launchApp).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
       {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"});
-  });
-
-  it('launchApp() should emit \'launchApp\' event for async listeners and wait for them', async () => {
-    device = validDevice();
-    device.deviceDriver.launch.mockReturnValue(1);
-
-    const log = [];
-    const onLaunchApp = jest.fn().mockImplementation(() => {
-      return new Promise(process.nextTick).then(() => {
-        log.push('listener.launchApp.end');
-      })
-    });
-
-    asyncEmitter.on('launchApp', onLaunchApp);
-    await device.launchApp().then(() => {
-      log.push('device.launchApp.end');
-    });
-
-    expect(onLaunchApp).toHaveBeenCalledWith({
-      deviceId: device._deviceId,
-      bundleId: device._bundleId,
-      pid: 1,
-    });
-
-    expect(log).toEqual([
-      'listener.launchApp.end',
-      'device.launchApp.end'
-    ]);
   });
 
   it(`relaunchApp()`, async () => {
@@ -148,7 +105,7 @@ describe('Device', () => {
     await device.relaunchApp();
 
     expect(device.deviceDriver.terminate).toHaveBeenCalled();
-    expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
+    expect(device.deviceDriver.launchApp).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
       {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"});
   });
@@ -185,7 +142,7 @@ describe('Device', () => {
 
     expect(device.deviceDriver.uninstallApp).toHaveBeenCalled();
     expect(device.deviceDriver.installApp).toHaveBeenCalled();
-    expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
+    expect(device.deviceDriver.launchApp).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
       {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"});
   });
@@ -199,7 +156,7 @@ describe('Device', () => {
 
     expect(device.deviceDriver.uninstallApp).not.toHaveBeenCalled();
     expect(device.deviceDriver.installApp).not.toHaveBeenCalled();
-    expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
+    expect(device.deviceDriver.launchApp).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
       {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"});
   });
@@ -208,7 +165,7 @@ describe('Device', () => {
     device = await validDevice();
     await device.relaunchApp({url: `scheme://some.url`});
 
-    expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
+    expect(device.deviceDriver.launchApp).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
       {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-detoxURLOverride": "scheme://some.url"});
   });
@@ -217,7 +174,7 @@ describe('Device', () => {
     device = await validDevice();
     await device.relaunchApp({url: `scheme://some.url`, sourceApp: 'sourceAppBundleId'});
 
-    expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
+    expect(device.deviceDriver.launchApp).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
       {
         "-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-detoxURLOverride": "scheme://some.url", "-detoxSourceAppOverride":
@@ -232,7 +189,7 @@ describe('Device', () => {
 
     await device.relaunchApp({userNotification: 'json'});
 
-    expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
+    expect(device.deviceDriver.launchApp).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
       {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-detoxUserNotificationDataURL": "url"});
   });
@@ -260,7 +217,7 @@ describe('Device', () => {
 
     await device.launchApp({launchArgs: {arg1: "1", arg2: 2}});
 
-    expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
+    expect(device.deviceDriver.launchApp).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
       {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-arg1": "1", "-arg2": 2});
   });
@@ -428,7 +385,6 @@ describe('Device', () => {
       deviceConfig: invalidDeviceNoBinary.configurations['ios.sim.release'],
       deviceDriver: new SimulatorDriver(client),
       sessionConfig: validScheme.session,
-      emitter: asyncEmitter,
     })).toThrowErrorMatchingSnapshot();
   });
 
@@ -437,7 +393,6 @@ describe('Device', () => {
       deviceConfig: invalidDeviceNoDeviceName.configurations['ios.sim.release'],
       deviceDriver: new SimulatorDriver(client),
       sessionConfig: validScheme.session,
-      emitter: asyncEmitter,
     })).toThrowErrorMatchingSnapshot();
   });
 
@@ -445,7 +400,7 @@ describe('Device', () => {
     const processId = 1;
     device = validDevice();
     device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
-    device.deviceDriver.launch.mockReturnValue(processId);
+    device.deviceDriver.launchApp.mockReturnValue(processId);
 
     await device.prepare({launchApp: true});
     await device.launchApp({newInstance: false});
@@ -457,7 +412,7 @@ describe('Device', () => {
     const processId = 1;
     device = validDevice();
     device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
-    device.deviceDriver.launch.mockReturnValue(processId);
+    device.deviceDriver.launchApp.mockReturnValue(processId);
 
     await device.prepare({launchApp: true});
     await device.launchApp({url: 'url://me'});
@@ -472,7 +427,7 @@ describe('Device', () => {
 
     device = validDevice();
     device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
-    device.deviceDriver.launch.mockReturnValueOnce(processId).mockReturnValueOnce(newProcessId);
+    device.deviceDriver.launchApp.mockReturnValueOnce(processId).mockReturnValueOnce(newProcessId);
 
     await device.prepare();
     await device.launchApp(launchParams);
@@ -486,7 +441,7 @@ describe('Device', () => {
 
     device = validDevice();
     device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
-    device.deviceDriver.launch.mockReturnValue(processId);
+    device.deviceDriver.launchApp.mockReturnValue(processId);
 
     await device.prepare({launchApp: true});
     await device.launchApp(launchParams);
@@ -500,7 +455,7 @@ describe('Device', () => {
 
     device = validDevice();
     device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
-    device.deviceDriver.launch.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
+    device.deviceDriver.launchApp.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
     device.deviceDriver.createPayloadFile = () => 'url';
 
     await device.prepare({launchApp: true});
@@ -516,7 +471,7 @@ describe('Device', () => {
 
     device = validDevice();
     device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
-    device.deviceDriver.launch.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
+    device.deviceDriver.launchApp.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
     device.deviceDriver.createPayloadFile = () => 'url';
 
     await device.prepare({launchApp: true});
@@ -532,7 +487,7 @@ describe('Device', () => {
 
     device = validDevice();
     device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
-    device.deviceDriver.launch.mockReturnValueOnce(processId).mockReturnValueOnce(newProcessId);
+    device.deviceDriver.launchApp.mockReturnValueOnce(processId).mockReturnValueOnce(newProcessId);
 
     await device.prepare();
     await device.launchApp(launchParams);
@@ -546,7 +501,7 @@ describe('Device', () => {
 
     device = validDevice();
     device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
-    device.deviceDriver.launch.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
+    device.deviceDriver.launchApp.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
 
     await device.prepare();
 

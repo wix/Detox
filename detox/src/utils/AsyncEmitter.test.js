@@ -78,4 +78,15 @@ describe('AsyncEmitter', () => {
       eventObj: 42,
     });
   });
+
+  it('should unregister all listeners with .off()', async () => {
+    const listener = jest.fn();
+
+    emitter = new AsyncEmitter({ events: [REGISTERED_EVENT] });
+    emitter.on(REGISTERED_EVENT, listener);
+    emitter.off();
+    await emitter.emit(REGISTERED_EVENT, 42);
+
+    expect(listener).not.toHaveBeenCalled();
+  });
 });

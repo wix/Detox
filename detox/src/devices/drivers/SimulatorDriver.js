@@ -43,8 +43,8 @@ class SimulatorDriver extends IosDriver {
   }
 
   async cleanup(deviceId, bundleId) {
+    await super.cleanup(deviceId, bundleId);
     await this.deviceRegistry.freeDevice(deviceId);
-    return super.cleanup(deviceId, bundleId);
   }
 
   async acquireFreeDevice(name) {
@@ -83,8 +83,12 @@ class SimulatorDriver extends IosDriver {
     await this._applesimutils.uninstall(deviceId, bundleId);
   }
 
-  async launch(deviceId, bundleId, launchArgs) {
-    return await this._applesimutils.launch(deviceId, bundleId, launchArgs);
+  async launchApp(deviceId, bundleId, launchArgs) {
+    await this.emitter.emit('beforeLaunchApp', {bundleId, deviceId, launchArgs});
+    const pid = await this._applesimutils.launch(deviceId, bundleId, launchArgs);
+    await this.emitter.emit('launchApp', {bundleId, deviceId, launchArgs, pid});
+
+    return pid;
   }
 
   async terminate(deviceId, bundleId) {
