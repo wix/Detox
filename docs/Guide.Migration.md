@@ -71,7 +71,7 @@ beforeEach(async function() {
   await adapter.beforeEach();
 });
 
-afterAll(async () => {
+afterAll(async function() {
   await adapter.afterAll();
   await detox.cleanup();
 });
@@ -85,7 +85,7 @@ jasmine.getEnv().addReporter(adapter);
 * Jest adapter requires a hook to `afterAll`:
 
 ```js
-afterAll(async () => {
+afterAll(async function() {
   await adapter.afterAll();
   await detox.cleanup();
 });
