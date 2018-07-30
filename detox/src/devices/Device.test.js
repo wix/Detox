@@ -38,9 +38,9 @@ describe('Device', () => {
     jest.mock('../utils/argparse');
     argparse = require('../utils/argparse');
 
-    jest.mock('./DeviceDriverBase');
-    DeviceDriverBase = require('./DeviceDriverBase');
-    SimulatorDriver = require('./SimulatorDriver');
+    jest.mock('./drivers/DeviceDriverBase');
+    DeviceDriverBase = require('./drivers/DeviceDriverBase');
+    SimulatorDriver = require('./drivers/SimulatorDriver');
     Client = require('../client/Client');
     AsyncEmitter = require('../utils/AsyncEmitter');
     asyncEmitter = new AsyncEmitter({

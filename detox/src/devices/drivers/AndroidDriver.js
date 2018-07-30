@@ -1,31 +1,31 @@
 const fs = require('fs');
 const _ = require('lodash');
-const log = require('../utils/logger').child({ __filename });
-const invoke = require('../invoke');
+const log = require('../../utils/logger').child({ __filename });
+const invoke = require('../../invoke');
 const InvocationManager = invoke.InvocationManager;
-const ADB = require('./android/ADB');
-const AAPT = require('./android/AAPT');
-const APKPath = require('./android/APKPath');
+const ADB = require('../android/ADB');
+const AAPT = require('../android/AAPT');
+const APKPath = require('../android/APKPath');
 const DeviceDriverBase = require('./DeviceDriverBase');
-const DetoxApi = require('../android/espressoapi/Detox');
-const EspressoDetoxApi = require('../android/espressoapi/EspressoDetox');
-const UIAutomatorAPI = require('../android/espressoapi/UIAutomator');
-const UIDevice = require('../android/espressoapi/UIDevice');
-const ADBLogcatPlugin = require('../artifacts/log/android/ADBLogcatPlugin');
-const ADBScreencapPlugin = require('../artifacts/screenshot/ADBScreencapPlugin');
-const ADBScreenrecorderPlugin = require('../artifacts/video/ADBScreenrecorderPlugin');
-const AndroidDevicePathBuilder = require('../artifacts/utils/AndroidDevicePathBuilder');
-const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
-const sleep = require('../utils/sleep');
-const interruptProcess = require('../utils/interruptProcess');
-const { spawnAndLog } = require('../utils/exec');
+const DetoxApi = require('../../android/espressoapi/Detox');
+const EspressoDetoxApi = require('../../android/espressoapi/EspressoDetox');
+const UIAutomatorAPI = require('../../android/espressoapi/UIAutomator');
+const UIDevice = require('../../android/espressoapi/UIDevice');
+const ADBLogcatPlugin = require('../../artifacts/log/android/ADBLogcatPlugin');
+const ADBScreencapPlugin = require('../../artifacts/screenshot/ADBScreencapPlugin');
+const ADBScreenrecorderPlugin = require('../../artifacts/video/ADBScreenrecorderPlugin');
+const AndroidDevicePathBuilder = require('../../artifacts/utils/AndroidDevicePathBuilder');
+const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
+const sleep = require('../../utils/sleep');
+const interruptProcess = require('../../utils/interruptProcess');
+const { spawnAndLog } = require('../../utils/exec');
 
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
 
 class AndroidDriver extends DeviceDriverBase {
   constructor({ client, emitter }) {
     super({ client, emitter });
-    this.expect = require('../android/expect');
+    this.expect = require('../../android/expect');
     this.invocationManager = new InvocationManager(client);
     this.expect.setInvocationManager(this.invocationManager);
 

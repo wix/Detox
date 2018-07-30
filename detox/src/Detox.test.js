@@ -55,8 +55,8 @@ describe('Detox', () => {
 
     global.device = undefined;
 
-    jest.mock('./devices/IosDriver');
-    jest.mock('./devices/SimulatorDriver');
+    jest.mock('./devices/drivers/IosDriver');
+    jest.mock('./devices/drivers/SimulatorDriver');
     jest.mock('./devices/Device');
     jest.mock('./server/DetoxServer');
     jest.mock('./client/Client');

@@ -13,13 +13,13 @@ describe('AppleSimUtils', () => {
   const bundleId = 'bundle.id';
 
   beforeEach(() => {
-    jest.mock('../utils/logger');
-    jest.mock('../utils/exec');
-    exec = require('../utils/exec');
-    jest.mock('../utils/retry');
-    retry = require('../utils/retry');
-    jest.mock('../utils/environment');
-    environment = require('../utils/environment');
+    jest.mock('../../utils/logger');
+    jest.mock('../../utils/exec');
+    exec = require('../../utils/exec');
+    jest.mock('../../utils/retry');
+    retry = require('../../utils/retry');
+    jest.mock('../../utils/environment');
+    environment = require('../../utils/environment');
     jest.mock('tempfile');
     tempfile = require('tempfile');
 
