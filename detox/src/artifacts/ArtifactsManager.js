@@ -22,6 +22,7 @@ class ArtifactsManager {
     this._pathBuilder = pathBuilder || new ArtifactPathBuilder({
       artifactsRootDir: argparse.getArgValue('artifacts-location') || 'artifacts',
     });
+    this._callersMap = new WeakMap();
 
     this.artifactsApi = {
       preparePathForArtifact: async (artifactName, testSummary) => {
@@ -42,7 +43,7 @@ class ArtifactsManager {
 
       requestIdleCallback: (callback, caller) => {
         if (caller) {
-          callback._from = caller.name;
+          this._callersMap.set(callback, caller);
         }
 
         this._onIdleCallbacks.push(callback);
@@ -77,50 +78,36 @@ class ArtifactsManager {
     deviceEmitter.on('launchApp', this.onLaunchApp);
   }
 
-  async onBootDevice({ coldBoot, deviceId }) {
-    this._deviceId = deviceId;
-
-    await this._emit('onBootDevice', [{
-      coldBoot,
-      deviceId: this._deviceId,
-    }]);
+  async onBootDevice(deviceInfo) {
+    await this._callPlugins('onBootDevice', deviceInfo);
   }
 
-  async onShutdownDevice({ deviceId }) {
-    await this._emit('onShutdownDevice', [{
-      deviceId,
-    }]);
+  async onShutdownDevice(deviceInfo) {
+    await this._callPlugins('onShutdownDevice', deviceInfo);
   }
 
-  async onBeforeLaunchApp({ bundleId, deviceId }) {
-    await this._emit('onBeforeLaunchApp', [{
-      bundleId,
-      deviceId,
-    }]);
+  async onBeforeLaunchApp(appLaunchInfo) {
+    await this._callPlugins('onBeforeLaunchApp', appLaunchInfo);
   }
 
-  async onLaunchApp({ bundleId, deviceId, pid }) {
-    await this._emit('onLaunchApp', [{
-      bundleId,
-      deviceId,
-      pid,
-    }]);
+  async onLaunchApp(appLaunchInfo) {
+    await this._callPlugins('onLaunchApp', appLaunchInfo);
   }
 
   async onBeforeAll() {
-    await this._emit('onBeforeAll', []);
+    await this._callPlugins('onBeforeAll');
   }
 
   async onBeforeEach(testSummary) {
-    await this._emit('onBeforeEach', [testSummary]);
+    await this._callPlugins('onBeforeEach', testSummary);
   }
 
   async onAfterEach(testSummary) {
-    await this._emit('onAfterEach', [testSummary]);
+    await this._callPlugins('onAfterEach', testSummary);
   }
 
   async onAfterAll() {
-    await this._emit('onAfterAll', []);
+    await this._callPlugins('onAfterAll');
     await this._idlePromise;
   }
 
@@ -131,7 +118,7 @@ class ArtifactsManager {
 
     log.info({ event: 'TERMINATE_START' }, 'finalizing the recorded artifacts, this can take some time...');
 
-    await this._emit('onTerminate', []);
+    await this._callPlugins('onTerminate');
     await Promise.all(this._onIdleCallbacks.splice(0).map(this._executeIdleCallback));
     await this._idlePromise;
 
@@ -142,26 +129,28 @@ class ArtifactsManager {
     log.info({ event: 'TERMINATE_SUCCESS' }, 'done.');
   }
 
-  async _emit(methodName, args) {
+  async _callPlugins(methodName, ...args) {
     log.trace(Object.assign({ event: 'LIFECYCLE', fn: methodName }, ...args), `${methodName}`);
 
     await Promise.all(this._artifactPlugins.map(async (plugin) => {
       try {
         await plugin[methodName](...args);
       } catch (e) {
-        this._errorHandler(e, { plugin, methodName, args });
+        this._unhandledPluginExceptionHandler(e, { plugin, methodName, args });
       }
     }));
   }
 
-  _errorHandler(err, { plugin, methodName }) {
+  _unhandledPluginExceptionHandler(err, { plugin, methodName }) {
     const eventObject = { event: 'PLUGIN_ERROR', plugin: plugin.name || 'unknown', methodName, err };
     log.error(eventObject, `Caught exception inside plugin (${eventObject.plugin}) at phase ${methodName}`);
   }
 
-  _idleCallbackErrorHandle(e, callback) {
-    this._errorHandler(e, {
-      plugin: { name: callback._from },
+  _idleCallbackErrorHandle(err, callback) {
+    const caller = this._callersMap.get(callback) || {};
+
+    this._unhandledPluginExceptionHandler(err, {
+      plugin: caller,
       methodName: 'onIdleCallback',
       args: []
     })

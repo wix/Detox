@@ -65,7 +65,12 @@ describe('ArtifactsManager', () => {
     });
 
     it('should get called immediately', () => {
-      expect(factory).toHaveBeenCalledWith(artifactsManager.artifactsApi);
+      expect(factory).toHaveBeenCalledWith(expect.objectContaining({
+        preparePathForArtifact: expect.any(Function),
+        trackArtifact: expect.any(Function),
+        untrackArtifact: expect.any(Function),
+        requestIdleCallback: expect.any(Function),
+      }));
     });
   });
 
