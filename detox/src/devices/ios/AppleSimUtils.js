@@ -193,7 +193,10 @@ class AppleSimUtils {
   }
 
   async takeScreenshot(udid, destination) {
-    await this._execSimctl({cmd: `io ${udid} screenshot "${destination}"`});
+    await this._execSimctl({
+      cmd: `io ${udid} screenshot "${destination}"`,
+      silent: destination === '/dev/null',
+    });
   }
 
   recordVideo(udid, destination) {
@@ -205,8 +208,8 @@ class AppleSimUtils {
     return await exec.execWithRetriesAndLogs(bin, options, statusLogs, retries, interval);
   }
 
-  async _execSimctl({ cmd, statusLogs = {}, retries = 1 }) {
-    return await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl ${cmd}`, undefined, statusLogs, retries);
+  async _execSimctl({ cmd, statusLogs = {}, retries = 1, silent = false }) {
+    return await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl ${cmd}`, { silent }, statusLogs, retries);
   }
 
   _parseResponseFromAppleSimUtils(response) {

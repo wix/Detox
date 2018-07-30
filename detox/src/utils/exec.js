@@ -10,29 +10,30 @@ let _operationCounter = 0;
 async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, interval = 1000) {
   const trackingId = _operationCounter++;
   const cmd = _composeCommand(bin, options);
+  const execTimeout = _.get(options, 'timeout', 0);
   const log = execLogger.child({ fn: 'execWithRetriesAndLogs', cmd, trackingId });
-  const timeout = _.get(options, 'timeout', 0);
-
   log.debug({ event: 'EXEC_CMD' }, `${cmd}`);
 
   let result;
-
   try {
     await retry({retries, interval}, async (retryNumber) => {
       if (statusLogs && statusLogs.trying) {
         log.debug({ event: 'EXEC_TRY', retryNumber }, statusLogs.trying);
       }
 
-      result = await exec(cmd, { timeout });
+      result = await exec(cmd, { timeout: execTimeout });
     });
   } catch (err) {
-    const _failReason = err.code == null && timeout > 0
-      ? `timeout = ${timeout}ms`
+    const _failReason = err.code == null && execTimeout > 0
+      ? `timeout = ${execTimeout}ms`
       : `code = ${err.code}`;
 
-    log.error({ event: 'EXEC_FAIL' }, `"${cmd}" failed with ${_failReason}, stdout and stderr:\n`);
-    log.error({ event: 'EXEC_FAIL', stdout: true }, err.stdout);
-    log.error({ event: 'EXEC_FAIL', stderr: true }, err.stderr);
+    const silent = _.get(options, 'silent', false);
+    const level = silent ? 'debug' : 'error';
+
+    log[level]({ event: 'EXEC_FAIL' }, `"${cmd}" failed with ${_failReason}, stdout and stderr:\n`);
+    log[level]({ event: 'EXEC_FAIL', stdout: true }, err.stdout);
+    log[level]({ event: 'EXEC_FAIL', stderr: true }, err.stderr);
 
     throw err;
   }
