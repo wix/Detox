@@ -105,7 +105,7 @@ function spawnAndLog(command, flags, options) {
   }
 
   stdout.on('data', (chunk) => log.trace({ stdout: true, event: 'SPAWN_STDOUT' }, chunk.toString()));
-  stderr.on('data', (chunk) => log.trace({ stderr: true, event: 'SPAWN_STDERR' }, chunk.toString()));
+  stderr.on('data', (chunk) => log.error({ stderr: true, event: 'SPAWN_STDERR' }, chunk.toString()));
 
   function onEnd(e) {
     const signal = e.childProcess.signalCode || '';

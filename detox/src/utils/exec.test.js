@@ -180,7 +180,7 @@ describe('spawn', () => {
     expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), '[pid=2018] command');
     expect(log.trace).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'command finished with code = 0');
     expect(log.trace).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDOUT', stdout: true }), 'hello');
-    expect(log.trace).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), 'world');
+    expect(log.error).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), 'world');
   });
 
   it('should log erroneously finished spawns', async () => {
@@ -199,7 +199,7 @@ describe('spawn', () => {
 
     expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), '[pid=8102] command');
     expect(log.trace).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'command finished with code = -2');
-    expect(log.trace).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), 'Some error.');
+    expect(log.error).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), 'Some error.');
   });
 
   it('should log immediate spawn errors', async () => {
@@ -219,7 +219,7 @@ describe('spawn', () => {
 
     expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), '[pid=null] command');
     expect(log.error).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_ERROR' }), 'command failed with code = -2');
-    expect(log.trace).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), 'Command `command` not found.');
+    expect(log.error).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), 'Command `command` not found.');
   });
 });
 
