@@ -12,7 +12,12 @@ describe('AppleSimUtils', () => {
   const simUdid = `9C9ABE4D-70C7-49DC-A396-3CB1D0E82846`;
   const bundleId = 'bundle.id';
 
+  let originalHome;
+
   beforeEach(() => {
+    originalHome = process.env.HOME;
+    process.env.HOME = '/Users/detox';
+
     jest.mock('../../utils/logger');
     jest.mock('../../utils/exec');
     exec = require('../../utils/exec');
@@ -25,6 +30,11 @@ describe('AppleSimUtils', () => {
 
     AppleSimUtils = require('./AppleSimUtils');
     uut = new AppleSimUtils();
+  });
+
+  afterEach(() => {
+    process.env.HOME = originalHome;
+
   });
 
   it(`appleSimUtils setPermissions`, async () => {

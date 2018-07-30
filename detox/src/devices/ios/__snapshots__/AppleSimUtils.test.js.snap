@@ -128,11 +128,11 @@ Array [
 exports[`AppleSimUtils launch asks environment for frameworkPath 1`] = `
 Array [
   Array [
-    "/bin/cat /dev/null >/home/x/Library/Developer/CoreSimulator/Devices/udid/data/tmp/detox.last_launch_app_log.out 2>/home/x/Library/Developer/CoreSimulator/Devices/udid/data/tmp/detox.last_launch_app_log.err && SIMCTL_CHILD_DYLD_INSERT_LIBRARIES=\\"thePathToFrameworks/Detox\\" /usr/bin/xcrun simctl launch --stdout=/tmp/detox.last_launch_app_log.out --stderr=/tmp/detox.last_launch_app_log.err udid theBundleId --args ",
+    "/bin/cat /dev/null >/Users/detox/Library/Developer/CoreSimulator/Devices/udid/data/tmp/detox.last_launch_app_log.out 2>/Users/detox/Library/Developer/CoreSimulator/Devices/udid/data/tmp/detox.last_launch_app_log.err && SIMCTL_CHILD_DYLD_INSERT_LIBRARIES=\\"thePathToFrameworks/Detox\\" /usr/bin/xcrun simctl launch --stdout=/tmp/detox.last_launch_app_log.out --stderr=/tmp/detox.last_launch_app_log.err udid theBundleId --args ",
     undefined,
     Object {
       "successful": "theBundleId launched. The stdout and stderr logs were recreated, you can watch them with:
-        tail -F /home/x/Library/Developer/CoreSimulator/Devices/udid/data/tmp/detox.last_launch_app_log.{out,err}",
+        tail -F /Users/detox/Library/Developer/CoreSimulator/Devices/udid/data/tmp/detox.last_launch_app_log.{out,err}",
       "trying": "Launching theBundleId...",
     },
     1,
@@ -143,11 +143,11 @@ Array [
 exports[`AppleSimUtils launch concats args 1`] = `
 Array [
   Array [
-    "/bin/cat /dev/null >/home/x/Library/Developer/CoreSimulator/Devices/udid/data/tmp/detox.last_launch_app_log.out 2>/home/x/Library/Developer/CoreSimulator/Devices/udid/data/tmp/detox.last_launch_app_log.err && SIMCTL_CHILD_DYLD_INSERT_LIBRARIES=\\"undefined/Detox\\" /usr/bin/xcrun simctl launch --stdout=/tmp/detox.last_launch_app_log.out --stderr=/tmp/detox.last_launch_app_log.err udid theBundleId --args foo bar bob yourUncle",
+    "/bin/cat /dev/null >/Users/detox/Library/Developer/CoreSimulator/Devices/udid/data/tmp/detox.last_launch_app_log.out 2>/Users/detox/Library/Developer/CoreSimulator/Devices/udid/data/tmp/detox.last_launch_app_log.err && SIMCTL_CHILD_DYLD_INSERT_LIBRARIES=\\"undefined/Detox\\" /usr/bin/xcrun simctl launch --stdout=/tmp/detox.last_launch_app_log.out --stderr=/tmp/detox.last_launch_app_log.err udid theBundleId --args foo bar bob yourUncle",
     undefined,
     Object {
       "successful": "theBundleId launched. The stdout and stderr logs were recreated, you can watch them with:
-        tail -F /home/x/Library/Developer/CoreSimulator/Devices/udid/data/tmp/detox.last_launch_app_log.{out,err}",
+        tail -F /Users/detox/Library/Developer/CoreSimulator/Devices/udid/data/tmp/detox.last_launch_app_log.{out,err}",
       "trying": "Launching theBundleId...",
     },
     1,
@@ -158,11 +158,11 @@ Array [
 exports[`AppleSimUtils launch launches magically 1`] = `
 Array [
   Array [
-    "/bin/cat /dev/null >/home/x/Library/Developer/CoreSimulator/Devices/udid/data/tmp/detox.last_launch_app_log.out 2>/home/x/Library/Developer/CoreSimulator/Devices/udid/data/tmp/detox.last_launch_app_log.err && SIMCTL_CHILD_DYLD_INSERT_LIBRARIES=\\"undefined/Detox\\" /usr/bin/xcrun simctl launch --stdout=/tmp/detox.last_launch_app_log.out --stderr=/tmp/detox.last_launch_app_log.err udid theBundleId --args ",
+    "/bin/cat /dev/null >/Users/detox/Library/Developer/CoreSimulator/Devices/udid/data/tmp/detox.last_launch_app_log.out 2>/Users/detox/Library/Developer/CoreSimulator/Devices/udid/data/tmp/detox.last_launch_app_log.err && SIMCTL_CHILD_DYLD_INSERT_LIBRARIES=\\"undefined/Detox\\" /usr/bin/xcrun simctl launch --stdout=/tmp/detox.last_launch_app_log.out --stderr=/tmp/detox.last_launch_app_log.err udid theBundleId --args ",
     undefined,
     Object {
       "successful": "theBundleId launched. The stdout and stderr logs were recreated, you can watch them with:
-        tail -F /home/x/Library/Developer/CoreSimulator/Devices/udid/data/tmp/detox.last_launch_app_log.{out,err}",
+        tail -F /Users/detox/Library/Developer/CoreSimulator/Devices/udid/data/tmp/detox.last_launch_app_log.{out,err}",
       "trying": "Launching theBundleId...",
     },
     1,
