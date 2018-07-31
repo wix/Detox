@@ -36,10 +36,10 @@ class SimulatorLogRecording extends Artifact {
 
   async doStop() {
     this._unwatch();
+    this._close();
   }
 
   async doSave(artifactPath) {
-    this._close();
     const tempLogPath = this._logPath;
 
     if (await fs.exists(tempLogPath)) {
@@ -51,7 +51,6 @@ class SimulatorLogRecording extends Artifact {
   }
 
   async doDiscard() {
-    this._close();
     await fs.remove(this._logPath);
   }
 
@@ -81,6 +80,11 @@ class SimulatorLogRecording extends Artifact {
   }
 
   _createTail(file, prefix) {
+    if (!fs.existsSync(file)) {
+      log.warn({ event: 'LOG_MISSING' }, `simulator ${prefix} log is missing at path: ${file}`);
+      return null;
+    }
+
     log.trace({ event: 'TAIL_CREATE' }, `starting to watch ${prefix} log: ${file}`);
 
     const tail = new Tail(file, {
