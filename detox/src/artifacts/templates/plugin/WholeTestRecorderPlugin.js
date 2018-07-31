@@ -54,14 +54,14 @@ class WholeTestRecorderPlugin extends ArtifactPlugin {
       const recordingArtifactPath = await this.preparePathForTestArtifact(testSummary);
       await testRecording.save(recordingArtifactPath);
       this.api.untrackArtifact(testRecording);
-    }, this);
+    });
   }
 
   _startDiscardingTestRecording(testRecording) {
     this.api.requestIdleCallback(async () => {
       await testRecording.discard();
       this.api.untrackArtifact(testRecording);
-    }, this);
+    });
   }
 }
 

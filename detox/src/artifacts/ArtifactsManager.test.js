@@ -202,16 +202,6 @@ describe('ArtifactsManager', () => {
         expect(callbacks[1]).toHaveBeenCalled();
       });
 
-      it('should gracefully handle a case when plugin object is not passed and use "unknown" as a name placeholder', async () => {
-        artifactsApi.requestIdleCallback(callbacks[0]); await sleep(0);
-        await rejects[0](new Error('test onIdleCallback error'));
-
-        expect(proxy.logger.error.mock.calls).toMatchSnapshot();
-
-        artifactsApi.requestIdleCallback(callbacks[1], testPlugin); await sleep(0);
-        expect(callbacks[1]).toHaveBeenCalled();
-      });
-
       it('should work correctly even when operations are flushed on Detox termination', async () => {
         artifactsApi.requestIdleCallback(callbacks[0], testPlugin);
         artifactsApi.requestIdleCallback(callbacks[1], testPlugin);

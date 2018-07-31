@@ -9,21 +9,7 @@ Array [
       "methodName": "onIdleCallback",
       "plugin": "testPlugin",
     },
-    "Caught exception inside plugin (testPlugin) at phase onIdleCallback",
-  ],
-]
-`;
-
-exports[`ArtifactsManager .artifactsApi .requestIdleCallback() should gracefully handle a case when plugin object is not passed and use "unknown" as a name placeholder 1`] = `
-Array [
-  Array [
-    Object {
-      "err": [Error: test onIdleCallback error],
-      "event": "PLUGIN_ERROR",
-      "methodName": "onIdleCallback",
-      "plugin": "unknown",
-    },
-    "Caught exception inside plugin (unknown) at phase onIdleCallback",
+    "Caught exception inside function call: testPlugin.onIdleCallback()",
   ],
 ]
 `;
@@ -37,7 +23,7 @@ Array [
       "methodName": "onAfterAll",
       "plugin": "testPlugin",
     },
-    "Caught exception inside plugin (testPlugin) at phase onAfterAll",
+    "Caught exception inside function call: testPlugin.onAfterAll()",
   ],
 ]
 `;
@@ -51,7 +37,7 @@ Array [
       "methodName": "onAfterEach",
       "plugin": "testPlugin",
     },
-    "Caught exception inside plugin (testPlugin) at phase onAfterEach",
+    "Caught exception inside function call: testPlugin.onAfterEach({ title: 'test', fullName: 'Suite test', status: 'passed' })",
   ],
 ]
 `;
@@ -65,7 +51,7 @@ Array [
       "methodName": "onBeforeAll",
       "plugin": "testPlugin",
     },
-    "Caught exception inside plugin (testPlugin) at phase onBeforeAll",
+    "Caught exception inside function call: testPlugin.onBeforeAll()",
   ],
 ]
 `;
@@ -79,7 +65,7 @@ Array [
       "methodName": "onBeforeEach",
       "plugin": "testPlugin",
     },
-    "Caught exception inside plugin (testPlugin) at phase onBeforeEach",
+    "Caught exception inside function call: testPlugin.onBeforeEach({ title: 'test', fullName: 'Suite test', status: 'running' })",
   ],
 ]
 `;
@@ -93,7 +79,7 @@ Array [
       "methodName": "onBeforeLaunchApp",
       "plugin": "testPlugin",
     },
-    "Caught exception inside plugin (testPlugin) at phase onBeforeLaunchApp",
+    "Caught exception inside function call: testPlugin.onBeforeLaunchApp({ bundleId: 'testBundleId', deviceId: 'testDeviceId' })",
   ],
 ]
 `;
@@ -107,7 +93,7 @@ Array [
       "methodName": "onBootDevice",
       "plugin": "testPlugin",
     },
-    "Caught exception inside plugin (testPlugin) at phase onBootDevice",
+    "Caught exception inside function call: testPlugin.onBootDevice({ coldBoot: false, deviceId: 'testDeviceId' })",
   ],
 ]
 `;
@@ -121,7 +107,7 @@ Array [
       "methodName": "onLaunchApp",
       "plugin": "testPlugin",
     },
-    "Caught exception inside plugin (testPlugin) at phase onLaunchApp",
+    "Caught exception inside function call: testPlugin.onLaunchApp({ bundleId: 'testBundleId', deviceId: 'testDeviceId', pid: 2018 })",
   ],
 ]
 `;
@@ -135,7 +121,7 @@ Array [
       "methodName": "onShutdownDevice",
       "plugin": "testPlugin",
     },
-    "Caught exception inside plugin (testPlugin) at phase onShutdownDevice",
+    "Caught exception inside function call: testPlugin.onShutdownDevice({ deviceId: 'testDeviceId' })",
   ],
 ]
 `;
@@ -149,7 +135,7 @@ Array [
       "methodName": "onTerminate",
       "plugin": "testPlugin",
     },
-    "Caught exception inside plugin (testPlugin) at phase onTerminate",
+    "Caught exception inside function call: testPlugin.onTerminate()",
   ],
 ]
 `;

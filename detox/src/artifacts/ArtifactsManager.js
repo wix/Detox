@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const fs = require('fs-extra');
 const path = require('path');
+const util = require('util');
 const log = require('../utils/logger').child({ __filename });
 const argparse = require('../utils/argparse');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
@@ -8,23 +9,21 @@ const ArtifactPathBuilder = require('./utils/ArtifactPathBuilder');
 
 class ArtifactsManager {
   constructor(pathBuilder) {
-    this.onBootDevice = this.onBootDevice.bind(this);
-    this.onShutdownDevice = this.onShutdownDevice.bind(this);
-    this.onBeforeLaunchApp = this.onBeforeLaunchApp.bind(this);
-    this.onLaunchApp = this.onLaunchApp.bind(this);
     this.onTerminate = _.once(this.onTerminate.bind(this));
-    this._executeIdleCallback = this._executeIdleCallback.bind(this);
 
     this._idlePromise = Promise.resolve();
-    this._onIdleCallbacks = [];
+    this._idleCallbackRequests = [];
     this._activeArtifacts = [];
     this._artifactPlugins = [];
     this._pathBuilder = pathBuilder || new ArtifactPathBuilder({
       artifactsRootDir: argparse.getArgValue('artifacts-location') || 'artifacts',
     });
-    this._callersMap = new WeakMap();
+  }
 
-    this.artifactsApi = {
+  _instantitateArtifactPlugin(pluginFactory) {
+    const artifactsApi = {
+      plugin: { name: '(unknown plugin)' },
+
       preparePathForArtifact: async (artifactName, testSummary) => {
         const artifactPath = this._pathBuilder.buildPathForTestArtifact(artifactName, testSummary);
         const artifactDir = path.dirname(artifactPath);
@@ -41,41 +40,47 @@ class ArtifactsManager {
         _.pull(this._activeArtifacts, artifact);
       },
 
-      requestIdleCallback: (callback, caller) => {
-        if (caller) {
-          this._callersMap.set(callback, caller);
-        }
-
-        this._onIdleCallbacks.push(callback);
+      requestIdleCallback: (callback) => {
+        this._idleCallbackRequests.push({
+          caller: artifactsApi.plugin,
+          callback,
+        });
 
         this._idlePromise = this._idlePromise.then(() => {
-          const nextCallback = this._onIdleCallbacks.shift();
-          return this._executeIdleCallback(nextCallback);
+          const nextCallbackRequest = this._idleCallbackRequests.shift();
+
+          if (nextCallbackRequest) {
+            return this._executeIdleCallbackRequest(nextCallbackRequest);
+          }
         });
       },
     };
+
+    const plugin = pluginFactory(artifactsApi);
+    artifactsApi.plugin = plugin;
+
+    return plugin;
   }
 
-  _executeIdleCallback(callback) {
-    if (callback) {
-      return Promise.resolve()
-        .then(callback)
-        .catch(e => this._idleCallbackErrorHandle(e, callback));
-    }
+  _executeIdleCallbackRequest({ callback, caller }) {
+    return Promise.resolve()
+      .then(callback)
+      .catch(e => this._idleCallbackErrorHandle(e, caller));
   }
 
   registerArtifactPlugins(artifactPluginFactoriesMap = {}) {
-    const api = this.artifactsApi;
     const artifactPluginsFactories = Object.values(artifactPluginFactoriesMap);
 
-    this._artifactPlugins = artifactPluginsFactories.map(factory => factory(api));
+    this._artifactPlugins = artifactPluginsFactories.map((factory) => {
+      return this._instantitateArtifactPlugin(factory);
+    });
   }
 
   subscribeToDeviceEvents(deviceEmitter) {
-    deviceEmitter.on('bootDevice', this.onBootDevice);
-    deviceEmitter.on('shutdownDevice', this.onShutdownDevice);
-    deviceEmitter.on('beforeLaunchApp', this.onBeforeLaunchApp);
-    deviceEmitter.on('launchApp', this.onLaunchApp);
+    deviceEmitter.on('bootDevice', this.onBootDevice.bind(this));
+    deviceEmitter.on('shutdownDevice', this.onShutdownDevice.bind(this));
+    deviceEmitter.on('beforeLaunchApp', this.onBeforeLaunchApp.bind(this));
+    deviceEmitter.on('launchApp', this.onLaunchApp.bind(this));
   }
 
   async onBootDevice(deviceInfo) {
@@ -119,7 +124,9 @@ class ArtifactsManager {
     log.info({ event: 'TERMINATE_START' }, 'finalizing the recorded artifacts, this can take some time...');
 
     await this._callPlugins('onTerminate');
-    await Promise.all(this._onIdleCallbacks.splice(0).map(this._executeIdleCallback));
+
+    const allCallbackRequests = this._idleCallbackRequests.splice(0);
+    await Promise.all(allCallbackRequests.map(this._executeIdleCallbackRequest.bind(this)));
     await this._idlePromise;
 
     await Promise.all(this._activeArtifacts.map(artifact => artifact.discard()));
@@ -130,7 +137,8 @@ class ArtifactsManager {
   }
 
   async _callPlugins(methodName, ...args) {
-    log.trace(Object.assign({ event: 'LIFECYCLE', fn: methodName }, ...args), `${methodName}`);
+    const callSignature = this._composeCallSignature('artifactsManager', methodName, args);
+    log.trace(Object.assign({ event: 'LIFECYCLE', fn: methodName }, ...args), callSignature);
 
     await Promise.all(this._artifactPlugins.map(async (plugin) => {
       try {
@@ -141,14 +149,24 @@ class ArtifactsManager {
     }));
   }
 
-  _unhandledPluginExceptionHandler(err, { plugin, methodName }) {
-    const eventObject = { event: 'PLUGIN_ERROR', plugin: plugin.name || 'unknown', methodName, err };
-    log.error(eventObject, `Caught exception inside plugin (${eventObject.plugin}) at phase ${methodName}`);
+  _composeCallSignature(object, methodName, args) {
+    const argsString = args.map(arg => util.inspect(arg)).join(', ');
+    return `${object}.${methodName}(${argsString})`;
   }
 
-  _idleCallbackErrorHandle(err, callback) {
-    const caller = this._callersMap.get(callback) || {};
+  _unhandledPluginExceptionHandler(err, { plugin, methodName, args }) {
+    const logObject = {
+      event: 'PLUGIN_ERROR',
+      plugin: plugin.name,
+      err,
+      methodName,
+    };
 
+    const callSignature = this._composeCallSignature(plugin.name, methodName, args);
+    log.error(logObject, `Caught exception inside function call: ${callSignature}`);
+  }
+
+  _idleCallbackErrorHandle(err, caller) {
     this._unhandledPluginExceptionHandler(err, {
       plugin: caller,
       methodName: 'onIdleCallback',

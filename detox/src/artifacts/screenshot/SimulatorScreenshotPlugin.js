@@ -13,7 +13,7 @@ class SimulatorScreenshotter extends ScreenshotArtifactPlugin {
   }
 
   async onBootDevice(event) {
-    super.onBootDevice(event);
+    await super.onBootDevice(event);
 
     if (this.enabled && event.coldBoot) {
       await this.appleSimUtils.takeScreenshot(event.deviceId, '/dev/null').catch(() => {

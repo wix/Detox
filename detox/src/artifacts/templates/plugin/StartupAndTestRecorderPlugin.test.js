@@ -187,7 +187,7 @@ describe('StartupAndTestRecorderPlugin', () => {
 
         it('should schedule saving of the start-up recording', () => {
           expect(api.requestIdleCallback).toHaveBeenCalledTimes(1);
-          expect(api.requestIdleCallback.mock.calls[0]).toEqual([expect.any(Function), plugin]);
+          expect(api.requestIdleCallback.mock.calls[0]).toEqual([expect.any(Function)]);
         });
 
         it('should reset .startupRecording property to null', async () => {
@@ -269,8 +269,8 @@ describe('StartupAndTestRecorderPlugin', () => {
 
     it('should schedule two operations', () => {
       expect(api.requestIdleCallback).toHaveBeenCalledTimes(2);
-      expect(api.requestIdleCallback.mock.calls[0]).toEqual([expect.any(Function), plugin]);
-      expect(api.requestIdleCallback.mock.calls[1]).toEqual([expect.any(Function), plugin]);
+      expect(api.requestIdleCallback.mock.calls[0]).toEqual([expect.any(Function)]);
+      expect(api.requestIdleCallback.mock.calls[1]).toEqual([expect.any(Function)]);
     });
 
     it('should schedule saving of the test recording', async () => {
@@ -304,7 +304,7 @@ describe('StartupAndTestRecorderPlugin', () => {
   function itShouldScheduleDiscardingAndUntrackingOfStartupArtifact() {
     it('should schedule discarding of the start-up recording', () => {
       expect(api.requestIdleCallback).toHaveBeenCalledTimes(1);
-      expect(api.requestIdleCallback.mock.calls[0]).toEqual([expect.any(Function), plugin]);
+      expect(api.requestIdleCallback.mock.calls[0]).toEqual([expect.any(Function)]);
     });
 
     it('should reset .startupRecording property to null', async () => {

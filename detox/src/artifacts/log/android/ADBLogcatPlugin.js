@@ -10,7 +10,7 @@ class ADBLogcatPlugin extends LogArtifactPlugin {
   }
 
   async onLaunchApp(event) {
-    super.onLaunchApp(event);
+    await super.onLaunchApp(event);
 
     if (this.currentRecording) {
       await this.currentRecording.start({ pid: event.pid });
