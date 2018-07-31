@@ -75,7 +75,7 @@ class ArtifactPlugin {
    *
    * @protected
    * @async
-   * @param {Object} event - Cold boot event object
+   * @param {Object} event - Device boot event object
    * @param {string} event.deviceId - Current deviceId
    * @param {boolean} event.coldBoot - true, if the device gets turned on from the shutdown state.
    * @return {Promise<void>} - when done
@@ -91,7 +91,7 @@ class ArtifactPlugin {
    *
    * @protected
    * @async
-   * @param {Object} event - Cold boot event object
+   * @param {Object} event - Device shutdown event object
    * @param {string} event.deviceId - Current deviceId
    * @return {Promise<void>} - when done
    */
