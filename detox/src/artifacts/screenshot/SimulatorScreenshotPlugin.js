@@ -18,11 +18,12 @@ class SimulatorScreenshotter extends ScreenshotArtifactPlugin {
     if (this.enabled && event.coldBoot) {
       await this.appleSimUtils.takeScreenshot(event.deviceId, '/dev/null').catch(() => {
         log.debug({}, `
-          NOTE: For an unknown reason, when you boot an iOS Simulator in a
-          hidden window mode (or on CI), the first screenshot always fails.
-          That's why we don't write the first screenshot to the filesystem and
-          suppress the error in logs (except for debugging log levels). It is a
-          dummy screenshot to ensure that the further ones are going to work fine.
+          NOTE: For an unknown yet reason, taking the first screenshot is apt
+          to fail when booting iOS Simulator in a hidden window mode (or on CI).
+          Detox applies a workaround by taking a dummy screenshot to ensure
+          that the future ones are going to work fine. This screenshot is not
+          saved anywhere, and the error above is suppressed for all log levels
+          except for "debug" and "trace."
         `.trim());
       });
     }

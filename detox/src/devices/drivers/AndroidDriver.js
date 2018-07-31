@@ -169,8 +169,8 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async cleanup(deviceId, bundleId) {
-    await super.cleanup(deviceId, bundleId);
     await this._terminateInstrumentation();
+    await super.cleanup(deviceId, bundleId);
   }
 
   defaultLaunchArgsPrefix() {
