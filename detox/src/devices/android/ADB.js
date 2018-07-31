@@ -15,6 +15,46 @@ class ADB {
     return await this.parseAdbDevicesConsoleOutput(output);
   }
 
+  async unlockScreen(deviceId) {
+    const {
+      mWakefulness,
+      mUserActivityTimeoutOverrideFromWindowManager,
+    } = await this._getPowerStatus(deviceId);
+
+    if (mWakefulness === 'Asleep') {
+      await this.pressPowerDevice(deviceId);
+    }
+
+    if (mUserActivityTimeoutOverrideFromWindowManager === '10000') { // screen is locked
+      await this.pressOptionsMenu(deviceId);
+    }
+  }
+
+  async _getPowerStatus(deviceId) {
+    const grep = pipeCommands.search.regexp;
+    const stdout = await this.shell(deviceId, `dumpsys power | ${grep('^\\s*m[UW].*=')}`);
+
+    return stdout
+      .split('\n')
+      .map(s => s.trim().split('='))
+      .reduce((acc, [key, value]) => ({
+        ...acc,
+        [key]: value,
+      }), {});
+  }
+
+  async pressOptionsMenu(deviceId) {
+    await this._sendKeyEvent(deviceId, 'KEYCODE_MENU');
+  }
+
+  async pressPowerDevice(deviceId) {
+    await this._sendKeyEvent(deviceId, 'KEYCODE_POWER');
+  }
+
+  async _sendKeyEvent(deviceId, keyevent) {
+    await this.shell(deviceId, `input keyevent ${keyevent}`);
+  }
+
   async parseAdbDevicesConsoleOutput(input) {
     const outputToList = input.trim().split('\n');
     const devicesList = _.takeRight(outputToList, outputToList.length - 1);
@@ -67,11 +107,6 @@ class ADB {
 
   async terminate(deviceId, appId) {
     await this.shell(deviceId, `am force-stop ${appId}`);
-  }
-
-  async unlockScreen(deviceId) {
-    // TODO: figure out why in some rare cases this command completely stucks on CI
-    await this.shell(deviceId, `input keyevent 82`, { timeout: 2000, retries: 3 });
   }
 
   async pidof(deviceId, bundleId) {
