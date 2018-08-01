@@ -12,12 +12,7 @@ describe('AppleSimUtils', () => {
   const simUdid = `9C9ABE4D-70C7-49DC-A396-3CB1D0E82846`;
   const bundleId = 'bundle.id';
 
-  let originalHome;
-
   beforeEach(() => {
-    originalHome = process.env.HOME;
-    process.env.HOME = '/Users/detox';
-
     jest.mock('../../utils/logger');
     jest.mock('../../utils/exec');
     exec = require('../../utils/exec');
@@ -25,16 +20,12 @@ describe('AppleSimUtils', () => {
     retry = require('../../utils/retry');
     jest.mock('../../utils/environment');
     environment = require('../../utils/environment');
+    environment.getHomeDir.mockReturnValue('/Users/detox');
     jest.mock('tempfile');
     tempfile = require('tempfile');
 
     AppleSimUtils = require('./AppleSimUtils');
     uut = new AppleSimUtils();
-  });
-
-  afterEach(() => {
-    process.env.HOME = originalHome;
-
   });
 
   it(`appleSimUtils setPermissions`, async () => {
@@ -364,11 +355,7 @@ describe('AppleSimUtils', () => {
 
   describe('getLogsPaths', () => {
     it('returns correct paths', () => {
-      const HOME = process.env.HOME;
-      expect(uut.getLogsPaths('123')).toEqual({
-        stdout: `${HOME}/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.out`,
-        stderr: `${HOME}/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.err`,
-      })
+      expect(uut.getLogsPaths('123')).toMatchSnapshot();
     });
   });
 

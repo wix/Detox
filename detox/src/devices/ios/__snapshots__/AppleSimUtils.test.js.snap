@@ -98,6 +98,13 @@ Array [
 ]
 `;
 
+exports[`AppleSimUtils getLogsPaths returns correct paths 1`] = `
+Object {
+  "stderr": "/Users/detox/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.err",
+  "stdout": "/Users/detox/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.out",
+}
+`;
+
 exports[`AppleSimUtils getXcodeVersion returns xcode major version 1`] = `
 Array [
   Array [

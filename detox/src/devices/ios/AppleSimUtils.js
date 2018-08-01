@@ -1,6 +1,5 @@
-const process = require('process');
+const os = require('os');
 const _ = require('lodash');
-const tempfile = require('tempfile');
 const cpp = require('child-process-promise');
 const exec = require('../../utils/exec');
 const retry = require('../../utils/retry');
@@ -279,7 +278,9 @@ class LogsInfo {
     const logPrefix = '/tmp/detox.last_launch_app_log.';
     this.simStdout = logPrefix + 'out';
     this.simStderr = logPrefix + 'err';
-    const simDataRoot = `${process.env.HOME}/Library/Developer/CoreSimulator/Devices/${udid}/data`;
+
+    const HOME = environment.getHomeDir();
+    const simDataRoot = `${HOME}/Library/Developer/CoreSimulator/Devices/${udid}/data`;
     this.absStdout = simDataRoot + this.simStdout;
     this.absStderr = simDataRoot + this.simStderr;
     this.absJoined = `${simDataRoot}${logPrefix}{out,err}`
