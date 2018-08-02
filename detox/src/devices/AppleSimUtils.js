@@ -255,9 +255,7 @@ class AppleSimUtils {
     const launchBin = `/bin/cat /dev/null >${logsInfo.absStdout} 2>${logsInfo.absStderr} && ` +
       `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${frameworkPath}/Detox" ` +
       `/usr/bin/xcrun simctl launch --stdout=${logsInfo.simStdout} --stderr=${logsInfo.simStderr} ` +
-      `${udid} ${bundleId} ${languageArgs}--args ${args}`;
-
-    console.log(`Launching app w/ ${launchBin}`);
+      `${udid} ${bundleId} ${languageArgs}--args ${args}`;;
 
     return await exec.execWithRetriesAndLogs(launchBin, undefined, statusLogs, 1);
   }
