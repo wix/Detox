@@ -1,12 +1,11 @@
 const _ = require('lodash');
-const child_process = require('child_process');
 const path = require('path');
 const {execWithRetriesAndLogs, spawnAndLog} = require('../../utils/exec');
-const regexEscape = require('../../utils/regexEscape');
+const pipeCommands = require('../../utils/pipeCommands');
 const EmulatorTelnet = require('./EmulatorTelnet');
 const Environment = require('../../utils/environment');
-class ADB {
 
+class ADB {
   constructor() {
     this.adbBin = path.join(Environment.getAndroidSDKPath(), 'platform-tools', 'adb');
   }
@@ -14,6 +13,46 @@ class ADB {
   async devices() {
     const output = (await this.adbCmd('', 'devices')).stdout;
     return await this.parseAdbDevicesConsoleOutput(output);
+  }
+
+  async unlockScreen(deviceId) {
+    const {
+      mWakefulness,
+      mUserActivityTimeoutOverrideFromWindowManager,
+    } = await this._getPowerStatus(deviceId);
+
+    if (mWakefulness === 'Asleep') {
+      await this.pressPowerDevice(deviceId);
+    }
+
+    if (mUserActivityTimeoutOverrideFromWindowManager === '10000') { // screen is locked
+      await this.pressOptionsMenu(deviceId);
+    }
+  }
+
+  async _getPowerStatus(deviceId) {
+    const grep = pipeCommands.search.regexp;
+    const stdout = await this.shell(deviceId, `dumpsys power | ${grep('^\\s*m[UW].*=')}`);
+
+    return stdout
+      .split('\n')
+      .map(s => s.trim().split('='))
+      .reduce((acc, [key, value]) => ({
+        ...acc,
+        [key]: value,
+      }), {});
+  }
+
+  async pressOptionsMenu(deviceId) {
+    await this._sendKeyEvent(deviceId, 'KEYCODE_MENU');
+  }
+
+  async pressPowerDevice(deviceId) {
+    await this._sendKeyEvent(deviceId, 'KEYCODE_POWER');
+  }
+
+  async _sendKeyEvent(deviceId, keyevent) {
+    await this.shell(deviceId, `input keyevent ${keyevent}`);
   }
 
   async parseAdbDevicesConsoleOutput(input) {
@@ -49,6 +88,10 @@ class ADB {
     return (/^((1?\d?\d|25[0-5]|2[0-4]\d)(\.|:)){4}[0-9]{4}/.test(string));
   }
 
+  async now(deviceId) {
+    return this.shell(deviceId, `date "+\\"%Y-%m-%d %T.000\\""`);
+  }
+
   async install(deviceId, apkPath) {
     const apiLvl = await this.apiLevel(deviceId);
     if (apiLvl >= 24) {
@@ -66,12 +109,11 @@ class ADB {
     await this.shell(deviceId, `am force-stop ${appId}`);
   }
 
-  async unlockScreen(deviceId) {
-    await this.shell(deviceId, `input keyevent 82`);
-  }
-
   async pidof(deviceId, bundleId) {
-    const processes = await this.shell(deviceId, `ps | grep "${regexEscape(bundleId)}\\s*$"`).catch(() => '');
+    const bundleIdRegex = pipeCommands.escape.inQuotedRegexp(bundleId) + '\\s*$';
+    const grep = pipeCommands.search.regexp;
+
+    const processes = await this.shell(deviceId, `ps | ${grep(bundleIdRegex)}`).catch(() => '');
     if (!processes) {
       return NaN;
     }
@@ -79,8 +121,8 @@ class ADB {
     return parseInt(processes.split(' ').filter(Boolean)[1], 10);
   }
 
-  async shell(deviceId, cmd) {
-    return (await this.adbCmd(deviceId, `shell ${cmd}`)).stdout.trim();
+  async shell(deviceId, cmd, options) {
+    return (await this.adbCmd(deviceId, `shell ${cmd}`, options)).stdout.trim();
   }
 
   async getFileSize(deviceId, filename) {
@@ -176,15 +218,13 @@ class ADB {
     return this.adbCmd(deviceId, `shell rm ${force ? '-f' : ''} "${path}"`);
   }
 
-  rmSync(deviceId, path) {
-    const cmd = `${this.adbBin} -s ${deviceId} shell rm -rf "${path}"`;
-    child_process.execSync(cmd);
-  }
-
-  async adbCmd(deviceId, params) {
+  async adbCmd(deviceId, params, options) {
     const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
     const cmd = `${this.adbBin} ${serial} ${params}`;
-    return await execWithRetriesAndLogs(cmd, undefined, undefined, 1);
+    const retries = _.get(options, 'retries', 1);
+    _.unset(options, 'retries');
+
+    return await execWithRetriesAndLogs(cmd, options, undefined, retries);
   }
 
   /***
@@ -207,7 +247,10 @@ class ADB {
   async getInstrumentationRunner(deviceId, bundleId) {
     const instrumentationRunners = await this.listInstrumentation(deviceId);
     const instrumentationRunner = this.instrumentationRunnerForBundleId(instrumentationRunners, bundleId);
-    if (instrumentationRunner === 'undefined') throw new Error(`No instrumentation runner found on device ${deviceId} for package ${bundleId}`);
+    if (instrumentationRunner === 'undefined') {
+      throw new Error(`No instrumentation runner found on device ${deviceId} for package ${bundleId}`);
+    }
+
     return instrumentationRunner;
   }
 }

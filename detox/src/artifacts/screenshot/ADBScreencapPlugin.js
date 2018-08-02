@@ -15,6 +15,8 @@ class ADBScreencapPlugin extends ScreenshotArtifactPlugin {
     const pathToScreenshotOnDevice = this._devicePathBuilder.buildTemporaryArtifactPath('.png');
 
     return new Artifact({
+      name: 'ADBScreencapRecording',
+
       async start() {
         await adb.screencap(deviceId, pathToScreenshotOnDevice);
       },

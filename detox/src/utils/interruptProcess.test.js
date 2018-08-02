@@ -1,3 +1,5 @@
+jest.mock('./logger');
+
 const { spawnAndLog } = require('./exec');
 const interruptProcess = require('./interruptProcess');
 

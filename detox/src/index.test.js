@@ -12,10 +12,10 @@ describe('index', () => {
 
   beforeEach(() => {
     jest
-      .mock('detox-server')
+      .mock('./server/DetoxServer')
       .mock('./devices/Device')
       .mock('./utils/onTerminate')
-      .mock('./utils/logError')
+      .mock('./utils/logger')
       .mock('./client/Client')
       .mock('./Detox', () => jest.fn(() => mockDetox))
       .mock('./platform');
@@ -27,7 +27,7 @@ describe('index', () => {
   afterEach(() => {
     process.env = {};
     jest
-      .unmock('detox-server')
+      .unmock('./server/DetoxServer')
       .unmock('./devices/Device')
       .unmock('./utils/onTerminate')
       .unmock('./client/Client')
@@ -36,7 +36,7 @@ describe('index', () => {
   });
 
   it(`throws if there was no config passed`, async () => {
-    let logError = require('./utils/logError');
+    const logger = require('./utils/logger');
     let exception = undefined;
 
     try {
@@ -46,7 +46,7 @@ describe('index', () => {
     }
 
     expect(exception).toBeDefined();
-    expect(logError).toHaveBeenCalledWith(exception);
+    expect(logger.error).toHaveBeenCalledWith({ event: 'DETOX_INIT_ERROR' }, '\n', exception);
   });
 
   it(`throws if there is no devices in config`, async () => {

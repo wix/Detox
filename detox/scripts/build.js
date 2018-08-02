@@ -16,7 +16,7 @@ if (process.platform === 'darwin') {
   sh("ios/EarlGrey/Scripts/setup-earlgrey.sh");
   sh("find ./ios -name Build -type d -exec rm -rf {} ;");
 
-  sh("tar -cjf ../Detox-ios-src.tbz .", { cwd: "ios" });
+  sh("tar --exclude-from=.tbzignore -cjf ../Detox-ios-src.tbz .", { cwd: "ios" });
 }
 
 if (process.argv[2] === "android" || process.argv[3] === "android") {

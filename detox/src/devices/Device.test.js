@@ -16,19 +16,15 @@ describe('Device', () => {
   let sh;
   let Client;
   let client;
-  let npmlog;
-  let logError;
+  let logger;
 
   beforeEach(async () => {
     jest.mock('fs');
-    jest.mock('npmlog');
+    jest.mock('../utils/logger');
     fs = require('fs');
-    npmlog = require('npmlog');
+    logger = require('../utils/logger');
 
     Device = require('./Device');
-
-    jest.mock('../utils/logError');
-    logError = require('../utils/logError');
 
     jest.mock('../utils/sh');
     sh = require('../utils/sh');
@@ -145,21 +141,18 @@ describe('Device', () => {
 
     await device.launchApp();
 
-    const eventObject = {
-      deviceId: device._deviceId,
-      bundleId: device._bundleId,
-      pid: 2,
+    const extraLoggerFields = {
+      event: 'DEVICE_EMIT_EVENT_ERROR',
+      eventName: 'launchApp',
     };
 
-    expect(npmlog.error).toHaveBeenCalledWith(
-      'detox-device',
-      'device.emit("%s", %j) error',
-      'launchApp',
-      eventObject
+    expect(logger.error).toHaveBeenCalledWith(
+      extraLoggerFields, `Caught an exception in: device.emit("launchApp", {"pid":2})\n\n`, errorSync
     );
 
-    expect(logError).toHaveBeenCalledWith(errorSync, 'detox-device');
-    expect(logError).toHaveBeenCalledWith(errorAsync, 'detox-device');
+    expect(logger.error).toHaveBeenCalledWith(
+      extraLoggerFields, `Caught an exception in: device.emit("launchApp", {"pid":2})\n\n`, errorAsync
+    );
   });
 
   it(`relaunchApp()`, async () => {
@@ -601,5 +594,12 @@ describe('Device', () => {
   it(`should accept relative path for binary`, async () => {
     const actualPath = await launchAndTestBinaryPath('relativePath');
     expect(actualPath).toEqual(path.join(process.cwd(), 'abcdef/123'));
+  });
+
+  it(`pressBack() should be called`, async () => {
+    device = validDevice();
+    await device.pressBack();
+
+    expect(device.deviceDriver.pressBack).toHaveBeenCalledWith(device._deviceId);
   });
 });

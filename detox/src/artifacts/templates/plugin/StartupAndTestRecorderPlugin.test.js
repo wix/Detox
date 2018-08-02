@@ -1,4 +1,4 @@
-jest.mock('npmlog');
+jest.mock('../../../utils/logger.js');
 const StartupAndTestRecorderPlugin = require('./StartupAndTestRecorderPlugin');
 const ArtifactsApi = require('./__mocks__/ArtifactsApi.mock');
 const testSummaries = require('./__mocks__/testSummaries.mock');

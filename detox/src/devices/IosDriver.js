@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const log = require('../utils/logger').child({ __filename });
 const DeviceDriverBase = require('./DeviceDriverBase');
 const InvocationManager = require('../invoke').InvocationManager;
 const invoke = require('../invoke');
@@ -71,6 +72,10 @@ class IosDriver extends DeviceDriverBase {
 
   getPlatform() {
     return 'ios';
+  }
+
+  async pressBack(deviceId) {
+    log.warn('pressBack is an android specific function, make sure you create an android specific test for this scenario');
   }
 }
 

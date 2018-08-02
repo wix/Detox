@@ -4,7 +4,7 @@ const DetoxConstants = require('./DetoxConstants');
 const platform = require('./platform');
 const exportWrapper = require('./exportWrapper');
 const argparse = require('./utils/argparse');
-const logError = require('./utils/logError');
+const log = require('./utils/logger').child({ __filename });
 const onTerminate = require('./utils/onTerminate');
 const configuration = require('./configuration');
 
@@ -53,7 +53,7 @@ async function init(config, params) {
   try {
     await initializeDetox(config, params);
   } catch (err) {
-    logError(err);
+    log.error({ event: 'DETOX_INIT_ERROR' }, '\n', err);
     await cleanup();
 
     detox = null;

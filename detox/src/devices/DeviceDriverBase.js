@@ -138,6 +138,10 @@ class DeviceDriverBase {
       stderr: undefined
     };
   }
+
+  async pressBack() {
+    return await Promise.resolve('');
+  }
 }
 
 module.exports = DeviceDriverBase;

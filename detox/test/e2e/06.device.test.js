@@ -54,4 +54,17 @@ describe('Device', () => {
     await device.shake();
     await expect(element(by.text('Shaken, not stirred'))).toBeVisible();
   });
+
+  describe(':android: device back button', () => {
+    beforeEach(async() => {
+      await device.reloadReactNative();
+      await element(by.text('Actions')).tap();
+    });
+
+    it(':android: should show popup back pressed when back button is pressed', async () => {
+      await device.pressBack();
+      await expect(element(by.text('Back pressed !'))).toBeVisible();
+    });
+  });
+
 });

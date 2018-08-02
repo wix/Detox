@@ -1,10 +1,9 @@
+const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
-const _ = require('lodash');
-const log = require('npmlog');
+const log = require('../utils/logger').child({ __filename });
 const argparse = require('../utils/argparse');
 const debug = require('../utils/debug'); //debug utils, leave here even if unused
-const logError = require('../utils/logError');
 
 class Device {
 
@@ -26,8 +25,10 @@ class Device {
   async emit(eventName, eventObj) {
     const fire = async (fn) => fn(eventObj);
     const logEmitError = (err) => {
-      log.error('detox-device', 'device.emit("%s", %j) error', eventName, eventObj);
-      logError(err, 'detox-device');
+      log.error(
+        { event: 'DEVICE_EMIT_EVENT_ERROR', eventName },
+        `Caught an exception in: device.emit("${eventName}", ${JSON.stringify(eventObj)})\n\n`, err
+      );
     };
 
     await Promise.all(this._listeners[eventName].map(fn => fire(fn).catch(logEmitError)));
@@ -101,18 +102,18 @@ class Device {
 
     const _bundleId = bundleId || this._bundleId;
 
-    await this.emit('beforeLaunchApp', {
-      deviceId: this._deviceId,
-      bundleId: _bundleId,
-    });
-
     if (this._isAppInBackground(params, _bundleId)) {
       if (hasPayload) {
         await this.deviceDriver.deliverPayload({...params, delayPayload: true});
       }
     }
 
-    const processId = await this.deviceDriver.launch(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.language);
+    await this.emit('beforeLaunchApp', {
+      deviceId: this._deviceId,
+      bundleId: _bundleId,
+    });
+
+    const processId = await this.deviceDriver.launch(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs));
     this._processes[_bundleId] = processId;
 
     await this.deviceDriver.waitUntilReady();
@@ -247,6 +248,10 @@ class Device {
 
   async _cleanup() {
     await this.deviceDriver.cleanup(this._deviceId, this._bundleId);
+  }
+
+  async pressBack() {
+    await this.deviceDriver.pressBack(this._deviceId);
   }
 
   _defaultLaunchArgs() {

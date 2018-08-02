@@ -2,7 +2,7 @@
 id: Troubleshooting.RunningTests
 title: Failing Tests
 ---
-* [Enable verbose mode](#enable-verbose-mode)
+* [Enable trace mode](#enable-trace-mode)
 * [Syntax Error: Unxpected Token](#syntax-error-unxpected-token)
 * [Can't find my component even though I added testID to its props](#cant-find-my-component-even-though-i-added-testid-to-its-props)
 * [Test tries to find my component before it's created](#test-tries-to-find-my-component-before-its-created)
@@ -15,12 +15,12 @@ title: Failing Tests
 
 <br>
 
-### Enable verbose mode
+### Enable trace mode
 
-It's a good idea to get as much information as possible about what's going on. We can enable verbose mode during tests by running our tests with:
+It's a good idea to get as much information as possible about what's going on. We can enable trace mode during tests by running our tests with:
 
 ```
-detox test --loglevel verbose
+detox test --loglevel trace
 ```
 
 
@@ -210,7 +210,7 @@ Include the following information in your issue to increase the chances of resol
 
 1. Versions of all dependencies - iOS version you're working on, simulator model, React Native version, Detox version, etc
 
-2. The verbose log of the test (see above)
+2. The trace log of the test (see above)
 
 3. Source code of your test scenario
 
