@@ -286,3 +286,10 @@ NSDictionary* _prettyPrintRunLoopIdlingResource(WXRunLoopIdlingResource* runLoop
 	return rv;
 }
 
+NSDictionary* _prettyPrintRNLoadIdlingResource(WXRNLoadIdlingResource* rnLoad)
+{
+	NSMutableDictionary* rv = [NSMutableDictionary new];
+	rv[@"prettyPrint"] = @"React Native is loading Javascript.";
+	
+	return rv;
+}

@@ -15,6 +15,7 @@
 #import "WXJSDisplayLinkIdlingResource.h"
 #import "WXJSTimerObservationIdlingResource.h"
 #import "WXAnimatedDisplayLinkIdlingResource.h"
+#import "WXRNLoadIdlingResource.h"
 
 #include <dlfcn.h>
 #include <fishhook.h>
@@ -111,7 +112,7 @@ static int __WX_UIApplicationMain(int argc, char * _Nonnull * _Null_unspecified 
 }
 
 __attribute__((constructor))
-void setupForTests()
+static void __setupRNSupport()
 {
 	wx_original_dispatch_queue_create = dlsym(RTLD_DEFAULT, "dispatch_queue_create");
 	
@@ -167,6 +168,7 @@ void setupForTests()
 	rebind_symbols(rebindings2, sizeof(rebindings2) / sizeof(rebindings2[0]));
 	
 	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[WXJSTimerObservationIdlingResource new]];
+	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[WXRNLoadIdlingResource new]];
 	
 	if([WXAnimatedDisplayLinkIdlingResource isAvailable]) {
 		[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[WXAnimatedDisplayLinkIdlingResource new]];
