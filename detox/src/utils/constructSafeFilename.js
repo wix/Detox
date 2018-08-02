@@ -7,7 +7,7 @@ const MAX_FILE_LENGTH = 255;
 function constructSafeFilename(prefix = '', trimmable = '', suffix = '') {
   if (!trimmable) {
     throw new DetoxRuntimeError({
-      message: 'no filename was given to constructSafeFilename()',
+      message: 'no trimmable filename was given to constructSafeFilename(prefix, trimmable, suffix)',
       debugInfo: 'the arguments were: ' + JSON.stringify({
         prefix,
         trimmable,

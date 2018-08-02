@@ -1,6 +1,7 @@
 const firstTestContent = require('./firstTestContent');
 const runnerConfig = `{
-    "setupTestFrameworkScriptFile": "./init.js"
+    "setupTestFrameworkScriptFile": "./init.js",
+    "testEnvironment": "node"
 }`;
 
 const initjsContent = `const detox = require('detox');

@@ -55,9 +55,63 @@ describe('ADB', () => {
     expect(await adb.pidof('', 'com.google.android.ext.services')).toBe(NaN);
   });
 
-  it(`unlockScreen`, async () => {
-    await adb.unlockScreen('deviceId');
-    expect(exec).toHaveBeenCalledTimes(1);
+  describe('unlockScreen', () => {
+    const deviceId = 'mockEmulator';
+
+    async function unlockScreenWithPowerStatus(mWakefulness, mUserActivityTimeoutOverrideFromWindowManager) {
+      adb.shell = jest.fn().mockReturnValue(`
+        mWakefulness=${mWakefulness}
+        mWakefulnessChanging=false
+        mWakeLockSummary=0x0
+        mUserActivitySummary=0x1
+        mWakeUpWhenPluggedOrUnpluggedConfig=false
+        mWakeUpWhenPluggedOrUnpluggedInTheaterModeConfig=false
+        mUserActivityTimeoutOverrideFromWindowManager=${mUserActivityTimeoutOverrideFromWindowManager}
+        mUserInactiveOverrideFromWindowManager=false
+      `);
+
+      await adb.unlockScreen(deviceId);
+    }
+
+    describe('when unlocking an awake and unlocked device', function() {
+      beforeEach(async () => unlockScreenWithPowerStatus('Awake', '-1'));
+
+      it('should not press power button', () =>
+        expect(adb.shell).not.toHaveBeenCalledWith(deviceId, 'input keyevent KEYCODE_POWER'));
+
+      it('should not press menu button', () =>
+        expect(adb.shell).not.toHaveBeenCalledWith(deviceId, 'input keyevent KEYCODE_MENU'));
+    });
+
+    describe('when unlocking a sleeping and locked device', function() {
+      beforeEach(async () => unlockScreenWithPowerStatus('Asleep', '10000'));
+
+      it('should press power button first', () =>
+        expect(adb.shell.mock.calls[1]).toEqual([deviceId, 'input keyevent KEYCODE_POWER']));
+
+      it('should press menu afterwards', () =>
+        expect(adb.shell.mock.calls[2]).toEqual([deviceId, 'input keyevent KEYCODE_MENU']));
+    });
+
+    describe('when unlocking an awake but locked device', function() {
+      beforeEach(async () => unlockScreenWithPowerStatus('Awake', '10000'));
+
+      it('should not press power button', () =>
+        expect(adb.shell).not.toHaveBeenCalledWith(deviceId, 'input keyevent KEYCODE_POWER'));
+
+      it('should press menu button', () =>
+        expect(adb.shell).toHaveBeenCalledWith(deviceId, 'input keyevent KEYCODE_MENU'));
+    });
+
+    describe('when unlocking a sleeping but unlocked device', function() {
+      beforeEach(async () => unlockScreenWithPowerStatus('Asleep', '-1'));
+
+      it('should press power button', () =>
+        expect(adb.shell).toHaveBeenCalledWith(deviceId, 'input keyevent KEYCODE_POWER'));
+
+      it('should not press menu button', () =>
+        expect(adb.shell).not.toHaveBeenCalledWith(deviceId, 'input keyevent KEYCODE_MENU'));
+    });
   });
 
   it(`listInstrumentation passes the right deviceId`, async () => {

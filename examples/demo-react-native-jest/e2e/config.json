@@ -1,3 +1,4 @@
 {
-  "setupTestFrameworkScriptFile" : "./init.js"
+  "setupTestFrameworkScriptFile" : "./init.js",
+  "testEnvironment": "node"
 }

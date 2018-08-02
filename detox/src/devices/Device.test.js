@@ -17,7 +17,6 @@ describe('Device', () => {
   let Client;
   let client;
   let logger;
-  let logError;
 
   beforeEach(async () => {
     jest.mock('fs');
@@ -26,9 +25,6 @@ describe('Device', () => {
     logger = require('../utils/logger');
 
     Device = require('./Device');
-
-    jest.mock('../utils/logError');
-    logError = require('../utils/logError');
 
     jest.mock('../utils/sh');
     sh = require('../utils/sh');
@@ -145,15 +141,18 @@ describe('Device', () => {
 
     await device.launchApp();
 
-    const eventObject = {
-      deviceId: device._deviceId,
-      bundleId: device._bundleId,
-      pid: 2,
+    const extraLoggerFields = {
+      event: 'DEVICE_EMIT_EVENT_ERROR',
+      eventName: 'launchApp',
     };
 
-    expect(logger.error).toHaveBeenCalledWith(`Caught an exception in: device.emit("launchApp", {"pid":2})`);
-    expect(logError).toHaveBeenCalledWith(logger, errorSync);
-    expect(logError).toHaveBeenCalledWith(logger, errorAsync);
+    expect(logger.error).toHaveBeenCalledWith(
+      extraLoggerFields, `Caught an exception in: device.emit("launchApp", {"pid":2})\n\n`, errorSync
+    );
+
+    expect(logger.error).toHaveBeenCalledWith(
+      extraLoggerFields, `Caught an exception in: device.emit("launchApp", {"pid":2})\n\n`, errorAsync
+    );
   });
 
   it(`relaunchApp()`, async () => {

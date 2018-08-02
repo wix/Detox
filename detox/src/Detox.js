@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const util = require('util');
 const logger = require('./utils/logger');
 const log = require('./utils/logger').child({ __filename });
 const Device = require('./devices/Device');
@@ -121,7 +122,7 @@ class Detox {
         hint: 'Maybe you are still using an old undocumented signature detox.beforeEach(string, string, string) in init.js ?' +
           '\nSee the article for the guidance: ' +
           'https://github.com/wix/detox/blob/master/docs/APIRef.TestLifecycle.md',
-        debugInfo: `testSummary was: ${JSON.stringify(testSummary, null, 2)}`,
+        debugInfo: `testSummary was: ${util.inspect(testSummary)}`,
       });
     }
 
