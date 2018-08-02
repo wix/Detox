@@ -250,7 +250,7 @@ class AppleSimUtils {
       `        tail -F ${logsInfo.absJoined}`
     };
 
-    const languageArgs = !!language ? `-AppleLanguages "(${language})" ` : '';
+    const languageArgs = !!language ? `-AppleLanguages "(${language})" -AppleLocale ${language} ` : '';
 
     const launchBin = `/bin/cat /dev/null >${logsInfo.absStdout} 2>${logsInfo.absStderr} && ` +
       `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${frameworkPath}/Detox" ` +
