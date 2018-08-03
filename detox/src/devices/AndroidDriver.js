@@ -86,7 +86,7 @@ class AndroidDriver extends DeviceDriverBase {
     }
   }
 
-  async launch(deviceId, bundleId, launchArgs) {
+  async launch(deviceId, bundleId, launchArgs, language) {
     const args = [];
     _.forEach(launchArgs, (value, key) => {
       args.push(`${key} ${value}`);
