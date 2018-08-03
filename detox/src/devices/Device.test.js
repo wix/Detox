@@ -90,6 +90,18 @@ describe('Device', () => {
       {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"}, undefined);
   });
 
+  it('launchApp({language}) should launch app with a specific language', async () => {
+    device = validDevice();
+
+    const language = 'es-MX';
+
+    await device.launchApp({language});
+
+    expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
+      device._bundleId,
+      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"}, language);
+  });
+
   it('launchApp() should emit \'launchApp\' event for async listeners and wait for them', async () => {
     device = validDevice();
     device.deviceDriver.launch.mockReturnValue(1);
