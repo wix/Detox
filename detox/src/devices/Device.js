@@ -67,7 +67,6 @@ class Device {
     params[launchKey] = payloadFilePath;
   }
 
-  
   async launchApp(params = {newInstance: false}, bundleId) {
     const payloadParams = ['url', 'userNotification', 'userActivity'];
     const hasPayload = this._assertHasSingleParam(payloadParams, params);
