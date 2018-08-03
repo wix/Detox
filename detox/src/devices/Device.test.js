@@ -87,7 +87,7 @@ describe('Device', () => {
 
     expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
-      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"});
+      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"}, undefined);
   });
 
   it('launchApp() should emit \'launchApp\' event for async listeners and wait for them', async () => {
@@ -163,7 +163,7 @@ describe('Device', () => {
     expect(device.deviceDriver.terminate).toHaveBeenCalled();
     expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
-      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"});
+      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"}, undefined);
   });
 
   it(`relaunchApp({newInstance: false}) should not terminate the app before launch`, async () => {
@@ -200,7 +200,7 @@ describe('Device', () => {
     expect(device.deviceDriver.installApp).toHaveBeenCalled();
     expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
-      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"});
+      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"}, undefined);
   });
 
   it(`relaunchApp() without delete when reuse is enabled should not uninstall and install`, async () => {
@@ -214,7 +214,7 @@ describe('Device', () => {
     expect(device.deviceDriver.installApp).not.toHaveBeenCalled();
     expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
-      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"});
+      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"}, undefined);
   });
 
   it(`relaunchApp() with url should send the url as a param in launchParams`, async () => {
@@ -223,7 +223,7 @@ describe('Device', () => {
 
     expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
-      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-detoxURLOverride": "scheme://some.url"});
+      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-detoxURLOverride": "scheme://some.url"}, undefined);
   });
 
   it(`relaunchApp() with url should send the url as a param in launchParams`, async () => {
@@ -235,7 +235,7 @@ describe('Device', () => {
       {
         "-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-detoxURLOverride": "scheme://some.url", "-detoxSourceAppOverride":
         "sourceAppBundleId"
-      });
+      }, undefined);
   });
 
   it(`relaunchApp() with userNofitication should send the userNotification as a param in launchParams`, async () => {
@@ -247,7 +247,7 @@ describe('Device', () => {
 
     expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
-      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-detoxUserNotificationDataURL": "url"});
+      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-detoxUserNotificationDataURL": "url"}, undefined);
   });
 
   it(`relaunchApp() with url and userNofitication should throw`, async () => {
@@ -275,7 +275,7 @@ describe('Device', () => {
 
     expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
-      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-arg1": "1", "-arg2": 2});
+      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-arg1": "1", "-arg2": 2}, undefined);
   });
 
   it(`sendToHome() should pass to device driver`, async () => {
