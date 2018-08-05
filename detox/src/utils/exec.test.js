@@ -176,7 +176,7 @@ describe('spawn', () => {
     }));
   });
 
-  it('spawns detached command with ignored input and piped output', () => {
+  it('spawns an attached command with ignored input and piped output', () => {
     const command = 'command';
     const flags = ['--some', '--value', Math.random()];
 
@@ -184,7 +184,7 @@ describe('spawn', () => {
 
     expect(cpp.spawn).toBeCalledWith(command, flags, {
       stdio: ['ignore', 'pipe', 'pipe'],
-      detached: true
+      detached: false
     });
   });
 
