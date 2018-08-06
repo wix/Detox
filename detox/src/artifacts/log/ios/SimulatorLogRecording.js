@@ -34,12 +34,16 @@ class SimulatorLogRecording extends Artifact {
       await this._minimumLifetime;
       await exec.interruptProcess(this._tailProcess);
       await Promise.all([
-        fs.truncate(this._stdoutPath),
-        fs.truncate(this._stderrPath),
+        fs.truncate(this._stdoutPath).catch(this._onMissingLogError),
+        fs.truncate(this._stderrPath).catch(this._onMissingLogError),
       ]);
 
       this._tailProcess = null;
     }
+  }
+
+  _onMissingLogError(e) {
+    log.warn({ event: 'APP_LOG_MISSING' }, 'Was the simulator log unexpectedly deleted?\n' + e.message);
   }
 
   async doSave(artifactPath) {
