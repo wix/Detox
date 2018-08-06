@@ -14,8 +14,9 @@ const SimulatorRecordVideoPlugin = require('../../artifacts/video/SimulatorRecor
 
 class SimulatorDriver extends IosDriver {
 
-  constructor({ client, emitter }) {
-    super({ client, emitter });
+  constructor(config) {
+    super(config);
+
     this._applesimutils = new AppleSimUtils();
     this.deviceRegistry = new DeviceRegistry({
       getDeviceIdsByType: async type => await this._applesimutils.findDevicesUDID(type),
@@ -43,8 +44,8 @@ class SimulatorDriver extends IosDriver {
   }
 
   async cleanup(deviceId, bundleId) {
-    await super.cleanup(deviceId, bundleId);
     await this.deviceRegistry.freeDevice(deviceId);
+    await super.cleanup(deviceId, bundleId);
   }
 
   async acquireFreeDevice(name) {

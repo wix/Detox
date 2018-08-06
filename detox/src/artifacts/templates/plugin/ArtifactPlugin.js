@@ -46,6 +46,7 @@ class ArtifactPlugin {
     Object.assign(this.context, {
       bundleId: event.bundleId,
       deviceId: event.deviceId,
+      pid: NaN,
     });
   }
 
@@ -83,6 +84,8 @@ class ArtifactPlugin {
   async onBootDevice(event) {
     Object.assign(this.context, {
       deviceId: event.deviceId,
+      bundleId: '',
+      pid: NaN,
     });
   }
 
@@ -98,6 +101,8 @@ class ArtifactPlugin {
   async onShutdownDevice(event) {
     Object.assign(this.context, {
       deviceId: event.deviceId,
+      bundleId: '',
+      pid: NaN,
     });
   }
 

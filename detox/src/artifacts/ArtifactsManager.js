@@ -22,7 +22,7 @@ class ArtifactsManager {
 
   _instantitateArtifactPlugin(pluginFactory) {
     const artifactsApi = {
-      plugin: { name: '(unknown plugin)' },
+      plugin: null,
 
       preparePathForArtifact: async (artifactName, testSummary) => {
         const artifactPath = this._pathBuilder.buildPathForTestArtifact(artifactName, testSummary);

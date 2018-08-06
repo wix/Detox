@@ -22,10 +22,11 @@ const { interruptProcess, spawnAndLog } = require('../../utils/exec');
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
 
 class AndroidDriver extends DeviceDriverBase {
-  constructor({ client, emitter }) {
-    super({ client, emitter });
+  constructor(config) {
+    super(config);
+
     this.expect = require('../../android/expect');
-    this.invocationManager = new InvocationManager(client);
+    this.invocationManager = new InvocationManager(this.client);
     this.expect.setInvocationManager(this.invocationManager);
 
     this.adb = new ADB();

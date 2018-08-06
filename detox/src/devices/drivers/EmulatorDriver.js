@@ -12,8 +12,8 @@ const fs = require('fs');
 const os = require('os');
 
 class EmulatorDriver extends AndroidDriver {
-  constructor({ client, emitter }) {
-    super({ client, emitter });
+  constructor(config) {
+    super(config);
 
     this.emulator = new Emulator();
   }

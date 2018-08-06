@@ -1,8 +1,5 @@
-const os = require('os');
 const _ = require('lodash');
-const cpp = require('child-process-promise');
 const exec = require('../../utils/exec');
-const retry = require('../../utils/retry');
 const environment = require('../../utils/environment');
 
 class AppleSimUtils {

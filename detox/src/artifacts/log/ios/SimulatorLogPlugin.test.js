@@ -109,5 +109,8 @@ describe('SimulatorLogPlugin', () => {
       expect(contents.filter(s => s.indexOf('stdout: ') === 0)).toMatchSnapshot(`stdout.${extension}`);
       expect(contents.filter(s => s.indexOf('stderr: ') === 0)).toMatchSnapshot(`stderr.${extension}`);
     }
+
+    const allCreatedFiles = [...Object.values(fakeAppleSimUtils.logs), ...createdArtifacts];
+    await Promise.all(allCreatedFiles.map(filename => fs.remove(filename)));
   });
 });
