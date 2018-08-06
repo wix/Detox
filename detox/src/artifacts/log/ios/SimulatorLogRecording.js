@@ -1,9 +1,9 @@
 const _ = require('lodash');
-const child_process = require('child_process');
 const fs = require('fs-extra');
 const path = require('path');
 const log = require('../../../utils/logger').child({ __filename });
 const sleep = require('../../../utils/sleep');
+const exec = require('../../../utils/exec');
 const Artifact = require('../../templates/artifact/Artifact');
 
 const TAIL_SCRIPT = path.join(__dirname, 'SimulatorLogPlugin.sh');
@@ -25,26 +25,21 @@ class SimulatorLogRecording extends Artifact {
 
   async doStart() {
     await fs.ensureFileSync(this._logPath);
-    this._tailProcess = child_process.spawn(TAIL_SCRIPT, [this._stdoutPath, this._stderrPath, this._logPath]);
+    this._tailProcess = exec.spawnAndLog(TAIL_SCRIPT, [this._stdoutPath, this._stderrPath, this._logPath]);
     this._minimumLifetime = sleep(100);
   }
 
   async doStop() {
     if (this._tailProcess) {
-      await this._terminateProcess(this._tailProcess);
+      await this._minimumLifetime;
+      await exec.interruptProcess(this._tailProcess);
+      await Promise.all([
+        fs.truncate(this._stdoutPath),
+        fs.truncate(this._stderrPath),
+      ]);
+
       this._tailProcess = null;
     }
-  }
-
-  async _terminateProcess(p) {
-    await this._minimumLifetime;
-    const onClose = new Promise(resolve => p.on('close', resolve));
-    p.kill('SIGINT');
-    await onClose;
-    await Promise.all([
-      fs.truncate(this._stdoutPath),
-      fs.truncate(this._stderrPath),
-    ]);
   }
 
   async doSave(artifactPath) {

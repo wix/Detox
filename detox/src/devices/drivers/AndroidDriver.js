@@ -17,8 +17,7 @@ const ADBScreenrecorderPlugin = require('../../artifacts/video/ADBScreenrecorder
 const AndroidDevicePathBuilder = require('../../artifacts/utils/AndroidDevicePathBuilder');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const sleep = require('../../utils/sleep');
-const interruptProcess = require('../../utils/interruptProcess');
-const { spawnAndLog } = require('../../utils/exec');
+const { interruptProcess, spawnAndLog } = require('../../utils/exec');
 
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
 

@@ -130,8 +130,27 @@ function _joinCommandAndFlags(command, flags) {
   return result;
 }
 
+async function interruptProcess(childProcessPromise, signal = 'SIGINT') {
+  const log = execLogger.child({ fn: 'interruptProcess' });
+
+  const childProcess = childProcessPromise.childProcess;
+  const pid = childProcess.pid;
+  const spawnargs = childProcess.spawnargs.join(' ');
+
+  log.debug({ event: 'KILL', signal, process_pid: pid }, `sending ${signal} to [pid = ${pid}]: ${spawnargs}`);
+
+  childProcess.kill(signal);
+  await childProcessPromise.catch(e => {
+    /* istanbul ignore if */
+    if (e.exitCode != null) {
+      throw e;
+    }
+  });
+}
+
 module.exports = {
   execWithRetriesAndLogs,
-  spawnAndLog
+  spawnAndLog,
+  interruptProcess,
 };
 
