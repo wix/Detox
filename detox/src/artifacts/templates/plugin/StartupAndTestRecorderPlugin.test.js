@@ -352,12 +352,10 @@ class FakeStartupAndTestRecorderPlugin extends StartupAndTestRecorderPlugin {
   }
 
   createStartupRecording() {
-    super.createStartupRecording();
     return this._createArtifactMock('startup');
   }
 
   createTestRecording() {
-    super.createTestRecording();
     return this._createArtifactMock('test');
   }
 

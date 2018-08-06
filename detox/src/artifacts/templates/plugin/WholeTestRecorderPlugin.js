@@ -14,7 +14,7 @@ class WholeTestRecorderPlugin extends ArtifactPlugin {
     await super.onBeforeEach(testSummary);
 
     if (this.enabled) {
-      const recording = this.createTestRecording(testSummary);
+      const recording = this.createTestRecording();
       await recording.start();
 
       this.api.trackArtifact(recording);

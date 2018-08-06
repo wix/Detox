@@ -183,8 +183,7 @@ describe('spawn', () => {
     exec.spawnAndLog(command, flags);
 
     expect(cpp.spawn).toBeCalledWith(command, flags, {
-      stdio: ['ignore', 'pipe', 'pipe'],
-      detached: false
+      stdio: ['ignore', 'pipe', 'pipe']
     });
   });
 

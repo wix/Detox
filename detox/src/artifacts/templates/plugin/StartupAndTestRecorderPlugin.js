@@ -64,10 +64,11 @@ class StartupAndTestRecorderPlugin extends WholeTestRecorderPlugin {
   }
 
   /***
-   * @abstract
    * @protected
    */
-  createStartupRecording() {}
+  createStartupRecording() {
+    return this.createTestRecording();
+  }
 
   /***
    * @abstract

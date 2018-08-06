@@ -96,7 +96,7 @@ function spawnAndLog(command, flags, options) {
   const cmd = _joinCommandAndFlags(command, flags);
   const log = execLogger.child({ fn: 'spawnAndLog', cmd, trackingId });
 
-  const result = spawn(command, flags, {stdio: ['ignore', 'pipe', 'pipe'], detached: false, ...options});
+  const result = spawn(command, flags, {stdio: ['ignore', 'pipe', 'pipe'], ...options});
   const { childProcess } = result;
   const { exitCode, stdout, stderr } = childProcess;
 
