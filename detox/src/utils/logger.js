@@ -41,7 +41,7 @@ function createPlainBunyanStream({ logPath, level }) {
   const options = {
     showDate: false,
     showLoggerName: true,
-    showPid: false,
+    showPid: true,
     showMetadata: false,
     basepath: __dirname,
     prefixers: {
