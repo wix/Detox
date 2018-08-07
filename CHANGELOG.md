@@ -1,5 +1,17 @@
 # Change Log
 
+## [8.1.2](https://github.com/wix/detox/tree/8.1.2) (2018-08-07)
+[Full Changelog](https://github.com/wix/detox/compare/8.1.1...8.1.2)
+
+**Merged Pull Requests**
+
+- change ES5 function to arrow function for consistency [\#874](https://github.com/wix/detox/pull/874) ([vonovak](https://github.com/vonovak))
+- Print detox PID in text logs [\#870](https://github.com/wix/detox/pull/870) ([noomorph](https://github.com/noomorph))
+- feat: cleaner implementation of ADB.unlockScreen [\#868](https://github.com/wix/detox/pull/868) ([noomorph](https://github.com/noomorph))
+- fix: stderr of the spawned process should be printed using log.error\(\) [\#867](https://github.com/wix/detox/pull/867) ([noomorph](https://github.com/noomorph))
+- fix: cross-testrunner message formatting for DetoxRuntimeError [\#861](https://github.com/wix/detox/pull/861) ([noomorph](https://github.com/noomorph))
+- Add Android back button \(copy of PR\#505\) [\#860](https://github.com/wix/detox/pull/860) ([noomorph](https://github.com/noomorph))
+
 ## [8.1.1](https://github.com/wix/detox/tree/8.1.1) (2018-07-26)
 [Full Changelog](https://github.com/wix/detox/compare/8.1.0...8.1.1)
 
@@ -397,7 +409,7 @@
 - Add change log generation when publishing a version [\#409](https://github.com/wix/detox/issues/409)
 
 ## [5.10.1](https://github.com/wix/detox/tree/5.10.1) (2017-11-15)
-[Full Changelog](https://github.com/wix/detox/compare/detox-server@2.1.0...5.10.1)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.10.0...5.10.1)
 
 **Fixed Bugs**
 
@@ -407,11 +419,11 @@
 
 - New demo project for react native jest [\#370](https://github.com/wix/detox/pull/370) ([SMJ93](https://github.com/SMJ93))
 
-## [detox-server@2.1.0](https://github.com/wix/detox/tree/detox-server@2.1.0) (2017-11-13)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.10.0...detox-server@2.1.0)
-
 ## [detox@5.10.0](https://github.com/wix/detox/tree/detox@5.10.0) (2017-11-13)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.9.3...detox@5.10.0)
+[Full Changelog](https://github.com/wix/detox/compare/detox-server@2.1.0...detox@5.10.0)
+
+## [detox-server@2.1.0](https://github.com/wix/detox/tree/detox-server@2.1.0) (2017-11-13)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.9.3...detox-server@2.1.0)
 
 **Enhancements**
 
