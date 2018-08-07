@@ -117,6 +117,7 @@ function runMocha() {
   const videos = program.recordVideos ? `--record-videos ${program.recordVideos}` : '';
   const headless = program.headless ? `--headless` : '';
   const color = program.color ? '' : '--no-colors';
+  const deviceName = program.deviceName ? `--device-name "${program.deviceName}"` : '';
 
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
   const binPath = path.join('node_modules', '.bin', 'mocha');
