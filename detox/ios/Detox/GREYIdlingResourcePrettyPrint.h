@@ -15,6 +15,7 @@
 #import <EarlGrey/GREYTimedIdlingResource.h>
 #import "WXJSTimerObservationIdlingResource.h"
 #import "WXRunLoopIdlingResource.h"
+#import "WXRNLoadIdlingResource.h"
 
 extern NSDictionary* _prettyPrintAppStateTracker(GREYAppStateTracker* tracker);
 extern NSDictionary* _prettyPrintDispatchQueueIdlingResource(GREYDispatchQueueIdlingResource* queue);
@@ -25,3 +26,4 @@ extern NSDictionary* _prettyPrintTimedIdlingResource(GREYTimedIdlingResource* ti
 extern NSDictionary* _prettyPrintWebViewIdlingResource(id webview);
 extern NSDictionary* _prettyPrintJSTimerObservationIdlingResource(WXJSTimerObservationIdlingResource* jsTimer);
 extern NSDictionary* _prettyPrintRunLoopIdlingResource(WXRunLoopIdlingResource* runLoop);
+extern NSDictionary* _prettyPrintRNLoadIdlingResource(WXRNLoadIdlingResource* rnLoad);
