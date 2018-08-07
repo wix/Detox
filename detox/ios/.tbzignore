@@ -2,7 +2,10 @@ build
 COSTouchVisualizer/ExampleObjC
 COSTouchVisualizer/ExampleSwift
 DetoxUserNotificationTests
-EarlGrey/Tests
+EarlGrey/Tests/FunctionalTests
+EarlGrey/Tests/FunctionalTests/Sources
+EarlGrey/Tests/FunctionalTests/TestRig
+EarlGrey/Tests/FunctionalTests/UnitTests.xcodeproj
 EarlGrey/Demo
 EarlGrey/docs
 EarlGrey/gem
