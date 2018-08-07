@@ -45,6 +45,8 @@ program
     '[Android Only] Launch Emulator in headless mode. Useful when running on CI.')
   .option('-w, --workers <n>',
     '[iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest)', 1)
+  .option('-n, --device-name [name]',
+    'Override the device name specified in a configuration. Useful for running a single build configuration on multiple devices.')
   .parse(process.argv);
 
 program.artifactsLocation = buildDefaultArtifactsRootDirpath(program.configuration, program.artifactsLocation);
@@ -120,7 +122,7 @@ function runMocha() {
   const binPath = path.join('node_modules', '.bin', 'mocha');
   const command = `${binPath} ${testFolder} ${configFile} ${configuration} ${loglevel} ${color} ` +
     `${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${headless} ` +
-    `${logs} ${screenshots} ${videos} ${artifactsLocation}`;
+    `${logs} ${screenshots} ${videos} ${artifactsLocation} ${deviceName}`;
 
   console.log(command);
   cp.execSync(command, {stdio: 'inherit'});
@@ -144,6 +146,7 @@ function runJest() {
     recordLogs: program.recordLogs,
     takeScreenshots: program.takeScreenshots,
     recordVideos: program.recordVideos,
+    deviceName: program.deviceName
   };
 
   console.log(printEnvironmentVariables(detoxEnvironmentVariables) + command);
