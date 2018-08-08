@@ -5,6 +5,9 @@
 */
 
 
+const log = require('../../utils/logger').child({ __filename });
+    const util = require('util')
+    
 function sanitize_matcher(matcher) {
   if (!matcher._call) {
     return matcher;
@@ -18,7 +21,10 @@ class DetoxAssertion {
     if (typeof m !== 'object' || typeof m.constructor !== 'function' || m.constructor.name.indexOf('Matcher') === -1) {
       const isObject = typeof m === 'object';
       const additionalErrorInfo = isObject ? typeof m.constructor === 'object' ? 'the constructor is no object' : 'it has a wrong class name: "' + m.constructor.name + '"' : 'it is no object';
-      console.error('m should be an instance of Matcher, got "' + m + '", it appears that ' + additionalErrorInfo);
+      log.error({
+        event: "assertMatcher",
+        err: util.inspect(m)
+      }, 'm should be an instance of Matcher, got "' + m + '", it appears that ' + additionalErrorInfo);
     }
 
     return {
@@ -69,7 +75,10 @@ class DetoxAssertion {
     if (typeof m !== 'object' || typeof m.constructor !== 'function' || m.constructor.name.indexOf('Matcher') === -1) {
       const isObject = typeof m === 'object';
       const additionalErrorInfo = isObject ? typeof m.constructor === 'object' ? 'the constructor is no object' : 'it has a wrong class name: "' + m.constructor.name + '"' : 'it is no object';
-      console.error('m should be an instance of Matcher, got "' + m + '", it appears that ' + additionalErrorInfo);
+      log.error({
+        event: "waitForAssertMatcher",
+        err: util.inspect(m)
+      }, 'm should be an instance of Matcher, got "' + m + '", it appears that ' + additionalErrorInfo);
     }
 
     if (typeof timeoutSeconds !== "number") throw new Error("timeoutSeconds should be a number, but got " + (timeoutSeconds + (" (" + (typeof timeoutSeconds + ")"))));
@@ -96,13 +105,19 @@ class DetoxAssertion {
     if (typeof m !== 'object' || typeof m.constructor !== 'function' || m.constructor.name.indexOf('Matcher') === -1) {
       const isObject = typeof m === 'object';
       const additionalErrorInfo = isObject ? typeof m.constructor === 'object' ? 'the constructor is no object' : 'it has a wrong class name: "' + m.constructor.name + '"' : 'it is no object';
-      console.error('m should be an instance of Matcher, got "' + m + '", it appears that ' + additionalErrorInfo);
+      log.error({
+        event: "waitForAssertMatcherWithSearchAction",
+        err: util.inspect(m)
+      }, 'm should be an instance of Matcher, got "' + m + '", it appears that ' + additionalErrorInfo);
     }
 
     if (typeof searchMatcher !== 'object' || typeof searchMatcher.constructor !== 'function' || searchMatcher.constructor.name.indexOf('Matcher') === -1) {
       const isObject = typeof searchMatcher === 'object';
       const additionalErrorInfo = isObject ? typeof searchMatcher.constructor === 'object' ? 'the constructor is no object' : 'it has a wrong class name: "' + searchMatcher.constructor.name + '"' : 'it is no object';
-      console.error('searchMatcher should be an instance of Matcher, got "' + searchMatcher + '", it appears that ' + additionalErrorInfo);
+      log.error({
+        event: "waitForAssertMatcherWithSearchAction",
+        err: util.inspect(searchMatcher)
+      }, 'searchMatcher should be an instance of Matcher, got "' + searchMatcher + '", it appears that ' + additionalErrorInfo);
     }
 
     return {

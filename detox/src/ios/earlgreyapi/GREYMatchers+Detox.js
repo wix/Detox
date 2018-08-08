@@ -5,6 +5,9 @@
 */
 
 
+const log = require('../../utils/logger').child({ __filename });
+    const util = require('util')
+    
 
 class GREYMatchers {
   static detoxMatcherForText(text) {

@@ -69,7 +69,7 @@ if (
 }
 
 function isOfClass(className) {
-  return ({ name }) =>
+  return ({ name }, functionName) =>
     template(`
 	if (
 		typeof ARG !== 'object' ||
@@ -79,10 +79,11 @@ function isOfClass(className) {
 		const isObject = typeof ARG === 'object';
 		const additionalErrorInfo = isObject ? (typeof ARG.constructor === 'object' ? 'the constructor is no object' : 'it has a wrong class name: "' + ARG.constructor.name +'"') : 'it is no object';
 
-		console.error('${name} should be an instance of ${className}, got "' + ARG + '", it appears that ' + additionalErrorInfo);
+		log.error({ event: EVENT, err: util.inspect(ARG) }, '${name} should be an instance of ${className}, got "' + ARG + '", it appears that ' + additionalErrorInfo);
 	}
 	`)({
-      ARG: t.identifier(name)
+      ARG: t.identifier(name),
+      EVENT: t.stringLiteral(functionName)
     });
 }
 

@@ -2,6 +2,10 @@ const fs = require('fs');
 const remove = require('remove');
 const androidGenerator = require('../adapters/android');
 
+// We have to separate jest contexts, therfore we need to do this manually
+const mockLogger = require('../../detox/src/utils/__mocks__/logger');
+jest.mock('../../detox/src/utils/logger', () => mockLogger);
+
 describe('Android generation', () => {
   let ExampleClass;
   let exampleContent;
@@ -66,18 +70,14 @@ describe('Android generation', () => {
   describe('validation', () => {
     describe('Matcher<View>', () => {
       it('should log that it gets no object', () => {
-        const spy = jest.spyOn(console, "error");
         expect(() => {
           ExampleClass.matcherForAnd('I am a string', 'I am one too');
         }).not.toThrow();
 
-        
-        expect(spy).toHaveBeenCalled();
-        spy.mockRestore();
+        expect(mockLogger.error).toHaveBeenCalledWith(expect.any(Object), expect.any(String));
       });
 
       it('should log with a wrong class', () => {
-        const spy = jest.spyOn(console, "error");
         class AnotherClass {}
         const x = new AnotherClass();
 
@@ -85,8 +85,7 @@ describe('Android generation', () => {
           ExampleClass.matcherForAnd(x, x);
         }).not.toThrow();
 
-        expect(spy).toHaveBeenCalled();
-        spy.mockRestore();
+        expect(mockLogger.error).toHaveBeenCalledWith(expect.any(Object), expect.any(String));
       });
 
       it("should succeed with the 'right' class", () => {
