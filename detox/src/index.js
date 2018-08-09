@@ -12,6 +12,7 @@ let detox;
 
 function getDeviceConfig(configurations) {
   const configurationName = argparse.getArgValue('configuration');
+  const deviceOverride = argparse.getArgValue('device-name');
 
   const deviceConfig = (!configurationName && _.size(configurations) === 1)
     ? _.values(configurations)[0]
@@ -21,6 +22,11 @@ function getDeviceConfig(configurations) {
     throw new Error(`Cannot determine which configuration to use. use --configuration to choose one of the following:
                       ${Object.keys(configurations)}`);
   }
+
+  if (deviceOverride) {
+    deviceConfig.name = deviceOverride;
+  }
+
   if (!deviceConfig.type) {
     configuration.throwOnEmptyType();
   }
