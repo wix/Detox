@@ -31,7 +31,7 @@ class SimulatorLogRecording extends Artifact {
 
   async doStop() {
     if (this._tailProcess) {
-      await this._minimumLifetime;
+      await Promise.race([this._tailProcess, this._minimumLifetime]);
       await exec.interruptProcess(this._tailProcess);
       await Promise.all([
         fs.truncate(this._stdoutPath).catch(this._onMissingLogError),
