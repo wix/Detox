@@ -8,6 +8,7 @@
 
 #import "WXRNLoadIdlingResource.h"
 #import <stdatomic.h>
+#import "ReactNativeSupport.h"
 @import ObjectiveC;
 
 static atomic_uintmax_t __numberOfLoadingRN = 0;
@@ -20,10 +21,11 @@ static void (*__orig_loadBundleAtURL_onProgress_onComplete)(id self, SEL _cmd, N
 static void __dtx_loadBundleAtURL_onProgress_onComplete(id self, SEL _cmd, NSURL* url, id onProgress, RCTSourceLoadBlock onComplete)
 {
 	atomic_fetch_add(&__numberOfLoadingRN, 1);
-	__orig_loadBundleAtURL_onProgress_onComplete(self, _cmd, url, onProgress, ^ (NSError* error, id source) {
-		onComplete(error, source);
+	__orig_loadBundleAtURL_onProgress_onComplete(self, _cmd, url, onProgress, onComplete);
+	
+	[ReactNativeSupport waitForReactNativeLoadWithCompletionHandler:^{
 		atomic_fetch_sub(&__numberOfLoadingRN, 1);
-	});
+	}];
 }
 
 @implementation WXRNLoadIdlingResource
