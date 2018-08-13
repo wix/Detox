@@ -243,15 +243,5 @@ describe('Detox', () => {
       await detox.cleanup();
       expect(detox.artifactsManager.onAfterAll).toHaveBeenCalledTimes(1);
     });
-
-    it(`Calling .terminate() will trigger artifacts manager .onTerminate()`, async () => {
-      Detox = require('./Detox');
-
-      detox = new Detox({deviceConfig: validDeviceConfig});
-      detox.artifactsManager.onTerminate = jest.fn();
-
-      await detox.terminate();
-      expect(detox.artifactsManager.onTerminate).toHaveBeenCalledTimes(1);
-    });
   });
 });

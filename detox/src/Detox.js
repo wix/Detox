@@ -91,11 +91,6 @@ class Detox {
     }
   }
 
-  async terminate() {
-    await this.artifactsManager.onTerminate();
-    await this.cleanup();
-  }
-
   async beforeEach(testSummary) {
     this._validateTestSummary(testSummary);
     this._logTestRunCheckpoint('DETOX_BEFORE_EACH', testSummary);
