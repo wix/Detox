@@ -5,7 +5,6 @@ const platform = require('./platform');
 const exportWrapper = require('./exportWrapper');
 const argparse = require('./utils/argparse');
 const log = require('./utils/logger').child({ __filename });
-const onTerminate = require('./utils/onTerminate');
 const configuration = require('./configuration');
 
 let detox;
@@ -84,9 +83,6 @@ async function cleanup() {
         await detox.cleanup();
     }
 }
-
-/* istanbul ignore next */
-onTerminate(() => detox && detox.terminate());
 
 module.exports = Object.assign({
   init,

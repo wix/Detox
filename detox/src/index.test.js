@@ -14,7 +14,6 @@ describe('index', () => {
     jest
       .mock('./server/DetoxServer')
       .mock('./devices/Device')
-      .mock('./utils/onTerminate')
       .mock('./utils/logger')
       .mock('./client/Client')
       .mock('./Detox', () => jest.fn(() => mockDetox))
@@ -29,7 +28,6 @@ describe('index', () => {
     jest
       .unmock('./server/DetoxServer')
       .unmock('./devices/Device')
-      .unmock('./utils/onTerminate')
       .unmock('./client/Client')
       .unmock('./Detox')
       .unmock('./platform');
