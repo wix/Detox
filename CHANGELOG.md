@@ -1,5 +1,28 @@
 # Change Log
 
+## [8.1.5](https://github.com/wix/detox/tree/8.1.5) (2018-08-13)
+[Full Changelog](https://github.com/wix/detox/compare/8.1.4...8.1.5)
+
+**Enhancements**
+
+- Allow override of simulator name? [\#875](https://github.com/wix/detox/issues/875)
+
+**Closed Issues**
+
+- \[Docs\] Screenshot comparison tool recommendations [\#825](https://github.com/wix/detox/issues/825)
+
+**Merged Pull Requests**
+
+- hotfix: remove SIGINT, SIGTERM handling due to \#881 [\#883](https://github.com/wix/detox/pull/883) ([noomorph](https://github.com/noomorph))
+- Add additional synchronization points for CFRunLoopPerformBlock [\#882](https://github.com/wix/detox/pull/882) ([LeoNatan](https://github.com/LeoNatan))
+- Add CLI parameter for overriding device name [\#878](https://github.com/wix/detox/pull/878) ([robbiemccorkell](https://github.com/robbiemccorkell))
+
+## [8.1.4](https://github.com/wix/detox/tree/8.1.4) (2018-08-07)
+[Full Changelog](https://github.com/wix/detox/compare/8.1.3...8.1.4)
+
+## [8.1.3](https://github.com/wix/detox/tree/8.1.3) (2018-08-07)
+[Full Changelog](https://github.com/wix/detox/compare/8.1.2...8.1.3)
+
 ## [8.1.2](https://github.com/wix/detox/tree/8.1.2) (2018-08-07)
 [Full Changelog](https://github.com/wix/detox/compare/8.1.1...8.1.2)
 
