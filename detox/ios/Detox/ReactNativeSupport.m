@@ -18,20 +18,25 @@
 #import "WXRNLoadIdlingResource.h"
 
 #include <dlfcn.h>
+#include <stdatomic.h>
 #include <fishhook.h>
 @import ObjectiveC;
 @import Darwin;
 
 DTX_CREATE_LOG(ReactNativeSupport);
 
-NSString *const RCTReloadNotification = @"RCTReloadNotification";
+static NSString *const RCTReloadNotification = @"RCTReloadNotification";
 
 static dispatch_queue_t __currentIdlingResourceSerialQueue;
 
+_Atomic(CFRunLoopRef) __RNRunLoop;
 static WXRunLoopIdlingResource* __current_runLoopIdlingResource;
 static void (*orig_runRunLoopThread)(id, SEL) = NULL;
 static void swz_runRunLoopThread(id self, SEL _cmd)
 {
+	CFRunLoopRef current = CFRunLoopGetCurrent();
+	atomic_store(&__RNRunLoop, current);
+	
 	dispatch_sync(__currentIdlingResourceSerialQueue, ^{
 		if(__current_runLoopIdlingResource)
 		{
@@ -39,7 +44,7 @@ static void swz_runRunLoopThread(id self, SEL _cmd)
 			__current_runLoopIdlingResource = nil;
 		}
 	
-		__current_runLoopIdlingResource = [[WXRunLoopIdlingResource alloc] initWithRunLoop:CFRunLoopGetCurrent()];
+		__current_runLoopIdlingResource = [[WXRunLoopIdlingResource alloc] initWithRunLoop:current];
 		[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:__current_runLoopIdlingResource];
 	});
 	
