@@ -29,11 +29,21 @@ class SimulatorLogPlugin extends LogArtifactPlugin {
     await super.onLaunchApp(event);
 
     if (this.currentRecording) {
-      await this.currentRecording.start();
+      await this.currentRecording.start({
+        readFromBeginning: true,
+      });
     }
   }
 
+  createStartupRecording() {
+    return this._createRecording(true);
+  }
+
   createTestRecording() {
+    return this._createRecording(false);
+  }
+
+  _createRecording(readFromBeginning) {
     const udid = this.context.deviceId;
     const { stdout, stderr } = this.appleSimUtils.getLogsPaths(udid);
 
@@ -41,6 +51,7 @@ class SimulatorLogPlugin extends LogArtifactPlugin {
       temporaryLogPath: tempfile('.log'),
       logStderr: stderr,
       logStdout: stdout,
+      readFromBeginning,
     });
   }
 }

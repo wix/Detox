@@ -120,15 +120,12 @@ describe('SimulatorLogPlugin', () => {
     return result;
   }
 
-  it('should work through-out boots, launches and relaunches', async () => {
-    const snapshots = await majorWorkflow();
-    for (const [snapshotName, value] of Object.entries(snapshots)) {
+  it('should work consistently in a stressed environment, through-out boots, launches and relaunches', async () => {
+    const results = await Promise.all(_.times(3, majorWorkflow));
+
+    for (const [snapshotName, value] of Object.entries(results[0])) {
       expect(value).toMatchSnapshot(snapshotName);
     }
-  });
-
-  it('should work consistently in a stressed environment', async () => {
-    const results = await Promise.all(_.times(16, majorWorkflow));
 
     for (const result of results) {
       expect(result).toEqual(results[0]);
