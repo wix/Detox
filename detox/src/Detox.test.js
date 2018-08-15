@@ -17,6 +17,7 @@ describe('Detox', () => {
   let fs;
   let Detox;
   let detox;
+
   const validDeviceConfig = schemes.validOneDeviceNoSession.configurations['ios.sim.release'];
   const validDeviceConfigWithSession = schemes.sessionPerConfiguration.configurations['ios.sim.none'];
   const invalidDeviceConfig = schemes.invalidDeviceNoDeviceType.configurations['ios.sim.release'];
@@ -54,11 +55,12 @@ describe('Detox', () => {
 
     global.device = undefined;
 
-    jest.mock('./devices/IosDriver');
-    jest.mock('./devices/SimulatorDriver');
+    jest.mock('./devices/drivers/IosDriver');
+    jest.mock('./devices/drivers/SimulatorDriver');
     jest.mock('./devices/Device');
     jest.mock('./server/DetoxServer');
     jest.mock('./client/Client');
+    jest.mock('./utils/logger');
   });
 
   it(`Passing --cleanup should shutdown the currently running device`, async () => {

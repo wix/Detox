@@ -1,7 +1,6 @@
 jest.mock('./logger');
 
-const { spawnAndLog } = require('./exec');
-const interruptProcess = require('./interruptProcess');
+const { interruptProcess, spawnAndLog } = require('./exec');
 
 describe(interruptProcess.name, () => {
   it('should interrupt a child process promise', async () => {

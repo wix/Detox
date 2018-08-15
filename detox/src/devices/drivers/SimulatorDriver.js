@@ -3,19 +3,20 @@ const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
 const IosDriver = require('./IosDriver');
-const AppleSimUtils = require('./AppleSimUtils');
-const configuration = require('../configuration');
-const environment = require('../utils/environment');
-const DeviceRegistry = require('./DeviceRegistry');
+const AppleSimUtils = require('../ios/AppleSimUtils');
+const configuration = require('../../configuration');
+const environment = require('../../utils/environment');
+const DeviceRegistry = require('../DeviceRegistry');
 
-const SimulatorLogPlugin = require('../artifacts/log/ios/SimulatorLogPlugin');
-const SimulatorScreenshotPlugin = require('../artifacts/screenshot/SimulatorScreenshotPlugin');
-const SimulatorRecordVideoPlugin = require('../artifacts/video/SimulatorRecordVideoPlugin');
+const SimulatorLogPlugin = require('../../artifacts/log/ios/SimulatorLogPlugin');
+const SimulatorScreenshotPlugin = require('../../artifacts/screenshot/SimulatorScreenshotPlugin');
+const SimulatorRecordVideoPlugin = require('../../artifacts/video/SimulatorRecordVideoPlugin');
 
 class SimulatorDriver extends IosDriver {
 
-  constructor(client) {
-    super(client);
+  constructor(config) {
+    super(config);
+
     this._applesimutils = new AppleSimUtils();
     this.deviceRegistry = new DeviceRegistry({
       getDeviceIdsByType: async type => await this._applesimutils.findDevicesUDID(type),
@@ -44,7 +45,7 @@ class SimulatorDriver extends IosDriver {
 
   async cleanup(deviceId, bundleId) {
     await this.deviceRegistry.freeDevice(deviceId);
-    return super.cleanup(deviceId, bundleId);
+    await super.cleanup(deviceId, bundleId);
   }
 
   async acquireFreeDevice(name) {
@@ -71,7 +72,8 @@ class SimulatorDriver extends IosDriver {
   }
 
   async boot(deviceId) {
-    await this._applesimutils.boot(deviceId);
+    const coldBoot = await this._applesimutils.boot(deviceId);
+    await this.emitter.emit('bootDevice', { coldBoot, deviceId });
   }
 
   async installApp(deviceId, binaryPath) {
@@ -82,8 +84,12 @@ class SimulatorDriver extends IosDriver {
     await this._applesimutils.uninstall(deviceId, bundleId);
   }
 
-  async launch(deviceId, bundleId, launchArgs) {
-    return await this._applesimutils.launch(deviceId, bundleId, launchArgs);
+  async launchApp(deviceId, bundleId, launchArgs) {
+    await this.emitter.emit('beforeLaunchApp', {bundleId, deviceId, launchArgs});
+    const pid = await this._applesimutils.launch(deviceId, bundleId, launchArgs);
+    await this.emitter.emit('launchApp', {bundleId, deviceId, launchArgs, pid});
+
+    return pid;
   }
 
   async terminate(deviceId, bundleId) {
@@ -96,6 +102,7 @@ class SimulatorDriver extends IosDriver {
 
   async shutdown(deviceId) {
     await this._applesimutils.shutdown(deviceId);
+    await this.emitter.emit('shutdownDevice', { deviceId });
   }
 
   async setLocation(deviceId, lat, lon) {
@@ -107,7 +114,9 @@ class SimulatorDriver extends IosDriver {
   }
 
   async resetContentAndSettings(deviceId) {
-    return await this._applesimutils.resetContentAndSettings(deviceId);
+    await this.shutdown(deviceId);
+    await this._applesimutils.resetContentAndSettings(deviceId);
+    await this.boot(deviceId);
   }
 
   validateDeviceConfig(deviceConfig) {

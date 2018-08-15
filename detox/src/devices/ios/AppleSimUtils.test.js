@@ -13,13 +13,14 @@ describe('AppleSimUtils', () => {
   const bundleId = 'bundle.id';
 
   beforeEach(() => {
-    jest.mock('../utils/logger');
-    jest.mock('../utils/exec');
-    exec = require('../utils/exec');
-    jest.mock('../utils/retry');
-    retry = require('../utils/retry');
-    jest.mock('../utils/environment');
-    environment = require('../utils/environment');
+    jest.mock('../../utils/logger');
+    jest.mock('../../utils/exec');
+    exec = require('../../utils/exec');
+    jest.mock('../../utils/retry');
+    retry = require('../../utils/retry');
+    jest.mock('../../utils/environment');
+    environment = require('../../utils/environment');
+    environment.getHomeDir.mockReturnValue('/Users/detox');
     jest.mock('tempfile');
     tempfile = require('tempfile');
 
@@ -32,7 +33,7 @@ describe('AppleSimUtils', () => {
       permissions:
       { calendar: "YES" }
     });
-    expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+    expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
   });
 
   describe('findDevicesUDID', () => {
@@ -83,9 +84,7 @@ describe('AppleSimUtils', () => {
       try {
         await uut.findDeviceUDID('iPhone 6 , iOS 10.3');
       } catch (e) { }
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith('applesimutils', {
-        args: `--list --byType "iPhone 6" --byOS "iOS 10.3"`
-      }, expect.anything(), 1, undefined);
+      expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
     });
 
     it('returns udid from found device', async () => {
@@ -195,8 +194,7 @@ describe('AppleSimUtils', () => {
       exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({ stdout: 'Xcode 123.456\nBuild version 123abc123\n' }));
       const result = await uut.getXcodeVersion();
       expect(result).toEqual(123);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
-      expect(exec.execWithRetriesAndLogs).toBeCalledWith(`xcodebuild -version`, undefined, undefined, 1);
+      expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
     });
 
     it('handles all sorts of results', async () => {
@@ -232,8 +230,7 @@ describe('AppleSimUtils', () => {
       uut.getXcodeVersion = jest.fn(() => Promise.resolve(1));
       expect(exec.execWithRetriesAndLogs).not.toHaveBeenCalled();
       await uut.boot('some-udid');
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(expect.stringMatching('xcode-select -p'), undefined, expect.anything(), 1);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(expect.stringMatching('bootstatus some-udid'), undefined, expect.anything(), 1);
+      expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
     });
 
     it('skips if device state was already Booted', async () => {
@@ -258,7 +255,7 @@ describe('AppleSimUtils', () => {
       uut.getXcodeVersion = jest.fn(() => Promise.resolve(9));
       await uut.boot('udid');
       expect(uut.getXcodeVersion).toHaveBeenCalledTimes(1);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(expect.stringMatching('xcrun simctl boot udid'), undefined, expect.anything(), 10);
+      expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
 
     });
   });
@@ -269,12 +266,7 @@ describe('AppleSimUtils', () => {
       exec.execWithRetriesAndLogs.mockReturnValue(Promise.resolve({stdout: JSON.stringify(simctlList)}));
 
       const created = await uut.create('iPhone X');
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(2);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
-        `/usr/bin/xcrun simctl list -j`,
-        undefined,
-        expect.anything(),
-        1);
+      expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
     });
 
     it('errors when there is no runtime available', async () => {
@@ -294,11 +286,7 @@ describe('AppleSimUtils', () => {
 
       const created = await uut.create('iPhone 7 Plus');
 
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
-        `/usr/bin/xcrun simctl create "iPhone  7 Plus" "iPhone 7 Plus" "com.apple.CoreSimulator.SimRuntime.iOS-11-3`,
-        undefined,
-        expect.anything(),
-        1);
+      expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
       expect(created).toEqual(true);
     });
   });
@@ -307,24 +295,14 @@ describe('AppleSimUtils', () => {
   describe('install', () => {
     it('calls xcrun', async () => {
       await uut.install('udid', 'somePath');
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
-        `/usr/bin/xcrun simctl install udid "somePath"`,
-        undefined,
-        expect.anything(),
-        1);
+      expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
     });
   });
 
   describe('uninstall', () => {
     it('calls xcrun', async () => {
       await uut.uninstall('udid', 'theBundleId');
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
-        `/usr/bin/xcrun simctl uninstall udid theBundleId`,
-        undefined,
-        expect.anything(),
-        1);
+      expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
     });
 
     it('does not throw', async () => {
@@ -336,34 +314,19 @@ describe('AppleSimUtils', () => {
   describe('launch', () => {
     it('launches magically', async () => {
       await uut.launch('udid', 'theBundleId');
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
-        expect.stringMatching(/^.*xcrun simctl launch.*$/),
-        undefined,
-        expect.anything(),
-        1);
+      expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
     });
 
     it('concats args', async () => {
       await uut.launch('udid', 'theBundleId', { 'foo': 'bar', 'bob': 'yourUncle' });
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
-        expect.stringMatching(/^.*xcrun simctl launch.* --args foo bar bob yourUncle$/),
-        undefined,
-        expect.anything(),
-        1);
+      expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
     });
 
     it('asks environment for frameworkPath', async () => {
       environment.getFrameworkPath.mockReturnValueOnce(Promise.resolve('thePathToFrameworks'));
       await uut.launch('udid', 'theBundleId');
       expect(environment.getFrameworkPath).toHaveBeenCalledTimes(1);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
-        expect.stringMatching(/^.*thePathToFrameworks\/Detox.*xcrun simctl launch.*$/),
-        undefined,
-        expect.anything(),
-        1);
+      expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
     });
 
     it('should fail when cant locate framework path', async () => {
@@ -386,59 +349,34 @@ describe('AppleSimUtils', () => {
   describe('sendToHome', () => {
     it('calls xcrun', async () => {
       await uut.sendToHome('theUdid');
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
-        expect.stringMatching(/.*xcrun simctl launch theUdid.*/),
-        undefined,
-        expect.anything(),
-        10
-      );
+      expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
     });
   });
 
   describe('getLogsPaths', () => {
     it('returns correct paths', () => {
-      const HOME = process.env.HOME;
-      expect(uut.getLogsPaths('123')).toEqual({
-        stdout: `${HOME}/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.out`,
-        stderr: `${HOME}/Library/Developer/CoreSimulator/Devices/123/data/tmp/detox.last_launch_app_log.err`,
-      })
+      expect(uut.getLogsPaths('123')).toMatchSnapshot();
     });
   });
 
   describe('terminate', () => {
     it('calls xcrun simctl', async () => {
       await uut.terminate('theUdid', 'thebundleId');
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
-        expect.stringMatching(/.*xcrun simctl terminate theUdid thebundleId.*/),
-        undefined,
-        expect.anything(),
-        1);
+      expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
     });
   });
 
   describe('shutdown', () => {
     it('calls xcrun simctl', async () => {
       await uut.shutdown('theUdid');
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
-        expect.stringMatching(/.*xcrun simctl shutdown theUdid.*/),
-        undefined,
-        expect.anything(),
-        1);
+      expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
     });
   });
 
   describe('openUrl', () => {
     it('calls xcrun simctl', async () => {
       await uut.openUrl('theUdid', 'someUrl');
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
-        expect.stringMatching(/.*xcrun simctl openurl theUdid someUrl.*/),
-        undefined,
-        expect.anything(),
-        1);
+      expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
     });
   });
 
@@ -449,69 +387,53 @@ describe('AppleSimUtils', () => {
         fail(`should throw`);
       } catch (e) {
         expect(e.message).toMatch(/.*Install fbsimctl using.*/);
-        expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+        expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
       }
     });
 
     it('calls fbsimctl set_location', async () => {
       exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({ stdout: `true` }));
       await uut.setLocation('theUdid', 123.456, 789.123);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(2);
-      expect(exec.execWithRetriesAndLogs.mock.calls[1][0])
-        .toMatch(/.*fbsimctl theUdid set_location 123.456 789.123.*/);
+      expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
     });
   });
 
   describe('resetContentAndSettings', () => {
     it('shutdown, simctl erase, then boot', async () => {
-      uut.shutdown = jest.fn();
-      uut.boot = jest.fn();
-      expect(uut.shutdown).not.toHaveBeenCalled();
-      expect(uut.boot).not.toHaveBeenCalled();
       await uut.resetContentAndSettings('theUdid');
-      expect(uut.shutdown).toHaveBeenCalledTimes(1);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
-        expect.stringMatching(/.*xcrun simctl erase theUdid.*/),
-        undefined,
-        expect.anything(),
-        1);
-      expect(uut.boot).toHaveBeenCalledTimes(1);
+      expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
     });
   });
 
   describe('takeScreenshot', () => {
     it('executes simctl screenshot command', async () => {
-      const udid = Math.random();
-      const dest = '/tmp/' + Math.random();
+      const udid = 'FBD9308E-33CC-4E43-92AD-FA7E1C06851A';
+      const dest = '/tmp/' + 'screenshot.png';
 
       await uut.takeScreenshot(udid, dest);
+      expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
+    });
 
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
-      expect(exec.execWithRetriesAndLogs).toHaveBeenCalledWith(
-        expect.stringMatching(new RegExp(`xcrun simctl io ${udid} screenshot "${dest}"`)),
-        undefined,
-        expect.anything(),
-        1
-      );
+    it('executes simctl screenshot command silently (if dest is /dev/null)', async () => {
+      const udid = 'FBD9308E-33CC-4E43-92AD-FA7E1C06851A';
+      const dest = '/dev/null';
+
+      await uut.takeScreenshot(udid, dest);
+      expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
+      expect(exec.execWithRetriesAndLogs.mock.calls[0][1].silent).toBe(true);
     });
   });
 
   describe('recordVideo', () => {
     it('spawns simctl process with recordVideo command', async () => {
       const childProcessPromise = Object.assign(Promise.resolve(), { childProcess: {} });
-      const udid = Math.random();
-      const dest = '/tmp/' + Math.random();
+      const udid = '30A234FD-2372-4757-A76B-E375C8C43A54';
+      const dest = '/tmp/' + 'video.mp4'
       exec.spawnAndLog.mockReturnValueOnce(childProcessPromise);
 
       const result = uut.recordVideo(udid, dest);
 
-      expect(exec.spawnAndLog).toHaveBeenCalledTimes(1);
-      expect(exec.spawnAndLog).toHaveBeenCalledWith(
-        expect.stringMatching(/xcrun/),
-        ['simctl', 'io', udid, 'recordVideo', dest]
-      );
-
+      expect(exec.spawnAndLog.mock.calls).toMatchSnapshot();
       expect(result).toEqual(childProcessPromise);
     });
   });

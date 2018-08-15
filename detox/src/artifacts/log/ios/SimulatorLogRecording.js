@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const fs = require('fs-extra');
 const log = require('../../../utils/logger').child({ __filename });
+const sleep = require('../../../utils/sleep');
 const { Tail } = require('tail');
 const Artifact = require('../../templates/artifact/Artifact');
 
@@ -21,27 +22,31 @@ class SimulatorLogRecording extends Artifact {
     this._logStream = null;
     this._stdoutTail = null;
     this._stderrTail = null;
+
+    this._beforeUnwatch = null;
+    this._beforeClose = null;
   }
 
-  async doStart() {
-    this._createWriteableStream();
-    this._stdoutTail = this._createTail(this._stdoutPath, 'stdout');
-    this._stderrTail = this._createTail(this._stderrPath, 'stderr');
-  }
+  async doStart({ readFromBeginning } = {}) {
+    if (readFromBeginning !== void 0) {
+      this._readFromBeginning = readFromBeginning;
+    }
 
-  _createWriteableStream() {
-    log.trace({ event: 'CREATE_STREAM '}, `creating append-only stream to: ${this._logPath}`);
-    this._logStream = fs.createWriteStream(this._logPath, { flags: 'a' });
+    this._logStream = this._logStream || this._openWriteableStream();
+    this._stdoutTail = await this._createTail(this._stdoutPath, 'stdout');
+    this._stderrTail = await this._createTail(this._stderrPath, 'stderr');
+    this._beforeUnwatch = sleep(200); // HACK: experimental value that ensures saving all lines from tail
   }
 
   async doStop() {
-    this._unwatch();
+    await this._unwatch();
+    this._beforeClose = sleep(100); // HACK: works around the Tail bug - it emits lines even after unwatch
   }
 
   async doSave(artifactPath) {
-    this._close();
-    const tempLogPath = this._logPath;
+    await this._closeWriteableStream();
 
+    const tempLogPath = this._logPath;
     if (await fs.exists(tempLogPath)) {
       log.debug({ event: 'MOVE_FILE' }, `moving "${tempLogPath}" to ${artifactPath}`);
       await fs.move(tempLogPath, artifactPath);
@@ -51,36 +56,48 @@ class SimulatorLogRecording extends Artifact {
   }
 
   async doDiscard() {
-    this._close();
+    await this._closeWriteableStream();
     await fs.remove(this._logPath);
   }
 
-  _unwatch() {
+  _openWriteableStream() {
+    log.trace({ event: 'CREATE_STREAM '}, `creating append-only stream to: ${this._logPath}`);
+    return fs.createWriteStream(this._logPath, { flags: 'a' });
+  }
+
+  async _unwatch() {
+    await this._beforeUnwatch;
+
     if (this._stdoutTail) {
-      log.trace({ event: 'TAIL_UNWATCH' }, `unwatching stdout log`);
+      log.trace({ event: 'TAIL_UNWATCH' }, `unwatching stdout log: ${this._stdoutPath}`);
       this._stdoutTail.unwatch();
     }
 
     this._stdoutTail = null;
 
     if (this._stderrTail) {
-      log.trace({ event: 'TAIL_UNWATCH' }, `unwatching stderr log`);
+      log.trace({ event: 'TAIL_UNWATCH' }, `unwatching stderr log: ${this._stderrPath}`);
       this._stderrTail.unwatch();
     }
 
     this._stderrTail = null;
   }
 
-  _close() {
-    if (this._logStream) {
-      log.trace({ event: 'CLOSING_STREAM '}, `closing stream to: ${this._logPath}`);
-      this._logStream.end();
-    }
+  async _closeWriteableStream() {
+    log.trace({ event: 'CLOSING_STREAM '}, `closing stream to: ${this._logPath}`);
 
+    const stream = this._logStream;
     this._logStream = null;
+    await this._beforeClose;
+    await new Promise(resolve => stream.end(resolve));
   }
 
-  _createTail(file, prefix) {
+  async _createTail(file, prefix) {
+    if (!fs.existsSync(file)) {
+      log.warn({ event: 'LOG_MISSING' }, `simulator ${prefix} log is missing at path: ${file}`);
+      return null;
+    }
+
     log.trace({ event: 'TAIL_CREATE' }, `starting to watch ${prefix} log: ${file}`);
 
     const tail = new Tail(file, {

@@ -1,6 +1,6 @@
 const Artifact = require('../../templates/artifact/Artifact');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
-const interruptProcess = require('../../../utils/interruptProcess');
+const { interruptProcess } = require('../../../utils/exec');
 const retry = require('../../../utils/retry');
 const sleep = require('../../../utils/sleep');
 

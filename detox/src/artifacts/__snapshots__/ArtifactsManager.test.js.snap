@@ -9,21 +9,7 @@ Array [
       "methodName": "onIdleCallback",
       "plugin": "testPlugin",
     },
-    "Caught exception inside plugin (testPlugin) at phase onIdleCallback",
-  ],
-]
-`;
-
-exports[`ArtifactsManager .artifactsApi .requestIdleCallback() should gracefully handle a case when plugin object is not passed and use "unknown" as a name placeholder 1`] = `
-Array [
-  Array [
-    Object {
-      "err": [Error: test onIdleCallback error],
-      "event": "PLUGIN_ERROR",
-      "methodName": "onIdleCallback",
-      "plugin": "unknown",
-    },
-    "Caught exception inside plugin (unknown) at phase onIdleCallback",
+    "Caught exception inside function call: testPlugin.onIdleCallback()",
   ],
 ]
 `;
@@ -37,7 +23,7 @@ Array [
       "methodName": "onAfterAll",
       "plugin": "testPlugin",
     },
-    "Caught exception inside plugin (testPlugin) at phase onAfterAll",
+    "Caught exception inside function call: testPlugin.onAfterAll()",
   ],
 ]
 `;
@@ -51,7 +37,7 @@ Array [
       "methodName": "onAfterEach",
       "plugin": "testPlugin",
     },
-    "Caught exception inside plugin (testPlugin) at phase onAfterEach",
+    "Caught exception inside function call: testPlugin.onAfterEach({ title: 'test', fullName: 'Suite test', status: 'passed' })",
   ],
 ]
 `;
@@ -65,7 +51,7 @@ Array [
       "methodName": "onBeforeAll",
       "plugin": "testPlugin",
     },
-    "Caught exception inside plugin (testPlugin) at phase onBeforeAll",
+    "Caught exception inside function call: testPlugin.onBeforeAll()",
   ],
 ]
 `;
@@ -79,63 +65,63 @@ Array [
       "methodName": "onBeforeEach",
       "plugin": "testPlugin",
     },
-    "Caught exception inside plugin (testPlugin) at phase onBeforeEach",
+    "Caught exception inside function call: testPlugin.onBeforeEach({ title: 'test', fullName: 'Suite test', status: 'running' })",
   ],
 ]
 `;
 
-exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onBeforeRelaunchApp errors 1`] = `
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onBeforeLaunchApp errors 1`] = `
 Array [
   Array [
     Object {
-      "err": [Error: test onBeforeRelaunchApp error],
+      "err": [Error: test onBeforeLaunchApp error],
       "event": "PLUGIN_ERROR",
-      "methodName": "onBeforeRelaunchApp",
+      "methodName": "onBeforeLaunchApp",
       "plugin": "testPlugin",
     },
-    "Caught exception inside plugin (testPlugin) at phase onBeforeRelaunchApp",
+    "Caught exception inside function call: testPlugin.onBeforeLaunchApp({ bundleId: 'testBundleId', deviceId: 'testDeviceId' })",
   ],
 ]
 `;
 
-exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onBeforeResetDevice errors 1`] = `
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onBootDevice errors 1`] = `
 Array [
   Array [
     Object {
-      "err": [Error: test onBeforeResetDevice error],
+      "err": [Error: test onBootDevice error],
       "event": "PLUGIN_ERROR",
-      "methodName": "onBeforeResetDevice",
+      "methodName": "onBootDevice",
       "plugin": "testPlugin",
     },
-    "Caught exception inside plugin (testPlugin) at phase onBeforeResetDevice",
+    "Caught exception inside function call: testPlugin.onBootDevice({ coldBoot: false, deviceId: 'testDeviceId' })",
   ],
 ]
 `;
 
-exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onRelaunchApp errors 1`] = `
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onLaunchApp errors 1`] = `
 Array [
   Array [
     Object {
-      "err": [Error: test onRelaunchApp error],
+      "err": [Error: test onLaunchApp error],
       "event": "PLUGIN_ERROR",
-      "methodName": "onRelaunchApp",
+      "methodName": "onLaunchApp",
       "plugin": "testPlugin",
     },
-    "Caught exception inside plugin (testPlugin) at phase onRelaunchApp",
+    "Caught exception inside function call: testPlugin.onLaunchApp({ bundleId: 'testBundleId', deviceId: 'testDeviceId', pid: 2018 })",
   ],
 ]
 `;
 
-exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onResetDevice errors 1`] = `
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onShutdownDevice errors 1`] = `
 Array [
   Array [
     Object {
-      "err": [Error: test onResetDevice error],
+      "err": [Error: test onShutdownDevice error],
       "event": "PLUGIN_ERROR",
-      "methodName": "onResetDevice",
+      "methodName": "onShutdownDevice",
       "plugin": "testPlugin",
     },
-    "Caught exception inside plugin (testPlugin) at phase onResetDevice",
+    "Caught exception inside function call: testPlugin.onShutdownDevice({ deviceId: 'testDeviceId' })",
   ],
 ]
 `;
@@ -149,15 +135,7 @@ Array [
       "methodName": "onTerminate",
       "plugin": "testPlugin",
     },
-    "Caught exception inside plugin (testPlugin) at phase onTerminate",
+    "Caught exception inside function call: testPlugin.onTerminate()",
   ],
 ]
 `;
-
-exports[`ArtifactsManager when created should provide partially working artifacts api, where .getBundleId() throws 1`] = `"DetoxRuntimeError: Detox Artifacts API had no bundleId at the time of calling"`;
-
-exports[`ArtifactsManager when created should provide partially working artifacts api, where .getDeviceId() throws 1`] = `"DetoxRuntimeError: Detox Artifacts API had no deviceId at the time of calling"`;
-
-exports[`ArtifactsManager when created should provide partially working artifacts api, where .getPid() throws 1`] = `"DetoxRuntimeError: Detox Artifacts API had no app PID at the time of calling"`;
-
-exports[`ArtifactsManager when plugin factory is registered and the app is about to be launched for the first time still should not be able to get PID from artifacts API 1`] = `"DetoxRuntimeError: Detox Artifacts API had no app PID at the time of calling"`;

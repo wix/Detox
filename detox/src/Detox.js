@@ -3,10 +3,10 @@ const util = require('util');
 const logger = require('./utils/logger');
 const log = require('./utils/logger').child({ __filename });
 const Device = require('./devices/Device');
-const IosDriver = require('./devices/IosDriver');
-const SimulatorDriver = require('./devices/SimulatorDriver');
-const EmulatorDriver = require('./devices/EmulatorDriver');
-const AttachedAndroidDriver = require('./devices/AttachedAndroidDriver');
+const IosDriver = require('./devices/drivers/IosDriver');
+const SimulatorDriver = require('./devices/drivers/SimulatorDriver');
+const EmulatorDriver = require('./devices/drivers/EmulatorDriver');
+const AttachedAndroidDriver = require('./devices/drivers/AttachedAndroidDriver');
 const DetoxRuntimeError = require('./errors/DetoxRuntimeError');
 const argparse = require('./utils/argparse');
 const configuration = require('./configuration');
@@ -14,6 +14,7 @@ const Client = require('./client/Client');
 const DetoxServer = require('./server/DetoxServer');
 const URL = require('url').URL;
 const ArtifactsManager = require('./artifacts/ArtifactsManager');
+const AsyncEmitter = require('./utils/AsyncEmitter');
 
 const DEVICE_CLASSES = {
   'ios.simulator': SimulatorDriver,
@@ -49,16 +50,23 @@ class Detox {
     this.client = new Client(sessionConfig);
     await this.client.connect();
 
-    const deviceClass = DEVICE_CLASSES[this.deviceConfig.type];
-
-    if (!deviceClass) {
+    const DeviceDriverClass = DEVICE_CLASSES[this.deviceConfig.type];
+    if (!DeviceDriverClass) {
       throw new Error(`'${this.deviceConfig.type}' is not supported`);
     }
 
-    const deviceDriver = new deviceClass(this.client);
+    const deviceDriver = new DeviceDriverClass({
+      client: this.client,
+    });
+
+    this.artifactsManager.subscribeToDeviceEvents(deviceDriver);
     this.artifactsManager.registerArtifactPlugins(deviceDriver.declareArtifactPlugins());
-    this.device = new Device(this.deviceConfig, sessionConfig, deviceDriver);
-    this.artifactsManager.subscribeToDeviceEvents(this.device);
+
+    this.device = new Device({
+      deviceConfig: this.deviceConfig,
+      deviceDriver,
+      sessionConfig,
+    });
 
     await this.device.prepare(params);
 
@@ -78,7 +86,6 @@ class Detox {
     }
 
     if (this.device) {
-      this.artifactsManager.unsubscribeFromDeviceEvents(this.device);
       await this.device._cleanup();
     }
 
