@@ -110,7 +110,7 @@ class ADB {
   }
 
   async pidof(deviceId, bundleId) {
-    const bundleIdRegex = pipeCommands.escape.inQuotedRegexp(bundleId) + '\\s*$';
+    const bundleIdRegex = pipeCommands.escape.inQuotedRegexp(bundleId) + '[ ]*$';
     const grep = pipeCommands.search.regexp;
 
     const processes = await this.shell(deviceId, `ps | ${grep(bundleIdRegex)}`).catch(() => '');
