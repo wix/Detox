@@ -32,7 +32,7 @@ class ADB {
 
   async _getPowerStatus(deviceId) {
     const grep = pipeCommands.search.regexp;
-    const stdout = await this.shell(deviceId, `dumpsys power | ${grep('^\\s*m[UW].*=')}`);
+    const stdout = await this.shell(deviceId, `dumpsys power | ${grep('^[ ]*m[UW].*=')}`);
 
     return stdout
       .split('\n')
