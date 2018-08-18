@@ -1,3 +1,4 @@
+const path = require('path');
 const glob = require('glob').sync;
 const readFile = require('fs').readFileSync;
 const { parse } = require('@babel/parser');
@@ -17,7 +18,9 @@ function findDocumentedFiles(basePath, globPattern) {
     cwd: basePath
   });
 
-  return filepaths.map((filePath) => [filePath, readFile(filePath, 'utf-8')]).filter(([_, content]) => findDocumentationComment(content));
+  return filepaths
+    .map((filePath) => [filePath, readFile(path.resolve(basePath, filePath), 'utf-8')])
+    .filter(([_, content]) => findDocumentationComment(content));
 }
 
 module.exports = { findDocumentedFiles, findDocumentationComment };
