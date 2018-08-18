@@ -1,5 +1,6 @@
 const glob = require('glob').sync;
 const readFile = require('fs').readFileSync;
+const writeFile = require('fs').writeFileSync;
 const { parse } = require('@babel/parser');
 const doctrine = require('doctrine');
 
@@ -202,7 +203,10 @@ ${documentation.methods.map(buildMethodDocumentation)}
 }
 
 function writeDocumentation(documentations, sourceToDestFn) {
-  // TODO: implement
+  documentations.forEach((doc) => {
+    const outputPath = sourceToDestFn(doc.paths);
+    writeFile(outputPath, buildDocumentation(doc));
+  });
 }
 
 // const documentationFiles = findDocumentedFiles('../../detox/src', '**/*.js');

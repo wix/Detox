@@ -8,6 +8,7 @@ const {
 } = require('../');
 const glob = require('glob').sync;
 const readFileSync = require('fs').readFileSync;
+const writeFileSync = require('fs').writeFileSync;
 const { parse } = require('@babel/parser');
 
 jest.mock('glob', () => ({
@@ -15,7 +16,8 @@ jest.mock('glob', () => ({
 }));
 
 jest.mock('fs', () => ({
-  readFileSync: jest.fn()
+  readFileSync: jest.fn(),
+  writeFileSync: jest.fn()
 }));
 
 const pathToContent = {
@@ -451,5 +453,56 @@ describe('buildDocumentation', () => {
       expect(doc).toEqual(expect.stringContaining('- `element(by.id("foo")).clickAtPosition()`'));
       expect(doc).toEqual(expect.stringContaining('- `element(by.id("foo")).clickAtPosition(true, false)`'));
     });
+  });
+});
+describe('writeDocumentation', () => {
+  it('calls the path mapping', () => {
+    const mockMapToDest = jest.fn();
+
+    writeDocumentation(
+      [
+        {
+          platform: ['ios', 'android'],
+          id: 'element',
+          paths: ['./foo/bar.js'],
+          methods: [
+            {
+              platform: ['ios', 'android'],
+              name: 'clickAtPosition',
+              args: [],
+              description: 'clicks at position',
+              examples: ['element(by.id("foo")).clickAtPosition()', 'element(by.id("foo")).clickAtPosition(true, false)']
+            }
+          ]
+        }
+      ],
+      mockMapToDest
+    );
+
+    expect(mockMapToDest).toHaveBeenCalledWith(['./foo/bar.js']);
+  });
+
+  it('writes to the mapped path', () => {
+    writeDocumentation(
+      [
+        {
+          platform: ['ios', 'android'],
+          id: 'element',
+          paths: ['./foo/bar.js'],
+          methods: [
+            {
+              platform: ['ios', 'android'],
+              name: 'clickAtPosition',
+              args: [],
+              description: 'clicks at position',
+              examples: ['element(by.id("foo")).clickAtPosition()', 'element(by.id("foo")).clickAtPosition(true, false)']
+            }
+          ]
+        }
+      ],
+      () => './foo/bar.js'
+    );
+
+    expect(writeFileSync).toHaveBeenCalledWith('./foo/bar.js', expect.stringContaining('clickAtPosition'));
   });
 });
