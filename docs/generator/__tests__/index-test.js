@@ -1,4 +1,11 @@
-const { findDocumentedFiles, extractMetaInformation, extractDocumentedMethods, combineDocumentations, buildDocumentation } = require('../');
+const {
+  findDocumentedFiles,
+  extractMetaInformation,
+  extractDocumentedMethods,
+  combineDocumentations,
+  buildDocumentation,
+  writeDocumentation
+} = require('../');
 const glob = require('glob').sync;
 const readFileSync = require('fs').readFileSync;
 const { parse } = require('@babel/parser');
@@ -228,44 +235,62 @@ describe('extractDocumentedMethods', () => {
 });
 
 describe('combineDocumentations', () => {
-  const documentationAiOS = {
-    meta: {
-      id: 'expect',
-      title: 'What to expect?',
-      platform: 'ios'
-    },
-    methods: [{ name: 'toBeVisible', args: [] }]
-  };
+  const documentationAiOS = [
+    './ios/a.js',
+    {
+      meta: {
+        id: 'expect',
+        title: 'What to expect?',
+        platform: 'ios'
+      },
+      methods: [{ name: 'toBeVisible', args: [] }]
+    }
+  ];
 
-  const documentationAAndroid = {
-    meta: {
-      id: 'expect',
-      platform: 'android'
-    },
-    methods: [{ name: 'toBeVisible', args: [] }, { name: 'toBeAlmostVisible', args: [] }]
-  };
+  const documentationAAndroid = [
+    './android/a.js',
+    {
+      meta: {
+        id: 'expect',
+        platform: 'android'
+      },
+      methods: [{ name: 'toBeVisible', args: [] }, { name: 'toBeAlmostVisible', args: [] }]
+    }
+  ];
 
-  const documentationBiOS = {
-    meta: {
-      id: 'actions',
-      platform: 'ios'
-    },
-    methods: [{ name: 'click', args: [] }]
-  };
+  const documentationBiOS = [
+    './ios/b.js',
+    {
+      meta: {
+        id: 'actions',
+        platform: 'ios'
+      },
+      methods: [{ name: 'click', args: [] }]
+    }
+  ];
 
-  const documentationCiOS = {
-    meta: {
-      id: 'actions',
-      platform: 'ios'
-    },
-    methods: [{ name: 'clickTwice', args: [] }]
-  };
+  const documentationCiOS = [
+    './ios/c.js',
+    {
+      meta: {
+        id: 'actions',
+        platform: 'ios'
+      },
+      methods: [{ name: 'clickTwice', args: [] }]
+    }
+  ];
 
   it('leaves unmatched ids alone', () => {
     expect(combineDocumentations([documentationAiOS, documentationBiOS])).toEqual(
       expect.arrayContaining([
-        { platform: ['ios'], id: 'expect', title: 'What to expect?', methods: [{ platform: ['ios'], name: 'toBeVisible', args: [] }] },
-        { platform: ['ios'], id: 'actions', methods: [{ platform: ['ios'], name: 'click', args: [] }] }
+        {
+          paths: ['./ios/a.js'],
+          platform: ['ios'],
+          id: 'expect',
+          title: 'What to expect?',
+          methods: [{ platform: ['ios'], name: 'toBeVisible', args: [] }]
+        },
+        { paths: ['./ios/b.js'], platform: ['ios'], id: 'actions', methods: [{ platform: ['ios'], name: 'click', args: [] }] }
       ])
     );
   });
@@ -273,8 +298,15 @@ describe('combineDocumentations', () => {
   it('enhances ids of the same platform', () => {
     expect(combineDocumentations([documentationAiOS, documentationBiOS, documentationCiOS])).toEqual(
       expect.arrayContaining([
-        { platform: ['ios'], id: 'expect', title: 'What to expect?', methods: [{ platform: ['ios'], name: 'toBeVisible', args: [] }] },
         {
+          paths: ['./ios/a.js'],
+          platform: ['ios'],
+          id: 'expect',
+          title: 'What to expect?',
+          methods: [{ platform: ['ios'], name: 'toBeVisible', args: [] }]
+        },
+        {
+          paths: ['./ios/b.js', './ios/c.js'],
           platform: ['ios'],
           id: 'actions',
           methods: [{ platform: ['ios'], name: 'click', args: [] }, { platform: ['ios'], name: 'clickTwice', args: [] }]
@@ -287,6 +319,7 @@ describe('combineDocumentations', () => {
     expect(combineDocumentations([documentationAiOS, documentationBiOS, documentationAAndroid])).toEqual(
       expect.arrayContaining([
         {
+          paths: ['./ios/a.js', './android/a.js'],
           platform: ['ios', 'android'],
           id: 'expect',
           title: 'What to expect?',
@@ -299,7 +332,7 @@ describe('combineDocumentations', () => {
             }
           ]
         },
-        { platform: ['ios'], id: 'actions', methods: [{ name: 'click', args: [], platform: ['ios'] }] }
+        { paths: ['./ios/b.js'], platform: ['ios'], id: 'actions', methods: [{ name: 'click', args: [], platform: ['ios'] }] }
       ])
     );
   });

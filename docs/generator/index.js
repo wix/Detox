@@ -134,8 +134,11 @@ function unique(array) {
 }
 
 function combineDocumentations(documentations) {
-  return documentations.reduce((carry, doc) => {
+  const documentationsWithPath = documentations.map(([path, doc]) => ({ ...doc, path }));
+
+  return documentationsWithPath.reduce((carry, doc) => {
     const platform = doc.meta.platform;
+    const path = doc.path;
 
     // Check if it is unknown
     const knownRecord = carry.find((knownDoc) => knownDoc.id === doc.meta.id);
@@ -145,6 +148,7 @@ function combineDocumentations(documentations) {
         {
           id: doc.meta.id,
           title: doc.meta.title,
+          paths: [path],
           platform: [platform],
           methods: doc.methods.map((method) => ({ ...method, platform: [platform] }))
         }
@@ -153,6 +157,7 @@ function combineDocumentations(documentations) {
 
     // Add new supported platform
     knownRecord.platform = unique([...knownRecord.platform, platform]);
+    knownRecord.paths.push(path);
 
     // Enhance methods
     const newMethods = [];
