@@ -1,5 +1,7 @@
-const { findDocumentationComment } = require('./find');
 const doctrine = require('doctrine');
+const { parse } = require('@babel/parser');
+const { findDocumentationComment } = require('./find');
+
 
 const SUPPORTED_PLATFORMS = ['ios', 'android'];
 
@@ -88,7 +90,7 @@ function extractMetaInformation(fileContent) {
 
 function extractDocumentation(fileContent) {
   const meta = extractMetaInformation(fileContent);
-  const ast = parse(fileContent);
+  const ast = parse(fileContent, { plugins: ["objectRestSpread"] });
   const classes = ast.program.body.filter((node) => node.type === 'ClassDeclaration');
 
   // TODO: support more than one class

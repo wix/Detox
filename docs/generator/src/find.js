@@ -6,7 +6,7 @@ const DOCUMENTATION_IDENTIFIER = '@Documented';
 const blockComments = (ast) => ast.comments.filter((node) => node.type === 'CommentBlock');
 
 function findDocumentationComment(fileContent) {
-  return blockComments(parse(fileContent))
+  return blockComments(parse(fileContent, { plugins: ["objectRestSpread"]}))
     .map((comment) => comment.value)
     .find((content) => content.includes(DOCUMENTATION_IDENTIFIER));
 }
