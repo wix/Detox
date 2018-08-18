@@ -26,9 +26,11 @@ function buildDocumentation(documentation) {
 }
 
 function writeDocumentation(documentations, sourceToDestFn) {
-  documentations.forEach((doc) => {
-    const outputPath = sourceToDestFn(doc.paths);
+  return documentations.map((doc) => ({ doc, outputPath: sourceToDestFn(doc.paths) })).map(({ doc, outputPath }) => {
+    // Side-effect
     writeFile(outputPath, buildDocumentation(doc));
+
+    return outputPath;
   });
 }
 

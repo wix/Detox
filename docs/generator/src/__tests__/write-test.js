@@ -166,4 +166,26 @@ describe('writeDocumentation', () => {
 
     expect(writeFileSync).toHaveBeenCalledWith('./foo/bar.js', expect.stringContaining('clickAtPosition'));
   });
+
+  it('returns an array of the file paths', () => {
+    const result = writeDocumentation(
+      [
+        {
+          platform: ['ios', 'android'],
+          id: 'element',
+          paths: ['./foo/bar.js'],
+          methods: []
+        },
+        {
+          platform: ['ios', 'android'],
+          id: 'other',
+          paths: ['./foo/baz.js'],
+          methods: []
+        }
+      ],
+      (paths) => paths[0].replace('.js', '.md')
+    );
+
+    expect(result).toEqual(['./foo/bar.md', './foo/baz.md']);
+  });
 });
