@@ -5,6 +5,11 @@ jest.mock('fs', () => ({
   writeFileSync: jest.fn()
 }));
 
+jest.mock('prettier', () => ({
+  resolveConfig: jest.fn().mockReturnValue(Promise.resolve({})),
+  format: jest.fn().mockImplementation((str) => str)
+}));
+
 describe('buildDocumentation', () => {
   it('uses the the id as markdown id', () => {
     expect(
@@ -117,10 +122,10 @@ describe('buildDocumentation', () => {
   });
 });
 describe('writeDocumentation', () => {
-  it('calls the path mapping', () => {
+  it('calls the path mapping', async () => {
     const mockMapToDest = jest.fn().mockReturnValue('./foo.js');
 
-    writeDocumentation(
+    await writeDocumentation(
       [
         {
           platform: ['ios', 'android'],
@@ -143,8 +148,8 @@ describe('writeDocumentation', () => {
     expect(mockMapToDest).toHaveBeenCalledWith(['./foo/bar.js']);
   });
 
-  it('writes to the mapped path', () => {
-    writeDocumentation(
+  it('writes to the mapped path', async () => {
+    await writeDocumentation(
       [
         {
           platform: ['ios', 'android'],
@@ -167,8 +172,8 @@ describe('writeDocumentation', () => {
     expect(writeFileSync).toHaveBeenCalledWith('./foo/bar.js', expect.stringContaining('clickAtPosition'));
   });
 
-  it('returns an array of the file paths', () => {
-    const result = writeDocumentation(
+  it('returns an array of the file paths', async () => {
+    const result = await writeDocumentation(
       [
         {
           platform: ['ios', 'android'],

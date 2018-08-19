@@ -15,6 +15,8 @@
     "jest": "^23.5.0"
   },
   "dependencies": {
-    "glob": "^7.1.2"
+    "glob": "^7.1.2",
+    "mkpath": "^1.0.0",
+    "prettier": "^1.14.2"
   }
 }

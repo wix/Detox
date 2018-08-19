@@ -1,3 +1,5 @@
+const prettier = require('prettier');
+const path = require('path');
 const writeFile = require('fs').writeFileSync;
 
 function buildMethodDocumentation(method) {
@@ -25,10 +27,12 @@ function buildDocumentation(documentation) {
   `;
 }
 
-function writeDocumentation(documentations, sourceToDestFn) {
+async function writeDocumentation(documentations, sourceToDestFn) {
+  const config = await prettier.resolveConfig(path.resolve(__dirname));
+
   return documentations.map((doc) => ({ doc, outputPath: sourceToDestFn(doc.paths) })).map(({ doc, outputPath }) => {
     // Side-effect
-    writeFile(outputPath, buildDocumentation(doc));
+    writeFile(outputPath, prettier.format(buildDocumentation(doc), { ...config, parser: 'markdown' }));
 
     return outputPath;
   });
