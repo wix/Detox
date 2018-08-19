@@ -10,13 +10,13 @@ title: The `device` Object
 - [`device.launchApp()`](#devicelaunchappparams)
 - [`device.relaunchApp()` **Deprecated**](#devicerelaunchappparams)
 - [`device.terminateApp()`](#deviceterminateapp)
-- [`device.reloadReactNative()`](#devicereloadreactnative)
 - [`device.sendToHome()`](#devicesendtohome)
+- [`device.reloadReactNative()`](#devicereloadreactnative)
 - [`device.installApp()`](#deviceinstallapp)
 - [`device.uninstallApp()`](#deviceuninstallapp)
 - [`device.openURL(url)`](#deviceopenurlurl-sourceappoptional)
 - [`device.sendUserNotification(params)`](#devicesendusernotificationparams)
-- [`device.sendUserActivity(params)`](#devicesenduseracitivityparams)
+- [`device.sendUserActivity(params)`](#devicesenduseractivityparams)
 - [`device.setOrientation(orientation)`](#devicesetorientationorientation)
 - [`device.setLocation(lat, lon)`](#devicesetlocationlat-lon)
 - [`device.setURLBlacklist([urls])`](#deviceseturlblacklisturls)
@@ -24,8 +24,8 @@ title: The `device` Object
 - [`device.disableSynchronization()`](#devicedisablesynchronization)
 - [`device.resetContentAndSettings()`](#deviceresetcontentandsettings)
 - [`device.getPlatform()`](#devicegetplatform)
-- [`device.pressBack()` **Android Only**](#devicepressback)
-- [`device.shake()` **iOS Only**](#deviceshake)
+- [`device.pressBack()` **Android Only**](#devicepressback-android-only)
+- [`device.shake()` **iOS Only**](#deviceshake-ios-only)
 
 ### `device.launchApp(params)`
 Launch the app defined in the current [`configuration`](APIRef.Configuration.md).
@@ -257,4 +257,4 @@ await device.pressBack();
 ```
 
 ### `device.shake()` **iOS Only**
-Simulate shake 
+Simulate shake
