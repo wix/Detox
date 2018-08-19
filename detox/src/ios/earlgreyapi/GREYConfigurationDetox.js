@@ -6,8 +6,8 @@
 
 
 const log = require('../../utils/logger').child({ __filename });
-    const util = require('util')
-    
+const util = require('util');
+
 
 class GREYConfiguration {
   static enableSynchronization(element) {

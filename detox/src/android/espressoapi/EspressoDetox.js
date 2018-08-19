@@ -6,8 +6,8 @@
 
 
 const log = require('../../utils/logger').child({ __filename });
-    const util = require('util')
-    
+const util = require('util');
+
 
 class EspressoDetox {
   static perform(interaction, action) {

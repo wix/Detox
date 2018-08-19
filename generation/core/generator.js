@@ -217,9 +217,11 @@ module.exports = function getGenerator({
     const outputPath = fragments.join('/');
     const absoluteUtilsPath = path.resolve('../detox/src/utils');
     const relativeUtilsPath = path.relative(outputPath, absoluteUtilsPath);
-    return `const log = require('${relativeUtilsPath}/logger').child({ __filename });
-    const util = require('util')
-    `;
+
+    return (
+      `const log = require('${relativeUtilsPath}/logger').child({ __filename });\n` +
+      `const util = require('util');\n`
+    );
   }
 
   return function generator(files) {

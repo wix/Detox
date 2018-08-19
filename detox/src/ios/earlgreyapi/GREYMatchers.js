@@ -6,8 +6,8 @@
 
 
 const log = require('../../utils/logger').child({ __filename });
-    const util = require('util')
-    
+const util = require('util');
+
 function sanitize_uiAccessibilityTraits(value) {
   let traits = 0;
   for (let i = 0; i < value.length; i++) {
