@@ -25,8 +25,8 @@ BUILD_SIM=`xcodebuild -project "${PROJECT}" -scheme Detox -configuration "${CONF
 echo ${BUILD_IOS}
 echo ${BUILD_SIM}
 
-xcodebuild -project "${PROJECT}" -scheme Detox ONLY_ACTIVE_ARCH=NO -configuration "${CONFIGURATION}" -arch arm64 -sdk iphoneos clean build VALID_ARCHS=arm64
-xcodebuild -project "${PROJECT}" -scheme Detox -configuration "${CONFIGURATION}" -arch x86_64 -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO clean build VALID_ARCHS=x86_64
+xcodebuild -project "${PROJECT}" -scheme Detox ONLY_ACTIVE_ARCH=NO -configuration "${CONFIGURATION}" -arch arm64 -sdk iphoneos build VALID_ARCHS=arm64
+xcodebuild -project "${PROJECT}" -scheme Detox -configuration "${CONFIGURATION}" -arch x86_64 -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO build VALID_ARCHS=x86_64
 
 # Step 2. Copy the framework structure (from iphoneos build) to the universal folder
 
