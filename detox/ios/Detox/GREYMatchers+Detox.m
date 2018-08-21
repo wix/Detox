@@ -48,23 +48,6 @@
 	
 }
 
-id<GREYMatcher> detox_grey_kindOfClass(Class cls)
-{
-	MatchesBlock matches = ^BOOL(id element) {
-		if(cls == UIScrollView.class && [element isKindOfClass:UIView.class] && [((UIView*)element).superview isKindOfClass:NSClassFromString(@"RCTScrollView")])
-		{
-			return YES;
-		}
-		
-		return [element isKindOfClass:cls];
-	};
-	DescribeToBlock describe = ^void(id<GREYDescription> description) {
-		[description appendText:[NSString stringWithFormat:@"detox_kindOfClass('%@')",
-								 NSStringFromClass(cls)]];
-	};
-	return [[GREYElementMatcherBlock alloc] initWithMatchesBlock:matches descriptionBlock:describe];
-}
-
 id<GREYMatcher> detox_grey_parent(id<GREYMatcher> ancestorMatcher)
 {
 	MatchesBlock matches = ^BOOL(id element) {
