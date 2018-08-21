@@ -82,14 +82,21 @@ id<GREYMatcher> detox_grey_parent(id<GREYMatcher> ancestorMatcher)
 
 + (id<GREYMatcher>)detoxMatcherForScrollChildOfMatcher:(id<GREYMatcher>)matcher
 {
+	//No RN—Life is always good.
+	Class RN_RCTScrollView = NSClassFromString(@"RCTScrollView");
+	if (!RN_RCTScrollView)
+	{
+		return matcher;
+	}
+	
+	//Either take scroll views or web views that match the provided matcher, or take views whose parent is a RCTScrollView subclass and the parent matches the provided matcher.
 	return grey_anyOf(grey_allOf(
 								   grey_anyOf(grey_kindOfClass([UIScrollView class]),
 											  grey_kindOfClass([UIWebView class]),
-											  grey_kindOfClass([UITextView class]),
 											  nil),
 								   matcher,
 								   nil),
-						grey_allOf(
+						grey_allOf(detox_grey_parent(grey_kindOfClass(RN_RCTScrollView)),
 								   grey_kindOfClass([UIScrollView class]),
 								   detox_grey_parent(matcher),
 								   nil),
@@ -98,12 +105,14 @@ id<GREYMatcher> detox_grey_parent(id<GREYMatcher> ancestorMatcher)
 
 + (id<GREYMatcher>)detoxMatcherAvoidingProblematicReactNativeElements:(id<GREYMatcher>)matcher
 {
+	//No RN—Life is always good.
 	Class RN_RCTScrollView = NSClassFromString(@"RCTScrollView");
 	if (!RN_RCTScrollView)
 	{
 		return matcher;
 	}
 	
+	//Either take items which are not RCTScrollView subclasses and match the provided matcher, or take items whose parent is RCTScrollView and the parent matches the provided matcher.
 	return grey_anyOf(
 					  grey_allOf(grey_not(grey_kindOfClass(RN_RCTScrollView)),
 								 matcher,
