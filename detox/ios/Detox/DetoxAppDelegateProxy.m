@@ -335,7 +335,7 @@ static void __copyMethods(Class orig, Class target)
 
 - (BOOL)touchVisualizerWindowShouldAlwaysShowFingertip:(COSTouchVisualizerWindow *)window
 {
-	return YES;
+	return ![[NSUserDefaults standardUserDefaults] objectForKey:@"detoxDisableTouchIndicators"];
 }
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_10_3

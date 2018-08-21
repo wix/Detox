@@ -128,6 +128,13 @@ await device.launchApp({launchArgs: {arg1: 1, arg2: "2"}});
 
 The added `launchArgs` will be passed through the launch command to the device and be accessible via `[[NSProcessInfo processInfo] arguments]`
 
+##### 8. Disable touch indicators (iOS only)
+Disable touch indicators on iOS.
+
+```js
+await device.launchApp({disableTouchIndicators: true});
+```
+
 ### `device.relaunchApp(params)`
 **Deprecated** Use `device.launchApp(params)` instead. This method is now calling `launchApp({newInstance: true})` for backwards compatibility, it will be removed in Detox 6.X.X.<Br>
 Kill and relaunch the app defined in the current [`configuration`](APIRef.Configuration.md).
