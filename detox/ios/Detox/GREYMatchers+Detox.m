@@ -50,30 +50,33 @@
 
 id<GREYMatcher> detox_grey_parent(id<GREYMatcher> ancestorMatcher)
 {
-	MatchesBlock matches = ^BOOL(id element) {
+	MatchesBlock matches = ^BOOL(id element)
+	{
 		id parent = nil;
 		
-		if ([element isKindOfClass:[UIView class]]) {
+		if ([element isKindOfClass:[UIView class]])
+		{
 			parent = [element superview];
 		} else {
-			parent = [parent accessibilityContainer];
+			parent = [element accessibilityContainer];
 		}
 		
-		if (parent && [ancestorMatcher matches:parent]) {
+		if (parent && [ancestorMatcher matches:parent])
+		{
 			return YES;
 		}
 		
 		return NO;
 	};
-	DescribeToBlock describe = ^void(id<GREYDescription> description) {
+	DescribeToBlock describe = ^void(id<GREYDescription> description)
+	{
 		[description appendText:[NSString stringWithFormat:@"parentThatMatches(%@)",
 								 ancestorMatcher]];
 	};
 	return grey_allOf(grey_anyOf(grey_kindOfClass([UIView class]),
 								 grey_respondsToSelector(@selector(accessibilityContainer)),
 								 nil),
-					  [[GREYElementMatcherBlock alloc] initWithMatchesBlock:matches
-														   descriptionBlock:describe],
+					  [[GREYElementMatcherBlock alloc] initWithMatchesBlock:matches descriptionBlock:describe],
 					  nil);
 }
 
