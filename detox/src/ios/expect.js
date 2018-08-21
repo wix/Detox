@@ -244,9 +244,11 @@ class WaitForActionInteraction extends Interaction {
     this._call = GreyInteraction.assertWithMatcher(invoke.callDirectly(_interactionCall), callThunk(this._originalMatcher));
     await this.execute();
   }
-  async scroll(amount, direction = 'down') {
-    // override the user's element selection with an extended matcher that looks for UIScrollView children
-    this._searchMatcher = this._searchMatcher._extendToDescendantScrollViews();
+  async scroll(amount, direction = 'down', extendToDescendants = true) {
+    if(extendToDescendants === true) {
+      // override the user's element selection with an extended matcher that looks for UIScrollView children
+      this._searchMatcher = this._searchMatcher._extendToDescendantScrollViews();
+    }
     await this._execute(new ScrollAmountAction(direction, amount));
   }
 }
@@ -287,14 +289,18 @@ class Element {
   async clearText() {
     return await new ActionInteraction(this, new ClearTextAction()).execute();
   }
-  async scroll(amount, direction = 'down') {
-    // override the user's element selection with an extended matcher that looks for UIScrollView children
-    this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
+  async scroll(amount, direction = 'down', extendToDescendants = true) {
+    if(extendToDescendants === true) {
+      // override the user's element selection with an extended matcher that looks for UIScrollView children
+      this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
+    }
     return await new ActionInteraction(this, new ScrollAmountAction(direction, amount)).execute();
   }
-  async scrollTo(edge) {
-    // override the user's element selection with an extended matcher that looks for UIScrollView children
-    this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
+  async scrollTo(edge, extendToDescendants = true) {
+    if(extendToDescendants === true) {
+      // override the user's element selection with an extended matcher that looks for UIScrollView children
+      this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
+    }
     return await new ActionInteraction(this, new ScrollEdgeAction(edge)).execute();
   }
   async swipe(direction, speed = 'fast', percentage = 0) {
