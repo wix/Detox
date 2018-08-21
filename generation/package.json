@@ -26,7 +26,7 @@
 		"babel-types": "6.25.0",
 		"download-file-sync": "1.0.4",
 		"java-method-parser": "0.4.7",
-		"objective-c-parser": "1.2.3",
+		"objective-c-parser": "1.2.4",
 		"remove": "0.1.5",
 		"uuid": "^3.2.1"
 	},

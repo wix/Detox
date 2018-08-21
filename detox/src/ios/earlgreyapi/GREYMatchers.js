@@ -373,12 +373,13 @@ unimplemented matcher is required, please implement it similar to @c grey_closeT
     };
   }
 
-  /*Matcher that matches UI element based on the presence of an ancestor in its hierarchy.
-The given matcher is used to match decendants.
+  /*Matcher that matches any UI element with an ancestor matching the given @c ancestorMatcher.
 
-@param ancestorMatcher The ancestor UI element whose descendants are to be matched.
+@param ancestorMatcher A matcher that's run against the ancestors of the UI element being
+matched.
 
-@return A matcher to check if a UI element is the descendant of another.
+@return A matcher to check if a specified element has an ancestor that matches
+@c ancestorMatcher.
 */static matcherForAncestor(ancestorMatcher) {
     if (typeof ancestorMatcher !== "object" || ancestorMatcher.type !== "Invocation" || typeof ancestorMatcher.value !== "object" || typeof ancestorMatcher.value.target !== "object" || ancestorMatcher.value.target.value !== "GREYMatchers") {
       throw new Error('ancestorMatcher should be a GREYMatcher, but got ' + JSON.stringify(ancestorMatcher));
@@ -394,12 +395,13 @@ The given matcher is used to match decendants.
     };
   }
 
-  /*Matcher that matches any UI element with a descendant matching the given matcher.
+  /*Matcher that matches any UI element with a descendant matching the given @c descendantMatcher.
 
-@param descendantMatcher A matcher being checked to be a descendant
-of the UI element being checked.
+@param descendantMatcher A matcher that's run against the descendants of the UI element being
+matched.
 
-@return A matcher to check if a the specified element is in a descendant of another UI element.
+@return A matcher to check if a specified element has a descendant that matches
+@c descendantMatcher.
 */static matcherForDescendant(descendantMatcher) {
     if (typeof descendantMatcher !== "object" || descendantMatcher.type !== "Invocation" || typeof descendantMatcher.value !== "object" || typeof descendantMatcher.value.target !== "object" || descendantMatcher.value.target.value !== "GREYMatchers") {
       throw new Error('descendantMatcher should be a GREYMatcher, but got ' + JSON.stringify(descendantMatcher));
@@ -482,31 +484,6 @@ is required, please implement it similar to @c grey_closeTo.
       },
       method: "matcherForSliderValueMatcher:",
       args: [valueMatcher]
-    };
-  }
-
-  /*Matcher that matches UIPickerView that has a column set to @c value.
-
-@param column The column of the UIPickerView to be matched.
-@param value  The value that should be set in the column of the UIPickerView.
-
-@return A matcher to check the value in a particular column of a UIPickerView.
-*/static matcherForPickerColumnSetToValue(column, value) {
-    if (typeof column !== "number") throw new Error("column should be a number, but got " + (column + (" (" + (typeof column + ")"))));
-    if (typeof value !== "string") throw new Error("value should be a string, but got " + (value + (" (" + (typeof value + ")"))));
-    return {
-      target: {
-        type: "Class",
-        value: "GREYMatchers"
-      },
-      method: "matcherForPickerColumn:setToValue:",
-      args: [{
-        type: "NSInteger",
-        value: column
-      }, {
-        type: "NSString",
-        value: value
-      }]
     };
   }
 

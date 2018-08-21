@@ -21,8 +21,8 @@ const iosFiles = {
 		"../detox/src/ios/earlgreyapi/GREYConfigurationDetox.js",
 	"../detox/ios/EarlGrey/EarlGrey/Common/GREYConfiguration.h":
 		"../detox/src/ios/earlgreyapi/GREYConfiguration.js",
-	"../detox/ios/EarlGrey/EarlGrey/EarlGrey.h":
-		"../detox/src/ios/earlgreyapi/EarlGrey.js"
+  "../detox/ios/EarlGrey/EarlGrey/Core/EarlGreyImpl.h":
+    "../detox/src/ios/earlgreyapi/EarlGreyImpl.js"
 };
 
 generateIOSAdapters(iosFiles);
