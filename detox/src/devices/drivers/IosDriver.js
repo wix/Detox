@@ -6,7 +6,7 @@ const InvocationManager = require('../../invoke').InvocationManager;
 const invoke = require('../../invoke');
 const GREYConfigurationApi = require('../../ios/earlgreyapi/GREYConfiguration');
 const GREYConfigurationDetox = require('../../ios/earlgreyapi/GREYConfigurationDetox');
-const EarlyGrey = require('../../ios/earlgreyapi/EarlGrey');
+const EarlyGreyImpl = require('../../ios/earlgreyapi/EarlGreyImpl');
 
 class IosDriver extends DeviceDriverBase {
   constructor(config) {
@@ -57,8 +57,7 @@ class IosDriver extends DeviceDriverBase {
   }
 
   async setOrientation(deviceId, orientation) {
-    const call = EarlyGrey.rotateDeviceToOrientationErrorOrNil(invoke.EarlGrey.instance,orientation);
-
+    const call = EarlyGreyImpl.rotateDeviceToOrientationErrorOrNil(invoke.EarlGrey.instance,orientation);
     await this.client.execute(call);
   }
 
