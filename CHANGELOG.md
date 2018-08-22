@@ -1,5 +1,29 @@
 # Change Log
 
+## [8.2.0](https://github.com/wix/detox/tree/8.2.0) (2018-08-22)
+[Full Changelog](https://github.com/wix/detox/compare/8.1.6...8.2.0)
+
+**Fixed Bugs**
+
+- postinstall script fails [\#889](https://github.com/wix/detox/issues/889)
+- Error when running "detox test" for windows using detox 8 due to findstr not supporting /s in regex [\#886](https://github.com/wix/detox/issues/886)
+- Log plugins in ArtifactsManager are not compatible with detox.init\(... launchApp: false ...\) option. [\#856](https://github.com/wix/detox/issues/856)
+- Default `detox test` triggers screenshot taking mechanism, to `dev/null`, it probably shouldn't trigger anything. [\#841](https://github.com/wix/detox/issues/841)
+- Where is the output for the UI Hierarchy? [\#737](https://github.com/wix/detox/issues/737)
+
+**Closed Issues**
+
+- Postinstall script fails when just command line tools are installed [\#897](https://github.com/wix/detox/issues/897)
+- postinstall script fails when parent folder has a space in it [\#894](https://github.com/wix/detox/issues/894)
+- Unable to find alert element  [\#890](https://github.com/wix/detox/issues/890)
+
+**Merged Pull Requests**
+
+- Updated to EarlGrey 1.15.0 [\#895](https://github.com/wix/detox/pull/895) ([rotemmiz](https://github.com/rotemmiz))
+- Fix typo [\#891](https://github.com/wix/detox/pull/891) ([kevinresol](https://github.com/kevinresol))
+- fix\(win32\): new regexp for ADB.pid which is compatible with findstr utility [\#888](https://github.com/wix/detox/pull/888) ([noomorph](https://github.com/noomorph))
+- fix\(win32\): new regexp for adb.unlockScreen which is compatible with findstr [\#887](https://github.com/wix/detox/pull/887) ([noomorph](https://github.com/noomorph))
+
 ## [8.1.6](https://github.com/wix/detox/tree/8.1.6) (2018-08-13)
 [Full Changelog](https://github.com/wix/detox/compare/8.1.5...8.1.6)
 
