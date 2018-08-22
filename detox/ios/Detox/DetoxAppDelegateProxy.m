@@ -14,6 +14,17 @@
 
 #import <Detox/Detox-Swift.h>
 
+@interface COSTouchVisualizerWindow () @end
+@interface DTXTouchVisualizerWindow : COSTouchVisualizerWindow @end
+@implementation DTXTouchVisualizerWindow
+
+- (UIWindow *)overlayWindow
+{
+	return self;
+}
+
+@end
+
 @class DetoxAppDelegateProxy;
 
 static DetoxAppDelegateProxy* _currentAppDelegateProxy;
@@ -23,7 +34,7 @@ static DetoxUserNotificationDispatcher* _pendingLaunchUserNotificationDispatcher
 static NSMutableArray<DetoxUserActivityDispatcher*>* _pendingUserActivityDispatchers;
 static DetoxUserActivityDispatcher* _pendingLaunchUserActivityDispatcher;
 
-static COSTouchVisualizerWindow* _touchVisualizerWindow;
+static DTXTouchVisualizerWindow* _touchVisualizerWindow;
 
 static NSURL* _launchUserNotificationDataURL()
 {
@@ -172,12 +183,15 @@ static void __copyMethods(Class orig, Class target)
 - (void)__dtx_applicationDidLaunchNotification:(NSNotification*)notification
 {
 	dispatch_async(dispatch_get_main_queue(), ^{
-		_touchVisualizerWindow = [[COSTouchVisualizerWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+		_touchVisualizerWindow = [[DTXTouchVisualizerWindow alloc] initWithFrame:CGRectZero];
 		_touchVisualizerWindow.windowLevel = 100000000000;
 		_touchVisualizerWindow.backgroundColor = [UIColor.greenColor colorWithAlphaComponent:0.0];
 		_touchVisualizerWindow.hidden = NO;
 		_touchVisualizerWindow.touchVisualizerWindowDelegate = self;
 		_touchVisualizerWindow.userInteractionEnabled = NO;
+		CGRect statusBarFrame = UIApplication.sharedApplication.statusBarFrame;
+		CGRect screenBounds = UIScreen.mainScreen.bounds;
+		_touchVisualizerWindow.frame = CGRectMake(0, statusBarFrame.size.height, screenBounds.size.width, screenBounds.size.height - statusBarFrame.size.height);
 	});
 }
 
@@ -327,7 +341,7 @@ static void __copyMethods(Class orig, Class target)
 {
 	DetoxUserNotificationDispatcher* dispatcher = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationDataURL:userNotificationDataURL];
 	
-	if(delay)
+	if(delay && UIApplication.sharedApplication.applicationState != UIApplicationStateActive)
 	{
 		[_pendingUserNotificationDispatchers addObject:dispatcher];
 	}

@@ -1,20 +1,20 @@
-const log = require('npmlog');
+const _ = require('lodash');
+const util = require('util');
+const logger = require('./utils/logger');
+const log = require('./utils/logger').child({ __filename });
 const Device = require('./devices/Device');
-const IosDriver = require('./devices/IosDriver');
-const SimulatorDriver = require('./devices/SimulatorDriver');
-const EmulatorDriver = require('./devices/EmulatorDriver');
-const AttachedAndroidDriver = require('./devices/AttachedAndroidDriver');
+const IosDriver = require('./devices/drivers/IosDriver');
+const SimulatorDriver = require('./devices/drivers/SimulatorDriver');
+const EmulatorDriver = require('./devices/drivers/EmulatorDriver');
+const AttachedAndroidDriver = require('./devices/drivers/AttachedAndroidDriver');
+const DetoxRuntimeError = require('./errors/DetoxRuntimeError');
 const argparse = require('./utils/argparse');
 const configuration = require('./configuration');
 const Client = require('./client/Client');
-const DetoxServer = require('detox-server');
+const DetoxServer = require('./server/DetoxServer');
 const URL = require('url').URL;
-const _ = require('lodash');
-const ArtifactsPathsProvider = require('./artifacts/ArtifactsPathsProvider');
-
-log.level = argparse.getArgValue('loglevel') || 'info';
-log.addLevel('wss', 999, {fg: 'blue', bg: 'black'}, 'wss');
-log.heading = 'detox';
+const ArtifactsManager = require('./artifacts/ArtifactsManager');
+const AsyncEmitter = require('./utils/AsyncEmitter');
 
 const DEVICE_CLASSES = {
   'ios.simulator': SimulatorDriver,
@@ -29,46 +29,58 @@ class Detox {
     this.userSession = deviceConfig.session || session;
     this.client = null;
     this.device = null;
-    this._currentTestNumber = 0;
-    const artifactsLocation = argparse.getArgValue('artifacts-location');
-    if (artifactsLocation !== undefined) {
-      try {
-        this._artifactsPathsProvider = new ArtifactsPathsProvider(artifactsLocation);
-      } catch (ex) {
-        log.warn(ex);
-      }
-    }
+    this.artifactsManager = new ArtifactsManager();
   }
 
   async init(userParams) {
     const sessionConfig = await this._getSessionConfig();
-    const defaultParams = {launchApp: true, initGlobals: true};
-    const params = Object.assign(defaultParams, userParams || {});
+    const params = {
+      launchApp: true,
+      initGlobals: true,
+      ...userParams,
+    };
 
     if (!this.userSession) {
-      this.server = new DetoxServer(new URL(sessionConfig.server).port);
+      this.server = new DetoxServer({
+        log: logger,
+        port: new URL(sessionConfig.server).port,
+      });
     }
 
     this.client = new Client(sessionConfig);
     await this.client.connect();
 
-    const deviceClass = DEVICE_CLASSES[this.deviceConfig.type];
-
-    if (!deviceClass) {
+    const DeviceDriverClass = DEVICE_CLASSES[this.deviceConfig.type];
+    if (!DeviceDriverClass) {
       throw new Error(`'${this.deviceConfig.type}' is not supported`);
     }
 
-    const deviceDriver = new deviceClass(this.client);
-    this.device = new Device(this.deviceConfig, sessionConfig, deviceDriver);
+    const deviceDriver = new DeviceDriverClass({
+      client: this.client,
+    });
+
+    this.artifactsManager.subscribeToDeviceEvents(deviceDriver);
+    this.artifactsManager.registerArtifactPlugins(deviceDriver.declareArtifactPlugins());
+
+    this.device = new Device({
+      deviceConfig: this.deviceConfig,
+      deviceDriver,
+      sessionConfig,
+    });
+
     await this.device.prepare(params);
 
     if (params.initGlobals) {
       deviceDriver.exportGlobals();
       global.device = this.device;
     }
+
+    await this.artifactsManager.onBeforeAll();
   }
 
   async cleanup() {
+    await this.artifactsManager.onAfterAll();
+
     if (this.client) {
       await this.client.cleanup();
     }
@@ -86,29 +98,56 @@ class Detox {
     }
   }
 
-  async beforeEach(...testNameComponents) {
-    this._currentTestNumber++;
-    if (this._artifactsPathsProvider !== undefined) {
-      const testArtifactsPath = this._artifactsPathsProvider.createPathForTest(this._currentTestNumber, ...testNameComponents);
-      this.device.setArtifactsDestination(testArtifactsPath);
-    }
-
-    await this._handleAppCrash(testNameComponents[1]);
+  async beforeEach(testSummary) {
+    this._validateTestSummary(testSummary);
+    this._logTestRunCheckpoint('DETOX_BEFORE_EACH', testSummary);
+    await this._handleAppCrashIfAny(testSummary.fullName);
+    await this.artifactsManager.onBeforeEach(testSummary);
   }
 
-  async afterEach(suiteName, testName) {
-    if (this._artifactsPathsProvider !== undefined) {
-      await this.device.finalizeArtifacts();
-    }
-
-    await this._handleAppCrash(testName);
+  async afterEach(testSummary) {
+    this._validateTestSummary(testSummary);
+    this._logTestRunCheckpoint('DETOX_AFTER_EACH', testSummary);
+    await this.artifactsManager.onAfterEach(testSummary);
+    await this._handleAppCrashIfAny(testSummary.fullName);
   }
 
-  async _handleAppCrash(testName) {
+  _logTestRunCheckpoint(event, { status, fullName }) {
+    log.trace({ event, status }, `${status} test: ${JSON.stringify(fullName)}`);
+  }
+
+  _validateTestSummary(testSummary) {
+    if (!_.isPlainObject(testSummary)) {
+      throw new DetoxRuntimeError({
+        message: `Invalid test summary was passed to detox.beforeEach(testSummary)` +
+          '\nExpected to get an object of type: { title: string; fullName: string; status: "running" | "passed" | "failed"; }',
+        hint: 'Maybe you are still using an old undocumented signature detox.beforeEach(string, string, string) in init.js ?' +
+          '\nSee the article for the guidance: ' +
+          'https://github.com/wix/detox/blob/master/docs/APIRef.TestLifecycle.md',
+        debugInfo: `testSummary was: ${util.inspect(testSummary)}`,
+      });
+    }
+
+    switch (testSummary.status) {
+      case 'running':
+      case 'passed':
+      case 'failed':
+        break;
+      default:
+        throw new DetoxRuntimeError({
+          message: `Invalid test summary status was passed to detox.beforeEach(testSummary). Valid values are: "running", "passed", "failed"`,
+          hint: "It seems like you've hit a Detox integration issue with a test runner. You are encouraged to report it in Detox issues on GitHub.",
+          debugInfo: `testSummary was: ${JSON.stringify(testSummary, null, 2)}`,
+        });
+    }
+  }
+
+  async _handleAppCrashIfAny(testName) {
     const pendingAppCrash = this.client.getPendingCrashAndReset();
+
     if (pendingAppCrash) {
-      log.error('', `App crashed in test '${testName}', here's the native stack trace: \n${pendingAppCrash}`);
-      await this.device.launchApp({newInstance: true});
+      log.error({ event: 'APP_CRASH' }, `App crashed in test '${testName}', here's the native stack trace: \n${pendingAppCrash}`);
+      await this.device.launchApp({ newInstance: true });
     }
   }
 

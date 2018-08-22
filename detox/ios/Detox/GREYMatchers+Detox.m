@@ -48,41 +48,79 @@
 	
 }
 
+id<GREYMatcher> detox_grey_parent(id<GREYMatcher> ancestorMatcher)
+{
+	MatchesBlock matches = ^BOOL(id element)
+	{
+		id parent = nil;
+		
+		if ([element isKindOfClass:[UIView class]])
+		{
+			parent = [element superview];
+		} else {
+			parent = [element accessibilityContainer];
+		}
+		
+		if (parent && [ancestorMatcher matches:parent])
+		{
+			return YES;
+		}
+		
+		return NO;
+	};
+	DescribeToBlock describe = ^void(id<GREYDescription> description)
+	{
+		[description appendText:[NSString stringWithFormat:@"parentThatMatches(%@)",
+								 ancestorMatcher]];
+	};
+	return grey_allOf(grey_anyOf(grey_kindOfClass([UIView class]),
+								 grey_respondsToSelector(@selector(accessibilityContainer)),
+								 nil),
+					  [[GREYElementMatcherBlock alloc] initWithMatchesBlock:matches descriptionBlock:describe],
+					  nil);
+}
+
 + (id<GREYMatcher>)detoxMatcherForScrollChildOfMatcher:(id<GREYMatcher>)matcher
 {
-    // find scroll views in a more robust way, either the original matcher already points to a UIScrollView
-    // and if it isn't look for a child under it that is a UIScrollView
-    return grey_anyOf(grey_allOf(grey_anyOf(grey_kindOfClass([UIScrollView class]),
-                                            grey_kindOfClass([UIWebView class]),
-											nil),
-                                 matcher,
-								 nil),
-                      grey_allOf(grey_kindOfClass([UIScrollView class]),
-                                 grey_ancestor(matcher),
-								 nil),
-					  nil);
+	//No RN—Life is always good.
+	Class RN_RCTScrollView = NSClassFromString(@"RCTScrollView");
+	if (!RN_RCTScrollView)
+	{
+		return matcher;
+	}
+	
+	//Either take scroll views or web views that match the provided matcher, or take views whose parent is a RCTScrollView subclass and the parent matches the provided matcher.
+	return grey_anyOf(grey_allOf(
+								   grey_anyOf(grey_kindOfClass([UIScrollView class]),
+											  grey_kindOfClass([UIWebView class]),
+											  nil),
+								   matcher,
+								   nil),
+						grey_allOf(detox_grey_parent(grey_kindOfClass(RN_RCTScrollView)),
+								   grey_kindOfClass([UIScrollView class]),
+								   detox_grey_parent(matcher),
+								   nil),
+						 nil);
 }
 
 + (id<GREYMatcher>)detoxMatcherAvoidingProblematicReactNativeElements:(id<GREYMatcher>)matcher
 {
-    Class RN_RCTScrollView = NSClassFromString(@"RCTScrollView");
-    if (!RN_RCTScrollView)
-    {
-        return matcher;
-    }
-    
-    // RCTScrollView is problematic because EarlGrey's visibility matcher adds a subview and this causes a RN assertion
-    //  solution: if we match RCTScrollView, switch over to matching its contained UIScrollView
-    
-	return grey_anyOf(grey_allOf(matcher,
-								 grey_not(grey_kindOfClass(RN_RCTScrollView)),
+	//No RN—Life is always good.
+	Class RN_RCTScrollView = NSClassFromString(@"RCTScrollView");
+	if (!RN_RCTScrollView)
+	{
+		return matcher;
+	}
+	
+	//Either take items which are not RCTScrollView subclasses and match the provided matcher, or take items whose parent is RCTScrollView and the parent matches the provided matcher.
+	return grey_anyOf(
+					  grey_allOf(grey_not(grey_kindOfClass(RN_RCTScrollView)),
+								 matcher,
 								 nil),
-					  grey_allOf(grey_kindOfClass([UIScrollView class]),
-                                 grey_ancestor(grey_allOf(matcher,
-														  grey_kindOfClass(RN_RCTScrollView),
-														  nil)),
+					  grey_allOf(detox_grey_parent(grey_kindOfClass(RN_RCTScrollView)),
+								 detox_grey_parent(matcher),
 								 nil),
-                      nil);
+					  nil);
 }
 
 + (id<GREYMatcher>)detoxMatcherForBoth:(id<GREYMatcher>)firstMatcher and:(id<GREYMatcher>)secondMatcher

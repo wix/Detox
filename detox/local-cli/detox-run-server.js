@@ -1,15 +1,31 @@
 #!/usr/bin/env node
 
 const program = require('commander');
-const cp = require('child_process');
-const fs = require('fs');
-const path = require('path');
+const DetoxServer = require('../src/server/DetoxServer');
+const logger = require('../src/utils/logger');
 
-program.parse(process.argv);
+program
+  .name('detox run-server')
+  .description('Start a standalone Detox server')
+  .option(
+    '-p, --port [port]',
+    'Port number',
+    '8099'
+  )
+  .option('-l, --loglevel [value]',
+    'Log level: fatal, error, warn, info, verbose, trace', 'info')
+  .option(
+    '--no-color',
+    'Disable colorful logs',
+    false
+  )
+  .parse(process.argv);
 
-if (fs.existsSync(path.join(process.cwd(), 'node_modules/.bin/detox-server'))) {
-  cp.execSync('node_modules/.bin/detox-server', {stdio: 'inherit'});
-} else {
-  cp.execSync('node_modules/detox/node_modules/.bin/detox-server', {stdio: 'inherit'});
+if (program.port < 1 || program.port > 65535) {
+  program.help();
 }
 
+const detoxServer = new DetoxServer({
+  port: +program.port,
+  log: logger,
+});

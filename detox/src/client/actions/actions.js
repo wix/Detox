@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const log = require('npmlog');
+const log = require('../../utils/logger').child({ __filename });
 
 class Action {
   constructor(type, params = {}) {
@@ -113,7 +113,7 @@ class CurrentStatus extends Action {
 
     //console.log("res:" + JSON.stringify(response, null, 2));
     _.forEach(response.params.resources, (resource) => {
-      log.info(`Sync`, `${resource.name}: ${resource.info.prettyPrint}`);
+      log.info({ class: 'CurrentStatus' }, `Sync ${resource.name}: ${resource.info.prettyPrint}`);
     });
     return response;
   }

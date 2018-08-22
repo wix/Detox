@@ -6,84 +6,80 @@
 
 
 function sanitize_uiAccessibilityTraits(value) {
-	let traits = 0;
-	for (let i = 0; i < value.length; i++) {
-		switch (value[i]) {
-			case "button":
-				traits |= 1;
-				break;
-			case "link":
-				traits |= 2;
-				break;
-			case "header":
-				traits |= 4;
-				break;
-			case "search":
-				traits |= 8;
-				break;
-			case "image":
-				traits |= 16;
-				break;
-			case "selected":
-				traits |= 32;
-				break;
-			case "plays":
-				traits |= 64;
-				break;
-			case "key":
-				traits |= 128;
-				break;
-			case "text":
-				traits |= 256;
-				break;
-			case "summary":
-				traits |= 512;
-				break;
-			case "disabled":
-				traits |= 1024;
-				break;
-			case "frequentUpdates":
-				traits |= 2048;
-				break;
-			case "startsMedia":
-				traits |= 4096;
-				break;
-			case "adjustable":
-				traits |= 8192;
-				break;
-			case "allowsDirectInteraction":
-				traits |= 16384;
-				break;
-			case "pageTurn":
-				traits |= 32768;
-				break;
-			default:
-				throw new Error(
-					`Unknown trait '${
-						value[i]
-					}', see list in https://facebook.github.io/react-native/docs/accessibility.html#accessibilitytraits-ios`
-				);
-		}
-	}
+  let traits = 0;
+  for (let i = 0; i < value.length; i++) {
+    switch (value[i]) {
+      case 'button':
+        traits |= 1;
+        break;
+      case 'link':
+        traits |= 2;
+        break;
+      case 'header':
+        traits |= 4;
+        break;
+      case 'search':
+        traits |= 8;
+        break;
+      case 'image':
+        traits |= 16;
+        break;
+      case 'selected':
+        traits |= 32;
+        break;
+      case 'plays':
+        traits |= 64;
+        break;
+      case 'key':
+        traits |= 128;
+        break;
+      case 'text':
+        traits |= 256;
+        break;
+      case 'summary':
+        traits |= 512;
+        break;
+      case 'disabled':
+        traits |= 1024;
+        break;
+      case 'frequentUpdates':
+        traits |= 2048;
+        break;
+      case 'startsMedia':
+        traits |= 4096;
+        break;
+      case 'adjustable':
+        traits |= 8192;
+        break;
+      case 'allowsDirectInteraction':
+        traits |= 16384;
+        break;
+      case 'pageTurn':
+        traits |= 32768;
+        break;
+      default:
+        throw new Error(
+          `Unknown trait '${value[i]}', see list in https://facebook.github.io/react-native/docs/accessibility.html#accessibilitytraits-ios`
+        );
+    }
+  }
 
-	return traits;
+  return traits;
 } 
 function sanitize_greyContentEdge(action) {
-	switch (action) {
-		case "left":
-			return 0;
-		case "right":
-			return 1;
-		case "top":
-			return 2;
-		case "bottom":
-			return 3;
+  switch (action) {
+    case 'left':
+      return 0;
+    case 'right':
+      return 1;
+    case 'top':
+      return 2;
+    case 'bottom':
+      return 3;
 
-		default:
-			throw new Error(
-				`GREYAction.GREYContentEdge must be a 'left'/'right'/'top'/'bottom', got ${action}`
-			);
-	}
+    default:
+      throw new Error(`GREYAction.GREYContentEdge must be a 'left'/'right'/'top'/'bottom', got ${action}`);
+  }
 } 
 class GREYMatchers {
   /*Matcher for application's key window.
@@ -377,12 +373,13 @@ unimplemented matcher is required, please implement it similar to @c grey_closeT
     };
   }
 
-  /*Matcher that matches UI element based on the presence of an ancestor in its hierarchy.
-The given matcher is used to match decendants.
+  /*Matcher that matches any UI element with an ancestor matching the given @c ancestorMatcher.
 
-@param ancestorMatcher The ancestor UI element whose descendants are to be matched.
+@param ancestorMatcher A matcher that's run against the ancestors of the UI element being
+matched.
 
-@return A matcher to check if a UI element is the descendant of another.
+@return A matcher to check if a specified element has an ancestor that matches
+@c ancestorMatcher.
 */static matcherForAncestor(ancestorMatcher) {
     if (typeof ancestorMatcher !== "object" || ancestorMatcher.type !== "Invocation" || typeof ancestorMatcher.value !== "object" || typeof ancestorMatcher.value.target !== "object" || ancestorMatcher.value.target.value !== "GREYMatchers") {
       throw new Error('ancestorMatcher should be a GREYMatcher, but got ' + JSON.stringify(ancestorMatcher));
@@ -398,12 +395,13 @@ The given matcher is used to match decendants.
     };
   }
 
-  /*Matcher that matches any UI element with a descendant matching the given matcher.
+  /*Matcher that matches any UI element with a descendant matching the given @c descendantMatcher.
 
-@param descendantMatcher A matcher being checked to be a descendant
-of the UI element being checked.
+@param descendantMatcher A matcher that's run against the descendants of the UI element being
+matched.
 
-@return A matcher to check if a the specified element is in a descendant of another UI element.
+@return A matcher to check if a specified element has a descendant that matches
+@c descendantMatcher.
 */static matcherForDescendant(descendantMatcher) {
     if (typeof descendantMatcher !== "object" || descendantMatcher.type !== "Invocation" || typeof descendantMatcher.value !== "object" || typeof descendantMatcher.value.target !== "object" || descendantMatcher.value.target.value !== "GREYMatchers") {
       throw new Error('descendantMatcher should be a GREYMatcher, but got ' + JSON.stringify(descendantMatcher));
@@ -489,31 +487,6 @@ is required, please implement it similar to @c grey_closeTo.
     };
   }
 
-  /*Matcher that matches UIPickerView that has a column set to @c value.
-
-@param column The column of the UIPickerView to be matched.
-@param value  The value that should be set in the column of the UIPickerView.
-
-@return A matcher to check the value in a particular column of a UIPickerView.
-*/static matcherForPickerColumnSetToValue(column, value) {
-    if (typeof column !== "number") throw new Error("column should be a number, but got " + (column + (" (" + (typeof column + ")"))));
-    if (typeof value !== "string") throw new Error("value should be a string, but got " + (value + (" (" + (typeof value + ")"))));
-    return {
-      target: {
-        type: "Class",
-        value: "GREYMatchers"
-      },
-      method: "matcherForPickerColumn:setToValue:",
-      args: [{
-        type: "NSInteger",
-        value: column
-      }, {
-        type: "NSString",
-        value: value
-      }]
-    };
-  }
-
   /*Matcher that verifies whether an element, that is a UIControl, is enabled.
 
 @return A matcher for checking whether a UI element is an enabled UIControl.
@@ -595,6 +568,61 @@ is required, please implement it similar to @c grey_closeTo.
       },
       method: "matcherForAnything",
       args: []
+    };
+  }
+
+  /*A Matcher that checks if a provided object is equal to the specified @c value. The equality is
+determined by calling the @c isEqual: method of the object being examined. In case the @c
+value is @c nil, then the object itself is checked to be @c nil.
+
+@param value  The value to be checked for equality. Please ensure that scalar types are
+passed in as boxed (object) values.
+
+@return A matcher that checks if an object is equal to the provided one.
+*/static matcherForEqualTo(value) {
+    return {
+      target: {
+        type: "Class",
+        value: "GREYMatchers"
+      },
+      method: "matcherForEqualTo:",
+      args: [value]
+    };
+  }
+
+  /*A Matcher that checks if a provided object is less than a specified @c value. The comparison
+is made by calling the @c compare: method of the object being examined.
+
+@param value The value to be compared, which should return @c NSOrderedDescending. Please
+ensure that scalar values are passed in as boxed (object) values.
+
+@return A matcher that checks an object is lesser than another provided @c value.
+*/static matcherForLessThan(value) {
+    return {
+      target: {
+        type: "Class",
+        value: "GREYMatchers"
+      },
+      method: "matcherForLessThan:",
+      args: [value]
+    };
+  }
+
+  /*A Matcher that checks if a provided object is greater than a specified @c value. The comparison
+is made by calling the @c compare: method of the object being examined.
+
+@param value The value to be compared, which should return @c NSOrderedAscending. Please
+ensure that scalar values are passed in as boxed (object) values.
+
+@return A matcher that checks an object is greater than another provided @c value.
+*/static matcherForGreaterThan(value) {
+    return {
+      target: {
+        type: "Class",
+        value: "GREYMatchers"
+      },
+      method: "matcherForGreaterThan:",
+      args: [value]
     };
   }
 

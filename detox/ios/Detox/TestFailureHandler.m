@@ -14,12 +14,14 @@ DTX_CREATE_LOG(TestFailureHandler)
 
 - (void)handleException:(GREYFrameworkException *)exception details:(NSString *)details
 {
-    NSString *description = [NSString stringWithFormat:@"%@\n%@", [exception description], details];
+	UIWindow* window = [[UIApplication sharedApplication] keyWindow];
+	NSString* hierarchy = [GREYElementHierarchy hierarchyStringForElement:window];
+	
+	NSString *description = [NSString stringWithFormat:@"%@\n\n%@\n\nHierarchy: %@", [exception description], details, hierarchy];
 	
 	dtx_log_error(@"Test Failed:\n%@", description);
-    
-    UIWindow* window = [[UIApplication sharedApplication] keyWindow];
-    dtx_log_error(@"UI Hierarchy on test failure:\n%@", [GREYElementHierarchy hierarchyStringForElement:window]);
+	
+    dtx_log_error(@"UI Hierarchy on test failure:\n%@", hierarchy);
     
     if (self.delegate) [self.delegate onTestFailed:description];
 }

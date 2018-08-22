@@ -5,7 +5,7 @@ title: Contributing
 
 ## Prerequisites
 
-### Install `node` v7.6 or higher (to support async-await natively)
+### Install `node` v8.3.0 or higher
 
 ```
 brew install node
@@ -18,7 +18,7 @@ npm install -g lerna
 npm install -g react-native-cli
 ```
 
-For all the internal projects (detox, detox-server, detox-cli, demos, test) `lerna` will create symbolic links in `node_modules` instead of `npm` copying the content of the projects. This way, any change you do on any code is there immediately. There is no need to update node modules or copy files between projects.
+For all the internal projects (detox, detox-cli, demos, test) `lerna` will create symbolic links in `node_modules` instead of `npm` copying the content of the projects. This way, any change you do on any code is there immediately. There is no need to update node modules or copy files between projects.
 
 ### Install `xcpretty`
 
@@ -45,15 +45,20 @@ git submodule update --init --recursive
 lerna bootstrap
 ```
 
-### Building
+### Building & Testing
+##### Automatically
+`scripts/ci.ios.sh` and `scripts/ci.android.sh` are the scripts Detox runs in CI, they will run `lerna bootstrap`, unit tests, and E2E tests. Make sure these scripts pass before submitting a PR, this is exactly what Detox is going to run in CI. 
 
+##### Manually
+Alternativley, you can run it manually
+
+#### 0. Fixing compilation issues in RN sources
+Detox Android test project uses React Native sources instead of the precompiled AAR. The test project uses RN51 and RN53, both have issues with compilation ([Fixed in RN55](https://github.com/facebook/react-native/commit/d8bb990abc226e778e2f32c2de3c6661c0aa64e5#diff-f44163238d434a443b56bd27b3ba0578)). In order to fix this issue, from inside `detox/test` run:
 ```sh
-lerna run build
-```
+mv node_modules/react-native/ReactAndroid/release.gradle node_modules/react-native/ReactAndroid/release.gradle.bak
+``` 
 
-### Testing
-
-### 1. Unit tests
+#### 1. Unit tests
 
 ```sh
 lerna run test
@@ -69,7 +74,7 @@ npm run unit
 npm run unit:watch
 ```
 
-#### How to read the coverage report
+##### How to read the coverage report
 After running the tests, jest will create a coverage report.
 
 ```sh
@@ -77,28 +82,24 @@ cd detox
 open coverage/lcov-report/index.html
 ```
 
-### 2. Running Detox e2e coverage tests
+#### 2. Running Detox e2e coverage tests
 Detox has a suite of e2e tests to test its own API while developing (and for regression). The way we do is is by maintaining a special application that is "tested" against Detox's API, but essentially, it's the API that is tested, not the app.
 To run the e2e tests, go to `detox/detox/test`
 
 ```sh
 cd detox/test
-```
-
-
-```sh
 npm run build
 ```
 
 To run the e2e tests, after the application was built.
 
-#### iOS
+##### iOS
 ```sh
 npm run build:ios
 npm run e2e:ios
 ```
 
-#### Android
+##### Android
 ```sh
 npm run build:android
 npm run e2e:android
@@ -120,7 +121,7 @@ launchctl setenv PATH $PATH
 ```
 
 
-### 3. Android Native tests
+#### 3. Android Native tests
 
 0. Install Java and Android SDK 25
 1. In `detox/android` run `./gradlew install` run
@@ -129,7 +130,7 @@ launchctl setenv PATH $PATH
 	./gradlew test
 	```
 
-### 4. Code Generation
+#### 4. Code Generation
 
 We are using a code generator based on `babel` and `objective-c-parser` to generate a Javascript Interface for `EarlGrey` (the testing library we use on iOS).
 This interface allows us to call Objective-C methods through the WebSocket connection directly on the testing device. 

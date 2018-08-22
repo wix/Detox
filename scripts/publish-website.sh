@@ -8,6 +8,7 @@ if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
 
   cd website
   npm install
+  npm run gatherDocs
   GIT_USER=$GIT_USER CURRENT_BRANCH=master npm run publish-gh-pages
 else
   echo 'Not deploying the website'

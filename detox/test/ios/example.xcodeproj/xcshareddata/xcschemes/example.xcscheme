@@ -117,8 +117,17 @@
             argument = "/private/var/folders/d0/q423mrk13bn_bx8wr416nsq40rv2wb/T/detoxrand-jN1HVo/payload.json"
             isEnabled = "NO">
          </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-detoxWaitForDebugger 9000"
+            isEnabled = "NO">
+         </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>
+         <AdditionalOption
+            key = "NSZombieEnabled"
+            value = "YES"
+            isEnabled = "YES">
+         </AdditionalOption>
       </AdditionalOptions>
    </LaunchAction>
    <ProfileAction

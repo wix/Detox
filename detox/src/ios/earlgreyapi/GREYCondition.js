@@ -22,10 +22,7 @@ GREYCondition::waitWithTimeout:pollInterval:
 */static waitWithTimeout(element, seconds) {
     if (typeof seconds !== "number") throw new Error("seconds should be a number, but got " + (seconds + (" (" + (typeof seconds + ")"))));
     return {
-      target: {
-        type: "Invocation",
-        value: element
-      },
+      target: element,
       method: "waitWithTimeout:",
       args: [{
         type: "CGFloat",
@@ -48,10 +45,7 @@ the condition as close as possible to every @c interval seconds.
     if (typeof seconds !== "number") throw new Error("seconds should be a number, but got " + (seconds + (" (" + (typeof seconds + ")"))));
     if (typeof interval !== "number") throw new Error("interval should be a number, but got " + (interval + (" (" + (typeof interval + ")"))));
     return {
-      target: {
-        type: "Invocation",
-        value: element
-      },
+      target: element,
       method: "waitWithTimeout:pollInterval:",
       args: [{
         type: "CGFloat",

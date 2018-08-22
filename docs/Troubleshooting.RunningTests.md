@@ -2,7 +2,7 @@
 id: Troubleshooting.RunningTests
 title: Failing Tests
 ---
-* [Enable verbose mode](#enable-verbose-mode)
+* [Enable trace mode](#enable-trace-mode)
 * [Syntax Error: Unxpected Token](#syntax-error-unxpected-token)
 * [Can't find my component even though I added testID to its props](#cant-find-my-component-even-though-i-added-testid-to-its-props)
 * [Test tries to find my component before it's created](#test-tries-to-find-my-component-before-its-created)
@@ -15,12 +15,12 @@ title: Failing Tests
 
 <br>
 
-### Enable verbose mode
+### Enable trace mode
 
-It's a good idea to get as much information as possible about what's going on. We can enable verbose mode during tests by running our tests with:
+It's a good idea to get as much information as possible about what's going on. We can enable trace mode during tests by running our tests with:
 
 ```
-detox test --loglevel verbose
+detox test --loglevel trace
 ```
 
 
@@ -32,7 +32,7 @@ See [here](https://github.com/wix/detox/blob/master/docs/Troubleshooting.Synchro
 
 **Issue:** Running tests immediately throws the following error:
 
-```
+```js
 beforeEach(async () => {
                    ^
 SyntaxError: Unexpected token (
@@ -40,32 +40,14 @@ SyntaxError: Unexpected token (
     at Module._compile (module.js:545:28)
     at loader (/Users/builduser/buildAgent/work/34eee2d16ef6c34b/node_modules/babel-register/lib/node.js:144:5)
     at Object.require.extensions.(anonymous function) [as .js] (/Users/builduser/buildAgent/work/34eee2d16ef6c34b/node_modules/babel-register/lib/node.js:154:7)
-    at Module.load (module.js:490:32)
-    at tryModuleLoad (module.js:449:12)
-    at Function.Module._load (module.js:441:3)
-    at Module.require (module.js:500:17)
-    at require (internal/module.js:20:19)
-    at /Users/builduser/buildAgent/work/34eee2d16ef6c34b/node_modules/mocha/lib/mocha.js:230:27
-    at Array.forEach (native)
-    at Mocha.loadFiles (/Users/builduser/buildAgent/work/34eee2d16ef6c34b/node_modules/mocha/lib/mocha.js:227:14)
-    at Mocha.run (/Users/builduser/buildAgent/work/34eee2d16ef6c34b/node_modules/mocha/lib/mocha.js:495:10)
-    at Object.<anonymous> (/Users/builduser/buildAgent/work/34eee2d16ef6c34b/node_modules/mocha/bin/_mocha:460:18)
-    at Module._compile (module.js:573:32)
-    at Object.Module._extensions..js (module.js:582:10)
-    at Module.load (module.js:490:32)
-    at tryModuleLoad (module.js:449:12)
-    at Function.Module._load (module.js:441:3)
-    at Module.runMain (module.js:607:10)
-    at run (bootstrap_node.js:382:7)
-    at startup (bootstrap_node.js:137:9)
-    at bootstrap_node.js:497:3
+...
 child_process.js:531
     throw err;
 ```
 
-**Solution:** This error means that your version of Node does not support `async-await` syntax. You should do one of the two:
+**Solution:** This error means that your version of Node does not support `async-await` syntax. You should do the following:
 
-1. Update Node to a version **higher than 7.6.0**, these versions will provide native support for async-await.
+1. Update Node to a version **8.3.0 or higher**.
 
 <br>
 
@@ -228,7 +210,7 @@ Include the following information in your issue to increase the chances of resol
 
 1. Versions of all dependencies - iOS version you're working on, simulator model, React Native version, Detox version, etc
 
-2. The verbose log of the test (see above)
+2. The trace log of the test (see above)
 
 3. Source code of your test scenario
 

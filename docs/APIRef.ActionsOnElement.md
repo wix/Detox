@@ -31,8 +31,9 @@ Simulate tap on an element.
 await element(by.id('tappable')).tap();
 ```
 
-### `longPress()`
-Simulate long press on an element.
+### `longPress(duration)`
+Simulate long press on an element.<br>
+duration - long press time interval. (iOS only)<br>
 
 ```js
 await element(by.id('tappable')).longPress();
@@ -61,7 +62,7 @@ await element(by.id('textField')).typeText('passcode');
 
 > **Note:** Make sure hardware keyboard is disconnected. Otherwise, Detox may fail when attempting to type text.
 > 
-> To make sure hardware keybaord is disconnected, open the simulator from Xcode and make sure **Hardware** -> **Keyboard** -> **Connect Hardware Keyboard** is deselected (or press ⇧⌘K).
+> To make sure hardware keyboard is disconnected, open the simulator from Xcode and make sure **Hardware** -> **Keyboard** -> **Connect Hardware Keyboard** is deselected (or press ⇧⌘K).
 
 ### `replaceText(text)`
 Paste text into a text field.

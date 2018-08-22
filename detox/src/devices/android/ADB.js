@@ -1,11 +1,11 @@
-const path = require('path');
-const exec = require('../../utils/exec').execWithRetriesAndLogs;
 const _ = require('lodash');
+const path = require('path');
+const {execWithRetriesAndLogs, spawnAndLog} = require('../../utils/exec');
+const pipeCommands = require('../../utils/pipeCommands');
 const EmulatorTelnet = require('./EmulatorTelnet');
 const Environment = require('../../utils/environment');
 
 class ADB {
-
   constructor() {
     this.adbBin = path.join(Environment.getAndroidSDKPath(), 'platform-tools', 'adb');
   }
@@ -13,6 +13,46 @@ class ADB {
   async devices() {
     const output = (await this.adbCmd('', 'devices')).stdout;
     return await this.parseAdbDevicesConsoleOutput(output);
+  }
+
+  async unlockScreen(deviceId) {
+    const {
+      mWakefulness,
+      mUserActivityTimeoutOverrideFromWindowManager,
+    } = await this._getPowerStatus(deviceId);
+
+    if (mWakefulness === 'Asleep') {
+      await this.pressPowerDevice(deviceId);
+    }
+
+    if (mUserActivityTimeoutOverrideFromWindowManager === '10000') { // screen is locked
+      await this.pressOptionsMenu(deviceId);
+    }
+  }
+
+  async _getPowerStatus(deviceId) {
+    const grep = pipeCommands.search.regexp;
+    const stdout = await this.shell(deviceId, `dumpsys power | ${grep('^[ ]*m[UW].*=')}`);
+
+    return stdout
+      .split('\n')
+      .map(s => s.trim().split('='))
+      .reduce((acc, [key, value]) => ({
+        ...acc,
+        [key]: value,
+      }), {});
+  }
+
+  async pressOptionsMenu(deviceId) {
+    await this._sendKeyEvent(deviceId, 'KEYCODE_MENU');
+  }
+
+  async pressPowerDevice(deviceId) {
+    await this._sendKeyEvent(deviceId, 'KEYCODE_POWER');
+  }
+
+  async _sendKeyEvent(deviceId, keyevent) {
+    await this.shell(deviceId, `input keyevent ${keyevent}`);
   }
 
   async parseAdbDevicesConsoleOutput(input) {
@@ -48,6 +88,10 @@ class ADB {
     return (/^((1?\d?\d|25[0-5]|2[0-4]\d)(\.|:)){4}[0-9]{4}/.test(string));
   }
 
+  async now(deviceId) {
+    return this.shell(deviceId, `date "+\\"%Y-%m-%d %T.000\\""`);
+  }
+
   async install(deviceId, apkPath) {
     const apiLvl = await this.apiLevel(deviceId);
     if (apiLvl >= 24) {
@@ -65,26 +109,43 @@ class ADB {
     await this.shell(deviceId, `am force-stop ${appId}`);
   }
 
-  async unlockScreen(deviceId) {
-    await this.shell(deviceId, `input keyevent 82`);
+  async pidof(deviceId, bundleId) {
+    const bundleIdRegex = pipeCommands.escape.inQuotedRegexp(bundleId) + '[ ]*$';
+    const grep = pipeCommands.search.regexp;
+
+    const processes = await this.shell(deviceId, `ps | ${grep(bundleIdRegex)}`).catch(() => '');
+    if (!processes) {
+      return NaN;
+    }
+
+    return parseInt(processes.split(' ').filter(Boolean)[1], 10);
   }
 
-  async shell(deviceId, cmd) {
-    return (await this.adbCmd(deviceId, `shell ${cmd}`)).stdout.trim();
+  async shell(deviceId, cmd, options) {
+    return (await this.adbCmd(deviceId, `shell ${cmd}`, options)).stdout.trim();
   }
 
-  async waitForBootComplete(deviceId) {
+  async getFileSize(deviceId, filename) {
+    const { stdout, stderr } = await this.adbCmd(deviceId, 'shell wc -c ' + filename).catch(e => e);
+
+    if (stderr.includes('No such file or directory')) {
+      return -1;
+    }
+
+    return Number(stdout.slice(0, stdout.indexOf(' ')));
+  }
+
+  async isFileOpen(deviceId, filename) {
+    const openedByProcesses = await this.shell(deviceId, 'lsof ' + filename);
+    return openedByProcesses.length > 0;
+  }
+
+  async isBootComplete(deviceId) {
     try {
       const bootComplete = await this.shell(deviceId, `getprop dev.bootcomplete`);
-      if (bootComplete === '1') {
-        return true;
-      } else {
-        await this.sleep(2000);
-        return await this.waitForBootComplete(deviceId);
-      }
+      return (bootComplete === '1');
     } catch (ex) {
-      await this.sleep(2000);
-      return await this.waitForBootComplete(deviceId);
+      return false;
     }
   }
 
@@ -93,14 +154,85 @@ class ADB {
     return Number(lvl);
   }
 
-  async adbCmd(deviceId, params) {
-    const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
-    const cmd = `${this.adbBin} ${serial} ${params}`;
-    return await exec(cmd, undefined, undefined, 1);
+  async screencap(deviceId, path) {
+    return this.adbCmd(deviceId, `shell screencap ${path}`);
   }
 
-  async sleep(ms = 0) {
-    return new Promise((resolve, reject) => setTimeout(resolve, ms));
+  /***
+   * @returns ChildProcessPromise
+   */
+  screenrecord(deviceId, { path, size, bitRate, timeLimit, verbose }) {
+    const [ width = 0, height = 0 ] = size || [];
+
+    const _size = (width > 0) && (height > 0)
+      ? ['--size', `${width}x${height}`]
+      : [];
+
+    const _bitRate = (bitRate > 0)
+      ? ['--bit-rate', String(bitRate)]
+      : [];
+
+    const _timeLimit = (timeLimit > 0)
+      ? [`--time-limit`, timeLimit]
+      : [];
+
+    const _verbose = verbose ? ['--verbose'] : [];
+    const screenRecordArgs = [..._size, ..._bitRate, ..._timeLimit, ..._verbose, path];
+
+    return this.spawn(deviceId, ['shell', 'screenrecord', ...screenRecordArgs]);
+  }
+
+  /***
+   * @returns ChildProcessPromise
+   */
+  logcat(deviceId, { expression, file, pid, time }) {
+    const logcatArgs = [];
+
+    if (expression) {
+      logcatArgs.push('-e');
+      logcatArgs.push(expression);
+    }
+
+    if (file) {
+      logcatArgs.push('-f');
+      logcatArgs.push(file);
+    }
+
+    if (pid > 0) {
+      logcatArgs.push(`--pid=${pid}`);
+    }
+
+    if (time) {
+      logcatArgs.push('-T');
+      logcatArgs.push(time);
+    }
+
+    return this.spawn(deviceId, ['logcat', ...logcatArgs]);
+  }
+
+  async pull(deviceId, src, dst = '') {
+    return this.adbCmd(deviceId, `pull "${src}" "${dst}"`);
+  }
+
+  async rm(deviceId, path, force = false) {
+    return this.adbCmd(deviceId, `shell rm ${force ? '-f' : ''} "${path}"`);
+  }
+
+  async adbCmd(deviceId, params, options) {
+    const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
+    const cmd = `${this.adbBin} ${serial} ${params}`;
+    const retries = _.get(options, 'retries', 1);
+    _.unset(options, 'retries');
+
+    return await execWithRetriesAndLogs(cmd, options, undefined, retries);
+  }
+
+  /***
+   * @returns {ChildProcessPromise}
+   */
+  spawn(deviceId, params) {
+    const serial = deviceId ? ['-s', deviceId] : [];
+    return spawnAndLog(this.adbBin, [...serial, ...params]);
   }
 
   async listInstrumentation(deviceId) {
@@ -115,7 +247,10 @@ class ADB {
   async getInstrumentationRunner(deviceId, bundleId) {
     const instrumentationRunners = await this.listInstrumentation(deviceId);
     const instrumentationRunner = this.instrumentationRunnerForBundleId(instrumentationRunners, bundleId);
-    if (instrumentationRunner === 'undefined') throw new Error(`No instrumentation runner found on device ${deviceId} for package ${bundleId}`);
+    if (instrumentationRunner === 'undefined') {
+      throw new Error(`No instrumentation runner found on device ${deviceId} for package ${bundleId}`);
+    }
+
     return instrumentationRunner;
   }
 }

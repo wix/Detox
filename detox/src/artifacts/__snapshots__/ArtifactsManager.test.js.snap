@@ -1,0 +1,141 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ArtifactsManager .artifactsApi .requestIdleCallback() should catch errors, report them if callback fails, and move on  1`] = `
+Array [
+  Array [
+    Object {
+      "err": [Error: test onIdleCallback error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onIdleCallback",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside function call: testPlugin.onIdleCallback()",
+  ],
+]
+`;
+
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onAfterAll errors 1`] = `
+Array [
+  Array [
+    Object {
+      "err": [Error: test onAfterAll error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onAfterAll",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside function call: testPlugin.onAfterAll()",
+  ],
+]
+`;
+
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onAfterEach errors 1`] = `
+Array [
+  Array [
+    Object {
+      "err": [Error: test onAfterEach error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onAfterEach",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside function call: testPlugin.onAfterEach({ title: 'test', fullName: 'Suite test', status: 'passed' })",
+  ],
+]
+`;
+
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onBeforeAll errors 1`] = `
+Array [
+  Array [
+    Object {
+      "err": [Error: test onBeforeAll error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onBeforeAll",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside function call: testPlugin.onBeforeAll()",
+  ],
+]
+`;
+
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onBeforeEach errors 1`] = `
+Array [
+  Array [
+    Object {
+      "err": [Error: test onBeforeEach error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onBeforeEach",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside function call: testPlugin.onBeforeEach({ title: 'test', fullName: 'Suite test', status: 'running' })",
+  ],
+]
+`;
+
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onBeforeLaunchApp errors 1`] = `
+Array [
+  Array [
+    Object {
+      "err": [Error: test onBeforeLaunchApp error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onBeforeLaunchApp",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside function call: testPlugin.onBeforeLaunchApp({ bundleId: 'testBundleId', deviceId: 'testDeviceId' })",
+  ],
+]
+`;
+
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onBootDevice errors 1`] = `
+Array [
+  Array [
+    Object {
+      "err": [Error: test onBootDevice error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onBootDevice",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside function call: testPlugin.onBootDevice({ coldBoot: false, deviceId: 'testDeviceId' })",
+  ],
+]
+`;
+
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onLaunchApp errors 1`] = `
+Array [
+  Array [
+    Object {
+      "err": [Error: test onLaunchApp error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onLaunchApp",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside function call: testPlugin.onLaunchApp({ bundleId: 'testBundleId', deviceId: 'testDeviceId', pid: 2018 })",
+  ],
+]
+`;
+
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onShutdownDevice errors 1`] = `
+Array [
+  Array [
+    Object {
+      "err": [Error: test onShutdownDevice error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onShutdownDevice",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside function call: testPlugin.onShutdownDevice({ deviceId: 'testDeviceId' })",
+  ],
+]
+`;
+
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onTerminate errors 1`] = `
+Array [
+  Array [
+    Object {
+      "err": [Error: test onTerminate error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onTerminate",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside function call: testPlugin.onTerminate()",
+  ],
+]
+`;

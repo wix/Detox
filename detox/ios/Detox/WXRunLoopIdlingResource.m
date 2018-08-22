@@ -7,12 +7,44 @@
 //
 
 #import "WXRunLoopIdlingResource.h"
+#import <stdatomic.h>
+#include <dlfcn.h>
+#include <fishhook.h>
+
+static atomic_uintmax_t __numberOfRunLoopBlocks = 0;
+
+extern _Atomic(CFRunLoopRef) __RNRunLoop;
+
+static void (*__orig_CFRunLoopPerformBlock)(CFRunLoopRef rl, CFTypeRef mode, void(^block)(void));
+static void __dtx_CFRunLoopPerformBlock(CFRunLoopRef rl, CFTypeRef mode, void(^block)(void))
+{
+	CFRunLoopRef RNRunLoop = atomic_load(&__RNRunLoop);
+	
+	if(rl != RNRunLoop)
+	{
+		__orig_CFRunLoopPerformBlock(rl, mode, block);
+		return;
+	}
+	
+	atomic_fetch_add(&__numberOfRunLoopBlocks, 1);
+	
+	__orig_CFRunLoopPerformBlock(rl, mode, ^ {
+		block();
+		atomic_fetch_sub(&__numberOfRunLoopBlocks, 1);
+	});
+}
+
+__attribute__((constructor))
+static void __setupRNSupport()
+{
+	__orig_CFRunLoopPerformBlock = dlsym(RTLD_DEFAULT, "CFRunLoopPerformBlock");
+	rebind_symbols((struct rebinding[]){"CFRunLoopPerformBlock", __dtx_CFRunLoopPerformBlock, NULL}, 1);
+}
 
 @implementation WXRunLoopIdlingResource
 {
 	id _runLoop;
-	dispatch_queue_t _syncSerialQueue;
-	BOOL _isBusy;
+	atomic_bool _isBusy;
 }
 
 - (NSString*)translateRunLoopActivity:(CFRunLoopActivity)act
@@ -41,20 +73,21 @@
 	if(self)
 	{
 		_runLoop = (__bridge id)(runLoop);
-		_syncSerialQueue = dispatch_queue_create("_syncSerialQueue", NULL);
 		
 		CFRunLoopAddObserver((__bridge CFRunLoopRef)_runLoop, CFRunLoopObserverCreateWithHandler(NULL, kCFRunLoopExit | kCFRunLoopBeforeWaiting | kCFRunLoopAfterWaiting, YES, 0, ^(CFRunLoopObserverRef observer, CFRunLoopActivity activity) {
-			dispatch_sync(_syncSerialQueue, ^{
-//				dtx_log_info(@"Current runloop activity: %@", [self translateRunLoopActivity: activity]);
-				if(activity == kCFRunLoopBeforeWaiting || activity == kCFRunLoopExit)
-				{
-					_isBusy = NO;
-				}
-				else
-				{
-					_isBusy = YES;
-				}
-			});
+			BOOL busy;
+			//				dtx_log_info(@"Current runloop activity: %@", [self translateRunLoopActivity: activity]);
+			if(activity == kCFRunLoopBeforeWaiting || activity == kCFRunLoopExit)
+			{
+				busy = NO;
+			}
+			else
+			{
+				busy = YES;
+			}
+			
+			atomic_store(&_isBusy, busy);
+			
 		}), kCFRunLoopDefaultMode);
 	}
 	return self;
@@ -62,13 +95,7 @@
 
 - (BOOL)isIdleNow
 {
-	__block BOOL rv = NO;
-	
-	dispatch_sync(_syncSerialQueue, ^{
-		rv = _isBusy == NO;
-	});
-    
-	return rv;
+	return atomic_load(&_isBusy) == NO && atomic_load(&__numberOfRunLoopBlocks) == 0;
 }
 
 - (NSString *)idlingResourceName

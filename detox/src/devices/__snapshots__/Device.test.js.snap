@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Device new Device() with invalid device config (no binary) should throw 1`] = `"'binaryPath' property is missing, should hold the app binary path"`;
+
+exports[`Device new Device() with invalid device config (no device name) should throw 1`] = `"'name' property is missing, should hold the device name to run on (e.g. \\"iPhone 7\\", \\"iPhone 7, iOS 10.2\\""`;

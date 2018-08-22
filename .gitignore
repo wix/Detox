@@ -212,7 +212,6 @@ detox/ios/DetoxBuild
 Detox.framework.tbz
 Detox-ios-src.tbz
 
-detox-server/lib
 demo-native-ios/Build
 detox/DetoxBuild
 examples/demo-native-ios/Build
@@ -222,3 +221,4 @@ yarn.lock
 detox/ios_src
 package-lock.json
 /detox/src/devices/detox/notifications/notification.json
+detox/test/artifacts

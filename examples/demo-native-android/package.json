@@ -4,12 +4,12 @@
   "private": true,
   "scripts": {
     "packager": "react-native start",
-    "detox-server": "detox-server",
+    "detox-server": "detox run-server",
     "e2e": "mocha e2e --opts ./e2e/mocha.opts"
   },
   "devDependencies": {
     "mocha": "^4.0.0",
-    "detox": "^7.0.0"
+    "detox": "^8.0.0"
   },
   "detox": {}
 }

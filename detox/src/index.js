@@ -1,16 +1,17 @@
+const _ = require('lodash');
 const Detox = require('./Detox');
 const DetoxConstants = require('./DetoxConstants');
 const platform = require('./platform');
 const exportWrapper = require('./exportWrapper');
 const argparse = require('./utils/argparse');
+const log = require('./utils/logger').child({ __filename });
 const configuration = require('./configuration');
-const _ = require('lodash');
-const Debug = require('./utils/debug.js');
 
 let detox;
 
 function getDeviceConfig(configurations) {
   const configurationName = argparse.getArgValue('configuration');
+  const deviceOverride = argparse.getArgValue('device-name');
 
   const deviceConfig = (!configurationName && _.size(configurations) === 1)
     ? _.values(configurations)[0]
@@ -20,6 +21,11 @@ function getDeviceConfig(configurations) {
     throw new Error(`Cannot determine which configuration to use. use --configuration to choose one of the following:
                       ${Object.keys(configurations)}`);
   }
+
+  if (deviceOverride) {
+    deviceConfig.name = deviceOverride;
+  }
+
   if (!deviceConfig.type) {
     configuration.throwOnEmptyType();
   }
@@ -31,7 +37,7 @@ function getDeviceConfig(configurations) {
   return deviceConfig;
 }
 
-function validateConfig(config) {
+async function initializeDetox(config, params) {
   if (!config) {
     throw new Error(`No configuration was passed to detox, make sure you pass a config when calling 'detox.init(config)'`);
   }
@@ -39,9 +45,8 @@ function validateConfig(config) {
   if (!(config.configurations && _.size(config.configurations) >= 1)) {
     throw new Error(`No configured devices`);
   }
-}
 
-async function initializeDetox({configurations, session}, params) {
+  const {configurations, session} = config;
   const deviceConfig = getDeviceConfig(configurations);
 
   detox = new Detox({deviceConfig, session});
@@ -50,26 +55,33 @@ async function initializeDetox({configurations, session}, params) {
 }
 
 async function init(config, params) {
-  validateConfig(config);
-  await initializeDetox(config, params);
+  try {
+    await initializeDetox(config, params);
+  } catch (err) {
+    log.error({ event: 'DETOX_INIT_ERROR' }, '\n', err);
+    await cleanup();
+
+    detox = null;
+    throw err;
+  }
+}
+
+async function beforeEach(testSummary) {
+  if (detox) {
+    await detox.beforeEach(testSummary);
+  }
+}
+
+async function afterEach(testSummary) {
+  if (detox) {
+    await detox.afterEach(testSummary);
+  }
 }
 
 async function cleanup() {
-  if (detox) {
-    await detox.cleanup();
-  }
-}
-
-async function beforeEach() {
-  if (detox) {
-    await detox.beforeEach.apply(detox, arguments);
-  }
-}
-
-async function afterEach() {
-  if (detox) {
-    await detox.afterEach.apply(detox, arguments);
-  }
+    if (detox) {
+        await detox.cleanup();
+    }
 }
 
 module.exports = Object.assign({

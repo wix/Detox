@@ -16,6 +16,14 @@ function getArgValue(key) {
   return value;
 }
 
+function getFlag(key) {
+  if (argv && argv[key]) {
+    return true;
+  }
+  return false;
+}
+
 module.exports = {
-  getArgValue
+  getArgValue,
+  getFlag
 };
