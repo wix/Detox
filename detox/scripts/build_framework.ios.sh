@@ -1,5 +1,8 @@
 #!/bin/bash -e -x
 
+# Ensure Xcode is installed or print a warning message and return.
+xcodebuild -version &>/dev/null || (echo "WARNING: Xcode is not installed on this machine. Skipping iOS framework build phase" && return 0)
+
 detoxRootPath="$(dirname $(dirname ${0}))"
 detoxVersion=`node -p "require('${detoxRootPath}/package.json').version"`
 
