@@ -368,7 +368,7 @@ static void __copyMethods(Class orig, Class target)
 {
 	DetoxUserNotificationDispatcher* dispatcher = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationDataURL:userNotificationDataURL];
 	
-	if(delay)
+	if(delay && UIApplication.sharedApplication.applicationState != UIApplicationStateActive)
 	{
 		[_pendingUserNotificationDispatchers addObject:dispatcher];
 	}

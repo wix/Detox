@@ -54,6 +54,18 @@ static void detoxConditionalInit()
 		return;
 	}
 	
+	NSNumber* waitForDebugger = [options objectForKey:@"detoxWaitForDebugger"];
+	if(waitForDebugger)
+	{
+		usleep(waitForDebugger.unsignedIntValue* 1000);
+	}
+	
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^
+	{
+		NSURL* URL = [NSURL fileURLWithPath:@"/Users/lnatan/Desktop/Code/Detox/detox/ios/DetoxUserNotificationTests/user_notification_push_trigger.json"];
+		[DetoxAppDelegateProxy.currentAppDelegateProxy __dtx_dispatchUserNotificationFromDataURL:URL delayUntilActive:YES];
+	});
+	
 	[[DetoxManager sharedManager] connectToServer:detoxServer withSessionId:detoxSessionId];
 }
 
@@ -80,8 +92,17 @@ static void detoxConditionalInit()
 	self.testRunner.delegate = self;
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidLaunch:) name:UIApplicationDidFinishLaunchingNotification object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
 	
 	return self;
+}
+
+- (void)_appDidEnterBackground:(NSNotification*)note
+{
+	__block UIBackgroundTaskIdentifier bgTask;
+	bgTask = [UIApplication.sharedApplication beginBackgroundTaskWithName:@"DetoxBackground" expirationHandler:^{
+		[UIApplication.sharedApplication endBackgroundTask:bgTask];
+	}];
 }
 
 - (void)_appDidLaunch:(NSNotification*)note
