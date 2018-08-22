@@ -517,7 +517,7 @@
 - Re-add matcher generation commits and add traits matcher to generated code [\#348](https://github.com/wix/detox/pull/348) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 
 ## [detox@5.9.0](https://github.com/wix/detox/tree/detox@5.9.0) (2017-10-18)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.8.4...detox@5.9.0)
+[Full Changelog](https://github.com/wix/detox/compare/detox-cli@1.0.3...detox@5.9.0)
 
 **Enhancements**
 
@@ -534,11 +534,11 @@
 - Create a build matrix to support multiple version of React Native and OSs [\#345](https://github.com/wix/detox/pull/345) ([rotemmiz](https://github.com/rotemmiz))
 - Basic support for Jest runner [\#335](https://github.com/wix/detox/pull/335) ([Kureev](https://github.com/Kureev))
 
-## [detox@5.8.4](https://github.com/wix/detox/tree/detox@5.8.4) (2017-10-17)
-[Full Changelog](https://github.com/wix/detox/compare/detox-cli@1.0.3...detox@5.8.4)
-
 ## [detox-cli@1.0.3](https://github.com/wix/detox/tree/detox-cli@1.0.3) (2017-10-17)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.8.3...detox-cli@1.0.3)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.8.4...detox-cli@1.0.3)
+
+## [detox@5.8.4](https://github.com/wix/detox/tree/detox@5.8.4) (2017-10-17)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.8.3...detox@5.8.4)
 
 **Fixed Bugs**
 
