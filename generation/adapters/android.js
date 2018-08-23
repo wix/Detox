@@ -2,11 +2,11 @@ const t = require('babel-types');
 const generator = require('../core/generator');
 const { callGlobal } = require('../helpers');
 
-const { isNumber, isString, isBoolean, isOfClass, isArray, isDefined } = require('../core/type-checks');
+const { isNumber, isString, isBoolean, isArray, isDefined } = require('../core/type-checks');
 
 const typeCheckInterfaces = {
   'ArrayList<String>': isArray,
-  'Matcher<View>': isOfClass('Matcher'),
+  'Matcher<View>': null, // isOfClass('Matcher'),
   boolean: isBoolean,
   Double: isNumber,
   Integer: isNumber,

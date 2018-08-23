@@ -5,9 +5,6 @@
 */
 
 
-const log = require('../../utils/logger').child({ __filename });
-const util = require('util');
-
 
 class GREYConfiguration {
   /*@return The singleton GREYConfiguration instance.

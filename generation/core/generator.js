@@ -131,7 +131,7 @@ module.exports = function getGenerator({
       (carry, item) => (item instanceof Array ? [...carry, ...item] : [...carry, item]),
       []
     );
-    const typeChecks = allTypeChecks.filter((check) => typeof check === 'object');
+    const typeChecks = allTypeChecks.filter((check) => typeof check === 'object' && check.type !== 'EmptyStatement');
     const returnStatement = createReturnStatement(classJson, sanitizedJson);
     return [...typeChecks, returnStatement];
   }
@@ -218,10 +218,7 @@ module.exports = function getGenerator({
     const absoluteUtilsPath = path.resolve('../detox/src/utils');
     const relativeUtilsPath = path.relative(outputPath, absoluteUtilsPath);
 
-    return (
-      `const log = require('${relativeUtilsPath}/logger').child({ __filename });\n` +
-      `const util = require('util');\n`
-    );
+    return `const log = require('${relativeUtilsPath}/logger').child({ __filename });\n` + `const util = require('util');\n`;
   }
 
   return function generator(files) {
@@ -258,7 +255,8 @@ module.exports = function getGenerator({
         })
         .join('\n');
 
-      const code = [commentBefore, createLogImport(pathFragments), globalFunctions, output.code].join('\n');
+      // TODO: add createLogImport(pathFragments) again
+      const code = [commentBefore, globalFunctions, output.code].join('\n');
       fs.writeFileSync(outputFile, code, 'utf8');
 
       // Output methods that were not created due to missing argument support

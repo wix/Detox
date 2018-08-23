@@ -5,9 +5,6 @@
 */
 
 
-const log = require('../../utils/logger').child({ __filename });
-const util = require('util');
-
 function sanitize_android_edge(edge) {
   switch (edge) {
     case 'left':

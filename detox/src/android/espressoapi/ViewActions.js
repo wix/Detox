@@ -5,9 +5,6 @@
 */
 
 
-const log = require('../../utils/logger').child({ __filename });
-const util = require('util');
-
 function sanitize_matcher(matcher) {
   if (!matcher._call) {
     return matcher;
@@ -275,15 +272,6 @@ class ViewActions {
   }
 
   static repeatedlyUntil(action, desiredStateMatcher, maxAttempts) {
-    if (typeof desiredStateMatcher !== 'object' || typeof desiredStateMatcher.constructor !== 'function' || desiredStateMatcher.constructor.name.indexOf('Matcher') === -1) {
-      const isObject = typeof desiredStateMatcher === 'object';
-      const additionalErrorInfo = isObject ? typeof desiredStateMatcher.constructor === 'object' ? 'the constructor is no object' : 'it has a wrong class name: "' + desiredStateMatcher.constructor.name + '"' : 'it is no object';
-      log.error({
-        event: "repeatedlyUntil",
-        err: util.inspect(desiredStateMatcher)
-      }, 'desiredStateMatcher should be an instance of Matcher, got "' + desiredStateMatcher + '", it appears that ' + additionalErrorInfo);
-    }
-
     if (typeof maxAttempts !== "number") throw new Error("maxAttempts should be a number, but got " + (maxAttempts + (" (" + (typeof maxAttempts + ")"))));
     return {
       target: {
