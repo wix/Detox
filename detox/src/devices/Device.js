@@ -72,6 +72,10 @@ class Device {
       await this.deviceDriver.setPermissions(this._deviceId, this._bundleId, params.permissions);
     }
 
+    if (params.disableTouchIndicators) {
+      baseLaunchArgs['detoxDisableTouchIndicators'] = true;
+    }
+
     const _bundleId = bundleId || this._bundleId;
     if (this._isAppInBackground(params, _bundleId)) {
       if (hasPayload) {

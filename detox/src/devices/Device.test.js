@@ -182,6 +182,15 @@ describe('Device', () => {
       });
   });
 
+  it(`launchApp() with disableTouchIndicators should send a boolean switch as a param in launchParams`, async () => {
+    device = await validDevice();
+    await device.launchApp({disableTouchIndicators: true});
+
+    expect(device.deviceDriver.launchApp).toHaveBeenCalledWith(device._deviceId,
+      device._bundleId,
+      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-detoxDisableTouchIndicators": true});
+  });
+
   it(`relaunchApp() with userNofitication should send the userNotification as a param in launchParams`, async () => {
     device = validDevice();
     fs.existsSync.mockReturnValue(true);
