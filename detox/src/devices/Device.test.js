@@ -182,9 +182,9 @@ describe('Device', () => {
       });
   });
 
-  it(`relaunchApp() with disableTouchIndicators should send a boolean switch as a param in launchParams`, async () => {
+  it(`launchApp() with disableTouchIndicators should send a boolean switch as a param in launchParams`, async () => {
     device = await validDevice();
-    await device.relaunchApp({disableTouchIndicators: true});
+    await device.launchApp({disableTouchIndicators: true});
 
     expect(device.deviceDriver.launchApp).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
