@@ -4,10 +4,6 @@
 	For more information see generation/README.md.
 */
 
-
-const log = require('../../utils/logger').child({ __filename });
-const util = require('util');
-
 function sanitize_uiDeviceOrientation(value) {
   const orientationMapping = {
     landscape: 3, // top at left side landscape
@@ -15,7 +11,7 @@ function sanitize_uiDeviceOrientation(value) {
   };
 
   return orientationMapping[value];
-} 
+}
 class EarlGreyImpl {
   /*Provides the file name and line number of the code that is calling into EarlGrey.
 In case of a failure, the information is used to tell XCTest the exact line which caused
@@ -25,22 +21,30 @@ the failure so it can be highlighted in the IDE.
 @param lineNumber The line number of the failing code.
 
 @return An EarlGreyImpl instance, with details of the code invoking EarlGrey.
-*/static invokedFromFileLineNumber(fileName, lineNumber) {
-    if (typeof fileName !== "string") throw new Error("fileName should be a string, but got " + (fileName + (" (" + (typeof fileName + ")"))));
-    if (typeof lineNumber !== "number") throw new Error("lineNumber should be a number, but got " + (lineNumber + (" (" + (typeof lineNumber + ")"))));
+*/ static invokedFromFileLineNumber(
+    fileName,
+    lineNumber
+  ) {
+    if (typeof fileName !== 'string')
+      throw new Error('fileName should be a string, but got ' + (fileName + (' (' + (typeof fileName + ')'))));
+    if (typeof lineNumber !== 'number')
+      throw new Error('lineNumber should be a number, but got ' + (lineNumber + (' (' + (typeof lineNumber + ')'))));
     return {
       target: {
-        type: "Class",
-        value: "EarlGreyImpl"
+        type: 'Class',
+        value: 'EarlGreyImpl'
       },
-      method: "invokedFromFile:lineNumber:",
-      args: [{
-        type: "NSString",
-        value: fileName
-      }, {
-        type: "NSInteger",
-        value: lineNumber
-      }]
+      method: 'invokedFromFile:lineNumber:',
+      args: [
+        {
+          type: 'NSString',
+          value: fileName
+        },
+        {
+          type: 'NSInteger',
+          value: lineNumber
+        }
+      ]
     };
   }
 
@@ -54,15 +58,21 @@ will be registered.
 failure will be reported if the rotation attempt fails.
 
 @return @c YES if the rotation was successful, @c NO otherwise.
-*/static rotateDeviceToOrientationErrorOrNil(element, deviceOrientation) {
-    if (!["landscape", "portrait"].some(option => option === deviceOrientation)) throw new Error("deviceOrientation should be one of [landscape, portrait], but got " + deviceOrientation);
+*/ static rotateDeviceToOrientationErrorOrNil(
+    element,
+    deviceOrientation
+  ) {
+    if (!['landscape', 'portrait'].some(option => option === deviceOrientation))
+      throw new Error('deviceOrientation should be one of [landscape, portrait], but got ' + deviceOrientation);
     return {
       target: element,
-      method: "rotateDeviceToOrientation:errorOrNil:",
-      args: [{
-        type: "NSInteger",
-        value: sanitize_uiDeviceOrientation(deviceOrientation)
-      }]
+      method: 'rotateDeviceToOrientation:errorOrNil:',
+      args: [
+        {
+          type: 'NSInteger',
+          value: sanitize_uiDeviceOrientation(deviceOrientation)
+        }
+      ]
     };
   }
 
@@ -76,10 +86,12 @@ failure will be reported if the shake attempt fails.
 @throws GREYFrameworkException if the action fails and @c errorOrNil is @c nil.
 @return @c YES if the shake was successful, @c NO otherwise. If @c errorOrNil is @c nil and
 the operation fails, it will throw an exception.
-*/static shakeDeviceWithError(element) {
+*/ static shakeDeviceWithError(
+    element
+  ) {
     return {
       target: element,
-      method: "shakeDeviceWithError:",
+      method: 'shakeDeviceWithError:',
       args: []
     };
   }
@@ -91,14 +103,15 @@ error if the first responder is not present or if the keyboard is not visible.
 failure will be reported if the dismissing fails.
 
 @return @c YES if the dismissing of the keyboard was successful, @c NO otherwise.
-*/static dismissKeyboardWithError(element) {
+*/ static dismissKeyboardWithError(
+    element
+  ) {
     return {
       target: element,
-      method: "dismissKeyboardWithError:",
+      method: 'dismissKeyboardWithError:',
       args: []
     };
   }
-
 }
 
 module.exports = EarlGreyImpl;
