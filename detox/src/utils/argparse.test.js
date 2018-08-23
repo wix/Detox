@@ -66,4 +66,42 @@ describe('argparse', () => {
       expect(argparse.getFlag('flag-missing')).toBe(false);
     });
   });
+
+  describe('composeArgs()', () => {
+    let composeArgs;
+
+    beforeEach(() => {
+      composeArgs = require('./argparse').composeArgs;
+    });
+
+    it('by default, should convert { byId: 100 } to "--byId 100"', () => {
+      expect(composeArgs({ byId: 100 })).toBe('--byId 100');
+    });
+
+    it('should convert camelcase to kebab case, if turned on', () => {
+      const options = { kebab: true };
+      expect(composeArgs({ byId: 100 }, options)).toBe('--by-id 100');
+    });
+
+    it('should quote-escape values with spaces inside', () => {
+      expect(composeArgs({ query: "equals \"iPhone X\"" })).toBe('--query "equals \\\"iPhone X\\\""');
+    });
+
+    it('should convert { enabled: true } to "--enabled" because it is boolean', () => {
+      expect(composeArgs({ enabled: true })).toBe('--enabled');
+    });
+
+    it('should omit { enabled: false } to because it is false', () => {
+      expect(composeArgs({ enabled: false })).toBe('');
+    });
+
+    it('should convert { e: true } to -e if prefix is "-"', () => {
+      expect(composeArgs({ e: true }, { prefix: '-' })).toBe('-e');
+    });
+
+    it('should convert { arg1: true, arg2: "arg3" } to "arg1 arg2 arg3" if there is no prefix', () => {
+      const options = { prefix: false };
+      expect(composeArgs({ arg1: true, arg2: 'arg3' }, options)).toBe('arg1 arg2 arg3');
+    });
+  });
 });

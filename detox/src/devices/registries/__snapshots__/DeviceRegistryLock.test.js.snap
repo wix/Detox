@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DeviceRegistryLock in locked state if locking it again if there are no retries should throw exception on timeout 1`] = `"Lock file is already being hold"`;
+
+exports[`DeviceRegistryLock in unlocked state should throw exception on attempt to read .busyDevices 1`] = `"Cannot access busy devices list while not being inside the lock."`;

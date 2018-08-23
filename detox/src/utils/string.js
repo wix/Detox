@@ -18,7 +18,17 @@ function lowerCamelCaseJoin(array) {
   })
   return retVal;
 }
+
+function ensureSuffix(str, suffix) {
+  if (str.endsWith(suffix)) {
+    return str;
+  }
+
+  return str + suffix;
+}
+
 module.exports = {
   capitalizeFirstLetter,
-  lowerCamelCaseJoin
+  lowerCamelCaseJoin,
+  ensureSuffix,
 };

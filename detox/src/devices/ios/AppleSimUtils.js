@@ -3,60 +3,26 @@ const exec = require('../../utils/exec');
 const environment = require('../../utils/environment');
 
 class AppleSimUtils {
-  async setPermissions(udid, bundleId, permissionsObj) {
-    const statusLogs = {
-      trying: `Trying to set permissions...`,
-      successful: 'Permissions are set'
-    };
-    let permissions = [];
-    _.forEach(permissionsObj, function (shouldAllow, permission) {
-      permissions.push(permission + '=' + shouldAllow);
-    });
-    await this._execAppleSimUtils({
-      args: `--simulator ${udid} --bundle ${bundleId} --setPermissions ${_.join(permissions, ',')}`
-    }, statusLogs, 1);
-  }
+  /***
+   * Boots the simulator if it is not booted already.
+   *
+   * @param {String} udid - device id
+   * @returns {Promise<boolean>} true, if device has been booted up from the shutdown state
+   */
+  async boot(udid) {
+    const isBooted = await this.isBooted(udid);
 
-  async findDeviceUDID(query) {
-    const udids = await this.findDevicesUDID(query);
-    return udids[0];
-  }
-
-  async findDevicesUDID(query) {
-    const statusLogs = {
-      trying: `Searching for device matching ${query}...`
-    };
-
-    let type;
-    let os;
-    if (_.includes(query, ',')) {
-      const parts = _.split(query, ',');
-      type = parts[0].trim();
-      os = parts[1].trim();
-    } else {
-      type = query;
-      const deviceInfo = await this.deviceTypeAndNewestRuntimeFor(query);
-      os = deviceInfo.newestRuntime.version;
+    if (!isBooted) {
+      await this._bootDeviceByXcodeVersion(udid);
+      return true;
     }
 
-    const response = await this._execAppleSimUtils({ args: `--list --byType "${type}" --byOS "${os}"`}, statusLogs, 1);
-    const parsed = this._parseResponseFromAppleSimUtils(response);
-    const udids = _.map(parsed, 'udid');
-    if (!udids || !udids.length || !udids[0]) {
-      throw new Error(`Can't find a simulator to match with "${query}", run 'xcrun simctl list' to list your supported devices.
-      It is advised to only state a device type, and not to state iOS version, e.g. "iPhone 7"`);
-    }
-    return udids;
+    return false;
   }
 
-  async findDeviceByUDID(udid) {
-    const response = await this._execAppleSimUtils({args: `--list --byId "${udid}"`}, undefined, 1);
-    const parsed = this._parseResponseFromAppleSimUtils(response);
-    const device = _.find(parsed, (device) => _.isEqual(device.udid, udid));
-    if (!device) {
-      throw new Error(`Can't find device ${udid}`);
-    }
-    return device;
+  async isBooted(udid) {
+    const [device] = await this.getDevicesWithProperties({ udid: udid });
+    return device.state === 'Booted' || device.state === 'Booting';
   }
 
   /***
@@ -76,29 +42,45 @@ class AppleSimUtils {
     return false;
   }
 
-  async isBooted(udid) {
-    const device = await this.findDeviceByUDID(udid);
-    return (_.isEqual(device.state, 'Booted') || _.isEqual(device.state, 'Booting'));
+    return udid;
   }
 
-  async deviceTypeAndNewestRuntimeFor(name) {
-    const result = await this._execSimctl({ cmd: `list -j` });
-    const stdout = _.get(result, 'stdout');
-    const output = JSON.parse(stdout);
-    const deviceType = _.filter(output.devicetypes, { 'name': name})[0];
-    const newestRuntime = _.maxBy(output.runtimes, r => Number(r.version));
-    return { deviceType, newestRuntime };
-  }
-  async create(name) {
-    const deviceInfo = await this.deviceTypeAndNewestRuntimeFor(name);
+  async getDevicesWithProperties(deviceProperties) {
+    const query = _.omitBy({
+      byId: _.get(deviceProperties, 'udid'),
+      byName: _.get(deviceProperties, 'name'),
+      byType: _.get(deviceProperties, ['deviceType', 'name']),
+      byOS: _.get(deviceProperties, ['os', 'version']),
+    }, _.isUndefined);
 
-    if (deviceInfo.newestRuntime) {
-      const result = await this._execSimctl({cmd: `create "${name}-Detox" "${deviceInfo.deviceType.identifier}" "${deviceInfo.newestRuntime.identifier}"`});
-      const udid = _.get(result, 'stdout').trim();
-      return udid;
-    } else {
-      throw new Error(`Unable to create device. No runtime found for ${name}`);
+    log.debug({ event: 'SEARCH_DEVICES' }, `Searching for device matching query: ${util.inspect(query)}...`);
+
+    const args = `--list ${composeArgs(query)}`;
+    const responseFromAppleSimUtils = await this._execAppleSimUtils({ args }, undefined, 1);
+    const foundDevices = this._parseResponseFromAppleSimUtils(responseFromAppleSimUtils);
+
+    if (_.isEmpty(foundDevices)) {
+      throw new DetoxRuntimeError({
+        message: `Can't find a simulator from output of: applesimutils ${args}`,
+        hint: `To see available devices, try to run: applesimutils --list | grep ^.....name`,
+      });
     }
+
+    return foundDevices;
+  }
+
+  async setPermissions(udid, bundleId, permissionsObj) {
+    const statusLogs = {
+      trying: `Trying to set permissions...`,
+      successful: 'Permissions are set'
+    };
+    let permissions = [];
+    _.forEach(permissionsObj, function (shouldAllow, permission) {
+      permissions.push(permission + '=' + shouldAllow);
+    });
+    await this._execAppleSimUtils({
+      args: `--simulator ${udid} --bundle ${bundleId} --setPermissions ${_.join(permissions, ',')}`
+    }, statusLogs, 1);
   }
 
   async install(udid, absPath) {
@@ -182,9 +164,11 @@ class AppleSimUtils {
     const stdout = _.get(raw, 'stdout', 'undefined');
     const match = /^Xcode (\S+)\.*\S*\s*/.exec(stdout);
     const majorVersion = parseInt(_.get(match, '[1]'));
+
     if (!_.isInteger(majorVersion) || majorVersion < 1) {
       throw new Error(`Can't read Xcode version, got: '${stdout}'`);
     }
+
     return majorVersion;
   }
 
@@ -208,24 +192,20 @@ class AppleSimUtils {
     return await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl ${cmd}`, { silent }, statusLogs, retries);
   }
 
-  _parseResponseFromAppleSimUtils(response) {
-    let out = _.get(response, 'stdout');
-    if (_.isEmpty(out)) {
-      out = _.get(response, 'stderr');
-    }
-    if (_.isEmpty(out)) {
-      return undefined;
-    }
+  _parseResponseFromAppleSimUtils({ stdout, stderr } = {}) {
+    const trim_stdout = (stdout || '').trim();
+    const trim_stderr = (stderr || '').trim();
+    const out = trim_stdout || trim_stderr;
 
-    let parsed;
     try {
-      parsed = JSON.parse(out);
-
+      return out && JSON.parse(out);
     } catch (ex) {
-      throw new Error(`Could not parse response from applesimutils, please update applesimutils and try again.
-      'brew uninstall applesimutils && brew tap wix/brew && brew install applesimutils'`);
+      throw new DetoxRuntimeError({
+        name: `Failed to parse JSON response from applesimutils`,
+        hint: `Try to update applesimutils: brew uninstall applesimutils && brew tap wix/brew && brew install applesimutils`,
+        debugInfo: 'Response was:\n' + out,
+      });
     }
-    return parsed;
   }
 
   async _bootDeviceByXcodeVersion(udid) {

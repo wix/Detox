@@ -29,4 +29,12 @@ describe('string', () => {
     });
   });
 
+  describe('ensureSuffix', () => {
+    it(`should add suffix if there is none`, () => {
+      expect(string.ensureSuffix('iPhone X', '-Detox')).toBe('iPhone X-Detox');
+    });
+    it(`should not add suffix if there is one`, () => {
+      expect(string.ensureSuffix('iPhone X-Detox', '-Detox')).toBe('iPhone X-Detox');
+    });
+  });
 });

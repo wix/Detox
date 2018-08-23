@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DeviceRegistry acquireDevice if there are no devices with given name should throw if device with given name is not found 1`] = `"Cannot search for similar device when there is no query to start with."`;

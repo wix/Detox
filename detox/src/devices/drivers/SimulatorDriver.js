@@ -18,10 +18,7 @@ class SimulatorDriver extends IosDriver {
     super(config);
 
     this._applesimutils = new AppleSimUtils();
-    this.deviceRegistry = new DeviceRegistry({
-      getDeviceIdsByType: async type => await this._applesimutils.findDevicesUDID(type),
-      createDevice: type => this._applesimutils.create(type),
-    });
+    this.deviceRegistry = new SimulatorDeviceRegistry(this._applesimutils);
   }
 
   declareArtifactPlugins() {
@@ -38,8 +35,10 @@ class SimulatorDriver extends IosDriver {
     const detoxFrameworkPath = await environment.getFrameworkPath();
 
     if (!fs.existsSync(detoxFrameworkPath)) {
-      throw new Error(`${detoxFrameworkPath} could not be found, this means either you changed a version of Xcode or Detox postinstall script was unsuccessful.
-      To attempt a fix try running 'detox clean-framework-cache && detox build-framework-cache'`);
+      throw new DetoxRuntimeError({
+        message: `${detoxFrameworkPath} could not be found, this means either you changed a version of Xcode or Detox postinstall script was unsuccessful.`,
+        hint: `To attempt a fix try running 'detox clean-framework-cache && detox build-framework-cache'`,
+      });
     }
   }
 
@@ -49,12 +48,14 @@ class SimulatorDriver extends IosDriver {
   }
 
   async acquireFreeDevice(name) {
-    const deviceId = await this.deviceRegistry.getDevice(name);
+    const deviceId = await this.deviceRegistry.acquireDeviceWithName(name);
+
     if (deviceId) {
       await this.boot(deviceId);
     } else {
-      console.error('Unable to acquire free device ', name);
+      log.error({ event: 'ACQUIRE_DEVICE_ERROR' }, `Unable to acquire free device: ${name}`);
     }
+
     return deviceId;
   }
 

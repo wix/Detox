@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SimulatorDriver should log error to log if cannot acquire free device from the registry 1`] = `
+Array [
+  Array [
+    Object {
+      "event": "ACQUIRE_DEVICE_ERROR",
+    },
+    "Unable to acquire free device: test string",
+  ],
+]
+`;
+
+exports[`SimulatorDriver should throw error if detox framework path has not been found 1`] = `
+"DetoxRuntimeError:  could not be found, this means either you changed a version of Xcode or Detox postinstall script was unsuccessful.
+
+HINT: To attempt a fix try running 'detox clean-framework-cache && detox build-framework-cache'"
+`;
