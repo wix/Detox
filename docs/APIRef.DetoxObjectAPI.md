@@ -9,10 +9,10 @@ title: The `detox` Object
 
 ### Methods
 
-- [`detox.init()`](#detox.init)
-- [`detox.beforeEach()`](#detox.beforeEach)
-- [`detox.afterEach()`](#detox.afterEach)
-- [`detox.cleanup()`](#detox.cleanup)
+- [`detox.init()`](#detoxinit)
+- [`detox.beforeEach()`](#detoxbeforeeach)
+- [`detox.afterEach()`](#detoxaftereach)
+- [`detox.cleanup()`](#detoxcleanup)
 
 ### `detox.init()`
 The setup phase happens inside `detox.init()`. This is the phase where detox reads its configuration, starts a server, loads its expection library and starts a simulator.
@@ -27,7 +27,7 @@ before(async () => {
 });
 ```
 
-##### Explicit imports during initialization 
+##### Explicit imports during initialization
 Detox exports `device `, `expect`, `element`, `by` and `waitFor` as globals by default, if you want to control their initialization manually, set init detox with `initGlobals` set to `false`. This is useful when during E2E tests you also need to run regular expectations in node. jest `Expect` for instance, will not be overriden by Detox when this option is used.
 
 ```js
