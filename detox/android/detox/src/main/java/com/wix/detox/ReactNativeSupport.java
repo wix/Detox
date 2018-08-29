@@ -3,13 +3,13 @@ package com.wix.detox;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.Espresso;
+import android.support.test.espresso.IdlingRegistry;
+import android.support.test.espresso.base.IdlingResourceRegistry;
 import android.util.Log;
 
 import com.wix.detox.espresso.AnimatedModuleIdlingResource;
-import com.wix.detox.espresso.LooperIdlingResource;
+import com.wix.detox.espresso.ReactNativeNetworkIdlingResource;
 import com.wix.detox.espresso.ReactBridgeIdlingResource;
-import com.wix.detox.espresso.RNExperimentalNetworkIR;
 import com.wix.detox.espresso.ReactNativeTimersIdlingResource;
 import com.wix.detox.espresso.ReactNativeUIModuleIdlingResource;
 
@@ -17,8 +17,6 @@ import org.joor.Reflect;
 import org.joor.ReflectException;
 
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -280,9 +278,7 @@ public class ReactNativeSupport {
     private static ReactNativeUIModuleIdlingResource rnUIModuleIdlingResource = null;
     private static AnimatedModuleIdlingResource animIdlingResource = null;
 
-    private static void setupEspressoIdlingResources(
-            @NonNull Object reactNativeHostHolder,
-            @NonNull Object reactContext) {
+    private static void setupEspressoIdlingResources(@NonNull Object reactNativeHostHolder, @NonNull Object reactContext) {
         removeEspressoIdlingResources(reactNativeHostHolder, reactContext);
         Log.i(LOG_TAG, "Setting up Espresso Idling Resources for React Native.");
 
@@ -297,55 +293,42 @@ public class ReactNativeSupport {
         rnUIModuleIdlingResource = new ReactNativeUIModuleIdlingResource(reactContext);
         animIdlingResource = new AnimatedModuleIdlingResource(reactContext);
 
-        Espresso.registerIdlingResources(
-                rnTimerIdlingResource,
-                rnBridgeIdlingResource,
-                rnUIModuleIdlingResource,
-                animIdlingResource);
+        IdlingRegistry.getInstance().register(rnTimerIdlingResource);
+        IdlingRegistry.getInstance().register(rnBridgeIdlingResource);
+        IdlingRegistry.getInstance().register(rnUIModuleIdlingResource);
+        IdlingRegistry.getInstance().register(animIdlingResource);
 
         if (networkSyncEnabled) {
             setupNetworkIdlingResource();
         }
     }
 
-    private static ArrayList<LooperIdlingResource> looperIdlingResources = new ArrayList<>();
-
     private static void setupReactNativeQueueInterrogators(@NonNull Object reactContext) {
-        HashSet<Looper> excludedLoopers = new HashSet<>();
-        excludedLoopers.add(InstrumentationRegistry.getTargetContext().getMainLooper());
-        setupRNQueueInterrogator(reactContext, FIELD_UI_MSG_QUEUE, excludedLoopers);
-        setupRNQueueInterrogator(reactContext, FIELD_UI_BG_MSG_QUEUE, excludedLoopers);
-        setupRNQueueInterrogator(reactContext, FIELD_JS_MSG_QUEUE, excludedLoopers);
-        setupRNQueueInterrogator(reactContext, FIELD_NATIVE_MODULES_MSG_QUEUE, excludedLoopers);
+        Looper UIBackgroundMessageQueue = getLooperFromQueue(reactContext, FIELD_UI_BG_MSG_QUEUE);
+        Looper JSMessageQueue = getLooperFromQueue(reactContext, FIELD_JS_MSG_QUEUE);
+        Looper JMativeModulesMessageQueue = getLooperFromQueue(reactContext, FIELD_NATIVE_MODULES_MSG_QUEUE);
+
+//        IdlingRegistry.getInstance().registerLooperAsIdlingResource(UIBackgroundMessageQueue);
+        IdlingRegistry.getInstance().registerLooperAsIdlingResource(JSMessageQueue);
+        IdlingRegistry.getInstance().registerLooperAsIdlingResource(JMativeModulesMessageQueue);
+
+        IdlingResourceRegistry irr = Reflect.on("android.support.test.espresso.Espresso").field("baseRegistry").get();
+        irr.sync(IdlingRegistry.getInstance().getResources(), IdlingRegistry.getInstance().getLoopers());
     }
 
-    private static void setupRNQueueInterrogator(
-            @NonNull Object reactContext,
-            @NonNull String field,
-            @NonNull HashSet<Looper> excludedLoopers) {
+    private static Looper getLooperFromQueue(@NonNull Object reactContext, String queueName) {
         Object queue;
-        Object looper;
+        Looper looper = null;
 
         try {
-            if ((queue = Reflect.on(reactContext).field(field).get()) != null) {
-                if ((looper = Reflect.on(queue).call(METHOD_GET_LOOPER).get()) != null) {
-                    if (!excludedLoopers.contains(looper)) {
-                        LooperIdlingResource looperIdlingResource = new LooperIdlingResource((Looper)looper, false);
-
-                        looperIdlingResources.add(looperIdlingResource);
-                        Espresso.registerIdlingResources(looperIdlingResource);
-                        excludedLoopers.add((Looper)looper);
-                    }
-                }
+            queue = Reflect.on(reactContext).field(queueName).get();
+            if (queue != null) {
+                looper = Reflect.on(queue).call(METHOD_GET_LOOPER).get();
             }
         } catch (ReflectException e) {
-            // The mUiBackgroundMessageQueueThread field is stripped at runtime
-            // in the current RN release.
-            // We still keep trying to grab it to be future proof.
-            if (!field.equals("mUiBackgroundMessageQueueThread")) {
-                Log.d(LOG_TAG, "Can't set up monitoring for " + field, e);
-            }
+            return null;
         }
+        return looper;
     }
 
     static void removeEspressoIdlingResources(@NonNull Object reactNativeHostHolder) {
@@ -360,28 +343,14 @@ public class ReactNativeSupport {
         removeEspressoIdlingResources(reactNativeHostHolder, reactContext);
     }
 
-    private static void removeEspressoIdlingResources(
-            @NonNull Object reactNativeHostHolder,
-            Object reactContext) {
+    private static void removeEspressoIdlingResources(@NonNull Object reactNativeHostHolder, Object reactContext) {
 
         Log.i(LOG_TAG, "Removing Espresso IdlingResources for React Native.");
 
-        if (rnBridgeIdlingResource != null
-                && rnTimerIdlingResource != null
-                && rnUIModuleIdlingResource != null
-                && animIdlingResource != null) {
-            Espresso.unregisterIdlingResources(
-                    rnTimerIdlingResource,
-                    rnBridgeIdlingResource,
-                    rnUIModuleIdlingResource,
-                    animIdlingResource);
-            rnTimerIdlingResource = null;
-            rnBridgeIdlingResource = null;
-            rnUIModuleIdlingResource = null;
-            animIdlingResource = null;
-        }
-
-        removeReactNativeQueueInterrogators();
+        IdlingRegistry.getInstance().unregister(rnTimerIdlingResource);
+        IdlingRegistry.getInstance().unregister(rnBridgeIdlingResource);
+        IdlingRegistry.getInstance().unregister(rnUIModuleIdlingResource);
+        IdlingRegistry.getInstance().unregister(animIdlingResource);
 
         final Object instanceManager = getInstanceManager(reactNativeHostHolder);
         if (instanceManager == null) {
@@ -398,14 +367,6 @@ public class ReactNativeSupport {
         }
     }
 
-    private static void removeReactNativeQueueInterrogators() {
-        for (LooperIdlingResource res : looperIdlingResources) {
-            res.stop();
-            Espresso.unregisterIdlingResources(res);
-        }
-        looperIdlingResources.clear();
-    }
-
     private static boolean networkSyncEnabled = true;
     public static void enableNetworkSynchronization(boolean enable) {
         if (!isReactNativeApp()) return;
@@ -419,7 +380,7 @@ public class ReactNativeSupport {
         networkSyncEnabled = enable;
     }
 
-    private static RNExperimentalNetworkIR networkIR = null;
+    private static ReactNativeNetworkIdlingResource networkIR = null;
     private final static String CLASS_NETWORK_MODULE = "com.facebook.react.modules.network.NetworkingModule";
     private final static String METHOD_GET_NATIVE_MODULE = "getNativeModule";
     private final static String METHOD_HAS_NATIVE_MODULE = "hasNativeModule";
@@ -448,8 +409,9 @@ public class ReactNativeSupport {
                     .call(METHOD_GET_NATIVE_MODULE, networkModuleClass)
                     .field(FIELD_OKHTTP_CLIENT)
                     .get();
-            networkIR = new RNExperimentalNetworkIR(client.dispatcher());
-            Espresso.registerIdlingResources(networkIR);
+            networkIR = new ReactNativeNetworkIdlingResource(client.dispatcher());
+            IdlingRegistry.getInstance().register(networkIR);
+
         } catch (ReflectException e) {
             Log.e(LOG_TAG, "Can't set up Networking Module listener", e.getCause());
         }
@@ -458,7 +420,7 @@ public class ReactNativeSupport {
     private static void removeNetworkIdlingResource() {
         if (networkIR != null) {
             networkIR.stop();
-            Espresso.unregisterIdlingResources(networkIR);
+            IdlingRegistry.getInstance().unregister(networkIR);
             networkIR = null;
         }
     }

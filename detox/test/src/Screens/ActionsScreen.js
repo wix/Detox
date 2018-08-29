@@ -138,34 +138,37 @@ export default class ActionsScreen extends Component {
   }
 
   onChangeTypeText(text) {
-    this.setState({
-      typeText: text
-    });
-    if (text == 'passcode') {
+    if (text === 'passcode') {
       this.setState({
         greeting: 'Type Working'
+      });
+    } else {
+      this.setState({
+        typeText: text
       });
     }
   }
 
   onReplaceText(text) {
-    this.setState({
-      replaceText: text
-    });
-    if (text == 'replaced_text') {
+    if (text === 'replaced_text') {
       this.setState({
         greeting: 'Replace Working'
+      });
+    } else {
+      this.setState({
+        replaceText: text
       });
     }
   }
 
   onChangeClearText(text) {
-    this.setState({
-      clearText: text
-    });
-    if (text == '') {
+    if (text === '') {
       this.setState({
         greeting: 'Clear Working'
+      });
+    } else {
+      this.setState({
+        clearText: text
       });
     }
   }
