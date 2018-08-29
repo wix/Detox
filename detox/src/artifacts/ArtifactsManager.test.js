@@ -91,6 +91,7 @@ describe('ArtifactsManager', () => {
           onShutdownDevice: jest.fn(),
           onBeforeLaunchApp: jest.fn(),
           onLaunchApp: jest.fn(),
+          onUserAction: jest.fn(),
           onBeforeAll: jest.fn(),
           onBeforeEach: jest.fn(),
           onAfterEach: jest.fn(),
@@ -249,6 +250,13 @@ describe('ArtifactsManager', () => {
           deviceId: 'testDeviceId',
         }));
 
+        itShouldCatchErrorsOnPhase('onUserAction', () => ({
+          type: 'takeScreenshot',
+          options: {
+            name: 'open app',
+          },
+        }));
+
         itShouldCatchErrorsOnPhase('onShutdownDevice', () => ({
           deviceId: 'testDeviceId'
         }));
@@ -332,6 +340,20 @@ describe('ArtifactsManager', () => {
           await artifactsManager.onShutdownDevice(shutdownInfo);
           expect(testPlugin.onShutdownDevice).toHaveBeenCalledWith(shutdownInfo);
         });
+      });
+    });
+
+    describe('onUserAction', () => {
+      it('should call onUserAction in plugins', async () => {
+        const actionInfo = {
+          type: 'takeScreenshot',
+          options: {
+            name: 'open app',
+          },
+        };
+
+        await artifactsManager.onUserAction(actionInfo);
+        expect(testPlugin.onUserAction).toHaveBeenCalledWith(actionInfo);
       });
     });
 

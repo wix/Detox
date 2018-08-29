@@ -18,6 +18,20 @@ class ScreenshotArtifactPlugin extends TwoSnapshotsPerTestPlugin {
     const pngName = index === 0 ? 'beforeEach.png' : 'afterEach.png';
     return this.api.preparePathForArtifact(pngName, testSummary);
   }
+
+  async onUserAction({ type, options }) {
+    if (type === 'takeScreenshot') {
+      return this._takeScreenshot(options);
+    }
+  }
+
+  async _takeScreenshot({ name }) {
+    const screenshot = await this.takeSnapshot();
+    const artifactPathPromise = this.api.preparePathForArtifact(`${name}.png`, this.context.testSummary);
+    this.api.requestIdleCallback(async () => screenshot.save(await artifactPathPromise), '_takeScreenshot');
+
+    return artifactPathPromise;
+  }
 }
 
 module.exports = ScreenshotArtifactPlugin;

@@ -107,13 +107,27 @@ class ArtifactPlugin {
   }
 
   /**
+   * Hook that is called on demand by some of user actions (e.g. device.takeScreeenshot())
+   *
+   * @protected
+   * @async
+   * @param {Object} event - User action event object
+   * @param {string} event.type - Action type
+   * @param {string} event.options - Action options
+   * @return {Promise<any>} - appropriate result of the action
+   */
+  async onUserAction(event) {}
+
+  /**
    * Hook that is called before any test begins
    *
    * @protected
    * @async
    * @return {Promise<void>} - when done
    */
-  async onBeforeAll() {}
+  async onBeforeAll() {
+    this.context.testSummary = null;
+  }
 
   /**
    * Hook that is called before a test begins
@@ -123,7 +137,9 @@ class ArtifactPlugin {
    * @param {TestSummary} testSummary - has name of currently running test
    * @return {Promise<void>} - when done
    */
-  async onBeforeEach(testSummary) {}
+  async onBeforeEach(testSummary) {
+    this.context.testSummary = testSummary;
+  }
 
   /***
    * @protected
@@ -131,7 +147,9 @@ class ArtifactPlugin {
    * @param {TestSummary} testSummary - has name and status of test that ran
    * @return {Promise<void>} - when done
    */
-  async onAfterEach(testSummary) {}
+  async onAfterEach(testSummary) {
+    this.context.testSummary = testSummary;
+  }
 
   /**
    * Hook that is called after all tests run
@@ -141,6 +159,7 @@ class ArtifactPlugin {
    * @return {Promise<void>} - when done
    */
   async onAfterAll() {
+    this.context.testSummary = null;
     this._logDisableWarning();
   }
 
@@ -159,6 +178,7 @@ class ArtifactPlugin {
     this.onShutdownDevice = _.noop;
     this.onBeforeLaunchApp = _.noop;
     this.onLaunchApp = _.noop;
+    this.onUserAction = _.noop;
     this.onBeforeAll = _.noop;
     this.onBeforeEach = _.noop;
     this.onAfterEach = _.noop;

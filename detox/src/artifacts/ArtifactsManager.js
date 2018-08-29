@@ -81,6 +81,7 @@ class ArtifactsManager {
     deviceEmitter.on('shutdownDevice', this.onShutdownDevice.bind(this));
     deviceEmitter.on('beforeLaunchApp', this.onBeforeLaunchApp.bind(this));
     deviceEmitter.on('launchApp', this.onLaunchApp.bind(this));
+    deviceEmitter.on('userAction', this.onUserAction.bind(this));
   }
 
   async onBootDevice(deviceInfo) {
@@ -97,6 +98,10 @@ class ArtifactsManager {
 
   async onLaunchApp(appLaunchInfo) {
     await this._callPlugins('onLaunchApp', appLaunchInfo);
+  }
+
+  async onUserAction(actionInfo) {
+    await this._callPlugins('onUserAction', actionInfo);
   }
 
   async onBeforeAll() {

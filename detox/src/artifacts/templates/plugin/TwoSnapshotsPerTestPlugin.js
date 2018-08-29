@@ -9,13 +9,16 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
     this._snapshots = [null, null];
   }
 
-  async onBeforeEach() {
-    await this._takeSnapshot(0);
+  async onBeforeEach(testSummary) {
+    await super.onBeforeEach(testSummary);
+    await this._takeAutomaticSnapshot(0);
   }
 
   async onAfterEach(testSummary) {
+    await super.onAfterEach(testSummary);
+
     if (this.shouldKeepArtifactOfTest(testSummary)) {
-      await this._takeSnapshot(1);
+      await this._takeAutomaticSnapshot(1);
       this._startSavingSnapshot(testSummary, 0);
       this._startSavingSnapshot(testSummary, 1);
     } else {
@@ -41,16 +44,22 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
    */
   createTestArtifact() {}
 
-  async _takeSnapshot(index) {
-    if (!this.enabled) {
-      return;
+  async _takeAutomaticSnapshot(index) {
+    if (this.enabled) {
+      this._snapshots[index] = await this.takeSnapshot();
     }
+  }
 
+  /***
+   * @protected
+   */
+  async takeSnapshot() {
     const snapshot = this.createTestArtifact();
     await snapshot.start();
     await snapshot.stop();
-    this._snapshots[index] = snapshot;
     this.api.trackArtifact(snapshot);
+
+    return snapshot;
   }
 
   _startSavingSnapshot(testSummary, index) {

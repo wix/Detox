@@ -139,3 +139,17 @@ Array [
   ],
 ]
 `;
+
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onUserAction errors 1`] = `
+Array [
+  Array [
+    Object {
+      "err": [Error: test onUserAction error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onUserAction",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside function call: testPlugin.onUserAction({ type: 'takeScreenshot', options: { name: 'open app' } })",
+  ],
+]
+`;
