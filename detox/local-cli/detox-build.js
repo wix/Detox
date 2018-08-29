@@ -9,7 +9,7 @@ program.description(`[convenience method] run the command defined in 'configurat
                                                              + 'if not supplied, and there\'s only one configuration, detox will default to it')
   .parse(process.argv);
 
-const config = require(path.join(process.cwd(), 'package.json')).detox;
+const config = getConfiguration();
 
 let buildScript;
 if (program.configuration) {
@@ -26,4 +26,12 @@ if (buildScript) {
   cp.execSync(buildScript, {stdio: 'inherit'});
 } else {
   throw new Error(`Could not find build script in detox.configurations["${program.configuration}"]`);
+}
+
+function getConfiguration() {
+  let config = require(path.join(process.cwd(), 'package.json')).detox;
+  if (!config) config = require(path.join(process.cwd(), '.detoxrc.json'));
+  if (_.size(config.configurations) === 1) {
+    return _.keys(config.configurations)[0];
+  }
 }
