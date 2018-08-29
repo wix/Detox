@@ -107,7 +107,7 @@ public class EspressoDetox {
         InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
-                RNExperimentalNetworkIR.setURLBlacklist(urls);
+                ReactNativeNetworkIdlingResource.setURLBlacklist(urls);
             }
         });
     }
