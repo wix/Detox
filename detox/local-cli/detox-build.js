@@ -31,7 +31,5 @@ if (buildScript) {
 function getConfiguration() {
   let config = require(path.join(process.cwd(), 'package.json')).detox;
   if (!config) config = require(path.join(process.cwd(), '.detoxrc.json'));
-  if (_.size(config.configurations) === 1) {
-    return _.keys(config.configurations)[0];
-  }
+  return config
 }
