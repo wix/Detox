@@ -1,6 +1,7 @@
 package com.wix.detox.espresso;
 
 import android.support.annotation.NonNull;
+import android.support.test.espresso.IdlingResource;
 import android.util.Log;
 import android.view.Choreographer;
 
@@ -23,7 +24,7 @@ import okhttp3.Dispatcher;
  * <p>
  * Must call stop() on it, before removing it from Espresso.
  */
-public class ReactNativeNetworkIdlingResource extends DetoxIdlingResource implements Choreographer.FrameCallback {
+public class ReactNativeNetworkIdlingResource implements IdlingResource, Choreographer.FrameCallback {
 
     private static final String LOG_TAG = "Detox";
 
