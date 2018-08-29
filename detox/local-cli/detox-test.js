@@ -8,7 +8,6 @@ const _ = require('lodash');
 const environment = require('../src/utils/environment');
 const buildDefaultArtifactsRootDirpath = require('../src/artifacts/utils/buildDefaultArtifactsRootDirpath');
 const DetoxConfigError = require('../src/errors/DetoxConfigError');
-const config = getConfiguration();
 
 program
   .option('-o, --runner-config [config]',
@@ -21,6 +20,8 @@ program
     'Disable colors in log output')
   .option('-c, --configuration [device configuration]',
     'Select a device configuration from your defined configurations, if not supplied, and there\'s only one configuration, detox will default to it', getDefaultConfiguration())
+  .option('--config-path [configPath]',
+    'Select a device config-file path, if not supplied, detox will default to the package.json, and if not found there, detox will fallback to .detoxrc.json', getDefaultConfiguration())
   .option('-r, --reuse',
     'Reuse existing installed app (do not delete and re-install) for a faster run.')
   .option('-u, --cleanup',
@@ -49,6 +50,7 @@ program
     'Override the device name specified in a configuration. Useful for running a single build configuration on multiple devices.')
   .parse(process.argv);
 
+const config = getConfigurationFile(program.configPath);  
 program.artifactsLocation = buildDefaultArtifactsRootDirpath(program.configuration, program.artifactsLocation);
 
 clearDeviceRegistryLockFile();
@@ -204,14 +206,21 @@ function clearDeviceRegistryLockFile() {
 }
 
 function getDefaultConfiguration() {
-  if (_.size(config.configurations) === 1) {
-    return _.keys(config.configurations)[0];
+  const file = getConfigurationFile();
+  if (file && _.size(file.configurations) === 1) {
+    return _.keys(file.configurations)[0];
   }
 }
 
-function getConfiguration() {
-  let config = require(path.join(process.cwd(), 'package.json')).detox;
-  if (!config) config = require(path.join(process.cwd(), '.detoxrc.json'));
+function getConfigurationFile(configPath) {
+  let config;
+  if (configPath) config = require(path.join(process.cwd(), configPath));
+  if (!config) config = require(path.join(process.cwd(), 'package.json')).detox;
+  if (!config) {
+    try {
+      config = require(path.join(process.cwd(), '.detoxrc.json'));
+    } catch (error) {}
+  }
   return config
 }
 

@@ -5,11 +5,13 @@ const program = require('commander');
 const path = require('path');
 const cp = require('child_process');
 program.description(`[convenience method] run the command defined in 'configuration.build'`)
-       .option('-c, --configuration [device configuration]', 'Select a device configuration from your defined configurations,'
-                                                             + 'if not supplied, and there\'s only one configuration, detox will default to it')
+  .option('--config-path [configPath]',
+    'Select a device config-file path, if not supplied, detox will default to the package.json, and if not found there, detox will fallback to .detoxrc.json')
+  .option('-c, --configuration [device configuration]', 'Select a device configuration from your defined configurations,' +
+    'if not supplied, and there\'s only one configuration, detox will default to it')
   .parse(process.argv);
 
-const config = getConfiguration();
+const config = getConfigurationFile(program.configPath);  
 
 let buildScript;
 if (program.configuration) {
@@ -28,8 +30,14 @@ if (buildScript) {
   throw new Error(`Could not find build script in detox.configurations["${program.configuration}"]`);
 }
 
-function getConfiguration() {
-  let config = require(path.join(process.cwd(), 'package.json')).detox;
-  if (!config) config = require(path.join(process.cwd(), '.detoxrc.json'));
+function getConfigurationFile(configPath) {
+  let config;
+  if (configPath) config = require(path.join(process.cwd(), configPath));
+  if (!config) config = require(path.join(process.cwd(), 'package.json')).detox;
+  if (!config) {
+    try {
+      config = require(path.join(process.cwd(), '.detoxrc.json'));
+    } catch (error) {}
+  }
   return config
 }
