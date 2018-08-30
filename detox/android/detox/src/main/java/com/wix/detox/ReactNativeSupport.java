@@ -1,5 +1,6 @@
 package com.wix.detox;
 
+import android.content.Context;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
@@ -7,6 +8,9 @@ import android.support.test.espresso.IdlingRegistry;
 import android.support.test.espresso.base.IdlingResourceRegistry;
 import android.util.Log;
 
+import com.facebook.react.ReactApplication;
+import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.bridge.ReactContext;
 import com.wix.detox.espresso.AnimatedModuleIdlingResource;
 import com.wix.detox.espresso.ReactNativeNetworkIdlingResource;
 import com.wix.detox.espresso.ReactBridgeIdlingResource;
@@ -16,11 +20,10 @@ import com.wix.detox.espresso.ReactNativeUIModuleIdlingResource;
 import org.joor.Reflect;
 import org.joor.ReflectException;
 
-import java.lang.reflect.Proxy;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
 import okhttp3.OkHttpClient;
+
 
 /**
  * Created by simonracz on 15/05/2017.
@@ -30,39 +33,11 @@ import okhttp3.OkHttpClient;
 
 public class ReactNativeSupport {
     private static final String LOG_TAG = "Detox";
-    private static final String METHOD_GET_RN_HOST = "getReactNativeHost";
-    private static final String METHOD_GET_INSTANCE_MANAGER = "getReactInstanceManager";
-    private final static String METHOD_GET_CATALYST_INSTANCE = "getCatalystInstance";
-    private final static String METHOD_ADD_DEBUG_BRIDGE_LISTENER = "addBridgeIdleDebugListener";
-    private final static String METHOD_REMOVE_DEBUG_BRIDGE_LISTENER = "removeBridgeIdleDebugListener";
-    private static final String METHOD_RECREATE_RN_CONTEXT = "recreateReactContextInBackground";
-    private static final String METHOD_GET_REACT_CONTEXT = "getCurrentReactContext";
-    private static final String METHOD_ADD_REACT_INSTANCE_LISTENER = "addReactInstanceEventListener";
-    private static final String METHOD_REMOVE_REACT_INSTANCE_LISTENER = "removeReactInstanceEventListener";
-    private static final String INTERFACE_REACT_INSTANCE_EVENT_LISTENER =
-            "com.facebook.react.ReactInstanceManager$ReactInstanceEventListener";
-    private static final String METHOD_HAS_STARTED_CREAT_CTX = "hasStartedCreatingInitialContext";
-    private static final String METHOD_CREAT_RN_CTX_IN_BG = "createReactContextInBackground";
 
-    private static final String INTERFACE_BRIDGE_IDLE_DEBUG_LISTENER =
-            "com.facebook.react.bridge.NotThreadSafeBridgeIdleDebugListener";
-
-    private static final String FIELD_UI_MSG_QUEUE = "mUiMessageQueueThread";
     private static final String FIELD_UI_BG_MSG_QUEUE = "mUiBackgroundMessageQueueThread";
     private static final String FIELD_NATIVE_MODULES_MSG_QUEUE = "mNativeModulesMessageQueueThread";
     private static final String FIELD_JS_MSG_QUEUE = "mJSMessageQueueThread";
     private static final String METHOD_GET_LOOPER = "getLooper";
-
-    // Espresso has a public method to register Loopers.
-    // BUT, they don't give you back a handle to them.
-    // Therefore you can't unregister them.
-    // We create the LooperIdlingResources by ourselves to keep a handle to them.
-    // UPDATE: The reason why Espresso doesn't expose this publicly
-    // is that they don't support removing Loopers at all.
-    // We are using our own LooperIdlingResource currently, that
-    // can be stopped properly.
-    private static final String CLASS_ESPRESSO_LOOPER_IDLING_RESOURCE =
-            "android.support.test.espresso.base.LooperIdlingResource";
 
     private ReactNativeSupport() {
         // static class
@@ -81,36 +56,11 @@ public class ReactNativeSupport {
     /**
      * Returns the instanceManager using reflection.
      *
-     * @param reactNativeHostHolder the object that has a getReactNativeHost() method
+     * @param context the object that has a getReactNativeHost() method
      * @return Returns the instanceManager as an Object or null
      */
-    public static Object getInstanceManager(@NonNull Object reactNativeHostHolder) {
-        Object instanceManager = null;
-        // If we are not in main thread and instanceManager has not been created, creation will fail
-        if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-            try {
-                instanceManager = Reflect.on(reactNativeHostHolder)
-                        .call(METHOD_GET_RN_HOST)
-                        .call(METHOD_GET_INSTANCE_MANAGER)
-                        .get();
-            } catch (ReflectException e) {
-                Log.e(LOG_TAG, "Problem calling getInstanceManager()", e.getCause());
-            }
-        } else {
-            instanceManager = getInstanceManagerFromOtherThread(reactNativeHostHolder);
-        }
-        return instanceManager;
-    }
-
-    private static Object getInstanceManagerFromOtherThread(@NonNull final Object reactNativeHostHolder) {
-        final Object[] instanceManager = {null};
-        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
-            @Override
-            public void run() {
-                instanceManager[0] = getInstanceManager(reactNativeHostHolder);
-            }
-        });
-        return instanceManager[0];
+    public static ReactInstanceManager getInstanceManager(@NonNull Context context) {
+        return ((ReactApplication) context).getReactNativeHost().getReactInstanceManager();
     }
 
     /**
@@ -125,7 +75,7 @@ public class ReactNativeSupport {
      *
      * @param reactNativeHostHolder the object that has a getReactNativeHost() method
      */
-    static void reloadApp(@NonNull Object reactNativeHostHolder) {
+    static void reloadApp(@NonNull Context reactNativeHostHolder) {
         if (!isReactNativeApp()) {
             return;
         }
@@ -134,7 +84,7 @@ public class ReactNativeSupport {
 
         removeEspressoIdlingResources(reactNativeHostHolder);
 
-        final Object instanceManager = getInstanceManager(reactNativeHostHolder);
+        final ReactInstanceManager instanceManager = getInstanceManager(reactNativeHostHolder);
         if (instanceManager == null) {
             return;
         }
@@ -143,11 +93,7 @@ public class ReactNativeSupport {
         InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
-                try {
-                    Reflect.on(instanceManager).call(METHOD_RECREATE_RN_CONTEXT);
-                } catch (ReflectException e) {
-                    Log.e(LOG_TAG, "Problem calling reloadApp()", e.getCause());
-                }
+                instanceManager.recreateReactContextInBackground();
             }
         });
 
@@ -155,7 +101,7 @@ public class ReactNativeSupport {
     }
 
     // Ideally we would not store this at all.
-    public static Object currentReactContext = null;
+    public static ReactContext currentReactContext = null;
 
     /**
      * <p>
@@ -163,65 +109,40 @@ public class ReactNativeSupport {
      * </p>
      * @param reactNativeHostHolder the object that has a getReactNativeHost() method
      */
-    static void waitForReactNativeLoad(@NonNull Object reactNativeHostHolder) {
+    static void waitForReactNativeLoad(@NonNull Context reactNativeHostHolder) {
 
         if (!isReactNativeApp()) {
             return;
         }
 
-        final Object instanceManager = getInstanceManager(reactNativeHostHolder);
+        final ReactInstanceManager instanceManager = getInstanceManager(reactNativeHostHolder);
         if (instanceManager == null) {
             throw new RuntimeException("ReactInstanceManager is null");
         }
 
-        final Class<?> listenerClass;
-        try {
-            listenerClass = Class.forName(INTERFACE_REACT_INSTANCE_EVENT_LISTENER);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Can't find class ReactInstanceEventListener", e);
-        }
-
         final CountDownLatch countDownLatch = new CountDownLatch(1);
-        final Object[] reactContextHolder = new Object[1];
         InstrumentationRegistry.getInstrumentation().runOnMainSync(
                 new Runnable() {
-            @Override
-            public void run() {
-                reactContextHolder[0] = Reflect.on(instanceManager).call(METHOD_GET_REACT_CONTEXT).get();
-                if (reactContextHolder[0] != null) {
-                    Log.d(LOG_TAG, "Got reactContext directly");
-                    countDownLatch.countDown();
-                    return;
-                }
-
-                Class[] proxyInterfaces = new Class[]{listenerClass};
-                final Proxy[] proxyHolder = new Proxy[1];
-                final Delegator delegator = new Delegator(proxyInterfaces, new Object[] {new ReactInstanceEventListenerProxy() {
                     @Override
-                    public void onReactContextInitialized(Object reactContext) {
-                        Log.i(LOG_TAG, "Got react context through listener.");
-                        reactContextHolder[0] = reactContext;
-                        Reflect.on(instanceManager).call(METHOD_REMOVE_REACT_INSTANCE_LISTENER, (Object) proxyHolder[0]);
-                        countDownLatch.countDown();
+                    public void run() {
+                        ReactContext reactContext = instanceManager.getCurrentReactContext();
+                        if (reactContext != null) {
+                            Log.d(LOG_TAG, "Got reactContext directly");
+                            countDownLatch.countDown();
+                            return;
+                        }
+
+                        instanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
+                            @Override
+                            public void onReactContextInitialized(ReactContext context) {
+                                Log.i(LOG_TAG, "Got react context through listener.");
+                                instanceManager.removeReactInstanceEventListener(this);
+                                countDownLatch.countDown();
+                            }
+                        });
                     }
-                }});
-                proxyHolder[0] = (Proxy) Proxy.newProxyInstance(
-                        listenerClass.getClassLoader(),
-                        proxyInterfaces,
-                        delegator);
-                Reflect.on(instanceManager).call(
-                        METHOD_ADD_REACT_INSTANCE_LISTENER,
-                        proxyHolder[0]);
-                if (!(boolean) Reflect.on(instanceManager).call(METHOD_HAS_STARTED_CREAT_CTX).get()) {
-                    try {
-                        Reflect.on(instanceManager).call(METHOD_CREAT_RN_CTX_IN_BG);
-                    } catch (ReflectException e) {
-                        Log.e(LOG_TAG, "Problem calling createReactContextInBackground()",
-                                e.getCause());
-                    }
-                }
-            }
-        });
+                });
+
 
         for (int i = 0; ; ) {
             try {
@@ -238,8 +159,8 @@ public class ReactNativeSupport {
                 // Due to an ugly timing issue in RN
                 // it is possible that our listener won't be ever called
                 // That's why we have to check the reactContext regularly.
-                reactContextHolder[0] = Reflect.on(instanceManager).call(METHOD_GET_REACT_CONTEXT).get();
-                if (reactContextHolder[0] != null) {
+                ReactContext reactContext = instanceManager.getCurrentReactContext();
+                if (reactContext != null) {
                     Log.d(LOG_TAG, "Got reactContext directly");
                     break;
                 }
@@ -248,47 +169,23 @@ public class ReactNativeSupport {
             }
         }
 
-        currentReactContext = reactContextHolder[0];
-        setupEspressoIdlingResources(reactNativeHostHolder, reactContextHolder[0]);
-    }
-
-    private static Object bridgeIdleSignaler = null;
-    private static ReactBridgeIdlingResource rnBridgeIdlingResource = null;
-
-    private static void createBridgeIdleSignaler() {
-        Class<?> bridgeIdleDebugListener = null;
-        try {
-            bridgeIdleDebugListener = Class.forName(INTERFACE_BRIDGE_IDLE_DEBUG_LISTENER);
-        } catch (ClassNotFoundException e) {
-            Log.e(LOG_TAG, "Can't find ReactBridgeIdleSignaler()", e);
-            return;
-        }
-
-        rnBridgeIdlingResource = new ReactBridgeIdlingResource();
-
-        Class[] proxyInterfaces = new Class[]{bridgeIdleDebugListener};
-        bridgeIdleSignaler = Proxy.newProxyInstance(
-                bridgeIdleDebugListener.getClassLoader(),
-                proxyInterfaces,
-                new Delegator(proxyInterfaces, new Object[] { rnBridgeIdlingResource })
-        );
+        currentReactContext = instanceManager.getCurrentReactContext();
+        setupEspressoIdlingResources(currentReactContext);
     }
 
     private static ReactNativeTimersIdlingResource rnTimerIdlingResource = null;
+    private static ReactBridgeIdlingResource rnBridgeIdlingResource = null;
     private static ReactNativeUIModuleIdlingResource rnUIModuleIdlingResource = null;
     private static AnimatedModuleIdlingResource animIdlingResource = null;
 
-    private static void setupEspressoIdlingResources(@NonNull Object reactNativeHostHolder, @NonNull Object reactContext) {
-        removeEspressoIdlingResources(reactNativeHostHolder, reactContext);
+    private static void setupEspressoIdlingResources(@NonNull ReactContext reactContext) {
+        removeEspressoIdlingResources(reactContext);
         Log.i(LOG_TAG, "Setting up Espresso Idling Resources for React Native.");
 
         setupReactNativeQueueInterrogators(reactContext);
 
-        createBridgeIdleSignaler();
-        Reflect.on(reactContext)
-                .call(METHOD_GET_CATALYST_INSTANCE)
-                .call(METHOD_ADD_DEBUG_BRIDGE_LISTENER, bridgeIdleSignaler);
 
+        rnBridgeIdlingResource = new ReactBridgeIdlingResource(reactContext);
         rnTimerIdlingResource = new ReactNativeTimersIdlingResource(reactContext);
         rnUIModuleIdlingResource = new ReactNativeUIModuleIdlingResource(reactContext);
         animIdlingResource = new AnimatedModuleIdlingResource(reactContext);
@@ -331,19 +228,13 @@ public class ReactNativeSupport {
         return looper;
     }
 
-    static void removeEspressoIdlingResources(@NonNull Object reactNativeHostHolder) {
-        Object reactContext = null;
-        final Object instanceManager = getInstanceManager(reactNativeHostHolder);
-        if (instanceManager != null) {
-            reactContext = Reflect.on(instanceManager).call(METHOD_GET_REACT_CONTEXT).get();
-        }
-
+    static void removeEspressoIdlingResources(@NonNull Context reactNativeHostHolder) {
+        final ReactInstanceManager instanceManager = getInstanceManager(reactNativeHostHolder);
         removeNetworkIdlingResource();
-
-        removeEspressoIdlingResources(reactNativeHostHolder, reactContext);
+        removeEspressoIdlingResources(instanceManager.getCurrentReactContext());
     }
 
-    private static void removeEspressoIdlingResources(@NonNull Object reactNativeHostHolder, Object reactContext) {
+    private static void removeEspressoIdlingResources(ReactContext reactContext) {
 
         Log.i(LOG_TAG, "Removing Espresso IdlingResources for React Native.");
 
@@ -352,19 +243,7 @@ public class ReactNativeSupport {
         IdlingRegistry.getInstance().unregister(rnUIModuleIdlingResource);
         IdlingRegistry.getInstance().unregister(animIdlingResource);
 
-        final Object instanceManager = getInstanceManager(reactNativeHostHolder);
-        if (instanceManager == null) {
-            return;
-        }
-
-        if (bridgeIdleSignaler != null) {
-            if (reactContext != null) {
-                Reflect.on(reactContext)
-                        .call(METHOD_GET_CATALYST_INSTANCE)
-                        .call(METHOD_REMOVE_DEBUG_BRIDGE_LISTENER, bridgeIdleSignaler);
-            }
-            bridgeIdleSignaler = null;
-        }
+        reactContext.getCatalystInstance().removeBridgeIdleDebugListener(rnBridgeIdlingResource);
     }
 
     private static boolean networkSyncEnabled = true;
@@ -424,6 +303,4 @@ public class ReactNativeSupport {
             networkIR = null;
         }
     }
-
-
 }

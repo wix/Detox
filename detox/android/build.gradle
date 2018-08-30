@@ -4,7 +4,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.1.4'
     }
 }
 
@@ -13,5 +13,8 @@ allprojects {
         mavenLocal()
         jcenter()
         google()
+        maven {
+            url "$projectDir/../../node_modules/react-native/android"
+        }
     }
 }

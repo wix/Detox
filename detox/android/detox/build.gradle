@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.3'
     defaultConfig {
         minSdkVersion 18
         targetSdkVersion 25
@@ -68,6 +68,7 @@ dependencies {
     })
     implementation 'com.android.support.test:runner:1.0.2'
     implementation 'com.android.support.test:rules:1.0.2'
+    compileOnly "com.facebook.react:react-native:+"
 
     implementation 'org.apache.commons:commons-lang3:3.4'
     implementation 'com.android.support.test.uiautomator:uiautomator-v18:2.1.3'
