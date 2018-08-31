@@ -19,7 +19,7 @@
     "react-native": "0.56.0"
   },
   "devDependencies": {
-    "detox": "^8.0.0",
+    "detox": "^9.0.0",
     "express": "^4.15.3",
     "jest": "^22.3.0",
     "lodash": "^4.14.1",

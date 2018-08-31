@@ -1,5 +1,27 @@
 # Change Log
 
+## [9.0.1](https://github.com/wix/detox/tree/9.0.1) (2018-09-01)
+[Full Changelog](https://github.com/wix/detox/compare/8.2.3...9.0.1)
+
+**Enhancements**
+
+- Allow to disable touch indicators on IOS [\#640](https://github.com/wix/detox/issues/640)
+
+**Fixed Bugs**
+
+- Multiple elements matched on action Swipe. [\#433](https://github.com/wix/detox/issues/433)
+
+**Merged Pull Requests**
+
+- RN 0.56.0 Android Support [\#910](https://github.com/wix/detox/pull/910) ([rotemmiz](https://github.com/rotemmiz))
+- Register Espresso IdlingResources with new API [\#909](https://github.com/wix/detox/pull/909) ([rotemmiz](https://github.com/rotemmiz))
+- Fix links in detox object docs [\#903](https://github.com/wix/detox/pull/903) ([fvonhoven](https://github.com/fvonhoven))
+- build\_framework.ios.sh: echo/exit from current shell [\#900](https://github.com/wix/detox/pull/900) ([rye](https://github.com/rye))
+- Add support for disabling touch indicators with launch args [\#899](https://github.com/wix/detox/pull/899) ([haswalt](https://github.com/haswalt))
+
+## [8.2.3](https://github.com/wix/detox/tree/8.2.3) (2018-08-23)
+[Full Changelog](https://github.com/wix/detox/compare/8.2.2...8.2.3)
+
 ## [8.2.2](https://github.com/wix/detox/tree/8.2.2) (2018-08-22)
 [Full Changelog](https://github.com/wix/detox/compare/8.2.1...8.2.2)
 
@@ -477,7 +499,7 @@
 - Add change log generation when publishing a version [\#409](https://github.com/wix/detox/issues/409)
 
 ## [5.10.1](https://github.com/wix/detox/tree/5.10.1) (2017-11-15)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.10.0...5.10.1)
+[Full Changelog](https://github.com/wix/detox/compare/detox-server@2.1.0...5.10.1)
 
 **Fixed Bugs**
 
@@ -487,11 +509,11 @@
 
 - New demo project for react native jest [\#370](https://github.com/wix/detox/pull/370) ([SMJ93](https://github.com/SMJ93))
 
-## [detox@5.10.0](https://github.com/wix/detox/tree/detox@5.10.0) (2017-11-13)
-[Full Changelog](https://github.com/wix/detox/compare/detox-server@2.1.0...detox@5.10.0)
-
 ## [detox-server@2.1.0](https://github.com/wix/detox/tree/detox-server@2.1.0) (2017-11-13)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.9.3...detox-server@2.1.0)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.10.0...detox-server@2.1.0)
+
+## [detox@5.10.0](https://github.com/wix/detox/tree/detox@5.10.0) (2017-11-13)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.9.3...detox@5.10.0)
 
 **Enhancements**
 
