@@ -8,6 +8,7 @@ const _ = require('lodash');
 const environment = require('../src/utils/environment');
 const buildDefaultArtifactsRootDirpath = require('../src/artifacts/utils/buildDefaultArtifactsRootDirpath');
 const DetoxConfigError = require('../src/errors/DetoxConfigError');
+const getConfigurationFile = require('../src/utils/getConfigurationFile');
 
 program
   .option('-o, --runner-config [config]',
@@ -210,18 +211,6 @@ function getDefaultConfiguration() {
   if (file && _.size(file.configurations) === 1) {
     return _.keys(file.configurations)[0];
   }
-}
-
-function getConfigurationFile(configPath) {
-  let config;
-  if (configPath) config = require(path.join(process.cwd(), configPath));
-  if (!config) config = require(path.join(process.cwd(), 'package.json')).detox;
-  if (!config) {
-    try {
-      config = require(path.join(process.cwd(), '.detoxrc.json'));
-    } catch (error) {}
-  }
-  return config
 }
 
 // This is very incomplete, don't use this for user input!

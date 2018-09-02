@@ -2,6 +2,7 @@
 
 const _ = require('lodash');
 const program = require('commander');
+const getConfigurationFile = require('../src/utils/getConfigurationFile');
 const path = require('path');
 const cp = require('child_process');
 program.description(`[convenience method] run the command defined in 'configuration.build'`)
@@ -28,16 +29,4 @@ if (buildScript) {
   cp.execSync(buildScript, {stdio: 'inherit'});
 } else {
   throw new Error(`Could not find build script in detox.configurations["${program.configuration}"]`);
-}
-
-function getConfigurationFile(configPath) {
-  let config;
-  if (configPath) config = require(path.join(process.cwd(), configPath));
-  if (!config) config = require(path.join(process.cwd(), 'package.json')).detox;
-  if (!config) {
-    try {
-      config = require(path.join(process.cwd(), '.detoxrc.json'));
-    } catch (error) {}
-  }
-  return config
 }
