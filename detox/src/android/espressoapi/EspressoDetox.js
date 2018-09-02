@@ -8,6 +8,14 @@
 
 class EspressoDetox {
   static perform(interaction, action) {
+    if (!interaction) {
+      throw new Error('interaction should be truthy, but it is "' + interaction + '"');
+    }
+
+    if (!action) {
+      throw new Error('action should be truthy, but it is "' + action + '"');
+    }
+
     return {
       target: {
         type: "Class",

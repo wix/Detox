@@ -68,15 +68,14 @@ if (
   });
 }
 
-function isDefined() {
-  return ({ name }) =>
-    template(`
+function isDefined({ name }) {
+  return template(`
 	if (!ARG) {
 		throw new Error('${name} should be truthy, but it is "' + ARG + '"');
 	}
 	`)({
-      ARG: t.identifier(name)
-    });
+    ARG: t.identifier(name)
+  });
 }
 
 module.exports = {

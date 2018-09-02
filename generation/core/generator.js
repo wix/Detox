@@ -206,7 +206,7 @@ module.exports = function getGenerator({
     const isListOfChecks = typeCheckCreator instanceof Array;
     return isListOfChecks
       ? typeCheckCreator.map((singleCheck) => singleCheck(json, functionName))
-      : typeof typeCheckCreator === 'function'
+      : typeCheckCreator instanceof Function
         ? typeCheckCreator(json, functionName)
         : t.emptyStatement();
   }

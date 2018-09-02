@@ -1,4 +1,3 @@
-const t = require('babel-types');
 const generator = require('../core/generator');
 const { callGlobal } = require('../helpers');
 
@@ -6,7 +5,7 @@ const { isNumber, isString, isBoolean, isArray, isDefined } = require('../core/t
 
 const typeCheckInterfaces = {
   'ArrayList<String>': isArray,
-  'Matcher<View>': null, // isOfClass('Matcher'),
+  'Matcher<View>': isDefined, // isOfClass('Matcher') would be better,
   boolean: isBoolean,
   Double: isNumber,
   Integer: isNumber,

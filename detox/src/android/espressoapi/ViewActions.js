@@ -26,6 +26,10 @@ class ViewActions {
   }
 
   static actionWithAssertions(viewAction) {
+    if (!viewAction) {
+      throw new Error('viewAction should be truthy, but it is "' + viewAction + '"');
+    }
+
     return {
       target: {
         type: "Class",
@@ -62,6 +66,10 @@ class ViewActions {
   }
 
   static click(rollbackAction) {
+    if (!rollbackAction) {
+      throw new Error('rollbackAction should be truthy, but it is "' + rollbackAction + '"');
+    }
+
     return {
       target: {
         type: "Class",
@@ -272,6 +280,14 @@ class ViewActions {
   }
 
   static repeatedlyUntil(action, desiredStateMatcher, maxAttempts) {
+    if (!action) {
+      throw new Error('action should be truthy, but it is "' + action + '"');
+    }
+
+    if (!desiredStateMatcher) {
+      throw new Error('desiredStateMatcher should be truthy, but it is "' + desiredStateMatcher + '"');
+    }
+
     if (typeof maxAttempts !== "number") throw new Error("maxAttempts should be a number, but got " + (maxAttempts + (" (" + (typeof maxAttempts + ")"))));
     return {
       target: {
