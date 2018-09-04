@@ -62,8 +62,6 @@ public class ReactBridgeIdlingResource implements IdlingResource, NotThreadSafeB
         // Log.i(LOG_TAG, "JS Bridge transitions to busy.");
     }
 
-    @Override
     public void onBridgeDestroyed() {
-
     }
 }
