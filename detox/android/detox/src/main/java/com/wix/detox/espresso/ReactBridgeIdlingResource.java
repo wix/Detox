@@ -63,6 +63,5 @@ public class ReactBridgeIdlingResource implements IdlingResource, NotThreadSafeB
     }
 
     public void onBridgeDestroyed() {
-        
     }
 }
