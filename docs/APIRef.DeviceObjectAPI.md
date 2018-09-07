@@ -212,7 +212,7 @@ await device.setLocation(32.0853, 34.7818);
 
 ### `device.setURLBlacklist([urls])`
 
-Disable [EarlGrey's network synchronization mechanism](https://github.com/google/EarlGrey/blob/master/docs/api.md#network) on preffered endpoints. Usful if you want to on skip over synchronizing on certain URLs.
+Disable [EarlGrey's network synchronization mechanism](https://github.com/google/EarlGrey/blob/master/docs/api.md#network) on preffered endpoints. Useful if you want to on skip over synchronizing on certain URLs.
 
 ```js
 await device.setURLBlacklist(['.*127.0.0.1.*']);
