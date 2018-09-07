@@ -51,14 +51,6 @@ class DetoxMatcher {
   }
 
   static matcherForAnd(m1, m2) {
-    if (!m1) {
-      throw new Error('m1 should be truthy, but it is "' + m1 + '"');
-    }
-
-    if (!m2) {
-      throw new Error('m2 should be truthy, but it is "' + m2 + '"');
-    }
-
     return {
       target: {
         type: "Class",
@@ -76,14 +68,6 @@ class DetoxMatcher {
   }
 
   static matcherForOr(m1, m2) {
-    if (!m1) {
-      throw new Error('m1 should be truthy, but it is "' + m1 + '"');
-    }
-
-    if (!m2) {
-      throw new Error('m2 should be truthy, but it is "' + m2 + '"');
-    }
-
     return {
       target: {
         type: "Class",
@@ -101,10 +85,6 @@ class DetoxMatcher {
   }
 
   static matcherForNot(m) {
-    if (!m) {
-      throw new Error('m should be truthy, but it is "' + m + '"');
-    }
-
     return {
       target: {
         type: "Class",
@@ -119,14 +99,6 @@ class DetoxMatcher {
   }
 
   static matcherWithAncestor(m, ancestorMatcher) {
-    if (!m) {
-      throw new Error('m should be truthy, but it is "' + m + '"');
-    }
-
-    if (!ancestorMatcher) {
-      throw new Error('ancestorMatcher should be truthy, but it is "' + ancestorMatcher + '"');
-    }
-
     return {
       target: {
         type: "Class",
@@ -144,14 +116,6 @@ class DetoxMatcher {
   }
 
   static matcherWithDescendant(m, descendantMatcher) {
-    if (!m) {
-      throw new Error('m should be truthy, but it is "' + m + '"');
-    }
-
-    if (!descendantMatcher) {
-      throw new Error('descendantMatcher should be truthy, but it is "' + descendantMatcher + '"');
-    }
-
     return {
       target: {
         type: "Class",
@@ -226,11 +190,6 @@ class DetoxMatcher {
 
   static matcherForAtIndex(index, innerMatcher) {
     if (typeof index !== "number") throw new Error("index should be a number, but got " + (index + (" (" + (typeof index + ")"))));
-
-    if (!innerMatcher) {
-      throw new Error('innerMatcher should be truthy, but it is "' + innerMatcher + '"');
-    }
-
     return {
       target: {
         type: "Class",

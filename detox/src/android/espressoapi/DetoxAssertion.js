@@ -15,14 +15,6 @@ function sanitize_matcher(matcher) {
 } 
 class DetoxAssertion {
   static assertMatcher(i, m) {
-    if (!i) {
-      throw new Error('i should be truthy, but it is "' + i + '"');
-    }
-
-    if (!m) {
-      throw new Error('m should be truthy, but it is "' + m + '"');
-    }
-
     return {
       target: {
         type: "Class",
@@ -40,10 +32,6 @@ class DetoxAssertion {
   }
 
   static assertNotVisible(i) {
-    if (!i) {
-      throw new Error('i should be truthy, but it is "' + i + '"');
-    }
-
     return {
       target: {
         type: "Class",
@@ -58,10 +46,6 @@ class DetoxAssertion {
   }
 
   static assertNotExists(i) {
-    if (!i) {
-      throw new Error('i should be truthy, but it is "' + i + '"');
-    }
-
     return {
       target: {
         type: "Class",
@@ -76,14 +60,6 @@ class DetoxAssertion {
   }
 
   static waitForAssertMatcher(i, m, timeoutSeconds) {
-    if (!i) {
-      throw new Error('i should be truthy, but it is "' + i + '"');
-    }
-
-    if (!m) {
-      throw new Error('m should be truthy, but it is "' + m + '"');
-    }
-
     if (typeof timeoutSeconds !== "number") throw new Error("timeoutSeconds should be a number, but got " + (timeoutSeconds + (" (" + (typeof timeoutSeconds + ")"))));
     return {
       target: {
@@ -105,22 +81,6 @@ class DetoxAssertion {
   }
 
   static waitForAssertMatcherWithSearchAction(i, m, searchAction, searchMatcher) {
-    if (!i) {
-      throw new Error('i should be truthy, but it is "' + i + '"');
-    }
-
-    if (!m) {
-      throw new Error('m should be truthy, but it is "' + m + '"');
-    }
-
-    if (!searchAction) {
-      throw new Error('searchAction should be truthy, but it is "' + searchAction + '"');
-    }
-
-    if (!searchMatcher) {
-      throw new Error('searchMatcher should be truthy, but it is "' + searchMatcher + '"');
-    }
-
     return {
       target: {
         type: "Class",

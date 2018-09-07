@@ -5,13 +5,13 @@ const { isNumber, isString, isBoolean, isArray, isDefined } = require('../core/t
 
 const typeCheckInterfaces = {
   'ArrayList<String>': isArray,
-  'Matcher<View>': isDefined, // isOfClass('Matcher') would be better,
+  'Matcher<View>': null, // isOfClass('Matcher') would be better,
   boolean: isBoolean,
   Double: isNumber,
   Integer: isNumber,
   String: isString,
-  ViewAction: isDefined,
-  ViewInteraction: isDefined
+  ViewAction: null, // there are optional view actions
+  ViewInteraction: null // there are optional view actions
 };
 
 const contentSanitizersForFunction = {
