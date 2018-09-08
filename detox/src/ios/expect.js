@@ -309,11 +309,22 @@ class Element {
 
 class Expect { }
 
+/**
+ * @Documented
+ * id: expect
+ * title: Expectations
+ * description: Detox uses Matchers to find UI elements in your app, Actions to emulate user interaction with those elements and Expectations to verify values on those elements. Expect verifies if a certain value is as expected to be.
+ * platform: ios
+ */
 class ExpectElement extends Expect {
   constructor(element) {
     super();
     this._element = element;
   }
+  /**
+   * Expect the view to be at least 75% visible.
+   * @example await expect(element(by.id('UniqueId204'))).toBeVisible();
+   */
   async toBeVisible() {
     return await new MatcherAssertionInteraction(this._element, new VisibleMatcher()).execute();
   }
