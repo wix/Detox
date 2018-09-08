@@ -6,29 +6,6 @@ function firstClass(ast) {
 }
 
 describe('extractMetaInformation', () => {
-  it('finds the first comment with the documented flag', () => {
-    expect(
-      extractMetaInformation(`
-        /**
-         * Not documented
-         **/
-  
-         const foo = 42;
-         /**
-          * @Documented
-          * id: my-id
-          **/
-         
-          const bar = 23;
-  
-          /**
-           * @Docuemnted
-           * id: wrong-id
-           **/
-        `).id
-    ).toBe('my-id');
-  });
-
   it('extracts information provided', () => {
     expect(
       extractMetaInformation(`

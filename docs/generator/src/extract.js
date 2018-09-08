@@ -1,7 +1,5 @@
 const doctrine = require('doctrine');
-const { parse } = require('@babel/parser');
-const { findDocumentationComment } = require('./find');
-
+const { findDocumentationComments, findClassAfterComment } = require('./find');
 
 const SUPPORTED_PLATFORMS = ['ios', 'android'];
 
@@ -64,8 +62,7 @@ function extractDocumentedMethods(classDef, ast) {
     });
 }
 
-function extractMetaInformation(fileContent) {
-  const comment = findDocumentationComment(fileContent);
+function extractMetaInformation(comment) {
   const attributeRegex = /^.*\*(.*):(.*)$/gm;
 
   let match = attributeRegex.exec(comment);
@@ -88,19 +85,18 @@ function extractMetaInformation(fileContent) {
   return metaInformation;
 }
 
-function extractDocumentation(fileContent) {
-  const meta = extractMetaInformation(fileContent);
-  const ast = parse(fileContent, { plugins: ["objectRestSpread"] });
-  const classes = ast.program.body.filter((node) => node.type === 'ClassDeclaration');
+function extractDocumentation(ast) {
+  const comments = findDocumentationComments(ast);
 
-  // TODO: support more than one class
-  const classDef = classes[0];
-  const methods = extractDocumentedMethods(classDef, ast);
-
-  return {
-    meta,
-    methods
-  };
+  return comments.map((comment) => {
+    const meta = extractMetaInformation(comment.value);
+    const classDef = findClassAfterComment(ast, comment);
+    const methods = extractDocumentedMethods(classDef, ast);
+    return {
+      meta,
+      methods
+    };
+  });
 }
 
 module.exports = {

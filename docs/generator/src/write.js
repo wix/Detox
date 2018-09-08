@@ -30,7 +30,7 @@ function buildDocumentation(documentation) {
 async function writeDocumentation(documentations, sourceToDestFn) {
   const config = await prettier.resolveConfig(path.resolve(__dirname));
 
-  return documentations.map((doc) => ({ doc, outputPath: sourceToDestFn(doc.paths) })).map(({ doc, outputPath }) => {
+  return documentations.map((doc) => ({ doc, outputPath: sourceToDestFn(doc) })).map(({ doc, outputPath }) => {
     // Side-effect
     writeFile(outputPath, prettier.format(buildDocumentation(doc), { ...config, parser: 'markdown' }));
 

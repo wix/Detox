@@ -10,7 +10,8 @@ const OUTPUT_PATH = '../generated-docs';
 mkpath(OUTPUT_PATH);
 
 const documentationFiles = findDocumentedFiles('../../detox/src', '**/*.js');
-writeDocumentation(
-  combineDocumentations(documentationFiles.map(([path, content]) => [path, extractDocumentation(content)])),
-  outputMapping(OUTPUT_PATH)
+const combinedDocumentations = combineDocumentations(
+  documentationFiles.reduce((allDocs, [path, ast]) => allDocs.concat(extractDocumentation(ast).map((doc) => [path, doc])), [])
 );
+
+writeDocumentation(combinedDocumentations, outputMapping(OUTPUT_PATH));

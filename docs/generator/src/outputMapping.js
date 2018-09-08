@@ -3,10 +3,8 @@ function last(array) {
 }
 
 function outputMapping(destBase) {
-  return (paths) => {
-    const [path] = paths;
-    const name = last(path.split('/')).replace('.js', '.md');
-    return `${destBase}/${name}`;
+  return (dcoumentation) => {
+    return `${destBase}/${dcoumentation.id}.md`;
   };
 }
 
