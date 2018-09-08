@@ -18,6 +18,7 @@ describe('combineDocumentations', () => {
     {
       meta: {
         id: 'expect',
+        description: 'expect the unexpected',
         platform: 'android'
       },
       methods: [{ name: 'toBeVisible', args: [] }, { name: 'toBeAlmostVisible', args: [] }]
@@ -89,6 +90,7 @@ describe('combineDocumentations', () => {
           platform: ['ios', 'android'],
           id: 'expect',
           title: 'What to expect?',
+          description: 'expect the unexpected',
           methods: [
             { platform: ['ios', 'android'], name: 'toBeVisible', args: [] },
             {
@@ -103,7 +105,85 @@ describe('combineDocumentations', () => {
     );
   });
 
-  // TODO: implement convenience functionality to make it more safe for devs to use
-  // it('throws an error if documentation with the same platform has title on both')
-  // it('throws an error if documentation with the same platform has descriptions on both')
+  it('exposes the description', () => {
+    expect(combineDocumentations([documentationAiOS, documentationAAndroid])).toEqual(
+      expect.arrayContaining([
+        {
+          paths: ['./ios/a.js', './android/a.js'],
+          platform: ['ios', 'android'],
+          id: 'expect',
+          title: 'What to expect?',
+          description: 'expect the unexpected',
+          methods: [
+            { platform: ['ios', 'android'], name: 'toBeVisible', args: [] },
+            {
+              platform: ['android'],
+              name: 'toBeAlmostVisible',
+              args: []
+            }
+          ]
+        }
+      ])
+    );
+  });
+
+  it('throws an error if documentation with the same platform has title on both', () => {
+    window.console.warn = jest.fn();
+    combineDocumentations([
+      [
+        './android/a.js',
+        {
+          meta: {
+            id: 'expect',
+            platform: 'android',
+            title: 'What to expect?'
+          },
+          methods: [{ name: 'toBeVisible', args: [] }, { name: 'toBeAlmostVisible', args: [] }]
+        }
+      ],
+      [
+        './android/b.js',
+        {
+          meta: {
+            id: 'expect',
+            platform: 'android',
+            title: 'What not to expect?'
+          },
+          methods: [{ name: 'toBeVisible', args: [] }, { name: 'toBeAlmostVisible', args: [] }]
+        }
+      ]
+    ]);
+
+    expect(window.console.warn).toHaveBeenCalledWith('Found two items with the same id, which both expose a title');
+  });
+
+  it('throws an error if documentation with the same platform has descriptions on both', () => {
+    window.console.warn = jest.fn();
+    combineDocumentations([
+      [
+        './android/a.js',
+        {
+          meta: {
+            id: 'expect',
+            platform: 'android',
+            description: 'What to expect?'
+          },
+          methods: [{ name: 'toBeVisible', args: [] }, { name: 'toBeAlmostVisible', args: [] }]
+        }
+      ],
+      [
+        './android/b.js',
+        {
+          meta: {
+            id: 'expect',
+            platform: 'android',
+            description: 'What not to expect?'
+          },
+          methods: [{ name: 'toBeVisible', args: [] }, { name: 'toBeAlmostVisible', args: [] }]
+        }
+      ]
+    ]);
+
+    expect(window.console.warn).toHaveBeenCalledWith('Found two items with the same id, which both expose a description');
+  });
 });

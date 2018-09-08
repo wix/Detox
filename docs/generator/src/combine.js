@@ -20,11 +20,24 @@ function combineDocumentations(documentations) {
         {
           id: doc.meta.id,
           title: doc.meta.title,
+          description: doc.meta.description,
           paths: [path],
           platform: [platform],
           methods: doc.methods.map((method) => ({ ...method, platform: [platform] }))
         }
       ];
+    }
+
+    if (!knownRecord.title) {
+      knownRecord.title = doc.meta.title;
+    } else {
+      console.warn('Found two items with the same id, which both expose a title');
+    }
+
+    if (!knownRecord.description) {
+      knownRecord.description = doc.meta.description;
+    } else {
+      console.warn('Found two items with the same id, which both expose a description');
     }
 
     // Add new supported platform
