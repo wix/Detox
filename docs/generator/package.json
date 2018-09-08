@@ -19,6 +19,7 @@
   "dependencies": {
     "glob": "^7.1.2",
     "mkpath": "^1.0.0",
-    "prettier": "^1.14.2"
+    "prettier": "^1.14.2",
+    "rimraf": "^2.6.2"
   }
 }
