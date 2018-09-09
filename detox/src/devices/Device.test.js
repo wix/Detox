@@ -106,7 +106,7 @@ describe('Device', () => {
 
     await device.launchApp({language});
 
-    expect(device.deviceDriver.launch).toHaveBeenCalledWith(device._deviceId,
+    expect(device.deviceDriver.launchApp).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
       {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"}, language);
   });
@@ -200,7 +200,7 @@ describe('Device', () => {
 
     expect(device.deviceDriver.launchApp).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
-      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-detoxDisableTouchIndicators": true});
+      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-detoxDisableTouchIndicators": true}, undefined);
   });
 
   it(`relaunchApp() with userNofitication should send the userNotification as a param in launchParams`, async () => {

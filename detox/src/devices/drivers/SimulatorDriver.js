@@ -84,9 +84,9 @@ class SimulatorDriver extends IosDriver {
     await this._applesimutils.uninstall(deviceId, bundleId);
   }
 
-  async launchApp(deviceId, bundleId, launchArgs) {
+  async launchApp(deviceId, bundleId, launchArgs, language) {
     await this.emitter.emit('beforeLaunchApp', {bundleId, deviceId, launchArgs});
-    const pid = await this._applesimutils.launch(deviceId, bundleId, launchArgs);
+    const pid = await this._applesimutils.launch(deviceId, bundleId, launchArgs, language);
     await this.emitter.emit('launchApp', {bundleId, deviceId, launchArgs, pid});
 
     return pid;
