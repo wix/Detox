@@ -20,6 +20,8 @@ function buildDocumentation(documentation) {
   id: ${documentation.id}
   ${documentation.title ? 'title: ' + documentation.title : ''}
   ---
+
+  ${documentation.description}
   
   ${classDescription}
   
