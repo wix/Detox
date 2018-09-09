@@ -8,9 +8,9 @@
     "detox-server": "detox run-server",
     "e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization --take-screenshots all --record-logs all",
     "e2e:ios-multi": "npm run e2e:ios -- -w 2",
-    "e2e:android": "detox test --configuration android.emu.release --take-screenshots all --record-logs all",
+    "e2e:android": "detox test --configuration android.emu.debug --take-screenshots all --record-logs all",
     "build:ios": "detox build --configuration ios.sim.release",
-    "build:android": "detox build --configuration android.emu.release",
+    "build:android": "detox build --configuration android.emu.debug",
     "verify-artifacts:ios": "jest ./scripts/verify_artifacts_are_not_missing.ios.test.js --testEnvironment node",
     "verify-artifacts:android": "jest ./scripts/verify_artifacts_are_not_missing.android.test.js --testEnvironment node"
   },
@@ -58,7 +58,7 @@
         "binaryPath": "android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk",
         "build": "cd android && ./gradlew assembleFromBinDebug assembleFromBinDebugAndroidTest -DtestBuildType=debug && cd ..",
         "type": "android.emulator",
-        "name": "Nexus_5X_API_26"
+        "name": "Pixel_2_XL_API_27"
       },
       "android.emu.release": {
         "binaryPath": "android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk",
