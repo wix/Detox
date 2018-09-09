@@ -47,7 +47,8 @@ describe('Device', () => {
 
     await device.launchApp({newInstance: true});
     await element(by.text('Language')).tap();
-    await expect(element(by.text('Current language: es-MX'))).toBeVisible();
+    await expect(element(by.text('Say Hello'))).toBeVisible();
+    // await expect(element(by.text('Current language: es-MX'))).toBeVisible();
   });
 
   // it('resetContentAndSettings() + install() + relaunch() - should tap successfully', async () => {
