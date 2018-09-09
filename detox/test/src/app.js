@@ -78,6 +78,7 @@ class example extends Component {
           <Text style={{fontSize: 20, marginBottom: 30}}>
             Choose a test
           </Text>
+          {this.renderScreenButton('Language', Screens.LanguageScreen)}
           {this.renderScreenButton('Sanity', Screens.SanityScreen)}
           {this.renderScreenButton('Matchers', Screens.MatchersScreen)}
           {this.renderScreenButton('Actions', Screens.ActionsScreen)}
