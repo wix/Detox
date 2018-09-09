@@ -42,7 +42,6 @@
 		39A34C791E30F3A000BEBB59 /* Detox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39B044621DAED76400431EC5 /* Detox.framework */; };
 		39B044651DAED76E00431EC5 /* Detox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 39B044621DAED76400431EC5 /* Detox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
-		CA3050EB41644470AAC97E89 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B8A28B62FB3541C19C71EE97 /* libRNDeviceInfo.a */; };
 		CC17D3321D60A24300267B0C /* NativeModule.m in Sources */ = {isa = PBXBuildFile; fileRef = CC17D3311D60A24300267B0C /* NativeModule.m */; };
 		E088C8F41F01585500CC48E9 /* CalendarManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E088C8F31F01585500CC48E9 /* CalendarManager.m */; };
 		E088C8F51F025DE900CC48E9 /* CalendarManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E088C8F31F01585500CC48E9 /* CalendarManager.m */; };
@@ -104,34 +103,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 83CBBA2E1A601D0E00E9B192;
 			remoteInfo = React;
-		};
-		20AC4A5921459E1B0036F3CF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = EBF21BDC1FC498900052F4D5;
-			remoteInfo = jsinspector;
-		};
-		20AC4A5B21459E1B0036F3CF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = EBF21BFA1FC4989A0052F4D5;
-			remoteInfo = "jsinspector-tvOS";
-		};
-		20AC4A6121459E1B0036F3CF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C09C646FD03A4D6BB6116478 /* RNDeviceInfo.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DA5891D81BA9A9FC002B4DB2;
-			remoteInfo = RNDeviceInfo;
-		};
-		20AC4A6321459E1B0036F3CF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C09C646FD03A4D6BB6116478 /* RNDeviceInfo.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E72EC1401F7ABB5A0001BC90;
-			remoteInfo = "RNDeviceInfo-tvOS";
 		};
 		396B38381EC9DAB600A226F2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -394,8 +365,6 @@
 		39FC9D24202899F90033C11A /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; name = src; path = ../src; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
-		B8A28B62FB3541C19C71EE97 /* libRNDeviceInfo.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNDeviceInfo.a; sourceTree = "<group>"; };
-		C09C646FD03A4D6BB6116478 /* RNDeviceInfo.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNDeviceInfo.xcodeproj; path = "../node_modules/react-native-device-info/ios/RNDeviceInfo.xcodeproj"; sourceTree = "<group>"; };
 		CC17D3301D60A24300267B0C /* NativeModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NativeModule.h; path = example/NativeModule.h; sourceTree = "<group>"; };
 		CC17D3311D60A24300267B0C /* NativeModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NativeModule.m; path = example/NativeModule.m; sourceTree = "<group>"; };
 		E088C8F21F01585500CC48E9 /* CalendarManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CalendarManager.h; path = example/CalendarManager.h; sourceTree = "<group>"; };
@@ -420,7 +389,6 @@
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				39A077AA1E5450FF00A53A07 /* libRCTPushNotification.a in Frameworks */,
-				CA3050EB41644470AAC97E89 /* libRNDeviceInfo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -537,31 +505,12 @@
 				39A34C5D1E30ED3600BEBB59 /* libcxxreact.a */,
 				39A34C5F1E30ED3600BEBB59 /* libjschelpers.a */,
 				39A34C611E30ED3600BEBB59 /* libjschelpers.a */,
-				20AC4A5A21459E1B0036F3CF /* libjsinspector.a */,
-				20AC4A5C21459E1B0036F3CF /* libjsinspector-tvOS.a */,
 				4644B8651F897583003223D4 /* libthird-party.a */,
 				4644B8671F897583003223D4 /* libthird-party.a */,
 				4644B8691F897583003223D4 /* libdouble-conversion.a */,
 				4644B86B1F897583003223D4 /* libdouble-conversion.a */,
 				4613EAAC2051F21100C6DF2D /* libprivatedata.a */,
 				4613EAAE2051F21100C6DF2D /* libprivatedata-tvOS.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		20AC4A3221459E1A0036F3CF /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				B8A28B62FB3541C19C71EE97 /* libRNDeviceInfo.a */,
-			);
-			name = "Recovered References";
-			sourceTree = "<group>";
-		};
-		20AC4A5D21459E1B0036F3CF /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				20AC4A6221459E1B0036F3CF /* libRNDeviceInfo.a */,
-				20AC4A6421459E1B0036F3CF /* libRNDeviceInfo-tvOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -626,7 +575,6 @@
 				832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */,
 				00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */,
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
-				C09C646FD03A4D6BB6116478 /* RNDeviceInfo.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -648,7 +596,6 @@
 				CCFA7DE41D11D22600E15EDF /* Frameworks */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
-				20AC4A3221459E1A0036F3CF /* Recovered References */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";
@@ -719,7 +666,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 900;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = Facebook;
 			};
 			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "example" */;
@@ -786,10 +733,6 @@
 					ProductGroup = 146834001AC3E56700842450 /* Products */;
 					ProjectRef = 146833FF1AC3E56700842450 /* React.xcodeproj */;
 				},
-				{
-					ProductGroup = 20AC4A5D21459E1B0036F3CF /* Products */;
-					ProjectRef = C09C646FD03A4D6BB6116478 /* RNDeviceInfo.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -854,34 +797,6 @@
 			fileType = archive.ar;
 			path = libReact.a;
 			remoteRef = 146834031AC3E56700842450 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		20AC4A5A21459E1B0036F3CF /* libjsinspector.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libjsinspector.a;
-			remoteRef = 20AC4A5921459E1B0036F3CF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		20AC4A5C21459E1B0036F3CF /* libjsinspector-tvOS.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libjsinspector-tvOS.a";
-			remoteRef = 20AC4A5B21459E1B0036F3CF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		20AC4A6221459E1B0036F3CF /* libRNDeviceInfo.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRNDeviceInfo.a;
-			remoteRef = 20AC4A6121459E1B0036F3CF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		20AC4A6421459E1B0036F3CF /* libRNDeviceInfo-tvOS.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libRNDeviceInfo-tvOS.a";
-			remoteRef = 20AC4A6321459E1B0036F3CF /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		396B38391EC9DAB600A226F2 /* libRCTAnimation.a */ = {
@@ -1193,17 +1108,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = "";
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../node_modules/react-native-device-info/ios/RNDeviceInfo",
-				);
 				INFOPLIST_FILE = example/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/example\"",
-				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -1218,17 +1125,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = "";
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../node_modules/react-native-device-info/ios/RNDeviceInfo",
-				);
 				INFOPLIST_FILE = example/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/example\"",
-				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -1244,17 +1143,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = "";
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../node_modules/react-native-device-info/ios/RNDeviceInfo",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/example/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/example\"",
-				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -1269,17 +1160,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = "";
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../node_modules/react-native-device-info/ios/RNDeviceInfo",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/example/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/example\"",
-				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",

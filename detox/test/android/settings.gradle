@@ -1,6 +1,4 @@
 rootProject.name = 'DetoxTest'
-include ':react-native-device-info'
-project(':react-native-device-info').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-device-info/android')
 
 include ':app'
 
