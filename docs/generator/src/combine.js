@@ -5,6 +5,7 @@ function methodToId(method) {
   return method.name + method.args.map((arg) => arg.type + arg.name).join(',');
 }
 
+// TODO: strip methods that are undocumented
 function combineDocumentations(documentations) {
   const documentationsWithPath = documentations.map(([path, doc]) => ({ ...doc, path }));
 

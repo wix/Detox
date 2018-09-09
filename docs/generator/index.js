@@ -15,4 +15,6 @@ const combinedDocumentations = combineDocumentations(
   documentationFiles.reduce((allDocs, [path, ast]) => allDocs.concat(extractDocumentation(ast).map((doc) => [path, doc])), [])
 );
 
+console.log(combinedDocumentations[0].methods);
+
 writeDocumentation(combinedDocumentations, outputMapping(OUTPUT_PATH));

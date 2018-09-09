@@ -92,6 +92,7 @@ function extractDocumentation(ast) {
     const meta = extractMetaInformation(comment.value);
     const classDef = findClassAfterComment(ast, comment);
     const methods = extractDocumentedMethods(classDef, ast);
+    // TODO: extract undocumented methods to be able to match them later on
     return {
       meta,
       methods
