@@ -48,7 +48,7 @@ detox.invoke.execute(_getInteraction2);
 
 */
 
-class Action { }
+class Action {}
 
 class TapAction extends Action {
   constructor() {
@@ -128,17 +128,17 @@ class SwipeAction extends Action {
       let x, y;
       const eps = 10 ** -8;
       switch (direction) {
-        case "left":
-          x = percentage, y = eps;
+        case 'left':
+          (x = percentage), (y = eps);
           break;
-        case "right":
-          x = percentage, y = eps;
+        case 'right':
+          (x = percentage), (y = eps);
           break;
-        case "up":
-          y = percentage, x = eps;
+        case 'up':
+          (y = percentage), (x = eps);
           break;
-        case "down":
-          y = percentage, x = eps;
+        case 'down':
+          (y = percentage), (x = eps);
           break;
       }
 
@@ -166,9 +166,9 @@ class SwipeAction extends Action {
 }
 
 class ScrollColumnToValue extends Action {
-  constructor(column,value) {
+  constructor(column, value) {
     super();
-    this._call = invoke.callDirectly(GreyActions.actionForSetPickerColumnToValue(column,value))
+    this._call = invoke.callDirectly(GreyActions.actionForSetPickerColumnToValue(column, value));
   }
 }
 
@@ -219,7 +219,7 @@ class WaitForInteraction extends Interaction {
       _conditionCall = GreyConditionDetox.detoxConditionForNotElementMatched(callThunk(this._element));
     }
 
-    this._call = GreyCondition.waitWithTimeout(invoke.callDirectly(_conditionCall), timeout / 1000)
+    this._call = GreyCondition.waitWithTimeout(invoke.callDirectly(_conditionCall), timeout / 1000);
     await this.execute();
   }
   whileElement(searchMatcher) {
@@ -232,14 +232,19 @@ class WaitForActionInteraction extends Interaction {
     super();
     //if (!(element instanceof Element)) throw new Error(`WaitForActionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
     //if (!(matcher instanceof Matcher)) throw new Error(`WaitForActionInteraction ctor 2nd argument must be a valid Matcher, got ${typeof matcher}`);
-    if (!(searchMatcher instanceof Matcher)) throw new Error(`WaitForActionInteraction ctor 3rd argument must be a valid Matcher, got ${typeof searchMatcher}`);
+    if (!(searchMatcher instanceof Matcher))
+      throw new Error(`WaitForActionInteraction ctor 3rd argument must be a valid Matcher, got ${typeof searchMatcher}`);
     this._element = element;
     this._originalMatcher = matcher;
     this._searchMatcher = searchMatcher;
   }
 
   async _execute(searchAction) {
-    const _interactionCall = GreyInteraction.usingSearchActionOnElementWithMatcher(invoke.callDirectly(callThunk(this._element)), callThunk(searchAction), callThunk(this._searchMatcher));
+    const _interactionCall = GreyInteraction.usingSearchActionOnElementWithMatcher(
+      invoke.callDirectly(callThunk(this._element)),
+      callThunk(searchAction),
+      callThunk(this._searchMatcher)
+    );
 
     this._call = GreyInteraction.assertWithMatcher(invoke.callDirectly(_interactionCall), callThunk(this._originalMatcher));
     await this.execute();
@@ -263,7 +268,8 @@ class Element {
     this._selectElementWithMatcher(this._originalMatcher);
   }
   _selectElementWithMatcher(matcher) {
-    if (!(matcher instanceof Matcher)) throw new Error(`Element _selectElementWithMatcher argument must be a valid Matcher, got ${typeof matcher}`);
+    if (!(matcher instanceof Matcher))
+      throw new Error(`Element _selectElementWithMatcher argument must be a valid Matcher, got ${typeof matcher}`);
     this._call = invoke.call(invoke.EarlGrey.instance, 'detox_selectElementWithMatcher:', matcher._call);
   }
   atIndex(index) {
@@ -280,18 +286,51 @@ class Element {
   async tap() {
     return await new ActionInteraction(this, new TapAction()).execute();
   }
+
+  /**
+   * Simulate tap at a specific point on an element.<br><br>
+   * Note: The point coordinates are relative to the matched element and the element size could changes on different devices or even when changing the device font size. 
+   * @param {Object} value coordinates where to tap at
+   * @param {number} value.x x coordinate
+   * @param {number} value.y y coordinate
+   * @example await element(by.id('tappable')).tapAtPoint({x:5, y:10});
+   */
   async tapAtPoint(value) {
     return await new ActionInteraction(this, new TapAtPointAction(value)).execute();
   }
+
+  /**
+   * Simulate long press on an element.
+   * @param {number} duration - long press time interval. (iOS only)
+   * @example await element(by.id('tappable')).longPress();
+   */
   async longPress(duration) {
     return await new ActionInteraction(this, new LongPressAction(duration)).execute();
   }
+
+  /**
+   * Simulate multiple taps on an element.
+   * @param {number} value - amount of taps to be made
+   * @example await element(by.id('tappable')).multiTap(3); 
+   */
   async multiTap(value) {
     return await new ActionInteraction(this, new MultiTapAction(value)).execute();
   }
+
+  /**
+   * Use the builtin keyboard to type text into a text field.
+   * @param {string} value - text to be typed. It should not contain numbers, those can't be typed this way. Please use replaceText for that.
+   * @example await element(by.id('textField')).typeText('passcode'); 
+   */
   async typeText(value) {
     return await new ActionInteraction(this, new TypeTextAction(value)).execute();
   }
+
+  /**
+   * Paste text into a text field.
+   * @param {string} value - text to be replaced
+   * @example await element(by.id('textField')).replaceText('passcode again');
+   */
   async replaceText(value) {
     return await new ActionInteraction(this, new ReplaceTextAction(value)).execute();
   }
@@ -313,12 +352,12 @@ class Element {
     this._selectElementWithMatcher(this._originalMatcher._avoidProblematicReactNativeElements());
     return await new ActionInteraction(this, new SwipeAction(direction, speed, percentage)).execute();
   }
-  async setColumnToValue(column,value) {
+  async setColumnToValue(column, value) {
     return await new ActionInteraction(this, new ScrollColumnToValue(column, value)).execute();
   }
 }
 
-class Expect { }
+class Expect {}
 
 /**
  * @Documented
@@ -362,7 +401,7 @@ class ExpectElement extends Expect {
   }
 }
 
-class WaitFor { }
+class WaitFor {}
 
 class WaitForElement extends WaitFor {
   constructor(element) {
@@ -408,13 +447,13 @@ function element(matcher) {
 }
 
 const by = {
-  accessibilityLabel: (value) => new LabelMatcher(value),
-  label: (value) => new LabelMatcher(value),
-  id: (value) => new IdMatcher(value),
-  type: (value) => new TypeMatcher(value),
-  traits: (value) => new TraitsMatcher(value),
-  value: (value) => new ValueMatcher(value),
-  text: (value) => new TextMatcher(value)
+  accessibilityLabel: value => new LabelMatcher(value),
+  label: value => new LabelMatcher(value),
+  id: value => new IdMatcher(value),
+  type: value => new TypeMatcher(value),
+  traits: value => new TraitsMatcher(value),
+  value: value => new ValueMatcher(value),
+  text: value => new TextMatcher(value)
 };
 
 const exportGlobals = () => {

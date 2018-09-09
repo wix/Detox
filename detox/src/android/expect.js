@@ -169,6 +169,11 @@ class WaitForActionInteraction extends Interaction {
   }
 }
 
+/**
+ * @Documented
+ * id: element
+ * platform: android
+ */
 class Element {
   constructor(matcher) {
     this._originalMatcher = matcher;
