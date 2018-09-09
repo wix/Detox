@@ -251,6 +251,12 @@ class WaitForActionInteraction extends Interaction {
   }
 }
 
+/**
+ * @Documented
+ * id: element
+ * platform: ios
+ * description: Detox uses **Matchers** to find UI `elements` in your app, **Actions** to emulate user interaction with those `elements` and **Expectations** to verify values on those `elements`.
+ */
 class Element {
   constructor(matcher) {
     this._originalMatcher = matcher;
@@ -266,6 +272,11 @@ class Element {
     this._call = invoke.call(_originalCall, 'atIndex:', invoke.IOS.NSInteger(index));
     return this;
   }
+
+  /**
+   * Simulate tap on an element.
+   * @example await element(by.id('tappable')).tap();
+   */
   async tap() {
     return await new ActionInteraction(this, new TapAction()).execute();
   }
