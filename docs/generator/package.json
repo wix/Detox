@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "node ./index.js",
-    "build:watch": "nodemon --watch ../../ ./index.js",
+    "build:watch": "nodemon --watch ../../detox --watch ../../docs/generator ./index.js",
     "test": "jest"
   },
   "author": "",
