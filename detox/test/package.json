@@ -64,7 +64,7 @@
         "binaryPath": "android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk",
         "build": "cd android && ./gradlew assembleFromBinRelease assembleFromBinReleaseAndroidTest -DtestBuildType=release && cd ..",
         "type": "android.emulator",
-        "name": "Pixel_2_XL_API_27"
+        "name": "Nexus_5X_API_26"
       },
       "android.emu.debug.fromSource": {
         "binaryPath": "android/app/build/outputs/apk/fromSource/debug/app-fromSource-debug.apk",
