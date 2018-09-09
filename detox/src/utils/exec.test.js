@@ -85,6 +85,21 @@ describe('exec', () => {
     }
   });
 
+  it(`exec command and silently fail with error code, report only to debug log`, async () => {
+    const errorResult = returnErrorWithValue('error result');
+    const rejectedPromise = Promise.reject(errorResult);
+    cpp.exec.mockReturnValueOnce(rejectedPromise);
+
+    try {
+      await exec.execWithRetriesAndLogs('bin', { silent: true }, '', 1, 1);
+      fail('expected execWithRetriesAndLogs() to throw');
+    } catch (object) {
+      expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
+      expect(logger.error).not.toHaveBeenCalled();
+      expect(logger.debug.mock.calls).toMatchSnapshot();
+    }
+  });
+
   it(`exec command and fail with timeout`, async () => {
     const errorResult = returnErrorWithValue('error result');
     const rejectedPromise = Promise.reject(errorResult);
@@ -161,15 +176,14 @@ describe('spawn', () => {
     }));
   });
 
-  it('spawns detached command with ignored input and piped output', () => {
+  it('spawns an attached command with ignored input and piped output', () => {
     const command = 'command';
     const flags = ['--some', '--value', Math.random()];
 
     exec.spawnAndLog(command, flags);
 
     expect(cpp.spawn).toBeCalledWith(command, flags, {
-      stdio: ['ignore', 'pipe', 'pipe'],
-      detached: true
+      stdio: ['ignore', 'pipe', 'pipe']
     });
   });
 

@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const fs = require('fs-extra');
 const path = require('path');
+const util = require('util');
 const log = require('../utils/logger').child({ __filename });
 const argparse = require('../utils/argparse');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
@@ -8,56 +9,20 @@ const ArtifactPathBuilder = require('./utils/ArtifactPathBuilder');
 
 class ArtifactsManager {
   constructor(pathBuilder) {
-    this.onBeforeResetDevice = this.onBeforeResetDevice.bind(this);
-    this.onResetDevice = this.onResetDevice.bind(this);
-    this.onBeforeLaunchApp = this.onBeforeLaunchApp.bind(this);
-    this.onLaunchApp = this.onLaunchApp.bind(this);
     this.onTerminate = _.once(this.onTerminate.bind(this));
-    this._executeIdleCallback = this._executeIdleCallback.bind(this);
 
     this._idlePromise = Promise.resolve();
-    this._onIdleCallbacks = [];
+    this._idleCallbackRequests = [];
     this._activeArtifacts = [];
-    this._artifactPluginsFactories = [];
     this._artifactPlugins = [];
     this._pathBuilder = pathBuilder || new ArtifactPathBuilder({
       artifactsRootDir: argparse.getArgValue('artifacts-location') || 'artifacts',
     });
+  }
 
-    this._deviceId = '';
-    this._bundleId = '';
-    this._pid = NaN;
-
-    this.artifactsApi = {
-      getDeviceId: () => {
-        if (!this._deviceId) {
-          throw new DetoxRuntimeError({
-            message: 'Detox Artifacts API had no deviceId at the time of calling',
-          });
-        }
-
-        return this._deviceId;
-      },
-
-      getBundleId: () => {
-        if (!this._bundleId) {
-          throw new DetoxRuntimeError({
-            message: 'Detox Artifacts API had no bundleId at the time of calling',
-          });
-        }
-
-        return this._bundleId;
-      },
-
-      getPid: () => {
-        if (isNaN(this._pid)) {
-          throw new DetoxRuntimeError({
-            message: 'Detox Artifacts API had no app PID at the time of calling',
-          });
-        }
-
-        return this._pid;
-      },
+  _instantitateArtifactPlugin(pluginFactory) {
+    const artifactsApi = {
+      plugin: null,
 
       preparePathForArtifact: async (artifactName, testSummary) => {
         const artifactPath = this._pathBuilder.buildPathForTestArtifact(artifactName, testSummary);
@@ -75,115 +40,79 @@ class ArtifactsManager {
         _.pull(this._activeArtifacts, artifact);
       },
 
-      requestIdleCallback: (callback, caller) => {
-        if (caller) {
-          callback._from = caller.name;
-        }
-
-        this._onIdleCallbacks.push(callback);
+      requestIdleCallback: (callback) => {
+        this._idleCallbackRequests.push({
+          caller: artifactsApi.plugin,
+          callback,
+        });
 
         this._idlePromise = this._idlePromise.then(() => {
-          const nextCallback = this._onIdleCallbacks.shift();
-          return this._executeIdleCallback(nextCallback);
+          const nextCallbackRequest = this._idleCallbackRequests.shift();
+
+          if (nextCallbackRequest) {
+            return this._executeIdleCallbackRequest(nextCallbackRequest);
+          }
         });
       },
     };
+
+    const plugin = pluginFactory(artifactsApi);
+    artifactsApi.plugin = plugin;
+
+    return plugin;
   }
 
-  _executeIdleCallback(callback) {
-    if (callback) {
-      return Promise.resolve()
-        .then(callback)
-        .catch(e => this._idleCallbackErrorHandle(e, callback));
-    }
+  _executeIdleCallbackRequest({ callback, caller }) {
+    return Promise.resolve()
+      .then(callback)
+      .catch(e => this._idleCallbackErrorHandle(e, caller));
   }
 
   registerArtifactPlugins(artifactPluginFactoriesMap = {}) {
-    this._artifactPluginsFactories = Object.values(artifactPluginFactoriesMap);
-  }
+    const artifactPluginsFactories = Object.values(artifactPluginFactoriesMap);
 
-  subscribeToDeviceEvents(device) {
-    device.on('beforeResetDevice', this.onBeforeResetDevice);
-    device.on('resetDevice', this.onResetDevice);
-    device.on('beforeLaunchApp', this.onBeforeLaunchApp);
-    device.on('launchApp', this.onLaunchApp);
-  }
-
-  unsubscribeFromDeviceEvents(device) {
-    device.off('beforeResetDevice', this.onBeforeResetDevice);
-    device.off('resetDevice', this.onResetDevice);
-    device.off('beforeLaunchApp', this.onBeforeLaunchApp);
-    device.off('launchApp', this.onLaunchApp);
-  }
-
-  async onBeforeLaunchApp(launchInfo) {
-    const { deviceId, bundleId } = launchInfo;
-    const isFirstTime = !this._deviceId;
-
-    this._deviceId = deviceId;
-    this._bundleId = bundleId;
-
-    return isFirstTime
-      ? this._onBeforeLaunchAppFirstTime(launchInfo)
-      : this._onBeforeRelaunchApp();
-  }
-
-  async _onBeforeLaunchAppFirstTime(launchInfo) {
-    log.trace({ event: 'LIFECYCLE', fn: 'onBeforeLaunchApp' }, 'onBeforeLaunchApp', launchInfo);
-    this._artifactPlugins = this._instantiateArtifactPlugins();
-  }
-
-  _instantiateArtifactPlugins() {
-    return this._artifactPluginsFactories.map((factory) => {
-      return factory(this.artifactsApi);
+    this._artifactPlugins = artifactPluginsFactories.map((factory) => {
+      return this._instantitateArtifactPlugin(factory);
     });
   }
 
-  async _onBeforeRelaunchApp() {
-    await this._emit('onBeforeRelaunchApp', [{
-      deviceId: this._deviceId,
-      bundleId: this._bundleId,
-    }]);
+  subscribeToDeviceEvents(deviceEmitter) {
+    deviceEmitter.on('bootDevice', this.onBootDevice.bind(this));
+    deviceEmitter.on('shutdownDevice', this.onShutdownDevice.bind(this));
+    deviceEmitter.on('beforeLaunchApp', this.onBeforeLaunchApp.bind(this));
+    deviceEmitter.on('launchApp', this.onLaunchApp.bind(this));
   }
 
-  async onLaunchApp(launchInfo) {
-    const isFirstTime = isNaN(this._pid);
-    if (isFirstTime) {
-      log.trace({ event: 'LIFECYCLE', fn: 'onLaunchApp' }, 'onLaunchApp', launchInfo);
-    }
+  async onBootDevice(deviceInfo) {
+    await this._callPlugins('onBootDevice', deviceInfo);
+  }
 
-    const { deviceId, bundleId, pid } = launchInfo;
-    this._deviceId = deviceId;
-    this._bundleId = bundleId;
-    this._pid = pid;
+  async onShutdownDevice(deviceInfo) {
+    await this._callPlugins('onShutdownDevice', deviceInfo);
+  }
 
-    if (!isFirstTime) {
-      await this._emit('onRelaunchApp', [{ deviceId, bundleId, pid }]);
-    }
+  async onBeforeLaunchApp(appLaunchInfo) {
+    await this._callPlugins('onBeforeLaunchApp', appLaunchInfo);
+  }
+
+  async onLaunchApp(appLaunchInfo) {
+    await this._callPlugins('onLaunchApp', appLaunchInfo);
   }
 
   async onBeforeAll() {
-    await this._emit('onBeforeAll', []);
+    await this._callPlugins('onBeforeAll');
   }
 
   async onBeforeEach(testSummary) {
-    await this._emit('onBeforeEach', [testSummary]);
-  }
-
-  async onBeforeResetDevice({ deviceId }) {
-    await this._emit('onBeforeResetDevice', [{ deviceId }]);
-  }
-
-  async onResetDevice({ deviceId }) {
-    await this._emit('onResetDevice', [{ deviceId }]);
+    await this._callPlugins('onBeforeEach', testSummary);
   }
 
   async onAfterEach(testSummary) {
-    await this._emit('onAfterEach', [testSummary]);
+    await this._callPlugins('onAfterEach', testSummary);
   }
 
   async onAfterAll() {
-    await this._emit('onAfterAll', []);
+    await this._callPlugins('onAfterAll');
     await this._idlePromise;
   }
 
@@ -194,8 +123,10 @@ class ArtifactsManager {
 
     log.info({ event: 'TERMINATE_START' }, 'finalizing the recorded artifacts, this can take some time...');
 
-    await this._emit('onTerminate', []);
-    await Promise.all(this._onIdleCallbacks.splice(0).map(this._executeIdleCallback));
+    await this._callPlugins('onTerminate');
+
+    const allCallbackRequests = this._idleCallbackRequests.splice(0);
+    await Promise.all(allCallbackRequests.map(this._executeIdleCallbackRequest.bind(this)));
     await this._idlePromise;
 
     await Promise.all(this._activeArtifacts.map(artifact => artifact.discard()));
@@ -205,26 +136,39 @@ class ArtifactsManager {
     log.info({ event: 'TERMINATE_SUCCESS' }, 'done.');
   }
 
-  async _emit(methodName, args) {
-    log.trace(Object.assign({ event: 'LIFECYCLE', fn: methodName }, ...args), `${methodName}`);
+  async _callPlugins(methodName, ...args) {
+    const callSignature = this._composeCallSignature('artifactsManager', methodName, args);
+    log.trace(Object.assign({ event: 'LIFECYCLE', fn: methodName }, ...args), callSignature);
 
     await Promise.all(this._artifactPlugins.map(async (plugin) => {
       try {
         await plugin[methodName](...args);
       } catch (e) {
-        this._errorHandler(e, { plugin, methodName, args });
+        this._unhandledPluginExceptionHandler(e, { plugin, methodName, args });
       }
     }));
   }
 
-  _errorHandler(err, { plugin, methodName }) {
-    const eventObject = { event: 'PLUGIN_ERROR', plugin: plugin.name || 'unknown', methodName, err };
-    log.error(eventObject, `Caught exception inside plugin (${eventObject.plugin}) at phase ${methodName}`);
+  _composeCallSignature(object, methodName, args) {
+    const argsString = args.map(arg => util.inspect(arg)).join(', ');
+    return `${object}.${methodName}(${argsString})`;
   }
 
-  _idleCallbackErrorHandle(e, callback) {
-    this._errorHandler(e, {
-      plugin: { name: callback._from },
+  _unhandledPluginExceptionHandler(err, { plugin, methodName, args }) {
+    const logObject = {
+      event: 'PLUGIN_ERROR',
+      plugin: plugin.name,
+      err,
+      methodName,
+    };
+
+    const callSignature = this._composeCallSignature(plugin.name, methodName, args);
+    log.error(logObject, `Caught exception inside function call: ${callSignature}`);
+  }
+
+  _idleCallbackErrorHandle(err, caller) {
+    this._unhandledPluginExceptionHandler(err, {
+      plugin: caller,
       methodName: 'onIdleCallback',
       args: []
     })

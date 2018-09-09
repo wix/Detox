@@ -64,19 +64,20 @@ class Emulator {
     childProcessPromise.childProcess.unref();
     log = log.child({ child_pid: childProcessPromise.childProcess.pid });
 
-    return childProcessPromise.catch((err) => {
+    return childProcessPromise.then(() => true).catch((err) => {
       detach();
 
       if (childProcessOutput.includes(`There's another emulator instance running with the current AVD`)) {
-        return;
+        return false;
       }
 
       log.error({ event: 'SPAWN_FAIL', error: true, err }, err.message);
       log.error({ event: 'SPAWN_FAIL', stderr: true }, childProcessOutput);
       throw err;
-    }).then(() => {
+    }).then((coldBoot) => {
       detach();
       log.debug({ event: 'SPAWN_SUCCESS', stdout: true }, childProcessOutput);
+      return coldBoot;
     });
   }
 

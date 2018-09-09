@@ -68,7 +68,7 @@ describe('WholeTestRecorderPlugin', () => {
 
       it('should schedule a save operation and specify itself as an initiator', () => {
         expect(api.requestIdleCallback).toHaveBeenCalledTimes(1);
-        expect(api.requestIdleCallback.mock.calls[0]).toEqual([expect.any(Function), plugin]);
+        expect(api.requestIdleCallback.mock.calls[0]).toEqual([expect.any(Function)]);
       });
 
       it('should ultimately save the artifact and untrack it', async () => {
@@ -100,7 +100,7 @@ describe('WholeTestRecorderPlugin', () => {
 
       it('should schedule a discard operation and specify itself as an initiator', () => {
         expect(api.requestIdleCallback).toHaveBeenCalledTimes(1);
-        expect(api.requestIdleCallback.mock.calls[0]).toEqual([expect.any(Function), plugin]);
+        expect(api.requestIdleCallback.mock.calls[0]).toEqual([expect.any(Function)]);
       });
 
       it('should ultimately discard the artifact and untrack it', async () => {

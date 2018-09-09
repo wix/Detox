@@ -32,7 +32,7 @@ class ADB {
 
   async _getPowerStatus(deviceId) {
     const grep = pipeCommands.search.regexp;
-    const stdout = await this.shell(deviceId, `dumpsys power | ${grep('^\\s*m[UW].*=')}`);
+    const stdout = await this.shell(deviceId, `dumpsys power | ${grep('^[ ]*m[UW].*=')}`);
 
     return stdout
       .split('\n')
@@ -110,7 +110,7 @@ class ADB {
   }
 
   async pidof(deviceId, bundleId) {
-    const bundleIdRegex = pipeCommands.escape.inQuotedRegexp(bundleId) + '\\s*$';
+    const bundleIdRegex = pipeCommands.escape.inQuotedRegexp(bundleId) + '[ ]*$';
     const grep = pipeCommands.search.regexp;
 
     const processes = await this.shell(deviceId, `ps | ${grep(bundleIdRegex)}`).catch(() => '');

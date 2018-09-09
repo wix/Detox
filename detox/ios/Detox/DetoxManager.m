@@ -54,6 +54,12 @@ static void detoxConditionalInit()
 		return;
 	}
 	
+	NSNumber* waitForDebugger = [options objectForKey:@"detoxWaitForDebugger"];
+	if(waitForDebugger)
+	{
+		usleep(waitForDebugger.unsignedIntValue* 1000);
+	}
+	
 	[[DetoxManager sharedManager] connectToServer:detoxServer withSessionId:detoxSessionId];
 }
 
@@ -80,8 +86,17 @@ static void detoxConditionalInit()
 	self.testRunner.delegate = self;
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidLaunch:) name:UIApplicationDidFinishLaunchingNotification object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
 	
 	return self;
+}
+
+- (void)_appDidEnterBackground:(NSNotification*)note
+{
+	__block UIBackgroundTaskIdentifier bgTask;
+	bgTask = [UIApplication.sharedApplication beginBackgroundTaskWithName:@"DetoxBackground" expirationHandler:^{
+		[UIApplication.sharedApplication endBackgroundTask:bgTask];
+	}];
 }
 
 - (void)_appDidLaunch:(NSNotification*)note

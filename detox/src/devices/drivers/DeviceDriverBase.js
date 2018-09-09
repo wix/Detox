@@ -2,10 +2,29 @@ const _ = require('lodash');
 const fs = require('fs-extra');
 const os = require('os');
 const path = require('path');
+const AsyncEmitter = require('../../utils/AsyncEmitter');
+const log = require('../../utils/logger').child({ __filename });
 
 class DeviceDriverBase {
-  constructor(client) {
+  constructor({ client }) {
     this.client = client;
+    this.emitter = new AsyncEmitter({
+      events: [
+        'bootDevice',
+        'shutdownDevice',
+        'beforeLaunchApp',
+        'launchApp',
+      ],
+      onError: this._onEmitError.bind(this),
+    });
+  }
+
+  off(event, listener) {
+    this.emitter.off(event, listener);
+  }
+
+  on(event, listener) {
+    this.emitter.on(event, listener);
   }
 
   declareArtifactPlugins() {
@@ -24,7 +43,7 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async launch() {
+  async launchApp() {
     return await Promise.resolve('');
   }
 
@@ -33,10 +52,6 @@ class DeviceDriverBase {
   }
 
   async shake() {
-    return await Promise.resolve('');
-  }
-
-  async relaunchApp() {
     return await Promise.resolve('');
   }
 
@@ -129,7 +144,7 @@ class DeviceDriverBase {
   }
 
   async cleanup(deviceId, bundleId) {
-    return await Promise.resolve('');
+    this.emitter.off(); // clean all listeners
   }
 
   getLogsPaths(deviceId) {
@@ -141,6 +156,14 @@ class DeviceDriverBase {
 
   async pressBack() {
     return await Promise.resolve('');
+  }
+
+  _onEmitError({ error, eventName, eventObj }) {
+    log.error(
+      { event: 'EMIT_ERROR', className: this.constructor.name, eventName },
+      `Caught an exception in: emitter.emit("${eventName}", ${JSON.stringify(eventObj)})\n\n`,
+      error
+    );
   }
 }
 

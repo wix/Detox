@@ -4,7 +4,7 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "version": "8.1.1",
+  "version": "9.0.1",
   "bin": {
     "detox": "local-cli/detox.js"
   },
@@ -35,7 +35,8 @@
     "eslint-plugin-node": "^6.0.1",
     "jest": "22.x.x",
     "mockdate": "^2.0.1",
-    "prettier": "1.7.0"
+    "prettier": "1.7.0",
+    "react-native": "0.56.0"
   },
   "dependencies": {
     "bunyan": "^1.8.12",

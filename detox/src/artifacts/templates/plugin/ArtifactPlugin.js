@@ -11,6 +11,7 @@ const log = require('../../../utils/logger').child({ __filename });
 class ArtifactPlugin {
   constructor({ api }) {
     this.api = api;
+    this.context = {};
     this.enabled = false;
     this.keepOnlyFailedTestsArtifacts = false;
     this._disableReason = '';
@@ -36,12 +37,18 @@ class ArtifactPlugin {
    *
    * @protected
    * @async
-   * @param {Object} event - Relaunch app event object
+   * @param {Object} event - Launch app event object
    * @param {string} event.deviceId - Current deviceId
    * @param {string} event.bundleId - Current bundleId
    * @return {Promise<void>} - when done
    */
-  async onBeforeRelaunchApp(event) {}
+  async onBeforeLaunchApp(event) {
+    Object.assign(this.context, {
+      bundleId: event.bundleId,
+      deviceId: event.deviceId,
+      pid: NaN,
+    });
+  }
 
   /**
    * Hook that is called inside device.launchApp() and
@@ -50,13 +57,54 @@ class ArtifactPlugin {
    *
    * @protected
    * @async
-   * @param {Object} event - Relaunch app event object
+   * @param {Object} event - Launch app event object
    * @param {string} event.deviceId - Current deviceId
    * @param {string} event.bundleId - Current bundleId
    * @param {number} event.pid - Process id of the running app
    * @return {Promise<void>} - when done
    */
-  async onRelaunchApp(event) {}
+  async onLaunchApp(event) {
+    Object.assign(this.context, {
+      bundleId: event.bundleId,
+      deviceId: event.deviceId,
+      pid: event.pid,
+   });
+  }
+
+  /**
+   * Hook that is supposed to be called from device.boot()
+   *
+   * @protected
+   * @async
+   * @param {Object} event - Device boot event object
+   * @param {string} event.deviceId - Current deviceId
+   * @param {boolean} event.coldBoot - true, if the device gets turned on from the shutdown state.
+   * @return {Promise<void>} - when done
+   */
+  async onBootDevice(event) {
+    Object.assign(this.context, {
+      deviceId: event.deviceId,
+      bundleId: '',
+      pid: NaN,
+    });
+  }
+
+  /**
+   * Hook that is supposed to be called from device.shutdown()
+   *
+   * @protected
+   * @async
+   * @param {Object} event - Device shutdown event object
+   * @param {string} event.deviceId - Current deviceId
+   * @return {Promise<void>} - when done
+   */
+  async onShutdownDevice(event) {
+    Object.assign(this.context, {
+      deviceId: event.deviceId,
+      bundleId: '',
+      pid: NaN,
+    });
+  }
 
   /**
    * Hook that is called before any test begins
@@ -76,26 +124,6 @@ class ArtifactPlugin {
    * @return {Promise<void>} - when done
    */
   async onBeforeEach(testSummary) {}
-
-  /**
-   * Hook that is called before device.resetContentAndSettings() is called
-   *
-   * @protected
-   * @async
-   * @param {object} event - has .deviceId inside
-   * @return {Promise<void>} - when done
-   */
-  async onBeforeResetDevice({ deviceId }) {}
-
-  /**
-   * Hook that is called after device.resetContentAndSettings() is called
-   *
-   * @protected
-   * @async
-   * @param {object} event - has .deviceId inside
-   * @return {Promise<void>} - when done
-   */
-  async onResetDevice({ deviceId }) {}
 
   /***
    * @protected
@@ -127,10 +155,10 @@ class ArtifactPlugin {
     this.disable('it was terminated by SIGINT or SIGTERM');
 
     this.onTerminate = _.noop;
-    this.onBeforeRelaunchApp = _.noop;
-    this.onRelaunchApp = _.noop;
-    this.onBeforeResetDevice = _.noop;
-    this.onResetDevice = _.noop;
+    this.onBootDevice = _.noop;
+    this.onShutdownDevice = _.noop;
+    this.onBeforeLaunchApp = _.noop;
+    this.onLaunchApp = _.noop;
     this.onBeforeAll = _.noop;
     this.onBeforeEach = _.noop;
     this.onAfterEach = _.noop;

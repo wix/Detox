@@ -51,3 +51,35 @@ Array [
   ],
 ]
 `;
+
+exports[`exec exec command and silently fail with error code, report only to debug log 1`] = `
+Array [
+  Array [
+    Object {
+      "event": "EXEC_CMD",
+    },
+    "bin",
+  ],
+  Array [
+    Object {
+      "event": "EXEC_FAIL",
+    },
+    "\\"bin\\" failed with code = undefined, stdout and stderr:
+",
+  ],
+  Array [
+    Object {
+      "event": "EXEC_FAIL",
+      "stdout": true,
+    },
+    "out",
+  ],
+  Array [
+    Object {
+      "event": "EXEC_FAIL",
+      "stderr": true,
+    },
+    "error result",
+  ],
+]
+`;

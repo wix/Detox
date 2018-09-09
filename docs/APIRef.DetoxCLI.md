@@ -59,7 +59,7 @@ Initiating your test suite
 | -p, --platform [ios/android]                  | Run platform specific tests. Runs tests with invert grep on `:platform:`, e.g test with substring `:ios:` in its name will not run when passing `--platform android` |
 | -H, --headless                                | [Android Only] Launch Emulator in headless mode. Useful when running on CI. |
 | -w, --workers                                 | [iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest) |
-
+| -n, --device-name [name]                                 | Override the device name specified in a configuration. Useful for running a single build configuration on multiple devices. |
 > NOTE: such log levels as `silly` and `wss` are deprecated since detox@8.1.0 and will be removed in 9.0.0.
 
 ### build

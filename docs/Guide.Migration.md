@@ -5,6 +5,42 @@ title: Migration Guide
 
 We are improving detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes.
 
+## Migrating from Detox 8.x.x to 9.x.x
+
+Detox 9.0.0 brings latest Espresso (3.0.2), and React Native 56 support on Android.
+Espresso 3.0.2 has a few mandatory dependency changes, which break the current setup for Detox users on Android.
+
+Use this to diff to upgrade your dependencies, and follow Android Studio's in-editor guidance/lint support.
+
+`android/app/build.gradle`
+
+```diff
+
+dependencies {
+-   implementation "com.android.support:appcompat-v7:27.0.2"
++   implementation "com.android.support:appcompat-v7:27.1.1"
+    implementation "com.facebook.react:react-native:+"  // From node_modules
+    androidTestImplementation(project(path: ":detox"))
+    androidTestImplementation 'junit:junit:4.12'
+-   androidTestImplementation 'com.android.support.test:runner:1.0.1'
+-   androidTestImplementation 'com.android.support.test:rules:1.0.1'
++   androidTestImplementation 'com.android.support.test:runner:1.0.2'
++   androidTestImplementation 'com.android.support.test:rules:1.0.2'
+```
+
+`android/build.gradle`
+
+```diff
+dependencies {
+-   classpath 'com.android.tools.build:gradle:3.0.1'
++   classpath 'com.android.tools.build:gradle:3.1.4'
+}
+```
+
+An example for the above changes can be found on [`demo-react-native` project](https://github.com/wix/detox/pull/914/files#diff-a4582798f3b7df5ccd62283b37b5573e)
+
+More details about Espresso dependencies [here](https://developer.android.com/training/testing/espresso/setup)
+
 ## Migrating from Detox 7.x.x to 8.x.x
 
 Detox 8.x.x brings support for test artifacts (videos, screenshot, logs), and to learn more about it you can refer to [Artifacts documentation](APIRef.Artifacts.md) and to [Detox CLI documentation](APIRef.DetoxCLI.md).
@@ -18,6 +54,7 @@ Detox 8 introduces adapters for both Mocha and Jest, wrapping the original `deto
 you are encouraged to reuse the examples of `./e2e/init.js` for  [mocha](/examples/demo-react-native/e2e/init.js) and [jest](/examples/demo-react-native-jest/e2e/init.js). The gist is brought in the following sections:
 
 ##### *Mocha*
+
 ```js
 const detox = require('detox');
 const config = require('../package.json').detox;
@@ -67,7 +104,7 @@ beforeAll(async () => {
   await detox.init(config);
 });
 
-beforeEach(async function() {
+beforeEach(async () => {
   await adapter.beforeEach();
 });
 
@@ -244,7 +281,7 @@ The new configuration holds a dictionary of `configurations`.
 You will now be able to run builds and tests from your command line `detox build` and `detox test`, read more about CLI tools [here]()
 
 ## Migrating from Detox 3.x.x to 4.x.x
-If you have integrated with detox in version 3.x.x, you will need to clean your project from previously generated targets.
+If you have integrated with Detox in version 3.x.x, you will need to clean your project from previously generated targets.
 
 * Use the provided `cleanup_4.0.rb` to remove unneeded changes made with Detox 4.x.x.
 

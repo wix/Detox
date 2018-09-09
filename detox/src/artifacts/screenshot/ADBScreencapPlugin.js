@@ -11,7 +11,7 @@ class ADBScreencapPlugin extends ScreenshotArtifactPlugin {
 
   createTestArtifact() {
     const adb = this._adb;
-    const deviceId = this.api.getDeviceId();
+    const deviceId = this.context.deviceId;
     const pathToScreenshotOnDevice = this._devicePathBuilder.buildTemporaryArtifactPath('.png');
 
     return new Artifact({

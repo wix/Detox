@@ -81,7 +81,8 @@ void WXFixupIdlingResourceClasses()
 						 CLS_STR(GREYTimedIdlingResource)					: @"Timed",
 						 @"GREYUIWebViewIdlingResource"						: @"WebView",
 						 CLS_STR(WXJSTimerObservationIdlingResource)		: @"JavaScript Timers",
-						 CLS_STR(WXJSTimerObservationIdlingResource)		: @"JavaScript Timers"};
+						 CLS_STR(WXRNLoadIdlingResource)					: @"ReactNative JS Loading",
+						 };
 		
 		_prettyPrinters = @{CLS_STR(GREYAppStateTracker)						: ^ (id tracker)	{ return _prettyPrintAppStateTracker(tracker); },
 							CLS_STR(GREYDispatchQueueIdlingResource)			: ^ (id queue)		{ return _prettyPrintDispatchQueueIdlingResource(queue); },
@@ -91,7 +92,9 @@ void WXFixupIdlingResourceClasses()
 							CLS_STR(GREYTimedIdlingResource)					: ^ (id timed)		{ return _prettyPrintTimedIdlingResource(timed); },
 							@"GREYUIWebViewIdlingResource"						: ^ (id webview)	{ return _prettyPrintWebViewIdlingResource(webview); },
 							CLS_STR(WXJSTimerObservationIdlingResource)			: ^ (id jsTimers)	{ return _prettyPrintJSTimerObservationIdlingResource(jsTimers); },
-							CLS_STR(WXRunLoopIdlingResource)					: ^ (id runLoop)	{ return _prettyPrintRunLoopIdlingResource(runLoop); }};
+							CLS_STR(WXRunLoopIdlingResource)					: ^ (id runLoop)	{ return _prettyPrintRunLoopIdlingResource(runLoop); },
+							CLS_STR(WXRNLoadIdlingResource)						: ^ (id rnLoad)		{ return _prettyPrintRNLoadIdlingResource(rnLoad); },
+							};
 		
 		WXFixupIdlingResourceClasses();
 	});
