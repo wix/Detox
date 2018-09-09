@@ -99,16 +99,19 @@ describe('Device', () => {
       {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"}, undefined);
   });
 
-  it('launchApp({language}) should launch app with a specific language', async () => {
+  it('launchApp({languageAndLocale}) should launch app with a specific language/locale', async () => {
     device = validDevice();
 
-    const language = 'es-MX';
+    const languageAndLocale = {
+      language: 'es-MX',
+      locale: 'es-MX'
+    };
 
-    await device.launchApp({language});
+    await device.launchApp({languageAndLocale});
 
     expect(device.deviceDriver.launchApp).toHaveBeenCalledWith(device._deviceId,
       device._bundleId,
-      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"}, language);
+      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test"}, languageAndLocale);
   });
 
   it(`relaunchApp()`, async () => {
