@@ -29,37 +29,37 @@ describe('Device', () => {
   //   await expect(element(by.text('Hello!!!'))).toBeVisible();
   // });
 
-  // it('launchApp({newInstance: true}) + sendToHome() + launchApp() - should bring up previous instance', async () => {
-  //   await device.launchApp({newInstance: true});
-  //   await element(by.text('Sanity')).tap();
-  //   await element(by.text('Say Hello')).tap();
-  //   await device.sendToHome();
-  //   await device.launchApp();
+  it('launchApp({newInstance: true}) + sendToHome() + launchApp() - should bring up previous instance', async () => {
+    await device.launchApp({newInstance: true});
+    await element(by.text('Sanity')).tap();
+    await element(by.text('Say Hello')).tap();
+    await device.sendToHome();
+    await device.launchApp();
 
-  //   await expect(element(by.text('Hello!!!'))).toBeVisible();
-  // });
-
-  it('launchApp in a different language', async () => {
-    let languageAndLocale = {
-      language: "es-MX",
-      locale: "es-MX"
-    };
-
-    await device.launchApp({newInstance: true, languageAndLocale});
-    await element(by.text('Language')).tap();
-    await expect(element(by.text(`Current locale: ${languageAndLocale.locale}`))).toBeVisible();
-    await expect(element(by.text(`Current language: ${languageAndLocale.language}`))).toBeVisible();
-
-    languageAndLocale = {
-      language: "en-US",
-      locale: "en-US"
-    };
-
-    await device.launchApp({newInstance: true, languageAndLocale});
-    await element(by.text('Language')).tap();
-    await expect(element(by.text(`Current locale: ${languageAndLocale.locale}`))).toBeVisible();
-    await expect(element(by.text(`Current language: ${languageAndLocale.language}`))).toBeVisible();
+    await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
+
+  // it('launchApp in a different language', async () => {
+  //   let languageAndLocale = {
+  //     language: "es-MX",
+  //     locale: "es-MX"
+  //   };
+
+  //   await device.launchApp({newInstance: true, languageAndLocale});
+  //   await element(by.text('Language')).tap();
+  //   await expect(element(by.text(`Current locale: ${languageAndLocale.locale}`))).toBeVisible();
+  //   await expect(element(by.text(`Current language: ${languageAndLocale.language}`))).toBeVisible();
+
+  //   languageAndLocale = {
+  //     language: "en-US",
+  //     locale: "en-US"
+  //   };
+
+  //   await device.launchApp({newInstance: true, languageAndLocale});
+  //   await element(by.text('Language')).tap();
+  //   await expect(element(by.text(`Current locale: ${languageAndLocale.locale}`))).toBeVisible();
+  //   await expect(element(by.text(`Current language: ${languageAndLocale.language}`))).toBeVisible();
+  // });
 
   // it('resetContentAndSettings() + install() + relaunch() - should tap successfully', async () => {
   //   await device.resetContentAndSettings();
