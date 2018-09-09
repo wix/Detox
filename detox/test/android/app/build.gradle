@@ -60,6 +60,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-device-info')
     implementation "com.android.support:appcompat-v7:27.1.1"
 
     fromSourceImplementation(project(path: ":ReactAndroid"))
