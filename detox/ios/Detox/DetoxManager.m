@@ -101,10 +101,8 @@ static void detoxConditionalInit()
 
 - (void)_appDidLaunch:(NSNotification*)note
 {
-	[EarlGrey detox_safeExecuteSync:^{
 		self.isReady = YES;
 		[self _sendGeneralReadyMessage];
-	}];
 }
 
 - (void)_sendGeneralReadyMessage
