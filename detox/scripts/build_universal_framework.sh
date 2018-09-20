@@ -19,14 +19,14 @@ echo TEMP_DIR = "${TEMP_DIR}"
 
 # Step 1. Build Device and Simulator versions
 
-BUILD_IOS=`xcodebuild -project "${PROJECT}" -scheme Detox ONLY_ACTIVE_ARCH=NO -configuration "${CONFIGURATION}" -arch arm64 -sdk iphoneos VALID_ARCHS=arm64 -showBuildSettings  | awk -F= '/TARGET_BUILD_DIR/{x=$NF; gsub(/^[ \t]+|[ \t]+$/,"",x); print x}'`
-BUILD_SIM=`xcodebuild -project "${PROJECT}" -scheme Detox -configuration "${CONFIGURATION}" -arch x86_64 -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO VALID_ARCHS=x86_64 -showBuildSettings  | awk -F= '/TARGET_BUILD_DIR/{x=$NF; gsub(/^[ \t]+|[ \t]+$/,"",x); print x}'`
+BUILD_IOS=`xcodebuild -project "${PROJECT}" -UseNewBuildSystem=NO -scheme Detox ONLY_ACTIVE_ARCH=NO -configuration "${CONFIGURATION}" -arch arm64 -sdk iphoneos VALID_ARCHS=arm64 -showBuildSettings  | awk -F= '/TARGET_BUILD_DIR/{x=$NF; gsub(/^[ \t]+|[ \t]+$/,"",x); print x}'`
+BUILD_SIM=`xcodebuild -project "${PROJECT}" -UseNewBuildSystem=NO -scheme Detox -configuration "${CONFIGURATION}" -arch x86_64 -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO VALID_ARCHS=x86_64 -showBuildSettings  | awk -F= '/TARGET_BUILD_DIR/{x=$NF; gsub(/^[ \t]+|[ \t]+$/,"",x); print x}'`
 
 echo ${BUILD_IOS}
 echo ${BUILD_SIM}
 
-xcodebuild -project "${PROJECT}" -scheme Detox ONLY_ACTIVE_ARCH=NO -configuration "${CONFIGURATION}" -arch arm64 -sdk iphoneos build VALID_ARCHS=arm64
-xcodebuild -project "${PROJECT}" -scheme Detox -configuration "${CONFIGURATION}" -arch x86_64 -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO build VALID_ARCHS=x86_64
+xcodebuild -project "${PROJECT}" -UseNewBuildSystem=NO -scheme Detox ONLY_ACTIVE_ARCH=NO -configuration "${CONFIGURATION}" -arch arm64 -sdk iphoneos build VALID_ARCHS=arm64
+xcodebuild -project "${PROJECT}" -UseNewBuildSystem=NO -scheme Detox -configuration "${CONFIGURATION}" -arch x86_64 -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO build VALID_ARCHS=x86_64
 
 # Step 2. Copy the framework structure (from iphoneos build) to the universal folder
 
