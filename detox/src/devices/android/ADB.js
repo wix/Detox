@@ -2,6 +2,7 @@ const _ = require('lodash');
 const path = require('path');
 const {execWithRetriesAndLogs, spawnAndLog} = require('../../utils/exec');
 const {escape} = require('../../utils/pipeCommands');
+const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const EmulatorTelnet = require('./EmulatorTelnet');
 const Environment = require('../../utils/environment');
 
@@ -89,15 +90,25 @@ class ADB {
   }
 
   async now(deviceId) {
-    return this.shell(deviceId, `date +"%Y-%m-%d %T.000"`);
+    return this.shell(deviceId, `date +"%m-%d %T.000"`);
   }
 
   async install(deviceId, apkPath) {
     const apiLvl = await this.apiLevel(deviceId);
+
+    let childProcess;
     if (apiLvl >= 24) {
-      await this.adbCmd(deviceId, `install -r -g ${apkPath}`);
+      childProcess = await this.adbCmd(deviceId, `install -r -g ${apkPath}`);
     } else {
-      await this.adbCmd(deviceId, `install -rg ${apkPath}`);
+      childProcess = await this.adbCmd(deviceId, `install -rg ${apkPath}`);
+    }
+
+    const [failure] = (childProcess.stdout || '').match(/^Failure \[.*\]$/m) || [];
+    if (failure) {
+      throw new DetoxRuntimeError({
+        message: `Failed to install app on ${this.devices()}: ${apkPath}`,
+        debugInfo: failure,
+      });
     }
   }
 
