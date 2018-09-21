@@ -141,8 +141,9 @@ class ADB {
     return Number(stdout.slice(0, stdout.indexOf(' ')));
   }
 
-  async isFileOpen(deviceId, filename) {
-    const openedByProcesses = await this.shell(deviceId, `lsof | grep -e "${escape.inQuotedString(filename)}" || true`);
+  async lsof(deviceId, pid) {
+    const pidParam = ((await this.apiLevel(deviceId)) >= 24) ? `-p ${pid}` : `${pid}`;
+    const openedByProcesses = await this.shell(deviceId, `lsof ${pidParam} || true`);
     return openedByProcesses.length > 0;
   }
 
@@ -156,6 +157,10 @@ class ADB {
   }
 
   async apiLevel(deviceId) {
+    if (this._cachedApiLevels.has(deviceId)) {
+      return this._cachedApiLevels.get(deviceId);
+    }
+
     const lvl = Number(await this.shell(deviceId, `getprop ro.build.version.sdk`));
     this._cachedApiLevels.set(deviceId, lvl);
 

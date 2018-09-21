@@ -48,11 +48,13 @@ class ADBLogcatRecording extends Artifact {
       await this._waitUntilLogFileIsCreated;
     } finally {
       if (this.processPromise) {
+        const pid = this.processPromise.childProcess.pid;
         await interruptProcess(this.processPromise);
         this.processPromise = null;
 
         this._waitWhileLogIsOpenedByLogcat = sleep(300).then(() => {
-          return retry(() => this._assertLogIsNotOpenedByApps());
+          // NOTE: see if we really need this check
+          return retry(() => this._assertLogIsNotOpenedByProcess(pid));
         });
       }
     }
@@ -79,8 +81,12 @@ class ADBLogcatRecording extends Artifact {
     }
   }
 
-  async _assertLogIsNotOpenedByApps() {
-    const isFileOpen = await this.adb.isFileOpen(this.deviceId, this.pathToLogOnDevice);
+  async _assertLogIsNotOpenedByProcess(pid) {
+    if (!pid) {
+      return;
+    }
+
+    const isFileOpen = await this.adb.lsof(this.deviceId, pid);
 
     if (isFileOpen) {
       throw new DetoxRuntimeError({
