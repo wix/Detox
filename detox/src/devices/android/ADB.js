@@ -93,6 +93,14 @@ class ADB {
     return this.shell(deviceId, `date +"%m-%d %T.000"`);
   }
 
+  async isPackageInstalled(deviceId, packageId) {
+    const output = await this.shell(deviceId, `pm list packages ${packageId}`);
+    const packageRegexp = new RegExp(`^package:${escape.inQuotedRegexp(packageId)}$`, 'm');
+    const isInstalled = packageRegexp.test(output);
+
+    return isInstalled;
+  }
+
   async install(deviceId, apkPath) {
     const apiLvl = await this.apiLevel(deviceId);
 
