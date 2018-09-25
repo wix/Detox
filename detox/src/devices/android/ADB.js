@@ -141,12 +141,6 @@ class ADB {
     return Number(stdout.slice(0, stdout.indexOf(' ')));
   }
 
-  async lsof(deviceId, pid) {
-    const pidParam = ((await this.apiLevel(deviceId)) >= 24) ? `-p ${pid}` : `${pid}`;
-    const openedByProcesses = await this.shell(deviceId, `lsof ${pidParam} || true`);
-    return openedByProcesses.length > 0;
-  }
-
   async isBootComplete(deviceId) {
     try {
       const bootComplete = await this.shell(deviceId, `getprop dev.bootcomplete`);
