@@ -1,5 +1,17 @@
 # Change Log
 
+## [9.0.3](https://github.com/wix/detox/tree/9.0.3) (2018-09-26)
+[Full Changelog](https://github.com/wix/detox/compare/9.0.2...9.0.3)
+
+**Fixed Bugs**
+
+- Regex for Android bundle id causing failures [\#924](https://github.com/wix/detox/issues/924)
+
+**Merged Pull Requests**
+
+- hotfix: legacy build workaround to fix monorepo build on XCode 10 [\#945](https://github.com/wix/detox/pull/945) ([noomorph](https://github.com/noomorph))
+- fix: ADB.pidof integration issue with grep and CRLF edge case [\#927](https://github.com/wix/detox/pull/927) ([noomorph](https://github.com/noomorph))
+
 ## [9.0.2](https://github.com/wix/detox/tree/9.0.2) (2018-09-24)
 [Full Changelog](https://github.com/wix/detox/compare/9.0.1...9.0.2)
 
