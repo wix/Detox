@@ -54,6 +54,14 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
   //  log.error(`${_operationCounter}: stderr:`, result.stderr);
   //}
 
+  if (typeof result.stdout === 'string') {
+    result.stdout = result.stdout.replace(/\r\n/g, '\n');
+  }
+
+  if (typeof result.stderr === 'string') {
+    result.stderr = result.stderr.replace(/\r\n/g, '\n');
+  }
+
   return result;
 }
 
