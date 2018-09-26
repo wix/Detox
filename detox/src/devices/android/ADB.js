@@ -114,7 +114,7 @@ class ADB {
     const [failure] = (childProcess.stdout || '').match(/^Failure \[.*\]$/m) || [];
     if (failure) {
       throw new DetoxRuntimeError({
-        message: `Failed to install app on ${this.devices()}: ${apkPath}`,
+        message: `Failed to install app on ${deviceId}: ${apkPath}`,
         debugInfo: failure,
       });
     }
