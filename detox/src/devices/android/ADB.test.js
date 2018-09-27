@@ -45,6 +45,17 @@ describe('ADB', () => {
     expect(exec).toHaveBeenCalledTimes(1);
   });
 
+  it(`setLocation`, async () => {
+    const deviceId = 'aDeviceId';
+    const lat = 30;
+    const lon = -70;
+    jest.spyOn(adb, 'emu');
+
+    await adb.setLocation(deviceId, lat, lon);
+
+    expect(adb.emu).toBeCalledWith(deviceId, 'geo fix -70 30');
+  })
+
   it(`pidof (success)`, async () => {
     jest.spyOn(adb, 'shell').mockImplementation(async () =>
       `u0_a19        2199  1701 3554600  70264 0                   0 s com.google.android.ext.services `);
@@ -163,4 +174,3 @@ describe('ADB', () => {
     expect(result).toEqual(expectedRunner);
   });
 });
-

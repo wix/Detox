@@ -65,7 +65,7 @@ class EmulatorDriver extends AndroidDriver {
     }
 
     if (strict) {
-      throw new Error(`Could not find '${avdName}' on the currently ADB attached devices, 
+      throw new Error(`Could not find '${avdName}' on the currently ADB attached devices,
       try restarting adb 'adb kill-server && adb start-server'`);
     }
 
@@ -78,7 +78,7 @@ class EmulatorDriver extends AndroidDriver {
     if (!avds) {
       const avdmanagerPath = path.join(Environment.getAndroidSDKPath(), 'tools', 'bin', 'avdmanager');
 
-      throw new Error(`Could not find any configured Android Emulator. 
+      throw new Error(`Could not find any configured Android Emulator.
       Try creating a device first, example: ${avdmanagerPath} create avd --force --name Nexus_5X_API_24 --abi x86 --package 'system-images;android-24;google_apis_playstore;x86' --device "Nexus 5X"
       or go to https://developer.android.com/studio/run/managing-avds.html for details on how to create an Emulator.`);
     }
@@ -115,6 +115,10 @@ class EmulatorDriver extends AndroidDriver {
     await telnet.connect(port);
     await telnet.kill();
     await this.emitter.emit('shutdownDevice', { deviceId });
+  }
+
+  async setLocation(deviceId, lat, lon) {
+    await this.adb.setLocation(deviceId, lat, lon);
   }
 }
 

@@ -128,6 +128,10 @@ class ADB {
     await this.shell(deviceId, `am force-stop ${appId}`);
   }
 
+  async setLocation(deviceId, lat, lon) {
+    await this.emu(deviceId, `geo fix ${lon} ${lat}`);
+  }
+
   async pidof(deviceId, bundleId) {
     const bundleIdRegex = escape.inQuotedRegexp(bundleId) + '$';
 
@@ -251,6 +255,10 @@ class ADB {
 
   async shell(deviceId, cmd, options) {
     return (await this.adbCmd(deviceId, `shell "${escape.inQuotedString(cmd)}"`, options)).stdout.trim();
+  }
+
+  async emu(devicedId, cmd, options) {
+    return (await this.adbCmd(deviceId, `emu "${escape.inQuotedString(cmd)}"`, options)).stdout.trim()
   }
 
   async adbCmd(deviceId, params, options) {
