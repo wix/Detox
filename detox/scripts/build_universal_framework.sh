@@ -14,7 +14,7 @@ function remove_arch() {
 mkdir -p "${OUTPUT_DIR}"
 rm -fr "${OUTPUT_DIR}/${PROJECT_NAME}.framework"
 
-TEMP_DIR=$(mktemp -d -t DetoxBuild)
+TEMP_DIR=$(mktemp -d "$TMPDIR"DetoxBuild.XXXX)
 echo TEMP_DIR = "${TEMP_DIR}"
 
 # Step 1. Build Device and Simulator versions
