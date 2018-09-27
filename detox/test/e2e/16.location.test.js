@@ -45,5 +45,5 @@ describe('location', () => {
 
     await expect(element(by.text('Latitude: 20.1'))).toBeVisible();
     await expect(element(by.text('Longitude: 20.2'))).toBeVisible();
-  })
+  });
 });
