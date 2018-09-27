@@ -106,7 +106,7 @@ class AppleSimUtils {
       trying: `Installing ${absPath}...`,
       successful: `${absPath} installed`
     };
-    await this._execSimctl({ cmd: `install ${udid} "${absPath}"`, statusLogs });
+    await this._execSimctl({ cmd: `install ${udid} "${absPath}"`, statusLogs, retries: 2 });
   }
 
   async uninstall(udid, bundleId) {
