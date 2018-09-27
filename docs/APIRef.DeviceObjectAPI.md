@@ -30,10 +30,10 @@ title: The `device` Object
 ### `device.launchApp(params)`
 Launch the app defined in the current [`configuration`](APIRef.Configuration.md).
 
-**Options:** 
+**Options:**
 
 ##### 1. Restart the app
-Terminate the app and launch it again. 
+Terminate the app and launch it again.
 If set to `false`, the simulator will try to bring app from background, if the app isn't running, it will launch a new instance. default is `false`
 
 ```js
@@ -41,7 +41,7 @@ await device.launchApp({newInstance: true});
 ```
 
 ##### 2. Set runtime permissions
-Grant or deny runtime permissions for your application. 
+Grant or deny runtime permissions for your application.
 
 ```js
 await device.launchApp({permissions: {calendar: 'YES'}});
@@ -112,7 +112,7 @@ This will launch the app from background and handle the activity.
 
 Read more in [Mocking User Activity](APIRef.MockingUserActivity.md) section.
 
-##### 6. Launch into a fresh installation 
+##### 6. Launch into a fresh installation
 A flag that enables relaunching into a fresh installation of the app (it will uninstall and install the binary again), default is `false`.
 
 ```js
@@ -204,8 +204,10 @@ Currently only available in the iOS Simulator.<br>
 Check out Detox's [own test suite](../detox/test/e2e/06.device-orientation.test.js)
 
 ### `device.setLocation(lat, lon)`
->Note: `setLocation` is dependent on `fbsimctl`. if `fbsimctl` is not installed, the command will fail, asking for it to be installed.
-Sets the simulator location to the given latitude and longitude.
+>Note:
+On iOS `setLocation` is dependent on `fbsimctl`. if `fbsimctl` is not installed, the command will fail, asking for it to be installed.
+On Android `setLocation` is dependent on your tests running on the Android Emulator (with the correct permissions set in your manifest), **not** on a physical device.
+Sets the simulator/emulator location to the given latitude and longitude.
 ```js
 await device.setLocation(32.0853, 34.7818);
 ```
