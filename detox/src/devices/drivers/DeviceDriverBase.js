@@ -99,6 +99,10 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
+  async dismissKeyboard(deviceId) {
+    return await Promise.resolve('');
+  }
+
   async setURLBlacklist(urlList) {
     return await Promise.resolve('');
   }
