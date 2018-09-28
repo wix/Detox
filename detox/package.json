@@ -1,10 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
-  },
-  "version": "9.0.1",
+  "version": "9.0.4",
   "bin": {
     "detox": "local-cli/detox.js"
   },
@@ -49,6 +46,7 @@
     "lodash": "^4.17.5",
     "minimist": "^1.2.0",
     "proper-lockfile": "^3.0.2",
+    "sanitize-filename": "^1.6.1",
     "shell-utils": "^1.0.9",
     "tail": "^1.2.3",
     "telnet-client": "0.15.3",

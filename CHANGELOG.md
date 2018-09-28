@@ -1,5 +1,41 @@
 # Change Log
 
+## [9.0.4](https://github.com/wix/detox/tree/9.0.4) (2018-09-28)
+[Full Changelog](https://github.com/wix/detox/compare/9.0.3...9.0.4)
+
+**Fixed Bugs**
+
+- Failed to load Info.plist from bundle at path [\#954](https://github.com/wix/Detox/issues/954)
+
+**Merged Pull Requests**
+
+- hotfix: added a retry on install \(XCode 10 issue\) [\#953](https://github.com/wix/Detox/pull/953) ([noomorph](https://github.com/noomorph))
+
+## [9.0.3](https://github.com/wix/detox/tree/9.0.3) (2018-09-26)
+[Full Changelog](https://github.com/wix/detox/compare/9.0.2...9.0.3)
+
+**Fixed Bugs**
+
+- Regex for Android bundle id causing failures [\#924](https://github.com/wix/detox/issues/924)
+
+**Merged Pull Requests**
+
+- hotfix: legacy build workaround to fix monorepo build on XCode 10 [\#945](https://github.com/wix/detox/pull/945) ([noomorph](https://github.com/noomorph))
+- fix: ADB.pidof integration issue with grep and CRLF edge case [\#927](https://github.com/wix/detox/pull/927) ([noomorph](https://github.com/noomorph))
+
+## [9.0.2](https://github.com/wix/detox/tree/9.0.2) (2018-09-24)
+[Full Changelog](https://github.com/wix/detox/compare/9.0.1...9.0.2)
+
+**Closed Issues**
+
+- Unable to install Detox 8.2.3 using Xcode 10 beta 6 [\#913](https://github.com/wix/detox/issues/913)
+- Task :detox:compileMinReactNative46DebugJavaWithJavac FAILED [\#919](https://github.com/wix/detox/issues/919)
+
+**Merged Pull Requests**
+
+- Use legacy build system to build framework [\#940](https://github.com/wix/detox/pull/940) ([karanjthakkar](https://github.com/karanjthakkar))
+- \[Android\] Remove @override annotation to support RN 0.53-0.55 on detox 9.0 [\#922](https://github.com/wix/detox/pull/922) ([JamesWatling](https://github.com/JamesWatling))
+
 ## [9.0.1](https://github.com/wix/detox/tree/9.0.1) (2018-09-01)
 [Full Changelog](https://github.com/wix/detox/compare/8.2.3...9.0.1)
 

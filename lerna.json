@@ -3,16 +3,18 @@
   "packages": [
     "detox",
     "detox-cli",
+    "detox/test",
     "examples/demo-native-android",
     "examples/demo-native-ios",
     "examples/demo-react-native",
     "examples/demo-react-native-jest",
-    "detox/test",
     "generation"
   ],
-  "commands": {
+  "version": "9.0.4",
+  "npmClient": "npm",
+  "command": {
     "publish": {
-      "ignore": [
+      "ignoreChanges": [
         "demo-react-native-jest",
         "detox-demo-native-android",
         "detox-demo-native-ios",
@@ -21,7 +23,5 @@
         "generation"
       ]
     }
-  },
-  "version": "9.0.1",
-  "npmClient": "npm"
+  }
 }
