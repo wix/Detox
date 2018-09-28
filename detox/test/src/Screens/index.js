@@ -7,6 +7,7 @@ import StressScreen from './StressScreen';
 import SwitchRootScreen from './SwitchRootScreen';
 import TimeoutsScreen from './TimeoutsScreen';
 import Orientation from './Orientation';
+import DismissKeyboard from './DismissKeyboard';
 import Permissions from './Permissions';
 import NetworkScreen from './NetworkScreen';
 import AnimationsScreen from './AnimationsScreen';
@@ -24,6 +25,7 @@ export {
   SwitchRootScreen,
   TimeoutsScreen,
   Orientation,
+  DismissKeyboard,
   Permissions,
   NetworkScreen,
   AnimationsScreen,
