@@ -1,5 +1,16 @@
 # Change Log
 
+## [9.0.4](https://github.com/wix/detox/tree/9.0.4) (2018-09-28)
+[Full Changelog](https://github.com/wix/detox/compare/9.0.3...9.0.4)
+
+**Fixed Bugs**
+
+- Failed to load Info.plist from bundle at path [\#954](https://github.com/wix/Detox/issues/954)
+
+**Merged Pull Requests**
+
+- hotfix: added a retry on install \(XCode 10 issue\) [\#953](https://github.com/wix/Detox/pull/953) ([noomorph](https://github.com/noomorph))
+
 ## [9.0.3](https://github.com/wix/detox/tree/9.0.3) (2018-09-26)
 [Full Changelog](https://github.com/wix/detox/compare/9.0.2...9.0.3)
 
