@@ -135,6 +135,48 @@ Disable touch indicators on iOS.
 await device.launchApp({disableTouchIndicators: true});
 ```
 
+##### 9. Launch with a specific language (iOS only)
+Launch the app with a specific system language
+
+Information about accepted values can be found [here](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/LanguageandLocaleIDs/LanguageandLocaleIDs.html).
+
+```js
+await device.launchApp({
+  languageAndLocale: {
+    language: "es-MX",
+    locale: "es-MX"
+  }
+});
+```
+
+With this API, you can run sets of e2e tests per language. For example:
+```js
+['es-MX', 'fr-FR', 'pt-BR'].forEach(locale => {
+  describe(`Test suite in ${locale}`, () => {
+
+    beforeAll(async () => {
+      await device.launchApp({
+        newInstance: true,
+        languageAndLocale: {
+          language: locale,
+          locale
+        }
+      });
+    });
+
+
+    it('Test A', () => {
+      
+    })
+
+    it('Test B', () => {
+      
+    })
+
+  });
+});
+```
+
 ### `device.relaunchApp(params)`
 **Deprecated** Use `device.launchApp(params)` instead. This method is now calling `launchApp({newInstance: true})` for backwards compatibility, it will be removed in Detox 6.X.X.<Br>
 Kill and relaunch the app defined in the current [`configuration`](APIRef.Configuration.md).

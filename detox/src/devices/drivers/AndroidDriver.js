@@ -83,7 +83,7 @@ class AndroidDriver extends DeviceDriverBase {
     }
   }
 
-  async launchApp(deviceId, bundleId, launchArgs) {
+  async launchApp(deviceId, bundleId, launchArgs, languageAndLocale) {
     await this.emitter.emit('beforeLaunchApp', { deviceId, bundleId, launchArgs });
 
     if (!this.instrumentationProcess) {

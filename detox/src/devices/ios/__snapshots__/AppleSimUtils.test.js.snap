@@ -132,6 +132,21 @@ Array [
 ]
 `;
 
+exports[`AppleSimUtils launch appends language and locale flags 1`] = `
+Array [
+  Array [
+    "/bin/cat /dev/null >/Users/detox/Library/Developer/CoreSimulator/Devices/udid/data/tmp/detox.last_launch_app_log.out 2>/Users/detox/Library/Developer/CoreSimulator/Devices/udid/data/tmp/detox.last_launch_app_log.err && SIMCTL_CHILD_DYLD_INSERT_LIBRARIES=\\"undefined/Detox\\" /usr/bin/xcrun simctl launch --stdout=/tmp/detox.last_launch_app_log.out --stderr=/tmp/detox.last_launch_app_log.err udid theBundleId --args  -AppleLanguages \\"(es-MS)\\" -AppleLocale en-US",
+    undefined,
+    Object {
+      "successful": "theBundleId launched. The stdout and stderr logs were recreated, you can watch them with:
+        tail -F /Users/detox/Library/Developer/CoreSimulator/Devices/udid/data/tmp/detox.last_launch_app_log.{out,err}",
+      "trying": "Launching theBundleId...",
+    },
+    1,
+  ],
+]
+`;
+
 exports[`AppleSimUtils launch asks environment for frameworkPath 1`] = `
 Array [
   Array [
