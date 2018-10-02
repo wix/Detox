@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const exec = require('child-process-promise').exec;
 
 //TODO: Ignoring the test in CI until fbsimctl supports Xcode 9
@@ -12,6 +13,13 @@ async function isFbsimctlInstalled() {
 }
 
 describe('location', () => {
+  let lat, long;
+
+  beforeEach(() => {
+    lat = _.random(-100, 100) + 0.125;
+    long = _.random(-100, 100) + 0.25;
+  });
+
   it(':ios: Location should be unavailable', async () => {
     if (!await isFbsimctlInstalled()) {
       return;
@@ -27,23 +35,24 @@ describe('location', () => {
       return;
     }
     await device.relaunchApp({ permissions: { location: 'always' } });
-    await device.setLocation(20.1, 20.25);
+    await device.setLocation(lat, long);
+
     await element(by.text('Location')).tap();
     await element(by.id('getLocationButton')).tap();
-    await waitFor(element(by.text('Latitude: 20.1'))).toBeVisible().withTimeout(3000);
+    await waitFor(element(by.text(`Latitude: ${lat}`))).toBeVisible().withTimeout(3000);
 
-    await expect(element(by.text('Latitude: 20.1'))).toBeVisible();
-    await expect(element(by.text('Longitude: 20.25'))).toBeVisible();
+    await expect(element(by.text(`Latitude: ${lat}`))).toBeVisible();
+    await expect(element(by.text(`Longitude: ${long}`))).toBeVisible();
   });
 
   it(':android: Should receive location (20,20)', async () => {
     await device.relaunchApp({ permissions: { location: 'always' } });
-    await device.setLocation(20.1, 20.25);
+    await device.setLocation(lat, long);
     await element(by.text('Location')).tap();
     await element(by.id('getLocationButton')).tap();
-    await waitFor(element(by.text('Latitude: 20.1'))).toBeVisible().withTimeout(9000);
+    await waitFor(element(by.text(`Latitude: ${lat}`))).toBeVisible().withTimeout(3000);
 
-    await expect(element(by.text('Latitude: 20.1'))).toBeVisible();
-    await expect(element(by.text('Longitude: 20.25'))).toBeVisible();
+    await expect(element(by.text(`Latitude: ${lat}`))).toBeVisible();
+    await expect(element(by.text(`Longitude: ${long}`))).toBeVisible();
   });
 });
