@@ -104,12 +104,31 @@ Read the [Jest integration guide](Guide.Jest.md) for more details and gotchas.
 npm install mocha --save-dev
 ```
 
-#### 3. Add Detox config to package.json
+#### 3. Add Detox config
+By default, detox will search for the configuration the `package.json`.   
+You can also write your config in a `.detoxrc` file if you prefer to separate between the configuration and the app's `package.json`.
+Another option is to create a config file and supply it when calling `detox init`.
+Either way the config should look like this: 
 
-The basic configuration for Detox should be in your `package.json` file under the `detox` property:
+##### in package.json
 
 ```json
 "detox": {
+  "configurations": {
+    "ios.sim.debug": {
+      "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
+      "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
+      "type": "ios.simulator",
+      "name": "iPhone 7"
+    }
+  }
+}
+```
+
+##### in .detoxrc or any config file
+
+```json
+{
   "configurations": {
     "ios.sim.debug": {
       "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",

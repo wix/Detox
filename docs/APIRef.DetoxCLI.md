@@ -49,6 +49,7 @@ Initiating your test suite
 | -l, --loglevel [value]                        | Log level: fatal, error, warn, info, verbose, trace |
 | --no-color                                    | Disable colors in log output |
 | -c, -configuration \<device config\>          | Select a device configuration from your defined configurations,if not supplied, and there's only one configuration, detox will default to it |
+| --config-path \<configPath\> |  Select a device config-file path, if not supplied, detox will default to the package.json, and if not found there, detox will fallback to .detoxrc.json |
 | -r, --reuse                                   | Reuse existing installed app (do not delete and re-tall) for a faster run. |
 | -u, --cleanup                                 | Shutdown simulator when test is over, useful for CI ipts, to make sure detox exists cleanly with no residue |
 | -d, --debug-synchronization \<value\>         | When an action/expectation takes a significant amount time use this option to print device synchronization status. The status will be printed if the ion takes more than [value]ms to complete |
@@ -71,6 +72,7 @@ Run a command defined in 'configuration.build'
 | --- | --- |
 | -h, --help                            |  output usage information |
 | -c, --configuration \<device config\> |  Select a device configuration from your defined configurations,if not supplied, and there's only one configuration, detox will default to it |
+| --config-path \<configPath\> |  Select a device config-file path, if not supplied, detox will default to the package.json, and if not found there, detox will fallback to .detoxrc.json |
 
 
 ### run-server

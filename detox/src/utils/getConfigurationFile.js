@@ -1,6 +1,6 @@
 const path = require('path');
 const packageJson = 'package.json';
-const detoxRc = '.detoxrc.json';
+const detoxRc = '.detoxrc';
 
 function getConfigurationFile(configPath) {
     let config;
