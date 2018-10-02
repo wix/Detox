@@ -1,5 +1,7 @@
 package com.wix.detox;
 
+import android.content.Context;
+
 import org.joor.Reflect;
 
 import java.util.HashMap;
@@ -26,7 +28,7 @@ public class ReactNativeCompat {
         return (Integer) VERSION.get("minor");
     }
 
-    public static void waitForReactNativeLoad(Object reactNativeHostHolder) {
+    public static void waitForReactNativeLoad(Context reactNativeHostHolder) {
         if (getMinor() >= 50) {
             ReactNativeSupport.waitForReactNativeLoad(reactNativeHostHolder);
             try {

@@ -98,8 +98,8 @@ describe('TwoSnapshotsPerTestPlugin', () => {
 
       it('should schedule two saving operations and specify itself as an initiator', () => {
         expect(api.requestIdleCallback).toHaveBeenCalledTimes(2);
-        expect(api.requestIdleCallback.mock.calls[0]).toEqual([expect.any(Function), plugin]);
-        expect(api.requestIdleCallback.mock.calls[1]).toEqual([expect.any(Function), plugin]);
+        expect(api.requestIdleCallback.mock.calls[0]).toEqual([expect.any(Function)]);
+        expect(api.requestIdleCallback.mock.calls[1]).toEqual([expect.any(Function)]);
       });
 
       it('should schedule to save and untrack the first artifact', async () => {
@@ -143,7 +143,7 @@ describe('TwoSnapshotsPerTestPlugin', () => {
 
       it('should schedule a discard operation for the first artifact and specify itself as an initiator', () => {
         expect(api.requestIdleCallback).toHaveBeenCalledTimes(1);
-        expect(api.requestIdleCallback.mock.calls[0]).toEqual([expect.any(Function), plugin]);
+        expect(api.requestIdleCallback.mock.calls[0]).toEqual([expect.any(Function)]);
       });
 
       it('should ultimately discard and untrack the first artifact', async () => {

@@ -1,3 +1,4 @@
+const os = require('os');
 const path = require('path');
 const exec = require('child-process-promise').exec;
 const appdatapath = require('./appdatapath');
@@ -32,10 +33,15 @@ function getDeviceLockFilePath() {
   return DEVICE_LOCK_FILE_PATH;
 }
 
+function getHomeDir() {
+  return os.homedir();
+}
+
 module.exports = {
   getDetoxVersion,
   getFrameworkPath,
   getAndroidSDKPath,
   getDetoxLibraryRootPath,
-  getDeviceLockFilePath
+  getDeviceLockFilePath,
+  getHomeDir,
 };

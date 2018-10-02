@@ -110,7 +110,7 @@ RCT_EXPORT_MODULE();
 	[RCTPushNotificationManager didReceiveLocalNotification:notification];
 }
 
-- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(id)restorationHandler
 {
 	if([userActivity.activityType isEqualToString:CSSearchableItemActionType])
 	{

@@ -324,10 +324,10 @@
 			isa = PBXGroup;
 			children = (
 				394767991DBF985400D72256 /* Detox */,
+				39408DEE1FE6368100C20BD5 /* JS */,
 				3928EFA61E47404900C19B6E /* DetoxUserNotificationTests */,
 				394767D61DBF990F00D72256 /* Frameworks */,
 				394767981DBF985400D72256 /* Products */,
-				39408DEE1FE6368100C20BD5 /* JS */,
 			);
 			sourceTree = "<group>";
 			usesTabs = 1;

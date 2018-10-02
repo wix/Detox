@@ -1,10 +1,6 @@
-const process = require('process');
 const _ = require('lodash');
-const tempfile = require('tempfile');
-const cpp = require('child-process-promise');
-const exec = require('../utils/exec');
-const retry = require('../utils/retry');
-const environment = require('../utils/environment');
+const exec = require('../../utils/exec');
+const environment = require('../../utils/environment');
 
 class AppleSimUtils {
   async setPermissions(udid, bundleId, permissionsObj) {
@@ -63,10 +59,21 @@ class AppleSimUtils {
     return device;
   }
 
+  /***
+   * Boots the simulator if it is not booted already.
+   *
+   * @param {String} udid - device id
+   * @returns {Promise<boolean>} true, if device has been booted up from the shutdown state
+   */
   async boot(udid) {
-    if (!await this.isBooted(udid)) {
+    const isBooted = await this.isBooted(udid);
+
+    if (!isBooted) {
       await this._bootDeviceByXcodeVersion(udid);
+      return true;
     }
+
+    return false;
   }
 
   async isBooted(udid) {
@@ -99,7 +106,7 @@ class AppleSimUtils {
       trying: `Installing ${absPath}...`,
       successful: `${absPath} installed`
     };
-    await this._execSimctl({ cmd: `install ${udid} "${absPath}"`, statusLogs });
+    await this._execSimctl({ cmd: `install ${udid} "${absPath}"`, statusLogs, retries: 2 });
   }
 
   async uninstall(udid, bundleId) {
@@ -114,12 +121,12 @@ class AppleSimUtils {
     }
   }
 
-  async launch(udid, bundleId, launchArgs) {
+  async launch(udid, bundleId, launchArgs, languageAndLocale) {
     const frameworkPath = await environment.getFrameworkPath();
     const logsInfo = new LogsInfo(udid);
     const args = this._joinLaunchArgs(launchArgs);
 
-    const result = await this._launchMagically(frameworkPath, logsInfo, udid, bundleId, args);
+    const result = await this._launchMagically(frameworkPath, logsInfo, udid, bundleId, args, languageAndLocale);
     return this._parseLaunchId(result);
   }
 
@@ -167,9 +174,7 @@ class AppleSimUtils {
   }
 
   async resetContentAndSettings(udid) {
-    await this.shutdown(udid);
     await this._execSimctl({ cmd: `erase ${udid}` });
-    await this.boot(udid);
   }
 
   async getXcodeVersion() {
@@ -184,7 +189,10 @@ class AppleSimUtils {
   }
 
   async takeScreenshot(udid, destination) {
-    await this._execSimctl({cmd: `io ${udid} screenshot "${destination}"`});
+    await this._execSimctl({
+      cmd: `io ${udid} screenshot "${destination}"`,
+      silent: destination === '/dev/null',
+    });
   }
 
   recordVideo(udid, destination) {
@@ -196,8 +204,8 @@ class AppleSimUtils {
     return await exec.execWithRetriesAndLogs(bin, options, statusLogs, retries, interval);
   }
 
-  async _execSimctl({ cmd, statusLogs = {}, retries = 1 }) {
-    return await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl ${cmd}`, undefined, statusLogs, retries);
+  async _execSimctl({ cmd, statusLogs = {}, retries = 1, silent = false }) {
+    return await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl ${cmd}`, { silent }, statusLogs, retries);
   }
 
   _parseResponseFromAppleSimUtils(response) {
@@ -229,7 +237,6 @@ class AppleSimUtils {
       await this._bootDeviceMagically(udid);
     }
     await this._execSimctl({ cmd: `bootstatus ${udid}`, retries: 1 });
-    await this.takeScreenshot(udid, '/dev/null').catch(_.noop); // fails but enables further headless screenshotting
   }
 
   async _bootDeviceMagically(udid) {
@@ -243,17 +250,25 @@ class AppleSimUtils {
     return _.map(launchArgs, (v, k) => `${k} ${v}`).join(' ').trim();
   }
 
-  async _launchMagically(frameworkPath, logsInfo, udid, bundleId, args) {
+  async _launchMagically(frameworkPath, logsInfo, udid, bundleId, args, languageAndLocale) {
     const statusLogs = {
       trying: `Launching ${bundleId}...`,
       successful: `${bundleId} launched. The stdout and stderr logs were recreated, you can watch them with:\n` +
       `        tail -F ${logsInfo.absJoined}`
     };
 
-    const launchBin = `/bin/cat /dev/null >${logsInfo.absStdout} 2>${logsInfo.absStderr} && ` +
+    let launchBin = `/bin/cat /dev/null >${logsInfo.absStdout} 2>${logsInfo.absStderr} && ` +
       `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${frameworkPath}/Detox" ` +
       `/usr/bin/xcrun simctl launch --stdout=${logsInfo.simStdout} --stderr=${logsInfo.simStderr} ` +
-      `${udid} ${bundleId} --args ${args}`;
+      `${udid} ${bundleId} --args ${args}`;;
+
+      if (!!languageAndLocale && !!languageAndLocale.language) {
+        launchBin += ` -AppleLanguages "(${languageAndLocale.language})"`;
+      }
+  
+      if (!!languageAndLocale && !!languageAndLocale.locale) {
+        launchBin += ` -AppleLocale ${languageAndLocale.locale}`;
+      }
 
     return await exec.execWithRetriesAndLogs(launchBin, undefined, statusLogs, 1);
   }
@@ -268,7 +283,9 @@ class LogsInfo {
     const logPrefix = '/tmp/detox.last_launch_app_log.';
     this.simStdout = logPrefix + 'out';
     this.simStderr = logPrefix + 'err';
-    const simDataRoot = `${process.env.HOME}/Library/Developer/CoreSimulator/Devices/${udid}/data`;
+
+    const HOME = environment.getHomeDir();
+    const simDataRoot = `${HOME}/Library/Developer/CoreSimulator/Devices/${udid}/data`;
     this.absStdout = simDataRoot + this.simStdout;
     this.absStderr = simDataRoot + this.simStderr;
     this.absJoined = `${simDataRoot}${logPrefix}{out,err}`

@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AsyncEmitter edge cases should fail to subscribe to non-registered events 1`] = `"AsyncEmitter.on() failed to subscribe to a non-existent event: aNotRegisteredEvent"`;
+
+exports[`AsyncEmitter edge cases should fail to unsubscribe from non-registered events 1`] = `"AsyncEmitter.off() failed to unsubscribe from a non-existent event: aNotRegisteredEvent"`;

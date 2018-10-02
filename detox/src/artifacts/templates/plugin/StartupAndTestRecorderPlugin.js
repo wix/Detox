@@ -102,14 +102,14 @@ class StartupAndTestRecorderPlugin extends WholeTestRecorderPlugin {
       const artifactPath = await this.preparePathForStartupArtifact();
       await startupRecording.save(artifactPath);
       this.api.untrackArtifact(startupRecording);
-    }, this);
+    });
   }
 
   _startDiscardingStartupRecording(startupRecording) {
     this.api.requestIdleCallback(async () => {
       await startupRecording.discard();
       this.api.untrackArtifact(startupRecording);
-    }, this);
+    });
   }
 }
 

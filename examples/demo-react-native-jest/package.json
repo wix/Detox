@@ -14,7 +14,7 @@
   "devDependencies": {
     "babel-jest": "21.2.0",
     "babel-preset-react-native": "4.0.0",
-    "detox": "^8.0.0",
+    "detox": "^9.0.0",
     "jest": "21.2.1",
     "react-test-renderer": "16.0.0-beta.5"
   },
@@ -24,13 +24,13 @@
     "configurations": {
       "ios.sim.release": {
         "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/DemoReactNativeJest.app",
-        "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/DemoReactNativeJest.xcodeproj -scheme DemoReactNativeJest -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet",
+        "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/DemoReactNativeJest.xcodeproj -UseNewBuildSystem=NO -scheme DemoReactNativeJest -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet",
         "type": "ios.simulator",
         "name": "iPhone 7 Plus"
       },
       "ios.sim.debug": {
         "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/DemoReactNativeJest.app",
-        "build": "xcodebuild -project ios/DemoReactNativeJest.xcodeproj -scheme DemoReactNativeJest -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
+        "build": "xcodebuild -project ios/DemoReactNativeJest.xcodeproj -UseNewBuildSystem=NO -scheme DemoReactNativeJest -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
         "type": "ios.simulator",
         "name": "iPhone 7 Plus"
       },

@@ -8,6 +8,42 @@ Array [
 ]
 `;
 
+exports[`ArtifactPlugin lifecycle hooks should have .onBootDevice 1`] = `
+Object {
+  "bundleId": "",
+  "deviceId": "testDeviceId",
+  "pid": NaN,
+  "shouldNotBeDeletedFromContext": "extraProperty",
+}
+`;
+
+exports[`ArtifactPlugin lifecycle hooks should have .onLaunchApp 1`] = `
+Object {
+  "bundleId": "testBundleId",
+  "deviceId": "testDeviceId",
+  "pid": 2018,
+  "shouldNotBeDeletedFromContext": "extraProperty",
+}
+`;
+
+exports[`ArtifactPlugin lifecycle hooks should have .onShutdownDevice 1`] = `
+Object {
+  "bundleId": "",
+  "deviceId": "testDeviceId",
+  "pid": NaN,
+  "shouldNotBeDeletedFromContext": "extraProperty",
+}
+`;
+
+exports[`ArtifactPlugin lifecycle hooks should update context on .onBeforeLaunchApp 1`] = `
+Object {
+  "bundleId": "testBundleId",
+  "deviceId": "testDeviceId",
+  "pid": NaN,
+  "shouldNotBeDeletedFromContext": "extraProperty",
+}
+`;
+
 exports[`ArtifactPlugin when enabled if it is disabled with a reason should log warning to log with that reason 1`] = `
 Array [
   Array [

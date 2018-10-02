@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "mocha": "^4.0.0",
-    "detox": "^8.0.0"
+    "detox": "^9.0.0"
   },
   "detox": {}
 }

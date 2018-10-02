@@ -1,19 +1,19 @@
 const path = require('path');
 const fs = require('fs');
-const log = require('../utils/logger').child({ __filename });
+const log = require('../../utils/logger').child({ __filename });
 const DeviceDriverBase = require('./DeviceDriverBase');
-const InvocationManager = require('../invoke').InvocationManager;
-const invoke = require('../invoke');
-const GREYConfigurationApi = require('./../ios/earlgreyapi/GREYConfiguration');
-const GREYConfigurationDetox = require('./../ios/earlgreyapi/GREYConfigurationDetox');
-const EarlyGrey = require('./../ios/earlgreyapi/EarlGrey');
+const InvocationManager = require('../../invoke').InvocationManager;
+const invoke = require('../../invoke');
+const GREYConfigurationApi = require('../../ios/earlgreyapi/GREYConfiguration');
+const GREYConfigurationDetox = require('../../ios/earlgreyapi/GREYConfigurationDetox');
+const EarlyGreyImpl = require('../../ios/earlgreyapi/EarlGreyImpl');
 
 class IosDriver extends DeviceDriverBase {
-  constructor(client) {
-    super(client);
+  constructor(config) {
+    super(config);
 
-    this.expect = require('../ios/expect');
-    this.expect.setInvocationManager(new InvocationManager(client));
+    this.expect = require('../../ios/expect');
+    this.expect.setInvocationManager(new InvocationManager(this.client));
   }
 
   exportGlobals() {
@@ -57,8 +57,7 @@ class IosDriver extends DeviceDriverBase {
   }
 
   async setOrientation(deviceId, orientation) {
-    const call = EarlyGrey.rotateDeviceToOrientationErrorOrNil(invoke.EarlGrey.instance,orientation);
-
+    const call = EarlyGreyImpl.rotateDeviceToOrientationErrorOrNil(invoke.EarlGrey.instance,orientation);
     await this.client.execute(call);
   }
 

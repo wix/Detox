@@ -12,7 +12,7 @@ class ADBScreenrecorderPlugin extends VideoArtifactPlugin {
   createTestRecording() {
     return new ADBScreenrecorderArtifact({
       adb: this._adb,
-      deviceId: this.api.getDeviceId(),
+      deviceId: this.context.deviceId,
       pathToVideoOnDevice: this._devicePathBuilder.buildTemporaryArtifactPath('.mp4'),
     });
   }
