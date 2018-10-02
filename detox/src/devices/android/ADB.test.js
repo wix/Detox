@@ -45,7 +45,7 @@ describe('ADB', () => {
     expect(exec).toHaveBeenCalledTimes(1);
   });
 
-  it(`setLocation`, async () => {
+  it(`sets location both with commas and dots due to the locale issue`, async () => {
     const deviceId = 'aDeviceId';
     const lat = 30.5;
     const lon = -70.5;
@@ -54,6 +54,7 @@ describe('ADB', () => {
     await adb.setLocation(deviceId, lat, lon);
 
     expect(adb.emu).toBeCalledWith(deviceId, 'geo fix -70.5 30.5');
+    expect(adb.emu).toBeCalledWith(deviceId, 'geo fix -70,5 30,5');
   })
 
   it(`pidof (success)`, async () => {
