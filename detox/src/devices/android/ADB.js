@@ -129,7 +129,25 @@ class ADB {
   }
 
   async setLocation(deviceId, lat, lon) {
-    await this.emu(deviceId, `geo fix ${lon} ${lat}`);
+    // NOTE: QEMU for Android for the telnet part relies on C stdlib
+    // function `strtod` which is locale-sensitive, meaning that depending
+    // on user environment you'll have to send either comma-separated
+    // numbers or dot-separated ones.
+    //
+    // See: https://android.googlesource.com/platform/external/qemu/+/ae0eaf51751391abea2639a65200e724131dc3d6/android/console.c#2273
+    //
+    // As by default Node.js is distributed without ICU, the locale issue
+    // becomes tricky to solve across different platforms, that's why
+    // it's easier for us just to send 2 commands in a row, ignoring one
+    // which will obviosuly fail.
+    //
+    // Since `adb emu` commands fail silently, .catch() is not necessary.
+
+    const dot = `${lon} ${lat}`;
+    const comma = dot.replace(/\./g, ',');
+
+    await this.emu(deviceId, `geo fix ${dot}`);
+    await this.emu(deviceId, `geo fix ${comma}`);
   }
 
   async pidof(deviceId, bundleId) {
