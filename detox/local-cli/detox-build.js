@@ -2,14 +2,14 @@
 
 const _ = require('lodash');
 const program = require('commander');
-const getConfigurationFile = require('../src/utils/getConfigurationFile');
+const {getConfigurationFile, getDefaultConfigurationFile} = require('../src/utils/getConfigurationFile');
 const path = require('path');
 const cp = require('child_process');
 program.description(`[convenience method] run the command defined in 'configuration.build'`)
   .option('--config-path [configPath]',
     'Select a device config-file path, if not supplied, detox will default to the package.json, and if not found there, detox will fallback to .detoxrc')
   .option('-c, --configuration [device configuration]', 'Select a device configuration from your defined configurations,' +
-    'if not supplied, and there\'s only one configuration, detox will default to it')
+    'if not supplied, and there\'s only one configuration, detox will default to it', getDefaultConfigurationFile())
   .parse(process.argv);
 
 const config = getConfigurationFile(program.configPath);  
