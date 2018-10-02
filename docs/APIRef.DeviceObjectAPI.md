@@ -206,7 +206,7 @@ Check out Detox's [own test suite](../detox/test/e2e/06.device-orientation.test.
 ### `device.setLocation(lat, lon)`
 >Note:
 On iOS `setLocation` is dependent on `fbsimctl`. if `fbsimctl` is not installed, the command will fail, asking for it to be installed.
-On Android `setLocation` is dependent on your tests running on the Android Emulator (with the correct permissions set in your manifest), **not** on a physical device.
+On Android `setLocation` currently will only work with Android Emulator bundled with Android development tools (as long as you've set the correct permissions set in your app manifest).
 Sets the simulator/emulator location to the given latitude and longitude.
 ```js
 await device.setLocation(32.0853, 34.7818);
