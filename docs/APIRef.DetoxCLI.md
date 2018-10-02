@@ -72,7 +72,7 @@ Run a command defined in 'configuration.build'
 | --- | --- |
 | -h, --help                            |  output usage information |
 | -c, --configuration \<device config\> |  Select a device configuration from your defined configurations,if not supplied, and there's only one configuration, detox will default to it |
-| --config-path \<configPath\> |  Select a device config-file path, if not supplied, detox will default to the package.json, and if not found there, detox will fallback to .detoxrc.json |
+| --config-path \<configPath\> |  Select a device config-file path, if not supplied, detox will default to the package.json, and if not found there, detox will fallback to .detoxrc |
 
 
 ### run-server
