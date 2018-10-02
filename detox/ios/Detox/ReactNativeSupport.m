@@ -225,7 +225,9 @@ static void __setupRNSupport()
 {
 	__block __weak id observer;
 	
-	observer = [[NSNotificationCenter defaultCenter] addObserverForName:@"RCTContentDidAppearNotification" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+	observer = [[NSNotificationCenter defaultCenter] addObserverForName:@"RCTJavaScriptDidLoadNotification" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+		
+		NSLog(@"1");
 		
 		if(handler)
 		{
