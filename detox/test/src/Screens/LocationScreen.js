@@ -50,13 +50,13 @@ export default class LocationScreen extends Component {
       });
     };
 
+    this.setState({ locationRequested: true });
+
     await navigator.geolocation.getCurrentPosition(success.bind(this), error.bind(this), {
       enableHighAccuracy: false,
-      maximumAge: 0,
-      timeout: 10000,
+      maximumAge: 1000,
+      timeout: 2500,
     });
-
-    this.setState({ locationRequested: true });
   }
 
   render() {
