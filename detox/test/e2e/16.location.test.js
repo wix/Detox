@@ -36,7 +36,7 @@ describe('location', () => {
     await expect(element(by.text('Longitude: 20.2'))).toBeVisible();
   });
 
-  if(':android: Should receive location (20,20)', async () => {
+  it(':android: Should receive location (20,20)', async () => {
     await device.relaunchApp({ permissions: { location: 'always' } });
     await device.setLocation(20.1, 20.2);
     await element(by.text('Location')).tap();
