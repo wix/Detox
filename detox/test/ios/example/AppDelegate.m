@@ -12,6 +12,7 @@
 static ShakeEventEmitter* _instance;
 @implementation ShakeEventEmitter
 
+
 RCT_EXPORT_MODULE();
 
 - (instancetype)init
