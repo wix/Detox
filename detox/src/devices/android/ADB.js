@@ -276,7 +276,7 @@ class ADB {
   }
 
   async emu(deviceId, cmd, options) {
-    return (await this.adbCmd(deviceId, `emu "${escape.inQuotedString(cmd)}"`, options)).stdout.trim()
+    return (await this.adbCmd(deviceId, `emu "${escape.inQuotedString(cmd)}"`, options)).stdout.trim();
   }
 
   async adbCmd(deviceId, params, options) {
