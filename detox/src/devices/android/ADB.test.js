@@ -47,13 +47,13 @@ describe('ADB', () => {
 
   it(`setLocation`, async () => {
     const deviceId = 'aDeviceId';
-    const lat = 30;
-    const lon = -70;
+    const lat = 30.5;
+    const lon = -70.5;
     jest.spyOn(adb, 'emu');
 
     await adb.setLocation(deviceId, lat, lon);
 
-    expect(adb.emu).toBeCalledWith(deviceId, 'geo fix -70 30');
+    expect(adb.emu).toBeCalledWith(deviceId, 'geo fix -70.5 30.5');
   })
 
   it(`pidof (success)`, async () => {
