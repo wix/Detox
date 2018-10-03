@@ -7,7 +7,7 @@ function requireWithRoot(suffix) {
 }
 
 function getDefaultConfigurationFile() {
-  return requireWithRoot(packageJson);
+  return path.resolve(packageJson);
 }
 
 function getConfigurationFile(configPath) {
