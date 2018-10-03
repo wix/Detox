@@ -12,8 +12,16 @@ function getDefaultConfigurationFile() {
 
 function getConfigurationFile(configPath) {
     let config;
+
+    console.log('Using config file', configPath)
+
+    // If config path is provided, use it
     if (configPath) config = requireWithRoot(configPath);
+
+    // if package.json contains detox object, use it
     if (!config) config = requireWithRoot(packageJson).detox;
+
+    // fallback to .detoxrc
     if (!config) config = requireWithRoot(detoxRc);
     return config
   }
