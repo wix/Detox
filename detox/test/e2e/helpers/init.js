@@ -1,5 +1,5 @@
 const detox = require('detox');
-const config = require('../../package.json').detox;
+const config = require('../../.detoxrc');
 const adapter = require('detox/runners/jest/adapter');
 
 jest.setTimeout(480000);

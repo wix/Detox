@@ -2,7 +2,7 @@
 
 const _ = require('lodash');
 const program = require('commander');
-const {getConfigurationFile} = require('../src/utils/getConfigurationFile');
+const ConfigurationResolver = require('../src/utils/ConfigurationResolver');
 const path = require('path');
 const cp = require('child_process');
 program.description(`[convenience method] run the command defined in 'configuration.build'`)
@@ -12,7 +12,7 @@ program.description(`[convenience method] run the command defined in 'configurat
     'if not supplied, and there\'s only one configuration, detox will default to it')
   .parse(process.argv);
 
-const config = getConfigurationFile(program.configPath);  
+const config = new ConfigurationResolver().getDetoxConfiguration(program.configPath);  
 
 let buildScript;
 if (program.configuration) {
