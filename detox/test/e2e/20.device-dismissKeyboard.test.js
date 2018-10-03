@@ -6,7 +6,7 @@ describe('Device DismissKeyboard', () => {
     await expect(element(by.id('testInput'))).toExist();
   });
 
-  it('DismissKeyboard', async () => {
+  it(':ios: should dismiss keyboard', async () => {
     await element(by.id('testInput')).tap();
     await expect(element(by.id('currentKeyboardVisibility'))).toHaveText('KeyboardOpen');
     await device.dismissKeyboard();
