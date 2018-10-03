@@ -151,7 +151,7 @@ class ADB {
 
   async isBootComplete(deviceId) {
     try {
-      const bootComplete = await this.shell(deviceId, `getprop dev.bootcomplete`);
+      const bootComplete = await this.shell(deviceId, `getprop dev.bootcomplete`, { silent: true });
       return (bootComplete === '1');
     } catch (ex) {
       return false;
@@ -201,7 +201,7 @@ class ADB {
    * @returns ChildProcessPromise
    */
   logcat(deviceId, { file, pid, time }) {
-    let shellCommand = 'logcat -v brief';
+    let shellCommand = 'logcat';
 
     // HACK: cannot make this function async, otherwise ChildProcessPromise.childProcess field will get lost,
     // and this will break interruptProcess() call for any logcat promise.
@@ -210,13 +210,23 @@ class ADB {
       shellCommand += ` -T "${time}"`;
     }
 
-    if (pid > 0) {
-      const __pid = String(pid).padStart(5);
-      shellCommand += ` | grep "(${__pid}):"`;
-   }
+    if (apiLevel < 24) {
+      if (pid > 0) {
+        const __pid = String(pid).padStart(5);
+        shellCommand += ` -v brief | grep "(${__pid}):"`;
+      }
 
-    if (file) {
-      shellCommand += ` >> ${file}`;
+      if (file) {
+        shellCommand += ` >> ${file}`;
+      }
+    } else {
+      if (pid > 0) {
+        shellCommand += ` --pid=${pid}`;
+      }
+
+      if (file) {
+        shellCommand += ` -f ${file}`;
+      }
     }
 
     return this.spawn(deviceId, ['shell', shellCommand]);
