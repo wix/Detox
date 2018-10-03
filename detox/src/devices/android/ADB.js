@@ -151,7 +151,7 @@ class ADB {
 
   async isBootComplete(deviceId) {
     try {
-      const bootComplete = await this.shell(deviceId, `getprop dev.bootcomplete`);
+      const bootComplete = await this.shell(deviceId, `getprop dev.bootcomplete`, { silent: true });
       return (bootComplete === '1');
     } catch (ex) {
       return false;
