@@ -6,10 +6,6 @@ function requireWithRoot(suffix) {
   return require(path.resolve(suffix))
 }
 
-function getDefaultConfigurationFile() {
-  return path.resolve(packageJson);
-}
-
 function getConfigurationFile(configPath) {
     let config;
 
@@ -26,5 +22,5 @@ function getConfigurationFile(configPath) {
     return config
   }
 
-  module.exports = {getDefaultConfigurationFile, getConfigurationFile};
+  module.exports = {getConfigurationFile};
   
