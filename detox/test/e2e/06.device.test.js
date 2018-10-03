@@ -39,6 +39,29 @@ describe('Device', () => {
     await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
 
+  // // Passing on iOS, not implemented on Android
+  // it('launchApp in a different language', async () => {
+  //   let languageAndLocale = {
+  //     language: "es-MX",
+  //     locale: "es-MX"
+  //   };
+
+  //   await device.launchApp({newInstance: true, languageAndLocale});
+  //   await element(by.text('Language')).tap();
+  //   await expect(element(by.text(`Current locale: ${languageAndLocale.locale}`))).toBeVisible();
+  //   await expect(element(by.text(`Current language: ${languageAndLocale.language}`))).toBeVisible();
+
+  //   languageAndLocale = {
+  //     language: "en-US",
+  //     locale: "en-US"
+  //   };
+
+  //   await device.launchApp({newInstance: true, languageAndLocale});
+  //   await element(by.text('Language')).tap();
+  //   await expect(element(by.text(`Current locale: ${languageAndLocale.locale}`))).toBeVisible();
+  //   await expect(element(by.text(`Current language: ${languageAndLocale.language}`))).toBeVisible();
+  // });
+
   it('resetContentAndSettings() + install() + relaunch() - should tap successfully', async () => {
     await device.resetContentAndSettings();
     await device.installApp();

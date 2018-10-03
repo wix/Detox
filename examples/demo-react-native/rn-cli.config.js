@@ -7,6 +7,6 @@ try {
 
 module.exports = {
   getBlacklistRE: function() {
-    return metroBundler.createBlacklist([/test\/.*/]);
+    return metroBundler.createBlacklist([/test\/.*/, /detox\/node_modules\/.*/]);
   }
 };

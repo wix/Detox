@@ -83,7 +83,7 @@ class Device {
       }
     }
 
-    const processId = await this.deviceDriver.launchApp(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs));
+    const processId = await this.deviceDriver.launchApp(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
     this._processes[_bundleId] = processId;
 
     await this.deviceDriver.waitUntilReady();

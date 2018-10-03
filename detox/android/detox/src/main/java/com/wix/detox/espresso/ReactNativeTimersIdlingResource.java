@@ -32,12 +32,11 @@ public class ReactNativeTimersIdlingResource implements IdlingResource, Choreogr
     private static final String LOG_TAG = "Detox";
 
     private final static String CLASS_TIMING = "com.facebook.react.modules.core.Timing";
-    private final static String CLASS_TIMER = "com.facebook.react.modules.core.Timing$Timer";
-    private final static String METHOD_HAS_CATALYST_INSTANCE = "hasActiveCatalystInstance";
     private final static String METHOD_GET_NATIVE_MODULE = "getNativeModule";
     private final static String METHOD_HAS_NATIVE_MODULE = "hasNativeModule";
     private final static String FIELD_TIMERS = "mTimers";
     private final static String FIELD_TARGET_TIME = "mTargetTime";
+    private final static String FIELD_CATALYST_INSTANCE = "mCatalystInstance";
     private final static String LOCK_TIMER = "mTimerGuard";
 
     private AtomicBoolean stopped = new AtomicBoolean(false);
@@ -64,11 +63,9 @@ public class ReactNativeTimersIdlingResource implements IdlingResource, Choreogr
             }
             return true;
         }
-        Class<?> timingClass = null;
-        Class<?> timerClass = null;
+        Class<?> timingClass;
         try {
             timingClass = Class.forName(CLASS_TIMING);
-            timerClass = Class.forName(CLASS_TIMER);
         } catch (ClassNotFoundException e) {
             Log.e(LOG_TAG, "Can't find Timing or Timing$Timer classes");
             if (callback != null) {
@@ -80,7 +77,7 @@ public class ReactNativeTimersIdlingResource implements IdlingResource, Choreogr
         try {
             // reactContext.hasActiveCatalystInstance() should be always true here
             // if called right after onReactContextInitialized(...)
-            if (!(boolean)Reflect.on(reactContext).call(METHOD_HAS_CATALYST_INSTANCE).get()) {
+            if (Reflect.on(reactContext).field(FIELD_CATALYST_INSTANCE).get() == null) {
                 Log.e(LOG_TAG, "No active CatalystInstance. Should never see this.");
                 return false;
             }

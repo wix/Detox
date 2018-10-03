@@ -7,6 +7,6 @@ try {
 
 module.exports = {
   getBlacklistRE: function() {
-    return metroBundler.createBlacklist([/test\/.*/, /detox\/node_modules\/.*/]);
+    return metroBundler.createBlacklist([/detox\/node_modules\/react-native\/.*/]);
   }
 };

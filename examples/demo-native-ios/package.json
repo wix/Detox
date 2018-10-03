@@ -4,20 +4,20 @@
 	"private": true,
 	"devDependencies": {
 		"mocha": "^4.0.0",
-		"detox": "^8.0.0"
+		"detox": "^9.0.0"
 	},
 	"detox": {
 		"specs": "e2e",
 		"configurations": {
 			"ios.sim.release": {
 				"binaryPath": "build/Build/Products/Release-iphonesimulator/NativeExample.app",
-				"build": "xcodebuild -project NativeExample.xcodeproj -scheme NativeExample -configuration Release -sdk iphonesimulator -derivedDataPath build",
+				"build": "xcodebuild -project NativeExample.xcodeproj -UseNewBuildSystem=NO -scheme NativeExample -configuration Release -sdk iphonesimulator -derivedDataPath build",
 				"type": "ios.simulator",
 				"name": "iPhone 7 Plus"
 			},
 			"ios.sim.debug": {
 				"binaryPath": "build/Build/Products/Debug-iphonesimulator/NativeExample.app",
-				"build": "xcodebuild -project NativeExample.xcodeproj -scheme NativeExample -configuration Debug -sdk iphonesimulator -derivedDataPath build",
+				"build": "xcodebuild -project NativeExample.xcodeproj -UseNewBuildSystem=NO -scheme NativeExample -configuration Debug -sdk iphonesimulator -derivedDataPath build",
 				"type": "ios.simulator",
 				"name": "iPhone 7 Plus"
 			}

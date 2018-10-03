@@ -91,6 +91,7 @@ class EmulatorDriver extends AndroidDriver {
     await this._fixEmulatorConfigIniSkinName(avdName);
 
     const adbName = await this.boot(avdName);
+    await this.adb.apiLevel(adbName);
     await this.adb.unlockScreen(adbName);
 
     return adbName;

@@ -317,6 +317,15 @@ describe('AppleSimUtils', () => {
       expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
     });
 
+    it('appends language and locale flags', async () => {
+      const languageAndLocale = {
+        language: "es-MS",
+        locale: "en-US"
+      };
+      await uut.launch('udid', 'theBundleId', undefined, languageAndLocale);
+      expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
+    });
+
     it('concats args', async () => {
       await uut.launch('udid', 'theBundleId', { 'foo': 'bar', 'bob': 'yourUncle' });
       expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
@@ -344,6 +353,7 @@ describe('AppleSimUtils', () => {
       const result = await uut.launch('udid', 'theBundleId');
       expect(result).toEqual(12345);
     });
+    
   });
 
   describe('sendToHome', () => {

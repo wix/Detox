@@ -1,37 +1,58 @@
 package com.wix.detox.espresso;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.test.espresso.IdlingResource;
 import android.util.Log;
-
-import org.joor.Reflect;
+import android.view.Choreographer;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import okhttp3.Call;
 import okhttp3.Dispatcher;
 
 /**
- * Created by simonracz on 24/08/2017.
+ * Created by simonracz on 09/10/2017.
  */
 
 
 /**
  * Idling Resource which monitors React Native's OkHttpClient.
- *
+ * <p>
  * Must call stop() on it, before removing it from Espresso.
- * @deprecated Please use RNExperimentalNetworkIR
  */
-public class ReactNativeNetworkIdlingResource implements IdlingResource {
+public class ReactNativeNetworkIdlingResource implements IdlingResource, Choreographer.FrameCallback {
 
     private static final String LOG_TAG = "Detox";
 
-    private ResourceCallback resourceCallback;
+    private AtomicBoolean stopped = new AtomicBoolean(false);
+
+    private ResourceCallback callback;
     private Dispatcher dispatcher;
-    private ForwardingIdleCallback forwardingIdleCallback;
-    private static final String FIELD_IDLE_CB = "idleCallback";
+
+    private static final ArrayList<Pattern> blacklist = new ArrayList<>();
+
+    /**
+     * Must be called on the UI thread.
+     *
+     * @param urls list of regexes of blacklisted urls
+     */
+    public static void setURLBlacklist(ArrayList<String> urls) {
+        blacklist.clear();
+        if (urls == null) return;
+
+        for (String url : urls) {
+            try {
+                blacklist.add(Pattern.compile(url));
+            } catch (PatternSyntaxException e) {
+                Log.e(LOG_TAG, "Couldn't parse regular expression for Black list url: " + url, e);
+            }
+        }
+    }
+
 
     public ReactNativeNetworkIdlingResource(@NonNull Dispatcher dispatcher) {
         this.dispatcher = dispatcher;
@@ -44,46 +65,55 @@ public class ReactNativeNetworkIdlingResource implements IdlingResource {
 
     @Override
     public boolean isIdleNow() {
-        boolean idle = dispatcher.runningCallsCount() == 0;
-        if (idle && resourceCallback != null) {
-            resourceCallback.onTransitionToIdle();
+        if (stopped.get()) {
+            if (callback != null) {
+                callback.onTransitionToIdle();
+            }
+            return true;
+        }
+        boolean idle = true;
+        List<Call> calls = dispatcher.runningCalls();
+        for (Call call : calls) {
+            idle = false;
+            String url = call.request().url().toString();
+            for (Pattern pattern : blacklist) {
+                if (pattern.matcher(url).matches()) {
+                    idle = true;
+                    break;
+                }
+            }
+            if (!idle) {
+                break;
+            }
         }
         if (!idle) {
+            Choreographer.getInstance().postFrameCallback(this);
             Log.i(LOG_TAG, "Network is busy");
+        } else {
+            if (callback != null) {
+                callback.onTransitionToIdle();
+            }
         }
         return idle;
     }
 
     @Override
     public void registerIdleTransitionCallback(ResourceCallback callback) {
-        resourceCallback = callback;
-        Runnable rootIdleCallback = Reflect.on(dispatcher).field(FIELD_IDLE_CB).get();
-        forwardingIdleCallback = new ForwardingIdleCallback(rootIdleCallback, resourceCallback);
-        dispatcher.setIdleCallback(forwardingIdleCallback);
+        this.callback = callback;
+        Choreographer.getInstance().postFrameCallback(this);
+    }
+
+    @Override
+    public void doFrame(long frameTimeNanos) {
+        isIdleNow();
     }
 
     public void stop() {
-        Runnable rootIdleCallback = forwardingIdleCallback.getRootIdleCallback();
-        dispatcher.setIdleCallback(rootIdleCallback);
-        forwardingIdleCallback = null;
+        stopped.set(true);
     }
 
-    private class ForwardingIdleCallback implements Runnable {
-        Runnable rootIdleCallback;
-        ResourceCallback resCallback;
-        ForwardingIdleCallback(@Nullable Runnable rootIdleCallback, @NonNull ResourceCallback resCallback) {
-            this.rootIdleCallback = rootIdleCallback;
-            this.resCallback = resCallback;
-        }
-        @Override
-        public void run() {
-            resCallback.onTransitionToIdle();
-            if (rootIdleCallback != null) {
-                rootIdleCallback.run();
-            }
-        }
-        Runnable getRootIdleCallback() {
-            return rootIdleCallback;
-        }
-    }
 }
+
+
+
+
