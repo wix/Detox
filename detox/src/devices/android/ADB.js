@@ -211,22 +211,22 @@ class ADB {
     }
 
     if (apiLevel < 24) {
-			if (pid > 0) {
-				const __pid = String(pid).padStart(5);
-				shellCommand += ` -v brief | grep "(${__pid}):"`;
-			}
+      if (pid > 0) {
+        const __pid = String(pid).padStart(5);
+        shellCommand += ` -v brief | grep "(${__pid}):"`;
+      }
 
-			if (file) {
-				shellCommand += ` >> ${file}`;
-			}
+      if (file) {
+        shellCommand += ` >> ${file}`;
+      }
     } else {
-			if (pid > 0) {
-				shellCommand += ` --pid=${pid}`;
-			}
+      if (pid > 0) {
+        shellCommand += ` --pid=${pid}`;
+      }
 
-			if (file) {
-				shellCommand += ` -f ${file}`;
-			}
+      if (file) {
+        shellCommand += ` -f ${file}`;
+      }
     }
 
     return this.spawn(deviceId, ['shell', shellCommand]);
