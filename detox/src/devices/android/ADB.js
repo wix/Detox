@@ -213,7 +213,7 @@ class ADB {
     if (apiLevel < 24) {
 			if (pid > 0) {
 				const __pid = String(pid).padStart(5);
-				shellCommand += `-v brief | grep "(${__pid}):"`;
+				shellCommand += ` -v brief | grep "(${__pid}):"`;
 			}
 
 			if (file) {
