@@ -3,7 +3,7 @@ const packageJson = 'package.json';
 const detoxRc = '.detoxrc';
 
 function requireWithRoot(suffix) {
-  return require(path.join(process.cwd(), suffix))
+  return require(path.resolve(suffix))
 }
 
 function getDefaultConfigurationFile() {
@@ -12,7 +12,7 @@ function getDefaultConfigurationFile() {
 
 function getConfigurationFile(configPath) {
     let config;
-    if (configPath) config = path.isAbsolute(configPath) ? require(configPath) : requireWithRoot(configPath);
+    if (configPath) config = requireWithRoot(configPath);
     if (!config) config = requireWithRoot(packageJson).detox;
     if (!config) config = requireWithRoot(detoxRc);
     return config
