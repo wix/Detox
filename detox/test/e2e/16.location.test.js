@@ -24,6 +24,7 @@ describe('location', () => {
     if (!await isFbsimctlInstalled()) {
       return;
     }
+
     await device.relaunchApp({ permissions: { location: 'never' } });
     await element(by.text('Location')).tap();
     await element(by.id('getLocationButton')).tap();
