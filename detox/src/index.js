@@ -6,12 +6,14 @@ const exportWrapper = require('./exportWrapper');
 const argparse = require('./utils/argparse');
 const log = require('./utils/logger').child({ __filename });
 const configuration = require('./configuration');
+const configurationResolver = require('./utils/ConfigurationResolver').default;
 
 let detox;
 
 function getDeviceConfig(configurations) {
   const configurationName = argparse.getArgValue('configuration');
   const deviceOverride = argparse.getArgValue('device-name');
+ 
 
   const deviceConfig = (!configurationName && _.size(configurations) === 1)
     ? _.values(configurations)[0]
@@ -37,9 +39,17 @@ function getDeviceConfig(configurations) {
   return deviceConfig;
 }
 
-async function initializeDetox(config, params) {
-  if (!config) {
-    throw new Error(`No configuration was passed to detox, make sure you pass a config when calling 'detox.init(config)'`);
+function getDetoxConfig() {
+  const configPath = argparse.getArgValue('config-path');
+  
+  return configurationResolver.getDetoxConfiguration(configPath);
+}
+
+async function initializeDetox(configParam, params) {
+  const config = getDetoxConfig();
+  if (configParam && !_.isEqual(config, configParam)) {
+    throw new Error(`Configuration does not match the one set in the detox CLI command, 
+      when providing a config other than the default, call detox.init(null, settings)`);
   }
 
   if (!(config.configurations && _.size(config.configurations) >= 1)) {

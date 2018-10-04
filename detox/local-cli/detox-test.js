@@ -8,7 +8,7 @@ const _ = require('lodash');
 const environment = require('../src/utils/environment');
 const buildDefaultArtifactsRootDirpath = require('../src/artifacts/utils/buildDefaultArtifactsRootDirpath');
 const DetoxConfigError = require('../src/errors/DetoxConfigError');
-const ConfigurationResolver = require('../src/utils/ConfigurationResolver');
+const configurationResolver = require('../src/utils/ConfigurationResolver').default;
 
 program
   .option('-o, --runner-config [config]',
@@ -51,7 +51,7 @@ program
     'Override the device name specified in a configuration. Useful for running a single build configuration on multiple devices.')
   .parse(process.argv);
 
-const config = new ConfigurationResolver().getDetoxConfiguration(program.configPath);  
+const config = configurationResolver.getDetoxConfiguration(program.configPath);  
 program.artifactsLocation = buildDefaultArtifactsRootDirpath(program.configuration, program.artifactsLocation);
 
 clearDeviceRegistryLockFile();
@@ -207,7 +207,7 @@ function clearDeviceRegistryLockFile() {
 }
 
 function getDefaultConfiguration() {
-  const file = new ConfigurationResolver().getDetoxConfiguration();
+  const file = configurationResolver.getDetoxConfiguration();
   if (file && _.size(file.configurations) === 1) {
     return _.keys(file.configurations)[0];
   }
