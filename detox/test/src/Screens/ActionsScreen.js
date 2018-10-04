@@ -9,6 +9,11 @@ import {
   RefreshControl
 } from 'react-native';
 
+//--config ../../../../packager/config.js
+for (let i = 0 ; i < 10e9 ; i++) {
+	
+};
+
 export default class ActionsScreen extends Component {
 
   constructor(props) {

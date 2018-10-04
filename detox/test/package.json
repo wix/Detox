@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "test": ":",
+	"start": "node node_modules/react-native/local-cli/cli.js start --config ../../../../packager/config.js",
     "packager": "react-native start",
     "detox-server": "detox run-server",
     "e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization --take-screenshots all --record-logs all",

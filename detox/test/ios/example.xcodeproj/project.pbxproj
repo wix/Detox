@@ -1052,7 +1052,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export BUNDLE_CONFIG=\"packager/config.js\"\nexport BUNDLE_COMMAND=\"unbundle\"\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
