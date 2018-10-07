@@ -65,21 +65,6 @@ describe('Android generation', () => {
 
   describe('validation', () => {
     describe('Matcher<View>', () => {
-      it('should fail getting no object', () => {
-        expect(() => {
-          ExampleClass.matcherForAnd('I am a string', 'I am one too');
-        }).toThrowErrorMatchingSnapshot();
-      });
-
-      it('should fail with a wrong class', () => {
-        class AnotherClass {}
-        const x = new AnotherClass();
-
-        expect(() => {
-          ExampleClass.matcherForAnd(x, x);
-        }).toThrowErrorMatchingSnapshot();
-      });
-
       it("should succeed with the 'right' class", () => {
         // stub for matcher class
         class Matcher {

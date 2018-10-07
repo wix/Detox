@@ -7,6 +7,23 @@
 
 
 class EspressoDetox {
+  static perform(interaction, action) {
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.EspressoDetox"
+      },
+      method: "perform",
+      args: [{
+        type: "ViewInteraction",
+        value: interaction
+      }, {
+        type: "ViewAction",
+        value: action
+      }]
+    };
+  }
+
   static changeOrientation(orientation) {
     if (typeof orientation !== "number") throw new Error("orientation should be a number, but got " + (orientation + (" (" + (typeof orientation + ")"))));
     return {

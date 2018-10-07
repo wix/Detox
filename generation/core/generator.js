@@ -4,6 +4,7 @@ const objectiveCParser = require('objective-c-parser');
 const javaMethodParser = require('java-method-parser');
 const generate = require('babel-generator').default;
 const fs = require('fs');
+const path = require('path');
 
 const { methodNameToSnakeCase } = require('../helpers');
 let globalFunctionUsage = {};
@@ -142,7 +143,7 @@ module.exports = function getGenerator({
       t.functionDeclaration(
         t.identifier(sanitizedName + args.length),
         args.filter(filterBlacklistedArguments).map(({ name }) => t.identifier(name)),
-        createMethodBody(classJson, { ...json, args })
+        createMethodBody(classJson, Object.assign({}, json, { args }))
       )
     );
 
@@ -192,7 +193,7 @@ module.exports = function getGenerator({
       (carry, item) => (item instanceof Array ? [...carry, ...item] : [...carry, item]),
       []
     );
-    const typeChecks = allTypeChecks.filter((check) => typeof check === 'object');
+    const typeChecks = allTypeChecks.filter((check) => typeof check === 'object' && check.type !== 'EmptyStatement');
     const returnStatement = createReturnStatement(classJson, sanitizedJson);
     return t.blockStatement([...typeChecks, returnStatement]);
   }
@@ -266,9 +267,9 @@ module.exports = function getGenerator({
     const typeCheckCreator = typeCheckInterfaces[type];
     const isListOfChecks = typeCheckCreator instanceof Array;
     return isListOfChecks
-      ? typeCheckCreator.map((singleCheck) => singleCheck(json))
-      : typeof typeCheckCreator === 'function'
-        ? typeCheckCreator(json)
+      ? typeCheckCreator.map((singleCheck) => singleCheck(json, functionName))
+      : typeCheckCreator instanceof Function
+        ? typeCheckCreator(json, functionName)
         : t.emptyStatement();
   }
 

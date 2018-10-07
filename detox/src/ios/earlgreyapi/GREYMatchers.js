@@ -580,6 +580,10 @@ passed in as boxed (object) values.
 
 @return A matcher that checks if an object is equal to the provided one.
 */static matcherForEqualTo(value) {
+    if (!value) {
+      throw new Error('value should be truthy, but it is "' + value + '"');
+    }
+
     return {
       target: {
         type: "Class",
@@ -598,6 +602,10 @@ ensure that scalar values are passed in as boxed (object) values.
 
 @return A matcher that checks an object is lesser than another provided @c value.
 */static matcherForLessThan(value) {
+    if (!value) {
+      throw new Error('value should be truthy, but it is "' + value + '"');
+    }
+
     return {
       target: {
         type: "Class",
@@ -616,6 +624,10 @@ ensure that scalar values are passed in as boxed (object) values.
 
 @return A matcher that checks an object is greater than another provided @c value.
 */static matcherForGreaterThan(value) {
+    if (!value) {
+      throw new Error('value should be truthy, but it is "' + value + '"');
+    }
+
     return {
       target: {
         type: "Class",

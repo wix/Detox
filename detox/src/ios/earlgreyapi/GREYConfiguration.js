@@ -123,6 +123,10 @@ Overwrites any previous value for the configuration.
 @param value     The configuration value to be set. Scalars should be wrapped in @c NSValue.
 @param configKey Key identifying an existing or new configuration. Must be a valid @c NSString.
 */static setValueForConfigKey(element, value, configKey) {
+    if (!value) {
+      throw new Error('value should be truthy, but it is "' + value + '"');
+    }
+
     if (typeof configKey !== "string") throw new Error("configKey should be a string, but got " + (configKey + (" (" + (typeof configKey + ")"))));
     return {
       target: element,
@@ -142,6 +146,10 @@ Overwrites any previous value for the configuration.
 @param value     The configuration value to be set. Scalars should be wrapped in @c NSValue.
 @param configKey Key identifying an existing or new configuration. Must be a valid @c NSString.
 */static setDefaultValueForConfigKey(element, value, configKey) {
+    if (!value) {
+      throw new Error('value should be truthy, but it is "' + value + '"');
+    }
+
     if (typeof configKey !== "string") throw new Error("configKey should be a string, but got " + (configKey + (" (" + (typeof configKey + ")"))));
     return {
       target: element,
