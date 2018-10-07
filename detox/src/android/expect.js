@@ -2,6 +2,9 @@ const invoke = require('../invoke');
 const matchers = require('./matcher');
 const DetoxActionApi = require('./espressoapi/DetoxAction');
 const ViewActionsApi = require('./espressoapi/ViewActions');
+const DetoxAssertionApi = require('./espressoapi/DetoxAssertion');
+const EspressoDetoxApi = require('./espressoapi/EspressoDetox');
+const DetoxMatcherApi = require('./espressoapi/DetoxMatcher');
 const Matcher = matchers.Matcher;
 const LabelMatcher = matchers.LabelMatcher;
 const IdMatcher = matchers.IdMatcher;
@@ -113,7 +116,7 @@ class Interaction {
 class ActionInteraction extends Interaction {
   constructor(element, action) {
     super();
-    this._call = invoke.call(invoke.Android.Class(EspressoDetox), 'perform', element._call, action._call);
+    this._call = EspressoDetoxApi.perform(element._call, action._call);
     // TODO: move this.execute() here from the caller
   }
 }
