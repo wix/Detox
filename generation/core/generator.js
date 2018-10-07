@@ -53,6 +53,7 @@ module.exports = function getGenerator({
         json.methods
           .filter(filterMethodsWithUnsupportedParams)
           .filter(filterMethodsWithBlacklistedName)
+          .reduce(handleOverloadedMethods, [])
           .map(createMethod.bind(null, json))
       ),
       []
@@ -72,6 +73,20 @@ module.exports = function getGenerator({
     }, true);
   }
 
+  function handleOverloadedMethods(list, method) {
+    const methodInstance = {
+      args: method.args
+    };
+
+    const firstDeclaration = list.find((item) => item.name === method.name);
+    if (firstDeclaration) {
+      firstDeclaration.instances.push(methodInstance);
+      return list;
+    }
+
+    return list.concat(Object.assign({}, method, { instances: [methodInstance] }));
+  }
+
   function createExport(json) {
     return t.expressionStatement(
       t.assignmentExpression('=', t.memberExpression(t.identifier('module'), t.identifier('exports'), false), t.identifier(json.name))
@@ -84,21 +99,23 @@ module.exports = function getGenerator({
   }
 
   function createMethod(classJson, json) {
+    const isOverloading = json.instances.length > 1;
+    if (isOverloading && hasProblematicOverloading(json.instances)) {
+      console.log(classJson, json);
+      throw 'Could not handle this overloaded method';
+    }
+
     json.args = json.args.filter(filterBlacklistedArguments);
+    // Args might be unused due to overloading
     const args = json.args.map(({ name }) => t.identifier(name));
 
     if (!json.static) {
       args.unshift(t.identifier('element'));
     }
 
-    const m = t.classMethod(
-      'method',
-      t.identifier(methodNameToSnakeCase(json.name)),
-      args,
-      t.blockStatement(createMethodBody(classJson, json)),
-      false,
-      true
-    );
+    const body = isOverloading ? createOverloadedMethodBody(classJson, json) : createMethodBody(classJson, json);
+
+    const m = t.classMethod('method', t.identifier(methodNameToSnakeCase(json.name)), args, body, false, true);
 
     if (json.comment) {
       const comment = {
@@ -110,6 +127,51 @@ module.exports = function getGenerator({
       m.leadingComments.push(comment);
     }
     return m;
+  }
+
+  function createOverloadedMethodBody(classJson, json) {
+    const sanitizedName = methodNameToSnakeCase(json.name);
+    // Lets create an inline function for each of the instances
+    // for this let's construct a JSON like we would need it
+    // name: thisName_argLength
+    // static: false
+    // args: instance.args
+    // Let's check the length of the call and use the matching one of the instances then
+
+    const overloadFunctionExpressions = json.instances.map(({ args }) =>
+      t.functionDeclaration(
+        t.identifier(sanitizedName + args.length),
+        args.filter(filterBlacklistedArguments).map(({ name }) => t.identifier(name)),
+        createMethodBody(classJson, { ...json, args })
+      )
+    );
+
+    const returnStatementsForNumber = (num) =>
+      template(`
+      if (arguments.length === ${num}) {
+        return ${sanitizedName + num}.apply(null, arguments);
+      }
+    `)();
+
+    const returns = json.instances.map(({ args }) => returnStatementsForNumber(args.length));
+
+    return t.blockStatement([...overloadFunctionExpressions, ...returns]);
+  }
+
+  // We don't handle same lengthed argument sets right now.
+  // In the future we could write the type checks in a way that
+  // would allow us to do an either or switch in this case
+  function hasProblematicOverloading(instances) {
+    // Check if there are same lengthed argument sets
+    const knownLengths = [];
+    return instances.map(({ args }) => args.length).reduce((carry, item) => {
+      if (carry || knownLengths.some((l) => l === item)) {
+        return true;
+      }
+
+      knownLengths.push(item);
+      return false;
+    }, false);
   }
 
   function sanitizeArgumentType(json) {
@@ -132,7 +194,7 @@ module.exports = function getGenerator({
     );
     const typeChecks = allTypeChecks.filter((check) => typeof check === 'object');
     const returnStatement = createReturnStatement(classJson, sanitizedJson);
-    return [...typeChecks, returnStatement];
+    return t.blockStatement([...typeChecks, returnStatement]);
   }
 
   function createTypeChecks(json, functionName) {
