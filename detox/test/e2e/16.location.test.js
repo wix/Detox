@@ -31,24 +31,13 @@ describe('location', () => {
     await expect(element(by.id('error'))).toBeVisible();
   });
 
-  it(':ios: Should receive location (20,20)', async () => {
-    if (!await isFbsimctlInstalled()) {
+  it('Should receive location (20,20)', async () => {
+    if (device.platform() === 'ios' && !await isFbsimctlInstalled()) {
       return;
     }
     await device.relaunchApp({ permissions: { location: 'always' } });
     await device.setLocation(lat, long);
 
-    await element(by.text('Location')).tap();
-    await element(by.id('getLocationButton')).tap();
-    await waitFor(element(by.text(`Latitude: ${lat}`))).toBeVisible().withTimeout(3000);
-
-    await expect(element(by.text(`Latitude: ${lat}`))).toBeVisible();
-    await expect(element(by.text(`Longitude: ${long}`))).toBeVisible();
-  });
-
-  it(':android: Should receive location (20,20)', async () => {
-    await device.relaunchApp({ permissions: { location: 'always' } });
-    await device.setLocation(lat, long);
     await element(by.text('Location')).tap();
     await element(by.id('getLocationButton')).tap();
     await waitFor(element(by.text(`Latitude: ${lat}`))).toBeVisible().withTimeout(3000);
