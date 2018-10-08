@@ -32,7 +32,7 @@ describe('location', () => {
   });
 
   it('Should receive location (20,20)', async () => {
-    if (device.platform() === 'ios' && !await isFbsimctlInstalled()) {
+    if (device.getPlatform() === 'ios' && !await isFbsimctlInstalled()) {
       return;
     }
     await device.relaunchApp({ permissions: { location: 'always' } });
