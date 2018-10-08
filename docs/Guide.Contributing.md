@@ -120,6 +120,18 @@ on macOS environment variables can be exported to desktop applications by adding
 launchctl setenv PATH $PATH
 ```
 
+##### Changing Detox e2e test suite
+
+If you add, rename, or delete a test in `detox/test/e2e` suite, you also have to update Jest snapshots
+of expected artifacts. It is usually done in five steps:
+
+1. In `detox/test` project, run all end-to-end tests on iOS with `npm run e2e:ios-multi`.
+2. Update the snapshots with: `npm run verify-artifacts:ios -- -u`.
+3. Re-run Android tests with `npm run e2e:android`.
+4. Update the snapshots with: `npm run verify-artifacts:android -- -u`.
+5. Add the snapshots to your Git commit:
+* Android: `detox/test/scripts/__snapshots__/verify_artifacts_are_not_missing.android.test.js.snap`
+* iOS: `detox/test/scripts/__snapshots__/verify_artifacts_are_not_missing.ios.test.js.snap`
 
 #### 3. Android Native tests
 
