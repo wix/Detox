@@ -166,6 +166,10 @@ class Device {
     await this.deviceDriver.setOrientation(this._deviceId, orientation);
   }
 
+  async dismissKeyboard() {
+    await this.deviceDriver.dismissKeyboard(this._deviceId);
+  }
+
   async setLocation(lat, lon) {
     lat = String(lat);
     lon = String(lon);

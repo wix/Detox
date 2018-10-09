@@ -339,6 +339,13 @@ describe('Device', () => {
     expect(device.deviceDriver.setOrientation).toHaveBeenCalledWith(device._deviceId, 'param');
   });
 
+  it(`dismissKeyboard() should pass to device driver`, async () => {
+    device = validDevice();
+    await device.dismissKeyboard();
+
+    expect(device.deviceDriver.dismissKeyboard).toHaveBeenCalledWith(device._deviceId);
+  });
+
   it(`sendUserNotification() should pass to device driver`, async () => {
     device = validDevice();
     await device.sendUserNotification('notif');
