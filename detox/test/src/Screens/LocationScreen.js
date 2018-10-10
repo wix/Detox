@@ -53,8 +53,9 @@ export default class LocationScreen extends Component {
     this.setState({ locationRequested: true });
 
     await navigator.geolocation.getCurrentPosition(success.bind(this), error.bind(this), {
-      enableHighAccuracy: false,
+      enableHighAccuracy: true,
       timeout: 2500,
+      maximumAge: 0,
     });
   }
 
