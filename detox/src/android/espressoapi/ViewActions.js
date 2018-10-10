@@ -51,28 +51,38 @@ class ViewActions {
   }
 
   static click() {
-    return {
-      target: {
-        type: "Class",
-        value: "android.support.test.espresso.action.ViewActions"
-      },
-      method: "click",
-      args: []
-    };
-  }
+    function click0() {
+      return {
+        target: {
+          type: "Class",
+          value: "android.support.test.espresso.action.ViewActions"
+        },
+        method: "click",
+        args: []
+      };
+    }
 
-  static click(rollbackAction) {
-    return {
-      target: {
-        type: "Class",
-        value: "android.support.test.espresso.action.ViewActions"
-      },
-      method: "click",
-      args: [{
-        type: "ViewAction",
-        value: rollbackAction
-      }]
-    };
+    function click1(rollbackAction) {
+      return {
+        target: {
+          type: "Class",
+          value: "android.support.test.espresso.action.ViewActions"
+        },
+        method: "click",
+        args: [{
+          type: "ViewAction",
+          value: rollbackAction
+        }]
+      };
+    }
+
+    if (arguments.length === 0) {
+      return click0.apply(null, arguments);
+    }
+
+    if (arguments.length === 1) {
+      return click1.apply(null, arguments);
+    }
   }
 
   static swipeLeft() {
