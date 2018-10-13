@@ -14,6 +14,7 @@ class example extends Component {
     super(props);
     this.state = {
       screen: undefined,
+      screenProps: {},
       url: undefined,
       notification: undefined
     };
@@ -29,9 +30,9 @@ class example extends Component {
     );
   }
 
-  renderScreenButton(title, component) {
+  renderScreenButton(title, component, props = {}) {
     return this.renderButton(title, () => {
-      this.setState({screen: component});
+      this.setState({screen: component, screenProps: props});
     });
   }
 
@@ -98,12 +99,16 @@ class example extends Component {
             throw new Error('Simulated Crash')
           })}
           {this.renderScreenButton('Shake', Screens.ShakeScreen)}
+          {this.renderScreenButton('Launch Arguments', Screens.LaunchArgsScreen, {
+            launchArgs: this.props.launchArgs
+          })}
         </View>
       );
     }
     const Screen = this.state.screen;
+    const screenProps = this.state.screenProps;
     return (
-      <Screen/>
+      <Screen {...screenProps} />
     );
   }
 
@@ -117,5 +122,7 @@ class example extends Component {
     this.setState({url: params.url});
   }
 }
+
+example.defaultProps = { launchArgs: undefined }
 
 module.exports = example;

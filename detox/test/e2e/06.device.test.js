@@ -39,6 +39,12 @@ describe('Device', () => {
     await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
 
+  it('launchApp with launchArgs - should pass the arguments through if specified', async () => {
+    await device.launchApp({newInstance: true, launchArgs: { test: 'argument1'}});
+    await element(by.text('Launch Arguments')).tap();
+    await expect(element(by.text('-test argument1'))).toBeVisible();
+  });
+
   // // Passing on iOS, not implemented on Android
   // it('launchApp in a different language', async () => {
   //   let languageAndLocale = {

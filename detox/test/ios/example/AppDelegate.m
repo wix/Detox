@@ -136,10 +136,21 @@ RCT_EXPORT_MODULE();
 #else
 	jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
-	
+
+  // Parse process arguments into a launchArgs initialProp that is passed to the react root view
+  NSMutableArray *arguments   = [[NSMutableArray alloc]initWithArray:[[NSProcessInfo processInfo] arguments]];
+  [arguments removeObjectAtIndex:0]; // Remove executable path
+  NSMutableDictionary *initialProps = [NSMutableDictionary dictionary];
+  if([arguments count] > 0) {
+    NSString *allArgs = [arguments componentsJoinedByString:@" "];
+    initialProps[@"launchArgs"] = allArgs;
+  } else {
+    initialProps = NULL;
+  }
+
 	RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
 														moduleName:@"example"
-												 initialProperties:nil
+												 initialProperties:initialProps
 													 launchOptions:launchOptions];
 	rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
 	
