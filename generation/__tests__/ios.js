@@ -32,7 +32,8 @@ describe('iOS generation', () => {
     });
 
     it('should include multi line comments', () => {
-      expect(exampleContent.indexOf('Multi Line Comment here\nAwesome')).not.toBe(-1);
+      expect(exampleContent.indexOf('Multi Line Comment here')).not.toBe(-1);
+			expect(exampleContent.indexOf('Awesome')).not.toBe(-1);
     });
   });
 

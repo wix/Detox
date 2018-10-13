@@ -1,8 +1,8 @@
-const t = require('babel-types');
-const template = require('babel-template');
+const t = require('@babel/types');
+const template = require('@babel/template').default;
+const generate = require('@babel/generator').default;
 const objectiveCParser = require('objective-c-parser');
 const javaMethodParser = require('java-method-parser');
-const generate = require('babel-generator').default;
 const fs = require('fs');
 
 const { methodNameToSnakeCase } = require('../helpers');
@@ -101,13 +101,7 @@ module.exports = function getGenerator({
     );
 
     if (json.comment) {
-      const comment = {
-        type: json.comment.indexOf('\n') === -1 ? 'LineComment' : 'BlockComment',
-        value: json.comment + '\n'
-      };
-
-      m.leadingComments = m.leadingComments || [];
-      m.leadingComments.push(comment);
+      t.addComment(m, 'leading', json.comment);
     }
     return m;
   }

@@ -1,4 +1,4 @@
-const t = require("babel-types");
+const t = require("@babel/types");
 
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
