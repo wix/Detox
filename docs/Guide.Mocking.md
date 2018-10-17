@@ -36,6 +36,19 @@ This replacement mechanism provides a lot of flexibility to change implementatio
 
     ```
 
+    or use the new format for metro configuration for RN >= 0.57 (or if you've metro >= 0.43)
+
+    ```js
+    const defaultSourceExts = require('metro-config/src/defaults/defaults').sourceExts
+    module.exports = {
+      resolver: { 
+        sourceExts: process.env.RN_SRC_EXT
+                    ? process.env.RN_SRC_EXT.split(',').concat(defaultSourceExts)
+                    : defaultSourceExts
+      }
+    };
+    ```
+
 2. Create `anyfile.e2e.js` alongside `anyfile.js`
 
 
