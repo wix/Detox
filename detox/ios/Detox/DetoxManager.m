@@ -122,15 +122,26 @@ static void detoxConditionalInit()
 	if (![ReactNativeSupport isReactNativeApp])
 	{
 		_isReady = YES;
-		[self.webSocket sendAction:@"ready" withParams:@{} withMessageId:@-1000];
+		[self _safeSendAction:@"ready" params:@{} messageId:@-1000];
 	}
+}
+
+- (void)_safeSendAction:(NSString*)action params:(NSDictionary*)params messageId:(NSNumber*)messageId
+{
+	[EarlGrey detox_safeExecuteSync:^{
+		[self.webSocket sendAction:action withParams:params withMessageId:messageId];
+	}];
 }
 
 - (void)websocketDidReceiveAction:(NSString *)type withParams:(NSDictionary *)params withMessageId:(NSNumber *)messageId
 {
 	NSAssert(messageId != nil, @"Got action with a null messageId");
 	
-	if([type isEqualToString:@"invoke"])
+	if([type isEqualToString:@"waitForIdle"])
+	{
+		[self _safeSendAction:@"waitForIdleDone" params:@{} messageId: messageId];
+	}
+	else if([type isEqualToString:@"invoke"])
 	{
 		[self.testRunner invoke:params withMessageId:messageId];
 		return;
@@ -139,7 +150,7 @@ static void detoxConditionalInit()
 	{
 		if(_isReady)
 		{
-			[self.webSocket sendAction:@"ready" withParams:@{} withMessageId:@-1000];
+			[self _safeSendAction:@"ready" params:@{} messageId:@-1000];
 		}
 		return;
 	}
@@ -156,7 +167,7 @@ static void detoxConditionalInit()
 		void (^block)(void);
 		//Send webSocket and messageId as params so the block is of global type, instead of being allocated on every message.
 		void (^sendDoneAction)(WebSocket* webSocket, NSNumber* messageId) = ^ (WebSocket* webSocket, NSNumber* messageId) {
-			[webSocket sendAction:@"deliverPayloadDone" withParams:@{} withMessageId: messageId];
+			[self _safeSendAction:@"deliverPayloadDone" params:@{} messageId: messageId];
 		};
 		
 		if(params[@"url"])
@@ -221,7 +232,7 @@ static void detoxConditionalInit()
 		[EarlGrey detox_safeExecuteSync:^{
 			[self _sendShakeNotification];
 			
-			[self.webSocket sendAction:@"shakeDeviceDone" withParams:@{} withMessageId: messageId];
+			[self _safeSendAction:@"shakeDeviceDone" params:@{} messageId: messageId];
 		}];
 	}
 	else if([type isEqualToString:@"reactNativeReload"])
@@ -260,19 +271,20 @@ static void detoxConditionalInit()
 	{
 		res = [NSString stringWithFormat:@"(%@)", NSStringFromClass([res class])];
 	}
-	[self.webSocket sendAction:@"invokeResult" withParams:@{@"result": res} withMessageId:messageId];
+	
+	[self _safeSendAction:@"invokeResult" params:@{@"result": res} messageId:messageId];
 }
 
 - (void)testRunnerOnTestFailed:(NSString *)details withMessageId:(NSNumber *) messageId
 {
 	if (details == nil) details = @"";
-	[self.webSocket sendAction:@"testFailed" withParams:@{@"details": details} withMessageId:messageId];
+	[self _safeSendAction:@"testFailed" params:@{@"details": details} messageId:messageId];
 }
 
 - (void)testRunnerOnError:(NSString *)error withMessageId:(NSNumber *) messageId
 {
 	if (error == nil) error = @"";
-	[self.webSocket sendAction:@"error" withParams:@{@"error": error} withMessageId:messageId];
+	[self _safeSendAction:@"error" params:@{@"error": error} messageId:messageId];
 }
 
 - (void)notifyOnCrashWithDetails:(NSDictionary*)details
