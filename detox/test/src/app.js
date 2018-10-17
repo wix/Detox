@@ -31,6 +31,11 @@ class example extends Component {
 
   renderScreenButton(title, component) {
     return this.renderButton(title, () => {
+	  if(component === "ActionsScreen")
+							 {
+							 let x = 9e10;
+							 	require('./Screens/ActionsScreen.js');
+							 }
       this.setState({screen: component});
     });
   }
@@ -81,7 +86,7 @@ class example extends Component {
           {this.renderScreenButton('Language', Screens.LanguageScreen)}
           {this.renderScreenButton('Sanity', Screens.SanityScreen)}
           {this.renderScreenButton('Matchers', Screens.MatchersScreen)}
-          {this.renderScreenButton('Actions', Screens.ActionsScreen)}
+          {this.renderScreenButton('Actions', "ActionsScreen")}
           {this.renderScreenButton('Assertions', Screens.AssertionsScreen)}
           {this.renderScreenButton('WaitFor', Screens.WaitForScreen)}
           {this.renderScreenButton('Stress', Screens.StressScreen)}
