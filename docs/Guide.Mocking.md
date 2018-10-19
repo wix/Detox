@@ -26,17 +26,7 @@ This replacement mechanism provides a lot of flexibility to change implementatio
 
 #### Configuration
 0. For RN < 0.55, setup `react-native-repackager` in your library.
-1. Configure Metro by creating `rn-cli.config.js` to root dir and setting `getSourceExts()` to prioritize any given source extension over the default one, by triggering each of these commands the bundler will take `e2e.js` over `.js`
-
-    ```js
-    module.exports = {
-      getSourceExts: () => process.env.RN_SRC_EXT ? 
-                           process.env.RN_SRC_EXT.split(',') : []
-    };
-
-    ```
-
-    or use the new format for metro configuration for RN >= 0.57 (or if you've metro >= 0.43)
+1. Configure Metro by creating `rn-cli.config.js` to root dir and setting `resolver.sourceExts` to prioritize any given source extension over the default one:
 
     ```js
     const defaultSourceExts = require('metro-config/src/defaults/defaults').sourceExts
@@ -47,6 +37,16 @@ This replacement mechanism provides a lot of flexibility to change implementatio
                     : defaultSourceExts
       }
     };
+    ```
+    
+    or if you have RN < 0.57 or Metro < 0.43 use the old Metro configuration format:
+    
+     ```js
+    module.exports = {
+      getSourceExts: () => process.env.RN_SRC_EXT ? 
+                           process.env.RN_SRC_EXT.split(',') : []
+    };
+
     ```
 
 2. Create `anyfile.e2e.js` alongside `anyfile.js`
