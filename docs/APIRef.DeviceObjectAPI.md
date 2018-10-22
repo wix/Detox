@@ -237,7 +237,7 @@ Check out Detox's [own test suite](../detox/test/e2e/11.user-notifications.test.
 
 ### `device.sendUserActivity(params)`
 Mock handling of received user activity when app is in foreground.<br>
-Read more in [Mocking User Activities](APIRef.MockingUserActivities.md) section.<br>
+Read more in [Mocking User Activity](APIRef.MockingUserActivity.md) section.<br>
 Check out Detox's [own test suite](../detox/test/e2e/18.user-activities.test.js)
 
 ### `device.setOrientation(orientation)`
