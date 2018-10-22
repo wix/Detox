@@ -147,7 +147,7 @@ In itself, `detox init` makes a few steps which you can reproduce manually:
 * Inside `e2e` folder create `firstTest.spec.js` with content similar to [this](/examples/demo-react-native/e2e/example.spec.js).
 * If you use `jest`, add `"test-runner": "jest"` to `detox` section in your `package.json` ([see example](https://github.com/wix/detox/blob/master/examples/demo-react-native-jest/package.json)).
 
-> TIP: Detox is nor tightly coupled to Mocha and Jest, neither to this specific directory structure. Both are just a recommendation and are easy to replace without touching the internal implementation of Detox itself.
+> TIP: Detox is not tightly coupled to Mocha and Jest, neither to this specific directory structure. Both are just a recommendation and are easy to replace without touching the internal implementation of Detox itself.
 
 <br>
 
