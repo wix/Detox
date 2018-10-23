@@ -9,8 +9,12 @@
 * make sure you have node installed (`brew install node`, node 8.3.0 and up is prefered, for native async-await support)
 
 ### Step 1: Npm install
-* Make sure you're in folder `examples/demo-native-ios`
+
+* Make sure you're in folder `detox`
 * Run `npm install`
+* Now switch to `examples/demo-native-ios`
+* Run `npm install` again
+
 
 ### Step 2: Build the Demo Project
 * Build the demo project
