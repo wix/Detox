@@ -52,9 +52,13 @@ The most difficult part of automated testing on mobile is the tip of the testing
 
 Detox is built from the ground up to support React Native projects as well as pure native ones.
 
+The following React Native versions have been tested:
+
 | iOS    | Android |
 | ------ | ------- |
 | <=0.56 | <=0.56  |
+
+Future versions are most likely supported, but have not been tested yet. Please open issues if you find specific issues with newer React Native versions.
 
 ## Getting Started
 
