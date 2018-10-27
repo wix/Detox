@@ -45,6 +45,7 @@ sidebar_label: Overview
 - [Advanced Mocking With Detox](Guide.Mocking.md)
 - [Migration Between Detox Versions](Guide.Migration.md)
 - [Use Jest as Test Runner](Guide.Jest.md)
+- [Integrating TypeScript with Detox + Jest](Guide.TypeScriptIntegrationJest.md)
 - [Parallel Test Execution](Guide.ParallelTestExecution.md)
 
 ## Under The Hood
