@@ -262,7 +262,7 @@ class AppleSimUtils {
       dylibs = `${process.env.SIMCTL_CHILD_DYLD_INSERT_LIBRARIES}:${dylibs}`;
     }
 
-    const launchBin = `/bin/cat /dev/null >${logsInfo.absStdout} 2>${logsInfo.absStderr} && ` +
+    let launchBin = `/bin/cat /dev/null >${logsInfo.absStdout} 2>${logsInfo.absStderr} && ` +
       `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${dylibs}" ` +
       `/usr/bin/xcrun simctl launch --stdout=${logsInfo.simStdout} --stderr=${logsInfo.simStderr} ` +
       `${udid} ${bundleId} --args ${args}`;
