@@ -45,6 +45,11 @@ static void detoxConditionalInit()
 	
 	NSUserDefaults* options = [NSUserDefaults standardUserDefaults];
 	
+	NSArray *blacklistRegex = [options arrayForKey:@"detoxURLBlacklistRegex"];
+	if (blacklistRegex){
+		[[GREYConfiguration sharedInstance] setValue:blacklistRegex forConfigKey:kGREYConfigKeyURLBlacklistRegex];
+	}
+	
 	NSString *detoxServer = [options stringForKey:@"detoxServer"];
 	NSString *detoxSessionId = [options stringForKey:@"detoxSessionId"];
 	if (!detoxServer || !detoxSessionId)
