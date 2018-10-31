@@ -27,7 +27,7 @@
   },
   "detox": {
     "specs": "e2e",
-    "test-runner": "jest",
+    "test-runner": "mocha",
     "__session": {
       "server": "ws://localhost:8099",
       "sessionId": "test"

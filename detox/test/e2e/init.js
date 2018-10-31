@@ -1,11 +1,8 @@
-const detox = require('detox');
-const config = require('../../package.json').detox;
-const adapter = require('detox/runners/jest/adapter');
+const detox = require('detox/src/index');
+const config = require('../package.json').detox;
+const adapter = require('detox/runners/mocha/adapter');
 
-jest.setTimeout(480000);
-jasmine.getEnv().addReporter(adapter);
-
-beforeAll(async () => {
+before(async () => {
   try {
     await detox.init(config);
   } catch (e) {
@@ -15,11 +12,15 @@ beforeAll(async () => {
   }
 });
 
-beforeEach(async function() {
-  await adapter.beforeEach();
+beforeEach(async function () {
+  await adapter.beforeEach(this);
 });
 
-afterAll(async () => {
+afterEach(async function () {
+  await adapter.afterEach(this);
+});
+
+after(async () => {
   await adapter.afterAll();
   await detox.cleanup();
 });

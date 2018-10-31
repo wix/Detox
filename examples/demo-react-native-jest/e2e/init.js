@@ -6,7 +6,7 @@ const adapter = require('detox/runners/jest/adapter');
 jest.setTimeout(120000);
 jasmine.getEnv().addReporter(adapter);
 
-beforeAll(async () => {
+before(async () => {
   await detox.init(config);
 });
 
@@ -14,7 +14,7 @@ beforeEach(async function() {
   await adapter.beforeEach();
 });
 
-afterAll(async () => {
+after(async () => {
   await adapter.afterAll();
   await detox.cleanup();
 });
