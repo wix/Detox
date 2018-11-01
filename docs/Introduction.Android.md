@@ -85,7 +85,6 @@ Add this part to your `package.json`:
     "configurations": {
         "android.emu.debug": {
             "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
-            "testBinaryPath": "android/app/build/outputs/apk/androidTest/debug/app-test-debug.apk",
             "build":
             "cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
             "type": "android.emulator",
@@ -93,7 +92,6 @@ Add this part to your `package.json`:
         },
         "android.emu.release": {
             "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
-            "testBinaryPath": "android/app/build/outputs/apk/androidTest/release/app-test-release.apk",
             "build":
             "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd ..",
             "type": "android.emulator",
@@ -102,8 +100,6 @@ Add this part to your `package.json`:
     }
 }
 ```
-Note: `testBinaryPath` is optional.
-
 Pay attention to `-DtestBuildType`, set either to `debug` or `release` according to the main apk type.
 
 
