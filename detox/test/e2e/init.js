@@ -21,7 +21,6 @@ afterEach(async function () {
 });
 
 after(async () => {
-  await adapter.afterAll();
   await detox.cleanup();
 });
 
