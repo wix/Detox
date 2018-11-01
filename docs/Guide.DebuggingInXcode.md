@@ -13,19 +13,6 @@ title: Debugging in Xcode During Detox Tests
 
 > NOTE: Apps should not be submitted to the App Store with the Detox framework linked. Follow this guide only to debug Detox issues in your project. Once finished, make sure to remove **Detox.framework** from your project.
 
-### Add Launch Arguments
-
-Under **Product** menu select **Scheme** -> **Edit Scheme** and select **Run** -> **Arguments** tab and add the following launch arguments to **Arguments Passed On Launch**:
-
-```
--detoxServer
-ws://localhost:8099
--detoxSessionId
-<project_name>
-```
-
-> NOTE: Add each line as a separate line in Xcode.
-
 ### Add 'None' Configuration to Detox Section
 
 Edit the Detox section in `package.json` to add the following configuration:
@@ -37,12 +24,12 @@ Edit the Detox section in `package.json` to add the following configuration:
     "name": "iPhone 8 Plus",
     "session": {
         "server": "ws://localhost:8099",
-        "sessionId": "<project_name>"
+        "sessionId": "<your app's bundle identifier>"
     }
 }
 ```
 
-> NOTE: This configuration will not handle simulator and application lifecycle, they will have to be provided manually (via running your application from Xcode).
+> NOTE: This configuration will not handle simulator and application lifecycle, they will have to be performed manually (e.g. running your application from Xcode).
 
 ### Run Detox Server Manually
 

@@ -104,6 +104,20 @@
 			remoteGlobalIDString = 83CBBA2E1A601D0E00E9B192;
 			remoteInfo = React;
 		};
+		395D2EAC218AFC67002E9C25 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EBF21BDC1FC498900052F4D5;
+			remoteInfo = jsinspector;
+		};
+		395D2EAE218AFC67002E9C25 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EBF21BFA1FC4989A0052F4D5;
+			remoteInfo = "jsinspector-tvOS";
+		};
 		396B38381EC9DAB600A226F2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 396B38301EC9DAB600A226F2 /* RCTAnimation.xcodeproj */;
@@ -505,6 +519,8 @@
 				39A34C5D1E30ED3600BEBB59 /* libcxxreact.a */,
 				39A34C5F1E30ED3600BEBB59 /* libjschelpers.a */,
 				39A34C611E30ED3600BEBB59 /* libjschelpers.a */,
+				395D2EAD218AFC67002E9C25 /* libjsinspector.a */,
+				395D2EAF218AFC67002E9C25 /* libjsinspector-tvOS.a */,
 				4644B8651F897583003223D4 /* libthird-party.a */,
 				4644B8671F897583003223D4 /* libthird-party.a */,
 				4644B8691F897583003223D4 /* libdouble-conversion.a */,
@@ -799,6 +815,20 @@
 			remoteRef = 146834031AC3E56700842450 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		395D2EAD218AFC67002E9C25 /* libjsinspector.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libjsinspector.a;
+			remoteRef = 395D2EAC218AFC67002E9C25 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		395D2EAF218AFC67002E9C25 /* libjsinspector-tvOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libjsinspector-tvOS.a";
+			remoteRef = 395D2EAE218AFC67002E9C25 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		396B38391EC9DAB600A226F2 /* libRCTAnimation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1052,7 +1082,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1115,7 +1145,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wix.detox-example";
 				PRODUCT_NAME = example;
 			};
 			name = Debug;
@@ -1132,7 +1162,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wix.detox-example";
 				PRODUCT_NAME = example;
 			};
 			name = Release;

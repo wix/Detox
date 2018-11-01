@@ -51,7 +51,7 @@
         "name": "iPhone X",
         "session": {
           "server": "ws://localhost:8099",
-          "sessionId": "test"
+          "sessionId": "com.wix.detox-example"
         }
       },
       "android.emu.debug": {
