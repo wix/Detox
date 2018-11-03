@@ -5,7 +5,7 @@ title: Expo
 
 ## Usage with Expo (iOS)
 
-- Install `detox` and `detox-expo-helpers` (yarn or npm)
+- Install `detox` 9.0.6 or higher, `detox-expo-helpers` and `expo-detox-hook` (yarn or npm)
 - Add `detox` configuration to [package.json](https://github.com/expo/with-detox-tests/blob/master/package.json#L21-L29):
 
 ```es6
