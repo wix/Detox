@@ -52,7 +52,7 @@
 
 @end
 
-static NSMapTable<GREYAppStateTrackerObject*, __DTXDeallocSafeProxy*>* __tarckedObjectsMapping;
+static NSMapTable<GREYAppStateTrackerObject*, NSObject*>* __tarckedObjectsMapping;
 static dispatch_queue_t __tarckedObjectsQueue;
 
 @interface GREYAppStateTracker (PrettyPrint) @end
@@ -63,10 +63,10 @@ static dispatch_queue_t __tarckedObjectsQueue;
 {
 	GREYAppStateTrackerObject* rv = [self _pp__trackState:state forObject:element];
 	
-	__DTXDeallocSafeProxy* proxy = [[__DTXDeallocSafeProxy alloc] initWithObject:element];
+//	__DTXDeallocSafeProxy* proxy = [[__DTXDeallocSafeProxy alloc] initWithObject:element];
 	
 	dispatch_sync(__tarckedObjectsQueue, ^{
-		[__tarckedObjectsMapping setObject:proxy forKey:rv];
+		[__tarckedObjectsMapping setObject:element forKey:rv];
 	});
 	
 	return rv;
@@ -172,39 +172,37 @@ NSDictionary* _prettyPrintAppStateTracker(GREYAppStateTracker* tracker)
 	__block NSArray<__DTXDeallocSafeProxy*>* allElements;
 	dispatch_sync(__tarckedObjectsQueue, ^{
 		allElements = [__tarckedObjectsMapping.allValues copy];
+		
+		NSMutableArray* elems = [NSMutableArray new];
+		NSMutableArray* URLs = [NSMutableArray new];
+		
+		[allElements enumerateObjectsUsingBlock:^(id _Nonnull actualElement, NSUInteger idx, BOOL * _Nonnull stop) {
+			id actualObject = actualElement;
+			if(actualObject == nil)
+			{
+				return;
+			}
+			
+			[elems addObject:[actualObject description]];
+			
+			if([actualObject isKindOfClass:[NSURLSessionTask class]])
+			{
+				[URLs addObject:[(NSURLSessionTask*)actualObject originalRequest].URL.absoluteString];
+			}
+		}];
+		
+		if(elems.count > 0)
+		{
+			rv[@"elements"] = elems;
+		}
+		
+		if(URLs.count > 0)
+		{
+			rv[@"urls"] = URLs;
+			rv[@"prettyPrint"]  = [NSString stringWithFormat:@"%@: %@", stateString, URLs];
+		}
 	});
 
-	
-	NSMutableArray* elems = [NSMutableArray new];
-	NSMutableArray* URLs = [NSMutableArray new];
-	
-	[allElements enumerateObjectsUsingBlock:^(__DTXDeallocSafeProxy* _Nonnull actualElement, NSUInteger idx, BOOL * _Nonnull stop) {
-		id actualObject = actualElement.object;
-		if(actualObject == nil)
-		{
-			return;
-		}
-		
-		[elems addObject:[actualObject description]];
-		
-		if([actualObject isKindOfClass:[NSURLSessionTask class]])
-		{
-			[URLs addObject:[(NSURLSessionTask*)actualObject originalRequest].URL.absoluteString];
-		}
-	}];
-	
-	if(elems.count > 0)
-	{
-		rv[@"elements"] = elems;
-	}
-	
-	if(URLs.count > 0)
-	{
-		rv[@"urls"] = URLs;
-		rv[@"prettyPrint"]  = [NSString stringWithFormat:@"%@: %@", stateString, URLs];
-	}
-	
-	
 	return rv;
 }
 
