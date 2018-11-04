@@ -48,7 +48,7 @@ void WXFixupIdlingResourceClasses()
 		Method m = class_getInstanceMethod(cls, @selector(isIdleNow));
 		
 		BOOL (*origIsIdleNow)(id, SEL) = (BOOL(*)(id, SEL))method_getImplementation(m);
-		method_setImplementation(m, imp_implementationWithBlock(^ (id<GREYIdlingResource> _self) {
+		method_setImplementation(m, imp_implementationWithBlock(^ BOOL (id<GREYIdlingResource> _self) {
 			BOOL rv = origIsIdleNow(_self, @selector(isIdleNow));
 			
 			if(rv == NO)
