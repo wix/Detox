@@ -85,7 +85,7 @@ Type 'android.attached' could be used to connect to any of already attached devi
 2. `--debug-synchronization [ms]`, our tool to identify synchronization issues works on Android too.
 
 ## Cross platform support
-Detox is being developed on Macs, but there is no Mac specifc command on any of the Android drivers, or anything related to Android. Detox should work on both Linux and Windows.
+Detox is being developed on Macs, but there is no Mac specific command on any of the Android drivers, or anything related to Android. Detox should work on both Linux and Windows.
 
 ## Differences between iOS and Android
 - Detox Android doesn't wait for Timers scheduled less than 1.5sec in the future. Its look ahead threshold is only 15ms.
