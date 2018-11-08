@@ -74,7 +74,7 @@ buildscript {
 
 ### 3. Create Android Test class
 
-You need to add the file `android/app/src/androidTest/java/com/[your.package]/DetoxTest.java` and fill it like [this](../detox/test/android/app/src/androidTest/java/com/example/DetoxTest.java), except that you need to change the package to your projects name.
+You need to add the file `android/app/src/androidTest/java/com/[your.package]/DetoxTest.java` and fill it like [this](../detox/test/android/app/src/androidTest/java/com/example/DetoxTest.java), except that you need to change the package to your project's package name in both the AndroidManifest.xml file as well as in this DetoxTest.java file.
 
 ### 4. Add Android configuration
 
