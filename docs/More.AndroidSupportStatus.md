@@ -42,10 +42,6 @@ android {
 
 Please take a look at the [demo-react-native](../examples/demo-react-native) project to see a minimal project set up for Android. If you want to browse a more complex example you can take a look at detox's internal test suite [here.](https://github.com/wix/detox/tree/master/detox/test/e2e)
 
-In case your project's RN version is at least 0.46.0 change the `oldOkhttp` configuration string to `newOkhttp`, in the `app/build.gradle` [here.](../examples/demo-react-native/android/app/build.gradle#L65)
-
-It's sad, that we had to expose this okhttp flag, the reason behind this too long to describe here.
-
 ## Hybrid apps
 
 Detox test is a NO-OP in case it's not triggered by detox itself. So, it's safe to add it to your existing test suite.
