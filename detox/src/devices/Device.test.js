@@ -273,7 +273,7 @@ describe('Device', () => {
 
     await device.installApp('newAppPath');
 
-    expect(device.deviceDriver.installApp).toHaveBeenCalledWith(device._deviceId, 'newAppPath');
+    expect(device.deviceDriver.installApp).toHaveBeenCalledWith(device._deviceId, 'newAppPath', undefined);
   });
 
   it(`installApp() with a custom test app path should use custom test app path`, async () => {
