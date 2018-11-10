@@ -24,6 +24,7 @@ title: The `device` Object
 - [`device.disableSynchronization()`](#devicedisablesynchronization)
 - [`device.resetContentAndSettings()`](#deviceresetcontentandsettings)
 - [`device.getPlatform()`](#devicegetplatform)
+- [`device.getViewportSize()`](#devicegetviewportsize)
 - [`device.pressBack()` **Android Only**](#devicepressback-android-only)
 - [`device.shake()` **iOS Only**](#deviceshake-ios-only)
 
@@ -306,6 +307,14 @@ Returns the current device, `ios` or `android`.
 if (device.getPlatform() === 'ios') {
   await expect(loopSwitch).toHaveValue('1');
 }
+```
+
+### `device.getViewportSize()`
+Returns the current device viewport/screen size. The return value will be an object containing a `width` and `height` property. As an example, these values can be used to scroll relative to the height of the screen.
+
+```js
+const viewportSize =  await device.getViewportSize();
+await element(by.id('scrollView')).scroll(viewportSize.height / 4, 'down');
 ```
 
 ### `device.pressBack()` **Android Only**

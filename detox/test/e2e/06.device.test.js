@@ -78,6 +78,34 @@ describe('Device', () => {
     await expect(element(by.text('Shaken, not stirred'))).toBeVisible();
   });
 
+  it(':ios: iPhone X viewport should equal 1125x2436', async () => {
+    const size = await device.getViewportSize();
+
+    if (!size) {
+      throw new Error("Could not retrieve viewport size");
+    }
+    if (size.width !== 1125) {
+      throw new Error("Width did not equal 1125");
+    }
+    if (size.height !== 2436) {
+      throw new Error("Height did not equal 2436");
+    }
+  });
+
+  it(':android: Nexus 5X viewport should equal 1080x1920', async () => {
+    const size = await device.getViewportSize();
+
+    if (!size) {
+      throw new Error("Could not retrieve viewport size");
+    }
+    if (size.width !== 1080) {
+      throw new Error("Width did not equal 1080");
+    }
+    if (size.height !== 1920) {
+      throw new Error("Height did not equal 1920");
+    }
+  });
+
   describe(':android: device back button', () => {
     beforeEach(async() => {
       await device.reloadReactNative();

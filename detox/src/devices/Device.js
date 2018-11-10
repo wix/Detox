@@ -208,6 +208,10 @@ class Device {
     return this.deviceDriver.getPlatform(this._deviceId);
   }
 
+  async getViewportSize() {
+    return await this.deviceDriver.getViewportSize(this._deviceId);
+  }
+
   async _cleanup() {
     await this.deviceDriver.cleanup(this._deviceId, this._bundleId);
   }

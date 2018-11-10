@@ -149,6 +149,26 @@ class ADB {
     return Number(stdout.slice(0, stdout.indexOf(' ')));
   }
 
+  async getViewportSize(deviceId) {
+    const { stdout } = await this.adbCmd(deviceId, 'shell wm size').catch(e => e);
+  
+    const sizeRegex = /(\d+)x(\d+)/i
+  
+    const matches = stdout && stdout.match(sizeRegex)
+  
+    if (matches && matches.length === 3) {
+      return {
+        width: +matches[1],
+        height: +matches [2]
+      }
+    } else {
+      return {
+        width: undefined,
+        height: undefined
+      }
+    }
+  }
+
   async isBootComplete(deviceId) {
     try {
       const bootComplete = await this.shell(deviceId, `getprop dev.bootcomplete`, { silent: true });

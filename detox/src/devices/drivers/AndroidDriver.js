@@ -62,6 +62,10 @@ class AndroidDriver extends DeviceDriverBase {
     await this.invocationManager.execute(call);
   }
 
+  async getViewportSize(deviceId) {
+    return await this.adb.getViewportSize(deviceId);
+  }
+
   getTestApkPath(originalApkPath) {
     const testApkPath = APKPath.getTestApkPath(originalApkPath);
 

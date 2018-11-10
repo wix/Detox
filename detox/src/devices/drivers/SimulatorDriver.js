@@ -2,6 +2,8 @@ const exec = require('child-process-promise').exec;
 const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
+const tempfile = require('tempfile');
+const sizeOf = require('image-size');
 const IosDriver = require('./IosDriver');
 const AppleSimUtils = require('../ios/AppleSimUtils');
 const configuration = require('../../configuration');
@@ -103,6 +105,20 @@ class SimulatorDriver extends IosDriver {
   async shutdown(deviceId) {
     await this._applesimutils.shutdown(deviceId);
     await this.emitter.emit('shutdownDevice', { deviceId });
+  }
+
+  async getViewportSize(udid) {
+    const temporaryFilePath = tempfile('.png');
+
+    await this._applesimutils.takeScreenshot(udid, temporaryFilePath)
+
+    var dimensions = sizeOf(temporaryFilePath);
+
+    fs.unlinkSync(temporaryFilePath);
+    
+    delete dimensions.type
+
+    return dimensions
   }
 
   async setLocation(deviceId, lat, lon) {
