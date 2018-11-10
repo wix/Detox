@@ -4,7 +4,7 @@ describe('StressRoot', () => {
     await element(by.text('Switch Root')).tap();
   });
 
-  afterAll(async () => {
+  after(async () => {
     await device.relaunchApp();
   });
 

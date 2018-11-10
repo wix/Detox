@@ -257,10 +257,15 @@ class AppleSimUtils {
       `        tail -F ${logsInfo.absJoined}`
     };
 
+    let dylibs = `${frameworkPath}/Detox`;
+    if (process.env.SIMCTL_CHILD_DYLD_INSERT_LIBRARIES) {
+      dylibs = `${process.env.SIMCTL_CHILD_DYLD_INSERT_LIBRARIES}:${dylibs}`;
+    }
+
     let launchBin = `/bin/cat /dev/null >${logsInfo.absStdout} 2>${logsInfo.absStderr} && ` +
-      `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${frameworkPath}/Detox" ` +
+      `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${dylibs}" ` +
       `/usr/bin/xcrun simctl launch --stdout=${logsInfo.simStdout} --stderr=${logsInfo.simStderr} ` +
-      `${udid} ${bundleId} --args ${args}`;;
+      `${udid} ${bundleId} --args ${args}`;
 
       if (!!languageAndLocale && !!languageAndLocale.language) {
         launchBin += ` -AppleLanguages "(${languageAndLocale.language})"`;

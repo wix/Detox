@@ -3,13 +3,13 @@ const cp = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-module.exports = function verify() {
+module.exports = function verify(configuration) {
   let startupLogs = 0;
   let textLogs = 0;
   let jsonLogs = 0;
 
-  const subdir = _.last(fs.readdirSync('artifacts'));
-  const artifacts = cp.execSync('find .', {
+  const subdir = _.last(_.filter(fs.readdirSync('artifacts'), (str) => str.includes(configuration)));
+  const artifacts = cp.execSync(`find .`, {
     cwd: path.join('artifacts', subdir),
     encoding: 'utf8'
   }).split('\n').map((filename) => {

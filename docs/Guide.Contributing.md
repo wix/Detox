@@ -83,24 +83,21 @@ open coverage/lcov-report/index.html
 ```
 
 #### 2. Running Detox e2e coverage tests
-Detox has a suite of e2e tests to test its own API while developing (and for regression). The way we do is is by maintaining a special application that is "tested" against Detox's API, but essentially, it's the API that is tested, not the app.
-To run the e2e tests, go to `detox/detox/test`
 
-```sh
-cd detox/test
-npm run build
-```
+Detox has a suite of e2e tests to test its own API while developing (and for regression); We maintain a special application that is "tested" against Detox's API, but essentially, it's the API that is tested, not the app.
 
-To run the e2e tests, after the application was built.
+To run the e2e tests, you must first build the native code and then run based on your target of choice (Android / iOS):
 
 ##### iOS
 ```sh
+cd detox/test
 npm run build:ios
 npm run e2e:ios
 ```
 
 ##### Android
 ```sh
+cd detox/test
 npm run build:android
 npm run e2e:android
 ```

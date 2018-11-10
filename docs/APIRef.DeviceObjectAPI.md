@@ -177,6 +177,16 @@ With this API, you can run sets of e2e tests per language. For example:
 });
 ```
 
+##### 10. Initialize the URL blacklist at device launch
+Launch the app with an URL blacklist to disable network synchronization on certain endpoints. Useful if the app makes frequent network calls to blacklisted endpoints upon startup. 
+
+```js
+await device.launchApp({
+  newInstance: true,
+  launchArgs: { detoxURLBlacklistRegex: ' \\("http://192.168.1.253:19001/onchange","https://e.crashlytics.com/spi/v2/events"\\)' },
+}); 
+```
+
 ### `device.relaunchApp(params)`
 **Deprecated** Use `device.launchApp(params)` instead. This method is now calling `launchApp({newInstance: true})` for backwards compatibility, it will be removed in Detox 6.X.X.<Br>
 Kill and relaunch the app defined in the current [`configuration`](APIRef.Configuration.md).
@@ -254,7 +264,7 @@ await device.setLocation(32.0853, 34.7818);
 
 ### `device.setURLBlacklist([urls])`
 
-Disable [EarlGrey's network synchronization mechanism](https://github.com/google/EarlGrey/blob/master/docs/api.md#network) on preffered endpoints. Useful if you want to on skip over synchronizing on certain URLs.
+Disable [EarlGrey's network synchronization mechanism](https://github.com/google/EarlGrey/blob/master/docs/api.md#network) on preferred endpoints. Useful if you want to on skip over synchronizing on certain URLs. To disable endpoints at initialization, pass in the blacklist at [device launch](#10-initialize-the-url-blacklist-at-device-launch).
 
 ```js
 await device.setURLBlacklist(['.*127.0.0.1.*']);

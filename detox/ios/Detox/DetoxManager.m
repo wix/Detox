@@ -45,19 +45,30 @@ static void detoxConditionalInit()
 	
 	NSUserDefaults* options = [NSUserDefaults standardUserDefaults];
 	
+	NSArray *blacklistRegex = [options arrayForKey:@"detoxURLBlacklistRegex"];
+	if (blacklistRegex){
+		[[GREYConfiguration sharedInstance] setValue:blacklistRegex forConfigKey:kGREYConfigKeyURLBlacklistRegex];
+	}
+	
 	NSString *detoxServer = [options stringForKey:@"detoxServer"];
 	NSString *detoxSessionId = [options stringForKey:@"detoxSessionId"];
-	if (!detoxServer || !detoxSessionId)
+	
+	if(detoxServer == nil)
 	{
-		dtx_log_error(@"Either 'detoxServer' and/or 'detoxSessionId' arguments are missing; failing Detox.");
-		// if these args were not provided as part of options, don't start Detox at all!
-		return;
+		detoxServer = @"ws://localhost:8099";
+		dtx_log_info(@"Using default 'detoxServer': ws://localhost:8099");
+	}
+	
+	if(detoxSessionId == nil)
+	{
+		detoxSessionId = NSBundle.mainBundle.bundleIdentifier;
+		dtx_log_info(@"Using default 'detoxSessionId': %@", NSBundle.mainBundle.bundleIdentifier);
 	}
 	
 	NSNumber* waitForDebugger = [options objectForKey:@"detoxWaitForDebugger"];
 	if(waitForDebugger)
 	{
-		usleep(waitForDebugger.unsignedIntValue* 1000);
+		usleep(waitForDebugger.unsignedIntValue * 1000);
 	}
 	
 	[[DetoxManager sharedManager] connectToServer:detoxServer withSessionId:detoxSessionId];
@@ -139,7 +150,7 @@ static void detoxConditionalInit()
 	
 	if([type isEqualToString:@"waitForIdle"])
 	{
-		[self _safeSendAction:@"waitForIdleDone" params:@{} messageId: messageId];
+		[self _safeSendAction:@"waitForIdleDone" params:@{} messageId:messageId];
 	}
 	else if([type isEqualToString:@"invoke"])
 	{
@@ -167,7 +178,7 @@ static void detoxConditionalInit()
 		void (^block)(void);
 		//Send webSocket and messageId as params so the block is of global type, instead of being allocated on every message.
 		void (^sendDoneAction)(WebSocket* webSocket, NSNumber* messageId) = ^ (WebSocket* webSocket, NSNumber* messageId) {
-			[self _safeSendAction:@"deliverPayloadDone" params:@{} messageId: messageId];
+			[self _safeSendAction:@"deliverPayloadDone" params:@{} messageId:messageId];
 		};
 		
 		if(params[@"url"])
@@ -232,7 +243,7 @@ static void detoxConditionalInit()
 		[EarlGrey detox_safeExecuteSync:^{
 			[self _sendShakeNotification];
 			
-			[self _safeSendAction:@"shakeDeviceDone" params:@{} messageId: messageId];
+			[self _safeSendAction:@"shakeDeviceDone" params:@{} messageId:messageId];
 		}];
 	}
 	else if([type isEqualToString:@"reactNativeReload"])
