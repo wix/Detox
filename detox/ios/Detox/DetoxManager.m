@@ -163,7 +163,7 @@ static void detoxConditionalInit()
 
 - (void)_sendGeneralReadyMessage
 {
-	[self.webSocket sendAction:@"ready" withParams:@{} withMessageId:@-1000];
+	[self _safeSendAction:@"ready" params:@{} messageId:@-1000];
 }
 
 - (void)connectToServer:(NSString*)url withSessionId:(NSString*)sessionId
@@ -176,7 +176,7 @@ static void detoxConditionalInit()
 	if (![ReactNativeSupport isReactNativeApp])
 	{
 		_isReady = YES;
-		[self _safeSendAction:@"ready" params:@{} messageId:@-1000];
+		[self _sendGeneralReadyMessage];
 	}
 }
 
@@ -215,7 +215,7 @@ static void detoxConditionalInit()
 	{
 		if(_isReady)
 		{
-			[self _safeSendAction:@"ready" params:@{} messageId:@-1000];
+			[self _sendGeneralReadyMessage];
 		}
 		return;
 	}
