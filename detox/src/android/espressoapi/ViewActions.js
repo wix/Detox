@@ -5,7 +5,6 @@
 */
 
 
-
 class ViewActions {
   static clearGlobalAssertions() {
     return {
@@ -33,7 +32,7 @@ class ViewActions {
     return {
       target: {
         type: "Class",
-        value: "android.support.test.espresso.action.ViewActions"
+        value: "com.wix.detox.espresso.DetoxViewActions"
       },
       method: "click",
       args: []
