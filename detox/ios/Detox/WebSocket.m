@@ -102,7 +102,7 @@ DTX_CREATE_LOG(WebSocket);
 		dtx_log_fault(@"receiveAction invalid messageId");
 		return;
 	}
-	dtx_log_info(@"Action Received: %@", type);
+	dtx_log_info(@"Action Received: %@ params: %@", type, params);
 	if (self.delegate) [self.delegate websocketDidReceiveAction:type withParams:params withMessageId:messageId];
 }
 

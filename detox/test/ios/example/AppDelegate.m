@@ -8,6 +8,12 @@
 
 @import UserNotifications;
 
+#if EXTERNAL_LOGGER
+extern void __dtx_send_external_log(const char* log) __attribute__((weak));
+#define __dtx_external_logger(log) __dtx_send_external_log(log);
+#else
+#define __dtx_external_logger(log)
+#endif
 @interface ShakeEventEmitter : RCTEventEmitter @end
 static ShakeEventEmitter* _instance;
 @implementation ShakeEventEmitter
@@ -94,10 +100,16 @@ RCT_EXPORT_MODULE();
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options
 {
-    return [RCTLinkingManager application:application
+	__dtx_external_logger("Got openURL:");
+	
+    BOOL rv = [RCTLinkingManager application:application
 								  openURL:url
                         sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
                                annotation:options[UIApplicationOpenURLOptionsAnnotationKey]];
+	
+	__dtx_external_logger("Finished openURL:");
+	
+	return rv;
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
@@ -124,6 +136,28 @@ RCT_EXPORT_MODULE();
 	}
 	
 	return [RCTLinkingManager application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
+}
+
+
+- (void)applicationDidEnterBackground:(UIApplication *)application
+{
+	__dtx_external_logger("DidEnterBackground");
+}
+
+- (void)applicationWillEnterForeground:(UIApplication *)application
+{
+	__dtx_external_logger("WillEnterForeground");
+}
+
+- (void)applicationWillResignActive:(UIApplication *)application
+{
+	__dtx_external_logger("WillResignActive");
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application
+{
+	
+	__dtx_external_logger("DidBecomeActive");
 }
 
 @end
