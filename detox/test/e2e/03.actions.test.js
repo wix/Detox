@@ -14,7 +14,7 @@ describe('Actions', () => {
     await expect(element(by.text('Long Press Working!!!'))).toBeVisible();
   });
 
-  it(':ios: should long press with duration on an element', async () => {
+  it('should long press with duration on an element', async () => {
     await element(by.text('Long Press Me 1.5s')).longPress(1500);
     await expect(element(by.text('Long Press With Duration Working!!!'))).toBeVisible();
   });
