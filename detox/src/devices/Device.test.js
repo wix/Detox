@@ -273,7 +273,16 @@ describe('Device', () => {
 
     await device.installApp('newAppPath');
 
-    expect(device.deviceDriver.installApp).toHaveBeenCalledWith(device._deviceId, 'newAppPath');
+    expect(device.deviceDriver.installApp).toHaveBeenCalledWith(device._deviceId, 'newAppPath', undefined);
+  });
+
+  it(`installApp() with a custom test app path should use custom test app path`, async () => {
+    device = validDevice();
+    fs.existsSync.mockReturnValue(true);
+
+    await device.installApp('newAppPath', 'newTestAppPath');
+
+    expect(device.deviceDriver.installApp).toHaveBeenCalledWith(device._deviceId, 'newAppPath', 'newTestAppPath');
   });
 
   it(`installApp() with no params should use the default path given in configuration`, async () => {
@@ -281,7 +290,7 @@ describe('Device', () => {
 
     await device.installApp();
 
-    expect(device.deviceDriver.installApp).toHaveBeenCalledWith(device._deviceId, device._binaryPath);
+    expect(device.deviceDriver.installApp).toHaveBeenCalledWith(device._deviceId, device._binaryPath, device._testBinaryPath);
   });
 
   it(`uninstallApp() with a custom app path should use custom app path`, async () => {

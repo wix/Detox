@@ -10,10 +10,11 @@ title: Configuration Options
 
 |Configuration Params|Details|
 |---|---|
-|`binaryPath`|relative path to the ipa/app due to be  tested (make sure you build the app in a project relative path)|
-|`type`|device type, currently only `ios.simulator` is supported|
-|`name`|device name, aligns to the device list avaliable through `xcrun simctl list` for example, this is one line of the output of `xcrun simctl list`: `A3C93900-6D17-4830-8FBE-E102E4BBCBB9  iPhone 7  Shutdown  iPhone 7  iOS 10.2`, ir order to choose the first `iPhone 7` regardless of OS version, use `iPhone 7`. <br>To be OS specific use `iPhone 7, iOS 10.2`|
-|`build`| **[optional]** build command (either `xcodebuild`, `react-native run-ios`, etc...), will be later available through detox CLI tool.|
+|`binaryPath`| Relative path to the ipa/app due to be  tested (make sure you build the app in a project relative path)|
+|`testBinaryPath`| (optional, Android only): relative path to the test app (apk) |
+|`type`| Device type, available options are `ios.simulator`, `ios.none`, `android.emulator`, and `android.attached`. |
+|`name`| Device name, aligns to the device list avaliable through `xcrun simctl list` for example, this is one line of the output of `xcrun simctl list`: `A3C93900-6D17-4830-8FBE-E102E4BBCBB9  iPhone 7  Shutdown  iPhone 7  iOS 10.2`, ir order to choose the first `iPhone 7` regardless of OS version, use `iPhone 7`. <br>To be OS specific use `iPhone 7, iOS 10.2`|
+|`build`| **[optional]** Build command (either `xcodebuild`, `react-native run-ios`, etc...), will be later available through detox CLI tool.|
 	
 **Example:**
 

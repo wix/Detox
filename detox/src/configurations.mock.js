@@ -72,6 +72,7 @@ const validOneDeviceAndSession = {
   "configurations": {
     "ios.sim.release": {
       "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+      "testBinaryPath": "some/test/path",
       "type": "ios.simulator",
       "name": "iPhone 7 Plus, iOS 10.2"
     }
