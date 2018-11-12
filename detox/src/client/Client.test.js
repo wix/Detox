@@ -58,6 +58,22 @@ describe('Client', () => {
     expect(client.ws.send).toHaveBeenCalledTimes(2);
   });
 
+  it(`waitForBackground() - should receive waitForBackgroundDone from device and resolve`, async () => {
+    await connect();
+    client.ws.send.mockReturnValueOnce(response("waitForBackgroundDone", {}, 1));
+    await client.waitForBackground();
+
+    expect(client.ws.send).toHaveBeenCalledTimes(2);
+  });
+
+  it(`waitForActive() - should receive waitForActiveDone from device and resolve`, async () => {
+    await connect();
+    client.ws.send.mockReturnValueOnce(response("waitForActiveDone", {}, 1));
+    await client.waitForActive();
+
+    expect(client.ws.send).toHaveBeenCalledTimes(2);
+  });
+
   it(`cleanup() - if connected should send cleanup action and close websocket`, async () => {
     await connect();
     client.ws.send.mockReturnValueOnce(response("ready", {}, 1));
