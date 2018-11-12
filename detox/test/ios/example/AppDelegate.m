@@ -14,6 +14,44 @@ extern void __dtx_send_external_log(const char* log) __attribute__((weak));
 #else
 #define __dtx_external_logger(log)
 #endif
+
+@implementation AnnoyingWindow
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+	self = [super initWithFrame:frame];
+	
+	if(self)
+	{
+		_annoyingLabel = [UILabel new];
+		
+		[self addSubview:_annoyingLabel];
+	}
+	
+	return self;
+}
+
+- (void)setHidden:(BOOL)hidden
+{
+	[super setHidden:hidden];
+}
+
+- (void)layoutSubviews
+{
+	[super layoutSubviews];
+	
+	[self bringSubviewToFront:_annoyingLabel];
+	
+	UIEdgeInsets insets;
+	if (@available(iOS 11.0, *)) {
+		insets = self.safeAreaInsets;
+	}
+	
+	_annoyingLabel.center = CGPointMake(self.center.x, insets.top);
+}
+
+@end
+
 @interface ShakeEventEmitter : RCTEventEmitter @end
 static ShakeEventEmitter* _instance;
 @implementation ShakeEventEmitter
@@ -59,11 +97,30 @@ RCT_EXPORT_MODULE();
 
 @end
 
+@implementation DetoxApp
+
+- (UIWindow *)keyWindow
+{
+	UIWindow* rv = super.keyWindow;
+	
+	if(rv == nil)
+	{
+		rv = self.delegate.window;
+	}
+	
+	return rv;
+}
+
+@end
+
 @interface AppDelegate () <UNUserNotificationCenterDelegate>
 
 @end
 
 @implementation AppDelegate
+{
+	UILabel* _resignActive;
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -86,7 +143,7 @@ RCT_EXPORT_MODULE();
 													 launchOptions:launchOptions];
 	rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
 	
-	self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+	self.window = [[AnnoyingWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 	ShakeDetectViewController *rootViewController = [ShakeDetectViewController new];
 	rootViewController.bridge = rootView.bridge;
 	rootViewController.view = rootView;
@@ -94,6 +151,12 @@ RCT_EXPORT_MODULE();
 	[self.window makeKeyAndVisible];
 	
 	[UNUserNotificationCenter currentNotificationCenter].delegate = self;
+	
+	self.window.annoyingLabel.text = @"App is inactive";
+	self.window.annoyingLabel.backgroundColor = UIColor.redColor;
+	self.window.annoyingLabel.textColor = UIColor.whiteColor;
+	self.window.annoyingLabel.font = [UIFont systemFontOfSize:30];
+	[self.window.annoyingLabel sizeToFit];
 	
 	return YES;
 }
@@ -122,7 +185,11 @@ RCT_EXPORT_MODULE();
 	[RCTPushNotificationManager didReceiveLocalNotification:notification];
 }
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_12_0
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void(^)(NSArray<id<UIUserActivityRestoring>> * __nullable restorableObjects))restorationHandler
+#else
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(id)restorationHandler
+#endif
 {
 	if([userActivity.activityType isEqualToString:CSSearchableItemActionType])
 	{
@@ -138,24 +205,50 @@ RCT_EXPORT_MODULE();
 	return [RCTLinkingManager application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
 }
 
+- (NSString*)_stringFromAppState
+{
+	switch (UIApplication.sharedApplication.applicationState) {
+		case UIApplicationStateActive:
+			return @"Active";
+		case UIApplicationStateInactive:
+			return @"Inactive";
+		case UIApplicationStateBackground:
+			return @"Background";
+	}
+}
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
+	self.window.annoyingLabel.text = [self _stringFromAppState];
+	self.window.annoyingLabel.backgroundColor = UIColor.redColor;
+	[self.window.annoyingLabel sizeToFit];
+	
 	__dtx_external_logger("DidEnterBackground");
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
+	self.window.annoyingLabel.text = [self _stringFromAppState];
+	self.window.annoyingLabel.backgroundColor = UIColor.redColor;
+	[self.window.annoyingLabel sizeToFit];
+	
 	__dtx_external_logger("WillEnterForeground");
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
+	self.window.annoyingLabel.text = [self _stringFromAppState];
+	self.window.annoyingLabel.backgroundColor = UIColor.redColor;
+	[self.window.annoyingLabel sizeToFit];
+	
 	__dtx_external_logger("WillResignActive");
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
+	self.window.annoyingLabel.text = [self _stringFromAppState];
+	self.window.annoyingLabel.backgroundColor = UIColor.greenColor;
+	[self.window.annoyingLabel sizeToFit];
 	
 	__dtx_external_logger("DidBecomeActive");
 }
