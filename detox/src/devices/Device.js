@@ -17,6 +17,7 @@ class Device {
 
   async prepare(params = {}) {
     this._binaryPath = this._getAbsolutePath(this._deviceConfig.binaryPath);
+    this._testBinaryPath = this._deviceConfig.testBinaryPath ? this._getAbsolutePath(this._deviceConfig.testBinaryPath) : null;
     this._deviceId = await this.deviceDriver.acquireFreeDevice(this._deviceConfig.name);
     this._bundleId = await this.deviceDriver.getBundleIdFromBinary(this._binaryPath);
 
@@ -24,7 +25,7 @@ class Device {
 
     if (!argparse.getArgValue('reuse')) {
       await this.deviceDriver.uninstallApp(this._deviceId, this._bundleId);
-      await this.deviceDriver.installApp(this._deviceId, this._binaryPath);
+      await this.deviceDriver.installApp(this._deviceId, this._binaryPath, this._testBinaryPath);
     }
 
     if (params.launchApp) {
@@ -47,7 +48,7 @@ class Device {
     if (params.delete) {
       await this.deviceDriver.terminate(this._deviceId, this._bundleId);
       await this.deviceDriver.uninstallApp(this._deviceId, this._bundleId);
-      await this.deviceDriver.installApp(this._deviceId, this._binaryPath);
+      await this.deviceDriver.installApp(this._deviceId, this._binaryPath, this._testBinaryPath);
     } else if (params.newInstance) {
       await this.deviceDriver.terminate(this._deviceId, this._bundleId);
     }
@@ -136,9 +137,10 @@ class Device {
     await this.deviceDriver.terminate(this._deviceId, _bundleId);
   }
 
-  async installApp(binaryPath) {
+  async installApp(binaryPath, testBinaryPath) {
     const _binaryPath = binaryPath || this._binaryPath;
-    await this.deviceDriver.installApp(this._deviceId, _binaryPath);
+    const _testBinaryPath = testBinaryPath || this._testBinaryPath;
+    await this.deviceDriver.installApp(this._deviceId, _binaryPath, _testBinaryPath);
   }
 
   async uninstallApp(bundleId) {

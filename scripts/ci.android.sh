@@ -12,6 +12,6 @@ mv node_modules/react-native/ReactAndroid/release.gradle node_modules/react-nati
 cp extras/release.gradle node_modules/react-native/ReactAndroid/
 
 run_f "npm run build:android"
-run_f "npm run e2e:android -- --headless --no-color"
-run_f "npm run verify-artifacts:android"
+run_f "npm run e2e:android -- --headless"
+# run_f "npm run verify-artifacts:android"
 popd
