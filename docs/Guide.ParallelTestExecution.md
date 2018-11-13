@@ -11,7 +11,7 @@ By default `detox test` will run the test runner with one worker (it will pass `
 #### Lock file
 Simulators/emulators run on a different process, outside of node, and require some sort of lock mechanism to make sure only one process controlls a simulator in a given time. Therefore, Detox 7.4.0 introduced `device.registry.state.lock`, a lock file controlled by Detox, that registers all in-use simulators.
 
-The lock file location is determined by the OS, and [defined here](https://github.com/wix/detox/blob/master/detox/src/utils/appdatapath.js).
+The default lock file location is determined by the OS, and [defined here](https://github.com/wix/detox/blob/master/detox/src/utils/appdatapath.js).
 
 **MacOS:** <br>
 `~/Library/Detox/device.registry.state.lock`<br>
@@ -21,6 +21,8 @@ The lock file location is determined by the OS, and [defined here](https://githu
 `$LOCALAPPDATA/data/Detox/device.registry.state.lock`<br>
 or<br>
 `$USERPROFILE/Application Data/Detox/device.registry.state.lock`
+
+The lock file location can be overridden using the DETOX_DEVICE_LOCK_FILE_PATH environment variable.
 
 #### Device creation
 While running with multiple workers, Detox might not have an available simulator for every worker.
