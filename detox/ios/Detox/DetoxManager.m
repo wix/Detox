@@ -118,9 +118,52 @@ static void detoxConditionalInit()
 	}];
 }
 
+- (void)_waitForApplicationState:(UIApplicationState)applicationState action:(NSString*)action messageId:(NSNumber*)messageId
+{
+	__block id observer = nil;
+	
+	void (^response)() = ^ {
+		[self _safeSendAction:[NSString stringWithFormat:@"%@Done", action] params:@{} messageId:messageId];
+		
+		if(observer != nil)
+		{
+			[NSNotificationCenter.defaultCenter removeObserver:observer];
+			observer = nil;
+		}
+	};
+	
+	if(UIApplication.sharedApplication.applicationState == applicationState)
+	{
+		response();
+		return;
+	}
+	
+	NSNotificationName notificationName;
+	switch (applicationState)
+	{
+		case UIApplicationStateActive:
+			notificationName = UIApplicationDidBecomeActiveNotification;
+			break;
+		case UIApplicationStateBackground:
+			notificationName = UIApplicationDidEnterBackgroundNotification;
+			break;
+		case UIApplicationStateInactive:
+			notificationName = UIApplicationWillResignActiveNotification;
+			break;
+		default:
+			[NSException raise:NSInvalidArgumentException format:@"Inknown application state %@", @(applicationState)];
+			break;
+	}
+	
+	observer = [[NSNotificationCenter defaultCenter] addObserverForName:notificationName object:nil queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
+		//Move the response one loop later to ensure all user handlers have been called.
+		dispatch_async(dispatch_get_main_queue(), response);
+	}];
+}
+
 - (void)_sendGeneralReadyMessage
 {
-	[self.webSocket sendAction:@"ready" withParams:@{} withMessageId:@-1000];
+	[self _safeSendAction:@"ready" params:@{} messageId:@-1000];
 }
 
 - (void)connectToServer:(NSString*)url withSessionId:(NSString*)sessionId
@@ -133,7 +176,7 @@ static void detoxConditionalInit()
 	if (![ReactNativeSupport isReactNativeApp])
 	{
 		_isReady = YES;
-		[self _safeSendAction:@"ready" params:@{} messageId:@-1000];
+		[self _sendGeneralReadyMessage];
 	}
 }
 
@@ -148,9 +191,20 @@ static void detoxConditionalInit()
 {
 	NSAssert(messageId != nil, @"Got action with a null messageId");
 	
-	if([type isEqualToString:@"waitForIdle"])
+	if([type isEqualToString:@"waitForActive"])
+	{
+		[self _waitForApplicationState:UIApplicationStateActive action:type messageId:messageId];
+		return;
+	}
+	else if([type isEqualToString:@"waitForBackground"])
+	{
+		[self _waitForApplicationState:UIApplicationStateBackground action:type messageId:messageId];
+		return;
+	}
+	else if([type isEqualToString:@"waitForIdle"])
 	{
 		[self _safeSendAction:@"waitForIdleDone" params:@{} messageId:messageId];
+		return;
 	}
 	else if([type isEqualToString:@"invoke"])
 	{
@@ -161,7 +215,7 @@ static void detoxConditionalInit()
 	{
 		if(_isReady)
 		{
-			[self _safeSendAction:@"ready" params:@{} messageId:@-1000];
+			[self _sendGeneralReadyMessage];
 		}
 		return;
 	}

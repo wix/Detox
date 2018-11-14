@@ -75,6 +75,14 @@ class DeviceDriverBase {
     return await this.client.waitUntilReady();
   }
 
+  async waitForActive() {
+    return await Promise.resolve('');
+  }
+
+  async waitForBackground() {
+    return await Promise.resolve('');
+  }
+
   async reloadReactNative() {
     return await this.client.reloadReactNative();
   }

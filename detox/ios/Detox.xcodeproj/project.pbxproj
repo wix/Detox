@@ -55,6 +55,8 @@
 		394D589C1E50B59400556DB9 /* NSBundle+TestsFix.m in Sources */ = {isa = PBXBuildFile; fileRef = 394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */; };
 		397EC9B51E7EDE0B00D5F2BB /* EarlGreyStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 397EC9B31E7EDE0B00D5F2BB /* EarlGreyStatistics.h */; };
 		397EC9B61E7EDE0B00D5F2BB /* EarlGreyStatistics.m in Sources */ = {isa = PBXBuildFile; fileRef = 397EC9B41E7EDE0B00D5F2BB /* EarlGreyStatistics.m */; };
+		399BF36821933F0C00F96D50 /* ExternalLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 399BF36621933F0C00F96D50 /* ExternalLogging.h */; };
+		399BF36921933F0C00F96D50 /* ExternalLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 399BF36721933F0C00F96D50 /* ExternalLogging.m */; };
 		39A34C711E30F10D00BEBB59 /* DetoxAppDelegateProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39A34C6F1E30F10D00BEBB59 /* DetoxAppDelegateProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		39A34C721E30F10D00BEBB59 /* DetoxAppDelegateProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A34C701E30F10D00BEBB59 /* DetoxAppDelegateProxy.m */; };
 		39AB2D31205ABBD90029CD1F /* DetoxUserActivityDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39AB2D30205ABBD90029CD1F /* DetoxUserActivityDispatcher.swift */; };
@@ -228,6 +230,8 @@
 		3975C78220272ED500C59ED8 /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; name = src; path = ../src; sourceTree = "<group>"; };
 		397EC9B31E7EDE0B00D5F2BB /* EarlGreyStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EarlGreyStatistics.h; sourceTree = "<group>"; };
 		397EC9B41E7EDE0B00D5F2BB /* EarlGreyStatistics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EarlGreyStatistics.m; sourceTree = "<group>"; };
+		399BF36621933F0C00F96D50 /* ExternalLogging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalLogging.h; sourceTree = "<group>"; };
+		399BF36721933F0C00F96D50 /* ExternalLogging.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExternalLogging.m; sourceTree = "<group>"; };
 		39A34C6F1E30F10D00BEBB59 /* DetoxAppDelegateProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetoxAppDelegateProxy.h; sourceTree = "<group>"; };
 		39A34C701E30F10D00BEBB59 /* DetoxAppDelegateProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetoxAppDelegateProxy.m; sourceTree = "<group>"; };
 		39AB2D30205ABBD90029CD1F /* DetoxUserActivityDispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetoxUserActivityDispatcher.swift; sourceTree = "<group>"; };
@@ -369,6 +373,8 @@
 				394767C31DBF98B100D72256 /* ReactNativeSupport */,
 				3947679B1DBF985400D72256 /* Info.plist */,
 				39F6422A1FDD5EEC00468FED /* Detox.pch */,
+				399BF36621933F0C00F96D50 /* ExternalLogging.h */,
+				399BF36721933F0C00F96D50 /* ExternalLogging.m */,
 			);
 			path = Detox;
 			sourceTree = "<group>";
@@ -461,6 +467,7 @@
 				A7F76A151ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.h in Headers */,
 				394767AE1DBF987E00D72256 /* DetoxManager.h in Headers */,
 				468731A51E6C6D0500F151BE /* EarlGrey+Detox.h in Headers */,
+				399BF36821933F0C00F96D50 /* ExternalLogging.h in Headers */,
 				394767CD1DBF98D900D72256 /* ReactNativeHeaders.h in Headers */,
 				394767D41DBF98D900D72256 /* WXRunLoopIdlingResource.h in Headers */,
 				394767BF1DBF98A700D72256 /* GREYCondition+Detox.h in Headers */,
@@ -678,6 +685,7 @@
 				394767D51DBF98D900D72256 /* WXRunLoopIdlingResource.m in Sources */,
 				468731A61E6C6D0500F151BE /* EarlGrey+Detox.m in Sources */,
 				397EC9B61E7EDE0B00D5F2BB /* EarlGreyStatistics.m in Sources */,
+				399BF36921933F0C00F96D50 /* ExternalLogging.m in Sources */,
 				391FA5EA1E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.m in Sources */,
 				394767CF1DBF98D900D72256 /* ReactNativeSupport.m in Sources */,
 				394767B51DBF987E00D72256 /* TestRunner.m in Sources */,

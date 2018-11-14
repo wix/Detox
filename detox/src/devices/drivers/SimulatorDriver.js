@@ -97,7 +97,7 @@ class SimulatorDriver extends IosDriver {
   }
 
   async sendToHome(deviceId) {
-    return await this._applesimutils.sendToHome(deviceId);
+    await this._applesimutils.sendToHome(deviceId);
   }
 
   async shutdown(deviceId) {
@@ -131,6 +131,14 @@ class SimulatorDriver extends IosDriver {
 
   getLogsPaths(deviceId) {
     return this._applesimutils.getLogsPaths(deviceId);
+  }
+
+  async waitForActive() {
+    return await this.client.waitForActive();
+  }
+
+  async waitForBackground() {
+    return await this.client.waitForBackground();
   }
 }
 

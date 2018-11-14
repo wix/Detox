@@ -88,6 +88,7 @@ class Device {
     this._processes[_bundleId] = processId;
 
     await this.deviceDriver.waitUntilReady();
+    await this.deviceDriver.waitForActive();
 
     if(params.detoxUserNotificationDataURL) {
       await this.deviceDriver.cleanupRandomDirectory(params.detoxUserNotificationDataURL);
@@ -126,6 +127,7 @@ class Device {
 
   async sendToHome() {
     await this.deviceDriver.sendToHome(this._deviceId);
+    await this.deviceDriver.waitForBackground();
   }
 
   async shake() {

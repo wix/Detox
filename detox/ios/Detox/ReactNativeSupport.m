@@ -30,12 +30,19 @@ static NSString *const RCTReloadNotification = @"RCTReloadNotification";
 static dispatch_queue_t __currentIdlingResourceSerialQueue;
 
 _Atomic(CFRunLoopRef) __RNRunLoop;
+_Atomic(const void*) __RNThread;
 static WXRunLoopIdlingResource* __current_runLoopIdlingResource;
 static void (*orig_runRunLoopThread)(id, SEL) = NULL;
 static void swz_runRunLoopThread(id self, SEL _cmd)
 {
 	CFRunLoopRef current = CFRunLoopGetCurrent();
 	atomic_store(&__RNRunLoop, current);
+	
+	//This will take the old thread and release it by transfering ownership to ObjC.
+	NSThread* oldThread = CFBridgingRelease(atomic_load(&__RNThread));
+	oldThread = nil;
+	
+	atomic_store(&__RNThread, CFBridgingRetain([NSThread currentThread]));
 	
 	dispatch_sync(__currentIdlingResourceSerialQueue, ^{
 		if(__current_runLoopIdlingResource)

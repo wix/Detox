@@ -1,4 +1,4 @@
-# Change Log
+# Change Log 
 
 ## [9.0.5](https://github.com/wix/detox/tree/9.0.5) (2018-10-24)
 [Full Changelog](https://github.com/wix/detox/compare/9.0.4...9.0.5)

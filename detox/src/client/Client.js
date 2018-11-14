@@ -32,6 +32,14 @@ class Client {
     this.isConnected = true;
   }
 
+  async waitForBackground() {
+    await this.sendAction(new actions.WaitForBackground());
+  }
+
+  async waitForActive() {
+    await this.sendAction(new actions.WaitForActive());
+  }
+
   async cleanup() {
     clearTimeout(this.slowInvocationStatusHandler);
     if (this.isConnected && !this.pandingAppCrash) {

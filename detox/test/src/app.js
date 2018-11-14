@@ -73,6 +73,7 @@ class example extends Component {
     }
 
     if (!this.state.screen) {
+		console.log("JS rendering");
       return (
         <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
           <Text style={{fontSize: 20, marginBottom: 30}}>
