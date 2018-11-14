@@ -38,13 +38,13 @@ describe('Actions', () => {
   it('should press the backspace key on an element', async () => {
     await element(by.id('UniqueId937')).tap();
     await element(by.id('UniqueId937')).typeText('testx');
-    await element(by.id('UniqueId937')).pressBackspaceKey();
+    await element(by.id('UniqueId937')).tapBackspaceKey();
     await expect(element(by.text('test'))).toBeVisible();
   });
 
   it('should press the return key on an element', async () => {
     await element(by.id('UniqueId937')).tap();
-    await element(by.id('UniqueId937')).pressReturnKey();
+    await element(by.id('UniqueId937')).tapReturnKey();
     await expect(element(by.text('Return Working!!!'))).toBeVisible();
   });
 

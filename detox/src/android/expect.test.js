@@ -103,8 +103,8 @@ describe('expect', async () => {
     await e.element(e.by.label('Tap Me')).longPress();
     await e.element(e.by.id('UniqueId819')).multiTap(3);
     await e.element(e.by.id('UniqueId937')).typeText('passcode');
-    await e.element(e.by.id('UniqueId937')).pressBackspaceKey();
-    await e.element(e.by.id('UniqueId937')).pressReturnKey();
+    await e.element(e.by.id('UniqueId937')).tapBackspaceKey();
+    await e.element(e.by.id('UniqueId937')).tapReturnKey();
     await e.element(e.by.id('UniqueId005')).clearText();
     await e.element(e.by.id('UniqueId005')).replaceText('replaceTo');
     await e.element(e.by.id('ScrollView161')).scroll(100);

@@ -204,10 +204,10 @@ class Element {
   async multiTap(times) {
     return await new ActionInteraction(this, new MultiClickAction(times)).execute();
   }
-  async pressBackspaceKey() {
+  async tapBackspaceKey() {
     return await new ActionInteraction(this, new PressKeyAction(67)).execute();
   }
-  async pressReturnKey() {
+  async tapReturnKey() {
     return await new ActionInteraction(this, new TypeTextAction('\n')).execute();
   }
   async typeText(value) {
