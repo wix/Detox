@@ -7,10 +7,9 @@ title: Integrating TypeScript with Detox + Jest
 
 ### 0. Initialize Detox in your project
 
-Follow the [Getting Started](Introduction.GettingStarted.md) Guide to set up Detox with [Jest as your test runner](Guide.Jest.md) (optionally, set up Detox to [test Android](Introduction.Android.md) as well). When you are finished with that, we will make some changes to your project:
+After following the [Getting Started](Introduction.GettingStarted.md) Guide to set up Detox + Jest, we will make some changes to your project:
 
 - Remove Detox from `package.json` at the root level
-
 - Create a `package.json` in the `e2e` folder and add Detox and Jest to the project dependencies:
 
 ```sh
@@ -20,7 +19,7 @@ npm init -y
 npm install -D detox jest
 ```
 
-You should then move the settings for Detox from the root-level `package.json` to the `e2e/package.json`, but make sure that you update the `build` and `binaryPath` values for your Detox configurations:
+Creating the `e2e` directory will be needed to prevent a typing collision issue with Jest and Detox (see step 5). You should then move the settings for Detox from the root-level `package.json` to the `e2e/package.json`, but make sure that you update the `build` and `binaryPath` values for your Detox configurations:
 
 ```json
 {
