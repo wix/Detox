@@ -60,6 +60,7 @@ export default class ActionsScreen extends Component {
           onChangeText={this.onChangeTypeText.bind(this)}
           value={this.state.typeText}
           testID='UniqueId937'
+          onSubmitEditing={this.onReturn.bind(this)}
         />
 
         <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }}
@@ -120,6 +121,12 @@ export default class ActionsScreen extends Component {
   onButtonPress(greeting) {
     this.setState({
       greeting: greeting
+    });
+  }
+
+  onReturn() {
+    this.setState({
+      greeting: "Return Working"
     });
   }
 
