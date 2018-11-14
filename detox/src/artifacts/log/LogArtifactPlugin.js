@@ -16,7 +16,7 @@ class LogArtifactPlugin extends StartupAndTestRecorderPlugin {
   }
 
   async preparePathForStartupArtifact() {
-    const deviceId = this.api.getDeviceId();
+    const deviceId = this.context.deviceId;
     const timestamp = getTimeStampString();
 
     return this.api.preparePathForArtifact(`${deviceId} ${timestamp}.startup.log`);

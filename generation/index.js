@@ -21,47 +21,48 @@ const iosFiles = {
 		"../detox/src/ios/earlgreyapi/GREYConfigurationDetox.js",
 	"../detox/ios/EarlGrey/EarlGrey/Common/GREYConfiguration.h":
 		"../detox/src/ios/earlgreyapi/GREYConfiguration.js",
-	"../detox/ios/EarlGrey/EarlGrey/EarlGrey.h":
-		"../detox/src/ios/earlgreyapi/EarlGrey.js"
+  "../detox/ios/EarlGrey/EarlGrey/Core/EarlGreyImpl.h":
+    "../detox/src/ios/earlgreyapi/EarlGreyImpl.js"
 };
 
 generateIOSAdapters(iosFiles);
-const espressoFilesToDownload = {
-	"android.support.test.espresso.action.ViewActions":
-		"../detox/src/android/espressoapi/ViewActions.js"
-};
-
-const downloadedEspressoFilesMap = Object.entries(
-	espressoFilesToDownload
-).reduce(
-	(obj, [fullyQualifiedClass, dest]) => ({
-		...obj,
-		[downloadEspressoFileByClass(fullyQualifiedClass)]: dest
-	}),
-	{}
-);
-
-const externalFilesToDownload = {
-	'https://android.googlesource.com/platform/frameworks/uiautomator/+/master/src/com/android/uiautomator/core/UiDevice.java?format=TEXT': '../detox/src/android/espressoapi/UIDevice.js'
-}
-
-const downloadedAndroidFilesMap = Object.entries(
-	externalFilesToDownload
-).reduce(
-	(obj, [url, dest]) => ({
-		...obj,
-		[downloadFile(url)]: dest
-	}),
-	{}
-);
-
-const androidFiles = {
-  ...downloadedAndroidFilesMap,
-  ...downloadedEspressoFilesMap,
-  '../detox/android/detox/src/main/java/com/wix/detox/espresso/DetoxAction.java': '../detox/src/android/espressoapi/DetoxAction.js',
-  '../detox/android/detox/src/main/java/com/wix/detox/espresso/DetoxMatcher.java': '../detox/src/android/espressoapi/DetoxMatcher.js',
-  '../detox/android/detox/src/main/java/com/wix/detox/Detox.java': '../detox/src/android/espressoapi/Detox.js',
-  '../detox/android/detox/src/main/java/com/wix/detox/espresso/EspressoDetox.java': '../detox/src/android/espressoapi/EspressoDetox.js',
-  '../detox/android/detox/src/main/java/com/wix/detox/uiautomator/UiAutomator.java': '../detox/src/android/espressoapi/UIAutomator.js',
-};
-generateAndroidAdapters(androidFiles);
+//TODO - network failing on CI, check ASAP
+// const espressoFilesToDownload = {
+// 	"android.support.test.espresso.action.ViewActions":
+// 		"../detox/src/android/espressoapi/ViewActions.js"
+// };
+//
+// const downloadedEspressoFilesMap = Object.entries(
+// 	espressoFilesToDownload
+// ).reduce(
+// 	(obj, [fullyQualifiedClass, dest]) => ({
+// 		...obj,
+// 		[downloadEspressoFileByClass(fullyQualifiedClass)]: dest
+// 	}),
+// 	{}
+// );
+//
+// const externalFilesToDownload = {
+// 	'https://android.googlesource.com/platform/frameworks/uiautomator/+/master/src/com/android/uiautomator/core/UiDevice.java?format=TEXT': '../detox/src/android/espressoapi/UIDevice.js'
+// }
+//
+// const downloadedAndroidFilesMap = Object.entries(
+// 	externalFilesToDownload
+// ).reduce(
+// 	(obj, [url, dest]) => ({
+// 		...obj,
+// 		[downloadFile(url)]: dest
+// 	}),
+// 	{}
+// );
+//
+// const androidFiles = {
+//   ...downloadedAndroidFilesMap,
+//   ...downloadedEspressoFilesMap,
+//   '../detox/android/detox/src/main/java/com/wix/detox/espresso/DetoxAction.java': '../detox/src/android/espressoapi/DetoxAction.js',
+//   '../detox/android/detox/src/main/java/com/wix/detox/espresso/DetoxMatcher.java': '../detox/src/android/espressoapi/DetoxMatcher.js',
+//   '../detox/android/detox/src/main/java/com/wix/detox/Detox.java': '../detox/src/android/espressoapi/Detox.js',
+//   '../detox/android/detox/src/main/java/com/wix/detox/espresso/EspressoDetox.java': '../detox/src/android/espressoapi/EspressoDetox.js',
+//   '../detox/android/detox/src/main/java/com/wix/detox/uiautomator/UiAutomator.java': '../detox/src/android/espressoapi/UIAutomator.js',
+// };
+// generateAndroidAdapters(androidFiles);

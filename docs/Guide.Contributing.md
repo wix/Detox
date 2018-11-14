@@ -83,24 +83,21 @@ open coverage/lcov-report/index.html
 ```
 
 #### 2. Running Detox e2e coverage tests
-Detox has a suite of e2e tests to test its own API while developing (and for regression). The way we do is is by maintaining a special application that is "tested" against Detox's API, but essentially, it's the API that is tested, not the app.
-To run the e2e tests, go to `detox/detox/test`
 
-```sh
-cd detox/test
-npm run build
-```
+Detox has a suite of e2e tests to test its own API while developing (and for regression); We maintain a special application that is "tested" against Detox's API, but essentially, it's the API that is tested, not the app.
 
-To run the e2e tests, after the application was built.
+To run the e2e tests, you must first build the native code and then run based on your target of choice (Android / iOS):
 
 ##### iOS
 ```sh
+cd detox/test
 npm run build:ios
 npm run e2e:ios
 ```
 
 ##### Android
 ```sh
+cd detox/test
 npm run build:android
 npm run e2e:android
 ```
@@ -120,6 +117,18 @@ on macOS environment variables can be exported to desktop applications by adding
 launchctl setenv PATH $PATH
 ```
 
+##### Changing Detox e2e test suite
+
+If you add, rename, or delete a test in `detox/test/e2e` suite, you also have to update Jest snapshots
+of expected artifacts. It is usually done in five steps:
+
+1. In `detox/test` project, run all end-to-end tests on iOS with `npm run e2e:ios-multi`.
+2. Update the snapshots with: `npm run verify-artifacts:ios -- -u`.
+3. Re-run Android tests with `npm run e2e:android`.
+4. Update the snapshots with: `npm run verify-artifacts:android -- -u`.
+5. Add the snapshots to your Git commit:
+* Android: `detox/test/scripts/__snapshots__/verify_artifacts_are_not_missing.android.test.js.snap`
+* iOS: `detox/test/scripts/__snapshots__/verify_artifacts_are_not_missing.ios.test.js.snap`
 
 #### 3. Android Native tests
 

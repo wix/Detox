@@ -1,5 +1,7 @@
 package com.wix.detox;
 
+import android.app.Application;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -35,16 +37,16 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     private final static String DETOX_SERVER_ARG_KEY = "detoxServer";
     private final static String DETOX_SESSION_ID_ARG_KEY = "detoxSessionId";
-    private String detoxServerUrl = null;
-    private String detoxSessionId = null;
+    private String detoxServerUrl;
+    private String detoxSessionId;
 
     private WebSocketClient wsClient;
     private Handler handler;
 
-    private Object reactNativeHostHolder = null;
+    private Context reactNativeHostHolder;
 
-    DetoxManager(@NonNull Object reactNativeHostHolder) {
-        this.reactNativeHostHolder = reactNativeHostHolder;
+    DetoxManager(@NonNull Context context) {
+        this.reactNativeHostHolder = context;
         handler = new Handler();
 
         Bundle arguments = InstrumentationRegistry.getArguments();

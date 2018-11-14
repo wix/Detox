@@ -1,5 +1,5 @@
 require('babel-polyfill');
-const detox = require('../../../detox/src/index');
+const detox = require('detox');
 const config = require('../package.json').detox;
 
 before(async () => {

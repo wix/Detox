@@ -1,19 +1,20 @@
 buildscript {
     repositories {
-        jcenter()
         google()
+        mavenLocal()
+        jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
-        classpath 'de.undercouch:gradle-download-task:3.1.2'
+        classpath 'com.android.tools.build:gradle:3.1.4'
+        classpath 'de.undercouch:gradle-download-task:3.4.3'
     }
 }
 
 allprojects {
     repositories {
+        google()
         mavenLocal()
         jcenter()
-        google()
         maven {
             url "$projectDir/../../node_modules/react-native/android"
         }

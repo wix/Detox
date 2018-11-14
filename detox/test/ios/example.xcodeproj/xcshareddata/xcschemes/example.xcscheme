@@ -78,22 +78,6 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-detoxServer"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "ws://localhost:8099"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-detoxSessionId"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "test"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
             argument = "-detoxURLOverride"
             isEnabled = "NO">
          </CommandLineArgument>
@@ -115,6 +99,10 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Users/lnatan/Desktop/user_notification.json"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-detoxWaitForDebugger 9000"
             isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>

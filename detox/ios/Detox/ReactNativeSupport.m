@@ -18,28 +18,37 @@
 #import "WXRNLoadIdlingResource.h"
 
 #include <dlfcn.h>
+#include <stdatomic.h>
 #include <fishhook.h>
 @import ObjectiveC;
 @import Darwin;
 
 DTX_CREATE_LOG(ReactNativeSupport);
 
-NSString *const RCTReloadNotification = @"RCTReloadNotification";
+static NSString *const RCTReloadNotification = @"RCTReloadNotification";
 
 static dispatch_queue_t __currentIdlingResourceSerialQueue;
 
+_Atomic(CFRunLoopRef) __RNRunLoop;
 static WXRunLoopIdlingResource* __current_runLoopIdlingResource;
 static void (*orig_runRunLoopThread)(id, SEL) = NULL;
 static void swz_runRunLoopThread(id self, SEL _cmd)
 {
+	CFRunLoopRef current = CFRunLoopGetCurrent();
+	atomic_store(&__RNRunLoop, current);
+	
 	dispatch_sync(__currentIdlingResourceSerialQueue, ^{
 		if(__current_runLoopIdlingResource)
 		{
+			dtx_log_info(@"Removing idling resource for JS runloop");
+			
 			[[GREYUIThreadExecutor sharedInstance] deregisterIdlingResource:__current_runLoopIdlingResource];
 			__current_runLoopIdlingResource = nil;
 		}
 	
-		__current_runLoopIdlingResource = [[WXRunLoopIdlingResource alloc] initWithRunLoop:CFRunLoopGetCurrent()];
+		dtx_log_info(@"Adding idling resource for JS runloop");
+		
+		__current_runLoopIdlingResource = [[WXRunLoopIdlingResource alloc] initWithRunLoop:current];
 		[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:__current_runLoopIdlingResource];
 	});
 	
@@ -53,9 +62,13 @@ void swz_addToRunLoop(id self, SEL _cmd, NSRunLoop* runloop)
 	dispatch_sync(__currentIdlingResourceSerialQueue, ^{
 		if(__original_displayLinkIdlingResource)
 		{
+			dtx_log_info(@"Removing idling resource for display link");
+			
 			[[GREYUIThreadExecutor sharedInstance] deregisterIdlingResource:__original_displayLinkIdlingResource];
 			__original_displayLinkIdlingResource = nil;
 		}
+		
+		dtx_log_info(@"Adding idling resource for display link");
 		
 		__original_displayLinkIdlingResource = [[WXJSDisplayLinkIdlingResource alloc] initWithDisplayLink:[self valueForKey:@"jsDisplayLink"]];
 		[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:__original_displayLinkIdlingResource];
@@ -75,6 +88,8 @@ dispatch_queue_t wx_dispatch_queue_create(const char *_Nullable label, dispatch_
 	
 	if(label != NULL && strncmp(label, "com.apple.NSURLSession-work", strlen("com.apple.NSURLSession-work")) == 0)
 	{
+		dtx_log_info(@"Adding idling resource for network queue: %@", rv);
+		
 		[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[GREYDispatchQueueIdlingResource resourceWithDispatchQueue:rv name:@"com.apple.NSURLSession-work"]];
 	}
 	
@@ -160,6 +175,9 @@ static void __setupRNSupport()
 	//Must be performed in +load and not in +setUp in order to correctly catch the ui queue, runloop and display link initialization by RN.
 	dispatch_queue_t queue = RCTGetUIManagerQueue();
 	[__observedQueues addObject:queue];
+	
+	dtx_log_info(@"Adding idling resource for RCTUIManagerQueue");
+	
 	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[GREYDispatchQueueIdlingResource resourceWithDispatchQueue:queue name:@"RCTUIManagerQueue"]];
 	
 	struct rebinding rebindings2[] = {
@@ -167,10 +185,17 @@ static void __setupRNSupport()
 	};
 	rebind_symbols(rebindings2, sizeof(rebindings2) / sizeof(rebindings2[0]));
 	
+	dtx_log_info(@"Adding idling resource for JS timers");
+	
 	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[WXJSTimerObservationIdlingResource new]];
+	
+	dtx_log_info(@"Adding idling resource for RN load");
+	
 	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[WXRNLoadIdlingResource new]];
 	
 	if([WXAnimatedDisplayLinkIdlingResource isAvailable]) {
+		dtx_log_info(@"Adding idling resource for Animated display link");
+		
 		[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[WXAnimatedDisplayLinkIdlingResource new]];
 	}
 }
@@ -191,7 +216,9 @@ static void __setupRNSupport()
 	}
 	
 	dispatch_sync(__currentIdlingResourceSerialQueue, ^{
-		[__currentDispatchQueueIdlingResources enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+		[__currentDispatchQueueIdlingResources enumerateObjectsUsingBlock:^(GREYDispatchQueueIdlingResource* _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+			dtx_log_info(@"Removing idling resource for queue: %@", [obj valueForKeyPath:@"dispatchQueueTracker.dispatchQueue"]);
+			
 			[[GREYUIThreadExecutor sharedInstance] deregisterIdlingResource:obj];
 		}];
 		
@@ -220,8 +247,7 @@ static void __setupRNSupport()
 {
 	__block __weak id observer;
 	
-	observer = [[NSNotificationCenter defaultCenter] addObserverForName:@"RCTContentDidAppearNotification" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
-		
+	observer = [[NSNotificationCenter defaultCenter] addObserverForName:@"RCTJavaScriptDidLoadNotification" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
 		if(handler)
 		{
 			handler();

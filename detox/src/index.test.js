@@ -14,7 +14,6 @@ describe('index', () => {
     jest
       .mock('./server/DetoxServer')
       .mock('./devices/Device')
-      .mock('./utils/onTerminate')
       .mock('./utils/logger')
       .mock('./client/Client')
       .mock('./Detox', () => jest.fn(() => mockDetox))
@@ -29,7 +28,6 @@ describe('index', () => {
     jest
       .unmock('./server/DetoxServer')
       .unmock('./devices/Device')
-      .unmock('./utils/onTerminate')
       .unmock('./client/Client')
       .unmock('./Detox')
       .unmock('./platform');
@@ -95,6 +93,23 @@ describe('index', () => {
     }
 
     expect(exception).toBeDefined();
+  });
+
+  it(`constructs detox with device name passed in '--device-name' cli value`, async () => {
+    process.env.deviceName = 'iPhone X';
+    const Detox = require('./Detox');
+
+    await detox.init(schemes.validOneDeviceNoSession);
+
+    const expectedConfig = {
+      ...schemes.validOneDeviceNoSession.configurations['ios.sim.release'],
+      name: 'iPhone X'
+    }
+
+    expect(Detox).toHaveBeenCalledWith({
+      deviceConfig: expectedConfig,
+      session: undefined,
+    });
   });
 
   it(`throws if a device has no name`, async () => {

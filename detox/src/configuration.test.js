@@ -37,7 +37,7 @@ describe('configuration', () => {
     try {
       configuration.validateSession(config);
     } catch (ex) {
-      expect(ex).toBeDefined();
+      expect(ex).toMatchSnapshot();
     }
   }
 });

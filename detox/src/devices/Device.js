@@ -6,44 +6,18 @@ const argparse = require('../utils/argparse');
 const debug = require('../utils/debug'); //debug utils, leave here even if unused
 
 class Device {
-
-  constructor(deviceConfig, sessionConfig, deviceDriver) {
+  constructor({ deviceConfig, deviceDriver, sessionConfig }) {
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
-    this.deviceDriver = deviceDriver;
     this._processes = {};
+    this.deviceDriver = deviceDriver;
     this.deviceDriver.validateDeviceConfig(deviceConfig);
     this.debug = debug;
-    this._listeners = {
-      beforeResetDevice: [],
-      resetDevice: [],
-      beforeLaunchApp: [],
-      launchApp: [],
-    };
-  }
-
-  async emit(eventName, eventObj) {
-    const fire = async (fn) => fn(eventObj);
-    const logEmitError = (err) => {
-      log.error(
-        { event: 'DEVICE_EMIT_EVENT_ERROR', eventName },
-        `Caught an exception in: device.emit("${eventName}", ${JSON.stringify(eventObj)})\n\n`, err
-      );
-    };
-
-    await Promise.all(this._listeners[eventName].map(fn => fire(fn).catch(logEmitError)));
-  }
-
-  on(eventName, callback) {
-    this._listeners[eventName].push(callback);
-  }
-
-  off(eventName, callback) {
-    _.pull(this._listeners[eventName], callback);
   }
 
   async prepare(params = {}) {
     this._binaryPath = this._getAbsolutePath(this._deviceConfig.binaryPath);
+    this._testBinaryPath = this._deviceConfig.testBinaryPath ? this._getAbsolutePath(this._deviceConfig.testBinaryPath) : null;
     this._deviceId = await this.deviceDriver.acquireFreeDevice(this._deviceConfig.name);
     this._bundleId = await this.deviceDriver.getBundleIdFromBinary(this._binaryPath);
 
@@ -51,7 +25,7 @@ class Device {
 
     if (!argparse.getArgValue('reuse')) {
       await this.deviceDriver.uninstallApp(this._deviceId, this._bundleId);
-      await this.deviceDriver.installApp(this._deviceId, this._binaryPath);
+      await this.deviceDriver.installApp(this._deviceId, this._binaryPath, this._testBinaryPath);
     }
 
     if (params.launchApp) {
@@ -74,7 +48,7 @@ class Device {
     if (params.delete) {
       await this.deviceDriver.terminate(this._deviceId, this._bundleId);
       await this.deviceDriver.uninstallApp(this._deviceId, this._bundleId);
-      await this.deviceDriver.installApp(this._deviceId, this._binaryPath);
+      await this.deviceDriver.installApp(this._deviceId, this._binaryPath, this._testBinaryPath);
     } else if (params.newInstance) {
       await this.deviceDriver.terminate(this._deviceId, this._bundleId);
     }
@@ -99,20 +73,18 @@ class Device {
       await this.deviceDriver.setPermissions(this._deviceId, this._bundleId, params.permissions);
     }
 
-    const _bundleId = bundleId || this._bundleId;
+    if (params.disableTouchIndicators) {
+      baseLaunchArgs['detoxDisableTouchIndicators'] = true;
+    }
 
+    const _bundleId = bundleId || this._bundleId;
     if (this._isAppInBackground(params, _bundleId)) {
       if (hasPayload) {
         await this.deviceDriver.deliverPayload({...params, delayPayload: true});
       }
     }
 
-    await this.emit('beforeLaunchApp', {
-      deviceId: this._deviceId,
-      bundleId: _bundleId,
-    });
-
-    const processId = await this.deviceDriver.launch(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs));
+    const processId = await this.deviceDriver.launchApp(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
     this._processes[_bundleId] = processId;
 
     await this.deviceDriver.waitUntilReady();
@@ -124,12 +96,6 @@ class Device {
     if(params.detoxUserActivityDataURL) {
       await this.deviceDriver.cleanupRandomDirectory(params.detoxUserActivityDataURL);
     }
-
-    await this.emit('launchApp', {
-      deviceId: this._deviceId,
-      bundleId: _bundleId,
-      pid: processId,
-    });
   }
 
   _isAppInBackground(params, _bundleId) {
@@ -171,9 +137,10 @@ class Device {
     await this.deviceDriver.terminate(this._deviceId, _bundleId);
   }
 
-  async installApp(binaryPath) {
+  async installApp(binaryPath, testBinaryPath) {
     const _binaryPath = binaryPath || this._binaryPath;
-    await this.deviceDriver.installApp(this._deviceId, _binaryPath);
+    const _testBinaryPath = testBinaryPath || this._testBinaryPath;
+    await this.deviceDriver.installApp(this._deviceId, _binaryPath, _testBinaryPath);
   }
 
   async uninstallApp(bundleId) {
@@ -236,9 +203,7 @@ class Device {
   }
 
   async resetContentAndSettings() {
-    await this.emit('beforeResetDevice', { deviceId: this._deviceId });
     await this.deviceDriver.resetContentAndSettings(this._deviceId);
-    await this.emit('resetDevice', { deviceId: this._deviceId });
   }
 
   getPlatform() {

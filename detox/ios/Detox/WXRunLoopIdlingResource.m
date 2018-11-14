@@ -7,32 +7,92 @@
 //
 
 #import "WXRunLoopIdlingResource.h"
+#import <stdatomic.h>
+#include <dlfcn.h>
+#include <fishhook.h>
+#import <pthread.h>
+
+DTX_CREATE_LOG(RunLoopIdlingResource);
+
+static pthread_mutex_t __globalMutex;
+
+static uintmax_t __numberOfRunLoopBlocks = 0;
+
+extern _Atomic(CFRunLoopRef) __RNRunLoop;
+
+static void (*__orig_CFRunLoopPerformBlock)(CFRunLoopRef rl, CFTypeRef mode, void(^block)(void));
+static void __dtx_CFRunLoopPerformBlock(CFRunLoopRef rl, CFTypeRef mode, void(^block)(void))
+{
+	CFRunLoopRef RNRunLoop = atomic_load(&__RNRunLoop);
+	
+	if(rl != RNRunLoop)
+	{
+		__orig_CFRunLoopPerformBlock(rl, mode, block);
+		return;
+	}
+	
+	pthread_mutex_lock(&__globalMutex);
+	__numberOfRunLoopBlocks += 1;
+	pthread_mutex_unlock(&__globalMutex);
+	
+	__orig_CFRunLoopPerformBlock(rl, mode, ^ {
+		block();
+		pthread_mutex_lock(&__globalMutex);
+		__numberOfRunLoopBlocks -= 1;
+		pthread_mutex_unlock(&__globalMutex);
+	});
+}
+
+__attribute__((constructor))
+static void __setupRNSupport()
+{
+	__orig_CFRunLoopPerformBlock = dlsym(RTLD_DEFAULT, "CFRunLoopPerformBlock");
+	rebind_symbols((struct rebinding[]){"CFRunLoopPerformBlock", __dtx_CFRunLoopPerformBlock, NULL}, 1);
+	
+	pthread_mutex_init(&__globalMutex, NULL);
+}
 
 @implementation WXRunLoopIdlingResource
 {
 	id _runLoop;
-	dispatch_queue_t _syncSerialQueue;
-	BOOL _isBusy;
+	BOOL _isBusyDefault;
 }
 
 - (NSString*)translateRunLoopActivity:(CFRunLoopActivity)act
 {
-    switch (act) {
-        case kCFRunLoopEntry:
-            return @"kCFRunLoopEntry";
-        case kCFRunLoopExit:
-            return @"kCFRunLoopExit";
-        case kCFRunLoopBeforeTimers:
-            return @"kCFRunLoopBeforeTimers";
-        case kCFRunLoopBeforeSources:
-            return @"kCFRunLoopBeforeSources";
-        case kCFRunLoopAfterWaiting:
-            return @"kCFRunLoopAfterWaiting";
-        case kCFRunLoopBeforeWaiting:
-            return @"kCFRunLoopBeforeWaiting";
-        default:
-            return @"----";
-    }
+	NSMutableString* rv = [NSMutableString new];
+	
+	if(act & kCFRunLoopEntry)
+	{
+		[rv appendString:@"kCFRunLoopEntry, "];
+	}
+	if(act & kCFRunLoopExit)
+	{
+		[rv appendString:@"kCFRunLoopExit, "];
+	}
+	if(act & kCFRunLoopBeforeTimers)
+	{
+		[rv appendString:@"kCFRunLoopBeforeTimers, "];
+	}
+	if(act & kCFRunLoopBeforeSources)
+	{
+		[rv appendString:@"kCFRunLoopBeforeSources, "];
+	}
+	if(act & kCFRunLoopAfterWaiting)
+	{
+		[rv appendString:@"kCFRunLoopAfterWaiting, "];
+	}
+	if(act & kCFRunLoopBeforeWaiting)
+	{
+		[rv appendString:@"kCFRunLoopBeforeWaiting, "];
+	}
+	
+	if(rv.length == 0)
+	{
+		[rv appendString:@"----"];
+	}
+	
+	return rv;
 }
 
 - (instancetype)initWithRunLoop:(CFRunLoopRef)runLoop
@@ -41,20 +101,24 @@
 	if(self)
 	{
 		_runLoop = (__bridge id)(runLoop);
-		_syncSerialQueue = dispatch_queue_create("_syncSerialQueue", NULL);
 		
-		CFRunLoopAddObserver((__bridge CFRunLoopRef)_runLoop, CFRunLoopObserverCreateWithHandler(NULL, kCFRunLoopExit | kCFRunLoopBeforeWaiting | kCFRunLoopAfterWaiting, YES, 0, ^(CFRunLoopObserverRef observer, CFRunLoopActivity activity) {
-			dispatch_sync(_syncSerialQueue, ^{
-//				dtx_log_info(@"Current runloop activity: %@", [self translateRunLoopActivity: activity]);
-				if(activity == kCFRunLoopBeforeWaiting || activity == kCFRunLoopExit)
-				{
-					_isBusy = NO;
-				}
-				else
-				{
-					_isBusy = YES;
-				}
-			});
+		CFRunLoopAddObserver((__bridge CFRunLoopRef)_runLoop, CFRunLoopObserverCreateWithHandler(NULL, kCFRunLoopEntry | kCFRunLoopBeforeTimers | kCFRunLoopBeforeSources | kCFRunLoopBeforeWaiting | kCFRunLoopAfterWaiting | kCFRunLoopExit, YES, 0, ^(CFRunLoopObserverRef observer, CFRunLoopActivity activity) {
+			BOOL busy;
+//			dtx_log_info(@"Current runloop activity: %@", [self translateRunLoopActivity: activity]);
+			
+			if(activity & kCFRunLoopBeforeWaiting || activity & kCFRunLoopExit)
+			{
+				busy = NO;
+			}
+			else
+			{
+				busy = YES;
+			}
+			
+			pthread_mutex_lock(&__globalMutex);
+			_isBusyDefault = busy;
+			pthread_mutex_unlock(&__globalMutex);
+			
 		}), kCFRunLoopDefaultMode);
 	}
 	return self;
@@ -62,13 +126,15 @@
 
 - (BOOL)isIdleNow
 {
-	__block BOOL rv = NO;
+	BOOL isBusyDefault;
+	uintmax_t numberOfRunLoopBlocks;
 	
-	dispatch_sync(_syncSerialQueue, ^{
-		rv = _isBusy == NO;
-	});
-    
-	return rv;
+	pthread_mutex_lock(&__globalMutex);
+	isBusyDefault = _isBusyDefault;
+	numberOfRunLoopBlocks = __numberOfRunLoopBlocks;
+	pthread_mutex_unlock(&__globalMutex);
+	
+	return isBusyDefault == NO && numberOfRunLoopBlocks == 0;
 }
 
 - (NSString *)idlingResourceName

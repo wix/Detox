@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SimulatorLogPlugin should work consistently in a stressed environment, through-out boots, launches and relaunches: stderr.log 1`] = `
+Array [
+  "stderr: inside before each",
+  "stderr: before relaunch inside test",
+  "stderr: during relaunch inside test",
+  "stderr: after relaunch inside test",
+]
+`;
+
+exports[`SimulatorLogPlugin should work consistently in a stressed environment, through-out boots, launches and relaunches: stderr.startup.log 1`] = `
+Array [
+  "stderr: during launch inside detox.init()",
+  "stderr: after launch inside detox.init()",
+  "stderr: inside before all",
+]
+`;
+
+exports[`SimulatorLogPlugin should work consistently in a stressed environment, through-out boots, launches and relaunches: stdout.log 1`] = `
+Array [
+  "stdout: inside before each",
+  "stdout: before relaunch inside test",
+  "stdout: during relaunch inside test",
+  "stdout: after relaunch inside test",
+]
+`;
+
+exports[`SimulatorLogPlugin should work consistently in a stressed environment, through-out boots, launches and relaunches: stdout.startup.log 1`] = `
+Array [
+  "stdout: during launch inside detox.init()",
+  "stdout: after launch inside detox.init()",
+  "stdout: inside before all",
+]
+`;

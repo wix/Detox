@@ -1,6 +1,9 @@
 #!/bin/bash -e -x
 
-detoxRootPath="$(dirname $(dirname ${0}))"
+# Ensure Xcode is installed or print a warning message and return.
+xcodebuild -version &>/dev/null || { echo "WARNING: Xcode is not installed on this machine. Skipping iOS framework build phase"; exit 0; }
+
+detoxRootPath="$(dirname "$(dirname "$0")")"
 detoxVersion=`node -p "require('${detoxRootPath}/package.json').version"`
 
 sha1=`(echo "${detoxVersion}" && xcodebuild -version) | shasum | awk '{print $1}' #"${2}"`
@@ -32,9 +35,7 @@ function buildFramework () {
   detoxSourcePath="${1}"
   echo "Building Detox.framework from ${detoxSourcePath}..."
   mkdir -p "${detoxFrameworkDirPath}"
-  "${detoxRootPath}"/scripts/build_universal_framework.sh "${detoxSourcePath}"/Detox.xcodeproj "${detoxFrameworkDirPath}"/DetoxBuild &> "${detoxFrameworkDirPath}"/detox_ios.log
-  mv "${detoxFrameworkDirPath}"/DetoxBuild/Build/Products/Release-universal/Detox.framework "${detoxFrameworkDirPath}"
-  rm -fr "${detoxFrameworkDirPath}"/DetoxBuild
+  "${detoxRootPath}"/scripts/build_universal_framework.sh "${detoxSourcePath}"/Detox.xcodeproj "${detoxFrameworkDirPath}" &> "${detoxFrameworkDirPath}"/detox_ios.log
 }
 
 function main () {

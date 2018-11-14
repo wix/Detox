@@ -85,7 +85,7 @@ public final class Detox {
      * @param activityTestRule the activityTestRule
      */
     public static void runTests(ActivityTestRule activityTestRule) {
-        Object appContext = InstrumentationRegistry.getTargetContext().getApplicationContext();
+        Context appContext = InstrumentationRegistry.getTargetContext().getApplicationContext();
         runTests(activityTestRule, appContext);
     }
 
@@ -104,9 +104,9 @@ public final class Detox {
      * </p>
      *
      * @param activityTestRule the activityTestRule
-     * @param reactActivityDelegate an object that has a {@code getReactNativeHost()} method
+     * @param Context an object that has a {@code getReactNativeHost()} method
      */
-    public static void runTests(ActivityTestRule activityTestRule, @NonNull final Object reactActivityDelegate) {
+    public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context context) {
         sActivityTestRule = activityTestRule;
         Intent intent = null;
         Bundle arguments = InstrumentationRegistry.getArguments();
@@ -129,7 +129,7 @@ public final class Detox {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        DetoxManager detoxManager = new DetoxManager(reactActivityDelegate);
+                        DetoxManager detoxManager = new DetoxManager(context);
                         detoxManager.start();
                     }
                 });

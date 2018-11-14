@@ -21,7 +21,7 @@ Actions are functions that emulate user behavior. They are being performed on ma
 - [`.scroll()`](#scrollpixels-direction)
 - [`.scrollTo()`](#scrolltoedge)
 - [`.swipe()`](#swipedirection-speed-percentage)
-- [`.setColumnToValue()`](#setcolumntovalue-column-value) **iOS only**
+- [`.setColumnToValue()`](#setcolumntovaluecolumnvalue--ios-only) **iOS only**
 
 
 ### `tap()`

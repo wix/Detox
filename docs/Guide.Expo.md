@@ -5,7 +5,7 @@ title: Expo
 
 ## Usage with Expo (iOS)
 
-- Install `detox` and `detox-expo-helpers` (yarn or npm)
+- Install `detox` 9.0.6 or higher, `detox-expo-helpers` and `expo-detox-hook` (yarn or npm)
 - Add `detox` configuration to [package.json](https://github.com/expo/with-detox-tests/blob/master/package.json#L21-L29):
 
 ```es6
@@ -20,7 +20,7 @@ title: Expo
 }
 ```
 
-- Download the Expo app from [Expo.io/tools](https://expo.io/tools).
+- Download the Expo Client iOS App from [Expo.io/tools](https://expo.io/tools#client).
 - Unzip the iOS IPA and **rename the folder** to `Exponent.app`. It'll have a file icon but will still be a folder.
 - Create `bin` folder and put `Exponent.app` inside so it matches the binaryPath set above.
 - Create an `e2e` and copy over the settings from [the example app](https://github.com/expo/with-detox-tests/tree/master/e2e)

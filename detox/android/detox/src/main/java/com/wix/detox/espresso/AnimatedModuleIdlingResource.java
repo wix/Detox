@@ -32,7 +32,6 @@ public class AnimatedModuleIdlingResource implements IdlingResource, Choreograph
     private static final String LOG_TAG = "Detox";
 
     private final static String CLASS_ANIMATED_MODULE = "com.facebook.react.animated.NativeAnimatedModule";
-    private final static String METHOD_HAS_CATALYST_INSTANCE = "hasActiveCatalystInstance";
     private final static String METHOD_GET_NATIVE_MODULE = "getNativeModule";
     private final static String METHOD_HAS_NATIVE_MODULE = "hasNativeModule";
     private final static String METHOD_IS_EMPTY = "isEmpty";
@@ -44,6 +43,7 @@ public class AnimatedModuleIdlingResource implements IdlingResource, Choreograph
     private final static String FIELD_ITERATIONS = "mIterations";
     private final static String FIELD_ACTIVE_ANIMATIONS = "mActiveAnimations";
     private final static String FIELD_UPDATED_NODES = "mUpdatedNodes";
+    private final static String FIELD_CATALYST_INSTANCE = "mCatalystInstance";
 
     private final static String METHOD_SIZE = "size";
     private final static String METHOD_VALUE_AT = "valueAt";
@@ -78,7 +78,7 @@ public class AnimatedModuleIdlingResource implements IdlingResource, Choreograph
         try {
             // reactContext.hasActiveCatalystInstance() should be always true here
             // if called right after onReactContextInitialized(...)
-            if (!(boolean) Reflect.on(reactContext).call(METHOD_HAS_CATALYST_INSTANCE).get()) {
+            if (Reflect.on(reactContext).field(FIELD_CATALYST_INSTANCE).get() == null) {
                 Log.e(LOG_TAG, "No active CatalystInstance. Should never see this.");
                 return false;
             }

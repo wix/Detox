@@ -3,9 +3,8 @@
 Gray box end-to-end testing and automation library for mobile apps.
 
 [![NPM Version](https://img.shields.io/npm/v/detox.svg?style=flat)](https://www.npmjs.com/package/detox)
-[![Build Status](https://travis-ci.org/wix/detox.svg?branch=master)](https://travis-ci.org/wix/detox)
 [![NPM Downloads](https://img.shields.io/npm/dm/detox.svg?style=flat)](https://www.npmjs.com/package/detox)
-
+[![Build Status](https://img.shields.io/jenkins/s/http/jenkins-oss.wixpress.com:8080/job/multi-detox-master.svg)](https://jenkins-oss.wixpress.com/job/multi-detox-master/)
 
 - [About](#about)
 - [Getting Started](/docs/Introduction.GettingStarted.md)
@@ -53,9 +52,13 @@ The most difficult part of automated testing on mobile is the tip of the testing
 
 Detox is built from the ground up to support React Native projects as well as pure native ones.
 
+The following React Native versions have been tested:
+
 | iOS    | Android |
 | ------ | ------- |
-| <=0.55 | <=0.51  |
+| <=0.56 | <=0.56  |
+
+Future versions are most likely supported, but have not been tested yet. Please open issues if you find specific issues with newer React Native versions.
 
 ## Getting Started
 

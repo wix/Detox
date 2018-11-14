@@ -9,9 +9,11 @@ class ADBLogcatPlugin extends LogArtifactPlugin {
     this._devicePathBuilder = config.devicePathBuilder;
   }
 
-  async onRelaunchApp({ pid }) {
+  async onLaunchApp(event) {
+    await super.onLaunchApp(event);
+
     if (this.currentRecording) {
-      await this.currentRecording.start({ pid });
+      await this.currentRecording.start({ pid: event.pid });
     }
   }
 
@@ -20,9 +22,7 @@ class ADBLogcatPlugin extends LogArtifactPlugin {
   }
 
   createTestRecording() {
-    const deviceId = this.api.getDeviceId();
-    const bundleId = this.api.getBundleId();
-    const pid = this.api.getPid(bundleId);
+    const { deviceId, bundleId, pid } = this.context;
 
     return new ADBLogcatRecording({
       adb: this._adb,

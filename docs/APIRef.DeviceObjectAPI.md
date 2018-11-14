@@ -10,13 +10,13 @@ title: The `device` Object
 - [`device.launchApp()`](#devicelaunchappparams)
 - [`device.relaunchApp()` **Deprecated**](#devicerelaunchappparams)
 - [`device.terminateApp()`](#deviceterminateapp)
-- [`device.reloadReactNative()`](#devicereloadreactnative)
 - [`device.sendToHome()`](#devicesendtohome)
+- [`device.reloadReactNative()`](#devicereloadreactnative)
 - [`device.installApp()`](#deviceinstallapp)
 - [`device.uninstallApp()`](#deviceuninstallapp)
 - [`device.openURL(url)`](#deviceopenurlurl-sourceappoptional)
 - [`device.sendUserNotification(params)`](#devicesendusernotificationparams)
-- [`device.sendUserActivity(params)`](#devicesenduseracitivityparams)
+- [`device.sendUserActivity(params)`](#devicesenduseractivityparams)
 - [`device.setOrientation(orientation)`](#devicesetorientationorientation)
 - [`device.setLocation(lat, lon)`](#devicesetlocationlat-lon)
 - [`device.setURLBlacklist([urls])`](#deviceseturlblacklisturls)
@@ -24,8 +24,8 @@ title: The `device` Object
 - [`device.disableSynchronization()`](#devicedisablesynchronization)
 - [`device.resetContentAndSettings()`](#deviceresetcontentandsettings)
 - [`device.getPlatform()`](#devicegetplatform)
-- [`device.pressBack()` **Android Only**](#devicepressback)
-- [`device.shake()` **iOS Only**](#deviceshake)
+- [`device.pressBack()` **Android Only**](#devicepressback-android-only)
+- [`device.shake()` **iOS Only**](#deviceshake-ios-only)
 
 ### `device.launchApp(params)`
 Launch the app defined in the current [`configuration`](APIRef.Configuration.md).
@@ -128,6 +128,65 @@ await device.launchApp({launchArgs: {arg1: 1, arg2: "2"}});
 
 The added `launchArgs` will be passed through the launch command to the device and be accessible via `[[NSProcessInfo processInfo] arguments]`
 
+##### 8. Disable touch indicators (iOS only)
+Disable touch indicators on iOS.
+
+```js
+await device.launchApp({disableTouchIndicators: true});
+```
+
+##### 9. Launch with a specific language (iOS only)
+Launch the app with a specific system language
+
+Information about accepted values can be found [here](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/LanguageandLocaleIDs/LanguageandLocaleIDs.html).
+
+```js
+await device.launchApp({
+  languageAndLocale: {
+    language: "es-MX",
+    locale: "es-MX"
+  }
+});
+```
+
+With this API, you can run sets of e2e tests per language. For example:
+```js
+['es-MX', 'fr-FR', 'pt-BR'].forEach(locale => {
+  describe(`Test suite in ${locale}`, () => {
+
+    beforeAll(async () => {
+      await device.launchApp({
+        newInstance: true,
+        languageAndLocale: {
+          language: locale,
+          locale
+        }
+      });
+    });
+
+
+    it('Test A', () => {
+      
+    })
+
+    it('Test B', () => {
+      
+    })
+
+  });
+});
+```
+
+##### 10. Initialize the URL blacklist at device launch
+Launch the app with an URL blacklist to disable network synchronization on certain endpoints. Useful if the app makes frequent network calls to blacklisted endpoints upon startup. 
+
+```js
+await device.launchApp({
+  newInstance: true,
+  launchArgs: { detoxURLBlacklistRegex: ' \\("http://192.168.1.253:19001/onchange","https://e.crashlytics.com/spi/v2/events"\\)' },
+}); 
+```
+
 ### `device.relaunchApp(params)`
 **Deprecated** Use `device.launchApp(params)` instead. This method is now calling `launchApp({newInstance: true})` for backwards compatibility, it will be removed in Detox 6.X.X.<Br>
 Kill and relaunch the app defined in the current [`configuration`](APIRef.Configuration.md).
@@ -144,14 +203,14 @@ await device.terminateApp('other.bundle.id');
 ### `device.sendToHome()`
 Send application to background by bringing `com.apple.springboard` to the foreground.<br>
 Combining `sendToHome()` with `launchApp({newInstance: false})` will simulate app coming back from background.<br>
-Check out Detox's [own test suite](../detox/test/e2e/f-simulator.js)
+Check out Detox's [own test suite](../detox/test/e2e/06.device.test.js)
 
 ```js
 await device.sendToHome();
 await device.launchApp({newInstance: false});
 // app returned from background, do stuff
 ```
-Check out Detox's [own test suite](../detox/test/e2e/f-device.js)
+Check out Detox's [own test suite](../detox/test/e2e/06.device.test.js)
 
 ### `device.reloadReactNative()`
 If this is a React Native app, reload the React Native JS bundle. This action is much faster than `device.launchApp()`, and can be used if you just need to reset your React Native logic.
@@ -179,22 +238,22 @@ await device.installApp('other.bundle.id');
 ### `device.openURL({url, sourceApp[optional]})`
 Mock opening the app from URL. `sourceApp` is an optional parameter to specify source application bundle id.<br>
 Read more in [Mocking Open From URL](APIRef.MockingOpenFromURL.md) section.<br>
-Check out Detox's [own test suite](../detox/test/e2e/n-deep-links.js)
+Check out Detox's [own test suite](../detox/test/e2e/15.urls.test.js)
 
 ### `device.sendUserNotification(params)`
 Mock handling of received user notification when app is in foreground.<br>
 Read more in [Mocking User Notifications](APIRef.MockingUserNotifications.md) section.<br>
-Check out Detox's [own test suite](../detox/test/e2e/k-user-notifications.js)
+Check out Detox's [own test suite](../detox/test/e2e/11.user-notifications.test.js)
 
 ### `device.sendUserActivity(params)`
 Mock handling of received user activity when app is in foreground.<br>
-Read more in [Mocking User Activities](APIRef.MockingUserActivities.md) section.<br>
-Check out Detox's [own test suite](../detox/test/e2e/t-user-activities.test.js)
+Read more in [Mocking User Activity](APIRef.MockingUserActivity.md) section.<br>
+Check out Detox's [own test suite](../detox/test/e2e/18.user-activities.test.js)
 
 ### `device.setOrientation(orientation)`
 Takes `"portrait"` or `"landscape"` and rotates the device to the given orientation.
 Currently only available in the iOS Simulator.<br>
-Check out Detox's [own test suite](../detox/test/e2e/f-device.js)
+Check out Detox's [own test suite](../detox/test/e2e/06.device-orientation.test.js)
 
 ### `device.setLocation(lat, lon)`
 >Note: `setLocation` is dependent on `fbsimctl`. if `fbsimctl` is not installed, the command will fail, asking for it to be installed.
@@ -205,7 +264,7 @@ await device.setLocation(32.0853, 34.7818);
 
 ### `device.setURLBlacklist([urls])`
 
-Disable [EarlGrey's network synchronization mechanism](https://github.com/google/EarlGrey/blob/master/docs/api.md#network) on preffered endpoints. Usful if you want to on skip over synchronizing on certain URLs.
+Disable [EarlGrey's network synchronization mechanism](https://github.com/google/EarlGrey/blob/master/docs/api.md#network) on preferred endpoints. Useful if you want to on skip over synchronizing on certain URLs. To disable endpoints at initialization, pass in the blacklist at [device launch](#10-initialize-the-url-blacklist-at-device-launch).
 
 ```js
 await device.setURLBlacklist(['.*127.0.0.1.*']);
@@ -257,4 +316,4 @@ await device.pressBack();
 ```
 
 ### `device.shake()` **iOS Only**
-Simulate shake 
+Simulate shake
