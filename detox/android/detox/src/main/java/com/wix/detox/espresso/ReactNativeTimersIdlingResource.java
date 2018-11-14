@@ -35,13 +35,15 @@ public class ReactNativeTimersIdlingResource implements IdlingResource, Choreogr
     private final static String METHOD_GET_NATIVE_MODULE = "getNativeModule";
     private final static String METHOD_HAS_NATIVE_MODULE = "hasNativeModule";
     private final static String FIELD_TIMERS = "mTimers";
-    private final static String FIELD_TARGET_TIME = "mTargetTime";
+    private final static String TIMER_FIELD_TARGET_TIME = "mTargetTime";
+    private final static String TIMER_FIELD_INTERVAL = "mInterval";
+    private final static String TIMER_FIELD_REPETITIVE = "mRepeat";
     private final static String FIELD_CATALYST_INSTANCE = "mCatalystInstance";
     private final static String LOCK_TIMER = "mTimerGuard";
 
-    private AtomicBoolean stopped = new AtomicBoolean(false);
+    private AtomicBoolean paused = new AtomicBoolean(false);
 
-    private static final long LOOK_AHEAD_MS = 15;
+    private static final long LOOK_AHEAD_MS = 1500;
 
     private ResourceCallback callback = null;
     private Object reactContext = null;
@@ -57,12 +59,10 @@ public class ReactNativeTimersIdlingResource implements IdlingResource, Choreogr
 
     @Override
     public boolean isIdleNow() {
-        if (stopped.get()) {
-            if (callback != null) {
-                callback.onTransitionToIdle();
-            }
+        if (paused.get()) {
             return true;
         }
+
         Class<?> timingClass;
         try {
             timingClass = Class.forName(CLASS_TIMING);
@@ -93,28 +93,21 @@ public class ReactNativeTimersIdlingResource implements IdlingResource, Choreogr
             Object timingModule = Reflect.on(reactContext).call(METHOD_GET_NATIVE_MODULE, timingClass).get();
             Object timerLock = Reflect.on(timingModule).field(LOCK_TIMER).get();
             synchronized (timerLock) {
-                PriorityQueue<?> timers = Reflect.on(timingModule).field(FIELD_TIMERS).get();
-                if (timers.isEmpty()) {
+                final PriorityQueue<?> timers = Reflect.on(timingModule).field(FIELD_TIMERS).get();
+                final Object nextTimer = timers.peek();
+                if (nextTimer == null) {
                     if (callback != null) {
                         callback.onTransitionToIdle();
                     }
                     return true;
                 }
 
-                // Log.i(LOG_TAG, "Num of Timers : " + timers.size());
+//                Log.i(LOG_TAG, "Num of Timers : " + timers.size());
 
-                long targetTime = Reflect.on(timers.peek()).field(FIELD_TARGET_TIME).get();
-                long currentTimeMS = System.nanoTime() / 1000000;
-
-                // Log.i(LOG_TAG, "targetTime " + targetTime + " currentTime " + currentTimeMS);
-
-                if (targetTime - currentTimeMS > LOOK_AHEAD_MS || targetTime < currentTimeMS) {
-                    // Timer is too far in the future. Mark it as OK for now.
-                    // This is similar to what Espresso does internally.
+                if (isTimerOutsideBusyWindow(nextTimer)) {
                     if (callback != null) {
                         callback.onTransitionToIdle();
                     }
-                    // Log.i(LOG_TAG, "JS Timer is idle: true");
                     return true;
                 }
             }
@@ -144,7 +137,46 @@ public class ReactNativeTimersIdlingResource implements IdlingResource, Choreogr
         isIdleNow();
     }
 
-    public void stop() {
-        stopped.set(true);
+    public void pause() {
+        paused.set(true);
+        if (callback != null) {
+            callback.onTransitionToIdle();
+        }
+    }
+    public void resume() {
+        paused.set(false);
+    }
+
+    private boolean isTimerOutsideBusyWindow(Object nextTimer) {
+        final long currentTimeMS = System.nanoTime() / 1000000L;
+        final Reflect nextTimerReflected = Reflect.on(nextTimer);
+        final long targetTimeMS = nextTimerReflected.field(TIMER_FIELD_TARGET_TIME).get();
+        final int intervalMS = nextTimerReflected.field(TIMER_FIELD_INTERVAL).get();
+        final boolean isRepetitive = nextTimerReflected.field(TIMER_FIELD_REPETITIVE).get();
+
+//        Log.i(LOG_TAG, "Next timer has duration of: " + intervalMS
+//                + "; due time is: " + targetTimeMS + ", current is: " + currentTimeMS
+//                + "; is " + (isRepetitive ? "repeating" : "a one-shot"));
+
+        // Before making any concrete checks, be sure to ignore repeating timers or we'd loop forever.
+        // TODO: Should we iterate to the first, non-repeating timer?
+        if (isRepetitive) {
+            return true;
+        }
+
+        // Core condition is for the timer interval (duration) to be set beyond our window.
+        // Note: we check the interval in an 'absolute' way rather than comparing to the 'current time'
+        //    since it always takes a while till we get dispatched (compared to when the timer was created),
+        //    and that could make a significant difference in timers set close to our window (up to ~ LOOK_AHEAD_MS+200ms).
+        if (intervalMS > LOOK_AHEAD_MS) {
+            return true;
+        }
+
+        // Edge case: timer has expired during this probing process and is yet to have left the queue.
+        if (targetTimeMS <= currentTimeMS) {
+            return true;
+        }
+
+        return false;
     }
 }

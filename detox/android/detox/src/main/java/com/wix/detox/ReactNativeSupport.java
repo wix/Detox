@@ -110,7 +110,6 @@ public class ReactNativeSupport {
      * @param reactNativeHostHolder the object that has a getReactNativeHost() method
      */
     static void waitForReactNativeLoad(@NonNull Context reactNativeHostHolder) {
-
         if (!isReactNativeApp()) {
             return;
         }
@@ -183,7 +182,6 @@ public class ReactNativeSupport {
         Log.i(LOG_TAG, "Setting up Espresso Idling Resources for React Native.");
 
         setupReactNativeQueueInterrogators(reactContext);
-
 
         rnBridgeIdlingResource = new ReactBridgeIdlingResource(reactContext);
         rnTimerIdlingResource = new ReactNativeTimersIdlingResource(reactContext);
@@ -302,5 +300,15 @@ public class ReactNativeSupport {
             IdlingRegistry.getInstance().unregister(networkIR);
             networkIR = null;
         }
+    }
+
+    public static void pauseRNTimersIdlingResource() {
+        if (rnTimerIdlingResource != null) {
+            rnTimerIdlingResource.pause();
+        }
+    }
+
+    public static void resumeRNTimersIdlingResource() {
+        rnTimerIdlingResource.resume();
     }
 }
