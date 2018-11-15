@@ -8,6 +8,8 @@ const SimulatorDriver = require('./devices/drivers/SimulatorDriver');
 const EmulatorDriver = require('./devices/drivers/EmulatorDriver');
 const AttachedAndroidDriver = require('./devices/drivers/AttachedAndroidDriver');
 const DetoxRuntimeError = require('./errors/DetoxRuntimeError');
+const AndroidAppiumDriver = require('./devices/drivers/AndroidAppiumDriver');
+const IosAppiumDriver = require('./devices/drivers/IosAppiumDriver');
 const argparse = require('./utils/argparse');
 const configuration = require('./configuration');
 const Client = require('./client/Client');
@@ -19,8 +21,10 @@ const AsyncEmitter = require('./utils/AsyncEmitter');
 const DEVICE_CLASSES = {
   'ios.simulator': SimulatorDriver,
   'ios.none': IosDriver,
+  'ios.appium': IosAppiumDriver,
   'android.emulator': EmulatorDriver,
   'android.attached': AttachedAndroidDriver,
+  'android.appium' : AndroidAppiumDriver
 };
 
 class Detox {
