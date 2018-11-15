@@ -1,22 +1,34 @@
 /**
  * Created by Or Evron on 06/08/2018
  */
-const invoke = require('../invoke');
+const wd = require('wd');
+const invoke = require('../../invoke');
 const InvocationManager = invoke.InvocationManager;
+const DeviceDriverBase = require('./DeviceDriverBase');
 const fs = require('fs');
 const path = require('path');
-const DeviceDriverBase = require('./DeviceDriverBase');
 
 class AppiumDriverBase extends DeviceDriverBase {
     constructor(client) {
         super(client);
+        client = client.client;
         this._url = client.configuration.appium.url;
         this.invocationManager = new InvocationManager(client);
         this._desiredCapabilities = Object.assign({
                 name: "detox",
-                newCommandTimeout: 60000,
             },
             client.configuration.appium.desiredCapabilities || {});
+    }
+
+    validateDeviceConfig(config) {
+        this.deviceConfig = config;
+    }
+
+    async prepare(deviceConfig) {
+        this._driver = await wd.promiseRemote(this._url);
+        console.log(this._desiredCapabilities)
+        await this._driver.init(this._desiredCapabilities);
+        global.appium = this._driver;
     }
 
     async acquireFreeDevice(name) {
@@ -34,7 +46,8 @@ class AppiumDriverBase extends DeviceDriverBase {
     }
 
     async terminate() {
-        await this._driver.closeApp();
+        // this function is called last in the sequence so the app staying closed before test starts
+        // await this._driver.closeApp();
     }
 
     async sendToHome() {

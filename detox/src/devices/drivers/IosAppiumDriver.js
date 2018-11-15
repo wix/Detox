@@ -1,36 +1,40 @@
 /**
  * Created by Or Evron on 07/08/2018
  */
-const wd = require('wd');
-const invoke = require('../invoke');
-const GREYConfigurationApi = require('./../ios/earlgreyapi/GREYConfiguration');
-const GREYConfigurationDetox = require('./../ios/earlgreyapi/GREYConfigurationDetox');
-const EarlyGrey = require('./../ios/earlgreyapi/EarlGrey');
+const invoke = require('../../invoke');
+const _ = require('lodash');
+const path = require('path');
+const InvocationManager = invoke.InvocationManager;
+const GREYConfigurationApi = require('../../ios/earlgreyapi/GREYConfiguration');
+const GREYConfigurationDetox = require('../../ios/earlgreyapi/GREYConfigurationDetox');
+const EarlyGreyImpl = require('../../ios/earlgreyapi/EarlGreyImpl');
 const AppiumDriverBase = require('./AppiumDriverBase');
 
 class IosAppiumDriver extends AppiumDriverBase {
     constructor(client) {
         super(client);
-        this.expect = require('../ios/expect');
-        this._desiredCapabilities = Object.assign({
+        client = client.client;
+        this.expect = require('../../ios/expect');
+        this.invocationManager = new InvocationManager(client);
+        this.expect.setInvocationManager(this.invocationManager);
+        this._desiredCapabilities = Object.assign({ // appPackage is required by documentation
             name: "detox",
-            clearSystemFiles: true,
             waitForQuiescence: false,
             processArguments: {args: ['-detoxServer', client.configuration.server, '-detoxSessionId', client.configuration.sessionId]}
         }, client.configuration.appium.desiredCapabilities || {});
     }
 
-    async prepare() {
-        this._driver = await wd.promiseRemote(this._url);
-        await this._driver.init(this._desiredCapabilities);
+    async getBundleIdFromBinary(appPath) {
+        return this._desiredCapabilities.bundleId;
     }
 
     async uninstallApp() {
-        await this._driver.removeAppFromDevice(this.bundleId);
+        await this._driver.removeAppFromDevice(this._desiredCapabilities.bundleId);
     }
 
     async installApp() {
         await this._driver.installApp(this._desiredCapabilities.app);
+        await this._driver.resetApp();
     }
 
     exportGlobals() {
@@ -50,16 +54,12 @@ class IosAppiumDriver extends AppiumDriverBase {
     }
 
     async setOrientation(deviceId, orientation) {
-        const call = EarlyGrey.rotateDeviceToOrientationErrorOrNil(invoke.EarlGrey.instance, orientation);
+        const call = EarlyGreyImpl.rotateDeviceToOrientationErrorOrNil(invoke.EarlGrey.instance, orientation);
         await this.client.execute(call);
     }
 
     defaultLaunchArgsPrefix() {
         return '-';
-    }
-
-    validateDeviceConfig(config) {
-        //no validation
     }
 }
 
