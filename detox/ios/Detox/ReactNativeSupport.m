@@ -103,8 +103,8 @@ dispatch_queue_t wx_dispatch_queue_create(const char *_Nullable label, dispatch_
 	return rv;
 }
 
-static int (*__WX_UIApplicationMain_orig)(int argc, char * _Nonnull * _Null_unspecified argv, NSString * _Nullable principalClassName, NSString * _Nullable delegateClassName);
-static int __WX_UIApplicationMain(int argc, char * _Nonnull * _Null_unspecified argv, NSString * _Nullable principalClassName, NSString * _Nullable delegateClassName)
+static int (*__detox_run_orig)(id self, SEL _cmd);
+static int __detox_run(id self, SEL _cmd)
 {
 	Class cls = NSClassFromString(@"RCTJSCExecutor");
 	Method m = NULL;
@@ -112,6 +112,7 @@ static int __WX_UIApplicationMain(int argc, char * _Nonnull * _Null_unspecified 
 	{
 		//Legacy RN
 		m = class_getClassMethod(cls, NSSelectorFromString(@"runRunLoopThread"));
+		dtx_log_info(@"Found legacy class RCTJSCExecutor");
 	}
 	else
 	{
@@ -121,6 +122,11 @@ static int __WX_UIApplicationMain(int argc, char * _Nonnull * _Null_unspecified 
 		if(m == NULL)
 		{
 			m = class_getInstanceMethod(cls, NSSelectorFromString(@"runJSRunLoop"));
+			dtx_log_info(@"Found modern class RCTCxxBridge, method runJSRunLoop");
+		}
+		else
+		{
+			dtx_log_info(@"Found modern class RCTCxxBridge, method runRunLoop");
 		}
 	}
 	
@@ -129,8 +135,12 @@ static int __WX_UIApplicationMain(int argc, char * _Nonnull * _Null_unspecified 
 		orig_runRunLoopThread = (void(*)(id, SEL))method_getImplementation(m);
 		method_setImplementation(m, (IMP)swz_runRunLoopThread);
 	}
+	else
+	{
+		dtx_log_info(@"Method runRunLoop not found");
+	}
 	
-	return __WX_UIApplicationMain_orig(argc, argv, principalClassName, delegateClassName);
+	return __detox_run_orig(self, _cmd);
 }
 
 __attribute__((constructor))
@@ -186,11 +196,10 @@ static void __setupRNSupport()
 	dtx_log_info(@"Adding idling resource for RCTUIManagerQueue");
 	
 	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[GREYDispatchQueueIdlingResource resourceWithDispatchQueue:queue name:@"RCTUIManagerQueue"]];
-	
-	struct rebinding rebindings2[] = {
-		{"UIApplicationMain", __WX_UIApplicationMain, (void*)&__WX_UIApplicationMain_orig}
-	};
-	rebind_symbols(rebindings2, sizeof(rebindings2) / sizeof(rebindings2[0]));
+
+	m = class_getInstanceMethod(UIApplication.class, NSSelectorFromString(@"_run"));
+	__detox_run_orig = (void*)method_getImplementation(m);
+	method_setImplementation(m, (void*)__detox_run);
 	
 	dtx_log_info(@"Adding idling resource for JS timers");
 	
