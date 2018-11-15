@@ -641,6 +641,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "example" */;
 			buildPhases = (
+				39227B47219D5B41001390C8 /* Integrate */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
@@ -661,6 +662,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 399B4E031ED587120098D2AC /* Build configuration list for PBXNativeTarget "example_ci" */;
 			buildPhases = (
+				39227BA4219D5C2B001390C8 /* Integrate */,
 				399B4DEB1ED587120098D2AC /* Sources */,
 				399B4DEF1ED587120098D2AC /* Frameworks */,
 				399B4DFD1ED587120098D2AC /* Resources */,
@@ -1070,6 +1072,42 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
+		39227B47219D5B41001390C8 /* Integrate */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = Integrate;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Only integrate the framework for the Debug configuration by default. Edit this section to integrate with additional configurations. For example, to add the \"Debug_Another\" and \"Release\" configurations, set the following line to:\n#       ALLOWED_CONFIGURATIONS=\"Debug,Debug_Another,Release\"\nALLOWED_CONFIGURATIONS=\"Debug,Release\"\n\nINSTRUMENTS_APP_PATH=\"${SRCROOT}/../node_modules/detox-instruments/Detox Instruments.app\"\nPROFILER_BUILD_SCRIPT_PATH=\"${INSTRUMENTS_APP_PATH}/Contents/SharedSupport/Scripts/profiler_build_phase.sh\"\nif [ \"${INSTRUMENTS_APP_PATH}\" -a -e \"${PROFILER_BUILD_SCRIPT_PATH}\" ]; then\necho Found integration script at \"${PROFILER_BUILD_SCRIPT_PATH}\"\n# Run the Profiler framework integration script\n\"${PROFILER_BUILD_SCRIPT_PATH}\" ${CONFIGURATION} ${ALLOWED_CONFIGURATIONS}\nelse\necho \"Profiler not included: Cannot find an installed Detox Instruments app.\"\nfi\n";
+		};
+		39227BA4219D5C2B001390C8 /* Integrate */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = Integrate;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Only integrate the framework for the Debug configuration by default. Edit this section to integrate with additional configurations. For example, to add the \"Debug_Another\" and \"Release\" configurations, set the following line to:\n#       ALLOWED_CONFIGURATIONS=\"Debug,Debug_Another,Release\"\nALLOWED_CONFIGURATIONS=\"Debug,Release\"\n\nINSTRUMENTS_APP_PATH=\"${SRCROOT}/../node_modules/detox-instruments/Detox Instruments.app\"\nPROFILER_BUILD_SCRIPT_PATH=\"${INSTRUMENTS_APP_PATH}/Contents/SharedSupport/Scripts/profiler_build_phase.sh\"\nif [ \"${INSTRUMENTS_APP_PATH}\" -a -e \"${PROFILER_BUILD_SCRIPT_PATH}\" ]; then\necho Found integration script at \"${PROFILER_BUILD_SCRIPT_PATH}\"\n# Run the Profiler framework integration script\n\"${PROFILER_BUILD_SCRIPT_PATH}\" ${CONFIGURATION} ${ALLOWED_CONFIGURATIONS}\nelse\necho \"Profiler not included: Cannot find an installed Detox Instruments app.\"\nfi\n";
+		};
 		399B4E001ED587120098D2AC /* Bundle React Native code and images */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1148,6 +1186,10 @@
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
+					"-ObjC",
+					"-F\"${CODESIGNING_FOLDER_PATH}\"/Frameworks",
+					"-framework",
+					DTXProfiler,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wix.detox-example";
 				PRODUCT_NAME = example;
@@ -1166,6 +1208,10 @@
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
+					"-ObjC",
+					"-F\"${CODESIGNING_FOLDER_PATH}\"/Frameworks",
+					"-framework",
+					DTXProfiler,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wix.detox-example";
 				PRODUCT_NAME = example;
@@ -1185,8 +1231,12 @@
 					"-ObjC",
 					"-lc++",
 					"-Wl,-U,___dtx_send_external_log",
+					"-ObjC",
+					"-F\"${CODESIGNING_FOLDER_PATH}\"/Frameworks",
+					"-framework",
+					DTXProfiler,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wix.detox-example";
 				PRODUCT_NAME = example;
 			};
 			name = Debug;
@@ -1203,8 +1253,12 @@
 					"-ObjC",
 					"-lc++",
 					"-Wl,-U,___dtx_send_external_log",
+					"-ObjC",
+					"-F\"${CODESIGNING_FOLDER_PATH}\"/Frameworks",
+					"-framework",
+					DTXProfiler,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wix.detox-example";
 				PRODUCT_NAME = example;
 			};
 			name = Release;
