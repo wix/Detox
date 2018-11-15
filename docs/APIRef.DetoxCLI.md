@@ -45,7 +45,8 @@ Initiating your test suite
 | Option                                        | Description |
 | ---                                           | --- |
 | -h, --help                                    | output usage information |
-| -o, --runner-config \<config\>                | Test runner config file, defaults to 'e2e/mocha.opts' for mocha and 'e2e/config.json' for jest |
+| -o, --runner-config \<config\>                | Test runner config file, defaults to 'e2e/mocha.opts' for mocha and 'e2e/config.json' for jest. Overrides the equivalent configuration in `package.json`, if set. |
+| -s, --specs \<relativePath\>                  | Root of tests look-up folder. Overrides the equivalent configuration in `package.json`, if set. |
 | -l, --loglevel [value]                        | Log level: fatal, error, warn, info, verbose, trace |
 | --no-color                                    | Disable colors in log output |
 | -c, -configuration \<device config\>          | Select a device configuration from your defined configurations,if not supplied, and there's only one configuration, detox will default to it |
