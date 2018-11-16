@@ -56,14 +56,14 @@ await element(by.id('tappable')).tapAtPoint({x:5, y:10});
 ```
 
 ### `tapBackspaceKey()`
-Tap the backspace key on the built-in keyboard.<br><br>
+Tap the backspace key on the built-in keyboard.
 
 ```js
 await element(by.id('textField')).tapBackspaceKey();
 ```
 
 ### `tapReturnKey()`
-Tap the return key on the built-in keyboard.<br><br>
+Tap the return key on the built-in keyboard.
 
 ```js
 await element(by.id('textField')).tapReturnKey();
