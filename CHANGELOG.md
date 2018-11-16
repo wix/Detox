@@ -1,6 +1,14 @@
 # Change Log
 
-## [9.0.7](https://github.com/wix/detox/tree/9.0.7) (2018-11-15)
+## [9.1.2](https://github.com/wix/detox/tree/9.1.2) (2018-11-17)
+[Full Changelog](https://github.com/wix/detox/compare/9.0.7...9.1.2)
+
+**Enhancements**
+
+- Detox configuration should allow ability to specify app apk path and androidTest apk path [\#571](https://github.com/wix/Detox/issues/571)
+- New Actions: `tapBackspaceKey` and `tapReturnKey` [\#1044](https://github.com/wix/Detox/pull/1044) ([michaelgmcd](https://github.com/michaelgmcd))
+
+## [9.0.7](https://github.com/wix/detox/tree/9.0.7) (2018-11-14)
 [Full Changelog](https://github.com/wix/detox/compare/v9.0.6...9.0.7)
 
 **Enhancements**
@@ -685,7 +693,7 @@
 - Re-add matcher generation commits and add traits matcher to generated code [\#348](https://github.com/wix/Detox/pull/348) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 
 ## [detox@5.9.0](https://github.com/wix/detox/tree/detox@5.9.0) (2017-10-18)
-[Full Changelog](https://github.com/wix/detox/compare/detox-cli@1.0.3...detox@5.9.0)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.8.4...detox@5.9.0)
 
 **Enhancements**
 
@@ -702,11 +710,11 @@
 - Create a build matrix to support multiple version of React Native and OSs [\#345](https://github.com/wix/Detox/pull/345) ([rotemmiz](https://github.com/rotemmiz))
 - Basic support for Jest runner [\#335](https://github.com/wix/Detox/pull/335) ([Kureev](https://github.com/Kureev))
 
-## [detox-cli@1.0.3](https://github.com/wix/detox/tree/detox-cli@1.0.3) (2017-10-17)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.8.4...detox-cli@1.0.3)
-
 ## [detox@5.8.4](https://github.com/wix/detox/tree/detox@5.8.4) (2017-10-17)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.8.3...detox@5.8.4)
+[Full Changelog](https://github.com/wix/detox/compare/detox-cli@1.0.3...detox@5.8.4)
+
+## [detox-cli@1.0.3](https://github.com/wix/detox/tree/detox-cli@1.0.3) (2017-10-17)
+[Full Changelog](https://github.com/wix/detox/compare/detox@5.8.3...detox-cli@1.0.3)
 
 **Fixed Bugs**
 
