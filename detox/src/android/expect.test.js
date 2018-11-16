@@ -35,14 +35,14 @@ describe('expect', async () => {
   it(`element by type`, async () => {
     await e.expect(e.element(e.by.type('test'))).toBeVisible();
   });
-  
+
   it(`element by traits`, async () => {
     await e.expect(e.element(e.by.traits(['button', 'link', 'header', 'search']))).toBeVisible();
     await e.expect(e.element(e.by.traits(['image', 'selected', 'plays', 'key']))).toBeNotVisible();
     await e.expect(e.element(e.by.traits(['text', 'summary', 'disabled', 'frequentUpdates']))).toBeNotVisible();
     await e.expect(e.element(e.by.traits(['startsMedia', 'adjustable', 'allowsDirectInteraction', 'pageTurn']))).toBeNotVisible();
   });
-  
+
   it(`matcher helpers`, async () => {
     await e.expect(e.element(e.by.id('test').withAncestor(e.by.id('ancestor')))).toBeVisible();
     await e.expect(e.element(e.by.id('test').withDescendant(e.by.id('descendant')))).toBeVisible();
@@ -103,6 +103,8 @@ describe('expect', async () => {
     await e.element(e.by.label('Tap Me')).longPress();
     await e.element(e.by.id('UniqueId819')).multiTap(3);
     await e.element(e.by.id('UniqueId937')).typeText('passcode');
+    await e.element(e.by.id('UniqueId937')).tapBackspaceKey();
+    await e.element(e.by.id('UniqueId937')).tapReturnKey();
     await e.element(e.by.id('UniqueId005')).clearText();
     await e.element(e.by.id('UniqueId005')).replaceText('replaceTo');
     await e.element(e.by.id('ScrollView161')).scroll(100);

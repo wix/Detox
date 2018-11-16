@@ -80,7 +80,7 @@ describe('expect', async () => {
     await e.waitFor(e.element(e.by.id('id'))).toHaveValue('value');
     await e.waitFor(e.element(e.by.id('id'))).toNotHaveValue('value');
 
-  
+
 
     await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50, 'down');
     await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50);
@@ -104,6 +104,8 @@ describe('expect', async () => {
     await e.element(e.by.label('Tap Me')).longPress(2000);
     await e.element(e.by.id('UniqueId819')).multiTap(3);
     await e.element(e.by.id('UniqueId937')).typeText('passcode');
+    await e.element(e.by.id('UniqueId937')).tapBackspaceKey();
+    await e.element(e.by.id('UniqueId937')).tapReturnKey();
     await e.element(e.by.id('UniqueId005')).clearText();
     await e.element(e.by.id('UniqueId005')).replaceText('replaceTo');
     await e.element(e.by.id('ScrollView161')).scroll(100);

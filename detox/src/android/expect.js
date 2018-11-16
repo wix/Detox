@@ -54,6 +54,13 @@ class MultiClickAction extends Action {
   }
 }
 
+class PressKeyAction extends Action {
+  constructor(value) {
+    super();
+    this._call = invoke.callDirectly(ViewActionsApi.pressKey(value));
+  }
+}
+
 class TypeTextAction extends Action {
   constructor(value) {
     super();
@@ -196,6 +203,12 @@ class Element {
   }
   async multiTap(times) {
     return await new ActionInteraction(this, new MultiClickAction(times)).execute();
+  }
+  async tapBackspaceKey() {
+    return await new ActionInteraction(this, new PressKeyAction(67)).execute();
+  }
+  async tapReturnKey() {
+    return await new ActionInteraction(this, new TypeTextAction('\n')).execute();
   }
   async typeText(value) {
     return await new ActionInteraction(this, new TypeTextAction(value)).execute();

@@ -15,6 +15,8 @@ Actions are functions that emulate user behavior. They are being performed on ma
 - [`.longPress()`](#longpress)
 - [`.multiTap()`](#multitaptimes)
 - [`.tapAtPoint()`](#tapatpoint)
+- [`.tapBackspaceKey()`](#tapbackspacekey)
+- [`.tapReturnKey()`](#tapreturnkey)
 - [`.typeText()`](#typetexttext)
 - [`.replaceText()`](#replacetexttext)
 - [`.clearText()`](#cleartext)
@@ -47,10 +49,24 @@ await element(by.id('tappable')).multiTap(3);
 ```
 ### `tapAtPoint()`
 Simulate tap at a specific point on an element.<br><br>
-Note: The point coordinates are relative to the matched element and the element size could changes on different devices or even when changing the device font size.   
+Note: The point coordinates are relative to the matched element and the element size could changes on different devices or even when changing the device font size.
 
 ```js
 await element(by.id('tappable')).tapAtPoint({x:5, y:10});
+```
+
+### `tapBackspaceKey()`
+Tap the backspace key on the built-in keyboard.
+
+```js
+await element(by.id('textField')).tapBackspaceKey();
+```
+
+### `tapReturnKey()`
+Tap the return key on the built-in keyboard.
+
+```js
+await element(by.id('textField')).tapReturnKey();
 ```
 
 ### `typeText(text)`
@@ -61,7 +77,7 @@ await element(by.id('textField')).typeText('passcode');
 ```
 
 > **Note:** Make sure hardware keyboard is disconnected. Otherwise, Detox may fail when attempting to type text.
-> 
+>
 > To make sure hardware keyboard is disconnected, open the simulator from Xcode and make sure **Hardware** -> **Keyboard** -> **Connect Hardware Keyboard** is deselected (or press ⇧⌘K).
 
 ### `replaceText(text)`

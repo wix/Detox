@@ -29,11 +29,23 @@ describe('Actions', () => {
     await expect(element(by.id('UniqueId819'))).toHaveText('Taps: 1');
   });
 
-  // Backspace is supported by using "\b" in the string. Return key is supported with "\n"
   it('should type in an element', async () => {
     await element(by.id('UniqueId937')).tap();
     await element(by.id('UniqueId937')).typeText('passcode');
     await expect(element(by.text('Type Working!!!'))).toBeVisible();
+  });
+
+  it('should press the backspace key on an element', async () => {
+    await element(by.id('UniqueId937')).tap();
+    await element(by.id('UniqueId937')).typeText('testx');
+    await element(by.id('UniqueId937')).tapBackspaceKey();
+    await expect(element(by.text('test'))).toBeVisible();
+  });
+
+  it('should press the return key on an element', async () => {
+    await element(by.id('UniqueId937')).tap();
+    await element(by.id('UniqueId937')).tapReturnKey();
+    await expect(element(by.text('Return Working!!!'))).toBeVisible();
   });
 
   it('should clear text in an element', async () => {
