@@ -5,8 +5,7 @@ cd ../android/wrapperApp
 EXIT_CODE=$?
 if [ $EXIT_CODE -ne 0 ];
 then
-    echo 'Android Wrapper app build failed'
-    exit 1
+    echo 'Android Wrapper app build failed' && exit 1
 else
     echo "Android Wrapper app built successfully and located at: $(pwd)/${appPath}"
 fi
