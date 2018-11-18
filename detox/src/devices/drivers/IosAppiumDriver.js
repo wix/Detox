@@ -17,19 +17,18 @@ class IosAppiumDriver extends AppiumDriverBase {
         this.expect = require('../../ios/expect');
         this.invocationManager = new InvocationManager(client);
         this.expect.setInvocationManager(this.invocationManager);
-        this._desiredCapabilities = Object.assign({ // appPackage is required by documentation
-            name: "detox",
+        this._desiredCapabilities = Object.assign({
             waitForQuiescence: false,
             processArguments: {args: ['-detoxServer', client.configuration.server, '-detoxSessionId', client.configuration.sessionId]}
-        }, client.configuration.appium.desiredCapabilities || {});
+        }, this._desiredCapabilities);
     }
 
     async getBundleIdFromBinary(appPath) {
-        return this._desiredCapabilities.bundleId;
+        return this._bundleId;
     }
 
     async uninstallApp() {
-        await this._driver.removeAppFromDevice(this._desiredCapabilities.bundleId);
+        await this._driver.removeAppFromDevice(`${this._bundleId}`);
     }
 
     async installApp() {

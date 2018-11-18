@@ -6,7 +6,6 @@ const DetoxApi = require("../../android/espressoapi/Detox");
 const EspressoDetoxApi = require("../../android/espressoapi/EspressoDetox");
 const AAPT = require("../android/AAPT");
 const {interruptProcess} = require("../../utils/exec");
-const path = require('path');
 
 class AndroidAppiumDriver extends AppiumDriverBase {
     constructor(client) {
@@ -15,24 +14,26 @@ class AndroidAppiumDriver extends AppiumDriverBase {
         this.expect = require("../../android/expect");
         this.expect.setInvocationManager(this.invocationManager);
         this.aapt = new AAPT();
-        this._desiredCapabilities = Object.assign(
-            client.configuration.appium.desiredCapabilities || {},
-            {
-                allowTestPackages: true,
-                clearSystemFiles: true,
-                app: client.configuration.appium.desiredCapabilities.wrapperApp,
-                otherApps: JSON.stringify([client.configuration.appium.desiredCapabilities.app, client.configuration.appium.desiredCapabilities.testBinaryPath]),
-                optionalIntentArguments: `--es detoxServer ${client.configuration.server} --es detoxSessionId ${client.configuration.sessionId} --es packageName ${client.configuration.appium.desiredCapabilities.bundleId}.test`,
-                appActivity: "MainActivity"
-            });
+        this._desiredCapabilities = Object.assign({
+            clearSystemFiles: true,
+            allowTestPackages: true,
+            noResetValue: true,
+            newCommandTimeout: 60000,
+            idleTimeout: 1000,
+            appPackage: 'launcher.detox.wix.com.detoxlauncher',
+            appActivity: "MainActivity",
+            otherApps: JSON.stringify([client.configuration.appium.desiredCapabilities.app, client.configuration.appium.desiredCapabilities.testBinaryPath]),
+            optionalIntentArguments: `--es detoxServer ${client.configuration.server} --es detoxSessionId ${client.configuration.sessionId} --es packageName ${client.configuration.appium.desiredCapabilities.bundleId}.test`
+        }, this._desiredCapabilities);
+        this._desiredCapabilities.app = client.configuration.appium.desiredCapabilities.launcher;
     }
 
     async getBundleIdFromBinary(binaryPath) {
-        return this._desiredCapabilities.bundleId;
+        return this._bundleId;
     }
 
     async uninstallApp(deviceId, bundleId) {
-        await this._driver.removeAppFromDevice(`${this._desiredCapabilities.bundleId}`);
+        await this._driver.removeAppFromDevice(`${this._bundleId}`);
     }
 
     async installApp(deviceId, binaryPath, testBinaryPath) {
