@@ -22,10 +22,10 @@ class AndroidAppiumDriver extends AppiumDriverBase {
             idleTimeout: 1000,
             appPackage: 'launcher.detox.wix.com.detoxlauncher',
             appActivity: "MainActivity",
-            otherApps: JSON.stringify([client.configuration.appium.desiredCapabilities.app, client.configuration.appium.desiredCapabilities.testBinaryPath]),
+            otherApps: JSON.stringify([client.configuration.appium.desiredCapabilities.app, client.configuration.appium.desiredCapabilities.androidTestApp]),
             optionalIntentArguments: `--es detoxServer ${client.configuration.server} --es detoxSessionId ${client.configuration.sessionId} --es packageName ${client.configuration.appium.desiredCapabilities.bundleId}.test`
         }, this._desiredCapabilities);
-        this._desiredCapabilities.app = client.configuration.appium.desiredCapabilities.launcher;
+        this._desiredCapabilities.app = client.configuration.appium.desiredCapabilities.androidLauncher;
     }
 
     async getBundleIdFromBinary(binaryPath) {
