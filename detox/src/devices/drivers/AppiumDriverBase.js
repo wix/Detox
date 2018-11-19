@@ -17,7 +17,7 @@ class AppiumDriverBase extends DeviceDriverBase {
         if (!client.configuration.appium) throw new Error('"appium" configuration is required to start appium driver.');
         this._desiredCapabilities = Object.assign({
             name: "detox",
-            appiumVersion: "1.8.1"
+            appiumVersion: "1.9.1"
         }, client.configuration.appium.desiredCapabilities || {});
         this._bundleId = client.configuration.appium.desiredCapabilities.bundleId;
     }
