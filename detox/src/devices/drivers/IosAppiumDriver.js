@@ -17,10 +17,11 @@ class IosAppiumDriver extends AppiumDriverBase {
         this.expect = require('../../ios/expect');
         this.invocationManager = new InvocationManager(client);
         this.expect.setInvocationManager(this.invocationManager);
-        this._desiredCapabilities = Object.assign({
+        var conf = {
             waitForQuiescence: false,
             processArguments: {args: ['-detoxServer', client.configuration.server, '-detoxSessionId', client.configuration.sessionId]}
-        }, this._desiredCapabilities);
+        };
+        this._desiredCapabilities = Object.assign(this._desiredCapabilities, conf);
     }
 
     async getBundleIdFromBinary(appPath) {

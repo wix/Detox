@@ -14,7 +14,7 @@ class AndroidAppiumDriver extends AppiumDriverBase {
         this.expect = require("../../android/expect");
         this.expect.setInvocationManager(this.invocationManager);
         this.aapt = new AAPT();
-        this._desiredCapabilities = Object.assign({
+        var conf = {
             clearSystemFiles: true,
             allowTestPackages: true,
             noResetValue: true,
@@ -24,7 +24,8 @@ class AndroidAppiumDriver extends AppiumDriverBase {
             appActivity: "MainActivity",
             otherApps: JSON.stringify([client.configuration.appium.desiredCapabilities.app, client.configuration.appium.desiredCapabilities.androidTestApp]),
             optionalIntentArguments: `--es detoxServer ${client.configuration.server} --es detoxSessionId ${client.configuration.sessionId} --es packageName ${client.configuration.appium.desiredCapabilities.bundleId}.test`
-        }, this._desiredCapabilities);
+        };
+        this._desiredCapabilities = Object.assign(this._desiredCapabilities, conf);
         this._desiredCapabilities.app = client.configuration.appium.desiredCapabilities.androidLauncher;
     }
 
