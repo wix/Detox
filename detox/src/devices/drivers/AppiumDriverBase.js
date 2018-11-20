@@ -30,7 +30,6 @@ class AppiumDriverBase extends DeviceDriverBase {
 
     async prepare() {
         this._driver = await wd.promiseRemote(this._url);
-        console.log(this._desiredCapabilities);
         await this._driver.init(this._desiredCapabilities);
         global.appium = this._driver;
     }
