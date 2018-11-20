@@ -17,16 +17,18 @@ class AppiumDriverBase extends DeviceDriverBase {
         if (!client.configuration.appium) throw new Error('"appium" configuration is required to start appium driver.');
         this._desiredCapabilities = Object.assign({
             name: "detox",
-            appiumVersion: "1.9.1"
+            appiumVersion: "1.9.1",
+            newCommandTimeout: 60000
         }, client.configuration.appium.desiredCapabilities || {});
         this._bundleId = client.configuration.appium.desiredCapabilities.bundleId;
     }
 
     validateDeviceConfig(config) {
+        // using validateDeviceConfig to get access to the user configuration
         this.deviceConfig = config;
     }
 
-    async prepare(deviceConfig) {
+    async prepare() {
         this._driver = await wd.promiseRemote(this._url);
         console.log(this._desiredCapabilities);
         await this._driver.init(this._desiredCapabilities);
@@ -48,7 +50,7 @@ class AppiumDriverBase extends DeviceDriverBase {
     }
 
     async terminate() {
-        // this function is called last in the sequence so the app staying closed before test starts
+        // Terminate function is not implemented due to bizarre behavior
         // await this._driver.closeApp();
     }
 

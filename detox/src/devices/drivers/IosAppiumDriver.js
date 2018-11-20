@@ -34,6 +34,7 @@ class IosAppiumDriver extends AppiumDriverBase {
 
     async installApp() {
         await this._driver.installApp(this._desiredCapabilities.app);
+        //resetApp is required to refresh the rendering of the app.
         await this._driver.resetApp();
     }
 
