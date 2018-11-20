@@ -36,7 +36,7 @@ title: Configuration Options
 ### Appium Configuration
 #### Android example
 ```json
-        detox: {
+        "detox": {
             ...
             "session": {
                     ...
@@ -46,12 +46,12 @@ title: Configuration Options
                            "deviceName": "Samsung Galaxy S7 GoogleAPI Emulator",
                            "platformName": "Android",
                            "platformVersion": "8.0",
-                           "app": `https://demo.example.com/appUnderTesting.apk`,
-                           "bundleId": `com.example.exampleApp`
+                           "app": 'https://demo.example.com/appUnderTesting.apk',
+                           "bundleId": 'com.example.exampleApp'
 
-                            **Android Only**
+                           // **Android Only**
                            "androidLauncher": 'https://storage.example.com/apps/launcherApp.apk',
-                           "androidTestApp": `https://storage.example.com/apps/Instrumentation.apk`
+                           "androidTestApp": 'https://storage.example.com/apps/Instrumentation.apk'
                          }
                     }
              },
@@ -59,7 +59,7 @@ title: Configuration Options
                 'android.emu.release': {
                     "type": "android.appium",
                     "name": "iPhone-X",
-                    "binaryPath": <path to binary path>`)
+                    "binaryPath": "<path to binary path>"
                 }
             }
         }
@@ -68,7 +68,7 @@ title: Configuration Options
 #### iOS example
 
 ```json
-        detox: {
+        "detox": {
             ...
             "session": {
                 ...
@@ -78,8 +78,8 @@ title: Configuration Options
                         "deviceName": "iPhone X",
                         "platformName": "iOS",
                         "platformVersion": "11.2",
-                        "app": `https://demo.example.com/appUnderTesting.apk`,
-                        "bundleId": `com.example.exampleApp`
+                        "app": "https://demo.example.com/appUnderTesting.apk",
+                        "bundleId": "com.example.exampleApp"
                     }
                 },
             },
@@ -87,7 +87,7 @@ title: Configuration Options
                 'ios.sim.release': {
                     "type": "ios.appium",
                     "name": "iPhone-X",
-                    "binaryPath": <path to binary path>`)
+                    "binaryPath": "<path to binary path>"
                 }
             }
         }
