@@ -46,17 +46,17 @@ title: Configuration Options
                            "deviceName": "Samsung Galaxy S7 GoogleAPI Emulator",
                            "platformName": "Android",
                            "platformVersion": "8.0",
-                           "app": 'https://demo.example.com/appUnderTesting.apk',
-                           "bundleId": 'com.example.exampleApp'
+                           "app": "https://demo.example.com/appUnderTesting.apk",
+                           "bundleId": "com.example.exampleApp"
 
                            // **Android Only**
-                           "androidLauncher": 'https://storage.example.com/apps/launcherApp.apk',
-                           "androidTestApp": 'https://storage.example.com/apps/Instrumentation.apk'
+                           "androidLauncher": "https://storage.example.com/apps/launcherApp.apk",
+                           "androidTestApp": "https://storage.example.com/apps/Instrumentation.apk"
                          }
                     }
              },
             "configurations": {
-                'android.emu.release': {
+                "android.emu.release": {
                     "type": "android.appium",
                     "name": "iPhone-X",
                     "binaryPath": "<path to binary path>"
@@ -84,7 +84,7 @@ title: Configuration Options
                 },
             },
             "configurations": {
-                'ios.sim.release': {
+                "ios.sim.release": {
                     "type": "ios.appium",
                     "name": "iPhone-X",
                     "binaryPath": "<path to binary path>"
