@@ -12,10 +12,10 @@ title: Configuration Options
 |---|---|
 |`binaryPath`| Relative path to the ipa/app due to be  tested (make sure you build the app in a project relative path)|
 |`testBinaryPath`| (optional, Android only): relative path to the test app (apk) |
-|`type`| Device type, available options are `ios.simulator`, `ios.none`, `android.emulator`, and `android.attached`. |
+|`type`| Device type, available options are `ios.simulator`, `ios.none`, `android.emulator`, `android.attached`, `android.appium` and `ios.appium`. |
 |`name`| Device name, aligns to the device list avaliable through `xcrun simctl list` for example, this is one line of the output of `xcrun simctl list`: `A3C93900-6D17-4830-8FBE-E102E4BBCBB9  iPhone 7  Shutdown  iPhone 7  iOS 10.2`, ir order to choose the first `iPhone 7` regardless of OS version, use `iPhone 7`. <br>To be OS specific use `iPhone 7, iOS 10.2`|
 |`build`| **[optional]** Build command (either `xcodebuild`, `react-native run-ios`, etc...), will be later available through detox CLI tool.|
-	
+|`appium`| Object that holds the configuration for bootstrapping the detox-appium driver |
 **Example:**
 
 ```json
@@ -30,12 +30,91 @@ title: Configuration Options
       }
     }
   }
-```	
-	
-	
+```
+
+
+### Appium Configuration
+#### Android example
+```json
+        detox: {
+            ...
+            "session": {
+                    ...
+                    "appium": {
+                        "url": "https://urlToAppiumServer:4726/wd/hub",
+                        "desiredCapabilities": {
+                           deviceName: "Samsung Galaxy S7 GoogleAPI Emulator",
+                           platformName: "Android",
+                           platformVersion: "8.0",
+                           app: `https://demo.example.com/appUnderTesting.apk`,
+                           bundleId: `com.example.exampleApp`
+
+                            **Android Only**
+                           androidLauncher: 'https://storage.example.com/apps/launcherApp.apk',
+                           androidTestApp: `https://storage.example.com/apps/Instrumentation.apk`
+                         }
+                    }
+             },
+            "configurations": {
+                'android.emu.release': {
+                    "type": "android.appium",
+                    "name": "iPhone-X",
+                    "binaryPath": <path to binary path>`)
+                }
+            }
+        }
+```
+
+#### iOS example
+
+```json
+        detox: {
+            ...
+            "session": {
+                ...
+                "appium": {
+                    "url": "https://urlToAppiumServer:4726/wd/hub",
+                    "desiredCapabilities": {
+                        deviceName: "iPhone X",
+                        platformName: "iOS",
+                        platformVersion: "11.2",
+                        app: `https://demo.example.com/appUnderTesting.apk`,
+                        bundleId: `com.example.exampleApp`
+                    }
+                },
+            },
+            "configurations": {
+                'ios.sim.release': {
+                    "type": "ios.appium",
+                    "name": "iPhone-X",
+                    "binaryPath": <path to binary path>`)
+                }
+            }
+        }
+```
+
+#### Important pre-requisition
+|Key|Description|
+|---|---|
+|deviceName|device name from the SauceLabs device manifest|
+|platformName|choose iOS or Android as the platform to be tested|
+|platformVersion|os version to be requested from SauceLabs|
+|app|url to the app under testing|
+|bundleId|the bundleId of the app under testing|
+|androidLauncher|the androidLauncher app is build during the detox framework installation process, this should be filled with the url of the app after the upload **_Android Only_**|
+|androidTestApp|this key is the url the the android test instrumentation app of the app that under testing  **_Android Only_**|
+
+During the Detox framework installation the android 'detoxLauncher' app is built in the path:
+```json
+<project dir>/node_modules/detox/android/detoxLauncher/app/build/outputs/apk/debug/app-debug.apk
+```
+the key androidLauncher should be filled with the app above after it has been uploaded to some cloud storage.
+
+
+
 ### Server Configuration
 Detox can either initialize a server using a generated configuration, or can be overriden with a manual  configuration:
-	
+
 ```json
 	"detox": {
 	  ...
