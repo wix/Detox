@@ -90,11 +90,11 @@ public class ReactNativeTimersIdlingResource implements IdlingResource, Choreogr
                 return true;
             }
 
-            Object timingModule = Reflect.on(reactContext).call(METHOD_GET_NATIVE_MODULE, timingClass).get();
-            Object timerLock = Reflect.on(timingModule).field(LOCK_TIMER).get();
+            final Object timingModule = Reflect.on(reactContext).call(METHOD_GET_NATIVE_MODULE, timingClass).get();
+            final Object timerLock = Reflect.on(timingModule).field(LOCK_TIMER).get();
             synchronized (timerLock) {
                 final PriorityQueue<?> timers = Reflect.on(timingModule).field(FIELD_TIMERS).get();
-                final Object nextTimer = timers.peek();
+                final Object nextTimer = findNextTimer(timers);
                 if (nextTimer == null) {
                     if (callback != null) {
                         callback.onTransitionToIdle();
@@ -147,22 +147,38 @@ public class ReactNativeTimersIdlingResource implements IdlingResource, Choreogr
         paused.set(false);
     }
 
+    private Object findNextTimer(PriorityQueue<?> timers) {
+        Object nextTimer = timers.peek();
+        if (nextTimer == null) {
+            return null;
+        }
+
+        final boolean isRepetitive = Reflect.on(nextTimer).field(TIMER_FIELD_REPETITIVE).get();
+        if (!isRepetitive) {
+            return nextTimer;
+        }
+
+        Object timer = null;
+        long targetTime = Long.MAX_VALUE;
+        for (Object aTimer : timers) {
+            final boolean timerIsRepetitive = Reflect.on(aTimer).field(TIMER_FIELD_REPETITIVE).get();
+            final long timerTargetTime = Reflect.on(aTimer).field(TIMER_FIELD_TARGET_TIME).get();
+            if (!timerIsRepetitive && timerTargetTime < targetTime) {
+                targetTime = timerTargetTime;
+                timer = aTimer;
+            }
+        }
+        return timer;
+    }
+
     private boolean isTimerOutsideBusyWindow(Object nextTimer) {
         final long currentTimeMS = System.nanoTime() / 1000000L;
         final Reflect nextTimerReflected = Reflect.on(nextTimer);
         final long targetTimeMS = nextTimerReflected.field(TIMER_FIELD_TARGET_TIME).get();
         final int intervalMS = nextTimerReflected.field(TIMER_FIELD_INTERVAL).get();
-        final boolean isRepetitive = nextTimerReflected.field(TIMER_FIELD_REPETITIVE).get();
 
 //        Log.i(LOG_TAG, "Next timer has duration of: " + intervalMS
-//                + "; due time is: " + targetTimeMS + ", current is: " + currentTimeMS
-//                + "; is " + (isRepetitive ? "repeating" : "a one-shot"));
-
-        // Before making any concrete checks, be sure to ignore repeating timers or we'd loop forever.
-        // TODO: Should we iterate to the first, non-repeating timer?
-        if (isRepetitive) {
-            return true;
-        }
+//                + "; due time is: " + targetTimeMS + ", current is: " + currentTimeMS);
 
         // Core condition is for the timer interval (duration) to be set beyond our window.
         // Note: we check the interval in an 'absolute' way rather than comparing to the 'current time'
