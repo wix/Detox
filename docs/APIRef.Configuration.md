@@ -43,15 +43,15 @@ title: Configuration Options
                     "appium": {
                         "url": "https://urlToAppiumServer:4726/wd/hub",
                         "desiredCapabilities": {
-                           deviceName: "Samsung Galaxy S7 GoogleAPI Emulator",
-                           platformName: "Android",
-                           platformVersion: "8.0",
-                           app: `https://demo.example.com/appUnderTesting.apk`,
-                           bundleId: `com.example.exampleApp`
+                           "deviceName": "Samsung Galaxy S7 GoogleAPI Emulator",
+                           "platformName": "Android",
+                           "platformVersion": "8.0",
+                           "app": `https://demo.example.com/appUnderTesting.apk`,
+                           "bundleId": `com.example.exampleApp`
 
                             **Android Only**
-                           androidLauncher: 'https://storage.example.com/apps/launcherApp.apk',
-                           androidTestApp: `https://storage.example.com/apps/Instrumentation.apk`
+                           "androidLauncher": 'https://storage.example.com/apps/launcherApp.apk',
+                           "androidTestApp": `https://storage.example.com/apps/Instrumentation.apk`
                          }
                     }
              },
@@ -75,11 +75,11 @@ title: Configuration Options
                 "appium": {
                     "url": "https://urlToAppiumServer:4726/wd/hub",
                     "desiredCapabilities": {
-                        deviceName: "iPhone X",
-                        platformName: "iOS",
-                        platformVersion: "11.2",
-                        app: `https://demo.example.com/appUnderTesting.apk`,
-                        bundleId: `com.example.exampleApp`
+                        "deviceName": "iPhone X",
+                        "platformName": "iOS",
+                        "platformVersion": "11.2",
+                        "app": `https://demo.example.com/appUnderTesting.apk`,
+                        "bundleId": `com.example.exampleApp`
                     }
                 },
             },
