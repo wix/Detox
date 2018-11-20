@@ -24,7 +24,6 @@ class Device {
     await this.deviceDriver.prepare();
 
     if (!argparse.getArgValue('reuse')) {
-      // Did not checked with reuse = true
       await this.deviceDriver.uninstallApp(this._deviceId, this._bundleId);
       await this.deviceDriver.installApp(this._deviceId, this._binaryPath, this._testBinaryPath);
     }
