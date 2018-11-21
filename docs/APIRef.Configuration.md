@@ -36,33 +36,33 @@ title: Configuration Options
 ### Appium Configuration
 #### Android example
 ```json
-        "detox": {
-            ...
-            "session": {
-                    ...
-                    "appium": {
-                        "url": "https://urlToAppiumServer:4726/wd/hub",
-                        "desiredCapabilities": {
-                           "deviceName": "Samsung Galaxy S7 GoogleAPI Emulator",
-                           "platformName": "Android",
-                           "platformVersion": "8.0",
-                           "app": "https://demo.example.com/appUnderTesting.apk",
-                           "bundleId": "com.example.exampleApp"
+  "detox": {
+      ...
+      "session": {
+              ...
+         "appium": {
+             "url": "https://urlToAppiumServer:4726/wd/hub",
+             "desiredCapabilities": {
+                "deviceName": "Samsung Galaxy S7 GoogleAPI Emulator",
+                "platformName": "Android",
+                "platformVersion": "8.0",
+                "app": "https://demo.example.com/appUnderTesting.apk",
+                "bundleId": "com.example.exampleApp"
 
-                           // **Android Only**
-                           "androidLauncher": "https://storage.example.com/apps/launcherApp.apk",
-                           "androidTestApp": "https://storage.example.com/apps/Instrumentation.apk"
-                         }
-                    }
-             },
-            "configurations": {
-                "android.emu.release": {
-                    "type": "android.appium",
-                    "name": "iPhone-X",
-                    "binaryPath": "<path to binary path>"
-                }
-            }
-        }
+                // **Android Only**
+                "androidLauncher": "https://storage.example.com/apps/launcherApp.apk",
+                "androidTestApp": "https://storage.example.com/apps/Instrumentation.apk"
+              }
+         }
+  },
+      "configurations": {
+          "android.emu.release": {
+              "type": "android.appium",
+              "name": "iPhone-X",
+              "binaryPath": "<path to binary path>"
+          }
+      }
+  }
 ```
 
 #### iOS example
