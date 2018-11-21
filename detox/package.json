@@ -72,7 +72,7 @@
       ".*Driver.js",
       "EmulatorTelnet.js",
       "Emulator.js",
-      "*DriverBase.js",
+      ".*DriverBase.js",
       "GREYConfiguration.js",
       "src/utils/environment.js",
       "src/utils/logger.js",
