@@ -106,7 +106,7 @@ class ADB {
 
     let childProcess;
     if (apiLvl >= 24) {
-      childProcess = await this.adbCmd(deviceId, `install -r -g ${apkPath}`);
+      childProcess = await this.adbCmd(deviceId, `install -r -g -t ${apkPath}`);
     } else {
       childProcess = await this.adbCmd(deviceId, `install -rg ${apkPath}`);
     }
