@@ -9,22 +9,22 @@ title: Integrating TypeScript with Detox + Jest
 
 After following the [Getting Started](Introduction.GettingStarted.md) Guide to set up Detox + Jest, we will make some changes to your project:
 
-- Remove Detox from `package.json` at the root level
+- Remove Detox from `package.json` at the root level: `npm uninstall detox`
 - Create a `package.json` in the `e2e` folder and add Detox and Jest to the project dependencies:
 
 ```sh
-npm uninstall detox
 cd e2e
 npm init -y
 npm install -D detox jest
 ```
 
-Creating the `e2e` directory will be needed to prevent a typing collision issue with Jest and Detox (see step 5). You should then move the settings for Detox from the root-level `package.json` to the `e2e/package.json`, but make sure that you update the `build` and `binaryPath` values for your Detox configurations:
+You should then move the settings for Detox from the root-level `package.json` to the `e2e/package.json`, but make sure that you update the `build`, `binaryPath`, and `runner-config` values for your Detox configurations:
 
 ```json
 {
   // ...
   "detox": {
+    "runner-config": "./config.json",
     "configurations": {
       "ios.sim.debug": {
         "binaryPath": "../ios/build/Build/Products/Debug-iphonesimulator/YourAppName.app",
@@ -48,6 +48,14 @@ Creating the `e2e` directory will be needed to prevent a typing collision issue 
   }
 }
 ```
+
+- Edit `init.js` to `require` the Detox configuration from `e2e/package.json` instead of the root-level `package.json`
+
+```js
+const config = require('./package.json').detox;
+```
+
+Moving all Detox-related code into the `e2e` directory is necessary to prevent a typing collision issue with Jest and Detox (see step 5).
 
 Before moving on, make sure that you can still successfully run your Detox tests.
 
