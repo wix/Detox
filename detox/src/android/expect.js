@@ -2,6 +2,7 @@ const invoke = require('../invoke');
 const matchers = require('./matcher');
 const DetoxActionApi = require('./espressoapi/DetoxAction');
 const ViewActionsApi = require('./espressoapi/ViewActions');
+const DetoxViewActionsApi = require('./espressoapi/DetoxViewActions');
 const Matcher = matchers.Matcher;
 const LabelMatcher = matchers.LabelMatcher;
 const IdMatcher = matchers.IdMatcher;
@@ -29,7 +30,7 @@ class Action {}
 class TapAction extends Action {
   constructor() {
     super();
-    this._call = invoke.callDirectly(ViewActionsApi.click());
+    this._call = invoke.callDirectly(DetoxViewActionsApi.click());
   }
 }
 
