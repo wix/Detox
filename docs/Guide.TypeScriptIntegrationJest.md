@@ -84,6 +84,8 @@ Add typings for Detox, Jest, and Jasmine (the latter two are used in `init.ts`),
 npm install --save-dev @types/detox @types/jest @types/jasmine
 ```
 
+Note: [`@types/detox`](https://www.npmjs.com/package/@types/detox) is maintained by the community and not by Wix.
+
 You should now be able to run your Detox tests, written in TypeScript! If you're not writing your unit tests with TypeScript and Jest, you can skip the next section.
 
 ### 5. Unit test collisions
