@@ -15,3 +15,6 @@
 [submodule "android-testing"]
 	path = android-testing
 	url = https://android.googlesource.com/platform/frameworks/testing/
+[submodule "android-uiautomator"]
+	path = android-uiautomator
+	url = https://android.googlesource.com/platform/frameworks/uiautomator
