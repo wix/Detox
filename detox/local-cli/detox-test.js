@@ -11,6 +11,7 @@ const DetoxConfigError = require('../src/errors/DetoxConfigError');
 const config = require(path.join(process.cwd(), 'package.json')).detox;
 
 program
+  .allowUnknownOption()
   .option('-o, --runner-config [config]',
     `Test runner config file, defaults to e2e/mocha.opts for mocha and e2e/config.json' for jest`)
   .option('-s, --specs [relativePath]',
@@ -89,6 +90,16 @@ function run() {
   }
 }
 
+function collectExtraArgs() {
+  const parsed = program.parseOptions(program.normalize(process.argv.slice(2)));
+
+  if (parsed && Array.isArray(parsed.unknown) && parsed.unknown.length > 0) {
+    return parsed.unknown.join(' ');
+  }
+
+  return '';
+}
+
 function getConfigFor(keys, fallback) {
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
@@ -123,7 +134,7 @@ function runMocha() {
   const binPath = path.join('node_modules', '.bin', 'mocha');
   const command = `${binPath} ${testFolder} ${configFile} ${configuration} ${loglevel} ${color} ` +
     `${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${headless} ` +
-    `${logs} ${screenshots} ${videos} ${artifactsLocation} ${deviceName}`;
+    `${logs} ${screenshots} ${videos} ${artifactsLocation} ${deviceName} ${collectExtraArgs()}`;
 
   console.log(command);
   cp.execSync(command, {stdio: 'inherit'});
@@ -135,7 +146,7 @@ function runJest() {
   const platformString = platform ? shellQuote(`--testNamePattern=^((?!${getPlatformSpecificString(platform)}).)*$`) : '';
   const binPath = path.join('node_modules', '.bin', 'jest');
   const color = program.color ? '' : ' --no-color';
-  const command = `${binPath} ${testFolder} ${configFile}${color} --maxWorkers=${program.workers} ${platformString}`;
+  const command = `${binPath} ${testFolder} ${configFile}${color} --maxWorkers=${program.workers} ${platformString} ${collectExtraArgs()}`;
   const detoxEnvironmentVariables = {
     configuration: program.configuration,
     loglevel: program.loglevel,
