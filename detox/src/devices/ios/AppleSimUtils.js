@@ -175,6 +175,8 @@ class AppleSimUtils {
 
   async resetContentAndSettings(udid) {
     await this._execSimctl({ cmd: `erase ${udid}` });
+    await this._execKillall({ cmd: `"Simulator"` });
+    await this._execOpen({ cmd: `-a "Simulator" --args -CurrentDeviceUDID ${udid}` });
   }
 
   async getXcodeVersion() {
@@ -206,6 +208,14 @@ class AppleSimUtils {
 
   async _execSimctl({ cmd, statusLogs = {}, retries = 1, silent = false }) {
     return await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl ${cmd}`, { silent }, statusLogs, retries);
+  }
+
+  async _execKillall({ cmd, statusLogs = {}, retries = 1, silent = false }) {
+    return await exec.execWithRetriesAndLogs(`/usr/bin/killall ${cmd}`, { silent }, statusLogs, retries);
+  }
+
+  async _execOpen({ cmd, statusLogs = {}, retries = 1, silent = false }) {
+    return await exec.execWithRetriesAndLogs(`/usr/bin/open ${cmd}`, { silent }, statusLogs, retries);
   }
 
   _parseResponseFromAppleSimUtils(response) {
