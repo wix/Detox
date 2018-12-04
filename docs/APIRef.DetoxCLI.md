@@ -62,6 +62,7 @@ Initiating your test suite
 | -w, --workers                                 | [iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest) |
 | -n, --device-name [name]                                 | Override the device name specified in a configuration. Useful for running a single build configuration on multiple devices. |
 > NOTE: such log levels as `silly` and `wss` are deprecated since detox@8.1.0 and will be removed in 9.0.0.
+> NOTE: extra arguments to `detox test` will be passed through to the test runner (e.g. arguments such as --bail can be passed to Detox and will get forwarded to your test runner)
 
 ### build
 Run a command defined in 'configuration.build'
