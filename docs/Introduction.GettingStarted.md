@@ -64,7 +64,7 @@ This package makes it easier to operate Detox from the command line. `detox-cli`
 
 #### 1. Install detox
 
-If you have a React Native project, go to its root folder (where `package.json` is found) and type the following command.
+If you have a React Native project, go to its root folder (where `package.json` is found) and type the following command:
 
 ```sh
 npm install detox --save-dev
