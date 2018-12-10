@@ -28,6 +28,14 @@ describe('Matchers', () => {
     await expect(element(byType)).toBeNotVisible();
   });
 
+  it('should match elements by type and visibility(native class)', async () => {
+    const byType = device.getPlatform() === 'ios' ? by.type('RCTImageView') : by.type('android.widget.ImageView');
+
+    await expect(element(byType).and(by.visibility())).toBeVisible();
+    await element(byType).tap();
+    await expect(element(byType).and(by.visibility(false))).toBeNotVisible();
+  });
+
   // https://facebook.github.io/react-native/docs/accessibility.html#accessibilitytraits-ios
   // Accessibility Inspector in the simulator can help investigate traits
   it(':ios: should match elements by accesibility trait', async () => {

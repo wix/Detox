@@ -32,9 +32,14 @@ describe('expect', async () => {
     await e.expect(e.element(e.by.id('test'))).toBeVisible();
   });
 
+  it(`element by visibility`, async () => {
+    await e.expect(e.element(e.by.id('test').and(e.by.visibility()))).toBeVisible();
+    await e.expect(e.element(e.by.id('test').and(e.by.visibility(false)))).toBeNotVisible();
+  });
+
   it(`element by type`, async () => {
     await e.expect(e.element(e.by.type('test'))).toBeVisible();
-    await e.element(e.by.type('UIPickerView')).setColumnToValue(1,"6");
+    await e.element(e.by.type('UIPickerView')).setColumnToValue(1, "6");
   });
 
   it(`element by traits`, async () => {
@@ -52,8 +57,8 @@ describe('expect', async () => {
   });
 
   it(`expect with wrong parameters should throw`, async () => {
-     await expectToThrow(() => e.expect('notAnElement'));
-     await expectToThrow(() => e.expect(e.element('notAMatcher')));
+    await expectToThrow(() => e.expect('notAnElement'));
+    await expectToThrow(() => e.expect(e.element('notAMatcher')));
   });
 
   it(`matchers with wrong parameters should throw`, async () => {
@@ -81,16 +86,15 @@ describe('expect', async () => {
     await e.waitFor(e.element(e.by.id('id'))).toNotHaveValue('value');
 
 
-
     await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50, 'down');
     await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50);
   });
 
   it(`waitFor (element) with wrong parameters should throw`, async () => {
-     await expectToThrow(() => e.waitFor('notAnElement'));
-     await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout('notANumber'));
-     await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout(-1));
-     await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement('notAnElement'));
+    await expectToThrow(() => e.waitFor('notAnElement'));
+    await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout('notANumber'));
+    await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout(-1));
+    await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement('notAnElement'));
   });
 
   it(`waitFor (element) with non-elements should throw`, async () => {
@@ -99,7 +103,7 @@ describe('expect', async () => {
 
   it(`interactions`, async () => {
     await e.element(e.by.label('Tap Me')).tap();
-    await e.element(e.by.label('Tap Me')).tapAtPoint({x: 10, y:10});
+    await e.element(e.by.label('Tap Me')).tapAtPoint({x: 10, y: 10});
     await e.element(e.by.label('Tap Me')).longPress();
     await e.element(e.by.label('Tap Me')).longPress(2000);
     await e.element(e.by.id('UniqueId819')).multiTap(3);

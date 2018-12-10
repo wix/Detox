@@ -17,6 +17,7 @@ Matchers find elements in your app that match one or more properties.
 - [`by.label()`](#bylabellabel)
 - [`by.type()`](#bytypenativeviewtype)
 - [`by.traits()`](#bytraitstraits)
+- [`by.visibility()`](#byvisibilityvisible)
 - [Advanced](#advanced)
 
 
@@ -73,6 +74,15 @@ Find an element with an [accessibility trait](https://developer.apple.com/docume
 
 ```js
 await element(by.traits(['button']));
+```
+
+#### `by.visibility(visible)`
+Find an element with an the given visibility (defaults to true for visible).
+
+
+```js
+await element(by.visibility()); // find a visible element
+await element(by.visibility(false)); // find an invisible element
 ```
 
 #### Advanced

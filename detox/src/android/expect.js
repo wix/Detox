@@ -321,7 +321,8 @@ const by = {
   type: (value) => new TypeMatcher(value),
   traits: (value) => new TraitsMatcher(value),
   value: (value) => new ValueMatcher(value),
-  text: (value) => new TextMatcher(value)
+  text: (value) => new TextMatcher(value),
+  visibility: (value = true) => value ? new VisibleMatcher() : new NotVisibleMatcher()
 };
 
 const exportGlobals = () => {

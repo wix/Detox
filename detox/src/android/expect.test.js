@@ -32,6 +32,11 @@ describe('expect', async () => {
     await e.expect(e.element(e.by.id('test'))).toBeVisible();
   });
 
+  it(`element by visibility`, async () => {
+    await e.expect(e.element(e.by.id('test').and(e.by.visibility()))).toBeVisible();
+    await e.expect(e.element(e.by.id('test').and(e.by.visibility(false)))).toBeNotVisible();
+  });
+
   it(`element by type`, async () => {
     await e.expect(e.element(e.by.type('test'))).toBeVisible();
   });
