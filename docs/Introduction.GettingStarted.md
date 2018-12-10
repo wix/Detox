@@ -42,7 +42,7 @@ Node is the JavaScript runtime Detox will run on. **Install Node 8.3.0 or above*
 
 #### 3. Install [applesimutils](https://github.com/wix/AppleSimulatorUtils)
 
-A collection of utils for Apple simulators, Detox uses it communicate with the simulator.
+A collection of utils for Apple simulators, Detox uses it to communicate with the simulator.
 
 ```sh
 brew tap wix/brew
@@ -64,13 +64,13 @@ This package makes it easier to operate Detox from the command line. `detox-cli`
 
 #### 1. Install detox
 
-If you have a React Native project, go to its root folder (where `package.json` is found) and type the following command.
+If you have a React Native project, go to its root folder (where `package.json` is found) and type the following command:
 
 ```sh
 npm install detox --save-dev
 ```
 
-If you have a project without Node integration (such as a native project), add the following package.json file to the root folder of you project:
+If you have a project without Node integration (such as a native project), add the following package.json file to the root folder of your project:
 
 ```json
 {
