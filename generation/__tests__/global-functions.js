@@ -124,6 +124,11 @@ describe('globals', () => {
       };
       expect(globals.sanitize_matcher(matcherLikeObj)).toBe('I am a call');
     });
+
+    it('should not get _call property if it is not present', () => {
+      const unwrappedMatcher = "I am a call";
+      expect(globals.sanitize_matcher(unwrappedMatcher)).toBe('I am a call');
+    })
   });
 
   describe('sanitize_greyElementInteraction', () => {

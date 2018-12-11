@@ -80,25 +80,6 @@ if (
   );
 }
 
-function isOfClass(className) {
-  return ({ name }) =>
-    templateFromString(
-      `
-	if (
-		typeof ARG !== 'object' ||
-		typeof ARG.constructor !== 'function' ||
-		ARG.constructor.name.indexOf('${className}') === -1
-	) {
-		const isObject = typeof ARG === 'object';
-		const additionalErrorInfo = isObject ? (typeof ARG.constructor === 'object' ? 'the constructor is no object' : 'it has a wrong class name: "' + ARG.constructor.name +'"') : 'it is no object';
-
-		throw new Error('${name} should be an instance of ${className}, got "' + ARG + '", it appears that ' + additionalErrorInfo);
-	}
-	`,
-      t.identifier(name)
-    );
-}
-
 function isDefined() {
   return ({ name }) =>
     templateFromString(
@@ -120,7 +101,6 @@ module.exports = {
   isGreyAction,
   isGreyMatcher,
   isArray,
-  isOfClass,
   isGreyElementInteraction,
   isDefined
 };

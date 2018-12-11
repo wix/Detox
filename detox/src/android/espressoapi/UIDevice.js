@@ -151,31 +151,41 @@ class UiDevice {
   }
 
   static pressKeyCode(element, keyCode) {
-    if (typeof keyCode !== "number") throw new Error("keyCode should be a number, but got " + (keyCode + (" (" + (typeof keyCode + ")"))));
-    return {
-      target: element,
-      method: "pressKeyCode",
-      args: [{
-        type: "Integer",
-        value: keyCode
-      }]
-    };
-  }
+    function pressKeyCode1(keyCode) {
+      if (typeof keyCode !== "number") throw new Error("keyCode should be a number, but got " + (keyCode + (" (" + (typeof keyCode + ")"))));
+      return {
+        target: element,
+        method: "pressKeyCode",
+        args: [{
+          type: "Integer",
+          value: keyCode
+        }]
+      };
+    }
 
-  static pressKeyCode(element, keyCode, metaState) {
-    if (typeof keyCode !== "number") throw new Error("keyCode should be a number, but got " + (keyCode + (" (" + (typeof keyCode + ")"))));
-    if (typeof metaState !== "number") throw new Error("metaState should be a number, but got " + (metaState + (" (" + (typeof metaState + ")"))));
-    return {
-      target: element,
-      method: "pressKeyCode",
-      args: [{
-        type: "Integer",
-        value: keyCode
-      }, {
-        type: "Integer",
-        value: metaState
-      }]
-    };
+    function pressKeyCode2(keyCode, metaState) {
+      if (typeof keyCode !== "number") throw new Error("keyCode should be a number, but got " + (keyCode + (" (" + (typeof keyCode + ")"))));
+      if (typeof metaState !== "number") throw new Error("metaState should be a number, but got " + (metaState + (" (" + (typeof metaState + ")"))));
+      return {
+        target: element,
+        method: "pressKeyCode",
+        args: [{
+          type: "Integer",
+          value: keyCode
+        }, {
+          type: "Integer",
+          value: metaState
+        }]
+      };
+    }
+
+    if (arguments.length === 1) {
+      return pressKeyCode1.apply(null, arguments);
+    }
+
+    if (arguments.length === 2) {
+      return pressKeyCode2.apply(null, arguments);
+    }
   }
 
   static pressRecentApps(element) {
