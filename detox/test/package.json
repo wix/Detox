@@ -8,12 +8,16 @@
     "detox-server": "detox run-server",
     "e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization --take-screenshots all --record-logs all",
     "e2e:android": "detox test --configuration android.emu.release --take-screenshots all --record-logs all",
+    "appium:prepare": "npm install appium",
+    "appium:launch": "appium&",
+    "e2e:appium:android": "sleep 5 && detox test --configuration android.emu.appium --take-screenshots all --record-logs all",
     "build:ios": "detox build --configuration ios.sim.release",
     "build:android": "detox build --configuration android.emu.release",
     "verify-artifacts:ios": "jest ./scripts/verify_artifacts_are_not_missing.ios.test.js --testEnvironment node",
     "verify-artifacts:android": "jest ./scripts/verify_artifacts_are_not_missing.android.test.js --testEnvironment node"
   },
   "dependencies": {
+    "appium": "^1.10.0",
     "react": "16.4.1",
     "react-native": "0.56.0"
   },
@@ -44,6 +48,24 @@
         "type": "ios.simulator",
         "name": "iPhone X"
       },
+      "android.emu.appium": {
+        "appium": {
+          "url": "http://localhost:4723/wd/hub",
+          "desiredCapabilities": {
+            "deviceName": "Samsung Galaxy S7 GoogleAPI Emulator",
+            "platformName": "Android",
+            "platformVersion": "8.0",
+            "app": "/data/capriza-ng/detox/detox/test/android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk",
+            "bundleId": "com.example",
+            "androidLauncher": "/data/capriza-ng/detox/detox/android/detoxLauncher/app/build/outputs/apk/debug/app-debug.apk",
+            "androidTestApp": "/data/capriza-ng/detox/detox/test/android/app/build/outputs/apk/androidTest/fromBin/release/app-fromBin-release-androidTest.apk"
+          }
+        },
+        "binaryPath": "/",
+        "build": "cd android && ./gradlew assembleFromBinDebug assembleFromBinDebugAndroidTest -DtestBuildType=debug && cd ..",
+        "type": "android.appium",
+        "name": "Nexus_5X_API_26"
+      },
       "ios.none": {
         "binaryPath": "ios",
         "type": "ios.none",
@@ -63,7 +85,7 @@
         "binaryPath": "android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk",
         "build": "cd android && ./gradlew assembleFromBinRelease assembleFromBinReleaseAndroidTest -DtestBuildType=release && cd ..",
         "type": "android.emulator",
-        "name": "Nexus_5X_API_26"
+        "name": "nexus_26"
       },
       "android.emu.debug.fromSource": {
         "binaryPath": "android/app/build/outputs/apk/fromSource/debug/app-fromSource-debug.apk",

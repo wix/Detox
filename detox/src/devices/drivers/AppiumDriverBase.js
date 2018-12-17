@@ -12,20 +12,33 @@ class AppiumDriverBase extends DeviceDriverBase {
     constructor(client) {
         super(client);
         client = client.client;
-        this._url = client.configuration.appium.url;
         this.invocationManager = new InvocationManager(client);
-        if (!client.configuration.appium) throw new Error('"appium" configuration is required to start appium driver.');
+        if (!client.configuration.appium) {
+            client.configuration.appium = {};
+        }
+        this._url = client.configuration.appium.url;
         this._desiredCapabilities = Object.assign({
             name: "detox",
             appiumVersion: "1.9.1",
             newCommandTimeout: 60000
         }, client.configuration.appium.desiredCapabilities || {});
-        this._bundleId = client.configuration.appium.desiredCapabilities.bundleId;
+        this._bundleId = this._desiredCapabilities.bundleId;
     }
 
     validateDeviceConfig(config) {
         // using validateDeviceConfig to get access to the user configuration
         this.deviceConfig = config;
+        if (config.appium) {
+            this._url = this._url || config.appium.url;
+            this._desiredCapabilities = Object.assign(config.appium.desiredCapabilities || {}, this._desiredCapabilities);
+            this._bundleId = this._desiredCapabilities.bundleId;
+        }
+        if (!this._url) {
+            throw new Error('missing appium url');
+        }
+        if (!this._bundleId) {
+            throw new Error('missing app bundleId');
+        }
     }
 
     async prepare() {

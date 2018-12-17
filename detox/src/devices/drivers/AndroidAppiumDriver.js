@@ -14,6 +14,11 @@ class AndroidAppiumDriver extends AppiumDriverBase {
         this.expect = require("../../android/expect");
         this.expect.setInvocationManager(this.invocationManager);
         this.aapt = new AAPT();
+    }
+
+    validateDeviceConfig(config) {
+        // using validateDeviceConfig to get access to the user configuration
+        super.validateDeviceConfig(config);
         var conf = {
             clearSystemFiles: true,
             allowTestPackages: true,
@@ -21,11 +26,11 @@ class AndroidAppiumDriver extends AppiumDriverBase {
             idleTimeout: 1000,
             appPackage: 'launcher.detox.wix.com.detoxlauncher',
             appActivity: "MainActivity",
-            otherApps: JSON.stringify([client.configuration.appium.desiredCapabilities.app, client.configuration.appium.desiredCapabilities.androidTestApp]),
-            optionalIntentArguments: `--es detoxServer ${client.configuration.server} --es detoxSessionId ${client.configuration.sessionId} --es packageName ${client.configuration.appium.desiredCapabilities.bundleId}.test`
+            otherApps: JSON.stringify([this._desiredCapabilities.app, this._desiredCapabilities.androidTestApp]),
+            optionalIntentArguments: `--es detoxServer ${this.client.configuration.server} --es detoxSessionId ${this.client.configuration.sessionId} --es packageName ${this._desiredCapabilities.bundleId}.test`
         };
         this._desiredCapabilities = Object.assign(this._desiredCapabilities, conf);
-        this._desiredCapabilities.app = client.configuration.appium.desiredCapabilities.androidLauncher;
+        this._desiredCapabilities.app = this._desiredCapabilities.androidLauncher;
     }
 
     async getBundleIdFromBinary(binaryPath) {
