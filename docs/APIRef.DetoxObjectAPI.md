@@ -28,7 +28,7 @@ before(async () => {
 ```
 
 ##### Explicit imports during initialization
-Detox exports `device `, `expect`, `element`, `by` and `waitFor` as globals by default, if you want to control their initialization manually, set init detox with `initGlobals` set to `false`. This is useful when during E2E tests you also need to run regular expectations in node. jest `Expect` for instance, will not be overriden by Detox when this option is used.
+Detox exports `device`, `expect`, `element`, `by` and `waitFor` as globals by default, if you want to control their initialization manually, set init detox with `initGlobals` set to `false`. This is useful when during E2E tests you also need to run regular expectations in node. jest `Expect` for instance, will not be overriden by Detox when this option is used.
 
 ```js
 before(async () => {
