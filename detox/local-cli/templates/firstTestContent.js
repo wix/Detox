@@ -16,6 +16,6 @@ const firstTestContent = `describe('Example', () => {
     await element(by.id('world_button')).tap();
     await expect(element(by.text('World!!!'))).toBeVisible();
   });
-})`;
+});`;
 
 module.exports = firstTestContent;
