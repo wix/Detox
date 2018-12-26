@@ -3,7 +3,7 @@
   "description": "E2E tests and automation for mobile",
   "version": "10.0.5",
   "bin": {
-    "detox": "local-cli/detox.js"
+    "detox": "cli.js"
   },
   "repository": {
     "type": "git",
@@ -51,7 +51,8 @@
     "tail": "^1.2.3",
     "telnet-client": "0.15.3",
     "tempfile": "^2.0.0",
-    "ws": "^1.1.1"
+    "ws": "^1.1.1",
+    "yargs": "^12.0.5"
   },
   "engines": {
     "node": ">=8.3.0"

@@ -1,27 +1,43 @@
 const _ = require("lodash");
 const fs = require("fs");
 const path = require("path");
-const program = require("commander");
 const mochaTemplates = require("./templates/mocha");
 const jestTemplates = require("./templates/jest");
 const log = require("../src/utils/logger");
 
 const PREFIX = "detox-init";
 
-program
-  .name('detox init')
-  .description("Scaffolds initial E2E test folder structure for a specific test runner")
-  .usage('-r <test-runner-name>')
-  .option(
-    "-r, --runner <test-runner-name>",
-    "test runner name (supported values: mocha, jest)"
-  )
-  .parse(process.argv);
+module.exports.command = 'init';
+module.exports.desc = 'Scaffolds initial E2E test folder structure for a specific test runner';
+module.exports.builder = {
+  runner: {
+    alias: 'r',
+    demandOption: true,
+    describe: 'test runner name (supported values: mocha, jest)'
+  }
+}
 
-if (program.runner) {
-  main(program);
-} else {
-  program.help();
+module.exports.handler = function main(argv) {
+  console.log("init handler", argv)
+  switch (argv.runner) {
+    case "mocha":
+    createMochaFolderE2E();
+    patchTestRunnerFieldInPackageJSON("mocha");
+    break;
+    case "jest":
+    createJestFolderE2E();
+    patchTestRunnerFieldInPackageJSON("jest");
+    break;
+    default:
+    log.error(PREFIX, "Convenience scaffolding for `%s` test runner is not supported currently.\n", runner);
+    log.info(PREFIX, "Supported runners at the moment are `mocha` and `jest`:");
+    log.info(PREFIX, "* detox init -r mocha");
+    log.info(PREFIX, "* detox init -r jest\n");
+    log.info(PREFIX, "If it is not a typo, and you plan to work with `%s` runner, then you have to create test setup files manually.", runner);
+    log.info(PREFIX, "HINT: Try running one of the commands above, watch what it does, and do the similar steps for your use case.");
+    
+    break;
+  }
 }
 
 function createFolder(dir, files) {
@@ -93,27 +109,5 @@ function patchTestRunnerFieldInPackageJSON(runnerName) {
   if (packageJson) {
     patchPackageJson(packageJson, runnerName);
     savePackageJson(packageJsonPath, packageJson);
-  }
-}
-
-function main({ runner }) {
-  switch (runner) {
-    case "mocha":
-      createMochaFolderE2E();
-      patchTestRunnerFieldInPackageJSON("mocha");
-      break;
-    case "jest":
-      createJestFolderE2E();
-      patchTestRunnerFieldInPackageJSON("jest");
-      break;
-    default:
-      log.error(PREFIX, "Convenience scaffolding for `%s` test runner is not supported currently.\n", runner);
-      log.info(PREFIX, "Supported runners at the moment are `mocha` and `jest`:");
-      log.info(PREFIX, "* detox init -r mocha");
-      log.info(PREFIX, "* detox init -r jest\n");
-      log.info(PREFIX, "If it is not a typo, and you plan to work with `%s` runner, then you have to create test setup files manually.", runner);
-      log.info(PREFIX, "HINT: Try running one of the commands above, watch what it does, and do the similar steps for your use case.");
-
-      break;
   }
 }
