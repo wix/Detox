@@ -172,6 +172,17 @@ Use the Detox command line tools to test your project easily:
 detox test
 ```
 
+### Ran all test suites
+When the tests have completed you will see the following for completed Android tests in your terminal 
+
+`Ran all test suites matching /e2e/i with tests matching "^((?!:ios:).)*$".`
+
+Similarly for iOS tests you will see:
+
+`Ran all test suites matching /e2e/i with tests matching "^((?!:android:).)*$".`
+
+This maybe confusing at first, but this is due to the fact that Detox uses a negative lookahead to match the tests to run. Which means that for the expression to match, the part within `(?!...)` must not match. 
+
 That's it. Your first failing Detox test is running!
 
 Next, we'll go over usage and how to make this test [actually pass](Introduction.WritingFirstTest.md).
