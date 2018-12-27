@@ -61,8 +61,10 @@
     "testEnvironment": "node",
     "roots": [
       "node_modules",
-      "src"
+      "src",
+      "local-cli"
     ],
+    "testPathIgnorePatterns": ["/node_modules/", "local-cli/test.js"],
     "coveragePathIgnorePatterns": [
       "/node_modules/",
       "src/artifacts/log",
