@@ -20,6 +20,17 @@ function sanitize_greyDirection(action) {
       throw new Error(`GREYAction.GREYDirection must be a 'left'/'right'/'up'/'down', got ${action}`);
   }
 } 
+function sanitize_greyPinchDirection(action) {
+  switch (action) {
+    case 'outward':
+      return 1;
+    case 'inward':
+      return 2;
+
+    default:
+      throw new Error(`GREYAction.GREYPinchDirection must be a 'outward'/'inward', got ${action}`);
+  }
+}
 function sanitize_greyContentEdge(action) {
   switch (action) {
     case 'left':
@@ -612,6 +623,52 @@ class GREYActions {
       }]
     };
   }
+
+  /*Returns an action that pinches on an element.
+
+@param direction  The direction of the pinch. (outward / inward)
+@param angle      The angle of the pinch.
+
+@return A GREYAction to pinch on an element.
+*/static actionForPinchFastInDirectionWithAngle(direction, angle) {
+  return {
+    target: {
+      type: "Class",
+      value: "GREYActions"
+    },
+    method: "actionForPinchFastInDirection:withAngle:",
+    args: [{
+      type: "NSInteger",
+      value: sanitize_greyPinchDirection(direction)
+    }, {
+      type: "NSNumber",
+      value: angle
+    }]
+  };
+}
+
+  /*Returns an action that pinches on an element.
+
+@param direction  The direction of the pinch. (outward / inward)
+@param angle      The angle of the pinch.
+
+@return A GREYAction to pinch on an element.
+*/static actionForPinchSlowInDirectionWithAngle(direction, angle) {
+  return {
+    target: {
+      type: "Class",
+      value: "GREYActions"
+    },
+    method: "actionForPinchSlowInDirection:withAngle:",
+    args: [{
+      type: "NSInteger",
+      value: sanitize_greyPinchDirection(direction)
+    }, {
+      type: "NSNumber",
+      value: angle
+    }]
+  };
+}
 
 }
 
