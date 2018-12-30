@@ -45,6 +45,18 @@ describe('globals', () => {
       }).toThrowErrorMatchingSnapshot();
     });
   });
+  describe('sanitize_greyPinchDirection', () => {
+    it('should return numbers for strings', () => {
+      expect(globals.sanitize_greyPinchDirection('outward')).toBe(1);
+      expect(globals.sanitize_greyPinchDirection('inward')).toBe(2);
+    });
+
+    it('should fail with unknown value', () => {
+      expect(() => {
+        globals.sanitize_greyPinchDirection('kittens');
+      }).toThrowErrorMatchingSnapshot();
+    });
+  });
 
   describe('sanitize_greyContentEdge', () => {
     it('should return numbers for strings', () => {
