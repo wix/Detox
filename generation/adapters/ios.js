@@ -78,6 +78,7 @@ module.exports = generator({
     'CGPoint',
     'GREYContentEdge',
     'GREYDirection',
+    'GREYPinchDirection',
     'GREYElementInteraction*',
     'id',
     'id<GREYAction>',
@@ -87,6 +88,7 @@ module.exports = generator({
     'NSString *',
     'NSString',
     'NSUInteger',
+    'double',
     'UIAccessibilityTraits',
     '__strong NSError **',
     'UIDeviceOrientation'
@@ -94,7 +96,8 @@ module.exports = generator({
   renameTypesMap: {
     NSUInteger: 'NSInteger',
     'NSString *': 'NSString',
-    CFTimeInterval: 'CGFloat'
+    CFTimeInterval: 'CGFloat',
+    "double": 'NSNumber'
   },
   classValue: ({ name }) => name,
   blacklistedFunctionNames: ['init']

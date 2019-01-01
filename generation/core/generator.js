@@ -70,6 +70,9 @@ module.exports = function getGenerator({
       if (methodArg === null) {
         console.error(method);
       }
+      if (!supportedTypes.includes(methodArg.type)) {
+        console.log(`The argument type ${methodArg.type} is not supported`)
+      }
       return carry && supportedTypes.includes(methodArg.type);
     }, true);
   }
