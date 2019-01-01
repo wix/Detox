@@ -108,6 +108,8 @@ describe('expect', async () => {
     await e.element(e.by.id('UniqueId937')).tapReturnKey();
     await e.element(e.by.id('UniqueId005')).clearText();
     await e.element(e.by.id('UniqueId005')).replaceText('replaceTo');
+    await e.element(e.by.id('UniqueId005')).pinchWithAngle('outward', 'fast', 0);
+    await e.element(e.by.id('UniqueId005')).pinchWithAngle('outward');
     await e.element(e.by.id('ScrollView161')).scroll(100);
     await e.element(e.by.id('ScrollView161')).scroll(100, 'down');
     await e.element(e.by.id('ScrollView161')).scroll(100, 'up');
@@ -132,6 +134,12 @@ describe('expect', async () => {
   it(`interactions with wrong parameters should throw`, async () => {
     await expectToThrow(() => e.element(e.by.id('UniqueId819')).multiTap('NaN'));
     await expectToThrow(() => e.element(e.by.id('UniqueId937')).typeText(0));
+    await expectToThrow(() => e.element(e.by.id('UniqueId005')).replaceText(3));
+    await expectToThrow(() => e.element(e.by.id('UniqueId005')).pinchWithAngle('noDirection', 'slow', 0));
+    await expectToThrow(() => e.element(e.by.id('UniqueId005')).pinchWithAngle(1, 'slow', 0));
+    await expectToThrow(() => e.element(e.by.id('UniqueId005')).pinchWithAngle('outward', 1, 0));
+    await expectToThrow(() => e.element(e.by.id('UniqueId005')).pinchWithAngle('outward', 'noDirection', 0));
+    await expectToThrow(() => e.element(e.by.id('UniqueId005')).pinchWithAngle('outward', 'slow', 'NaN'));
     await expectToThrow(() => e.element(e.by.id('UniqueId005')).replaceText(3));
     await expectToThrow(() => e.element(e.by.id('ScrollView161')).scroll('NaN', 'down'));
     await expectToThrow(() => e.element(e.by.id('ScrollView161')).scroll(100, 'noDirection'));
