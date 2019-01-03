@@ -79,6 +79,10 @@ class AppiumDriverBase extends DeviceDriverBase {
         await this._driver.quit();
     }
 
+    async cleanup(){
+        await this._driver.quit();
+    }
+
     async getPlatform() {
         return this._desiredCapabilities.platformName;
     }
