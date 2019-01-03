@@ -23,7 +23,6 @@ class AndroidAppiumDriver extends AppiumDriverBase {
             clearSystemFiles: true,
             allowTestPackages: true,
             noResetValue: true,
-            idleTimeout: 1000,
             appPackage: 'launcher.detox.wix.com.detoxlauncher',
             appActivity: "MainActivity",
             otherApps: JSON.stringify([this._desiredCapabilities.app, this._desiredCapabilities.androidTestApp]),

@@ -20,7 +20,8 @@ class AppiumDriverBase extends DeviceDriverBase {
         this._desiredCapabilities = Object.assign({
             name: "detox",
             appiumVersion: "1.9.1",
-            newCommandTimeout: 60000
+            newCommandTimeout: 60000,
+            idleTimeout: 1000,
         }, client.configuration.appium.desiredCapabilities || {});
         this._bundleId = this._desiredCapabilities.bundleId;
     }
