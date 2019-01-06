@@ -1,32 +1,8 @@
-const yargs = require('yargs');
-const path = require('path');
-
-function call(cmd) {
-  const parser = yargs
-    .scriptName('detox')
-    .command(require('./build'))
-    .help();
-
-  return new Promise((resolve, reject) => {
-    try {
-      parser.parse(cmd, (err, argv, output) => resolve(output));
-    } catch (e) {
-      reject(e);
-    }
-  });
-}
-
-function mockPackageJson(mockContent) {
-  jest.mock(path.join(process.cwd(), 'package.json'), () => ({
-    detox: mockContent
-  }));
-}
-
 describe('build', () => {
   it('shows help text', async () => {
     jest.spyOn(process, 'exit'); // otherwise tests are aborted
 
-    expect(await call('--help')).toMatchInlineSnapshot(`
+    expect(await callCli('./build', '--help')).toMatchInlineSnapshot(`
 "detox [command]
 
 Commands:
@@ -52,7 +28,7 @@ Options:
       execSync: mockExec
     }));
 
-    await call('build');
+    await callCli('./build', 'build');
     expect(mockExec).toHaveBeenCalledWith(expect.stringContaining('I was build'), expect.anything());
   });
 
@@ -72,7 +48,7 @@ Options:
       execSync: mockExec
     }));
 
-    await call('build -c myconf');
+    await callCli('./build', 'build -c myconf');
     expect(mockExec).toHaveBeenCalledWith(expect.stringContaining('Something else'), expect.anything());
   });
 
@@ -92,7 +68,7 @@ Options:
       execSync: mockExec
     }));
 
-    expect(call('build')).rejects.toBeInstanceOf(Error);
+    expect(callCli('./build', 'build')).rejects.toBeInstanceOf(Error);
     expect(mockExec).not.toHaveBeenCalled();
   });
 
@@ -103,7 +79,7 @@ Options:
       execSync: mockExec
     }));
 
-    expect(call('build')).rejects.toEqual(new Error('Cannot find detox.configurations in package.json'));
+    expect(callCli('./build', 'build')).rejects.toEqual(new Error('Cannot find detox.configurations in package.json'));
     expect(mockExec).not.toHaveBeenCalled();
   });
 
@@ -118,7 +94,7 @@ Options:
       execSync: mockExec
     }));
 
-    expect(call('build -c only')).rejects.toEqual(new Error('Could not find build script in detox.configurations["only"].build'));
+    expect(callCli('./build', 'build -c only')).rejects.toEqual(new Error('Could not find build script in detox.configurations["only"].build'));
     expect(mockExec).not.toHaveBeenCalled();
   });
 
@@ -133,7 +109,7 @@ Options:
       execSync: mockExec
     }));
 
-    expect(call('build')).rejects.toEqual(new Error('Could not find build script in detox.configurations["only"].build'));
+    expect(callCli('./build', 'build')).rejects.toEqual(new Error('Could not find build script in detox.configurations["only"].build'));
     expect(mockExec).not.toHaveBeenCalled();
   });
 });

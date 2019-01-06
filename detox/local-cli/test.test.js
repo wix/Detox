@@ -1,27 +1,3 @@
-const yargs = require('yargs');
-const path = require('path');
-
-function call(cmd) {
-  const parser = yargs
-    .scriptName('detox')
-    .command(require('./test'))
-    .help();
-
-  return new Promise((resolve, reject) => {
-    try {
-      parser.parse(cmd, (err, argv, output) => resolve(output));
-    } catch (e) {
-      reject(e);
-    }
-  });
-}
-
-function mockPackageJson(mockContent) {
-  jest.mock(path.join(process.cwd(), 'package.json'), () => ({
-    detox: mockContent
-  }));
-}
-
 describe('test', () => {
   describe('mocha', () => {
     it('runs successfully', async () => {
@@ -39,7 +15,7 @@ describe('test', () => {
       }));
 
       try {
-        await call('test');
+        await callCli('./test', 'test');
       } catch (e) {
         console.log(e);
       }
@@ -69,7 +45,7 @@ describe('test', () => {
       }));
 
       try {
-        await call('test');
+        await callCli('./test', 'test');
       } catch (e) {
         console.log(e);
       }
@@ -99,7 +75,7 @@ describe('test', () => {
 
     const mockError = jest.fn();
     try {
-      await call('test');
+      await callCli('./test', 'test');
     } catch (e) {
       mockError(e.toString());
     }

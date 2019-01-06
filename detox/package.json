@@ -64,6 +64,7 @@
       "src",
       "local-cli"
     ],
+    "setupFiles": ["<rootDir>/setupJest.js"],
     "testPathIgnorePatterns": ["/node_modules/", "local-cli/test.js"],
     "coveragePathIgnorePatterns": [
       "/node_modules/",
