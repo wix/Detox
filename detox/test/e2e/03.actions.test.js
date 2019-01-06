@@ -100,4 +100,11 @@ describe('Actions', () => {
     await expect(element(by.id('WhyDoAllTheTestIDsHaveTheseStrangeNames'))).toBeVisible();
   });
 
+  it(':ios: should zoom in and out the pinchable scrollview', async () => {
+    await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0);
+    await expect(element(by.id('UniqueId007'))).toBeNotVisible();
+    await element(by.id('PinchableScrollView')).pinchWithAngle('inward', 'slow', 0);
+    await expect(element(by.id('UniqueId007'))).toBeVisible();
+  });
+
 });
