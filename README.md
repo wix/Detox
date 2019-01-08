@@ -56,7 +56,7 @@ The following React Native versions have been tested:
 
 | iOS    | Android |
 | ------ | ------- |
-| <=0.56 | <=0.56  |
+| <=0.58 | <=0.56  |
 
 Future versions are most likely supported, but have not been tested yet. Please open issues if you find specific issues with newer React Native versions.
 
