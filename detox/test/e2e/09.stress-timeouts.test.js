@@ -4,7 +4,7 @@ describe('StressTimeouts', () => {
     await element(by.text('Timeouts')).tap();
   });
 
-  it('should handle a short timeout', async () => {
+  it(':ios: should handle a short timeout', async () => {
     await element(by.id('TimeoutShort')).tap();
     await expect(element(by.text('Short Timeout Working!!!'))).toBeVisible();
   });
