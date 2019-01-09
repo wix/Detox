@@ -153,7 +153,7 @@ A common use-case, is adding identifiers to list items. testIDs for FlatList ite
 	await element(by.text('Product')).atIndex(2);
 	```
 **Usage of `atIndex` is not recommended!**, since the order of matched views can not be guaranteed by the system. Recyclable views in [UITableView](https://developer.apple.com/documentation/uikit/uitableview) / [UICollectionView](https://developer.apple.com/documentation/uikit/uicollectionview) / [RecyclerView](https://developer.android.com/guide/topics/ui/layout/recyclerview) or any custom view may even change during scroll, while views are being recycled with new data. 
-	React Native FlatList items are being traveresed in different ways on the different platforms, causing `atIndex` to return the **opposite indexes on iOS than what it does on Android.**
+	React Native FlatList items are being traversed in different ways on the different platforms, causing `atIndex` to return the **opposite indexes on iOS than what it does on Android.**
 
 
 ##### TIP: Finding the back button on iOS 
