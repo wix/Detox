@@ -15,13 +15,7 @@ title: Detox for Android
 
   For older Android gradle plugin support use `detox@6.x.x` instead ([previous setup guide here](https://github.com/wix/detox/blob/97654071573053def90e8207be8eba011408f977/docs/Introduction.Android.md)).<br>
 
-
-
-
-
   **Note: As a rule of thumb, we consider all old major versions discontinued; We only support the latest Detox major version.**
-
-
 
 ## Setup :gear:
 ### 1. Run through the initial _Getting Started_ Guide
@@ -97,8 +91,7 @@ buildscript {
 }
 ```
 
-_Note: most guides advise for defining a global `kotlinVersion` constant - as in this example, but that is not mandatory._
-
+_Note: most guides advise of defining a global `kotlinVersion` constant - as in this example, but that is not mandatory._
 
 
 **IMPORTANT:** Detox aims at a playing fair with your app, and so it allows you to explicitly define the kotlin version for it to use - so as to align it with your own; Please do so - in your root `android/build.gradle` configuration file:
