@@ -36,7 +36,7 @@ detox [options] [command]
 
 ## Configuration Options
 
-Every flag can be passed in different ways, this section will show how `detox test --record-videos failing` can be expressed differently.
+Every flag can be passed in different ways, this section will show how `detox test --record-videos failing` can be expressed differently. Please note that you can use any combination of the usages below.
 
 ### Environment Varables
 
@@ -64,7 +64,23 @@ The options can be extended like this where `my-companies-detox-config` is a pac
 }
 ```
 
+### Config File
 
+You can either configure a CommonJS module or a JSON file to be loaded as configuration if you specify the file to be loaded via the `--config` flag:
+
+```js
+module.exports = {
+    recordVideos: "failing"
+};
+```
+
+or
+
+```json
+{
+    "recordVideos": "failing"
+}
+```
 
 ## Commands
 

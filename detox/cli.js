@@ -5,6 +5,9 @@ yargs
   .scriptName('detox')
   .env('DETOX')
   .pkgConf('detox')
+  .config('config', 'configuration either as JSON or as Javascript file', function(configPath) {
+    return require(configPath);
+  })
   .commandDir('local-cli', {
     exclude: function(path) {
       // This is a test file
