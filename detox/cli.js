@@ -3,6 +3,7 @@
 const yargs = require('yargs');
 yargs
   .scriptName('detox')
+  .env('DETOX')
   .commandDir('local-cli', {
     exclude: function(path) {
       // This is a test file
@@ -15,5 +16,4 @@ yargs
   .demandCommand()
   .recommendCommands()
   .help()
-  .wrap(yargs.terminalWidth() * 0.9)
-  .argv
+  .wrap(yargs.terminalWidth() * 0.9).argv;

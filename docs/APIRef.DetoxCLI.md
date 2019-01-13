@@ -34,6 +34,13 @@ detox [options] [command]
 | --- | --- |
 | -h, --help | Output usage information |
 
+## Configuration Options
+
+### Environment Varables
+
+Every flag passed to a command can also be expressed by using environment variables.
+For example, `detox test --configuration my.config` is the same as `DETOX_CONFIGURATION="my.config" detox test`.
+
 
 ## Commands
 
