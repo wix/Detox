@@ -36,10 +36,34 @@ detox [options] [command]
 
 ## Configuration Options
 
+Every flag can be passed in different ways, this section will show how `detox test --record-videos failing` can be expressed differently.
+
 ### Environment Varables
 
-Every flag passed to a command can also be expressed by using environment variables.
-For example, `detox test --configuration my.config` is the same as `DETOX_CONFIGURATION="my.config" detox test`.
+`DETOX_RECORD_VIDEOS="failing" detox test`
+
+### `package.json`
+
+The flags need to be passed under the `detox` object in camel case.
+
+```json
+{
+    "detox": {
+        "recordVideos": "failing"
+    }
+}
+```
+
+The options can be extended like this where `my-companies-detox-config` is a package exporting a configuration:
+
+```json
+{
+   "detox": {
+        "extends": "my-companies-detox-config"
+    } 
+}
+```
+
 
 
 ## Commands

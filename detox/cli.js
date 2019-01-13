@@ -4,6 +4,7 @@ const yargs = require('yargs');
 yargs
   .scriptName('detox')
   .env('DETOX')
+  .pkgConf('detox')
   .commandDir('local-cli', {
     exclude: function(path) {
       // This is a test file
