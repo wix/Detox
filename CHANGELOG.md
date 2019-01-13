@@ -1,5 +1,15 @@
 # Change Log
 
+## [10.0.0]((https://github.com/wix/detox/tree/9.1.2)) (2019-01-13)
+[Full Changelog](https://github.com/wix/detox/compare/9.1.2...10.0.0)
+
+**Enhancements**
+- Android: Introduce Kotlin (v1.3.0 as the default version).
+- Android: Rewrite of the JS-timers idling resource in Kotlin (`ReactNativeTimersIdlingResource`).
+
+**Fixed Bugs**
+- Idle timer shadows busy timers at rare cases [\#1115](https://github.com/wix/Detox/issues/1115)    
+
 ## [9.1.2](https://github.com/wix/detox/tree/9.1.2) (2018-11-17)
 [Full Changelog](https://github.com/wix/detox/compare/9.0.7...9.1.2)
 
