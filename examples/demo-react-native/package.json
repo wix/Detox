@@ -1,6 +1,6 @@
 {
   "name": "example",
-  "version": "9.1.2",
+  "version": "10.0.2",
   "private": true,
   "scripts": {
     "start": "react-native start"
@@ -10,7 +10,7 @@
     "react-native": "0.51.1"
   },
   "devDependencies": {
-    "detox": "^9.1.2",
+    "detox": "^10.0.2",
     "mocha": "^4.0.1"
   },
   "detox": {
