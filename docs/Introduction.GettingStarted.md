@@ -3,6 +3,8 @@ id: Introduction.GettingStarted
 title: Getting Started
 ---
 
+**This guide is focused on iOS. For installing Detox for Android, be sure to also go over the [Android guide](Introduction.Android.md)**.
+
 This is a step-by-step guide for adding Detox to your React Native project.
 
 > TIP: You can also check out this [awesome tutorial](https://medium.com/@bogomolnyelad/how-to-test-your-react-native-app-like-a-real-user-ecfc72e9b6bc) on Medium with video by [@bogomolnyelad](https://medium.com/@bogomolnyelad)

@@ -1,12 +1,17 @@
 buildscript {
+    ext.kotlinVersion = '1.3.0'
+    ext.detoxKotlinVerion = ext.kotlinVersion
+
     repositories {
         google()
         mavenLocal()
         jcenter()
     }
+
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.4'
         classpath 'de.undercouch:gradle-download-task:3.4.3'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
 

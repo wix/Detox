@@ -1,11 +1,14 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
-def _ext = rootProject.ext;
+def _ext = rootProject.ext
 
-def _compileSdkVersion = _ext.has('compileSdkVersion') ? _ext.compileSdkVersion : 25;
-def _buildToolsVersion = _ext.has('buildToolsVersion') ? _ext.buildToolsVersion : '27.0.3';
-def _minSdkVersion = _ext.has('minSdkVersion') ? _ext.minSdkVersion : 18;
-def _targetSdkVersion = _ext.has('targetSdkVersion') ? _ext.targetSdkVersion : 25;
+def _compileSdkVersion = _ext.has('compileSdkVersion') ? _ext.compileSdkVersion : 25
+def _buildToolsVersion = _ext.has('buildToolsVersion') ? _ext.buildToolsVersion : '27.0.3'
+def _minSdkVersion = _ext.has('minSdkVersion') ? _ext.minSdkVersion : 18
+def _targetSdkVersion = _ext.has('targetSdkVersion') ? _ext.targetSdkVersion : 25
+def _kotlinVersion = _ext.has('detoxKotlinVersion') ? _ext.detoxKotlinVersion : '1.3.0'
 
 android {
     compileSdkVersion _compileSdkVersion
@@ -64,6 +67,8 @@ android {
 }
 
 dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$_kotlinVersion"
+
     minReactNative44Implementation 'com.squareup.okhttp3:okhttp:3.4.1'
     minReactNative44Implementation 'com.squareup.okhttp3:okhttp-ws:3.4.1'
 
@@ -84,4 +89,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.assertj:assertj-core:3.8.0'
     testImplementation 'org.apache.commons:commons-io:1.3.2'
+    testImplementation 'com.nhaarman:mockito-kotlin:1.4.0'
+    testImplementation "com.facebook.react:react-native:+"
 }
