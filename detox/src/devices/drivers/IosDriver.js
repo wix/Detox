@@ -7,12 +7,13 @@ const invoke = require('../../invoke');
 const GREYConfigurationApi = require('../../ios/earlgreyapi/GREYConfiguration');
 const GREYConfigurationDetox = require('../../ios/earlgreyapi/GREYConfigurationDetox');
 const EarlyGreyImpl = require('../../ios/earlgreyapi/EarlGreyImpl');
+const configureExpect = require('../../ios/expect');
 
 class IosDriver extends DeviceDriverBase {
   constructor(config) {
     super(config);
 
-    this.expect = require('../../ios/expect');
+    this.expect = configureExpect();
     this.expect.setInvocationManager(new InvocationManager(this.client));
   }
 

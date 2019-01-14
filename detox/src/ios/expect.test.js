@@ -2,7 +2,7 @@ describe('expect', async () => {
   let e;
 
   beforeEach(() => {
-    e = require('./expect');
+    e = require('./expect')();
     e.setInvocationManager(new MockExecutor());
   });
 
