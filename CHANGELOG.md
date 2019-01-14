@@ -1,15 +1,57 @@
 # Change Log
 
-## [9.1.2](https://github.com/wix/detox/tree/9.1.2) (2018-11-17)
-[Full Changelog](https://github.com/wix/detox/compare/9.0.7...9.1.2)
+## [10.0.2](https://github.com/wix/Detox/tree/10.0.2) (2019-01-14)
+[Full Changelog](https://github.com/wix/Detox/compare/9.1.2...10.0.2)
+
+**Enhancements**
+
+- Support for pressing Delete key on Android [\#1039](https://github.com/wix/Detox/issues/1039)
+- Run individual Detox test [\#536](https://github.com/wix/Detox/issues/536)
+- Expectation/matcher for the app being in background? [\#226](https://github.com/wix/Detox/issues/226)
+- CLI: Add pass through test runner arguments  [\#1025](https://github.com/wix/Detox/pull/1025) ([EdwardDrapkin](https://github.com/EdwardDrapkin))
+
+**Fixed Bugs**
+
+- Idle timer shadows busy timers at rare cases [\#1115](https://github.com/wix/Detox/issues/1115)
+
+**Closed Issues**
+
+- No instrumentation runner found on device [\#1106](https://github.com/wix/Detox/issues/1106)
+- Firebase, react\_native projects causes unreasonable long load time or timeout [\#1095](https://github.com/wix/Detox/issues/1095)
+- Installation crashes with "$\""" failed with code = 1, stdout and stderr:" error [\#1094](https://github.com/wix/Detox/issues/1094)
+- windows [\#1088](https://github.com/wix/Detox/issues/1088)
+- Extra tap for focusing a focused input - cant delete input value. [\#1075](https://github.com/wix/Detox/issues/1075)
+- resetContentAndSettings freezes simulator [\#1059](https://github.com/wix/Detox/issues/1059)
+- Detox integration with jest - Jest did not exit one second after the test run has completed. [\#1046](https://github.com/wix/Detox/issues/1046)
+- iOS test hangs on splash screen and crashes. [\#1042](https://github.com/wix/Detox/issues/1042)
+- Unable to create new device when running parallel tests Jest [\#1004](https://github.com/wix/Detox/issues/1004)
+
+**Merged Pull Requests**
+
+- Fix typo in APIRef.DetoxObjectAPI.md [\#1090](https://github.com/wix/Detox/pull/1090) ([lukasgjetting](https://github.com/lukasgjetting))
+- Set consistent semicolon style in firstTestContent [\#1089](https://github.com/wix/Detox/pull/1089) ([CodingItWrong](https://github.com/CodingItWrong))
+- Introduce kotlin and reimplement RN-timers idling resource [\#1085](https://github.com/wix/Detox/pull/1085) ([d4vidi](https://github.com/d4vidi))
+- Fixing typo [\#1079](https://github.com/wix/Detox/pull/1079) ([bward2](https://github.com/bward2))
+- Fix typo in pr template [\#1054](https://github.com/wix/Detox/pull/1054) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
+- Android Sync: Improve RN-timers idling resource such that it would skip over interval-timers [\#1048](https://github.com/wix/Detox/pull/1048) ([d4vidi](https://github.com/d4vidi))
+- Android: allow test packages \(built for emulator by Android Studio\) to be installed via adb [\#1015](https://github.com/wix/Detox/pull/1015) ([Annihil](https://github.com/Annihil))
+
+## [9.1.2](https://github.com/wix/Detox/tree/9.1.2) (2018-11-16)
+[Full Changelog](https://github.com/wix/Detox/compare/9.0.8...9.1.2)
+
+**Enhancements**
+
+- New Actions: `tapBackspaceKey` and `tapReturnKey` [\#1044](https://github.com/wix/Detox/pull/1044) ([michaelgmcd](https://github.com/michaelgmcd))
+
+## [9.0.8](https://github.com/wix/Detox/tree/9.0.8) (2018-11-15)
+[Full Changelog](https://github.com/wix/Detox/compare/9.0.7...9.0.8)
 
 **Enhancements**
 
 - Detox configuration should allow ability to specify app apk path and androidTest apk path [\#571](https://github.com/wix/Detox/issues/571)
-- New Actions: `tapBackspaceKey` and `tapReturnKey` [\#1044](https://github.com/wix/Detox/pull/1044) ([michaelgmcd](https://github.com/michaelgmcd))
 
-## [9.0.7](https://github.com/wix/detox/tree/9.0.7) (2018-11-14)
-[Full Changelog](https://github.com/wix/detox/compare/v9.0.6...9.0.7)
+## [9.0.7](https://github.com/wix/Detox/tree/9.0.7) (2018-11-14)
+[Full Changelog](https://github.com/wix/Detox/compare/v9.0.6...9.0.7)
 
 **Enhancements**
 
@@ -35,8 +77,8 @@
 - Added testBinaryPath as an optional config parameter [\#1007](https://github.com/wix/Detox/pull/1007) ([reime005](https://github.com/reime005))
 - List possible values for `type` [\#1003](https://github.com/wix/Detox/pull/1003) ([solkaz](https://github.com/solkaz))
 
-## [v9.0.6](https://github.com/wix/detox/tree/v9.0.6) (2018-11-02)
-[Full Changelog](https://github.com/wix/detox/compare/9.0.5...v9.0.6)
+## [v9.0.6](https://github.com/wix/Detox/tree/v9.0.6) (2018-11-02)
+[Full Changelog](https://github.com/wix/Detox/compare/9.0.5...v9.0.6)
 
 **Enhancements**
 
@@ -54,8 +96,8 @@
 - Detox hangs on detox config step with expo iOS [\#917](https://github.com/wix/Detox/issues/917)
 - Detox device/element is not defined [\#911](https://github.com/wix/Detox/issues/911)
 
-## [9.0.5](https://github.com/wix/detox/tree/9.0.5) (2018-10-24)
-[Full Changelog](https://github.com/wix/detox/compare/9.0.4...9.0.5)
+## [9.0.5](https://github.com/wix/Detox/tree/9.0.5) (2018-10-24)
+[Full Changelog](https://github.com/wix/Detox/compare/9.0.4...9.0.5)
 
 **Enhancements**
 
@@ -86,8 +128,8 @@
 - \[Android\] allow config extension [\#884](https://github.com/wix/Detox/pull/884) ([matteo-hertel](https://github.com/matteo-hertel))
 - Move generation to babel 7 [\#762](https://github.com/wix/Detox/pull/762) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 
-## [9.0.4](https://github.com/wix/detox/tree/9.0.4) (2018-09-28)
-[Full Changelog](https://github.com/wix/detox/compare/9.0.3...9.0.4)
+## [9.0.4](https://github.com/wix/Detox/tree/9.0.4) (2018-09-28)
+[Full Changelog](https://github.com/wix/Detox/compare/9.0.3...9.0.4)
 
 **Fixed Bugs**
 
@@ -97,8 +139,8 @@
 
 - hotfix: added a retry on install \(XCode 10 issue\) [\#953](https://github.com/wix/Detox/pull/953) ([noomorph](https://github.com/noomorph))
 
-## [9.0.3](https://github.com/wix/detox/tree/9.0.3) (2018-09-26)
-[Full Changelog](https://github.com/wix/detox/compare/9.0.2...9.0.3)
+## [9.0.3](https://github.com/wix/Detox/tree/9.0.3) (2018-09-26)
+[Full Changelog](https://github.com/wix/Detox/compare/9.0.2...9.0.3)
 
 **Fixed Bugs**
 
@@ -113,8 +155,8 @@
 - hotfix: legacy build workaround to fix monorepo build on XCode 10 [\#945](https://github.com/wix/Detox/pull/945) ([noomorph](https://github.com/noomorph))
 - fix: ADB.pidof integration issue with grep and CRLF edge case [\#927](https://github.com/wix/Detox/pull/927) ([noomorph](https://github.com/noomorph))
 
-## [9.0.2](https://github.com/wix/detox/tree/9.0.2) (2018-09-24)
-[Full Changelog](https://github.com/wix/detox/compare/9.0.0...9.0.2)
+## [9.0.2](https://github.com/wix/Detox/tree/9.0.2) (2018-09-24)
+[Full Changelog](https://github.com/wix/Detox/compare/9.0.0...9.0.2)
 
 **Enhancements**
 
@@ -137,11 +179,11 @@
 
 - \[Android\] Remove @override annotation to support RN 0.53-0.55 on detox 9.0 [\#922](https://github.com/wix/Detox/pull/922) ([JamesWatling](https://github.com/JamesWatling))
 
-## [9.0.0](https://github.com/wix/detox/tree/9.0.0) (2018-08-31)
-[Full Changelog](https://github.com/wix/detox/compare/9.0.1...9.0.0)
+## [9.0.0](https://github.com/wix/Detox/tree/9.0.0) (2018-08-31)
+[Full Changelog](https://github.com/wix/Detox/compare/9.0.1...9.0.0)
 
-## [9.0.1](https://github.com/wix/detox/tree/9.0.1) (2018-08-31)
-[Full Changelog](https://github.com/wix/detox/compare/8.2.3...9.0.1)
+## [9.0.1](https://github.com/wix/Detox/tree/9.0.1) (2018-08-31)
+[Full Changelog](https://github.com/wix/Detox/compare/8.2.3...9.0.1)
 
 **Enhancements**
 
@@ -159,11 +201,11 @@
 - build\_framework.ios.sh: echo/exit from current shell [\#900](https://github.com/wix/Detox/pull/900) ([rye](https://github.com/rye))
 - Add support for disabling touch indicators with launch args [\#899](https://github.com/wix/Detox/pull/899) ([haswalt](https://github.com/haswalt))
 
-## [8.2.3](https://github.com/wix/detox/tree/8.2.3) (2018-08-23)
-[Full Changelog](https://github.com/wix/detox/compare/8.2.2...8.2.3)
+## [8.2.3](https://github.com/wix/Detox/tree/8.2.3) (2018-08-23)
+[Full Changelog](https://github.com/wix/Detox/compare/8.2.2...8.2.3)
 
-## [8.2.2](https://github.com/wix/detox/tree/8.2.2) (2018-08-22)
-[Full Changelog](https://github.com/wix/detox/compare/8.2.1...8.2.2)
+## [8.2.2](https://github.com/wix/Detox/tree/8.2.2) (2018-08-22)
+[Full Changelog](https://github.com/wix/Detox/compare/8.2.1...8.2.2)
 
 **Fixed Bugs**
 
@@ -173,11 +215,11 @@
 
 - Fix multiple elements matched when dealing with nested scrollviews. [\#896](https://github.com/wix/Detox/pull/896) ([LeoNatan](https://github.com/LeoNatan))
 
-## [8.2.1](https://github.com/wix/detox/tree/8.2.1) (2018-08-22)
-[Full Changelog](https://github.com/wix/detox/compare/8.2.0...8.2.1)
+## [8.2.1](https://github.com/wix/Detox/tree/8.2.1) (2018-08-22)
+[Full Changelog](https://github.com/wix/Detox/compare/8.2.0...8.2.1)
 
-## [8.2.0](https://github.com/wix/detox/tree/8.2.0) (2018-08-22)
-[Full Changelog](https://github.com/wix/detox/compare/8.1.6...8.2.0)
+## [8.2.0](https://github.com/wix/Detox/tree/8.2.0) (2018-08-22)
+[Full Changelog](https://github.com/wix/Detox/compare/8.1.6...8.2.0)
 
 **Fixed Bugs**
 
@@ -200,15 +242,15 @@
 - fix\(win32\): new regexp for ADB.pid which is compatible with findstr utility [\#888](https://github.com/wix/Detox/pull/888) ([noomorph](https://github.com/noomorph))
 - fix\(win32\): new regexp for adb.unlockScreen which is compatible with findstr [\#887](https://github.com/wix/Detox/pull/887) ([noomorph](https://github.com/noomorph))
 
-## [8.1.6](https://github.com/wix/detox/tree/8.1.6) (2018-08-13)
-[Full Changelog](https://github.com/wix/detox/compare/8.1.5...8.1.6)
+## [8.1.6](https://github.com/wix/Detox/tree/8.1.6) (2018-08-13)
+[Full Changelog](https://github.com/wix/Detox/compare/8.1.5...8.1.6)
 
 **Fixed Bugs**
 
 - Detox catches SIGINT and SIGTERM, causing long running subprocesses to never end [\#881](https://github.com/wix/Detox/issues/881)
 
-## [8.1.5](https://github.com/wix/detox/tree/8.1.5) (2018-08-13)
-[Full Changelog](https://github.com/wix/detox/compare/8.1.4...8.1.5)
+## [8.1.5](https://github.com/wix/Detox/tree/8.1.5) (2018-08-13)
+[Full Changelog](https://github.com/wix/Detox/compare/8.1.4...8.1.5)
 
 **Enhancements**
 
@@ -224,14 +266,14 @@
 - Add additional synchronization points for CFRunLoopPerformBlock [\#882](https://github.com/wix/Detox/pull/882) ([LeoNatan](https://github.com/LeoNatan))
 - Add CLI parameter for overriding device name [\#878](https://github.com/wix/Detox/pull/878) ([robbiemccorkell](https://github.com/robbiemccorkell))
 
-## [8.1.4](https://github.com/wix/detox/tree/8.1.4) (2018-08-07)
-[Full Changelog](https://github.com/wix/detox/compare/8.1.3...8.1.4)
+## [8.1.4](https://github.com/wix/Detox/tree/8.1.4) (2018-08-07)
+[Full Changelog](https://github.com/wix/Detox/compare/8.1.3...8.1.4)
 
-## [8.1.3](https://github.com/wix/detox/tree/8.1.3) (2018-08-07)
-[Full Changelog](https://github.com/wix/detox/compare/8.1.2...8.1.3)
+## [8.1.3](https://github.com/wix/Detox/tree/8.1.3) (2018-08-07)
+[Full Changelog](https://github.com/wix/Detox/compare/8.1.2...8.1.3)
 
-## [8.1.2](https://github.com/wix/detox/tree/8.1.2) (2018-08-07)
-[Full Changelog](https://github.com/wix/detox/compare/8.1.1...8.1.2)
+## [8.1.2](https://github.com/wix/Detox/tree/8.1.2) (2018-08-07)
+[Full Changelog](https://github.com/wix/Detox/compare/8.1.1...8.1.2)
 
 **Merged Pull Requests**
 
@@ -242,15 +284,15 @@
 - fix: cross-testrunner message formatting for DetoxRuntimeError [\#861](https://github.com/wix/Detox/pull/861) ([noomorph](https://github.com/noomorph))
 - Add Android back button \(copy of PR\#505\) [\#860](https://github.com/wix/Detox/pull/860) ([noomorph](https://github.com/noomorph))
 
-## [8.1.1](https://github.com/wix/detox/tree/8.1.1) (2018-07-26)
-[Full Changelog](https://github.com/wix/detox/compare/8.1.0...8.1.1)
+## [8.1.1](https://github.com/wix/Detox/tree/8.1.1) (2018-07-26)
+[Full Changelog](https://github.com/wix/Detox/compare/8.1.0...8.1.1)
 
 **Merged Pull Requests**
 
 - hotfix: revert log level debug to verbose due to Mocha incompatibility [\#859](https://github.com/wix/Detox/pull/859) ([noomorph](https://github.com/noomorph))
 
-## [8.1.0](https://github.com/wix/detox/tree/8.1.0) (2018-07-26)
-[Full Changelog](https://github.com/wix/detox/compare/8.0.0...8.1.0)
+## [8.1.0](https://github.com/wix/Detox/tree/8.1.0) (2018-07-26)
+[Full Changelog](https://github.com/wix/Detox/compare/8.0.0...8.1.0)
 
 **Enhancements**
 
@@ -273,8 +315,8 @@
 - Improve dispatch queue idling resource handling [\#806](https://github.com/wix/Detox/pull/806) ([LeoNatan](https://github.com/LeoNatan))
 - Fix  detox cli --platform flag on Windows [\#763](https://github.com/wix/Detox/pull/763) ([simonbuchan](https://github.com/simonbuchan))
 
-## [8.0.0](https://github.com/wix/detox/tree/8.0.0) (2018-06-27)
-[Full Changelog](https://github.com/wix/detox/compare/v8.0.0-alpha.1...8.0.0)
+## [8.0.0](https://github.com/wix/Detox/tree/8.0.0) (2018-06-27)
+[Full Changelog](https://github.com/wix/Detox/compare/v8.0.0-alpha.1...8.0.0)
 
 **Enhancements**
 
@@ -290,25 +332,25 @@
 - Screenshots, logs and video recordings of tests  [\#734](https://github.com/wix/Detox/pull/734) ([noomorph](https://github.com/noomorph))
 - Usage with Expo instructions [\#630](https://github.com/wix/Detox/pull/630) ([peterpme](https://github.com/peterpme))
 
-## [v8.0.0-alpha.1](https://github.com/wix/detox/tree/v8.0.0-alpha.1) (2018-06-18)
-[Full Changelog](https://github.com/wix/detox/compare/v8.0.0-alpha.0...v8.0.0-alpha.1)
+## [v8.0.0-alpha.1](https://github.com/wix/Detox/tree/v8.0.0-alpha.1) (2018-06-18)
+[Full Changelog](https://github.com/wix/Detox/compare/v8.0.0-alpha.0...v8.0.0-alpha.1)
 
-## [v8.0.0-alpha.0](https://github.com/wix/detox/tree/v8.0.0-alpha.0) (2018-06-14)
-[Full Changelog](https://github.com/wix/detox/compare/7.4.3...v8.0.0-alpha.0)
+## [v8.0.0-alpha.0](https://github.com/wix/Detox/tree/v8.0.0-alpha.0) (2018-06-14)
+[Full Changelog](https://github.com/wix/Detox/compare/7.4.3...v8.0.0-alpha.0)
 
-## [7.4.3](https://github.com/wix/detox/tree/7.4.3) (2018-06-14)
-[Full Changelog](https://github.com/wix/detox/compare/7.4.2...7.4.3)
+## [7.4.3](https://github.com/wix/Detox/tree/7.4.3) (2018-06-14)
+[Full Changelog](https://github.com/wix/Detox/compare/7.4.2...7.4.3)
 
 **Merged Pull Requests**
 
 - Android: on headless mode, default to high-perf software renderes `swiftshader\_indirect` and `angle\_indirect` [\#784](https://github.com/wix/Detox/pull/784) ([rotemmiz](https://github.com/rotemmiz))
 - Move android matchers to generated code [\#745](https://github.com/wix/Detox/pull/745) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 
-## [7.4.2](https://github.com/wix/detox/tree/7.4.2) (2018-06-10)
-[Full Changelog](https://github.com/wix/detox/compare/7.4.1...7.4.2)
+## [7.4.2](https://github.com/wix/Detox/tree/7.4.2) (2018-06-10)
+[Full Changelog](https://github.com/wix/Detox/compare/7.4.1...7.4.2)
 
-## [7.4.1](https://github.com/wix/detox/tree/7.4.1) (2018-06-10)
-[Full Changelog](https://github.com/wix/detox/compare/7.4.0...7.4.1)
+## [7.4.1](https://github.com/wix/Detox/tree/7.4.1) (2018-06-10)
+[Full Changelog](https://github.com/wix/Detox/compare/7.4.0...7.4.1)
 
 **Fixed Bugs**
 
@@ -322,8 +364,8 @@
 - Match only visible views [\#780](https://github.com/wix/Detox/pull/780) ([rotemmiz](https://github.com/rotemmiz))
 - Android: force matchers to ignore layouts with GONE visibility [\#775](https://github.com/wix/Detox/pull/775) ([rotemmiz](https://github.com/rotemmiz))
 
-## [7.4.0](https://github.com/wix/detox/tree/7.4.0) (2018-06-03)
-[Full Changelog](https://github.com/wix/detox/compare/7.3.7...7.4.0)
+## [7.4.0](https://github.com/wix/Detox/tree/7.4.0) (2018-06-03)
+[Full Changelog](https://github.com/wix/Detox/compare/7.3.7...7.4.0)
 
 **Enhancements**
 
@@ -346,11 +388,11 @@
 - Add check for ungenerated code [\#679](https://github.com/wix/Detox/pull/679) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 - Running on windows support [\#628](https://github.com/wix/Detox/pull/628) ([simonbuchan](https://github.com/simonbuchan))
 
-## [7.3.7](https://github.com/wix/detox/tree/7.3.7) (2018-05-10)
-[Full Changelog](https://github.com/wix/detox/compare/7.3.6...7.3.7)
+## [7.3.7](https://github.com/wix/Detox/tree/7.3.7) (2018-05-10)
+[Full Changelog](https://github.com/wix/Detox/compare/7.3.6...7.3.7)
 
-## [7.3.6](https://github.com/wix/detox/tree/7.3.6) (2018-05-09)
-[Full Changelog](https://github.com/wix/detox/compare/7.3.5...7.3.6)
+## [7.3.6](https://github.com/wix/Detox/tree/7.3.6) (2018-05-09)
+[Full Changelog](https://github.com/wix/Detox/compare/7.3.5...7.3.6)
 
 **Enhancements**
 
@@ -376,8 +418,8 @@
 - Website: fix version display [\#582](https://github.com/wix/Detox/pull/582) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 - Add duration of element.longPress for iOS [\#412](https://github.com/wix/Detox/pull/412) ([jhen0409](https://github.com/jhen0409))
 
-## [7.3.5](https://github.com/wix/detox/tree/7.3.5) (2018-05-01)
-[Full Changelog](https://github.com/wix/detox/compare/7.3.4...7.3.5)
+## [7.3.5](https://github.com/wix/Detox/tree/7.3.5) (2018-05-01)
+[Full Changelog](https://github.com/wix/Detox/compare/7.3.4...7.3.5)
 
 **Closed Issues**
 
@@ -390,8 +432,8 @@
 - Migrate from Travis CI to Jenkins [\#701](https://github.com/wix/Detox/pull/701) ([yershalom](https://github.com/yershalom))
 - Add no window option for running android emulator with no window [\#690](https://github.com/wix/Detox/pull/690) ([yershalom](https://github.com/yershalom))
 
-## [7.3.4](https://github.com/wix/detox/tree/7.3.4) (2018-04-25)
-[Full Changelog](https://github.com/wix/detox/compare/7.3.3...7.3.4)
+## [7.3.4](https://github.com/wix/Detox/tree/7.3.4) (2018-04-25)
+[Full Changelog](https://github.com/wix/Detox/compare/7.3.3...7.3.4)
 
 **Fixed Bugs**
 
@@ -411,8 +453,8 @@
 - Change 'deugging' to 'debugging' in TroubleShooting\#RunningTests docs [\#662](https://github.com/wix/Detox/pull/662) ([johnbayne](https://github.com/johnbayne))
 - Add generation for GREYInteraction [\#564](https://github.com/wix/Detox/pull/564) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 
-## [7.3.3](https://github.com/wix/detox/tree/7.3.3) (2018-04-04)
-[Full Changelog](https://github.com/wix/detox/compare/7.3.2...7.3.3)
+## [7.3.3](https://github.com/wix/Detox/tree/7.3.3) (2018-04-04)
+[Full Changelog](https://github.com/wix/Detox/compare/7.3.2...7.3.3)
 
 **Fixed Bugs**
 
@@ -420,11 +462,11 @@
 - CLI: `detox test` fails to determine a default configuration [\#648](https://github.com/wix/Detox/issues/648)
 - Android: Support RN50-51 changes [\#652](https://github.com/wix/Detox/pull/652) ([rotemmiz](https://github.com/rotemmiz))
 
-## [7.3.2](https://github.com/wix/detox/tree/7.3.2) (2018-03-27)
-[Full Changelog](https://github.com/wix/detox/compare/7.3.0...7.3.2)
+## [7.3.2](https://github.com/wix/Detox/tree/7.3.2) (2018-03-27)
+[Full Changelog](https://github.com/wix/Detox/compare/7.3.0...7.3.2)
 
-## [7.3.0](https://github.com/wix/detox/tree/7.3.0) (2018-03-26)
-[Full Changelog](https://github.com/wix/detox/compare/7.2.0...7.3.0)
+## [7.3.0](https://github.com/wix/Detox/tree/7.3.0) (2018-03-26)
+[Full Changelog](https://github.com/wix/Detox/compare/7.2.0...7.3.0)
 
 **Enhancements**
 
@@ -446,8 +488,8 @@
 - CLI: add -f option to run specific test file [\#616](https://github.com/wix/Detox/pull/616) ([jeremyeaton89](https://github.com/jeremyeaton89))
 - iOS: perform actions on UIPickerView [\#605](https://github.com/wix/Detox/pull/605) ([DmitryPonomarenko](https://github.com/DmitryPonomarenko))
 
-## [7.2.0](https://github.com/wix/detox/tree/7.2.0) (2018-03-12)
-[Full Changelog](https://github.com/wix/detox/compare/7.1.0...7.2.0)
+## [7.2.0](https://github.com/wix/Detox/tree/7.2.0) (2018-03-12)
+[Full Changelog](https://github.com/wix/Detox/compare/7.1.0...7.2.0)
 
 **Enhancements**
 
@@ -474,8 +516,8 @@
 - set location should not use comma [\#532](https://github.com/wix/Detox/pull/532) ([hiaw](https://github.com/hiaw))
 - Generation: combining and string matchers for android [\#496](https://github.com/wix/Detox/pull/496) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 
-## [7.1.0](https://github.com/wix/detox/tree/7.1.0) (2018-02-12)
-[Full Changelog](https://github.com/wix/detox/compare/7.0.1...7.1.0)
+## [7.1.0](https://github.com/wix/Detox/tree/7.1.0) (2018-02-12)
+[Full Changelog](https://github.com/wix/Detox/compare/7.0.1...7.1.0)
 
 **Enhancements**
 
@@ -494,22 +536,22 @@
 - Minor typo in Introduction.GettingStarted.md [\#555](https://github.com/wix/Detox/pull/555) ([orta](https://github.com/orta))
 - Website build only run on master [\#544](https://github.com/wix/Detox/pull/544) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 
-## [7.0.1](https://github.com/wix/detox/tree/7.0.1) (2018-01-29)
-[Full Changelog](https://github.com/wix/detox/compare/7.0.0...7.0.1)
+## [7.0.1](https://github.com/wix/Detox/tree/7.0.1) (2018-01-29)
+[Full Changelog](https://github.com/wix/Detox/compare/7.0.0...7.0.1)
 
 **Merged Pull Requests**
 
 - Fixes broken AndroidDriver explicit exportGlobals flow [\#545](https://github.com/wix/Detox/pull/545) ([rotemmiz](https://github.com/rotemmiz))
 
-## [7.0.0](https://github.com/wix/detox/tree/7.0.0) (2018-01-26)
-[Full Changelog](https://github.com/wix/detox/compare/v7.0.0-alpha.1...7.0.0)
+## [7.0.0](https://github.com/wix/Detox/tree/7.0.0) (2018-01-26)
+[Full Changelog](https://github.com/wix/Detox/compare/v7.0.0-alpha.1...7.0.0)
 
 **Merged Pull Requests**
 
 - export platform specific objects through proxy [\#374](https://github.com/wix/Detox/pull/374) ([trofima](https://github.com/trofima))
 
-## [v7.0.0-alpha.1](https://github.com/wix/detox/tree/v7.0.0-alpha.1) (2018-01-24)
-[Full Changelog](https://github.com/wix/detox/compare/v7.0.0-alpha.0...v7.0.0-alpha.1)
+## [v7.0.0-alpha.1](https://github.com/wix/Detox/tree/v7.0.0-alpha.1) (2018-01-24)
+[Full Changelog](https://github.com/wix/Detox/compare/v7.0.0-alpha.0...v7.0.0-alpha.1)
 
 **Fixed Bugs**
 
@@ -525,8 +567,8 @@
 - Fix wrong path to install Android script [\#514](https://github.com/wix/Detox/pull/514) ([ygorbarboza](https://github.com/ygorbarboza))
 - Add docusaurus for website [\#491](https://github.com/wix/Detox/pull/491) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 
-## [v7.0.0-alpha.0](https://github.com/wix/detox/tree/v7.0.0-alpha.0) (2018-01-11)
-[Full Changelog](https://github.com/wix/detox/compare/6.0.4...v7.0.0-alpha.0)
+## [v7.0.0-alpha.0](https://github.com/wix/Detox/tree/v7.0.0-alpha.0) (2018-01-11)
+[Full Changelog](https://github.com/wix/Detox/compare/6.0.4...v7.0.0-alpha.0)
 
 **Enhancements**
 
@@ -558,8 +600,8 @@
 - Generation: Add generation for external files [\#465](https://github.com/wix/Detox/pull/465) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 - Fix the link to Android Support Status page [\#461](https://github.com/wix/Detox/pull/461) ([kkhaidukov](https://github.com/kkhaidukov))
 
-## [6.0.4](https://github.com/wix/detox/tree/6.0.4) (2017-12-13)
-[Full Changelog](https://github.com/wix/detox/compare/6.0.2...6.0.4)
+## [6.0.4](https://github.com/wix/Detox/tree/6.0.4) (2017-12-13)
+[Full Changelog](https://github.com/wix/Detox/compare/6.0.2...6.0.4)
 
 **Enhancements**
 
@@ -582,18 +624,18 @@
 - Add support for generating android matchers [\#425](https://github.com/wix/Detox/pull/425) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 - Add prettier to detox folder [\#278](https://github.com/wix/Detox/pull/278) ([AlanFoster](https://github.com/AlanFoster))
 
-## [6.0.2](https://github.com/wix/detox/tree/6.0.2) (2017-11-28)
-[Full Changelog](https://github.com/wix/detox/compare/6.0.1...6.0.2)
+## [6.0.2](https://github.com/wix/Detox/tree/6.0.2) (2017-11-28)
+[Full Changelog](https://github.com/wix/Detox/compare/6.0.1...6.0.2)
 
 **Closed Issues**
 
 - How to disable "The stdout and stderr logs" [\#429](https://github.com/wix/Detox/issues/429)
 
-## [6.0.1](https://github.com/wix/detox/tree/6.0.1) (2017-11-28)
-[Full Changelog](https://github.com/wix/detox/compare/6.0.0...6.0.1)
+## [6.0.1](https://github.com/wix/Detox/tree/6.0.1) (2017-11-28)
+[Full Changelog](https://github.com/wix/Detox/compare/6.0.0...6.0.1)
 
-## [6.0.0](https://github.com/wix/detox/tree/6.0.0) (2017-11-27)
-[Full Changelog](https://github.com/wix/detox/compare/5.10.0...6.0.0)
+## [6.0.0](https://github.com/wix/Detox/tree/6.0.0) (2017-11-27)
+[Full Changelog](https://github.com/wix/Detox/compare/5.10.0...6.0.0)
 
 **Enhancements**
 
@@ -631,15 +673,15 @@
 - Exchange com.fasterxml.jackson with org.json implementation [\#415](https://github.com/wix/Detox/pull/415) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 - Stop transpiling detox and detox-server, use sources and require node \>=7.6 [\#404](https://github.com/wix/Detox/pull/404) ([mrtnrst](https://github.com/mrtnrst))
 
-## [5.10.0](https://github.com/wix/detox/tree/5.10.0) (2017-11-15)
-[Full Changelog](https://github.com/wix/detox/compare/5.10.1...5.10.0)
+## [5.10.0](https://github.com/wix/Detox/tree/5.10.0) (2017-11-15)
+[Full Changelog](https://github.com/wix/Detox/compare/5.10.1...5.10.0)
 
 **Enhancements**
 
 - Add change log generation when publishing a version [\#409](https://github.com/wix/Detox/issues/409)
 
-## [5.10.1](https://github.com/wix/detox/tree/5.10.1) (2017-11-15)
-[Full Changelog](https://github.com/wix/detox/compare/detox-server@2.1.0...5.10.1)
+## [5.10.1](https://github.com/wix/Detox/tree/5.10.1) (2017-11-15)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-server@2.1.0...5.10.1)
 
 **Fixed Bugs**
 
@@ -649,11 +691,11 @@
 
 - New demo project for react native jest [\#370](https://github.com/wix/Detox/pull/370) ([SMJ93](https://github.com/SMJ93))
 
-## [detox-server@2.1.0](https://github.com/wix/detox/tree/detox-server@2.1.0) (2017-11-13)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.10.0...detox-server@2.1.0)
+## [detox-server@2.1.0](https://github.com/wix/Detox/tree/detox-server@2.1.0) (2017-11-13)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.10.0...detox-server@2.1.0)
 
-## [detox@5.10.0](https://github.com/wix/detox/tree/detox@5.10.0) (2017-11-13)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.9.3...detox@5.10.0)
+## [detox@5.10.0](https://github.com/wix/Detox/tree/detox@5.10.0) (2017-11-13)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.9.3...detox@5.10.0)
 
 **Enhancements**
 
@@ -668,8 +710,8 @@
 - Running `build-framework-cache` produces different output directory than expected [\#380](https://github.com/wix/Detox/issues/380)
 - Mocha 4.0.x: Test process never finishes [\#368](https://github.com/wix/Detox/issues/368)
 
-## [detox@5.9.3](https://github.com/wix/detox/tree/detox@5.9.3) (2017-11-02)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.9.2...detox@5.9.3)
+## [detox@5.9.3](https://github.com/wix/Detox/tree/detox@5.9.3) (2017-11-02)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.9.2...detox@5.9.3)
 
 **Merged Pull Requests**
 
@@ -678,22 +720,22 @@
 - improve android docs [\#361](https://github.com/wix/Detox/pull/361) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 - Update Jest-related docs [\#355](https://github.com/wix/Detox/pull/355) ([Kureev](https://github.com/Kureev))
 
-## [detox@5.9.2](https://github.com/wix/detox/tree/detox@5.9.2) (2017-10-22)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.9.1...detox@5.9.2)
+## [detox@5.9.2](https://github.com/wix/Detox/tree/detox@5.9.2) (2017-10-22)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.9.1...detox@5.9.2)
 
 **Fixed Bugs**
 
 - Application stopped at UIWindow creation while running tests on simulator [\#341](https://github.com/wix/Detox/issues/341)
 
-## [detox@5.9.1](https://github.com/wix/detox/tree/detox@5.9.1) (2017-10-19)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.9.0...detox@5.9.1)
+## [detox@5.9.1](https://github.com/wix/Detox/tree/detox@5.9.1) (2017-10-19)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.9.0...detox@5.9.1)
 
 **Merged Pull Requests**
 
 - Re-add matcher generation commits and add traits matcher to generated code [\#348](https://github.com/wix/Detox/pull/348) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 
-## [detox@5.9.0](https://github.com/wix/detox/tree/detox@5.9.0) (2017-10-18)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.8.4...detox@5.9.0)
+## [detox@5.9.0](https://github.com/wix/Detox/tree/detox@5.9.0) (2017-10-18)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.8.4...detox@5.9.0)
 
 **Enhancements**
 
@@ -710,25 +752,25 @@
 - Create a build matrix to support multiple version of React Native and OSs [\#345](https://github.com/wix/Detox/pull/345) ([rotemmiz](https://github.com/rotemmiz))
 - Basic support for Jest runner [\#335](https://github.com/wix/Detox/pull/335) ([Kureev](https://github.com/Kureev))
 
-## [detox@5.8.4](https://github.com/wix/detox/tree/detox@5.8.4) (2017-10-17)
-[Full Changelog](https://github.com/wix/detox/compare/detox-cli@1.0.3...detox@5.8.4)
+## [detox@5.8.4](https://github.com/wix/Detox/tree/detox@5.8.4) (2017-10-17)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-cli@1.0.3...detox@5.8.4)
 
-## [detox-cli@1.0.3](https://github.com/wix/detox/tree/detox-cli@1.0.3) (2017-10-17)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.8.3...detox-cli@1.0.3)
+## [detox-cli@1.0.3](https://github.com/wix/Detox/tree/detox-cli@1.0.3) (2017-10-17)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.8.3...detox-cli@1.0.3)
 
 **Fixed Bugs**
 
 - Detox incompatibility with Firebase SDK [\#270](https://github.com/wix/Detox/issues/270)
 
-## [detox@5.8.3](https://github.com/wix/detox/tree/detox@5.8.3) (2017-10-16)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.8.2...detox@5.8.3)
+## [detox@5.8.3](https://github.com/wix/Detox/tree/detox@5.8.3) (2017-10-16)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.8.2...detox@5.8.3)
 
 **Merged Pull Requests**
 
 - Update README for required Xcode version [\#339](https://github.com/wix/Detox/pull/339) ([MoOx](https://github.com/MoOx))
 
-## [detox@5.8.2](https://github.com/wix/detox/tree/detox@5.8.2) (2017-10-12)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.8.1...detox@5.8.2)
+## [detox@5.8.2](https://github.com/wix/Detox/tree/detox@5.8.2) (2017-10-12)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.8.1...detox@5.8.2)
 
 **Enhancements**
 
@@ -755,30 +797,30 @@
 - Scroll Amount Action: Move to generated code [\#298](https://github.com/wix/Detox/pull/298) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 - \[Android\] label -\> contentDescription [\#293](https://github.com/wix/Detox/pull/293) ([simonracz](https://github.com/simonracz))
 
-## [detox@5.8.1](https://github.com/wix/detox/tree/detox@5.8.1) (2017-09-27)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.8.0...detox@5.8.1)
+## [detox@5.8.1](https://github.com/wix/Detox/tree/detox@5.8.1) (2017-09-27)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.8.0...detox@5.8.1)
 
 **Fixed Bugs**
 
 -  Error: is it currently building [\#291](https://github.com/wix/Detox/issues/291)
 
-## [detox@5.8.0](https://github.com/wix/detox/tree/detox@5.8.0) (2017-09-27)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.7.0...detox@5.8.0)
+## [detox@5.8.0](https://github.com/wix/Detox/tree/detox@5.8.0) (2017-09-27)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.7.0...detox@5.8.0)
 
 **Merged Pull Requests**
 
 - High grade Android Emulator/Device control [\#295](https://github.com/wix/Detox/pull/295) ([rotemmiz](https://github.com/rotemmiz))
 - No more fb pains [\#292](https://github.com/wix/Detox/pull/292) ([DanielZlotin](https://github.com/DanielZlotin))
 
-## [detox@5.7.0](https://github.com/wix/detox/tree/detox@5.7.0) (2017-09-20)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.6.2...detox@5.7.0)
+## [detox@5.7.0](https://github.com/wix/Detox/tree/detox@5.7.0) (2017-09-20)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.6.2...detox@5.7.0)
 
 **Merged Pull Requests**
 
 - Swift support [\#277](https://github.com/wix/Detox/pull/277) ([rotemmiz](https://github.com/rotemmiz))
 
-## [detox@5.6.2](https://github.com/wix/detox/tree/detox@5.6.2) (2017-09-09)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.6.1...detox@5.6.2)
+## [detox@5.6.2](https://github.com/wix/Detox/tree/detox@5.6.2) (2017-09-09)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.6.1...detox@5.6.2)
 
 **Fixed Bugs**
 
@@ -801,11 +843,11 @@
 - device: add `resetContentAndSettings` [\#217](https://github.com/wix/Detox/pull/217) ([formatlos](https://github.com/formatlos))
 - Translate EarlGrey headers to Javascript calls [\#178](https://github.com/wix/Detox/pull/178) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 
-## [detox@5.6.1](https://github.com/wix/detox/tree/detox@5.6.1) (2017-08-09)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.6.0...detox@5.6.1)
+## [detox@5.6.1](https://github.com/wix/Detox/tree/detox@5.6.1) (2017-08-09)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.6.0...detox@5.6.1)
 
-## [detox@5.6.0](https://github.com/wix/detox/tree/detox@5.6.0) (2017-08-08)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.5.1...detox@5.6.0)
+## [detox@5.6.0](https://github.com/wix/Detox/tree/detox@5.6.0) (2017-08-08)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.5.1...detox@5.6.0)
 
 **Fixed Bugs**
 
@@ -819,15 +861,15 @@
 - Espresso [\#208](https://github.com/wix/Detox/pull/208) ([simonracz](https://github.com/simonracz))
 - WIP: Location support [\#195](https://github.com/wix/Detox/pull/195) ([yogevbd](https://github.com/yogevbd))
 
-## [detox@5.5.1](https://github.com/wix/detox/tree/detox@5.5.1) (2017-07-19)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.5.0...detox@5.5.1)
+## [detox@5.5.1](https://github.com/wix/Detox/tree/detox@5.5.1) (2017-07-19)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.5.0...detox@5.5.1)
 
 **Fixed Bugs**
 
 - relaunchApp from userNotification doesn't relaunch at all [\#205](https://github.com/wix/Detox/issues/205)
 
-## [detox@5.5.0](https://github.com/wix/detox/tree/detox@5.5.0) (2017-07-19)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.4.0...detox@5.5.0)
+## [detox@5.5.0](https://github.com/wix/Detox/tree/detox@5.5.0) (2017-07-19)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.4.0...detox@5.5.0)
 
 **Enhancements**
 
@@ -845,14 +887,14 @@
 - App logs [\#200](https://github.com/wix/Detox/pull/200) ([silyevsk](https://github.com/silyevsk))
 - Add support for tapAtPoint action [\#189](https://github.com/wix/Detox/pull/189) ([blankg](https://github.com/blankg))
 
-## [detox@5.4.0](https://github.com/wix/detox/tree/detox@5.4.0) (2017-07-11)
-[Full Changelog](https://github.com/wix/detox/compare/detox-server@2.0.4...detox@5.4.0)
+## [detox@5.4.0](https://github.com/wix/Detox/tree/detox@5.4.0) (2017-07-11)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-server@2.0.4...detox@5.4.0)
 
-## [detox-server@2.0.4](https://github.com/wix/detox/tree/detox-server@2.0.4) (2017-07-10)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.3.1...detox-server@2.0.4)
+## [detox-server@2.0.4](https://github.com/wix/Detox/tree/detox-server@2.0.4) (2017-07-10)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.3.1...detox-server@2.0.4)
 
-## [detox@5.3.1](https://github.com/wix/detox/tree/detox@5.3.1) (2017-07-10)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.3.0...detox@5.3.1)
+## [detox@5.3.1](https://github.com/wix/Detox/tree/detox@5.3.1) (2017-07-10)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.3.0...detox@5.3.1)
 
 **Enhancements**
 
@@ -871,8 +913,8 @@
 
 - Fix typo sre =\> are [\#185](https://github.com/wix/Detox/pull/185) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 
-## [detox@5.3.0](https://github.com/wix/detox/tree/detox@5.3.0) (2017-07-04)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.2.0...detox@5.3.0)
+## [detox@5.3.0](https://github.com/wix/Detox/tree/detox@5.3.0) (2017-07-04)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.2.0...detox@5.3.0)
 
 **Merged Pull Requests**
 
@@ -880,8 +922,8 @@
 - Fix type on APIRef.Matchers.md [\#177](https://github.com/wix/Detox/pull/177) ([xcarpentier](https://github.com/xcarpentier))
 - Permissions api [\#176](https://github.com/wix/Detox/pull/176) ([rotemmiz](https://github.com/rotemmiz))
 
-## [detox@5.2.0](https://github.com/wix/detox/tree/detox@5.2.0) (2017-06-27)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.1.3...detox@5.2.0)
+## [detox@5.2.0](https://github.com/wix/Detox/tree/detox@5.2.0) (2017-06-27)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.1.3...detox@5.2.0)
 
 **Enhancements**
 
@@ -894,36 +936,36 @@
 - Adb [\#166](https://github.com/wix/Detox/pull/166) ([simonracz](https://github.com/simonracz))
 - Architecture overview [\#132](https://github.com/wix/Detox/pull/132) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 
-## [detox@5.1.3](https://github.com/wix/detox/tree/detox@5.1.3) (2017-06-18)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.1.2...detox@5.1.3)
+## [detox@5.1.3](https://github.com/wix/Detox/tree/detox@5.1.3) (2017-06-18)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.1.2...detox@5.1.3)
 
 **Merged Pull Requests**
 
 - Document percentage parameter in swipe action [\#163](https://github.com/wix/Detox/pull/163) ([yedidyak](https://github.com/yedidyak))
 - Android support. Phase I. [\#148](https://github.com/wix/Detox/pull/148) ([simonracz](https://github.com/simonracz))
 
-## [detox@5.1.2](https://github.com/wix/detox/tree/detox@5.1.2) (2017-06-11)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.1.1...detox@5.1.2)
+## [detox@5.1.2](https://github.com/wix/Detox/tree/detox@5.1.2) (2017-06-11)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.1.1...detox@5.1.2)
 
 **Merged Pull Requests**
 
 - Added optional percentage parameter to swipe action [\#162](https://github.com/wix/Detox/pull/162) ([yedidyak](https://github.com/yedidyak))
 
-## [detox@5.1.1](https://github.com/wix/detox/tree/detox@5.1.1) (2017-06-11)
-[Full Changelog](https://github.com/wix/detox/compare/detox-cli@1.0.2...detox@5.1.1)
+## [detox@5.1.1](https://github.com/wix/Detox/tree/detox@5.1.1) (2017-06-11)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-cli@1.0.2...detox@5.1.1)
 
 **Merged Pull Requests**
 
 - fixed the crash on older react native versions where there’s no `\_nod… [\#160](https://github.com/wix/Detox/pull/160) ([silyevsk](https://github.com/silyevsk))
 
-## [detox-cli@1.0.2](https://github.com/wix/detox/tree/detox-cli@1.0.2) (2017-06-07)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.1.0...detox-cli@1.0.2)
+## [detox-cli@1.0.2](https://github.com/wix/Detox/tree/detox-cli@1.0.2) (2017-06-07)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.1.0...detox-cli@1.0.2)
 
-## [detox@5.1.0](https://github.com/wix/detox/tree/detox@5.1.0) (2017-06-07)
-[Full Changelog](https://github.com/wix/detox/compare/detox-server@2.0.3...detox@5.1.0)
+## [detox@5.1.0](https://github.com/wix/Detox/tree/detox@5.1.0) (2017-06-07)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-server@2.0.3...detox@5.1.0)
 
-## [detox-server@2.0.3](https://github.com/wix/detox/tree/detox-server@2.0.3) (2017-06-07)
-[Full Changelog](https://github.com/wix/detox/compare/detox-server@2.0.2...detox-server@2.0.3)
+## [detox-server@2.0.3](https://github.com/wix/Detox/tree/detox-server@2.0.3) (2017-06-07)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-server@2.0.2...detox-server@2.0.3)
 
 **Enhancements**
 
@@ -944,30 +986,30 @@
 
 - Animations issue [\#150](https://github.com/wix/Detox/pull/150) ([silyevsk](https://github.com/silyevsk))
 
-## [detox-server@2.0.2](https://github.com/wix/detox/tree/detox-server@2.0.2) (2017-05-29)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.12...detox-server@2.0.2)
+## [detox-server@2.0.2](https://github.com/wix/Detox/tree/detox-server@2.0.2) (2017-05-29)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.0.12...detox-server@2.0.2)
 
-## [detox@5.0.12](https://github.com/wix/detox/tree/detox@5.0.12) (2017-05-29)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.11...detox@5.0.12)
+## [detox@5.0.12](https://github.com/wix/Detox/tree/detox@5.0.12) (2017-05-29)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.0.11...detox@5.0.12)
 
-## [detox@5.0.11](https://github.com/wix/detox/tree/detox@5.0.11) (2017-05-29)
-[Full Changelog](https://github.com/wix/detox/compare/detox-server@2.0.1...detox@5.0.11)
+## [detox@5.0.11](https://github.com/wix/Detox/tree/detox@5.0.11) (2017-05-29)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-server@2.0.1...detox@5.0.11)
 
-## [detox-server@2.0.1](https://github.com/wix/detox/tree/detox-server@2.0.1) (2017-05-29)
-[Full Changelog](https://github.com/wix/detox/compare/detox-server@1.2.3...detox-server@2.0.1)
+## [detox-server@2.0.1](https://github.com/wix/Detox/tree/detox-server@2.0.1) (2017-05-29)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-server@1.2.3...detox-server@2.0.1)
 
-## [detox-server@1.2.3](https://github.com/wix/detox/tree/detox-server@1.2.3) (2017-05-28)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.10...detox-server@1.2.3)
+## [detox-server@1.2.3](https://github.com/wix/Detox/tree/detox-server@1.2.3) (2017-05-28)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.0.10...detox-server@1.2.3)
 
-## [detox@5.0.10](https://github.com/wix/detox/tree/detox@5.0.10) (2017-05-28)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.9...detox@5.0.10)
+## [detox@5.0.10](https://github.com/wix/Detox/tree/detox@5.0.10) (2017-05-28)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.0.9...detox@5.0.10)
 
 **Merged Pull Requests**
 
 - Device Orientation Manipulation  [\#133](https://github.com/wix/Detox/pull/133) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 
-## [detox@5.0.9](https://github.com/wix/detox/tree/detox@5.0.9) (2017-05-24)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.8...detox@5.0.9)
+## [detox@5.0.9](https://github.com/wix/Detox/tree/detox@5.0.9) (2017-05-24)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.0.8...detox@5.0.9)
 
 **Enhancements**
 
@@ -978,11 +1020,11 @@
 - Update APIRef.Matchers.md [\#135](https://github.com/wix/Detox/pull/135) ([isnifer](https://github.com/isnifer))
 - Update APIRef.Element.md - fix broken links [\#125](https://github.com/wix/Detox/pull/125) ([isnifer](https://github.com/isnifer))
 
-## [detox@5.0.8](https://github.com/wix/detox/tree/detox@5.0.8) (2017-05-08)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.7...detox@5.0.8)
+## [detox@5.0.8](https://github.com/wix/Detox/tree/detox@5.0.8) (2017-05-08)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.0.7...detox@5.0.8)
 
-## [detox@5.0.7](https://github.com/wix/detox/tree/detox@5.0.7) (2017-05-07)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.6...detox@5.0.7)
+## [detox@5.0.7](https://github.com/wix/Detox/tree/detox@5.0.7) (2017-05-07)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.0.6...detox@5.0.7)
 
 **Merged Pull Requests**
 
@@ -990,8 +1032,8 @@
 - HW - Fix typos in README [\#121](https://github.com/wix/Detox/pull/121) ([HanWax](https://github.com/HanWax))
 - Update README.md [\#117](https://github.com/wix/Detox/pull/117) ([dassir](https://github.com/dassir))
 
-## [detox@5.0.6](https://github.com/wix/detox/tree/detox@5.0.6) (2017-04-20)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.5...detox@5.0.6)
+## [detox@5.0.6](https://github.com/wix/Detox/tree/detox@5.0.6) (2017-04-20)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.0.5...detox@5.0.6)
 
 **Closed Issues**
 
@@ -1009,11 +1051,11 @@
 - fix demo app config [\#104](https://github.com/wix/Detox/pull/104) ([doronpr](https://github.com/doronpr))
 - wix mobile open source config file [\#101](https://github.com/wix/Detox/pull/101) ([bogobogo](https://github.com/bogobogo))
 
-## [detox@5.0.5](https://github.com/wix/detox/tree/detox@5.0.5) (2017-03-23)
-[Full Changelog](https://github.com/wix/detox/compare/detox-server@1.2.2...detox@5.0.5)
+## [detox@5.0.5](https://github.com/wix/Detox/tree/detox@5.0.5) (2017-03-23)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-server@1.2.2...detox@5.0.5)
 
-## [detox-server@1.2.2](https://github.com/wix/detox/tree/detox-server@1.2.2) (2017-03-23)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.4...detox-server@1.2.2)
+## [detox-server@1.2.2](https://github.com/wix/Detox/tree/detox-server@1.2.2) (2017-03-23)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.0.4...detox-server@1.2.2)
 
 **Enhancements**
 
@@ -1024,26 +1066,26 @@
 
 - Failing tests pass, afterEach fails [\#52](https://github.com/wix/Detox/issues/52)
 
-## [detox@5.0.4](https://github.com/wix/detox/tree/detox@5.0.4) (2017-03-17)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.3...detox@5.0.4)
+## [detox@5.0.4](https://github.com/wix/Detox/tree/detox@5.0.4) (2017-03-17)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.0.3...detox@5.0.4)
 
-## [detox@5.0.3](https://github.com/wix/detox/tree/detox@5.0.3) (2017-03-16)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.2...detox@5.0.3)
+## [detox@5.0.3](https://github.com/wix/Detox/tree/detox@5.0.3) (2017-03-16)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.0.2...detox@5.0.3)
 
-## [detox@5.0.2](https://github.com/wix/detox/tree/detox@5.0.2) (2017-03-16)
-[Full Changelog](https://github.com/wix/detox/compare/detox@5.0.1...detox@5.0.2)
+## [detox@5.0.2](https://github.com/wix/Detox/tree/detox@5.0.2) (2017-03-16)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.0.1...detox@5.0.2)
 
-## [detox@5.0.1](https://github.com/wix/detox/tree/detox@5.0.1) (2017-03-16)
-[Full Changelog](https://github.com/wix/detox/compare/detox-cli@1.0.1...detox@5.0.1)
+## [detox@5.0.1](https://github.com/wix/Detox/tree/detox@5.0.1) (2017-03-16)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-cli@1.0.1...detox@5.0.1)
 
-## [detox-cli@1.0.1](https://github.com/wix/detox/tree/detox-cli@1.0.1) (2017-03-16)
-[Full Changelog](https://github.com/wix/detox/compare/detox-server@1.2.1...detox-cli@1.0.1)
+## [detox-cli@1.0.1](https://github.com/wix/Detox/tree/detox-cli@1.0.1) (2017-03-16)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-server@1.2.1...detox-cli@1.0.1)
 
-## [detox-server@1.2.1](https://github.com/wix/detox/tree/detox-server@1.2.1) (2017-03-16)
-[Full Changelog](https://github.com/wix/detox/compare/detox@4.3.2...detox-server@1.2.1)
+## [detox-server@1.2.1](https://github.com/wix/Detox/tree/detox-server@1.2.1) (2017-03-16)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@4.3.2...detox-server@1.2.1)
 
-## [detox@4.3.2](https://github.com/wix/detox/tree/detox@4.3.2) (2017-03-09)
-[Full Changelog](https://github.com/wix/detox/compare/detox@4.3.1...detox@4.3.2)
+## [detox@4.3.2](https://github.com/wix/Detox/tree/detox@4.3.2) (2017-03-09)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@4.3.1...detox@4.3.2)
 
 **Enhancements**
 
@@ -1058,8 +1100,8 @@
 
 - Need to tap fb keg for fbsimctl install via homebrew [\#89](https://github.com/wix/Detox/pull/89) ([brentvatne](https://github.com/brentvatne))
 
-## [detox@4.3.1](https://github.com/wix/detox/tree/detox@4.3.1) (2017-02-26)
-[Full Changelog](https://github.com/wix/detox/compare/detox@4.3.0...detox@4.3.1)
+## [detox@4.3.1](https://github.com/wix/Detox/tree/detox@4.3.1) (2017-02-26)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@4.3.0...detox@4.3.1)
 
 **Closed Issues**
 
@@ -1069,30 +1111,30 @@
 
 - fix: ReferenceError: loglevel is not defined [\#88](https://github.com/wix/Detox/pull/88) ([doronpr](https://github.com/doronpr))
 
-## [detox@4.3.0](https://github.com/wix/detox/tree/detox@4.3.0) (2017-02-20)
-[Full Changelog](https://github.com/wix/detox/compare/detox@4.2.0...detox@4.3.0)
+## [detox@4.3.0](https://github.com/wix/Detox/tree/detox@4.3.0) (2017-02-20)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@4.2.0...detox@4.3.0)
 
-## [detox@4.2.0](https://github.com/wix/detox/tree/detox@4.2.0) (2017-02-15)
-[Full Changelog](https://github.com/wix/detox/compare/detox@4.1.4...detox@4.2.0)
+## [detox@4.2.0](https://github.com/wix/Detox/tree/detox@4.2.0) (2017-02-15)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@4.1.4...detox@4.2.0)
 
 **Closed Issues**
 
 - fbsimctl sometimes fails with timeout on Travis CI [\#68](https://github.com/wix/Detox/issues/68)
 
-## [detox@4.1.4](https://github.com/wix/detox/tree/detox@4.1.4) (2017-01-19)
-[Full Changelog](https://github.com/wix/detox/compare/detox@4.1.3...detox@4.1.4)
+## [detox@4.1.4](https://github.com/wix/Detox/tree/detox@4.1.4) (2017-01-19)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@4.1.3...detox@4.1.4)
 
-## [detox@4.1.3](https://github.com/wix/detox/tree/detox@4.1.3) (2017-01-19)
-[Full Changelog](https://github.com/wix/detox/compare/detox@4.1.2...detox@4.1.3)
+## [detox@4.1.3](https://github.com/wix/Detox/tree/detox@4.1.3) (2017-01-19)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@4.1.2...detox@4.1.3)
 
-## [detox@4.1.2](https://github.com/wix/detox/tree/detox@4.1.2) (2017-01-19)
-[Full Changelog](https://github.com/wix/detox/compare/detox@4.1.1...detox@4.1.2)
+## [detox@4.1.2](https://github.com/wix/Detox/tree/detox@4.1.2) (2017-01-19)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@4.1.1...detox@4.1.2)
 
-## [detox@4.1.1](https://github.com/wix/detox/tree/detox@4.1.1) (2017-01-19)
-[Full Changelog](https://github.com/wix/detox/compare/detox-server@1.1.1...detox@4.1.1)
+## [detox@4.1.1](https://github.com/wix/Detox/tree/detox@4.1.1) (2017-01-19)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-server@1.1.1...detox@4.1.1)
 
-## [detox-server@1.1.1](https://github.com/wix/detox/tree/detox-server@1.1.1) (2017-01-19)
-[Full Changelog](https://github.com/wix/detox/compare/v4.1.0...detox-server@1.1.1)
+## [detox-server@1.1.1](https://github.com/wix/Detox/tree/detox-server@1.1.1) (2017-01-19)
+[Full Changelog](https://github.com/wix/Detox/compare/v4.1.0...detox-server@1.1.1)
 
 **Enhancements**
 
@@ -1102,15 +1144,15 @@
 
 - Dev\_Detox build builds react in release mode [\#73](https://github.com/wix/Detox/issues/73)
 
-## [v4.1.0](https://github.com/wix/detox/tree/v4.1.0) (2017-01-17)
-[Full Changelog](https://github.com/wix/detox/compare/4.0.12...v4.1.0)
+## [v4.1.0](https://github.com/wix/Detox/tree/v4.1.0) (2017-01-17)
+[Full Changelog](https://github.com/wix/Detox/compare/4.0.12...v4.1.0)
 
 **Closed Issues**
 
 - Using firebase seems to cause detox to hang [\#70](https://github.com/wix/Detox/issues/70)
 
-## [4.0.12](https://github.com/wix/detox/tree/4.0.12) (2017-01-10)
-[Full Changelog](https://github.com/wix/detox/compare/1000...4.0.12)
+## [4.0.12](https://github.com/wix/Detox/tree/4.0.12) (2017-01-10)
+[Full Changelog](https://github.com/wix/Detox/compare/1000...4.0.12)
 
 **Merged Pull Requests**
 
@@ -1118,32 +1160,32 @@
 - document a gotcha we ran into [\#69](https://github.com/wix/Detox/pull/69) ([doronpr](https://github.com/doronpr))
 - Added replaceText action [\#65](https://github.com/wix/Detox/pull/65) ([yedidyak](https://github.com/yedidyak))
 
-## [1000](https://github.com/wix/detox/tree/1000) (2016-12-05)
-[Full Changelog](https://github.com/wix/detox/compare/4.0.9...1000)
+## [1000](https://github.com/wix/Detox/tree/1000) (2016-12-05)
+[Full Changelog](https://github.com/wix/Detox/compare/4.0.9...1000)
 
-## [4.0.9](https://github.com/wix/detox/tree/4.0.9) (2016-12-05)
-[Full Changelog](https://github.com/wix/detox/compare/4.0.8...4.0.9)
+## [4.0.9](https://github.com/wix/Detox/tree/4.0.9) (2016-12-05)
+[Full Changelog](https://github.com/wix/Detox/compare/4.0.8...4.0.9)
 
-## [4.0.8](https://github.com/wix/detox/tree/4.0.8) (2016-12-05)
-[Full Changelog](https://github.com/wix/detox/compare/4.0.7...4.0.8)
+## [4.0.8](https://github.com/wix/Detox/tree/4.0.8) (2016-12-05)
+[Full Changelog](https://github.com/wix/Detox/compare/4.0.7...4.0.8)
 
-## [4.0.7](https://github.com/wix/detox/tree/4.0.7) (2016-12-04)
-[Full Changelog](https://github.com/wix/detox/compare/4.0.6...4.0.7)
+## [4.0.7](https://github.com/wix/Detox/tree/4.0.7) (2016-12-04)
+[Full Changelog](https://github.com/wix/Detox/compare/4.0.6...4.0.7)
 
-## [4.0.6](https://github.com/wix/detox/tree/4.0.6) (2016-12-04)
-[Full Changelog](https://github.com/wix/detox/compare/4.0.5...4.0.6)
+## [4.0.6](https://github.com/wix/Detox/tree/4.0.6) (2016-12-04)
+[Full Changelog](https://github.com/wix/Detox/compare/4.0.5...4.0.6)
 
-## [4.0.5](https://github.com/wix/detox/tree/4.0.5) (2016-12-01)
-[Full Changelog](https://github.com/wix/detox/compare/4.0.4...4.0.5)
+## [4.0.5](https://github.com/wix/Detox/tree/4.0.5) (2016-12-01)
+[Full Changelog](https://github.com/wix/Detox/compare/4.0.4...4.0.5)
 
-## [4.0.4](https://github.com/wix/detox/tree/4.0.4) (2016-12-01)
-[Full Changelog](https://github.com/wix/detox/compare/4.0.3...4.0.4)
+## [4.0.4](https://github.com/wix/Detox/tree/4.0.4) (2016-12-01)
+[Full Changelog](https://github.com/wix/Detox/compare/4.0.3...4.0.4)
 
-## [4.0.3](https://github.com/wix/detox/tree/4.0.3) (2016-12-01)
-[Full Changelog](https://github.com/wix/detox/compare/4.0.2...4.0.3)
+## [4.0.3](https://github.com/wix/Detox/tree/4.0.3) (2016-12-01)
+[Full Changelog](https://github.com/wix/Detox/compare/4.0.2...4.0.3)
 
-## [4.0.2](https://github.com/wix/detox/tree/4.0.2) (2016-12-01)
-[Full Changelog](https://github.com/wix/detox/compare/4.0.1...4.0.2)
+## [4.0.2](https://github.com/wix/Detox/tree/4.0.2) (2016-12-01)
+[Full Changelog](https://github.com/wix/Detox/compare/4.0.1...4.0.2)
 
 **Enhancements**
 
@@ -1154,8 +1196,8 @@
 - Need to update dependencies - issues with Xcode 8, MacOS Sierra [\#44](https://github.com/wix/Detox/issues/44)
 - React Native 0.34+ not supported - testee not connected, cannot fw action [\#43](https://github.com/wix/Detox/issues/43)
 
-## [4.0.1](https://github.com/wix/detox/tree/4.0.1) (2016-11-30)
-[Full Changelog](https://github.com/wix/detox/compare/3.2.1...4.0.1)
+## [4.0.1](https://github.com/wix/Detox/tree/4.0.1) (2016-11-30)
+[Full Changelog](https://github.com/wix/Detox/compare/3.2.1...4.0.1)
 
 **Enhancements**
 
@@ -1165,7 +1207,7 @@
 
 - Merge 4.0.0 branch into master [\#48](https://github.com/wix/Detox/pull/48) ([LeoNatan](https://github.com/LeoNatan))
 
-## [3.2.1](https://github.com/wix/detox/tree/3.2.1) (2016-10-12)
+## [3.2.1](https://github.com/wix/Detox/tree/3.2.1) (2016-10-12)
 **Enhancements**
 
 - add match by type [\#41](https://github.com/wix/Detox/issues/41)
