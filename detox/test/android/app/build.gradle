@@ -4,7 +4,6 @@ apply from: "../../node_modules/react-native/react.gradle"
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "com.wix.detox.test"
@@ -63,6 +62,7 @@ dependencies {
     implementation "com.android.support:appcompat-v7:27.1.1"
 
     fromSourceImplementation(project(path: ":ReactAndroid"))
+    // noinspection GradleDynamicVersion
     fromBinImplementation "com.facebook.react:react-native:+"
 
     androidTestImplementation(project(path: ":detox"))
