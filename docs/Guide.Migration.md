@@ -5,6 +5,36 @@ title: Migration Guide
 
 We are improving detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes.
 
+## Migrating from Detox 9.x.x to 10.x.x
+If your project does not already use Kotlin, add the Kotlin Gradle-plugin to your classpath in `android/build.gradle`:
+
+```groovy
+buildscript {
+    // ...
+    ext.kotlinVersion = '1.3.0'
+    
+    dependencies: {
+        // ...
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+```
+
+_Note: most guides advise of defining a global `kotlinVersion` constant - as in this example, but that is not mandatory._
+
+
+**IMPORTANT:** Detox aims at a playing fair with your app, and so it allows you to explicitly define the kotlin version for it to use - so as to align it with your own; Please do so - in your root `android/build.gradle` configuration file:
+
+```groovy
+buildscript {
+    ext.kotlinVersion = '1.3.0' // Your app's version
+    ext.detoxKotlinVersion = ext.kotlinVersion // Detox' version: should be 1.1.0 or higher!
+}
+```
+
+***Note that Detox has been tested for version 1.1.0 of Kotlin, and higher!***
+
+
 ## Migrating from Detox 8.x.x to 9.x.x
 
 Detox 9.0.0 brings latest Espresso (3.0.2), and React Native 56 support on Android.
