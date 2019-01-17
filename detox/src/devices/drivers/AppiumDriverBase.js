@@ -22,6 +22,7 @@ class AppiumDriverBase extends DeviceDriverBase {
             appiumVersion: "1.9.1",
             newCommandTimeout: 60000,
             idleTimeout: 1000,
+            maxDuration: 7200,
         }, client.configuration.appium.desiredCapabilities || {});
         this._bundleId = this._desiredCapabilities.bundleId;
     }
