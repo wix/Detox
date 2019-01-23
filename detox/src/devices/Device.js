@@ -46,11 +46,10 @@ class Device {
     const hasPayload = this._assertHasSingleParam(payloadParams, params);
 
     if (params.delete) {
-      await this.deviceDriver.terminate(this._deviceId, this._bundleId);
-      await this.deviceDriver.uninstallApp(this._deviceId, this._bundleId);
-      await this.deviceDriver.installApp(this._deviceId, this._binaryPath, this._testBinaryPath);
+      await this._terminateApp();
+      await this._reinstallApp();
     } else if (params.newInstance) {
-      await this.deviceDriver.terminate(this._deviceId, this._bundleId);
+      await this._terminateApp();
     }
 
     let baseLaunchArgs = {};
@@ -75,6 +74,10 @@ class Device {
 
     if (params.disableTouchIndicators) {
       baseLaunchArgs['detoxDisableTouchIndicators'] = true;
+    }
+
+    if (params.newInstance && params.androidSingleTask) {
+      baseLaunchArgs['forceSingleTask'] = true;
     }
 
     const _bundleId = bundleId || this._bundleId;
@@ -252,6 +255,16 @@ class Device {
     } else {
       throw new Error(`app binary not found at '${absPath}', did you build it?`);
     }
+  }
+
+  async _terminateApp() {
+    await this.deviceDriver.terminate(this._deviceId, this._bundleId);
+    this._processes[this._bundleId] = undefined;
+  }
+
+  async _reinstallApp() {
+    await this.deviceDriver.uninstallApp(this._deviceId, this._bundleId);
+    await this.deviceDriver.installApp(this._deviceId, this._binaryPath, this._testBinaryPath);
   }
 }
 

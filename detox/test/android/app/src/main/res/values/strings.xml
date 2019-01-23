@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Detox Test</string>
+    <string name="app_single_task_name">Detox Test (SingleTask)</string>
 </resources>

@@ -35,18 +35,6 @@ class Detox {
     };
   }
 
-  static intentWithUrl(url) {
-    if (typeof url !== "string") throw new Error("url should be a string, but got " + (url + (" (" + (typeof url + ")"))));
-    return {
-      target: {
-        type: "Class",
-        value: "com.wix.detox.Detox"
-      },
-      method: "intentWithUrl",
-      args: [url]
-    };
-  }
-
   static launchMainActivity() {
     return {
       target: {

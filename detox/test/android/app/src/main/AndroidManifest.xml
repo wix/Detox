@@ -17,9 +17,14 @@
       android:label="@string/app_name"
       android:icon="@mipmap/ic_launcher"
       android:theme="@style/AppTheme">
+
+      <!--
+       The main, default activity; Note: always keep launchMode 'standard'
+       -->
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
+        android:launchMode="standard"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
         android:windowSoftInputMode="adjustResize">
         <intent-filter>
@@ -27,14 +32,33 @@
             <category android:name="android.intent.category.LAUNCHER" />
             <category android:name="android.intent.category.DEFAULT" />
         </intent-filter>
-          <intent-filter>
-              <action android:name="android.intent.action.VIEW" />
-              <category android:name="android.intent.category.DEFAULT" />
-              <category android:name="android.intent.category.BROWSABLE" />
-              <data android:scheme="detoxtesturlscheme"/>
-          </intent-filter>
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="detoxtesturlscheme"/>
+        </intent-filter>
       </activity>
+
+      <!--
+       MainActivity flavor that only runs in a 'singleInstance' launch mode.
+       Executed instead of the main by the test app given the "forceSingleTask" arg to instrumentation.
+       -->
+      <activity
+        android:name=".SingleInstanceActivity"
+        android:label="@string/app_single_task_name"
+        android:launchMode="singleInstance"
+        android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+        android:windowSoftInputMode="adjustResize">
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <data android:scheme="detoxtesturlscheme"/>
+        </intent-filter>
+       </activity>
+
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+
     </application>
 
 </manifest>
