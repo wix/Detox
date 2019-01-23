@@ -119,18 +119,12 @@ launchctl setenv PATH $PATH
 
 ##### Changing Detox e2e test suite
 
-If you add, rename, or delete a test in `detox/test/e2e` suite, you also have to update Jest snapshots
-of expected artifacts. It is usually done in seven steps:
+If you add, rename, or delete a test in `detox/test/e2e` suite, you should follow these steps:
 
 1. In `detox/test` project, build the ios project with `npm run build:ios`.
 2. Run all end-to-end tests on iOS with `npm run e2e:ios`.
-3. Update the snapshots with: `npm run verify-artifacts:ios -- -u`.
-4. In `detox/test` project, build the ios project with `npm run build:android`
-5. Re-run Android tests with `npm run e2e:android`.
-6. Update the snapshots with: `npm run verify-artifacts:android -- -u`.
-7. Add the snapshots to your Git commit:
-* Android: `detox/test/scripts/__snapshots__/verify_artifacts_are_not_missing.android.test.js.snap`
-* iOS: `detox/test/scripts/__snapshots__/verify_artifacts_are_not_missing.ios.test.js.snap`
+4. In `detox/test` project, build the android project with `npm run build:android`
+5. Run all end-to-end tests on Android with `npm run e2e:android`.
 
 #### 3. Android Native tests
 
