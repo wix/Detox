@@ -287,6 +287,8 @@ module.exports = function getGenerator({
 
   return function generator(files) {
     Object.entries(files).forEach(([inputFile, outputFile]) => {
+      console.log(`\n\r${inputFile} => ${outputFile}`);
+
       globalFunctionUsage = {};
       const input = fs.readFileSync(inputFile, 'utf8');
       const isObjectiveC = inputFile[inputFile.length - 1] === 'h';

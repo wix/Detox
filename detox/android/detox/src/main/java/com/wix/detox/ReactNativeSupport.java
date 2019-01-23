@@ -3,9 +3,6 @@ package com.wix.detox;
 import android.content.Context;
 import android.os.Looper;
 import android.support.annotation.NonNull;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.IdlingRegistry;
-import android.support.test.espresso.base.IdlingResourceRegistry;
 import android.util.Log;
 
 import com.facebook.react.ReactApplication;
@@ -22,6 +19,10 @@ import org.joor.ReflectException;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import androidx.test.espresso.IdlingRegistry;
+import androidx.test.espresso.base.IdlingResourceRegistry;
+import androidx.test.platform.app.InstrumentationRegistry;
 import okhttp3.OkHttpClient;
 
 
@@ -207,7 +208,7 @@ public class ReactNativeSupport {
         IdlingRegistry.getInstance().registerLooperAsIdlingResource(JSMessageQueue);
         IdlingRegistry.getInstance().registerLooperAsIdlingResource(JMativeModulesMessageQueue);
 
-        IdlingResourceRegistry irr = Reflect.on("android.support.test.espresso.Espresso").field("baseRegistry").get();
+        IdlingResourceRegistry irr = Reflect.on(androidx.test.espresso.Espresso.class).field("baseRegistry").get();
         irr.sync(IdlingRegistry.getInstance().getResources(), IdlingRegistry.getInstance().getLoopers());
     }
 

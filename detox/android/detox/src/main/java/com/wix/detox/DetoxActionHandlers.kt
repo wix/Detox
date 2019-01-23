@@ -1,8 +1,8 @@
 package com.wix.detox
 
 import android.content.Context
-import android.support.test.espresso.IdlingResource
 import android.util.Log
+import androidx.test.espresso.IdlingResource
 import com.wix.invoke.MethodInvocation
 import org.json.JSONArray
 import org.json.JSONException
