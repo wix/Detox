@@ -247,28 +247,6 @@ describe('Device', () => {
       {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-arg1": "1", "-arg2": 2}, undefined);
   });
 
-  it(`launchApp() should ask for a single-task if specified (for Android)`, async () => {
-    device = await validDevice();
-    await device.launchApp({newInstance: true, androidSingleTask: true});
-
-    expect(device.deviceDriver.launchApp).toHaveBeenCalledWith(device._deviceId,
-      device._bundleId,
-      {
-        "-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-forceSingleTask": true,
-      }, undefined);
-  });
-
-  it(`launchApp() should NOT ask for a single-task (for Android) if newInstance isn't set as well`, async () => {
-    device = await validDevice();
-    await device.launchApp({newInstance: false, androidSingleTask: true});
-
-    expect(device.deviceDriver.launchApp).toHaveBeenCalledWith(device._deviceId,
-      device._bundleId,
-      {
-        "-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test",
-      }, undefined);
-  });
-
   it(`sendToHome() should pass to device driver`, async () => {
     device = validDevice();
     await device.sendToHome();

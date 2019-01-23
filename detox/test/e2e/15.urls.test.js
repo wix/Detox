@@ -7,8 +7,8 @@ describe('Open URLs', () => {
     await expect(element(by.text(testUrl))).toBeVisible();
   });
 
-  it(':android: device.launchApp() with a URL and a fresh app should launch app properly also in single-task mode', async () => {
-    await device.launchApp({newInstance: true, url: testUrl, androidSingleTask: true});
+  it(':android: device.launchApp() with a URL and a fresh app should launch app properly also in single-task activities', async () => {
+    await device.launchApp({newInstance: true, url: testUrl, launchArgs: {androidSingleTaskActivity: true}});
     await expect(element(by.text(testUrl))).toBeVisible();
   });
 
@@ -18,8 +18,8 @@ describe('Open URLs', () => {
     await expect(element(by.text(testUrl))).toBeVisible();
   });
 
-  it(':android: device.openURL() should should work properly also in single-task mode', async () => {
-    await device.launchApp({newInstance: true, androidSingleTask: true});
+  it(':android: device.openURL() should should work properly also in single-task activities', async () => {
+    await device.launchApp({newInstance: true, launchArgs: {androidSingleTaskActivity: true}});
     await device.openURL({url: testUrl});
     await expect(element(by.text(testUrl))).toBeVisible();
   });
@@ -31,8 +31,8 @@ describe('Open URLs', () => {
     await expect(element(by.text(testUrl))).toBeVisible();
   });
 
-  it(':android: device.launchApp() with a URL should work properly also in single-task mode', async () => {
-    await device.launchApp({newInstance: true, androidSingleTask: true});
+  it(':android: device.launchApp() with a URL should work properly also in single-task activities', async () => {
+    await device.launchApp({newInstance: true, launchArgs: {androidSingleTaskActivity: true}});
     await device.sendToHome();
     await device.launchApp({newInstance: false, url: testUrl});
     await expect(element(by.text(testUrl))).toBeVisible();

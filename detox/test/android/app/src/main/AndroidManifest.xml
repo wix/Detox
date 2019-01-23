@@ -42,7 +42,7 @@
 
       <!--
        MainActivity flavor that only runs in a 'singleInstance' launch mode.
-       Executed instead of the main by the test app given the "forceSingleTask" arg to instrumentation.
+       Executed instead of the main by the test app given a "androidSingleTaskActivity" arg to instrumentation.
        -->
       <activity
         android:name=".SingleInstanceActivity"

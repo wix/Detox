@@ -148,9 +148,12 @@ public final class Detox {
     public static void startActivityFromUrl(String url) {
         // Ideally, we would just call sActivityTestRule.launchActivity(intentWithUrl(url)) and get it over with.
         // BUT!!! as it turns out, Espresso has an issue where doing this for an activity running in the background
-        // would have it set up an ActivityMonitor which will spend its time waiting for the activity to load, *without ever being released*.
-        // It will finally fail after a 45 seconds timeout. The reason for the bug is in TODO.
-        // This is the core reason for this issue: https://github.com/wix/Detox/issues/1125
+        // would have Espresso set up an ActivityMonitor which will spend its time waiting for the activity to load, *without
+        // ever being released*. It will finally fail after a 45 seconds timeout.
+        // Without going into full details, it seems that activity test rules were not meant to be used this way. However,
+        // the all-new ActivityScenario implementation introduced in androidx could probably support this (e.g. by using
+        // dedicated methods such as moveToState(), which give better control over the lifecycle).
+        // In any case, this is the core reason for this issue: https://github.com/wix/Detox/issues/1125
         // What it forces us to do, then, is this -
         // 1. Launch the activity by "ourselves" from the OS (i.e. using context.startActivity()).
         // 2. Set up an activity monitor by ourselves -- such that it would block until the activity is ready.
