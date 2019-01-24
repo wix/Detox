@@ -16,7 +16,8 @@
       android:allowBackup="true"
       android:label="@string/app_name"
       android:icon="@mipmap/ic_launcher"
-      android:theme="@style/AppTheme">
+      android:theme="@style/AppTheme"
+    >
 
       <!--
        The main, default activity; Note: always keep launchMode 'standard'
@@ -53,7 +54,7 @@
         <intent-filter>
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
-            <data android:scheme="detoxtesturlscheme"/>
+            <data android:scheme="detoxtesturlscheme.singletask"/>
         </intent-filter>
        </activity>
 

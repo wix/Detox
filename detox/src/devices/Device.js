@@ -52,10 +52,9 @@ class Device {
       await this._terminateApp();
     }
 
-    let baseLaunchArgs = {};
-    if (params.launchArgs) {
-      baseLaunchArgs = params.launchArgs;
-    }
+    let baseLaunchArgs = {
+      ...params.launchArgs,
+    };
 
     if (params.url) {
       baseLaunchArgs['detoxURLOverride'] = params.url;

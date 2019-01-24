@@ -201,14 +201,6 @@ public final class Detox {
     private static Intent intentWithUrl(String url) {
         final Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(url));
-
-        // This is "a must" in order to support various activity rules (potentially associated with different activities, that
-        // can handle this intent action + uri schema combination).
-        // If this is removed, Android's activity disambiguity bottom-selection dialog will show, prompting for a user selection,
-        // instead of 'just launching'.
-        if (sActivityTestRule.getActivity() != null) {
-            intent.setClass(InstrumentationRegistry.getTargetContext(), sActivityTestRule.getActivity().getClass());
-        }
         return intent;
     }
 }

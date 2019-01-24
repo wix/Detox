@@ -1,40 +1,46 @@
 describe('Open URLs', () => {
 
-  const testUrl = 'detoxtesturlscheme://such-string';
-
-  it('device.launchApp() with a URL and a fresh app should launch app and trigger handling open url handling in app', async () => {
-    await device.launchApp({newInstance: true, url: testUrl});
-    await expect(element(by.text(testUrl))).toBeVisible();
+  const withDefaultArgs = () => ({
+    url: 'detoxtesturlscheme://such-string',
+    launchArgs: undefined,
   });
 
-  it(':android: device.launchApp() with a URL and a fresh app should launch app properly also in single-task activities', async () => {
-    await device.launchApp({newInstance: true, url: testUrl, launchArgs: {androidSingleTaskActivity: true}});
-    await expect(element(by.text(testUrl))).toBeVisible();
+  const withAndroidSingleTaskActivityArgs = () => ({
+    url: 'detoxtesturlscheme.singletask://such-string',
+    launchArgs: Object.freeze({ androidSingleTaskActivity: true }),
   });
 
-  it('device.openURL() should trigger open url handling in app when app is in foreground', async () => {
-    await device.launchApp({newInstance: true});
-    await device.openURL({url: testUrl});
-    await expect(element(by.text(testUrl))).toBeVisible();
-  });
+  [
+    {
+      platform: '',
+      ...withDefaultArgs(),
+    },
+    {
+      platform: 'android',
+      ...withAndroidSingleTaskActivityArgs(),
+    }
+  ].forEach(({platform, url, launchArgs}) => {
 
-  it(':android: device.openURL() should should work properly also in single-task activities', async () => {
-    await device.launchApp({newInstance: true, launchArgs: {androidSingleTaskActivity: true}});
-    await device.openURL({url: testUrl});
-    await expect(element(by.text(testUrl))).toBeVisible();
-  });
+    const _platform = platform ? `:${platform}: ` : '';
 
-  it('device.launchApp() with a URL should trigger url handling when app is in background', async () => {
-    await device.launchApp({newInstance: true});
-    await device.sendToHome();
-    await device.launchApp({newInstance: false, url: testUrl});
-    await expect(element(by.text(testUrl))).toBeVisible();
-  });
+    it(`${_platform}device.launchApp() with a URL and a fresh app should launch app and trigger handling open url handling in app`, async () => {
+      await device.launchApp({newInstance: true, url, launchArgs});
+      await expect(element(by.text(url))).toBeVisible();
+    });
 
-  it(':android: device.launchApp() with a URL should work properly also in single-task activities', async () => {
-    await device.launchApp({newInstance: true, launchArgs: {androidSingleTaskActivity: true}});
-    await device.sendToHome();
-    await device.launchApp({newInstance: false, url: testUrl});
-    await expect(element(by.text(testUrl))).toBeVisible();
+    it(`${_platform}device.openURL() should trigger open url handling in app when app is in foreground`, async () => {
+      await device.launchApp({newInstance: true, launchArgs});
+      await expect(element(by.text(url))).toBeNotVisible();
+      await device.openURL({url});
+      await expect(element(by.text(url))).toBeVisible();
+    });
+
+    it(`${_platform}device.launchApp() with a URL should trigger url handling when app is in background`, async () => {
+      await device.launchApp({newInstance: true, launchArgs});
+      await expect(element(by.text(url))).toBeNotVisible();
+      await device.sendToHome();
+      await device.launchApp({newInstance: false, url});
+      await expect(element(by.text(url))).toBeVisible();
+    });
   });
 });
