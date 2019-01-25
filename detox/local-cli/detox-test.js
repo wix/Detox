@@ -11,11 +11,12 @@ const DetoxConfigError = require('../src/errors/DetoxConfigError');
 const config = require(path.join(process.cwd(), 'package.json')).detox;
 
 program
+  .usage('[testPatterns ...]')
   .allowUnknownOption()
   .option('-o, --runner-config [config]',
     `Test runner config file, defaults to e2e/mocha.opts for mocha and e2e/config.json' for jest`)
   .option('-s, --specs [relativePath]',
-    `Root of test folder`)
+    `[DEPRECATED] Root of test folder`)
   .option('-l, --loglevel [value]',
     'Log level: fatal, error, warn, info, verbose, trace')
   .option('--no-color',
@@ -41,7 +42,7 @@ program
     '[DEPRECATED], platform is deduced automatically. Run platform specific tests. Runs tests with invert grep on \':platform:\', '
     + 'e.g test with substring \':ios:\' in its name will not run when passing \'--platform android\'')
   .option('-f, --file [path]',
-    'Specify test file to run')
+    '[DEPRECATED] Specify test file to run')
   .option('-H, --headless',
     '[Android Only] Launch Emulator in headless mode. Useful when running on CI.')
   .option('-w, --workers <n>',
@@ -64,7 +65,6 @@ if (!config.configurations[program.configuration]) {
     Available configurations: ${_.keys(config.configurations).join(', ')}`);
 }
 
-const testFolder = getConfigFor(['file', 'specs'], 'e2e');
 const runner = getConfigFor(['testRunner'], 'mocha');
 const runnerConfig = getConfigFor(['runnerConfig'], getDefaultRunnerConfig());
 const platform = (config.configurations[program.configuration].type).split('.')[0];
@@ -92,12 +92,26 @@ function run() {
 
 function collectExtraArgs() {
   const parsed = program.parseOptions(program.normalize(process.argv.slice(2)));
+  const depreactedTestPatterns = getConfigFor(['file', 'specs']);
+  const args = [].concat(depreactedTestPatterns, parsed.args, parsed.unknown)
+    .filter(Boolean)
+    .map((str) => {
+      // skip if it's an option like `-h` or `--help`
+      // json strignify the string if it has glob magic
+      if (!/^-+/.test(str) && /[*?\[\]{}!()|+@/.]/.test(str)) return JSON.stringify(str);
+      return str;
+    })
+    .join(' ');
 
-  if (parsed && Array.isArray(parsed.unknown) && parsed.unknown.length > 0) {
-    return parsed.unknown.join(' ');
+  if (depreactedTestPatterns) {
+    if (config.specs && !program.specs) {
+      console.log(`[DEPRECATED] the \`specs\` config has been deprecated. Instead set the default pattern for your tests inside of your config for your test runner.`);
+    } else {
+      console.log(`[DEPRECATED] \`--file\` and \`--specs\` have been deprecated. Just change your command from \`${runner} --file ${args}\` to be \`${runner} ${args}\``);
+    }
   }
 
-  return '';
+  return args;
 }
 
 function getConfigFor(keys, fallback) {
@@ -132,7 +146,7 @@ function runMocha() {
 
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
   const binPath = path.join('node_modules', '.bin', 'mocha');
-  const command = `${binPath} ${testFolder} ${configFile} ${configuration} ${loglevel} ${color} ` +
+  const command = `${binPath} ${configFile} ${configuration} ${loglevel} ${color} ` +
     `${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${headless} ` +
     `${logs} ${screenshots} ${videos} ${artifactsLocation} ${deviceName} ${collectExtraArgs()}`;
 
@@ -145,9 +159,8 @@ function runJest() {
 
   const platformString = platform ? shellQuote(`--testNamePattern=^((?!${getPlatformSpecificString(platform)}).)*$`) : '';
   const binPath = path.join('node_modules', '.bin', 'jest');
-  const quotedTestFolder = `"${testFolder}"`
-  const color = program.color ? '' : ' --no-color';
-  const command = `${binPath} ${quotedTestFolder} ${configFile}${color} --maxWorkers=${program.workers} ${platformString} ${collectExtraArgs()}`;
+  const color = program.color ? '' : '--no-color';
+  const command = `${binPath} ${configFile} ${color} --maxWorkers=${program.workers} ${platformString} ${collectExtraArgs()}`;
   const detoxEnvironmentVariables = {
     configuration: program.configuration,
     loglevel: program.loglevel,
