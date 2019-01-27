@@ -47,14 +47,14 @@
        -->
       <activity
         android:name=".SingleInstanceActivity"
-        android:label="@string/app_single_task_name"
+        android:label="@string/app_name_single_instance"
         android:launchMode="singleInstance"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
         android:windowSoftInputMode="adjustResize">
         <intent-filter>
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
-            <data android:scheme="detoxtesturlscheme.singletask"/>
+            <data android:scheme="detoxtesturlscheme.singleinstance"/>
         </intent-filter>
        </activity>
 

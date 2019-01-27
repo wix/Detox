@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const configurationsMock = require('../configurations.mock');
 
 const path = require('path');
@@ -237,14 +238,23 @@ describe('Device', () => {
       device._bundleId, {calendar: "YES"});
   });
 
-  it(`launchApp({launchArgs: }) should pass to native as launch args`, async () => {
+  it(`launchApp({launchArgs}) should pass to native as launch args`, async () => {
+    const launchArgs = {
+      arg1: "1",
+      arg2: 2,
+    };
+    const expectedArgs = {
+      "-detoxServer": "ws://localhost:8099",
+      "-detoxSessionId": "test",
+      "-arg1": "1",
+      "-arg2": 2,
+    };
+
     device = validDevice();
 
-    await device.launchApp({launchArgs: {arg1: "1", arg2: 2}});
+    await device.launchApp({launchArgs});
 
-    expect(device.deviceDriver.launchApp).toHaveBeenCalledWith(device._deviceId,
-      device._bundleId,
-      {"-detoxServer": "ws://localhost:8099", "-detoxSessionId": "test", "-arg1": "1", "-arg2": 2}, undefined);
+    expect(device.deviceDriver.launchApp).toHaveBeenCalledWith(device._deviceId, device._bundleId, expectedArgs, undefined);
   });
 
   it(`sendToHome() should pass to device driver`, async () => {
@@ -442,7 +452,7 @@ describe('Device', () => {
     expect(device.deviceDriver.deliverPayload).not.toHaveBeenCalled();
   });
 
-  it(`launchApp({url: url}) should check if process is in background and use openURL() instead of launch args`, async () => {
+  it(`launchApp({url}) should check if process is in background and use openURL() instead of launch args`, async () => {
     const processId = 1;
     device = validDevice();
     device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
@@ -454,7 +464,7 @@ describe('Device', () => {
     expect(device.deviceDriver.deliverPayload).toHaveBeenCalledTimes(1);
   });
 
-  it(`launchApp({url: url}) should check if process is in background and if not use launch args`, async () => {
+  it(`launchApp({url}) should check if process is in background and if not use launch args`, async () => {
     const launchParams = {url: 'url://me'};
     const processId = 1;
     const newProcessId = 2;
@@ -469,7 +479,7 @@ describe('Device', () => {
     expect(device.deviceDriver.deliverPayload).not.toHaveBeenCalled();
   });
 
-  it(`launchApp({url: url}) should check if process is in background and use openURL() instead of launch args`, async () => {
+  it(`launchApp({url}) should check if process is in background and use openURL() instead of launch args`, async () => {
     const launchParams = {url: 'url://me'};
     const processId = 1;
 
@@ -483,7 +493,22 @@ describe('Device', () => {
     expect(device.deviceDriver.deliverPayload).toHaveBeenCalledWith({delayPayload: true, url: 'url://me'});
   });
 
-  it('launchApp({userActivity: userActivity}) should check if process is in background and if it is use deliverPayload', async () => {
+  it(`launchApp({params}) should keep user params unmodified`, async () => {
+    const params = {
+      url: 'some.url',
+      launchArgs: {
+        some: 'userArg',
+      }
+    };
+    const paramsClone = _.cloneDeep(params);
+
+    device = validDevice();
+    await device.launchApp(params);
+
+    expect(params).toEqual(paramsClone);
+  });
+
+  it('launchApp({userActivity}) should check if process is in background and if it is use deliverPayload', async () => {
     const launchParams = {userActivity: 'userActivity'};
     const processId = 1;
 
@@ -499,7 +524,7 @@ describe('Device', () => {
   });
 
 
-  it('launchApp({userNotification: userNotification}) should check if process is in background and if it is use deliverPayload', async () => {
+  it('launchApp({userNotification}) should check if process is in background and if it is use deliverPayload', async () => {
     const launchParams = {userNotification: 'notification'};
     const processId = 1;
 
@@ -514,7 +539,7 @@ describe('Device', () => {
     expect(device.deviceDriver.deliverPayload).toHaveBeenCalledTimes(1);
   });
 
-  it(`launchApp({userNotification: userNotification}) should check if process is in background and if not use launch args`, async () => {
+  it(`launchApp({userNotification}) should check if process is in background and if not use launch args`, async () => {
     const launchParams = {userNotification: 'notification'};
     const processId = 1;
     const newProcessId = 2;
@@ -529,7 +554,7 @@ describe('Device', () => {
     expect(device.deviceDriver.deliverPayload).not.toHaveBeenCalled();
   });
 
-  it(`launchApp({userNotification: userNotification, url: url}) should fail`, async () => {
+  it(`launchApp({userNotification, url}) should fail`, async () => {
     const launchParams = {userNotification: 'notification', url: 'url://me'};
     const processId = 1;
 

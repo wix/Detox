@@ -25,7 +25,7 @@ public class DetoxTest {
      * Important so as to allow for some testing of Detox in this particular mode, which has been proven to introduce caveats.
      * </br>Here for internal usage; Not external-API related.
      */
-    private static final String RUN_SINGLE_TASK_ACTIVITY_ARG = "androidSingleTaskActivity";
+    private static final String SINGLE_INSTANCE_ACTIVITY_ARG = "androidSingleInstanceActivity";
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class, false, false);
@@ -36,7 +36,7 @@ public class DetoxTest {
     @Test
     public void runDetoxTests() {
         final Bundle arguments = InstrumentationRegistry.getArguments();
-        final boolean forceSingleTaskActivity = Boolean.parseBoolean(arguments.getString(RUN_SINGLE_TASK_ACTIVITY_ARG, "false"));
+        final boolean forceSingleTaskActivity = Boolean.parseBoolean(arguments.getString(SINGLE_INSTANCE_ACTIVITY_ARG, "false"));
         final ActivityTestRule<?> rule = forceSingleTaskActivity ? mSingleInstanceActivityRule : mActivityRule;
         Detox.runTests(rule);
     }

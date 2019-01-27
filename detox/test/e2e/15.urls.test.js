@@ -1,13 +1,12 @@
 describe('Open URLs', () => {
-
   const withDefaultArgs = () => ({
     url: 'detoxtesturlscheme://such-string',
     launchArgs: undefined,
   });
 
-  const withAndroidSingleTaskActivityArgs = () => ({
-    url: 'detoxtesturlscheme.singletask://such-string',
-    launchArgs: Object.freeze({ androidSingleTaskActivity: true }),
+  const withSingleInstanceActivityArgs = () => ({
+    url: 'detoxtesturlscheme.singleinstance://such-string',
+    launchArgs: { androidSingleInstanceActivity: true },
   });
 
   [
@@ -17,10 +16,10 @@ describe('Open URLs', () => {
     },
     {
       platform: 'android',
-      ...withAndroidSingleTaskActivityArgs(),
+      ...withSingleInstanceActivityArgs(),
     }
-  ].forEach(({platform, url, launchArgs}) => {
-
+  ].forEach((testSpec) => {
+    const {platform, url, launchArgs} = testSpec;
     const _platform = platform ? `:${platform}: ` : '';
 
     it(`${_platform}device.launchApp() with a URL and a fresh app should launch app and trigger handling open url handling in app`, async () => {
