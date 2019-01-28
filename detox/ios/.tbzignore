@@ -1,4 +1,5 @@
 build
+DerivedData
 COSTouchVisualizer/ExampleObjC
 COSTouchVisualizer/ExampleSwift
 DetoxUserNotificationTests
