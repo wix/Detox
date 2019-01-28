@@ -1,7 +1,7 @@
 # Change Log
 
-## [10.0.3](https://github.com/wix/Detox/tree/10.0.3) (2019-01-28)
-[Full Changelog](https://github.com/wix/Detox/compare/10.0.2...10.0.3)
+## [10.0.4](https://github.com/wix/Detox/tree/10.0.4) (2019-01-28)
+[Full Changelog](https://github.com/wix/Detox/compare/10.0.2...10.0.4)
 
 **Fixed Bugs**
 
