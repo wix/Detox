@@ -1,4 +1,11 @@
 describe('build', () => {
+  let mockExec;
+  beforeEach(() => {
+    mockExec = jest.fn();
+    jest.mock('child_process', () => ({
+      execSync: mockExec
+    }));
+  });
   it('runs the build script if there is only one config', async () => {
     mockPackageJson({
       configurations: {
@@ -7,10 +14,6 @@ describe('build', () => {
         }
       }
     });
-    const mockExec = jest.fn();
-    jest.mock('child_process', () => ({
-      execSync: mockExec
-    }));
 
     await callCli('./build', 'build');
     expect(mockExec).toHaveBeenCalledWith(expect.stringContaining('only'), expect.anything());
@@ -27,10 +30,6 @@ describe('build', () => {
         }
       }
     });
-    const mockExec = jest.fn();
-    jest.mock('child_process', () => ({
-      execSync: mockExec
-    }));
 
     await callCli('./build', 'build -c myconf');
     expect(mockExec).toHaveBeenCalledWith(expect.stringContaining('myconf'), expect.anything());
@@ -47,10 +46,6 @@ describe('build', () => {
         }
       }
     });
-    const mockExec = jest.fn();
-    jest.mock('child_process', () => ({
-      execSync: mockExec
-    }));
 
     expect(callCli('./build', 'build')).rejects.toBeInstanceOf(Error);
     expect(mockExec).not.toHaveBeenCalled();
@@ -58,10 +53,6 @@ describe('build', () => {
 
   it('fails without configurations', async () => {
     mockPackageJson({});
-    const mockExec = jest.fn();
-    jest.mock('child_process', () => ({
-      execSync: mockExec
-    }));
 
     expect(callCli('./build', 'build')).rejects.toEqual(new Error('Cannot find detox.configurations in package.json'));
     expect(mockExec).not.toHaveBeenCalled();
@@ -73,10 +64,6 @@ describe('build', () => {
         only: {}
       }
     });
-    const mockExec = jest.fn();
-    jest.mock('child_process', () => ({
-      execSync: mockExec
-    }));
 
     expect(callCli('./build', 'build -c only')).rejects.toEqual(
       new Error('Could not find build script in detox.configurations["only"].build')
@@ -90,10 +77,6 @@ describe('build', () => {
         only: {}
       }
     });
-    const mockExec = jest.fn();
-    jest.mock('child_process', () => ({
-      execSync: mockExec
-    }));
 
     expect(callCli('./build', 'build')).rejects.toEqual(new Error('Could not find build script in detox.configurations["only"].build'));
     expect(mockExec).not.toHaveBeenCalled();

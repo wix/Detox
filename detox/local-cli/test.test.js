@@ -1,4 +1,11 @@
 describe('test', () => {
+  let mockExec;
+  beforeEach(() => {
+    mockExec = jest.fn();
+    jest.mock('child_process', () => ({
+      execSync: mockExec
+    }));
+  });
   describe('mocha', () => {
     it('runs successfully', async () => {
       mockPackageJson({
@@ -8,11 +15,6 @@ describe('test', () => {
           }
         }
       });
-
-      const mockExec = jest.fn();
-      jest.mock('child_process', () => ({
-        execSync: mockExec
-      }));
 
       try {
         await callCli('./test', 'test');
@@ -68,11 +70,6 @@ describe('test', () => {
       }
     });
 
-    const mockExec = jest.fn();
-    jest.mock('child_process', () => ({
-      execSync: mockExec
-    }));
-
     const mockError = jest.fn();
     try {
       await callCli('./test', 'test');
@@ -93,11 +90,6 @@ describe('test', () => {
         }
       }
     });
-
-    const mockExec = jest.fn();
-    jest.mock('child_process', () => ({
-      execSync: mockExec
-    }));
 
     const mockError = jest.fn();
     try {
@@ -120,11 +112,6 @@ describe('test', () => {
       }
     });
 
-    const mockExec = jest.fn();
-    jest.mock('child_process', () => ({
-      execSync: mockExec
-    }));
-
     try {
       await callCli('./test', 'test --debug-synchronization');
     } catch (e) {
@@ -146,11 +133,6 @@ describe('test', () => {
         }
       }
     });
-
-    const mockExec = jest.fn();
-    jest.mock('child_process', () => ({
-      execSync: mockExec
-    }));
 
     try {
       await callCli('./test', 'test --unknown-property 42');
