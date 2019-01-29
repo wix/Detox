@@ -51,9 +51,10 @@ describe('test', () => {
       } catch (e) {
         console.log(e);
       }
+
       expect(mockExec).toHaveBeenCalledWith(
         expect.stringContaining(
-          "node_modules/.bin/jest e2e --config=e2e/config.json --no-color --maxWorkers=1 '--testNamePattern=^((?!:ios:).)*$'"
+          `node_modules/.bin/jest \"e2e\" --config=e2e/config.json --no-color --maxWorkers=1 \'--testNamePattern=^((?!:ios:).)*$\'`
         ),
         expect.anything()
       );

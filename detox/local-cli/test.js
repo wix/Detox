@@ -215,7 +215,7 @@ module.exports.handler = function main(program) {
     const platformString = platform ? shellQuote(`--testNamePattern=^((?!${getPlatformSpecificString(platform)}).)*$`) : '';
     const binPath = path.join('node_modules', '.bin', 'jest');
     const color = program.color ? '' : ' --no-color';
-    const command = `${binPath} ${testFolder} ${configFile}${color} --maxWorkers=${program.workers} ${platformString} ${collectExtraArgs()}`;
+    const command = `${binPath} "${testFolder}" ${configFile}${color} --maxWorkers=${program.workers} ${platformString} ${collectExtraArgs()}`;
     const detoxEnvironmentVariables = {
       configuration: program.configuration,
       loglevel: program.loglevel,
