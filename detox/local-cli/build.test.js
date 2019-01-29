@@ -1,25 +1,9 @@
 describe('build', () => {
-  it('shows help text', async () => {
-    jest.spyOn(process, 'exit'); // otherwise tests are aborted
-
-    expect(await callCli('./build', '--help')).toMatchInlineSnapshot(`
-"detox [command]
-
-Commands:
-  detox build  [convenience method] Run the command defined in
-               'configuration.build'
-
-Options:
-  --version  Show version number                                       [boolean]
-  --help     Show help                                                 [boolean]"
-`);
-  });
-
   it('runs the build script if there is only one config', async () => {
     mockPackageJson({
       configurations: {
         only: {
-          build: 'echo "I was build"'
+          build: 'echo "only"'
         }
       }
     });
@@ -29,17 +13,17 @@ Options:
     }));
 
     await callCli('./build', 'build');
-    expect(mockExec).toHaveBeenCalledWith(expect.stringContaining('I was build'), expect.anything());
+    expect(mockExec).toHaveBeenCalledWith(expect.stringContaining('only'), expect.anything());
   });
 
   it('runs the build script of selected config', async () => {
     mockPackageJson({
       configurations: {
         only: {
-          build: 'echo "I was build"'
+          build: 'echo "only"'
         },
         myconf: {
-          build: 'echo "Something else"'
+          build: 'echo "myconf"'
         }
       }
     });
@@ -49,17 +33,17 @@ Options:
     }));
 
     await callCli('./build', 'build -c myconf');
-    expect(mockExec).toHaveBeenCalledWith(expect.stringContaining('Something else'), expect.anything());
+    expect(mockExec).toHaveBeenCalledWith(expect.stringContaining('myconf'), expect.anything());
   });
 
   it('fails with multiple configs if none is selected', async () => {
     mockPackageJson({
       configurations: {
         only: {
-          build: 'echo "I was build"'
+          build: 'echo "only"'
         },
         myconf: {
-          build: 'echo "Something else"'
+          build: 'echo "myconf"'
         }
       }
     });
@@ -94,7 +78,9 @@ Options:
       execSync: mockExec
     }));
 
-    expect(callCli('./build', 'build -c only')).rejects.toEqual(new Error('Could not find build script in detox.configurations["only"].build'));
+    expect(callCli('./build', 'build -c only')).rejects.toEqual(
+      new Error('Could not find build script in detox.configurations["only"].build')
+    );
     expect(mockExec).not.toHaveBeenCalled();
   });
 
