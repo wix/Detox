@@ -57,7 +57,7 @@ module.exports.builder = {
   'artifacts-location': {
     alias: ['a', 'artifactsLocation'],
     group: 'Debugging',
-    describe: '[EXPERIMENTAL] Artifacts (logs, screenshots, etc) root directory.',
+    describe: 'Artifacts (logs, screenshots, etc) root directory.',
     default: 'artifacts'
   },
   'record-logs': {
