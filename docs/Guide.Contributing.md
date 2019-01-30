@@ -123,8 +123,8 @@ If you add, rename, or delete a test in `detox/test/e2e` suite, you should follo
 
 1. In `detox/test` project, build the ios project with `npm run build:ios`.
 2. Run all end-to-end tests on iOS with `npm run e2e:ios`.
-4. In `detox/test` project, build the android project with `npm run build:android`
-5. Run all end-to-end tests on Android with `npm run e2e:android`.
+3. In `detox/test` project, build the android project with `npm run build:android`
+4. Run all end-to-end tests on Android with `npm run e2e:android`.
 
 #### 3. Android Native tests
 
