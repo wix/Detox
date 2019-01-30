@@ -8,4 +8,6 @@ exports[`globals sanitize_greyContentEdge should fail with unknown value 1`] = `
 
 exports[`globals sanitize_greyDirection should fail with unknown value 1`] = `"GREYAction.GREYDirection must be a 'left'/'right'/'up'/'down', got kittens"`;
 
+exports[`globals sanitize_greyPinchDirection should fail with unknown value 1`] = `"GREYAction.GREYPinchDirection must be a 'outward'/'inward', got kittens"`;
+
 exports[`globals sanitize_uiAccessibilityTraits should throw if unknown trait is accessed 1`] = `"Unknown trait 'unknown', see list in https://facebook.github.io/react-native/docs/accessibility.html#accessibilitytraits-ios"`;

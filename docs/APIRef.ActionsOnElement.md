@@ -24,6 +24,7 @@ Actions are functions that emulate user behavior. They are being performed on ma
 - [`.scrollTo()`](#scrolltoedge)
 - [`.swipe()`](#swipedirection-speed-percentage)
 - [`.setColumnToValue()`](#setcolumntovaluecolumnvalue--ios-only) **iOS only**
+- [`.pinchWithAngle()`](#pinchWithAngle--ios-only) **iOS only**
 
 
 ### `tap()`
@@ -125,7 +126,7 @@ await element(by.id('scrollView')).swipe('down');
 await element(by.id('scrollView')).swipe('down', 'fast');
 await element(by.id('scrollView')).swipe('down', 'fast', 0.5);
 ```
-### `setColumnToValue(column,value)`  iOS only
+### `setColumnToValue(column, value)`  iOS only
 
 column - date picker column index<br>
 value - string value to set in column<br>
@@ -134,4 +135,15 @@ value - string value to set in column<br>
 await expect(element(by.type('UIPickerView'))).toBeVisible();
 await element(by.type('UIPickerView')).setColumnToValue(1,"6");
 await element(by.type('UIPickerView')).setColumnToValue(2,"34");
+```
+
+### `pinchWithAngle(direction, speed, angle)`  iOS only
+
+direction - inward/outward<br>
+speed - slow/fast - default is slow<br>
+angle - value in radiant - default is 0<br>
+
+```js
+await expect(element(by.id('PinchableScrollView'))).toBeVisible();
+await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0);
 ```

@@ -460,6 +460,25 @@ class GREYMatchers {
     };
   }
 
+  /*Matcher that matches UIStepper with value as @c value.
+  
+  @param value A value that the UIStepper should be checked for.
+  
+  @return A matcher for checking UIStepper values.*/
+  static matcherForStepperValue(value) {
+    return {
+      target: {
+        type: "Class",
+        value: "GREYMatchers"
+      },
+      method: "matcherForStepperValue:",
+      args: [{
+        type: "NSNumber",
+        value: value
+      }]
+    };
+  }
+
   /*Matcher that matches a UISlider's value.
   
   @param valueMatcher A matcher for the UISlider's value. You must provide a valid
@@ -554,6 +573,31 @@ class GREYMatchers {
       },
       method: "matcherForNotNil",
       args: []
+    };
+  }
+
+  /*A Matcher for NSNumbers that matches when the examined number is within a specified @c delta
+  from the specified value.
+  
+  @param value The expected value of the number being matched.
+  
+  @param delta The delta within which matches are allowed
+  
+  @return A matcher that checks if a number is close to a specified @c value.*/
+  static matcherForCloseToDelta(value, delta) {
+    return {
+      target: {
+        type: "Class",
+        value: "GREYMatchers"
+      },
+      method: "matcherForCloseTo:delta:",
+      args: [{
+        type: "NSNumber",
+        value: value
+      }, {
+        type: "NSNumber",
+        value: delta
+      }]
     };
   }
 
