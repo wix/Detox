@@ -4,7 +4,7 @@ const path = require('path');
 function callCli(modulePath, cmd) {
   const parser = yargs
     .scriptName('detox')
-    .command(require(path.join(__dirname, "local-cli", modulePath)))
+    .command(require(path.join(__dirname, "../local-cli", modulePath)))
     .help();
 
   return new Promise((resolve, reject) => {
