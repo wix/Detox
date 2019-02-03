@@ -36,7 +36,12 @@ detox [options] [command]
 
 ## Configuration Options
 
-Every flag can be passed in different ways, this section will show how `detox test --record-videos failing` can be expressed differently. Please note that you can use any combination of the usages below.
+Every flag can be passed in different ways, this section will show how `detox test --record-videos failing` can be expressed differently. Please note that you can use any combination of the usages below. Please note the order of precedence:
+
+1. Command line args
+2. Environment variables
+3. Config file / package.json field
+4. Configured defaults
 
 ### Environment Varables
 
