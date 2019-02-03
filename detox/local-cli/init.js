@@ -21,20 +21,20 @@ module.exports.handler = function main(argv) {
   console.log("init handler", argv)
   switch (argv.runner) {
     case "mocha":
-    createMochaFolderE2E();
-    patchTestRunnerFieldInPackageJSON("mocha");
+      createMochaFolderE2E();
+      patchTestRunnerFieldInPackageJSON("mocha");
     break;
     case "jest":
-    createJestFolderE2E();
-    patchTestRunnerFieldInPackageJSON("jest");
+      createJestFolderE2E();
+      patchTestRunnerFieldInPackageJSON("jest");
     break;
     default:
-    log.error(PREFIX, "Convenience scaffolding for `%s` test runner is not supported currently.\n", runner);
-    log.info(PREFIX, "Supported runners at the moment are `mocha` and `jest`:");
-    log.info(PREFIX, "* detox init -r mocha");
-    log.info(PREFIX, "* detox init -r jest\n");
-    log.info(PREFIX, "If it is not a typo, and you plan to work with `%s` runner, then you have to create test setup files manually.", runner);
-    log.info(PREFIX, "HINT: Try running one of the commands above, watch what it does, and do the similar steps for your use case.");
+      log.error(PREFIX, "Convenience scaffolding for `%s` test runner is not supported currently.\n", runner);
+      log.info(PREFIX, "Supported runners at the moment are `mocha` and `jest`:");
+      log.info(PREFIX, "* detox init -r mocha");
+      log.info(PREFIX, "* detox init -r jest\n");
+      log.info(PREFIX, "If it is not a typo, and you plan to work with `%s` runner, then you have to create test setup files manually.", runner);
+      log.info(PREFIX, "HINT: Try running one of the commands above, watch what it does, and do the similar steps for your use case.");
     
     break;
   }
