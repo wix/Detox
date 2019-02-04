@@ -140,10 +140,10 @@ A common use-case, is adding identifiers to list items. testIDs for FlatList ite
 	```jsx
 	render() {
 	  return (
-	    <View>
+	    <View
 	      testID={'listitem' + this.props.index}
 	      ...
-	    </View>
+	    />
 	  );
 	}
 	```
