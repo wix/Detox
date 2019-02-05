@@ -19,6 +19,7 @@ const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const sleep = require('../../utils/sleep');
 const retry = require('../../utils/retry');
 const { interruptProcess, spawnAndLog } = require('../../utils/exec');
+const AndroidExpect = require('../../android/expect');
 
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
 
@@ -26,9 +27,8 @@ class AndroidDriver extends DeviceDriverBase {
   constructor(config) {
     super(config);
 
-    this.expect = require('../../android/expect');
     this.invocationManager = new InvocationManager(this.client);
-    this.expect.setInvocationManager(this.invocationManager);
+    this.expect = new AndroidExpect(this.invocationManager);
 
     this.adb = new ADB();
     this.aapt = new AAPT();
