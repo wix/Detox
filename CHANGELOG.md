@@ -1,5 +1,22 @@
 # Change Log
 
+## [10.0.5](https://github.com/wix/Detox/tree/10.0.4) (2019-01-28)
+[Full Changelog](https://github.com/wix/Detox/compare/10.0.2...10.0.5)
+
+**Fixed Bugs**
+
+- Idle timer shadows busy timers at rare cases [\#1115](https://github.com/wix/Detox/issues/1115)
+
+**Closed Issues**
+
+- Running Detox build command shows following ERROR \#detox [\#1123](https://github.com/wix/Detox/issues/1123)
+- Improve Mocking Documentation to include `detox build` [\#1116](https://github.com/wix/Detox/issues/1116)
+
+**Merged Pull Requests**
+
+- Fix issues related to single-task activities [\#1128](https://github.com/wix/Detox/pull/1128) ([d4vidi](https://github.com/d4vidi))
+-  Allow Regular Expressions in Jest Runner [\#1083](https://github.com/wix/Detox/pull/1083) ([RCiesielczuk](https://github.com/RCiesielczuk))
+
 ## [10.0.2](https://github.com/wix/Detox/tree/10.0.2) (2019-01-14)
 [Full Changelog](https://github.com/wix/Detox/compare/9.1.2...10.0.2)
 
@@ -9,10 +26,6 @@
 - Run individual Detox test [\#536](https://github.com/wix/Detox/issues/536)
 - Expectation/matcher for the app being in background? [\#226](https://github.com/wix/Detox/issues/226)
 - CLI: Add pass through test runner arguments  [\#1025](https://github.com/wix/Detox/pull/1025) ([EdwardDrapkin](https://github.com/EdwardDrapkin))
-
-**Fixed Bugs**
-
-- Idle timer shadows busy timers at rare cases [\#1115](https://github.com/wix/Detox/issues/1115)
 
 **Closed Issues**
 

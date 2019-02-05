@@ -145,8 +145,9 @@ function runJest() {
 
   const platformString = platform ? shellQuote(`--testNamePattern=^((?!${getPlatformSpecificString(platform)}).)*$`) : '';
   const binPath = path.join('node_modules', '.bin', 'jest');
+  const quotedTestFolder = `"${testFolder}"`
   const color = program.color ? '' : ' --no-color';
-  const command = `${binPath} ${testFolder} ${configFile}${color} --maxWorkers=${program.workers} ${platformString} ${collectExtraArgs()}`;
+  const command = `${binPath} ${quotedTestFolder} ${configFile}${color} --maxWorkers=${program.workers} ${platformString} ${collectExtraArgs()}`;
   const detoxEnvironmentVariables = {
     configuration: program.configuration,
     loglevel: program.loglevel,

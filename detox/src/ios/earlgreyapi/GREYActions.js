@@ -35,6 +35,17 @@ function sanitize_greyContentEdge(action) {
       throw new Error(`GREYAction.GREYContentEdge must be a 'left'/'right'/'top'/'bottom', got ${action}`);
   }
 } 
+function sanitize_greyPinchDirection(action) {
+  switch (action) {
+    case 'outward':
+      return 1;
+    case 'inward':
+      return 2;
+
+    default:
+      throw new Error(`GREYAction.GREYPinchDirection must be a 'outward'/'inward', got ${action}`);
+  }
+} 
 class GREYActions {
   /*@return A GREYAction that performs multiple taps of a specified @c count.*/
   static actionForMultipleTapsWithCount(count) {
@@ -491,6 +502,78 @@ class GREYActions {
       }, {
         type: "CGFloat",
         value: yOriginStartPercentage
+      }]
+    };
+  }
+
+  /*Returns an action that pinches view quickly in the specified @c direction and @c angle.
+  
+  @param  pinchDirection The direction of the pinch action.
+  @param  angle          The angle of the pinch action in radians.
+  Use @c kGREYPinchAngleDefault for the default angle (currently set to
+  30 degrees).
+  
+  @return A GREYAction that performs a fast pinch on the view in the specified @c direction.*/
+  static actionForPinchFastInDirectionWithAngle(pinchDirection, angle) {
+    if (!["outward", "inward"].some(option => option === pinchDirection)) throw new Error("pinchDirection should be one of [outward, inward], but got " + pinchDirection);
+    return {
+      target: {
+        type: "Class",
+        value: "GREYActions"
+      },
+      method: "actionForPinchFastInDirection:withAngle:",
+      args: [{
+        type: "NSInteger",
+        value: sanitize_greyPinchDirection(pinchDirection)
+      }, {
+        type: "NSNumber",
+        value: angle
+      }]
+    };
+  }
+
+  /*Returns an action that pinches view slowly in the specified @c direction and @c angle.
+  
+  @param  pinchDirection The direction of the pinch action.
+  @param  angle          The angle of the pinch action in radians.
+  Use @c kGREYPinchAngleDefault for the default angle (currently set to
+  30 degrees).
+  
+  @return A GREYAction that performs a slow pinch on the view in the specified @c direction.*/
+  static actionForPinchSlowInDirectionWithAngle(pinchDirection, angle) {
+    if (!["outward", "inward"].some(option => option === pinchDirection)) throw new Error("pinchDirection should be one of [outward, inward], but got " + pinchDirection);
+    return {
+      target: {
+        type: "Class",
+        value: "GREYActions"
+      },
+      method: "actionForPinchSlowInDirection:withAngle:",
+      args: [{
+        type: "NSInteger",
+        value: sanitize_greyPinchDirection(pinchDirection)
+      }, {
+        type: "NSNumber",
+        value: angle
+      }]
+    };
+  }
+
+  /*Returns an action that changes the value of UIStepper to @c value by tapping the appropriate
+  button multiple times.
+  
+  @param value The value to change the UIStepper to.
+  
+  @return A GREYAction that sets the given @c value on a stepper.*/
+  static actionForSetStepperValue(value) {
+    return {
+      target: {
+        type: "Class",
+        value: "GREYActions"
+      },
+      method: "actionForSetStepperValue:",
+      args: [{
+        type: "NSNumber",
+        value: value
       }]
     };
   }

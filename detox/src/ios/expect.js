@@ -82,6 +82,22 @@ class MultiTapAction extends Action {
   }
 }
 
+class PinchAction extends Action {
+  constructor(direction, speed, angle) {
+    super();
+    if (typeof direction !== 'string') throw new Error(`PinchAction ctor 1st argument must be a string, got ${typeof direction}`);
+    if (typeof speed !== 'string') throw new Error(`PinchAction ctor 2nd argument must be a string, got ${typeof speed}`);
+    if (typeof angle !== 'number') throw new Error(`PinchAction ctor 3nd argument must be a number, got ${typeof angle}`);
+    if (speed == 'fast') {
+      this._call = invoke.callDirectly(GreyActions.actionForPinchFastInDirectionWithAngle(direction, angle));
+    } else if (speed == 'slow') {
+      this._call = invoke.callDirectly(GreyActions.actionForPinchSlowInDirectionWithAngle(direction, angle));
+    } else {
+      throw new Error(`PinchAction speed must be a 'fast'/'slow', got ${speed}`);
+    }
+  }
+}
+
 class TypeTextAction extends Action {
   constructor(value) {
     super();
@@ -292,6 +308,9 @@ class Element {
   }
   async clearText() {
     return await new ActionInteraction(this, new ClearTextAction()).execute();
+  }
+  async pinchWithAngle(direction, speed = 'slow', angle = 0) {
+    return await new ActionInteraction(this, new PinchAction(direction, speed, angle)).execute();
   }
   async scroll(amount, direction = 'down') {
     // override the user's element selection with an extended matcher that looks for UIScrollView children

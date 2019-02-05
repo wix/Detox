@@ -1,6 +1,6 @@
+const _ = require('lodash');
 const fs = require('fs-extra');
 const plockfile = require('proper-lockfile');
-const _ = require('lodash');
 const retry = require('../utils/retry');
 const environment = require('../utils/environment');
 const DEVICE_LOCK_FILE_PATH = environment.getDeviceLockFilePath();

@@ -94,6 +94,13 @@ export default class ActionsScreen extends Component {
           }>
           </ScrollView>
         </View>
+        <View>
+          <ScrollView testID='PinchableScrollView' minimumZoomScale={1} maximumZoomScale={10}>
+            <View>
+              <View testID='UniqueId007' style={{ height: 30, width: 30, backgroundColor:'red' }} />
+            </View>
+          </ScrollView>
+        </View>
       </View>
     );
   }
