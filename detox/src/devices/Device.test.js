@@ -17,9 +17,10 @@ describe('Device', () => {
   let driverMock;
 
   beforeEach(async () => {
+    jest.mock('fs');
+    jest.mock('proper-lockfile');
     jest.mock('../utils/logger');
 
-    jest.mock('fs');
     fs = require('fs');
 
     jest.mock('../utils/argparse');

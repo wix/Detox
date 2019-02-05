@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const exec = require('../../utils/exec');
+const log = require('../../utils/logger').child({ __filename });
 const environment = require('../../utils/environment');
 
 class AppleSimUtils {
@@ -253,8 +254,6 @@ class AppleSimUtils {
   async _launchMagically(frameworkPath, logsInfo, udid, bundleId, args, languageAndLocale) {
     const statusLogs = {
       trying: `Launching ${bundleId}...`,
-      successful: `${bundleId} launched. The stdout and stderr logs were recreated, you can watch them with:\n` +
-      `        tail -F ${logsInfo.absJoined}`
     };
 
     let dylibs = `${frameworkPath}/Detox`;
@@ -275,7 +274,12 @@ class AppleSimUtils {
         launchBin += ` -AppleLocale ${languageAndLocale.locale}`;
       }
 
-    return await exec.execWithRetriesAndLogs(launchBin, undefined, statusLogs, 1);
+    const result = await exec.execWithRetriesAndLogs(launchBin, undefined, statusLogs, 1);
+    
+    log.info(`${bundleId} launched. The stdout and stderr logs were recreated, you can watch them with:\n` +
+             `        tail -F ${logsInfo.absJoined}`);
+
+    return result;
   }
 
   _parseLaunchId(result) {
