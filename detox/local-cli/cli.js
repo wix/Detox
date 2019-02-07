@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 const yargs = require('yargs');
 yargs
   .scriptName('detox')
@@ -8,7 +7,7 @@ yargs
   .config('config', 'configuration either as JSON or as Javascript file', function(configPath) {
     return require(configPath);
   })
-  .commandDir('local-cli', {
+  .commandDir('./', {
     exclude: function(path) {
       // This is a test file
       if (/\.test\.js$/.test(path)) {

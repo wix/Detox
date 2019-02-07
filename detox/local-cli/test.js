@@ -34,7 +34,7 @@ module.exports.builder = {
     alias: 'c',
     group: 'Configuration',
     describe:
-      "Select a device configuration from your defined configurations, if not supplied, and there's only one configuration, detox will default to it",
+      'Select a device configuration from your defined configurations, if not supplied, and there\'s only one configuration, detox will default to it',
     default: getDefaultConfiguration()
   },
   reuse: {
@@ -65,7 +65,7 @@ module.exports.builder = {
     group: 'Debugging',
     choices: ['failing', 'all', 'none'],
     default: 'none',
-    describe: '[EXPERIMENTAL] Save logs during each test to artifacts directory. Pass "failing" to save logs of failing tests only.'
+    describe: 'Save logs during each test to artifacts directory. Pass "failing" to save logs of failing tests only.'
   },
   'take-screenshots': {
     alias: 'takeScreenshots',
@@ -73,7 +73,7 @@ module.exports.builder = {
     choices: ['failing', 'all', 'none'],
     default: 'none',
     describe:
-      '[EXPERIMENTAL] Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only.'
+      'Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only.'
   },
   'record-videos': {
     alias: 'recordVideos',
@@ -81,7 +81,7 @@ module.exports.builder = {
     choices: ['failing', 'all', 'none'],
     default: 'none',
     describe:
-      '[EXPERIMENTAL] Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only.'
+      'Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only.'
   },
   file: {
     alias: 'f',
