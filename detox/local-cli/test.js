@@ -149,13 +149,14 @@ module.exports.handler = function main(program) {
     }
   }
 
+  const blacklistedArgs = ['configurations', '$0']
   function collectExtraArgs() {
     const aliasKeys = Object.values(module.exports.builder).reduce(
       (carry, item) => [].concat(carry, typeof item.alias === 'string' ? [item.alias] : item.alias),
       []
     );
 
-    const knownKeys = [].concat(Object.keys(module.exports.builder), aliasKeys);
+    const knownKeys = [].concat(Object.keys(module.exports.builder), aliasKeys, blacklistedArgs);
 
     const clone = Object.assign({}, program);
     knownKeys.forEach(key => delete clone[key]);
