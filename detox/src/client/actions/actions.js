@@ -139,6 +139,16 @@ class CurrentStatus extends Action {
   }
 }
 
+class TestLifecycleEvent extends Action {
+  constructor(params) {
+    super('testLifecycleEvent', params);
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'testLifecycleEventDone');
+  }
+}
+
 class AppWillTerminateWithError extends Action {
   constructor(params) {
     super(params);
@@ -162,5 +172,6 @@ module.exports = {
   DeliverPayload,
   CurrentStatus,
   Shake,
+  TestLifecycleEvent,
   AppWillTerminateWithError
 };

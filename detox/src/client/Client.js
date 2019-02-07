@@ -62,6 +62,10 @@ class Client {
     await this.sendAction(new actions.Shake());
   }
 
+  async testLifecycleEvent(event) {
+    await this.sendAction(new actions.TestLifecycleEvent(event));
+  }
+
   async deliverPayload(params) {
     await this.sendAction(new actions.DeliverPayload(params));
   }
