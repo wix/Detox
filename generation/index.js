@@ -13,7 +13,8 @@ const iosFiles = {
   '../detox/ios/EarlGrey/EarlGrey/Synchronization/GREYCondition.h': '../detox/src/ios/earlgreyapi/GREYCondition.js',
   '../detox/ios/Detox/GREYConfiguration+Detox.h': '../detox/src/ios/earlgreyapi/GREYConfigurationDetox.js',
   '../detox/ios/EarlGrey/EarlGrey/Common/GREYConfiguration.h': '../detox/src/ios/earlgreyapi/GREYConfiguration.js',
-  '../detox/ios/EarlGrey/EarlGrey/Core/EarlGreyImpl.h': '../detox/src/ios/earlgreyapi/EarlGreyImpl.js'
+  '../detox/ios/EarlGrey/EarlGrey/Core/EarlGreyImpl.h': '../detox/src/ios/earlgreyapi/EarlGreyImpl.js',
+  '../detox/ios/Detox/GREYActions+Detox.h': '../detox/src/ios/earlgreyapi/GREYActions+Detox.js'
 };
 
 generateIOSAdapters(iosFiles);
