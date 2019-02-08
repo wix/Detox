@@ -25,6 +25,7 @@ Actions are functions that emulate user behavior. They are being performed on ma
 - [`.swipe()`](#swipedirection-speed-percentage)
 - [`.setColumnToValue()`](#setcolumntovaluecolumnvalue--ios-only) **iOS only**
 - [`.pinchWithAngle()`](#pinchWithAngle--ios-only) **iOS only**
+- [`.setDatePickerDate()`](#setdatepickerdate--ios-only) **iOS only**
 
 
 ### `tap()`
@@ -146,4 +147,14 @@ angle - value in radiant - default is 0<br>
 ```js
 await expect(element(by.id('PinchableScrollView'))).toBeVisible();
 await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0);
+```
+
+### `setDatePickerDate(dateString, dateFormat)`  iOS only
+
+dateString - string representing a date in the supplied dateFormat<br>
+dateFormat - format for the dateString supplied<br>
+
+```js
+await expect(element(by.type('UIDatePicker'))).toBeVisible();
+await element(by.type('UIDatePicker)).setDatePickerDate('2019-02-06T05:10:00-08:00', "yyyy-MM-dd'T'HH:mm:ssZZZZZ");
 ```
