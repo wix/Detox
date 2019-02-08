@@ -185,7 +185,6 @@ class SwipeAction extends Action {
 class ScrollColumnToValue extends Action {
   constructor(column,value) {
     super();
-    this._call = invoke.callDirectly(GreyActions.actionForSetPickerColumnToValue(column,value))
     this._call = invoke.callDirectly(GreyActions.actionForSetPickerColumnToValue(column, value));
   }
 }
