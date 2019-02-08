@@ -12,7 +12,7 @@
 
 @implementation GREYActions (Detox)
 
-+ (id<GREYAction>)detoxSetDatePickerDateIOSOnly:(NSString *)dateString withFormat:(NSString *)dateFormat
++ (id<GREYAction>)detoxSetDatePickerDate:(NSString *)dateString withFormat:(NSString *)dateFormat
 {
 	NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
   	formatter.dateFormat = dateFormat;

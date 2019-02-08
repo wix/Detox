@@ -11,7 +11,7 @@ describe(':ios: DatePicker', () => {
     });
 
     it('can select dates on a UIDatePicker', async () => {
-      await element(by.type('UIDatePicker')).setDatePickerDateIOSOnly('2019-02-06T05:10:00-08:00', "yyyy-MM-dd'T'HH:mm:ssZZZZZ");
+      await element(by.type('UIDatePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', "yyyy-MM-dd'T'HH:mm:ssZZZZZ");
 
       await expect(element(by.id('dateTimeLabel'))).toHaveText('choosenDateTime is 2-6-2019 5:10');
     });

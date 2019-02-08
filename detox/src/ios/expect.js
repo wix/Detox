@@ -193,7 +193,7 @@ class ScrollColumnToValue extends Action {
 class SetDatePickerDate extends Action {
   constructor(dateString, dateFormat) {
     super();
-    this._call = invoke.callDirectly(GreyActionsDetox.detoxSetDatePickerDateIOSOnlyWithFormat(dateString, dateFormat));
+    this._call = invoke.callDirectly(GreyActionsDetox.detoxSetDatePickerDateWithFormat(dateString, dateFormat));
   }
 }
 
@@ -339,7 +339,7 @@ class Element {
   async setColumnToValue(column,value) {
     return await new ActionInteraction(this, new ScrollColumnToValue(column, value)).execute();
   }
-  async setDatePickerDateIOSOnly(dateString, dateFormat) {
+  async setDatePickerDate(dateString, dateFormat) {
     return await new ActionInteraction(this, new SetDatePickerDate(dateString, dateFormat)).execute();
   }
 }

@@ -7,7 +7,7 @@
 
 
 class GREYActions {
-  static detoxSetDatePickerDateIOSOnlyWithFormat(dateString, dateFormat) {
+  static detoxSetDatePickerDateWithFormat(dateString, dateFormat) {
     if (typeof dateString !== "string") throw new Error("dateString should be a string, but got " + (dateString + (" (" + (typeof dateString + ")"))));
     if (typeof dateFormat !== "string") throw new Error("dateFormat should be a string, but got " + (dateFormat + (" (" + (typeof dateFormat + ")"))));
     return {
@@ -15,7 +15,7 @@ class GREYActions {
         type: "Class",
         value: "GREYActions"
       },
-      method: "detoxSetDatePickerDateIOSOnly:withFormat:",
+      method: "detoxSetDatePickerDate:withFormat:",
       args: [{
         type: "NSString",
         value: dateString
