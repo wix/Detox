@@ -15,6 +15,7 @@ const GreyActions = require('./earlgreyapi/GREYActions');
 const GreyInteraction = require('./earlgreyapi/GREYInteraction');
 const GreyCondition = require('./earlgreyapi/GREYCondition');
 const GreyConditionDetox = require('./earlgreyapi/GREYConditionDetox');
+const GreyActionsDetox = require('./earlgreyapi/GREYActions+Detox');
 
 let invocationManager;
 
@@ -184,7 +185,14 @@ class SwipeAction extends Action {
 class ScrollColumnToValue extends Action {
   constructor(column,value) {
     super();
-    this._call = invoke.callDirectly(GreyActions.actionForSetPickerColumnToValue(column,value))
+    this._call = invoke.callDirectly(GreyActions.actionForSetPickerColumnToValue(column, value));
+  }
+}
+
+class SetDatePickerDate extends Action {
+  constructor(dateString, dateFormat) {
+    super();
+    this._call = invoke.callDirectly(GreyActionsDetox.detoxSetDatePickerDateWithFormat(dateString, dateFormat));
   }
 }
 
@@ -329,6 +337,9 @@ class Element {
   }
   async setColumnToValue(column,value) {
     return await new ActionInteraction(this, new ScrollColumnToValue(column, value)).execute();
+  }
+  async setDatePickerDate(dateString, dateFormat) {
+    return await new ActionInteraction(this, new SetDatePickerDate(dateString, dateFormat)).execute();
   }
 }
 

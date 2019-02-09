@@ -8,6 +8,8 @@
 
 #import "DTXMethodInvocation.h"
 @import EarlGrey;
+#import <EarlGrey/GreyActions.h>
+#import "GREYActions+Detox.h"
 
 @implementation DTXMethodInvocation
 

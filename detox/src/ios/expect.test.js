@@ -35,6 +35,7 @@ describe('expect', async () => {
   it(`element by type`, async () => {
     await e.expect(e.element(e.by.type('test'))).toBeVisible();
     await e.element(e.by.type('UIPickerView')).setColumnToValue(1,"6");
+    await e.element(e.by.type('UIPickerView')).setDatePickerDate('2019-2-8T05:10:00-08:00', "yyyy-MM-dd'T'HH:mm:ssZZZZZ");
   });
 
   it(`element by traits`, async () => {
@@ -152,6 +153,8 @@ describe('expect', async () => {
     await expectToThrow(() => e.element(e.by.id('ScrollView799')).swipe('down', 'NotFastNorSlow'));
     await expectToThrow(() => e.element(e.by.id('ScrollView799')).swipe('down', 'NotFastNorSlow', 0.9));
     await expectToThrow(() => e.element(e.by.id('ScrollView799')).atIndex('NaN'));
+    await expectToThrow(() => e.element(e.by.type('UIPickerView')).setDatePickerDate(0, 'mm'));
+    await expectToThrow(() => e.element(e.by.type('UIPickerView')).setDatePickerDate('something', 0));
   });
 
   it(`exportGlobals() should export api functions`, async () => {
