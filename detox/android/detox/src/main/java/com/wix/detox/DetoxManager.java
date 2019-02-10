@@ -1,6 +1,5 @@
 package com.wix.detox;
 
-import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,6 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -42,6 +42,9 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     private WebSocketClient wsClient;
     private Handler handler;
+
+    private Map<String, ExternalAction> externalActions = new HashMap<>();
+    private ReadyAction readyAction = null;
 
     private Context reactNativeHostHolder;
 
@@ -68,12 +71,9 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     void start() {
         if (detoxServerUrl != null && detoxSessionId != null) {
-            if (ReactNativeSupport.isReactNativeApp()) {
-                ReactNativeCompat.waitForReactNativeLoad(reactNativeHostHolder);
-            }
-
-            wsClient = new WebSocketClient(this);
-            wsClient.connectToServer(detoxServerUrl, detoxSessionId);
+            initReactNativeIfNeeded();
+            initWSClient();
+            initActionHandlers();
         }
     }
 
@@ -102,6 +102,13 @@ class DetoxManager implements WebSocketClient.ActionHandler {
         handler.post(new Runnable() {
             @Override
             public void run() {
+
+                final ExternalAction actionHandler = externalActions.get(type);
+                if (actionHandler != null) {
+                    actionHandler.perform(params, messageId);
+                    return;
+                }
+
                 switch (type) {
                     case "invoke":
                         try {
@@ -126,9 +133,6 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                             m.put("details", e.getMessage());
                             wsClient.sendAction("testFailed", m, messageId);
                         }
-                        break;
-                    case "isReady":
-                        wsClient.sendAction("ready", Collections.emptyMap(), messageId);
                         break;
                     case "cleanup":
                         ReactNativeSupport.currentReactContext = null;
@@ -213,12 +217,31 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     @Override
     public void onConnect() {
-        wsClient.sendAction("ready", Collections.emptyMap(), -1000L);
+        readyAction.perform("", -1000L);
     }
 
     @Override
     public void onClosed() {
         stop();
+    }
+
+    private void initReactNativeIfNeeded() {
+        if (ReactNativeSupport.isReactNativeApp()) {
+            ReactNativeCompat.waitForReactNativeLoad(reactNativeHostHolder);
+        }
+    }
+
+    private void initWSClient() {
+        wsClient = new WebSocketClient(this);
+        wsClient.connectToServer(detoxServerUrl, detoxSessionId);
+    }
+
+    private void initActionHandlers() {
+        final TestHelper testHelper = new TestHelper();
+
+        readyAction = new ReadyAction(wsClient, testHelper);
+        externalActions.clear();
+        externalActions.put("isReady", readyAction);
     }
 
     private static final class SyncRunnable implements Runnable {
