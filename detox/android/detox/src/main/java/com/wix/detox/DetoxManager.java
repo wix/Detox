@@ -10,7 +10,6 @@ import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingResource;
 import android.util.Log;
 
-import com.wix.detox.espresso.UiAutomatorHelper;
 import com.wix.detox.systeminfo.Environment;
 import com.wix.invoke.MethodInvocation;
 
@@ -103,12 +102,13 @@ class DetoxManager implements WebSocketClient.ActionHandler {
             @Override
             public void run() {
 
-                final ExternalAction actionHandler = externalActions.get(type);
-                if (actionHandler != null) {
-                    actionHandler.perform(params, messageId);
+                final ExternalAction externalAction = externalActions.get(type);
+                if (externalAction != null) {
+                    externalAction.perform(params, messageId);
                     return;
                 }
 
+                // TODO migrate these to external actions
                 switch (type) {
                     case "invoke":
                         try {
@@ -147,11 +147,6 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                             Log.e(LOG_TAG, "cleanup cmd doesn't have stopRunner param");
                         }
                         wsClient.sendAction("cleanupDone", Collections.emptyMap(), messageId);
-                        break;
-                    case "reactNativeReload":
-                        UiAutomatorHelper.espressoSync();
-                        ReactNativeSupport.reloadApp(reactNativeHostHolder);
-                        wsClient.sendAction("ready", Collections.emptyMap(), messageId);
                         break;
                     case "currentStatus":
                         // Ugly, deeply nested, because have to follow
@@ -237,11 +232,12 @@ class DetoxManager implements WebSocketClient.ActionHandler {
     }
 
     private void initActionHandlers() {
-        final TestHelper testHelper = new TestHelper();
+        final ActionsFacade actionsFacade = new ActionsFacade();
 
-        readyAction = new ReadyAction(wsClient, testHelper);
+        readyAction = new ReadyAction(wsClient, actionsFacade);
         externalActions.clear();
         externalActions.put("isReady", readyAction);
+        externalActions.put("reactNativeReload", new ReactNativeReloadAction(reactNativeHostHolder, wsClient, actionsFacade));
     }
 
     private static final class SyncRunnable implements Runnable {

@@ -1,19 +1,32 @@
 package com.wix.detox
 
-import android.support.test.espresso.Espresso
+import android.content.Context
 import java.util.*
-
-class TestHelper {
-    fun awaitIdle() = Espresso.onIdle()
-}
 
 interface ExternalAction {
     fun perform(params: String, messageId: Long)
 }
 
-class ReadyAction(private val wsClientMock: WebSocketClient, private val testHelper: TestHelper) : ExternalAction {
+class ReadyAction(
+        private val wsClient: WebSocketClient,
+        private val actionsFacade: ActionsFacade)
+    : ExternalAction {
+
     override fun perform(params: String, messageId: Long) {
-        testHelper.awaitIdle()
-        wsClientMock.sendAction("ready", Collections.emptyMap<Any, Any>(), messageId)
+        actionsFacade.awaitIdle()
+        wsClient.sendAction("ready", Collections.emptyMap<Any, Any>(), messageId)
+    }
+}
+
+class ReactNativeReloadAction(
+        private val rnContext: Context,
+        private val wsClient: WebSocketClient,
+        private val actionsFacade: ActionsFacade)
+    : ExternalAction {
+
+    override fun perform(params: String, messageId: Long) {
+        actionsFacade.syncIdle()
+        actionsFacade.reloadReactNative(rnContext)
+        wsClient.sendAction("ready", Collections.emptyMap<Any, Any>(), messageId)
     }
 }
