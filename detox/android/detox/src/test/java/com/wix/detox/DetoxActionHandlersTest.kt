@@ -8,32 +8,31 @@ import org.junit.Test
 import java.util.*
 import java.util.concurrent.Executors
 
-open class ExternalActionTestsBase {
+open class DetoxActionHandlerTestBase {
     val params = ""
     val messageId = 666L
 
     lateinit var rnContext: ReactContext
     lateinit var wsClientMock: WebSocketClient
-    lateinit var actionsFacade: ActionsFacade
+    lateinit var testEngineFacade: TestEngineFacade
 
     @Before open fun setUp() {
         rnContext = mock()
         wsClientMock = mock()
 
-        actionsFacade = mock()
-        whenever(actionsFacade.awaitIdle()).then {
+        testEngineFacade = mock()
+        whenever(testEngineFacade.awaitIdle()).then {
             synchronized(this) {}
         }
-        whenever(actionsFacade.syncIdle()).then {
+        whenever(testEngineFacade.syncIdle()).then {
             synchronized(this) {}
         }
     }
-
 }
 
-class ReadyActionTest : ExternalActionTestsBase() {
+class ReadyActionHandlerTest : DetoxActionHandlerTestBase() {
     @Test fun `should reply with a 'ready' ACK if ready`() {
-        uut().perform(params, messageId)
+        uut().handle(params, messageId)
         verify(wsClientMock).sendAction(eq("ready"), eq(Collections.emptyMap<Any, Any>()), eq(messageId))
     }
 
@@ -42,27 +41,27 @@ class ReadyActionTest : ExternalActionTestsBase() {
 
         synchronized(this) {
             executor.submit {
-                uut().perform(params, messageId)
+                uut().handle(params, messageId)
             }
             yieldToOtherThreads(executor)
-            verify(actionsFacade).awaitIdle()
+            verify(testEngineFacade).awaitIdle()
             verify(wsClientMock, never()).sendAction(any(), any(), any())
         }
         yieldToOtherThreads(executor)
         verify(wsClientMock, times(1)).sendAction(any(), any(), any())
     }
 
-    private fun uut() = ReadyAction(wsClientMock, actionsFacade)
+    private fun uut() = ReadyActionHandler(wsClientMock, testEngineFacade)
 }
 
-class ReactNativeReloadActionTest : ExternalActionTestsBase() {
+class ReactNativeReloadActionHandlerTest : DetoxActionHandlerTestBase() {
     @Test fun `should reload the app`() {
-        uut().perform(params, messageId)
-        verify(actionsFacade).reloadReactNative(rnContext)
+        uut().handle(params, messageId)
+        verify(testEngineFacade).reloadReactNative(rnContext)
     }
 
     @Test fun `should reply with a 'ready' ACK when ready`() {
-        uut().perform(params, messageId)
+        uut().handle(params, messageId)
         verify(wsClientMock).sendAction(eq("ready"), eq(Collections.emptyMap<Any, Any>()), eq(messageId))
     }
 
@@ -71,17 +70,17 @@ class ReactNativeReloadActionTest : ExternalActionTestsBase() {
 
         synchronized(this) {
             executor.submit {
-                uut().perform(params, messageId)
+                uut().handle(params, messageId)
             }
             yieldToOtherThreads(executor)
-            verify(actionsFacade).syncIdle()
-            verify(actionsFacade, never()).reloadReactNative(any())
+            verify(testEngineFacade).syncIdle()
+            verify(testEngineFacade, never()).reloadReactNative(any())
             verify(wsClientMock, never()).sendAction(any(), any(), any())
         }
         yieldToOtherThreads(executor)
-        verify(actionsFacade, times(1)).reloadReactNative(any())
+        verify(testEngineFacade, times(1)).reloadReactNative(any())
         verify(wsClientMock, times(1)).sendAction(any(), any(), any())
     }
 
-    private fun uut() = ReactNativeReloadAction(rnContext, wsClientMock, actionsFacade)
+    private fun uut() = ReactNativeReloadActionHandler(rnContext, wsClientMock, testEngineFacade)
 }

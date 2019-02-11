@@ -36,14 +36,15 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     private final static String DETOX_SERVER_ARG_KEY = "detoxServer";
     private final static String DETOX_SESSION_ID_ARG_KEY = "detoxSessionId";
+
     private String detoxServerUrl;
     private String detoxSessionId;
 
     private WebSocketClient wsClient;
     private Handler handler;
 
-    private Map<String, ExternalAction> externalActions = new HashMap<>();
-    private ReadyAction readyAction = null;
+    private Map<String, DetoxActionHandler> actionHandlers = new HashMap<>();
+    private ReadyActionHandler readyActionHandler = null;
 
     private Context reactNativeHostHolder;
 
@@ -102,9 +103,9 @@ class DetoxManager implements WebSocketClient.ActionHandler {
             @Override
             public void run() {
 
-                final ExternalAction externalAction = externalActions.get(type);
-                if (externalAction != null) {
-                    externalAction.perform(params, messageId);
+                final DetoxActionHandler handler = actionHandlers.get(type);
+                if (handler != null) {
+                    handler.handle(params, messageId);
                     return;
                 }
 
@@ -212,7 +213,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     @Override
     public void onConnect() {
-        readyAction.perform("", -1000L);
+        readyActionHandler.handle("", -1000L);
     }
 
     @Override
@@ -232,12 +233,12 @@ class DetoxManager implements WebSocketClient.ActionHandler {
     }
 
     private void initActionHandlers() {
-        final ActionsFacade actionsFacade = new ActionsFacade();
+        final TestEngineFacade testEngineFacade = new TestEngineFacade();
 
-        readyAction = new ReadyAction(wsClient, actionsFacade);
-        externalActions.clear();
-        externalActions.put("isReady", readyAction);
-        externalActions.put("reactNativeReload", new ReactNativeReloadAction(reactNativeHostHolder, wsClient, actionsFacade));
+        readyActionHandler = new ReadyActionHandler(wsClient, testEngineFacade);
+        actionHandlers.clear();
+        actionHandlers.put("isReady", readyActionHandler);
+        actionHandlers.put("reactNativeReload", new ReactNativeReloadActionHandler(reactNativeHostHolder, wsClient, testEngineFacade));
     }
 
     private static final class SyncRunnable implements Runnable {
