@@ -5,6 +5,7 @@ import android.view.Choreographer
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.modules.core.Timing
 import com.nhaarman.mockito_kotlin.*
+import com.wix.detox.UTHelpers.yieldToOtherThreads
 import org.assertj.core.api.Assertions.assertThat
 import org.joor.Reflect
 import org.junit.Before
@@ -12,7 +13,6 @@ import org.junit.Test
 import org.mockito.ArgumentMatchers
 import java.util.*
 import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 
 const val BUSY_INTERVAL_MS = 1500
 const val MEANINGFUL_TIMER_INTERVAL = BUSY_INTERVAL_MS
@@ -228,10 +228,10 @@ class ReactNativeTimersIdlingResourceTest {
             executor.submit {
                 isIdle = uut().isIdleNow
             }
-            executor.awaitTermination(100L, TimeUnit.MILLISECONDS)
+            yieldToOtherThreads(executor)
             assertThat(isIdle).isNull()
         }
-        executor.awaitTermination(100L, TimeUnit.MILLISECONDS)
+        yieldToOtherThreads(executor)
         assertThat(isIdle).isNotNull()
     }
 

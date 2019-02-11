@@ -1,6 +1,5 @@
 package com.wix.detox;
 
-import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,7 +10,6 @@ import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingResource;
 import android.util.Log;
 
-import com.wix.detox.espresso.UiAutomatorHelper;
 import com.wix.detox.systeminfo.Environment;
 import com.wix.invoke.MethodInvocation;
 
@@ -25,6 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -37,11 +36,15 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     private final static String DETOX_SERVER_ARG_KEY = "detoxServer";
     private final static String DETOX_SESSION_ID_ARG_KEY = "detoxSessionId";
+
     private String detoxServerUrl;
     private String detoxSessionId;
 
     private WebSocketClient wsClient;
     private Handler handler;
+
+    private Map<String, DetoxActionHandler> actionHandlers = new HashMap<>();
+    private ReadyActionHandler readyActionHandler = null;
 
     private Context reactNativeHostHolder;
 
@@ -68,12 +71,9 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     void start() {
         if (detoxServerUrl != null && detoxSessionId != null) {
-            if (ReactNativeSupport.isReactNativeApp()) {
-                ReactNativeCompat.waitForReactNativeLoad(reactNativeHostHolder);
-            }
-
-            wsClient = new WebSocketClient(this);
-            wsClient.connectToServer(detoxServerUrl, detoxSessionId);
+            initReactNativeIfNeeded();
+            initWSClient();
+            initActionHandlers();
         }
     }
 
@@ -102,6 +102,14 @@ class DetoxManager implements WebSocketClient.ActionHandler {
         handler.post(new Runnable() {
             @Override
             public void run() {
+
+                final DetoxActionHandler handler = actionHandlers.get(type);
+                if (handler != null) {
+                    handler.handle(params, messageId);
+                    return;
+                }
+
+                // TODO migrate these to external actions
                 switch (type) {
                     case "invoke":
                         try {
@@ -127,9 +135,6 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                             wsClient.sendAction("testFailed", m, messageId);
                         }
                         break;
-                    case "isReady":
-                        wsClient.sendAction("ready", Collections.emptyMap(), messageId);
-                        break;
                     case "cleanup":
                         ReactNativeSupport.currentReactContext = null;
                         try {
@@ -143,11 +148,6 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                             Log.e(LOG_TAG, "cleanup cmd doesn't have stopRunner param");
                         }
                         wsClient.sendAction("cleanupDone", Collections.emptyMap(), messageId);
-                        break;
-                    case "reactNativeReload":
-                        UiAutomatorHelper.espressoSync();
-                        ReactNativeSupport.reloadApp(reactNativeHostHolder);
-                        wsClient.sendAction("ready", Collections.emptyMap(), messageId);
                         break;
                     case "currentStatus":
                         // Ugly, deeply nested, because have to follow
@@ -213,12 +213,32 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     @Override
     public void onConnect() {
-        wsClient.sendAction("ready", Collections.emptyMap(), -1000L);
+        readyActionHandler.handle("", -1000L);
     }
 
     @Override
     public void onClosed() {
         stop();
+    }
+
+    private void initReactNativeIfNeeded() {
+        if (ReactNativeSupport.isReactNativeApp()) {
+            ReactNativeCompat.waitForReactNativeLoad(reactNativeHostHolder);
+        }
+    }
+
+    private void initWSClient() {
+        wsClient = new WebSocketClient(this);
+        wsClient.connectToServer(detoxServerUrl, detoxSessionId);
+    }
+
+    private void initActionHandlers() {
+        final TestEngineFacade testEngineFacade = new TestEngineFacade();
+
+        readyActionHandler = new ReadyActionHandler(wsClient, testEngineFacade);
+        actionHandlers.clear();
+        actionHandlers.put("isReady", readyActionHandler);
+        actionHandlers.put("reactNativeReload", new ReactNativeReloadActionHandler(reactNativeHostHolder, wsClient, testEngineFacade));
     }
 
     private static final class SyncRunnable implements Runnable {
