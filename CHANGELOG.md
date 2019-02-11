@@ -1,7 +1,36 @@
 # Change Log
 
-## [10.0.5](https://github.com/wix/Detox/tree/10.0.4) (2019-01-28)
-[Full Changelog](https://github.com/wix/Detox/compare/10.0.2...10.0.5)
+## [10.0.6](https://github.com/wix/Detox/tree/10.0.6) (2019-02-11)
+[Full Changelog](https://github.com/wix/Detox/compare/10.0.5...10.0.6)
+
+**Enhancements**
+
+- Improve the way we can interract with react-native-maps [\#1105](https://github.com/wix/Detox/issues/1105)
+
+**Fixed Bugs**
+
+- Resuming the app with a url causes detox to hang and time-out [\#1125](https://github.com/wix/Detox/issues/1125)
+
+**Closed Issues**
+
+- Scrolling and navigation takes too much time while running detox test in emulator  [\#1141](https://github.com/wix/Detox/issues/1141)
+- Bring back printing of device logs location [\#1110](https://github.com/wix/Detox/issues/1110)
+
+**Merged Pull Requests**
+
+- Idle wait before ready [\#1150](https://github.com/wix/Detox/pull/1150) ([d4vidi](https://github.com/d4vidi))
+- Select date on IOS UIDatePicker with actionForSetDate [\#1148](https://github.com/wix/Detox/pull/1148) ([matthewrfindley](https://github.com/matthewrfindley))
+- code: print simulator launch message to info [\#1127](https://github.com/wix/Detox/pull/1127) ([noomorph](https://github.com/noomorph))
+- iOS: Add pinch actions [\#1104](https://github.com/wix/Detox/pull/1104) ([sraikimaxime](https://github.com/sraikimaxime))
+
+## [10.0.5](https://github.com/wix/Detox/tree/10.0.5) (2019-01-28)
+[Full Changelog](https://github.com/wix/Detox/compare/10.0.4...10.0.5)
+
+## [10.0.4](https://github.com/wix/Detox/tree/10.0.4) (2019-01-28)
+[Full Changelog](https://github.com/wix/Detox/compare/10.0.3...10.0.4)
+
+## [10.0.3](https://github.com/wix/Detox/tree/10.0.3) (2019-01-28)
+[Full Changelog](https://github.com/wix/Detox/compare/10.0.2...10.0.3)
 
 **Fixed Bugs**
 
@@ -694,7 +723,7 @@
 - Add change log generation when publishing a version [\#409](https://github.com/wix/Detox/issues/409)
 
 ## [5.10.1](https://github.com/wix/Detox/tree/5.10.1) (2017-11-15)
-[Full Changelog](https://github.com/wix/Detox/compare/detox-server@2.1.0...5.10.1)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.10.0...5.10.1)
 
 **Fixed Bugs**
 
@@ -704,11 +733,11 @@
 
 - New demo project for react native jest [\#370](https://github.com/wix/Detox/pull/370) ([SMJ93](https://github.com/SMJ93))
 
-## [detox-server@2.1.0](https://github.com/wix/Detox/tree/detox-server@2.1.0) (2017-11-13)
-[Full Changelog](https://github.com/wix/Detox/compare/detox@5.10.0...detox-server@2.1.0)
-
 ## [detox@5.10.0](https://github.com/wix/Detox/tree/detox@5.10.0) (2017-11-13)
-[Full Changelog](https://github.com/wix/Detox/compare/detox@5.9.3...detox@5.10.0)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-server@2.1.0...detox@5.10.0)
+
+## [detox-server@2.1.0](https://github.com/wix/Detox/tree/detox-server@2.1.0) (2017-11-13)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.9.3...detox-server@2.1.0)
 
 **Enhancements**
 
@@ -748,7 +777,7 @@
 - Re-add matcher generation commits and add traits matcher to generated code [\#348](https://github.com/wix/Detox/pull/348) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
 
 ## [detox@5.9.0](https://github.com/wix/Detox/tree/detox@5.9.0) (2017-10-18)
-[Full Changelog](https://github.com/wix/Detox/compare/detox@5.8.4...detox@5.9.0)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-cli@1.0.3...detox@5.9.0)
 
 **Enhancements**
 
@@ -765,11 +794,11 @@
 - Create a build matrix to support multiple version of React Native and OSs [\#345](https://github.com/wix/Detox/pull/345) ([rotemmiz](https://github.com/rotemmiz))
 - Basic support for Jest runner [\#335](https://github.com/wix/Detox/pull/335) ([Kureev](https://github.com/Kureev))
 
-## [detox@5.8.4](https://github.com/wix/Detox/tree/detox@5.8.4) (2017-10-17)
-[Full Changelog](https://github.com/wix/Detox/compare/detox-cli@1.0.3...detox@5.8.4)
-
 ## [detox-cli@1.0.3](https://github.com/wix/Detox/tree/detox-cli@1.0.3) (2017-10-17)
-[Full Changelog](https://github.com/wix/Detox/compare/detox@5.8.3...detox-cli@1.0.3)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.8.4...detox-cli@1.0.3)
+
+## [detox@5.8.4](https://github.com/wix/Detox/tree/detox@5.8.4) (2017-10-17)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.8.3...detox@5.8.4)
 
 **Fixed Bugs**
 
@@ -1089,13 +1118,13 @@
 [Full Changelog](https://github.com/wix/Detox/compare/detox@5.0.1...detox@5.0.2)
 
 ## [detox@5.0.1](https://github.com/wix/Detox/tree/detox@5.0.1) (2017-03-16)
-[Full Changelog](https://github.com/wix/Detox/compare/detox-cli@1.0.1...detox@5.0.1)
-
-## [detox-cli@1.0.1](https://github.com/wix/Detox/tree/detox-cli@1.0.1) (2017-03-16)
-[Full Changelog](https://github.com/wix/Detox/compare/detox-server@1.2.1...detox-cli@1.0.1)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-server@1.2.1...detox@5.0.1)
 
 ## [detox-server@1.2.1](https://github.com/wix/Detox/tree/detox-server@1.2.1) (2017-03-16)
-[Full Changelog](https://github.com/wix/Detox/compare/detox@4.3.2...detox-server@1.2.1)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-cli@1.0.1...detox-server@1.2.1)
+
+## [detox-cli@1.0.1](https://github.com/wix/Detox/tree/detox-cli@1.0.1) (2017-03-16)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@4.3.2...detox-cli@1.0.1)
 
 ## [detox@4.3.2](https://github.com/wix/Detox/tree/detox@4.3.2) (2017-03-09)
 [Full Changelog](https://github.com/wix/Detox/compare/detox@4.3.1...detox@4.3.2)
