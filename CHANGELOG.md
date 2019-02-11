@@ -198,7 +198,7 @@
 - fix: ADB.pidof integration issue with grep and CRLF edge case [\#927](https://github.com/wix/Detox/pull/927) ([noomorph](https://github.com/noomorph))
 
 ## [9.0.2](https://github.com/wix/Detox/tree/9.0.2) (2018-09-24)
-[Full Changelog](https://github.com/wix/Detox/compare/9.0.0...9.0.2)
+[Full Changelog](https://github.com/wix/Detox/compare/9.0.1...9.0.2)
 
 **Enhancements**
 
@@ -221,11 +221,11 @@
 
 - \[Android\] Remove @override annotation to support RN 0.53-0.55 on detox 9.0 [\#922](https://github.com/wix/Detox/pull/922) ([JamesWatling](https://github.com/JamesWatling))
 
-## [9.0.0](https://github.com/wix/Detox/tree/9.0.0) (2018-08-31)
-[Full Changelog](https://github.com/wix/Detox/compare/9.0.1...9.0.0)
-
 ## [9.0.1](https://github.com/wix/Detox/tree/9.0.1) (2018-08-31)
-[Full Changelog](https://github.com/wix/Detox/compare/8.2.3...9.0.1)
+[Full Changelog](https://github.com/wix/Detox/compare/9.0.0...9.0.1)
+
+## [9.0.0](https://github.com/wix/Detox/tree/9.0.0) (2018-08-31)
+[Full Changelog](https://github.com/wix/Detox/compare/8.2.3...9.0.0)
 
 **Enhancements**
 
@@ -723,7 +723,7 @@
 - Add change log generation when publishing a version [\#409](https://github.com/wix/Detox/issues/409)
 
 ## [5.10.1](https://github.com/wix/Detox/tree/5.10.1) (2017-11-15)
-[Full Changelog](https://github.com/wix/Detox/compare/detox@5.10.0...5.10.1)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-server@2.1.0...5.10.1)
 
 **Fixed Bugs**
 
@@ -733,11 +733,11 @@
 
 - New demo project for react native jest [\#370](https://github.com/wix/Detox/pull/370) ([SMJ93](https://github.com/SMJ93))
 
-## [detox@5.10.0](https://github.com/wix/Detox/tree/detox@5.10.0) (2017-11-13)
-[Full Changelog](https://github.com/wix/Detox/compare/detox-server@2.1.0...detox@5.10.0)
-
 ## [detox-server@2.1.0](https://github.com/wix/Detox/tree/detox-server@2.1.0) (2017-11-13)
-[Full Changelog](https://github.com/wix/Detox/compare/detox@5.9.3...detox-server@2.1.0)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.10.0...detox-server@2.1.0)
+
+## [detox@5.10.0](https://github.com/wix/Detox/tree/detox@5.10.0) (2017-11-13)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.9.3...detox@5.10.0)
 
 **Enhancements**
 

@@ -15,7 +15,7 @@ echo "[Publish] VERSION_TYPE=$VERSION_TYPE"
 echo ""
 
 echo "[Publish] Starting lerna publish..."
-lerna publish --cd-version "$VERSION_TYPE" --yes --skip-git
+lerna publish --cd-version "$VERSION_TYPE" --yes --skip-git --force-publish=*
 
 echo "[Publish] Running change-log generator..."
 VERSION=`node -p "require('./detox/package.json').version"`
