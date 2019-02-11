@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.pm.ActivityInfo;
+import android.os.Handler;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.Espresso;
+import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.ViewInteraction;
@@ -16,6 +19,7 @@ import com.wix.detox.ReactNativeSupport;
 
 import org.hamcrest.Matcher;
 import org.joor.Reflect;
+import org.joor.ReflectException;
 
 import java.util.ArrayList;
 
@@ -110,6 +114,65 @@ public class EspressoDetox {
                 ReactNativeNetworkIdlingResource.setURLBlacklist(urls);
             }
         });
+    }
+
+    public static ArrayList<IdlingResource> getBusyEspressoResources() {
+        // We do this in this complicated way for two reasons
+        // 1. we want to use postAtFrontOfQueue()
+        // 2. we want it to be synchronous
+        final ArrayList<IdlingResource> busyResources = new ArrayList<>();
+        final Handler handler = new Handler(InstrumentationRegistry.getTargetContext().getMainLooper());
+        final SyncRunnable sr = new SyncRunnable(new Runnable() {
+            @Override
+            public void run() {
+                // The following snippet works only in Espresso 3.0
+                try {
+                    ArrayList<Object> idlingStates = Reflect.on(Espresso.class)
+                            .field("baseRegistry")
+                            .field("idlingStates")
+                            .get();
+                    for (int i = 0; i < idlingStates.size(); ++i) {
+                        if (!(boolean)Reflect.on(idlingStates.get(i)).field("idle").get()) {
+                            busyResources.add((IdlingResource)Reflect.on(idlingStates.get(i)).field("resource").get());
+                        }
+                    }
+                } catch (ReflectException e) {
+                    Log.d(LOG_TAG, "Couldn't get busy resources", e);
+                }
+            }
+        });
+        handler.postAtFrontOfQueue(sr);
+        sr.waitForComplete();
+        return busyResources;
+    }
+
+
+    private static final class SyncRunnable implements Runnable {
+        private final Runnable mTarget;
+        private boolean mComplete;
+
+        public SyncRunnable(Runnable target) {
+            mTarget = target;
+        }
+
+        public void run() {
+            mTarget.run();
+            synchronized (this) {
+                mComplete = true;
+                notifyAll();
+            }
+        }
+
+        public void waitForComplete() {
+            synchronized (this) {
+                while (!mComplete) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                    }
+                }
+            }
+        }
     }
 }
 

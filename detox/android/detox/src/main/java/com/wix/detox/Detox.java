@@ -117,7 +117,6 @@ public final class Detox {
         Intent intent = extractInitialIntent();
         activityTestRule.launchActivity(intent);
 
-
         // Kicks off another thread and attaches a Looper to that.
         // The goal is to keep the test thread intact,
         // as Loopers can't run on a thread twice.
@@ -137,6 +136,7 @@ public final class Detox {
             }
         }, "com.wix.detox.manager");
         t.start();
+
         try {
             t.join();
         } catch (InterruptedException e) {

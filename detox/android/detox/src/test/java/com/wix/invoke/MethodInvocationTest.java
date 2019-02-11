@@ -4,6 +4,7 @@ import com.wix.invoke.types.Invocation;
 import com.wix.invoke.types.InvocationTarget;
 import com.wix.invoke.types.ObjectInstanceTarget;
 
+import org.junit.Before;
 import org.junit.Test;
 
 
@@ -14,6 +15,13 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
  * Created by rotemm on 10/10/2016.
  */
 public class MethodInvocationTest {
+    MethodInvocation uut;
+
+    @Before
+    public void setUp() {
+        uut = new MethodInvocation();
+    }
+
     @Test(expected = RuntimeException.class)
     public void invokeEmptyInvocation() {
         assertThat(invoke(new Invocation(null, null))).isNull();
@@ -144,7 +152,7 @@ public class MethodInvocationTest {
 
     public Object invoke(Invocation invocation) {
         try {
-            return MethodInvocation.invoke(invocation);
+            return uut.invoke(invocation);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -152,7 +160,7 @@ public class MethodInvocationTest {
 
     public Object invoke(String string) {
         try {
-            return MethodInvocation.invoke(string);
+            return uut.invoke(string);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
