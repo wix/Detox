@@ -6,24 +6,16 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.Espresso;
-import android.support.test.espresso.IdlingResource;
 import android.util.Log;
 
 import com.wix.detox.systeminfo.Environment;
 import com.wix.invoke.MethodInvocation;
 
-import org.joor.Reflect;
-import org.joor.ReflectException;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 
 
 /**
@@ -32,7 +24,7 @@ import java.util.Map;
 
 class DetoxManager implements WebSocketClient.ActionHandler {
 
-    private static final String LOG_TAG =  "DetoxManager";
+    private final static String LOG_TAG =  "DetoxManager";
 
     private final static String DETOX_SERVER_ARG_KEY = "detoxServer";
     private final static String DETOX_SESSION_ID_ARG_KEY = "detoxSessionId";
@@ -43,6 +35,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
     private WebSocketClient wsClient;
     private Handler handler;
 
+    private TestEngineFacade testEngineFacade = new TestEngineFacade();
     private Map<String, DetoxActionHandler> actionHandlers = new HashMap<>();
     private ReadyActionHandler readyActionHandler = null;
 
@@ -65,8 +58,8 @@ class DetoxManager implements WebSocketClient.ActionHandler {
             return;
         }
 
-        Log.i(LOG_TAG, "DetoxServerUrl : " + detoxServerUrl);
-        Log.i(LOG_TAG, "DetoxSessionId : " + detoxSessionId);
+        Log.i(LOG_TAG, "DetoxServerUrl: " + detoxServerUrl);
+        Log.i(LOG_TAG, "DetoxSessionId: " + detoxSessionId);
     }
 
     void start() {
@@ -86,8 +79,12 @@ class DetoxManager implements WebSocketClient.ActionHandler {
             public void run() {
                 if (stopping) return;
                 stopping = true;
-                ReactNativeSupport.currentReactContext = null;
-                ReactNativeSupport.removeEspressoIdlingResources(reactNativeHostHolder);
+
+                testEngineFacade.hardResetReactNative(reactNativeHostHolder);
+
+                actionHandlers.clear();
+                readyActionHandler = null;
+
                 if (wsClient != null) {
                     wsClient.close();
                 }
@@ -102,113 +99,12 @@ class DetoxManager implements WebSocketClient.ActionHandler {
         handler.post(new Runnable() {
             @Override
             public void run() {
-
                 final DetoxActionHandler handler = actionHandlers.get(type);
                 if (handler != null) {
                     handler.handle(params, messageId);
-                    return;
-                }
-
-                // TODO migrate these to external actions
-                switch (type) {
-                    case "invoke":
-                        try {
-                            Object retVal = MethodInvocation.invoke(params);
-                            Log.d(LOG_TAG, "Invocation result: " + retVal);
-                            String retStr = "(null)";
-                            if (retVal != null) {
-                                // TODO
-                                // handle supported return types
-                            }
-                            HashMap m = new HashMap();
-                            m.put("result", retStr);
-                            wsClient.sendAction("invokeResult", m, messageId);
-                        } catch (InvocationTargetException e) {
-                                Log.e(LOG_TAG, "Exception", e);
-                                HashMap m = new HashMap();
-                                m.put("error", e.getTargetException().getMessage());
-                                wsClient.sendAction("error", m, messageId);
-                        } catch (Exception e) {
-                            Log.i(LOG_TAG, "Test exception", e);
-                            HashMap m = new HashMap();
-                            m.put("details", e.getMessage());
-                            wsClient.sendAction("testFailed", m, messageId);
-                        }
-                        break;
-                    case "cleanup":
-                        ReactNativeSupport.currentReactContext = null;
-                        try {
-                            boolean stopRunner = new JSONObject(params).getBoolean("stopRunner");
-                            if (stopRunner) {
-                                stop();
-                            } else {
-                                ReactNativeSupport.removeEspressoIdlingResources(reactNativeHostHolder);
-                            }
-                        } catch (JSONException e) {
-                            Log.e(LOG_TAG, "cleanup cmd doesn't have stopRunner param");
-                        }
-                        wsClient.sendAction("cleanupDone", Collections.emptyMap(), messageId);
-                        break;
-                    case "currentStatus":
-                        // Ugly, deeply nested, because have to follow
-                        // EarlGrey/Detox iOS here.
-                        ArrayList<IdlingResource> l = getBusyEspressoResources();
-                        HashMap m = new HashMap();
-                        if (l.isEmpty()) {
-                            m.put("state", "idle");
-                            wsClient.sendAction("currentStatusResult", m, messageId);
-                            break;
-                        }
-                        m.put("state", "busy");
-                        JSONArray resources = new JSONArray();
-                        for (IdlingResource res : l) {
-                            JSONObject obj = new JSONObject();
-                            try {
-                                obj.put("name", res.getClass().getSimpleName());
-                                JSONObject prettyPrint = new JSONObject();
-                                prettyPrint.put("prettyPrint", res.getName());
-                                obj.put("info", prettyPrint);
-                                resources.put(obj);
-                            } catch (JSONException je) {
-                                Log.d(LOG_TAG, "Couldn't collect busy resources.", je);
-                            }
-                        }
-                        m.put("resources", resources);
-                        wsClient.sendAction("currentStatusResult", m, messageId);
-                        break;
                 }
             }
         });
-    }
-
-    private ArrayList<IdlingResource> getBusyEspressoResources() {
-        // We do this in this complicated way for two reasons
-        // 1. we want to use postAtFrontOfQueue()
-        // 2. we want it to be synchronous
-        final ArrayList<IdlingResource> busyResources = new ArrayList<>();
-        Handler handler = new Handler(InstrumentationRegistry.getTargetContext().getMainLooper());
-        SyncRunnable sr = new SyncRunnable(new Runnable() {
-            @Override
-            public void run() {
-                // The following snippet works only in Espresso 3.0
-                try {
-                    ArrayList<Object> idlingStates = Reflect.on(Espresso.class)
-                            .field("baseRegistry")
-                            .field("idlingStates")
-                            .get();
-                    for (int i = 0; i < idlingStates.size(); ++i) {
-                        if (!(boolean)Reflect.on(idlingStates.get(i)).field("idle").get()) {
-                            busyResources.add((IdlingResource)Reflect.on(idlingStates.get(i)).field("resource").get());
-                        }
-                    }
-                } catch (ReflectException e) {
-                    Log.d(LOG_TAG, "Couldn't get busy resources", e);
-                }
-            }
-        });
-        handler.postAtFrontOfQueue(sr);
-        sr.waitForComplete();
-        return busyResources;
     }
 
     @Override
@@ -233,39 +129,18 @@ class DetoxManager implements WebSocketClient.ActionHandler {
     }
 
     private void initActionHandlers() {
-        final TestEngineFacade testEngineFacade = new TestEngineFacade();
-
         readyActionHandler = new ReadyActionHandler(wsClient, testEngineFacade);
         actionHandlers.clear();
         actionHandlers.put("isReady", readyActionHandler);
         actionHandlers.put("reactNativeReload", new ReactNativeReloadActionHandler(reactNativeHostHolder, wsClient, testEngineFacade));
-    }
-
-    private static final class SyncRunnable implements Runnable {
-        private final Runnable mTarget;
-        private boolean mComplete;
-
-        public SyncRunnable(Runnable target) {
-            mTarget = target;
-        }
-
-        public void run() {
-            mTarget.run();
-            synchronized (this) {
-                mComplete = true;
-                notifyAll();
+        actionHandlers.put("invoke", new InvokeActionHandler(new MethodInvocation(), wsClient));
+        actionHandlers.put("currentStatus", new QueryStatusActionHandler(wsClient, testEngineFacade));
+        actionHandlers.put("cleanup", new CleanupActionHandler(reactNativeHostHolder, wsClient, testEngineFacade, new Function0<Unit>() {
+            @Override
+            public Unit invoke() {
+                stop();
+                return null;
             }
-        }
-
-        public void waitForComplete() {
-            synchronized (this) {
-                while (!mComplete) {
-                    try {
-                        wait();
-                    } catch (InterruptedException e) {
-                    }
-                }
-            }
-        }
+        }));
     }
 }
