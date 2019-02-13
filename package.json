@@ -2,7 +2,7 @@
   "scripts": {
     "test:e2e:ios": "pushd detox/test && npm run e2e:ios && popd",
     "test:e2e:android": "pushd detox/test && npm run e2e:android && popd",
-    "release": "node scripts/release.js"
+    "release": "node scripts/ci.release.js"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"

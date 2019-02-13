@@ -14,8 +14,6 @@ const VERSION_INC = 'patch';
 const log = (...args) => console.log('[RELEASE]', ...args);
 
 function run() {
-	log('DEBUG!!!', process.env);
-
 	if (!validateEnv()) {
 		return;
 	}
@@ -70,60 +68,20 @@ function versionTagAndPublish() {
 	log(`    current published version: ${currentPublished}`);
 
 	if (isRelease) {
-		tryPublishNewVersion(packageVersion);
+		const publishNewVersion = require('./ci.publish');
+		publishNewVersion(packageVersion);
 	} else {
-		log('TODO tag a snapshot')
-		// tryPublishAndTag(packageVersion, currentPublished);
+		tagVersion(packageVersion, currentPublished);
 	}
 
-	log(`Over and out`);
+	log(`Great success, much amaze`);
 }
 
 function findCurrentPublishedVersion() {
 	return exec.execSyncRead(`npm view detox dist-tags.latest`);
 }
 
-function tryPublishNewVersion(packageVersion) {
-	log('Publishing using lerna...');
-	validatePublishConfig();
-
-	const versionType = process.env.RELEASE_VERSION_TYPE;
-	const lernaResult = exec.execSyncRead(`lerna publish --cd-version "${versionType}" --yes --skip-git`);
-	log('Result from Lerna:', lernaResult);
-	const newVersion = getVersion();
-	if (newVersion === packageVersion) {
-		log('Stopping: Lerna\'s completed without upgrading the version');
-		return;
-	}
-
-	log('Starting changelog generator...');
-	exec.execSync(`github_changelog_generator --future-release "${newVersion}" --no-verbose`);
-
-	log('Packing up into a git commit...');
-	exec.execSync(`git add -A`);
-	exec.execSync(`git commit -m "[skip ci] Publish $VERSION"`);
-	exec.execSync(`git tag ${newVersion}`);
-	exec.execSync(`git push deploy`);
-	exec.execSync(`git push --tags deploy`);
-}
-
-function validatePublishConfig() {
-	const lernaVersion = exec.execSyncRead('lerna --version');
-	if (!lernaVersion.startsWith('2.')) {
-		throw new Error(`Cannot publish: lerna version isn't 2.x.x (actual version is ${lernaVersion})`);
-	}
-
-	const changelogGenerator = exec.execSyncRead(`which github_changelog_generator`);
-	if (!changelogGenerator) {
-		throw new Error(`Cannot publish: Github change-log generator not installed (see https://github.com/github-changelog-generator/github-changelog-generator#installation for more details`);
-	}
-
-	if (!process.env.CHANGELOG_GITHUB_TOKEN) {
-		throw new Error(`Cannot publish: Github token for change-log generator hasn't been specified (see https://github.com/github-changelog-generator/github-changelog-generator#github-token for more details)`);
-	}
-}
-
-function tryPublishAndTag(packageVersion, currentPublished) {
+function tagVersion(packageVersion, currentPublished) {
 	let theCandidate =
 		semver.gt(packageVersion, currentPublished)
 			? `${packageVersion}-snapshot.${process.env.BUILD_ID}`
@@ -131,8 +89,7 @@ function tryPublishAndTag(packageVersion, currentPublished) {
 
 	for (let retry = 0; retry < 5; retry++) {
 		try {
-			tagAndPublish(theCandidate);
-			console.log(`Released ${theCandidate}`);
+			gitTag(theCandidate);
 			return;
 		} catch (err) {
 			const alreadyPublished = _.includes(err.toString(), 'You cannot publish over the previously published version');
@@ -145,12 +102,11 @@ function tryPublishAndTag(packageVersion, currentPublished) {
 	}
 }
 
-function tagAndPublish(newVersion) {
-	console.log(`trying to publish ${newVersion}...`);
-	exec.execSync(`npm --no-git-tag-version version ${newVersion}`);
-	exec.execSync(`npm publish --tag ${VERSION_TAG}`);
+function gitTag(newVersion) {
+	// exec.execSync(`npm --no-git-tag-version version ${newVersion}`);
+	// exec.execSync(`npm publish --tag ${VERSION_TAG}`);
 	exec.execSync(`git tag -a ${newVersion} -m "${newVersion}"`);
-	exec.execSyncSilent(`git push deploy ${newVersion} || true`);
+	exec.execSyncSilent(`git push --tags deploy ${newVersion} || true`);
 	// if (isRelease) {
 	// 	updatePackageJsonGit(newVersion);
 	// }
@@ -164,18 +120,6 @@ function getVersion() {
 	return version;
 }
 
-function getPackageJsonPath() {
-	return `${process.cwd()}/package.json`;
-}
-
-function writePackageJson(packageJson) {
-	fs.writeFileSync(getPackageJsonPath(), JSON.stringify(packageJson, null, 2));
-}
-
-function readPackageJson() {
-	return JSON.parse(fs.readFileSync(getPackageJsonPath()));
-}
-
 function updatePackageJsonGit(version) {
 	exec.execSync(`git checkout master`);
 	const packageJson = readPackageJson();
@@ -184,6 +128,18 @@ function updatePackageJsonGit(version) {
 	exec.execSync(`git add package.json`);
 	exec.execSync(`git commit -m"Update package.json version to ${version} [ci skip]"`);
 	exec.execSync(`git push deploy master`);
+}
+
+function getPackageJsonPath() {
+	return `${process.cwd()}/package.json`;
+}
+
+function readPackageJson() {
+	return JSON.parse(fs.readFileSync(getPackageJsonPath()));
+}
+
+function writePackageJson(packageJson) {
+	fs.writeFileSync(getPackageJsonPath(), JSON.stringify(packageJson, null, 2));
 }
 
 run();
