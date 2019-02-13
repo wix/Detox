@@ -5,8 +5,7 @@ const semver = require('semver');
 const fs = require('fs');
 const path = require('path');
 
-// Workaround JS
-const isRelease = process.env.RELEASE_BUILD === 'true';
+const isRelease = (process.env.RELEASE_VERSION_TYPE && process.env.RELEASE_VERSION_TYPE !== 'none');
 
 const ONLY_ON_BRANCH = 'origin/master';
 const VERSION_TAG = isRelease ? 'latest' : 'snapshot';
@@ -62,29 +61,69 @@ email=\${NPM_EMAIL}
 }
 
 function versionTagAndPublish() {
-	const packageVersion = semver.clean(process.env.npm_package_version);
-	console.log(`package version: ${packageVersion}`);
+	log('Preparing to tag/release');
 
-	// const currentPublished = findCurrentPublishedVersion();
-	// console.log(`current published version: ${currentPublished}`);
-	//
-	// const version = isRelease
-	// 	? process.env.VERSION
-	// 	: semver.gt(packageVersion, currentPublished)
-	// 		? `${packageVersion}-snapshot.${process.env.BUILD_ID}`
-	// 		: `${currentPublished}-snapshot.${process.env.BUILD_ID}`;
-	//
-	// console.log(`Publishing version: ${version}`);
-	//
-	// tryPublishAndTag(version);
+	const packageVersion = getVersion();
+	log(`    package version: ${packageVersion}`);
+
+	const currentPublished = findCurrentPublishedVersion();
+	log(`    current published version: ${currentPublished}`);
+
+	if (isRelease) {
+		tryPublishNewVersion();
+	} else {
+		log('TODO tag a snapshot')
+		// tryPublishAndTag(packageVersion, currentPublished);
+	}
+
+	log(`Over and out`);
 }
 
 function findCurrentPublishedVersion() {
-	return exec.execSyncRead(`npm view ${process.env.npm_package_name} dist-tags.latest`);
+	return exec.execSyncRead(`npm view detox dist-tags.latest`);
 }
 
-function tryPublishAndTag(version) {
-	let theCandidate = version;
+function tryPublishNewVersion() {
+	log('Publishing using lerna...');
+	validatePublishConfig();
+
+	const versionType = process.env.RELEASE_VERSION_TYPE;
+	exec.execSync(`lerna publish --cd-version "${versionType}" --yes --skip-git`);
+	const newVersion = getVersion();
+
+	log('Starting changelog generator...');
+	exec.execSync(`github_changelog_generator --future-release "${newVersion}" --no-verbose`);
+
+	log('Packing up into a git commit...');
+	exe.execSync(`git add -A`);
+	exe.execSync(`git commit -m "[skip ci] Publish $VERSION"`);
+	exe.execSync(`git tag ${newVersion}`);
+	exe.execSync(`git push deploy`);
+	exe.execSync(`git push --tags deploy`);
+}
+
+function validatePublishConfig() {
+	const lernaVersion = exec.execSyncRead('lerna --version');
+	if (!lernaVersion.startsWith('2.')) {
+		throw new Error(`Cannot publish: lerna version isn't 2.x.x (actual version is ${lernaVersion})`);
+	}
+
+	const changelogGenerator = exec.execSyncRead(`which github_changelog_generator`);
+	if (!changelogGenerator) {
+		throw new Error(`Cannot publish: Github change-log generator not installed (see https://github.com/github-changelog-generator/github-changelog-generator#installation for more details`);
+	}
+
+	if (!process.env.CHANGELOG_GITHUB_TOKEN) {
+		throw new Error(`Cannot publish: Github token for change-log generator hasn't been specified (see https://github.com/github-changelog-generator/github-changelog-generator#github-token for more details)`);
+	}
+}
+
+function tryPublishAndTag(packageVersion, currentPublished) {
+	let theCandidate =
+		semver.gt(packageVersion, currentPublished)
+			? `${packageVersion}-snapshot.${process.env.BUILD_ID}`
+			: `${currentPublished}-snapshot.${process.env.BUILD_ID}`;
+
 	for (let retry = 0; retry < 5; retry++) {
 		try {
 			tagAndPublish(theCandidate);
@@ -107,9 +146,13 @@ function tagAndPublish(newVersion) {
 	exec.execSync(`npm publish --tag ${VERSION_TAG}`);
 	exec.execSync(`git tag -a ${newVersion} -m "${newVersion}"`);
 	exec.execSyncSilent(`git push deploy ${newVersion} || true`);
-	if (isRelease) {
-		updatePackageJsonGit(newVersion);
-	}
+	// if (isRelease) {
+	// 	updatePackageJsonGit(newVersion);
+	// }
+}
+
+function getVersion() {
+	return semver.clean(require('../detox/package.json').version);
 }
 
 function getPackageJsonPath() {
