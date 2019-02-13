@@ -3,6 +3,7 @@ const exec = require('shell-utils').exec;
 const semver = require('semver');
 
 function publishNewVersion(packageVersion) {
+  installLernaIfNeeded();
   validatePublishConfig();
 
   const newVersion = publishToNpm();
@@ -14,6 +15,12 @@ function publishNewVersion(packageVersion) {
   generateChangeLog(newVersion);
   updateGit(newVersion);
   return true;
+}
+
+function installLernaIfNeeded() {
+  if (!exec.which('lerna')) {
+    exec.execSync(`npm install --global lerna@2.11.0`);
+  }
 }
 
 function validatePublishConfig() {
