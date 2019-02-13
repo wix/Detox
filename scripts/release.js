@@ -70,7 +70,7 @@ function versionTagAndPublish() {
 	log(`    current published version: ${currentPublished}`);
 
 	if (isRelease) {
-		tryPublishNewVersion();
+		tryPublishNewVersion(packageVersion);
 	} else {
 		log('TODO tag a snapshot')
 		// tryPublishAndTag(packageVersion, currentPublished);
@@ -83,23 +83,28 @@ function findCurrentPublishedVersion() {
 	return exec.execSyncRead(`npm view detox dist-tags.latest`);
 }
 
-function tryPublishNewVersion() {
+function tryPublishNewVersion(packageVersion) {
 	log('Publishing using lerna...');
 	validatePublishConfig();
 
 	const versionType = process.env.RELEASE_VERSION_TYPE;
-	exec.execSync(`lerna publish --cd-version "${versionType}" --yes --skip-git`);
+	const lernaResult = exec.execSyncRead(`lerna publish --cd-version "${versionType}" --yes --skip-git`);
+	log('Result from Lerna:', lernaResult);
 	const newVersion = getVersion();
+	if (newVersion === packageVersion) {
+		log('Stopping: Lerna\'s completed without upgrading the version');
+		return;
+	}
 
 	log('Starting changelog generator...');
 	exec.execSync(`github_changelog_generator --future-release "${newVersion}" --no-verbose`);
 
 	log('Packing up into a git commit...');
-	exe.execSync(`git add -A`);
-	exe.execSync(`git commit -m "[skip ci] Publish $VERSION"`);
-	exe.execSync(`git tag ${newVersion}`);
-	exe.execSync(`git push deploy`);
-	exe.execSync(`git push --tags deploy`);
+	exec.execSync(`git add -A`);
+	exec.execSync(`git commit -m "[skip ci] Publish $VERSION"`);
+	exec.execSync(`git tag ${newVersion}`);
+	exec.execSync(`git push deploy`);
+	exec.execSync(`git push --tags deploy`);
 }
 
 function validatePublishConfig() {
@@ -152,7 +157,11 @@ function tagAndPublish(newVersion) {
 }
 
 function getVersion() {
-	return semver.clean(require('../detox/package.json').version);
+	const version = semver.clean(require('../detox/package.json').version);
+	if (!version) {
+		throw new Error('Error: failed to read version from package.json!');
+	}
+	return version;
 }
 
 function getPackageJsonPath() {
