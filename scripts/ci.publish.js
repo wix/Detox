@@ -61,8 +61,8 @@ function updateGit(newVersion) {
   exec.execSync(`git add -u`);
   exec.execSync(`git commit -m "[ci skip] Publish $VERSION"`);
   exec.execSync(`git tag ${newVersion}`);
-  exec.execSync(`git push deploy`);
-  exec.execSync(`git push --tags deploy`);
+  exec.execSync(`git push deploy master`);
+  exec.execSync(`git push --tags deploy master`);
 }
 
 module.exports = publishNewVersion;
