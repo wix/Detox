@@ -7,6 +7,7 @@ const log = (...args) => console.log('[RELEASE]', ...args);
 function publishNewVersion(packageVersion) {
   validatePublishConfig();
 
+  lernaBootstrap();
   publishToNpm();
   const newVersion = getVersion();
   if (newVersion === packageVersion) {
@@ -33,6 +34,10 @@ function validatePublishConfig() {
   if (!process.env.CHANGELOG_GITHUB_TOKEN) {
     throw new Error(`Cannot publish: Github token for change-log generator hasn't been specified (see https://github.com/github-changelog-generator/github-changelog-generator#github-token for more details)`);
   }
+}
+
+function lernaBootstrap() {
+  exec.execSync(`lerna bootstrap`);
 }
 
 function publishToNpm() {
