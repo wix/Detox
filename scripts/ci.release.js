@@ -55,8 +55,8 @@ email=\${process.env.NPM_EMAIL}
 	fs.writeFileSync(`.npmrc`, content);
 
 	// Workaround. see https://github.com/lerna/lerna/issues/361
-	fs.copyFileSync('.npmrc', './detox/');
-	fs.copyFileSync('.npmrc', './detox-cli/');
+	fs.copyFileSync('.npmrc', 'detox/.npmrc');
+	fs.copyFileSync('.npmrc', 'detox-cli/.npmrc');
 }
 
 function versionTagAndPublish() {
