@@ -2,13 +2,9 @@
 const exec = require('shell-utils').exec;
 const semver = require('semver');
 
-const LERNA_VERSION = '2.11.0';
-
 const log = (...args) => console.log('[RELEASE]', ...args);
 
 function publishNewVersion(packageVersion) {
-  installLernaIfNeeded();
-  installChangelogGeneratorIfNeeded();
   validatePublishConfig();
 
   publishToNpm();
@@ -21,21 +17,6 @@ function publishNewVersion(packageVersion) {
   generateChangeLog(newVersion);
   updateGit(newVersion);
   return true;
-}
-
-function installLernaIfNeeded() {
-  if (!exec.which('lerna')) {
-    log('Installing lerna...');
-    exec.execSync(`npm install --global lerna@${LERNA_VERSION}`);
-  }
-}
-
-function installChangelogGeneratorIfNeeded() {
-  const changelogGenerator = exec.which(`github_changelog_generator`);
-  if (!changelogGenerator) {
-    log('Installing change-log generator...');
-    exec.execSync(`gem install github_changelog_generator`);
-  }
 }
 
 function validatePublishConfig() {
@@ -70,7 +51,7 @@ function generateChangeLog(newVersion) {
 function updateGit(newVersion) {
   log('Packing changes up onto a git commit...');
   exec.execSync(`git add -A`);
-  exec.execSync(`git commit -m "[skip ci] Publish $VERSION"`);
+  exec.execSync(`git commit -m "[ci skip] Publish $VERSION"`);
   exec.execSync(`git tag ${newVersion}`);
   exec.execSync(`git push deploy`);
   exec.execSync(`git push --tags deploy`);
