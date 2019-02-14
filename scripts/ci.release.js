@@ -53,6 +53,10 @@ email=\${process.env.NPM_EMAIL}
 //registry.npmjs.org/:_authToken=\${process.env.NPM_EMAIL}
 `;
 	fs.writeFileSync(`.npmrc`, content);
+
+	// Workaround. see https://github.com/lerna/lerna/issues/361
+	fs.copyFileSync('.npmrc', './detox/');
+	fs.copyFileSync('.npmrc', './detox-cli/');
 }
 
 function versionTagAndPublish() {
