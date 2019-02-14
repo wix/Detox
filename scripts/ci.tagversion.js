@@ -2,8 +2,6 @@
 const exec = require('shell-utils').exec;
 const semver = require('semver');
 
-const log = (...args) => console.log('[RELEASE]', ...args);
-
 function tagVersion(packageVersion, currentPublished) {
   const tagName =
     semver.gt(packageVersion, currentPublished)

@@ -1,18 +1,16 @@
 /* tslint:disable: no-console */
 const exec = require('shell-utils').exec;
-const semver = require('semver');
-const fs = require('fs');
 
-const log = (...args) => console.log('[RELEASE]', ...args);
+const {log, getVersionSafe} = require('./ci.common');
 
 function publishNewVersion(packageVersion) {
   validatePublishConfig();
 
   lernaBootstrap();
   publishToNpm();
-  const newVersion = getVersion();
+  const newVersion = getVersionSafe();
   if (newVersion === packageVersion) {
-    log('Stopping: Lerna\'s completed without upgrading the version (nothing to publish)');
+    log(`Stopping: Lerna\'s completed without upgrading the version - nothing to publish (version is ${npmVersion})`);
     return false;
   }
 
@@ -38,45 +36,34 @@ function validatePublishConfig() {
 }
 
 function lernaBootstrap() {
+  log('*** Lerna bootstap ***');
   exec.execSync(`lerna bootstrap`);
 }
 
 function publishToNpm() {
-  const versionType = process.env.RELEASE_VERSION_TYPE;
-  const lernaResult = exec.execSyncRead(`lerna publish --cd-version "${versionType}" --yes --skip-git`);
-  log('(DEBUG) Result from Lerna:', lernaResult);
+  log('*** Lerna publish ***');
 
-  exec.execSync('git status');
+  const versionType = process.env.RELEASE_VERSION_TYPE;
+
+  exec.execSyncRead(`lerna publish --cd-version "${versionType}" --yes --skip-git`);
+  log('git status:', exec.execSyncRead('git status'));
 }
 
 function generateChangeLog(newVersion) {
-  log('Starting changelog generator...');
-  exec.execSync(`github_changelog_generator --future-release "${newVersion}" --no-verbose`);
+  log('*** Changelog generator ***');
+
+  const gitToken = process.env.CHANGELOG_GITHUB_TOKEN;
+  log(`(DEBUG) CHANGELOG_GITHUB_TOKEN? `, !!gitToken);
+  exec.execSyncSilent(`export CHANGELOG_GITHUB_TOKEN=${gitToken} github_changelog_generator --future-release "${newVersion}" --no-verbose`);
 }
 
 function updateGit(newVersion) {
-  log('Packing changes up onto a git commit...');
+  log('*** Packing changes up onto a git commit... ***');
   exec.execSync(`git add -A`);
   exec.execSync(`git commit -m "[ci skip] Publish $VERSION"`);
   exec.execSync(`git tag ${newVersion}`);
   exec.execSync(`git push deploy`);
   exec.execSync(`git push --tags deploy`);
-}
-
-function getVersion() {
-  const version = semver.clean(readPackageJson().version);
-  if (!version) {
-    throw new Error('Error: failed to read version from package.json!');
-  }
-  return version;
-}
-
-function getPackageJsonPath() {
-  return `${process.cwd()}/detox/package.json`;
-}
-
-function readPackageJson() {
-  return JSON.parse(fs.readFileSync(getPackageJsonPath()));
 }
 
 module.exports = publishNewVersion;

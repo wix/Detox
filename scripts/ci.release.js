@@ -1,19 +1,19 @@
 /* tslint:disable: no-console */
-const _ = require('lodash');
 const exec = require('shell-utils').exec;
-const semver = require('semver');
 const fs = require('fs');
+const {log, getVersionSafe} = require('./ci.common');
 
 const isRelease = (process.env.RELEASE_VERSION_TYPE && process.env.RELEASE_VERSION_TYPE !== 'none');
 
 const ONLY_ON_BRANCH = 'origin/master';
 
-const log = (...args) => console.log('[RELEASE]', ...args);
-
 function run() {
+	log('Running some validations...');
 	if (!validateEnv()) {
 		return;
 	}
+
+	log('Configuring stuff...');
 	setupGitConfig();
 	setupNpmConfig();
 	versionTagAndPublish();
@@ -62,7 +62,7 @@ email=\${NPM_EMAIL}
 function versionTagAndPublish() {
 	log('Preparing to tag/release');
 
-	const packageVersion = getVersion();
+	const packageVersion = getVersionSafe();
 	log(`    package version: ${packageVersion}`);
 
 	const currentPublished = findCurrentPublishedVersion();
@@ -81,14 +81,6 @@ function versionTagAndPublish() {
 
 function findCurrentPublishedVersion() {
 	return exec.execSyncRead(`npm view detox dist-tags.latest`);
-}
-
-function getVersion() {
-	const version = semver.clean(require('../detox/package.json').version);
-	if (!version) {
-		throw new Error('Error: failed to read version from package.json!');
-	}
-	return version;
 }
 
 run();
