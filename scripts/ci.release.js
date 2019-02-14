@@ -15,7 +15,6 @@ function run() {
 		return;
 	}
 	setupGitConfig();
-	setupNpmConfig();
 	versionTagAndPublish();
 }
 
@@ -44,15 +43,6 @@ function setupGitConfig() {
 	const remoteUrl = new RegExp(`https?://(\\S+)`).exec(exec.execSyncRead(`git remote -v`))[1];
 	exec.execSyncSilent(`git remote add deploy "https://${process.env.GIT_USER}:${process.env.GIT_TOKEN}@${remoteUrl}"`);
 	// exec.execSync(`git checkout ${ONLY_ON_BRANCH}`);
-}
-
-function setupNpmConfig() {
-	exec.execSync(`rm -f package-lock.json`);
-	const content = `
-email=\${NPM_EMAIL}
-//registry.npmjs.org/:_authToken=\${NPM_TOKEN}
-`;
-	fs.writeFileSync(`.npmrc`, content);
 }
 
 function versionTagAndPublish() {
