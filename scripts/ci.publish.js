@@ -46,20 +46,19 @@ function publishToNpm() {
   const versionType = process.env.RELEASE_VERSION_TYPE;
 
   exec.execSyncRead(`lerna publish --cd-version "${versionType}" --yes --skip-git`);
-  log('git status:', exec.execSyncRead('git status'));
+  log('git status\n', exec.execSyncRead('git status', true));
 }
 
 function generateChangeLog(newVersion) {
   log('*** Changelog generator ***');
 
   const gitToken = process.env.CHANGELOG_GITHUB_TOKEN;
-  log(`(DEBUG) CHANGELOG_GITHUB_TOKEN? `, !!gitToken);
-  exec.execSyncSilent(`export CHANGELOG_GITHUB_TOKEN=${gitToken} github_changelog_generator --future-release "${newVersion}" --no-verbose`);
+  exec.execSyncSilent(`CHANGELOG_GITHUB_TOKEN=${gitToken} github_changelog_generator --future-release "${newVersion}" --no-verbose`);
 }
 
 function updateGit(newVersion) {
   log('*** Packing changes up onto a git commit... ***');
-  exec.execSync(`git add -A`);
+  exec.execSync(`git add -u`);
   exec.execSync(`git commit -m "[ci skip] Publish $VERSION"`);
   exec.execSync(`git tag ${newVersion}`);
   exec.execSync(`git push deploy`);
