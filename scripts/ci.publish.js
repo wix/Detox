@@ -9,7 +9,6 @@ function publishNewVersion(packageVersion) {
   validatePublishConfig();
 
   lernaBootstrap();
-  setupNpmConfig();
   publishToNpm();
   const newVersion = getVersion();
   if (newVersion === packageVersion) {
@@ -39,16 +38,7 @@ function validatePublishConfig() {
 }
 
 function lernaBootstrap() {
-  exec.execSync(`rm -f package-lock.json`);
   exec.execSync(`lerna bootstrap`);
-}
-
-function setupNpmConfig() {
-  const content = `
-email=\${NPM_EMAIL}
-//registry.npmjs.org/:_authToken=\${NPM_TOKEN}
-`;
-  fs.writeFileSync(`.npmrc`, content);
 }
 
 function publishToNpm() {
