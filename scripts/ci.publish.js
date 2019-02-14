@@ -45,8 +45,8 @@ function publishToNpm() {
 
   const versionType = process.env.RELEASE_VERSION_TYPE;
 
-  exec.execSyncRead(`lerna publish --cd-version "${versionType}" --yes --skip-git`);
-  log('git status\n', exec.execSyncRead('git status', true));
+  exec.execSync(`lerna publish --cd-version "${versionType}" --yes --skip-git`);
+  exec.execSync('git status');
 }
 
 function generateChangeLog(newVersion) {

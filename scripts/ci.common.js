@@ -3,7 +3,9 @@ const semver = require('semver');
 const fs = require('fs');
 const chalk = require('chalk');
 
-const log = (...args) => console.log(chalk.blue('[RELEASE]'), ...args);
+const _chalk = new chalk.constructor({level: 0, enabled: true});
+
+const log = (...args) => console.log(_chalk.blue('[RELEASE]'), ...args);
 
 function getPackageJsonPath() {
   return `${process.cwd()}/detox/package.json`;
