@@ -1,8 +1,9 @@
 /* tslint:disable: no-console */
 const semver = require('semver');
 const fs = require('fs');
+const chalk = require('chalk');
 
-const log = (...args) => console.log('[RELEASE]', ...args);
+const log = (...args) => console.log(chalk.blue('[RELEASE]'), ...args);
 
 function getPackageJsonPath() {
   return `${process.cwd()}/detox/package.json`;
@@ -22,6 +23,5 @@ function getVersionSafe() {
 
 module.exports = {
   log,
-  readPackageJson,
   getVersionSafe,
 };
