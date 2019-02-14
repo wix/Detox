@@ -49,8 +49,8 @@ function setupGitConfig() {
 function setupNpmConfig() {
 	exec.execSync(`rm -f package-lock.json`);
 	const content = `
-email=\${NPM_EMAIL}
-//registry.npmjs.org/:_authToken=\${NPM_TOKEN}
+email=\${process.env.NPM_EMAIL}
+//registry.npmjs.org/:_authToken=\${process.env.NPM_EMAIL}
 `;
 	fs.writeFileSync(`.npmrc`, content);
 }
