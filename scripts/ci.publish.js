@@ -72,7 +72,7 @@ function getVersion() {
 }
 
 function getPackageJsonPath() {
-  return `${process.cwd()}/package.json`;
+  return `${process.cwd()}/detox/package.json`;
 }
 
 function readPackageJson() {
