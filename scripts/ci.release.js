@@ -2,6 +2,7 @@
 const _ = require('lodash');
 const exec = require('shell-utils').exec;
 const semver = require('semver');
+const fs = require('fs');
 
 const isRelease = (process.env.RELEASE_VERSION_TYPE && process.env.RELEASE_VERSION_TYPE !== 'none');
 

@@ -1,7 +1,6 @@
 /* tslint:disable: no-console */
 const exec = require('shell-utils').exec;
 const semver = require('semver');
-const fs = require('fs');
 
 const log = (...args) => console.log('[RELEASE]', ...args);
 
