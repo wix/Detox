@@ -1,6 +1,7 @@
 /* tslint:disable: no-console */
 const exec = require('shell-utils').exec;
 const semver = require('semver');
+const fs = require('fs');
 
 const log = (...args) => console.log('[RELEASE]', ...args);
 
@@ -63,11 +64,19 @@ function updateGit(newVersion) {
 }
 
 function getVersion() {
-  const version = semver.clean(require('../detox/package.json').version);
+  const version = semver.clean(readPackageJson().version);
   if (!version) {
     throw new Error('Error: failed to read version from package.json!');
   }
   return version;
+}
+
+function getPackageJsonPath() {
+  return `${process.cwd()}/package.json`;
+}
+
+function readPackageJson() {
+  return JSON.parse(fs.readFileSync(getPackageJsonPath()));
 }
 
 module.exports = publishNewVersion;
