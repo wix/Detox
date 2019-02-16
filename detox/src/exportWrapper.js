@@ -1,19 +1,22 @@
 const platform = require('./platform');
-const iosExports = require('./ios/expect');
-const androidExports = require('./android/expect');
+const IosExpect = require('./ios/expect');
+const AndroidExpect = require('./android/expect');
+
+const iosExports = new IosExpect();
+const androidExports = new AndroidExpect();
 
 const exportMap = {
   expect: {
-    ios: iosExports.expect,
-    android: androidExports.expect,
+    ios: iosExports.expect.bind(iosExports),
+    android: androidExports.expect.bind(androidExports),
   },
   element: {
-    ios: iosExports.element,
-    android: androidExports.element,
+    ios: iosExports.element.bind(iosExports),
+    android: androidExports.element.bind(androidExports),
   },
   waitFor: {
-    ios: iosExports.waitFor,
-    android: androidExports.waitFor,
+    ios: iosExports.waitFor.bind(iosExports),
+    android: androidExports.waitFor.bind(androidExports),
   },
   by: {
     ios: iosExports.by,

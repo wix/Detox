@@ -2,8 +2,8 @@ describe('expect', () => {
   let e;
 
   beforeEach(() => {
-    e = require('./expect');
-    e.setInvocationManager(new MockExecutor());
+    const AndroidExpect = require('./expect');
+    e = new AndroidExpect(new MockExecutor());
   });
 
   it(`element by accessibilityLabel`, async () => {
