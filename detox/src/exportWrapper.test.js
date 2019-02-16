@@ -1,18 +1,31 @@
 let exportWrapper;
 let platform;
-let iosExports;
-let androidExports;
+const iosExports = {
+  by: {
+    method: jest.fn()
+  },
+  expect: jest.fn(),
+  element: jest.fn(),
+  waitFor: jest.fn(),
+};
+const androidExports = {
+  by: {
+    method: jest.fn()
+  },
+  expect: jest.fn(),
+  element: jest.fn(),
+  waitFor: jest.fn(),
+};
 
 describe('exportWrapper', () => {
   const mockDevice = {method: jest.fn()};
 
   beforeAll(async() => {
-    jest.mock('./ios/expect');
-    jest.mock('./android/expect');
+    jest.doMock('./ios/expect', () => jest.fn().mockImplementation(() => iosExports));
+    jest.doMock('./android/expect', () => jest.fn().mockImplementation(() => androidExports));
+
     exportWrapper = require('./exportWrapper');
     platform = require('./platform');
-    iosExports = require('./ios/expect');
-    androidExports = require('./android/expect');
   });
 
   afterAll(async() => {
@@ -25,7 +38,6 @@ describe('exportWrapper', () => {
     const arg2 = 'test';
 
     platform.set('ios.none', mockDevice);
-    iosExports.by.method = jest.fn();
 
     exportWrapper.device.method(arg1, arg2);
     expect(mockDevice.method).toHaveBeenCalledWith(arg1, arg2);
@@ -48,7 +60,6 @@ describe('exportWrapper', () => {
     const arg2 = 'test';
 
     platform.set('android.attached', mockDevice);
-    androidExports.by.method = jest.fn();
 
     exportWrapper.device.method(arg1, arg2);
     expect(mockDevice.method).toHaveBeenCalledWith(arg1, arg2);

@@ -2,8 +2,8 @@ describe('expect', () => {
   let e;
 
   beforeEach(() => {
-    e = require('./expect');
-    e.setInvocationManager(new MockExecutor());
+    const IosExpect = require('./expect');
+    e = new IosExpect(new MockExecutor());
   });
 
   it(`element by accessibilityLabel`, async () => {
