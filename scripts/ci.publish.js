@@ -7,6 +7,7 @@ function publishNewVersion(packageVersion) {
   validatePublishConfig();
 
   lernaBootstrap();
+  prePublishToNpm();
   publishToNpm();
   const newVersion = getVersionSafe();
   if (newVersion === packageVersion) {
@@ -38,6 +39,13 @@ function validatePublishConfig() {
 function lernaBootstrap() {
   log('*** Lerna bootstap ***');
   exec.execSync(`lerna bootstrap`);
+}
+
+function prePublishToNpm() {
+  log('*** Pre-publish ***');
+
+  const {packageIosSources} = require('../detox/scripts/pack_ios');
+  packageIosSources();
 }
 
 function publishToNpm() {
