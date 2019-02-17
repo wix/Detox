@@ -10,7 +10,7 @@
     "examples/demo-react-native-jest",
     "generation"
   ],
-  "version": "10.0.7",
+  "version": "10.0.8",
   "npmClient": "npm",
   "command": {
     "publish": {
