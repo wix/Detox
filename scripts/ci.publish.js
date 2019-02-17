@@ -44,8 +44,11 @@ function lernaBootstrap() {
 function prePublishToNpm() {
   log('*** Pre-publish ***');
 
+  const baseDir = process.cwd();
+  process.chdir(baseDir + '/detox');
   const {packageIosSources} = require('../detox/scripts/pack_ios');
   packageIosSources();
+  process.chdir(baseDir);
 }
 
 function publishToNpm() {
