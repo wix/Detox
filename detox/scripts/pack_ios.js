@@ -1,3 +1,4 @@
+const fs = require('fs-extra');
 const {sh} = require('./utils');
 
 function packageIosSources() {
