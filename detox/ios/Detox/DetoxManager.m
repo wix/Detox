@@ -191,7 +191,11 @@ static void detoxConditionalInit()
 {
 	NSAssert(messageId != nil, @"Got action with a null messageId");
 	
-	if([type isEqualToString:@"waitForActive"])
+	if([type isEqualToString:@"testLifecycleEvent"])
+	{
+		[self _safeSendAction:@"testLifecycleEventDone" params:@{} messageId:messageId];
+	}
+	else if([type isEqualToString:@"waitForActive"])
 	{
 		[self _waitForApplicationState:UIApplicationStateActive action:type messageId:messageId];
 		return;
