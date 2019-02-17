@@ -17,6 +17,8 @@
 #import "EarlGreyExtensions.h"
 #import "EarlGreyStatistics.h"
 
+#import "DetoxInstrumentsManager.h"
+
 @interface UIApplication ()
 
 - (void)_sendMotionBegan:(UIEventSubtype)arg;
@@ -27,6 +29,11 @@
 DTX_CREATE_LOG(DetoxManager)
 
 @interface DetoxManager() <WebSocketDelegate, TestRunnerDelegate>
+{
+	DetoxInstrumentsManager* _recordingManager;
+	
+	NSString* _activeTest;
+}
 
 @property (nonatomic) BOOL isReady;
 @property (nonatomic, strong) WebSocket *webSocket;
@@ -98,6 +105,15 @@ static void detoxConditionalInit()
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidLaunch:) name:UIApplicationDidFinishLaunchingNotification object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+	
+	_recordingManager = [DetoxInstrumentsManager new];
+	
+	if([NSUserDefaults.standardUserDefaults objectForKey:@"currentTestSummaryDataURL"])
+	{
+		NSURL* currentTestSummarydataURL = [NSURL fileURLWithPath:[NSUserDefaults.standardUserDefaults objectForKey:@"currentTestSummaryDataURL"]];
+		NSDictionary* params = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfURL:currentTestSummarydataURL] options:NSJSONReadingAllowFragments error:NULL];
+		[self _handleLifecycle:params completionHandler:nil];
+	}
 	
 	return self;
 }
@@ -193,7 +209,9 @@ static void detoxConditionalInit()
 	
 	if([type isEqualToString:@"testLifecycleEvent"])
 	{
-		[self _safeSendAction:@"testLifecycleEventDone" params:@{} messageId:messageId];
+		[self _handleLifecycle:params completionHandler:^ {
+			[self _safeSendAction:@"testLifecycleEventDone" params:@{} messageId:messageId];
+		}];
 	}
 	else if([type isEqualToString:@"waitForActive"])
 	{
@@ -367,6 +385,25 @@ static void detoxConditionalInit()
 	//This behaves exactly in the same manner that UIApplication handles the simulator "Shake Gesture" menu command.
 	[[UIApplication sharedApplication] _sendMotionBegan:UIEventSubtypeMotionShake];
 	[[UIApplication sharedApplication] _sendMotionEnded:UIEventSubtypeMotionShake];
+}
+
+- (void)_handleLifecycle:(NSDictionary*)props completionHandler:(void(^)(void))completionHandler
+{
+	NSString* status = props[@"status"];
+	
+	if([status isEqualToString:@"running"])
+	{
+		_activeTest = props[@"fullName"];
+	}
+	else
+	{
+		_activeTest = nil;
+	}
+	
+	if(completionHandler)
+	{
+		completionHandler();
+	}
 }
 
 @end
