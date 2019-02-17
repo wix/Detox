@@ -6,7 +6,7 @@ const {log, getVersionSafe} = require('./ci.common');
 function publishNewVersion(packageVersion) {
   validatePublishConfig();
 
-  lernaBootstrap();
+  projectSetup();
   prePublishToNpm();
   publishToNpm();
   const newVersion = getVersionSafe();
@@ -36,9 +36,10 @@ function validatePublishConfig() {
   }
 }
 
-function lernaBootstrap() {
-  log('*** Lerna bootstap ***');
+function projectSetup() {
+  log('*** Environment setup ***');
   exec.execSync(`lerna bootstrap`);
+  exec.execSync(`git checkout master`);
 }
 
 function prePublishToNpm() {
@@ -72,7 +73,7 @@ function updateGit(newVersion) {
   exec.execSync(`git add -u`);
   exec.execSync(`git commit -m "[ci skip] Publish $VERSION"`);
   exec.execSync(`git tag ${newVersion}`);
-  exec.execSync(`git log -10 --date=short --pretty=format:'%h %ad %s %d %cr %an'`);
+  exec.execSync(`git log -1 --date=short --pretty=format:'%h %ad %s %d %cr %an'`);
   exec.execSync(`git push deploy master`);
   exec.execSync(`git push --tags deploy master`);
 }
