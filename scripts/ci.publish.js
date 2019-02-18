@@ -71,7 +71,7 @@ function generateChangeLog(newVersion) {
 function updateGit(newVersion) {
   log('*** Packing changes up onto a git commit... ***');
   exec.execSync(`git add -u`);
-  exec.execSync(`git commit -m "[ci skip] Publish $VERSION"`);
+  exec.execSync(`git commit -m "Publish ${newVersion} [ci skip]"`);
   exec.execSync(`git tag ${newVersion}`);
   exec.execSync(`git log -1 --date=short --pretty=format:'%h %ad %s %d %cr %an'`);
   exec.execSync(`git push deploy master`);
