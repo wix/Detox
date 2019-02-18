@@ -52,6 +52,7 @@ async function initializeDetox(config, params) {
   detox = new Detox({deviceConfig, session});
   await detox.init(params);
   platform.set(deviceConfig.type, detox.device);
+  exportWrapper._setDetoxClient(detox.client);
 }
 
 async function init(config, params) {

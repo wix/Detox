@@ -1,6 +1,7 @@
 const platform = require('./platform');
 const IosExpect = require('./ios/expect');
 const AndroidExpect = require('./android/expect');
+const InvocationManager = require('./invoke').InvocationManager;
 
 const iosExports = new IosExpect();
 const androidExports = new AndroidExpect();
@@ -29,6 +30,10 @@ function applyToPlatformSpecific(name, args) {
 }
 
 module.exports = {
+  _setDetoxClient(client) {
+    iosExports.setInvocationManager(new InvocationManager(client));
+    androidExports.setInvocationManager(new InvocationManager(client));
+  },
   element() {
     return applyToPlatformSpecific('element', arguments);
   },

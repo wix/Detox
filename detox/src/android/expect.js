@@ -337,6 +337,10 @@ class AndroidExpect {
     };
   }
 
+  setInvocationManager(invocationManager) {
+    this.invocationManager = invocationManager;
+  }
+
   expect(element) {
     if (element instanceof Element) return new ExpectElement(element, this.invocationManager);
     throw new Error(`expect() argument is invalid, got ${typeof element}`);
