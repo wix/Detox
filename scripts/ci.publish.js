@@ -11,7 +11,7 @@ function publishNewVersion(packageVersion) {
   publishToNpm();
   const newVersion = getVersionSafe();
   if (newVersion === packageVersion) {
-    log(`Stopping: Lerna\'s completed without upgrading the version - nothing to publish (version is ${npmVersion})`);
+    log(`Stopping: Lerna\'s completed without upgrading the version - nothing to publish (version is ${newVersion})`);
     return false;
   }
 
