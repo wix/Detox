@@ -14,7 +14,6 @@ const Client = require('./client/Client');
 const DetoxServer = require('./server/DetoxServer');
 const URL = require('url').URL;
 const ArtifactsManager = require('./artifacts/ArtifactsManager');
-const AsyncEmitter = require('./utils/AsyncEmitter');
 
 const DEVICE_CLASSES = {
   'ios.simulator': SimulatorDriver,
