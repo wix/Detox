@@ -72,8 +72,9 @@ function versionTagAndPublish() {
 		const publishNewVersion = require('./ci.publish');
 		publishNewVersion(packageVersion);
 	} else {
-		const tagVersion = require('./ci.tagversion');
-		tagVersion(packageVersion, currentPublished);
+		// Disabled for the time being
+		// const tagVersion = require('./ci.tagversion');
+		// tagVersion(packageVersion, currentPublished);
 	}
 
 	log(`Great success, much amaze`);
