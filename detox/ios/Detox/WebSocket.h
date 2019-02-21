@@ -8,10 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+@class WebSocket;
+
 @protocol WebSocketDelegate <NSObject>
 
-- (void)websocketDidConnect;
-- (void)websocketDidReceiveAction:(NSString*)type withParams:(NSDictionary*)params withMessageId:(NSNumber*) messageId;
+- (void)websocketDidConnect:(WebSocket*)websocket;
+- (void)websocket:(WebSocket*)websocket didReceiveAction:(NSString*)type withParams:(NSDictionary*)params withMessageId:(NSNumber*)messageId;
+- (void)websocketDidClose:(WebSocket*)websocket;
 
 @end
 

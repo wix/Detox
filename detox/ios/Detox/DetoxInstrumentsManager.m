@@ -15,8 +15,13 @@ DTX_CREATE_LOG(DetoxInstrumentsManager)
 @interface NSObject ()
 
 @property (class, nonatomic, strong, readonly) id defaultProfilingConfiguration;
+@property (nonatomic, readwrite) NSTimeInterval samplingInterval;
 @property (nonatomic, readwrite) BOOL recordNetwork;
 @property (nonatomic, readwrite) BOOL recordThreadInformation;
+@property (nonatomic, readwrite) BOOL collectStackTraces;
+@property (nonatomic, readwrite) BOOL symbolicateStackTraces;
+@property (atomic, assign, readonly, getter=isRecording) BOOL recording;
+@property (nonatomic, copy, null_resettable, readwrite) NSURL* recordingFileURL;
 
 - (void)startProfilingWithConfiguration:(id)configuration;
 - (void)continueProfilingWithConfiguration:(id)configuration;
@@ -51,7 +56,7 @@ static void (*__DTXProfilerMarkEvent)(NSString* category, NSString* name, __DTXE
 	{
 		//The user has not linked the Profiler framework. Load it manually.
 		
-		//TODO: Use launch argument rather than hardcoded path.
+		//TODO: Use launch argument (if it exists) and only then fallback to hardcoded path.
 		NSBundle* profilerBundle = [NSBundle bundleWithURL:[NSURL fileURLWithPath:@"/Applications/Detox Instruments.app/Contents/SharedSupport/ProfilerFramework/DTXProfiler.framework"]];
 		NSError* error = nil;
 		[profilerBundle loadAndReturnError:&error];
@@ -88,6 +93,22 @@ static void (*__DTXProfilerMarkEvent)(NSString* category, NSString* name, __DTXE
 	}
 }
 
++ (NSString *)_sanitizeFileNameString:(NSString *)fileName
+{
+	NSCharacterSet* illegalFileNameCharacters = [NSCharacterSet characterSetWithCharactersInString:@":/\\?%*|\"<>"];
+	return [[fileName componentsSeparatedByCharactersInSet:illegalFileNameCharacters] componentsJoinedByString:@"_"];
+}
+
++ (NSURL*)defaultURLForTestName:(NSString*)testName
+{
+	NSURL* documents = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].firstObject;
+	NSURL* rv = [documents URLByAppendingPathComponent:[self _sanitizeFileNameString:testName]];
+	
+	NSLog(@"🥶 %@", rv.path);
+	
+	return rv;
+}
+
 - (instancetype)init
 {
 	self = [super init];
@@ -100,32 +121,42 @@ static void (*__DTXProfilerMarkEvent)(NSString* category, NSString* name, __DTXE
 	return self;
 }
 
-- (id)_configForDetoxRecording
+- (id)_configForDetoxRecordingWithURL:(NSURL*)URL
 {
 	id config = [__DTXMutableProfilingConfiguration defaultProfilingConfiguration];
+	[config setRecordingFileURL:URL];
+	
+	//TODO: Finalize the actual config for Detox perf recording.
 	[config setRecordNetwork:NO];
-	[config setRecordThreadInformation:NO];
+	[config setRecordThreadInformation:YES];
+	[config setCollectStackTraces:YES];
+	[config setSymbolicateStackTraces:YES];
+	[config setSamplingInterval:0.1];
 	
 	return config;
 }
 
 - (void)startRecordingAtURL:(NSURL*)URL
 {
-	NSParameterAssert(_recorderInstance != nil);
-	
-	[_recorderInstance startProfilingWithConfiguration:self._configForDetoxRecording];
+	[_recorderInstance startProfilingWithConfiguration:[self _configForDetoxRecordingWithURL:URL]];
 }
 
 - (void)continueRecordingAtURL:(NSURL*)URL
 {
-	NSParameterAssert(_recorderInstance != nil);
-	
-	[_recorderInstance continueProfilingWithConfiguration:self._configForDetoxRecording];
+	[_recorderInstance continueProfilingWithConfiguration:[self _configForDetoxRecordingWithURL:URL]];
 }
 
 - (void)stopRecordingWithCompletionHandler:(void(^)(NSError* error))completionHandler
 {
-	NSParameterAssert(_recorderInstance != nil);
+	if(_recorderInstance == nil || [_recorderInstance isRecording] == NO)
+	{
+		if(completionHandler != nil)
+		{
+			completionHandler(nil);
+		}
+		
+		return;
+	}
 	
 	[_recorderInstance stopProfilingWithCompletionHandler:completionHandler];
 }

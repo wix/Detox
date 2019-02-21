@@ -112,7 +112,7 @@ static void detoxConditionalInit()
 	{
 		NSURL* currentTestSummarydataURL = [NSURL fileURLWithPath:[NSUserDefaults.standardUserDefaults objectForKey:@"currentTestSummaryDataURL"]];
 		NSDictionary* params = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfURL:currentTestSummarydataURL] options:NSJSONReadingAllowFragments error:NULL];
-		[self _handleLifecycle:params completionHandler:nil];
+		[self _handleLifecycle:params isFromBoot:YES completionHandler:nil];
 	}
 	
 	return self;
@@ -187,7 +187,7 @@ static void detoxConditionalInit()
 	[self.webSocket connectToServer:url withSessionId:sessionId];
 }
 
-- (void)websocketDidConnect
+- (void)websocketDidConnect:(WebSocket*)websocket
 {
 	if (![ReactNativeSupport isReactNativeApp])
 	{
@@ -203,13 +203,13 @@ static void detoxConditionalInit()
 	}];
 }
 
-- (void)websocketDidReceiveAction:(NSString *)type withParams:(NSDictionary *)params withMessageId:(NSNumber *)messageId
+- (void)websocket:(WebSocket*)websocket didReceiveAction:(NSString *)type withParams:(NSDictionary *)params withMessageId:(NSNumber *)messageId
 {
 	NSAssert(messageId != nil, @"Got action with a null messageId");
 	
 	if([type isEqualToString:@"testLifecycleEvent"])
 	{
-		[self _handleLifecycle:params completionHandler:^ {
+		[self _handleLifecycle:params isFromBoot:NO completionHandler:^ {
 			[self _safeSendAction:@"testLifecycleEventDone" params:@{} messageId:messageId];
 		}];
 	}
@@ -342,6 +342,11 @@ static void detoxConditionalInit()
 	}
 }
 
+- (void)websocketDidClose:(WebSocket *)websocket
+{
+	[self _handleLifecycle:nil isFromBoot:NO completionHandler:nil];
+}
+
 - (void)_waitForRNLoadWithId:(id)messageId
 {
 	__weak __typeof(self) weakSelf = self;
@@ -387,20 +392,41 @@ static void detoxConditionalInit()
 	[[UIApplication sharedApplication] _sendMotionEnded:UIEventSubtypeMotionShake];
 }
 
-- (void)_handleLifecycle:(NSDictionary*)props completionHandler:(void(^)(void))completionHandler
+- (void)_handleLifecycle:(NSDictionary*)props isFromBoot:(BOOL)boot completionHandler:(void(^)(void))completionHandler
 {
 	NSString* status = props[@"status"];
+	if(completionHandler == nil)
+	{
+		completionHandler = ^ {};
+	}
+	
+	BOOL completionBlocked = NO;
 	
 	if([status isEqualToString:@"running"])
 	{
 		_activeTest = props[@"fullName"];
+		if(boot)
+		{
+			[_recordingManager startRecordingAtURL:[DetoxInstrumentsManager defaultURLForTestName:_activeTest]];
+		}
+		else
+		{
+			[_recordingManager continueRecordingAtURL:[DetoxInstrumentsManager defaultURLForTestName:_activeTest]];
+		}
 	}
 	else
 	{
 		_activeTest = nil;
+		completionBlocked = YES;
+		[_recordingManager stopRecordingWithCompletionHandler:^(NSError *error) {
+			dispatch_async(dispatch_get_main_queue(), ^{
+				completionHandler();
+			});
+		}];
 	}
 	
-	if(completionHandler)
+	
+	if(completionBlocked == NO)
 	{
 		completionHandler();
 	}
