@@ -10,7 +10,7 @@
 #import "DTXLogging.h"
 #include <dlfcn.h>
 
-DTX_CREATE_LOG(DetoxInstrumentsManager)
+DTX_CREATE_LOG_PREFIX(DetoxInstrumentsManager, @"🥶")
 
 @interface NSObject ()
 
@@ -104,7 +104,7 @@ static void (*__DTXProfilerMarkEvent)(NSString* category, NSString* name, __DTXE
 	NSURL* documents = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].firstObject;
 	NSURL* rv = [documents URLByAppendingPathComponent:[self _sanitizeFileNameString:testName]];
 	
-	NSLog(@"🥶 %@", rv.path);
+	dtx_log_debug(@"Returning %@ as URL", rv.path);
 	
 	return rv;
 }
