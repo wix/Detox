@@ -48,49 +48,66 @@ static void (*__DTXProfilerMarkEvent)(NSString* category, NSString* name, __DTXE
 	id _recorderInstance;
 }
 
-+ (void)load
++ (void)_loadProfiler
 {
-	__DTXProfiler = NSClassFromString(@"DTXProfiler");
-	
-	if(__DTXProfiler == NULL)
-	{
-		//The user has not linked the Profiler framework. Load it manually.
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		__DTXProfiler = NSClassFromString(@"DTXProfiler");
 		
-		//TODO: Use launch argument (if it exists) and only then fallback to hardcoded path.
-		NSBundle* profilerBundle = [NSBundle bundleWithURL:[NSURL fileURLWithPath:@"/Applications/Detox Instruments.app/Contents/SharedSupport/ProfilerFramework/DTXProfiler.framework"]];
-		NSError* error = nil;
-		[profilerBundle loadAndReturnError:&error];
-		
-		if(error != nil)
+		if(__DTXProfiler == NULL)
 		{
-			dtx_log_error(@"Error loading Profiler framework bundle: %@", error);
+			//The user has not linked the Profiler framework. Load it manually.
+			
+			NSString* instrumentsPath = [NSUserDefaults.standardUserDefaults stringForKey:@"instrumentsPath"];
+			if(instrumentsPath == nil)
+			{
+				instrumentsPath = @"/Applications/Detox Instruments.app";
+			}
+			
+			NSURL* bundleURL = [[NSURL fileURLWithPath:instrumentsPath] URLByAppendingPathComponent:@"/Contents/SharedSupport/ProfilerFramework/DTXProfiler.framework"];
+			NSBundle* profilerBundle = [NSBundle bundleWithURL:bundleURL];
+			
+			if(profilerBundle == nil)
+			{
+				dtx_log_error(@"Error loading Profiler framework bundle. Bundle not found at %@", bundleURL.path);
+				return;
+			}
+			
+			NSError* error = nil;
+			[profilerBundle loadAndReturnError:&error];
+			
+			if(error != nil)
+			{
+				dtx_log_error(@"Error loading Profiler framework bundle: %@", error);
+				return;
+			}
 		}
-	}
-	
-	__DTXProfiler = NSClassFromString(@"DTXProfiler");
-	if(__DTXProfiler == NULL)
-	{
-		dtx_log_error(@"DTXProfiler class not found—this should not have happened!");
-		return;
-	}
-	
-	__DTXMutableProfilingConfiguration = NSClassFromString(@"DTXMutableProfilingConfiguration");
-	if(__DTXMutableProfilingConfiguration == NULL)
-	{
-		dtx_log_error(@"DTXMutableProfilingConfiguration class not found—this should not have happened!");
-		return;
-	}
-	
-	__DTXProfilerAddTag = dlsym(RTLD_DEFAULT, "DTXProfilerAddTag");
-	__DTXProfilerMarkEventIntervalBegin = dlsym(RTLD_DEFAULT, "DTXProfilerMarkEventIntervalBegin");
-	__DTXProfilerMarkEventIntervalEnd = dlsym(RTLD_DEFAULT, "DTXProfilerMarkEventIntervalEnd");
-	__DTXProfilerMarkEvent = dlsym(RTLD_DEFAULT, "DTXProfilerMarkEvent");
-	
-	if(__DTXProfilerAddTag == NULL || __DTXProfilerMarkEventIntervalBegin == NULL || __DTXProfilerMarkEventIntervalEnd == NULL || __DTXProfilerMarkEvent == NULL)
-	{
-		dtx_log_error(@"One or more DTXProfilerAPI functions are NULL—this should not have happened!");
-		return;
-	}
+		
+		__DTXProfiler = NSClassFromString(@"DTXProfiler");
+		if(__DTXProfiler == NULL)
+		{
+			dtx_log_error(@"DTXProfiler class not found—this should not have happened!");
+			return;
+		}
+		
+		__DTXMutableProfilingConfiguration = NSClassFromString(@"DTXMutableProfilingConfiguration");
+		if(__DTXMutableProfilingConfiguration == NULL)
+		{
+			dtx_log_error(@"DTXMutableProfilingConfiguration class not found—this should not have happened!");
+			return;
+		}
+		
+		__DTXProfilerAddTag = dlsym(RTLD_DEFAULT, "DTXProfilerAddTag");
+		__DTXProfilerMarkEventIntervalBegin = dlsym(RTLD_DEFAULT, "DTXProfilerMarkEventIntervalBegin");
+		__DTXProfilerMarkEventIntervalEnd = dlsym(RTLD_DEFAULT, "DTXProfilerMarkEventIntervalEnd");
+		__DTXProfilerMarkEvent = dlsym(RTLD_DEFAULT, "DTXProfilerMarkEvent");
+		
+		if(__DTXProfilerAddTag == NULL || __DTXProfilerMarkEventIntervalBegin == NULL || __DTXProfilerMarkEventIntervalEnd == NULL || __DTXProfilerMarkEvent == NULL)
+		{
+			dtx_log_error(@"One or more DTXProfilerAPI functions are NULL—this should not have happened!");
+			return;
+		}
+	});
 }
 
 + (NSString *)_sanitizeFileNameString:(NSString *)fileName
@@ -111,6 +128,8 @@ static void (*__DTXProfilerMarkEvent)(NSString* category, NSString* name, __DTXE
 
 - (instancetype)init
 {
+	[DetoxInstrumentsManager _loadProfiler];
+	
 	self = [super init];
 	
 	if(self)

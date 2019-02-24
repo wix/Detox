@@ -106,7 +106,9 @@ static void detoxConditionalInit()
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidLaunch:) name:UIApplicationDidFinishLaunchingNotification object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
 	
-	_recordingManager = [DetoxInstrumentsManager new];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		_recordingManager = [DetoxInstrumentsManager new];
+	});
 	
 	if([NSUserDefaults.standardUserDefaults objectForKey:@"currentTestSummaryDataURL"])
 	{
