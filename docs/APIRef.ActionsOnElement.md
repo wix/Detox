@@ -13,6 +13,7 @@ Actions are functions that emulate user behavior. They are being performed on ma
 
 - [`.tap()`](#tap)
 - [`.longPress()`](#longpress)
+- [`.longPressAtPoint()`](#longpressatpoint) **iOS only**
 - [`.multiTap()`](#multitaptimes)
 - [`.tapAtPoint()`](#tapatpoint)
 - [`.tapBackspaceKey()`](#tapbackspacekey)
@@ -37,10 +38,19 @@ await element(by.id('tappable')).tap();
 
 ### `longPress(duration)`
 Simulate long press on an element.<br>
-duration - long press time interval. (iOS only)<br>
+duration - long press time interval is seconds. (iOS only)<br>
 
 ```js
-await element(by.id('tappable')).longPress();
+await element(by.id('tappable')).longPress(2); // This will press for 2 seconds
+```
+
+### `longPressAtPoint(point, duration)`  iOS only
+Simulate long press on a specific point on an element.<br>
+duration - long press time interval in seconds.<br>
+Note: The point coordinates are relative to the matched element and the element size could changes on different devices or even when changing the device font size.
+
+```js
+await element(by.id('tappable')).longPressAtPoint({x: 5, y: 10}, 1);
 ```
 
 ### `multiTap(times)`
