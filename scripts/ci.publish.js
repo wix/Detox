@@ -5,6 +5,12 @@ const {log, logSection, getVersionSafe} = require('./ci.common');
 
 function publishNewVersion(packageVersion) {
   validatePrerequisites();
+
+  logSection('DEBUG');
+  exec.execSync('whoami');
+  exec.execSync('gem list');
+  exec.execSync('gem env');
+
   projectSetup();
   prePublishToNpm();
   publishToNpm();
