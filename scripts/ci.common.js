@@ -4,7 +4,7 @@ const fs = require('fs');
 const chalk = require('chalk');
 
 const log = (...args) => console.log('[RELEASE]', ...args);
-const logSection = (message) => console.log(chalk.blue('[RELEASE]'), chalk.blue(`*** ${message} ***`));
+const logSection = (message) => console.log(chalk.blue(`[RELEASE] ${message}`));
 
 function getPackageJsonPath() {
   return `${process.cwd()}/detox/package.json`;
