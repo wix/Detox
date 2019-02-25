@@ -1,5 +1,15 @@
 # Change Log
 
+## [10.0.10](https://github.com/wix/Detox/tree/10.0.10) (2019-02-25)
+[Full Changelog](https://github.com/wix/Detox/compare/10.0.9...10.0.10)
+
+**Fixed Bugs**
+
+- Postinstall installation error build\_framework.ios.sh [\#1092](https://github.com/wix/Detox/issues/1092)
+
+## [10.0.9](https://github.com/wix/Detox/tree/10.0.9) (2019-02-18)
+[Full Changelog](https://github.com/wix/Detox/compare/10.0.8...10.0.9)
+
 ## [10.0.8](https://github.com/wix/Detox/tree/10.0.8) (2019-02-17)
 [Full Changelog](https://github.com/wix/Detox/compare/10.0.7-snapshot.299...10.0.8)
 
@@ -226,7 +236,7 @@
 - fix: ADB.pidof integration issue with grep and CRLF edge case [\#927](https://github.com/wix/Detox/pull/927) ([noomorph](https://github.com/noomorph))
 
 ## [9.0.2](https://github.com/wix/Detox/tree/9.0.2) (2018-09-24)
-[Full Changelog](https://github.com/wix/Detox/compare/9.0.0...9.0.2)
+[Full Changelog](https://github.com/wix/Detox/compare/9.0.1...9.0.2)
 
 **Enhancements**
 
@@ -249,11 +259,11 @@
 
 - \[Android\] Remove @override annotation to support RN 0.53-0.55 on detox 9.0 [\#922](https://github.com/wix/Detox/pull/922) ([JamesWatling](https://github.com/JamesWatling))
 
-## [9.0.0](https://github.com/wix/Detox/tree/9.0.0) (2018-08-31)
-[Full Changelog](https://github.com/wix/Detox/compare/9.0.1...9.0.0)
-
 ## [9.0.1](https://github.com/wix/Detox/tree/9.0.1) (2018-08-31)
-[Full Changelog](https://github.com/wix/Detox/compare/8.2.3...9.0.1)
+[Full Changelog](https://github.com/wix/Detox/compare/9.0.0...9.0.1)
+
+## [9.0.0](https://github.com/wix/Detox/tree/9.0.0) (2018-08-31)
+[Full Changelog](https://github.com/wix/Detox/compare/8.2.3...9.0.0)
 
 **Enhancements**
 
@@ -1029,13 +1039,13 @@
 - fixed the crash on older react native versions where there’s no `\_nod… [\#160](https://github.com/wix/Detox/pull/160) ([silyevsk](https://github.com/silyevsk))
 
 ## [detox-cli@1.0.2](https://github.com/wix/Detox/tree/detox-cli@1.0.2) (2017-06-07)
-[Full Changelog](https://github.com/wix/Detox/compare/detox-server@2.0.3...detox-cli@1.0.2)
-
-## [detox-server@2.0.3](https://github.com/wix/Detox/tree/detox-server@2.0.3) (2017-06-07)
-[Full Changelog](https://github.com/wix/Detox/compare/detox@5.1.0...detox-server@2.0.3)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.1.0...detox-cli@1.0.2)
 
 ## [detox@5.1.0](https://github.com/wix/Detox/tree/detox@5.1.0) (2017-06-07)
-[Full Changelog](https://github.com/wix/Detox/compare/detox-server@2.0.2...detox@5.1.0)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-server@2.0.3...detox@5.1.0)
+
+## [detox-server@2.0.3](https://github.com/wix/Detox/tree/detox-server@2.0.3) (2017-06-07)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-server@2.0.2...detox-server@2.0.3)
 
 **Enhancements**
 
@@ -1066,13 +1076,13 @@
 [Full Changelog](https://github.com/wix/Detox/compare/detox@5.0.11...detox-server@2.0.1)
 
 ## [detox@5.0.11](https://github.com/wix/Detox/tree/detox@5.0.11) (2017-05-29)
-[Full Changelog](https://github.com/wix/Detox/compare/detox-server@1.2.3...detox@5.0.11)
-
-## [detox-server@1.2.3](https://github.com/wix/Detox/tree/detox-server@1.2.3) (2017-05-28)
-[Full Changelog](https://github.com/wix/Detox/compare/detox@5.0.10...detox-server@1.2.3)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.0.10...detox@5.0.11)
 
 ## [detox@5.0.10](https://github.com/wix/Detox/tree/detox@5.0.10) (2017-05-28)
-[Full Changelog](https://github.com/wix/Detox/compare/detox@5.0.9...detox@5.0.10)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-server@1.2.3...detox@5.0.10)
+
+## [detox-server@1.2.3](https://github.com/wix/Detox/tree/detox-server@1.2.3) (2017-05-28)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.0.9...detox-server@1.2.3)
 
 **Merged Pull Requests**
 
@@ -1143,16 +1153,16 @@
 [Full Changelog](https://github.com/wix/Detox/compare/detox@5.0.2...detox@5.0.3)
 
 ## [detox@5.0.2](https://github.com/wix/Detox/tree/detox@5.0.2) (2017-03-16)
-[Full Changelog](https://github.com/wix/Detox/compare/detox-cli@1.0.1...detox@5.0.2)
-
-## [detox-cli@1.0.1](https://github.com/wix/Detox/tree/detox-cli@1.0.1) (2017-03-16)
-[Full Changelog](https://github.com/wix/Detox/compare/detox-server@1.2.1...detox-cli@1.0.1)
-
-## [detox-server@1.2.1](https://github.com/wix/Detox/tree/detox-server@1.2.1) (2017-03-16)
-[Full Changelog](https://github.com/wix/Detox/compare/detox@5.0.1...detox-server@1.2.1)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@5.0.1...detox@5.0.2)
 
 ## [detox@5.0.1](https://github.com/wix/Detox/tree/detox@5.0.1) (2017-03-16)
-[Full Changelog](https://github.com/wix/Detox/compare/detox@4.3.2...detox@5.0.1)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-server@1.2.1...detox@5.0.1)
+
+## [detox-server@1.2.1](https://github.com/wix/Detox/tree/detox-server@1.2.1) (2017-03-16)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-cli@1.0.1...detox-server@1.2.1)
+
+## [detox-cli@1.0.1](https://github.com/wix/Detox/tree/detox-cli@1.0.1) (2017-03-16)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@4.3.2...detox-cli@1.0.1)
 
 ## [detox@4.3.2](https://github.com/wix/Detox/tree/detox@4.3.2) (2017-03-09)
 [Full Changelog](https://github.com/wix/Detox/compare/detox@4.3.1...detox@4.3.2)
@@ -1198,13 +1208,13 @@
 [Full Changelog](https://github.com/wix/Detox/compare/detox@4.1.2...detox@4.1.3)
 
 ## [detox@4.1.2](https://github.com/wix/Detox/tree/detox@4.1.2) (2017-01-19)
-[Full Changelog](https://github.com/wix/Detox/compare/detox-server@1.1.1...detox@4.1.2)
-
-## [detox-server@1.1.1](https://github.com/wix/Detox/tree/detox-server@1.1.1) (2017-01-19)
-[Full Changelog](https://github.com/wix/Detox/compare/detox@4.1.1...detox-server@1.1.1)
+[Full Changelog](https://github.com/wix/Detox/compare/detox@4.1.1...detox@4.1.2)
 
 ## [detox@4.1.1](https://github.com/wix/Detox/tree/detox@4.1.1) (2017-01-19)
-[Full Changelog](https://github.com/wix/Detox/compare/v4.1.0...detox@4.1.1)
+[Full Changelog](https://github.com/wix/Detox/compare/detox-server@1.1.1...detox@4.1.1)
+
+## [detox-server@1.1.1](https://github.com/wix/Detox/tree/detox-server@1.1.1) (2017-01-19)
+[Full Changelog](https://github.com/wix/Detox/compare/v4.1.0...detox-server@1.1.1)
 
 **Enhancements**
 
