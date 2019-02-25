@@ -1,14 +1,14 @@
 /* tslint:disable: no-console */
 const exec = require('shell-utils').exec;
 const fs = require('fs');
-const {log, getVersionSafe} = require('./ci.common');
+const {log, logSection, getVersionSafe} = require('./ci.common');
 
 const isRelease = (process.env.RELEASE_VERSION_TYPE && process.env.RELEASE_VERSION_TYPE !== 'none');
 
 const ONLY_ON_BRANCH = 'origin/master';
 
 function run() {
-	log('Running some validations...');
+	logSection('Script started');
 	if (!validateEnv()) {
 		return;
 	}
@@ -43,7 +43,6 @@ function setupGitConfig() {
 	exec.execSyncSilent(`git config --global user.name "${process.env.GIT_USER}"`);
 	const remoteUrl = new RegExp(`https?://(\\S+)`).exec(exec.execSyncRead(`git remote -v`))[1];
 	exec.execSyncSilent(`git remote add deploy "https://${process.env.GIT_USER}:${process.env.GIT_TOKEN}@${remoteUrl}"`);
-	// exec.execSync(`git checkout ${ONLY_ON_BRANCH}`);
 }
 
 function setupNpmConfig() {
@@ -60,7 +59,7 @@ email=\${NPM_EMAIL}
 }
 
 function versionTagAndPublish() {
-	log('Preparing to tag/release');
+	logSection('Preparing to tag/release');
 
 	const packageVersion = getVersionSafe();
 	log(`    package version: ${packageVersion}`);
