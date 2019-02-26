@@ -68,7 +68,7 @@ function generateChangeLog(newVersion) {
   logSection('Changelog generator');
 
   const gitToken = process.env.CHANGELOG_GITHUB_TOKEN;
-  exec.execSync(`CHANGELOG_GITHUB_TOKEN=${gitToken} LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 LC_ALL=en_US.UTF-8 github_changelog_generator --future-release "${newVersion}" --no-verbose`);
+  exec.execSyncSilent(`CHANGELOG_GITHUB_TOKEN=${gitToken} LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 LC_ALL=en_US.UTF-8 github_changelog_generator --future-release "${newVersion}" --no-verbose`);
   exec.execSync('git status');
 }
 
