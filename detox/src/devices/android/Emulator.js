@@ -86,6 +86,11 @@ class Emulator {
   }
 
   gpuMethod() {
+    const gpuArgument = argparse.getArgValue('gpu');
+    if(gpuArgument) {
+      return gpuArgument;
+    }
+
     if (argparse.getArgValue('headless')) {
       switch (os.platform()) {
         case 'darwin':

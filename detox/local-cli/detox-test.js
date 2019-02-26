@@ -44,6 +44,8 @@ program
     'Specify test file to run')
   .option('-H, --headless',
     '[Android Only] Launch Emulator in headless mode. Useful when running on CI.')
+  .option('--gpu [gpu mode]',
+    '[Android Only] Launch Emulator with the specific -gpu [gpu mode] parameter.')
   .option('-w, --workers <n>',
     '[iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest)', 1)
   .option('-n, --device-name [name]',
@@ -127,13 +129,14 @@ function runMocha() {
   const screenshots = program.takeScreenshots ? `--take-screenshots ${program.takeScreenshots}` : '';
   const videos = program.recordVideos ? `--record-videos ${program.recordVideos}` : '';
   const headless = program.headless ? `--headless` : '';
+  const gpu = program.gpu ? `--gpu ${program.gpu}` : '';
   const color = program.color ? '' : '--no-colors';
   const deviceName = program.deviceName ? `--device-name "${program.deviceName}"` : '';
 
   const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
   const binPath = path.join('node_modules', '.bin', 'mocha');
   const command = `${binPath} ${testFolder} ${configFile} ${configuration} ${loglevel} ${color} ` +
-    `${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${headless} ` +
+    `${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${headless} ${gpu} ` +
     `${logs} ${screenshots} ${videos} ${artifactsLocation} ${deviceName} ${collectExtraArgs()}`;
 
   console.log(command);
@@ -154,6 +157,7 @@ function runJest() {
     cleanup: program.cleanup,
     reuse: program.reuse,
     debugSynchronization: program.debugSynchronization,
+    gpu: program.gpu,
     headless: program.headless,
     artifactsLocation: program.artifactsLocation,
     recordLogs: program.recordLogs,
