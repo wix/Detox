@@ -29,11 +29,15 @@ class Emulator {
   async boot(emulatorName) {
     const emulatorArgs = _.compact([
       '-verbose',
-      '-gpu', this.gpuMethod(),
       '-no-audio',
       argparse.getArgValue('headless') ? '-no-window' : '',
       `@${emulatorName}`
     ]);
+
+    const gpuMethod = this.gpuMethod();
+    if(gpuMethod) {
+      emulatorArgs.push('-gpu', gpuMethod);
+    }
 
     let childProcessOutput;
     const tempLog = `./${emulatorName}.log`;
@@ -93,9 +97,9 @@ class Emulator {
         default:
           return 'auto';
       }
-    } else {
-      return 'host';
     }
+
+    return undefined;
   }
 }
 
