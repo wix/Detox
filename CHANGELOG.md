@@ -1,11 +1,27 @@
 # Change Log
 
-## [10.0.10](https://github.com/wix/Detox/tree/10.0.10) (2019-02-25)
-[Full Changelog](https://github.com/wix/Detox/compare/10.0.9...10.0.10)
+## [10.0.12](https://github.com/wix/Detox/tree/10.0.12) (2019-03-03)
+[Full Changelog](https://github.com/wix/Detox/compare/10.0.11...10.0.12)
 
 **Fixed Bugs**
 
 - Postinstall installation error build\_framework.ios.sh [\#1092](https://github.com/wix/Detox/issues/1092)
+
+**Closed Issues**
+
+- Detox error running tests on real Android device [\#1174](https://github.com/wix/Detox/issues/1174)
+- toHaveText\(\) not working with Expo [\#1168](https://github.com/wix/Detox/issues/1168)
+- Postinstall fails on missing simulator runtimes [\#1167](https://github.com/wix/Detox/issues/1167)
+
+**Merged Pull Requests**
+
+- Android: Stabilize animations short-timer e2e \(minor change in timers IR\) - fix \#1171 [\#1186](https://github.com/wix/Detox/pull/1186) ([d4vidi](https://github.com/d4vidi))
+
+## [10.0.11](https://github.com/wix/Detox/tree/10.0.11) (2019-02-25)
+[Full Changelog](https://github.com/wix/Detox/compare/10.0.10...10.0.11)
+
+## [10.0.10](https://github.com/wix/Detox/tree/10.0.10) (2019-02-25)
+[Full Changelog](https://github.com/wix/Detox/compare/10.0.9...10.0.10)
 
 ## [10.0.9](https://github.com/wix/Detox/tree/10.0.9) (2019-02-18)
 [Full Changelog](https://github.com/wix/Detox/compare/10.0.8...10.0.9)
