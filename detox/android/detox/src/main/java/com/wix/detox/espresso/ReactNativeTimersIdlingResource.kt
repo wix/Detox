@@ -82,31 +82,28 @@ class ReactNativeTimersIdlingResource @JvmOverloads constructor(
     }
 
     private fun checkIdle(): Boolean {
-        val now = System.nanoTime() / 1000000L
         val (timersQueue, timersLock) = TimingModuleReflected(reactContext)
-
         synchronized(timersLock) {
             val nextTimer = timersQueue.peek()
             nextTimer?.let {
-                return !isTimerInBusyWindow(it, now) && !hasBusyTimers(timersQueue, now)
+                return !isTimerInBusyWindow(it) && !hasBusyTimers(timersQueue)
             }
             return true
         }
     }
 
-    private fun isTimerInBusyWindow(timer: Any, now: Long): Boolean {
+    private fun isTimerInBusyWindow(timer: Any): Boolean {
         val timerReflected = TimerReflected(timer)
         return when {
             timerReflected.isRepeating -> false
-            timerReflected.targetTime < now -> false
             timerReflected.interval > BUSY_WINDOW_THRESHOLD -> false
             else -> true
         }
     }
 
-    private fun hasBusyTimers(timersQueue: PriorityQueue<Any>, now: Long): Boolean {
+    private fun hasBusyTimers(timersQueue: PriorityQueue<Any>): Boolean {
         timersQueue.forEach {
-            if (isTimerInBusyWindow(it, now)) {
+            if (isTimerInBusyWindow(it)) {
                 return true
             }
         }
