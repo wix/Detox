@@ -4,19 +4,21 @@ describe('Matchers', () => {
     await element(by.text('Matchers')).tap();
   });
 
-  it('should match elements by (accesibility) label', async () => {
+  it('should match elements by (accessibility) label', async () => {
     await element(by.label('Label')).tap();
     await expect(element(by.text('Label Working!!!'))).toBeVisible();
   });
 
-  it('should match elements by (accesibility) id', async () => {
+  it('should match elements by (accessibility) id', async () => {
     await element(by.id('UniqueId345')).tap();
     await expect(element(by.text('ID Working!!!'))).toBeVisible();
   });
 
   it('should match elements by index', async () => {
     const index = device.getPlatform() === 'ios' ? 2 : 0;
-    await element(by.text('Index')).atIndex(index).tap();
+    await element(by.text('Index'))
+      .atIndex(index)
+      .tap();
     await expect(element(by.text('First button pressed!!!'))).toBeVisible();
   });
 
@@ -30,8 +32,8 @@ describe('Matchers', () => {
 
   // https://facebook.github.io/react-native/docs/accessibility.html#accessibilitytraits-ios
   // Accessibility Inspector in the simulator can help investigate traits
-  it(':ios: should match elements by accesibility trait', async () => {
-    await element(by.traits(['button', 'text'])).tap();
+  it(':ios: should match elements by accessibility trait', async () => {
+    await element(by.traits(['button', 'disabled'])).tap();
     await expect(element(by.text('Traits Working!!!'))).toBeVisible();
   });
 
@@ -66,5 +68,4 @@ describe('Matchers', () => {
   it.skip('should choose from multiple elements matching the same matcher using index', async () => {
     await expect(element(by.text('Product')).atIndex(2)).toHaveId('ProductId002');
   });
-
 });
