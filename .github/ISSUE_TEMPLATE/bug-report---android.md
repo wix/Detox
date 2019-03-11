@@ -2,7 +2,7 @@
 name: Bug Report - Android
 about: Create a report to help us improve Detox on Android
 title: ''
-labels: 'platform: android'
+labels: 'platform: android, type: triage/bug'
 assignees: ''
 
 ---
