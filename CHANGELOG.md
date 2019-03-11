@@ -1,5 +1,16 @@
 # Change Log
 
+## [10.0.13](https://github.com/wix/Detox/tree/10.0.13) (2019-03-11)
+[Full Changelog](https://github.com/wix/Detox/compare/10.0.12...10.0.13)
+
+**Enhancements**
+
+- Issue with \_queryPID function [\#1100](https://github.com/wix/Detox/issues/1100)
+
+**Merged Pull Requests**
+
+- Resolves \#1100 [\#1189](https://github.com/wix/Detox/pull/1189) ([noomorph](https://github.com/noomorph))
+
 ## [10.0.12](https://github.com/wix/Detox/tree/10.0.12) (2019-03-03)
 [Full Changelog](https://github.com/wix/Detox/compare/10.0.11...10.0.12)
 
