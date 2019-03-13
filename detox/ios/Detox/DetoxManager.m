@@ -413,13 +413,15 @@ static void detoxConditionalInit()
 	
 	if(props[@"recordingPath"] != nil)
 	{
+		NSURL* absoluteURL = [NSURL fileURLWithPath:props[@"recordingPath"]];
+		
 		if(launch)
 		{
-			[_recordingManager continueRecordingAtURL:[DetoxInstrumentsManager defaultURLForTestName:props[@"recordingPath"]]];
+			[_recordingManager continueRecordingAtURL:absoluteURL];
 		}
 		else
 		{
-			[_recordingManager startRecordingAtURL:[DetoxInstrumentsManager defaultURLForTestName:props[@"recordingPath"]]];
+			[_recordingManager startRecordingAtURL:absoluteURL];
 		}
 	}
 	else
