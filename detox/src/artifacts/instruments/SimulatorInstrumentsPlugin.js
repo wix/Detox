@@ -15,33 +15,37 @@ class SimulatorInstrumentsPlugin extends WholeTestRecorderPlugin {
       : false;
   }
 
+  async onBeforeTerminateApp(event) {
+    await super.onBeforeTerminateApp(event);
+    await this._stopRecordingIfExists();
+  }
+
   async onBeforeShutdownDevice(event) {
     await super.onBeforeShutdownDevice(event);
+    await this._stopRecordingIfExists();
+  }
 
-    if (this.currentRecording) {
-      await this.currentRecording.stop();
+  async _stopRecordingIfExists() {
+    if (this.testRecording) {
+      await this.testRecording.stop();
     }
   }
 
   async onBeforeLaunchApp(event) {
     await super.onBeforeLaunchApp(event);
 
-    if (this.currentRecording) {
-      await this.currentRecording.stop();
-
-      if (this.enabled) {
-        event.launchArgs['-recordingPath'] = this.currentRecording.temporaryRecordingPath;
-      }
+    if (this.testRecording && this.enabled) {
+      event.launchArgs['-recordingPath'] = this.testRecording.temporaryRecordingPath;
     }
   }
 
   async onLaunchApp(event) {
     await super.onLaunchApp(event);
 
-    if (this.currentRecording && this.enabled) {
+    if (this.testRecording && this.enabled) {
       // doing a nominal start, without doing anything useful
       // to preserve correct recording state
-      await this.currentRecording.start({ dry: true });
+      await this.testRecording.start({ dry: true });
     }
   }
 

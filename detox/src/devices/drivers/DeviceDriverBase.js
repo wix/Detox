@@ -13,6 +13,7 @@ class DeviceDriverBase {
         'bootDevice',
         'beforeShutdownDevice',
         'shutdownDevice',
+        'beforeTerminateApp',
         'beforeLaunchApp',
         'launchApp',
       ],

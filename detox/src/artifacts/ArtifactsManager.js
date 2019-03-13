@@ -77,16 +77,19 @@ class ArtifactsManager {
 
   subscribeToDeviceEvents(deviceEmitter) {
     deviceEmitter.on('bootDevice', this.onBootDevice.bind(this));
-
     deviceEmitter.on('beforeShutdownDevice', this.onBeforeShutdownDevice.bind(this));
     deviceEmitter.on('shutdownDevice', this.onShutdownDevice.bind(this));
-
     deviceEmitter.on('beforeLaunchApp', this.onBeforeLaunchApp.bind(this));
     deviceEmitter.on('launchApp', this.onLaunchApp.bind(this));
+    deviceEmitter.on('beforeTerminateApp', this.onBeforeTerminateApp.bind(this));
   }
 
   async onBootDevice(deviceInfo) {
     await this._callPlugins('onBootDevice', deviceInfo);
+  }
+
+  async onBeforeTerminateApp(appInfo) {
+    await this._callPlugins('onBeforeTerminateApp', appInfo);
   }
 
   async onBeforeShutdownDevice(deviceInfo) {
