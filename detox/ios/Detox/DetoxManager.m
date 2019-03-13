@@ -31,8 +31,6 @@ DTX_CREATE_LOG(DetoxManager)
 @interface DetoxManager() <WebSocketDelegate, TestRunnerDelegate>
 {
 	DetoxInstrumentsManager* _recordingManager;
-	
-	NSString* _activeTest;
 }
 
 @property (nonatomic) BOOL isReady;
@@ -112,9 +110,11 @@ static void detoxConditionalInit()
 	
 	if([NSUserDefaults.standardUserDefaults objectForKey:@"currentTestSummaryDataURL"])
 	{
-		NSURL* currentTestSummarydataURL = [NSURL fileURLWithPath:[NSUserDefaults.standardUserDefaults objectForKey:@"currentTestSummaryDataURL"]];
-		NSDictionary* params = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfURL:currentTestSummarydataURL] options:NSJSONReadingAllowFragments error:NULL];
-		[self _handleLifecycle:params isFromBoot:YES completionHandler:nil];
+		NSString* recordingPath = [NSUserDefaults.standardUserDefaults objectForKey:@"recordingPath"];
+		if(recordingPath != nil)
+		{
+			[self _handlePerformanceRecording:@{@"recordingPath": recordingPath} isFromLaunch:YES completionHandler:nil];
+		}
 	}
 	
 	return self;
@@ -209,10 +209,10 @@ static void detoxConditionalInit()
 {
 	NSAssert(messageId != nil, @"Got action with a null messageId");
 	
-	if([type isEqualToString:@"testLifecycleEvent"])
+	if([type isEqualToString:@"setRecordingState"])
 	{
-		[self _handleLifecycle:params isFromBoot:NO completionHandler:^ {
-			[self _safeSendAction:@"testLifecycleEventDone" params:@{} messageId:messageId];
+		[self _handlePerformanceRecording:params isFromLaunch:NO completionHandler:^ {
+			[self _safeSendAction:@"setRecordingStateDone" params:@{} messageId:messageId];
 		}];
 	}
 	else if([type isEqualToString:@"waitForActive"])
@@ -346,7 +346,7 @@ static void detoxConditionalInit()
 
 - (void)websocketDidClose:(WebSocket *)websocket
 {
-	[self _handleLifecycle:nil isFromBoot:NO completionHandler:nil];
+	[self _handlePerformanceRecording:nil isFromLaunch:NO completionHandler:nil];
 }
 
 - (void)_waitForRNLoadWithId:(id)messageId
@@ -394,9 +394,8 @@ static void detoxConditionalInit()
 	[[UIApplication sharedApplication] _sendMotionEnded:UIEventSubtypeMotionShake];
 }
 
-- (void)_handleLifecycle:(NSDictionary*)props isFromBoot:(BOOL)boot completionHandler:(void(^)(void))completionHandler
+- (void)_handlePerformanceRecording:(NSDictionary*)props isFromLaunch:(BOOL)launch completionHandler:(void(^)(void))completionHandler
 {
-	NSString* status = props[@"status"];
 	if(completionHandler == nil)
 	{
 		completionHandler = ^ {};
@@ -404,21 +403,19 @@ static void detoxConditionalInit()
 	
 	BOOL completionBlocked = NO;
 	
-	if([status isEqualToString:@"running"])
+	if(props[@"recordingPath"] != nil)
 	{
-		_activeTest = props[@"fullName"];
-		if(boot)
+		if(launch)
 		{
-			[_recordingManager continueRecordingAtURL:[DetoxInstrumentsManager defaultURLForTestName:_activeTest]];
+			[_recordingManager continueRecordingAtURL:[DetoxInstrumentsManager defaultURLForTestName:props[@"recordingPath"]]];
 		}
 		else
 		{
-			[_recordingManager startRecordingAtURL:[DetoxInstrumentsManager defaultURLForTestName:_activeTest]];
+			[_recordingManager startRecordingAtURL:[DetoxInstrumentsManager defaultURLForTestName:props[@"recordingPath"]]];
 		}
 	}
 	else
 	{
-		_activeTest = nil;
 		completionBlocked = YES;
 		[_recordingManager stopRecordingWithCompletionHandler:^(NSError *error) {
 			dispatch_async(dispatch_get_main_queue(), ^{
