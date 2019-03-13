@@ -199,9 +199,11 @@ class ArtifactPlugin {
 
     this.onTerminate = _.noop;
     this.onBootDevice = _.noop;
+    this.onBeforeShutdownDevice = _.noop;
     this.onShutdownDevice = _.noop;
     this.onBeforeLaunchApp = _.noop;
     this.onLaunchApp = _.noop;
+    this.onBeforeTerminateApp = _.noop;
     this.onBeforeAll = _.noop;
     this.onBeforeEach = _.noop;
     this.onAfterEach = _.noop;

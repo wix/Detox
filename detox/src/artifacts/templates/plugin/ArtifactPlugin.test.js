@@ -97,6 +97,15 @@ describe(ArtifactPlugin, () => {
       expect(plugin.context).toMatchSnapshot();
     });
 
+    it('should update context on .onBeforeTerminateApp', async () => {
+      await expect(plugin.onBeforeTerminateApp({
+        deviceId: 'testDeviceId',
+        bundleId: 'testBundleId',
+      }));
+
+      expect(plugin.context).toMatchSnapshot();
+    });
+
     it('should have .onBootDevice', async () => {
       await expect(plugin.onBootDevice({
         deviceId: 'testDeviceId',
@@ -157,9 +166,11 @@ describe(ArtifactPlugin, () => {
         await plugin.onTerminate();
 
         expect(plugin.onBootDevice).toBe(plugin.onTerminate);
+        expect(plugin.onBeforeShutdownDevice).toBe(plugin.onTerminate);
         expect(plugin.onShutdownDevice).toBe(plugin.onTerminate);
         expect(plugin.onBeforeLaunchApp).toBe(plugin.onTerminate);
         expect(plugin.onLaunchApp).toBe(plugin.onTerminate);
+        expect(plugin.onBeforeTerminateApp).toBe(plugin.onTerminate);
         expect(plugin.onBeforeAll).toBe(plugin.onTerminate);
         expect(plugin.onBeforeEach).toBe(plugin.onTerminate);
         expect(plugin.onAfterEach).toBe(plugin.onTerminate);

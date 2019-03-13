@@ -84,6 +84,34 @@ Array [
 ]
 `;
 
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onBeforeShutdownDevice errors 1`] = `
+Array [
+  Array [
+    Object {
+      "err": [Error: test onBeforeShutdownDevice error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onBeforeShutdownDevice",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside function call: testPlugin.onBeforeShutdownDevice({ deviceId: 'testDeviceId' })",
+  ],
+]
+`;
+
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onBeforeTerminateApp errors 1`] = `
+Array [
+  Array [
+    Object {
+      "err": [Error: test onBeforeTerminateApp error],
+      "event": "PLUGIN_ERROR",
+      "methodName": "onBeforeTerminateApp",
+      "plugin": "testPlugin",
+    },
+    "Caught exception inside function call: testPlugin.onBeforeTerminateApp({ bundleId: 'testBundleId', deviceId: 'testDeviceId' })",
+  ],
+]
+`;
+
 exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onBootDevice errors 1`] = `
 Array [
   Array [
