@@ -31,8 +31,12 @@ const downloadedEspressoFilesMap = Object
   );
 
 const externalFilesToDownload = {
-  'https://android.googlesource.com/platform/frameworks/uiautomator/+/master/src/com/android/uiautomator/core/UiDevice.java?format=TEXT':
-    '../detox/src/android/espressoapi/UIDevice.js'
+  // This doesn't work on ios builds on CI - I suspect a node version issue since the root of the problem is in child_process'
+  // execFileSync() (probably incompatible parameters usage).
+  // FIX ASAP
+
+  // 'https://android.googlesource.com/platform/frameworks/uiautomator/+/master/src/com/android/uiautomator/core/UiDevice.java?format=TEXT':
+  //   '../detox/src/android/espressoapi/UIDevice.js'
 };
 
 const downloadedAndroidFilesMap = Object
