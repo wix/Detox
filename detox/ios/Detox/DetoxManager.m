@@ -209,7 +209,12 @@ static void detoxConditionalInit()
 {
 	NSAssert(messageId != nil, @"Got action with a null messageId");
 	
-	if([type isEqualToString:@"setRecordingState"])
+	if([type isEqualToString:@"testerDisconnected"])
+	{
+		//This should call the websocket closed delegate. Fingers crossed 🤞
+		[websocket close];
+	}
+	else if([type isEqualToString:@"setRecordingState"])
 	{
 		[self _handlePerformanceRecording:params isFromLaunch:NO completionHandler:^ {
 			[self _safeSendAction:@"setRecordingStateDone" params:@{} messageId:messageId];

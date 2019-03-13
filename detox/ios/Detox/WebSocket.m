@@ -48,6 +48,15 @@ DTX_CREATE_LOG(WebSocket);
 	_isModern = [self.websocket respondsToSelector:@selector(sendString:error:)];
 }
 
+- (void)close
+{
+	if (self.websocket)
+	{
+		[self.websocket close];
+		self.websocket = nil;
+	}
+}
+
 - (void)sendAction:(NSString*)type withParams:(NSDictionary*)params withMessageId:(NSNumber*)messageId
 {
 	NSDictionary *data = @{@"type": type, @"params": params, @"messageId": messageId};
