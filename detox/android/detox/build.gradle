@@ -91,3 +91,79 @@ dependencies {
     // noinspection GradleDynamicVersion
     testImplementation 'com.facebook.react:react-native:+'
 }
+
+/*
+ * =========================================================
+ * publish fatjar (poms + aars + sourcejars + javadocs) :
+ * =========================================================
+ */
+
+apply plugin: 'maven-publish'
+
+println "Publish artifacts to: $buildDir../../../../DetoxAndroid"
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    failOnError false
+    source android.sourceSets.main.java.srcDirs
+    classpath += files(android.bootClasspath)
+    classpath += files(project.configurations.getByName('compile').asList())
+    classpath += files(android.libraryVariants.collect { variant ->
+        variant.javaCompile.classpath.files
+    }.flatten())
+    options {
+        memberLevel = JavadocMemberLevel.PUBLIC
+        docEncoding = 'UTF-8'
+        encoding = 'UTF-8'
+        charSet = 'UTF-8'
+        locale = 'en_US'
+        links "https://docs.oracle.com/javase/7/docs/api/"
+        linksOffline "https://developer.android.com/reference/", "${project.android.sdkDirectory}/docs/reference"
+    }
+    exclude '**/BuildConfig.java'
+    exclude '**/R.java'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+project.afterEvaluate {
+    project.tasks.all { task ->
+        android.libraryVariants.all { variant ->
+            def v = variant.name.capitalize()
+            if (task.name == "publishMaven${v}AarPublicationToMavenRepository") {
+                task.dependsOn "assemble${v}"
+            }
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            url = "$buildDir../../../../DetoxAndroid"
+        }
+    }
+    publications {
+        android.libraryVariants.all { variant ->
+            if (variant.buildType.name == 'release') {
+                "maven${variant.name.capitalize()}Aar"(MavenPublication) {
+                    variant.outputs.forEach { output ->
+                        artifact output.outputFile
+                    }
+                    artifact sourcesJar
+                    artifact javadocJar
+                    groupId 'com.wix'
+                    artifactId 'detox'
+                    version "${project.findProperty('VERSION') ?: '1.0.0'}-${variant.name}"
+                }
+            }
+        }
+    }
+}
