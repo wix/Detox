@@ -15,47 +15,50 @@ function sanitize_uiAccessibilityTraits(value) {
       case 'link':
         traits |= 2;
         break;
-      case 'header':
+      case 'image':
         traits |= 4;
         break;
-      case 'search':
+      case 'selected':
         traits |= 8;
         break;
-      case 'image':
+      case 'plays':
         traits |= 16;
         break;
-      case 'selected':
+      case 'key':
         traits |= 32;
         break;
-      case 'plays':
+      case 'text':
         traits |= 64;
         break;
-      case 'key':
+      case 'summary':
         traits |= 128;
         break;
-      case 'text':
+      case 'disabled':
         traits |= 256;
         break;
-      case 'summary':
+      case 'frequentUpdates':
         traits |= 512;
         break;
-      case 'disabled':
+      case 'search':
         traits |= 1024;
         break;
-      case 'frequentUpdates':
+      case 'startsMedia':
         traits |= 2048;
         break;
-      case 'startsMedia':
+      case 'adjustable':
         traits |= 4096;
         break;
-      case 'adjustable':
+      case 'allowsDirectInteraction':
         traits |= 8192;
         break;
-      case 'allowsDirectInteraction':
+      case 'pageTurn':
         traits |= 16384;
         break;
-      case 'pageTurn':
+      case 'tabBar':
         traits |= 32768;
+        break;
+      case 'header':
+        traits |= 65536;
         break;
       default:
         throw new Error(
