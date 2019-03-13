@@ -1,7 +1,7 @@
 package com.wix.detox.espresso
 
-import android.support.test.espresso.IdlingResource
 import android.view.Choreographer
+import androidx.test.espresso.IdlingResource
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.modules.core.Timing
 import org.joor.Reflect

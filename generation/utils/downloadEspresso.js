@@ -3,7 +3,5 @@ const downloadFile = require('./downloadFile');
 
 module.exports = function downloadEspresso(fullyQualifiedClass) {
   const path = fullyQualifiedClass.replace(/\./g, '/');
-  return downloadFile(
-    `http://android.googlesource.com/platform/frameworks/testing/+/android-support-test/espresso/core/src/main/java/${path}.java?format=TEXT`
-  );
+  return downloadFile(`https://raw.githubusercontent.com/android/android-test/androidx-test-1.1.0/espresso/core/java/${path}.java`);
 };

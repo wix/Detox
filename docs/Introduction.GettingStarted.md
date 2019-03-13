@@ -177,3 +177,10 @@ detox test
 That's it. Your first failing Detox test is running!
 
 Next, we'll go over usage and how to make this test [actually pass](Introduction.WritingFirstTest.md).
+
+<br>
+
+## Step 5: Android Setup
+
+If you haven't already done so - now is the time to set Android up using the [Android guide](Introduction.Android.md).
+

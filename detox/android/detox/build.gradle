@@ -75,11 +75,13 @@ dependencies {
     minReactNative46Implementation 'com.squareup.okhttp3:okhttp:3.6.0'
     minReactNative46Implementation 'com.squareup.okio:okio:1.13.0'
 
-    implementation('com.android.support.test.espresso:espresso-core:3.0.2', {
-        exclude group: 'com.google.code.findbugs'
-    })
-    implementation 'com.android.support.test:runner:1.0.2'
-    implementation 'com.android.support.test:rules:1.0.2'
+    // Versions are in-sync with the 'androidx-test-1.1.0' release/tag of the android-test github repo,
+    // used by the Detox generator. See https://github.com/android/android-test/releases/tag/androidx-test-1.1.0
+    // Important: Should remain so when generator tag is replaced!
+    api 'androidx.test.espresso:espresso-core:3.1.1'
+    api 'androidx.test:runner:1.1.1'
+    api 'androidx.test:rules:1.1.1'
+    api 'androidx.test.ext:junit:1.1.0'
 
     // noinspection GradleDynamicVersion
     compileOnly "com.facebook.react:react-native:+"

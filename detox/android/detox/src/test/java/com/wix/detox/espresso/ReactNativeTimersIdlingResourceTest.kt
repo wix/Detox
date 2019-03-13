@@ -1,7 +1,7 @@
 package com.wix.detox.espresso
 
-import android.support.test.espresso.IdlingResource.ResourceCallback
 import android.view.Choreographer
+import androidx.test.espresso.IdlingResource.ResourceCallback
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.modules.core.Timing
 import com.nhaarman.mockito_kotlin.*
