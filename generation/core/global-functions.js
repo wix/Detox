@@ -125,6 +125,9 @@ function sanitize_uiAccessibilityTraits(value) {
       case 'pageTurn':
         traits |= 16384;
         break;
+      case 'tabBar':
+        traits |= 32768;
+        break;
       case 'header':
         traits |= 65536;
         break;

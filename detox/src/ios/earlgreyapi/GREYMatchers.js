@@ -4,6 +4,7 @@
 	For more information see generation/README.md.
 */
 
+
 function sanitize_uiAccessibilityTraits(value) {
   let traits = 0;
   for (let i = 0; i < value.length; i++) {
@@ -67,7 +68,7 @@ function sanitize_uiAccessibilityTraits(value) {
   }
 
   return traits;
-}
+} 
 function sanitize_greyContentEdge(action) {
   switch (action) {
     case 'left':
@@ -82,7 +83,7 @@ function sanitize_greyContentEdge(action) {
     default:
       throw new Error(`GREYAction.GREYContentEdge must be a 'left'/'right'/'top'/'bottom', got ${action}`);
   }
-}
+} 
 class GREYMatchers {
   /*Matcher for application's key window.
   
