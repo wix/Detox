@@ -409,11 +409,11 @@ static void detoxConditionalInit()
 		_activeTest = props[@"fullName"];
 		if(boot)
 		{
-			[_recordingManager startRecordingAtURL:[DetoxInstrumentsManager defaultURLForTestName:_activeTest]];
+			[_recordingManager continueRecordingAtURL:[DetoxInstrumentsManager defaultURLForTestName:_activeTest]];
 		}
 		else
 		{
-			[_recordingManager continueRecordingAtURL:[DetoxInstrumentsManager defaultURLForTestName:_activeTest]];
+			[_recordingManager startRecordingAtURL:[DetoxInstrumentsManager defaultURLForTestName:_activeTest]];
 		}
 	}
 	else
