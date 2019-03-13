@@ -11,6 +11,7 @@ const DeviceRegistry = require('../DeviceRegistry');
 const SimulatorLogPlugin = require('../../artifacts/log/ios/SimulatorLogPlugin');
 const SimulatorScreenshotPlugin = require('../../artifacts/screenshot/SimulatorScreenshotPlugin');
 const SimulatorRecordVideoPlugin = require('../../artifacts/video/SimulatorRecordVideoPlugin');
+const SimulatorInstrumentsPlugin =require('../../artifacts/instruments/SimulatorInstrumentsPlugin');
 
 class SimulatorDriver extends IosDriver {
 
@@ -26,8 +27,10 @@ class SimulatorDriver extends IosDriver {
 
   declareArtifactPlugins() {
     const appleSimUtils = this._applesimutils;
+    const client = this.client;
 
     return {
+      instruments: (api) => new SimulatorInstrumentsPlugin({ api, client }),
       log: (api) => new SimulatorLogPlugin({ api, appleSimUtils }),
       screenshot: (api) => new SimulatorScreenshotPlugin({ api, appleSimUtils }),
       video: (api) => new SimulatorRecordVideoPlugin({ api, appleSimUtils }),
@@ -101,6 +104,7 @@ class SimulatorDriver extends IosDriver {
   }
 
   async shutdown(deviceId) {
+    await this.emitter.emit('beforeShutdownDevice', { deviceId });
     await this._applesimutils.shutdown(deviceId);
     await this.emitter.emit('shutdownDevice', { deviceId });
   }

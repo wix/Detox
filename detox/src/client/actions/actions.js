@@ -139,13 +139,13 @@ class CurrentStatus extends Action {
   }
 }
 
-class TestLifecycleEvent extends Action {
+class SetInstrumentsRecordingState extends Action {
   constructor(params) {
-    super('testLifecycleEvent', params);
+    super('setRecordingState', params);
   }
 
   async handle(response) {
-    this.expectResponseOfType(response, 'testLifecycleEventDone');
+    this.expectResponseOfType(response, 'setRecordingStateDone');
   }
 }
 
@@ -172,6 +172,6 @@ module.exports = {
   DeliverPayload,
   CurrentStatus,
   Shake,
-  TestLifecycleEvent,
+  SetInstrumentsRecordingState,
   AppWillTerminateWithError
 };

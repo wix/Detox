@@ -249,6 +249,10 @@ describe('ArtifactsManager', () => {
           deviceId: 'testDeviceId',
         }));
 
+        itShouldCatchErrorsOnPhase('onBeforeShutdownDevice', () => ({
+          deviceId: 'testDeviceId'
+        }));
+
         itShouldCatchErrorsOnPhase('onShutdownDevice', () => ({
           deviceId: 'testDeviceId'
         }));
@@ -319,6 +323,18 @@ describe('ArtifactsManager', () => {
           expect(testPlugin.onBootDevice).not.toHaveBeenCalled();
           await artifactsManager.onBootDevice(bootInfo);
           expect(testPlugin.onBootDevice).toHaveBeenCalledWith(bootInfo);
+        });
+      });
+
+      describe('onBeforeShutdownDevice', () => {
+        it('should call onBeforeShutdownDevice in plugins', async () => {
+          const shutdownInfo = {
+            deviceId: 'testDeviceId',
+          };
+
+          expect(testPlugin.onBeforeShutdownDevice).not.toHaveBeenCalled();
+          await artifactsManager.onBeforeShutdownDevice(shutdownInfo);
+          expect(testPlugin.onBeforeShutdownDevice).toHaveBeenCalledWith(shutdownInfo);
         });
       });
 

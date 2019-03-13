@@ -45,14 +45,7 @@ class SimulatorLogRecording extends Artifact {
 
   async doSave(artifactPath) {
     await this._closeWriteableStream();
-
-    const tempLogPath = this._logPath;
-    if (await fs.exists(tempLogPath)) {
-      log.debug({ event: 'MOVE_FILE' }, `moving "${tempLogPath}" to ${artifactPath}`);
-      await fs.move(tempLogPath, artifactPath);
-    } else {
-      log.error({ event: 'MOVE_FILE_ERROR'} , `did not find temporary log file: ${tempLogPath}`);
-    }
+    await Artifact.moveTemporaryFile(log, this._logPath, artifactPath);
   }
 
   async doDiscard() {

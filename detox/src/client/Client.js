@@ -62,8 +62,14 @@ class Client {
     await this.sendAction(new actions.Shake());
   }
 
-  async testLifecycleEvent(event) {
-    await this.sendAction(new actions.TestLifecycleEvent(event));
+  async startInstrumentsRecording({ recordingPath }) {
+    await this.sendAction(new actions.SetInstrumentsRecordingState({
+      recordingPath
+    }));
+  }
+
+  async stopInstrumentsRecording() {
+    await this.sendAction(new actions.SetInstrumentsRecordingState());
   }
 
   async deliverPayload(params) {
