@@ -383,6 +383,14 @@ static void detoxConditionalInit()
 
 - (void)notifyOnCrashWithDetails:(NSDictionary*)details
 {
+	dispatch_semaphore_t semaphore = dispatch_semaphore_create(1);
+	
+	[_recordingManager stopRecordingWithCompletionHandler:^(NSError *error) {
+		dispatch_semaphore_signal(semaphore);
+	}];
+	
+	dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+	
 	[self.webSocket sendAction:@"AppWillTerminateWithError" withParams:details withMessageId:@-10000];
 }
 
