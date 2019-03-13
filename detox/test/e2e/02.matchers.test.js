@@ -16,9 +16,7 @@ describe('Matchers', () => {
 
   it('should match elements by index', async () => {
     const index = device.getPlatform() === 'ios' ? 2 : 0;
-    await element(by.text('Index'))
-      .atIndex(index)
-      .tap();
+    await element(by.text('Index')).atIndex(index).tap();
     await expect(element(by.text('First button pressed!!!'))).toBeVisible();
   });
 
