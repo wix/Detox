@@ -3,8 +3,6 @@ id: Introduction.Android
 title: Detox for Android
 ---
 
-**Detox for Android currently has several compatibility issues with React Native >= 0.50.** See [#608](https://github.com/wix/detox/issues/608) for details.
-
 ## Breaking Changes :warning:
 
 * **In version 10, we've made [Kotlin](https://kotlinlang.org/) mandatory for integrating Detox into your Android project.** In the very least, you must include the Kotlin gradle plugin in your project, as we shall see later on. Nevertheless, this is a breaking change so bear that in mind when upgrading. In any case, worry not of the impact on your app, as - unless you effectively use Kotlin in your own native code, **there will be no impact on the final APK**, in terms of size and methods count.

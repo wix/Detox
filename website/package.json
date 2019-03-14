@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "fs-extra": "^5.0.0",
+    "highlight.js": "^9.14.2",
     "nodegit": "^0.21.1",
     "semver": "^5.5.0"
   }

@@ -130,6 +130,14 @@ describe('iOS generation', () => {
       expect(result).toMatchSnapshot();
     });
 
+    it('should sanitize the pinch directions', () => {
+      const result = ExampleClass.actionForPinchSlowInDirectionWithAngle('outward', 0);
+
+      expect(result.args[0].type).toBe('NSInteger');
+      expect(result.args[0].value).toBe(1);
+      expect(result).toMatchSnapshot();
+    });
+
     it('should sanitize the content edge', () => {
       const result = ExampleClass.actionForScrollToContentEdge('bottom');
 

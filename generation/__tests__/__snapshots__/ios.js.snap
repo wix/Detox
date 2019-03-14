@@ -93,6 +93,26 @@ Object {
 }
 `;
 
+exports[`iOS generation Invocations should sanitize the pinch directions 1`] = `
+Object {
+  "args": Array [
+    Object {
+      "type": "NSInteger",
+      "value": 1,
+    },
+    Object {
+      "type": "NSNumber",
+      "value": 0,
+    },
+  ],
+  "method": "actionForPinchSlowInDirection:withAngle:",
+  "target": Object {
+    "type": "Class",
+    "value": "GREYActions",
+  },
+}
+`;
+
 exports[`iOS generation special case: id<GREYMatcher> should fail with wrongly formatted matchers 1`] = `"firstMatcher should be a GREYMatcher, but got {\\"type\\":\\"Invocation\\",\\"value\\":{\\"target\\":{\\"type\\":\\"Class\\",\\"value\\":\\"GREYAction\\"},\\"method\\":\\"matcherForAccessibilityID:\\",\\"args\\":[\\"Grandfather883\\"]}}"`;
 
 exports[`iOS generation special case: id<GREYMatcher> should fail with wrongly formatted matchers 2`] = `"ancestorMatcher should be a GREYMatcher, but got {\\"type\\":\\"Invocation\\",\\"value\\":{\\"target\\":{\\"type\\":\\"Class\\",\\"value\\":\\"GREYAction\\"},\\"method\\":\\"matcherForAccessibilityID:\\",\\"args\\":[\\"Grandson883\\"]}}"`;

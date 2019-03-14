@@ -15,6 +15,7 @@ const GreyActions = require('./earlgreyapi/GREYActions');
 const GreyInteraction = require('./earlgreyapi/GREYInteraction');
 const GreyCondition = require('./earlgreyapi/GREYCondition');
 const GreyConditionDetox = require('./earlgreyapi/GREYConditionDetox');
+const GreyActionsDetox = require('./earlgreyapi/GREYActions+Detox');
 
 let invocationManager;
 
@@ -79,6 +80,22 @@ class MultiTapAction extends Action {
   constructor(value) {
     super();
     this._call = invoke.callDirectly(GreyActions.actionForMultipleTapsWithCount(value));
+  }
+}
+
+class PinchAction extends Action {
+  constructor(direction, speed, angle) {
+    super();
+    if (typeof direction !== 'string') throw new Error(`PinchAction ctor 1st argument must be a string, got ${typeof direction}`);
+    if (typeof speed !== 'string') throw new Error(`PinchAction ctor 2nd argument must be a string, got ${typeof speed}`);
+    if (typeof angle !== 'number') throw new Error(`PinchAction ctor 3nd argument must be a number, got ${typeof angle}`);
+    if (speed == 'fast') {
+      this._call = invoke.callDirectly(GreyActions.actionForPinchFastInDirectionWithAngle(direction, angle));
+    } else if (speed == 'slow') {
+      this._call = invoke.callDirectly(GreyActions.actionForPinchSlowInDirectionWithAngle(direction, angle));
+    } else {
+      throw new Error(`PinchAction speed must be a 'fast'/'slow', got ${speed}`);
+    }
   }
 }
 
@@ -168,7 +185,14 @@ class SwipeAction extends Action {
 class ScrollColumnToValue extends Action {
   constructor(column,value) {
     super();
-    this._call = invoke.callDirectly(GreyActions.actionForSetPickerColumnToValue(column,value))
+    this._call = invoke.callDirectly(GreyActions.actionForSetPickerColumnToValue(column, value));
+  }
+}
+
+class SetDatePickerDate extends Action {
+  constructor(dateString, dateFormat) {
+    super();
+    this._call = invoke.callDirectly(GreyActionsDetox.detoxSetDatePickerDateWithFormat(dateString, dateFormat));
   }
 }
 
@@ -293,6 +317,9 @@ class Element {
   async clearText() {
     return await new ActionInteraction(this, new ClearTextAction()).execute();
   }
+  async pinchWithAngle(direction, speed = 'slow', angle = 0) {
+    return await new ActionInteraction(this, new PinchAction(direction, speed, angle)).execute();
+  }
   async scroll(amount, direction = 'down') {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
     this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
@@ -310,6 +337,9 @@ class Element {
   }
   async setColumnToValue(column,value) {
     return await new ActionInteraction(this, new ScrollColumnToValue(column, value)).execute();
+  }
+  async setDatePickerDate(dateString, dateFormat) {
+    return await new ActionInteraction(this, new SetDatePickerDate(dateString, dateFormat)).execute();
   }
 }
 

@@ -20,6 +20,18 @@
 + (id<GREYAction>)actionForMultipleTapsWithCount:(NSUInteger)count atPoint:(CGPoint)point;
 
 /**
+ *  Returns a pinch action that pich in a @c direction. @c angle is the angle given to the fingers in radiants.
+ *
+ *  @param direction              The direction of the scroll.
+ *  @param angle                  The angle between the fingers.
+ *
+ *  @return A GREYAction that pinch in a given @c direction with a given @c angle.
+ */
+
++ (id<GREYAction>)actionForPinchSlowInDirection:(GREYPinchDirection)direction
+                                      withAngle:(NSNumber)angle;
+
+/**
  *  Returns a scroll action that scrolls in a @c direction for an @c amount of points starting from
  *  the given start point specified as percentages. @c xOriginStartPercentage is the x start
  *  position as a percentage of the total width of the scrollable visible area,
