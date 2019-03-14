@@ -94,10 +94,6 @@ class Device {
     if(params.detoxUserActivityDataURL) {
       await this.deviceDriver.cleanupRandomDirectory(params.detoxUserActivityDataURL);
     }
-
-    if(params.currentTestSummaryDataURL) {
-      await this.deviceDriver.cleanupRandomDirectory(params.currentTestSummaryDataURL);
-    }
   }
 
   _isAppInBackground(params, _bundleId) {
