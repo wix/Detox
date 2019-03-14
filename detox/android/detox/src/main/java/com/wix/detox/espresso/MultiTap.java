@@ -1,17 +1,18 @@
 package com.wix.detox.espresso;
 
 import android.os.Build;
-import android.support.test.espresso.UiController;
-import android.support.test.espresso.action.MotionEvents;
-import android.support.test.espresso.action.MotionEvents.DownResultHolder;
-import android.support.test.espresso.action.Tapper;
 import android.util.Log;
 import android.view.ViewConfiguration;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import static android.support.test.espresso.core.internal.deps.guava.base.Preconditions.checkNotNull;
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.action.MotionEvents;
+import androidx.test.espresso.action.MotionEvents.DownResultHolder;
+import androidx.test.espresso.action.Tapper;
+
+import static androidx.test.espresso.core.internal.deps.guava.base.Preconditions.checkNotNull;
 
 
 public class MultiTap implements Tapper {

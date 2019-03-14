@@ -1,7 +1,8 @@
 package com.wix.detox.uiautomator;
 
-import android.support.test.InstrumentationRegistry;
 import android.support.test.uiautomator.UiDevice;
+
+import androidx.test.platform.app.InstrumentationRegistry;
 
 /**
  * Created by rotemm on 30/08/2017.

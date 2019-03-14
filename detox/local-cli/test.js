@@ -93,6 +93,10 @@ module.exports.builder = {
     group: 'Execution',
     describe: '[Android Only] Launch Emulator in headless mode. Useful when running on CI.'
   },
+  gpu: {
+    group: 'Execution',
+    describe: '[Android Only] Launch Emulator with the specific -gpu [gpu mode] parameter.'
+  },
   workers: {
     alias: 'w',
     group: 'Execution',
@@ -196,14 +200,16 @@ module.exports.handler = function main(program) {
     const screenshots = program.takeScreenshots ? `--take-screenshots ${program.takeScreenshots}` : '';
     const videos = program.recordVideos ? `--record-videos ${program.recordVideos}` : '';
     const headless = program.headless ? `--headless` : '';
+    const gpu = program.gpu ? `--gpu ${program.gpu}` : '';
     const color = program.color ? '' : '--no-colors';
     const deviceName = program.deviceName ? `--device-name "${program.deviceName}"` : '';
 
     const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
     const binPath = path.join('node_modules', '.bin', 'mocha');
+    const quotedTestFolder = testFolder && `"${testFolder}"`;
     const command =
-      `${binPath} ${testFolder} ${configFile} ${configuration} ${loglevel} ${color} ` +
-      `${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${headless} ` +
+      `${binPath} ${quotedTestFolder} ${configFile} ${configuration} ${loglevel} ${color} ` +
+      `${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${headless} ${gpu}` +
       `${logs} ${screenshots} ${videos} ${artifactsLocation} ${deviceName} ${collectExtraArgs()}`;
 
     console.log(command);
@@ -223,6 +229,7 @@ module.exports.handler = function main(program) {
       cleanup: program.cleanup,
       reuse: program.reuse,
       debugSynchronization: program.debugSynchronization,
+      gpu: program.gpu,
       headless: program.headless,
       artifactsLocation: program.artifactsLocation,
       recordLogs: program.recordLogs,

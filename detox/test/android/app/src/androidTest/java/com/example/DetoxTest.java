@@ -1,10 +1,11 @@
 package com.example;
 
 import android.os.Bundle;
-import android.support.test.filters.LargeTest;
-import android.support.test.rule.ActivityTestRule;
-import android.support.test.runner.AndroidJUnit4;
-import android.support.test.InstrumentationRegistry;
+import android.test.suitebuilder.annotation.LargeTest;
+
+import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.rule.ActivityTestRule;
 
 import com.wix.detox.Detox;
 

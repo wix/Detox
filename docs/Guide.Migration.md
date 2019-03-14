@@ -5,7 +5,37 @@ title: Migration Guide
 
 We are improving detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes.
 
+
+
+## Migrating from Detox 10.x.x to 11.x.x
+
+#### Step 1:
+
+`android/app/build.gradle`
+
+```diff
+android {
+    defaultConfig {
+        // ...
+-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
++        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+}
+
+dependencies {
+    implementation "com.facebook.react:react-native:+"  // From node_modules
+    androidTestImplementation(project(path: ":detox"))
+    androidTestImplementation 'junit:junit:4.12'
+-   androidTestImplementation 'com.android.support.test:runner:1.0.2'
+-   androidTestImplementation 'com.android.support.test:rules:1.0.2'
+```
+
+#### Step 2:
+
+Rewrite your `DetoxTest.java` file according to the updated [Android setup guide](Introduction.Android.md#4-create-android-test-class) (step 4).
+
 ## Migrating from Detox 9.x.x to 10.x.x
+
 If your project does not already use Kotlin, add the Kotlin Gradle-plugin to your classpath in `android/build.gradle`:
 
 ```groovy

@@ -66,6 +66,33 @@ class EspressoDetox {
     };
   }
 
+  static getBusyEspressoResources() {
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.EspressoDetox"
+      },
+      method: "getBusyEspressoResources",
+      args: []
+    };
+  }
+
+  static run(element) {
+    return {
+      target: element,
+      method: "run",
+      args: []
+    };
+  }
+
+  static waitForComplete(element) {
+    return {
+      target: element,
+      method: "waitForComplete",
+      args: []
+    };
+  }
+
 }
 
 module.exports = EspressoDetox;
