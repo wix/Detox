@@ -211,8 +211,7 @@ static void detoxConditionalInit()
 	
 	if([type isEqualToString:@"testerDisconnected"])
 	{
-		//This should call the websocket closed delegate. Fingers crossed 🤞
-		[websocket close];
+		[self _stopAndCleanupRecording];
 	}
 	else if([type isEqualToString:@"setRecordingState"])
 	{
@@ -350,6 +349,11 @@ static void detoxConditionalInit()
 }
 
 - (void)websocketDidClose:(WebSocket *)websocket
+{
+	[self _stopAndCleanupRecording];
+}
+
+- (void)_stopAndCleanupRecording
 {
 	[self _handlePerformanceRecording:nil isFromLaunch:NO completionHandler:nil];
 }
