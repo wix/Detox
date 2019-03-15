@@ -23,7 +23,7 @@ describe('test', () => {
       }
       expect(mockExec).toHaveBeenCalledWith(
         expect.stringContaining(
-          'node_modules/.bin/mocha e2e --opts e2e/mocha.opts --configuration only  --no-colors    --grep :ios: --invert  --record-logs none --take-screenshots none --record-videos none --artifacts-location "artifacts/only.'
+          'node_modules/.bin/mocha "e2e" --opts e2e/mocha.opts --configuration only  --no-colors    --grep :ios: --invert  --record-logs none --take-screenshots none --record-videos none --artifacts-location "artifacts/only.'
         ),
         expect.anything()
       );
@@ -54,7 +54,7 @@ describe('test', () => {
 
       expect(mockExec).toHaveBeenCalledWith(
         expect.stringContaining(
-          `node_modules/.bin/jest \"e2e\" --config=e2e/config.json --no-color --maxWorkers=1 \'--testNamePattern=^((?!:ios:).)*$\'`
+          `node_modules/.bin/jest "e2e" --config=e2e/config.json --no-color --maxWorkers=1 \'--testNamePattern=^((?!:ios:).)*$\'`
         ),
         expect.anything()
       );
@@ -120,7 +120,7 @@ describe('test', () => {
     }
     expect(mockExec).toHaveBeenCalledWith(
       expect.stringContaining(
-        'node_modules/.bin/mocha e2e --opts e2e/mocha.opts --configuration only  --no-colors   --debug-synchronization 3000 --grep :ios: --invert  --record-logs none --take-screenshots none --record-videos none --artifacts-location "artifacts/only.'
+        'node_modules/.bin/mocha "e2e" --opts e2e/mocha.opts --configuration only  --no-colors   --debug-synchronization 3000 --grep :ios: --invert  --record-logs none --take-screenshots none --record-videos none --artifacts-location "artifacts/only.'
       ),
       expect.anything()
     );
