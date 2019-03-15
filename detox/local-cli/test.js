@@ -3,22 +3,36 @@ const cp = require('child_process');
 const fs = require('fs-extra');
 const _ = require('lodash');
 const environment = require('../src/utils/environment');
+const config = require(path.join(process.cwd(), 'package.json')).detox;
 const buildDefaultArtifactsRootDirpath = require('../src/artifacts/utils/buildDefaultArtifactsRootDirpath');
 const DetoxConfigError = require('../src/errors/DetoxConfigError');
-const config = require(path.join(process.cwd(), 'package.json')).detox;
 
 module.exports.command = 'test';
 module.exports.desc = 'Initiating your test suite';
 module.exports.builder = {
+  'test-runner': {
+    alias: ['testRunner'],
+    group: 'Configuration',
+    describe: 'Test runner to use and pass configuration to',
+    default: 'mocha',
+    hidden: true,
+  },
   'runner-config': {
     alias: ['o', 'runnerConfig'],
     group: 'Configuration',
     describe: 'Test runner config file, defaults to e2e/mocha.opts for mocha and e2e/config.json for jest'
   },
+  file: {
+    alias: 'f',
+    group: 'Configuration',
+    describe: '[DEPRECATED] Specify test file to run',
+    hidden: true,
+  },
   specs: {
     alias: 's',
     group: 'Configuration',
-    describe: 'Root of test folder'
+    describe: '[DEPRECATED] Root of test folder',
+    hidden: true,
   },
   loglevel: {
     alias: 'l',
@@ -26,9 +40,14 @@ module.exports.builder = {
     choices: ['fatal', 'error', 'warn', 'info', 'verbose', 'trace'],
     describe: 'Log level'
   },
-  'no-color': {
-    alias: 'noColor',
-    describe: 'Disable colors in log output'
+  color: {
+    describe: 'Enable colors in log output',
+    default: true,
+  },
+  configurations: {
+    group: 'Configuration',
+    describe: 'Key-value map of Detox test configurations, usually defined in package.json',
+    hidden: true,
   },
   configuration: {
     alias: 'c',
@@ -83,11 +102,6 @@ module.exports.builder = {
     describe:
       'Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only.'
   },
-  file: {
-    alias: 'f',
-    group: 'Configuration',
-    describe: 'Specify test file to run'
-  },
   headless: {
     alias: 'H',
     group: 'Execution',
@@ -127,9 +141,7 @@ module.exports.handler = function main(program) {
       Available configurations: ${_.keys(config.configurations).join(', ')}`);
   }
 
-  const testFolder = getConfigFor(['file', 'specs'], 'e2e');
-  const runner = getConfigFor(['testRunner'], 'mocha');
-  const runnerConfig = getConfigFor(['runnerConfig'], getDefaultRunnerConfig());
+  const runnerConfig = program.runnerConfig || getDefaultRunnerConfig();
   const platform = config.configurations[program.configuration].type.split('.')[0];
 
   if (platform === 'android' && program.workers !== 1) {
@@ -141,7 +153,7 @@ module.exports.handler = function main(program) {
   }
 
   function run() {
-    switch (runner) {
+    switch (program.testRunner) {
       case 'mocha':
         runMocha();
         break;
@@ -149,43 +161,30 @@ module.exports.handler = function main(program) {
         runJest();
         break;
       default:
-        throw new Error(`${runner} is not supported in detox cli tools. You can still run your tests with the runner's own cli tool`);
+        throw new Error(`${program.testRunner} is not supported in detox cli tools. You can still run your tests with the runner's own cli tool`);
     }
   }
 
-  const blacklistedArgs = ['configurations', '$0']
+  function aliasToArray(alias) {
+    return (typeof alias === 'string' ? [alias] : (alias || []));
+  }
+
   function collectExtraArgs() {
-    const aliasKeys = Object.values(module.exports.builder).reduce(
-      (carry, item) => [].concat(carry, typeof item.alias === 'string' ? [item.alias] : item.alias),
-      []
+    const blacklistedArgs = Object.entries(module.exports.builder).reduce(
+      (carry, [key, {alias}]) => carry.concat(key, aliasToArray(alias)),
+      ['$0'],
     );
 
-    const knownKeys = [].concat(Object.keys(module.exports.builder), aliasKeys, blacklistedArgs);
+    const positionalArgs = program._.slice(1);
 
-    const clone = Object.assign({}, program);
-    knownKeys.forEach(key => delete clone[key]);
-
-    const res = Object.entries(clone)
-      .filter(([key]) => !key.includes('_') && !key.includes('-') && !key.includes('$'))
-      .map(([key, value]) => `--${key} ${value}`)
+    return _.chain(program)
+      .omit(blacklistedArgs)
+      .pickBy((_value, key) => !key.includes('_') && !key.includes('-') && !key.includes('$'))
+      .entries()
+      .map(([key, value]) => `--${key}${value === true ? '' : ` ${value}`}`)
+      .concat(positionalArgs)
+      .value()
       .join(' ');
-
-    return res;
-  }
-
-  function getConfigFor(keys, fallback) {
-    for (let i = 0; i < keys.length; i++) {
-      const key = keys[i];
-      const keyKebabCase = camelToKebabCase(key);
-      const result = program[key] || config[key] || config[keyKebabCase];
-      if (result) return result;
-    }
-
-    return fallback;
-  }
-
-  function camelToKebabCase(string) {
-    return string.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
   }
 
   function runMocha() {
@@ -206,9 +205,8 @@ module.exports.handler = function main(program) {
 
     const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
     const binPath = path.join('node_modules', '.bin', 'mocha');
-    const quotedTestFolder = testFolder && `"${testFolder}"`;
     const command =
-      `${binPath} ${quotedTestFolder} ${configFile} ${configuration} ${loglevel} ${color} ` +
+      `${binPath} ${configFile} ${configuration} ${loglevel} ${color} ` +
       `${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${headless} ${gpu}` +
       `${logs} ${screenshots} ${videos} ${artifactsLocation} ${deviceName} ${collectExtraArgs()}`;
 
@@ -222,7 +220,7 @@ module.exports.handler = function main(program) {
     const platformString = platform ? shellQuote(`--testNamePattern=^((?!${getPlatformSpecificString(platform)}).)*$`) : '';
     const binPath = path.join('node_modules', '.bin', 'jest');
     const color = program.color ? '' : ' --no-color';
-    const command = `${binPath} "${testFolder}" ${configFile}${color} --maxWorkers=${program.workers} ${platformString} ${collectExtraArgs()}`;
+    const command = `${binPath} ${configFile}${color} --maxWorkers=${program.workers} ${platformString} ${collectExtraArgs()}`;
     const detoxEnvironmentVariables = {
       configuration: program.configuration,
       loglevel: program.loglevel,
@@ -260,7 +258,7 @@ module.exports.handler = function main(program) {
 
   function getDefaultRunnerConfig() {
     let defaultConfig;
-    switch (runner) {
+    switch (program.testRunner) {
       case 'mocha':
         defaultConfig = 'e2e/mocha.opts';
         break;
@@ -268,7 +266,7 @@ module.exports.handler = function main(program) {
         defaultConfig = 'e2e/config.json';
         break;
       default:
-        console.log(`Missing 'runner-config' value in detox config in package.json, using '${defaultConfig}' as default for ${runner}`);
+        console.log(`Missing 'runner-config' value in detox config in package.json, using '${defaultConfig}' as default for ${program.testRunner}`);
     }
 
     return defaultConfig;

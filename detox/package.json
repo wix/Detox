@@ -7,13 +7,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/wix/detox.git"
+    "url": "https://github.com/wix/Detox.git"
   },
   "nativePackage": true,
   "bugs": {
-    "url": "https://github.com/wix/detox/issues"
+    "url": "https://github.com/wix/Detox/issues"
   },
-  "homepage": "https://github.com/wix/detox#readme",
+  "homepage": "https://github.com/wix/Detox#readme",
   "main": "./src/index.js",
   "author": "Tal Kol <talkol@gmail.com>",
   "license": "MIT",

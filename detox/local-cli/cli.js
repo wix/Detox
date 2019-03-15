@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const yargs = require('yargs');
+
 yargs
   .scriptName('detox')
   .env('DETOX')
