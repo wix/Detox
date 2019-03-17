@@ -5,6 +5,19 @@ title: Migration Guide
 
 We are improving detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes.
 
+## Migrating from Detox 11.0.0 to 11.0.1 (nonbreaking)
+
+**React Native versions older than 0.46 are no longer supported**, so the `missingDimentsionStrategy` can be removed from `android/app/build.gradle`:
+
+```diff
+android {
+		defaultConfig {
+    		// ...
+-        missingDimensionStrategy "minReactNative", "minReactNative46"
+    }
+}
+```
+
 
 
 ## Migrating from Detox 10.x.x to 11.x.x
@@ -16,7 +29,7 @@ We are improving detox API as we go along, sometimes these changes require us to
 ```diff
 android {
     defaultConfig {
-        // ...
+         // ...
 -        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 +        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
