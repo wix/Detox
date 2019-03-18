@@ -9,10 +9,8 @@ if (process.platform === 'darwin') {
 if (process.argv[2] === "android" || process.argv[3] === "android") {
 	console.log("\nBuilding Detox aars");
 	const aars = [
-		"detox-minReactNative44-debug.aar",
-		"detox-minReactNative46-debug.aar",
-		"detox-minReactNative44-release.aar",
-		"detox-minReactNative46-release.aar"
+		"detox-debug.aar",
+		"detox-release.aar"
 	];
 	aars.forEach(aar => {
 		fs.removeSync(aar);
