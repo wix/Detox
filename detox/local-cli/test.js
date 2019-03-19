@@ -41,7 +41,8 @@ module.exports.builder = {
     describe: 'Log level'
   },
   color: {
-    describe: 'Enable colors in log output',
+    describe: 'Enabled by default. Pass --no-color to disable colors in log output',
+    boolean: true,
     default: true,
   },
   configurations: {
