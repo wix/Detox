@@ -1,6 +1,6 @@
 {
 	"name": "generation",
-	"version": "11.0.0",
+	"version": "11.0.2",
 	"description": "Generate wrapper code for native dependencies",
 	"main": "index.js",
 	"private": true,
