@@ -71,6 +71,7 @@
     ],
     "coveragePathIgnorePatterns": [
       "/node_modules/",
+      "__tests__",
       "local-cli/utils/catchAndLog.js",
       "local-cli/utils/configurationUtils.js",
       "src/artifacts/log",
