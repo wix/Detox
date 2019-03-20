@@ -3,18 +3,15 @@ const yargs = require('yargs');
 
 yargs
   .scriptName('detox')
-  .env('DETOX')
-  .pkgConf('detox')
-  .config('config', 'configuration either as JSON or as Javascript file', function(configPath) {
-    return require(configPath);
+  .parserConfiguration({
+    'boolean-negation': false,
+    'dot-notation': false,
+    'duplicate-arguments-array': false,
   })
   .commandDir('./', {
     exclude: function(path) {
       // This is a test file
-      if (/\.test\.js$/.test(path)) {
-        return true;
-      }
-      return false;
+      return /\.test\.js$/.test(path);
     }
   })
   .demandCommand()

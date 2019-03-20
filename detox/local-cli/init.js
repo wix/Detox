@@ -3,7 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const mochaTemplates = require('./templates/mocha');
 const jestTemplates = require('./templates/jest');
-const log = require('../src/utils/logger');
+const log = require('../src/utils/logger').child({ __filename: 'detox-init' });
+const catchAndLog = require('./utils/catchAndLog');
 
 const PREFIX = 'detox-init';
 
@@ -17,9 +18,10 @@ module.exports.builder = {
   }
 };
 
-module.exports.handler = function main(argv) {
-  console.log('init handler', argv);
-  switch (argv.runner) {
+module.exports.handler = catchAndLog(log, function main(argv) {
+  const {runner} = argv;
+
+  switch (runner) {
     case 'mocha':
       createMochaFolderE2E();
       patchTestRunnerFieldInPackageJSON('mocha');
@@ -29,16 +31,16 @@ module.exports.handler = function main(argv) {
       patchTestRunnerFieldInPackageJSON('jest');
       break;
     default:
-      log.error(PREFIX, 'Convenience scaffolding for `%s` test runner is not supported currently.\n', runner);
-      log.info(PREFIX, 'Supported runners at the moment are `mocha` and `jest`:');
-      log.info(PREFIX, '* detox init -r mocha');
-      log.info(PREFIX, '* detox init -r jest\n');
-      log.info(PREFIX, 'If it is not a typo, and you plan to work with `%s` runner, then you have to create test setup files manually.', runner);
-      log.info(PREFIX, 'HINT: Try running one of the commands above, watch what it does, and do the similar steps for your use case.');
-
-      break;
+      throw new Error([
+        `Convenience scaffolding for \`${runner}\` test runner is not supported currently.\n`,
+        'Supported runners at the moment are: `mocha` and `jest`:',
+        '* detox init -r mocha',
+        '* detox init -r jest\n',
+        `If it is not a typo, and you plan to work with \`${runner}\` runner, then you have to create test setup files manually.`,
+        'HINT: Try running one of the commands above, look what it does, and take similar steps for your use case.',
+      ].join('\n'));
   }
-};
+});
 
 function createFolder(dir, files) {
   if (!fs.existsSync(dir)) {
@@ -49,16 +51,16 @@ function createFolder(dir, files) {
       createFile(path.join(dir, filename), content);
     }
   } else {
-    log.error(PREFIX, './e2e folder already exists at path: %s', path.resolve(dir));
+    log.error(PREFIX, `./e2e folder already exists at path: ${path.resolve(dir)}`);
   }
 }
 
 function createFile(filename, content) {
   try {
     fs.writeFileSync(filename, content);
-    log.info(PREFIX, 'A file was created in: %s', filename);
+    log.info(PREFIX, `A file was created in: ${filename}`);
   } catch (e) {
-    log.error(PREFIX, 'Failed to create file in: %s.', filename);
+    log.error(PREFIX, `Failed to create file in: ${filename}`);
     log.error(PREFIX, e);
   }
 }
@@ -83,7 +85,7 @@ function parsePackageJson(filepath) {
   try {
     return require(filepath);
   } catch (err) {
-    log.error(PREFIX, `Failed to parse ./package.json due to the error:\n%s`, err.message);
+    log.error(PREFIX, `Failed to parse ./package.json due to the error:\n${err.message}`);
   }
 }
 
@@ -98,7 +100,7 @@ function savePackageJson(filepath, json) {
   try {
     fs.writeFileSync(filepath, JSON.stringify(json, null, 2));
   } catch (err) {
-    log.error(PREFIX, 'Failed to write changes into ./package.json due to the error:\n%s', err.message);
+    log.error(PREFIX, `Failed to write changes into ./package.json due to the error:\n${err.message}`);
   }
 }
 

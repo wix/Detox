@@ -1,94 +1,96 @@
+const _ = require('lodash');
 const path = require('path');
 const cp = require('child_process');
 const fs = require('fs-extra');
-const _ = require('lodash');
 const environment = require('../src/utils/environment');
-const config = require(path.join(process.cwd(), 'package.json')).detox;
 const buildDefaultArtifactsRootDirpath = require('../src/artifacts/utils/buildDefaultArtifactsRootDirpath');
 const DetoxConfigError = require('../src/errors/DetoxConfigError');
+
+const log = require('../src/utils/logger').child({ __filename: 'detox-test' });
+const catchAndLog = require('./utils/catchAndLog');
+const {getDetoxSection, getDefaultConfiguration, getConfigurationByKey} = require('./utils/configurationUtils');
+const {coerceDeprecation, migrationGuideUrl} = require('./utils/deprecation');
 
 module.exports.command = 'test';
 module.exports.desc = 'Initiating your test suite';
 module.exports.builder = {
-  'test-runner': {
-    alias: ['testRunner'],
+  c: {
+    alias: ['configuration'],
     group: 'Configuration',
-    describe: 'Test runner to use and pass configuration to',
-    default: 'mocha',
+    default: () => getDefaultConfiguration(),
+    describe:
+      'Select a device configuration from your defined configurations, if not supplied, and there\'s only one configuration, detox will default to it'
+  },
+  o: {
+    alias: 'runner-config',
+    group: 'Configuration',
+    describe: 'Test runner config file, defaults to e2e/mocha.opts for mocha and e2e/config.json for jest',
+  },
+  f: {
+    alias: 'file',
+    group: 'Configuration',
+    describe: 'Specify test file to run',
+    coerce: coerceDeprecation('-f, --file'),
     hidden: true,
   },
-  'runner-config': {
-    alias: ['o', 'runnerConfig'],
+  s: {
+    alias: 'specs',
     group: 'Configuration',
-    describe: 'Test runner config file, defaults to e2e/mocha.opts for mocha and e2e/config.json for jest'
-  },
-  file: {
-    alias: 'f',
-    group: 'Configuration',
-    describe: '[DEPRECATED] Specify test file to run',
+    describe: 'Root of test folder',
+    coerce: coerceDeprecation('-s, --specs'),
     hidden: true,
   },
-  specs: {
-    alias: 's',
-    group: 'Configuration',
-    describe: '[DEPRECATED] Root of test folder',
-    hidden: true,
-  },
-  loglevel: {
-    alias: 'l',
+  l: {
+    alias: 'loglevel',
     group: 'Debugging',
     choices: ['fatal', 'error', 'warn', 'info', 'verbose', 'trace'],
     describe: 'Log level'
   },
-  color: {
-    describe: 'Enabled by default. Pass --no-color to disable colors in log output',
+  'no-color': {
+    describe: 'Pass to disable colors in log output',
     boolean: true,
-    default: true,
   },
-  configurations: {
-    group: 'Configuration',
-    describe: 'Key-value map of Detox test configurations, usually defined in package.json',
-    hidden: true,
-  },
-  configuration: {
-    alias: 'c',
-    group: 'Configuration',
-    describe:
-      'Select a device configuration from your defined configurations, if not supplied, and there\'s only one configuration, detox will default to it',
-    default: getDefaultConfiguration()
-  },
-  reuse: {
-    alias: 'r',
+  r: {
+    alias: 'reuse',
     group: 'Execution',
     describe: 'Reuse existing installed app (do not delete and re-install) for a faster run.'
   },
-  cleanup: {
-    alias: 'u',
+  u: {
+    alias: 'cleanup',
     group: 'Execution',
     describe: 'Shutdown simulator when test is over, useful for CI scripts, to make sure detox exists cleanly with no residue'
   },
-  'debug-synchronization': {
-    alias: ['d', 'debugSynchronization'],
+  d: {
+    alias: 'debug-synchronization',
     group: 'Debugging',
+    coerce(value) {
+      if (value == null) {
+        return undefined;
+      }
+
+      if (value === true || value === 'true') {
+        return 3000;
+      }
+
+      return Number(value);
+    },
     describe:
       'When an action/expectation takes a significant amount of time use this option to print device synchronization status.' +
       'The status will be printed if the action takes more than [value]ms to complete'
   },
-  'artifacts-location': {
-    alias: ['a', 'artifactsLocation'],
+  a: {
+    alias: 'artifacts-location',
     group: 'Debugging',
     describe: 'Artifacts (logs, screenshots, etc) root directory.',
     default: 'artifacts'
   },
   'record-logs': {
-    alias: 'recordLogs',
     group: 'Debugging',
     choices: ['failing', 'all', 'none'],
     default: 'none',
     describe: 'Save logs during each test to artifacts directory. Pass "failing" to save logs of failing tests only.'
   },
   'take-screenshots': {
-    alias: 'takeScreenshots',
     group: 'Debugging',
     choices: ['failing', 'all', 'none'],
     default: 'none',
@@ -96,15 +98,22 @@ module.exports.builder = {
       'Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only.'
   },
   'record-videos': {
-    alias: 'recordVideos',
     group: 'Debugging',
     choices: ['failing', 'all', 'none'],
     default: 'none',
     describe:
       'Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only.'
   },
-  headless: {
-    alias: 'H',
+  w: {
+    alias: 'workers',
+    group: 'Execution',
+    describe:
+      '[iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest)',
+    default: 1,
+    number: true
+  },
+  H: {
+    alias: 'headless',
     group: 'Execution',
     describe: '[Android Only] Launch Emulator in headless mode. Useful when running on CI.'
   },
@@ -112,49 +121,42 @@ module.exports.builder = {
     group: 'Execution',
     describe: '[Android Only] Launch Emulator with the specific -gpu [gpu mode] parameter.'
   },
-  workers: {
-    alias: 'w',
-    group: 'Execution',
-    describe:
-      '[iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest)',
-    default: 1,
-    number: true
-  },
-  'device-name': {
-    alias: ['n', 'deviceName'],
+  n: {
+    alias: 'device-name',
     group: 'Configuration',
     describe: 'Override the device name specified in a configuration. Useful for running a single build configuration on multiple devices.'
   }
 };
 
-module.exports.handler = function main(program) {
+const collectExtraArgs = require('./utils/collectExtraArgs')(module.exports.builder);
+
+module.exports.handler = catchAndLog(log, function main(program) {
   program.artifactsLocation = buildDefaultArtifactsRootDirpath(program.configuration, program.artifactsLocation);
 
   clearDeviceRegistryLockFile();
 
-  if (!program.configuration) {
-    throw new DetoxConfigError(`Cannot determine which configuration to use.
-    Use --configuration to choose one of the following: ${_.keys(config.configurations).join(', ')}`);
+  const config = getDetoxSection();
+
+  let testFolder = getConfigFor(['file', 'specs'], 'e2e');
+  testFolder = testFolder && `"${testFolder}"`;
+
+  if (testFolder && !program.file && !program.specs) {
+    log.warn('Deprecation warning: "file" and "specs" support will be dropped in the next Detox version.');
+    log.warn(`Please edit your package.json according to the migration guide: ${migrationGuideUrl}`);
   }
 
-  if (!config.configurations[program.configuration]) {
-    throw new DetoxConfigError(`Cannot determine configuration '${program.configuration}'.
-      Available configurations: ${_.keys(config.configurations).join(', ')}`);
+  const runner = getConfigFor(['test-runner'], 'mocha');
+  const runnerConfig = getConfigFor(['runner-config'], getDefaultRunnerConfig());
+
+  const currentConfiguration = getConfigurationByKey(program.configuration);
+  if (!currentConfiguration.type) {
+    throw new DetoxConfigError(`Missing "type" inside detox.configurations["${program.configuration}"]`);
   }
 
-  const runnerConfig = program.runnerConfig || getDefaultRunnerConfig();
-  const platform = config.configurations[program.configuration].type.split('.')[0];
-
-  if (platform === 'android' && program.workers !== 1) {
-    throw new DetoxConfigError('Can not use -w, --workers. Parallel test execution is only supported on iOS currently');
-  }
-
-  if (typeof program.debugSynchronization === 'boolean') {
-    program.debugSynchronization = 3000;
-  }
+  const platform = currentConfiguration.type.split('.')[0];
 
   function run() {
-    switch (program.testRunner) {
+    switch (runner) {
       case 'mocha':
         runMocha();
         break;
@@ -162,82 +164,85 @@ module.exports.handler = function main(program) {
         runJest();
         break;
       default:
-        throw new Error(`${program.testRunner} is not supported in detox cli tools. You can still run your tests with the runner's own cli tool`);
+        throw new Error(`${runner} is not supported in detox cli tools. You can still run your tests with the runner's own cli tool`);
     }
   }
 
-  function aliasToArray(alias) {
-    return (typeof alias === 'string' ? [alias] : (alias || []));
-  }
+  function getConfigFor(keys, fallback) {
+    for (const key of keys) {
+      const camel = _.camelCase(key);
+      const result = program[key] || config[camel] || config[key];
 
-  function collectExtraArgs() {
-    const blacklistedArgs = Object.entries(module.exports.builder).reduce(
-      (carry, [key, {alias}]) => carry.concat(key, aliasToArray(alias)),
-      ['$0'],
-    );
+      if (result != null) {
+        return result;
+      }
+    }
 
-    const positionalArgs = program._.slice(1);
-
-    return _.chain(program)
-      .omit(blacklistedArgs)
-      .pickBy((_value, key) => !key.includes('_') && !key.includes('-') && !key.includes('$'))
-      .entries()
-      .map(([key, value]) => `--${key}${value === true ? '' : ` ${value}`}`)
-      .concat(positionalArgs)
-      .value()
-      .join(' ');
+    return fallback;
   }
 
   function runMocha() {
-    const loglevel = program.loglevel ? `--loglevel ${program.loglevel}` : '';
-    const configuration = program.configuration ? `--configuration ${program.configuration}` : '';
-    const cleanup = program.cleanup ? `--cleanup` : '';
-    const reuse = program.reuse ? `--reuse` : '';
-    const artifactsLocation = program.artifactsLocation ? `--artifacts-location "${program.artifactsLocation}"` : '';
-    const configFile = runnerConfig ? `--opts ${runnerConfig}` : '';
-    const platformString = platform ? `--grep ${getPlatformSpecificString(platform)} --invert` : '';
-    const logs = program.recordLogs ? `--record-logs ${program.recordLogs}` : '';
-    const screenshots = program.takeScreenshots ? `--take-screenshots ${program.takeScreenshots}` : '';
-    const videos = program.recordVideos ? `--record-videos ${program.recordVideos}` : '';
-    const headless = program.headless ? `--headless` : '';
-    const gpu = program.gpu ? `--gpu ${program.gpu}` : '';
-    const color = program.color ? '' : '--no-colors';
-    const deviceName = program.deviceName ? `--device-name "${program.deviceName}"` : '';
+    if (program.workers !== 1) {
+      log.warn('Can not use -w, --workers. Parallel test execution is only supported with iOS and Jest');
+    }
 
-    const debugSynchronization = program.debugSynchronization ? `--debug-synchronization ${program.debugSynchronization}` : '';
-    const binPath = path.join('node_modules', '.bin', 'mocha');
-    const command =
-      `${binPath} ${configFile} ${configuration} ${loglevel} ${color} ` +
-      `${cleanup} ${reuse} ${debugSynchronization} ${platformString} ${headless} ${gpu}` +
-      `${logs} ${screenshots} ${videos} ${artifactsLocation} ${deviceName} ${collectExtraArgs()}`;
+    const command = _.compact([
+      (path.join('node_modules', '.bin', 'mocha')),
+      (runnerConfig ? `--opts ${runnerConfig}` : ''),
+      (program.configuration ? `--configuration ${program.configuration}` : ''),
+      (program.loglevel ? `--loglevel ${program.loglevel}` : ''),
+      (program.noColor ? '--no-colors' : ''),
+      (program.cleanup ? `--cleanup` : ''),
+      (program.reuse ? `--reuse` : ''),
+      (isFinite(program.debugSynchronization) ? `--debug-synchronization ${program.debugSynchronization}` : ''),
+      (platform ? `--grep ${getPlatformSpecificString()} --invert` : ''),
+      (program.headless ? `--headless` : ''),
+      (program.gpu ? `--gpu ${program.gpu}` : ''),
+      (program.recordLogs ? `--record-logs ${program.recordLogs}` : ''),
+      (program.takeScreenshots ? `--take-screenshots ${program.takeScreenshots}` : ''),
+      (program.recordVideos ? `--record-videos ${program.recordVideos}` : ''),
+      (program.artifactsLocation ? `--artifacts-location "${program.artifactsLocation}"` : ''),
+      (program.deviceName ? `--device-name "${program.deviceName}"` : ''),
+      testFolder,
+      collectExtraArgs(process.argv.slice(3)),
+    ]).join(' ');
 
-    console.log(command);
+    log.info(command);
     cp.execSync(command, { stdio: 'inherit' });
   }
 
   function runJest() {
-    const configFile = runnerConfig ? `--config=${runnerConfig}` : '';
+    if (platform === 'android' && program.workers !== 1) {
+      log.warn('Can not use -w, --workers. Parallel test execution is only supported on iOS currently');
+      program.w = program.workers = 1;
+    }
 
-    const platformString = platform ? shellQuote(`--testNamePattern=^((?!${getPlatformSpecificString(platform)}).)*$`) : '';
-    const binPath = path.join('node_modules', '.bin', 'jest');
-    const color = program.color ? '' : ' --no-color';
-    const command = `${binPath} ${configFile}${color} --maxWorkers=${program.workers} ${platformString} ${collectExtraArgs()}`;
-    const detoxEnvironmentVariables = {
-      configuration: program.configuration,
-      loglevel: program.loglevel,
-      cleanup: program.cleanup,
-      reuse: program.reuse,
-      debugSynchronization: program.debugSynchronization,
-      gpu: program.gpu,
-      headless: program.headless,
-      artifactsLocation: program.artifactsLocation,
-      recordLogs: program.recordLogs,
-      takeScreenshots: program.takeScreenshots,
-      recordVideos: program.recordVideos,
-      deviceName: program.deviceName
-    };
+    const command = _.compact([
+      path.join('node_modules', '.bin', 'jest'),
+      (runnerConfig ? `--config=${runnerConfig}` : ''),
+      (program.noColor ? ' --no-color' : ''),
+      `--maxWorkers=${program.workers}`,
+      (platform ? shellQuote(`--testNamePattern=^((?!${getPlatformSpecificString()}).)*$`) : ''),
+      testFolder,
+      collectExtraArgs(process.argv.slice(3)),
+    ]).join(' ');
 
-    console.log(printEnvironmentVariables(detoxEnvironmentVariables) + command);
+    const detoxEnvironmentVariables = _.pick(program, [
+      'configuration',
+      'loglevel',
+      'cleanup',
+      'reuse',
+      'debugSynchronization',
+      'gpu',
+      'headless',
+      'artifactsLocation',
+      'recordLogs',
+      'takeScreenshots',
+      'recordVideos',
+      'deviceName',
+    ]);
+
+    log.info(printEnvironmentVariables(detoxEnvironmentVariables) + command);
     cp.execSync(command, {
       stdio: 'inherit',
       env: {
@@ -249,7 +254,7 @@ module.exports.handler = function main(program) {
 
   function printEnvironmentVariables(envObject) {
     return Object.entries(envObject).reduce((cli, [key, value]) => {
-      if (value === null || value === undefined || value === '') {
+      if (value == null || value === '') {
         return cli;
       }
 
@@ -258,22 +263,17 @@ module.exports.handler = function main(program) {
   }
 
   function getDefaultRunnerConfig() {
-    let defaultConfig;
-    switch (program.testRunner) {
+    switch (runner) {
       case 'mocha':
-        defaultConfig = 'e2e/mocha.opts';
-        break;
+        return 'e2e/mocha.opts';
       case 'jest':
-        defaultConfig = 'e2e/config.json';
-        break;
+        return 'e2e/config.json';
       default:
-        console.log(`Missing 'runner-config' value in detox config in package.json, using '${defaultConfig}' as default for ${program.testRunner}`);
+        return undefined;
     }
-
-    return defaultConfig;
   }
 
-  function getPlatformSpecificString(platform) {
+  function getPlatformSpecificString() {
     let platformRevertString;
     if (platform === 'ios') {
       platformRevertString = ':android:';
@@ -296,10 +296,4 @@ module.exports.handler = function main(program) {
   }
 
   run();
-};
-
-function getDefaultConfiguration() {
-  if (config && _.size(config.configurations) === 1) {
-    return _.keys(config.configurations)[0];
-  }
-}
+});

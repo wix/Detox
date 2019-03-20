@@ -1,42 +1,16 @@
-class DetoxDeprecation {
-  constructor({ name, version, repositoryUrl, logger }) {
-    this.name = name;
-    this.version = version;
-    this.repositoryUrl = repositoryUrl;
-    this.logger = logger;
-    this.hasDeprecationWarnings = false;
-  }
+const log = require('../../src/utils/logger').child({ __filename });
+const migrationGuideUrl = 'https://wix.to/I0DOAK0';
 
-  coerse({ name }) {
-    return (value) => {
-      this.logger.warn(`"${name}" is deprecated and will be removed in ${this.name}@${this.nextVersion}`);
-      this.hasDeprecationWarnings = true;
-      return value;
-    };
-  }
+function coerceDeprecation(option) {
+  return function coerceDeprecationFn(value) {
+    log.warn(`Beware: ${option} will be removed in the next version of Detox.`);
+    log.warn(`See the migration guide: ${migrationGuideUrl}`);
 
-  get nextVersion() {
-    return `${parseInt(this.version, 10) + 1}.0.0`;
-  }
-
-  help() {
-    this.logger.warn(`See the Migration Guide to fix deprecation warnings: ${this.migrationGuideUrl}`);
-  }
-
-  get migrationGuideUrl() {
-    return this.repositoryUrl.replace(/\.git$/, '') + '/blob/master/docs/Guide.Migration.md';
-  }
-
-  static init(options) {
-    const { name, version, repository: { url }} = require('../../package.json');
-
-    return new DetoxDeprecation({
-      name,
-      version,
-      repositoryUrl: url,
-      ...options,
-    });
-  }
+    return value;
+  };
 }
 
-module.exports = DetoxDeprecation;
+module.exports = {
+  coerceDeprecation,
+  migrationGuideUrl,
+};

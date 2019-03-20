@@ -1,11 +1,28 @@
+jest.mock('../src/utils/logger');
+
 describe('test', () => {
   let mockExec;
+  let argv;
+  let logger;
+
+  beforeAll(() => {
+    argv = process.argv;
+  });
+
   beforeEach(() => {
+    process.argv = ['node', 'jest', 'test'];
+
+    logger = require('../src/utils/logger');
     mockExec = jest.fn();
     jest.mock('child_process', () => ({
       execSync: mockExec
     }));
   });
+
+  afterEach(() => {
+    process.argv = argv;
+  });
+
   describe('mocha', () => {
     it('runs successfully', async () => {
       mockPackageJson({
@@ -22,11 +39,32 @@ describe('test', () => {
         console.log(e);
       }
       expect(mockExec).toHaveBeenCalledWith(
-        expect.stringContaining(
-          'node_modules/.bin/mocha "e2e" --opts e2e/mocha.opts --configuration only  --no-colors    --grep :ios: --invert  --record-logs none --take-screenshots none --record-videos none --artifacts-location "artifacts/only.'
-        ),
+        expect.stringContaining('node_modules/.bin/mocha --opts e2e/mocha.opts --configuration only --grep :ios: --invert --record-logs none --take-screenshots none --record-videos none --artifacts-location "artifacts/only.'),
         expect.anything()
       );
+
+      expect(mockExec).toHaveBeenCalledWith(
+        expect.stringMatching(/ "e2e"$/),
+        expect.anything()
+      );
+    });
+
+    it('should warn about deprecated options', async () => {
+      mockPackageJson({
+        configurations: {
+          only: {
+            type: 'android.emulator'
+          }
+        }
+      });
+
+      try {
+        await callCli('./test', 'test --specs e2e');
+      } catch (e) {
+        console.log(e);
+      }
+
+      expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('migration guide'));
     });
   });
 
@@ -54,9 +92,17 @@ describe('test', () => {
 
       expect(mockExec).toHaveBeenCalledWith(
         expect.stringContaining(
-          `node_modules/.bin/jest "e2e" --config=e2e/config.json --no-color --maxWorkers=1 \'--testNamePattern=^((?!:ios:).)*$\'`
+          `node_modules/.bin/jest --config=e2e/config.json --maxWorkers=1 \'--testNamePattern=^((?!:ios:).)*$\' "e2e"`
         ),
-        expect.anything()
+        expect.objectContaining({
+          env: expect.objectContaining({
+            configuration: 'only',
+            recordLogs: 'none',
+            takeScreenshots: 'none',
+            recordVideos: 'none',
+            artifactsLocation: expect.stringContaining('artifacts/only.'),
+          }),
+        })
       );
     });
   });
@@ -71,20 +117,13 @@ describe('test', () => {
       }
     });
 
-    const mockError = jest.fn();
-    try {
-      await callCli('./test', 'test');
-    } catch (e) {
-      mockError(e.toString());
-    }
+    await expect(callCli('./test', 'test')).rejects.toThrowErrorMatchingSnapshot();
     expect(mockExec).not.toHaveBeenCalled();
-    expect(mockError).toHaveBeenCalledWith(
-      expect.stringContaining("ava is not supported in detox cli tools. You can still run your tests with the runner's own cli tool")
-    );
   });
 
-  it('throws an error if the platform is android and the workers are enabled', async () => {
+  it('overrides workers count to 1 if running Android tests on Jest', async () => {
     mockPackageJson({
+      'test-runner': 'jest',
       configurations: {
         only: {
           type: 'android.emulator'
@@ -92,15 +131,10 @@ describe('test', () => {
       }
     });
 
-    const mockError = jest.fn();
-    try {
-      await callCli('./test', 'test --workers 2');
-    } catch (e) {
-      mockError(e.toString());
-    }
-    expect(mockExec).not.toHaveBeenCalled();
-    expect(mockError).toHaveBeenCalledWith(
-      expect.stringContaining('Can not use -w, --workers. Parallel test execution is only supported on iOS currently')
+    await callCli('./test', 'test --workers 2');
+    expect(mockExec).toHaveBeenCalledWith(
+      expect.stringContaining(` --maxWorkers=1 `),
+      expect.anything()
     );
   });
 
@@ -120,13 +154,13 @@ describe('test', () => {
     }
     expect(mockExec).toHaveBeenCalledWith(
       expect.stringContaining(
-        'node_modules/.bin/mocha "e2e" --opts e2e/mocha.opts --configuration only  --no-colors   --debug-synchronization 3000 --grep :ios: --invert  --record-logs none --take-screenshots none --record-videos none --artifacts-location "artifacts/only.'
+        'node_modules/.bin/mocha --opts e2e/mocha.opts --configuration only --debug-synchronization 3000 --grep :ios: --invert --record-logs none --take-screenshots none --record-videos none --artifacts-location "artifacts/only.'
       ),
       expect.anything()
     );
   });
 
-  it('passes extra agrs to the test runner', async () => {
+  it('passes extra args to the test runner', async () => {
     mockPackageJson({
       configurations: {
         only: {
@@ -136,10 +170,12 @@ describe('test', () => {
     });
 
     try {
-      await callCli('./test', 'test --unknown-property 42');
+      process.argv = [...process.argv, '--unknown-property', '42', '--flag'];
+      await callCli('./test', 'test --unknown-property 42 --flag');
     } catch (e) {
       console.log(e);
     }
-    expect(mockExec).toHaveBeenCalledWith(expect.stringContaining('--unknownProperty 42'), expect.anything());
+
+    expect(mockExec).toHaveBeenCalledWith(expect.stringContaining('--unknown-property 42 --flag'), expect.anything());
   });
 });

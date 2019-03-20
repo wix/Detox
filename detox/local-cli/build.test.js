@@ -1,11 +1,15 @@
+jest.mock('../src/utils/logger');
+
 describe('build', () => {
   let mockExec;
   beforeEach(() => {
+    spyOn(console, 'error');
     mockExec = jest.fn();
     jest.mock('child_process', () => ({
       execSync: mockExec
     }));
   });
+
   it('runs the build script if there is only one config', async () => {
     mockPackageJson({
       configurations: {
@@ -47,14 +51,14 @@ describe('build', () => {
       }
     });
 
-    expect(callCli('./build', 'build')).rejects.toBeInstanceOf(Error);
+    await expect(callCli('./build', 'build')).rejects.toThrowErrorMatchingSnapshot();
     expect(mockExec).not.toHaveBeenCalled();
   });
 
   it('fails without configurations', async () => {
     mockPackageJson({});
 
-    expect(callCli('./build', 'build')).rejects.toEqual(new Error('Cannot find detox.configurations in package.json'));
+    await expect(callCli('./build', 'build')).rejects.toThrowErrorMatchingSnapshot();
     expect(mockExec).not.toHaveBeenCalled();
   });
 
@@ -65,9 +69,7 @@ describe('build', () => {
       }
     });
 
-    expect(callCli('./build', 'build -c only')).rejects.toEqual(
-      new Error('Could not find build script in detox.configurations["only"].build')
-    );
+    await expect(callCli('./build', 'build -c only')).rejects.toThrowErrorMatchingSnapshot();
     expect(mockExec).not.toHaveBeenCalled();
   });
 
@@ -78,7 +80,7 @@ describe('build', () => {
       }
     });
 
-    expect(callCli('./build', 'build')).rejects.toEqual(new Error('Could not find build script in detox.configurations["only"].build'));
+    await expect(callCli('./build', 'build')).rejects.toThrowErrorMatchingSnapshot();
     expect(mockExec).not.toHaveBeenCalled();
   });
 });
