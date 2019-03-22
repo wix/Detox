@@ -27,7 +27,7 @@ function getDefaultConfiguration(pathToPackageJson = getDefaultPathToPackageJson
     }
   } catch (err) {}
 
-  return '';
+  return undefined;
 }
 
 function getConfigurationByKey(key) {

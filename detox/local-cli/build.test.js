@@ -3,7 +3,6 @@ jest.mock('../src/utils/logger');
 describe('build', () => {
   let mockExec;
   beforeEach(() => {
-    spyOn(console, 'error');
     mockExec = jest.fn();
     jest.mock('child_process', () => ({
       execSync: mockExec

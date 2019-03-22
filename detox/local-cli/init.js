@@ -3,22 +3,22 @@ const fs = require('fs');
 const path = require('path');
 const mochaTemplates = require('./templates/mocha');
 const jestTemplates = require('./templates/jest');
-const log = require('../src/utils/logger').child({ __filename: 'detox-init' });
-const catchAndLog = require('./utils/catchAndLog');
+const log = require('../src/utils/logger').child({ __filename });
 
 const PREFIX = 'detox-init';
 
 module.exports.command = 'init';
-module.exports.desc = 'Scaffolds initial E2E test folder structure for a specific test runner';
+module.exports.desc = 'Scaffold initial E2E test folder structure for a specified test runner';
 module.exports.builder = {
   runner: {
     alias: 'r',
     demandOption: true,
-    describe: 'test runner name (supported values: mocha, jest)'
+    describe: 'test runner name (supported values: mocha, jest)',
+    group: 'Configuration:',
   }
 };
 
-module.exports.handler = catchAndLog(log, function main(argv) {
+module.exports.handler = async function init(argv) {
   const {runner} = argv;
 
   switch (runner) {
@@ -40,7 +40,7 @@ module.exports.handler = catchAndLog(log, function main(argv) {
         'HINT: Try running one of the commands above, look what it does, and take similar steps for your use case.',
       ].join('\n'));
   }
-});
+};
 
 function createFolder(dir, files) {
   if (!fs.existsSync(dir)) {

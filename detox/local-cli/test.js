@@ -6,63 +6,63 @@ const environment = require('../src/utils/environment');
 const buildDefaultArtifactsRootDirpath = require('../src/artifacts/utils/buildDefaultArtifactsRootDirpath');
 const DetoxConfigError = require('../src/errors/DetoxConfigError');
 
-const log = require('../src/utils/logger').child({ __filename: 'detox-test' });
-const catchAndLog = require('./utils/catchAndLog');
+const log = require('../src/utils/logger').child({ __filename });
 const {getDetoxSection, getDefaultConfiguration, getConfigurationByKey} = require('./utils/configurationUtils');
 const {coerceDeprecation, migrationGuideUrl} = require('./utils/deprecation');
+const shellQuote = require('./utils/shellQuote');
 
 module.exports.command = 'test';
-module.exports.desc = 'Initiating your test suite';
+module.exports.desc = 'Run your test suite with the test runner specified in package.json';
 module.exports.builder = {
   c: {
     alias: ['configuration'],
-    group: 'Configuration',
-    default: () => getDefaultConfiguration(),
+    group: 'Configuration:',
+    default: getDefaultConfiguration(),
     describe:
       'Select a device configuration from your defined configurations, if not supplied, and there\'s only one configuration, detox will default to it'
   },
   o: {
     alias: 'runner-config',
-    group: 'Configuration',
+    group: 'Configuration:',
     describe: 'Test runner config file, defaults to e2e/mocha.opts for mocha and e2e/config.json for jest',
   },
   f: {
     alias: 'file',
-    group: 'Configuration',
+    group: 'Configuration:',
     describe: 'Specify test file to run',
     coerce: coerceDeprecation('-f, --file'),
     hidden: true,
   },
   s: {
     alias: 'specs',
-    group: 'Configuration',
-    describe: 'Root of test folder',
+    group: 'Configuration:',
+    describe: 'Root of tests look-up folder. Overrides the equivalent configuration in `package.json`, if set.',
     coerce: coerceDeprecation('-s, --specs'),
     hidden: true,
   },
   l: {
     alias: 'loglevel',
-    group: 'Debugging',
+    group: 'Debugging:',
     choices: ['fatal', 'error', 'warn', 'info', 'verbose', 'trace'],
     describe: 'Log level'
   },
   'no-color': {
-    describe: 'Pass to disable colors in log output',
+    describe: 'Disable colors in log output',
     boolean: true,
   },
   r: {
     alias: 'reuse',
-    group: 'Execution',
-    describe: 'Reuse existing installed app (do not delete and re-install) for a faster run.'
+    group: 'Execution:',
+    describe: 'Reuse existing installed app (do not delete + reinstall) for a faster run.'
   },
   u: {
     alias: 'cleanup',
-    group: 'Execution',
+    group: 'Execution:',
     describe: 'Shutdown simulator when test is over, useful for CI scripts, to make sure detox exists cleanly with no residue'
   },
   d: {
     alias: 'debug-synchronization',
-    group: 'Debugging',
+    group: 'Debugging:',
     coerce(value) {
       if (value == null) {
         return undefined;
@@ -80,25 +80,25 @@ module.exports.builder = {
   },
   a: {
     alias: 'artifacts-location',
-    group: 'Debugging',
+    group: 'Debugging:',
     describe: 'Artifacts (logs, screenshots, etc) root directory.',
     default: 'artifacts'
   },
   'record-logs': {
-    group: 'Debugging',
+    group: 'Debugging:',
     choices: ['failing', 'all', 'none'],
     default: 'none',
     describe: 'Save logs during each test to artifacts directory. Pass "failing" to save logs of failing tests only.'
   },
   'take-screenshots': {
-    group: 'Debugging',
+    group: 'Debugging:',
     choices: ['failing', 'all', 'none'],
     default: 'none',
     describe:
       'Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only.'
   },
   'record-videos': {
-    group: 'Debugging',
+    group: 'Debugging:',
     choices: ['failing', 'all', 'none'],
     default: 'none',
     describe:
@@ -106,7 +106,7 @@ module.exports.builder = {
   },
   w: {
     alias: 'workers',
-    group: 'Execution',
+    group: 'Execution:',
     describe:
       '[iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest)',
     default: 1,
@@ -114,23 +114,23 @@ module.exports.builder = {
   },
   H: {
     alias: 'headless',
-    group: 'Execution',
+    group: 'Execution:',
     describe: '[Android Only] Launch Emulator in headless mode. Useful when running on CI.'
   },
   gpu: {
-    group: 'Execution',
+    group: 'Execution:',
     describe: '[Android Only] Launch Emulator with the specific -gpu [gpu mode] parameter.'
   },
   n: {
     alias: 'device-name',
-    group: 'Configuration',
+    group: 'Configuration:',
     describe: 'Override the device name specified in a configuration. Useful for running a single build configuration on multiple devices.'
   }
 };
 
 const collectExtraArgs = require('./utils/collectExtraArgs')(module.exports.builder);
 
-module.exports.handler = catchAndLog(log, function main(program) {
+module.exports.handler = async function test(program) {
   program.artifactsLocation = buildDefaultArtifactsRootDirpath(program.configuration, program.artifactsLocation);
 
   clearDeviceRegistryLockFile();
@@ -290,10 +290,6 @@ module.exports.handler = catchAndLog(log, function main(program) {
     fs.writeFileSync(lockFilePath, '[]');
   }
 
-  // This is very incomplete, don't use this for user input!
-  function shellQuote(input) {
-    return process.platform !== 'win32' ? `'${input}'` : `"${input}"`;
-  }
 
   run();
-});
+};

@@ -1,4 +1,6 @@
 jest.mock('../src/utils/logger');
+const {normalize} = require('path');
+const shellQuote = require('./utils/shellQuote');
 
 describe('test', () => {
   let mockExec;
@@ -33,13 +35,10 @@ describe('test', () => {
         }
       });
 
-      try {
-        await callCli('./test', 'test');
-      } catch (e) {
-        console.log(e);
-      }
+      await callCli('./test', 'test');
+
       expect(mockExec).toHaveBeenCalledWith(
-        expect.stringContaining('node_modules/.bin/mocha --opts e2e/mocha.opts --configuration only --grep :ios: --invert --record-logs none --take-screenshots none --record-videos none --artifacts-location "artifacts/only.'),
+        expect.stringContaining(`${normalize('node_modules/.bin/mocha')} --opts e2e/mocha.opts --configuration only --grep :ios: --invert --record-logs none --take-screenshots none --record-videos none --artifacts-location "${normalize('artifacts/only.')}`),
         expect.anything()
       );
 
@@ -58,12 +57,7 @@ describe('test', () => {
         }
       });
 
-      try {
-        await callCli('./test', 'test --specs e2e');
-      } catch (e) {
-        console.log(e);
-      }
-
+      await callCli('./test', 'test --specs e2e');
       expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('migration guide'));
     });
   });
@@ -84,15 +78,11 @@ describe('test', () => {
         execSync: mockExec
       }));
 
-      try {
-        await callCli('./test', 'test');
-      } catch (e) {
-        console.log(e);
-      }
+      await callCli('./test', 'test');
 
       expect(mockExec).toHaveBeenCalledWith(
         expect.stringContaining(
-          `node_modules/.bin/jest --config=e2e/config.json --maxWorkers=1 \'--testNamePattern=^((?!:ios:).)*$\' "e2e"`
+          `${normalize('node_modules/.bin/jest')} --config=e2e/config.json --maxWorkers=1 ${shellQuote('--testNamePattern=^((?!:ios:).)*$')} "e2e"`
         ),
         expect.objectContaining({
           env: expect.objectContaining({
@@ -100,7 +90,7 @@ describe('test', () => {
             recordLogs: 'none',
             takeScreenshots: 'none',
             recordVideos: 'none',
-            artifactsLocation: expect.stringContaining('artifacts/only.'),
+            artifactsLocation: expect.stringContaining(normalize('artifacts/only.')),
           }),
         })
       );
@@ -154,7 +144,7 @@ describe('test', () => {
     }
     expect(mockExec).toHaveBeenCalledWith(
       expect.stringContaining(
-        'node_modules/.bin/mocha --opts e2e/mocha.opts --configuration only --debug-synchronization 3000 --grep :ios: --invert --record-logs none --take-screenshots none --record-videos none --artifacts-location "artifacts/only.'
+        `${normalize('node_modules/.bin/mocha')} --opts e2e/mocha.opts --configuration only --debug-synchronization 3000 --grep :ios: --invert --record-logs none --take-screenshots none --record-videos none --artifacts-location "${normalize('artifacts/only.')}`
       ),
       expect.anything()
     );

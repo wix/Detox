@@ -6,139 +6,36 @@ title: Detox Command Line Tools (detox-cli)
 `detox-cli` lets you operate Detox from command line.
 
 ## Installation
-Install `detox-cli` globally via npm:
+
+Install `detox-cli` globally via [npm](http://npmjs.org/detox-cli):
 
 ```sh
 npm install -g detox-cli
 ```
 
 ## Usage
+
 ```sh
-detox [options] [command]
-```
-
-## Commands:
-| Command | Description |
-| --- | --- |
-| [test](#test)              | Initiating your test suite |
-| [build](#build)            | Run the command defined in `configuration.build` |
-| [run-server](#run-server)  | Starts a standalone detox server |
-| [init](#init)              | Create initial e2e tests folder for jest or mocha |
-| clean-framework-cache      | Delete all compiled framework binaries from ~/Library/Detox, they will be rebuilt on 'npm install' or when running 'build-framework-cache'
-| build-framework-cache      | Build Detox.framework to ~/Library/Detox. The framework cache is specific for each combination of Xcode and Detox versions
-| [help](#help)              | Display help for specific command |
-
-## Options:
-
-| Options | Description |
-| --- | --- |
-| -h, --help | Output usage information |
-
-## Configuration Options
-
-Every flag can be passed in different ways, this section will show how `detox test --record-videos failing` can be expressed differently. Please note that you can use any combination of the usages below. Please note the order of precedence:
-
-1. Command line args
-2. Environment variables
-3. Config file / package.json field
-4. Configured defaults
-
-### Environment Varables
-
-`DETOX_RECORD_VIDEOS="failing" detox test`
-
-### `package.json`
-
-The flags need to be passed under the `detox` object in camel case.
-
-```json
-{
-    "detox": {
-        "recordVideos": "failing"
-    }
-}
-```
-
-The options can be extended like this where `my-companies-detox-config` is a package exporting a configuration:
-
-```json
-{
-   "detox": {
-        "extends": "my-companies-detox-config"
-    } 
-}
-```
-
-### Config File
-
-You can either configure a CommonJS module or a JSON file to be loaded as configuration if you specify the file to be loaded via the `--config` flag:
-
-```js
-module.exports = {
-    recordVideos: "failing"
-};
-```
-
-or
-
-```json
-{
-    "recordVideos": "failing"
-}
+detox <command> [options] 
 ```
 
 ## Commands
 
-### test
-Initiating your test suite
-
-`detox test [options]`
-
-| Option                                        | Description |
-| ---                                           | --- |
-| -h, --help                                    | output usage information |
-| -o, --runner-config \<config\>                | Test runner config file, defaults to 'e2e/mocha.opts' for mocha and 'e2e/config.json' for jest. Overrides the equivalent configuration in `package.json`, if set. |
-| -s, --specs \<relativePath\>                  | Root of tests look-up folder. Overrides the equivalent configuration in `package.json`, if set. |
-| -l, --loglevel [value]                        | Log level: fatal, error, warn, info, verbose, trace |
-| --no-color                                    | Disable colors in log output |
-| -c, -configuration \<device config\>          | Select a device configuration from your defined configurations,if not supplied, and there's only one configuration, detox will default to it |
-| -r, --reuse                                   | Reuse existing installed app (do not delete and re-tall) for a faster run. |
-| -u, --cleanup                                 | Shutdown simulator when test is over, useful for CI ipts, to make sure detox exists cleanly with no residue |
-| -d, --debug-synchronization \<value\>         | When an action/expectation takes a significant amount time use this option to print device synchronization status. The status will be printed if the ion takes more than [value]ms to complete |
-| -a, --artifacts-location \<path\>             | Artifacts (logs, screenshots, etc) root directory. If it does not end with a slash (`/`) or backslash, then CLI will append to the path a subdirectory with configuration name and timestamp (e.g. `artifacts/android.emu.release.2018-06-12 05:52:43Z`. The path with a slash at the end assumes you do not want a subdirectory inside. For more details, please check the [Enabling artifacts](APIRef.Artifacts.md#artifacts). The default value is **artifacts** (plus a subdir). |
-| --record-logs [failing/all/none]              | Save logs during each test to artifacts directory. Pass "failing" to save logs of failing tests only. The default value is **none**. |
-| --take-screenshots [failing/all/none]         | Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only. The default value is **none**. |
-| --record-videos [failing/all/none]            | Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only. The default value is **none**. |
-| -p, --platform [ios/android]                  | Run platform specific tests. Runs tests with invert grep on `:platform:`, e.g test with substring `:ios:` in its name will not run when passing `--platform android` |
-| -H, --headless                                | [Android Only] Launch Emulator in headless mode. Useful when running on CI. |
-| -w, --workers                                 | [iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest) |
-| -n, --device-name [name]                                 | Override the device name specified in a configuration. Useful for running a single build configuration on multiple devices. |
-> NOTE: such log levels as `silly` and `wss` are deprecated since detox@8.1.0 and will be removed in 9.0.0.
-> NOTE: extra arguments to `detox test` will be passed through to the test runner (e.g. arguments such as --bail can be passed to Detox and will get forwarded to your test runner)
-
-### build
-Run a command defined in 'configuration.build'
-
-`detox build <command> [options]`
-
-| Option | Description |
+| Command | Description |
 | --- | --- |
-| -h, --help                            |  output usage information |
-| -c, --configuration \<device config\> |  Select a device configuration from your defined configurations,if not supplied, and there's only one configuration, detox will default to it |
+| [init](#init)              | Create initial e2e tests folder for jest or mocha |
+| [build](#build)            | **Convenience method.** Run the command defined in 'build' property of the specified configuration. |
+| [test](#test)              | Initiating your test suite |
+| [run-server](#run-server)  | Starts a standalone detox server |
+| clean-framework-cache      | **MacOS only.** Delete all compiled framework binaries from ~/Library/Detox, they will be rebuilt on 'npm install' or when running 'build-framework-cache'
+| build-framework-cache      | **MacOS only.** Build Detox.framework to ~/Library/Detox. The framework cache is specific for each combination of Xcode and Detox versions
 
+### Options:
 
-### run-server
-
-Start a standalone Detox server
-
-`detox run-server [options]`
-
-| Option                 | Description                                         |
+| Options | Description |
 | --- | --- |
-| -p, --port [port]      | Port number (default: 8099)                         |
-| -l, --loglevel [value] | Log level: fatal, error, warn, info, verbose, trace |
-| --no-color             | Disable colorful logs                               |
-| -h, --help             | output usage information                            |
+| --version | Show version number |
+| --help | Show help |
 
 ### init
 
@@ -148,11 +45,75 @@ Scaffolds initial E2E test folder structure for a specific test runner
 
 | Option                          | Description |
 | ---                             | --- |
-| -h, --help                      | output usage information |
 | -r, --runner <test-runner-name> | test runner name (supported values: mocha, jest) |
+| --help                          | Show help |
 
-### help
-Display help for a command
+### build
 
-`detox help [command]`
+Run the command defined in `build` property of the specified **configuration**.
+
+`detox build [options]`
+
+| Option | Description |
+| --- | --- |
+| -c, --configuration \<device config\> |  Select a device configuration from your defined configurations, if not supplied, and there's only one configuration, detox will default to it |
+| --help                                | Show help |
+
+### test
+
+Initiating your test suite. <sup>[[1]](#notice-passthrough)</sup>
+
+`detox test [options] <...testFilePaths>`
+
+| Option                                        | Description |
+| ---                                           | --- |
+| -c, -configuration \<device config\>          | Select a device configuration from your defined configurations, if not supplied, and there's only one configuration, detox will default to it |
+| -o, --runner-config \<config\>                | Test runner config file, defaults to 'e2e/mocha.opts' for mocha and 'e2e/config.json' for jest. |
+| -n, --device-name [name]                      | Override the device name specified in a configuration. Useful for running a single build configuration on multiple devices. |
+| -l, --loglevel [value]                        | Log level: fatal, error, warn, info, verbose, trace |
+| -d, --debug-synchronization \<value\>         | When an action/expectation takes a significant amount time use this option to print device synchronization status. The status will be printed if the action takes more than [value]ms to complete |
+| -a, --artifacts-location \<path\>             | Artifacts (logs, screenshots, etc) root directory.<sup>[[2]](#notice-artifacts)</sup> |
+| --record-logs [failing/all/none]              | Save logs during each test to artifacts directory. Pass "failing" to save logs of failing tests only. The default value is **none**. |
+| --take-screenshots [failing/all/none]         | Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only. The default value is **none**. |
+| --record-videos [failing/all/none]            | Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only. The default value is **none**. |
+| -r, --reuse                                   | Reuse existing installed app (do not delete + reinstall) for a faster run. |
+| -u, --cleanup                                 | Shutdown simulator when test is over, useful for CI scripts, to make sure detox exists cleanly with no residue |
+| -w, --workers                                 | [iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest) |
+| -H, --headless                                | [Android Only] Launch Emulator in headless mode. Useful when running on CI. |
+| -gpu                                          | [Android Only] Launch Emulator with the specific -gpu [gpu mode] parameter. |
+| --no-color                                    | Disable colors in log output |
+| --help                                        | Show help |
+
+##### Notices
+
+1. <a name="notice-passthrough">It</a> should be noted that `detox test` is a convenience method to trigger an execution
+of a supported test runner, so for the most part it reads configuration from CLI args and `package.json` and remaps it
+to command-line arguments or environment variables that are supported by (or not conflict with) the test runner.
+Hence, **extra arguments to** `detox test` **will be forwarded to your test runner**, e.g:
+
+    * You run `detox test --bail`, and since `--bail` is an unknown option, it will be forwarded to the test runner as-is.
+    * If there is a name conflict for some option (between the test runner and `detox test`), you can pass it explicitly
+    after the reserved `--` sequence. For instance, `detox test -- --help`, will pass `--help` to the test runner CLI
+    itself.
+
+2. <a name="notice-artifacts">If</a> `--artifacts-location` path does not end with a slash (`/`) or a backslash, then detox CLI will append to the
+path a subdirectory with configuration name and timestamp (e.g. `artifacts/android.emu.release.2018-06-12 05:52:43Z`).
+In other words, the path with a slash at the end assumes you do not want a subdirectory inside.
+For more details, please check the [Enabling artifacts](APIRef.Artifacts.md#artifacts).
+The default value is **artifacts** (plus a subdir). 
+
+### run-server
+
+Start a standalone Detox server
+
+`detox run-server [options]`
+
+| Option                 | Description                                         |
+| --- | --- |
+| -p, --port [port]      | Port number (default: 8099) |
+| -l, --loglevel [value] | Log level: fatal, error, warn, info, verbose, trace |
+| --no-color             | Disable colorful logs |
+| --help                 | Show help |
+
+
 

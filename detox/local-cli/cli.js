@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const yargs = require('yargs');
+const logger = require('../src/utils/logger').child({ __filename });
 
 yargs
   .scriptName('detox')
@@ -17,4 +18,11 @@ yargs
   .demandCommand()
   .recommendCommands()
   .help()
-  .wrap(yargs.terminalWidth() * 0.9).argv;
+  .wrap(yargs.terminalWidth() * 0.9)
+  .fail((_msg, err) => {
+    const lines = (err ? err.toString() : msg).split('\n');
+    for (const line of lines) {
+      logger.error(line);
+    }
+  })
+  .parse();

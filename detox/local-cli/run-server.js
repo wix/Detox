@@ -1,20 +1,21 @@
 const DetoxServer = require('../src/server/DetoxServer');
-const log = require('../src/utils/logger').child({ __filename: 'detox-run-server' });
-const catchAndLog = require('./utils/catchAndLog');
+const log = require('../src/utils/logger').child({ __filename });
 
 module.exports.command = 'run-server';
 module.exports.desc = 'Start a standalone Detox server';
 module.exports.builder = {
-  port: {
-    alias: 'p',
+  l: {
+    alias: 'loglevel',
+    describe: 'Log level',
+    group: 'Configuration:',
+    choices: ['fatal', 'error', 'warn', 'info', 'verbose', 'trace'],
+  },
+  p: {
+    alias: 'port',
     describe: 'Port number',
+    group: 'Configuration:',
     number: true,
     default: 8099
-  },
-  loglevel: {
-    alias: 'l',
-    choices: ['fatal', 'error', 'warn', 'info', 'verbose', 'trace'],
-    describe: 'Log level'
   },
   'no-color': {
     describe: 'Disable colorful logs',
@@ -22,7 +23,7 @@ module.exports.builder = {
   }
 };
 
-module.exports.handler = catchAndLog(log, function main(argv) {
+module.exports.handler = async function runServer(argv) {
   if (isNaN(argv.port) || argv.port < 1 || argv.port > 65535) {
     throw new Error(`The port should be between 1 and 65535, got ${argv.port}`)
   }
@@ -31,4 +32,4 @@ module.exports.handler = catchAndLog(log, function main(argv) {
     port: +argv.port,
     log,
   });
-});
+};
