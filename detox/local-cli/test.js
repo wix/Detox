@@ -142,7 +142,7 @@ module.exports.handler = async function test(program) {
 
   if (testFolder && !program.file && !program.specs) {
     log.warn('Deprecation warning: "file" and "specs" support will be dropped in the next Detox version.');
-    log.warn(`Please edit your package.json according to the migration guide: ${migrationGuideUrl}`);
+    log.warn(`Please edit your package.json according to the migration guide: ${migrationGuideUrl} `);
   }
 
   const runner = getConfigFor(['test-runner'], 'mocha');
