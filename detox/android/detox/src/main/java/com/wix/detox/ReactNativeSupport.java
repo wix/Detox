@@ -310,6 +310,8 @@ public class ReactNativeSupport {
     }
 
     public static void resumeRNTimersIdlingResource() {
-        rnTimerIdlingResource.resume();
+        if (rnTimerIdlingResource != null) {
+            rnTimerIdlingResource.resume();
+        }
     }
 }
