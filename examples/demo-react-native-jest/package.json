@@ -19,8 +19,8 @@
     "react-test-renderer": "16.0.0-beta.5"
   },
   "detox": {
+    "specs": "",
     "test-runner": "jest",
-    "specs": "e2e",
     "configurations": {
       "ios.sim.release": {
         "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/DemoReactNativeJest.app",
