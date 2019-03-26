@@ -88,20 +88,20 @@ with the previous versions of Detox.
 `file` and `specs` properties implied a default test folder value (`"e2e"`).
 > In other words:
 
-	```js
-	const testFolder = config.file || config.specs || "e2e";
-	```
+```js
+const testFolder = config.file || config.specs || "e2e";
+```
 
 > In order not to break the existing logic but to introduce the deprecation,
 the check for the `e2e` placeholder assignment became narrower yet remaining valid:
 
-	```js
-	let testFolder = config.file || config.specs;
-	if (testFolder == null) { // that's why you should change it to an empty string, ""
-	    testFolder = "e2e"; // otherwise, if it is null or undefined, then we save backward compatibility
-	}
-	if (testFolder) { printDeprecationWarning(); }
-	```
+```js
+let testFolder = config.file || config.specs;
+if (testFolder == null) { // that's why you should change it to an empty string, ""
+    testFolder = "e2e"; // otherwise, if it is null or undefined, then we save backward compatibility
+}
+if (testFolder) { printDeprecationWarning(); }
+```
 
 > As it can be seen above, this move allows to track if you followed the migration guide or not.
 
