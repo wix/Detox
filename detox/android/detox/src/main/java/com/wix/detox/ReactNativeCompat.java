@@ -33,7 +33,7 @@ public class ReactNativeCompat {
             // ReactNativeSupport.waitForReactNativeLoad(reactNativeHostHolder);
             try {
                 //TODO- Temp hack to make Detox usable for RN>=50 till we find a better sync solution.
-                Thread.sleep(5 * 1000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
