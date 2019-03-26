@@ -63,7 +63,7 @@ in `package.json`, then please add it temporarily like this:
 ```
 
 Last, but not least, if you have been using CLI arguments like
-`--file e2e` or `--specs e2e`, then please drop the preceding
+`--file e2e` or `--specs e2e`, please drop the preceding
 `--file` and `--specs`, so that:
 
 ```
