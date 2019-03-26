@@ -79,31 +79,31 @@ detox test e2e
 The idea in the example above is to pass `e2e` straight to `mocha` or `jest` as
 a path to the folder with Detox tests, without extra preprocessing from Detox CLI side.
 
-For the curious ones, who want to know more why we should use an empty string
+> For the curious ones, who want to know more why we should use an empty string
 (`""`) instead of deleting `"specs"` and `"file"` from `package.json`, here is
 the explanation. This seemingly weird step is motivated by backward compatibility
 with the previous versions of Detox.
-
-So far, before `detox@12.1.0`, absence of
+>
+> So far, before `detox@12.1.0`, absence of
 `file` and `specs` properties implied a default test folder value (`"e2e"`).
-In other words:
+> In other words:
 
-```js
-const testFolder = config.file || config.specs || "e2e";
-```
+	```js
+	const testFolder = config.file || config.specs || "e2e";
+	```
 
-In order not to break the existing logic but to introduce the deprecation,
+> In order not to break the existing logic but to introduce the deprecation,
 the check for the `e2e` placeholder assignment became narrower yet remaining valid:
 
-```js
-let testFolder = config.file || config.specs;
-if (testFolder == null) { // that's why you should change it to an empty string, ""
-    testFolder = "e2e"; // otherwise, if it is null or undefined, then we save backward compatibility
-}
-if (testFolder) { printDeprecationWarning(); }
-```
+	```js
+	let testFolder = config.file || config.specs;
+	if (testFolder == null) { // that's why you should change it to an empty string, ""
+	    testFolder = "e2e"; // otherwise, if it is null or undefined, then we save backward compatibility
+	}
+	if (testFolder) { printDeprecationWarning(); }
+	```
 
-As it can be seen above, this move allows to track if you followed the migration guide or not.
+> As it can be seen above, this move allows to track if you followed the migration guide or not.
 
 ## Migrating from Detox 11.0.1 to 12.0.0
 
