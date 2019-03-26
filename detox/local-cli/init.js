@@ -93,7 +93,7 @@ function patchPackageJson(packageJson, runnerName) {
   _.set(packageJson, ['detox', 'test-runner'], runnerName);
   _.set(packageJson, ['detox', 'specs'], "");
 
-  log.info(PREFIX, 'Patched ./package.json with the command:');
+  log.info(PREFIX, 'Patched ./package.json with commands:');
   log.info(PREFIX, `_.set(packageJson, ['detox', 'test-runner'], "${runnerName}")`);
   log.info(PREFIX, `_.set(packageJson, ['detox', 'specs'], "")`);
 }
