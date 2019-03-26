@@ -234,15 +234,18 @@ public class ReactNativeSupport {
     }
 
     private static void removeEspressoIdlingResources(ReactContext reactContext) {
-
+        if(reactContext == null) {
+            return;
+        }
+        
         Log.i(LOG_TAG, "Removing Espresso IdlingResources for React Native.");
 
-        // IdlingRegistry.getInstance().unregister(rnTimerIdlingResource);
-        // IdlingRegistry.getInstance().unregister(rnBridgeIdlingResource);
-        // IdlingRegistry.getInstance().unregister(rnUIModuleIdlingResource);
-        // IdlingRegistry.getInstance().unregister(animIdlingResource);
+        IdlingRegistry.getInstance().unregister(rnTimerIdlingResource);
+        IdlingRegistry.getInstance().unregister(rnBridgeIdlingResource);
+        IdlingRegistry.getInstance().unregister(rnUIModuleIdlingResource);
+        IdlingRegistry.getInstance().unregister(animIdlingResource);
 
-        // reactContext.getCatalystInstance().removeBridgeIdleDebugListener(rnBridgeIdlingResource);
+        reactContext.getCatalystInstance().removeBridgeIdleDebugListener(rnBridgeIdlingResource);
     }
 
     private static boolean networkSyncEnabled = true;
