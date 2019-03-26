@@ -33,7 +33,7 @@ In a React Native component add testID like so:
 Then match with `by.id`:
 
 ```js
-await element(by.id('tap_me'));
+element(by.id('tap_me'));
 ```
 
 
@@ -43,14 +43,14 @@ For other cases, and only if you can't use `by.id` there is a variety of options
 Find an element by text, useful for text fields, buttons.
 
 ```js
-await element(by.text('Tap Me'));
+element(by.text('Tap Me'));
 ```
 
 #### `by.label(label)`
 Find an element by `accessibilityLabel` on iOS, or by `contentDescription` on Android.
 
 ```js
-await element(by.label('Welcome'));
+element(by.label('Welcome'));
 ```
 
 #### `by.type(nativeViewType)`
@@ -59,39 +59,38 @@ Find an element by native view type. **View types differ between iOS and Android
 on iOS:
 
 ```js
-await element(by.type('RCTImageView'));
+element(by.type('RCTImageView'));
 ```
 
 on Android, provide the class canonical name:
 
 ```js
-await element(by.type('android.widget.ImageView'));
+element(by.type('android.widget.ImageView'));
 ```
 
 #### `by.traits([traits])`
 Find an element with an [accessibility trait](https://developer.apple.com/documentation/uikit/accessibility/uiaccessibility/accessibility_traits). (iOS only)
 
 ```js
-await element(by.traits(['button']));
+element(by.traits(['button']));
 ```
 
 #### Advanced
 ##### Multiple matchers
 
 ```js
-await element(by.id('uniqueId').and(by.text('some text')));
+element(by.id('uniqueId').and(by.text('some text')));
 ```
 
 ##### Match by id and by parent id
 
 ```js
-await element(by.id('child').withAncestor(by.id('parent')));
-
+element(by.id('child').withAncestor(by.id('parent')));
 ```
 ##### Match by id and by child id
 
 ```js
-await element(by.id('parent').withDescendant(by.id('child')));
+element(by.id('parent').withDescendant(by.id('child')));
 ```
 
 ###### Example
@@ -111,9 +110,9 @@ await element(by.id('parent').withDescendant(by.id('child')));
 	
 	```js
 	// any of the following will work
-	await element(by.id('child'));
-	await element(by.id('child').withAncestor(by.id('parent')));
-	await element(by.id('child').withDescendant(by.id('grandchild')));
+	element(by.id('child'));
+	element(by.id('child').withAncestor(by.id('parent')));
+	element(by.id('child').withDescendant(by.id('grandchild')));
 	```
 
 #### Dealing with multiple elements matching the same matcher
@@ -150,7 +149,7 @@ A common use-case, is adding identifiers to list items. testIDs for FlatList ite
 3. Select a matched view from the matched view list using `atIndex`
 
 	```js
-	await element(by.text('Product')).atIndex(2);
+	element(by.text('Product')).atIndex(2);
 	```
 **Usage of `atIndex` is not recommended!**, since the order of matched views can not be guaranteed by the system. Recyclable views in [UITableView](https://developer.apple.com/documentation/uikit/uitableview) / [UICollectionView](https://developer.apple.com/documentation/uikit/uicollectionview) / [RecyclerView](https://developer.android.com/guide/topics/ui/layout/recyclerview) or any custom view may even change during scroll, while views are being recycled with new data. 
 	React Native FlatList items are being traversed in different ways on the different platforms, causing `atIndex` to return the **opposite indexes on iOS than what it does on Android.**
@@ -161,11 +160,11 @@ A common use-case, is adding identifiers to list items. testIDs for FlatList ite
 on iOS 11:
 
 ```js
-await element(by.traits(['button']).and(by.label('Back')));
+element(by.traits(['button']).and(by.label('Back')));
 ```
 
 on iOS 10:
 
 ```js
-await element(by.type('_UIModernBarButton').and(by.label('Back')));
+element(by.type('_UIModernBarButton').and(by.label('Back')));
 ```
