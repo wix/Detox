@@ -188,7 +188,7 @@ await device.launchApp({
 ```
 
 ### `device.relaunchApp(params)`
-**Deprecated** Use `device.launchApp(params)` instead. This method is now calling `launchApp({newInstance: true})` for backwards compatibility, it will be removed in Detox 6.X.X.<Br>
+**Deprecated** Use `device.launchApp(params)` instead. This method is now calling `launchApp({newInstance: true})` for backwards compatibility.<Br>
 Kill and relaunch the app defined in the current [`configuration`](APIRef.Configuration.md).
 
 ### `device.terminateApp()`

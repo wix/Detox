@@ -5,17 +5,16 @@ title: Migration Guide
 
 We are improving detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes.
 
-## Migrating from Detox 11.0.x to 11.1.x
+## Migrating from Detox 12.0.x to 12.1.x
 
-This is not a breaking change yet, but starting from `detox@11.1.0` you'll start seeing warnings
-like:
+This is not a breaking change yet, but starting from `detox@12.1.0` you'll start seeing warnings like:
 
 ```
 WARN:  [test.js] Deprecation warning: "file" and "specs" support will be dropped in the next Detox version.
 WARN:  [test.js] Please edit your package.json according to the migration guide: https://wix.to/I0DOAK0 
 ```
 
-In the next version (12.x.x), `--file` and `--specs` will be treated as unknown arguments
+In the next major version `--file` and `--specs` will be treated as unknown arguments
 and therefore passed as-is to your appropriate test runner.
 
 To get rid of this warning:
@@ -77,20 +76,24 @@ becomes:
 detox test e2e
 ```
 
+The idea in the example above is to pass `e2e` straight to `mocha` or `jest` as
+a path to the folder with Detox tests, without extra preprocessing from Detox CLI side.
+
 For the curious ones, who want to know more why we should use an empty string
 (`""`) instead of deleting `"specs"` and `"file"` from `package.json`, here is
-an explanation. This seemingly weird step is motivated by backward compatibility
+the explanation. This seemingly weird step is motivated by backward compatibility
 with the previous versions of Detox.
 
-So far, before `detox@11.1.0`, absence of
-`file` and `specs` properties implied a default test folder value (`"e2e"`):
+So far, before `detox@12.1.0`, absence of
+`file` and `specs` properties implied a default test folder value (`"e2e"`).
+In other words:
 
 ```js
 const testFolder = config.file || config.specs || "e2e";
 ```
 
-In order to not break the existing logic but introduce the deprecation,
-the check has been made a bit stricter:
+In order not to break the existing logic but to introduce the deprecation,
+the check for the `e2e` placeholder assignment became narrower yet remaining valid:
 
 ```js
 let testFolder = config.file || config.specs;
@@ -98,6 +101,25 @@ if (testFolder == null) { // that's why you should change it to an empty string,
     testFolder = "e2e"; // otherwise, if it is null or undefined, then we save backward compatibility
 }
 if (testFolder) { printDeprecationWarning(); }
+```
+
+As it can be seen above, this move allows to track if you followed the migration guide or not.
+
+## Migrating from Detox 11.0.1 to 12.0.0
+
+The new version explicity requires **Xcode 10.1 or higher** in order to run tests on iOS ([#1229](https://github.com/wix/Detox/issues/1229)).
+
+## Migrating from Detox 11.0.0 to 11.0.1 (nonbreaking)
+
+**React Native versions older than 0.46 are no longer supported**, so the `missingDimentsionStrategy` can be removed from `android/app/build.gradle`:
+
+```diff
+android {
+		defaultConfig {
+    		// ...
+-        missingDimensionStrategy "minReactNative", "minReactNative46"
+    }
+}
 ```
 
 ## Migrating from Detox 10.x.x to 11.x.x
@@ -109,7 +131,7 @@ if (testFolder) { printDeprecationWarning(); }
 ```diff
 android {
     defaultConfig {
-        // ...
+         // ...
 -        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 +        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

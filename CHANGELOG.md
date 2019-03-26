@@ -1,5 +1,29 @@
 # Change Log
 
+## [11.0.2](https://github.com/wix/Detox/tree/11.0.2) (2019-03-19)
+[Full Changelog](https://github.com/wix/Detox/compare/11.0.1...11.0.2)
+
+**Merged Pull Requests**
+
+- Restore UIAutomator as an external file in Android generation [\#1210](https://github.com/wix/Detox/pull/1210) ([d4vidi](https://github.com/d4vidi))
+
+## [11.0.1](https://github.com/wix/Detox/tree/11.0.1) (2019-03-18)
+[Full Changelog](https://github.com/wix/Detox/compare/11.0.0...11.0.1)
+
+**Enhancements**
+
+- End support in RN .44, .45 [\#1203](https://github.com/wix/Detox/issues/1203)
+- Migrate to Android jetpack \(androidx\) [\#1173](https://github.com/wix/Detox/issues/1173)
+
+**Closed Issues**
+
+- Stop forcing -gpu host when launching android emulator [\#1176](https://github.com/wix/Detox/issues/1176)
+
+**Merged Pull Requests**
+
+- \(Android\) Make RN .46 the new minimal version \(i.e. stop support for 44, .45\) [\#1209](https://github.com/wix/Detox/pull/1209) ([d4vidi](https://github.com/d4vidi))
+- PR \(Issue \#1176\) - Stop Forcing -gpu host on android emulators [\#1177](https://github.com/wix/Detox/pull/1177) ([RyanThomas73](https://github.com/RyanThomas73))
+
 ## [11.0.0](https://github.com/wix/Detox/tree/11.0.0) (2019-03-13)
 [Full Changelog](https://github.com/wix/Detox/compare/10.0.13...11.0.0)
 

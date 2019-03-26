@@ -16,7 +16,7 @@ android {
         }
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        missingDimensionStrategy "minReactNative", "minReactNative46"
+
         /*
         testInstrumentationRunnerArguments = [
                 'detoxServer': 'ws://localhost:8099',

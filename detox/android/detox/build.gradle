@@ -20,17 +20,6 @@ android {
         versionName "1.0"
     }
 
-    productFlavors {
-        flavorDimensions "minReactNative"
-        minReactNative44 {
-            dimension "minReactNative"
-
-        }
-        minReactNative46 {
-            dimension "minReactNative"
-        }
-    }
-
     testOptions {
         unitTests.returnDefaultValues = true
 
@@ -69,11 +58,8 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$_kotlinVersion"
 
-    minReactNative44Implementation 'com.squareup.okhttp3:okhttp:3.4.1'
-    minReactNative44Implementation 'com.squareup.okhttp3:okhttp-ws:3.4.1'
-
-    minReactNative46Implementation 'com.squareup.okhttp3:okhttp:3.6.0'
-    minReactNative46Implementation 'com.squareup.okio:okio:1.13.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.6.0'
+    implementation 'com.squareup.okio:okio:1.13.0'
 
     // Versions are in-sync with the 'androidx-test-1.1.0' release/tag of the android-test github repo,
     // used by the Detox generator. See https://github.com/android/android-test/releases/tag/androidx-test-1.1.0

@@ -91,9 +91,11 @@ function parsePackageJson(filepath) {
 
 function patchPackageJson(packageJson, runnerName) {
   _.set(packageJson, ['detox', 'test-runner'], runnerName);
+  _.set(packageJson, ['detox', 'specs'], "");
 
   log.info(PREFIX, 'Patched ./package.json with the command:');
   log.info(PREFIX, `_.set(packageJson, ['detox', 'test-runner'], "${runnerName}")`);
+  log.info(PREFIX, `_.set(packageJson, ['detox', 'specs'], "")`);
 }
 
 function savePackageJson(filepath, json) {

@@ -11,9 +11,7 @@ const argparse = require('../../utils/argparse');
 
 class Emulator {
   constructor() {
-    const newEmulatorPath = path.join(Environment.getAndroidSDKPath(), 'emulator', 'emulator');
-    const oldEmulatorPath = path.join(Environment.getAndroidSDKPath(), 'tools', 'emulator');
-    this.emulatorBin = fs.existsSync(newEmulatorPath) ? newEmulatorPath : oldEmulatorPath;
+    this.emulatorBin = Environment.getAndroidEmulatorPath();
   }
 
   async listAvds() {

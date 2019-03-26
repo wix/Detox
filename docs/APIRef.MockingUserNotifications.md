@@ -9,7 +9,7 @@ Detox supports mocking user notifications for iOS apps.
 
 ### Mocking App Launch with a Notification
 
-Using `relauchApp()` with custom params will trigger the mocking mechanism.
+Using `relaunchApp()` with custom params will trigger the mocking mechanism.
 
 ```js
 await device.relaunchApp({userNotification: notification});

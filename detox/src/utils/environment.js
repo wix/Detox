@@ -1,3 +1,4 @@
+const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const exec = require('child-process-promise').exec;
@@ -13,6 +14,15 @@ function getAndroidSDKPath() {
     Go to https://developer.android.com/studio/command-line/variables.html for more details`);
   }
   return sdkPath;
+}
+
+function getAndroidEmulatorPath() {
+  const sdkPath = getAndroidSDKPath();
+  const extension = os.platform() === 'win32' ? '.exe' : '';
+  const newEmulatorPath = path.join(sdkPath, 'emulator', `emulator${extension}`);
+  const oldEmulatorPath = path.join(sdkPath, 'tools', `emulator${extension}`);
+
+  return fs.existsSync(newEmulatorPath) ? newEmulatorPath : oldEmulatorPath;
 }
 
 function getDetoxVersion() {
@@ -41,6 +51,7 @@ module.exports = {
   getDetoxVersion,
   getFrameworkPath,
   getAndroidSDKPath,
+  getAndroidEmulatorPath,
   getDetoxLibraryRootPath,
   getDeviceLockFilePath,
   getHomeDir,
