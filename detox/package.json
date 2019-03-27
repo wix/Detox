@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "12.0.0",
+  "version": "12.1.0",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -58,7 +58,9 @@
     "node": ">=8.3.0"
   },
   "jest": {
-    "setupFiles": ["<rootDir>/__tests__/setupJest.js"],
+    "setupFiles": [
+      "<rootDir>/__tests__/setupJest.js"
+    ],
     "testEnvironment": "node",
     "roots": [
       "node_modules",

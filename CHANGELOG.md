@@ -1,5 +1,21 @@
 # Change Log
 
+## [12.1.0](https://github.com/wix/detox/tree/12.1.0) (2019-03-27)
+[Full Changelog](https://github.com/wix/detox/compare/v12.0.0...12.1.0)
+
+**Fixed Bugs**
+
+- Animations are not firing after upgrading to React Native 0.59.2 [\#1234](https://github.com/wix/Detox/issues/1234)
+
+**Closed Issues**
+
+- Announcement: Detox now requires Xcode 10.1 [\#1202](https://github.com/wix/Detox/issues/1202)
+- pass in files to the cli like jest and mocha do by default [\#1132](https://github.com/wix/Detox/issues/1132)
+
+**Merged Pull Requests**
+
+- Switch CLI to yargs [\#1109](https://github.com/wix/Detox/pull/1109) ([DanielMSchmidt](https://github.com/DanielMSchmidt))
+
 ## [v12.0.0](https://github.com/wix/detox/tree/v12.0.0) (2019-03-26)
 [Full Changelog](https://github.com/wix/detox/compare/11.0.2...v12.0.0)
 
