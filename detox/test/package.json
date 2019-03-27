@@ -6,8 +6,8 @@
     "test": ":",
     "packager": "react-native start",
     "detox-server": "detox run-server",
-    "e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization --take-screenshots all --record-logs all",
-    "e2e:android": "detox test --configuration android.emu.release --take-screenshots all --record-logs all",
+    "e2e:ios": "detox test e2e --configuration ios.sim.release --debug-synchronization --take-screenshots all --record-logs all",
+    "e2e:android": "detox test e2e --configuration android.emu.release --take-screenshots all --record-logs all",
     "build:ios": "detox build --configuration ios.sim.release",
     "build:android": "detox build --configuration android.emu.release",
     "verify-artifacts:ios": "jest ./scripts/verify_artifacts_are_not_missing.ios.test.js --testEnvironment node",
@@ -25,7 +25,7 @@
     "mocha": "^5.0.0"
   },
   "detox": {
-    "specs": "e2e",
+    "specs": "",
     "test-runner": "mocha",
     "__session": {
       "server": "ws://localhost:8099",

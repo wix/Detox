@@ -23,6 +23,6 @@
 * Run tests on the demo project
  
  ```sh
- detox test --configuration ios.sim.release
+ detox test e2e --configuration ios.sim.release
  ```
  This action will open a new simulator and run the tests on it.

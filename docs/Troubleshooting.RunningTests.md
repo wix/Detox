@@ -145,8 +145,30 @@ Error: Cannot determine which configuration to use. use --configuration to choos
 
 Run your commands with one of these configurations, for example:
 
-`detox build --configuration ios.sim.debug`<br>
-`detox test --configuration ios.sim.debug`
+* `detox build --configuration ios.sim.debug`
+* `detox test --configuration ios.sim.debug`
+
+<hr>
+
+**Issue:** In an attempt to run `detox test` the following error is thrown:
+
+```
+detox[4498] INFO:  [test.js] node_modules/.bin/mocha --opts e2e/mocha.opts --configuration ios.sim.release --grep :android: --invert
+
+  error: unknown option `--configuration'
+```
+
+**Solution:** In `detox@11.1.0` such options as `--file` and `--specs` were
+deprecated in favor of straightforward passing command line arguments to test
+runners. Since `mocha` does not search for test files recursively in the
+current working directory by default, you have to pass the path to your e2e
+tests folder manually:
+
+```
+detox test ./your-e2e-tests-folder
+```
+
+See [the migration guide](Guide.Migration.md#migrating-from-detox-110x-to-111x) for more details.
 
 <br>
 

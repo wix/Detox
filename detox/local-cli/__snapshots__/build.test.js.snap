@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`build fails with multiple configs if none is selected 1`] = `
+"Cannot determine which configuration to use. Use --configuration to choose one of the following:
+* only
+* myconf"
+`;
+
+exports[`build fails without build script 1`] = `"Could not find build script in detox.configurations[\\"only\\"].build"`;
+
+exports[`build fails without build script and configuration 1`] = `"Could not find build script in detox.configurations[\\"only\\"].build"`;
+
+exports[`build fails without configurations 1`] = `"There are no \\"configurations\\" in \\"detox\\" section of package.json"`;
