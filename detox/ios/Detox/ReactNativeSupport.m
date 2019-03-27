@@ -143,13 +143,45 @@ static int __detox_run(id self, SEL _cmd)
 	return __detox_run_orig(self, _cmd);
 }
 
+Class (*__orig_objc_lookUpClass)(const char * name);
+Class __dtx_objc_lookUpClass(const char * name)
+{
+	void* nameptr = (void*)name;
+	void* xctestptr = (void*)"XCTest";
+	if(name != NULL && (nameptr == xctestptr || memcmp(nameptr, xctestptr, 6) == 0))
+	{
+		return nil;
+	}
+	
+	return __orig_objc_lookUpClass(name);
+}
+
 __attribute__((constructor))
 static void __setupRNSupport()
 {
 	wx_original_dispatch_queue_create = dlsym(RTLD_DEFAULT, "dispatch_queue_create");
 	
 	// Rebind symbols dispatch_queue_create to point to our own implementation.
-	rebind_symbols((struct rebinding[]){"dispatch_queue_create", wx_dispatch_queue_create, NULL}, 1);
+	rebind_symbols((struct rebinding[]){
+		{
+			"dispatch_queue_create",
+			wx_dispatch_queue_create,
+			NULL
+		},
+	}, 1);
+	
+	//Add "-disableRNTestingOverride 1" to disable this behavior.
+	if([NSUserDefaults.standardUserDefaults boolForKey:@"disableRNTestingOverride"] == NO)
+	{
+		__orig_objc_lookUpClass = dlsym(RTLD_DEFAULT, "objc_lookUpClass");
+		rebind_symbols((struct rebinding[]){
+			{
+				"objc_lookUpClass",
+				__dtx_objc_lookUpClass,
+				NULL
+			}
+		}, 1);
+	}
 	
 	__currentIdlingResourceSerialQueue = dispatch_queue_create("__currentIdlingResourceSerialQueue", NULL);
 
