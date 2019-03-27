@@ -129,6 +129,19 @@ For iOS apps in a workspace (eg: CocoaPods) use `-workspace ios/example.xcworksp
 
 Also make sure the simulator model specified under the key `"name"` (`iPhone 7` above) is actually available on your machine (it was installed by Xcode). Check this by typing `xcrun simctl list` in terminal to display all available simulators.
 
+**Note:** For `react-native 0.59`, build directory is updated by adding a directory name is your app under `ios/build`. So, detox configurations `binaryPath` should be:
+
+```json
+"detox": {
+  "configurations": {
+    "ios.sim.debug": {
+      "binaryPath": "ios/build/example/Build/Products/Debug-iphonesimulator/example.app",
+      ...
+    }
+  }
+}
+```
+
 > TIP: To test a release version, replace 'Debug' with 'Release' in the binaryPath and build properties. For full configuration options see Configuration under the API Reference.
 
 <br>
