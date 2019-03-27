@@ -61,6 +61,8 @@
 		39A34C711E30F10D00BEBB59 /* DetoxAppDelegateProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39A34C6F1E30F10D00BEBB59 /* DetoxAppDelegateProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		39A34C721E30F10D00BEBB59 /* DetoxAppDelegateProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A34C701E30F10D00BEBB59 /* DetoxAppDelegateProxy.m */; };
 		39AB2D31205ABBD90029CD1F /* DetoxUserActivityDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39AB2D30205ABBD90029CD1F /* DetoxUserActivityDispatcher.swift */; };
+		39BCE598224BDBF000B0D357 /* ReactNativeSupportNoARC.h in Headers */ = {isa = PBXBuildFile; fileRef = 39BCE596224BDBF000B0D357 /* ReactNativeSupportNoARC.h */; };
+		39BCE599224BDBF000B0D357 /* ReactNativeSupportNoARC.m in Sources */ = {isa = PBXBuildFile; fileRef = 39BCE597224BDBF000B0D357 /* ReactNativeSupportNoARC.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		39C3C3511DBF9A13008177E1 /* EarlGrey.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 394767DC1DBF991E00D72256 /* EarlGrey.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		39C3C3531DBF9A19008177E1 /* SocketRocket.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 394767E91DBF992400D72256 /* SocketRocket.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */; };
@@ -238,6 +240,8 @@
 		39A34C6F1E30F10D00BEBB59 /* DetoxAppDelegateProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetoxAppDelegateProxy.h; sourceTree = "<group>"; };
 		39A34C701E30F10D00BEBB59 /* DetoxAppDelegateProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetoxAppDelegateProxy.m; sourceTree = "<group>"; };
 		39AB2D30205ABBD90029CD1F /* DetoxUserActivityDispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetoxUserActivityDispatcher.swift; sourceTree = "<group>"; };
+		39BCE596224BDBF000B0D357 /* ReactNativeSupportNoARC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReactNativeSupportNoARC.h; sourceTree = "<group>"; };
+		39BCE597224BDBF000B0D357 /* ReactNativeSupportNoARC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReactNativeSupportNoARC.m; sourceTree = "<group>"; };
 		39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetoxUserNotificationDispatcher.swift; sourceTree = "<group>"; };
 		39F642201FDD5EB000468FED /* DTXLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTXLogging.h; path = DTXLoggingInfra/DTXLogging.h; sourceTree = SOURCE_ROOT; };
 		39F642271FDD5EB000468FED /* DTXLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DTXLogging.m; path = DTXLoggingInfra/DTXLogging.m; sourceTree = SOURCE_ROOT; };
@@ -410,6 +414,8 @@
 				394767C41DBF98D900D72256 /* ReactNativeHeaders.h */,
 				394767C51DBF98D900D72256 /* ReactNativeSupport.h */,
 				394767C61DBF98D900D72256 /* ReactNativeSupport.m */,
+				39BCE596224BDBF000B0D357 /* ReactNativeSupportNoARC.h */,
+				39BCE597224BDBF000B0D357 /* ReactNativeSupportNoARC.m */,
 				394767C71DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.h */,
 				394767C81DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.m */,
 				394767C91DBF98D900D72256 /* WXJSTimerObservationIdlingResource.h */,
@@ -477,6 +483,7 @@
 				394767D41DBF98D900D72256 /* WXRunLoopIdlingResource.h in Headers */,
 				394767BF1DBF98A700D72256 /* GREYCondition+Detox.h in Headers */,
 				390D1C9C1E3A45F1007F5F46 /* UNNotification+PrivateHeaders.h in Headers */,
+				39BCE598224BDBF000B0D357 /* ReactNativeSupportNoARC.h in Headers */,
 				394767B21DBF987E00D72256 /* TestFailureHandler.h in Headers */,
 				394767CE1DBF98D900D72256 /* ReactNativeSupport.h in Headers */,
 				394767B61DBF987E00D72256 /* WebSocket.h in Headers */,
@@ -690,6 +697,7 @@
 				394767B71DBF987E00D72256 /* WebSocket.m in Sources */,
 				394767D51DBF98D900D72256 /* WXRunLoopIdlingResource.m in Sources */,
 				468731A61E6C6D0500F151BE /* EarlGrey+Detox.m in Sources */,
+				39BCE599224BDBF000B0D357 /* ReactNativeSupportNoARC.m in Sources */,
 				397EC9B61E7EDE0B00D5F2BB /* EarlGreyStatistics.m in Sources */,
 				399BF36921933F0C00F96D50 /* ExternalLogging.m in Sources */,
 				391FA5EA1E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.m in Sources */,
