@@ -17,6 +17,7 @@ const ADBScreenrecorderPlugin = require('../../artifacts/video/ADBScreenrecorder
 const AndroidDevicePathBuilder = require('../../artifacts/utils/AndroidDevicePathBuilder');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const sleep = require('../../utils/sleep');
+const retry = require('../../utils/retry');
 const { interruptProcess, spawnAndLog } = require('../../utils/exec');
 
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
@@ -90,6 +91,7 @@ class AndroidDriver extends DeviceDriverBase {
 
     if (!this.instrumentationProcess) {
       await this._launchInstrumentationProcess(deviceId, bundleId, launchArgs);
+      await sleep(500);
     } else {
       if (this.pendingUrl) {
         await this._startActivityWithUrl(this._getAndClearPendingUrl());
@@ -98,15 +100,12 @@ class AndroidDriver extends DeviceDriverBase {
       }
     }
 
-    const pid = await this._queryPID(deviceId, bundleId);
-
-    if (isNaN(pid)) {
+    let pid = NaN;
+    try {
+      pid = await retry(() => this._queryPID(deviceId, bundleId));
+    } catch (e) {
       log.warn(await this.adb.shell(deviceId, 'ps'));
-
-      throw new DetoxRuntimeError({
-        message: `Failed to find PID of the launched bundle: ${bundleId}`,
-        hint: `You might want to check "adb logcat" logs - maybe the app has crashed.`,
-      });
+      throw e;
     }
 
     await this.emitter.emit('launchApp', { deviceId, bundleId, launchArgs, pid });

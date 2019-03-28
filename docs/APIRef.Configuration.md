@@ -4,16 +4,17 @@ title: Configuration Options
 ---
 
 ## Configuring package.json 
+
 ### Device Configuration
+
 `configurations` holds all the device configurations, if there is only one configuration in `configurations` `detox build` and `detox test` will default to it, to choose a specific configuration use `--configuration` param<br>
 	
-
 |Configuration Params|Details|
 |---|---|
+|`type`| Device type, available options are `ios.simulator`, `ios.none`, `android.emulator`, and `android.attached`. |
 |`binaryPath`| Relative path to the ipa/app due to be  tested (make sure you build the app in a project relative path)|
 |`testBinaryPath`| (optional, Android only): relative path to the test app (apk) |
-|`type`| Device type, available options are `ios.simulator`, `ios.none`, `android.emulator`, and `android.attached`. |
-|`name`| Device name, aligns to the device list avaliable through `xcrun simctl list` for example, this is one line of the output of `xcrun simctl list`: `A3C93900-6D17-4830-8FBE-E102E4BBCBB9  iPhone 7  Shutdown  iPhone 7  iOS 10.2`, ir order to choose the first `iPhone 7` regardless of OS version, use `iPhone 7`. <br>To be OS specific use `iPhone 7, iOS 10.2`|
+|`name`| Device name, aligns to the device list avaliable through `xcrun simctl list` for example, this is one line of the output of `xcrun simctl list`: `A3C93900-6D17-4830-8FBE-E102E4BBCBB9  iPhone 7  Shutdown  iPhone 7  iOS 10.2`, in order to choose the first `iPhone 7` regardless of OS version, use `iPhone 7`. <br>To be OS specific use `iPhone 7, iOS 10.2`|
 |`build`| **[optional]** Build command (either `xcodebuild`, `react-native run-ios`, etc...), will be later available through detox CLI tool.|
 	
 **Example:**
@@ -32,8 +33,8 @@ title: Configuration Options
   }
 ```	
 	
-	
 ### Server Configuration
+
 Detox can either initialize a server using a generated configuration, or can be overriden with a manual  configuration:
 	
 ```json
@@ -66,18 +67,20 @@ Session can also be set per configuration:
 ### Test Runner Configuration
 
 ##### Optional: setting a test runner (Mocha as default, Jest is supported)
+
 ##### Mocha
 ```json
 	"detox": {
 	  ...
-	  "test-runner": "mocha"
+	  "test-runner": "mocha",
 	  "runner-config": "path/to/mocha.opts"
-	  "specs": "path/to/tests/root"
 	}
 ```
+
 `mocha.opts` refers to `--opts` in https://mochajs.org/#mochaopts
 
 ##### Jest
+
 ```json
 	"detox": {
 	  ...
@@ -85,14 +88,17 @@ Session can also be set per configuration:
 	  "runner-config": "path/to/config.json"
 	}
 ```
+
 `config.json` refers to `--config` in https://facebook.github.io/jest/docs/en/configuration.html
+
 >NOTE: jest tests will run in band, as Detox does not currently supports parallelization. 
 
 ## detox-cli
+
 ### Build Configuration
 
 In your detox config (in `package.json`) paste your build command into the configuration's `build` field. 
-The build command will be triggered when running `detox build`.<br>
+The build command will be triggered when running `detox build`.  
 **This is only a convience method, to help you manage building multiple configurations of your app and couple them to your tests. You can also choose not to use it and provide a compiled `app` by yourself.**
 
 You can choose to build your project in any of these ways...
@@ -124,23 +130,28 @@ You can choose to build your project in any of these ways...
 
 
 ### Test Configuration
+
 * If there's only one configuration, you can simply use:
 
 	```sh
-	detox test
+	detox test ./e2e
 	```
+
+where `./e2e` is the path to your Detox tests folder.
+
 * For multiple configurations, choose your configuration by passing `--configuration` param:
 	
 	```sh
-	detox test --configuration yourConfiguration
+	detox test ./e2e --configuration yourConfiguration
 	```
 
 ### Faster test runs with app reuse
+
 By default the app is removed, reinstalled and launched before each run.
 Starting fresh is critical in CI but in dev you might be able to save time between test runs and reuse the app that was previously installed in the simulator. To do so use the `reuse` flag and run your tests like this:
 
 ```sh
-detox test --reuse
+detox test ./e2e --reuse
 ```
 
 This is especially useful with React Native DEV mode when making Javascript code changes that are getting picked up by the packager (and thus no reinstall is needed). This can save up to 7 seconds per run!

@@ -1,6 +1,6 @@
 package com.wix.detox
 
-import android.support.test.espresso.IdlingResource
+import androidx.test.espresso.IdlingResource
 import com.facebook.react.bridge.ReactContext
 import com.nhaarman.mockito_kotlin.*
 import com.wix.detox.UTHelpers.yieldToOtherThreads

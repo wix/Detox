@@ -48,7 +48,14 @@ The most difficult part of automated testing on mobile is the tip of the testing
 * **Test Runner Independent:** Use Mocha, AVA, or any other JavaScript test runner you like.
 * **Debuggable:** Modern async-await API allows breakpoints in asynchronous tests to work as expected.
 
-## Supported React Native versions
+## Supported versions
+
+### Environment
+
+* **OS**: MacOS 10.13 (High Sierra) or higher.
+* **Xcode**: 10.1 or higher.
+
+### React Native
 
 Detox is built from the ground up to support React Native projects as well as pure native ones.
 

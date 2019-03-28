@@ -1,11 +1,12 @@
 package com.wix.detox.espresso;
 
 import android.os.SystemClock;
-import android.support.test.espresso.UiController;
-import android.support.test.espresso.action.MotionEvents;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.action.MotionEvents;
 
 /**
  * Created by simonracz on 09/08/2017.

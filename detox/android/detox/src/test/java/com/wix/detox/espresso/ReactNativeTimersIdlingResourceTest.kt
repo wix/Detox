@@ -1,7 +1,7 @@
 package com.wix.detox.espresso
 
-import android.support.test.espresso.IdlingResource.ResourceCallback
 import android.view.Choreographer
+import androidx.test.espresso.IdlingResource.ResourceCallback
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.modules.core.Timing
 import com.nhaarman.mockito_kotlin.*
@@ -105,9 +105,16 @@ class ReactNativeTimersIdlingResourceTest {
         assertThat(uut().isIdleNow).isFalse()
     }
 
-    @Test fun `should be idle if the only timer is overdue (due in the past)`() {
+    /**
+     * Note: Reversed logic due to this issue: https://github.com/wix/Detox/issues/1171 !!!
+     *
+     * Apparently at times (rare) this caused Espresso to think we're idle too soon, rendering
+     * it never to query any idling resource again even after the timer effectively expires...
+     */
+    @Test fun `should be *busy* even if all timers are overdue`() {
         givenTimer(anOverdueTimer())
-        assertThat(uut().isIdleNow).isTrue()
+        givenTimer(anOverdueTimer())
+        assertThat(uut().isIdleNow).isFalse()
     }
 
     @Test fun `should be busy if has a meaningful pending timer set beyond an overdue timer`() {

@@ -2,9 +2,6 @@ package com.wix.detox.espresso;
 
 import android.content.Context;
 import android.os.Handler;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.Espresso;
-import android.support.test.espresso.ViewInteraction;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Choreographer;
@@ -16,6 +13,10 @@ import org.joor.ReflectException;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import androidx.test.espresso.Espresso;
+import androidx.test.espresso.ViewInteraction;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 /**
  * Created by simonracz on 19/07/2017.
@@ -72,7 +73,7 @@ public class UiAutomatorHelper {
     }
 
     public static float getDensity() {
-        Context context = InstrumentationRegistry.getTargetContext().getApplicationContext();
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext();
         return context.getResources().getDisplayMetrics().density;
     }
 
@@ -85,7 +86,7 @@ public class UiAutomatorHelper {
     }
 
     public static float[] getScreenSizeInPX() {
-        DisplayMetrics metrics = InstrumentationRegistry.getTargetContext()
+        DisplayMetrics metrics = InstrumentationRegistry.getInstrumentation().getTargetContext()
                 .getApplicationContext().getResources().getDisplayMetrics();
         return new float[]{metrics.widthPixels, metrics.heightPixels};
     }
@@ -105,7 +106,7 @@ public class UiAutomatorHelper {
     private static void waitForChoreographer() {
         final int waitFrameCount = 2;
         final CountDownLatch latch = new CountDownLatch(1);
-        Handler handler = new Handler(InstrumentationRegistry.getTargetContext().getMainLooper());
+        Handler handler = new Handler(InstrumentationRegistry.getInstrumentation().getTargetContext().getMainLooper());
         handler.post(
                 new Runnable() {
                     @Override

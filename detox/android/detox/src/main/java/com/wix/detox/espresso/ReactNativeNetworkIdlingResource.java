@@ -1,7 +1,6 @@
 package com.wix.detox.espresso;
 
 import android.support.annotation.NonNull;
-import android.support.test.espresso.IdlingResource;
 import android.util.Log;
 import android.view.Choreographer;
 
@@ -10,6 +9,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import androidx.test.espresso.IdlingResource;
+import static androidx.test.espresso.IdlingResource.ResourceCallback;
 
 import okhttp3.Call;
 import okhttp3.Dispatcher;
@@ -113,7 +115,3 @@ public class ReactNativeNetworkIdlingResource implements IdlingResource, Choreog
     }
 
 }
-
-
-
-

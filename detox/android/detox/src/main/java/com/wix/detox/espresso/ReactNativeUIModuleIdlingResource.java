@@ -1,12 +1,15 @@
 package com.wix.detox.espresso;
 
 import android.support.annotation.NonNull;
-import android.support.test.espresso.IdlingResource;
 import android.util.Log;
 import android.view.Choreographer;
 
 import org.joor.Reflect;
 import org.joor.ReflectException;
+
+import androidx.test.espresso.IdlingResource;
+
+import static androidx.test.espresso.IdlingResource.ResourceCallback;
 
 /**
  * Created by simonracz on 26/07/2017.
@@ -28,7 +31,7 @@ public class ReactNativeUIModuleIdlingResource implements IdlingResource, Choreo
     private final static String METHOD_GET_NATIVE_MODULE = "getNativeModule";
     private final static String METHOD_HAS_NATIVE_MODULE = "hasNativeModule";
     private final static String METHOD_GET_UI_IMPLEMENTATION = "getUIImplementation";
-    private final static String METHOD_GET_UI_OPERATION_QUEUE = "getUIViewOperationQueue";
+    private final static String FIELD_UI_OPERATION_QUEUE = "mOperationsQueue";
     private final static String METHOD_IS_EMPTY = "isEmpty";
     private final static String FIELD_DISPATCH_RUNNABLES = "mDispatchUIRunnables";
     private final static String FIELD_NON_BATCHES_OPERATIONS = "mNonBatchedOperations";
@@ -80,7 +83,7 @@ public class ReactNativeUIModuleIdlingResource implements IdlingResource, Choreo
             Object uiOperationQueue = Reflect.on(reactContext)
                     .call(METHOD_GET_NATIVE_MODULE, uiModuleClass)
                     .call(METHOD_GET_UI_IMPLEMENTATION)
-                    .call(METHOD_GET_UI_OPERATION_QUEUE)
+                    .field(FIELD_UI_OPERATION_QUEUE)
                     .get();
             Object runnablesLock = Reflect.on(uiOperationQueue).field(LOCK_RUNNABLES).get();
             Object operationsLock = Reflect.on(uiOperationQueue).field(LOCK_OPERATIONS).get();

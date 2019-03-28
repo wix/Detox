@@ -5,12 +5,6 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.pm.ActivityInfo;
 import android.os.Handler;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.Espresso;
-import android.support.test.espresso.IdlingResource;
-import android.support.test.espresso.UiController;
-import android.support.test.espresso.ViewAction;
-import android.support.test.espresso.ViewInteraction;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,13 +17,19 @@ import org.joor.ReflectException;
 
 import java.util.ArrayList;
 
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
+import androidx.test.espresso.Espresso;
+import androidx.test.espresso.IdlingResource;
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
+import androidx.test.espresso.ViewInteraction;
+import androidx.test.platform.app.InstrumentationRegistry;
+
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 
 /**
  * Created by rotemm on 26/12/2016.
  */
-
 public class EspressoDetox {
     private static final String LOG_TAG = "detox";
 
@@ -121,7 +121,7 @@ public class EspressoDetox {
         // 1. we want to use postAtFrontOfQueue()
         // 2. we want it to be synchronous
         final ArrayList<IdlingResource> busyResources = new ArrayList<>();
-        final Handler handler = new Handler(InstrumentationRegistry.getTargetContext().getMainLooper());
+        final Handler handler = new Handler(InstrumentationRegistry.getInstrumentation().getTargetContext().getMainLooper());
         final SyncRunnable sr = new SyncRunnable(new Runnable() {
             @Override
             public void run() {

@@ -74,6 +74,7 @@ install:
 - export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 - nvm install $NODE_VERSION
 - nvm use $NODE_VERSION
+- nvm alias default $NODE_VERSION
 
 - npm install -g react-native-cli
 - npm install -g detox-cli

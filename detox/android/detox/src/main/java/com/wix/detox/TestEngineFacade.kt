@@ -1,8 +1,8 @@
 package com.wix.detox
 
 import android.content.Context
-import android.support.test.espresso.Espresso
-import android.support.test.espresso.IdlingResource
+import androidx.test.espresso.Espresso
+import androidx.test.espresso.IdlingResource
 import com.wix.detox.espresso.EspressoDetox
 import com.wix.detox.espresso.UiAutomatorHelper
 

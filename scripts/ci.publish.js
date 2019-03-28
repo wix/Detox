@@ -1,11 +1,10 @@
 /* tslint:disable: no-console */
 const exec = require('shell-utils').exec;
 
-const {log, getVersionSafe} = require('./ci.common');
+const {log, logSection, getVersionSafe} = require('./ci.common');
 
 function publishNewVersion(packageVersion) {
-  validatePublishConfig();
-
+  validatePrerequisites();
   projectSetup();
   prePublishToNpm();
   publishToNpm();
@@ -20,13 +19,18 @@ function publishNewVersion(packageVersion) {
   return true;
 }
 
-function validatePublishConfig() {
+function validatePrerequisites() {
+  const lernaBin = exec.which('lerna');
+  if (!lernaBin) {
+    throw new Error(`Cannot publish: lerna not installed!`);
+  }
+
   const lernaVersion = exec.execSyncRead('lerna --version');
   if (!lernaVersion.startsWith('2.')) {
     throw new Error(`Cannot publish: lerna version isn't 2.x.x (actual version is ${lernaVersion})`);
   }
 
-  const changelogGenerator = exec.which(`github_changelog_generator`);
+  const changelogGenerator = exec.which('github_changelog_generator');
   if (!changelogGenerator) {
     throw new Error(`Cannot publish: Github change-log generator not installed (see https://github.com/github-changelog-generator/github-changelog-generator#installation for more details`);
   }
@@ -37,23 +41,22 @@ function validatePublishConfig() {
 }
 
 function projectSetup() {
-  log('*** Environment setup ***');
+  logSection('Project setup');
   exec.execSync(`lerna bootstrap`);
   exec.execSync(`git checkout master`);
 }
 
 function prePublishToNpm() {
-  log('*** Pre-publish ***');
+  logSection('Prepublish');
 
-  const baseDir = process.cwd();
-  process.chdir(baseDir + '/detox');
+  process.chdir('detox');
   const {packageIosSources} = require('../detox/scripts/pack_ios');
   packageIosSources();
-  process.chdir(baseDir);
+  process.chdir('..');
 }
 
 function publishToNpm() {
-  log('*** Lerna publish ***');
+  logSection('Lerna publish');
 
   const versionType = process.env.RELEASE_VERSION_TYPE;
 
@@ -62,14 +65,15 @@ function publishToNpm() {
 }
 
 function generateChangeLog(newVersion) {
-  log('*** Changelog generator ***');
+  logSection('Changelog generator');
 
   const gitToken = process.env.CHANGELOG_GITHUB_TOKEN;
-  exec.execSync(`CHANGELOG_GITHUB_TOKEN=${gitToken} github_changelog_generator --future-release "${newVersion}" --no-verbose`);
+  exec.execSyncSilent(`CHANGELOG_GITHUB_TOKEN=${gitToken} LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 LC_ALL=en_US.UTF-8 github_changelog_generator --future-release "${newVersion}" --no-verbose`);
+  exec.execSync('git status');
 }
 
 function updateGit(newVersion) {
-  log('*** Packing changes up onto a git commit... ***');
+  logSection('Packing changes up onto a git commit');
   exec.execSync(`git add -u`);
   exec.execSync(`git commit -m "Publish ${newVersion} [ci skip]"`);
   exec.execSync(`git tag ${newVersion}`);

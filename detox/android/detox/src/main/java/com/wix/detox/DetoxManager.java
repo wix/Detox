@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
-import android.support.test.InstrumentationRegistry;
 import android.util.Log;
 
 import com.wix.detox.systeminfo.Environment;
@@ -14,9 +13,9 @@ import com.wix.invoke.MethodInvocation;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.test.platform.app.InstrumentationRegistry;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
-
 
 /**
  * Created by rotemm on 04/01/2017.

@@ -15,9 +15,9 @@ This is a step-by-step guide for adding Detox to your React Native project.
 
 Running Detox (on iOS) requires the following:
 
-* Mac with macOS (at least macOS El Capitan 10.11)
+* Mac with macOS (at least macOS High Sierra 10.13)
 
-* Xcode 8.3+ with Xcode command line tools
+* Xcode 10.1+ with Xcode command line tools
 > TIP: Verify Xcode command line tools is installed by typing `gcc -v` in terminal (shows a popup if not installed)
 
 * A working [React Native](https://facebook.github.io/react-native/docs/getting-started.html) app you want to test
@@ -177,3 +177,10 @@ detox test
 That's it. Your first failing Detox test is running!
 
 Next, we'll go over usage and how to make this test [actually pass](Introduction.WritingFirstTest.md).
+
+<br>
+
+## Step 5: Android Setup
+
+If you haven't already done so - now is the time to set Android up using the [Android guide](Introduction.Android.md).
+

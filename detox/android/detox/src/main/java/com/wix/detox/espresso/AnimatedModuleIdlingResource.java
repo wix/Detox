@@ -1,7 +1,6 @@
 package com.wix.detox.espresso;
 
 import android.support.annotation.NonNull;
-import android.support.test.espresso.IdlingResource;
 import android.util.Log;
 import android.view.Choreographer;
 
@@ -9,6 +8,8 @@ import com.wix.detox.ReactNativeCompat;
 
 import org.joor.Reflect;
 import org.joor.ReflectException;
+
+import androidx.test.espresso.IdlingResource;
 
 /**
  * Created by simonracz on 25/08/2017.
