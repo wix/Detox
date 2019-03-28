@@ -1,6 +1,6 @@
 {
 	"name": "generation",
-	"version": "10.0.7",
+	"version": "12.1.1",
 	"description": "Generate wrapper code for native dependencies",
 	"main": "index.js",
 	"private": true,
@@ -24,7 +24,6 @@
 		"@babel/template": "7.0.0-beta.49",
 		"@babel/types": "7.0.0-beta.49",
 		"babel-generate-guard-clauses": "3.0.0-1",
-		"download-file-sync": "1.0.4",
 		"java-method-parser": "0.4.7",
 		"objective-c-parser": "1.2.4",
 		"remove": "0.1.5",

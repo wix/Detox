@@ -149,7 +149,13 @@ static void __setupRNSupport()
 	wx_original_dispatch_queue_create = dlsym(RTLD_DEFAULT, "dispatch_queue_create");
 	
 	// Rebind symbols dispatch_queue_create to point to our own implementation.
-	rebind_symbols((struct rebinding[]){"dispatch_queue_create", wx_dispatch_queue_create, NULL}, 1);
+	rebind_symbols((struct rebinding[]){
+		{
+			"dispatch_queue_create",
+			wx_dispatch_queue_create,
+			NULL
+		},
+	}, 1);
 	
 	__currentIdlingResourceSerialQueue = dispatch_queue_create("__currentIdlingResourceSerialQueue", NULL);
 

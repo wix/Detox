@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test fails with a different runner 1`] = `"ava is not supported in detox cli tools. You can still run your tests with the runner's own cli tool"`;

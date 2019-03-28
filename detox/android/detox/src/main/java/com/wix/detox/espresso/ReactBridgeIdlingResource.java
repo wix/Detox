@@ -1,12 +1,15 @@
 package com.wix.detox.espresso;
 
-import android.support.test.espresso.IdlingResource;
 import android.util.Log;
 
 import com.facebook.react.bridge.NotThreadSafeBridgeIdleDebugListener;
 import com.facebook.react.bridge.ReactContext;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import androidx.test.espresso.IdlingResource;
+
+import static androidx.test.espresso.IdlingResource.ResourceCallback;
 
 /**
  * Created by simonracz on 01/06/2017.

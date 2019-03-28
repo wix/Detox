@@ -5,7 +5,152 @@ title: Migration Guide
 
 We are improving detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes.
 
+## Migrating from Detox 12.0.x to 12.1.x
+
+This is not a breaking change yet, but starting from `detox@12.1.0` you'll start seeing warnings like:
+
+```
+WARN:  [test.js] Deprecation warning: "file" and "specs" support will be dropped in the next Detox version.
+WARN:  [test.js] Please edit your package.json according to the migration guide: https://wix.to/I0DOAK0 
+```
+
+In the next major version `--file` and `--specs` will be treated as unknown arguments
+and therefore passed as-is to your appropriate test runner.
+
+To get rid of this warning:
+
+* find `"specs"` or `"file"` entry in your project's `package.json` and empty it (e.g. `"e2e"` &#10230; `""`);
+* update your `detox test` scripts — make sure they have an explicit path to your Detox tests folder, e.g. `detox test e2e`.
+
+For example, if it were a `package.json` before:
+
+```json
+{
+  "name": "your-project",
+  "scripts": {
+    "e2e:ios": "detox test -c ios.simulator.release"
+  },
+  "detox": {
+    "specs": "e2e"
+  }
+}
+```
+
+Then this is how it should look like afterwards:
+
+```json
+{
+  "name": "your-project",
+  "scripts": {
+    "e2e:ios": "detox test -c ios.simulator.release e2e"
+  },
+  "detox": {
+    "specs": ""
+  }
+}
+```
+
+Notice that we appended `e2e` to the `e2e:ios` test script and
+emptied `"specs"` property in `detox` configuration.
+
+In a case if you had no `"specs"` property in your `detox` configuration
+in `package.json`, then please add it temporarily like this:
+
+```json
+{
+    "specs": ""
+}
+```
+
+Last, but not least, if you have been using CLI arguments like
+`--file e2e` or `--specs e2e`, please drop the preceding
+`--file` and `--specs`, so that:
+
+```
+detox test --specs e2e
+```
+
+becomes:
+
+```
+detox test e2e
+```
+
+The idea in the example above is to pass `e2e` straight to `mocha` or `jest` as
+a path to the folder with Detox tests, without extra preprocessing from Detox CLI side.
+
+> For the curious ones, who want to know more why we should use an empty string
+(`""`) instead of deleting `"specs"` and `"file"` from `package.json`, here is
+the explanation. This seemingly weird step is motivated by backward compatibility
+with the previous versions of Detox.
+>
+> So far, before `detox@12.1.0`, absence of
+`file` and `specs` properties implied a default test folder value (`"e2e"`).
+> In other words:
+
+```js
+const testFolder = config.file || config.specs || "e2e";
+```
+
+> In order not to break the existing logic but to introduce the deprecation,
+the check for the `e2e` placeholder assignment became narrower yet remaining valid:
+
+```js
+let testFolder = config.file || config.specs;
+if (testFolder == null) { // that's why you should change it to an empty string, ""
+    testFolder = "e2e"; // otherwise, if it is null or undefined, then we save backward compatibility
+}
+if (testFolder) { printDeprecationWarning(); }
+```
+
+> As it can be seen above, this move allows to track if you followed the migration guide or not.
+
+## Migrating from Detox 11.0.1 to 12.0.0
+
+The new version explicity requires **Xcode 10.1 or higher** in order to run tests on iOS ([#1229](https://github.com/wix/Detox/issues/1229)).
+
+## Migrating from Detox 11.0.0 to 11.0.1 (nonbreaking)
+
+**React Native versions older than 0.46 are no longer supported**, so the `missingDimentsionStrategy` can be removed from `android/app/build.gradle`:
+
+```diff
+android {
+		defaultConfig {
+    		// ...
+-        missingDimensionStrategy "minReactNative", "minReactNative46"
+    }
+}
+```
+
+## Migrating from Detox 10.x.x to 11.x.x
+
+#### Step 1:
+
+`android/app/build.gradle`
+
+```diff
+android {
+    defaultConfig {
+         // ...
+-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
++        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+}
+
+dependencies {
+    implementation "com.facebook.react:react-native:+"  // From node_modules
+    androidTestImplementation(project(path: ":detox"))
+    androidTestImplementation 'junit:junit:4.12'
+-   androidTestImplementation 'com.android.support.test:runner:1.0.2'
+-   androidTestImplementation 'com.android.support.test:rules:1.0.2'
+```
+
+#### Step 2:
+
+Rewrite your `DetoxTest.java` file according to the updated [Android setup guide](Introduction.Android.md#4-create-android-test-class) (step 4).
+
 ## Migrating from Detox 9.x.x to 10.x.x
+
 If your project does not already use Kotlin, add the Kotlin Gradle-plugin to your classpath in `android/build.gradle`:
 
 ```groovy

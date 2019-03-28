@@ -9,12 +9,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.rule.ActivityTestRule;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiSelector;
+import androidx.test.platform.app.InstrumentationRegistry;
+
+import androidx.test.rule.ActivityTestRule;
 
 /**
  * <p>Static class.</p>
@@ -85,12 +86,12 @@ public final class Detox {
      *
      * <p>
      * In case you have a non-standard React Native application, consider using
-     * {@link Detox#runTests(ActivityTestRule, Object)}}.
+     * {@link #runTests(ActivityTestRule, Context)}}.
      * </p>
      * @param activityTestRule the activityTestRule
      */
     public static void runTests(ActivityTestRule activityTestRule) {
-        Context appContext = InstrumentationRegistry.getTargetContext().getApplicationContext();
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext();
         runTests(activityTestRule, appContext);
     }
 
@@ -109,7 +110,7 @@ public final class Detox {
      * </p>
      *
      * @param activityTestRule the activityTestRule
-     * @param Context an object that has a {@code getReactNativeHost()} method
+     * @param context an object that has a {@code getReactNativeHost()} method
      */
     public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context context) {
         sActivityTestRule = activityTestRule;
@@ -173,7 +174,7 @@ public final class Detox {
     // TODO: Can't get to launch the app back to previous instance using only intents from inside instrumentation (not sure why).
     // this is a (hopefully) temp solution. Should use intents instead.
     public static void launchMainActivity() throws RemoteException, UiObjectNotFoundException {
-        final Context targetContext = InstrumentationRegistry.getTargetContext();
+        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
 //        Intent intent = targetContext.getPackageManager().getLaunchIntentForPackage(targetContext.getPackageName());
 //        intent.setPackage(null);

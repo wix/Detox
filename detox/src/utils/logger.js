@@ -5,7 +5,7 @@ const bunyan = require('bunyan');
 const bunyanDebugStream = require('bunyan-debug-stream');
 const argparse = require('./argparse');
 
-function adaptOlderLogLevelName(level) {
+function adaptLogLevelName(level) {
   switch (level) {
     case 'fatal':
     case 'error':
@@ -18,22 +18,8 @@ function adaptOlderLogLevelName(level) {
     case 'verbose':
       return 'debug';
 
-    case 'silly':
-    case 'wss':
-      return 'trace';
-
     default:
       return 'info';
-  }
-}
-
-function isLogLevelNameDeprecated(level) {
-  switch (level) {
-    case 'silly':
-    case 'wss':
-      return true;
-    default:
-      return false;
   }
 }
 
@@ -74,7 +60,7 @@ function createPlainBunyanStream({ logPath, level }) {
 
 function init() {
   const levelFromArg = argparse.getArgValue('loglevel');
-  const level = adaptOlderLogLevelName(levelFromArg);
+  const level = adaptLogLevelName(levelFromArg);
   const logBaseFilename = path.join(argparse.getArgValue('artifacts-location') || '', `detox_pid_${process.pid}`);
   const shouldRecordLogs = ['failing', 'all'].indexOf(argparse.getArgValue('record-logs')) >= 0;
 
@@ -101,10 +87,6 @@ function init() {
     name: 'detox',
     streams: bunyanStreams,
   });
-
-  if (isLogLevelNameDeprecated(levelFromArg)) {
-    logger.warn(`--loglevel ${levelFromArg} is deprecated and will be removed in detox@9.0.0, use --loglevel ${level} instead`);
-  }
 
   return logger;
 }

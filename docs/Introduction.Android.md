@@ -5,6 +5,12 @@ title: Detox for Android
 
 ## Breaking Changes :warning:
 
+> If you are installing Detox for Android for the first time, you can skip right over to the setup section.
+
+> Follow our [Migration Guide](Guide.Migration.md) for instructions on how to upgrade from older versions.
+
+* **In version 11 we switched to using Android Espresso of Android's new [androidx.\*  support libraries](https://developer.android.com/jetpack/androidx/).** We did this in order to stay up to date with Google's latest features and bug fixes, in the hopes of using them to improve our own Android support (which gets better every day!).
+
 * **In version 10, we've made [Kotlin](https://kotlinlang.org/) mandatory for integrating Detox into your Android project.** In the very least, you must include the Kotlin gradle plugin in your project, as we shall see later on. Nevertheless, this is a breaking change so bear that in mind when upgrading. In any case, worry not of the impact on your app, as - unless you effectively use Kotlin in your own native code, **there will be no impact on the final APK**, in terms of size and methods count.
 
 * **As of version 7** we require Android gradle plugin 3.0.0 or newer. This is a breaking change that makes it impossible to support previous Android gradle plugin versions.
@@ -35,19 +41,13 @@ In `android/app/build.gradle` add this to `defaultConfig` section:
   defaultConfig {
       ...
       testBuildType System.getProperty('testBuildType', 'debug')  //this will later be used to control the test apk build type
-      missingDimensionStrategy "minReactNative", "minReactNative46" //read note
-      testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+      testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
       ...
   }
 ```
 Please be aware that the `minSdkVersion` needs to be at least 18.
 
-> ###### Choosing the right build type (in missingDimensionStrategy)
->Detox runs on multiple React Native versions, choose the correct build type to support the version you use.<br>
->**Available versions:**
->
->* `minReactNative44`: Support for React Native 0.44-0.45
->* `minReactNative46`: Support for React Native 0.46+
+
 
 
 In `android/app/build.gradle` add this in `dependencies` section:
@@ -57,8 +57,6 @@ dependencies {
 	// ...
     androidTestImplementation(project(path: ":detox"))
     androidTestImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test:rules:1.0.1'
 }
 ```
 
