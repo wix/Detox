@@ -16,7 +16,7 @@ function dumpCertificate(url, port = 443) {
     host += ':443';
   }
 
-  const args = ['s_client', '-showcerts', '-connect', host];
+  const args = ['s_client', '-CApath', '/etc/ssl/certs/', '-showcerts', '-connect', host];
   console.log(['openssl', ...args].join(' '));
 
   return cp.execFileSync('openssl', args, execOptions);
