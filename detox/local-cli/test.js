@@ -104,6 +104,13 @@ module.exports.builder = {
     describe:
       'Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only.'
   },
+  'record-performance': {
+    group: 'Debugging:',
+    choices: ['all', 'none'],
+    default: 'none',
+    describe:
+      'Save Detox Instruments performance recordings of each test to artifacts directory.'
+  },
   w: {
     alias: 'workers',
     group: 'Execution:',
@@ -201,6 +208,7 @@ module.exports.handler = async function test(program) {
       (program.recordLogs ? `--record-logs ${program.recordLogs}` : ''),
       (program.takeScreenshots ? `--take-screenshots ${program.takeScreenshots}` : ''),
       (program.recordVideos ? `--record-videos ${program.recordVideos}` : ''),
+      (program.recordPerformance ? `--record-performance ${program.recordPerformance}` : ''),
       (program.artifactsLocation ? `--artifacts-location "${program.artifactsLocation}"` : ''),
       (program.deviceName ? `--device-name "${program.deviceName}"` : ''),
       testFolder,
@@ -239,6 +247,7 @@ module.exports.handler = async function test(program) {
       'recordLogs',
       'takeScreenshots',
       'recordVideos',
+      'recordPerformance',
       'deviceName',
     ]);
 
