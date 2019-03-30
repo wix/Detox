@@ -1,6 +1,7 @@
 const cp = require('child_process');
 const os = require('os');
 const fs = require('fs');
+const path = require('path');
 const URL = require('url');
 const uuidv4 = require('uuid/v4');
 
@@ -16,11 +17,25 @@ function dumpCertificate(url, port = 443) {
     host += ':443';
   }
 
-  const args = ['s_client', '-CApath', '/etc/ssl/certs/', '-showcerts', '-connect', host];
+  const args = ['s_client', '-showcerts', '-connect', host];
   console.log(['openssl', ...args].join(' '));
 
   return cp.execFileSync('openssl', args, execOptions);
 }
+
+function getCurlPath() {
+  try {
+    const prefix = cp.execFileSync('brew', ['--prefix', 'curl'], {
+      encoding: 'utf8',
+    }).trim();
+
+    return path.join(prefix, 'bin/curl');
+  } catch (e) {
+    return 'curl';
+  }
+}
+
+let curlPath;
 
 function downloadFileSync(url) {
   const flags = ['--silent', '--show-error', '-L'];
@@ -29,7 +44,8 @@ function downloadFileSync(url) {
   };
 
   try {
-    return cp.execFileSync('curl', [...flags, url], execOptions);
+    curlPath = curlPath || getCurlPath();
+    return cp.execFileSync(curlPath, [...flags, url], execOptions);
   } catch (e) {
     if (e.stderr.indexOf('SSL certificate problem') >= 0) {
       console.log('\nDumping SSL certificate details:\n');
