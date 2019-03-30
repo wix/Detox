@@ -47,7 +47,7 @@ function downloadFileSync(url) {
     curlPath = curlPath || getCurlPath();
     return cp.execFileSync(curlPath, [...flags, url], execOptions);
   } catch (e) {
-    if (e.stderr.indexOf('SSL certificate problem') >= 0) {
+    if ((e.stderr || '').indexOf('SSL certificate problem') >= 0) {
       console.log('\nDumping SSL certificate details:\n');
       console.log(dumpCertificate(url));
     }
