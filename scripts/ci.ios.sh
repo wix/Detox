@@ -1,5 +1,6 @@
 #!/bin/bash -e
 
+source $(dirname "$0")/install.ios.sh
 source $(dirname "$0")/ci.sh
 
 run_f "$(dirname "$0")/unit.ios.sh"
