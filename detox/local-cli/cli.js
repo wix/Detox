@@ -20,13 +20,18 @@ yargs
   .help()
   .wrap(yargs.terminalWidth() * 0.9)
   .fail(function(msg, err, program) {
-    if (msg || !err) {
-      program.showHelp();
-    } else {
+    if (err) {
       const lines = err.toString().split("\n");
       for (const line of lines) {
         logger.error(line);
       }
+      console.error('');
     }
+
+    if (msg) {
+      logger.error(msg + '\n');
+    }
+
+    program.showHelp();
   })
   .parse();
