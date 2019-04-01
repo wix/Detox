@@ -42,6 +42,11 @@ class DetoxServer {
       ws.on('close', () => {
         if (sessionId && role) {
           this.log.debug({ event: 'DISCONNECT' }, `role=${role}, sessionId=${sessionId}`);
+
+          if (role === 'tester') {
+            this.sendToOtherRole(sessionId, role, { type: 'testerDisconnected' });
+          }
+
           _.set(this.sessions, [sessionId, role], undefined);
         }
       });
