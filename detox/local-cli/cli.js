@@ -30,8 +30,7 @@ yargs
 
     if (msg) {
       logger.error(msg + '\n');
+      program.showHelp();
     }
-
-    program.showHelp();
   })
   .parse();
