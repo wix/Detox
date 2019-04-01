@@ -17,6 +17,7 @@ Artifacts are disabled by default. Two things are required to enable them:
 * To record `.log` files, add `--record-logs all` (or `--record-logs failing`, if you want to keep logs only for failing tests).
 * To record `.mp4` test run videos, add `--record-videos all` (or `--record-videos failing`, if you want to keep video recordings only for failing tests).
 * To record `.png` screenshots before and after each test, add `--take-screenshots all` (or `--take-screenshots failing`, if you want to keep only screenshots of failing tests).
+* To record `.dtxrec` (Detox Instruments recordings) for each test, add `--record-performance all`. To open those recordings, you'll need [Detox Instruments](https://github.com/wix/DetoxInstruments).
 * To change artifacts root directory location (by default it is `./artifacts`), add `--artifacts-location <path>`.  
 **NOTE:** There is a slightly obscure convention. If you want to create automatically a subdirectory with timestamp and configuration name (to avoid file overwrites upon consquent re-runs), specify a path to directory that does not end with a slash. Otherwise, if you want to put artifacts straight to the specified directory (in a case where you make a single run only, e.g. on CI), add a slash (or a backslash) to the end.
 
@@ -41,6 +42,7 @@ detox test --artifacts-location /tmp/detox_artifacts/ # won't append anything, h
 ```
 test.log
 test.mp4
+test.dtxrec/
 beforeEach.png
 afterEach.png
 ```
