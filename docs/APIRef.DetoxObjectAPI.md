@@ -65,6 +65,17 @@ before(async () => {
 });
 ```
 
+#### Reusing existing app
+By default `await detox.init(config);` will uninstall and install the app. If you wish to reuse the existing app for a faster run, add `{reuse: true}` param to your init.
+
+```js
+const config = require('../package.json').detox;
+
+before(async () => {
+  await detox.init(config, {reuse: true});
+});
+```
+
 ### `detox.beforeEach()`
 
 This method should be called at the start of every test to let Detox's artifacts lifecycle know it is the time to start recording logs and videos, or to take another `beforeEach.png` screenshot. Although this is one of usage of `beforeEach`, Detox does not limit itself to this usage and may utilize calls to `beforeEach` for additional purposes in the future.

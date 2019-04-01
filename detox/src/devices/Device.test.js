@@ -108,11 +108,20 @@ describe('Device', () => {
       await device.prepare();
     });
 
-    it(`when reuse is enabled should not uninstall and install`, async () => {
+    it(`when reuse is enabled in CLI args should not uninstall and install`, async () => {
       const device = validDevice();
       argparse.getArgValue.mockReturnValue(true);
 
       await device.prepare();
+
+      expect(driverMock.driver.uninstallApp).not.toHaveBeenCalled();
+      expect(driverMock.driver.installApp).not.toHaveBeenCalled();
+    });
+
+    it(`when reuse is enabled in params should not uninstall and install`, async () => {
+      const device = validDevice();
+
+      await device.prepare({reuse: true});
 
       expect(driverMock.driver.uninstallApp).not.toHaveBeenCalled();
       expect(driverMock.driver.installApp).not.toHaveBeenCalled();
