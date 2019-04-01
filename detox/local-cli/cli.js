@@ -26,6 +26,7 @@ yargs
         logger.error(line);
       }
       console.error('');
+      process.exit(1);
     }
 
     if (msg) {
