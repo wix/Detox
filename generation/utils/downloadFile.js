@@ -23,7 +23,7 @@ function dumpCertificate(url, port = 443) {
 }
 
 function downloadFileSync(url) {
-  const flags = ['--silent', '--show-error', '--insecure', '-L'];
+  const flags = ['--silent', '--show-error', '-L'];
   const execOptions = {
     encoding: 'utf8',
   };
