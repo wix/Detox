@@ -109,7 +109,7 @@ module.exports.builder = {
     choices: ['all', 'none'],
     default: 'none',
     describe:
-      'Save Detox Instruments performance recordings of each test to artifacts directory.'
+      '[iOS Only] Save Detox Instruments performance recordings of each test to artifacts directory.'
   },
   w: {
     alias: 'workers',
