@@ -18,6 +18,8 @@ android {
         targetSdkVersion _targetSdkVersion
         versionCode 1
         versionName "1.0"
+
+        consumerProguardFiles 'proguard-rules.pro'
     }
 
     testOptions {

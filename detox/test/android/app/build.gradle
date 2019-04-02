@@ -25,6 +25,24 @@ android {
         */
     }
 
+    signingConfigs {
+        release {
+            storeFile file("keystore.jks")
+            storePassword "12345678"
+            keyAlias "key0"
+            keyPassword "12345678"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', "${project(':detox').projectDir}/proguard-rules-app.pro"
+
+            signingConfig signingConfigs.release
+        }
+    }
+
     productFlavors {
         flavorDimensions "compileRNFromSource"
         fromSource {
@@ -35,20 +53,6 @@ android {
         }
     }
 
-    signingConfigs {
-        release {
-            storeFile file("keystore.jks")
-            storePassword "12345678"
-            keyAlias "key0"
-            keyPassword "12345678"
-        }
-    }
-    buildTypes {
-        release {
-            signingConfig signingConfigs.release
-        }
-    }
-
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/NOTICE'
@@ -56,7 +60,6 @@ android {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
     }
-
 }
 
 dependencies {
