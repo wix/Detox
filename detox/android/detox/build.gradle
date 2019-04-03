@@ -63,6 +63,11 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.6.0'
     implementation 'com.squareup.okio:okio:1.13.0'
 
+    implementation 'org.apache.commons:commons-lang3:3.4'
+
+    // noinspection GradleDynamicVersion
+    compileOnly "com.facebook.react:react-native:+"
+
     // Versions are in-sync with the 'androidx-test-1.1.0' release/tag of the android-test github repo,
     // used by the Detox generator. See https://github.com/android/android-test/releases/tag/androidx-test-1.1.0
     // Important: Should remain so when generator tag is replaced!
@@ -71,11 +76,9 @@ dependencies {
     api 'androidx.test:rules:1.1.1'
     api 'androidx.test.ext:junit:1.1.0'
 
-    // noinspection GradleDynamicVersion
-    compileOnly "com.facebook.react:react-native:+"
-
-    implementation 'org.apache.commons:commons-lang3:3.4'
-    implementation 'com.android.support.test.uiautomator:uiautomator-v18:2.1.3'
+    // Version is the latest; Cannot sync with the Github repo (e.g. android/android-test) because the androidx
+    // packaging version of associated classes is simply not there...
+    api 'androidx.test.uiautomator:uiautomator:2.2.0'
 
     testImplementation 'org.json:json:20140107'
     testImplementation 'junit:junit:4.12'
