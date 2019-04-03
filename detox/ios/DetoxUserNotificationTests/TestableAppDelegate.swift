@@ -33,13 +33,13 @@ class TestableAppDelegate: NSObject, UIApplicationDelegate {
 	var userNotificationTriggerType = TestableAppDelegateNotifcationTriggerType.unknown
 	var userNotificationTitle : String?
 	
-	func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+	func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
 		localNotificationObjectWasFoundInWillLaunch = launchOptions?[.localNotification] != nil
 		remoteNotificationObjectWasFoundInWillLaunch = launchOptions?[.remoteNotification] != nil
 		return true
 	}
 	
-	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
 		localNotificationObjectWasFoundInDidLaunch = launchOptions?[.localNotification] != nil
 		remoteNotificationObjectWasFoundInDidLaunch = launchOptions?[.remoteNotification] != nil
 		
