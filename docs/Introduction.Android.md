@@ -147,6 +147,27 @@ Using the `android.emu.debug` configuration from above, you can invoke it in the
 detox test -c android.emu.debug
 ```
 
+## Proguard (Minification)
+
+In apps running [minification using Proguard](https://developer.android.com/studio/build/shrink-code), in order for Detox to work well on release builds, please enable some Detox proguard-configuration rules by applying the custom configuration file on top of your own. Typically, this is defined using the `proguardFiles` statement in the minification-enabled build-type in your `app/build.gradle`:
+
+```groovy
+    buildTypes {
+        // 'release' is typically the default proguard-enabled build-type
+        release {
+            minifyEnabled true
+          
+            // The last expression results in a path to Detox' custom rules file
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', "${project(':detox').projectDir}/proguard-rules-app.pro"
+
+            // ...
+        }
+    }
+
+```
+
+
+
 ## Troubleshooting
 
 ### Problem: `Duplicate files copied in ...`
