@@ -79,6 +79,8 @@ dependencies {
     api 'androidx.test:rules:1.1.1'
     api 'androidx.test.ext:junit:1.1.0'
 
+    // Version is the latest; Cannot sync with the Github repo (e.g. android/android-test) because the androidx
+    // packaging version of associated classes is simply not there...
     api 'androidx.test.uiautomator:uiautomator:2.2.0'
 
     testImplementation 'org.json:json:20140107'
