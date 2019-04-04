@@ -6,8 +6,8 @@
     "start": "react-native start"
   },
   "dependencies": {
-    "react": "16.0.0",
-    "react-native": "0.51.1"
+    "react": "16.4.1",
+    "react-native": "0.56.0"
   },
   "devDependencies": {
     "detox": "^12.1.2",
