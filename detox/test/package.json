@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "12.1.2",
+  "version": "12.1.3",
   "private": true,
   "scripts": {
     "test": ":",
@@ -18,7 +18,7 @@
     "react-native": "0.56.0"
   },
   "devDependencies": {
-    "detox": "^12.1.2",
+    "detox": "^12.1.3",
     "express": "^4.15.3",
     "jest": "^22.3.0",
     "lodash": "^4.14.1",
