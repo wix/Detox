@@ -31,11 +31,8 @@ const downloadedEspressoFilesMap = Object
   );
 
 const externalFilesToDownload = {
-// Disabled temporarily as we've switched to the androidx version of this class, which doesn't seem to exist online (not even
-// on android/android-test on Github). My only hope, for now, is to be able to inquire where it is released from (maven group/name
-// is androidx.test.uiautomator:uiautomator:x.y.z) either in Google i/o 2019 or on the next AMA on the /androiddev subreddit.
-// Note: the 'new' (androidx) and 'old' versions are identical (except for the package name, obviously).
-//  'https://android.googlesource.com/platform/frameworks/uiautomator/+/master/src/com/android/uiautomator/core/UiDevice.java?format=TEXT': '../detox/src/android/espressoapi/UIDevice.js'
+  'https://android.googlesource.com/platform/frameworks/uiautomator/+/master/src/com/android/uiautomator/core/UiDevice.java?format=TEXT':
+    '../detox/src/android/espressoapi/UIDevice.js'
 };
 
 const downloadedAndroidFilesMap = Object
