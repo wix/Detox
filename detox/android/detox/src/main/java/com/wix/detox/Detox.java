@@ -9,13 +9,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
-import android.support.test.uiautomator.UiDevice;
-import android.support.test.uiautomator.UiObject;
-import android.support.test.uiautomator.UiObjectNotFoundException;
-import android.support.test.uiautomator.UiSelector;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import androidx.test.rule.ActivityTestRule;
+import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiObjectNotFoundException;
+import androidx.test.uiautomator.UiSelector;
 
 /**
  * <p>Static class.</p>
