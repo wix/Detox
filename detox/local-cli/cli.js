@@ -19,10 +19,19 @@ yargs
   .recommendCommands()
   .help()
   .wrap(yargs.terminalWidth() * 0.9)
-  .fail((_msg, err) => {
-    const lines = (err ? err.toString() : msg).split('\n');
-    for (const line of lines) {
-      logger.error(line);
+  .fail(function(msg, err, program) {
+    if (err) {
+      const lines = err.toString().split("\n");
+      for (const line of lines) {
+        logger.error(line);
+      }
+      console.error('');
+      process.exit(1);
+    }
+
+    if (msg) {
+      logger.error(msg + '\n');
+      program.showHelp();
     }
   })
   .parse();

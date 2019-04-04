@@ -11,7 +11,7 @@ import UserNotifications
 
 @available(iOS 10.0, *)
 class UNApiAppDelegate: LegacyApiAppDelegate, UNUserNotificationCenterDelegate {
-	override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]?) -> Bool {
+	override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]?) -> Bool {
 		UNUserNotificationCenter.current().delegate = self
 		
 		return super.application(application, didFinishLaunchingWithOptions: launchOptions)

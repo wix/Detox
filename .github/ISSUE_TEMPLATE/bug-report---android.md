@@ -11,6 +11,9 @@ assignees: ''
 A clear and concise description of what the bug is.
 
 **To Reproduce**
+
+- [ ] I have tested this issue on the latest Detox release and it still reproduces
+
 Provide the steps necessary to reproduce the issue. If you are seeing a regression, try to provide the last known version where the issue did not reproduce.
 
 1. 

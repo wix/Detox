@@ -18,6 +18,8 @@ android {
         targetSdkVersion _targetSdkVersion
         versionCode 1
         versionName "1.0"
+
+        consumerProguardFiles 'proguard-rules.pro'
     }
 
     testOptions {
@@ -58,22 +60,26 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$_kotlinVersion"
 
-    implementation 'com.squareup.okhttp3:okhttp:3.6.0'
-    implementation 'com.squareup.okio:okio:1.13.0'
+    // noinspection GradleDynamicVersion
+    compileOnly 'com.facebook.react:react-native:+'
+    // noinspection GradleDynamicVersion
+    compileOnly 'com.squareup.okhttp3:okhttp:+'
+    // noinspection GradleDynamicVersion
+    compileOnly 'com.squareup.okio:okio:+'
+
+    implementation 'org.apache.commons:commons-lang3:3.4'
 
     // Versions are in-sync with the 'androidx-test-1.1.0' release/tag of the android-test github repo,
     // used by the Detox generator. See https://github.com/android/android-test/releases/tag/androidx-test-1.1.0
     // Important: Should remain so when generator tag is replaced!
-    api 'androidx.test.espresso:espresso-core:3.1.1'
+    api('androidx.test.espresso:espresso-core:3.1.1') {
+        exclude group: 'com.google.code.findbugs', module: 'jsr305'
+    }
     api 'androidx.test:runner:1.1.1'
     api 'androidx.test:rules:1.1.1'
     api 'androidx.test.ext:junit:1.1.0'
 
-    // noinspection GradleDynamicVersion
-    compileOnly "com.facebook.react:react-native:+"
-
-    implementation 'org.apache.commons:commons-lang3:3.4'
-    implementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+    api 'androidx.test.uiautomator:uiautomator:2.2.0'
 
     testImplementation 'org.json:json:20140107'
     testImplementation 'junit:junit:4.12'
@@ -81,5 +87,5 @@ dependencies {
     testImplementation 'org.apache.commons:commons-io:1.3.2'
     testImplementation 'com.nhaarman:mockito-kotlin:1.4.0'
     // noinspection GradleDynamicVersion
-    testImplementation "com.facebook.react:react-native:+"
+    testImplementation 'com.facebook.react:react-native:+'
 }
