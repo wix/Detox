@@ -106,11 +106,7 @@ class SimulatorLogRecording extends Artifact {
       fromBeginning: this._readFromBeginning,
       logger: {
         info: _.noop,
-        error: (...args) => {
-          debugger;
-          !fs.existsSync(file);
-          return log.error({ event: 'TAIL_ERROR' }, ...args);
-        },
+        error: (...args) => log.error({ event: 'TAIL_ERROR' }, ...args),
       },
     }).on('line', (line) => {
       this._appendLine(prefix, line);
