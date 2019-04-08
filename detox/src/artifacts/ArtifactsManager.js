@@ -4,7 +4,6 @@ const path = require('path');
 const util = require('util');
 const log = require('../utils/logger').child({ __filename });
 const argparse = require('../utils/argparse');
-const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const ArtifactPathBuilder = require('./utils/ArtifactPathBuilder');
 
 class ArtifactsManager {
@@ -78,13 +77,23 @@ class ArtifactsManager {
 
   subscribeToDeviceEvents(deviceEmitter) {
     deviceEmitter.on('bootDevice', this.onBootDevice.bind(this));
+    deviceEmitter.on('beforeShutdownDevice', this.onBeforeShutdownDevice.bind(this));
     deviceEmitter.on('shutdownDevice', this.onShutdownDevice.bind(this));
     deviceEmitter.on('beforeLaunchApp', this.onBeforeLaunchApp.bind(this));
     deviceEmitter.on('launchApp', this.onLaunchApp.bind(this));
+    deviceEmitter.on('beforeTerminateApp', this.onBeforeTerminateApp.bind(this));
   }
 
   async onBootDevice(deviceInfo) {
     await this._callPlugins('onBootDevice', deviceInfo);
+  }
+
+  async onBeforeTerminateApp(appInfo) {
+    await this._callPlugins('onBeforeTerminateApp', appInfo);
+  }
+
+  async onBeforeShutdownDevice(deviceInfo) {
+    await this._callPlugins('onBeforeShutdownDevice', deviceInfo);
   }
 
   async onShutdownDevice(deviceInfo) {

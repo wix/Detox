@@ -45,14 +45,7 @@ class SimulatorLogRecording extends Artifact {
 
   async doSave(artifactPath) {
     await this._closeWriteableStream();
-
-    const tempLogPath = this._logPath;
-    if (await fs.exists(tempLogPath)) {
-      log.debug({ event: 'MOVE_FILE' }, `moving "${tempLogPath}" to ${artifactPath}`);
-      await fs.move(tempLogPath, artifactPath);
-    } else {
-      log.error({ event: 'MOVE_FILE_ERROR'} , `did not find temporary log file: ${tempLogPath}`);
-    }
+    await Artifact.moveTemporaryFile(log, this._logPath, artifactPath);
   }
 
   async doDiscard() {
@@ -67,20 +60,29 @@ class SimulatorLogRecording extends Artifact {
 
   async _unwatch() {
     await this._beforeUnwatch;
+    await Promise.all([this._unwatchTail('stdout'), this._unwatchTail('stderr')]);
+  }
 
-    if (this._stdoutTail) {
-      log.trace({ event: 'TAIL_UNWATCH' }, `unwatching stdout log: ${this._stdoutPath}`);
-      this._stdoutTail.unwatch();
+  async _unwatchTail(stdxxx) {
+    const stdTail = `_${stdxxx}Tail`;
+    const logPath = this[`_${stdxxx}Path`];
+    const tail = this[stdTail];
+
+    if (tail) {
+      log.trace({ event: 'TAIL_UNWATCH' }, `unwatching ${stdxxx} log: ${logPath}`);
+
+      await new Promise((resolve, reject) => {
+        try {
+          tail.watcher.on('close', resolve);
+          tail.watcher.on('error', reject);
+          tail.unwatch();
+        } catch (e) {
+          reject(e);
+        }
+      });
     }
 
-    this._stdoutTail = null;
-
-    if (this._stderrTail) {
-      log.trace({ event: 'TAIL_UNWATCH' }, `unwatching stderr log: ${this._stderrPath}`);
-      this._stderrTail.unwatch();
-    }
-
-    this._stderrTail = null;
+    this[stdTail] = null;
   }
 
   async _closeWriteableStream() {
@@ -104,24 +106,17 @@ class SimulatorLogRecording extends Artifact {
       fromBeginning: this._readFromBeginning,
       logger: {
         info: _.noop,
-        error: (...args) => log.error({ event: 'TAIL_ERROR' }, ...args),
+        error: (...args) => {
+          debugger;
+          !fs.existsSync(file);
+          return log.error({ event: 'TAIL_ERROR' }, ...args);
+        },
       },
     }).on('line', (line) => {
       this._appendLine(prefix, line);
     });
 
-    if (this._readFromBeginning) {
-      this._triggerTailReadUsingHack(tail);
-    }
-
     return tail;
-  }
-
-  /***
-   * @link https://github.com/lucagrulla/node-tail/issues/40
-   */
-  _triggerTailReadUsingHack(tail) {
-    tail.watchEvent.call(tail, "change");
   }
 
   _appendLine(prefix, line) {

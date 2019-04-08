@@ -93,6 +93,7 @@ class SimulatorDriver extends IosDriver {
   }
 
   async terminate(deviceId, bundleId) {
+    await this.emitter.emit('beforeTerminateApp', { deviceId, bundleId });
     await this._applesimutils.terminate(deviceId, bundleId);
   }
 
@@ -101,6 +102,7 @@ class SimulatorDriver extends IosDriver {
   }
 
   async shutdown(deviceId) {
+    await this.emitter.emit('beforeShutdownDevice', { deviceId });
     await this._applesimutils.shutdown(deviceId);
     await this.emitter.emit('shutdownDevice', { deviceId });
   }

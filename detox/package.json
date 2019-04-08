@@ -47,7 +47,7 @@
     "proper-lockfile": "^3.0.2",
     "sanitize-filename": "^1.6.1",
     "shell-utils": "^1.0.9",
-    "tail": "^1.2.3",
+    "tail": "^2.0.0",
     "telnet-client": "0.15.3",
     "tempfile": "^2.0.0",
     "ws": "^1.1.1",

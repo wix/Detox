@@ -1,9 +1,16 @@
-jest.mock('../../../utils/logger.js');
+jest.mock('../../../utils/logger');
 
 const _ = require('lodash');
+const fs = require('fs-extra');
+const tempfile = require('tempfile');
 const Artifact = require('./Artifact');
 
-describe(Artifact, () => {
+describe(Artifact.name, () => {
+  let logger;
+
+  beforeEach(() => {
+    logger = require('../../../utils/logger');
+  });
 
   describe('extends Artifact', () => {
     let artifact;
@@ -468,6 +475,35 @@ describe(Artifact, () => {
       await artifact.start();
       await artifact.discard(200);
       expect(discard).toHaveBeenCalledWith(200);
+    });
+  });
+
+  describe('static helper methods', () => {
+    describe('.moveTemporaryFile', () => {
+      let source = '', destination = '';
+
+      beforeEach(() => {
+        source = tempfile('.tmp');
+      });
+
+      afterEach(async () => {
+        await fs.remove(source);
+        await fs.remove(destination);
+      });
+
+      it('should move file from source to destination and log that', async () => {
+        await fs.writeFile(source, 'dummy');
+        await Artifact.moveTemporaryFile(logger, source, destination = tempfile('.dest'));
+
+        expect(await fs.exists(destination)).toBe(true);
+        expect(logger.debug).toHaveBeenCalledWith({ event: 'MOVE_FILE' }, expect.any(String));
+      });
+
+      it('should log error if source file does not exist', async () => {
+        await Artifact.moveTemporaryFile(logger, source, destination = tempfile('.dest'));
+        expect(await fs.exists(destination)).toBe(false);
+        expect(logger.error).toHaveBeenCalledWith({ event: 'MOVE_FILE_ERROR' }, expect.any(String));
+      });
     });
   });
 });

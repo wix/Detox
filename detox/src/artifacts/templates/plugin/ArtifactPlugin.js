@@ -40,12 +40,14 @@ class ArtifactPlugin {
    * @param {Object} event - Launch app event object
    * @param {string} event.deviceId - Current deviceId
    * @param {string} event.bundleId - Current bundleId
+   * @param {Object} event.launchArgs - Mutable key-value pairs of args before the launch
    * @return {Promise<void>} - when done
    */
   async onBeforeLaunchApp(event) {
     Object.assign(this.context, {
       bundleId: event.bundleId,
       deviceId: event.deviceId,
+      launchArgs: event.launchArgs,
       pid: NaN,
     });
   }
@@ -60,6 +62,7 @@ class ArtifactPlugin {
    * @param {Object} event - Launch app event object
    * @param {string} event.deviceId - Current deviceId
    * @param {string} event.bundleId - Current bundleId
+   * @param {Object} event.launchArgs - key-value pairs of launch args
    * @param {number} event.pid - Process id of the running app
    * @return {Promise<void>} - when done
    */
@@ -67,6 +70,7 @@ class ArtifactPlugin {
     Object.assign(this.context, {
       bundleId: event.bundleId,
       deviceId: event.deviceId,
+      launchArgs: event.launchArgs,
       pid: event.pid,
    });
   }
@@ -86,6 +90,38 @@ class ArtifactPlugin {
       deviceId: event.deviceId,
       bundleId: '',
       pid: NaN,
+    });
+  }
+
+  /**
+   * Hook that is supposed to be called before app is terminated
+   *
+   * @protected
+   * @async
+   * @param {Object} event - Device shutdown event object
+   * @param {string} event.deviceId - Current deviceId
+   * @param {string} event.bundleId - Current bundleId
+   * @return {Promise<void>} - when done
+   */
+  async onBeforeTerminateApp(event) {
+    Object.assign(this.context, {
+      deviceId: event.deviceId,
+      bundleId: event.bundleId,
+    });
+  }
+
+  /**
+   * Hook that is supposed to be called before device.shutdown() happens
+   *
+   * @protected
+   * @async
+   * @param {Object} event - Device shutdown event object
+   * @param {string} event.deviceId - Current deviceId
+   * @return {Promise<void>} - when done
+   */
+  async onBeforeShutdownDevice(event) {
+    Object.assign(this.context, {
+      deviceId: event.deviceId,
     });
   }
 
@@ -113,7 +149,9 @@ class ArtifactPlugin {
    * @async
    * @return {Promise<void>} - when done
    */
-  async onBeforeAll() {}
+  async onBeforeAll() {
+    this.context.testSummary = null;
+  }
 
   /**
    * Hook that is called before a test begins
@@ -123,7 +161,9 @@ class ArtifactPlugin {
    * @param {TestSummary} testSummary - has name of currently running test
    * @return {Promise<void>} - when done
    */
-  async onBeforeEach(testSummary) {}
+  async onBeforeEach(testSummary) {
+    this.context.testSummary = testSummary;
+  }
 
   /***
    * @protected
@@ -131,7 +171,9 @@ class ArtifactPlugin {
    * @param {TestSummary} testSummary - has name and status of test that ran
    * @return {Promise<void>} - when done
    */
-  async onAfterEach(testSummary) {}
+  async onAfterEach(testSummary) {
+    this.context.testSummary = testSummary;
+  }
 
   /**
    * Hook that is called after all tests run
@@ -141,6 +183,7 @@ class ArtifactPlugin {
    * @return {Promise<void>} - when done
    */
   async onAfterAll() {
+    this.context.testSummary = null;
     this._logDisableWarning();
   }
 
@@ -156,9 +199,11 @@ class ArtifactPlugin {
 
     this.onTerminate = _.noop;
     this.onBootDevice = _.noop;
+    this.onBeforeShutdownDevice = _.noop;
     this.onShutdownDevice = _.noop;
     this.onBeforeLaunchApp = _.noop;
     this.onLaunchApp = _.noop;
+    this.onBeforeTerminateApp = _.noop;
     this.onBeforeAll = _.noop;
     this.onBeforeEach = _.noop;
     this.onAfterEach = _.noop;
