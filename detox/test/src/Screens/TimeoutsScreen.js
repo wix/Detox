@@ -44,6 +44,10 @@ export default class TimeoutsScreen extends Component {
           <Text testID='IntervalIgnore' style={{color: 'blue', marginBottom: 20}}>Interval Ignore</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity onPress={this.onIntervalSkipOver.bind(this, 'Interval Skipped-Over')}>
+          <Text testID='SkipOverInterval' style={{color: 'blue', marginBottom: 20}}>Interval Skip-Over</Text>
+        </TouchableOpacity>
+
       </View>
     );
   }
@@ -59,37 +63,42 @@ export default class TimeoutsScreen extends Component {
   }
 
   onTimeoutButtonPress(greeting, timeout) {
-    setTimeout(() => {
-      this.setState({
-        greeting: greeting
-      });
-    }, timeout);
+    setTimeout(() => this.setState({greeting}), timeout);
   }
 
   onTimeoutIgnoreButtonPress(greeting, timeout) {
-    setTimeout(() => {
-      console.log('this will happen soon');
-    }, timeout);
-    this.setState({
-      greeting: greeting
-    });
+    setTimeout(() => console.log('this will happen soon'), timeout);
+    this.setState({greeting});
   }
 
   onImmediateButtonPress(greeting) {
-    setImmediate(() => {
-      this.setState({
-        greeting: greeting
-      });
-    });
+    setImmediate(() => this.setState({greeting}));
   }
 
   onIntervalIgnoreButtonPress(greeting, interval) {
-    setInterval(() => {
-      console.log('this is recurring');
-    }, interval);
-    this.setState({
-      greeting: greeting
-    });
+    setInterval(() => console.log('this is recurring'), interval);
+    this.setState({greeting});
   }
 
+  onIntervalSkipOver(greeting) {
+    const busyPeriodTimeoutHandler = () => this.setState({greeting});
+    const idledTimeoutHandler = (timeMs) => console.log(`Non-busy keeping timer of ${timeMs}ms has expired`);
+
+    const interval = 88;
+    const busyKeepingTime = 600;
+    const idledTimeBase = 1500 + 1;
+    const foreverTimer = 2500;
+    let intervalId;
+
+    intervalId = setInterval(() => console.log(`this should show every ${interval}ms`), interval);
+    setTimeout(() => idledTimeoutHandler(idledTimeBase), idledTimeBase);
+    setTimeout(() => busyPeriodTimeoutHandler(), busyKeepingTime);
+    setTimeout(() => idledTimeoutHandler(idledTimeBase + 10), idledTimeBase + 10);
+    setTimeout(() => idledTimeoutHandler(idledTimeBase + 100), idledTimeBase + 100);
+    setTimeout(() => {
+      console.log('"Forever" timer expired - though it shouldn\'t have!');
+      clearInterval(intervalId);
+      this.setState({greeting: '???'});
+    }, foreverTimer);
+  }
 }

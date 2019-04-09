@@ -30,6 +30,7 @@ static NSString *const RCTReloadNotification = @"RCTReloadNotification";
 static dispatch_queue_t __currentIdlingResourceSerialQueue;
 
 _Atomic(CFRunLoopRef) __RNRunLoop;
+_Atomic(const void*) __RNThread;
 static WXRunLoopIdlingResource* __current_runLoopIdlingResource;
 static void (*orig_runRunLoopThread)(id, SEL) = NULL;
 static void swz_runRunLoopThread(id self, SEL _cmd)
@@ -37,13 +38,23 @@ static void swz_runRunLoopThread(id self, SEL _cmd)
 	CFRunLoopRef current = CFRunLoopGetCurrent();
 	atomic_store(&__RNRunLoop, current);
 	
+	//This will take the old thread and release it by transfering ownership to ObjC.
+	NSThread* oldThread = CFBridgingRelease(atomic_load(&__RNThread));
+	oldThread = nil;
+	
+	atomic_store(&__RNThread, CFBridgingRetain([NSThread currentThread]));
+	
 	dispatch_sync(__currentIdlingResourceSerialQueue, ^{
 		if(__current_runLoopIdlingResource)
 		{
+			dtx_log_info(@"Removing idling resource for JS runloop");
+			
 			[[GREYUIThreadExecutor sharedInstance] deregisterIdlingResource:__current_runLoopIdlingResource];
 			__current_runLoopIdlingResource = nil;
 		}
 	
+		dtx_log_info(@"Adding idling resource for JS runloop");
+		
 		__current_runLoopIdlingResource = [[WXRunLoopIdlingResource alloc] initWithRunLoop:current];
 		[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:__current_runLoopIdlingResource];
 	});
@@ -58,9 +69,13 @@ void swz_addToRunLoop(id self, SEL _cmd, NSRunLoop* runloop)
 	dispatch_sync(__currentIdlingResourceSerialQueue, ^{
 		if(__original_displayLinkIdlingResource)
 		{
+			dtx_log_info(@"Removing idling resource for display link");
+			
 			[[GREYUIThreadExecutor sharedInstance] deregisterIdlingResource:__original_displayLinkIdlingResource];
 			__original_displayLinkIdlingResource = nil;
 		}
+		
+		dtx_log_info(@"Adding idling resource for display link");
 		
 		__original_displayLinkIdlingResource = [[WXJSDisplayLinkIdlingResource alloc] initWithDisplayLink:[self valueForKey:@"jsDisplayLink"]];
 		[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:__original_displayLinkIdlingResource];
@@ -80,14 +95,16 @@ dispatch_queue_t wx_dispatch_queue_create(const char *_Nullable label, dispatch_
 	
 	if(label != NULL && strncmp(label, "com.apple.NSURLSession-work", strlen("com.apple.NSURLSession-work")) == 0)
 	{
+		dtx_log_info(@"Adding idling resource for network queue: %@", rv);
+		
 		[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[GREYDispatchQueueIdlingResource resourceWithDispatchQueue:rv name:@"com.apple.NSURLSession-work"]];
 	}
 	
 	return rv;
 }
 
-static int (*__WX_UIApplicationMain_orig)(int argc, char * _Nonnull * _Null_unspecified argv, NSString * _Nullable principalClassName, NSString * _Nullable delegateClassName);
-static int __WX_UIApplicationMain(int argc, char * _Nonnull * _Null_unspecified argv, NSString * _Nullable principalClassName, NSString * _Nullable delegateClassName)
+static int (*__detox_run_orig)(id self, SEL _cmd);
+static int __detox_run(id self, SEL _cmd)
 {
 	Class cls = NSClassFromString(@"RCTJSCExecutor");
 	Method m = NULL;
@@ -95,6 +112,7 @@ static int __WX_UIApplicationMain(int argc, char * _Nonnull * _Null_unspecified 
 	{
 		//Legacy RN
 		m = class_getClassMethod(cls, NSSelectorFromString(@"runRunLoopThread"));
+		dtx_log_info(@"Found legacy class RCTJSCExecutor");
 	}
 	else
 	{
@@ -104,6 +122,11 @@ static int __WX_UIApplicationMain(int argc, char * _Nonnull * _Null_unspecified 
 		if(m == NULL)
 		{
 			m = class_getInstanceMethod(cls, NSSelectorFromString(@"runJSRunLoop"));
+			dtx_log_info(@"Found modern class RCTCxxBridge, method runJSRunLoop");
+		}
+		else
+		{
+			dtx_log_info(@"Found modern class RCTCxxBridge, method runRunLoop");
 		}
 	}
 	
@@ -112,8 +135,12 @@ static int __WX_UIApplicationMain(int argc, char * _Nonnull * _Null_unspecified 
 		orig_runRunLoopThread = (void(*)(id, SEL))method_getImplementation(m);
 		method_setImplementation(m, (IMP)swz_runRunLoopThread);
 	}
+	else
+	{
+		dtx_log_info(@"Method runRunLoop not found");
+	}
 	
-	return __WX_UIApplicationMain_orig(argc, argv, principalClassName, delegateClassName);
+	return __detox_run_orig(self, _cmd);
 }
 
 __attribute__((constructor))
@@ -122,7 +149,13 @@ static void __setupRNSupport()
 	wx_original_dispatch_queue_create = dlsym(RTLD_DEFAULT, "dispatch_queue_create");
 	
 	// Rebind symbols dispatch_queue_create to point to our own implementation.
-	rebind_symbols((struct rebinding[]){"dispatch_queue_create", wx_dispatch_queue_create, NULL}, 1);
+	rebind_symbols((struct rebinding[]){
+		{
+			"dispatch_queue_create",
+			wx_dispatch_queue_create,
+			NULL
+		},
+	}, 1);
 	
 	__currentIdlingResourceSerialQueue = dispatch_queue_create("__currentIdlingResourceSerialQueue", NULL);
 
@@ -165,17 +198,26 @@ static void __setupRNSupport()
 	//Must be performed in +load and not in +setUp in order to correctly catch the ui queue, runloop and display link initialization by RN.
 	dispatch_queue_t queue = RCTGetUIManagerQueue();
 	[__observedQueues addObject:queue];
-	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[GREYDispatchQueueIdlingResource resourceWithDispatchQueue:queue name:@"RCTUIManagerQueue"]];
 	
-	struct rebinding rebindings2[] = {
-		{"UIApplicationMain", __WX_UIApplicationMain, (void*)&__WX_UIApplicationMain_orig}
-	};
-	rebind_symbols(rebindings2, sizeof(rebindings2) / sizeof(rebindings2[0]));
+	dtx_log_info(@"Adding idling resource for RCTUIManagerQueue");
+	
+	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[GREYDispatchQueueIdlingResource resourceWithDispatchQueue:queue name:@"RCTUIManagerQueue"]];
+
+	m = class_getInstanceMethod(UIApplication.class, NSSelectorFromString(@"_run"));
+	__detox_run_orig = (void*)method_getImplementation(m);
+	method_setImplementation(m, (void*)__detox_run);
+	
+	dtx_log_info(@"Adding idling resource for JS timers");
 	
 	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[WXJSTimerObservationIdlingResource new]];
+	
+	dtx_log_info(@"Adding idling resource for RN load");
+	
 	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[WXRNLoadIdlingResource new]];
 	
 	if([WXAnimatedDisplayLinkIdlingResource isAvailable]) {
+		dtx_log_info(@"Adding idling resource for Animated display link");
+		
 		[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[WXAnimatedDisplayLinkIdlingResource new]];
 	}
 }
@@ -196,7 +238,9 @@ static void __setupRNSupport()
 	}
 	
 	dispatch_sync(__currentIdlingResourceSerialQueue, ^{
-		[__currentDispatchQueueIdlingResources enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+		[__currentDispatchQueueIdlingResources enumerateObjectsUsingBlock:^(GREYDispatchQueueIdlingResource* _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+			dtx_log_info(@"Removing idling resource for queue: %@", [obj valueForKeyPath:@"dispatchQueueTracker.dispatchQueue"]);
+			
 			[[GREYUIThreadExecutor sharedInstance] deregisterIdlingResource:obj];
 		}];
 		
@@ -225,8 +269,7 @@ static void __setupRNSupport()
 {
 	__block __weak id observer;
 	
-	observer = [[NSNotificationCenter defaultCenter] addObserverForName:@"RCTContentDidAppearNotification" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
-		
+	observer = [[NSNotificationCenter defaultCenter] addObserverForName:@"RCTJavaScriptDidLoadNotification" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
 		if(handler)
 		{
 			handler();

@@ -1,13 +1,16 @@
+const SPECIAL_CHARS = /([\^\$\[\]\*\.\\])/g;
+
+const escapeInQuotedString = (fragment) => fragment.replace(/"/g, '\\"');
+const escapeInQuotedRegexp = (fragment) => fragment.replace(SPECIAL_CHARS, "\\$1");
+
 function win32Implementation() {
-  const escapeInQuotedStringWin32 = (fragment) => fragment.replace(/"/g, '""');
-  const escapeInQuotedRegexpWin32 = escapeInQuotedStringWin32;
-  const searchRegexpWin32 = (pattern) => `findstr /R /C:"${escapeInQuotedStringWin32(pattern)}"`;
-  const searchFragmentWin32 = (fragment) => `findstr /C:"${escapeInQuotedStringWin32(fragment)}"`;
+  const searchRegexpWin32 = (pattern) => `findstr /R /C:"${escapeInQuotedString(pattern)}"`;
+  const searchFragmentWin32 = (fragment) => `findstr /C:"${escapeInQuotedString(fragment)}"`;
 
   return {
     escape: {
-      inQuotedString: escapeInQuotedStringWin32,
-      inQuotedRegexp: escapeInQuotedRegexpWin32,
+      inQuotedString: escapeInQuotedString,
+      inQuotedRegexp: escapeInQuotedRegexp,
     },
     search: {
       regexp: searchRegexpWin32,
@@ -17,17 +20,13 @@ function win32Implementation() {
 }
 
 function nixImplementation() {
-  const SPECIAL_CHARS = /(["\^\$\[\]\*\.\\])/g;
-
-  const escapeInQuotedStringNix = (fragment) => fragment.replace(/"/g, '\\"');
-  const escapeInQuotedRegexpNix = (fragment) => fragment.replace(SPECIAL_CHARS, "\\$1");
-  const searchRegexpNix = (pattern) => `grep "${escapeInQuotedStringNix(pattern)}"`;
-  const searchFragmentNix = (fragment) => `grep -e "${escapeInQuotedStringNix(fragment)}"`;
+  const searchRegexpNix = (pattern) => `grep "${escapeInQuotedString(pattern)}"`;
+  const searchFragmentNix = (fragment) => `grep -e "${escapeInQuotedString(fragment)}"`;
 
   return {
     escape: {
-      inQuotedString: escapeInQuotedStringNix,
-      inQuotedRegexp: escapeInQuotedRegexpNix,
+      inQuotedString: escapeInQuotedString,
+      inQuotedRegexp: escapeInQuotedRegexp,
     },
     search: {
       regexp: searchRegexpNix,
@@ -36,6 +35,8 @@ function nixImplementation() {
   };
 }
 
-module.exports = process.platform === 'win32'
+const isRunningInCMDEXE = process.platform === 'win32' && !process.env['SHELL'];
+
+module.exports = isRunningInCMDEXE
   ? win32Implementation()
   : nixImplementation();

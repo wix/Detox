@@ -1,33 +1,32 @@
 {
   "name": "detox-test",
-  "version": "0.0.1",
+  "version": "12.1.3",
   "private": true,
   "scripts": {
     "test": ":",
     "packager": "react-native start",
     "detox-server": "detox run-server",
-    "e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization --take-screenshots all --record-logs all",
-    "e2e:ios-multi": "npm run e2e:ios -- -w 2",
-    "e2e:android": "detox test --configuration android.emu.release --take-screenshots all --record-logs all",
+    "e2e:ios": "detox test e2e --configuration ios.sim.release --debug-synchronization --take-screenshots all --record-logs all",
+    "e2e:android": "detox test e2e --configuration android.emu.release --take-screenshots all --record-logs all",
     "build:ios": "detox build --configuration ios.sim.release",
     "build:android": "detox build --configuration android.emu.release",
     "verify-artifacts:ios": "jest ./scripts/verify_artifacts_are_not_missing.ios.test.js --testEnvironment node",
     "verify-artifacts:android": "jest ./scripts/verify_artifacts_are_not_missing.android.test.js --testEnvironment node"
   },
   "dependencies": {
-    "react": "16.0.0",
-    "react-native": "0.51.x"
+    "react": "16.4.1",
+    "react-native": "0.56.0"
   },
   "devDependencies": {
-    "detox": "^8.0.0",
+    "detox": "^12.1.3",
     "express": "^4.15.3",
     "jest": "^22.3.0",
     "lodash": "^4.14.1",
-    "mocha": "^4.0.0"
+    "mocha": "^5.0.0"
   },
   "detox": {
-    "specs": "e2e",
-    "test-runner": "jest",
+    "specs": "",
+    "test-runner": "mocha",
     "__session": {
       "server": "ws://localhost:8099",
       "sessionId": "test"
@@ -35,13 +34,13 @@
     "configurations": {
       "ios.sim.debug": {
         "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
-        "build": "set -o pipefail && xcodebuild -project ios/example.xcodeproj -scheme example_ci -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build | xcpretty",
+        "build": "set -o pipefail && xcodebuild -project ios/example.xcodeproj -UseNewBuildSystem=NO -scheme example_ci -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build | xcpretty",
         "type": "ios.simulator",
         "name": "iPhone X"
       },
       "ios.sim.release": {
         "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-        "build": "set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -scheme example_ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build | xcpretty",
+        "build": "set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj  -UseNewBuildSystem=NO -scheme example_ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build | xcpretty",
         "type": "ios.simulator",
         "name": "iPhone X"
       },
@@ -51,7 +50,7 @@
         "name": "iPhone X",
         "session": {
           "server": "ws://localhost:8099",
-          "sessionId": "test"
+          "sessionId": "com.wix.detox-example"
         }
       },
       "android.emu.debug": {

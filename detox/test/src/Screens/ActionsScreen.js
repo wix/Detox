@@ -60,6 +60,7 @@ export default class ActionsScreen extends Component {
           onChangeText={this.onChangeTypeText.bind(this)}
           value={this.state.typeText}
           testID='UniqueId937'
+          onSubmitEditing={this.onReturn.bind(this)}
         />
 
         <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }}
@@ -93,6 +94,13 @@ export default class ActionsScreen extends Component {
           }>
           </ScrollView>
         </View>
+        <View>
+          <ScrollView testID='PinchableScrollView' minimumZoomScale={1} maximumZoomScale={10}>
+            <View>
+              <View testID='UniqueId007' style={{ height: 30, width: 30, backgroundColor:'red' }} />
+            </View>
+          </ScrollView>
+        </View>
       </View>
     );
   }
@@ -123,6 +131,12 @@ export default class ActionsScreen extends Component {
     });
   }
 
+  onReturn() {
+    this.setState({
+      greeting: "Return Working"
+    });
+  }
+
   onLongTimeout() {
     setTimeout(() => {
       this.setState({
@@ -138,34 +152,37 @@ export default class ActionsScreen extends Component {
   }
 
   onChangeTypeText(text) {
-    this.setState({
-      typeText: text
-    });
-    if (text == 'passcode') {
+    if (text === 'passcode') {
       this.setState({
         greeting: 'Type Working'
+      });
+    } else {
+      this.setState({
+        typeText: text
       });
     }
   }
 
   onReplaceText(text) {
-    this.setState({
-      replaceText: text
-    });
-    if (text == 'replaced_text') {
+    if (text === 'replaced_text') {
       this.setState({
         greeting: 'Replace Working'
+      });
+    } else {
+      this.setState({
+        replaceText: text
       });
     }
   }
 
   onChangeClearText(text) {
-    this.setState({
-      clearText: text
-    });
-    if (text == '') {
+    if (text === '') {
       this.setState({
         greeting: 'Clear Working'
+      });
+    } else {
+      this.setState({
+        clearText: text
       });
     }
   }

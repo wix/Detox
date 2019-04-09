@@ -317,6 +317,15 @@ describe('AppleSimUtils', () => {
       expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
     });
 
+    it('appends language and locale flags', async () => {
+      const languageAndLocale = {
+        language: "es-MS",
+        locale: "en-US"
+      };
+      await uut.launch('udid', 'theBundleId', undefined, languageAndLocale);
+      expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
+    });
+
     it('concats args', async () => {
       await uut.launch('udid', 'theBundleId', { 'foo': 'bar', 'bob': 'yourUncle' });
       expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
@@ -339,11 +348,32 @@ describe('AppleSimUtils', () => {
       }
     });
 
+    it('should append framework path to existing dyld path if present', async () => {
+      const origEnvVar = process.env.SIMCTL_CHILD_DYLD_INSERT_LIBRARIES;
+      process.env.SIMCTL_CHILD_DYLD_INSERT_LIBRARIES = '/tmp';
+      environment.getFrameworkPath.mockReturnValueOnce(Promise.resolve('thePathToFrameworks'));
+      try {
+        await uut.launch('udid', 'theBundleId');
+        expect(exec.execWithRetriesAndLogs.mock.calls).toMatchSnapshot();
+      } catch (e) {
+        fail(`should throw`);
+      } finally {
+        if (origEnvVar){
+          // set the env var back to what it used to be
+          process.env.SIMCTL_CHILD_DYLD_INSERT_LIBRARIES = origEnvVar;
+        } else {
+          // env var was never set to begin with, delete it
+          delete process.env.SIMCTL_CHILD_DYLD_INSERT_LIBRARIES;
+        } 
+      }
+    });
+
     it('returns the parsed id', async () => {
       exec.execWithRetriesAndLogs.mockReturnValueOnce(Promise.resolve({ stdout: 'appId: 12345 \n' }));
       const result = await uut.launch('udid', 'theBundleId');
       expect(result).toEqual(12345);
     });
+    
   });
 
   describe('sendToHome', () => {

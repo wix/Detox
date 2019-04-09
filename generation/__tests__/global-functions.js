@@ -45,6 +45,18 @@ describe('globals', () => {
       }).toThrowErrorMatchingSnapshot();
     });
   });
+  describe('sanitize_greyPinchDirection', () => {
+    it('should return numbers for strings', () => {
+      expect(globals.sanitize_greyPinchDirection('outward')).toBe(1);
+      expect(globals.sanitize_greyPinchDirection('inward')).toBe(2);
+    });
+
+    it('should fail with unknown value', () => {
+      expect(() => {
+        globals.sanitize_greyPinchDirection('kittens');
+      }).toThrowErrorMatchingSnapshot();
+    });
+  });
 
   describe('sanitize_greyContentEdge', () => {
     it('should return numbers for strings', () => {
@@ -64,6 +76,8 @@ describe('globals', () => {
   describe('sanitize_uiAccessibilityTraits', () => {
     it('should return numbers for traits', () => {
       expect(globals.sanitize_uiAccessibilityTraits(['button'])).toBe(1);
+      expect(globals.sanitize_uiAccessibilityTraits(['image'])).toBe(4);
+      expect(globals.sanitize_uiAccessibilityTraits(['header'])).toBe(65536);
 
       [
         'button',
@@ -82,12 +96,12 @@ describe('globals', () => {
         'adjustable',
         'allowsDirectInteraction',
         'pageTurn'
-      ].forEach((trait) => {
+      ].forEach(trait => {
         expect(typeof globals.sanitize_uiAccessibilityTraits([trait])).toBe('number');
       });
     });
     it('should combine the traits', () => {
-      expect(globals.sanitize_uiAccessibilityTraits(['summary', 'allowsDirectInteraction'])).toBe(16896);
+      expect(globals.sanitize_uiAccessibilityTraits(['summary', 'allowsDirectInteraction'])).toBe(8320);
     });
 
     it('should throw if unknown trait is accessed', () => {
@@ -124,6 +138,11 @@ describe('globals', () => {
       };
       expect(globals.sanitize_matcher(matcherLikeObj)).toBe('I am a call');
     });
+
+    it('should not get _call property if it is not present', () => {
+      const unwrappedMatcher = "I am a call";
+      expect(globals.sanitize_matcher(unwrappedMatcher)).toBe('I am a call');
+    })
   });
 
   describe('sanitize_greyElementInteraction', () => {

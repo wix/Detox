@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const exec = require('../../utils/exec');
+const log = require('../../utils/logger').child({ __filename });
 const environment = require('../../utils/environment');
 
 class AppleSimUtils {
@@ -106,7 +107,7 @@ class AppleSimUtils {
       trying: `Installing ${absPath}...`,
       successful: `${absPath} installed`
     };
-    await this._execSimctl({ cmd: `install ${udid} "${absPath}"`, statusLogs });
+    await this._execSimctl({ cmd: `install ${udid} "${absPath}"`, statusLogs, retries: 2 });
   }
 
   async uninstall(udid, bundleId) {
@@ -121,12 +122,12 @@ class AppleSimUtils {
     }
   }
 
-  async launch(udid, bundleId, launchArgs) {
+  async launch(udid, bundleId, launchArgs, languageAndLocale) {
     const frameworkPath = await environment.getFrameworkPath();
     const logsInfo = new LogsInfo(udid);
     const args = this._joinLaunchArgs(launchArgs);
 
-    const result = await this._launchMagically(frameworkPath, logsInfo, udid, bundleId, args);
+    const result = await this._launchMagically(frameworkPath, logsInfo, udid, bundleId, args, languageAndLocale);
     return this._parseLaunchId(result);
   }
 
@@ -250,19 +251,35 @@ class AppleSimUtils {
     return _.map(launchArgs, (v, k) => `${k} ${v}`).join(' ').trim();
   }
 
-  async _launchMagically(frameworkPath, logsInfo, udid, bundleId, args) {
+  async _launchMagically(frameworkPath, logsInfo, udid, bundleId, args, languageAndLocale) {
     const statusLogs = {
       trying: `Launching ${bundleId}...`,
-      successful: `${bundleId} launched. The stdout and stderr logs were recreated, you can watch them with:\n` +
-      `        tail -F ${logsInfo.absJoined}`
     };
 
-    const launchBin = `/bin/cat /dev/null >${logsInfo.absStdout} 2>${logsInfo.absStderr} && ` +
-      `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${frameworkPath}/Detox" ` +
+    let dylibs = `${frameworkPath}/Detox`;
+    if (process.env.SIMCTL_CHILD_DYLD_INSERT_LIBRARIES) {
+      dylibs = `${process.env.SIMCTL_CHILD_DYLD_INSERT_LIBRARIES}:${dylibs}`;
+    }
+
+    let launchBin = `/bin/cat /dev/null >${logsInfo.absStdout} 2>${logsInfo.absStderr} && ` +
+      `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${dylibs}" ` +
       `/usr/bin/xcrun simctl launch --stdout=${logsInfo.simStdout} --stderr=${logsInfo.simStderr} ` +
       `${udid} ${bundleId} --args ${args}`;
 
-    return await exec.execWithRetriesAndLogs(launchBin, undefined, statusLogs, 1);
+      if (!!languageAndLocale && !!languageAndLocale.language) {
+        launchBin += ` -AppleLanguages "(${languageAndLocale.language})"`;
+      }
+  
+      if (!!languageAndLocale && !!languageAndLocale.locale) {
+        launchBin += ` -AppleLocale ${languageAndLocale.locale}`;
+      }
+
+    const result = await exec.execWithRetriesAndLogs(launchBin, undefined, statusLogs, 1);
+    
+    log.info(`${bundleId} launched. The stdout and stderr logs were recreated, you can watch them with:\n` +
+             `        tail -F ${logsInfo.absJoined}`);
+
+    return result;
   }
 
   _parseLaunchId(result) {

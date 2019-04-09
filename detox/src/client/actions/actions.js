@@ -40,6 +40,26 @@ class Ready extends Action {
   }
 }
 
+class WaitForBackground extends Action {
+  constructor() {
+    super('waitForBackground');
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'waitForBackgroundDone');
+  }
+}
+
+class WaitForActive extends Action {
+  constructor() {
+    super('waitForActive');
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'waitForActiveDone');
+  }
+}
+
 class Shake extends Action {
   constructor() {
     super('shakeDevice');
@@ -133,6 +153,8 @@ class AppWillTerminateWithError extends Action {
 
 module.exports = {
   Login,
+  WaitForBackground,
+  WaitForActive,
   Ready,
   Invoke,
   ReloadReactNative,

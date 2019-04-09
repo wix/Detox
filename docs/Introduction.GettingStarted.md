@@ -3,6 +3,8 @@ id: Introduction.GettingStarted
 title: Getting Started
 ---
 
+**This guide is focused on iOS. For installing Detox for Android, be sure to also go over the [Android guide](Introduction.Android.md)**.
+
 This is a step-by-step guide for adding Detox to your React Native project.
 
 > TIP: You can also check out this [awesome tutorial](https://medium.com/@bogomolnyelad/how-to-test-your-react-native-app-like-a-real-user-ecfc72e9b6bc) on Medium with video by [@bogomolnyelad](https://medium.com/@bogomolnyelad)
@@ -13,9 +15,9 @@ This is a step-by-step guide for adding Detox to your React Native project.
 
 Running Detox (on iOS) requires the following:
 
-* Mac with macOS (at least macOS El Capitan 10.11)
+* Mac with macOS (at least macOS High Sierra 10.13)
 
-* Xcode 8.3+ with Xcode command line tools
+* Xcode 10.1+ with Xcode command line tools
 > TIP: Verify Xcode command line tools is installed by typing `gcc -v` in terminal (shows a popup if not installed)
 
 * A working [React Native](https://facebook.github.io/react-native/docs/getting-started.html) app you want to test
@@ -42,7 +44,7 @@ Node is the JavaScript runtime Detox will run on. **Install Node 8.3.0 or above*
 
 #### 3. Install [applesimutils](https://github.com/wix/AppleSimulatorUtils)
 
-A collection of utils for Apple simulators, Detox uses it communicate with the simulator.
+A collection of utils for Apple simulators, Detox uses it to communicate with the simulator.
 
 ```sh
 brew tap wix/brew
@@ -64,13 +66,13 @@ This package makes it easier to operate Detox from the command line. `detox-cli`
 
 #### 1. Install detox
 
-If you have a React Native project, go to its root folder (where `package.json` is found) and type the following command.
+If you have a React Native project, go to its root folder (where `package.json` is found) and type the following command:
 
 ```sh
 npm install detox --save-dev
 ```
 
-If you have a project without Node integration (such as a native project), add the following package.json file to the root folder of you project:
+If you have a project without Node integration (such as a native project), add the following package.json file to the root folder of your project:
 
 ```json
 {
@@ -147,7 +149,7 @@ In itself, `detox init` makes a few steps which you can reproduce manually:
 * Inside `e2e` folder create `firstTest.spec.js` with content similar to [this](/examples/demo-react-native/e2e/example.spec.js).
 * If you use `jest`, add `"test-runner": "jest"` to `detox` section in your `package.json` ([see example](https://github.com/wix/detox/blob/master/examples/demo-react-native-jest/package.json)).
 
-> TIP: Detox is nor tightly coupled to Mocha and Jest, neither to this specific directory structure. Both are just a recommendation and are easy to replace without touching the internal implementation of Detox itself.
+> TIP: Detox is not tightly coupled to Mocha and Jest, neither to this specific directory structure. Both are just a recommendation and are easy to replace without touching the internal implementation of Detox itself.
 
 <br>
 
@@ -175,3 +177,10 @@ detox test
 That's it. Your first failing Detox test is running!
 
 Next, we'll go over usage and how to make this test [actually pass](Introduction.WritingFirstTest.md).
+
+<br>
+
+## Step 5: Android Setup
+
+If you haven't already done so - now is the time to set Android up using the [Android guide](Introduction.Android.md).
+

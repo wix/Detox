@@ -1,9 +1,8 @@
-### For usage help, ask a question on Stack Overflow with the `detox` tag. The issues section of the project is meant for opening bug reports and enhancement requests of Detox. We use it to automatically track the [change log](https://github.com/wix/detox/blob/master/CHANGELOG.md)
-
-### IMPORTANT: Use search before opening an issue. Duplicate issues will simply be closed.
+### IMPORTANT: Use search before opening an issue. For help, ask in Stack Overflow with the `detox` tag. Duplicate issues or questions will simply be closed.
 
 <!---
 Please fill this template before submitting an issue. This helps determine the issue cause much quicker.
+Remove the sections that are not relevant to your issue.
 If you are filing an enhancement request, you only need to fill the description section and can safely remove the other sections.
 -->
 
@@ -33,5 +32,11 @@ Provide the macOS and Xcode versions you are using, and the device / simulator y
 #### Device and verbose Detox logs
 <!---
 Provide the device and verbose Detox logs so we can understand what happened. You can obtain them by passing the loglevel param: `detox test --loglevel verbose`
+
+-->
+
+#### iOS build logs
+<!---
+If you are seeing a build problem (during npm install), provide the log found here: ~/Library/Detox/ios/{...}/detox_ios.log
 
 -->

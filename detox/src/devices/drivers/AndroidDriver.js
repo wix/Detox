@@ -17,6 +17,7 @@ const ADBScreenrecorderPlugin = require('../../artifacts/video/ADBScreenrecorder
 const AndroidDevicePathBuilder = require('../../artifacts/utils/AndroidDevicePathBuilder');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const sleep = require('../../utils/sleep');
+const retry = require('../../utils/retry');
 const { interruptProcess, spawnAndLog } = require('../../utils/exec');
 
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
@@ -31,6 +32,8 @@ class AndroidDriver extends DeviceDriverBase {
 
     this.adb = new ADB();
     this.aapt = new AAPT();
+
+    this.pendingUrl = undefined;
   }
 
   declareArtifactPlugins() {
@@ -52,9 +55,9 @@ class AndroidDriver extends DeviceDriverBase {
     return await this.aapt.getPackageName(apkPath);
   }
 
-  async installApp(deviceId, binaryPath) {
+  async installApp(deviceId, binaryPath, testBinaryPath) {
     await this.adb.install(deviceId, binaryPath);
-    await this.adb.install(deviceId, this.getTestApkPath(binaryPath));
+    await this.adb.install(deviceId, testBinaryPath ? testBinaryPath : this.getTestApkPath(binaryPath));
   }
 
   async pressBack(deviceId) {
@@ -73,82 +76,50 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async uninstallApp(deviceId, bundleId) {
-    try {
+    if (await this.adb.isPackageInstalled(deviceId, bundleId)) {
       await this.adb.uninstall(deviceId, bundleId);
-    } catch (ex) {
-      //this is fine
     }
 
-    try {
-      await this.adb.uninstall(deviceId, `${bundleId}.test`);
-    } catch (ex) {
-      //this is fine
+    const testBundle = `${bundleId}.test`;
+    if (await this.adb.isPackageInstalled(deviceId, testBundle)) {
+      await this.adb.uninstall(deviceId, testBundle);
     }
   }
 
-  async launchApp(deviceId, bundleId, launchArgs) {
+  async launchApp(deviceId, bundleId, launchArgs, languageAndLocale) {
     await this.emitter.emit('beforeLaunchApp', { deviceId, bundleId, launchArgs });
 
     if (!this.instrumentationProcess) {
       await this._launchInstrumentationProcess(deviceId, bundleId, launchArgs);
+      await sleep(500);
     } else {
-      await this.invocationManager.execute(DetoxApi.launchMainActivity());
+      if (this.pendingUrl) {
+        await this._startActivityWithUrl(this._getAndClearPendingUrl());
+      } else {
+        await this._resumeMainActivity();
+      }
     }
 
-    const pid = await this._queryPID(deviceId, bundleId);
-
-    if (isNaN(pid)) {
+    let pid = NaN;
+    try {
+      pid = await retry(() => this._queryPID(deviceId, bundleId));
+    } catch (e) {
       log.warn(await this.adb.shell(deviceId, 'ps'));
-
-      throw new DetoxRuntimeError({
-        message: `Failed to find PID of the launched bundle: ${bundleId}`,
-        hint: `You might want to check "adb logcat" logs - maybe the app has crashed.`,
-      });
+      throw e;
     }
 
     await this.emitter.emit('launchApp', { deviceId, bundleId, launchArgs, pid });
     return pid;
   }
 
-  async _launchInstrumentationProcess(deviceId, bundleId, launchArgs) {
-    const testRunner = await this.adb.getInstrumentationRunner(deviceId, bundleId);
-    const args = [];
-    _.forEach(launchArgs, (value, key) => {
-      args.push(`${key} ${value}`);
-    });
-
-    this.instrumentationProcess = spawnAndLog(this.adb.adbBin,
-      [`-s`, `${deviceId}`, `shell`, `am`, `instrument`, `-w`, `-r`, `${args.join(' ')}`, `-e`, `debug`, `false`, testRunner],
-      { detached: false });
-
-    this.instrumentationProcess.childProcess.on('close', () => this._terminateInstrumentation());
-  }
-
-  async _queryPID(deviceId, bundleId, waitAtStart = true) {
-    if (waitAtStart) {
-      await sleep(500);
-    }
-
-    for (let attempts = 5; attempts > 0; attempts--) {
-      const pid = await this.adb.pidof(deviceId, bundleId);
-
-      if (pid > 0) {
-        return pid;
-      }
-
-      await sleep(1000);
-    }
-
-    return NaN;
-  }
-
   async deliverPayload(params) {
-    if(params.url) {
-      const call = DetoxApi.startActivityFromUrl(params.url);
-      await this.invocationManager.execute(call);
+    const {delayPayload, url} = params;
+
+    if (url) {
+      await (delayPayload ? this._setPendingUrl(url) : this._startActivityWithUrl(url));
     }
 
-    //The other types are not yet supported.
+    // Other payload content types are not yet supported.
   }
 
   async sendToHome(deviceId, params) {
@@ -227,6 +198,55 @@ class AndroidDriver extends DeviceDriverBase {
     await this.invocationManager.execute(call);
   }
 
+  async _launchInstrumentationProcess(deviceId, bundleId, launchArgs) {
+    const testRunner = await this.adb.getInstrumentationRunner(deviceId, bundleId);
+    const args = [];
+    _.forEach(launchArgs, (value, key) => {
+      args.push(`${key} ${value}`);
+    });
+
+    this.instrumentationProcess = spawnAndLog(this.adb.adbBin,
+      [`-s`, `${deviceId}`, `shell`, `am`, `instrument`, `-w`, `-r`, `${args.join(' ')}`, `-e`, `debug`, `false`, testRunner],
+      { detached: false });
+
+    this.instrumentationProcess.childProcess.on('close', () => this._terminateInstrumentation());
+  }
+
+  async _queryPID(deviceId, bundleId, waitAtStart = true) {
+    if (waitAtStart) {
+      await sleep(500);
+    }
+
+    for (let attempts = 5; attempts > 0; attempts--) {
+      const pid = await this.adb.pidof(deviceId, bundleId);
+
+      if (pid > 0) {
+        return pid;
+      }
+
+      await sleep(1000);
+    }
+
+    return NaN;
+  }
+
+  _setPendingUrl(url) {
+    this.pendingUrl = url;
+  }
+
+  _getAndClearPendingUrl() {
+    const pendingUrl = this.pendingUrl;
+    this.pendingUrl = undefined;
+    return pendingUrl;
+  }
+
+  _startActivityWithUrl(url) {
+    return this.invocationManager.execute(DetoxApi.startActivityFromUrl(url));
+  }
+
+  _resumeMainActivity() {
+    return this.invocationManager.execute(DetoxApi.launchMainActivity());
+  }
 }
 
 module.exports = AndroidDriver;

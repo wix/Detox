@@ -23,6 +23,11 @@
 	return self;
 }
 
+- (BOOL)_canBecomeKeyWindow
+{
+	return NO;
+}
+
 @end
 
 @class DetoxAppDelegateProxy;

@@ -14,7 +14,7 @@ describe('Actions', () => {
     await expect(element(by.text('Long Press Working!!!'))).toBeVisible();
   });
 
-  it(':ios: should long press with duration on an element', async () => {
+  it('should long press with duration on an element', async () => {
     await element(by.text('Long Press Me 1.5s')).longPress(1500);
     await expect(element(by.text('Long Press With Duration Working!!!'))).toBeVisible();
   });
@@ -29,11 +29,23 @@ describe('Actions', () => {
     await expect(element(by.id('UniqueId819'))).toHaveText('Taps: 1');
   });
 
-  // Backspace is supported by using "\b" in the string. Return key is supported with "\n"
   it('should type in an element', async () => {
     await element(by.id('UniqueId937')).tap();
     await element(by.id('UniqueId937')).typeText('passcode');
     await expect(element(by.text('Type Working!!!'))).toBeVisible();
+  });
+
+  it('should press the backspace key on an element', async () => {
+    await element(by.id('UniqueId937')).tap();
+    await element(by.id('UniqueId937')).typeText('testx');
+    await element(by.id('UniqueId937')).tapBackspaceKey();
+    await expect(element(by.text('test'))).toBeVisible();
+  });
+
+  it('should press the return key on an element', async () => {
+    await element(by.id('UniqueId937')).tap();
+    await element(by.id('UniqueId937')).tapReturnKey();
+    await expect(element(by.text('Return Working!!!'))).toBeVisible();
   });
 
   it('should clear text in an element', async () => {
@@ -86,6 +98,13 @@ describe('Actions', () => {
   it('should not wait for long timeout (>1.5s)', async () => {
     await element(by.id('WhyDoAllTheTestIDsHaveTheseStrangeNames')).tap();
     await expect(element(by.id('WhyDoAllTheTestIDsHaveTheseStrangeNames'))).toBeVisible();
+  });
+
+  it(':ios: should zoom in and out the pinchable scrollview', async () => {
+    await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0);
+    await expect(element(by.id('UniqueId007'))).toBeNotVisible();
+    await element(by.id('PinchableScrollView')).pinchWithAngle('inward', 'slow', 0);
+    await expect(element(by.id('UniqueId007'))).toBeVisible();
   });
 
 });

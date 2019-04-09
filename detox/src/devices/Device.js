@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
-const log = require('../utils/logger').child({ __filename });
 const argparse = require('../utils/argparse');
 const debug = require('../utils/debug'); //debug utils, leave here even if unused
 
@@ -17,14 +16,15 @@ class Device {
 
   async prepare(params = {}) {
     this._binaryPath = this._getAbsolutePath(this._deviceConfig.binaryPath);
+    this._testBinaryPath = this._deviceConfig.testBinaryPath ? this._getAbsolutePath(this._deviceConfig.testBinaryPath) : null;
     this._deviceId = await this.deviceDriver.acquireFreeDevice(this._deviceConfig.name);
     this._bundleId = await this.deviceDriver.getBundleIdFromBinary(this._binaryPath);
 
     await this.deviceDriver.prepare();
 
-    if (!argparse.getArgValue('reuse')) {
+    if (!argparse.getArgValue('reuse') && !params.reuse) {
       await this.deviceDriver.uninstallApp(this._deviceId, this._bundleId);
-      await this.deviceDriver.installApp(this._deviceId, this._binaryPath);
+      await this.deviceDriver.installApp(this._deviceId, this._binaryPath, this._testBinaryPath);
     }
 
     if (params.launchApp) {
@@ -45,17 +45,15 @@ class Device {
     const hasPayload = this._assertHasSingleParam(payloadParams, params);
 
     if (params.delete) {
-      await this.deviceDriver.terminate(this._deviceId, this._bundleId);
-      await this.deviceDriver.uninstallApp(this._deviceId, this._bundleId);
-      await this.deviceDriver.installApp(this._deviceId, this._binaryPath);
+      await this._terminateApp();
+      await this._reinstallApp();
     } else if (params.newInstance) {
-      await this.deviceDriver.terminate(this._deviceId, this._bundleId);
+      await this._terminateApp();
     }
 
-    let baseLaunchArgs = {};
-    if (params.launchArgs) {
-      baseLaunchArgs = params.launchArgs;
-    }
+    let baseLaunchArgs = {
+      ...params.launchArgs,
+    };
 
     if (params.url) {
       baseLaunchArgs['detoxURLOverride'] = params.url;
@@ -83,10 +81,11 @@ class Device {
       }
     }
 
-    const processId = await this.deviceDriver.launchApp(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs));
+    const processId = await this.deviceDriver.launchApp(this._deviceId, _bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
     this._processes[_bundleId] = processId;
 
     await this.deviceDriver.waitUntilReady();
+    await this.deviceDriver.waitForActive();
 
     if(params.detoxUserNotificationDataURL) {
       await this.deviceDriver.cleanupRandomDirectory(params.detoxUserNotificationDataURL);
@@ -133,6 +132,7 @@ class Device {
 
   async sendToHome() {
     await this.deviceDriver.sendToHome(this._deviceId);
+    await this.deviceDriver.waitForBackground();
   }
 
   async shake() {
@@ -144,9 +144,10 @@ class Device {
     await this.deviceDriver.terminate(this._deviceId, _bundleId);
   }
 
-  async installApp(binaryPath) {
+  async installApp(binaryPath, testBinaryPath) {
     const _binaryPath = binaryPath || this._binaryPath;
-    await this.deviceDriver.installApp(this._deviceId, _binaryPath);
+    const _testBinaryPath = testBinaryPath || this._testBinaryPath;
+    await this.deviceDriver.installApp(this._deviceId, _binaryPath, _testBinaryPath);
   }
 
   async uninstallApp(bundleId) {
@@ -256,6 +257,16 @@ class Device {
     } else {
       throw new Error(`app binary not found at '${absPath}', did you build it?`);
     }
+  }
+
+  async _terminateApp() {
+    await this.deviceDriver.terminate(this._deviceId, this._bundleId);
+    this._processes[this._bundleId] = undefined;
+  }
+
+  async _reinstallApp() {
+    await this.deviceDriver.uninstallApp(this._deviceId, this._bundleId);
+    await this.deviceDriver.installApp(this._deviceId, this._binaryPath, this._testBinaryPath);
   }
 }
 

@@ -11,7 +11,7 @@ apply from: "../../node_modules/react-native/react.gradle"
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "27.0.2"
+    buildToolsVersion "27.0.3"
 
     defaultConfig {
         applicationId "com.demoreactnativejest"
@@ -73,7 +73,7 @@ android {
 }
 
 dependencies {
-    implementation "com.android.support:appcompat-v7:27.0.2"
+    implementation "com.android.support:appcompat-v7:27.1.1"
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     androidTestImplementation(project(path: ":detox"))

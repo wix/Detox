@@ -48,13 +48,24 @@ The most difficult part of automated testing on mobile is the tip of the testing
 * **Test Runner Independent:** Use Mocha, AVA, or any other JavaScript test runner you like.
 * **Debuggable:** Modern async-await API allows breakpoints in asynchronous tests to work as expected.
 
-## Supported React Native versions
+## Supported versions
+
+### Environment
+
+* **OS**: MacOS 10.13 (High Sierra) or higher.
+* **Xcode**: 10.1 or higher.
+
+### React Native
 
 Detox is built from the ground up to support React Native projects as well as pure native ones.
 
+The following React Native versions have been tested:
+
 | iOS    | Android |
 | ------ | ------- |
-| <=0.55 | <=0.51  |
+| <=0.58 | <=0.56  |
+
+Future versions are most likely supported, but have not been tested yet. Please open issues if you find specific issues with newer React Native versions.
 
 ## Getting Started
 
@@ -76,7 +87,7 @@ We believe that the only way to address the core difficulties with mobile end-to
 
 ## Contributing to Detox
 
-Open source from the first commit. If you're interested in helping out with our roadmap, please see issues tagged marked with the [![ ](https://placehold.it/15/c4532d/000000?text=+) looking for contributors](https://github.com/wix/detox/labels/user%3A%20looking%20for%20contributors) label. If you have encoutnered a bug or would like to suggest a new feature, please open an issue.
+Open source from the first commit. If you're interested in helping out with our roadmap, please see issues tagged marked with the [![ ](https://placehold.it/15/c4532d/000000?text=+) looking for contributors](https://github.com/wix/detox/labels/user%3A%20looking%20for%20contributors) label. If you have encountered a bug or would like to suggest a new feature, please open an issue.
 
 Dive into Detox core by reading the [Detox Contribution Guide](/docs/Guide.Contributing.md).
 

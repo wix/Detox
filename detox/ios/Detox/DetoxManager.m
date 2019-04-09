@@ -45,19 +45,30 @@ static void detoxConditionalInit()
 	
 	NSUserDefaults* options = [NSUserDefaults standardUserDefaults];
 	
+	NSArray *blacklistRegex = [options arrayForKey:@"detoxURLBlacklistRegex"];
+	if (blacklistRegex){
+		[[GREYConfiguration sharedInstance] setValue:blacklistRegex forConfigKey:kGREYConfigKeyURLBlacklistRegex];
+	}
+	
 	NSString *detoxServer = [options stringForKey:@"detoxServer"];
 	NSString *detoxSessionId = [options stringForKey:@"detoxSessionId"];
-	if (!detoxServer || !detoxSessionId)
+	
+	if(detoxServer == nil)
 	{
-		dtx_log_error(@"Either 'detoxServer' and/or 'detoxSessionId' arguments are missing; failing Detox.");
-		// if these args were not provided as part of options, don't start Detox at all!
-		return;
+		detoxServer = @"ws://localhost:8099";
+		dtx_log_info(@"Using default 'detoxServer': ws://localhost:8099");
+	}
+	
+	if(detoxSessionId == nil)
+	{
+		detoxSessionId = NSBundle.mainBundle.bundleIdentifier;
+		dtx_log_info(@"Using default 'detoxSessionId': %@", NSBundle.mainBundle.bundleIdentifier);
 	}
 	
 	NSNumber* waitForDebugger = [options objectForKey:@"detoxWaitForDebugger"];
 	if(waitForDebugger)
 	{
-		usleep(waitForDebugger.unsignedIntValue* 1000);
+		usleep(waitForDebugger.unsignedIntValue * 1000);
 	}
 	
 	[[DetoxManager sharedManager] connectToServer:detoxServer withSessionId:detoxSessionId];
@@ -107,9 +118,52 @@ static void detoxConditionalInit()
 	}];
 }
 
+- (void)_waitForApplicationState:(UIApplicationState)applicationState action:(NSString*)action messageId:(NSNumber*)messageId
+{
+	__block id observer = nil;
+	
+	void (^response)() = ^ {
+		[self _safeSendAction:[NSString stringWithFormat:@"%@Done", action] params:@{} messageId:messageId];
+		
+		if(observer != nil)
+		{
+			[NSNotificationCenter.defaultCenter removeObserver:observer];
+			observer = nil;
+		}
+	};
+	
+	if(UIApplication.sharedApplication.applicationState == applicationState)
+	{
+		response();
+		return;
+	}
+	
+	NSNotificationName notificationName;
+	switch (applicationState)
+	{
+		case UIApplicationStateActive:
+			notificationName = UIApplicationDidBecomeActiveNotification;
+			break;
+		case UIApplicationStateBackground:
+			notificationName = UIApplicationDidEnterBackgroundNotification;
+			break;
+		case UIApplicationStateInactive:
+			notificationName = UIApplicationWillResignActiveNotification;
+			break;
+		default:
+			[NSException raise:NSInvalidArgumentException format:@"Inknown application state %@", @(applicationState)];
+			break;
+	}
+	
+	observer = [[NSNotificationCenter defaultCenter] addObserverForName:notificationName object:nil queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
+		//Move the response one loop later to ensure all user handlers have been called.
+		dispatch_async(dispatch_get_main_queue(), response);
+	}];
+}
+
 - (void)_sendGeneralReadyMessage
 {
-	[self.webSocket sendAction:@"ready" withParams:@{} withMessageId:@-1000];
+	[self _safeSendAction:@"ready" params:@{} messageId:@-1000];
 }
 
 - (void)connectToServer:(NSString*)url withSessionId:(NSString*)sessionId
@@ -122,15 +176,37 @@ static void detoxConditionalInit()
 	if (![ReactNativeSupport isReactNativeApp])
 	{
 		_isReady = YES;
-		[self.webSocket sendAction:@"ready" withParams:@{} withMessageId:@-1000];
+		[self _sendGeneralReadyMessage];
 	}
+}
+
+- (void)_safeSendAction:(NSString*)action params:(NSDictionary*)params messageId:(NSNumber*)messageId
+{
+	[EarlGrey detox_safeExecuteSync:^{
+		[self.webSocket sendAction:action withParams:params withMessageId:messageId];
+	}];
 }
 
 - (void)websocketDidReceiveAction:(NSString *)type withParams:(NSDictionary *)params withMessageId:(NSNumber *)messageId
 {
 	NSAssert(messageId != nil, @"Got action with a null messageId");
 	
-	if([type isEqualToString:@"invoke"])
+	if([type isEqualToString:@"waitForActive"])
+	{
+		[self _waitForApplicationState:UIApplicationStateActive action:type messageId:messageId];
+		return;
+	}
+	else if([type isEqualToString:@"waitForBackground"])
+	{
+		[self _waitForApplicationState:UIApplicationStateBackground action:type messageId:messageId];
+		return;
+	}
+	else if([type isEqualToString:@"waitForIdle"])
+	{
+		[self _safeSendAction:@"waitForIdleDone" params:@{} messageId:messageId];
+		return;
+	}
+	else if([type isEqualToString:@"invoke"])
 	{
 		[self.testRunner invoke:params withMessageId:messageId];
 		return;
@@ -139,7 +215,7 @@ static void detoxConditionalInit()
 	{
 		if(_isReady)
 		{
-			[self.webSocket sendAction:@"ready" withParams:@{} withMessageId:@-1000];
+			[self _sendGeneralReadyMessage];
 		}
 		return;
 	}
@@ -156,7 +232,7 @@ static void detoxConditionalInit()
 		void (^block)(void);
 		//Send webSocket and messageId as params so the block is of global type, instead of being allocated on every message.
 		void (^sendDoneAction)(WebSocket* webSocket, NSNumber* messageId) = ^ (WebSocket* webSocket, NSNumber* messageId) {
-			[webSocket sendAction:@"deliverPayloadDone" withParams:@{} withMessageId: messageId];
+			[self _safeSendAction:@"deliverPayloadDone" params:@{} messageId:messageId];
 		};
 		
 		if(params[@"url"])
@@ -221,7 +297,7 @@ static void detoxConditionalInit()
 		[EarlGrey detox_safeExecuteSync:^{
 			[self _sendShakeNotification];
 			
-			[self.webSocket sendAction:@"shakeDeviceDone" withParams:@{} withMessageId: messageId];
+			[self _safeSendAction:@"shakeDeviceDone" params:@{} messageId:messageId];
 		}];
 	}
 	else if([type isEqualToString:@"reactNativeReload"])
@@ -260,19 +336,20 @@ static void detoxConditionalInit()
 	{
 		res = [NSString stringWithFormat:@"(%@)", NSStringFromClass([res class])];
 	}
-	[self.webSocket sendAction:@"invokeResult" withParams:@{@"result": res} withMessageId:messageId];
+	
+	[self _safeSendAction:@"invokeResult" params:@{@"result": res} messageId:messageId];
 }
 
 - (void)testRunnerOnTestFailed:(NSString *)details withMessageId:(NSNumber *) messageId
 {
 	if (details == nil) details = @"";
-	[self.webSocket sendAction:@"testFailed" withParams:@{@"details": details} withMessageId:messageId];
+	[self _safeSendAction:@"testFailed" params:@{@"details": details} messageId:messageId];
 }
 
 - (void)testRunnerOnError:(NSString *)error withMessageId:(NSNumber *) messageId
 {
 	if (error == nil) error = @"";
-	[self.webSocket sendAction:@"error" withParams:@{@"error": error} withMessageId:messageId];
+	[self _safeSendAction:@"error" params:@{@"error": error} messageId:messageId];
 }
 
 - (void)notifyOnCrashWithDetails:(NSDictionary*)details

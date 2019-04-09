@@ -48,12 +48,11 @@ class ADBLogcatRecording extends Artifact {
       await this._waitUntilLogFileIsCreated;
     } finally {
       if (this.processPromise) {
-        await interruptProcess(this.processPromise);
-        this.processPromise = null;
+        const processPromise = this.processPromise;
 
-        this._waitWhileLogIsOpenedByLogcat = sleep(300).then(() => {
-          return retry(() => this._assertLogIsNotOpenedByApps());
-        });
+        this._waitWhileLogIsOpenedByLogcat = sleep(300)
+          .then(() => interruptProcess(processPromise))
+          .then(() => { this.processPromise = null; });
       }
     }
   }
@@ -75,16 +74,6 @@ class ADBLogcatRecording extends Artifact {
     if (size < 0) {
       throw new DetoxRuntimeError({
         message: `The log is not being recorded on device (${this.deviceId}) at path: ${this.pathToLogOnDevice}`,
-      });
-    }
-  }
-
-  async _assertLogIsNotOpenedByApps() {
-    const isFileOpen = await this.adb.isFileOpen(this.deviceId, this.pathToLogOnDevice);
-
-    if (isFileOpen) {
-      throw new DetoxRuntimeError({
-        message: `The log is still being opened on device (${this.deviceId}) at path: ${this.pathToLogOnDevice}`,
       });
     }
   }

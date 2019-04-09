@@ -37,7 +37,3 @@ Object {
   },
 }
 `;
-
-exports[`Android generation validation Matcher<View> should fail getting no object 1`] = `"m1 should be an instance of Matcher, got \\"I am a string\\", it appears that it is no object"`;
-
-exports[`Android generation validation Matcher<View> should fail with a wrong class 1`] = `"m1 should be an instance of Matcher, got \\"[object Object]\\", it appears that it has a wrong class name: \\"AnotherClass\\""`;

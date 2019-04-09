@@ -35,6 +35,7 @@ describe('expect', async () => {
   it(`element by type`, async () => {
     await e.expect(e.element(e.by.type('test'))).toBeVisible();
     await e.element(e.by.type('UIPickerView')).setColumnToValue(1,"6");
+    await e.element(e.by.type('UIPickerView')).setDatePickerDate('2019-2-8T05:10:00-08:00', "yyyy-MM-dd'T'HH:mm:ssZZZZZ");
   });
 
   it(`element by traits`, async () => {
@@ -80,7 +81,7 @@ describe('expect', async () => {
     await e.waitFor(e.element(e.by.id('id'))).toHaveValue('value');
     await e.waitFor(e.element(e.by.id('id'))).toNotHaveValue('value');
 
-  
+
 
     await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50, 'down');
     await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50);
@@ -104,8 +105,12 @@ describe('expect', async () => {
     await e.element(e.by.label('Tap Me')).longPress(2000);
     await e.element(e.by.id('UniqueId819')).multiTap(3);
     await e.element(e.by.id('UniqueId937')).typeText('passcode');
+    await e.element(e.by.id('UniqueId937')).tapBackspaceKey();
+    await e.element(e.by.id('UniqueId937')).tapReturnKey();
     await e.element(e.by.id('UniqueId005')).clearText();
     await e.element(e.by.id('UniqueId005')).replaceText('replaceTo');
+    await e.element(e.by.id('UniqueId005')).pinchWithAngle('outward', 'fast', 0);
+    await e.element(e.by.id('UniqueId005')).pinchWithAngle('outward');
     await e.element(e.by.id('ScrollView161')).scroll(100);
     await e.element(e.by.id('ScrollView161')).scroll(100, 'down');
     await e.element(e.by.id('ScrollView161')).scroll(100, 'up');
@@ -131,6 +136,12 @@ describe('expect', async () => {
     await expectToThrow(() => e.element(e.by.id('UniqueId819')).multiTap('NaN'));
     await expectToThrow(() => e.element(e.by.id('UniqueId937')).typeText(0));
     await expectToThrow(() => e.element(e.by.id('UniqueId005')).replaceText(3));
+    await expectToThrow(() => e.element(e.by.id('UniqueId005')).pinchWithAngle('noDirection', 'slow', 0));
+    await expectToThrow(() => e.element(e.by.id('UniqueId005')).pinchWithAngle(1, 'slow', 0));
+    await expectToThrow(() => e.element(e.by.id('UniqueId005')).pinchWithAngle('outward', 1, 0));
+    await expectToThrow(() => e.element(e.by.id('UniqueId005')).pinchWithAngle('outward', 'noDirection', 0));
+    await expectToThrow(() => e.element(e.by.id('UniqueId005')).pinchWithAngle('outward', 'slow', 'NaN'));
+    await expectToThrow(() => e.element(e.by.id('UniqueId005')).replaceText(3));
     await expectToThrow(() => e.element(e.by.id('ScrollView161')).scroll('NaN', 'down'));
     await expectToThrow(() => e.element(e.by.id('ScrollView161')).scroll(100, 'noDirection'));
     await expectToThrow(() => e.element(e.by.id('ScrollView161')).scroll(100, 0));
@@ -142,6 +153,8 @@ describe('expect', async () => {
     await expectToThrow(() => e.element(e.by.id('ScrollView799')).swipe('down', 'NotFastNorSlow'));
     await expectToThrow(() => e.element(e.by.id('ScrollView799')).swipe('down', 'NotFastNorSlow', 0.9));
     await expectToThrow(() => e.element(e.by.id('ScrollView799')).atIndex('NaN'));
+    await expectToThrow(() => e.element(e.by.type('UIPickerView')).setDatePickerDate(0, 'mm'));
+    await expectToThrow(() => e.element(e.by.type('UIPickerView')).setDatePickerDate('something', 0));
   });
 
   it(`exportGlobals() should export api functions`, async () => {

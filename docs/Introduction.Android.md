@@ -3,17 +3,26 @@ id: Introduction.Android
 title: Detox for Android
 ---
 
-**Detox for Android currently has several compatibility issues with React Native >= 0.50.** See [#608](https://github.com/wix/detox/issues/608) for details.
+## Breaking Changes :warning:
 
-## Setup
-Detox 7 was updated to support Android gradle plugin 3.0.0. This is a breaking change that makes it impossible to support previous Android gradle plugin versions.
+> If you are installing Detox for Android for the first time, you can skip right over to the setup section.
 
-https://developer.android.com/studio/build/gradle-plugin-3-0-0-migration.html
+> Follow our [Migration Guide](Guide.Migration.md) for instructions on how to upgrade from older versions.
 
-For older Android gradle plugin support use `detox@6.x.x` instead ([previous setup guide here](https://github.com/wix/detox/blob/97654071573053def90e8207be8eba011408f977/docs/Introduction.Android.md)).<br>
-**Detox 6 will not continue to be updated, to continue getting updates and features, update your Android gradle config and migrate to Detox 7.**
+* **In version 11 we switched to using Android Espresso of Android's new [androidx.\*  support libraries](https://developer.android.com/jetpack/androidx/).** We did this in order to stay up to date with Google's latest features and bug fixes, in the hopes of using them to improve our own Android support (which gets better every day!).
 
-### 1. Do the initial setup described in the Getting Started Guide
+* **In version 10, we've made [Kotlin](https://kotlinlang.org/) mandatory for integrating Detox into your Android project.** In the very least, you must include the Kotlin gradle plugin in your project, as we shall see later on. Nevertheless, this is a breaking change so bear that in mind when upgrading. In any case, worry not of the impact on your app, as - unless you effectively use Kotlin in your own native code, **there will be no impact on the final APK**, in terms of size and methods count.
+
+* **As of version 7** we require Android gradle plugin 3.0.0 or newer. This is a breaking change that makes it impossible to support previous Android gradle plugin versions.
+
+  https://developer.android.com/studio/build/gradle-plugin-3-0-0-migration.html
+
+  For older Android gradle plugin support use `detox@6.x.x` instead ([previous setup guide here](https://github.com/wix/detox/blob/97654071573053def90e8207be8eba011408f977/docs/Introduction.Android.md)).<br>
+
+  **Note: As a rule of thumb, we consider all old major versions discontinued; We only support the latest Detox major version.**
+
+## Setup :gear:
+### 1. Run through the initial _Getting Started_ Guide
 
 - [Getting Started](Introduction.GettingStarted.md)
 
@@ -21,62 +30,82 @@ For older Android gradle plugin support use `detox@6.x.x` instead ([previous set
 
 In `android/settings.gradle` add:
 
-```gradle
+```groovy
 include ':detox'
 project(':detox').projectDir = new File(rootProject.projectDir, '../node_modules/detox/android/detox')
 ```
 
 In `android/app/build.gradle` add this to `defaultConfig` section:
 
-```gradle
+```groovy
   defaultConfig {
       ...
       testBuildType System.getProperty('testBuildType', 'debug')  //this will later be used to control the test apk build type
-      missingDimensionStrategy "minReactNative", "minReactNative46" //read note
-      testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+      testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
       ...
   }
 ```
 Please be aware that the `minSdkVersion` needs to be at least 18.
 
-> ###### Choosing the right build type (in missingDimensionStrategy)
->Detox runs on multiple React Native versions, choose the correct build type to support the version you use.<br>
->**Available versions:**
->
->* `minReactNative44`: Support for React Native 0.44-0.45
->* `minReactNative46`: Support for React Native 0.46+
+
 
 
 In `android/app/build.gradle` add this in `dependencies` section:
 
-```gradle
+```groovy
 dependencies {
-	...
+	// ...
     androidTestImplementation(project(path: ":detox"))
     androidTestImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test:rules:1.0.1'
-    ...
 }
 ```
 
 And in `android/build.gradle` you need to add this under `allprojects > repositories`:
 
-```gradle
+```groovy
 buildscript {
     repositories {
-	     ...
+	    // ...
         google()
-        ...
     }
 }
 ```
 
-### 3. Create Android Test class
+### 3. Add Kotlin
 
-You need to add the file `android/app/src/androidTest/java/com/[your.package]/DetoxTest.java` and fill it like [this](../detox/test/android/app/src/androidTest/java/com/example/DetoxTest.java), except that you need to change the package to your projects name.
+If your project does not already use Kotlin, add the Kotlin Gradle-plugin to your classpath in `android/build.gradle`:
 
-### 4. Add Android configuration
+```groovy
+buildscript {
+    // ...
+    ext.kotlinVersion = '1.3.0'
+    
+    dependencies: {
+        // ...
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+```
+
+_Note: most guides advise of defining a global `kotlinVersion` constant - as in this example, but that is not mandatory._
+
+
+**IMPORTANT:** Detox aims at a playing fair with your app, and so it allows you to explicitly define the kotlin version for it to use - so as to align it with your own; Please do so - in your root `android/build.gradle` configuration file:
+
+```groovy
+buildscript {
+    ext.kotlinVersion = '1.3.0' // Your app's version
+    ext.detoxKotlinVersion = ext.kotlinVersion // Detox' version: should be 1.1.0 or higher!
+}
+```
+
+***Note that Detox has been tested for version 1.1.0 of Kotlin, and higher!***
+
+### 4. Create Android Test class
+
+Add the file `android/app/src/androidTest/java/com/[your.package]/DetoxTest.java` and fill as in [the detox example app for NR](../examples/demo-react-native/android/app/src/androidTest/java/com/example/DetoxTest.java). **Don't forget to change the package name to your project's**.
+
+### 5. Add Android configuration
 
 Add this part to your `package.json`:
 
@@ -110,13 +139,34 @@ Following device types could be used to control Android devices:
 `android.attached`. Connect to already-attached android device. The device should be listed in the output of `adb devices` command under provided `name`.
 Use this type to connect to Genymotion emulator.
 
-### 5. Run the tests
+### 6. Run the tests
 
 Using the `android.emu.debug` configuration from above, you can invoke it in the standard way.
 
 ```sh
 detox test -c android.emu.debug
 ```
+
+## Proguard (Minification)
+
+In apps running [minification using Proguard](https://developer.android.com/studio/build/shrink-code), in order for Detox to work well on release builds, please enable some Detox proguard-configuration rules by applying the custom configuration file on top of your own. Typically, this is defined using the `proguardFiles` statement in the minification-enabled build-type in your `app/build.gradle`:
+
+```groovy
+    buildTypes {
+        // 'release' is typically the default proguard-enabled build-type
+        release {
+            minifyEnabled true
+          
+            // The last expression results in a path to Detox' custom rules file
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', "${project(':detox').projectDir}/proguard-rules-app.pro"
+
+            // ...
+        }
+    }
+
+```
+
+
 
 ## Troubleshooting
 
@@ -131,7 +181,7 @@ Execution failed for task ':app:transformResourcesWithMergeJavaResForDebug'.
 
 You need to add this to the `android` section of your `android/app/build.gradle`:
 
-```gradle
+```groovy
 packagingOptions {
     exclude 'META-INF/LICENSE'
 }

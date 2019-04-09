@@ -65,21 +65,6 @@ describe('Android generation', () => {
 
   describe('validation', () => {
     describe('Matcher<View>', () => {
-      it('should fail getting no object', () => {
-        expect(() => {
-          ExampleClass.matcherForAnd('I am a string', 'I am one too');
-        }).toThrowErrorMatchingSnapshot();
-      });
-
-      it('should fail with a wrong class', () => {
-        class AnotherClass {}
-        const x = new AnotherClass();
-
-        expect(() => {
-          ExampleClass.matcherForAnd(x, x);
-        }).toThrowErrorMatchingSnapshot();
-      });
-
       it("should succeed with the 'right' class", () => {
         // stub for matcher class
         class Matcher {
@@ -95,6 +80,22 @@ describe('Android generation', () => {
         expect(() => {
           ExampleClass.matcherForAnd(m, m);
         }).not.toThrow();
+      });
+    });
+  });
+
+  describe('method overloading', () => {
+    it('should distinguish between one and two argument call of method', () => {
+      expect(ExampleClass.overloadable(true, 42)).toEqual({
+        args: [{ type: 'boolean', value: true }, { type: 'Integer', value: 42 }],
+        method: 'overloadable',
+        target: { type: 'Class', value: 'com.wix.detox.espresso.DetoxAction' }
+      });
+
+      expect(ExampleClass.overloadable(true)).toEqual({
+        args: [{ type: 'boolean', value: true }],
+        method: 'overloadable',
+        target: { type: 'Class', value: 'com.wix.detox.espresso.DetoxAction' }
       });
     });
   });

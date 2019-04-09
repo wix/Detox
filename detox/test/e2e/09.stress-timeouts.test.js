@@ -4,7 +4,7 @@ describe('StressTimeouts', () => {
     await element(by.text('Timeouts')).tap();
   });
 
-  it(':ios: should handle a short timeout', async () => {
+  it('should handle a short timeout', async () => {
     await element(by.id('TimeoutShort')).tap();
     await expect(element(by.text('Short Timeout Working!!!'))).toBeVisible();
   });
@@ -32,5 +32,10 @@ describe('StressTimeouts', () => {
   it('should ignore setInterval', async () => {
     await element(by.id('IntervalIgnore')).tap();
     await expect(element(by.text('Interval Ignored!!!'))).toBeVisible();
+  });
+
+  it('should skip over setInterval', async () => {
+    await element(by.id('SkipOverInterval')).tap();
+    await expect(element(by.text('Interval Skipped-Over!!!'))).toBeVisible();
   });
 });

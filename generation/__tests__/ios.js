@@ -32,7 +32,8 @@ describe('iOS generation', () => {
     });
 
     it('should include multi line comments', () => {
-      expect(exampleContent.indexOf('Multi Line Comment here\nAwesome')).not.toBe(-1);
+      expect(exampleContent.indexOf('Multi Line Comment here')).not.toBe(-1);
+			expect(exampleContent.indexOf('Awesome')).not.toBe(-1);
     });
   });
 
@@ -126,6 +127,14 @@ describe('iOS generation', () => {
 
       expect(result.args[0].type).toBe('NSInteger');
       expect(result.args[0].value).toBe(4);
+      expect(result).toMatchSnapshot();
+    });
+
+    it('should sanitize the pinch directions', () => {
+      const result = ExampleClass.actionForPinchSlowInDirectionWithAngle('outward', 0);
+
+      expect(result.args[0].type).toBe('NSInteger');
+      expect(result.args[0].value).toBe(1);
       expect(result).toMatchSnapshot();
     });
 

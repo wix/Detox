@@ -55,7 +55,7 @@ DTX_CREATE_LOG(WebSocket);
 	NSData *jsonData = [NSJSONSerialization dataWithJSONObject:data options:kNilOptions error:&error];
 	if (jsonData == nil)
 	{
-		dtx_log_error(@"Error decoding sendAction encode - %@", error);
+		dtx_log_fault(@"Error decoding sendAction encode - %@", error);
 		return;
 	}
 	dtx_log_info(@"Action Sent: %@", type);
@@ -81,28 +81,28 @@ DTX_CREATE_LOG(WebSocket);
 	NSDictionary *data = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:&error];
 	if (data == nil)
 	{
-		dtx_log_error(@"Error decoding receiveAction decode - %@", error);
+		dtx_log_fault(@"Error decoding receiveAction decode - %@", error);
 		return;
 	}
 	NSString *type = [data objectForKey:@"type"];
 	if (type == nil)
 	{
-		dtx_log_error(@"receiveAction missing type");
+		dtx_log_fault(@"receiveAction missing type");
 		return;
 	}
 	NSDictionary *params = [data objectForKey:@"params"];
 	if (params != nil && ![params isKindOfClass:[NSDictionary class]])
 	{
-		dtx_log_error(@"receiveAction invalid params");
+		dtx_log_fault(@"receiveAction invalid params");
 		return;
 	}
 	NSNumber *messageId = [data objectForKey:@"messageId"];
 	if (messageId != nil && ![messageId isKindOfClass:[NSNumber class]])
 	{
-		dtx_log_error(@"receiveAction invalid messageId");
+		dtx_log_fault(@"receiveAction invalid messageId");
 		return;
 	}
-	dtx_log_info(@"Action Received: %@", type);
+	dtx_log_info(@"Action Received: %@ params: %@", type, params);
 	if (self.delegate) [self.delegate websocketDidReceiveAction:type withParams:params withMessageId:messageId];
 }
 
@@ -119,7 +119,7 @@ DTX_CREATE_LOG(WebSocket);
 
 - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error
 {
-	dtx_log_error(@"Socket failed with error: %@", error);
+	dtx_log_fault(@"Socket failed with error: %@", error);
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean

@@ -16,17 +16,17 @@ import org.json.JSONException;
  */
 public class MethodInvocation {
 
-    public static Object invoke(String invocationJson) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, JSONException {
+    public Object invoke(String invocationJson) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, JSONException {
         return invoke(invocationJson, null);
     }
 
-    public static Object invoke(String invocationJson, Class<?> extendWith) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, JSONException {
+    public Object invoke(String invocationJson, Class<?> extendWith) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, JSONException {
         JsonParser parser = new JsonParser();
         Invocation invocation = new Invocation(parser.parse(invocationJson));
         return invoke(invocation);
     }
 
-    public static Object invoke(Invocation invocation) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public Object invoke(Invocation invocation) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         if (StringUtils.isBlank(invocation.getMethod()))
             throw new EmptyInvocationInstructionException();
 

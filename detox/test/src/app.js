@@ -73,11 +73,13 @@ class example extends Component {
     }
 
     if (!this.state.screen) {
+		console.log("JS rendering");
       return (
         <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
           <Text style={{fontSize: 20, marginBottom: 30}}>
             Choose a test
           </Text>
+          {this.renderScreenButton('Language', Screens.LanguageScreen)}
           {this.renderScreenButton('Sanity', Screens.SanityScreen)}
           {this.renderScreenButton('Matchers', Screens.MatchersScreen)}
           {this.renderScreenButton('Actions', Screens.ActionsScreen)}

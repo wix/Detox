@@ -27,7 +27,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFro
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static org.hamcrest.Matchers.allOf;
 
-
 /**
  * Created by simonracz on 10/07/2017.
  */
@@ -40,7 +39,8 @@ public class DetoxAction {
     }
 
     public static ViewAction multiClick(int times) {
-        return actionWithAssertions(new GeneralClickAction(new MultiTap(times), GeneralLocation.CENTER, Press.FINGER, 0, 0));
+        return actionWithAssertions(
+                new GeneralClickAction(new MultiTap(times), GeneralLocation.CENTER, Press.FINGER, 0, 0));
     }
 
     public static ViewAction tapAtLocation(final int x, final int y) {
@@ -53,22 +53,18 @@ public class DetoxAction {
                 view.getLocationOnScreen(xy);
                 final float fx = xy[0] + px;
                 final float fy = xy[1] + py;
-                float[] coordinates = {fx, fy};
+                float[] coordinates = { fx, fy };
                 return coordinates;
             }
         };
-        return actionWithAssertions(new GeneralClickAction(
-                Tap.SINGLE, c, Press.FINGER, InputDevice.SOURCE_UNKNOWN, MotionEvent.BUTTON_PRIMARY));
+        return actionWithAssertions(new GeneralClickAction(Tap.SINGLE, c, Press.FINGER, InputDevice.SOURCE_UNKNOWN,
+                MotionEvent.BUTTON_PRIMARY));
     }
 
     /**
      * Scrolls to the edge of the given scrollable view.
      *
-     * Edge
-     * 1 -> Left
-     * 2 -> Right
-     * 3 -> Top
-     * 4 -> Bottom
+     * Edge 1 -> Left 2 -> Right 3 -> Top 4 -> Bottom
      *
      * @param edge
      * @return ViewAction
@@ -104,7 +100,8 @@ public class DetoxAction {
                     while (true) {
                         ScrollHelper.performOnce(uiController, view, edge);
                         int currentScrollY = view.getScrollY();
-                        if (currentScrollY == prevScrollY) break;
+                        if (currentScrollY == prevScrollY)
+                            break;
                         prevScrollY = currentScrollY;
                     }
                 } else if (view instanceof HorizontalScrollView) {
@@ -112,7 +109,8 @@ public class DetoxAction {
                     while (true) {
                         ScrollHelper.performOnce(uiController, view, edge);
                         int currentScrollX = view.getScrollX();
-                        if (currentScrollX == prevScrollX) break;
+                        if (currentScrollX == prevScrollX)
+                            break;
                         prevScrollX = currentScrollX;
                     }
                 } else if (recyclerViewClass != null && recyclerViewClass.isInstance(view)) {
@@ -132,13 +130,9 @@ public class DetoxAction {
     /**
      * Scrolls the View in a direction by the Density Independent Pixel amount.
      *
-     * Direction
-     * 1 -> left
-     * 2 -> Right
-     * 3 -> Up
-     * 4 -> Down
+     * Direction 1 -> left 2 -> Right 3 -> Up 4 -> Down
      *
-     * @param direction Direction to scroll
+     * @param direction  Direction to scroll
      * @param amountInDP Density Independent Pixels
      *
      */
@@ -166,55 +160,50 @@ public class DetoxAction {
     /**
      * Swipes the View in a direction.
      *
-     * Direction
-     * 1 -> left
-     * 2 -> Right
-     * 3 -> Up
-     * 4 -> Down
+     * Direction 1 -> left 2 -> Right 3 -> Up 4 -> Down
      *
      * @param direction Direction to scroll
-     * @param fast true if fast, false if slow
+     * @param fast      true if fast, false if slow
      *
      */
     public static ViewAction swipeInDirection(final int direction, boolean fast) {
         if (fast) {
             switch (direction) {
-                case 1:
-                    return swipeLeft();
-                case 2:
-                    return swipeRight();
-                case 3:
-                    return swipeUp();
-                case 4:
-                    return swipeDown();
-                default:
-                    throw new RuntimeException("Unsupported swipe direction: " + direction);
+            case 1:
+                return swipeLeft();
+            case 2:
+                return swipeRight();
+            case 3:
+                return swipeUp();
+            case 4:
+                return swipeDown();
+            default:
+                throw new RuntimeException("Unsupported swipe direction: " + direction);
             }
         }
         switch (direction) {
-            case 1:
-                return actionWithAssertions(new GeneralSwipeAction(Swipe.SLOW,
-                        translate(GeneralLocation.CENTER_RIGHT, -EDGE_FUZZ_FACTOR, 0),
-                        GeneralLocation.CENTER_LEFT, Press.FINGER));
-            case 2:
-                return actionWithAssertions(new GeneralSwipeAction(Swipe.SLOW,
-                        translate(GeneralLocation.CENTER_LEFT, EDGE_FUZZ_FACTOR, 0),
-                        GeneralLocation.CENTER_RIGHT, Press.FINGER));
-            case 3:
-                return actionWithAssertions(new GeneralSwipeAction(Swipe.SLOW,
-                        translate(GeneralLocation.BOTTOM_CENTER, 0, -EDGE_FUZZ_FACTOR),
-                        GeneralLocation.TOP_CENTER, Press.FINGER));
-            case 4:
-                return actionWithAssertions(new GeneralSwipeAction(Swipe.SLOW,
-                        translate(GeneralLocation.TOP_CENTER, 0, EDGE_FUZZ_FACTOR),
-                        GeneralLocation.BOTTOM_CENTER, Press.FINGER));
-            default:
-                throw new RuntimeException("Unsupported swipe direction: " + direction);
+        case 1:
+            return actionWithAssertions(
+                    new GeneralSwipeAction(Swipe.SLOW, translate(GeneralLocation.CENTER_RIGHT, -EDGE_FUZZ_FACTOR, 0),
+                            GeneralLocation.CENTER_LEFT, Press.FINGER));
+        case 2:
+            return actionWithAssertions(
+                    new GeneralSwipeAction(Swipe.SLOW, translate(GeneralLocation.CENTER_LEFT, EDGE_FUZZ_FACTOR, 0),
+                            GeneralLocation.CENTER_RIGHT, Press.FINGER));
+        case 3:
+            return actionWithAssertions(
+                    new GeneralSwipeAction(Swipe.SLOW, translate(GeneralLocation.BOTTOM_CENTER, 0, -EDGE_FUZZ_FACTOR),
+                            GeneralLocation.TOP_CENTER, Press.FINGER));
+        case 4:
+            return actionWithAssertions(
+                    new GeneralSwipeAction(Swipe.SLOW, translate(GeneralLocation.TOP_CENTER, 0, EDGE_FUZZ_FACTOR),
+                            GeneralLocation.BOTTOM_CENTER, Press.FINGER));
+        default:
+            throw new RuntimeException("Unsupported swipe direction: " + direction);
         }
     }
 
-    private static CoordinatesProvider translate(final CoordinatesProvider coords,
-                                                 final float dx, final float dy) {
+    private static CoordinatesProvider translate(final CoordinatesProvider coords, final float dx, final float dy) {
         return new CoordinatesProvider() {
             @Override
             public float[] calculateCoordinates(View view) {
@@ -230,4 +219,11 @@ public class DetoxAction {
         return allOf(m1, m2);
     }
 
+    public static boolean overloadable(boolean one) {
+        return true;
+    }
+
+    public static boolean overloadable(boolean one, int two) {
+        return false;
+    }
 }

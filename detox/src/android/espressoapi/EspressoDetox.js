@@ -7,6 +7,20 @@
 
 
 class EspressoDetox {
+  static perform(interaction, action) {
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.EspressoDetox"
+      },
+      method: "perform",
+      args: [{
+        type: "Invocation",
+        value: interaction
+      }, action]
+    };
+  }
+
   static changeOrientation(orientation) {
     if (typeof orientation !== "number") throw new Error("orientation should be a number, but got " + (orientation + (" (" + (typeof orientation + ")"))));
     return {
@@ -49,6 +63,33 @@ class EspressoDetox {
       },
       method: "setURLBlacklist",
       args: [urls]
+    };
+  }
+
+  static getBusyEspressoResources() {
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.EspressoDetox"
+      },
+      method: "getBusyEspressoResources",
+      args: []
+    };
+  }
+
+  static run(element) {
+    return {
+      target: element,
+      method: "run",
+      args: []
+    };
+  }
+
+  static waitForComplete(element) {
+    return {
+      target: element,
+      method: "waitForComplete",
+      args: []
     };
   }
 
