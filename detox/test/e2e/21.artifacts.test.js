@@ -1,5 +1,5 @@
 describe('Artifacts', () => {
-  beforeAll(async () => {
+  before(async () => {
     await device.takeScreenshot('artifacts-beforeAll');
   });
 
