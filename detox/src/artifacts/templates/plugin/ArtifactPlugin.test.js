@@ -75,7 +75,10 @@ describe(ArtifactPlugin, () => {
     it('should update context on .onBeforeLaunchApp', async () => {
       await expect(plugin.onBeforeLaunchApp({
         deviceId: 'testDeviceId',
-        bundleId: 'testBundleId'
+        bundleId: 'testBundleId',
+        launchArgs: {
+          detoxSessionId: 'test',
+        },
       }));
 
       expect(plugin.context).toMatchSnapshot();
@@ -85,7 +88,19 @@ describe(ArtifactPlugin, () => {
       await expect(plugin.onLaunchApp({
         deviceId: 'testDeviceId',
         bundleId: 'testBundleId',
+        launchArgs: {
+          detoxSessionId: 'test',
+        },
         pid: 2018
+      }));
+
+      expect(plugin.context).toMatchSnapshot();
+    });
+
+    it('should update context on .onBeforeTerminateApp', async () => {
+      await expect(plugin.onBeforeTerminateApp({
+        deviceId: 'testDeviceId',
+        bundleId: 'testBundleId',
       }));
 
       expect(plugin.context).toMatchSnapshot();
@@ -100,6 +115,14 @@ describe(ArtifactPlugin, () => {
       expect(plugin.context).toMatchSnapshot();
     });
 
+    it('should have .onBeforeShutdownDevice', async () => {
+      await expect(plugin.onBeforeShutdownDevice({
+        deviceId: 'testDeviceId'
+      }));
+
+      expect(plugin.context).toMatchSnapshot();
+    });
+
     it('should have .onShutdownDevice', async () => {
       await expect(plugin.onShutdownDevice({
         deviceId: 'testDeviceId'
@@ -108,8 +131,9 @@ describe(ArtifactPlugin, () => {
       expect(plugin.context).toMatchSnapshot();
     });
 
-    it('should have .onUserAction', async () =>
-      await expect(plugin.onUserAction()).resolves.toBe(void 0));
+    it('should have .onUserAction', async () => {
+      await expect(plugin.onUserAction()).resolves.toBe(void 0);
+    });
 
     it('should have .onBeforeAll, which resets context.testSummary if called', async () => {
       plugin.context.testSummary = {};
@@ -146,14 +170,16 @@ describe(ArtifactPlugin, () => {
         await plugin.onTerminate();
 
         expect(plugin.onBootDevice).toBe(plugin.onTerminate);
-        expect(plugin.onUserAction).toBe(plugin.onTerminate);
+        expect(plugin.onBeforeShutdownDevice).toBe(plugin.onTerminate);
         expect(plugin.onShutdownDevice).toBe(plugin.onTerminate);
         expect(plugin.onBeforeLaunchApp).toBe(plugin.onTerminate);
         expect(plugin.onLaunchApp).toBe(plugin.onTerminate);
+        expect(plugin.onBeforeTerminateApp).toBe(plugin.onTerminate);
         expect(plugin.onBeforeAll).toBe(plugin.onTerminate);
         expect(plugin.onBeforeEach).toBe(plugin.onTerminate);
         expect(plugin.onAfterEach).toBe(plugin.onTerminate);
         expect(plugin.onAfterAll).toBe(plugin.onTerminate);
+        expect(plugin.onUserAction).toBe(plugin.onTerminate);
       });
 
       it('should not work after the first call', async () => {

@@ -110,6 +110,7 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async shutdown(deviceId) {
+    await this.emitter.emit('beforeShutdownDevice', { deviceId });
     const port = _.split(deviceId, '-')[1];
     const telnet = new EmulatorTelnet();
     await telnet.connect(port);

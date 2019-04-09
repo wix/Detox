@@ -9,6 +9,7 @@
     }
   },
   "rules": {
+    "no-debugger": "error",
     "no-mixed-spaces-and-tabs": "error",
     "node/no-unpublished-require": "warn"
   }
