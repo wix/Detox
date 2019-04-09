@@ -11,7 +11,9 @@ class DeviceDriverBase {
     this.emitter = new AsyncEmitter({
       events: [
         'bootDevice',
+        'beforeShutdownDevice',
         'shutdownDevice',
+        'beforeTerminateApp',
         'beforeLaunchApp',
         'launchApp',
       ],

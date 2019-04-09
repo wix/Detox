@@ -22,6 +22,8 @@ class StartupAndTestRecorderPlugin extends WholeTestRecorderPlugin {
   }
 
   async onBeforeAll() {
+    await super.onBeforeAll();
+
     if (this.enabled) {
       const recording = this.createStartupRecording();
       await recording.start();

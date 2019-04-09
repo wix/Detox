@@ -8,6 +8,13 @@ Array [
 ]
 `;
 
+exports[`ArtifactPlugin lifecycle hooks should have .onBeforeShutdownDevice 1`] = `
+Object {
+  "deviceId": "testDeviceId",
+  "shouldNotBeDeletedFromContext": "extraProperty",
+}
+`;
+
 exports[`ArtifactPlugin lifecycle hooks should have .onBootDevice 1`] = `
 Object {
   "bundleId": "",
@@ -21,6 +28,9 @@ exports[`ArtifactPlugin lifecycle hooks should have .onLaunchApp 1`] = `
 Object {
   "bundleId": "testBundleId",
   "deviceId": "testDeviceId",
+  "launchArgs": Object {
+    "detoxSessionId": "test",
+  },
   "pid": 2018,
   "shouldNotBeDeletedFromContext": "extraProperty",
 }
@@ -39,7 +49,18 @@ exports[`ArtifactPlugin lifecycle hooks should update context on .onBeforeLaunch
 Object {
   "bundleId": "testBundleId",
   "deviceId": "testDeviceId",
+  "launchArgs": Object {
+    "detoxSessionId": "test",
+  },
   "pid": NaN,
+  "shouldNotBeDeletedFromContext": "extraProperty",
+}
+`;
+
+exports[`ArtifactPlugin lifecycle hooks should update context on .onBeforeTerminateApp 1`] = `
+Object {
+  "bundleId": "testBundleId",
+  "deviceId": "testDeviceId",
   "shouldNotBeDeletedFromContext": "extraProperty",
 }
 `;

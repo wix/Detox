@@ -88,9 +88,11 @@ describe('ArtifactsManager', () => {
           name: 'testPlugin',
           disable: jest.fn(),
           onBootDevice: jest.fn(),
+          onBeforeShutdownDevice: jest.fn(),
           onShutdownDevice: jest.fn(),
           onBeforeLaunchApp: jest.fn(),
           onLaunchApp: jest.fn(),
+          onBeforeTerminateApp: jest.fn(),
           onBeforeAll: jest.fn(),
           onBeforeEach: jest.fn(),
           onAfterEach: jest.fn(),
@@ -249,6 +251,10 @@ describe('ArtifactsManager', () => {
           deviceId: 'testDeviceId',
         }));
 
+        itShouldCatchErrorsOnPhase('onBeforeShutdownDevice', () => ({
+          deviceId: 'testDeviceId'
+        }));
+
         itShouldCatchErrorsOnPhase('onShutdownDevice', () => ({
           deviceId: 'testDeviceId'
         }));
@@ -262,6 +268,11 @@ describe('ArtifactsManager', () => {
           bundleId: 'testBundleId',
           deviceId: 'testDeviceId',
           pid: 2018,
+        }));
+
+        itShouldCatchErrorsOnPhase('onBeforeTerminateApp', () => ({
+          bundleId: 'testBundleId',
+          deviceId: 'testDeviceId',
         }));
       });
 
@@ -319,6 +330,31 @@ describe('ArtifactsManager', () => {
           expect(testPlugin.onBootDevice).not.toHaveBeenCalled();
           await artifactsManager.onBootDevice(bootInfo);
           expect(testPlugin.onBootDevice).toHaveBeenCalledWith(bootInfo);
+        });
+      });
+
+      describe('onBeforeTerminateApp', () => {
+        it('should call onBeforeTerminateApp in plugins', async () => {
+          const terminateInfo = {
+            deviceId: 'testDeviceId',
+            bundleId: 'testBundleId',
+          };
+
+          expect(testPlugin.onBeforeTerminateApp).not.toHaveBeenCalled();
+          await artifactsManager.onBeforeTerminateApp(terminateInfo);
+          expect(testPlugin.onBeforeTerminateApp).toHaveBeenCalledWith(terminateInfo);
+        });
+      });
+
+      describe('onBeforeShutdownDevice', () => {
+        it('should call onBeforeShutdownDevice in plugins', async () => {
+          const shutdownInfo = {
+            deviceId: 'testDeviceId',
+          };
+
+          expect(testPlugin.onBeforeShutdownDevice).not.toHaveBeenCalled();
+          await artifactsManager.onBeforeShutdownDevice(shutdownInfo);
+          expect(testPlugin.onBeforeShutdownDevice).toHaveBeenCalledWith(shutdownInfo);
         });
       });
 

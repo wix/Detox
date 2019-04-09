@@ -28,11 +28,7 @@ class SimulatorRecordVideoPlugin extends VideoArtifactPlugin {
         }
       },
       save: async (artifactPath) => {
-        if (await fs.exists(temporaryFilePath)) {
-          await fs.move(temporaryFilePath, artifactPath);
-        } else {
-          log.error({ event: 'MOVE_FILE_ERROR' }, `could not find temporary file at: "${temporaryFilePath}"`);
-        }
+        await Artifact.moveTemporaryFile(log, temporaryFilePath, artifactPath);
       },
       discard: async () => {
         await fs.remove(temporaryFilePath);
