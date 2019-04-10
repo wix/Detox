@@ -22,9 +22,6 @@ class SimulatorLogRecording extends Artifact {
     this._logStream = null;
     this._stdoutTail = null;
     this._stderrTail = null;
-
-    this._beforeUnwatch = null;
-    this._afterUnwatch = null;
   }
 
   async doStart({ readFromBeginning } = {}) {
@@ -33,16 +30,12 @@ class SimulatorLogRecording extends Artifact {
     }
 
     this._logStream = this._logStream || this._openWriteableStream();
-
-    await this._afterUnwatch;
     this._stdoutTail = await this._createTail(this._stdoutPath, 'stdout');
     this._stderrTail = await this._createTail(this._stderrPath, 'stderr');
-    this._beforeUnwatch = sleep(200); // HACK: experimental value that ensures saving all lines from tail
   }
 
   async doStop() {
     await this._unwatch();
-    this._afterUnwatch = sleep(100); // HACK: works around the Tail bug - it emits lines even after unwatch
   }
 
   async doSave(artifactPath) {
@@ -61,7 +54,6 @@ class SimulatorLogRecording extends Artifact {
   }
 
   async _unwatch() {
-    await this._beforeUnwatch;
     await Promise.all([this._unwatchTail('stdout'), this._unwatchTail('stderr')]);
   }
 
@@ -72,6 +64,7 @@ class SimulatorLogRecording extends Artifact {
 
     if (tail) {
       log.trace({ event: 'TAIL_UNWATCH' }, `unwatching ${stdxxx} log: ${logPath}`);
+      tail.watch = _.noop; // HACK: suppress race condition: https://github.com/lucagrulla/node-tail/blob/3791355a0ddcc5de72e1ad64ea2f0d6e78e2c9c5/src/tail.coffee#L102
       tail.unwatch();
       await new Promise((resolve) => setImmediate(resolve));
     }
@@ -84,7 +77,6 @@ class SimulatorLogRecording extends Artifact {
 
     const stream = this._logStream;
     this._logStream = null;
-    await this._afterUnwatch;
     await new Promise(resolve => stream.end(resolve));
   }
 
@@ -105,10 +97,7 @@ class SimulatorLogRecording extends Artifact {
 
   _appendLine(prefix, line) {
     if (this._logStream) {
-      this._logStream.write(prefix);
-      this._logStream.write(': ');
-      this._logStream.write(line);
-      this._logStream.write('\n');
+      this._logStream.write(`${prefix}: ${line}\n`);
     } else {
       log.warn({ event: 'LOG_WRITE_ERROR' }, 'failed to add line to log:\n' + line);
     }
