@@ -14,8 +14,13 @@ class SimulatorLogPlugin extends LogArtifactPlugin {
     await this._tryStopCurrentRecording();
   }
 
-  async onBeforeLaunchApp(event) {
-    await super.onBeforeLaunchApp(event);
+  async onBeforeUninstallApp(event) {
+    await super.onBeforeUninstallApp(event);
+    await this._tryStopCurrentRecording();
+  }
+
+  async onBeforeTerminateApp(event) {
+    await super.onBeforeTerminateApp(event);
     await this._tryStopCurrentRecording();
   }
 
