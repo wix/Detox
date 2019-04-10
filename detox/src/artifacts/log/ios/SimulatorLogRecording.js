@@ -100,12 +100,12 @@ class SimulatorLogRecording extends Artifact {
       fromBeginning: this._readFromBeginning,
       logger: {
         info: _.noop,
-        error: (...args) => log.error({ event: 'TAIL_ERROR' }, ...args),
+        error: (...args) => log.warn({ event: 'TAIL_ERROR' }, ...args),
       },
     }).on('line', (line) => {
       this._appendLine(prefix, line);
     }).on('error', (err) => {
-      log.error({ event: 'TAIL_UNHANDLED_ERROR', err });
+      log.warn({ event: 'TAIL_UNHANDLED_ERROR', err });
     });
 
     return tail;

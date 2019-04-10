@@ -233,7 +233,7 @@ describe('ArtifactsManager', () => {
             });
 
             await artifactsManager[hookName](argFactory());
-            expect(proxy.logger.error.mock.calls).toMatchSnapshot();
+            expect(proxy.logger.warn.mock.calls).toMatchSnapshot();
           });
         }
 
