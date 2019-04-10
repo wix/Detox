@@ -1,61 +1,67 @@
+import moment from 'moment';
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, DatePickerIOS } from 'react-native';
 
 export default class DatePickerScreen extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       chosenDate: new Date()
     };
-    this._setDate = this._setDate.bind(this);
+
+    this.setDate = this.setDate.bind(this);
   }
 
-  _setDate(newDate) {
+  setDate(newDate) {
     this.setState({
       chosenDate: newDate
     });
   }
 
-  getTime() {
-    minutes = this.state.chosenDate.getMinutes();
-    hour = this.state.chosenDate.getHours();
-
-    if (hour > 12) {
-      hour = hour - 12;
-    }
-    return `${hour}:${minutes}`;
+  getTimeLocal() {
+    return moment(this.state.chosenDate).format("hh:mm");
   }
 
-  getDateTime() {
-    year = this.state.chosenDate.getFullYear();
-    month = this.state.chosenDate.getMonth() + 1;
-    day = this.state.chosenDate.getDate();
+  getTimeUTC() {
+    return moment(this.state.chosenDate).utc().format("h:mm A");
+  }
 
-    return `${month}-${day}-${year} ${this.getTime()}`;
+  getDateUTC() {
+    return moment(this.state.chosenDate).utc().format("MMM Do, YYYY");
   }
 
   render() {
     return (
-      <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
-        <Text style={styles.dateText} testID='timeLabel'>
-          {"choosenTime is " + this.getTime()}
+      <View style={styles.container}>
+        <Text style={styles.dateText} testID="utcDateLabel">
+          {"Date (UTC): " + this.getDateUTC()}
         </Text>
-        <Text style={styles.dateText} testID="dateTimeLabel">
-          {"choosenDateTime is " + this.getDateTime()}
+        <Text style={styles.dateText} testID='utcTimeLabel'>
+          {"Time (UTC): " + this.getTimeUTC()}
         </Text>
-        <DatePickerIOS style={styles.datePicker} date={this.state.chosenDate} onDateChange={this._setDate} />
+        <Text style={styles.dateText} testID='localTimeLabel'>
+          {"Time: " + this.getTimeLocal()}
+        </Text>
+        <DatePickerIOS style={styles.datePicker} date={this.state.chosenDate} onDateChange={this.setDate} />
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-    datePicker: {
-      width:'100%',
-      height:200,
-      backgroundColor:'green'
-    },
-    dateText: {
-      textAlign:'center'
-    }
+  container: {
+    flex: 1,
+    paddingTop: 20,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  datePicker: {
+    width:'100%',
+    height:200,
+    backgroundColor:'green'
+  },
+  dateText: {
+    textAlign:'center'
+  }
 });
