@@ -14,6 +14,7 @@ class DeviceDriverBase {
         'beforeShutdownDevice',
         'shutdownDevice',
         'beforeTerminateApp',
+        'beforeUninstallApp',
         'beforeLaunchApp',
         'launchApp',
       ],
