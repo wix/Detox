@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const fs = require('fs-extra');
 const path = require('path');
 const bunyan = require('bunyan');
@@ -62,7 +61,7 @@ function init() {
   const levelFromArg = argparse.getArgValue('loglevel');
   const level = adaptLogLevelName(levelFromArg);
   const logBaseFilename = path.join(argparse.getArgValue('artifacts-location') || '', `detox_pid_${process.pid}`);
-  const shouldRecordLogs = ['failing', 'all'].indexOf(argparse.getArgValue('record-logs')) >= 0;
+  const shouldRecordLogs = typeof DETOX_CLI === 'undefined' && ['failing', 'all'].indexOf(argparse.getArgValue('record-logs')) >= 0;
 
   const bunyanStreams = [createPlainBunyanStream({ level })];
   if (shouldRecordLogs) {

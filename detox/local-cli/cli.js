@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+global.DETOX_CLI = true;
 const yargs = require('yargs');
 const logger = require('../src/utils/logger').child({ __filename });
 
