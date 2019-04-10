@@ -33,7 +33,8 @@
     "jest": "23.x.x",
     "mockdate": "^2.0.1",
     "prettier": "1.7.0",
-    "react-native": "0.56.0"
+    "react-native": "0.56.0",
+    "wtfnode": "^0.8.0"
   },
   "dependencies": {
     "bunyan": "^1.8.12",
