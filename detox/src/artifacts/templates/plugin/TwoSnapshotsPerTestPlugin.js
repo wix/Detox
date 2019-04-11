@@ -6,33 +6,33 @@ const ArtifactPlugin = require('./ArtifactPlugin');
 class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
   constructor({ api }) {
     super({ api });
-    this._snapshots = [null, null];
+    this.snapshots = {};
   }
 
   async onBeforeEach(testSummary) {
     await super.onBeforeEach(testSummary);
-    await this._takeAutomaticSnapshot(0);
+    await this._takeAutomaticSnapshot('beforeEach');
   }
 
   async onAfterEach(testSummary) {
     await super.onAfterEach(testSummary);
 
     if (this.shouldKeepArtifactOfTest(testSummary)) {
-      await this._takeAutomaticSnapshot(1);
-      this._startSavingSnapshot(testSummary, 0);
-      this._startSavingSnapshot(testSummary, 1);
+      await this._takeAutomaticSnapshot('afterEach');
+      this.startSavingSnapshot(testSummary, 'beforeEach');
+      this.startSavingSnapshot(testSummary, 'afterEach');
     } else {
-      this._startDiscardingSnapshot(0);
+      this.startDiscardingSnapshot('beforeEach');
     }
 
-    this._clearSnapshotReferences();
+    this._clearAutomaticSnapshotReferences();
   }
 
   /***
    * @protected
    * @abstract
    */
-  async preparePathForSnapshot(testSummary, index) {}
+  async preparePathForSnapshot(testSummary, snapshotName) {}
 
 
   /***
@@ -44,9 +44,9 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
    */
   createTestArtifact() {}
 
-  async _takeAutomaticSnapshot(index) {
+  async _takeAutomaticSnapshot(name) {
     if (this.enabled) {
-      this._snapshots[index] = await this.takeSnapshot();
+      this.snapshots[name] = await this.takeSnapshot();
     }
   }
 
@@ -62,21 +62,21 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
     return snapshot;
   }
 
-  _startSavingSnapshot(testSummary, index) {
-    const snapshot = this._snapshots[index];
+  startSavingSnapshot(testSummary, name) {
+    const snapshot = this.snapshots[name];
     if (!snapshot) {
       return;
     }
 
     this.api.requestIdleCallback(async () => {
-      const snapshotArtifactPath = await this.preparePathForSnapshot(testSummary, index);
+      const snapshotArtifactPath = await this.preparePathForSnapshot(testSummary, name);
       await snapshot.save(snapshotArtifactPath);
       this.api.untrackArtifact(snapshot);
     });
   }
 
-  _startDiscardingSnapshot(index) {
-    const snapshot = this._snapshots[index];
+  startDiscardingSnapshot(name) {
+    const snapshot = this.snapshots[name];
     if (!snapshot) {
       return;
     }
@@ -87,9 +87,9 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
     });
   }
 
-  _clearSnapshotReferences() {
-    this._snapshots[0] = null;
-    this._snapshots[1] = null;
+  _clearAutomaticSnapshotReferences() {
+    delete this.snapshots.beforeEach;
+    delete this.snapshots.afterEach;
   }
 }
 

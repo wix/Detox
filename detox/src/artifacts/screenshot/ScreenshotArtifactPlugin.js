@@ -14,23 +14,30 @@ class ScreenshotArtifactPlugin extends TwoSnapshotsPerTestPlugin {
     this.keepOnlyFailedTestsArtifacts = takeScreenshots === 'failing';
   }
 
-  async preparePathForSnapshot(testSummary, index) {
-    const pngName = index === 0 ? 'beforeEach.png' : 'afterEach.png';
-    return this.api.preparePathForArtifact(pngName, testSummary);
+  async onAfterEach(testSummary) {
+    await super.onAfterEach(testSummary);
+
+    for (const name of Object.keys(this.snapshots)) {
+      this.startSavingSnapshot(testSummary, name);
+      delete this.snapshots[name];
+    }
+  }
+
+  async preparePathForSnapshot(testSummary, name) {
+    return this.api.preparePathForArtifact(`${name}.png`, testSummary);
   }
 
   async onUserAction({ type, options }) {
-    if (type === 'takeScreenshot') {
-      return this._takeScreenshot(options);
+    switch (type) {
+      case 'takeScreenshot':
+        return this._takeScreenshot(options);
     }
   }
 
   async _takeScreenshot({ name }) {
     const screenshot = await this.takeSnapshot();
-    const artifactPathPromise = this.api.preparePathForArtifact(`${name}.png`, this.context.testSummary);
-    this.api.requestIdleCallback(async () => screenshot.save(await artifactPathPromise), '_takeScreenshot');
-
-    return artifactPathPromise;
+    this.snapshots[name] = screenshot;
+    this.api.trackArtifact(screenshot);
   }
 }
 
