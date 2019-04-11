@@ -14,6 +14,7 @@
     "verify-artifacts:android": "jest ./scripts/verify_artifacts_are_not_missing.android.test.js --testEnvironment node"
   },
   "dependencies": {
+    "moment": "^2.24.0",
     "react": "16.4.1",
     "react-native": "0.56.0"
   },

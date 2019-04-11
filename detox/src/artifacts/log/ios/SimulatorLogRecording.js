@@ -64,7 +64,7 @@ class SimulatorLogRecording extends Artifact {
 
     if (tail) {
       log.trace({ event: 'TAIL_UNWATCH' }, `unwatching ${stdxxx} log: ${logPath}`);
-      tail.watch = _.noop;
+      tail.watch = _.noop; // HACK: suppress race condition: https://github.com/lucagrulla/node-tail/blob/3791355a0ddcc5de72e1ad64ea2f0d6e78e2c9c5/src/tail.coffee#L102
       tail.unwatch();
       await new Promise((resolve) => setImmediate(resolve));
     }
@@ -88,13 +88,9 @@ class SimulatorLogRecording extends Artifact {
 
     log.trace({ event: 'TAIL_CREATE' }, `starting to watch ${prefix} log: ${file}`);
 
-    const tail = new Tail(file, {
-      fromBeginning: this._readFromBeginning,
-    }).on('line', (line) => {
-      this._appendLine(prefix, line);
-    }).on('error', (err) => {
-      log.warn({ event: 'TAIL_ERROR', err });
-    });
+    const tail = new Tail(file, { fromBeginning: this._readFromBeginning })
+      .on('line', (line) => { this._appendLine(prefix, line); })
+      .on('error', (err) => { log.warn({ event: 'TAIL_ERROR' }, err); });
 
     return tail;
   }
