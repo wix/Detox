@@ -98,7 +98,7 @@ class Device {
 
   async takeScreenshot(name) {
     if (!name) {
-      throw new Error('Cannot take screenshot with an empty name.');
+      throw new Error('Cannot take a screenshot with an empty name.');
     }
 
     return this.deviceDriver.takeScreenshot(name);
