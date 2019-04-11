@@ -65,6 +65,14 @@ Object {
 }
 `;
 
+exports[`ArtifactPlugin lifecycle hooks should update context on .onBeforeUninstallApp 1`] = `
+Object {
+  "bundleId": "testBundleId",
+  "deviceId": "testDeviceId",
+  "shouldNotBeDeletedFromContext": "extraProperty",
+}
+`;
+
 exports[`ArtifactPlugin when enabled if it is disabled with a reason should log warning to log with that reason 1`] = `
 Array [
   Array [

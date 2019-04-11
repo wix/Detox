@@ -97,6 +97,15 @@ describe(ArtifactPlugin, () => {
       expect(plugin.context).toMatchSnapshot();
     });
 
+    it('should update context on .onBeforeUninstallApp', async () => {
+      await expect(plugin.onBeforeUninstallApp({
+        deviceId: 'testDeviceId',
+        bundleId: 'testBundleId',
+      }));
+
+      expect(plugin.context).toMatchSnapshot();
+    });
+
     it('should update context on .onBeforeTerminateApp', async () => {
       await expect(plugin.onBeforeTerminateApp({
         deviceId: 'testDeviceId',
