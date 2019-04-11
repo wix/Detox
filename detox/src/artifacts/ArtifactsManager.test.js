@@ -90,6 +90,7 @@ describe('ArtifactsManager', () => {
           onBootDevice: jest.fn(),
           onBeforeShutdownDevice: jest.fn(),
           onShutdownDevice: jest.fn(),
+          onBeforeUninstallApp: jest.fn(),
           onBeforeTerminateApp: jest.fn(),
           onBeforeLaunchApp: jest.fn(),
           onLaunchApp: jest.fn(),
@@ -233,7 +234,7 @@ describe('ArtifactsManager', () => {
             });
 
             await artifactsManager[hookName](argFactory());
-            expect(proxy.logger.error.mock.calls).toMatchSnapshot();
+            expect(proxy.logger.warn.mock.calls).toMatchSnapshot();
           });
         }
 
@@ -279,6 +280,11 @@ describe('ArtifactsManager', () => {
         }));
 
         itShouldCatchErrorsOnPhase('onBeforeTerminateApp', () => ({
+          bundleId: 'testBundleId',
+          deviceId: 'testDeviceId',
+        }));
+
+        itShouldCatchErrorsOnPhase('onBeforeUninstallApp', () => ({
           bundleId: 'testBundleId',
           deviceId: 'testDeviceId',
         }));
@@ -351,6 +357,19 @@ describe('ArtifactsManager', () => {
           expect(testPlugin.onBeforeTerminateApp).not.toHaveBeenCalled();
           await artifactsManager.onBeforeTerminateApp(terminateInfo);
           expect(testPlugin.onBeforeTerminateApp).toHaveBeenCalledWith(terminateInfo);
+        });
+      });
+
+      describe('onBeforeUninstallApp', () => {
+        it('should call onBeforeUninstallApp in plugins', async () => {
+          const uninstallInfo = {
+            deviceId: 'testDeviceId',
+            bundleId: 'testBundleId',
+          };
+
+          expect(testPlugin.onBeforeUninstallApp).not.toHaveBeenCalled();
+          await artifactsManager.onBeforeUninstallApp(uninstallInfo);
+          expect(testPlugin.onBeforeUninstallApp).toHaveBeenCalledWith(uninstallInfo);
         });
       });
 

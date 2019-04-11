@@ -81,6 +81,7 @@ class ArtifactsManager {
     deviceEmitter.on('shutdownDevice', this.onShutdownDevice.bind(this));
     deviceEmitter.on('beforeLaunchApp', this.onBeforeLaunchApp.bind(this));
     deviceEmitter.on('launchApp', this.onLaunchApp.bind(this));
+    deviceEmitter.on('beforeUninstallApp', this.onBeforeUninstallApp.bind(this));
     deviceEmitter.on('beforeTerminateApp', this.onBeforeTerminateApp.bind(this));
     deviceEmitter.on('userAction', this.onUserAction.bind(this));
   }
@@ -91,6 +92,10 @@ class ArtifactsManager {
 
   async onBeforeTerminateApp(appInfo) {
     await this._callPlugins('onBeforeTerminateApp', appInfo);
+  }
+
+  async onBeforeUninstallApp(appInfo) {
+    await this._callPlugins('onBeforeUninstallApp', appInfo);
   }
 
   async onBeforeShutdownDevice(deviceInfo) {
@@ -170,14 +175,14 @@ class ArtifactsManager {
 
   _unhandledPluginExceptionHandler(err, { plugin, methodName, args }) {
     const logObject = {
-      event: 'PLUGIN_ERROR',
+      event: 'SUPPRESS_PLUGIN_ERROR',
       plugin: plugin.name,
       err,
       methodName,
     };
 
     const callSignature = this._composeCallSignature(plugin.name, methodName, args);
-    log.error(logObject, `Caught exception inside function call: ${callSignature}`);
+    log.warn(logObject, `Suppressed error inside function call: ${callSignature}`);
   }
 
   _idleCallbackErrorHandle(err, caller) {

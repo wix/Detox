@@ -98,12 +98,29 @@ class ArtifactPlugin {
    *
    * @protected
    * @async
-   * @param {Object} event - Device shutdown event object
+   * @param {Object} event - App termination event object
    * @param {string} event.deviceId - Current deviceId
    * @param {string} event.bundleId - Current bundleId
    * @return {Promise<void>} - when done
    */
   async onBeforeTerminateApp(event) {
+    Object.assign(this.context, {
+      deviceId: event.deviceId,
+      bundleId: event.bundleId,
+    });
+  }
+
+  /**
+   * Hook that is supposed to be called before app is uninstalled
+   *
+   * @protected
+   * @async
+   * @param {Object} event - App uninstall event object
+   * @param {string} event.deviceId - Current deviceId
+   * @param {string} event.bundleId - Current bundleId
+   * @return {Promise<void>} - when done
+   */
+  async onBeforeUninstallApp(event) {
     Object.assign(this.context, {
       deviceId: event.deviceId,
       bundleId: event.bundleId,
