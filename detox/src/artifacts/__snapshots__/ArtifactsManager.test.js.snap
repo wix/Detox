@@ -100,6 +100,20 @@ Array [
 ]
 `;
 
+exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onBeforeUninstallApp errors 1`] = `
+Array [
+  Array [
+    Object {
+      "err": [Error: test onBeforeUninstallApp error],
+      "event": "SUPPRESS_PLUGIN_ERROR",
+      "methodName": "onBeforeUninstallApp",
+      "plugin": "testPlugin",
+    },
+    "Suppressed error inside function call: testPlugin.onBeforeUninstallApp({ bundleId: 'testBundleId', deviceId: 'testDeviceId' })",
+  ],
+]
+`;
+
 exports[`ArtifactsManager .artifactsApi hooks error handling should catch .onBootDevice errors 1`] = `
 Array [
   Array [

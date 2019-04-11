@@ -81,6 +81,7 @@ class SimulatorDriver extends IosDriver {
   }
 
   async uninstallApp(deviceId, bundleId) {
+    await this.emitter.emit('beforeUninstallApp', { deviceId, bundleId });
     await this._applesimutils.uninstall(deviceId, bundleId);
   }
 

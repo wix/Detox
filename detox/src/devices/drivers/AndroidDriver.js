@@ -76,6 +76,8 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async uninstallApp(deviceId, bundleId) {
+    await this.emitter.emit('beforeUninstallApp', { deviceId, bundleId });
+
     if (await this.adb.isPackageInstalled(deviceId, bundleId)) {
       await this.adb.uninstall(deviceId, bundleId);
     }
