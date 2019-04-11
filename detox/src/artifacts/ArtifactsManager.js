@@ -165,14 +165,14 @@ class ArtifactsManager {
 
   _unhandledPluginExceptionHandler(err, { plugin, methodName, args }) {
     const logObject = {
-      event: 'PLUGIN_ERROR',
+      event: 'SUPPRESS_PLUGIN_ERROR',
       plugin: plugin.name,
       err,
       methodName,
     };
 
     const callSignature = this._composeCallSignature(plugin.name, methodName, args);
-    log.error(logObject, `Caught exception inside function call: ${callSignature}`);
+    log.warn(logObject, `Suppressed error inside function call: ${callSignature}`);
   }
 
   _idleCallbackErrorHandle(err, caller) {
