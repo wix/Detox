@@ -175,11 +175,11 @@ Array [
   Array [
     Object {
       "err": [Error: test onUserAction error],
-      "event": "PLUGIN_ERROR",
+      "event": "SUPPRESS_PLUGIN_ERROR",
       "methodName": "onUserAction",
       "plugin": "testPlugin",
     },
-    "Caught exception inside function call: testPlugin.onUserAction({ type: 'takeScreenshot', options: { name: 'open app' } })",
+    "Suppressed error inside function call: testPlugin.onUserAction({ type: 'takeScreenshot', options: { name: 'open app' } })",
   ],
 ]
 `;
