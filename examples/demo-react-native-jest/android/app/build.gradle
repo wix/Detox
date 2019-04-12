@@ -1,12 +1,5 @@
 apply plugin: "com.android.application"
 
-import com.android.build.OutputFile
-
-
-project.ext.react = [
-    entryFile: "index.js"
-]
-
 apply from: "../../node_modules/react-native/react.gradle"
 
 android {
@@ -22,19 +15,10 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
-
         testBuildType System.getProperty('testBuildType', 'debug')
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        missingDimensionStrategy "minReactNative", "minReactNative46"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    splits {
-        abi {
-            reset()
-            enable false
-            universalApk false  // If true, also generate a universal APK
-            include "armeabi-v7a", "x86"
-        }
-    }
+
     signingConfigs {
         release {
             storeFile file("keystore.jks")
@@ -43,26 +27,26 @@ android {
             keyPassword "12345678"
         }
     }
+
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', "${project(':detox').projectDir}/proguard-rules-app.pro"
+
             signingConfig signingConfigs.release
         }
     }
-    // applicationVariants are e.g. debug, release
-    applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            // For each separate APK per architecture, set a unique version code as described here:
-            // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-            def versionCodes = ["armeabi-v7a":1, "x86":2]
-            def abi = output.getFilter(OutputFile.ABI)
-            if (abi != null) {  // null for the universal-debug, universal-release variants
-                output.versionCodeOverride =
-                        versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
-            }
+
+    productFlavors {
+        flavorDimensions "compileRNFromSource"
+        fromSource {
+            dimension "compileRNFromSource"
+        }
+        fromBin {
+            dimension "compileRNFromSource"
         }
     }
+
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/NOTICE'
@@ -76,10 +60,10 @@ dependencies {
     implementation "com.android.support:appcompat-v7:27.1.1"
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
-    androidTestImplementation(project(path: ":detox"))
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test:rules:1.1.0'
     androidTestImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test:rules:1.0.1'
+    androidTestImplementation(project(path: ":detox"))
 }
 
 
