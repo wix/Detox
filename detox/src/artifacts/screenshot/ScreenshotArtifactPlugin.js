@@ -16,19 +16,19 @@ class ScreenshotArtifactPlugin extends TwoSnapshotsPerTestPlugin {
 
   async onBeforeEach(testSummary) {
     this.context.testSummary = null;
-    await this._startSavingAllSnapshots();
+    await this._flushScreenshots();
 
     await super.onBeforeEach(testSummary);
   }
 
   async onAfterEach(testSummary) {
     await super.onAfterEach(testSummary);
-    await this._startSavingAllSnapshots();
+    await this._flushScreenshots();
   }
 
   async onAfterAll() {
     await super.onAfterAll();
-    await this._startSavingAllSnapshots();
+    await this._flushScreenshots();
   }
 
   async preparePathForSnapshot(testSummary, name) {
@@ -38,21 +38,15 @@ class ScreenshotArtifactPlugin extends TwoSnapshotsPerTestPlugin {
   async onUserAction({ type, options }) {
     switch (type) {
       case 'takeScreenshot':
-        return this._takeScreenshot(options);
+        return this.takeSnapshot(options.name);
     }
   }
 
-  async _startSavingAllSnapshots() {
+  async _flushScreenshots() {
     for (const name of Object.keys(this.snapshots)) {
       this.startSavingSnapshot(name);
       delete this.snapshots[name];
     }
-  }
-
-  async _takeScreenshot({ name }) {
-    const screenshot = await this.takeSnapshot();
-    this.snapshots[name] = screenshot;
-    this.api.trackArtifact(screenshot);
   }
 }
 

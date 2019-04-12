@@ -46,22 +46,29 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
 
   async _takeAutomaticSnapshot(name) {
     if (this.enabled) {
-      this.snapshots[name] = await this.takeSnapshot();
+       await this.takeSnapshot(name);
     }
+  }
+
+  _clearAutomaticSnapshotReferences() {
+    delete this.snapshots.beforeEach;
+    delete this.snapshots.afterEach;
   }
 
   /***
    * @protected
    */
-  async takeSnapshot() {
-    const snapshot = this.createTestArtifact();
+  async takeSnapshot(name) {
+    const snapshot = this.snapshots[name] = this.createTestArtifact();
     await snapshot.start();
     await snapshot.stop();
-    this.api.trackArtifact(snapshot);
 
-    return snapshot;
+    this.api.trackArtifact(snapshot);
   }
 
+  /***
+   * @protected
+   */
   startSavingSnapshot(name) {
     const snapshot = this.snapshots[name];
     if (!snapshot) {
@@ -76,6 +83,9 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
     });
   }
 
+  /***
+   * @protected
+   */
   startDiscardingSnapshot(name) {
     const snapshot = this.snapshots[name];
     if (!snapshot) {
@@ -86,11 +96,6 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
       await snapshot.discard();
       this.api.untrackArtifact(snapshot);
     });
-  }
-
-  _clearAutomaticSnapshotReferences() {
-    delete this.snapshots.beforeEach;
-    delete this.snapshots.afterEach;
   }
 }
 
