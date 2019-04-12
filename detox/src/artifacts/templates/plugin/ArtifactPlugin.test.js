@@ -140,6 +140,10 @@ describe(ArtifactPlugin, () => {
       expect(plugin.context).toMatchSnapshot();
     });
 
+    it('should have .onUserAction', async () => {
+      await expect(plugin.onUserAction()).resolves.toBe(void 0);
+    });
+
     it('should have .onBeforeAll, which resets context.testSummary if called', async () => {
       plugin.context.testSummary = {};
       await plugin.onBeforeAll();
@@ -184,6 +188,7 @@ describe(ArtifactPlugin, () => {
         expect(plugin.onBeforeEach).toBe(plugin.onTerminate);
         expect(plugin.onAfterEach).toBe(plugin.onTerminate);
         expect(plugin.onAfterAll).toBe(plugin.onTerminate);
+        expect(plugin.onUserAction).toBe(plugin.onTerminate);
       });
 
       it('should not work after the first call', async () => {

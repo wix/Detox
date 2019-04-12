@@ -110,7 +110,7 @@ describe('TwoSnapshotsPerTestPlugin', () => {
 
         await saveRequest();
 
-        expect(plugin.createdArtifacts[0].save).toBeCalledWith('test/0.png');
+        expect(plugin.createdArtifacts[0].save).toBeCalledWith('test/beforeEach.png');
         expect(api.untrackArtifact).toBeCalledWith(plugin.createdArtifacts[0]);
       });
 
@@ -122,7 +122,7 @@ describe('TwoSnapshotsPerTestPlugin', () => {
 
         await saveRequest();
 
-        expect(plugin.createdArtifacts[1].save).toBeCalledWith('test/1.png');
+        expect(plugin.createdArtifacts[1].save).toBeCalledWith('test/afterEach.png');
         expect(api.untrackArtifact).toBeCalledWith(plugin.createdArtifacts[1]);
       });
     });
