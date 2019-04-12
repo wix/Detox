@@ -1,4 +1,6 @@
+const _ = require('lodash');
 const argparse = require('../../utils/argparse');
+const log = require('../../utils/logger').child({ __filename });
 const TwoSnapshotsPerTestPlugin = require('../templates/plugin/TwoSnapshotsPerTestPlugin');
 
 /***
@@ -12,6 +14,7 @@ class ScreenshotArtifactPlugin extends TwoSnapshotsPerTestPlugin {
 
     this.enabled = takeScreenshots && takeScreenshots !== 'none';
     this.keepOnlyFailedTestsArtifacts = takeScreenshots === 'failing';
+    this._warnAboutNotImplementedMode = _.once(this._warnAboutNotImplementedMode.bind(this));
   }
 
   async onBeforeEach(testSummary) {
@@ -38,8 +41,15 @@ class ScreenshotArtifactPlugin extends TwoSnapshotsPerTestPlugin {
   async onUserAction({ type, options }) {
     switch (type) {
       case 'takeScreenshot':
-        return this.takeSnapshot(options.name);
+        return this.keepOnlyFailedTestsArtifacts
+          ? this._warnAboutNotImplementedMode()
+          : this.takeSnapshot(options.name);
     }
+  }
+
+  _warnAboutNotImplementedMode() {
+    const message = 'Taking screenshots on-demand is not supported yet for `--take-screenshots failing` mode.';
+    log.warn({ event: 'TAKE_SCREENSHOT_IGNORED' }, message);
   }
 
   async _flushScreenshots() {

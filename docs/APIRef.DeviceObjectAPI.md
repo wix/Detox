@@ -327,6 +327,8 @@ describe('Menu items', () => {
 * If the test passes, the screenshot will be put to `<artifacts-location>/✓ Menu items should have Logout/tap on menu.png`.
 * If the test fails, the screenshot will be put to `<artifacts-location>/✗ Menu items should have Logout/tap on menu.png`.
 
+> NOTE: at the moment, taking screenshots on-demand is supported **only** in `--take-screenshots all` mode.
+
 ### `device.pressBack()` **Android Only**
 Simulate press back button.
 
