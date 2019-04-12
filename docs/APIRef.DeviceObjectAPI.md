@@ -24,6 +24,7 @@ title: The `device` Object
 - [`device.disableSynchronization()`](#devicedisablesynchronization)
 - [`device.resetContentAndSettings()`](#deviceresetcontentandsettings)
 - [`device.getPlatform()`](#devicegetplatform)
+- [`device.takeScreenshot(name)`](#devicetakescreenshotname)
 - [`device.pressBack()` **Android Only**](#devicepressback-android-only)
 - [`device.shake()` **iOS Only**](#deviceshake-ios-only)
 
@@ -307,6 +308,24 @@ if (device.getPlatform() === 'ios') {
   await expect(loopSwitch).toHaveValue('1');
 }
 ```
+
+### `device.takeScreenshot(name)`
+Takes a screenshot on the device and schedules putting it to
+the [artifacts folder](APIRef.Artifacts.md#enabling-artifacts) upon
+completion of the current test. Consider the example below:
+
+```js
+describe('Menu items', () => {
+  it('should have Logout', async () => {
+    // ...
+    await device.takeScreenshot('tap on menu');
+    // ...
+  });
+});
+```
+
+* If the test passes, the screenshot will be put to `<artifacts-location>/✓ Menu items should have Logout/tap on menu.png`.
+* If the test fails, the screenshot will be put to `<artifacts-location>/✗ Menu items should have Logout/tap on menu.png`.
 
 ### `device.pressBack()` **Android Only**
 Simulate press back button.
