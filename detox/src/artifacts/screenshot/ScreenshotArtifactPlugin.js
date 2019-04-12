@@ -14,13 +14,21 @@ class ScreenshotArtifactPlugin extends TwoSnapshotsPerTestPlugin {
     this.keepOnlyFailedTestsArtifacts = takeScreenshots === 'failing';
   }
 
+  async onBeforeEach(testSummary) {
+    this.context.testSummary = null;
+    await this._startSavingAllSnapshots();
+
+    await super.onBeforeEach(testSummary);
+  }
+
   async onAfterEach(testSummary) {
     await super.onAfterEach(testSummary);
+    await this._startSavingAllSnapshots();
+  }
 
-    for (const name of Object.keys(this.snapshots)) {
-      this.startSavingSnapshot(testSummary, name);
-      delete this.snapshots[name];
-    }
+  async onAfterAll() {
+    await super.onAfterAll();
+    await this._startSavingAllSnapshots();
   }
 
   async preparePathForSnapshot(testSummary, name) {
@@ -31,6 +39,13 @@ class ScreenshotArtifactPlugin extends TwoSnapshotsPerTestPlugin {
     switch (type) {
       case 'takeScreenshot':
         return this._takeScreenshot(options);
+    }
+  }
+
+  async _startSavingAllSnapshots() {
+    for (const name of Object.keys(this.snapshots)) {
+      this.startSavingSnapshot(name);
+      delete this.snapshots[name];
     }
   }
 

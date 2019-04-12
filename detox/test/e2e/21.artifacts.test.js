@@ -1,17 +1,38 @@
 describe('Artifacts', () => {
   before(async () => {
-    await device.takeScreenshot('artifacts-beforeAll');
+    await device.sendToHome();
+    await device.takeScreenshot('Artifacts/before all');
+    await device.launchApp();
   });
 
   beforeEach(async () => {
+    // implicitly taking screenshot - beforeEach.png
     await device.reloadReactNative();
-    await element(by.text('Sanity')).tap();
-    await device.takeScreenshot('sanity screen');
+    await device.takeScreenshot('in main menu');
+
+    await element(by.text('Actions')).tap();
+    await device.takeScreenshot('Actions');
   });
 
   it('should take screenshots inside test', async () => {
-    await device.takeScreenshot('before tap');
-    await element(by.text('Say Hello')).tap();
-    await device.takeScreenshot('after tap');
+    await element(by.id('UniqueId819')).tap();
+    await device.takeScreenshot('taps - 1');
+
+    await element(by.id('UniqueId819')).tap();
+    await device.takeScreenshot('taps - 2');
+  });
+
+  afterEach(async () => {
+    await element(by.text('Tap Me')).tap();
+    await device.takeScreenshot('tap working');
+
+    await device.reloadReactNative();
+    // implicitly taking screenshot - afterEach.png
+  });
+
+  after(async () => {
+    await device.sendToHome();
+    await device.takeScreenshot('Artifacts/after all');
+    await device.launchApp();
   });
 });

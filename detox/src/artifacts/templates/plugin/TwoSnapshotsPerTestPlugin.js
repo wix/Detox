@@ -19,8 +19,8 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
 
     if (this.shouldKeepArtifactOfTest(testSummary)) {
       await this._takeAutomaticSnapshot('afterEach');
-      this.startSavingSnapshot(testSummary, 'beforeEach');
-      this.startSavingSnapshot(testSummary, 'afterEach');
+      this.startSavingSnapshot('beforeEach');
+      this.startSavingSnapshot('afterEach');
     } else {
       this.startDiscardingSnapshot('beforeEach');
     }
@@ -62,12 +62,13 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
     return snapshot;
   }
 
-  startSavingSnapshot(testSummary, name) {
+  startSavingSnapshot(name) {
     const snapshot = this.snapshots[name];
     if (!snapshot) {
       return;
     }
 
+    const {testSummary} = this.context;
     this.api.requestIdleCallback(async () => {
       const snapshotArtifactPath = await this.preparePathForSnapshot(testSummary, name);
       await snapshot.save(snapshotArtifactPath);
