@@ -2,9 +2,11 @@ jest.mock('../../../utils/argparse');
 jest.mock('../../../utils/logger');
 
 const _ = require('lodash');
+const os = require('os');
 const tempfile = require('tempfile');
 const fs = require('fs-extra');
 const path = require('path');
+const sleep = require('../../../utils/sleep');
 
 describe('SimulatorLogPlugin', () => {
   async function majorWorkflow() {
@@ -87,6 +89,10 @@ describe('SimulatorLogPlugin', () => {
 
     await artifactsManager.onBeforeAll();
     await logToDeviceLogs('inside before all');
+
+    if (os.platform() !== 'darwin') {
+      await sleep(1000); // HACK: till we replace `tail` with something less flaky
+    }
 
     await artifactsManager.onBeforeEach({ title: 'test', fullName: 'some test', status: 'running'});
     await logToDeviceLogs('inside before each');
