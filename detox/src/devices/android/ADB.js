@@ -102,6 +102,8 @@ class ADB {
   }
 
   async install(deviceId, apkPath) {
+    apkPath = `"${apkPath}"`;
+    
     const apiLvl = await this.apiLevel(deviceId);
 
     let childProcess;
