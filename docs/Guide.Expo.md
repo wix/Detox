@@ -21,7 +21,7 @@ title: Expo
 }
 ```
 
-- Download your Expo Client iOS App from [Expo.io/builds](https://expo.io/builds).
+- Download the Expo Client iOS App from [Expo.io/tools](https://expo.io/tools#client).
 
 - Unzip the iOS IPA and **rename the folder** to `Exponent.app`. It'll have a file icon but will still be a folder.
 - Create `bin` folder and put `Exponent.app` inside so it matches the binaryPath set above.
