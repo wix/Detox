@@ -628,6 +628,17 @@ describe('Device', () => {
     expect(driverMock.driver.pressBack).toHaveBeenCalledWith(device._deviceId);
   });
 
+  it('takeScreenshot(name) should throw an exception if given name is empty', async () => {
+    await expect(validDevice().takeScreenshot()).rejects.toThrowErrorMatchingSnapshot();
+  });
+
+  it('takeScreenshot(name) should delegate the work to the driver', async () => {
+    device = validDevice();
+
+    await device.takeScreenshot('name');
+    expect(device.deviceDriver.takeScreenshot).toHaveBeenCalledWith('name');
+  });
+
   async function launchAndTestBinaryPath(configuration) {
     const device = schemeDevice(configurationsMock.pathsTests, configuration);
 

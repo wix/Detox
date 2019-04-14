@@ -160,6 +160,18 @@ class ArtifactPlugin {
   }
 
   /**
+   * Hook that is called on demand by some of user actions (e.g. device.takeScreeenshot())
+   *
+   * @protected
+   * @async
+   * @param {Object} event - User action event object
+   * @param {string} event.type - Action type
+   * @param {string} event.options - Action options
+   * @return {Promise<any>} - appropriate result of the action
+   */
+  async onUserAction(event) {}
+
+  /**
    * Hook that is called before any test begins
    *
    * @protected
@@ -218,9 +230,10 @@ class ArtifactPlugin {
     this.onBootDevice = _.noop;
     this.onBeforeShutdownDevice = _.noop;
     this.onShutdownDevice = _.noop;
+    this.onBeforeTerminateApp = _.noop;
     this.onBeforeLaunchApp = _.noop;
     this.onLaunchApp = _.noop;
-    this.onBeforeTerminateApp = _.noop;
+    this.onUserAction = _.noop;
     this.onBeforeAll = _.noop;
     this.onBeforeEach = _.noop;
     this.onAfterEach = _.noop;

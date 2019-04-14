@@ -96,6 +96,14 @@ class Device {
     }
   }
 
+  async takeScreenshot(name) {
+    if (!name) {
+      throw new Error('Cannot take a screenshot with an empty name.');
+    }
+
+    return this.deviceDriver.takeScreenshot(name);
+  }
+
   _isAppInBackground(params, _bundleId) {
     return !params.delete && !params.newInstance && this._processes[_bundleId];
   }
