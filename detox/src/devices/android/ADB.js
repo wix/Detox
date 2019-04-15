@@ -102,7 +102,7 @@ class ADB {
   }
 
   async install(deviceId, apkPath) {
-    apkPath = `"${apkPath}"`;
+    apkPath = `"${escape.inQuotedString(apkPath)}"`;
     
     const apiLvl = await this.apiLevel(deviceId);
 
