@@ -38,7 +38,7 @@ describe('test', () => {
       await callCli('./test', 'test');
 
       expect(mockExec).toHaveBeenCalledWith(
-        expect.stringContaining(`${normalize('node_modules/.bin/mocha')} --opts e2e/mocha.opts --configuration only --grep :ios: --invert --record-logs none --take-screenshots none --record-videos none --artifacts-location "${normalize('artifacts/only.')}`),
+        expect.stringContaining(`${normalize('node_modules/.bin/mocha')} --opts e2e/mocha.opts --configuration only --grep :ios: --invert --artifacts-location "${normalize('artifacts/only.')}`),
         expect.anything()
       );
 
@@ -144,7 +144,7 @@ describe('test', () => {
     }
     expect(mockExec).toHaveBeenCalledWith(
       expect.stringContaining(
-        `${normalize('node_modules/.bin/mocha')} --opts e2e/mocha.opts --configuration only --debug-synchronization 3000 --grep :ios: --invert --record-logs none --take-screenshots none --record-videos none --artifacts-location "${normalize('artifacts/only.')}`
+        `${normalize('node_modules/.bin/mocha')} --opts e2e/mocha.opts --configuration only --debug-synchronization 3000 --grep :ios: --invert --artifacts-location "${normalize('artifacts/only.')}`
       ),
       expect.anything()
     );
