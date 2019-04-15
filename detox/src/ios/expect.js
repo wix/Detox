@@ -121,9 +121,9 @@ class ClearTextAction extends Action {
 }
 
 class ScrollAmountAction extends Action {
-  constructor(direction, amount) {
+  constructor(direction, amount, startScrollX = NaN, startScrollY = NaN) {
     super();
-    this._call = invoke.callDirectly(GreyActions.actionForScrollInDirectionAmount(direction, amount));
+    this._call = invoke.callDirectly(GreyActions.actionForScrollInDirectionAmountXOriginStartPercentageYOriginStartPercentage(direction, amount, startScrollX, startScrollY));
   }
 }
 
@@ -268,10 +268,10 @@ class WaitForActionInteraction extends Interaction {
     this._call = GreyInteraction.assertWithMatcher(invoke.callDirectly(_interactionCall), callThunk(this._originalMatcher));
     await this.execute();
   }
-  async scroll(amount, direction = 'down') {
+  async scroll(amount, direction = 'down', startScrollX, startScrollY) {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
     this._searchMatcher = this._searchMatcher._extendToDescendantScrollViews();
-    await this._execute(new ScrollAmountAction(direction, amount));
+    await this._execute(new ScrollAmountAction(direction, amount, startScrollX, startScrollY));
   }
 }
 
@@ -320,10 +320,10 @@ class Element {
   async pinchWithAngle(direction, speed = 'slow', angle = 0) {
     return await new ActionInteraction(this, new PinchAction(direction, speed, angle)).execute();
   }
-  async scroll(amount, direction = 'down') {
+  async scroll(amount, direction = 'down', startScrollX, startScrollY) {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
     this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
-    return await new ActionInteraction(this, new ScrollAmountAction(direction, amount)).execute();
+    return await new ActionInteraction(this, new ScrollAmountAction(direction, amount, startScrollX, startScrollY)).execute();
   }
   async scrollTo(edge) {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
