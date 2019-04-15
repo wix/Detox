@@ -31,8 +31,16 @@ describe('ADB', () => {
   });
 
   it(`install`, async () => {
-    await adb.install('path/to/app');
-    expect(exec).toHaveBeenCalledTimes(2);
+    await adb.install('emulator-5556', 'path inside "quotes" to/app');
+
+    expect(exec).toHaveBeenCalledWith(
+      expect.stringContaining('adb -s emulator-5556 shell "getprop ro.build.version.sdk"'),
+      undefined, undefined, 1
+    );
+
+    expect(exec).toHaveBeenCalledWith(
+      expect.stringContaining('adb -s emulator-5556 install -rg "path inside \\"quotes\\" to/app"'),
+      undefined, undefined, 1);
   });
 
   it(`uninstall`, async () => {
