@@ -74,7 +74,7 @@ Initiating your test suite. <sup>[[1]](#notice-passthrough)</sup>
 | -d, --debug-synchronization \<value\>         | When an action/expectation takes a significant amount time use this option to print device synchronization status. The status will be printed if the action takes more than [value]ms to complete |
 | -a, --artifacts-location \<path\>             | Artifacts (logs, screenshots, etc) root directory.<sup>[[2]](#notice-artifacts)</sup> |
 | --record-logs [failing/all/none]              | Save logs during each test to artifacts directory. Pass "failing" to save logs of failing tests only. The default value is **none**. |
-| --take-screenshots [failing/all/none]         | Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only. The default value is **none**. |
+| --take-screenshots [manual/failing/all/none]  | Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only. The default value is **manual**. |
 | --record-videos [failing/all/none]            | Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only. The default value is **none**. |
 | --record-performance [all/none]               | [iOS Only] Save Detox Instruments performance recordings of each test to artifacts directory. The default value is **none**. |
 | -r, --reuse                                   | Reuse existing installed app (do not delete + reinstall) for a faster run. |

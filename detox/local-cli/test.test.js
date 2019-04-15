@@ -88,7 +88,7 @@ describe('test', () => {
           env: expect.objectContaining({
             configuration: 'only',
             recordLogs: 'none',
-            takeScreenshots: 'none',
+            takeScreenshots: 'manual',
             recordVideos: 'none',
             artifactsLocation: expect.stringContaining(normalize('artifacts/only.')),
           }),
