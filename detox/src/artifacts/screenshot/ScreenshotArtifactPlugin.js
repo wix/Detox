@@ -12,7 +12,8 @@ class ScreenshotArtifactPlugin extends TwoSnapshotsPerTestPlugin {
 
     const takeScreenshots = argparse.getArgValue('take-screenshots');
 
-    this.enabled = takeScreenshots && takeScreenshots !== 'none';
+    this.enabled = takeScreenshots === 'all' || takeScreenshots === 'failing';
+    this.allowManualScreenshots = !takeScreenshots || takeScreenshots === 'manual';
     this.keepOnlyFailedTestsArtifacts = takeScreenshots === 'failing';
     this._warnAboutNotImplementedMode = _.once(this._warnAboutNotImplementedMode.bind(this));
   }
@@ -39,11 +40,13 @@ class ScreenshotArtifactPlugin extends TwoSnapshotsPerTestPlugin {
   }
 
   async onUserAction({ type, options }) {
-    switch (type) {
-      case 'takeScreenshot':
-        return this.keepOnlyFailedTestsArtifacts
-          ? this._warnAboutNotImplementedMode()
-          : this.takeSnapshot(options.name);
+    if (this.enabled || this.allowManualScreenshots) {
+      switch (type) {
+        case 'takeScreenshot':
+          return this.keepOnlyFailedTestsArtifacts
+            ? this._warnAboutNotImplementedMode()
+            : this.takeSnapshot(options.name);
+      }
     }
   }
 

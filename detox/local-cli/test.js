@@ -92,8 +92,8 @@ module.exports.builder = {
   },
   'take-screenshots': {
     group: 'Debugging:',
-    choices: ['failing', 'all', 'none'],
-    default: 'none',
+    choices: ['manual', 'failing', 'all', 'none'],
+    default: 'manual',
     describe:
       'Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only.'
   },
