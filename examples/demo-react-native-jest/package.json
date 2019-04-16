@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test-ios": "detox build --configuration ios.sim.debug && detox test --configuration ios.sim.debug",
-    "test-android": "detox build --configuration android.emu.debug && detox test --configuration android.emu.debug -l verbose"
+    "test-android": "detox build --configuration android.emu.debug && detox test --configuration android.emu.debug -l verbose",
+    "test-android-release": "detox build --configuration android.emu.release && detox test --configuration android.emu.release -l verbose"
   },
   "dependencies": {
     "react": "16.0.0",

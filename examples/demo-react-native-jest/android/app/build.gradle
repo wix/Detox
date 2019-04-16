@@ -2,7 +2,6 @@ apply plugin: "com.android.application"
 
 import com.android.build.OutputFile
 
-
 project.ext.react = [
     entryFile: "index.js"
 ]
@@ -22,10 +21,8 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
-
         testBuildType System.getProperty('testBuildType', 'debug')
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        missingDimensionStrategy "minReactNative", "minReactNative46"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     splits {
         abi {
@@ -46,10 +43,12 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', "${project(':detox').projectDir}/proguard-rules-app.pro"
+
             signingConfig signingConfigs.release
         }
     }
+
     // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
@@ -63,6 +62,7 @@ android {
             }
         }
     }
+
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/NOTICE'
@@ -74,12 +74,14 @@ android {
 
 dependencies {
     implementation "com.android.support:appcompat-v7:27.1.1"
-    implementation "com.facebook.react:react-native:+"  // From node_modules
 
-    androidTestImplementation(project(path: ":detox"))
+    // noinspection GradleDynamicVersion
+    implementation "com.facebook.react:react-native:+"
+
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test:rules:1.1.0'
     androidTestImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test:rules:1.0.1'
+    androidTestImplementation(project(path: ":detox"))
 }
 
 
