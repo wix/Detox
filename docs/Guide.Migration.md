@@ -29,12 +29,14 @@ detox test e2e/01.sanity.test.js  # translates to: mocha <...args> e2e e2e/01.sa
 This is not a breaking change yet, but starting from `detox@12.1.0` you'll start seeing warnings like:
 
 ```
-WARN:  [test.js] Deprecation warning: "file" and "specs" support will be dropped in the next Detox version.
-WARN:  [test.js] Please edit your package.json according to the migration guide: https://wix.to/I0DOAK0 
+detox[21201] WARN:  [deprecation.js] Beware: -f, --file will be removed in the next version of Detox.
+detox[21201] WARN:  [deprecation.js] See the migration guide: https://wix.to/I0DOAK0
 ```
 
 In the next major version `--file` and `--specs` will be treated as unknown arguments
-and therefore passed as-is to your appropriate test runner.
+and therefore passed as-is to your appropriate test runner. That allows to avoid name
+conflict with the respective `--file` option in Mocha runner itself and other potential
+collisions.
 
 So, if you have been using CLI arguments like `--file e2e` or
 `--specs e2e`, please drop the preceding `--file` and `--specs`, so that:
@@ -50,7 +52,7 @@ detox test e2e/01.sanity.test.js
 ```
 
 **UPDATE:** It was decided not to deprecate `"specs"` in `package.json`, so the text below
-is not relevant to a large extent. Please ignore.
+is not relevant to a large extent. Please ignore the guide below.
 
 ~To get rid of this warning:~
 
