@@ -9,7 +9,7 @@ We are improving detox API as we go along, sometimes these changes require us to
 
 The deprecation of `"specs"` (in `package.json`) introduced in 12.1.0 is **no longer relevant**.
 It is valid now, like it was before, but from now on the semantics has been slightly changed -
-it acts like a fallback for the default root for your Detox e2e specs, in cases when
+it acts as a fallback for the default root for your Detox e2e specs, in cases when
 you don't specify it explicitly, e.g.:
 
 ```sh
