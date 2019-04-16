@@ -49,15 +49,15 @@ becomes:
 detox test e2e/01.sanity.test.js
 ```
 
-**UPDATE:** It was decided not to deprecate `"specs"` in `package.json`, so the text belove
+**UPDATE:** It was decided not to deprecate `"specs"` in `package.json`, so the text below
 is not relevant to a large extent. Please ignore.
 
-To get rid of this warning:
+~To get rid of this warning:~
 
-* find `"specs"` or `"file"` entry in your project's `package.json` and empty it (e.g. `"e2e"` &#10230; `""`);
-* update your `detox test` scripts — make sure they have an explicit path to your Detox tests folder, e.g. `detox test e2e`.
+* ~find `"specs"` or `"file"` entry in your project's `package.json` and empty it (e.g. `"e2e"` &#10230; `""`);~
+* ~update your `detox test` scripts — make sure they have an explicit path to your Detox tests folder, e.g. `detox test e2e`.~
 
-For example, if it were a `package.json` before:
+~For example, if it were a `package.json` before:~
 
 ```json
 {
@@ -71,7 +71,7 @@ For example, if it were a `package.json` before:
 }
 ```
 
-Then this is how it should look like afterwards:
+~Then this is how it should look like afterwards:~
 
 ```json
 {
@@ -85,46 +85,17 @@ Then this is how it should look like afterwards:
 }
 ```
 
-Notice that we appended `e2e` to the `e2e:ios` test script and
-emptied `"specs"` property in `detox` configuration.
+~Notice that we appended `e2e` to the `e2e:ios` test script and
+emptied `"specs"` property in `detox` configuration.~
 
-In a case if you had no `"specs"` property in your `detox` configuration
-in `package.json`, then please add it temporarily like this:
+~In a case if you had no `"specs"` property in your `detox` configuration
+in `package.json`, then please add it temporarily like this:~
 
 ```json
 {
     "specs": ""
 }
 ```
-
-The idea in the example above is to pass `e2e` straight to `mocha` or `jest` as
-a path to the folder with Detox tests, without extra preprocessing from Detox CLI side.
-
-> For the curious ones, who want to know more why we should use an empty string
-(`""`) instead of deleting `"specs"` and `"file"` from `package.json`, here is
-the explanation. This seemingly weird step is motivated by backward compatibility
-with the previous versions of Detox.
->
-> So far, before `detox@12.1.0`, absence of
-`file` and `specs` properties implied a default test folder value (`"e2e"`).
-> In other words:
-
-```js
-const testFolder = config.file || config.specs || "e2e";
-```
-
-> In order not to break the existing logic but to introduce the deprecation,
-the check for the `e2e` placeholder assignment became narrower yet remaining valid:
-
-```js
-let testFolder = config.file || config.specs;
-if (testFolder == null) { // that's why you should change it to an empty string, ""
-    testFolder = "e2e"; // otherwise, if it is null or undefined, then we save backward compatibility
-}
-if (testFolder) { printDeprecationWarning(); }
-```
-
-> As it can be seen above, this move allows to track if you followed the migration guide or not.
 
 ## Migrating from Detox 11.0.1 to 12.0.0
 
