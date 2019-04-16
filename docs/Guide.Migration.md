@@ -5,6 +5,25 @@ title: Migration Guide
 
 We are improving detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes.
 
+## Migrating from Detox 12.3.x to 12.4.0
+
+The deprecation of `"specs"` (in `package.json`) introduced in 12.1.0 is **no longer relevant**.
+It is valid now, like it was before, but from now on the semantics has been slightly changed -
+it acts like a fallback for the default root for your Detox e2e specs, in cases when
+you don't specify it explicitly, e.g.:
+
+```sh
+detox test   # translates to: mocha <...args> e2e
+detox test e2e/01.sanity.test.js  # translates to: mocha <...args> e2e/01.sanity.test.js
+```
+
+Previously, it used to work like:
+
+```sh
+detox test   # translates to: mocha <...args> e2e
+detox test e2e/01.sanity.test.js  # translates to: mocha <...args> e2e e2e/01.sanity.test.js
+```
+
 ## Migrating from Detox 12.0.x to 12.1.x
 
 This is not a breaking change yet, but starting from `detox@12.1.0` you'll start seeing warnings like:
@@ -16,6 +35,22 @@ WARN:  [test.js] Please edit your package.json according to the migration guide:
 
 In the next major version `--file` and `--specs` will be treated as unknown arguments
 and therefore passed as-is to your appropriate test runner.
+
+So, if you have been using CLI arguments like `--file e2e` or
+`--specs e2e`, please drop the preceding `--file` and `--specs`, so that:
+
+```
+detox test --file e2e/01.sanity.test.js
+```
+
+becomes:
+
+```
+detox test e2e/01.sanity.test.js
+```
+
+**UPDATE:** It was decided not to deprecate `"specs"` in `package.json`, so the text belove
+is not relevant to a large extent. Please ignore.
 
 To get rid of this warning:
 
@@ -60,20 +95,6 @@ in `package.json`, then please add it temporarily like this:
 {
     "specs": ""
 }
-```
-
-Last, but not least, if you have been using CLI arguments like
-`--file e2e` or `--specs e2e`, please drop the preceding
-`--file` and `--specs`, so that:
-
-```
-detox test --specs e2e
-```
-
-becomes:
-
-```
-detox test e2e
 ```
 
 The idea in the example above is to pass `e2e` straight to `mocha` or `jest` as

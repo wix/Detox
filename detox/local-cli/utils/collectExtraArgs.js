@@ -23,7 +23,11 @@ function collectBlacklistedArgs(builder) {
 function configureCollectExtraArgs(builder) {
   const blacklistedArgs = collectBlacklistedArgs(builder);
 
-  return function collectExtraArgs(argv) {
+  /***
+   * @param {Object} argv
+   * @returns {string[]}
+   */
+  function collectExtraArgs(argv) {
     const parsed = parseArgv(argv, {
       configuration: {
         'boolean-negation': false,
@@ -41,11 +45,12 @@ function configureCollectExtraArgs(builder) {
         return value === true ? `--${key}` : `--${key} ${value}`;
       })
       .concat(parsed['_'])
-      .value()
-      .join(' ');
+      .value();
 
     return passthrough;
-  };
+  }
+
+  return collectExtraArgs;
 }
 
 module.exports = configureCollectExtraArgs;

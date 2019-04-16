@@ -1,3 +1,4 @@
+const chalk = require('chalk');
 const log = require('../../src/utils/logger').child({ __filename });
 const migrationGuideUrl = 'https://wix.to/I0DOAK0';
 
@@ -10,7 +11,16 @@ function coerceDeprecation(option) {
   };
 }
 
+function printFileDeprecationWarning(file) {
+  log.warn('Deprecated: "file" option in "detox" section of package.json won\'t be supported in the next Detox version.\n');
+  console.log(`   "detox": {`);
+  console.log(chalk.red(`-    "file": ${JSON.stringify(file)},`));
+  console.log(chalk.green(`+    "specs": ${JSON.stringify(file)},\n`));
+  log.warn(`Please rename it to "specs", as demonstrated above.`);
+}
+
 module.exports = {
   coerceDeprecation,
   migrationGuideUrl,
+  printFileDeprecationWarning,
 };
