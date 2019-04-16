@@ -168,17 +168,19 @@ from `detox@12.4.0`, `"specs"` property acts like a fallback if a specific
 test folder has not been specified.
 
 If you are using `detox@12.x.x` and cannot upgrade to the latest, you can
-pass the path to your e2e tests folder manually:
+still pass the path to your e2e tests folder manually:
 
 ```
 detox test <your-e2e-tests-folder>
 ```
 
-The problem itself stems from the fact that `mocha` does not search for test files
-recursively in the current working directory by default, contrary to Jest. 
+The problem with `unknown option --configuration` stems from the fact
+that `mocha` does not search for test files recursively in the current
+working directory by default, contrary to Jest.
 
-After you upgrade, you can specify default path to your end-to-end tests folder
-in `package.json` without getting any deprecation warnings:
+After you upgrade to `12.4.0` or a more recent version, you can specify
+default path to your end-to-end tests folder in `package.json`
+without getting any deprecation warnings:
 
 ```json
 {
@@ -188,8 +190,8 @@ in `package.json` without getting any deprecation warnings:
 }
 ```
 
-If your e2e tests are located at the default path (`e2e`), then you don't need
-to add `"specs"` property explicitly.
+Please mind that if your e2e tests are located at the default path (`e2e`),
+then you don't need to add `"specs"` property explicitly to `package.json`.
 
 <br>
 

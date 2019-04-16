@@ -7,7 +7,6 @@
 		"mocha": "^4.0.0"
 	},
 	"detox": {
-		"specs": "",
 		"configurations": {
 			"ios.sim.release": {
 				"binaryPath": "build/Build/Products/Release-iphonesimulator/NativeExample.app",
