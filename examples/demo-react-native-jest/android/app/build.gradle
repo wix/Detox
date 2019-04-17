@@ -32,6 +32,7 @@ android {
             include "armeabi-v7a", "x86"
         }
     }
+
     signingConfigs {
         release {
             storeFile file("keystore.jks")
@@ -40,6 +41,7 @@ android {
             keyPassword "12345678"
         }
     }
+
     buildTypes {
         release {
             minifyEnabled false
