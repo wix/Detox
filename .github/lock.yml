@@ -2,7 +2,7 @@
 daysUntilLock: 3
 
 # Issues and pull requests with these labels will not be locked. Set to `[]` to disable
-exemptLabels: []
+exemptLabels: ["🔓"]
 
 # Label to add before locking, such as `outdated`. Set to `false` to disable
 lockLabel: false
