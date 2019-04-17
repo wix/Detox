@@ -158,36 +158,34 @@ detox[4498] INFO:  [test.js] node_modules/.bin/mocha --opts e2e/mocha.opts --con
   error: unknown option `--configuration'
 ```
 
-**Solution:** Upgrade to `detox@12.4.0`. Alternatively, you can try the solutions below,
-described right after the explanation.
-
-In `detox@12.1.0` there was a premature deprecation of `"specs"` property in
-detox section of `package.json`. It appeared inconvenient for anyone who
-prefers terse commands like `detox test` over verbose `detox test e2e`. Starting
-from `detox@12.4.0`, `"specs"` property acts like a fallback if a specific
-test folder has not been specified.
-
-If you are using `detox@12.x.x` and cannot upgrade to the latest, you can
-still pass the path to your e2e tests folder manually:
+**Solution:** Upgrade to `detox@^12.4.0` and `mocha@^6.1.3`.
+That weird error has been spotted in older versions of `mocha` (including 5.2.0)
+and fixed since 6.0.0. In fact, it conceals the genuine error:
 
 ```
-detox test <your-e2e-tests-folder>
+Error: No test files found
 ```
 
-The problem with `unknown option --configuration` stems from the fact
-that `mocha` does not search for test files recursively in the current
-working directory by default, contrary to Jest.
+If the error appeared after running a short command like `detox test`,
+please try out `detox test e2e` (in other words, append the path to your
+end-to-end tests folder) - and if that fixes the error, then you deal the
+bug in the question and upgrading `detox` and `mocha` should help.
 
-After you upgrade to `12.4.0` or a more recent version, you can specify
-default path to your end-to-end tests folder in `package.json`
-without getting any deprecation warnings:
+Here's why you need to upgrade to `detox@12.4.0`.  In `12.1.0` there was a
+premature deprecation of `"specs"` property in detox section of `package.json`.
+The deprecation was revoked in `detox@12.4.0`, and since then `"specs"` property
+acts as a fallback if a test folder has not been specified explicitly.
 
-```json
-{
-  "detox": {
-    "specs": "your-e2e-tests-folder"
-  }
-}
+After you upgrade, you can configure the default path to your end-to-end tests folder
+in `package.json` (no deprecation warnings starting from `12.4.0`), as shown below:
+
+```diff
+ {
+   "detox": {
+-    "specs": "",  
++    "specs": "your-e2e-tests-folder",
+   }
+ }
 ```
 
 Please mind that if your e2e tests are located at the default path (`e2e`),
