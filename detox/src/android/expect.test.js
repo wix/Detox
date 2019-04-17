@@ -1,4 +1,4 @@
-describe('expect', async () => {
+describe('expect', () => {
   let e;
 
   beforeEach(() => {
