@@ -21,7 +21,6 @@
   "devDependencies": {
     "detox": "^12.3.0",
     "express": "^4.15.3",
-    "jest": "^22.3.0",
     "lodash": "^4.14.1",
     "mocha": "^6.1.3"
   },
