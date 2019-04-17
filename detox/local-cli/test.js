@@ -92,8 +92,8 @@ module.exports.builder = {
   },
   'take-screenshots': {
     group: 'Debugging:',
-    choices: ['failing', 'all', 'none'],
-    default: 'none',
+    choices: ['manual', 'failing', 'all', 'none'],
+    default: 'manual',
     describe:
       'Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only.'
   },
@@ -181,6 +181,13 @@ module.exports.handler = async function test(program) {
     return fallback;
   }
 
+  function hasCustomValue(key) {
+    const value = program[key];
+    const metadata = module.exports.builder[key];
+
+    return (value !== metadata.default);
+  }
+
   function runMocha() {
     if (program.workers !== 1) {
       log.warn('Can not use -w, --workers. Parallel test execution is only supported with iOS and Jest');
@@ -198,9 +205,9 @@ module.exports.handler = async function test(program) {
       (platform ? `--grep ${getPlatformSpecificString()} --invert` : ''),
       (program.headless ? `--headless` : ''),
       (program.gpu ? `--gpu ${program.gpu}` : ''),
-      (program.recordLogs ? `--record-logs ${program.recordLogs}` : ''),
-      (program.takeScreenshots ? `--take-screenshots ${program.takeScreenshots}` : ''),
-      (program.recordVideos ? `--record-videos ${program.recordVideos}` : ''),
+      (hasCustomValue('record-logs') ? `--record-logs ${program.recordLogs}` : ''),
+      (hasCustomValue('take-screenshots') ? `--take-screenshots ${program.takeScreenshots}` : ''),
+      (hasCustomValue('record-videos') ? `--record-videos ${program.recordVideos}` : ''),
       (program.artifactsLocation ? `--artifacts-location "${program.artifactsLocation}"` : ''),
       (program.deviceName ? `--device-name "${program.deviceName}"` : ''),
       testFolder,

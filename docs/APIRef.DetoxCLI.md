@@ -67,20 +67,20 @@ Initiating your test suite. <sup>[[1]](#notice-passthrough)</sup>
 
 | Option                                        | Description |
 | ---                                           | --- |
-| -c, -configuration \<device config\>          | Select a device configuration from your defined configurations, if not supplied, and there's only one configuration, detox will default to it |
+| -c, --configuration \<device config\>         | Select a device configuration from your defined configurations, if not supplied, and there's only one configuration, detox will default to it |
 | -o, --runner-config \<config\>                | Test runner config file, defaults to 'e2e/mocha.opts' for mocha and 'e2e/config.json' for jest. |
 | -n, --device-name [name]                      | Override the device name specified in a configuration. Useful for running a single build configuration on multiple devices. |
 | -l, --loglevel [value]                        | Log level: fatal, error, warn, info, verbose, trace |
 | -d, --debug-synchronization \<value\>         | When an action/expectation takes a significant amount time use this option to print device synchronization status. The status will be printed if the action takes more than [value]ms to complete |
 | -a, --artifacts-location \<path\>             | Artifacts (logs, screenshots, etc) root directory.<sup>[[2]](#notice-artifacts)</sup> |
 | --record-logs [failing/all/none]              | Save logs during each test to artifacts directory. Pass "failing" to save logs of failing tests only. The default value is **none**. |
-| --take-screenshots [failing/all/none]         | Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only. The default value is **none**. |
+| --take-screenshots [manual/failing/all/none]  | Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only. The default value is **manual**. |
 | --record-videos [failing/all/none]            | Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only. The default value is **none**. |
 | -r, --reuse                                   | Reuse existing installed app (do not delete + reinstall) for a faster run. |
 | -u, --cleanup                                 | Shutdown simulator when test is over, useful for CI scripts, to make sure detox exists cleanly with no residue |
 | -w, --workers                                 | [iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest) |
 | -H, --headless                                | [Android Only] Launch Emulator in headless mode. Useful when running on CI. |
-| -gpu                                          | [Android Only] Launch Emulator with the specific -gpu [gpu mode] parameter. |
+| --gpu                                         | [Android Only] Launch Emulator with the specific -gpu [gpu mode] parameter. |
 | --no-color                                    | Disable colors in log output |
 | --help                                        | Show help |
 

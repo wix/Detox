@@ -1,5 +1,11 @@
 apply plugin: "com.android.application"
 
+import com.android.build.OutputFile
+
+project.ext.react = [
+    entryFile: "index.js"
+]
+
 apply from: "../../node_modules/react-native/react.gradle"
 
 android {
@@ -17,6 +23,14 @@ android {
         }
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    splits {
+        abi {
+            reset()
+            enable false
+            universalApk false  // If true, also generate a universal APK
+            include "armeabi-v7a", "x86"
+        }
     }
 
     signingConfigs {
@@ -37,13 +51,17 @@ android {
         }
     }
 
-    productFlavors {
-        flavorDimensions "compileRNFromSource"
-        fromSource {
-            dimension "compileRNFromSource"
-        }
-        fromBin {
-            dimension "compileRNFromSource"
+    // applicationVariants are e.g. debug, release
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            // For each separate APK per architecture, set a unique version code as described here:
+            // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
+            def versionCodes = ["armeabi-v7a":1, "x86":2]
+            def abi = output.getFilter(OutputFile.ABI)
+            if (abi != null) {  // null for the universal-debug, universal-release variants
+                output.versionCodeOverride =
+                        versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
+            }
         }
     }
 
@@ -58,7 +76,9 @@ android {
 
 dependencies {
     implementation "com.android.support:appcompat-v7:27.1.1"
-    implementation "com.facebook.react:react-native:+"  // From node_modules
+
+    // noinspection GradleDynamicVersion
+    implementation "com.facebook.react:react-native:+"
 
     androidTestImplementation 'androidx.test:runner:1.1.0'
     androidTestImplementation 'androidx.test:rules:1.1.0'

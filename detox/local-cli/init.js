@@ -100,7 +100,7 @@ function patchPackageJson(packageJson, runnerName) {
 
 function savePackageJson(filepath, json) {
   try {
-    fs.writeFileSync(filepath, JSON.stringify(json, null, 2));
+    fs.writeFileSync(filepath, JSON.stringify(json, null, 2) + '\n');
   } catch (err) {
     log.error(PREFIX, `Failed to write changes into ./package.json due to the error:\n${err.message}`);
   }

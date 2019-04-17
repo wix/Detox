@@ -1,5 +1,89 @@
 # Change Log
 
+## [12.2.0](https://github.com/wix/detox/tree/12.2.0) (2019-04-12)
+[Full Changelog](https://github.com/wix/detox/compare/12.1.4-screenshots-beta...12.2.0)
+
+**Enhancements**
+
+- Provide API for taking screenshots on demand [\#807](https://github.com/wix/Detox/issues/807)
+
+**Merged Pull Requests**
+
+- feat: device.takeScreenshot\(name\) [\#904](https://github.com/wix/Detox/pull/904) ([noomorph](https://github.com/noomorph))
+
+## [12.1.4-screenshots-beta](https://github.com/wix/detox/tree/12.1.4-screenshots-beta) (2019-04-11)
+[Full Changelog](https://github.com/wix/detox/compare/12.1.4-screenshot...12.1.4-screenshots-beta)
+
+## [12.1.4-screenshot](https://github.com/wix/detox/tree/12.1.4-screenshot) (2019-04-11)
+[Full Changelog](https://github.com/wix/detox/compare/12.1.4...12.1.4-screenshot)
+
+**Fixed Bugs**
+
+- Detox CLI does not error on unknown commands [\#149](https://github.com/wix/Detox/issues/149)
+
+## [12.1.4](https://github.com/wix/detox/tree/12.1.4) (2019-04-11)
+[Full Changelog](https://github.com/wix/detox/compare/12.1.3...12.1.4)
+
+**Enhancements**
+
+- View Hierarchy dump is an impediment to adoption [\#1227](https://github.com/wix/Detox/issues/1227)
+
+**Closed Issues**
+
+- Detox doesn't work with React-Native 0.59 on Android [\#1208](https://github.com/wix/Detox/issues/1208)
+
+**Merged Pull Requests**
+
+- fix: stabilize simulator log plugin [\#1273](https://github.com/wix/Detox/pull/1273) ([noomorph](https://github.com/noomorph))
+- code: lower status of artifact manager errors [\#1271](https://github.com/wix/Detox/pull/1271) ([noomorph](https://github.com/noomorph))
+- hotfix: redundant logs in the folder [\#1268](https://github.com/wix/Detox/pull/1268) ([noomorph](https://github.com/noomorph))
+- fix: e2e test on timezones different from LA [\#1267](https://github.com/wix/Detox/pull/1267) ([noomorph](https://github.com/noomorph))
+- fix: simulator log plugin issue [\#1261](https://github.com/wix/Detox/pull/1261) ([noomorph](https://github.com/noomorph))
+
+## [12.1.3](https://github.com/wix/detox/tree/12.1.3) (2019-04-04)
+[Full Changelog](https://github.com/wix/detox/compare/12.1.2...12.1.3)
+
+**Enhancements**
+
+- Migrate uiautomator to AndroidX [\#1235](https://github.com/wix/Detox/issues/1235)
+- Introduce proguard minification into test app [\#1216](https://github.com/wix/Detox/issues/1216)
+
+**Closed Issues**
+
+- CircleCI: Reports test failure but command exits with success code \(0\) [\#1252](https://github.com/wix/Detox/issues/1252)
+- Getting an error when running Detox - yargs [\#1250](https://github.com/wix/Detox/issues/1250)
+
+**Merged Pull Requests**
+
+- \(Android\) Migrate UIAutomator to AndroidX \(\#1235\) [\#1251](https://github.com/wix/Detox/pull/1251) ([d4vidi](https://github.com/d4vidi))
+- \(Android\) Introduce Proguard all-around [\#1249](https://github.com/wix/Detox/pull/1249) ([d4vidi](https://github.com/d4vidi))
+- Migrate uiautomator to AndroidX [\#1242](https://github.com/wix/Detox/pull/1242) ([leanmazzu](https://github.com/leanmazzu))
+
+## [12.1.2](https://github.com/wix/detox/tree/12.1.2) (2019-04-02)
+[Full Changelog](https://github.com/wix/detox/compare/12.1.1...12.1.2)
+
+**Enhancements**
+
+- feat: specify resuing existing app in Detox.init\(\) params [\#1245](https://github.com/wix/Detox/pull/1245) ([Ponyets](https://github.com/Ponyets))
+
+**Fixed Bugs**
+
+- `detox test` fails without status code [\#1247](https://github.com/wix/Detox/issues/1247)
+- iOS keyWindow.rootViewController would be null when app is driven by Detox. [\#1230](https://github.com/wix/Detox/issues/1230)
+- Taps do not register on iOS simulator [\#1224](https://github.com/wix/Detox/issues/1224)
+
+**Closed Issues**
+
+- How to pass -disableRNTestingOverride 1 to tests? [\#1243](https://github.com/wix/Detox/issues/1243)
+- Error: Can't find a simulator to match with "iPhone 7" [\#1241](https://github.com/wix/Detox/issues/1241)
+- React Navigation v3.3.1 SafeAreaView update breaks scroll\('down'\) \(iOS only\) [\#1196](https://github.com/wix/Detox/issues/1196)
+
+**Merged Pull Requests**
+
+- Exit process with error status code when a cli command fails [\#1248](https://github.com/wix/Detox/pull/1248) ([tancredi](https://github.com/tancredi))
+- Fix keyWindow.rootViewController nullability on iOS [\#1231](https://github.com/wix/Detox/pull/1231) ([Ponyets](https://github.com/Ponyets))
+- Fix main.jsbundle does not exist [\#1190](https://github.com/wix/Detox/pull/1190) ([msand](https://github.com/msand))
+
 ## [12.1.1](https://github.com/wix/detox/tree/12.1.1) (2019-03-27)
 [Full Changelog](https://github.com/wix/detox/compare/12.1.0...12.1.1)
 
@@ -244,17 +328,17 @@
 - Android: allow test packages \(built for emulator by Android Studio\) to be installed via adb [\#1015](https://github.com/wix/Detox/pull/1015) ([Annihil](https://github.com/Annihil))
 
 ## [9.1.2](https://github.com/wix/detox/tree/9.1.2) (2018-11-16)
-[Full Changelog](https://github.com/wix/detox/compare/v9.0.8...9.1.2)
+[Full Changelog](https://github.com/wix/detox/compare/9.0.8...9.1.2)
 
 **Enhancements**
 
 - New Actions: `tapBackspaceKey` and `tapReturnKey` [\#1044](https://github.com/wix/Detox/pull/1044) ([michaelgmcd](https://github.com/michaelgmcd))
 
-## [v9.0.8](https://github.com/wix/detox/tree/v9.0.8) (2018-11-15)
-[Full Changelog](https://github.com/wix/detox/compare/9.0.8...v9.0.8)
-
 ## [9.0.8](https://github.com/wix/detox/tree/9.0.8) (2018-11-15)
-[Full Changelog](https://github.com/wix/detox/compare/9.0.7...9.0.8)
+[Full Changelog](https://github.com/wix/detox/compare/v9.0.8...9.0.8)
+
+## [v9.0.8](https://github.com/wix/detox/tree/v9.0.8) (2018-11-15)
+[Full Changelog](https://github.com/wix/detox/compare/9.0.7...v9.0.8)
 
 **Enhancements**
 
@@ -387,7 +471,7 @@
 - fix: ADB.pidof integration issue with grep and CRLF edge case [\#927](https://github.com/wix/Detox/pull/927) ([noomorph](https://github.com/noomorph))
 
 ## [9.0.2](https://github.com/wix/detox/tree/9.0.2) (2018-09-24)
-[Full Changelog](https://github.com/wix/detox/compare/9.0.1...9.0.2)
+[Full Changelog](https://github.com/wix/detox/compare/9.0.0...9.0.2)
 
 **Enhancements**
 
@@ -412,11 +496,11 @@
 - Fix typo [\#928](https://github.com/wix/Detox/pull/928) ([tatane616](https://github.com/tatane616))
 - \[Android\] Remove @override annotation to support RN 0.53-0.55 on detox 9.0 [\#922](https://github.com/wix/Detox/pull/922) ([JamesWatling](https://github.com/JamesWatling))
 
-## [9.0.1](https://github.com/wix/detox/tree/9.0.1) (2018-08-31)
-[Full Changelog](https://github.com/wix/detox/compare/9.0.0...9.0.1)
-
 ## [9.0.0](https://github.com/wix/detox/tree/9.0.0) (2018-08-31)
-[Full Changelog](https://github.com/wix/detox/compare/8.2.3...9.0.0)
+[Full Changelog](https://github.com/wix/detox/compare/9.0.1...9.0.0)
+
+## [9.0.1](https://github.com/wix/detox/tree/9.0.1) (2018-08-31)
+[Full Changelog](https://github.com/wix/detox/compare/8.2.3...9.0.1)
 
 **Enhancements**
 

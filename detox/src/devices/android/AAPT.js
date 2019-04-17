@@ -2,6 +2,7 @@ const _ = require('lodash');
 const Environment = require('../../utils/environment');
 const path = require('path');
 const exec = require('../../utils/exec').execWithRetriesAndLogs;
+const escape = require('../../utils/pipeCommands').escape.inQuotedString;
 const egrep = require('../../utils/pipeCommands').search.fragment;
 const fsext = require('../../utils/fsext');
 
@@ -23,7 +24,7 @@ class AAPT {
   async getPackageName(apkPath) {
     await this._prepare();
     const process = await exec(
-      `${this.aaptBin} dump badging "${apkPath}" | ${egrep("package: name=")}`,
+      `${this.aaptBin} dump badging "${escape(apkPath)}" | ${egrep("package: name=")}`,
       undefined, undefined, 1
     );
 

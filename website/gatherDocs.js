@@ -12,7 +12,7 @@ async function getVersions() {
 
   const semverTags = tags
     .filter((tag) => !tag.includes('@'))
-    .filter((tag) => tag.split('.').length === 3 && major(tag) >= 7)
+    .filter((tag) => tag.split('.').length === 3 && major(tag) >= 10)
     .sort()
     .reverse();
   await fs.remove(tmp);

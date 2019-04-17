@@ -3,3 +3,5 @@
 exports[`Device new Device() with invalid device config (no binary) should throw 1`] = `"'binaryPath' property is missing, should hold the app binary path"`;
 
 exports[`Device new Device() with invalid device config (no device name) should throw 1`] = `"'name' property is missing, should hold the device name to run on (e.g. \\"iPhone 7\\", \\"iPhone 7, iOS 10.2\\""`;
+
+exports[`Device takeScreenshot(name) should throw an exception if given name is empty 1`] = `"Cannot take a screenshot with an empty name."`;
