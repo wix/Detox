@@ -23,7 +23,6 @@
     "jest": "24.x.x"
   },
   "detox": {
-    "specs": "",
     "test-runner": "jest",
     "configurations": {
       "ios.sim.release": {

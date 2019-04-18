@@ -158,17 +158,38 @@ detox[4498] INFO:  [test.js] node_modules/.bin/mocha --opts e2e/mocha.opts --con
   error: unknown option `--configuration'
 ```
 
-**Solution:** In `detox@11.1.0` such options as `--file` and `--specs` were
-deprecated in favor of straightforward passing command line arguments to test
-runners. Since `mocha` does not search for test files recursively in the
-current working directory by default, you have to pass the path to your e2e
-tests folder manually:
+**Solution:** Upgrade to `detox@^12.4.0` and `mocha@^6.1.3`.
+That weird error has been spotted in older versions of `mocha` (including 5.2.0)
+and fixed since 6.0.0. In fact, it conceals the genuine error:
 
 ```
-detox test ./your-e2e-tests-folder
+Error: No test files found
 ```
 
-See [the migration guide](Guide.Migration.md#migrating-from-detox-110x-to-111x) for more details.
+If the error appeared after running a short command like `detox test`,
+please try out `detox test e2e` (in other words, append the path to your
+end-to-end tests folder) - and if that fixes the error, then you deal the
+bug in the question and upgrading `detox` and `mocha` should help.
+
+Here's why you need to upgrade to `detox@12.4.0`.  In `12.1.0` there was a
+premature deprecation of `"specs"` property in detox section of `package.json`.
+The deprecation was revoked in `detox@12.4.0`, and since then `"specs"` property
+acts as a fallback if a test folder has not been specified explicitly.
+
+After you upgrade, you can configure the default path to your end-to-end tests folder
+in `package.json` (no deprecation warnings starting from `12.4.0`), as shown below:
+
+```diff
+ {
+   "detox": {
+-    "specs": "",  
++    "specs": "your-e2e-tests-folder",
+   }
+ }
+```
+
+Please mind that if your e2e tests are located at the default path (`e2e`),
+then you don't need to add `"specs"` property explicitly to `package.json`.
 
 <br>
 
