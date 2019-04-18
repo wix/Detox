@@ -8,8 +8,9 @@
     "build:android-debug": "detox build --configuration android.emu.debug",
     "build:android-release": "detox build --configuration android.emu.release",
     "test:ios": "detox test --configuration ios.sim.debug",
-    "test:android-debug": "detox test --configuration android.emu.debug -l verbose",
-    "test:android-release": "detox test --configuration android.emu.release -l verbose",
+    "test:android-debug": "detox test -c android.emu.debug -l verbose",
+    "test:android-release": "detox test -c android.emu.release -l verbose",
+    "test:android-reuse": "detox test -c android.emu.release e2e-reuse --runner-config e2e-reuse/config.json -l verbose",
     "e2e:ios": "npm run build:ios && npm run test:ios",
     "e2e:android-debug": "npm run build:android-debug && npm run test:android-debug",
     "e2e:android-release": "npm run build:android-release && npm run test:android-release"
@@ -23,7 +24,6 @@
     "jest": "24.x.x"
   },
   "detox": {
-    "specs": "",
     "test-runner": "jest",
     "configurations": {
       "ios.sim.release": {
