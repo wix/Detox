@@ -17,7 +17,7 @@ detox test   # translates to: mocha <...args> e2e
 detox test e2e/01.sanity.test.js  # translates to: mocha <...args> e2e/01.sanity.test.js
 ```
 
-Previously, it used to work like:
+Between 12.1.x and 12.3.x, it was buggy and used to work like this:
 
 ```sh
 detox test   # translates to: mocha <...args> e2e
