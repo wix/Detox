@@ -30,7 +30,8 @@ This is not a breaking change yet, but starting from `detox@12.1.0` you'll start
 
 ```
 detox[21201] WARN:  [deprecation.js] Beware: -f, --file will be removed in the next version of Detox.
-detox[21201] WARN:  [deprecation.js] See the migration guide: https://wix.to/I0DOAK0
+detox[21201] WARN:  [deprecation.js] See the migration guide:
+https://github.com/wix/Detox/blob/master/docs/Guide.Migration.md#migrating-from-detox-120x-to-121x
 ```
 
 In the next major version `--file` and `--specs` will be treated as unknown arguments
