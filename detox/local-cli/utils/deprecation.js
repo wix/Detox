@@ -1,11 +1,11 @@
 const chalk = require('chalk');
 const log = require('../../src/utils/logger').child({ __filename });
-const migrationGuideUrl = 'https://wix.to/I0DOAK0';
+const migrationGuideUrl = 'https://github.com/wix/Detox/blob/master/docs/Guide.Migration.md#migrating-from-detox-120x-to-121x';
 
 function coerceDeprecation(option) {
   return function coerceDeprecationFn(value) {
     log.warn(`Beware: ${option} will be removed in the next version of Detox.`);
-    log.warn(`See the migration guide: ${migrationGuideUrl}`);
+    log.warn(`See the migration guide:\n${migrationGuideUrl} `);
 
     return value;
   };
