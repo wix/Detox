@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "12.2.1",
+  "version": "12.3.0",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -30,7 +30,7 @@
   "devDependencies": {
     "eslint": "^4.11.0",
     "eslint-plugin-node": "^6.0.1",
-    "jest": "23.x.x",
+    "jest": "24.x.x",
     "mockdate": "^2.0.1",
     "prettier": "1.7.0",
     "react-native": "0.56.0",
@@ -39,6 +39,7 @@
   "dependencies": {
     "bunyan": "^1.8.12",
     "bunyan-debug-stream": "^1.1.0",
+    "chalk": "^2.4.2",
     "child-process-promise": "^2.2.0",
     "fs-extra": "^4.0.2",
     "get-port": "^2.1.0",

@@ -1,6 +1,6 @@
 const firstTestContent = require('./firstTestContent');
 const runnerConfig = `{
-    "setupTestFrameworkScriptFile": "./init.js",
+    "setupFilesAfterEnv": ["./init.js"],
     "testEnvironment": "node"
 }`;
 

@@ -4,7 +4,7 @@ source $(dirname "$0")/demo-projects.sh
 
 pushd examples/demo-react-native
 run_f "detox build -c ios.sim.release"
-run_f "detox test -c ios.sim.release e2e"
+run_f "detox test -c ios.sim.release"
 run_f "detox test -c ios.sim.release e2eExplicitRequire --runner-config e2eExplicitRequire/mocha.opts"
 popd
 

@@ -1,25 +1,28 @@
 {
   "name": "demo-react-native-jest",
-  "version": "12.2.1",
+  "version": "12.3.0",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test-ios": "detox build --configuration ios.sim.debug && detox test --configuration ios.sim.debug",
-    "test-android": "detox build --configuration android.emu.debug && detox test --configuration android.emu.debug -l verbose"
+    "build:ios": "detox build --configuration ios.sim.debug",
+    "build:android-debug": "detox build --configuration android.emu.debug",
+    "build:android-release": "detox build --configuration android.emu.release",
+    "test:ios": "detox test --configuration ios.sim.debug",
+    "test:android-debug": "detox test --configuration android.emu.debug -l verbose",
+    "test:android-release": "detox test --configuration android.emu.release -l verbose",
+    "e2e:ios": "npm run build:ios && npm run test:ios",
+    "e2e:android-debug": "npm run build:android-debug && npm run test:android-debug",
+    "e2e:android-release": "npm run build:android-release && npm run test:android-release"
   },
   "dependencies": {
-    "react": "16.0.0",
-    "react-native": "0.51.1"
+    "react": "16.6.3",
+    "react-native": "0.57.x"
   },
   "devDependencies": {
-    "babel-jest": "21.2.0",
-    "babel-preset-react-native": "4.0.0",
-    "detox": "^12.2.1",
-    "jest": "21.2.1",
-    "react-test-renderer": "16.0.0-beta.5"
+    "detox": "^12.3.0",
+    "jest": "24.x.x"
   },
   "detox": {
-    "specs": "",
     "test-runner": "jest",
     "configurations": {
       "ios.sim.release": {
@@ -36,13 +39,13 @@
       },
       "android.emu.debug": {
         "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
-        "build": "pushd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && popd",
+        "build": "cd android; ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug; cd -",
         "type": "android.emulator",
         "name": "Nexus_5X_API_26"
       },
       "android.emu.release": {
         "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
-        "build": "pushd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && popd",
+        "build": "cd android; ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release; cd -",
         "type": "android.emulator",
         "name": "Nexus_5X_API_26"
       }

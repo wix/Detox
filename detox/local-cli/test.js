@@ -8,7 +8,7 @@ const DetoxConfigError = require('../src/errors/DetoxConfigError');
 
 const log = require('../src/utils/logger').child({ __filename });
 const {getDetoxSection, getDefaultConfiguration, getConfigurationByKey} = require('./utils/configurationUtils');
-const {coerceDeprecation, migrationGuideUrl} = require('./utils/deprecation');
+const {coerceDeprecation, printFileDeprecationWarning} = require('./utils/deprecation');
 const shellQuote = require('./utils/shellQuote');
 
 module.exports.command = 'test';
@@ -144,16 +144,12 @@ module.exports.handler = async function test(program) {
 
   const config = getDetoxSection();
 
-  let testFolder = getConfigFor(['file', 'specs'], 'e2e');
-  testFolder = testFolder && `"${testFolder}"`;
-
-  if (testFolder && !program.file && !program.specs) {
-    log.warn('Deprecation warning: "file" and "specs" support will be dropped in the next Detox version.');
-    log.warn(`Please edit your package.json according to the migration guide: ${migrationGuideUrl} `);
+  if (!program.file && config.file) {
+    printFileDeprecationWarning(config.file);
   }
 
-  const runner = getConfigFor(['test-runner'], 'mocha');
-  const runnerConfig = getConfigFor(['runner-config'], getDefaultRunnerConfig());
+  const runner = getConfigFor('test-runner') || 'mocha';
+  const runnerConfig = getConfigFor('runner-config') || getDefaultRunnerConfig();
 
   const currentConfiguration = getConfigurationByKey(program.configuration);
   if (!currentConfiguration.type) {
@@ -175,17 +171,14 @@ module.exports.handler = async function test(program) {
     }
   }
 
-  function getConfigFor(keys, fallback) {
+  function getConfigFor(...keys) {
     for (const key of keys) {
-      const camel = _.camelCase(key);
-      const result = program[key] || config[camel] || config[key];
+      const result = program[key] || config[_.camelCase(key)] || config[key];
 
-      if (result != null) {
+      if (result) {
         return result;
       }
     }
-
-    return fallback;
   }
 
   function hasCustomValue(key) {
@@ -193,6 +186,18 @@ module.exports.handler = async function test(program) {
     const metadata = module.exports.builder[key];
 
     return (value !== metadata.default);
+  }
+
+  function getPassthroughArguments() {
+    const args = collectExtraArgs(process.argv.slice(3));
+
+    const hasFolders = args.some(arg => arg && !arg.startsWith('-'));
+    if (hasFolders) {
+      return args;
+    }
+
+    const fallbackTestFolder = `"${getConfigFor('file', 'specs') || 'e2e'}"`;
+    return args.concat(fallbackTestFolder);
   }
 
   function runMocha() {
@@ -218,8 +223,7 @@ module.exports.handler = async function test(program) {
       (hasCustomValue('record-performance') ? `--record-performance ${program.recordPerformance}` : ''),
       (program.artifactsLocation ? `--artifacts-location "${program.artifactsLocation}"` : ''),
       (program.deviceName ? `--device-name "${program.deviceName}"` : ''),
-      testFolder,
-      collectExtraArgs(process.argv.slice(3)),
+      ...getPassthroughArguments(),
     ]).join(' ');
 
     log.info(command);
@@ -238,8 +242,7 @@ module.exports.handler = async function test(program) {
       (program.noColor ? ' --no-color' : ''),
       `--maxWorkers=${program.workers}`,
       (platform ? shellQuote(`--testNamePattern=^((?!${getPlatformSpecificString()}).)*$`) : ''),
-      testFolder,
-      collectExtraArgs(process.argv.slice(3)),
+      ...getPassthroughArguments(),
     ]).join(' ');
 
     const detoxEnvironmentVariables = _.pick(program, [
@@ -305,7 +308,6 @@ module.exports.handler = async function test(program) {
     fs.ensureFileSync(lockFilePath);
     fs.writeFileSync(lockFilePath, '[]');
   }
-
 
   run();
 };

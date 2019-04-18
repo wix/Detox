@@ -91,16 +91,14 @@ function parsePackageJson(filepath) {
 
 function patchPackageJson(packageJson, runnerName) {
   _.set(packageJson, ['detox', 'test-runner'], runnerName);
-  _.set(packageJson, ['detox', 'specs'], "");
 
   log.info(PREFIX, 'Patched ./package.json with commands:');
   log.info(PREFIX, `_.set(packageJson, ['detox', 'test-runner'], "${runnerName}")`);
-  log.info(PREFIX, `_.set(packageJson, ['detox', 'specs'], "")`);
 }
 
 function savePackageJson(filepath, json) {
   try {
-    fs.writeFileSync(filepath, JSON.stringify(json, null, 2));
+    fs.writeFileSync(filepath, JSON.stringify(json, null, 2) + '\n');
   } catch (err) {
     log.error(PREFIX, `Failed to write changes into ./package.json due to the error:\n${err.message}`);
   }
