@@ -14,7 +14,7 @@
     "mocha": "^4.0.1"
   },
   "detox": {
-    "specs": "",
+    "specs": "e2e",
     "test-runner": "mocha",
     "runner-config": "e2e/mocha.opts",
     "configurations": {
@@ -32,13 +32,13 @@
       },
       "android.emu.debug": {
         "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
-        "build": "pushd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && popd",
+        "build": "cd android ; ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug ; cd -",
         "type": "android.emulator",
         "name": "Nexus_5X_API_26"
       },
       "android.emu.release": {
         "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
-        "build": "pushd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && popd",
+        "build": "cd android ; ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release ; cd -",
         "type": "android.emulator",
         "name": "Nexus_5X_API_26"
       }
