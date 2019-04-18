@@ -19,6 +19,9 @@ npm install --save-dev jest
 detox init -r jest
 ```
 
+Please note, however, that the generated configuration files are not compatible
+with older versions of Jest (23.x or older).
+
 ### 3. Modify package.json
 
 ```json

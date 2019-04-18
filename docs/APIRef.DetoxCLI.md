@@ -67,7 +67,7 @@ Initiating your test suite. <sup>[[1]](#notice-passthrough)</sup>
 
 | Option                                        | Description |
 | ---                                           | --- |
-| -c, -configuration \<device config\>          | Select a device configuration from your defined configurations, if not supplied, and there's only one configuration, detox will default to it |
+| -c, --configuration \<device config\>         | Select a device configuration from your defined configurations, if not supplied, and there's only one configuration, detox will default to it |
 | -o, --runner-config \<config\>                | Test runner config file, defaults to 'e2e/mocha.opts' for mocha and 'e2e/config.json' for jest. |
 | -n, --device-name [name]                      | Override the device name specified in a configuration. Useful for running a single build configuration on multiple devices. |
 | -l, --loglevel [value]                        | Log level: fatal, error, warn, info, verbose, trace |
@@ -80,7 +80,7 @@ Initiating your test suite. <sup>[[1]](#notice-passthrough)</sup>
 | -u, --cleanup                                 | Shutdown simulator when test is over, useful for CI scripts, to make sure detox exists cleanly with no residue |
 | -w, --workers                                 | [iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest) |
 | -H, --headless                                | [Android Only] Launch Emulator in headless mode. Useful when running on CI. |
-| -gpu                                          | [Android Only] Launch Emulator with the specific -gpu [gpu mode] parameter. |
+| --gpu                                         | [Android Only] Launch Emulator with the specific -gpu [gpu mode] parameter. |
 | --no-color                                    | Disable colors in log output |
 | --help                                        | Show help |
 

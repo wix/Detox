@@ -30,7 +30,7 @@
   "devDependencies": {
     "eslint": "^4.11.0",
     "eslint-plugin-node": "^6.0.1",
-    "jest": "23.x.x",
+    "jest": "24.x.x",
     "mockdate": "^2.0.1",
     "prettier": "1.7.0",
     "react-native": "0.56.0",
