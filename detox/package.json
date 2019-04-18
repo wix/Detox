@@ -78,6 +78,7 @@
       "__tests__",
       "local-cli/utils",
       "src/artifacts/log",
+      "src/artifacts/instruments",
       "src/artifacts/screenshot",
       "src/artifacts/video",
       "src/server/DetoxServer.js",

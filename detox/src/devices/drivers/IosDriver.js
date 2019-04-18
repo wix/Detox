@@ -7,13 +7,33 @@ const invoke = require('../../invoke');
 const GREYConfigurationApi = require('../../ios/earlgreyapi/GREYConfiguration');
 const GREYConfigurationDetox = require('../../ios/earlgreyapi/GREYConfigurationDetox');
 const EarlyGreyImpl = require('../../ios/earlgreyapi/EarlGreyImpl');
+const AppleSimUtils = require('../ios/AppleSimUtils');
+
+const SimulatorLogPlugin = require('../../artifacts/log/ios/SimulatorLogPlugin');
+const SimulatorScreenshotPlugin = require('../../artifacts/screenshot/SimulatorScreenshotPlugin');
+const SimulatorRecordVideoPlugin = require('../../artifacts/video/SimulatorRecordVideoPlugin');
+const SimulatorInstrumentsPlugin = require('../../artifacts/instruments/SimulatorInstrumentsPlugin');
 
 class IosDriver extends DeviceDriverBase {
   constructor(config) {
     super(config);
 
+    this.applesimutils = new AppleSimUtils();
+
     this.expect = require('../../ios/expect');
     this.expect.setInvocationManager(new InvocationManager(this.client));
+  }
+
+  declareArtifactPlugins() {
+    const appleSimUtils = this.applesimutils;
+    const client = this.client;
+
+    return {
+      instruments: (api) => new SimulatorInstrumentsPlugin({ api, client }),
+      log: (api) => new SimulatorLogPlugin({ api, appleSimUtils }),
+      screenshot: (api) => new SimulatorScreenshotPlugin({ api, appleSimUtils }),
+      video: (api) => new SimulatorRecordVideoPlugin({ api, appleSimUtils }),
+    };
   }
 
   exportGlobals() {

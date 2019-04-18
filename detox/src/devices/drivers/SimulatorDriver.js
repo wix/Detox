@@ -3,35 +3,19 @@ const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
 const IosDriver = require('./IosDriver');
-const AppleSimUtils = require('../ios/AppleSimUtils');
 const configuration = require('../../configuration');
 const environment = require('../../utils/environment');
 const DeviceRegistry = require('../DeviceRegistry');
-
-const SimulatorLogPlugin = require('../../artifacts/log/ios/SimulatorLogPlugin');
-const SimulatorScreenshotPlugin = require('../../artifacts/screenshot/SimulatorScreenshotPlugin');
-const SimulatorRecordVideoPlugin = require('../../artifacts/video/SimulatorRecordVideoPlugin');
 
 class SimulatorDriver extends IosDriver {
 
   constructor(config) {
     super(config);
 
-    this._applesimutils = new AppleSimUtils();
     this.deviceRegistry = new DeviceRegistry({
-      getDeviceIdsByType: async type => await this._applesimutils.findDevicesUDID(type),
-      createDevice: type => this._applesimutils.create(type),
+      getDeviceIdsByType: async type => await this.applesimutils.findDevicesUDID(type),
+      createDevice: type => this.applesimutils.create(type),
     });
-  }
-
-  declareArtifactPlugins() {
-    const appleSimUtils = this._applesimutils;
-
-    return {
-      log: (api) => new SimulatorLogPlugin({ api, appleSimUtils }),
-      screenshot: (api) => new SimulatorScreenshotPlugin({ api, appleSimUtils }),
-      video: (api) => new SimulatorRecordVideoPlugin({ api, appleSimUtils }),
-    };
   }
 
   async prepare() {
@@ -72,22 +56,22 @@ class SimulatorDriver extends IosDriver {
   }
 
   async boot(deviceId) {
-    const coldBoot = await this._applesimutils.boot(deviceId);
+    const coldBoot = await this.applesimutils.boot(deviceId);
     await this.emitter.emit('bootDevice', { coldBoot, deviceId });
   }
 
   async installApp(deviceId, binaryPath) {
-    await this._applesimutils.install(deviceId, binaryPath);
+    await this.applesimutils.install(deviceId, binaryPath);
   }
 
   async uninstallApp(deviceId, bundleId) {
     await this.emitter.emit('beforeUninstallApp', { deviceId, bundleId });
-    await this._applesimutils.uninstall(deviceId, bundleId);
+    await this.applesimutils.uninstall(deviceId, bundleId);
   }
 
   async launchApp(deviceId, bundleId, launchArgs, languageAndLocale) {
     await this.emitter.emit('beforeLaunchApp', {bundleId, deviceId, launchArgs});
-    const pid = await this._applesimutils.launch(deviceId, bundleId, launchArgs, languageAndLocale);
+    const pid = await this.applesimutils.launch(deviceId, bundleId, launchArgs, languageAndLocale);
     await this.emitter.emit('launchApp', {bundleId, deviceId, launchArgs, pid});
 
     return pid;
@@ -95,30 +79,30 @@ class SimulatorDriver extends IosDriver {
 
   async terminate(deviceId, bundleId) {
     await this.emitter.emit('beforeTerminateApp', { deviceId, bundleId });
-    await this._applesimutils.terminate(deviceId, bundleId);
+    await this.applesimutils.terminate(deviceId, bundleId);
   }
 
   async sendToHome(deviceId) {
-    await this._applesimutils.sendToHome(deviceId);
+    await this.applesimutils.sendToHome(deviceId);
   }
 
   async shutdown(deviceId) {
     await this.emitter.emit('beforeShutdownDevice', { deviceId });
-    await this._applesimutils.shutdown(deviceId);
+    await this.applesimutils.shutdown(deviceId);
     await this.emitter.emit('shutdownDevice', { deviceId });
   }
 
   async setLocation(deviceId, lat, lon) {
-    await this._applesimutils.setLocation(deviceId, lat, lon);
+    await this.applesimutils.setLocation(deviceId, lat, lon);
   }
 
   async setPermissions(deviceId, bundleId, permissions) {
-    await this._applesimutils.setPermissions(deviceId, bundleId, permissions);
+    await this.applesimutils.setPermissions(deviceId, bundleId, permissions);
   }
 
   async resetContentAndSettings(deviceId) {
     await this.shutdown(deviceId);
-    await this._applesimutils.resetContentAndSettings(deviceId);
+    await this.applesimutils.resetContentAndSettings(deviceId);
     await this.boot(deviceId);
   }
 
@@ -133,7 +117,7 @@ class SimulatorDriver extends IosDriver {
   }
 
   getLogsPaths(deviceId) {
-    return this._applesimutils.getLogsPaths(deviceId);
+    return this.applesimutils.getLogsPaths(deviceId);
   }
 
   async waitForActive() {

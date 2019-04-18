@@ -104,6 +104,13 @@ module.exports.builder = {
     describe:
       'Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only.'
   },
+  'record-performance': {
+    group: 'Debugging:',
+    choices: ['all', 'none'],
+    default: 'none',
+    describe:
+      '[iOS Only] Save Detox Instruments performance recordings of each test to artifacts directory.'
+  },
   w: {
     alias: 'workers',
     group: 'Execution:',
@@ -213,6 +220,7 @@ module.exports.handler = async function test(program) {
       (hasCustomValue('record-logs') ? `--record-logs ${program.recordLogs}` : ''),
       (hasCustomValue('take-screenshots') ? `--take-screenshots ${program.takeScreenshots}` : ''),
       (hasCustomValue('record-videos') ? `--record-videos ${program.recordVideos}` : ''),
+      (hasCustomValue('record-performance') ? `--record-performance ${program.recordPerformance}` : ''),
       (program.artifactsLocation ? `--artifacts-location "${program.artifactsLocation}"` : ''),
       (program.deviceName ? `--device-name "${program.deviceName}"` : ''),
       ...getPassthroughArguments(),
@@ -249,6 +257,7 @@ module.exports.handler = async function test(program) {
       'recordLogs',
       'takeScreenshots',
       'recordVideos',
+      'recordPerformance',
       'deviceName',
     ]);
 

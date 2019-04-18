@@ -17,6 +17,8 @@
 #import "EarlGreyExtensions.h"
 #import "EarlGreyStatistics.h"
 
+#import "DetoxInstrumentsManager.h"
+
 @interface UIApplication ()
 
 - (void)_sendMotionBegan:(UIEventSubtype)arg;
@@ -27,6 +29,9 @@
 DTX_CREATE_LOG(DetoxManager)
 
 @interface DetoxManager() <WebSocketDelegate, TestRunnerDelegate>
+{
+	DetoxInstrumentsManager* _recordingManager;
+}
 
 @property (nonatomic) BOOL isReady;
 @property (nonatomic, strong) WebSocket *webSocket;
@@ -98,6 +103,19 @@ static void detoxConditionalInit()
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidLaunch:) name:UIApplicationDidFinishLaunchingNotification object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+	
+	dispatch_async(dispatch_get_main_queue(), ^{
+		_recordingManager = [DetoxInstrumentsManager new];
+	});
+	
+	if([NSUserDefaults.standardUserDefaults objectForKey:@"currentTestSummaryDataURL"])
+	{
+		NSString* recordingPath = [NSUserDefaults.standardUserDefaults objectForKey:@"recordingPath"];
+		if(recordingPath != nil)
+		{
+			[self _handlePerformanceRecording:@{@"recordingPath": recordingPath} isFromLaunch:YES completionHandler:nil];
+		}
+	}
 	
 	return self;
 }
@@ -171,7 +189,7 @@ static void detoxConditionalInit()
 	[self.webSocket connectToServer:url withSessionId:sessionId];
 }
 
-- (void)websocketDidConnect
+- (void)websocketDidConnect:(WebSocket*)websocket
 {
 	if (![ReactNativeSupport isReactNativeApp])
 	{
@@ -187,11 +205,21 @@ static void detoxConditionalInit()
 	}];
 }
 
-- (void)websocketDidReceiveAction:(NSString *)type withParams:(NSDictionary *)params withMessageId:(NSNumber *)messageId
+- (void)websocket:(WebSocket*)websocket didReceiveAction:(NSString *)type withParams:(NSDictionary *)params withMessageId:(NSNumber *)messageId
 {
 	NSAssert(messageId != nil, @"Got action with a null messageId");
 	
-	if([type isEqualToString:@"waitForActive"])
+	if([type isEqualToString:@"testerDisconnected"])
+	{
+		[self _stopAndCleanupRecording];
+	}
+	else if([type isEqualToString:@"setRecordingState"])
+	{
+		[self _handlePerformanceRecording:params isFromLaunch:NO completionHandler:^ {
+			[self _safeSendAction:@"setRecordingStateDone" params:@{} messageId:messageId];
+		}];
+	}
+	else if([type isEqualToString:@"waitForActive"])
 	{
 		[self _waitForApplicationState:UIApplicationStateActive action:type messageId:messageId];
 		return;
@@ -320,6 +348,16 @@ static void detoxConditionalInit()
 	}
 }
 
+- (void)websocketDidClose:(WebSocket *)websocket
+{
+	[self _stopAndCleanupRecording];
+}
+
+- (void)_stopAndCleanupRecording
+{
+	[self _handlePerformanceRecording:nil isFromLaunch:NO completionHandler:nil];
+}
+
 - (void)_waitForRNLoadWithId:(id)messageId
 {
 	__weak __typeof(self) weakSelf = self;
@@ -354,6 +392,14 @@ static void detoxConditionalInit()
 
 - (void)notifyOnCrashWithDetails:(NSDictionary*)details
 {
+	dispatch_semaphore_t semaphore = dispatch_semaphore_create(1);
+	
+	[_recordingManager stopRecordingWithCompletionHandler:^(NSError *error) {
+		dispatch_semaphore_signal(semaphore);
+	}];
+	
+	dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+	
 	[self.webSocket sendAction:@"AppWillTerminateWithError" withParams:details withMessageId:@-10000];
 }
 
@@ -363,6 +409,45 @@ static void detoxConditionalInit()
 	//This behaves exactly in the same manner that UIApplication handles the simulator "Shake Gesture" menu command.
 	[[UIApplication sharedApplication] _sendMotionBegan:UIEventSubtypeMotionShake];
 	[[UIApplication sharedApplication] _sendMotionEnded:UIEventSubtypeMotionShake];
+}
+
+- (void)_handlePerformanceRecording:(NSDictionary*)props isFromLaunch:(BOOL)launch completionHandler:(void(^)(void))completionHandler
+{
+	if(completionHandler == nil)
+	{
+		completionHandler = ^ {};
+	}
+	
+	BOOL completionBlocked = NO;
+	
+	if(props[@"recordingPath"] != nil)
+	{
+		NSURL* absoluteURL = [NSURL fileURLWithPath:props[@"recordingPath"]];
+		
+		if(launch)
+		{
+			[_recordingManager continueRecordingAtURL:absoluteURL];
+		}
+		else
+		{
+			[_recordingManager startRecordingAtURL:absoluteURL];
+		}
+	}
+	else
+	{
+		completionBlocked = YES;
+		[_recordingManager stopRecordingWithCompletionHandler:^(NSError *error) {
+			dispatch_async(dispatch_get_main_queue(), ^{
+				completionHandler();
+			});
+		}];
+	}
+	
+	
+	if(completionBlocked == NO)
+	{
+		completionHandler();
+	}
 }
 
 @end
