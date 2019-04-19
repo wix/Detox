@@ -12,5 +12,5 @@ run_f "lerna run --ignore detox-demo* build"
 run_f "lerna run --ignore detox-demo* test"
 
 pushd detox
-source $(dirname "$0")/coverage.sh
-popd detox
+try_coveralls
+popd

@@ -14,6 +14,5 @@ cp extras/release.gradle node_modules/react-native/ReactAndroid/
 run_f "npm run build:android"
 run_f "npm run e2e:android -- --headless"
 # run_f "npm run verify-artifacts:android"
-source $(dirname "$0")/coverage.sh
-
+try_coveralls
 popd
