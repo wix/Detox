@@ -159,16 +159,15 @@ module.exports.handler = async function test(program) {
   const platform = currentConfiguration.type.split('.')[0];
 
   function run() {
-    switch (runner) {
-      case 'mocha':
-        runMocha();
-        break;
-      case 'jest':
-        runJest();
-        break;
-      default:
-        throw new Error(`${runner} is not supported in detox cli tools. You can still run your tests with the runner's own cli tool`);
+    if (runner.includes('jest')) {
+      return runJest();
     }
+
+    if (runner.includes('mocha')) {
+      return runMocha();
+    }
+
+    throw new Error(`${runner} is not supported in detox cli tools. You can still run your tests with the runner's own cli tool`);
   }
 
   function getConfigFor(...keys) {
@@ -206,7 +205,7 @@ module.exports.handler = async function test(program) {
     }
 
     const command = _.compact([
-      (path.join('node_modules', '.bin', 'mocha')),
+      (path.join('node_modules', '.bin', runner)),
       (runnerConfig ? `--opts ${runnerConfig}` : ''),
       (program.configuration ? `--configuration ${program.configuration}` : ''),
       (program.loglevel ? `--loglevel ${program.loglevel}` : ''),
@@ -237,7 +236,7 @@ module.exports.handler = async function test(program) {
     }
 
     const command = _.compact([
-      path.join('node_modules', '.bin', 'jest'),
+      path.join('node_modules', '.bin', runner),
       (runnerConfig ? `--config=${runnerConfig}` : ''),
       (program.noColor ? ' --no-color' : ''),
       `--maxWorkers=${program.workers}`,
@@ -282,13 +281,12 @@ module.exports.handler = async function test(program) {
   }
 
   function getDefaultRunnerConfig() {
-    switch (runner) {
-      case 'mocha':
-        return 'e2e/mocha.opts';
-      case 'jest':
-        return 'e2e/config.json';
-      default:
-        return undefined;
+    if (runner.includes('jest')) {
+      return 'e2e/config.json';
+    }
+
+    if (runner.includes('mocha')) {
+      return 'e2e/mocha.opts';
     }
   }
 
