@@ -58,7 +58,7 @@ function createPlainBunyanStream({ logPath, level }) {
 }
 
 function init() {
-  const levelFromArg = argparse.getArgValue('loglevel');
+  const levelFromArg = argparse.getArgValue('loglevel') || process.env.DETOX_LOGLEVEL;
   const level = adaptLogLevelName(levelFromArg);
   const logBaseFilename = path.join(argparse.getArgValue('artifacts-location') || '', `detox_pid_${process.pid}`);
   const shouldRecordLogs = typeof DETOX_CLI === 'undefined' && ['failing', 'all'].indexOf(argparse.getArgValue('record-logs')) >= 0;

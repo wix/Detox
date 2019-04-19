@@ -16,7 +16,7 @@ npm install -g detox-cli
 ## Usage
 
 ```sh
-detox <command> [options] 
+detox <command> [options]
 ```
 
 ## Commands
@@ -70,7 +70,7 @@ Initiating your test suite. <sup>[[1]](#notice-passthrough)</sup>
 | -c, --configuration \<device config\>         | Select a device configuration from your defined configurations, if not supplied, and there's only one configuration, detox will default to it |
 | -o, --runner-config \<config\>                | Test runner config file, defaults to 'e2e/mocha.opts' for mocha and 'e2e/config.json' for jest. |
 | -n, --device-name [name]                      | Override the device name specified in a configuration. Useful for running a single build configuration on multiple devices. |
-| -l, --loglevel [value]                        | Log level: fatal, error, warn, info, verbose, trace |
+| -l, --loglevel [value]                        | Log level: `fatal`, `error`, `warn`, `info`, `verbose`, `trace`. Alternatively, this can be set with the environment variable `DETOX_LOGLEVEL`.|
 | -d, --debug-synchronization \<value\>         | When an action/expectation takes a significant amount time use this option to print device synchronization status. The status will be printed if the action takes more than [value]ms to complete |
 | -a, --artifacts-location \<path\>             | Artifacts (logs, screenshots, etc) root directory.<sup>[[2]](#notice-artifacts)</sup> |
 | --record-logs [failing/all/none]              | Save logs during each test to artifacts directory. Pass "failing" to save logs of failing tests only. The default value is **none**. |
@@ -101,7 +101,7 @@ Hence, **extra arguments to** `detox test` **will be forwarded to your test runn
 path a subdirectory with configuration name and timestamp (e.g. `artifacts/android.emu.release.2018-06-12 05:52:43Z`).
 In other words, the path with a slash at the end assumes you do not want a subdirectory inside.
 For more details, please check the [Enabling artifacts](APIRef.Artifacts.md#artifacts).
-The default value is **artifacts** (plus a subdir). 
+The default value is **artifacts** (plus a subdir).
 
 ### run-server
 
@@ -115,6 +115,3 @@ Start a standalone Detox server
 | -l, --loglevel [value] | Log level: fatal, error, warn, info, verbose, trace |
 | --no-color             | Disable colorful logs |
 | --help                 | Show help |
-
-
-
