@@ -25,9 +25,11 @@
     "test": "npm run unit",
     "unit:watch": "jest --watch",
     "prepublish": "npm run build",
-    "postinstall": "node scripts/postinstall.js"
+    "postinstall": "node scripts/postinstall.js",
+    "coveralls": "cat coverage/lcov.info | coveralls"
   },
   "devDependencies": {
+    "coveralls": "^3.0.3",
     "eslint": "^4.11.0",
     "eslint-plugin-node": "^6.0.1",
     "jest": "24.x.x",
