@@ -210,7 +210,6 @@ ios.tar
 demo-native-ios/ModuleCache
 detox/ios/DetoxBuild
 Detox.framework.tbz
-Detox-ios-src.tbz
 
 demo-native-ios/Build
 detox/DetoxBuild
@@ -222,3 +221,8 @@ detox/ios_src
 package-lock.json
 /detox/src/devices/detox/notifications/notification.json
 detox/test/artifacts
+
+## Final outputs
+
+Detox-android/
+Detox-ios-src.tbz

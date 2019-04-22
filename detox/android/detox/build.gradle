@@ -91,3 +91,7 @@ dependencies {
     // noinspection GradleDynamicVersion
     testImplementation 'com.facebook.react:react-native:+'
 }
+
+if (rootProject.hasProperty('isOfficialDetoxLib')) {
+    apply from: './detox-publishing.gradle'
+}
