@@ -39,8 +39,10 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            proguardFile new File(rootProject.projectDir, '../node_modules/detox/android/detox/proguard-rules-app.pro')
+
             signingConfig signingConfigs.release
         }
     }
@@ -68,10 +70,10 @@ android {
 }
 
 dependencies {
-    implementation "com.android.support:appcompat-v7:27.1.1"
-    implementation "com.facebook.react:react-native:+"  // From node_modules
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.facebook.react:react-native:+'  // From node_modules
 
-    androidTestImplementation(project(path: ":detox"))
+    androidTestImplementation('com.wix:detox:+') { transitive = true }
     androidTestImplementation 'junit:junit:4.12'
 }
 

@@ -28,21 +28,32 @@ title: Detox for Android
 
 ### 2. Add Detox dependency to an Android project
 
-In `android/settings.gradle` add:
+In your *root* buildscript (i.e. `build.gradle`), register both `google()` _and_ detox as repository lookup points:
 
 ```groovy
-include ':detox'
-project(':detox').projectDir = new File(rootProject.projectDir, '../node_modules/detox/android/detox')
+allprojects {
+    repositories {
+        // ...
+        google()
+        maven {
+            // All of Detox' artifacts are provided via the npm module
+            url "$rootDir/../node_modules/detox/Detox-android"
+        }
+    }
+}
+
 ```
+
+
 
 In `android/app/build.gradle` add this to `defaultConfig` section:
 
 ```groovy
   defaultConfig {
-      ...
-      testBuildType System.getProperty('testBuildType', 'debug')  //this will later be used to control the test apk build type
+      // ...
+      testBuildType System.getProperty('testBuildType', 'debug')  // This will later be used to control the test apk build type
       testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-      ...
+      // ...
   }
 ```
 Please be aware that the `minSdkVersion` needs to be at least 18.
@@ -50,24 +61,13 @@ Please be aware that the `minSdkVersion` needs to be at least 18.
 
 
 
-In `android/app/build.gradle` add this in `dependencies` section:
+In your app's buildscript (i.e. `app/build.gradle`) add this in `dependencies` section:
 
 ```groovy
 dependencies {
-	// ...
-    androidTestImplementation(project(path: ":detox"))
+	  // ...
+    androidTestImplementation('com.wix:detox:+') { transitive = true } 
     androidTestImplementation 'junit:junit:4.12'
-}
-```
-
-And in `android/build.gradle` you need to add this under `allprojects > repositories`:
-
-```groovy
-buildscript {
-    repositories {
-	    // ...
-        google()
-    }
 }
 ```
 
@@ -156,11 +156,11 @@ In apps running [minification using Proguard](https://developer.android.com/stud
         // 'release' is typically the default proguard-enabled build-type
         release {
             minifyEnabled true
-          
-            // The last expression results in a path to Detox' custom rules file
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', "${project(':detox').projectDir}/proguard-rules-app.pro"
 
-            // ...
+            // Typical pro-guard definiotns
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // Detox-specific additions to pro-guard
+            proguardFile new File(rootProject.projectDir, '../node_modules/detox/android/detox/proguard-rules-app.pro')
         }
     }
 
