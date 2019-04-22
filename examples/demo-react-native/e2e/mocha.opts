@@ -1,4 +1,4 @@
 --recursive
---timeout 120000
+--timeout 300000
 --bail
 --file e2e/init.js
