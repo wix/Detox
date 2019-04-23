@@ -8,6 +8,7 @@
     "build:android-debug": "detox build --configuration android.emu.debug",
     "build:android-release": "detox build --configuration android.emu.release",
     "test:ios": "detox test --configuration ios.sim.debug",
+    "test:ios-reuse": "detox test -c ios.sim.debug e2e-reuse --runner-config e2e-reuse/config.json -l verbose -w 1",
     "test:android-debug": "detox test -c android.emu.debug -l verbose",
     "test:android-release": "detox test -c android.emu.release -l verbose",
     "test:android-reuse": "detox test -c android.emu.release e2e-reuse --runner-config e2e-reuse/config.json -l verbose",
