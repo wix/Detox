@@ -10,7 +10,7 @@ beforeAll(async () => {
   await detox.init(config, { reuse: true });
 });
 
-beforeEach(async function() {
+beforeEach(async () => {
   await adapter.beforeEach();
 });
 
