@@ -3,7 +3,17 @@
   "version": "12.4.0",
   "private": true,
   "scripts": {
-    "start": "react-native start"
+    "start": "react-native start",
+    "build:ios": "detox build --configuration ios.sim.debug",
+    "build:android-debug": "detox build --configuration android.emu.debug",
+    "build:android-release": "detox build --configuration android.emu.release",
+    "test:ios": "detox test --configuration ios.sim.debug",
+    "test:android-debug": "detox test --configuration android.emu.debug -l verbose",
+    "test:android-release": "detox test --configuration android.emu.release -l verbose",
+    "test:android-explicit-require": "detox test e2eExplicitRequire -c android.emu.release -l verbose --runner-config e2eExplicitRequire/mocha.opts",
+    "e2e:ios": "npm run build:ios && npm run test:ios",
+    "e2e:android-debug": "npm run build:android-debug && npm run test:android-debug",
+    "e2e:android-release": "npm run build:android-release && npm run test:android-release"
   },
   "dependencies": {
     "react": "16.4.1",
