@@ -50,25 +50,11 @@ function projectSetup() {
 function prePublishToNpm() {
   logSection('Prepublish');
 
-  // Dry-run 'lerna publish' just for getting the calculated future version.
-  const versionType = process.env.RELEASE_VERSION_TYPE;
-
-  log('Pre-calculating future version...');
-  exec.execSync(`lerna publish --cd-version "${versionType}" --yes --skip-git --skip-npm`);
-  const futureVersion = getVersionSafe();
-  log('Version is: ' + futureVersion);
-  exec.execSync('git reset --hard');
-
   log('Gathering up iOS artifacts...');
   process.chdir('detox');
   const {packageIosSources} = require('../detox/scripts/pack_ios');
   packageIosSources();
   process.chdir('..');
-
-  log('Packing up Android artifacts...');
-  process.chdir('detox/android');
-  exec.execSync(`./gradlew clean detox:publish -Dversion=${futureVersion}`);
-  process.chdir('../..');
 }
 
 function publishToNpm() {
