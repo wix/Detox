@@ -61,7 +61,7 @@ function publishToNpm() {
   logSection('Lerna publish');
 
   const versionType = process.env.RELEASE_VERSION_TYPE;
-  const dryRun = process.env.RELEASE_DRY_RUN === true;
+  const dryRun = process.env.RELEASE_DRY_RUN === "true";
   if (dryRun) {
     log('DRY RUN: Running lerna without publishing');
   }
@@ -85,7 +85,7 @@ function updateGit(newVersion) {
   exec.execSync(`git tag ${newVersion}`);
   exec.execSync(`git log -1 --date=short --pretty=format:'%h %ad %s %d %cr %an'`);
 
-  const dryRun = process.env.RELEASE_DRY_RUN === true;
+  const dryRun = process.env.RELEASE_DRY_RUN === "true";
   if (dryRun) {
     log('DRY RUN: not pushing to git');
   } else {
