@@ -51,6 +51,8 @@ function prePublishToNpm() {
   logSection('Prepublish');
 
   // Dry-run 'lerna publish' just for getting the calculated future version.
+  const versionType = process.env.RELEASE_VERSION_TYPE;
+
   log('Pre-calculating future version...');
   exec.execSync(`lerna publish --cd-version "${versionType}" --yes --skip-git --skip-npm`);
   const futureVersion = getVersionSafe();
