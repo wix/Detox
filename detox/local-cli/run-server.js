@@ -31,5 +31,6 @@ module.exports.handler = async function runServer(argv) {
   new DetoxServer({
     port: +argv.port,
     log,
+    standalone: true,
   });
 };

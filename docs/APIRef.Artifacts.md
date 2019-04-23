@@ -16,6 +16,7 @@ Artifacts are disabled by default. Two things are required to enable them:
 
 * To record `.log` files, add `--record-logs all` (or `--record-logs failing`, if you want to keep logs only for failing tests).
 * To record `.mp4` test run videos, add `--record-videos all` (or `--record-videos failing`, if you want to keep video recordings only for failing tests).
+* To record `.dtxrec` (Detox Instruments recordings) for each test, add `--record-performance all`. To open those recordings, you'll need [Detox Instruments](https://github.com/wix/DetoxInstruments). **NOTE:** only iOS is supported.
 * To take `.png` screenshots before and after each test, add `--take-screenshots all` (or `--take-screenshots failing`, if you want to keep only screenshots of failing tests).  
 Alternatively, you might leverage `await device.takeScreenshot('your screenshot name')` API to have manual control over taking the screenshots.  
 To disable screenshots subsystem forcibly, use `--take-screenshots none`.
@@ -43,6 +44,7 @@ detox test --artifacts-location /tmp/detox_artifacts/ # won't append anything, h
 ```
 test.log
 test.mp4
+test.dtxrec/
 beforeEach.png
 afterEach.png
 ```

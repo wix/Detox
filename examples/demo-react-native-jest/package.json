@@ -1,6 +1,6 @@
 {
   "name": "demo-react-native-jest",
-  "version": "12.3.0",
+  "version": "12.4.0",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -20,7 +20,7 @@
     "react-native": "0.57.x"
   },
   "devDependencies": {
-    "detox": "^12.3.0",
+    "detox": "^12.4.0",
     "jest": "24.x.x"
   },
   "detox": {

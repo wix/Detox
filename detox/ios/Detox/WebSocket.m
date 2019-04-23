@@ -48,6 +48,15 @@ DTX_CREATE_LOG(WebSocket);
 	_isModern = [self.websocket respondsToSelector:@selector(sendString:error:)];
 }
 
+- (void)close
+{
+	if (self.websocket)
+	{
+		[self.websocket close];
+		self.websocket = nil;
+	}
+}
+
 - (void)sendAction:(NSString*)type withParams:(NSDictionary*)params withMessageId:(NSNumber*)messageId
 {
 	NSDictionary *data = @{@"type": type, @"params": params, @"messageId": messageId};
@@ -102,14 +111,15 @@ DTX_CREATE_LOG(WebSocket);
 		dtx_log_fault(@"receiveAction invalid messageId");
 		return;
 	}
-	dtx_log_info(@"Action Received: %@ params: %@", type, params);
-	if (self.delegate) [self.delegate websocketDidReceiveAction:type withParams:params withMessageId:messageId];
+	dtx_log_info(@"Action Received: %@", type);
+//	dtx_log_debug(@"params: %@", params);
+	[self.delegate websocket:self didReceiveAction:type withParams:params withMessageId:messageId];
 }
 
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket
 {
 	[self sendAction:@"login" withParams:@{@"sessionId": self.sessionId, @"role": @"testee"} withMessageId:@0];
-	if (self.delegate) [self.delegate websocketDidConnect];
+	[self.delegate websocketDidConnect:self];
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessageWithString:(NSString *)string
@@ -125,6 +135,7 @@ DTX_CREATE_LOG(WebSocket);
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean
 {
 	dtx_log_info(@"Socket closed: %@", reason);
+	[self.delegate websocketDidClose:self];
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message {

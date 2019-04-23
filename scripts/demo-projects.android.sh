@@ -2,13 +2,17 @@
 
 source $(dirname "$0")/demo-projects.sh
 
+pushd detox/android
+run_f "./gradlew publish -Dversion=999.999.999"
+popd
+
 pushd examples/demo-react-native
-run_f "detox build -c android.emu.release"
-run_f "detox test -c android.emu.release"
-run_f "detox test -c android.emu.release --specs e2eExplicitRequire --runner-config e2eExplicitRequire/mocha.opts"
+run_f "npm run build:android-release"
+run_f "npm run test:android-release -- --headless"
+run_f "npm run test:android-explicit-require -- --headless"
 popd
 
 pushd examples/demo-react-native-jest
-run_f "detox build -c android.emu.release"
-run_f "detox test -c android.emu.release"
+run_f "npm run build:android-release"
+run_f "npm run test:android-release -- --headless"
 popd

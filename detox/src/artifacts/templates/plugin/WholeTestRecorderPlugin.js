@@ -14,11 +14,8 @@ class WholeTestRecorderPlugin extends ArtifactPlugin {
     await super.onBeforeEach(testSummary);
 
     if (this.enabled) {
-      const recording = this.createTestRecording();
-      await recording.start();
-
-      this.api.trackArtifact(recording);
-      this.testRecording = recording;
+      this.testRecording = this.createTrackedTestRecording();
+      await this.testRecording.start();
     }
   }
 
@@ -36,6 +33,16 @@ class WholeTestRecorderPlugin extends ArtifactPlugin {
 
       this.testRecording = null;
     }
+  }
+
+  /***
+   * @protected
+   */
+  createTrackedTestRecording(config) {
+    const recording = this.createTestRecording(config);
+    this.api.trackArtifact(recording);
+
+    return recording;
   }
 
   /***

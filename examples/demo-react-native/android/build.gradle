@@ -20,5 +20,8 @@ allprojects {
         maven {
             url "$rootDir/../node_modules/react-native/android"
         }
+        maven {
+            url "$rootDir/../node_modules/detox/Detox-android"
+        }
     }
 }

@@ -139,6 +139,16 @@ class CurrentStatus extends Action {
   }
 }
 
+class SetInstrumentsRecordingState extends Action {
+  constructor(params) {
+    super('setRecordingState', params);
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'setRecordingStateDone');
+  }
+}
+
 class AppWillTerminateWithError extends Action {
   constructor(params) {
     super(params);
@@ -162,5 +172,6 @@ module.exports = {
   DeliverPayload,
   CurrentStatus,
   Shake,
+  SetInstrumentsRecordingState,
   AppWillTerminateWithError
 };
