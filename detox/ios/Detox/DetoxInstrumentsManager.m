@@ -17,6 +17,7 @@ DTX_CREATE_LOG_PREFIX(DetoxInstrumentsManager, @"🥶")
 @property (class, nonatomic, strong, readonly) id defaultProfilingConfiguration;
 @property (nonatomic, readwrite) NSTimeInterval samplingInterval;
 @property (nonatomic, readwrite) BOOL recordNetwork;
+@property (nonatomic, readwrite) BOOL recordInternalReactNativeEvents;
 @property (nonatomic, readwrite) BOOL recordThreadInformation;
 @property (nonatomic, readwrite) BOOL collectStackTraces;
 @property (nonatomic, readwrite) BOOL symbolicateStackTraces;
