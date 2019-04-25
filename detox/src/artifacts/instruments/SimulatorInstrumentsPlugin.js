@@ -89,6 +89,6 @@ class SimulatorInstrumentsPlugin extends WholeTestRecorderPlugin {
   }
 }
 
-SimulatorInstrumentsPlugin.DEFAULT_INSTRUMENTS_PATH = process.env.DETOX_INSTRUMENTS_PATH || '/Applications/Detox Instruments.app';
+SimulatorInstrumentsPlugin.DEFAULT_INSTRUMENTS_PATH = '/Applications/Detox Instruments.app';
 
 module.exports = SimulatorInstrumentsPlugin;

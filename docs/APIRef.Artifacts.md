@@ -69,29 +69,11 @@ Make sure you have `detox.beforeEach(testSummary)` and `detox.afterEach(testSumm
 
 For iOS, you might be getting errors on CI similar to this:
 
-```
-Error: Error Domain=NSPOSIXErrorDomain Code=22 "Invalid argument" UserInfo={NSLocalizedDescription=Video recording requires hardware Metal capability.}.
-```
+```Error: Error Domain=NSPOSIXErrorDomain Code=22 "Invalid argument" UserInfo={NSLocalizedDescription=Video recording requires hardware Metal capability.}.```
 
 Unfortunately, this error is beyond our reach. To fix it, you have to enable hardware acceleration on your build machine, or just disable video recording on CI if it is not possible to turn on the acceleration.
 
 There might be a similar issue on Android when the screenrecording process exits with an error on CI. While the solution might be identical to the one above, also you might try to experiment with other emulator devices and Android OS versions to see if it helps.
-
-### Detox Instruments is installed in a custom location
-
-If you see such warnings in log as:
-
-```
-detox[46413] WARN:  [SimulatorInstrumentsPlugin.js/INSTRUMENTS_NOT_FOUND] Failed to find Detox Instruments app at path: /Applications/Detox Instruments.app
-To enable recording performance profiles, please follow: https://github.com/wix/DetoxInstruments#installation
-```
-
-and you can't fix that by installing [Detox Instruments](https://github.com/wix/DetoxInstruments)
-in a default location, then you can override the path by setting an environment variable, e.g.:
-
-```
-DETOX_INSTRUMENTS_PATH="/path/to/Detox Instruments.app" detox test ...
-```
 
 ### Ctrl+C does not terminate Detox+Jest tests correctly
 
