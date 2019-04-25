@@ -146,7 +146,6 @@ static void (*__DTXProfilerMarkEvent)(NSString* category, NSString* name, __DTXE
 	[config setRecordingFileURL:URL];
 	
 	//TODO: Finalize the actual config for Detox perf recording.
-	[config setRecordNetwork:NO];
 	[config setRecordThreadInformation:YES];
 	[config setCollectStackTraces:YES];
 	[config setSymbolicateStackTraces:YES];
