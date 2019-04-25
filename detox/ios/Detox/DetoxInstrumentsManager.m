@@ -16,7 +16,9 @@ DTX_CREATE_LOG_PREFIX(DetoxInstrumentsManager, @"🥶")
 
 @property (class, nonatomic, strong, readonly) id defaultProfilingConfiguration;
 @property (nonatomic, readwrite) NSTimeInterval samplingInterval;
+@property (nonatomic, readwrite) BOOL recordEvents;
 @property (nonatomic, readwrite) BOOL recordNetwork;
+@property (nonatomic, readwrite) BOOL recordLocalhostNetwork;
 @property (nonatomic, readwrite) BOOL recordInternalReactNativeEvents;
 @property (nonatomic, readwrite) BOOL recordThreadInformation;
 @property (nonatomic, readwrite) BOOL collectStackTraces;
@@ -147,8 +149,14 @@ static void (*__DTXProfilerMarkEvent)(NSString* category, NSString* name, __DTXE
 	[config setRecordingFileURL:URL];
 	
 	//TODO: Finalize the actual config for Detox perf recording.
+	[config setRecordEvents:YES];
+	if ([config respondsToSelector:@selector(setRecordInternalReactNativeEvents:)])
+	{
+		[config setRecordInternalReactNativeEvents:YES];
+	}
+
 	[config setRecordNetwork:YES];
-	[config setRecordInternalReactNativeEvents:YES];
+	[config setRecordLocalhostNetwork:YES];
 	[config setRecordThreadInformation:YES];
 	[config setCollectStackTraces:YES];
 	[config setSymbolicateStackTraces:YES];
