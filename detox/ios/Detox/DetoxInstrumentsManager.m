@@ -147,6 +147,7 @@ static void (*__DTXProfilerMarkEvent)(NSString* category, NSString* name, __DTXE
 	
 	//TODO: Finalize the actual config for Detox perf recording.
 	[config setRecordNetwork:YES];
+	[config setRecordInternalReactNativeEvents:YES];
 	[config setRecordThreadInformation:YES];
 	[config setCollectStackTraces:YES];
 	[config setSymbolicateStackTraces:YES];
