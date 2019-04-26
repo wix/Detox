@@ -95,10 +95,7 @@ class Client {
     } catch (err) {
       this.successfulTestRun = false;
 
-      if (_.isError(err)) {
-        potentialError.message = err.message;
-      }
-
+      potentialError.message = _.isError(err) ? err.message : String(err);
       throw potentialError;
     }
     clearTimeout(this.slowInvocationStatusHandler);
