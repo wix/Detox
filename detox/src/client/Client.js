@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const AsyncWebSocket = require('./AsyncWebSocket');
 const actions = require('./actions/actions');
 const argparse = require('../utils/argparse');
@@ -93,7 +94,8 @@ class Client {
       await this.sendAction(new actions.Invoke(invocation));
     } catch (err) {
       this.successfulTestRun = false;
-      potentialError.message = err;
+
+      potentialError.message = _.isError(err) ? err.message : String(err);
       throw potentialError;
     }
     clearTimeout(this.slowInvocationStatusHandler);
