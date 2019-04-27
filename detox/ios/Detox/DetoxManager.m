@@ -108,13 +108,10 @@ static void detoxConditionalInit()
 		_recordingManager = [DetoxInstrumentsManager new];
 	});
 	
-	if([NSUserDefaults.standardUserDefaults objectForKey:@"currentTestSummaryDataURL"])
+	NSString* recordingPath = [NSUserDefaults.standardUserDefaults objectForKey:@"recordingPath"];
+	if(recordingPath != nil)
 	{
-		NSString* recordingPath = [NSUserDefaults.standardUserDefaults objectForKey:@"recordingPath"];
-		if(recordingPath != nil)
-		{
-			[self _handlePerformanceRecording:@{@"recordingPath": recordingPath} isFromLaunch:YES completionHandler:nil];
-		}
+		[self _handlePerformanceRecording:@{@"recordingPath": recordingPath} isFromLaunch:YES completionHandler:nil];
 	}
 	
 	return self;
