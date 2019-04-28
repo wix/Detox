@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "12.4.1",
+  "version": "12.5.0",
   "private": true,
   "scripts": {
     "test": ":",
@@ -19,7 +19,7 @@
     "react-native": "0.56.0"
   },
   "devDependencies": {
-    "detox": "^12.4.1",
+    "detox": "^12.5.0",
     "express": "^4.15.3",
     "lodash": "^4.14.1",
     "mocha": "^6.1.3"
