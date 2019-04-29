@@ -43,7 +43,7 @@ class SimulatorInstrumentsPlugin extends WholeTestRecorderPlugin {
     }
 
     if (process.env.DETOX_INSTRUMENTS_PATH) {
-      event.launchArgs['-detoxInstrumentsPath'] = event.launchArgs['-detoxInstrumentsPath'] || process.env.DETOX_INSTRUMENTS_PATH;
+      event.launchArgs['-instrumentsPath'] = event.launchArgs['-instrumentsPath'] || process.env.DETOX_INSTRUMENTS_PATH;
     }
 
     if (this.testRecording) {
