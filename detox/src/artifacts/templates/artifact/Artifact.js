@@ -106,8 +106,10 @@ class Artifact {
     if (await fs.exists(source)) {
       logger.debug({ event: 'MOVE_FILE' }, `moving "${source}" to ${destination}`);
       await fs.move(source, destination);
+      return true;
     } else {
       logger.warn({ event: 'MOVE_FILE_MISSING'} , `did not find temporary file: ${source}`);
+      return false;
     }
   }
 }

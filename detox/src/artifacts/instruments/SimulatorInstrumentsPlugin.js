@@ -10,8 +10,7 @@ class SimulatorInstrumentsPlugin extends WholeTestRecorderPlugin {
     super(config);
 
     this.client = config.client;
-    this.enabled = false;
-    this.shouldRecord = argparse.getArgValue('record-performance') === 'all';
+    this.enabled = argparse.getArgValue('record-performance') === 'all';
   }
 
   async onBeforeUninstallApp(event) {
@@ -38,14 +37,13 @@ class SimulatorInstrumentsPlugin extends WholeTestRecorderPlugin {
   async onBeforeLaunchApp(event) {
     await super.onBeforeLaunchApp(event);
 
-    if (!this.enabled && this.shouldRecord) {
-      const isInstalled = await this._assertDetoxInstrumentsInstalled(event.launchArgs['-instrumentsPath']);
-      this.enabled = this.shouldRecord = isInstalled;
-    }
-
     const isInsideRunningTest = !!this.context.testSummary;
     if (this.enabled && isInsideRunningTest && !this.testRecording) {
       this.testRecording = this.createTrackedTestRecording();
+    }
+
+    if (process.env.DETOX_INSTRUMENTS_PATH) {
+      event.launchArgs['-instrumentsPath'] = process.env.DETOX_INSTRUMENTS_PATH;
     }
 
     if (this.testRecording) {
@@ -61,22 +59,6 @@ class SimulatorInstrumentsPlugin extends WholeTestRecorderPlugin {
     }
   }
 
-  async _assertDetoxInstrumentsInstalled(customInstrumentsPath) {
-    const instrumentsPath = customInstrumentsPath || SimulatorInstrumentsPlugin.DEFAULT_INSTRUMENTS_PATH;
-    if (await fs.exists(instrumentsPath)) {
-      return true;
-    }
-
-    const hint = customInstrumentsPath
-      ? `Please verify that -instrumentsPath argument points to the existing Detox Instruments installation.`
-      : `To enable recording performance profiles, please follow: https://github.com/wix/DetoxInstruments#installation`;
-
-    log.warn({ event: 'INSTRUMENTS_NOT_FOUND' },
-      `Failed to find Detox Instruments app at path: ${instrumentsPath}\n${hint}`);
-
-    return false;
-  }
-
   createTestRecording() {
     return new SimulatorInstrumentsRecording({
       client: this.client,
@@ -88,7 +70,5 @@ class SimulatorInstrumentsPlugin extends WholeTestRecorderPlugin {
     return this.api.preparePathForArtifact('test.dtxrec', testSummary);
   }
 }
-
-SimulatorInstrumentsPlugin.DEFAULT_INSTRUMENTS_PATH = '/Applications/Detox Instruments.app';
 
 module.exports = SimulatorInstrumentsPlugin;

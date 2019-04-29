@@ -69,11 +69,27 @@ Make sure you have `detox.beforeEach(testSummary)` and `detox.afterEach(testSumm
 
 For iOS, you might be getting errors on CI similar to this:
 
-```Error: Error Domain=NSPOSIXErrorDomain Code=22 "Invalid argument" UserInfo={NSLocalizedDescription=Video recording requires hardware Metal capability.}.```
+```
+Error: Error Domain=NSPOSIXErrorDomain Code=22 "Invalid argument" UserInfo={NSLocalizedDescription=Video recording requires hardware Metal capability.}.
+```
 
 Unfortunately, this error is beyond our reach. To fix it, you have to enable hardware acceleration on your build machine, or just disable video recording on CI if it is not possible to turn on the acceleration.
 
 There might be a similar issue on Android when the screenrecording process exits with an error on CI. While the solution might be identical to the one above, also you might try to experiment with other emulator devices and Android OS versions to see if it helps.
+
+### Detox Instruments is installed in a custom location
+
+If you have to use [Detox Instruments](https://github.com/wix/DetoxInstruments)
+installed in a custom location (e.g., inside `node_modules`), you can point Detox
+to it with the `DETOX_INSTRUMENTS_PATH` environment variable, as shown below:
+
+```bash
+DETOX_INSTRUMENTS_PATH="/path/to/Detox Instruments.app" detox test ...
+```
+
+Please mind that if **Detox Instruments** had been [integrated into
+your app](https://github.com/wix/DetoxInstruments/blob/master/Documentation/XcodeIntegrationGuide.md) (usually, that is in development builds), then the built-in version of [Detox Profiler framework](https://github.com/wix/DetoxInstruments/tree/master/Profiler) will always take priority over any custom path to Detox Instruments installation.
+
 
 ### Ctrl+C does not terminate Detox+Jest tests correctly
 
