@@ -87,6 +87,7 @@
     "exclude": [
       "**/__test/**",
       "**/__mocks__/**",
+      "**/*.mock.js",
       "**/*.test.js"
     ]
   }
