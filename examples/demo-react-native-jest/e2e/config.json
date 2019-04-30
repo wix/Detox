@@ -1,4 +1,6 @@
 {
   "setupFilesAfterEnv": ["./init.js"],
-  "testEnvironment": "node"
+  "testEnvironment": "node",
+  "reporters": ["<rootDir>/../node_modules/detox/runners/jest/DetoxJestReporter.js"],
+  "verbose": true
 }

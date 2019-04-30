@@ -1,10 +1,20 @@
 const DetoxRuntimeError = require('../../src/errors/DetoxRuntimeError');
 
-class DetoxJestAdapter /* implements JasmineReporter */ {
+class DetoxLifecycleAdapter /* implements JasmineReporter */ {
   constructor(detox) {
     this.detox = detox;
     this._currentSpec = null;
     this._todos = [];
+  }
+
+  async beforeAll(config) {
+    if (!config) {
+      throw new DetoxRuntimeError({
+        message: 'Detox adapter to Jest is malfunctioning.',
+        hint: 'You must pass specifcy the detox config from your package.json as a parameter to beforeAll()'
+      });
+    }
+    await this.detox.init(config);
   }
 
   async beforeEach() {
@@ -23,6 +33,11 @@ class DetoxJestAdapter /* implements JasmineReporter */ {
 
   async afterAll() {
     await this._flush();
+
+    if (!this.cleanUpCalled) {
+      this.cleanUpCalled = true; // This is for temporary backwards compatibility.
+      await this.detox.cleanup();
+    }
   }
 
   async _afterEach(previousSpec) {
@@ -70,4 +85,4 @@ class DetoxJestAdapter /* implements JasmineReporter */ {
   }
 }
 
-module.exports = DetoxJestAdapter;
+module.exports = DetoxLifecycleAdapter;

@@ -1,4 +1,4 @@
 const detox = require('../../src/index');
-const DetoxJestAdapter = require('./DetoxJestAdapter');
+const DetoxLifecycleAdapter = require('./DetoxLifecycleAdapter');
 
-module.exports = new DetoxJestAdapter(detox);
+module.exports = new DetoxLifecycleAdapter(detox);
