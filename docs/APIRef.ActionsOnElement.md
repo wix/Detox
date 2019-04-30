@@ -102,7 +102,7 @@ Scroll amount of pixels.<br>
 pixels - independent device pixels<br>
 direction - left/right/top/bottom<br>
 startPositionX - The X starting scroll position, in percentage; valid input: (0.0, 1.0), `NaN`; default: `NaN`—Choose the best value<br>
-startPositionX - The Y starting scroll position, in percentage; valid input: (0.0, 1.0), `NaN`; default: `NaN`—Choose the best value<br>
+startPositionY - The Y starting scroll position, in percentage; valid input: (0.0, 1.0), `NaN`; default: `NaN`—Choose the best value<br>
 
 ```js
 await element(by.id('scrollView')).scroll(100, 'down', NaN, 0.85);

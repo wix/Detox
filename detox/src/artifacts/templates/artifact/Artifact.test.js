@@ -502,7 +502,7 @@ describe(Artifact.name, () => {
       it('should log error if source file does not exist', async () => {
         await Artifact.moveTemporaryFile(logger, source, destination = tempfile('.dest'));
         expect(await fs.exists(destination)).toBe(false);
-        expect(logger.error).toHaveBeenCalledWith({ event: 'MOVE_FILE_ERROR' }, expect.any(String));
+        expect(logger.warn).toHaveBeenCalledWith({ event: 'MOVE_FILE_MISSING' }, expect.any(String));
       });
     });
   });

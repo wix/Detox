@@ -196,6 +196,17 @@ describe('Client', () => {
     }
   });
 
+  it(`execute() - should throw if non-error is thrown`, async () => {
+    await connect();
+    client.ws.send.mockRejectedValueOnce("non-error");
+    const call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityLabel:', 'test');
+    try {
+      await client.execute(call);
+    } catch (ex) {
+      expect(ex.message).toBe("non-error");
+    }
+  });
+
   it(`execute() - unsupported result should throw`, async () => {
     await connect();
     client.ws.send.mockReturnValueOnce(Promise.resolve(`{"unsupported":"unsupported"}`));

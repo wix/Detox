@@ -5,6 +5,63 @@ title: Migration Guide
 
 We are improving detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes.
 
+## Migrating from Detox 12.4.x to 12.5.0 (nonbreaking)
+
+Starting Detox `12.5.0`, we ship Android with precompiled sources under a  `.aar` file. The complete configuration process is thoroughly described in the [Android setup guide](Introduction.Android.md#2-add-detox-dependency-to-an-android-project) - but it mostly fits **new** projects. For existing projects, migrating is strongly recommended; Here's the diff:
+
+Root `settings.gradle` file:
+
+```diff
+-include ':detox'
+-project(':detox').projectDir = new File(rootProject.projectDir, '../node_modules/detox/android/detox')
+```
+
+
+
+Root buildscript (i.e. `build.gradle`):
+
+```diff
+allprojects {
+    repositories {
+         // ...
++        maven {
++            url "$rootDir/../node_modules/detox/Detox-android"
++        }
+     }
+ }
+```
+
+
+
+App buildscript (i.e. `app/build.gradle`):
+
+```diff
+ dependencies {
+-    androidTestImplementation(project(path: ":detox"))
++    androidTestImplementation('com.wix:detox:+') { transitive = true }
+ }
+```
+
+
+
+#### Proguard Configuration
+
+If you have Detox Proguard rules integrated into the `app/build.gradle`, be sure to switch to an explicit search path:
+
+```diff
+     buildTypes {
+         release {
+         
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+-            proguardFile "${project(':detox').projectDir}/proguard-rules-app.pro"
++            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
+
+         }
+     }
+```
+
+
+
 ## Migrating from Detox 12.3.x to 12.4.0
 
 The deprecation of `"specs"` (in `package.json`) introduced in 12.1.0 is **no longer relevant**.

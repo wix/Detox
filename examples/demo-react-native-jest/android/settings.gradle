@@ -1,6 +1,3 @@
 rootProject.name = 'DemoReactNativeJest'
 
-include ':detox'
-project(':detox').projectDir = new File(rootProject.projectDir, '../node_modules/detox/android/detox')
-
 include ':app'

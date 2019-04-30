@@ -8,6 +8,7 @@ function publishNewVersion(packageVersion) {
   projectSetup();
   prePublishToNpm();
   publishToNpm();
+
   const newVersion = getVersionSafe();
   if (newVersion === packageVersion) {
     log(`Stopping: Lerna\'s completed without upgrading the version - nothing to publish (version is ${newVersion})`);
@@ -49,6 +50,7 @@ function projectSetup() {
 function prePublishToNpm() {
   logSection('Prepublish');
 
+  log('Gathering up iOS artifacts...');
   process.chdir('detox');
   const {packageIosSources} = require('../detox/scripts/pack_ios');
   packageIosSources();
@@ -59,8 +61,12 @@ function publishToNpm() {
   logSection('Lerna publish');
 
   const versionType = process.env.RELEASE_VERSION_TYPE;
+  const dryRun = process.env.RELEASE_DRY_RUN === "true";
+  if (dryRun) {
+    log('DRY RUN: Running lerna without publishing');
+  }
 
-  exec.execSync(`lerna publish --cd-version "${versionType}" --yes --skip-git`);
+  exec.execSync(`lerna publish --cd-version "${versionType}" --yes --skip-git ${dryRun ? '--skip-npm' : ''}`);
   exec.execSync('git status');
 }
 
@@ -78,8 +84,14 @@ function updateGit(newVersion) {
   exec.execSync(`git commit -m "Publish ${newVersion} [ci skip]"`);
   exec.execSync(`git tag ${newVersion}`);
   exec.execSync(`git log -1 --date=short --pretty=format:'%h %ad %s %d %cr %an'`);
-  exec.execSync(`git push deploy master`);
-  exec.execSync(`git push --tags deploy master`);
+
+  const dryRun = process.env.RELEASE_DRY_RUN === "true";
+  if (dryRun) {
+    log('DRY RUN: not pushing to git');
+  } else {
+    exec.execSync(`git push deploy master`);
+    exec.execSync(`git push --tags deploy master`);
+  }
 }
 
 module.exports = publishNewVersion;
