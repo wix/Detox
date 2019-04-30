@@ -11,8 +11,7 @@
     "build:ios": "detox build --configuration ios.sim.release",
     "build:android": "detox build --configuration android.emu.release",
     "verify-artifacts:ios": "jest ./scripts/verify_artifacts_are_not_missing.ios.test.js --testEnvironment node",
-    "verify-artifacts:android": "jest ./scripts/verify_artifacts_are_not_missing.android.test.js --testEnvironment node",
-    "coveralls": "cat coverage/lcov.info | coveralls"
+    "verify-artifacts:android": "jest ./scripts/verify_artifacts_are_not_missing.android.test.js --testEnvironment node"
   },
   "dependencies": {
     "moment": "^2.24.0",
@@ -20,7 +19,6 @@
     "react-native": "0.56.0"
   },
   "devDependencies": {
-    "coveralls": "^3.0.3",
     "detox": "^12.5.0",
     "express": "^4.15.3",
     "lodash": "^4.14.1",

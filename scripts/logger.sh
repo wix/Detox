@@ -18,12 +18,3 @@ run_f () {
   echo "travis_fold:end:$name"
   echo -e "${green}\t --> $(($duration / 60)) minutes and $(($duration % 60)) seconds ${nocolor}\n"
 }
-
-try_coveralls() {
-  if [ ! -z ${COVERALLS_REPO_TOKEN} ];
-  then
-    run_f "npm run coveralls"
-  else
-    echo "Skipping code coverage upload."
-  fi
-}

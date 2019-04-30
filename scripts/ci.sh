@@ -10,7 +10,3 @@ run_f "lerna bootstrap"
 
 run_f "lerna run --ignore detox-demo* build"
 run_f "lerna run --ignore detox-demo* test"
-
-pushd detox
-try_coveralls
-popd
