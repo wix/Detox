@@ -22,10 +22,11 @@
     "detox": "^12.6.0",
     "express": "^4.15.3",
     "lodash": "^4.14.1",
-    "mocha": "^6.1.3"
+    "mocha": "^6.1.3",
+    "nyc": "^14.0.0"
   },
   "detox": {
-    "test-runner": "mocha",
+    "test-runner": "nyc mocha",
     "__session": {
       "server": "ws://localhost:8099",
       "sessionId": "test"
@@ -71,5 +72,23 @@
         "name": "Nexus_5X_API_26"
       }
     }
+  },
+  "nyc": {
+    "reporter": [
+      "lcov",
+      "html"
+    ],
+    "all": true,
+    "cwd": "..",
+    "include": [
+      "src/**/*.js"
+    ],
+    "report-dir": "test/coverage",
+    "exclude": [
+      "**/__test/**",
+      "**/__mocks__/**",
+      "**/*.mock.js",
+      "**/*.test.js"
+    ]
   }
 }
