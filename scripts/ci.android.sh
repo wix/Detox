@@ -13,5 +13,6 @@ cp extras/release.gradle node_modules/react-native/ReactAndroid/
 
 run_f "npm run build:android"
 run_f "npm run e2e:android -- --headless --loglevel verbose"
+cp coverage/lcov.info coverage/e2e.lcov
 # run_f "npm run verify-artifacts:android"
 popd

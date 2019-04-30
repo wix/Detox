@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "12.4.1",
+  "version": "12.6.0",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -23,6 +23,7 @@
     "unit": "jest --coverage --verbose",
     "pretest": "npm run lint",
     "test": "npm run unit",
+    "posttest": "cp coverage/lcov.info coverage/unit.lcov",
     "unit:watch": "jest --watch",
     "prepublish": "npm run build",
     "postinstall": "node scripts/postinstall.js"
