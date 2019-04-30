@@ -23,6 +23,7 @@
     "unit": "jest --coverage --verbose",
     "pretest": "npm run lint",
     "test": "npm run unit",
+    "posttest": "cp coverage/lcov.info coverage/unit.lcov",
     "unit:watch": "jest --watch",
     "prepublish": "npm run build",
     "postinstall": "node scripts/postinstall.js"
