@@ -5,8 +5,15 @@ if [ -d aggregated-coverage ]; then
 
   rm -f "aggregated-coverage/merged.lcov"
   {
-    node_modules/.bin/lcov-result-merger 'aggregated-coverage/**/lcov.info' "aggregated-coverage/merged.lcov"
+    for lcov in aggregated-coverage/**/*.lcov; do
+      echo "Forcing relative paths in: $lcov"
+      sed -i 's/^SF:.*\(detox-ios-51-pr\|detox-ios-56-pr\|detox-android-56-pr\)\//SF:/g' $lcov
+    done
+
+    echo "Merging LCOV files"
+    node_modules/.bin/lcov-result-merger 'aggregated-coverage/**/*.lcov' "aggregated-coverage/merged.lcov"
   } && {
+    echo "Uploading to coveralls"
     cat "aggregated-coverage/merged.lcov" | node_modules/.bin/coveralls
   } || {
     echo "Failed to aggregate the test coverage, skipping."
