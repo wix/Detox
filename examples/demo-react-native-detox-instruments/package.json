@@ -1,0 +1,38 @@
+{
+  "name": "demo-react-native-detox-instruments",
+  "version": "12.4.1",
+  "private": true,
+  "scripts": {
+    "start": "react-native start",
+    "build:ios": "detox build --configuration ios.sim.debug",
+    "test:ios": "detox test --configuration ios.sim.debug",
+    "e2e:ios": "npm run build:ios && npm run test:ios"
+  },
+  "dependencies": {
+    "react": "16.8.4",
+    "react-native": "0.59.x"
+  },
+  "devDependencies": {
+    "detox": "^12.4.1",
+    "detox-instruments": "1.x.x",
+    "mocha": "6.x.x"
+  },
+  "detox": {
+    "test-runner": "mocha",
+    "runner-config": "e2e/mocha.opts",
+    "configurations": {
+      "ios.sim.release": {
+        "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+        "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj -UseNewBuildSystem=NO -scheme example -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet",
+        "type": "ios.simulator",
+        "name": "iPhone 7 Plus"
+      },
+      "ios.sim.debug": {
+        "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
+        "build": "xcodebuild -project ios/example.xcodeproj -UseNewBuildSystem=NO -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
+        "type": "ios.simulator",
+        "name": "iPhone 7 Plus"
+      }
+    }
+  }
+}
