@@ -85,7 +85,7 @@ Please be aware that the `minSdkVersion` needs to be at least 18.
 
 ### 3. Add Kotlin
 
-If your project does not already use Kotlin, add the Kotlin Gradle-plugin to your classpath in `android/build.gradle`:
+If your project does not already support Kotlin, add the Kotlin Gradle-plugin to your classpath in the root build-script (i.e.`android/build.gradle`):
 
 ```groovy
 buildscript {
@@ -102,14 +102,6 @@ buildscript {
 _Note: most guides advise of defining a global `kotlinVersion` constant - as in this example, but that is not mandatory._
 
 
-**IMPORTANT:** Detox aims at a playing fair with your app, and so it allows you to explicitly define the kotlin version for it to use - so as to align it with your own; Please do so - in your root `android/build.gradle` configuration file:
-
-```groovy
-buildscript {
-    ext.kotlinVersion = '1.3.0' // Your app's version
-    ext.detoxKotlinVersion = ext.kotlinVersion // Detox' version: should be 1.1.0 or higher!
-}
-```
 
 ***Note that Detox has been tested for version 1.1.0 of Kotlin, and higher!***
 
@@ -204,6 +196,24 @@ packagingOptions {
     exclude 'META-INF/LICENSE'
 }
 ```
+
+
+
+### Problem: Kotlin stdlib version conflicts
+
+Of all [Kotlin implementation flavours](https://kotlinlang.org/docs/reference/using-gradle.html#configuring-dependencies), Detox assumes the most recent one, namely `kotlin-stdlib-jdk8`. If your Android build fails due to conflicts with implementations coming from other dependencies or even your own app, consider adding an exclusion to either the "other" dependencies or detox itself, for example:
+
+```diff
+dependencies {
+-    androidTestImplementation('com.wix:detox:+') { transitive = true } 
++    androidTestImplementation('com.wix:detox:+') { 
++        transitive = true
++        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
++    }
+}
+```
+
+Detox should work with `kotlin-stdlib-jdk7`, as well.
 
 
 
