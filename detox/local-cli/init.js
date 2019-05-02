@@ -24,11 +24,11 @@ module.exports.handler = async function init(argv) {
   switch (runner) {
     case 'mocha':
       createMochaFolderE2E();
-      patchDetoxConfigInPackageJSON('mocha');
+      patchTestRunnerFieldInPackageJSON('mocha');
       break;
     case 'jest':
       createJestFolderE2E();
-      patchDetoxConfigInPackageJSON('jest', 'e2e/config.json');
+      patchTestRunnerFieldInPackageJSON('jest');
       break;
     default:
       throw new Error([
@@ -89,16 +89,11 @@ function parsePackageJson(filepath) {
   }
 }
 
-function patchPackageJson(packageJson, runnerName, runnerConfigFile) {
-  log.info(PREFIX, 'Patched ./package.json with these changes:');
-
+function patchPackageJson(packageJson, runnerName) {
   _.set(packageJson, ['detox', 'test-runner'], runnerName);
-  log.info(PREFIX, `  set detox->test-runner to "${runnerName}"`);
 
-  if (runnerConfigFile) {
-    _.set(packageJson, ['detox', 'runner-config'], runnerConfigFile);
-    log.info(PREFIX, `  set detox->runner-config to "${runnerConfigFile}"`);
-  }
+  log.info(PREFIX, 'Patched ./package.json with commands:');
+  log.info(PREFIX, `_.set(packageJson, ['detox', 'test-runner'], "${runnerName}")`);
 }
 
 function savePackageJson(filepath, json) {
@@ -109,12 +104,12 @@ function savePackageJson(filepath, json) {
   }
 }
 
-function patchDetoxConfigInPackageJSON(runnerName, runnerConfigFile) {
+function patchTestRunnerFieldInPackageJSON(runnerName) {
   const packageJsonPath = path.join(process.cwd(), 'package.json');
   const packageJson = parsePackageJson(packageJsonPath);
 
   if (packageJson) {
-    patchPackageJson(packageJson, runnerName, runnerConfigFile);
+    patchPackageJson(packageJson, runnerName);
     savePackageJson(packageJsonPath, packageJson);
   }
 }

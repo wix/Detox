@@ -9,25 +9,30 @@ class DetoxJestReporter extends VerboseReporter {
   }
 
   /**
-   * The super's impl does the following:
+   * Monkey patch for _wrapStdio method of Jest's DefaultReporter class
+   * https://github.com/facebook/jest/blob/84466b7bb187d33ffd336bd9fc76111bba511fe6/packages/jest-reporters/src/default_reporter.ts#L47
+   *
+   * The official implementation does the following:
    * - For the <b>stderr</b> stream, it overrides the 'write' method with a simple bulked output mechanism,
    *   which aggregates output onto a buffer but flushes it immediately.
    * - For the <b>stdout</b> stream, it overrides the 'write' method with a time-based bulked output mechanism,
    *   which aggregates output onto a buffer and flushes only in 100ms intervals.
    *
-   * This gives priority, to a certain extent, to stderr output, over stdout. Typically, user logs are sent
-   * to stdout, and Jest reporter's (e.g. test-suite summary) - to stderr.
+   * This gives priority, to a certain extent, to stderr output, over stdout.
+   * See: https://github.com/facebook/jest/blob/84466b7bb187d33ffd336bd9fc76111bba511fe6/packages/jest-reporters/src/default_reporter.ts#L73
+   *
+   * Typically, user logs are sent to stdout, and Jest reporter's (e.g. test-suite summary) - to stderr.
    *
    * ---
-   * Our goal is to have these 3 types of output stream-lined in real-time:
+   * Our goal is to have these 3 types of output streamlined in real time:
    *
    * 1. Jest suite-level lifecycle logging, typically done by the super-class' impl.
-   *    Note: jest does not notify spec-level events to reporters.
+   *    Note: Jest does not notify spec-level events to reporters.
    * 2. Jasmine real-time, spec-level lifecycle logging.
    * 3. User in-test logging (e.g. for debugging).
    *
-   * It's easy to see that this cannot be done while stderr and stdout are not of equal priority. Therefore, the
-   * solution introduced here is to apply the super's immediate-flushing approach to <b>both</b> flavors.
+   * It's easy to see that this cannot be done while stderr and stdout are not of equal priority.
+   * Therefore, this hack enforces immediate-flushing approach to <b>both</b> stderr and stdout.
    */
   _wrapStdio(stream) {
     const originalWrite = stream.write;
@@ -68,10 +73,10 @@ class DetoxJestReporter extends VerboseReporter {
     }
 
     if (this._hasDefaultReporter()) {
-      // This class overrides jest's VerboseReporter, which is set by default. Can't have both.
+      // This class overrides Jest's VerboseReporter, which is set by default. Can't have both.
       throw new DetoxRuntimeError({
         message: 'Cannot work alongside the default Jest reporter. Please remove it from the reporters list.',
-        hint: 'see https://jestjs.io/docs/en/configuration#reporters-array-modulename-modulename-options for more details',
+        hint: 'See https://jestjs.io/docs/en/configuration#reporters-array-modulename-modulename-options for more details',
       });
     }
   }

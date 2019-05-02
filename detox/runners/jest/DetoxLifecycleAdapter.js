@@ -33,11 +33,7 @@ class DetoxLifecycleAdapter /* implements JasmineReporter */ {
 
   async afterAll() {
     await this._flush();
-
-    if (!this.cleanUpCalled) {
-      this.cleanUpCalled = true; // This is for temporary backwards compatibility.
-      await this.detox.cleanup();
-    }
+    await this.detox.cleanup();
   }
 
   async _afterEach(previousSpec) {
