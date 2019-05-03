@@ -172,6 +172,12 @@ describe('index', () => {
     await detox.cleanup();
   });
 
+  it(`Basic usage, do not throw an error if cleanup is done twice`, async() => {
+    await detox.init(schemes.validOneDeviceNoSession);
+    await detox.cleanup();
+    await detox.cleanup();
+  });
+
   it(`Basic usage, if detox is undefined, do not throw an error`, async() => {
     await detox.cleanup();
   });

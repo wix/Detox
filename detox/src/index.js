@@ -60,8 +60,6 @@ async function init(config, params) {
   } catch (err) {
     log.error({ event: 'DETOX_INIT_ERROR' }, '\n', err);
     await cleanup();
-
-    detox = null;
     throw err;
   }
 }
@@ -81,6 +79,7 @@ async function afterEach(testSummary) {
 async function cleanup() {
     if (detox) {
         await detox.cleanup();
+        detox = null;
     }
 }
 
