@@ -2,7 +2,8 @@ const firstTestContent = require('./firstTestContent');
 const runnerConfig = `{
     "setupFilesAfterEnv": ["./init.js"],
     "testEnvironment": "node"
-}`;
+}
+`;
 
 const initjsContent = `const detox = require('detox');
 const config = require('../package.json').detox;
