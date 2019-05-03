@@ -2,6 +2,9 @@
   "name": "detox-test",
   "version": "12.6.1",
   "private": true,
+  "engines": {
+    "node": ">=8.3.0"
+  },
   "scripts": {
     "test": ":",
     "packager": "react-native start",
