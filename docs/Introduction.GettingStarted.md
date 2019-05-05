@@ -141,15 +141,17 @@ At the moment, such scaffolding is supported for two test runners:
 * ```detox init -r mocha```
 * ```detox init -r jest```
 
-In itself, `detox init` makes a few steps which you can reproduce manually:
+In itself, `detox init` runs these steps, which you can reproduce manually:
 
-* Create an `e2e` folder in your project root
-* Inside `e2e` folder create `mocha.opts` (for `mocha`) or `config.json` (for `jest`). See examples: [mocha.opts](/examples/demo-react-native/e2e/mocha.opts), [config.json](/examples/demo-react-native-jest/e2e/config.json)
-* Inside `e2e` folder create `init.js` file. See examples for [Mocha](/examples/demo-react-native/e2e/init.js) and [Jest](/examples/demo-react-native-jest/e2e/init.js).
-* Inside `e2e` folder create `firstTest.spec.js` with content similar to [this](/examples/demo-react-native/e2e/example.spec.js).
-* If you use `jest`, add `"test-runner": "jest"` to `detox` section in your `package.json` ([see example](https://github.com/wix/detox/blob/master/examples/demo-react-native-jest/package.json)).
+* Creates an `e2e/` folder in your project root
+* Inside `e2e` folder, creates `mocha.opts` (for `mocha`) or `config.json` (for `jest`). See examples: [mocha.opts](/examples/demo-react-native/e2e/mocha.opts), [config.json](/examples/demo-react-native-jest/e2e/config.json)
+* Inside `e2e` folder, creates `init.js` file. See examples for [Mocha](/examples/demo-react-native/e2e/init.js) and [Jest](/examples/demo-react-native-jest/e2e/init.js).
+* Inside `e2e` folder, creates `firstTest.spec.js` with content similar to [this](/examples/demo-react-native/e2e/example.spec.js).
+* If you use `jest`, adds `"test-runner": "jest"` to `detox` section in your `package.json` ([see example](https://github.com/wix/detox/blob/master/examples/demo-react-native-jest/package.json)).
 
-> TIP: Detox is not tightly coupled to Mocha and Jest, neither to this specific directory structure. Both are just a recommendation and are easy to replace without touching the internal implementation of Detox itself.
+**Note: For a Jest-based environment, please pause and follow-through the comprehensive [Jest setup guide](Guide.Jest.md).**
+
+> Tip: Detox is not tightly coupled to Mocha and Jest, neither to this specific directory structure. Both are just a recommendation and are easy to replace without touching the internal implementation of Detox itself.
 
 <br>
 

@@ -1,6 +1,6 @@
 const chalk = require('chalk').default;
 
-class DetoxTraceAdapter /* implements JasmineReporter */ {
+class DetoxSpecJasmineReporter /* implements JasmineReporter */ {
 
   constructor() {
     this._suites = [];
@@ -63,4 +63,4 @@ class DetoxTraceAdapter /* implements JasmineReporter */ {
   }
 }
 
-module.exports = DetoxTraceAdapter;
+module.exports = DetoxSpecJasmineReporter;

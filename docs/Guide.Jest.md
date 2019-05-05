@@ -3,10 +3,9 @@ id: Guide.Jest
 title: Jest
 ---
 
-## DISCLAIMERS
+## Disclaimer
 
-- This guide describing installing Detox with Jest on a fresh project. If you're migrating an existing project, please apply some common sense in the process.
-- We **strongly** recommend using Jest `24.x.x`.
+This guide describes installing Detox with Jest on a fresh project. If you're migrating an existing project, please apply some common sense in the process.
 
 ## Installation
 
@@ -33,38 +32,36 @@ If you haven't already, use the [Getting Started](Introduction.GettingStarted.md
 ##### The [*detox* configuration section](https://github.com/wix/Detox/blob/master/examples/demo-react-native-jest/package.json#L25) in your project's `package.json`:
 
 - `test-runner` should be `jest`.
-- `runner-config` to be set to the path of your Jest configuration file (see below). `detox init` generates it as `e2e/config.json`, which is also Jest's default (i.e. used whenever `runner-config` isn't  specified).
+- `runner-config`: Detox looks up Jest's config in `e2e/config.json` (which `detox init` generates for you), by default. You can override that by specifying this *optional* field.
 
 ![package.json](img/jest-guide/package_json.png)
 
-##### The [Jest configuration file](https://github.com/wix/Detox/blob/master/examples/demo-react-native-jest/e2e/config.json):
+---
 
-- In the very least, verify the following fields: `testEnvironment`, `setupFilesAfterEnv`.
+##### The [Jest configuration file](https://github.com/wix/Detox/blob/master/examples/demo-react-native-jest/e2e/config.json) (aka `config.json`):
+
+- At the very least, verify the following fields: `testEnvironment`, `setupFilesAfterEnv`.
 
   > Note: `setupFilesAfterEnv` was introduced in Jest 24.
 
-- **`reporters` array field, `verify` bolean field:**
-  We override Jest's default reporters so as to streamline logs of all flavours, in real-time - which isn't Jest's default, thus optimizing it for running e2e tests. This is optional: if you're OK with Jest's default logging, you can either remove `reporters` or set to the `"default"` item. See [Jest's docs](https://jestjs.io/docs/en/configuration#reporters-array-modulename-modulename-options) for more details.
+- **`reporters` (strings-array), `verify` (boolean) fields:**
+  In Detox `12.7.0` we've introduced a custom [Jest reporter](https://jestjs.io/docs/en/configuration#reporters-array-modulename-modulename-options) that optimizes Jest's console output for running e2e tests. It mainly takes care of streamlining logs of _all_ flavours - which isn't Jest's default. Setting `verbose=true` also makes sure that logs would show in real-time, as the tests are run. It is mandatory so as to have our custom reporter work well enough.
+  
+  > Note: This is all optional - but highly recommended. However, if you're OK with Jest's default logging, you can either remove `reporters` or set to the `"default"` item. See [Jest's docs](https://jestjs.io/docs/en/configuration#reporters-array-modulename-modulename-options) for more details.
+  >
+  > **Disclaimer:** We've only proved the custom reporter to work with Jest 24.
 
-##### The [Jest custom initialization code](https://github.com/wix/Detox/blob/master/examples/demo-react-native-jest/e2e/init.js):
+##### The [Jest custom initialization code](https://github.com/wix/Detox/blob/master/examples/demo-react-native-jest/e2e/init.js) (aka `e2e/init.js`):
 
-- `beforeAll()`, `beforeEach()`, `afterAll()` should all call our custom Detox-Jest adapter's equivalent lifecycle methods.
+- `beforeAll()`, `beforeEach()`, `afterAll()` should be registered as hooks for invoking `detox` and/or a custom adapter.
 - The custom Detox-Jest adapter must be registered as a `jasmine` reporter (`jasmine.getEnv().addReporter()`).
-- Optional: An additional `trace-adapter` should be registered as a `jasmine` reporter, as well. This one takes care of logging on a per-spec basis (i.e. when an `it` starts and ends) — which Jest does not do by default. Should be used in conjunction with our custom reporters.
+- Optional (but recommended): Starting Detox `12.7.0`, an additional, custom `spec-reporter` should be registered as a `jasmine` reporter, as well. This one takes care of logging on a per-spec basis (i.e. when an `it` starts and ends) — which Jest does not do by default. Should be used in conjunction with our custom reporters.
+
+
+
+Stream-lined test results showing in real-time, when putting all the pieces together:
 
 ![Streamlined output](img/jest-guide/streamlined_logging.png)
-
-### 4. Run some tests
-
-For example:
-
-```sh
-> react-native start
-...
-> detox test e2e --configuration ios.sim.debug
-```
-
-`detox init` generates default tests under the `e2e` folder. By now, you should be able to run them successfully, getting real-time, streamlined output and results.
 
 
 
@@ -79,9 +76,9 @@ There are some things you should notice:
 
 ## Parallelism
 
-Through Detox' cli, Jest can be started with [multiple workers](https://github.com/wix/Detox/blob/jest-boost/docs/APIRef.DetoxCLI.md#test) that run tests in simultaneously. In this mode, Jest effectively assigns one worker per each test file (invoking jasmine over it). In this mode, the per-spec logging offered by the trace-adapter mentioned earlier, does not necessarily make sense, as the workers' outputs get mixed up.
+Through Detox' cli, Jest can be started with [multiple workers](Guide.ParallelTestExecution.md) that run tests in simultaneously. In this mode, Jest effectively assigns one worker per each test file (invoking jasmine over it). In this mode, the per-spec logging offered by the `spec-adapter` mentioned earlier, does not necessarily make sense, as the workers' outputs get mixed up.
 
-Unfortunately, there's no way of telling whether parallelism has been enabled, at the adapter's scope (different JS contexts). If you find this way of logging unsuitable in a multiple-workers environment (typically an automated CI build), consider limiting the trace-adapter's registration in your test-init file (e.g. by using a dedicated environment variable).
+Unfortunately, there's no way of telling whether parallelism has been enabled, at the adapter's scope (different JS contexts). If you find this way of logging unsuitable in a multiple-workers environment (typically an automated CI build), consider limiting the `spec-adapter`'s registration in your test-init file (e.g. by using a dedicated environment variable).
 
 
 

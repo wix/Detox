@@ -1,7 +1,7 @@
-const {VerboseReporter} = require('@jest/reporters'); // eslint-disable-line
+const {VerboseReporter: JestVerboseReporter} = require('@jest/reporters');
 const DetoxRuntimeError = require('../../src/errors/DetoxRuntimeError');
 
-class DetoxJestReporter extends VerboseReporter {
+class DetoxStreamlineJestReporter extends JestVerboseReporter {
 
   constructor(globalConfig) {
     super(globalConfig);
@@ -87,10 +87,10 @@ class DetoxJestReporter extends VerboseReporter {
 
   _hasDefaultReporter() {
     return !!this._globalConfig.reporters.find(reporterDef => {
-      const reporterName = reporterDef[0];
+      const [reporterName] = reporterDef;
       return reporterName === 'default';
     });
   }
 }
 
-module.exports = DetoxJestReporter;
+module.exports = DetoxStreamlineJestReporter;
