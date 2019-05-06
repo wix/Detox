@@ -1,2 +1,2 @@
-const Reporter = require('./DetoxSpecJasmineReporter');
+const Reporter = require('./JasmineSpecReporter');
 module.exports = new Reporter();
