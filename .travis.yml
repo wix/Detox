@@ -7,7 +7,7 @@ matrix:
     os: osx
     osx_image: xcode10.2
     env:
-    - REACT_NATIVE_VERSION=0.59.4
+    - REACT_NATIVE_VERSION=0.56.x
       PATH=$PATH:~/Library/Python/2.7/bin
     install:
     - ./scripts/install.ios.sh
@@ -18,7 +18,7 @@ matrix:
     os: osx
     osx_image: xcode10.2
     env:
-    - REACT_NATIVE_VERSION=0.57.x
+    - REACT_NATIVE_VERSION=0.51.x
       PATH=$PATH:~/Library/Python/2.7/bin
     install:
     - ./scripts/install.ios.sh
@@ -27,7 +27,7 @@ matrix:
     - ./scripts/upload_artifact.sh
   - language: android
     env:
-    - REACT_NATIVE_VERSION=0.59.4
+    - REACT_NATIVE_VERSION=0.56.x
     android:
     components:
     - tools
@@ -48,7 +48,7 @@ matrix:
     os: osx
     osx_image: xcode10.2
     env:
-    - REACT_NATIVE_VERSION=0.59.4
+    - REACT_NATIVE_VERSION=0.56.x
     install:
     - ./scripts/install.ios.sh
     script:
