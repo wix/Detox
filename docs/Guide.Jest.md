@@ -5,7 +5,14 @@ title: Jest
 
 ## Disclaimer
 
-This guide describes installing Detox with Jest on a fresh project. If you're migrating an existing project, please apply some common sense in the process.
+This guide describes installing Detox with Jest on a fresh project.
+
+It has been officially tested only with `jest@24.x`, and you cannot
+apply it to the older versions of Jest.
+
+
+If you're migrating an existing project, please apply some common sense in the process.
+
 
 ## Installation
 
@@ -25,45 +32,57 @@ If you haven't already, use the [Getting Started](Introduction.GettingStarted.md
 > detox init -r jest
 ```
 
+**IMPORTANT:** Before proceeding to the next step, please verify that `detox init` command
+succeeded and the logs are green. Otherwise, be sure to address the issues specified with red color.
+**For the official reference, you can also use the
+[`demo-react-native-jest`](https://github.com/wix/Detox/tree/master/examples/demo-react-native-jest)**
+example project.
+
 ### 3. Fix & Verify
 
-**THIS IS IMPORTANT!** Make sure that `detox init` has ended successfully (everything is green). If it hasn't, be sure to address the issues specified in red. **The ultimate reference is our Jest-based demo app, [`demo-react-native-jest`](https://github.com/wix/Detox/tree/master/examples/demo-react-native-jest)**; Go over these fundamental things:
-
-##### The [*detox* configuration section](https://github.com/wix/Detox/blob/master/examples/demo-react-native-jest/package.json#L25) in your project's `package.json`:
-
-- `test-runner` should be `jest`.
-- `runner-config`: Detox looks up Jest's config in `e2e/config.json` (which `detox init` generates for you), by default. You can override that by specifying this *optional* field.
-
-![package.json](img/jest-guide/package_json.png)
-
----
-
-##### The [Jest configuration file](https://github.com/wix/Detox/blob/master/examples/demo-react-native-jest/e2e/config.json) (aka `config.json`):
-
-- At the very least, verify the following fields: `testEnvironment`, `setupFilesAfterEnv`.
-
-  > Note: `setupFilesAfterEnv` was introduced in Jest 24.
-
-- **`reporters` (strings-array), `verify` (boolean) fields:**
-  In Detox `12.7.0` we've introduced a custom [Jest reporter](https://jestjs.io/docs/en/configuration#reporters-array-modulename-modulename-options) that optimizes Jest's console output for running e2e tests. It mainly takes care of streamlining logs of _all_ flavours - which isn't Jest's default. Setting `verbose=true` also makes sure that logs would show in real-time, as the tests are run. It is mandatory so as to have our custom reporter work well enough.
-  
-  > Note: This is all optional - but highly recommended. However, if you're OK with Jest's default logging, you can either remove `reporters` or set to the `"default"` item. See [Jest's docs](https://jestjs.io/docs/en/configuration#reporters-array-modulename-modulename-options) for more details.
-  >
-  > **Disclaimer:** We've only proved the custom reporter to work with Jest 24.
-
-##### The [Jest custom initialization code](https://github.com/wix/Detox/blob/master/examples/demo-react-native-jest/e2e/init.js) (aka `e2e/init.js`):
-
-- `beforeAll()`, `beforeEach()`, `afterAll()` should be registered as hooks for invoking `detox` and/or a custom adapter.
-- The custom Detox-Jest adapter must be registered as a `jasmine` reporter (`jasmine.getEnv().addReporter()`).
-- Optional (but recommended): Starting Detox `12.7.0`, an additional, custom `spec-reporter` should be registered as a `jasmine` reporter, as well. This one takes care of logging on a per-spec basis (i.e. when an `it` starts and ends) — which Jest does not do by default. Should be used in conjunction with our custom reporters.
+Go over these fundamental things:
 
 
+| File              | Property                     | Value                                       | Description                                                                                                                                                                                                                                                                                                         |
+|-------------------|------------------------------|---------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `package.json`    | `["detox"]["test-runner"]`   | `"jest"`                                    | Required. Should be `"jest"` for the proper `detox test` CLI functioning.                                                                                                                                                                                                                                           |
+| `package.json`    | `["detox"]["runner-config"] `| (optional path to Jest config file)         | Optional. This field tells `detox test` CLI where to look for Jest's config file. If omitted, the path defaults to "e2e/config.json" (a file generated by `detox init -r jest`).                                                                                                                                    |
+| `e2e/config.json` | `["testEnvironment"] `       | `"node"`                                    | Required for the proper functioning of Jest and Detox.                                                                                                                                                                                                                                                       |
+| `e2e/config.json` | `["setupFilesAfterEnv"] `    | `["./init.js"]`                             | Paths to files to run before each test suite. The field was [introduced in Jest 24](https://jestjs.io/docs/en/configuration#setupfilesafterenv-array).                                                                                                                                                              |
+| `e2e/config.json` | `["reporters"]`              | ["detox/runners/<br/>jest/streamlineReporter"] | Optional field. Available since `detox@12.7.0`. A highly recommended [Jest reporter](https://jestjs.io/docs/en/configuration#reporters-array-modulename-modulename-options), tailored for running end-to-end tests in Jest, which in itself was mostly intended for running unit tests. For more details, [see the migration guide](Guide.Migration.md#migrating-to-1270-from-older-nonbreaking). |
+| `e2e/config.json` | `["verbose"]`                | `true`                                      | Must be `true` if you have replaced Jest's `default` reporter with Detox's `streamlineReporter`. Optional otherwise.                                                                                                                                                                                                |
 
-Stream-lined test results showing in real-time, when putting all the pieces together:
+For the reference, you can look into:
+
+* [examples/demo-react-native-jest/package.json](https://github.com/wix/Detox/blob/master/examples/demo-react-native-jest/package.json#L25)
+    ![package.json](img/jest-guide/package_json.png)
+* [examples/demo-react-native-jest/e2e/config.json](https://github.com/wix/Detox/blob/master/examples/demo-react-native-jest/e2e/config.json)
+
+The last two fields are recommended but not mandatory, if you are okay with Jest's default logging.
+However, if you adhere to the recommendation, then streamlined test results will be showing up in real time,
+making it easy to put all the pieces together, especially during e2e tests development:
 
 ![Streamlined output](img/jest-guide/streamlined_logging.png)
 
+> **Disclaimer:** the `streamlineReporter` was officially tested only with Jest 24.7.1.
+Please file a bug report if experience integration issues with more recent Jest versions.
 
+
+##### The custom initialization code for Jest (aka `e2e/init.js`)
+
+See [examples/demo-react-native-jest/e2e/init.js](https://github.com/wix/Detox/blob/master/examples/demo-react-native-jest/e2e/init.js) for the reference.
+The highlights are:
+
+- `beforeAll()`, `beforeEach()`, `afterAll()` should be registered as hooks
+for invoking `detox` and/or a custom adapter.
+- Required. The custom Detox-Jest adapter must be registered as a `jasmine`
+reporter (`jasmine.getEnv().addReporter()`). It is required for the
+[artifacts subsystem](APIRef.Artifacts.md) to properly work.
+- Recommended. Since `detox@12.7.0`, an additional, custom `spec-reporter`
+should be registered as a `jasmine` reporter, as well.
+This one takes care of logging on a per-spec basis
+(i.e. when an `it` starts and ends) — which Jest does not do by default.
+Should be used in conjunction with the Detox-Jest adapter.
 
 ## Writing Tests
 
