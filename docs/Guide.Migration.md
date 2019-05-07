@@ -5,6 +5,20 @@ title: Migration Guide
 
 We are improving detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes.
 
+## Migrating to 12.7.0 from older (nonbreaking)
+
+**This is only relevant to those running Detox using [`Jest` as the test runner](APIRef.Configuration.md#test-runner-configuration)**!
+
+In `12.7.0` we've greatly improved our support in Jest - trying to tackle these two caveats which hold developers back from embracing it:
+
+1. Jest file-level summary logs take precedence over 'plain' output, which makes them and all other logs (e.g. user in-test logging) seem cluttered.
+2. Plain logs output is batched, and thus often does not show in real-time as the test is run. This is particularly annoying when running tests on the local computer.
+3. Jest offeres no spec-level logging => no way to tell what's running "right now" and which test created what log-outputs.
+
+_Put in simple words, Jest is optimized for running tests concurrently using multiple workers. This isn't the case when writing/debugging tests on a local machine._
+
+In `12.7.0` we've worked out a configuration scheme that aims at solving these by streamlining all test-related outputs. **Please follow the updated [Jest installation guide](Guide.Jest.md), to set it up.**
+
 ## Migrating from Detox 12.4.x to 12.5.0 (nonbreaking)
 
 Starting Detox `12.5.0`, we ship Android with precompiled sources under a  `.aar` file. The complete configuration process is thoroughly described in the [Android setup guide](Introduction.Android.md#2-add-detox-dependency-to-an-android-project) - but it mostly fits **new** projects. For existing projects, migrating is strongly recommended; Here's the diff:
