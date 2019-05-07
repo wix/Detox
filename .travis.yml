@@ -57,6 +57,7 @@ matrix:
 branches:
   only:
   - travis_integration
+  - master
 before_install:
 - nvm install 10
 - pip install awscli --upgrade --user
