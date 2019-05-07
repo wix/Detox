@@ -1,5 +1,6 @@
 {
-  "lerna": "2.4.0",
+  "version": "12.6.3",
+  "npmClient": "npm",
   "packages": [
     "detox",
     "detox-cli",
@@ -10,8 +11,6 @@
     "examples/demo-react-native-jest",
     "generation"
   ],
-  "version": "12.6.3",
-  "npmClient": "npm",
   "command": {
     "publish": {
       "ignoreChanges": [
