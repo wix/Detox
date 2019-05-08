@@ -79,7 +79,8 @@ Initiating your test suite. <sup>[[1]](#notice-passthrough)</sup>
 | --record-performance [all/none]               | [iOS Only] Save Detox Instruments performance recordings of each test to artifacts directory. The default value is **none**. |
 | -r, --reuse                                   | Reuse existing installed app (do not delete + reinstall) for a faster run. |
 | -u, --cleanup                                 | Shutdown simulator when test is over, useful for CI scripts, to make sure detox exists cleanly with no residue |
-| -w, --workers                                 | [iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest) |
+| -w, --workers                                 | [iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest). *Note: For workers > 1, Jest's spec-level reporting is disabled, by default (can be overridden using --jest-report-specs).* |
+| --jest-report-specs | [Jest Only] Whether to output logs per each running spec, in real-time. By default, disabled with multiple workers. |
 | -H, --headless                                | [Android Only] Launch Emulator in headless mode. Useful when running on CI. |
 | --gpu                                         | [Android Only] Launch Emulator with the specific -gpu [gpu mode] parameter. |
 | --no-color                                    | Disable colors in log output |
@@ -91,12 +92,11 @@ Initiating your test suite. <sup>[[1]](#notice-passthrough)</sup>
 of a supported test runner, so for the most part it reads configuration from CLI args and `package.json` and remaps it
 to command-line arguments or environment variables that are supported by (or not conflict with) the test runner.
 Hence, **extra arguments to** `detox test` **will be forwarded to your test runner**, e.g:
-
-    * You run `detox test --bail`, and since `--bail` is an unknown option, it will be forwarded to the test runner as-is.
+  * You run `detox test --bail`, and since `--bail` is an unknown option, it will be forwarded to the test runner as-is.
     * If there is a name conflict for some option (between the test runner and `detox test`), you can pass it explicitly
-    after the reserved `--` sequence. For instance, `detox test -- --help`, will pass `--help` to the test runner CLI
-    itself.
-
+      after the reserved `--` sequence. For instance, `detox test -- --help`, will pass `--help` to the test runner CLI
+      itself.
+  
 2. <a name="notice-artifacts">If</a> `--artifacts-location` path does not end with a slash (`/`) or a backslash, then detox CLI will append to the
 path a subdirectory with configuration name and timestamp (e.g. `artifacts/android.emu.release.2018-06-12 05:52:43Z`).
 In other words, the path with a slash at the end assumes you do not want a subdirectory inside.

@@ -119,6 +119,10 @@ module.exports.builder = {
     default: 1,
     number: true
   },
+  'jest-report-specs': {
+    group: 'Execution:',
+    describe: '[Jest Only] Whether to output logs per each running spec, in real-time. By default, disabled with multiple workers.',
+  },
   H: {
     alias: 'headless',
     group: 'Execution:',
@@ -235,6 +239,13 @@ module.exports.handler = async function test(program) {
       program.w = program.workers = 1;
     }
 
+    const jestReportSpecsArg = program['jest-report-specs'];
+    if (!_.isUndefined(jestReportSpecsArg)) {
+      program.reportSpecs = (jestReportSpecsArg.toString() === 'true');
+    } else {
+      program.reportSpecs = (program.workers === 1);
+    }
+
     const command = _.compact([
       path.join('node_modules', '.bin', runner),
       (runnerConfig ? `--config=${runnerConfig}` : ''),
@@ -258,6 +269,7 @@ module.exports.handler = async function test(program) {
       'recordVideos',
       'recordPerformance',
       'deviceName',
+      'reportSpecs',
     ]);
 
     log.info(printEnvironmentVariables(detoxEnvironmentVariables) + command);

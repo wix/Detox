@@ -3,13 +3,7 @@ const config = require('../package.json').detox;
 const adapter = require('detox/runners/mocha/adapter');
 
 before(async () => {
-  try {
-    await detox.init(config);
-  } catch (e) {
-    await detox.cleanup();
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    process.exit(1);
-  }
+  await detox.init(config);
 });
 
 beforeEach(async function () {
