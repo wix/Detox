@@ -20,8 +20,7 @@ class IosDriver extends DeviceDriverBase {
     super(config);
 
     this.applesimutils = new AppleSimUtils();
-
-    this.expect = new IosExpect(new InvocationManager(this.client));
+    this.matchers = new IosExpect(new InvocationManager(this.client));
   }
 
   declareArtifactPlugins() {
@@ -34,10 +33,6 @@ class IosDriver extends DeviceDriverBase {
       screenshot: (api) => new SimulatorScreenshotPlugin({ api, appleSimUtils }),
       video: (api) => new SimulatorRecordVideoPlugin({ api, appleSimUtils }),
     };
-  }
-
-  exportGlobals() {
-    this.expect.exportGlobals();
   }
 
   createPayloadFile(notification) {

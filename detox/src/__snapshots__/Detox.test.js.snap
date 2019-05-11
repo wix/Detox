@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Detox .artifactsManager Calling .beforeEach() and .afterEach() with a deprecated signature will throw an exception 1`] = `
+exports[`Detox .artifactsManager Calling detox.beforeEach() and detox.afterEach() with a deprecated signature will throw an exception 1`] = `
 "DetoxRuntimeError: Invalid test summary was passed to detox.beforeEach(testSummary)
 Expected to get an object of type: { title: string; fullName: string; status: \\"running\\" | \\"passed\\" | \\"failed\\"; }
 
@@ -10,7 +10,7 @@ See the article for the guidance: https://github.com/wix/detox/blob/master/docs/
 testSummary was: 'test'"
 `;
 
-exports[`Detox .artifactsManager Calling .beforeEach() and .afterEach() with a deprecated signature will throw an exception 2`] = `
+exports[`Detox .artifactsManager Calling detox.beforeEach() and detox.afterEach() with a deprecated signature will throw an exception 2`] = `
 "DetoxRuntimeError: Invalid test summary was passed to detox.beforeEach(testSummary)
 Expected to get an object of type: { title: string; fullName: string; status: \\"running\\" | \\"passed\\" | \\"failed\\"; }
 
@@ -20,7 +20,7 @@ See the article for the guidance: https://github.com/wix/detox/blob/master/docs/
 testSummary was: 'test'"
 `;
 
-exports[`Detox .artifactsManager Calling .beforeEach() and .afterEach() with incorrect test status will throw an exception 1`] = `
+exports[`Detox .artifactsManager Calling detox.beforeEach() and detox.afterEach() with incorrect test status will throw an exception 1`] = `
 "DetoxRuntimeError: Invalid test summary status was passed to detox.beforeEach(testSummary). Valid values are: \\"running\\", \\"passed\\", \\"failed\\"
 
 HINT: It seems like you've hit a Detox integration issue with a test runner. You are encouraged to report it in Detox issues on GitHub.
@@ -32,7 +32,7 @@ testSummary was: {
 }"
 `;
 
-exports[`Detox .artifactsManager Calling .beforeEach() and .afterEach() with incorrect test status will throw an exception 2`] = `
+exports[`Detox .artifactsManager Calling detox.beforeEach() and detox.afterEach() with incorrect test status will throw an exception 2`] = `
 "DetoxRuntimeError: Invalid test summary status was passed to detox.beforeEach(testSummary). Valid values are: \\"running\\", \\"passed\\", \\"failed\\"
 
 HINT: It seems like you've hit a Detox integration issue with a test runner. You are encouraged to report it in Detox issues on GitHub.

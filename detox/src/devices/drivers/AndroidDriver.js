@@ -28,7 +28,7 @@ class AndroidDriver extends DeviceDriverBase {
     super(config);
 
     this.invocationManager = new InvocationManager(this.client);
-    this.expect = new AndroidExpect(this.invocationManager);
+    this.matchers = new AndroidExpect(this.invocationManager);
 
     this.adb = new ADB();
     this.aapt = new AAPT();
@@ -45,10 +45,6 @@ class AndroidDriver extends DeviceDriverBase {
       screenshot: (api) => new ADBScreencapPlugin({ api, adb, devicePathBuilder }),
       video: (api) => new ADBScreenrecorderPlugin({ api, adb, devicePathBuilder }),
     };
-  }
-
-  exportGlobals() {
-    this.expect.exportGlobals();
   }
 
   async getBundleIdFromBinary(apkPath) {
