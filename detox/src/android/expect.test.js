@@ -144,18 +144,6 @@ describe('expect', () => {
     await expectToThrow(() => e.element(e.by.id('ScrollView799')).swipe('down', 'NotFastNorSlow', 0.9));
     await expectToThrow(() => e.element(e.by.id('ScrollView799')).atIndex('NaN'));
   });
-
-  it(`exportGlobals() should export api functions`, async () => {
-    const originalExpect = expect;
-    e.exportGlobals();
-    const newExpect = expect;
-    global.expect = originalExpect;
-
-    expect(newExpect).not.toEqual(originalExpect);
-    expect(element).toBeDefined();
-    expect(waitFor).toBeDefined();
-    expect(by).toBeDefined();
-  });
 });
 
 async function expectToThrow(func) {

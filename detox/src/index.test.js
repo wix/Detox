@@ -1,23 +1,29 @@
 const schemes = require('./configurations.mock');
 describe('index', () => {
   let detox;
-  const mockDevice = {};
-  const mockDetox = {
-    device: mockDevice,
-    init: jest.fn(),
-    cleanup: jest.fn(),
-    beforeEach: jest.fn(),
-    afterEach: jest.fn(),
-  };
+  let mockDevice;
+  let mockDetox;
 
   beforeEach(() => {
+    mockDevice = { launchApp: jest.fn() };
+    mockDetox = {
+      init: jest.fn(() => {
+        mockDetox.device = mockDevice;
+        mockDetox.by = {
+          id: jest.fn(),
+        };
+      }),
+      cleanup: jest.fn(),
+      beforeEach: jest.fn(),
+      afterEach: jest.fn(),
+    };
+
     jest
       .mock('./server/DetoxServer')
       .mock('./devices/Device')
       .mock('./utils/logger')
       .mock('./client/Client')
       .mock('./Detox', () => jest.fn(() => mockDetox))
-      .mock('./platform');
 
     process.env.DETOX_UNIT_TEST = true;
     detox = require('./index');
@@ -30,7 +36,6 @@ describe('index', () => {
       .unmock('./devices/Device')
       .unmock('./client/Client')
       .unmock('./Detox')
-      .unmock('./platform');
   });
 
   it(`throws if there was no config passed`, async () => {
@@ -148,17 +153,6 @@ describe('index', () => {
     expect(exception).toBeDefined();
   });
 
-  it(`sets platform`, async () => {
-    const platform = require('./platform');
-
-    await detox.init(schemes.validOneDeviceNoSession);
-
-    expect(platform.set).toHaveBeenCalledWith(
-      'ios.simulator',
-      mockDevice,
-    );
-  });
-
   it(`initializes detox`, async () => {
     const params = {};
 
@@ -172,6 +166,23 @@ describe('index', () => {
     await detox.cleanup();
   });
 
+  it(`Basic usage with memorized exported objects`, async() => {
+    const { device, by } = detox;
+
+    expect(device.launchApp).toBe(undefined);
+    expect(by.id).toBe(undefined);
+
+    await detox.init(schemes.validOneDeviceNoSession);
+
+    expect(device.launchApp).toEqual(expect.any(Function));
+    expect(by.id).toEqual(expect.any(Function));
+
+    await detox.cleanup();
+
+    expect(device.launchApp).toBe(undefined);
+    expect(by.id).toBe(undefined);
+  });
+
   it(`Basic usage, do not throw an error if cleanup is done twice`, async() => {
     await detox.init(schemes.validOneDeviceNoSession);
     await detox.cleanup();
@@ -180,6 +191,12 @@ describe('index', () => {
 
   it(`Basic usage, if detox is undefined, do not throw an error`, async() => {
     await detox.cleanup();
+  });
+
+  it(`if detox.init() fails, detox.cleanup() is called automatically`, async () => {
+    mockDetox.init.mockImplementation(() => { throw new Error('test'); });
+    expect(detox.init(schemes.validOneDeviceNoSession)).rejects.toThrow();
+    expect(mockDetox.cleanup).toHaveBeenCalled();
   });
 
   it(`beforeEach() should be covered - with detox initialized`, async() => {
