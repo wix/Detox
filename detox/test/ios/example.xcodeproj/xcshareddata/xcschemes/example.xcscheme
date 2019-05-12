@@ -78,32 +78,24 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-detoxURLOverride"
+            argument = "-detoxURLOverride test://ttt"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "test://ttt"
+            argument = "-detoxSourceAppOverride com.apple.mobilesafari"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-detoxSourceAppOverride"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "com.apple.mobilesafari"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-detoxUserNotificationDataURL"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "/Users/lnatan/Desktop/user_notification.json"
+            argument = "-detoxUserNotificationDataURL /Users/lnatan/Desktop/user_notification.json"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-detoxWaitForDebugger 9000"
             isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-recordingPath /Users/lnatan/Desktop/from_detox.dtxrec"
+            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>

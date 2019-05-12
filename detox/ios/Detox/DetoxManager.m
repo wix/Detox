@@ -28,10 +28,9 @@
 
 DTX_CREATE_LOG(DetoxManager)
 
+static DetoxInstrumentsManager* _recordingManager;
+
 @interface DetoxManager() <WebSocketDelegate, TestRunnerDelegate>
-{
-	DetoxInstrumentsManager* _recordingManager;
-}
 
 @property (nonatomic) BOOL isReady;
 @property (nonatomic, strong) WebSocket *webSocket;
@@ -104,17 +103,10 @@ static void detoxConditionalInit()
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidLaunch:) name:UIApplicationDidFinishLaunchingNotification object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
 	
-	dispatch_async(dispatch_get_main_queue(), ^{
-		_recordingManager = [DetoxInstrumentsManager new];
-	});
-	
-	if([NSUserDefaults.standardUserDefaults objectForKey:@"currentTestSummaryDataURL"])
+	NSString* recordingPath = [NSUserDefaults.standardUserDefaults objectForKey:@"recordingPath"];
+	if(recordingPath != nil)
 	{
-		NSString* recordingPath = [NSUserDefaults.standardUserDefaults objectForKey:@"recordingPath"];
-		if(recordingPath != nil)
-		{
-			[self _handlePerformanceRecording:@{@"recordingPath": recordingPath} isFromLaunch:YES completionHandler:nil];
-		}
+		[self _handlePerformanceRecording:NSDictionaryOfVariableBindings(recordingPath) isFromLaunch:YES completionHandler:nil];
 	}
 	
 	return self;
@@ -140,7 +132,7 @@ static void detoxConditionalInit()
 {
 	__block id observer = nil;
 	
-	void (^response)() = ^ {
+	void (^response)(void) = ^ {
 		[self _safeSendAction:[NSString stringWithFormat:@"%@Done", action] params:@{} messageId:messageId];
 		
 		if(observer != nil)
@@ -393,7 +385,7 @@ static void detoxConditionalInit()
 - (void)notifyOnCrashWithDetails:(NSDictionary*)details
 {
 	dispatch_semaphore_t semaphore = dispatch_semaphore_create(1);
-	
+
 	[_recordingManager stopRecordingWithCompletionHandler:^(NSError *error) {
 		dispatch_semaphore_signal(semaphore);
 	}];
@@ -424,6 +416,10 @@ static void detoxConditionalInit()
 	{
 		NSURL* absoluteURL = [NSURL fileURLWithPath:props[@"recordingPath"]];
 		
+		static dispatch_once_t onceToken;
+		dispatch_once(&onceToken, ^{
+			_recordingManager = [DetoxInstrumentsManager new];
+		});
 		if(launch)
 		{
 			[_recordingManager continueRecordingAtURL:absoluteURL];
@@ -442,7 +438,6 @@ static void detoxConditionalInit()
 			});
 		}];
 	}
-	
 	
 	if(completionBlocked == NO)
 	{
