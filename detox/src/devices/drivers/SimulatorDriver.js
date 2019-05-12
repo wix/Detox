@@ -69,7 +69,9 @@ class SimulatorDriver extends IosDriver {
     await this.applesimutils.uninstall(deviceId, bundleId);
   }
 
-  async launchApp(deviceId, bundleId, launchArgs, languageAndLocale) {
+  async launchApp(deviceId, bundleId, _launchArgs, languageAndLocale) {
+    const launchArgs = this._transformLaunchArgs(_launchArgs);
+
     await this.emitter.emit('beforeLaunchApp', {bundleId, deviceId, launchArgs});
     const pid = await this.applesimutils.launch(deviceId, bundleId, launchArgs, languageAndLocale);
     await this.emitter.emit('launchApp', {bundleId, deviceId, launchArgs, pid});
@@ -126,6 +128,13 @@ class SimulatorDriver extends IosDriver {
 
   async waitForBackground() {
     return await this.client.waitForBackground();
+  }
+
+  _transformLaunchArgs(launchArgs) {
+    return _.reduce(launchArgs, (result, value, key) => {
+      result[`-${key}`] = value;
+      return result;
+    }, {});
   }
 }
 
