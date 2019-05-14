@@ -5,12 +5,14 @@ import android.app.Instrumentation;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
-import androidx.test.platform.app.InstrumentationRegistry;
+import android.util.Base64;
 
+import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
@@ -71,6 +73,7 @@ import androidx.test.uiautomator.UiSelector;
  * <p>If not set, then Detox tests are no ops. So it's safe to mix it with other tests.</p>
  */
 public final class Detox {
+    private static final String LAUNCH_ARGS_KEY = "launchArgs";
     private static final String DETOX_URL_OVERRIDE_ARG = "detoxURLOverride";
     private static final long ACTIVITY_LAUNCH_TIMEOUT = 10000L;
 
@@ -115,7 +118,7 @@ public final class Detox {
     public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context context) {
         sActivityTestRule = activityTestRule;
 
-        Intent intent = extractInitialIntent();
+        Intent intent = extractLaunchIntent();
         activityTestRule.launchActivity(intent);
 
         // Kicks off another thread and attaches a Looper to that.
@@ -191,17 +194,49 @@ public final class Detox {
         recentApp.click();
     }
 
-    private static Intent extractInitialIntent() {
-        String detoxURLOverride = InstrumentationRegistry.getArguments().getString(DETOX_URL_OVERRIDE_ARG);
+    private static Intent extractLaunchIntent() {
+        Intent intent;
+
+        final String detoxURLOverride = InstrumentationRegistry.getArguments().getString(DETOX_URL_OVERRIDE_ARG);
         if (detoxURLOverride != null) {
-            return intentWithUrl(detoxURLOverride);
+            intent = intentWithUrl(detoxURLOverride);
+        } else {
+            intent = defaultIntent();
         }
-        return null;
+        intent.putExtra(LAUNCH_ARGS_KEY, readLaunchArgs());
+        return intent;
+    }
+
+    private static Intent defaultIntent() {
+        // Mimicking here what ActivityTestRule does when no intent is given: action is ACTION_MAIN, activity class (aka component) is
+        // taken from ActivityTestRule's own activityClass data member which was set in the c'tor by the user (outside of Detox).
+        return new Intent(Intent.ACTION_MAIN);
     }
 
     private static Intent intentWithUrl(String url) {
         final Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(url));
         return intent;
+    }
+
+    private static Bundle readLaunchArgs() {
+        final Bundle instrumArgs = InstrumentationRegistry.getArguments();
+        final Bundle launchArgs = new Bundle();
+
+        for (String arg : instrumArgs.keySet()) {
+            launchArgs.putString(arg, decodeLaunchArgValue(arg, instrumArgs));
+        }
+        return launchArgs;
+    }
+
+    private static String decodeLaunchArgValue(String arg, Bundle instrumArgs) {
+        final String rawValue = instrumArgs.getString(arg);
+
+        if (arg.startsWith("detox")) {
+            return rawValue;
+        }
+
+        byte[] base64Value = Base64.decode(rawValue, Base64.DEFAULT);
+        return new String(base64Value);
     }
 }

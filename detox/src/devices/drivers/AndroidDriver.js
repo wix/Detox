@@ -1,5 +1,6 @@
 const fs = require('fs');
 const _ = require('lodash');
+const { base64encode } = require('nodejs-base64');
 const log = require('../../utils/logger').child({ __filename });
 const invoke = require('../../invoke');
 const InvocationManager = invoke.InvocationManager;
@@ -199,8 +200,9 @@ class AndroidDriver extends DeviceDriverBase {
 
   async _launchInstrumentationProcess(deviceId, bundleId, rawLaunchArgs) {
     const launchArgs = this._prepareLaunchArgs(rawLaunchArgs);
+    const additionalLaunchArgs = this._prepareLaunchArgs({debug: false});
     const testRunner = await this.adb.getInstrumentationRunner(deviceId, bundleId);
-    const spawnFlags = [`-s`, `${deviceId}`, `shell`, `am`, `instrument`, `-w`, `-r`, ...launchArgs, `-e`, `debug`, `false`, testRunner];
+    const spawnFlags = [`-s`, `${deviceId}`, `shell`, `am`, `instrument`, `-w`, `-r`, ...launchArgs, ...additionalLaunchArgs, testRunner];
 
     this.instrumentationProcess = spawnAndLog(this.adb.adbBin, spawnFlags, { detached: false });
     this.instrumentationProcess.childProcess.on('close', () => this._terminateInstrumentation());
@@ -244,7 +246,9 @@ class AndroidDriver extends DeviceDriverBase {
 
   _prepareLaunchArgs(launchArgs) {
     return _.reduce(launchArgs, (result, value, key) => {
-      result.push('-e', key, JSON.stringify(value));
+      const valueAsString = _.isString(value) ? value : JSON.stringify(value);
+      const valueEncoded = (key.startsWith('detox')) ? valueAsString : base64encode(valueAsString);
+      result.push('-e', key, valueEncoded);
       return result;
     }, []);
   }

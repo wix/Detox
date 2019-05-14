@@ -5,6 +5,9 @@ describe('Android driver', () => {
 
   let exec;
   beforeEach(() => {
+    jest.mock('nodejs-base64', () => ({
+      base64encode: (x) => `base64(${x})`,
+    }));
     jest.mock('../android/ADB', () => mockADBClass);
     jest.mock('../../utils/AsyncEmitter', () => mockAsyncEmitter);
     jest.mock('../../utils/sleep', () => jest.fn().mockResolvedValue(''));
@@ -39,7 +42,7 @@ describe('Android driver', () => {
       }),
     });
 
-    it('should stringify arg values', async () => {
+    it('should base64-encode and stringify arg values', async () => {
       const launchArgs = {
         'object-arg': {
           such: 'wow',
@@ -56,11 +59,11 @@ describe('Android driver', () => {
 
       expectSpawnedFlag(spawnedFlags).startingIndex(7).toBe({
         key: 'object-arg',
-        value: '{\"such\":\"wow\",\"much\":\"amaze\",\"very\":111}'
+        value: 'base64({"such":"wow","much":"amaze","very":111})'
       });
       expectSpawnedFlag(spawnedFlags).startingIndex(10).toBe({
         key: 'string-arg',
-        value: '\"text, with commas-and-dashes,\"'
+        value: 'base64(text, with commas-and-dashes,)'
       });
     });
   });

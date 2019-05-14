@@ -38,6 +38,7 @@
     "wtfnode": "^0.8.0"
   },
   "dependencies": {
+    "nodejs-base64": "^1.0.3",
     "bunyan": "^1.8.12",
     "bunyan-debug-stream": "^1.1.0",
     "chalk": "^2.4.2",

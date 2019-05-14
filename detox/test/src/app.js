@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Linking,
 } from 'react-native';
+import { PropTypes } from 'prop-types';
 
 import * as Screens from './Screens';
 
@@ -14,6 +15,7 @@ class example extends Component {
     super(props);
     this.state = {
       screen: undefined,
+      screenProps: {},
       url: undefined,
       notification: undefined
     };
@@ -24,7 +26,7 @@ class example extends Component {
       <TouchableOpacity onPress={() => {
         onPressCallback();
       }}>
-        <Text style={{color: 'blue', marginBottom: 20}}>{title}</Text>
+        <Text style={{color: 'blue', marginBottom: 10}}>{title}</Text>
       </TouchableOpacity>
     );
   }
@@ -75,8 +77,8 @@ class example extends Component {
     if (!this.state.screen) {
 		console.log("JS rendering");
       return (
-        <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
-          <Text style={{fontSize: 20, marginBottom: 30}}>
+        <View style={{flex: 1, paddingTop: 10, justifyContent: 'center', alignItems: 'center'}}>
+          <Text style={{fontSize: 20, marginBottom: 10}}>
             Choose a test
           </Text>
           {this.renderScreenButton('Language', Screens.LanguageScreen)}
@@ -98,6 +100,7 @@ class example extends Component {
             throw new Error('Simulated Crash')
           })}
           {this.renderScreenButton('Shake', Screens.ShakeScreen)}
+          {this.renderScreenButton('Launch Args', Screens.LaunchArgsScreen)}
         </View>
       );
     }
