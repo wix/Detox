@@ -29,7 +29,7 @@
     "nyc": "^14.0.0"
   },
   "detox": {
-    "test-runner": "nyc mocha",
+    "test-runner": "mocha",
     "__session": {
       "server": "ws://localhost:8099",
       "sessionId": "test"
