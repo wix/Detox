@@ -1,5 +1,5 @@
 language: node_js
-node_js: 8
+node_js: 10
 
 matrix:
   include:
@@ -8,7 +8,6 @@ matrix:
     osx_image: xcode10.2
     env:
     - REACT_NATIVE_VERSION=0.56.x
-      PATH=$PATH:~/Library/Python/2.7/bin
     install:
     - ./scripts/install.ios.sh
     script:
@@ -19,7 +18,6 @@ matrix:
     osx_image: xcode10.2
     env:
     - REACT_NATIVE_VERSION=0.51.x
-      PATH=$PATH:~/Library/Python/2.7/bin
     install:
     - ./scripts/install.ios.sh
     script:
@@ -29,16 +27,16 @@ matrix:
     env:
     - REACT_NATIVE_VERSION=0.56.x
     android:
-    components:
-    - tools
-    - platform-tools
-    - build-tools-27.0.3
-    - android-26
-    - extra-google-google_play_services
-    - extra-google-m2repository
-    - extra-android-m2repository
-    - sys-img-x86-android-26
-    - sys-img-x86-android-28
+      components:
+        - tools
+        - platform-tools
+        - build-tools-27.0.3
+        - android-26
+        - extra-google-google_play_services
+        - extra-google-m2repository
+        - extra-android-m2repository
+        - sys-img-x86-android-26
+        - sys-img-x86-android-28
     install:
     - ./scripts/install.android.sh
     script:
