@@ -280,13 +280,15 @@ Detox should work with `kotlin-stdlib-jdk7`, as well.
 
 Detox requires the Kotlin standard-library as it's own dependency. Due to the [many flavours](https://kotlinlang.org/docs/reference/using-gradle.html#configuring-dependencies) by which Kotlin has been released, multiple dependencies often create a conflict.
 
-For that, Detox allows for the exact specification of the standard library to use using two Gradle globals: `detoxKotlinVerion` and `detoxKotlinStdlib`. You can define both in your  root build-script file (i.e.`android/build.gradle`):
+For that, Detox allows for the exact specification of the standard library to use using some Gradle globals: `detoxKotlinVerion` and `detoxKotlinStdlib`. You can define both in your root build-script file (i.e.`android/build.gradle`):
 
 ```groovy
 buildscript {
     // ...
     ext.detoxKotlinVersion = '1.3.0' // Detox' default is 1.2.0
     ext.detoxKotlinStdlib = 'kotlin-stdlib-jdk7' // Detox' default is kotlin-stdlib-jdk8
+    // ext.okioVersion and ext.okhttpVersion are available too.
 }
 ```
+
 
