@@ -10,6 +10,9 @@ def _minSdkVersion = _ext.has('minSdkVersion') ? _ext.minSdkVersion : 18
 def _targetSdkVersion = _ext.has('targetSdkVersion') ? _ext.targetSdkVersion : 25
 def _kotlinVersion = _ext.has('detoxKotlinVersion') ? _ext.detoxKotlinVersion : '1.2.0'
 def _kotlinStdlib = _ext.has('detoxKotlinStdlib') ? _ext.detoxKotlinStdlib : 'kotlin-stdlib-jdk8'
+def _okhttpVersion = _ext.has('okhttpVersion') ? _ext.okhttpVersion : '3.14.1';
+def _okioVersion = _ext.has('okioVersion') ? _ext.okioVersion : '2.2.2';
+def _reactNativeVersion = _ext.has('reactNativeVersion') ? _ext.reactNativeVersion : '+';
 
 android {
     compileSdkVersion _compileSdkVersion
@@ -62,11 +65,11 @@ dependencies {
     implementation "org.jetbrains.kotlin:$_kotlinStdlib:$_kotlinVersion"
 
     // noinspection GradleDynamicVersion
-    compileOnly 'com.facebook.react:react-native:+'
+    compileOnly "com.facebook.react:react-native:${_reactNativeVersion}"
     // noinspection GradleDynamicVersion
-    compileOnly 'com.squareup.okhttp3:okhttp:+'
+    compileOnly "com.squareup.okhttp3:okhttp:${_okhttpVersion}"
     // noinspection GradleDynamicVersion
-    compileOnly 'com.squareup.okio:okio:+'
+    compileOnly "com.squareup.okio:okio:${okioVersion}"
 
     implementation 'org.apache.commons:commons-lang3:3.4'
 
@@ -90,7 +93,7 @@ dependencies {
     testImplementation 'org.apache.commons:commons-io:1.3.2'
     testImplementation 'com.nhaarman:mockito-kotlin:1.4.0'
     // noinspection GradleDynamicVersion
-    testImplementation 'com.facebook.react:react-native:+'
+    testImplementation "com.facebook.react:react-native:${_reactNativeVersion}"
 }
 
 if (rootProject.hasProperty('isOfficialDetoxLib')) {
