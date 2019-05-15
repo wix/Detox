@@ -47,6 +47,10 @@ static NSString* (*__DTXProfilerMarkEventIntervalBegin)(NSString* category, NSSt
 static void (*__DTXProfilerMarkEventIntervalEnd)(NSString* identifier, __DTXEventStatus eventStatus, NSString* __nullable endMessage);
 static void (*__DTXProfilerMarkEvent)(NSString* category, NSString* name, __DTXEventStatus eventStatus, NSString* __nullable startMessage);
 
+//Weak link
+WEAK_IMPORT_ATTRIBUTE
+@interface DTXProfiler : NSObject @end
+
 @implementation DetoxInstrumentsManager
 {
 	id _recorderInstance;
@@ -56,7 +60,7 @@ static void (*__DTXProfilerMarkEvent)(NSString* category, NSString* name, __DTXE
 {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		__DTXProfiler = NSClassFromString(@"DTXProfiler");
+		__DTXProfiler = [DTXProfiler class];
 		
 		if(__DTXProfiler == NULL)
 		{

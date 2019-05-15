@@ -945,6 +945,7 @@
 					"-ObjC",
 					"-all_load",
 					"-lstdc++",
+					"-Wl,-U,_OBJC_CLASS_$_DTXProfiler",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wix.Detox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -983,6 +984,7 @@
 					"-ObjC",
 					"-all_load",
 					"-lstdc++",
+					"-Wl,-U,_OBJC_CLASS_$_DTXProfiler",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wix.Detox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
