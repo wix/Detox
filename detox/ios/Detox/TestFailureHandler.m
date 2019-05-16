@@ -19,7 +19,7 @@ DTX_CREATE_LOG(TestFailureHandler)
 	
 	NSString *description = [NSString stringWithFormat:@"%@\n\n%@\n\nHierarchy: %@", [exception description], details, hierarchy];
 	
-	dtx_log_fault(@"Test Failed:\n%@", description);
+	dtx_log_error(@"Test Failed:\n%@", description);
 	
     dtx_log_error(@"UI Hierarchy on test failure:\n%@", hierarchy);
     
