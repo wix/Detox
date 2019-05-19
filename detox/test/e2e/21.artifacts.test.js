@@ -1,5 +1,5 @@
 describe('Artifacts', () => {
-  before(async () => {
+  beforeAll(async () => {
     await device.sendToHome();
     await device.takeScreenshot('Artifacts/before all');
     await device.launchApp({newInstance: true});
@@ -30,7 +30,7 @@ describe('Artifacts', () => {
     // implicitly taking screenshot - afterEach.png
   });
 
-  after(async () => {
+  afterAll(async () => {
     await device.sendToHome();
     await device.takeScreenshot('Artifacts/after all');
     await device.launchApp();
