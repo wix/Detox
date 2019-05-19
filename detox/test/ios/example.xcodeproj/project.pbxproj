@@ -41,6 +41,8 @@
 		39A077AA1E5450FF00A53A07 /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 39A077981E5450E700A53A07 /* libRCTPushNotification.a */; };
 		39A34C791E30F3A000BEBB59 /* Detox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39B044621DAED76400431EC5 /* Detox.framework */; };
 		39B044651DAED76E00431EC5 /* Detox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 39B044621DAED76400431EC5 /* Detox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		39ED922F22916437005EDB56 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39ED920022916437005EDB56 /* JavaScriptCore.framework */; };
+		39ED92302291643E005EDB56 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39ED920022916437005EDB56 /* JavaScriptCore.framework */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		CC17D3321D60A24300267B0C /* NativeModule.m in Sources */ = {isa = PBXBuildFile; fileRef = CC17D3311D60A24300267B0C /* NativeModule.m */; };
 		E088C8F41F01585500CC48E9 /* CalendarManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E088C8F31F01585500CC48E9 /* CalendarManager.m */; };
@@ -375,6 +377,7 @@
 		399B4E061ED587120098D2AC /* example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39A077861E5450E700A53A07 /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
 		39B0445B1DAED76400431EC5 /* Detox.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Detox.xcodeproj; path = ../../ios/Detox.xcodeproj; sourceTree = "<group>"; };
+		39ED920022916437005EDB56 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		39FC9D23202899F90033C11A /* e2e */ = {isa = PBXFileReference; lastKnownFileType = folder; name = e2e; path = ../e2e; sourceTree = "<group>"; };
 		39FC9D24202899F90033C11A /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; name = src; path = ../src; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
@@ -410,6 +413,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39ED92302291643E005EDB56 /* JavaScriptCore.framework in Frameworks */,
 				399B4DF01ED587120098D2AC /* libRCTAnimation.a in Frameworks */,
 				399B4DF21ED587120098D2AC /* libReact.a in Frameworks */,
 				399B4DF31ED587120098D2AC /* libRCTActionSheet.a in Frameworks */,
@@ -629,6 +633,7 @@
 		CCFA7DE41D11D22600E15EDF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				39ED920022916437005EDB56 /* JavaScriptCore.framework */,
 				39B0445B1DAED76400431EC5 /* Detox.xcodeproj */,
 			);
 			name = Frameworks;
