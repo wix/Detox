@@ -10,8 +10,8 @@ def _minSdkVersion = _ext.has('minSdkVersion') ? _ext.minSdkVersion : 18
 def _targetSdkVersion = _ext.has('targetSdkVersion') ? _ext.targetSdkVersion : 25
 def _kotlinVersion = _ext.has('detoxKotlinVersion') ? _ext.detoxKotlinVersion : '1.2.0'
 def _kotlinStdlib = _ext.has('detoxKotlinStdlib') ? _ext.detoxKotlinStdlib : 'kotlin-stdlib-jdk8'
-def _okhttpVersion = _ext.has('okhttpVersion') ? _ext.okhttpVersion : '3.14.1';
-def _okioVersion = _ext.has('okioVersion') ? _ext.okioVersion : '2.2.2';
+def _okhttpVersion = _ext.has('detoxOkhttpVersion') ? _ext.detoxOkhttpVersion : '3.14.1';
+def _okioVersion = _ext.has('detoxOkioVersion') ? _ext.detoxOkioVersion : '2.2.2';
 def _reactNativeVersion = _ext.has('reactNativeVersion') ? _ext.reactNativeVersion : '+';
 
 android {
