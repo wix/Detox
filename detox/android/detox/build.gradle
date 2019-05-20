@@ -69,7 +69,7 @@ dependencies {
     // noinspection GradleDynamicVersion
     compileOnly "com.squareup.okhttp3:okhttp:${_okhttpVersion}"
     // noinspection GradleDynamicVersion
-    compileOnly "com.squareup.okio:okio:${okioVersion}"
+    compileOnly "com.squareup.okio:okio:${_okioVersion}"
 
     implementation 'org.apache.commons:commons-lang3:3.4'
 
