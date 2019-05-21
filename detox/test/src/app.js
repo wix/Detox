@@ -4,10 +4,13 @@ import {
   View,
   TouchableOpacity,
   Linking,
+  Platform,
 } from 'react-native';
 import { PropTypes } from 'prop-types';
 
 import * as Screens from './Screens';
+
+const isAndroid = Platform.OS === 'android';
 
 class example extends Component {
 
@@ -100,7 +103,7 @@ class example extends Component {
             throw new Error('Simulated Crash')
           })}
           {this.renderScreenButton('Shake', Screens.ShakeScreen)}
-          {this.renderScreenButton('Launch Args', Screens.LaunchArgsScreen)}
+          {isAndroid && this.renderScreenButton('Launch Args', Screens.LaunchArgsScreen)}
         </View>
       );
     }

@@ -1,4 +1,7 @@
-describe('Launch arguments', () => {
+// Note: Android-only as, according to Leo, on iOS there's no added value here compared to
+// existing tests that check deep-link URLs. Combined with the fact that we do not yet
+// support complex args on iOS -- no point in testing it out.
+describe(':android: Launch arguments', () => {
   async function assertLaunchArg(launchArgs, key, expectedValue) {
     await expect(element(by.id(`launchArg-${key}.name`))).toBeVisible();
     await expect(element(by.id(`launchArg-${key}.value`))).toHaveText(expectedValue);
@@ -19,7 +22,7 @@ describe('Launch arguments', () => {
     await assertLaunchArg(launchArgs, 'heisthe', '1');
   });
 
-  it(':android: should handle complex args', async () => {
+  it('should handle complex args', async () => {
     const launchArgs = {
       complex: {
         bull: ['s', 'h', 1, 't'],
