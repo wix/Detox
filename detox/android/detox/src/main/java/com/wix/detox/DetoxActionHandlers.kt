@@ -10,7 +10,7 @@ import org.json.JSONObject
 import java.lang.Exception
 import java.lang.reflect.InvocationTargetException
 
-const val LOG_TAG = "DetoxManager"
+private const val LOG_TAG = "DetoxManager"
 
 interface DetoxActionHandler {
     fun handle(params: String, messageId: Long)

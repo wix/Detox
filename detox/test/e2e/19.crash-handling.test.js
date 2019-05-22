@@ -1,4 +1,4 @@
-describe(':ios: Crash Handling', () => {
+describe('Crash Handling', () => {
 
   it('Should throw error upon app crash', async () => {
     await device.reloadReactNative();
