@@ -20,7 +20,6 @@ import kotlin.jvm.functions.Function0;
 /**
  * Created by rotemm on 04/01/2017.
  */
-
 class DetoxManager implements WebSocketClient.ActionHandler {
 
     private final static String LOG_TAG =  "DetoxManager";
