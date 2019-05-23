@@ -14,7 +14,7 @@ class AppleSimUtils {
       permissions.push(permission + '=' + shouldAllow);
     });
     await this._execAppleSimUtils({
-      args: `--simulator ${udid} --bundle ${bundleId} --setPermissions ${_.join(permissions, ',')}`
+      args: `--simulator ${udid} --bundle ${bundleId} --restartSB --setPermissions ${_.join(permissions, ',')}`
     }, statusLogs, 1);
   }
 
