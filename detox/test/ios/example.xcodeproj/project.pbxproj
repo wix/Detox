@@ -20,6 +20,7 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
+		3953CC0D229AA78F005DD98C /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39ED920022916437005EDB56 /* JavaScriptCore.framework */; };
 		396B38541EC9DAC000A226F2 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 396B38391EC9DAB600A226F2 /* libRCTAnimation.a */; };
 		399B4DEC1ED587120098D2AC /* NativeModule.m in Sources */ = {isa = PBXBuildFile; fileRef = CC17D3311D60A24300267B0C /* NativeModule.m */; };
 		399B4DED1ED587120098D2AC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
@@ -41,7 +42,6 @@
 		39A077AA1E5450FF00A53A07 /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 39A077981E5450E700A53A07 /* libRCTPushNotification.a */; };
 		39A34C791E30F3A000BEBB59 /* Detox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39B044621DAED76400431EC5 /* Detox.framework */; };
 		39B044651DAED76E00431EC5 /* Detox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 39B044621DAED76400431EC5 /* Detox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		39ED922F22916437005EDB56 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39ED920022916437005EDB56 /* JavaScriptCore.framework */; };
 		39ED92302291643E005EDB56 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39ED920022916437005EDB56 /* JavaScriptCore.framework */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		CC17D3321D60A24300267B0C /* NativeModule.m in Sources */ = {isa = PBXBuildFile; fileRef = CC17D3311D60A24300267B0C /* NativeModule.m */; };
@@ -393,6 +393,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3953CC0D229AA78F005DD98C /* JavaScriptCore.framework in Frameworks */,
 				396B38541EC9DAC000A226F2 /* libRCTAnimation.a in Frameworks */,
 				39A34C791E30F3A000BEBB59 /* Detox.framework in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
