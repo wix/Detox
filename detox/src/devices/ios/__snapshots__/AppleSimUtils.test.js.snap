@@ -5,7 +5,7 @@ Array [
   Array [
     "applesimutils",
     Object {
-      "args": "--simulator bundle.id --bundle 9C9ABE4D-70C7-49DC-A396-3CB1D0E82846 --setPermissions permissions=[object Object]",
+      "args": "--simulator bundle.id --bundle 9C9ABE4D-70C7-49DC-A396-3CB1D0E82846 --restartSB --setPermissions permissions=[object Object]",
     },
     Object {
       "successful": "Permissions are set",
