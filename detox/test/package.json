@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "12.9.0",
+  "version": "12.10.0",
   "private": true,
   "engines": {
     "node": ">=8.3.0"
@@ -22,7 +22,7 @@
     "react-native": "0.56.0"
   },
   "devDependencies": {
-    "detox": "^12.9.0",
+    "detox": "^12.10.0",
     "express": "^4.15.3",
     "lodash": "^4.14.1",
     "mocha": "^6.1.3",
