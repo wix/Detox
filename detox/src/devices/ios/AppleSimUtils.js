@@ -30,7 +30,10 @@ class AppleSimUtils {
 
     let type;
     let os;
-    if (_.includes(query, ',')) {
+    if (query.match(/[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}/i)) {
+      return [query]
+    }
+    else if (_.includes(query, ',')) {
       const parts = _.split(query, ',');
       type = parts[0].trim();
       os = parts[1].trim();
