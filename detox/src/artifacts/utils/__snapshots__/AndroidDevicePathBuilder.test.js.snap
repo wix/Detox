@@ -1,5 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`AndroidDevicePathBuilder should generate process id dependent paths with a counter 1`] = `"/sdcard/152580_0.png"`;
-
-exports[`AndroidDevicePathBuilder should generate process id dependent paths with a counter 2`] = `"/sdcard/152580_1.png"`;

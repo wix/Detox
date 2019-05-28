@@ -73,6 +73,8 @@ Read more in [Mocking Open From URL](APIRef.MockingOpenFromURL.md) section.
 
 ##### 4. Launch with user notifications
 
+> Currently only supported on iOS!
+
 ```js
 await device.launchApp({userNotification: notification});
 ```
@@ -93,6 +95,8 @@ This will launch the app from background and handle the notification.
 Read more in [Mocking User Notifications](APIRef.MockingUserNotifications.md) section.
 
 ##### 5. Launch with user activity
+
+> Currently only supported on iOS!
 
 ```js
 await device.launchApp({userActivity: activity});
@@ -127,7 +131,14 @@ Detox can start the app with additional launch arguments
 await device.launchApp({launchArgs: {arg1: 1, arg2: "2"}});
 ```
 
-The added `launchArgs` will be passed through the launch command to the device and be accessible via `[[NSProcessInfo processInfo] arguments]`
+* **On iOS**, the added `launchArgs` will be passed through the launch command to the device and be accessible via `[[NSProcessInfo processInfo] arguments]`
+* **On Android**, the `launchArgs` will be set as a bundle-extra into the activity's intent. It will therefore be accessible on the native side via the current activity as: `currentActivity.getIntent().getBundleExtra("launchArgs")`.
+
+Note that there are numerous ways to forward the arguments onto the javascript side of the app, but that is essentially out of Detox' scope. Nevertheless here are some references:
+
+* Supported out of the box if you're using [React Native Navigation](https://github.com/wix/react-native-navigation/blob/2.18.5/docs/api/Navigation.md#getlaunchargs).
+* On Android, you can use `ReactNativeDelegate.getLaunchOptions()` , as described [here](https://dev.to/ryohlan/how-to-pass-initial-props-from-android-native-2k2).
+* For iOS, you may find this [this post](https://stackoverflow.com/a/31229533/453052) on stack overflow useful.
 
 ##### 8. Disable touch indicators (iOS only)
 Disable touch indicators on iOS.

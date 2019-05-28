@@ -38,11 +38,11 @@ class SimulatorInstrumentsPlugin extends WholeTestRecorderPlugin {
     await super.onBeforeLaunchApp(event);
 
     if (process.env.DETOX_INSTRUMENTS_PATH) {
-      event.launchArgs['-instrumentsPath'] = process.env.DETOX_INSTRUMENTS_PATH;
+      event.launchArgs['instrumentsPath'] = process.env.DETOX_INSTRUMENTS_PATH;
     }
 
     if (this.testRecording) {
-      event.launchArgs['-recordingPath'] = this.testRecording.temporaryRecordingPath;
+      event.launchArgs['recordingPath'] = this.testRecording.temporaryRecordingPath;
     }
   }
 

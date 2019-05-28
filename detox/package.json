@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "12.9.0",
+  "version": "12.10.2",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -82,6 +82,7 @@
       "src/artifacts/instruments",
       "src/artifacts/screenshot",
       "src/artifacts/video",
+      "src/devices/ios/AppleSimUtils.js",
       "src/server/DetoxServer.js",
       ".*Driver.js",
       "EmulatorTelnet.js",
