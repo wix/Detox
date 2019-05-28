@@ -70,8 +70,10 @@ class SimulatorDriver extends IosDriver {
   }
 
   async launchApp(deviceId, bundleId, launchArgs, languageAndLocale) {
+    const _launchArgs = this._transformLaunchArgs(launchArgs);
+
     await this.emitter.emit('beforeLaunchApp', {bundleId, deviceId, launchArgs});
-    const pid = await this.applesimutils.launch(deviceId, bundleId, launchArgs, languageAndLocale);
+    const pid = await this.applesimutils.launch(deviceId, bundleId, _launchArgs, languageAndLocale);
     await this.emitter.emit('launchApp', {bundleId, deviceId, launchArgs, pid});
 
     return pid;
@@ -126,6 +128,13 @@ class SimulatorDriver extends IosDriver {
 
   async waitForBackground() {
     return await this.client.waitForBackground();
+  }
+
+  _transformLaunchArgs(launchArgs) {
+    return _.reduce(launchArgs, (result, value, key) => {
+      result[`-${key}`] = value;
+      return result;
+    }, {});
   }
 }
 

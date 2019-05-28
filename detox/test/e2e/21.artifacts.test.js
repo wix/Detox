@@ -2,7 +2,7 @@ describe('Artifacts', () => {
   before(async () => {
     await device.sendToHome();
     await device.takeScreenshot('Artifacts/before all');
-    await device.launchApp();
+    await device.launchApp({newInstance: true});
   });
 
   beforeEach(async () => {

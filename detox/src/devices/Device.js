@@ -51,7 +51,7 @@ class Device {
       await this._terminateApp();
     }
 
-    let baseLaunchArgs = {
+    const baseLaunchArgs = {
       ...params.launchArgs,
     };
 
@@ -232,17 +232,8 @@ class Device {
     };
   }
 
-  _addPrefixToDefaultLaunchArgs(args) {
-    let newArgs = {};
-    _.forEach(args, (value, key) => {
-      newArgs[`${this.deviceDriver.defaultLaunchArgsPrefix()}${key}`] = value;
-    });
-    return newArgs;
-  }
-
   _prepareLaunchArgs(additionalLaunchArgs) {
-    const merged = _.merge(this._defaultLaunchArgs(), additionalLaunchArgs);
-    const launchArgs = this._addPrefixToDefaultLaunchArgs(merged);
+    const launchArgs = _.merge(this._defaultLaunchArgs(), additionalLaunchArgs);
     return launchArgs;
   }
 
