@@ -1,3 +1,5 @@
+const custom = require('./utils/custom-it');
+
 describe('Actions', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
@@ -61,7 +63,7 @@ describe('Actions', () => {
   });
 
   // directions: 'up'/'down'/'left'/'right'
-  it('should scroll for a small amount in direction', async () => {
+  custom.it.withFailureIf.android.rn58OrNewer('should scroll for a small amount in direction', async () => {
     await expect(element(by.text('Text1'))).toBeVisible();
     await expect(element(by.text('Text4'))).toBeNotVisible();
     await expect(element(by.id('ScrollView161'))).toBeVisible();
@@ -73,7 +75,7 @@ describe('Actions', () => {
     await expect(element(by.text('Text4'))).toBeNotVisible();
   });
 
-  it('should scroll for a large amount in direction', async () => {
+  custom.it.withFailureIf.android.rn58OrNewer('should scroll for a large amount in direction', async () => {
     await expect(element(by.text('Text6'))).toBeNotVisible();
     await element(by.id('ScrollView161')).scroll(220, 'down');
     await expect(element(by.text('Text6'))).toBeVisible();
