@@ -1,6 +1,6 @@
 const fs = require('fs');
 const _ = require('lodash');
-const { base64encode } = require('nodejs-base64');
+const { encodeBase64 } = require('../../utils/encoding');
 const log = require('../../utils/logger').child({ __filename });
 const invoke = require('../../invoke');
 const InvocationManager = invoke.InvocationManager;
@@ -247,7 +247,7 @@ class AndroidDriver extends DeviceDriverBase {
   _prepareLaunchArgs(launchArgs) {
     return _.reduce(launchArgs, (result, value, key) => {
       const valueAsString = _.isString(value) ? value : JSON.stringify(value);
-      const valueEncoded = (key.startsWith('detox')) ? valueAsString : base64encode(valueAsString);
+      const valueEncoded = (key.startsWith('detox')) ? valueAsString : encodeBase64(valueAsString);
       result.push('-e', key, valueEncoded);
       return result;
     }, []);

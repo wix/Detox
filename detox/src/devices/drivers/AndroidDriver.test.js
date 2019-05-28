@@ -5,8 +5,8 @@ describe('Android driver', () => {
 
   let exec;
   beforeEach(() => {
-    jest.mock('nodejs-base64', () => ({
-      base64encode: (x) => `base64(${x})`,
+    jest.mock('../../utils/encoding', () => ({
+      encodeBase64: (x) => `base64(${x})`,
     }));
     jest.mock('../android/ADB', () => mockADBClass);
     jest.mock('../../utils/AsyncEmitter', () => mockAsyncEmitter);
