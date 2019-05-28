@@ -1,4 +1,5 @@
 describe('Crash Handling', () => {
+  
   it('Should throw error upon app crash', async () => {
     await device.launchApp({newInstance: true});
 
