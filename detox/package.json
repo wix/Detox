@@ -82,6 +82,7 @@
       "src/artifacts/instruments",
       "src/artifacts/screenshot",
       "src/artifacts/video",
+      "src/devices/ios/AppleSimUtils.js",
       "src/server/DetoxServer.js",
       ".*Driver.js",
       "EmulatorTelnet.js",
