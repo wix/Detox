@@ -1,7 +1,7 @@
 describe('Crash Handling', () => {
-
   it('Should throw error upon app crash', async () => {
-    await device.reloadReactNative();
+    await device.launchApp({newInstance: true});
+
     let failed = false;
 
     try {
