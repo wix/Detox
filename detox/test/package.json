@@ -24,6 +24,7 @@
     "react-native": "0.56.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.4.5",
     "detox": "^12.10.2",
     "express": "^4.15.3",
     "lodash": "^4.14.1",

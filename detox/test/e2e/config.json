@@ -7,7 +7,6 @@
   "bail": false,
   "collectCoverageFrom": [
     "src/**/*.js",
-    "!**/node_modules/**",
     "!**/__test/**",
     "!**/__mocks__/**",
     "!**/*.mock.js",

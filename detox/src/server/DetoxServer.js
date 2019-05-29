@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const WebSocket = require('ws');
 const WebSocketServer = WebSocket.Server;
-const delegatedPromise = require('../utils/delegatedPromise');
 
 const CLOSE_TIMEOUT = 10000;
 const ROLE_TESTER = 'tester';
@@ -14,7 +13,6 @@ class DetoxServer {
     this.standalone = standalone;
     this.log = log.child({ __filename });
     this.log.info(`server listening on localhost:${this.wss.options.port}...`);
-    this.pendingClosedown = undefined;
     this._setup();
   }
 
@@ -56,8 +54,6 @@ class DetoxServer {
           }
 
           _.set(this.sessions, [sessionId, role], undefined);
-
-          this._resolvePendingClosedownIfNeeded();
         }
       });
     });
@@ -78,51 +74,22 @@ class DetoxServer {
   }
 
   async close() {
-    if (this._hasConnections()) {
-      await this._closeWithTimeout();
-    } else {
-      this.wss.close();
-    }
+    await this._closeWithTimeout();
   }
 
-  async _closeWithTimeout() {
-    this.pendingClosedown = delegatedPromise();
+  _closeWithTimeout() {
+    return new Promise((resolve) => {
+      const handle = setTimeout(() => {
+        this.log.warn({ event: 'TIMEOUT' }, 'Detox server closed ungracefully on a timeout!!!');
+        resolve();
+      }, CLOSE_TIMEOUT);
 
-    const handle = setTimeout(() => {
-      this.log.warn({ event: 'TIMEOUT' }, 'Detox server closed ungracefully on a timeout!!!');
-      this._resolvePendingClosedown();
-    }, CLOSE_TIMEOUT);
-
-    this.wss.close();
-    await this.pendingClosedown;
-    clearTimeout(handle);
-  }
-
-  _resolvePendingClosedownIfNeeded() {
-    if (this._isClosedownPending() && !this._hasConnections()) {
-      this._resolvePendingClosedown();
-    }
-  }
-
-  _isClosedownPending() {
-    return !!this.pendingClosedown;
-  }
-
-  _resolvePendingClosedown() {
-    this.pendingClosedown.resolve();
-    this.pendingClosedown = undefined;
-  }
-
-  _hasConnections() {
-    let result = false;
-    _.forEach(this.sessions, (session) => {
-      _.forEach(session, (role) => {
-        if (role) {
-          result = true;
-        }
+      this.wss.close(() => {
+        this.log.debug({ event: 'WS_CLOSE' }, 'Detox server connections terminated gracefully');
+        clearTimeout(handle);
+        resolve();
       });
     });
-    return result;
   }
 }
 
