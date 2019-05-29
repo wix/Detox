@@ -30,13 +30,13 @@ describe('IOS simulator driver', () => {
 
     it('should be passed to AppleSimUtils even if some of them were received from `beforeLaunchApp` phase', async () => {
       uut.emitter.on('beforeLaunchApp', ({ launchArgs }) => {
-        launchArgs.dog3 = 'from-plugin';
+        launchArgs.dog3 = 'Chika, from plugin';
       });
 
       await uut.launchApp(deviceId, bundleId, launchArgs, languageAndLocale);
       expect(uut.applesimutils.launch).toHaveBeenCalledWith(deviceId, bundleId, {
         ...launchArgs,
-        dog3: 'from-plugin',
+        dog3: 'Chika, from plugin',
       }, '');
     });
   });
