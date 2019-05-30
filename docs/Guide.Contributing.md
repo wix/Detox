@@ -136,13 +136,13 @@ If you add, rename, or delete a test in `detox/test/e2e` suite, you should follo
 	```
 #### 4. Running example projects on Android
 
-To be able to run `example/demo-react-*` projects on Android, make sure you downgrade the demo project to `react-native@0.57.8`:
+To be able to run one of `example/demo-react-*` projects on Android, make sure you downgrade that demo project to `react-native@0.57.8`, e.g.:
 
 ```bash
 node scripts/change_react_native_version.js examples/demo-react-native 0.57.8
 ```
 
-and publish `detox-999.999.999.aar` locally (before you build the demo project):
+and also publish `detox-999.999.999.aar` locally (before you start building that demo project):
 
 ```bash
 cd detox/android
