@@ -103,8 +103,8 @@ dispatch_queue_t wx_dispatch_queue_create(const char *_Nullable label, dispatch_
 	return rv;
 }
 
-static int (*__detox_run_orig)(id self, SEL _cmd);
-static int __detox_run(id self, SEL _cmd)
+static int (*__detox_UIApplication_run_orig)(id self, SEL _cmd);
+static int __detox_UIApplication_run(id self, SEL _cmd)
 {
 	Class cls = NSClassFromString(@"RCTJSCExecutor");
 	Method m = NULL;
@@ -140,7 +140,7 @@ static int __detox_run(id self, SEL _cmd)
 		dtx_log_info(@"Method runRunLoop not found");
 	}
 	
-	return __detox_run_orig(self, _cmd);
+	return __detox_UIApplication_run_orig(self, _cmd);
 }
 
 __attribute__((constructor))
@@ -204,8 +204,8 @@ static void __setupRNSupport()
 	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[GREYDispatchQueueIdlingResource resourceWithDispatchQueue:queue name:@"RCTUIManagerQueue"]];
 
 	m = class_getInstanceMethod(UIApplication.class, NSSelectorFromString(@"_run"));
-	__detox_run_orig = (void*)method_getImplementation(m);
-	method_setImplementation(m, (void*)__detox_run);
+	__detox_UIApplication_run_orig = (void*)method_getImplementation(m);
+	method_setImplementation(m, (void*)__detox_UIApplication_run);
 	
 	dtx_log_info(@"Adding idling resource for JS timers");
 	

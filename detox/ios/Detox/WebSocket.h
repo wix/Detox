@@ -12,9 +12,10 @@
 
 @protocol WebSocketDelegate <NSObject>
 
-- (void)websocketDidConnect:(WebSocket*)websocket;
-- (void)websocket:(WebSocket*)websocket didReceiveAction:(NSString*)type withParams:(NSDictionary*)params withMessageId:(NSNumber*)messageId;
-- (void)websocketDidClose:(WebSocket*)websocket;
+- (void)webSocketDidConnect:(WebSocket*)webSocket;
+- (void)webSocket:(WebSocket*)webSocket didFailWithError:(NSError*)error;
+- (void)webSocket:(WebSocket*)webSocket didReceiveAction:(NSString*)type withParams:(NSDictionary*)params withMessageId:(NSNumber*)messageId;
+- (void)webSocket:(WebSocket*)webSocket didCloseWithReason:(NSString*)reason;
 
 @end
 

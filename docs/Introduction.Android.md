@@ -276,7 +276,7 @@ dependencies {
 
 Detox should work with `kotlin-stdlib-jdk7`, as well.
 
-######## Resolving for a compiling subproject
+#### Resolving for a compiling subproject
 
 Detox requires the Kotlin standard-library as it's own dependency. Due to the [many flavours](https://kotlinlang.org/docs/reference/using-gradle.html#configuring-dependencies) by which Kotlin has been released, multiple dependencies often create a conflict.
 

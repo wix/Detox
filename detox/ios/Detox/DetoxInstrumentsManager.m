@@ -10,7 +10,7 @@
 #import "DTXLogging.h"
 #include <dlfcn.h>
 
-DTX_CREATE_LOG_PREFIX(DetoxInstrumentsManager, @"🥶")
+DTX_CREATE_LOG(DetoxInstrumentsManager)
 
 @interface NSObject ()
 
@@ -47,16 +47,20 @@ static NSString* (*__DTXProfilerMarkEventIntervalBegin)(NSString* category, NSSt
 static void (*__DTXProfilerMarkEventIntervalEnd)(NSString* identifier, __DTXEventStatus eventStatus, NSString* __nullable endMessage);
 static void (*__DTXProfilerMarkEvent)(NSString* category, NSString* name, __DTXEventStatus eventStatus, NSString* __nullable startMessage);
 
+//Weak link
+WEAK_IMPORT_ATTRIBUTE
+@interface DTXProfiler : NSObject @end
+
 @implementation DetoxInstrumentsManager
 {
 	id _recorderInstance;
 }
 
-+ (void)_loadProfiler
++ (void)load
 {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		__DTXProfiler = NSClassFromString(@"DTXProfiler");
+		__DTXProfiler = [DTXProfiler class];
 		
 		if(__DTXProfiler == NULL)
 		{
@@ -73,7 +77,7 @@ static void (*__DTXProfilerMarkEvent)(NSString* category, NSString* name, __DTXE
 			
 			if(profilerBundle == nil)
 			{
-				dtx_log_error(@"Error loading Profiler framework bundle. Bundle not found at %@", bundleURL.path);
+				dtx_log_info(@"Error loading Profiler framework bundle. Bundle not found at %@", bundleURL.path);
 				return;
 			}
 			
@@ -87,9 +91,15 @@ static void (*__DTXProfilerMarkEvent)(NSString* category, NSString* name, __DTXE
 			}
 		}
 		
+		static void (^cleanupOnError)(void) = ^ {
+			__DTXProfiler = NULL;
+			__DTXMutableProfilingConfiguration = NULL;
+		};
+		
 		__DTXProfiler = NSClassFromString(@"DTXProfiler");
 		if(__DTXProfiler == NULL)
 		{
+			cleanupOnError();
 			dtx_log_error(@"DTXProfiler class not found—this should not have happened!");
 			return;
 		}
@@ -97,6 +107,7 @@ static void (*__DTXProfilerMarkEvent)(NSString* category, NSString* name, __DTXE
 		__DTXMutableProfilingConfiguration = NSClassFromString(@"DTXMutableProfilingConfiguration");
 		if(__DTXMutableProfilingConfiguration == NULL)
 		{
+			cleanupOnError();
 			dtx_log_error(@"DTXMutableProfilingConfiguration class not found—this should not have happened!");
 			return;
 		}
@@ -108,6 +119,7 @@ static void (*__DTXProfilerMarkEvent)(NSString* category, NSString* name, __DTXE
 		
 		if(__DTXProfilerAddTag == NULL || __DTXProfilerMarkEventIntervalBegin == NULL || __DTXProfilerMarkEventIntervalEnd == NULL || __DTXProfilerMarkEvent == NULL)
 		{
+			cleanupOnError();
 			dtx_log_error(@"One or more DTXProfilerAPI functions are NULL—this should not have happened!");
 			return;
 		}
@@ -132,13 +144,16 @@ static void (*__DTXProfilerMarkEvent)(NSString* category, NSString* name, __DTXE
 
 - (instancetype)init
 {
-	[DetoxInstrumentsManager _loadProfiler];
-	
 	self = [super init];
 	
 	if(self)
 	{
 		_recorderInstance = [__DTXProfiler new];
+		
+		if(_recorderInstance == nil)
+		{
+			dtx_log_error(@"Profiler framework is not loaded. Did you forget to install Detox Instruments?");
+		}
 	}
 	
 	return self;
@@ -169,16 +184,19 @@ static void (*__DTXProfilerMarkEvent)(NSString* category, NSString* name, __DTXE
 
 - (void)startRecordingAtURL:(NSURL*)URL
 {
+	dtx_log_info(@"Starting recording at %@", URL);
 	[_recorderInstance startProfilingWithConfiguration:[self _configForDetoxRecordingWithURL:URL]];
 }
 
 - (void)continueRecordingAtURL:(NSURL*)URL
 {
+	dtx_log_info(@"Continuing recording at %@", URL);
 	[_recorderInstance continueProfilingWithConfiguration:[self _configForDetoxRecordingWithURL:URL]];
 }
 
 - (void)stopRecordingWithCompletionHandler:(void(^)(NSError* error))completionHandler
 {
+	dtx_log_info(@"Stopping recording");
 	if(_recorderInstance == nil || [_recorderInstance isRecording] == NO)
 	{
 		if(completionHandler != nil)

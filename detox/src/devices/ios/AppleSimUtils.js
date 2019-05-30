@@ -14,7 +14,7 @@ class AppleSimUtils {
       permissions.push(permission + '=' + shouldAllow);
     });
     await this._execAppleSimUtils({
-      args: `--simulator ${udid} --bundle ${bundleId} --setPermissions ${_.join(permissions, ',')}`
+      args: `--simulator ${udid} --bundle ${bundleId} --restartSB --setPermissions ${_.join(permissions, ',')}`
     }, statusLogs, 1);
   }
 
@@ -248,7 +248,7 @@ class AppleSimUtils {
   }
 
   _joinLaunchArgs(launchArgs) {
-    return _.map(launchArgs, (v, k) => `${k} "${v}"`).join(' ').trim();
+    return _.map(launchArgs, (v, k) => `-${k} "${v}"`).join(' ').trim();
   }
 
   async _launchMagically(frameworkPath, logsInfo, udid, bundleId, args, languageAndLocale) {

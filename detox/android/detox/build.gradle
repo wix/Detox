@@ -63,10 +63,6 @@ dependencies {
 
     // noinspection GradleDynamicVersion
     compileOnly 'com.facebook.react:react-native:+'
-    // noinspection GradleDynamicVersion
-    compileOnly 'com.squareup.okhttp3:okhttp:+'
-    // noinspection GradleDynamicVersion
-    compileOnly 'com.squareup.okio:okio:+'
 
     implementation 'org.apache.commons:commons-lang3:3.4'
 

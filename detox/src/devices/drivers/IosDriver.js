@@ -76,10 +76,6 @@ class IosDriver extends DeviceDriverBase {
     await this.client.execute(call);
   }
 
-  defaultLaunchArgsPrefix() {
-    return '-';
-  }
-
   validateDeviceConfig(config) {
     //no validation
   }

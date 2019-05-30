@@ -98,7 +98,7 @@ class Detox {
     }
 
     if (this._server) {
-      this._server.close();
+      await this._server.close();
     }
 
     if (argparse.getArgValue('cleanup') && this.device) {

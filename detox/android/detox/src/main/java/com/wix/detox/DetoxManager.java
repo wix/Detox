@@ -20,7 +20,6 @@ import kotlin.jvm.functions.Function0;
 /**
  * Created by rotemm on 04/01/2017.
  */
-
 class DetoxManager implements WebSocketClient.ActionHandler {
 
     private final static String LOG_TAG =  "DetoxManager";
@@ -42,6 +41,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     DetoxManager(@NonNull Context context) {
         this.reactNativeHostHolder = context;
+
         handler = new Handler();
 
         Bundle arguments = InstrumentationRegistry.getArguments();
@@ -65,6 +65,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
         if (detoxServerUrl != null && detoxSessionId != null) {
             initReactNativeIfNeeded();
             initWSClient();
+            initCrashHandler();
             initActionHandlers();
         }
     }
@@ -125,6 +126,10 @@ class DetoxManager implements WebSocketClient.ActionHandler {
     private void initWSClient() {
         wsClient = new WebSocketClient(this);
         wsClient.connectToServer(detoxServerUrl, detoxSessionId);
+    }
+
+    private void initCrashHandler() {
+        new DetoxCrashHandler(wsClient).attach();
     }
 
     private void initActionHandlers() {

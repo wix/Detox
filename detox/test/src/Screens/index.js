@@ -14,6 +14,7 @@ import LocationScreen from './LocationScreen';
 import ShakeScreen from './ShakeScreen';
 import DatePickerScreen from './DatePickerScreen';
 import LanguageScreen from './LanguageScreen';
+import LaunchArgsScreen from './LaunchArgsScreen';
 
 export {
   SanityScreen,
@@ -31,5 +32,6 @@ export {
   LocationScreen,
   ShakeScreen,
   DatePickerScreen,
-  LanguageScreen
+  LanguageScreen,
+  LaunchArgsScreen,
 };
