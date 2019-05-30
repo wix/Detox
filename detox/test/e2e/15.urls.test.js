@@ -1,4 +1,12 @@
 describe('Open URLs', () => {
+  afterAll(async () => {
+    await device.launchApp({
+      newInstance: true,
+      url: undefined,
+      launchArgs: undefined,
+    });
+  });
+
   const withDefaultArgs = () => ({
     url: 'detoxtesturlscheme://such-string',
     launchArgs: undefined,
