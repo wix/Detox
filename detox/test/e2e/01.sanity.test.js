@@ -1,6 +1,10 @@
 describe('Sanity', () => {
+  beforeAll(async () => {
+    await device.launchApp({newInstance: true, delete: true, permissions: {notifications: 'YES'}});
+  });
+
   beforeEach(async () => {
-    await device.reloadReactNative();
+    await device.launchApp({newInstance: true});
     await element(by.text('Sanity')).tap();
   });
 
