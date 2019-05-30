@@ -134,8 +134,22 @@ If you add, rename, or delete a test in `detox/test/e2e` suite, you should follo
 	```sh
 	./gradlew test
 	```
+#### 4. Running example projects on Android
 
-#### 4. Code Generation
+To be able to run `example/demo-react-*` projects on Android, make sure you downgrade the demo project to `react-native@0.57.8`:
+
+```bash
+node scripts/change_react_native_version.js examples/demo-react-native 0.57.8
+```
+
+and publish `detox-999.999.999.aar` locally (before you build the demo project):
+
+```bash
+cd detox/android
+./gradlew publish -Dversion=999.999.999 
+```
+
+#### 5. Code Generation
 
 We are using a code generator based on `babel` and `objective-c-parser` to generate a Javascript Interface for `EarlGrey` (the testing library we use on iOS).
 This interface allows us to call Objective-C methods through the WebSocket connection directly on the testing device. 
