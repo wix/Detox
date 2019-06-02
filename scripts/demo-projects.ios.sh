@@ -2,6 +2,7 @@
 
 source $(dirname "$0")/demo-projects.sh
 
+brew tap wix/brew
 brew cask reinstall detox-instruments
 
 pushd examples/demo-react-native
