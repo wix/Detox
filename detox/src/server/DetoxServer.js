@@ -2,6 +2,10 @@ const _ = require('lodash');
 const WebSocket = require('ws');
 const WebSocketServer = WebSocket.Server;
 
+const CLOSE_TIMEOUT = 10000;
+const ROLE_TESTER = 'tester';
+const ROLE_TESTEE = 'testee';
+
 class DetoxServer {
   constructor({ port, log, standalone = false }) {
     this.wss = new WebSocketServer({ port });
@@ -45,7 +49,7 @@ class DetoxServer {
         if (sessionId && role) {
           this.log.debug({ event: 'DISCONNECT' }, `role=${role}, sessionId=${sessionId}`);
 
-          if (this.standalone && role === 'tester') {
+          if (this.standalone && role === ROLE_TESTER) {
             this.sendToOtherRole(sessionId, role, { type: 'testerDisconnected', messageId: -1 });
           }
 
@@ -56,13 +60,11 @@ class DetoxServer {
   }
 
   sendAction(ws, action) {
-    ws.send(JSON.stringify(
-      action
-    ) + '\n ');
+    ws.send(JSON.stringify(action) + '\n ');
   }
 
   sendToOtherRole(sessionId, role, action) {
-    const otherRole = role === 'testee' ? 'tester' : 'testee';
+    const otherRole = role === ROLE_TESTEE ? ROLE_TESTER : ROLE_TESTEE;
     const ws = _.get(this.sessions, [sessionId, otherRole]);
     if (ws && ws.readyState === WebSocket.OPEN) {
       this.sendAction(ws, action);
@@ -71,8 +73,23 @@ class DetoxServer {
     }
   }
 
-  close() {
-    this.wss.close();
+  async close() {
+    await this._closeWithTimeout();
+  }
+
+  _closeWithTimeout() {
+    return new Promise((resolve) => {
+      const handle = setTimeout(() => {
+        this.log.warn({ event: 'TIMEOUT' }, 'Detox server closed ungracefully on a timeout!!!');
+        resolve();
+      }, CLOSE_TIMEOUT);
+
+      this.wss.close(() => {
+        this.log.debug({ event: 'WS_CLOSE' }, 'Detox server connections terminated gracefully');
+        clearTimeout(handle);
+        resolve();
+      });
+    });
   }
 }
 

@@ -31,13 +31,14 @@
   "devDependencies": {
     "eslint": "^4.11.0",
     "eslint-plugin-node": "^6.0.1",
-    "jest": "24.x.x",
+    "jest": "24.6.x",
     "mockdate": "^2.0.1",
     "prettier": "1.7.0",
     "react-native": "0.56.0",
     "wtfnode": "^0.8.0"
   },
   "dependencies": {
+    "@babel/core": "^7.4.5",
     "bunyan": "^1.8.12",
     "bunyan-debug-stream": "^1.1.0",
     "chalk": "^2.4.2",
@@ -53,7 +54,7 @@
     "tail": "^2.0.0",
     "telnet-client": "0.15.3",
     "tempfile": "^2.0.0",
-    "ws": "^1.1.1",
+    "ws": "^2.3.1",
     "yargs": "^13.0.0",
     "yargs-parser": "^13.0.0"
   },

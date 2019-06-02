@@ -71,7 +71,7 @@ class AsyncWebSocket {
   }
 
   async close() {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       if (this.ws) {
         this.ws.onclose = (message) => {
           this.ws = null;

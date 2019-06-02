@@ -1,34 +1,43 @@
 describe('IOS simulator driver', () => {
+  let uut;
 
   const deviceId = 'device-id-mock';
   const bundleId = 'bundle-id-mock';
 
+  beforeEach(() => {
+    jest.mock('../ios/AppleSimUtils', () => mockAppleSimUtils);
+  });
+
   describe('launch args', () => {
+    let launchArgs, languageAndLocale;
 
-    let uut;
     beforeEach(() => {
-      jest.mock('../ios/AppleSimUtils', () => mockAppleSimUtils);
-
-      const SimulatorDriver = require('./SimulatorDriver');
-      uut = new SimulatorDriver({
-        client: {},
-      });
-    });
-
-    it('should inject a prefix to arg keys', async () => {
-      const launchArgs = {
+      launchArgs = {
         'dog1': 'dharma',
         'dog2': 'karma',
       };
 
-      await uut.launchApp(deviceId, bundleId, launchArgs, '');
+      languageAndLocale = '';
 
-      const simUtilsLaunchAllArgs = uut.applesimutils.launch.mock.calls[0];
-      const simUtilsLaunchArgs = simUtilsLaunchAllArgs[2];
-      expect(simUtilsLaunchArgs).toEqual({
-        '-dog1': 'dharma',
-        '-dog2': 'karma',
+      const SimulatorDriver = require('./SimulatorDriver');
+      uut = new SimulatorDriver({ client: {} });
+    });
+
+    it('should be passed to AppleSimUtils', async () => {
+      await uut.launchApp(deviceId, bundleId, launchArgs, languageAndLocale);
+      expect(uut.applesimutils.launch).toHaveBeenCalledWith(deviceId, bundleId, launchArgs, languageAndLocale);
+    });
+
+    it('should be passed to AppleSimUtils even if some of them were received from `beforeLaunchApp` phase', async () => {
+      uut.emitter.on('beforeLaunchApp', ({ launchArgs }) => {
+        launchArgs.dog3 = 'Chika, from plugin';
       });
+
+      await uut.launchApp(deviceId, bundleId, launchArgs, languageAndLocale);
+      expect(uut.applesimutils.launch).toHaveBeenCalledWith(deviceId, bundleId, {
+        ...launchArgs,
+        dog3: 'Chika, from plugin',
+      }, '');
     });
   });
 });
