@@ -2,6 +2,8 @@
 
 source $(dirname "$0")/demo-projects.sh
 
+brew cask reinstall detox-instruments
+
 pushd examples/demo-react-native
 run_f "detox build -c ios.sim.release"
 run_f "detox test -c ios.sim.release"

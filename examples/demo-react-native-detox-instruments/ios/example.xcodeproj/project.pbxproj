@@ -562,6 +562,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -912,7 +913,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ALLOWED_CONFIGURATIONS=\"Debug, Release\"\n\n# Explicitly integrate with detox-instruments from node_modules and not /Applications/ \nINSTRUMENTS_APP_PATH=\"${SRCROOT}/../node_modules/detox-instruments/Detox Instruments.app\"\n\nPROFILER_BUILD_SCRIPT_PATH=\"${INSTRUMENTS_APP_PATH}/Contents/SharedSupport/Scripts/profiler_build_phase.sh\"\nif [ \"${INSTRUMENTS_APP_PATH}\" -a -e \"${PROFILER_BUILD_SCRIPT_PATH}\" ]; then\necho Found integration script at \"${PROFILER_BUILD_SCRIPT_PATH}\"\n# Run the Profiler framework integration script\n\"${PROFILER_BUILD_SCRIPT_PATH}\" ${CONFIGURATION} ${ALLOWED_CONFIGURATIONS}\nelse\necho \"Profiler not included: Cannot find an installed Detox Instruments app.\"\nfi\n";
+			shellScript = "# Only integrate the framework for the Debug configuration by default. Edit this section to integrate with additional configurations. For example, to add the \"Debug_Another\" and \"Release\" configurations, set the following line to:\n#       ALLOWED_CONFIGURATIONS=\"Debug,Debug_Another,Release\"\nALLOWED_CONFIGURATIONS=\"Debug, Release\"\n\n# Leave this section empty to dynamically determine the path of the Detox Instruments app. If you are seeing issues, point explicitly to the app here.\nEXPLICIT_INSTRUMENTS_APP_PATH=\n\nif [ -z \"$EXPLICIT_INSTRUMENTS_APP_PATH\" ]; then\n# Find where the Detox Instruments app is installed\nINSTRUMENTS_APP_PATH=$(mdfind kMDItemCFBundleIdentifier=\"com.wix.DetoxInstruments\" | head -n 1)\nelse\nINSTRUMENTS_APP_PATH=\"$EXPLICIT_INSTRUMENTS_APP_PATH\"\nfi\nPROFILER_BUILD_SCRIPT_PATH=\"${INSTRUMENTS_APP_PATH}/Contents/SharedSupport/Scripts/profiler_build_phase.sh\"\nif [ \"${INSTRUMENTS_APP_PATH}\" -a -e \"${PROFILER_BUILD_SCRIPT_PATH}\" ]; then\necho Found integration script at \"${PROFILER_BUILD_SCRIPT_PATH}\"\n# Run the Profiler framework integration script\n\"${PROFILER_BUILD_SCRIPT_PATH}\" ${CONFIGURATION} ${ALLOWED_CONFIGURATIONS}\nelse\necho \"Profiler not included: Cannot find an installed Detox Instruments app.\"\nfi\n";
 		};
 		7D57265F10EEF7CD92D7973F /* Copy Detox Framework */ = {
 			isa = PBXShellScriptBuildPhase;

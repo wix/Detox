@@ -14,7 +14,6 @@
   },
   "devDependencies": {
     "detox": "^12.4.1",
-    "detox-instruments": "1.x.x",
     "mocha": "6.x.x"
   },
   "detox": {
