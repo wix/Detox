@@ -73,8 +73,12 @@ DTX_CREATE_LOG(WXJSTimerObservationIdlingResource)
 @implementation WXJSTimerObservationIdlingResource
 {
 	NSMapTable<id, _WXJSTimingObservationWrapper*>* _observations;
-	dispatch_queue_t _timersObservationQueue;
 	NSTimeInterval _durationThreshold;
+}
+
+- (NSMapTable<id,id> *)observations
+{
+	return (id)_observations;
 }
 
 - (void)setDurationThreshold:(NSTimeInterval)durationThreshold

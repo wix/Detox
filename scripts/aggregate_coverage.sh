@@ -7,7 +7,7 @@ if [ -d aggregated-coverage ]; then
   {
     for lcov in aggregated-coverage/**/*.lcov; do
       echo "Forcing relative paths in: $lcov"
-      sed -i 's/^SF:.*\(detox-[a-z]\+-[0-9]\+-[a-z]\+\)\//SF:/g' $lcov
+      sed -i 's/^SF:.*\(detox-[a-z]\+-[0-9\-]\+-[a-z]\+\)\//SF:/g' $lcov
     done
 
     echo "Merging LCOV files"

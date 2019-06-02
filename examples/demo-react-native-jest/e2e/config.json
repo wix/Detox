@@ -1,4 +1,6 @@
 {
   "setupFilesAfterEnv": ["./init.js"],
-  "testEnvironment": "node"
+  "testEnvironment": "node",
+  "reporters": ["detox/runners/jest/streamlineReporter"],
+  "verbose": true
 }

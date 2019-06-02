@@ -85,13 +85,13 @@ Please be aware that the `minSdkVersion` needs to be at least 18.
 
 ### 3. Add Kotlin
 
-If your project does not already use Kotlin, add the Kotlin Gradle-plugin to your classpath in `android/build.gradle`:
+If your project does not already support Kotlin, add the Kotlin Gradle-plugin to your classpath in the root build-script (i.e.`android/build.gradle`):
 
 ```groovy
 buildscript {
     // ...
     ext.kotlinVersion = '1.3.0'
-    
+
     dependencies: {
         // ...
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
@@ -100,16 +100,6 @@ buildscript {
 ```
 
 _Note: most guides advise of defining a global `kotlinVersion` constant - as in this example, but that is not mandatory._
-
-
-**IMPORTANT:** Detox aims at a playing fair with your app, and so it allows you to explicitly define the kotlin version for it to use - so as to align it with your own; Please do so - in your root `android/build.gradle` configuration file:
-
-```groovy
-buildscript {
-    ext.kotlinVersion = '1.3.0' // Your app's version
-    ext.detoxKotlinVersion = ext.kotlinVersion // Detox' version: should be 1.1.0 or higher!
-}
-```
 
 ***Note that Detox has been tested for version 1.1.0 of Kotlin, and higher!***
 
@@ -186,27 +176,6 @@ In apps running [minification using Proguard](https://developer.android.com/stud
 
 
 
-## Troubleshooting
-
-### Problem: `Duplicate files copied in ...`
-
-If you get an error like this:
-
-```sh
-Execution failed for task ':app:transformResourcesWithMergeJavaResForDebug'.
-> com.android.build.api.transform.TransformException: com.android.builder.packaging.DuplicateFileException: Duplicate files copied in APK META-INF/LICENSE
-```
-
-You need to add this to the `android` section of your `android/app/build.gradle`:
-
-```groovy
-packagingOptions {
-    exclude 'META-INF/LICENSE'
-}
-```
-
-
-
 ## Setting Detox up as a compiling dependency
 
 This is an **alternative** to the setup process described under the previous section, on adding Detox as a dependency.
@@ -263,4 +232,61 @@ android {
 ```
 
 Please be aware that the `minSdkVersion` needs to be at least 18.
+
+
+
+## Troubleshooting
+
+### Problem: `Duplicate files copied in ...`
+
+If you get an error like this:
+
+```sh
+Execution failed for task ':app:transformResourcesWithMergeJavaResForDebug'.
+> com.android.build.api.transform.TransformException: com.android.builder.packaging.DuplicateFileException: Duplicate files copied in APK META-INF/LICENSE
+```
+
+You need to add this to the `android` section of your `android/app/build.gradle`:
+
+```groovy
+packagingOptions {
+    exclude 'META-INF/LICENSE'
+}
+```
+
+
+
+### Problem: Kotlin stdlib version conflicts
+
+The problems and resolutions here are different if you're using Detox as a precompiled dependency artifact (i.e. an `.aar`) - which is the default, or compiling it yourself.
+
+#### Resolving for a precompiled dependency (`.aar`)
+
+Of all [Kotlin implementation flavours](https://kotlinlang.org/docs/reference/using-gradle.html#configuring-dependencies), Detox assumes the most recent one, namely `kotlin-stdlib-jdk8`. If your Android build fails due to conflicts with implementations coming from other dependencies or even your own app, consider adding an exclusion to either the "other" dependencies or detox itself, for example:
+
+```diff
+dependencies {
+-    androidTestImplementation('com.wix:detox:+') { transitive = true } 
++    androidTestImplementation('com.wix:detox:+') { 
++        transitive = true
++        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
++    }
+}
+```
+
+Detox should work with `kotlin-stdlib-jdk7`, as well.
+
+#### Resolving for a compiling subproject
+
+Detox requires the Kotlin standard-library as it's own dependency. Due to the [many flavours](https://kotlinlang.org/docs/reference/using-gradle.html#configuring-dependencies) by which Kotlin has been released, multiple dependencies often create a conflict.
+
+For that, Detox allows for the exact specification of the standard library to use using two Gradle globals: `detoxKotlinVerion` and `detoxKotlinStdlib`. You can define both in your  root build-script file (i.e.`android/build.gradle`):
+
+```groovy
+buildscript {
+    // ...
+    ext.detoxKotlinVersion = '1.3.0' // Detox' default is 1.2.0
+    ext.detoxKotlinStdlib = 'kotlin-stdlib-jdk7' // Detox' default is kotlin-stdlib-jdk8
+}
+```
 

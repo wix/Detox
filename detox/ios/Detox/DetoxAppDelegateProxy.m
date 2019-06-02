@@ -203,6 +203,7 @@ static void __copyMethods(Class orig, Class target)
 		_touchVisualizerWindow.backgroundColor = [UIColor.greenColor colorWithAlphaComponent:0.0];
 		_touchVisualizerWindow.hidden = NO;
 		_touchVisualizerWindow.touchVisualizerWindowDelegate = self;
+		_touchVisualizerWindow.stationaryMorphEnabled = NO;
 		_touchVisualizerWindow.userInteractionEnabled = NO;
 		CGRect statusBarFrame = UIApplication.sharedApplication.statusBarFrame;
 		CGRect screenBounds = UIScreen.mainScreen.bounds;

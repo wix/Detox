@@ -81,7 +81,6 @@ describe('Device', () => {
       sessionConfig: scheme.session,
     });
 
-    device.deviceDriver.defaultLaunchArgsPrefix.mockReturnValue('-');
     device.deviceDriver.acquireFreeDevice.mockReturnValue('mockDeviceId');
 
     return device;
@@ -130,8 +129,8 @@ describe('Device', () => {
 
   describe('re/launchApp()', () => {
     const expectedDriverArgs = {
-      "-detoxServer": "ws://localhost:8099",
-      "-detoxSessionId": "test",
+      "detoxServer": "ws://localhost:8099",
+      "detoxSessionId": "test",
     };
 
     it(`with no args should launch app with defaults`, async () => {
@@ -197,7 +196,7 @@ describe('Device', () => {
     });
 
     it(`(relaunch) with url should send the url as a param in launchParams`, async () => {
-      const expectedArgs = {...expectedDriverArgs, "-detoxURLOverride": "scheme://some.url"};
+      const expectedArgs = {...expectedDriverArgs, "detoxURLOverride": "scheme://some.url"};
       const device = await validDevice();
 
       await device.relaunchApp({url: `scheme://some.url`});
@@ -208,8 +207,8 @@ describe('Device', () => {
     it(`(relaunch) with url should send the url as a param in launchParams`, async () => {
       const expectedArgs = {
         ...expectedDriverArgs,
-        "-detoxURLOverride": "scheme://some.url",
-        "-detoxSourceAppOverride": "sourceAppBundleId",
+        "detoxURLOverride": "scheme://some.url",
+        "detoxSourceAppOverride": "sourceAppBundleId",
       };
       const device = await validDevice();
       await device.relaunchApp({url: `scheme://some.url`, sourceApp: 'sourceAppBundleId'});
@@ -220,7 +219,7 @@ describe('Device', () => {
     it(`(relaunch) with userNofitication should send the userNotification as a param in launchParams`, async () => {
       const expectedArgs = {
         ...expectedDriverArgs,
-        "-detoxUserNotificationDataURL": "url",
+        "detoxUserNotificationDataURL": "url",
       };
       const device = validDevice();
 
@@ -263,7 +262,7 @@ describe('Device', () => {
     });
 
     it(`with disableTouchIndicators should send a boolean switch as a param in launchParams`, async () => {
-      const expectedArgs = {...expectedDriverArgs, "-detoxDisableTouchIndicators": true};
+      const expectedArgs = {...expectedDriverArgs, "detoxDisableTouchIndicators": true};
       const device = await validDevice();
 
       await device.launchApp({disableTouchIndicators: true});
@@ -277,10 +276,10 @@ describe('Device', () => {
         arg2: 2,
       };
       const expectedArgs = {
-        "-detoxServer": "ws://localhost:8099",
-        "-detoxSessionId": "test",
-        "-arg1": "1",
-        "-arg2": 2,
+        "detoxServer": "ws://localhost:8099",
+        "detoxSessionId": "test",
+        "arg1": "1",
+        "arg2": 2,
       };
 
       const device = validDevice();

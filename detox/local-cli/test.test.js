@@ -128,6 +128,79 @@ describe('test', () => {
     );
   });
 
+  describe('specs reporting (propagated) switch', () => {
+    const expectReportSpecsArg = ({value}) => expect(mockExec).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        env: expect.objectContaining({
+          reportSpecs: value,
+        }),
+      })
+    );
+
+    describe('ios', () => {
+      beforeEach(() => mockPackageJson({
+        'test-runner': 'jest',
+        configurations: {
+          only: {
+            type: 'ios.sim'
+          }
+        }
+      }));
+
+      it('should be enabled for a single worker', async () => {
+        await callCli('./test', 'test --workers 1');
+        expectReportSpecsArg({value: true});
+      });
+
+      it('should be disabled for multiple workers', async () => {
+        await callCli('./test', 'test --workers 2');
+        expectReportSpecsArg({value: false});
+      });
+
+      it('should be enabled in case no specific workers config has been specified', async () => {
+        await callCli('./test', 'test');
+        expectReportSpecsArg({value: true});
+      });
+
+      it('should be enabled if custom --jest-report-specs switch is specified', async () => {
+        await callCli('./test', 'test --workers 2 --jest-report-specs');
+        expectReportSpecsArg({value: true});
+      });
+
+      it('should be disabled if custom switch has non-true value', async () => {
+        await callCli('./test', 'test --jest-report-specs meh');
+        expectReportSpecsArg({value: false});
+      });
+
+      it('should be enabled if custom switch has explicit value of \'true\'', async () => {
+        await callCli('./test', 'test --workers 2 --jest-report-specs true');
+        expectReportSpecsArg({value: true});
+      });
+    });
+
+    describe('android', () => {
+      beforeEach(() => mockPackageJson({
+        'test-runner': 'jest',
+        configurations: {
+          only: {
+            type: 'android.emulator'
+          }
+        }
+      }));
+
+      it('should align with fallback to single-worker', async () => {
+        await callCli('./test', 'test --workers 2');
+        expectReportSpecsArg({value: true});
+      });
+
+      it('should adhere to custom --jest-report-specs switch, as with ios', async () => {
+        await callCli('./test', 'test --workers 2 --jest-report-specs false');
+        expectReportSpecsArg({value: false});
+      });
+    });
+  });
+
   it('sets default value for debugSynchronization', async () => {
     mockPackageJson({
       configurations: {

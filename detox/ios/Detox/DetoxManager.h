@@ -11,7 +11,6 @@
 @interface DetoxManager : NSObject
 
 + (instancetype)sharedManager;
-- (void)connectToServer:(NSString*)url withSessionId:(NSString*)sessionId;
 
 - (void)notifyOnCrashWithDetails:(NSDictionary*)details;
 
