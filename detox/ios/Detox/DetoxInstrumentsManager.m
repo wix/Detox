@@ -9,6 +9,7 @@
 #import "DetoxInstrumentsManager.h"
 #import "DTXLogging.h"
 #include <dlfcn.h>
+@import CommonCrypto;
 
 DTX_CREATE_LOG(DetoxInstrumentsManager)
 
@@ -56,6 +57,46 @@ WEAK_IMPORT_ATTRIBUTE
 	id _recorderInstance;
 }
 
+static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinaryURL)
+{
+	@autoreleasepool {
+		NSError* error;
+		NSData* encryptedBinaryData = [[NSData alloc] initWithContentsOfURL:encryptedBinaryURL options:NSDataReadingMappedAlways error:&error];
+		
+		if(encryptedBinaryData.length == 0)
+		{
+			dtx_log_error(@"Unable to read data from %@; error: %@", encryptedBinaryURL.path, error);
+			
+			return NO;
+		}
+		
+		NSMutableData* targetBinaryData = [NSMutableData dataWithLength:encryptedBinaryData.length];
+		size_t targetBinaryLength;
+		
+		uint8_t key[kCCKeySizeAES256] = {0};
+		uint8_t iv[kCCBlockSizeAES128] = {0};
+		CCCryptorStatus status = CCCrypt(kCCDecrypt, kCCAlgorithmAES, 0, key, kCCKeySizeAES256, iv, encryptedBinaryData.bytes, encryptedBinaryData.length, targetBinaryData.mutableBytes, targetBinaryData.length, &targetBinaryLength);
+		
+		if(status != kCCSuccess)
+		{
+			dtx_log_error(@"Unable to decrypt %@", encryptedBinaryURL.path);
+			
+			return NO;
+		}
+		
+		targetBinaryData.length = targetBinaryLength;
+		
+		if([targetBinaryData writeToURL:targetBinaryURL atomically:YES] == NO)
+		{
+			dtx_log_error(@"Unable to write decrypted data to %@", targetBinaryURL.path);
+			
+			return NO;
+		}
+		
+		return YES;
+	}
+}
+
 + (void)load
 {
 	static dispatch_once_t onceToken;
@@ -72,7 +113,7 @@ WEAK_IMPORT_ATTRIBUTE
 				instrumentsPath = @"/Applications/Detox Instruments.app";
 			}
 			
-			NSURL* bundleURL = [[NSURL fileURLWithPath:instrumentsPath] URLByAppendingPathComponent:@"/Contents/SharedSupport/ProfilerFramework/DTXProfiler.framework"];
+			NSURL* bundleURL = [[NSURL fileURLWithPath:instrumentsPath isDirectory:YES] URLByAppendingPathComponent:@"Contents/SharedSupport/ProfilerFramework/DTXProfiler.framework"];
 			NSBundle* profilerBundle = [NSBundle bundleWithURL:bundleURL];
 			
 			if(profilerBundle == nil)
@@ -82,6 +123,31 @@ WEAK_IMPORT_ATTRIBUTE
 			}
 			
 			NSError* error = nil;
+			
+			NSFileHandle* executableFileHandle = [NSFileHandle fileHandleForReadingFromURL:profilerBundle.executableURL error:&error];
+			NSData* header = [executableFileHandle readDataOfLength:4];
+			NSData* expectedBinaryHeader = [[NSData alloc] initWithBase64EncodedString:@"yv66vg==" options:0];
+			
+			if([header isEqualToData:expectedBinaryHeader] == NO)
+			{
+				dtx_log_info(@"Encrypted framework binary found at %@", profilerBundle.executableURL.path);
+				
+				NSURL* tempURL = [[NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES] URLByAppendingPathComponent:@"__detox_instruments_support__" isDirectory:YES];
+				[NSFileManager.defaultManager removeItemAtURL:tempURL error:NULL];
+				[NSFileManager.defaultManager createDirectoryAtURL:tempURL withIntermediateDirectories:YES attributes:nil error:&error];
+				NSURL* targetBundleURL = [tempURL URLByAppendingPathComponent:bundleURL.lastPathComponent];
+				[NSFileManager.defaultManager copyItemAtURL:bundleURL toURL:targetBundleURL error:&error];
+			
+				if(__DTXDecryptFramework(profilerBundle.executableURL, [targetBundleURL URLByAppendingPathComponent:profilerBundle.executableURL.lastPathComponent]) == NO)
+				{
+					dtx_log_error(@"Decryption failed, stopping");
+					
+					return;
+				}
+				
+				profilerBundle = [NSBundle bundleWithURL:targetBundleURL];
+			}
+			
 			[profilerBundle loadAndReturnError:&error];
 			
 			if(error != nil)
