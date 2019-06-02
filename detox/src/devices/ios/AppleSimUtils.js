@@ -30,10 +30,7 @@ class AppleSimUtils {
 
     let type;
     let os;
-    if (query.match(/[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}/i)) {
-      return [query]
-    }
-    else if (_.includes(query, ',')) {
+    if (_.includes(query, ',')) {
       const parts = _.split(query, ',');
       type = parts[0].trim();
       os = parts[1].trim();
@@ -45,10 +42,14 @@ class AppleSimUtils {
 
     const response = await this._execAppleSimUtils({ args: `--list --byType "${type}" --byOS "${os}"`}, statusLogs, 1);
     const parsed = this._parseResponseFromAppleSimUtils(response);
-    const udids = _.map(parsed, 'udid');
+    let udids = _.map(parsed, 'udid');
     if (!udids || !udids.length || !udids[0]) {
-      throw new Error(`Can't find a simulator to match with "${query}", run 'xcrun simctl list' to list your supported devices.
-      It is advised to only state a device type, and not to state iOS version, e.g. "iPhone 7"`);
+      const devices = await this.devicesMatching(query)
+      udids = _.map(devices, 'udid')
+      if (!udids || !udids.length || !udids[0]) {
+        throw new Error(`Can't find a simulator to match with "${query}", run 'xcrun simctl list' to list your supported devices.
+        It is advised to only state a device type or name, and not to state iOS version, e.g. "iPhone 7"`);
+      }
     }
     return udids;
   }
@@ -85,6 +86,14 @@ class AppleSimUtils {
   async isBooted(udid) {
     const device = await this.findDeviceByUDID(udid);
     return (_.isEqual(device.state, 'Booted') || _.isEqual(device.state, 'Booting'));
+  }
+
+  async devicesMatching(name) {
+    const result = await this._execSimctl({ cmd: `list -j` });
+    const stdout = _.get(result, 'stdout');
+    const output = JSON.parse(stdout);
+    const devicesWithRunTimes = _.flatMap(output.devices, (runtime) => _.map(runtime, (device) => ({ runtime, ...device })) );    
+    return _.filter(devicesWithRunTimes, (device) => device.name == name || device.udid == name)
   }
 
   async deviceTypeAndNewestRuntimeFor(name) {
