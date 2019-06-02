@@ -30,7 +30,11 @@ describe('Fullscreen scrolling Actions', () => {
     await expect(scrollViewDriver.firstItem()).toBeVisible();
     await expect(scrollViewDriver.lastItem()).toBeNotVisible();
 
-    await scrollViewDriver.scrollBy(1000);
+    try {
+      await scrollViewDriver.scrollBy(1000);
+    } catch (error) {
+      console.log('Expected error caught: Scrolled the list down to its very end');
+    }
     await expect(scrollViewDriver.firstItem()).toBeNotVisible();
     await expect(scrollViewDriver.lastItem()).toBeVisible();
   });
