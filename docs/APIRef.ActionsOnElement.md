@@ -160,5 +160,5 @@ dateFormat - format for the dateString supplied<br>
 
 ```js
 await expect(element(by.type('UIDatePicker'))).toBeVisible();
-await element(by.type('UIDatePicker)).setDatePickerDate('2019-02-06T05:10:00-08:00', "yyyy-MM-dd'T'HH:mm:ssZZZZZ");
+await element(by.type('UIDatePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', "yyyy-MM-dd'T'HH:mm:ssZZZZZ");
 ```
