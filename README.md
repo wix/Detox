@@ -61,11 +61,14 @@ Detox is built from the ground up to support React Native projects as well as pu
 
 The following React Native versions have been tested:
 
-| iOS    | Android |
-| ------ | ------- |
-| <=0.59 | <=0.56  |
+| iOS    | Android                                                      |
+| ------ | ------------------------------------------------------------ |
+| <=0.59 | <=0.56 - Full support                                        |
+|        | >=0.57 <=0.59 - Visibility edge-case: see this [RN issue](https://github.com/facebook/react-native/issues/23870)* |
 
 Future versions are most likely supported, but have not been tested yet. Please open issues if you find specific issues with newer React Native versions.
+
+> (*) We are planning on introducing a better `Matcher` that would work around this issue. In the meantime, it doesn't seem to hold any projects back from upgrading - not that we know of, at least. Contributions would be more than welcomed.
 
 ## Getting Started
 
