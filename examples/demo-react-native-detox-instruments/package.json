@@ -5,7 +5,7 @@
   "scripts": {
     "start": "react-native start",
     "build:ios": "detox build --configuration ios.sim.debug",
-    "test:ios": "detox test --configuration ios.sim.debug --record-performance all",
+    "test:ios": "detox test --configuration ios.sim.debug --record-performance all --record-logs all",
     "e2e:ios": "npm run build:ios && npm run test:ios"
   },
   "dependencies": {

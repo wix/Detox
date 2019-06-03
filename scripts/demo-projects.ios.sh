@@ -21,5 +21,5 @@ popd
 
 pushd examples/demo-react-native-detox-instruments
 run_f "detox build -c ios.sim.release"
-run_f "detox test -c ios.sim.release --record-performance all --loglevel trace"
+run_f "detox test -c ios.sim.release --record-performance all --loglevel trace --record-logs all"
 popd
