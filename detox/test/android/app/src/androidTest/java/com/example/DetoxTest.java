@@ -1,8 +1,8 @@
 package com.example;
 
 import android.os.Bundle;
-import android.test.suitebuilder.annotation.LargeTest;
 
+import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
