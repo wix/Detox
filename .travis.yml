@@ -7,7 +7,7 @@ matrix:
     os: osx
     osx_image: xcode10.2
     env:
-    - REACT_NATIVE_VERSION=0.56.x
+    - REACT_NATIVE_VERSION=0.59.x
     install:
     - ./scripts/install.ios.sh
     script:
@@ -17,7 +17,7 @@ matrix:
     os: osx
     osx_image: xcode10.2
     env:
-    - REACT_NATIVE_VERSION=0.51.x
+    - REACT_NATIVE_VERSION=0.58.x
     install:
     - ./scripts/install.ios.sh
     script:
@@ -25,13 +25,13 @@ matrix:
     - ./scripts/upload_artifact.sh
   - language: android
     env:
-    - REACT_NATIVE_VERSION=0.56.x
+    - REACT_NATIVE_VERSION=0.59.x
     android:
       components:
         - tools
         - platform-tools
-        - build-tools-27.0.3
-        - android-26
+        - build-tools-28.0.3
+        - android-28
         - extra-google-google_play_services
         - extra-google-m2repository
         - extra-android-m2repository
@@ -46,7 +46,7 @@ matrix:
     os: osx
     osx_image: xcode10.2
     env:
-    - REACT_NATIVE_VERSION=0.56.x
+    - REACT_NATIVE_VERSION=0.59.x
     install:
     - ./scripts/install.ios.sh
     script:
