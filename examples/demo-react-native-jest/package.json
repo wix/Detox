@@ -3,20 +3,9 @@
   "version": "12.10.3",
   "private": true,
   "scripts": {
-    "start": "node node_modules/react-native/local-cli/cli.js start",
-    "build:ios": "detox build --configuration ios.sim.debug",
-    "build:android-debug": "detox build --configuration android.emu.debug",
-    "build:android-release": "detox build --configuration android.emu.release",
-    "test:ios": "detox test --configuration ios.sim.debug",
-    "test:android-debug": "detox test --configuration android.emu.debug -l verbose",
-    "test:android-release": "detox test --configuration android.emu.release -l verbose",
-    "e2e:ios": "npm run build:ios && npm run test:ios",
-    "e2e:android-debug": "npm run build:android-debug && npm run test:android-debug",
-    "e2e:android-release": "npm run build:android-release && npm run test:android-release"
+    "test:android-release": "detox test --configuration android.emu.release -l verbose"
   },
   "dependencies": {
-    "react": "16.8.3",
-    "react-native": "0.59.8"
   },
   "devDependencies": {
     "detox": "^12.10.3",
@@ -26,26 +15,12 @@
     "test-runner": "jest",
     "configurations": {
       "ios.sim.release": {
-        "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/DemoReactNativeJest.app",
-        "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/DemoReactNativeJest.xcodeproj -UseNewBuildSystem=NO -scheme DemoReactNativeJest -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet",
+        "binaryPath": "../demo-react-native/ios/build/Build/Products/Release-iphonesimulator/example.app",
         "type": "ios.simulator",
-        "name": "iPhone 7 Plus"
-      },
-      "ios.sim.debug": {
-        "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/DemoReactNativeJest.app",
-        "build": "xcodebuild -project ios/DemoReactNativeJest.xcodeproj -UseNewBuildSystem=NO -scheme DemoReactNativeJest -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
-        "type": "ios.simulator",
-        "name": "iPhone 7 Plus"
-      },
-      "android.emu.debug": {
-        "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
-        "build": "cd android; ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug; cd -",
-        "type": "android.emulator",
-        "name": "Nexus_5X_API_26"
+        "name": "iPhone X"
       },
       "android.emu.release": {
-        "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
-        "build": "cd android; ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release; cd -",
+        "binaryPath": "../demo-react-native/android/app/build/outputs/apk/release/app-release.apk",
         "type": "android.emulator",
         "name": "Nexus_5X_API_26"
       }

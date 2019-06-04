@@ -16,6 +16,5 @@ run_f "npm run test:android-explicit-require -- --headless"
 popd
 
 pushd examples/demo-react-native-jest
-run_f "npm run build:android-release"
 run_f "npm run test:android-release -- --headless"
 popd

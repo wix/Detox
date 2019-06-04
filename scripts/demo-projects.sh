@@ -2,10 +2,7 @@
 
 source $(dirname "$0")/logger.sh
 
-if [ ! -z ${REACT_NATIVE_VERSION} ]; then
-  for proj in demo-react-native demo-react-native-jest; do
-    node scripts/change_react_native_version.js "examples/${proj}" ${REACT_NATIVE_VERSION}
-  done
-fi
+# Only update the demo-react-native project; others will use this binary
+node scripts/change_react_native_version.js "examples/demo-react-native" ${REACT_NATIVE_VERSION}
 
 run_f "lerna bootstrap"
