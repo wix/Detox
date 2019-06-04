@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "12.10.2",
+  "version": "12.10.3",
   "private": true,
   "engines": {
     "node": ">=8.3.0"
@@ -20,15 +20,15 @@
   },
   "dependencies": {
     "moment": "^2.24.0",
-    "react": "16.4.1",
-    "react-native": "0.56.0"
+    "react": "16.8.3",
+    "react-native": "0.59.8"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
-    "detox": "^12.10.2",
+    "detox": "^12.10.3",
     "express": "^4.15.3",
-    "lodash": "^4.14.1",
     "jest": "24.6.x",
+    "lodash": "^4.14.1",
     "nyc": "^14.0.0"
   },
   "detox": {

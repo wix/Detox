@@ -11,52 +11,39 @@ class SimulatorLogPlugin extends LogArtifactPlugin {
 
   async onBeforeShutdownDevice(event) {
     await super.onBeforeShutdownDevice(event);
-    await this._tryStopCurrentRecording();
+    await this._tryToStopCurrentRecording();
   }
 
-  async onBeforeUninstallApp(event) {
-    await super.onBeforeUninstallApp(event);
-    await this._tryStopCurrentRecording();
+  async onBeforeLaunchApp(event) {
+    await super.onBeforeLaunchApp(event);
+    await this._tryToLaunchCurrentRecording();
   }
 
-  async onBeforeTerminateApp(event) {
-    await super.onBeforeTerminateApp(event);
-    await this._tryStopCurrentRecording();
-  }
-
-  async onLaunchApp(event) {
-    await super.onLaunchApp(event);
-
+  async _tryToLaunchCurrentRecording() {
     if (this.currentRecording) {
       await this.currentRecording.start({
-        readFromBeginning: true,
+        udid: this.context.deviceId,
+        bundleId: this.context.bundleId,
       });
     }
   }
 
-  async _tryStopCurrentRecording() {
+  async _tryToStopCurrentRecording() {
     if (this.currentRecording) {
       await this.currentRecording.stop();
     }
   }
 
   createStartupRecording() {
-    return this._createRecording(true);
+    return this.createTestRecording();
   }
 
   createTestRecording() {
-    return this._createRecording(false);
-  }
-
-  _createRecording(readFromBeginning) {
-    const udid = this.context.deviceId;
-    const { stdout, stderr } = this.appleSimUtils.getLogsPaths(udid);
-
     return new SimulatorLogRecording({
+      udid: this.context.deviceId,
+      bundleId: this.context.bundleId,
+      appleSimUtils: this.appleSimUtils,
       temporaryLogPath: tempfile('.log'),
-      logStderr: stderr,
-      logStdout: stdout,
-      readFromBeginning,
     });
   }
 }

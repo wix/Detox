@@ -4,10 +4,10 @@ apply plugin: 'kotlin-android-extensions'
 
 def _ext = rootProject.ext
 
-def _compileSdkVersion = _ext.has('compileSdkVersion') ? _ext.compileSdkVersion : 25
-def _buildToolsVersion = _ext.has('buildToolsVersion') ? _ext.buildToolsVersion : '27.0.3'
+def _compileSdkVersion = _ext.has('compileSdkVersion') ? _ext.compileSdkVersion : 28
+def _buildToolsVersion = _ext.has('buildToolsVersion') ? _ext.buildToolsVersion : '28.0.3'
 def _minSdkVersion = _ext.has('minSdkVersion') ? _ext.minSdkVersion : 18
-def _targetSdkVersion = _ext.has('targetSdkVersion') ? _ext.targetSdkVersion : 25
+def _targetSdkVersion = _ext.has('targetSdkVersion') ? _ext.targetSdkVersion : 28
 def _kotlinVersion = _ext.has('detoxKotlinVersion') ? _ext.detoxKotlinVersion : '1.2.0'
 def _kotlinStdlib = _ext.has('detoxKotlinStdlib') ? _ext.detoxKotlinStdlib : 'kotlin-stdlib-jdk8'
 

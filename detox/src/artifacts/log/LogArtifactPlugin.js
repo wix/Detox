@@ -23,7 +23,7 @@ class LogArtifactPlugin extends StartupAndTestRecorderPlugin {
   }
 
   async preparePathForTestArtifact(testSummary) {
-    return this.api.preparePathForArtifact('test.log', testSummary);
+    return this.api.preparePathForArtifact('process.log', testSummary);
   }
 }
 

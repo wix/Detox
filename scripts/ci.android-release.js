@@ -13,6 +13,8 @@ function run() {
   exec.execSync('git reset --hard');
 
   logSection('Packing up Android artifacts...');
+  log('Accepting all Android SDK licenses...');
+  exec.execSync(`yes | ${process.env.ANDROID_HOME}/tools/bin/sdkmanager --licenses`);
   process.chdir('detox/android');
   exec.execSync(`./gradlew clean detox:publish -Dversion=${futureVersion}`);
   process.chdir('../..');
