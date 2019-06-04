@@ -90,6 +90,7 @@ class AppleSimUtils {
     const newestRuntime = _.maxBy(output.runtimes, r => Number(r.version));
     return { deviceType, newestRuntime };
   }
+
   async create(name) {
     const deviceInfo = await this.deviceTypeAndNewestRuntimeFor(name);
 
@@ -124,10 +125,9 @@ class AppleSimUtils {
 
   async launch(udid, bundleId, launchArgs, languageAndLocale) {
     const frameworkPath = await environment.getFrameworkPath();
-    const logsInfo = new LogsInfo(udid);
-    const args = this._joinLaunchArgs(launchArgs);
+    const result = await this._launchMagically(frameworkPath, udid, bundleId, launchArgs, languageAndLocale);
+    await this._printLoggingHint(udid, bundleId);
 
-    const result = await this._launchMagically(frameworkPath, logsInfo, udid, bundleId, args, languageAndLocale);
     return this._parseLaunchId(result);
   }
 
@@ -135,12 +135,34 @@ class AppleSimUtils {
     await this._execSimctl({ cmd: `launch ${udid} com.apple.springboard`, retries: 10 });
   }
 
-  getLogsPaths(udid) {
-    const logsInfo = new LogsInfo(udid);
-    return {
-      stdout: logsInfo.absStdout,
-      stderr: logsInfo.absStderr
+  async getAppContainer(udid, bundleId) {
+    return _.trim((await this._execSimctl({ cmd: `get_app_container ${udid} ${bundleId}` })).stdout);
+  }
+
+  logStream({ udid, stdout, level, processImagePath, style }) {
+    const args = ['simctl', 'spawn', udid, 'log', 'stream'];
+
+    if (level) {
+      args.push('--level');
+      args.push(level);
     }
+
+    if (style) {
+      args.push('--style');
+      args.push(style);
+    }
+
+    if (processImagePath) {
+      args.push('--predicate');
+      args.push(`processImagePath beginsWith "${processImagePath}"`);
+    }
+
+    const promise = exec.spawnAndLog('/usr/bin/xcrun', args, {
+      stdio: ['ignore', stdout, 'ignore'],
+      silent: true,
+    });
+
+    return promise;
   }
 
   async terminate(udid, bundleId) {
@@ -251,7 +273,9 @@ class AppleSimUtils {
     return _.map(launchArgs, (v, k) => `-${k} "${v}"`).join(' ').trim();
   }
 
-  async _launchMagically(frameworkPath, logsInfo, udid, bundleId, args, languageAndLocale) {
+  async _launchMagically(frameworkPath, udid, bundleId, launchArgs, languageAndLocale) {
+    const args = this._joinLaunchArgs(launchArgs);
+
     const statusLogs = {
       trying: `Launching ${bundleId}...`,
     };
@@ -261,43 +285,32 @@ class AppleSimUtils {
       dylibs = `${process.env.SIMCTL_CHILD_DYLD_INSERT_LIBRARIES}:${dylibs}`;
     }
 
-    let launchBin = `/bin/cat /dev/null >${logsInfo.absStdout} 2>${logsInfo.absStderr} && ` +
-      `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${dylibs}" ` +
-      `/usr/bin/xcrun simctl launch --stdout=${logsInfo.simStdout} --stderr=${logsInfo.simStderr} ` +
-      `${udid} ${bundleId} --args ${args}`;
+    let launchBin = `SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${dylibs}" ` +
+      `/usr/bin/xcrun simctl launch ${udid} ${bundleId} --args ${args}`;
 
       if (!!languageAndLocale && !!languageAndLocale.language) {
         launchBin += ` -AppleLanguages "(${languageAndLocale.language})"`;
       }
-  
+
       if (!!languageAndLocale && !!languageAndLocale.locale) {
         launchBin += ` -AppleLocale ${languageAndLocale.locale}`;
       }
 
     const result = await exec.execWithRetriesAndLogs(launchBin, undefined, statusLogs, 1);
-    
-    log.info(`${bundleId} launched. The stdout and stderr logs were recreated, you can watch them with:\n` +
-             `        tail -F ${logsInfo.absJoined}`);
 
     return result;
   }
 
+  async _printLoggingHint(udid, bundleId) {
+    const appContainer = await this.getAppContainer(udid, bundleId);
+    const predicate = `processImagePath beginsWith "${appContainer}"`;
+    const command = `/usr/bin/xcrun simctl spawn ${udid} log stream --level debug --style compact --predicate '${predicate}'`;
+
+    log.info(`${bundleId} launched. To watch simulator logs, run:\n        ${command}`);
+  }
+
   _parseLaunchId(result) {
     return parseInt(_.get(result, 'stdout', ':').trim().split(':')[1]);
-  }
-}
-
-class LogsInfo {
-  constructor(udid) {
-    const logPrefix = '/tmp/detox.last_launch_app_log.';
-    this.simStdout = logPrefix + 'out';
-    this.simStderr = logPrefix + 'err';
-
-    const HOME = environment.getHomeDir();
-    const simDataRoot = `${HOME}/Library/Developer/CoreSimulator/Devices/${udid}/data`;
-    this.absStdout = simDataRoot + this.simStdout;
-    this.absStderr = simDataRoot + this.simStderr;
-    this.absJoined = `${simDataRoot}${logPrefix}{out,err}`
   }
 }
 
