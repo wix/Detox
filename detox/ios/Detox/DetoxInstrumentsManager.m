@@ -284,6 +284,14 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 		{
 			dtx_log_info(@"Stopping recording");
 		}
+
+		NSURL* recordingURL = [[_recorderInstance profilingConfiguration] recordingFileURL];
+		dtx_log_debug(@"🤡 Start of %@", [recordingURL URLByDeletingLastPathComponent]);
+		[[NSFileManager.defaultManager contentsOfDirectoryAtURL:[recordingURL URLByDeletingLastPathComponent] includingPropertiesForKeys:nil options:0 error:NULL] enumerateObjectsUsingBlock:^(NSURL * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+			dtx_log_debug(@"🤡 %@", obj);
+		}];
+		dtx_log_debug(@"🤡 End of");
+		
 		if(completionHandler != nil)
 		{
 			completionHandler(error);
