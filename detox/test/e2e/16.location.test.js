@@ -12,7 +12,7 @@ async function isFbsimctlInstalled() {
 }
 
 describe(':ios: location', () => {
-  it('Location should be unavabilable', async () => {
+  it('Location should be unavailable', async () => {
     if (!await isFbsimctlInstalled()) {
       return;
     }

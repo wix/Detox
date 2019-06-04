@@ -70,7 +70,9 @@ class AppleSimUtils {
     const isBooted = await this.isBooted(udid);
 
     if (!isBooted) {
-      await this._bootDeviceByXcodeVersion(udid);
+      const statusLogs = { trying: `Booting device ${udid}` };
+      await this._execSimctl({ cmd: `boot ${udid}`, statusLogs, retries: 10 });
+      await this._execSimctl({ cmd: `bootstatus ${udid}`, retries: 1 });
       return true;
     }
 
@@ -238,12 +240,6 @@ class AppleSimUtils {
       'brew uninstall applesimutils && brew tap wix/brew && brew install applesimutils'`);
     }
     return parsed;
-  }
-
-  async _bootDeviceByXcodeVersion(udid) {
-    const statusLogs = { trying: `Booting device ${udid}` };
-    await this._execSimctl({ cmd: `boot ${udid}`, statusLogs, retries: 10 });
-    await this._execSimctl({ cmd: `bootstatus ${udid}`, retries: 1 });
   }
 
   _joinLaunchArgs(launchArgs) {
