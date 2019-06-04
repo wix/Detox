@@ -1,6 +1,7 @@
 describe('Example', () => {
   beforeEach(async () => {
-    await device.reloadReactNative();
+    // await device.reloadReactNative();
+    await device.launchApp({ newInstance: true });
   });
   
   it('should have welcome screen', async () => {
