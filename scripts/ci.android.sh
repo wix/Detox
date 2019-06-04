@@ -1,9 +1,5 @@
 #!/bin/bash -e
 
-# TODO Remove this once migration is merged-in. It's only needed for the transitional state.
-echo "*** Forcing react-native version to 0.59.8 instead of $REACT_NATIVE_VERSION ***"
-export REACT_NATIVE_VERSION="0.59.8"
-
 # Approve unapproved SDK licenses
 yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
 
