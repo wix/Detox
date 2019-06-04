@@ -2,7 +2,7 @@
 name: Bug Report - iOS
 about: Create a report to help us improve Detox on iOS
 title: ''
-labels: 'platform: ios, type: triage/bug'
+labels: 'z_platform: ios, type: triage/bug'
 assignees: ''
 
 ---

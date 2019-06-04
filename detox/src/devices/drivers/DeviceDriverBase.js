@@ -134,10 +134,6 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  defaultLaunchArgsPrefix() {
-    return '';
-  }
-
   createRandomDirectory() {
     const randomDir = fs.mkdtempSync(path.join(os.tmpdir(), 'detoxrand-'));
     fs.ensureDirSync(randomDir);
