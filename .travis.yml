@@ -28,18 +28,22 @@ matrix:
     - REACT_NATIVE_VERSION=0.59.x
     android:
       components:
-        - tools
-        - platform-tools
-        - build-tools-28.0.3
-        - android-28
-        - extra-google-google_play_services
-        - extra-google-m2repository
-        - extra-android-m2repository
-        - sys-img-x86-android-26
-        - sys-img-x86-android-28
+      - tools
+      - platform-tools
+      - build-tools-28.0.3
+      - android-28
+      - extra-google-google_play_services
+      - extra-google-m2repository
+      - extra-android-m2repository
+      - sys-img-x86-android-26
+      - sys-img-x86-android-28
+      - ndk-bundle
+      licenses:
+      - ndk-bundle
     install:
     - ./scripts/install.android.sh
     script:
+    - export ANDROID_NDK="$ANDROID_HOME/ndk-bundle"
     - ./scripts/ci.android.sh
   # Example Projects
   - language: objective-c

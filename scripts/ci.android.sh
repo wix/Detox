@@ -4,8 +4,11 @@
 echo "*** Forcing react-native version to 0.59.8 instead of $REACT_NATIVE_VERSION ***"
 export REACT_NATIVE_VERSION="0.59.8"
 
-# Approve unapproved SDK licenses
-yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
+
+if [[ "$TRAVIS" != "true" ]]; then
+    # Approve unapproved SDK licenses
+    yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
+fi
 
 source $(dirname "$0")/ci.sh
 
