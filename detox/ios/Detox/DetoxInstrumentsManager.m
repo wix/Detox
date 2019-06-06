@@ -171,11 +171,6 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 			__DTXMutableProfilingConfiguration = NULL;
 		};
 		
-		static void (^cleanupOnError)(void) = ^ {
-			__DTXProfiler = NULL;
-			__DTXMutableProfilingConfiguration = NULL;
-		};
-		
 		__DTXProfiler = NSClassFromString(@"DTXProfiler");
 		if(__DTXProfiler == NULL)
 		{
