@@ -89,24 +89,7 @@ npm install detox --save-dev
 
 > TIP: Remember to add the "node_modules" folder to your git ignore.
 
-#### 2. Install a test runner
-
-You can use any JavaScript test runner. Detox CLI supports Jest and Mocha out of the box.
-
-- [Jest](http://jestjs.io/)
-
-```sh
-npm install jest --save-dev
-```
-Read the [Jest integration guide](Guide.Jest.md) for more details and gotchas.
-
-- [Mocha](https://mochajs.org/)
-
-```sh
-npm install mocha --save-dev
-```
-
-#### 3. Add Detox config to package.json
+#### 2. Add Detox config to package.json
 
 The basic configuration for Detox should be in your `package.json` file under the `detox` property:
 
@@ -135,21 +118,55 @@ Also make sure the simulator model specified under the key `"name"` (`iPhone 7` 
 
 ## Step 3: Create your first test
 
-Detox has `detox init` convenience method to automate a setup for your first test.  
-At the moment, such scaffolding is supported for two test runners:
+#### 1. Install a test runner :running_man:
 
-* ```detox init -r mocha```
-* ```detox init -r jest```
+Detox CLI supports Jest and Mocha out of the box. You need to choose one now, but it *is* possible to replace it later on.
 
-In itself, `detox init` makes a few steps which you can reproduce manually:
+> Do note that:
+>
+> * Jest is more complex to set up, but it's the only one that supports parallel tests execution. In Detox `12.7.0`, we've made Jest more suitable for e2e testing in terms of logging and usability.
+> * Mocha is easy to set up and is lightweight.
 
-* Create an `e2e` folder in your project root
-* Inside `e2e` folder create `mocha.opts` (for `mocha`) or `config.json` (for `jest`). See examples: [mocha.opts](/examples/demo-react-native/e2e/mocha.opts), [config.json](/examples/demo-react-native-jest/e2e/config.json)
-* Inside `e2e` folder create `init.js` file. See examples for [Mocha](/examples/demo-react-native/e2e/init.js) and [Jest](/examples/demo-react-native-jest/e2e/init.js).
-* Inside `e2e` folder create `firstTest.spec.js` with content similar to [this](/examples/demo-react-native/e2e/example.spec.js).
-* If you use `jest`, add `"test-runner": "jest"` to `detox` section in your `package.json` ([see example](https://github.com/wix/detox/blob/master/examples/demo-react-native-jest/package.json)).
+<br>
 
-> TIP: Detox is not tightly coupled to Mocha and Jest, neither to this specific directory structure. Both are just a recommendation and are easy to replace without touching the internal implementation of Detox itself.
+[Jest](http://jestjs.io/):
+
+```sh
+npm install jest --save-dev
+```
+
+[Mocha](https://mochajs.org/):
+
+```sh
+npm install mocha --save-dev
+```
+
+> Tip: Detox is not tightly coupled to Mocha and Jest, neither to this specific directory structure. Both are just a recommendation and are easy to replace without touching the internal implementation of Detox itself.
+
+#### 2. Set up test-code scaffolds (automated) :building_construction:
+
+The Detox CLI has a `detox init` convenience method to automate a setup for your first test. Depending on your test runner of choice, run one of these commands:
+
+Jest:
+
+```sh
+detox init -r jest
+```
+
+Mocha:
+
+```sh
+detox init -r mocha
+```
+
+**For a Jest-based environment, please pause and run through the comprehensive [Jest setup guide](Guide.Jest.md).**
+
+> Note: `detox init` runs these steps, which you can reproduce manually:
+>
+> - Creates an `e2e/` folder in your project root
+> - Inside `e2e` folder, creates `mocha.opts` (for `mocha`) or `config.json` (for `jest`). See examples: [mocha.opts](/examples/demo-react-native/e2e/mocha.opts), [config.json](/examples/demo-react-native-jest/e2e/config.json)
+> - Inside `e2e` folder, creates `init.js` file. See examples for [Mocha](/examples/demo-react-native/e2e/init.js) and [Jest](/examples/demo-react-native-jest/e2e/init.js).
+> - Inside `e2e` folder, creates `firstTest.spec.js` with content similar to [this](/examples/demo-react-native/e2e/example.spec.js).
 
 <br>
 
@@ -166,7 +183,7 @@ detox build
 > TIP: Notice that the actual build command was specified in the Detox configuration in `package.json` .   
 See `"build": "xcodebuild -project ..."` inside `ios.sim.debug` configuration (step 2.3).
 
-#### 2. Run the tests (finally)
+#### 2. Run the tests (finally) :tada:
 
 Use the Detox command line tools to test your project easily:
 

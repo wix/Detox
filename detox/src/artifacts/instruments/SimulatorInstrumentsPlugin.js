@@ -37,17 +37,12 @@ class SimulatorInstrumentsPlugin extends WholeTestRecorderPlugin {
   async onBeforeLaunchApp(event) {
     await super.onBeforeLaunchApp(event);
 
-    const isInsideRunningTest = !!this.context.testSummary;
-    if (this.enabled && isInsideRunningTest && !this.testRecording) {
-      this.testRecording = this.createTrackedTestRecording();
-    }
-
     if (process.env.DETOX_INSTRUMENTS_PATH) {
-      event.launchArgs['-instrumentsPath'] = process.env.DETOX_INSTRUMENTS_PATH;
+      event.launchArgs['instrumentsPath'] = process.env.DETOX_INSTRUMENTS_PATH;
     }
 
     if (this.testRecording) {
-      event.launchArgs['-recordingPath'] = this.testRecording.temporaryRecordingPath;
+      event.launchArgs['recordingPath'] = this.testRecording.temporaryRecordingPath;
     }
   }
 

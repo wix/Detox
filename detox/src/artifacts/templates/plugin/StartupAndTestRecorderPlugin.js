@@ -8,6 +8,7 @@ class StartupAndTestRecorderPlugin extends WholeTestRecorderPlugin {
     super({ api });
 
     this.startupRecording = null;
+    this._isInStartupPhase = true;
     this._isRecordingStartup = false;
     this._hasFailingTests = false;
   }
@@ -21,22 +22,22 @@ class StartupAndTestRecorderPlugin extends WholeTestRecorderPlugin {
       : this.testRecording;
   }
 
-  async onBeforeAll() {
-    await super.onBeforeAll();
-
-    if (this.enabled) {
+  /***
+   * @protected
+   */
+  async onReadyToRecord() {
+    if (this.enabled && this._isInStartupPhase && !this.startupRecording) {
       const recording = this.createStartupRecording();
-      await recording.start();
 
       this.startupRecording = recording;
       this.api.trackArtifact(recording);
       this._isRecordingStartup = true;
     }
-
-    await super.onBeforeAll();
   }
 
   async onBeforeEach(testSummary) {
+    this._isInStartupPhase = false;
+
     if (this._isRecordingStartup) {
       await this.startupRecording.stop();
       this._isRecordingStartup = false;

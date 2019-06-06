@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const tempfile = require('tempfile');
 const LogArtifactPlugin = require('../LogArtifactPlugin');
 const SimulatorLogRecording = require('./SimulatorLogRecording');
@@ -7,56 +8,36 @@ class SimulatorLogPlugin extends LogArtifactPlugin {
     super(config);
 
     this.appleSimUtils = config.appleSimUtils;
+    this.priority = 8;
   }
 
-  async onBeforeShutdownDevice(event) {
-    await super.onBeforeShutdownDevice(event);
-    await this._tryStopCurrentRecording();
-  }
-
-  async onBeforeUninstallApp(event) {
-    await super.onBeforeUninstallApp(event);
-    await this._tryStopCurrentRecording();
-  }
-
-  async onBeforeTerminateApp(event) {
-    await super.onBeforeTerminateApp(event);
-    await this._tryStopCurrentRecording();
-  }
-
-  async onLaunchApp(event) {
-    await super.onLaunchApp(event);
+  async onBeforeLaunchApp(event) {
+    await super.onBeforeLaunchApp(event);
+    await this.onReadyToRecord();
 
     if (this.currentRecording) {
       await this.currentRecording.start({
-        readFromBeginning: true,
+        udid: this.context.deviceId,
+        bundleId: this.context.bundleId,
       });
     }
   }
 
-  async _tryStopCurrentRecording() {
-    if (this.currentRecording) {
-      await this.currentRecording.stop();
-    }
-  }
-
   createStartupRecording() {
-    return this._createRecording(true);
+    return this.createTestRecording();
   }
 
   createTestRecording() {
-    return this._createRecording(false);
-  }
-
-  _createRecording(readFromBeginning) {
-    const udid = this.context.deviceId;
-    const { stdout, stderr } = this.appleSimUtils.getLogsPaths(udid);
-
     return new SimulatorLogRecording({
+      udid: this.context.deviceId,
+      bundleId: this.context.bundleId,
+      appleSimUtils: this.appleSimUtils,
       temporaryLogPath: tempfile('.log'),
-      logStderr: stderr,
-      logStdout: stdout,
-      readFromBeginning,
+      config: {
+        delayAfterStart: 50,
+        delayBeforeStop: 50,
+        delayBeforeSigterm: 200,
+      },
     });
   }
 }

@@ -7,13 +7,20 @@ class ADBLogcatPlugin extends LogArtifactPlugin {
 
     this._adb = config.adb;
     this._devicePathBuilder = config.devicePathBuilder;
+    this._lastTimestamp = '';
+  }
+
+  async onBeforeLaunchApp(event) {
+    await super.onBeforeLaunchApp(event);
+    this._lastTimestamp = await this._adb.now(event.deviceId);
   }
 
   async onLaunchApp(event) {
     await super.onLaunchApp(event);
+    await this.onReadyToRecord();
 
     if (this.currentRecording) {
-      await this.currentRecording.start({ pid: event.pid });
+      await this.currentRecording.start();
     }
   }
 
@@ -28,7 +35,13 @@ class ADBLogcatPlugin extends LogArtifactPlugin {
       adb: this._adb,
       deviceId,
       bundleId,
-      pid,
+      pid: {
+        get: () => this.context.pid,
+      },
+      since: {
+        get: () => this._lastTimestamp,
+        set: (value) => { this._lastTimestamp = value; },
+      },
       pathToLogOnDevice: this._devicePathBuilder.buildTemporaryArtifactPath('.log'),
     });
   }

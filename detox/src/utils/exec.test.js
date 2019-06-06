@@ -197,6 +197,16 @@ describe('spawn', () => {
     expect(log.error).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), 'world');
   });
 
+  it('should not log output if silent: true', async () => {
+    await exec.spawnAndLog('command', [], { silent: true });
+    await nextCycle();
+
+    expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), '[pid=2018] command');
+    expect(log.trace).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'command finished with code = 0');
+    expect(log.trace).not.toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDOUT', stdout: true }), expect.any(String));
+    expect(log.error).not.toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), expect.any(String));
+  });
+
   it('should log erroneously finished spawns', async () => {
     const childProcess = {
       pid: 8102,

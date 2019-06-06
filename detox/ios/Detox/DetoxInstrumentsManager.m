@@ -123,7 +123,7 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 			
 			if(profilerBundle == nil)
 			{
-				dtx_log_error(@"Error loading Profiler framework bundle. Bundle not found at %@", bundleURL.path);
+				dtx_log_info(@"Error loading Profiler framework bundle. Bundle not found at %@", bundleURL.path);
 				return;
 			}
 			
@@ -165,6 +165,11 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 		{
 			dtx_log_info(@"DTXProfiler class was found in hosting process");
 		}
+		
+		static void (^cleanupOnError)(void) = ^ {
+			__DTXProfiler = NULL;
+			__DTXMutableProfilingConfiguration = NULL;
+		};
 		
 		static void (^cleanupOnError)(void) = ^ {
 			__DTXProfiler = NULL;
@@ -271,6 +276,7 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 
 - (void)stopRecordingWithCompletionHandler:(void(^)(NSError* error))completionHandler
 {
+	dtx_log_info(@"Stopping recording");
 	if(_recorderInstance == nil || [_recorderInstance isRecording] == NO)
 	{
 		dtx_log_info(@"Called stop but no recording in progress");

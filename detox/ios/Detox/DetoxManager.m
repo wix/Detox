@@ -28,14 +28,15 @@
 
 DTX_CREATE_LOG(DetoxManager)
 
+static DetoxInstrumentsManager* _recordingManager;
+
 @interface DetoxManager() <WebSocketDelegate, TestRunnerDelegate>
-{
-	DetoxInstrumentsManager* _recordingManager;
-}
 
 @property (nonatomic) BOOL isReady;
 @property (nonatomic, strong) WebSocket *webSocket;
 @property (nonatomic, strong) TestRunner *testRunner;
+
+- (void)reconnect;
 
 @end
 
@@ -55,28 +56,13 @@ static void detoxConditionalInit()
 		[[GREYConfiguration sharedInstance] setValue:blacklistRegex forConfigKey:kGREYConfigKeyURLBlacklistRegex];
 	}
 	
-	NSString *detoxServer = [options stringForKey:@"detoxServer"];
-	NSString *detoxSessionId = [options stringForKey:@"detoxSessionId"];
-	
-	if(detoxServer == nil)
-	{
-		detoxServer = @"ws://localhost:8099";
-		dtx_log_info(@"Using default 'detoxServer': ws://localhost:8099");
-	}
-	
-	if(detoxSessionId == nil)
-	{
-		detoxSessionId = NSBundle.mainBundle.bundleIdentifier;
-		dtx_log_info(@"Using default 'detoxSessionId': %@", NSBundle.mainBundle.bundleIdentifier);
-	}
-	
 	NSNumber* waitForDebugger = [options objectForKey:@"detoxWaitForDebugger"];
 	if(waitForDebugger)
 	{
 		usleep(waitForDebugger.unsignedIntValue * 1000);
 	}
 	
-	[[DetoxManager sharedManager] connectToServer:detoxServer withSessionId:detoxSessionId];
+	[[DetoxManager sharedManager] reconnect];
 }
 
 @implementation DetoxManager
@@ -104,17 +90,10 @@ static void detoxConditionalInit()
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidLaunch:) name:UIApplicationDidFinishLaunchingNotification object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
 	
-	dispatch_async(dispatch_get_main_queue(), ^{
-		_recordingManager = [DetoxInstrumentsManager new];
-	});
-	
-	if([NSUserDefaults.standardUserDefaults objectForKey:@"currentTestSummaryDataURL"])
+	NSString* recordingPath = [NSUserDefaults.standardUserDefaults objectForKey:@"recordingPath"];
+	if(recordingPath != nil)
 	{
-		NSString* recordingPath = [NSUserDefaults.standardUserDefaults objectForKey:@"recordingPath"];
-		if(recordingPath != nil)
-		{
-			[self _handlePerformanceRecording:@{@"recordingPath": recordingPath} isFromLaunch:YES completionHandler:nil];
-		}
+		[self _handlePerformanceRecording:NSDictionaryOfVariableBindings(recordingPath) isFromLaunch:YES completionHandler:nil];
 	}
 	
 	return self;
@@ -140,7 +119,7 @@ static void detoxConditionalInit()
 {
 	__block id observer = nil;
 	
-	void (^response)() = ^ {
+	void (^response)(void) = ^ {
 		[self _safeSendAction:[NSString stringWithFormat:@"%@Done", action] params:@{} messageId:messageId];
 		
 		if(observer != nil)
@@ -184,18 +163,43 @@ static void detoxConditionalInit()
 	[self _safeSendAction:@"ready" params:@{} messageId:@-1000];
 }
 
-- (void)connectToServer:(NSString*)url withSessionId:(NSString*)sessionId
+- (void)reconnect
 {
-	[self.webSocket connectToServer:url withSessionId:sessionId];
+	NSUserDefaults* options = NSUserDefaults.standardUserDefaults;
+	NSString *detoxServer = [options stringForKey:@"detoxServer"];
+	NSString *detoxSessionId = [options stringForKey:@"detoxSessionId"];
+	
+	if(detoxServer == nil)
+	{
+		detoxServer = @"ws://localhost:8099";
+		dtx_log_info(@"Using default 'detoxServer': ws://localhost:8099");
+	}
+	
+	if(detoxSessionId == nil)
+	{
+		detoxSessionId = NSBundle.mainBundle.bundleIdentifier;
+		dtx_log_info(@"Using default 'detoxSessionId': %@", NSBundle.mainBundle.bundleIdentifier);
+	}
+	
+	[self.webSocket connectToServer:detoxServer withSessionId:detoxSessionId];
 }
 
-- (void)websocketDidConnect:(WebSocket*)websocket
+- (void)webSocketDidConnect:(WebSocket*)webSocket
 {
 	if (![ReactNativeSupport isReactNativeApp])
 	{
 		_isReady = YES;
 		[self _sendGeneralReadyMessage];
 	}
+}
+
+- (void)webSocket:(WebSocket *)webSocket didFailWithError:(NSError *)error
+{
+	dtx_log_error(@"Web socket failed to connect with error: %@", error);
+	
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+		[self reconnect];
+	});
 }
 
 - (void)_safeSendAction:(NSString*)action params:(NSDictionary*)params messageId:(NSNumber*)messageId
@@ -205,7 +209,7 @@ static void detoxConditionalInit()
 	}];
 }
 
-- (void)websocket:(WebSocket*)websocket didReceiveAction:(NSString *)type withParams:(NSDictionary *)params withMessageId:(NSNumber *)messageId
+- (void)webSocket:(WebSocket*)webSocket didReceiveAction:(NSString *)type withParams:(NSDictionary *)params withMessageId:(NSNumber *)messageId
 {
 	NSAssert(messageId != nil, @"Got action with a null messageId");
 	
@@ -348,9 +352,15 @@ static void detoxConditionalInit()
 	}
 }
 
-- (void)websocketDidClose:(WebSocket *)websocket
+- (void)webSocket:(WebSocket*)webSocket didCloseWithReason:(NSString*)reason
 {
+	dtx_log_error(@"Web socket closed with reason: %@", reason);
+	
 	[self _stopAndCleanupRecording];
+	
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+		[self reconnect];
+	});
 }
 
 - (void)_stopAndCleanupRecording
@@ -393,7 +403,7 @@ static void detoxConditionalInit()
 - (void)notifyOnCrashWithDetails:(NSDictionary*)details
 {
 	dispatch_semaphore_t semaphore = dispatch_semaphore_create(1);
-	
+
 	[_recordingManager stopRecordingWithCompletionHandler:^(NSError *error) {
 		dispatch_semaphore_signal(semaphore);
 	}];
@@ -424,6 +434,10 @@ static void detoxConditionalInit()
 	{
 		NSURL* absoluteURL = [NSURL fileURLWithPath:props[@"recordingPath"]];
 		
+		static dispatch_once_t onceToken;
+		dispatch_once(&onceToken, ^{
+			_recordingManager = [DetoxInstrumentsManager new];
+		});
 		if(launch)
 		{
 			[_recordingManager continueRecordingAtURL:absoluteURL];
@@ -443,7 +457,6 @@ static void detoxConditionalInit()
 		}];
 	}
 	
-	
 	if(completionBlocked == NO)
 	{
 		completionHandler();
@@ -451,3 +464,4 @@ static void detoxConditionalInit()
 }
 
 @end
+

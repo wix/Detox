@@ -1,6 +1,7 @@
 import SanityScreen from './SanityScreen';
 import MatchersScreen from './MatchersScreen';
 import ActionsScreen from './ActionsScreen';
+import ScrollActionsScreen from './ScrollActionsScreen';
 import AssertionsScreen from './AssertionsScreen';
 import WaitForScreen from './WaitForScreen';
 import StressScreen from './StressScreen';
@@ -14,11 +15,13 @@ import LocationScreen from './LocationScreen';
 import ShakeScreen from './ShakeScreen';
 import DatePickerScreen from './DatePickerScreen';
 import LanguageScreen from './LanguageScreen';
+import LaunchArgsScreen from './LaunchArgsScreen';
 
 export {
   SanityScreen,
   MatchersScreen,
   ActionsScreen,
+  ScrollActionsScreen,
   AssertionsScreen,
   WaitForScreen,
   StressScreen,
@@ -31,5 +34,6 @@ export {
   LocationScreen,
   ShakeScreen,
   DatePickerScreen,
-  LanguageScreen
+  LanguageScreen,
+  LaunchArgsScreen,
 };

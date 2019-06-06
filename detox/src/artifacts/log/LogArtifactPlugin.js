@@ -15,6 +15,14 @@ class LogArtifactPlugin extends StartupAndTestRecorderPlugin {
     this.keepOnlyFailedTestsArtifacts = recordLogs === 'failing';
   }
 
+  async onBeforeShutdownDevice(event) {
+    await super.onBeforeShutdownDevice(event);
+
+    if (this.currentRecording) {
+      await this.currentRecording.stop();
+    }
+  }
+
   async preparePathForStartupArtifact() {
     const deviceId = this.context.deviceId;
     const timestamp = getTimeStampString();
@@ -23,7 +31,7 @@ class LogArtifactPlugin extends StartupAndTestRecorderPlugin {
   }
 
   async preparePathForTestArtifact(testSummary) {
-    return this.api.preparePathForArtifact('test.log', testSummary);
+    return this.api.preparePathForArtifact('process.log', testSummary);
   }
 }
 

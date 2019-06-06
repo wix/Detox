@@ -11,6 +11,9 @@
 
 @interface WXJSTimerObservationIdlingResource : NSObject <GREYIdlingResource>
 
+@property (nonatomic, strong, readonly) dispatch_queue_t timersObservationQueue;
+@property (nonatomic, strong, readonly) NSMapTable<id, id>* observations;
+
 - (void)setDurationThreshold:(NSTimeInterval)durationThreshold;
 
 @end

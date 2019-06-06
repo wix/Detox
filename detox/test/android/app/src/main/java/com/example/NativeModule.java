@@ -1,6 +1,7 @@
 package com.example;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -9,11 +10,13 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-
+import com.facebook.react.bridge.WritableMap;
 
 public class NativeModule extends ReactContextBaseJavaModule {
 
@@ -83,5 +86,19 @@ public class NativeModule extends ReactContextBaseJavaModule {
 
             }
         });
+    }
+
+    @ReactMethod
+    public void getLaunchArguments(Promise promise) {
+        final Activity currentActivity = getCurrentActivity();
+        if (currentActivity != null) {
+            final Bundle launchArgs = currentActivity.getIntent().getBundleExtra("launchArgs");
+            if (launchArgs != null) {
+                final WritableMap launchArgsMap = Arguments.fromBundle(launchArgs);
+                promise.resolve(launchArgsMap);
+                return;
+            }
+        }
+        promise.resolve(Arguments.createMap());
     }
 }

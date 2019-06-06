@@ -1,5 +1,8 @@
 #!/bin/bash -e
 
+# Approve unapproved SDK licenses
+yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
+
 source $(dirname "$0")/demo-projects.sh
 
 pushd detox/android
