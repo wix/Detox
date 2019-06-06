@@ -269,12 +269,14 @@ NSDictionary* _prettyPrintWebViewIdlingResource(id webview)
 
 NSDictionary* _prettyPrintJSTimerObservationIdlingResource(WXJSTimerObservationIdlingResource* jsTimer)
 {
-	NSMutableDictionary* rv = [NSMutableDictionary new];
-	dispatch_sync(jsTimer.timersObservationQueue, ^{
-		rv[@"javascriptTimerIDs"] = [[jsTimer valueForKeyPath:@"observations.objectEnumerator.allObjects.@distinctUnionOfArrays.observedTimers"] sortedArrayUsingSelector:@selector(compare:)];
-		rv[@"prettyPrint"] = [NSString stringWithFormat:@"Javascript Timers Ids: %@", [rv[@"javascriptTimerIDs"] componentsJoinedByString:@", "]];
-	});
-	return rv;
+	return @{@"prettyPrint": @"Javascript Timers"};
+	
+//	NSMutableDictionary* rv = [NSMutableDictionary new];
+//	dispatch_sync(jsTimer.timersObservationQueue, ^{
+//		rv[@"javascriptTimerIDs"] = [[jsTimer valueForKeyPath:@"observations.objectEnumerator.allObjects.@distinctUnionOfArrays.observedTimers"] sortedArrayUsingSelector:@selector(compare:)];
+//		rv[@"prettyPrint"] = [NSString stringWithFormat:@"Javascript Timers Ids: %@", [rv[@"javascriptTimerIDs"] componentsJoinedByString:@", "]];
+//	});
+//	return rv;
 }
 
 NSDictionary* _prettyPrintRunLoopIdlingResource(WXRunLoopIdlingResource* runLoop)

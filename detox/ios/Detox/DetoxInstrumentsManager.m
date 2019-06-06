@@ -108,6 +108,8 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 		
 		if(__DTXProfiler == NULL)
 		{
+			dtx_log_info(@"DTXProfiler class was not found, loading Profiler framework manually");
+			
 			//The user has not linked the Profiler framework. Load it manually.
 			
 			NSString* instrumentsPath = [NSUserDefaults.standardUserDefaults stringForKey:@"instrumentsPath"];
@@ -158,6 +160,10 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 				dtx_log_error(@"Error loading Profiler framework bundle: %@", error);
 				return;
 			}
+		}
+		else
+		{
+			dtx_log_info(@"DTXProfiler class was found in hosting process");
 		}
 		
 		static void (^cleanupOnError)(void) = ^ {
@@ -267,6 +273,8 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 {
 	if(_recorderInstance == nil || [_recorderInstance isRecording] == NO)
 	{
+		dtx_log_info(@"Called stop but no recording in progress");
+		
 		if(completionHandler != nil)
 		{
 			completionHandler(nil);
@@ -278,19 +286,12 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 	[_recorderInstance stopProfilingWithCompletionHandler:^(NSError * _Nullable error) {
 		if(error)
 		{
-			dtx_log_error(@"Stopping recording with error: %@", error);
+			dtx_log_error(@"Stopped recording with error: %@", error);
 		}
 		else
 		{
-			dtx_log_info(@"Stopping recording");
+			dtx_log_info(@"Stopped recording at %@", [[_recorderInstance profilingConfiguration] recordingFileURL]);
 		}
-
-		NSURL* recordingURL = [[_recorderInstance profilingConfiguration] recordingFileURL];
-		dtx_log_debug(@"🤡 Start of %@", [recordingURL URLByDeletingLastPathComponent]);
-		[[NSFileManager.defaultManager contentsOfDirectoryAtURL:[recordingURL URLByDeletingLastPathComponent] includingPropertiesForKeys:nil options:0 error:NULL] enumerateObjectsUsingBlock:^(NSURL * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-			dtx_log_debug(@"🤡 %@", obj);
-		}];
-		dtx_log_debug(@"🤡 End of");
 		
 		if(completionHandler != nil)
 		{

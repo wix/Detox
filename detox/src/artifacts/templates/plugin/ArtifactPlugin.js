@@ -14,6 +14,7 @@ class ArtifactPlugin {
     this.context = {};
     this.enabled = false;
     this.keepOnlyFailedTestsArtifacts = false;
+    this.priority = 16;
     this._disableReason = '';
   }
 

@@ -70,7 +70,9 @@ class AppleSimUtils {
     const isBooted = await this.isBooted(udid);
 
     if (!isBooted) {
-      await this._bootDeviceByXcodeVersion(udid);
+      const statusLogs = { trying: `Booting device ${udid}` };
+      await this._execSimctl({ cmd: `boot ${udid}`, statusLogs, retries: 10 });
+      await this._execSimctl({ cmd: `bootstatus ${udid}`, retries: 1 });
       return true;
     }
 
@@ -200,17 +202,6 @@ class AppleSimUtils {
     await this._execSimctl({ cmd: `erase ${udid}` });
   }
 
-  async getXcodeVersion() {
-    const raw = await exec.execWithRetriesAndLogs(`xcodebuild -version`, undefined, undefined, 1);
-    const stdout = _.get(raw, 'stdout', 'undefined');
-    const match = /^Xcode (\S+)\.*\S*\s*/.exec(stdout);
-    const majorVersion = parseInt(_.get(match, '[1]'));
-    if (!_.isInteger(majorVersion) || majorVersion < 1) {
-      throw new Error(`Can't read Xcode version, got: '${stdout}'`);
-    }
-    return majorVersion;
-  }
-
   async takeScreenshot(udid, destination) {
     await this._execSimctl({
       cmd: `io ${udid} screenshot "${destination}"`,
@@ -249,24 +240,6 @@ class AppleSimUtils {
       'brew uninstall applesimutils && brew tap wix/brew && brew install applesimutils'`);
     }
     return parsed;
-  }
-
-  async _bootDeviceByXcodeVersion(udid) {
-    const xcodeVersion = await this.getXcodeVersion();
-    if (xcodeVersion >= 9) {
-      const statusLogs = { trying: `Booting device ${udid}` };
-      await this._execSimctl({ cmd: `boot ${udid}`, statusLogs, retries: 10 });
-    } else {
-      await this._bootDeviceMagically(udid);
-    }
-    await this._execSimctl({ cmd: `bootstatus ${udid}`, retries: 1 });
-  }
-
-  async _bootDeviceMagically(udid) {
-    const cmd = "/bin/bash -c '`xcode-select -p`/Applications/Simulator.app/Contents/MacOS/Simulator " +
-      `--args -CurrentDeviceUDID ${udid} -ConnectHardwareKeyboard 0 ` +
-      "-DeviceSetPath $HOME/Library/Developer/CoreSimulator/Devices > /dev/null 2>&1 < /dev/null &'";
-    await exec.execWithRetriesAndLogs(cmd, undefined, { trying: `Launching device ${udid}...` }, 1);
   }
 
   _joinLaunchArgs(launchArgs) {

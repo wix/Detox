@@ -10,6 +10,7 @@ class SimulatorLogRecording extends Artifact {
     bundleId,
     appleSimUtils,
     temporaryLogPath,
+    config,
   }) {
     super();
 
@@ -18,6 +19,7 @@ class SimulatorLogRecording extends Artifact {
     this._appleSimUtils = appleSimUtils;
     this._logPath = temporaryLogPath;
     this._logContext = null;
+    this._config = config;
   }
 
   async doStart({ udid, bundleId } = {}) {
@@ -29,7 +31,6 @@ class SimulatorLogRecording extends Artifact {
 
     this._logContext = {
       fileHandle,
-      throttle: sleep(100),
       process: this._appleSimUtils.logStream({
         udid: this._udid,
         processImagePath: await this._getProcessImagePath(),
@@ -38,15 +39,28 @@ class SimulatorLogRecording extends Artifact {
         style: 'compact',
       }),
     };
+
+    await sleep(this._config.delayAfterStart);
   }
 
   async doStop() {
     if (this._logContext) {
-      const { fileHandle, throttle, process } = this._logContext;
-      await throttle;
-      await exec.interruptProcess(process, 'SIGTERM');
+      const { fileHandle, process } = this._logContext;
+      await sleep(this._config.delayBeforeStop);
+      await this._tryInterruptProcessGracefully(process);
       await fs.close(fileHandle);
       this._logContext = null;
+    }
+  }
+
+  async _tryInterruptProcessGracefully(process) {
+    const graceful = await Promise.race([
+      sleep(this._config.delayBeforeSigterm).then(() => false),
+      exec.interruptProcess(process, 'SIGINT').then(() => true),
+    ]);
+
+    if (!graceful) {
+      await exec.interruptProcess(process, 'SIGTERM');
     }
   }
 
