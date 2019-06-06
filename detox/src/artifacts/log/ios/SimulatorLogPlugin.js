@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const tempfile = require('tempfile');
 const LogArtifactPlugin = require('../LogArtifactPlugin');
 const SimulatorLogRecording = require('./SimulatorLogRecording');
@@ -7,30 +8,18 @@ class SimulatorLogPlugin extends LogArtifactPlugin {
     super(config);
 
     this.appleSimUtils = config.appleSimUtils;
-  }
-
-  async onBeforeShutdownDevice(event) {
-    await super.onBeforeShutdownDevice(event);
-    await this._tryToStopCurrentRecording();
+    this.priority = 8;
   }
 
   async onBeforeLaunchApp(event) {
     await super.onBeforeLaunchApp(event);
-    await this._tryToLaunchCurrentRecording();
-  }
+    await this.onReadyToRecord();
 
-  async _tryToLaunchCurrentRecording() {
     if (this.currentRecording) {
       await this.currentRecording.start({
         udid: this.context.deviceId,
         bundleId: this.context.bundleId,
       });
-    }
-  }
-
-  async _tryToStopCurrentRecording() {
-    if (this.currentRecording) {
-      await this.currentRecording.stop();
     }
   }
 
@@ -44,6 +33,11 @@ class SimulatorLogPlugin extends LogArtifactPlugin {
       bundleId: this.context.bundleId,
       appleSimUtils: this.appleSimUtils,
       temporaryLogPath: tempfile('.log'),
+      config: {
+        delayAfterStart: 50,
+        delayBeforeStop: 50,
+        delayBeforeSigterm: 200,
+      },
     });
   }
 }
