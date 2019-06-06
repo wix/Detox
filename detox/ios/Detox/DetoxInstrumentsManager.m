@@ -15,6 +15,7 @@ DTX_CREATE_LOG(DetoxInstrumentsManager)
 
 @interface NSObject ()
 
+//DTXProfilingConfiguration
 @property (class, nonatomic, strong, readonly) id defaultProfilingConfiguration;
 @property (nonatomic, readwrite) NSTimeInterval samplingInterval;
 @property (nonatomic, readwrite) BOOL recordEvents;
@@ -28,9 +29,11 @@ DTX_CREATE_LOG(DetoxInstrumentsManager)
 @property (atomic, assign, readonly, getter=isRecording) BOOL recording;
 @property (nonatomic, copy, null_resettable, readwrite) NSURL* recordingFileURL;
 
+//DTXProfiler
 - (void)startProfilingWithConfiguration:(id)configuration;
 - (void)continueProfilingWithConfiguration:(id)configuration;
 - (void)stopProfilingWithCompletionHandler:(void(^ __nullable)(NSError* __nullable error))completionHandler;
+@property (atomic, copy, readonly, nullable) id profilingConfiguration;
 
 @end
 
@@ -105,6 +108,8 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 		
 		if(__DTXProfiler == NULL)
 		{
+			dtx_log_info(@"DTXProfiler class was not found, loading Profiler framework manually");
+			
 			//The user has not linked the Profiler framework. Load it manually.
 			
 			NSString* instrumentsPath = [NSUserDefaults.standardUserDefaults stringForKey:@"instrumentsPath"];
@@ -155,6 +160,10 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 				dtx_log_error(@"Error loading Profiler framework bundle: %@", error);
 				return;
 			}
+		}
+		else
+		{
+			dtx_log_info(@"DTXProfiler class was found in hosting process");
 		}
 		
 		static void (^cleanupOnError)(void) = ^ {
@@ -265,6 +274,8 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 	dtx_log_info(@"Stopping recording");
 	if(_recorderInstance == nil || [_recorderInstance isRecording] == NO)
 	{
+		dtx_log_info(@"Called stop but no recording in progress");
+		
 		if(completionHandler != nil)
 		{
 			completionHandler(nil);
@@ -273,7 +284,21 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 		return;
 	}
 	
-	[_recorderInstance stopProfilingWithCompletionHandler:completionHandler];
+	[_recorderInstance stopProfilingWithCompletionHandler:^(NSError * _Nullable error) {
+		if(error)
+		{
+			dtx_log_error(@"Stopped recording with error: %@", error);
+		}
+		else
+		{
+			dtx_log_info(@"Stopped recording at %@", [[_recorderInstance profilingConfiguration] recordingFileURL]);
+		}
+		
+		if(completionHandler != nil)
+		{
+			completionHandler(error);
+		}
+	}];
 }
 
 @end

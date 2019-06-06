@@ -73,7 +73,8 @@ void WXFixupIdlingResourceClasses()
 {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		_prettyNames = @{CLS_STR(GREYAppStateTracker)						: @"App State",
+		_prettyNames = @{
+						 CLS_STR(GREYAppStateTracker)						: @"App State",
 						 CLS_STR(GREYDispatchQueueIdlingResource)			: @"Dispatch Queue",
 						 CLS_STR(GREYManagedObjectContextIdlingResource)	: @"Managed Object Context",
 						 CLS_STR(GREYNSTimerIdlingResource)					: @"Timer",
@@ -84,16 +85,17 @@ void WXFixupIdlingResourceClasses()
 						 CLS_STR(WXRNLoadIdlingResource)					: @"ReactNative JS Loading",
 						 };
 		
-		_prettyPrinters = @{CLS_STR(GREYAppStateTracker)						: ^ (id tracker)	{ return _prettyPrintAppStateTracker(tracker); },
-							CLS_STR(GREYDispatchQueueIdlingResource)			: ^ (id queue)		{ return _prettyPrintDispatchQueueIdlingResource(queue); },
-							CLS_STR(GREYManagedObjectContextIdlingResource)		: ^ (id ctx)		{ return _prettyPrintManagedObjectContextIdlingResource(ctx); },
-							CLS_STR(GREYNSTimerIdlingResource)					: ^ (id timer)		{ return _prettyPrintTimerIdlingResource(timer); },
-							CLS_STR(GREYOperationQueueIdlingResource)			: ^ (id opQ)		{ return _prettyPrintOperationQueueIdlingResource(opQ); },
-							CLS_STR(GREYTimedIdlingResource)					: ^ (id timed)		{ return _prettyPrintTimedIdlingResource(timed); },
-							@"GREYUIWebViewIdlingResource"						: ^ (id webview)	{ return _prettyPrintWebViewIdlingResource(webview); },
-							CLS_STR(WXJSTimerObservationIdlingResource)			: ^ (id jsTimers)	{ return _prettyPrintJSTimerObservationIdlingResource(jsTimers); },
-							CLS_STR(WXRunLoopIdlingResource)					: ^ (id runLoop)	{ return _prettyPrintRunLoopIdlingResource(runLoop); },
-							CLS_STR(WXRNLoadIdlingResource)						: ^ (id rnLoad)		{ return _prettyPrintRNLoadIdlingResource(rnLoad); },
+		_prettyPrinters = @{
+							CLS_STR(GREYAppStateTracker)					  : ^ (id tracker)	 { return _prettyPrintAppStateTracker(tracker); },
+							CLS_STR(GREYDispatchQueueIdlingResource)		  : ^ (id queue)     { return _prettyPrintDispatchQueueIdlingResource(queue); },
+							CLS_STR(GREYManagedObjectContextIdlingResource)   : ^ (id ctx)		 { return _prettyPrintManagedObjectContextIdlingResource(ctx); },
+							CLS_STR(GREYNSTimerIdlingResource)                : ^ (id timer)	 { return _prettyPrintTimerIdlingResource(timer); },
+							CLS_STR(GREYOperationQueueIdlingResource)         : ^ (id opQ)		 { return _prettyPrintOperationQueueIdlingResource(opQ); },
+							CLS_STR(GREYTimedIdlingResource)                  : ^ (id timed)	 { return _prettyPrintTimedIdlingResource(timed); },
+							@"GREYUIWebViewIdlingResource"                    : ^ (id webview)	 { return _prettyPrintWebViewIdlingResource(webview); },
+							CLS_STR(WXJSTimerObservationIdlingResource)       : ^ (id jsTimers)	 { return _prettyPrintJSTimerObservationIdlingResource(jsTimers); },
+							CLS_STR(WXRunLoopIdlingResource)			      : ^ (id runLoop)	 { return _prettyPrintRunLoopIdlingResource(runLoop); },
+							CLS_STR(WXRNLoadIdlingResource)                   : ^ (id rnLoad)	 { return _prettyPrintRNLoadIdlingResource(rnLoad); },
 							};
 		
 		WXFixupIdlingResourceClasses();

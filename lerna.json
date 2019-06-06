@@ -7,6 +7,7 @@
     "examples/demo-native-android",
     "examples/demo-native-ios",
     "examples/demo-react-native",
+    "examples/demo-react-native-detox-instruments",
     "examples/demo-react-native-jest",
     "generation"
   ],
@@ -16,6 +17,7 @@
     "publish": {
       "ignoreChanges": [
         "demo-react-native-jest",
+        "examples/demo-react-native-detox-instruments",
         "detox-demo-native-android",
         "detox-demo-native-ios",
         "detox-demo-react-native",
