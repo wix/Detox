@@ -1,0 +1,26 @@
+{
+  "name": "detox-demo-native-ios-cucumber",
+  "version": "12.10.3",
+  "private": true,
+  "scripts": {
+    "test": "cucumber-js"
+  },
+  "devDependencies": {
+    "cucumber": "^5.1.0",
+    "detox": "^12.10.3"
+  },
+  "detox": {
+    "specs": "",
+    "configurations": {
+      "ios.sim.release": {
+        "binaryPath": "build/Build/Products/Release-iphonesimulator/NativeExample.app",
+        "build": "xcodebuild -project NativeExample.xcodeproj -UseNewBuildSystem=NO -scheme NativeExample -configuration Release -sdk iphonesimulator -derivedDataPath build",
+        "type": "ios.simulator",
+        "name": "iPhone 7 Plus"
+      }
+    }
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.26.0"
+  }
+}
