@@ -17,6 +17,7 @@ class ADBLogcatPlugin extends LogArtifactPlugin {
 
   async onLaunchApp(event) {
     await super.onLaunchApp(event);
+    await this.onReadyToRecord();
 
     if (this.currentRecording) {
       await this.currentRecording.start();

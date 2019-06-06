@@ -6,7 +6,6 @@ const SimulatorLogRecording = require('./SimulatorLogRecording');
 class SimulatorLogPlugin extends LogArtifactPlugin {
   constructor(config) {
     super(config);
-    this.onBeforeAll = _.once(this.onBeforeAll.bind(this));
 
     this.appleSimUtils = config.appleSimUtils;
     this.priority = 8;
@@ -14,7 +13,7 @@ class SimulatorLogPlugin extends LogArtifactPlugin {
 
   async onBeforeLaunchApp(event) {
     await super.onBeforeLaunchApp(event);
-    await this.onBeforeAll();
+    await this.onReadyToRecord();
 
     if (this.currentRecording) {
       await this.currentRecording.start({
