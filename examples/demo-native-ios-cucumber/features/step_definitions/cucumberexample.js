@@ -1,4 +1,4 @@
-const {Given} = require('cucumber');
+const {Given, Then} = require('cucumber');
 const {beforeEach, device} = require('detox');
 
 beforeEach(async () => {
@@ -11,8 +11,11 @@ Given('I should have welcome screen', async () => {
     await expect(element(by.text('Say World'))).toBeVisible();
   });
 
-Given('I should show hello screen after tap', async () => {
-    await element(by.text('Say Hello')).tap();
+Given('I tap say hello', async () => {
+  await element(by.text('Say Hello')).tap();
+});
+
+Then('I should show hello screen after tap', async () => {
     await expect(element(by.text('Hello!!!'))).toBeVisible();
 });
 
