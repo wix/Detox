@@ -271,7 +271,6 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 
 - (void)stopRecordingWithCompletionHandler:(void(^)(NSError* error))completionHandler
 {
-	dtx_log_info(@"Stopping recording");
 	if(_recorderInstance == nil || [_recorderInstance isRecording] == NO)
 	{
 		dtx_log_info(@"Called stop but no recording in progress");
