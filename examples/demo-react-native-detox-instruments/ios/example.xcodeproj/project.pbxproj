@@ -531,7 +531,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "example" */;
 			buildPhases = (
-				461BBF8E2278952A0069D237 /* Profiler Framework Integration */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
@@ -897,24 +896,6 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
-		461BBF8E2278952A0069D237 /* Profiler Framework Integration */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Profiler Framework Integration";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Only integrate the framework for the Debug configuration by default. Edit this section to integrate with additional configurations. For example, to add the \"Debug_Another\" and \"Release\" configurations, set the following line to:\n#       ALLOWED_CONFIGURATIONS=\"Debug,Debug_Another,Release\"\nALLOWED_CONFIGURATIONS=\"Debug, Release\"\n\n# Leave this section empty to dynamically determine the path of the Detox Instruments app. If you are seeing issues, point explicitly to the app here.\nEXPLICIT_INSTRUMENTS_APP_PATH=\n\nif [ -z \"$EXPLICIT_INSTRUMENTS_APP_PATH\" ]; then\n# Find where the Detox Instruments app is installed\nINSTRUMENTS_APP_PATH=$(mdfind kMDItemCFBundleIdentifier=\"com.wix.DetoxInstruments\" | head -n 1)\nelse\nINSTRUMENTS_APP_PATH=\"$EXPLICIT_INSTRUMENTS_APP_PATH\"\nfi\nPROFILER_BUILD_SCRIPT_PATH=\"${INSTRUMENTS_APP_PATH}/Contents/SharedSupport/Scripts/profiler_build_phase.sh\"\nif [ \"${INSTRUMENTS_APP_PATH}\" -a -e \"${PROFILER_BUILD_SCRIPT_PATH}\" ]; then\necho Found integration script at \"${PROFILER_BUILD_SCRIPT_PATH}\"\n# Run the Profiler framework integration script\n\"${PROFILER_BUILD_SCRIPT_PATH}\" ${CONFIGURATION} ${ALLOWED_CONFIGURATIONS}\nelse\necho \"Profiler not included: Cannot find an installed Detox Instruments app.\"\nfi\n";
-		};
 		7D57265F10EEF7CD92D7973F /* Copy Detox Framework */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -969,8 +950,6 @@
 					"-lc++",
 					"-ObjC",
 					"-F\"${CODESIGNING_FOLDER_PATH}\"/Frameworks",
-					"-framework",
-					DTXProfiler,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wix.demo.react.native;
 				PRODUCT_NAME = example;
@@ -989,8 +968,6 @@
 					"-lc++",
 					"-ObjC",
 					"-F\"${CODESIGNING_FOLDER_PATH}\"/Frameworks",
-					"-framework",
-					DTXProfiler,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wix.demo.react.native;
 				PRODUCT_NAME = example;
