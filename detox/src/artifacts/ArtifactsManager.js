@@ -87,51 +87,51 @@ class ArtifactsManager {
   }
 
   async onBootDevice(deviceInfo) {
-    await this._callPlugins('onBootDevice', deviceInfo);
+    await this._callPlugins('plain', 'onBootDevice', deviceInfo);
   }
 
   async onBeforeTerminateApp(appInfo) {
-    await this._callPlugins('onBeforeTerminateApp', appInfo);
+    await this._callPlugins('plain', 'onBeforeTerminateApp', appInfo);
   }
 
   async onBeforeUninstallApp(appInfo) {
-    await this._callPlugins('onBeforeUninstallApp', appInfo);
+    await this._callPlugins('plain', 'onBeforeUninstallApp', appInfo);
   }
 
   async onBeforeShutdownDevice(deviceInfo) {
-    await this._callPlugins('onBeforeShutdownDevice', deviceInfo);
+    await this._callPlugins('plain', 'onBeforeShutdownDevice', deviceInfo);
   }
 
   async onShutdownDevice(deviceInfo) {
-    await this._callPlugins('onShutdownDevice', deviceInfo);
+    await this._callPlugins('plain', 'onShutdownDevice', deviceInfo);
   }
 
   async onBeforeLaunchApp(appLaunchInfo) {
-    await this._callPlugins('onBeforeLaunchApp', appLaunchInfo);
+    await this._callPlugins('plain', 'onBeforeLaunchApp', appLaunchInfo);
   }
 
   async onLaunchApp(appLaunchInfo) {
-    await this._callPlugins('onLaunchApp', appLaunchInfo);
+    await this._callPlugins('plain', 'onLaunchApp', appLaunchInfo);
   }
 
   async onUserAction(actionInfo) {
-    await this._callPlugins('onUserAction', actionInfo);
+    await this._callPlugins('plain', 'onUserAction', actionInfo);
   }
 
   async onBeforeAll() {
-    await this._callPlugins('onBeforeAll');
+    await this._callPlugins('ascending', 'onBeforeAll');
   }
 
   async onBeforeEach(testSummary) {
-    await this._callPlugins('onBeforeEach', testSummary);
+    await this._callPlugins('ascending', 'onBeforeEach', testSummary);
   }
 
   async onAfterEach(testSummary) {
-    await this._callPlugins('onAfterEach', testSummary);
+    await this._callPlugins('descending', 'onAfterEach', testSummary);
   }
 
   async onAfterAll() {
-    await this._callPlugins('onAfterAll');
+    await this._callPlugins('descending', 'onAfterAll');
     await this._idlePromise;
   }
 
@@ -142,7 +142,7 @@ class ArtifactsManager {
 
     log.info({ event: 'TERMINATE_START' }, 'finalizing the recorded artifacts, this can take some time...');
 
-    await this._callPlugins('onTerminate');
+    await this._callPlugins('plain', 'onTerminate');
 
     const allCallbackRequests = this._idleCallbackRequests.splice(0);
     await Promise.all(allCallbackRequests.map(this._executeIdleCallbackRequest.bind(this)));
@@ -155,17 +155,42 @@ class ArtifactsManager {
     log.info({ event: 'TERMINATE_SUCCESS' }, 'done.');
   }
 
-  async _callPlugins(methodName, ...args) {
+  async _callPlugins(strategy, methodName, ...args) {
     const callSignature = this._composeCallSignature('artifactsManager', methodName, args);
     log.trace(Object.assign({ event: 'LIFECYCLE', fn: methodName }, ...args), callSignature);
 
-    await Promise.all(this._artifactPlugins.map(async (plugin) => {
-      try {
-        await plugin[methodName](...args);
-      } catch (e) {
-        this._unhandledPluginExceptionHandler(e, { plugin, methodName, args });
-      }
-    }));
+    for (const pluginGroup of this._groupPlugins(strategy)) {
+      await Promise.all(pluginGroup.map(async (plugin) => {
+        try {
+          await plugin[methodName](...args);
+        } catch (e) {
+          this._unhandledPluginExceptionHandler(e, { plugin, methodName, args });
+        }
+      }));
+    }
+  }
+
+  _groupPlugins(strategy) {
+    if (strategy === 'plain') {
+      return [this._artifactPlugins];
+    }
+
+    const pluginsByPriority = _.chain(this._artifactPlugins)
+      .groupBy('priority')
+      .entries()
+      .sortBy(([priority]) => Number(priority))
+      .map(1)
+      .value();
+
+    switch (strategy) {
+      case 'descending':
+        return pluginsByPriority.reverse();
+      case 'ascending':
+        return pluginsByPriority;
+      /* istanbul ignore next */
+      default: // is
+        throw new Error(`Unknown plugins grouping strategy: ${strategy}`);
+    }
   }
 
   _composeCallSignature(object, methodName, args) {

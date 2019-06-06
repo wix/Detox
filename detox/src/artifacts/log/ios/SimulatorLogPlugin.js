@@ -7,6 +7,7 @@ class SimulatorLogPlugin extends LogArtifactPlugin {
     super(config);
 
     this.appleSimUtils = config.appleSimUtils;
+    this.priority = 8;
   }
 
   async onBeforeShutdownDevice(event) {
