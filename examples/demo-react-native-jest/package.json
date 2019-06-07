@@ -1,14 +1,12 @@
 {
   "name": "demo-react-native-jest",
-  "version": "12.10.3",
+  "version": "12.11.0",
   "private": true,
   "scripts": {
     "test:android-release": "detox test --configuration android.emu.release -l verbose"
   },
-  "dependencies": {
-  },
   "devDependencies": {
-    "detox": "^12.10.3",
+    "detox": "^12.11.0",
     "jest": "24.x.x"
   },
   "detox": {
