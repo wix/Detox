@@ -57,10 +57,7 @@ brew install applesimutils
 
 This package makes it easier to operate Detox from the command line. `detox-cli` should be installed globally, enabling usage of the command line tools outside of your npm scripts. `detox-cli` is merely a script that passes commands through to a the command line tool shipped inside `detox` package (in `node_modules/.bin/detox`).
 
-  ```sh
-  npm install -g detox-cli
-  ```
-
+`npm install -g detox-cli` or `yarn global add detox-cli`
 
 ## Step 2: Add Detox to your project
 
@@ -68,9 +65,7 @@ This package makes it easier to operate Detox from the command line. `detox-cli`
 
 If you have a React Native project, go to its root folder (where `package.json` is found) and type the following command:
 
-```sh
-npm install detox --save-dev
-```
+`npm install -g detox-cli` or `yarn global add detox-cli`
 
 If you have a project without Node integration (such as a native project), add the following package.json file to the root folder of your project:
 
@@ -83,9 +78,7 @@ If you have a project without Node integration (such as a native project), add t
 
 Now run the following command:
 
-```sh
-npm install detox --save-dev
-```
+`npm install -g detox-cli` or `yarn global add detox-cli`
 
 > TIP: Remember to add the "node_modules" folder to your git ignore.
 
@@ -131,15 +124,11 @@ Detox CLI supports Jest and Mocha out of the box. You need to choose one now, bu
 
 [Jest](http://jestjs.io/):
 
-```sh
-npm install jest --save-dev
-```
+`npm install jest --save-dev` or `yarn add jest --dev`
 
 [Mocha](https://mochajs.org/):
 
-```sh
-npm install mocha --save-dev
-```
+`npm install mocha --save-dev` or `yarn add mocha --dev`
 
 > Tip: Detox is not tightly coupled to Mocha and Jest, neither to this specific directory structure. Both are just a recommendation and are easy to replace without touching the internal implementation of Detox itself.
 
