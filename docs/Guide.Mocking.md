@@ -26,7 +26,7 @@ This replacement mechanism provides a lot of flexibility to change implementatio
 
 #### Configuration
 0. For RN < 0.55, setup `react-native-repackager` in your library.
-1. Configure Metro by creating `rn-cli.config.js` to root dir and setting `resolver.sourceExts` to prioritize any given source extension over the default one:
+1. Configure Metro (if you use old version before 0.43 - https://github.com/facebook/metro/releases/tag/v0.43.0 file should have name `rn-cli.config.js`) by creating either `metro.config.js` or `metro.config.json` (or defining metro field in `package.json`) to root dir and setting `resolver.sourceExts` to prioritize any given source extension over the default one:
 
     ```js
     const defaultSourceExts = require('metro-config/src/defaults/defaults').sourceExts
