@@ -24,11 +24,13 @@ const DEVICE_CLASSES = {
 
 class Detox {
   constructor({deviceConfig, session}) {
-    this.deviceConfig = deviceConfig;
-    this.userSession = deviceConfig.session || session;
-    this.client = null;
+    this._deviceConfig = deviceConfig;
+    this._userSession = deviceConfig.session || session;
+    this._client = null;
+    this._server = null;
+    this._artifactsManager = new ArtifactsManager();
+
     this.device = null;
-    this.artifactsManager = new ArtifactsManager();
   }
 
   async init(userParams) {
@@ -39,57 +41,64 @@ class Detox {
       ...userParams,
     };
 
-    if (!this.userSession) {
-      this.server = new DetoxServer({
+    if (!this._userSession) {
+      this._server = new DetoxServer({
         log: logger,
         port: new URL(sessionConfig.server).port,
       });
     }
 
-    this.client = new Client(sessionConfig);
-    await this.client.connect();
+    this._client = new Client(sessionConfig);
+    await this._client.connect();
 
-    const DeviceDriverClass = DEVICE_CLASSES[this.deviceConfig.type];
+    const DeviceDriverClass = DEVICE_CLASSES[this._deviceConfig.type];
     if (!DeviceDriverClass) {
-      throw new Error(`'${this.deviceConfig.type}' is not supported`);
+      throw new Error(`'${this._deviceConfig.type}' is not supported`);
     }
 
     const deviceDriver = new DeviceDriverClass({
-      client: this.client,
+      client: this._client,
     });
 
-    this.artifactsManager.subscribeToDeviceEvents(deviceDriver);
-    this.artifactsManager.registerArtifactPlugins(deviceDriver.declareArtifactPlugins());
+    this._artifactsManager.subscribeToDeviceEvents(deviceDriver);
+    this._artifactsManager.registerArtifactPlugins(deviceDriver.declareArtifactPlugins());
 
-    this.device = new Device({
-      deviceConfig: this.deviceConfig,
+    const device = new Device({
+      deviceConfig: this._deviceConfig,
       deviceDriver,
       sessionConfig,
     });
 
-    await this.device.prepare(params);
+    await device.prepare(params);
 
+    const globalsToExport = {
+      ...deviceDriver.matchers,
+      device,
+    };
+
+    Object.assign(this, globalsToExport);
     if (params.initGlobals) {
-      deviceDriver.exportGlobals();
-      global.device = this.device;
+      Object.assign(global, globalsToExport);
     }
 
-    await this.artifactsManager.onBeforeAll();
+    await this._artifactsManager.onBeforeAll();
+
+    return this;
   }
 
   async cleanup() {
-    await this.artifactsManager.onAfterAll();
+    await this._artifactsManager.onAfterAll();
 
-    if (this.client) {
-      await this.client.cleanup();
+    if (this._client) {
+      await this._client.cleanup();
     }
 
     if (this.device) {
       await this.device._cleanup();
     }
 
-    if (this.server) {
-      await this.server.close();
+    if (this._server) {
+      await this._server.close();
     }
 
     if (argparse.getArgValue('cleanup') && this.device) {
@@ -101,13 +110,13 @@ class Detox {
     this._validateTestSummary(testSummary);
     this._logTestRunCheckpoint('DETOX_BEFORE_EACH', testSummary);
     await this._handleAppCrashIfAny(testSummary.fullName);
-    await this.artifactsManager.onBeforeEach(testSummary);
+    await this._artifactsManager.onBeforeEach(testSummary);
   }
 
   async afterEach(testSummary) {
     this._validateTestSummary(testSummary);
     this._logTestRunCheckpoint('DETOX_AFTER_EACH', testSummary);
-    await this.artifactsManager.onAfterEach(testSummary);
+    await this._artifactsManager.onAfterEach(testSummary);
     await this._handleAppCrashIfAny(testSummary.fullName);
   }
 
@@ -142,7 +151,7 @@ class Detox {
   }
 
   async _handleAppCrashIfAny(testName) {
-    const pendingAppCrash = this.client.getPendingCrashAndReset();
+    const pendingAppCrash = this._client.getPendingCrashAndReset();
 
     if (pendingAppCrash) {
       log.error({ event: 'APP_CRASH' }, `App crashed in test '${testName}', here's the native stack trace: \n${pendingAppCrash}`);
@@ -151,7 +160,7 @@ class Detox {
   }
 
   async _getSessionConfig() {
-    const session = this.userSession || await configuration.defaultSession();
+    const session = this._userSession || await configuration.defaultSession();
 
     configuration.validateSession(session);
 

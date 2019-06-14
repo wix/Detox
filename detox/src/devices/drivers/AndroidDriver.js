@@ -20,6 +20,7 @@ const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const sleep = require('../../utils/sleep');
 const retry = require('../../utils/retry');
 const { interruptProcess, spawnAndLog } = require('../../utils/exec');
+const AndroidExpect = require('../../android/expect');
 
 const EspressoDetox = 'com.wix.detox.espresso.EspressoDetox';
 
@@ -27,9 +28,8 @@ class AndroidDriver extends DeviceDriverBase {
   constructor(config) {
     super(config);
 
-    this.expect = require('../../android/expect');
     this.invocationManager = new InvocationManager(this.client);
-    this.expect.setInvocationManager(this.invocationManager);
+    this.matchers = new AndroidExpect(this.invocationManager);
 
     this.adb = new ADB();
     this.aapt = new AAPT();
@@ -46,10 +46,6 @@ class AndroidDriver extends DeviceDriverBase {
       screenshot: (api) => new ADBScreencapPlugin({ api, adb, devicePathBuilder }),
       video: (api) => new ADBScreenrecorderPlugin({ api, adb, devicePathBuilder }),
     };
-  }
-
-  exportGlobals() {
-    this.expect.exportGlobals();
   }
 
   async getBundleIdFromBinary(apkPath) {

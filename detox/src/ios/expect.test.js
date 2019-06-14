@@ -2,8 +2,8 @@ describe('expect', () => {
   let e;
 
   beforeEach(() => {
-    e = require('./expect');
-    e.setInvocationManager(new MockExecutor());
+    const IosExpect = require('./expect');
+    e = new IosExpect(new MockExecutor());
   });
 
   it(`element by accessibilityLabel`, async () => {
@@ -155,18 +155,6 @@ describe('expect', () => {
     await expectToThrow(() => e.element(e.by.id('ScrollView799')).atIndex('NaN'));
     await expectToThrow(() => e.element(e.by.type('UIPickerView')).setDatePickerDate(0, 'mm'));
     await expectToThrow(() => e.element(e.by.type('UIPickerView')).setDatePickerDate('something', 0));
-  });
-
-  it(`exportGlobals() should export api functions`, async () => {
-    const originalExpect = expect;
-    e.exportGlobals();
-    const newExpect = expect;
-    global.expect = originalExpect;
-
-    expect(newExpect).not.toEqual(originalExpect);
-    expect(element).toBeDefined();
-    expect(waitFor).toBeDefined();
-    expect(by).toBeDefined();
   });
 });
 

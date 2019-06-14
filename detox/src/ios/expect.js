@@ -17,12 +17,6 @@ const GreyCondition = require('./earlgreyapi/GREYCondition');
 const GreyConditionDetox = require('./earlgreyapi/GREYConditionDetox');
 const GreyActionsDetox = require('./earlgreyapi/GREYActions+Detox');
 
-let invocationManager;
-
-function setInvocationManager(im) {
-  invocationManager = im;
-}
-
 function callThunk(element) {
   return typeof element._call === 'function' ? element._call() : element._call;
 }
@@ -89,9 +83,9 @@ class PinchAction extends Action {
     if (typeof direction !== 'string') throw new Error(`PinchAction ctor 1st argument must be a string, got ${typeof direction}`);
     if (typeof speed !== 'string') throw new Error(`PinchAction ctor 2nd argument must be a string, got ${typeof speed}`);
     if (typeof angle !== 'number') throw new Error(`PinchAction ctor 3nd argument must be a number, got ${typeof angle}`);
-    if (speed == 'fast') {
+    if (speed === 'fast') {
       this._call = invoke.callDirectly(GreyActions.actionForPinchFastInDirectionWithAngle(direction, angle));
-    } else if (speed == 'slow') {
+    } else if (speed === 'slow') {
       this._call = invoke.callDirectly(GreyActions.actionForPinchSlowInDirectionWithAngle(direction, angle));
     } else {
       throw new Error(`PinchAction speed must be a 'fast'/'slow', got ${speed}`);
@@ -159,11 +153,11 @@ class SwipeAction extends Action {
           break;
       }
 
-      if (speed == 'fast') {
+      if (speed === 'fast') {
         this._call = invoke.callDirectly(
           GreyActions.actionForSwipeFastInDirectionXOriginStartPercentageYOriginStartPercentage(direction, x, y)
         );
-      } else if (speed == 'slow') {
+      } else if (speed === 'slow') {
         this._call = invoke.callDirectly(
           GreyActions.actionForSwipeSlowInDirectionXOriginStartPercentageYOriginStartPercentage(direction, x, y)
         );
@@ -171,9 +165,9 @@ class SwipeAction extends Action {
         throw new Error(`SwipeAction speed must be a 'fast'/'slow', got ${speed}`);
       }
     } else {
-      if (speed == 'fast') {
+      if (speed === 'fast') {
         this._call = invoke.callDirectly(GreyActions.actionForSwipeFastInDirection(direction));
-      } else if (speed == 'slow') {
+      } else if (speed === 'slow') {
         this._call = invoke.callDirectly(GreyActions.actionForSwipeSlowInDirection(direction));
       } else {
         throw new Error(`SwipeAction speed must be a 'fast'/'slow', got ${speed}`);
@@ -197,30 +191,34 @@ class SetDatePickerDate extends Action {
 }
 
 class Interaction {
+  constructor(invocationManager) {
+    this._invocationManager = invocationManager;
+  }
+
   async execute() {
     //if (!this._call) throw new Error(`Interaction.execute cannot find a valid _call, got ${typeof this._call}`);
-    await invocationManager.execute(this._call);
+    await this._invocationManager.execute(this._call);
   }
 }
 
 class ActionInteraction extends Interaction {
-  constructor(element, action) {
-    super();
+  constructor(invocationManager, element, action) {
+    super(invocationManager);
 
     this._call = GreyInteraction.performAction(invoke.callDirectly(callThunk(element)), callThunk(action));
   }
 }
 
 class MatcherAssertionInteraction extends Interaction {
-  constructor(element, matcher) {
-    super();
+  constructor(invocationManager, element, matcher) {
+    super(invocationManager);
     this._call = GreyInteraction.assertWithMatcher(invoke.callDirectly(callThunk(element)), callThunk(matcher));
   }
 }
 
 class WaitForInteraction extends Interaction {
-  constructor(element, matcher) {
-    super();
+  constructor(invocationManager, element, matcher) {
+    super(invocationManager);
     //if (!(element instanceof Element)) throw new Error(`WaitForInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
     //if (!(matcher instanceof Matcher)) throw new Error(`WaitForInteraction ctor 2nd argument must be a valid Matcher, got ${typeof matcher}`);
     this._element = element;
@@ -243,17 +241,17 @@ class WaitForInteraction extends Interaction {
       _conditionCall = GreyConditionDetox.detoxConditionForNotElementMatched(callThunk(this._element));
     }
 
-    this._call = GreyCondition.waitWithTimeout(invoke.callDirectly(_conditionCall), timeout / 1000)
+    this._call = GreyCondition.waitWithTimeout(invoke.callDirectly(_conditionCall), timeout / 1000);
     await this.execute();
   }
   whileElement(searchMatcher) {
-    return new WaitForActionInteraction(this._element, this._originalMatcher, searchMatcher);
+    return new WaitForActionInteraction(this._invocationManager, this._element, this._originalMatcher, searchMatcher);
   }
 }
 
 class WaitForActionInteraction extends Interaction {
-  constructor(element, matcher, searchMatcher) {
-    super();
+  constructor(invocationManager, element, matcher, searchMatcher) {
+    super(invocationManager);
     //if (!(element instanceof Element)) throw new Error(`WaitForActionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
     //if (!(matcher instanceof Matcher)) throw new Error(`WaitForActionInteraction ctor 2nd argument must be a valid Matcher, got ${typeof matcher}`);
     if (!(searchMatcher instanceof Matcher)) throw new Error(`WaitForActionInteraction ctor 3rd argument must be a valid Matcher, got ${typeof searchMatcher}`);
@@ -276,7 +274,8 @@ class WaitForActionInteraction extends Interaction {
 }
 
 class Element {
-  constructor(matcher) {
+  constructor(invocationManager, matcher) {
+    this._invocationManager = invocationManager;
     this._originalMatcher = matcher;
     this._selectElementWithMatcher(this._originalMatcher);
   }
@@ -291,158 +290,162 @@ class Element {
     return this;
   }
   async tap() {
-    return await new ActionInteraction(this, new TapAction()).execute();
+    return await new ActionInteraction(this._invocationManager, this, new TapAction()).execute();
   }
   async tapAtPoint(value) {
-    return await new ActionInteraction(this, new TapAtPointAction(value)).execute();
+    return await new ActionInteraction(this._invocationManager, this, new TapAtPointAction(value)).execute();
   }
   async longPress(duration) {
-    return await new ActionInteraction(this, new LongPressAction(duration)).execute();
+    return await new ActionInteraction(this._invocationManager, this, new LongPressAction(duration)).execute();
   }
   async multiTap(value) {
-    return await new ActionInteraction(this, new MultiTapAction(value)).execute();
+    return await new ActionInteraction(this._invocationManager, this, new MultiTapAction(value)).execute();
   }
   async tapBackspaceKey() {
-    return await new ActionInteraction(this, new TypeTextAction('\b')).execute();
+    return await new ActionInteraction(this._invocationManager, this, new TypeTextAction('\b')).execute();
   }
   async tapReturnKey() {
-    return await new ActionInteraction(this, new TypeTextAction('\n')).execute();
+    return await new ActionInteraction(this._invocationManager, this, new TypeTextAction('\n')).execute();
   }
   async typeText(value) {
-    return await new ActionInteraction(this, new TypeTextAction(value)).execute();
+    return await new ActionInteraction(this._invocationManager, this, new TypeTextAction(value)).execute();
   }
   async replaceText(value) {
-    return await new ActionInteraction(this, new ReplaceTextAction(value)).execute();
+    return await new ActionInteraction(this._invocationManager, this, new ReplaceTextAction(value)).execute();
   }
   async clearText() {
-    return await new ActionInteraction(this, new ClearTextAction()).execute();
+    return await new ActionInteraction(this._invocationManager, this, new ClearTextAction()).execute();
   }
   async pinchWithAngle(direction, speed = 'slow', angle = 0) {
-    return await new ActionInteraction(this, new PinchAction(direction, speed, angle)).execute();
+    return await new ActionInteraction(this._invocationManager, this, new PinchAction(direction, speed, angle)).execute();
   }
   async scroll(amount, direction = 'down', startScrollX, startScrollY) {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
     this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
-    return await new ActionInteraction(this, new ScrollAmountAction(direction, amount, startScrollX, startScrollY)).execute();
+    return await new ActionInteraction(this._invocationManager, this, new ScrollAmountAction(direction, amount, startScrollX, startScrollY)).execute();
   }
   async scrollTo(edge) {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
     this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
-    return await new ActionInteraction(this, new ScrollEdgeAction(edge)).execute();
+    return await new ActionInteraction(this._invocationManager, this, new ScrollEdgeAction(edge)).execute();
   }
   async swipe(direction, speed = 'fast', percentage = 0) {
     // override the user's element selection with an extended matcher that avoids RN issues with RCTScrollView
     this._selectElementWithMatcher(this._originalMatcher._avoidProblematicReactNativeElements());
-    return await new ActionInteraction(this, new SwipeAction(direction, speed, percentage)).execute();
+    return await new ActionInteraction(this._invocationManager, this, new SwipeAction(direction, speed, percentage)).execute();
   }
   async setColumnToValue(column,value) {
-    return await new ActionInteraction(this, new ScrollColumnToValue(column, value)).execute();
+    return await new ActionInteraction(this._invocationManager, this, new ScrollColumnToValue(column, value)).execute();
   }
   async setDatePickerDate(dateString, dateFormat) {
-    return await new ActionInteraction(this, new SetDatePickerDate(dateString, dateFormat)).execute();
+    return await new ActionInteraction(this._invocationManager, this, new SetDatePickerDate(dateString, dateFormat)).execute();
   }
 }
 
-class Expect { }
+class Expect {
+  constructor(invocationManager) {
+    this._invocationManager = invocationManager;
+  }
+}
 
 class ExpectElement extends Expect {
-  constructor(element) {
-    super();
+  constructor(invocationManager, element) {
+    super(invocationManager);
     this._element = element;
   }
   async toBeVisible() {
-    return await new MatcherAssertionInteraction(this._element, new VisibleMatcher()).execute();
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, new VisibleMatcher()).execute();
   }
   async toBeNotVisible() {
-    return await new MatcherAssertionInteraction(this._element, new NotVisibleMatcher()).execute();
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, new NotVisibleMatcher()).execute();
   }
   async toExist() {
-    return await new MatcherAssertionInteraction(this._element, new ExistsMatcher()).execute();
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, new ExistsMatcher()).execute();
   }
   async toNotExist() {
-    return await new MatcherAssertionInteraction(this._element, new NotExistsMatcher()).execute();
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, new NotExistsMatcher()).execute();
   }
   async toHaveText(value) {
-    return await new MatcherAssertionInteraction(this._element, new TextMatcher(value)).execute();
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, new TextMatcher(value)).execute();
   }
   async toHaveLabel(value) {
-    return await new MatcherAssertionInteraction(this._element, new LabelMatcher(value)).execute();
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, new LabelMatcher(value)).execute();
   }
   async toHaveId(value) {
-    return await new MatcherAssertionInteraction(this._element, new IdMatcher(value)).execute();
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, new IdMatcher(value)).execute();
   }
   async toHaveValue(value) {
-    return await new MatcherAssertionInteraction(this._element, new ValueMatcher(value)).execute();
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, new ValueMatcher(value)).execute();
   }
 }
 
-class WaitFor { }
+class WaitFor {
+  constructor(invocationManager) {
+    this._invocationManager = invocationManager;
+  }
+}
 
 class WaitForElement extends WaitFor {
-  constructor(element) {
-    super();
+  constructor(invocationManager, element) {
+    super(invocationManager);
     //if ((!element instanceof Element)) throw new Error(`WaitForElement ctor argument must be a valid Element, got ${typeof element}`);
     this._element = element;
   }
   toBeVisible() {
-    return new WaitForInteraction(this._element, new VisibleMatcher());
+    return new WaitForInteraction(this._invocationManager, this._element, new VisibleMatcher());
   }
   toBeNotVisible() {
-    return new WaitForInteraction(this._element, new VisibleMatcher())._not();
+    return new WaitForInteraction(this._invocationManager, this._element, new VisibleMatcher())._not();
   }
   toExist() {
-    return new WaitForInteraction(this._element, new ExistsMatcher());
+    return new WaitForInteraction(this._invocationManager, this._element, new ExistsMatcher());
   }
   toNotExist() {
-    return new WaitForInteraction(this._element, new ExistsMatcher())._not();
+    return new WaitForInteraction(this._invocationManager, this._element, new ExistsMatcher())._not();
   }
   toHaveText(text) {
-    return new WaitForInteraction(this._element, new TextMatcher(text));
+    return new WaitForInteraction(this._invocationManager, this._element, new TextMatcher(text));
   }
   toHaveValue(value) {
-    return new WaitForInteraction(this._element, new ValueMatcher(value));
+    return new WaitForInteraction(this._invocationManager, this._element, new ValueMatcher(value));
   }
   toNotHaveValue(value) {
-    return new WaitForInteraction(this._element, new ValueMatcher(value))._not();
+    return new WaitForInteraction(this._invocationManager, this._element, new ValueMatcher(value))._not();
   }
 }
 
-function expect(element) {
-  if (element instanceof Element) return new ExpectElement(element);
-  throw new Error(`expect() argument is invalid, got ${typeof element}`);
+class IosExpect {
+  constructor(invocationManager) {
+    this._invocationManager = invocationManager;
+
+    this.by = {
+      accessibilityLabel: (value) => new LabelMatcher(value),
+      label: (value) => new LabelMatcher(value),
+      id: (value) => new IdMatcher(value),
+      type: (value) => new TypeMatcher(value),
+      traits: (value) => new TraitsMatcher(value),
+      value: (value) => new ValueMatcher(value),
+      text: (value) => new TextMatcher(value)
+    };
+
+    this.element = this.element.bind(this);
+    this.expect = this.expect.bind(this);
+    this.waitFor = this.waitFor.bind(this);
+  }
+
+  expect(element) {
+    if (element instanceof Element) return new ExpectElement(this._invocationManager, element);
+    throw new Error(`expect() argument is invalid, got ${typeof element}`);
+  }
+
+  element(matcher) {
+    return new Element(this._invocationManager, matcher);
+  }
+
+  waitFor(element) {
+    if (element instanceof Element) return new WaitForElement(this._invocationManager, element);
+    throw new Error(`waitFor() argument is invalid, got ${typeof element}`);
+  }
 }
 
-function waitFor(element) {
-  if (element instanceof Element) return new WaitForElement(element);
-  throw new Error(`waitFor() argument is invalid, got ${typeof element}`);
-}
-
-function element(matcher) {
-  return new Element(matcher);
-}
-
-const by = {
-  accessibilityLabel: (value) => new LabelMatcher(value),
-  label: (value) => new LabelMatcher(value),
-  id: (value) => new IdMatcher(value),
-  type: (value) => new TypeMatcher(value),
-  traits: (value) => new TraitsMatcher(value),
-  value: (value) => new ValueMatcher(value),
-  text: (value) => new TextMatcher(value)
-};
-
-const exportGlobals = () => {
-  global.element = element;
-  global.expect = expect;
-  global.waitFor = waitFor;
-  global.by = by;
-};
-
-module.exports = {
-  setInvocationManager,
-  exportGlobals,
-  expect,
-  waitFor,
-  element,
-  by
-};
+module.exports = IosExpect;

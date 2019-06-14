@@ -13,15 +13,14 @@ const SimulatorLogPlugin = require('../../artifacts/log/ios/SimulatorLogPlugin')
 const SimulatorScreenshotPlugin = require('../../artifacts/screenshot/SimulatorScreenshotPlugin');
 const SimulatorRecordVideoPlugin = require('../../artifacts/video/SimulatorRecordVideoPlugin');
 const SimulatorInstrumentsPlugin = require('../../artifacts/instruments/SimulatorInstrumentsPlugin');
+const IosExpect = require('../../ios/expect');
 
 class IosDriver extends DeviceDriverBase {
   constructor(config) {
     super(config);
 
     this.applesimutils = new AppleSimUtils();
-
-    this.expect = require('../../ios/expect');
-    this.expect.setInvocationManager(new InvocationManager(this.client));
+    this.matchers = new IosExpect(new InvocationManager(this.client));
   }
 
   declareArtifactPlugins() {
@@ -34,10 +33,6 @@ class IosDriver extends DeviceDriverBase {
       screenshot: (api) => new SimulatorScreenshotPlugin({ api, appleSimUtils }),
       video: (api) => new SimulatorRecordVideoPlugin({ api, appleSimUtils }),
     };
-  }
-
-  exportGlobals() {
-    this.expect.exportGlobals();
   }
 
   createPayloadFile(notification) {
