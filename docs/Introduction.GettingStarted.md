@@ -48,7 +48,7 @@ A collection of utils for Apple simulators, Detox uses it to communicate with th
 
 ```sh
 brew tap wix/brew
-brew install applesimutils
+brew install wix/brew/applesimutils
 ```
 
 > TIP: Verify it works by typing in terminal `applesimutils` to output the tool help screen

@@ -237,7 +237,7 @@ class AppleSimUtils {
 
     } catch (ex) {
       throw new Error(`Could not parse response from applesimutils, please update applesimutils and try again.
-      'brew uninstall applesimutils && brew tap wix/brew && brew install applesimutils'`);
+      'brew uninstall applesimutils && brew tap wix/brew && brew install wix/brew/applesimutils'`);
     }
     return parsed;
   }

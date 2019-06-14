@@ -69,7 +69,7 @@ env:
 
 install:
 - brew tap wix/brew
-- brew install applesimutils
+- brew install wix/brew/applesimutils
 - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
 - export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 - nvm install $NODE_VERSION
@@ -137,7 +137,7 @@ workflows:
             #!/bin/bash
 
             brew tap wix/brew
-            brew install applesimutils
+            brew install wix/brew/applesimutils
         title: Install Detox Utils
     - script:
         inputs:
