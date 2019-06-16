@@ -219,7 +219,8 @@ class AppleSimUtils {
   }
 
   async _execSimctl({ cmd, statusLogs = {}, retries = 1, silent = false }) {
-    return await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl ${cmd}`, { silent }, statusLogs, retries);
+    const verbosity = silent ? 'low' : 'normal';
+    return await exec.execWithRetriesAndLogs(`/usr/bin/xcrun simctl ${cmd}`, { verbosity }, statusLogs, retries);
   }
 
   _parseResponseFromAppleSimUtils(response) {

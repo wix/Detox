@@ -1,4 +1,6 @@
 describe('ADB', () => {
+  const mockAndroidSDKPath = '/Android/sdk-mock';
+
   let ADB;
   let adb;
   let EmulatorTelnet;
@@ -7,7 +9,7 @@ describe('ADB', () => {
   beforeEach(() => {
     jest.mock('../../utils/logger');
     jest.mock('../../utils/environment', () => ({
-      getAndroidSDKPath: () => '/dev/null',
+      getAndroidSDKPath: () => mockAndroidSDKPath,
     }));
 
     jest.mock('./EmulatorTelnet');
@@ -27,6 +29,7 @@ describe('ADB', () => {
 
   it(`devices`, async () => {
     await adb.devices();
+    expect(exec).toHaveBeenCalledWith(`${mockAndroidSDKPath}/platform-tools/adb  devices`, { verbosity: 'high' }, undefined, 1);
     expect(exec).toHaveBeenCalledTimes(1);
   });
 

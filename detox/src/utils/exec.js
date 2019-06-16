@@ -12,6 +12,7 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
   const cmd = _composeCommand(bin, options);
   const execTimeout = _.get(options, 'timeout', 0);
   const log = execLogger.child({ fn: 'execWithRetriesAndLogs', cmd, trackingId });
+  const verbosity = _.get(options, 'verbosity', 'normal');
   log.debug({ event: 'EXEC_CMD' }, `${cmd}`);
 
   let result;
@@ -28,8 +29,7 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
       ? `timeout = ${execTimeout}ms`
       : `code = ${err.code}`;
 
-    const silent = _.get(options, 'silent', false);
-    const level = silent ? 'debug' : 'error';
+    const level = (verbosity === 'low' ? 'debug' : 'error');
 
     log[level]({ event: 'EXEC_FAIL' }, `"${cmd}" failed with ${_failReason}, stdout and stderr:\n`);
     log[level]({ event: 'EXEC_FAIL', stdout: true }, err.stdout);
@@ -43,7 +43,7 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
     throw new DetoxRuntimeError(`command ${cmd} returned undefined`);
   }
 
-  _logExecOutput(log, result);
+  _logExecOutput(log, result, verbosity === 'high' ? 'debug' : 'trace');
 
   if (statusLogs && statusLogs.successful) {
     log.debug({ event: 'EXEC_SUCCESS' }, statusLogs.successful);
@@ -66,7 +66,7 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
 }
 
 /* istanbul ignore next */
-function _logExecOutput(log, process) {
+function _logExecOutput(log, process, level) {
   let stdout = process.stdout || '';
   let stderr = process.stderr || '';
 
@@ -76,15 +76,15 @@ function _logExecOutput(log, process) {
   }
 
   if (stdout) {
-    log.trace({ event: 'EXEC_SUCCESS', stdout: true }, stdout);
+    log[level]({ event: 'EXEC_SUCCESS', stdout: true }, stdout);
   }
 
   if (stderr) {
-    log.trace({ event: 'EXEC_SUCCESS', stderr: true }, stderr);
+    log[level]({ event: 'EXEC_SUCCESS', stderr: true }, stderr);
   }
 
   if (!stdout && !stderr) {
-    log.trace({ event: 'EXEC_SUCCESS' }, '');
+    log[level]({ event: 'EXEC_SUCCESS' }, '');
   }
 }
 
