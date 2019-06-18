@@ -46,13 +46,24 @@ class Detox {
     };
   }
 
-  static extractInitialIntent() {
+  static extractLaunchIntent() {
     return {
       target: {
         type: "Class",
         value: "com.wix.detox.Detox"
       },
-      method: "extractInitialIntent",
+      method: "extractLaunchIntent",
+      args: []
+    };
+  }
+
+  static defaultIntent() {
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.Detox"
+      },
+      method: "defaultIntent",
       args: []
     };
   }
@@ -66,6 +77,17 @@ class Detox {
       },
       method: "intentWithUrl",
       args: [url]
+    };
+  }
+
+  static readLaunchArgs() {
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.Detox"
+      },
+      method: "readLaunchArgs",
+      args: []
     };
   }
 
