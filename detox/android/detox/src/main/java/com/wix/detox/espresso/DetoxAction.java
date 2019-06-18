@@ -3,9 +3,12 @@ package com.wix.detox.espresso;
 import android.view.InputDevice;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.HorizontalScrollView;
-import android.widget.ScrollView;
+
+import com.wix.detox.espresso.DetoxErrors.DetoxRuntimeException;
+import com.wix.detox.espresso.DetoxErrors.StaleActionException;
+import com.wix.detox.espresso.common.annot.MotionDir;
+import com.wix.detox.espresso.scroll.ScrollEdgeException;
+import com.wix.detox.espresso.scroll.ScrollHelper;
 
 import org.hamcrest.Matcher;
 
@@ -26,6 +29,10 @@ import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.action.ViewActions.swipeUp;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_DOWN;
+import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_LEFT;
+import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_RIGHT;
+import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_UP;
 import static org.hamcrest.Matchers.allOf;
 
 
@@ -65,13 +72,7 @@ public class DetoxAction {
     /**
      * Scrolls to the edge of the given scrollable view.
      *
-     * Edge
-     * 1 -> Left
-     * 2 -> Right
-     * 3 -> Top
-     * 4 -> Bottom
-     *
-     * @param edge
+     * @param edge Direction to scroll (see {@link MotionDir})
      * @return ViewAction
      */
     public static ViewAction scrollToEdge(final int edge) {
@@ -88,43 +89,13 @@ public class DetoxAction {
 
             @Override
             public void perform(UiController uiController, View view) {
-                Class<?> recyclerViewClass = null;
                 try {
-                    recyclerViewClass = Class.forName(RecyclerViewScrollListener.CLASS_RECYCLERVIEW);
-                } catch (ClassNotFoundException e) {
-                    // ok
-                }
-                if (view instanceof AbsListView) {
-                    RNScrollListener l = new RNScrollListener((AbsListView) view);
-                    do {
+                    for (int i = 0; i < 100; i++) {
                         ScrollHelper.performOnce(uiController, view, edge);
-                    } while (l.didScroll());
-                    l.cleanup();
-                } else if (view instanceof ScrollView) {
-                    int prevScrollY = view.getScrollY();
-                    while (true) {
-                        ScrollHelper.performOnce(uiController, view, edge);
-                        int currentScrollY = view.getScrollY();
-                        if (currentScrollY == prevScrollY) break;
-                        prevScrollY = currentScrollY;
                     }
-                } else if (view instanceof HorizontalScrollView) {
-                    int prevScrollX = view.getScrollX();
-                    while (true) {
-                        ScrollHelper.performOnce(uiController, view, edge);
-                        int currentScrollX = view.getScrollX();
-                        if (currentScrollX == prevScrollX) break;
-                        prevScrollX = currentScrollX;
-                    }
-                } else if (recyclerViewClass != null && recyclerViewClass.isInstance(view)) {
-                    RecyclerViewScrollListener l = new RecyclerViewScrollListener(view);
-                    do {
-                        ScrollHelper.performOnce(uiController, view, edge);
-                    } while (l.didScroll());
-                    l.cleanup();
-                } else {
-                    throw new RuntimeException(
-                            "Only descendants of AbsListView, ScrollView, HorizontalScrollView and RecyclerView are supported");
+                    throw new DetoxRuntimeException("Scrolling a lot without reaching the edge: force-breaking the loop");
+                } catch (ScrollEdgeException e) {
+                    // Done
                 }
             }
         });
@@ -133,15 +104,8 @@ public class DetoxAction {
     /**
      * Scrolls the View in a direction by the Density Independent Pixel amount.
      *
-     * Direction
-     * 1 -> left
-     * 2 -> Right
-     * 3 -> Up
-     * 4 -> Down
-     *
-     * @param direction Direction to scroll
+     * @param direction Direction to scroll (see {@link MotionDir})
      * @param amountInDP Density Independent Pixels
-     *
      */
     public static ViewAction scrollInDirection(final int direction, final double amountInDP) {
         return actionWithAssertions(new ViewAction() {
@@ -157,7 +121,43 @@ public class DetoxAction {
 
             @Override
             public void perform(UiController uiController, View view) {
-                ScrollHelper.perform(uiController, view, direction, amountInDP);
+                try {
+                    ScrollHelper.perform(uiController, view, direction, amountInDP);
+                } catch (Exception e) {
+                    throw new DetoxRuntimeException(e);
+                }
+            }
+        });
+    }
+
+    /**
+     * Scroll the view in a direction by a specified amount (DP units).
+     * <br/>Similar to {@link #scrollInDirection(int, double)}, but stops <b>gracefully</b> in the case
+     * where the scrolling-edge is reached, by throwing the {@link StaleActionException} exception (i.e.
+     * so as to make this use case manageable by the user).
+     *
+     * @param direction Direction to scroll (see {@link MotionDir})
+     * @param amountInDP Density Independent Pixels
+     */
+    public static ViewAction scrollInDirectionStaleAtEdge(final int direction, final double amountInDP) {
+        return actionWithAssertions(new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return allOf(isAssignableFrom(View.class), isDisplayed());
+            }
+
+            @Override
+            public String getDescription() {
+                return "scrollInDirectionStaleAtEdge";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                try {
+                    ScrollHelper.perform(uiController, view, direction, amountInDP);
+                } catch (ScrollEdgeException exScrollAtEdge) {
+                    throw new StaleActionException(exScrollAtEdge);
+                }
             }
         });
     }
@@ -167,45 +167,40 @@ public class DetoxAction {
     /**
      * Swipes the View in a direction.
      *
-     * Direction
-     * 1 -> left
-     * 2 -> Right
-     * 3 -> Up
-     * 4 -> Down
-     *
-     * @param direction Direction to scroll
+     * @param direction Direction to swipe (see {@link MotionDir})
      * @param fast true if fast, false if slow
      *
      */
     public static ViewAction swipeInDirection(final int direction, boolean fast) {
         if (fast) {
             switch (direction) {
-                case 1:
+                case MOTION_DIR_LEFT:
                     return swipeLeft();
-                case 2:
+                case MOTION_DIR_RIGHT:
                     return swipeRight();
-                case 3:
+                case MOTION_DIR_UP:
                     return swipeUp();
-                case 4:
+                case MOTION_DIR_DOWN:
                     return swipeDown();
                 default:
                     throw new RuntimeException("Unsupported swipe direction: " + direction);
             }
         }
+
         switch (direction) {
-            case 1:
+            case MOTION_DIR_LEFT:
                 return actionWithAssertions(new GeneralSwipeAction(Swipe.SLOW,
                         translate(GeneralLocation.CENTER_RIGHT, -EDGE_FUZZ_FACTOR, 0),
                         GeneralLocation.CENTER_LEFT, Press.FINGER));
-            case 2:
+            case MOTION_DIR_RIGHT:
                 return actionWithAssertions(new GeneralSwipeAction(Swipe.SLOW,
                         translate(GeneralLocation.CENTER_LEFT, EDGE_FUZZ_FACTOR, 0),
                         GeneralLocation.CENTER_RIGHT, Press.FINGER));
-            case 3:
+            case MOTION_DIR_UP:
                 return actionWithAssertions(new GeneralSwipeAction(Swipe.SLOW,
                         translate(GeneralLocation.BOTTOM_CENTER, 0, -EDGE_FUZZ_FACTOR),
                         GeneralLocation.TOP_CENTER, Press.FINGER));
-            case 4:
+            case MOTION_DIR_DOWN:
                 return actionWithAssertions(new GeneralSwipeAction(Swipe.SLOW,
                         translate(GeneralLocation.TOP_CENTER, 0, EDGE_FUZZ_FACTOR),
                         GeneralLocation.BOTTOM_CENTER, Press.FINGER));
@@ -226,5 +221,4 @@ public class DetoxAction {
             }
         };
     }
-
 }

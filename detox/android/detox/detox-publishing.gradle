@@ -12,7 +12,7 @@ dokka {
     sourceDirs = files(android.sourceSets.main.java.srcDirs)
 
     // Nothing to add to what kotlinTasks() resolves on its own
-    classpath = []
+//    classpath = []
 //    classpath += files(android.bootClasspath)
 //    classpath += files(project.configurations.getByName('compile').asList())
 //    classpath += files(android.libraryVariants.collect { variant ->
@@ -25,7 +25,8 @@ dokka {
     outputFormat = 'javadoc' // https://github.com/Kotlin/dokka#output-formats
     outputDirectory = "$buildDir/dokkaDoc" // Temp 'exploded' dir for .jar creation (i.e. by dokkaDocJar task)
 
-    def suppressedPackages = ["androidx", "android_libs"]
+
+    def suppressedPackages = ["android_libs", "com.wix.detox.espresso.common.annot"]
     for (String packagePrefix: suppressedPackages) {
         packageOptions {
             prefix = packagePrefix

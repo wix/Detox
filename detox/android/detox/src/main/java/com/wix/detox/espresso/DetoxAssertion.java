@@ -2,6 +2,8 @@ package com.wix.detox.espresso;
 
 import android.view.View;
 
+import com.wix.detox.espresso.DetoxErrors.StaleActionException;
+
 import junit.framework.AssertionFailedError;
 
 import org.hamcrest.Matcher;
@@ -71,17 +73,22 @@ public class DetoxAssertion {
 
     public static void waitForAssertMatcherWithSearchAction(
             final ViewInteraction i,
-            final Matcher<View> m,
+            final Matcher<View> vm,
             final ViewAction searchAction,
             final Matcher<View> searchMatcher) {
 
         while (true) {
             try {
-                i.check(matches(m));
+                assertMatcher(i, vm);
                 break;
             } catch (Exception e) {
                 if (e instanceof EspressoException) {
-                    onView(searchMatcher).perform(searchAction);
+                    try {
+                        onView(searchMatcher).perform(searchAction);
+                    } catch (StaleActionException exStaleAction) {
+                        assertMatcher(i, vm);
+                        break;
+                    }
                 } else {
                     throw e;
                 }

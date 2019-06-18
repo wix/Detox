@@ -21,6 +21,12 @@ const contentSanitizersForFunction = {
     name: 'sanitize_android_direction',
     value: callGlobal('sanitize_android_direction')
   },
+  scrollInDirectionStaleAtEdge: {
+    argumentName: 'direction',
+    newType: 'String',
+    name: 'sanitize_android_direction',
+    value: callGlobal('sanitize_android_direction')
+  },
   swipeInDirection: {
     argumentName: 'direction',
     newType: 'String',
