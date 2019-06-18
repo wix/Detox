@@ -26,13 +26,19 @@ Array [
 ]
 `;
 
-exports[`exec exec command and fail with timeout 1`] = `
+exports[`exec exec command and fail with error code, report only to debug log if verbosity is low 1`] = `
 Array [
+  Array [
+    Object {
+      "event": "EXEC_CMD",
+    },
+    "bin",
+  ],
   Array [
     Object {
       "event": "EXEC_FAIL",
     },
-    "\\"bin\\" failed with timeout = 1ms, stdout and stderr:
+    "\\"bin\\" failed with code = undefined, stdout and stderr:
 ",
   ],
   Array [
@@ -52,19 +58,13 @@ Array [
 ]
 `;
 
-exports[`exec exec command and silently fail with error code, report only to debug log 1`] = `
+exports[`exec exec command and fail with timeout 1`] = `
 Array [
-  Array [
-    Object {
-      "event": "EXEC_CMD",
-    },
-    "bin",
-  ],
   Array [
     Object {
       "event": "EXEC_FAIL",
     },
-    "\\"bin\\" failed with code = undefined, stdout and stderr:
+    "\\"bin\\" failed with timeout = 1ms, stdout and stderr:
 ",
   ],
   Array [

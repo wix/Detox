@@ -13,7 +13,7 @@ class ADB {
   }
 
   async devices() {
-    const output = (await this.adbCmd('', 'devices')).stdout;
+    const output = (await this.adbCmd('', 'devices', { verbosity: 'high' })).stdout;
     return this.parseAdbDevicesConsoleOutput(output);
   }
 

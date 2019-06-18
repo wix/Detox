@@ -61,6 +61,37 @@ describe('exec', () => {
     expect(cpp.exec).toHaveBeenCalledWith(`bin --argument 123`, { timeout: 0 });
   });
 
+  it(`exec command should output success and err logs`, async () => {
+    mockCppSuccessful(cpp);
+    await exec.execWithRetriesAndLogs('bin');
+
+    expect(logger.trace).toHaveBeenCalledWith({ event: 'EXEC_SUCCESS', stdout: true }, '"successful result"');
+    expect(logger.trace).toHaveBeenCalledWith({ event: 'EXEC_SUCCESS', stderr: true }, 'err');
+  });
+
+  it(`exec command should output a plain success if no output was made`, async () => {
+    const cppResult = {
+      childProcess: {
+        exitCode: 0
+      }
+    };
+    cpp.exec.mockReturnValueOnce(Promise.resolve(cppResult));
+
+    await exec.execWithRetriesAndLogs('bin');
+
+    expect(logger.trace).toHaveBeenCalledWith({ event: 'EXEC_SUCCESS' }, '');
+    expect(logger.trace).toHaveBeenCalledTimes(1);
+  });
+
+  it(`exec command should output success with high severity if verbosity set to high`, async () => {
+    mockCppSuccessful(cpp);
+    await exec.execWithRetriesAndLogs('bin', { verbosity: 'high' });
+
+    expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_SUCCESS', stdout: true }, '"successful result"');
+    expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_SUCCESS', stderr: true }, 'err');
+    expect(logger.trace).not.toHaveBeenCalledWith(expect.objectContaining({event: 'EXEC_SUCCESS'}), expect.anything());
+  });
+
   it(`exec command with undefined return should throw`, async () => {
     cpp.exec.mockReturnValueOnce(undefined);
     try {
@@ -85,13 +116,13 @@ describe('exec', () => {
     }
   });
 
-  it(`exec command and silently fail with error code, report only to debug log`, async () => {
+  it(`exec command and fail with error code, report only to debug log if verbosity is low`, async () => {
     const errorResult = returnErrorWithValue('error result');
     const rejectedPromise = Promise.reject(errorResult);
     cpp.exec.mockReturnValueOnce(rejectedPromise);
 
     try {
-      await exec.execWithRetriesAndLogs('bin', { silent: true }, '', 1, 1);
+      await exec.execWithRetriesAndLogs('bin', { verbosity: 'low' }, '', 1, 1);
       fail('expected execWithRetriesAndLogs() to throw');
     } catch (object) {
       expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
