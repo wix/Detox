@@ -75,6 +75,7 @@ dependencies {
     api 'androidx.test:runner:1.1.1'
     api 'androidx.test:rules:1.1.1'
     api 'androidx.test.ext:junit:1.1.0'
+    api 'androidx.annotation:annotation:1.1.0'
 
     // Version is the latest; Cannot sync with the Github repo (e.g. android/android-test) because the androidx
     // packaging version of associated classes is simply not there...

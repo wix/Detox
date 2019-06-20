@@ -80,7 +80,7 @@ class DetoxAssertion {
     };
   }
 
-  static waitForAssertMatcherWithSearchAction(i, m, searchAction, searchMatcher) {
+  static waitForAssertMatcherWithSearchAction(i, vm, searchAction, searchMatcher) {
     return {
       target: {
         type: "Class",
@@ -92,7 +92,7 @@ class DetoxAssertion {
         value: i
       }, {
         type: "Invocation",
-        value: sanitize_matcher(m)
+        value: sanitize_matcher(vm)
       }, searchAction, {
         type: "Invocation",
         value: sanitize_matcher(searchMatcher)

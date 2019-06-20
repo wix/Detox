@@ -1,4 +1,5 @@
 const custom = require('./utils/custom-it');
+const {expectToThrow} = require('./utils/custom-expects');
 
 describe('WaitFor', () => {
   beforeEach(async() => {
@@ -25,5 +26,11 @@ describe('WaitFor', () => {
     await element(by.id('GoButton')).tap();
     await waitFor(element(by.text('Text5'))).toBeVisible().whileElement(by.id('ScrollView')).scroll(50, 'down');
     await expect(element(by.text('Text5'))).toBeVisible();
+  });
+
+  it('should abort scrolling if element was not found', async () => {
+    await element(by.id('GoButton')).tap();
+    await expectToThrow(() => waitFor(element(by.text('Text1000'))).toBeVisible().whileElement(by.id('ScrollView')).scroll(50, 'down'));
+    await expect(element(by.text('Text1000'))).toBeNotVisible();
   });
 });

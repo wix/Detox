@@ -89,6 +89,13 @@ class ScrollAmountAction extends Action {
   }
 }
 
+class ScrollAmountStopAtEdgeAction extends Action {
+  constructor(direction, amount) {
+    super();
+    this._call = invoke.callDirectly(DetoxActionApi.scrollInDirectionStaleAtEdge(direction, amount));
+  }
+}
+
 class ScrollEdgeAction extends Action {
   constructor(edge) {
     super();
@@ -113,6 +120,7 @@ class SwipeAction extends Action {
 
 class Interaction {
   constructor(invocationManager) {
+    this._call = undefined;
     this._invocationManager = invocationManager;
   }
 
@@ -159,7 +167,7 @@ class WaitForInteraction extends Interaction {
   }
 }
 
-class WaitForActionInteraction extends Interaction {
+class WaitForActionInteractionBase extends Interaction {
   constructor(invocationManager, element, matcher, searchMatcher) {
     super(invocationManager);
     //if (!(element instanceof Element)) throw new Error(`WaitForActionInteraction ctor 1st argument must be a valid Element, got ${typeof element}`);
@@ -170,7 +178,8 @@ class WaitForActionInteraction extends Interaction {
     this._originalMatcher = matcher;
     this._searchMatcher = searchMatcher;
   }
-  async _execute(searchAction) {
+
+  _prepare(searchAction) {
     //if (!searchAction instanceof Action) throw new Error(`WaitForActionInteraction _execute argument must be a valid Action, got ${typeof searchAction}`);
 
     this._call = DetoxAssertionApi.waitForAssertMatcherWithSearchAction(
@@ -179,11 +188,13 @@ class WaitForActionInteraction extends Interaction {
       call(searchAction._call),
       call(this._searchMatcher._call).value
     );
-
-    await this.execute();
   }
+}
+
+class WaitForActionInteraction extends WaitForActionInteractionBase {
   async scroll(amount, direction = 'down') {
-    await this._execute(new ScrollAmountAction(direction, amount));
+    this._prepare(new ScrollAmountStopAtEdgeAction(direction, amount));
+    await this.execute();
   }
 }
 
