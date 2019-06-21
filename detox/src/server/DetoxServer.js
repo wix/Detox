@@ -49,6 +49,10 @@ class DetoxServer {
         if (sessionId && role) {
           this.log.debug({ event: 'DISCONNECT' }, `role=${role}, sessionId=${sessionId}`);
 
+          if (role === ROLE_TESTEE) {
+            this.sendToOtherRole(sessionId, role, { type: 'testeeDisconnected', messageId: -0xc1ea });
+          }
+
           if (this.standalone && role === ROLE_TESTER) {
             this.sendToOtherRole(sessionId, role, { type: 'testerDisconnected', messageId: -1 });
           }
@@ -70,6 +74,13 @@ class DetoxServer {
       this.sendAction(ws, action);
     } else {
       this.log.debug({ event: 'CANNOT_FORWARD' }, `role=${otherRole} not connected, cannot fw action (sessionId=${sessionId})`);
+
+      if (role === ROLE_TESTER && action.type === 'cleanup') {
+        this.sendToOtherRole(sessionId, otherRole, {
+          type: 'testeeDisconnected',
+          messageId: action.messageId,
+        });
+      }
     }
   }
 

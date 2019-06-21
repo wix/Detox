@@ -83,14 +83,14 @@ class ReloadReactNative extends Action {
 
 class Cleanup extends Action {
   constructor(stopRunner) {
-    const params = {
-      stopRunner: stopRunner
-    };
-    super('cleanup', params);
+    super('cleanup', { stopRunner });
+    this.messageId = -0xc1ea;
   }
 
   async handle(response) {
-    this.expectResponseOfType(response, 'cleanupDone');
+    if (response.type !== 'testeeDisconnected') {
+      this.expectResponseOfType('cleanupDone');
+    }
   }
 }
 
