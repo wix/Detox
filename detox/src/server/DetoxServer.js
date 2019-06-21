@@ -45,6 +45,10 @@ class DetoxServer {
         }
       });
 
+      ws.on('error', (e) => {
+        this.log.warn({ event: 'WEBSOCKET_ERROR', role, sessionId }, `${e && e.message} (role=${role}, session=${sessionId})`);
+      });
+
       ws.on('close', () => {
         if (sessionId && role) {
           this.log.debug({ event: 'DISCONNECT' }, `role=${role}, sessionId=${sessionId}`);
