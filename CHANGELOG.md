@@ -1,5 +1,44 @@
 # Change Log
 
+## [12.11.2](https://github.com/wix/Detox/tree/12.11.2) (2019-06-21)
+[Full Changelog](https://github.com/wix/Detox/compare/12.11.1...12.11.2)
+
+**Enhancements**
+
+- Update EarlGrey to include TrustKit fixes [\#1392](https://github.com/wix/Detox/issues/1392)
+- \(Android\) Introduce exception-based, edge-monitoring in scrolling actions of all flavours \(equiv to iOS\) [\#1464](https://github.com/wix/Detox/pull/1464) ([d4vidi](https://github.com/d4vidi))
+- refactor: allow technically to control multiple detox instances  [\#1144](https://github.com/wix/Detox/pull/1144) ([manuquentin](https://github.com/manuquentin))
+
+**Fixed Bugs**
+
+- bug: timeout error on detox.cleanup\(\) if an app had been terminated earlier in a test [\#1460](https://github.com/wix/Detox/issues/1460)
+- \(Android\) Endless scrolling attempts if item not found using `waitFor` [\#1409](https://github.com/wix/Detox/issues/1409)
+
+**Closed Issues**
+
+- Second Test File Causing Issues [\#1458](https://github.com/wix/Detox/issues/1458)
+- Detox hangs on "Trying permissions" on CircleCI [\#1457](https://github.com/wix/Detox/issues/1457)
+- `invocationManager` is cached by nodejs' require cache and prevent multiple client [\#1119](https://github.com/wix/Detox/issues/1119)
+
+**Merged Pull Requests**
+
+- fix\(ws\): explicit error handling [\#1467](https://github.com/wix/Detox/pull/1467) ([noomorph](https://github.com/noomorph))
+- fix: conduct cleanup even if app has been already terminated [\#1465](https://github.com/wix/Detox/pull/1465) ([noomorph](https://github.com/noomorph))
+- Revive generation script [\#1459](https://github.com/wix/Detox/pull/1459) ([d4vidi](https://github.com/d4vidi))
+- Increase log-level for result of 'adb devices' command [\#1453](https://github.com/wix/Detox/pull/1453) ([d4vidi](https://github.com/d4vidi))
+
+## [12.11.1](https://github.com/wix/Detox/tree/12.11.1) (2019-06-14)
+[Full Changelog](https://github.com/wix/Detox/compare/12.11.0...12.11.1)
+
+**Closed Issues**
+
+- Regex For Matchers [\#1441](https://github.com/wix/Detox/issues/1441)
+
+**Merged Pull Requests**
+
+- use --byId instead of --simulator [\#1448](https://github.com/wix/Detox/pull/1448) ([vonovak](https://github.com/vonovak))
+- Update APIRef.ActionsOnElement.md [\#1437](https://github.com/wix/Detox/pull/1437) ([leotm](https://github.com/leotm))
+
 ## [12.11.0](https://github.com/wix/Detox/tree/12.11.0) (2019-06-07)
 [Full Changelog](https://github.com/wix/Detox/compare/12.10.3...12.11.0)
 
