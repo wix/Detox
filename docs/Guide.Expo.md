@@ -39,5 +39,8 @@ beforeEach(async () => {
 
 - Usage with Android is currently TBD.
 
+## Known issues
+[Timeout on opening the app](https://github.com/wix/Detox/issues/1422) - Expo not working with detox > 12.3.0
+
 ### Example App
-[expo/with-detox-tests](https://github.com/expo/with-detox-tests)
+[yaron1m/expo-detox-typescript-example](https://github.com/yaron1m/expo-detox-typescript-example)
