@@ -186,6 +186,16 @@ describe('AsyncWebSocket', () => {
     await expect(message2).rejects.toEqual(error);
   });
 
+  it(`resetInFlightPromises should erase all pending promises`, async () => {
+    await connect(client);
+    client.send(generateRequest());
+    client.send(generateRequest());
+
+    expect(_.size(client.inFlightPromises)).toBe(2);
+    client.resetInFlightPromises();
+    expect(_.size(client.inFlightPromises)).toBe(0);
+  });
+
   async function connect(client) {
     const result = {};
     const promise = client.open();

@@ -1,4 +1,5 @@
 const tempfile = require('tempfile');
+const actions = require('./actions/actions');
 const config = require('../configurations.mock').validOneDeviceAndSession.session;
 const invoke = require('../invoke');
 
@@ -7,6 +8,7 @@ describe('Client', () => {
   let WebSocket;
   let Client;
   let client;
+  let log;
 
   beforeEach(() => {
     jest.mock('../utils/logger');
@@ -16,6 +18,7 @@ describe('Client', () => {
     argparse = require('../utils/argparse');
 
     Client = require('./Client');
+    log = require('../utils/logger');
   });
 
   it(`reloadReactNative() - should receive ready from device and resolve`, async () => {
@@ -226,6 +229,36 @@ describe('Client', () => {
     } catch (ex) {
       expect(ex).toBeDefined();
     }
+  });
+
+  it(`dumpPendingRequests() - should not dump if no pending requests`, async () => {
+    await connect();
+    client.dumpPendingRequests();
+    expect(log.warn).not.toHaveBeenCalled();
+  });
+
+  it(`dumpPendingRequests() - should dump if there are pending requests`, async () => {
+    await connect();
+
+    const cleanup = { message: new actions.Cleanup(), resolve: jest.fn(), reject: jest.fn() };
+    client.ws.inFlightPromises = {
+      [cleanup.message.messageId]: cleanup
+    };
+
+    client.dumpPendingRequests();
+    expect(log.warn.mock.calls[0]).toMatchSnapshot();
+  });
+
+  it(`dumpPendingRequests() - should reset in flight promises`, async () => {
+    await connect();
+
+    const cleanup = { message: new actions.Cleanup(), resolve: jest.fn(), reject: jest.fn() };
+    client.ws.inFlightPromises = {
+      [cleanup.message.messageId]: cleanup
+    };
+
+    client.dumpPendingRequests();
+    expect(client.ws.resetInFlightPromises).toHaveBeenCalled();
   });
 
   it(`save a pending error if AppWillTerminateWithError event is sent to tester`, async () => {

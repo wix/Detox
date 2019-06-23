@@ -2,6 +2,7 @@ const _ = require('lodash');
 const AsyncWebSocket = require('./AsyncWebSocket');
 const actions = require('./actions/actions');
 const argparse = require('../utils/argparse');
+const log = require('../utils/logger').child({ __filename });
 
 class Client {
   constructor(config) {
@@ -134,6 +135,22 @@ class Client {
         this.slowInvocationStatusHandler = this.slowInvocationStatus();
       }
     }, this.slowInvocationTimeout);
+  }
+
+  dumpPendingRequests() {
+    const messages = _.values(this.ws.inFlightPromises).map(p => p.message);
+    if (_.isEmpty(messages)) {
+      return;
+    }
+
+    let dump = 'App has not responded to the network requests below:';
+    for (const msg of messages) {
+      dump += `\n  (id = ${msg.messageId}) ${msg.type}: ${JSON.stringify(msg.params)}`;
+    }
+    dump += '\n\nThat might be a reason to why your test suite fails with a timeout error.\n';
+
+    log.warn({ event: 'PENDING_REQUESTS'}, dump);
+    this.ws.resetInFlightPromises();
   }
 }
 

@@ -16,6 +16,7 @@ class DetoxMochaAdapter {
       title: context.currentTest.title,
       fullName: context.currentTest.fullTitle(),
       status: this._mapStatus(context, true),
+      timedOut: context.currentTest.timedOut,
     });
   }
 

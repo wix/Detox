@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Client dumpPendingRequests() - should dump if there are pending requests 1`] = `
+Array [
+  Object {
+    "event": "PENDING_REQUESTS",
+  },
+  "App has not responded to the network requests below:
+  (id = -49642) cleanup: {}
+
+That might be a reason to why your test suite fails with a timeout error.
+",
+]
+`;
