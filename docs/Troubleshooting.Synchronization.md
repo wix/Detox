@@ -94,10 +94,24 @@ This makes sense only if we're not waiting enough (or if we've disabled automati
 
 Interactions with the application are synchronized, meaning that they will not execute unless the app is idle. You may encounter situations where the tests just hang. 
 When an action/expectation takes a significant amount of time use this option to print device synchronization status.
-The status will be printed if the action takes more than [value]ms to complete
+The status will be printed if the action takes more than [value] ms to complete
 
 ```
-detox test --debug-synchronization [value in ms]
+detox test --debug-synchronization 200
+```
+
+If this does not provide the necessary information, on iOS, you can add the
+
+```shell
+-detoxPrintBusyIdleResources YES
+```
+
+launch argument to enable a very verbose logging of the idling resource system to the system log.
+
+You can then obtain this log by running the following command:
+
+```shell
+xcrun simctl spawn booted log stream --level debug --style compact --predicate "category=='EarlGreyStatistics'"
 ```
 
 <br>

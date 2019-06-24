@@ -14,6 +14,8 @@
 NSDictionary<NSString*, NSDictionary*(^)(id<GREYIdlingResource>)>* _prettyPrinters;
 NSDictionary<NSString*, NSString*>* _prettyNames;
 
+DTX_CREATE_LOG(EarlGreyStatistics)
+
 #define CLS_STR(__cls) NSStringFromClass([__cls class])
 
 @import ObjectiveC;
@@ -42,6 +44,11 @@ NSArray *WXClassesConformingToProtocol(Protocol* protocol)
 
 void WXFixupIdlingResourceClasses()
 {
+	if([NSUserDefaults.standardUserDefaults boolForKey:@"detoxPrintBusyIdleResources"] == NO)
+	{
+		return;
+	}
+	
 	NSArray<Class>* classes = WXClassesConformingToProtocol(@protocol(GREYIdlingResource));
 	
 	[classes enumerateObjectsUsingBlock:^(Class  _Nonnull cls, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -53,13 +60,9 @@ void WXFixupIdlingResourceClasses()
 			
 			if(rv == NO)
 			{
-//				dtx_log_info(@"%@ -> busy", NSStringFromClass([_self class]));
-//				NSString* prettyName = _prettyNames[CLS_STR(_self)] ?: _self.idlingResourceName;
-//				NSDictionary* (^prettyPrinter)(id<GREYIdlingResource>) = _prettyPrinters[CLS_STR(_self)] ?: ^ (id<GREYIdlingResource> res) { return @{}; };
-//
-//				dtx_log_info(@"%@ -> busy %@", prettyName, prettyPrinter(_self)[@"prettyPrint"]);
-//
-//				[resources addObject:@{@"name": prettyName, @"info": prettyPrinter(obj)}];
+				NSString* prettyName = _prettyNames[CLS_STR(_self)] ?: _self.idlingResourceName;
+				NSDictionary* (^prettyPrinter)(id<GREYIdlingResource>) = _prettyPrinters[CLS_STR(_self)] ?: ^ (id<GREYIdlingResource> res) { return @{}; };
+				dtx_log_debug(@"%@ -> busy %@", prettyName, prettyPrinter(_self)[@"prettyPrint"]);
 			}
 			
 			return rv;
