@@ -1,7 +1,4 @@
----
-id: Guide.Migration
-title: Migration Guide
----
+# Migration Guide
 
 We are improving detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes.
 
@@ -393,7 +390,7 @@ Check [detox test change log](https://github.com/wix/detox/commit/c636e2281d83d0
 ###Version 5.x.x breaks detox's API in 4 different places
 
 #### 1. Promise based flow
-All of the API calls are now promise based, and must use either promise chains or async-await.<br>
+All of the API calls are now promise based, and must use either promise chains or async-await.
 
 Here's an example of async call to tap an element
 

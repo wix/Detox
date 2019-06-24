@@ -1,11 +1,6 @@
----
-id: Troubleshooting.Installation
-title: Installation
----
+# Installation
 
 * [No simulators found](#no-simulators-found)
-
-<br>
 
 ### No simulators found
 

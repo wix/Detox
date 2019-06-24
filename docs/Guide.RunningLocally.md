@@ -1,14 +1,8 @@
----
-id: Guide.RunningLocally
-title: Running Locally
-sidebar_label: Running Tests Locally
----
+# Running Locally
 
 > If your app is ready and does not require any active development, you can write your tests using this workflow and run them locally on your machine. This is convenient for developing your test suite without actively developing your app.
 
 This is the basic workflow. It takes your app executable and runs Detox tests against it.
-
-<br>
 
 ## Step 1: Build your app
 
@@ -21,8 +15,6 @@ detox build
 ```
 
 > TIP: After build, the app executable should be found in the path specified inside `package.json` under the `detox` configuration section (`binaryPath`). That's where Detox is going to look for it.
-
-<br>
 
 ## Step 2: Run Detox tests
 

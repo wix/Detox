@@ -1,7 +1,4 @@
----
-id: Guide.Contributing
-title: Contributing
----
+# Contributing
 
 ## Prerequisites
 

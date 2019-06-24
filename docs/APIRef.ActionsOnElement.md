@@ -1,7 +1,4 @@
----
-id: APIRef.ActionsOnElement
-title: Actions on Element
----
+# Actions on Element
 
 Detox uses **Matchers** to find UI `elements` in your app, **Actions** to emulate user interaction with those `elements` and **Expectations** to verify values on those `elements`.
 
@@ -36,8 +33,8 @@ await element(by.id('tappable')).tap();
 ```
 
 ### `longPress(duration)`
-Simulate long press on an element.<br>
-duration - long press time interval. (iOS only)<br>
+Simulate long press on an element.
+duration - long press time interval. (iOS only)
 
 ```js
 await element(by.id('tappable')).longPress();
@@ -50,7 +47,8 @@ Simulate multiple taps on an element.
 await element(by.id('tappable')).multiTap(3);
 ```
 ### `tapAtPoint()`
-Simulate tap at a specific point on an element.<br><br>
+Simulate tap at a specific point on an element.
+
 Note: The point coordinates are relative to the matched element and the element size could changes on different devices or even when changing the device font size.
 
 ```js
@@ -102,11 +100,11 @@ await element(by.id('textField')).clearText();
 
 ### `scroll(pixels, direction, startPositionX=NaN, startPositionY=NaN)`
 
-Scroll amount of pixels.<br>
-pixels - independent device pixels<br>
-direction - left/right/top/bottom<br>
-startPositionX - The X starting scroll position, in percentage; valid input: (0.0, 1.0), `NaN`; default: `NaN`—Choose the best value<br>
-startPositionY - The Y starting scroll position, in percentage; valid input: (0.0, 1.0), `NaN`; default: `NaN`—Choose the best value<br>
+Scroll amount of pixels.
+pixels - independent device pixels
+direction - left/right/top/bottom
+startPositionX - The X starting scroll position, in percentage; valid input: (0.0, 1.0), `NaN`; default: `NaN`—Choose the best value
+startPositionY - The Y starting scroll position, in percentage; valid input: (0.0, 1.0), `NaN`; default: `NaN`—Choose the best value
 
 ```js
 await element(by.id('scrollView')).scroll(100, 'down', NaN, 0.85);
@@ -126,8 +124,8 @@ await element(by.id('scrollView')).scrollTo('top');
 
 ### `swipe(direction, speed, percentage)`
 
-direction - left/right/up/down<br>
-speed - fast/slow - default is fast<br>
+direction - left/right/up/down
+speed - fast/slow - default is fast
 percentage - (optional) screen percentage to swipe as float
 
 ```js
@@ -137,8 +135,8 @@ await element(by.id('scrollView')).swipe('down', 'fast', 0.5);
 ```
 ### `setColumnToValue(column, value)`  iOS only
 
-column - date picker column index<br>
-value - string value to set in column<br>
+column - date picker column index
+value - string value to set in column
 
 ```js
 await expect(element(by.type('UIPickerView'))).toBeVisible();
@@ -148,9 +146,9 @@ await element(by.type('UIPickerView')).setColumnToValue(2,"34");
 
 ### `pinchWithAngle(direction, speed, angle)`  iOS only
 
-direction - inward/outward<br>
-speed - slow/fast - default is slow<br>
-angle - value in radiant - default is 0<br>
+direction - inward/outward
+speed - slow/fast - default is slow
+angle - value in radiant - default is 0
 
 ```js
 await expect(element(by.id('PinchableScrollView'))).toBeVisible();
@@ -159,8 +157,8 @@ await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0)
 
 ### `setDatePickerDate(dateString, dateFormat)`  iOS only
 
-dateString - string representing a date in the supplied dateFormat<br>
-dateFormat - format for the dateString supplied<br>
+dateString - string representing a date in the supplied dateFormat
+dateFormat - format for the dateString supplied
 
 ```js
 await expect(element(by.type('UIDatePicker'))).toBeVisible();

@@ -1,7 +1,4 @@
----
-id: APIRef.Matchers
-title: Matchers
----
+# Matchers
 
 Detox uses **Matchers** to find UI `elements` in your app, **Actions** to emulate user interaction with those `elements` and **Expectations** to verify values on those `elements`.
 
@@ -119,7 +116,7 @@ element(by.id('parent').withDescendant(by.id('child')));
 When a matcher matches multiple views, there are three possible solutions:
 
 1. Use multiple matchers to narrow down the matched results.
-2. Add unique identifiers (testIDs) to the view which need to matched.<br>
+2. Add unique identifiers (testIDs) to the view which need to matched.
 A common use-case, is adding identifiers to list items. testIDs for FlatList items can be assigned dynamically, by passing `index` in [`renderItem({item, index})`](https://facebook.github.io/react-native/docs/flatlist.html#renderitem) and using it in the component's render function.      
 
 	FlatList `renderItem` function:

@@ -1,7 +1,4 @@
----
-id: Guide.DebuggingInXcode
-title: Debugging in Xcode During Detox Tests
----
+# Debugging in Xcode During Detox Tests
 
 > This is mostly useful for investigating weird crashes or when contributing to Detox itself. **This workflow isn't standard. Don't use it unless you have a good reason.**
 

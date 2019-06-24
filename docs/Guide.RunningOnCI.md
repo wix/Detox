@@ -1,15 +1,10 @@
----
-id: Guide.RunningOnCI
-title: Running On CI
----
+# Running On CI
 
 > When your test suite is finally ready, it should be set up to run automatically on your CI server on every git push. This will alert you if new changes to the app break existing functionality.
 
 Running detox on CI is not that different from running it locally. There are two main differences:
 1. We will test a release build rather than a debug build
 2. We will tell Detox to shut down the simulator when test is over 
-
-<br>
 
 ## Step 1: Prepare a release configuration for your app
 
@@ -32,8 +27,6 @@ We will need to create a [release device configuration for Detox](/docs/APIRef.C
 
 > TIP: Notice that the name `example` above should be replaced with your actual project name.
 
-<br>
-
 ## Step 2: Add build and test commands to your CI script
 
 Assuming your CI is executing some sort of shell script, add the following commands that should run inside the project root:
@@ -44,8 +37,6 @@ detox test --configuration ios.sim.release --cleanup
 ```
 
 > TIP: Adding `--cleanup` to the test command will make sure detox exits cleanly by shutting down the simulator when the test is over.
-
-<br>
 
 ## Appendix
 

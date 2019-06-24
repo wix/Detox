@@ -1,7 +1,4 @@
----
-id: APIRef.MockingUserActivity
-title: Mocking User Activity
----
+# Mocking User Activity
 
 Detox supports mocking user activity for iOS apps.
 

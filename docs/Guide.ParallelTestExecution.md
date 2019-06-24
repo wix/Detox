@@ -1,9 +1,4 @@
----
-id: Guide.ParallelTestExecution
-title: Parallel Test Execution
----
-
-## Parallel Test Execution
+# Parallel Test Execution
 Detox can leverage multi worker support of JS test runners ([Jest](http://jestjs.io/docs/en/cli#maxworkers-num), [AVA](https://github.com/avajs/ava#process-isolation), etc.).
 
 By default `detox test` will run the test runner with one worker (it will pass `--maxWorkers=1` to Jest cli, Mocha is unaffected). Worker count can be controlled by adding `--workers n` to `detox test`, read more in [detox-cli section](APIRef.DetoxCLI.md#test).
@@ -13,13 +8,13 @@ Simulators/emulators run on a different process, outside of node, and require so
 
 The lock file location is determined by the OS, and [defined here](https://github.com/wix/detox/blob/master/detox/src/utils/appdatapath.js).
 
-**MacOS:** <br>
-`~/Library/Detox/device.registry.state.lock`<br>
-**Linux:** <br>
-`~/.local/share/Detox/device.registry.state.lock`<br>
-**Windows:** <br>
-`$LOCALAPPDATA/data/Detox/device.registry.state.lock`<br>
-or<br>
+##### MacOS
+`~/Library/Detox/device.registry.state.lock`
+##### Linux
+`~/.local/share/Detox/device.registry.state.lock`
+##### Windows
+`$LOCALAPPDATA/data/Detox/device.registry.state.lock`
+or
 `$USERPROFILE/Application Data/Detox/device.registry.state.lock`
 
 #### Device creation

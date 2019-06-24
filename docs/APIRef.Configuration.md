@@ -1,20 +1,17 @@
----
-id: APIRef.Configuration
-title: Configuration Options
----
+# Configuration Options
 
 ## Configuring package.json 
 
 ### Device Configuration
 
-`configurations` holds all the device configurations, if there is only one configuration in `configurations` `detox build` and `detox test` will default to it, to choose a specific configuration use `--configuration` param<br>
+`configurations` holds all the device configurations, if there is only one configuration in `configurations` `detox build` and `detox test` will default to it, to choose a specific configuration use `--configuration` param
 	
 |Configuration Params|Details|
 |---|---|
 |`type`| Device type, available options are `ios.simulator`, `ios.none`, `android.emulator`, and `android.attached`. |
 |`binaryPath`| Relative path to the ipa/app due to be  tested (make sure you build the app in a project relative path)|
 |`testBinaryPath`| (optional, Android only): relative path to the test app (apk) |
-|`name`| Device name, aligns to the device list avaliable through `xcrun simctl list` for example, this is one line of the output of `xcrun simctl list`: `A3C93900-6D17-4830-8FBE-E102E4BBCBB9  iPhone 7  Shutdown  iPhone 7  iOS 10.2`, in order to choose the first `iPhone 7` regardless of OS version, use `iPhone 7`. <br>To be OS specific use `iPhone 7, iOS 10.2`|
+|`name`| Device name, aligns to the device list avaliable through `xcrun simctl list` for example, this is one line of the output of `xcrun simctl list`: `A3C93900-6D17-4830-8FBE-E102E4BBCBB9  iPhone 7  Shutdown  iPhone 7  iOS 10.2`, in order to choose the first `iPhone 7` regardless of OS version, use `iPhone 7`. To be OS specific use `iPhone 7, iOS 10.2`|
 |`build`| **[optional]** Build command (either `xcodebuild`, `react-native run-ios`, etc...), will be later available through detox CLI tool.|
 	
 **Example:**

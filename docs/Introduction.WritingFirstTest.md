@@ -1,13 +1,8 @@
----
-id: Introduction.WritingFirstTest
-title: Writing Your First Test
----
+# Writing Your First Test
 
 This tutorial assumes you've already installed Detox successfully on a working React Native project.
 
 > TIP: You can also check out this [awesome tutorial](https://medium.com/@bogomolnyelad/how-to-test-your-react-native-app-like-a-real-user-ecfc72e9b6bc) on Medium with video by [@bogomolnyelad](https://medium.com/@bogomolnyelad)
-
-<br>
 
 ## Step 1: Prepare a JavaScript file to hold your scenario (spec)
 
@@ -17,8 +12,6 @@ If you're using Mocha as your test runner, these files will simply be executed o
 
 If you've followed the installation tutorial, you should already have `firstTest.spec.js` as a placeholder to start from.
 
-<br>
-
 ## Step 2: Decide how to reset your app for the beginning of the scenario
 
 In order to start the scenario from a predictable app state and reset the state from any previous scenarios that may have been running, it's customary to start the scenario by restarting the app.
@@ -26,8 +19,6 @@ In order to start the scenario from a predictable app state and reset the state 
 The fastest way to reset is by calling `await device.reloadReactNative();`. This is equivalent to pressing CMD+R in the simulator window - it will just reload the React Native bundle. You can find other alternatives that may be slower but more thorough [here](APIRef.DeviceObjectAPI.md).
 
 Our scenario is made from multiple different test cases (`it()` clauses). We usually want to reset before each one is running. This can be accomplished by placing the reset logic inside a `beforeEach()` clause.
-
-<br>
 
 ## Step 3: Add testIDs to your app to assist in matching elements
 
@@ -43,7 +34,6 @@ Note that not all React components support this prop. Most of the built-in nativ
 </View>
 ```
 
-<br>
 
 ## Step 4: Match an element and perform an action
 
@@ -54,8 +44,6 @@ Choose an action to perform on the element, the various alternatives are documen
 ```jsx
 await element(by.id('MyUniqueId123')).tap();
 ```
-
-<br>
 
 ## Step 5: Set an expectation on the result
 
@@ -71,15 +59,11 @@ await expect(element(by.id('AnotherUniqueId456'))).toBeVisible();
 
 Note that the visibilty matcher makes sure the element is actually visible on screen (at least 75% of it to be exact). If it appears under the fold (eg. the user has to scroll to see it), this specific matcher will fail.
 
-<br>
-
 ## Step 6: Rinse and repeat
 
 Create more complicated test cases by stringing actions and expectations one after the other. Explore the rest of the API to see what other things you can do in your tests.
 
 Add more test cases to your file by adding `it()` clauses. Add new scenarios by adding new `*.spec.js` files.
-
-<br>
 
 ## Step 7: Run your tests and make sure they pass
 

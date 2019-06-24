@@ -1,7 +1,5 @@
----
-id: Troubleshooting.RunningTests
-title: Failing Tests
----
+# Failing Tests
+
 * [Enable trace mode](#enable-trace-mode)
 * [Syntax Error: Unxpected Token](#syntax-error-unxpected-token)
 * [Can't find my component even though I added testID to its props](#cant-find-my-component-even-though-i-added-testid-to-its-props)
@@ -12,8 +10,6 @@ title: Failing Tests
 * [Compare to a working setup](#compare-to-a-working-setup)
 * [Take a look at past issues](#take-a-look-at-past-issues)
 * [How to open a new issue](#how-to-open-a-new-issue)
-
-<br>
 
 ### Enable trace mode
 
@@ -48,8 +44,6 @@ child_process.js:531
 **Solution:** This error means that your version of Node does not support `async-await` syntax. You should do the following:
 
 1. Update Node to a version **8.3.0 or higher**.
-
-<br>
 
 ### Can't find my component even though I added testID to its props
 
@@ -99,8 +93,6 @@ render() {
 }
 ```
 
-<br>
-
 ### Test tries to find my component before it's created
 
 **Issue:** Due to a synchronization issue, the test tries to perform an expectation and fails because it runs the expectation too soon. Consider this example:
@@ -121,13 +113,9 @@ await element(by.text('Login')).tap();
 await waitFor(element(by.text('Welcome'))).toBeVisible().withTimeout(2000);
 ```
 
-<br>
-
 ### Can't synchronize the test with my app
 
 If you suspect that the test is failing because Detox fails to synchronize the test steps with your app, take a look at this in-depth [synchronization troubleshooting tutorial](/docs/Troubleshooting.Synchronization.md).
-
-<br>
 
 ### detox build or detox test are failing to run
 
@@ -191,8 +179,6 @@ in `package.json` (no deprecation warnings starting from `12.4.0`), as shown bel
 Please mind that if your e2e tests are located at the default path (`e2e`),
 then you don't need to add `"specs"` property explicitly to `package.json`.
 
-<br>
-
 ### Debug view hierarchy
 
 **Issue:** I added the `testID` prop but I still can't find the view by id in my tests.
@@ -227,8 +213,6 @@ This is the hierarchy viewer, pointing to the native view just mentioned:
 
 <img src="img/hierarchy-viewer.jpg">
 
-<br>
-
 ### Compare to a working setup
 
 If you feel lost, try starting from a working example for sanity.
@@ -237,13 +221,9 @@ There are multiple working examples included in this repo, such as [demo-react-n
 
 First, install, build and make sure the tests are indeed passing. If they are, try comparing this setup with what you have.
 
-<br>
-
 ### Take a look at past issues
 
 Before opening a new issue, search the [list of issues](https://github.com/wix/detox/issues?utf8=%E2%9C%93&q=is%3Aissue) on GitHub. There's a good chance somebody faced the same problem you are.
-
-<br>
 
 ### How to open a new issue
 

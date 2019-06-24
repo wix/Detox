@@ -1,7 +1,4 @@
----
-id: APIRef.DeviceObjectAPI
-title: The `device` Object
----
+# The `device` Object
 
 `device` is globally available in every test file, it enables control over the current attached device (currently only simulators are supported).
 
@@ -200,7 +197,7 @@ await device.launchApp({
 ```
 
 ### `device.relaunchApp(params)`
-**Deprecated** Use `device.launchApp(params)` instead. This method is now calling `launchApp({newInstance: true})` for backwards compatibility.<Br>
+**Deprecated** Use `device.launchApp(params)` instead. This method is now calling `launchApp({newInstance: true})` for backwards compatibility.
 Kill and relaunch the app defined in the current [`configuration`](APIRef.Configuration.md).
 
 ### `device.terminateApp()`
@@ -213,8 +210,8 @@ await device.terminateApp('other.bundle.id');
 ```
 
 ### `device.sendToHome()`
-Send application to background by bringing `com.apple.springboard` to the foreground.<br>
-Combining `sendToHome()` with `launchApp({newInstance: false})` will simulate app coming back from background.<br>
+Send application to background by bringing `com.apple.springboard` to the foreground.
+Combining `sendToHome()` with `launchApp({newInstance: false})` will simulate app coming back from background.
 Check out Detox's [own test suite](../detox/test/e2e/06.device.test.js)
 
 ```js
@@ -248,23 +245,23 @@ await device.installApp('other.bundle.id');
 ```
 
 ### `device.openURL({url, sourceApp[optional]})`
-Mock opening the app from URL. `sourceApp` is an optional parameter to specify source application bundle id.<br>
-Read more in [Mocking Open From URL](APIRef.MockingOpenFromURL.md) section.<br>
+Mock opening the app from URL. `sourceApp` is an optional parameter to specify source application bundle id.
+Read more in [Mocking Open From URL](APIRef.MockingOpenFromURL.md) section.
 Check out Detox's [own test suite](../detox/test/e2e/15.urls.test.js)
 
 ### `device.sendUserNotification(params)`
-Mock handling of received user notification when app is in foreground.<br>
-Read more in [Mocking User Notifications](APIRef.MockingUserNotifications.md) section.<br>
+Mock handling of received user notification when app is in foreground.
+Read more in [Mocking User Notifications](APIRef.MockingUserNotifications.md) section.
 Check out Detox's [own test suite](../detox/test/e2e/11.user-notifications.test.js)
 
 ### `device.sendUserActivity(params)`
-Mock handling of received user activity when app is in foreground.<br>
-Read more in [Mocking User Activity](APIRef.MockingUserActivity.md) section.<br>
+Mock handling of received user activity when app is in foreground.
+Read more in [Mocking User Activity](APIRef.MockingUserActivity.md) section.
 Check out Detox's [own test suite](../detox/test/e2e/18.user-activities.test.js)
 
 ### `device.setOrientation(orientation)`
 Takes `"portrait"` or `"landscape"` and rotates the device to the given orientation.
-Currently only available in the iOS Simulator.<br>
+Currently only available in the iOS Simulator.
 Check out Detox's [own test suite](../detox/test/e2e/06.device-orientation.test.js)
 
 ### `device.setLocation(lat, lon)`

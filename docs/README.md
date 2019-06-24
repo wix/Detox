@@ -1,8 +1,4 @@
----
-id: README
-title: detox
-sidebar_label: Overview
----
+# Overview
 
 # Detox Documentation
 

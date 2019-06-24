@@ -1,7 +1,4 @@
----
-id: APIRef.MockingUserNotifications
-title: Mocking User Notifications
----
+# Mocking User Notifications
 
 Detox supports mocking user notifications for iOS apps.
 

@@ -1,7 +1,4 @@
----
-id: APIRef.MockingOpenFromURL
-title: Mocking Open from URL (Deep Links)
----
+# Mocking Open from URL (Deep Links)
 
 You can mock opening the app from URL to test your app's deep link handling mechanism.
 

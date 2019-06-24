@@ -1,15 +1,10 @@
----
-id: Introduction.GettingStarted
-title: Getting Started
----
+# Getting Started
 
 **This guide is focused on iOS. For installing Detox for Android, be sure to also go over the [Android guide](Introduction.Android.md)**.
 
 This is a step-by-step guide for adding Detox to your React Native project.
 
 > TIP: You can also check out this [awesome tutorial](https://medium.com/@bogomolnyelad/how-to-test-your-react-native-app-like-a-real-user-ecfc72e9b6bc) on Medium with video by [@bogomolnyelad](https://medium.com/@bogomolnyelad)
-
-<br>
 
 ## Prerequisites
 
@@ -21,8 +16,6 @@ Running Detox (on iOS) requires the following:
 > TIP: Verify Xcode command line tools is installed by typing `gcc -v` in terminal (shows a popup if not installed)
 
 * A working [React Native](https://facebook.github.io/react-native/docs/getting-started.html) app you want to test
-
-<br>
 
 ## Step 1: Install dependencies
 
@@ -60,7 +53,6 @@ This package makes it easier to operate Detox from the command line. `detox-cli`
   ```sh
   npm install -g detox-cli
   ```
-
 
 ## Step 2: Add Detox to your project
 
@@ -114,8 +106,6 @@ Also make sure the simulator model specified under the key `"name"` (`iPhone 7` 
 
 > TIP: To test a release version, replace 'Debug' with 'Release' in the binaryPath and build properties. For full configuration options see Configuration under the API Reference.
 
-<br>
-
 ## Step 3: Create your first test
 
 #### 1. Install a test runner :running_man:
@@ -126,8 +116,6 @@ Detox CLI supports Jest and Mocha out of the box. You need to choose one now, bu
 >
 > * Jest is more complex to set up, but it's the only one that supports parallel tests execution. In Detox `12.7.0`, we've made Jest more suitable for e2e testing in terms of logging and usability.
 > * Mocha is easy to set up and is lightweight.
-
-<br>
 
 [Jest](http://jestjs.io/):
 
@@ -168,8 +156,6 @@ detox init -r mocha
 > - Inside `e2e` folder, creates `init.js` file. See examples for [Mocha](/examples/demo-react-native/e2e/init.js) and [Jest](/examples/demo-react-native-jest/e2e/init.js).
 > - Inside `e2e` folder, creates `firstTest.spec.js` with content similar to [this](/examples/demo-react-native/e2e/example.spec.js).
 
-<br>
-
 ## Step 4: Build your app and run Detox tests
 
 #### 1. Build your app
@@ -195,9 +181,6 @@ That's it. Your first failing Detox test is running!
 
 Next, we'll go over usage and how to make this test [actually pass](Introduction.WritingFirstTest.md).
 
-<br>
-
 ## Step 5: Android Setup
 
 If you haven't already done so - now is the time to set Android up using the [Android guide](Introduction.Android.md).
-

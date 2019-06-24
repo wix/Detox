@@ -1,7 +1,4 @@
----
-id: Guide.Jest
-title: Jest
----
+# Jest
 
 ## Disclaimer
 
@@ -48,13 +45,9 @@ Even if `detox init` goes well and everything is green, we recommend going over 
 |                                                              | `reporters`            | ["detox/runners/<br/>jest/streamlineReporter"] | *Optional.* Available since  Detox `12.7.0`. Sets up our highly recommended `streamline-reporter` [Jest reporter](https://jestjs.io/docs/en/configuration#reporters-array-modulename-modulename-options), tailored for running end-to-end tests in Jest - which in itself was mostly intended for running unit tests. For more details, [see the migration guide](Guide.Migration.md#migrating-to-1270-from-older-nonbreaking). |
 |                                                              | `verbose`              | `true`                                         | Must be `true` if you have replaced Jest's `default` reporter with Detox's `streamlineReporter`. Optional otherwise. |
 
-<br>
-
 A typical detox configuration in a `package.json`file:
 
 ![package.json](img/jest-guide/package_json.png)
-
-
 
 ##### b. Fix/verify the custom Jest init script (i.e. [`e2e/init.js`](https://github.com/wix/Detox/blob/master/examples/demo-react-native-jest/e2e/init.js)):
 
@@ -76,15 +69,11 @@ There are some things you should notice:
 - Don't worry about mocks being used, Detox works on the compiled version of your app.
 - Detox exposes it's primitives (`expect`, `device`, ...) globally, it will override Jest's global `expect` object.
 
-
-
 ## Parallel Test Execution
 
 Through Detox' cli, Jest can be started with [multiple workers](Guide.ParallelTestExecution.md) that run tests simultaneously. In this mode, Jest effectively assigns one worker per each test file (invoking Jasmine over it). In this mode, the per-spec logging offered by the `spec-reporter` mentioned earlier, does not necessarily make sense, as the workers' outputs get mixed up.
 
 By default, we disable `spec-reporter` in a multi-workers environment. If you wish to force-enable it nonetheless, the [`--jest-report-specs`](APIRef.DetoxCLI.md#test) CLI option can be used.
-
-
 
 ## How to run unit test and E2E tests in the same project
 

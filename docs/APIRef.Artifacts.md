@@ -1,7 +1,4 @@
----
-id: APIRef.Artifacts
-title: Artifacts
----
+# Artifacts
 
 Artifacts are various recordings during tests including, but not limited to, device logs, device screenshots and screen recordings (videos).
 

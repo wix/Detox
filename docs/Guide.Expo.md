@@ -1,9 +1,6 @@
----
-id: Guide.Expo
-title: Expo
----
+# Expo
 
-## Usage with Expo (iOS)
+### Usage with Expo (iOS)
 
 - Install `detox` 9.0.6 or higher, `detox-expo-helpers` and `expo-detox-hook` (yarn or npm)
 - Add `detox` configuration to [package.json](https://github.com/expo/with-detox-tests/blob/master/package.json#L21-L29):
@@ -35,11 +32,11 @@ beforeEach(async () => {
 });
 ```
 
-## Usage with Expo (Android)
+### Usage with Expo (Android)
 
 - Usage with Android is currently TBD.
 
-## Known issues
+### Known issues
 [Timeout on opening the app](https://github.com/wix/Detox/issues/1422) - Expo not working with detox > 12.3.0
 
 ### Example App

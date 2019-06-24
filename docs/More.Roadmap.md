@@ -1,7 +1,4 @@
----
-id: More.Roadmap
-title: Roadmap
----
+# Roadmap
 
 We have some very interesting plans for Detox, this is the place to discuss and share them.
 

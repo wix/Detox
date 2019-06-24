@@ -1,7 +1,4 @@
----
-id: Introduction.Android
-title: Detox for Android
----
+# Detox for Android
 
 ## Breaking Changes :warning:
 
@@ -17,7 +14,7 @@ title: Detox for Android
 
   https://developer.android.com/studio/build/gradle-plugin-3-0-0-migration.html
 
-  For older Android gradle plugin support use `detox@6.x.x` instead ([previous setup guide here](https://github.com/wix/detox/blob/97654071573053def90e8207be8eba011408f977/docs/Introduction.Android.md)).<br>
+  For older Android gradle plugin support use `detox@6.x.x` instead ([previous setup guide here](https://github.com/wix/detox/blob/97654071573053def90e8207be8eba011408f977/docs/Introduction.Android.md)).
 
   **Note: As a rule of thumb, we consider all old major versions discontinued; We only support the latest Detox major version.**
 
