@@ -11,7 +11,6 @@ describe('WaitFor', () => {
     await expect(element(by.id('createdAndVisibleText'))).toNotExist();
     await element(by.id('GoButton')).tap();
     await waitFor(element(by.id('createdAndVisibleText'))).toExist().withTimeout(20000);
-    await expect(element(by.id('createdAndVisibleText'))).toExist();
   });
 
   it('should wait until an element is removed', async () => {
@@ -36,6 +35,11 @@ describe('WaitFor', () => {
     await element(by.id('GoButton')).tap();
     await waitFor(element(by.text('Text5'))).toBeVisible().whileElement(by.id('ScrollView')).scroll(50, 'down');
     await expect(element(by.text('Text5'))).toBeVisible();
+  });
+
+  it('should fail test after waiting for element to exist but it doesn\'t at the end', async () => {
+    await expect(element(by.id('neverAppearingText'))).toNotExist();
+    await expectToThrow(() => waitFor(element(by.id('neverAppearingText'))).toExist().withTimeout(1000));
   });
 
   it('should abort scrolling if element was not found', async () => {

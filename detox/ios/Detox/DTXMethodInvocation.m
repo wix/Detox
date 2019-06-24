@@ -126,14 +126,21 @@
         res = tempResultSet;
         return res;
     }
+	if([type isEqualToString:@"B"])
+	{
+		BOOL rv;
+		[invocation getReturnValue:&rv];
+		res = [NSNumber numberWithBool:rv];
+		return res;
+	}
     NSUInteger length = [[invocation methodSignature] methodReturnLength];
     void *buffer = (void *)malloc(length);
     [invocation getReturnValue:buffer];
-    if ([type isEqualToString:@"{CGPoint=dd}"])
+    if([type isEqualToString:@"{CGPoint=dd}"])
     {
         res = [NSValue valueWithCGPoint:*(CGPoint*)buffer];
     }
-    if ([type isEqualToString:@"{CGRect={CGPoint=dd}{CGSize=dd}}"])
+    else if([type isEqualToString:@"{CGRect={CGPoint=dd}{CGSize=dd}}"])
     {
         res = [NSValue valueWithCGRect:*(CGRect*)buffer];
     }

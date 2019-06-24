@@ -9,6 +9,7 @@
 #import "TestRunner.h"
 #import "DTXMethodInvocation.h"
 #import "TestFailureHandler.h"
+#import <EarlGrey/GREYError.h>
 
 @interface TestRunner()
 
@@ -61,6 +62,8 @@
     }
 }
 
+extern GREYError* _dtx_elementMatcherError;
+
 - (void)invoke:(NSDictionary*)params withMessageId:(NSNumber *)messageId
 {
 	self.currentMessageId = messageId;
@@ -69,11 +72,20 @@
         {
             if (self.delegate) [self.delegate testRunnerOnError:error withMessageId:messageId];
         }];
-        if (self.currentMessageId != nil)
+		
+		NSString* currentSelector = [params objectForKey:@"method"];
+		
+		if([currentSelector isEqualToString:@"waitWithTimeout:"] && [res boolValue] == NO)
+		{
+			if (self.delegate) [self.delegate testRunnerOnTestFailed:[NSString stringWithFormat:@"%@\n\nElement matcher: %@", _dtx_elementMatcherError.localizedDescription, _dtx_elementMatcherError.errorInfo[@"Element Matcher"]] withMessageId:messageId];
+			_dtx_elementMatcherError = nil;
+		}
+		else if (self.currentMessageId != nil)
         {
             if (self.delegate) [self.delegate testRunnerOnInvokeResult:res withMessageId:messageId];
-            self.currentMessageId = nil;
         }
+		
+		self.currentMessageId = nil;
     });
 }
 
