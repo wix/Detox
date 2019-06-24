@@ -39,14 +39,14 @@ describe('ADB', () => {
     adb = new ADB();
   });
 
-  describe('devices', () => {
+  describe.only('devices', () => {
     it(`should invoke ADB`, async () => {
       await adb.devices();
       expect(exec).toHaveBeenCalledWith(`${adbBinPath}  devices`, { verbosity: 'high' }, undefined, 1);
       expect(exec).toHaveBeenCalledTimes(1);
     });
 
-    it(`should parse emulator devices`, async () => {
+    it.only(`should parse emulator devices`, async () => {
       exec.mockReturnValue({
         stdout: 'List of devices attached\nemulator-5554\tdevice\nemulator-5555\tdevice\n'
       });
