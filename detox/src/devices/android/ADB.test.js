@@ -1,11 +1,9 @@
-
 describe('ADB', () => {
   const mockAndroidSDKPath = '/Android/sdk-mock';
-  const adbBinPath = `${mockAndroidSDKPath}/platform-tools/adb`;
 
-  let mockEmulatorTelnet;
   let ADB;
   let adb;
+  let EmulatorTelnet;
   let exec;
 
   beforeEach(() => {
@@ -14,19 +12,9 @@ describe('ADB', () => {
       getAndroidSDKPath: () => mockAndroidSDKPath,
     }));
 
-    mockEmulatorTelnet = {
-      connect: jest.fn(),
-      quit: jest.fn(),
-      avdName: jest.fn(),
-    };
-    class MockEmulatorTelnet {
-      constructor() {
-        this.connect = mockEmulatorTelnet.connect;
-        this.quit = mockEmulatorTelnet.quit;
-        this.avdName = mockEmulatorTelnet.avdName;
-      }
-    }
-    jest.mock('./EmulatorTelnet', () => MockEmulatorTelnet);
+    jest.mock('./EmulatorTelnet');
+    EmulatorTelnet = require('./EmulatorTelnet');
+
 
     jest.mock('../../utils/exec', () => {
       const exec = jest.fn();
@@ -39,44 +27,10 @@ describe('ADB', () => {
     adb = new ADB();
   });
 
-  describe.only('devices', () => {
-    it(`should invoke ADB`, async () => {
-      await adb.devices();
-      expect(exec).toHaveBeenCalledWith(`${adbBinPath}  devices`, { verbosity: 'high' }, undefined, 1);
-      expect(exec).toHaveBeenCalledTimes(1);
-    });
-
-    it.only(`should parse emulator devices`, async () => {
-      exec.mockReturnValue({
-        stdout: 'List of devices attached\nemulator-5554\tdevice\nemulator-5555\tdevice\n'
-      });
-
-      await adb.devices();
-      expect(mockEmulatorTelnet.connect).toHaveBeenCalledWith("5554");
-    });
-
-    it(`should abort if port can't be parsed`, async () => {
-      exec.mockReturnValue({
-        stdout: 'List of devices attached\nemulator-\tdevice\n'
-      });
-
-      try {
-        await adb.devices();
-        fail('Expected an error');
-      } catch (error) {
-        expect(mockEmulatorTelnet.connect).not.toHaveBeenCalled();
-        expect(error.message).toEqual(`Unable to determine port for emulator device 'emulator-'!`);
-      }
-    });
-
-    it(`should skip if no devices are available`, async () => {
-      exec.mockReturnValue({
-        stdout: 'List of devices attached\n'
-      });
-
-      await adb.devices();
-      expect(mockEmulatorTelnet.connect).not.toHaveBeenCalled();
-    });
+  it(`devices`, async () => {
+    await adb.devices();
+    expect(exec).toHaveBeenCalledWith(`${mockAndroidSDKPath}/platform-tools/adb  devices`, { verbosity: 'high' }, undefined, 1);
+    expect(exec).toHaveBeenCalledTimes(1);
   });
 
   it(`install`, async () => {
