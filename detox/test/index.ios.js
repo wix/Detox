@@ -22,4 +22,5 @@ class exampleIos extends example {
   }
 }
 
+console.disableYellowBox = true;
 AppRegistry.registerComponent('example', () => exampleIos);
