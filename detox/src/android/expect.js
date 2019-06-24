@@ -146,24 +146,23 @@ class MatcherAssertionInteraction extends Interaction {
 }
 
 class WaitForInteraction extends Interaction {
-  constructor(invocationManager, element, matcher) {
+  constructor(invocationManager, element, assertionMatcher) {
     super(invocationManager);
     this._element = element;
-    this._originalMatcher = matcher;
-    // we need to override the original matcher for the element and add matcher to it as well
-    this._element._selectElementWithMatcher(this._element._originalMatcher.and(this._originalMatcher));
+    this._assertionMatcher = assertionMatcher;
+    this._element._selectElementWithMatcher(this._element._originalMatcher);
   }
 
   async withTimeout(timeout) {
     if (typeof timeout !== 'number') throw new Error(`WaitForInteraction withTimeout argument must be a number, got ${typeof timeout}`);
     if (timeout < 0) throw new Error('timeout must be larger than 0');
 
-    this._call = DetoxAssertionApi.waitForAssertMatcher(call(this._element._call), this._originalMatcher._call.value, timeout / 1000);
+    this._call = DetoxAssertionApi.waitForAssertMatcher(call(this._element._call), this._assertionMatcher._call.value, timeout / 1000);
     await this.execute();
   }
 
   whileElement(searchMatcher) {
-    return new WaitForActionInteraction(this._invocationManager, this._element, this._originalMatcher, searchMatcher);
+    return new WaitForActionInteraction(this._invocationManager, this._element, this._assertionMatcher, searchMatcher);
   }
 }
 

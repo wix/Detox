@@ -2,11 +2,8 @@ package com.wix.detox.espresso;
 
 import android.view.View;
 
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
-import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.espresso.matcher.ViewMatchers.Visibility;
 
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
@@ -15,8 +12,11 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayingAtLeast;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
+import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withTagValue;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static com.wix.detox.espresso.matcher.ViewMatchersKt.isMatchingAtIndex;
+import static com.wix.detox.espresso.matcher.ViewMatchersKt.isOfClassName;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.is;
@@ -36,15 +36,15 @@ public class DetoxMatcher {
 
     public static Matcher<View> matcherForText(String text) {
         // return anyOf(withText(text), withContentDescription(text));
-        return allOf(withText(text), ViewMatchers.withEffectiveVisibility(Visibility.VISIBLE));
+        return allOf(withText(text), withEffectiveVisibility(Visibility.VISIBLE));
     }
 
     public static Matcher<View> matcherForContentDescription(String contentDescription) {
-        return allOf(withContentDescription(contentDescription), ViewMatchers.withEffectiveVisibility(Visibility.VISIBLE));
+        return allOf(withContentDescription(contentDescription), withEffectiveVisibility(Visibility.VISIBLE));
     }
 
     public static Matcher<View> matcherForTestId(String testId) {
-        return allOf(withTagValue(is((Object) testId)), ViewMatchers.withEffectiveVisibility(Visibility.VISIBLE));
+        return allOf(withTagValue(is((Object) testId)), withEffectiveVisibility(Visibility.VISIBLE));
     }
 
     public static Matcher<View> matcherForAnd(Matcher<View> m1, Matcher<View> m2) {
@@ -67,34 +67,16 @@ public class DetoxMatcher {
         return allOf(m, hasDescendant(descendantMatcher));
     }
 
-    public static Matcher<View> matcherForClass(final String className) {
-        try {
-            Class cls = Class.forName(className);
-            return allOf(isAssignableFrom(cls), ViewMatchers.withEffectiveVisibility(Visibility.VISIBLE));
-        } catch (ClassNotFoundException e) {
-            // empty
-        }
-        return new BaseMatcher<View>() {
-            @Override
-            public boolean matches(Object item) {
-                return false;
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Class " + className + " not found on classpath. Are you using full class name?");
-            }
-        };
+    public static Matcher<View> matcherForClass(String className) {
+        return isOfClassName(className);
     }
 
     public static Matcher<View> matcherForSufficientlyVisible() {
         return isDisplayingAtLeast(75);
     }
 
-    // Special ViewAssertion is needed for GONE views
-    @Deprecated
     public static Matcher<View> matcherForNotVisible() {
-        return not(isDisplayed());
+        return anyOf(nullValue(), not(isDisplayed()));
     }
 
     public static Matcher<View> matcherForNotNull() {
@@ -106,27 +88,7 @@ public class DetoxMatcher {
     }
 
     public static Matcher<View> matcherForAtIndex(final int index, final Matcher<View> innerMatcher) {
-        return new BaseMatcher<View>() {
-            boolean foundMatch = false;
-            int count = 0;
-
-            @Override
-            public boolean matches(Object item) {
-                if (!innerMatcher.matches(item) || foundMatch) return false;
-
-                if (count == index) {                    
-                    foundMatch = true;
-                    return true;
-                }
-                ++count;
-                return false;
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("matches " + index + "th view.");
-            }
-        };
+        return isMatchingAtIndex(index, innerMatcher);
     }
 
     public static Matcher<View> matcherForAnything() {

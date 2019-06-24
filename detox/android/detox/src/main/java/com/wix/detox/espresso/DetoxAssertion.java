@@ -2,20 +2,20 @@ package com.wix.detox.espresso;
 
 import android.view.View;
 
+import com.wix.detox.espresso.DetoxErrors.DetoxRuntimeException;
 import com.wix.detox.espresso.DetoxErrors.StaleActionException;
 
 import junit.framework.AssertionFailedError;
 
 import org.hamcrest.Matcher;
 
-import androidx.test.espresso.EspressoException;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.ViewInteraction;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static com.wix.detox.espresso.assertion.ViewAssertions.matches;
 import static org.hamcrest.Matchers.not;
 
 /**
@@ -48,25 +48,21 @@ public class DetoxAssertion {
     }
 
     public static void waitForAssertMatcher(final ViewInteraction i, final Matcher<View> m, double timeoutSeconds) {
-        long originTime = System.nanoTime();
-        long currentTime;
+        final long originTime = System.nanoTime();
 
         while (true) {
-            currentTime = System.nanoTime();
+            long currentTime = System.nanoTime();
             long elapsed = currentTime - originTime;
-            double seconds = (double)elapsed / 1000000000.0;
+            double seconds = (double) elapsed / 1000000000.0;
             if (seconds >= timeoutSeconds) {
-                return;
+                throw new DetoxRuntimeException("" + timeoutSeconds + "sec timeout expired without matching of given matcher: " + m);
             }
+
             try {
                 i.check(matches(m));
                 break;
-            } catch (Exception e) {
-                if (e instanceof EspressoException) {
-                    UiAutomatorHelper.espressoSync();
-                } else {
-                    throw e;
-                }
+            } catch (AssertionFailedError err) {
+                UiAutomatorHelper.espressoSync(20);
             }
         }
     }
@@ -81,16 +77,12 @@ public class DetoxAssertion {
             try {
                 assertMatcher(i, vm);
                 break;
-            } catch (Exception e) {
-                if (e instanceof EspressoException) {
-                    try {
-                        onView(searchMatcher).perform(searchAction);
-                    } catch (StaleActionException exStaleAction) {
-                        assertMatcher(i, vm);
-                        break;
-                    }
-                } else {
-                    throw e;
+            } catch (AssertionFailedError err) {
+                try {
+                    onView(searchMatcher).perform(searchAction);
+                } catch (StaleActionException exStaleAction) {
+                    assertMatcher(i, vm);
+                    break;
                 }
             }
         }

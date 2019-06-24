@@ -15,9 +15,19 @@ describe('WaitFor', () => {
   });
 
   it('should wait until an element is removed', async () => {
+    const timeout = 20000;
+
     await expect(element(by.id('deletedFromHierarchyText'))).toBeVisible();
     await element(by.id('GoButton')).tap();
-    await waitFor(element(by.id('deletedFromHierarchyText'))).toBeNotVisible().withTimeout(20000);
+
+    const startTime = new Date().getTime();
+    await waitFor(element(by.id('deletedFromHierarchyText'))).toBeNotVisible().withTimeout(timeout);
+    const endTime = new Date().getTime();
+
+    if (endTime - startTime > timeout) {
+      throw new Error(`Action not expired even after a timeout`);
+    }
+
     await expect(element(by.id('deletedFromHierarchyText'))).toBeNotVisible();
   });
 
