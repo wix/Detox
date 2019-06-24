@@ -43,7 +43,7 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, in
     throw new DetoxRuntimeError(`command ${cmd} returned undefined`);
   }
 
-  _logExecOutput(log, result, verbosity === 'high' ? 'debug' : 'trace');
+  _logExecOutput(log, result, verbosity === 'high' ? 'info' : 'trace');
 
   if (statusLogs && statusLogs.successful) {
     log.debug({ event: 'EXEC_SUCCESS' }, statusLogs.successful);
