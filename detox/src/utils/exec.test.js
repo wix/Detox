@@ -87,8 +87,8 @@ describe('exec', () => {
     mockCppSuccessful(cpp);
     await exec.execWithRetriesAndLogs('bin', { verbosity: 'high' });
 
-    expect(logger.info).toHaveBeenCalledWith({ event: 'EXEC_SUCCESS', stdout: true }, '"successful result"');
-    expect(logger.info).toHaveBeenCalledWith({ event: 'EXEC_SUCCESS', stderr: true }, 'err');
+    expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_SUCCESS', stdout: true }, '"successful result"');
+    expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_SUCCESS', stderr: true }, 'err');
     expect(logger.trace).not.toHaveBeenCalledWith(expect.objectContaining({event: 'EXEC_SUCCESS'}), expect.anything());
   });
 

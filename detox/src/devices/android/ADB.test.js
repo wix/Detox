@@ -14,6 +14,10 @@ describe('ADB', () => {
       getAndroidSDKPath: () => mockAndroidSDKPath,
     }));
 
+    jest.mock('../../utils/encoding', () => ({
+      encodeBase64: (text) => `base64(${text})`,
+    }));
+
     mockEmulatorTelnet = {
       connect: jest.fn(),
       quit: jest.fn(),
@@ -56,8 +60,9 @@ describe('ADB', () => {
     });
 
     it(`should abort if port can't be parsed`, async () => {
+      const adbDevicesResult = 'List of devices attached\nemulator-\tdevice\n';
       exec.mockReturnValue({
-        stdout: 'List of devices attached\nemulator-\tdevice\n'
+        stdout: adbDevicesResult
       });
 
       try {
@@ -65,7 +70,8 @@ describe('ADB', () => {
         fail('Expected an error');
       } catch (error) {
         expect(mockEmulatorTelnet.connect).not.toHaveBeenCalled();
-        expect(error.message).toEqual(`Unable to determine port for emulator device 'emulator-'!`);
+        expect(error.message).toContain(`Failed to determine telnet port for emulator device 'emulator-'!`);
+        expect(error.message).toContain(`base64(${adbDevicesResult})`);
       }
     });
 

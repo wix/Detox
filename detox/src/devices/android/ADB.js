@@ -288,16 +288,19 @@ class ADB {
 }
 
 function _reportTelnetPortResolutionError(input, devicesList, deviceAdbName, port) {
-  const log = require('../../utils/logger').child({ __filename });
   const {encodeBase64} = require('../../utils/encoding');
-  log.error({event: 'DEVICE_NAME_ERROR'}, `Failed to determine port for emulator device '${deviceAdbName}!!!`);
-  log.error({event: 'DEVICE_NAME_ERROR'}, `Please help us out by reporting all DEVICE_NAME_ERROR logs in: https://github.com/wix/Detox/issues/1427`);
-  log.error({event: 'DEVICE_NAME_ERROR'}, `State dump ==>`);
-  log.error({event: 'DEVICE_NAME_ERROR'}, `adb devices: ${input}`);
-  log.error({event: 'DEVICE_NAME_ERROR'}, `adb devices (base64): '${encodeBase64(input)}'`);
-  log.error({event: 'DEVICE_NAME_ERROR'}, `devicesList: ${devicesList}`);
-  log.error({event: 'DEVICE_NAME_ERROR'}, `port: ${port}`);
-  throw new Error(`Unable to determine port for emulator device '${deviceAdbName}'!`);
+  const errorMessage = [
+    `Failed to determine telnet port for emulator device '${deviceAdbName}'!`,
+    `Please help us out by reporting dump below in: https://github.com/wix/Detox/issues/1427`,
+    `------ BEGIN DUMP ------`,
+    `adb devices base64: ${encodeBase64(input)}`,
+    `adb devices: ${input}`,
+    `devicesList: ${devicesList}`,
+    `port: ${port}`,
+    `------  END DUMP  ------`,
+  ].join('\n');
+
+  throw new Error(errorMessage);
 }
 
 module.exports = ADB;
