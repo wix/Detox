@@ -1,5 +1,31 @@
 # Change Log
 
+## [12.11.3](https://github.com/wix/Detox/tree/12.11.3) (2019-06-25)
+[Full Changelog](https://github.com/wix/Detox/compare/12.11.2...12.11.3)
+
+**Enhancements**
+
+- Table of contents in documentation [\#1449](https://github.com/wix/Detox/issues/1449)
+- Upgrade to RN 0.59.9 to support Xcode 11 [\#1472](https://github.com/wix/Detox/pull/1472) ([LeoNatan](https://github.com/LeoNatan))
+
+**Fixed Bugs**
+
+- \(Android\) optimize waitFor\(\) + toBeNotVisible\(\) + withTimeout\(\) combo [\#1463](https://github.com/wix/Detox/issues/1463)
+
+**Closed Issues**
+
+- Can't find a simulator to match with... [\#1469](https://github.com/wix/Detox/issues/1469)
+- Allow disabling of post install with env var [\#1338](https://github.com/wix/Detox/issues/1338)
+- Detox tests hang on detox.init\(\) [\#1288](https://github.com/wix/Detox/issues/1288)
+
+**Merged Pull Requests**
+
+- \(Android\) Improve reporting of 'adb devices' for \#1427 [\#1474](https://github.com/wix/Detox/pull/1474) ([d4vidi](https://github.com/d4vidi))
+- \(Android\) Fix a unidentified non-visibility matching when using waitFor\(\) [\#1471](https://github.com/wix/Detox/pull/1471) ([d4vidi](https://github.com/d4vidi))
+- Update Guide.Expo.md [\#1470](https://github.com/wix/Detox/pull/1470) ([yaron1m](https://github.com/yaron1m))
+- Updating Guide.Mocking with Metro breaking changes [\#1440](https://github.com/wix/Detox/pull/1440) ([antonabyzov](https://github.com/antonabyzov))
+- feat: allow disabling of post install with env var [\#1347](https://github.com/wix/Detox/pull/1347) ([noomorph](https://github.com/noomorph))
+
 ## [12.11.2](https://github.com/wix/Detox/tree/12.11.2) (2019-06-21)
 [Full Changelog](https://github.com/wix/Detox/compare/12.11.1...12.11.2)
 
