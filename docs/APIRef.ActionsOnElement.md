@@ -140,8 +140,8 @@ value - string value to set in column
 
 ```js
 await expect(element(by.type('UIPickerView'))).toBeVisible();
-await element(by.type('UIPickerView')).setColumnToValue(1,"6");
-await element(by.type('UIPickerView')).setColumnToValue(2,"34");
+await element(by.type('UIPickerView')).setColumnToValue(0,"6");
+await element(by.type('UIPickerView')).setColumnToValue(1,"34");
 ```
 
 ### `pinchWithAngle(direction, speed, angle)`  iOS only
