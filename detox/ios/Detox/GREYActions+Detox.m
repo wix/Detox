@@ -27,8 +27,6 @@
 
 @end
 
-extern void AudioServicesPlaySystemSoundWithOptions(SystemSoundID inSystemSoundID, NSDictionary* options, void (^__nullable inCompletionBlock)(void));
-
 static void _DTXTypeText(NSString* text)
 {
 	static dispatch_once_t onceToken;
@@ -45,12 +43,10 @@ static void _DTXTypeText(NSString* text)
 		
 		[UIKeyboardImpl.sharedInstance.taskQueue performTask:^(id ctx) {
 			[UIKeyboardImpl.sharedInstance handleKeyWithString:grapheme forKeyEvent:nil executionContext:ctx];
-			
-			NSDictionary* options = @{@"PlaySystemSoundOption_Flags": @2};
-			
+					
 			NSArray* sounds = @[@1104, @1155, @1156];
 			
-			AudioServicesPlaySystemSoundWithOptions([sounds[grapheme.hash % 3] unsignedIntValue], options, nil);
+			AudioServicesPlaySystemSound([sounds[grapheme.hash % 3] unsignedIntValue]);
 		}];
 		[UIKeyboardImpl.sharedInstance.taskQueue waitUntilAllTasksAreFinished];
 		

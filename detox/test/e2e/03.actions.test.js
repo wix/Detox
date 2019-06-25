@@ -31,7 +31,7 @@ describe('Actions', () => {
     await expect(element(by.id('UniqueId819'))).toHaveText('Taps: 1');
   });
 
-  it.only('should type in an element', async () => {
+  it('should type in an element', async () => {
     let typedText = 'Type Working 123 אֱבּג абв!!!';
     await element(by.id('UniqueId937')).tap();
     await element(by.id('UniqueId937')).typeText(typedText);
@@ -39,10 +39,11 @@ describe('Actions', () => {
   });
 
   it('should press the backspace key on an element', async () => {
+    let typedText = 'Test';
     await element(by.id('UniqueId937')).tap();
-    await element(by.id('UniqueId937')).typeText('testx');
+    await element(by.id('UniqueId937')).typeText(typedText + 'x');
     await element(by.id('UniqueId937')).tapBackspaceKey();
-    await expect(element(by.text('test'))).toBeVisible();
+    await expect(element(by.text(typedText))).toBeVisible();
   });
 
   it('should press the return key on an element', async () => {
