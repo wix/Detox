@@ -20,9 +20,9 @@ Actions are functions that emulate user behavior. They are being performed on ma
 - [`.scroll()`](#scrollpixels-direction)
 - [`.scrollTo()`](#scrolltoedge)
 - [`.swipe()`](#swipedirection-speed-percentage)
-- [`.setColumnToValue()`](#setcolumntovaluecolumnvalue--ios-only) **iOS only**
-- [`.pinchWithAngle()`](#pinchWithAngle--ios-only) **iOS only**
-- [`.setDatePickerDate()`](#setdatepickerdate--ios-only) **iOS only**
+- [`.setColumnToValue()`](#setcolumntovaluecolumn-value--ios-only) **iOS only**
+- [`.pinchWithAngle()`](#pinchwithangledirection-speed-angle--ios-only) **iOS only**
+- [`.setDatePickerDate()`](#setdatepickerdatedatestring-dateformat--ios-only) **iOS only**
 
 
 ### `tap()`
