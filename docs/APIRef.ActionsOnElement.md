@@ -144,6 +144,8 @@ await element(by.type('UIPickerView')).setColumnToValue(1,"6");
 await element(by.type('UIPickerView')).setColumnToValue(2,"34");
 ```
 
+>  **Note:** When working with date pickers, you should always set an explicit locale when launching your app in order to prevent flakiness from different date and time styles. See [here](https://github.com/wix/Detox/blob/master/docs/APIRef.DeviceObjectAPI.md#9-launch-with-a-specific-language-ios-only) for more information.
+
 ### `pinchWithAngle(direction, speed, angle)`  iOS only
 
 direction - inward/outward
