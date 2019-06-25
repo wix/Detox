@@ -66,6 +66,10 @@ class ADB {
       let device;
       if (this.isEmulator(deviceAdbName)) {
         const port = _.split(deviceAdbName, '-')[1];
+        if (!port) {
+          _reportTelnetPortResolutionError(input, devicesList, deviceAdbName, port);
+        }
+
         const telnet = new EmulatorTelnet();
         await telnet.connect(port);
         const name = await telnet.avdName();
@@ -103,7 +107,7 @@ class ADB {
 
   async install(deviceId, apkPath) {
     apkPath = `"${escape.inQuotedString(apkPath)}"`;
-    
+
     const apiLvl = await this.apiLevel(deviceId);
 
     let childProcess;
@@ -281,6 +285,22 @@ class ADB {
     const serial = deviceId ? ['-s', deviceId] : [];
     return spawnAndLog(this.adbBin, [...serial, ...params]);
   }
+}
+
+function _reportTelnetPortResolutionError(input, devicesList, deviceAdbName, port) {
+  const {encodeBase64} = require('../../utils/encoding');
+  const errorMessage = [
+    `Failed to determine telnet port for emulator device '${deviceAdbName}'!`,
+    `Please help us out by reporting dump below in: https://github.com/wix/Detox/issues/1427`,
+    `------ BEGIN DUMP ------`,
+    `adb devices base64: ${encodeBase64(input)}`,
+    `adb devices: ${input}`,
+    `devicesList: ${devicesList}`,
+    `port: ${port}`,
+    `------  END DUMP  ------`,
+  ].join('\n');
+
+  throw new Error(errorMessage);
 }
 
 module.exports = ADB;
