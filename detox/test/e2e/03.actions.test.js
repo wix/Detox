@@ -31,10 +31,11 @@ describe('Actions', () => {
     await expect(element(by.id('UniqueId819'))).toHaveText('Taps: 1');
   });
 
-  it('should type in an element', async () => {
+  it.only('should type in an element', async () => {
+    let typedText = 'Type Working 123 אֱבּג абв!!!';
     await element(by.id('UniqueId937')).tap();
-    await element(by.id('UniqueId937')).typeText('passcode');
-    await expect(element(by.text('Type Working!!!'))).toBeVisible();
+    await element(by.id('UniqueId937')).typeText(typedText);
+    await expect(element(by.text(typedText))).toBeVisible();
   });
 
   it('should press the backspace key on an element', async () => {

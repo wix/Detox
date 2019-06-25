@@ -9,8 +9,87 @@
 #import <Foundation/Foundation.h>
 #import "GREYActions+Detox.h"
 #import <EarlGrey/GREYActions.h>
+@import AudioToolbox;
+@import ObjectiveC;
+
+@interface UIKeyboardTaskQueue : NSObject
+
+- (void)performTask:(void (^)(id ctx))arg1;
+- (void)waitUntilAllTasksAreFinished;
+
+@end
+
+@interface UIKeyboardImpl : UIView
+
++ (instancetype)sharedInstance;
+@property(readonly, nonatomic) UIKeyboardTaskQueue *taskQueue;
+- (void)handleKeyWithString:(id)arg1 forKeyEvent:(id)arg2 executionContext:(id)arg3;
+
+@end
+
+extern void AudioServicesPlaySystemSoundWithOptions(SystemSoundID inSystemSoundID, NSDictionary* options, void (^__nullable inCompletionBlock)(void));
+
+static void _DTXTypeText(NSString* text)
+{
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		srand48(time(0));
+	});
+	
+	NSUInteger rangeIdx = 0;
+	while (rangeIdx < text.length)
+	{
+		NSRange range = [text rangeOfComposedCharacterSequenceAtIndex:rangeIdx];
+		
+		NSString* grapheme = [text substringWithRange:range];
+		
+		[UIKeyboardImpl.sharedInstance.taskQueue performTask:^(id ctx) {
+			[UIKeyboardImpl.sharedInstance handleKeyWithString:grapheme forKeyEvent:nil executionContext:ctx];
+			
+			NSDictionary* options = @{@"PlaySystemSoundOption_Flags": @2};
+			
+			NSArray* sounds = @[@1104, @1155, @1156];
+			
+			AudioServicesPlaySystemSoundWithOptions([sounds[grapheme.hash % 3] unsignedIntValue], options, nil);
+		}];
+		[UIKeyboardImpl.sharedInstance.taskQueue waitUntilAllTasksAreFinished];
+		
+		[NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+		
+		rangeIdx += range.length;
+	}
+}
 
 @implementation GREYActions (Detox)
+
++ (void)load
+{
+	Method m = class_getClassMethod(self, NSSelectorFromString(@"actionForTypeText:"));
+	method_setImplementation(m, imp_implementationWithBlock(^(id _self, NSString* text) {
+		return [self dtx_actionForTypeText:text];
+	}));
+}
+
++ (id<GREYAction>)dtx_actionForTypeText:(NSString *)text
+{
+	return [GREYActionBlock actionWithName:[NSString stringWithFormat:@"Type '%@'", text]
+							   constraints:grey_not(grey_systemAlertViewShown())
+							  performBlock:^BOOL (UIView * expectedFirstResponderView, __strong NSError **errorOrNil) {
+								  // If expectedFirstResponderView or one of its ancestors isn't the first responder, tap on
+								  // it so it becomes the first responder.
+								  if (![expectedFirstResponderView isFirstResponder] &&
+									  ![grey_ancestor(grey_firstResponder()) matches:expectedFirstResponderView]) {
+									  // Tap on the element to make expectedFirstResponderView a first responder.
+									  if (![[GREYActions actionForTap] perform:expectedFirstResponderView error:errorOrNil]) {
+										  return NO;
+									  }
+								  }
+								  
+								  _DTXTypeText(text);
+								  
+								  return YES;
+							  }];
+}
 
 + (id<GREYAction>)detoxSetDatePickerDate:(NSString *)dateString withFormat:(NSString *)dateFormat
 {
