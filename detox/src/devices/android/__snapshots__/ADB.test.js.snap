@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ADB devices should abort if port can't be parsed 1`] = `
+"Failed to determine port for emulator device \\"emulator-\\"
+Please help us out by reporting dump below in: https://github.com/wix/Detox/issues/1427
+The dump below just contains base64-encoded output of \\"adb devices\\"
+------BEGIN DUMP------
+TGlzdCBvZiBkZXZpY2VzIGF0dGFjaGVkCmVtdWxhdG9yLQlkZXZpY2UK
+------END DUMP------"
+`;

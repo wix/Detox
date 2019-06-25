@@ -5,6 +5,7 @@ const {escape} = require('../../utils/pipeCommands');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const EmulatorTelnet = require('./EmulatorTelnet');
 const Environment = require('../../utils/environment');
+const {encodeBase64} = require('../../utils/encoding');
 
 class ADB {
   constructor() {
@@ -67,7 +68,7 @@ class ADB {
       if (this.isEmulator(deviceAdbName)) {
         const port = _.split(deviceAdbName, '-')[1];
         if (!port) {
-          _reportTelnetPortResolutionError(input, devicesList, deviceAdbName, port);
+          _reportTelnetPortResolutionError(input, deviceAdbName);
         }
 
         const telnet = new EmulatorTelnet();
@@ -287,17 +288,17 @@ class ADB {
   }
 }
 
-function _reportTelnetPortResolutionError(input, devicesList, deviceAdbName, port) {
-  const log = require('../../utils/logger').child({ __filename });
-  const {encodeBase64} = require('../../utils/encoding');
-  log.error({event: 'DEVICE_NAME_ERROR'}, `Failed to determine port for emulator device '${deviceAdbName}!!!`);
-  log.error({event: 'DEVICE_NAME_ERROR'}, `Please help us out by reporting all DEVICE_NAME_ERROR logs in: https://github.com/wix/Detox/issues/1427`);
-  log.error({event: 'DEVICE_NAME_ERROR'}, `State dump ==>`);
-  log.error({event: 'DEVICE_NAME_ERROR'}, `adb devices: ${input}`);
-  log.error({event: 'DEVICE_NAME_ERROR'}, `adb devices (base64): '${encodeBase64(input)}'`);
-  log.error({event: 'DEVICE_NAME_ERROR'}, `devicesList: ${devicesList}`);
-  log.error({event: 'DEVICE_NAME_ERROR'}, `port: ${port}`);
-  throw new Error(`Unable to determine port for emulator device '${deviceAdbName}'!`);
+function _reportTelnetPortResolutionError(input, deviceAdbName) {
+  const errorMessage = [
+    `Failed to determine port for emulator device "${deviceAdbName}"`,
+    `Please help us out by reporting dump below in: https://github.com/wix/Detox/issues/1427`,
+    `The dump below just contains base64-encoded output of "adb devices"`,
+    `------BEGIN DUMP------`,
+    encodeBase64(input),
+    `------END DUMP------`,
+  ].join('\n');
+
+  throw new Error(errorMessage);
 }
 
 module.exports = ADB;

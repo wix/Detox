@@ -65,7 +65,7 @@ describe('ADB', () => {
         fail('Expected an error');
       } catch (error) {
         expect(mockEmulatorTelnet.connect).not.toHaveBeenCalled();
-        expect(error.message).toEqual(`Unable to determine port for emulator device 'emulator-'!`);
+        expect(error.message).toMatchSnapshot();
       }
     });
 
