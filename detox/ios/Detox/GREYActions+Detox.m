@@ -24,6 +24,7 @@
 + (instancetype)sharedInstance;
 @property(readonly, nonatomic) UIKeyboardTaskQueue *taskQueue;
 - (void)handleKeyWithString:(id)arg1 forKeyEvent:(id)arg2 executionContext:(id)arg3;
+- (void)setShift:(_Bool)arg1 autoshift:(_Bool)arg2;
 
 @end
 
@@ -33,6 +34,8 @@ static void _DTXTypeText(NSString* text)
 	dispatch_once(&onceToken, ^{
 		srand48(time(0));
 	});
+	
+	[UIKeyboardImpl.sharedInstance setShift:NO autoshift:NO];
 	
 	NSUInteger rangeIdx = 0;
 	while (rangeIdx < text.length)
@@ -70,7 +73,7 @@ static void _DTXTypeText(NSString* text)
 {
 	return [GREYActionBlock actionWithName:[NSString stringWithFormat:@"Type '%@'", text]
 							   constraints:grey_not(grey_systemAlertViewShown())
-							  performBlock:^BOOL (UIView * expectedFirstResponderView, __strong NSError **errorOrNil) {
+							  performBlock:^BOOL (UIView* expectedFirstResponderView, __strong NSError **errorOrNil) {
 								  // If expectedFirstResponderView or one of its ancestors isn't the first responder, tap on
 								  // it so it becomes the first responder.
 								  if (![expectedFirstResponderView isFirstResponder] &&

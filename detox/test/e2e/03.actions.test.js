@@ -39,7 +39,7 @@ describe('Actions', () => {
   });
 
   it('should press the backspace key on an element', async () => {
-    let typedText = 'Test';
+    let typedText = 'test';
     await element(by.id('UniqueId937')).tap();
     await element(by.id('UniqueId937')).typeText(typedText + 'x');
     await element(by.id('UniqueId937')).tapBackspaceKey();
