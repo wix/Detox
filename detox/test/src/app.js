@@ -53,6 +53,7 @@ class example extends Component {
   async componentDidMount() {
     const url = await Linking.getInitialURL();
     if (url) {
+      console.log('App@didMount: Found pending URL', url);
       this.setState({url: url});
     }
   }
@@ -63,7 +64,7 @@ class example extends Component {
 
   render() {
     if (this.state.notification) {
-      console.log("notification:", this.state.notification);
+      console.log("App@render: rendering a notification", this.state.notification);
       if (this.state.notification.title) {
         return this.renderText(this.state.notification.title);
       } else {
@@ -73,12 +74,12 @@ class example extends Component {
     }
 
     else if (this.state.url) {
-      console.log("url:", this.state.url);
+      console.log("App@render: rendering a URL:", this.state.url);
       return this.renderText(this.state.url);
     }
 
     if (!this.state.screen) {
-		console.log("JS rendering");
+		  console.log("App@render: JS rendering main screen");
       return (
         <View style={{flex: 1, paddingTop: 10, justifyContent: 'center', alignItems: 'center'}}>
           <Text style={{fontSize: 20, marginBottom: 10}}>
@@ -115,12 +116,12 @@ class example extends Component {
   }
 
   _onNotification(notification) {
-    console.log("onNotification:", notification);
+    console.log('App@onNotification:', notification);
     this.setState({notification: notification.getAlert()});
   }
 
   _handleOpenURL(params) {
-    console.log("handleOpenURL:", params);
+    console.log('App@handleOpenURL:', params);
     this.setState({url: params.url});
   }
 }
