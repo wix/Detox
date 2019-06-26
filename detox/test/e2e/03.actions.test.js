@@ -32,16 +32,18 @@ describe('Actions', () => {
   });
 
   it('should type in an element', async () => {
+    let typedText = device.getPlatform() === 'ios' ? 'Type Working 123 אֱבּג абв!!!' : "Type Working!!!";
     await element(by.id('UniqueId937')).tap();
-    await element(by.id('UniqueId937')).typeText('passcode');
-    await expect(element(by.text('Type Working!!!'))).toBeVisible();
+    await element(by.id('UniqueId937')).typeText(typedText);
+    await expect(element(by.text(typedText))).toBeVisible();
   });
 
   it('should press the backspace key on an element', async () => {
+    let typedText = 'test';
     await element(by.id('UniqueId937')).tap();
-    await element(by.id('UniqueId937')).typeText('testx');
+    await element(by.id('UniqueId937')).typeText(typedText + 'x');
     await element(by.id('UniqueId937')).tapBackspaceKey();
-    await expect(element(by.text('test'))).toBeVisible();
+    await expect(element(by.text(typedText))).toBeVisible();
   });
 
   it('should press the return key on an element', async () => {
