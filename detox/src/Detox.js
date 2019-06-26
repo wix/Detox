@@ -159,7 +159,7 @@ class Detox {
 
   async _dumpUnhandledErrorsIfAny({ testName, pendingRequests }) {
     if (pendingRequests) {
-      this._client.dumpPendingRequests();
+      this._client.dumpPendingRequests({testName});
     }
 
     const pendingAppCrash = this._client.getPendingCrashAndReset();

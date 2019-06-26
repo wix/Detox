@@ -137,8 +137,11 @@ class Client {
     }, this.slowInvocationTimeout);
   }
 
-  dumpPendingRequests() {
-    const messages = _.values(this.ws.inFlightPromises).map(p => p.message);
+  dumpPendingRequests({testName} = {}) {
+    const messages = _.values(this.ws.inFlightPromises)
+      .map(p => p.message)
+      .filter(m => m.type !== 'currentStatus');
+
     if (_.isEmpty(messages)) {
       return;
     }
@@ -147,7 +150,12 @@ class Client {
     for (const msg of messages) {
       dump += `\n  (id = ${msg.messageId}) ${msg.type}: ${JSON.stringify(msg.params)}`;
     }
-    dump += '\n\nThat might be a reason to why your test suite fails with a timeout error.\n';
+
+    const notice = testName
+      ? `That might be the reason why the test "${testName}" has timed out.`
+      : `Unresponded network requests might result in timeout errors in Detox tests.`;
+
+    dump += `\n\n${notice}\n`;
 
     log.warn({ event: 'PENDING_REQUESTS'}, dump);
     this.ws.resetInFlightPromises();
