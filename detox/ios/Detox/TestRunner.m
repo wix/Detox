@@ -9,6 +9,7 @@
 #import "TestRunner.h"
 #import "DTXMethodInvocation.h"
 #import "TestFailureHandler.h"
+#import <EarlGrey/GREYError.h>
 
 @interface TestRunner()
 
@@ -22,59 +23,70 @@
 
 - (void)initEarlGrey
 {
-    [EarlGrey setFailureHandler:self.failureHandler];
-    [[GREYConfiguration sharedInstance] setValue:@(NO) forConfigKey:kGREYConfigKeyAnalyticsEnabled];
-    //[[GREYConfiguration sharedInstance] setValue:@".*localhost.*" forConfigKey:kGREYConfigKeyURLBlacklistRegex];
+	[EarlGrey setFailureHandler:self.failureHandler];
+	[[GREYConfiguration sharedInstance] setValue:@(NO) forConfigKey:kGREYConfigKeyAnalyticsEnabled];
+	//[[GREYConfiguration sharedInstance] setValue:@".*localhost.*" forConfigKey:kGREYConfigKeyURLBlacklistRegex];
 }
 
 - (void)cleanupEarlGrey
 {
-    // this triggers grey_tearDown in GREYAutomationSetup
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"GREYXCTestCaseInstanceDidFinish"
-                                                        object:self
-                                                      userInfo:nil];
+	// this triggers grey_tearDown in GREYAutomationSetup
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"GREYXCTestCaseInstanceDidFinish"
+														object:self
+													  userInfo:nil];
 }
 
 - (instancetype)init
 {
-    self = [super init];
-    if (self == nil) return nil;
-    
-    self.failureHandler = [[TestFailureHandler alloc] init];
-    self.failureHandler.delegate = self;
-    self.currentMessageId = nil;
-    [self initEarlGrey];
-    
-    return self;
+	self = [super init];
+	if (self == nil) return nil;
+	
+	self.failureHandler = [[TestFailureHandler alloc] init];
+	self.failureHandler.delegate = self;
+	self.currentMessageId = nil;
+	[self initEarlGrey];
+	
+	return self;
 }
 
 - (void)cleanup
 {
-    [self cleanupEarlGrey];
+	[self cleanupEarlGrey];
 }
 
 - (void)onTestFailed:(NSString *)details {
-    if (self.currentMessageId != nil)
-    {
-        if (self.delegate) [self.delegate testRunnerOnTestFailed:details withMessageId:self.currentMessageId];
-        self.currentMessageId = nil;
-    }
+	if (self.currentMessageId != nil)
+	{
+		if (self.delegate) [self.delegate testRunnerOnTestFailed:details withMessageId:self.currentMessageId];
+		self.currentMessageId = nil;
+	}
 }
+
+extern GREYError* _dtx_elementMatcherError;
 
 - (void)invoke:(NSDictionary*)params withMessageId:(NSNumber *)messageId
 {
 	self.currentMessageId = messageId;
-    grey_execute_async(^{
-        id res = [DTXMethodInvocation invoke:params onError:^(NSString *error)
-        {
-            if (self.delegate) [self.delegate testRunnerOnError:error withMessageId:messageId];
-        }];
-        if (self.currentMessageId != nil)
-        {
-            if (self.delegate) [self.delegate testRunnerOnInvokeResult:res withMessageId:messageId];
-            self.currentMessageId = nil;
-        }
-    });
+	grey_execute_async(^{
+		id res = [DTXMethodInvocation invoke:params onError:^(NSString *error)
+				  {
+					  if (self.delegate) [self.delegate testRunnerOnError:error withMessageId:messageId];
+				  }];
+		
+		NSString* currentSelector = [params objectForKey:@"method"];
+		
+		if([currentSelector isEqualToString:@"waitWithTimeout:"] && [res boolValue] == NO)
+		{
+			if (self.delegate) [self.delegate testRunnerOnTestFailed:[NSString stringWithFormat:@"%@\n\nElement matcher: %@", _dtx_elementMatcherError.localizedDescription, _dtx_elementMatcherError.errorInfo[@"Element Matcher"]] withMessageId:messageId];
+			_dtx_elementMatcherError = nil;
+		}
+		else if (self.currentMessageId != nil)
+		{
+			if (self.delegate) [self.delegate testRunnerOnInvokeResult:res withMessageId:messageId];
+		}
+		
+		self.currentMessageId = nil;
+	});
 }
 
 /*
@@ -94,6 +106,6 @@
  
  });
  
-*/
+ */
 
 @end
