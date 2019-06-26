@@ -72,9 +72,11 @@ static void _DTXTypeText(NSString* text)
 								  // If expectedFirstResponderView or one of its ancestors isn't the first responder, tap on
 								  // it so it becomes the first responder.
 								  if (![expectedFirstResponderView isFirstResponder] &&
-									  ![grey_ancestor(grey_firstResponder()) matches:expectedFirstResponderView]) {
+									  ![grey_ancestor(grey_firstResponder()) matches:expectedFirstResponderView]) 
+								  {
 									  // Tap on the element to make expectedFirstResponderView a first responder.
-									  if (![[GREYActions actionForTap] perform:expectedFirstResponderView error:errorOrNil]) {
+									  if (![[GREYActions actionForTap] perform:expectedFirstResponderView error:errorOrNil]) 
+									  {
 										  return NO;
 									  }
 								  }
