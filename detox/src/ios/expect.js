@@ -282,10 +282,14 @@ class Element {
   _selectElementWithMatcher(matcher) {
     if (!(matcher instanceof Matcher)) throw new Error(`Element _selectElementWithMatcher argument must be a valid Matcher, got ${typeof matcher}`);
     this._call = invoke.call(invoke.EarlGrey.instance, 'detox_selectElementWithMatcher:', matcher._call);
+    if(this._atIndex !== undefined) {
+      this.atIndex(this._atIndex);
+    }
   }
   atIndex(index) {
     if (typeof index !== 'number') throw new Error(`Element atIndex argument must be a number, got ${typeof index}`);
     const _originalCall = this._call;
+    this._atIndex = index;
     this._call = invoke.call(_originalCall, 'atIndex:', invoke.IOS.NSInteger(index));
     return this;
   }
