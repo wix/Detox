@@ -104,7 +104,8 @@
       "src/android/espressoapi",
       "appdatapath.js",
       ".test.js",
-      ".mock.js"
+      ".mock.js",
+	  "src/ios/expect.js"
     ],
     "resetMocks": true,
     "resetModules": true,

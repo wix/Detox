@@ -19,6 +19,11 @@ describe('Matchers', () => {
     await element(by.text('Index')).atIndex(index).tap();
     await expect(element(by.text('First button pressed!!!'))).toBeVisible();
   });
+  
+  it('should be able to swipe elements matched by index', async () => {
+    const index = device.getPlatform() === 'ios' ? 2 : 0;
+    await element(by.text('Index')).atIndex(index).swipe('down', 'fast', 0.7); //No need to do here anything, just let it not crash.
+  });
 
   it('should match elements by type (native class)', async () => {
     const byType = device.getPlatform() === 'ios' ? by.type('RCTImageView') : by.type('android.widget.ImageView');
