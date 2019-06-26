@@ -1,4 +1,5 @@
 const tempfile = require('tempfile');
+const actions = require('./actions/actions');
 const config = require('../configurations.mock').validOneDeviceAndSession.session;
 const invoke = require('../invoke');
 
@@ -7,6 +8,7 @@ describe('Client', () => {
   let WebSocket;
   let Client;
   let client;
+  let log;
 
   beforeEach(() => {
     jest.mock('../utils/logger');
@@ -16,6 +18,7 @@ describe('Client', () => {
     argparse = require('../utils/argparse');
 
     Client = require('./Client');
+    log = require('../utils/logger');
   });
 
   it(`reloadReactNative() - should receive ready from device and resolve`, async () => {
@@ -226,6 +229,53 @@ describe('Client', () => {
     } catch (ex) {
       expect(ex).toBeDefined();
     }
+  });
+
+  it(`dumpPendingRequests() - should not dump if no pending requests`, async () => {
+    await connect();
+    client.dumpPendingRequests();
+    expect(log.warn).not.toHaveBeenCalled();
+  });
+
+  it(`dumpPendingRequests() - should not dump if there are only currentStatus requests (debug-synchronization)`, async () => {
+    await connect();
+
+    const currentStatus = { message: new actions.CurrentStatus(), resolve: jest.fn(), reject: jest.fn() };
+    client.ws.inFlightPromises = {
+      [currentStatus.message.messageId]: currentStatus
+    };
+
+    client.dumpPendingRequests();
+    expect(log.warn).not.toHaveBeenCalled();
+  });
+
+  describe('dumpPendingRequests() - if there are pending requests -', () => {
+    beforeEach(async () => {
+      await connect();
+
+      const cleanup = { message: new actions.Cleanup(), resolve: jest.fn(), reject: jest.fn() };
+      client.ws.inFlightPromises = {
+        [cleanup.message.messageId]: cleanup
+      };
+    });
+
+    it(`should dump generic message if not testName is specified`, async () => {
+      client.dumpPendingRequests();
+      expect(log.warn.mock.calls[0]).toMatchSnapshot();
+      expect(log.warn.mock.calls[0][1]).toMatch(/Unresponded network requests/);
+    });
+
+    it(`should dump specific message if testName is specified`, async () => {
+      client.dumpPendingRequests({testName: "Login screen should log in"});
+      expect(log.warn.mock.calls[0]).toMatchSnapshot();
+      expect(log.warn.mock.calls[0][1]).toMatch(/Login screen should log in/);
+    });
+
+    it(`should reset in flight promises`, async () => {
+      expect(client.ws.resetInFlightPromises).not.toHaveBeenCalled();
+      client.dumpPendingRequests();
+      expect(client.ws.resetInFlightPromises).toHaveBeenCalled();
+    });
   });
 
   it(`save a pending error if AppWillTerminateWithError event is sent to tester`, async () => {

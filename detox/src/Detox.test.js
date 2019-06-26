@@ -166,6 +166,27 @@ describe('Detox', () => {
     expect(device.launchApp).toHaveBeenCalledTimes(1);
   });
 
+  it(`handleAppCrash should not dump pending requests if testSummary has no timeout flag`, async () => {
+    Detox = require('./Detox');
+    detox = new Detox({deviceConfig: validDeviceConfigWithSession});
+    const testSummary = { title: 'test', fullName: 'suite - test', status: 'failed' };
+
+    await detox.init();
+    await detox.afterEach(testSummary);
+
+    expect(detox._client.dumpPendingRequests).not.toHaveBeenCalled();
+  });
+
+  it(`handleAppCrash should dump pending requests if testSummary has timeout flag`, async () => {
+    Detox = require('./Detox');
+    detox = new Detox({deviceConfig: validDeviceConfigWithSession});
+    const testSummary = { title: 'test', fullName: 'suite - test', status: 'failed', timedOut: true };
+
+    await detox.init();
+    await detox.afterEach(testSummary);
+    expect(detox._client.dumpPendingRequests).toHaveBeenCalled();
+  });
+
   describe('.artifactsManager', () => {
     let artifactsManager;
 

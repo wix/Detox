@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const DetoxRuntimeError = require('../../src/errors/DetoxRuntimeError');
 
 class DetoxJestAdapter /* implements JasmineReporter */ {
@@ -60,9 +61,18 @@ class DetoxJestAdapter /* implements JasmineReporter */ {
       title: result.description,
       fullName: result.fullName,
       status: result.status,
+      timedOut: this._hasTimedOut(result),
     };
 
     this._enqueue(() => this._afterEach(spec));
+  }
+
+  _hasTimedOut(result) {
+    return _.chain(result.failedExpectations)
+      .map('error')
+      .compact()
+      .some(e => _.includes(e.message, 'Timeout'))
+      .value();
   }
 
   _enqueue(fn) {

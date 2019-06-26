@@ -59,7 +59,7 @@ class AsyncWebSocket {
 
     return new Promise(async(resolve, reject) => {
       message.messageId = messageId || this.messageIdCounter++;
-      this.inFlightPromises[message.messageId] = {resolve, reject};
+      this.inFlightPromises[message.messageId] = {message, resolve, reject};
       const messageAsString = JSON.stringify(message);
       this.log.trace({ event: 'WEBSOCKET_SEND' }, `${messageAsString}`);
       this.ws.send(messageAsString);
@@ -94,6 +94,12 @@ class AsyncWebSocket {
       return false;
     }
     return this.ws.readyState === WebSocket.OPEN;
+  }
+
+  resetInFlightPromises() {
+    _.forEach(this.inFlightPromises, (_, messageId) => {
+      delete this.inFlightPromises[messageId];
+    });
   }
 
   rejectAll(error) {

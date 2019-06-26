@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Client dumpPendingRequests() - if there are pending requests - should dump generic message if not testName is specified 1`] = `
+Array [
+  Object {
+    "event": "PENDING_REQUESTS",
+  },
+  "App has not responded to the network requests below:
+  (id = -49642) cleanup: {}
+
+Unresponded network requests might result in timeout errors in Detox tests.
+",
+]
+`;
+
+exports[`Client dumpPendingRequests() - if there are pending requests - should dump specific message if testName is specified 1`] = `
+Array [
+  Object {
+    "event": "PENDING_REQUESTS",
+  },
+  "App has not responded to the network requests below:
+  (id = -49642) cleanup: {}
+
+That might be the reason why the test \\"Login screen should log in\\" has timed out.
+",
+]
+`;

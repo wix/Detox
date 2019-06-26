@@ -2,6 +2,7 @@ const _ = require('lodash');
 const AsyncWebSocket = require('./AsyncWebSocket');
 const actions = require('./actions/actions');
 const argparse = require('../utils/argparse');
+const log = require('../utils/logger').child({ __filename });
 
 class Client {
   constructor(config) {
@@ -134,6 +135,30 @@ class Client {
         this.slowInvocationStatusHandler = this.slowInvocationStatus();
       }
     }, this.slowInvocationTimeout);
+  }
+
+  dumpPendingRequests({testName} = {}) {
+    const messages = _.values(this.ws.inFlightPromises)
+      .map(p => p.message)
+      .filter(m => m.type !== 'currentStatus');
+
+    if (_.isEmpty(messages)) {
+      return;
+    }
+
+    let dump = 'App has not responded to the network requests below:';
+    for (const msg of messages) {
+      dump += `\n  (id = ${msg.messageId}) ${msg.type}: ${JSON.stringify(msg.params)}`;
+    }
+
+    const notice = testName
+      ? `That might be the reason why the test "${testName}" has timed out.`
+      : `Unresponded network requests might result in timeout errors in Detox tests.`;
+
+    dump += `\n\n${notice}\n`;
+
+    log.warn({ event: 'PENDING_REQUESTS'}, dump);
+    this.ws.resetInFlightPromises();
   }
 }
 
