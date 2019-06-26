@@ -29,12 +29,7 @@
 @end
 
 static void _DTXTypeText(NSString* text)
-{
-	static dispatch_once_t onceToken;
-	dispatch_once(&onceToken, ^{
-		srand48(time(0));
-	});
-	
+{	
 	[UIKeyboardImpl.sharedInstance setShift:NO autoshift:NO];
 	
 	NSUInteger rangeIdx = 0;
