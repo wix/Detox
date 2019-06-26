@@ -37,7 +37,7 @@ await device.sendUserActivity(activity)
 describe('Foreground user activity', () => {
 
 beforeEach(async () => {
-  await device.relaunchApp();
+  await device.launchApp({newInstance: true});
 });
 
 it('User activity from inside the app', async () => {
