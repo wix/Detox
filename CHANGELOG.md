@@ -1,5 +1,29 @@
 # Change Log
 
+## [13.0.0](https://github.com/wix/Detox/tree/13.0.0) (2019-06-26)
+[Full Changelog](https://github.com/wix/Detox/compare/12.11.3...13.0.0)
+
+**Enhancements**
+
+- docs: deprecated relaunchApp is used in examples [\#1479](https://github.com/wix/Detox/issues/1479)
+- Move away from Earl Grey's keyboard typing mechanism [\#1476](https://github.com/wix/Detox/issues/1476)
+- Artifacts test should not run on all tests [\#1038](https://github.com/wix/Detox/issues/1038)
+- Implement a new typing action [\#1480](https://github.com/wix/Detox/pull/1480) ([LeoNatan](https://github.com/LeoNatan))
+
+**Fixed Bugs**
+
+- cannot use Swipe along with atIndex [\#1461](https://github.com/wix/Detox/issues/1461)
+- App is not installed on simulator in detox 12.11.0 [\#1456](https://github.com/wix/Detox/issues/1456)
+- \[Android\] scroll does not finish before tap occurs [\#757](https://github.com/wix/Detox/issues/757)
+
+**Merged Pull Requests**
+
+- docs: remove mentions of device.relaunchApp [\#1482](https://github.com/wix/Detox/pull/1482) ([noomorph](https://github.com/noomorph))
+- Fix atIndex\(\) to work for swipes and scrolls [\#1481](https://github.com/wix/Detox/pull/1481) ([LeoNatan](https://github.com/LeoNatan))
+- Fix APIRef.ActionsOnElement last 3 links [\#1477](https://github.com/wix/Detox/pull/1477) ([leotm](https://github.com/leotm))
+- Fail test when waitFor\(\).withTimeout\(\) reaches timeout and assertion fails [\#1473](https://github.com/wix/Detox/pull/1473) ([LeoNatan](https://github.com/LeoNatan))
+- feat\(log\): dump pending network requests on test timeout [\#1269](https://github.com/wix/Detox/pull/1269) ([noomorph](https://github.com/noomorph))
+
 ## [12.11.3](https://github.com/wix/Detox/tree/12.11.3) (2019-06-25)
 [Full Changelog](https://github.com/wix/Detox/compare/12.11.2...12.11.3)
 
