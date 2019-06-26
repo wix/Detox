@@ -32,7 +32,7 @@ describe('Actions', () => {
   });
 
   it('should type in an element', async () => {
-    let typedText = 'Type Working 123 אֱבּג абв!!!';
+    let typedText = device.getPlatform() === 'ios' ? 'Type Working 123 אֱבּג абв!!!' : "Type Working!!!";
     await element(by.id('UniqueId937')).tap();
     await element(by.id('UniqueId937')).typeText(typedText);
     await expect(element(by.text(typedText))).toBeVisible();
