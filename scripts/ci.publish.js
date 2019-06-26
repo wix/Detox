@@ -15,7 +15,6 @@ function publishNewVersion(packageVersion) {
     return false;
   }
 
-  generateChangeLog(newVersion);
   updateGit(newVersion);
   return true;
 }
@@ -29,15 +28,6 @@ function validatePrerequisites() {
   const lernaVersion = exec.execSyncRead('lerna --version');
   if (!lernaVersion.startsWith('2.')) {
     throw new Error(`Cannot publish: lerna version isn't 2.x.x (actual version is ${lernaVersion})`);
-  }
-
-  const changelogGenerator = exec.which('github_changelog_generator');
-  if (!changelogGenerator) {
-    throw new Error(`Cannot publish: Github change-log generator not installed (see https://github.com/github-changelog-generator/github-changelog-generator#installation for more details`);
-  }
-
-  if (!process.env.CHANGELOG_GITHUB_TOKEN) {
-    throw new Error(`Cannot publish: Github token for change-log generator hasn't been specified (see https://github.com/github-changelog-generator/github-changelog-generator#github-token for more details)`);
   }
 }
 
@@ -68,18 +58,6 @@ function publishToNpm() {
 
   exec.execSync(`lerna publish --cd-version "${versionType}" --yes --skip-git ${dryRun ? '--skip-npm' : ''}`);
   exec.execSync('git status');
-}
-
-function generateChangeLog(newVersion) {
-  logSection('Changelog generator');
-
-  try {
-    const gitToken = process.env.CHANGELOG_GITHUB_TOKEN;
-    exec.execSync(`CHANGELOG_GITHUB_TOKEN=${gitToken} LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 LC_ALL=en_US.UTF-8 github_changelog_generator --future-release "${newVersion}" --no-verbose`);
-    exec.execSync('git status');
-  } catch (err) {
-    log('Change-log generation failed! (not skipping)', err);
-  }
 }
 
 function updateGit(newVersion) {
