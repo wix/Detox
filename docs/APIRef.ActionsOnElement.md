@@ -17,7 +17,7 @@ Actions are functions that emulate user behavior. They are being performed on ma
 - [`.typeText()`](#typetexttext)
 - [`.replaceText()`](#replacetexttext)
 - [`.clearText()`](#cleartext)
-- [`.scroll()`](#scrollpixels-direction)
+- [`.scroll()`](#scrollpixels-direction-startpositionxnan-startpositionynan)
 - [`.scrollTo()`](#scrolltoedge)
 - [`.swipe()`](#swipedirection-speed-percentage)
 - [`.setColumnToValue()`](#setcolumntovaluecolumn-value--ios-only) **iOS only**
