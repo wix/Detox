@@ -52,7 +52,9 @@ static void __dtx_loadBundleAtURL_onProgress_onComplete(id self, SEL _cmd, NSURL
 
 - (NSString *)idlingResourceDescription
 {
-	return @"React Native is loading JavaScript";
+	uint64_t localNumberOfLoadingRN = atomic_load(&__numberOfLoadingRN);
+	
+	return [NSString stringWithFormat:@"React Native is loading JavaScript (%@ pending loads)", @(localNumberOfLoadingRN)];
 }
 
 - (NSString *)idlingResourceName
