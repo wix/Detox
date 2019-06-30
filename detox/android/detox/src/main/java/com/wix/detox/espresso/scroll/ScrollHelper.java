@@ -4,6 +4,7 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 
 import com.wix.detox.espresso.UiAutomatorHelper;
 import com.wix.detox.espresso.common.annot.MotionDir;
@@ -27,6 +28,7 @@ public class ScrollHelper {
 
     private static final int SCROLL_STEPS = 50;
     private static final int SCROLL_DURATION_MS = 275;
+    private static final float[] SCROLL_PRECISION = {1f, 1f};
 
     private static final double DEFAULT_DEADZONE_PERCENT = 0.05;
 
@@ -137,14 +139,27 @@ public class ScrollHelper {
         sendScrollEvent(uiController, downX, downY, upX, upY);
     }
 
+    /**
+     * This was taken from Espresso's implementation of {@link androidx.test.espresso.action.Swipe},
+     * typically accessible through the {@link androidx.test.espresso.action.GeneralSwipeAction} action.
+     *
+     * <br/>The main differences compared to the original impl are:
+     * <ol>
+     *     <li>50 motion events instead of 10, which makes the overall scrolling add up to something more
+     *         accurate (i.e. closer to the scrolling originally requested by the user, in DP).</li>
+     *     <li>Espresso's options for overall scrolling times are SLOW=1.5s and FAST=150ms. We use 275ms
+     *         (i.e. neither).</li>
+     * </ol>
+     *
+     * TODO revisit this - consider whether we nevertheless use Espresso's code here.
+     */
     private static void sendScrollEvent(UiController uiController, int downX, int downY, int upX, int upY) {
-        float[] startCoordinates = new float[]{downX, downY};
-        float[] endCoordinates = new float[]{upX, upY};
-        float[] precision = new float[]{16f, 16f};
-        float[][] steps = interpolate(startCoordinates, endCoordinates);
+        final float[] startCoordinates = new float[]{downX, downY};
+        final float[] endCoordinates = new float[]{upX, upY};
+        final float[][] steps = interpolate(startCoordinates, endCoordinates);
         final int delayBetweenMovements = SCROLL_DURATION_MS / steps.length;
 
-        MotionEvent downEvent = MotionEvents.sendDown(uiController, startCoordinates, precision).down;
+        final MotionEvent downEvent = MotionEvents.sendDown(uiController, startCoordinates, SCROLL_PRECISION).down;
         try {
             for (int i = 0; i < steps.length; i++) {
                 if (!MotionEvents.sendMovement(uiController, downEvent, steps[i])) {
@@ -160,14 +175,19 @@ public class ScrollHelper {
                 }
             }
 
-            Log.d(LOG_TAG, "View's scroll completed!");
-
             if (!MotionEvents.sendUp(uiController, downEvent, endCoordinates)) {
                 Log.e(LOG_TAG, "Injection of up event as part of the scroll failed. Sending cancel event.");
                 MotionEvents.sendCancel(uiController, downEvent);
             }
         } finally {
             downEvent.recycle();
+        }
+
+        // Ensures that all child views leave the pressed-on state, if in effect.
+        // This is paramount for having consequent tap-events registered properly.
+        final int androidPressedDuration = ViewConfiguration.getPressedStateDuration();
+        if (androidPressedDuration > 0) {
+            uiController.loopMainThreadForAtLeast(androidPressedDuration);
         }
     }
 
