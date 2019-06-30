@@ -1,38 +1,13 @@
 version: 2
 
-detox-suite-template: &detox-suite-template
-  macos:
-    xcode: "10.2.1"
-  steps:
-    - checkout
-    - run: 
-        name: Install Dependencies
-        command: scripts/install.ios.sh        
-    - run:
-        name: Detox iOS CI
-        command: scripts/ci.ios.sh
-    - store_artifacts:
-        path: detox/test/artifacts
-
 jobs:
-  detox-suite-rn59-9:
+  build:
     enviroment:
       REACT_NATIVE_VERSION: "0.59.9" 
-    <<: *detox-suite-template
-  detox-suite-rn58-6:      
-    enviroment:
-      REACT_NATIVE_VERSION: "0.58.6"   
-    <<: *detox-suite-template
-      
-workflows:
-  version: 2
-  test-detox-suite:
-    jobs:
-      - detox-suite-rn59-9:
-          filters:
-            branches:
-              only: TravisCITest    
-      - detox-suite-rn58-6:
-          filters:
-            branches:
-              only: TravisCITest
+    macos:
+      xcode: "10.2.1"
+    steps:
+      - checkout
+    branches:
+      only:
+        TravisCITest
