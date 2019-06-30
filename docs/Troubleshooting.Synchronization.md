@@ -93,7 +93,7 @@ If this does not provide the necessary information, on iOS, you can add the
 -detoxPrintBusyIdleResources YES
 ```
 
-launch argument to your app (in `launchApp()`) to enable a very verbose logging of the idling resource system to the system log.
+launch argument to your app (using `launchArgs` in your `launchApp()` call) to enable a very verbose logging of the idling resource system to the system log.
 
 You can then obtain this log by running the following command:
 
