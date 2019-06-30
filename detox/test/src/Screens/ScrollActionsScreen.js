@@ -3,6 +3,8 @@ import {
   Text,
   View,
   ScrollView,
+  TouchableOpacity,
+  Alert,
 } from 'react-native';
 
 export default class ScrollActionsScreen extends Component {
@@ -20,6 +22,11 @@ export default class ScrollActionsScreen extends Component {
   }
 
   renderItem(id) {
-    return <Text key={`listItem.${id}`} style={{ height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10 }}>{`Text${id}`}</Text>;
+    const key = `listItem.${id}`;
+    return (
+      <TouchableOpacity key={key} testID={key} onPress={() => Alert.alert('Alert', `Alert(Item #${id})`)}>
+        <Text style={{ height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10 }}>{`Text${id}`}</Text>
+      </TouchableOpacity>
+    );
   }
 }
