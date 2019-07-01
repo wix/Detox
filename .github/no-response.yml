@@ -8,3 +8,5 @@ responseRequiredLabel: "user: more info needed"
 closeComment: >
   This issue has been automatically closed because there has been no response
   to our request for more information from the original author.
+  
+  For more information on bots in this reporsitory, read [this discussion](https://github.com/wix/Detox/issues/1305).
