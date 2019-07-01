@@ -85,7 +85,8 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.assertj:assertj-core:3.8.0'
     testImplementation 'org.apache.commons:commons-io:1.3.2'
-    testImplementation 'com.nhaarman:mockito-kotlin:1.4.0'
+    testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0'
+
     // noinspection GradleDynamicVersion
     testImplementation 'com.facebook.react:react-native:+'
 }
