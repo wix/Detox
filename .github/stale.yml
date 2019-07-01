@@ -30,6 +30,8 @@ markComment: >
   If you believe the issue is still relevant, please test on the latest Detox and report back.
 
   Thank you for your contributions.
+  
+  For more information on bots in this reporsitory, read [this discussion](https://github.com/wix/Detox/issues/1305).
 
 # Comment to post when removing the stale label.
 # unmarkComment: >
@@ -50,8 +52,11 @@ pulls:
   daysUntilStale: 45
   markComment: >
     This pull request has been automatically marked as stale because it has not had
-    recent activity. It will be closed if no further activity occurs. Thank you
-    for your contributions.
+    recent activity. It will be closed if no further activity occurs.
+    
+    Thank you for your contributions.
+    
+    For more information on bots in this reporsitory, read [this discussion](https://github.com/wix/Detox/issues/1305).
 
 # issues:
 #   exemptLabels:
