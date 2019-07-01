@@ -9,6 +9,8 @@ supportComment: >
   This issue appears to be a general usage or support question. 
   Instead, please ask a question on Stack Overflow with the [`detox`](https://stackoverflow.com/questions/tagged/detox) tag.
   
+  Feel free to post your Stack Overflow question here for more visility. We'll take a look at it.
+  
   For more information on bots in this reporsitory, read [this discussion](https://github.com/wix/Detox/issues/1305).
 # Whether to close issues marked as support requests
 close: true
