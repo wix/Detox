@@ -4,7 +4,7 @@ import android.view.Choreographer
 import androidx.test.espresso.IdlingResource.ResourceCallback
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.modules.core.Timing
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import com.wix.detox.UTHelpers.yieldToOtherThreads
 import org.assertj.core.api.Assertions.assertThat
 import org.joor.Reflect

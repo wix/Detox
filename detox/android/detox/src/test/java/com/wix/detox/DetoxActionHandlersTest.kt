@@ -2,7 +2,6 @@ package com.wix.detox
 
 import androidx.test.espresso.IdlingResource
 import com.facebook.react.bridge.ReactContext
-import com.nhaarman.mockito_kotlin.*
 import com.wix.detox.UTHelpers.yieldToOtherThreads
 import com.wix.invoke.MethodInvocation
 import org.assertj.core.api.Assertions.assertThat
@@ -13,6 +12,7 @@ import org.junit.Test
 import java.util.*
 import java.util.concurrent.Executors
 import java.lang.reflect.InvocationTargetException
+import com.nhaarman.mockitokotlin2.*
 
 open class DetoxActionHandlerTestBase {
     val params = "{\"mock\": \"params\"}"
@@ -244,6 +244,6 @@ class QueryStatusActionHandlerTest : DetoxActionHandlerTestBase() {
             }
 
     private fun withBusyResources(resources: List<IdlingResource>) {
-        whenever(testEngineFacade.getBusyIdlingResources()).doReturn(listOf(resources))
+        whenever(testEngineFacade.getBusyIdlingResources()).thenReturn(resources)
     }
 }
