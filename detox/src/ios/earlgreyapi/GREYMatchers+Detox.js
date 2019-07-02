@@ -154,6 +154,21 @@ class GREYMatchers {
     };
   }
 
+  static detoxMatcherForPickerViewChildOfMatcher(matcher) {
+    if (typeof matcher !== "object" || matcher.type !== "Invocation" || typeof matcher.value !== "object" || typeof matcher.value.target !== "object" || matcher.value.target.value !== "GREYMatchers") {
+      throw new Error('matcher should be a GREYMatcher, but got ' + JSON.stringify(matcher));
+    }
+
+    return {
+      target: {
+        type: "Class",
+        value: "GREYMatchers"
+      },
+      method: "detoxMatcherForPickerViewChildOfMatcher:",
+      args: [matcher]
+    };
+  }
+
 }
 
 module.exports = GREYMatchers;

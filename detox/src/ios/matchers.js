@@ -33,6 +33,16 @@ class Matcher {
     this._call = invoke.callDirectly(GreyMatchersDetox.detoxMatcherForScrollChildOfMatcher(_originalMatcherCall));
     return this;
   }
+  _extendToDescendantScrollViews() {
+    const _originalMatcherCall = this._call;
+    this._call = invoke.callDirectly(GreyMatchersDetox.detoxMatcherForScrollChildOfMatcher(_originalMatcherCall));
+    return this;
+  }
+  _extendPickerViewMatching() {
+    const _originalMatcherCall = this._call;
+    this._call = invoke.callDirectly(GreyMatchersDetox.detoxMatcherForPickerViewChildOfMatcher(_originalMatcherCall));
+    return this;
+  }
 }
 
 class LabelMatcher extends Matcher {

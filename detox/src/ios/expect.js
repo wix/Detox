@@ -339,6 +339,8 @@ class Element {
     return await new ActionInteraction(this._invocationManager, this, new SwipeAction(direction, speed, percentage)).execute();
   }
   async setColumnToValue(column,value) {
+    // override the user's element selection with an extended matcher that supports RN's date picker
+    this._selectElementWithMatcher(this._originalMatcher._extendPickerViewMatching());
     return await new ActionInteraction(this._invocationManager, this, new ScrollColumnToValue(column, value)).execute();
   }
   async setDatePickerDate(dateString, dateFormat) {

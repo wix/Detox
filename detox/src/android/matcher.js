@@ -38,6 +38,9 @@ class Matcher {
     return this;
   }
   
+  _extendPickerViewMatching() {
+    return this;
+  }
 }
 
 class LabelMatcher extends Matcher {

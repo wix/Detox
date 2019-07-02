@@ -149,4 +149,29 @@ id<GREYMatcher> detox_grey_parent(id<GREYMatcher> ancestorMatcher)
     return grey_kindOfClass(klass);
 }
 
++ (id<GREYMatcher>)detoxMatcherForPickerViewChildOfMatcher:(id<GREYMatcher>)matcher
+{
+	//No RN—Life is always good.
+	Class RN_RCTDatePicker = NSClassFromString(@"RCTDatePicker");
+	if (!RN_RCTDatePicker)
+	{
+		return matcher;
+	}
+	
+	//Either take picker view or the pickerview that is a child of RCTDatePicker.
+	return grey_anyOf(grey_allOf(
+								 grey_kindOfClass([UIPickerView class]),
+								 matcher,
+								 nil),
+					  grey_allOf(grey_kindOfClass([UIPickerView class]),
+								 grey_ancestor(
+												 grey_allOf(
+															matcher,
+															grey_kindOfClass(RN_RCTDatePicker),
+															nil)
+												 ),
+								 nil),
+					  nil);
+}
+
 @end

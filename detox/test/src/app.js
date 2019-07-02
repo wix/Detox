@@ -35,6 +35,10 @@ class example extends Component {
   }
 
   renderScreenButton(title, component) {
+    if(component == null) {
+      throw new Error("Got no component for " + title);
+    }
+    
     return this.renderButton(title, () => {
       this.setState({screen: component});
     });
@@ -100,7 +104,8 @@ class example extends Component {
           {this.renderScreenButton('Network', Screens.NetworkScreen)}
           {this.renderScreenButton('Animations', Screens.AnimationsScreen)}
           {this.renderScreenButton('Location', Screens.LocationScreen)}
-          {this.renderScreenButton('DatePicker', Screens.DatePickerScreen)}
+          {!isAndroid && this.renderScreenButton('DatePicker', Screens.DatePickerScreen)}
+          {!isAndroid && this.renderScreenButton('Picker', Screens.PickerViewScreen)}
           {this.renderButton('Crash', () => {
             throw new Error('Simulated Crash')
           })}
