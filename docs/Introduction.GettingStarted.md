@@ -63,6 +63,7 @@ If you have a React Native project, go to its root folder (where `package.json` 
 ```sh
 npm install detox --save-dev
 ```
+OR
 
 If you have a project without Node integration (such as a native project), add the following package.json file to the root folder of your project:
 
