@@ -220,6 +220,27 @@ static void __setupRNSupport()
 		
 		[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[WXAnimatedDisplayLinkIdlingResource new]];
 	}
+	
+	//🤦‍♂️ RN doesn't set the data source and relies on undocumented behavior.
+	cls = NSClassFromString(@"RCTPicker");
+	if(cls != nil)
+	{
+		SEL sel = @selector(initWithFrame:);
+		Method m = class_getInstanceMethod(cls, sel);
+		
+		if(m == nil)
+		{
+			return;
+		}
+		
+		id (*orig)(id, SEL, CGRect) = (void*)method_getImplementation(m);
+		method_setImplementation(m, imp_implementationWithBlock(^ (UIPickerView<UIPickerViewDataSource>* _self, CGRect frame) {
+			_self = orig(_self, sel, frame);
+			_self.dataSource = _self;
+			
+			return _self;
+		}));
+	}
 }
 
 @implementation ReactNativeSupport

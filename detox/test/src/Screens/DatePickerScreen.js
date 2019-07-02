@@ -43,7 +43,7 @@ export default class DatePickerScreen extends Component {
         <Text style={styles.dateText} testID='localTimeLabel'>
           {"Time: " + this.getTimeLocal()}
         </Text>
-        <DatePickerIOS style={styles.datePicker} date={this.state.chosenDate} onDateChange={this.setDate} />
+        <DatePickerIOS testID="datePicker" style={styles.datePicker} date={this.state.chosenDate} onDateChange={this.setDate} />
       </View>
     );
   }
@@ -58,8 +58,7 @@ const styles = StyleSheet.create({
   },
   datePicker: {
     width:'100%',
-    height:200,
-    backgroundColor:'green'
+    height:200
   },
   dateText: {
     textAlign:'center'

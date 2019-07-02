@@ -28,4 +28,6 @@
 
 + (id<GREYMatcher>)detoxMatcherForClass:(NSString *)aClassName;
 
++ (id<GREYMatcher>)detoxMatcherForPickerViewChildOfMatcher:(id<GREYMatcher>)matcher;
+
 @end

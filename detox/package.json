@@ -102,6 +102,8 @@
       "debug.js",
       "src/ios/earlgreyapi",
       "src/android/espressoapi",
+      "src/android/matcher.js",
+      "src/ios/matchers.js",
       "appdatapath.js",
       ".test.js",
       ".mock.js",
