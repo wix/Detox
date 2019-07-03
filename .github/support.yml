@@ -15,4 +15,4 @@ supportComment: >
 # Whether to close issues marked as support requests
 close: true
 # Whether to lock issues marked as support requests
-lock: false
+lock: true
