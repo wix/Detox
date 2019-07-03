@@ -18,24 +18,6 @@ class EmulatorDriver extends AndroidDriver {
     this.emulator = new Emulator();
   }
 
-  async _fixEmulatorConfigIniSkinName(name) {
-    const configFile = `${os.homedir()}/.android/avd/${name}.avd/config.ini`;
-    const config = ini.parse(fs.readFileSync(configFile, 'utf-8'));
-
-    if (!config['skin.name']) {
-      const width = config['hw.lcd.width'];
-      const height = config['hw.lcd.height'];
-
-      if (width === undefined || height === undefined) {
-        throw new Error(`Emulator with name ${name} has a corrupt config.ini file (${configFile}), try fixing it by recreating an emulator.`);
-      }
-
-      config['skin.name'] = `${width}x${height}`;
-      fs.writeFileSync(configFile, ini.stringify(config));
-    }
-    return config;
-  }
-
   async boot(avdName) {
     let adbName = await this._findADBNameByAVDName(avdName, { strict: false });
     const coldBoot = adbName == null;
@@ -87,8 +69,6 @@ class EmulatorDriver extends AndroidDriver {
       throw new Error(`Can not boot Android Emulator with the name: '${avdName}',
       make sure you choose one of the available emulators: ${avds.toString()}`);
     }
-
-    await this._fixEmulatorConfigIniSkinName(avdName);
 
     const adbName = await this.boot(avdName);
     await this.adb.apiLevel(adbName);
