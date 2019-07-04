@@ -100,6 +100,16 @@ You can then obtain this log by running the following command:
 ```shell
 xcrun simctl spawn booted log stream --level debug --style compact --predicate "category=='EarlGreyStatistics'"
 ```
+Example if you are using jest, edit `/e2e/init.js`
+```js
+beforeAll(async () => {
+  await detox.init(config, { launchApp: false });
+  await device.launchApp({
+    newInstance: true,
+    launchArgs: { 'detoxPrintBusyIdleResources': 'YES' }
+  });
+});
+```
 
 ### Tweaking and fine-tuning the synchronization mechanisms
 
