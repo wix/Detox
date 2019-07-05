@@ -101,6 +101,16 @@ You can then obtain this log by running the following command:
 xcrun simctl spawn booted log stream --level debug --style compact --predicate "category=='EarlGreyStatistics'"
 ```
 
+For example, change your `/e2e/init.js` like so:
+
+```js
+await detox.init(config, { launchApp: false });
+await device.launchApp({
+  newInstance: true,
+  launchArgs: { 'detoxPrintBusyIdleResources': 'YES' }
+});
+```
+
 ### Tweaking and fine-tuning the synchronization mechanisms
 
 > This isn't exposed yet, TBD
