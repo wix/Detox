@@ -24,8 +24,27 @@ extern void __dtx_send_external_log(const char* log) __attribute__((weak));
 	if(self)
 	{
 		_annoyingLabel = [UILabel new];
+		_annoyingLabel.translatesAutoresizingMaskIntoConstraints = NO;
 		
 		[self addSubview:_annoyingLabel];
+		
+		NSLayoutYAxisAnchor* topAnchor;
+		if (@available(iOS 11.0, *))
+		{
+			topAnchor = self.safeAreaLayoutGuide.topAnchor;
+		}
+		else
+		{
+			topAnchor = self.topAnchor;
+		}
+		
+		NSLayoutConstraint* topConstraint = [_annoyingLabel.topAnchor constraintEqualToAnchor:topAnchor constant:-14];
+		topConstraint.priority = UILayoutPriorityRequired - 1;
+		[NSLayoutConstraint activateConstraints:@[
+			[_annoyingLabel.centerXAnchor constraintEqualToAnchor:self.centerXAnchor],
+			topConstraint,
+			[_annoyingLabel.topAnchor constraintGreaterThanOrEqualToAnchor:self.topAnchor],
+		]];
 	}
 	
 	return self;
@@ -41,13 +60,6 @@ extern void __dtx_send_external_log(const char* log) __attribute__((weak));
 	[super layoutSubviews];
 	
 	[self bringSubviewToFront:_annoyingLabel];
-	
-	UIEdgeInsets insets;
-	if (@available(iOS 11.0, *)) {
-		insets = self.safeAreaInsets;
-	}
-	
-	_annoyingLabel.center = CGPointMake(self.center.x, insets.top);
 }
 
 @end
@@ -175,9 +187,29 @@ RCT_EXPORT_MODULE();
 	return rv;
 }
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler
 {
-	[RCTPushNotificationManager didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
+	completionHandler(UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound);
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler
+{
+	UILabel* someLabel = [UILabel new];
+	someLabel.translatesAutoresizingMaskIntoConstraints = NO;
+	
+	someLabel.text = response.notification.request.content.title;
+	someLabel.backgroundColor = UIColor.blackColor;
+	someLabel.textColor = UIColor.whiteColor;
+	someLabel.font = [UIFont systemFontOfSize:40];
+	
+	RCTRootView* rv = (id)self.window.rootViewController.view;
+	//Add to the content view so that reloadReactNative() removes this label.
+	[[rv valueForKey:@"contentView"] addSubview:someLabel];
+	
+	[NSLayoutConstraint activateConstraints:@[
+		[someLabel.centerXAnchor constraintEqualToAnchor:self.window.centerXAnchor],
+		[someLabel.topAnchor constraintEqualToAnchor:self.window.annoyingLabel.bottomAnchor],
+	]];
 }
 
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
@@ -185,7 +217,7 @@ RCT_EXPORT_MODULE();
 	[RCTPushNotificationManager didReceiveLocalNotification:notification];
 }
 
-- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(id)restorationHandler
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void(^)(NSArray<id<UIUserActivityRestoring>> * __nullable restorableObjects))restorationHandler
 {
 	if([userActivity.activityType isEqualToString:CSSearchableItemActionType])
 	{
@@ -194,8 +226,8 @@ RCT_EXPORT_MODULE();
 		//Fake it here as if it is a URL, but actually it's a searchable item identifier.
 		return [RCTLinkingManager application:application
 									  openURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", identifier]]
-							sourceApplication:nil
-								   annotation:nil];
+							sourceApplication:@""
+								   annotation:@{}];
 	}
 	
 	return [RCTLinkingManager application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
