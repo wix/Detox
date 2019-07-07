@@ -148,7 +148,7 @@ const collectExtraArgs = require('./utils/collectExtraArgs')(module.exports.buil
 module.exports.handler = async function test(program) {
   program.artifactsLocation = buildDefaultArtifactsRootDirpath(program.configuration, program.artifactsLocation);
   
-  if(program.keepsimlock){
+  if(!program.keepsimlock){
     clearDeviceRegistryLockFile();
   }
 
