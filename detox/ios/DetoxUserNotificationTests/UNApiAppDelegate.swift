@@ -11,15 +11,35 @@ import UserNotifications
 
 @available(iOS 10.0, *)
 class UNApiAppDelegate: LegacyApiAppDelegate, UNUserNotificationCenterDelegate {
+	var userNotificationWillPresentWasCalled = false
+	var userNotificationdidReceiveWasCalled = false
+	var swallowActiveUserNotification = false
+	
 	override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]?) -> Bool {
 		UNUserNotificationCenter.current().delegate = self
 		
 		return super.application(application, didFinishLaunchingWithOptions: launchOptions)
 	}
 	
-	func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Swift.Void) {
+	private func markUNApiCalled(notification: UNNotification) {
 		userNotificationAPIWasCalled = true
-		userNotificationTriggerType = TestableAppDelegate.triggerType(from: response)
-		userNotificationTitle = response.notification.request.content.title
+		userNotificationTriggerType = TestableAppDelegate.triggerType(from: notification)
+		userNotificationTitle = notification.request.content.title
+	}
+	
+	func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+		userNotificationWillPresentWasCalled = true
+		markUNApiCalled(notification: notification)
+		
+		if swallowActiveUserNotification {
+			completionHandler([])
+		} else {
+			completionHandler([.alert, .badge, .sound])
+		}
+	}
+	
+	func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Swift.Void) {
+		userNotificationdidReceiveWasCalled = true
+		markUNApiCalled(notification: response.notification)
 	}
 }

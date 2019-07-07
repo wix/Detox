@@ -84,7 +84,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-detoxUserNotificationDataURL /Users/lnatan/Desktop/user_notification.json"
+            argument = "-detoxUserNotificationDataURL /Users/lnatan/Desktop/Code/Detox/detox/ios/DetoxUserNotificationTests/user_notification_push_trigger.json"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -97,6 +97,10 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-detoxPrintBusyIdleResources YES"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-detoxUserActivityDataURL /Users/lnatan/Desktop/user-activity.json"
             isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>

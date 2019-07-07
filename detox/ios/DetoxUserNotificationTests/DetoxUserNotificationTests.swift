@@ -18,23 +18,41 @@ class DetoxUserNotificationTests: XCTestCase {
 		return Bundle(for: DetoxUserNotificationTests.self).url(forResource: "user_notification_calendar_trigger", withExtension: "json")!
 	}()
 	
-    override func setUp() {
-        super.setUp()
-    }
-    
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
+	override func setUp() {
+		super.setUp()
+	}
 	
-	func sharedRemoteUserNotificationAssertions(for appDelegate: TestableAppDelegate, dispatcher: DetoxUserNotificationDispatcher) {
+	override func tearDown() {
+		// Put teardown code here. This method is called after the invocation of each test method in the class.
+		super.tearDown()
+	}
+	
+	func sharedRemoteUserNotificationAssertions(for appDelegate: TestableAppDelegate, dispatcher: DetoxUserNotificationDispatcher, onLaunch: Bool) {
 		XCTAssert(dispatcher.remoteNotification != nil)
 		_ = appDelegate.application(UIApplication.shared, willFinishLaunchingWithOptions: [.remoteNotification: dispatcher.remoteNotification!])
 		_ = appDelegate.application(UIApplication.shared, didFinishLaunchingWithOptions: [.remoteNotification: dispatcher.remoteNotification!])
-		dispatcher.dispatch(on: appDelegate, simulateDuringLaunch: true)
+		dispatcher.dispatch(on: appDelegate, simulateDuringLaunch: onLaunch)
 		
-		XCTAssert(appDelegate.remoteNotificationObjectWasFoundInWillLaunch)
-		XCTAssert(appDelegate.remoteNotificationObjectWasFoundInDidLaunch)
+		if onLaunch {
+			XCTAssert(appDelegate.remoteNotificationObjectWasFoundInWillLaunch)
+			XCTAssert(appDelegate.remoteNotificationObjectWasFoundInDidLaunch)
+		}
+	}
+	
+	@available(iOS 10.0, *)
+	func testUNApiSwallowOnActive() {
+		let appDelegate = UNApiAppDelegate()
+		appDelegate.swallowActiveUserNotification = true
+		
+		let dispatcher = DetoxUserNotificationDispatcher(userNotificationDataUrl: urlForPushUserNotification)
+		
+		sharedRemoteUserNotificationAssertions(for: appDelegate, dispatcher: dispatcher, onLaunch: false)
+		
+		XCTAssert(appDelegate.userNotificationAPIWasCalled)
+		XCTAssert(appDelegate.userNotificationWillPresentWasCalled)
+		XCTAssertFalse(appDelegate.userNotificationdidReceiveWasCalled)
+		XCTAssertEqual(appDelegate.userNotificationTriggerType, .push)
+		XCTAssertEqual(appDelegate.userNotificationTitle, "From push")
 	}
 	
 	@available(iOS 10.0, *)
@@ -42,12 +60,14 @@ class DetoxUserNotificationTests: XCTestCase {
 		let appDelegate = UNApiAppDelegate()
 		let dispatcher = DetoxUserNotificationDispatcher(userNotificationDataUrl: urlForPushUserNotification)
 		
-		sharedRemoteUserNotificationAssertions(for: appDelegate, dispatcher: dispatcher)
+		sharedRemoteUserNotificationAssertions(for: appDelegate, dispatcher: dispatcher, onLaunch: true)
 		
 		XCTAssert(appDelegate.userNotificationAPIWasCalled)
-		XCTAssert(appDelegate.userNotificationTriggerType == .push)
-		XCTAssert(appDelegate.userNotificationTitle == "From push")
-    }
+		XCTAssertFalse(appDelegate.userNotificationWillPresentWasCalled)
+		XCTAssert(appDelegate.userNotificationdidReceiveWasCalled)
+		XCTAssertEqual(appDelegate.userNotificationTriggerType, .push)
+		XCTAssertEqual(appDelegate.userNotificationTitle, "From push")
+	}
 	
 	func sharedLocalUserNotificationAssertions(for appDelegate: TestableAppDelegate, dispatcher: DetoxUserNotificationDispatcher) {
 		XCTAssert(dispatcher.localNotification != nil)
@@ -68,8 +88,8 @@ class DetoxUserNotificationTests: XCTestCase {
 		
 		XCTAssert(appDelegate.userNotificationAPIWasCalled)
 		XCTAssertFalse(appDelegate.legacyLocalNotificationAPIWasCalled)
-		XCTAssert(appDelegate.userNotificationTriggerType == .calendar)
-		XCTAssert(appDelegate.userNotificationTitle == "From calendar")
+		XCTAssertEqual(appDelegate.userNotificationTriggerType, .calendar)
+		XCTAssertEqual(appDelegate.userNotificationTitle, "From calendar")
 	}
 	
 	func testLegacyApiWithLocalOnLaunch() {
@@ -80,31 +100,31 @@ class DetoxUserNotificationTests: XCTestCase {
 		
 		XCTAssertFalse(appDelegate.userNotificationAPIWasCalled)
 		XCTAssert(appDelegate.legacyLocalNotificationAPIWasCalled)
-		XCTAssert(appDelegate.userNotificationTriggerType == .calendar)
-		XCTAssert(appDelegate.userNotificationTitle == "From calendar")
+		XCTAssertEqual(appDelegate.userNotificationTriggerType, .calendar)
+		XCTAssertEqual(appDelegate.userNotificationTitle, "From calendar")
 	}
 	
 	func testLegacyApiWithPushOnLaunch() {
 		let appDelegate = TestableAppDelegate()
 		let dispatcher = DetoxUserNotificationDispatcher(userNotificationDataUrl: urlForPushUserNotification)
 		
-		sharedRemoteUserNotificationAssertions(for: appDelegate, dispatcher: dispatcher)
+		sharedRemoteUserNotificationAssertions(for: appDelegate, dispatcher: dispatcher, onLaunch: true)
 		
 		//It is not called on launch!
 		XCTAssertFalse(appDelegate.legacyRemoteNotificationAPIWasCalled)
-		XCTAssert(appDelegate.userNotificationTriggerType == .push)
-		XCTAssert(appDelegate.userNotificationTitle == "From push")
+		XCTAssertEqual(appDelegate.userNotificationTriggerType, .push)
+		XCTAssertEqual(appDelegate.userNotificationTitle, "From push")
 	}
 	
 	func testLegacyApiOS7WithPushOnLaunch() {
 		let appDelegate = LegacyApiAppDelegate()
 		let dispatcher = DetoxUserNotificationDispatcher(userNotificationDataUrl: urlForPushUserNotification)
 		
-		sharedRemoteUserNotificationAssertions(for: appDelegate, dispatcher: dispatcher)
+		sharedRemoteUserNotificationAssertions(for: appDelegate, dispatcher: dispatcher, onLaunch: true)
 		
 		XCTAssertFalse(appDelegate.legacyRemoteNotificationAPIWasCalled)
 		XCTAssert(appDelegate.legacyRemoteNotificationOS7APIWasCalled)
-		XCTAssert(appDelegate.userNotificationTriggerType == .push)
-		XCTAssert(appDelegate.userNotificationTitle == "From push")
+		XCTAssertEqual(appDelegate.userNotificationTriggerType, .push)
+		XCTAssertEqual(appDelegate.userNotificationTitle, "From push")
 	}
 }

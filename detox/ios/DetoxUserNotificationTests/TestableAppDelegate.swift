@@ -66,8 +66,8 @@ class TestableAppDelegate: NSObject, UIApplicationDelegate {
 
 @available(iOS 10.0, *)
 extension TestableAppDelegate {
-	class func triggerType(from response: UNNotificationResponse) -> TestableAppDelegateNotifcationTriggerType {
-		switch response.notification.request.trigger {
+	class func triggerType(from notification: UNNotification) -> TestableAppDelegateNotifcationTriggerType {
+		switch notification.request.trigger {
 		case is UNPushNotificationTrigger:
 			return .push
 		case is UNTimeIntervalNotificationTrigger:

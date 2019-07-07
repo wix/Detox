@@ -314,7 +314,7 @@ static void __copyMethods(Class orig, Class target)
 	return rv;
 }
 
-- (void)applicationWillEnterForeground:(UIApplication *)application
+- (void)applicationDidBecomeActive:(UIApplication *)application
 {
 	if([class_getSuperclass(object_getClass(self)) instancesRespondToSelector:_cmd])
 	{
@@ -323,24 +323,22 @@ static void __copyMethods(Class orig, Class target)
 		super_class(&super, _cmd, application);
 	}
 	
-	dispatch_async(dispatch_get_main_queue(), ^{
-		[_pendingOpenURLs enumerateObjectsUsingBlock:^(NSDictionary * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-			[self __dtx_actualDispatchOpenURL:obj];
-		}];
-		[_pendingOpenURLs removeAllObjects];
-		
-		[_pendingUserNotificationDispatchers enumerateObjectsUsingBlock:^(DetoxUserNotificationDispatcher * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-			[self __dtx_actualDispatchUserNotificationWithDispatcher:obj];
-		}];
-		[_pendingUserNotificationDispatchers removeAllObjects];
-		
+	[_pendingOpenURLs enumerateObjectsUsingBlock:^(NSDictionary * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+		[self __dtx_actualDispatchOpenURL:obj];
+	}];
+	[_pendingOpenURLs removeAllObjects];
+	
+	[_pendingUserNotificationDispatchers enumerateObjectsUsingBlock:^(DetoxUserNotificationDispatcher * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+		[self __dtx_actualDispatchUserNotificationWithDispatcher:obj];
+	}];
+	[_pendingUserNotificationDispatchers removeAllObjects];
+	
 #if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_10_3
-		[_pendingUserActivityDispatchers enumerateObjectsUsingBlock:^(DetoxUserActivityDispatcher * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-			[self __dtx_actualDispatchUserActivityWithDispatcher:obj];
-		}];
-		[_pendingUserActivityDispatchers removeAllObjects];
+	[_pendingUserActivityDispatchers enumerateObjectsUsingBlock:^(DetoxUserActivityDispatcher * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+		[self __dtx_actualDispatchUserActivityWithDispatcher:obj];
+	}];
+	[_pendingUserActivityDispatchers removeAllObjects];
 #endif
-	});
 }
 
 - (BOOL)touchVisualizerWindowShouldAlwaysShowFingertip:(COSTouchVisualizerWindow *)window
