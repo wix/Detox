@@ -2,7 +2,6 @@
 #import <React/RCTEventDispatcher.h>
 #import <React/RCTBridgeModule.h>
 #import <React/RCTRootView.h>
-#import <React/RCTPushNotificationManager.h>
 #import <React/RCTLinkingManager.h>
 @import CoreSpotlight;
 
@@ -149,10 +148,14 @@ RCT_EXPORT_MODULE();
 	jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
 	
+	//RN 🤦‍♂️
+	NSMutableDictionary* opts = launchOptions.mutableCopy;
+	opts[UIApplicationLaunchOptionsRemoteNotificationKey] = nil;
+	
 	RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
 														moduleName:@"example"
 												 initialProperties:nil
-													 launchOptions:launchOptions];
+													 launchOptions:opts];
 	rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
 	
 	self.window = [[AnnoyingWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
@@ -210,11 +213,6 @@ RCT_EXPORT_MODULE();
 		[someLabel.centerXAnchor constraintEqualToAnchor:self.window.centerXAnchor],
 		[someLabel.topAnchor constraintEqualToAnchor:self.window.annoyingLabel.bottomAnchor],
 	]];
-}
-
-- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
-{
-	[RCTPushNotificationManager didReceiveLocalNotification:notification];
 }
 
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void(^)(NSArray<id<UIUserActivityRestoring>> * __nullable restorableObjects))restorationHandler

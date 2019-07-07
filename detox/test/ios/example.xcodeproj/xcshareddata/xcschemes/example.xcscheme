@@ -99,6 +99,10 @@
             argument = "-detoxPrintBusyIdleResources YES"
             isEnabled = "NO">
          </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-detoxUserActivityDataURL /Users/lnatan/Desktop/user-activity.json"
+            isEnabled = "NO">
+         </CommandLineArgument>
       </CommandLineArguments>
    </LaunchAction>
    <ProfileAction
