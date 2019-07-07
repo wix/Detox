@@ -132,6 +132,10 @@ module.exports.builder = {
     group: 'Execution:',
     describe: '[Android Only] Launch Emulator with the specific -gpu [gpu mode] parameter.'
   },
+  keepsimlock:{
+    group: 'Configuration:',
+    describe:'keep simulator lock file when running detox test'
+  },
   n: {
     alias: 'device-name',
     group: 'Configuration:',
@@ -143,8 +147,10 @@ const collectExtraArgs = require('./utils/collectExtraArgs')(module.exports.buil
 
 module.exports.handler = async function test(program) {
   program.artifactsLocation = buildDefaultArtifactsRootDirpath(program.configuration, program.artifactsLocation);
-
-  clearDeviceRegistryLockFile();
+  
+  if(program.keepsimlock){
+    clearDeviceRegistryLockFile();
+  }
 
   const config = getDetoxSection();
 
