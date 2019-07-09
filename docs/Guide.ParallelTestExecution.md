@@ -31,6 +31,6 @@ The lock file location is determined by the OS, and [defined here](https://githu
 or
 `$USERPROFILE/Application Data/Detox/device.registry.state.lock`
 
-#### Persisting the Lock File
+### Persisting the Lock File
 
 By default, once all workers finish their test runs, Detox will delete the lock file. Under certain conditions, you may want to persist the lock file. Use the `--keepLockFile` flag to disable automatic deletion.
