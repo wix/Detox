@@ -126,11 +126,11 @@ module.exports.builder = {
   H: {
     alias: 'headless',
     group: 'Execution:',
-    describe: '[Android Only] Launch Emulator in headless mode. Useful when running on CI.'
+    describe: '[Android Only] Launch emulator in headless mode. Useful when running on CI.'
   },
   gpu: {
     group: 'Execution:',
-    describe: '[Android Only] Launch Emulator with the specific -gpu [gpu mode] parameter.'
+    describe: '[Android Only] Launch emulator with the specific -gpu [gpu mode] parameter.'
   },
   keepLockFile:{
     group: 'Configuration:',
