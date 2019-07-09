@@ -126,11 +126,15 @@ module.exports.builder = {
   H: {
     alias: 'headless',
     group: 'Execution:',
-    describe: '[Android Only] Launch Emulator in headless mode. Useful when running on CI.'
+    describe: '[Android Only] Launch emulator in headless mode. Useful when running on CI.'
   },
   gpu: {
     group: 'Execution:',
-    describe: '[Android Only] Launch Emulator with the specific -gpu [gpu mode] parameter.'
+    describe: '[Android Only] Launch emulator with the specific -gpu [gpu mode] parameter.'
+  },
+  keepLockFile:{
+    group: 'Configuration:',
+    describe:'Keep the device lock file when running Detox tests'
   },
   n: {
     alias: 'device-name',
@@ -143,8 +147,10 @@ const collectExtraArgs = require('./utils/collectExtraArgs')(module.exports.buil
 
 module.exports.handler = async function test(program) {
   program.artifactsLocation = buildDefaultArtifactsRootDirpath(program.configuration, program.artifactsLocation);
-
-  clearDeviceRegistryLockFile();
+  
+  if(!program.keepLockFile){
+    clearDeviceRegistryLockFile();
+  }
 
   const config = getDetoxSection();
 
