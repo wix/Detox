@@ -134,7 +134,7 @@ module.exports.builder = {
   },
   keepLockFile:{
     group: 'Configuration:',
-    describe:'Keep Simulators lock file when running detox test'
+    describe:'Keep the device lock file when running Detox tests'
   },
   n: {
     alias: 'device-name',
