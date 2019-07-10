@@ -9,13 +9,13 @@ import java.lang.RuntimeException
 
 fun floatEq3(value: Float) = AdditionalMatchers.eq(value, 0.001f)
 
-class DetoxSwiperTest {
+class DetoxSwipeTest {
     private val startX = 100f
     private val startY = 200f
     private val endX = 110f
     private val endY = 220f
 
-    private lateinit var swipeExecutor: SwipeExecutor
+    private lateinit var swipeExecutor: DetoxSwiper
 
     @Before fun setUp() {
         swipeExecutor = mock {
@@ -24,14 +24,14 @@ class DetoxSwiperTest {
     }
 
     @Test fun `should generate swipe orchestrator`() {
-        val swipeExecutorProvider: (perMotionTime: Int) -> SwipeExecutor = mock {
+        val swipeExecutorProvider: (perMotionTime: Int) -> DetoxSwiper = mock {
             onGeneric { invoke(any()) }.doReturn(swipeExecutor)
         }
         val swipeDuration = 500
         val motionCount = 10
         val expectedPerMotionTime = 50 // i.e. swipeDuration / motionsCount
 
-        val uut = DetoxSwiper(0f, 0f, 1f, 1f, swipeDuration, motionCount, swipeExecutorProvider)
+        val uut = DetoxSwipe(0f, 0f, 1f, 1f, swipeDuration, motionCount, swipeExecutorProvider)
         uut.perform()
 
         verify(swipeExecutorProvider)(expectedPerMotionTime)
@@ -101,5 +101,5 @@ class DetoxSwiperTest {
         verify(swipeExecutor, times(1)).moveTo(any(), any())
     }
 
-    private fun uut(motionCount: Int = 1): DetoxSwiper = DetoxSwiper(startX, startY, endX, endY, 100, motionCount) { swipeExecutor }
+    private fun uut(motionCount: Int = 1): DetoxSwipe = DetoxSwipe(startX, startY, endX, endY, 100, motionCount) { swipeExecutor }
 }
