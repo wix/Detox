@@ -1,5 +1,9 @@
 #!/bin/bash -e
 
+system_profiler > $(dirname "$0")/../sp.txt
+
+exit 0
+
 source $(dirname "$0")/ci.sh
 
 run_f "$(dirname "$0")/unit.ios.sh"
