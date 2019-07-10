@@ -9,8 +9,7 @@
 import UIKit
 import UserNotifications
 
-@available(iOS 10.0, *)
-class UNApiAppDelegate: LegacyApiAppDelegate, UNUserNotificationCenterDelegate {
+class UNApiAppDelegate: TestableAppDelegate, UNUserNotificationCenterDelegate {
 	var userNotificationWillPresentWasCalled = false
 	var userNotificationdidReceiveWasCalled = false
 	var swallowActiveUserNotification = false

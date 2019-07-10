@@ -299,7 +299,6 @@ static void detoxConditionalInit()
 				sendDoneAction(self.webSocket, messageId);
 			};
 		}
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_10_3
 		else if(params[@"detoxUserActivityDataURL"])
 		{
 			NSURL* userActivityDataURL = [NSURL fileURLWithPath:params[@"detoxUserActivityDataURL"]];
@@ -312,7 +311,6 @@ static void detoxConditionalInit()
 				sendDoneAction(self.webSocket, messageId);
 			};
 		}
-#endif
 		
 		NSAssert(block != nil, @"Logic error, no block was generated for payload: %@", params);
 		
