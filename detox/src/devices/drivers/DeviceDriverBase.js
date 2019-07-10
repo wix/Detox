@@ -131,6 +131,46 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
+  async enableNetworkSynchronization() {
+    return await Promise.resolve('');
+  }
+
+  async disableNetworkSynchronization() {
+    return await Promise.resolve('');
+  }
+
+  async enableAnimationSynchronization() {
+    return await Promise.resolve('');
+  }
+
+  async disableAnimationSynchronization() {
+    return await Promise.resolve('');
+  }
+
+  async enableRNTimersSynchronization() {
+    return await Promise.resolve('');
+  }
+
+  async disableRNTimersSynchronization() {
+    return await Promise.resolve('');
+  }
+
+  async enableRNUIModuleSynchronization() {
+    return await Promise.resolve('');
+  }
+
+  async disableRNUIModuleSynchronization() {
+    return await Promise.resolve('');
+  }
+
+  async enableRNBridgeSynchronization() {
+    return await Promise.resolve('');
+  }
+
+  async disableRNBridgeSynchronization() {
+    return await Promise.resolve('');
+  }
+
   async resetContentAndSettings() {
     return await Promise.resolve('');
   }

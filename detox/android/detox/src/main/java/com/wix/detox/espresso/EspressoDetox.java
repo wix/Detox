@@ -104,7 +104,27 @@ public class EspressoDetox {
     }
 
     public static void setSynchronization(boolean enabled) {
+        ReactNativeSupport.enableSynchronization(enabled);
+    }
+
+    public static void setNetworkSynchronization(boolean enabled) {
         ReactNativeSupport.enableNetworkSynchronization(enabled);
+    }
+
+    public static void setAnimationSynchronization(boolean enabled) {
+        ReactNativeSupport.enableAnimationSynchronization(enabled);
+    }
+
+    public static void setRNTimersSynchronization(boolean enabled) {
+        ReactNativeSupport.enableRNTimersSynchronization(enabled);
+    }
+
+    public static void setRNUIModuleSynchronization(boolean enabled) {
+        ReactNativeSupport.enableRNUIModuleSynchronization(enabled);
+    }
+
+    public static void setRNBridgeSynchronization(boolean enabled) {
+        ReactNativeSupport.enableRNBridgeSynchronization(enabled);
     }
 
     public static void setURLBlacklist(final ArrayList<String> urls) {

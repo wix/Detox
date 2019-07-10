@@ -572,6 +572,76 @@ describe('Device', () => {
     expect(driverMock.driver.disableSynchronization).toHaveBeenCalledTimes(1);
   });
 
+  it(`enableNetworkSynchronization() should pass to device driver`, async () => {
+    const device = validDevice();
+    await device.enableNetworkSynchronization();
+
+    expect(driverMock.driver.enableNetworkSynchronization).toHaveBeenCalledTimes(1);
+  });
+
+  it(`disableNetworkSynchronization() should pass to device driver`, async () => {
+    const device = validDevice();
+    await device.disableNetworkSynchronization();
+
+    expect(driverMock.driver.disableNetworkSynchronization).toHaveBeenCalledTimes(1);
+  });
+
+  it(`enableAnimationSynchronization() should pass to device driver`, async () => {
+    const device = validDevice();
+    await device.enableAnimationSynchronization();
+
+    expect(driverMock.driver.enableAnimationSynchronization).toHaveBeenCalledTimes(1);
+  });
+
+  it(`disableAnimationSynchronization() should pass to device driver`, async () => {
+    const device = validDevice();
+    await device.disableAnimationSynchronization();
+
+    expect(driverMock.driver.disableAnimationSynchronization).toHaveBeenCalledTimes(1);
+  });
+
+  it(`enableRNTimersSynchronization() should pass to device driver`, async () => {
+    const device = validDevice();
+    await device.enableRNTimersSynchronization();
+
+    expect(driverMock.driver.enableRNTimersSynchronization).toHaveBeenCalledTimes(1);
+  });
+
+  it(`disableRNTimersSynchronization() should pass to device driver`, async () => {
+    const device = validDevice();
+    await device.disableRNTimersSynchronization();
+
+    expect(driverMock.driver.disableRNTimersSynchronization).toHaveBeenCalledTimes(1);
+  });
+
+  it(`enableRNUIModuleSynchronization() should pass to device driver`, async () => {
+    const device = validDevice();
+    await device.enableRNUIModuleSynchronization();
+
+    expect(driverMock.driver.enableRNUIModuleSynchronization).toHaveBeenCalledTimes(1);
+  });
+
+  it(`disableRNUIModuleSynchronization() should pass to device driver`, async () => {
+    const device = validDevice();
+    await device.disableRNUIModuleSynchronization();
+
+    expect(driverMock.driver.disableRNUIModuleSynchronization).toHaveBeenCalledTimes(1);
+  });
+
+  it(`enableRNBridgeSynchronization() should pass to device driver`, async () => {
+    const device = validDevice();
+    await device.enableRNBridgeSynchronization();
+
+    expect(driverMock.driver.enableRNBridgeSynchronization).toHaveBeenCalledTimes(1);
+  });
+
+  it(`disableRNBridgeSynchronization() should pass to device driver`, async () => {
+    const device = validDevice();
+    await device.disableRNBridgeSynchronization();
+
+    expect(driverMock.driver.disableRNBridgeSynchronization).toHaveBeenCalledTimes(1);
+  });
+
   it(`resetContentAndSettings() should pass to device driver`, async () => {
     const device = validDevice();
     await device.resetContentAndSettings();

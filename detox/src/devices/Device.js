@@ -209,6 +209,46 @@ class Device {
     await this.deviceDriver.disableSynchronization();
   }
 
+  async enableNetworkSynchronization() {
+    await this.deviceDriver.enableNetworkSynchronization();
+  }
+
+  async disableNetworkSynchronization() {
+    await this.deviceDriver.disableNetworkSynchronization();
+  }
+
+  async enableAnimationSynchronization() {
+    await this.deviceDriver.enableAnimationSynchronization();
+  }
+
+  async disableAnimationSynchronization() {
+    await this.deviceDriver.disableAnimationSynchronization();
+  }
+
+  async enableRNTimersSynchronization() {
+    await this.deviceDriver.enableRNTimersSynchronization();
+  }
+
+  async disableRNTimersSynchronization() {
+    await this.deviceDriver.disableRNTimersSynchronization();
+  }
+
+  async enableRNUIModuleSynchronization() {
+    await this.deviceDriver.enableRNUIModuleSynchronization();
+  }
+
+  async disableRNUIModuleSynchronization() {
+    await this.deviceDriver.disableRNUIModuleSynchronization();
+  }
+
+  async enableRNBridgeSynchronization() {
+    await this.deviceDriver.enableRNBridgeSynchronization();
+  }
+
+  async disableRNBridgeSynchronization() {
+    await this.deviceDriver.disableRNBridgeSynchronization();
+  }
+
   async resetContentAndSettings() {
     await this.deviceDriver.resetContentAndSettings(this._deviceId);
   }

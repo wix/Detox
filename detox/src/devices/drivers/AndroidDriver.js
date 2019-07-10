@@ -184,6 +184,56 @@ class AndroidDriver extends DeviceDriverBase {
     await this.invocationManager.execute(call);
   }
 
+  async enableNetworkSynchronization() {
+    const call = EspressoDetoxApi.setNetworkSynchronization(true);
+    await this.invocationManager.execute(call);
+  }
+
+  async disableNetworkSynchronization() {
+    const call = EspressoDetoxApi.setNetworkSynchronization(false);
+    await this.invocationManager.execute(call);
+  }
+
+  async enableAnimationSynchronization() {
+    const call = EspressoDetoxApi.setAnimationSynchronization(true);
+    await this.invocationManager.execute(call);
+  }
+
+  async disableAnimationSynchronization() {
+    const call = EspressoDetoxApi.setAnimationSynchronization(false);
+    await this.invocationManager.execute(call);
+  }
+
+  async enableRNTimersSynchronization() {
+    const call = EspressoDetoxApi.setRNTimersSynchronization(true);
+    await this.invocationManager.execute(call);
+  }
+
+  async disableRNTimersSynchronization() {
+    const call = EspressoDetoxApi.setRNTimersSynchronization(false);
+    await this.invocationManager.execute(call);
+  }
+
+  async enableRNUIModuleSynchronization() {
+    const call = EspressoDetoxApi.setRNUIModuleSynchronization(true);
+    await this.invocationManager.execute(call);
+  }
+
+  async disableRNUIModuleSynchronization() {
+    const call = EspressoDetoxApi.setRNUIModuleSynchronization(false);
+    await this.invocationManager.execute(call);
+  }
+
+  async enableRNBridgeSynchronization() {
+    const call = EspressoDetoxApi.setRNBridgeSynchronization(true);
+    await this.invocationManager.execute(call);
+  }
+
+  async disableRNBridgeSynchronization() {
+    const call = EspressoDetoxApi.setRNBridgeSynchronization(false);
+    await this.invocationManager.execute(call);
+  }
+
   async setOrientation(deviceId, orientation) {
     const orientationMapping = {
       landscape: 1, // top at left side landscape

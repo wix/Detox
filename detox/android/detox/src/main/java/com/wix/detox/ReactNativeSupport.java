@@ -184,18 +184,24 @@ public class ReactNativeSupport {
 
         setupReactNativeQueueInterrogators(reactContext);
 
-        rnBridgeIdlingResource = new ReactBridgeIdlingResource(reactContext);
-        rnTimerIdlingResource = new ReactNativeTimersIdlingResource(reactContext);
-        rnUIModuleIdlingResource = new ReactNativeUIModuleIdlingResource(reactContext);
-        animIdlingResource = new AnimatedModuleIdlingResource(reactContext);
-
-        IdlingRegistry.getInstance().register(rnTimerIdlingResource);
-        IdlingRegistry.getInstance().register(rnBridgeIdlingResource);
-        IdlingRegistry.getInstance().register(rnUIModuleIdlingResource);
-        IdlingRegistry.getInstance().register(animIdlingResource);
-
         if (networkSyncEnabled) {
             setupNetworkIdlingResource();
+        }
+
+        if (animationSyncEnabled) {
+            setupAnimationIdlingResource();
+        }
+
+        if (rnTimersSyncEnabled) {
+            setupRNTimersIdlingResource();
+        }
+
+        if (rnUIModuleIdlingResourceEnabled) {
+            setupRNUIModuleIdlingResource();
+        }
+
+        if (rnBridgeIdlingResourceEnabled) {
+            setupRNBridgeIdlingResource();
         }
     }
 
@@ -204,7 +210,7 @@ public class ReactNativeSupport {
         Looper JSMessageQueue = getLooperFromQueue(reactContext, FIELD_JS_MSG_QUEUE);
         Looper JMativeModulesMessageQueue = getLooperFromQueue(reactContext, FIELD_NATIVE_MODULES_MSG_QUEUE);
 
-//        IdlingRegistry.getInstance().registerLooperAsIdlingResource(UIBackgroundMessageQueue);
+        //        IdlingRegistry.getInstance().registerLooperAsIdlingResource(UIBackgroundMessageQueue);
         IdlingRegistry.getInstance().registerLooperAsIdlingResource(JSMessageQueue);
         IdlingRegistry.getInstance().registerLooperAsIdlingResource(JMativeModulesMessageQueue);
 
@@ -245,6 +251,14 @@ public class ReactNativeSupport {
         reactContext.getCatalystInstance().removeBridgeIdleDebugListener(rnBridgeIdlingResource);
     }
 
+    public static void enableSynchronization(boolean enable) {
+        enableRNTimersSynchronization(enable);
+        enableAnimationSynchronization(enable);
+        enableNetworkSynchronization(enable);
+        enableRNBridgeSynchronization(enable);
+        enableRNUIModuleSynchronization(enable);
+    }
+
     private static boolean networkSyncEnabled = true;
     public static void enableNetworkSynchronization(boolean enable) {
         if (!isReactNativeApp()) return;
@@ -256,6 +270,58 @@ public class ReactNativeSupport {
             removeNetworkIdlingResource();
         }
         networkSyncEnabled = enable;
+    }
+
+    private static boolean animationSyncEnabled = true;
+    public static void enableAnimationSynchronization(boolean enable) {
+        if (!isReactNativeApp()) return;
+        if (animationSyncEnabled == enable) return;
+
+        if (enable) {
+            setupAnimationIdlingResource();
+        } else {
+            removeAnimationIdlingResource();
+        }
+        animationSyncEnabled = enable;
+    }
+
+    private static boolean rnTimersSyncEnabled = true;
+    public static void enableRNTimersSynchronization(boolean enable) {
+        if (!isReactNativeApp()) return;
+        if (rnTimersSyncEnabled == enable) return;
+
+        if (enable) {
+            setupRNTimersIdlingResource();
+        } else {
+            removeRNTimersIdlingResource();
+        }
+        rnTimersSyncEnabled = enable;
+    }
+
+    private static boolean rnUIModuleIdlingResourceEnabled = true;
+    public static void enableRNUIModuleSynchronization(boolean enable) {
+        if (!isReactNativeApp()) return;
+        if (rnUIModuleIdlingResourceEnabled == enable) return;
+
+        if (enable) {
+            setupRNUIModuleIdlingResource();
+        } else {
+            removeRNUIModuleIdlingResource();
+        }
+        rnUIModuleIdlingResourceEnabled = enable;
+    }
+
+    private static boolean rnBridgeIdlingResourceEnabled = true;
+    public static void enableRNBridgeSynchronization(boolean enable) {
+        if (!isReactNativeApp()) return;
+        if (rnBridgeIdlingResourceEnabled == enable) return;
+
+        if (enable) {
+            setupRNBridgeIdlingResource();
+        } else {
+            removeRNBridgeIdlingResource();
+        }
+        rnBridgeIdlingResourceEnabled = enable;
     }
 
     private static ReactNativeNetworkIdlingResource networkIR = null;
@@ -303,6 +369,30 @@ public class ReactNativeSupport {
         }
     }
 
+    private static void setupAnimationIdlingResource() {
+        animIdlingResource = new AnimatedModuleIdlingResource(currentReactContext);
+        IdlingRegistry.getInstance().register(animIdlingResource);
+    }
+
+    private static void removeAnimationIdlingResource() {
+        if (animIdlingResource != null) {
+            IdlingRegistry.getInstance().unregister(animIdlingResource);
+            animIdlingResource = null;
+        }
+    }
+
+    private static void setupRNTimersIdlingResource() {
+        rnTimerIdlingResource = new ReactNativeTimersIdlingResource(currentReactContext);
+        IdlingRegistry.getInstance().register(rnTimerIdlingResource);
+    }
+
+    private static void removeRNTimersIdlingResource() {
+        if (rnTimerIdlingResource != null) {
+            IdlingRegistry.getInstance().unregister(rnTimerIdlingResource);
+            rnTimerIdlingResource = null;
+        }
+    }
+
     public static void pauseRNTimersIdlingResource() {
         if (rnTimerIdlingResource != null) {
             rnTimerIdlingResource.pause();
@@ -310,6 +400,32 @@ public class ReactNativeSupport {
     }
 
     public static void resumeRNTimersIdlingResource() {
-        rnTimerIdlingResource.resume();
+        if (rnTimerIdlingResource != null) {
+            rnTimerIdlingResource.resume();
+        }
+    }
+
+    private static void setupRNUIModuleIdlingResource() {
+        rnUIModuleIdlingResource = new ReactNativeUIModuleIdlingResource(currentReactContext);
+        IdlingRegistry.getInstance().register(rnUIModuleIdlingResource);
+    }
+
+    private static void removeRNUIModuleIdlingResource() {
+        if (rnUIModuleIdlingResource != null) {
+            IdlingRegistry.getInstance().unregister(rnUIModuleIdlingResource);
+            rnUIModuleIdlingResource = null;
+        }
+    }
+
+    private static void setupRNBridgeIdlingResource() {
+        rnBridgeIdlingResource = new ReactBridgeIdlingResource(currentReactContext);
+        IdlingRegistry.getInstance().register(rnBridgeIdlingResource);
+    }
+
+    private static void removeRNBridgeIdlingResource() {
+        if (rnBridgeIdlingResource != null) {
+            IdlingRegistry.getInstance().unregister(rnBridgeIdlingResource);
+            rnBridgeIdlingResource = null;
+        }
     }
 }

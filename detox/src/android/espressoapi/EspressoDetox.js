@@ -51,6 +51,81 @@ class EspressoDetox {
     };
   }
 
+  static setNetworkSynchronization(enabled) {
+    if (typeof enabled !== "boolean") throw new Error("enabled should be a boolean, but got " + (enabled + (" (" + (typeof enabled + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.EspressoDetox"
+      },
+      method: "setNetworkSynchronization",
+      args: [{
+        type: "boolean",
+        value: enabled
+      }]
+    };
+  }
+
+  static setAnimationSynchronization(enabled) {
+    if (typeof enabled !== "boolean") throw new Error("enabled should be a boolean, but got " + (enabled + (" (" + (typeof enabled + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.EspressoDetox"
+      },
+      method: "setAnimationSynchronization",
+      args: [{
+        type: "boolean",
+        value: enabled
+      }]
+    };
+  }
+
+  static setRNTimersSynchronization(enabled) {
+    if (typeof enabled !== "boolean") throw new Error("enabled should be a boolean, but got " + (enabled + (" (" + (typeof enabled + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.EspressoDetox"
+      },
+      method: "setRNTimersSynchronization",
+      args: [{
+        type: "boolean",
+        value: enabled
+      }]
+    };
+  }
+
+  static setRNUIModuleSynchronization(enabled) {
+    if (typeof enabled !== "boolean") throw new Error("enabled should be a boolean, but got " + (enabled + (" (" + (typeof enabled + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.EspressoDetox"
+      },
+      method: "setRNUIModuleSynchronization",
+      args: [{
+        type: "boolean",
+        value: enabled
+      }]
+    };
+  }
+
+  static setRNBridgeSynchronization(enabled) {
+    if (typeof enabled !== "boolean") throw new Error("enabled should be a boolean, but got " + (enabled + (" (" + (typeof enabled + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.EspressoDetox"
+      },
+      method: "setRNBridgeSynchronization",
+      args: [{
+        type: "boolean",
+        value: enabled
+      }]
+    };
+  }
+
   static setURLBlacklist(urls) {
     if (typeof urls !== 'object' || !urls instanceof Array) {
       throw new Error('urls must be an array, got ' + typeof urls);

@@ -67,6 +67,46 @@ class IosDriver extends DeviceDriverBase {
     );
   }
 
+  async enableNetworkSynchronization() {
+    log.info('enableNetworkSynchronization ignored in iOS');
+  }
+
+  async disableNetworkSynchronization() {
+    log.info('disableNetworkSynchronization ignored in iOS');
+  }
+
+  async enableAnimationSynchronization() {
+    log.info('enableAnimationSynchronization ignored in iOS');
+  }
+
+  async disableAnimationSynchronization() {
+    log.info('disableAnimationSynchronization ignored in iOS');
+  }
+
+  async enableRNTimersSynchronization() {
+    log.info('enableRNTimersSynchronization ignored in iOS');
+  }
+
+  async disableRNTimersSynchronization() {
+    log.info('disableRNTimersSynchronization ignored in iOS');
+  }
+
+  async enableRNUIModuleSynchronization() {
+    log.info('enableRNUIModuleSynchronization ignored in iOS');
+  }
+
+  async disableRNUIModuleSynchronization() {
+    log.info('disableRNUIModuleSynchronization ignored in iOS');
+  }
+
+  async enableRNBridgeSynchronization() {
+    log.info('enableRNBridgeSynchronization ignored in iOS');
+  }
+
+  async disableRNBridgeSynchronization() {
+    log.info('disableRNBridgeSynchronization ignored in iOS');
+  }
+
   async shake(deviceId) {
     return await this.client.shake();
   }
