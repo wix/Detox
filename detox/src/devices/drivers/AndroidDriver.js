@@ -59,7 +59,6 @@ class AndroidDriver extends DeviceDriverBase {
 
   async pressBack(deviceId) {
     this.UiDevice.pressBack();
-
   }
 
   getTestApkPath(originalApkPath) {

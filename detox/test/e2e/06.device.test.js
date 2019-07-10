@@ -78,7 +78,7 @@ describe('Device', () => {
     await expect(element(by.text('Shaken, not stirred'))).toBeVisible();
   });
 
-  describe.only(':android: device back button', () => {
+  describe(':android: device back button', () => {
     beforeEach(async() => {
       await device.reloadReactNative();
     });
