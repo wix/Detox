@@ -64,7 +64,7 @@ dependencies {
     // noinspection GradleDynamicVersion
     compileOnly 'com.facebook.react:react-native:+'
 
-    implementation 'org.apache.commons:commons-lang3:3.4'
+    implementation 'org.apache.commons:commons-lang3:3.7'
 
     // Versions are in-sync with the 'androidx-test-1.1.0' release/tag of the android-test github repo,
     // used by the Detox generator. See https://github.com/android/android-test/releases/tag/androidx-test-1.1.0

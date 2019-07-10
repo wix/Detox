@@ -92,14 +92,15 @@ class Client {
     const potentialError = new Error();
 
     try {
-      await this.sendAction(new actions.Invoke(invocation));
+      return await this.sendAction(new actions.Invoke(invocation));
     } catch (err) {
       this.successfulTestRun = false;
 
       potentialError.message = _.isError(err) ? err.message : String(err);
       throw potentialError;
+    } finally {
+      clearTimeout(this.slowInvocationStatusHandler);
     }
-    clearTimeout(this.slowInvocationStatusHandler);
   }
 
   getPendingCrashAndReset() {

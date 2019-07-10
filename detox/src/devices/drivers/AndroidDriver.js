@@ -10,8 +10,7 @@ const APKPath = require('../android/APKPath');
 const DeviceDriverBase = require('./DeviceDriverBase');
 const DetoxApi = require('../../android/espressoapi/Detox');
 const EspressoDetoxApi = require('../../android/espressoapi/EspressoDetox');
-const UIAutomatorAPI = require('../../android/espressoapi/UIAutomator');
-const UIDevice = require('../../android/espressoapi/UIDevice');
+const UiDeviceProxy = require('../../android/espressoapi/UiDeviceProxy');
 const ADBLogcatPlugin = require('../../artifacts/log/android/ADBLogcatPlugin');
 const ADBScreencapPlugin = require('../../artifacts/screenshot/ADBScreencapPlugin');
 const ADBScreenrecorderPlugin = require('../../artifacts/video/ADBScreenrecorderPlugin');
@@ -30,6 +29,7 @@ class AndroidDriver extends DeviceDriverBase {
 
     this.invocationManager = new InvocationManager(this.client);
     this.matchers = new AndroidExpect(this.invocationManager);
+    this.UiDevice = new UiDeviceProxy(this.invocationManager).getUIDevice();
 
     this.adb = new ADB();
     this.aapt = new AAPT();
@@ -58,8 +58,8 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async pressBack(deviceId) {
-    const call = UIDevice.pressBack(invoke.callDirectly(UIAutomatorAPI.uiDevice()));
-    await this.invocationManager.execute(call);
+    this.UiDevice.pressBack();
+
   }
 
   getTestApkPath(originalApkPath) {
@@ -122,8 +122,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async sendToHome(deviceId, params) {
-    const call = UIDevice.pressHome(invoke.callDirectly(UIAutomatorAPI.uiDevice()));
-    await this.invocationManager.execute(call);
+    this.UiDevice.pressHome();
   }
 
   async terminate(deviceId, bundleId) {
@@ -146,6 +145,10 @@ class AndroidDriver extends DeviceDriverBase {
 
   getPlatform() {
     return 'android';
+  }
+
+  getUiDevice() {
+    return this.UiDevice;
   }
 
   async findDeviceId(filter) {

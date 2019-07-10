@@ -225,6 +225,10 @@ class Device {
     await this.deviceDriver.pressBack(this._deviceId);
   }
 
+  getUiDevice() {
+    return this.deviceDriver.getUiDevice();
+  }
+
   _defaultLaunchArgs() {
     return {
       'detoxServer': this._sessionConfig.server,

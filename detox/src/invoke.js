@@ -8,7 +8,7 @@ class InvocationManager {
   }
 
   async execute(invocation) {
-    await this.executionHandler.execute(invocation);
+   return await this.executionHandler.execute(invocation);
   }
 }
 

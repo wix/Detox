@@ -627,6 +627,14 @@ describe('Device', () => {
     expect(driverMock.driver.pressBack).toHaveBeenCalledWith(device._deviceId);
   });
 
+  it(`getUiDevice() should invoke driver's getUiDevice()`, async () => {
+    const device = validDevice();
+
+    await device.getUiDevice();
+
+    expect(driverMock.driver.getUiDevice).toHaveBeenCalled();
+  });
+
   it('takeScreenshot(name) should throw an exception if given name is empty', async () => {
     await expect(validDevice().takeScreenshot()).rejects.toThrowErrorMatchingSnapshot();
   });

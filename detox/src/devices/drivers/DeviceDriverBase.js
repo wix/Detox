@@ -159,6 +159,10 @@ class DeviceDriverBase {
 
   }
 
+  getUiDevice() {
+
+  }
+
   async cleanup(deviceId, bundleId) {
     this.emitter.off(); // clean all listeners
   }
