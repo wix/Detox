@@ -40,7 +40,6 @@ await device.sendUserNotification(notification)
 **Example:**
 
 ```js
- 
 describe('Foreground user notifications', () => {
 
 beforeEach(async () => {
@@ -89,11 +88,10 @@ Triggers are objects representing the trigger.
 #### Trigger Types
 
 There are four types of triggers supported by Detox at this time:
-
- • `push`
- • `calendar`
- • `timeInterval`
- • `location`
+- `push`
+- `calendar`
+- `timeInterval`
+- `location`
 
 For convenience, these trigger types are provided as constants in `DetoxConstants`:
 
