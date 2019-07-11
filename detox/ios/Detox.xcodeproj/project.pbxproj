@@ -68,6 +68,7 @@
 		39CE25AB22197F0900D78AA1 /* DetoxInstrumentsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 39CE25A922197F0900D78AA1 /* DetoxInstrumentsManager.h */; };
 		39CE25AC22197F0900D78AA1 /* DetoxInstrumentsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 39CE25AA22197F0900D78AA1 /* DetoxInstrumentsManager.m */; };
 		39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */; };
+		39DA0E2822D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DA0E2722D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m */; };
 		39F642281FDD5EB100468FED /* DTXLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 39F642201FDD5EB000468FED /* DTXLogging.h */; };
 		39F642291FDD5EB100468FED /* DTXLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 39F642271FDD5EB000468FED /* DTXLogging.m */; };
 		39FFD9471FD730A600C97030 /* DetoxCrashHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */; };
@@ -247,6 +248,9 @@
 		39CE25A922197F0900D78AA1 /* DetoxInstrumentsManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetoxInstrumentsManager.h; sourceTree = "<group>"; };
 		39CE25AA22197F0900D78AA1 /* DetoxInstrumentsManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetoxInstrumentsManager.m; sourceTree = "<group>"; };
 		39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetoxUserNotificationDispatcher.swift; sourceTree = "<group>"; };
+		39DA0E2622D72AEF001E63A0 /* UIApplication+MockedSharedApplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIApplication+MockedSharedApplication.h"; sourceTree = "<group>"; };
+		39DA0E2722D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIApplication+MockedSharedApplication.m"; sourceTree = "<group>"; };
+		39DA0E3522D72C91001E63A0 /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		39F642201FDD5EB000468FED /* DTXLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTXLogging.h; path = DTXLoggingInfra/DTXLogging.h; sourceTree = SOURCE_ROOT; };
 		39F642271FDD5EB000468FED /* DTXLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DTXLogging.m; path = DTXLoggingInfra/DTXLogging.m; sourceTree = SOURCE_ROOT; };
 		39F6422A1FDD5EEC00468FED /* Detox.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.pch; sourceTree = "<group>"; };
@@ -302,8 +306,11 @@
 				3928EFB61E475C1F00C19B6E /* UNApiAppDelegate.swift */,
 				3928EFC11E47673800C19B6E /* LegacyApiAppDelegate.swift */,
 				3928EFA91E47404900C19B6E /* Info.plist */,
+				39DA0E3522D72C91001E63A0 /* Bridging-Header.h */,
 				394D589A1E50B59400556DB9 /* NSBundle+TestsFix.h */,
 				394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */,
+				39DA0E2622D72AEF001E63A0 /* UIApplication+MockedSharedApplication.h */,
+				39DA0E2722D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m */,
 			);
 			path = DetoxUserNotificationTests;
 			sourceTree = "<group>";
@@ -689,6 +696,7 @@
 				394D589C1E50B59400556DB9 /* NSBundle+TestsFix.m in Sources */,
 				3928EFA81E47404900C19B6E /* DetoxUserNotificationTests.swift in Sources */,
 				3928EFB51E47571500C19B6E /* TestableAppDelegate.swift in Sources */,
+				39DA0E2822D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m in Sources */,
 				3928EFC21E47673800C19B6E /* LegacyApiAppDelegate.swift in Sources */,
 				3928EFB71E475C1F00C19B6E /* UNApiAppDelegate.swift in Sources */,
 			);
@@ -767,6 +775,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.wix.DetoxUserNotificationTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OBJC_BRIDGING_HEADER = "DetoxUserNotificationTests/Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
 			};
@@ -785,6 +794,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wix.DetoxUserNotificationTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "DetoxUserNotificationTests/Bridging-Header.h";
 				SWIFT_VERSION = 4.2;
 			};
 			name = Release;

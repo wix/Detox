@@ -49,11 +49,13 @@ private struct DetoxUserNotificationKeys {
 @objc(DetoxUserNotificationDispatcher)
 public class DetoxUserNotificationDispatcher: NSObject {
 	@objc let userNotificationData : [String: Any]
+	private let appStateAtCreation : UIApplication.State
 	
 	@objc(initWithUserNotificationDataURL:)
 	public init(userNotificationDataUrl: URL) {
 		userNotificationData = DetoxUserNotificationDispatcher.parseUserNotificationData(url: userNotificationDataUrl)
-
+		appStateAtCreation = UIApplication.shared.applicationState
+		
 		super.init()
 	}
 	
@@ -122,14 +124,13 @@ public class DetoxUserNotificationDispatcher: NSObject {
 				
 				actualDelegateMethod(UNUserNotificationCenter.current(), self.userNotificationResponse(notification: notification), {})
 			}
+		
+			let isAppActive = simulateDuringLaunch == false && appStateAtCreation == UIApplication.State.active
 			
-			//During testing, this will come up as nil.
-			let appStateOrNil = UIApplication.shared.value(forKey: "applicationState")
-			
-			if simulateDuringLaunch == false && (appStateOrNil == nil || (appStateOrNil as? NSNumber)?.intValue ?? -1 == UIApplication.State.active.rawValue), let actualWillPresentDelegateMethod = userNotificationsDelegate.userNotificationCenter(_:willPresent:withCompletionHandler:) {
+			if isAppActive == true, let actualWillPresentDelegateMethod = userNotificationsDelegate.userNotificationCenter(_:willPresent:withCompletionHandler:) {
 				actualWillPresentDelegateMethod(UNUserNotificationCenter.current(), notification, handler)
 			} else {
-				handler(simulateDuringLaunch == true ? [ .alert ] : [])
+				handler(isAppActive == false ? [ .alert ] : [])
 			}
 		}
 		
