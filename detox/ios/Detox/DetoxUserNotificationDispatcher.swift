@@ -49,11 +49,13 @@ private struct DetoxUserNotificationKeys {
 @objc(DetoxUserNotificationDispatcher)
 public class DetoxUserNotificationDispatcher: NSObject {
 	@objc let userNotificationData : [String: Any]
+	private let appStateAtCreation : UIApplication.State
 	
 	@objc(initWithUserNotificationDataURL:)
 	public init(userNotificationDataUrl: URL) {
 		userNotificationData = DetoxUserNotificationDispatcher.parseUserNotificationData(url: userNotificationDataUrl)
-
+		appStateAtCreation = UIApplication.shared.applicationState
+		
 		super.init()
 	}
 	
@@ -72,12 +74,12 @@ public class DetoxUserNotificationDispatcher: NSObject {
 			actualDelegateMethod(UNUserNotificationCenter.current(), self.userNotificationResponse(notification: notification), {})
 		}
 		
-		let appIsActive = simulateDuringLaunch == false && UIApplication.shared.applicationState == .active
+		let isAppActive = simulateDuringLaunch == false && appStateAtCreation == .active
 		
-		if appIsActive == true, let actualWillPresentDelegateMethod = userNotificationsDelegate.userNotificationCenter(_:willPresent:withCompletionHandler:) {
+		if isAppActive == true, let actualWillPresentDelegateMethod = userNotificationsDelegate.userNotificationCenter(_:willPresent:withCompletionHandler:) {
 			actualWillPresentDelegateMethod(UNUserNotificationCenter.current(), notification, handler)
 		} else {
-			handler(appIsActive == false ? [ .alert ] : [])
+			handler(isAppActive == false ? [ .alert ] : [])
 		}
 	}
 	

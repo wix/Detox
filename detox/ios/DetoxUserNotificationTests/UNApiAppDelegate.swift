@@ -9,6 +9,7 @@
 import UIKit
 import UserNotifications
 
+@objc(UNApiAppDelegate)
 class UNApiAppDelegate: TestableAppDelegate, UNUserNotificationCenterDelegate {
 	var userNotificationWillPresentWasCalled = false
 	var userNotificationdidReceiveWasCalled = false

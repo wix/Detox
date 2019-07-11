@@ -46,7 +46,9 @@ class DetoxUserNotificationTests: XCTestCase {
 	}
 	
 	func testUNApiSwallowOnActive() {
-		let appDelegate = UNApiAppDelegate()
+		DTXApplicationMock(nil, "UNApiAppDelegate")
+		UIApplication.shared.applicationState = .active
+		let appDelegate = UIApplication.shared.delegate as! UNApiAppDelegate
 		appDelegate.swallowActiveUserNotification = true
 		
 		let dispatcher = DetoxUserNotificationDispatcher(userNotificationDataUrl: urlForPushUserNotification)
@@ -60,8 +62,43 @@ class DetoxUserNotificationTests: XCTestCase {
 		XCTAssertEqual(appDelegate.userNotificationTitle, "From push")
 	}
 	
+	func testUNApiDoesntSwallowOnInactive() {
+		DTXApplicationMock(nil, "UNApiAppDelegate")
+		UIApplication.shared.applicationState = .inactive
+		let appDelegate = UIApplication.shared.delegate as! UNApiAppDelegate
+		appDelegate.swallowActiveUserNotification = true
+		
+		let dispatcher = DetoxUserNotificationDispatcher(userNotificationDataUrl: urlForPushUserNotification)
+		
+		sharedRemoteUserNotificationAssertions(for: appDelegate, dispatcher: dispatcher, onLaunch: false)
+		
+		XCTAssert(appDelegate.userNotificationAPIWasCalled)
+		XCTAssertFalse(appDelegate.userNotificationWillPresentWasCalled)
+		XCTAssert(appDelegate.userNotificationdidReceiveWasCalled)
+		XCTAssertEqual(appDelegate.userNotificationTriggerType, .push)
+		XCTAssertEqual(appDelegate.userNotificationTitle, "From push")
+	}
+	
+	func testUNApiDoesntSwallowOnBackground() {
+		DTXApplicationMock(nil, "UNApiAppDelegate")
+		UIApplication.shared.applicationState = .background
+		let appDelegate = UIApplication.shared.delegate as! UNApiAppDelegate
+		appDelegate.swallowActiveUserNotification = true
+		
+		let dispatcher = DetoxUserNotificationDispatcher(userNotificationDataUrl: urlForPushUserNotification)
+		
+		sharedRemoteUserNotificationAssertions(for: appDelegate, dispatcher: dispatcher, onLaunch: false)
+		
+		XCTAssert(appDelegate.userNotificationAPIWasCalled)
+		XCTAssertFalse(appDelegate.userNotificationWillPresentWasCalled)
+		XCTAssert(appDelegate.userNotificationdidReceiveWasCalled)
+		XCTAssertEqual(appDelegate.userNotificationTriggerType, .push)
+		XCTAssertEqual(appDelegate.userNotificationTitle, "From push")
+	}
+	
 	func testUNApiWithPushOnLaunch() {
-		let appDelegate = UNApiAppDelegate()
+		DTXApplicationMock(nil, "UNApiAppDelegate")
+		let appDelegate = UIApplication.shared.delegate as! UNApiAppDelegate
 		let dispatcher = DetoxUserNotificationDispatcher(userNotificationDataUrl: urlForPushUserNotification)
 		
 		sharedRemoteUserNotificationAssertions(for: appDelegate, dispatcher: dispatcher, onLaunch: true)
@@ -74,7 +111,20 @@ class DetoxUserNotificationTests: XCTestCase {
 	}
 	
 	func testUNApiWithCalendarOnLaunch() {
-		let appDelegate = UNApiAppDelegate()
+		DTXApplicationMock(nil, "UNApiAppDelegate")
+		let appDelegate = UIApplication.shared.delegate as! UNApiAppDelegate
+		let dispatcher = DetoxUserNotificationDispatcher(userNotificationDataUrl: urlForCalendarUserNotification)
+		
+		sharedLocalUserNotificationAssertions(for: appDelegate, dispatcher: dispatcher)
+		
+		XCTAssert(appDelegate.userNotificationAPIWasCalled)
+		XCTAssertEqual(appDelegate.userNotificationTriggerType, .calendar)
+		XCTAssertEqual(appDelegate.userNotificationTitle, "From calendar")
+	}
+	
+	func testLegacyApiWithLocalOnLaunch() {
+		DTXApplicationMock(nil, "UNApiAppDelegate")
+		let appDelegate = UIApplication.shared.delegate as! TestableAppDelegate
 		let dispatcher = DetoxUserNotificationDispatcher(userNotificationDataUrl: urlForCalendarUserNotification)
 		
 		sharedLocalUserNotificationAssertions(for: appDelegate, dispatcher: dispatcher)

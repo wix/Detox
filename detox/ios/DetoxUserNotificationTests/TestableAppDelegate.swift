@@ -17,6 +17,7 @@ enum TestableAppDelegateNotifcationTriggerType {
 	case timeInterval
 }
 
+@objc(TestableAppDelegate)
 class TestableAppDelegate: NSObject, UIApplicationDelegate {
 	var remoteNotificationObjectWasFoundInWillLaunch = false
 	var remoteNotificationObjectWasFoundInDidLaunch = false
