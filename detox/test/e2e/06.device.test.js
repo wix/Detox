@@ -78,25 +78,10 @@ describe('Device', () => {
     await expect(element(by.text('Shaken, not stirred'))).toBeVisible();
   });
 
-  describe(':android: device back button', () => {
-    beforeEach(async() => {
-      await device.reloadReactNative();
-    });
-
-    it(':android: should show popup back pressed when back button is pressed', async () => {
-      await element(by.text('Actions')).tap();
-      const uiDevice = device.getUiDevice();
-      await uiDevice.pressBack();
-      await expect(element(by.text('Back pressed !'))).toBeVisible();
-    });
-    it('should show button with \'Tap works\' text when button is clicked', async () => {
-      await element(by.text('Device')).tap();
-      const uiDevice = device.getUiDevice();
-      const height = await uiDevice.getDisplayHeight();
-      const width = await uiDevice.getDisplayWidth();
-      await uiDevice.click(width / 2, height / 2);
-      await expect(element(by.text('Tap works'))).toBeVisible();
-    });
+  it(':android: device back button - should show popup back pressed when back button is pressed', async () => {
+    await device.reloadReactNative();
+    await element(by.text('Actions')).tap();
+    await device.pressBack();
+    await expect(element(by.text('Back pressed !'))).toBeVisible();
   });
-
 });
