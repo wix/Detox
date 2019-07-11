@@ -10,6 +10,7 @@ import UIKit
 import UserNotifications
 
 @available(iOS 10.0, *)
+@objc(UNApiAppDelegate)
 class UNApiAppDelegate: LegacyApiAppDelegate, UNUserNotificationCenterDelegate {
 	var userNotificationWillPresentWasCalled = false
 	var userNotificationdidReceiveWasCalled = false

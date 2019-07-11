@@ -8,6 +8,7 @@
 
 import UIKit
 
+@objc(LegacyApiAppDelegate)
 class LegacyApiAppDelegate: TestableAppDelegate {
 	func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
 		legacyRemoteNotificationOS7APIWasCalled = true
