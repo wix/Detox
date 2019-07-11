@@ -159,8 +159,9 @@ class DeviceDriverBase {
 
   }
 
-  getUiDevice() {
-
+  async getUiDevice() {
+    log.warn(`getUiDevice() is an android specific function, it exposes UiAutomator's UiDevice API (https://developer.android.com/reference/android/support/test/uiautomator/UiDevice) make sure you create an android specific test for this scenario`);
+    return await Promise.resolve('');
   }
 
   async cleanup(deviceId, bundleId) {
@@ -175,6 +176,7 @@ class DeviceDriverBase {
   }
 
   async pressBack() {
+    log.warn('pressBack() is an android specific function, make sure you create an android specific test for this scenario');
     return await Promise.resolve('');
   }
 
