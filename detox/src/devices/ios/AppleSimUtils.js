@@ -188,14 +188,8 @@ class AppleSimUtils {
   }
 
   async setLocation(udid, lat, lon) {
-    const result = await exec.execWithRetriesAndLogs(`which fbsimctl`, undefined, undefined, 1);
-    if (_.get(result, 'stdout')) {
-      await exec.execWithRetriesAndLogs(`fbsimctl ${udid} set_location ${lat} ${lon}`, undefined, undefined, 1);
-    } else {
-      throw new Error(`setLocation currently supported only through fbsimctl.
-      Install fbsimctl using:
-      "brew tap facebook/fb && export CODE_SIGNING_REQUIRED=NO && brew install fbsimctl"`);
-    }
+    await exec.execWithRetriesAndLogs(`idb set_location ${lat} ${lon}`);
+
   }
 
   async resetContentAndSettings(udid) {
