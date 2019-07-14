@@ -2,6 +2,8 @@ buildscript {
     ext.kotlinVersion = '1.3.0'
     ext.detoxKotlinVerion = ext.kotlinVersion
     ext.buildToolsVersion = '28.0.3'
+    ext.spekVersion = '2.0.5'
+    ext.androidJunit5Version = '1.4.2.1'
 
     repositories {
         google()
@@ -13,6 +15,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:3.3.2'
         classpath 'de.undercouch:gradle-download-task:3.4.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "de.mannodermaus.gradle.plugins:android-junit5:$androidJunit5Version"
     }
 }
 
