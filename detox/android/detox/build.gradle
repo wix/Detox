@@ -1,7 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'de.mannodermaus.android-junit5'
 
 def _ext = rootProject.ext
 
@@ -41,14 +40,6 @@ android {
                     println '\n' + ('-' * repeatLength) + '\n' + output + '\n' + ('-' * repeatLength) + '\n'
 
                     println "see report at file://${t.reports.html.destination}/index.html"
-                }
-            }
-        }
-
-        junitPlatform {
-            filters {
-                engines {
-                    include 'spek2'
                 }
             }
         }
@@ -95,11 +86,6 @@ dependencies {
     testImplementation 'org.assertj:assertj-core:3.8.0'
     testImplementation 'org.apache.commons:commons-io:1.3.2'
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0'
-
-    // Spek (https://spekframework.org/setup-android/)
-    testImplementation "org.spekframework.spek2:spek-dsl-jvm:$spekVersion"
-    testImplementation "org.spekframework.spek2:spek-runner-junit5:$spekVersion"
-    testImplementation "org.jetbrains.kotlin:kotlin-reflect:$_kotlinVersion"
 
     // noinspection GradleDynamicVersion
     testImplementation 'com.facebook.react:react-native:+'
