@@ -13,6 +13,9 @@ buildscript {
         classpath 'com.android.tools.build:gradle:3.3.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
+
+        // Needed by Spek (https://spekframework.org/setup-android)
+        classpath "de.mannodermaus.gradle.plugins:android-junit5:1.4.2.1"
     }
 }
 

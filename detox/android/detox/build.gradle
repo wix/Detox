@@ -91,6 +91,30 @@ dependencies {
     testImplementation 'com.facebook.react:react-native:+'
 }
 
+// Spek (https://spekframework.org/setup-android)
+if (rootProject.hasProperty('isOfficialDetoxLib')) {
+    apply plugin: 'de.mannodermaus.android-junit5'
+
+    android {
+        testOptions {
+            junitPlatform {
+                filters {
+                    engines {
+                        include 'spek2'
+                    }
+                }
+            }
+        }
+    }
+
+    dependencies {
+        testImplementation 'org.spekframework.spek2:spek-dsl-jvm:2.0.5'
+        testImplementation 'org.spekframework.spek2:spek-runner-junit5:2.0.5'
+        testImplementation "org.jetbrains.kotlin:kotlin-reflect:$_kotlinVersion"
+    }
+}
+
+// Enable publishing
 if (rootProject.hasProperty('isOfficialDetoxLib')) {
     apply from: './detox-publishing.gradle'
 }
