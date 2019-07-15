@@ -29,7 +29,7 @@ class TimingModuleReflected(reactContext: ReactContext) {
     val timersQueue: PriorityQueue<Any>
         get() = Reflect.on(nativeModule).field("mTimers").get()
 
-    val timersLock: Object
+    val timersLock: Any
         get() = Reflect.on(nativeModule).field("mTimerGuard").get()
 
     operator fun component1() = timersQueue
