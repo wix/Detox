@@ -12,7 +12,33 @@
 @import UserNotifications;
 @import COSTouchVisualizer;
 
+DTX_CREATE_LOG(AppDelegateProxy)
+
 #import <Detox/Detox-Swift.h>
+
+#define CALL_SUPER_IMPL_IF_NEEDED_BOOL_RV(self, rv, PARAM1, PARAM2) if([class_getSuperclass(object_getClass(self)) instancesRespondToSelector:_cmd]) \
+{ \
+	dtx_log_debug(@"Superclass “%@” responds to selector “%@”", class_getSuperclass(object_getClass(self)), NSStringFromSelector(_cmd)); \
+	struct objc_super super = {.receiver = self, .super_class = class_getSuperclass(object_getClass(self))}; \
+	BOOL (*super_class)(struct objc_super*, SEL, id, id) = (void*)objc_msgSendSuper; \
+	rv = super_class(&super, _cmd, PARAM1, PARAM2); \
+} \
+else \
+{ \
+	dtx_log_debug(@"Superclass “%@” does not respond to selector “%@”", class_getSuperclass(object_getClass(self)), NSStringFromSelector(_cmd)); \
+}
+
+#define CALL_SUPER_IMPL_IF_NEEDED(self, PARAM1) if([class_getSuperclass(object_getClass(self)) instancesRespondToSelector:_cmd]) \
+{ \
+dtx_log_debug(@"Superclass “%@” responds to selector “%@”", class_getSuperclass(object_getClass(self)), NSStringFromSelector(_cmd)); \
+struct objc_super super = {.receiver = self, .super_class = class_getSuperclass(object_getClass(self))}; \
+void (*super_class)(struct objc_super*, SEL, id) = (void*)objc_msgSendSuper; \
+super_class(&super, _cmd, PARAM1); \
+} \
+else \
+{ \
+dtx_log_debug(@"Superclass “%@” does not respond to selector “%@”", class_getSuperclass(object_getClass(self)), NSStringFromSelector(_cmd)); \
+}
 
 @interface COSTouchVisualizerWindow () @end
 @interface DTXTouchVisualizerWindow : COSTouchVisualizerWindow @end
@@ -30,9 +56,9 @@
 
 @end
 
-@class DetoxAppDelegateProxy;
+@class DetoxAppDelegateProxyPrototype;
 
-static DetoxAppDelegateProxy* _currentAppDelegateProxy;
+static DetoxAppDelegateProxyPrototype* _currentAppDelegateProxy;
 static NSMutableArray<NSDictionary*>* _pendingOpenURLs;
 static NSMutableArray<DetoxUserNotificationDispatcher*>* _pendingUserNotificationDispatchers;
 static DetoxUserNotificationDispatcher* _pendingLaunchUserNotificationDispatcher;
@@ -98,11 +124,11 @@ static NSURL* _launchUserActivityDataURL()
 
 @end
 
-@interface DetoxAppDelegateProxy () <UIApplicationDelegate, COSTouchVisualizerWindowDelegate> @end
+@interface DetoxAppDelegateProxyPrototype () <UIApplicationDelegate, COSTouchVisualizerWindowDelegate> @end
 
-@implementation DetoxAppDelegateProxy
+@implementation DetoxAppDelegateProxyPrototype
 
-+ (instancetype)currentAppDelegateProxy
++ (instancetype)__dtx_currentAppDelegateProxy
 {
 	return _currentAppDelegateProxy;
 }
@@ -122,6 +148,7 @@ static void __copyMethods(Class orig, Class target)
 		{
 			continue;
 		}
+		dtx_log_debug(@"Copying class method “%@” from “%@” to “%@”", NSStringFromSelector(method_getName(method)), orig, target);
 		class_addMethod(targetMetaclass, method_getName(method), method_getImplementation(method), method_getTypeEncoding(method));
 	}
 	
@@ -133,6 +160,7 @@ static void __copyMethods(Class orig, Class target)
 	for (unsigned int i = 0; i < methodCount; i++)
 	{
 		Method method = methods[i];
+		dtx_log_debug(@"Copying instance method “%@” from “%@” to “%@”", NSStringFromSelector(method_getName(method)), orig, target);
 		class_addMethod(target, method_getName(method), method_getImplementation(method), method_getTypeEncoding(method));
 	}
 	
@@ -167,27 +195,39 @@ static void __copyMethods(Class orig, Class target)
 		}
 		
 		Method m = class_getInstanceMethod([UIApplication class], @selector(setDelegate:));
-		void (*orig)(id, SEL, id<UIApplicationDelegate>) = (void*)method_getImplementation(m);
-		method_setImplementation(m, imp_implementationWithBlock(^ (id _self, id<UIApplicationDelegate, COSTouchVisualizerWindowDelegate> origDelegate) {
-			//Only create a dupe class if the provided instance is not already a dupe class.
+		void (*orig)(id, SEL, NSObject<UIApplicationDelegate, COSTouchVisualizerWindowDelegate>*) = (void*)method_getImplementation(m);
+		method_setImplementation(m, imp_implementationWithBlock(^ (id _self, NSObject<UIApplicationDelegate, COSTouchVisualizerWindowDelegate>* origDelegate) {
+			
+			dtx_log_debug(@"Original delegate class: “%@” (objc), “%@” (runtime)", origDelegate.class, object_getClass(origDelegate));
+			
+			//Only create a support class if the provided instance is not already a support class.
 			if(origDelegate != nil && [origDelegate respondsToSelector:@selector(__dtx_canaryInTheCoalMine)] == NO)
 			{
-				NSString* clsName = [NSString stringWithFormat:@"%@(%@)", NSStringFromClass([origDelegate class]), NSStringFromClass([DetoxAppDelegateProxy class])];
+				NSString* clsName = [NSString stringWithFormat:@"%@(%@)", NSStringFromClass([origDelegate class]), @"DetoxSupport"];
 				Class cls = objc_getClass(clsName.UTF8String);
 				
 				if(cls == nil)
 				{
+					dtx_log_debug(@"Creating proxy class “%@” for original delegate “%@”\n\nMethod description: %@", clsName, origDelegate, [origDelegate valueForKey:@"methodDescription"]);
 					cls = objc_allocateClassPair(origDelegate.class, clsName.UTF8String, 0);
-					__copyMethods([DetoxAppDelegateProxy class], cls);
+					__copyMethods([DetoxAppDelegateProxyPrototype class], cls);
 					objc_registerClassPair(cls);
+				}
+				else
+				{
+					dtx_log_debug(@"Class “%@” exists", cls);
 				}
 				
 				object_setClass(origDelegate, cls);
 				
 				[[NSNotificationCenter defaultCenter] addObserver:origDelegate selector:@selector(__dtx_applicationDidLaunchNotification:) name:UIApplicationDidFinishLaunchingNotification object:nil];
 			}
+			else
+			{
+				dtx_log_debug(@"Original delegate “%@” responds to “__dtx_canaryInTheCoalMine”", origDelegate);
+			}
 			
-			_currentAppDelegateProxy = origDelegate;
+			_currentAppDelegateProxy = (id)origDelegate;
 			orig(_self, @selector(setDelegate:), origDelegate);
 		}));
 	});
@@ -270,12 +310,7 @@ static void __copyMethods(Class orig, Class target)
 					 ];
 	
 	BOOL rv = YES;
-	if([class_getSuperclass(object_getClass(self)) instancesRespondToSelector:_cmd])
-	{
-		struct objc_super super = {.receiver = self, .super_class = class_getSuperclass(object_getClass(self))};
-		BOOL (*super_class)(struct objc_super*, SEL, id, id) = (void*)objc_msgSendSuper;
-		rv = super_class(&super, _cmd, application, launchOptions);
-	}
+	CALL_SUPER_IMPL_IF_NEEDED_BOOL_RV(self, rv, application, launchOptions);
 	
 	return rv;
 }
@@ -289,12 +324,7 @@ static void __copyMethods(Class orig, Class target)
 					 ];
 	
 	BOOL rv = YES;
-	if([class_getSuperclass(object_getClass(self)) instancesRespondToSelector:_cmd])
-	{
-		struct objc_super super = {.receiver = self, .super_class = class_getSuperclass(object_getClass(self))};
-		BOOL (*super_class)(struct objc_super*, SEL, id, id) = (void*)objc_msgSendSuper;
-		rv = super_class(&super, _cmd, application, launchOptions);
-	}
+	CALL_SUPER_IMPL_IF_NEEDED_BOOL_RV(self, rv, application, launchOptions);
 	
 	[_pendingLaunchUserNotificationDispatcher dispatchOnAppDelegate:self simulateDuringLaunch:YES];
 #if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_10_3
@@ -316,12 +346,7 @@ static void __copyMethods(Class orig, Class target)
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-	if([class_getSuperclass(object_getClass(self)) instancesRespondToSelector:_cmd])
-	{
-		struct objc_super super = {.receiver = self, .super_class = class_getSuperclass(object_getClass(self))};
-		void (*super_class)(struct objc_super*, SEL, id) = (void*)objc_msgSendSuper;
-		super_class(&super, _cmd, application);
-	}
+	CALL_SUPER_IMPL_IF_NEEDED(self, application);
 	
 	[_pendingOpenURLs enumerateObjectsUsingBlock:^(NSDictionary * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
 		[self __dtx_actualDispatchOpenURL:obj];

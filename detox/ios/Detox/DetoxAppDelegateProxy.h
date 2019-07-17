@@ -9,9 +9,9 @@
 @import Foundation;
 @import UIKit;
 
-@interface DetoxAppDelegateProxy : NSObject <UIApplicationDelegate>
+@interface DetoxAppDelegateProxyPrototype : NSObject <UIApplicationDelegate>
 
-@property (class, nonatomic, strong, readonly) DetoxAppDelegateProxy* currentAppDelegateProxy;
+@property (class, nonatomic, strong, readonly) DetoxAppDelegateProxyPrototype* __dtx_currentAppDelegateProxy;
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_10_3
 - (void)__dtx_dispatchUserActivityFromDataURL:(NSURL*)userActivityDataURL delayUntilActive:(BOOL)delay;
