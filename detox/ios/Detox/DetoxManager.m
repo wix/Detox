@@ -282,7 +282,7 @@ static void detoxConditionalInit()
 			}
 			
 			block = ^{
-				[DetoxAppDelegateProxyPrototype.__dtx_currentAppDelegateProxy __dtx_dispatchOpenURL:URLToOpen options:options delayUntilActive:delay];
+				[DetoxAppDelegateProxy.sharedAppDelegateProxy _dispatchOpenURL:URLToOpen options:options delayUntilActive:delay];
 				
 				sendDoneAction(self.webSocket, messageId);
 			};
@@ -294,7 +294,7 @@ static void detoxConditionalInit()
 			NSParameterAssert(userNotificationDataURL != nil);
 			
 			block = ^{
-				[DetoxAppDelegateProxyPrototype.__dtx_currentAppDelegateProxy __dtx_dispatchUserNotificationFromDataURL:userNotificationDataURL delayUntilActive:delay];
+				[DetoxAppDelegateProxy.sharedAppDelegateProxy _dispatchUserNotificationFromDataURL:userNotificationDataURL delayUntilActive:delay];
 				
 				sendDoneAction(self.webSocket, messageId);
 			};
@@ -307,7 +307,7 @@ static void detoxConditionalInit()
 			NSParameterAssert(userActivityDataURL != nil);
 			
 			block = ^{
-				[DetoxAppDelegateProxyPrototype.__dtx_currentAppDelegateProxy __dtx_dispatchUserActivityFromDataURL:userActivityDataURL delayUntilActive:delay];
+				[DetoxAppDelegateProxy.sharedAppDelegateProxy _dispatchUserActivityFromDataURL:userActivityDataURL delayUntilActive:delay];
 				
 				sendDoneAction(self.webSocket, messageId);
 			};
