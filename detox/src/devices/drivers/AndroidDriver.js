@@ -29,7 +29,7 @@ class AndroidDriver extends DeviceDriverBase {
 
     this.invocationManager = new InvocationManager(this.client);
     this.matchers = new AndroidExpect(this.invocationManager);
-    this.UiDevice = new UiDeviceProxy(this.invocationManager).getUIDevice();
+    this.uiDevice = new UiDeviceProxy(this.invocationManager).getUIDevice();
 
     this.adb = new ADB();
     this.aapt = new AAPT();
@@ -58,7 +58,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async pressBack(deviceId) {
-    this.UiDevice.pressBack();
+    this.uiDevice.pressBack();
   }
 
   getTestApkPath(originalApkPath) {
@@ -121,7 +121,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async sendToHome(deviceId, params) {
-    this.UiDevice.pressHome();
+    this.uiDevice.pressHome();
   }
 
   async terminate(deviceId, bundleId) {
@@ -147,7 +147,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   getUiDevice() {
-    return this.UiDevice;
+    return this.uiDevice;
   }
 
   async findDeviceId(filter) {
