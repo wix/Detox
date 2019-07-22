@@ -85,5 +85,8 @@ describe('IOS simulator driver', () => {
 class mockAppleSimUtils {
   constructor() {
     this.launch = jest.fn();
+    this.setBiometricEnrollment = jest.fn();
+    this.matchBiometric = jest.fn();
+    this.unmatchBiometric = jest.fn();
   }
 }
