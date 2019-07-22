@@ -63,6 +63,42 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
+  async sendToHome() {
+    return await Promise.resolve('');
+  }
+
+  async sendToHome() {
+    return await Promise.resolve('');
+  }
+
+  async sendToHome() {
+    return await Promise.resolve('');
+  }
+
+  async enrollBiometrics() {
+    return await Promise.resolve('');
+  }
+
+  async disenrollBiometrics() {
+    return await Promise.resolve('');
+  }
+
+  async matchFace() {
+    return await Promise.resolve('');
+  }
+
+  async unmatchFace() {
+    return await Promise.resolve('');
+  }
+
+  async matchFinger() {
+    return await Promise.resolve('');
+  }
+  
+  async unmatchFinger() {
+    return await Promise.resolve('');
+  }
+
   async shake() {
     return await Promise.resolve('');
   }

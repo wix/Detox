@@ -138,7 +138,7 @@ class AppleSimUtils {
   }
 
   async matchBiometric(udid, matchType) {
-    if (!['face', 'finger'].include(matchType)) {
+    if (!['Face', 'Finger'].include(matchType)) {
       return;
     }
     const statusLogs = {
