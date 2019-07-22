@@ -17,6 +17,7 @@ import DatePickerScreen from './DatePickerScreen';
 import LanguageScreen from './LanguageScreen';
 import LaunchArgsScreen from './LaunchArgsScreen';
 import PickerViewScreen from './PickerViewScreen';
+import DeviceScreen from './DeviceScreen';
 
 export {
   SanityScreen,
@@ -37,5 +38,6 @@ export {
   DatePickerScreen,
   PickerViewScreen,
   LanguageScreen,
-  LaunchArgsScreen
+  LaunchArgsScreen,
+  DeviceScreen
 };

@@ -83,10 +83,6 @@ class IosDriver extends DeviceDriverBase {
   getPlatform() {
     return 'ios';
   }
-
-  async pressBack(deviceId) {
-    log.warn('pressBack is an android specific function, make sure you create an android specific test for this scenario');
-  }
 }
 
 module.exports = IosDriver;

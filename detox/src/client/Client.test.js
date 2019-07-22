@@ -152,6 +152,18 @@ describe('Client', () => {
     expect(client.ws.send).toHaveBeenCalledTimes(2);
   });
 
+  it(`execute() - "invokeResult" on an invocation object should return invokeResult`, async () => {
+    const someResult = 'some_result';
+    const someInvocationResult = { type: "invokeResult", params: { result: someResult }, messageId: 1 };
+    await connect();
+    client.ws.send.mockReturnValueOnce(response("invokeResult", {result: someResult}, 1));
+
+    const call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityLabel:', 'test');
+    const invokeResult = await client.execute(call());
+
+    expect(invokeResult).toEqual(someInvocationResult);
+  });
+
   it(`execute() - fast invocation should not trigger "slowInvocationStatus"`, async () => {
     argparse.getArgValue.mockReturnValue(2); // set debug-slow-invocations
     await connect();

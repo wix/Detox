@@ -627,6 +627,29 @@ describe('Device', () => {
     expect(driverMock.driver.pressBack).toHaveBeenCalledWith(device._deviceId);
   });
 
+  describe('get ui device', () => {
+    it(`getUiDevice should invoke driver's getUiDevice`, async () => {
+      const device = validDevice();
+
+      await device.getUiDevice();
+
+      expect(driverMock.driver.getUiDevice).toHaveBeenCalled();
+    });
+
+    it('should call return UiDevice when call getUiDevice', async () => {
+      const uiDevice = {
+        uidevice: true,
+      };
+
+      const device = validDevice();
+      driverMock.driver.getUiDevice = () =>  uiDevice;
+
+      const result = await device.getUiDevice();
+
+      expect(result).toEqual(uiDevice);
+    })
+  });
+
   it('takeScreenshot(name) should throw an exception if given name is empty', async () => {
     await expect(validDevice().takeScreenshot()).rejects.toThrowErrorMatchingSnapshot();
   });
