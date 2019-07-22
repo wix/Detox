@@ -136,35 +136,34 @@ class Device {
   }
 
   async enrollBiometrics() {
-    await this.deviceDriver.setBiometricEnrollment(this._deviceId, 'YES');
+    await this.deviceDriver.enrollBiometrics(this._deviceId);
     await this.deviceDriver.waitForBackground();
   }
 
   async disenrollBiometrics() {
-    await this.deviceDriver.setBiometricEnrollment(this._deviceId, 'NO');
+    await this.deviceDriver.disenrollBiometrics(this._deviceId);
     await this.deviceDriver.waitForBackground();
   }
 
-  // async matchFace() {
-  //   await this.deviceDriver.matchBiometric(this._deviceId, 'Face');
-  //   await this.deviceDriver.waitForBackground();
-  // }
+  async matchFace() {
+    await this.deviceDriver.matchFace(this._deviceId);
+    await this.deviceDriver.waitForBackground();
+  }
 
-  // async unmatchFace() {
-  //   console.log('this.deviceDriver ==>', this.deviceDriver)
-  //   await this.deviceDriver.unmatchBiometric(this._deviceId, 'Face');
-  //   await this.deviceDriver.waitForBackground();
-  // }
+  async unmatchFace() {
+    await this.deviceDriver.unmatchFace(this._deviceId);
+    await this.deviceDriver.waitForBackground();
+  }
 
-  // async matchFinger() {
-  //   await this.deviceDriver.matchBiometric(this._deviceId, 'Finger');
-  //   await this.deviceDriver.waitForBackground();
-  // }
+  async matchFinger() {
+    await this.deviceDriver.matchFinger(this._deviceId);
+    await this.deviceDriver.waitForBackground();
+  }
 
-  // async unmatchFinger() {
-  //   await this.deviceDriver.unmatchBiometric(this._deviceId, 'Finger');
-  //   await this.deviceDriver.waitForBackground();
-  // }
+  async unmatchFinger() {
+    await this.deviceDriver.unmatchFinger(this._deviceId);
+    await this.deviceDriver.waitForBackground();
+  }
 
   async shake() {
     await this.deviceDriver.shake(this._deviceId);
