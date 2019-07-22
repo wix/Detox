@@ -490,33 +490,33 @@ describe('Device', () => {
     expect(driverMock.driver.disenrollBiometrics).toHaveBeenCalledTimes(1);
   });
 
-  // it(`matchFace() should pass to device driver`, async () => {
-  //   const device = validDevice();
-  //   await device.matchFace();
+  it(`matchFace() should pass to device driver`, async () => {
+    const device = validDevice();
+    await device.matchFace();
 
-  //   expect(driverMock.driver.matchFace).toHaveBeenCalledTimes(1);
-  // });
+    expect(driverMock.driver.matchFace).toHaveBeenCalledTimes(1);
+  });
 
-  // it(`unmatchFace() should pass to device driver`, async () => {
-  //   const device = validDevice();
-  //   await device.unmatchFace();
+  it(`unmatchFace() should pass to device driver`, async () => {
+    const device = validDevice();
+    await device.unmatchFace();
 
-  //   expect(driverMock.driver.unmatchFace).toHaveBeenCalledTimes(1);
-  // });
+    expect(driverMock.driver.unmatchFace).toHaveBeenCalledTimes(1);
+  });
 
-  // it(`matchFinger() should pass to device driver`, async () => {
-  //   const device = validDevice();
-  //   await device.matchFinger();
+  it(`matchFinger() should pass to device driver`, async () => {
+    const device = validDevice();
+    await device.matchFinger();
 
-  //   expect(driverMock.driver.matchFinger).toHaveBeenCalledTimes(1);
-  // });
+    expect(driverMock.driver.matchFinger).toHaveBeenCalledTimes(1);
+  });
 
-  // it(`unmatchFinger() should pass to device driver`, async () => {
-  //   const device = validDevice();
-  //   await device.unmatchFinger();
+  it(`unmatchFinger() should pass to device driver`, async () => {
+    const device = validDevice();
+    await device.unmatchFinger();
 
-  //   expect(driverMock.driver.unmatchFinger).toHaveBeenCalledTimes(1);
-  // });
+    expect(driverMock.driver.unmatchFinger).toHaveBeenCalledTimes(1);
+  });
 
   it(`shake() should pass to device driver`, async () => {
     const device = validDevice();
