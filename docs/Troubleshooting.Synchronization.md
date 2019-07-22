@@ -86,14 +86,13 @@ The status will be printed if the action takes more than [value] ms to complete
 ```
 detox test --debug-synchronization 200
 ```
+#### Lower-level Idling Resources Rebug (iOS Only)
 
-If this does not provide the necessary information, on iOS, you can add the
+If `--debug-synchronization` does not provide the necessary information, on iOS you can add the following launch argument to your app (using `launchArgs` in your `launchApp()` call) to enable a very verbose logging of the idling resource system to the system log:
 
 ```shell
 -detoxPrintBusyIdleResources YES
 ```
-
-launch argument to your app (using `launchArgs` in your `launchApp()` call) to enable a very verbose logging of the idling resource system to the system log.
 
 You can then obtain this log by running the following command:
 

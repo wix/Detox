@@ -11,10 +11,10 @@
 
 @interface DetoxAppDelegateProxy : NSObject <UIApplicationDelegate>
 
-@property (class, nonatomic, strong, readonly) DetoxAppDelegateProxy* currentAppDelegateProxy;
+@property (class, nonatomic, strong, readonly) DetoxAppDelegateProxy* sharedAppDelegateProxy;
 
-- (void)__dtx_dispatchUserActivityFromDataURL:(NSURL*)userActivityDataURL delayUntilActive:(BOOL)delay;
-- (void)__dtx_dispatchUserNotificationFromDataURL:(NSURL*)userNotificationDataURL delayUntilActive:(BOOL)delay;
-- (void)__dtx_dispatchOpenURL:(NSURL*)URL options:(NSDictionary*)options delayUntilActive:(BOOL)delay;
+- (void)_dispatchUserActivityFromDataURL:(NSURL*)userActivityDataURL delayUntilActive:(BOOL)delay;
+- (void)_dispatchUserNotificationFromDataURL:(NSURL*)userNotificationDataURL delayUntilActive:(BOOL)delay;
+- (void)_dispatchOpenURL:(NSURL*)URL options:(NSDictionary*)options delayUntilActive:(BOOL)delay;
 
 @end
