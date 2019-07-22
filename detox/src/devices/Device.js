@@ -151,6 +151,7 @@ class Device {
   }
 
   async unmatchFace() {
+    console.log('this.deviceDriver ==>', this.deviceDriver)
     await this.deviceDriver.unmatchBiometric(this._deviceId, 'Face');
     await this.deviceDriver.waitForBackground();
   }
