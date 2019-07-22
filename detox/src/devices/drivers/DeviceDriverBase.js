@@ -63,18 +63,6 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async sendToHome() {
-    return await Promise.resolve('');
-  }
-
-  async sendToHome() {
-    return await Promise.resolve('');
-  }
-
-  async sendToHome() {
-    return await Promise.resolve('');
-  }
-
   async enrollBiometrics() {
     return await Promise.resolve('');
   }

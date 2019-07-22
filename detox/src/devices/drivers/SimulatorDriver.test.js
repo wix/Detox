@@ -1,5 +1,5 @@
 describe('IOS simulator driver', () => {
-  let uut;
+  let uut, sim;
 
   const deviceId = 'device-id-mock';
   const bundleId = 'bundle-id-mock';
