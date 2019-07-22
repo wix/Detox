@@ -631,11 +631,11 @@ describe('Device', () => {
     it(`getUiDevice should invoke driver's getUiDevice`, async () => {
       const device = validDevice();
 
-      const result = await device.getUiDevice();
+      await device.getUiDevice();
 
       expect(driverMock.driver.getUiDevice).toHaveBeenCalled();
     });
-    
+
     it('should call return UiDevice when call getUiDevice', async () => {
       const uiDevice = {
         uidevice: true,

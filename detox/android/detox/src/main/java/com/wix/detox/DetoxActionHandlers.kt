@@ -49,13 +49,13 @@ class InvokeActionHandler(
     override fun handle(params: String, messageId: Long) {
         try {
             val invocationResult = methodInvocation.invoke(params)
-            wsClient.sendAction("invokeResult", mapOf<String, Any?>(Pair("result", invocationResult)), messageId)
+            wsClient.sendAction("invokeResult", mapOf<String, Any?>("result" to invocationResult), messageId)
         } catch (e: InvocationTargetException) {
             Log.e(LOG_TAG, "Exception", e)
-            wsClient.sendAction("error", mapOf<String, Any?>(Pair("error", e.targetException?.message)), messageId)
+            wsClient.sendAction("error", mapOf<String, Any?>("error" to e.targetException?.message), messageId)
         } catch (e: Exception) {
             Log.i(LOG_TAG, "Test exception", e)
-            wsClient.sendAction("testFailed", mapOf<String, Any?>(Pair("details", e.message)), messageId)
+            wsClient.sendAction("testFailed", mapOf<String, Any?>("details" to e.message), messageId)
         }
     }
 }

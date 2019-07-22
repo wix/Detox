@@ -58,7 +58,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async pressBack(deviceId) {
-    this.uiDevice.pressBack();
+    await this.uiDevice.pressBack();
   }
 
   getTestApkPath(originalApkPath) {
@@ -121,7 +121,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async sendToHome(deviceId, params) {
-    this.uiDevice.pressHome();
+    await this.uiDevice.pressHome();
   }
 
   async terminate(deviceId, bundleId) {

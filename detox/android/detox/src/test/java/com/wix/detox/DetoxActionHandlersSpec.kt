@@ -106,11 +106,18 @@ object DetoxActionHandlersSpec: Spek({
                 verify(wsClient).sendAction(eq("invokeResult"), any(), eq(messageId))
             }
 
-            // TODO reply with an actual result
-            it("should reply with dummy result data") {
+            it("should reply with empty result data") {
                 uut().handle(params, messageId)
 
-                verify(wsClient).sendAction(any(), argThat { size == 1 && this["result"] == "(null)" }, any())
+                verify(wsClient).sendAction(any(), argThat { size == 1 && this["result"] == null }, any())
+            }
+
+            it("should reply with actual result data") {
+                val someResult = "some_result"
+                whenever(methodInvocationMock.invoke(isA<String>())).thenReturn(someResult)
+                uut().handle(params, messageId)
+
+                verify(wsClient).sendAction(any(), argThat { size == 1 && this["result"] == someResult }, any())
             }
 
             it("should handle runtime errors") {
