@@ -135,6 +135,30 @@ class Device {
     await this.deviceDriver.waitForBackground();
   }
 
+  async enrollBiometrics() {
+    await this.deviceDriver.setBiometricEnrollment(this._deviceId, 'YES');
+  }
+
+  async disenrollBiometrics() {
+    await this.deviceDriver.setBiometricEnrollment(this._deviceId, 'NO');
+  }
+
+  async matchFace() {
+    await this.deviceDriver.matchBiometric(this._deviceId, 'Face');
+  }
+
+  async unmatchFace() {
+    await this.deviceDriver.unmatchBiometric(this._deviceId, 'Face');
+  }
+
+  async matchFinger() {
+    await this.deviceDriver.matchBiometric(this._deviceId, 'Finger');
+  }
+
+  async unmatchFinger() {
+    await this.deviceDriver.unmatchBiometric(this._deviceId, 'Finger');
+  }
+
   async shake() {
     await this.deviceDriver.shake(this._deviceId);
   }
