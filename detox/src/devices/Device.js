@@ -145,26 +145,26 @@ class Device {
     await this.deviceDriver.waitForBackground();
   }
 
-  async matchFace() {
-    await this.deviceDriver.matchBiometric(this._deviceId, 'Face');
-    await this.deviceDriver.waitForBackground();
-  }
+  // async matchFace() {
+  //   await this.deviceDriver.matchBiometric(this._deviceId, 'Face');
+  //   await this.deviceDriver.waitForBackground();
+  // }
 
-  async unmatchFace() {
-    console.log('this.deviceDriver ==>', this.deviceDriver)
-    await this.deviceDriver.unmatchBiometric(this._deviceId, 'Face');
-    await this.deviceDriver.waitForBackground();
-  }
+  // async unmatchFace() {
+  //   console.log('this.deviceDriver ==>', this.deviceDriver)
+  //   await this.deviceDriver.unmatchBiometric(this._deviceId, 'Face');
+  //   await this.deviceDriver.waitForBackground();
+  // }
 
-  async matchFinger() {
-    await this.deviceDriver.matchBiometric(this._deviceId, 'Finger');
-    await this.deviceDriver.waitForBackground();
-  }
+  // async matchFinger() {
+  //   await this.deviceDriver.matchBiometric(this._deviceId, 'Finger');
+  //   await this.deviceDriver.waitForBackground();
+  // }
 
-  async unmatchFinger() {
-    await this.deviceDriver.unmatchBiometric(this._deviceId, 'Finger');
-    await this.deviceDriver.waitForBackground();
-  }
+  // async unmatchFinger() {
+  //   await this.deviceDriver.unmatchBiometric(this._deviceId, 'Finger');
+  //   await this.deviceDriver.waitForBackground();
+  // }
 
   async shake() {
     await this.deviceDriver.shake(this._deviceId);
