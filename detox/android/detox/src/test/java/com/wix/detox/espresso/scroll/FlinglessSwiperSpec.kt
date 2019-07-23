@@ -50,7 +50,7 @@ object FlinglessSwiperSpec: Spek({
                 verify(motionEvents).obtainDownEvent(eq(666f), eq(999f), any())
             }
 
-            it("should throw descriptive error if already started") {
+            it("should throw a descriptive error if already started") {
                 var err: Exception? = null
                 try {
                     with (uut()) {
@@ -88,7 +88,7 @@ object FlinglessSwiperSpec: Spek({
                     err = e
                 }
                 assertThat(err).isNotNull()
-                assertThat(err).hasMessage("Cannot move swiper because it hasn't been started yet - did you forget to call startAt()?")
+                assertThat(err).hasMessage("Swiper not initialized - did you forget to call startAt()?")
             }
 
             describe("event time") {
@@ -128,8 +128,8 @@ object FlinglessSwiperSpec: Spek({
                 }
 
                 it("should apply a min event-time delta of 10ms") {
-                    val defaultDelta = 10
-                    val expectedEventTime = swipeStartTime + defaultDelta
+                    val expectedMinDelta = 10
+                    val expectedEventTime = swipeStartTime + expectedMinDelta
 
                     with(uut()) {
                         startAt(0f, 0f)
@@ -168,6 +168,19 @@ object FlinglessSwiperSpec: Spek({
         }
 
         describe("finish") {
+            it("should throw descriptive error if not started") {
+                var err: Exception? = null
+                try {
+                    with (uut()) {
+                        finishAt(1f, 1f)
+                    }
+                } catch (e: Exception) {
+                    err = e
+                }
+                assertThat(err).isNotNull()
+                assertThat(err).hasMessage("Swiper not initialized - did you forget to call startAt()?")
+            }
+
             it("should finish by obtaining an up event") {
                 whenever(downEvent.x).doReturn(666f)
                 whenever(downEvent.y).doReturn(999f)
@@ -203,7 +216,7 @@ object FlinglessSwiperSpec: Spek({
                 verify(moveEvent).recycle()
             }
 
-            it("should recycler all events event if ui controller fails") {
+            it("should recycle all events even if ui controller fails") {
                 whenever(uiController.injectMotionEventSequence(any())).doThrow(RuntimeException())
 
                 with(uut()) {

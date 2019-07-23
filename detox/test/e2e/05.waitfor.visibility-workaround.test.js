@@ -5,7 +5,7 @@ const {expectToThrow} = require('./utils/custom-expects');
  * Another mini-suite providing an alternative to https://github.com/facebook/react-native/issues/23870.
  * See actions visibility workaround for more.
  */
-describe('Visibility-bug workaround waitfor() api', () => {
+describe('Visibility-bug workaround for waitfor() api', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
     await element(by.text('FS Scroll Actions')).tap();

@@ -1,6 +1,5 @@
 const scrollingTextsDriver = {
-  scrollViewById: () => by.id('integActions.textsScrollView'),
-  scrollView: () => element(scrollingTextsDriver.scrollViewById()),
+  scrollView: () => element(by.id('integActions.textsScrollView')),
   scrollDown: async (amount) => {
     await scrollingTextsDriver.scrollView().scroll(amount + 15.5, 'down'); // Adjustment is experiments-based, not a magic number!
   },
@@ -12,10 +11,6 @@ const scrollingTextsDriver = {
     const elementId = scrollingTextsDriver._elementId(id);
     const expectedText = `${elementId}: 1`;
     await expect(element(by.id(elementId))).toHaveText(expectedText);
-  },
-  textElement: (id) => {
-    const elementId = scrollingTextsDriver._elementId(id);
-    return element(by.id(elementId));
   },
   _elementId: (fieldId) => `tappableText-${fieldId}`,
 };

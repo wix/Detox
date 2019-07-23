@@ -46,6 +46,8 @@ class FlinglessSwiper @JvmOverloads constructor(
     }
 
     override fun finishAt(releaseX: Float, releaseY: Float) {
+        assertStarted()
+
         try {
             val upEvent = motionEvents.obtainUpEvent(downEvent!!, calcEventTime(releaseX, releaseY), releaseX, releaseY)
             events.add(upEvent)
@@ -78,7 +80,7 @@ class FlinglessSwiper @JvmOverloads constructor(
 
     private fun assertStarted() {
         if (downEvent == null) {
-            throw IllegalStateException("Cannot move swiper because it hasn't been started yet - did you forget to call startAt()?")
+            throw IllegalStateException("Swiper not initialized - did you forget to call startAt()?")
         }
     }
 
