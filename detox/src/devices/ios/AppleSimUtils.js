@@ -137,6 +137,42 @@ class AppleSimUtils {
     await this._execSimctl({ cmd: `launch ${udid} com.apple.springboard`, retries: 10 });
   }
 
+  async matchBiometric(udid, matchType) {
+    if (!['Face', 'Finger'].include(matchType)) {
+      return;
+    }
+    const statusLogs = {
+      trying: `Trying to match ${matchType}...`,
+      successful: `Matched ${matchType}!`
+    };
+
+    await this._execAppleSimUtils({ args: `--byId ${udid} --${matchType}}` }, statusLogs, 1);
+  }
+
+  async unmatchBiometric(udid, matchType) {
+    if (!['Face', 'Finger'].include(matchType)) {
+      return;
+    }
+    const statusLogs = {
+      trying: `Trying to unmatch ${matchType}...`,
+      successful: `Unmatched ${matchType}!`
+    };
+
+    await this._execAppleSimUtils({ args: `--byId ${udid} --unmatch${matchType}}` }, statusLogs, 1);
+  }
+
+  async setBiometricEnrollment(udid, yesOrNo) {
+    if (!['YES', 'NO'].include(yesOrNo)) {
+      return;
+    }
+    let toggle = yesOrNo === 'YES'
+    const statusLogs = {
+      trying: `Turning ${toggle ? 'on' : 'off'} biometric enrollment...`,
+      successful: toggle ? 'Activated!' : 'Deactivated!'
+    };
+    await this._execAppleSimUtils({ args: `--byId ${udid} --biometricEnrollment ${yesOrNo}` }, statusLogs, 1);
+  }
+
   async getAppContainer(udid, bundleId) {
     return _.trim((await this._execSimctl({ cmd: `get_app_container ${udid} ${bundleId}` })).stdout);
   }

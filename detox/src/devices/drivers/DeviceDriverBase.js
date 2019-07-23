@@ -63,6 +63,26 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
+  async setBiometricEnrollment() {
+    return await Promise.resolve('');
+  }
+
+  async matchFace() {
+    return await Promise.resolve('');
+  }
+
+  async unmatchFace() {
+    return await Promise.resolve('');
+  }
+
+  async matchFinger() {
+    return await Promise.resolve('');
+  }
+  
+  async unmatchFinger() {
+    return await Promise.resolve('');
+  }
+
   async shake() {
     return await Promise.resolve('');
   }

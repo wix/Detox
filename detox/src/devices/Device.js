@@ -135,6 +135,32 @@ class Device {
     await this.deviceDriver.waitForBackground();
   }
 
+  async setBiometricEnrollment(toggle) {
+    let yesOrNo = toggle ? 'YES' : 'NO'
+    await this.deviceDriver.setBiometricEnrollment(this._deviceId, yesOrNo);
+    await this.deviceDriver.waitForBackground();
+  }
+
+  async matchFace() {
+    await this.deviceDriver.matchFace(this._deviceId);
+    await this.deviceDriver.waitForBackground();
+  }
+
+  async unmatchFace() {
+    await this.deviceDriver.unmatchFace(this._deviceId);
+    await this.deviceDriver.waitForBackground();
+  }
+
+  async matchFinger() {
+    await this.deviceDriver.matchFinger(this._deviceId);
+    await this.deviceDriver.waitForBackground();
+  }
+
+  async unmatchFinger() {
+    await this.deviceDriver.unmatchFinger(this._deviceId);
+    await this.deviceDriver.waitForBackground();
+  }
+
   async shake() {
     await this.deviceDriver.shake(this._deviceId);
   }

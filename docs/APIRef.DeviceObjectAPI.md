@@ -23,6 +23,11 @@
 - [`device.getPlatform()`](#devicegetplatform)
 - [`device.takeScreenshot(name)`](#devicetakescreenshotname)
 - [`device.shake()` **iOS Only**](#deviceshake-ios-only)
+- [`device.setBiometricEnrollment(bool)` **iOS Only**](#devicesetbiometricenrolmmentbool-ios-only)
+- [`device.matchFace()` **iOS Only**](#devicematchface-ios-only)
+- [`device.unmatchFace()` **iOS Only**](#deviceunmatchface-ios-only)
+- [`device.matchFinger()` **iOS Only**](#devicematchfinger-ios-only)
+- [`device.unmatchFinger()` **iOS Only**](#deviceunmatchfinger-ios-only)
 - [`device.pressBack()` **Android Only**](#devicepressback-android-only)
 - [`device.getUIDevice()` **Android Only**](#devicegetuidevice-android-only)
 
@@ -340,6 +345,27 @@ describe('Menu items', () => {
 
 ### `device.shake()` **iOS Only**
 Simulate shake
+
+### `device.setBiometricEnrollment(bool)` **iOS Only**
+Toggles device enrollment in biometric auth (TouchID or FaceID).
+
+```js
+await device.setBiometricEnrollment(true);
+// or
+await device.setBiometricEnrollment(false);
+```
+
+### `device.matchFace()` **iOS Only**
+Simulates the success of a face match via FaceID
+
+### `device.unmatchFace()` **iOS Only**
+Simulates the failure of face match via FaceID
+
+### `device.matchFinger()` **iOS Only**
+Simulates the success of a finger match via TouchID
+
+### `device.unmatchFinger()` **iOS Only**
+Simulates the failure of a finger match via TouchID
 
 ### `device.pressBack()` **Android Only**
 Simulate press back button.
