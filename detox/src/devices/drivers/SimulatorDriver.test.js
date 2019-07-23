@@ -50,12 +50,12 @@ describe('IOS simulator driver', () => {
     });
 
     it('enrolls in biometrics by passing to AppleSimUtils', async () => {
-      await sim.setBiometricEnrollment(deviceId, true);
+      await sim.setBiometricEnrollment(deviceId, 'YES');
       expect(sim.applesimutils.setBiometricEnrollment).toHaveBeenCalledWith(deviceId, 'YES');
     })
 
     it('disenrolls in biometrics by passing to AppleSimUtils', async () => {
-      await sim.setBiometricEnrollment(deviceId, false);
+      await sim.setBiometricEnrollment(deviceId, 'NO');
       expect(sim.applesimutils.setBiometricEnrollment).toHaveBeenCalledWith(deviceId, 'NO');
     })
 
