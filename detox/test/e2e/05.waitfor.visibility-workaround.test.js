@@ -1,3 +1,6 @@
+const {scrollViewDriver} = require('./drivers/fs-scroll-driver');
+const {expectToThrow} = require('./utils/custom-expects');
+
 /**
  * Another mini-suite providing an alternative to https://github.com/facebook/react-native/issues/23870.
  * See actions visibility workaround for more.

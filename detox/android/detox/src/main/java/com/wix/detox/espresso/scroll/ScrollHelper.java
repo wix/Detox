@@ -1,12 +1,13 @@
 package com.wix.detox.espresso.scroll;
 
+import android.content.Context;
 import android.view.View;
+import android.view.ViewConfiguration;
 
 import com.wix.detox.espresso.UiAutomatorHelper;
 import com.wix.detox.espresso.common.annot.MotionDir;
 
 import androidx.test.espresso.UiController;
-import kotlin.jvm.functions.Function1;
 
 import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_DOWN;
 import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_LEFT;
@@ -20,10 +21,10 @@ import static com.wix.detox.espresso.scroll.ScrollProbesKt.getScrollableProbe;
  */
 
 public class ScrollHelper {
-    private static final String LOG_TAG = "DetoxScrollHelper";
+//    private static final String LOG_TAG = "DetoxScrollHelper";
 
     private static final int SCROLL_MOTIONS = 50;
-    private static final int SCROLL_DURATION_MS = 275;
+    private static final int MAX_FLING_WAITS = 3;
 
     private static final double DEFAULT_DEADZONE_PERCENT = 0.05;
 
@@ -75,11 +76,9 @@ public class ScrollHelper {
 
         for (int i = 0; i < times; ++i) {
             scrollOnce(uiController, view, direction, fullAmount);
-            uiController.loopMainThreadUntilIdle();
         }
 
         scrollOnce(uiController, view, direction, remainder);
-        uiController.loopMainThreadUntilIdle();
     }
 
     /**
@@ -112,8 +111,6 @@ public class ScrollHelper {
         } else {
             scrollOnce(uiController, view, direction, adjHeight);
         }
-
-        uiController.loopMainThreadUntilIdle();
     }
 
     private static void scrollOnce(UiController uiController, View view, @MotionDir int direction, int amount) throws ScrollEdgeException {
@@ -165,18 +162,29 @@ public class ScrollHelper {
         }
 
         // Log.d(LOG_TAG, "scroll downx: " + downX + " downy: " + downY + " upx: " + upX + " upy: " + upY);
-        doScroll(uiController, downX, downY, upX, upY);
+        doScroll(view.getContext(), uiController, downX, downY, upX, upY);
+
+        // This is highly unnecessary as, in essence, we use a swiper implementation that effectively knows how to avoid fling.
+        // Nevertheless we cannot validate all use cases in the universe, and since the runtime price is very small, along with
+        // the fact we've already faced issues in the area in the past, we choose to do run this anyways.
+        waitForFlingToFinish(view, uiController);
     }
 
-    private static void doScroll(final UiController uiController, int downX, int downY, int upX, int upY) {
-        // TODO lambda
-        final Function1<Integer, DetoxSwiper> swipeExecutorProvider = new Function1<Integer, DetoxSwiper>() {
-            @Override
-            public DetoxSwiper invoke(Integer perMotionTimeMS) {
-                return new BatchedSwiper(uiController, perMotionTimeMS);
-            }
-        };
-        final DetoxSwipe detoxSwipe = new DetoxSwipe(downX, downY, upX, upY, SCROLL_DURATION_MS, SCROLL_MOTIONS, swipeExecutorProvider);
-        detoxSwipe.perform();
+    private static void doScroll(final Context context, final UiController uiController, int downX, int downY, int upX, int upY) {
+        final DetoxSwiper swiper = new FlinglessSwiper(SCROLL_MOTIONS, uiController, ViewConfiguration.get(context));
+        final DetoxSwipe swipe = new DetoxSwipe(downX, downY, upX, upY, SCROLL_MOTIONS, swiper);
+        swipe.perform();
+    }
+
+    private static void waitForFlingToFinish(View view, UiController uiController) {
+        int iteration = 0;
+        int startX;
+        int startY;
+        do {
+            iteration++;
+            startY = view.getScrollY();
+            startX = view.getScrollX();
+            uiController.loopMainThreadForAtLeast(10);
+        } while ((view.getScrollY() != startY || view.getScrollX() != startX) && iteration < MAX_FLING_WAITS);
     }
 }
