@@ -38,7 +38,7 @@ class example extends Component {
     if(component == null) {
       throw new Error("Got no component for " + title);
     }
-    
+
     return this.renderButton(title, () => {
       this.setState({screen: component});
     });
@@ -93,7 +93,8 @@ class example extends Component {
           {this.renderScreenButton('Sanity', Screens.SanityScreen)}
           {this.renderScreenButton('Matchers', Screens.MatchersScreen)}
           {this.renderScreenButton('Actions', Screens.ActionsScreen)}
-          {this.renderScreenButton('Scroll-Actions', Screens.ScrollActionsScreen)}
+          {this.renderScreenButton('Integrative Actions', Screens.IntegActionsScreen)}
+          {this.renderScreenButton('FS Scroll Actions', Screens.ScrollActionsScreen)}
           {this.renderScreenButton('Assertions', Screens.AssertionsScreen)}
           {this.renderScreenButton('WaitFor', Screens.WaitForScreen)}
           {this.renderScreenButton('Stress', Screens.StressScreen)}
