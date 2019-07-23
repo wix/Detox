@@ -63,11 +63,7 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async enrollBiometrics() {
-    return await Promise.resolve('');
-  }
-
-  async disenrollBiometrics() {
+  async setBiometricEnrollment() {
     return await Promise.resolve('');
   }
 

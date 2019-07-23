@@ -154,8 +154,8 @@ class AppleSimUtils {
       return;
     }
     const statusLogs = {
-      trying: `Trying to match ${matchType}...`,
-      successful: `Matched ${matchType}!`
+      trying: `Trying to unmatch ${matchType}...`,
+      successful: `Unmatched ${matchType}!`
     };
 
     await this._execAppleSimUtils({ args: `--byId ${udid} --unmatch${matchType}}` }, statusLogs, 1);

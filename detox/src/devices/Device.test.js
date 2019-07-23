@@ -476,18 +476,20 @@ describe('Device', () => {
     expect(driverMock.driver.sendToHome).toHaveBeenCalledTimes(1);
   });
 
-  it(`enrollBiometrics() should pass to device driver`, async () => {
+  it(`setBiometricEnrollment(true) should pass YES to device driver`, async () => {
     const device = validDevice();
-    await device.enrollBiometrics();
+    await device.setBiometricEnrollment(true);
 
-    expect(driverMock.driver.enrollBiometrics).toHaveBeenCalledTimes(1);
+    expect(driverMock.driver.setBiometricEnrollment).toHaveBeenCalledWith(device._deviceId, 'YES');
+    expect(driverMock.driver.setBiometricEnrollment).toHaveBeenCalledTimes(1);
   });
 
-  it(`disenrollBiometrics() should pass to device driver`, async () => {
+  it(`setBiometricEnrollment(false) should pass NO to device driver`, async () => {
     const device = validDevice();
-    await device.disenrollBiometrics();
+    await device.setBiometricEnrollment(false);
 
-    expect(driverMock.driver.disenrollBiometrics).toHaveBeenCalledTimes(1);
+    expect(driverMock.driver.setBiometricEnrollment).toHaveBeenCalledWith(device._deviceId, 'NO');
+    expect(driverMock.driver.setBiometricEnrollment).toHaveBeenCalledTimes(1);
   });
 
   it(`matchFace() should pass to device driver`, async () => {

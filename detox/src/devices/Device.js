@@ -135,13 +135,9 @@ class Device {
     await this.deviceDriver.waitForBackground();
   }
 
-  async enrollBiometrics() {
-    await this.deviceDriver.enrollBiometrics(this._deviceId);
-    await this.deviceDriver.waitForBackground();
-  }
-
-  async disenrollBiometrics() {
-    await this.deviceDriver.disenrollBiometrics(this._deviceId);
+  async setBiometricEnrollment(toggle) {
+    let yesOrNo = toggle ? 'YES' : 'NO'
+    await this.deviceDriver.setBiometricEnrollment(this._deviceId, yesOrNo);
     await this.deviceDriver.waitForBackground();
   }
 

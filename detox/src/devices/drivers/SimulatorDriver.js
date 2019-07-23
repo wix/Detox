@@ -82,12 +82,8 @@ class SimulatorDriver extends IosDriver {
     await this.applesimutils.terminate(deviceId, bundleId);
   }
 
-  async enrollBiometrics(deviceId) {
-    await this.applesimutils.setBiometricEnrollment(deviceId, 'YES');
-  }
-
-  async disenrollBiometrics(deviceId) {
-    await this.applesimutils.setBiometricEnrollment(deviceId, 'NO');
+  async setBiometricEnrollment(deviceId, yesOrNo) {
+    await this.applesimutils.setBiometricEnrollment(deviceId, yesOrNo);
   }
 
   async matchFace(deviceId) {
