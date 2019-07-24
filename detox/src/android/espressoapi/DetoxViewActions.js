@@ -7,22 +7,6 @@
 
 
 class DetoxViewActions {
-  static getConstraints(element) {
-    return {
-      target: element,
-      method: "getConstraints",
-      args: []
-    };
-  }
-
-  static getDescription(element) {
-    return {
-      target: element,
-      method: "getDescription",
-      args: []
-    };
-  }
-
   static click() {
     return {
       target: {
@@ -31,6 +15,18 @@ class DetoxViewActions {
       },
       method: "click",
       args: []
+    };
+  }
+
+  static typeText(text) {
+    if (typeof text !== "string") throw new Error("text should be a string, but got " + (text + (" (" + (typeof text + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxViewActions"
+      },
+      method: "typeText",
+      args: [text]
     };
   }
 

@@ -32,34 +32,46 @@ describe('Actions', () => {
   });
 
   it('should type in an element', async () => {
-    let typedText = device.getPlatform() === 'ios' ? 'Type Working 123 אֱבּג абв!!!' : "Type Working!!!";
-    await element(by.id('UniqueId937')).tap();
+    const typedText = device.getPlatform() === 'ios' ? 'Type Working 123 אֱבּג абв!!!' : "Type Working!!!";
+
+    if (device.getPlatform() === 'ios') {
+      await element(by.id('UniqueId937')).tap();
+    }
     await element(by.id('UniqueId937')).typeText(typedText);
     await expect(element(by.text(typedText))).toBeVisible();
   });
 
   it('should press the backspace key on an element', async () => {
-    let typedText = 'test';
-    await element(by.id('UniqueId937')).tap();
+    const typedText = 'test';
+
+    if (device.getPlatform() === 'ios') { // TODO remove tap() for iOS
+      await element(by.id('UniqueId937')).tap();
+    }
     await element(by.id('UniqueId937')).typeText(typedText + 'x');
     await element(by.id('UniqueId937')).tapBackspaceKey();
     await expect(element(by.text(typedText))).toBeVisible();
   });
 
   it('should press the return key on an element', async () => {
-    await element(by.id('UniqueId937')).tap();
+    if (device.getPlatform() === 'ios') { // TODO remove tap() for iOS
+      await element(by.id('UniqueId937')).tap();
+    }
     await element(by.id('UniqueId937')).tapReturnKey();
     await expect(element(by.text('Return Working!!!'))).toBeVisible();
   });
 
   it('should clear text in an element', async () => {
-    await element(by.id('UniqueId005')).tap();
+    if (device.getPlatform() === 'ios') { // TODO remove tap() for iOS
+      await element(by.id('UniqueId005')).tap();
+    }
     await element(by.id('UniqueId005')).clearText();
     await expect(element(by.text('Clear Working!!!'))).toBeVisible();
   });
 
   it('should replace text in an element', async () => {
-    await element(by.id('UniqueId006')).tap();
+    if (device.getPlatform() === 'ios') { // TODO remove tap() for iOS
+      await element(by.id('UniqueId006')).tap();
+    }
     await element(by.id('UniqueId006')).replaceText('replaced_text');
     await expect(element(by.text('Replace Working!!!'))).toBeVisible();
   });
