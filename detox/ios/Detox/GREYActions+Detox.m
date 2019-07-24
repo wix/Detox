@@ -77,7 +77,7 @@ static void _DTXTypeText(NSString* text)
 	}));
 }
 
-static BOOL _assureFirstResponderIfNeeded(id expectedFirstResponderView, NSError* __strong * errorOrNil)
+static BOOL _ensureFirstResponderIfNeeded(id expectedFirstResponderView, NSError* __strong * errorOrNil)
 {
 	BOOL isFirstResponder = [expectedFirstResponderView isFirstResponder];
 	
@@ -99,7 +99,7 @@ static BOOL _assureFirstResponderIfNeeded(id expectedFirstResponderView, NSError
 {
 	return [GREYActionBlock actionWithName:@"Clear text" constraints:grey_not(grey_systemAlertViewShown()) performBlock:^BOOL(id  _Nonnull element, NSError * _Nullable __strong * _Nullable errorOrNil) {
 		
-		BOOL firstResponder = _assureFirstResponderIfNeeded(element, errorOrNil);
+		BOOL firstResponder = _ensureFirstResponderIfNeeded(element, errorOrNil);
 		if(firstResponder == NO)
 		{
 			return NO;
@@ -140,7 +140,7 @@ static BOOL _assureFirstResponderIfNeeded(id expectedFirstResponderView, NSError
 	return [GREYActionBlock actionWithName:[NSString stringWithFormat:@"Type '%@'", text]
 							   constraints:grey_not(grey_systemAlertViewShown())
 							  performBlock:^BOOL (UIView* expectedFirstResponderView, __strong NSError **errorOrNil) {
-		BOOL firstResponder = _assureFirstResponderIfNeeded(expectedFirstResponderView, errorOrNil);
+		BOOL firstResponder = _ensureFirstResponderIfNeeded(expectedFirstResponderView, errorOrNil);
 		if(firstResponder == NO)
 		{
 			return NO;
