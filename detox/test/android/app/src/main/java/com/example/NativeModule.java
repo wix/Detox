@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.uimanager.util.ReactFindViewUtil;
 
 public class NativeModule extends ReactContextBaseJavaModule {
 
@@ -100,5 +102,33 @@ public class NativeModule extends ReactContextBaseJavaModule {
             }
         }
         promise.resolve(Arguments.createMap());
+    }
+
+    @ReactMethod
+    public void spyLongTaps(final String testID) {
+        ReactFindViewUtil.addViewListener(new ReactFindViewUtil.OnViewFoundListener() {
+            @Override
+            public String getNativeId() {
+                return testID;
+            }
+
+            @Override
+            public void onViewFound(View view) {
+                final ReactFindViewUtil.OnViewFoundListener onViewFoundListener = this;
+                view.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        throw new IllegalStateException("Validation failed: component \"" + testID + "\" was long-tapped!!!");
+                    }
+                });
+
+                view.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ReactFindViewUtil.removeViewListener(onViewFoundListener);
+                    }
+                });
+            }
+        });
     }
 }

@@ -64,7 +64,7 @@ class PressKeyAction extends Action {
 class TypeTextAction extends Action {
   constructor(value) {
     super();
-    this._call = invoke.callDirectly(ViewActionsApi.typeText(value));
+    this._call = invoke.callDirectly(DetoxViewActionsApi.typeText(value));
   }
 }
 
