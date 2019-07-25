@@ -138,7 +138,6 @@ class Device {
   async setBiometricEnrollment(toggle) {
     let yesOrNo = toggle ? 'YES' : 'NO'
     await this.deviceDriver.setBiometricEnrollment(this._deviceId, yesOrNo);
-    await this.deviceDriver.waitForBackground();
   }
 
   async matchFace() {
