@@ -4,10 +4,10 @@ import {
   BackHandler,
   View,
   TouchableOpacity,
-  TextInput,
   ScrollView,
-  RefreshControl
+  RefreshControl,
 } from 'react-native';
+import TextInput from '../Views/TextInput';
 
 export default class ActionsScreen extends Component {
 

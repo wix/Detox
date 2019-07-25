@@ -1,6 +1,7 @@
 import SanityScreen from './SanityScreen';
 import MatchersScreen from './MatchersScreen';
 import ActionsScreen from './ActionsScreen';
+import IntegActionsScreen from './IntegActionsScreen';
 import ScrollActionsScreen from './ScrollActionsScreen';
 import AssertionsScreen from './AssertionsScreen';
 import WaitForScreen from './WaitForScreen';
@@ -23,6 +24,7 @@ export {
   SanityScreen,
   MatchersScreen,
   ActionsScreen,
+  IntegActionsScreen,
   ScrollActionsScreen,
   AssertionsScreen,
   WaitForScreen,
