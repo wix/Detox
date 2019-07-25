@@ -138,7 +138,7 @@ class AppleSimUtils {
   }
 
   async matchBiometric(udid, matchType) {
-    if (!['Face', 'Finger'].include(matchType)) {
+    if (!_.includes(['Face', 'Finger'], matchType)) {
       return;
     }
     const statusLogs = {
@@ -150,7 +150,7 @@ class AppleSimUtils {
   }
 
   async unmatchBiometric(udid, matchType) {
-    if (!['Face', 'Finger'].include(matchType)) {
+    if (!_.includes(['Face', 'Finger'], matchType)) {
       return;
     }
     const statusLogs = {
@@ -162,7 +162,7 @@ class AppleSimUtils {
   }
 
   async setBiometricEnrollment(udid, yesOrNo) {
-    if (!['YES', 'NO'].include(yesOrNo)) {
+    if (!_.includes(['YES', 'NO'], yesOrNo)) {
       return;
     }
     let toggle = yesOrNo === 'YES'
