@@ -46,4 +46,4 @@ To understand this topic more thoroughly we need to have a look at an example ac
 7. [`DetoxManager.m`](https://github.com/wix/detox/blob/master/detox/ios/Detox/DetoxManager.m) invokes the [`TestRunner.m`](https://github.com/wix/detox/blob/master/detox/ios/Detox/TestRunner.m). `TestRunner.m` uses [`DTXMethodInvocation.m`](https://github.com/wix/detox/blob/master/detox/ios/Detox/DTXMethodInvocation.m) to map the JSON representation of the native commands into the actual native command and executes it. *(8)*
 
 
-*NOTE: the images can be updated with [mermaid](http://knsv.github.io/mermaid/#mermaid). The files can be found under `img-src`*
+*NOTE: the images can be updated with [mermaid](http://knsv.github.io/mermaid/#/). The files can be found under `img-src`*
