@@ -23,7 +23,7 @@
 - [`device.getPlatform()`](#devicegetplatform)
 - [`device.takeScreenshot(name)`](#devicetakescreenshotname)
 - [`device.shake()` **iOS Only**](#deviceshake-ios-only)
-- [`device.setBiometricEnrollment(bool)` **iOS Only**](#devicesetbiometricenrolmmentbool-ios-only)
+- [`device.setBiometricEnrollment(bool)` **iOS Only**](#devicesetbiometricenrollmentbool-ios-only)
 - [`device.matchFace()` **iOS Only**](#devicematchface-ios-only)
 - [`device.unmatchFace()` **iOS Only**](#deviceunmatchface-ios-only)
 - [`device.matchFinger()` **iOS Only**](#devicematchfinger-ios-only)
