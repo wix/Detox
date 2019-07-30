@@ -29,6 +29,7 @@ function createPlainBunyanStream({ logPath, level }) {
     showPid: true,
     showMetadata: false,
     basepath: __dirname,
+    out: process.stderr,
     prefixers: {
       '__filename': (filename, { entry }) => {
         const suffix = entry.event ? `/${entry.event}` : '';
