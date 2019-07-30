@@ -41,11 +41,18 @@ class Emulator {
     const tempLog = `./${emulatorName}.log`;
     const stdout = fs.openSync(tempLog, 'a');
     const stderr = fs.openSync(tempLog, 'a');
-    const tail = new Tail(tempLog).on("line", (line) => {
-      if (line.includes('Adb connected, start proxing data')) {
-        childProcessPromise._cpResolve();
-      }
-    });
+    const tailOptions = {
+      useWatchFile: true,
+      fsWatchOptions: {
+        interval: 1500,
+      },
+    };
+    const tail = new Tail(tempLog, tailOptions)
+      .on("line", (line) => {
+        if (line.includes('Adb connected, start proxing data')) {
+          childProcessPromise._cpResolve();
+        }
+      });
 
     function detach() {
       if (childProcessOutput) {
