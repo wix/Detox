@@ -247,7 +247,7 @@ By default, `uninstallApp()` with no params will uninstall the app defined in th
 To uninstall another app, specify its bundle id
 
 ```js
-await device.installApp('other.bundle.id');
+await device.uninstallApp('other.bundle.id');
 ```
 
 ### `device.openURL({url, sourceApp[optional]})`
