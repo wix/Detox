@@ -3,9 +3,8 @@ const _ = require('lodash');
 const string = require('../../utils/string');
 
 class APKPath {
-
   static getTestApkPath(originalApkPath) {
-    const originalApkPathObj = path.parse(originalApkPath);
+    const originalApkPathObj = path.parse(originalApkPath.replace(/x86\w*-/g, ''));
     let tempPath = originalApkPathObj.dir.split(path.sep);
     const splitFileName = originalApkPathObj.name.split('-');
 
@@ -20,7 +19,13 @@ class APKPath {
       tempPath = _.dropRight(tempPath, 1); //flavorDimensions
     }
 
-    const testApkPath = path.join(tempPath.join(path.sep), 'androidTest', flavorDimensionsPath, buildType, `${originalApkPathObj.name}-androidTest${originalApkPathObj.ext}`);
+    const testApkPath = path.join(
+      tempPath.join(path.sep),
+      'androidTest',
+      flavorDimensionsPath,
+      buildType,
+      `${originalApkPathObj.name}-androidTest${originalApkPathObj.ext}`
+    );
     return testApkPath;
   }
 }
