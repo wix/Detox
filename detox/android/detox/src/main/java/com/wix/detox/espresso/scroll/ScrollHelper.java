@@ -164,9 +164,9 @@ public class ScrollHelper {
         // Log.d(LOG_TAG, "scroll downx: " + downX + " downy: " + downY + " upx: " + upX + " upy: " + upY);
         doScroll(view.getContext(), uiController, downX, downY, upX, upY);
 
-        // This is highly unnecessary as, in essence, we use a swiper implementation that effectively knows how to avoid fling.
-        // Nevertheless we cannot validate all use cases in the universe, and since the runtime price is very small, along with
-        // the fact we've already faced issues in the area in the past, we choose to do run this anyways.
+        // This is, at least in theory, unnecessary, as we use a swiper implementation that effectively knows how to avoid fling.
+        // Nevertheless we cannot validate all use cases in the universe, and thus in order to stay robust we assume somehow fling
+        // might get registered on rare occasions. Since the runtime price is very small, it's better to be safe than sorry...
         waitForFlingToFinish(view, uiController);
     }
 
@@ -177,14 +177,17 @@ public class ScrollHelper {
     }
 
     private static void waitForFlingToFinish(View view, UiController uiController) {
+        int waitTimeMS = 100; // Note: experimentation shows initial lookahead window should be large or we could miss out on future-pending events.
         int iteration = 0;
         int startX;
         int startY;
         do {
-            iteration++;
             startY = view.getScrollY();
             startX = view.getScrollX();
-            uiController.loopMainThreadForAtLeast(10);
+            uiController.loopMainThreadForAtLeast(waitTimeMS);
+
+            waitTimeMS = 10;
+            iteration++;
         } while ((view.getScrollY() != startY || view.getScrollX() != startX) && iteration < MAX_FLING_WAITS);
     }
 }
