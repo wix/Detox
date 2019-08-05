@@ -2,7 +2,7 @@
 
 Detox supports mocking user notifications for iOS apps.
 
->NOTE: The mocking mechanism will not mimic the UI of a user notification. Instead, it will only simulate the flow of a user-selected notifications.
+>**Note:** The mocking mechanism will not mimic the UI of a user notification. Instead, it will only simulate a user interaction with the notification.
 
 ### Mocking App Launch with a Notification
 
@@ -29,18 +29,17 @@ describe('Background push notification', () => {
 });
 ```
 
-### Mocking Notification Reception on a Launched App
+### Mocking Notification Reception on a Running App
 
-Use the `sendUserNotification()` method to send notification to running app.
+Use the `sendUserNotification()` method to send notification to running app. Notifications can be sent to an active or a background app.
 
 ```js
 await device.sendUserNotification(notification)
 ```
 
 **Example:**
- 
+
 ```js
- 
 describe('Foreground user notifications', () => {
 
 beforeEach(async () => {
@@ -57,9 +56,7 @@ it('Local notification from inside the app', async () => {
 ## Notification JSON Format
 
 
-User notifications are passed as JSON objects to detox, which then parses them and creates native objects representing the passed information.
-
-The JSON object passed to Detox needs to provide some required data, but can also provide additional, optional data.
+User notifications are passed as JSON objects to Detox. The JSON object needs to provide some required data, but can also provide additional, optional data.
 
 <!--- Use http://www.tablesgenerator.com/markdown_tables to edit these tables. --->
 
@@ -82,11 +79,32 @@ Triggers are objects representing the trigger.
 
 | Key | Required | Value Type | Description |
 |-------------------|-------------------------------------|------------|-------------------------------------------------------------------------------------------------------------|
-| `type` | Yes | String | The conditions that trigger the delivery of the notification.<br /><br /> There are four types of triggers supported by Detox at this time:<br /> • `push`<br /> • `calendar`<br /> • `timeInterval`<br /> • `location`<br /> |
+| `type` | Yes | String | The conditions that trigger the delivery of the notification. See the Trigger Types section below. |
 | `repeats` | No | Boolean | Indicates whether the event repeats. Only used for `calendar`, `timeInterval` and `location` trigger types. |
 | `timeInterval` | Yes for `timeInterval` trigger type | Number | The time interval used to create the trigger. |
-| `date-components` | Yes for `calendar` trigger type | Object | The date components used to construct this object. See the [Date Components section](https://github.com/wix/detox/wiki/User-Notifications-JSON-Format-Documentation#date-components) below. |
-| `region` | Yes for `location` trigger type | Object | The region used to determine when the notification is sent. See the [Region section](https://github.com/wix/detox/wiki/User-Notifications-JSON-Format-Documentation#region) below. |
+| `date-components` | Yes for `calendar` trigger type | Object | The date components used to construct this object. See the Date Components section below. |
+| `region` | Yes for `location` trigger type | Object | The region used to determine when the notification is sent. See the Region section below. |
+
+#### Trigger Types
+
+There are four types of triggers supported by Detox at this time:
+- `push`
+- `calendar`
+- `timeInterval`
+- `location`
+
+For convenience, these trigger types are provided as constants in `DetoxConstants`:
+
+```js
+const DetoxConstants = require('detox').DetoxConstants;
+
+const userNotification = {
+	"trigger": {
+		"type": DetoxConstants.userNotificationTriggers.push
+	},
+	...
+}
+```
 
 ### Date Components
 

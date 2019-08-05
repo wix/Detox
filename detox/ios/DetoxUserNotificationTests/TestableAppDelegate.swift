@@ -19,29 +19,20 @@ enum TestableAppDelegateNotifcationTriggerType {
 
 @objc(TestableAppDelegate)
 class TestableAppDelegate: NSObject, UIApplicationDelegate {
-	var localNotificationObjectWasFoundInWillLaunch = false
 	var remoteNotificationObjectWasFoundInWillLaunch = false
-	var localNotificationObjectWasFoundInDidLaunch = false
 	var remoteNotificationObjectWasFoundInDidLaunch = false
 	
-	var legacyLocalNotificationAPIWasCalled = false
-	var legacyRemoteNotificationAPIWasCalled = false
-	var legacyRemoteNotificationOS7APIWasCalled = false
-	var legacyLocalNotificationWithActionAPIWasCalled = false
-	var legacyRemoteNotificationWithActionAPIWasCalled = false
 	var userNotificationAPIWasCalled = false
 	
 	var userNotificationTriggerType = TestableAppDelegateNotifcationTriggerType.unknown
 	var userNotificationTitle : String?
 	
 	func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-		localNotificationObjectWasFoundInWillLaunch = launchOptions?[.localNotification] != nil
 		remoteNotificationObjectWasFoundInWillLaunch = launchOptions?[.remoteNotification] != nil
 		return true
 	}
 	
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-		localNotificationObjectWasFoundInDidLaunch = launchOptions?[.localNotification] != nil
 		remoteNotificationObjectWasFoundInDidLaunch = launchOptions?[.remoteNotification] != nil
 		
 		if remoteNotificationObjectWasFoundInDidLaunch {
@@ -51,21 +42,8 @@ class TestableAppDelegate: NSObject, UIApplicationDelegate {
 		
 		return true
 	}
-	
-	public func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
-		legacyLocalNotificationAPIWasCalled = true
-		userNotificationTriggerType = TestableAppDelegate.triggerType(from: notification)
-		userNotificationTitle = notification.alertTitle
-	}
-	
-	public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
-		legacyRemoteNotificationAPIWasCalled = true
-		userNotificationTriggerType = .push
-		userNotificationTitle = ((userInfo as NSDictionary).value(forKeyPath: "aps.alert.title") as! String)
-	}
 }
 
-@available(iOS 10.0, *)
 extension TestableAppDelegate {
 	class func triggerType(from notification: UNNotification) -> TestableAppDelegateNotifcationTriggerType {
 		switch notification.request.trigger {
@@ -80,11 +58,5 @@ extension TestableAppDelegate {
 		default:
 			return .unknown
 		}
-	}
-}
-
-extension TestableAppDelegate {
-	class func triggerType(from response: UILocalNotification) -> TestableAppDelegateNotifcationTriggerType {
-		return response.region != nil ? .location : .calendar
 	}
 }

@@ -22,7 +22,6 @@
 		3928EFBD1E475E4C00C19B6E /* user_notification_location_trigger.json in Resources */ = {isa = PBXBuildFile; fileRef = 3928EFB91E475E4C00C19B6E /* user_notification_location_trigger.json */; };
 		3928EFBE1E475E4C00C19B6E /* user_notification_calendar_trigger.json in Resources */ = {isa = PBXBuildFile; fileRef = 3928EFBA1E475E4C00C19B6E /* user_notification_calendar_trigger.json */; };
 		3928EFBF1E475E4C00C19B6E /* user_notification_push_trigger.json in Resources */ = {isa = PBXBuildFile; fileRef = 3928EFBB1E475E4C00C19B6E /* user_notification_push_trigger.json */; };
-		3928EFC21E47673800C19B6E /* LegacyApiAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3928EFC11E47673800C19B6E /* LegacyApiAppDelegate.swift */; };
 		39319D7A1FCA0DA70045BC17 /* COSTouchVisualizer.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 393E66E61FC5F3E90092EE89 /* COSTouchVisualizer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		393E66ED1FC5F3F40092EE89 /* COSTouchVisualizer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 393E66E61FC5F3E90092EE89 /* COSTouchVisualizer.framework */; };
 		3947679C1DBF985400D72256 /* Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 3947679A1DBF985400D72256 /* Detox.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -202,7 +201,6 @@
 		3928EFB91E475E4C00C19B6E /* user_notification_location_trigger.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = user_notification_location_trigger.json; sourceTree = "<group>"; };
 		3928EFBA1E475E4C00C19B6E /* user_notification_calendar_trigger.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = user_notification_calendar_trigger.json; sourceTree = "<group>"; };
 		3928EFBB1E475E4C00C19B6E /* user_notification_push_trigger.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = user_notification_push_trigger.json; sourceTree = "<group>"; };
-		3928EFC11E47673800C19B6E /* LegacyApiAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LegacyApiAppDelegate.swift; sourceTree = "<group>"; };
 		393E66E11FC5F3E90092EE89 /* COSTouchVisualizer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = COSTouchVisualizer.xcodeproj; path = COSTouchVisualizer/Classes/COSTouchVisualizer.xcodeproj; sourceTree = "<group>"; };
 		394767971DBF985400D72256 /* Detox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Detox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3947679A1DBF985400D72256 /* Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.h; sourceTree = "<group>"; };
@@ -305,10 +303,9 @@
 			isa = PBXGroup;
 			children = (
 				3928EFC01E475E5500C19B6E /* UserNotificationTestInputs */,
-				3928EFA71E47404900C19B6E /* DetoxUserNotificationTests.swift */,
 				3928EFB41E47571500C19B6E /* TestableAppDelegate.swift */,
 				3928EFB61E475C1F00C19B6E /* UNApiAppDelegate.swift */,
-				3928EFC11E47673800C19B6E /* LegacyApiAppDelegate.swift */,
+				3928EFA71E47404900C19B6E /* DetoxUserNotificationTests.swift */,
 				3928EFA91E47404900C19B6E /* Info.plist */,
 				39DA0E3522D72C91001E63A0 /* Bridging-Header.h */,
 				394D589A1E50B59400556DB9 /* NSBundle+TestsFix.h */,
@@ -704,7 +701,6 @@
 				3928EFA81E47404900C19B6E /* DetoxUserNotificationTests.swift in Sources */,
 				3928EFB51E47571500C19B6E /* TestableAppDelegate.swift in Sources */,
 				39DA0E2822D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m in Sources */,
-				3928EFC21E47673800C19B6E /* LegacyApiAppDelegate.swift in Sources */,
 				3928EFB71E475C1F00C19B6E /* UNApiAppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -812,11 +808,6 @@
 			baseConfigurationReference = 390D1C981E3A2893007F5F46 /* Detox.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					arm64,
-					arm64e,
-					x86_64,
-				);
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -865,13 +856,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "arm64 arm64e x86_64";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -882,11 +872,6 @@
 			baseConfigurationReference = 390D1C981E3A2893007F5F46 /* Detox.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					arm64,
-					arm64e,
-					x86_64,
-				);
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -929,7 +914,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -937,7 +922,6 @@
 				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = "arm64 arm64e x86_64";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -961,6 +945,7 @@
 				HEADER_SEARCH_PATHS = EarlGrey/fishhook;
 				INFOPLIST_FILE = Detox/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1001,6 +986,7 @@
 				HEADER_SEARCH_PATHS = EarlGrey/fishhook;
 				INFOPLIST_FILE = Detox/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

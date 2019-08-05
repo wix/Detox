@@ -2,6 +2,16 @@
 
 We are improving detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes. If a newer version has no entries in this document, it means it does not require special migration steps. Refer to the release notes of the later builds to learn about their improvements and changes.
 
+## 14.0.0
+
+Detox 14.0.0 drops support for iOS 9.x simulators, and thus it also drops support for any API that is deprecated in iOS 10 and above. This includes legacy [remote](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1623013-application?language=objc) and [local](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1622930-application?language=objc) notifications handling API. These APIs have been deprecated since iOS 10, and we believe we've given app developers enough time to use the modern APIs. Make sure you transition to the [UserNotifications framework](https://developer.apple.com/documentation/usernotifications?language=objc) as soon as possible.
+
+**Please note that for React Native apps, [PushNotificationIOS (`RCTPushNotificationManager`)](https://facebook.github.io/react-native/docs/pushnotificationios) is severely outdated and does not support these modern APIs.** It is recommended to transition to a more modern solution. While it is sad that such an important app feature is let to stagnate so much by Facebook, it cannot be the concern of Detox. It is up to RN users to keep their apps up to date with the latest Apple APIs.
+
+Our [own React Native notifications solution](https://github.com/wix/react-native-notifications) supports these modern APIs.
+
+See [#1514](https://github.com/wix/Detox/issues/1514).
+
 ## Migrating to 12.7.0 from older (nonbreaking)
 
 **This is only relevant to those running Detox using [`Jest` as the test runner](APIRef.Configuration.md#test-runner-configuration)**!

@@ -59,104 +59,27 @@ public class DetoxUserNotificationDispatcher: NSObject {
 		super.init()
 	}
 	
-	private func dispatchLegacyLocalNotification(_ notification: UILocalNotification, with actionIdentifier: String, on appDelegate: UIApplicationDelegate) {
-		let responseInfo : [String: Any]
-		if let userText = userNotificationData[DetoxUserNotificationKeys.userText] as? String {
-			responseInfo = [UIUserNotificationActionResponseTypedTextKey: userText]
-		}
-		else {
-			responseInfo = [:]
-		}
-		
-		let app = UIApplication.shared
-		if let os9Method = appDelegate.application(_:handleActionWithIdentifier:for:withResponseInfo: completionHandler:) {
-			os9Method(app, actionIdentifier, notification, responseInfo, {})
-		}
-		else {
-			appDelegate.application?(app, handleActionWithIdentifier: actionIdentifier, for: notification, completionHandler: {})
-		}
-	}
-	
-	private func dispatchLegacyRemoteNotification(_ notification: [String: Any], on appDelegate: UIApplicationDelegate, simulateDuringLaunch: Bool) {
-		let app = UIApplication.shared
-		if let os7Method = appDelegate.application(_:didReceiveRemoteNotification:fetchCompletionHandler:) {
-			//This method is always called, regarding of launch status.
-			os7Method(app, notification, { (_) in })
-		}
-		else if simulateDuringLaunch == false {
-			//Only called by system if app was open, otherwise user needs to handle key from didFinishLaunch options dictionary.
-			appDelegate.application?(app, didReceiveRemoteNotification: notification)
-		}
-	}
-	
-	private func dispatchLegacyRemoteNotification(_ notification: [String: Any], with actionIdentifier: String, on appDelegate: UIApplicationDelegate) {
-		let responseInfo : [String: Any]
-		if let userText = userNotificationData[DetoxUserNotificationKeys.userText] as? String {
-			responseInfo = [UIUserNotificationActionResponseTypedTextKey: userText]
-		}
-		else {
-			responseInfo = [:]
-		}
-		
-		let app = UIApplication.shared
-		if let os9Method = appDelegate.application(_:handleActionWithIdentifier:forRemoteNotification:withResponseInfo:completionHandler:) {
-			os9Method(app, actionIdentifier, notification, responseInfo, {})
-		}
-		else {
-			appDelegate.application?(app, handleActionWithIdentifier: actionIdentifier, forRemoteNotification: notification, completionHandler: {})
-		}
-	}
-	
 	@objc(dispatchOnAppDelegate:simulateDuringLaunch:)
 	public func dispatch(on appDelegate: UIApplicationDelegate, simulateDuringLaunch: Bool) {
-		var shouldUseLegacyPath = true
-		os10api: if #available(iOS 10.0, *) {
-			guard let userNotificationsDelegate = UNUserNotificationCenter.current().delegate, let actualDelegateMethod = userNotificationsDelegate.userNotificationCenter(_:didReceive:withCompletionHandler:) else {
-				break os10api;
-			}
-			shouldUseLegacyPath = false
-			let notification = userNotification()
-
-			let handler : (UNNotificationPresentationOptions) -> Void = { (options) in
-				guard options.contains(.alert) else {
-					return
-				}
-				
-				actualDelegateMethod(UNUserNotificationCenter.current(), self.userNotificationResponse(notification: notification), {})
-			}
-		
-			let isAppActive = simulateDuringLaunch == false && appStateAtCreation == UIApplication.State.active
-			
-			if isAppActive == true, let actualWillPresentDelegateMethod = userNotificationsDelegate.userNotificationCenter(_:willPresent:withCompletionHandler:) {
-				actualWillPresentDelegateMethod(UNUserNotificationCenter.current(), notification, handler)
-			} else {
-				handler(isAppActive == false ? [ .alert ] : [])
-			}
-		}
-		
-		guard shouldUseLegacyPath == true else {
+		guard let userNotificationsDelegate = UNUserNotificationCenter.current().delegate, let actualDelegateMethod = userNotificationsDelegate.userNotificationCenter(_:didReceive:withCompletionHandler:) else {
 			return
 		}
+		let notification = userNotification()
 		
-		let actionIdentifier = userNotificationData[DetoxUserNotificationKeys.actionIdentifier] as? String
-		let app = UIApplication.shared
-		switch (actionIdentifier, self.isLegacyRemoteNotification) {
-		case (nil, false):
-			fallthrough
-		case ("default"?, false):
-			appDelegate.application?(app, didReceive: localNotification!)
-			break;
-		case let (actionIdentifier?, false):
-			dispatchLegacyLocalNotification(localNotification!, with: actionIdentifier, on: appDelegate)
-			break;
-		case (nil, true):
-			fallthrough
-		case ("default"?, true):
-			dispatchLegacyRemoteNotification(remoteNotification!, on: appDelegate, simulateDuringLaunch: simulateDuringLaunch)
-			break;
-		case let (actionIdentifier?, true):
-			dispatchLegacyRemoteNotification(remoteNotification!, with: actionIdentifier, on: appDelegate)
-			break;
+		let handler : (UNNotificationPresentationOptions) -> Void = { (options) in
+			guard options.contains(.alert) else {
+				return
+			}
+			
+			actualDelegateMethod(UNUserNotificationCenter.current(), self.userNotificationResponse(notification: notification), {})
+		}
+		
+		let isAppActive = simulateDuringLaunch == false && appStateAtCreation == .active
+		
+		if isAppActive == true, let actualWillPresentDelegateMethod = userNotificationsDelegate.userNotificationCenter(_:willPresent:withCompletionHandler:) {
+			actualWillPresentDelegateMethod(UNUserNotificationCenter.current(), notification, handler)
+		} else {
+			handler(isAppActive == false ? [ .alert ] : [])
 		}
 	}
 	
@@ -181,58 +104,13 @@ public class DetoxUserNotificationDispatcher: NSObject {
 		return jsonObject
 	}
 	
-	@objc public lazy var localNotification : UILocalNotification? = {
-		[unowned self] in
-		guard self.userNotificationData[DetoxUserNotificationKeys.absoluteTriggerType] as! String != DetoxUserNotificationKeys.TriggerTypes.push else {
-			return nil;
-		}
-		
-		let rv = UILocalNotification()
-		
-		rv.applicationIconBadgeNumber = self.userNotificationData[DetoxUserNotificationKeys.badge] as? Int ?? 0
-		rv.alertBody = self.userNotificationData[DetoxUserNotificationKeys.body] as? String
-		rv.category = self.userNotificationData[DetoxUserNotificationKeys.category] as? String
-		rv.alertTitle = self.userNotificationData[DetoxUserNotificationKeys.title] as? String ?? ""
-		rv.userInfo = self.userPayload
-		
-		let repeats = self.userNotificationData[DetoxUserNotificationKeys.repeats] as? Bool ?? false
-		
-		let triggerData = self.userNotificationData[DetoxUserNotificationKeys.trigger] as! [String: Any]
-		
-		switch self.userNotificationData[DetoxUserNotificationKeys.absoluteTriggerType] as! String {
-		case DetoxUserNotificationKeys.TriggerTypes.calendar:
-			let dateComponentsData = DetoxUserNotificationDispatcher.value(for: DetoxUserNotificationKeys.dateComponents, in: triggerData, ofType: [String: Any].self, context: "calendar trigger")
-			let dc = DetoxUserNotificationDispatcher.dateComponents(from: dateComponentsData)
-			rv.fireDate = dc.date
-			break
-		case DetoxUserNotificationKeys.TriggerTypes.location:
-			let regionData = DetoxUserNotificationDispatcher.value(for: DetoxUserNotificationKeys.region, in: triggerData, ofType: [String: Any].self, context: "location trigger")
-			let rgn = DetoxUserNotificationDispatcher.region(from: regionData)
-			rv.region = rgn
-			rv.regionTriggersOnce = repeats
-			break
-		case DetoxUserNotificationKeys.TriggerTypes.timeInterval:
-			let timeInterval = DetoxUserNotificationDispatcher.value(for: DetoxUserNotificationKeys.timeInterval, in: triggerData, ofType: Double.self, context: "time interval trigger")
-			rv.fireDate = Date(timeIntervalSinceNow: timeInterval)
-			break
-		default: break
-		}
-		
-		return rv
-	}()
-	
-	@objc public lazy var remoteNotification : [String: Any]? = {
+	@objc public private(set) lazy var remoteNotificationDictionary : [String: Any]? = {
 		[unowned self] in
 		guard self.userNotificationData[DetoxUserNotificationKeys.absoluteTriggerType] as! String == DetoxUserNotificationKeys.TriggerTypes.push else {
 			return nil;
 		}
 		
 		return self.payload
-	}()
-	
-	private lazy var isLegacyRemoteNotification : Bool = {
-		[unowned self] in
-		return self.userNotificationData[DetoxUserNotificationKeys.absoluteTriggerType] as! String == DetoxUserNotificationKeys.TriggerTypes.push
 	}()
 	
 	private lazy var userPayload : [String: Any] = {
@@ -302,7 +180,6 @@ public class DetoxUserNotificationDispatcher: NSObject {
 		return region
 	}
 	
-	@objc @available(iOS 10.0, *)
 	public func userNotification() -> UNNotification {
 		let notificationContent = UNMutableNotificationContent()
 		notificationContent.badge = userNotificationData[DetoxUserNotificationKeys.badge] as? NSNumber
@@ -345,7 +222,6 @@ public class DetoxUserNotificationDispatcher: NSObject {
 		return UNNotification(request: notificationRequest, date: Date())
 	}
 	
-	@objc @available(iOS 10.0, *)
 	public func userNotificationResponse(notification: UNNotification) -> UNNotificationResponse {
 		
 		
