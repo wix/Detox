@@ -44,10 +44,6 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async boot() {
-    return await Promise.resolve('');
-  }
-
   async launchApp() {
     return await Promise.resolve('');
   }
@@ -78,7 +74,7 @@ class DeviceDriverBase {
   async matchFinger() {
     return await Promise.resolve('');
   }
-  
+
   async unmatchFinger() {
     return await Promise.resolve('');
   }

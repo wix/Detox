@@ -147,7 +147,7 @@ const collectExtraArgs = require('./utils/collectExtraArgs')(module.exports.buil
 
 module.exports.handler = async function test(program) {
   program.artifactsLocation = buildDefaultArtifactsRootDirpath(program.configuration, program.artifactsLocation);
-  
+
   if(!program.keepLockFile){
     clearDeviceRegistryLockFile();
   }
@@ -320,9 +320,13 @@ module.exports.handler = async function test(program) {
   }
 
   function clearDeviceRegistryLockFile() {
-    const lockFilePath = environment.getDeviceLockFilePath();
-    fs.ensureFileSync(lockFilePath);
-    fs.writeFileSync(lockFilePath, '[]');
+    const lockFilePathIOS = environment.getDeviceLockFilePathIOS();
+    fs.ensureFileSync(lockFilePathIOS);
+    fs.writeFileSync(lockFilePathIOS, '[]');
+
+    const lockFilePathAndroid = environment.getDeviceLockFilePathAndroid();
+    fs.ensureFileSync(lockFilePathAndroid);
+    fs.writeFileSync(lockFilePathAndroid, '[]');
   }
 
   run();
