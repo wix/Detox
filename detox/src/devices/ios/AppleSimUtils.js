@@ -146,7 +146,7 @@ class AppleSimUtils {
       successful: `Matched ${matchType}!`
     };
 
-    await this._execAppleSimUtils({ args: `--byId ${udid} --${matchType}}` }, statusLogs, 1);
+    await this._execAppleSimUtils({ args: `--byId ${udid} --match${matchType}` }, statusLogs, 1);
   }
 
   async unmatchBiometric(udid, matchType) {
@@ -158,7 +158,7 @@ class AppleSimUtils {
       successful: `Unmatched ${matchType}!`
     };
 
-    await this._execAppleSimUtils({ args: `--byId ${udid} --unmatch${matchType}}` }, statusLogs, 1);
+    await this._execAppleSimUtils({ args: `--byId ${udid} --unmatch${matchType}` }, statusLogs, 1);
   }
 
   async setBiometricEnrollment(udid, yesOrNo) {
