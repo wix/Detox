@@ -15,6 +15,7 @@ class SimulatorDriver extends IosDriver {
     this.deviceRegistry = new DeviceRegistry({
       getDeviceIdsByType: async type => await this.applesimutils.findDevicesUDID(type),
       createDevice: type => this.applesimutils.create(type),
+      lockfile: environment.getDeviceLockFilePathIOS(),
     });
   }
 
@@ -55,7 +56,7 @@ class SimulatorDriver extends IosDriver {
     }
   }
 
-  async boot(deviceId) {
+  async _boot(deviceId) {
     const coldBoot = await this.applesimutils.boot(deviceId);
     await this.emitter.emit('bootDevice', { coldBoot, deviceId });
   }
@@ -123,7 +124,7 @@ class SimulatorDriver extends IosDriver {
   async resetContentAndSettings(deviceId) {
     await this.shutdown(deviceId);
     await this.applesimutils.resetContentAndSettings(deviceId);
-    await this.boot(deviceId);
+    await this._boot(deviceId);
   }
 
   validateDeviceConfig(deviceConfig) {

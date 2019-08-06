@@ -16,10 +16,6 @@ describe('DeviceRegistry', () => {
 
     jest.mock('proper-lockfile');
 
-    jest.mock('../utils/environment', () => ({
-      getDeviceLockFilePath: jest.fn().mockReturnValue('lockfile-path/mock'),
-    }));
-
     createDevice = jest.fn();
     getDeviceIdsByType = jest.fn();
   });
@@ -31,7 +27,11 @@ describe('DeviceRegistry', () => {
 
   function deviceRegistry() {
     const DeviceRegistry = require('./DeviceRegistry');
-    const registry = new DeviceRegistry({getDeviceIdsByType, createDevice});
+    const registry = new DeviceRegistry({
+      getDeviceIdsByType,
+      createDevice,
+      lockfile: 'lockfile-path/mock'
+    });
     registry.clear();
     return registry;
   }
@@ -73,7 +73,7 @@ describe('DeviceRegistry', () => {
     it(`should create a lockfile if none exists`, async () => {
       fs.existsSync.mockReturnValue(false);
 
-      const registry = deviceRegistry();
+      deviceRegistry();
 
       expect(fs.ensureFileSync).toHaveBeenCalledWith('lockfile-path/mock');
       expect(fs.writeFileSync).toHaveBeenCalledWith('lockfile-path/mock', "[]");
