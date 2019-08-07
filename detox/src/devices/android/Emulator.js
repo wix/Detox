@@ -23,15 +23,15 @@ class Emulator {
     return (await exec(`${this.emulatorBin} ${cmd}`)).stdout;
   }
 
-  async boot(emulatorName, options = {port: undefined, readOnly: false}) {
+  async boot(emulatorName, options = {port: undefined}) {
     const emulatorArgs = _.compact([
       '-verbose',
       '-no-audio',
       '-no-boot-anim',
       argparse.getArgValue('headless') ? '-no-window' : '',
+      argparse.getArgValue('readOnlyEmu') ? '-read-only' : '',
       options.port ? `-port` : '',
       options.port ? `${options.port}` : '',
-      options.readOnly ? '-read-only' : '',
       `@${emulatorName}`
     ]);
 
@@ -41,7 +41,7 @@ class Emulator {
     }
 
     let childProcessOutput;
-    const tempLog = `./${emulatorName}.log`;
+    const tempLog = `./${emulatorName}-${options.port}.log`;
     const stdout = fs.openSync(tempLog, 'a');
     const stderr = fs.openSync(tempLog, 'a');
     const tailOptions = {

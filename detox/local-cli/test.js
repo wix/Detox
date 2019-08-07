@@ -240,9 +240,13 @@ module.exports.handler = async function test(program) {
   }
 
   function runJest() {
-    if (platform === 'android' && program.workers !== 1) {
-      log.warn('Can not use -w, --workers. Parallel test execution is only supported on iOS currently');
-      program.w = program.workers = 1;
+    if (platform === 'android') {
+      program.readOnlyEmu = false;
+      if ((program.workers || 0) > 1) {
+        program.readOnlyEmu = true;
+        log.warn('Multiple workers is an experimental feature on Android and requires an emulator binary of version 28.0.1 or higher. ' +
+          'Check your version by running: $ANDROID_HOME/tools/bin/sdkmanager --list');
+      }
     }
 
     const jestReportSpecsArg = program['jest-report-specs'];
@@ -276,6 +280,7 @@ module.exports.handler = async function test(program) {
       'recordPerformance',
       'deviceName',
       'reportSpecs',
+      'readOnlyEmu',
     ]);
 
     log.info(printEnvironmentVariables(detoxEnvironmentVariables) + command);
