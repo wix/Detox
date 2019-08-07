@@ -77,7 +77,7 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async _waitForBootToComplete(deviceId) {
-    await retry({ retries: 120, interval: 5000 }, async () => {
+    await retry({ retries: 240, interval: 2500 }, async () => {
       const isBootComplete = await this.adb.isBootComplete(deviceId);
 
       if (!isBootComplete) {
