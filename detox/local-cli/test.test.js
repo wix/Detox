@@ -150,6 +150,29 @@ describe('test', () => {
     });
   });
 
+  describe('Jest worker-device assignment reporting (propagated) switch', () => {
+    const expectWorkerAssignArg = ({value}) => expect(mockExec).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        env: expect.objectContaining({
+          reportWorkerAssign: value,
+        }),
+      })
+    );
+
+    it('should be enabled if more than 1 worker is set', async () => {
+      mockAndroidJestConfiguration();
+      await callCli('./test', 'test --workers 2');
+      expectWorkerAssignArg({value: true});
+    });
+
+    it('should be disabled by default', async () => {
+      mockAndroidJestConfiguration();
+      await callCli('./test', 'test');
+      expectWorkerAssignArg({value: false});
+    });
+  });
+
   describe('Jest read-only mode for emulators (propagated) switch', () => {
     const expectReadOnlyEmulatorsArg = ({value}) => expect(mockExec).toHaveBeenCalledWith(
       expect.anything(),

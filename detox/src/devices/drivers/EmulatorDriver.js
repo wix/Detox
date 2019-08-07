@@ -27,6 +27,11 @@ class EmulatorDriver extends AndroidDriver {
       lockfile: environment.getDeviceLockFilePathAndroid(),
     });
     this.pendingBoots = {};
+    this._name = 'Unspecified Emulator';
+  }
+
+  name() {
+    return this._name
   }
 
   async acquireFreeDevice(avdName) {
@@ -39,12 +44,13 @@ class EmulatorDriver extends AndroidDriver {
     await this.adb.apiLevel(adbName);
     await this.adb.unlockScreen(adbName);
 
+    this._name = `${adbName} (${avdName})`;
     return adbName;
   }
 
-  async cleanup(deviceId, bundleId) {
-    await this.deviceRegistry.freeDevice(deviceId);
-    await super.cleanup(deviceId, bundleId);
+  async cleanup(adbName, bundleId) {
+    await this.deviceRegistry.freeDevice(adbName);
+    await super.cleanup(adbName, bundleId);
   }
 
   async _boot(avdName, adbName) {

@@ -127,6 +127,10 @@ class Detox {
     });
   }
 
+  deviceName() {
+    return this.device.name();
+  }
+
   _logTestRunCheckpoint(event, { status, fullName }) {
     log.trace({ event, status }, `${status} test: ${JSON.stringify(fullName)}`);
   }

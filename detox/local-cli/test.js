@@ -240,20 +240,22 @@ module.exports.handler = async function test(program) {
   }
 
   function runJest() {
+    const hasMultipleWorkers = ((program.workers || 0) > 1);
     if (platform === 'android') {
       program.readOnlyEmu = false;
-      if ((program.workers || 0) > 1) {
+      if (hasMultipleWorkers) {
         program.readOnlyEmu = true;
         log.warn('Multiple workers is an experimental feature on Android and requires an emulator binary of version 28.0.1 or higher. ' +
           'Check your version by running: $ANDROID_HOME/tools/bin/sdkmanager --list');
       }
     }
+    program.reportWorkerAssign = hasMultipleWorkers;
 
     const jestReportSpecsArg = program['jest-report-specs'];
     if (!_.isUndefined(jestReportSpecsArg)) {
       program.reportSpecs = (jestReportSpecsArg.toString() === 'true');
     } else {
-      program.reportSpecs = (program.workers === 1);
+      program.reportSpecs = !hasMultipleWorkers;
     }
 
     const command = _.compact([
@@ -280,6 +282,7 @@ module.exports.handler = async function test(program) {
       'recordPerformance',
       'deviceName',
       'reportSpecs',
+      'reportWorkerAssign',
       'readOnlyEmu',
     ]);
 

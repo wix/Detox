@@ -24,6 +24,10 @@ class DeviceDriverBase {
     });
   }
 
+  name() {
+    return 'UNKNOWN_DEVICE';
+  }
+
   off(event, listener) {
     this.emitter.off(event, listener);
   }

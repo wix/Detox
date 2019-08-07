@@ -17,6 +17,12 @@ class SimulatorDriver extends IosDriver {
       createDevice: type => this.applesimutils.create(type),
       lockfile: environment.getDeviceLockFilePathIOS(),
     });
+
+    this._name = 'Unspecified Simulator';
+  }
+
+  name() {
+    return this._name;
   }
 
   async prepare() {
@@ -36,10 +42,11 @@ class SimulatorDriver extends IosDriver {
   async acquireFreeDevice(name) {
     const deviceId = await this.deviceRegistry.getDevice(name);
     if (deviceId) {
-      await this.boot(deviceId);
+      await this._boot(deviceId);
     } else {
       console.error('Unable to acquire free device ', name);
     }
+    this._name = `${deviceId || 'UNKNOWN_DEVICE_ID'} (${name})`;
     return deviceId;
   }
 
