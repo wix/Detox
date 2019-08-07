@@ -7,12 +7,18 @@ class AttachedAndroidDriver extends AndroidDriver {
     super(config);
 
     this.emulator = new Emulator();
+    this._name = 'Unspecified Device';
+  }
+
+  name() {
+    return this._name;
   }
 
   async acquireFreeDevice(name) {
     const deviceId = await this.findDeviceId({adbName: name});
     await this.adb.apiLevel(name);
     await this.adb.unlockScreen(deviceId);
+    this._name = `${deviceId} (${name})`;
     return deviceId;
   }
 }

@@ -40,6 +40,13 @@ class DetoxExportWrapper {
     }
   }
 
+  deviceName() {
+    if (this[_detox]) {
+      return this[_detox].deviceName();
+    }
+    return '';
+  }
+
   _definePassthroughMethod(name) {
     this[name] = (...args) => {
       if (this[_detox]) {
