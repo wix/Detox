@@ -127,6 +127,8 @@ static BOOL _ensureFirstResponderIfNeeded(id expectedFirstResponderView, NSError
 		if (deleteStr.length == 0) {
 			return YES;
 		} else if ([element conformsToProtocol:@protocol(UITextInput)]) {
+			UITextPosition* endPosition = [element endOfDocument];
+			[element setSelectedTextRange:[element textRangeFromPosition:endPosition toPosition:endPosition]];
 			id<GREYAction> typeAtEnd = [GREYActions dtx_actionForTypeText:deleteStr];
 			return [typeAtEnd perform:element error:errorOrNil];
 		} else {
