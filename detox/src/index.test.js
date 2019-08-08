@@ -13,6 +13,7 @@ describe('index', () => {
           id: jest.fn(),
         };
       }),
+      deviceName: jest.fn(),
       cleanup: jest.fn(),
       beforeEach: jest.fn(),
       afterEach: jest.fn(),
@@ -199,6 +200,17 @@ describe('index', () => {
     expect(mockDetox.cleanup).toHaveBeenCalled();
   });
 
+  it(`should return name from detox`, async () => {
+    mockDetox.deviceName.mockReturnValue('mock-device-name');
+    await detox.init(schemes.validOneDeviceNoSession);
+    expect(detox.deviceName()).toEqual('mock-device-name');
+  });
+
+  it(`should fallback to empty name before init`, async () => {
+    mockDetox.deviceName.mockReturnValue('mock-device-name');
+    expect(detox.deviceName()).toEqual('');
+  });
+
   it(`beforeEach() should be covered - with detox initialized`, async() => {
     await detox.init(schemes.validOneDeviceNoSession);
     await detox.beforeEach();
@@ -216,4 +228,5 @@ describe('index', () => {
   it(`afterEach() should be covered - with detox not initialized`, async() => {
     await detox.afterEach();
   });
+
 });
