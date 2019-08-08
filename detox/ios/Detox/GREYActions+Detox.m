@@ -11,6 +11,7 @@
 #import <EarlGrey/GREYActions.h>
 #import <EarlGrey/NSObject+GREYAdditions.h>
 #import <EarlGrey/GREYAppleInternals.h>
+#import <EarlGrey/GREYError.h>
 @import AudioToolbox;
 @import ObjectiveC;
 
@@ -89,7 +90,20 @@ static BOOL _ensureFirstResponderIfNeeded(id expectedFirstResponderView, NSError
 			return NO;
 		}
 		
-		return [expectedFirstResponderView becomeFirstResponder];
+		BOOL isFirstResponder = [expectedFirstResponderView becomeFirstResponder];
+		
+		if(isFirstResponder == NO)
+		{
+			NSString *description = @"Failed to make element [E] first responder.";
+			NSDictionary *glossary = @{ @"E" : [expectedFirstResponderView grey_description] };
+			GREYPopulateErrorNotedOrLog(errorOrNil,
+										kGREYInteractionErrorDomain,
+										kGREYInteractionActionFailedErrorCode,
+										description,
+										glossary);
+		}
+		
+		return isFirstResponder;
 	}
 	
 	return YES;
@@ -106,34 +120,42 @@ static BOOL _ensureFirstResponderIfNeeded(id expectedFirstResponderView, NSError
 		}
 		
 		NSString *textStr;
-		if ([element grey_isWebAccessibilityElement]) {
+		if([element grey_isWebAccessibilityElement])
+		{
 			[GREYActions grey_setText:@"" onWebElement:element];
 			return YES;
-		} else if ([element isKindOfClass:NSClassFromString(@"UIAccessibilityTextFieldElement")]) {
-			element = [element textField];
-		} else if ([element respondsToSelector:@selector(text)]) {
-			textStr = [element text];
-		} else {
-			UITextRange *range = [element textRangeFromPosition:[element beginningOfDocument]
-													 toPosition:[element endOfDocument]];
-			textStr = [element textInRange:range];
 		}
+		else if([element conformsToProtocol:@protocol(UITextInput)] == NO)
+		{
+			NSString *description = @"Element [E] does not conform to UITextInput protocol.";
+			NSDictionary *glossary = @{ @"E" : [element grey_description] };
+			GREYPopulateErrorNotedOrLog(errorOrNil,
+										kGREYInteractionErrorDomain,
+										kGREYInteractionActionFailedErrorCode,
+										description,
+										glossary);
+			return NO;
+		}
+			
+			
+		UITextRange *range = [element textRangeFromPosition:[element beginningOfDocument] toPosition:[element endOfDocument]];
+		textStr = [element textInRange:range];
 		
 		NSMutableString *deleteStr = [[NSMutableString alloc] init];
-		for (NSUInteger i = 0; i < textStr.length; i++) {
+		for (NSUInteger i = 0; i < textStr.length; i++)
+		{
 			[deleteStr appendString:@"\b"];
 		}
 		
-		if (deleteStr.length == 0) {
+		if (deleteStr.length == 0)
+		{
 			return YES;
-		} else if ([element conformsToProtocol:@protocol(UITextInput)]) {
-			UITextPosition* endPosition = [element endOfDocument];
-			[element setSelectedTextRange:[element textRangeFromPosition:endPosition toPosition:endPosition]];
-			id<GREYAction> typeAtEnd = [GREYActions dtx_actionForTypeText:deleteStr];
-			return [typeAtEnd perform:element error:errorOrNil];
-		} else {
-			return [[GREYActions dtx_actionForTypeText:deleteStr] perform:element error:errorOrNil];
 		}
+		
+		UITextPosition* endPosition = [element endOfDocument];
+		[element setSelectedTextRange:[element textRangeFromPosition:endPosition toPosition:endPosition]];
+		id<GREYAction> typeAtEnd = [GREYActions dtx_actionForTypeText:deleteStr];
+		return [typeAtEnd perform:element error:errorOrNil];
 	}];
 }
 
@@ -145,6 +167,18 @@ static BOOL _ensureFirstResponderIfNeeded(id expectedFirstResponderView, NSError
 		BOOL firstResponder = _ensureFirstResponderIfNeeded(expectedFirstResponderView, errorOrNil);
 		if(firstResponder == NO)
 		{
+			return NO;
+		}
+		
+		if([expectedFirstResponderView conformsToProtocol:@protocol(UITextInput)] == NO)
+		{
+			NSString *description = @"Element [E] does not conform to UITextInput protocol.";
+			NSDictionary *glossary = @{ @"E" : [expectedFirstResponderView grey_description] };
+			GREYPopulateErrorNotedOrLog(errorOrNil,
+										kGREYInteractionErrorDomain,
+										kGREYInteractionActionFailedErrorCode,
+										description,
+										glossary);
 			return NO;
 		}
 		
