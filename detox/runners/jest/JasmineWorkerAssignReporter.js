@@ -1,4 +1,4 @@
-const detox = require('detox');
+const detox = require('detox'); // eslint-disable-line node/no-missing-require
 const chalk = require('chalk').default;
 const path = require('path');
 
