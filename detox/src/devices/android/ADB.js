@@ -130,6 +130,10 @@ class ADB {
     await this.adbCmd(deviceId, `uninstall ${appId}`);
   }
 
+  async clearStorage(deviceId, packageId) {
+    await this.adbCmd(deviceId, `shell pm clear ${packageId}`)
+  }
+
   async terminate(deviceId, appId) {
     await this.shell(deviceId, `am force-stop ${appId}`);
   }

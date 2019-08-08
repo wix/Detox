@@ -235,7 +235,7 @@ class Device {
   }
 
   async resetContentAndSettings() {
-    await this.deviceDriver.resetContentAndSettings(this._deviceId);
+    await this.deviceDriver.resetContentAndSettings(this._deviceId, this._bundleId);
   }
 
   getPlatform() {

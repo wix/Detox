@@ -110,6 +110,10 @@ class AndroidDriver extends DeviceDriverBase {
     return pid;
   }
 
+  async resetContentAndSettings(deviceId, packageId) {
+    await Promise.all([this.adb.clearStorage(deviceId, packageId), this.adb.clearStorage(deviceId, `${packageId}.test`)])
+  }
+
   async deliverPayload(params) {
     const {delayPayload, url} = params;
 
