@@ -5,11 +5,13 @@ const {escape} = require('../../utils/pipeCommands');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const EmulatorTelnet = require('./EmulatorTelnet');
 const Environment = require('../../utils/environment');
+const {which} = require('../../utils/which');
 
 class ADB {
   constructor() {
     this._cachedApiLevels = new Map();
-    this.adbBin = path.join(Environment.getAndroidSDKPath(), 'platform-tools', 'adb');
+    this.adbBin = which('adb') ||
+      path.join(Environment.getAndroidSDKPath(), 'platform-tools', 'adb');
   }
 
   async devices() {

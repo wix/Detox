@@ -5,6 +5,7 @@ const exec = require('../../utils/exec').execWithRetriesAndLogs;
 const escape = require('../../utils/pipeCommands').escape.inQuotedString;
 const egrep = require('../../utils/pipeCommands').search.fragment;
 const fsext = require('../../utils/fsext');
+const {which} = require('../../utils/which');
 
 class AAPT {
 
@@ -13,6 +14,8 @@ class AAPT {
   }
 
   async _prepare() {
+    this.aaptBin = which('aapt');
+
     if (!this.aaptBin) {
       const sdkPath = Environment.getAndroidSDKPath();
       const buildToolsDirs = await fsext.getDirectories(path.join(sdkPath, 'build-tools'));

@@ -3,6 +3,7 @@ const os = require('os');
 const path = require('path');
 const exec = require('child-process-promise').exec;
 const appdatapath = require('./appdatapath');
+const {which} = require('./which');
 
 const DETOX_LIBRARY_ROOT_PATH = path.join(appdatapath.appDataPath(), 'Detox');
 const DEVICE_LOCK_FILE_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'device.registry.state.lock');
@@ -17,8 +18,13 @@ function getAndroidSDKPath() {
 }
 
 function getAndroidEmulatorPath() {
-  const sdkPath = getAndroidSDKPath();
   const extension = os.platform() === 'win32' ? '.exe' : '';
+  const emulatorOnPath = which(`emulator${extension}`);
+  if (emulatorOnPath) {
+    return emulatorOnPath;
+  }
+
+  const sdkPath = getAndroidSDKPath();
   const newEmulatorPath = path.join(sdkPath, 'emulator', `emulator${extension}`);
   const oldEmulatorPath = path.join(sdkPath, 'tools', `emulator${extension}`);
 

@@ -1,12 +1,9 @@
-const Emulator = require('../android/Emulator');
 const AndroidDriver = require('./AndroidDriver');
 
 class AttachedAndroidDriver extends AndroidDriver {
 
   constructor(config) {
     super(config);
-
-    this.emulator = new Emulator();
   }
 
   async acquireFreeDevice(name) {
