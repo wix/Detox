@@ -98,6 +98,11 @@ describe('ADB', () => {
       undefined, undefined, 1);
   });
 
+  it(`clears storage`, async () => {
+    await adb.clearStorage('com.package');
+    expect(exec).toHaveBeenCalledTimes(1)
+  })
+
   it(`uninstall`, async () => {
     await adb.uninstall('com.package');
     expect(exec).toHaveBeenCalledTimes(1);
