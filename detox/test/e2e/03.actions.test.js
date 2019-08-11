@@ -37,13 +37,13 @@ describe('Actions', () => {
     await expect(element(by.text(typedText))).toBeVisible();
   });
 
-  it('should type in a wrapped element', async () => {
+  it(':ios: should type in a wrapped element', async () => {
     const typedText = device.getPlatform() === 'ios' ? 'Type Working 123 אֱבּג абв!!!' : "Type Working!!!";
     await element(by.id('UniqueId937_wrapper')).typeText(typedText);
     await expect(element(by.text(typedText))).toBeVisible();
   });
   
-  it('should fail typing in a view without text element', async () => {
+  it(':ios: should fail typing in a view without text element', async () => {
     const typedText = 'Won\'t be typed at all';
     let failed = false;
     try {

@@ -80,7 +80,12 @@ static void _DTXTypeText(NSString* text)
 
 static UIView* _isViewOrDescendantFirstResponder(UIView* view)
 {
-	UIView* currentFirstResponder = view.window.firstResponder;
+	id currentFirstResponder = view.window.firstResponder;
+	
+	if([currentFirstResponder isKindOfClass:UIView.class] == NO)
+	{
+		return nil;
+	}
 	
 	if(currentFirstResponder != nil && [currentFirstResponder isDescendantOfView:view])
 	{
