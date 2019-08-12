@@ -23,7 +23,7 @@ class ADB {
       mUserActivityTimeoutOverrideFromWindowManager,
     } = await this._getPowerStatus(deviceId);
 
-    if (mWakefulness === 'Asleep') {
+    if (mWakefulness === 'Asleep' || mWakefulness === 'Dozing') {
       await this.pressPowerDevice(deviceId);
     }
 
