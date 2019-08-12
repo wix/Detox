@@ -55,13 +55,17 @@ export default class ActionsScreen extends Component {
           <Text style={{ color: 'blue', marginBottom: 20, textAlign: 'center' }}
             testID='UniqueId819'>Taps: {this.state.numTaps}</Text>
         </TouchableOpacity>
-
-        <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }}
-          onChangeText={this.onChangeTypeText.bind(this)}
-          value={this.state.typeText}
-          testID='UniqueId937'
-          onSubmitEditing={this.onReturn.bind(this)}
-        />
+          
+        <View testID='UniqueId937_wrapper'>
+          <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }}
+            onChangeText={this.onChangeTypeText.bind(this)}
+            value={this.state.typeText}
+            testID='UniqueId937'
+            onSubmitEditing={this.onReturn.bind(this)}
+            />
+        </View>
+  
+        {Platform.OS === 'ios' && <TouchableOpacity style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }} testID='NoTextInputInside' />}
 
         <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }}
           onChangeText={this.onChangeClearText.bind(this)}

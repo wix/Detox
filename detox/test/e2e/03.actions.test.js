@@ -37,6 +37,27 @@ describe('Actions', () => {
     await expect(element(by.text(typedText))).toBeVisible();
   });
 
+  it(':ios: should type in a wrapped element', async () => {
+    const typedText = device.getPlatform() === 'ios' ? 'Type Working 123 אֱבּג абв!!!' : "Type Working!!!";
+    await element(by.id('UniqueId937_wrapper')).typeText(typedText);
+    await expect(element(by.text(typedText))).toBeVisible();
+  });
+  
+  it(':ios: should fail typing in a view without text element', async () => {
+    const typedText = 'Won\'t be typed at all';
+    let failed = false;
+    try {
+      await element(by.id('NoTextInputInside')).typeText(typedText);
+    }
+    catch(ex) {
+      failed = true;
+    }
+    
+    if(failed === false) {
+      throw new Error('Test should have thrown an error, but did not');
+    }
+  });
+
   it('should press the backspace key on an element', async () => {
     const typedText = 'test';
     await element(by.id('UniqueId937')).typeText(typedText + 'x');
