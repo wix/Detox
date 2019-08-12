@@ -64,8 +64,8 @@ export default class ActionsScreen extends Component {
             onSubmitEditing={this.onReturn.bind(this)}
             />
         </View>
-
-        <TouchableOpacity style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }} testID='NoTextInputInside' />
+  
+        {Platform.OS === 'ios' && <TouchableOpacity style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }} testID='NoTextInputInside' />}
 
         <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }}
           onChangeText={this.onChangeClearText.bind(this)}
