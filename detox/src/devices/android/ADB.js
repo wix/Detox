@@ -1,17 +1,25 @@
 const _ = require('lodash');
 const path = require('path');
+const which = require('which');
 const {execWithRetriesAndLogs, spawnAndLog} = require('../../utils/exec');
 const {escape} = require('../../utils/pipeCommands');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const EmulatorTelnet = require('./EmulatorTelnet');
 const Environment = require('../../utils/environment');
-const {which} = require('../../utils/which');
 
 class ADB {
   constructor() {
     this._cachedApiLevels = new Map();
-    this.adbBin = which('adb') ||
-      path.join(Environment.getAndroidSDKPath(), 'platform-tools', 'adb');
+    try{
+      this.adbBin = path.join(Environment.getAndroidSDKPath(), 'platform-tools', 'adb');
+    } catch (err){
+      const adbOnPath =  which.sync('adb', {nothrow: true});
+      if (adbOnPath) {
+        this.adbBin = adbOnPath;
+        return;
+      }
+      throw new Error(err);
+    }
   }
 
   async devices() {

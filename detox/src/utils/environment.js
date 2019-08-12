@@ -2,8 +2,8 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const exec = require('child-process-promise').exec;
+const which = require('which');
 const appdatapath = require('./appdatapath');
-const {which} = require('./which');
 
 const DETOX_LIBRARY_ROOT_PATH = path.join(appdatapath.appDataPath(), 'Detox');
 const DEVICE_LOCK_FILE_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'device.registry.state.lock');
@@ -18,17 +18,19 @@ function getAndroidSDKPath() {
 }
 
 function getAndroidEmulatorPath() {
-  const extension = os.platform() === 'win32' ? '.exe' : '';
-  const emulatorOnPath = which(`emulator${extension}`);
-  if (emulatorOnPath) {
-    return emulatorOnPath;
+  try{
+    const extension = os.platform() === 'win32' ? '.exe' : '';
+    const sdkPath = getAndroidSDKPath();
+    const newEmulatorPath = path.join(sdkPath, 'emulator', `emulator${extension}`);
+    const oldEmulatorPath = path.join(sdkPath, 'tools', `emulator${extension}`);
+    return fs.existsSync(newEmulatorPath) ? newEmulatorPath : oldEmulatorPath;
+  } catch (err) {
+    const emulatorBinOnPath = which.sync(`emulator`, {nothrow: true});
+    if (emulatorBinOnPath) {
+      return emulatorBinOnPath;
+    }
+    throw new Error(err);
   }
-
-  const sdkPath = getAndroidSDKPath();
-  const newEmulatorPath = path.join(sdkPath, 'emulator', `emulator${extension}`);
-  const oldEmulatorPath = path.join(sdkPath, 'tools', `emulator${extension}`);
-
-  return fs.existsSync(newEmulatorPath) ? newEmulatorPath : oldEmulatorPath;
 }
 
 function getDetoxVersion() {
