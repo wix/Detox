@@ -14,12 +14,16 @@ class AAPT {
   }
 
   async _prepare() {
+    if (this.aaptBin) {
+      return
+    }
+
     try{
       const sdkPath = Environment.getAndroidSDKPath();
       const buildToolsDirs = await fsext.getDirectories(path.join(sdkPath, 'build-tools'));
       const latestBuildToolsVersion = _.last(buildToolsDirs);
       this.aaptBin = path.join(sdkPath, 'build-tools', latestBuildToolsVersion, 'aapt');
-    } catch(err) {
+    } catch (err) {
       const aaptOnPath =  which.sync('aapt', {nothrow: true});
       if (aaptOnPath) {
         this.aaptBin = aaptOnPath;
