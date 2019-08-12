@@ -269,6 +269,14 @@ class ADB {
     return (await this.adbCmd(deviceId, `shell "${escape.inQuotedString(cmd)}"`, options)).stdout.trim();
   }
 
+  async reverse(deviceId, port) {
+    return this.adbCmd(deviceId, `reverse tcp:${port} tcp:${port}`);
+  }
+
+  async reverseRemove(deviceId, port) {
+    return this.adbCmd(deviceId, `reverse --remove tcp:${port}`);
+  }
+
   async adbCmd(deviceId, params, options) {
     const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
     const cmd = `${this.adbBin} ${serial} ${params}`;
