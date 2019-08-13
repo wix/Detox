@@ -47,8 +47,7 @@ class ADB {
   }
 
   async _getPowerStatus(deviceId) {
-    const stdout = await this.shell(deviceId, `dumpsys power | grep "^[ ]*m[UW].*="`);
-
+    const stdout = await this.shell(deviceId, `dumpsys power | grep "^[ ]*m[UW].*="`, { retries: 5 });
     return stdout
       .split('\n')
       .map(s => s.trim().split('='))
@@ -146,7 +145,7 @@ class ADB {
       return this._cachedApiLevels.get(deviceId);
     }
 
-    const lvl = Number(await this.shell(deviceId, `getprop ro.build.version.sdk`));
+    const lvl = Number(await this.shell(deviceId, `getprop ro.build.version.sdk`, { retries: 5 }));
     this._cachedApiLevels.set(deviceId, lvl);
 
     return lvl;

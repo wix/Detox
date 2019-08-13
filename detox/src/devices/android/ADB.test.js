@@ -139,8 +139,7 @@ describe('ADB', () => {
 
     expect(exec).toHaveBeenCalledWith(
       expect.stringContaining('adb -s emulator-5556 shell "getprop ro.build.version.sdk"'),
-      undefined, undefined, 1
-    );
+      {}, undefined, 5);
 
     expect(exec).toHaveBeenCalledWith(
       expect.stringContaining('adb -s emulator-5556 install -rg "path inside \\"quotes\\" to/app"'),
