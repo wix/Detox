@@ -1,36 +1,36 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const exec = require('child-process-promise').exec;
 const which = require('which');
+const exec = require('child-process-promise').exec;
 const appdatapath = require('./appdatapath');
 
 const DETOX_LIBRARY_ROOT_PATH = path.join(appdatapath.appDataPath(), 'Detox');
-const DEVICE_LOCK_FILE_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'device.registry.state.lock');
+const DEVICE_LOCK_FILE_PATH = path.join(
+  DETOX_LIBRARY_ROOT_PATH,
+  'device.registry.state.lock',
+);
+const MISSING_SDK_ERROR = `$ANDROID_SDK_ROOT is not defined, set the path to the SDK installation directory into $ANDROID_SDK_ROOT,
+Go to https://developer.android.com/studio/command-line/variables.html for more details`;
 
 function getAndroidSDKPath() {
-  let sdkPath = process.env.ANDROID_SDK_ROOT || process.env.ANDROID_HOME;
-  if (!sdkPath) {
-    throw new Error(`$ANDROID_SDK_ROOT is not defined, set the path to the SDK installation directory into $ANDROID_SDK_ROOT,
-    Go to https://developer.android.com/studio/command-line/variables.html for more details`);
-  }
-  return sdkPath;
+  return process.env.ANDROID_SDK_ROOT || process.env.ANDROID_HOME || '';
 }
 
 function getAndroidEmulatorPath() {
-  try{
-    const extension = os.platform() === 'win32' ? '.exe' : '';
-    const sdkPath = getAndroidSDKPath();
-    const newEmulatorPath = path.join(sdkPath, 'emulator', `emulator${extension}`);
-    const oldEmulatorPath = path.join(sdkPath, 'tools', `emulator${extension}`);
-    return fs.existsSync(newEmulatorPath) ? newEmulatorPath : oldEmulatorPath;
-  } catch (err) {
-    const emulatorBinOnPath = which.sync(`emulator`, {nothrow: true});
-    if (emulatorBinOnPath) {
-      return emulatorBinOnPath;
-    }
-    throw new Error(err);
+  const sdkPath = getAndroidSDKPath();
+  const newEmulatorDir = path.join(sdkPath, 'emulator');
+  const oldEmulatorDir = path.join(sdkPath, 'tools');
+  const emulator =
+    which.sync('emulator', {path: newEmulatorDir, nothrow: true}) ||
+    which.sync('emulator', {path: oldEmulatorDir, nothrow: true}) ||
+    which.sync('emulator', {nothrow: true});
+
+  if (emulator == null) {
+    throw new Error(MISSING_SDK_ERROR);
   }
+
+  return emulator
 }
 
 function getDetoxVersion() {

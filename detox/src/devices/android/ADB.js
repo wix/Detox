@@ -10,15 +10,13 @@ const Environment = require('../../utils/environment');
 class ADB {
   constructor() {
     this._cachedApiLevels = new Map();
-    try{
-      this.adbBin = path.join(Environment.getAndroidSDKPath(), 'platform-tools', 'adb');
-    } catch (err){
-      const adbOnPath =  which.sync('adb', {nothrow: true});
-      if (adbOnPath) {
-        this.adbBin = adbOnPath;
-        return;
-      }
-      throw new Error(err);
+    const platformToolsDir = path.join(Environment.getAndroidSDKPath(), 'platform-tools')
+    this.adbBin =
+      which.sync('adb', {path: platformToolsDir, nothrow: true}) ||
+      which.sync('adb', {nothrow: true});
+
+    if (this.adbBin == null){
+      throw new Error(Environment.MISSING_SDK_ERROR)
     }
   }
 
