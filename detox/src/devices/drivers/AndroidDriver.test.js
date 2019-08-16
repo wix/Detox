@@ -27,7 +27,11 @@ describe('Android driver', () => {
   beforeEach(() => {
     const AndroidDriver = require('./AndroidDriver');
     uut = new AndroidDriver({
-      client: {}
+      client: {
+        configuration: {
+          server: 'ws://localhost:1234'
+        }
+      }
     });
   });
 
@@ -72,6 +76,8 @@ describe('Android driver', () => {
 class mockADBClass {
   constructor() {
     this.getInstrumentationRunner = jest.fn();
+    this.reverse = jest.fn();
+    this.reverseRemove = jest.fn();
   }
 }
 

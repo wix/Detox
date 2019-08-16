@@ -23,7 +23,7 @@ class ADB {
       mUserActivityTimeoutOverrideFromWindowManager,
     } = await this._getPowerStatus(deviceId);
 
-    if (mWakefulness === 'Asleep') {
+    if (mWakefulness === 'Asleep' || mWakefulness === 'Dozing') {
       await this.pressPowerDevice(deviceId);
     }
 
@@ -267,6 +267,14 @@ class ADB {
 
   async shell(deviceId, cmd, options) {
     return (await this.adbCmd(deviceId, `shell "${escape.inQuotedString(cmd)}"`, options)).stdout.trim();
+  }
+
+  async reverse(deviceId, port) {
+    return this.adbCmd(deviceId, `reverse tcp:${port} tcp:${port}`);
+  }
+
+  async reverseRemove(deviceId, port) {
+    return this.adbCmd(deviceId, `reverse --remove tcp:${port}`);
   }
 
   async adbCmd(deviceId, params, options) {
