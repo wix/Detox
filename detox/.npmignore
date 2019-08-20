@@ -6,8 +6,13 @@ DerivedData/
 DetoxBuild/
 Detox.framework/
 
+.eslintrc
+.nvmrc
+.vscode
+jsconfig.json
 
 src/**/*.test.js
+/__tests__
 __snapshots__
 ios_src
 
