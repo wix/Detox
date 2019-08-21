@@ -56,6 +56,7 @@ function getHomeDir() {
 }
 
 module.exports = {
+  MISSING_SDK_ERROR,
   getDetoxVersion,
   getFrameworkPath,
   getAndroidSDKPath,
