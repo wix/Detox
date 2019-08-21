@@ -1,5 +1,7 @@
 # Expo
 
+> **Note**: Expo support is entirely a community driven effort. We do not use Expo internally and, unfortunately, do not have the resources to actively support it.
+
 ### Usage with Expo (iOS)
 
 - Install `detox` 9.0.6 or higher, `detox-expo-helpers` and `expo-detox-hook` (yarn or npm)
