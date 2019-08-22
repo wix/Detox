@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const path = require('path');
-const which = require('which');
 const {execWithRetriesAndLogs, spawnAndLog} = require('../../utils/exec');
 const {escape} = require('../../utils/pipeCommands');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
