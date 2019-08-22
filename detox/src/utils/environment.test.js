@@ -36,6 +36,21 @@ describe('Environment', () => {
 
     expect(Environment.getAndroidSDKPath())
       .toEqual('');
-
   });
+
+  it('throws error when android tools are not found', async () => {
+    process.env.ANDROID_SDK_ROOT = undefined;
+    process.env.ANDROID_HOME = undefined;
+    process.env.PATH = '/dev/null'
+
+    expect(Environment.getAndroidEmulatorPath)
+      .toThrow(Environment.MISSING_SDK_ERROR);
+
+    await expect(Environment.getAaptPath())
+      .rejects
+      .toThrow(Environment.MISSING_SDK_ERROR);
+
+    expect(Environment.getAdbPath)
+      .toThrow(Environment.MISSING_SDK_ERROR);
+  })
 });

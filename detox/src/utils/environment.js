@@ -1,7 +1,9 @@
-const fs = require('fs-extra');
+const fs = require('fs');
+const fsext = require('./fsext');
 const os = require('os');
 const path = require('path');
 const which = require('which');
+const _ = require('lodash');
 const exec = require('child-process-promise').exec;
 const appdatapath = require('./appdatapath');
 
@@ -39,8 +41,8 @@ async function getAaptPath(){
   let latestBuildToolsVersion = '';
 
   const buildToolsDir = path.join(sdkPath, 'build-tools');
-  if (fs.pathExistsSync(buildToolsDir)) {
-    const buildToolsDirs = await fs.getDirectories(buildToolsDir);
+  if (fs.existsSync(buildToolsDir)) {
+    const buildToolsDirs = await fsext.getDirectories(buildToolsDir);
     latestBuildToolsVersion = _.last(buildToolsDirs);
   }
 
