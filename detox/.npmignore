@@ -12,7 +12,8 @@ Detox.framework/
 jsconfig.json
 
 src/**/*.test.js
-/__tests__
+__tests__
+__mocks__
 __snapshots__
 ios_src
 
