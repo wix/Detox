@@ -6,9 +6,19 @@ DerivedData/
 DetoxBuild/
 Detox.framework/
 
+.eslintrc
+.nvmrc
+.vscode
+jsconfig.json
+wallaby.js
 
-src/**/*.test.js
+__tests__
+__mocks__
 __snapshots__
+src/**/*.test.js
+src/**/*.mock.js
+src/**/*.mock.json
+
 ios_src
 
 #################
