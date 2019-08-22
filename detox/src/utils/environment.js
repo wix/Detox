@@ -69,6 +69,7 @@ function getAdbPath(){
   if (adbBin == null){
     throw new Error(MISSING_SDK_ERROR)
   }
+  return adbBin;
 }
 
 
