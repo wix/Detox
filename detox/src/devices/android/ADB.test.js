@@ -1,7 +1,6 @@
 
 describe('ADB', () => {
-  const mockAndroidSDKPath = '/Android/sdk-mock';
-  const adbBinPath = `${mockAndroidSDKPath}/platform-tools/adb`;
+  const adbBinPath = `/Android/sdk-mock/platform-tools/adb`;
 
   let mockEmulatorTelnet;
   let ADB;
@@ -11,7 +10,7 @@ describe('ADB', () => {
   beforeEach(() => {
     jest.mock('../../utils/logger');
     jest.mock('../../utils/environment', () => ({
-      getAndroidSDKPath: () => mockAndroidSDKPath,
+      getAdbPath: () => `/Android/sdk-mock/platform-tools/adb`,
     }));
 
     jest.mock('../../utils/encoding', () => ({
@@ -226,4 +225,3 @@ describe('ADB', () => {
     expect(result).toEqual(expectedRunner);
   });
 });
-

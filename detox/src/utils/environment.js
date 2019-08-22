@@ -17,7 +17,7 @@ function getAndroidSDKPath() {
   return process.env.ANDROID_SDK_ROOT || process.env.ANDROID_HOME || '';
 }
 
-function getAndroidEmulatorPath() {
+function getAndroidEmulatorPath(){
   const sdkPath = getAndroidSDKPath();
   const newEmulatorDir = path.join(sdkPath, 'emulator');
   const oldEmulatorDir = path.join(sdkPath, 'tools');
@@ -32,6 +32,46 @@ function getAndroidEmulatorPath() {
 
   return emulator
 }
+
+async function getAaptPath(){
+  const sdkPath = getAndroidSDKPath();
+
+  let latestBuildToolsVersion = '';
+
+  const buildToolsDir = path.join(sdkPath, 'build-tools');
+  if (fs.pathExistsSync(buildToolsDir)) {
+    const buildToolsDirs = await fsext.getDirectories(buildToolsDir);
+    latestBuildToolsVersion = _.last(buildToolsDirs);
+  }
+
+  const buildToolsDirLatestVersion = path.join(
+    sdkPath,
+    'build-tools',
+    latestBuildToolsVersion,
+  );
+
+  const aaptBin =
+    which.sync('aapt', {path: buildToolsDirLatestVersion, nothrow: true}) ||
+    which.sync('aapt', {nothrow: true});
+
+  if (aaptBin == null) {
+    throw new Error(MISSING_SDK_ERROR);
+  }
+  return aaptBin
+}
+
+function getAdbPath(){
+  const platformToolsDir = path.join(getAndroidSDKPath(), 'platform-tools')
+  const adbBin =
+    which.sync('adb', {path: platformToolsDir, nothrow: true}) ||
+    which.sync('adb', {nothrow: true});
+
+  if (adbBin == null){
+    throw new Error(MISSING_SDK_ERROR)
+  }
+}
+
+
 
 function getDetoxVersion() {
   return require(path.join(__dirname, '../../package.json')).version;
@@ -56,7 +96,8 @@ function getHomeDir() {
 }
 
 module.exports = {
-  MISSING_SDK_ERROR,
+  getAaptPath,
+  getAdbPath,
   getDetoxVersion,
   getFrameworkPath,
   getAndroidSDKPath,

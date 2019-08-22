@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const Environment = require('../../utils/environment');
+const {getAaptPath} = require('../../utils/environment');
 const fs = require('fs-extra');
 const path = require('path');
 const which = require('which');
@@ -17,29 +17,7 @@ class AAPT {
       return;
     }
 
-    const sdkPath = Environment.getAndroidSDKPath();
-
-    let latestBuildToolsVersion = '';
-
-    const buildToolsDir = path.join(sdkPath, 'build-tools');
-    if (fs.pathExistsSync(buildToolsDir)) {
-      const buildToolsDirs = await fsext.getDirectories(buildToolsDir);
-      latestBuildToolsVersion = _.last(buildToolsDirs);
-    }
-
-    const buildToolsDirLatestVersion = path.join(
-      sdkPath,
-      'build-tools',
-      latestBuildToolsVersion,
-    );
-
-    this.aaptBin =
-      which.sync('aapt', {path: buildToolsDirLatestVersion, nothrow: true}) ||
-      which.sync('aapt', {nothrow: true});
-
-    if (this.aaptBin == null) {
-      throw new Error(Environment.MISSING_SDK_ERROR);
-    }
+    this.aaptBin = await getAaptPath()
   }
 
   async getPackageName(apkPath) {

@@ -5,13 +5,13 @@ const _ = require('lodash');
 const unitLogger = require('../../utils/logger').child({ __filename });
 const fs = require('fs');
 const os = require('os');
-const Environment = require('../../utils/environment');
+const {getAndroidEmulatorPath} = require('../../utils/environment');
 const Tail = require('tail').Tail;
 const argparse = require('../../utils/argparse');
 
 class Emulator {
   constructor() {
-    this.emulatorBin = Environment.getAndroidEmulatorPath();
+    this.emulatorBin = getAndroidEmulatorPath();
   }
 
   async listAvds() {

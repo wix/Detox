@@ -34,9 +34,8 @@ describe('Environment', () => {
     process.env.ANDROID_SDK_ROOT = undefined;
     process.env.ANDROID_HOME = undefined;
 
-    expect(Environment.getAndroidSDKPath)
-      .toThrow('$ANDROID_SDK_ROOT is not defined, set the path to the SDK installation directory into $ANDROID_SDK_ROOT');
+    expect(Environment.getAndroidSDKPath())
+      .toEqual('');
 
   });
 });
-
