@@ -11,6 +11,7 @@
 #import <EarlGrey/GREYActions.h>
 #import <EarlGrey/NSObject+GREYAdditions.h>
 #import <EarlGrey/GREYAppleInternals.h>
+#import <EarlGrey/GREYError.h>
 @import AudioToolbox;
 @import ObjectiveC;
 
@@ -77,63 +78,121 @@ static void _DTXTypeText(NSString* text)
 	}));
 }
 
-static BOOL _ensureFirstResponderIfNeeded(id expectedFirstResponderView, NSError* __strong * errorOrNil)
+static UIView* _isViewOrDescendantFirstResponder(UIView* view)
 {
-	BOOL isFirstResponder = [expectedFirstResponderView isFirstResponder];
+	id currentFirstResponder = view.window.firstResponder;
 	
-	if(isFirstResponder == NO)
+	if([currentFirstResponder isKindOfClass:UIView.class] == NO)
 	{
-		// Tap on the element to make expectedFirstResponderView a first responder.
-		if ([[GREYActions actionForTap] perform:expectedFirstResponderView error:errorOrNil] == NO)
-		{
-			return NO;
-		}
-		
-		return [expectedFirstResponderView becomeFirstResponder];
+		return nil;
 	}
 	
-	return YES;
+	if(currentFirstResponder != nil && [currentFirstResponder isDescendantOfView:view])
+	{
+		return currentFirstResponder;
+	}
+	
+	return nil;
+}
+
+static UIView* _ensureFirstResponderIfNeeded(UIView* view, NSError* __strong * errorOrNil)
+{
+	UIView* firstResponder = _isViewOrDescendantFirstResponder(view);
+	
+	if(firstResponder != nil)
+	{
+		return firstResponder;
+	}
+	
+	// Tap on the element to make expectedFirstResponderView a first responder.
+	if ([[GREYActions actionForTap] perform:view error:errorOrNil] == NO)
+	{
+		return nil;
+	}
+	
+	firstResponder = _isViewOrDescendantFirstResponder(view);
+	if(firstResponder == nil && [view becomeFirstResponder])
+	{
+		firstResponder = view;
+	}
+	
+	if(firstResponder == nil)
+	{
+		NSString *description = @"Failed to make element [E] first responder.";
+		NSDictionary *glossary = @{ @"E" : [view grey_description] };
+		GREYPopulateErrorNotedOrLog(errorOrNil,
+									kGREYInteractionErrorDomain,
+									kGREYInteractionActionFailedErrorCode,
+									description,
+									glossary);
+	}
+	
+	return firstResponder;
+}
+
+static BOOL _assertFirstResponderSupportsTextInput(UIView* firstResponder, UIView* view, __strong NSError** errorOrNil)
+{
+	if([firstResponder conformsToProtocol:@protocol(UITextInput)])
+	{
+		return YES;
+	}
+	
+	NSString *description;
+	NSDictionary* glossary;
+	if(firstResponder == view)
+	{
+		description = @"Element [E] does not conform to UITextInput protocol.";
+		glossary = @{ @"E": [firstResponder grey_description] };
+	}
+	else
+	{
+		description = @"Element [F] (descendant of [E]) does not conform to UITextInput protocol.";
+		glossary = @{ @"F": [firstResponder grey_description], @"E": [view grey_description] };
+	}
+	
+	GREYPopulateErrorNotedOrLog(errorOrNil,
+								kGREYInteractionErrorDomain,
+								kGREYInteractionActionFailedErrorCode,
+								description,
+								glossary);
+	return NO;
 }
 
 + (id<GREYAction>)dtx_actionForClearText
 {
-	return [GREYActionBlock actionWithName:@"Clear text" constraints:grey_not(grey_systemAlertViewShown()) performBlock:^BOOL(id  _Nonnull element, NSError * _Nullable __strong * _Nullable errorOrNil) {
+	return [GREYActionBlock actionWithName:@"Clear text" constraints:grey_not(grey_systemAlertViewShown()) performBlock:^BOOL(UIView* _Nonnull view, NSError * _Nullable __strong * _Nullable errorOrNil) {
 		
-		BOOL firstResponder = _ensureFirstResponderIfNeeded(element, errorOrNil);
-		if(firstResponder == NO)
+		UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(view, errorOrNil);
+		if(firstResponder == nil)
 		{
 			return NO;
 		}
 		
-		NSString *textStr;
-		if ([element grey_isWebAccessibilityElement]) {
-			[GREYActions grey_setText:@"" onWebElement:element];
-			return YES;
-		} else if ([element isKindOfClass:NSClassFromString(@"UIAccessibilityTextFieldElement")]) {
-			element = [element textField];
-		} else if ([element respondsToSelector:@selector(text)]) {
-			textStr = [element text];
-		} else {
-			UITextRange *range = [element textRangeFromPosition:[element beginningOfDocument]
-													 toPosition:[element endOfDocument]];
-			textStr = [element textInRange:range];
+		if(_assertFirstResponderSupportsTextInput(firstResponder, view, errorOrNil) == NO)
+		{
+			return NO;
 		}
 		
-		NSMutableString *deleteStr = [[NSMutableString alloc] init];
-		for (NSUInteger i = 0; i < textStr.length; i++) {
+		UITextPosition* beginningOfDocument = firstResponder.beginningOfDocument;
+		UITextPosition* endOfDocument = firstResponder.endOfDocument;
+			
+		UITextRange* range = [firstResponder textRangeFromPosition:beginningOfDocument toPosition:endOfDocument];
+		NSString* textStr = [firstResponder textInRange:range];
+		
+		NSMutableString* deleteStr = [NSMutableString new];
+		for(NSUInteger i = 0; i < textStr.length; i++)
+		{
 			[deleteStr appendString:@"\b"];
 		}
 		
-		if (deleteStr.length == 0) {
+		if (deleteStr.length == 0)
+		{
 			return YES;
-		} else if ([element conformsToProtocol:@protocol(UITextInput)]) {
-			UITextPosition* endPosition = [element endOfDocument];
-			[element setSelectedTextRange:[element textRangeFromPosition:endPosition toPosition:endPosition]];
-			id<GREYAction> typeAtEnd = [GREYActions dtx_actionForTypeText:deleteStr];
-			return [typeAtEnd perform:element error:errorOrNil];
-		} else {
-			return [[GREYActions dtx_actionForTypeText:deleteStr] perform:element error:errorOrNil];
 		}
+		
+		[firstResponder setSelectedTextRange:[firstResponder textRangeFromPosition:endOfDocument toPosition:endOfDocument]];
+		id<GREYAction> typeAtEnd = [GREYActions dtx_actionForTypeText:deleteStr];
+		return [typeAtEnd perform:firstResponder error:errorOrNil];
 	}];
 }
 
@@ -141,9 +200,14 @@ static BOOL _ensureFirstResponderIfNeeded(id expectedFirstResponderView, NSError
 {
 	return [GREYActionBlock actionWithName:[NSString stringWithFormat:@"Type '%@'", text]
 							   constraints:grey_not(grey_systemAlertViewShown())
-							  performBlock:^BOOL (UIView* expectedFirstResponderView, __strong NSError **errorOrNil) {
-		BOOL firstResponder = _ensureFirstResponderIfNeeded(expectedFirstResponderView, errorOrNil);
-		if(firstResponder == NO)
+							  performBlock:^BOOL (UIView* view, __strong NSError **errorOrNil) {
+		UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(view, errorOrNil);
+		if(firstResponder == nil)
+		{
+			return NO;
+		}
+		
+		if(_assertFirstResponderSupportsTextInput(firstResponder, view, errorOrNil) == NO)
 		{
 			return NO;
 		}

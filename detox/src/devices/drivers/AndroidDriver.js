@@ -1,4 +1,5 @@
 const fs = require('fs');
+const URL = require('url').URL;
 const _ = require('lodash');
 const { encodeBase64 } = require('../../utils/encoding');
 const log = require('../../utils/logger').child({ __filename });
@@ -199,11 +200,16 @@ class AndroidDriver extends DeviceDriverBase {
   async _launchInstrumentationProcess(deviceId, bundleId, rawLaunchArgs) {
     const launchArgs = this._prepareLaunchArgs(rawLaunchArgs);
     const additionalLaunchArgs = this._prepareLaunchArgs({debug: false});
+    const serverPort = new URL(this.client.configuration.server).port;
+    await this.adb.reverse(deviceId, serverPort);
     const testRunner = await this.adb.getInstrumentationRunner(deviceId, bundleId);
     const spawnFlags = [`-s`, `${deviceId}`, `shell`, `am`, `instrument`, `-w`, `-r`, ...launchArgs, ...additionalLaunchArgs, testRunner];
 
     this.instrumentationProcess = spawnAndLog(this.adb.adbBin, spawnFlags, { detached: false });
-    this.instrumentationProcess.childProcess.on('close', () => this._terminateInstrumentation());
+    this.instrumentationProcess.childProcess.on('close', async () => {
+      await this._terminateInstrumentation();
+      await this.adb.reverseRemove(deviceId, serverPort);
+    });
   }
 
   async _queryPID(deviceId, bundleId, waitAtStart = true) {
