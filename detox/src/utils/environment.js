@@ -40,7 +40,7 @@ async function getAaptPath(){
 
   const buildToolsDir = path.join(sdkPath, 'build-tools');
   if (fs.pathExistsSync(buildToolsDir)) {
-    const buildToolsDirs = await fsext.getDirectories(buildToolsDir);
+    const buildToolsDirs = await fs.getDirectories(buildToolsDir);
     latestBuildToolsVersion = _.last(buildToolsDirs);
   }
 
