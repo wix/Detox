@@ -187,18 +187,6 @@ describe('Detox', () => {
     expect(detox._client.dumpPendingRequests).toHaveBeenCalled();
   });
 
-  it('should return the device\'s name', async () => {
-    const deviceMock = require('./devices/Device');
-    deviceMock.prototype.name = jest.fn().mockReturnValue('mock-device-name');
-
-    Detox = require('./Detox');
-    detox = new Detox({deviceConfig: validDeviceConfig});
-
-    await detox.init();
-    expect(detox.deviceName()).toEqual('mock-device-name');
-    expect(deviceMock.prototype.name).toHaveBeenCalled();
-  });
-
   describe('.artifactsManager', () => {
     let artifactsManager;
 

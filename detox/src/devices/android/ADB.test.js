@@ -84,6 +84,15 @@ describe('ADB', () => {
       expect(actual).toEqual(parsedDevices);
     });
 
+    it(`should return an empty list if no devices are available`, async () => {
+      exec.mockReturnValue({
+        stdout: 'List of devices attached\n'
+      });
+
+      const devices = await adb.devices();
+      expect(devices.length).toEqual(0);
+    });
+
     it(`should abort if port can't be parsed`, async () => {
       const adbDevicesResult = 'List of devices attached\nemulator-\tdevice\n';
       exec.mockReturnValue({
@@ -100,7 +109,7 @@ describe('ADB', () => {
       }
     });
 
-    it(`should skip if no devices are available`, async () => {
+    it(`should skip telnet if no devices are available`, async () => {
       exec.mockReturnValue({
         stdout: 'List of devices attached\n'
       });

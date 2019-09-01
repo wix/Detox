@@ -41,7 +41,8 @@ class Emulator {
     }
 
     let childProcessOutput;
-    const tempLog = `./${emulatorName}-${options.port}.log`;
+    const portName = options.port ? `-${options.port}` : '';
+    const tempLog = `./${emulatorName}${portName}.log`;
     const stdout = fs.openSync(tempLog, 'a');
     const stderr = fs.openSync(tempLog, 'a');
     const tailOptions = {

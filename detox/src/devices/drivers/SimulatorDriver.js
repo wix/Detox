@@ -21,7 +21,7 @@ class SimulatorDriver extends IosDriver {
     this._name = 'Unspecified Simulator';
   }
 
-  name() {
+  get name() {
     return this._name;
   }
 

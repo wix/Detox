@@ -255,7 +255,7 @@ class ADB {
 
   async _adbDevices() {
     const output = (await this.adbCmd('', 'devices', { verbosity: 'high' })).stdout;
-    return new AdbDevicesParser(output);
+    return new ADBDevicesParser(output);
   }
 
   async adbCmd(deviceId, params, options) {
@@ -276,7 +276,7 @@ class ADB {
   }
 }
 
-class AdbDevicesParser {
+class ADBDevicesParser {
   constructor(adbDevicesOutput) {
     this.rawInput = adbDevicesOutput;
     this.devicesList = this._extractDeviceNamesFromAdbDevicesOutput(adbDevicesOutput);

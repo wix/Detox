@@ -91,11 +91,10 @@ describe('Device', () => {
   }
 
   it('should return the name from the driver', async () => {
-    driverMock.driver.name.mockReturnValue('mock-device-name');
+    driverMock.driver.name = 'mock-device-name-from-driver';
 
     const device = validDevice();
-    expect(device.name()).toEqual('mock-device-name');
-    expect(driverMock.driver.name).toHaveBeenCalled();
+    expect(device.name).toEqual('mock-device-name-from-driver');
   });
 
   describe('prepare()', () => {

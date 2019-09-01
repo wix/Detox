@@ -7,10 +7,10 @@ class AttachedAndroidDriver extends AndroidDriver {
     super(config);
 
     this.emulator = new Emulator();
-    this._name = 'Unspecified Device';
+    this._name = 'Unnamed Android Device';
   }
 
-  name() {
+  get name() {
     return this._name;
   }
 

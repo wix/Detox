@@ -48,6 +48,18 @@ describe('DeviceRegistry', () => {
       expect(createDevice).toHaveBeenCalledWith('iPhone X');
     });
 
+    it(`should query for available devices by type`, async () => {
+      const devices = mockDeviceList('iPhone X', 2);
+      const busyDevices = mockDeviceList('iPhone X', 1);
+      mockDevices(devices);
+      mockBusyDevices(busyDevices);
+
+      const registry = deviceRegistry();
+      await registry.getDevice('iPhone X');
+
+      expect(getDeviceIdsByType).toHaveBeenCalledWith('iPhone X', busyDevices);
+    });
+
     it(`should not create device if there's no device available`, async () => {
       const devices = mockDeviceList('iPhone X', 1);
       mockDevices(devices);

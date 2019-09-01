@@ -24,8 +24,8 @@ class DeviceDriverBase {
     });
   }
 
-  name() {
-    return 'UNKNOWN_DEVICE';
+  get name() {
+    return 'UNSPECIFIED_DEVICE';
   }
 
   off(event, listener) {

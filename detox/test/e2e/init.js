@@ -10,7 +10,7 @@ jasmine.getEnv().addReporter(adapter);
 // This is strictly optional.
 jasmine.getEnv().addReporter(specReporter);
 
-// This will post which device has assigned to run a suite, in a multiple-worker test session.
+// This will post which device has assigned to run a suite, which can be useful in a multiple-worker tests run.
 // This is strictly optional.
 jasmine.getEnv().addReporter(assignReporter);
 

@@ -30,7 +30,7 @@ class EmulatorDriver extends AndroidDriver {
     this._name = 'Unspecified Emulator';
   }
 
-  name() {
+  get name() {
     return this._name
   }
 
@@ -72,7 +72,7 @@ class EmulatorDriver extends AndroidDriver {
       const avdmanagerPath = path.join(environment.getAndroidSDKPath(), 'tools', 'bin', 'avdmanager');
 
       throw new Error(`Could not find any configured Android Emulator. 
-      Try creating a device first, example: ${avdmanagerPath} create avd --force --name Pixel_2_API_26 --abi x86 --package 'system-images;android-26;google_apis_playstore;x86' --device "Pixel 2"
+      Try creating a device first, example: ${avdmanagerPath} create avd --force --name Pixel_2_API_26 --abi x86 --package 'system-images;android-26;google_apis_playstore;x86' --device "pixel"
       or go to https://developer.android.com/studio/run/managing-avds.html for details on how to create an Emulator.`);
     }
 
@@ -121,7 +121,7 @@ class EmulatorDriver extends AndroidDriver {
     return config;
   }
 
-  async _getDeviceIdsByType(name) {
+  async _getDeviceIdsByType(name, currentBusyDevices) {
     const device = await this.adb.findDevice(async (candidate) => {
       const isEmulator = candidate.type === 'emulator';
       const isMatchingName = candidate.name === name;
@@ -129,9 +129,9 @@ class EmulatorDriver extends AndroidDriver {
         return false;
       }
 
-      // Note: though not entirely pure, this is an important optimization so as to avoid preparsing of all
+      // Note: though not entirely pure, this is an important optimization so as to avoid the preparsing of all
       // potentially fit emulators, which can be time consuming - mostly because of the telnet.
-      const isBusy = await this.deviceRegistry._getBusyDevices().includes(candidate.adbName);
+      const isBusy = currentBusyDevices.includes(candidate.adbName);
       return !isBusy;
     });
 
@@ -145,7 +145,7 @@ class EmulatorDriver extends AndroidDriver {
   async _createDevice() {
     const {min, max} = DetoxEmulatorsPortRange;
     let port = Math.random() * (max - min) + min;
-    port = port & (~0 - 1);
+    port = port & 0xFFFFFFFE; // Should always be even
 
     const adbName = `emulator-${port}`;
     this.pendingBoots[adbName] = port;

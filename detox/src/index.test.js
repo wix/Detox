@@ -199,18 +199,7 @@ describe('index', () => {
     expect(detox.init(schemes.validOneDeviceNoSession)).rejects.toThrow();
     expect(mockDetox.cleanup).toHaveBeenCalled();
   });
-
-  it(`should return name from detox`, async () => {
-    mockDetox.deviceName.mockReturnValue('mock-device-name');
-    await detox.init(schemes.validOneDeviceNoSession);
-    expect(detox.deviceName()).toEqual('mock-device-name');
-  });
-
-  it(`should fallback to empty name before init`, async () => {
-    mockDetox.deviceName.mockReturnValue('mock-device-name');
-    expect(detox.deviceName()).toEqual('');
-  });
-
+  
   it(`beforeEach() should be covered - with detox initialized`, async() => {
     await detox.init(schemes.validOneDeviceNoSession);
     await detox.beforeEach();

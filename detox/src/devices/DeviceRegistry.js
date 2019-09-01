@@ -75,7 +75,8 @@ class DeviceRegistry {
   }
 
   async _getFreeDevice(deviceType) {
-    const deviceIds = await this.getDeviceIdsByType(deviceType);
+    const busyDevices = await this._getBusyDevices();
+    const deviceIds = await this.getDeviceIdsByType(deviceType, busyDevices);
 
     for (let i = 0; i < deviceIds.length; i++) {
       let deviceId = deviceIds[i];

@@ -148,10 +148,6 @@ const collectExtraArgs = require('./utils/collectExtraArgs')(module.exports.buil
 module.exports.handler = async function test(program) {
   program.artifactsLocation = buildDefaultArtifactsRootDirpath(program.configuration, program.artifactsLocation);
 
-  if(!program.keepLockFile){
-    clearDeviceRegistryLockFile();
-  }
-
   const config = getDetoxSection();
 
   if (!program.file && config.file) {
@@ -167,6 +163,10 @@ module.exports.handler = async function test(program) {
   }
 
   const platform = currentConfiguration.type.split('.')[0];
+
+  if(!program.keepLockFile){
+    clearDeviceRegistryLockFile();
+  }
 
   function run() {
     if (runner.includes('jest')) {
@@ -240,16 +240,15 @@ module.exports.handler = async function test(program) {
   }
 
   function runJest() {
-    const hasMultipleWorkers = ((program.workers || 0) > 1);
+    const hasMultipleWorkers = (program.workers > 1);
     if (platform === 'android') {
       program.readOnlyEmu = false;
       if (hasMultipleWorkers) {
         program.readOnlyEmu = true;
-        log.warn('Multiple workers is an experimental feature on Android and requires an emulator binary of version 28.0.1 or higher. ' +
+        log.warn('Multiple workers is an experimental feature on Android and requires an emulator binary of version 28.0.16 or higher. ' +
           'Check your version by running: $ANDROID_HOME/tools/bin/sdkmanager --list');
       }
     }
-    program.reportWorkerAssign = hasMultipleWorkers;
 
     const jestReportSpecsArg = program['jest-report-specs'];
     if (!_.isUndefined(jestReportSpecsArg)) {
@@ -282,7 +281,6 @@ module.exports.handler = async function test(program) {
       'recordPerformance',
       'deviceName',
       'reportSpecs',
-      'reportWorkerAssign',
       'readOnlyEmu',
     ]);
 
@@ -328,13 +326,9 @@ module.exports.handler = async function test(program) {
   }
 
   function clearDeviceRegistryLockFile() {
-    const lockFilePathIOS = environment.getDeviceLockFilePathIOS();
-    fs.ensureFileSync(lockFilePathIOS);
-    fs.writeFileSync(lockFilePathIOS, '[]');
-
-    const lockFilePathAndroid = environment.getDeviceLockFilePathAndroid();
-    fs.ensureFileSync(lockFilePathAndroid);
-    fs.writeFileSync(lockFilePathAndroid, '[]');
+    const lockFilePath = platform === 'ios' ? environment.getDeviceLockFilePathIOS() : environment.getDeviceLockFilePathAndroid();
+    fs.ensureFileSync(lockFilePath);
+    fs.writeFileSync(lockFilePath, '[]');
   }
 
   run();

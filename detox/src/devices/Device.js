@@ -96,8 +96,8 @@ class Device {
     }
   }
 
-  name() {
-    return this.deviceDriver.name();
+  get name() {
+    return this.deviceDriver.name;
   }
 
   async takeScreenshot(name) {
