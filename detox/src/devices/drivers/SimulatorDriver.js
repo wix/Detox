@@ -15,7 +15,14 @@ class SimulatorDriver extends IosDriver {
     this.deviceRegistry = new DeviceRegistry({
       getDeviceIdsByType: async type => await this.applesimutils.findDevicesUDID(type),
       createDevice: type => this.applesimutils.create(type),
+      lockfile: environment.getDeviceLockFilePathIOS(),
     });
+
+    this._name = 'Unspecified Simulator';
+  }
+
+  get name() {
+    return this._name;
   }
 
   async prepare() {
@@ -35,10 +42,11 @@ class SimulatorDriver extends IosDriver {
   async acquireFreeDevice(name) {
     const deviceId = await this.deviceRegistry.getDevice(name);
     if (deviceId) {
-      await this.boot(deviceId);
+      await this._boot(deviceId);
     } else {
       console.error('Unable to acquire free device ', name);
     }
+    this._name = `${deviceId || 'UNKNOWN_DEVICE_ID'} (${name})`;
     return deviceId;
   }
 
@@ -55,7 +63,7 @@ class SimulatorDriver extends IosDriver {
     }
   }
 
-  async boot(deviceId) {
+  async _boot(deviceId) {
     const coldBoot = await this.applesimutils.boot(deviceId);
     await this.emitter.emit('bootDevice', { coldBoot, deviceId });
   }
@@ -123,7 +131,7 @@ class SimulatorDriver extends IosDriver {
   async resetContentAndSettings(deviceId) {
     await this.shutdown(deviceId);
     await this.applesimutils.resetContentAndSettings(deviceId);
-    await this.boot(deviceId);
+    await this._boot(deviceId);
   }
 
   validateDeviceConfig(deviceConfig) {

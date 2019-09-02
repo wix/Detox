@@ -13,8 +13,22 @@ class ADB {
   }
 
   async devices() {
-    const output = (await this.adbCmd('', 'devices', { verbosity: 'high' })).stdout;
-    return this.parseAdbDevicesConsoleOutput(output);
+    const parser = await this._adbDevices();
+    const devices = [];
+    for (let device = await parser.parseNext(); device; device = await parser.parseNext()) {
+      devices.push(device);
+    }
+    return devices;
+  }
+
+  async findDevice(matcher) {
+    const parser = await this._adbDevices();
+    for (let device = await parser.parseNext(); device; device = await parser.parseNext()) {
+      if (await matcher(device)) {
+        return device;
+      }
+    }
+    return undefined;
   }
 
   async unlockScreen(deviceId) {
@@ -33,8 +47,7 @@ class ADB {
   }
 
   async _getPowerStatus(deviceId) {
-    const stdout = await this.shell(deviceId, `dumpsys power | grep "^[ ]*m[UW].*="`);
-
+    const stdout = await this.shell(deviceId, `dumpsys power | grep "^[ ]*m[UW].*="`, { retries: 5 });
     return stdout
       .split('\n')
       .map(s => s.trim().split('='))
@@ -54,43 +67,6 @@ class ADB {
 
   async _sendKeyEvent(deviceId, keyevent) {
     await this.shell(deviceId, `input keyevent ${keyevent}`);
-  }
-
-  async parseAdbDevicesConsoleOutput(input) {
-    const outputToList = input.trim().split('\n');
-    const devicesList = _.takeRight(outputToList, outputToList.length - 1);
-    const devices = [];
-    for (const deviceString of devicesList) {
-      const deviceParams = deviceString.split('\t');
-      const deviceAdbName = deviceParams[0];
-      let device;
-      if (this.isEmulator(deviceAdbName)) {
-        const port = _.split(deviceAdbName, '-')[1];
-        if (!port) {
-          _reportTelnetPortResolutionError(input, devicesList, deviceAdbName, port);
-        }
-
-        const telnet = new EmulatorTelnet();
-        await telnet.connect(port);
-        const name = await telnet.avdName();
-        device = {type: 'emulator', name: name, adbName: deviceAdbName, port: port};
-        await telnet.quit();
-      } else if (this.isGenymotion(deviceAdbName)) {
-        device = {type: 'genymotion', name: deviceAdbName, adbName: deviceAdbName};
-      } else {
-        device = {type: 'device', name: deviceAdbName, adbName: deviceAdbName};
-      }
-      devices.push(device);
-    }
-    return devices;
-  }
-
-  isEmulator(deviceAdbName) {
-    return _.includes(deviceAdbName, 'emulator-');
-  }
-
-  isGenymotion(string) {
-    return (/^((1?\d?\d|25[0-5]|2[0-4]\d)(\.|:)){4}[0-9]{4}/.test(string));
   }
 
   async now(deviceId) {
@@ -169,7 +145,7 @@ class ADB {
       return this._cachedApiLevels.get(deviceId);
     }
 
-    const lvl = Number(await this.shell(deviceId, `getprop ro.build.version.sdk`));
+    const lvl = Number(await this.shell(deviceId, `getprop ro.build.version.sdk`, { retries: 5 }));
     this._cachedApiLevels.set(deviceId, lvl);
 
     return lvl;
@@ -277,6 +253,11 @@ class ADB {
     return this.adbCmd(deviceId, `reverse --remove tcp:${port}`);
   }
 
+  async _adbDevices() {
+    const output = (await this.adbCmd('', 'devices', { verbosity: 'high' })).stdout;
+    return new ADBDevicesParser(output);
+  }
+
   async adbCmd(deviceId, params, options) {
     const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
     const cmd = `${this.adbBin} ${serial} ${params}`;
@@ -293,6 +274,59 @@ class ADB {
     const serial = deviceId ? ['-s', deviceId] : [];
     return spawnAndLog(this.adbBin, [...serial, ...params]);
   }
+}
+
+class ADBDevicesParser {
+  constructor(adbDevicesOutput) {
+    this.rawInput = adbDevicesOutput;
+    this.devicesList = this._extractDeviceNamesFromAdbDevicesOutput(adbDevicesOutput);
+    this.index = 0;
+  }
+
+  async parseNext() {
+    if (this.index < this.devicesList.length) {
+      return await this._parseAdbDevice(this.devicesList[this.index++]);
+    }
+    return undefined;
+  }
+
+  _extractDeviceNamesFromAdbDevicesOutput(input) {
+    const outputToList = input.trim().split('\n');
+    const devicesList = _.takeRight(outputToList, outputToList.length - 1);
+    return devicesList;
+  }
+
+  async _parseAdbDevice(deviceString) {
+    const deviceParams = deviceString.split('\t');
+    const adbName = deviceParams[0];
+
+    let device;
+    if (isEmulator(adbName)) {
+      const port = _.split(adbName, '-')[1];
+      if (!port) {
+        _reportTelnetPortResolutionError(this.rawInput, this.devicesList, adbName, port);
+      }
+
+      const telnet = new EmulatorTelnet();
+      await telnet.connect(port);
+      const name = await telnet.avdName();
+      device = {type: 'emulator', name: name, adbName, port};
+      await telnet.quit();
+    } else if (isGenymotion(adbName)) {
+      device = {type: 'genymotion', name: adbName, adbName};
+    } else {
+      device = {type: 'device', name: adbName, adbName};
+    }
+    return device;
+  }
+}
+
+function isEmulator(deviceAdbName) {
+  return _.includes(deviceAdbName, 'emulator-');
+}
+
+function isGenymotion(adbName) {
+  return (/^((1?\d?\d|25[0-5]|2[0-4]\d)(\.|:)){4}[0-9]{4}/.test(adbName));
 }
 
 function _reportTelnetPortResolutionError(input, devicesList, deviceAdbName, port) {

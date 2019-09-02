@@ -13,7 +13,7 @@
     "e2e:ios-ci": "detox test --configuration ios.sim.release --workers 3 --debug-synchronization --take-screenshots all --record-logs all -- --coverage",
     "e2e:android": "detox test --configuration android.emu.release",
     "e2e:android-debug": "detox test --configuration android.emu.debug",
-    "e2e:android-ci": "detox test e2e --configuration android.emu.release --take-screenshots all --record-logs all --headless --loglevel verbose -- --coverage",
+    "e2e:android-ci": "detox test e2e --configuration android.emu.release --workers 3 --take-screenshots all --record-logs all --headless --loglevel verbose -- --coverage",
     "build:ios": "detox build --configuration ios.sim.release",
     "build:android": "detox build --configuration android.emu.release",
     "build:android-debug": "detox build --configuration android.emu.debug",

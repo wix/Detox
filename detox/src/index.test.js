@@ -13,6 +13,7 @@ describe('index', () => {
           id: jest.fn(),
         };
       }),
+      deviceName: jest.fn(),
       cleanup: jest.fn(),
       beforeEach: jest.fn(),
       afterEach: jest.fn(),
@@ -198,7 +199,7 @@ describe('index', () => {
     expect(detox.init(schemes.validOneDeviceNoSession)).rejects.toThrow();
     expect(mockDetox.cleanup).toHaveBeenCalled();
   });
-
+  
   it(`beforeEach() should be covered - with detox initialized`, async() => {
     await detox.init(schemes.validOneDeviceNoSession);
     await detox.beforeEach();
@@ -216,4 +217,5 @@ describe('index', () => {
   it(`afterEach() should be covered - with detox not initialized`, async() => {
     await detox.afterEach();
   });
+
 });

@@ -90,6 +90,13 @@ describe('Device', () => {
     return schemeDevice(validScheme, 'ios.sim.release');
   }
 
+  it('should return the name from the driver', async () => {
+    driverMock.driver.name = 'mock-device-name-from-driver';
+
+    const device = validDevice();
+    expect(device.name).toEqual('mock-device-name-from-driver');
+  });
+
   describe('prepare()', () => {
     it(`valid scheme, no binary, should throw`, async () => {
       const device = validDevice();

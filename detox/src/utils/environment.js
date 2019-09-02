@@ -5,7 +5,8 @@ const exec = require('child-process-promise').exec;
 const appdatapath = require('./appdatapath');
 
 const DETOX_LIBRARY_ROOT_PATH = path.join(appdatapath.appDataPath(), 'Detox');
-const DEVICE_LOCK_FILE_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'device.registry.state.lock');
+const DEVICE_LOCK_FILE_PATH_IOS = path.join(DETOX_LIBRARY_ROOT_PATH, 'device.registry.state.lock');
+const DEVICE_LOCK_FILE_PATH_ANDROID = path.join(DETOX_LIBRARY_ROOT_PATH, 'android-device.registry.state.lock');
 
 function getAndroidSDKPath() {
   let sdkPath = process.env.ANDROID_SDK_ROOT || process.env.ANDROID_HOME;
@@ -39,8 +40,12 @@ function getDetoxLibraryRootPath() {
   return DETOX_LIBRARY_ROOT_PATH;
 }
 
-function getDeviceLockFilePath() {
-  return DEVICE_LOCK_FILE_PATH;
+function getDeviceLockFilePathIOS() {
+  return DEVICE_LOCK_FILE_PATH_IOS;
+}
+
+function getDeviceLockFilePathAndroid() {
+  return DEVICE_LOCK_FILE_PATH_ANDROID;
 }
 
 function getHomeDir() {
@@ -53,6 +58,7 @@ module.exports = {
   getAndroidSDKPath,
   getAndroidEmulatorPath,
   getDetoxLibraryRootPath,
-  getDeviceLockFilePath,
+  getDeviceLockFilePathIOS,
+  getDeviceLockFilePathAndroid,
   getHomeDir,
 };

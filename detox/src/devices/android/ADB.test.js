@@ -50,13 +50,47 @@ describe('ADB', () => {
       expect(exec).toHaveBeenCalledTimes(1);
     });
 
-    it(`should parse emulator devices`, async () => {
+    it(`should query emulator devices' name via telnet`, async () => {
       exec.mockReturnValue({
-        stdout: 'List of devices attached\nemulator-5554\tdevice\nemulator-5555\tdevice\n'
+        stdout: 'List of devices attached\n'
+          + 'emulator-5554\tdevice\n'
+          + 'emulator-5555\tdevice\n'
+          + '\n',
       });
 
       await adb.devices();
       expect(mockEmulatorTelnet.connect).toHaveBeenCalledWith("5554");
+      expect(mockEmulatorTelnet.connect).toHaveBeenCalledWith("5555");
+    });
+
+    it(`Parse 'adb device' output with devices of all kinds`, async () => {
+      const adbDevicesConsoleOutput = "List of devices attached\n"
+        + "192.168.60.101:5555\tdevice\n"
+        + "emulator-5556\tdevice\n"
+        + "emulator-5554\tdevice\n"
+        + "sx432wsds\tdevice\n"
+        + "\n";
+      exec.mockReturnValue({
+        stdout: adbDevicesConsoleOutput
+      });
+
+      const parsedDevices = [
+        { "adbName": "192.168.60.101:5555", "name": "192.168.60.101:5555", "type": "genymotion" },
+        { "adbName": "emulator-5556", "name": undefined, "port": "5556", "type": "emulator" },
+        { "adbName": "emulator-5554", "name": undefined, "port": "5554", "type": "emulator" },
+        { "adbName": "sx432wsds", "name": "sx432wsds", "type": "device" }];
+
+      const actual = await adb.devices();
+      expect(actual).toEqual(parsedDevices);
+    });
+
+    it(`should return an empty list if no devices are available`, async () => {
+      exec.mockReturnValue({
+        stdout: 'List of devices attached\n'
+      });
+
+      const devices = await adb.devices();
+      expect(devices.length).toEqual(0);
     });
 
     it(`should abort if port can't be parsed`, async () => {
@@ -75,7 +109,7 @@ describe('ADB', () => {
       }
     });
 
-    it(`should skip if no devices are available`, async () => {
+    it(`should skip telnet if no devices are available`, async () => {
       exec.mockReturnValue({
         stdout: 'List of devices attached\n'
       });
@@ -85,13 +119,36 @@ describe('ADB', () => {
     });
   });
 
+  describe('lookup device', () => {
+    it('should look up a device by matcher', async () => {
+      const adbDevices = 'List of devices attached\n'
+        + 'MOCK_SERIAL\tdevice\n'
+        + '192.168.60.101:6666\tdevice\n'
+        + 'emulator-5554\tdevice\n'
+        + 'emulator-5556\tdevice\n'
+        + '\n';
+      const matcher = jest.fn()
+        .mockReturnValueOnce(false)
+        .mockReturnValueOnce(false)
+        .mockReturnValueOnce(true);
+
+      exec.mockReturnValue({
+        stdout: adbDevices,
+      });
+
+      const result = await adb.findDevice(matcher);
+
+      expect(result.adbName).toEqual('emulator-5554');
+      expect(matcher).toHaveBeenCalledTimes(3);
+    });
+  });
+
   it(`install`, async () => {
     await adb.install('emulator-5556', 'path inside "quotes" to/app');
 
     expect(exec).toHaveBeenCalledWith(
       expect.stringContaining('adb -s emulator-5556 shell "getprop ro.build.version.sdk"'),
-      undefined, undefined, 1
-    );
+      {}, undefined, 5);
 
     expect(exec).toHaveBeenCalledWith(
       expect.stringContaining('adb -s emulator-5556 install -rg "path inside \\"quotes\\" to/app"'),
@@ -186,27 +243,6 @@ describe('ADB', () => {
     await adb.listInstrumentation(deviceId);
 
     expect(adb.shell).toBeCalledWith(deviceId, 'pm list instrumentation');
-  });
-
-  it(`Parse 'adb device' output`, async () => {
-    const adbDevicesConsoleOutput = "List of devices attached\n"
-      + "192.168.60.101:5555\tdevice\n"
-      + "emulator-5556\tdevice\n"
-      + "emulator-5554\tdevice\n"
-      + "sx432wsds\tdevice\n"
-      + "\n";
-
-    const spyDevices = jest.spyOn(adb, 'devices');
-    spyDevices.mockReturnValue(Promise.resolve(adbDevicesConsoleOutput));
-
-    const parsedDevices = [
-      { "adbName": "192.168.60.101:5555", "name": "192.168.60.101:5555", "type": "genymotion" },
-      { "adbName": "emulator-5556", "name": undefined, "port": "5556", "type": "emulator" },
-      { "adbName": "emulator-5554", "name": undefined, "port": "5554", "type": "emulator" },
-      { "adbName": "sx432wsds", "name": "sx432wsds", "type": "device" }];
-
-    const actual = await adb.parseAdbDevicesConsoleOutput(adbDevicesConsoleOutput);
-    expect(actual).toEqual(parsedDevices);
   });
 
   it(`getInstrumentationRunner parses the correct runner for the package`, async () => {
