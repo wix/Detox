@@ -181,7 +181,6 @@ static NSURL* _launchUserActivityDataURL()
 		void (*origSetDelegate)(id, SEL, NSObject<UIApplicationDelegate, COSTouchVisualizerWindowDelegate>*) = (void*)method_getImplementation(m);
 		method_setImplementation(m, imp_implementationWithBlock(^ (id _self, NSObject<UIApplicationDelegate, COSTouchVisualizerWindowDelegate>* origDelegate) {
 			_userAppDelegate = origDelegate;
-			[self _regenerateNewAppDelegateProxy];
 			origSetDelegate(_self, @selector(setDelegate:), DetoxAppDelegateProxy.sharedAppDelegateProxy);
 		}));
 	});

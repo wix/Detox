@@ -24,6 +24,10 @@ class DeviceDriverBase {
     });
   }
 
+  get name() {
+    return 'UNSPECIFIED_DEVICE';
+  }
+
   off(event, listener) {
     this.emitter.off(event, listener);
   }
@@ -41,10 +45,6 @@ class DeviceDriverBase {
   }
 
   async prepare() {
-    return await Promise.resolve('');
-  }
-
-  async boot() {
     return await Promise.resolve('');
   }
 
@@ -78,7 +78,7 @@ class DeviceDriverBase {
   async matchFinger() {
     return await Promise.resolve('');
   }
-  
+
   async unmatchFinger() {
     return await Promise.resolve('');
   }

@@ -16,10 +16,6 @@ describe('DeviceRegistry', () => {
 
     jest.mock('proper-lockfile');
 
-    jest.mock('../utils/environment', () => ({
-      getDeviceLockFilePath: jest.fn().mockReturnValue('lockfile-path/mock'),
-    }));
-
     createDevice = jest.fn();
     getDeviceIdsByType = jest.fn();
   });
@@ -31,7 +27,11 @@ describe('DeviceRegistry', () => {
 
   function deviceRegistry() {
     const DeviceRegistry = require('./DeviceRegistry');
-    const registry = new DeviceRegistry({getDeviceIdsByType, createDevice});
+    const registry = new DeviceRegistry({
+      getDeviceIdsByType,
+      createDevice,
+      lockfile: 'lockfile-path/mock'
+    });
     registry.clear();
     return registry;
   }
@@ -46,6 +46,18 @@ describe('DeviceRegistry', () => {
 
       expect(createDevice).toHaveBeenCalledTimes(1);
       expect(createDevice).toHaveBeenCalledWith('iPhone X');
+    });
+
+    it(`should query for available devices by type`, async () => {
+      const devices = mockDeviceList('iPhone X', 2);
+      const busyDevices = mockDeviceList('iPhone X', 1);
+      mockDevices(devices);
+      mockBusyDevices(busyDevices);
+
+      const registry = deviceRegistry();
+      await registry.getDevice('iPhone X');
+
+      expect(getDeviceIdsByType).toHaveBeenCalledWith('iPhone X', busyDevices);
     });
 
     it(`should not create device if there's no device available`, async () => {
@@ -73,7 +85,7 @@ describe('DeviceRegistry', () => {
     it(`should create a lockfile if none exists`, async () => {
       fs.existsSync.mockReturnValue(false);
 
-      const registry = deviceRegistry();
+      deviceRegistry();
 
       expect(fs.ensureFileSync).toHaveBeenCalledWith('lockfile-path/mock');
       expect(fs.writeFileSync).toHaveBeenCalledWith('lockfile-path/mock', "[]");

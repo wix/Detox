@@ -147,10 +147,6 @@ const collectExtraArgs = require('./utils/collectExtraArgs')(module.exports.buil
 
 module.exports.handler = async function test(program) {
   program.artifactsLocation = buildDefaultArtifactsRootDirpath(program.configuration, program.artifactsLocation);
-  
-  if(!program.keepLockFile){
-    clearDeviceRegistryLockFile();
-  }
 
   const config = getDetoxSection();
 
@@ -167,6 +163,10 @@ module.exports.handler = async function test(program) {
   }
 
   const platform = currentConfiguration.type.split('.')[0];
+
+  if(!program.keepLockFile){
+    clearDeviceRegistryLockFile();
+  }
 
   function run() {
     if (runner.includes('jest')) {
@@ -240,16 +240,21 @@ module.exports.handler = async function test(program) {
   }
 
   function runJest() {
-    if (platform === 'android' && program.workers !== 1) {
-      log.warn('Can not use -w, --workers. Parallel test execution is only supported on iOS currently');
-      program.w = program.workers = 1;
+    const hasMultipleWorkers = (program.workers > 1);
+    if (platform === 'android') {
+      program.readOnlyEmu = false;
+      if (hasMultipleWorkers) {
+        program.readOnlyEmu = true;
+        log.warn('Multiple workers is an experimental feature on Android and requires an emulator binary of version 28.0.16 or higher. ' +
+          'Check your version by running: $ANDROID_HOME/tools/bin/sdkmanager --list');
+      }
     }
 
     const jestReportSpecsArg = program['jest-report-specs'];
     if (!_.isUndefined(jestReportSpecsArg)) {
       program.reportSpecs = (jestReportSpecsArg.toString() === 'true');
     } else {
-      program.reportSpecs = (program.workers === 1);
+      program.reportSpecs = !hasMultipleWorkers;
     }
 
     const command = _.compact([
@@ -276,6 +281,7 @@ module.exports.handler = async function test(program) {
       'recordPerformance',
       'deviceName',
       'reportSpecs',
+      'readOnlyEmu',
     ]);
 
     log.info(printEnvironmentVariables(detoxEnvironmentVariables) + command);
@@ -320,7 +326,7 @@ module.exports.handler = async function test(program) {
   }
 
   function clearDeviceRegistryLockFile() {
-    const lockFilePath = environment.getDeviceLockFilePath();
+    const lockFilePath = platform === 'ios' ? environment.getDeviceLockFilePathIOS() : environment.getDeviceLockFilePathAndroid();
     fs.ensureFileSync(lockFilePath);
     fs.writeFileSync(lockFilePath, '[]');
   }

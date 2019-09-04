@@ -15,6 +15,10 @@ supportComment: >
   
   
   
+  For issues with Expo apps, it is most likely not an issue with Detox itself, but with the Expo runtime or with incorrect Detox setup. For support on how to use Detox with Expo, you should contact the Expo team or the Expo community.
+
+  
+  
   For more information on bots in this reporsitory, read [this discussion](https://github.com/wix/Detox/issues/1305).
 # Whether to close issues marked as support requests
 close: true

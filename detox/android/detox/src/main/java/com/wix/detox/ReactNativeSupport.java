@@ -222,6 +222,7 @@ public class ReactNativeSupport {
                 looper = Reflect.on(queue).call(METHOD_GET_LOOPER).get();
             }
         } catch (ReflectException e) {
+            Log.e(LOG_TAG, "Could not find looper queue: " + queueName, e.getCause());
             return null;
         }
         return looper;

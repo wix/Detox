@@ -25,15 +25,22 @@ describe('test', () => {
     process.argv = argv;
   });
 
+  const mockAndroidJestConfiguration = () => mockConfiguration('android.emulator', 'jest');
+  const mockIOSJestConfiguration = () => mockConfiguration('ios.sim', 'jest');
+  const mockAndroidMochaConfiguration = () => mockConfiguration('android.emulator');
+  const mockIOSMochaConfiguration = () => mockConfiguration('ios.sim');
+  const mockConfiguration = (deviceType, runner) => mockPackageJson({
+    'test-runner': runner,
+    configurations: {
+      only: {
+        type: deviceType,
+      }
+    }
+  });
+
   describe('mocha', () => {
     it('runs successfully', async () => {
-      mockPackageJson({
-        configurations: {
-          only: {
-            type: 'android.emulator'
-          }
-        }
-      });
+      mockAndroidMochaConfiguration();
 
       await callCli('./test', 'test');
 
@@ -49,29 +56,16 @@ describe('test', () => {
     });
 
     it('should warn about deprecated options', async () => {
-      mockPackageJson({
-        configurations: {
-          only: {
-            type: 'android.emulator'
-          }
-        }
-      });
-
+      mockAndroidMochaConfiguration();
       await callCli('./test', 'test --specs e2e');
       expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('migration guide'));
     });
   });
 
+
   describe('jest', () => {
     it('runs successfully', async () => {
-      mockPackageJson({
-        testRunner: 'jest',
-        configurations: {
-          only: {
-            type: 'android.emulator'
-          }
-        }
-      });
+      mockAndroidJestConfiguration();
 
       const mockExec = jest.fn();
       jest.mock('child_process', () => ({
@@ -98,37 +92,12 @@ describe('test', () => {
   });
 
   it('fails with a different runner', async () => {
-    mockPackageJson({
-      testRunner: 'ava',
-      configurations: {
-        only: {
-          type: 'android.emulator'
-        }
-      }
-    });
-
+    mockConfiguration('android.emulator', 'ava');
     await expect(callCli('./test', 'test')).rejects.toThrowErrorMatchingSnapshot();
     expect(mockExec).not.toHaveBeenCalled();
   });
 
-  it('overrides workers count to 1 if running Android tests on Jest', async () => {
-    mockPackageJson({
-      'test-runner': 'jest',
-      configurations: {
-        only: {
-          type: 'android.emulator'
-        }
-      }
-    });
-
-    await callCli('./test', 'test --workers 2');
-    expect(mockExec).toHaveBeenCalledWith(
-      expect.stringContaining(` --maxWorkers=1 `),
-      expect.anything()
-    );
-  });
-
-  describe('specs reporting (propagated) switch', () => {
+  describe('Jest specs reporting (propagated) switch', () => {
     const expectReportSpecsArg = ({value}) => expect(mockExec).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
@@ -139,14 +108,7 @@ describe('test', () => {
     );
 
     describe('ios', () => {
-      beforeEach(() => mockPackageJson({
-        'test-runner': 'jest',
-        configurations: {
-          only: {
-            type: 'ios.sim'
-          }
-        }
-      }));
+      beforeEach(mockIOSJestConfiguration);
 
       it('should be enabled for a single worker', async () => {
         await callCli('./test', 'test --workers 1');
@@ -180,35 +142,54 @@ describe('test', () => {
     });
 
     describe('android', () => {
-      beforeEach(() => mockPackageJson({
-        'test-runner': 'jest',
-        configurations: {
-          only: {
-            type: 'android.emulator'
-          }
-        }
-      }));
-
-      it('should align with fallback to single-worker', async () => {
-        await callCli('./test', 'test --workers 2');
-        expectReportSpecsArg({value: true});
-      });
-
       it('should adhere to custom --jest-report-specs switch, as with ios', async () => {
+        mockAndroidJestConfiguration();
         await callCli('./test', 'test --workers 2 --jest-report-specs false');
         expectReportSpecsArg({value: false});
       });
     });
   });
 
-  it('sets default value for debugSynchronization', async () => {
-    mockPackageJson({
-      configurations: {
-        only: {
-          type: 'android.emulator'
-        }
-      }
+  describe('Jest read-only mode for emulators (propagated) switch', () => {
+    const expectReadOnlyEmulatorsArg = ({value}) => expect(mockExec).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        env: expect.objectContaining({
+          readOnlyEmu: value,
+        }),
+      })
+    );
+
+    const expectNoReadOnlyEmulatorsArg = () => expect(mockExec).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        env: expect.not.objectContaining({
+          readOnlyEmu: expect.anything(),
+        }),
+      })
+    );
+
+    it('should be enabled if more than 1 worker is set', async () => {
+      mockAndroidJestConfiguration();
+      await callCli('./test', 'test --workers 2');
+      expectReadOnlyEmulatorsArg({value: true});
     });
+
+    it('should be disabled by default', async () => {
+      mockAndroidJestConfiguration();
+      await callCli('./test', 'test');
+      expectReadOnlyEmulatorsArg({value: false});
+    });
+
+    it('should be disabled on iOS', async () => {
+      mockIOSJestConfiguration();
+      await callCli('./test', 'test --workers 2');
+      expectNoReadOnlyEmulatorsArg();
+    });
+  });
+
+  it('sets default value for debugSynchronization', async () => {
+    mockAndroidMochaConfiguration();
 
     try {
       await callCli('./test', 'test --debug-synchronization');
@@ -224,13 +205,7 @@ describe('test', () => {
   });
 
   it('passes extra args to the test runner', async () => {
-    mockPackageJson({
-      configurations: {
-        only: {
-          type: 'android.emulator'
-        }
-      }
-    });
+    mockAndroidMochaConfiguration();
 
     try {
       process.argv = [...process.argv, '--unknown-property', '42', '--flag'];
