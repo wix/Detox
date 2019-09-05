@@ -95,7 +95,7 @@ await element(by.id('textField')).clearText();
 
 Scrolls a given amount of pixels in the provided direction, starting from the provided start positions.
 pixels - independent device pixels
-direction - left/right/top/bottom
+direction - left/right/up/down
 startPositionX - the X starting scroll position, in percentage; valid input: [0.0, 1.0], `NaN`; default: `NaN`—choose the best value automatically
 startPositionY - the Y starting scroll position, in percentage; valid input: [0.0, 1.0], `NaN`; default: `NaN`—choose the best value automatically
 
