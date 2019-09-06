@@ -1,3 +1,5 @@
+jest.mock('proper-lockfile');
+
 const yargs = require('yargs');
 const path = require('path');
 

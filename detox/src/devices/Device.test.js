@@ -18,7 +18,6 @@ describe('Device', () => {
 
   beforeEach(async () => {
     jest.mock('fs');
-    jest.mock('proper-lockfile');
     jest.mock('../utils/logger');
 
     fs = require('fs');
