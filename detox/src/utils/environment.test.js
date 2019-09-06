@@ -2,101 +2,182 @@ const _ = require('lodash');
 const tempfile = require('tempfile');
 const fs = require('fs-extra');
 const path = require('path');
+const os = require('os');
 
 describe('Environment', () => {
   let Environment;
-  let originalProcessEnv;
-
-  beforeEach(() => {
-    originalProcessEnv = _.cloneDeep(process.env);
-    Environment = require('./environment');
-  });
+  let originalProcessEnv = _.cloneDeep(process.env);
 
   beforeEach(() => {
     process.env = _.cloneDeep(originalProcessEnv);
     Environment = require('./environment');
   });
 
-  it(`ANDROID_SDK_ROOT and ANDROID_HOME are defined, prefer ANDROID_SDK_ROOT`, () => {
-    process.env.ANDROID_SDK_ROOT = 'path/to/sdk/root';
-    process.env.ANDROID_HOME = 'path/to/android/home';
-
-    const path = Environment.getAndroidSDKPath();
-    expect(path).toEqual('path/to/sdk/root');
+  afterAll(() => {
+    process.env = originalProcessEnv;
   });
 
-  it(`ANDROID_HOME is defined`, () => {
-    process.env.ANDROID_SDK_ROOT = undefined;
-    process.env.ANDROID_HOME = 'path/to/android/home';
+  describe('(android)', () => {
+    let tempSdkPath;
 
-    const path = Environment.getAndroidSDKPath();
-    expect(path).toEqual('path/to/android/home');
-  });
+    async function genExec(relativePath) {
+      const extension = (os.platform() === 'win32') ? '.cmd' : '';
+      const filePath = path.join(tempSdkPath, relativePath) + extension;
 
-  it(`ANDROID_SDK_ROOT and ANDROID_HOME are not defined`, () => {
-    process.env.ANDROID_SDK_ROOT = undefined;
-    process.env.ANDROID_HOME = undefined;
-
-    expect(Environment.getAndroidSDKPath()).toEqual('');
-  });
-
-  it('throws error when android tools are not found', async () => {
-    process.env.ANDROID_SDK_ROOT = undefined;
-    process.env.ANDROID_HOME = undefined;
-    process.env.PATH = '/dev/null';
-
-    expect(Environment.getAndroidEmulatorPath).toThrow(Environment.MISSING_SDK_ERROR);
-
-    await expect(Environment.getAaptPath()).rejects.toThrow(Environment.MISSING_SDK_ERROR);
-
-    expect(Environment.getAdbPath).toThrow(Environment.MISSING_SDK_ERROR);
-  });
-
-  it('finds tools on path', async () => {
-    const tempDir = path.dirname(tempfile());
-    const dirOnPath = path.join(tempDir, 'dirOnPath');
-    const fakeAndroidSdkRoot = path.join(tempDir, 'fakeAndroidSdkRoot');
-    const fakeAndroidHomeRoot = path.join(tempDir, 'fakeAndroidHomeRoot');
-
-    [fakeAndroidSdkRoot, fakeAndroidHomeRoot, dirOnPath].forEach((p) => createMockAndroidToolsForDir(p));
-
-    process.env.ANDROID_SDK_ROOT = fakeAndroidSdkRoot;
-    process.env.ANDROID_HOME = fakeAndroidHomeRoot;
-    process.env.PATH = [
-      path.join(dirOnPath, 'emulator'),
-      path.join(dirOnPath, 'platform-tools'),
-      path.join(dirOnPath, 'build-tools', '2.0.0')
-    ].join(path.delimiter);
-
-    await assertToolsOnPath(fakeAndroidSdkRoot);
-
-    process.env.ANDROID_SDK_ROOT = undefined;
-    await assertToolsOnPath(fakeAndroidHomeRoot);
-
-    process.env.ANDROID_HOME = undefined;
-    await assertToolsOnPath(dirOnPath);
-
-    function createMockAndroidToolsForDir(rootPath) {
-      createTool(path.join(rootPath, 'build-tools', '1.0.0', 'aapt'));
-      createTool(path.join(rootPath, 'build-tools', '2.0.0', 'aapt'));
-      createTool(path.join(rootPath, 'emulator', 'emulator'));
-      createTool(path.join(rootPath, 'platform-tools', 'adb'));
-
-      function createTool(toolPath) {
-        const parentDir = path.dirname(toolPath);
-        fs.ensureDirSync(parentDir);
-        const options = { mode: 0o755 };
-        try {
-          fs.unlinkSync(toolPath);
-        } catch (e) {}
-        fs.writeFileSync(toolPath, '', options);
-      }
+      await fs.ensureFile(filePath);
+      await fs.chmod(filePath, 0o755);
     }
 
-    async function assertToolsOnPath(rootPath) {
-      expect(Environment.getAndroidEmulatorPath()).toEqual(path.join(rootPath, 'emulator', 'emulator'));
-      expect(Environment.getAdbPath()).toEqual(path.join(rootPath, 'platform-tools', 'adb'));
-      expect(await Environment.getAaptPath()).toEqual(path.join(rootPath, 'build-tools', '2.0.0', 'aapt'));
+    beforeEach(async () => {
+      tempSdkPath = tempfile();
+      await fs.mkdirp(tempSdkPath);
+    });
+
+    afterEach(async () => {
+      await fs.remove(tempSdkPath);
+    });
+
+    describe('getAndroidSDKPath', () => {
+      it(`should return empty string if $ANDROID_SDK_ROOT and $ANDROID_HOME both are not set`, () => {
+        delete process.env.ANDROID_SDK_ROOT;
+        delete process.env.ANDROID_HOME;
+
+        const sdkPath = Environment.getAndroidSDKPath();
+        expect(sdkPath).toEqual('');
+      });
+
+      it(`should return $ANDROID_HOME if it is set`, () => {
+        delete process.env.ANDROID_SDK_ROOT;
+        process.env.ANDROID_HOME = 'path/to/android/home';
+
+        const sdkPath = Environment.getAndroidSDKPath();
+        expect(sdkPath).toEqual('path/to/android/home');
+      });
+
+      it(`should return $ANDROID_SDK_ROOT if it is set`, () => {
+        delete process.env.ANDROID_HOME;
+        process.env.ANDROID_SDK_ROOT = 'path/to/sdk/root';
+
+        const sdkPath = Environment.getAndroidSDKPath();
+        expect(sdkPath).toEqual('path/to/sdk/root');
+      });
+
+      it(`should prefer $ANDROID_SDK_ROOT, if both $ANDROID_SDK_ROOT and $ANDROID_HOME are set`, () => {
+        process.env.ANDROID_SDK_ROOT = 'path/to/sdk/root';
+        process.env.ANDROID_HOME = 'path/to/android/home';
+
+        const sdkPath = Environment.getAndroidSDKPath();
+        expect(sdkPath).toEqual('path/to/sdk/root');
+      });
+    });
+
+    describe('getAndroidEmulatorPath', () => {
+      describe('if $ANDROID_SDK_ROOT is set', () => {
+        beforeEach(() => {
+          process.env.ANDROID_SDK_ROOT = tempSdkPath;
+        });
+
+        it('should return emulator if it is in $ANDROID_SDK_ROOT/emulator dir', async () => {
+          await genExec('emulator/emulator');
+          expect(Environment.getAndroidEmulatorPath()).toMatch(/.emulator.emulator/);
+        });
+
+        it('should return emulator if it is in $ANDROID_SDK_ROOT/tools dir', async () => {
+          await genExec('tools/emulator');
+          expect(Environment.getAndroidEmulatorPath()).toMatch(/.tools.emulator/);
+        });
+
+        it('should prefer $ANDROID_SDK_ROOT/emulator over $ANDROID_SDK_ROOT/tools', async () => {
+          await genExec('tools/emulator');
+          await genExec('emulator/emulator');
+
+          expect(Environment.getAndroidEmulatorPath()).toMatch(/.emulator.emulator/);
+        });
+
+        it('should throw error if there are no executables at those locations', async () => {
+          expect(Environment.getAndroidEmulatorPath).toThrow(/There was no.*file in directory:/);
+        });
+      });
+
+      ifAndroidSdkRootAndHomeAreNotSet(() => {
+        itShouldFallBackToPathResolution(() => Environment.getAndroidEmulatorPath(), 'emulator');
+        itShouldThrowErrorIfThereAreNoExecutables(() => Environment.getAndroidEmulatorPath());
+      });
+    });
+
+    describe('getAaptPath', () => {
+      describe('if $ANDROID_SDK_ROOT is set', () => {
+        beforeEach(() => {
+          process.env.ANDROID_SDK_ROOT = tempSdkPath;
+        });
+
+        it('should return aapt from build-tools/<latest>', async () => {
+          await genExec('build-tools/19.0.0/aapt');
+          await genExec('build-tools/20.0.0/aapt');
+
+          expect(await Environment.getAaptPath()).toMatch(/.build-tools.20.0.0.aapt/);
+        });
+
+        it('should throw error if aapt is not found inside build-tools/<someDir>', async () => {
+          await genExec('build-tools/aapt');
+          await expect(Environment.getAaptPath()).rejects.toThrow(/There was no.*file in directory:/);
+        });
+      });
+
+      ifAndroidSdkRootAndHomeAreNotSet(() => {
+        itShouldFallBackToPathResolution(() => Environment.getAaptPath(), 'aapt');
+        itShouldThrowErrorIfThereAreNoExecutables(() => Environment.getAaptPath());
+      });
+    });
+
+    describe('getAdbPath', () => {
+      describe('if $ANDROID_SDK_ROOT is set', () => {
+        beforeEach(() => {
+          process.env.ANDROID_SDK_ROOT = tempSdkPath;
+        });
+
+        it('should return adb from platform-tools', async () => {
+          await genExec('platform-tools/adb');
+          expect(Environment.getAdbPath()).toMatch(/.platform-tools.adb/);
+        });
+
+        it('should throw error if adb is not found in platform-tools/', async () => {
+          await expect(Environment.getAaptPath()).rejects.toThrow(/There was no.*file in directory:/);
+        });
+      });
+
+      ifAndroidSdkRootAndHomeAreNotSet(() => {
+        itShouldFallBackToPathResolution(() => Environment.getAdbPath(), 'adb');
+        itShouldThrowErrorIfThereAreNoExecutables(() => Environment.getAdbPath());
+      });
+    });
+
+    function ifAndroidSdkRootAndHomeAreNotSet(fn) {
+      describe('if $ANDROID_SDK_ROOT and $ANDROID_HOME are not set', () => {
+        beforeEach(() => {
+          delete process.env.ANDROID_SDK_ROOT;
+          delete process.env.ANDROID_HOME;
+        });
+
+        fn();
+      });
+    }
+
+    function itShouldFallBackToPathResolution(getter, executable) {
+        it('should fall back to $PATH resolution', async () => {
+          process.env.PATH = path.join(tempSdkPath, 'somewhere');
+          await genExec(`somewhere/${executable}`);
+          expect(await getter()).toMatch(new RegExp(`somewhere.${executable}`));
+        });
+    }
+
+    function itShouldThrowErrorIfThereAreNoExecutables(getter) {
+      const asyncGetter = async () => getter();
+
+      it('should throw error if there are no executables on $PATH', async () => {
+        delete process.env.PATH;
+        await expect(asyncGetter()).rejects.toThrow(/\$ANDROID_SDK_ROOT is not defined/);
+      });
     }
   });
 });

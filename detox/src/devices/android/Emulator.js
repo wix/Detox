@@ -1,12 +1,11 @@
 const _ = require('lodash');
 const fs = require('fs');
 const os = require('os');
-const {getAndroidEmulatorPath} = require('../../utils/environment');
 const spawn = require('child-process-promise').spawn;
 const Tail = require('tail').Tail;
 const exec = require('../../utils/exec').execWithRetriesAndLogs;
 const unitLogger = require('../../utils/logger').child({ __filename });
-const Environment = require('../../utils/environment');
+const {getAndroidEmulatorPath} = require('../../utils/environment');
 const argparse = require('../../utils/argparse');
 
 class Emulator {

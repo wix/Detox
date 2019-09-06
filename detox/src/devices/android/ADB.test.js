@@ -9,9 +9,8 @@ describe('ADB', () => {
 
   beforeEach(() => {
     jest.mock('../../utils/logger');
-    jest.mock('../../utils/environment', () => ({
-      getAdbPath: () => `/Android/sdk-mock/platform-tools/adb`,
-    }));
+    jest.mock('../../utils/environment');
+    require('../../utils/environment').getAdbPath.mockReturnValue(adbBinPath);
 
     jest.mock('../../utils/encoding', () => ({
       encodeBase64: (text) => `base64(${text})`,

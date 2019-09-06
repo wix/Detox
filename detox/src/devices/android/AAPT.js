@@ -5,17 +5,14 @@ const exec = require('../../utils/exec').execWithRetriesAndLogs;
 const escape = require('../../utils/pipeCommands').escape.inQuotedString;
 const egrep = require('../../utils/pipeCommands').search.fragment;
 const fsext = require('../../utils/fsext');
+
 class AAPT {
   constructor() {
     this.aaptBin = null;
   }
 
   async _prepare() {
-    if (this.aaptBin) {
-      return;
-    }
-
-    this.aaptBin = await getAaptPath()
+    this.aaptBin = this.aaptBin || await getAaptPath();
   }
 
   async getPackageName(apkPath) {
