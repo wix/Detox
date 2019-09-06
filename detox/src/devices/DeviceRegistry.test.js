@@ -14,8 +14,6 @@ describe('DeviceRegistry', () => {
     fs.existsSync.mockReturnValue(true);
     fs.readFileSync.mockReturnValue("[]");
 
-    jest.mock('proper-lockfile');
-
     createDevice = jest.fn();
     getDeviceIdsByType = jest.fn();
   });
