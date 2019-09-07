@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const Environment = require('../../utils/environment');
+const {getAaptPath} = require('../../utils/environment');
 const path = require('path');
 const exec = require('../../utils/exec').execWithRetriesAndLogs;
 const escape = require('../../utils/pipeCommands').escape.inQuotedString;
@@ -7,18 +7,12 @@ const egrep = require('../../utils/pipeCommands').search.fragment;
 const fsext = require('../../utils/fsext');
 
 class AAPT {
-
   constructor() {
     this.aaptBin = null;
   }
 
   async _prepare() {
-    if (!this.aaptBin) {
-      const sdkPath = Environment.getAndroidSDKPath();
-      const buildToolsDirs = await fsext.getDirectories(path.join(sdkPath, 'build-tools'));
-      const latestBuildToolsVersion = _.last(buildToolsDirs);
-      this.aaptBin = path.join(sdkPath, 'build-tools', latestBuildToolsVersion, 'aapt');
-    }
+    this.aaptBin = this.aaptBin || await getAaptPath();
   }
 
   async getPackageName(apkPath) {

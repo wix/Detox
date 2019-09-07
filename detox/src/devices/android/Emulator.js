@@ -5,12 +5,12 @@ const spawn = require('child-process-promise').spawn;
 const Tail = require('tail').Tail;
 const exec = require('../../utils/exec').execWithRetriesAndLogs;
 const unitLogger = require('../../utils/logger').child({ __filename });
-const Environment = require('../../utils/environment');
+const {getAndroidEmulatorPath} = require('../../utils/environment');
 const argparse = require('../../utils/argparse');
 
 class Emulator {
   constructor() {
-    this.emulatorBin = Environment.getAndroidEmulatorPath();
+    this.emulatorBin = getAndroidEmulatorPath();
   }
 
   async listAvds() {
