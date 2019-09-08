@@ -1,4 +1,5 @@
+const runnerInfo = require('./runnerInfo');
 const detox = require('../../src/index');
-const DetoxJestAdapter = require('./DetoxJestAdapter');
+const DetoxAdapter = runnerInfo.isJestCircus ? require('./DetoxAdapterCircus') : require('./DetoxAdapterJasmine');
 
-module.exports = new DetoxJestAdapter(detox);
+module.exports = new DetoxAdapter(detox);

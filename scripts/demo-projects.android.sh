@@ -17,4 +17,5 @@ popd
 
 pushd examples/demo-react-native-jest
 run_f "npm run test:android-release -- --headless"
+run_f "npm run test:jest-circus:android-release -- --headless"
 popd
