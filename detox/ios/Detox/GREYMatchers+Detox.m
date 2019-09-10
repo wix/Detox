@@ -105,6 +105,8 @@ id<GREYMatcher> detox_grey_parent(id<GREYMatcher> ancestorMatcher)
 
 + (id<GREYMatcher>)detoxMatcherAvoidingProblematicReactNativeElements:(id<GREYMatcher>)matcher
 {
+	matcher = grey_allOf(matcher, grey_not(grey_kindOfClass(NSClassFromString(@"UIAccessibilityTextFieldElement"))), nil);
+	
 	//No RN—Life is always good.
 	Class RN_RCTScrollView = NSClassFromString(@"RCTScrollView");
 	if (!RN_RCTScrollView)
