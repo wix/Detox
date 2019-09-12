@@ -11,7 +11,10 @@ class DetoxAdapterCircus extends TestEventListenerBase {
   static _describeInitError() {
     return {
       message: 'Detox adapter to Jest is malfunctioning.',
-    }
+      hint: `Make sure you register it as a test-event listener inside init.js:\n` +
+        `-------------------------------------------------------------\n` +
+        'detoxCircus.getEnv().addEventsListener(adapter);',
+      };
   }
 
   async beforeEach() {

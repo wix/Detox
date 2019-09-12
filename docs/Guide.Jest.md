@@ -72,9 +72,10 @@ A typical Jest log output, having set up `streamline-reporter` in `config.json` 
 
 ### 3. Applying `jest-circus` (optional)
 
-> * Requires Detox >= 14.3.0 !!!
->
-> * Requires Jest & jest-circus version >= 24.9.0 !!!
+> * **Experimental;** Frequent breaking changes are expected in upcoming versions! Known issues:
+>   * Video recording causes iOS simulator to freeze
+> *  Requires Detox >= 14.3.0 !!!
+> * Tested on Jest & jest-circus version >= 24.8.0 !!!
 
 By reaching this point you effectively have Jest set up and ready to launch in its default settings - i.e. with `jasmine` as its default test runner. However, `jasmine` can be switched with `jest-circus` as a drop-in replacement. To do so, apply these changes:
 
@@ -110,15 +111,15 @@ In `e2e/init.js`, as explained in the previous section, we typically register th
 // e2e/init.js
 
 const adapter = require('detox/runners/jest/adapter');
-const workerAssignReporter = require('detox/runners/jest/assignReporter');
 const specReporter = require('detox/runners/jest/specReporter');
+const assignReporter = require('detox/runners/jest/assignReporter');
 
 -jasmine.getEnv().addReporter(adapter);
--jasmine.getEnv().addReporter(workerAssignReporter);
 -jasmine.getEnv().addReporter(specReporter);
+-jasmine.getEnv().addReporter(assignReporter);
 +detoxCircus.getEnv().addEventsListener(adapter);
-+detoxCircus.getEnv().addEventsListener(assignReporter);
 +detoxCircus.getEnv().addEventsListener(specReporter);
++detoxCircus.getEnv().addEventsListener(assignReporter);
 ```
 
 Once again, use our [jest demo-suite's init.js](https://github.com/wix/Detox/blob/jest-circus/examples/demo-react-native-jest/e2e/init-circus.js#L10) as a reference.
