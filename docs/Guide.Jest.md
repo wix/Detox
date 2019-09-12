@@ -1,11 +1,20 @@
 # Jest
 
+This guide describes how to install [Jest](http://jestjs.io/) as the test runner to be used by Detox for effectively running the E2E tests (i.e. instead of the default runner, which is Mocha).
+
 ## Disclaimer
 
-- This guide describes installing Detox with Jest on a fresh project. If you're migrating an existing project, please apply some common sense in the process.
+- The guide describes installing Detox with Jest on a _fresh project_. If you're migrating an existing project, use the guide but please apply some common sense in the process.
 
-- The guide has been officially tested only with Jest 24.x.x. We cannot guarantee that everything would work with other versions.
+- The guide has been officially tested only with Jest 24.x.x. We cannot guarantee that everything would work with older versions.
 
+## Introduction
+
+As already mentioned in the [Getting Started](Introduction.GettingStarted.md#step-3-create-your-first-test) guide, Detox itself does not effectively run tests logic, but rather delegates that responsibility onto a test runner. Jest is the recommended runner for projects with test suites that have become large enough so as to require parallel execution.
+
+Do note that in turn, Jest itself - much like Detox, also does not effectively run any tests; Rather, it is more of a dispatcher and orchestrator of multiple instances of a delegated runner, capable of running in parallel (for more info, refer to [this video](https://youtu.be/3YDiloj8_d0?t=2127); source: [Jest architecture](https://jestjs.io/docs/en/architecture)). Currently, by default, the concrete runner is `jasmine v2`, but Jest's own project called [jest-circus](https://github.com/facebook/jest/tree/master/packages/jest-circus) is becoming more and more stable. In a way, we even recommend using it over `jasmine`  because of bugs in `jasmine` that are not maintained ([this one](https://github.com/facebook/jest/issues/6755) in particular).
+
+**The guide initially describes the setup of Jest in its default settings (i.e. using `jasmine`).** For applying `jest-circus`, refer to the end of the installation section.
 
 ## Installation
 
@@ -61,6 +70,59 @@ A typical Jest log output, having set up `streamline-reporter` in `config.json` 
 
 ![Streamlined output](img/jest-guide/streamlined_logging.png)
 
+### 3. Applying `jest-circus` (optional)
+
+> * **Experimental;** Frequent breaking changes are expected in upcoming versions! Known issues:
+>   * Video recording causes iOS simulator to freeze
+> *  Requires Detox >= 14.3.0 !!!
+> * Tested on Jest & jest-circus version >= 24.8.0 !!!
+
+By reaching this point you effectively have Jest set up and ready to launch in its default settings - i.e. with `jasmine` as its default test runner. However, `jasmine` can be switched with `jest-circus` as a drop-in replacement. To do so, apply these changes:
+
+##### a. Install jest-circus
+
+```sh
+npm install --save-dev jest-circus
+```
+
+> Make sure jest and jest-circus' versions match (e.g. both are 24.9.0)
+
+##### b. Update jest's config
+
+In `e2e/config.json`, apply this change:
+
+```diff
+// e2e/config.json
+
+{
+-    "testEnvironment": "node"
++    "testEnvironment": "detox/runners/jest/JestCircusEnvironment",
++    "testRunner": "jest-circus/runner"
+
+...
+}
+```
+
+##### c. Update init script
+
+In `e2e/init.js`, as explained in the previous section, we typically register the main adapter and various reporters directly do `jasmine`. Since `jest-circus` **replaces** `jasmine`, we've set up a custom circus-associated API to replace `jasmine.getEnv().addReporter()` calls, namely: `detoxCircus.getEnv().addEventsListener()`. You must have all associated calls replaced. Example:
+
+```diff
+// e2e/init.js
+
+const adapter = require('detox/runners/jest/adapter');
+const specReporter = require('detox/runners/jest/specReporter');
+const assignReporter = require('detox/runners/jest/assignReporter');
+
+-jasmine.getEnv().addReporter(adapter);
+-jasmine.getEnv().addReporter(specReporter);
+-jasmine.getEnv().addReporter(assignReporter);
++detoxCircus.getEnv().addEventsListener(adapter);
++detoxCircus.getEnv().addEventsListener(specReporter);
++detoxCircus.getEnv().addEventsListener(assignReporter);
+```
+
+Once again, use our [jest demo-suite's init.js](https://github.com/wix/Detox/blob/jest-circus/examples/demo-react-native-jest/e2e/init-circus.js#L10) as a reference.
 
 ## Writing Tests
 

@@ -15,9 +15,9 @@ run_f "detox test -c ios.sim.release e2eExplicitRequire --runner-config e2eExpli
 popd
 
 pushd examples/demo-react-native-jest
-run_f "detox test -c ios.sim.release"
+run_f "npm run test:ios-release"
+run_f "npm run test:jest-circus:ios-release"
 popd
-
 
 pushd examples/demo-react-native-detox-instruments
 run_f "detox test -c ios.sim.release --record-performance all"

@@ -1,0 +1,18 @@
+{
+  "rootDir": "../..",
+  "setupFilesAfterEnv": ["./test/e2e/init-circus.js"],
+  "testEnvironment": "<rootDir>/runners/jest/JestCircusEnvironment",
+  "testRunner": "./test/node_modules/jest-circus/runner",
+  "reporters": ["<rootDir>/runners/jest/streamlineReporter"],
+  "verbose": true,
+  "bail": false,
+  "collectCoverageFrom": [
+    "src/**/*.js",
+    "!**/__test/**",
+    "!**/__mocks__/**",
+    "!**/*.mock.js",
+    "!**/*.test.js"
+  ],
+  "coverageDirectory": "test/coverage",
+  "coverageReporters": ["lcov", "html"]
+}
