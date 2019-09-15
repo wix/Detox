@@ -1,7 +1,7 @@
-const { TestEventListenerBase } = require('./CircusTestEventListeners');
+const CircusTestEventListenerBase = require('./CircusTestEventListenerBase');
 const SpecReporter = require('./SpecReporterImpl');
 
-class SpecReporterCircus extends TestEventListenerBase {
+class SpecReporterCircus extends CircusTestEventListenerBase {
   constructor() {
     super();
     this._specReporter = new SpecReporter();

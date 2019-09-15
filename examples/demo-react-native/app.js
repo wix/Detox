@@ -33,6 +33,9 @@ class example extends Component {
         <TouchableOpacity testID='world_button' onPress={this.onButtonPress.bind(this, 'World')}>
           <Text style={{color: 'blue', marginBottom: 20}}>Say World</Text>
         </TouchableOpacity>
+        <TouchableOpacity testID='goodbye_button' onPress={this.onButtonPress.bind(this, 'Goodbye, World')}>
+          <Text style={{color: 'blue', marginTop: 50, marginBottom: 20}}>Say Goodbye</Text>
+        </TouchableOpacity>
       </View>
     );
   }

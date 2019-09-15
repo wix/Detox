@@ -1,8 +1,8 @@
 const _ = require('lodash');
-const { TestEventListenerBase } = require('./CircusTestEventListeners');
+const CircusTestEventListenerBase = require('./CircusTestEventListenerBase');
 const DetoxAdapter = require('./DetoxAdapterImpl');
 
-class DetoxAdapterCircus extends TestEventListenerBase {
+class DetoxAdapterCircus extends CircusTestEventListenerBase {
   constructor(detox) {
     super();
     this._adapter = new DetoxAdapter(detox, DetoxAdapterCircus._describeInitError);
