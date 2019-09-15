@@ -15,8 +15,10 @@ import androidx.test.espresso.action.GeneralLocation;
 import androidx.test.espresso.action.Press;
 import androidx.test.espresso.action.Tap;
 
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayingAtLeast;
+
 public class RNClickAction implements ViewAction {
-    private final ViewAction clickAction =
+    private final GeneralClickAction clickAction =
             new GeneralClickAction(
                 Tap.SINGLE,
                 GeneralLocation.VISIBLE_CENTER,
@@ -26,7 +28,7 @@ public class RNClickAction implements ViewAction {
 
     @Override
     public Matcher<View> getConstraints() {
-        return clickAction.getConstraints();
+        return isDisplayingAtLeast(75);
     }
 
     @Override
