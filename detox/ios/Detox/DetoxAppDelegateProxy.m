@@ -188,18 +188,21 @@ static NSURL* _launchUserActivityDataURL()
 
 - (void)_applicationDidLaunchNotification:(NSNotification*)notification
 {
-	dispatch_async(dispatch_get_main_queue(), ^{
-		_touchVisualizerWindow = [[DTXTouchVisualizerWindow alloc] initWithFrame:CGRectZero];
-		_touchVisualizerWindow.windowLevel = 100000000000;
-		_touchVisualizerWindow.backgroundColor = [UIColor.greenColor colorWithAlphaComponent:0.0];
-		_touchVisualizerWindow.hidden = NO;
-		_touchVisualizerWindow.touchVisualizerWindowDelegate = self;
-		_touchVisualizerWindow.stationaryMorphEnabled = NO;
-		_touchVisualizerWindow.userInteractionEnabled = NO;
-		CGRect statusBarFrame = UIApplication.sharedApplication.statusBarFrame;
-		CGRect screenBounds = UIScreen.mainScreen.bounds;
-		_touchVisualizerWindow.frame = CGRectMake(0, statusBarFrame.size.height, screenBounds.size.width, screenBounds.size.height - statusBarFrame.size.height);
-	});
+	if(!_disableTouchIndicator)
+	{
+		dispatch_async(dispatch_get_main_queue(), ^{
+			_touchVisualizerWindow = [[DTXTouchVisualizerWindow alloc] initWithFrame:CGRectZero];
+			_touchVisualizerWindow.windowLevel = 100000000000;
+			_touchVisualizerWindow.backgroundColor = [UIColor.greenColor colorWithAlphaComponent:0.0];
+			_touchVisualizerWindow.hidden = NO;
+			_touchVisualizerWindow.touchVisualizerWindowDelegate = self;
+			_touchVisualizerWindow.stationaryMorphEnabled = NO;
+			_touchVisualizerWindow.userInteractionEnabled = NO;
+			CGRect statusBarFrame = UIApplication.sharedApplication.statusBarFrame;
+			CGRect screenBounds = UIScreen.mainScreen.bounds;
+			_touchVisualizerWindow.frame = CGRectMake(0, statusBarFrame.size.height, screenBounds.size.width, screenBounds.size.height - statusBarFrame.size.height);
+		});
+	}
 }
 
 - (NSURL*)_URLOverride
