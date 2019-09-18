@@ -1,7 +1,12 @@
+// This isn't ideal, but native scrolling is never entirely accurate, compared the exact amount we pass in in DP.
+// This is an approximation based on experiments (over the current native impl.), AND IS IN NO WAY A MAGIC NUMBER (!!!),
+// especially since the inaccuracy is not linear as we assume here.
+const SCROLL_ADJ_FACTOR = 1.035;
+
 const scrollingTextsDriver = {
   scrollView: () => element(by.id('integActions.textsScrollView')),
   scrollDown: async (amount) => {
-    await scrollingTextsDriver.scrollView().scroll(amount + 15.5, 'down'); // Adjustment is experiments-based, not a magic number!
+    await scrollingTextsDriver.scrollView().scroll(amount * SCROLL_ADJ_FACTOR, 'down'); // Adjustment is experiments-based, not a magic number!
   },
   tapOnText: async (id) => {
     const elementId = scrollingTextsDriver._elementId(id);
@@ -18,7 +23,7 @@ const scrollingTextsDriver = {
 const scrollingTextInputsDriver = {
   scrollView: () => element(by.id('integActions.inputsScrollView')),
   scrollDown: async (amount) => {
-    await scrollingTextInputsDriver.scrollView().scroll(amount + 16, 'down'); // Adjustment is experiments-based, not a magic number!
+    await scrollingTextInputsDriver.scrollView().scroll(amount * SCROLL_ADJ_FACTOR, 'down');
   },
   typeInField: async (fieldId) => {
     const elementId = scrollingTextInputsDriver._elementId(fieldId);
