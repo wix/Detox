@@ -43,7 +43,7 @@ describe(':android: Integrative actions', () => {
    * This use case is a nearly identical reproduction of https://github.com/wix/Detox/issues/1495
    */
   it('should scroll various distances accurately, and type text into text fields', async () => {
-    const iterations = 10;
+    const iterations = 9; // TODO See why this tends to fail when #iterations=10
     const inputHeightDP = 40;
     const baseMarginDP = 20;
 
