@@ -1,6 +1,7 @@
 package com.wix.detox.espresso.scroll;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewConfiguration;
 
@@ -8,6 +9,7 @@ import com.wix.detox.espresso.UiAutomatorHelper;
 import com.wix.detox.espresso.common.annot.MotionDir;
 
 import androidx.test.espresso.UiController;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_DOWN;
 import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_LEFT;
@@ -21,12 +23,14 @@ import static com.wix.detox.espresso.scroll.ScrollProbesKt.getScrollableProbe;
  */
 
 public class ScrollHelper {
-//    private static final String LOG_TAG = "DetoxScrollHelper";
+    private static final String LOG_TAG = "DetoxScrollHelper";
 
-    private static final int SCROLL_MOTIONS = 50;
+    private static final int SCROLL_MOTIONS = 70;
     private static final int MAX_FLING_WAITS = 3;
 
     private static final double DEFAULT_DEADZONE_PERCENT = 0.05;
+
+    private static ViewConfiguration viewConfiguration = null;
 
     private ScrollHelper() {
         // static class
@@ -74,6 +78,8 @@ public class ScrollHelper {
             fullAmount = adjHeight;
         }
 
+        Log.d(LOG_TAG, "prescroll amountDP="+amountInDP + " amountPx="+amountInPX + " adjHeight="+adjHeight + " times="+times + " remainder="+remainder);
+
         for (int i = 0; i < times; ++i) {
             scrollOnce(uiController, view, direction, fullAmount);
         }
@@ -113,7 +119,7 @@ public class ScrollHelper {
         }
     }
 
-    private static void scrollOnce(UiController uiController, View view, @MotionDir int direction, int amount) throws ScrollEdgeException {
+    private static void scrollOnce(UiController uiController, View view, @MotionDir int direction, int userAmountPx) throws ScrollEdgeException {
         int[] pos = new int[2];
         view.getLocationInWindow(pos);
         int x = pos[0];
@@ -124,33 +130,34 @@ public class ScrollHelper {
         int upX;
         int upY;
 
-        int marginX = (int) (view.getWidth() * DEFAULT_DEADZONE_PERCENT);
-        int marginY = (int) (view.getHeight() * DEFAULT_DEADZONE_PERCENT);
+        int scrollStartOffset = UiAutomatorHelper.convertDiptoPix(1);
+        int touchToScrollSlopPx = getViewConfiguration().getScaledTouchSlop();
+        int amountPx = userAmountPx + scrollStartOffset + touchToScrollSlopPx;
 
         switch (direction) {
             case MOTION_DIR_RIGHT:
-                downX = x + view.getWidth() - marginX;
+                downX = x + view.getWidth() - scrollStartOffset;
                 downY = y + view.getHeight() / 2;
-                upX = downX - amount;
+                upX = downX - amountPx;
                 upY = y + view.getHeight() / 2;
                 break;
             case MOTION_DIR_LEFT:
-                downX = x + marginX;
+                downX = x + scrollStartOffset;
                 downY = y + view.getHeight() / 2;
-                upX = downX + amount;
+                upX = downX + amountPx;
                 upY = y + view.getHeight() / 2;
                 break;
             case MOTION_DIR_DOWN:
                 downX = x + view.getWidth() / 2;
-                downY = y + view.getHeight() - marginY;
+                downY = y + view.getHeight() - scrollStartOffset;
                 upX = x + view.getWidth() / 2;
-                upY = downY - amount;
+                upY = downY - amountPx;
                 break;
             case MOTION_DIR_UP:
                 downX = x + view.getWidth() / 2;
-                downY = y + marginY;
+                downY = y + scrollStartOffset;
                 upX = x + view.getWidth() / 2;
-                upY = downY + amount;
+                upY = downY + amountPx;
                 break;
             default:
                 throw new RuntimeException("Scroll direction can go from 1 to 4");
@@ -161,7 +168,7 @@ public class ScrollHelper {
             throw new ScrollEdgeException("View is already at the scrolling edge");
         }
 
-        // Log.d(LOG_TAG, "scroll downx: " + downX + " downy: " + downY + " upx: " + upX + " upy: " + upY);
+        Log.d(LOG_TAG, "scroll downx=" + downX + " downy=" + downY + " upx=" + upX + " upy=" + upY);
         doScroll(view.getContext(), uiController, downX, downY, upX, upY);
 
         // This is, at least in theory, unnecessary, as we use a swiper implementation that effectively knows how to avoid fling.
@@ -189,5 +196,16 @@ public class ScrollHelper {
             waitTimeMS = 10;
             iteration++;
         } while ((view.getScrollY() != startY || view.getScrollX() != startX) && iteration < MAX_FLING_WAITS);
+
+        if (iteration > 1) {
+            Log.w(LOG_TAG, "Detected a possibly overly-running fling! (#iterations=" + iteration + ")");
+        }
+    }
+
+    private static ViewConfiguration getViewConfiguration() {
+        if (viewConfiguration == null) {
+            viewConfiguration = ViewConfiguration.get(InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext());
+        }
+        return viewConfiguration;
     }
 }
