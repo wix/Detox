@@ -10,7 +10,7 @@ This is a step-by-step guide for adding Detox to your React Native project.
 
 Running Detox (on iOS) requires the following:
 
-* Mac with macOS (at least macOS High Sierra 10.13)
+* Mac with macOS (at least macOS High Sierra 10.13.6)
 
 * Xcode 10.1+ with Xcode command line tools
 > TIP: Verify Xcode command line tools is installed by typing `gcc -v` in terminal (shows a popup if not installed)
