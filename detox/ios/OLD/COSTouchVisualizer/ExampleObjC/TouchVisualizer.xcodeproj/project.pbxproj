@@ -1,0 +1,551 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7768493E589CAF2536B1E9AA /* libPods-TouchVisualizer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B8220D1CBF35CF736AC66CD /* libPods-TouchVisualizer.a */; };
+		E670B46A1AB3EBEF0043E508 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E670B4691AB3EBEF0043E508 /* Main.storyboard */; };
+		E670B46C1AB3EC8E0043E508 /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = E670B46B1AB3EC8E0043E508 /* Launch Screen.xib */; };
+		E6F67FCD18DE12B4001C954A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6F67FCC18DE12B4001C954A /* Foundation.framework */; };
+		E6F67FCF18DE12B4001C954A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6F67FCE18DE12B4001C954A /* CoreGraphics.framework */; };
+		E6F67FD118DE12B4001C954A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6F67FD018DE12B4001C954A /* UIKit.framework */; };
+		E6F67FD718DE12B4001C954A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E6F67FD518DE12B4001C954A /* InfoPlist.strings */; };
+		E6F67FD918DE12B4001C954A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E6F67FD818DE12B4001C954A /* main.m */; };
+		E6F67FDD18DE12B4001C954A /* COSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E6F67FDC18DE12B4001C954A /* COSAppDelegate.m */; };
+		E6F67FE318DE12B4001C954A /* COSMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6F67FE218DE12B4001C954A /* COSMasterViewController.m */; };
+		E6F67FE618DE12B4001C954A /* COSDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6F67FE518DE12B4001C954A /* COSDetailViewController.m */; };
+		E6F67FE818DE12B4001C954A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E6F67FE718DE12B4001C954A /* Images.xcassets */; };
+		E6F67FEF18DE12B4001C954A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6F67FEE18DE12B4001C954A /* XCTest.framework */; };
+		E6F67FF018DE12B4001C954A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6F67FCC18DE12B4001C954A /* Foundation.framework */; };
+		E6F67FF118DE12B4001C954A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6F67FD018DE12B4001C954A /* UIKit.framework */; };
+		E6F67FF918DE12B4001C954A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E6F67FF718DE12B4001C954A /* InfoPlist.strings */; };
+		E6F67FFB18DE12B4001C954A /* TouchVisualizerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E6F67FFA18DE12B4001C954A /* TouchVisualizerTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E6F67FF218DE12B4001C954A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E6F67FC118DE12B4001C954A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E6F67FC818DE12B4001C954A;
+			remoteInfo = TouchVisualizer;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		2E6DEA32CB6F631008A1F6CE /* Pods-TouchVisualizer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TouchVisualizer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TouchVisualizer/Pods-TouchVisualizer.debug.xcconfig"; sourceTree = "<group>"; };
+		9B8220D1CBF35CF736AC66CD /* libPods-TouchVisualizer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TouchVisualizer.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E670B4691AB3EBEF0043E508 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		E670B46B1AB3EC8E0043E508 /* Launch Screen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "Launch Screen.xib"; sourceTree = "<group>"; };
+		E6F67FC918DE12B4001C954A /* TouchVisualizer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TouchVisualizer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E6F67FCC18DE12B4001C954A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		E6F67FCE18DE12B4001C954A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		E6F67FD018DE12B4001C954A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		E6F67FD418DE12B4001C954A /* TouchVisualizer-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "TouchVisualizer-Info.plist"; sourceTree = "<group>"; };
+		E6F67FD618DE12B4001C954A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		E6F67FD818DE12B4001C954A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		E6F67FDA18DE12B4001C954A /* TouchVisualizer-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TouchVisualizer-Prefix.pch"; sourceTree = "<group>"; };
+		E6F67FDB18DE12B4001C954A /* COSAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = COSAppDelegate.h; sourceTree = "<group>"; };
+		E6F67FDC18DE12B4001C954A /* COSAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = COSAppDelegate.m; sourceTree = "<group>"; };
+		E6F67FE118DE12B4001C954A /* COSMasterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = COSMasterViewController.h; sourceTree = "<group>"; };
+		E6F67FE218DE12B4001C954A /* COSMasterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = COSMasterViewController.m; sourceTree = "<group>"; };
+		E6F67FE418DE12B4001C954A /* COSDetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = COSDetailViewController.h; sourceTree = "<group>"; };
+		E6F67FE518DE12B4001C954A /* COSDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = COSDetailViewController.m; sourceTree = "<group>"; };
+		E6F67FE718DE12B4001C954A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		E6F67FED18DE12B4001C954A /* TouchVisualizerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TouchVisualizerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E6F67FEE18DE12B4001C954A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		E6F67FF618DE12B4001C954A /* TouchVisualizerTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "TouchVisualizerTests-Info.plist"; sourceTree = "<group>"; };
+		E6F67FF818DE12B4001C954A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		E6F67FFA18DE12B4001C954A /* TouchVisualizerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TouchVisualizerTests.m; sourceTree = "<group>"; };
+		E6F6800418DE141D001C954A /* COSTouchVisualizerWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = COSTouchVisualizerWindow.h; path = ../Classes/COSTouchVisualizerWindow.h; sourceTree = "<group>"; };
+		E6F6800518DE141D001C954A /* COSTouchVisualizerWindow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = COSTouchVisualizerWindow.m; path = ../Classes/COSTouchVisualizerWindow.m; sourceTree = "<group>"; };
+		F2C0C844B7C63874B9E7BDB3 /* Pods-TouchVisualizer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TouchVisualizer.release.xcconfig"; path = "Pods/Target Support Files/Pods-TouchVisualizer/Pods-TouchVisualizer.release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E6F67FC618DE12B4001C954A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E6F67FCF18DE12B4001C954A /* CoreGraphics.framework in Frameworks */,
+				E6F67FD118DE12B4001C954A /* UIKit.framework in Frameworks */,
+				E6F67FCD18DE12B4001C954A /* Foundation.framework in Frameworks */,
+				7768493E589CAF2536B1E9AA /* libPods-TouchVisualizer.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E6F67FEA18DE12B4001C954A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E6F67FEF18DE12B4001C954A /* XCTest.framework in Frameworks */,
+				E6F67FF118DE12B4001C954A /* UIKit.framework in Frameworks */,
+				E6F67FF018DE12B4001C954A /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3AAA8C6165CBDBBCA20993E6 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				2E6DEA32CB6F631008A1F6CE /* Pods-TouchVisualizer.debug.xcconfig */,
+				F2C0C844B7C63874B9E7BDB3 /* Pods-TouchVisualizer.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		E6F67FC018DE12B4001C954A = {
+			isa = PBXGroup;
+			children = (
+				E6F6800418DE141D001C954A /* COSTouchVisualizerWindow.h */,
+				E6F6800518DE141D001C954A /* COSTouchVisualizerWindow.m */,
+				E6F67FD218DE12B4001C954A /* TouchVisualizer */,
+				E6F67FF418DE12B4001C954A /* TouchVisualizerTests */,
+				E6F67FCB18DE12B4001C954A /* Frameworks */,
+				E6F67FCA18DE12B4001C954A /* Products */,
+				3AAA8C6165CBDBBCA20993E6 /* Pods */,
+			);
+			sourceTree = "<group>";
+		};
+		E6F67FCA18DE12B4001C954A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E6F67FC918DE12B4001C954A /* TouchVisualizer.app */,
+				E6F67FED18DE12B4001C954A /* TouchVisualizerTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E6F67FCB18DE12B4001C954A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E6F67FCC18DE12B4001C954A /* Foundation.framework */,
+				E6F67FCE18DE12B4001C954A /* CoreGraphics.framework */,
+				E6F67FD018DE12B4001C954A /* UIKit.framework */,
+				E6F67FEE18DE12B4001C954A /* XCTest.framework */,
+				9B8220D1CBF35CF736AC66CD /* libPods-TouchVisualizer.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E6F67FD218DE12B4001C954A /* TouchVisualizer */ = {
+			isa = PBXGroup;
+			children = (
+				E6F67FDB18DE12B4001C954A /* COSAppDelegate.h */,
+				E6F67FDC18DE12B4001C954A /* COSAppDelegate.m */,
+				E670B4691AB3EBEF0043E508 /* Main.storyboard */,
+				E6F67FE118DE12B4001C954A /* COSMasterViewController.h */,
+				E6F67FE218DE12B4001C954A /* COSMasterViewController.m */,
+				E6F67FE418DE12B4001C954A /* COSDetailViewController.h */,
+				E6F67FE518DE12B4001C954A /* COSDetailViewController.m */,
+				E6F67FE718DE12B4001C954A /* Images.xcassets */,
+				E670B46B1AB3EC8E0043E508 /* Launch Screen.xib */,
+				E6F67FD318DE12B4001C954A /* Supporting Files */,
+			);
+			path = TouchVisualizer;
+			sourceTree = "<group>";
+		};
+		E6F67FD318DE12B4001C954A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				E6F67FD418DE12B4001C954A /* TouchVisualizer-Info.plist */,
+				E6F67FD518DE12B4001C954A /* InfoPlist.strings */,
+				E6F67FD818DE12B4001C954A /* main.m */,
+				E6F67FDA18DE12B4001C954A /* TouchVisualizer-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		E6F67FF418DE12B4001C954A /* TouchVisualizerTests */ = {
+			isa = PBXGroup;
+			children = (
+				E6F67FFA18DE12B4001C954A /* TouchVisualizerTests.m */,
+				E6F67FF518DE12B4001C954A /* Supporting Files */,
+			);
+			path = TouchVisualizerTests;
+			sourceTree = "<group>";
+		};
+		E6F67FF518DE12B4001C954A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				E6F67FF618DE12B4001C954A /* TouchVisualizerTests-Info.plist */,
+				E6F67FF718DE12B4001C954A /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E6F67FC818DE12B4001C954A /* TouchVisualizer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E6F67FFE18DE12B4001C954A /* Build configuration list for PBXNativeTarget "TouchVisualizer" */;
+			buildPhases = (
+				83967BC7551A039648AEDA63 /* [CP] Check Pods Manifest.lock */,
+				E6F67FC518DE12B4001C954A /* Sources */,
+				E6F67FC618DE12B4001C954A /* Frameworks */,
+				E6F67FC718DE12B4001C954A /* Resources */,
+				6A066EEC9687C1D55B336253 /* [CP] Embed Pods Frameworks */,
+				61E1D9D01FFCA9145337C5EF /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TouchVisualizer;
+			productName = TouchVisualizer;
+			productReference = E6F67FC918DE12B4001C954A /* TouchVisualizer.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E6F67FEC18DE12B4001C954A /* TouchVisualizerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E6F6800118DE12B4001C954A /* Build configuration list for PBXNativeTarget "TouchVisualizerTests" */;
+			buildPhases = (
+				E6F67FE918DE12B4001C954A /* Sources */,
+				E6F67FEA18DE12B4001C954A /* Frameworks */,
+				E6F67FEB18DE12B4001C954A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E6F67FF318DE12B4001C954A /* PBXTargetDependency */,
+			);
+			name = TouchVisualizerTests;
+			productName = TouchVisualizerTests;
+			productReference = E6F67FED18DE12B4001C954A /* TouchVisualizerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E6F67FC118DE12B4001C954A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = COS;
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = conopsys;
+				TargetAttributes = {
+					E6F67FEC18DE12B4001C954A = {
+						TestTargetID = E6F67FC818DE12B4001C954A;
+					};
+				};
+			};
+			buildConfigurationList = E6F67FC418DE12B4001C954A /* Build configuration list for PBXProject "TouchVisualizer" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = E6F67FC018DE12B4001C954A;
+			productRefGroup = E6F67FCA18DE12B4001C954A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E6F67FC818DE12B4001C954A /* TouchVisualizer */,
+				E6F67FEC18DE12B4001C954A /* TouchVisualizerTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E6F67FC718DE12B4001C954A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E6F67FE818DE12B4001C954A /* Images.xcassets in Resources */,
+				E670B46C1AB3EC8E0043E508 /* Launch Screen.xib in Resources */,
+				E6F67FD718DE12B4001C954A /* InfoPlist.strings in Resources */,
+				E670B46A1AB3EBEF0043E508 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E6F67FEB18DE12B4001C954A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E6F67FF918DE12B4001C954A /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		61E1D9D01FFCA9145337C5EF /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TouchVisualizer/Pods-TouchVisualizer-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6A066EEC9687C1D55B336253 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TouchVisualizer/Pods-TouchVisualizer-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		83967BC7551A039648AEDA63 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E6F67FC518DE12B4001C954A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E6F67FDD18DE12B4001C954A /* COSAppDelegate.m in Sources */,
+				E6F67FE318DE12B4001C954A /* COSMasterViewController.m in Sources */,
+				E6F67FD918DE12B4001C954A /* main.m in Sources */,
+				E6F67FE618DE12B4001C954A /* COSDetailViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E6F67FE918DE12B4001C954A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E6F67FFB18DE12B4001C954A /* TouchVisualizerTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E6F67FF318DE12B4001C954A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E6F67FC818DE12B4001C954A /* TouchVisualizer */;
+			targetProxy = E6F67FF218DE12B4001C954A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		E6F67FD518DE12B4001C954A /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E6F67FD618DE12B4001C954A /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		E6F67FF718DE12B4001C954A /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E6F67FF818DE12B4001C954A /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		E6F67FFC18DE12B4001C954A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		E6F67FFD18DE12B4001C954A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		E6F67FFF18DE12B4001C954A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2E6DEA32CB6F631008A1F6CE /* Pods-TouchVisualizer.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TouchVisualizer/TouchVisualizer-Prefix.pch";
+				INFOPLIST_FILE = "TouchVisualizer/TouchVisualizer-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		E6F6800018DE12B4001C954A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F2C0C844B7C63874B9E7BDB3 /* Pods-TouchVisualizer.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TouchVisualizer/TouchVisualizer-Prefix.pch";
+				INFOPLIST_FILE = "TouchVisualizer/TouchVisualizer-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		E6F6800218DE12B4001C954A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/TouchVisualizer.app/TouchVisualizer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TouchVisualizer/TouchVisualizer-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "TouchVisualizerTests/TouchVisualizerTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		E6F6800318DE12B4001C954A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/TouchVisualizer.app/TouchVisualizer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TouchVisualizer/TouchVisualizer-Prefix.pch";
+				INFOPLIST_FILE = "TouchVisualizerTests/TouchVisualizerTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E6F67FC418DE12B4001C954A /* Build configuration list for PBXProject "TouchVisualizer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E6F67FFC18DE12B4001C954A /* Debug */,
+				E6F67FFD18DE12B4001C954A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E6F67FFE18DE12B4001C954A /* Build configuration list for PBXNativeTarget "TouchVisualizer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E6F67FFF18DE12B4001C954A /* Debug */,
+				E6F6800018DE12B4001C954A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E6F6800118DE12B4001C954A /* Build configuration list for PBXNativeTarget "TouchVisualizerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E6F6800218DE12B4001C954A /* Debug */,
+				E6F6800318DE12B4001C954A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E6F67FC118DE12B4001C954A /* Project object */;
+}

@@ -2,13 +2,9 @@
 	path = detox/ios/SocketRocket
 	url = https://github.com/facebook/SocketRocket.git
 	ignore = dirty
-[submodule "detox/ios/EarlGrey"]
-	path = detox/ios/EarlGrey
-	url = https://github.com/wix-playground/EarlGrey.git
-	ignore = dirty
-[submodule "detox/ios/COSTouchVisualizer"]
-	path = detox/ios/COSTouchVisualizer
-	url = https://github.com/conopsys/COSTouchVisualizer
 [submodule "detox/ios/DTXLoggingInfra"]
 	path = detox/ios/DTXLoggingInfra
 	url = https://github.com/wix/DTXLoggingInfra.git
+[submodule "detox/ios/fishhook"]
+	path = detox/ios/fishhook
+	url = https://LeoNatan@github.com/facebook/fishhook.git
