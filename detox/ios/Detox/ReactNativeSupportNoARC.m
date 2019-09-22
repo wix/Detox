@@ -8,7 +8,7 @@
 
 #import "ReactNativeSupportNoARC.h"
 #include <dlfcn.h>
-#include <fishhook.h>
+#include "fishhook.h"
 
 Class (*__orig_objc_lookUpClass)(const char * name);
 Class __dtx_objc_lookUpClass(const char * name)
