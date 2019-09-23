@@ -44,18 +44,18 @@
         "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
         "build": "set -o pipefail && xcodebuild -project ios/example.xcodeproj -UseNewBuildSystem=NO -scheme example_ci -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build | xcpretty",
         "type": "ios.simulator",
-        "name": "iPhone X"
+        "name": "iPhone 11 Pro"
       },
       "ios.sim.release": {
         "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
         "build": "set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj  -UseNewBuildSystem=NO -scheme example_ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build | xcpretty",
         "type": "ios.simulator",
-        "name": "iPhone X"
+        "name": "iPhone 11 Pro"
       },
       "ios.none": {
         "binaryPath": "ios",
         "type": "ios.none",
-        "name": "iPhone X",
+        "name": "iPhone 11 Pro",
         "session": {
           "server": "ws://localhost:8099",
           "sessionId": "com.wix.detox-example"
