@@ -3,7 +3,7 @@
   "setupFilesAfterEnv": ["./test/e2e/init-circus.js"],
   "testEnvironment": "<rootDir>/runners/jest/JestCircusEnvironment",
   "testRunner": "./test/node_modules/jest-circus/runner",
-  "reporters": ["<rootDir>/runners/jest/streamlineReporter"],
+  "reporters": ["<rootDir>/runners/jest/streamlineReporter", "<rootDir>/test/node_modules/jest-junit"],
   "verbose": true,
   "bail": false,
   "collectCoverageFrom": [
