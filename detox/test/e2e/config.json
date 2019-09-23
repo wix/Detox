@@ -2,7 +2,7 @@
   "rootDir": "../..",
   "setupFilesAfterEnv": ["./test/e2e/init.js"],
   "testEnvironment": "node",
-  "reporters": ["<rootDir>/runners/jest/streamlineReporter"],
+  "reporters": ["<rootDir>/runners/jest/streamlineReporter", "<rootDir>/test/node_modules/jest-junit"],
   "verbose": true,
   "bail": false,
   "collectCoverageFrom": [

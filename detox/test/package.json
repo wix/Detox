@@ -33,6 +33,7 @@
     "express": "^4.15.3",
     "jest": "24.9.x",
     "jest-circus": "24.9.x",
+    "jest-junit": "^8.0.0",
     "lodash": "^4.14.1",
     "nyc": "^14.0.0"
   },
@@ -83,5 +84,12 @@
         "name": "Nexus_5X_API_26"
       }
     }
+  },
+  "jest-junit": {
+    "suiteName": "Detox E2E tests",
+    "outputName": "e2e-junit.xml",
+    "ancestorSeparator": " > ",
+    "classNameTemplate": "E2E Results.{classname}",
+    "titleTemplate": "{classname} > {title}"
   }
 }
