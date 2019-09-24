@@ -42,8 +42,7 @@ describe(ArtifactPlugin, () => {
         expect(plugin.enabled).toBe(false));
 
       it('should log warning to log with that reason', () => {
-        expect(logger.warn.mock.calls.length).toBe(1);
-        expect(logger.warn.mock.calls).toMatchSnapshot();
+        expect(logger.warn.mock.calls).toHaveLength(1);
       });
     });
   });
@@ -81,7 +80,15 @@ describe(ArtifactPlugin, () => {
         },
       }));
 
-      expect(plugin.context).toMatchSnapshot();
+      expect(plugin.context).toEqual({
+        bundleId: 'testBundleId',
+        deviceId: 'testDeviceId',
+        launchArgs: {
+          detoxSessionId: 'test',
+        },
+        pid: NaN,
+        shouldNotBeDeletedFromContext: 'extraProperty',
+      });
     });
 
     it('should have .onLaunchApp', async () => {
@@ -94,7 +101,15 @@ describe(ArtifactPlugin, () => {
         pid: 2018
       }));
 
-      expect(plugin.context).toMatchSnapshot();
+      expect(plugin.context).toEqual({
+        bundleId: 'testBundleId',
+        deviceId: 'testDeviceId',
+        launchArgs: {
+          detoxSessionId: 'test',
+        },
+        pid: 2018,
+        shouldNotBeDeletedFromContext: 'extraProperty',
+      });
     });
 
     it('should update context on .onBeforeUninstallApp', async () => {
@@ -103,7 +118,11 @@ describe(ArtifactPlugin, () => {
         bundleId: 'testBundleId',
       }));
 
-      expect(plugin.context).toMatchSnapshot();
+      expect(plugin.context).toEqual({
+        bundleId: 'testBundleId',
+        deviceId: 'testDeviceId',
+        shouldNotBeDeletedFromContext: 'extraProperty',
+      });
     });
 
     it('should update context on .onBeforeTerminateApp', async () => {
@@ -112,7 +131,11 @@ describe(ArtifactPlugin, () => {
         bundleId: 'testBundleId',
       }));
 
-      expect(plugin.context).toMatchSnapshot();
+      expect(plugin.context).toEqual({
+        bundleId: 'testBundleId',
+        deviceId: 'testDeviceId',
+        shouldNotBeDeletedFromContext: 'extraProperty',
+      });
     });
 
     it('should have .onBootDevice', async () => {
@@ -121,7 +144,12 @@ describe(ArtifactPlugin, () => {
         coldBoot: true
       }));
 
-      expect(plugin.context).toMatchSnapshot();
+      expect(plugin.context).toEqual({
+        bundleId: '',
+        deviceId: 'testDeviceId',
+        pid: NaN,
+        shouldNotBeDeletedFromContext: 'extraProperty',
+      });
     });
 
     it('should have .onBeforeShutdownDevice', async () => {
@@ -129,7 +157,10 @@ describe(ArtifactPlugin, () => {
         deviceId: 'testDeviceId'
       }));
 
-      expect(plugin.context).toMatchSnapshot();
+      expect(plugin.context).toEqual({
+        deviceId: 'testDeviceId',
+        shouldNotBeDeletedFromContext: 'extraProperty',
+      });
     });
 
     it('should have .onShutdownDevice', async () => {
@@ -137,7 +168,12 @@ describe(ArtifactPlugin, () => {
         deviceId: 'testDeviceId'
       }));
 
-      expect(plugin.context).toMatchSnapshot();
+      expect(plugin.context).toEqual({
+        bundleId: '',
+        deviceId: 'testDeviceId',
+        pid: NaN,
+        shouldNotBeDeletedFromContext: 'extraProperty',
+      });
     });
 
     it('should have .onUserAction', async () => {
@@ -172,7 +208,7 @@ describe(ArtifactPlugin, () => {
       it('should disable plugin with a reason', async () => {
         plugin.disable = jest.fn();
         await expect(plugin.onTerminate()).resolves.toBe(void 0);
-        expect(plugin.disable.mock.calls).toMatchSnapshot();
+        expect(plugin.disable.mock.calls).toEqual([["it was terminated by SIGINT or SIGTERM"]]);
       });
 
       it('should replace the other lifecycle hooks with the same noop function', async () => {

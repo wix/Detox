@@ -273,13 +273,13 @@ describe('Client', () => {
 
     it(`should dump generic message if not testName is specified`, async () => {
       client.dumpPendingRequests();
-      expect(log.warn.mock.calls[0]).toMatchSnapshot();
+      expect(log.warn.mock.calls[0][0]).toEqual({ event: "PENDING_REQUESTS" });
       expect(log.warn.mock.calls[0][1]).toMatch(/Unresponded network requests/);
     });
 
     it(`should dump specific message if testName is specified`, async () => {
       client.dumpPendingRequests({testName: "Login screen should log in"});
-      expect(log.warn.mock.calls[0]).toMatchSnapshot();
+      expect(log.warn.mock.calls[0][0]).toEqual({ event: "PENDING_REQUESTS" });
       expect(log.warn.mock.calls[0][1]).toMatch(/Login screen should log in/);
     });
 
