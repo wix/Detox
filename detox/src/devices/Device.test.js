@@ -648,7 +648,7 @@ describe('Device', () => {
       deviceConfig: invalidDeviceNoBinary.configurations['ios.sim.release'],
       deviceDriver: new SimulatorDriver(client),
       sessionConfig: validScheme.session,
-    })).toThrowErrorMatchingSnapshot();
+    })).toThrowError(/binaryPath.* is missing/);
   });
 
   it(`new Device() with invalid device config (no device name) should throw`, () => {
@@ -656,7 +656,7 @@ describe('Device', () => {
       deviceConfig: invalidDeviceNoDeviceName.configurations['ios.sim.release'],
       deviceDriver: new SimulatorDriver(client),
       sessionConfig: validScheme.session,
-    })).toThrowErrorMatchingSnapshot();
+    })).toThrowError(/name.* is missing/);
   });
 
   it(`should accept absolute path for binary`, async () => {
@@ -701,7 +701,7 @@ describe('Device', () => {
   });
 
   it('takeScreenshot(name) should throw an exception if given name is empty', async () => {
-    await expect(validDevice().takeScreenshot()).rejects.toThrowErrorMatchingSnapshot();
+    await expect(validDevice().takeScreenshot()).rejects.toThrowError(/empty name/);
   });
 
   it('takeScreenshot(name) should delegate the work to the driver', async () => {
