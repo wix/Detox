@@ -8,3 +8,6 @@
 [submodule "detox/ios/fishhook"]
 	path = detox/ios/fishhook
 	url = https://LeoNatan@github.com/facebook/fishhook.git
+[submodule "detox/ios/DetoxIPC"]
+	path = detox/ios/DetoxIPC
+	url = https://LeoNatan@github.com/wix/DetoxIPC.git

@@ -14,7 +14,6 @@
 		397D3E49233A325600E69D28 /* DetoxIPC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 397D3E3A233A293E00E69D28 /* DetoxIPC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		39AC097E23322A8600DF85F8 /* DetoxTestRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AC097D23322A8600DF85F8 /* DetoxTestRunner.m */; };
 		39AC098623322B0800DF85F8 /* XCUIElement+UIDatePickerSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AC098523322B0800DF85F8 /* XCUIElement+UIDatePickerSupport.m */; };
-		39AC099023322C9A00DF85F8 /* DetoxHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 39AC098E23322C9A00DF85F8 /* DetoxHelper.h */; };
 		39AC099623322CBE00DF85F8 /* DetoxHelper.framework in Resources */ = {isa = PBXBuildFile; fileRef = 39AC098C23322C9A00DF85F8 /* DetoxHelper.framework */; platformFilter = ios; };
 		39AC09A023322E8E00DF85F8 /* DetoxManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 39AC099E23322E8E00DF85F8 /* DetoxManager.h */; };
 		39AC09A123322E8E00DF85F8 /* DetoxManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AC099F23322E8E00DF85F8 /* DetoxManager.m */; };
@@ -25,6 +24,11 @@
 		39AC09B923326AEB00DF85F8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39AC09B823326AEB00DF85F8 /* Assets.xcassets */; };
 		39AC09BC23326AEB00DF85F8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39AC09BA23326AEB00DF85F8 /* LaunchScreen.storyboard */; };
 		39AC09BF23326AEB00DF85F8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AC09BE23326AEB00DF85F8 /* main.m */; };
+		39B833D1233A7C5B00DBC1D2 /* Detox.pch in Headers */ = {isa = PBXBuildFile; fileRef = 39B833D0233A7C5B00DBC1D2 /* Detox.pch */; };
+		39B833D4233A7C9A00DBC1D2 /* DTXLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 39B833D2233A7C9A00DBC1D2 /* DTXLogging.h */; };
+		39B833D5233A7C9A00DBC1D2 /* DTXLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B833D3233A7C9A00DBC1D2 /* DTXLogging.m */; };
+		39B833D6233A7C9A00DBC1D2 /* DTXLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B833D3233A7C9A00DBC1D2 /* DTXLogging.m */; };
+		39B833D8233A7CD800DBC1D2 /* DTXLoggingSubsystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 39B833D7233A7CD800DBC1D2 /* DTXLoggingSubsystem.h */; };
 		39C94D3F2336EC7200FDF64E /* DTXDetoxApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C94D3E2336EC7200FDF64E /* DTXDetoxApplication.m */; };
 		39C94D522337004700FDF64E /* XCUIElement+ExtendedTouches.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C94D512337004700FDF64E /* XCUIElement+ExtendedTouches.m */; };
 		39F62D212337263400094FAB /* fishhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 39F62D202337263400094FAB /* fishhook.c */; };
@@ -114,7 +118,6 @@
 		39AC098423322B0800DF85F8 /* XCUIElement+UIDatePickerSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XCUIElement+UIDatePickerSupport.h"; sourceTree = "<group>"; };
 		39AC098523322B0800DF85F8 /* XCUIElement+UIDatePickerSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XCUIElement+UIDatePickerSupport.m"; sourceTree = "<group>"; };
 		39AC098C23322C9A00DF85F8 /* DetoxHelper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DetoxHelper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		39AC098E23322C9A00DF85F8 /* DetoxHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetoxHelper.h; sourceTree = "<group>"; };
 		39AC098F23322C9A00DF85F8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		39AC099D23322E7800DF85F8 /* DetoxIPCAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetoxIPCAPI.h; sourceTree = "<group>"; };
 		39AC099E23322E8E00DF85F8 /* DetoxManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetoxManager.h; sourceTree = "<group>"; };
@@ -131,6 +134,10 @@
 		39AC09BB23326AEB00DF85F8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		39AC09BD23326AEB00DF85F8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		39AC09BE23326AEB00DF85F8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		39B833D0233A7C5B00DBC1D2 /* Detox.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Detox.pch; sourceTree = "<group>"; };
+		39B833D2233A7C9A00DBC1D2 /* DTXLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTXLogging.h; path = DTXLoggingInfra/DTXLogging.h; sourceTree = SOURCE_ROOT; };
+		39B833D3233A7C9A00DBC1D2 /* DTXLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DTXLogging.m; path = DTXLoggingInfra/DTXLogging.m; sourceTree = SOURCE_ROOT; };
+		39B833D7233A7CD800DBC1D2 /* DTXLoggingSubsystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTXLoggingSubsystem.h; sourceTree = "<group>"; };
 		39C94D3D2336EC7200FDF64E /* DTXDetoxApplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXDetoxApplication.h; sourceTree = "<group>"; };
 		39C94D3E2336EC7200FDF64E /* DTXDetoxApplication.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DTXDetoxApplication.m; sourceTree = "<group>"; };
 		39C94D502337004700FDF64E /* XCUIElement+ExtendedTouches.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XCUIElement+ExtendedTouches.h"; sourceTree = "<group>"; };
@@ -227,7 +234,6 @@
 			children = (
 				39AC099E23322E8E00DF85F8 /* DetoxManager.h */,
 				39AC099F23322E8E00DF85F8 /* DetoxManager.m */,
-				39AC098E23322C9A00DF85F8 /* DetoxHelper.h */,
 				39AC098F23322C9A00DF85F8 /* Info.plist */,
 			);
 			path = DetoxHelper;
@@ -243,6 +249,10 @@
 		39AC099C23322E6500DF85F8 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				39B833D0233A7C5B00DBC1D2 /* Detox.pch */,
+				39B833D2233A7C9A00DBC1D2 /* DTXLogging.h */,
+				39B833D3233A7C9A00DBC1D2 /* DTXLogging.m */,
+				39B833D7233A7CD800DBC1D2 /* DTXLoggingSubsystem.h */,
 				39AC099D23322E7800DF85F8 /* DetoxIPCAPI.h */,
 				39F62D1F2337263400094FAB /* fishhook.h */,
 				39F62D202337263400094FAB /* fishhook.c */,
@@ -278,7 +288,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				39AC09A023322E8E00DF85F8 /* DetoxManager.h in Headers */,
-				39AC099023322C9A00DF85F8 /* DetoxHelper.h in Headers */,
+				39B833D4233A7C9A00DBC1D2 /* DTXLogging.h in Headers */,
+				39B833D8233A7CD800DBC1D2 /* DTXLoggingSubsystem.h in Headers */,
+				39B833D1233A7C5B00DBC1D2 /* Detox.pch in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,6 +451,7 @@
 				39C94D522337004700FDF64E /* XCUIElement+ExtendedTouches.m in Sources */,
 				39F62D212337263400094FAB /* fishhook.c in Sources */,
 				39AC098623322B0800DF85F8 /* XCUIElement+UIDatePickerSupport.m in Sources */,
+				39B833D6233A7C9A00DBC1D2 /* DTXLogging.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -448,6 +461,7 @@
 			files = (
 				39AC09A123322E8E00DF85F8 /* DetoxManager.m in Sources */,
 				39F62D252337291B00094FAB /* xpc_extensions.m in Sources */,
+				39B833D5233A7C9A00DBC1D2 /* DTXLogging.m in Sources */,
 				39F62D232337285100094FAB /* fishhook.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -577,6 +591,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREFIX_HEADER = Shared/Detox.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -645,6 +660,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = Shared/Detox.pch;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -712,6 +728,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREFIX_HEADER = Shared/Detox.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -785,6 +802,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = Shared/Detox.pch;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
