@@ -13,13 +13,13 @@
         "binaryPath": "build/Build/Products/Release-iphonesimulator/NativeExample.app",
         "build": "xcodebuild -project NativeExample.xcodeproj -UseNewBuildSystem=NO -scheme NativeExample -configuration Release -sdk iphonesimulator -derivedDataPath build",
         "type": "ios.simulator",
-        "name": "iPhone 7 Plus"
+        "name": "iPhone 11 Pro"
       },
       "ios.sim.debug": {
         "binaryPath": "build/Build/Products/Debug-iphonesimulator/NativeExample.app",
         "build": "xcodebuild -project NativeExample.xcodeproj -UseNewBuildSystem=NO -scheme NativeExample -configuration Debug -sdk iphonesimulator -derivedDataPath build",
         "type": "ios.simulator",
-        "name": "iPhone 7 Plus"
+        "name": "iPhone 11 Pro"
       }
     }
   }
