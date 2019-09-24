@@ -24,7 +24,7 @@ function validateSession(session) {
 }
 
 function throwOnEmptyName() {
-  throw new DetoxConfigError(`'name' property is missing, should hold the device name to run on (e.g. "iPhone 7", "iPhone 7, iOS 10.2"`);
+  throw new DetoxConfigError(`'name' property is missing, should hold the device name to run on (e.g. "iPhone 11 Pro", "iPhone 11 Pro, iOS 13.0"`);
 }
 
 function throwOnEmptyType() {
