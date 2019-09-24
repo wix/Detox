@@ -70,6 +70,8 @@
 		39CE25AC22197F0900D78AA1 /* DetoxInstrumentsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 39CE25AA22197F0900D78AA1 /* DetoxInstrumentsManager.m */; };
 		39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */; };
 		39DA0E2822D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DA0E2722D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m */; };
+		39F62D41233730F500094FAB /* fishhook.h in Headers */ = {isa = PBXBuildFile; fileRef = 39F62D39233730F500094FAB /* fishhook.h */; };
+		39F62D42233730F500094FAB /* fishhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 39F62D40233730F500094FAB /* fishhook.c */; };
 		39F642281FDD5EB100468FED /* DTXLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 39F642201FDD5EB000468FED /* DTXLogging.h */; };
 		39F642291FDD5EB100468FED /* DTXLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 39F642271FDD5EB000468FED /* DTXLogging.m */; };
 		39FFD9471FD730A600C97030 /* DetoxCrashHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */; };
@@ -253,6 +255,8 @@
 		39DA0E2622D72AEF001E63A0 /* UIApplication+MockedSharedApplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIApplication+MockedSharedApplication.h"; sourceTree = "<group>"; };
 		39DA0E2722D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIApplication+MockedSharedApplication.m"; sourceTree = "<group>"; };
 		39DA0E3522D72C91001E63A0 /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
+		39F62D39233730F500094FAB /* fishhook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fishhook.h; path = EarlGrey/fishhook/fishhook.h; sourceTree = SOURCE_ROOT; };
+		39F62D40233730F500094FAB /* fishhook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fishhook.c; path = EarlGrey/fishhook/fishhook.c; sourceTree = SOURCE_ROOT; };
 		39F642201FDD5EB000468FED /* DTXLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTXLogging.h; path = DTXLoggingInfra/DTXLogging.h; sourceTree = SOURCE_ROOT; };
 		39F642271FDD5EB000468FED /* DTXLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DTXLogging.m; path = DTXLoggingInfra/DTXLogging.m; sourceTree = SOURCE_ROOT; };
 		39F6422A1FDD5EEC00468FED /* Detox.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.pch; sourceTree = "<group>"; };
@@ -367,6 +371,8 @@
 		394767991DBF985400D72256 /* Detox */ = {
 			isa = PBXGroup;
 			children = (
+				39F62D39233730F500094FAB /* fishhook.h */,
+				39F62D40233730F500094FAB /* fishhook.c */,
 				39F642201FDD5EB000468FED /* DTXLogging.h */,
 				39F642271FDD5EB000468FED /* DTXLogging.m */,
 				39F6422B1FDD5F3300468FED /* DTXLoggingSubsystem.h */,
@@ -495,6 +501,7 @@
 				A7F76A151ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.h in Headers */,
 				394767AE1DBF987E00D72256 /* DetoxManager.h in Headers */,
 				468731A51E6C6D0500F151BE /* EarlGrey+Detox.h in Headers */,
+				39F62D41233730F500094FAB /* fishhook.h in Headers */,
 				399BF36821933F0C00F96D50 /* ExternalLogging.h in Headers */,
 				394767CD1DBF98D900D72256 /* ReactNativeHeaders.h in Headers */,
 				394767D41DBF98D900D72256 /* WXRunLoopIdlingResource.h in Headers */,
@@ -731,6 +738,7 @@
 				394767B11DBF987E00D72256 /* DTXMethodInvocation.m in Sources */,
 				39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */,
 				394767C21DBF98A700D72256 /* GREYMatchers+Detox.m in Sources */,
+				39F62D42233730F500094FAB /* fishhook.c in Sources */,
 				394767AF1DBF987E00D72256 /* DetoxManager.m in Sources */,
 				398260E8220CC9530061E83E /* GREYActions+Detox.m in Sources */,
 				39FFD9471FD730A600C97030 /* DetoxCrashHandler.mm in Sources */,

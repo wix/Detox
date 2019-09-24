@@ -6,7 +6,7 @@
 //  Copyright © 2017 Wix. All rights reserved.
 //
 
-#include <fishhook.h>
+#include "fishhook.h"
 #import <dlfcn.h>
 #import <Foundation/Foundation.h>
 #import "DetoxManager.h"

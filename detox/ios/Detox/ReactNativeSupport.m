@@ -19,7 +19,7 @@
 
 #include <dlfcn.h>
 #include <stdatomic.h>
-#include <fishhook.h>
+#include "fishhook.h"
 @import ObjectiveC;
 @import Darwin;
 
