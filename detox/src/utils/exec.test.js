@@ -112,7 +112,7 @@ describe('exec', () => {
       fail('expected execWithRetriesAndLogs() to throw');
     } catch (object) {
       expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
-      expect(logger.error.mock.calls).toMatchSnapshot();
+      expect(logger.error.mock.calls).toHaveLength(3);
     }
   });
 
@@ -127,7 +127,7 @@ describe('exec', () => {
     } catch (object) {
       expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
       expect(logger.error).not.toHaveBeenCalled();
-      expect(logger.debug.mock.calls).toMatchSnapshot();
+      expect(logger.debug.mock.calls).toHaveLength(4);
     }
   });
 
@@ -141,7 +141,7 @@ describe('exec', () => {
       fail('expected execWithRetriesAndLogs() to throw');
     } catch (object) {
       expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 1 });
-      expect(logger.error.mock.calls).toMatchSnapshot();
+      expect(logger.error.mock.calls).toHaveLength(3);
     }
   });
 

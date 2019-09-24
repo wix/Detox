@@ -212,20 +212,20 @@ describe('Detox', () => {
     it(`Calling detox.beforeEach() and detox.afterEach() with a deprecated signature will throw an exception`, async () => {
       const testSummary = { title: 'test', fullName: 'suite - test', status: 'running' };
 
-      await expect(detox.beforeEach(testSummary.title, testSummary.fullName, testSummary.status)).rejects.toThrowErrorMatchingSnapshot();
+      await expect(detox.beforeEach(testSummary.title, testSummary.fullName, testSummary.status)).rejects.toThrowError();
       expect(artifactsManager.onBeforeEach).not.toHaveBeenCalled();
 
-      await expect(detox.afterEach(testSummary.title, testSummary.fullName, testSummary.status)).rejects.toThrowErrorMatchingSnapshot();
+      await expect(detox.afterEach(testSummary.title, testSummary.fullName, testSummary.status)).rejects.toThrowError();
       expect(artifactsManager.onAfterEach).not.toHaveBeenCalled();
     });
 
     it(`Calling detox.beforeEach() and detox.afterEach() with incorrect test status will throw an exception`, async () => {
       const testSummary = { title: 'test', fullName: 'suite - test', status: 'incorrect status' };
 
-      await expect(detox.beforeEach(testSummary)).rejects.toThrowErrorMatchingSnapshot();
+      await expect(detox.beforeEach(testSummary)).rejects.toThrowError();
       expect(artifactsManager.onBeforeEach).not.toHaveBeenCalled();
 
-      await expect(detox.afterEach(testSummary)).rejects.toThrowErrorMatchingSnapshot();
+      await expect(detox.afterEach(testSummary)).rejects.toThrowError();
       expect(artifactsManager.onAfterEach).not.toHaveBeenCalled();
     });
 

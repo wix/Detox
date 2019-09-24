@@ -1,9 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`configuration providing empty server config should throw 1`] = `[Error: No session configuration was found, pass settings under the session property]`;
-
-exports[`configuration providing server config with no session should throw 1`] = `[Error: No session configuration was found, pass settings under the session property]`;
-
-exports[`configuration providing server config with no session.server should throw 1`] = `[Error: session.server property is missing, should hold the server address]`;
-
-exports[`configuration providing server config with no session.sessionId should throw 1`] = `[Error: session.sessionId property is missing, should hold the server session id]`;

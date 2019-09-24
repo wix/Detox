@@ -48,9 +48,9 @@ describe(ArtifactPathBuilder, () => {
         pathBuilder.buildPathForTestArtifact(maliciousName, { title: '', fullName: maliciousName }),
       ].map(asPosixPath);
 
-      expect(path1).toMatchSnapshot();
-      expect(path2).toMatchSnapshot();
-      expect(path3).toMatchSnapshot();
+      expect(path1).toBe('/tmp/subdir/some_.._.._.._.._.._.._home_build-server/.bashrc');
+      expect(path2).toBe('/tmp/subdir/test/some_.._.._.._.._.._.._home_build-server');
+      expect(path3).toBe('/tmp/subdir/some_.._.._.._.._.._.._home_build-server/some_.._.._.._.._.._.._home_build-server');
     });
 
     it('should trim too long filenames', () => {
@@ -64,14 +64,14 @@ describe(ArtifactPathBuilder, () => {
       const testSummary = {title: '', fullName: 'test', status: 'passed' };
       const artifactPath = pathBuilder.buildPathForTestArtifact('1.log', testSummary);
 
-      expect(asPosixPath(artifactPath)).toMatchSnapshot();
+      expect(asPosixPath(artifactPath)).toBe('/tmp/subdir/✓ test/1.log');
     });
 
     it('should prepend x sign to an artifact of a failed test', () => {
       const testSummary = {title: '', fullName: 'test', status: 'failed' };
       const artifactPath = pathBuilder.buildPathForTestArtifact('1.log', testSummary);
 
-      expect(asPosixPath(artifactPath)).toMatchSnapshot();
+      expect(asPosixPath(artifactPath)).toBe('/tmp/subdir/✗ test/1.log');
     });
   });
 
