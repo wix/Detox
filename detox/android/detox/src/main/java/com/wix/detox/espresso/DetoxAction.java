@@ -106,8 +106,12 @@ public class DetoxAction {
      *
      * @param direction Direction to scroll (see {@link MotionDir})
      * @param amountInDP Density Independent Pixels
+     * @param startOffsetPercentX Percentage denoting where X-swipe should start, with respect to the scrollable view.
+     * @param startOffsetPercentY Percentage denoting where Y-swipe should start, with respect to the scrollable view.
      */
-    public static ViewAction scrollInDirection(final int direction, final double amountInDP) {
+    public static ViewAction scrollInDirection(final int direction, final double amountInDP, double startOffsetPercentX, double startOffsetPercentY) {
+        final Float _startOffsetPercentX = startOffsetPercentX < 0 ? null : (float) startOffsetPercentX;
+        final Float _startOffsetPercentY = startOffsetPercentY < 0 ? null : (float) startOffsetPercentY;
         return actionWithAssertions(new ViewAction() {
             @Override
             public Matcher<View> getConstraints() {
@@ -122,7 +126,7 @@ public class DetoxAction {
             @Override
             public void perform(UiController uiController, View view) {
                 try {
-                    ScrollHelper.perform(uiController, view, direction, amountInDP);
+                    ScrollHelper.perform(uiController, view, direction, amountInDP, _startOffsetPercentX, _startOffsetPercentY);
                 } catch (Exception e) {
                     throw new DetoxRuntimeException(e);
                 }
@@ -132,14 +136,18 @@ public class DetoxAction {
 
     /**
      * Scroll the view in a direction by a specified amount (DP units).
-     * <br/>Similar to {@link #scrollInDirection(int, double)}, but stops <b>gracefully</b> in the case
+     * <br/>Similar to {@link #scrollInDirection(int, double, double, double)}, but stops <b>gracefully</b> in the case
      * where the scrolling-edge is reached, by throwing the {@link StaleActionException} exception (i.e.
      * so as to make this use case manageable by the user).
      *
      * @param direction Direction to scroll (see {@link MotionDir})
      * @param amountInDP Density Independent Pixels
+     * @param startOffsetPercentX Percentage denoting where X-swipe should start, with respect to the scrollable view.
+     * @param startOffsetPercentY Percentage denoting where Y-swipe should start, with respect to the scrollable view.
      */
-    public static ViewAction scrollInDirectionStaleAtEdge(final int direction, final double amountInDP) {
+    public static ViewAction scrollInDirectionStaleAtEdge(final int direction, final double amountInDP, double startOffsetPercentX, double startOffsetPercentY) {
+        final Float _startOffsetPercentX = startOffsetPercentX < 0 ? null : (float) startOffsetPercentX;
+        final Float _startOffsetPercentY = startOffsetPercentY < 0 ? null : (float) startOffsetPercentY;
         return actionWithAssertions(new ViewAction() {
             @Override
             public Matcher<View> getConstraints() {
@@ -154,7 +162,7 @@ public class DetoxAction {
             @Override
             public void perform(UiController uiController, View view) {
                 try {
-                    ScrollHelper.perform(uiController, view, direction, amountInDP);
+                    ScrollHelper.perform(uiController, view, direction, amountInDP, _startOffsetPercentX, _startOffsetPercentY);
                 } catch (ScrollEdgeException exScrollAtEdge) {
                     throw new StaleActionException(exScrollAtEdge);
                 }
