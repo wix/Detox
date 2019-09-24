@@ -34,7 +34,7 @@
     "jest": "24.6.x",
     "mockdate": "^2.0.1",
     "prettier": "1.7.0",
-    "react-native": "0.59.8",
+    "react-native": "0.60.5",
     "wtfnode": "^0.8.0"
   },
   "dependencies": {
