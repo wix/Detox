@@ -83,9 +83,11 @@ class DetoxAction {
     };
   }
 
-  static scrollInDirection(direction, amountInDP) {
+  static scrollInDirection(direction, amountInDP, startOffsetPercentX, startOffsetPercentY) {
     if (typeof direction !== "string") throw new Error("direction should be a string, but got " + (direction + (" (" + (typeof direction + ")"))));
     if (typeof amountInDP !== "number") throw new Error("amountInDP should be a number, but got " + (amountInDP + (" (" + (typeof amountInDP + ")"))));
+    if (typeof startOffsetPercentX !== "number") throw new Error("startOffsetPercentX should be a number, but got " + (startOffsetPercentX + (" (" + (typeof startOffsetPercentX + ")"))));
+    if (typeof startOffsetPercentY !== "number") throw new Error("startOffsetPercentY should be a number, but got " + (startOffsetPercentY + (" (" + (typeof startOffsetPercentY + ")"))));
     return {
       target: {
         type: "Class",
@@ -98,13 +100,21 @@ class DetoxAction {
       }, {
         type: "Double",
         value: amountInDP
+      }, {
+        type: "Double",
+        value: startOffsetPercentX
+      }, {
+        type: "Double",
+        value: startOffsetPercentY
       }]
     };
   }
 
-  static scrollInDirectionStaleAtEdge(direction, amountInDP) {
+  static scrollInDirectionStaleAtEdge(direction, amountInDP, startOffsetPercentX, startOffsetPercentY) {
     if (typeof direction !== "string") throw new Error("direction should be a string, but got " + (direction + (" (" + (typeof direction + ")"))));
     if (typeof amountInDP !== "number") throw new Error("amountInDP should be a number, but got " + (amountInDP + (" (" + (typeof amountInDP + ")"))));
+    if (typeof startOffsetPercentX !== "number") throw new Error("startOffsetPercentX should be a number, but got " + (startOffsetPercentX + (" (" + (typeof startOffsetPercentX + ")"))));
+    if (typeof startOffsetPercentY !== "number") throw new Error("startOffsetPercentY should be a number, but got " + (startOffsetPercentY + (" (" + (typeof startOffsetPercentY + ")"))));
     return {
       target: {
         type: "Class",
@@ -117,6 +127,12 @@ class DetoxAction {
       }, {
         type: "Double",
         value: amountInDP
+      }, {
+        type: "Double",
+        value: startOffsetPercentX
+      }, {
+        type: "Double",
+        value: startOffsetPercentY
       }]
     };
   }

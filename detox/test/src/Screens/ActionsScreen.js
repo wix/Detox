@@ -33,6 +33,7 @@ export default class ActionsScreen extends Component {
       numTaps: 0,
       isRefreshing: false,
       backPressed: false,
+      showScrollOverlays: false,
     };
   }
 
@@ -93,6 +94,12 @@ export default class ActionsScreen extends Component {
           testID='UniqueId006'
         />
 
+        <View style={{ height: 20, borderColor: '#c0c0c0', borderWidth: 1, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' }}>
+          <TouchableOpacity onPress={this.onToggleScrollViewVisibility.bind(this)}>
+            <Text testID='toggleScrollOverlays' style={{ color: 'blue' }}>Toggle scroll overlays</Text>
+          </TouchableOpacity>
+        </View>
+
         <View style={{ height: 100, borderColor: '#c0c0c0', borderWidth: 1, backgroundColor: '#f8f8ff' }}>
           <ScrollView testID='ScrollView161'>
             <Text style={styles.item}>Text1</Text>
@@ -104,9 +111,11 @@ export default class ActionsScreen extends Component {
             <Text style={styles.item}>Text7</Text>
             <Text style={styles.item}>Text8</Text>
           </ScrollView>
+          { this.state.showScrollOverlays ? <View style={{ height: 55, width: width * 0.75, backgroundColor: 'deepskyblue', position: 'absolute', bottom: 0 }} /> : null }
+          { this.state.showScrollOverlays ? <View style={{ height: 55, width: width * 0.75, backgroundColor: 'goldenrod', position: 'absolute', right: 0 }} /> : null }
         </View>
 
-        <View style={{ height: 50, borderColor: '#c0c0c0', borderWidth: 1, backgroundColor: '#f8f8ff', marginBottom: 20 }}>
+        <View style={{ height: 50, borderColor: '#c0c0c0', borderWidth: 1, backgroundColor: '#f8f8ff' }}>
           <ScrollView testID='ScrollViewH' horizontal>
             <Text style={styles.horizItem}>HText1</Text>
             <Text style={styles.horizItem}>HText2</Text>
@@ -117,6 +126,8 @@ export default class ActionsScreen extends Component {
             <Text style={styles.horizItem}>HText7</Text>
             <Text style={styles.horizItem}>HText8</Text>
           </ScrollView>
+          { this.state.showScrollOverlays ? <View style={{ height: 28, width: width * 0.75, backgroundColor: 'goldenrod', position: 'absolute', bottom: 0 }} /> : null }
+          { this.state.showScrollOverlays ? <View style={{ height: 28, width: width * 0.75, backgroundColor: 'deepskyblue', position: 'absolute', right: 0 }} /> : null }
         </View>
 
         <View style={{ height: 100, borderColor: '#c0c0c0', borderWidth: 1, backgroundColor: '#f8f8ff', marginBottom: 20 }}>
@@ -227,6 +238,12 @@ export default class ActionsScreen extends Component {
         greeting: 'PullToReload Working'
       });
     }, 500);
+  }
+
+  onToggleScrollViewVisibility() {
+    this.setState({
+      showScrollOverlays: !this.state.showScrollOverlays,
+    })
   }
 
   backHandler() {

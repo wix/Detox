@@ -1,6 +1,7 @@
 package com.wix.detox.espresso.scroll;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -15,7 +16,6 @@ import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_DOWN;
 import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_LEFT;
 import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_RIGHT;
 import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_UP;
-import static com.wix.detox.espresso.common.annot.MotionDefsKt.isHorizontal;
 import static com.wix.detox.espresso.scroll.ScrollProbesKt.getScrollableProbe;
 
 /**
@@ -29,6 +29,7 @@ public class ScrollHelper {
     private static final int MAX_FLING_WAITS = 3;
 
     private static final double DEFAULT_DEADZONE_PERCENT = 0.05;
+    private static final double SCROLL_RANGE_SAFE_PERCENT = (1 - 2 * DEFAULT_DEADZONE_PERCENT);
 
     private static ViewConfiguration viewConfiguration = null;
 
@@ -41,50 +42,21 @@ public class ScrollHelper {
      *
      * @param direction Direction to scroll (see {@link MotionDir})
      * @param amountInDP Density Independent Pixels
-     *
+     * @param startOffsetPercentX Percentage denoting where X-swipe should start, with respect to the scrollable view. Null means select automatically.
+     * @param startOffsetPercentY Percentage denoting where Y-swipe should start, with respect to the scrollable view. Null means select automatically.
      */
-    public static void perform(UiController uiController, View view, @MotionDir int direction, double amountInDP) throws ScrollEdgeException {
-        int adjWidth = 0;
-        int adjHeight = 0;
+    public static void perform(UiController uiController, View view, @MotionDir int direction, double amountInDP, Float startOffsetPercentX, Float startOffsetPercentY) throws ScrollEdgeException {
+        final int amountInPx = UiAutomatorHelper.convertDiptoPix(amountInDP);
+        final int safeScrollableRangePx = getViewSafeScrollableRangePix(view, direction);
+        final int times = amountInPx / safeScrollableRangePx;
+        final int remainder = amountInPx % safeScrollableRangePx;
 
-        int[] pos = new int[2];
-        view.getLocationInWindow(pos);
-
-        int amountInPX = UiAutomatorHelper.convertDiptoPix(amountInDP);
-
-        float[] screenSize = UiAutomatorHelper.getScreenSizeInPX();
-
-        if (direction == MOTION_DIR_LEFT) {
-            adjWidth = (int) ((screenSize[0] - pos[0]) * (1 - 2 * DEFAULT_DEADZONE_PERCENT));
-        } else if (direction == MOTION_DIR_RIGHT) {
-            adjWidth = (int) ((pos[0] + view.getWidth()) * (1 - 2 * DEFAULT_DEADZONE_PERCENT));
-        } else if (direction == MOTION_DIR_UP) {
-            adjHeight = (int) ((screenSize[1] - pos[1]) * (1 - 2 * DEFAULT_DEADZONE_PERCENT));
-        } else {
-            adjHeight = (int) ((pos[1] + view.getHeight()) * (1 - 2 * DEFAULT_DEADZONE_PERCENT));
-        }
-
-        int times;
-        int remainder;
-        int fullAmount;
-
-        if (isHorizontal(direction)) {
-            times = amountInPX / adjWidth;
-            remainder = amountInPX % adjWidth;
-            fullAmount = adjWidth;
-        } else {
-            times = amountInPX / adjHeight;
-            remainder = amountInPX % adjHeight;
-            fullAmount = adjHeight;
-        }
-
-        Log.d(LOG_TAG, "prescroll amountDP="+amountInDP + " amountPx="+amountInPX + " adjHeight="+adjHeight + " times="+times + " remainder="+remainder);
+        Log.d(LOG_TAG, "prescroll amountDP="+amountInDP + " amountPx="+amountInPx + " scrollableRangePx="+safeScrollableRangePx + " times="+times + " remainder="+remainder);
 
         for (int i = 0; i < times; ++i) {
-            scrollOnce(uiController, view, direction, fullAmount);
+            scrollOnce(uiController, view, direction, safeScrollableRangePx, startOffsetPercentX, startOffsetPercentY);
         }
-
-        scrollOnce(uiController, view, direction, remainder);
+        scrollOnce(uiController, view, direction, remainder, startOffsetPercentX, startOffsetPercentY);
     }
 
     /**
@@ -94,82 +66,21 @@ public class ScrollHelper {
      * @param direction Direction to scroll (see {@link @MotionDir})
      */
     public static void performOnce(UiController uiController, View view, @MotionDir int direction) throws ScrollEdgeException {
-        int adjWidth = 0;
-        int adjHeight = 0;
-
-        int[] pos = new int[2];
-        view.getLocationInWindow(pos);
-
-        float[] screenSize = UiAutomatorHelper.getScreenSizeInPX();
-
-        if (direction == MOTION_DIR_LEFT) {
-            adjWidth = (int) ((screenSize[0] - pos[0]) * (1 - 2 * DEFAULT_DEADZONE_PERCENT));
-        } else if (direction == MOTION_DIR_RIGHT) {
-            adjWidth = (int) ((pos[0] + view.getWidth()) * (1 - 2 * DEFAULT_DEADZONE_PERCENT));
-        } else if (direction == MOTION_DIR_UP) {
-            adjHeight = (int) ((screenSize[1] - pos[1]) * (1 - 2 * DEFAULT_DEADZONE_PERCENT));
-        } else {
-            adjHeight = (int) ((pos[1] + view.getHeight()) * (1 - 2 * DEFAULT_DEADZONE_PERCENT));
-        }
-
-        if (isHorizontal(direction)) {
-            scrollOnce(uiController, view, direction, adjWidth);
-        } else {
-            scrollOnce(uiController, view, direction, adjHeight);
-        }
+        final int scrollableRangePx = getViewSafeScrollableRangePix(view, direction);
+        scrollOnce(uiController, view, direction, scrollableRangePx, null, null);
     }
 
-    private static void scrollOnce(UiController uiController, View view, @MotionDir int direction, int userAmountPx) throws ScrollEdgeException {
-        int[] pos = new int[2];
-        view.getLocationInWindow(pos);
-        int x = pos[0];
-        int y = pos[1];
-
-        int downX;
-        int downY;
-        int upX;
-        int upY;
-
-        int scrollStartOffset = UiAutomatorHelper.convertDiptoPix(1);
-        int touchToScrollSlopPx = getViewConfiguration().getScaledTouchSlop();
-        int amountPx = userAmountPx + scrollStartOffset + touchToScrollSlopPx;
-
-        switch (direction) {
-            case MOTION_DIR_RIGHT:
-                downX = x + view.getWidth() - scrollStartOffset;
-                downY = y + view.getHeight() / 2;
-                upX = downX - amountPx;
-                upY = y + view.getHeight() / 2;
-                break;
-            case MOTION_DIR_LEFT:
-                downX = x + scrollStartOffset;
-                downY = y + view.getHeight() / 2;
-                upX = downX + amountPx;
-                upY = y + view.getHeight() / 2;
-                break;
-            case MOTION_DIR_DOWN:
-                downX = x + view.getWidth() / 2;
-                downY = y + view.getHeight() - scrollStartOffset;
-                upX = x + view.getWidth() / 2;
-                upY = downY - amountPx;
-                break;
-            case MOTION_DIR_UP:
-                downX = x + view.getWidth() / 2;
-                downY = y + scrollStartOffset;
-                upX = x + view.getWidth() / 2;
-                upY = downY + amountPx;
-                break;
-            default:
-                throw new RuntimeException("Scroll direction can go from 1 to 4");
-        }
-
+    private static void scrollOnce(UiController uiController, View view, @MotionDir int direction, int userAmountPx, Float startOffsetPercentX, Float startOffsetPercentY) throws ScrollEdgeException {
         final ScrollableProbe scrollableProbe = getScrollableProbe(view, direction);
         if (scrollableProbe.atScrollingEdge()) {
             throw new ScrollEdgeException("View is already at the scrolling edge");
         }
 
-        Log.d(LOG_TAG, "scroll downx=" + downX + " downy=" + downY + " upx=" + upX + " upy=" + upY);
-        doScroll(view.getContext(), uiController, downX, downY, upX, upY);
+        final Point downPoint = getScrollStartPoint(view, direction, startOffsetPercentX, startOffsetPercentY);
+        final Point upPoint = getScrollEndPoint(downPoint, direction, userAmountPx, startOffsetPercentX, startOffsetPercentY);
+
+        Log.d(LOG_TAG, "scroll " + downPoint + " --> " + upPoint);
+        doScroll(view.getContext(), uiController, downPoint.x, downPoint.y, upPoint.x, upPoint.y);
 
         // This is, at least in theory, unnecessary, as we use a swiper implementation that effectively knows how to avoid fling.
         // Nevertheless we cannot validate all use cases in the universe, and thus in order to stay robust we assume somehow fling
@@ -202,9 +113,112 @@ public class ScrollHelper {
         }
     }
 
+    private static int getViewSafeScrollableRangePix(View view, @MotionDir int direction) {
+        final float[] screenSize = UiAutomatorHelper.getScreenSizeInPX();
+        final int[] pos = new int[2];
+        view.getLocationInWindow(pos);
+
+        int range;
+        switch (direction) {
+            case MOTION_DIR_LEFT: range = (int) ((screenSize[0] - pos[0]) * SCROLL_RANGE_SAFE_PERCENT); break;
+            case MOTION_DIR_RIGHT: range = (int) ((pos[0] + view.getWidth()) * SCROLL_RANGE_SAFE_PERCENT); break;
+            case MOTION_DIR_UP: range = (int) ((screenSize[1] - pos[1]) * SCROLL_RANGE_SAFE_PERCENT); break;
+            default: range = (int) ((pos[1] + view.getHeight()) * SCROLL_RANGE_SAFE_PERCENT); break;
+        }
+        return range;
+    }
+
+    private static Point getScrollStartPoint(View view, @MotionDir int direction, Float startOffsetPercentX, Float startOffsetPercentY) {
+        final int safetyOffset = UiAutomatorHelper.convertDiptoPix(1);
+
+        Point point = getGlobalViewLocation(view);
+        float offsetFactorX;
+        float offsetFactorY;
+        int safetyOffsetX;
+        int safetyOffsetY;
+
+        switch (direction) {
+            case MOTION_DIR_RIGHT:
+                offsetFactorX = (startOffsetPercentX != null ? startOffsetPercentX : 1f);
+                offsetFactorY = (startOffsetPercentY != null ? startOffsetPercentY : 0.5f);
+                safetyOffsetX = (startOffsetPercentX != null ? 0 : -safetyOffset);
+                safetyOffsetY = 0;
+                break;
+            case MOTION_DIR_LEFT:
+                offsetFactorX = (startOffsetPercentX != null ? startOffsetPercentX : 0);
+                offsetFactorY = (startOffsetPercentY != null ? startOffsetPercentY : 0.5f);
+                safetyOffsetX = (startOffsetPercentX != null ? 0 : safetyOffset);
+                safetyOffsetY = 0;
+                break;
+            case MOTION_DIR_DOWN:
+                offsetFactorX = (startOffsetPercentX != null ? startOffsetPercentX : 0.5f);
+                offsetFactorY = (startOffsetPercentY != null ? startOffsetPercentY : 1f);
+                safetyOffsetX = 0;
+                safetyOffsetY = (startOffsetPercentY != null ? 0 : -safetyOffset);
+                break;
+            case MOTION_DIR_UP:
+                offsetFactorX = (startOffsetPercentX != null ? startOffsetPercentX : 0.5f);
+                offsetFactorY = (startOffsetPercentY != null ? startOffsetPercentY : 0f);
+                safetyOffsetX = 0;
+                safetyOffsetY = (startOffsetPercentY != null ? 0 : safetyOffset);
+                break;
+            default:
+                throw new RuntimeException("Scroll direction can go from 1 to 4");
+        }
+
+        int offsetX = ((int) (view.getWidth() * offsetFactorX) + safetyOffsetX);
+        int offsetY = ((int) (view.getHeight() * offsetFactorY) + safetyOffsetY);
+
+        point.offset(offsetX, offsetY);
+        return point;
+    }
+
+    private static Point getScrollEndPoint(Point startPoint, @MotionDir int direction, int userAmountPx, Float startOffsetPercentX, Float startOffsetPercentY) {
+        int safetyOffset = UiAutomatorHelper.convertDiptoPix(1);
+        int safetyOffsetX = (startOffsetPercentX != null ? safetyOffset : 0);
+        int safetyOffsetY = (startOffsetPercentY != null ? safetyOffset : 0);
+
+        int touchToScrollSlopPx = getViewConfiguration().getScaledTouchSlop();
+        int amountPx = userAmountPx + touchToScrollSlopPx;
+
+        Point point = new Point(startPoint);
+        int amountX;
+        int amountY;
+        switch (direction) {
+            case MOTION_DIR_RIGHT:
+                amountX = -amountPx - safetyOffsetX;
+                amountY = 0;
+                break;
+            case MOTION_DIR_LEFT:
+                amountX = amountPx + safetyOffsetX;
+                amountY = 0;
+                break;
+            case MOTION_DIR_DOWN:
+                amountX = 0;
+                amountY = -amountPx - safetyOffsetY;
+                break;
+            case MOTION_DIR_UP:
+                amountX = 0;
+                amountY = amountPx + safetyOffsetY;
+                break;
+            default:
+                throw new RuntimeException("Scroll direction can go from 1 to 4");
+        }
+
+        point.offset(amountX, amountY);
+        return point;
+    }
+
+    private static Point getGlobalViewLocation(View view) {
+        int[] pos = new int[2];
+        view.getLocationInWindow(pos);
+        return new Point(pos[0], pos[1]);
+    }
+
     private static ViewConfiguration getViewConfiguration() {
         if (viewConfiguration == null) {
-            viewConfiguration = ViewConfiguration.get(InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext());
+            final Context applicationContext = InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext();
+            viewConfiguration = ViewConfiguration.get(applicationContext);
         }
         return viewConfiguration;
     }

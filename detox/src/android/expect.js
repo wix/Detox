@@ -83,16 +83,16 @@ class ClearTextAction extends Action {
 }
 
 class ScrollAmountAction extends Action {
-  constructor(direction, amount) {
+  constructor(direction, amount, startPositionX = -1.0, startPositionY = -1.0) {
     super();
-    this._call = invoke.callDirectly(DetoxActionApi.scrollInDirection(direction, amount));
+    this._call = invoke.callDirectly(DetoxActionApi.scrollInDirection(direction, amount, startPositionX, startPositionY));
   }
 }
 
 class ScrollAmountStopAtEdgeAction extends Action {
-  constructor(direction, amount) {
+  constructor(direction, amount, startPositionX = -1.0, startPositionY = -1.0) {
     super();
-    this._call = invoke.callDirectly(DetoxActionApi.scrollInDirectionStaleAtEdge(direction, amount));
+    this._call = invoke.callDirectly(DetoxActionApi.scrollInDirectionStaleAtEdge(direction, amount, startPositionX, startPositionY));
   }
 }
 
@@ -191,8 +191,8 @@ class WaitForActionInteractionBase extends Interaction {
 }
 
 class WaitForActionInteraction extends WaitForActionInteractionBase {
-  async scroll(amount, direction = 'down') {
-    this._prepare(new ScrollAmountStopAtEdgeAction(direction, amount));
+  async scroll(amount, direction = 'down', scrollPositionX, scrollPositionY) {
+    this._prepare(new ScrollAmountStopAtEdgeAction(direction, amount, scrollPositionX, scrollPositionY));
     await this.execute();
   }
 }
@@ -243,10 +243,10 @@ class Element {
   async clearText() {
     return await new ActionInteraction(this._invocationManager, this, new ClearTextAction()).execute();
   }
-  async scroll(amount, direction = 'down') {
+  async scroll(amount, direction = 'down', startPositionX, startPositionY) {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
     // this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
-    return await new ActionInteraction(this._invocationManager, this, new ScrollAmountAction(direction, amount)).execute();
+    return await new ActionInteraction(this._invocationManager, this, new ScrollAmountAction(direction, amount, startPositionX, startPositionY)).execute();
   }
   async scrollTo(edge) {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
