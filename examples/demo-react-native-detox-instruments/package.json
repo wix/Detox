@@ -14,7 +14,7 @@
       "ios.sim.release": {
         "binaryPath": "../demo-react-native/ios/build/Build/Products/Release-iphonesimulator/example.app",
         "type": "ios.simulator",
-        "name": "iPhone X"
+        "name": "iPhone 11 Pro"
       }
     }
   }
