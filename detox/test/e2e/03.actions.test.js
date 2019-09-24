@@ -42,7 +42,7 @@ describe('Actions', () => {
     await element(by.id('UniqueId937_wrapper')).typeText(typedText);
     await expect(element(by.text(typedText))).toBeVisible();
   });
-  
+
   it(':ios: should fail typing in a view without text element', async () => {
     const typedText = 'Won\'t be typed at all';
     let failed = false;
@@ -52,7 +52,7 @@ describe('Actions', () => {
     catch(ex) {
       failed = true;
     }
-    
+
     if(failed === false) {
       throw new Error('Test should have thrown an error, but did not');
     }
@@ -98,10 +98,28 @@ describe('Actions', () => {
     await expect(element(by.text('Text4'))).toBeNotVisible();
   });
 
-  custom.it.withFailureIf.android.rn58OrNewer('should scroll for a large amount in direction', async () => {
+  it('should scroll for a large amount in direction', async () => {
     await expect(element(by.text('Text6'))).toBeNotVisible();
     await element(by.id('ScrollView161')).scroll(220, 'down');
     await expect(element(by.text('Text6'))).toBeVisible();
+  });
+
+  it('should scroll for a small amount in horizontal direction', async () => {
+    await expect(element(by.text('HText1'))).toBeVisible();
+    await expect(element(by.text('HText6'))).toBeNotVisible();
+    await expect(element(by.id('ScrollViewH'))).toBeVisible();
+    await element(by.id('ScrollViewH')).scroll(100, 'right');
+    await expect(element(by.text('HText1'))).toBeNotVisible();
+    await expect(element(by.text('HText6'))).toBeVisible();
+    await element(by.id('ScrollViewH')).scroll(100, 'left');
+    await expect(element(by.text('HText1'))).toBeVisible();
+    await expect(element(by.text('HText6'))).toBeNotVisible();
+  });
+
+  it('should scroll for a large amount in horizontal direction', async () => {
+    await expect(element(by.text('HText7'))).toBeNotVisible();
+    await element(by.id('ScrollViewH')).scroll(220, 'right');
+    await expect(element(by.text('HText7'))).toBeVisible();
   });
 
   // edges: 'top'/'bottom'/'left'/'right'
@@ -111,6 +129,15 @@ describe('Actions', () => {
     await expect(element(by.text('Text8'))).toBeVisible();
     await element(by.id('ScrollView161')).scrollTo('top');
     await expect(element(by.text('Text1'))).toBeVisible();
+  });
+
+
+  it('should scroll horizontally to edge', async () => {
+    await expect(element(by.text('HText8'))).toBeNotVisible();
+    await element(by.id('ScrollViewH')).scrollTo('right');
+    await expect(element(by.text('HText8'))).toBeVisible();
+    await element(by.id('ScrollViewH')).scrollTo('left');
+    await expect(element(by.text('HText1'))).toBeVisible();
   });
 
   // TODO - swipe is not good enough for triggering pull to refresh. need to come up with something better
