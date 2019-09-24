@@ -195,6 +195,11 @@ class WaitForActionInteraction extends WaitForActionInteractionBase {
     this._prepare(new ScrollAmountStopAtEdgeAction(direction, amount));
     await this.execute();
   }
+  
+  async swipe(direction, speed = 'fast') {
+    this._prepare(new SwipeAction(direction, speed));
+    await this.execute();
+  }
 }
 
 class Element {
