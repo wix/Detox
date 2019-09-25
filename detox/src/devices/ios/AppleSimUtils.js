@@ -2,6 +2,7 @@ const _ = require('lodash');
 const exec = require('../../utils/exec');
 const log = require('../../utils/logger').child({ __filename });
 const environment = require('../../utils/environment');
+const argparse = require('../../utils/argparse');
 
 class AppleSimUtils {
   async setPermissions(udid, bundleId, permissionsObj) {
@@ -70,8 +71,9 @@ class AppleSimUtils {
     const isBooted = await this.isBooted(udid);
 
     if (!isBooted) {
+      const userLaunchArgs = (argparse.getArgValue('deviceLaunchArgs') || '');
       const statusLogs = { trying: `Booting device ${udid}` };
-      await this._execSimctl({ cmd: `boot ${udid}`, statusLogs, retries: 10 });
+      await this._execSimctl({ cmd: `boot ${udid} ${userLaunchArgs}`, statusLogs, retries: 10 });
       await this._execSimctl({ cmd: `bootstatus ${udid}`, retries: 1 });
       return true;
     }

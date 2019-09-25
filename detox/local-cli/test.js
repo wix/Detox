@@ -140,6 +140,10 @@ module.exports.builder = {
     alias: 'device-name',
     group: 'Configuration:',
     describe: 'Override the device name specified in a configuration. Useful for running a single build configuration on multiple devices.'
+  },
+  'device-launch-args': {
+    group: 'Execution:',
+    describe: 'Custom arguments to pass (through) onto the device (emulator/simulator) binary when launched.'
   }
 };
 
@@ -235,8 +239,19 @@ module.exports.handler = async function test(program) {
       ...getPassthroughArguments(),
     ]).join(' ');
 
-    log.info(command);
-    cp.execSync(command, { stdio: 'inherit' });
+
+    const detoxEnvironmentVariables = _.pick(program, [
+      'deviceLaunchArgs',
+    ]);
+
+    log.info(printEnvironmentVariables(detoxEnvironmentVariables) + command);
+    cp.execSync(command, {
+        stdio: 'inherit',
+        env: {
+          ...process.env,
+          ...detoxEnvironmentVariables
+        }
+      });
   }
 
   function runJest() {
@@ -282,6 +297,7 @@ module.exports.handler = async function test(program) {
       'deviceName',
       'reportSpecs',
       'readOnlyEmu',
+      'deviceLaunchArgs',
     ]);
 
     log.info(printEnvironmentVariables(detoxEnvironmentVariables) + command);
