@@ -80,6 +80,7 @@ Initiating your test suite. <sup>[[1]](#notice-passthrough)</sup>
 | --jest-report-specs | [Jest Only] Whether to output logs per each running spec, in real-time. By default, disabled with multiple workers. |
 | -H, --headless                                | [Android Only] Launch Emulator in headless mode. Useful when running on CI. |
 | --gpu                                         | [Android Only] Launch Emulator with the specific -gpu [gpu mode] parameter. |
+| --device-launch-args | A list of passthrough-arguments to use when (if) devices (Android emulator / iOS simulator) are launched by Detox.<br />**Note: the value must be specified after an equal size (`=`) and inside quotes.** Usage example:<br />`--device-launch-args="-http-proxy http://1.1.1.1:8000 -no-snapshot-load"` |
 | --no-color                                    | Disable colors in log output |
 | --help                                        | Show help |
 
