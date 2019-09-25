@@ -271,6 +271,11 @@ class WaitForActionInteraction extends Interaction {
     this._searchMatcher = this._searchMatcher._extendToDescendantScrollViews();
     await this._execute(new ScrollAmountAction(direction, amount, startScrollX, startScrollY));
   }
+  async swipe(direction, speed = 'fast') {
+    // override the user's element selection with an extended matcher that avoids RN issues with RCTScrollView
+    this._searchMatcher = this._searchMatcher._avoidProblematicReactNativeElements();
+    await this.execute(new SwipeAction(direction, speed));
+  }
 }
 
 class Element {
