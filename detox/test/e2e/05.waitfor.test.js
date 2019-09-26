@@ -47,4 +47,11 @@ describe('WaitFor', () => {
     await expectToThrow(() => waitFor(element(by.text('Text1000'))).toBeVisible().whileElement(by.id('ScrollView')).scroll(50, 'down'));
     await expect(element(by.text('Text1000'))).toBeNotVisible();
   });
+  
+  
+  it('should abort swiping if element was not found', async () => {
+    await element(by.id('GoButton')).tap();
+    await expectToThrow(() => waitFor(element(by.text('Text1000'))).toBeVisible().whileElement(by.id('ScrollView')).swipe('up', 'fast'));
+    await expect(element(by.text('Text1000'))).toBeNotVisible();
+  });
 });
