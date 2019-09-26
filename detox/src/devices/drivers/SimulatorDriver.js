@@ -6,6 +6,7 @@ const IosDriver = require('./IosDriver');
 const configuration = require('../../configuration');
 const environment = require('../../utils/environment');
 const DeviceRegistry = require('../DeviceRegistry');
+const argparse = require('../../utils/argparse');
 
 class SimulatorDriver extends IosDriver {
 
@@ -64,7 +65,8 @@ class SimulatorDriver extends IosDriver {
   }
 
   async _boot(deviceId) {
-    const coldBoot = await this.applesimutils.boot(deviceId);
+    const deviceLaunchArgs = argparse.getArgValue('deviceLaunchArgs');
+    const coldBoot = await this.applesimutils.boot(deviceId, deviceLaunchArgs);
     await this.emitter.emit('bootDevice', { coldBoot, deviceId });
   }
 

@@ -24,7 +24,7 @@ class Emulator {
   }
 
   async boot(emulatorName, options = {port: undefined}) {
-    const userLaunchArgs = (argparse.getArgValue('deviceLaunchArgs') || '').split(/\s+/);
+    const deviceLaunchArgs = (argparse.getArgValue('deviceLaunchArgs') || '').split(/\s+/);
     const emulatorArgs = _.compact([
       '-verbose',
       '-no-audio',
@@ -33,7 +33,7 @@ class Emulator {
       argparse.getArgValue('readOnlyEmu') ? '-read-only' : '',
       options.port ? `-port` : '',
       options.port ? `${options.port}` : '',
-      ...userLaunchArgs,
+      ...deviceLaunchArgs,
       `@${emulatorName}`
     ]);
 

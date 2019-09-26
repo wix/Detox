@@ -243,15 +243,7 @@ module.exports.handler = async function test(program) {
     const detoxEnvironmentVariables = _.pick(program, [
       'deviceLaunchArgs',
     ]);
-
-    log.info(printEnvironmentVariables(detoxEnvironmentVariables) + command);
-    cp.execSync(command, {
-        stdio: 'inherit',
-        env: {
-          ...process.env,
-          ...detoxEnvironmentVariables
-        }
-      });
+    launchTestRunner(command, detoxEnvironmentVariables);
   }
 
   function runJest() {
@@ -299,15 +291,7 @@ module.exports.handler = async function test(program) {
       'readOnlyEmu',
       'deviceLaunchArgs',
     ]);
-
-    log.info(printEnvironmentVariables(detoxEnvironmentVariables) + command);
-    cp.execSync(command, {
-      stdio: 'inherit',
-      env: {
-        ...process.env,
-        ...detoxEnvironmentVariables
-      }
-    });
+    launchTestRunner(command, detoxEnvironmentVariables);
   }
 
   function printEnvironmentVariables(envObject) {
@@ -345,6 +329,17 @@ module.exports.handler = async function test(program) {
     const lockFilePath = platform === 'ios' ? environment.getDeviceLockFilePathIOS() : environment.getDeviceLockFilePathAndroid();
     fs.ensureFileSync(lockFilePath);
     fs.writeFileSync(lockFilePath, '[]');
+  }
+
+  function launchTestRunner(command, detoxEnvironmentVariables) {
+    log.info(printEnvironmentVariables(detoxEnvironmentVariables) + command);
+    cp.execSync(command, {
+      stdio: 'inherit',
+      env: {
+        ...process.env,
+        ...detoxEnvironmentVariables
+      }
+    });
   }
 
   run();
