@@ -115,9 +115,25 @@ module.exports.builder = {
     alias: 'workers',
     group: 'Execution:',
     describe:
-      '[iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest)',
-    default: 1,
-    number: true
+      '[iOS Only] Specifies the number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest)',
+    coerce(param) {
+      let workers = 1;
+      if (param) {
+        const workersStr = param.trim();
+        const workersInt = Number.parseInt(workersStr, 10);
+
+        if (workersStr.endsWith('%')) {
+          const percentValue = workersStr.substring(0, workersStr.length - 1);
+          if (percentValue == Number.parseInt(percentValue, 10)) {
+            workers = workersStr;
+          }
+        } else if (workersStr == workersInt) {
+          workers = workersInt;
+        }
+      }
+      return workers;
+    },
+    default: "1"
   },
   'jest-report-specs': {
     group: 'Execution:',
@@ -240,7 +256,7 @@ module.exports.handler = async function test(program) {
   }
 
   function runJest() {
-    const hasMultipleWorkers = (program.workers > 1);
+    const hasMultipleWorkers = (program.workers !== 1);
     if (platform === 'android') {
       program.readOnlyEmu = false;
       if (hasMultipleWorkers) {
