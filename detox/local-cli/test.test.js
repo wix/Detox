@@ -60,8 +60,22 @@ describe('test', () => {
       await callCli('./test', 'test --specs e2e');
       expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('migration guide'));
     });
-  });
 
+    it('should pass in device-launch-args as an environment variable', async () => {
+      mockAndroidMochaConfiguration();
+
+      await callCli('./test', 'test --device-launch-args="-mocked -launched -args"');
+
+      expect(mockExec).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          env: expect.objectContaining({
+            deviceLaunchArgs: '-mocked -launched -args',
+          }),
+        }),
+      );
+    });
+  });
 
   describe('jest', () => {
     it('runs successfully', async () => {
@@ -87,6 +101,21 @@ describe('test', () => {
             artifactsLocation: expect.stringContaining(normalize('artifacts/only.')),
           }),
         })
+      );
+    });
+
+    it('should pass in device-launch-args as an environment variable', async () => {
+      mockAndroidJestConfiguration();
+
+      await callCli('./test', 'test --device-launch-args="-mocked -launched -args"');
+
+      expect(mockExec).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          env: expect.objectContaining({
+            deviceLaunchArgs: '-mocked -launched -args',
+          }),
+        }),
       );
     });
   });
