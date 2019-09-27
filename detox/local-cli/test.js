@@ -115,9 +115,9 @@ module.exports.builder = {
     alias: 'workers',
     group: 'Execution:',
     describe:
-      '[iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest)',
-    default: 1,
-    number: true
+      '[iOS Only] Specifies the number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest)',
+    string: true,
+    default: '1'
   },
   'jest-report-specs': {
     group: 'Execution:',
@@ -214,7 +214,7 @@ module.exports.handler = async function test(program) {
   }
 
   function runMocha() {
-    if (program.workers !== 1) {
+    if (program.workers !== '1') {
       log.warn('Can not use -w, --workers. Parallel test execution is only supported with iOS and Jest');
     }
 
@@ -248,7 +248,7 @@ module.exports.handler = async function test(program) {
   }
 
   function runJest() {
-    const hasMultipleWorkers = (program.workers > 1);
+    const hasMultipleWorkers = program.workers !== '1';
     if (platform === 'android') {
       program.readOnlyEmu = false;
       if (hasMultipleWorkers) {

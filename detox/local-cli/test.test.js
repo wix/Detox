@@ -136,8 +136,33 @@ describe('test', () => {
       })
     );
 
+    const expectWorkersArg = ({value}) => expect(mockExec).toHaveBeenCalledWith(
+      expect.stringContaining(`--maxWorkers=${value}`),
+      expect.anything(),
+    );
+
     describe('ios', () => {
       beforeEach(mockIOSJestConfiguration);
+
+      it('should use one worker', async () => {
+        await callCli('./test', 'test');
+        expectWorkersArg({value: '1'});
+      });
+
+      it('should still use one worker', async () => {
+        await callCli('./test', 'test --workers 1');
+        expectWorkersArg({value: '1'});
+      });
+
+      it('should still use two workers', async () => {
+        await callCli('./test', 'test --workers 2');
+        expectWorkersArg({value: '2'});
+      });
+
+      it('should use 100% workers', async () => {
+        await callCli('./test', 'test --workers 100%');
+        expectWorkersArg({value: '100%'});
+      });
 
       it('should be enabled for a single worker', async () => {
         await callCli('./test', 'test --workers 1');
