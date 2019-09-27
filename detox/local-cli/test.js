@@ -243,6 +243,7 @@ module.exports.handler = async function test(program) {
     const detoxEnvironmentVariables = _.pick(program, [
       'deviceLaunchArgs',
     ]);
+
     launchTestRunner(command, detoxEnvironmentVariables);
   }
 
@@ -291,6 +292,7 @@ module.exports.handler = async function test(program) {
       'readOnlyEmu',
       'deviceLaunchArgs',
     ]);
+
     launchTestRunner(command, detoxEnvironmentVariables);
   }
 
