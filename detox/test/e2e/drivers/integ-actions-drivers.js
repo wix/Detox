@@ -1,7 +1,7 @@
 // This isn't ideal, but native scrolling is never entirely accurate, compared the exact amount we pass in in DP.
 // This is an approximation based on experiments (over the current native impl.), AND IS IN NO WAY A MAGIC NUMBER (!!!),
 // especially since the inaccuracy is not linear as we assume here.
-const SCROLL_ADJ_FACTOR = 1.035;
+const SCROLL_ADJ_FACTOR = 1.04;
 
 const scrollingTextsDriver = {
   scrollView: () => element(by.id('integActions.textsScrollView')),
