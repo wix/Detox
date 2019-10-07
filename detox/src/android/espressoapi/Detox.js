@@ -57,13 +57,13 @@ class Detox {
     };
   }
 
-  static defaultIntent() {
+  static cleanIntent() {
     return {
       target: {
         type: "Class",
         value: "com.wix.detox.Detox"
       },
-      method: "defaultIntent",
+      method: "cleanIntent",
       args: []
     };
   }

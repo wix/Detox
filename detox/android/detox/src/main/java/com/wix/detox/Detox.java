@@ -8,16 +8,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.util.Base64;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
-import androidx.test.uiautomator.UiDevice;
-import androidx.test.uiautomator.UiObject;
-import androidx.test.uiautomator.UiObjectNotFoundException;
-import androidx.test.uiautomator.UiSelector;
 
 /**
  * <p>Static class.</p>
@@ -150,7 +145,60 @@ public final class Detox {
     }
 
     public static void startActivityFromUrl(String url) {
-        // Ideally, we would just call sActivityTestRule.launchActivity(intentWithUrl(url)) and get it over with.
+        launchActivitySync(intentWithUrl(url));
+    }
+
+    public static void launchMainActivity() {
+        final Activity activity = sActivityTestRule.getActivity();
+        final Context appContext = activity.getApplicationContext();
+        final Intent intent = new Intent(appContext, activity.getClass());
+
+        // SINGLE_TOP is important so as to avoid launching the app's main activity over an existing instance (in the same task),
+        // in case it's already running. It *would* happen without the flag, since by default ActivityTestRule instances
+        // are created so as to force the FLAG_ACTIVITY_NEW_TASK flag in the initial launch, which evidently causes consequent
+        // launches to create additional activity instances on top of it (although inside the same task).
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        launchActivitySync(intent);
+    }
+
+    private static Intent extractLaunchIntent() {
+        Intent intent;
+
+        final String detoxURLOverride = InstrumentationRegistry.getArguments().getString(DETOX_URL_OVERRIDE_ARG);
+        if (detoxURLOverride != null) {
+            intent = intentWithUrl(detoxURLOverride);
+        } else {
+            intent = cleanIntent();
+        }
+        intent.putExtra(LAUNCH_ARGS_KEY, readLaunchArgs());
+        return intent;
+    }
+
+    /**
+     * Constructs a near-empty intent, assuming the activityTestRule will fill in all the missing details - namely the activity
+     * class (aka component), which is taken from activityTestRule's own activityClass data member which was set in the c'tor
+     * by the user (outside of Detox)
+     *
+     * @return The resulting intent.
+     */
+    private static Intent cleanIntent() {
+        return new Intent(Intent.ACTION_MAIN);
+    }
+
+    /**
+     * Constructs an intent with a URL such that the resolved activity to be launched would be an activity that has
+     * been defined to match it using an intent-filter xml tag, and has been associated with an {@link Intent.ACTION_VIEW} action.
+     * @param url The URL to associated.
+     * @return The resulting intent.
+     */
+    private static Intent intentWithUrl(String url) {
+        final Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        return intent;
+    }
+
+    private static void launchActivitySync(Intent intent) {
+        // Ideally, we would just call sActivityTestRule.launchActivity(intent) and get it over with.
         // BUT!!! as it turns out, Espresso has an issue where doing this for an activity running in the background
         // would have Espresso set up an ActivityMonitor which will spend its time waiting for the activity to load, *without
         // ever being released*. It will finally fail after a 45 seconds timeout.
@@ -164,59 +212,13 @@ public final class Detox {
         // ^ Hence the code below.
 
         final Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
-
-        final Intent intent = intentWithUrl(url);
         final Activity activity = sActivityTestRule.getActivity();
+        final Context appContext = activity.getApplicationContext();
         final Instrumentation.ActivityMonitor activityMonitor = new Instrumentation.ActivityMonitor(activity.getClass().getName(), null, true);
 
-        activity.startActivity(intent);
+        appContext.startActivity(intent);
         instrumentation.addMonitor(activityMonitor);
         instrumentation.waitForMonitorWithTimeout(activityMonitor, ACTIVITY_LAUNCH_TIMEOUT);
-    }
-
-    // TODO: Can't get to launch the app back to previous instance using only intents from inside instrumentation (not sure why).
-    // this is a (hopefully) temp solution. Should use intents instead.
-    public static void launchMainActivity() throws RemoteException, UiObjectNotFoundException {
-        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-
-//        Intent intent = targetContext.getPackageManager().getLaunchIntentForPackage(targetContext.getPackageName());
-//        intent.setPackage(null);
-//        intent.removeCategory(Intent.CATEGORY_LAUNCHER);;
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-//        Log.d("Detox", intent.toString());
-//        sActivityTestRule.launchActivity(intent);
-
-        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-        device.pressRecentApps();
-        UiSelector selector = new UiSelector();
-        String appName = targetContext.getApplicationInfo().loadLabel(targetContext.getPackageManager()).toString();
-        UiObject recentApp = device.findObject(selector.descriptionContains(appName));
-        recentApp.click();
-    }
-
-    private static Intent extractLaunchIntent() {
-        Intent intent;
-
-        final String detoxURLOverride = InstrumentationRegistry.getArguments().getString(DETOX_URL_OVERRIDE_ARG);
-        if (detoxURLOverride != null) {
-            intent = intentWithUrl(detoxURLOverride);
-        } else {
-            intent = defaultIntent();
-        }
-        intent.putExtra(LAUNCH_ARGS_KEY, readLaunchArgs());
-        return intent;
-    }
-
-    private static Intent defaultIntent() {
-        // Mimicking here what ActivityTestRule does when no intent is given: action is ACTION_MAIN, activity class (aka component) is
-        // taken from ActivityTestRule's own activityClass data member which was set in the c'tor by the user (outside of Detox).
-        return new Intent(Intent.ACTION_MAIN);
-    }
-
-    private static Intent intentWithUrl(String url) {
-        final Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(url));
-        return intent;
     }
 
     private static Bundle readLaunchArgs() {
