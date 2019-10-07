@@ -1,11 +1,12 @@
-const exec = require('child-process-promise').exec;
-const path = require('path');
-const fs = require('fs');
 const _ = require('lodash');
+const fs = require('fs');
+const path = require('path');
+const exec = require('child-process-promise').exec;
+const DeviceRegistry = require('../DeviceRegistry');
 const IosDriver = require('./IosDriver');
 const configuration = require('../../configuration');
+const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const environment = require('../../utils/environment');
-const DeviceRegistry = require('../DeviceRegistry');
 const argparse = require('../../utils/argparse');
 
 class SimulatorDriver extends IosDriver {
@@ -14,9 +15,7 @@ class SimulatorDriver extends IosDriver {
     super(config);
 
     this.deviceRegistry = new DeviceRegistry({
-      getDeviceIdsByType: async type => await this.applesimutils.findDevicesUDID(type),
-      createDevice: type => this.applesimutils.create(type),
-      lockfile: environment.getDeviceLockFilePathIOS(),
+      lockfilePath: environment.getDeviceLockFilePathIOS(),
     });
 
     this._name = 'Unspecified Simulator';
@@ -36,19 +35,18 @@ class SimulatorDriver extends IosDriver {
   }
 
   async cleanup(deviceId, bundleId) {
-    await this.deviceRegistry.freeDevice(deviceId);
+    await this.deviceRegistry.disposeDevice(deviceId);
     await super.cleanup(deviceId, bundleId);
   }
 
-  async acquireFreeDevice(name) {
-    const deviceId = await this.deviceRegistry.getDevice(name);
-    if (deviceId) {
+  async acquireFreeDevice(query) {
+    return this.deviceRegistry.allocateDevice(async () => {
+      const deviceId = await this._findOrCreateDevice(query);
       await this._boot(deviceId);
-    } else {
-      console.error('Unable to acquire free device ', name);
-    }
-    this._name = `${deviceId || 'UNKNOWN_DEVICE_ID'} (${name})`;
-    return deviceId;
+
+      this._name = `${deviceId} (${query})`;
+      return deviceId;
+    });
   }
 
   async getBundleIdFromBinary(appPath) {
@@ -156,6 +154,75 @@ class SimulatorDriver extends IosDriver {
 
   async waitForBackground() {
     return await this.client.waitForBackground();
+  }
+
+  /***
+   * @private
+   * @param deviceQuery
+   * @returns {Promise<String>}
+   */
+  async _findOrCreateDevice(deviceQuery) {
+    let udid;
+
+    const { free, busy } = await this._groupDevicesByStatus(deviceQuery);
+
+    if (_.isEmpty(free)) {
+      const prototypeDevice = busy[0];
+      udid = this.applesimutils.create(prototypeDevice);
+    } else {
+      udid = free[0].udid;
+    }
+
+    if (!udid) {
+      throw new Error(`Failed to find device matching "${deviceQuery}"`);
+    }
+
+    return udid;
+  }
+
+  async _groupDevicesByStatus(query) {
+    const searchResults = await this._queryDevices(query);
+
+    const { busy, free}  = _.groupBy(searchResults, device => {
+      return this.deviceRegistry.isDeviceBusy(device.udid)
+        ? 'busy'
+        : 'free';
+    });
+
+    const targetOS = _.get(busy, '0.os.identifier');
+    const isMatching = targetOS && { os: { identifier: targetOS } };
+
+    return {
+      busy: _.filter(busy, isMatching),
+      free: _.filter(free, isMatching),
+    }
+  }
+
+  async _queryDevices(query) {
+    let byType, byOS, searchCriteria;
+
+    if (_.includes(query, ',')) {
+      [byType, byOS] = _.split(query, /\s*,\s*/);
+      searchCriteria = `type "${byType}" with "${byOS}"`;
+    } else {
+      byType = query;
+      searchCriteria = `type "${byType}"`;
+    }
+
+    const result = await this.applesimutils.list(
+      { byType, byOS },
+      `Searching for device of ${searchCriteria}...`
+    );
+
+    if (_.isEmpty(result)) {
+      throw new DetoxRuntimeError({
+        message: `Failed to find a device of ${searchCriteria}`,
+        hint: `Run 'applesimutils --list' to list your supported devices. ` +
+              `It is advised only to specify a device type, e.g., "iPhone Xʀ" and avoid explicit search by OS version.`
+      });
+    }
+
+    return result;
   }
 }
 

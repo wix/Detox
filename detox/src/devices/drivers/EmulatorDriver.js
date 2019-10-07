@@ -1,15 +1,15 @@
 const _ = require('lodash');
-const path = require('path');
-const ini = require('ini');
 const fs = require('fs');
+const path = require('path');
 const os = require('os');
+const ini = require('ini');
+const AndroidDriver = require('./AndroidDriver');
+const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
+const DeviceRegistry = require('../DeviceRegistry');
 const Emulator = require('../android/Emulator');
 const EmulatorTelnet = require('../android/EmulatorTelnet');
-const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const environment = require('../../utils/environment');
 const retry = require('../../utils/retry');
-const AndroidDriver = require('./AndroidDriver');
-const DeviceRegistry = require('../DeviceRegistry');
 
 const DetoxEmulatorsPortRange = {
   min: 10000,
@@ -22,9 +22,7 @@ class EmulatorDriver extends AndroidDriver {
 
     this.emulator = new Emulator();
     this.deviceRegistry = new DeviceRegistry({
-      getDeviceIdsByType: this._getDeviceIdsByType.bind(this),
-      createDevice: this._createDevice.bind(this),
-      lockfile: environment.getDeviceLockFilePathAndroid(),
+      lockfilePath: environment.getDeviceLockFilePathAndroid(),
     });
     this.pendingBoots = {};
     this._name = 'Unspecified Emulator';
@@ -38,7 +36,25 @@ class EmulatorDriver extends AndroidDriver {
     await this._validateAvd(avdName);
     await this._fixEmulatorConfigIniSkinNameIfNeeded(avdName);
 
-    const adbName = await this.deviceRegistry.getDevice(avdName);
+    const adbName = await this.deviceRegistry.allocateDevice(async () => {
+      let freeEmulatorAdbName;
+
+      const { devices } = await this.adb.devices();
+      for (const candidate of devices) {
+        const isEmulator = candidate.type === 'emulator';
+        const isBusy = this.deviceRegistry.isDeviceBusy(candidate.adbName);
+
+        if (isEmulator && !isBusy) {
+          if (await candidate.queryName() === avdName) {
+            freeEmulatorAdbName = candidate.adbName;
+            break;
+          }
+        }
+      }
+
+      return freeEmulatorAdbName || this._createDevice();
+    });
+
     await this._boot(avdName, adbName);
 
     await this.adb.apiLevel(adbName);
@@ -49,7 +65,7 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async cleanup(adbName, bundleId) {
-    await this.deviceRegistry.freeDevice(adbName);
+    await this.deviceRegistry.disposeDevice(adbName);
     await super.cleanup(adbName, bundleId);
   }
 
@@ -119,27 +135,6 @@ class EmulatorDriver extends AndroidDriver {
       fs.writeFileSync(configFile, ini.stringify(config));
     }
     return config;
-  }
-
-  async _getDeviceIdsByType(name, currentBusyDevices) {
-    const device = await this.adb.findDevice(async (candidate) => {
-      const isEmulator = candidate.type === 'emulator';
-      const isMatchingName = candidate.name === name;
-      if (!(isEmulator && isMatchingName)) {
-        return false;
-      }
-
-      // Note: though not entirely pure, this is an important optimization so as to avoid the preparsing of all
-      // potentially fit emulators, which can be time consuming - mostly because of the telnet.
-      const isBusy = currentBusyDevices.includes(candidate.adbName);
-      return !isBusy;
-    });
-
-    const devices = [];
-    if (device) {
-      devices.push(device.adbName);
-    }
-    return devices;
   }
 
   async _createDevice() {

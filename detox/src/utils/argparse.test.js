@@ -66,4 +66,33 @@ describe('argparse', () => {
       expect(argparse.getFlag('flag-missing')).toBe(false);
     });
   });
+
+  describe('joinArgs()', () => {
+    let argparse;
+
+    beforeEach(() => {
+      argparse = require('./argparse');
+    });
+
+    it('should convert key-values to args string', () => {
+      expect(argparse.joinArgs({
+        optional: undefined,
+        debug: true,
+        timeout: 3000,
+        logLevel: 'verbose',
+        '-w': 1,
+        'device-name': 'iPhone X'
+      })).toBe('--debug --timeout 3000 --logLevel verbose -w 1 --device-name "iPhone X"');
+    });
+
+    it('should accept options', () => {
+      const options = { prefix: '-', joiner: '=' };
+      const argsObject = {
+        'version': 100,
+        '--help': true
+      };
+
+      expect(argparse.joinArgs(argsObject, options)).toBe('-version=100 --help');
+    });
+  })
 });

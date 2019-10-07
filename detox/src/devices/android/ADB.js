@@ -5,6 +5,7 @@ const {escape} = require('../../utils/pipeCommands');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const EmulatorTelnet = require('./EmulatorTelnet');
 const {getAdbPath} = require('../../utils/environment');
+const {encodeBase64} = require('../../utils/encoding');
 
 class ADB {
   constructor() {
@@ -13,22 +14,24 @@ class ADB {
   }
 
   async devices() {
-    const parser = await this._adbDevices();
-    const devices = [];
-    for (let device = await parser.parseNext(); device; device = await parser.parseNext()) {
-      devices.push(device);
-    }
-    return devices;
-  }
+    const {stdout} = await this.adbCmd('', 'devices', { verbosity: 'high' });
+    const devices = _.chain(stdout)
+      .trim()
+      .split('\n')
+      .slice(1)
+      .map(s => _.trim(s))
+      .map(s => s.startsWith('emulator-')
+        ? new EmulatorHandle(s)
+        : new DeviceHandle(s))
+      .value();
 
-  async findDevice(matcher) {
-    const parser = await this._adbDevices();
-    for (let device = await parser.parseNext(); device; device = await parser.parseNext()) {
-      if (await matcher(device)) {
-        return device;
+    for (const device of devices) {
+      if (device.type === 'emulator') {
+        assertEmulatorHasPort(device, stdout);
       }
     }
-    return undefined;
+
+    return { devices, stdout };
   }
 
   async unlockScreen(deviceId) {
@@ -253,11 +256,6 @@ class ADB {
     return this.adbCmd(deviceId, `reverse --remove tcp:${port}`);
   }
 
-  async _adbDevices() {
-    const output = (await this.adbCmd('', 'devices', { verbosity: 'high' })).stdout;
-    return new ADBDevicesParser(output);
-  }
-
   async adbCmd(deviceId, params, options) {
     const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
     const cmd = `${this.adbBin} ${serial} ${params}`;
@@ -274,75 +272,72 @@ class ADB {
     const serial = deviceId ? ['-s', deviceId] : [];
     return spawnAndLog(this.adbBin, [...serial, ...params]);
   }
-}
 
-class ADBDevicesParser {
-  constructor(adbDevicesOutput) {
-    this.rawInput = adbDevicesOutput;
-    this.devicesList = this._extractDeviceNamesFromAdbDevicesOutput(adbDevicesOutput);
-    this.index = 0;
-  }
-
-  async parseNext() {
-    if (this.index < this.devicesList.length) {
-      return await this._parseAdbDevice(this.devicesList[this.index++]);
+  static inferDeviceType(adbName) {
+    if (adbName.startsWith('emulator-')) {
+      return 'emulator';
     }
-    return undefined;
-  }
 
-  _extractDeviceNamesFromAdbDevicesOutput(input) {
-    const outputToList = input.trim().split('\n');
-    const devicesList = _.takeRight(outputToList, outputToList.length - 1);
-    return devicesList;
-  }
-
-  async _parseAdbDevice(deviceString) {
-    const deviceParams = deviceString.split('\t');
-    const adbName = deviceParams[0];
-
-    let device;
-    if (isEmulator(adbName)) {
-      const port = _.split(adbName, '-')[1];
-      if (!port) {
-        _reportTelnetPortResolutionError(this.rawInput, this.devicesList, adbName, port);
-      }
-
-      const telnet = new EmulatorTelnet();
-      await telnet.connect(port);
-      const name = await telnet.avdName();
-      device = {type: 'emulator', name: name, adbName, port};
-      await telnet.quit();
-    } else if (isGenymotion(adbName)) {
-      device = {type: 'genymotion', name: adbName, adbName};
-    } else {
-      device = {type: 'device', name: adbName, adbName};
+    if ((/^((1?\d?\d|25[0-5]|2[0-4]\d)(\.|:)){4}[0-9]{4}/.test(adbName))) {
+      return 'genymotion';
     }
-    return device;
+
+    return 'device';
   }
 }
 
-function isEmulator(deviceAdbName) {
-  return _.includes(deviceAdbName, 'emulator-');
-}
+function assertEmulatorHasPort(device, stdout) {
+  if (device.port) {
+    return;
+  }
 
-function isGenymotion(adbName) {
-  return (/^((1?\d?\d|25[0-5]|2[0-4]\d)(\.|:)){4}[0-9]{4}/.test(adbName));
-}
-
-function _reportTelnetPortResolutionError(input, devicesList, deviceAdbName, port) {
-  const {encodeBase64} = require('../../utils/encoding');
   const errorMessage = [
-    `Failed to determine telnet port for emulator device '${deviceAdbName}'!`,
+    `Failed to determine telnet port for emulator device '${device.adbName}'!`,
     `Please help us out by reporting dump below in: https://github.com/wix/Detox/issues/1427`,
     `------ BEGIN DUMP ------`,
-    `adb devices base64: ${encodeBase64(input)}`,
-    `adb devices: ${input}`,
-    `devicesList: ${devicesList}`,
-    `port: ${port}`,
+    `adb devices base64: ${encodeBase64(stdout)}`,
+    `adb devices: ${stdout}`,
+    `port: ${device.port}`,
     `------  END DUMP  ------`,
   ].join('\n');
 
   throw new Error(errorMessage);
+}
+
+class DeviceHandle {
+  constructor(deviceString) {
+    const [adbName, status] = deviceString.split('\t');
+    this.type = ADB.inferDeviceType(adbName);
+    this.adbName = adbName;
+    this.status = status;
+  }
+}
+
+class EmulatorHandle extends DeviceHandle {
+  constructor(deviceString) {
+    super(deviceString);
+
+    this.port = this.adbName.split('-')[1];
+  }
+
+  queryName() {
+    if (!this._name) {
+      this._name = this._queryNameViaTelnet();
+    }
+
+    return this._name;
+  }
+
+  async _queryNameViaTelnet() {
+    const telnet = new EmulatorTelnet();
+
+    await telnet.connect(this.port);
+    try {
+      return await telnet.avdName();
+    } finally {
+      await telnet.quit();
+    }
+  }
 }
 
 module.exports = ADB;
