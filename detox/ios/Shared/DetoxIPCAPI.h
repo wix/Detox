@@ -15,7 +15,9 @@
 @protocol DetoxHelper <NSObject>
 
 - (void)waitForIdleWithCompletionHandler:(dispatch_block_t)completionHandler;
-- (void)aMoreComplexSelector:(NSUInteger)a b:(NSString*)str c:(void(^)(dispatch_block_t))block1 d:(void(^)(NSArray*))test;
+
+- (void)beginDelayingTimePickerEvents;
+- (void)endDelayingTimePickerEventsWithCompletionHandler:(dispatch_block_t)completionHandler;
 
 @end
 

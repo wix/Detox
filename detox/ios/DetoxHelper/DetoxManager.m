@@ -7,6 +7,7 @@
 
 #import "DetoxManager.h"
 #import "DetoxIPCAPI.h"
+#import "UIDatePicker+TestSupport.h"
 #import <DetoxIPC/DTXIPCConnection.h>
 @import ObjectiveC;
 @import Darwin;
@@ -40,7 +41,7 @@
 }
 
 - (void)connect
-{
+{	
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
 		NSString* serviceName = NSProcessInfo.processInfo.environment[@"DetoxRunnerServiceName"];
@@ -48,6 +49,11 @@
 		_runnerConnection.exportedInterface = [DTXIPCInterface interfaceWithProtocol:@protocol(DetoxHelper)];
 		_runnerConnection.exportedObject = self;
 		_runnerConnection.remoteObjectInterface = [DTXIPCInterface interfaceWithProtocol:@protocol(DetoxTestRunner)];
+		CLANG_IGNORE(-Warc-retain-cycles)
+		_runnerConnection.invalidationHandler = ^ {
+			[self endDelayingTimePickerEventsWithCompletionHandler:nil];
+		};
+		CLANG_POP
 	});
 }
 
@@ -56,16 +62,18 @@
 	completionHandler();
 }
 
-- (void)aMoreComplexSelector:(NSUInteger)a b:(NSString*)str c:(void(^)(dispatch_block_t))block1 d:(void(^)(NSArray*))test
+- (void)beginDelayingTimePickerEvents
 {
-	if(block1 != nil)
-	{
-		block1(^ {
-			NSLog(@"from inner block");
-		});
-	}
-	
-	test(@[@"Hello", @123, @{@"Hi": @"There"}]);
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[UIDatePicker dtx_beginDelayingTimePickerEvents];
+	});
+}
+
+- (void)endDelayingTimePickerEventsWithCompletionHandler:(dispatch_block_t)completionHandler
+{
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[UIDatePicker dtx_endDelayingTimePickerEventsWithCompletionHandler:completionHandler];
+	});
 }
 
 @end

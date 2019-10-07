@@ -95,36 +95,33 @@
 	NSMutableDictionary* userEnvironment = self.launchEnvironment.mutableCopy;
 	userEnvironment[@"DYLD_INSERT_LIBRARIES"] = [[[NSBundle bundleForClass:self.class] URLForResource:@"DetoxHelper" withExtension:@"framework"] URLByAppendingPathComponent:@"DetoxHelper"].path;
 	userEnvironment[@"DetoxRunnerServiceName"] = _connection.serviceName;
-	userEnvironment[@"NSZombieEnabled"] = @"YES";
-//	userEnvironment[@"DetoxRunnerPort"] = @(_service.port.port);
-//	userEnvironment[@"DetoxRunnerEndpoint"] = [_DTXSerializationDataForListenerEndpoint(_listener.endpoint) base64EncodedStringWithOptions:0];
+//	userEnvironment[@"NSZombieEnabled"] = @"YES";
 	self.launchEnvironment = userEnvironment;
 	
 	[super launch];
 	
-//	[self.detoxHelper waitForIdleWithCompletionHandler:^{
-//
-//	}];
-	
+	[self waitForIdleWithTimeout:0];
+}
+
+- (BOOL)waitForIdleWithTimeout:(NSTimeInterval)timeout
+{
 	dispatch_group_t gr = dispatch_group_create();
 	dispatch_group_enter(gr);
 	
-	[self.detoxHelper aMoreComplexSelector:10 b:@"Hello World!" c:^ (dispatch_block_t block) {
-		NSLog(@"from first block");
-		
-		if(block)
+	__block BOOL cancelledDueToTimeout = NO;
+	
+	[self.detoxHelper waitForIdleWithCompletionHandler:^{
+		if(cancelledDueToTimeout == NO)
 		{
-			block();
+			dispatch_group_leave(gr);
 		}
-	} d:^(NSArray * arr) {
-		NSLog(@"from second block: %@", arr);
-		
-//		dispatch_group_leave(gr);
 	}];
 	
-	dispatch_group_wait(gr, DISPATCH_TIME_FOREVER);
+	dispatch_time_t waitTime = timeout == 0 ? DISPATCH_TIME_FOREVER : dispatch_time(DISPATCH_TIME_NOW, timeout);
 	
-	NSLog(@"");
+	cancelledDueToTimeout = dispatch_group_wait(gr, waitTime) != 0;
+	
+	return cancelledDueToTimeout != NO;
 }
 
 @end

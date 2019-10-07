@@ -16,23 +16,22 @@
 
 @implementation DetoxTestRunner
 
-- (void)setUp {
-    // Put setup code here. This method is called before the invocation of each test method in the class.
-
-    // In UI tests it is usually best to stop immediately when a failure occurs.
+- (void)setUp
+{
     self.continueAfterFailure = YES;
-
-    // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
 }
 
-- (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
+- (void)tearDown
+{
 }
 
-- (void)testExample {
-    // UI tests must launch the application that they test.
-//    DTXDetoxApplication *app = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.LeoNatan.XCUITestTest"];
-	DTXDetoxApplication *app = [[DTXDetoxApplication alloc] init];
+- (void)testDetoxSuite
+{
+	NSLog(@"*******************\n%@\n*******************", NSProcessInfo.processInfo.environment);
+	
+//	DTXDetoxApplication *app = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.apple.mobilesafari"];
+	DTXDetoxApplication *app = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.wix.ExampleApp"];
+//	DTXDetoxApplication *app = [[DTXDetoxApplication alloc] init];
 	[app launch];
 	
 	XCUIElement* tableView = app.tables.firstMatch;
@@ -54,11 +53,14 @@
 	query = [[app.windows.firstMatch descendantsMatchingType:XCUIElementTypeAny] matchingPredicate:[NSPredicate predicateWithFormat:@"identifier == 'TextField'"]];
 	XCUIElement* textField = query.firstMatch;
 	[textField tap];
-	[textField typeText:@"Hello World!"];
+	[textField typeText:NSProcessInfo.processInfo.environment[@"DETOX_SERVER_PORT"]];
 	[textField typeText:XCUIKeyboardKeyReturn];
 	
 	[picker ln_adjustToDatePickerDate:[NSDate dateWithTimeIntervalSinceNow:86400 * 1000 - 48200]];
 //	[picker ln_adjustToCountDownDuration:27900];
+	
+//	[NSThread sleepForTimeInterval:2];
+//	[NSRunLoop.currentRunLoop runUntilDate:NSDate.distantFuture];
 }
 
 @end

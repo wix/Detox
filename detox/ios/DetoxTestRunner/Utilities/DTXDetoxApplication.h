@@ -13,7 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DTXDetoxApplication : XCUIApplication
 
 @property (nonatomic, strong, readonly) id<DetoxHelper> detoxHelper;
-@property (nonatomic, strong, readonly) NSXPCConnection* detoxHelperConnection;
+
+- (BOOL)waitForIdleWithTimeout:(NSTimeInterval)timeout;
 
 @end
 

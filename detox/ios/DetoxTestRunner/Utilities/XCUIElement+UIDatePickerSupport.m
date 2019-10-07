@@ -7,6 +7,7 @@
 //
 
 #import "XCUIElement+UIDatePickerSupport.h"
+#import "DTXDetoxApplication.h"
 @import UIKit;
 
 @interface NSObject ()
@@ -97,6 +98,12 @@ static UIDatePicker* _datePickerFromValueProvider(id self)
 		[selectedRows addObject:@([pickerDelegate selectedRowInComponent:idx])];
 	}
 	
+//	DTXDetoxApplication* application = [self valueForKey:@"application"];
+//	if([application isKindOfClass:DTXDetoxApplication.class])
+//	{
+//		[application.detoxHelper beginDelayingTimePickerEvents];
+//	}
+	
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 	[datePicker performSelector:selector withObject:value];
@@ -118,7 +125,6 @@ static UIDatePicker* _datePickerFromValueProvider(id self)
 				currentIdx = MAX(currentIdx - 40, targetIdx);
 			}
 			
-			
 			id label = (id)[pickerDelegate pickerView:pickerDelegate viewForRow:currentIdx forComponent:idx reusingView:nil];
 			NSString* strValue;
 			
@@ -134,6 +140,18 @@ static UIDatePicker* _datePickerFromValueProvider(id self)
 			[[self.pickerWheels elementBoundByIndex:idx] adjustToPickerWheelValue:strValue];
 		}
 	}
+	
+//	if([application isKindOfClass:DTXDetoxApplication.class])
+//	{
+//		dispatch_group_t gr = dispatch_group_create();
+//		dispatch_group_enter(gr);
+//
+//		[application.detoxHelper endDelayingTimePickerEventsWithCompletionHandler:^{
+//			dispatch_group_leave(gr);
+//		}];
+//
+//		dispatch_group_wait(gr, DISPATCH_TIME_FOREVER);
+//	}
 }
 
 @end

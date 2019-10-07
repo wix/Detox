@@ -10,6 +10,10 @@
 		393EA5C42338BA63007DBB5A /* xpc_extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 39F62D1A23371BF300094FAB /* xpc_extensions.m */; };
 		3971742A233A380700FFE816 /* DetoxIPC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 397D3E3A233A293E00E69D28 /* DetoxIPC.framework */; };
 		3971742B233A380700FFE816 /* DetoxIPC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 397D3E3A233A293E00E69D28 /* DetoxIPC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		397788D7234AC08D00A74C39 /* FirstViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 397788D3234AC08D00A74C39 /* FirstViewController.m */; };
+		397788D8234AC08D00A74C39 /* SecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 397788D4234AC08D00A74C39 /* SecondViewController.m */; };
+		397788DC234AD23400A74C39 /* UIDatePicker+TestSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 397788DA234AD23400A74C39 /* UIDatePicker+TestSupport.h */; };
+		397788DD234AD23400A74C39 /* UIDatePicker+TestSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 397788DB234AD23400A74C39 /* UIDatePicker+TestSupport.m */; };
 		397D3E47233A324400E69D28 /* DetoxIPC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 397D3E3A233A293E00E69D28 /* DetoxIPC.framework */; };
 		397D3E49233A325600E69D28 /* DetoxIPC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 397D3E3A233A293E00E69D28 /* DetoxIPC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		39AC097E23322A8600DF85F8 /* DetoxTestRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AC097D23322A8600DF85F8 /* DetoxTestRunner.m */; };
@@ -19,7 +23,6 @@
 		39AC09A123322E8E00DF85F8 /* DetoxManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AC099F23322E8E00DF85F8 /* DetoxManager.m */; };
 		39AC09AE23326AE800DF85F8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AC09AD23326AE800DF85F8 /* AppDelegate.m */; };
 		39AC09B123326AE800DF85F8 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AC09B023326AE800DF85F8 /* SceneDelegate.m */; };
-		39AC09B423326AE800DF85F8 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AC09B323326AE800DF85F8 /* ViewController.m */; };
 		39AC09B723326AE800DF85F8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39AC09B523326AE800DF85F8 /* Main.storyboard */; };
 		39AC09B923326AEB00DF85F8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39AC09B823326AEB00DF85F8 /* Assets.xcassets */; };
 		39AC09BC23326AEB00DF85F8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39AC09BA23326AEB00DF85F8 /* LaunchScreen.storyboard */; };
@@ -66,13 +69,6 @@
 			remoteGlobalIDString = 39AC098B23322C9A00DF85F8;
 			remoteInfo = DetoxHelper;
 		};
-		39B22C162337FC69001F794E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 39AC097023322A5B00DF85F8 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 39AC09A923326AE800DF85F8;
-			remoteInfo = ExampleApp;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -111,6 +107,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		397788D3234AC08D00A74C39 /* FirstViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FirstViewController.m; sourceTree = "<group>"; };
+		397788D4234AC08D00A74C39 /* SecondViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SecondViewController.m; sourceTree = "<group>"; };
+		397788D5234AC08D00A74C39 /* SecondViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecondViewController.h; sourceTree = "<group>"; };
+		397788D6234AC08D00A74C39 /* FirstViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FirstViewController.h; sourceTree = "<group>"; };
+		397788DA234AD23400A74C39 /* UIDatePicker+TestSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIDatePicker+TestSupport.h"; sourceTree = "<group>"; };
+		397788DB234AD23400A74C39 /* UIDatePicker+TestSupport.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIDatePicker+TestSupport.m"; sourceTree = "<group>"; };
 		397D3E35233A293D00E69D28 /* DetoxIPC.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DetoxIPC.xcodeproj; path = DetoxIPC/DetoxIPC.xcodeproj; sourceTree = "<group>"; };
 		39AC097A23322A8600DF85F8 /* DetoxTestRunner.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DetoxTestRunner.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		39AC097D23322A8600DF85F8 /* DetoxTestRunner.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetoxTestRunner.m; sourceTree = "<group>"; };
@@ -127,8 +129,6 @@
 		39AC09AD23326AE800DF85F8 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		39AC09AF23326AE800DF85F8 /* SceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SceneDelegate.h; sourceTree = "<group>"; };
 		39AC09B023326AE800DF85F8 /* SceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
-		39AC09B223326AE800DF85F8 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		39AC09B323326AE800DF85F8 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		39AC09B623326AE800DF85F8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		39AC09B823326AEB00DF85F8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		39AC09BB23326AEB00DF85F8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -175,6 +175,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		397788D9234AD0FF00A74C39 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				397788DA234AD23400A74C39 /* UIDatePicker+TestSupport.h */,
+				397788DB234AD23400A74C39 /* UIDatePicker+TestSupport.m */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
 		397D3E36233A293D00E69D28 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -232,6 +241,7 @@
 		39AC098D23322C9A00DF85F8 /* DetoxHelper */ = {
 			isa = PBXGroup;
 			children = (
+				397788D9234AD0FF00A74C39 /* Utilities */,
 				39AC099E23322E8E00DF85F8 /* DetoxManager.h */,
 				39AC099F23322E8E00DF85F8 /* DetoxManager.m */,
 				39AC098F23322C9A00DF85F8 /* Info.plist */,
@@ -269,8 +279,10 @@
 				39AC09AD23326AE800DF85F8 /* AppDelegate.m */,
 				39AC09AF23326AE800DF85F8 /* SceneDelegate.h */,
 				39AC09B023326AE800DF85F8 /* SceneDelegate.m */,
-				39AC09B223326AE800DF85F8 /* ViewController.h */,
-				39AC09B323326AE800DF85F8 /* ViewController.m */,
+				397788D6234AC08D00A74C39 /* FirstViewController.h */,
+				397788D3234AC08D00A74C39 /* FirstViewController.m */,
+				397788D5234AC08D00A74C39 /* SecondViewController.h */,
+				397788D4234AC08D00A74C39 /* SecondViewController.m */,
 				39AC09B523326AE800DF85F8 /* Main.storyboard */,
 				39AC09B823326AEB00DF85F8 /* Assets.xcassets */,
 				39AC09BA23326AEB00DF85F8 /* LaunchScreen.storyboard */,
@@ -290,6 +302,7 @@
 				39AC09A023322E8E00DF85F8 /* DetoxManager.h in Headers */,
 				39B833D4233A7C9A00DBC1D2 /* DTXLogging.h in Headers */,
 				39B833D8233A7CD800DBC1D2 /* DTXLoggingSubsystem.h in Headers */,
+				397788DC234AD23400A74C39 /* UIDatePicker+TestSupport.h in Headers */,
 				39B833D1233A7C5B00DBC1D2 /* Detox.pch in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -311,7 +324,6 @@
 			dependencies = (
 				397D3E46233A323C00E69D28 /* PBXTargetDependency */,
 				39AC099823322D1E00DF85F8 /* PBXTargetDependency */,
-				39B22C172337FC69001F794E /* PBXTargetDependency */,
 			);
 			name = DetoxTestRunner;
 			productName = DetoxTestRunner;
@@ -362,11 +374,10 @@
 		39AC097023322A5B00DF85F8 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1100;
+				LastUpgradeCheck = 1120;
 				TargetAttributes = {
 					39AC097923322A8600DF85F8 = {
 						CreatedOnToolsVersion = 11.0;
-						TestTargetID = 39AC09A923326AE800DF85F8;
 					};
 					39AC098B23322C9A00DF85F8 = {
 						CreatedOnToolsVersion = 11.0;
@@ -462,6 +473,7 @@
 				39AC09A123322E8E00DF85F8 /* DetoxManager.m in Sources */,
 				39F62D252337291B00094FAB /* xpc_extensions.m in Sources */,
 				39B833D5233A7C9A00DBC1D2 /* DTXLogging.m in Sources */,
+				397788DD234AD23400A74C39 /* UIDatePicker+TestSupport.m in Sources */,
 				39F62D232337285100094FAB /* fishhook.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -470,8 +482,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				39AC09B423326AE800DF85F8 /* ViewController.m in Sources */,
+				397788D7234AC08D00A74C39 /* FirstViewController.m in Sources */,
 				393EA5C42338BA63007DBB5A /* xpc_extensions.m in Sources */,
+				397788D8234AC08D00A74C39 /* SecondViewController.m in Sources */,
 				39AC09AE23326AE800DF85F8 /* AppDelegate.m in Sources */,
 				39AC09BF23326AEB00DF85F8 /* main.m in Sources */,
 				39AC09B123326AE800DF85F8 /* SceneDelegate.m in Sources */,
@@ -496,11 +509,6 @@
 			platformFilter = ios;
 			target = 39AC098B23322C9A00DF85F8 /* DetoxHelper */;
 			targetProxy = 39AC099723322D1E00DF85F8 /* PBXContainerItemProxy */;
-		};
-		39B22C172337FC69001F794E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 39AC09A923326AE800DF85F8 /* ExampleApp */;
-			targetProxy = 39B22C162337FC69001F794E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -611,11 +619,10 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.LeoNatan.DetoxTestRunner;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wix.DetoxTestRunner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
-				TEST_TARGET_NAME = ExampleApp;
 				TVOS_DEPLOYMENT_TARGET = "";
 				WATCHOS_DEPLOYMENT_TARGET = "";
 			};
@@ -675,11 +682,10 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.LeoNatan.DetoxTestRunner;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wix.DetoxTestRunner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
-				TEST_TARGET_NAME = ExampleApp;
 				TVOS_DEPLOYMENT_TARGET = "";
 				WATCHOS_DEPLOYMENT_TARGET = "";
 			};
@@ -719,6 +725,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
+				DETOX_SERVER_PORT = 100;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -750,7 +757,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.LeoNatan.DetoxHelper;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wix.DetoxHelper;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -795,6 +802,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
+				DETOX_SERVER_PORT = 100;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -819,7 +827,7 @@
 				MACOSX_DEPLOYMENT_TARGET = "";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.LeoNatan.DetoxHelper;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wix.DetoxHelper;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -890,7 +898,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.LeoNatan.ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wix.ExampleApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -949,7 +957,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.LeoNatan.ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wix.ExampleApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
