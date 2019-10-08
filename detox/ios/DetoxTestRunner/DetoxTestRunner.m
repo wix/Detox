@@ -27,7 +27,7 @@
 
 - (void)testDetoxSuite
 {
-	NSLog(@"*******************\n%@\n*******************", NSProcessInfo.processInfo.environment);
+	NSLog(@"*********************************************************\nArguments: %@\n*********************************************************", NSProcessInfo.processInfo.arguments);
 	
 //	DTXDetoxApplication *app = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.apple.mobilesafari"];
 	DTXDetoxApplication *app = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.wix.ExampleApp"];
