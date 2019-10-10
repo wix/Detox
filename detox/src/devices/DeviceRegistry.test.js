@@ -1,128 +1,46 @@
-describe('DeviceRegistry', () => {
-  let fs;
-  let createDevice = jest.fn();
-  let getDeviceIdsByType = jest.fn();
+const fs = require('fs-extra');
+const tempfile = require('tempfile');
+const DeviceRegistry = require('./DeviceRegistry');
 
-  function mockDeviceList(type, length) {
-    const devicesIds = Array.from(Array(length).keys());
-    return devicesIds.map(deviceId => `id-${deviceId}-of-type-${type}`);
-  }
+describe('DeviceRegistry', () => {
+  let lockfilePath;
+  let registry;
 
   beforeEach(() => {
-    jest.mock('fs-extra');
-    fs = require('fs-extra');
-    fs.existsSync.mockReturnValue(true);
-    fs.readFileSync.mockReturnValue("[]");
-
-    createDevice = jest.fn();
-    getDeviceIdsByType = jest.fn();
+    lockfilePath = tempfile('.test');
+    registry = new DeviceRegistry({ lockfilePath });
   });
 
-  const mockDevices = (devices) => getDeviceIdsByType.mockReturnValue(devices);
-  const mockNoDevices = () => mockDevices([]);
-  const mockBusyDevices = (devices) => fs.readFileSync.mockReturnValue(JSON.stringify(devices));
-  const mockNoBusyDevices = () => mockBusyDevices([]);
-
-  function deviceRegistry() {
-    const DeviceRegistry = require('./DeviceRegistry');
-    const registry = new DeviceRegistry({
-      getDeviceIdsByType,
-      createDevice,
-      lockfile: 'lockfile-path/mock'
-    });
-    registry.clear();
-    return registry;
-  }
-
-  describe(`create device`, () => {
-
-    it(`should create device if there's no device available`, async () => {
-      mockNoDevices();
-
-      const registry = deviceRegistry();
-      await registry.getDevice('iPhone X');
-
-      expect(createDevice).toHaveBeenCalledTimes(1);
-      expect(createDevice).toHaveBeenCalledWith('iPhone X');
-    });
-
-    it(`should query for available devices by type`, async () => {
-      const devices = mockDeviceList('iPhone X', 2);
-      const busyDevices = mockDeviceList('iPhone X', 1);
-      mockDevices(devices);
-      mockBusyDevices(busyDevices);
-
-      const registry = deviceRegistry();
-      await registry.getDevice('iPhone X');
-
-      expect(getDeviceIdsByType).toHaveBeenCalledWith('iPhone X', busyDevices);
-    });
-
-    it(`should not create device if there's no device available`, async () => {
-      const devices = mockDeviceList('iPhone X', 1);
-      mockDevices(devices);
-      mockNoBusyDevices();
-
-      const registry = deviceRegistry();
-      await registry.getDevice('iPhone X');
-
-      expect(createDevice).not.toHaveBeenCalled();
-    });
-
-    it(`should create device if all available devices are busy`, async () => {
-      const devices = mockDeviceList('iPhone X', 1);
-      mockDevices(devices);
-      mockBusyDevices(devices);
-
-      const registry = deviceRegistry();
-      await registry.getDevice('iPhone X');
-
-      expect(createDevice).toHaveBeenCalledTimes(1);
-    });
-
-    it(`should create a lockfile if none exists`, async () => {
-      fs.existsSync.mockReturnValue(false);
-
-      deviceRegistry();
-
-      expect(fs.ensureFileSync).toHaveBeenCalledWith('lockfile-path/mock');
-      expect(fs.writeFileSync).toHaveBeenCalledWith('lockfile-path/mock', "[]");
-    });
+  afterEach(async () => {
+    await fs.remove(lockfilePath);
   });
 
-  it('should indicate a device is busy', async () => {
-    const deviceList = mockDeviceList('iPhone X', 1);
-    const deviceId = deviceList[0];
+  it('should throw on attempt to checking if device is busy outside of allocation/disposal context', async () => {
+    const deviceId = 'emulator-5554';
 
-    mockDevices(deviceList);
-    mockBusyDevices(deviceList);
+    const assertForbiddenOutOfContext = () =>
+      expect(() => registry.isDeviceBusy(deviceId)).toThrowError();
 
-    const registry = deviceRegistry();
-    await registry.getDevice('iPhoneX');
-    expect(await registry.isBusy(deviceId)).toBe(true);
-  });
+    assertForbiddenOutOfContext();
+    const result = await registry.allocateDevice(() => {
+      expect(registry.isDeviceBusy(deviceId)).toBe(false);
+      return deviceId;
+    });
 
-  it('should indicate a device is not busy', async () => {
-    const deviceList = mockDeviceList('iPhone X', 1);
-    const deviceId = deviceList[0];
+    expect(result).toBe(deviceId);
 
-    mockDevices(deviceList);
-    mockNoBusyDevices();
+    assertForbiddenOutOfContext();
+    await registry.disposeDevice(() => {
+      expect(registry.isDeviceBusy(deviceId)).toBe(true);
+      return deviceId;
+    });
 
-    const registry = deviceRegistry();
-    await registry.getDevice('iPhoneX');
-    expect(await registry.isBusy(deviceId)).toBe(false);
-  });
+    assertForbiddenOutOfContext();
+    await registry.allocateDevice(() => {
+      expect(registry.isDeviceBusy(deviceId)).toBe(false);
+      throw new Error();
+    }).catch(() => {});
 
-  it('should free a busy device', async () => {
-    const deviceList = mockDeviceList('iPhone X', 1);
-    const deviceId = deviceList[0];
-    mockDevices(deviceList);
-    mockBusyDevices(deviceList);
-
-    const registry = deviceRegistry();
-    await registry.getDevice('iPhoneX');
-    await registry.freeDevice(deviceId);
-    expect(fs.writeFileSync).toHaveBeenCalledWith('lockfile-path/mock', "[]");
+    assertForbiddenOutOfContext();
   });
 });

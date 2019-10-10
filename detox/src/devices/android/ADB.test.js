@@ -48,17 +48,31 @@ describe('ADB', () => {
       expect(exec).toHaveBeenCalledTimes(1);
     });
 
-    it(`should query emulator devices' name via telnet`, async () => {
-      exec.mockReturnValue({
-        stdout: 'List of devices attached\n'
-          + 'emulator-5554\tdevice\n'
-          + 'emulator-5555\tdevice\n'
-          + '\n',
-      });
+    it('should query device name lazily', async () => {
+      const adbDevices = 'List of devices attached\n'
+        + 'MOCK_SERIAL\tdevice\n'
+        + '192.168.60.101:6666\tdevice\n'
+        + 'emulator-5554\tdevice\n'
+        + 'emulator-5556\toffline\n'
+        + '\n';
 
-      await adb.devices();
-      expect(mockEmulatorTelnet.connect).toHaveBeenCalledWith("5554");
-      expect(mockEmulatorTelnet.connect).toHaveBeenCalledWith("5555");
+
+      exec.mockReturnValue({ stdout: adbDevices });
+
+      const { devices, stdout } = await adb.devices();
+      expect(stdout).toBe(adbDevices);
+      expect(devices).toHaveLength(4);
+
+      expect(devices).toEqual([
+        { type: 'device', adbName: 'MOCK_SERIAL', status: 'device' },
+        { type: 'genymotion', adbName: '192.168.60.101:6666', status: 'device' },
+        { type: 'emulator', adbName: 'emulator-5554', port: '5554', status: 'device' },
+        { type: 'emulator', adbName: 'emulator-5556', port: '5556', status: 'offline' },
+      ]);
+
+      mockEmulatorTelnet.avdName.mockReturnValue('Nexus_5X_API_29_x86');
+      expect(await devices[2].queryName()).toBe('Nexus_5X_API_29_x86');
+      expect(mockEmulatorTelnet.connect).toHaveBeenCalledWith('5554');
     });
 
     it(`Parse 'adb device' output with devices of all kinds`, async () => {
@@ -72,14 +86,13 @@ describe('ADB', () => {
         stdout: adbDevicesConsoleOutput
       });
 
-      const parsedDevices = [
-        { "adbName": "192.168.60.101:5555", "name": "192.168.60.101:5555", "type": "genymotion" },
-        { "adbName": "emulator-5556", "name": undefined, "port": "5556", "type": "emulator" },
-        { "adbName": "emulator-5554", "name": undefined, "port": "5554", "type": "emulator" },
-        { "adbName": "sx432wsds", "name": "sx432wsds", "type": "device" }];
-
-      const actual = await adb.devices();
-      expect(actual).toEqual(parsedDevices);
+      const { devices } = await adb.devices();
+      expect(devices).toEqual([
+        { "adbName": "192.168.60.101:5555", "type": "genymotion", status: "device" },
+        { "adbName": "emulator-5556", "port": "5556", "type": "emulator", status: "device" },
+        { "adbName": "emulator-5554", "port": "5554", "type": "emulator", status: "device" },
+        { "adbName": "sx432wsds", "type": "device", status: "device" }
+      ]);
     });
 
     it(`should return an empty list if no devices are available`, async () => {
@@ -87,7 +100,7 @@ describe('ADB', () => {
         stdout: 'List of devices attached\n'
       });
 
-      const devices = await adb.devices();
+      const {devices} = await adb.devices();
       expect(devices.length).toEqual(0);
     });
 
@@ -118,27 +131,6 @@ describe('ADB', () => {
   });
 
   describe('lookup device', () => {
-    it('should look up a device by matcher', async () => {
-      const adbDevices = 'List of devices attached\n'
-        + 'MOCK_SERIAL\tdevice\n'
-        + '192.168.60.101:6666\tdevice\n'
-        + 'emulator-5554\tdevice\n'
-        + 'emulator-5556\tdevice\n'
-        + '\n';
-      const matcher = jest.fn()
-        .mockReturnValueOnce(false)
-        .mockReturnValueOnce(false)
-        .mockReturnValueOnce(true);
-
-      exec.mockReturnValue({
-        stdout: adbDevices,
-      });
-
-      const result = await adb.findDevice(matcher);
-
-      expect(result.adbName).toEqual('emulator-5554');
-      expect(matcher).toHaveBeenCalledTimes(3);
-    });
   });
 
   it(`install`, async () => {

@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const {joinArgs} = require('../../utils/argparse');
 const exec = require('../../utils/exec');
 const log = require('../../utils/logger').child({ __filename });
 const environment = require('../../utils/environment');
@@ -18,46 +19,13 @@ class AppleSimUtils {
     }, statusLogs, 1);
   }
 
-  async findDeviceUDID(query) {
-    const udids = await this.findDevicesUDID(query);
-    return udids[0];
-  }
-
-  async findDevicesUDID(query) {
-    const statusLogs = {
-      trying: `Searching for device matching ${query}...`
-    };
-
-    let type;
-    let os;
-    if (_.includes(query, ',')) {
-      const parts = _.split(query, ',');
-      type = parts[0].trim();
-      os = parts[1].trim();
-    } else {
-      type = query;
-      const deviceInfo = await this.deviceTypeAndNewestRuntimeFor(query);
-      os = deviceInfo.newestRuntime.version;
-    }
-
-    const response = await this._execAppleSimUtils({ args: `--list --byType "${type}" --byOS "${os}"`}, statusLogs, 1);
+  async list(query, options = {}) {
+    const args = `--list ${joinArgs(query)}`;
+    const statusLogs = options.trying ? { trying: options.trying } : undefined;
+    const response = await this._execAppleSimUtils({ args }, statusLogs,  1);
     const parsed = this._parseResponseFromAppleSimUtils(response);
-    const udids = _.map(parsed, 'udid');
-    if (!udids || !udids.length || !udids[0]) {
-      throw new Error(`Can't find a simulator to match with "${query}", run 'xcrun simctl list' to list your supported devices.
-      It is advised to only state a device type, and not to state iOS version, e.g. "iPhone 7"`);
-    }
-    return udids;
-  }
 
-  async findDeviceByUDID(udid) {
-    const response = await this._execAppleSimUtils({args: `--list --byId "${udid}"`}, undefined, 1);
-    const parsed = this._parseResponseFromAppleSimUtils(response);
-    const device = _.find(parsed, (device) => _.isEqual(device.udid, udid));
-    if (!device) {
-      throw new Error(`Can't find device ${udid}`);
-    }
-    return device;
+    return parsed;
   }
 
   /***
@@ -80,29 +48,38 @@ class AppleSimUtils {
   }
 
   async isBooted(udid) {
-    const device = await this.findDeviceByUDID(udid);
+    const device = await this._findDeviceByUDID(udid);
     return (_.isEqual(device.state, 'Booted') || _.isEqual(device.state, 'Booting'));
   }
 
-  async deviceTypeAndNewestRuntimeFor(name) {
-    const result = await this._execSimctl({ cmd: `list -j` });
-    const stdout = _.get(result, 'stdout');
-    const output = JSON.parse(stdout);
-    const deviceType = _.filter(output.devicetypes, { 'name': name})[0];
-    const newestRuntime = _.maxBy(output.runtimes, r => Number(r.version));
-    return { deviceType, newestRuntime };
+  async _findDeviceByUDID(udid) {
+    const [device] = await this.list({ byId: udid, maxResults: 1 });
+    if (!device) {
+      throw new Error(`Can't find device with UDID = "${udid}"`);
+    }
+
+    return device;
   }
 
-  async create(name) {
-    const deviceInfo = await this.deviceTypeAndNewestRuntimeFor(name);
+  /***
+   * @param deviceInfo - an item in output of `applesimutils --list`
+   * @returns {Promise<string>} UDID of a new device
+   */
+  async create(deviceInfo) {
+    const deviceName = _.get(deviceInfo, 'name');
+    const deviceTypeIdentifier = _.get(deviceInfo, 'deviceType.identifier');
+    const deviceRuntimeIdentifier = _.get(deviceInfo, 'os.identifier');
 
-    if (deviceInfo.newestRuntime) {
-      const result = await this._execSimctl({cmd: `create "${name}-Detox" "${deviceInfo.deviceType.identifier}" "${deviceInfo.newestRuntime.identifier}"`});
-      const udid = _.get(result, 'stdout').trim();
-      return udid;
-    } else {
-      throw new Error(`Unable to create device. No runtime found for ${name}`);
+    if (!deviceTypeIdentifier || !deviceRuntimeIdentifier) {
+      const deviceInfoStr = JSON.stringify(deviceInfo, null, 4);
+      throw new Error(`Unable to create device from: ${deviceInfoStr}`);
     }
+
+    const { stdout: udid } = await this._execSimctl({
+      cmd: `create "${deviceName}-Detox" "${deviceTypeIdentifier}" "${deviceRuntimeIdentifier}"`
+    });
+
+    return (udid || '').trim();
   }
 
   async install(udid, absPath) {
