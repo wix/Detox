@@ -150,6 +150,15 @@ class AppleSimUtils {
     await this._execAppleSimUtils({ args: `--byId ${udid} --biometricEnrollment ${yesOrNo}` }, statusLogs, 1);
   }
 
+  async clearKeychain(udid) {
+    const statusLogs = {
+      trying: `Clearing Keychain...`,
+      successful: 'Cleared Keychain!'
+    };
+
+    await this._execAppleSimUtils({ args: `--byId ${udid} --clearKeychain` }, statusLogs, 1);
+  }
+
   async getAppContainer(udid, bundleId) {
     return _.trim((await this._execSimctl({ cmd: `get_app_container ${udid} ${bundleId}` })).stdout);
   }

@@ -367,6 +367,9 @@ Simulates the success of a finger match via TouchID
 ### `device.unmatchFinger()` **iOS Only**
 Simulates the failure of a finger match via TouchID
 
+### `device.clearKeychain()` **iOS Only**
+Cleares the device keychain
+
 ### `device.pressBack()` **Android Only**
 Simulate press back button.
 

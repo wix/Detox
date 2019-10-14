@@ -103,6 +103,10 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
+  async clearKeychain(_udid) {
+    return await Promise.resolve('')
+  }
+
   async waitUntilReady() {
     return await this.client.waitUntilReady();
   }

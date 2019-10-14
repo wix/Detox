@@ -128,6 +128,10 @@ class SimulatorDriver extends IosDriver {
     await this.applesimutils.setPermissions(deviceId, bundleId, permissions);
   }
 
+  async clearKeychain(deviceId) {
+    await this.applesimutils.clearKeychain(deviceId)
+  }
+
   async resetContentAndSettings(deviceId) {
     await this.shutdown(deviceId);
     await this.applesimutils.resetContentAndSettings(deviceId);
