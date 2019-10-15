@@ -677,6 +677,14 @@ describe('Device', () => {
     expect(driverMock.driver.pressBack).toHaveBeenCalledWith(device._deviceId);
   });
 
+  it(`clearKeychain() should invoke driver's clearKeychain()`, async () => {
+    const device = validDevice();
+
+    await device.clearKeychain();
+
+    expect(driverMock.driver.clearKeychain).toHaveBeenCalledWith(device._deviceId);
+  });
+
   describe('get ui device', () => {
     it(`getUiDevice should invoke driver's getUiDevice`, async () => {
       const device = validDevice();

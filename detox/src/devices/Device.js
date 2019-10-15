@@ -210,6 +210,10 @@ class Device {
     await this.deviceDriver.setLocation(this._deviceId, lat, lon);
   }
 
+  async clearKeychain() {
+    await this.deviceDriver.clearKeychain(this._deviceId);
+  }
+
   async _sendPayload(key, params) {
     const payloadFilePath = this.deviceDriver.createPayloadFile(params);
     let payload = {};
