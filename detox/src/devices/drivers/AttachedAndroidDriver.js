@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const AndroidDriver = require('./AndroidDriver');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 
@@ -12,7 +13,8 @@ class AttachedAndroidDriver extends AndroidDriver {
     return this._name;
   }
 
-  async acquireFreeDevice(adbName) {
+  async acquireFreeDevice(deviceQuery) {
+    const adbName = _.isPlainObject(deviceQuery) ? deviceQuery.adbName : deviceQuery;
     const { devices, stdout } = await this.adb.devices();
 
     if (!devices.some(d => d.adbName === adbName)) {

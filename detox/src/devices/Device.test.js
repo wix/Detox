@@ -644,19 +644,12 @@ describe('Device', () => {
   });
 
   it(`new Device() with invalid device config (no binary) should throw`, () => {
+    // TODO: this is an invalid test, because it will pass only on SimulatorDriver
     expect(() => new Device({
       deviceConfig: invalidDeviceNoBinary.configurations['ios.sim.release'],
       deviceDriver: new SimulatorDriver(client),
       sessionConfig: validScheme.session,
     })).toThrowError(/binaryPath.* is missing/);
-  });
-
-  it(`new Device() with invalid device config (no device name) should throw`, () => {
-    expect(() => new Device({
-      deviceConfig: invalidDeviceNoDeviceName.configurations['ios.sim.release'],
-      deviceDriver: new SimulatorDriver(client),
-      sessionConfig: validScheme.session,
-    })).toThrowError(/name.* is missing/);
   });
 
   it(`should accept absolute path for binary`, async () => {

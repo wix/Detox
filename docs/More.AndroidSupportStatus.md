@@ -62,7 +62,9 @@ To utilize Genymotion you should use 'android.attached' as configuration type pa
     "binaryPath": "./android/app/build/outputs/apk/app-debug.apk",
     "build": "pushd ./android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && popd",
     "type": "android.attached",
-    "name": "192.168.57.101:5555"
+    "device": {
+      "adbName": "192.168.57.101:5555"
+    }
 }
 ```
 

@@ -16,13 +16,15 @@ Edit the Detox section in `package.json` to add the following configuration:
 
 ```json
 "ios.none": {
-    "binaryPath": "ios",
-    "type": "ios.none",
-    "name": "iPhone 8 Plus",
-    "session": {
-        "server": "ws://localhost:8099",
-        "sessionId": "<your app's bundle identifier>"
-    }
+  "binaryPath": "ios",
+  "type": "ios.none",
+  "device": {
+    "type": "iPhone 8 Plus"
+  },
+  "session": {
+    "server": "ws://localhost:8099",
+    "sessionId": "<your app's bundle identifier>"
+  }
 }
 ```
 

@@ -40,7 +40,7 @@ class DeviceDriverBase {
     return {};
   }
 
-  async acquireFreeDevice(name) {
+  async acquireFreeDevice(deviceQuery) {
     await Promise.resolve('');
   }
 
