@@ -28,6 +28,7 @@
 - [`device.unmatchFace()` **iOS Only**](#deviceunmatchface-ios-only)
 - [`device.matchFinger()` **iOS Only**](#devicematchfinger-ios-only)
 - [`device.unmatchFinger()` **iOS Only**](#deviceunmatchfinger-ios-only)
+- [`device.clearKeychain()` **iOS Only**](#deviceclearkeychain-ios-only)
 - [`device.pressBack()` **Android Only**](#devicepressback-android-only)
 - [`device.getUIDevice()` **Android Only**](#devicegetuidevice-android-only)
 
