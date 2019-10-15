@@ -32,7 +32,9 @@ class EmulatorDriver extends AndroidDriver {
     return this._name
   }
 
-  async acquireFreeDevice(avdName) {
+  async acquireFreeDevice(deviceQuery) {
+    const avdName = _.isPlainObject(deviceQuery) ? deviceQuery.avdName : deviceQuery;
+
     await this._validateAvd(avdName);
     await this._fixEmulatorConfigIniSkinNameIfNeeded(avdName);
 

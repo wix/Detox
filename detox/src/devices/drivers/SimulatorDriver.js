@@ -39,13 +39,18 @@ class SimulatorDriver extends IosDriver {
     await super.cleanup(deviceId, bundleId);
   }
 
-  async acquireFreeDevice(query) {
+  async acquireFreeDevice(deviceQuery) {
     return this.deviceRegistry.allocateDevice(async () => {
-      const deviceId = await this._findOrCreateDevice(query);
-      await this._boot(deviceId);
+      const udid = await this._findOrCreateDevice(deviceQuery);
+      const deviceComment = this._commentDevice(deviceQuery);
 
-      this._name = `${deviceId} (${query})`;
-      return deviceId;
+      if (!udid) {
+        throw new Error(`Failed to find device matching ${deviceComment}`);
+      }
+
+      await this._boot(udid);
+      this._name = `${udid} ${deviceComment}`;
+      return udid;
     });
   }
 
@@ -142,10 +147,6 @@ class SimulatorDriver extends IosDriver {
     if (!deviceConfig.binaryPath) {
       configuration.throwOnEmptyBinaryPath();
     }
-
-    if (!deviceConfig.name) {
-      configuration.throwOnEmptyName();
-    }
   }
 
   getLogsPaths(deviceId) {
@@ -162,12 +163,13 @@ class SimulatorDriver extends IosDriver {
 
   /***
    * @private
-   * @param deviceQuery
+   * @param {String | Object} rawDeviceQuery
    * @returns {Promise<String>}
    */
-  async _findOrCreateDevice(deviceQuery) {
+  async _findOrCreateDevice(rawDeviceQuery) {
     let udid;
 
+    const deviceQuery = this._adaptQuery(rawDeviceQuery);
     const { free, busy } = await this._groupDevicesByStatus(deviceQuery);
 
     if (_.isEmpty(free)) {
@@ -177,15 +179,11 @@ class SimulatorDriver extends IosDriver {
       udid = free[0].udid;
     }
 
-    if (!udid) {
-      throw new Error(`Failed to find device matching "${deviceQuery}"`);
-    }
-
     return udid;
   }
 
-  async _groupDevicesByStatus(query) {
-    const searchResults = await this._queryDevices(query);
+  async _groupDevicesByStatus(deviceQuery) {
+    const searchResults = await this._queryDevices(deviceQuery);
 
     const { busy, free}  = _.groupBy(searchResults, device => {
       return this.deviceRegistry.isDeviceBusy(device.udid)
@@ -202,31 +200,60 @@ class SimulatorDriver extends IosDriver {
     }
   }
 
-  async _queryDevices(query) {
-    let byType, byOS, searchCriteria;
-
-    if (_.includes(query, ',')) {
-      [byType, byOS] = _.split(query, /\s*,\s*/);
-      searchCriteria = `type "${byType}" with "${byOS}"`;
-    } else {
-      byType = query;
-      searchCriteria = `type "${byType}"`;
-    }
-
+  async _queryDevices(deviceQuery) {
     const result = await this.applesimutils.list(
-      { byType, byOS },
-      `Searching for device of ${searchCriteria}...`
+      deviceQuery,
+      `Searching for device ${this._commentQuery(deviceQuery)} ...`
     );
 
     if (_.isEmpty(result)) {
       throw new DetoxRuntimeError({
-        message: `Failed to find a device of ${searchCriteria}`,
+        message: `Failed to find a device ${this._commentQuery(deviceQuery)}`,
         hint: `Run 'applesimutils --list' to list your supported devices. ` +
               `It is advised only to specify a device type, e.g., "iPhone Xʀ" and avoid explicit search by OS version.`
       });
     }
 
     return result;
+  }
+
+  _adaptQuery(rawDeviceQuery) {
+    let byId, byName, byOS, byType;
+
+    if (_.isPlainObject(rawDeviceQuery)) {
+      byId = rawDeviceQuery.id;
+      byName = rawDeviceQuery.name;
+      byOS = rawDeviceQuery.os;
+      byType = rawDeviceQuery.type;
+    } else {
+      if (_.includes(rawDeviceQuery, ',')) {
+        [byType, byOS] = _.split(rawDeviceQuery, /\s*,\s*/);
+      } else {
+        byType = rawDeviceQuery;
+      }
+    }
+
+    return _.omitBy({
+      byId,
+      byName,
+      byOS,
+      byType,
+    }, _.isUndefined);
+  }
+
+  _commentQuery({ byId, byName, byOS, byType }) {
+    return _.compact([
+      byId && `by UDID = ${JSON.stringify(byId)}`,
+      byName && `by name = ${JSON.stringify(byName)}`,
+      byType && `by type = ${JSON.stringify(byType)}`,
+      byOS && `by OS = ${JSON.stringify(byOS)}`,
+    ]).join(' and ');
+  }
+
+  _commentDevice(rawDeviceQuery) {
+    return _.isPlainObject(rawDeviceQuery)
+      ? JSON.stringify(rawDeviceQuery)
+      : `(${rawDeviceQuery})`;
   }
 }
 

@@ -48,18 +48,24 @@
         "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
         "build": "set -o pipefail && xcodebuild -project ios/example.xcodeproj -UseNewBuildSystem=NO -scheme example_ci -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
         "type": "ios.simulator",
-        "name": "iPhone 11 Pro"
+        "device": {
+          "type": "iPhone 11 Pro"
+        }
       },
       "ios.sim.release": {
         "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
         "build": "set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/example.xcodeproj  -UseNewBuildSystem=NO -scheme example_ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build",
         "type": "ios.simulator",
-        "name": "iPhone 11 Pro"
+        "device": {
+          "type": "iPhone 11 Pro"
+        }
       },
       "ios.none": {
         "binaryPath": "ios",
         "type": "ios.none",
-        "name": "iPhone 11 Pro",
+        "device": {
+          "type": "iPhone 11 Pro"
+        },
         "session": {
           "server": "ws://localhost:8099",
           "sessionId": "com.wix.detox-example"
@@ -69,19 +75,25 @@
         "binaryPath": "android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk",
         "build": "cd android && ./gradlew assembleFromBinDebug assembleFromBinDebugAndroidTest -DtestBuildType=debug && cd ..",
         "type": "android.emulator",
-        "name": "Nexus_5X_API_26"
+        "device": {
+          "avdName": "Nexus_5X_API_26"
+        }
       },
       "android.emu.release": {
         "binaryPath": "android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk",
         "build": "cd android && ./gradlew assembleFromBinRelease assembleFromBinReleaseAndroidTest -DtestBuildType=release && cd ..",
         "type": "android.emulator",
-        "name": "Nexus_5X_API_26"
+        "device": {
+          "avdName": "Nexus_5X_API_26"
+        }
       },
       "android.emu.debug.fromSource": {
         "binaryPath": "android/app/build/outputs/apk/fromSource/debug/app-fromSource-debug.apk",
         "build": "cd android && ./gradlew assembleFromSourceDebug assembleFromSourceDebugAndroidTest -DtestBuildType=debug && cd ..",
         "type": "android.emulator",
-        "name": "Nexus_5X_API_26"
+        "device": {
+          "avdName": "Nexus_5X_API_26"
+        }
       }
     }
   },

@@ -95,16 +95,15 @@ class DetoxExportWrapper {
                         ${Object.keys(configurations)}`);
     }
 
-    if (deviceOverride) {
-      deviceConfig.name = deviceOverride;
-    }
-
     if (!deviceConfig.type) {
       configuration.throwOnEmptyType();
     }
 
-    if (!deviceConfig.name) {
-      configuration.throwOnEmptyName();
+    deviceConfig.device = deviceOverride || deviceConfig.device || deviceConfig.name;
+    delete deviceConfig.name;
+
+    if (_.isEmpty(deviceConfig.device)) {
+      configuration.throwOnEmptyDevice();
     }
 
     return deviceConfig;

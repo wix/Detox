@@ -120,14 +120,17 @@ Add this part to your `package.json`:
             "build":
             "cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
             "type": "android.emulator",
-            "name": "Nexus_5X_API_24"
+            "device": {
+              "avdName": "Nexus_5X_API_24"
+            }
         },
         "android.emu.release": {
             "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
-            "build":
-            "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd ..",
+            "build": "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd ..",
             "type": "android.emulator",
-            "name": "Nexus_5X_API_26"
+            "device": {
+              "avdName": "Nexus_5X_API_26"
+            }
         }
     }
 }

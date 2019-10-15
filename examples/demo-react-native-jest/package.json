@@ -23,12 +23,16 @@
       "ios.sim.release": {
         "binaryPath": "../demo-react-native/ios/build/Build/Products/Release-iphonesimulator/example.app",
         "type": "ios.simulator",
-        "name": "iPhone 11 Pro"
+        "device": {
+          "type": "iPhone 11 Pro"
+        }
       },
       "android.emu.release": {
         "binaryPath": "../demo-react-native/android/app/build/outputs/apk/release/app-release.apk",
         "type": "android.emulator",
-        "name": "Nexus_5X_API_26"
+        "device": {
+          "avdName": "Nexus_5X_API_26"
+        }
       }
     }
   }

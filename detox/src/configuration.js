@@ -23,12 +23,12 @@ function validateSession(session) {
   }
 }
 
-function throwOnEmptyName() {
-  throw new DetoxConfigError(`'name' property is missing, should hold the device name to run on (e.g. "iPhone 11 Pro", "iPhone 11 Pro, iOS 13.0"`);
+function throwOnEmptyDevice() {
+  throw new DetoxConfigError(`'device' property is empty, should hold the device query to run on (e.g. { "type": "iPhone 11 Pro" }, { "avdName": "Nexus_5X_API_29" })`);
 }
 
 function throwOnEmptyType() {
-  throw new DetoxConfigError(`'type' property is missing, should hold the device type to test on (currently only simulator is supported: ios.simulator or ios.none)`);
+  throw new DetoxConfigError(`'type' property is missing, should hold the device type to test on (e.g. "ios.simulator" or "android.emulator")`);
 }
 
 function throwOnEmptyBinaryPath() {
@@ -38,7 +38,7 @@ function throwOnEmptyBinaryPath() {
 module.exports = {
   defaultSession,
   validateSession,
-  throwOnEmptyName,
+  throwOnEmptyDevice,
   throwOnEmptyType,
   throwOnEmptyBinaryPath
 };
