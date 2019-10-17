@@ -49,11 +49,11 @@
 	_connection.exportedObject = self;
 	_connection.remoteObjectInterface = [DTXIPCInterface interfaceWithProtocol:@protocol(DetoxHelper)];
 	
-	_remoteObjectProxy = _connection.remoteObjectProxy;
+//	_remoteObjectProxy = _connection.remoteObjectProxy;
 	
-//	_remoteObjectProxy = [_connection synchronousRemoteObjectProxyWithErrorHandler:^(NSError * _Nonnull error) {
-//		NSLog(@"%@", error);
-//	}];
+	_remoteObjectProxy = [_connection synchronousRemoteObjectProxyWithErrorHandler:^(NSError * _Nonnull error) {
+		NSLog(@"%@", error);
+	}];
 }
 
 - (instancetype)initWithBundleIdentifier:(NSString *)bundleIdentifier
@@ -122,6 +122,13 @@
 	cancelledDueToTimeout = dispatch_group_wait(gr, waitTime) != 0;
 	
 	return cancelledDueToTimeout != NO;
+}
+
+#pragma mark DetoxTestRunner
+
+- (void)notifyOnCrashWithDetails:(NSDictionary*)details
+{
+	//TODO: Send over web socket
 }
 
 @end

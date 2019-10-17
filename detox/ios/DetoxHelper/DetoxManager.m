@@ -25,11 +25,11 @@
 {
 	@autoreleasepool
 	{
-		[self.sharedListener connect];
+		[self.sharedManager connect];
 	}
 }
 
-+ (instancetype)sharedListener
++ (instancetype)sharedManager
 {
 	static DetoxManager* manager;
 	static dispatch_once_t onceToken;
@@ -40,12 +40,17 @@
 	return manager;
 }
 
+- (void)notifyOnCrashWithDetails:(NSDictionary*)details;
+{
+	[_runnerConnection.remoteObjectProxy notifyOnCrashWithDetails:details];
+}
+
 - (void)connect
 {	
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
 		NSString* serviceName = NSProcessInfo.processInfo.environment[@"DetoxRunnerServiceName"];
-		_runnerConnection = [[DTXIPCConnection alloc] initWithRegisteredServiceName:serviceName];
+		_runnerConnection = [[DTXIPCConnection alloc] initWithServiceName:serviceName];
 		_runnerConnection.exportedInterface = [DTXIPCInterface interfaceWithProtocol:@protocol(DetoxHelper)];
 		_runnerConnection.exportedObject = self;
 		_runnerConnection.remoteObjectInterface = [DTXIPCInterface interfaceWithProtocol:@protocol(DetoxTestRunner)];

@@ -10,6 +10,8 @@
 
 @protocol DetoxTestRunner <NSObject>
 
+- (void)notifyOnCrashWithDetails:(NSDictionary*)details;
+
 @end
 
 @protocol DetoxHelper <NSObject>
