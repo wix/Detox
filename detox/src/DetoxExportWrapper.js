@@ -10,7 +10,7 @@ const _detox = Symbol('detox');
 
 class DetoxExportWrapper {
   constructor() {
-    this[_detox] = null;
+    this[_detox] = Detox.none;
 
     this.init = this.init.bind(this);
     this.cleanup = this.cleanup.bind(this);
@@ -34,22 +34,20 @@ class DetoxExportWrapper {
   }
 
   async cleanup() {
-    if (this[_detox]) {
+    if (this[_detox] !== Detox.none) {
       await this[_detox].cleanup();
-      this[_detox] = null;
+      this[_detox] = Detox.none;
     }
   }
 
   _definePassthroughMethod(name) {
     this[name] = (...args) => {
-      if (this[_detox]) {
-        return this[_detox][name](...args);
-      }
+      return this[_detox][name](...args);
     };
   }
 
   _defineProxy(name) {
-    this[name] = funpermaproxy(() => (this[_detox] && this[_detox][name]));
+    this[name] = funpermaproxy(() => this[_detox][name]);
   }
 
   static async _initializeInstance(detoxConfig, params) {
@@ -81,6 +79,7 @@ class DetoxExportWrapper {
       await instance.init(params);
       return instance;
     } catch (err) {
+      Detox.none.setError(err);
       log.error({ event: 'DETOX_INIT_ERROR' }, '\n', err);
 
       if (instance) {
