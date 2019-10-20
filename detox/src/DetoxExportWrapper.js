@@ -29,6 +29,10 @@ class DetoxExportWrapper {
   }
 
   async init(config, params) {
+    if (!params || params.initGlobals !== false) {
+      Detox.none.initContext(global);
+    }
+
     this[_detox] = await DetoxExportWrapper._initializeInstance(config, params);
     return this[_detox];
   }

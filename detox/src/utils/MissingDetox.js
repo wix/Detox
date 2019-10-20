@@ -1,37 +1,55 @@
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
 class MissingDetox {
-  constructor(invocationManager) {
-    this.throwError = this._throwError.bind(this);
+  constructor() {
+    this.throwError = this.throwError.bind(this);
+    this.initContext(this);
 
-    this.by = {
-      accessibilityLabel: this.throwError,
-      label: this.throwError,
-      id: this.throwError,
-      type: this.throwError,
-      traits: this.throwError,
-      value: this.throwError,
-      text: this.throwError,
+    this._defineRequiredProperty(this, 'beforeEach', async () => this.throwError(), true);
+    this._defineRequiredProperty(this, 'afterEach', async () => this.throwError(), true);
+  }
+
+  initContext(context) {
+    const readonly = context === this;
+
+    this._defineRequiredProperty(context, 'by', undefined, readonly);
+    this._defineRequiredProperty(context, 'device', undefined, readonly);
+    this._defineRequiredProperty(context, 'element', this.throwError, readonly);
+    this._defineRequiredProperty(context, 'expect', this.throwError, readonly);
+    this._defineRequiredProperty(context, 'waitFor', this.throwError, readonly);
+  }
+
+  _defineRequiredProperty(context, name, initialValue, readonly) {
+    if (context.hasOwnProperty(name)) {
+      return;
+    }
+
+    let _value = initialValue;
+
+    const descriptor = {
+      get: () => {
+        if (_value === undefined) {
+          this.throwError();
+        }
+
+        return _value;
+      },
     };
 
-    this.element = this.throwError;
-    this.expect = this.throwError;
-    this.waitFor = this.throwError;
-  }
+    if (!readonly) {
+      descriptor.set = (value) => {
+        _value = value;
+      };
+    }
 
-  get device() {
-    this.throwError();
-  }
-
-  get by() {
-    this.throwError();
+    Object.defineProperty(context, name, descriptor);
   }
 
   setError(err) {
     this._lastError = err;
   }
 
-  _throwError() {
+  throwError() {
     throw new DetoxRuntimeError({
       message: 'Detox instance has not been initialized',
       hint: this._lastError
