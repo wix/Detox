@@ -19,6 +19,20 @@ class MissingDetox {
     this._defineRequiredProperty(context, 'waitFor', this.throwError, readonly);
   }
 
+  cleanupContext(context) {
+    this._cleanupProperty(context, 'by');
+    this._cleanupProperty(context, 'device');
+    this._cleanupProperty(context, 'element');
+    this._cleanupProperty(context, 'expect');
+    this._cleanupProperty(context, 'waitFor');
+  }
+
+  _cleanupProperty(context, name) {
+    if (context.hasOwnProperty(name)) {
+      context[name] = undefined;
+    }
+  }
+
   _defineRequiredProperty(context, name, initialValue, readonly) {
     if (context.hasOwnProperty(name)) {
       return;

@@ -38,6 +38,8 @@ class DetoxExportWrapper {
   }
 
   async cleanup() {
+    Detox.none.cleanupContext(global);
+
     if (this[_detox] !== Detox.none) {
       await this[_detox].cleanup();
       this[_detox] = Detox.none;
@@ -58,6 +60,8 @@ class DetoxExportWrapper {
     let instance = null;
 
     try {
+      Detox.none.setError(null);
+
       if (!detoxConfig) {
         throw new Error(`No configuration was passed to detox, make sure you pass a detoxConfig when calling 'detox.init(detoxConfig)'`);
       }

@@ -28,6 +28,7 @@ describe('index', () => {
       .mock('./Detox', () => {
         const MissingDetox = require('./utils/MissingDetox');
         const none = new MissingDetox();
+        none.cleanupContext = () => {}; // avoid ruining global state
 
         return Object.assign(jest.fn(() => mockDetox), { none });
       });
@@ -43,6 +44,14 @@ describe('index', () => {
       .unmock('./devices/Device')
       .unmock('./client/Client')
       .unmock('./Detox')
+  });
+
+  it(`constructs detox without globals if initGlobals = false`, async () => {
+    const Detox = require('./Detox');
+
+    await detox.init(schemes.validOneDeviceNoSession, { initGlobals: false });
+
+    expect('by' in global).toBe(false);
   });
 
   it(`throws if there was no config passed`, async () => {
