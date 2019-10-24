@@ -118,21 +118,23 @@ DTX_CREATE_LOG(WXJSTimerObservationIdlingResource)
 		Class cls = NSClassFromString(@"RCTTiming");
 		SEL createTimerSel = NSSelectorFromString(@"createTimer:duration:jsSchedulingTime:repeats:");
 		Method m = class_getInstanceMethod(cls, createTimerSel);
-
+		
 		// Check if the createTimer interface is using doubles or NSObjects.
 		// Earlier versions of react native use NSObjects for the timer and
 		// date params, while later versions use doubles for these.
-		char timerArgType[10];
-		method_getArgumentType(m, 2, timerArgType, 10);
-		if (strcmp(timerArgType, "d") == 0) {
-			void (*orig_createTimer)(id, SEL, double, NSTimeInterval, double, BOOL) = (void(*)(id, SEL, double, NSTimeInterval, double, BOOL))method_getImplementation(m);
+		const char* timerArgType = [[cls instanceMethodSignatureForSelector:createTimerSel] getArgumentTypeAtIndex:2];
+		if (strncmp(timerArgType, "d", 1) == 0)
+		{
+			void (*orig_createTimer)(id, SEL, double, NSTimeInterval, double, BOOL) = (void*)method_getImplementation(m);
 			method_setImplementation(m, imp_implementationWithBlock(^(id _self, double timerID, NSTimeInterval duration, double jsDate, BOOL repeats) {
 				__strong __typeof(weakSelf) strongSelf = weakSelf;
-				[strongSelf attachObservation:_self timerID:[NSNumber numberWithDouble:timerID] duration:duration repeats:repeats];
+				[strongSelf attachObservation:_self timerID:@(timerID) duration:duration repeats:repeats];
 				orig_createTimer(_self, createTimerSel, timerID, duration, jsDate, repeats);
 			}));
-		} else {
-			void (*orig_createTimer)(id, SEL, NSNumber*, NSTimeInterval, NSDate*, BOOL) = (void(*)(id, SEL, NSNumber*, NSTimeInterval, NSDate*, BOOL))method_getImplementation(m);
+		}
+		else
+		{
+			void (*orig_createTimer)(id, SEL, NSNumber*, NSTimeInterval, NSDate*, BOOL) = (void*)method_getImplementation(m);
 			method_setImplementation(m, imp_implementationWithBlock(^(id _self, NSNumber* timerID, NSTimeInterval duration, NSDate* jsDate, BOOL repeats) {
 				__strong __typeof(weakSelf) strongSelf = weakSelf;
 				[strongSelf attachObservation:_self timerID:timerID duration:duration repeats:repeats];
@@ -143,21 +145,18 @@ DTX_CREATE_LOG(WXJSTimerObservationIdlingResource)
 	return self;
 }
 
-- (void)attachObservation:(id)_self
-                  timerID:(NSNumber *)timerID
-                 duration:(NSTimeInterval)duration
-                  repeats:(BOOL)repeats
+- (void)attachObservation:(id)_self timerID:(NSNumber *)timerID duration:(NSTimeInterval)duration repeats:(BOOL)repeats
 {
 	dispatch_sync(_timersObservationQueue, ^{
 		_WXJSTimingObservationWrapper* _observationWrapper = [self->_observations objectForKey:_self];
-
+		
 		if(_observationWrapper == nil)
 		{
 			_observationWrapper = [[_WXJSTimingObservationWrapper alloc] initWithTimers:[_self valueForKey:@"_timers"]];
 			[_self setValue:_observationWrapper forKey:@"_timers"];
 			[self->_observations setObject:_observationWrapper forKey:_self];
 		}
-
+		
 		if(duration > 0 && duration <= _durationThreshold && repeats == NO)
 		{
 			dtx_log_info(@"Observing timer: %@ d: %@ r: %@", timerID, @(duration), @(repeats));
