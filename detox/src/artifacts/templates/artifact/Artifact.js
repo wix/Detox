@@ -1,29 +1,37 @@
-const fs = require('fs-extra');
 const log = require('../../../utils/logger').child({ __filename });
 
 class Artifact {
   constructor(template) {
+    defineNonEnumerableProperties(this, Artifact.nonEnumerableProperties);
+
+    if (template) {
+      const { name, start, stop, save, discard, ...misc } = template;
+
+      Object.assign(this, misc);
+      this._name = name;
+
+      if (typeof start === 'function') {
+        this.doStart = start.bind(this);
+      }
+
+      if (typeof stop === 'function') {
+        this.doStop = stop.bind(template);
+      }
+
+      if (typeof save === 'function') {
+        this.doSave = save.bind(template);
+      }
+
+      if (typeof discard === 'function') {
+        this.doDiscard = discard.bind(template);
+      }
+    }
+
     this._startPromise = null;
     this._stopPromise = null;
     this._savePromise = null;
     this._discardPromise = null;
-
-    if (template) {
-      this._name = template.name || '';
-
-      if (typeof template.start === 'function') {
-        this.doStart = template.start.bind(template);
-      }
-      if (typeof template.stop === 'function') {
-        this.doStop = template.stop.bind(template);
-      }
-      if (typeof template.save === 'function') {
-        this.doSave = template.save.bind(template);
-      }
-      if (typeof template.discard === 'function') {
-        this.doDiscard = template.discard.bind(template);
-      }
-    }
+    this.logger = log.child({ class: this.name });
   }
 
   get name() {
@@ -31,7 +39,7 @@ class Artifact {
   }
 
   start(...args) {
-    log.trace({ event: 'START', class: this.name }, `starting ${this.name}`, ...args);
+    this.logger.trace({ event: 'START' }, `starting ${this.name}`, ...args);
 
     if (this._savePromise) {
       this._startPromise = this._savePromise.then(() => this.doStart(...args));
@@ -49,7 +57,7 @@ class Artifact {
 
   stop(...args) {
     if (!this._stopPromise) {
-      log.trace({ event: 'STOP', class: this.name }, `stopping ${this.name}`, ...args);
+      this.logger.trace({ event: 'STOP' }, `stopping ${this.name}`, ...args);
 
       if (this._startPromise) {
         this._stopPromise = this._startPromise.then(() => this.doStop(...args));
@@ -63,10 +71,10 @@ class Artifact {
 
   save(artifactPath, ...args) {
     if (!this._savePromise) {
-      log.trace({ event: 'SAVE', class: this.name }, `saving ${this.name} to: ${artifactPath}`, ...args);
+      this.logger.trace({ event: 'SAVE' }, `saving ${this.name} to: ${artifactPath}`, ...args);
 
       if (this._discardPromise) {
-        log.warn({ event: 'SAVE_ERROR' }, `cannot save an already discarded artifact to: ${artifactPath}`);
+        this.logger.warn({ event: 'SAVE_ERROR' }, `cannot save an already discarded artifact to: ${artifactPath}`);
         this._savePromise = this._discardPromise;
       } else if (this._startPromise) {
         this._savePromise = this.stop().then(() => this.doSave(artifactPath, ...args));
@@ -80,7 +88,7 @@ class Artifact {
 
   discard(...args) {
     if (!this._discardPromise) {
-      log.trace({ event: 'DISCARD', class: this.name }, `discarding ${this.name}`, ...args);
+      this.logger.trace({ event: 'DISCARD' }, `discarding ${this.name}`, ...args);
 
       if (this._savePromise) {
         this._discardPromise = this._savePromise;
@@ -101,16 +109,28 @@ class Artifact {
   async doSave(artifactPath) {}
 
   async doDiscard() {}
+}
 
-  static async moveTemporaryFile(logger, source, destination) {
-    if (await fs.exists(source)) {
-      logger.debug({ event: 'MOVE_FILE' }, `moving "${source}" to ${destination}`);
-      await fs.move(source, destination);
-      return true;
-    } else {
-      logger.warn({ event: 'MOVE_FILE_MISSING'} , `did not find temporary file: ${source}`);
-      return false;
-    }
+Artifact.nonEnumerableProperties = [
+  '_name',
+  '_startPromise',
+  '_stopPromise',
+  '_savePromise',
+  '_discardPromise',
+  'logger',
+  'doStart',
+  'doStop',
+  'doSave',
+  'doDiscard',
+];
+
+function defineNonEnumerableProperties(obj, props) {
+  for (const prop of props) {
+    Object.defineProperty(obj, prop, {
+      enumerable: false,
+      writable: true,
+      value: obj[prop],
+    });
   }
 }
 

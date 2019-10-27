@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const log = require('../../utils/logger').child({ __filename });
 const Artifact = require('../templates/artifact/Artifact');
+const FileArtifact = require('../templates/artifact/FileArtifact');
 
 class SimulatorInstrumentsRecording extends Artifact {
   constructor({
@@ -34,7 +35,7 @@ class SimulatorInstrumentsRecording extends Artifact {
   }
 
   async doSave(artifactPath) {
-    const success = await Artifact.moveTemporaryFile(log, this.temporaryRecordingPath, artifactPath);
+    const success = await FileArtifact.moveTemporaryFile(log, this.temporaryRecordingPath, artifactPath);
     if (!success) {
       SimulatorInstrumentsRecording.hintAboutDetoxInstruments();
     }

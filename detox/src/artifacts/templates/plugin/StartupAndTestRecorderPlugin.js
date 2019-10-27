@@ -10,7 +10,6 @@ class StartupAndTestRecorderPlugin extends WholeTestRecorderPlugin {
     this.startupRecording = null;
     this._isInStartupPhase = true;
     this._isRecordingStartup = false;
-    this._hasFailingTests = false;
   }
 
   /***
@@ -47,20 +46,18 @@ class StartupAndTestRecorderPlugin extends WholeTestRecorderPlugin {
   }
 
   async onAfterEach(testSummary) {
-    if (testSummary.status === 'failed') {
-      this._hasFailingTests = true;
-    }
-
     await super.onAfterEach(testSummary);
 
     if (this.startupRecording) {
-      this._tryToFinalizeStartupRecording(false);
+      this._tryToFinalizeStartupRecording();
     }
   }
 
   async onAfterAll() {
+    await super.onAfterAll();
+
     if (this.startupRecording) {
-      this._finalizeStartupRecording();
+      this._tryToFinalizeStartupRecording();
     }
 
     await super.onAfterAll();
@@ -78,26 +75,18 @@ class StartupAndTestRecorderPlugin extends WholeTestRecorderPlugin {
    */
   async preparePathForStartupArtifact() {}
 
-  _shouldKeepStartupRecording() {
-    if (this.keepOnlyFailedTestsArtifacts && !this._hasFailingTests) {
-      return false;
-    }
+  _tryToFinalizeStartupRecording() {
+    const shouldKeep = this.shouldKeepArtifactOfSession();
 
-    return true;
-  }
-
-  _tryToFinalizeStartupRecording(isExiting) {
-    if (this._shouldKeepStartupRecording()) {
+    if (shouldKeep === true) {
       this._startSavingStartupRecording(this.startupRecording);
       this.startupRecording = null;
-    } else if (isExiting) {
+    }
+
+    if (shouldKeep === false) {
       this._startDiscardingStartupRecording(this.startupRecording);
       this.startupRecording = null;
     }
-  }
-
-  _finalizeStartupRecording() {
-    this._tryToFinalizeStartupRecording(true);
   }
 
   _startSavingStartupRecording(startupRecording) {
