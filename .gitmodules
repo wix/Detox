@@ -11,3 +11,6 @@
 [submodule "detox/ios/DetoxIPC"]
 	path = detox/ios/DetoxIPC
 	url = https://LeoNatan@github.com/wix/DetoxIPC.git
+[submodule "detox/ios/DetoxSync"]
+	path = detox/ios/DetoxSync
+	url = https://LeoNatan@github.com/wix/DetoxSync.git

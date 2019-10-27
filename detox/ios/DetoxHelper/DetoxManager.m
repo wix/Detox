@@ -9,6 +9,7 @@
 #import "DetoxIPCAPI.h"
 #import "UIDatePicker+TestSupport.h"
 #import <DetoxIPC/DTXIPCConnection.h>
+#import <DetoxSync/DetoxSync.h>
 @import ObjectiveC;
 @import Darwin;
 
@@ -59,12 +60,31 @@
 			[self endDelayingTimePickerEventsWithCompletionHandler:nil];
 		};
 		CLANG_POP
+		
+		__block BOOL waitForDebugger;
+		__block NSDictionary<NSString*, id>* userNotificationData;
+		__block NSDictionary<NSString*, id>* userActivityData;
+		__block NSURL* openURL;
+		__block NSString* sourceApp;
+		[[_runnerConnection synchronousRemoteObjectProxyWithErrorHandler:^(NSError * _Nonnull error) {
+			NSLog(@"%@", error);
+		}] getLaunchArgumentsWithCompletionHandler:^(BOOL _waitForDebugger, NSDictionary<NSString *,id> *_userNotificationData, NSDictionary<NSString *,id> *_userActivityData, NSURL *_openURL, NSString *_sourceApp) {
+			waitForDebugger = _waitForDebugger;
+			userNotificationData = _userNotificationData;
+			userActivityData = _userActivityData;
+			openURL = _openURL;
+			sourceApp = _sourceApp;
+		}];
+		
+		NSLog(@"");
 	});
 }
 
 - (void)waitForIdleWithCompletionHandler:(dispatch_block_t)completionHandler
 {
-	completionHandler();
+	[DTXSyncManager enqueueIdleBlock:^{
+		completionHandler();
+	}];
 }
 
 - (void)beginDelayingTimePickerEvents

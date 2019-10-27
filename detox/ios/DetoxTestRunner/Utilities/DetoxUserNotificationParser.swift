@@ -9,7 +9,10 @@ import UIKit
 
 public class DetoxUserNotificationParser: NSObject {
 	@objc
-	public class func parseUserNotificationData(url: URL) -> [String: Any] {
+	public class func parseUserNotificationData(url: URL?) -> [String: Any]? {
+		guard let url = url else {
+			return nil
+		}
 		
 		guard let data = try? Data.init(contentsOf: url) else {
 			Swift.fatalError("Unable to read user notification data file.")

@@ -25,41 +25,6 @@
 {
 }
 
-static NSURL* _launchUserNotificationDataURL()
-{
-	NSString* userNotificationDataPath = [[NSUserDefaults standardUserDefaults] objectForKey:@"detoxUserNotificationDataURL"];
-	
-	if(userNotificationDataPath == nil)
-	{
-		return nil;
-	}
-	
-	return [NSURL fileURLWithPath:userNotificationDataPath];
-}
-
-static NSURL* _launchUserActivityDataURL()
-{
-	NSString* userActivityDataPath = [[NSUserDefaults standardUserDefaults] objectForKey:@"detoxUserActivityDataURL"];
-	
-	if(userActivityDataPath == nil)
-	{
-		return nil;
-	}
-	
-	return [NSURL fileURLWithPath:userActivityDataPath];
-}
-
-static NSURL* _URLOverride()
-{
-	return [NSURL URLWithString:[[NSUserDefaults standardUserDefaults] objectForKey:@"detoxURLOverride"]];
-}
-
-static NSString* _sourceAppOverride()
-{
-	return [[NSUserDefaults standardUserDefaults] objectForKey:@"detoxSourceAppOverride"];
-}
-
-
 - (void)testDetoxSuite
 {
 	NSLog(@"*********************************************************\nArguments: %@\n*********************************************************", NSProcessInfo.processInfo.arguments);

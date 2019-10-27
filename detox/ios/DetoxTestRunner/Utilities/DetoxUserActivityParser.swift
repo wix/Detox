@@ -8,7 +8,12 @@
 import Foundation
 
 public class DetoxUserActivityParser : NSObject {
-	public class func parseUserActivityData(url: URL) -> [String: Any] {
+	@objc
+	public class func parseUserActivityData(url: URL?) -> [String: Any]? {
+		guard let url = url else {
+			return nil
+		}
+		
 		guard let data = try? Data.init(contentsOf: url) else {
 			Swift.fatalError("Unable to read user activity data file.")
 		}

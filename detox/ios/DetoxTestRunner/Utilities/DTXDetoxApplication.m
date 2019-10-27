@@ -7,15 +7,43 @@
 
 #import "DTXDetoxApplication.h"
 #import "DetoxIPCAPI.h"
+#import "DetoxTestRunner-Swift.h"
 #import <DetoxIPC/DTXIPCConnection.h>
 @import ObjectiveC;
 
-@interface NSObject ()
+static NSURL* _launchUserNotificationDataURL()
+{
+	NSString* userNotificationDataPath = [[NSUserDefaults standardUserDefaults] objectForKey:@"detoxUserNotificationDataURL"];
+	
+	if(userNotificationDataPath == nil)
+	{
+		return nil;
+	}
+	
+	return [NSURL fileURLWithPath:userNotificationDataPath];
+}
 
-- (id)initWithServiceName:(NSString *)serviceName;
-- (id)initWithMachServiceName:(NSString *)name;
+static NSURL* _launchUserActivityDataURL()
+{
+	NSString* userActivityDataPath = [[NSUserDefaults standardUserDefaults] objectForKey:@"detoxUserActivityDataURL"];
+	
+	if(userActivityDataPath == nil)
+	{
+		return nil;
+	}
+	
+	return [NSURL fileURLWithPath:userActivityDataPath];
+}
 
-@end
+static NSURL* _URLOverride()
+{
+	return [NSURL URLWithString:[[NSUserDefaults standardUserDefaults] objectForKey:@"detoxURLOverride"]];
+}
+
+static NSString* _sourceAppOverride()
+{
+	return [[NSUserDefaults standardUserDefaults] objectForKey:@"detoxSourceAppOverride"];
+}
 
 @interface DTXDetoxApplication () <DetoxTestRunner>
 {
@@ -129,6 +157,14 @@
 - (void)notifyOnCrashWithDetails:(NSDictionary*)details
 {
 	//TODO: Send over web socket
+}
+
+- (void)getLaunchArgumentsWithCompletionHandler:(void (^)(BOOL waitForDebugger, NSDictionary<NSString*, id>* userNotificationData, NSDictionary<NSString*, id>* userActivityData, NSURL* openURL, NSString* sourceApp))completionHandler
+{
+	id userNotificationData = [DetoxUserNotificationParser parseUserNotificationDataWithUrl:_launchUserNotificationDataURL()];
+	id userActivityData = [DetoxUserActivityParser parseUserActivityDataWithUrl:_launchUserActivityDataURL()];
+	
+	completionHandler([NSUserDefaults.standardUserDefaults boolForKey:@"detoxWaitForDebugger"], userNotificationData, userActivityData, _URLOverride(), _sourceAppOverride());
 }
 
 @end

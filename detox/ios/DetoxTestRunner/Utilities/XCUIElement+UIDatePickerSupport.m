@@ -143,14 +143,7 @@ static UIDatePicker* _datePickerFromValueProvider(id self)
 	
 //	if([application isKindOfClass:DTXDetoxApplication.class])
 //	{
-//		dispatch_group_t gr = dispatch_group_create();
-//		dispatch_group_enter(gr);
-//
-//		[application.detoxHelper endDelayingTimePickerEventsWithCompletionHandler:^{
-//			dispatch_group_leave(gr);
-//		}];
-//
-//		dispatch_group_wait(gr, DISPATCH_TIME_FOREVER);
+//		[application.detoxHelper endDelayingTimePickerEventsWithCompletionHandler:^{}];
 //	}
 }
 
