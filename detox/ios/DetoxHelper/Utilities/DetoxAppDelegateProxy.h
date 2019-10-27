@@ -17,7 +17,7 @@
 
 + (void)setLaunchUserActivity:(NSDictionary*)userActivity;
 + (void)setLaunchUserNotification:(NSDictionary*)userNotification;
-+ (void)setLaunchOpenURL:(NSDictionary*)URL options:(NSDictionary*)options;
++ (void)setLaunchOpenURL:(NSURL*)URL options:(NSDictionary*)options;
 
 - (void)dispatchUserActivity:(NSDictionary*)userActivity delayUntilActive:(BOOL)delay;
 - (void)dispatchUserNotification:(NSDictionary*)userNotification delayUntilActive:(BOOL)delay;

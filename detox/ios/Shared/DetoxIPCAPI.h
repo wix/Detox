@@ -11,7 +11,7 @@
 @protocol DetoxTestRunner <NSObject>
 
 - (void)notifyOnCrashWithDetails:(NSDictionary*)details;
-- (void)getLaunchArgumentsWithCompletionHandler:(void (^)(BOOL waitForDebugger, NSDictionary<NSString*, id>* userNotificationData, NSDictionary<NSString*, id>* userActivityData, NSURL* openURL, NSString* sourceApp))completionHandler;
+- (void)getLaunchArgumentsWithCompletionHandler:(void (^)(NSUInteger waitForDebugger, NSURL* recordingPath, NSDictionary<NSString*, id>* userNotificationData, NSDictionary<NSString*, id>* userActivityData, NSURL* openURL, NSString* sourceApp))completionHandler;
 
 @end
 

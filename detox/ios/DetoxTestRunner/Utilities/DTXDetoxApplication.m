@@ -159,12 +159,13 @@ static NSString* _sourceAppOverride()
 	//TODO: Send over web socket
 }
 
-- (void)getLaunchArgumentsWithCompletionHandler:(void (^)(BOOL waitForDebugger, NSDictionary<NSString*, id>* userNotificationData, NSDictionary<NSString*, id>* userActivityData, NSURL* openURL, NSString* sourceApp))completionHandler
+- (void)getLaunchArgumentsWithCompletionHandler:(void (^)(NSUInteger waitForDebugger, NSURL* recordingPath, NSDictionary<NSString*, id>* userNotificationData, NSDictionary<NSString*, id>* userActivityData, NSURL* openURL, NSString* sourceApp))completionHandler
 {
+	
 	id userNotificationData = [DetoxUserNotificationParser parseUserNotificationDataWithUrl:_launchUserNotificationDataURL()];
 	id userActivityData = [DetoxUserActivityParser parseUserActivityDataWithUrl:_launchUserActivityDataURL()];
 	
-	completionHandler([NSUserDefaults.standardUserDefaults boolForKey:@"detoxWaitForDebugger"], userNotificationData, userActivityData, _URLOverride(), _sourceAppOverride());
+	completionHandler([NSUserDefaults.standardUserDefaults integerForKey:@"detoxWaitForDebugger"], nil, userNotificationData, userActivityData, _URLOverride(), _sourceAppOverride());
 }
 
 @end

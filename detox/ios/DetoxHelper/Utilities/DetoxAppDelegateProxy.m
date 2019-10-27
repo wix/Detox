@@ -134,7 +134,7 @@ static BOOL _disableTouchIndicator;
 	_pendingLaunchUserNotificationDispatcher = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationData:userNotification];
 }
 
-+ (void)setLaunchOpenURL:(NSDictionary *)URL options:(NSDictionary *)options
++ (void)setLaunchOpenURL:(NSURL *)URL options:(NSDictionary *)options
 {
 	_pendingLaunchOpenURL = NSDictionaryOfVariableBindings(URL, options);
 }
@@ -226,7 +226,7 @@ static BOOL _disableTouchIndicator;
 	{
 		rv[UIApplicationLaunchOptionsURLKey] = openURLOverride;
 		
-		NSString* originalAppOverride = _pendingLaunchOpenURL[@"URL"][@"UIApplicationOpenURLOptionsSourceApplicationKey"];
+		NSString* originalAppOverride = _pendingLaunchOpenURL[@"options"][UIApplicationOpenURLOptionsSourceApplicationKey];
 		if(originalAppOverride)
 		{
 			rv[UIApplicationLaunchOptionsSourceApplicationKey] = originalAppOverride;
@@ -265,13 +265,11 @@ static BOOL _disableTouchIndicator;
 	_pendingLaunchUserNotificationDispatcher = nil;
 	_pendingLaunchUserActivityDispatcher = nil;
 	
-	dtx_defer {
-		if(_pendingLaunchOpenURL)
-		{
-			[self _actualDispatchOpenURL:_pendingLaunchOpenURL];
-			_pendingLaunchOpenURL = nil;
-		}
-	};
+	if(_pendingLaunchOpenURL)
+	{
+		[self _actualDispatchOpenURL:_pendingLaunchOpenURL];
+		_pendingLaunchOpenURL = nil;
+	}
 	
 	return rv;
 }

@@ -9,8 +9,11 @@
 #import "XCUIElement+ExtendedTouches.h"
 #import "XCUIElement+UIDatePickerSupport.h"
 #import "DTXDetoxApplication.h"
+#import "WebSocket.h"
 
-@interface DetoxTestRunner : XCTestCase
+@interface DetoxTestRunner : XCTestCase <WebSocketDelegate>
+
+@property (nonatomic, strong) WebSocket *webSocket;
 
 @end
 
@@ -18,6 +21,8 @@
 
 - (void)setUp
 {
+	self.webSocket = [[WebSocket alloc] init];
+	self.webSocket.delegate = self;
     self.continueAfterFailure = YES;
 }
 
