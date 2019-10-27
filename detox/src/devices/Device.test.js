@@ -644,19 +644,12 @@ describe('Device', () => {
   });
 
   it(`new Device() with invalid device config (no binary) should throw`, () => {
+    // TODO: this is an invalid test, because it will pass only on SimulatorDriver
     expect(() => new Device({
       deviceConfig: invalidDeviceNoBinary.configurations['ios.sim.release'],
       deviceDriver: new SimulatorDriver(client),
       sessionConfig: validScheme.session,
-    })).toThrowErrorMatchingSnapshot();
-  });
-
-  it(`new Device() with invalid device config (no device name) should throw`, () => {
-    expect(() => new Device({
-      deviceConfig: invalidDeviceNoDeviceName.configurations['ios.sim.release'],
-      deviceDriver: new SimulatorDriver(client),
-      sessionConfig: validScheme.session,
-    })).toThrowErrorMatchingSnapshot();
+    })).toThrowError(/binaryPath.* is missing/);
   });
 
   it(`should accept absolute path for binary`, async () => {
@@ -675,6 +668,14 @@ describe('Device', () => {
     await device.pressBack();
 
     expect(driverMock.driver.pressBack).toHaveBeenCalledWith(device._deviceId);
+  });
+
+  it(`clearKeychain() should invoke driver's clearKeychain()`, async () => {
+    const device = validDevice();
+
+    await device.clearKeychain();
+
+    expect(driverMock.driver.clearKeychain).toHaveBeenCalledWith(device._deviceId);
   });
 
   describe('get ui device', () => {
@@ -701,7 +702,7 @@ describe('Device', () => {
   });
 
   it('takeScreenshot(name) should throw an exception if given name is empty', async () => {
-    await expect(validDevice().takeScreenshot()).rejects.toThrowErrorMatchingSnapshot();
+    await expect(validDevice().takeScreenshot()).rejects.toThrowError(/empty name/);
   });
 
   it('takeScreenshot(name) should delegate the work to the driver', async () => {

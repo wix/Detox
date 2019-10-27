@@ -11,23 +11,47 @@
 |`type`| Device type, available options are `ios.simulator`, `ios.none`, `android.emulator`, and `android.attached`. |
 |`binaryPath`| Relative path to the ipa/app due to be  tested (make sure you build the app in a project relative path)|
 |`testBinaryPath`| (optional, Android only): relative path to the test app (apk) |
-|`name`| Device name, aligns to the device list avaliable through `xcrun simctl list` for example, this is one line of the output of `xcrun simctl list`: `A3C93900-6D17-4830-8FBE-E102E4BBCBB9  iPhone 7  Shutdown  iPhone 7  iOS 10.2`, in order to choose the first `iPhone 7` regardless of OS version, use `iPhone 7`. To be OS specific use `iPhone 7, iOS 10.2`|
+|`device`| Device query, e.g. `{ "byType": "iPhone 11 Pro" }` for iOS simulator or `{ "avdName": "Nexus_5X_API_29" }` |
 |`build`| **[optional]** Build command (either `xcodebuild`, `react-native run-ios`, etc...), will be later available through detox CLI tool.|
 	
 **Example:**
 
-```json
+```js
+{
+  // ...
   "detox": {
-	...
+    // ...
     "configurations": {
       "ios.sim.debug": {
         "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
         "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
         "type": "ios.simulator",
-        "name": "iPhone 7 Plus"
-      }
+        "device": { /* one of these or a combination of them */
+          "id": "D53474CF-7DD1-4673-8517-E75DAD6C34D6",
+          "type": "iPhone 11 Pro",
+          "name": "MySim",
+          "os": "iOS 13.0",
+        }
+      },
+      "android.emu.release": {
+        "binaryPath": "...",
+        "build": "...",
+        "type": "android.emulator",
+        "device": {
+          "avdName": "Nexus_5X_API_29",
+        }
+      },
+      "android.att.release": {
+        "binaryPath": "...",
+        "build": "...",
+        "type": "android.attached",
+        "device": {
+          "adbName": "YOGAA1BBB412",
+        }
+      },
     }
   }
+}
 ```	
 	
 ### Server Configuration
@@ -52,7 +76,7 @@ Session can also be set per configuration:
     "configurations": {
       "ios.sim.debug": {
         ...
-	"session": {
+        "session": {
           "server": "ws://localhost:8099",
           "sessionId": "YourProjectSessionId"
         }

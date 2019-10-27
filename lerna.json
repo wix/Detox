@@ -9,9 +9,10 @@
     "examples/demo-react-native",
     "examples/demo-react-native-detox-instruments",
     "examples/demo-react-native-jest",
-    "generation"
+    "generation",
+    "."
   ],
-  "version": "14.3.2",
+  "version": "14.5.1",
   "npmClient": "npm",
   "command": {
     "publish": {

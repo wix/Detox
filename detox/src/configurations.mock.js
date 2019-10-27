@@ -171,6 +171,31 @@ const validOneEmulator = {
   }
 };
 
+const deviceObjectSimulator = {
+  "configurations": {
+    "ios.sim.release": {
+      "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+      "type": "ios.simulator",
+      "device": {
+        "name": "iPhone 7 Plus",
+        "os": "iOS 10.2"
+      }
+    }
+  }
+};
+
+const deviceObjectEmulator = {
+  "configurations": {
+    "android.emu.release": {
+      "binaryPath": "android/app/build/outputs/apk/app-debug.apk",
+      "type": "android.emulator",
+      "device": {
+        "avdName": "Nexus 5X"
+      }
+    }
+  }
+};
+
 module.exports = {
   validOneDeviceNoSession,
   validOneIosNoneDeviceNoSession,
@@ -186,5 +211,7 @@ module.exports = {
   sessionPerConfiguration,
   sessionInCommonAndInConfiguration,
   validOneEmulator,
-  pathsTests
+  pathsTests,
+  deviceObjectEmulator,
+  deviceObjectSimulator,
 };

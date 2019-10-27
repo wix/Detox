@@ -109,7 +109,7 @@ describe('index', () => {
 
     const expectedConfig = {
       ...schemes.validOneDeviceNoSession.configurations['ios.sim.release'],
-      name: 'iPhone X'
+      device: 'iPhone X'
     }
 
     expect(Detox).toHaveBeenCalledWith({

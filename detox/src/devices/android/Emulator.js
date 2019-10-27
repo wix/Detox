@@ -24,6 +24,7 @@ class Emulator {
   }
 
   async boot(emulatorName, options = {port: undefined}) {
+    const deviceLaunchArgs = (argparse.getArgValue('deviceLaunchArgs') || '').split(/\s+/);
     const emulatorArgs = _.compact([
       '-verbose',
       '-no-audio',
@@ -32,11 +33,12 @@ class Emulator {
       argparse.getArgValue('readOnlyEmu') ? '-read-only' : '',
       options.port ? `-port` : '',
       options.port ? `${options.port}` : '',
+      ...deviceLaunchArgs,
       `@${emulatorName}`
     ]);
 
     const gpuMethod = this.gpuMethod();
-    if(gpuMethod) {
+    if (gpuMethod) {
       emulatorArgs.push('-gpu', gpuMethod);
     }
 
@@ -96,7 +98,7 @@ class Emulator {
 
   gpuMethod() {
     const gpuArgument = argparse.getArgValue('gpu');
-    if(gpuArgument) {
+    if (gpuArgument) {
       return gpuArgument;
     }
 

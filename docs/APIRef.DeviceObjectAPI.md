@@ -28,6 +28,7 @@
 - [`device.unmatchFace()` **iOS Only**](#deviceunmatchface-ios-only)
 - [`device.matchFinger()` **iOS Only**](#devicematchfinger-ios-only)
 - [`device.unmatchFinger()` **iOS Only**](#deviceunmatchfinger-ios-only)
+- [`device.clearKeychain()` **iOS Only**](#deviceclearkeychain-ios-only)
 - [`device.pressBack()` **Android Only**](#devicepressback-android-only)
 - [`device.getUIDevice()` **Android Only**](#devicegetuidevice-android-only)
 
@@ -366,6 +367,9 @@ Simulates the success of a finger match via TouchID
 
 ### `device.unmatchFinger()` **iOS Only**
 Simulates the failure of a finger match via TouchID
+
+### `device.clearKeychain()` **iOS Only**
+Clears the device keychain
 
 ### `device.pressBack()` **Android Only**
 Simulate press back button.

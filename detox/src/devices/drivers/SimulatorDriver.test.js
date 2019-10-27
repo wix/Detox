@@ -79,6 +79,72 @@ describe('IOS simulator driver', () => {
       expect(sim.applesimutils.unmatchBiometric).toHaveBeenCalledWith(deviceId, 'Finger');
     })
   });
+
+  describe('acquireFreeDevice', () => {
+    let applesimutils;
+
+    beforeEach(() => {
+      const SimulatorDriver = require('./SimulatorDriver');
+      uut = new SimulatorDriver({ client: {} });
+      jest.spyOn(uut.deviceRegistry, 'isDeviceBusy').mockReturnValue(false);
+      applesimutils = uut.applesimutils;
+      applesimutils.list.mockImplementation(async () => require('../ios/applesimutils.mock')['--list']);
+    });
+
+    it('should accept string as device type', async () => {
+      await uut.acquireFreeDevice('iPhone X');
+
+      expect(applesimutils.list).toHaveBeenCalledWith(
+        { byType: 'iPhone X' },
+        'Searching for device by type = "iPhone X" ...'
+      );
+    });
+
+    it('should accept string with comma as device type and OS version', async () => {
+      await uut.acquireFreeDevice('iPhone X, iOS 12.0');
+
+      expect(applesimutils.list).toHaveBeenCalledWith(
+        { byType: 'iPhone X', byOS: 'iOS 12.0' },
+        'Searching for device by type = "iPhone X" and by OS = "iOS 12.0" ...'
+      );
+    });
+
+    it('should accept { byId } as matcher', async () => {
+      await uut.acquireFreeDevice({ id: 'C6EC2279-A6EB-40BE-99D2-5F11949F25E5' });
+
+      expect(applesimutils.list).toHaveBeenCalledWith(
+        { byId: 'C6EC2279-A6EB-40BE-99D2-5F11949F25E5' },
+        'Searching for device by UDID = "C6EC2279-A6EB-40BE-99D2-5F11949F25E5" ...'
+      );
+    });
+
+    it('should accept { byName } as matcher', async () => {
+      await uut.acquireFreeDevice({ name: 'Chika' });
+
+      expect(applesimutils.list).toHaveBeenCalledWith(
+        { byName: 'Chika' },
+        'Searching for device by name = "Chika" ...'
+      );
+    });
+
+    it('should accept { byType } as matcher', async () => {
+      await uut.acquireFreeDevice({ type: 'iPad Air' });
+
+      expect(applesimutils.list).toHaveBeenCalledWith(
+        { byType: 'iPad Air' },
+        'Searching for device by type = "iPad Air" ...'
+      );
+    });
+
+    it('should accept { byType, byOS } as matcher', async () => {
+      await uut.acquireFreeDevice({ type: 'iPad 2', os: 'iOS 9.3.6' });
+
+      expect(applesimutils.list).toHaveBeenCalledWith(
+        { byType: 'iPad 2', byOS: 'iOS 9.3.6' },
+        'Searching for device by type = "iPad 2" and by OS = "iOS 9.3.6" ...'
+      );
+    });
+  });
 });
 
 class mockAppleSimUtils {
@@ -87,5 +153,7 @@ class mockAppleSimUtils {
     this.setBiometricEnrollment = jest.fn();
     this.matchBiometric = jest.fn();
     this.unmatchBiometric = jest.fn();
+    this.boot = jest.fn();
+    this.list = jest.fn();
   }
 }

@@ -13,11 +13,11 @@ describe('AsyncEmitter', () => {
 
   describe('edge cases', () => {
     it('should fail to subscribe to non-registered events', () => {
-      expect(() => emitter.on(NOT_REGISTERED_EVENT, () => {})).toThrowErrorMatchingSnapshot();
+      expect(() => emitter.on(NOT_REGISTERED_EVENT, () => {})).toThrowError(/subscribe to a non-existent/);
     });
 
     it('should fail to unsubscribe from non-registered events', () => {
-      expect(() => emitter.off(NOT_REGISTERED_EVENT, () => {})).toThrowErrorMatchingSnapshot();
+      expect(() => emitter.off(NOT_REGISTERED_EVENT, () => {})).toThrowError(/unsubscribe from a non-existent/);
     });
 
     it('should not throw on attempt to remove a non-existent listener', () => {

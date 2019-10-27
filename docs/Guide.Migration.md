@@ -2,6 +2,56 @@
 
 We are improving detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes. If a newer version has no entries in this document, it means it does not require special migration steps. Refer to the release notes of the later builds to learn about their improvements and changes.
 
+## 14.5.0
+
+It is recommended to change "name" string to "device" object in your configurations, like shown below:
+
+Before:
+```json
+{
+  "ios.sim.debug": {
+    "type": "ios.simulator",
+    "name": "iPhone 11 Pro"
+  },
+  "android.emu.release": {
+    "type": "android.emulator",
+    "name": "Nexus_5X_API_29"
+  },
+  "android.att.release": {
+    "type": "android.attached",
+    "name": "YOGAA1BBB412"
+  }
+}
+```
+
+After:
+
+```js
+{
+  "ios.sim.debug": {
+    "type": "ios.simulator",
+    "device": { // one of these or a combination of them
+      "id": "D53474CF-7DD1-4673-8517-E75DAD6C34D6",
+      "type": "iPhone 11 Pro",
+      "name": "MySim",
+      "os": "iOS 13.0",
+    }
+  },
+  "android.emu.release": {
+    "type": "android.emulator",
+    "device": { // only avdName is supported at the moment
+      "avdName": "Nexus_5X_API_29",
+    }
+  },
+  "android.att.release": {
+    "type": "android.attached",
+    "device": { // only adbName is supported at the moment
+      "adbName": "YOGAA1BBB412",
+    }
+  }
+}
+```
+
 ## 14.0.0
 
 Detox 14.0.0 drops support for iOS 9.x simulators, and thus it also drops support for any API that is deprecated in iOS 10 and above. This includes legacy [remote](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1623013-application?language=objc) and [local](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1622930-application?language=objc) notifications handling API. These APIs have been deprecated since iOS 10, and we believe we've given app developers enough time to use the modern APIs. Make sure you transition to the [UserNotifications framework](https://developer.apple.com/documentation/usernotifications?language=objc) as soon as possible.

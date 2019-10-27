@@ -22,6 +22,7 @@ class example extends Component {
       url: undefined,
       notification: undefined
     };
+    Linking.addEventListener('url', (params) => this._handleOpenURL(params));
   }
 
   renderButton(title, onPressCallback) {
@@ -60,10 +61,6 @@ class example extends Component {
       console.log('App@didMount: Found pending URL', url);
       this.setState({url: url});
     }
-  }
-
-  componentWillMount() {
-    Linking.addEventListener('url', (params) => this._handleOpenURL(params));
   }
 
   render() {

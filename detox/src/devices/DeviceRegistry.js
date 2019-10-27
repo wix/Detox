@@ -1,89 +1,63 @@
 const _ = require('lodash');
-const fs = require('fs-extra');
-const plockfile = require('proper-lockfile');
-const retry = require('../utils/retry');
-
-const LOCK_RETRY_OPTIONS = {retries: 10000, interval: 5};
+const ExclusiveLockfile = require('../utils/ExclusiveLockfile');
+const safeAsync = require('../utils/safeAsync');
 
 class DeviceRegistry {
-
-  constructor({getDeviceIdsByType, createDevice, lockfile}) {
-    this.getDeviceIdsByType = getDeviceIdsByType;
-    this.createDevice = createDevice;
-    this.lockfile = lockfile;
-    this._createEmptyLockFileIfNeeded();
+  constructor({ lockfilePath }) {
+    /***
+     * @protected
+     * @type {ExclusiveLockfile}
+     */
+    this._lockfile = new ExclusiveLockfile(lockfilePath, {
+      getInitialState: this._getInitialLockFileState.bind(this),
+    });
   }
 
-  async freeDevice(deviceId) {
-    await this._lock();
-    const lockedDevices = this._getBusyDevices();
-    _.remove(lockedDevices, lockedDeviceId => lockedDeviceId === deviceId);
-    this._writeBusyDevicesToLockFile(lockedDevices);
-    await this._unlock();
+  /***
+   * @param {string|Function} getDeviceId
+   * @returns {Promise<string>}
+   */
+  async allocateDevice(getDeviceId) {
+    return this._lockfile.exclusively(async () => {
+      const deviceId = await safeAsync(getDeviceId);
+      this._toggleDeviceStatus(deviceId, true);
+      return deviceId;
+    });
   }
 
-  async getDevice(deviceType) {
-    await this._lock();
-
-    let deviceId = await this._getFreeDevice(deviceType);
-    if (!deviceId) {
-      deviceId = await this.createDevice(deviceType);
-    }
-
-    const busyDevices = this._getBusyDevices();
-    busyDevices.push(deviceId);
-    this._writeBusyDevicesToLockFile(busyDevices);
-    await this._unlock();
-    return deviceId;
+  /***
+   * @param {string|Function} getDeviceId
+   * @returns {void}
+   */
+  async disposeDevice(getDeviceId) {
+    await this._lockfile.exclusively(async () => {
+      const deviceId = await safeAsync(getDeviceId);
+      this._toggleDeviceStatus(deviceId, false);
+    });
   }
 
-  async _lock() {
-    await retry(LOCK_RETRY_OPTIONS, () => plockfile.lockSync(this.lockfile));
+  isDeviceBusy(deviceId) {
+    return this._lockfile.read().includes(deviceId);
   }
 
-  async _unlock() {
-    await plockfile.unlockSync(this.lockfile);
+  /***
+   * @private
+   */
+  _getInitialLockFileState() {
+    return [];
   }
 
-  clear() {
-    this._writeBusyDevicesToLockFile([]);
-  }
+  /***
+   * @private
+   */
+  _toggleDeviceStatus(deviceId, busy) {
+    const state = this._lockfile.read();
 
-  async isBusy(deviceId) {
-    await this._lock();
-    const isBusy = this._getBusyDevices().includes(deviceId);
+    const newState = busy
+      ? _.concat(state, deviceId)
+      : _.without(state, deviceId);
 
-    await this._unlock();
-    return isBusy;
-  }
-
-  _createEmptyLockFileIfNeeded() {
-    if (!fs.existsSync(this.lockfile)) {
-      fs.ensureFileSync(this.lockfile);
-      this._writeBusyDevicesToLockFile([]);
-    }
-  }
-
-  _writeBusyDevicesToLockFile(lockedDevices) {
-    fs.writeFileSync(this.lockfile, JSON.stringify(lockedDevices));
-  }
-
-  _getBusyDevices() {
-    this._createEmptyLockFileIfNeeded();
-    const lockFileContent = fs.readFileSync(this.lockfile, 'utf-8');
-    return JSON.parse(lockFileContent);
-  }
-
-  async _getFreeDevice(deviceType) {
-    const busyDevices = await this._getBusyDevices();
-    const deviceIds = await this.getDeviceIdsByType(deviceType, busyDevices);
-
-    for (let i = 0; i < deviceIds.length; i++) {
-      let deviceId = deviceIds[i];
-      if (!this._getBusyDevices().includes(deviceId)) {
-        return deviceId;
-      }
-    }
+    this._lockfile.write(newState);
   }
 }
 

@@ -40,7 +40,7 @@ class DeviceDriverBase {
     return {};
   }
 
-  async acquireFreeDevice(name) {
+  async acquireFreeDevice(deviceQuery) {
     await Promise.resolve('');
   }
 
@@ -101,6 +101,10 @@ class DeviceDriverBase {
 
   async setLocation(lat, lon) {
     return await Promise.resolve('');
+  }
+
+  async clearKeychain(_udid) {
+    return await Promise.resolve('')
   }
 
   async waitUntilReady() {

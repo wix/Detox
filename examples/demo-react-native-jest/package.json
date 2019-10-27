@@ -1,6 +1,6 @@
 {
   "name": "demo-react-native-jest",
-  "version": "14.3.2",
+  "version": "14.5.1",
   "private": true,
   "scripts": {
     "test:ios-release": "detox test --configuration ios.sim.release -l verbose",
@@ -13,7 +13,7 @@
     "test:jest-circus:android-release-ci": "detox test --configuration android.emu.release -l verbose -o e2e/config-circus.json --workers 2"
   },
   "devDependencies": {
-    "detox": "^14.3.2",
+    "detox": "^14.5.1",
     "jest": "24.8.x",
     "jest-circus": "24.8.x"
   },
@@ -23,12 +23,16 @@
       "ios.sim.release": {
         "binaryPath": "../demo-react-native/ios/build/Build/Products/Release-iphonesimulator/example.app",
         "type": "ios.simulator",
-        "name": "iPhone X"
+        "device": {
+          "type": "iPhone 11 Pro"
+        }
       },
       "android.emu.release": {
         "binaryPath": "../demo-react-native/android/app/build/outputs/apk/release/app-release.apk",
         "type": "android.emulator",
-        "name": "Nexus_5X_API_26"
+        "device": {
+          "avdName": "Nexus_5X_API_26"
+        }
       }
     }
   }

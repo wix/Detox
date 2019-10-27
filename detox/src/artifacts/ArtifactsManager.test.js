@@ -200,7 +200,7 @@ describe('ArtifactsManager', () => {
         artifactsApi.requestIdleCallback(callbacks[0], testPlugin); await sleep(0);
         await rejects[0](new Error('test onIdleCallback error'));
 
-        expect(proxy.logger.error.mock.calls).toMatchSnapshot();
+        expect(proxy.logger.error.mock.calls.length).toBe(0);
 
         artifactsApi.requestIdleCallback(callbacks[1], testPlugin); await sleep(0);
         expect(callbacks[1]).toHaveBeenCalled();
@@ -234,7 +234,15 @@ describe('ArtifactsManager', () => {
             });
 
             await artifactsManager[hookName](argFactory());
-            expect(proxy.logger.warn.mock.calls).toMatchSnapshot();
+            expect(proxy.logger.warn.mock.calls).toEqual([[
+              {
+                err: expect.any(Error),
+                event: 'SUPPRESS_PLUGIN_ERROR',
+                methodName: hookName,
+                plugin: 'testPlugin',
+              },
+              expect.stringContaining(`Suppressed error inside function call: testPlugin.${hookName}`)
+            ]]);
           });
         }
 

@@ -17,7 +17,7 @@ class Device {
   async prepare(params = {}) {
     this._binaryPath = this._getAbsolutePath(this._deviceConfig.binaryPath);
     this._testBinaryPath = this._deviceConfig.testBinaryPath ? this._getAbsolutePath(this._deviceConfig.testBinaryPath) : null;
-    this._deviceId = await this.deviceDriver.acquireFreeDevice(this._deviceConfig.name);
+    this._deviceId = await this.deviceDriver.acquireFreeDevice(this._deviceConfig.device || this._deviceConfig.name);
     this._bundleId = await this.deviceDriver.getBundleIdFromBinary(this._binaryPath);
 
     await this.deviceDriver.prepare();
@@ -208,6 +208,10 @@ class Device {
     lat = String(lat);
     lon = String(lon);
     await this.deviceDriver.setLocation(this._deviceId, lat, lon);
+  }
+
+  async clearKeychain() {
+    await this.deviceDriver.clearKeychain(this._deviceId);
   }
 
   async _sendPayload(key, params) {

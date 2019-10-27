@@ -9,7 +9,7 @@
 #import "WXRunLoopIdlingResource.h"
 #import <stdatomic.h>
 #include <dlfcn.h>
-#include <fishhook.h>
+#include "fishhook.h"
 #import <pthread.h>
 @import ObjectiveC;
 
