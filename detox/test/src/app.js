@@ -55,15 +55,13 @@ class example extends Component {
   }
 
   async componentDidMount() {
+    Linking.addEventListener('url', (params) => this._handleOpenURL(params));
+
     const url = await Linking.getInitialURL();
     if (url) {
       console.log('App@didMount: Found pending URL', url);
       this.setState({url: url});
     }
-  }
-
-  componentWillMount() {
-    Linking.addEventListener('url', (params) => this._handleOpenURL(params));
   }
 
   render() {
