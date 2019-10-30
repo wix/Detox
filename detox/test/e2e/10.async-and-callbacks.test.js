@@ -4,7 +4,7 @@ describe('Async and Callbacks', () => {
     await element(by.text('Sanity')).tap();
   });
 
-  it('should handle done() callback', (done) => {
+  it('should handle done() callback', async (done) => {
     expect(await element(by.text('Welcome'))).toBeVisible().then(() => {
       setTimeout(() => {
         done();
