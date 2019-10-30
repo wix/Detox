@@ -65,9 +65,9 @@ class TypeMatcher extends Matcher {
 }
 
 class VisibleMatcher extends Matcher {
-  constructor() {
+  constructor(percentage = 0.75) {
     super();
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForSufficientlyVisible());
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForMinimumVisiblePercent(percentage));
   }
 }
 

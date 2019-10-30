@@ -74,9 +74,9 @@ class TraitsMatcher extends Matcher {
 }
 
 class VisibleMatcher extends Matcher {
-  constructor() {
+  constructor(percentage = 0.75) {
     super();
-    this._call = invoke.callDirectly(GreyMatchers.matcherForSufficientlyVisible());
+    this._call = invoke.callDirectly(GreyMatchers.matcherForMinimumVisiblePercent(percentage));
   }
 }
 

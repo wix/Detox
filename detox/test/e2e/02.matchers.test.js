@@ -4,6 +4,13 @@ describe('Matchers', () => {
     await element(by.text('Matchers')).tap();
   });
 
+  it('should assert visibility', async () => {
+    await expect(element(by.id('visible30%'))).toBeVisible(0.3);
+    await expect(element(by.id('visible1%'))).toBeVisible(0.01);
+    await expect(element(by.id('visible75%'))).toBeVisible(0.75);
+    await expect(element(by.id('visible75%'))).toBeVisible();
+  });
+
   it('should match elements by (accessibility) label', async () => {
     await element(by.label('Label')).tap();
     await expect(element(by.text('Label Working!!!'))).toBeVisible();

@@ -16,11 +16,18 @@ Expect verifies if a certain value is as expected to be.
 - [`.toHaveValue()`](#tohavevaluevalue)
 
 
-### `toBeVisible()`
-Expect the view to be at least 75% visible.
+
+### `toBeVisible(percentage=0.75)`
+Expect the view to be at least 75% visible by default. Any arbitrary visibility
+percentage in a range of [0, 1] (inclusive) can be specified.
 
 ```js
 await expect(element(by.id('UniqueId204'))).toBeVisible();
+```
+
+
+```js
+await expect(element(by.id('visible30%'))).toBeVisible(0.3);
 ```
 
 ### `toBeNotVisible()`

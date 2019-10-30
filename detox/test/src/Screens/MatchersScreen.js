@@ -63,6 +63,20 @@ export default class MatchersScreen extends Component {
           <Text style={{color: 'brown', marginBottom: 20}}>Index</Text>
         </TouchableOpacity>        
 
+        <View style={{ width: 100, height: 100, backgroundColor: 'yellow', overflow: 'hidden' }}>
+          <View
+            testID="visible30%"
+            style={{ position: 'absolute', width: 100, height: 25, backgroundColor: 'magenta', left: -70 }}
+          />
+          <View
+            testID="visible1%"
+            style={{ position: 'absolute', width: 100, height: 25, backgroundColor: 'red', left: -99, top: 25 }}
+          />
+          <View
+            testID="visible75%"
+            style={{ position: 'absolute', width: 100, height: 25, backgroundColor: 'green', left: -25, top: 50 }}
+          />
+        </View>
       </View>
     );
   }

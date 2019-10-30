@@ -359,8 +359,8 @@ class ExpectElement extends Expect {
     super(invocationManager);
     this._element = element;
   }
-  async toBeVisible() {
-    return await new MatcherAssertionInteraction(this._invocationManager, this._element, new VisibleMatcher()).execute();
+  async toBeVisible(percentage) {
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, new VisibleMatcher(percentage)).execute();
   }
   async toBeNotVisible() {
     return await new MatcherAssertionInteraction(this._invocationManager, this._element, new NotVisibleMatcher()).execute();
@@ -397,8 +397,8 @@ class WaitForElement extends WaitFor {
     //if ((!element instanceof Element)) throw new Error(`WaitForElement ctor argument must be a valid Element, got ${typeof element}`);
     this._element = element;
   }
-  toBeVisible() {
-    return new WaitForInteraction(this._invocationManager, this._element, new VisibleMatcher());
+  toBeVisible(percentage) {
+    return new WaitForInteraction(this._invocationManager, this._element, new VisibleMatcher(percentage));
   }
   toBeNotVisible() {
     return new WaitForInteraction(this._invocationManager, this._element, new VisibleMatcher())._not();

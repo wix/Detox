@@ -2,6 +2,8 @@ package com.wix.detox.espresso;
 
 import android.view.View;
 
+import java.lang.Math;
+
 import org.hamcrest.Matcher;
 
 import androidx.test.espresso.matcher.ViewMatchers.Visibility;
@@ -73,6 +75,10 @@ public class DetoxMatcher {
 
     public static Matcher<View> matcherForSufficientlyVisible() {
         return isDisplayingAtLeast(75);
+    }
+
+    public static Matcher<View> matcherForMinimumVisiblePercent(double percentage) {
+        return isDisplayingAtLeast((int)percentage * 100);
     }
 
     public static Matcher<View> matcherForNotVisible() {

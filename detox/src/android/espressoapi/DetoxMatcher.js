@@ -155,6 +155,21 @@ class DetoxMatcher {
     };
   }
 
+  static matcherForMinimumVisiblePercent(percentage) {
+    if (typeof percentage !== "number") throw new Error("percentage should be a number, but got " + (percentage + (" (" + (typeof percentage + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxMatcher"
+      },
+      method: "matcherForMinimumVisiblePercent",
+      args: [{
+        type: "Double",
+        value: percentage
+      }]
+    };
+  }
+
   static matcherForNotVisible() {
     return {
       target: {
