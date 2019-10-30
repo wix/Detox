@@ -17,7 +17,7 @@ describe(':android: Integrative actions', () => {
 
     await waitFor(scrollViewDriver.secondPageItem()).toBeVisible().whileElement(scrollViewDriver.byId()).scroll(100, 'down');
     await scrollViewDriver.secondPageItem().tap();
-    await expect(element(by.text(expectedAlertText))).toBeVisible();
+    await expect(await element(by.text(expectedAlertText))).toBeVisible();
     await element(by.text('OK')).tap();
   });
 

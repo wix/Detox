@@ -9,6 +9,6 @@
       const height = await uiDevice.getDisplayHeight();
       const width = await uiDevice.getDisplayWidth();
       await uiDevice.click(width / 2, height / 2);
-      await expect(element(by.text('Tap works'))).toBeVisible();
+      await expect(await element(by.text('Tap works'))).toBeVisible();
     });
 });

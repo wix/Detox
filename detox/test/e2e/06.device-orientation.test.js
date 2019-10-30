@@ -2,13 +2,13 @@ describe('Device Orientation', () => {
   beforeEach(async() => {
     await device.reloadReactNative();
     await element(by.text('Orientation')).tap();
-    await expect(element(by.id('currentOrientation'))).toExist();
+    await expect(await element(by.id('currentOrientation'))).toExist();
   });
 
   it('OrientationLandscape', async () => {
     await device.setOrientation('landscape');
 
-    await expect(element(by.id('currentOrientation'))).toHaveText('Landscape');
+    await expect(await element(by.id('currentOrientation'))).toHaveText('Landscape');
   });
 
   it('OrientationPortrait', async() => {
@@ -16,6 +16,6 @@ describe('Device Orientation', () => {
     await device.setOrientation('landscape');
     await device.setOrientation('portrait');
 
-    await expect(element(by.id('currentOrientation'))).toHaveText('Portrait');
+    await expect(await element(by.id('currentOrientation'))).toHaveText('Portrait');
   });
 });

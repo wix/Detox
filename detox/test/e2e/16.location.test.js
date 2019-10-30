@@ -19,7 +19,7 @@ describe(':ios: location', () => {
     await device.relaunchApp({ permissions: { location: 'never' } });
     await element(by.text('Location')).tap();
     await element(by.id('getLocationButton')).tap();
-    await expect(element(by.id('error'))).toBeVisible();
+    await expect(await element(by.id('error'))).toBeVisible();
   });
 
   it('Should receive location (20,20)', async () => {
@@ -32,7 +32,7 @@ describe(':ios: location', () => {
     await element(by.id('getLocationButton')).tap();
     await waitFor(element(by.text('Latitude: 20.1'))).toBeVisible().withTimeout(3000);
 
-    await expect(element(by.text('Latitude: 20.1'))).toBeVisible();
-    await expect(element(by.text('Longitude: 20.2'))).toBeVisible();
+    await expect(await element(by.text('Latitude: 20.1'))).toBeVisible();
+    await expect(await element(by.text('Longitude: 20.2'))).toBeVisible();
   });
 });

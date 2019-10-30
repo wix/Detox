@@ -474,18 +474,18 @@ Same thing with expectations
 ```js 
 // <=4.x.x
 it('should have welcome screen', () => {
-  expect(element(by.text('Welcome'))).toBeVisible();
-  expect(element(by.text('Say Hello'))).toBeVisible(); 
-  expect(element(by.text('Say World'))).toBeVisible();
+  expect(await element(by.text('Welcome'))).toBeVisible();
+  expect(await element(by.text('Say Hello'))).toBeVisible(); 
+  expect(await element(by.text('Say World'))).toBeVisible();
 };
 ```
 
 ```js
 // 5.x.x
 it('should have welcome screen', async () => {
-  await expect(element(by.text('Welcome'))).toBeVisible();
-  await expect(element(by.text('Say Hello'))).toBeVisible();
-  await expect(element(by.text('Say World'))).toBeVisible();
+  await expect(await element(by.text('Welcome'))).toBeVisible();
+  await expect(await element(by.text('Say Hello'))).toBeVisible();
+  await expect(await element(by.text('Say World'))).toBeVisible();
 });
 ```
 

@@ -7,25 +7,25 @@ describe('StressTests', () => {
   it('should handle tap during busy bridge (one way)', async () => {
     await element(by.text('Bridge OneWay Stress')).tap();
     await element(by.text('Next')).tap();
-    await expect(element(by.text('BridgeOneWay'))).toBeVisible();
+    await expect(await element(by.text('BridgeOneWay'))).toBeVisible();
   });
 
   it('should handle tap during busy bridge (two way)', async () => {
     await element(by.text('Bridge TwoWay Stress')).tap();
     await element(by.text('Next')).tap();
-    await expect(element(by.text('BridgeTwoWay'))).toBeVisible();
+    await expect(await element(by.text('BridgeTwoWay'))).toBeVisible();
   });
 
   it('should handle tap during busy bridge (setState)', async () => {
     await element(by.text('Bridge setState Stress')).tap();
     await element(by.text('Next')).tap();
-    await expect(element(by.text('BridgeSetState'))).toBeVisible();
+    await expect(await element(by.text('BridgeSetState'))).toBeVisible();
   });
 
   it('should handle tap during busy JS event loop', async () => {
     await element(by.text('EventLoop Stress')).tap();
     await element(by.text('Next')).tap();
-    await expect(element(by.text('EventLoop'))).toBeVisible();
+    await expect(await element(by.text('EventLoop'))).toBeVisible();
   });
 
   it('should handle consecutive taps', async () => {

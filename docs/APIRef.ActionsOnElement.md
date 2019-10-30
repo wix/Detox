@@ -136,7 +136,7 @@ column - date picker column index
 value - string value to set in column
 
 ```js
-await expect(element(by.id('pickerView'))).toBeVisible();
+await expect(await element(by.id('pickerView'))).toBeVisible();
 await element(by.id('pickerView')).setColumnToValue(1,"6");
 await element(by.id('pickerView')).setColumnToValue(2,"34");
 ```
@@ -151,7 +151,7 @@ dateString - string representing a date in the supplied dateFormat
 dateFormat - format for the dateString supplied
 
 ```js
-await expect(element(by.id('datePicker'))).toBeVisible();
+await expect(await element(by.id('datePicker'))).toBeVisible();
 await element(by.id('datePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', "yyyy-MM-dd'T'HH:mm:ssZZZZZ");
 ```
 
@@ -164,6 +164,6 @@ speed - slow/fast - default is slow
 angle - value in radiant - default is 0
 
 ```js
-await expect(element(by.id('PinchableScrollView'))).toBeVisible();
+await expect(await element(by.id('PinchableScrollView'))).toBeVisible();
 await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0);
 ```

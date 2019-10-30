@@ -3,8 +3,8 @@
 // support complex args on iOS -- no point in testing it out.
 describe(':android: Launch arguments', () => {
   async function assertLaunchArg(launchArgs, key, expectedValue) {
-    await expect(element(by.id(`launchArg-${key}.name`))).toBeVisible();
-    await expect(element(by.id(`launchArg-${key}.value`))).toHaveText(expectedValue);
+    await expect(await element(by.id(`launchArg-${key}.name`))).toBeVisible();
+    await expect(await element(by.id(`launchArg-${key}.value`))).toHaveText(expectedValue);
   }
 
   it('should handle primitive args', async () => {

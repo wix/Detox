@@ -34,27 +34,27 @@ describe('Animations', () => {
   _.forEach(['JS', 'Native'], (driver) => {
     it(`should find element (driver: ${driver})`, async () => {
       await _startTest(driver);
-      await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toBeVisible();
+      await expect(await element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toBeVisible();
     });
 
     it(`should detect loops with final number of iterations (driver: ${driver})`, async () => {
       await _startTest(driver, {loops: 4});
-      await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toBeVisible();
+      await expect(await element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toBeVisible();
     });
 
     it.skip(`should not wait for infinite animations (driver: ${driver})`, async() => {
       await _startTest(driver, {loops: -1});
-      await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toBeVisible();
+      await expect(await element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toBeVisible();
     });
 
     it(`should not wait during delays longer than 1.5s (driver: ${driver})`, async () => {
       await _startTest(driver, {delay: 1600});
-      await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toNotExist();
+      await expect(await element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toNotExist();
     });
 
     it(`should wait during delays shorter than 1.5s (driver: ${driver})`, async () => {
       await _startTest(driver, {delay: 500});
-      await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toExist();
+      await expect(await element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toExist();
     });
 
   });

@@ -18,21 +18,21 @@ describe('Network Synchronization', () => {
 
   it('Sync with short network requests - 100ms', async () => {
     await element(by.id('ShortNetworkRequest')).tap();
-    await expect(element(by.text('Short Network Request Working!!!'))).toBeVisible();
+    await expect(await element(by.text('Short Network Request Working!!!'))).toBeVisible();
   });
 
   it('Sync with long network requests - 3000ms', async () => {
     await element(by.id('LongNetworkRequest')).tap();
-    await expect(element(by.text('Long Network Request Working!!!'))).toBeVisible();
+    await expect(await element(by.text('Long Network Request Working!!!'))).toBeVisible();
   });
 
   it('disableSynchronization() should disable sync', async () => {
     await device.disableSynchronization();
     await waitFor(element(by.id('LongNetworkRequest'))).toBeVisible().withTimeout(4000);
     await element(by.id('LongNetworkRequest')).tap();
-    await expect(element(by.text('Long Network Request Working!!!'))).toBeNotVisible();
+    await expect(await element(by.text('Long Network Request Working!!!'))).toBeNotVisible();
     await waitFor(element(by.text('Long Network Request Working!!!'))).toBeVisible().withTimeout(4000);
-    await expect(element(by.text('Long Network Request Working!!!'))).toBeVisible();
+    await expect(await element(by.text('Long Network Request Working!!!'))).toBeVisible();
 
     await device.enableSynchronization();
   });
@@ -43,9 +43,9 @@ describe('Network Synchronization', () => {
     await device.setURLBlacklist([url]);
 
     await element(by.id('LongNetworkRequest')).tap();
-    await expect(element(by.text('Long Network Request Working!!!'))).toBeNotVisible();
+    await expect(await element(by.text('Long Network Request Working!!!'))).toBeNotVisible();
     await waitFor(element(by.text('Long Network Request Working!!!'))).toBeVisible().withTimeout(4000);
-    await expect(element(by.text('Long Network Request Working!!!'))).toBeVisible();
+    await expect(await element(by.text('Long Network Request Working!!!'))).toBeVisible();
 
     await device.setURLBlacklist([]);
   });

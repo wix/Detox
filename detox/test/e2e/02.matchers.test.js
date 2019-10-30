@@ -6,18 +6,18 @@ describe('Matchers', () => {
 
   it('should match elements by (accessibility) label', async () => {
     await element(by.label('Label')).tap();
-    await expect(element(by.text('Label Working!!!'))).toBeVisible();
+    await expect(await element(by.text('Label Working!!!'))).toBeVisible();
   });
 
   it('should match elements by (accessibility) id', async () => {
     await element(by.id('UniqueId345')).tap();
-    await expect(element(by.text('ID Working!!!'))).toBeVisible();
+    await expect(await element(by.text('ID Working!!!'))).toBeVisible();
   });
 
   it('should match elements by index', async () => {
     const index = device.getPlatform() === 'ios' ? 2 : 0;
     await element(by.text('Index')).atIndex(index).tap();
-    await expect(element(by.text('First button pressed!!!'))).toBeVisible();
+    await expect(await element(by.text('First button pressed!!!'))).toBeVisible();
   });
   
   it('should be able to swipe elements matched by index', async () => {
@@ -28,47 +28,47 @@ describe('Matchers', () => {
   it('should match elements by type (native class)', async () => {
     const byType = device.getPlatform() === 'ios' ? by.type('RCTImageView') : by.type('android.widget.ImageView');
 
-    await expect(element(byType)).toBeVisible();
+    await expect(await element(byType)).toBeVisible();
     await element(byType).tap();
-    await expect(element(byType)).toBeNotVisible();
+    await expect(await element(byType)).toBeNotVisible();
   });
 
   // https://facebook.github.io/react-native/docs/accessibility.html#accessibilitytraits-ios
   // Accessibility Inspector in the simulator can help investigate traits
   it.skip(':ios: should match elements by accessibility trait', async () => {
     await element(by.traits(['button', 'text'])).tap();
-    await expect(element(by.text('Traits Working!!!'))).toBeVisible();
+    await expect(await element(by.text('Traits Working!!!'))).toBeVisible();
   });
 
   it('should match elements with ancenstor (parent)', async () => {
-    await expect(element(by.id('Grandson883').withAncestor(by.id('Son883')))).toExist();
-    await expect(element(by.id('Son883').withAncestor(by.id('Grandson883')))).toNotExist();
-    await expect(element(by.id('Grandson883').withAncestor(by.id('Father883')))).toExist();
-    await expect(element(by.id('Father883').withAncestor(by.id('Grandson883')))).toNotExist();
-    await expect(element(by.id('Grandson883').withAncestor(by.id('Grandfather883')))).toExist();
-    await expect(element(by.id('Grandfather883').withAncestor(by.id('Grandson883')))).toNotExist();
+    await expect(await element(by.id('Grandson883').withAncestor(by.id('Son883')))).toExist();
+    await expect(await element(by.id('Son883').withAncestor(by.id('Grandson883')))).toNotExist();
+    await expect(await element(by.id('Grandson883').withAncestor(by.id('Father883')))).toExist();
+    await expect(await element(by.id('Father883').withAncestor(by.id('Grandson883')))).toNotExist();
+    await expect(await element(by.id('Grandson883').withAncestor(by.id('Grandfather883')))).toExist();
+    await expect(await element(by.id('Grandfather883').withAncestor(by.id('Grandson883')))).toNotExist();
   });
 
   it('should match elements with descendant (child)', async () => {
-    await expect(element(by.id('Son883').withDescendant(by.id('Grandson883')))).toExist();
-    await expect(element(by.id('Grandson883').withDescendant(by.id('Son883')))).toNotExist();
-    await expect(element(by.id('Father883').withDescendant(by.id('Grandson883')))).toExist();
-    await expect(element(by.id('Grandson883').withDescendant(by.id('Father883')))).toNotExist();
-    await expect(element(by.id('Grandfather883').withDescendant(by.id('Grandson883')))).toExist();
-    await expect(element(by.id('Grandson883').withDescendant(by.id('Grandfather883')))).toNotExist();
+    await expect(await element(by.id('Son883').withDescendant(by.id('Grandson883')))).toExist();
+    await expect(await element(by.id('Grandson883').withDescendant(by.id('Son883')))).toNotExist();
+    await expect(await element(by.id('Father883').withDescendant(by.id('Grandson883')))).toExist();
+    await expect(await element(by.id('Grandson883').withDescendant(by.id('Father883')))).toNotExist();
+    await expect(await element(by.id('Grandfather883').withDescendant(by.id('Grandson883')))).toExist();
+    await expect(await element(by.id('Grandson883').withDescendant(by.id('Grandfather883')))).toNotExist();
   });
 
   it('should match elements by using two matchers together with and', async () => {
-    await expect(element(by.id('UniqueId345').and(by.text('ID')))).toExist();
-    await expect(element(by.id('UniqueId345').and(by.text('RandomJunk')))).toNotExist();
-    await expect(element(by.id('UniqueId345').and(by.label('RandomJunk')))).toNotExist();
+    await expect(await element(by.id('UniqueId345').and(by.text('ID')))).toExist();
+    await expect(await element(by.id('UniqueId345').and(by.text('RandomJunk')))).toNotExist();
+    await expect(await element(by.id('UniqueId345').and(by.label('RandomJunk')))).toNotExist();
     if (device.getPlatform() === 'ios') {
-      await expect(element(by.id('UniqueId345').and(by.traits(['button'])))).toNotExist();
+      await expect(await element(by.id('UniqueId345').and(by.traits(['button'])))).toNotExist();
     }
   });
 
   // waiting to upgrade EarlGrey version in order to test this (not supported in our current one)
   it.skip('should choose from multiple elements matching the same matcher using index', async () => {
-    await expect(element(by.text('Product')).atIndex(2)).toHaveId('ProductId002');
+    await expect(await element(by.text('Product')).atIndex(2)).toHaveId('ProductId002');
   });
 });

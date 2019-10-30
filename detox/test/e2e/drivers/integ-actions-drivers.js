@@ -15,7 +15,7 @@ const scrollingTextsDriver = {
   assertTextTappedOnce: async (id) => {
     const elementId = scrollingTextsDriver._elementId(id);
     const expectedText = `${elementId}: 1`;
-    await expect(element(by.id(elementId))).toHaveText(expectedText);
+    await expect(await element(by.id(elementId))).toHaveText(expectedText);
   },
   _elementId: (fieldId) => `tappableText-${fieldId}`,
 };
@@ -33,7 +33,7 @@ const scrollingTextInputsDriver = {
   assertFieldText: async (fieldId) => {
     const elementId = scrollingTextInputsDriver._elementId(fieldId);
     const expectedText = elementId;
-    await expect(element(by.id(elementId))).toHaveText(expectedText);
+    await expect(await element(by.id(elementId))).toHaveText(expectedText);
   },
   _elementId: (fieldId) => `textInput-${fieldId}`,
 };

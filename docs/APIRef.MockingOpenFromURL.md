@@ -21,7 +21,7 @@ describe('launch app from URL', () => {
     });
 
     it('should tap successfully', async () => {
-      await expect(element(by.text('a label'))).toBeVisible();
+      await expect(await element(by.text('a label'))).toBeVisible();
     });
   });
 ```

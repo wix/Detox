@@ -3,9 +3,9 @@ describe(":ios: Background-Foreground Transitions", () => {
 		await device.launchApp({newInstance: true});
 		await device.sendToHome();
 		//Cannot use toBeVisible because Earl Grey does not support apps in background
-		await expect(element(by.text("Background"))).toExist();
+		await expect(await element(by.text("Background"))).toExist();
 		await device.launchApp({newInstance: false});
-		await expect(element(by.text("Active"))).toBeVisible();
+		await expect(await element(by.text("Active"))).toBeVisible();
 	});
 });
 

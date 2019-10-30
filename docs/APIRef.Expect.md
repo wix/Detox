@@ -20,28 +20,28 @@ Expect verifies if a certain value is as expected to be.
 Expect the view to be at least 75% visible.
 
 ```js
-await expect(element(by.id('UniqueId204'))).toBeVisible();
+await expect(await element(by.id('UniqueId204'))).toBeVisible();
 ```
 
 ### `toBeNotVisible()`
 Expect the view to not be visible.
 
 ```js
-await expect(element(by.id('UniqueId205'))).toBeNotVisible();
+await expect(await element(by.id('UniqueId205'))).toBeNotVisible();
 ```
 
 ### `toExist()`
 Expect the view to exist in the UI hierarchy.
 
 ```js
-await expect(element(by.id('UniqueId205'))).toExist();
+await expect(await element(by.id('UniqueId205'))).toExist();
 ```
 
 ### `toNotExist()`
 Expect the view to not exist in the UI hierarchy.
 
 ```js
-await expect(element(by.id('RandomJunk959'))).toNotExist();
+await expect(await element(by.id('RandomJunk959'))).toNotExist();
 ```
 
 ### `toHaveText(text)`
@@ -50,7 +50,7 @@ await expect(element(by.id('RandomJunk959'))).toNotExist();
 - In native iOS apps, expect UI elements of type UIButton, UILabel, UITextField or UITextViewIn to have inputText with text.
 
 ```js
-await expect(element(by.id('UniqueId204'))).toHaveText('I contain some text');
+await expect(await element(by.id('UniqueId204'))).toHaveText('I contain some text');
 ```
 
 ### `toHaveLabel(label)`
@@ -59,7 +59,7 @@ await expect(element(by.id('UniqueId204'))).toHaveText('I contain some text');
 - In React Native it can be set for both platforms by defining an [`accessibilityLabel`](https://facebook.github.io/react-native/docs/view.html#accessibilitylabel) on the view.
 
 ```js
-await expect(element(by.id('UniqueId204'))).toHaveLabel('Done');
+await expect(await element(by.id('UniqueId204'))).toHaveLabel('Done');
 ```
 
 ### `toHaveId(id)`
@@ -67,12 +67,12 @@ await expect(element(by.id('UniqueId204'))).toHaveLabel('Done');
 - In native iOS apps, expect UI element to have accesibilityIdentifier with that id.
 
 ```js
-await expect(element(by.text('I contain some text'))).toHaveId('UniqueId204');
+await expect(await element(by.text('I contain some text'))).toHaveId('UniqueId204');
 ```
 
 ### `toHaveValue(value)`
 Expect components like a Switch to have a value ('0' for off, '1' for on).
 
 ```js
-await expect(element(by.id('UniqueId533'))).toHaveValue('0');
+await expect(await element(by.id('UniqueId533'))).toHaveValue('0');
 ```

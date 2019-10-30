@@ -17,7 +17,7 @@ await device.launchApp({userActivity: activity});
 describe('Background user activity', () => {
 	it('Launch with user activity', async () => {
 	  await device.launchApp({userActivity: activity})
-	  await expect(element(by.text('From user activity'))).toBeVisible();
+	  await expect(await element(by.text('From user activity'))).toBeVisible();
 	});
 });
 ```
@@ -42,7 +42,7 @@ beforeEach(async () => {
 
 it('User activity from inside the app', async () => {
   await device.sendUserActivity(activity);
-  await expect(element(by.text('From user activity'))).toBeVisible();
+  await expect(await element(by.text('From user activity'))).toBeVisible();
  });
 });
 ```

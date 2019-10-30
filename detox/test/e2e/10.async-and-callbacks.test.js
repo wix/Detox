@@ -5,7 +5,7 @@ describe('Async and Callbacks', () => {
   });
 
   it('should handle done() callback', (done) => {
-    expect(element(by.text('Welcome'))).toBeVisible().then(() => {
+    expect(await element(by.text('Welcome'))).toBeVisible().then(() => {
       setTimeout(() => {
         done();
       }, 1000);
@@ -14,7 +14,7 @@ describe('Async and Callbacks', () => {
 
   it('should handle async await', async () => {
     await timeout(1);
-    await expect(element(by.text('Welcome'))).toBeVisible();
+    await expect(await element(by.text('Welcome'))).toBeVisible();
   });
 });
 
