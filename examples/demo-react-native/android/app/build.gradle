@@ -1,12 +1,15 @@
-apply plugin: "com.android.application"
-
+import groovy.json.JsonSlurper
 import com.android.build.OutputFile
+
+apply plugin: "com.android.application"
 
 //project.ext.react = [:]
 project.ext.react = [
     enableHermes: false
 ]
 apply from: "../../node_modules/react-native/react.gradle"
+
+Boolean isRN60OrHigher = getRNVersion() >= 60
 
 android {
     compileSdkVersion 28
@@ -74,8 +77,12 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+    if (isRN60OrHigher) {
+        implementation 'androidx.appcompat:appcompat:1.1.0'
+        implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+    } else {
+        implementation 'com.android.support:appcompat-v7:28.0.0'
+    }
 
     // noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'
@@ -84,16 +91,18 @@ dependencies {
     androidTestImplementation 'junit:junit:4.12'
 }
 
-// ref: https://react-native-community.github.io/upgrade-helper/?from=0.59.9&to=0.60.6
-dependencies {
-    def enableHermes = project.ext.react.get("enableHermes", false)
+if (isRN60OrHigher) {
+    // ref: https://react-native-community.github.io/upgrade-helper/?from=0.59.9&to=0.60.6
+    dependencies {
+        def enableHermes = project.ext.react.get("enableHermes", false)
 
-    if (enableHermes) {
-        def hermesPath = "../../node_modules/hermesvm/android/"
-        debugImplementation files(hermesPath + "hermes-debug.aar")
-        releaseImplementation files(hermesPath + "hermes-release.aar")
-    } else {
-        implementation 'org.webkit:android-jsc:+'
+        if (enableHermes) {
+            def hermesPath = "../../node_modules/hermesvm/android/"
+            debugImplementation files(hermesPath + "hermes-debug.aar")
+            releaseImplementation files(hermesPath + "hermes-release.aar")
+        } else {
+            implementation 'org.webkit:android-jsc:+'
+        }
     }
 }
 
@@ -102,4 +111,12 @@ dependencies {
 task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
+}
+
+static def getRNVersion() {
+    def jsonSlurper = new JsonSlurper()
+    Map<String, Object> packageJSON  = jsonSlurper.parse(new File('../node_modules/react-native/package.json'))
+    String rnVersion = packageJSON.get('version')
+    Integer rnVersionMajor = rnVersion.split('\\.')[1].toInteger()
+    return rnVersionMajor
 }
