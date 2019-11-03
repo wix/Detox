@@ -6,7 +6,6 @@ import {
   Linking,
   Platform,
 } from 'react-native';
-import { PropTypes } from 'prop-types';
 
 import * as Screens from './Screens';
 
@@ -22,6 +21,12 @@ class example extends Component {
       url: undefined,
       notification: undefined
     };
+
+    // TODO this is a hack for RN 0.60: Android warns of the deprecation (yellow-box), while iOS can't live
+    //   without this method (native error).
+    if (!isAndroid) {
+      this.componentWillMount = () => {};
+    }
   }
 
   renderButton(title, onPressCallback) {
