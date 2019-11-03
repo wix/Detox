@@ -10,12 +10,15 @@
 #import "UIDatePicker+TestSupport.h"
 #import "DetoxAppDelegateProxy.h"
 #import "DetoxInstrumentsManager.h"
+#import "DetoxUtils.h"
+#import "ReactNativeSupport.h"
 #import <DetoxIPC/DTXIPCConnection.h>
 #import <DetoxSync/DetoxSync.h>
 @import ObjectiveC;
 @import Darwin;
 
 static DetoxInstrumentsManager* _recordingManager;
+static dispatch_queue_t _recordingManagerQueue;
 
 @interface DetoxManager () <DetoxHelper>
 {
@@ -30,6 +33,8 @@ static DetoxInstrumentsManager* _recordingManager;
 {
 	@autoreleasepool
 	{
+		_recordingManagerQueue = dispatch_queue_create("com.wix.detox.recordingManagerQueue", NULL);
+		
 		[self.sharedManager connect];
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
@@ -92,10 +97,76 @@ static DetoxInstrumentsManager* _recordingManager;
 			
 			if(recordingURL)
 			{
-				[self _handlePerformanceRecording:NSDictionaryOfVariableBindings(recordingURL) isFromLaunch:YES completionHandler:nil];
+				[self handlePerformanceRecording:NSDictionaryOfVariableBindings(recordingURL) isFromLaunch:YES completionHandler:nil];
 			}
 		}];
 	});
+}
+
+- (void)deliverPayload:(NSDictionary*)payload completionHandler:(dispatch_block_t)completionHandler
+{
+	BOOL delay = [payload[@"delayPayload"] boolValue];
+	
+	void (^block)(void);
+	
+	if(payload[@"url"])
+	{
+		NSURL* URLToOpen = [NSURL URLWithString:payload[@"url"]];
+		
+		NSParameterAssert(URLToOpen != nil);
+		
+		NSString* sourceApp = payload[@"sourceApp"];
+		
+		NSMutableDictionary* options = [@{UIApplicationLaunchOptionsURLKey: URLToOpen} mutableCopy];
+		if(sourceApp != nil)
+		{
+			options[UIApplicationLaunchOptionsSourceApplicationKey] = sourceApp;
+		}
+		
+		block = ^{
+			[DetoxAppDelegateProxy.sharedAppDelegateProxy dispatchOpenURL:URLToOpen options:options delayUntilActive:delay];
+			
+			completionHandler();
+		};
+	}
+	else if(payload[@"detoxUserNotificationDataURL"])
+	{
+		NSDictionary* userNotification = payload[@"detoxUserNotification"];
+		
+		NSParameterAssert(userNotification != nil);
+		
+		block = ^{
+			[DetoxAppDelegateProxy.sharedAppDelegateProxy dispatchUserNotification:userNotification delayUntilActive:delay];
+			
+			completionHandler();
+		};
+	}
+	else if(payload[@"detoxUserActivityDataURL"])
+	{
+		NSDictionary* userActivity = payload[@"detoxUserActivity"];
+		
+		NSParameterAssert(userActivity != nil);
+		
+		block = ^{
+			[DetoxAppDelegateProxy.sharedAppDelegateProxy dispatchUserActivity:userActivity delayUntilActive:delay];
+			
+			completionHandler();
+		};
+	}
+	
+	NSAssert(block != nil, @"Logic error, no block was generated for payload: %@", payload);
+	
+	if(delay == YES)
+	{
+		block();
+		return;
+	}
+	
+	[self waitForIdleWithCompletionHandler:^{
+		block();
+	}];
+	
+	[DTXSyncManager enqueueIdleBlock:block queue:dispatch_get_main_queue()];
 }
 
 - (void)_appDidEnterBackground:(NSNotification*)note
@@ -110,7 +181,7 @@ static DetoxInstrumentsManager* _recordingManager;
 {
 	dispatch_semaphore_t semaphore = dispatch_semaphore_create(1);
 
-	[_recordingManager stopRecordingWithCompletionHandler:^(NSError *error) {
+	[self stopAndCleanupRecordingWithCompletionHandler:^{
 		dispatch_semaphore_signal(semaphore);
 	}];
 	
@@ -140,94 +211,116 @@ static DetoxInstrumentsManager* _recordingManager;
 	});
 }
 
-- (void)_handlePerformanceRecording:(NSDictionary*)props isFromLaunch:(BOOL)launch completionHandler:(void(^)(void))completionHandler
+- (void)handlePerformanceRecording:(NSDictionary*)props isFromLaunch:(BOOL)launch completionHandler:(dispatch_block_t)_completionHandler
 {
-	if(completionHandler == nil)
-	{
-		completionHandler = ^ {};
-	}
+	__block dispatch_block_t completionHandler = _completionHandler;
 	
-	BOOL completionBlocked = NO;
-	
-	if(props[@"recordingURL"] != nil)
-	{
-		NSURL* absoluteURL = [NSURL fileURLWithPath:props[@"recordingPath"]];
-		
-		static dispatch_once_t onceToken;
-		dispatch_once(&onceToken, ^{
-			_recordingManager = [DetoxInstrumentsManager new];
-		});
-		if(launch)
+	dispatch_sync(_recordingManagerQueue, ^{
+		if(completionHandler == nil)
 		{
-			[_recordingManager continueRecordingAtURL:absoluteURL];
+			completionHandler = ^ {};
+		}
+		
+		BOOL completionBlocked = NO;
+		
+		if(props[@"recordingURL"] != nil)
+		{
+			NSURL* absoluteURL = [NSURL fileURLWithPath:props[@"recordingPath"]];
+			
+			static dispatch_once_t onceToken;
+			dispatch_once(&onceToken, ^{
+				_recordingManager = [DetoxInstrumentsManager new];
+			});
+			if(launch)
+			{
+				[_recordingManager continueRecordingAtURL:absoluteURL];
+			}
+			else
+			{
+				[_recordingManager startRecordingAtURL:absoluteURL];
+			}
 		}
 		else
 		{
-			[_recordingManager startRecordingAtURL:absoluteURL];
-		}
-	}
-	else
-	{
-		completionBlocked = YES;
-		[_recordingManager stopRecordingWithCompletionHandler:^(NSError *error) {
-			dispatch_async(dispatch_get_main_queue(), ^{
+			completionBlocked = YES;
+			[_recordingManager stopRecordingWithCompletionHandler:^(NSError *error) {
 				completionHandler();
-			});
-		}];
-	}
-	
-	if(completionBlocked == NO)
-	{
-		completionHandler();
-	}
-}
-
-- (void)_stopAndCleanupRecording
-{
-	[self _handlePerformanceRecording:nil isFromLaunch:NO completionHandler:nil];
-}
-
-- (void)_waitForApplicationState:(UIApplicationState)applicationState completionHandler:(dispatch_block_t)completionHandler
-{
-	__block id observer = nil;
-	
-	void (^response)(void) = ^ {
-		completionHandler();
-		
-		if(observer != nil)
-		{
-			[NSNotificationCenter.defaultCenter removeObserver:observer];
-			observer = nil;
+			}];
 		}
-	};
-	
-	if(UIApplication.sharedApplication.applicationState == applicationState)
-	{
-		response();
-		return;
-	}
-	
-	NSNotificationName notificationName;
-	switch (applicationState)
-	{
-		case UIApplicationStateActive:
-			notificationName = UIApplicationDidBecomeActiveNotification;
-			break;
-		case UIApplicationStateBackground:
-			notificationName = UIApplicationDidEnterBackgroundNotification;
-			break;
-		case UIApplicationStateInactive:
-			notificationName = UIApplicationWillResignActiveNotification;
-			break;
-		default:
-			[NSException raise:NSInvalidArgumentException format:@"Inknown application state %@", @(applicationState)];
-			break;
-	}
-	
-	observer = [[NSNotificationCenter defaultCenter] addObserverForName:notificationName object:nil queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
-		//Move the response one loop later to ensure all user handlers have been called.
-		dispatch_async(dispatch_get_main_queue(), response);
-	}];
+		
+		if(completionBlocked == NO)
+		{
+			completionHandler();
+		}
+	});
+}
+
+- (void)stopAndCleanupRecordingWithCompletionHandler:(dispatch_block_t)completionHandler;
+{
+	[self handlePerformanceRecording:nil isFromLaunch:NO completionHandler:completionHandler];
+}
+
+- (void)waitForApplicationState:(UIApplicationState)applicationState completionHandler:(dispatch_block_t)completionHandler
+{
+	DTXEnsureMainThread(^{
+		__block id observer = nil;
+		
+		void (^response)(void) = ^ {
+			completionHandler();
+			
+			if(observer != nil)
+			{
+				[NSNotificationCenter.defaultCenter removeObserver:observer];
+				observer = nil;
+			}
+		};
+		
+		if(UIApplication.sharedApplication.applicationState == applicationState)
+		{
+			response();
+			return;
+		}
+		
+		NSNotificationName notificationName;
+		switch (applicationState)
+		{
+			case UIApplicationStateActive:
+				notificationName = UIApplicationDidBecomeActiveNotification;
+				break;
+			case UIApplicationStateBackground:
+				notificationName = UIApplicationDidEnterBackgroundNotification;
+				break;
+			case UIApplicationStateInactive:
+				notificationName = UIApplicationWillResignActiveNotification;
+				break;
+			default:
+				[NSException raise:NSInvalidArgumentException format:@"Inknown application state %@", @(applicationState)];
+				break;
+		}
+		
+		observer = [[NSNotificationCenter defaultCenter] addObserverForName:notificationName object:nil queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
+			//Move the response one loop later to ensure all user handlers have been called.
+			dispatch_async(dispatch_get_main_queue(), response);
+		}];
+	});
+}
+
+- (void)isDebuggerAttachedWithCompletionHandler:(void(^)(BOOL isDebuggerAttached))completionHandler
+{
+	completionHandler(DTXIsDebuggerAttached());
+}
+
+- (void)reloadReactNativeWithCompletionHandler:(dispatch_block_t)completionHandler
+{
+	[DTXSyncManager enqueueIdleBlock:^{
+		[ReactNativeSupport reloadApp];
+		[DTXSyncManager enqueueIdleBlock:completionHandler];
+	} queue:dispatch_get_main_queue()];
+}
+
+- (void)syncStatusWithCompletionHandler:(void (^)(NSString* information))completionHandler
+{
+	[DTXSyncManager syncStatusWithCompletionHandler:completionHandler];
 }
 
 @end

@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		39068D3E236EEF620005A2A7 /* DetoxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 39068D3C236EEF610005A2A7 /* DetoxUtils.h */; };
+		39068D3F236EEF620005A2A7 /* DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 39068D3D236EEF620005A2A7 /* DetoxUtils.m */; };
+		39068D40236EEFD80005A2A7 /* DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 39068D3D236EEF620005A2A7 /* DetoxUtils.m */; };
+		39068D53236F1CCB0005A2A7 /* ReactNativeSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 39068D51236F1CCB0005A2A7 /* ReactNativeSupport.h */; };
+		39068D54236F1CCB0005A2A7 /* ReactNativeSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39068D52236F1CCB0005A2A7 /* ReactNativeSupport.m */; };
 		393A50F32355EE1F00DFCEF5 /* SocketRocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 393A50E82355ECDF00DFCEF5 /* SocketRocket.framework */; };
 		393A50FA2355FEB100DFCEF5 /* WebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 393A50F92355FEB100DFCEF5 /* WebSocket.m */; };
 		393A5102235600A300DFCEF5 /* DetoxInstrumentsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 393A50FB235600A300DFCEF5 /* DetoxInstrumentsManager.h */; };
@@ -198,6 +203,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		39068D33236EE30A0005A2A7 /* XCTestConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XCTestConfiguration.h; sourceTree = "<group>"; };
+		39068D3C236EEF610005A2A7 /* DetoxUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetoxUtils.h; sourceTree = "<group>"; };
+		39068D3D236EEF620005A2A7 /* DetoxUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetoxUtils.m; sourceTree = "<group>"; };
+		39068D51236F1CCB0005A2A7 /* ReactNativeSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactNativeSupport.h; sourceTree = "<group>"; };
+		39068D52236F1CCB0005A2A7 /* ReactNativeSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactNativeSupport.m; sourceTree = "<group>"; };
 		393A50DC2355ECDF00DFCEF5 /* SocketRocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SocketRocket.xcodeproj; path = SocketRocket/SocketRocket.xcodeproj; sourceTree = SOURCE_ROOT; };
 		393A50F82355FEB100DFCEF5 /* WebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocket.h; sourceTree = "<group>"; };
 		393A50F92355FEB100DFCEF5 /* WebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebSocket.m; sourceTree = "<group>"; };
@@ -287,6 +297,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		39068D4B236F1C8F0005A2A7 /* ReactNativeSupport */ = {
+			isa = PBXGroup;
+			children = (
+				39068D51236F1CCB0005A2A7 /* ReactNativeSupport.h */,
+				39068D52236F1CCB0005A2A7 /* ReactNativeSupport.m */,
+			);
+			path = ReactNativeSupport;
+			sourceTree = "<group>";
+		};
 		393A50DD2355ECDF00DFCEF5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -331,6 +350,7 @@
 		397788D9234AD0FF00A74C39 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				39068D4B236F1C8F0005A2A7 /* ReactNativeSupport */,
 				393A51112356017800DFCEF5 /* UserNotificationsPrivate */,
 				393A511C2356056600DFCEF5 /* DTXAddressInfo.h */,
 				393A511D2356056600DFCEF5 /* DTXAddressInfo.mm */,
@@ -393,6 +413,7 @@
 			isa = PBXGroup;
 			children = (
 				393A50F42355FE7E00DFCEF5 /* WebSocket */,
+				39068D33236EE30A0005A2A7 /* XCTestConfiguration.h */,
 				39C94D3D2336EC7200FDF64E /* DTXDetoxApplication.h */,
 				39C94D3E2336EC7200FDF64E /* DTXDetoxApplication.m */,
 				39AC098423322B0800DF85F8 /* XCUIElement+UIDatePickerSupport.h */,
@@ -436,6 +457,8 @@
 				39F62D202337263400094FAB /* fishhook.c */,
 				393A51252356E47C00DFCEF5 /* DetoxUserActivityShared.swift */,
 				393A512223560D1200DFCEF5 /* DetoxUserNotificationsShared.swift */,
+				39068D3C236EEF610005A2A7 /* DetoxUtils.h */,
+				39068D3D236EEF620005A2A7 /* DetoxUtils.m */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -470,12 +493,14 @@
 				39AC09A023322E8E00DF85F8 /* DetoxManager.h in Headers */,
 				393A51162356017800DFCEF5 /* UNNotificationResponse+PrivateHeaders.h in Headers */,
 				39B833D4233A7C9A00DBC1D2 /* DTXLogging.h in Headers */,
+				39068D3E236EEF620005A2A7 /* DetoxUtils.h in Headers */,
 				393A5102235600A300DFCEF5 /* DetoxInstrumentsManager.h in Headers */,
 				393A5103235600A300DFCEF5 /* DetoxAppDelegateProxy.h in Headers */,
 				39B833D8233A7CD800DBC1D2 /* DTXLoggingSubsystem.h in Headers */,
 				393A511E2356056600DFCEF5 /* DTXAddressInfo.h in Headers */,
 				393A51182356017800DFCEF5 /* UNNotification+PrivateHeaders.h in Headers */,
 				397788DC234AD23400A74C39 /* UIDatePicker+TestSupport.h in Headers */,
+				39068D53236F1CCB0005A2A7 /* ReactNativeSupport.h in Headers */,
 				393A51172356017800DFCEF5 /* UNPushNotificationTrigger+PrivateHeaders.h in Headers */,
 				39B833D1233A7C5B00DBC1D2 /* Detox.pch in Headers */,
 			);
@@ -697,6 +722,7 @@
 				39AC097E23322A8600DF85F8 /* DetoxTestRunner.m in Sources */,
 				393A51272356E47C00DFCEF5 /* DetoxUserActivityShared.swift in Sources */,
 				39C94D522337004700FDF64E /* XCUIElement+ExtendedTouches.m in Sources */,
+				39068D40236EEFD80005A2A7 /* DetoxUtils.m in Sources */,
 				393A512A2356E4AD00DFCEF5 /* DetoxUserActivityParser.swift in Sources */,
 				39F62D212337263400094FAB /* fishhook.c in Sources */,
 				393A50FA2355FEB100DFCEF5 /* WebSocket.m in Sources */,
@@ -714,6 +740,7 @@
 				39AC09A123322E8E00DF85F8 /* DetoxManager.m in Sources */,
 				393A5106235600A300DFCEF5 /* DetoxUserNotificationDispatcher.swift in Sources */,
 				393A51292356E4AD00DFCEF5 /* DetoxUserActivityParser.swift in Sources */,
+				39068D54236F1CCB0005A2A7 /* ReactNativeSupport.m in Sources */,
 				39B833D5233A7C9A00DBC1D2 /* DTXLogging.m in Sources */,
 				393A5105235600A300DFCEF5 /* DetoxInstrumentsManager.m in Sources */,
 				393A5104235600A300DFCEF5 /* DetoxUserActivityDispatcher.swift in Sources */,
@@ -721,6 +748,7 @@
 				393A51262356E47C00DFCEF5 /* DetoxUserActivityShared.swift in Sources */,
 				39F62D232337285100094FAB /* fishhook.c in Sources */,
 				393A5107235600A300DFCEF5 /* DetoxAppDelegateProxy.m in Sources */,
+				39068D3F236EEF620005A2A7 /* DetoxUtils.m in Sources */,
 				393A512423560D1800DFCEF5 /* DetoxUserNotificationsShared.swift in Sources */,
 				393A511F2356056600DFCEF5 /* DTXAddressInfo.mm in Sources */,
 				393A5108235600A300DFCEF5 /* DetoxCrashHandler.mm in Sources */,
@@ -801,6 +829,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MACOSX_DEPLOYMENT_TARGET = "";
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -818,6 +847,7 @@
 				MACOSX_DEPLOYMENT_TARGET = "";
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_SWIFT_SYMBOLS = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
 			};
 			name = Release;
 		};

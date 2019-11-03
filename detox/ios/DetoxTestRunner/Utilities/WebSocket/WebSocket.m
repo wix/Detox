@@ -42,6 +42,7 @@ DTX_CREATE_LOG(WebSocket);
 	}
 	self.sessionId = sessionId;
 	self.websocket = [[SRWebSocket alloc] initWithURL:[NSURL URLWithString:url]];
+	self.websocket.delegateDispatchQueue = dispatch_queue_create("com.wix.detoxTestRunner.webSocket", NULL);
 	self.websocket.delegate = self;
 	[self.websocket open];
 	
