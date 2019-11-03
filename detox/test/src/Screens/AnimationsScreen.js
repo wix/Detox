@@ -9,46 +9,42 @@ import {
   TextInput
 } from 'react-native';
 import SegmentedControl from '../Views/SegmentedControl.js';
-import _ from 'lodash';
-
 
 class AnimationsComponent extends Component {
   constructor(props) {
     super(props);
 
-    this._faidInValue = new Animated.Value(0);
-
+    this._fadeInValue = new Animated.Value(0);
     this.state = {
       showAfterAnimationText: false
     };
   }
 
   componentDidMount() {
-    let fadeInAnimation = Animated.timing(this._faidInValue, {
+    const fadeInAnimation = Animated.timing(this._fadeInValue, {
       toValue: 1,
       duration: this.props.duration,
       delay: this.props.delay,
       useNativeDriver: this.props.useNativeDriver
     });
-    var animation;
-    if(this.props.loops === undefined) {
+    const fadeOutAnimation = Animated.timing(this._fadeInValue, {
+      toValue: 0.5,
+      duration: 0,
+      useNativeDriver: this.props.useNativeDriver
+    });
+
+    let animation;
+    if (this.props.loops === undefined) {
       animation = fadeInAnimation;
     } else {
       animation = Animated.loop(
-        Animated.sequence([
-          fadeInAnimation,
-          Animated.timing(this._faidInValue, {
-            toValue: 0.5,
-            duration: 0,
-            useNativeDriver: this.props.useNativeDriver
-          })
-        ]),
+        Animated.sequence([fadeInAnimation, fadeOutAnimation]),
         {
           iterations: this.props.loops
         }
       );
     }
-    
+
     animation.start(() => this.setState({ showAfterAnimationText: true }));
   }
 
@@ -56,21 +52,26 @@ class AnimationsComponent extends Component {
     return (
       <View style={{ flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center' }}>
         <Animated.Text testID='UniqueId_AnimationsScreen_animatedText' style={{
-          opacity: this._faidInValue,
+          opacity: this._fadeInValue,
           backgroundColor: 'green'
         }}
         >
           Fading in text
         </Animated.Text>
-        {(() => {
-          if (this.state.showAfterAnimationText) return (
-            <Text testID='UniqueId_AnimationsScreen_afterAnimationText' style={{ marginTop: 20 }}>
-              After-animation-text
-          </Text>
-          )
-        })()}
+        {this.renderAfterAnimTextIfNeeded()}
       </View>
     );
+  }
+
+  renderAfterAnimTextIfNeeded() {
+    if (this.state.showAfterAnimationText) {
+      return (
+        <Text testID='UniqueId_AnimationsScreen_afterAnimationText' style={{ marginTop: 20 }}>
+          After-animation-text
+        </Text>
+      );
+    }
+    return undefined;
   }
 }
 

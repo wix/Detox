@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "react-native start",
+    "postinstall": "node scripts/postinstall.js",
     "build:ios": "detox build --configuration ios.sim.debug",
     "build:android-debug": "detox build --configuration android.emu.debug",
     "build:android-release": "detox build --configuration android.emu.release",
@@ -16,8 +17,8 @@
     "e2e:android-release": "npm run build:android-release && npm run test:android-release"
   },
   "dependencies": {
-    "react": "16.8.3",
-    "react-native": "0.59.9"
+    "react": "16.8.x",
+    "react-native": "0.60.x"
   },
   "devDependencies": {
     "detox": "^14.5.1",
