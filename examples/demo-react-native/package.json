@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "react-native start",
+    "postinstall": "node scripts/postinstall.js",
     "build:ios": "detox build --configuration ios.sim.debug",
     "build:android-debug": "detox build --configuration android.emu.debug",
     "build:android-release": "detox build --configuration android.emu.release",

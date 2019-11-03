@@ -7,6 +7,7 @@
   },
   "scripts": {
     "test": ":",
+    "postinstall": "node scripts/postinstall.js",
     "packager": "react-native start",
     "detox-server": "detox run-server",
     "e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization",
@@ -19,6 +20,7 @@
     "build:ios": "detox build --configuration ios.sim.release",
     "build:android": "detox build --configuration android.emu.release",
     "build:android-debug": "detox build --configuration android.emu.debug",
+    "clean:android": "pushd android && ./gradlew clean && popd",
     "verify-artifacts:ios": "jest ./scripts/verify_artifacts_are_not_missing.ios.test.js --testEnvironment node",
     "verify-artifacts:android": "jest ./scripts/verify_artifacts_are_not_missing.android.test.js --testEnvironment node"
   },
