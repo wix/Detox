@@ -709,7 +709,7 @@ describe('Device', () => {
     device = validDevice();
 
     await device.takeScreenshot('name');
-    expect(device.deviceDriver.takeScreenshot).toHaveBeenCalledWith('name');
+    expect(device.deviceDriver.takeScreenshot).toHaveBeenCalledWith(device._deviceId, 'name');
   });
 
   async function launchAndTestBinaryPath(configuration) {

@@ -18,7 +18,7 @@ class DeviceDriverBase {
         'beforeUninstallApp',
         'beforeLaunchApp',
         'launchApp',
-        'userAction',
+        'createExternalArtifact',
       ],
       onError: this._onEmitError.bind(this),
     });
@@ -52,11 +52,8 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async takeScreenshot(name) {
-    await this.emitter.emit('userAction', {
-      type: 'takeScreenshot',
-      options: { name },
-    });
+  async takeScreenshot(deviceId, screenshotName) {
+    return await Promise.resolve('');
   }
 
   async sendToHome() {

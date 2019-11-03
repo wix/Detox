@@ -16,6 +16,8 @@ class ArtifactPlugin {
     this.keepOnlyFailedTestsArtifacts = false;
     this.priority = 16;
     this._disableReason = '';
+    this._hasFailingTests = false;
+    this._finishedTests = false;
   }
 
   get name() {
@@ -161,16 +163,17 @@ class ArtifactPlugin {
   }
 
   /**
-   * Hook that is called on demand by some of user actions (e.g. device.takeScreeenshot())
+   * Hook that is supposed to be called when an artifact has been created indirectly,
+   * outside of lifecycle of the plugin.
    *
    * @protected
    * @async
-   * @param {Object} event - User action event object
-   * @param {string} event.type - Action type
-   * @param {string} event.options - Action options
-   * @return {Promise<any>} - appropriate result of the action
+   * @param {Object} event - Information about an indirectly created artifact
+   * @param {string} event.name - Target name for the artifact
+   * @param {Artifact} event.artifact - Artifact instance
+   * @return {Promise<void>} - when done
    */
-  async onUserAction(event) {}
+  async onCreateExternalArtifact(event) {}
 
   /**
    * Hook that is called before any test begins
@@ -181,6 +184,8 @@ class ArtifactPlugin {
    */
   async onBeforeAll() {
     this.context.testSummary = null;
+    this._hasFailingTests = false;
+    this._finishedTests = false;
   }
 
   /**
@@ -203,6 +208,10 @@ class ArtifactPlugin {
    */
   async onAfterEach(testSummary) {
     this.context.testSummary = testSummary;
+
+    if (testSummary.status === 'failed') {
+      this._hasFailingTests = true;
+    }
   }
 
   /**
@@ -214,6 +223,7 @@ class ArtifactPlugin {
    */
   async onAfterAll() {
     this.context.testSummary = null;
+    this._finishedTests = true;
     this._logDisableWarning();
   }
 
@@ -247,7 +257,31 @@ class ArtifactPlugin {
     }
   }
 
+  shouldKeepArtifactOfSession() {
+    if (!this.enabled) {
+      return false;
+    }
+
+    if (!this.keepOnlyFailedTestsArtifacts) {
+      return true;
+    }
+
+    if (this._hasFailingTests) {
+      return true;
+    }
+
+    if (this._finishedTests) {
+      return false;
+    }
+
+    return undefined;
+  }
+
   shouldKeepArtifactOfTest(testSummary) {
+    if (!this.enabled) {
+      return false;
+    }
+
     if (this.keepOnlyFailedTestsArtifacts && testSummary.status !== 'failed') {
       return false;
     }

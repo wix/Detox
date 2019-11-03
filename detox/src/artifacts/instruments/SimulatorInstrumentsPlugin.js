@@ -1,5 +1,5 @@
 const fs = require('fs-extra');
-const tempfile = require('tempfile');
+const temporaryPath = require('../utils/temporaryPath');
 const argparse = require('../../utils/argparse');
 const log = require('../../utils/logger').child({ __filename });
 const WholeTestRecorderPlugin = require('../templates/plugin/WholeTestRecorderPlugin');
@@ -57,7 +57,7 @@ class SimulatorInstrumentsPlugin extends WholeTestRecorderPlugin {
   createTestRecording() {
     return new SimulatorInstrumentsRecording({
       client: this.client,
-      temporaryRecordingPath: tempfile('.dtxrec'),
+      temporaryRecordingPath: temporaryPath.for.dtxrec(),
     });
   }
 

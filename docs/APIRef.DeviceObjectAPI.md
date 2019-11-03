@@ -325,24 +325,34 @@ if (device.getPlatform() === 'ios') {
 ```
 
 ### `device.takeScreenshot(name)`
+
 Takes a screenshot on the device and schedules putting it to
 the [artifacts folder](APIRef.Artifacts.md#enabling-artifacts) upon
-completion of the current test. Consider the example below:
+completion of the current test.
+
+Returns a temporary path to the screenshot.
+
+**NOTE:** The returned path is guaranteed to be valid only during the test execution.
+Later on, the screenshot will be moved to the artifacts location.
+
+Consider the example below:
 
 ```js
 describe('Menu items', () => {
   it('should have Logout', async () => {
     // ...
-    await device.takeScreenshot('tap on menu');
+    const screenshotPath = await device.takeScreenshot('tap on menu');
     // ...
   });
 });
 ```
 
-* If the test passes, the screenshot will be put to `<artifacts-location>/✓ Menu items should have Logout/tap on menu.png`.
-* If the test fails, the screenshot will be put to `<artifacts-location>/✗ Menu items should have Logout/tap on menu.png`.
+In this example:
 
-> NOTE: At the moment, taking screenshots on-demand in `--take-screenshots failing` mode is not yet implemented.
+* If `--take-screenshots none` is set, the screenshot will be taken, but it won't be saved to `<artifacts-location>` after the test ends.
+* If `--take-screenshots failing` is set, and the test passes, the screenshot won't be saved to `<artifacts-location>` after the test ends.
+* In the other modes (`manual` and `all`), if the test passes, the screenshot will be put to `<artifacts-location>/✓ Menu items should have Logout/tap on menu.png`.
+* In the other modes (`manual` and `all`), if the test fails, the screenshot will be put to `<artifacts-location>/✗ Menu items should have Logout/tap on menu.png`.
 
 ### `device.shake()` **iOS Only**
 Simulate shake
