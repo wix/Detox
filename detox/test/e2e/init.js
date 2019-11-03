@@ -18,14 +18,17 @@ jasmine.getEnv().addReporter(assignReporter);
 jest.setTimeout(360000);
 
 beforeAll(async () => {
+  console.log('DBG beforeAll');
   await detox.init(config);
 });
 
 beforeEach(async () => {
+  console.log('DBG beforeEach');
   await adapter.beforeEach();
 });
 
 afterAll(async () => {
+  console.log('DBG afterAll');
   await adapter.afterAll();
   await detox.cleanup();
 });
