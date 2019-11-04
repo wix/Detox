@@ -140,6 +140,10 @@ public class ReactNativeSupport {
                                 countDownLatch.countDown();
                             }
                         });
+
+                        if (!instanceManager.hasStartedCreatingInitialContext()) {
+                            instanceManager.createReactContextInBackground();
+                        }
                     }
                 });
 
