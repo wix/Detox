@@ -41,18 +41,18 @@ class SimulatorDriver extends IosDriver {
   }
 
   async acquireFreeDevice(deviceQuery) {
-    return this.deviceRegistry.allocateDevice(async () => {
-      const udid = await this._findOrCreateDevice(deviceQuery);
-      const deviceComment = this._commentDevice(deviceQuery);
-
-      if (!udid) {
-        throw new Error(`Failed to find device matching ${deviceComment}`);
-      }
-
-      await this._boot(udid);
-      this._name = `${udid} ${deviceComment}`;
-      return udid;
+    const udid = await this.deviceRegistry.allocateDevice(async () => {
+      return await this._findOrCreateDevice(deviceQuery);
     });
+
+    const deviceComment = this._commentDevice(deviceQuery);
+    if (!udid) {
+      throw new Error(`Failed to find device matching ${deviceComment}`);
+    }
+
+    await this._boot(udid);
+    this._name = `${udid} ${deviceComment}`;
+    return udid;
   }
 
   async getBundleIdFromBinary(appPath) {
