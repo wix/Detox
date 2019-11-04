@@ -1,6 +1,6 @@
 {
   "name": "demo-react-native-jest",
-  "version": "14.5.1",
+  "version": "14.6.0",
   "private": true,
   "scripts": {
     "test:ios-release": "detox test --configuration ios.sim.release -l verbose",
@@ -13,7 +13,7 @@
     "test:jest-circus:android-release-ci": "detox test --configuration android.emu.release -l verbose -o e2e/config-circus.json --workers 2"
   },
   "devDependencies": {
-    "detox": "^14.5.1",
+    "detox": "^14.6.0",
     "jest": "24.8.x",
     "jest-circus": "24.8.x"
   },
