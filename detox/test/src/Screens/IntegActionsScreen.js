@@ -54,7 +54,7 @@ export default class IntegActionsScreen extends Component {
 
   renderAllTappableTexts(length) {
     return Array.from({length}, (_, index) => {
-      const marginBottom = 20 * (index + 1);
+      const marginBottom = 10 * (index + 1);
       return this.renderTappableText(index + 1, marginBottom)
     })
   }
@@ -71,7 +71,7 @@ export default class IntegActionsScreen extends Component {
 
   renderAllTextInputs(length) {
     return Array.from({length}, (_, index) => {
-      const marginBottom = 20 * (index + 1);
+      const marginBottom = 10 * (index + 1);
       return this.renderTextInput(index + 1, marginBottom)
     })
   }
