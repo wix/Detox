@@ -9,6 +9,7 @@ project.ext.react = [
 apply from: "../../node_modules/react-native/react.gradle"
 
 Boolean isRN60OrHigher = getRNVersion() >= 60
+Boolean isRN61OrHigher = getRNVersion() >= 61
 
 android {
     compileSdkVersion 28
@@ -68,7 +69,7 @@ android {
 
     packagingOptions {
         pickFirst '**/libc++_shared.so'
-        
+
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/LICENSE'
@@ -94,12 +95,13 @@ dependencies {
 }
 
 if (isRN60OrHigher) {
-    // ref: https://react-native-community.github.io/upgrade-helper/?from=0.59.9&to=0.60.6
+    // refs: https://react-native-community.github.io/upgrade-helper/?from=0.59.9&to=0.60.6
+    //       https://react-native-community.github.io/upgrade-helper/?from=0.60.6&to=0.61.4
     dependencies {
         def enableHermes = project.ext.react.get("enableHermes", false)
 
         if (enableHermes) {
-            def hermesPath = "../../node_modules/hermesvm/android/"
+            def hermesPath = (isRN61OrHigher ? "../../node_modules/hermes-engine/android/" : "../../node_modules/hermesvm/android/")
             debugImplementation files(hermesPath + "hermes-debug.aar")
             releaseImplementation files(hermesPath + "hermes-release.aar")
         } else {
