@@ -20,7 +20,7 @@ class Emulator {
   }
 
   async exec(cmd) {
-    return (await exec(`${this.emulatorBin} ${cmd}`)).stdout;
+    return (await exec(`"${this.emulatorBin}" ${cmd}`)).stdout;
   }
 
   async boot(emulatorName, options = {port: undefined}) {
