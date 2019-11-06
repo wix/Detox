@@ -119,7 +119,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     private void initReactNativeIfNeeded() {
         if (ReactNativeSupport.isReactNativeApp()) {
-            ReactNativeSupport.waitForReactNativeLoad(reactNativeHostHolder, null);
+            ReactNativeSupport.waitForReactNativeLoad(reactNativeHostHolder);
         }
     }
 

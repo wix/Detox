@@ -12,15 +12,13 @@ import com.wix.detox.espresso.ReactBridgeIdlingResource;
 import com.wix.detox.espresso.ReactNativeNetworkIdlingResource;
 import com.wix.detox.espresso.ReactNativeTimersIdlingResource;
 import com.wix.detox.espresso.ReactNativeUIModuleIdlingResource;
+import com.wix.detox.reactnative.ReactNativeLoadingMonitor;
+import com.wix.detox.reactnative.ReactNativeReLoader;
 
 import org.joor.Reflect;
 import org.joor.ReflectException;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.base.IdlingResourceRegistry;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -41,6 +39,9 @@ public class ReactNativeSupport {
     private static final String FIELD_JS_MSG_QUEUE = "mJSMessageQueueThread";
     private static final String METHOD_GET_LOOPER = "getLooper";
 
+    // Ideally we would not store this at all.
+    public static ReactContext currentReactContext = null;
+
     private ReactNativeSupport() {
         // static class
     }
@@ -53,16 +54,6 @@ public class ReactNativeSupport {
             return false;
         }
         return (found != null);
-    }
-
-    /**
-     * Returns the instanceManager using reflection.
-     *
-     * @param context the object that has a getReactNativeHost() method
-     * @return Returns the instanceManager as an Object or null
-     */
-    public static ReactInstanceManager getInstanceManager(@NonNull Context context) {
-        return ((ReactApplication) context).getReactNativeHost().getReactInstanceManager();
     }
 
     /**
@@ -81,105 +72,40 @@ public class ReactNativeSupport {
         if (!isReactNativeApp()) {
             return;
         }
+
         Log.i(LOG_TAG, "Reloading React Native");
         currentReactContext = null;
 
         removeEspressoIdlingResources(reactNativeHostHolder);
 
-        final ReactInstanceManager instanceManager = getInstanceManager(reactNativeHostHolder);
-        if (instanceManager == null) {
-            return;
-        }
+        final ReactInstanceManager instanceManager = getInstanceManagerSafe(reactNativeHostHolder);
+        final ReactContext previousReactContext = instanceManager.getCurrentReactContext();
+        final ReactNativeReLoader rnReloader = new ReactNativeReLoader(InstrumentationRegistry.getInstrumentation(), (ReactApplication) reactNativeHostHolder);
+        final ReactNativeLoadingMonitor rnLoadingMonitor = new ReactNativeLoadingMonitor(InstrumentationRegistry.getInstrumentation(), (ReactApplication) reactNativeHostHolder, previousReactContext);
 
-        final Context prereloadReactContext = instanceManager.getCurrentReactContext();
-
-        // Must be called on the UI thread!
-        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
-            @Override
-            public void run() {
-                instanceManager.recreateReactContextInBackground();
-            }
-        });
-
-        waitForReactNativeLoad(reactNativeHostHolder, prereloadReactContext);
+        rnReloader.reloadInBackground();
+        currentReactContext = rnLoadingMonitor.getNewContext();
+        setupEspressoIdlingResources(currentReactContext);
+        hackRN50OrHigherWaitForReady();
     }
 
-    // Ideally we would not store this at all.
-    public static ReactContext currentReactContext = null;
-
     /**
-     * <p>
-     * Waits for a ReactContext to be created. Can be called any time.
-     * </p>
+     * Waits for a ReactContext to be created.
+
      * @param reactNativeHostHolder the object that has a getReactNativeHost() method
-     * @param previousReactContext The previous context that we had before *re*-loading. Can be null.
      */
-    static void waitForReactNativeLoad(@NonNull Context reactNativeHostHolder, final @Nullable Context previousReactContext) {
+    static void waitForReactNativeLoad(@NonNull Context reactNativeHostHolder) {
         if (!isReactNativeApp()) {
             return;
         }
 
-        final ReactInstanceManager instanceManager = getInstanceManager(reactNativeHostHolder);
-        if (instanceManager == null) {
-            throw new RuntimeException("ReactInstanceManager is null!");
-        }
-
-        final CountDownLatch countDownLatch = new CountDownLatch(1);
-        InstrumentationRegistry.getInstrumentation().runOnMainSync(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        ReactContext reactContext = instanceManager.getCurrentReactContext();
-                        if (reactContext != null && reactContext != previousReactContext) {
-                            Log.d(LOG_TAG, "Got new RN-context directly and immediately");
-                            countDownLatch.countDown();
-                            return;
-                        }
-
-                        instanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
-                            @Override
-                            public void onReactContextInitialized(ReactContext context) {
-                                Log.i(LOG_TAG, "Got new RN-context async'ly through listener");
-                                instanceManager.removeReactInstanceEventListener(this);
-                                countDownLatch.countDown();
-                            }
-                        });
-                    }
-                });
-
-
-        for (int i = 0; ; ) {
-            try {
-                if (!countDownLatch.await(1, TimeUnit.SECONDS)) {
-                    i++;
-                    if (i >= 60) {
-                        // First load can take a lot of time. (packager)
-                        // Loads afterwards should take less than a second.
-                        throw new RuntimeException("waited a whole minute for the new RN-context");
-                    }
-                } else {
-                    break;
-                }
-                // Due to an ugly timing issue in RN
-                // it is possible that our listener won't be ever called
-                // That's why we have to check the reactContext regularly.
-                ReactContext reactContext = instanceManager.getCurrentReactContext();
-                if (reactContext != null && reactContext != previousReactContext) {
-                    Log.d(LOG_TAG, "Got new RN-context explicitly while polling (#iteration="+i+")");
-                    break;
-                }
-            } catch (InterruptedException e) {
-                throw new RuntimeException("waiting for new RN-context got interrupted", e);
-            }
-        }
-
-        currentReactContext = instanceManager.getCurrentReactContext();
+        ReactNativeLoadingMonitor rnLoadingMonitor = new ReactNativeLoadingMonitor(InstrumentationRegistry.getInstrumentation(), (ReactApplication) reactNativeHostHolder, null);
+        currentReactContext = rnLoadingMonitor.getNewContext();
         setupEspressoIdlingResources(currentReactContext);
-
-        hackRN50OrHigherWaitForReload();
+        hackRN50OrHigherWaitForReady();
     }
 
-    private static void hackRN50OrHigherWaitForReload() {
+    private static void hackRN50OrHigherWaitForReady() {
         if (ReactNativeCompat.getMinor() >= 50) {
             try {
                 //TODO- Temp hack to make Detox usable for RN>=50 till we find a better sync solution.
@@ -188,6 +114,18 @@ public class ReactNativeSupport {
                 e.printStackTrace();
             }
         }
+    }
+
+    private static ReactInstanceManager getInstanceManager(@NonNull Context context) {
+        return ((ReactApplication) context).getReactNativeHost().getReactInstanceManager();
+    }
+
+    private static ReactInstanceManager getInstanceManagerSafe(@NonNull Context context) {
+        ReactInstanceManager reactInstanceManager = ((ReactApplication) context).getReactNativeHost().getReactInstanceManager();
+        if (reactInstanceManager == null) {
+            throw new RuntimeException("ReactInstanceManager is null!");
+        }
+        return reactInstanceManager;
     }
 
     private static ReactNativeTimersIdlingResource rnTimerIdlingResource = null;
