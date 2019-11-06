@@ -4,6 +4,7 @@ const path = require('path');
 const exec = require('child-process-promise').exec;
 const DeviceRegistry = require('../DeviceRegistry');
 const IosDriver = require('./IosDriver');
+const temporaryPath = require('../../artifacts/utils/temporaryPath');
 const configuration = require('../../configuration');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const environment = require('../../utils/environment');
@@ -40,18 +41,18 @@ class SimulatorDriver extends IosDriver {
   }
 
   async acquireFreeDevice(deviceQuery) {
-    return this.deviceRegistry.allocateDevice(async () => {
-      const udid = await this._findOrCreateDevice(deviceQuery);
-      const deviceComment = this._commentDevice(deviceQuery);
-
-      if (!udid) {
-        throw new Error(`Failed to find device matching ${deviceComment}`);
-      }
-
-      await this._boot(udid);
-      this._name = `${udid} ${deviceComment}`;
-      return udid;
+    const udid = await this.deviceRegistry.allocateDevice(async () => {
+      return await this._findOrCreateDevice(deviceQuery);
     });
+
+    const deviceComment = this._commentDevice(deviceQuery);
+    if (!udid) {
+      throw new Error(`Failed to find device matching ${deviceComment}`);
+    }
+
+    await this._boot(udid);
+    this._name = `${udid} ${deviceComment}`;
+    return udid;
   }
 
   async getBundleIdFromBinary(appPath) {
@@ -159,6 +160,19 @@ class SimulatorDriver extends IosDriver {
 
   async waitForBackground() {
     return await this.client.waitForBackground();
+  }
+
+  async takeScreenshot(udid, screenshotName) {
+    const tempPath = await temporaryPath.for.png();
+    await this.applesimutils.takeScreenshot(udid, tempPath);
+
+    await this.emitter.emit('createExternalArtifact', {
+      pluginId: 'screenshot',
+      artifactName: screenshotName,
+      artifactPath: tempPath,
+    });
+
+    return tempPath;
   }
 
   /***

@@ -27,7 +27,7 @@ describe(':android: Integrative actions', () => {
   it('should scroll various distances accurately, and tap scroll targets', async () => {
     const iterations = 10;
     const textHeightDP = 40;
-    const baseMarginDP = 20;
+    const baseMarginDP = 10;
 
     await element(by.text('Integrative Actions')).tap();
     for (let i = 1; i <= iterations; i++) {
@@ -45,7 +45,7 @@ describe(':android: Integrative actions', () => {
   it('should scroll various distances accurately, and type text into text fields', async () => {
     const iterations = 10;
     const inputHeightDP = 40;
-    const baseMarginDP = 20;
+    const baseMarginDP = 10;
 
     await element(by.text('Integrative Actions')).tap();
 

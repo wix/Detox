@@ -1,8 +1,7 @@
 const _ = require('lodash');
-const fs = require('fs-extra');
 const log = require('../../utils/logger').child({ __filename });
-const tempfile = require('tempfile');
-const Artifact = require('../templates/artifact/Artifact');
+const temporaryPath = require('../utils/temporaryPath');
+const FileArtifact = require('../templates/artifact/FileArtifact');
 const ScreenshotArtifactPlugin = require('./ScreenshotArtifactPlugin');
 
 class SimulatorScreenshotter extends ScreenshotArtifactPlugin {
@@ -31,23 +30,13 @@ class SimulatorScreenshotter extends ScreenshotArtifactPlugin {
 
   createTestArtifact() {
     const { context, appleSimUtils } = this;
-    const temporaryFilePath = tempfile('.png');
 
-    return new Artifact({
+    return new FileArtifact({
       name: 'SimulatorScreenshot',
 
       async start() {
-        await appleSimUtils.takeScreenshot(context.deviceId, temporaryFilePath);
-      },
-
-      async save(artifactPath) {
-        log.debug({ event: 'MOVE_FILE' }, `moving file "${temporaryFilePath}" to "${artifactPath}"`);
-        await fs.move(temporaryFilePath, artifactPath);
-      },
-
-      async discard() {
-        log.debug({ event: 'REMOVE_FILE' }, `removing temp file: ${temporaryFilePath}`);
-        await fs.remove(temporaryFilePath);
+        this.temporaryPath = temporaryPath.for.png();
+        await appleSimUtils.takeScreenshot(context.deviceId, this.temporaryPath);
       },
     });
   }

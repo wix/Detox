@@ -105,7 +105,7 @@ class Device {
       throw new Error('Cannot take a screenshot with an empty name.');
     }
 
-    return this.deviceDriver.takeScreenshot(name);
+    return this.deviceDriver.takeScreenshot(this._deviceId, name);
   }
 
   _isAppInBackground(params, _bundleId) {

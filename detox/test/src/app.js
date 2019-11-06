@@ -6,7 +6,6 @@ import {
   Linking,
   Platform,
 } from 'react-native';
-import { PropTypes } from 'prop-types';
 
 import * as Screens from './Screens';
 
@@ -22,6 +21,7 @@ class example extends Component {
       url: undefined,
       notification: undefined
     };
+
     Linking.addEventListener('url', (params) => this._handleOpenURL(params));
   }
 
@@ -56,6 +56,8 @@ class example extends Component {
   }
 
   async componentDidMount() {
+    Linking.addEventListener('url', (params) => this._handleOpenURL(params));
+
     const url = await Linking.getInitialURL();
     if (url) {
       console.log('App@didMount: Found pending URL', url);

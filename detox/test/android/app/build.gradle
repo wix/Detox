@@ -1,9 +1,23 @@
+import groovy.json.JsonSlurper
+
 apply plugin: 'com.android.application'
 
+//project.ext.react = [:]
+project.ext.react = [
+    enableHermes: false
+]
 apply from: "../../node_modules/react-native/react.gradle"
+
+Boolean isRN60OrHigher = getRNVersion() >= 60
+Boolean isRN61OrHigher = getRNVersion() >= 61
 
 android {
     compileSdkVersion 28
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
     defaultConfig {
         applicationId "com.wix.detox.test"
@@ -54,6 +68,8 @@ android {
     }
 
     packagingOptions {
+        pickFirst '**/libc++_shared.so'
+
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/LICENSE'
@@ -63,7 +79,12 @@ android {
 }
 
 dependencies {
-    implementation "com.android.support:appcompat-v7:28.0.0"
+    if (isRN60OrHigher) {
+        implementation 'androidx.appcompat:appcompat:1.1.0'
+        implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+    } else {
+        implementation 'com.android.support:appcompat-v7:28.0.0'
+    }
 
     fromSourceImplementation(project(path: ":ReactAndroid"))
     // noinspection GradleDynamicVersion
@@ -73,9 +94,33 @@ dependencies {
     androidTestImplementation 'junit:junit:4.12'
 }
 
+if (isRN60OrHigher) {
+    // refs: https://react-native-community.github.io/upgrade-helper/?from=0.59.9&to=0.60.6
+    //       https://react-native-community.github.io/upgrade-helper/?from=0.60.6&to=0.61.4
+    dependencies {
+        def enableHermes = project.ext.react.get("enableHermes", false)
+
+        if (enableHermes) {
+            def hermesPath = (isRN61OrHigher ? "../../node_modules/hermes-engine/android/" : "../../node_modules/hermesvm/android/")
+            debugImplementation files(hermesPath + "hermes-debug.aar")
+            releaseImplementation files(hermesPath + "hermes-release.aar")
+        } else {
+            implementation 'org.webkit:android-jsc:+'
+        }
+    }
+}
+
 // Run this once to be able to run the application with BUCK
 // puts all compile dependencies into folder libs for BUCK to use
 task copyDownloadableDepsToLibs(type: Copy) {
   from configurations.compile
   into 'libs'
+}
+
+static def getRNVersion() {
+    def jsonSlurper = new JsonSlurper()
+    Map<String, Object> packageJSON  = jsonSlurper.parse(new File('../node_modules/react-native/package.json'))
+    String rnVersion = packageJSON.get('version')
+    Integer rnVersionMajor = rnVersion.split('\\.')[1].toInteger()
+    return rnVersionMajor
 }

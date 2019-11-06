@@ -2,15 +2,14 @@ package com.wix.detox;
 
 import android.content.Context;
 import android.os.Looper;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.ReactContext;
 import com.wix.detox.espresso.AnimatedModuleIdlingResource;
-import com.wix.detox.espresso.ReactNativeNetworkIdlingResource;
 import com.wix.detox.espresso.ReactBridgeIdlingResource;
+import com.wix.detox.espresso.ReactNativeNetworkIdlingResource;
 import com.wix.detox.espresso.ReactNativeTimersIdlingResource;
 import com.wix.detox.espresso.ReactNativeUIModuleIdlingResource;
 
@@ -20,6 +19,8 @@ import org.joor.ReflectException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.base.IdlingResourceRegistry;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -33,7 +34,7 @@ import okhttp3.OkHttpClient;
 //TODO Dear reader, if you get this far and find this class messy you are not alone. :) It needs a refactor.
 
 public class ReactNativeSupport {
-    private static final String LOG_TAG = "Detox";
+    private static final String LOG_TAG = "DetoxRNSupport";
 
     private static final String FIELD_UI_BG_MSG_QUEUE = "mUiBackgroundMessageQueueThread";
     private static final String FIELD_NATIVE_MODULES_MSG_QUEUE = "mNativeModulesMessageQueueThread";
@@ -90,6 +91,8 @@ public class ReactNativeSupport {
             return;
         }
 
+        final Context prereloadReactContext = instanceManager.getCurrentReactContext();
+
         // Must be called on the UI thread!
         InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
             @Override
@@ -98,7 +101,7 @@ public class ReactNativeSupport {
             }
         });
 
-        ReactNativeCompat.waitForReactNativeLoad(reactNativeHostHolder);
+        waitForReactNativeLoad(reactNativeHostHolder, prereloadReactContext);
     }
 
     // Ideally we would not store this at all.
@@ -109,15 +112,16 @@ public class ReactNativeSupport {
      * Waits for a ReactContext to be created. Can be called any time.
      * </p>
      * @param reactNativeHostHolder the object that has a getReactNativeHost() method
+     * @param previousReactContext The previous context that we had before *re*-loading. Can be null.
      */
-    static void waitForReactNativeLoad(@NonNull Context reactNativeHostHolder) {
+    static void waitForReactNativeLoad(@NonNull Context reactNativeHostHolder, final @Nullable Context previousReactContext) {
         if (!isReactNativeApp()) {
             return;
         }
 
         final ReactInstanceManager instanceManager = getInstanceManager(reactNativeHostHolder);
         if (instanceManager == null) {
-            throw new RuntimeException("ReactInstanceManager is null");
+            throw new RuntimeException("ReactInstanceManager is null!");
         }
 
         final CountDownLatch countDownLatch = new CountDownLatch(1);
@@ -126,8 +130,8 @@ public class ReactNativeSupport {
                     @Override
                     public void run() {
                         ReactContext reactContext = instanceManager.getCurrentReactContext();
-                        if (reactContext != null) {
-                            Log.d(LOG_TAG, "Got reactContext directly");
+                        if (reactContext != null && reactContext != previousReactContext) {
+                            Log.d(LOG_TAG, "Got new RN-context directly and immediately");
                             countDownLatch.countDown();
                             return;
                         }
@@ -135,7 +139,7 @@ public class ReactNativeSupport {
                         instanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
                             @Override
                             public void onReactContextInitialized(ReactContext context) {
-                                Log.i(LOG_TAG, "Got react context through listener.");
+                                Log.i(LOG_TAG, "Got new RN-context async'ly through listener");
                                 instanceManager.removeReactInstanceEventListener(this);
                                 countDownLatch.countDown();
                             }
@@ -151,7 +155,7 @@ public class ReactNativeSupport {
                     if (i >= 60) {
                         // First load can take a lot of time. (packager)
                         // Loads afterwards should take less than a second.
-                        throw new RuntimeException("waited a minute for the new reactContext");
+                        throw new RuntimeException("waited a whole minute for the new RN-context");
                     }
                 } else {
                     break;
@@ -160,17 +164,30 @@ public class ReactNativeSupport {
                 // it is possible that our listener won't be ever called
                 // That's why we have to check the reactContext regularly.
                 ReactContext reactContext = instanceManager.getCurrentReactContext();
-                if (reactContext != null) {
-                    Log.d(LOG_TAG, "Got reactContext directly");
+                if (reactContext != null && reactContext != previousReactContext) {
+                    Log.d(LOG_TAG, "Got new RN-context explicitly while polling (#iteration="+i+")");
                     break;
                 }
             } catch (InterruptedException e) {
-                throw new RuntimeException("waiting for reactContext got interrupted", e);
+                throw new RuntimeException("waiting for new RN-context got interrupted", e);
             }
         }
 
         currentReactContext = instanceManager.getCurrentReactContext();
         setupEspressoIdlingResources(currentReactContext);
+
+        hackRN50OrHigherWaitForReload();
+    }
+
+    private static void hackRN50OrHigherWaitForReload() {
+        if (ReactNativeCompat.getMinor() >= 50) {
+            try {
+                //TODO- Temp hack to make Detox usable for RN>=50 till we find a better sync solution.
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private static ReactNativeTimersIdlingResource rnTimerIdlingResource = null;

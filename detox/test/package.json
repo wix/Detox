@@ -1,12 +1,13 @@
 {
   "name": "detox-test",
-  "version": "14.5.1",
+  "version": "14.6.1",
   "private": true,
   "engines": {
     "node": ">=8.3.0"
   },
   "scripts": {
     "test": ":",
+    "postinstall": "node scripts/postinstall.js",
     "packager": "react-native start",
     "detox-server": "detox run-server",
     "e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization",
@@ -19,6 +20,7 @@
     "build:ios": "detox build --configuration ios.sim.release",
     "build:android": "detox build --configuration android.emu.release",
     "build:android-debug": "detox build --configuration android.emu.debug",
+    "clean:android": "pushd android && ./gradlew clean && popd",
     "verify-artifacts:ios": "jest ./scripts/verify_artifacts_are_not_missing.ios.test.js --testEnvironment node",
     "verify-artifacts:android": "jest ./scripts/verify_artifacts_are_not_missing.android.test.js --testEnvironment node"
   },
@@ -29,13 +31,14 @@
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
-    "detox": "^14.5.1",
+    "detox": "^14.6.1",
     "express": "^4.15.3",
     "jest": "24.9.x",
     "jest-circus": "24.9.x",
     "jest-junit": "^8.0.0",
     "lodash": "^4.14.1",
-    "nyc": "^14.0.0"
+    "nyc": "^14.0.0",
+    "pngjs": "^3.4.0"
   },
   "detox": {
     "test-runner": "jest",

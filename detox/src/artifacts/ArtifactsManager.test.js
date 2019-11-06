@@ -94,7 +94,7 @@ describe('ArtifactsManager', () => {
           onBeforeTerminateApp: jest.fn(),
           onBeforeLaunchApp: jest.fn(),
           onLaunchApp: jest.fn(),
-          onUserAction: jest.fn(),
+          onCreateExternalArtifact: jest.fn(),
           onBeforeAll: jest.fn(),
           onBeforeEach: jest.fn(),
           onAfterEach: jest.fn(),
@@ -108,7 +108,7 @@ describe('ArtifactsManager', () => {
       };
 
       artifactsManager = new proxy.ArtifactsManager(pathBuilder);
-      artifactsManager.registerArtifactPlugins({ testPluginFactory });
+      artifactsManager.registerArtifactPlugins({ testPlugin: testPluginFactory });
     });
 
     describe('.preparePathForArtifact()', () => {
@@ -261,11 +261,10 @@ describe('ArtifactsManager', () => {
           deviceId: 'testDeviceId',
         }));
 
-        itShouldCatchErrorsOnPhase('onUserAction', () => ({
-          type: 'takeScreenshot',
-          options: {
-            name: 'open app',
-          }
+        itShouldCatchErrorsOnPhase('onCreateExternalArtifact', () => ({
+          pluginId: 'testPlugin',
+          artifactName: 'example',
+          artifactPath: '/tmp/path/to/artifact',
         }));
 
         itShouldCatchErrorsOnPhase('onBeforeShutdownDevice', () => ({
@@ -406,17 +405,18 @@ describe('ArtifactsManager', () => {
       });
     });
 
-    describe('onUserAction', () => {
-      it('should call onUserAction in plugins', async () => {
-        const actionInfo = {
-          type: 'takeScreenshot',
-          options: {
-            name: 'open app',
-          },
-        };
+    describe('onCreateExternalArtifact', () => {
+      it('should call onCreateExternalArtifact in a specific plugin', async () => {
+        await artifactsManager.onCreateExternalArtifact({
+          pluginId: 'testPlugin',
+          artifactPath: '/tmp/path/to/artifact',
+          artifactName: 'Example',
+        });
 
-        await artifactsManager.onUserAction(actionInfo);
-        expect(testPlugin.onUserAction).toHaveBeenCalledWith(actionInfo);
+        expect(testPlugin.onCreateExternalArtifact).toHaveBeenCalledWith({
+          artifact: expect.any(Object),
+          name: 'Example',
+        });
       });
     });
 

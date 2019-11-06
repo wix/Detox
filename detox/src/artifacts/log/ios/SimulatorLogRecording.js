@@ -3,6 +3,7 @@ const log = require('../../../utils/logger').child({ __filename });
 const sleep = require('../../../utils/sleep');
 const exec = require('../../../utils/exec');
 const Artifact = require('../../templates/artifact/Artifact');
+const FileArtifact = require('../../templates/artifact/FileArtifact');
 
 class SimulatorLogRecording extends Artifact {
   constructor({
@@ -65,7 +66,7 @@ class SimulatorLogRecording extends Artifact {
   }
 
   async doSave(artifactPath) {
-    await Artifact.moveTemporaryFile(log, this._logPath, artifactPath);
+    await FileArtifact.moveTemporaryFile(log, this._logPath, artifactPath);
   }
 
   async doDiscard() {
