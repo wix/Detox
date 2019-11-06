@@ -13,10 +13,12 @@
 #import "DTXLogging.h"
 #import "XCTestConfiguration.h"
 #import "DetoxUtils.h"
+#import "DetoxTestRunner-Swift.h"
+@import Darwin;
 
 DTX_CREATE_LOG(DetoxTestRunner);
 
-@interface DetoxTestRunner : XCTestCase <WebSocketDelegate>
+@interface DetoxTestRunner : XCTestCase <WebSocketDelegate, DTXDetoxApplicationDelegate>
 
 @end
 
@@ -24,11 +26,24 @@ DTX_CREATE_LOG(DetoxTestRunner);
 {
 	WebSocket *_webSocket;
 	DTXDetoxApplication* _testedApplication;
+	
+	NSMutableArray<dispatch_block_t>* _pendingActions;
+	pthread_mutex_t _pendingActionsMutex;
+	dispatch_semaphore_t _pendingActionsAvailable;
+}
+
+- (void)dealloc
+{
+	pthread_mutex_destroy(&_pendingActionsMutex);
 }
 
 - (void)setUp
 {
-	_webSocket = [[WebSocket alloc] init];
+	_pendingActions = [NSMutableArray new];
+	pthread_mutex_init(&_pendingActionsMutex, NULL);
+	_pendingActionsAvailable = dispatch_semaphore_create(0);
+	
+	_webSocket = [WebSocket new];
 	_webSocket.delegate = self;
 	
 	[self _reconnectWebSocket];
@@ -40,6 +55,43 @@ DTX_CREATE_LOG(DetoxTestRunner);
 {
 }
 
+- (void)_replaceActionsQueue:(NSArray<dispatch_block_t>*)actions
+{
+	BOOL needsSignal = NO;
+	pthread_mutex_lock(&_pendingActionsMutex);
+	[_pendingActions removeAllObjects];
+	[_pendingActions addObjectsFromArray:actions];
+	if(actions.count > 0)
+	{
+		needsSignal = YES;
+	}
+	pthread_mutex_unlock(&_pendingActionsMutex);
+	
+	if(needsSignal)
+	{
+		dispatch_semaphore_signal(_pendingActionsAvailable);
+	}
+}
+
+- (void)_enqueueAction:(dispatch_block_t)action
+{
+	pthread_mutex_lock(&_pendingActionsMutex);
+	[_pendingActions addObject:action];
+	pthread_mutex_unlock(&_pendingActionsMutex);
+	dispatch_semaphore_signal(_pendingActionsAvailable);
+}
+
+- (dispatch_block_t)_dequeueAction
+{
+	dispatch_semaphore_wait(_pendingActionsAvailable, DISPATCH_TIME_FOREVER);
+	pthread_mutex_lock(&_pendingActionsMutex);
+	dispatch_block_t action = _pendingActions.firstObject;
+	[_pendingActions removeObjectAtIndex:0];
+	pthread_mutex_unlock(&_pendingActionsMutex);
+	
+	return action;
+}
+
 - (void)testDetoxSuite
 {
 	NSLog(@"*********************************************************\nArguments: %@\n*********************************************************", NSProcessInfo.processInfo.arguments);
@@ -47,37 +99,103 @@ DTX_CREATE_LOG(DetoxTestRunner);
 //	_testedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.apple.mobilesafari"];
 //	_testedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.wix.ExampleApp"];
 	_testedApplication = [[DTXDetoxApplication alloc] init];
-	[_testedApplication launch];
+	_testedApplication.delegate = self;
 	
-	XCUIElement* tableView = _testedApplication.tables.firstMatch;
-	[tableView scrollWithOffset:CGVectorMake(0, -200)];
-	[tableView tapAtPoint:CGVectorMake(200, 200)];
+	do {
+		dispatch_block_t action = [self _dequeueAction];
+		action();
+	} while (true);
 	
-	XCUIElementQuery* query = [[_testedApplication.windows.firstMatch descendantsMatchingType:XCUIElementTypeAny] matchingPredicate:[NSPredicate predicateWithFormat:@"label == 'Second'"]];
-	XCUIElement* element = query.firstMatch;
-	[element tap];
+//	[_testedApplication launch];
+//
+//	XCUIElement* tableView = _testedApplication.tables.firstMatch;
+//	[tableView scrollWithOffset:CGVectorMake(0, -200)];
+//	[tableView tapAtPoint:CGVectorMake(200, 200)];
+//
+//	XCUIElementQuery* query = [[_testedApplication.windows.firstMatch descendantsMatchingType:XCUIElementTypeAny] matchingPredicate:[NSPredicate predicateWithFormat:@"label == 'Second'"]];
+//	XCUIElement* element = query.firstMatch;
+//	[element tap];
+//
+//	[[_testedApplication.buttons elementMatchingPredicate:[NSPredicate predicateWithFormat:@"label == 'Second'"]] tap];
+//	XCUIElement* label = [_testedApplication.staticTexts elementMatchingPredicate:[NSPredicate predicateWithFormat:@"label == 'Second View'"]];
+//	XCTAssertTrue(label.exists);
+//	XCTAssertTrue(label.isHittable);
+//
+//	query = [[_testedApplication.windows.firstMatch descendantsMatchingType:XCUIElementTypeAny] matchingPredicate:[NSPredicate predicateWithFormat:@"identifier == 'picker'"]];
+//	XCUIElement* picker = query.firstMatch;
+//
+//	query = [[_testedApplication.windows.firstMatch descendantsMatchingType:XCUIElementTypeAny] matchingPredicate:[NSPredicate predicateWithFormat:@"identifier == 'TextField'"]];
+//	XCUIElement* textField = query.firstMatch;
+//	[textField tap];
+//	[textField typeText:NSProcessInfo.processInfo.environment[@"DETOX_SERVER_PORT"]];
+//	[textField typeText:XCUIKeyboardKeyReturn];
+//
+//	[picker ln_adjustToDatePickerDate:[NSDate dateWithTimeIntervalSinceNow:86400 * 1000 - 48200]];
+//
+//	[_testedApplication terminate];
+}
+
+- (void)_cleanUpAndTerminateIfNeeded
+{
+	//The web socket connection closed, so terminate all tested applications and finally exist the process.
+	[_testedApplication.detoxHelper stopAndCleanupRecordingWithCompletionHandler:^ {}];
+	//Only terminated tested app if debugger is not attached.
+	[_testedApplication.detoxHelper isDebuggerAttachedWithCompletionHandler:^(BOOL isDebuggerAttached) {
+		if(isDebuggerAttached == NO)
+		{
+			[self _terminateApplicationWithParameters:nil completionHandler:nil];
+		}
+	}];
 	
-	[[_testedApplication.buttons elementMatchingPredicate:[NSPredicate predicateWithFormat:@"label == 'Second'"]] tap];
-	XCUIElement* label = [_testedApplication.staticTexts elementMatchingPredicate:[NSPredicate predicateWithFormat:@"label == 'Second View'"]];
-	XCTAssertTrue(label.exists);
-	XCTAssertTrue(label.isHittable);
+	//Only exist test runner process if debugger is not attached.
+	if(DTXIsDebuggerAttached() == NO)
+	{
+		exit(0);
+	}
+}
+
+- (void)_launchApplicationWithParameters:(NSDictionary*)params completionHandler:(dispatch_block_t)completionHandler
+{
+	NSDictionary* userActivity = params[@"userActivity"];
+	NSDictionary* userNotification = [DetoxUserNotificationParser parseUserNotificationWithDictionary:params[@"userNotification"]];
 	
-	query = [[_testedApplication.windows.firstMatch descendantsMatchingType:XCUIElementTypeAny] matchingPredicate:[NSPredicate predicateWithFormat:@"identifier == 'picker'"]];
-	XCUIElement* picker = query.firstMatch;
+	_testedApplication.launchUserActivity = userActivity;
+	_testedApplication.launchUserNotification = userNotification;
+	_testedApplication.launchOpenURL = [NSURL URLWithString:params[@"url"]];
+	_testedApplication.launchSourceApp = params[@"sourceApp"];
 	
-	query = [[_testedApplication.windows.firstMatch descendantsMatchingType:XCUIElementTypeAny] matchingPredicate:[NSPredicate predicateWithFormat:@"identifier == 'TextField'"]];
-	XCUIElement* textField = query.firstMatch;
-	[textField tap];
-	[textField typeText:NSProcessInfo.processInfo.environment[@"DETOX_SERVER_PORT"]];
-	[textField typeText:XCUIKeyboardKeyReturn];
+	_testedApplication.launchArguments = params[@"launchArgs"];
 	
-	[picker ln_adjustToDatePickerDate:[NSDate dateWithTimeIntervalSinceNow:86400 * 1000 - 48200]];
+	if([params[@"newInstance"] boolValue])
+	{
+		[_testedApplication launch];
+	}
+	else
+	{
+		[_testedApplication activate];
+	}
 	
+	if(completionHandler)
+	{
+		completionHandler();
+	}
+}
+
+- (void)_terminateApplicationWithParameters:(NSDictionary*)params completionHandler:(dispatch_block_t)completionHandler
+{
 	[_testedApplication terminate];
-//	[picker ln_adjustToCountDownDuration:27900];
 	
-//	[NSThread sleepForTimeInterval:2];
-//	[NSRunLoop.currentRunLoop runUntilDate:NSDate.distantFuture];
+	if(completionHandler)
+	{
+		completionHandler();
+	}
+}
+
+- (void)_cleanupActionsQueueAndTerminateIfNeeded
+{
+	[self _replaceActionsQueue:@[^ {
+		[self _cleanUpAndTerminateIfNeeded];
+	}]];
 }
 
 #pragma mark WebSocket
@@ -120,7 +238,6 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	[_webSocket connectToServer:detoxServer withSessionId:detoxSessionId];
 }
 
-
 - (void)webSocketDidConnect:(WebSocket*)webSocket
 {
 	[self _sendGeneralReadyMessage];
@@ -131,7 +248,7 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	dtx_log_error(@"Web socket failed to connect with error: %@", error);
 	
 	//Retry server connection
-	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), _webSocket.delegateQueue, ^{
 		[self _reconnectWebSocket];
 	});
 }
@@ -142,31 +259,39 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	
 	if([type isEqualToString:@"testerDisconnected"])
 	{
-		[_testedApplication.detoxHelper stopAndCleanupRecordingWithCompletionHandler:^{}];
+		[self _cleanupActionsQueueAndTerminateIfNeeded];
+		return;
 	}
 	else if([type isEqualToString:@"setRecordingState"])
 	{
-		[_testedApplication.detoxHelper handlePerformanceRecording:params isFromLaunch:NO completionHandler:^ {
-			[self _safeSendAction:@"setRecordingStateDone" params:@{} messageId:messageId];
+		[self _enqueueAction:^{
+			[_testedApplication.detoxHelper handlePerformanceRecording:params isFromLaunch:NO completionHandler:^ {
+				[self _safeSendAction:@"setRecordingStateDone" params:@{} messageId:messageId];
+			}];
 		}];
+		return;
 	}
 	else if([type isEqualToString:@"waitForActive"])
 	{
-		[_testedApplication.detoxHelper waitForApplicationState:UIApplicationStateActive completionHandler:^{
-			[self _safeSendAction:@"waitForActiveDone" params:@{} messageId:messageId];
+		[self _enqueueAction:^{
+			[_testedApplication.detoxHelper waitForApplicationState:UIApplicationStateActive completionHandler:^{
+				[self _safeSendAction:@"waitForActiveDone" params:@{} messageId:messageId];
+			}];
 		}];
 		return;
 	}
 	else if([type isEqualToString:@"waitForBackground"])
 	{
-		[_testedApplication.detoxHelper waitForApplicationState:UIApplicationStateBackground completionHandler:^{
-			[self _safeSendAction:@"waitForBackgroundDone" params:@{} messageId:messageId];
+		[self _enqueueAction:^{
+			[_testedApplication.detoxHelper waitForApplicationState:UIApplicationStateBackground completionHandler:^{
+				[self _safeSendAction:@"waitForBackgroundDone" params:@{} messageId:messageId];
+			}];
 		}];
 		return;
 	}
 	else if([type isEqualToString:@"invoke"])
 	{
-//		[self.testRunner invoke:params withMessageId:messageId];
+		//TODO: Implement
 		return;
 	}
 	else if([type isEqualToString:@"isReady"])
@@ -174,42 +299,67 @@ DTX_CREATE_LOG(DetoxTestRunner);
 		[self _sendGeneralReadyMessage];
 		return;
 	}
-	//TODO: ???
 	else if([type isEqualToString:@"cleanup"])
 	{
+		//TODO: ???
 		[self _safeSendAction:@"cleanupDone" params:@{} messageId:messageId];
+		return;
+	}
+	else if([type isEqualToString:@"launch"])
+	{
+		[self _enqueueAction:^{
+			[self _launchApplicationWithParameters:params completionHandler:^{
+				[self _safeSendAction:@"launchDone" params:@{} messageId:messageId];
+			}];
+		}];
+		return;
+	}
+	else if([type isEqualToString:@"terminate"])
+	{
+		[self _enqueueAction:^{
+			[self _terminateApplicationWithParameters:params completionHandler:^{
+				[self _safeSendAction:@"terminateDone" params:@{} messageId:messageId];
+			}];
+		}];
 		return;
 	}
 	else if([type isEqualToString:@"deliverPayload"])
 	{
-		[_testedApplication.detoxHelper deliverPayload:params completionHandler:^{
-			[self _safeSendAction:@"deliverPayloadDone" params:@{} messageId:messageId];
+		[self _enqueueAction:^{
+			[_testedApplication.detoxHelper deliverPayload:params completionHandler:^{
+				[self _safeSendAction:@"deliverPayloadDone" params:@{} messageId:messageId];
+			}];
 		}];
+		return;
+	}
+	else if([type isEqualToString:@"setOrientation"])
+	{
+		[self _enqueueAction:^{
+			[XCUIDevice.sharedDevice setOrientation:[params[@"orientation"] unsignedIntegerValue]];
+		}];
+		return;
 	}
 	else if([type isEqualToString:@"shakeDevice"])
 	{
 		//TODO: Implement shake!
-//		[EarlGrey detox_safeExecuteSync:^{
-//			[GREYSyntheticEvents shakeDeviceWithError:NULL];
-//
-//			[self _safeSendAction:@"shakeDeviceDone" params:@{} messageId:messageId];
-//		}];
+		return;
 	}
 	else if([type isEqualToString:@"reactNativeReload"])
 	{
-		[_testedApplication.detoxHelper reloadReactNativeWithCompletionHandler:^{
-			[self _safeSendAction:@"reactNativeReloadDone" params:@{} messageId:messageId];
+		[self _enqueueAction:^{
+			[_testedApplication.detoxHelper reloadReactNativeWithCompletionHandler:^{
+				[self _safeSendAction:@"reactNativeReloadDone" params:@{} messageId:messageId];
+			}];
 		}];
-		
 		return;
 	}
 	else if([type isEqualToString:@"currentStatus"])
 	{
 		//TODO: Format changed!
-		
 		[_testedApplication.detoxHelper syncStatusWithCompletionHandler:^(NSString * _Nonnull information) {
 			[self _safeSendAction:@"currentStatusResult" params:@{@"messageId": messageId, @"syncStatus": information} messageId:messageId];
 		}];
+		return;
 	}
 }
 
@@ -217,21 +367,14 @@ DTX_CREATE_LOG(DetoxTestRunner);
 {
 	dtx_log_error(@"Web socket closed with reason: %@", reason);
 	
-	//The web socket connection closed, so terminate all tested applications and finally exist the process.
-	[_testedApplication.detoxHelper stopAndCleanupRecordingWithCompletionHandler:^ {}];
-	//Only terminated tested app if debugger is not attached.
-	[_testedApplication.detoxHelper isDebuggerAttachedWithCompletionHandler:^(BOOL isDebuggerAttached) {
-		if(isDebuggerAttached == NO)
-		{
-			[_testedApplication terminate];
-		}
-	}];
-	
-	//Only exist test runner process if debugger is not attached.
-	if(DTXIsDebuggerAttached() == NO)
-	{
-		exit(0);
-	}
+	[self _cleanupActionsQueueAndTerminateIfNeeded];
+}
+
+#pragma mark DTXDetoxApplicationDelegate
+
+- (void)application:(DTXDetoxApplication *)application didCrashWithDetails:(NSDictionary *)details
+{
+	[self _safeSendAction:@"AppWillTerminateWithError" params:details messageId:@-10000];
 }
 
 @end

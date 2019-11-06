@@ -23,6 +23,8 @@
 @interface WebSocket : NSObject
 
 @property (nonatomic, assign) id<WebSocketDelegate> delegate;
+@property (nonatomic, strong, readonly) dispatch_queue_t delegateQueue;
+
 - (void)connectToServer:(NSString*)url withSessionId:(NSString*)sessionId;
 - (void)sendAction:(NSString*)type withParams:(NSDictionary*)params withMessageId:(NSNumber*)messageId;
 - (void)close;

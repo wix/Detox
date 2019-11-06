@@ -8,14 +8,14 @@
 import Foundation
 
 public class DetoxUserActivityParser : NSObject {
-	@objc
-	public class func parseUserActivityData(url: URL?) -> [String: Any]? {
-		guard let url = url else {
+	@objc(parseUserActivityWithString:)
+	public class func parseUserActivity(str: String?) -> [String: Any]? {
+		guard let str = str else {
 			return nil
 		}
 		
-		guard let data = try? Data.init(contentsOf: url) else {
-			Swift.fatalError("Unable to read user activity data file.")
+		guard let data = str.data(using: .utf8) else {
+			Swift.fatalError("Unable to read user activity data.")
 		}
 		
 		guard let jsonObject = (try? JSONSerialization.jsonObject(with: data, options: .init(rawValue: 0)) as? [String: Any]) else {

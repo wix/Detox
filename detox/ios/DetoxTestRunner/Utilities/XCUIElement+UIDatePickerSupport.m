@@ -10,6 +10,8 @@
 #import "DTXDetoxApplication.h"
 @import UIKit;
 
+extern XCTestCase* _XCTCurrentTestCase(void);
+
 @interface NSObject ()
 
 - (NSString*)formattedDateString;

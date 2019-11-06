@@ -1,6 +1,6 @@
 [submodule "detox/ios/SocketRocket"]
 	path = detox/ios/SocketRocket
-	url = https://github.com/facebook/SocketRocket.git
+	url = https://github.com/wix-playground/SocketRocket.git
 	ignore = dirty
 [submodule "detox/ios/DTXLoggingInfra"]
 	path = detox/ios/DTXLoggingInfra

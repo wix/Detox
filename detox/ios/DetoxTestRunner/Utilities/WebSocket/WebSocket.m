@@ -21,9 +21,6 @@
 DTX_CREATE_LOG(WebSocket);
 
 @interface WebSocket() <SRWebSocketDelegate>
-{
-	BOOL _isModern;
-}
 
 @property (nonatomic, retain) NSString *sessionId;
 @property (nonatomic, retain) SRWebSocket *websocket;
@@ -32,6 +29,16 @@ DTX_CREATE_LOG(WebSocket);
 
 
 @implementation WebSocket
+
+- (instancetype)init
+{
+	self = [super init];
+	if(self)
+	{
+		_delegateQueue = dispatch_queue_create("com.wix.detoxTestRunner.webSocket", dispatch_queue_attr_make_with_autorelease_frequency(NULL, DISPATCH_AUTORELEASE_FREQUENCY_WORK_ITEM));
+	}
+	return self;
+}
 
 - (void)connectToServer:(NSString*)url withSessionId:(NSString*)sessionId
 {
@@ -42,11 +49,9 @@ DTX_CREATE_LOG(WebSocket);
 	}
 	self.sessionId = sessionId;
 	self.websocket = [[SRWebSocket alloc] initWithURL:[NSURL URLWithString:url]];
-	self.websocket.delegateDispatchQueue = dispatch_queue_create("com.wix.detoxTestRunner.webSocket", NULL);
+	self.websocket.delegateDispatchQueue = _delegateQueue;
 	self.websocket.delegate = self;
 	[self.websocket open];
-	
-	_isModern = [self.websocket respondsToSelector:@selector(sendString:error:)];
 }
 
 - (void)close
@@ -71,17 +76,7 @@ DTX_CREATE_LOG(WebSocket);
 	dtx_log_info(@"Action Sent: %@", type);
 	NSString *json = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
 	
-	if(_isModern)
-	{
-		[self.websocket sendString:json error:NULL];
-	}
-	else
-	{
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-		[self.websocket send:json];
-#pragma GCC diagnostic pop
-	}
+	[self.websocket sendString:json error:NULL];
 }
 
 - (void)receiveAction:(NSString*)json
@@ -137,18 +132,5 @@ DTX_CREATE_LOG(WebSocket);
 {
 	[self.delegate webSocket:self didCloseWithReason:reason];
 }
-
-- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message {
-	if(_isModern == YES)
-	{
-		return;
-	}
-	
-	if([message isKindOfClass:[NSString class]])
-	{
-		[self receiveAction:message];
-	}
-}
-
 
 @end
