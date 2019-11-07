@@ -63,20 +63,18 @@ module.exports.builder = {
   d: {
     alias: 'debug-synchronization',
     group: 'Debugging:',
+    default: '10000',
     coerce(value) {
-      if (value == null) {
-        return undefined;
+      if (value === 'off') {
+        return undefined
+      } else if (value) {
+        return Number(value);
       }
-
-      if (value === true || value === 'true') {
-        return 3000;
-      }
-
-      return Number(value);
     },
     describe:
-      'When an action/expectation takes a significant amount of time use this option to print device synchronization status.' +
-      'The status will be printed if the action takes more than [value]ms to complete'
+      'On By Default! Will trigger every 10000ms. When an action/expectation takes a significant amount of time use this option to print device synchronization status.' +
+      'The status will be printed if the action takes more than [value]ms to complete' +
+      'Options: "off", or time in ms'
   },
   a: {
     alias: 'artifacts-location',
