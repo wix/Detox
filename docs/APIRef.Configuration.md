@@ -1,11 +1,11 @@
 # Configuration Options
 
-## Configuring package.json 
+## Configuring package.json
 
 ### Device Configuration
 
 `configurations` holds all the device configurations, if there is only one configuration in `configurations` `detox build` and `detox test` will default to it, to choose a specific configuration use `--configuration` param
-	
+
 |Configuration Params|Details|
 |---|---|
 |`type`| Device type, available options are `ios.simulator`, `ios.none`, `android.emulator`, and `android.attached`. |
@@ -13,7 +13,7 @@
 |`testBinaryPath`| (optional, Android only): relative path to the test app (apk) |
 |`device`| Device query, e.g. `{ "byType": "iPhone 11 Pro" }` for iOS simulator or `{ "avdName": "Nexus_5X_API_29" }` |
 |`build`| **[optional]** Build command (either `xcodebuild`, `react-native run-ios`, etc...), will be later available through detox CLI tool.|
-	
+
 **Example:**
 
 ```js
@@ -52,27 +52,62 @@
     }
   }
 }
-```	
-	
+```
+
+### Artifacts Configuration
+
+Detox can control artifacts collection via settings from `package.json`:
+
+```js
+{
+  "detox": {
+    "artifacts": {
+      "rootDir": ".artifacts",
+      "pathBuilder": "config/pathbuilder.js",
+      "plugins": {
+        "instruments": "none",
+        "log": "all",
+        "screenshot": "failing",
+        "video": "none"
+      }
+    },
+    "configurations": {
+      "ios.sim.release": {
+        "binaryPath": "/path/to/app",
+        "device": { /* ... */ },
+        "artifacts": {
+          "rootDir": ".artifacts/ios",
+          "plugins": { "instruments": "all" }
+        }
+      }
+    }
+  }
+}
+```
+
+As can be seen from the example above, in a specific configuration you may override individual properties from the default one.
+
+CLI arguments (e.g., `--artifacts-location`, `--record-logs`) still have the highest priority and override their counterparts from JSON.
+
 ### Server Configuration
 
 Detox can either initialize a server using a generated configuration, or can be overriden with a manual  configuration:
-	
+
 ```json
-	"detox": {
-	  ...
-	  "session": {
-		"server": "ws://localhost:8099",
-		"sessionId": "YourProjectSessionId"
-	  }
-	}
+  "detox": {
+    ...
+    "session": {
+    "server": "ws://localhost:8099",
+    "sessionId": "YourProjectSessionId"
+    }
+  }
 ```
 
 Session can also be set per configuration:
 
 ```json
   "detox": {
-	...
+  ...
     "configurations": {
       "ios.sim.debug": {
         ...
@@ -83,7 +118,7 @@ Session can also be set per configuration:
       }
     }
   }
-```	
+```
 
 ### Test Runner Configuration
 
@@ -91,11 +126,11 @@ Session can also be set per configuration:
 
 ##### Mocha
 ```json
-	"detox": {
-	  ...
-	  "test-runner": "mocha",
-	  "runner-config": "path/to/mocha.opts"
-	}
+  "detox": {
+    ...
+    "test-runner": "mocha",
+    "runner-config": "path/to/mocha.opts"
+  }
 ```
 
 `mocha.opts` refers to `--opts` in https://mochajs.org/#mochaopts
@@ -103,47 +138,47 @@ Session can also be set per configuration:
 ##### Jest
 
 ```json
-	"detox": {
-	  ...
-	  "test-runner": "jest"
-	  "runner-config": "path/to/config.json"
-	}
+  "detox": {
+    ...
+    "test-runner": "jest"
+    "runner-config": "path/to/config.json"
+  }
 ```
 
 `config.json` refers to `--config` in https://facebook.github.io/jest/docs/en/configuration.html
 
->NOTE: jest tests will run in band, as Detox does not currently supports parallelization. 
+>NOTE: jest tests will run in band, as Detox does not currently supports parallelization.
 
 ## detox-cli
 
 ### Build Configuration
 
-In your detox config (in `package.json`) paste your build command into the configuration's `build` field. 
-The build command will be triggered when running `detox build`.  
+In your detox config (in `package.json`) paste your build command into the configuration's `build` field.
+The build command will be triggered when running `detox build`.
 **This is only a convience method, to help you manage building multiple configurations of your app and couple them to your tests. You can also choose not to use it and provide a compiled `app` by yourself.**
 
 You can choose to build your project in any of these ways...
 
 * If there's only one configuration, you can simply use:
 
-	```sh
-	detox build
-	```
+  ```sh
+  detox build
+  ```
 
 * To choose a specific configuration:
-	
-	```sh
-	detox build --configuration yourConfiguration
-	```
+
+  ```sh
+  detox build --configuration yourConfiguration
+  ```
 * Building with xcodebuild:
 
-	```sh
-	xcodebuild -project ios/YourProject.xcodeproj -scheme YourProject -sdk iphonesimulator -derivedDataPath ios/build
-	```
-	
+  ```sh
+  xcodebuild -project ios/YourProject.xcodeproj -scheme YourProject -sdk iphonesimulator -derivedDataPath ios/build
+  ```
+
 * Building using React Native, this is the least suggested way of running your build, since it also starts a random simulator and installs the app on it.
-	
-  ```sh 
+
+  ```sh
   react-native run-ios
   ```
 
@@ -154,17 +189,17 @@ You can choose to build your project in any of these ways...
 
 * If there's only one configuration, you can simply use:
 
-	```sh
-	detox test ./e2e
-	```
+  ```sh
+  detox test ./e2e
+  ```
 
 where `./e2e` is the path to your Detox tests folder.
 
 * For multiple configurations, choose your configuration by passing `--configuration` param:
-	
-	```sh
-	detox test ./e2e --configuration yourConfiguration
-	```
+
+  ```sh
+  detox test ./e2e --configuration yourConfiguration
+  ```
 
 ### Faster test runs with app reuse
 

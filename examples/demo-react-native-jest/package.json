@@ -15,12 +15,16 @@
   "devDependencies": {
     "detox": "^14.6.1",
     "jest": "24.8.x",
-    "jest-circus": "24.8.x"
+    "jest-circus": "24.8.x",
+    "sanitize-filename": "^1.6.1"
   },
   "detox": {
     "test-runner": "jest",
     "configurations": {
       "ios.sim.release": {
+        "artifacts": {
+          "pathBuilder": "e2e/detox.pathbuilder.ios.js"
+        },
         "binaryPath": "../demo-react-native/ios/build/Build/Products/Release-iphonesimulator/example.app",
         "type": "ios.simulator",
         "device": {
@@ -28,6 +32,9 @@
         }
       },
       "android.emu.release": {
+        "artifacts": {
+          "pathBuilder": "e2e/detox.pathbuilder.android.js"
+        },
         "binaryPath": "../demo-react-native/android/app/build/outputs/apk/release/app-release.apk",
         "type": "android.emulator",
         "device": {

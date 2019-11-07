@@ -9,7 +9,13 @@ describe('TwoSnapshotsPerTestPlugin', () => {
   let plugin;
 
   beforeEach(() => {
-    api = new ArtifactsApi();
+    api = new ArtifactsApi({
+      config: {
+        enabled: true,
+        shouldTakeAutomaticSnapshots: true,
+        keepOnlyFailedTestsArtifacts: false,
+      },
+    });
     plugin = new FakeTwoSnapshotsPerTestPlugin({ api });
   });
 
@@ -273,9 +279,8 @@ describe('TwoSnapshotsPerTestPlugin', () => {
 });
 
 class FakeTwoSnapshotsPerTestPlugin extends TwoSnapshotsPerTestPlugin {
-  constructor(...args) {
-    super(...args);
-    this.enabled = true;
+  constructor({ api }) {
+    super({ api });
     this.createTestArtifact = jest.fn(this.createTestArtifact.bind(this));
 
     const nonDeletable = { deleteProperty: () => true };

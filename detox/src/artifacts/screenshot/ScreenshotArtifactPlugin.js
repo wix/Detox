@@ -1,24 +1,45 @@
-const _ = require('lodash');
-const argparse = require('../../utils/argparse');
-const log = require('../../utils/logger').child({ __filename });
 const TwoSnapshotsPerTestPlugin = require('../templates/plugin/TwoSnapshotsPerTestPlugin');
 
 /***
  * @abstract
  */
 class ScreenshotArtifactPlugin extends TwoSnapshotsPerTestPlugin {
-  constructor(config) {
-    super(config);
-
-    const takeScreenshots = argparse.getArgValue('take-screenshots');
-
-    this.enabled = !takeScreenshots || takeScreenshots !== 'none';
-    this.shouldTakeAutomaticSnapshots = takeScreenshots === 'failing' || takeScreenshots === 'all';
-    this.keepOnlyFailedTestsArtifacts = takeScreenshots === 'failing';
+  constructor({ api }) {
+    super({ api });
   }
 
   async preparePathForSnapshot(testSummary, name) {
     return this.api.preparePathForArtifact(`${name}.png`, testSummary);
+  }
+
+  static parseConfig(config) {
+    switch (config) {
+      case 'failing':
+        return {
+          enabled: true,
+          shouldTakeAutomaticSnapshots: true,
+          keepOnlyFailedTestsArtifacts: true,
+        };
+      case 'all':
+        return {
+          enabled: true,
+          shouldTakeAutomaticSnapshots: true,
+          keepOnlyFailedTestsArtifacts: false,
+        };
+      case 'none':
+        return {
+          enabled: false,
+          shouldTakeAutomaticSnapshots: false,
+          keepOnlyFailedTestsArtifacts: false,
+        };
+      case 'manual':
+      default:
+        return {
+          enabled: true,
+          shouldTakeAutomaticSnapshots: false,
+          keepOnlyFailedTestsArtifacts: false,
+        };
+    }
   }
 }
 

@@ -12,8 +12,8 @@ class ArtifactPlugin {
   constructor({ api }) {
     this.api = api;
     this.context = {};
-    this.enabled = false;
-    this.keepOnlyFailedTestsArtifacts = false;
+    this.enabled = api.userConfig.enabled;
+    this.keepOnlyFailedTestsArtifacts = api.userConfig.keepOnlyFailedTestsArtifacts;
     this.priority = 16;
     this._disableReason = '';
     this._hasFailingTests = false;

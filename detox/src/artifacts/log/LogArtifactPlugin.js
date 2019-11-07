@@ -1,4 +1,5 @@
-const argparse = require('../../utils/argparse');
+const logger = require('../../utils/logger');
+const FileArtifact = require('../templates/artifact/FileArtifact');
 const StartupAndTestRecorderPlugin = require('../templates/plugin/StartupAndTestRecorderPlugin');
 const getTimeStampString = require('../utils/getTimeStampString');
 
@@ -6,13 +7,26 @@ const getTimeStampString = require('../utils/getTimeStampString');
  * @abstract
  */
 class LogArtifactPlugin extends StartupAndTestRecorderPlugin {
-  constructor(config) {
-    super(config);
+  constructor({ api }) {
+    super({ api });
+  }
 
-    const recordLogs = argparse.getArgValue('record-logs');
+  async onAfterAll() {
+    await super.onAfterAll();
 
-    this.enabled = recordLogs && recordLogs !== 'none';
-    this.keepOnlyFailedTestsArtifacts = recordLogs === 'failing';
+    if (this.shouldKeepArtifactOfSession()) {
+      this.api.requestIdleCallback(async () => {
+        const [jsonLogPath, plainLogPath] = await Promise.all([
+          this.api.preparePathForArtifact(`detox_pid_${process.pid}.json.log`),
+          this.api.preparePathForArtifact(`detox_pid_${process.pid}.log`),
+        ]);
+
+        await Promise.all([
+          new FileArtifact({ temporaryPath: logger.jsonFileStreamPath }).save(jsonLogPath, { append: true }),
+          new FileArtifact({ temporaryPath: logger.plainFileStreamPath }).save(plainLogPath, { append: true })
+        ]);
+      });
+    }
   }
 
   async onBeforeShutdownDevice(event) {
@@ -32,6 +46,27 @@ class LogArtifactPlugin extends StartupAndTestRecorderPlugin {
 
   async preparePathForTestArtifact(testSummary) {
     return this.api.preparePathForArtifact('process.log', testSummary);
+  }
+
+  static parseConfig(config) {
+    switch (config) {
+      case 'failing':
+        return {
+          enabled: true,
+          keepOnlyFailedTestsArtifacts: true,
+        };
+      case 'all':
+        return {
+          enabled: true,
+          keepOnlyFailedTestsArtifacts: false,
+        };
+      case 'none':
+      default:
+        return {
+          enabled: false,
+          keepOnlyFailedTestsArtifacts: false,
+        };
+    }
   }
 }
 

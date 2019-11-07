@@ -65,7 +65,7 @@ describe('SimulatorLogPlugin', () => {
         },
       };
 
-      artifactsManager = new ArtifactsManager(fakePathBuilder);
+      artifactsManager = new ArtifactsManager({ pathBuilder: fakePathBuilder });
       artifactsManager.registerArtifactPlugins({
         log: (api) => new SimulatorLogPlugin({
           api,
