@@ -28,3 +28,4 @@ function mockPackageJson(mockContent) {
 
 global.mockPackageJson = mockPackageJson;
 global.callCli = callCli;
+global.IS_RUNNING_DETOX_UNIT_TESTS = true;

@@ -6,12 +6,18 @@ const testSummaries = require('./__mocks__/testSummaries.mock');
 
 class TestArtifactPlugin extends ArtifactPlugin {}
 
-describe(ArtifactPlugin, () => {
+describe('ArtifactPlugin', () => {
   let api;
   let plugin;
 
   beforeEach(() => {
-    api = {};
+    api = {
+      userConfig: {
+        enabled: false,
+        keepOnlyFailedTestsArtifacts: false,
+      },
+    };
+
     plugin = new TestArtifactPlugin({ api });
   });
 

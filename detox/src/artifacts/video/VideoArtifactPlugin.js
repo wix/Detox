@@ -1,18 +1,33 @@
-const argparse = require('../../utils/argparse');
 const WholeTestRecorderPlugin = require('../templates/plugin/WholeTestRecorderPlugin');
 
 class VideoArtifactPlugin extends WholeTestRecorderPlugin {
-  constructor(config) {
-    super(config);
-
-    const recordVideos = argparse.getArgValue('record-videos');
-
-    this.enabled = recordVideos && recordVideos !== 'none';
-    this.keepOnlyFailedTestsArtifacts = recordVideos === 'failing';
+  constructor({ api }) {
+    super({ api });
   }
 
   async preparePathForTestArtifact(testSummary) {
     return this.api.preparePathForArtifact('test.mp4', testSummary);
+  }
+
+  static parseConfig(config) {
+    switch (config) {
+      case 'failing':
+        return {
+          enabled: true,
+          keepOnlyFailedTestsArtifacts: true,
+        };
+      case 'all':
+        return {
+          enabled: true,
+          keepOnlyFailedTestsArtifacts: false,
+        };
+      case 'none':
+      default:
+        return {
+          enabled: false,
+          keepOnlyFailedTestsArtifacts: false,
+        };
+    }
   }
 }
 

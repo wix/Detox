@@ -8,7 +8,12 @@ describe('WholeTestRecorderPlugin', () => {
   let plugin;
 
   beforeEach(() => {
-    api = new ArtifactsApi();
+    api = new ArtifactsApi({
+      config: {
+        enabled: false,
+        keepOnlyFailedTestsArtifacts: false,
+      },
+    });
     plugin = new FakeWholeTestRecorderPlugin({ api });
   });
 

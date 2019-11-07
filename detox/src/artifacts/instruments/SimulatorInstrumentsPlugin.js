@@ -1,16 +1,11 @@
-const fs = require('fs-extra');
 const temporaryPath = require('../utils/temporaryPath');
-const argparse = require('../../utils/argparse');
-const log = require('../../utils/logger').child({ __filename });
 const WholeTestRecorderPlugin = require('../templates/plugin/WholeTestRecorderPlugin');
 const SimulatorInstrumentsRecording = require('./SimulatorInstrumentsRecording');
 
 class SimulatorInstrumentsPlugin extends WholeTestRecorderPlugin {
-  constructor(config) {
-    super(config);
-
-    this.client = config.client;
-    this.enabled = argparse.getArgValue('record-performance') === 'all';
+  constructor({ api, client }) {
+    super({ api });
+    this.client = client;
   }
 
   async onBeforeUninstallApp(event) {
@@ -63,6 +58,22 @@ class SimulatorInstrumentsPlugin extends WholeTestRecorderPlugin {
 
   async preparePathForTestArtifact(testSummary) {
     return this.api.preparePathForArtifact('test.dtxrec', testSummary);
+  }
+
+  static parseConfig(config) {
+    switch (config) {
+      case 'all':
+        return {
+          enabled: true,
+          keepOnlyFailedTestsArtifacts: false,
+        };
+      case 'none':
+      default:
+        return {
+          enabled: false,
+          keepOnlyFailedTestsArtifacts: false,
+        };
+    }
   }
 }
 
