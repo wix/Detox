@@ -20,7 +20,7 @@ When the automatic synchronization mechanism doesn't work, we have 2 potential p
 
 * We are waiting too much - The test will appear to hang and fail with timeout. This happens because Detox thinks an asychronous operations is currently taking place and is waiting for it endlessly.
 
-* We are not waiting enough - The test will appear to fail at some point becuase an element isn't found according to an expectation or isn't found when attempting to perform an action on it. This happens because Detox didn't take some asynchronous operation into account and isn't waiting until it completes.
+* We are not waiting enough - The test will appear to fail at some point because an element isn't found according to an expectation or isn't found when attempting to perform an action on it. This happens because Detox didn't take some asynchronous operation into account and isn't waiting until it completes.
 
 ### Switching to manual synchronization as a workaround
 
