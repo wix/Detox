@@ -18,7 +18,7 @@ class AAPT {
   async getPackageName(apkPath) {
     await this._prepare();
     const process = await exec(
-      `${this.aaptBin} dump badging "${escape(apkPath)}" | ${egrep("package: name=")}`,
+      `"${this.aaptBin}" dump badging "${escape(apkPath)}" | ${egrep("package: name=")}`,
       undefined, undefined, 1
     );
 
