@@ -12,13 +12,13 @@ class AAPT {
   }
 
   async _prepare() {
-    this.aaptBin = this.aaptBin || await getAaptPath();
+    this.aaptBin = this.aaptBin || `"${escape(await getAaptPath())}"`;
   }
 
   async getPackageName(apkPath) {
     await this._prepare();
     const process = await exec(
-      `"${this.aaptBin}" dump badging "${escape(apkPath)}" | ${egrep("package: name=")}`,
+      `${this.aaptBin} dump badging "${escape(apkPath)}" | ${egrep("package: name=")}`,
       undefined, undefined, 1
     );
 
