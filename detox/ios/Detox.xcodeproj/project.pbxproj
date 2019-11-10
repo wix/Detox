@@ -31,8 +31,6 @@
 		393A512423560D1800DFCEF5 /* DetoxUserNotificationsShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 393A512223560D1200DFCEF5 /* DetoxUserNotificationsShared.swift */; };
 		393A51262356E47C00DFCEF5 /* DetoxUserActivityShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 393A51252356E47C00DFCEF5 /* DetoxUserActivityShared.swift */; };
 		393A51272356E47C00DFCEF5 /* DetoxUserActivityShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 393A51252356E47C00DFCEF5 /* DetoxUserActivityShared.swift */; };
-		393A51292356E4AD00DFCEF5 /* DetoxUserActivityParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 393A51282356E4AD00DFCEF5 /* DetoxUserActivityParser.swift */; };
-		393A512A2356E4AD00DFCEF5 /* DetoxUserActivityParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 393A51282356E4AD00DFCEF5 /* DetoxUserActivityParser.swift */; };
 		395765602365F093000C2F4A /* DetoxSync.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3957655D2365F075000C2F4A /* DetoxSync.framework */; platformFilter = ios; };
 		395765612365F093000C2F4A /* DetoxSync.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3957655D2365F075000C2F4A /* DetoxSync.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3971742A233A380700FFE816 /* DetoxIPC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 397D3E3A233A293E00E69D28 /* DetoxIPC.framework */; platformFilter = ios; };
@@ -227,7 +225,6 @@
 		393A512023560AF600DFCEF5 /* DetoxUserNotificationParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxUserNotificationParser.swift; sourceTree = "<group>"; };
 		393A512223560D1200DFCEF5 /* DetoxUserNotificationsShared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxUserNotificationsShared.swift; sourceTree = "<group>"; };
 		393A51252356E47C00DFCEF5 /* DetoxUserActivityShared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxUserActivityShared.swift; sourceTree = "<group>"; };
-		393A51282356E4AD00DFCEF5 /* DetoxUserActivityParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxUserActivityParser.swift; sourceTree = "<group>"; };
 		395765582365F075000C2F4A /* DetoxSync.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DetoxSync.xcodeproj; path = DetoxSync/DetoxSync/DetoxSync.xcodeproj; sourceTree = SOURCE_ROOT; };
 		397788D3234AC08D00A74C39 /* FirstViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FirstViewController.m; sourceTree = "<group>"; };
 		397788D4234AC08D00A74C39 /* SecondViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SecondViewController.m; sourceTree = "<group>"; };
@@ -420,7 +417,6 @@
 				39AC098523322B0800DF85F8 /* XCUIElement+UIDatePickerSupport.m */,
 				39C94D502337004700FDF64E /* XCUIElement+ExtendedTouches.h */,
 				39C94D512337004700FDF64E /* XCUIElement+ExtendedTouches.m */,
-				393A51282356E4AD00DFCEF5 /* DetoxUserActivityParser.swift */,
 				393A512023560AF600DFCEF5 /* DetoxUserNotificationParser.swift */,
 			);
 			path = Utilities;
@@ -723,7 +719,6 @@
 				393A51272356E47C00DFCEF5 /* DetoxUserActivityShared.swift in Sources */,
 				39C94D522337004700FDF64E /* XCUIElement+ExtendedTouches.m in Sources */,
 				39068D40236EEFD80005A2A7 /* DetoxUtils.m in Sources */,
-				393A512A2356E4AD00DFCEF5 /* DetoxUserActivityParser.swift in Sources */,
 				39F62D212337263400094FAB /* fishhook.c in Sources */,
 				393A50FA2355FEB100DFCEF5 /* WebSocket.m in Sources */,
 				39AC098623322B0800DF85F8 /* XCUIElement+UIDatePickerSupport.m in Sources */,
@@ -739,7 +734,6 @@
 			files = (
 				39AC09A123322E8E00DF85F8 /* DetoxManager.m in Sources */,
 				393A5106235600A300DFCEF5 /* DetoxUserNotificationDispatcher.swift in Sources */,
-				393A51292356E4AD00DFCEF5 /* DetoxUserActivityParser.swift in Sources */,
 				39068D54236F1CCB0005A2A7 /* ReactNativeSupport.m in Sources */,
 				39B833D5233A7C9A00DBC1D2 /* DTXLogging.m in Sources */,
 				393A5105235600A300DFCEF5 /* DetoxInstrumentsManager.m in Sources */,
