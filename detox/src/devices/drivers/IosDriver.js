@@ -83,6 +83,12 @@ class IosDriver extends DeviceDriverBase {
   getPlatform() {
     return 'ios';
   }
+
+  async setStatusBar(deviceId, flags) {
+  }
+
+  async resetStatusBar(deviceId) {
+  }
 }
 
 module.exports = IosDriver;

@@ -262,6 +262,14 @@ class Device {
     return this.deviceDriver.getUiDevice();
   }
 
+  async setStatusBar(params) {
+    await this.deviceDriver.setStatusBar(this._deviceId, params);
+  }
+
+  async resetStatusBar() {
+    await this.deviceDriver.resetStatusBar(this._deviceId);
+  }
+
   _defaultLaunchArgs() {
     return {
       'detoxServer': this._sessionConfig.server,

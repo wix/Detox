@@ -29,6 +29,8 @@
 - [`device.matchFinger()` **iOS Only**](#devicematchfinger-ios-only)
 - [`device.unmatchFinger()` **iOS Only**](#deviceunmatchfinger-ios-only)
 - [`device.clearKeychain()` **iOS Only**](#deviceclearkeychain-ios-only)
+- [`device.setStatusBar()` **iOS Only**](#devicesetstatusbar-ios-only)
+- [`device.resetStatusBar()` **iOS Only**](#deviceresetstatusbar-ios-only)
 - [`device.pressBack()` **Android Only**](#devicepressback-android-only)
 - [`device.getUIDevice()` **Android Only**](#devicegetuidevice-android-only)
 
@@ -380,6 +382,34 @@ Simulates the failure of a finger match via TouchID
 
 ### `device.clearKeychain()` **iOS Only**
 Clears the device keychain
+
+### `device.setStatusBar()` **iOS Only**
+Override simulator's status bar. Available options:
+
+```
+{
+  time: "12:34"
+  // Set the date or time to a fixed value.
+  // If the string is a valid ISO date string it will also set the date on relevant devices.
+  dataNetwork: "wifi"
+  // If specified must be one of 'wifi', '3g', '4g', 'lte', 'lte-a', or 'lte+'.
+  wifiMode: "failed"
+  // If specified must be one of 'searching', 'failed', or 'active'.
+  wifiBars: "2"
+  // If specified must be 0-3.
+  cellularMode: "searching"
+  // If specified must be one of 'notSupported', 'searching', 'failed', or 'active'.
+  cellularBars: "3"
+  // If specified must be 0-4.
+  batteryState: "charging"
+  // If specified must be one of 'charging', 'charged', or 'discharging'.
+  batteryLevel: "50"
+  // If specified must be 0-100.
+}
+```
+
+### `device.resetStatusBar()` **iOS Only**
+Resets any override in simulator's status bar.
 
 ### `device.pressBack()` **Android Only**
 Simulate press back button.
