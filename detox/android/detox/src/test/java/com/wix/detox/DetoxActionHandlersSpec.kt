@@ -1,6 +1,6 @@
 package com.wix.detox
 
-import com.facebook.react.bridge.ReactContext
+import android.content.Context
 import com.nhaarman.mockitokotlin2.*
 import com.wix.detox.UTHelpers.yieldToOtherThreads
 import com.wix.invoke.MethodInvocation
@@ -15,12 +15,12 @@ object DetoxActionHandlersSpec: Spek({
         val params = "{\"mock\": \"params\"}"
         val messageId = 666L
 
-        lateinit var rnContext: ReactContext
+        lateinit var appContext: Context
         lateinit var wsClient: WebSocketClient
         lateinit var testEngineFacade: TestEngineFacade
 
         beforeEachTest {
-            rnContext = mock()
+            appContext = mock()
             wsClient = mock()
 
             testEngineFacade = mock()
@@ -57,11 +57,11 @@ object DetoxActionHandlersSpec: Spek({
         }
 
         describe("React-native reload action") {
-            fun uut() = ReactNativeReloadActionHandler(rnContext, wsClient, testEngineFacade)
+            fun uut() = ReactNativeReloadActionHandler(appContext, wsClient, testEngineFacade)
 
             it("should reload the app") {
                 uut().handle(params, messageId)
-                verify(testEngineFacade).reloadReactNative(rnContext)
+                verify(testEngineFacade).reloadReactNative(appContext)
             }
 
             it("should reply with a 'ready' ACK when ready") {
@@ -82,7 +82,7 @@ object DetoxActionHandlersSpec: Spek({
                     verify(wsClient, never()).sendAction(any(), any(), any())
                 }
                 yieldToOtherThreads(executor)
-                verify(testEngineFacade, times(1)).reloadReactNative(any())
+                verify(testEngineFacade, times(1)).reloadReactNative(eq(appContext))
                 verify(wsClient, times(1)).sendAction(any(), any(), any())
             }
         }

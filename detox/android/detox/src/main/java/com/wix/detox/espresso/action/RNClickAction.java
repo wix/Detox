@@ -4,7 +4,7 @@ import android.view.InputDevice;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.wix.detox.ReactNativeSupport;
+import com.wix.detox.reactnative.ReactNativeExtension;
 
 import org.hamcrest.Matcher;
 
@@ -38,11 +38,11 @@ public class RNClickAction implements ViewAction {
 
     @Override
     public void perform(UiController uiController, View view) {
-        ReactNativeSupport.pauseRNTimersIdlingResource();
+        ReactNativeExtension.toggleTimersSynchronization(false);
         try {
             clickAction.perform(uiController, view);
         } finally {
-            ReactNativeSupport.resumeRNTimersIdlingResource();
+            ReactNativeExtension.toggleTimersSynchronization(true);
         }
         uiController.loopMainThreadUntilIdle();
     }
