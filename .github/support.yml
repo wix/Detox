@@ -11,7 +11,7 @@ supportComment: >
   
   
   
-  Feel free to post your Stack Overflow question here for more visility. We'll take a look at it.
+  Feel free to post your Stack Overflow question here for more visibility. We'll take a look at it.
   
   
   
@@ -19,7 +19,7 @@ supportComment: >
 
   
   
-  For more information on bots in this reporsitory, read [this discussion](https://github.com/wix/Detox/issues/1305).
+  For more information on bots in this repository, read [this discussion](https://github.com/wix/Detox/issues/1305).
 # Whether to close issues marked as support requests
 close: true
 # Whether to lock issues marked as support requests
