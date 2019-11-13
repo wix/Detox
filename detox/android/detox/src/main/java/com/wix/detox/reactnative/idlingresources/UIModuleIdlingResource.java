@@ -1,4 +1,4 @@
-package com.wix.detox.espresso;
+package com.wix.detox.reactnative.idlingresources;
 
 import androidx.annotation.NonNull;
 import android.util.Log;
@@ -8,8 +8,6 @@ import org.joor.Reflect;
 import org.joor.ReflectException;
 
 import androidx.test.espresso.IdlingResource;
-
-import static androidx.test.espresso.IdlingResource.ResourceCallback;
 
 /**
  * Created by simonracz on 26/07/2017.
@@ -24,7 +22,7 @@ import static androidx.test.espresso.IdlingResource.ResourceCallback;
  * Hooks up to React Native internals to grab the pending ui operations from it.
  * </p>
  */
-public class ReactNativeUIModuleIdlingResource implements IdlingResource, Choreographer.FrameCallback {
+public class UIModuleIdlingResource implements IdlingResource, Choreographer.FrameCallback {
     private static final String LOG_TAG = "Detox";
 
     private final static String CLASS_UI_MANAGER_MODULE = "com.facebook.react.uimanager.UIManagerModule";
@@ -42,13 +40,13 @@ public class ReactNativeUIModuleIdlingResource implements IdlingResource, Choreo
     private ResourceCallback callback = null;
     private Object reactContext = null;
 
-    public ReactNativeUIModuleIdlingResource(@NonNull Object reactContext) {
+    public UIModuleIdlingResource(@NonNull Object reactContext) {
         this.reactContext = reactContext;
     }
 
     @Override
     public String getName() {
-        return ReactNativeUIModuleIdlingResource.class.getName();
+        return UIModuleIdlingResource.class.getName();
     }
 
     @Override

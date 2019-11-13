@@ -1,4 +1,4 @@
-package com.wix.detox.espresso;
+package com.wix.detox.reactnative.idlingresources;
 
 import android.util.Log;
 
@@ -8,8 +8,6 @@ import com.facebook.react.bridge.ReactContext;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import androidx.test.espresso.IdlingResource;
-
-import static androidx.test.espresso.IdlingResource.ResourceCallback;
 
 /**
  * Created by simonracz on 01/06/2017.
@@ -21,19 +19,19 @@ import static androidx.test.espresso.IdlingResource.ResourceCallback;
  * React Native's JS bridge.
  * </p>
  */
-public class ReactBridgeIdlingResource implements IdlingResource, NotThreadSafeBridgeIdleDebugListener {
+public class BridgeIdlingResource implements IdlingResource, NotThreadSafeBridgeIdleDebugListener {
     private static final String LOG_TAG = "Detox";
 
     private AtomicBoolean idleNow = new AtomicBoolean(true);
     private ResourceCallback callback = null;
 
-    public ReactBridgeIdlingResource(ReactContext reactContext) {
+    public BridgeIdlingResource(ReactContext reactContext) {
         reactContext.getCatalystInstance().addBridgeIdleDebugListener(this);
     }
 
     @Override
     public String getName() {
-        return ReactBridgeIdlingResource.class.getName();
+        return BridgeIdlingResource.class.getName();
     }
 
     @Override

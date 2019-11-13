@@ -29,10 +29,10 @@ import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.action.ViewActions.swipeUp;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_DOWN;
-import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_LEFT;
-import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_RIGHT;
-import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_UP;
+import static com.wix.detox.espresso.common.annot.MotionDefs.MOTION_DIR_DOWN;
+import static com.wix.detox.espresso.common.annot.MotionDefs.MOTION_DIR_LEFT;
+import static com.wix.detox.espresso.common.annot.MotionDefs.MOTION_DIR_RIGHT;
+import static com.wix.detox.espresso.common.annot.MotionDefs.MOTION_DIR_UP;
 import static org.hamcrest.Matchers.allOf;
 
 

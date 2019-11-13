@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.wix.detox.reactnative.ReactNativeExtension;
+import com.wix.detox.reactnative.idlingresources.NetworkIdlingResource;
 
 import org.hamcrest.Matcher;
 import org.joor.Reflect;
@@ -112,7 +113,7 @@ public class EspressoDetox {
         InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
-                ReactNativeNetworkIdlingResource.setURLBlacklist(urls);
+                NetworkIdlingResource.setURLBlacklist(urls);
             }
         });
     }
