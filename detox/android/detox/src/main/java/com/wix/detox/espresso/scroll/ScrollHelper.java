@@ -12,11 +12,11 @@ import com.wix.detox.espresso.common.annot.MotionDir;
 import androidx.test.espresso.UiController;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_DOWN;
-import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_LEFT;
-import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_RIGHT;
-import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_UP;
-import static com.wix.detox.espresso.scroll.ScrollProbesKt.getScrollableProbe;
+import static com.wix.detox.espresso.common.annot.MotionDefs.MOTION_DIR_DOWN;
+import static com.wix.detox.espresso.common.annot.MotionDefs.MOTION_DIR_LEFT;
+import static com.wix.detox.espresso.common.annot.MotionDefs.MOTION_DIR_RIGHT;
+import static com.wix.detox.espresso.common.annot.MotionDefs.MOTION_DIR_UP;
+import static com.wix.detox.espresso.scroll.ScrollProbes.getScrollableProbe;
 
 /**
  * Created by simonracz on 09/08/2017.

@@ -15,8 +15,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withTagValue;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static com.wix.detox.espresso.matcher.ViewMatchersKt.isMatchingAtIndex;
-import static com.wix.detox.espresso.matcher.ViewMatchersKt.isOfClassName;
+import static com.wix.detox.espresso.matcher.ViewMatchers.isMatchingAtIndex;
+import static com.wix.detox.espresso.matcher.ViewMatchers.isOfClassName;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.is;

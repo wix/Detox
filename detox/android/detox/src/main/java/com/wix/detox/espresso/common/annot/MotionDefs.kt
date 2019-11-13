@@ -1,3 +1,5 @@
+@file:JvmName("MotionDefs")
+
 package com.wix.detox.espresso.common.annot
 
 import androidx.annotation.IntDef

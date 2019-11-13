@@ -1,4 +1,4 @@
-package com.wix.detox.espresso
+package com.wix.detox.reactnative.idlingresources
 
 import android.view.Choreographer
 import androidx.test.espresso.IdlingResource
@@ -40,7 +40,7 @@ object ReactNativeTimersIdlingResourceSpec : Spek({
         lateinit var choreographer: Choreographer
         lateinit var pendingTimers: PriorityQueue<Any>
 
-        fun uut() = ReactNativeTimersIdlingResource(reactAppContext) { choreographer }
+        fun uut() = TimersIdlingResource(reactAppContext) { choreographer }
 
         fun givenTimer(timer: Any) {
             pendingTimers.add(timer)

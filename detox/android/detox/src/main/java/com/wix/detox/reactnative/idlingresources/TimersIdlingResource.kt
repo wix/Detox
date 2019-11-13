@@ -1,4 +1,4 @@
-package com.wix.detox.espresso
+package com.wix.detox.reactnative.idlingresources
 
 import android.view.Choreographer
 import androidx.test.espresso.IdlingResource
@@ -36,7 +36,7 @@ class TimingModuleReflected(reactContext: ReactContext) {
     operator fun component2() = timersLock
 }
 
-class ReactNativeTimersIdlingResource @JvmOverloads constructor(
+class TimersIdlingResource @JvmOverloads constructor(
         private val reactContext: ReactContext,
         private val getChoreographer: () -> Choreographer = { Choreographer.getInstance() }
     ) : IdlingResource, Choreographer.FrameCallback {
@@ -61,7 +61,7 @@ class ReactNativeTimersIdlingResource @JvmOverloads constructor(
             if (result) {
                 callback?.onTransitionToIdle()
             } else {
-                getChoreographer().postFrameCallback(this@ReactNativeTimersIdlingResource)
+                getChoreographer().postFrameCallback(this@TimersIdlingResource)
             }
         }
     }
@@ -72,12 +72,12 @@ class ReactNativeTimersIdlingResource @JvmOverloads constructor(
         }
     }
 
-    public fun pause() {
+    fun pause() {
         paused.set(true)
         callback?.onTransitionToIdle()
     }
 
-    public fun resume() {
+    fun resume() {
         paused.set(false)
     }
 

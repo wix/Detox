@@ -6,7 +6,7 @@ import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.base.IdlingResourceRegistry
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.modules.network.NetworkingModule
-import com.wix.detox.espresso.*
+import com.wix.detox.reactnative.idlingresources.*
 import okhttp3.OkHttpClient
 import org.joor.Reflect
 import org.joor.ReflectException
@@ -17,7 +17,7 @@ class MQThreadsReflector(private val reactContext: ReactContext) {
     fun getQueue(queueName: String): MQThreadReflected? {
         try {
             val queue = Reflect.on(reactContext).field(queueName).get() as Any?
-            return MQThreadReflected(queue)
+            return MQThreadReflected(queue, queueName)
         } catch (e: ReflectException) {
             Log.e(LOG_TAG, "Could not find queue: $queueName", e)
         }
@@ -25,14 +25,14 @@ class MQThreadsReflector(private val reactContext: ReactContext) {
     }
 }
 
-class MQThreadReflected(private val queue: Any?) {
+class MQThreadReflected(private val queue: Any?, private val queueName: String) {
     fun getLooper(): Looper? {
         try {
             if (queue != null) {
                 return Reflect.on(queue).call(METHOD_GET_LOOPER).get()
             }
         } catch (e: ReflectException) {
-            Log.e(LOG_TAG, "Could not find looper for queue", e)
+            Log.e(LOG_TAG, "Could not find looper for queue: $queueName", e)
         }
         return null
     }
@@ -71,30 +71,17 @@ class ReactNativeIdlingResources
         private const val FIELD_JS_MSG_QUEUE = "mJSMessageQueueThread"
     }
 
-    private var rnTimerIdlingResource: ReactNativeTimersIdlingResource? = null
-    private var rnBridgeIdlingResource: ReactBridgeIdlingResource? = null
-    private var rnUIModuleIdlingResource: ReactNativeUIModuleIdlingResource? = null
+    private var timersIdlingResource: TimersIdlingResource? = null
+    private var rnBridgeIdlingResource: BridgeIdlingResource? = null
+    private var uiModuleIdlingResource: UIModuleIdlingResource? = null
     private var animIdlingResource: AnimatedModuleIdlingResource? = null
-    private var networkIdlingResource: ReactNativeNetworkIdlingResource? = null
+    private var networkIdlingResource: NetworkIdlingResource? = null
 
     fun registerAll() {
-        removeEspressoIdlingResources(reactContext)
         Log.i(LOG_TAG, "Setting up Espresso Idling Resources for React Native.")
-
-        registerMQThreadsInterrogators(reactContext)
-
-        rnBridgeIdlingResource = ReactBridgeIdlingResource(reactContext)
-        rnTimerIdlingResource = ReactNativeTimersIdlingResource(reactContext)
-        rnUIModuleIdlingResource = ReactNativeUIModuleIdlingResource(reactContext)
-        animIdlingResource = AnimatedModuleIdlingResource(reactContext)
-
-        IdlingRegistry.getInstance().apply {
-            register(rnTimerIdlingResource)
-            register(rnBridgeIdlingResource)
-            register(rnUIModuleIdlingResource)
-            register(animIdlingResource)
-        }
-
+        unregisterAll()
+        setupMQThreadsInterrogators()
+        setupCustomRNIdlingResources()
         if (networkSyncEnabled) {
             setupNetworkIdlingResource()
         }
@@ -102,7 +89,7 @@ class ReactNativeIdlingResources
 
     fun unregisterAll() {
         removeNetworkIdlingResource()
-        removeEspressoIdlingResources(reactContext)
+        unregisterAllIdlingResources(reactContext)
     }
 
     fun setNetworkSynchronization(enable: Boolean) {
@@ -118,10 +105,10 @@ class ReactNativeIdlingResources
         networkSyncEnabled = enable
     }
 
-    fun pauseRNTimersIdlingResource() = rnTimerIdlingResource?.pause()
-    fun resumeRNTimersIdlingResource() = rnTimerIdlingResource?.resume()
+    fun pauseRNTimersIdlingResource() = timersIdlingResource?.pause()
+    fun resumeRNTimersIdlingResource() = timersIdlingResource?.resume()
 
-    private fun registerMQThreadsInterrogators(reactContext: ReactContext) {
+    private fun setupMQThreadsInterrogators() {
         val mqThreadsReflector = MQThreadsReflector(reactContext)
         val mqUIBackground = mqThreadsReflector.getQueue(FIELD_UI_BG_MSG_QUEUE)?.getLooper()
         val mqJS = mqThreadsReflector.getQueue(FIELD_JS_MSG_QUEUE)?.getLooper()
@@ -137,13 +124,25 @@ class ReactNativeIdlingResources
         }
     }
 
-    private fun removeEspressoIdlingResources(reactContext: ReactContext) {
-        Log.i(LOG_TAG, "Removing Espresso IdlingResources for React Native.")
+    private fun setupCustomRNIdlingResources() {
+        rnBridgeIdlingResource = BridgeIdlingResource(reactContext)
+        timersIdlingResource = TimersIdlingResource(reactContext)
+        uiModuleIdlingResource = UIModuleIdlingResource(reactContext)
+        animIdlingResource = AnimatedModuleIdlingResource(reactContext)
 
         IdlingRegistry.getInstance().apply {
-            unregister(rnTimerIdlingResource)
+            register(timersIdlingResource)
+            register(rnBridgeIdlingResource)
+            register(uiModuleIdlingResource)
+            register(animIdlingResource)
+        }
+    }
+
+    private fun unregisterAllIdlingResources(reactContext: ReactContext) {
+        IdlingRegistry.getInstance().apply {
+            unregister(timersIdlingResource)
             unregister(rnBridgeIdlingResource)
-            unregister(rnUIModuleIdlingResource)
+            unregister(uiModuleIdlingResource)
             unregister(animIdlingResource)
         }
 
@@ -153,7 +152,7 @@ class ReactNativeIdlingResources
     private fun setupNetworkIdlingResource() {
         try {
             val client = NetworkingModuleReflected(reactContext).getHttpClient()!!
-            networkIdlingResource = ReactNativeNetworkIdlingResource(client.dispatcher())
+            networkIdlingResource = NetworkIdlingResource(client.dispatcher())
             IdlingRegistry.getInstance().register(networkIdlingResource)
         } catch (e: ReflectException) {
             Log.e(LOG_TAG, "Can't set up Networking Module listener", e.cause)
