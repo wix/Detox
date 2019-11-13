@@ -9,7 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.wix.detox.ReactNativeSupport;
+import com.wix.detox.reactnative.ReactNativeExtension;
 
 import org.hamcrest.Matcher;
 import org.joor.Reflect;
@@ -66,10 +66,9 @@ public class EspressoDetox {
 
             @Override
             public void perform(UiController uiController, View view) {
-                Activity activity;
-                if (ReactNativeSupport.currentReactContext != null) {
-                    activity = Reflect.on(ReactNativeSupport.currentReactContext).call(METHOD_GET_ACTIVITY).get();
-                } else {
+                Activity activity = ReactNativeExtension.getRNActivity(view.getContext().getApplicationContext());
+
+                if (activity == null) {
                     activity = getActivity(view.getContext());
                     if (activity == null && view instanceof ViewGroup) {
                         ViewGroup v = (ViewGroup)view;
@@ -79,9 +78,11 @@ public class EspressoDetox {
                         }
                     }
                 }
+
                 if (activity == null) {
                     throw new RuntimeException("Couldn't get a hold of the Activity");
                 }
+
                 switch (orientation) {
                     case 0:
                         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -104,7 +105,7 @@ public class EspressoDetox {
     }
 
     public static void setSynchronization(boolean enabled) {
-        ReactNativeSupport.enableNetworkSynchronization(enabled);
+        ReactNativeExtension.toggleNetworkSynchronization(enabled);
     }
 
     public static void setURLBlacklist(final ArrayList<String> urls) {

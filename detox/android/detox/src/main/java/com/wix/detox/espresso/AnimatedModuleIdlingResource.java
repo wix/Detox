@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 import android.util.Log;
 import android.view.Choreographer;
 
-import com.wix.detox.ReactNativeCompat;
+import com.wix.detox.reactnative.ReactNativeCompat;
 
 import org.joor.Reflect;
 import org.joor.ReflectException;

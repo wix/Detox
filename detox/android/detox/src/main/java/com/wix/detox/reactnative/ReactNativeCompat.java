@@ -1,4 +1,4 @@
-package com.wix.detox;
+package com.wix.detox.reactnative;
 
 import org.joor.Reflect;
 
