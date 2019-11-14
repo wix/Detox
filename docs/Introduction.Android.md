@@ -87,7 +87,7 @@ If your project does not already support Kotlin, add the Kotlin Gradle-plugin to
 ```groovy
 buildscript {
     // ...
-    ext.kotlinVersion = '1.3.0'
+    ext.kotlinVersion = '1.3.50'
 
     dependencies: {
         // ...
