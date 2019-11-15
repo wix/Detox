@@ -536,9 +536,9 @@ describe('Device', () => {
   
   it(`resetStatusBar() should pass to device driver`, async () => {
     const device = validDevice();
-    await device.resetStatusBar(params);
+    await device.resetStatusBar();
 
-    expect(driverMock.driver.resetStatusBar).toHaveBeenCalledWith(device._deviceId;
+    expect(driverMock.driver.resetStatusBar).toHaveBeenCalledWith(device._deviceId);
   });
 
   it(`shake() should pass to device driver`, async () => {
