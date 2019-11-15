@@ -252,12 +252,6 @@ class AndroidDriver extends DeviceDriverBase {
       return result;
     }, []);
   }
-
-  async setStatusBar(deviceId, flags) {
-  }
-
-  async resetStatusBar(deviceId) {
-  }
 }
 
 module.exports = AndroidDriver;

@@ -1,170 +1,47 @@
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 describe('StatusBar Override', () => {
-  it('Time', async () => {
-    await device.setStatusBar({
-      time: '11:11',
-    });
-    await sleep(500);
-    await device.setStatusBar({
-      time: '22:22',
-    });
-    await sleep(500);
-    await device.setStatusBar({
-      time: '33:33',
-    });
-    await sleep(500);
+  afterEach(async () => {
     await device.resetStatusBar();
-    await sleep(500);
   });
+  it.each(['11:11', '22:22', '33:33'])(`setStatusBar({ time: "%s" })`, async (time) => {
+    await device.setStatusBar({ time });
+    await device.takeScreenshot(`setStatusBar({ time: "${time}" })`);
+  })
 
-  it('dataNetwork', async () => {
-    await device.setStatusBar({
-      dataNetwork: '3g',
-    });
-    await sleep(500);
-    await device.setStatusBar({
-      dataNetwork: '4g',
-    });
-    await sleep(500);
-    await device.setStatusBar({
-      dataNetwork: 'lte',
-    });
-    await sleep(500);
-    await device.resetStatusBar();
-    await sleep(500);
-  });
+  it.each(['wifi', '3g', '4g', 'lte', 'lte-a', 'lte+'])(`setStatusBar({ dataNetwork: "%s" })`, async (dataNetwork) => {
+    await device.setStatusBar({ dataNetwork });
+    await device.takeScreenshot(`setStatusBar({ dataNetwork: "${dataNetwork}" })`);
+  })
 
-  it('wifiMode', async () => {
-    await device.setStatusBar({
-      dataNetwork: 'wifi',
-      wifiMode: 'failed',
-    });
-    await sleep(1000);
-    await device.setStatusBar({
-      dataNetwork: 'wifi',
-      wifiMode: 'searching',
-    });
-    await sleep(1000);
-    await device.setStatusBar({
-      dataNetwork: 'wifi',
-      wifiMode: 'active',
-    });
-    await sleep(1000);
-    await device.resetStatusBar();
-    await sleep(500);
-  });
+  it.each(['searching', 'failed', 'active'])(`setStatusBar({ wifiMode: "%s" })`, async (wifiMode) => {
+    await device.setStatusBar({ wifiMode, dataNetwork: 'wifi' });
+    await device.takeScreenshot(`setStatusBar({ wifiMode: "${wifiMode}" })`);
+  })
 
-  it('wifiBars', async () => {
-    await device.setStatusBar({
-      dataNetwork: 'wifi',
-      wifiBars: '0',
-    });
-    await sleep(500);
-    await device.setStatusBar({
-      dataNetwork: 'wifi',
-      wifiBars: '1',
-    });
-    await sleep(500);
-    await device.setStatusBar({
-      dataNetwork: 'wifi',
-      wifiBars: '2',
-    });
-    await sleep(500);
-    await device.setStatusBar({
-      dataNetwork: 'wifi',
-      wifiBars: '3',
-    });
-    await sleep(500);
-    await device.resetStatusBar();
-    await sleep(500);
-  });
+  it.each(['0', '1', '2', '3'])(`setStatusBar({ wifiBars: "%s" })`, async (wifiBars) => {
+    await device.setStatusBar({ wifiBars, dataNetwork: 'wifi' });
+    await device.takeScreenshot(`setStatusBar({ wifiBars: "${wifiBars}" })`);
+  })
 
-  it('cellularMode', async () => {
-    await device.setStatusBar({
-      cellularMode: 'notSupported',
-    });
-    await sleep(1000);
-    await device.setStatusBar({
-      cellularMode: 'searching',
-    });
-    await sleep(1000);
-    await device.setStatusBar({
-      cellularMode: 'failed',
-    });
-    await sleep(1000);
-    await device.setStatusBar({
-      cellularMode: 'active',
-    });
-    await sleep(1000);
-    await device.resetStatusBar();
-    await sleep(500);
-  });
+  it.each(['searching', 'failed', 'active'])(`setStatusBar({ cellularMode: "%s" })`, async (cellularMode) => {
+    await device.setStatusBar({ cellularMode, dataNetwork: '3g' });
+    await device.takeScreenshot(`setStatusBar({ cellularMode: "${cellularMode}" })`);
+  })
 
-  it('cellularBars', async () => {
-    await device.setStatusBar({
-      wifiMode: 'failed',
-      dataNetwork: '3g',
-    });
-    await device.setStatusBar({
-      cellularBars: '0',
-    });
-    await sleep(500);
-    await device.setStatusBar({
-      cellularBars: '1',
-    });
-    await sleep(500);
-    await device.setStatusBar({
-      cellularBars: '2',
-    });
-    await sleep(500);
-    await device.setStatusBar({
-      cellularBars: '3',
-    });
-    await sleep(500);
-    await device.setStatusBar({
-      cellularBars: '4',
-    });
-    await sleep(500);
-    await device.resetStatusBar();
-    await sleep(500);
-  });
+  it.each(['0', '1', '2', '3', '4'])(`setStatusBar({ cellularBars: "%s" })`, async (cellularBars) => {
+    await device.setStatusBar({ cellularBars, dataNetwork: '3g' });
+    await device.takeScreenshot(`setStatusBar({ cellularBars: "${cellularBars}" })`);
+  })
 
-  it('batteryState', async () => {
-    await device.setStatusBar({
-      batteryState: 'charging'
-    });
-    await sleep(500);
-    await device.setStatusBar({
-      batteryState: 'discharging'
-    });
-    await sleep(500);
-    await device.setStatusBar({
-      batteryState: 'charged'
-    });
-    await sleep(500);
-    await device.resetStatusBar();
-    await sleep(500);
-  });
+  it.each(['charging', 'discharging', 'charged'])(`setStatusBar({ batteryState: "%s" })`, async (batteryState) => {
+    await device.setStatusBar({ batteryState });
+    await device.takeScreenshot(`setStatusBar({ batteryState: "${batteryState}" })`);
+  })
 
-  it('batteryLevel', async () => {
-    await device.setStatusBar({
-      batteryLevel: '30'
-    });
-    await sleep(500);
-    await device.setStatusBar({
-      batteryLevel: '60'
-    });
-    await sleep(500);
-    await device.setStatusBar({
-      batteryLevel: '90'
-    });
-    await sleep(500);
-    await device.resetStatusBar();
-    await sleep(500);
-  });
+  it.each(['30', '60', '90', '100'])(`setStatusBar({ batteryLevel: "%s" })`, async (batteryLevel) => {
+    await device.setStatusBar({ batteryLevel });
+    await device.takeScreenshot(`setStatusBar({ batteryLevel: "${batteryLevel}" })`);
+  })
 
 });
