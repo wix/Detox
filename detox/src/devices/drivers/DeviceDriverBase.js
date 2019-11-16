@@ -208,6 +208,13 @@ class DeviceDriverBase {
       error
     );
   }
+
+  async setStatusBar(deviceId, flags) {
+  }
+
+  async resetStatusBar(deviceId) {
+  }
+
 }
 
 module.exports = DeviceDriverBase;

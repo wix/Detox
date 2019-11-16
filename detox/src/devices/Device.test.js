@@ -526,6 +526,21 @@ describe('Device', () => {
     expect(driverMock.driver.unmatchFinger).toHaveBeenCalledTimes(1);
   });
 
+  it(`setStatusBar() should pass to device driver`, async () => {
+    const device = validDevice();
+    const params = {};
+    await device.setStatusBar(params);
+
+    expect(driverMock.driver.setStatusBar).toHaveBeenCalledWith(device._deviceId, params);
+  });
+  
+  it(`resetStatusBar() should pass to device driver`, async () => {
+    const device = validDevice();
+    await device.resetStatusBar();
+
+    expect(driverMock.driver.resetStatusBar).toHaveBeenCalledWith(device._deviceId);
+  });
+
   it(`shake() should pass to device driver`, async () => {
     const device = validDevice();
     await device.shake();

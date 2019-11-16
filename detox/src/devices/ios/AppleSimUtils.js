@@ -308,6 +308,34 @@ class AppleSimUtils {
   _parseLaunchId(result) {
     return parseInt(_.get(result, 'stdout', ':').trim().split(':')[1]);
   }
+
+  async statusBarOverride(udid, flags) {
+    if (udid && flags) {
+      let overrides = [];
+      if (flags.time)
+        overrides.push(`--time "${flags.time}"`)
+      if (flags.dataNetwork)
+        overrides.push(`--dataNetwork "${flags.dataNetwork}"`)
+      if (flags.wifiMode)
+        overrides.push(`--wifiMode "${flags.wifiMode}"`)
+      if (flags.wifiBars)
+        overrides.push(`--wifiBars "${flags.wifiBars}"`)
+      if (flags.cellularMode)
+        overrides.push(`--cellularMode "${flags.cellularMode}"`)
+      if (flags.cellularBars)
+        overrides.push(`--cellularBars "${flags.cellularBars}"`)
+      if (flags.batteryState)
+        overrides.push(`--batteryState "${flags.batteryState}"`)
+      if (flags.batteryLevel)
+        overrides.push(`--batteryLevel "${flags.batteryLevel}"`)
+
+      await this._execSimctl({ cmd: `status_bar ${udid} override ${overrides.join(' ')}` });
+    }
+  }
+
+  async statusBarReset(udid) {
+    await this._execSimctl({ cmd: `status_bar ${udid} clear` });
+  }
 }
 
 module.exports = AppleSimUtils;
