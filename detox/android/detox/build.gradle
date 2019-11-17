@@ -3,7 +3,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 def _ext = rootProject.ext
-
 def _compileSdkVersion = _ext.has('compileSdkVersion') ? _ext.compileSdkVersion : 28
 def _buildToolsVersion = _ext.has('buildToolsVersion') ? _ext.buildToolsVersion : '28.0.3'
 def _minSdkVersion = _ext.has('minSdkVersion') ? _ext.minSdkVersion : 18
@@ -18,7 +17,7 @@ android {
         minSdkVersion _minSdkVersion
         targetSdkVersion _targetSdkVersion
         versionCode 1
-        versionName "1.0"
+        versionName '1.0'
 
         consumerProguardFiles 'proguard-rules.pro'
     }
@@ -69,12 +68,12 @@ dependencies {
     // Versions are in-sync with the 'androidx-test-1.1.0' release/tag of the android-test github repo,
     // used by the Detox generator. See https://github.com/android/android-test/releases/tag/androidx-test-1.1.0
     // Important: Should remain so when generator tag is replaced!
-    api('androidx.test.espresso:espresso-core:3.1.1') {
+    api('androidx.test.espresso:espresso-core:3.2.0') {
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
     }
-    api 'androidx.test:runner:1.1.1'
-    api 'androidx.test:rules:1.1.1'
-    api 'androidx.test.ext:junit:1.1.0'
+    api 'androidx.test:runner:1.2.0'
+    api 'androidx.test:rules:1.2.0'
+    api 'androidx.test.ext:junit:1.1.1'
     api 'androidx.annotation:annotation:1.1.0'
 
     // Version is the latest; Cannot sync with the Github repo (e.g. android/android-test) because the androidx
