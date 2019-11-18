@@ -193,6 +193,7 @@ public final class Detox {
      */
     private static Intent intentWithUrl(String url) {
         final Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.setData(Uri.parse(url));
         return intent;
     }
