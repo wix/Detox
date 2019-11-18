@@ -8,6 +8,7 @@ describe('Android driver', () => {
     jest.mock('../../utils/encoding', () => ({
       encodeBase64: (x) => `base64(${x})`,
     }));
+
     jest.mock('../android/ADB', () => mockADBClass);
     jest.mock('../../utils/AsyncEmitter', () => mockAsyncEmitter);
     jest.mock('../../utils/sleep', () => jest.fn().mockResolvedValue(''));
@@ -69,6 +70,21 @@ describe('Android driver', () => {
         key: 'string-arg',
         value: 'base64(text, with commas-and-dashes,)'
       });
+    });
+  });
+
+  describe('net-port reversing', () => {
+    const deviceId = 1010;
+    const port = 1337;
+
+    it(`should invoke ADB's reverse`, async () => {
+      await uut.reverseTcpPort(deviceId, port);
+      expect(uut.adb.reverse).toHaveBeenCalledWith(deviceId, port);
+    });
+
+    it(`should invoke ADB's reverse-remove`, async () => {
+      await uut.unreverseTcpPort(deviceId, port);
+      expect(uut.adb.reverseRemove).toHaveBeenCalledWith(deviceId, port);
     });
   });
 });

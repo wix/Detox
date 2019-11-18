@@ -31,6 +31,8 @@
 - [`device.clearKeychain()` **iOS Only**](#deviceclearkeychain-ios-only)
 - [`device.setStatusBar()` **iOS Only**](#devicesetstatusbar-ios-only)
 - [`device.resetStatusBar()` **iOS Only**](#deviceresetstatusbar-ios-only)
+- [`device.reverseTcpPort()` **Android Only**](#devicereversetcpport-android-only)
+- [`device.unreverseTcpPort()` **Android Only**](#deviceunreversetcpport-android-only)
 - [`device.pressBack()` **Android Only**](#devicepressback-android-only)
 - [`device.getUIDevice()` **Android Only**](#devicegetuidevice-android-only)
 
@@ -410,6 +412,14 @@ Override simulator's status bar. Available options:
 
 ### `device.resetStatusBar()` **iOS Only**
 Resets any override in simulator's status bar.
+
+### `device.reverseTcpPort()` **Android Only**
+
+Reverse a TCP port from the device (guest) back to the host-computer, as typically done with the `adb reverse` command. The end result would be that all network requests going from the device to the specified port will be forwarded to the computer.
+
+### `device.unreverseTcpPort()` **Android Only**
+
+Clear a _reversed_ TCP-port (e.g. previously set using `device.reverseTcpPort()`).
 
 ### `device.pressBack()` **Android Only**
 Simulate press back button.

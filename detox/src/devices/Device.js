@@ -140,7 +140,7 @@ class Device {
   }
 
   async setBiometricEnrollment(toggle) {
-    let yesOrNo = toggle ? 'YES' : 'NO'
+    const yesOrNo = toggle ? 'YES' : 'NO';
     await this.deviceDriver.setBiometricEnrollment(this._deviceId, yesOrNo);
   }
 
@@ -208,6 +208,14 @@ class Device {
     lat = String(lat);
     lon = String(lon);
     await this.deviceDriver.setLocation(this._deviceId, lat, lon);
+  }
+
+  async reverseTcpPort(port) {
+    await this.deviceDriver.reverseTcpPort(this._deviceId, port);
+  }
+
+  async unreverseTcpPort(port) {
+    await this.deviceDriver.unreverseTcpPort(this._deviceId, port);
   }
 
   async clearKeychain() {
