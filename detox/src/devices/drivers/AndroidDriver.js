@@ -149,6 +149,14 @@ class AndroidDriver extends DeviceDriverBase {
     return this.uiDevice;
   }
 
+  async reverseTcpPort(deviceId, port) {
+    await this.adb.reverse(deviceId, port);
+  }
+
+  async unreverseTcpPort(deviceId, port) {
+    await this.adb.reverseRemove(deviceId, port);
+  }
+
   async setURLBlacklist(urlList) {
     const call = EspressoDetoxApi.setURLBlacklist(urlList);
     await this.invocationManager.execute(call);
