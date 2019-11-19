@@ -31,7 +31,11 @@ This integration is mainly tested against android. But there shouldn't be any pr
  ```sh
  node_modules/.bin/cucumber-js ./e2e/features --require-module @babel/register --configuration android.emu.release
  ```
+
  This action will open a new simulator and run the tests on it.
+
+ Any arguments which you would have wanted to pass it to detox directly, you can continue to pass it as an argument to `cucumber-js` like how we have passed `--configuration` and detox will read it internally.
+
 
 ## To test Debug build of your app
 ### Step 2: Build 
