@@ -5,7 +5,6 @@
 ### Methods
 
 - [`device.launchApp()`](#devicelaunchappparams)
-- [`device.relaunchApp()` **Deprecated**](#devicerelaunchappparams)
 - [`device.terminateApp()`](#deviceterminateapp)
 - [`device.sendToHome()`](#devicesendtohome)
 - [`device.reloadReactNative()`](#devicereloadreactnative)
@@ -19,7 +18,7 @@
 - [`device.setURLBlacklist([urls])`](#deviceseturlblacklisturls)
 - [`device.enableSynchronization()`](#deviceenablesynchronization)
 - [`device.disableSynchronization()`](#devicedisablesynchronization)
-- [`device.resetContentAndSettings()`](#deviceresetcontentandsettings)
+- [`device.resetContentAndSettings()` **iOS Only**](#deviceresetcontentandsettings-ios-only)
 - [`device.getPlatform()`](#devicegetplatform)
 - [`device.takeScreenshot(name)`](#devicetakescreenshotname)
 - [`device.shake()` **iOS Only**](#deviceshake-ios-only)
@@ -311,7 +310,7 @@ await device.disableSynchronization();
 ```
 
 
-### `device.resetContentAndSettings()`
+### `device.resetContentAndSettings()` **iOS Only**
 Resets the Simulator to clean state (like the Simulator > Reset Content and Settings... menu item), especially removing
 previously set permissions.
 
