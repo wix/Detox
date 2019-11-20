@@ -1,5 +1,8 @@
-const DEFAULT_RETRIES = 10;
+const sleep = require('./sleep');
+
+const DEFAULT_RETRIES = 9;
 const DEFAULT_INTERVAL = 500;
+const DEFAULT_CONDITION_FN = () => true;
 
 async function retry(options, func) {
   if (typeof options === 'function') {
@@ -7,21 +10,20 @@ async function retry(options, func) {
     options = {};
   }
 
-  let {retries, interval} = options;
-  retries = retries || DEFAULT_RETRIES;
-  interval = interval || DEFAULT_INTERVAL;
+  const {
+    retries = DEFAULT_RETRIES,
+    interval = DEFAULT_INTERVAL,
+    conditionFn = DEFAULT_CONDITION_FN,
+  } = options;
 
-  let currentRetry = 0;
-  while (currentRetry++ < retries) {
+  for (let totalRetries = 1; true; totalRetries++) {
     try {
-      return await func(currentRetry);
+      return await func(totalRetries);
     } catch (e) {
-      if (currentRetry === retries) {
+      if (!conditionFn(e) || (totalRetries > retries)) {
         throw e;
-      } else {
-        const sleep = currentRetry * interval;
-        await new Promise((accept) => setTimeout(accept, sleep));
       }
+      await sleep(totalRetries * interval);
     }
   }
 }
