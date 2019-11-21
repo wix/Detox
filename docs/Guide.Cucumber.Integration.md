@@ -31,4 +31,4 @@ AfterAll(async () => {
 });
 ```
 
-Now we are done with the setup of Detox-Cucumber integration and we can start writing our test scenarios and execute them. To know about how to write a test scenario and execute them, refer to the [react-native-detox-cucumber](https://github.com/mathanpec/react-native-detox-cucumber) repository where a working example is given.
+To know more about the scaffolding, how to write a test scenario and execute them, refer to the [react-native-detox-cucumber](https://github.com/mathanpec/react-native-detox-cucumber) repository where a working example is available which covers multiple other usages like test artifacts support.
