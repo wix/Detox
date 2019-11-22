@@ -122,7 +122,8 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async _fixEmulatorConfigIniSkinNameIfNeeded(avdName) {
-    const configFile = `${os.homedir()}/.android/avd/${avdName}.avd/config.ini`;
+    const avdHome = process.env['ANDROID_AVD_HOME'] || `${os.homedir()}/.android/avd`;
+    const configFile = `${avdHome}/${avdName}.avd/config.ini`;
     const config = ini.parse(fs.readFileSync(configFile, 'utf-8'));
 
     if (!config['skin.name']) {
