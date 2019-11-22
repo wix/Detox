@@ -41,7 +41,7 @@
 - [Advanced Mocking With Detox](Guide.Mocking.md)
 - [Migration Between Detox Versions](Guide.Migration.md)
 - [Use Jest as Test Runner](Guide.Jest.md)
-- [Using Cucumber wit Detox](https://github.com/mathanpec/react-native-detox-cucumber)
+- [Using Cucumber with Detox](https://github.com/mathanpec/react-native-detox-cucumber)
 - [Parallel Test Execution](Guide.ParallelTestExecution.md)
 
 ## Under The Hood
