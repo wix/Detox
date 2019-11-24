@@ -1,5 +1,6 @@
 const chalk = require('chalk').default;
 const ReporterBase = require('./ReporterBase');
+const log = require('../../src/utils/logger').child();
 
 class WorkerAssignReporterImpl extends ReporterBase {
   constructor(detox) {
@@ -8,8 +9,7 @@ class WorkerAssignReporterImpl extends ReporterBase {
   }
 
   report(workerName) {
-    this._traceln(`${chalk.whiteBright(workerName)} assigned to ${chalk.blueBright(this.device.name)}`);
-    this._traceln('');
+    log.info({event: 'WORKER_ASSIGN'}, `${chalk.whiteBright(workerName)} assigned to ${chalk.blueBright(this.device.name)}`);
   }
 }
 
