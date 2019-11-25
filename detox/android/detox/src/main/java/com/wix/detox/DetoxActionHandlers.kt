@@ -110,3 +110,12 @@ class QueryStatusActionHandler(
             })
         }
 }
+
+class RecordingStateActionHandler(
+        private val wsClient: WebSocketClient
+) : DetoxActionHandler {
+    override fun handle(params: String, messageId: Long) {
+        Log.i("Detox", "RecordingStateActionHandler. Params: "+params+", messageId: "+messageId);
+        wsClient.sendAction("setRecordingStateDone", mapOf<String, Any>(), messageId);
+    }
+}
