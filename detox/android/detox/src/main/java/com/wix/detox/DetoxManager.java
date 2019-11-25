@@ -145,5 +145,6 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                 return null;
             }
         }));
+        actionHandlers.put("setRecordingState", new RecordingStateActionHandler(wsClient));
     }
 }
