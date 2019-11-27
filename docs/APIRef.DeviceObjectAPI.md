@@ -2,6 +2,11 @@
 
 `device` is globally available in every test file, it enables control over the current attached device (currently only simulators are supported).
 
+### Public Properties
+
+* [`device.id`](#deviceid)
+* [`device.name`](#devicename)
+
 ### Methods
 
 - [`device.launchApp()`](#devicelaunchappparams)
@@ -35,7 +40,20 @@
 - [`device.pressBack()` **Android Only**](#devicepressback-android-only)
 - [`device.getUIDevice()` **Android Only**](#devicegetuidevice-android-only)
 
+### `device.id`
+
+Holds the environment-unique ID of the device - namely, the `adb` ID on Android (e.g. `emulator-5554`) and the Mac-global simulator UDID on iOS, as used by `simctl` (e.g. `AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE`).
+
+The value will be `undefined` until the device is properly _prepared_ (i.e. in `detox.init()`).
+
+### `device.name`
+
+Holds a descriptive name of the device. Example: `emulator-5554 (Pixel_API_26)`
+
+The value will be `undefined` until the device is properly _prepared_ (i.e. in `detox.init()`).
+
 ### `device.launchApp(params)`
+
 Launch the app defined in the current [`configuration`](APIRef.Configuration.md).
 
 **Options:** 

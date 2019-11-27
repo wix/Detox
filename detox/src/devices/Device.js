@@ -96,6 +96,10 @@ class Device {
     }
   }
 
+  get id() {
+    return this._deviceId;
+  }
+
   get name() {
     return this.deviceDriver.name;
   }

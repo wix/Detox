@@ -104,6 +104,17 @@ describe('Device', () => {
     expect(device.name).toEqual('mock-device-name-from-driver');
   });
 
+  it('should return an undefined ID for an unprepared device', async() => {
+    const device = validDevice();
+    expect(device.id).toBeUndefined();
+  });
+
+  it('should return the device ID, as provided by acquireFreeDevice', async () => {
+    const device = validDevice();
+    await device.prepare();
+    expect(device.id).toEqual('mockDeviceId');
+  });
+
   describe('prepare()', () => {
     it(`valid scheme, no binary, should throw`, async () => {
       const device = validDevice();
