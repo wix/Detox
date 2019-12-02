@@ -23,7 +23,9 @@ class Mockserver {
 
     router.route('/delay/:delay')
           .get((req, res) => {
+            console.log('Mock server', `GET delayed response, will reply in ${req.params.delay}sec`);
             setTimeout(() => {
+              console.log('Mock server', `GET delayed response, responding now`);
               res.json({message: `Response was delayed by ${req.params.delay}ms`});
             }, req.params.delay);
           });
@@ -31,7 +33,7 @@ class Mockserver {
     this.app.use('/', router);
 
     this.server = this.app.listen(port);
-    console.log('Mock server listening on port ' + port);
+    console.log('Mock server', `Listening on port ${port}`);
   }
 
   close() {
