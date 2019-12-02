@@ -23,7 +23,7 @@ class Mockserver {
 
     router.route('/delay/:delay')
           .get((req, res) => {
-            console.log('Mock server', `GET delayed response, will reply in ${req.params.delay}sec`);
+            console.log('Mock server', `GET delayed response, will reply in ${req.params.delay}ms`);
             setTimeout(() => {
               console.log('Mock server', `GET delayed response, responding now`);
               res.json({message: `Response was delayed by ${req.params.delay}ms`});
