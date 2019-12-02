@@ -14,6 +14,7 @@
 #import <EarlGrey/GREYError.h>
 @import AudioToolbox;
 @import ObjectiveC;
+@import Darwin;
 
 @interface UIKeyboardTaskQueue ()
 
@@ -31,6 +32,40 @@
 - (void)removeCandidateList;
 
 @end
+
+__attribute__((constructor))
+static void _DTXFixupKeyboard(void)
+{
+	static char const *const controllerPrefBundlePath = "/System/Library/PrivateFrameworks/TextInput.framework/TextInput";
+	__unused void *handle = dlopen(controllerPrefBundlePath, RTLD_LAZY);
+	
+	TIPreferencesController* controller = TIPreferencesController.sharedPreferencesController;
+	if([controller respondsToSelector:@selector(setAutocorrectionEnabled:)] == YES)
+	{
+		controller.autocorrectionEnabled = NO;
+	}
+	else
+	{
+		[controller setValue:@NO forPreferenceKey:@"KeyboardAutocorrection"];
+	}
+	
+	if([controller respondsToSelector:@selector(setPredictionEnabled:)])
+	{
+		controller.predictionEnabled = NO;
+	}
+	else
+	{
+		[controller setValue:@NO forPreferenceKey:@"KeyboardPrediction"];
+	}
+	
+	[controller setValue:@YES forPreferenceKey:@"DidShowGestureKeyboardIntroduction"];
+	if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+	{
+		[controller setValue:@YES forPreferenceKey:@"DidShowContinuousPathIntroduction"];
+	}
+
+	[controller synchronizePreferences];
+}
 
 static void _DTXTypeText(NSString* text)
 {	
