@@ -153,6 +153,10 @@ Using the `android.emu.debug` configuration from above, you can invoke it in the
 detox test -c android.emu.debug
 ```
 
+### 7. Fix your Android emulators
+
+While everything may seem on the working side right now, there are many issues with Google's Android emulators causing flakiness and inefficient usage, we recommend addressing. We highly recommend you take the time and apply the practices we've summed up in our [Emulators Best Practices guide](Introduction.AndroidEmulatorsBestPractices.md), in all relevant machines (dev computers, CI agents and scripts) and AVD's.
+
 
 
 ## Proguard (Minification)

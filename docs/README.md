@@ -7,6 +7,7 @@
 - [Getting Started](Introduction.GettingStarted.md)
 - [Writing Your First Passing Test](Introduction.WritingFirstTest.md)
 - [Adding Android](Introduction.Android.md)
+- [Android Emulators: Best Practices](Introduction.AndroidEmulatorsBestPractices.md)
 - [How Detox Works](Introduction.HowDetoxWorks.md)
 - [Recommended Workflows With Detox](Introduction.Workflows.md)
 
