@@ -6,7 +6,7 @@ In particular, this applies to CI machines aimed at running automated end-to-end
 
 
 
-## Minimizing ANR's
+## 1. Minimizing ANR's
 
 Sooner or later, all Android developers (and even users) find themselves facing Android's infamous `Application Not Responding` alerts (i.e. ANR's). They come in various flavors, but in tests-running emulators we've most commonly witnessed this specific flavor -- which seemed to appear shortly after emulators finish starting up:
 
@@ -64,7 +64,7 @@ disk.dataPartition.size=2048M
 
 
 
-## Enable Quick-Booting
+## 2. Enable Quick-Booting
 
 If the system allows saving a state (for example, in dev computers or a CI system with custom VM agents with prebaked images you can configure), we highly and strongly recommend setting up quick-boot snapshots for you emulators. Quick-boot saves significant time otherwise wasted when emulators cold-boot from scratch. The concept becomes more prominent in environments capable of parallel-executing tests in multiple, concurrently running emulators (as when [Detox is run with multiple Jest workers](Guide.Jest.md)).
 
@@ -92,7 +92,7 @@ saveOnExit = true
 
 4. Now that everything is in place, [launch your emulator](#booting-an-emulator-via-command-line) once (in verbose mode) and wait for it to fully load. Then, shut it down, and make sure the [state has been saved](#verifying-the-emulators-quick-boot-snapshot-has-been-saved). 
 
-## Fixing Post-Quickboot High CPU Load Bug
+## 3. Fixing Post-Quickboot High CPU Load Bug
 
 If you have configured your emulators to quick-boot instead of cold-boot (as we have -- and as previously recommended here), you might have overlooked a bug where right after boot completion, the emulator runs at very high CPU usage and virtually chokes it altogether. We've detected this bug in both Mac and Linux machines, where the emulator binary installed was of version `29.0.11`: the CPU started and stayed at high load for 1-2 minutes and then went down with no manual intervention.
 
@@ -133,7 +133,7 @@ To check and update your tools' versions, use the [sdk-manager tool](https://dev
 
 
 
-## Google's keyboard onboarding
+## 4. Google's keyboard onboarding
 
 Google AVD images, as with Google devices (e.g. Pixels), are shipped with [Google's gboard](https://play.google.com/store/apps/details?id=com.google.android.inputmethod.latin) as the default keyboard. Gboard is feature-rich: sporting type-suggestions, swipe-based typing, themes and more. Great for users, not so great for automation testing.
 
@@ -156,7 +156,7 @@ If you have GUI and you're running on a machine that can save the emulator's sta
 Alternatively, or simply if there's no GUI, you can simply launch this command right after the emulator finishes launching:
 
 ```
-> adb shell am force-stop com.google.android.inputmethod.latin
+adb shell am force-stop com.google.android.inputmethod.latin
 ```
 
 The keyboard will shut down and save it's shared-preferences state such that the onboarding dialog box will not show for some time. After this, yet again, shut the emulator down.
@@ -179,42 +179,42 @@ In particular, these two key-value entries control the appearance of the onboard
 Hence, changing the timestamp to a futuristic value will make sure you won't ever see the dialog box again. Unfortunately, that's a bit tricky to pull off - yet doable:
 
 1. [Launch the testing-target emulator](#booting-an-emulator-via-command-line) from scratch in verbose mode.
-2. Log-in as a [root](https://stackoverflow.com/a/40097307/453052). **Run `su` after `adb shell`, if needed.**
-3. Copy the `xml` to `/sdcard`:
+2. Log-in as a [superuser](#logging-in-to-an-emulator-as-a-superuser-(root)).
+3. Kill the gboard "app":
+
+```
+am force-stop com.google.android.inputmethod.latin
+```
+
+4. Copy the `xml` to `/sdcard`:
 
 ```
 cp /data/data/com.google.android.inputmethod.latin/shared_prefs/com.google.android.inputmethod.latin_preferences.xml /sdcard/
 ```
 
-4. In your computer's shell, pull the file back to it:
+5. In your computer's shell, pull the file back to it:
 
 ```
-> adb pull /sdcard/com.google.android.inputmethod.latin_preferences.xml
+adb pull /sdcard/com.google.android.inputmethod.latin_preferences.xml
 ```
 
-5. Edit the file on your computer. Set `pref_key_access_points_hint_shown_times` to 1 and `pref_key_access_points_hint_shown_timestamp` to `1893456000000` (i.e. 1/1/2030):
+6. Edit the file on your computer. Set `pref_key_access_points_hint_shown_times` to 1 and `pref_key_access_points_hint_shown_timestamp` to `1893456000000` (i.e. 1/1/2030):
 
 ```xml
     <int name="pref_key_access_points_hint_shown_times" value="1" />
     <long name="pref_key_access_points_hint_shown_timestamp" value="1893456000000" />
 ```
 
-6. Push the file back to the emulator:
+7. Push the file back to the emulator:
 
 ```
-> adb push com.google.android.inputmethod.latin_preferences.xml /sdcard
+adb push com.google.android.inputmethod.latin_preferences.xml /sdcard
 ```
 
-7. Back to the emulator's shell (as a **root**), copy the file back from `/sdcard`:
+8. Back to the emulator's shell (as a **root**): copy the file back from `/sdcard`:
 
 ```
 cp /sdcard/com.google.android.inputmethod.latin_preferences.xml /data/data/com.google.android.inputmethod.latin/shared_prefs/
-```
-
-8. Restart the keyboard:
-
-```
-> adb shell am force-stop com.google.android.inputmethod.latin
 ```
 
 9. Shut the emulator down and [make sure the emulator's state has been saved](#verifying-the-emulators-quick-boot-snapshot-has-been-saved).
@@ -292,3 +292,26 @@ emulator: Saving state on exit with session uptime 9423 ms
 > ```
 >
 > It can be a result of an improper configuration, or an emulator launch where the `-read-only` argument was provided.
+
+
+
+### Logging in to an emulator as a superuser (root)
+
+> Based on this [Stackoverflow answer](https://stackoverflow.com/a/40097307/453052)
+
+1. (Re)start the adb server in root mode:
+
+```
+adb root
+```
+
+2. Launch an emulator (no need to re-launch)
+
+3. Log-in as a superuser
+
+```
+adb shell
+su
+```
+
+*Note: `su` isn't necessary in all environments*
