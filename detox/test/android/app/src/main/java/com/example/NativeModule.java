@@ -114,19 +114,8 @@ public class NativeModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onViewFound(View view) {
-                final ReactFindViewUtil.OnViewFoundListener onViewFoundListener = this;
-                view.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        throw new IllegalStateException("Validation failed: component \"" + testID + "\" was long-tapped!!!");
-                    }
-                });
-
-                view.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        ReactFindViewUtil.removeViewListener(onViewFoundListener);
-                    }
+                view.setOnLongClickListener(v -> {
+                    throw new IllegalStateException("Validation failed: component \"" + testID + "\" was long-tapped!!!");
                 });
             }
         });
