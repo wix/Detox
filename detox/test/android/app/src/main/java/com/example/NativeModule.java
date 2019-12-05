@@ -121,6 +121,13 @@ public class NativeModule extends ReactContextBaseJavaModule {
                         throw new IllegalStateException("Validation failed: component \"" + testID + "\" was long-tapped!!!");
                     }
                 });
+
+                view.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ReactFindViewUtil.removeViewListener(onViewFoundListener);
+                    }
+                });
             }
         });
     }
