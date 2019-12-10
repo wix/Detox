@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import android.util.Log;
 import android.view.Choreographer;
 
+import com.facebook.react.bridge.ReactContext;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -14,6 +16,7 @@ import androidx.test.espresso.IdlingResource;
 
 import okhttp3.Call;
 import okhttp3.Dispatcher;
+import okhttp3.OkHttpClient;
 
 /**
  * Created by simonracz on 09/10/2017.
@@ -54,6 +57,9 @@ public class NetworkIdlingResource implements IdlingResource, Choreographer.Fram
         }
     }
 
+    public NetworkIdlingResource(@NonNull ReactContext reactContext) {
+        this(new NetworkingModuleReflected(reactContext).getHttpClient().dispatcher());
+    }
 
     public NetworkIdlingResource(@NonNull Dispatcher dispatcher) {
         this.dispatcher = dispatcher;
