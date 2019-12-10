@@ -21,12 +21,18 @@ import androidx.test.espresso.IdlingResource;
  */
 public class BridgeIdlingResource implements IdlingResource, NotThreadSafeBridgeIdleDebugListener {
     private static final String LOG_TAG = "Detox";
+    private final ReactContext reactContext;
 
     private AtomicBoolean idleNow = new AtomicBoolean(true);
     private ResourceCallback callback = null;
 
     public BridgeIdlingResource(ReactContext reactContext) {
-        reactContext.getCatalystInstance().addBridgeIdleDebugListener(this);
+        this.reactContext = reactContext;
+        this.reactContext.getCatalystInstance().addBridgeIdleDebugListener(this);
+    }
+
+    public void onDetach() {
+        this.reactContext.getCatalystInstance().removeBridgeIdleDebugListener(this);
     }
 
     @Override
