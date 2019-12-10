@@ -113,7 +113,7 @@ public final class Detox {
     public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context context) {
         sActivityTestRule = activityTestRule;
 
-        Intent intent = extractLaunchIntent();
+        Intent intent = extractInitialIntent();
         activityTestRule.launchActivity(intent);
 
         // Kicks off another thread and attaches a Looper to that.
@@ -144,29 +144,31 @@ public final class Detox {
         }
     }
 
-    public static void startActivityFromUrl(String url) {
-        launchActivitySync(intentWithUrl(url));
-    }
-
     public static void launchMainActivity() {
         final Activity activity = sActivityTestRule.getActivity();
         final Context appContext = activity.getApplicationContext();
         final Intent intent = new Intent(appContext, activity.getClass());
 
-        // SINGLE_TOP is important so as to avoid launching the app's main activity over an existing instance (in the same task),
+        // CLEAR_TOP is important so as to avoid launching the app's main activity over an existing instance (in the same task),
         // in case it's already running. It *would* happen without the flag, since by default ActivityTestRule instances
-        // are created so as to force the FLAG_ACTIVITY_NEW_TASK flag in the initial launch, which evidently causes consequent
-        // launches to create additional activity instances on top of it (although inside the same task).
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        // are created so as to force the FLAG_ACTIVITY_NEW_TASK flag in the initial launch (see flags-less c'tor), which
+        // evidently causes consequent launches to create additional activity instances on top of it (although inside the same task).
+        // SINGLE_TOP here is needed as well so as to avoid the *relaunch* of the already-running activity (rather, the intent
+        // would be delivered to that activity's onNewIntent(), as explain in the docs for CLEAR_TOP).
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         launchActivitySync(intent);
     }
 
-    private static Intent extractLaunchIntent() {
+    public static void startActivityFromUrl(String url) {
+        launchActivitySync(intentWithUrl(url, false));
+    }
+
+    private static Intent extractInitialIntent() {
         Intent intent;
 
         final String detoxURLOverride = InstrumentationRegistry.getArguments().getString(DETOX_URL_OVERRIDE_ARG);
         if (detoxURLOverride != null) {
-            intent = intentWithUrl(detoxURLOverride);
+            intent = intentWithUrl(detoxURLOverride, true);
         } else {
             intent = cleanIntent();
         }
@@ -187,13 +189,24 @@ public final class Detox {
 
     /**
      * Constructs an intent with a URL such that the resolved activity to be launched would be an activity that has
-     * been defined to match it using an intent-filter xml tag, and has been associated with an {@link Intent.ACTION_VIEW} action.
+     * been defined to match it using an intent-filter xml tag, and has been associated with an {@link Intent#ACTION_VIEW} action.
      * @param url The URL to associated.
+     *
      * @return The resulting intent.
      */
-    private static Intent intentWithUrl(String url) {
+    private static Intent intentWithUrl(String url, boolean initialLaunch) {
         final Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(url));
+
+        // CLEAR_TOP+SINGLE_TOP is needed here for the same reasons as in launchMainActivity().
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        // Upon initial launch (first-ever instance of the test activity), we also manually need to add the NEW_TASK flag
+        // so as to mimic the ActivityTestRule's behavior: we get NEW_TASK from it if no flags are specified; here we _do_
+        // specify flags so need to add it ourselves.
+        if (initialLaunch) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
         return intent;
     }
 
@@ -213,10 +226,9 @@ public final class Detox {
 
         final Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
         final Activity activity = sActivityTestRule.getActivity();
-        final Context appContext = activity.getApplicationContext();
         final Instrumentation.ActivityMonitor activityMonitor = new Instrumentation.ActivityMonitor(activity.getClass().getName(), null, true);
 
-        appContext.startActivity(intent);
+        activity.startActivity(intent);
         instrumentation.addMonitor(activityMonitor);
         instrumentation.waitForMonitorWithTimeout(activityMonitor, ACTIVITY_LAUNCH_TIMEOUT);
     }
