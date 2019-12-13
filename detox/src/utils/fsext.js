@@ -6,7 +6,7 @@ async function getDirectories (rootPath) {
   let dirs = [];
   for (let file of files) {
     let pathString = path.resolve(rootPath, file);
-    if ((await fs.lstat(pathString)).isDirectory()) {
+    if ((await fs.stat(pathString)).isDirectory()) {
       dirs.push(file);
     }
   }
