@@ -38,7 +38,7 @@
         "binaryPath": "../demo-react-native/android/app/build/outputs/apk/release/app-release.apk",
         "type": "android.emulator",
         "device": {
-          "avdName": "Nexus_5X_API_26"
+          "avdName": "Pixel_API_28"
         }
       }
     }
