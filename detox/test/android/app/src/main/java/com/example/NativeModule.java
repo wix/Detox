@@ -19,6 +19,11 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.util.ReactFindViewUtil;
+import com.facebook.react.uimanager.util.ReactFindViewUtil.OnMultipleViewsFoundListener;
+
+import java.util.Set;
+
+import androidx.collection.ArraySet;
 
 public class NativeModule extends ReactContextBaseJavaModule {
 
@@ -106,18 +111,43 @@ public class NativeModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void spyLongTaps(final String testID) {
-        ReactFindViewUtil.addViewListener(new ReactFindViewUtil.OnViewFoundListener() {
-            @Override
-            public String getNativeId() {
-                return testID;
-            }
+        new LongTapsSpy(testID).spyOnce();
+    }
 
-            @Override
-            public void onViewFound(View view) {
-                view.setOnLongClickListener(v -> {
-                    throw new IllegalStateException("Validation failed: component \"" + testID + "\" was long-tapped!!!");
-                });
-            }
-        });
+    /**
+     * Implementation note: For this purpose, a simpler RN API exists in the same class -
+     * {@link ReactFindViewUtil#addViewListener(ReactFindViewUtil.OnViewFoundListener)}.
+     * However, it is found to be a but buggy since it removes all listeners immediately
+     * after being called (i.e. while iterating) with no thread-sync mechanisms to protect it.
+     * If real life (CI), we've genuinely seen on occasions that it throws ConcurrentModificationException
+     * exceptions (and why wouldn't it? - we have a screen with multiple views subscribing and
+     * called concurrently in the ActionsScreen of this demo app; could it be that it is not always called
+     * from the main thread?).
+     * Therefore, we use here {@link ReactFindViewUtil#addViewsListener(OnMultipleViewsFoundListener, Set)},
+     * which is too generic but nevertheless allows us to better control when we are to be removed.
+     */
+    private static class LongTapsSpy implements OnMultipleViewsFoundListener {
+
+        private final String testID;
+
+        private LongTapsSpy(String testID) {
+            this.testID = testID;
+        }
+
+        public void spyOnce() {
+            final Set<String> nativeIdsSet = new ArraySet<>(1);
+            nativeIdsSet.add(testID);
+
+            ReactFindViewUtil.addViewsListener(this, nativeIdsSet);
+        }
+
+        @Override
+        public void onViewFound(View view, String nativeId) {
+            view.setOnLongClickListener(v -> {
+                throw new IllegalStateException("Validation failed: component \"" + testID + "\" was long-tapped!!!");
+            });
+
+            view.post(() -> ReactFindViewUtil.removeViewsListener(this));
+        }
     }
 }
