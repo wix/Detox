@@ -112,10 +112,59 @@ class QueryStatusActionHandler(
 }
 
 class RecordingStateActionHandler(
+        private val instrumentsManager: DetoxInstrumentsManager,
         private val wsClient: WebSocketClient
 ) : DetoxActionHandler {
+
     override fun handle(params: String, messageId: Long) {
-        Log.i("Detox", "RecordingStateActionHandler. Params: "+params+", messageId: "+messageId);
-        wsClient.sendAction("setRecordingStateDone", mapOf<String, Any>(), messageId);
+        val recordingPath = JSONObject(params).optString("recordingPath", null)
+        if (recordingPath != null) {
+            instrumentsManager.startRecordingAtLocalPath(recordingPath)
+        } else {
+            instrumentsManager.stopRecording()
+        }
+
+        wsClient.sendAction("setRecordingStateDone", mapOf<String, Any>(), messageId)
     }
+}
+
+class EventsActionsHandler(
+        private val instrumentsManager: DetoxInstrumentsManager,
+        private val wsClient: WebSocketClient
+) : DetoxActionHandler {
+
+    override fun handle(params: String, messageId: Long) {
+        with (JSONObject(params))  {
+            when (getString("action")) {
+                "begin" -> {
+                    instrumentsManager.eventBeginInterval(
+                            getString("category"),
+                            getString("name"),
+                            getString("id"),
+                            getString("additionalInfo")
+                    )
+                }
+                "end" -> {
+                    instrumentsManager.eventEndInterval(
+                            getString("id"),
+                            getString("status"),
+                            getString("additionalInfo")
+                    )
+                }
+                "mark" -> {
+                    instrumentsManager.eventMark(
+                            getString("category"),
+                            getString("name"),
+                            getString("id"),
+                            getString("status"),
+                            getString("additionalInfo")
+                    )
+                }
+                else -> throw RuntimeException("Invalid action")
+            }
+        }
+
+        wsClient.sendAction("addActionDone", mapOf<String, Any>(), messageId)
+    }
+
 }

@@ -13,6 +13,7 @@ const SimulatorLogPlugin = require('../../artifacts/log/ios/SimulatorLogPlugin')
 const SimulatorScreenshotPlugin = require('../../artifacts/screenshot/SimulatorScreenshotPlugin');
 const SimulatorRecordVideoPlugin = require('../../artifacts/video/SimulatorRecordVideoPlugin');
 const SimulatorInstrumentsPlugin = require('../../artifacts/instruments/SimulatorInstrumentsPlugin');
+const IosRecordingPathCreator = require('../../artifacts/instruments/recording/IosRecordingPathCreator');
 const IosExpect = require('../../ios/expect');
 
 class IosDriver extends DeviceDriverBase {
@@ -21,14 +22,14 @@ class IosDriver extends DeviceDriverBase {
 
     this.applesimutils = new AppleSimUtils();
     this.matchers = new IosExpect(new InvocationManager(this.client));
+    this.recordingPathCreator = new IosRecordingPathCreator();
   }
 
   declareArtifactPlugins() {
-    const appleSimUtils = this.applesimutils;
-    const client = this.client;
+    const { appleSimUtils, client, recordingPathCreator } = this;
 
     return {
-      instruments: (api) => new SimulatorInstrumentsPlugin({ api, client }),
+      instruments: (api) => new SimulatorInstrumentsPlugin({ api, client, recordingPathCreator }),
       log: (api) => new SimulatorLogPlugin({ api, appleSimUtils }),
       screenshot: (api) => new SimulatorScreenshotPlugin({ api, appleSimUtils }),
       video: (api) => new SimulatorRecordVideoPlugin({ api, appleSimUtils }),

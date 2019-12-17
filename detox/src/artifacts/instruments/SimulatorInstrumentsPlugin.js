@@ -3,9 +3,10 @@ const WholeTestRecorderPlugin = require('../templates/plugin/WholeTestRecorderPl
 const SimulatorInstrumentsRecording = require('./SimulatorInstrumentsRecording');
 
 class SimulatorInstrumentsPlugin extends WholeTestRecorderPlugin {
-  constructor({ api, client }) {
+  constructor({ api, client, recordingPathCreator }) {
     super({ api });
     this.client = client;
+    this.recordingPathCreator = recordingPathCreator;
   }
 
   async onBeforeUninstallApp(event) {
@@ -52,7 +53,7 @@ class SimulatorInstrumentsPlugin extends WholeTestRecorderPlugin {
   createTestRecording() {
     return new SimulatorInstrumentsRecording({
       client: this.client,
-      temporaryRecordingPath: temporaryPath.for.dtxrec(),
+      temporaryRecordingPath: this.recordingPathCreator.createRecordingPath(),
     });
   }
 

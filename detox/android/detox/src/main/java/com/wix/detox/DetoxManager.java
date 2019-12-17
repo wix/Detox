@@ -145,6 +145,9 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                 return null;
             }
         }));
-        actionHandlers.put("setRecordingState", new RecordingStateActionHandler(wsClient));
+
+        final DetoxInstrumentsManager instrumentsManager = new DetoxInstrumentsManager(reactNativeHostHolder);
+        actionHandlers.put("setRecordingState", new RecordingStateActionHandler(instrumentsManager, wsClient));
+        actionHandlers.put("addEvent", new EventsActionsHandler(instrumentsManager, wsClient));
     }
 }
