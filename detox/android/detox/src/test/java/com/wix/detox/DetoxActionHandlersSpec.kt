@@ -142,5 +142,82 @@ object DetoxActionHandlersSpec: Spek({
                         eq(messageId))
             }
         }
+
+        describe("Recording state actions") {
+            lateinit var instrumentsManager: DetoxInstrumentsManager
+
+            fun uut() = RecordingStateActionHandler(instrumentsManager, wsClient)
+
+            beforeEachTest {
+                instrumentsManager = mock()
+            }
+
+            it("should start recording with path") {
+                uut().handle("{\"recordingPath\":\"/MockPath\"}", messageId)
+                verify(instrumentsManager).startRecordingAtLocalPath(eq("/MockPath"))
+            }
+
+            it("should stop recording without path") {
+                uut().handle("{\"recordingPath\":null}", messageId)
+                verify(instrumentsManager).stopRecording()
+            }
+
+            it("should reply with a 'done' ACK on set state finish") {
+                uut().handle(params, messageId)
+                verify(wsClient).sendAction(eq("setRecordingStateDone"), any(), eq(messageId))
+            }
+        }
+
+        describe("Events actions") {
+            lateinit var instrumentsManager: DetoxInstrumentsManager
+
+            fun uut() = EventsActionsHandler(instrumentsManager, wsClient)
+
+            beforeEachTest {
+                instrumentsManager = mock()
+            }
+
+            describe("begin interval") {
+                val json = "{\"category\":\"MockCategory\",\"name\":\"MockName\",\"id\":\"MockId\",\"additionalInfo\":\"MockAdditionalInfo\",\"action\":\"begin\"}"
+
+                it("should invoke instrumentation") {
+                    uut().handle(json, messageId)
+                    verify(instrumentsManager).eventBeginInterval(eq("MockCategory"), eq("MockName"), eq("MockId"), eq("MockAdditionalInfo"))
+                }
+
+                it("should reply with a 'done' ACK") {
+                    uut().handle(json, messageId)
+                    verify(wsClient).sendAction(eq("addActionDone"), any(), eq(messageId))
+                }
+            }
+
+            describe("end interval") {
+                val json = "{\"id\":\"MockId\",\"status\":\"MockStatus\",\"additionalInfo\":\"MockAdditionalInfo\",\"action\":\"end\"}"
+
+                it("should invoke instrumentation") {
+                    uut().handle(json, messageId)
+                    verify(instrumentsManager).eventEndInterval(eq("MockId"), eq("MockStatus"), eq("MockAdditionalInfo"))
+                }
+
+                it("should reply with a 'done' ACK") {
+                    uut().handle(json, messageId)
+                    verify(wsClient).sendAction(eq("addActionDone"), any(), eq(messageId))
+                }
+            }
+
+            describe("mark") {
+                val json = "{\"category\":\"MockCategory\",\"name\":\"MockName\",\"id\":\"MockId\",\"status\":\"MockStatus\",\"additionalInfo\":\"MockAdditionalInfo\",\"action\":\"mark\"}"
+
+                it("should invoke instrumentation") {
+                    uut().handle(json, messageId)
+                    verify(instrumentsManager).eventMark(eq("MockCategory"), eq("MockName"), eq("MockId"), eq("MockStatus"), eq("MockAdditionalInfo"))
+                }
+
+                it("should reply with a 'done' ACK") {
+                    uut().handle(json, messageId)
+                    verify(wsClient).sendAction(eq("addActionDone"), any(), eq(messageId))
+                }
+            }
+        }
     }
 })

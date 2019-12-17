@@ -17,6 +17,7 @@ const ADBLogcatPlugin = require('../../artifacts/log/android/ADBLogcatPlugin');
 const ADBScreencapPlugin = require('../../artifacts/screenshot/ADBScreencapPlugin');
 const ADBScreenrecorderPlugin = require('../../artifacts/video/ADBScreenrecorderPlugin');
 const AndroidDevicePathBuilder = require('../../artifacts/utils/AndroidDevicePathBuilder');
+const AndroidRecordingPathCreator = require('../../artifacts/instruments/recording/AndroidRecordingPathCreator');
 const temporaryPath = require('../../artifacts/utils/temporaryPath');
 const sleep = require('../../utils/sleep');
 const retry = require('../../utils/retry');
@@ -34,15 +35,16 @@ class AndroidDriver extends DeviceDriverBase {
     this.adb = new ADB();
     this.aapt = new AAPT();
     this.devicePathBuilder = new AndroidDevicePathBuilder();
+    this.recordingPathCreator = new AndroidRecordingPathCreator(this.devicePathBuilder);
 
     this.pendingUrl = undefined;
   }
 
   declareArtifactPlugins() {
-    const { adb, client, devicePathBuilder } = this;
+    const { adb, client, devicePathBuilder, recordingPathCreator } = this;
 
     return {
-      instruments: (api) => new SimulatorInstrumentsPlugin({ api, client }),
+      instruments: (api) => new SimulatorInstrumentsPlugin({ api, client, recordingPathCreator }),
       log: (api) => new ADBLogcatPlugin({ api, adb, devicePathBuilder }),
       screenshot: (api) => new ADBScreencapPlugin({ api, adb, devicePathBuilder }),
       video: (api) => new ADBScreenrecorderPlugin({ api, adb, devicePathBuilder }),
