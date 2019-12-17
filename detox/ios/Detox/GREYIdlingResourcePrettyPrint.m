@@ -12,20 +12,24 @@
 
 @interface __DTXDeallocSafeProxy : NSObject
 
-@property (nonatomic, unsafe_unretained) id object;
+@property (nonatomic, weak) id object;
 
 @end
 
 @implementation __DTXDeallocSafeProxy
+{
+	NSString* _cachedDescription;
+	NSString* _cachedDebugDescription;
+}
 
 - (NSString *)description
 {
-	return [self.object description];
+	return  self.object? [self.object description] : _cachedDescription;
 }
 
 - (NSString *)debugDescription
 {
-	return [self.object debugDescription];
+	return  self.object? [self.object debugDescription] : _cachedDebugDescription;
 }
 
 - (void)dealloc
@@ -39,7 +43,11 @@
 	if(self)
 	{
 		self.object = object;
-		objc_setAssociatedObject(object, "__DTXDeallocSafeProxy", self, OBJC_ASSOCIATION_RETAIN);
+		_cachedDescription = [object description];
+		if([object respondsToSelector:@selector(debugDescription)])
+		{
+			_cachedDebugDescription = [object debugDescription];
+		}
 	}
 	return self;
 }
@@ -77,7 +85,10 @@ static dispatch_queue_t __tarckedObjectsQueue;
 	[self _pp__untrackState:state forObject:obj];
 	
 	dispatch_sync(__tarckedObjectsQueue, ^{
-		[__tarckedObjectsMapping removeObjectForKey:obj];
+		if(obj != nil)
+		{
+			[__tarckedObjectsMapping removeObjectForKey:obj];
+		}
 	});
 }
 
@@ -86,7 +97,7 @@ static dispatch_queue_t __tarckedObjectsQueue;
 {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		__tarckedObjectsMapping = [NSMapTable mapTableWithKeyOptions:NSMapTableStrongMemory valueOptions:NSMapTableWeakMemory];
+		__tarckedObjectsMapping = [NSMapTable mapTableWithKeyOptions:NSMapTableStrongMemory valueOptions:NSMapTableStrongMemory];
 		__tarckedObjectsQueue = dispatch_queue_create("com.wix.tarckedObjectsQueue", DISPATCH_QUEUE_SERIAL);
 		
 		Method m1 = class_getInstanceMethod(self, @selector(trackState:forObject:));
@@ -112,51 +123,51 @@ NSString* _prettyPrintAppState(GREYAppState state)
 	
 	if (state & kGREYPendingViewsToAppear)
 	{
-		[eventStateString addObject:@"Waiting for view controller's view to appear."];
+		[eventStateString addObject:@"Waiting for view controller's view to appear"];
 	}
 	if (state & kGREYPendingViewsToDisappear)
 	{
-		[eventStateString addObject:@"Waiting for view controller's view to disappear."];
+		[eventStateString addObject:@"Waiting for view controller's view to disappear"];
 	}
 	if (state & kGREYPendingCAAnimation)
 	{
-		[eventStateString addObject:@"Waiting for an animation to finish. Continuous animations may never finish and must be stopped explicitly. Animations attached to hidden view may still be running in the background."];
+		[eventStateString addObject:@"Waiting for an animation to finish. Continuous animations may never finish and must be stopped explicitly. Animations attached to hidden view may still be running in the background"];
 	}
 	if (state & kGREYPendingNetworkRequest)
 	{
-		[eventStateString addObject:@"Waiting for network requests to finish."];
+		[eventStateString addObject:@"Waiting for network requests to finish"];
 	}
 	if (state & kGREYPendingRootViewControllerToAppear)
 	{
-		[eventStateString addObject:@"Waiting for window's root view controller's view to appear."];
+		[eventStateString addObject:@"Waiting for window's root view controller's view to appear"];
 	}
 	if (state & kGREYPendingGestureRecognition)
 	{
-		[eventStateString addObject:@"Waiting for gesture recognizer to detect or fail an ongoing gesture."];
+		[eventStateString addObject:@"Waiting for gesture recognizer to detect or fail an ongoing gesture"];
 	}
 	if (state & kGREYPendingUIScrollViewScrolling)
 	{
-		[eventStateString addObject:@"Waiting for scroll view to finish scrolling and come to standstill."];
+		[eventStateString addObject:@"Waiting for scroll view to finish scrolling and come to standstill"];
 	}
 	if (state & kGREYPendingUIWebViewAsyncRequest)
 	{
-		[eventStateString addObject:@"Waiting for web view to finish loading asynchronous request."];
+		[eventStateString addObject:@"Waiting for web view to finish loading asynchronous request"];
 	}
 	if (state & kGREYPendingUIAnimation)
 	{
-		[eventStateString addObject:@"Waiting for animation to complete."];
+		[eventStateString addObject:@"Waiting for animation to complete"];
 	}
 	if (state & kGREYIgnoringSystemWideUserInteraction)
 	{
-		[eventStateString addObject:@"System wide interaction events are being ignored."];
+		[eventStateString addObject:@"System wide interaction events are being ignored"];
 	}
 	if (state & kGREYPendingKeyboardTransition)
 	{
-		[eventStateString addObject:@"Waiting for keyboard transition to finish."];
+		[eventStateString addObject:@"Waiting for keyboard transition to finish"];
 	}
 	if (state & kGREYPendingDrawLayoutPass)
 	{
-		[eventStateString addObject:@"Waiting for view's draw or layout pass to complete."];
+		[eventStateString addObject:@"Waiting for view's draw or layout pass to complete"];
 	}
 	
 	return [eventStateString componentsJoinedByString:@"\n"];
@@ -168,6 +179,7 @@ NSDictionary* _prettyPrintAppStateTracker(GREYAppStateTracker* tracker)
 	
 	NSString* stateString = _prettyPrintAppState(tracker.currentState);
 	rv[@"appState"] = stateString;
+	rv[@"prettyPrint"] = stateString;
 	
 	__block NSArray<__DTXDeallocSafeProxy*>* allElements;
 	dispatch_sync(__tarckedObjectsQueue, ^{
@@ -177,7 +189,7 @@ NSDictionary* _prettyPrintAppStateTracker(GREYAppStateTracker* tracker)
 		NSMutableArray* URLs = [NSMutableArray new];
 		
 		[allElements enumerateObjectsUsingBlock:^(__DTXDeallocSafeProxy* _Nonnull actualElement, NSUInteger idx, BOOL * _Nonnull stop) {
-			id actualObject = actualElement.object;
+			__strong id actualObject = actualElement.object;
 			if(actualObject == nil)
 			{
 				return;
