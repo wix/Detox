@@ -55,6 +55,26 @@ describe('Client', () => {
     expect(client.ws.send).toHaveBeenCalledTimes(2);
   });
 
+  it(`addInstrumentsEvent() - should send a 'addEvent' action and resolve when 'addEventDone' returns`, async () => {
+    await connect();
+    client.ws.send.mockReturnValueOnce(response("addEventDone", {}, 1));
+
+    const event = {
+      isLifecycle: false,
+      id: Math.random().toFixed(36),
+      category: 'describe',
+      name: 'Sanity',
+      action: 'begin',
+    };
+
+    await client.addInstrumentsEvent(event);
+
+    expect(client.ws.send).toHaveBeenCalledWith(expect.objectContaining({
+      type: 'addEvent',
+      params: expect.objectContaining({ ...event }),
+    }), undefined);
+  });
+
   it(`startInstrumentsRecording() - should send a 'setRecordingState' action and resolve when 'setRecordingStateDone' returns`, async () => {
     await connect();
     client.ws.send.mockReturnValueOnce(response("setRecordingStateDone", {}, 1));

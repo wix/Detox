@@ -64,6 +64,38 @@ class Client {
     await this.sendAction(new actions.Shake());
   }
 
+  /***
+   * @param {boolean} isLifecycle
+   * @param {string} id
+   * @param {string} category
+   * @param {string} name
+   * @param {string} [additionalInfo]
+   * @param {'mark' | 'begin' | 'end'} action
+   * @param {number} [status] - event status, provided at the end or for mark (completed = 0, cancelled = 1, error = 2)
+   * @returns {Promise<void>}
+   */
+  async addInstrumentsEvent({
+    isLifecycle,
+    id,
+    category,
+    name,
+    additionalInfo,
+    action,
+    status,
+  }) {
+    const payload = _.omitBy({
+      isLifecycle,
+      id,
+      category,
+      name,
+      additionalInfo,
+      action,
+      status,
+    }, _.isUndefined);
+
+    await this.sendAction(new actions.AddInstrumentsEvent(payload));
+  }
+
   async startInstrumentsRecording({ recordingPath }) {
     await this.sendAction(new actions.SetInstrumentsRecordingState({
       recordingPath
