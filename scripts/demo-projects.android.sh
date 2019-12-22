@@ -11,11 +11,16 @@ popd
 
 pushd examples/demo-react-native
 run_f "npm run build:android-release"
-run_f "npm run test:android-release-ci -- --device-launch-args=\"-read-only\""
-run_f "npm run test:android-explicit-require-ci"
 popd
 
+# this needs to go first because it preloads all the emulators we need,
+# as it runs tests in parallel.
 pushd examples/demo-react-native-jest
 run_f "npm run test:android-release-ci"
 run_f "npm run test:jest-circus:android-release-ci"
+popd
+
+pushd examples/demo-react-native
+run_f "npm run test:android-release-ci"
+run_f "npm run test:android-explicit-require-ci"
 popd
