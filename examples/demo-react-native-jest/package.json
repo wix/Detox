@@ -7,10 +7,10 @@
     "test:ios-release-ci": "detox test --configuration ios.sim.release -l verbose --workers 2",
     "test:jest-circus:ios-release": "detox test --configuration ios.sim.release -l verbose -o e2e/config-circus.json",
     "test:jest-circus:ios-release-ci": "detox test --configuration ios.sim.release -l verbose -o e2e/config-circus.json --workers 2",
-    "test:android-release": "detox test --configuration android.emu.release -l verbose",
-    "test:android-release-ci": "detox test --configuration android.emu.release -l verbose --workers 2",
-    "test:jest-circus:android-release": "detox test --configuration android.emu.release -l verbose -o e2e/config-circus.json",
-    "test:jest-circus:android-release-ci": "detox test --configuration android.emu.release -l verbose -o e2e/config-circus.json --workers 2"
+    "test:android-release": "detox test --configuration android.emu.release",
+    "test:android-release-ci": "detox test --configuration android.emu.release -l verbose --workers 2 --headless",
+    "test:jest-circus:android-release": "detox test --configuration android.emu.release -o e2e/config-circus.json",
+    "test:jest-circus:android-release-ci": "detox test --configuration android.emu.release -o e2e/config-circus.json -l verbose --workers 2 --headless"
   },
   "devDependencies": {
     "detox": "^14.9.1",

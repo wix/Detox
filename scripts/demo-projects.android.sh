@@ -11,11 +11,11 @@ popd
 
 pushd examples/demo-react-native
 run_f "npm run build:android-release"
-run_f "npm run test:android-release -- --device-launch-args=\"-read-only\" --headless"
-run_f "npm run test:android-explicit-require"
+run_f "npm run test:android-release-ci -- --device-launch-args=\"-read-only\""
+run_f "npm run test:android-explicit-require-ci"
 popd
 
 pushd examples/demo-react-native-jest
-run_f "npm run test:android-release-ci -- --headless"
-run_f "npm run test:jest-circus:android-release-ci -- --headless"
+run_f "npm run test:android-release-ci"
+run_f "npm run test:jest-circus:android-release-ci"
 popd
