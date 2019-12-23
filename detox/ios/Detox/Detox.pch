@@ -21,4 +21,10 @@ static void defer_cleanup_block(__strong void(^*block)(void)) {
 }
 #pragma clang diagnostic pop
 
+#define pthread_mutex_lock_deferred_unlock(mutex) \
+pthread_mutex_lock(mutex);\
+dtx_defer {\
+	pthread_mutex_unlock(mutex);\
+};
+
 #endif /* Detox_pch */

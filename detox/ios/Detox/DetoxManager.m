@@ -224,6 +224,43 @@ static void detoxConditionalInit()
 			[self _safeSendAction:@"setRecordingStateDone" params:@{} messageId:messageId];
 		}];
 	}
+	else if([type isEqualToString:@"event"])
+	{
+		BOOL isLifecycle = [params[@"isLifecycle"] boolValue];
+		NSString* identifier = params[@"id"];
+		NSString* category = params[@"category"];
+		NSString* name = params[@"name"];
+		NSString* additionalInfo = params[@"additionalInfo"];
+		int status = [(params[@"status"] ?: @0) intValue];
+		NSString* action = params[@"action"];
+		
+		if([action isEqualToString:@"mark"])
+		{
+			if(isLifecycle)
+			{
+				[_recordingManager markLifecycleEventWithCategory:category name:name eventStatus:status additionalInfo:additionalInfo];
+			}
+			else
+			{
+				[_recordingManager markEventWithCategory:category name:name eventStatus:status additionalInfo:additionalInfo];
+			}
+		}
+		else if([action isEqualToString:@"begin"])
+		{
+			if(isLifecycle)
+			{
+				[_recordingManager markLifecycleIntervalBeginWithIdentifier:identifier category:category name:name additionalInfo:additionalInfo];
+			}
+			else
+			{
+				[_recordingManager markEventIntervalBeginWithIdentifier:identifier category:category name:name additionalInfo:additionalInfo];
+			}
+		}
+		else if([action isEqualToString:@"end"])
+		{
+			[_recordingManager markEventIntervalEndWithIdentifier:identifier eventStatus:status additionalInfo:additionalInfo];
+		}
+	}
 	else if([type isEqualToString:@"waitForActive"])
 	{
 		[self _waitForApplicationState:UIApplicationStateActive action:type messageId:messageId];

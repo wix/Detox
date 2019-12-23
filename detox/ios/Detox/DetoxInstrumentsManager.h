@@ -16,4 +16,11 @@
 - (void)continueRecordingAtURL:(NSURL*)URL;
 - (void)stopRecordingWithCompletionHandler:(void(^)(NSError* error))completionHandler;
 
+- (void)markEventIntervalBeginWithIdentifier:(NSString*)identifier category:(NSString*)category name:(NSString*)name additionalInfo:(NSString*)additionalInfo;
+- (void)markEventIntervalEndWithIdentifier:(NSString*)identifier eventStatus:(NSUInteger)eventStatus additionalInfo:(NSString*)additionalInfo;
+- (void)markEventWithCategory:(NSString*)category name:(NSString*)name eventStatus:(NSUInteger)eventStatus additionalInfo:(NSString*)additionalInfo;
+
+- (void)markLifecycleIntervalBeginWithIdentifier:(NSString*)identifier category:(NSString*)category name:(NSString*)name additionalInfo:(NSString*)additionalInfo;
+- (void)markLifecycleEventWithCategory:(NSString*)category name:(NSString*)name eventStatus:(NSUInteger)eventStatus additionalInfo:(NSString*)additionalInfo;
+
 @end

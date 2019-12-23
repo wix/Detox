@@ -9,6 +9,7 @@
 #import "DetoxInstrumentsManager.h"
 #import "DTXLogging.h"
 #include <dlfcn.h>
+#include <pthread.h>
 @import CommonCrypto;
 
 DTX_CREATE_LOG(DetoxInstrumentsManager)
@@ -51,13 +52,19 @@ static NSString* (*__DTXProfilerMarkEventIntervalBegin)(NSString* category, NSSt
 static void (*__DTXProfilerMarkEventIntervalEnd)(NSString* identifier, __DTXEventStatus eventStatus, NSString* __nullable endMessage);
 static void (*__DTXProfilerMarkEvent)(NSString* category, NSString* name, __DTXEventStatus eventStatus, NSString* __nullable startMessage);
 
+static NSString* (*__DTXProfilerMarkDetoxLifecycleIntervalBegin)(NSString* category, NSString* name, NSString* __nullable message);
+static void (*__DTXProfilerMarkDetoxLifecycleEvent)(NSString* category, NSString* name, __DTXEventStatus eventStatus, NSString* __nullable startMessage);
+
 //Weak link
 WEAK_IMPORT_ATTRIBUTE
 @interface DTXProfiler : NSObject @end
 
 @implementation DetoxInstrumentsManager
 {
+	pthread_mutex_t _mutex;
+	
 	id _recorderInstance;
+	NSMutableDictionary<NSString*, NSString*>* _eventIdentifierMapping;
 }
 
 static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinaryURL)
@@ -175,7 +182,7 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 		if(__DTXProfiler == NULL)
 		{
 			cleanupOnError();
-			dtx_log_error(@"DTXProfiler class not found—this should not have happened!");
+			dtx_log_error(@"DTXProfiler class not found—did you forget to install Detox Instruments?");
 			return;
 		}
 		
@@ -191,6 +198,9 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 		__DTXProfilerMarkEventIntervalBegin = dlsym(RTLD_DEFAULT, "DTXProfilerMarkEventIntervalBegin");
 		__DTXProfilerMarkEventIntervalEnd = dlsym(RTLD_DEFAULT, "DTXProfilerMarkEventIntervalEnd");
 		__DTXProfilerMarkEvent = dlsym(RTLD_DEFAULT, "DTXProfilerMarkEvent");
+		
+		__DTXProfilerMarkDetoxLifecycleIntervalBegin = dlsym(RTLD_DEFAULT, "DTXProfilerMarkDetoxLifecycleIntervalBegin") ?: (void*)__DTXProfilerMarkEventIntervalBegin;
+		__DTXProfilerMarkDetoxLifecycleEvent = dlsym(RTLD_DEFAULT, "DTXProfilerMarkDetoxLifecycleEvent") ?: (void*)__DTXProfilerMarkEvent;
 		
 		if(__DTXProfilerAddTag == NULL || __DTXProfilerMarkEventIntervalBegin == NULL || __DTXProfilerMarkEventIntervalEnd == NULL || __DTXProfilerMarkEvent == NULL)
 		{
@@ -223,12 +233,7 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 	
 	if(self)
 	{
-		_recorderInstance = [__DTXProfiler new];
-		
-		if(_recorderInstance == nil)
-		{
-			dtx_log_error(@"Profiler framework is not loaded. Did you forget to install Detox Instruments?");
-		}
+		pthread_mutex_init(&_mutex, NULL);
 	}
 	
 	return self;
@@ -259,26 +264,48 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 
 - (void)startRecordingAtURL:(NSURL*)URL
 {
+	pthread_mutex_lock_deferred_unlock(&_mutex);
+	
+	if(_recorderInstance != nil)
+	{
+		dtx_log_error(@"Start called but already recording");
+		return;
+	}
+	
 	dtx_log_info(@"Starting recording at %@", URL);
+	_recorderInstance = [__DTXProfiler new];
 	[_recorderInstance startProfilingWithConfiguration:[self _configForDetoxRecordingWithURL:URL]];
 }
 
 - (void)continueRecordingAtURL:(NSURL*)URL
 {
+	pthread_mutex_lock_deferred_unlock(&_mutex);
+	
+	if(_recorderInstance != nil)
+	{
+		dtx_log_error(@"Continue called but already recording");
+		return;
+	}
+	
 	dtx_log_info(@"Continuing recording at %@", URL);
+	_recorderInstance = [__DTXProfiler new];
 	[_recorderInstance continueProfilingWithConfiguration:[self _configForDetoxRecordingWithURL:URL]];
 }
 
 - (void)stopRecordingWithCompletionHandler:(void(^)(NSError* error))completionHandler
 {
+	pthread_mutex_lock(&_mutex);
+	
 	if(_recorderInstance == nil || [_recorderInstance isRecording] == NO)
 	{
-		dtx_log_info(@"Called stop but no recording in progress");
+		dtx_log_error(@"Called stop but no recording in progress");
 		
 		if(completionHandler != nil)
 		{
 			completionHandler(nil);
 		}
+		
+		pthread_mutex_unlock(&_mutex);
 		
 		return;
 	}
@@ -293,11 +320,65 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 			dtx_log_info(@"Stopped recording at %@", [[_recorderInstance profilingConfiguration] recordingFileURL]);
 		}
 		
+		_recorderInstance = nil;
+		
+		pthread_mutex_unlock(&_mutex);
+		
 		if(completionHandler != nil)
 		{
 			completionHandler(error);
 		}
 	}];
+}
+
+- (void)markEventIntervalBeginWithIdentifier:(NSString*)identifier category:(NSString*)category name:(NSString*)name additionalInfo:(NSString*)additionalInfo
+{
+	pthread_mutex_lock_deferred_unlock(&_mutex);
+	if(_eventIdentifierMapping[identifier] != nil)
+	{
+		dtx_log_error(@"Event with identifier “%@” already exists", identifier);
+		return;
+	}
+	
+	NSString* innerId = __DTXProfilerMarkEventIntervalBegin(category, name, additionalInfo);
+	_eventIdentifierMapping[identifier] = innerId;
+}
+
+- (void)markEventIntervalEndWithIdentifier:(NSString*)identifier eventStatus:(NSUInteger)eventStatus additionalInfo:(NSString*)additionalInfo
+{
+	pthread_mutex_lock_deferred_unlock(&_mutex);
+	if(_eventIdentifierMapping[identifier] == nil)
+	{
+		dtx_log_error(@"Event with identifier “%@” doesn't exists", identifier);
+		return;
+	}
+	
+	NSString* innerId = _eventIdentifierMapping[identifier];
+	__DTXProfilerMarkEventIntervalEnd(innerId, eventStatus, additionalInfo);
+	[_eventIdentifierMapping removeObjectForKey:identifier];
+}
+
+- (void)markEventWithCategory:(NSString*)category name:(NSString*)name eventStatus:(NSUInteger)eventStatus additionalInfo:(NSString*)additionalInfo
+{
+	__DTXProfilerMarkEvent(category, name, eventStatus, additionalInfo);
+}
+
+- (void)markLifecycleIntervalBeginWithIdentifier:(NSString*)identifier category:(NSString*)category name:(NSString*)name additionalInfo:(NSString*)additionalInfo
+{
+	pthread_mutex_lock_deferred_unlock(&_mutex);
+	if(_eventIdentifierMapping[identifier] != nil)
+	{
+		dtx_log_error(@"Event with identifier “%@” already exists", identifier);
+		return;
+	}
+	
+	NSString* innerId = __DTXProfilerMarkDetoxLifecycleIntervalBegin(category, name, additionalInfo);
+	_eventIdentifierMapping[identifier] = innerId;
+}
+
+- (void)markLifecycleEventWithCategory:(NSString*)category name:(NSString*)name eventStatus:(NSUInteger)eventStatus additionalInfo:(NSString*)additionalInfo
+{
+	__DTXProfilerMarkDetoxLifecycleEvent(category, name, eventStatus, additionalInfo);
 }
 
 @end
