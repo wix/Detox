@@ -96,6 +96,10 @@ class Device {
     }
   }
 
+  get id() {
+    return this._deviceId;
+  }
+
   get name() {
     return this.deviceDriver.name;
   }
@@ -140,7 +144,7 @@ class Device {
   }
 
   async setBiometricEnrollment(toggle) {
-    let yesOrNo = toggle ? 'YES' : 'NO'
+    const yesOrNo = toggle ? 'YES' : 'NO';
     await this.deviceDriver.setBiometricEnrollment(this._deviceId, yesOrNo);
   }
 
@@ -210,6 +214,14 @@ class Device {
     await this.deviceDriver.setLocation(this._deviceId, lat, lon);
   }
 
+  async reverseTcpPort(port) {
+    await this.deviceDriver.reverseTcpPort(this._deviceId, port);
+  }
+
+  async unreverseTcpPort(port) {
+    await this.deviceDriver.unreverseTcpPort(this._deviceId, port);
+  }
+
   async clearKeychain() {
     await this.deviceDriver.clearKeychain(this._deviceId);
   }
@@ -260,6 +272,14 @@ class Device {
 
   getUiDevice() {
     return this.deviceDriver.getUiDevice();
+  }
+
+  async setStatusBar(params) {
+    await this.deviceDriver.setStatusBar(this._deviceId, params);
+  }
+
+  async resetStatusBar() {
+    await this.deviceDriver.resetStatusBar(this._deviceId);
   }
 
   _defaultLaunchArgs() {

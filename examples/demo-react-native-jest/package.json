@@ -1,26 +1,30 @@
 {
   "name": "demo-react-native-jest",
-  "version": "14.6.1",
+  "version": "14.9.1",
   "private": true,
   "scripts": {
     "test:ios-release": "detox test --configuration ios.sim.release -l verbose",
     "test:ios-release-ci": "detox test --configuration ios.sim.release -l verbose --workers 2",
     "test:jest-circus:ios-release": "detox test --configuration ios.sim.release -l verbose -o e2e/config-circus.json",
     "test:jest-circus:ios-release-ci": "detox test --configuration ios.sim.release -l verbose -o e2e/config-circus.json --workers 2",
-    "test:android-release": "detox test --configuration android.emu.release -l verbose",
-    "test:android-release-ci": "detox test --configuration android.emu.release -l verbose --workers 2",
-    "test:jest-circus:android-release": "detox test --configuration android.emu.release -l verbose -o e2e/config-circus.json",
-    "test:jest-circus:android-release-ci": "detox test --configuration android.emu.release -l verbose -o e2e/config-circus.json --workers 2"
+    "test:android-release": "detox test --configuration android.emu.release",
+    "test:android-release-ci": "detox test --configuration android.emu.release -l verbose --workers 2 --headless --record-logs all --take-screenshots all",
+    "test:jest-circus:android-release": "detox test --configuration android.emu.release -o e2e/config-circus.json",
+    "test:jest-circus:android-release-ci": "detox test --configuration android.emu.release -o e2e/config-circus.json -l verbose --workers 2 --headless --record-logs all --take-screenshots all"
   },
   "devDependencies": {
-    "detox": "^14.6.1",
+    "detox": "^14.9.1",
     "jest": "24.8.x",
-    "jest-circus": "24.8.x"
+    "jest-circus": "24.8.x",
+    "sanitize-filename": "^1.6.1"
   },
   "detox": {
     "test-runner": "jest",
     "configurations": {
       "ios.sim.release": {
+        "artifacts": {
+          "pathBuilder": "e2e/detox.pathbuilder.ios.js"
+        },
         "binaryPath": "../demo-react-native/ios/build/Build/Products/Release-iphonesimulator/example.app",
         "type": "ios.simulator",
         "device": {
@@ -28,10 +32,13 @@
         }
       },
       "android.emu.release": {
+        "artifacts": {
+          "pathBuilder": "e2e/detox.pathbuilder.android.js"
+        },
         "binaryPath": "../demo-react-native/android/app/build/outputs/apk/release/app-release.apk",
         "type": "android.emulator",
         "device": {
-          "avdName": "Nexus_5X_API_26"
+          "avdName": "Pixel_API_28"
         }
       }
     }

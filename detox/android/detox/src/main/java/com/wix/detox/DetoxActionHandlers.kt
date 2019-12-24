@@ -7,7 +7,6 @@ import com.wix.invoke.MethodInvocation
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import java.lang.Exception
 import java.lang.reflect.InvocationTargetException
 
 private const val LOG_TAG = "DetoxManager"
@@ -28,14 +27,14 @@ class ReadyActionHandler(
 }
 
 class ReactNativeReloadActionHandler(
-        private val rnContext: Context,
+        private val appContext: Context,
         private val wsClient: WebSocketClient,
         private val testEngineFacade: TestEngineFacade)
     : DetoxActionHandler {
 
     override fun handle(params: String, messageId: Long) {
         testEngineFacade.syncIdle()
-        testEngineFacade.reloadReactNative(rnContext)
+        testEngineFacade.reloadReactNative(appContext)
         wsClient.sendAction("ready", emptyMap<Any, Any>(), messageId)
     }
 }
@@ -44,7 +43,6 @@ class InvokeActionHandler(
         private val methodInvocation: MethodInvocation,
         private val wsClient: WebSocketClient)
     : DetoxActionHandler {
-
 
     override fun handle(params: String, messageId: Long) {
         try {
@@ -61,7 +59,6 @@ class InvokeActionHandler(
 }
 
 class CleanupActionHandler(
-        private val rnContext: Context,
         private val wsClient: WebSocketClient,
         private val testEngineFacade: TestEngineFacade,
         private val doStopDetox: () -> Unit)
@@ -69,10 +66,9 @@ class CleanupActionHandler(
     override fun handle(params: String, messageId: Long) {
         val stopRunner = JSONObject(params).optBoolean("stopRunner", false)
         if (stopRunner) {
-            testEngineFacade.softResetReactNative()
             doStopDetox()
         } else {
-            testEngineFacade.hardResetReactNative(rnContext)
+            testEngineFacade.resetReactNative()
         }
         wsClient.sendAction("cleanupDone", emptyMap<Any, Any>(), messageId)
     }

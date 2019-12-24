@@ -23,12 +23,12 @@ const DEVICE_CLASSES = {
 };
 
 class Detox {
-  constructor({deviceConfig, session}) {
+  constructor({artifactsConfig, deviceConfig, session}) {
     this._deviceConfig = deviceConfig;
     this._userSession = deviceConfig.session || session;
     this._client = null;
     this._server = null;
-    this._artifactsManager = new ArtifactsManager();
+    this._artifactsManager = new ArtifactsManager(artifactsConfig);
 
     this.device = null;
   }

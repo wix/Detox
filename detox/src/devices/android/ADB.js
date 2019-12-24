@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const path = require('path');
 const {execWithRetriesAndLogs, spawnAndLog} = require('../../utils/exec');
 const {escape} = require('../../utils/pipeCommands');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
@@ -258,7 +257,7 @@ class ADB {
 
   async adbCmd(deviceId, params, options) {
     const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
-    const cmd = `${this.adbBin} ${serial} ${params}`;
+    const cmd = `"${this.adbBin}" ${serial} ${params}`;
     const retries = _.get(options, 'retries', 1);
     _.unset(options, 'retries');
 

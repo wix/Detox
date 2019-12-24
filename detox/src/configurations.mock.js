@@ -1,3 +1,50 @@
+const SimulatorInstrumentsPlugin = require('./artifacts/instruments/SimulatorInstrumentsPlugin');
+const LogArtifactPlugin = require('./artifacts/log/LogArtifactPlugin');
+const ScreenshotArtifactPlugin = require('./artifacts/screenshot/ScreenshotArtifactPlugin');
+const VideoArtifactPlugin = require('./artifacts/video/VideoArtifactPlugin');
+
+const defaultArtifactsConfiguration = {
+  rootDir: 'artifacts',
+  pathBuilder: null,
+  plugins: {
+    log: 'none',
+    screenshot: 'manual',
+    video: 'none',
+    instruments: 'none',
+  },
+};
+
+const allArtifactsConfiguration = {
+  rootDir: 'artifacts',
+  pathBuilder: null,
+  plugins: {
+    log: 'all',
+    screenshot: 'all',
+    video: 'all',
+    instruments: 'all',
+  },
+};
+
+const pluginsDefaultsResolved = {
+  log: LogArtifactPlugin.parseConfig('none'),
+  screenshot: ScreenshotArtifactPlugin.parseConfig('manual'),
+  video: VideoArtifactPlugin.parseConfig('none'),
+  instruments: SimulatorInstrumentsPlugin.parseConfig('none'),
+};
+
+const pluginsFailingResolved = {
+  log: LogArtifactPlugin.parseConfig('failing'),
+  screenshot: ScreenshotArtifactPlugin.parseConfig('failing'),
+  video: VideoArtifactPlugin.parseConfig('failing'),
+};
+
+const pluginsAllResolved = {
+  log: LogArtifactPlugin.parseConfig('all'),
+  screenshot: ScreenshotArtifactPlugin.parseConfig('all'),
+  video: VideoArtifactPlugin.parseConfig('all'),
+  instruments: SimulatorInstrumentsPlugin.parseConfig('all'),
+};
+
 const validOneDeviceNoSession = {
   "configurations": {
     "ios.sim.release": {
@@ -197,6 +244,11 @@ const deviceObjectEmulator = {
 };
 
 module.exports = {
+  allArtifactsConfiguration,
+  defaultArtifactsConfiguration,
+  pluginsAllResolved,
+  pluginsDefaultsResolved,
+  pluginsFailingResolved,
   validOneDeviceNoSession,
   validOneIosNoneDeviceNoSession,
   validTwoDevicesNoSession,

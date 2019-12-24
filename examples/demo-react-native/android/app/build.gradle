@@ -1,39 +1,40 @@
 import groovy.json.JsonSlurper
 import com.android.build.OutputFile
 
-apply plugin: "com.android.application"
+apply plugin: 'com.android.application'
 
 //project.ext.react = [:]
 project.ext.react = [
     enableHermes: false
 ]
-apply from: "../../node_modules/react-native/react.gradle"
+apply from: '../../node_modules/react-native/react.gradle'
 
 Boolean isRN60OrHigher = getRNVersion() >= 60
+Boolean isRN61OrHigher = getRNVersion() >= 61
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 29
+    buildToolsVersion '29.0.0'
 
     defaultConfig {
-        applicationId "com.detox.rn.example"
+        applicationId 'com.detox.rn.example'
         minSdkVersion 18
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 1
-        versionName "1.0"
+        versionName '1.0'
         ndk {
-            abiFilters "armeabi-v7a", "x86"
+            abiFilters 'armeabi-v7a', 'x86', 'x86_64'
         }
 
         testBuildType System.getProperty('testBuildType', 'debug')
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     splits {
         abi {
             reset()
             enable false
             universalApk false  // If true, also generate a universal APK
-            include "armeabi-v7a", "x86"
+            include 'armeabi-v7a', 'x86', 'x86_64'
         }
     }
     signingConfigs {
@@ -51,19 +52,6 @@ android {
             proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
 
             signingConfig signingConfigs.release
-        }
-    }
-    // applicationVariants are e.g. debug, release
-    applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            // For each separate APK per architecture, set a unique version code as described here:
-            // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-            def versionCodes = ["armeabi-v7a": 1, "x86": 2]
-            def abi = output.getFilter(OutputFile.ABI)
-            if (abi != null) {  // null for the universal-debug, universal-release variants
-                output.versionCodeOverride =
-                        versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
-            }
         }
     }
 
@@ -92,14 +80,15 @@ dependencies {
 }
 
 if (isRN60OrHigher) {
-    // ref: https://react-native-community.github.io/upgrade-helper/?from=0.59.9&to=0.60.6
+    // refs: https://react-native-community.github.io/upgrade-helper/?from=0.59.9&to=0.60.6
+    //       https://react-native-community.github.io/upgrade-helper/?from=0.60.6&to=0.61.4
     dependencies {
-        def enableHermes = project.ext.react.get("enableHermes", false)
-
+        def enableHermes = project.ext.react.get('enableHermes', false)
         if (enableHermes) {
-            def hermesPath = "../../node_modules/hermesvm/android/"
-            debugImplementation files(hermesPath + "hermes-debug.aar")
-            releaseImplementation files(hermesPath + "hermes-release.aar")
+            def hermesModuleName = isRN61OrHigher ? 'hermes-engine' : 'hermesvm'
+            def hermesPath = "../../node_modules/$hermesModuleName/android/"
+            debugImplementation files(hermesPath + 'hermes-debug.aar')
+            releaseImplementation files(hermesPath + 'hermes-release.aar')
         } else {
             implementation 'org.webkit:android-jsc:+'
         }

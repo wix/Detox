@@ -11,12 +11,16 @@ popd
 
 pushd examples/demo-react-native
 run_f "npm run build:android-release"
-run_f "npm run test:android-release -- --headless"
-run_f "npm run test:android-explicit-require -- --headless"
 popd
 
+# this needs to go first because it preloads all the emulators we need,
+# as it runs tests in parallel.
 pushd examples/demo-react-native-jest
-killall -9 qemu-system-x86_64 # Because jest-parallel needs emu's from scratch in read-only mode
-run_f "npm run test:android-release-ci -- --headless"
-run_f "npm run test:jest-circus:android-release-ci -- --headless"
+run_f "npm run test:android-release-ci"
+run_f "npm run test:jest-circus:android-release-ci"
+popd
+
+pushd examples/demo-react-native
+run_f "npm run test:android-release-ci"
+run_f "npm run test:android-explicit-require-ci"
 popd

@@ -7,7 +7,7 @@ const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
 let _operationCounter = 0;
 
-async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 10, interval = 1000) {
+async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 9, interval = 1000) {
   const trackingId = _operationCounter++;
   const cmd = _composeCommand(bin, options);
   const execTimeout = _.get(options, 'timeout', 0);

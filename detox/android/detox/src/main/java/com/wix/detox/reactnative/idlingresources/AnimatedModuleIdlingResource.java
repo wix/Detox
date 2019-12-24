@@ -1,14 +1,14 @@
-package com.wix.detox.espresso;
+package com.wix.detox.reactnative.idlingresources;
 
-import androidx.annotation.NonNull;
 import android.util.Log;
 import android.view.Choreographer;
 
-import com.wix.detox.ReactNativeCompat;
+import com.wix.detox.reactnative.ReactNativeInfo;
 
 import org.joor.Reflect;
 import org.joor.ReflectException;
 
+import androidx.annotation.NonNull;
 import androidx.test.espresso.IdlingResource;
 
 /**
@@ -92,7 +92,7 @@ public class AnimatedModuleIdlingResource implements IdlingResource, Choreograph
                 return true;
             }
 
-            if (ReactNativeCompat.getMinor() >= 51) {
+            if (ReactNativeInfo.rnVersion().getMinor() >= 51) {
                 if(isIdleRN51(animModuleClass)) {
                     return true;
                 }

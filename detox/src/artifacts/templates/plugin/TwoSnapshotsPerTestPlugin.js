@@ -7,7 +7,8 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
   constructor({ api }) {
     super({ api });
 
-    this.shouldTakeAutomaticSnapshots = true;
+    this.shouldTakeAutomaticSnapshots = this.api.userConfig.shouldTakeAutomaticSnapshots;
+    this.keepOnlyFailedTestsArtifacts = this.api.userConfig.keepOnlyFailedTestsArtifacts;
     this.snapshots = {
       fromTest: {},
       fromSession: {},

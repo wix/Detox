@@ -1,8 +1,10 @@
-package com.wix.detox.espresso;
+package com.wix.detox.reactnative.idlingresources;
 
 import androidx.annotation.NonNull;
 import android.util.Log;
 import android.view.Choreographer;
+
+import com.facebook.react.bridge.ReactContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +13,10 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import androidx.test.espresso.IdlingResource;
-import static androidx.test.espresso.IdlingResource.ResourceCallback;
 
 import okhttp3.Call;
 import okhttp3.Dispatcher;
+import okhttp3.OkHttpClient;
 
 /**
  * Created by simonracz on 09/10/2017.
@@ -26,7 +28,7 @@ import okhttp3.Dispatcher;
  * <p>
  * Must call stop() on it, before removing it from Espresso.
  */
-public class ReactNativeNetworkIdlingResource implements IdlingResource, Choreographer.FrameCallback {
+public class NetworkIdlingResource implements IdlingResource, Choreographer.FrameCallback {
 
     private static final String LOG_TAG = "Detox";
 
@@ -55,14 +57,17 @@ public class ReactNativeNetworkIdlingResource implements IdlingResource, Choreog
         }
     }
 
+    public NetworkIdlingResource(@NonNull ReactContext reactContext) {
+        this(new NetworkingModuleReflected(reactContext).getHttpClient().dispatcher());
+    }
 
-    public ReactNativeNetworkIdlingResource(@NonNull Dispatcher dispatcher) {
+    public NetworkIdlingResource(@NonNull Dispatcher dispatcher) {
         this.dispatcher = dispatcher;
     }
 
     @Override
     public String getName() {
-        return ReactNativeNetworkIdlingResource.class.getName();
+        return NetworkIdlingResource.class.getName();
     }
 
     @Override

@@ -12,7 +12,7 @@ class AAPT {
   }
 
   async _prepare() {
-    this.aaptBin = this.aaptBin || await getAaptPath();
+    this.aaptBin = this.aaptBin || `"${escape(await getAaptPath())}"`;
   }
 
   async getPackageName(apkPath) {

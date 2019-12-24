@@ -100,6 +100,14 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
+  async reverseTcpPort() {
+    return await Promise.resolve('');
+  }
+
+  async unreverseTcpPort() {
+    return await Promise.resolve('');
+  }
+
   async clearKeychain(_udid) {
     return await Promise.resolve('')
   }
@@ -208,6 +216,13 @@ class DeviceDriverBase {
       error
     );
   }
+
+  async setStatusBar(deviceId, flags) {
+  }
+
+  async resetStatusBar(deviceId) {
+  }
+
 }
 
 module.exports = DeviceDriverBase;

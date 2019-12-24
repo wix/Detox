@@ -269,6 +269,14 @@ class SimulatorDriver extends IosDriver {
       ? JSON.stringify(rawDeviceQuery)
       : `(${rawDeviceQuery})`;
   }
+
+  async setStatusBar(deviceId, flags) {
+    await this.applesimutils.statusBarOverride(deviceId, flags);
+  }
+
+  async resetStatusBar(deviceId) {
+    await this.applesimutils.statusBarReset(deviceId);
+  }
 }
 
 module.exports = SimulatorDriver;

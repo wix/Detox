@@ -64,8 +64,17 @@ class DetoxExportWrapper {
         throw new Error(`There are no device configurations in the detox config`);
       }
 
+      const deviceConfig = configuration.composeDeviceConfig(detoxConfig);
+      const configurationName = _.findKey(detoxConfig.configurations, (config) => config === deviceConfig);
+      const artifactsConfig = configuration.composeArtifactsConfig({
+        configurationName,
+        detoxConfig,
+        deviceConfig,
+      });
+
       instance = new Detox({
-        deviceConfig: DetoxExportWrapper._getDeviceConfig(detoxConfig),
+        deviceConfig,
+        artifactsConfig,
         session: detoxConfig.session,
       });
 
@@ -82,32 +91,6 @@ class DetoxExportWrapper {
     }
   }
 
-  static _getDeviceConfig({ configurations }) {
-    const configurationName = argparse.getArgValue('configuration');
-    const deviceOverride = argparse.getArgValue('device-name');
-
-    const deviceConfig = (!configurationName && _.size(configurations) === 1)
-      ? _.values(configurations)[0]
-      : configurations[configurationName];
-
-    if (!deviceConfig) {
-      throw new Error(`Cannot determine which configuration to use. use --configuration to choose one of the following:
-                        ${Object.keys(configurations)}`);
-    }
-
-    if (!deviceConfig.type) {
-      configuration.throwOnEmptyType();
-    }
-
-    deviceConfig.device = deviceOverride || deviceConfig.device || deviceConfig.name;
-    delete deviceConfig.name;
-
-    if (_.isEmpty(deviceConfig.device)) {
-      configuration.throwOnEmptyDevice();
-    }
-
-    return deviceConfig;
-  }
 }
 
 module.exports = DetoxExportWrapper;

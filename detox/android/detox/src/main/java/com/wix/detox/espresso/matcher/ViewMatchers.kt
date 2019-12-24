@@ -1,3 +1,5 @@
+@file:JvmName("ViewMatchers")
+
 package com.wix.detox.espresso.matcher
 
 import android.view.View
