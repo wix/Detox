@@ -7,6 +7,10 @@ describe(':android: Launch arguments', () => {
     await expect(element(by.id(`launchArg-${key}.value`))).toHaveText(expectedValue);
   }
 
+  async function assertNoLaunchArg(launchArgKey) {
+    await expect(element(by.id(`launchArg-${launchArgKey}.name`))).toBeNotVisible();
+  }
+
   it('should handle primitive args', async () => {
     const launchArgs = {
       hello: 'world',
@@ -39,5 +43,23 @@ describe(':android: Launch arguments', () => {
 
     await assertLaunchArg(launchArgs, 'complex', JSON.stringify(launchArgs.complex));
     await assertLaunchArg(launchArgs, 'complexlist', JSON.stringify(launchArgs.complexlist));
+  });
+
+  // Ref: https://developer.android.com/studio/test/command-line#AMOptionsSyntax
+  it('should not pass android instrumentation args through', async () => {
+    const launchArgs = {
+      hello: 'world',
+      debug: false,
+      log: false,
+      size: 'large',
+    };
+
+    await device.launchApp({newInstance: true, launchArgs});
+
+    await element(by.text('Launch Args')).tap();
+    await assertLaunchArg(launchArgs, 'hello', 'world');
+    await assertNoLaunchArg('debug');
+    await assertNoLaunchArg('log');
+    await assertNoLaunchArg('size');
   });
 });
