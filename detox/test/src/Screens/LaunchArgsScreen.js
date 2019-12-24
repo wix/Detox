@@ -18,7 +18,7 @@ export default class LaunchArgsScreen extends Component {
     }
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     const launchArgs = await NativeModule.getLaunchArguments();
     this.setState({
       launchArgs,

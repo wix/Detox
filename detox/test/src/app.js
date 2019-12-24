@@ -22,11 +22,7 @@ class example extends Component {
       notification: undefined
     };
 
-    // TODO this is a hack for RN 0.60: Android warns of the deprecation (yellow-box), while iOS can't live
-    //   without this method (native error).
-    if (!isAndroid) {
-      this.componentWillMount = () => {};
-    }
+    Linking.addEventListener('url', (params) => this._handleOpenURL(params));
   }
 
   renderButton(title, onPressCallback) {

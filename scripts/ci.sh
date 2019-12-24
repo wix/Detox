@@ -8,5 +8,5 @@ fi
 
 run_f "lerna bootstrap"
 
-run_f "lerna run --ignore detox-demo* build"
-run_f "lerna run --ignore detox-demo* test"
+run_f "lerna run build"
+run_f "lerna run test"
