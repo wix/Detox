@@ -11,6 +11,9 @@ import android.os.Looper;
 import androidx.annotation.NonNull;
 import android.util.Base64;
 
+import java.util.Arrays;
+import java.util.List;
+
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
@@ -71,6 +74,7 @@ public final class Detox {
     private static final String LAUNCH_ARGS_KEY = "launchArgs";
     private static final String DETOX_URL_OVERRIDE_ARG = "detoxURLOverride";
     private static final long ACTIVITY_LAUNCH_TIMEOUT = 10000L;
+    private static final List<String> RESERVED_INSTRUMENTATION_ARGS = Arrays.asList("class", "package", "func", "unit", "size", "perf", "debug", "log", "emma", "coverageFile");
 
     private static ActivityTestRule sActivityTestRule;
 
@@ -234,11 +238,13 @@ public final class Detox {
     }
 
     private static Bundle readLaunchArgs() {
-        final Bundle instrumArgs = InstrumentationRegistry.getArguments();
+        final Bundle instrumentationArgs = InstrumentationRegistry.getArguments();
         final Bundle launchArgs = new Bundle();
 
-        for (String arg : instrumArgs.keySet()) {
-            launchArgs.putString(arg, decodeLaunchArgValue(arg, instrumArgs));
+        for (String arg : instrumentationArgs.keySet()) {
+            if (!RESERVED_INSTRUMENTATION_ARGS.contains(arg)) {
+                launchArgs.putString(arg, decodeLaunchArgValue(arg, instrumentationArgs));
+            }
         }
         return launchArgs;
     }

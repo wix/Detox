@@ -2,7 +2,8 @@ const fs = require('fs');
 const URL = require('url').URL;
 const _ = require('lodash');
 const { encodeBase64 } = require('../../utils/encoding');
-const log = require('../../utils/logger').child({ __filename });
+const logger = require('../../utils/logger');
+const log = logger.child({ __filename });
 const invoke = require('../../invoke');
 const InvocationManager = invoke.InvocationManager;
 const ADB = require('../android/ADB');
@@ -21,6 +22,9 @@ const sleep = require('../../utils/sleep');
 const retry = require('../../utils/retry');
 const { interruptProcess, spawnAndLog } = require('../../utils/exec');
 const AndroidExpect = require('../../android/expect');
+
+const reservedInstrumentationArgs = ['class', 'package', 'func', 'unit', 'size', 'perf', 'debug', 'log', 'emma', 'coverageFile'];
+const isReservedInstrumentationArg = (arg) => reservedInstrumentationArgs.includes(arg);
 
 class AndroidDriver extends DeviceDriverBase {
   constructor(config) {
@@ -202,7 +206,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async _launchInstrumentationProcess(deviceId, bundleId, rawLaunchArgs) {
-    const launchArgs = this._prepareLaunchArgs(rawLaunchArgs);
+    const launchArgs = this._prepareLaunchArgs(rawLaunchArgs, true);
     const additionalLaunchArgs = this._prepareLaunchArgs({debug: false});
     const serverPort = new URL(this.client.configuration.server).port;
     await this.adb.reverse(deviceId, serverPort);
@@ -252,13 +256,30 @@ class AndroidDriver extends DeviceDriverBase {
     return this.invocationManager.execute(DetoxApi.launchMainActivity());
   }
 
-  _prepareLaunchArgs(launchArgs) {
-    return _.reduce(launchArgs, (result, value, key) => {
+  _prepareLaunchArgs(launchArgs, verbose = false) {
+    const usedReservedArgs = [];
+    const preparedLaunchArgs = _.reduce(launchArgs, (result, value, key) => {
       const valueAsString = _.isString(value) ? value : JSON.stringify(value);
-      const valueEncoded = (key.startsWith('detox')) ? valueAsString : encodeBase64(valueAsString);
+
+      let valueEncoded = valueAsString;
+      if (isReservedInstrumentationArg(key)) {
+        usedReservedArgs.push(key);
+      } else if (!key.startsWith('detox')) {
+        valueEncoded = encodeBase64(valueAsString);
+      }
+
       result.push('-e', key, valueEncoded);
       return result;
     }, []);
+
+    if (verbose && usedReservedArgs.length) {
+      logger.warn([`Arguments [${usedReservedArgs}] were passed in as launchArgs to device.launchApp() `,
+                   'but are reserved to Android\'s test-instrumentation and will not be passed into the app. ',
+                   'Ignore this message if this is what you meant to do. Refer to ',
+                   'https://developer.android.com/studio/test/command-line#AMOptionsSyntax for ',
+                   'further details.'].join(''));
+    }
+    return preparedLaunchArgs;
   }
 }
 
