@@ -10,9 +10,10 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
+    "chalk": "^2.4.2",
     "lodash": "4.17.x",
     "semver": "5.x.x",
-    "shell-utils": "1.x.x",
-    "chalk": "^2.4.2"
-  }
+    "shell-utils": "1.x.x"
+  },
+  "version": "14.9.2"
 }
