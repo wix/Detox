@@ -52,11 +52,15 @@ function publishToNpm() {
 
   const versionType = process.env.RELEASE_VERSION_TYPE;
   const dryRun = process.env.RELEASE_DRY_RUN === "true";
+  const skipNpm = process.env.RELEASE_SKIP_NPM === "true";
   if (dryRun) {
-    log('DRY RUN: Running lerna without publishing');
+    log('DRY RUN: Lerna-publishing without publishing to NPM');
+  }
+  else if (skipNpm) {
+    log('SKIP NPM is set: Lerna-publishing without publishing to NPM');
   }
 
-  exec.execSync(`lerna publish --cd-version "${versionType}" --yes --skip-git ${dryRun ? '--skip-npm' : ''}`);
+  exec.execSync(`lerna publish --cd-version "${versionType}" --yes --skip-git ${(dryRun || skipNpm) ? '--skip-npm' : ''}`);
   exec.execSync('git status');
 }
 
