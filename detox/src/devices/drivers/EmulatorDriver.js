@@ -122,9 +122,7 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async _fixEmulatorConfigIniSkinNameIfNeeded(avdName) {
-    const sdkHome = process.env['ANDROID_SDK_HOME'] || os.homedir();
-    const emulatorHome = process.env['ANDROID_EMULATOR_HOME'] || path.join(sdkHome, '.android');
-    const avdHome = process.env['ANDROID_AVD_HOME'] || path.join(emulatorHome, 'avd');
+    const avdHome = environment.getAvdHome();
     const configFile = path.join(avdHome, `${avdName}.avd`, 'config.ini');
     const config = ini.parse(fs.readFileSync(configFile, 'utf-8'));
 

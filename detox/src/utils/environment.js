@@ -21,6 +21,18 @@ function getAndroidSDKPath() {
   return process.env.ANDROID_SDK_ROOT || process.env.ANDROID_HOME || '';
 }
 
+function getAndroidSDKHome() {
+  return process.env['ANDROID_SDK_HOME'] || os.homedir();
+}
+
+function getEmulatorHome() {
+  return process.env['ANDROID_EMULATOR_HOME'] || path.join(getAndroidSDKHome(), '.android');
+}
+
+function getAvdHome() {
+  return process.env['ANDROID_AVD_HOME'] || path.join(getEmulatorHome(), 'avd');
+}
+
 function getAndroidEmulatorPath() {
   const sdkRoot = getAndroidSDKPath();
   if (!sdkRoot) {
@@ -126,6 +138,7 @@ function getHomeDir() {
 module.exports = {
   getAaptPath,
   getAdbPath,
+  getAvdHome,
   getDetoxVersion,
   getFrameworkPath,
   getAndroidSDKPath,
