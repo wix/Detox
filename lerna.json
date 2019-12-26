@@ -23,7 +23,8 @@
         "detox-demo-native-ios",
         "detox-demo-react-native",
         "detox-test",
-        "generation"
+        "generation",
+        "."
       ]
     }
   }
