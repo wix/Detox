@@ -8,6 +8,22 @@ Instead, Detox tries to synchronize the test with the app completely *automatica
 
 When this works it's like magic. You simply execute actions one after the other without worrying about timing, and Detox waits for the app to stabilize before moving to the next test line. If there's an in-flight request to a server, for example, the test will not move forward until the request completes.
 
+### What operations do we try to synchronize with automatically
+
+* **Network requests** - Detox monitors in-flight requests over the network.
+
+* **Main thread (native)** - Detox monitors pending native operations on the main thread (main dispatch queue and main NSOperationQueue).
+
+* **Layout of UI** - Detox monitors UI layout operations. There's also special support for React Native layout which includes the Shadow Queue where [yoga](https://github.com/facebook/yoga) runs.
+
+* **Timers** - Detox monitors timers (explicit asynchronous delays). There's special support for JavaScript timers like setTimeout and setInterval.
+
+* **Animations** - Detox monitors active animations and transitions. There's special support for React Native animations with the Animated library.
+
+* **React Native JavaScript thread** - Detox monitors pending operations on the JavaScript thread in RN apps.
+
+* **React Native bridge** - Detox monitors the React Native bridge and asynchronous messages sent on it.
+
 ### Automatic synchronization works most of the time
 
 It's difficult for an automatic mechanism to be correct in 100% of the cases. There are always exceptions. We are optimizing for the common case so most of your scenarios will not have to deal with synchronization issues.
@@ -21,6 +37,39 @@ When the automatic synchronization mechanism doesn't work, we have 2 potential p
 * We are waiting too much - The test will appear to hang and fail with timeout. This happens because Detox thinks an asychronous operations is currently taking place and is waiting for it endlessly.
 
 * We are not waiting enough - The test will appear to fail at some point because an element isn't found according to an expectation or isn't found when attempting to perform an action on it. This happens because Detox didn't take some asynchronous operation into account and isn't waiting until it completes.
+
+### Identifying which synchronization mechanism causes us to wait too much
+
+Interactions with the application are synchronized, meaning that they will not execute unless the app is idle. You may encounter situations where the tests just hang. 
+When an action/expectation takes a significant amount of time use this option to print device synchronization status.
+The status will be printed if the action takes more than [value] ms to complete
+
+```
+detox test --debug-synchronization 200
+```
+#### Lower-level Idling Resources Debug (iOS Only)
+
+If `--debug-synchronization` does not provide the necessary information, on iOS you can add the following launch argument to your app (using `launchArgs` in your `launchApp()` call) to enable a very verbose logging of the idling resource system to the system log:
+
+```shell
+-detoxPrintBusyIdleResources YES
+```
+
+You can then obtain this log by running the following command:
+
+```shell
+xcrun simctl spawn booted log stream --level debug --style compact --predicate "category=='EarlGreyStatistics'"
+```
+
+For example, change your `/e2e/init.js` like so:
+
+```js
+await detox.init(config, { launchApp: false });
+await device.launchApp({
+  newInstance: true,
+  launchArgs: { 'detoxPrintBusyIdleResources': 'YES' }
+});
+```
 
 ### Switching to manual synchronization as a workaround
 
@@ -61,55 +110,6 @@ await device.setURLBlacklist([]);
 
 This makes sense only if we're not waiting enough (or if we've disabled automatic synchronization). Use the `waitFor` API to poll until an expectation is met. The API is documented [here](/docs/APIRef.waitFor.md).
 
-### What operations do we try to synchronize with automatically
-
-* **Network requests** - Detox monitors in-flight requests over the network.
-
-* **Main thread (native)** - Detox monitors pending native operations on the main thread (main dispatch queue and main NSOperationQueue).
-
-* **Layout of UI** - Detox monitors UI layout operations. There's also special support for React Native layout which includes the Shadow Queue where [yoga](https://github.com/facebook/yoga) runs.
-
-* **Timers** - Detox monitors timers (explicit asynchronous delays). There's special support for JavaScript timers like setTimeout and setInterval.
-
-* **Animations** - Detox monitors active animations and transitions. There's special support for React Native animations with the Animated library.
-
-* **React Native JavaScript thread** - Detox monitors pending operations on the JavaScript thread in RN apps.
-
-* **React Native bridge** - Detox monitors the React Native bridge and asynchronous messages sent on it.
-
-### Identifying which synchronization mechanism causes us to wait too much
-
-Interactions with the application are synchronized, meaning that they will not execute unless the app is idle. You may encounter situations where the tests just hang. 
-When an action/expectation takes a significant amount of time use this option to print device synchronization status.
-The status will be printed if the action takes more than [value] ms to complete
-
-```
-detox test --debug-synchronization 200
-```
-#### Lower-level Idling Resources Debug (iOS Only)
-
-If `--debug-synchronization` does not provide the necessary information, on iOS you can add the following launch argument to your app (using `launchArgs` in your `launchApp()` call) to enable a very verbose logging of the idling resource system to the system log:
-
-```shell
--detoxPrintBusyIdleResources YES
-```
-
-You can then obtain this log by running the following command:
-
-```shell
-xcrun simctl spawn booted log stream --level debug --style compact --predicate "category=='EarlGreyStatistics'"
-```
-
-For example, change your `/e2e/init.js` like so:
-
-```js
-await detox.init(config, { launchApp: false });
-await device.launchApp({
-  newInstance: true,
-  launchArgs: { 'detoxPrintBusyIdleResources': 'YES' }
-});
-```
-
 ### Tweaking and fine-tuning the synchronization mechanisms
 
 > This isn't exposed yet, TBD
@@ -118,12 +118,12 @@ await device.launchApp({
 
 When facing a synchronization issue and tweaking doesn't help, consider modifying your app. When Detox is having trouble synchronizing due to intense non-stopping activity, it may be a sign that your app is abusing resources.
 
-You can also modify your app for the sake of tests only. If you're building a React Native app, you can use [react-native-repackager](https://github.com/wix/react-native-repackager) to override specific files only in your E2E build.
+You can also modify your app, for the sake of tests only, by using mocking. Read more [here](https://github.com/wix/Detox/blob/master/docs/Guide.Mocking.md).
 
 #### setTimeout and setInterval
 
-By default, Detox is designed to ignore `setInterval` and will only wait for `setTimeout` of up to 1 second. If you have an endless polling loop with short intervals implemented with `setTimeout`, switch the implementation to `setInterval`. If possible, avoid agressive polling in your app altogether, the poor single JavaScript thread we have doesn't like it.
+By default, Detox is designed to ignore `setInterval` and will only wait for `setTimeout` of up to 1.5 seconds. If you have an endless polling loop with short intervals implemented with `setTimeout`, switch the implementation to `setInterval`. If possible, avoid agressive polling in your app altogether, the poor single JavaScript thread we have doesn't like it.
 
 #### Endless looping animations
 
-By default, Detox will wait until animations complete. If you have an endless looping animation, this may cause Detox to hang. In this case, consider turning off the animation synchronization or remove the endless loop in your E2E build with [react-native-repackager](https://github.com/wix/react-native-repackager).
+By default, Detox will wait until animations complete. If you have an endless looping animation, this may cause Detox to hang. In this case, consider turning off the animation synchronization or remove the endless loop in your E2E build with [mocking](https://github.com/wix/Detox/blob/master/docs/Guide.Mocking.md).
