@@ -2,11 +2,13 @@
 
 Traditionally, end-to-end tests on mobile are riddled with inherent issues, making the testing process difficult and lowering ROI for developers. We believe that the only way to solve these issues at the core is by changing some of the basic principles of our approach.
 
-* **Detox does not rely on WebDriver** — Detox is built from the ground up to integrate with native layers of your mobile app directly. We try to avoid generic cross-platform interfaces that are often the lowest common denominator. We want to optimize per platform.
+* **Detox does not rely on WebDriver**—Detox is built from the ground up to integrate with native layers of your mobile app directly. We try to avoid generic cross-platform interfaces that are often the lowest common denominator. We want to optimize per platform.
 
 * **Detox does gray box, not black box** — Theoretically, it sounds better to test exactly what you ship as a black box. In practice, switching to gray box allows the test framework to monitor the app from the inside and delivers critical wins like fighting flakiness at the core.
 
 * **Detox relies on EarlGrey and Espresso** — The leading native gray box drivers are developed by Google - EarlGrey for iOS and Espresso for Android. Detox relies on them using a JSON-based reflection mechanism which allows a common JavaScript implementation to invoke their native methods directly.
+
+* **Detox synchronizes with your app's activity** — By being aware of what your app is doing and synchronizing it, Detox times its actions to run only when your app is idle, meaning it has determined that your app has finished work, such as React Native load, animations, network requests, etc. You can further read on this [here](https://github.com/wix/Detox/blob/master/docs/Troubleshooting.Synchronization.md).
 
 * **Friendly Protractor-like API for tests** — Tests in Detox are implemented in human-readable JavaScript and can even be shared between platforms. This easy to use API completely abstracts the complex native driver invocations taking place under the hood.
 
