@@ -17,6 +17,10 @@ class DetoxAdapterCircus extends CircusTestEventListenerBase {
       };
   }
 
+  setTimeout({testRun, deviceBoot}) {
+    this._adapter.setTimeout({testRun, deviceBoot});
+  }
+
   async beforeEach() {
     await this._adapter.beforeEach();
   }

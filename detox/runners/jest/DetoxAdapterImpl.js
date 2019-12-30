@@ -1,4 +1,6 @@
 const DetoxRuntimeError = require('../../src/errors/DetoxRuntimeError');
+const AdaptiveTimeouts = require('../../src/runtime/AdaptiveTimeouts');
+const adaptiveTimeoutsHolder = require('../../src/runtime/adaptiveTimeoutsHolder');
 
 class DetoxAdapterImpl {
   constructor(detox, describeInitErrorFn) {
@@ -6,6 +8,17 @@ class DetoxAdapterImpl {
     this._describeInitError = describeInitErrorFn;
     this._currentTest = null;
     this._todos = [];
+  }
+
+  setTimeout({testRun, deviceBoot}) {
+    jest.setTimeout(testRun);
+
+    adaptiveTimeoutsHolder.instance = new AdaptiveTimeouts({
+      baseTimeout: testRun,
+      coldBootInc: deviceBoot,
+    }, (timeout) => {
+      jest.setTimeout(timeout);
+    });
   }
 
   async beforeEach() {

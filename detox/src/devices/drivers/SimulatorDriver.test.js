@@ -154,6 +154,7 @@ class mockAppleSimUtils {
     this.matchBiometric = jest.fn();
     this.unmatchBiometric = jest.fn();
     this.boot = jest.fn();
+    this.isBooted = jest.fn().mockReturnValue(false);
     this.list = jest.fn();
   }
 }

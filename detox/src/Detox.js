@@ -14,6 +14,7 @@ const Client = require('./client/Client');
 const DetoxServer = require('./server/DetoxServer');
 const URL = require('url').URL;
 const ArtifactsManager = require('./artifacts/ArtifactsManager');
+const adaptiveTimeoutsHolder = require('./runtime/adaptiveTimeoutsHolder');
 
 const DEVICE_CLASSES = {
   'ios.simulator': SimulatorDriver,
@@ -29,6 +30,7 @@ class Detox {
     this._client = null;
     this._server = null;
     this._artifactsManager = new ArtifactsManager(artifactsConfig);
+    this._adaptiveTimeouts = null;
 
     this.device = null;
   }
@@ -62,6 +64,10 @@ class Detox {
 
     this._artifactsManager.subscribeToDeviceEvents(deviceDriver);
     this._artifactsManager.registerArtifactPlugins(deviceDriver.declareArtifactPlugins());
+
+    if (adaptiveTimeoutsHolder.instance) {
+      adaptiveTimeoutsHolder.instance.init(deviceDriver);
+    }
 
     const device = new Device({
       deviceConfig: this._deviceConfig,
@@ -105,6 +111,14 @@ class Detox {
     if (argparse.getArgValue('cleanup') && this.device) {
       await this.device.shutdown();
     }
+  }
+
+  set adaptiveTimeouts(value) {
+    this._adaptiveTimeouts = value;
+  }
+
+  get adaptiveTimeouts() {
+    return this._adaptiveTimeouts;
   }
 
   async beforeEach(testSummary) {

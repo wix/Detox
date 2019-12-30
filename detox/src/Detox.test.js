@@ -15,6 +15,7 @@ const defaultPlatformEnv = {
 
 describe('Detox', () => {
   let fs;
+  let mockSimulatorDriver;
   let Detox;
   let detox;
 
@@ -55,12 +56,16 @@ describe('Detox', () => {
 
     global.device = undefined;
 
+    const SimulatorDriver = jest.genMockFromModule('./devices/drivers/SimulatorDriver');
+    mockSimulatorDriver = new SimulatorDriver();
+    jest.mock('./devices/drivers/SimulatorDriver', () => jest.fn(() => mockSimulatorDriver));
+
     jest.mock('./devices/drivers/IosDriver');
-    jest.mock('./devices/drivers/SimulatorDriver');
     jest.mock('./devices/Device');
     jest.mock('./server/DetoxServer');
     jest.mock('./client/Client');
     jest.mock('./utils/logger');
+    jest.mock('./runtime/AdaptiveTimeouts');
   });
 
   it(`Passing --cleanup should shutdown the currently running device`, async () => {
@@ -185,6 +190,21 @@ describe('Detox', () => {
     await detox.init();
     await detox.afterEach(testSummary);
     expect(detox._client.dumpPendingRequests).toHaveBeenCalled();
+  });
+
+  it('should init adaptive-timeouts', async () => {
+    const AdaptiveTimeouts = jest.genMockFromModule('./runtime/AdaptiveTimeouts');
+    const mockAdaptiveTimeouts = new AdaptiveTimeouts();
+    jest.mock('./runtime/adaptiveTimeoutsHolder', () => ({
+      instance: mockAdaptiveTimeouts,
+    }));
+
+    Detox = require('./Detox');
+    detox = new Detox({deviceConfig: validDeviceConfig});
+
+    await detox.init();
+
+    expect(mockAdaptiveTimeouts.init).toHaveBeenCalledWith(mockSimulatorDriver);
   });
 
   describe('.artifactsManager', () => {

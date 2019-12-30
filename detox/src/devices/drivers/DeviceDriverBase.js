@@ -11,6 +11,7 @@ class DeviceDriverBase {
     this.matchers = null;
     this.emitter = new AsyncEmitter({
       events: [
+        'coldBootDevice',
         'bootDevice',
         'beforeShutdownDevice',
         'shutdownDevice',

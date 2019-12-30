@@ -86,6 +86,8 @@ class EmulatorDriver extends AndroidDriver {
     const coldBoot = !!this.pendingBoots[adbName];
 
     if (coldBoot) {
+      await this.emitter.emit('coldBootDevice', { deviceId: adbName });
+
       const port = this.pendingBoots[adbName];
       await this.emulator.boot(avdName, {port});
       delete this.pendingBoots[adbName];

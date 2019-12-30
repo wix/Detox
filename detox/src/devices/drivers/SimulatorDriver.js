@@ -70,7 +70,12 @@ class SimulatorDriver extends IosDriver {
 
   async _boot(deviceId) {
     const deviceLaunchArgs = argparse.getArgValue('deviceLaunchArgs');
-    const coldBoot = await this.applesimutils.boot(deviceId, deviceLaunchArgs);
+
+    const coldBoot = await this.applesimutils.isBooted(deviceId);
+    if (!coldBoot) {
+      await this.emitter.emit('coldBootDevice', { deviceId });
+      await this.applesimutils.boot(deviceId, deviceLaunchArgs);
+    }
     await this.emitter.emit('bootDevice', { coldBoot, deviceId });
   }
 
