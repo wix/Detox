@@ -73,12 +73,12 @@ describe('ArtifactPlugin', () => {
   describe('lifecycle hooks', () => {
     beforeEach(() => {
       plugin.context = {
-        deviceId: 'shouldNotBeInExpectSnapshots',
+        deviceId: 'someOriginalDeviceId',
         shouldNotBeDeletedFromContext: 'extraProperty'
       };
     });
 
-    it('should update context on .onBeforeLaunchApp', async () => {
+    it('should not update context on .onBeforeLaunchApp', async () => {
       await expect(plugin.onBeforeLaunchApp({
         deviceId: 'testDeviceId',
         bundleId: 'testBundleId',
@@ -88,17 +88,12 @@ describe('ArtifactPlugin', () => {
       }));
 
       expect(plugin.context).toEqual({
-        bundleId: 'testBundleId',
-        deviceId: 'testDeviceId',
-        launchArgs: {
-          detoxSessionId: 'test',
-        },
-        pid: NaN,
-        shouldNotBeDeletedFromContext: 'extraProperty',
+        deviceId: 'someOriginalDeviceId',
+        shouldNotBeDeletedFromContext: 'extraProperty'
       });
     });
 
-    it('should have .onLaunchApp', async () => {
+    it('should update context .onLaunchApp', async () => {
       await expect(plugin.onLaunchApp({
         deviceId: 'testDeviceId',
         bundleId: 'testBundleId',
@@ -110,7 +105,7 @@ describe('ArtifactPlugin', () => {
 
       expect(plugin.context).toEqual({
         bundleId: 'testBundleId',
-        deviceId: 'testDeviceId',
+        deviceId: 'someOriginalDeviceId',
         launchArgs: {
           detoxSessionId: 'test',
         },
@@ -119,29 +114,27 @@ describe('ArtifactPlugin', () => {
       });
     });
 
-    it('should update context on .onBeforeUninstallApp', async () => {
+    it('should not update context on .onBeforeUninstallApp', async () => {
       await expect(plugin.onBeforeUninstallApp({
         deviceId: 'testDeviceId',
         bundleId: 'testBundleId',
       }));
 
       expect(plugin.context).toEqual({
-        bundleId: 'testBundleId',
-        deviceId: 'testDeviceId',
-        shouldNotBeDeletedFromContext: 'extraProperty',
+        deviceId: 'someOriginalDeviceId',
+        shouldNotBeDeletedFromContext: 'extraProperty'
       });
     });
 
-    it('should update context on .onBeforeTerminateApp', async () => {
+    it('should not update context on .onBeforeTerminateApp', async () => {
       await expect(plugin.onBeforeTerminateApp({
         deviceId: 'testDeviceId',
         bundleId: 'testBundleId',
       }));
 
       expect(plugin.context).toEqual({
-        bundleId: 'testBundleId',
-        deviceId: 'testDeviceId',
-        shouldNotBeDeletedFromContext: 'extraProperty',
+        deviceId: 'someOriginalDeviceId',
+        shouldNotBeDeletedFromContext: 'extraProperty'
       });
     });
 
@@ -153,32 +146,32 @@ describe('ArtifactPlugin', () => {
 
       expect(plugin.context).toEqual({
         bundleId: '',
-        deviceId: 'testDeviceId',
+        launchArgs: null,
+        pid: NaN,
+        deviceId: 'someOriginalDeviceId',
         shouldNotBeDeletedFromContext: 'extraProperty',
       });
     });
 
-    it('should have .onBootDevice', async () => {
+    it('should update context on .onBootDevice', async () => {
       await expect(plugin.onBootDevice({
         deviceId: 'testDeviceId',
         coldBoot: true
       }));
 
       expect(plugin.context).toEqual({
-        bundleId: '',
         deviceId: 'testDeviceId',
-        pid: NaN,
         shouldNotBeDeletedFromContext: 'extraProperty',
       });
     });
 
-    it('should have .onBeforeShutdownDevice', async () => {
+    it('should not update context on .onBeforeShutdownDevice', async () => {
       await expect(plugin.onBeforeShutdownDevice({
         deviceId: 'testDeviceId'
       }));
 
       expect(plugin.context).toEqual({
-        deviceId: 'testDeviceId',
+        deviceId: 'someOriginalDeviceId',
         shouldNotBeDeletedFromContext: 'extraProperty',
       });
     });
@@ -189,8 +182,9 @@ describe('ArtifactPlugin', () => {
       }));
 
       expect(plugin.context).toEqual({
+        deviceId: '',
         bundleId: '',
-        deviceId: 'testDeviceId',
+        launchArgs: null,
         pid: NaN,
         shouldNotBeDeletedFromContext: 'extraProperty',
       });

@@ -46,14 +46,7 @@ class ArtifactPlugin {
    * @param {Object} event.launchArgs - Mutable key-value pairs of args before the launch
    * @return {Promise<void>} - when done
    */
-  async onBeforeLaunchApp(event) {
-    Object.assign(this.context, {
-      bundleId: event.bundleId,
-      deviceId: event.deviceId,
-      launchArgs: event.launchArgs,
-      pid: NaN,
-    });
-  }
+  async onBeforeLaunchApp(event) {}
 
   /**
    * Hook that is called inside device.launchApp() and
@@ -72,7 +65,6 @@ class ArtifactPlugin {
   async onLaunchApp(event) {
     Object.assign(this.context, {
       bundleId: event.bundleId,
-      deviceId: event.deviceId,
       launchArgs: event.launchArgs,
       pid: event.pid,
    });
@@ -91,8 +83,6 @@ class ArtifactPlugin {
   async onBootDevice(event) {
     Object.assign(this.context, {
       deviceId: event.deviceId,
-      bundleId: '',
-      pid: NaN,
     });
   }
 
@@ -106,12 +96,7 @@ class ArtifactPlugin {
    * @param {string} event.bundleId - Current bundleId
    * @return {Promise<void>} - when done
    */
-  async onBeforeTerminateApp(event) {
-    Object.assign(this.context, {
-      deviceId: event.deviceId,
-      bundleId: event.bundleId,
-    });
-  }
+  async onBeforeTerminateApp(event) {}
 
   /**
    * Hook that is supposed to be called after app has been terminated
@@ -125,8 +110,9 @@ class ArtifactPlugin {
    */
   async onTerminateApp(event) {
     Object.assign(this.context, {
-      deviceId: event.deviceId,
       bundleId: '',
+      launchArgs: null,
+      pid: NaN,
     });
   }
 
@@ -140,12 +126,7 @@ class ArtifactPlugin {
    * @param {string} event.bundleId - Current bundleId
    * @return {Promise<void>} - when done
    */
-  async onBeforeUninstallApp(event) {
-    Object.assign(this.context, {
-      deviceId: event.deviceId,
-      bundleId: event.bundleId,
-    });
-  }
+  async onBeforeUninstallApp(event) {}
 
   /**
    * Hook that is supposed to be called before device.shutdown() happens
@@ -156,11 +137,7 @@ class ArtifactPlugin {
    * @param {string} event.deviceId - Current deviceId
    * @return {Promise<void>} - when done
    */
-  async onBeforeShutdownDevice(event) {
-    Object.assign(this.context, {
-      deviceId: event.deviceId,
-    });
-  }
+  async onBeforeShutdownDevice(event) {}
 
   /**
    * Hook that is supposed to be called from device.shutdown()
@@ -173,8 +150,9 @@ class ArtifactPlugin {
    */
   async onShutdownDevice(event) {
     Object.assign(this.context, {
-      deviceId: event.deviceId,
+      deviceId: '',
       bundleId: '',
+      launchArgs: null,
       pid: NaN,
     });
   }
