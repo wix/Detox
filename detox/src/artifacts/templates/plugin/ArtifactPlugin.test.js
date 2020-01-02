@@ -145,6 +145,19 @@ describe('ArtifactPlugin', () => {
       });
     });
 
+    it('should update context on .onTerminateApp', async () => {
+      await expect(plugin.onTerminateApp({
+        deviceId: 'testDeviceId',
+        bundleId: 'testBundleId',
+      }));
+
+      expect(plugin.context).toEqual({
+        bundleId: '',
+        deviceId: 'testDeviceId',
+        shouldNotBeDeletedFromContext: 'extraProperty',
+      });
+    });
+
     it('should have .onBootDevice', async () => {
       await expect(plugin.onBootDevice({
         deviceId: 'testDeviceId',
@@ -232,6 +245,7 @@ describe('ArtifactPlugin', () => {
         expect(plugin.onBeforeLaunchApp).toBe(plugin.onTerminate);
         expect(plugin.onLaunchApp).toBe(plugin.onTerminate);
         expect(plugin.onBeforeTerminateApp).toBe(plugin.onTerminate);
+        expect(plugin.onTerminateApp).toBe(plugin.onTerminate);
         expect(plugin.onBeforeAll).toBe(plugin.onTerminate);
         expect(plugin.onBeforeEach).toBe(plugin.onTerminate);
         expect(plugin.onAfterEach).toBe(plugin.onTerminate);

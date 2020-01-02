@@ -114,6 +114,23 @@ class ArtifactPlugin {
   }
 
   /**
+   * Hook that is supposed to be called after app has been terminated
+   *
+   * @protected
+   * @async
+   * @param {Object} event - App termination event object
+   * @param {string} event.deviceId - Current deviceId
+   * @param {string} event.bundleId - Terminated bundleId
+   * @return {Promise<void>} - when done
+   */
+  async onTerminateApp(event) {
+    Object.assign(this.context, {
+      deviceId: event.deviceId,
+      bundleId: '',
+    });
+  }
+
+  /**
    * Hook that is supposed to be called before app is uninstalled
    *
    * @protected
@@ -242,6 +259,7 @@ class ArtifactPlugin {
     this.onBeforeShutdownDevice = _.noop;
     this.onShutdownDevice = _.noop;
     this.onBeforeTerminateApp = _.noop;
+    this.onTerminateApp = _.noop;
     this.onBeforeLaunchApp = _.noop;
     this.onLaunchApp = _.noop;
     this.onUserAction = _.noop;

@@ -5,11 +5,13 @@ const FileArtifact = require('../templates/artifact/FileArtifact');
 
 class SimulatorInstrumentsRecording extends Artifact {
   constructor({
+    pluginContext,
     client,
     temporaryRecordingPath,
   }) {
     super();
 
+    this._pluginContext = pluginContext;
     this._client = client;
     this.temporaryRecordingPath = temporaryRecordingPath;
   }
@@ -46,7 +48,10 @@ class SimulatorInstrumentsRecording extends Artifact {
   }
 
   _isClientConnected() {
-    return this._client.isConnected && !this._client.pandingAppCrash;
+    const isConnectedToDetoxServer = this._client.isConnected && !this._client.pandingAppCrash;
+    const isAppRunning = this._pluginContext.bundleId;
+
+    return Boolean(isConnectedToDetoxServer && isAppRunning);
   }
 }
 

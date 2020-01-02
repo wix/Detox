@@ -51,6 +51,7 @@ class SimulatorInstrumentsPlugin extends WholeTestRecorderPlugin {
 
   createTestRecording() {
     return new SimulatorInstrumentsRecording({
+      pluginContext: this.context,
       client: this.client,
       temporaryRecordingPath: temporaryPath.for.dtxrec(),
     });
