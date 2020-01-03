@@ -63,7 +63,7 @@ Detox can control artifacts collection via settings from `package.json`:
   "detox": {
     "artifacts": {
       "rootDir": ".artifacts",
-      "pathBuilder": "config/pathbuilder.js",
+      "pathBuilder": "./config/pathbuilder.js",
       "plugins": {
         "instruments": "none",
         "log": "all",
