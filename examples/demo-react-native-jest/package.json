@@ -23,7 +23,7 @@
     "configurations": {
       "ios.sim.release": {
         "artifacts": {
-          "pathBuilder": "e2e/detox.pathbuilder.ios.js"
+          "pathBuilder": "./e2e/detox.pathbuilder.ios.js"
         },
         "binaryPath": "../demo-react-native/ios/build/Build/Products/Release-iphonesimulator/example.app",
         "type": "ios.simulator",
@@ -33,7 +33,7 @@
       },
       "android.emu.release": {
         "artifacts": {
-          "pathBuilder": "e2e/detox.pathbuilder.android.js"
+          "pathBuilder": "./e2e/detox.pathbuilder.android.js"
         },
         "binaryPath": "../demo-react-native/android/app/build/outputs/apk/release/app-release.apk",
         "type": "android.emulator",
