@@ -13,14 +13,13 @@ import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.action.GeneralClickAction;
 import androidx.test.espresso.action.GeneralLocation;
 import androidx.test.espresso.action.Press;
-import androidx.test.espresso.action.Tap;
 
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayingAtLeast;
 
 public class RNClickAction implements ViewAction {
     private final GeneralClickAction clickAction =
             new GeneralClickAction(
-                Tap.SINGLE,
+                new DetoxSingleTap(),
                 GeneralLocation.VISIBLE_CENTER,
                 Press.FINGER,
                 InputDevice.SOURCE_UNKNOWN,
