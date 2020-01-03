@@ -37,6 +37,28 @@ describe('Environment', () => {
       await fs.remove(tempSdkPath);
     });
 
+    describe('getAvdHome', () => {
+      const testCases = [
+        [path.join(os.homedir(), '.android', 'avd'), null, null, null],
+        [path.join('homedir', '.android', 'avd'), null, null, 'homedir'],
+        [path.join('emu', 'avd'), null, 'emu', 'homedir'],
+        ['AVD', 'AVD', 'emu', 'homedir'],
+      ];
+
+      it.each(testCases)('should return %j ' + [
+        'if $ANDROID_AVD_HOME = %j',
+        'if $ANDROID_EMULATOR_HOME = %j',
+        'if $ANDROID_SDK_HOME = %j',
+      ].join(' and '), (...args) => {
+
+        process.env['ANDROID_AVD_HOME'] = args[1];
+        process.env['ANDROID_EMULATOR_HOME'] = args[2];
+        process.env['ANDROID_SDK_HOME'] = args[3];
+
+        expect(Environment.getAvdHome()).toBe(args[0]);
+      });
+    });
+
     describe('getAndroidSDKPath', () => {
       it(`should return empty string if $ANDROID_SDK_ROOT and $ANDROID_HOME both are not set`, () => {
         delete process.env.ANDROID_SDK_ROOT;
