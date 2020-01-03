@@ -17,8 +17,8 @@ class SimulatorLogPlugin extends LogArtifactPlugin {
 
     if (this.currentRecording) {
       await this.currentRecording.start({
-        udid: this.context.deviceId,
-        bundleId: this.context.bundleId,
+        udid: event.deviceId,
+        bundleId: event.bundleId,
       });
     }
   }

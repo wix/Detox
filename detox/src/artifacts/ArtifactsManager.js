@@ -96,6 +96,7 @@ class ArtifactsManager {
     deviceEmitter.on('launchApp', this.onLaunchApp.bind(this));
     deviceEmitter.on('beforeUninstallApp', this.onBeforeUninstallApp.bind(this));
     deviceEmitter.on('beforeTerminateApp', this.onBeforeTerminateApp.bind(this));
+    deviceEmitter.on('terminateApp', this.onTerminateApp.bind(this));
     deviceEmitter.on('createExternalArtifact', this.onCreateExternalArtifact.bind(this));
   }
 
@@ -105,6 +106,10 @@ class ArtifactsManager {
 
   async onBeforeTerminateApp(appInfo) {
     await this._callPlugins('plain', 'onBeforeTerminateApp', appInfo);
+  }
+
+  async onTerminateApp(appInfo) {
+    await this._callPlugins('plain', 'onTerminateApp', appInfo);
   }
 
   async onBeforeUninstallApp(appInfo) {
