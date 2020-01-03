@@ -82,7 +82,8 @@ function getArtifactsCliConfig() {
 }
 
 function resolveModuleFromPath(modulePath) {
-  return require.resolve(modulePath, { paths: [process.cwd()]});
+  const resolvedModulePath = require.resolve(modulePath, { paths: [process.cwd()]});
+  return require(resolvedModulePath);
 }
 
 function composeArtifactsConfig({
