@@ -1,5 +1,6 @@
 {
   "name": "",
+  "private": true,
   "scripts": {
     "test:e2e:ios": "pushd detox/test && npm run e2e:ios && popd",
     "test:e2e:android": "pushd detox/test && npm run e2e:android && popd",
