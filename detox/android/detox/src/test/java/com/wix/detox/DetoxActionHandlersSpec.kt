@@ -3,8 +3,10 @@ package com.wix.detox
 import android.content.Context
 import com.nhaarman.mockitokotlin2.*
 import com.wix.detox.UTHelpers.yieldToOtherThreads
+import com.wix.detox.instruments.DetoxInstrumentsException
 import com.wix.detox.instruments.DetoxInstrumentsManager
 import com.wix.invoke.MethodInvocation
+import org.assertj.core.api.Assertions
 import org.json.JSONObject
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
@@ -257,6 +259,21 @@ object DetoxActionHandlersSpec : Spek({
                     uut().handle(json, messageId)
                     verify(wsClient).sendAction(eq("eventDone"), any(), eq(messageId))
                 }
+            }
+
+            it("wrong event action") {
+                val json = with(JSONObject()) {
+                    put("action", "wrong")
+                }.toString()
+
+                var err: Exception? = null
+                try {
+                    uut().handle(json, messageId)
+                } catch (e: DetoxInstrumentsException) {
+                    err = e
+                }
+                Assertions.assertThat(err).isNotNull()
+                Assertions.assertThat(err).hasMessage("Invalid action")
             }
         }
     }
