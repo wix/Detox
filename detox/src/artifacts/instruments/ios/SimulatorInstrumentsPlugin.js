@@ -23,6 +23,7 @@ class SimulatorInstrumentsPlugin extends InstrumentsArtifactPlugin {
 
   createTestRecording() {
     return new SimulatorInstrumentsRecording({
+      pluginContext: this.context,
       client: this.client,
       temporaryRecordingPath: temporaryPath.for.dtxrec(),
     });
