@@ -2,6 +2,8 @@
 
 $(dirname "$0")/install.sh
 
+gem install xcpretty >/dev/null 2>&1
+
 export CODE_SIGNING_REQUIRED=NO
-brew tap wix/brew
-brew install applesimutils --HEAD
+HOMEBREW_NO_INSTALL_CLEANUP=1 HOMEBREW_NO_AUTO_UPDATE=1 brew tap wix/brew
+HOMEBREW_NO_INSTALL_CLEANUP=1 HOMEBREW_NO_AUTO_UPDATE=1 brew install applesimutils

@@ -55,12 +55,6 @@ describe('test', () => {
       );
     });
 
-    it('should warn about deprecated options', async () => {
-      mockAndroidMochaConfiguration();
-      await callCli('./test', 'test --specs e2e');
-      expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('migration guide'));
-    });
-
     it('should pass in device-launch-args as an environment variable', async () => {
       mockAndroidMochaConfiguration();
 

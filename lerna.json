@@ -9,9 +9,10 @@
     "examples/demo-react-native",
     "examples/demo-react-native-detox-instruments",
     "examples/demo-react-native-jest",
-    "generation"
+    "generation",
+    "."
   ],
-  "version": "14.9.1",
+  "version": "15.0.0",
   "npmClient": "npm",
   "command": {
     "publish": {
@@ -22,7 +23,8 @@
         "detox-demo-native-ios",
         "detox-demo-react-native",
         "detox-test",
-        "generation"
+        "generation",
+        "."
       ]
     }
   }

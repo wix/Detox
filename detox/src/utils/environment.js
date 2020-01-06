@@ -2,6 +2,7 @@ const _ = require('lodash');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const ini = require('ini');
 const _which = require('which');
 const exec = require('child-process-promise').exec;
 const appdatapath = require('./appdatapath');
@@ -19,6 +20,32 @@ const DEVICE_LOCK_FILE_PATH_ANDROID = path.join(DETOX_LIBRARY_ROOT_PATH, 'androi
 
 function getAndroidSDKPath() {
   return process.env.ANDROID_SDK_ROOT || process.env.ANDROID_HOME || '';
+}
+
+function getAndroidSDKHome() {
+  return process.env['ANDROID_SDK_HOME'] || os.homedir();
+}
+
+function getEmulatorHome() {
+  return process.env['ANDROID_EMULATOR_HOME'] || path.join(getAndroidSDKHome(), '.android');
+}
+
+function getAvdHome() {
+  return process.env['ANDROID_AVD_HOME'] || path.join(getEmulatorHome(), 'avd');
+}
+
+function getAvdDir(avdName) {
+  const avdIniPath = path.join(getAvdHome(), `${avdName}.ini`);
+  if (!fs.existsSync(avdIniPath)) {
+    throwMissingAvdINIError(avdName, avdIniPath)
+  }
+
+  const avdIni = ini.parse(fs.readFileSync(avdIniPath, 'utf-8'));
+  if (!fs.existsSync(avdIni.path)) {
+    throwMissingAvdError(avdName, avdIni.path, avdIniPath)
+  }
+
+  return avdIni.path;
 }
 
 function getAndroidEmulatorPath() {
@@ -83,7 +110,18 @@ function getAdbPath() {
 }
 
 function throwMissingSdkError() {
-    throw new Error(MISSING_SDK_ERROR);
+  throw new Error(MISSING_SDK_ERROR);
+}
+
+function throwMissingAvdINIError(avdName, avdIniPath) {
+  throw new Error(`Failed to find INI file for ${avdName} at path: ${avdIniPath}`);
+}
+
+function throwMissingAvdError(avdName, avdPath, avdIniPath) {
+  throw new Error(
+    `Failed to find AVD ${avdName} directory at path: ${avdPath}\n` +
+    `Please verify "path" property in the INI file: ${avdIniPath}`
+  );
 }
 
 function throwSdkIntegrityError(sdkRoot, relativeExecutablePath) {
@@ -126,6 +164,8 @@ function getHomeDir() {
 module.exports = {
   getAaptPath,
   getAdbPath,
+  getAvdHome,
+  getAvdDir,
   getDetoxVersion,
   getFrameworkPath,
   getAndroidSDKPath,

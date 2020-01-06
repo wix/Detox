@@ -26,7 +26,7 @@ android {
         versionCode 1
         versionName '1.0'
         ndk {
-            abiFilters 'armeabi-v7a', 'x86'
+            abiFilters 'armeabi-v7a', 'x86', 'x86_64'
         }
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -38,7 +38,14 @@ android {
         ]
         */
     }
-
+    splits {
+        abi {
+            reset()
+            enable false
+            universalApk false  // If true, also generate a universal APK
+            include 'armeabi-v7a', 'x86', 'x86_64'
+        }
+    }
     signingConfigs {
         release {
             storeFile file("keystore.jks")
@@ -47,7 +54,6 @@ android {
             keyPassword "12345678"
         }
     }
-
     buildTypes {
         release {
             minifyEnabled true
@@ -56,7 +62,6 @@ android {
             signingConfig signingConfigs.release
         }
     }
-
     productFlavors {
         flavorDimensions 'compileRNFromSource'
         fromSource {
@@ -66,7 +71,6 @@ android {
             dimension 'compileRNFromSource'
         }
     }
-
     packagingOptions {
         pickFirst '**/libc++_shared.so'
 

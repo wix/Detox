@@ -1,6 +1,6 @@
 {
   "name": "example",
-  "version": "14.9.1",
+  "version": "15.0.0",
   "private": true,
   "scripts": {
     "start": "react-native start",
@@ -9,9 +9,11 @@
     "build:android-debug": "detox build --configuration android.emu.debug",
     "build:android-release": "detox build --configuration android.emu.release",
     "test:ios": "detox test --configuration ios.sim.debug",
-    "test:android-debug": "detox test --configuration android.emu.debug -l verbose",
-    "test:android-release": "detox test --configuration android.emu.release -l verbose",
-    "test:android-explicit-require": "detox test e2eExplicitRequire -c android.emu.release -l verbose --runner-config e2eExplicitRequire/mocha.opts",
+    "test:android-debug": "detox test --configuration android.emu.debug",
+    "test:android-release": "detox test --configuration android.emu.release",
+    "test:android-release-ci": "detox test --configuration android.emu.release -l verbose --headless --record-logs all --take-screenshots all",
+    "test:android-explicit-require": "detox test e2eExplicitRequire -c android.emu.release --runner-config e2eExplicitRequire/mocha.opts",
+    "test:android-explicit-require-ci": "detox test e2eExplicitRequire -c android.emu.release --runner-config e2eExplicitRequire/mocha.opts -l verbose --headless --record-logs all --take-screenshots all",
     "e2e:ios": "npm run build:ios && npm run test:ios",
     "e2e:android-debug": "npm run build:android-debug && npm run test:android-debug",
     "e2e:android-release": "npm run build:android-release && npm run test:android-release"
@@ -21,7 +23,7 @@
     "react-native": "0.60.x"
   },
   "devDependencies": {
-    "detox": "^14.9.1",
+    "detox": "^15.0.0",
     "mocha": "^6.1.3"
   },
   "detox": {

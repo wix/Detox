@@ -103,7 +103,8 @@ ios/xcuserdata/
 # you should judge for yourself, the pros and cons are mentioned at:
 # https://guides.cocoapods.org/using/using-cocoapods.html#should-i-check-the-pods-directory-into-source-control
 #
-ios/Pods/
+*/*/ios/Pods/
+*/*/ios/Podfile.lock
 
 # Carthage
 #
@@ -221,6 +222,8 @@ detox/ios_src
 package-lock.json
 /detox/src/devices/detox/notifications/notification.json
 detox/test/artifacts
+/examples/demo-react-native/artifacts
+/examples/demo-react-native-jest/artifacts
 
 ## Final outputs
 

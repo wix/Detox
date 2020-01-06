@@ -21,6 +21,10 @@ export default class ShakeScreen extends Component {
       greeting: "Shake it, baby"
     };
     this.subscription = undefined;
+    this.subscription = shakeEventEmitter.addListener('ShakeEvent', () => {
+      console.log("Shake!!!");
+      this.setState({ greeting: "Shaken, not stirred" });
+    });
   }
 
   render() {
@@ -31,13 +35,6 @@ export default class ShakeScreen extends Component {
         </Text>
       </View>
     );
-  }
-
-  componentWillMount() {
-    this.subscription = shakeEventEmitter.addListener('ShakeEvent', () => {
-      console.log("Shake!!!");
-      this.setState({ greeting: "Shaken, not stirred" });
-    });
   }
 
   componentWillUnmount() {

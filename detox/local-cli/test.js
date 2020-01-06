@@ -7,7 +7,6 @@ const DetoxConfigError = require('../src/errors/DetoxConfigError');
 
 const log = require('../src/utils/logger').child({ __filename });
 const {getDetoxSection, getDefaultConfiguration, getConfigurationByKey} = require('./utils/configurationUtils');
-const {coerceDeprecation, printFileDeprecationWarning} = require('./utils/deprecation');
 const shellQuote = require('./utils/shellQuote');
 
 module.exports.command = 'test';
@@ -24,20 +23,6 @@ module.exports.builder = {
     alias: 'runner-config',
     group: 'Configuration:',
     describe: 'Test runner config file, defaults to e2e/mocha.opts for mocha and e2e/config.json for jest',
-  },
-  f: {
-    alias: 'file',
-    group: 'Configuration:',
-    describe: 'Specify test file to run',
-    coerce: coerceDeprecation('-f, --file'),
-    hidden: true,
-  },
-  s: {
-    alias: 'specs',
-    group: 'Configuration:',
-    describe: 'Root of tests look-up folder. Overrides the equivalent configuration in `package.json`, if set.',
-    coerce: coerceDeprecation('-s, --specs'),
-    hidden: true,
   },
   l: {
     alias: 'loglevel',
@@ -145,11 +130,6 @@ const collectExtraArgs = require('./utils/collectExtraArgs')(module.exports.buil
 
 module.exports.handler = async function test(program) {
   const config = getDetoxSection();
-
-  if (!program.file && config.file) {
-    printFileDeprecationWarning(config.file);
-  }
-
   const runner = getConfigFor('test-runner') || 'mocha';
   const runnerConfig = getConfigFor('runner-config') || getDefaultRunnerConfig();
 
@@ -201,7 +181,7 @@ module.exports.handler = async function test(program) {
       return args;
     }
 
-    const fallbackTestFolder = `"${getConfigFor('file', 'specs') || 'e2e'}"`;
+    const fallbackTestFolder = `"${config.specs || 'e2e'}"`;
     return args.concat(fallbackTestFolder);
   }
 

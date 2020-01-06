@@ -8,11 +8,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-
 import androidx.annotation.NonNull;
-
 import android.util.Base64;
-import android.util.Log;
+
+import java.util.Arrays;
+import java.util.List;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
@@ -24,11 +24,11 @@ import androidx.test.rule.ActivityTestRule;
  * This test must use AndroidJUnitRunner or a subclass of it, as Detox uses Espresso internally.
  * All non-standard async code must be wrapped in an Espresso
  * <a href="https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/">IdlingResource</a>.</p>
- * <p>
+ *
  * Example usage
  * <pre>{@code
- * @literal @runWith(AndroidJUnit4.class)
- * @literal @LargeTest
+ *@literal @runWith(AndroidJUnit4.class)
+ *@literal @LargeTest
  * public class DetoxTest {
  *  @literal @Rule
  *   //The Activity that controls React Native.
@@ -60,7 +60,7 @@ import androidx.test.rule.ActivityTestRule;
  *   }
  * }}
  * </pre>
- * <p>
+ *
  * Or through command line, e.g <br>
  * <blockquote>{@code adb shell am instrument -w -e detoxServer ws://localhost:8001 -e detoxSessionId
  * 1 com.example/android.support.test.runner.AndroidJUnitRunner}</blockquote></p>
@@ -74,6 +74,7 @@ public final class Detox {
     private static final String LAUNCH_ARGS_KEY = "launchArgs";
     private static final String DETOX_URL_OVERRIDE_ARG = "detoxURLOverride";
     private static final long ACTIVITY_LAUNCH_TIMEOUT = 10000L;
+    private static final List<String> RESERVED_INSTRUMENTATION_ARGS = Arrays.asList("class", "package", "func", "unit", "size", "perf", "debug", "log", "emma", "coverageFile");
 
     private static ActivityTestRule sActivityTestRule;
 
@@ -89,7 +90,6 @@ public final class Detox {
      * In case you have a non-standard React Native application, consider using
      * {@link #runTests(ActivityTestRule, Context)}}.
      * </p>
-     *
      * @param activityTestRule the activityTestRule
      */
     public static void runTests(ActivityTestRule activityTestRule) {
@@ -102,7 +102,7 @@ public final class Detox {
      * Call this method only if you have a React Native application and it
      * doesn't implement ReactApplication.
      * </p>
-     * <p>
+     *
      * Call {@link Detox#runTests(ActivityTestRule)} )} in every other case.
      *
      * <p>
@@ -112,7 +112,7 @@ public final class Detox {
      * </p>
      *
      * @param activityTestRule the activityTestRule
-     * @param context          an object that has a {@code getReactNativeHost()} method
+     * @param context an object that has a {@code getReactNativeHost()} method
      */
     public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context context) {
         sActivityTestRule = activityTestRule;
@@ -194,8 +194,8 @@ public final class Detox {
     /**
      * Constructs an intent with a URL such that the resolved activity to be launched would be an activity that has
      * been defined to match it using an intent-filter xml tag, and has been associated with an {@link Intent#ACTION_VIEW} action.
-     *
      * @param url The URL to associated.
+     *
      * @return The resulting intent.
      */
     private static Intent intentWithUrl(String url, boolean initialLaunch) {
@@ -238,13 +238,13 @@ public final class Detox {
     }
 
     private static Bundle readLaunchArgs() {
-        final Bundle instrumArgs = InstrumentationRegistry.getArguments();
+        final Bundle instrumentationArgs = InstrumentationRegistry.getArguments();
         final Bundle launchArgs = new Bundle();
 
-        for (String arg : instrumArgs.keySet()) {
-            final String value = decodeLaunchArgValue(arg, instrumArgs);
-            Log.i("DTX", "Launch arg: " + arg + "=" + value);
-            launchArgs.putString(arg, value);
+        for (String arg : instrumentationArgs.keySet()) {
+            if (!RESERVED_INSTRUMENTATION_ARGS.contains(arg)) {
+                launchArgs.putString(arg, decodeLaunchArgValue(arg, instrumentationArgs));
+            }
         }
         return launchArgs;
     }
