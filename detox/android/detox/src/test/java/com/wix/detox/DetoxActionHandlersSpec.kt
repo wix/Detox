@@ -3,14 +3,16 @@ package com.wix.detox
 import android.content.Context
 import com.nhaarman.mockitokotlin2.*
 import com.wix.detox.UTHelpers.yieldToOtherThreads
+import com.wix.detox.instruments.DetoxInstrumentsManager
 import com.wix.invoke.MethodInvocation
+import org.json.JSONObject
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import java.lang.reflect.InvocationTargetException
 import java.util.*
 import java.util.concurrent.Executors
 
-object DetoxActionHandlersSpec: Spek({
+object DetoxActionHandlersSpec : Spek({
     describe("Action handlers") {
         val params = "{\"mock\": \"params\"}"
         val messageId = 666L
@@ -143,10 +145,10 @@ object DetoxActionHandlersSpec: Spek({
             }
         }
 
-        describe("Recording state actions") {
+        describe("InstrumentsRecording recording state actions") {
             lateinit var instrumentsManager: DetoxInstrumentsManager
 
-            fun uut() = RecordingStateActionHandler(instrumentsManager, wsClient)
+            fun uut() = InstrumentsRecordingStateActionHandler(instrumentsManager, wsClient)
 
             beforeEachTest {
                 instrumentsManager = mock()
@@ -168,54 +170,92 @@ object DetoxActionHandlersSpec: Spek({
             }
         }
 
-        describe("Events actions") {
+        describe("InstrumentsRecording events actions") {
             lateinit var instrumentsManager: DetoxInstrumentsManager
+            val mockCategory = "MockCategory"
+            val mockName = "MockName"
+            val mockId = "MockId"
+            val mockAdditionalInfo = "MockAdditionalInfo"
+            val mockStatus = "MockStatus"
 
-            fun uut() = EventsActionsHandler(instrumentsManager, wsClient)
+            fun uut() = InstrumentsEventsActionsHandler(instrumentsManager, wsClient)
 
             beforeEachTest {
                 instrumentsManager = mock()
             }
 
             describe("begin interval") {
-                val json = "{\"category\":\"MockCategory\",\"name\":\"MockName\",\"id\":\"MockId\",\"additionalInfo\":\"MockAdditionalInfo\",\"action\":\"begin\"}"
+                val json = with(JSONObject()) {
+                    put("category", mockCategory)
+                    put("name", mockName)
+                    put("id", mockId)
+                    put("additionalInfo", mockAdditionalInfo)
+                    put("action", "begin")
+                }.toString()
 
                 it("should invoke instrumentation") {
                     uut().handle(json, messageId)
-                    verify(instrumentsManager).eventBeginInterval(eq("MockCategory"), eq("MockName"), eq("MockId"), eq("MockAdditionalInfo"))
+                    verify(instrumentsManager).eventBeginInterval(
+                            eq(mockCategory),
+                            eq(mockName),
+                            eq(mockId),
+                            eq(mockAdditionalInfo)
+                    )
                 }
 
                 it("should reply with a 'done' ACK") {
                     uut().handle(json, messageId)
-                    verify(wsClient).sendAction(eq("addActionDone"), any(), eq(messageId))
+                    verify(wsClient).sendAction(eq("eventDone"), any(), eq(messageId))
                 }
             }
 
             describe("end interval") {
-                val json = "{\"id\":\"MockId\",\"status\":\"MockStatus\",\"additionalInfo\":\"MockAdditionalInfo\",\"action\":\"end\"}"
+                val json = with(JSONObject()) {
+                    put("id", mockId)
+                    put("status", mockStatus)
+                    put("additionalInfo", mockAdditionalInfo)
+                    put("action", "end")
+                }.toString()
 
                 it("should invoke instrumentation") {
                     uut().handle(json, messageId)
-                    verify(instrumentsManager).eventEndInterval(eq("MockId"), eq("MockStatus"), eq("MockAdditionalInfo"))
+                    verify(instrumentsManager).eventEndInterval(
+                            eq(mockId),
+                            eq(mockStatus),
+                            eq(mockAdditionalInfo)
+                    )
                 }
 
                 it("should reply with a 'done' ACK") {
                     uut().handle(json, messageId)
-                    verify(wsClient).sendAction(eq("addActionDone"), any(), eq(messageId))
+                    verify(wsClient).sendAction(eq("eventDone"), any(), eq(messageId))
                 }
             }
 
             describe("mark") {
-                val json = "{\"category\":\"MockCategory\",\"name\":\"MockName\",\"id\":\"MockId\",\"status\":\"MockStatus\",\"additionalInfo\":\"MockAdditionalInfo\",\"action\":\"mark\"}"
+                val json = with(JSONObject()) {
+                    put("category", mockCategory)
+                    put("name", mockName)
+                    put("id", mockId)
+                    put("status", mockStatus)
+                    put("additionalInfo", mockAdditionalInfo)
+                    put("action", "mark")
+                }.toString()
 
                 it("should invoke instrumentation") {
                     uut().handle(json, messageId)
-                    verify(instrumentsManager).eventMark(eq("MockCategory"), eq("MockName"), eq("MockId"), eq("MockStatus"), eq("MockAdditionalInfo"))
+                    verify(instrumentsManager).eventMark(
+                            eq(mockCategory),
+                            eq(mockName),
+                            eq(mockId),
+                            eq(mockStatus),
+                            eq(mockAdditionalInfo)
+                    )
                 }
 
                 it("should reply with a 'done' ACK") {
                     uut().handle(json, messageId)
-                    verify(wsClient).sendAction(eq("addActionDone"), any(), eq(messageId))
+                    verify(wsClient).sendAction(eq("eventDone"), any(), eq(messageId))
                 }
             }
         }

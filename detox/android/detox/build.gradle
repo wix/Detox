@@ -93,6 +93,16 @@ dependencies {
 // Spek (https://spekframework.org/setup-android)
 if (rootProject.hasProperty('isOfficialDetoxLib') ||
     rootProject.hasProperty('isOfficialDetoxApp')) {
+    buildscript {
+        repositories {
+            jcenter()
+        }
+
+        dependencies {
+            classpath 'de.mannodermaus.gradle.plugins:android-junit5:1.5.2.0'
+        }
+    }
+
     apply plugin: 'de.mannodermaus.android-junit5'
 
     android {
@@ -108,8 +118,8 @@ if (rootProject.hasProperty('isOfficialDetoxLib') ||
     }
 
     dependencies {
-        testImplementation 'org.spekframework.spek2:spek-dsl-jvm:2.0.7'
-        testImplementation 'org.spekframework.spek2:spek-runner-junit5:2.0.7'
+        testImplementation 'org.spekframework.spek2:spek-dsl-jvm:2.0.9'
+        testImplementation 'org.spekframework.spek2:spek-runner-junit5:2.0.9'
         testImplementation "org.jetbrains.kotlin:kotlin-reflect:$_kotlinVersion"
     }
 }

@@ -1,8 +1,8 @@
-const SimulatorInstrumentsPlugin = require('./SimulatorInstrumentsPlugin');
+const InstrumentsArtifactPlugin = require('./InstrumentsArtifactPlugin');
 
-describe('SimulatorInstrumentsPlugin', () => {
+describe('InstrumentsArtifactPlugin', () => {
     describe('static parseConfig(config)', () => {
-        const parseConfig = SimulatorInstrumentsPlugin.parseConfig;
+        const parseConfig = InstrumentsArtifactPlugin.parseConfig;
 
         const ENABLE_MODES = ['all'].map(x => [x]);
         const DISABLE_MODES = ['none', 'manual', 'failing', { enabled: true }].map(x => [x]);

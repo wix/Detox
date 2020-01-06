@@ -7,6 +7,7 @@ import android.os.Looper;
 import androidx.annotation.NonNull;
 import android.util.Log;
 
+import com.wix.detox.instruments.DetoxInstrumentsManager;
 import com.wix.detox.reactnative.ReactNativeExtension;
 import com.wix.detox.systeminfo.Environment;
 import com.wix.invoke.MethodInvocation;
@@ -27,6 +28,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     private final static String DETOX_SERVER_ARG_KEY = "detoxServer";
     private final static String DETOX_SESSION_ID_ARG_KEY = "detoxSessionId";
+    private final static String DETOX_RECORDING_PATH = "recordingPath";
 
     private String detoxServerUrl;
     private String detoxSessionId;
@@ -39,6 +41,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
     private ReadyActionHandler readyActionHandler = null;
 
     private Context reactNativeHostHolder;
+    private DetoxInstrumentsManager instrumentsManager;
 
     DetoxManager(@NonNull Context context) {
         this.reactNativeHostHolder = context;
@@ -56,6 +59,13 @@ class DetoxManager implements WebSocketClient.ActionHandler {
             Log.i(LOG_TAG, "Missing arguments : detoxServer and/or detoxSession. Detox quits.");
             stop();
             return;
+        }
+        if (DetoxInstrumentsManager.supports()) {
+            final String recordingPath = arguments.getString(DETOX_RECORDING_PATH);
+            if (recordingPath != null) {
+                instrumentsManager = new DetoxInstrumentsManager(reactNativeHostHolder);
+                instrumentsManager.startRecordingAtLocalPath(recordingPath);
+            }
         }
 
         Log.i(LOG_TAG, "DetoxServerUrl: " + detoxServerUrl);
@@ -146,8 +156,12 @@ class DetoxManager implements WebSocketClient.ActionHandler {
             }
         }));
 
-        final DetoxInstrumentsManager instrumentsManager = new DetoxInstrumentsManager(reactNativeHostHolder);
-        actionHandlers.put("setRecordingState", new RecordingStateActionHandler(instrumentsManager, wsClient));
-        actionHandlers.put("addEvent", new EventsActionsHandler(instrumentsManager, wsClient));
+        if (DetoxInstrumentsManager.supports()) {
+            if (instrumentsManager == null) {
+                instrumentsManager = new DetoxInstrumentsManager(reactNativeHostHolder);
+            }
+            actionHandlers.put("setRecordingState", new InstrumentsRecordingStateActionHandler(instrumentsManager, wsClient));
+            actionHandlers.put("event", new InstrumentsEventsActionsHandler(instrumentsManager, wsClient));
+        }
     }
 }

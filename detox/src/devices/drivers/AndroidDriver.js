@@ -12,12 +12,11 @@ const DeviceDriverBase = require('./DeviceDriverBase');
 const DetoxApi = require('../../android/espressoapi/Detox');
 const EspressoDetoxApi = require('../../android/espressoapi/EspressoDetox');
 const UiDeviceProxy = require('../../android/espressoapi/UiDeviceProxy');
-const SimulatorInstrumentsPlugin = require('../../artifacts/instruments/SimulatorInstrumentsPlugin');
+const AndroidInstrumentsPlugin = require('../../artifacts/instruments/android/AndroidInstrumentsPlugin');
 const ADBLogcatPlugin = require('../../artifacts/log/android/ADBLogcatPlugin');
 const ADBScreencapPlugin = require('../../artifacts/screenshot/ADBScreencapPlugin');
 const ADBScreenrecorderPlugin = require('../../artifacts/video/ADBScreenrecorderPlugin');
 const AndroidDevicePathBuilder = require('../../artifacts/utils/AndroidDevicePathBuilder');
-const AndroidRecordingPathCreator = require('../../artifacts/instruments/recording/AndroidRecordingPathCreator');
 const temporaryPath = require('../../artifacts/utils/temporaryPath');
 const sleep = require('../../utils/sleep');
 const retry = require('../../utils/retry');
@@ -35,16 +34,15 @@ class AndroidDriver extends DeviceDriverBase {
     this.adb = new ADB();
     this.aapt = new AAPT();
     this.devicePathBuilder = new AndroidDevicePathBuilder();
-    this.recordingPathCreator = new AndroidRecordingPathCreator(this.devicePathBuilder);
 
     this.pendingUrl = undefined;
   }
 
   declareArtifactPlugins() {
-    const { adb, client, devicePathBuilder, recordingPathCreator } = this;
+    const { adb, client, devicePathBuilder } = this;
 
     return {
-      instruments: (api) => new SimulatorInstrumentsPlugin({ api, client, recordingPathCreator }),
+      instruments: (api) => new AndroidInstrumentsPlugin({ api, adb, client, devicePathBuilder }),
       log: (api) => new ADBLogcatPlugin({ api, adb, devicePathBuilder }),
       screenshot: (api) => new ADBScreencapPlugin({ api, adb, devicePathBuilder }),
       video: (api) => new ADBScreenrecorderPlugin({ api, adb, devicePathBuilder }),

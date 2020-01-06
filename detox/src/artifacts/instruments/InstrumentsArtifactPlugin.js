@@ -1,12 +1,17 @@
-const temporaryPath = require('../utils/temporaryPath');
 const WholeTestRecorderPlugin = require('../templates/plugin/WholeTestRecorderPlugin');
-const SimulatorInstrumentsRecording = require('./SimulatorInstrumentsRecording');
+const log = require('../../utils/logger').child({ __filename });
 
-class SimulatorInstrumentsPlugin extends WholeTestRecorderPlugin {
-  constructor({ api, client, recordingPathCreator }) {
+class InstrumentsArtifactPlugin extends WholeTestRecorderPlugin {
+  constructor({ api }) {
     super({ api });
-    this.client = client;
-    this.recordingPathCreator = recordingPathCreator;
+  }
+
+  async onBeforeLaunchApp(event) {
+    await super.onBeforeLaunchApp(event);
+
+    if (this.testRecording) {
+      event.launchArgs['recordingPath'] = this.testRecording.temporaryRecordingPath;
+    }
   }
 
   async onBeforeUninstallApp(event) {
@@ -30,35 +35,12 @@ class SimulatorInstrumentsPlugin extends WholeTestRecorderPlugin {
     }
   }
 
-  async onBeforeLaunchApp(event) {
-    await super.onBeforeLaunchApp(event);
-
-    if (process.env.DETOX_INSTRUMENTS_PATH) {
-      event.launchArgs['instrumentsPath'] = process.env.DETOX_INSTRUMENTS_PATH;
-    }
-
-    if (this.testRecording) {
-      event.launchArgs['recordingPath'] = this.testRecording.temporaryRecordingPath;
-    }
-  }
-
   async onLaunchApp(event) {
     await super.onLaunchApp(event);
 
     if (this.testRecording) {
       await this.testRecording.start({ dry: true }); // start nominally, to set a correct recording state
     }
-  }
-
-  createTestRecording() {
-    return new SimulatorInstrumentsRecording({
-      client: this.client,
-      temporaryRecordingPath: this.recordingPathCreator.createRecordingPath(),
-    });
-  }
-
-  async preparePathForTestArtifact(testSummary) {
-    return this.api.preparePathForArtifact('test.dtxrec', testSummary);
   }
 
   static parseConfig(config) {
@@ -78,4 +60,4 @@ class SimulatorInstrumentsPlugin extends WholeTestRecorderPlugin {
   }
 }
 
-module.exports = SimulatorInstrumentsPlugin;
+module.exports = InstrumentsArtifactPlugin;

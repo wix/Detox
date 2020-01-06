@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const path = require('path');
 const schemes = require('./configurations.mock');
-const SimulatorInstrumentsPlugin = require('./artifacts/instruments/SimulatorInstrumentsPlugin');
 const LogArtifactPlugin = require('./artifacts/log/LogArtifactPlugin');
 const ScreenshotArtifactPlugin = require('./artifacts/screenshot/ScreenshotArtifactPlugin');
 const VideoArtifactPlugin = require('./artifacts/video/VideoArtifactPlugin');

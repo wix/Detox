@@ -3,6 +3,8 @@ package com.wix.detox
 import android.content.Context
 import android.util.Log
 import androidx.test.espresso.IdlingResource
+import com.wix.detox.instruments.DetoxInstrumentsException
+import com.wix.detox.instruments.DetoxInstrumentsManager
 import com.wix.invoke.MethodInvocation
 import org.json.JSONArray
 import org.json.JSONException
@@ -111,7 +113,7 @@ class QueryStatusActionHandler(
         }
 }
 
-class RecordingStateActionHandler(
+class InstrumentsRecordingStateActionHandler(
         private val instrumentsManager: DetoxInstrumentsManager,
         private val wsClient: WebSocketClient
 ) : DetoxActionHandler {
@@ -124,11 +126,11 @@ class RecordingStateActionHandler(
             instrumentsManager.stopRecording()
         }
 
-        wsClient.sendAction("setRecordingStateDone", mapOf<String, Any>(), messageId)
+        wsClient.sendAction("setRecordingStateDone", emptyMap<String, Any>(), messageId)
     }
 }
 
-class EventsActionsHandler(
+class InstrumentsEventsActionsHandler(
         private val instrumentsManager: DetoxInstrumentsManager,
         private val wsClient: WebSocketClient
 ) : DetoxActionHandler {
@@ -160,11 +162,11 @@ class EventsActionsHandler(
                             getString("additionalInfo")
                     )
                 }
-                else -> throw RuntimeException("Invalid action")
+                else -> throw DetoxInstrumentsException("Invalid action")
             }
         }
 
-        wsClient.sendAction("addActionDone", mapOf<String, Any>(), messageId)
+        wsClient.sendAction("eventDone", emptyMap<String, Any>(), messageId)
     }
 
 }
