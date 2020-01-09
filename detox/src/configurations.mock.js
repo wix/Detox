@@ -1,4 +1,4 @@
-const SimulatorInstrumentsPlugin = require('./artifacts/instruments/SimulatorInstrumentsPlugin');
+const InstrumentsArtifactPlugin = require('./artifacts/instruments/InstrumentsArtifactPlugin');
 const LogArtifactPlugin = require('./artifacts/log/LogArtifactPlugin');
 const ScreenshotArtifactPlugin = require('./artifacts/screenshot/ScreenshotArtifactPlugin');
 const VideoArtifactPlugin = require('./artifacts/video/VideoArtifactPlugin');
@@ -29,7 +29,7 @@ const pluginsDefaultsResolved = {
   log: LogArtifactPlugin.parseConfig('none'),
   screenshot: ScreenshotArtifactPlugin.parseConfig('manual'),
   video: VideoArtifactPlugin.parseConfig('none'),
-  instruments: SimulatorInstrumentsPlugin.parseConfig('none'),
+  instruments: InstrumentsArtifactPlugin.parseConfig('none'),
 };
 
 const pluginsFailingResolved = {
@@ -42,7 +42,7 @@ const pluginsAllResolved = {
   log: LogArtifactPlugin.parseConfig('all'),
   screenshot: ScreenshotArtifactPlugin.parseConfig('all'),
   video: VideoArtifactPlugin.parseConfig('all'),
-  instruments: SimulatorInstrumentsPlugin.parseConfig('all'),
+  instruments: InstrumentsArtifactPlugin.parseConfig('all'),
 };
 
 const validOneDeviceNoSession = {

@@ -1,39 +1,13 @@
 const _ = require('lodash');
-const log = require('../../utils/logger').child({ __filename });
-const Artifact = require('../templates/artifact/Artifact');
-const FileArtifact = require('../templates/artifact/FileArtifact');
+const log = require('../../../utils/logger').child({ __filename });
+const InstrumentsArtifactRecording = require('../InstrumentsArtifactRecording');
+const FileArtifact = require('../../templates/artifact/FileArtifact');
 
-class SimulatorInstrumentsRecording extends Artifact {
-  constructor({
-    pluginContext,
-    client,
-    temporaryRecordingPath,
-  }) {
-    super();
+class SimulatorInstrumentsRecording extends InstrumentsArtifactRecording {
+  constructor({ pluginContext, client, temporaryRecordingPath }) {
+    super({ client, temporaryRecordingPath });
 
     this._pluginContext = pluginContext;
-    this._client = client;
-    this.temporaryRecordingPath = temporaryRecordingPath;
-  }
-
-  async doStart({ dry = false } = {}) {
-    if (dry) {
-      return; // nominal start, to preserve state change
-    }
-
-    if (!this._isClientConnected()) {
-      return;
-    }
-
-    await this._client.startInstrumentsRecording({
-      recordingPath: this.temporaryRecordingPath,
-    });
-  }
-
-  async doStop() {
-    if (this._isClientConnected()) {
-      await this._client.stopInstrumentsRecording();
-    }
   }
 
   async doSave(artifactPath) {
@@ -47,8 +21,9 @@ class SimulatorInstrumentsRecording extends Artifact {
     await fs.remove(this.temporaryRecordingPath);
   }
 
+
   _isClientConnected() {
-    const isConnectedToDetoxServer = this._client.isConnected && !this._client.pandingAppCrash;
+    const isConnectedToDetoxServer = super._isClientConnected();
     const isAppRunning = this._pluginContext.bundleId;
 
     return Boolean(isConnectedToDetoxServer && isAppRunning);

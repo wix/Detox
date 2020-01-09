@@ -3,6 +3,8 @@ package com.wix.detox
 import android.content.Context
 import android.util.Log
 import androidx.test.espresso.IdlingResource
+import com.wix.detox.instruments.DetoxInstrumentsException
+import com.wix.detox.instruments.DetoxInstrumentsManager
 import com.wix.invoke.MethodInvocation
 import org.json.JSONArray
 import org.json.JSONException
@@ -109,4 +111,62 @@ class QueryStatusActionHandler(
                 put("prettyPrint", resource.name)
             })
         }
+}
+
+class InstrumentsRecordingStateActionHandler(
+        private val instrumentsManager: DetoxInstrumentsManager,
+        private val wsClient: WebSocketClient
+) : DetoxActionHandler {
+
+    override fun handle(params: String, messageId: Long) {
+        val recordingPath = JSONObject(params).optString("recordingPath", null)
+        if (recordingPath != null) {
+            instrumentsManager.startRecordingAtLocalPath(recordingPath)
+        } else {
+            instrumentsManager.stopRecording()
+        }
+
+        wsClient.sendAction("setRecordingStateDone", emptyMap<String, Any>(), messageId)
+    }
+}
+
+class InstrumentsEventsActionsHandler(
+        private val instrumentsManager: DetoxInstrumentsManager,
+        private val wsClient: WebSocketClient
+) : DetoxActionHandler {
+
+    override fun handle(params: String, messageId: Long) {
+        with (JSONObject(params))  {
+            when (getString("action")) {
+                "begin" -> {
+                    instrumentsManager.eventBeginInterval(
+                            getString("category"),
+                            getString("name"),
+                            getString("id"),
+                            getString("additionalInfo")
+                    )
+                }
+                "end" -> {
+                    instrumentsManager.eventEndInterval(
+                            getString("id"),
+                            getString("status"),
+                            getString("additionalInfo")
+                    )
+                }
+                "mark" -> {
+                    instrumentsManager.eventMark(
+                            getString("category"),
+                            getString("name"),
+                            getString("id"),
+                            getString("status"),
+                            getString("additionalInfo")
+                    )
+                }
+                else -> throw DetoxInstrumentsException("Invalid action")
+            }
+        }
+
+        wsClient.sendAction("eventDone", emptyMap<String, Any>(), messageId)
+    }
+
 }

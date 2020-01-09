@@ -6,7 +6,7 @@ const argparse = require('./utils/argparse');
 const getPort = require('get-port');
 const buildDefaultArtifactsRootDirpath = require('./artifacts/utils/buildDefaultArtifactsRootDirpath');
 
-const SimulatorInstrumentsPlugin = require('./artifacts/instruments/SimulatorInstrumentsPlugin');
+const InstrumentsArtifactPlugin = require('./artifacts/instruments/InstrumentsArtifactPlugin');
 const LogArtifactPlugin = require('./artifacts/log/LogArtifactPlugin');
 const ScreenshotArtifactPlugin = require('./artifacts/screenshot/ScreenshotArtifactPlugin');
 const VideoArtifactPlugin = require('./artifacts/video/VideoArtifactPlugin');
@@ -127,7 +127,7 @@ function composeArtifactsConfig({
 
   artifactsConfig.plugins = _.mapValues(artifactsConfig.plugins, (value, key) => {
     switch (key) {
-      case 'instruments': return SimulatorInstrumentsPlugin.parseConfig(value);
+      case 'instruments': return InstrumentsArtifactPlugin.parseConfig(value);
       case 'log': return LogArtifactPlugin.parseConfig(value);
       case 'screenshot': return ScreenshotArtifactPlugin.parseConfig(value);
       case 'video': return VideoArtifactPlugin.parseConfig(value);

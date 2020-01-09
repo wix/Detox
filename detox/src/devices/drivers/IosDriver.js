@@ -12,7 +12,7 @@ const AppleSimUtils = require('../ios/AppleSimUtils');
 const SimulatorLogPlugin = require('../../artifacts/log/ios/SimulatorLogPlugin');
 const SimulatorScreenshotPlugin = require('../../artifacts/screenshot/SimulatorScreenshotPlugin');
 const SimulatorRecordVideoPlugin = require('../../artifacts/video/SimulatorRecordVideoPlugin');
-const SimulatorInstrumentsPlugin = require('../../artifacts/instruments/SimulatorInstrumentsPlugin');
+const SimulatorInstrumentsPlugin = require('../../artifacts/instruments/ios/SimulatorInstrumentsPlugin');
 const IosExpect = require('../../ios/expect');
 
 class IosDriver extends DeviceDriverBase {
@@ -24,8 +24,7 @@ class IosDriver extends DeviceDriverBase {
   }
 
   declareArtifactPlugins() {
-    const appleSimUtils = this.applesimutils;
-    const client = this.client;
+    const { appleSimUtils, client } = this;
 
     return {
       instruments: (api) => new SimulatorInstrumentsPlugin({ api, client }),
