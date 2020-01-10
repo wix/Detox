@@ -143,6 +143,15 @@ class ArtifactsManager {
     await this._callPlugins('ascending', 'onTestStart', testSummary);
   }
 
+  async onTestEvent({ event, ...payload }) {
+    switch (event) {
+      case 'hook_failure':
+        return await this._callPlugins('plain', 'onHookFailure', payload);
+      case 'test_fn_failure':
+        return await this._callPlugins('plain', 'onTestFnFailure', payload);
+    }
+  }
+
   async onTestDone(testSummary) {
     await this._callPlugins('descending', 'onTestDone', testSummary);
   }

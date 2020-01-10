@@ -15,12 +15,7 @@ beforeAll(async () => {
   await detox.init(config);
 }, 300000);
 
-beforeEach(async () => {
-  await adapter.beforeEach();
-});
-
 afterAll(async () => {
-  await adapter.afterAll();
   await detox.cleanup();
 });
 

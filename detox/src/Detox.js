@@ -115,6 +115,10 @@ class Detox {
     await this._artifactsManager.onTestStart(testSummary);
   }
 
+  async notify(event) {
+    await this._artifactsManager.onTestEvent(event);
+  }
+
   async afterEach(testSummary) {
     this._validateTestSummary(testSummary);
     this._logTestRunCheckpoint('DETOX_AFTER_EACH', testSummary);

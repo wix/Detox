@@ -182,6 +182,22 @@ class ArtifactPlugin {
     this.context.testSummary = testSummary;
   }
 
+  /**
+   * @protected
+   * @async
+   * @param {any} event
+   * @return {Promise<void>} - when done
+   */
+  async onHookFailure(event) {}
+
+  /**
+   * @protected
+   * @async
+   * @param {any} event
+   * @return {Promise<void>} - when done
+   */
+  async onTestFnFailure(event) {}
+
   /***
    * @protected
    * @async

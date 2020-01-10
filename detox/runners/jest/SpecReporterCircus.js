@@ -7,7 +7,7 @@ class SpecReporterCircus extends CircusTestEventListenerBase {
     this._specReporter = new SpecReporter();
   }
 
-  _onSuiteStart(event) {
+  onRunDescribeStart(event) {
     if (event.describeBlock.parent !== undefined) {
       this._specReporter.onSuiteStart({
         description: event.describeBlock.name,
@@ -15,19 +15,19 @@ class SpecReporterCircus extends CircusTestEventListenerBase {
     }
   }
 
-  _onSuiteEnd(event) {
+  onRunDescribeFinish(event) {
     if (event.describeBlock.parent !== undefined) {
       this._specReporter.onSuiteEnd();
     }
   }
 
-  _onTestStart(event) {
+  onTestStart(event) {
     this._specReporter.onTestStart({
       description: event.test.name,
     });
   }
 
-  _onTestComplete(event) {
+  onTestDone(event) {
     const { test } = event;
     const testInfo = {
       description: test.name,
@@ -35,7 +35,7 @@ class SpecReporterCircus extends CircusTestEventListenerBase {
     this._specReporter.onTestEnd(testInfo, test.errors.length ? 'failed' : 'success');
   }
 
-  _onTestSkip(event) {
+  onTestSkip(event) {
     const testInfo = {
       description: event.test.name,
     };

@@ -1,11 +1,11 @@
 const _ = require('lodash');
 const CircusTestEventListenerBase = require('./CircusTestEventListenerBase');
-const DetoxAdapter = require('./DetoxAdapterImpl');
 
 class DetoxAdapterCircus extends CircusTestEventListenerBase {
   constructor(detox) {
     super();
-    this._adapter = new DetoxAdapter(detox, DetoxAdapterCircus._describeInitError);
+
+    this._detox = detox;
   }
 
   static _describeInitError() {
@@ -17,37 +17,41 @@ class DetoxAdapterCircus extends CircusTestEventListenerBase {
       };
   }
 
-  async beforeEach() {
-    await this._adapter.beforeEach();
-  }
-
-  async afterAll() {
-    await this._adapter.afterAll();
-  }
-
-  _onTestStart(event) {
+  async onTestStart(event) {
     const { test } = event;
     if (test.mode === 'skip' || test.mode === 'todo') {
       return;
     }
 
-    this._adapter.testStart({
+    await this._detox.beforeEach({
       title: test.name,
       fullName: this._getFullTestName(test),
       status: 'running',
     });
   }
 
-  _onTestComplete(event) {
-    const { test } = event;
-    this._adapter.testComplete({
-      status: test.errors.length ? 'failed' : 'passed',
-      timedOut: this._hasTimedOut(test)
+  async onHookFailure(event) {
+    await this._detox.notify({
+      event: 'hook_failure',
+      hook: event.hook.type,
     });
   }
 
-  _onTestSkip(event) {
-    // Ignored (for clarity)
+  async onTestFnFailure(event) {
+    await this._detox.notify({
+      event: 'test_fn_failure',
+    });
+  }
+
+  async onTestDone(event, state) {
+    const { test } = event;
+
+    await this._detox.afterEach({
+      title: test.name,
+      fullName: this._getFullTestName(test),
+      status: _.isEmpty(test.errors) ? 'passed' : 'failed',
+      timedOut: this._hasTimedOut(test)
+    });
   }
 
   _getFullTestName(test, separator = ' ') {
