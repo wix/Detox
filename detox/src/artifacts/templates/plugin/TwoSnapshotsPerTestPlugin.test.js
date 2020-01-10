@@ -22,18 +22,18 @@ describe('TwoSnapshotsPerTestPlugin', () => {
   describe('when disabled', () => {
     beforeEach(() => plugin.disable());
 
-    describe('onBeforeEach', () => {
-      beforeEach(async () => plugin.onBeforeEach(testSummaries.running()));
+    describe('onTestStart', () => {
+      beforeEach(async () => plugin.onTestStart(testSummaries.running()));
 
-      it('should not create artifact onBeforeEach', async () =>
+      it('should not create artifact onTestStart', async () =>
         expect(plugin.createTestArtifact).not.toHaveBeenCalled());
     });
 
     describe('when configured to keep artifacts', function() {
       beforeEach(() => plugin.configureToKeepArtifacts(true));
 
-      describe('onAfterEach', () => {
-        beforeEach(async () => plugin.onAfterEach(testSummaries.passed()));
+      describe('onTestDone', () => {
+        beforeEach(async () => plugin.onTestDone(testSummaries.passed()));
 
         it('should not do create artifacts', async () =>
           expect(plugin.createTestArtifact).not.toHaveBeenCalled());
@@ -46,8 +46,8 @@ describe('TwoSnapshotsPerTestPlugin', () => {
     describe('when configured to keep artifacts', function() {
       beforeEach(() => plugin.configureToKeepArtifacts(false));
 
-      describe('onAfterEach', () => {
-        beforeEach(async () => plugin.onAfterEach(testSummaries.passed()));
+      describe('onTestDone', () => {
+        beforeEach(async () => plugin.onTestDone(testSummaries.passed()));
 
         it('should not do create artifacts', async () =>
           expect(plugin.createTestArtifact).not.toHaveBeenCalled());
@@ -58,9 +58,9 @@ describe('TwoSnapshotsPerTestPlugin', () => {
     });
   });
 
-  describe('when onBeforeEach called', function() {
+  describe('when onTestStart called', function() {
     beforeEach(async () => {
-      await plugin.onBeforeEach(testSummaries.running());
+      await plugin.onTestStart(testSummaries.running());
     });
 
     it('should create test artifact', () => {
@@ -94,10 +94,10 @@ describe('TwoSnapshotsPerTestPlugin', () => {
   describe('when the plugin should keep a test artifact', () => {
     beforeEach(() => plugin.configureToKeepArtifacts(true));
 
-    describe('when onBeforeEach and onAfterEach are called', () => {
+    describe('when onTestStart and onTestDone are called', () => {
       beforeEach(async () => {
-        await plugin.onBeforeEach(testSummaries.running());
-        await plugin.onAfterEach(testSummaries.passed());
+        await plugin.onTestStart(testSummaries.running());
+        await plugin.onTestDone(testSummaries.passed());
       });
 
       it('should create the second test artifact', () => {
@@ -150,12 +150,12 @@ describe('TwoSnapshotsPerTestPlugin', () => {
       beforeEach(async () => {
         artifact = new ArtifactMock('screenshot');
 
-        await plugin.onBeforeEach(testSummaries.running());
+        await plugin.onTestStart(testSummaries.running());
         await plugin.onCreateExternalArtifact({
           artifact,
           name: 'final_name',
         });
-        await plugin.onAfterEach(testSummaries.passed());
+        await plugin.onTestDone(testSummaries.passed());
       });
 
       it('should be saved using the suggested name and untracked', async () => {
@@ -179,7 +179,7 @@ describe('TwoSnapshotsPerTestPlugin', () => {
           artifact,
           name: 'final_name',
         });
-        await plugin.onBeforeEach(testSummaries.running());
+        await plugin.onTestStart(testSummaries.running());
       });
 
       it('should be saved using the suggested name and untracked', async () => {
@@ -199,8 +199,8 @@ describe('TwoSnapshotsPerTestPlugin', () => {
       beforeEach(async () => {
         artifact = new ArtifactMock('screenshot');
 
-        await plugin.onBeforeEach(testSummaries.running());
-        await plugin.onAfterEach(testSummaries.passed());
+        await plugin.onTestStart(testSummaries.running());
+        await plugin.onTestDone(testSummaries.passed());
         await plugin.onCreateExternalArtifact({
           artifact,
           name: 'final_name',
@@ -223,10 +223,10 @@ describe('TwoSnapshotsPerTestPlugin', () => {
   describe('when the plugin should not keep a test artifact', () => {
     beforeEach(() => plugin.configureToKeepArtifacts(false));
 
-    describe('when onBeforeEach and onAfterEach are called', () => {
+    describe('when onTestStart and onTestDone are called', () => {
       beforeEach(async () => {
-        await plugin.onBeforeEach(testSummaries.running());
-        await plugin.onAfterEach(testSummaries.passed());
+        await plugin.onTestStart(testSummaries.running());
+        await plugin.onTestDone(testSummaries.passed());
       });
 
       it('should not create the second test artifact', () => {
@@ -257,12 +257,12 @@ describe('TwoSnapshotsPerTestPlugin', () => {
       beforeEach(async () => {
         artifact = new ArtifactMock('screenshot');
 
-        await plugin.onBeforeEach(testSummaries.running());
+        await plugin.onTestStart(testSummaries.running());
         await plugin.onCreateExternalArtifact({
           artifact,
           name: 'final_name',
         });
-        await plugin.onAfterEach(testSummaries.passed());
+        await plugin.onTestDone(testSummaries.passed());
       });
 
       it('should be discarded and untracked', async () => {

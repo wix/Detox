@@ -10,8 +10,8 @@ class WholeTestRecorderPlugin extends ArtifactPlugin {
     this.testRecording = null;
   }
 
-  async onBeforeEach(testSummary) {
-    await super.onBeforeEach(testSummary);
+  async onTestStart(testSummary) {
+    await super.onTestStart(testSummary);
 
     if (this.enabled) {
       this.testRecording = this.createTrackedTestRecording();
@@ -19,8 +19,8 @@ class WholeTestRecorderPlugin extends ArtifactPlugin {
     }
   }
 
-  async onAfterEach(testSummary) {
-    await super.onAfterEach(testSummary);
+  async onTestDone(testSummary) {
+    await super.onTestDone(testSummary);
 
     if (this.testRecording) {
       await this.testRecording.stop();

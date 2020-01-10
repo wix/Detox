@@ -284,9 +284,9 @@ describe('ArtifactsManager', () => {
 
         itShouldCatchErrorsOnPhase('onBeforeAll', () => undefined);
 
-        itShouldCatchErrorsOnPhase('onBeforeEach', () => testSummaries.running());
+        itShouldCatchErrorsOnPhase('onTestStart', () => testSummaries.running());
 
-        itShouldCatchErrorsOnPhase('onAfterEach', () => testSummaries.passed());
+        itShouldCatchErrorsOnPhase('onTestDone', () => testSummaries.passed());
 
         itShouldCatchErrorsOnPhase('onAfterAll', () => undefined);
 
@@ -346,22 +346,22 @@ describe('ArtifactsManager', () => {
         });
       });
 
-      describe('onBeforeEach', () => {
-        it('should call onBeforeEach in plugins with the passed argument', async () => {
+      describe('onTestStart', () => {
+        it('should call onTestStart in plugins with the passed argument', async () => {
           const testSummary = testSummaries.running();
 
           expect(testPlugin.onBeforeEach).not.toHaveBeenCalled();
-          await artifactsManager.onBeforeEach(testSummary);
+          await artifactsManager.onTestStart(testSummary);
           expect(testPlugin.onBeforeEach).toHaveBeenCalledWith(testSummary);
         });
       });
 
-      describe('onAfterEach', () => {
-        it('should call onAfterEach in plugins with the passed argument', async () => {
+      describe('onTestDone', () => {
+        it('should call onTestDone in plugins with the passed argument', async () => {
           const testSummary = testSummaries.passed();
 
           expect(testPlugin.onAfterEach).not.toHaveBeenCalled();
-          await artifactsManager.onAfterEach(testSummary);
+          await artifactsManager.onTestDone(testSummary);
           expect(testPlugin.onAfterEach).toHaveBeenCalledWith(testSummary);
         });
       });

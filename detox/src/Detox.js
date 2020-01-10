@@ -114,13 +114,13 @@ class Detox {
       pendingRequests: false,
       testName: testSummary.fullName,
     });
-    await this._artifactsManager.onBeforeEach(testSummary);
+    await this._artifactsManager.onTestStart(testSummary);
   }
 
   async afterEach(testSummary) {
     this._validateTestSummary(testSummary);
     this._logTestRunCheckpoint('DETOX_AFTER_EACH', testSummary);
-    await this._artifactsManager.onAfterEach(testSummary);
+    await this._artifactsManager.onTestDone(testSummary);
     await this._dumpUnhandledErrorsIfAny({
       pendingRequests: testSummary.timedOut,
       testName: testSummary.fullName,

@@ -143,12 +143,12 @@ class ArtifactsManager {
     await this._callPlugins('ascending', 'onBeforeAll');
   }
 
-  async onBeforeEach(testSummary) {
-    await this._callPlugins('ascending', 'onBeforeEach', testSummary);
+  async onTestStart(testSummary) {
+    await this._callPlugins('ascending', 'onTestStart', testSummary);
   }
 
-  async onAfterEach(testSummary) {
-    await this._callPlugins('descending', 'onAfterEach', testSummary);
+  async onTestDone(testSummary) {
+    await this._callPlugins('descending', 'onTestDone', testSummary);
   }
 
   async onAfterAll() {
