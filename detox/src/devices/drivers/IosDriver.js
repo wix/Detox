@@ -24,7 +24,8 @@ class IosDriver extends DeviceDriverBase {
   }
 
   declareArtifactPlugins() {
-    const { appleSimUtils, client } = this;
+    const appleSimUtils = this.applesimutils;
+    const client = this.client;
 
     return {
       instruments: (api) => new SimulatorInstrumentsPlugin({ api, client }),
