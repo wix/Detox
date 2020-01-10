@@ -34,7 +34,7 @@
     "detox": "^15.1.0",
     "express": "^4.15.3",
     "jest": "24.9.x",
-    "jest-circus": "24.9.x",
+    "@noomorph/jest-circus": "24.9.0-experiment.async",
     "jest-junit": "^8.0.0",
     "lodash": "^4.14.1",
     "nyc": "^14.0.0",

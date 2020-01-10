@@ -23,6 +23,16 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
     await this._takeAutomaticSnapshot('testStart');
   }
 
+  async onHookFailure(event) {
+    await super.onHookFailure(event);
+    await this._takeAutomaticSnapshot(`${event.hook}-error`);
+  }
+
+  async onTestFnFailure(event) {
+    await super.onHookFailure(event);
+    await this._takeAutomaticSnapshot('testError');
+  }
+
   async onTestDone(testSummary) {
     await super.onTestDone(testSummary);
 

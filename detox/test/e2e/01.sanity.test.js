@@ -1,22 +1,25 @@
 describe('Sanity', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
-    await element(by.text('Sanity')).tap();
   });
 
-  it('should have welcome screen', async () => {
-    await expect(element(by.text('Welcome'))).toBeVisible();
-    await expect(element(by.text('Say Hello'))).toBeVisible();
-    await expect(element(by.text('Say World'))).toBeVisible();
+  describe('correct beforeEach', () => {
+    beforeEach(async () => {
+      await element(by.text('Sanity')).tap();
+    });
+
+    it('but failing test', async () => {
+      await expect(element(by.text('Welcome2'))).toBeVisible();
+    });
   });
 
-  it('should show hello screen after tap', async () => {
-    await element(by.text('Say Hello')).tap();
-    await expect(element(by.text('Hello!!!'))).toBeVisible();
-  });
+  describe('incorrect beforeEach', () => {
+    beforeEach(async () => {
+      await element(by.text('Sanity2')).tap();
+    });
 
-  it('should show world screen after tap', async () => {
-    await element(by.text('Say World')).tap();
-    await expect(element(by.text('World!!!'))).toBeVisible();
+    it('and test that never ran', async () => {
+      await expect(element(by.text('Welcome'))).toBeVisible();
+    });
   });
 });

@@ -7,7 +7,7 @@ class WorkerAssignReporterCircus extends CircusTestEventListenerBase {
     this._reporter = new WorkerAssignReporter(detox);
   }
 
-  _onSuiteStart(event) {
+  onRunDescribeStart(event) {
     const { describeBlock } = event;
     if (describeBlock.parent && describeBlock.parent.parent === undefined) {
       this._reporter.report(describeBlock.name);
