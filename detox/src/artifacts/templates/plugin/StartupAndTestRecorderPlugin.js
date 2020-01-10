@@ -34,7 +34,7 @@ class StartupAndTestRecorderPlugin extends WholeTestRecorderPlugin {
     }
   }
 
-  async onBeforeEach(testSummary) {
+  async onTestStart(testSummary) {
     this._isInStartupPhase = false;
 
     if (this._isRecordingStartup) {
@@ -42,11 +42,11 @@ class StartupAndTestRecorderPlugin extends WholeTestRecorderPlugin {
       this._isRecordingStartup = false;
     }
 
-    await super.onBeforeEach(testSummary);
+    await super.onTestStart(testSummary);
   }
 
-  async onAfterEach(testSummary) {
-    await super.onAfterEach(testSummary);
+  async onTestDone(testSummary) {
+    await super.onTestDone(testSummary);
 
     if (this.startupRecording) {
       this._tryToFinalizeStartupRecording();

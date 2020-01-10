@@ -122,8 +122,8 @@ describe('ArtifactsManager', () => {
           onLaunchApp: jest.fn(),
           onCreateExternalArtifact: jest.fn(),
           onBeforeAll: jest.fn(),
-          onBeforeEach: jest.fn(),
-          onAfterEach: jest.fn(),
+          onTestStart: jest.fn(),
+          onTestDone: jest.fn(),
           onAfterAll: jest.fn(),
           onTerminate: jest.fn(),
         });
@@ -284,9 +284,9 @@ describe('ArtifactsManager', () => {
 
         itShouldCatchErrorsOnPhase('onBeforeAll', () => undefined);
 
-        itShouldCatchErrorsOnPhase('onBeforeEach', () => testSummaries.running());
+        itShouldCatchErrorsOnPhase('onTestStart', () => testSummaries.running());
 
-        itShouldCatchErrorsOnPhase('onAfterEach', () => testSummaries.passed());
+        itShouldCatchErrorsOnPhase('onTestDone', () => testSummaries.passed());
 
         itShouldCatchErrorsOnPhase('onAfterAll', () => undefined);
 
@@ -346,23 +346,23 @@ describe('ArtifactsManager', () => {
         });
       });
 
-      describe('onBeforeEach', () => {
-        it('should call onBeforeEach in plugins with the passed argument', async () => {
+      describe('onTestStart', () => {
+        it('should call onTestStart in plugins with the passed argument', async () => {
           const testSummary = testSummaries.running();
 
-          expect(testPlugin.onBeforeEach).not.toHaveBeenCalled();
-          await artifactsManager.onBeforeEach(testSummary);
-          expect(testPlugin.onBeforeEach).toHaveBeenCalledWith(testSummary);
+          expect(testPlugin.onTestStart).not.toHaveBeenCalled();
+          await artifactsManager.onTestStart(testSummary);
+          expect(testPlugin.onTestStart).toHaveBeenCalledWith(testSummary);
         });
       });
 
-      describe('onAfterEach', () => {
-        it('should call onAfterEach in plugins with the passed argument', async () => {
+      describe('onTestDone', () => {
+        it('should call onTestDone in plugins with the passed argument', async () => {
           const testSummary = testSummaries.passed();
 
-          expect(testPlugin.onAfterEach).not.toHaveBeenCalled();
-          await artifactsManager.onAfterEach(testSummary);
-          expect(testPlugin.onAfterEach).toHaveBeenCalledWith(testSummary);
+          expect(testPlugin.onTestDone).not.toHaveBeenCalled();
+          await artifactsManager.onTestDone(testSummary);
+          expect(testPlugin.onTestDone).toHaveBeenCalledWith(testSummary);
         });
       });
 

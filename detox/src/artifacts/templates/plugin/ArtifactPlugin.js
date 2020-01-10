@@ -191,7 +191,7 @@ class ArtifactPlugin {
    * @param {TestSummary} testSummary - has name of currently running test
    * @return {Promise<void>} - when done
    */
-  async onBeforeEach(testSummary) {
+  async onTestStart(testSummary) {
     this.context.testSummary = testSummary;
   }
 
@@ -201,7 +201,7 @@ class ArtifactPlugin {
    * @param {TestSummary} testSummary - has name and status of test that ran
    * @return {Promise<void>} - when done
    */
-  async onAfterEach(testSummary) {
+  async onTestDone(testSummary) {
     this.context.testSummary = testSummary;
 
     if (testSummary.status === 'failed') {
@@ -242,8 +242,8 @@ class ArtifactPlugin {
     this.onLaunchApp = _.noop;
     this.onUserAction = _.noop;
     this.onBeforeAll = _.noop;
-    this.onBeforeEach = _.noop;
-    this.onAfterEach = _.noop;
+    this.onTestStart = _.noop;
+    this.onTestDone = _.noop;
     this.onAfterAll = _.noop;
   }
 

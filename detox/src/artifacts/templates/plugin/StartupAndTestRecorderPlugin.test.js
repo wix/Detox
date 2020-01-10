@@ -31,18 +31,18 @@ describe('StartupAndTestRecorderPlugin', () => {
       it('should end correctly, but do nothing', expectThatNothingActuallyHappens);
     });
 
-    describe('onBeforeEach', () => {
+    describe('onTestStart', () => {
       beforeEach(async () => {
-        await plugin.onBeforeEach(testSummaries.running());
+        await plugin.onTestStart(testSummaries.running());
       });
 
       it('should end correctly, but do nothing', expectThatNothingActuallyHappens);
     });
 
-    describe('onAfterEach', () => {
+    describe('onTestDone', () => {
       beforeEach(async () => {
-        await plugin.onBeforeEach(testSummaries.running());
-        await plugin.onAfterEach(testSummaries.failed());
+        await plugin.onTestStart(testSummaries.running());
+        await plugin.onTestDone(testSummaries.failed());
       });
 
       it('should end correctly, but do nothing', expectThatNothingActuallyHappens);
@@ -50,8 +50,8 @@ describe('StartupAndTestRecorderPlugin', () => {
 
     describe('onAfterAll', () => {
       beforeEach(async () => {
-        await plugin.onBeforeEach(testSummaries.running());
-        await plugin.onAfterEach(testSummaries.failed());
+        await plugin.onTestStart(testSummaries.running());
+        await plugin.onTestDone(testSummaries.failed());
         await plugin.onAfterAll();
       });
 
@@ -89,11 +89,11 @@ describe('StartupAndTestRecorderPlugin', () => {
     });
   });
 
-  describe('onBeforeEach', () => {
+  describe('onTestStart', () => {
     describe('if app was launched before', () => {
       beforeEach(async () => {
         await plugin.onReadyToRecord();
-        await plugin.onBeforeEach(testSummaries.running());
+        await plugin.onTestStart(testSummaries.running());
       });
 
       it('should stop start-up recording', () => {
@@ -107,7 +107,7 @@ describe('StartupAndTestRecorderPlugin', () => {
 
     describe('', () => {
       beforeEach(async () => {
-        await plugin.onBeforeEach(testSummaries.running());
+        await plugin.onTestStart(testSummaries.running());
       });
 
       it('should create test recording', () => {
@@ -132,7 +132,7 @@ describe('StartupAndTestRecorderPlugin', () => {
     });
   });
 
-  describe('onAfterEach', () => {
+  describe('onTestDone', () => {
     describe('when plugin is keeping only artifacts from failed tests', () => {
       beforeEach(() => {
         plugin.keepOnlyFailedTestsArtifacts = true;
@@ -141,8 +141,8 @@ describe('StartupAndTestRecorderPlugin', () => {
       describe('and current test passed well', () => {
         beforeEach(async () => {
           await plugin.onReadyToRecord();
-          await plugin.onBeforeEach(testSummaries.running());
-          await plugin.onAfterEach(testSummaries.passed());
+          await plugin.onTestStart(testSummaries.running());
+          await plugin.onTestDone(testSummaries.passed());
           await api.emulateRunningAllIdleCallbacks();
         });
 
@@ -159,8 +159,8 @@ describe('StartupAndTestRecorderPlugin', () => {
       describe('and current test failed', () => {
         beforeEach(async () => {
           await plugin.onReadyToRecord();
-          await plugin.onBeforeEach(testSummaries.running());
-          await plugin.onAfterEach(testSummaries.failed());
+          await plugin.onTestStart(testSummaries.running());
+          await plugin.onTestDone(testSummaries.failed());
         });
 
         itShouldScheduleSavingAndUntrackingOfBothArtifacts();
@@ -175,8 +175,8 @@ describe('StartupAndTestRecorderPlugin', () => {
       describe('and test finished anyhow', () => {
         beforeEach(async () => {
           await plugin.onReadyToRecord();
-          await plugin.onBeforeEach(testSummaries.running());
-          await plugin.onAfterEach(testSummaries.passed());
+          await plugin.onTestStart(testSummaries.running());
+          await plugin.onTestDone(testSummaries.passed());
         });
 
         itShouldScheduleSavingAndUntrackingOfBothArtifacts();
@@ -190,7 +190,7 @@ describe('StartupAndTestRecorderPlugin', () => {
         plugin.keepOnlyFailedTestsArtifacts = false;
       });
 
-      describe('when there were no calls to .onBeforeEach and .onAfterEach', () => {
+      describe('when there were no calls to .onTestStart and .onTestDone', () => {
         beforeEach(async () => {
           await plugin.onReadyToRecord();
           await plugin.onAfterAll();
@@ -224,11 +224,11 @@ describe('StartupAndTestRecorderPlugin', () => {
         });
       });
 
-      describe('when there were already calls to .onAfterEach', () => {
+      describe('when there were already calls to .onTestDone', () => {
         beforeEach(async () => {
           await plugin.onReadyToRecord();
-          await plugin.onBeforeEach(testSummaries.running());
-          await plugin.onAfterEach(testSummaries.passed());
+          await plugin.onTestStart(testSummaries.running());
+          await plugin.onTestDone(testSummaries.passed());
           api.requestIdleCallback.mockClear();
         });
 
@@ -247,7 +247,7 @@ describe('StartupAndTestRecorderPlugin', () => {
         plugin.keepOnlyFailedTestsArtifacts = true;
       });
 
-      describe('when there were no calls to .onBeforeEach and .onAfterEach', () => {
+      describe('when there were no calls to .onTestStart and .onTestDone', () => {
         beforeEach(async () => {
           await plugin.onReadyToRecord();
 
@@ -261,8 +261,8 @@ describe('StartupAndTestRecorderPlugin', () => {
       describe('when all tests were successful', () => {
         beforeEach(async () => {
           await plugin.onReadyToRecord();
-          await plugin.onBeforeEach(testSummaries.running());
-          await plugin.onAfterEach(testSummaries.passed());
+          await plugin.onTestStart(testSummaries.running());
+          await plugin.onTestDone(testSummaries.passed());
 
           api.requestIdleCallback.mockClear();
           await plugin.onAfterAll();

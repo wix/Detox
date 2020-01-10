@@ -205,15 +205,15 @@ describe('ArtifactPlugin', () => {
       expect(plugin.context.testSummary).toBe(null);
     });
 
-    it('should have .onBeforeEach, which updates context.testSummary if called', async () => {
+    it('should have .onTestStart, which updates context.testSummary if called', async () => {
       const testSummary = testSummaries.running();
-      await plugin.onBeforeEach(testSummary);
+      await plugin.onTestStart(testSummary);
       expect(plugin.context.testSummary).toBe(testSummary);
     });
 
-    it('should have .onAfterEach, which updates context.testSummary if called', async () => {
+    it('should have .onTestDone, which updates context.testSummary if called', async () => {
       const testSummary = testSummaries.failed();
-      await plugin.onAfterEach(testSummary);
+      await plugin.onTestDone(testSummary);
       expect(plugin.context.testSummary).toBe(testSummary);
     });
 
@@ -241,8 +241,8 @@ describe('ArtifactPlugin', () => {
         expect(plugin.onBeforeTerminateApp).toBe(plugin.onTerminate);
         expect(plugin.onTerminateApp).toBe(plugin.onTerminate);
         expect(plugin.onBeforeAll).toBe(plugin.onTerminate);
-        expect(plugin.onBeforeEach).toBe(plugin.onTerminate);
-        expect(plugin.onAfterEach).toBe(plugin.onTerminate);
+        expect(plugin.onTestStart).toBe(plugin.onTerminate);
+        expect(plugin.onTestDone).toBe(plugin.onTerminate);
         expect(plugin.onAfterAll).toBe(plugin.onTerminate);
         expect(plugin.onUserAction).toBe(plugin.onTerminate);
       });

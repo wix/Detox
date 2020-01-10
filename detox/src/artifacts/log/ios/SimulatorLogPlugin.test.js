@@ -91,7 +91,7 @@ describe('SimulatorLogPlugin', () => {
     await artifactsManager.onBeforeAll();
     await logToDeviceLogs('take - inside before all');
 
-    await artifactsManager.onBeforeEach({ title: 'test', fullName: 'some test', status: 'running'});
+    await artifactsManager.onTestStart({ title: 'test', fullName: 'some test', status: 'running'});
     await logToDeviceLogs('take - inside before each');
 
     await logToDeviceLogs('take - before relaunch inside test');
@@ -100,7 +100,7 @@ describe('SimulatorLogPlugin', () => {
     await artifactsManager.onLaunchApp({ device: 'booted', bundleId: 'com.test', pid: 8001 });
     await logToDeviceLogs('take - after relaunch inside test');
 
-    await artifactsManager.onAfterEach({ title: 'test', fullName: 'some test', status: 'passed'});
+    await artifactsManager.onTestDone({ title: 'test', fullName: 'some test', status: 'passed'});
     await logToDeviceLogs('omit - after afterEach');
     await artifactsManager.onAfterAll();
     await logToDeviceLogs('omit - after afterAll');
