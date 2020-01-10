@@ -122,8 +122,8 @@ describe('ArtifactsManager', () => {
           onLaunchApp: jest.fn(),
           onCreateExternalArtifact: jest.fn(),
           onBeforeAll: jest.fn(),
-          onBeforeEach: jest.fn(),
-          onAfterEach: jest.fn(),
+          onTestStart: jest.fn(),
+          onTestDone: jest.fn(),
           onAfterAll: jest.fn(),
           onTerminate: jest.fn(),
         });
@@ -350,9 +350,9 @@ describe('ArtifactsManager', () => {
         it('should call onTestStart in plugins with the passed argument', async () => {
           const testSummary = testSummaries.running();
 
-          expect(testPlugin.onBeforeEach).not.toHaveBeenCalled();
+          expect(testPlugin.onTestStart).not.toHaveBeenCalled();
           await artifactsManager.onTestStart(testSummary);
-          expect(testPlugin.onBeforeEach).toHaveBeenCalledWith(testSummary);
+          expect(testPlugin.onTestStart).toHaveBeenCalledWith(testSummary);
         });
       });
 
@@ -360,9 +360,9 @@ describe('ArtifactsManager', () => {
         it('should call onTestDone in plugins with the passed argument', async () => {
           const testSummary = testSummaries.passed();
 
-          expect(testPlugin.onAfterEach).not.toHaveBeenCalled();
+          expect(testPlugin.onTestDone).not.toHaveBeenCalled();
           await artifactsManager.onTestDone(testSummary);
-          expect(testPlugin.onAfterEach).toHaveBeenCalledWith(testSummary);
+          expect(testPlugin.onTestDone).toHaveBeenCalledWith(testSummary);
         });
       });
 

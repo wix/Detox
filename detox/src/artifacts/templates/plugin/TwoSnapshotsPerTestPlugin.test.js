@@ -68,12 +68,12 @@ describe('TwoSnapshotsPerTestPlugin', () => {
     });
 
     it('should start and stop recording in the artifact', () => {
-      expect(plugin.snapshots.fromTest['beforeEach'].start).toHaveBeenCalledTimes(1);
-      expect(plugin.snapshots.fromTest['beforeEach'].stop).toHaveBeenCalledTimes(1);
+      expect(plugin.snapshots.fromTest['testStart'].start).toHaveBeenCalledTimes(1);
+      expect(plugin.snapshots.fromTest['testStart'].stop).toHaveBeenCalledTimes(1);
     });
 
     it('should put the artifact under tracking', () => {
-      expect(api.trackArtifact).toHaveBeenCalledWith(plugin.snapshots.fromTest['beforeEach']);
+      expect(api.trackArtifact).toHaveBeenCalledWith(plugin.snapshots.fromTest['testStart']);
     });
   });
 
@@ -105,12 +105,12 @@ describe('TwoSnapshotsPerTestPlugin', () => {
       });
 
       it('should start and stop the second test artifact', () => {
-        expect(plugin.snapshots.fromTest['afterEach'].start).toHaveBeenCalledTimes(1);
-        expect(plugin.snapshots.fromTest['afterEach'].stop).toHaveBeenCalledTimes(1);
+        expect(plugin.snapshots.fromTest['testDone'].start).toHaveBeenCalledTimes(1);
+        expect(plugin.snapshots.fromTest['testDone'].stop).toHaveBeenCalledTimes(1);
       });
 
       it('should put the second test artifact under tracking', () => {
-        expect(api.trackArtifact).toHaveBeenCalledWith(plugin.snapshots.fromTest['afterEach']);
+        expect(api.trackArtifact).toHaveBeenCalledWith(plugin.snapshots.fromTest['testDone']);
       });
 
       it('should schedule two saving operations and specify itself as an initiator', () => {
@@ -122,25 +122,25 @@ describe('TwoSnapshotsPerTestPlugin', () => {
       it('should schedule to save and untrack the first artifact', async () => {
         const [saveRequest] = api.requestIdleCallback.mock.calls[0];
 
-        expect(plugin.snapshots.fromTest['beforeEach'].save).not.toHaveBeenCalled();
+        expect(plugin.snapshots.fromTest['testStart'].save).not.toHaveBeenCalled();
         expect(api.untrackArtifact).not.toHaveBeenCalled();
 
         await saveRequest();
 
-        expect(plugin.snapshots.fromTest['beforeEach'].save).toBeCalledWith('test/beforeEach.png');
-        expect(api.untrackArtifact).toBeCalledWith(plugin.snapshots.fromTest['beforeEach']);
+        expect(plugin.snapshots.fromTest['testStart'].save).toBeCalledWith('test/testStart.png');
+        expect(api.untrackArtifact).toBeCalledWith(plugin.snapshots.fromTest['testStart']);
       });
 
       it('should ultimately save and untrack the second artifact', async () => {
         const [saveRequest] = api.requestIdleCallback.mock.calls[1];
 
-        expect(plugin.snapshots.fromTest['afterEach'].save).not.toHaveBeenCalled();
+        expect(plugin.snapshots.fromTest['testDone'].save).not.toHaveBeenCalled();
         expect(api.untrackArtifact).not.toHaveBeenCalled();
 
         await saveRequest();
 
-        expect(plugin.snapshots.fromTest['afterEach'].save).toBeCalledWith('test/afterEach.png');
-        expect(api.untrackArtifact).toBeCalledWith(plugin.snapshots.fromTest['afterEach']);
+        expect(plugin.snapshots.fromTest['testDone'].save).toBeCalledWith('test/testDone.png');
+        expect(api.untrackArtifact).toBeCalledWith(plugin.snapshots.fromTest['testDone']);
       });
     });
 
@@ -241,13 +241,13 @@ describe('TwoSnapshotsPerTestPlugin', () => {
       it('should ultimately discard and untrack the first artifact', async () => {
         const [discardRequest] = api.requestIdleCallback.mock.calls[0];
 
-        expect(plugin.snapshots.fromTest['beforeEach'].discard).not.toHaveBeenCalled();
+        expect(plugin.snapshots.fromTest['testStart'].discard).not.toHaveBeenCalled();
         expect(api.untrackArtifact).not.toHaveBeenCalled();
 
         await discardRequest();
 
-        expect(plugin.snapshots.fromTest['beforeEach'].discard).toHaveBeenCalledTimes(1);
-        expect(api.untrackArtifact).toBeCalledWith(plugin.snapshots.fromTest['beforeEach']);
+        expect(plugin.snapshots.fromTest['testStart'].discard).toHaveBeenCalledTimes(1);
+        expect(api.untrackArtifact).toBeCalledWith(plugin.snapshots.fromTest['testStart']);
       });
     });
 
