@@ -198,10 +198,6 @@ describe('Detox', () => {
       artifactsManager = detox._artifactsManager; // TODO: rewrite to avoid accessing private fields
     });
 
-    it(`Calling detox.init() should trigger artifactsManager.beforeAll()`, async () => {
-      expect(artifactsManager.onBeforeAll).toHaveBeenCalledTimes(1);
-    });
-
     it(`Calling detox.beforeEach() will trigger artifacts manager .onBeforeEach`, async () => {
       const testSummary = { title: 'test', fullName: 'suite - test', status: 'running' };
       await detox.beforeEach(testSummary);
@@ -236,9 +232,9 @@ describe('Detox', () => {
       expect(artifactsManager.onTestDone).toHaveBeenCalledWith(testSummary);
     });
 
-    it(`Calling detox.cleanup() should trigger artifactsManager.afterAll()`, async () => {
+    it(`Calling detox.cleanup() should trigger artifactsManager.onBeforeCleanup()`, async () => {
       await detox.cleanup();
-      expect(artifactsManager.onAfterAll).toHaveBeenCalledTimes(1);
+      expect(artifactsManager.onBeforeCleanup).toHaveBeenCalledTimes(1);
     });
   });
 });

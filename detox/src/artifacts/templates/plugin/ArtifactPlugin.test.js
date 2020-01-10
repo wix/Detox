@@ -199,12 +199,6 @@ describe('ArtifactPlugin', () => {
       })).resolves.toBe(void 0);
     });
 
-    it('should have .onBeforeAll, which resets context.testSummary if called', async () => {
-      plugin.context.testSummary = {};
-      await plugin.onBeforeAll();
-      expect(plugin.context.testSummary).toBe(null);
-    });
-
     it('should have .onTestStart, which updates context.testSummary if called', async () => {
       const testSummary = testSummaries.running();
       await plugin.onTestStart(testSummary);
@@ -217,9 +211,9 @@ describe('ArtifactPlugin', () => {
       expect(plugin.context.testSummary).toBe(testSummary);
     });
 
-    it('should have .onAfterAll, which resets context.testSummary if called', async () => {
+    it('should have .onBeforeCleanup, which resets context.testSummary if called', async () => {
       plugin.context.testSummary = {};
-      await plugin.onAfterAll();
+      await plugin.onBeforeCleanup();
       expect(plugin.context.testSummary).toBe(null);
     });
 
@@ -240,10 +234,9 @@ describe('ArtifactPlugin', () => {
         expect(plugin.onLaunchApp).toBe(plugin.onTerminate);
         expect(plugin.onBeforeTerminateApp).toBe(plugin.onTerminate);
         expect(plugin.onTerminateApp).toBe(plugin.onTerminate);
-        expect(plugin.onBeforeAll).toBe(plugin.onTerminate);
         expect(plugin.onTestStart).toBe(plugin.onTerminate);
         expect(plugin.onTestDone).toBe(plugin.onTerminate);
-        expect(plugin.onAfterAll).toBe(plugin.onTerminate);
+        expect(plugin.onBeforeCleanup).toBe(plugin.onTerminate);
         expect(plugin.onUserAction).toBe(plugin.onTerminate);
       });
 

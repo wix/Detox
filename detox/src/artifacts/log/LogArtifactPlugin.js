@@ -11,8 +11,8 @@ class LogArtifactPlugin extends StartupAndTestRecorderPlugin {
     super({ api });
   }
 
-  async onAfterAll() {
-    await super.onAfterAll();
+  async onBeforeCleanup() {
+    await super.onBeforeCleanup();
 
     if (this.shouldKeepArtifactOfSession()) {
       this.api.requestIdleCallback(async () => {

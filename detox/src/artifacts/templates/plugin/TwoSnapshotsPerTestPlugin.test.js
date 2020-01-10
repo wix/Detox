@@ -193,7 +193,7 @@ describe('TwoSnapshotsPerTestPlugin', () => {
       });
     });
 
-    describe('when an external snapshot is created before afterAll', function() {
+    describe('when an external snapshot is created before Detox cleanup', function() {
       let artifact;
 
       beforeEach(async () => {
@@ -205,7 +205,7 @@ describe('TwoSnapshotsPerTestPlugin', () => {
           artifact,
           name: 'final_name',
         });
-        await plugin.onAfterAll();
+        await plugin.onBeforeCleanup();
       });
 
       it('should be saved using the suggested name and untracked', async () => {

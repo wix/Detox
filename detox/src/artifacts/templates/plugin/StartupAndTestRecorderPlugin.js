@@ -53,14 +53,14 @@ class StartupAndTestRecorderPlugin extends WholeTestRecorderPlugin {
     }
   }
 
-  async onAfterAll() {
-    await super.onAfterAll();
+  async onBeforeCleanup() {
+    await super.onBeforeCleanup();
 
     if (this.startupRecording) {
       this._tryToFinalizeStartupRecording();
     }
 
-    await super.onAfterAll();
+    await super.onBeforeCleanup();
   }
 
   /***

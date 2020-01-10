@@ -121,10 +121,9 @@ describe('ArtifactsManager', () => {
           onBeforeLaunchApp: jest.fn(),
           onLaunchApp: jest.fn(),
           onCreateExternalArtifact: jest.fn(),
-          onBeforeAll: jest.fn(),
           onTestStart: jest.fn(),
           onTestDone: jest.fn(),
-          onAfterAll: jest.fn(),
+          onBeforeCleanup: jest.fn(),
           onTerminate: jest.fn(),
         });
       };
@@ -282,13 +281,11 @@ describe('ArtifactsManager', () => {
           });
         }
 
-        itShouldCatchErrorsOnPhase('onBeforeAll', () => undefined);
-
         itShouldCatchErrorsOnPhase('onTestStart', () => testSummaries.running());
 
         itShouldCatchErrorsOnPhase('onTestDone', () => testSummaries.passed());
 
-        itShouldCatchErrorsOnPhase('onAfterAll', () => undefined);
+        itShouldCatchErrorsOnPhase('onBeforeCleanup', () => undefined);
 
         itShouldCatchErrorsOnPhase('onTerminate', () => undefined);
 
@@ -338,14 +335,6 @@ describe('ArtifactsManager', () => {
         }));
       });
 
-      describe('onBeforeAll', () => {
-        it('should call onBeforeAll in plugins', async () => {
-          expect(testPlugin.onBeforeAll).not.toHaveBeenCalled();
-          await artifactsManager.onBeforeAll();
-          expect(testPlugin.onBeforeAll).toHaveBeenCalled();
-        });
-      });
-
       describe('onTestStart', () => {
         it('should call onTestStart in plugins with the passed argument', async () => {
           const testSummary = testSummaries.running();
@@ -366,11 +355,11 @@ describe('ArtifactsManager', () => {
         });
       });
 
-      describe('onAfterAll', () => {
-        it('should call onAfterAll in plugins', async () => {
-          expect(testPlugin.onAfterAll).not.toHaveBeenCalled();
-          await artifactsManager.onAfterAll();
-          expect(testPlugin.onAfterAll).toHaveBeenCalled();
+      describe('onBeforeCleanup', () => {
+        it('should call onBeforeCleanup in plugins', async () => {
+          expect(testPlugin.onBeforeCleanup).not.toHaveBeenCalled();
+          await artifactsManager.onBeforeCleanup();
+          expect(testPlugin.onBeforeCleanup).toHaveBeenCalled();
         });
       });
 
