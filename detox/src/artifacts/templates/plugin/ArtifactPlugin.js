@@ -11,7 +11,7 @@ const log = require('../../../utils/logger').child({ __filename });
 class ArtifactPlugin {
   constructor({ api }) {
     this.api = api;
-    this.context = {};
+    this.context = { testSummary: null };
     this.enabled = api.userConfig.enabled;
     this.keepOnlyFailedTestsArtifacts = api.userConfig.keepOnlyFailedTestsArtifacts;
     this.priority = 16;
@@ -171,19 +171,6 @@ class ArtifactPlugin {
   async onCreateExternalArtifact(event) {}
 
   /**
-   * Hook that is called before any test begins
-   *
-   * @protected
-   * @async
-   * @return {Promise<void>} - when done
-   */
-  async onBeforeAll() {
-    this.context.testSummary = null;
-    this._hasFailingTests = false;
-    this._finishedTests = false;
-  }
-
-  /**
    * Hook that is called before a test begins
    *
    * @protected
@@ -210,13 +197,13 @@ class ArtifactPlugin {
   }
 
   /**
-   * Hook that is called after all tests run
+   * Hook that is called when detox.cleanup() just begins
    *
    * @protected
    * @async
    * @return {Promise<void>} - when done
    */
-  async onAfterAll() {
+  async onBeforeCleanup() {
     this.context.testSummary = null;
     this._finishedTests = true;
     this._logDisableWarning();
@@ -241,10 +228,9 @@ class ArtifactPlugin {
     this.onBeforeLaunchApp = _.noop;
     this.onLaunchApp = _.noop;
     this.onUserAction = _.noop;
-    this.onBeforeAll = _.noop;
     this.onTestStart = _.noop;
     this.onTestDone = _.noop;
-    this.onAfterAll = _.noop;
+    this.onBeforeCleanup = _.noop;
   }
 
   _logDisableWarning() {

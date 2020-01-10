@@ -139,10 +139,6 @@ class ArtifactsManager {
     });
   }
 
-  async onBeforeAll() {
-    await this._callPlugins('ascending', 'onBeforeAll');
-  }
-
   async onTestStart(testSummary) {
     await this._callPlugins('ascending', 'onTestStart', testSummary);
   }
@@ -151,8 +147,8 @@ class ArtifactsManager {
     await this._callPlugins('descending', 'onTestDone', testSummary);
   }
 
-  async onAfterAll() {
-    await this._callPlugins('descending', 'onAfterAll');
+  async onBeforeCleanup() {
+    await this._callPlugins('descending', 'onBeforeCleanup');
     await this._idlePromise;
   }
 

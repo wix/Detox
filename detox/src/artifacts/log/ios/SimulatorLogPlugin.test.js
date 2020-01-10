@@ -1,4 +1,3 @@
-jest.mock('../../../utils/argparse');
 jest.mock('../../../utils/logger');
 
 const _ = require('lodash');
@@ -9,7 +8,6 @@ const path = require('path');
 
 describe('SimulatorLogPlugin', () => {
   async function majorWorkflow() {
-    let argparse = null;
     let fakePathBuilder = null;
     let fakeSources = null;
     let fakeAppleSimUtils = null;
@@ -19,24 +17,16 @@ describe('SimulatorLogPlugin', () => {
     let createdArtifacts = null;
 
     function init() {
-      argparse = require('../../../utils/argparse');
-      argparse.getArgValue.mockImplementation((key) => {
-        switch (key) {
-          case 'record-logs': return 'all';
-          case 'loglevel': return 'trace';
-          case 'artifacts-location': return path.dirname(tempfile(''));
-          default: throw new Error(`unexpected argparse.getArgValue mock call: ${key}`);
-        }
-      });
-
       SimulatorLogPlugin = require('./SimulatorLogPlugin');
       ArtifactsManager = require('../../ArtifactsManager');
 
       createdArtifacts = [];
       fakePathBuilder = {
-        buildPathForTestArtifact: jest.fn((_, summary) => {
+        buildPathForTestArtifact: jest.fn((artifactName, summary) => {
           const artifactPath = tempfile(summary ? '.log' : '.startup.log');
-          createdArtifacts.push(artifactPath);
+          if (!artifactName.includes('detox_')) {
+            createdArtifacts.push(artifactPath);
+          }
 
           return artifactPath;
         }),
@@ -48,7 +38,7 @@ describe('SimulatorLogPlugin', () => {
 
       fakeAppleSimUtils = {
         logStream({ udid, processImagePath, level, stdout, stderr }) {
-          fs.writeFileSync(fakeSources.stdin, '');
+          // fs.writeFileSync(fakeSources.stdin, '');
 
           const handle = fs.openSync(fakeSources.stdin, 'r');
           const process = exec.spawnAndLog('cat', [], {
@@ -65,7 +55,15 @@ describe('SimulatorLogPlugin', () => {
         },
       };
 
-      artifactsManager = new ArtifactsManager({ pathBuilder: fakePathBuilder });
+      artifactsManager = new ArtifactsManager({
+        pathBuilder: fakePathBuilder,
+        plugins: {
+          log: {
+            enabled: true,
+            keepOnlyFailedTestsArtifacts: false,
+          },
+        },
+      });
       artifactsManager.registerArtifactPlugins({
         log: (api) => new SimulatorLogPlugin({
           api,
@@ -88,26 +86,23 @@ describe('SimulatorLogPlugin', () => {
     await artifactsManager.onLaunchApp({ device: 'booted', bundleId: 'com.test', pid: 8000 });
     await logToDeviceLogs('omit - after launch inside detox.init()');
 
-    await artifactsManager.onBeforeAll();
-    await logToDeviceLogs('take - inside before all');
-
     await artifactsManager.onTestStart({ title: 'test', fullName: 'some test', status: 'running'});
-    await logToDeviceLogs('take - inside before each');
-
     await logToDeviceLogs('take - before relaunch inside test');
+
     await artifactsManager.onBeforeLaunchApp({ device: 'booted', bundleId: 'com.test' });
     await logToDeviceLogs('take - during relaunch inside test');
     await artifactsManager.onLaunchApp({ device: 'booted', bundleId: 'com.test', pid: 8001 });
-    await logToDeviceLogs('take - after relaunch inside test');
 
+    await logToDeviceLogs('take - after relaunch inside test');
     await artifactsManager.onTestDone({ title: 'test', fullName: 'some test', status: 'passed'});
-    await logToDeviceLogs('omit - after afterEach');
-    await artifactsManager.onAfterAll();
-    await logToDeviceLogs('omit - after afterAll');
+
+    await logToDeviceLogs('omit - before cleanup');
+    await artifactsManager.onBeforeCleanup();
+    await logToDeviceLogs('omit - after cleanup');
 
     const result = {};
 
-    expect(fakePathBuilder.buildPathForTestArtifact).toHaveBeenCalledTimes(2);
+    expect(fakePathBuilder.buildPathForTestArtifact).toHaveBeenCalledTimes(4);
     for (const artifact of createdArtifacts) {
       const contents = (await fs.readFile(artifact, 'utf8')).trim().split('\n');
       const extension = path.basename(artifact).split('.').slice(1).join('.');

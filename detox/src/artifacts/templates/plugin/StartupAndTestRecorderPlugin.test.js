@@ -48,11 +48,11 @@ describe('StartupAndTestRecorderPlugin', () => {
       it('should end correctly, but do nothing', expectThatNothingActuallyHappens);
     });
 
-    describe('onAfterAll', () => {
+    describe('onBeforeCleanup', () => {
       beforeEach(async () => {
         await plugin.onTestStart(testSummaries.running());
         await plugin.onTestDone(testSummaries.failed());
-        await plugin.onAfterAll();
+        await plugin.onBeforeCleanup();
       });
 
       it('should end correctly, but do nothing', expectThatNothingActuallyHappens);
@@ -184,7 +184,7 @@ describe('StartupAndTestRecorderPlugin', () => {
     });
   });
 
-  describe('onAfterAll', () => {
+  describe('onBeforeCleanup', () => {
     describe('when the plugin is configured to keep all artifacts', () => {
       beforeEach(() => {
         plugin.keepOnlyFailedTestsArtifacts = false;
@@ -193,7 +193,7 @@ describe('StartupAndTestRecorderPlugin', () => {
       describe('when there were no calls to .onTestStart and .onTestDone', () => {
         beforeEach(async () => {
           await plugin.onReadyToRecord();
-          await plugin.onAfterAll();
+          await plugin.onBeforeCleanup();
         });
 
         it('should schedule saving of the start-up recording', () => {
@@ -252,7 +252,7 @@ describe('StartupAndTestRecorderPlugin', () => {
           await plugin.onReadyToRecord();
 
           api.requestIdleCallback.mockClear();
-          await plugin.onAfterAll();
+          await plugin.onBeforeCleanup();
         });
 
         itShouldScheduleDiscardingAndUntrackingOfStartupArtifact();
@@ -265,7 +265,7 @@ describe('StartupAndTestRecorderPlugin', () => {
           await plugin.onTestDone(testSummaries.passed());
 
           api.requestIdleCallback.mockClear();
-          await plugin.onAfterAll();
+          await plugin.onBeforeCleanup();
         });
 
         itShouldScheduleDiscardingAndUntrackingOfStartupArtifact();

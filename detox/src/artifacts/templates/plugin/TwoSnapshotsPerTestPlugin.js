@@ -37,8 +37,8 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
     this._flushSessionSnapshots();
   }
 
-  async onAfterAll() {
-    await super.onAfterAll();
+  async onBeforeCleanup() {
+    await super.onBeforeCleanup();
     this._flushSessionSnapshots();
   }
 

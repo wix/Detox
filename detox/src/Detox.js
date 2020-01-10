@@ -81,13 +81,11 @@ class Detox {
       Object.assign(global, globalsToExport);
     }
 
-    await this._artifactsManager.onBeforeAll();
-
     return this;
   }
 
   async cleanup() {
-    await this._artifactsManager.onAfterAll();
+    await this._artifactsManager.onBeforeCleanup();
 
     if (this._client) {
       this._client.dumpPendingRequests();
