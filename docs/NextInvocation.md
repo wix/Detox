@@ -1,36 +1,37 @@
 `element(by.text('tapMe')).tap();`
 
+
 ```json
 {
-   type: "action",
-   action: "tap",
-   predicate: 
-     {
-      type: "text",
-      value: "Tap Me"
-     }
+  "type": "action",
+  "action": "tap",
+  "predicate": {
+    "type": "text",
+    "value": "Tap Me"
+  }
 }
+
 ```
 
 `element(by.id('uniqueId').and(by.text('some text'))).tap();`
 
 ```json
 {
- type: "action",
- action: "tap",
- predicate: {
- 	type: "and",
- 	predicastes: [
-		 { 
-		   type: "id",
-		   value: "uniqueId"
-		 }, 
-		 {
-		   type: "text",
-		   value: "some text"
-		 }
-		 ]
- }
+  "type": "action",
+  "action": "tap",
+  "predicate": {
+    "type": "and",
+    "predicates": [
+      {
+        "type": "id",
+        "value": "uniqueId"
+      },
+      {
+        "type": "text",
+        "value": "some text"
+      }
+    ]
+  }
 }
 ```
 
@@ -38,25 +39,24 @@
 
 ```json
 {
- type: "action",
- action: "tap",
- predicate: { 
-     type: "and", 
-     predicates: [
- 		{ 
-   		type: "id",
-   		value: "child"
- 		}, 
-		{
-		  type: "ancestor",
-		  value: 
-		  { 
-  			type: "id",
-  			value: "parent"
-  			}
-		}
- 		]
- 	}
+  "type": "action",
+  "action": "tap",
+  "predicate": {
+    "type": "and",
+    "predicates": [
+      {
+        "type": "id",
+        "value": "child"
+      },
+      {
+        "type": "ancestor",
+        "value": {
+          "type": "id",
+          "value": "parent"
+        }
+      }
+    ]
+  }
 }
 ```
 
@@ -65,15 +65,18 @@
 
 ```json
 {
-   type: "action",
-   action: "tapAtPoint",
-   params: [{x:5, y:10}]
-   predicate: 
-     {
-      type: "id",
-      value: "tappable"
-     }
-   
+  "type": "action",
+  "action": "tapAtPoint",
+  "params": [
+    {
+      "x": 5,
+      "y": 10
+    }
+  ],
+  "predicate": {
+    "type": "id",
+    "value": "tappable"
+  }
 }
 ```
 
@@ -98,27 +101,27 @@ Matchers
 
 ```json
 {
-    matchers: [
-        matchers
+    "matchers": [
+        
     ],
-    action: {
-        type: while,
-        params: [
+    "action": {
+        "type": "while",
+        "params": [
             {
-                matchers: [
-                    matchers
+                "matchers": [
+                    
                 ],
-                assertion: {
-                    modifier: not,
-                    type: visible
+                "assertion": {
+                    "modifier": "not",
+                    "type": "visible"
                 }
             },
             {
-                action: {
-                    type: scroll,
-                    params: [
+                "action": {
+                    "type": "scroll",
+                    "params": [
                         50,
-                        'down'
+                        "down"
                     ]
                 }
             }
