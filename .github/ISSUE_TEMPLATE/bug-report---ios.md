@@ -2,17 +2,17 @@
 name: Bug Report - iOS
 about: Create a report to help us improve Detox on iOS
 title: ''
-labels: 'z_platform: ios, type: triage/bug'
+labels: 'type: triage/bug, z_platform: ios'
 assignees: ''
 
 ---
 
-**Describe the bug**
+### Description
 A clear and concise description of what the bug is.
 
-**To Reproduce**
-
 - [ ] I have tested this issue on the latest Detox release and it still reproduces
+
+#### Reproduction
 
 Provide the steps necessary to reproduce the issue. If you are seeing a regression, try to provide the last known version where the issue did not reproduce.
 
@@ -21,15 +21,13 @@ Provide the steps necessary to reproduce the issue. If you are seeing a regressi
 3. 
 4. 
 
-If possible, please provide a small demo project that reproduces the issue, or attach a video with the reproduction - this would be very appreciated.
-
-**Expected behavior**
+#### Expected behavior
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
+#### Screenshots
 If applicable, add screenshots to help explain your problem.
 
-**Environment (please complete the following information):**
+#### Environment (please complete the following information):
  - Detox:
  - React Native:
  - Node:
@@ -38,8 +36,13 @@ If applicable, add screenshots to help explain your problem.
  - iOS:
  - macOS: 
 
-**Device and Verbose Detox Logs**
-Provide the device and "trace" Detox logs so we can understand what happened. You can obtain them by passing the loglevel param: `detox test --loglevel trace`
+### Logs
 
-**iOS Framework Build Logs**
-If you are seeing a build problem (e.g. during `npm install`), provide the log found here: `~/Library/Detox/ios/{...}/detox_ios.log`
+#### If you are experiencing a timeout in your test
+- [ ] I have followed the instructions under [Lower-level Idling Resources Debug](https://github.com/wix/Detox/blob/master/docs/Troubleshooting.Synchronization.md#lower-level-idling-resources-debug-ios-only) and am providing the log below:
+
+#### If you are seeing a build problem (e.g. during `npm install`)
+- [ ] I am providing the `npm install` log below:
+
+#### Device and verbose Detox logs
+- [ ] I have run my tests using the `--loglevel trace` argument and am providing the verbose log below:
