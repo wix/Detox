@@ -4,7 +4,12 @@ let detox;
 
 async function init(config, params) {
   detox = new Detox(config);
-  await detox.init(params);
+  try {
+    await detox.init(params);
+  } catch (e) {
+    console.error(`Error during detox initialization: ${e.message}`);
+    throw e;
+  }
 }
 
 async function cleanup() {
