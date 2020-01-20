@@ -28,7 +28,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     private final static String DETOX_SERVER_ARG_KEY = "detoxServer";
     private final static String DETOX_SESSION_ID_ARG_KEY = "detoxSessionId";
-    private final static String DETOX_RECORDING_PATH = "recordingPath";
+    private final static String DETOX_RECORDING_PATH_ARG_KEY = "detoxInstrumentsRecordingPath";
 
     private String detoxServerUrl;
     private String detoxSessionId;
@@ -61,7 +61,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
             return;
         }
         if (DetoxInstrumentsManager.supports()) {
-            final String recordingPath = arguments.getString(DETOX_RECORDING_PATH);
+            final String recordingPath = arguments.getString(DETOX_RECORDING_PATH_ARG_KEY);
             if (recordingPath != null) {
                 instrumentsManager = new DetoxInstrumentsManager(reactNativeHostHolder);
                 instrumentsManager.startRecordingAtLocalPath(recordingPath);

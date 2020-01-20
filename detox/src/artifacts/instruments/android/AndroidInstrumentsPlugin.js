@@ -12,6 +12,10 @@ class AndroidInstrumentsPlugin extends InstrumentsArtifactPlugin {
 
   async onBeforeLaunchApp(event) {
     await super.onBeforeLaunchApp(event);
+
+    if (this.testRecording) {
+      event.launchArgs['detoxInstrumentsRecordingPath'] = this.testRecording.temporaryRecordingPath;
+    }
   }
 
   async preparePathForTestArtifact(testSummary) {

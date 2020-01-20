@@ -6,14 +6,6 @@ class InstrumentsArtifactPlugin extends WholeTestRecorderPlugin {
     super({ api });
   }
 
-  async onBeforeLaunchApp(event) {
-    await super.onBeforeLaunchApp(event);
-
-    if (this.testRecording) {
-      event.launchArgs['recordingPath'] = this.testRecording.temporaryRecordingPath;
-    }
-  }
-
   async onBeforeUninstallApp(event) {
     await super.onBeforeUninstallApp(event);
     await this._stopRecordingIfExists();
