@@ -174,24 +174,23 @@ describe('InvokeTwo', () => {
 
     expect(testCall).deepEquals(jsonOutput);
   });
+
+  it(`waitFor(element(by.id('uniqueId'))).toHaveValue('Some value').withTimeout(2000)`, () => {
+    const testCall = waitFor(element(by.id('uniqueId'))).toHaveValue('Some value').withTimeout(2000);
+    const jsonOutput = {
+      type: 'waitFor',
+      timeout: 2000,
+      predicate: {
+        type: 'id',
+        value: 'uniqueId'
+      },
+      expectation: 'toHaveValue',
+      params: ['Some value']
+    };
+
+    expect(testCall).deepEquals(jsonOutput);
+  });
 });
-
-it(`waitFor(element(by.id('uniqueId'))).toHaveValue('Some value').withTimeout(2000)`, () => {
-  const testCall = waitFor(element(by.id('uniqueId'))).toHaveValue('Some value').withTimeout(2000);
-  const jsonOutput = {
-    type: 'waitFor',
-    timeout: 2000,
-    predicate: {
-      type: 'id',
-      value: 'uniqueId'
-    },
-    expectation: 'toHaveValue',
-    params: ['Some value']
-  };
-
-  expect(testCall).deepEquals(jsonOutput);
-});
-
 
 expect.extend({
   deepEquals(a, b) {
