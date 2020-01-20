@@ -6,6 +6,8 @@ import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.base.IdlingResourceRegistry
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.reactnative.idlingresources.*
+import com.wix.detox.reactnative.idlingresources.timers.TimersIdlingResource
+import com.wix.detox.reactnative.idlingresources.timers.getInterrogationStrategy
 import org.joor.Reflect
 import org.joor.ReflectException
 import java.util.Set
@@ -108,7 +110,7 @@ class ReactNativeIdlingResources constructor(
 
     private fun setupCustomRNIdlingResources() {
         rnBridgeIdlingResource = BridgeIdlingResource(reactContext)
-        timersIdlingResource = TimersIdlingResource(reactContext)
+        timersIdlingResource = TimersIdlingResource(getInterrogationStrategy(reactContext)!!)
         uiModuleIdlingResource = UIModuleIdlingResource(reactContext)
         animIdlingResource = AnimatedModuleIdlingResource(reactContext)
 
