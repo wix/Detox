@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 **Describe the bug**
-A clear and concise description of what the bug is.
+<!-- A clear and concise description of what the bug is. -->
 
 **To Reproduce**
 
@@ -28,10 +28,10 @@ If possible, please provide a small demo project that reproduces the issue, or a
 -->
 
 **Expected behavior**
-A clear and concise description of what you think should happen.
+<!-- A clear and concise description of what you think should happen. -->
 
 **Screenshots**
-If applicable, add screenshots to help explain your problem.
+<!-- If applicable, add screenshots to help explain your problem. -->
 
 **Device and Verbose Detox Logs**
 <!--
@@ -47,3 +47,5 @@ Device logs can be retrieved from the device using `adb logcat`, or if recorded,
  - Device:
  - OS: 
  - Test-runner (select one): Mocha | Jest+jasmine | Jest+jest-circus
+
+<!-- Note: Test-runner is set in Detox.test-runner in your package.json -->
