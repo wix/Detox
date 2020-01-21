@@ -28,7 +28,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     private final static String DETOX_SERVER_ARG_KEY = "detoxServer";
     private final static String DETOX_SESSION_ID_ARG_KEY = "detoxSessionId";
-    private final static String DETOX_RECORDING_PATH_ARG_KEY = "detoxInstrumentsRecordingPath";
+    private final static String DETOX_RECORDING_PATH_ARG_KEY = "detoxInstrumRecPath";
 
     private String detoxServerUrl;
     private String detoxSessionId;
