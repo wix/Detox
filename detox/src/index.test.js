@@ -1,4 +1,5 @@
 const schemes = require('./configurations.mock');
+
 describe('index', () => {
   let detox;
   let mockDevice;
@@ -24,7 +25,13 @@ describe('index', () => {
       .mock('./devices/Device')
       .mock('./utils/logger')
       .mock('./client/Client')
-      .mock('./Detox', () => jest.fn(() => mockDetox))
+      .mock('./Detox', () => {
+        const MissingDetox = require('./utils/MissingDetox');
+        const none = new MissingDetox();
+        none.cleanupContext = () => {}; // avoid ruining global state
+
+        return Object.assign(jest.fn(() => mockDetox), { none });
+      });
 
     process.env.DETOX_UNIT_TEST = true;
     detox = require('./index');
@@ -37,6 +44,14 @@ describe('index', () => {
       .unmock('./devices/Device')
       .unmock('./client/Client')
       .unmock('./Detox')
+  });
+
+  it(`constructs detox without globals if initGlobals = false`, async () => {
+    const Detox = require('./Detox');
+
+    await detox.init(schemes.validOneDeviceNoSession, { initGlobals: false });
+
+    expect('by' in global).toBe(false);
   });
 
   it(`throws if there was no config passed`, async () => {
@@ -185,8 +200,9 @@ describe('index', () => {
   it(`Basic usage with memorized exported objects`, async() => {
     const { device, by } = detox;
 
-    expect(device.launchApp).toBe(undefined);
-    expect(by.id).toBe(undefined);
+    expect(() => { device, by }).not.toThrowError();
+    expect(() => { device.launchApp }).toThrowError();
+    expect(() => { by.id }).toThrowError();
 
     await detox.init(schemes.validOneDeviceNoSession);
 
@@ -195,8 +211,9 @@ describe('index', () => {
 
     await detox.cleanup();
 
-    expect(device.launchApp).toBe(undefined);
-    expect(by.id).toBe(undefined);
+    expect(() => { device, by }).not.toThrowError();
+    expect(() => { device.launchApp }).toThrowError();
+    expect(() => { by.id }).toThrowError();
   });
 
   it(`Basic usage, do not throw an error if cleanup is done twice`, async() => {
@@ -221,7 +238,14 @@ describe('index', () => {
   });
 
   it(`beforeEach() should be covered - with detox not initialized`, async() => {
-    await detox.beforeEach();
+    await expect(detox.beforeEach()).rejects.toThrow(/Make sure to call/);
+  });
+
+  it(`error message should be covered - with detox failed to initialize`, async() => {
+    mockDetox.init.mockReturnValue(Promise.reject(new Error('Test error')));
+
+    await expect(detox.init(schemes.validOneDeviceNoSession)).rejects.toThrow(/Test error/);
+    await expect(detox.beforeEach()).rejects.toThrow(/There was an error/);
   });
 
   it(`afterEach() should be covered - with detox initialized`, async() => {
@@ -230,7 +254,6 @@ describe('index', () => {
   });
 
   it(`afterEach() should be covered - with detox not initialized`, async() => {
-    await detox.afterEach();
+    await expect(detox.afterEach()).rejects.toThrow(/Make sure to call/);
   });
-
 });
