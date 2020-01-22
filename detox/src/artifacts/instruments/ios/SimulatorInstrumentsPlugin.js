@@ -12,6 +12,10 @@ class SimulatorInstrumentsPlugin extends InstrumentsArtifactPlugin {
   async onBeforeLaunchApp(event) {
     await super.onBeforeLaunchApp(event);
 
+    if (this.testRecording) {
+      event.launchArgs['recordingPath'] = this.testRecording.temporaryRecordingPath;
+    }
+
     if (process.env.DETOX_INSTRUMENTS_PATH) {
       event.launchArgs['instrumentsPath'] = process.env.DETOX_INSTRUMENTS_PATH;
     }
