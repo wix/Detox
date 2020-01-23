@@ -1,7 +1,6 @@
 package com.wix.detox.instruments.reflected;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.wix.detox.instruments.DetoxInstrumentsException;
 import com.wix.detox.instruments.Instruments;
@@ -34,8 +33,6 @@ public class InstrumentsReflected implements Instruments {
             methodGetInstanceOfProfiler = profilerClass.getDeclaredMethod("getInstance", Context.class);
             methodStartRecording = profilerClass.getDeclaredMethod("startProfiling", Context.class, configurationClass);
         } catch (Exception e) {
-            Log.i("DetoxInstrumentsManager", "InstrumentsRecording not found", e);
-
             constructorDtxProfilingConfiguration = null;
             methodGetInstanceOfProfiler = null;
             methodStartRecording = null;
