@@ -32,10 +32,10 @@ public class InstrumentsReflected implements Instruments {
             );
             methodGetInstanceOfProfiler = profilerClass.getDeclaredMethod("getInstance", Context.class);
             methodStartRecording = profilerClass.getDeclaredMethod("startProfiling", Context.class, configurationClass);
-        } catch (Exception e) {
-            constructorDtxProfilingConfiguration = null;
+        } catch (ClassNotFoundException e) {
             methodGetInstanceOfProfiler = null;
-            methodStartRecording = null;
+        } catch (NoSuchMethodException e) {
+            methodGetInstanceOfProfiler = null;
         }
         hasProfiler = methodGetInstanceOfProfiler != null;
     }
