@@ -23,6 +23,12 @@ Running Detox (on iOS) requires the following:
 
 Homebrew is a package manager for macOS, we'll need it to install other command line tools.
 
+To ensure everything needed for Homebrew tool installation is installed, run
+
+```sh
+xcode-select install
+```
+
 > TIP: Verify it works by typing in terminal `brew -h` to output list of available commands
 
 #### 2. Install [Node.js](https://nodejs.org/en/)
@@ -39,10 +45,7 @@ Node is the JavaScript runtime Detox will run on. **Install Node 8.3.0 or above*
 
 A collection of utils for Apple simulators, Detox uses it to communicate with the simulator.
 
-If you are using `MacOS Mojave` run `xcode-select install` first
-
 ```sh
-xcode-select install
 brew tap wix/brew
 brew install applesimutils
 ```
