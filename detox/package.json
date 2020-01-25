@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "14.5.1",
+  "version": "15.1.4",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -34,7 +34,7 @@
     "jest": "24.6.x",
     "mockdate": "^2.0.1",
     "prettier": "1.7.0",
-    "react-native": "0.59.8",
+    "react-native": "0.60.x",
     "wtfnode": "^0.8.0"
   },
   "dependencies": {
@@ -88,6 +88,7 @@
       "src/devices/ios/AppleSimUtils.js",
       "src/server/DetoxServer.js",
       ".*Driver.js",
+      "MissingDetox.js",
       "EmulatorTelnet.js",
       "Emulator.js",
       "DeviceDriverBase.js",

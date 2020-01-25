@@ -6,26 +6,48 @@ const ArtifactPlugin = require('./ArtifactPlugin');
 class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
   constructor({ api }) {
     super({ api });
-    this.snapshots = {};
+
+    this.shouldTakeAutomaticSnapshots = this.api.userConfig.shouldTakeAutomaticSnapshots;
+    this.keepOnlyFailedTestsArtifacts = this.api.userConfig.keepOnlyFailedTestsArtifacts;
+    this.snapshots = {
+      fromTest: {},
+      fromSession: {},
+    };
   }
 
-  async onBeforeEach(testSummary) {
-    await super.onBeforeEach(testSummary);
-    await this._takeAutomaticSnapshot('beforeEach');
+  async onTestStart(testSummary) {
+    this.context.testSummary = null;
+    this._flushSessionSnapshots();
+
+    await super.onTestStart(testSummary);
+    await this._takeAutomaticSnapshot('testStart');
   }
 
-  async onAfterEach(testSummary) {
-    await super.onAfterEach(testSummary);
+  async onTestDone(testSummary) {
+    await super.onTestDone(testSummary);
 
     if (this.shouldKeepArtifactOfTest(testSummary)) {
-      await this._takeAutomaticSnapshot('afterEach');
-      this.startSavingSnapshot('beforeEach');
-      this.startSavingSnapshot('afterEach');
+      await this._takeAutomaticSnapshot('testDone');
+      this._startSavingSnapshots('fromTest');
     } else {
-      this.startDiscardingSnapshot('beforeEach');
+      this._startDiscardingSnapshots('fromTest');
     }
 
-    this._clearAutomaticSnapshotReferences();
+    this.context.testSummary = null;
+    this._flushSessionSnapshots();
+  }
+
+  async onBeforeCleanup() {
+    await super.onBeforeCleanup();
+    this._flushSessionSnapshots();
+  }
+
+  async onCreateExternalArtifact(e) {
+    if (!e.artifact) {
+      throw new Error('Internal error: expected Artifact instance in the event');
+    }
+
+    this._registerSnapshot(e.name, e.artifact);
   }
 
   /***
@@ -44,58 +66,65 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
    */
   createTestArtifact() {}
 
-  _clearAutomaticSnapshotReferences() {
-    delete this.snapshots.beforeEach;
-    delete this.snapshots.afterEach;
-  }
-
   async _takeAutomaticSnapshot(name) {
-    if (this.enabled) {
-      await this.takeSnapshot(name);
+    if (this.enabled && this.shouldTakeAutomaticSnapshots) {
+      await this._takeSnapshot(name);
     }
   }
 
-  /***
-   * @protected
-   */
-  async takeSnapshot(name) {
-    const snapshot = this.snapshots[name] = this.createTestArtifact();
+  async _takeSnapshot(name) {
+    const snapshot = this.createTestArtifact();
     await snapshot.start();
     await snapshot.stop();
 
+    this._registerSnapshot(name, snapshot);
+  }
+
+  _registerSnapshot(name, snapshot) {
+    const snapshots = this.context.testSummary
+      ? this.snapshots.fromTest
+      : this.snapshots.fromSession;
+
+    snapshots[name] = snapshot;
     this.api.trackArtifact(snapshot);
   }
 
-  /***
-   * @protected
-   */
-  startSavingSnapshot(name) {
-    const snapshot = this.snapshots[name];
-    if (!snapshot) {
-      return;
-    }
-
+  _startSavingSnapshots(where) {
     const {testSummary} = this.context;
-    this.api.requestIdleCallback(async () => {
-      const snapshotArtifactPath = await this.preparePathForSnapshot(testSummary, name);
-      await snapshot.save(snapshotArtifactPath);
-      this.api.untrackArtifact(snapshot);
-    });
+    const snapshots = this.snapshots[where];
+
+    for (const [name, snapshot] of Object.entries(snapshots)) {
+      delete this.snapshots[name];
+
+      this.api.requestIdleCallback(async () => {
+        const snapshotArtifactPath = await this.preparePathForSnapshot(testSummary, name);
+        await snapshot.save(snapshotArtifactPath);
+        this.api.untrackArtifact(snapshot);
+      });
+    }
   }
 
-  /***
-   * @protected
-   */
-  startDiscardingSnapshot(name) {
-    const snapshot = this.snapshots[name];
-    if (!snapshot) {
-      return;
+  _startDiscardingSnapshots(where) {
+    const snapshots = this.snapshots[where];
+
+    for (const [name, snapshot] of Object.entries(snapshots)) {
+      delete this.snapshots[name];
+
+      this.api.requestIdleCallback(async () => {
+        await snapshot.discard();
+        this.api.untrackArtifact(snapshot);
+      });
+    }
+  }
+
+  _flushSessionSnapshots() {
+    if (this.shouldKeepArtifactOfSession() === true) {
+      this._startSavingSnapshots('fromSession');
     }
 
-    this.api.requestIdleCallback(async () => {
-      await snapshot.discard();
-      this.api.untrackArtifact(snapshot);
-    });
+    if (this.shouldKeepArtifactOfSession() === false) {
+      this._startDiscardingSnapshots('fromSession');
+    }
   }
 }
 

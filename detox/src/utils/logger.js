@@ -3,6 +3,7 @@ const path = require('path');
 const bunyan = require('bunyan');
 const bunyanDebugStream = require('bunyan-debug-stream');
 const argparse = require('./argparse');
+const temporaryPath = require('../artifacts/utils/temporaryPath');
 
 function adaptLogLevelName(level) {
   switch (level) {
@@ -61,32 +62,40 @@ function createPlainBunyanStream({ logPath, level }) {
 function init() {
   const levelFromArg = argparse.getArgValue('loglevel');
   const level = adaptLogLevelName(levelFromArg);
-  const logBaseFilename = path.join(argparse.getArgValue('artifacts-location') || '', `detox_pid_${process.pid}`);
-  const shouldRecordLogs = typeof DETOX_CLI === 'undefined' && ['failing', 'all'].indexOf(argparse.getArgValue('record-logs')) >= 0;
-
   const bunyanStreams = [createPlainBunyanStream({ level })];
-  if (shouldRecordLogs) {
-    const jsonFileStreamPath = logBaseFilename + '.json.log';
-    const plainFileStreamPath = logBaseFilename + '.log';
 
-    fs.ensureFileSync(jsonFileStreamPath);
-    fs.ensureFileSync(plainFileStreamPath);
-
-    bunyanStreams.push({
-      level,
-      path: jsonFileStreamPath,
-    });
-
-    bunyanStreams.push(createPlainBunyanStream({
-      level,
-      logPath: plainFileStreamPath,
-    }));
+  let jsonFileStreamPath, plainFileStreamPath;
+  if (!global.DETOX_CLI && !global.IS_RUNNING_DETOX_UNIT_TESTS) {
+    {
+      jsonFileStreamPath = temporaryPath.for.log();
+      fs.ensureFileSync(jsonFileStreamPath);
+      bunyanStreams.push({
+        level,
+        path: jsonFileStreamPath,
+      });
+    }
+    {
+      plainFileStreamPath = temporaryPath.for.log();
+      fs.ensureFileSync(plainFileStreamPath);
+      bunyanStreams.push(createPlainBunyanStream({
+        level,
+        logPath: plainFileStreamPath,
+      }));
+    }
   }
 
   const logger = bunyan.createLogger({
     name: 'detox',
     streams: bunyanStreams,
   });
+
+  if (jsonFileStreamPath) {
+    logger.jsonFileStreamPath = jsonFileStreamPath;
+  }
+
+  if (plainFileStreamPath) {
+    logger.plainFileStreamPath = plainFileStreamPath;
+  }
 
   return logger;
 }

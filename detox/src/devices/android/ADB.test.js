@@ -44,7 +44,7 @@ describe('ADB', () => {
   describe('devices', () => {
     it(`should invoke ADB`, async () => {
       await adb.devices();
-      expect(exec).toHaveBeenCalledWith(`${adbBinPath}  devices`, { verbosity: 'high' }, undefined, 1);
+      expect(exec).toHaveBeenCalledWith(`"${adbBinPath}"  devices`, { verbosity: 'high' }, undefined, 1);
       expect(exec).toHaveBeenCalledTimes(1);
     });
 
@@ -137,11 +137,11 @@ describe('ADB', () => {
     await adb.install('emulator-5556', 'path inside "quotes" to/app');
 
     expect(exec).toHaveBeenCalledWith(
-      expect.stringContaining('adb -s emulator-5556 shell "getprop ro.build.version.sdk"'),
+      expect.stringContaining('adb" -s emulator-5556 shell "getprop ro.build.version.sdk"'),
       {}, undefined, 5);
 
     expect(exec).toHaveBeenCalledWith(
-      expect.stringContaining('adb -s emulator-5556 install -rg "path inside \\"quotes\\" to/app"'),
+      expect.stringContaining('adb" -s emulator-5556 install -rg "path inside \\"quotes\\" to/app"'),
       undefined, undefined, 1);
   });
 

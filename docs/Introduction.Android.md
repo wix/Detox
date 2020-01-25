@@ -153,6 +153,10 @@ Using the `android.emu.debug` configuration from above, you can invoke it in the
 detox test -c android.emu.debug
 ```
 
+### 7. Fix your Android emulators
+
+While everything may seem on the working side right now, there are many issues with Google's Android emulators causing flakiness and inefficient usage, we recommend addressing. We highly recommend you take the time and apply the practices we've summed up in our [Emulators Best Practices guide](Introduction.AndroidEmulatorsBestPractices.md), in all relevant machines (dev computers, CI agents and scripts) and AVD's.
+
 
 
 ## Proguard (Minification)
@@ -276,6 +280,33 @@ dependencies {
 
 Detox should work with `kotlin-stdlib-jdk7`, as well.
 
+A typical error output formed by `Gradle` in this case is as provided, for example, in [#1380](https://github.com/wix/Detox/issues/1380):
+
+```
+Could not determine the dependencies of task ':detox:compileDebugAidl'.
+> Could not resolve all task dependencies for configuration ':detox:debugCompileClasspath'.
+   > Could not resolve org.jetbrains.kotlin:kotlin-stdlib:1.3.0.
+     Required by:
+         project :detox
+      > Cannot find a version of 'org.jetbrains.kotlin:kotlin-stdlib' that satisfies the version constraints:
+           Dependency path 'OurApp:detox:unspecified' --> 'com.squareup.okhttp3:okhttp:4.0.0-alpha01' --> 'org.jetbrains.kotlin:kotlin-stdlib:1.3.30'
+           Dependency path 'OurApp:detox:unspecified' --> 'com.squareup.okio:okio:2.2.2' --> 'org.jetbrains.kotlin:kotlin-stdlib:1.2.60'
+           Dependency path 'OurApp:detox:unspecified' --> 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.0' --> 'org.jetbrains.kotlin:kotlin-stdlib:1.3.0'
+           Dependency path 'OurApp:detox:unspecified' --> 'com.facebook.react:react-native:0.59.5' --> 'com.squareup.okhttp3:okhttp:4.0.0-alpha01' --> 'org.jetbrains.kotlin:kotlin-stdlib:1.3.30'
+           Dependency path 'OurApp:detox:unspecified' --> 'com.facebook.react:react-native:0.59.5' --> 'com.squareup.okio:okio:2.2.2' --> 'org.jetbrains.kotlin:kotlin-stdlib:1.2.60'
+           Dependency path 'OurApp:detox:unspecified' --> 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.0' --> 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.0' --> 'org.jetbrains.kotlin:kotlin-stdlib:1.3.0'
+           Constraint path 'OurApp:detox:unspecified' --> 'org.jetbrains.kotlin:kotlin-stdlib' strictly '1.3.0' because of the following reason: debugRuntimeClasspath uses version 1.3.0
+           Constraint path 'OurApp:detox:unspecified' --> 'org.jetbrains.kotlin:kotlin-stdlib' strictly '1.3.0' because of the following reason: debugRuntimeClasspath uses version 1.3.0
+
+   > Could not resolve org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0.
+     Required by:
+         project :detox
+      > Cannot find a version of 'org.jetbrains.kotlin:kotlin-stdlib-common' that satisfies the version constraints:
+           Dependency path 'OurApp:detox:unspecified' --> 'com.squareup.okhttp3:okhttp:4.0.0-alpha01' --> 'org.jetbrains.kotlin:kotlin-stdlib:1.3.30' --> 'org.jetbrains.kotlin:kotlin-stdlib-common:1.3.30'
+           Constraint path 'OurApp:detox:unspecified' --> 'org.jetbrains.kotlin:kotlin-stdlib-common' strictly '1.3.0' because of the following reason: debugRuntimeClasspath uses version 1.3.0
+```
+(i.e. the project indirectly depends on different versions of `kotlin-stdlib`, such as `1.3.0`, `1.3.30`, `1.2.60`)
+
 #### Resolving for a compiling subproject
 
 Detox requires the Kotlin standard-library as it's own dependency. Due to the [many flavours](https://kotlinlang.org/docs/reference/using-gradle.html#configuring-dependencies) by which Kotlin has been released, multiple dependencies often create a conflict.
@@ -289,4 +320,38 @@ buildscript {
     ext.detoxKotlinStdlib = 'kotlin-stdlib-jdk7' // Detox' default is kotlin-stdlib-jdk8
 }
 ```
+
+
+
+### Problem: The app loads but tests fail to start in SDK >= 28
+
+As reported in issue [#1450](https://github.com/wix/Detox/issues/1450), sometimes the application under test would properly launch on an emulator/device when running Detox, but the test runner will hang and will not start running the actual tests.
+
+More specifically, when this happens:
+
+1. Detox and the tests runner launch successfully, alongside the app being run (unless `launchApp: false` has been passed to `detox.init()`), but the first test simply hangs forever (as explained).
+2. Eventually, the test runner would time-out.
+3. The last reported Detox-logs before time-out would indicate the device failing to connect to the Detox tester on the host. For example:
+
+```
+detox[12345] DEBUG: [DetoxServer.js/CANNOT_FORWARD] role=testee not connected, cannot fw action (sessionId=11111111-2222-3333-4444-555555555555)
+```
+
+A common reason for this set of symptoms to take place is the lack of a clear-text network traffic policy configuration in app - the kind that would allow both the app _and Detox_ to work properly. These Android developers blog posts ([1](https://android-developers.googleblog.com/2016/04/protecting-against-unintentional.html), [2](https://developer.android.com/training/articles/security-config)) elaborate on what should be configured for apps and how, in great length. The pain-point in this context is that in SDK 28, clear-text traffic was set to be denied by Android, by default. In that mode, Detox, which requires such traffic while testing, is blocked.
+
+The solution here is therefore to first properly configure clear-text traffic and for all app flavors (e.g. release / debug) -- if you haven't already. Second, the app needs to be configured to allow for clear-text traffic between the emulator and the running host. Examples:
+
+1. Applying `android:cleartextTrafficPermitted="true"` in the application tag of the main `AndroidManifest.xml` **(not recommended)**.
+2. **(Untested)** Applying a base config denying clear-text (i.e. using `cleartextTrafficPermitted=false`, or just by omitting it altogether), and enabling it for the special-localhost domain:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">10.0.2.2</domain>
+    </domain-config>
+</network-security-config>
+```
+
+> `10.0.2.2` is the IP equivalent to the localhost on the computer hosting the Android emulator, on Google emulators. On Genymotion ones, it is `10.0.3.2`.
 

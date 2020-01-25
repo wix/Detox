@@ -8,22 +8,27 @@ describe('WholeTestRecorderPlugin', () => {
   let plugin;
 
   beforeEach(() => {
-    api = new ArtifactsApi();
+    api = new ArtifactsApi({
+      config: {
+        enabled: false,
+        keepOnlyFailedTestsArtifacts: false,
+      },
+    });
     plugin = new FakeWholeTestRecorderPlugin({ api });
   });
 
   describe('when disabled', () => {
     beforeEach(() => plugin.disable());
 
-    describe('onBeforeEach', () => {
-      beforeEach(async () => plugin.onBeforeEach(testSummaries.running()));
+    describe('onTestStart', () => {
+      beforeEach(async () => plugin.onTestStart(testSummaries.running()));
 
-      it('should not create recording onBeforeEach', async () =>
+      it('should not create recording onTestStart', async () =>
         expect(plugin.createTestRecording).not.toHaveBeenCalled());
     });
 
-    describe('onAfterEach', () => {
-      beforeEach(async () => plugin.onAfterEach(testSummaries.passed()));
+    describe('onTestDone', () => {
+      beforeEach(async () => plugin.onTestDone(testSummaries.passed()));
 
       it('should not create recording', async () =>
         expect(plugin.createTestRecording).not.toHaveBeenCalled());
@@ -33,8 +38,8 @@ describe('WholeTestRecorderPlugin', () => {
     });
   });
 
-  describe('onBeforeEach', () => {
-    beforeEach(async () => plugin.onBeforeEach(testSummaries.running()));
+  describe('onTestStart', () => {
+    beforeEach(async () => plugin.onTestStart(testSummaries.running()));
 
     it('should create artifact', async () => {
       expect(plugin.createTestRecording).toHaveBeenCalled();
@@ -56,10 +61,10 @@ describe('WholeTestRecorderPlugin', () => {
   describe('when the plugin should keep a test artifact', () => {
     beforeEach(() => plugin.configureToKeepArtifacts(true));
 
-    describe('onAfterEach', () => {
+    describe('onTestDone', () => {
       beforeEach(async () => {
-        await plugin.onBeforeEach(testSummaries.running());
-        await plugin.onAfterEach(testSummaries.failed());
+        await plugin.onTestStart(testSummaries.running());
+        await plugin.onTestDone(testSummaries.failed());
       });
 
       it('should stop artifact recording', async () => {
@@ -88,10 +93,10 @@ describe('WholeTestRecorderPlugin', () => {
   describe('when the plugin should discard a test artifact', () => {
     beforeEach(() => plugin.configureToKeepArtifacts(false));
 
-    describe('onAfterEach', () => {
+    describe('onTestDone', () => {
       beforeEach(async () => {
-        await plugin.onBeforeEach(testSummaries.running());
-        await plugin.onAfterEach(testSummaries.failed());
+        await plugin.onTestStart(testSummaries.running());
+        await plugin.onTestDone(testSummaries.failed());
       });
 
       it('should stop artifact recording', async () => {

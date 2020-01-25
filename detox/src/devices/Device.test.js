@@ -71,6 +71,14 @@ describe('Device', () => {
     expectTerminateNotCalled() {
       expect(this.driver.terminate).not.toHaveBeenCalled();
     }
+
+    expectReverseTcpPortCalled(deviceId, port) {
+      expect(this.driver.reverseTcpPort).toHaveBeenCalledWith(deviceId, port);
+    }
+
+    expectUnreverseTcpPortCalled(deviceId, port) {
+      expect(this.driver.unreverseTcpPort).toHaveBeenCalledWith(deviceId, port);
+    }
   }
 
   function schemeDevice(scheme, configuration) {
@@ -94,6 +102,17 @@ describe('Device', () => {
 
     const device = validDevice();
     expect(device.name).toEqual('mock-device-name-from-driver');
+  });
+
+  it('should return an undefined ID for an unprepared device', async() => {
+    const device = validDevice();
+    expect(device.id).toBeUndefined();
+  });
+
+  it('should return the device ID, as provided by acquireFreeDevice', async () => {
+    const device = validDevice();
+    await device.prepare();
+    expect(device.id).toEqual('mockDeviceId');
   });
 
   describe('prepare()', () => {
@@ -526,6 +545,21 @@ describe('Device', () => {
     expect(driverMock.driver.unmatchFinger).toHaveBeenCalledTimes(1);
   });
 
+  it(`setStatusBar() should pass to device driver`, async () => {
+    const device = validDevice();
+    const params = {};
+    await device.setStatusBar(params);
+
+    expect(driverMock.driver.setStatusBar).toHaveBeenCalledWith(device._deviceId, params);
+  });
+
+  it(`resetStatusBar() should pass to device driver`, async () => {
+    const device = validDevice();
+    await device.resetStatusBar();
+
+    expect(driverMock.driver.resetStatusBar).toHaveBeenCalledWith(device._deviceId);
+  });
+
   it(`shake() should pass to device driver`, async () => {
     const device = validDevice();
     await device.shake();
@@ -599,6 +633,20 @@ describe('Device', () => {
     await device.setLocation(30.1, 30.2);
 
     expect(driverMock.driver.setLocation).toHaveBeenCalledWith(device._deviceId, '30.1', '30.2');
+  });
+
+  it(`reverseTcpPort should pass to device driver`, async () => {
+    const device = validDevice();
+    await device.reverseTcpPort(666);
+
+    await driverMock.expectReverseTcpPortCalled(device._deviceId, 666);
+  });
+
+  it(`unreverseTcpPort should pass to device driver`, async () => {
+    const device = validDevice();
+    await device.unreverseTcpPort(777);
+
+    await driverMock.expectUnreverseTcpPortCalled(device._deviceId, 777);
   });
 
   it(`setURLBlacklist() should pass to device driver`, async () => {
@@ -709,7 +757,7 @@ describe('Device', () => {
     device = validDevice();
 
     await device.takeScreenshot('name');
-    expect(device.deviceDriver.takeScreenshot).toHaveBeenCalledWith('name');
+    expect(device.deviceDriver.takeScreenshot).toHaveBeenCalledWith(device._deviceId, 'name');
   });
 
   async function launchAndTestBinaryPath(configuration) {

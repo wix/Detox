@@ -1,3 +1,5 @@
+@file:JvmName("ScrollProbes")
+
 package com.wix.detox.espresso.scroll
 
 import android.annotation.SuppressLint

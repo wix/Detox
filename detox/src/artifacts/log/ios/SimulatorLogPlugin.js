@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const tempfile = require('tempfile');
+const temporaryPath = require('../../utils/temporaryPath');
 const LogArtifactPlugin = require('../LogArtifactPlugin');
 const SimulatorLogRecording = require('./SimulatorLogRecording');
 
@@ -17,8 +17,8 @@ class SimulatorLogPlugin extends LogArtifactPlugin {
 
     if (this.currentRecording) {
       await this.currentRecording.start({
-        udid: this.context.deviceId,
-        bundleId: this.context.bundleId,
+        udid: event.deviceId,
+        bundleId: event.bundleId,
       });
     }
   }
@@ -32,7 +32,7 @@ class SimulatorLogPlugin extends LogArtifactPlugin {
       udid: this.context.deviceId,
       bundleId: this.context.bundleId,
       appleSimUtils: this.appleSimUtils,
-      temporaryLogPath: tempfile('.log'),
+      temporaryLogPath: temporaryPath.for.log(),
       config: {
         delayAfterStart: 50,
         delayBeforeStop: 50,

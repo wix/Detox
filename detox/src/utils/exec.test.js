@@ -108,11 +108,12 @@ describe('exec', () => {
     cpp.exec.mockReturnValueOnce(rejectedPromise);
 
     try {
-      await exec.execWithRetriesAndLogs('bin', null, '', 1, 1);
+      await exec.execWithRetriesAndLogs('bin', null, '', 0, 1);
       fail('expected execWithRetriesAndLogs() to throw');
     } catch (object) {
       expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
       expect(logger.error.mock.calls).toHaveLength(3);
+      expect(logger.error).toHaveBeenCalledWith(expect.objectContaining({event: 'EXEC_FAIL'}), expect.anything());
     }
   });
 
@@ -122,7 +123,7 @@ describe('exec', () => {
     cpp.exec.mockReturnValueOnce(rejectedPromise);
 
     try {
-      await exec.execWithRetriesAndLogs('bin', { verbosity: 'low' }, '', 1, 1);
+      await exec.execWithRetriesAndLogs('bin', { verbosity: 'low' }, '', 0, 1);
       fail('expected execWithRetriesAndLogs() to throw');
     } catch (object) {
       expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
@@ -137,7 +138,7 @@ describe('exec', () => {
     cpp.exec.mockReturnValueOnce(rejectedPromise);
 
     try {
-      await exec.execWithRetriesAndLogs('bin', { timeout: 1 }, '', 1, 1);
+      await exec.execWithRetriesAndLogs('bin', { timeout: 1 }, '', 0, 1);
       fail('expected execWithRetriesAndLogs() to throw');
     } catch (object) {
       expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 1 });
@@ -155,7 +156,7 @@ describe('exec', () => {
        .mockReturnValueOnce(rejectedPromise)
        .mockReturnValueOnce(rejectedPromise);
     try {
-      await exec.execWithRetriesAndLogs('bin', null, '', 6, 1);
+      await exec.execWithRetriesAndLogs('bin', null, '', 5, 1);
       fail('expected execWithRetriesAndLogs() to throw');
     } catch (object) {
       expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });

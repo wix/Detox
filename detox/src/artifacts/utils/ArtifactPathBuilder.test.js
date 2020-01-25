@@ -8,7 +8,7 @@ describe(ArtifactPathBuilder, () => {
   describe('precise tests', () => {
     beforeEach(() => {
       pathBuilder = new ArtifactPathBuilder({
-        artifactsRootDir: '/tmp'
+        rootDir: '/tmp'
       });
     });
 
@@ -35,7 +35,7 @@ describe(ArtifactPathBuilder, () => {
   describe('snapshot tests', () => {
     beforeEach(() => {
       pathBuilder = new ArtifactPathBuilder({
-        artifactsRootDir: '/tmp/subdir',
+        rootDir: '/tmp/subdir',
       });
     });
 

@@ -2,7 +2,8 @@ const fs = require('fs');
 const URL = require('url').URL;
 const _ = require('lodash');
 const { encodeBase64 } = require('../../utils/encoding');
-const log = require('../../utils/logger').child({ __filename });
+const logger = require('../../utils/logger');
+const log = logger.child({ __filename });
 const invoke = require('../../invoke');
 const InvocationManager = invoke.InvocationManager;
 const ADB = require('../android/ADB');
@@ -12,14 +13,19 @@ const DeviceDriverBase = require('./DeviceDriverBase');
 const DetoxApi = require('../../android/espressoapi/Detox');
 const EspressoDetoxApi = require('../../android/espressoapi/EspressoDetox');
 const UiDeviceProxy = require('../../android/espressoapi/UiDeviceProxy');
+const AndroidInstrumentsPlugin = require('../../artifacts/instruments/android/AndroidInstrumentsPlugin');
 const ADBLogcatPlugin = require('../../artifacts/log/android/ADBLogcatPlugin');
 const ADBScreencapPlugin = require('../../artifacts/screenshot/ADBScreencapPlugin');
 const ADBScreenrecorderPlugin = require('../../artifacts/video/ADBScreenrecorderPlugin');
 const AndroidDevicePathBuilder = require('../../artifacts/utils/AndroidDevicePathBuilder');
+const temporaryPath = require('../../artifacts/utils/temporaryPath');
 const sleep = require('../../utils/sleep');
 const retry = require('../../utils/retry');
 const { interruptProcess, spawnAndLog } = require('../../utils/exec');
 const AndroidExpect = require('../../android/expect');
+
+const reservedInstrumentationArgs = ['class', 'package', 'func', 'unit', 'size', 'perf', 'debug', 'log', 'emma', 'coverageFile'];
+const isReservedInstrumentationArg = (arg) => reservedInstrumentationArgs.includes(arg);
 
 class AndroidDriver extends DeviceDriverBase {
   constructor(config) {
@@ -31,15 +37,16 @@ class AndroidDriver extends DeviceDriverBase {
 
     this.adb = new ADB();
     this.aapt = new AAPT();
+    this.devicePathBuilder = new AndroidDevicePathBuilder();
 
     this.pendingUrl = undefined;
   }
 
   declareArtifactPlugins() {
-    const adb = this.adb;
-    const devicePathBuilder = new AndroidDevicePathBuilder();
+    const { adb, client, devicePathBuilder } = this;
 
     return {
+      instruments: (api) => new AndroidInstrumentsPlugin({ api, adb, client, devicePathBuilder }),
       log: (api) => new ADBLogcatPlugin({ api, adb, devicePathBuilder }),
       screenshot: (api) => new ADBScreencapPlugin({ api, adb, devicePathBuilder }),
       video: (api) => new ADBScreenrecorderPlugin({ api, adb, devicePathBuilder }),
@@ -126,6 +133,7 @@ class AndroidDriver extends DeviceDriverBase {
     await this.emitter.emit('beforeTerminateApp', { deviceId, bundleId });
     await this._terminateInstrumentation();
     await this.adb.terminate(deviceId, bundleId);
+    await this.emitter.emit('terminateApp', { deviceId, bundleId });
   }
 
   async _terminateInstrumentation() {
@@ -148,6 +156,14 @@ class AndroidDriver extends DeviceDriverBase {
     return this.uiDevice;
   }
 
+  async reverseTcpPort(deviceId, port) {
+    await this.adb.reverse(deviceId, port);
+  }
+
+  async unreverseTcpPort(deviceId, port) {
+    await this.adb.reverseRemove(deviceId, port);
+  }
+
   async setURLBlacklist(urlList) {
     const call = EspressoDetoxApi.setURLBlacklist(urlList);
     await this.invocationManager.execute(call);
@@ -163,6 +179,25 @@ class AndroidDriver extends DeviceDriverBase {
     await this.invocationManager.execute(call);
   }
 
+  async takeScreenshot(deviceId, screenshotName) {
+    const adb = this.adb;
+
+    const pathOnDevice = this.devicePathBuilder.buildTemporaryArtifactPath('.png');
+    await adb.screencap(deviceId, pathOnDevice);
+
+    const tempPath = temporaryPath.for.png();
+    await adb.pull(deviceId, pathOnDevice, tempPath);
+    await adb.rm(deviceId, pathOnDevice);
+
+    await this.emitter.emit('createExternalArtifact', {
+      pluginId: 'screenshot',
+      artifactName: screenshotName,
+      artifactPath: tempPath,
+    });
+
+    return tempPath;
+  }
+
   async setOrientation(deviceId, orientation) {
     const orientationMapping = {
       landscape: 1, // top at left side landscape
@@ -174,7 +209,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async _launchInstrumentationProcess(deviceId, bundleId, rawLaunchArgs) {
-    const launchArgs = this._prepareLaunchArgs(rawLaunchArgs);
+    const launchArgs = this._prepareLaunchArgs(rawLaunchArgs, true);
     const additionalLaunchArgs = this._prepareLaunchArgs({debug: false});
     const serverPort = new URL(this.client.configuration.server).port;
     await this.adb.reverse(deviceId, serverPort);
@@ -224,13 +259,30 @@ class AndroidDriver extends DeviceDriverBase {
     return this.invocationManager.execute(DetoxApi.launchMainActivity());
   }
 
-  _prepareLaunchArgs(launchArgs) {
-    return _.reduce(launchArgs, (result, value, key) => {
+  _prepareLaunchArgs(launchArgs, verbose = false) {
+    const usedReservedArgs = [];
+    const preparedLaunchArgs = _.reduce(launchArgs, (result, value, key) => {
       const valueAsString = _.isString(value) ? value : JSON.stringify(value);
-      const valueEncoded = (key.startsWith('detox')) ? valueAsString : encodeBase64(valueAsString);
+
+      let valueEncoded = valueAsString;
+      if (isReservedInstrumentationArg(key)) {
+        usedReservedArgs.push(key);
+      } else if (!key.startsWith('detox')) {
+        valueEncoded = encodeBase64(valueAsString);
+      }
+
       result.push('-e', key, valueEncoded);
       return result;
     }, []);
+
+    if (verbose && usedReservedArgs.length) {
+      logger.warn([`Arguments [${usedReservedArgs}] were passed in as launchArgs to device.launchApp() `,
+                   'but are reserved to Android\'s test-instrumentation and will not be passed into the app. ',
+                   'Ignore this message if this is what you meant to do. Refer to ',
+                   'https://developer.android.com/studio/test/command-line#AMOptionsSyntax for ',
+                   'further details.'].join(''));
+    }
+    return preparedLaunchArgs;
   }
 }
 

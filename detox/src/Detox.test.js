@@ -198,47 +198,43 @@ describe('Detox', () => {
       artifactsManager = detox._artifactsManager; // TODO: rewrite to avoid accessing private fields
     });
 
-    it(`Calling detox.init() should trigger artifactsManager.beforeAll()`, async () => {
-      expect(artifactsManager.onBeforeAll).toHaveBeenCalledTimes(1);
-    });
-
     it(`Calling detox.beforeEach() will trigger artifacts manager .onBeforeEach`, async () => {
       const testSummary = { title: 'test', fullName: 'suite - test', status: 'running' };
       await detox.beforeEach(testSummary);
 
-      expect(artifactsManager.onBeforeEach).toHaveBeenCalledWith(testSummary);
+      expect(artifactsManager.onTestStart).toHaveBeenCalledWith(testSummary);
     });
 
     it(`Calling detox.beforeEach() and detox.afterEach() with a deprecated signature will throw an exception`, async () => {
       const testSummary = { title: 'test', fullName: 'suite - test', status: 'running' };
 
       await expect(detox.beforeEach(testSummary.title, testSummary.fullName, testSummary.status)).rejects.toThrowError();
-      expect(artifactsManager.onBeforeEach).not.toHaveBeenCalled();
+      expect(artifactsManager.onTestStart).not.toHaveBeenCalled();
 
       await expect(detox.afterEach(testSummary.title, testSummary.fullName, testSummary.status)).rejects.toThrowError();
-      expect(artifactsManager.onAfterEach).not.toHaveBeenCalled();
+      expect(artifactsManager.onTestDone).not.toHaveBeenCalled();
     });
 
     it(`Calling detox.beforeEach() and detox.afterEach() with incorrect test status will throw an exception`, async () => {
       const testSummary = { title: 'test', fullName: 'suite - test', status: 'incorrect status' };
 
       await expect(detox.beforeEach(testSummary)).rejects.toThrowError();
-      expect(artifactsManager.onBeforeEach).not.toHaveBeenCalled();
+      expect(artifactsManager.onTestStart).not.toHaveBeenCalled();
 
       await expect(detox.afterEach(testSummary)).rejects.toThrowError();
-      expect(artifactsManager.onAfterEach).not.toHaveBeenCalled();
+      expect(artifactsManager.onTestDone).not.toHaveBeenCalled();
     });
 
     it(`Calling detox.afterEach() should trigger artifactsManager.onAfterEach`, async () => {
       const testSummary = { title: 'test', fullName: 'suite - test', status: 'passed' };
       await detox.afterEach(testSummary);
 
-      expect(artifactsManager.onAfterEach).toHaveBeenCalledWith(testSummary);
+      expect(artifactsManager.onTestDone).toHaveBeenCalledWith(testSummary);
     });
 
-    it(`Calling detox.cleanup() should trigger artifactsManager.afterAll()`, async () => {
+    it(`Calling detox.cleanup() should trigger artifactsManager.onBeforeCleanup()`, async () => {
       await detox.cleanup();
-      expect(artifactsManager.onAfterAll).toHaveBeenCalledTimes(1);
+      expect(artifactsManager.onBeforeCleanup).toHaveBeenCalledTimes(1);
     });
   });
 });

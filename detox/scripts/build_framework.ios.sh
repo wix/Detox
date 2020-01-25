@@ -35,7 +35,16 @@ function buildFramework () {
   detoxSourcePath="${1}"
   echo "Building Detox.framework from ${detoxSourcePath}..."
   mkdir -p "${detoxFrameworkDirPath}"
-  "${detoxRootPath}"/scripts/build_universal_framework.sh "${detoxSourcePath}"/Detox.xcodeproj "${detoxFrameworkDirPath}" &> "${detoxFrameworkDirPath}"/detox_ios.log
+	logPath="${detoxFrameworkDirPath}"/detox_ios.log
+	echo -n "" > "${logPath}"
+  "${detoxRootPath}"/scripts/build_universal_framework.sh "${detoxSourcePath}"/Detox.xcodeproj "${detoxFrameworkDirPath}" &> "${logPath}"
+	errno=$?
+	if [ $errno -ne 0 ]; then
+		echo -e "#################################\nError building Detox.framework:\n----------------------------------\n"
+		cat "${logPath}"
+		echo "#################################"
+	fi
+	exit $errno
 }
 
 function main () {

@@ -7,6 +7,9 @@ const exec = require('../../utils/exec').execWithRetriesAndLogs;
 const unitLogger = require('../../utils/logger').child({ __filename });
 const {getAndroidEmulatorPath} = require('../../utils/environment');
 const argparse = require('../../utils/argparse');
+const retry = require('../../utils/retry');
+
+const isUnknownEmulatorError = (err) => (err.message || '').includes('failed with code null');
 
 class Emulator {
   constructor() {
@@ -20,17 +23,27 @@ class Emulator {
   }
 
   async exec(cmd) {
-    return (await exec(`${this.emulatorBin} ${cmd}`)).stdout;
+    return (await exec(`"${this.emulatorBin}" ${cmd}`)).stdout;
   }
 
   async boot(emulatorName, options = {port: undefined}) {
+    const emulatorArgs = this._getEmulatorArgs(emulatorName, options);
+
+    return await retry({
+      retries: 2,
+      interval: 100,
+      conditionFn: isUnknownEmulatorError,
+    }, () => this._spawnEmulator(emulatorName, emulatorArgs, options));
+  }
+
+  _getEmulatorArgs(emulatorName, options) {
     const deviceLaunchArgs = (argparse.getArgValue('deviceLaunchArgs') || '').split(/\s+/);
     const emulatorArgs = _.compact([
       '-verbose',
       '-no-audio',
       '-no-boot-anim',
-      argparse.getArgValue('headless') ? '-no-window' : '',
-      argparse.getArgValue('readOnlyEmu') ? '-read-only' : '',
+      argparse.getArgValue('headless') === 'true' ? '-no-window' : '',
+      argparse.getArgValue('readOnlyEmu') === 'true' ? '-read-only' : '',
       options.port ? `-port` : '',
       options.port ? `${options.port}` : '',
       ...deviceLaunchArgs,
@@ -42,6 +55,32 @@ class Emulator {
       emulatorArgs.push('-gpu', gpuMethod);
     }
 
+    return emulatorArgs;
+  }
+
+  gpuMethod() {
+    const gpuArgument = argparse.getArgValue('gpu');
+    if (gpuArgument) {
+      return gpuArgument;
+    }
+
+    if (argparse.getArgValue('headless')) {
+      switch (os.platform()) {
+        case 'darwin':
+          return 'host';
+        case 'linux':
+          return 'swiftshader_indirect';
+        case 'win32':
+          return 'angle_indirect';
+        default:
+          return 'auto';
+      }
+    }
+
+    return undefined;
+  }
+
+  _spawnEmulator(emulatorName, emulatorArgs, options) {
     let childProcessOutput;
     const portName = options.port ? `-${options.port}` : '';
     const tempLog = `./${emulatorName}${portName}.log`;
@@ -94,28 +133,6 @@ class Emulator {
       log.debug({ event: 'SPAWN_SUCCESS', stdout: true }, childProcessOutput);
       return coldBoot;
     });
-  }
-
-  gpuMethod() {
-    const gpuArgument = argparse.getArgValue('gpu');
-    if (gpuArgument) {
-      return gpuArgument;
-    }
-
-    if (argparse.getArgValue('headless')) {
-      switch (os.platform()) {
-        case 'darwin':
-          return 'host';
-        case 'linux':
-          return 'swiftshader_indirect';
-        case 'win32':
-          return 'angle_indirect';
-        default:
-          return 'auto';
-      }
-    }
-
-    return undefined;
   }
 }
 

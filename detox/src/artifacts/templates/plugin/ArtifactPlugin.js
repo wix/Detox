@@ -11,11 +11,13 @@ const log = require('../../../utils/logger').child({ __filename });
 class ArtifactPlugin {
   constructor({ api }) {
     this.api = api;
-    this.context = {};
-    this.enabled = false;
-    this.keepOnlyFailedTestsArtifacts = false;
+    this.context = { testSummary: null };
+    this.enabled = api.userConfig.enabled;
+    this.keepOnlyFailedTestsArtifacts = api.userConfig.keepOnlyFailedTestsArtifacts;
     this.priority = 16;
     this._disableReason = '';
+    this._hasFailingTests = false;
+    this._finishedTests = false;
   }
 
   get name() {
@@ -44,14 +46,7 @@ class ArtifactPlugin {
    * @param {Object} event.launchArgs - Mutable key-value pairs of args before the launch
    * @return {Promise<void>} - when done
    */
-  async onBeforeLaunchApp(event) {
-    Object.assign(this.context, {
-      bundleId: event.bundleId,
-      deviceId: event.deviceId,
-      launchArgs: event.launchArgs,
-      pid: NaN,
-    });
-  }
+  async onBeforeLaunchApp(event) {}
 
   /**
    * Hook that is called inside device.launchApp() and
@@ -70,7 +65,6 @@ class ArtifactPlugin {
   async onLaunchApp(event) {
     Object.assign(this.context, {
       bundleId: event.bundleId,
-      deviceId: event.deviceId,
       launchArgs: event.launchArgs,
       pid: event.pid,
    });
@@ -89,8 +83,6 @@ class ArtifactPlugin {
   async onBootDevice(event) {
     Object.assign(this.context, {
       deviceId: event.deviceId,
-      bundleId: '',
-      pid: NaN,
     });
   }
 
@@ -104,10 +96,23 @@ class ArtifactPlugin {
    * @param {string} event.bundleId - Current bundleId
    * @return {Promise<void>} - when done
    */
-  async onBeforeTerminateApp(event) {
+  async onBeforeTerminateApp(event) {}
+
+  /**
+   * Hook that is supposed to be called after app has been terminated
+   *
+   * @protected
+   * @async
+   * @param {Object} event - App termination event object
+   * @param {string} event.deviceId - Current deviceId
+   * @param {string} event.bundleId - Terminated bundleId
+   * @return {Promise<void>} - when done
+   */
+  async onTerminateApp(event) {
     Object.assign(this.context, {
-      deviceId: event.deviceId,
-      bundleId: event.bundleId,
+      bundleId: '',
+      launchArgs: null,
+      pid: NaN,
     });
   }
 
@@ -121,12 +126,7 @@ class ArtifactPlugin {
    * @param {string} event.bundleId - Current bundleId
    * @return {Promise<void>} - when done
    */
-  async onBeforeUninstallApp(event) {
-    Object.assign(this.context, {
-      deviceId: event.deviceId,
-      bundleId: event.bundleId,
-    });
-  }
+  async onBeforeUninstallApp(event) {}
 
   /**
    * Hook that is supposed to be called before device.shutdown() happens
@@ -137,11 +137,7 @@ class ArtifactPlugin {
    * @param {string} event.deviceId - Current deviceId
    * @return {Promise<void>} - when done
    */
-  async onBeforeShutdownDevice(event) {
-    Object.assign(this.context, {
-      deviceId: event.deviceId,
-    });
-  }
+  async onBeforeShutdownDevice(event) {}
 
   /**
    * Hook that is supposed to be called from device.shutdown()
@@ -154,34 +150,25 @@ class ArtifactPlugin {
    */
   async onShutdownDevice(event) {
     Object.assign(this.context, {
-      deviceId: event.deviceId,
+      deviceId: '',
       bundleId: '',
+      launchArgs: null,
       pid: NaN,
     });
   }
 
   /**
-   * Hook that is called on demand by some of user actions (e.g. device.takeScreeenshot())
+   * Hook that is supposed to be called when an artifact has been created indirectly,
+   * outside of lifecycle of the plugin.
    *
    * @protected
    * @async
-   * @param {Object} event - User action event object
-   * @param {string} event.type - Action type
-   * @param {string} event.options - Action options
-   * @return {Promise<any>} - appropriate result of the action
-   */
-  async onUserAction(event) {}
-
-  /**
-   * Hook that is called before any test begins
-   *
-   * @protected
-   * @async
+   * @param {Object} event - Information about an indirectly created artifact
+   * @param {string} event.name - Target name for the artifact
+   * @param {Artifact} event.artifact - Artifact instance
    * @return {Promise<void>} - when done
    */
-  async onBeforeAll() {
-    this.context.testSummary = null;
-  }
+  async onCreateExternalArtifact(event) {}
 
   /**
    * Hook that is called before a test begins
@@ -191,7 +178,7 @@ class ArtifactPlugin {
    * @param {TestSummary} testSummary - has name of currently running test
    * @return {Promise<void>} - when done
    */
-  async onBeforeEach(testSummary) {
+  async onTestStart(testSummary) {
     this.context.testSummary = testSummary;
   }
 
@@ -201,19 +188,24 @@ class ArtifactPlugin {
    * @param {TestSummary} testSummary - has name and status of test that ran
    * @return {Promise<void>} - when done
    */
-  async onAfterEach(testSummary) {
+  async onTestDone(testSummary) {
     this.context.testSummary = testSummary;
+
+    if (testSummary.status === 'failed') {
+      this._hasFailingTests = true;
+    }
   }
 
   /**
-   * Hook that is called after all tests run
+   * Hook that is called when detox.cleanup() just begins
    *
    * @protected
    * @async
    * @return {Promise<void>} - when done
    */
-  async onAfterAll() {
+  async onBeforeCleanup() {
     this.context.testSummary = null;
+    this._finishedTests = true;
     this._logDisableWarning();
   }
 
@@ -232,13 +224,13 @@ class ArtifactPlugin {
     this.onBeforeShutdownDevice = _.noop;
     this.onShutdownDevice = _.noop;
     this.onBeforeTerminateApp = _.noop;
+    this.onTerminateApp = _.noop;
     this.onBeforeLaunchApp = _.noop;
     this.onLaunchApp = _.noop;
     this.onUserAction = _.noop;
-    this.onBeforeAll = _.noop;
-    this.onBeforeEach = _.noop;
-    this.onAfterEach = _.noop;
-    this.onAfterAll = _.noop;
+    this.onTestStart = _.noop;
+    this.onTestDone = _.noop;
+    this.onBeforeCleanup = _.noop;
   }
 
   _logDisableWarning() {
@@ -247,7 +239,31 @@ class ArtifactPlugin {
     }
   }
 
+  shouldKeepArtifactOfSession() {
+    if (!this.enabled) {
+      return false;
+    }
+
+    if (!this.keepOnlyFailedTestsArtifacts) {
+      return true;
+    }
+
+    if (this._hasFailingTests) {
+      return true;
+    }
+
+    if (this._finishedTests) {
+      return false;
+    }
+
+    return undefined;
+  }
+
   shouldKeepArtifactOfTest(testSummary) {
+    if (!this.enabled) {
+      return false;
+    }
+
     if (this.keepOnlyFailedTestsArtifacts && testSummary.status !== 'failed') {
       return false;
     }

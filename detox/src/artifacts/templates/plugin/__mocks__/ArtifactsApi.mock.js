@@ -1,5 +1,7 @@
 class ArtifactsApiMock {
-  constructor() {
+  constructor({ config }) {
+    this.userConfig = config;
+
     this.preparePathForArtifact = jest.fn();
     this.trackArtifact = jest.fn();
     this.untrackArtifact = jest.fn();

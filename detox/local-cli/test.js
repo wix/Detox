@@ -3,12 +3,10 @@ const path = require('path');
 const cp = require('child_process');
 const fs = require('fs-extra');
 const environment = require('../src/utils/environment');
-const buildDefaultArtifactsRootDirpath = require('../src/artifacts/utils/buildDefaultArtifactsRootDirpath');
 const DetoxConfigError = require('../src/errors/DetoxConfigError');
 
 const log = require('../src/utils/logger').child({ __filename });
 const {getDetoxSection, getDefaultConfiguration, getConfigurationByKey} = require('./utils/configurationUtils');
-const {coerceDeprecation, printFileDeprecationWarning} = require('./utils/deprecation');
 const shellQuote = require('./utils/shellQuote');
 
 module.exports.command = 'test';
@@ -25,20 +23,6 @@ module.exports.builder = {
     alias: 'runner-config',
     group: 'Configuration:',
     describe: 'Test runner config file, defaults to e2e/mocha.opts for mocha and e2e/config.json for jest',
-  },
-  f: {
-    alias: 'file',
-    group: 'Configuration:',
-    describe: 'Specify test file to run',
-    coerce: coerceDeprecation('-f, --file'),
-    hidden: true,
-  },
-  s: {
-    alias: 'specs',
-    group: 'Configuration:',
-    describe: 'Root of tests look-up folder. Overrides the equivalent configuration in `package.json`, if set.',
-    coerce: coerceDeprecation('-s, --specs'),
-    hidden: true,
   },
   l: {
     alias: 'loglevel',
@@ -81,33 +65,28 @@ module.exports.builder = {
   a: {
     alias: 'artifacts-location',
     group: 'Debugging:',
-    describe: 'Artifacts (logs, screenshots, etc) root directory.',
-    default: 'artifacts'
+    describe: 'Artifacts (logs, screenshots, etc) root directory.'
   },
   'record-logs': {
     group: 'Debugging:',
     choices: ['failing', 'all', 'none'],
-    default: 'none',
     describe: 'Save logs during each test to artifacts directory. Pass "failing" to save logs of failing tests only.'
   },
   'take-screenshots': {
     group: 'Debugging:',
     choices: ['manual', 'failing', 'all', 'none'],
-    default: 'manual',
     describe:
       'Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only.'
   },
   'record-videos': {
     group: 'Debugging:',
     choices: ['failing', 'all', 'none'],
-    default: 'none',
     describe:
       'Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only.'
   },
   'record-performance': {
     group: 'Debugging:',
     choices: ['all', 'none'],
-    default: 'none',
     describe:
       '[iOS Only] Save Detox Instruments performance recordings of each test to artifacts directory.'
   },
@@ -150,14 +129,7 @@ module.exports.builder = {
 const collectExtraArgs = require('./utils/collectExtraArgs')(module.exports.builder);
 
 module.exports.handler = async function test(program) {
-  program.artifactsLocation = buildDefaultArtifactsRootDirpath(program.configuration, program.artifactsLocation);
-
   const config = getDetoxSection();
-
-  if (!program.file && config.file) {
-    printFileDeprecationWarning(config.file);
-  }
-
   const runner = getConfigFor('test-runner') || 'mocha';
   const runnerConfig = getConfigFor('runner-config') || getDefaultRunnerConfig();
 
@@ -209,8 +181,21 @@ module.exports.handler = async function test(program) {
       return args;
     }
 
-    const fallbackTestFolder = `"${getConfigFor('file', 'specs') || 'e2e'}"`;
+    const fallbackTestFolder = `"${config.specs || 'e2e'}"`;
     return args.concat(fallbackTestFolder);
+  }
+
+  function safeGuardArguments(args) {
+    if (_.last(args).includes(' ')) {
+      return args;
+    }
+
+    const safeArg = _.findLast(args, a => a.includes(' '));
+    if (!safeArg) {
+      return args;
+    }
+
+    return [..._.pull(args, safeArg), safeArg]
   }
 
   function runMocha() {
@@ -220,22 +205,24 @@ module.exports.handler = async function test(program) {
 
     const command = _.compact([
       (path.join('node_modules', '.bin', runner)),
-      (runnerConfig ? `--opts ${runnerConfig}` : ''),
-      (program.configuration ? `--configuration ${program.configuration}` : ''),
-      (program.loglevel ? `--loglevel ${program.loglevel}` : ''),
-      (program.noColor ? '--no-colors' : ''),
-      (program.cleanup ? `--cleanup` : ''),
-      (program.reuse ? `--reuse` : ''),
-      (isFinite(program.debugSynchronization) ? `--debug-synchronization ${program.debugSynchronization}` : ''),
-      (platform ? `--grep ${getPlatformSpecificString()} --invert` : ''),
-      (program.headless ? `--headless` : ''),
-      (program.gpu ? `--gpu ${program.gpu}` : ''),
-      (hasCustomValue('record-logs') ? `--record-logs ${program.recordLogs}` : ''),
-      (hasCustomValue('take-screenshots') ? `--take-screenshots ${program.takeScreenshots}` : ''),
-      (hasCustomValue('record-videos') ? `--record-videos ${program.recordVideos}` : ''),
-      (hasCustomValue('record-performance') ? `--record-performance ${program.recordPerformance}` : ''),
-      (program.artifactsLocation ? `--artifacts-location "${program.artifactsLocation}"` : ''),
-      (program.deviceName ? `--device-name "${program.deviceName}"` : ''),
+      ...safeGuardArguments([
+        (runnerConfig ? `--opts ${runnerConfig}` : ''),
+        (program.configuration ? `--configuration ${program.configuration}` : ''),
+        (program.loglevel ? `--loglevel ${program.loglevel}` : ''),
+        (program.noColor ? '--no-colors' : ''),
+        (program.cleanup ? `--cleanup` : ''),
+        (program.reuse ? `--reuse` : ''),
+        (isFinite(program.debugSynchronization) ? `--debug-synchronization ${program.debugSynchronization}` : ''),
+        (platform ? `--grep ${getPlatformSpecificString()} --invert` : ''),
+        (program.headless ? `--headless` : ''),
+        (program.gpu ? `--gpu ${program.gpu}` : ''),
+        (hasCustomValue('record-logs') ? `--record-logs ${program.recordLogs}` : ''),
+        (hasCustomValue('take-screenshots') ? `--take-screenshots ${program.takeScreenshots}` : ''),
+        (hasCustomValue('record-videos') ? `--record-videos ${program.recordVideos}` : ''),
+        (hasCustomValue('record-performance') ? `--record-performance ${program.recordPerformance}` : ''),
+        (program.artifactsLocation ? `--artifacts-location "${program.artifactsLocation}"` : ''),
+        (program.deviceName ? `--device-name "${program.deviceName}"` : ''),
+      ]),
       ...getPassthroughArguments(),
     ]).join(' ');
 
@@ -267,31 +254,36 @@ module.exports.handler = async function test(program) {
 
     const command = _.compact([
       path.join('node_modules', '.bin', runner),
-      (runnerConfig ? `--config=${runnerConfig}` : ''),
-      (program.noColor ? ' --no-color' : ''),
-      `--maxWorkers=${program.workers}`,
-      (platform ? shellQuote(`--testNamePattern=^((?!${getPlatformSpecificString()}).)*$`) : ''),
+      ...safeGuardArguments([
+        (program.noColor ? ' --no-color' : ''),
+        (runnerConfig ? `--config ${runnerConfig}` : ''),
+        (platform ? shellQuote(`--testNamePattern=^((?!${getPlatformSpecificString()}).)*$`) : ''),
+        `--maxWorkers ${program.workers}`,
+      ]),
       ...getPassthroughArguments(),
     ]).join(' ');
 
-    const detoxEnvironmentVariables = _.pick(program, [
-      'configuration',
-      'loglevel',
-      'cleanup',
-      'reuse',
-      'debugSynchronization',
-      'gpu',
-      'headless',
-      'artifactsLocation',
-      'recordLogs',
-      'takeScreenshots',
-      'recordVideos',
-      'recordPerformance',
-      'deviceName',
-      'reportSpecs',
-      'readOnlyEmu',
-      'deviceLaunchArgs',
-    ]);
+    const detoxEnvironmentVariables = {
+      ..._.pick(program, [
+        'configuration',
+        'loglevel',
+        'cleanup',
+        'reuse',
+        'debugSynchronization',
+        'gpu',
+        'headless',
+        'artifactsLocation',
+        'recordLogs',
+        'takeScreenshots',
+        'recordVideos',
+        'recordPerformance',
+        'deviceName',
+        'reportSpecs',
+        'readOnlyEmu',
+        'deviceLaunchArgs',
+      ]),
+      DETOX_START_TIMESTAMP: Date.now(),
+    };
 
     launchTestRunner(command, detoxEnvironmentVariables);
   }

@@ -10,11 +10,14 @@ const Emulator = require('../android/Emulator');
 const EmulatorTelnet = require('../android/EmulatorTelnet');
 const environment = require('../../utils/environment');
 const retry = require('../../utils/retry');
+const log = require('../../utils/logger').child({ __filename });
 
 const DetoxEmulatorsPortRange = {
   min: 10000,
   max: 20000
 };
+
+const ACQUIRE_DEVICE_EV = 'ACQUIRE_DEVICE';
 
 class EmulatorDriver extends AndroidDriver {
   constructor(config) {
@@ -38,6 +41,8 @@ class EmulatorDriver extends AndroidDriver {
     await this._validateAvd(avdName);
     await this._fixEmulatorConfigIniSkinNameIfNeeded(avdName);
 
+    log.debug({ event: ACQUIRE_DEVICE_EV }, `Looking up a device based on ${avdName}`);
+
     const adbName = await this.deviceRegistry.allocateDevice(async () => {
       let freeEmulatorAdbName;
 
@@ -49,13 +54,19 @@ class EmulatorDriver extends AndroidDriver {
         if (isEmulator && !isBusy) {
           if (await candidate.queryName() === avdName) {
             freeEmulatorAdbName = candidate.adbName;
+            log.debug({ event: ACQUIRE_DEVICE_EV }, `Found ${candidate.adbName}!`);
             break;
           }
+          log.debug({ event: ACQUIRE_DEVICE_EV }, `${candidate.adbName} is available but AVD is different`);
+        } else {
+          log.debug({ event: ACQUIRE_DEVICE_EV }, `${candidate.adbName} is not a free emulator`, isEmulator, !isBusy);
         }
       }
 
       return freeEmulatorAdbName || this._createDevice();
     });
+
+    log.debug({ event: ACQUIRE_DEVICE_EV }, `Settled on ${adbName}`);
 
     await this._boot(avdName, adbName);
 
@@ -122,7 +133,8 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async _fixEmulatorConfigIniSkinNameIfNeeded(avdName) {
-    const configFile = `${os.homedir()}/.android/avd/${avdName}.avd/config.ini`;
+    const avdPath = environment.getAvdDir(avdName);
+    const configFile = path.join(avdPath, 'config.ini');
     const config = ini.parse(fs.readFileSync(configFile, 'utf-8'));
 
     if (!config['skin.name']) {

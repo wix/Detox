@@ -45,7 +45,7 @@ describe('test', () => {
       await callCli('./test', 'test');
 
       expect(mockExec).toHaveBeenCalledWith(
-        expect.stringContaining(`${normalize('node_modules/.bin/mocha')} --opts e2e/mocha.opts --configuration only --grep :ios: --invert --artifacts-location "${normalize('artifacts/only.')}`),
+        expect.stringContaining(`${normalize('node_modules/.bin/mocha')} --opts e2e/mocha.opts --configuration only --grep :ios: --invert`),
         expect.anything()
       );
 
@@ -53,12 +53,6 @@ describe('test', () => {
         expect.stringMatching(/ "e2e"$/),
         expect.anything()
       );
-    });
-
-    it('should warn about deprecated options', async () => {
-      mockAndroidMochaConfiguration();
-      await callCli('./test', 'test --specs e2e');
-      expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('migration guide'));
     });
 
     it('should pass in device-launch-args as an environment variable', async () => {
@@ -90,15 +84,11 @@ describe('test', () => {
 
       expect(mockExec).toHaveBeenCalledWith(
         expect.stringContaining(
-          `${normalize('node_modules/.bin/jest')} --config=e2e/config.json --maxWorkers=1 ${shellQuote('--testNamePattern=^((?!:ios:).)*$')} "e2e"`
+          `${normalize('node_modules/.bin/jest')} --config e2e/config.json ${shellQuote('--testNamePattern=^((?!:ios:).)*$')} --maxWorkers 1 "e2e"`
         ),
         expect.objectContaining({
           env: expect.objectContaining({
             configuration: 'only',
-            recordLogs: 'none',
-            takeScreenshots: 'manual',
-            recordVideos: 'none',
-            artifactsLocation: expect.stringContaining(normalize('artifacts/only.')),
           }),
         })
       );
@@ -137,7 +127,7 @@ describe('test', () => {
     );
 
     const expectWorkersArg = ({value}) => expect(mockExec).toHaveBeenCalledWith(
-      expect.stringContaining(`--maxWorkers=${value}`),
+      expect.stringContaining(`--maxWorkers ${value}`),
       expect.anything(),
     );
 
@@ -252,7 +242,7 @@ describe('test', () => {
     }
     expect(mockExec).toHaveBeenCalledWith(
       expect.stringContaining(
-        `${normalize('node_modules/.bin/mocha')} --opts e2e/mocha.opts --configuration only --debug-synchronization 3000 --grep :ios: --invert --artifacts-location "${normalize('artifacts/only.')}`
+        `${normalize('node_modules/.bin/mocha')} --opts e2e/mocha.opts --configuration only --debug-synchronization 3000 --grep :ios: --invert`
       ),
       expect.anything()
     );

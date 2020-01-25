@@ -6,7 +6,6 @@ import {
   Linking,
   Platform,
 } from 'react-native';
-import { PropTypes } from 'prop-types';
 
 import * as Screens from './Screens';
 

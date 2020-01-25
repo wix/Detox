@@ -2,10 +2,14 @@
 
 `device` is globally available in every test file, it enables control over the current attached device (currently only simulators are supported).
 
+### Public Properties
+
+* [`device.id`](#deviceid)
+* [`device.name`](#devicename)
+
 ### Methods
 
 - [`device.launchApp()`](#devicelaunchappparams)
-- [`device.relaunchApp()` **Deprecated**](#devicerelaunchappparams)
 - [`device.terminateApp()`](#deviceterminateapp)
 - [`device.sendToHome()`](#devicesendtohome)
 - [`device.reloadReactNative()`](#devicereloadreactnative)
@@ -19,7 +23,7 @@
 - [`device.setURLBlacklist([urls])`](#deviceseturlblacklisturls)
 - [`device.enableSynchronization()`](#deviceenablesynchronization)
 - [`device.disableSynchronization()`](#devicedisablesynchronization)
-- [`device.resetContentAndSettings()`](#deviceresetcontentandsettings)
+- [`device.resetContentAndSettings()` **iOS Only**](#deviceresetcontentandsettings-ios-only)
 - [`device.getPlatform()`](#devicegetplatform)
 - [`device.takeScreenshot(name)`](#devicetakescreenshotname)
 - [`device.shake()` **iOS Only**](#deviceshake-ios-only)
@@ -29,10 +33,27 @@
 - [`device.matchFinger()` **iOS Only**](#devicematchfinger-ios-only)
 - [`device.unmatchFinger()` **iOS Only**](#deviceunmatchfinger-ios-only)
 - [`device.clearKeychain()` **iOS Only**](#deviceclearkeychain-ios-only)
+- [`device.setStatusBar()` **iOS Only**](#devicesetstatusbar-ios-only)
+- [`device.resetStatusBar()` **iOS Only**](#deviceresetstatusbar-ios-only)
+- [`device.reverseTcpPort()` **Android Only**](#devicereversetcpport-android-only)
+- [`device.unreverseTcpPort()` **Android Only**](#deviceunreversetcpport-android-only)
 - [`device.pressBack()` **Android Only**](#devicepressback-android-only)
 - [`device.getUIDevice()` **Android Only**](#devicegetuidevice-android-only)
 
+### `device.id`
+
+Holds the environment-unique ID of the device - namely, the `adb` ID on Android (e.g. `emulator-5554`) and the Mac-global simulator UDID on iOS, as used by `simctl` (e.g. `AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE`).
+
+The value will be `undefined` until the device is properly _prepared_ (i.e. in `detox.init()`).
+
+### `device.name`
+
+Holds a descriptive name of the device. Example: `emulator-5554 (Pixel_API_26)`
+
+The value will be `undefined` until the device is properly _prepared_ (i.e. in `detox.init()`).
+
 ### `device.launchApp(params)`
+
 Launch the app defined in the current [`configuration`](APIRef.Configuration.md).
 
 **Options:** 
@@ -307,7 +328,7 @@ await device.disableSynchronization();
 ```
 
 
-### `device.resetContentAndSettings()`
+### `device.resetContentAndSettings()` **iOS Only**
 Resets the Simulator to clean state (like the Simulator > Reset Content and Settings... menu item), especially removing
 previously set permissions.
 
@@ -325,24 +346,34 @@ if (device.getPlatform() === 'ios') {
 ```
 
 ### `device.takeScreenshot(name)`
+
 Takes a screenshot on the device and schedules putting it to
 the [artifacts folder](APIRef.Artifacts.md#enabling-artifacts) upon
-completion of the current test. Consider the example below:
+completion of the current test.
+
+Returns a temporary path to the screenshot.
+
+**NOTE:** The returned path is guaranteed to be valid only during the test execution.
+Later on, the screenshot will be moved to the artifacts location.
+
+Consider the example below:
 
 ```js
 describe('Menu items', () => {
   it('should have Logout', async () => {
     // ...
-    await device.takeScreenshot('tap on menu');
+    const screenshotPath = await device.takeScreenshot('tap on menu');
     // ...
   });
 });
 ```
 
-* If the test passes, the screenshot will be put to `<artifacts-location>/✓ Menu items should have Logout/tap on menu.png`.
-* If the test fails, the screenshot will be put to `<artifacts-location>/✗ Menu items should have Logout/tap on menu.png`.
+In this example:
 
-> NOTE: At the moment, taking screenshots on-demand in `--take-screenshots failing` mode is not yet implemented.
+* If `--take-screenshots none` is set, the screenshot will be taken, but it won't be saved to `<artifacts-location>` after the test ends.
+* If `--take-screenshots failing` is set, and the test passes, the screenshot won't be saved to `<artifacts-location>` after the test ends.
+* In the other modes (`manual` and `all`), if the test passes, the screenshot will be put to `<artifacts-location>/✓ Menu items should have Logout/tap on menu.png`.
+* In the other modes (`manual` and `all`), if the test fails, the screenshot will be put to `<artifacts-location>/✗ Menu items should have Logout/tap on menu.png`.
 
 ### `device.shake()` **iOS Only**
 Simulate shake
@@ -370,6 +401,42 @@ Simulates the failure of a finger match via TouchID
 
 ### `device.clearKeychain()` **iOS Only**
 Clears the device keychain
+
+### `device.setStatusBar()` **iOS Only**
+Override simulator's status bar. Available options:
+
+```
+{
+  time: "12:34"
+  // Set the date or time to a fixed value.
+  // If the string is a valid ISO date string it will also set the date on relevant devices.
+  dataNetwork: "wifi"
+  // If specified must be one of 'wifi', '3g', '4g', 'lte', 'lte-a', or 'lte+'.
+  wifiMode: "failed"
+  // If specified must be one of 'searching', 'failed', or 'active'.
+  wifiBars: "2"
+  // If specified must be 0-3.
+  cellularMode: "searching"
+  // If specified must be one of 'notSupported', 'searching', 'failed', or 'active'.
+  cellularBars: "3"
+  // If specified must be 0-4.
+  batteryState: "charging"
+  // If specified must be one of 'charging', 'charged', or 'discharging'.
+  batteryLevel: "50"
+  // If specified must be 0-100.
+}
+```
+
+### `device.resetStatusBar()` **iOS Only**
+Resets any override in simulator's status bar.
+
+### `device.reverseTcpPort()` **Android Only**
+
+Reverse a TCP port from the device (guest) back to the host-computer, as typically done with the `adb reverse` command. The end result would be that all network requests going from the device to the specified port will be forwarded to the computer.
+
+### `device.unreverseTcpPort()` **Android Only**
+
+Clear a _reversed_ TCP-port (e.g. previously set using `device.reverseTcpPort()`).
 
 ### `device.pressBack()` **Android Only**
 Simulate press back button.

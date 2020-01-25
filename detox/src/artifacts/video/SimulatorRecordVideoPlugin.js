@@ -1,8 +1,9 @@
 const fs = require('fs-extra');
 const log = require('../../utils/logger').child({ __filename });
-const tempfile = require('tempfile');
+const temporaryPath = require('../utils/temporaryPath');
 const VideoArtifactPlugin = require('./VideoArtifactPlugin');
 const Artifact = require('../templates/artifact/Artifact');
+const FileArtifact = require('../templates/artifact/FileArtifact');
 const { interruptProcess } = require('../../utils/exec');
 
 class SimulatorRecordVideoPlugin extends VideoArtifactPlugin {
@@ -14,7 +15,7 @@ class SimulatorRecordVideoPlugin extends VideoArtifactPlugin {
 
   createTestRecording() {
     const { context, appleSimUtils } = this;
-    const temporaryFilePath = tempfile('.mp4');
+    const temporaryFilePath = temporaryPath.for.mp4();
     let processPromise = null;
 
     return new Artifact({
@@ -28,7 +29,7 @@ class SimulatorRecordVideoPlugin extends VideoArtifactPlugin {
         }
       },
       save: async (artifactPath) => {
-        await Artifact.moveTemporaryFile(log, temporaryFilePath, artifactPath);
+        await FileArtifact.moveTemporaryFile(log, temporaryFilePath, artifactPath);
       },
       discard: async () => {
         await fs.remove(temporaryFilePath);

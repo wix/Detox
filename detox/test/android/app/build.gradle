@@ -1,21 +1,35 @@
+import groovy.json.JsonSlurper
+
 apply plugin: 'com.android.application'
 
-apply from: "../../node_modules/react-native/react.gradle"
+//project.ext.react = [:]
+project.ext.react = [
+    enableHermes: false
+]
+apply from: '../../node_modules/react-native/react.gradle'
+
+Boolean isRN60OrHigher = getRNVersion() >= 60
+Boolean isRN61OrHigher = getRNVersion() >= 61
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion rootProject.ext.compileSdkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
     defaultConfig {
-        applicationId "com.wix.detox.test"
-        minSdkVersion 18
-        targetSdkVersion 28
+        applicationId 'com.wix.detox.test'
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0"
+        versionName '1.0'
         ndk {
-            abiFilters "armeabi-v7a", "x86"
+            abiFilters 'armeabi-v7a', 'x86', 'x86_64'
         }
         testBuildType System.getProperty('testBuildType', 'debug')
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         /*
         testInstrumentationRunnerArguments = [
@@ -24,7 +38,14 @@ android {
         ]
         */
     }
-
+    splits {
+        abi {
+            reset()
+            enable false
+            universalApk false  // If true, also generate a universal APK
+            include 'armeabi-v7a', 'x86', 'x86_64'
+        }
+    }
     signingConfigs {
         release {
             storeFile file("keystore.jks")
@@ -33,7 +54,6 @@ android {
             keyPassword "12345678"
         }
     }
-
     buildTypes {
         release {
             minifyEnabled true
@@ -42,18 +62,18 @@ android {
             signingConfig signingConfigs.release
         }
     }
-
     productFlavors {
-        flavorDimensions "compileRNFromSource"
+        flavorDimensions 'compileRNFromSource'
         fromSource {
-            dimension "compileRNFromSource"
+            dimension 'compileRNFromSource'
         }
         fromBin {
-            dimension "compileRNFromSource"
+            dimension 'compileRNFromSource'
         }
     }
-
     packagingOptions {
+        pickFirst '**/libc++_shared.so'
+
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/LICENSE'
@@ -63,14 +83,35 @@ android {
 }
 
 dependencies {
-    implementation "com.android.support:appcompat-v7:28.0.0"
+    if (isRN60OrHigher) {
+        implementation 'androidx.appcompat:appcompat:1.1.0'
+        implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+    } else {
+        implementation 'com.android.support:appcompat-v7:28.0.0'
+    }
 
-    fromSourceImplementation(project(path: ":ReactAndroid"))
+    fromSourceImplementation(project(path: ':ReactAndroid'))
     // noinspection GradleDynamicVersion
-    fromBinImplementation "com.facebook.react:react-native:+"
+    fromBinImplementation 'com.facebook.react:react-native:+'
 
-    androidTestImplementation(project(path: ":detox"))
+    androidTestImplementation(project(path: ':detox'))
     androidTestImplementation 'junit:junit:4.12'
+}
+
+if (isRN60OrHigher) {
+    // refs: https://react-native-community.github.io/upgrade-helper/?from=0.59.9&to=0.60.6
+    //       https://react-native-community.github.io/upgrade-helper/?from=0.60.6&to=0.61.4
+    dependencies {
+        def enableHermes = project.ext.react.get('enableHermes', false)
+        if (enableHermes) {
+            def hermesModuleName = isRN61OrHigher ? 'hermes-engine' : 'hermesvm'
+            def hermesPath = "../../node_modules/$hermesModuleName/android/"
+            debugImplementation files(hermesPath + 'hermes-debug.aar')
+            releaseImplementation files(hermesPath + 'hermes-release.aar')
+        } else {
+            implementation 'org.webkit:android-jsc:+'
+        }
+    }
 }
 
 // Run this once to be able to run the application with BUCK
@@ -78,4 +119,12 @@ dependencies {
 task copyDownloadableDepsToLibs(type: Copy) {
   from configurations.compile
   into 'libs'
+}
+
+static def getRNVersion() {
+    def jsonSlurper = new JsonSlurper()
+    Map<String, Object> packageJSON  = jsonSlurper.parse(new File('../node_modules/react-native/package.json'))
+    String rnVersion = packageJSON.get('version')
+    Integer rnVersionMajor = rnVersion.split('\\.')[1].toInteger()
+    return rnVersionMajor
 }

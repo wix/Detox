@@ -1,16 +1,23 @@
 jest.mock('../../../utils/logger');
 const logger = require('../../../utils/logger');
 const ArtifactPlugin = require('./ArtifactPlugin');
+const FileArtifact = require('../artifact/FileArtifact');
 const testSummaries = require('./__mocks__/testSummaries.mock');
 
 class TestArtifactPlugin extends ArtifactPlugin {}
 
-describe(ArtifactPlugin, () => {
+describe('ArtifactPlugin', () => {
   let api;
   let plugin;
 
   beforeEach(() => {
-    api = {};
+    api = {
+      userConfig: {
+        enabled: false,
+        keepOnlyFailedTestsArtifacts: false,
+      },
+    };
+
     plugin = new TestArtifactPlugin({ api });
   });
 
@@ -66,12 +73,12 @@ describe(ArtifactPlugin, () => {
   describe('lifecycle hooks', () => {
     beforeEach(() => {
       plugin.context = {
-        deviceId: 'shouldNotBeInExpectSnapshots',
+        deviceId: 'someOriginalDeviceId',
         shouldNotBeDeletedFromContext: 'extraProperty'
       };
     });
 
-    it('should update context on .onBeforeLaunchApp', async () => {
+    it('should not update context on .onBeforeLaunchApp', async () => {
       await expect(plugin.onBeforeLaunchApp({
         deviceId: 'testDeviceId',
         bundleId: 'testBundleId',
@@ -81,17 +88,12 @@ describe(ArtifactPlugin, () => {
       }));
 
       expect(plugin.context).toEqual({
-        bundleId: 'testBundleId',
-        deviceId: 'testDeviceId',
-        launchArgs: {
-          detoxSessionId: 'test',
-        },
-        pid: NaN,
-        shouldNotBeDeletedFromContext: 'extraProperty',
+        deviceId: 'someOriginalDeviceId',
+        shouldNotBeDeletedFromContext: 'extraProperty'
       });
     });
 
-    it('should have .onLaunchApp', async () => {
+    it('should update context .onLaunchApp', async () => {
       await expect(plugin.onLaunchApp({
         deviceId: 'testDeviceId',
         bundleId: 'testBundleId',
@@ -103,7 +105,7 @@ describe(ArtifactPlugin, () => {
 
       expect(plugin.context).toEqual({
         bundleId: 'testBundleId',
-        deviceId: 'testDeviceId',
+        deviceId: 'someOriginalDeviceId',
         launchArgs: {
           detoxSessionId: 'test',
         },
@@ -112,53 +114,64 @@ describe(ArtifactPlugin, () => {
       });
     });
 
-    it('should update context on .onBeforeUninstallApp', async () => {
+    it('should not update context on .onBeforeUninstallApp', async () => {
       await expect(plugin.onBeforeUninstallApp({
         deviceId: 'testDeviceId',
         bundleId: 'testBundleId',
       }));
 
       expect(plugin.context).toEqual({
-        bundleId: 'testBundleId',
-        deviceId: 'testDeviceId',
-        shouldNotBeDeletedFromContext: 'extraProperty',
+        deviceId: 'someOriginalDeviceId',
+        shouldNotBeDeletedFromContext: 'extraProperty'
       });
     });
 
-    it('should update context on .onBeforeTerminateApp', async () => {
+    it('should not update context on .onBeforeTerminateApp', async () => {
       await expect(plugin.onBeforeTerminateApp({
         deviceId: 'testDeviceId',
         bundleId: 'testBundleId',
       }));
 
       expect(plugin.context).toEqual({
-        bundleId: 'testBundleId',
+        deviceId: 'someOriginalDeviceId',
+        shouldNotBeDeletedFromContext: 'extraProperty'
+      });
+    });
+
+    it('should update context on .onTerminateApp', async () => {
+      await expect(plugin.onTerminateApp({
         deviceId: 'testDeviceId',
+        bundleId: 'testBundleId',
+      }));
+
+      expect(plugin.context).toEqual({
+        bundleId: '',
+        launchArgs: null,
+        pid: NaN,
+        deviceId: 'someOriginalDeviceId',
         shouldNotBeDeletedFromContext: 'extraProperty',
       });
     });
 
-    it('should have .onBootDevice', async () => {
+    it('should update context on .onBootDevice', async () => {
       await expect(plugin.onBootDevice({
         deviceId: 'testDeviceId',
         coldBoot: true
       }));
 
       expect(plugin.context).toEqual({
-        bundleId: '',
         deviceId: 'testDeviceId',
-        pid: NaN,
         shouldNotBeDeletedFromContext: 'extraProperty',
       });
     });
 
-    it('should have .onBeforeShutdownDevice', async () => {
+    it('should not update context on .onBeforeShutdownDevice', async () => {
       await expect(plugin.onBeforeShutdownDevice({
         deviceId: 'testDeviceId'
       }));
 
       expect(plugin.context).toEqual({
-        deviceId: 'testDeviceId',
+        deviceId: 'someOriginalDeviceId',
         shouldNotBeDeletedFromContext: 'extraProperty',
       });
     });
@@ -169,38 +182,38 @@ describe(ArtifactPlugin, () => {
       }));
 
       expect(plugin.context).toEqual({
+        deviceId: '',
         bundleId: '',
-        deviceId: 'testDeviceId',
+        launchArgs: null,
         pid: NaN,
         shouldNotBeDeletedFromContext: 'extraProperty',
       });
     });
 
-    it('should have .onUserAction', async () => {
-      await expect(plugin.onUserAction()).resolves.toBe(void 0);
+    it('should have .onCreateExternalArtifact', async () => {
+      await expect(plugin.onCreateExternalArtifact({
+        name: 'The custom artifact',
+        artifact: new FileArtifact({
+          temporaryPath: '/tmp/path/to/artifact.file'
+        }),
+      })).resolves.toBe(void 0);
     });
 
-    it('should have .onBeforeAll, which resets context.testSummary if called', async () => {
-      plugin.context.testSummary = {};
-      await plugin.onBeforeAll();
-      expect(plugin.context.testSummary).toBe(null);
-    });
-
-    it('should have .onBeforeEach, which updates context.testSummary if called', async () => {
+    it('should have .onTestStart, which updates context.testSummary if called', async () => {
       const testSummary = testSummaries.running();
-      await plugin.onBeforeEach(testSummary);
+      await plugin.onTestStart(testSummary);
       expect(plugin.context.testSummary).toBe(testSummary);
     });
 
-    it('should have .onAfterEach, which updates context.testSummary if called', async () => {
+    it('should have .onTestDone, which updates context.testSummary if called', async () => {
       const testSummary = testSummaries.failed();
-      await plugin.onAfterEach(testSummary);
+      await plugin.onTestDone(testSummary);
       expect(plugin.context.testSummary).toBe(testSummary);
     });
 
-    it('should have .onAfterAll, which resets context.testSummary if called', async () => {
+    it('should have .onBeforeCleanup, which resets context.testSummary if called', async () => {
       plugin.context.testSummary = {};
-      await plugin.onAfterAll();
+      await plugin.onBeforeCleanup();
       expect(plugin.context.testSummary).toBe(null);
     });
 
@@ -220,10 +233,10 @@ describe(ArtifactPlugin, () => {
         expect(plugin.onBeforeLaunchApp).toBe(plugin.onTerminate);
         expect(plugin.onLaunchApp).toBe(plugin.onTerminate);
         expect(plugin.onBeforeTerminateApp).toBe(plugin.onTerminate);
-        expect(plugin.onBeforeAll).toBe(plugin.onTerminate);
-        expect(plugin.onBeforeEach).toBe(plugin.onTerminate);
-        expect(plugin.onAfterEach).toBe(plugin.onTerminate);
-        expect(plugin.onAfterAll).toBe(plugin.onTerminate);
+        expect(plugin.onTerminateApp).toBe(plugin.onTerminate);
+        expect(plugin.onTestStart).toBe(plugin.onTerminate);
+        expect(plugin.onTestDone).toBe(plugin.onTerminate);
+        expect(plugin.onBeforeCleanup).toBe(plugin.onTerminate);
         expect(plugin.onUserAction).toBe(plugin.onTerminate);
       });
 
@@ -247,6 +260,14 @@ describe(ArtifactPlugin, () => {
     describe('if should not keep specifically failed test artifacts', () => {
       beforeEach(() => {
         plugin.keepOnlyFailedTestsArtifacts = false;
+        plugin.enabled = true;
+      });
+
+      it('should return false if it is disabled', () => {
+        plugin.enabled = false;
+        expect(plugin.shouldKeepArtifactOfTest(testSummaries.running())).toBe(false);
+        expect(plugin.shouldKeepArtifactOfTest(testSummaries.passed())).toBe(false);
+        expect(plugin.shouldKeepArtifactOfTest(testSummaries.failed())).toBe(false);
       });
 
       it('should return true for testSummary.status === running', () =>
@@ -262,6 +283,14 @@ describe(ArtifactPlugin, () => {
     describe('if should keep only failed test artifacts', () => {
       beforeEach(() => {
         plugin.keepOnlyFailedTestsArtifacts = true;
+        plugin.enabled = true;
+      });
+
+      it('should return false if it is disabled', () => {
+        plugin.enabled = false;
+        expect(plugin.shouldKeepArtifactOfTest(testSummaries.running())).toBe(false);
+        expect(plugin.shouldKeepArtifactOfTest(testSummaries.passed())).toBe(false);
+        expect(plugin.shouldKeepArtifactOfTest(testSummaries.failed())).toBe(false);
       });
 
       it('should return false for testSummary.status === running', () =>

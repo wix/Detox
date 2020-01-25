@@ -9,6 +9,7 @@ const EmulatorDriver = require('./devices/drivers/EmulatorDriver');
 const AttachedAndroidDriver = require('./devices/drivers/AttachedAndroidDriver');
 const DetoxRuntimeError = require('./errors/DetoxRuntimeError');
 const argparse = require('./utils/argparse');
+const MissingDetox = require('./utils/MissingDetox');
 const configuration = require('./configuration');
 const Client = require('./client/Client');
 const DetoxServer = require('./server/DetoxServer');
@@ -23,12 +24,12 @@ const DEVICE_CLASSES = {
 };
 
 class Detox {
-  constructor({deviceConfig, session}) {
+  constructor({artifactsConfig, deviceConfig, session}) {
     this._deviceConfig = deviceConfig;
     this._userSession = deviceConfig.session || session;
     this._client = null;
     this._server = null;
-    this._artifactsManager = new ArtifactsManager();
+    this._artifactsManager = new ArtifactsManager(artifactsConfig);
 
     this.device = null;
   }
@@ -81,13 +82,11 @@ class Detox {
       Object.assign(global, globalsToExport);
     }
 
-    await this._artifactsManager.onBeforeAll();
-
     return this;
   }
 
   async cleanup() {
-    await this._artifactsManager.onAfterAll();
+    await this._artifactsManager.onBeforeCleanup();
 
     if (this._client) {
       this._client.dumpPendingRequests();
@@ -114,13 +113,13 @@ class Detox {
       pendingRequests: false,
       testName: testSummary.fullName,
     });
-    await this._artifactsManager.onBeforeEach(testSummary);
+    await this._artifactsManager.onTestStart(testSummary);
   }
 
   async afterEach(testSummary) {
     this._validateTestSummary(testSummary);
     this._logTestRunCheckpoint('DETOX_AFTER_EACH', testSummary);
-    await this._artifactsManager.onAfterEach(testSummary);
+    await this._artifactsManager.onTestDone(testSummary);
     await this._dumpUnhandledErrorsIfAny({
       pendingRequests: testSummary.timedOut,
       testName: testSummary.fullName,
@@ -178,5 +177,7 @@ class Detox {
     return session;
   }
 }
+
+Detox.none = new MissingDetox();
 
 module.exports = Detox;

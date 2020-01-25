@@ -10,7 +10,6 @@ class StartupAndTestRecorderPlugin extends WholeTestRecorderPlugin {
     this.startupRecording = null;
     this._isInStartupPhase = true;
     this._isRecordingStartup = false;
-    this._hasFailingTests = false;
   }
 
   /***
@@ -35,7 +34,7 @@ class StartupAndTestRecorderPlugin extends WholeTestRecorderPlugin {
     }
   }
 
-  async onBeforeEach(testSummary) {
+  async onTestStart(testSummary) {
     this._isInStartupPhase = false;
 
     if (this._isRecordingStartup) {
@@ -43,27 +42,25 @@ class StartupAndTestRecorderPlugin extends WholeTestRecorderPlugin {
       this._isRecordingStartup = false;
     }
 
-    await super.onBeforeEach(testSummary);
+    await super.onTestStart(testSummary);
   }
 
-  async onAfterEach(testSummary) {
-    if (testSummary.status === 'failed') {
-      this._hasFailingTests = true;
-    }
-
-    await super.onAfterEach(testSummary);
+  async onTestDone(testSummary) {
+    await super.onTestDone(testSummary);
 
     if (this.startupRecording) {
-      this._tryToFinalizeStartupRecording(false);
+      this._tryToFinalizeStartupRecording();
     }
   }
 
-  async onAfterAll() {
+  async onBeforeCleanup() {
+    await super.onBeforeCleanup();
+
     if (this.startupRecording) {
-      this._finalizeStartupRecording();
+      this._tryToFinalizeStartupRecording();
     }
 
-    await super.onAfterAll();
+    await super.onBeforeCleanup();
   }
 
   /***
@@ -78,26 +75,18 @@ class StartupAndTestRecorderPlugin extends WholeTestRecorderPlugin {
    */
   async preparePathForStartupArtifact() {}
 
-  _shouldKeepStartupRecording() {
-    if (this.keepOnlyFailedTestsArtifacts && !this._hasFailingTests) {
-      return false;
-    }
+  _tryToFinalizeStartupRecording() {
+    const shouldKeep = this.shouldKeepArtifactOfSession();
 
-    return true;
-  }
-
-  _tryToFinalizeStartupRecording(isExiting) {
-    if (this._shouldKeepStartupRecording()) {
+    if (shouldKeep === true) {
       this._startSavingStartupRecording(this.startupRecording);
       this.startupRecording = null;
-    } else if (isExiting) {
+    }
+
+    if (shouldKeep === false) {
       this._startDiscardingStartupRecording(this.startupRecording);
       this.startupRecording = null;
     }
-  }
-
-  _finalizeStartupRecording() {
-    this._tryToFinalizeStartupRecording(true);
   }
 
   _startSavingStartupRecording(startupRecording) {

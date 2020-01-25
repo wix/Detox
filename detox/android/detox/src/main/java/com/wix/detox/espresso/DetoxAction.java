@@ -1,11 +1,10 @@
 package com.wix.detox.espresso;
 
-import android.view.InputDevice;
-import android.view.MotionEvent;
 import android.view.View;
 
 import com.wix.detox.espresso.DetoxErrors.DetoxRuntimeException;
 import com.wix.detox.espresso.DetoxErrors.StaleActionException;
+import com.wix.detox.espresso.action.RNClickAction;
 import com.wix.detox.espresso.common.annot.MotionDir;
 import com.wix.detox.espresso.scroll.ScrollEdgeException;
 import com.wix.detox.espresso.scroll.ScrollHelper;
@@ -20,7 +19,6 @@ import androidx.test.espresso.action.GeneralLocation;
 import androidx.test.espresso.action.GeneralSwipeAction;
 import androidx.test.espresso.action.Press;
 import androidx.test.espresso.action.Swipe;
-import androidx.test.espresso.action.Tap;
 
 import static androidx.test.espresso.action.ViewActions.actionWithAssertions;
 import static androidx.test.espresso.action.ViewActions.swipeDown;
@@ -29,10 +27,10 @@ import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.action.ViewActions.swipeUp;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_DOWN;
-import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_LEFT;
-import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_RIGHT;
-import static com.wix.detox.espresso.common.annot.MotionDefsKt.MOTION_DIR_UP;
+import static com.wix.detox.espresso.common.annot.MotionDefs.MOTION_DIR_DOWN;
+import static com.wix.detox.espresso.common.annot.MotionDefs.MOTION_DIR_LEFT;
+import static com.wix.detox.espresso.common.annot.MotionDefs.MOTION_DIR_RIGHT;
+import static com.wix.detox.espresso.common.annot.MotionDefs.MOTION_DIR_UP;
 import static org.hamcrest.Matchers.allOf;
 
 
@@ -61,12 +59,10 @@ public class DetoxAction {
                 view.getLocationOnScreen(xy);
                 final float fx = xy[0] + px;
                 final float fy = xy[1] + py;
-                float[] coordinates = {fx, fy};
-                return coordinates;
+                return new float[] {fx, fy};
             }
         };
-        return actionWithAssertions(new GeneralClickAction(
-                Tap.SINGLE, c, Press.FINGER, InputDevice.SOURCE_UNKNOWN, MotionEvent.BUTTON_PRIMARY));
+        return actionWithAssertions(new RNClickAction(c));
     }
 
     /**

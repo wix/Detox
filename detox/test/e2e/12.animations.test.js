@@ -56,6 +56,5 @@ describe('Animations', () => {
       await _startTest(driver, {delay: 500});
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toExist();
     });
-
   });
 });
