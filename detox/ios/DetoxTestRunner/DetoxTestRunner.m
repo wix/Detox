@@ -101,38 +101,39 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	_testedApplication = [[DTXDetoxApplication alloc] init];
 	_testedApplication.delegate = self;
 	
-	do {
-		dispatch_block_t action = [self _dequeueAction];
-		action();
-	} while (true);
+//	do {
+//		dispatch_block_t action = [self _dequeueAction];
+//		action();
+//	} while (true);
 	
-//	[_testedApplication launch];
-//
-//	XCUIElement* tableView = _testedApplication.tables.firstMatch;
-//	[tableView scrollWithOffset:CGVectorMake(0, -200)];
-//	[tableView tapAtPoint:CGVectorMake(200, 200)];
-//
-//	XCUIElementQuery* query = [[_testedApplication.windows.firstMatch descendantsMatchingType:XCUIElementTypeAny] matchingPredicate:[NSPredicate predicateWithFormat:@"label == 'Second'"]];
-//	XCUIElement* element = query.firstMatch;
-//	[element tap];
-//
-//	[[_testedApplication.buttons elementMatchingPredicate:[NSPredicate predicateWithFormat:@"label == 'Second'"]] tap];
-//	XCUIElement* label = [_testedApplication.staticTexts elementMatchingPredicate:[NSPredicate predicateWithFormat:@"label == 'Second View'"]];
-//	XCTAssertTrue(label.exists);
-//	XCTAssertTrue(label.isHittable);
-//
-//	query = [[_testedApplication.windows.firstMatch descendantsMatchingType:XCUIElementTypeAny] matchingPredicate:[NSPredicate predicateWithFormat:@"identifier == 'picker'"]];
-//	XCUIElement* picker = query.firstMatch;
-//
-//	query = [[_testedApplication.windows.firstMatch descendantsMatchingType:XCUIElementTypeAny] matchingPredicate:[NSPredicate predicateWithFormat:@"identifier == 'TextField'"]];
-//	XCUIElement* textField = query.firstMatch;
-//	[textField tap];
+	[_testedApplication launch];
+
+	XCUIElement* tableView = _testedApplication.tables.firstMatch;
+	[tableView scrollWithOffset:CGVectorMake(0, -200)];
+	[tableView tapAtPoint:CGVectorMake(200, 200)];
+
+	XCUIElementQuery* query = [[_testedApplication.windows.firstMatch descendantsMatchingType:XCUIElementTypeAny] matchingPredicate:[NSPredicate predicateWithFormat:@"label == 'Second'"]];
+	XCUIElement* element = query.firstMatch;
+	[element tap];
+
+	[[_testedApplication.buttons elementMatchingPredicate:[NSPredicate predicateWithFormat:@"label == 'Second'"]] tap];
+	XCUIElement* label = [_testedApplication.staticTexts elementMatchingPredicate:[NSPredicate predicateWithFormat:@"label == 'Second View'"]];
+	XCTAssertTrue(label.exists);
+	XCTAssertTrue(label.isHittable);
+
+	query = [[_testedApplication.windows.firstMatch descendantsMatchingType:XCUIElementTypeAny] matchingPredicate:[NSPredicate predicateWithFormat:@"identifier == 'picker'"]];
+	XCUIElement* picker = query.firstMatch;
+
+	query = [[_testedApplication.windows.firstMatch descendantsMatchingType:XCUIElementTypeAny] matchingPredicate:[NSPredicate predicateWithFormat:@"identifier == 'TextField'"]];
+	XCUIElement* textField = query.firstMatch;
+	[textField tap];
+	[textField typeText:@"Hello Wordl!"];
 //	[textField typeText:NSProcessInfo.processInfo.environment[@"DETOX_SERVER_PORT"]];
-//	[textField typeText:XCUIKeyboardKeyReturn];
-//
-//	[picker ln_adjustToDatePickerDate:[NSDate dateWithTimeIntervalSinceNow:86400 * 1000 - 48200]];
-//
-//	[_testedApplication terminate];
+	[textField typeText:XCUIKeyboardKeyReturn];
+
+	[picker ln_adjustToDatePickerDate:[NSDate dateWithTimeIntervalSinceNow:86400 * 1000 - 48200]];
+
+	[_testedApplication terminate];
 }
 
 - (void)_cleanUpAndTerminateIfNeeded

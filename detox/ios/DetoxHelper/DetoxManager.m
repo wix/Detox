@@ -37,7 +37,7 @@ static dispatch_queue_t _recordingManagerQueue;
 		
 		[self.sharedManager connect];
 		
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self.sharedManager selector:@selector(_appDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
 	}
 }
 
