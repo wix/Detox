@@ -69,14 +69,14 @@ static void _DTXFixupKeyboard(void)
 
 static void _DTXTypeText(NSString* text)
 {	
-	[UIKeyboardImpl.sharedInstance setShift:NO autoshift:NO];
-	
 	NSUInteger rangeIdx = 0;
 	while (rangeIdx < text.length)
 	{
 		NSRange range = [text rangeOfComposedCharacterSequenceAtIndex:rangeIdx];
 		
 		NSString* grapheme = [text substringWithRange:range];
+		
+		[UIKeyboardImpl.sharedInstance setShift:NO autoshift:NO];
 		
 		[UIKeyboardImpl.sharedInstance.taskQueue performTask:^(id ctx) {
 			[UIKeyboardImpl.sharedInstance handleKeyWithString:grapheme forKeyEvent:nil executionContext:ctx];
