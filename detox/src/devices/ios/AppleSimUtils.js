@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const path = require('path');
 const {joinArgs} = require('../../utils/argparse');
 const exec = require('../../utils/exec');
 const log = require('../../utils/logger').child({ __filename });
@@ -299,7 +300,8 @@ class AppleSimUtils {
 
   async _printLoggingHint(udid, bundleId) {
     const appContainer = await this.getAppContainer(udid, bundleId);
-    const predicate = `processImagePath beginsWith "${appContainer}"`;
+    const CFBundleExecutable = await exec.execAsync(`/usr/libexec/PlistBuddy -c "Print CFBundleExecutable" "${path.join(appContainer, 'Info.plist')}"`);
+    const predicate = `process == ${CFBundleExecutable}`;
     const command = `/usr/bin/xcrun simctl spawn ${udid} log stream --level debug --style compact --predicate '${predicate}'`;
 
     log.info(`${bundleId} launched. To watch simulator logs, run:\n        ${command}`);

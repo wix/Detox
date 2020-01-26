@@ -158,9 +158,13 @@ async function interruptProcess(childProcessPromise, signal = 'SIGINT') {
   });
 }
 
+async function execAsync(command) {
+  const result = await exec(command);
+  return _.trim(result.stdout);
+}
 module.exports = {
   execWithRetriesAndLogs,
   spawnAndLog,
   interruptProcess,
+  execAsync
 };
-
