@@ -277,6 +277,12 @@ describe('spawn', () => {
     expect(log.error).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_ERROR' }), 'command failed with code = -2');
     expect(log.error).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), 'Command `command` not found.');
   });
+
+  it(`execAsync command with no arguments successfully`, async () => {
+    mockCppSuccessful(cpp);
+    await exec.execAsync('bin');
+    expect(cpp.exec).toHaveBeenCalledWith(`bin`);
+  });
 });
 
 function nextCycle() {

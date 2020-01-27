@@ -15,6 +15,7 @@ module.exports = function(wallaby) {
       'src/**/*.js',
       'src/**/*.mock.*',
       '!src/**/*.test.js',
+      '__tests__/setupJest.js'
     ],
 
     tests: [
