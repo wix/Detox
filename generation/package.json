@@ -30,7 +30,7 @@
 		"uuid": "^3.2.1"
 	},
 	"devDependencies": {
-		"jest": "^24.0.0",
+		"jest": "^25.1.0",
 		"lint-staged": "^6.0.0",
 		"prettier": "^1.8.2"
 	},
