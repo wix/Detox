@@ -11,7 +11,7 @@ Matchers find elements in your app that match one or more properties.
 
 - [`by.id()`](#byidid)
 - [`by.label()`](#bylabellabel)
-- [`by.text()`](#bytexttext)
+- [`by.text()`](#bytexttext-deprecated-on-ios)
 - [`by.type()`](#bytypenativeviewtype)
 - [`by.traits()`](#bytraitstraits)
 - [Advanced](#advanced)
