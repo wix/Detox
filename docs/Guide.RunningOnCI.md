@@ -4,7 +4,7 @@
 
 Running detox on CI is not that different from running it locally. There are two main differences:
 1. We will test a release build rather than a debug build
-2. We will tell Detox to shut down the simulator when test is over 
+2. We will tell Detox to shut down the simulator when test is over
 
 ## Step 1: Prepare a release configuration for your app
 
@@ -82,7 +82,7 @@ script:
 
 Bitrise is a popular CI service for automating React Native apps. If you are looking to get started with Bitrise, check out [this](http://blog.bitrise.io/2017/07/25/how-to-set-up-a-react-native-app-on-bitrise.html) guide.
 
-You can run Detox on Bitrise by creating a new workflow. Below is an example of the Bitrise **.yml** file for a workflow called `tests`. 
+You can run Detox on Bitrise by creating a new workflow. Below is an example of the Bitrise **.yml** file for a workflow called `tests`.
 
 Additionally, you can use a [webhook](http://devcenter.bitrise.io/webhooks/) on Bitrise to post the build status directly into your Slack channel.
 
@@ -151,4 +151,29 @@ workflows:
     - _tests_setup
     - _detox_tests
     after_run: []
+```
+
+### • Running Detox on [GitHub Actions](https://help.github.com/en/actions)
+
+GitHub Actions is a handy CI service that runs directly inside GitHub. They provide free macOS VMs with HAXM installed.
+
+You can run Detox on GitHub by creating a new workflow. For example, to run iOS tests, create a `.github/workflows/detox.yml` like below:
+
+```yml
+name: Detox
+on: [push, pull_request]
+jobs:
+  detox:
+    name: Detox Tests
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - run: yarn install
+      - run: |
+          brew tap wix/brew
+          brew install applesimutils
+      - run: cd ios/ && pod install --repo-update && cd ..
+      - run: node node_modules/.bin/detox build --configuration ios.sim.release
+      - run: node node_modules/.bin/detox test --configuration ios.sim.release --cleanup
 ```
