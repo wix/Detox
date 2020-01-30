@@ -10,6 +10,7 @@ const InstrumentsArtifactPlugin = require('./artifacts/instruments/InstrumentsAr
 const LogArtifactPlugin = require('./artifacts/log/LogArtifactPlugin');
 const ScreenshotArtifactPlugin = require('./artifacts/screenshot/ScreenshotArtifactPlugin');
 const VideoArtifactPlugin = require('./artifacts/video/VideoArtifactPlugin');
+const ArtifactPathBuilder = require('./artifacts/utils/ArtifactPathBuilder');
 
 async function defaultSession() {
   return {
@@ -121,9 +122,7 @@ function composeArtifactsConfig({
     artifactsConfig.rootDir
   );
 
-  if (typeof artifactsConfig.pathBuilder === 'string') {
-    artifactsConfig.pathBuilder = resolveModuleFromPath(artifactsConfig.pathBuilder);
-  }
+  artifactsConfig.pathBuilder = resolveArtifactsPathBuilder(artifactsConfig);
 
   artifactsConfig.plugins = _.mapValues(artifactsConfig.plugins, (value, key) => {
     switch (key) {
@@ -135,6 +134,28 @@ function composeArtifactsConfig({
   });
 
   return artifactsConfig;
+}
+
+function resolveArtifactsPathBuilder(artifactsConfig) {
+  let { rootDir, pathBuilder } = artifactsConfig;
+
+  if (typeof pathBuilder === 'string') {
+    pathBuilder = resolveModuleFromPath(pathBuilder);
+  }
+
+  if (typeof pathBuilder === 'function') {
+    try {
+      pathBuilder = pathBuilder({ rootDir });
+    } catch (e) {
+      pathBuilder = new pathBuilder({ rootDir });
+    }
+  }
+
+  if (!pathBuilder) {
+    pathBuilder = new ArtifactPathBuilder({ rootDir });
+  }
+
+  return pathBuilder;
 }
 
 module.exports = {

@@ -4,6 +4,7 @@ const schemes = require('./configurations.mock');
 const LogArtifactPlugin = require('./artifacts/log/LogArtifactPlugin');
 const ScreenshotArtifactPlugin = require('./artifacts/screenshot/ScreenshotArtifactPlugin');
 const VideoArtifactPlugin = require('./artifacts/video/VideoArtifactPlugin');
+const ArtifactPathBuilder = require('./artifacts/utils/ArtifactPathBuilder');
 
 describe('configuration', () => {
   let configuration;
@@ -43,9 +44,10 @@ describe('configuration', () => {
         configurationName: 'abracadabra',
         deviceConfig: {},
         detoxConfig: {},
-      })).toEqual({
-        rootDir: expect.stringMatching(/^artifacts[\\\/]abracadabra\.\d{4}/),
-        pathBuilder: null,
+      })).toMatchObject({
+        pathBuilder: expect.objectContaining({
+          rootDir: expect.stringMatching(/^artifacts[\\\/]abracadabra\.\d{4}/),
+        }),
         plugins: schemes.pluginsDefaultsResolved,
       });
     });
@@ -62,9 +64,10 @@ describe('configuration', () => {
         },
         detoxConfig: {},
         cliConfig: {}
-      })).toEqual({
-        rootDir: expect.stringMatching(/^otherPlace[\\\/]abracadabra\.\d{4}/),
-        pathBuilder: _.noop,
+      })).toMatchObject({
+        pathBuilder: expect.objectContaining({
+          rootDir: expect.stringMatching(/^otherPlace[\\\/]abracadabra\.\d{4}/),
+        }),
         plugins: schemes.pluginsAllResolved,
       });
     });
@@ -81,9 +84,10 @@ describe('configuration', () => {
           }
         },
         cliConfig: {}
-      })).toEqual({
-        rootDir: expect.stringMatching(/^otherPlace[\\\/]abracadabra\.\d{4}/),
-        pathBuilder: _.noop,
+      })).toMatchObject({
+        pathBuilder: expect.objectContaining({
+          rootDir: expect.stringMatching(/^otherPlace[\\\/]abracadabra\.\d{4}/),
+        }),
         plugins: schemes.pluginsAllResolved,
       });
     });
@@ -100,9 +104,10 @@ describe('configuration', () => {
           recordVideos: 'all',
           recordPerformance: 'all',
         }
-      })).toEqual({
-        rootDir: expect.stringMatching(/^otherPlace[\\\/]abracadabra\.\d{4}/),
-        pathBuilder: null,
+      })).toMatchObject({
+        pathBuilder: expect.objectContaining({
+          rootDir: expect.stringMatching(/^otherPlace[\\\/]abracadabra\.\d{4}/),
+        }),
         plugins: schemes.pluginsAllResolved,
       });
     });
@@ -131,9 +136,10 @@ describe('configuration', () => {
             },
           },
         },
-      })).toEqual({
-        rootDir: expect.stringMatching(/^cli[\\\/]priority\.\d{4}/),
-        pathBuilder: _.identity,
+      })).toMatchObject({
+        pathBuilder: expect.objectContaining({
+          rootDir: expect.stringMatching(/^cli[\\\/]priority\.\d{4}/),
+        }),
         plugins: {
           log: schemes.pluginsFailingResolved.log,
           screenshot: schemes.pluginsAllResolved.screenshot,
@@ -144,6 +150,7 @@ describe('configuration', () => {
     });
 
     it('should resolve path builder from string (absolute path)', () => {
+      const FakePathBuilder = require('./artifacts/__mocks__/FakePathBuilder');
       expect(configuration.composeArtifactsConfig({
         configurationName: 'customization',
         deviceConfig: {
@@ -152,9 +159,7 @@ describe('configuration', () => {
           },
         },
         detoxConfig: {},
-      })).toEqual(expect.objectContaining({
-        pathBuilder: require('./artifacts/__mocks__/FakePathBuilder'),
-      }));
+      }).pathBuilder).toBeInstanceOf(FakePathBuilder);
     });
 
     it('should resolve path builder from string (relative path)', () => {
@@ -166,9 +171,12 @@ describe('configuration', () => {
           },
         },
         detoxConfig: {},
-      })).toEqual(expect.objectContaining({
-        pathBuilder: require(path.join(process.cwd(), 'package.json')),
-      }));
+      })).toMatchObject({
+        pathBuilder: expect.objectContaining({
+          "name": expect.any(String),
+          "version": expect.any(String),
+        }),
+      });
     });
 
     it('should not append configuration with timestamp if rootDir ends with slash', () => {
@@ -180,9 +188,9 @@ describe('configuration', () => {
           },
         },
         detoxConfig: {},
-      })).toEqual(expect.objectContaining({
+      })).toMatchObject({
         rootDir: '.artifacts/',
-      }));
+      });
     });
   });
 
