@@ -175,8 +175,10 @@ describe('ArtifactsManager', () => {
         expect(proxy.logger.warn.mock.calls.length).toBe(0);
 
         await sleep(0);
-        expect(proxy.logger.warn.mock.calls.length).toBe(1);
+
+        expect(callbacks[0]).toHaveBeenCalled();
         expect(callbacks[1]).toHaveBeenCalled();
+        expect(proxy.logger.warn.mock.calls.length).toBe(1);
       });
 
       it('should work correctly for onBeforeCleanup', async () => {
@@ -189,8 +191,6 @@ describe('ArtifactsManager', () => {
         expect(callbacks[0]).toHaveBeenCalledTimes(1);
         expect(callbacks[1]).toHaveBeenCalledTimes(1);
         expect(callbacks[2]).toHaveBeenCalledTimes(1);
-        await sleep(100);
-        console.log(artifactsManager._idlePromise);
       });
     });
 
