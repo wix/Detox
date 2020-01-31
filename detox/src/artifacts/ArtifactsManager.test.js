@@ -33,43 +33,6 @@ describe('ArtifactsManager', () => {
     };
   });
 
-  describe('when created', () => {
-    let artifactsManager;
-
-    beforeEach(() => {
-      artifactsManager = new proxy.ArtifactsManager({
-        rootDir: '/tmp',
-        plugins: {},
-      });
-    });
-
-    it('should provide artifacts location to path builder', async () => {
-      expect(proxy.ArtifactPathBuilder).toHaveBeenCalledWith({
-        rootDir: '/tmp',
-      });
-    });
-
-    it('should correctly terminate itself (without errors)', async () => {
-      await artifactsManager.onTerminate();
-    });
-
-    describe('with { pathBuilder } instance', () => {
-      it('should require that module as pathBuilder', () => {
-        const pathBuilder = new FakePathBuilder();
-        artifactsManager = new proxy.ArtifactsManager({ pathBuilder });
-        expect(artifactsManager._pathBuilder).toBe(pathBuilder);
-      });
-    })
-
-    describe('with { pathBuilder } function', () => {
-      it('should require that module as pathBuilder', () => {
-        const pathBuilder = jest.fn(() => new FakePathBuilder());
-        artifactsManager = new proxy.ArtifactsManager({ pathBuilder, rootDir: '/tmp/42' });
-        expect(pathBuilder).toHaveBeenCalledWith({ rootDir: '/tmp/42' });
-      });
-    })
-  });
-
   describe('when plugin factory is registered', () => {
     let artifactsManager, factory, plugin;
 
@@ -79,7 +42,9 @@ describe('ArtifactsManager', () => {
       });
 
       artifactsManager = new proxy.ArtifactsManager({
-        rootDir: '/tmp',
+        pathBuilder: new proxy.ArtifactPathBuilder({
+          rootDir: '/tmp',
+        }),
         plugins: {
           mock: { setting: 'value' },
         },
@@ -124,7 +89,6 @@ describe('ArtifactsManager', () => {
           onTestStart: jest.fn(),
           onTestDone: jest.fn(),
           onBeforeCleanup: jest.fn(),
-          onTerminate: jest.fn(),
         });
       };
 
@@ -167,34 +131,6 @@ describe('ArtifactsManager', () => {
       });
     });
 
-    describe('.trackArtifact()', () => {
-      it('should mark artifact to be discarded when Detox is being terminated', async () => {
-        const artifact = {
-          discard: jest.fn(),
-        };
-
-        artifactsApi.trackArtifact(artifact);
-        expect(artifact.discard).not.toHaveBeenCalled();
-        await artifactsManager.onTerminate();
-        expect(artifact.discard).toHaveBeenCalled();
-      });
-    });
-
-    describe('.untrackArtifact()', () => {
-      it('should mark artifact as the one that does not have to be discarded when Detox is being terminated', async () => {
-        const artifact = {
-          discard: jest.fn(),
-        };
-
-        artifactsApi.trackArtifact(artifact);
-        artifactsApi.untrackArtifact(artifact);
-
-        expect(artifact.discard).not.toHaveBeenCalled();
-        await artifactsManager.onTerminate();
-        expect(artifact.discard).not.toHaveBeenCalled();
-      });
-    });
-
     describe('.requestIdleCallback()', () => {
       let callbacks, resolves, rejects;
 
@@ -203,57 +139,55 @@ describe('ArtifactsManager', () => {
         resolves = new Array(3);
         rejects = new Array(3);
 
-        [0, 1, 2].forEach((index) => {
-          callbacks[index] = jest.fn().mockImplementation(() => {
-            return new Promise((resolve, reject) => {
-              resolves[index] = async (value) => { resolve(value); await sleep(0); };
-              rejects[index] = async (value) => { reject(value); await sleep(0); };
-            });
+        for (const index of [0, 1, 2]) {
+          const promise = new Promise((resolve, reject) => {
+            resolves[index] = resolve;
+            rejects[index] = reject;
           });
-        });
+
+          callbacks[index] = jest.fn(() => promise);
+        }
       });
 
       it('should enqueue an async operation to a queue that executes operations only one by one', async () => {
-        artifactsApi.requestIdleCallback(callbacks[0], testPlugin); await sleep(0);
-        expect(callbacks[0]).toHaveBeenCalled();
-
+        artifactsApi.requestIdleCallback(callbacks[0], testPlugin);
         artifactsApi.requestIdleCallback(callbacks[1], testPlugin);
-        artifactsApi.requestIdleCallback(callbacks[2], testPlugin);
 
-        expect(callbacks[1]).not.toHaveBeenCalled();
-        expect(callbacks[2]).not.toHaveBeenCalled();
+        expect(callbacks[0]).toHaveBeenCalledTimes(0);
+        expect(callbacks[1]).toHaveBeenCalledTimes(0);
 
-        await resolves[0]();
-        expect(callbacks[1]).toHaveBeenCalled();
-        expect(callbacks[2]).not.toHaveBeenCalled();
+        await sleep(0);
+        expect(callbacks[0]).toHaveBeenCalledTimes(1);
+        expect(callbacks[1]).toHaveBeenCalledTimes(0);
 
-        await resolves[1]();
-        expect(callbacks[2]).toHaveBeenCalled();
+        await (resolves[0](), sleep(0));
+        expect(callbacks[1]).toHaveBeenCalledTimes(1);
       });
 
       it('should catch errors, report them if callback fails, and move on ', async () => {
-        artifactsApi.requestIdleCallback(callbacks[0], testPlugin); await sleep(0);
-        await rejects[0](new Error('test onIdleCallback error'));
+        artifactsApi.requestIdleCallback(callbacks[0], testPlugin);
+        artifactsApi.requestIdleCallback(callbacks[1], testPlugin);
+        rejects[0](new Error('test onIdleCallback error'));
+        resolves[1]();
 
-        expect(proxy.logger.error.mock.calls.length).toBe(0);
+        expect(callbacks[0]).not.toHaveBeenCalled();
+        expect(callbacks[1]).not.toHaveBeenCalled();
+        expect(proxy.logger.warn.mock.calls.length).toBe(0);
 
-        artifactsApi.requestIdleCallback(callbacks[1], testPlugin); await sleep(0);
+        await sleep(0);
+
+        expect(callbacks[0]).toHaveBeenCalled();
         expect(callbacks[1]).toHaveBeenCalled();
+        expect(proxy.logger.warn.mock.calls.length).toBe(1);
       });
 
-      it('should work correctly even when operations are flushed on Detox termination', async () => {
+      it('should work correctly for onBeforeCleanup', async () => {
+        resolves[0](); resolves[1](); resolves[2]();
         artifactsApi.requestIdleCallback(callbacks[0], testPlugin);
         artifactsApi.requestIdleCallback(callbacks[1], testPlugin);
         artifactsApi.requestIdleCallback(callbacks[2], testPlugin);
-        artifactsManager.onTerminate();
-        await sleep(0);
 
-        expect(callbacks[0]).toHaveBeenCalledTimes(1);
-        expect(callbacks[1]).toHaveBeenCalledTimes(1);
-        expect(callbacks[2]).toHaveBeenCalledTimes(1);
-
-        await Promise.all(resolves.map(r => r()));
-
+        await artifactsManager.onBeforeCleanup();
         expect(callbacks[0]).toHaveBeenCalledTimes(1);
         expect(callbacks[1]).toHaveBeenCalledTimes(1);
         expect(callbacks[2]).toHaveBeenCalledTimes(1);
@@ -286,8 +220,6 @@ describe('ArtifactsManager', () => {
         itShouldCatchErrorsOnPhase('onTestDone', () => testSummaries.passed());
 
         itShouldCatchErrorsOnPhase('onBeforeCleanup', () => undefined);
-
-        itShouldCatchErrorsOnPhase('onTerminate', () => undefined);
 
         itShouldCatchErrorsOnPhase('onBootDevice', () => ({
           coldBoot: false,
@@ -360,14 +292,6 @@ describe('ArtifactsManager', () => {
           expect(testPlugin.onBeforeCleanup).not.toHaveBeenCalled();
           await artifactsManager.onBeforeCleanup();
           expect(testPlugin.onBeforeCleanup).toHaveBeenCalled();
-        });
-      });
-
-      describe('onTerminate', () => {
-        it('should call onTerminate in plugins', async () => {
-          expect(testPlugin.onTerminate).not.toHaveBeenCalled();
-          await artifactsManager.onTerminate();
-          expect(testPlugin.onTerminate).toHaveBeenCalled();
         });
       });
 
