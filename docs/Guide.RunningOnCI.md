@@ -157,14 +157,14 @@ workflows:
 
 GitHub Actions is a handy CI service that runs directly inside GitHub. They provide free macOS VMs with HAXM installed.
 
-You can run Detox on GitHub by creating a new workflow. For example, to run iOS tests, create a `.github/workflows/detox.yml` like below:
+You can run Detox on GitHub by creating a new workflow. For example, to run both iOS and Android tests, create a `.github/workflows/detox.yml` like below:
 
 ```yml
 name: Detox
 on: [push, pull_request]
 jobs:
-  detox:
-    name: Detox Tests
+  ios:
+    name: iOS Simulator Tests
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v2
@@ -176,4 +176,32 @@ jobs:
       - run: cd ios/ && pod install --repo-update && cd ..
       - run: node node_modules/.bin/detox build --configuration ios.sim.release
       - run: node node_modules/.bin/detox test --configuration ios.sim.release --cleanup
+  android:
+    name: Android Emulator Tests
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - uses: actions/setup-node@v1
+      - run: yarn install
+      - name: Enable clear text traffic in release builds
+        run: |
+          brew install xmlstarlet
+          xmlstarlet ed --inplace --ps --insert "/manifest/application" --type attr -n "android:usesCleartextTraffic" -v "true" android/app/src/main/AndroidManifest.xml
+      - run: node node_modules/.bin/detox build -c android.emu.release
+      - name: Execute emulator tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 28
+          target: google_apis
+          arch: x86_64
+          profile: Nexus 6
+          emulator-options: -verbose -no-window -no-snapshot -noaudio -no-boot-anim -gpu swiftshader_indirect -camera-back emulated -camera-front emulated
+          disable-animations: true
+          script: |
+            bash -c "echo 'hw.lcd.height=2560' >> /Users/runner/.android/avd/test.avd/config.ini"
+            bash -c "echo 'hw.lcd.width=1440' >> /Users/runner/.android/avd/test.avd/config.ini"
+            node node_modules/.bin/detox test -c android.emu.release --device-name=emulator-5554 --loglevel trace
 ```
