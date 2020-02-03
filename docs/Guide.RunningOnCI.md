@@ -190,7 +190,7 @@ jobs:
         run: |
           brew install xmlstarlet
           xmlstarlet ed --inplace --ps --insert "/manifest/application" --type attr -n "android:usesCleartextTraffic" -v "true" android/app/src/main/AndroidManifest.xml
-      - run: node node_modules/.bin/detox build -c android.emu.release
+      - run: node node_modules/.bin/detox build -c android.att.release
       - name: Execute emulator tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -203,5 +203,7 @@ jobs:
           script: |
             bash -c "echo 'hw.lcd.height=2560' >> /Users/runner/.android/avd/test.avd/config.ini"
             bash -c "echo 'hw.lcd.width=1440' >> /Users/runner/.android/avd/test.avd/config.ini"
-            node node_modules/.bin/detox test -c android.emu.release --device-name=emulator-5554 --loglevel trace
+            node node_modules/.bin/detox test -c android.att.release --device-name=emulator-5554 --loglevel trace
 ```
+
+Please note that you need to use the [`android.attached` device type](https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md) to use the emulator created by `reactivecircus/android-emulator-runner`.
