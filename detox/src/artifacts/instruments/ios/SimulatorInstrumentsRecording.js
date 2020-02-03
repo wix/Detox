@@ -5,9 +5,7 @@ const FileArtifact = require('../../templates/artifact/FileArtifact');
 
 class SimulatorInstrumentsRecording extends InstrumentsArtifactRecording {
   constructor({ pluginContext, client, temporaryRecordingPath }) {
-    super({ client, temporaryRecordingPath });
-
-    this._pluginContext = pluginContext;
+    super({ pluginContext, client, temporaryRecordingPath });
   }
 
   async doSave(artifactPath) {
@@ -19,14 +17,6 @@ class SimulatorInstrumentsRecording extends InstrumentsArtifactRecording {
 
   async doDiscard() {
     await fs.remove(this.temporaryRecordingPath);
-  }
-
-
-  _isClientConnected() {
-    const isConnectedToDetoxServer = super._isClientConnected();
-    const isAppRunning = this._pluginContext.bundleId;
-
-    return Boolean(isConnectedToDetoxServer && isAppRunning);
   }
 }
 
