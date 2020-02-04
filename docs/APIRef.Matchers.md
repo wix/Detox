@@ -11,7 +11,7 @@ Matchers find elements in your app that match one or more properties.
 
 - [`by.id()`](#byidid)
 - [`by.label()`](#bylabellabel)
-- [`by.text()`](#bytexttext-deprecated-on-ios)
+- [`by.text()`](#bytexttext-limited-on-ios)
 - [`by.type()`](#bytypenativeviewtype)
 - [`by.traits()`](#bytraitstraits)
 - [Advanced](#advanced)
@@ -43,14 +43,14 @@ Find an element by `accessibilityLabel` on iOS, or by `contentDescription` on An
 element(by.label('Welcome'));
 ```
 
-#### `by.text(text)` (**Deprecated on iOS**)
+#### `by.text(text)` (**Limited on iOS**)
 Find an element by text, useful for text fields, buttons.
 
 ```js
 element(by.text('Tap Me'));
 ```
 
-**Note:** Due to technical limitations on iOS, `by.text()` is implemented as `by.label()`. Thus, it has been deprecated on iOS.
+**Note:** Due to technical limitations on iOS, `by.text()` is implemented as `by.label()`.
 
 #### `by.type(nativeViewType)`
 Find an element by native view type. **View types differ between iOS and Android.**
