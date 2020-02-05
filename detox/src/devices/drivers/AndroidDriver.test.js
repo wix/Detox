@@ -4,6 +4,8 @@ describe('Android driver', () => {
   const bundleId = 'bundle-id-mock';
 
   let logger;
+  let client;
+  let mockInstrumLogsParser;
   let exec;
   beforeEach(() => {
     jest.mock('../../utils/encoding', () => ({
@@ -14,6 +16,10 @@ describe('Android driver', () => {
     jest.mock('../../utils/AsyncEmitter', () => mockAsyncEmitter);
     jest.mock('../../utils/sleep', () => jest.fn().mockResolvedValue(''));
     jest.mock('../../utils/retry', () => jest.fn().mockResolvedValue(''));
+
+    jest.mock('./InstrumentationLogsParser', () => ({
+      InstrumentationLogsParser: mockInstrumentationLogsParserClass,
+    }));
 
     const mockLogger = {
       warn: jest.fn(),
@@ -28,25 +34,89 @@ describe('Android driver', () => {
       spawnAndLog: jest.fn().mockReturnValue({
         childProcess: {
           on: jest.fn(),
+          stdout: {
+            on: jest.fn(),
+          }
         }
       }),
+      interruptProcess: jest.fn(),
     }));
     exec = require('../../utils/exec');
+
+    client = {
+      configuration: {
+        server: 'ws://localhost:1234'
+      },
+      waitUntilReady: jest.fn(),
+    };
   });
 
   let uut;
   beforeEach(() => {
     const AndroidDriver = require('./AndroidDriver');
     uut = new AndroidDriver({
-      client: {
-        configuration: {
-          server: 'ws://localhost:1234'
-        }
-      }
+      client,
     });
   });
 
-  describe('launch args', () => {
+  describe('Instrumentation bootstrap', () => {
+    it('should launch instrumentation upon app launch', async () => {
+      await uut.launchApp(deviceId, bundleId, {}, '');
+
+      expect(exec.spawnAndLog).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.arrayContaining(['shell', 'am', 'instrument']),
+        expect.anything(),
+      );
+    });
+  });
+
+  describe('Device ready-wait', () => {
+    beforeEach(async () => {
+      await uut.launchApp(deviceId, bundleId, {}, '');
+    });
+
+    it('should delegate wait to device being ready via client api', async () => {
+      await uut.waitUntilReady();
+      expect(client.waitUntilReady).toHaveBeenCalled();
+    }, 2000);
+
+    it('should fail if instrumentation dies prematurely while waiting for device-ready resolution', async () => {
+      const clientWaitResolve = mockDeviceReadyPromise();
+
+      const promise = uut.waitUntilReady();
+      setTimeout(async () => await killInstrumentation(exec.spawnAndLog()), 1);
+
+      try {
+        await promise;
+        fail('Expected an error and none was thrown');
+      } catch (e) {
+        expect(e.message).toEqual('Failed to run application on the device; Stack-trace dump:\nStacktrace mock');
+      } finally {
+        clientWaitResolve();
+      }
+    }, 2000);
+
+    const mockDeviceReadyPromise = () => {
+      let clientResolve;
+      client.waitUntilReady.mockReturnValue(new Promise((resolve) => clientResolve = resolve));
+      return clientResolve;
+    };
+
+    const killInstrumentation = async (instrumProcess) => {
+      const { childProcess } = instrumProcess;
+
+      const stdoutSubscribeCallArgs = childProcess.stdout.on.mock.calls[0];
+      const stdoutListenerFn = stdoutSubscribeCallArgs[1];
+      stdoutListenerFn('Doesnt matter what we put here');
+
+      const closeEvCallArgs = childProcess.on.mock.calls[0];
+      const closeEvListenerFn = closeEvCallArgs[1];
+      await closeEvListenerFn();
+    };
+  });
+
+  describe('Launch args', () => {
     const expectSpawnedFlag = (spawnedFlags) => ({
       startingIndex: (index) => ({
         toBe: ({key, value}) => {
@@ -163,11 +233,20 @@ class mockADBClass {
     this.getInstrumentationRunner = jest.fn();
     this.reverse = jest.fn();
     this.reverseRemove = jest.fn();
+
+    this.adbBin = 'ADB binary mock';
   }
 }
 
 class mockAsyncEmitter {
   constructor() {
     this.emit = jest.fn();
+  }
+}
+
+class mockInstrumentationLogsParserClass {
+  constructor() {
+    this.hasStackTraceLog = () => true;
+    this.getStackTrace = () => 'Stacktrace mock';
   }
 }

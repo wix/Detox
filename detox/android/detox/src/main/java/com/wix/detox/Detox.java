@@ -6,14 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
-import androidx.annotation.NonNull;
 import android.util.Base64;
+import android.util.Log;
 
 import java.util.Arrays;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
@@ -118,7 +118,7 @@ public final class Detox {
         sActivityTestRule = activityTestRule;
 
         Intent intent = extractInitialIntent();
-        activityTestRule.launchActivity(intent);
+        sActivityTestRule.launchActivity(intent);
 
         // Kicks off another thread and attaches a Looper to that.
         // The goal is to keep the test thread intact,
@@ -127,14 +127,7 @@ public final class Detox {
             @Override
             public void run() {
                 Looper.prepare();
-                Handler handler = new Handler();
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        DetoxManager detoxManager = new DetoxManager(context);
-                        detoxManager.start();
-                    }
-                });
+                new DetoxManager(context).start();
                 Looper.loop();
             }
         }, "com.wix.detox.manager");
@@ -144,7 +137,7 @@ public final class Detox {
             t.join();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("Got interrupted", e);
+            throw new RuntimeException("Detox got interrupted prematurely", e);
         }
     }
 

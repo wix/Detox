@@ -23,6 +23,7 @@ const sleep = require('../../utils/sleep');
 const retry = require('../../utils/retry');
 const { interruptProcess, spawnAndLog } = require('../../utils/exec');
 const AndroidExpect = require('../../android/expect');
+const { InstrumentationLogsParser } = require('./InstrumentationLogsParser');
 
 const reservedInstrumentationArgs = ['class', 'package', 'func', 'unit', 'size', 'perf', 'debug', 'log', 'emma', 'coverageFile'];
 const isReservedInstrumentationArg = (arg) => reservedInstrumentationArgs.includes(arg);
@@ -30,6 +31,10 @@ const isReservedInstrumentationArg = (arg) => reservedInstrumentationArgs.includ
 class AndroidDriver extends DeviceDriverBase {
   constructor(config) {
     super(config);
+
+    this.instrumentationLogsParser = new InstrumentationLogsParser();
+    this.instrumentationProcess = null;
+    this.instrumentationStackTrace = '';
 
     this.invocationManager = new InvocationManager(this.client);
     this.matchers = new AndroidExpect(this.invocationManager);
@@ -125,6 +130,24 @@ class AndroidDriver extends DeviceDriverBase {
     // Other payload content types are not yet supported.
   }
 
+  async waitUntilReady() {
+    let intervalId;
+    try {
+        await Promise.race([
+          super.waitUntilReady(),
+          new Promise((resolve, reject) => {
+            intervalId = setInterval(() => {
+              if (!this.instrumentationProcess) {
+                reject(new Error('Failed to run application on the device; Stack-trace dump:\n' + this.instrumentationStackTrace));
+              }
+            }, 100);
+          }),
+        ]);
+    } finally {
+      !_.isUndefined(intervalId) && clearInterval(intervalId);
+    }
+  }
+
   async sendToHome(deviceId, params) {
     await this.uiDevice.pressHome();
   }
@@ -217,10 +240,17 @@ class AndroidDriver extends DeviceDriverBase {
     const spawnFlags = [`-s`, `${deviceId}`, `shell`, `am`, `instrument`, `-w`, `-r`, ...launchArgs, ...additionalLaunchArgs, testRunner];
 
     this.instrumentationProcess = spawnAndLog(this.adb.adbBin, spawnFlags, { detached: false });
+    this.instrumentationProcess.childProcess.stdout.on('data', (raw) => this._extractStackTraceFromInstrumLogs(raw.toString()));
     this.instrumentationProcess.childProcess.on('close', async () => {
       await this._terminateInstrumentation();
       await this.adb.reverseRemove(deviceId, serverPort);
     });
+  }
+
+  _extractStackTraceFromInstrumLogs(logsDump) {
+    if (this.instrumentationLogsParser.hasStackTraceLog(logsDump)) {
+      this.instrumentationStackTrace = this.instrumentationLogsParser.getStackTrace(logsDump);
+    }
   }
 
   async _queryPID(deviceId, bundleId, waitAtStart = true) {
