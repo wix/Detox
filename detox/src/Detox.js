@@ -82,6 +82,8 @@ class Detox {
       Object.assign(global, globalsToExport);
     }
 
+    await this._artifactsManager.onInit();
+
     return this;
   }
 
@@ -124,6 +126,14 @@ class Detox {
       pendingRequests: testSummary.timedOut,
       testName: testSummary.fullName,
     });
+  }
+
+  async suiteStart(suite) {
+    await this._artifactsManager.onSuiteStart(suite);
+  }
+
+  async suiteEnd(suite) {
+    await this._artifactsManager.onSuiteEnd(suite);
   }
 
   _logTestRunCheckpoint(event, { status, fullName }) {

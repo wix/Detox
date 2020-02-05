@@ -29,10 +29,15 @@ class EmulatorDriver extends AndroidDriver {
     });
     this.pendingBoots = {};
     this._name = 'Unspecified Emulator';
+    this._type = 'Unspecified';
   }
 
   get name() {
     return this._name
+  }
+
+  get type() {
+    return this._type
   }
 
   async acquireFreeDevice(deviceQuery) {
@@ -92,7 +97,7 @@ class EmulatorDriver extends AndroidDriver {
     }
 
     await this._waitForBootToComplete(adbName);
-    await this.emitter.emit('bootDevice', { coldBoot, deviceId: adbName });
+    await this.emitter.emit('bootDevice', { coldBoot, deviceId: adbName, type: avdName });
   }
 
   async _validateAvd(avdName) {

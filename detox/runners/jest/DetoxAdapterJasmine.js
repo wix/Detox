@@ -23,6 +23,14 @@ class DetoxAdapterJasmine /* extends JasmineReporter */ {
     await this._adapter.afterAll();
   }
 
+  async suiteStarted(result) {
+    await this._adapter.suiteStart({name: result.description});
+  }
+
+  async suiteDone(result) {
+    await this._adapter.suiteEnd({name: result.description});
+  }
+
   specStarted(result) {
     if (result.pendingReason) {
       return;

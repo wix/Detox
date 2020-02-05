@@ -13,6 +13,7 @@ const SimulatorLogPlugin = require('../../artifacts/log/ios/SimulatorLogPlugin')
 const SimulatorScreenshotPlugin = require('../../artifacts/screenshot/SimulatorScreenshotPlugin');
 const SimulatorRecordVideoPlugin = require('../../artifacts/video/SimulatorRecordVideoPlugin');
 const SimulatorInstrumentsPlugin = require('../../artifacts/instruments/ios/SimulatorInstrumentsPlugin');
+const TracingPlugin = require('../../artifacts/tracing/TracingPlugin');
 const IosExpect = require('../../ios/expect');
 
 class IosDriver extends DeviceDriverBase {
@@ -32,6 +33,7 @@ class IosDriver extends DeviceDriverBase {
       log: (api) => new SimulatorLogPlugin({ api, appleSimUtils }),
       screenshot: (api) => new SimulatorScreenshotPlugin({ api, appleSimUtils }),
       video: (api) => new SimulatorRecordVideoPlugin({ api, appleSimUtils }),
+      tracing: (api) => new TracingPlugin({api, appleSimUtils}),
     };
   }
 

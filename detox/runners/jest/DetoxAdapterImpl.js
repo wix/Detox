@@ -21,6 +21,14 @@ class DetoxAdapterImpl {
     await this._flush();
   }
 
+  async suiteStart({name}) {
+    this._enqueue(() => this.detox.suiteStart({name}));
+  }
+
+  async suiteEnd({name}) {
+    this._enqueue(() => this.detox.suiteEnd({name}));
+  }
+
   testStart({title, fullName, status}) {
     this._currentTest = {
       title,
