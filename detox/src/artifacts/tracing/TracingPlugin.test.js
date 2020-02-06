@@ -1,17 +1,6 @@
 const TracingPlugin = require('./TracingPlugin');
 
 describe('TracingPlugin', () => {
-  const MockConfig = () => {
-    const config = {
-      api: {
-        userConfig: {},
-        preparePathForArtifact: path => path,
-      },
-    };
-
-    return {config}
-  };
-
   const configMock = {
     api: {
       userConfig: {},
@@ -182,11 +171,10 @@ describe('TracingPlugin', () => {
     it('should create log file starting with [', async() => {
       const mockData = 'mockTrace';
       const {MockTraceClass} = MockTrace(mockData);
-      const {config} = MockConfig();
       const {MockFileArtifactClass, mockFile} = MockFileArtifact();
       const mockPid = 'testPid';
 
-      const tracingPlugin = new TracingPlugin(config, {
+      const tracingPlugin = new TracingPlugin(configMock, {
         Trace: MockTraceClass, FileArtifact: MockFileArtifactClass, pid: mockPid, fs: mockFs(async() => {throw new Error()}),
       });
 
@@ -201,11 +189,10 @@ describe('TracingPlugin', () => {
       const mockData = 'mockTrace';
       const mockExistingData = 'mockExistingTrace';
       const {MockTraceClass} = MockTrace(mockData);
-      const {config} = MockConfig();
       const {MockFileArtifactClass, mockFile} = MockFileArtifact(mockExistingData);
       const mockPid = 'testPid';
 
-      const tracingPlugin = new TracingPlugin(config, {
+      const tracingPlugin = new TracingPlugin(configMock, {
         Trace: MockTraceClass, FileArtifact: MockFileArtifactClass, pid: mockPid, fs: mockFs(async() => {}),
       });
 
