@@ -236,5 +236,21 @@ describe('Detox', () => {
       await detox.cleanup();
       expect(artifactsManager.onBeforeCleanup).toHaveBeenCalledTimes(1);
     });
+
+    it(`should trigger artifactsManager.onSuiteStart`, async() => {
+      const suite = {name: 'testSuiteName'};
+
+      await detox.suiteStart(suite);
+
+      expect(artifactsManager.onSuiteStart).toHaveBeenCalledWith(suite);
+    });
+
+    it(`should trigger artifactsManager.onSuiteEnd`, async() => {
+      const suite = {name: 'testSuiteName'};
+
+      await detox.suiteEnd(suite);
+
+      expect(artifactsManager.onSuiteEnd).toHaveBeenCalledWith(suite);
+    });
   });
 });

@@ -1,6 +1,7 @@
 const path = require('path');
 const sleep = require('../utils/sleep');
 const testSummaries = require('./templates/plugin/__mocks__/testSummaries.mock');
+const testSuite = require('./templates/plugin/__mocks__/testSuite.mock');
 
 describe('ArtifactsManager', () => {
   let proxy, FakePathBuilder;
@@ -88,6 +89,9 @@ describe('ArtifactsManager', () => {
           onCreateExternalArtifact: jest.fn(),
           onTestStart: jest.fn(),
           onTestDone: jest.fn(),
+          onSuiteStart: jest.fn(),
+          onSuiteEnd: jest.fn(),
+          onInit: jest.fn(),
           onBeforeCleanup: jest.fn(),
         });
       };
@@ -219,6 +223,12 @@ describe('ArtifactsManager', () => {
 
         itShouldCatchErrorsOnPhase('onTestDone', () => testSummaries.passed());
 
+        itShouldCatchErrorsOnPhase('onSuiteStart', () => (testSuite.mock()));
+
+        itShouldCatchErrorsOnPhase('onSuiteEnd', () => (testSuite.mock()));
+
+        itShouldCatchErrorsOnPhase('onInit', () => undefined);
+
         itShouldCatchErrorsOnPhase('onBeforeCleanup', () => undefined);
 
         itShouldCatchErrorsOnPhase('onBootDevice', () => ({
@@ -284,6 +294,34 @@ describe('ArtifactsManager', () => {
           expect(testPlugin.onTestDone).not.toHaveBeenCalled();
           await artifactsManager.onTestDone(testSummary);
           expect(testPlugin.onTestDone).toHaveBeenCalledWith(testSummary);
+        });
+      });
+
+      describe('onSuiteStart', () => {
+        it('should call onSuiteStart in plugins with the passed argument', async () => {
+          const suite = testSuite.mock();
+
+          expect(testPlugin.onSuiteStart).not.toHaveBeenCalled();
+          await artifactsManager.onSuiteStart(suite);
+          expect(testPlugin.onSuiteStart).toHaveBeenCalledWith(suite);
+        });
+      });
+
+      describe('onSuiteEnd', () => {
+        it('should call onSuiteEnd in plugins with the passed argument', async () => {
+          const suite = testSuite.mock();
+
+          expect(testPlugin.onSuiteEnd).not.toHaveBeenCalled();
+          await artifactsManager.onSuiteEnd(suite);
+          expect(testPlugin.onSuiteEnd).toHaveBeenCalledWith(suite);
+        });
+      });
+
+      describe('onInit', () => {
+        it('should call onInit in plugins', async () => {
+          expect(testPlugin.onInit).not.toHaveBeenCalled();
+          await artifactsManager.onInit();
+          expect(testPlugin.onInit).toHaveBeenCalled();
         });
       });
 

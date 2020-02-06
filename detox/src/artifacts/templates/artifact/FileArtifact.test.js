@@ -3,7 +3,7 @@ const fs = require('fs-extra');
 const tempfile = require('tempfile');
 
 describe('FileArtifact', () => {
-  let FileArtifact, fileArtifact, logger, temporaryPath, destinationPath;
+  let FileArtifact, fileArtifact, logger, temporaryPath, temporaryData, destinationPath;
 
   beforeEach(async () => {
     jest.mock('../../../utils/logger');
@@ -12,6 +12,7 @@ describe('FileArtifact', () => {
     fileArtifact = null;
     temporaryPath = tempfile('.artifact');
     destinationPath = tempfile('.artifact');
+    temporaryData = 'Just a usual string to be saved to the file';
   });
 
   afterEach(async () => {
@@ -24,6 +25,7 @@ describe('FileArtifact', () => {
   describe('save', () => {
     beforeEach(() => {
       jest.spyOn(FileArtifact, 'moveTemporaryFile').mockImplementation(_.noop);
+      jest.spyOn(FileArtifact, 'writeFile').mockImplementation(_.noop);
     });
 
     describe('if temporary file is passed to constructor', () => {
@@ -85,6 +87,35 @@ describe('FileArtifact', () => {
 
         it('should call FileArtifact.moveTemporaryFile', async () => {
           expect(FileArtifact.moveTemporaryFile).toHaveBeenCalledWith(logger, temporaryPath, destinationPath, undefined);
+        });
+      });
+    });
+
+    describe('if temporary data is passed to constructor', () => {
+      beforeEach(() => {
+        fileArtifact = new FileArtifact({
+          name: 'CustomArtifact',
+          temporaryData,
+        });
+      });
+
+      describe('when called simply', () => {
+        beforeEach(async () => {
+          await fileArtifact.save(destinationPath);
+        });
+
+        it('should call FileArtifact.writeFile', async () => {
+          expect(FileArtifact.writeFile).toHaveBeenCalledWith(logger, temporaryData, destinationPath, undefined);
+        });
+      });
+
+      describe('when called with { append: true }', () => {
+        beforeEach(async () => {
+          await fileArtifact.save(destinationPath, {append: true});
+        });
+
+        it('should call FileArtifact.moveTemporaryFile with extra param', async () => {
+          expect(FileArtifact.writeFile).toHaveBeenCalledWith(logger, temporaryData, destinationPath, true);
         });
       });
     });
@@ -179,6 +210,71 @@ describe('FileArtifact', () => {
             expect(await fs.readFile(destinationPath, 'utf8')).toBe('My file and more to it');
 
             expect(logger.debug).toHaveBeenCalledWith({ event: 'MOVE_FILE' }, expect.stringContaining('appending'));
+          });
+        });
+      });
+    });
+
+    describe('.writeFile', () => {
+      describe('if there is no temporary data', () => {
+        beforeEach(async () => {
+          await fs.writeFile(destinationPath, 'Hello');
+        });
+
+        it('should log a warning', async () => {
+          const result = await FileArtifact.writeFile(logger, undefined, destinationPath);
+
+          expect(result).toBe(false);
+          expect(await fs.readFile(destinationPath, 'utf8')).toBe('Hello');
+          expect(logger.warn).toHaveBeenCalledWith({event: 'FILE_WRITE_EMPTY_DATA'}, expect.any(String));
+        });
+      });
+
+      describe('if there is a data', () => {
+        describe('if there is no destination file', () => {
+          beforeEach(async () => {
+            await fs.remove(destinationPath);
+          });
+
+          it('should log a debug message', async () => {
+            const result = await FileArtifact.writeFile(logger, temporaryData, destinationPath);
+
+            expect(result).toBe(true);
+            expect(logger.debug).toHaveBeenCalledWith({event: 'FILE_WRITE_CREATE'}, expect.any(String));
+          });
+
+          it('should create the file', async () => {
+            const result = await FileArtifact.writeFile(logger, temporaryData, destinationPath);
+
+            expect(result).toBe(true);
+            expect(await fs.readFile(destinationPath, 'utf8')).toBe(temporaryData);
+          });
+        });
+
+        describe('if the destination file exists', () => {
+          const fileContent = 'Hello';
+
+          beforeEach(async () => {
+            await fs.writeFile(destinationPath, fileContent);
+          });
+
+          describe('usual mode', () => {
+            it('should refuse overwriting the file', async () => {
+              const result = await FileArtifact.writeFile(logger, temporaryData, destinationPath);
+
+              expect(result).toBe(false);
+              expect(logger.warn).toHaveBeenCalledWith({event: 'FILE_WRITE_EXISTS'}, expect.any(String));
+            });
+          });
+
+          describe('append mode', () => {
+            it('should append to the file', async () => {
+              const result = await FileArtifact.writeFile(logger, temporaryData, destinationPath, true);
+
+              expect(result).toBe(true);
+              expect(await fs.readFile(destinationPath, 'utf8')).toBe(fileContent + temporaryData);
+              expect(logger.debug).toHaveBeenCalledWith({event: 'FILE_WRITE'}, expect.any(String));
+            });
           });
         });
       });

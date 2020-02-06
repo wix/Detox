@@ -15,8 +15,8 @@ class FileArtifact extends Artifact {
   async doSave(artifactPath, options = {}) {
     if (this.temporaryPath)
       await FileArtifact.moveTemporaryFile(this.logger, this.temporaryPath, artifactPath, options.append);
-    else if (this.temporaryData) await FileArtifact.writeFile(this.logger, this.temporaryData, artifactPath, options.append);
-    else this.logger.warn({event: 'FILE_WRITE_ERROR'}, `there is nothing to write to "${artifactPath}"`);
+    else if (this.temporaryData)
+      await FileArtifact.writeFile(this.logger, this.temporaryData, artifactPath, options.append);
   }
 
   async doDiscard() {
@@ -24,18 +24,31 @@ class FileArtifact extends Artifact {
   }
 
   static async writeFile(logger, data, destination, canAppend = false) {
-    if (!await fs.exists(destination)) logger.debug({event: 'FILE_WRITE_CREATE'}, `creating file "${destination}"`);
+    if (!data) {
+      logger.warn({event: 'FILE_WRITE_EMPTY_DATA'}, `there is no data to write to "${destination}"`);
+
+      return false
+    }
+
+    if (!await fs.exists(destination)) {
+      logger.debug({event: 'FILE_WRITE_CREATE'}, `creating file "${destination}"`)
+    } else if (!canAppend) {
+      logger.warn({event: 'FILE_WRITE_EXISTS'}, `cannot overwrite "${destination}"`);
+
+      return false
+    }
 
     if (canAppend) {
       logger.debug({event: 'FILE_WRITE'}, `writing to "${destination}" via appending`);
       await fs.appendFile(destination, data);
 
       return true
+    } else {
+      logger.debug({event: 'FILE_WRITE'}, `writing to "${destination}"`);
+      await fs.writeFile(destination, data);
+
+      return true
     }
-
-    logger.warn({event: 'FILE_WRITE_EXISTS'}, `cannot overwrite "${destination}"`);
-
-    return false
   }
 
   static async moveTemporaryFile(logger, source, destination, canAppend = false) {

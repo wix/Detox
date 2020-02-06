@@ -263,8 +263,8 @@ class ArtifactPlugin {
     this.onUserAction = _.noop;
     this.onTestStart = _.noop;
     this.onTestDone = _.noop;
-    this.onSuiteStart = _.noop();
-    this.onSuiteEnd = _.noop();
+    this.onSuiteStart = _.noop;
+    this.onSuiteEnd = _.noop;
     this.onInit = _.noop;
     this.onBeforeCleanup = _.noop;
   }
