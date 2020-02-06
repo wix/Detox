@@ -1,5 +1,9 @@
+const di = {getTimeStamp: Date.now, jsonStringify: JSON.stringify};
+
 class Trace {
-  constructor() {
+  constructor({getTimeStamp = di.getTimeStamp, jsonStringify = di.jsonStringify} = di) {
+    this._getTimeStamp = getTimeStamp;
+    this._jsonStringify = jsonStringify;
     this._process = {id: undefined, name: undefined};
     this._thread = {id: undefined, name: undefined};
     this._events = [];
@@ -10,7 +14,7 @@ class Trace {
       name,
       pid: this._process.id,
       tid: this._thread.id,
-      ts: Date.now(),
+      ts: this._getTimeStamp(),
       ph: phase,
       args: {...args},
     }
@@ -46,7 +50,7 @@ class Trace {
   }
 
   json() {
-    return JSON.stringify(this._events);
+    return this._jsonStringify(this._events);
   }
 
   traces({prefix = '', suffix = ''} = {prefix: '', suffix: ''}) {

@@ -216,7 +216,7 @@ class ArtifactPlugin {
    * @param {Suite} suite - has name of currently running test suite
    * @return {Promise<void>} - when done
    */
-  async onSuiteEnd() {
+  async onSuiteEnd(suite) {
     this.context.suite = null;
   }
 
