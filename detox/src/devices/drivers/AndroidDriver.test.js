@@ -5,7 +5,6 @@ describe('Android driver', () => {
 
   let logger;
   let client;
-  let mockInstrumLogsParser;
   let exec;
   beforeEach(() => {
     jest.mock('../../utils/encoding', () => ({
@@ -35,6 +34,7 @@ describe('Android driver', () => {
         childProcess: {
           on: jest.fn(),
           stdout: {
+            setEncoding: jest.fn(),
             on: jest.fn(),
           }
         }
@@ -91,7 +91,8 @@ describe('Android driver', () => {
         await promise;
         fail('Expected an error and none was thrown');
       } catch (e) {
-        expect(e.message).toEqual('Failed to run application on the device; Stack-trace dump:\nStacktrace mock');
+        expect(e.message).toContain('DetoxRuntimeError: Failed to run application on the device');
+        expect(e.message).toContain(`Native stacktrace dump: ${mockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK}`);
       } finally {
         clientWaitResolve();
       }
@@ -246,7 +247,9 @@ class mockAsyncEmitter {
 
 class mockInstrumentationLogsParserClass {
   constructor() {
-    this.hasStackTraceLog = () => true;
-    this.getStackTrace = () => 'Stacktrace mock';
+    this.parse = () => {};
+    this.containsStackTraceLog = () => true;
+    this.getStackTrace = () => mockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK;
   }
 }
+mockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK = 'Stacktrace mock';

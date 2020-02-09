@@ -1,39 +1,65 @@
-const INSTRUMENTATION_LOGS_PREFIX = 'INSTRUMENTATION_STATUS';
-const STACKTRACE_PREFIX_TEXT = INSTRUMENTATION_LOGS_PREFIX + ': stack=';
+const _ = require('lodash');
+
+const LOG_PREFIX = 'INSTRUMENTATION_STATUS';
+const START_WITH_PREFIX = new RegExp(`^${LOG_PREFIX}(?:_[A-Z]+)*:[\\s]+`, 'm');
+const STACKTRACE_PREFIX = 'stack=';
 
 class InstrumentationLogsParser {
-  hasStackTraceLog(logsDump) {
-    return logsDump.includes(STACKTRACE_PREFIX_TEXT);
+  constructor() {
+    this._partialLog = undefined;
+    this._stackTrace = undefined;
   }
 
-  getStackTrace(logsDump) {
-    const logLines = logsDump.split('\n');
-
-    const index = this._findStackTraceLog(logLines);
-    const stackTrace = this._extractStackTrace(logLines, index);
-    return stackTrace;
+  parse(logsDump) {
+    this._analyzeLogs(logsDump);
   }
 
-  _findStackTraceLog(logLines) {
-    let i;
-    for (i = 0; i < logLines.length && !logLines[i].includes(STACKTRACE_PREFIX_TEXT); i++) {}
-    return i;
+  containsStackTraceLog() {
+    return !_.isUndefined(this._stackTrace);
   }
 
-  _extractStackTrace(logLines, i) {
-    if (i < logLines.length) {
-      logLines[i] = logLines[i].replace(STACKTRACE_PREFIX_TEXT, '');
+  getStackTrace() {
+    return this._stackTrace || '';
+  }
+
+  _analyzeLogs(_logsDump) {
+    const logsDump = this._partialLog ? this._partialLog.concat(_logsDump) : _logsDump;
+    const logs = logsDump.split(START_WITH_PREFIX);
+    this._extractStackTraceLogIfExists(logs);
+    this._keepPartialLogIfNeeded(logs);
+  }
+
+  _extractStackTraceLogIfExists(logs) {
+    const stackTraceLogs = logs.filter(this._verifyStackTraceLog);
+    if (!_.isEmpty(stackTraceLogs)) {
+      this._stackTrace = _.last(stackTraceLogs).replace(STACKTRACE_PREFIX, '').trim().concat('\n');
     }
+  }
 
-    let stackTrace = '';
-    for (
-      ; i < logLines.length
-        && logLines[i].trim()
-        && !logLines[i].includes(INSTRUMENTATION_LOGS_PREFIX)
-      ; i++) {
-      stackTrace = stackTrace.concat(logLines[i], '\n');
+  _keepPartialLogIfNeeded(logs) {
+    const lastLog = _.last(logs);
+    if (this._isPartialLog(lastLog)) {
+      this._partialLog = lastLog;
     }
-    return stackTrace;
+  }
+
+  _verifyStackTraceLog(log) {
+    return log.startsWith(STACKTRACE_PREFIX) && log.endsWith('\n\n');
+  }
+
+  _isPartialLog(log) {
+    return (
+      this._isPartialStackTraceLog(log) ||
+      this._isPartialAnyLog(log)
+    );
+  }
+
+  _isPartialStackTraceLog(log) {
+    return log.startsWith(STACKTRACE_PREFIX) && !log.endsWith('\n\n');
+  }
+
+  _isPartialAnyLog(log) {
+    return !log.endsWith('\n');
   }
 }
 
