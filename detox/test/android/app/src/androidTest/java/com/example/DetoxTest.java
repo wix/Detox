@@ -38,7 +38,6 @@ public class DetoxTest {
     public void runDetoxTests() {
         final Bundle arguments = InstrumentationRegistry.getArguments();
         final boolean forceSingleTaskActivity = Boolean.parseBoolean(arguments.getString(SINGLE_INSTANCE_ACTIVITY_ARG, "false"));
-        final ActivityTestRule<?> rule = forceSingleTaskActivity ? mSingleInstanceActivityRule : mActivityRule;
-        Detox.runTests(rule);
+        Detox.runTests(forceSingleTaskActivity ? SingleInstanceActivity.class : MainActivity.class, null);
     }
 }

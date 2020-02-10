@@ -4,15 +4,22 @@ import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import androidx.annotation.NonNull;
 import android.util.Base64;
+import android.util.Log;
 
+import com.wix.detox.espresso.DetoxErrors;
+
+import androidx.annotation.Nullable;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
+import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 
 /**
  * <p>Static class.</p>
@@ -24,21 +31,18 @@ import androidx.test.rule.ActivityTestRule;
  *
  * Example usage
  * <pre>{@code
- *@literal @runWith(AndroidJUnit4.class)
- *@literal @LargeTest
+ * @RunWith(AndroidJUnit4.class)
+ * @LargeTest
  * public class DetoxTest {
- *  @literal @Rule
- *   //The Activity that controls React Native.
- *   public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule(MainActivity.class);
  *
- *  @literal @Before
+ *   @Before
  *   public void setUpCustomEspressoIdlingResources() {
- *     // set up your own custom Espresso resources here
+ *     // set up your own custom Espresso resources here, if needed
  *   }
  *
- *  @literal @Test
+ *   @Test
  *   public void runDetoxTests() {
- *     Detox.runTests();
+ *     Detox.runTests(MainActivity.class); // MainActivity being the main React Native activity.
  *   }
  * }}</pre>
  *
@@ -78,43 +82,58 @@ public final class Detox {
     }
 
     /**
-     * <p>
      * Call this method from a JUnit test to invoke detox tests.
-     * </p>
      *
-     * <p>
-     * In case you have a non-standard React Native application, consider using
-     * {@link #runTests(ActivityTestRule, Context)}}.
-     * </p>
-     * @param activityTestRule the activityTestRule
+     * @param mainActivityClass The class of app's main activity.
+     * @param context (optional)
      */
-    public static void runTests(ActivityTestRule activityTestRule) {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext();
-        runTests(activityTestRule, appContext);
+    public static void runTests(Class<? extends Activity> mainActivityClass, @Nullable Context context) {
+        ActivityTestRule activityTestRule = createActivityTestRule(mainActivityClass, true);
+        Context _context = (context != null ? context : getApplicationContext());
+        initialize(activityTestRule, _context);
     }
 
     /**
-     * <p>
-     * Call this method only if you have a React Native application and it
-     * doesn't implement ReactApplication.
-     * </p>
+     * Call this method from a JUnit test to invoke detox tests.
      *
-     * Call {@link Detox#runTests(ActivityTestRule)} )} in every other case.
+     * </p>In case you have a non-standard React Native application, consider using
+     * {@link #runTests(ActivityTestRule, Context)}}.
      *
-     * <p>
+     * @param activityTestRule the activityTestRule
+     *
+     * @deprecated Test-rule usage is deprecated; use {@link #runTests(Class, Context)} instead.
+     */
+    @Deprecated
+    public static void runTests(ActivityTestRule activityTestRule) {
+        initialize(activityTestRule, getApplicationContext());
+    }
+
+    /**
+     * Use this method only if you have a React Native application and it
+     * doesn't implement ReactApplication. Use {@link Detox#runTests(ActivityTestRule)} )} in
+     * any other case.
+     *
+     * <p/>
      * The only requirement is that the passed in object must have
-     * a method with the signature
+     * a method with the signature:
      * <blockquote>{@code ReactNativeHost getReactNativeHost();}</blockquote>
-     * </p>
      *
      * @param activityTestRule the activityTestRule
      * @param context an object that has a {@code getReactNativeHost()} method
+     *
+     * @deprecated Test-rule usage is deprecated; use {@link #runTests(Class, Context)} instead.
      */
+    @Deprecated
     public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context context) {
+        initialize(activityTestRule, context);
+    }
+
+    private static void initialize(ActivityTestRule activityTestRule, @NonNull final Context context) {
         sActivityTestRule = activityTestRule;
 
+        Log.e("ASDASD", "initialize");
         Intent intent = extractInitialIntent();
-        activityTestRule.launchActivity(intent);
+        sActivityTestRule.launchActivity(intent);
 
         // Kicks off another thread and attaches a Looper to that.
         // The goal is to keep the test thread intact,
@@ -145,6 +164,8 @@ public final class Detox {
     }
 
     public static void launchMainActivity() {
+        Log.e("ASDASD", "launchMainActivity");
+
         final Activity activity = sActivityTestRule.getActivity();
         final Context appContext = activity.getApplicationContext();
         final Intent intent = new Intent(appContext, activity.getClass());
@@ -160,18 +181,20 @@ public final class Detox {
     }
 
     public static void startActivityFromUrl(String url) {
-        launchActivitySync(intentWithUrl(url, false));
+        Log.e("ASDASD", "startActivityFromUrl: "+url);
+        launchActivitySync(intentWithUrl(url));
     }
 
     private static Intent extractInitialIntent() {
         Intent intent;
 
         final String detoxURLOverride = InstrumentationRegistry.getArguments().getString(DETOX_URL_OVERRIDE_ARG);
-        if (detoxURLOverride != null) {
-            intent = intentWithUrl(detoxURLOverride, true);
-        } else {
+        if (detoxURLOverride == null) {
             intent = cleanIntent();
+        } else {
+            intent = intentWithUrl(detoxURLOverride);
         }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Because this is the *initial* intent
         intent.putExtra(LAUNCH_ARGS_KEY, readLaunchArgs());
         return intent;
     }
@@ -194,19 +217,12 @@ public final class Detox {
      *
      * @return The resulting intent.
      */
-    private static Intent intentWithUrl(String url, boolean initialLaunch) {
+    private static Intent intentWithUrl(String url) {
         final Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(url));
 
         // CLEAR_TOP+SINGLE_TOP is needed here for the same reasons as in launchMainActivity().
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        // Upon initial launch (first-ever instance of the test activity), we also manually need to add the NEW_TASK flag
-        // so as to mimic the ActivityTestRule's behavior: we get NEW_TASK from it if no flags are specified; here we _do_
-        // specify flags so need to add it ourselves.
-        if (initialLaunch) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        }
         return intent;
     }
 
@@ -224,13 +240,24 @@ public final class Detox {
         // 2. Set up an activity monitor by ourselves -- such that it would block until the activity is ready.
         // ^ Hence the code below.
 
-        final Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
-        final Activity activity = sActivityTestRule.getActivity();
-        final Instrumentation.ActivityMonitor activityMonitor = new Instrumentation.ActivityMonitor(activity.getClass().getName(), null, true);
+//        final Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
+//        final Activity activity = sActivityTestRule.getActivity();
+//        final Instrumentation.ActivityMonitor activityMonitor = new Instrumentation.ActivityMonitor(activity.getClass().getName(), null, true);
+//
+//        activity.startActivity(intent);
+//        instrumentation.addMonitor(activityMonitor);
+//        instrumentation.waitForMonitorWithTimeout(activityMonitor, ACTIVITY_LAUNCH_TIMEOUT);
 
-        activity.startActivity(intent);
-        instrumentation.addMonitor(activityMonitor);
-        instrumentation.waitForMonitorWithTimeout(activityMonitor, ACTIVITY_LAUNCH_TIMEOUT);
+        try {
+            PackageManager pm = getApplicationContext().getPackageManager();
+            ResolveInfo ri = pm.resolveActivity(intent, 0);
+            String activityName = ri.activityInfo.name;
+            Log.e("ASDASD", "launchActivitySync; intent="+intent + " activityName="+activityName);
+            ActivityTestRule runtimeActivityTestRule = createActivityTestRule(Class.forName(activityName), false);
+            runtimeActivityTestRule.launchActivity(intent);
+        } catch (ClassNotFoundException e) {
+            throw new DetoxErrors.DetoxRuntimeException(e);
+        }
     }
 
     private static Bundle readLaunchArgs() {
@@ -252,5 +279,15 @@ public final class Detox {
 
         byte[] base64Value = Base64.decode(rawValue, Base64.DEFAULT);
         return new String(base64Value);
+    }
+
+    private static Context getApplicationContext() {
+        return InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext();
+    }
+
+    private static ActivityTestRule createActivityTestRule(Class<?> activityClass, boolean isRoot) {
+        int flags = isRoot ? Intent.FLAG_ACTIVITY_NEW_TASK : 0;
+        String packageName = InstrumentationRegistry.getInstrumentation().getTargetContext().getPackageName();
+        return new ActivityTestRule(activityClass, packageName, flags, false, false);
     }
 }
