@@ -3,24 +3,22 @@ const ArtifactPlugin = require('../templates/plugin/ArtifactPlugin');
 const FileArtifact = require('../templates/artifact/FileArtifact');
 const Trace = require('./Trace');
 
-const di = {pid: process.env.DETOX_START_TIMESTAMP, processName: 'detox', Trace, FileArtifact, fs};
-
 class TracingPlugin extends ArtifactPlugin {
-  constructor(
-    config,
-    {pid = di.pid, processName = di.processName, Trace = di.Trace, FileArtifact = di.FileArtifact, fs = di.fs} = di,
-  ) {
+  constructor(config) {
     super(config);
 
-    this._fs = fs;
+    const {
+      pid = process.env.DETOX_START_TIMESTAMP,
+      processName = 'detox',
+    } = config;
+
     this._pid = pid;
     this._trace = new Trace().startProcess({id: this._pid, name: processName});
     this._deviceId = null;
-    this._FileArtifact = FileArtifact;
   }
 
   async _logFileExists(traceLogPath) {
-    return this._fs.access(traceLogPath).then(() => true).catch(() => false);
+    return fs.access(traceLogPath).then(() => true).catch(() => false);
   }
 
   async onBootDevice(event) {
@@ -62,7 +60,7 @@ class TracingPlugin extends ArtifactPlugin {
 
     this._deviceId = null;
 
-    await new this._FileArtifact({temporaryData: this._trace.traces({prefix})})
+    await new FileArtifact({temporaryData: this._trace.traces({prefix})})
       .save(traceLogPath, {append: true});
   }
 }

@@ -4,7 +4,10 @@ describe('Trace', () => {
   const tsMock = 1487076708000;
   class TestTrace extends Trace {
     constructor() {
-      super({getTimeStamp: () => tsMock, jsonStringify: obj => obj});
+      super({
+        getTimeStampFn: () => tsMock,
+        stringifyFn: (obj) => obj
+      });
     }
   }
 
@@ -101,7 +104,7 @@ describe('Trace', () => {
     it('should create json representation of all events', () => {
       const name = 'eventName';
 
-      const trace = new Trace({getTimeStamp: () => tsMock}).beginEvent(name).finishEvent(name);
+      const trace = new Trace({getTimeStampFn: () => tsMock}).beginEvent(name).finishEvent(name);
       const json = trace.json();
 
       expect(json).toBe(JSON.stringify([event({name, ph: 'B'}), event({name, ph: 'E'})]));
@@ -114,28 +117,28 @@ describe('Trace', () => {
 
     class TestTraceGeneration extends Trace {
       constructor() {
-        super({jsonStringify: () => jsonString});
+        super({stringifyFn: () => jsonString});
       }
     }
 
     it('should trim first and last character of the json representation', () => {
       const trace = new TestTraceGeneration();
 
-      expect(trace.traces()).toBe(dataString);
+      expect(trace.traces()).toEqual(dataString);
     });
 
     it('should add prefix', () => {
       const prefix = 'prefix';
       const trace = new TestTraceGeneration();
 
-      expect(trace.traces({prefix})).toBe(`${prefix}${dataString}`);
+      expect(trace.traces({prefix})).toEqual(`${prefix}${dataString}`);
     });
 
     it('should add suffix', () => {
       const suffix = 'suffix';
       const trace = new TestTraceGeneration();
 
-      expect(trace.traces({suffix})).toBe(`${dataString}${suffix}`);
+      expect(trace.traces({suffix})).toEqual(`${dataString}${suffix}`);
     });
   });
 });

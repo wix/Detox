@@ -1,5 +1,3 @@
-const TracingPlugin = require('./TracingPlugin');
-
 describe('TracingPlugin', () => {
   const configMock = {
     api: {
@@ -8,199 +6,158 @@ describe('TracingPlugin', () => {
     },
   };
 
-  const MockTrace = (data = '') => {
-    const mockProcess = {};
-    const mockThread = {};
-    const mockEvent = {};
-
-    class MockTraceClass {
-      startProcess({id, name}) {
-        mockProcess.id = id;
-        mockProcess.name = name;
-
-        return this;
-      }
-
-      startThread({id, name}) {
-        mockThread.id = id;
-        mockThread.name = name;
-
-        return this;
-      }
-
-      beginEvent(name, args) {
-        mockEvent.name = name;
-        mockEvent.type = 'begin';
-        mockEvent.args = args;
-
-        return this;
-      }
-
-      finishEvent(name, args) {
-        mockEvent.name = name;
-        mockEvent.type = 'end';
-        mockEvent.args = args;
-
-        return this;
-      }
-
-      traces({prefix}) {
-        return prefix + data;
-      }
+  class MockTraceClass {
+    constructor() {
+      Object.assign(this, traceMock);
+      this.startProcess.mockReturnValue(this);
+      this.startThread.mockReturnValue(this);
+      this.beginEvent.mockReturnValue(this);
+      this.finishEvent.mockReturnValue(this);
     }
+  }
 
-    return {MockTraceClass, mockProcess, mockThread, mockEvent};
-  };
+  let traceMock;
+  beforeEach(() => {
+    const Trace = jest.genMockFromModule('./Trace');
+    traceMock = new Trace();
+    jest.mock('./Trace', () => MockTraceClass);
+  });
 
-  const MockFileArtifact = (existingData = '') => {
-    const mockFile = {};
-
-    class MockFileArtifactClass {
-      constructor({temporaryData}) {
-        mockFile.data = existingData + temporaryData;
-      }
-
-      save(path, {append}) {
-        mockFile.path = path;
-        mockFile.append = append;
-      }
+  class MockFileArtifactClass {
+    constructor() {
+      fileArtifactMock.ctor(...arguments);
+      Object.assign(this, fileArtifactMock);
     }
+  }
 
-    return {MockFileArtifactClass, mockFile};
-  };
+  let fileArtifactMock;
+  beforeEach(() => {
+    const FileArtifacts = jest.genMockFromModule('../templates/artifact/FileArtifact');
+    fileArtifactMock = new FileArtifacts();
+    fileArtifactMock.ctor = jest.fn();
+    jest.mock('../templates/artifact/FileArtifact', () => MockFileArtifactClass);
+  });
 
-  const mockFs = accessFnMock => ({
-    access: accessFnMock,
+  let fs;
+  let TracingPlugin;
+  beforeEach(() => {
+    jest.mock('fs-extra', () => ({
+      access: jest.fn(),
+    }));
+    fs = require('fs-extra');
+
+    TracingPlugin = require('./TracingPlugin');
   });
 
   describe('constructor', () => {
-    it('should not fail, if dependencies were not provided', () => {
-      const constructor = () => new TracingPlugin(configMock, undefined);
-
-      expect(constructor).not.toThrow();
-    });
-
     it('should start trace process', () => {
       const pid = 'mockPid';
       const processName = 'mockName';
-      const {MockTraceClass, mockProcess} = MockTrace();
 
-      new TracingPlugin(configMock, {Trace: MockTraceClass, pid, processName});
+      new TracingPlugin({...configMock, pid, processName});
 
-      expect(mockProcess.id).toBe(pid);
-      expect(mockProcess.name).toBe(processName);
+      expect(traceMock.startProcess).toHaveBeenCalledWith({id: pid, name: processName});
     });
   });
 
   describe('onBootDevice', () => {
-    it('should start trace thread', () => {
-      const {MockTraceClass, mockThread} = MockTrace();
+    it('should start trace thread', async () => {
       const deviceId = 'testDeviceId';
       const type = 'testDeviceType';
 
-      const tracingPlugin = new TracingPlugin(configMock, {Trace: MockTraceClass});
+      const tracingPlugin = new TracingPlugin(configMock);
+      await tracingPlugin.onBootDevice({deviceId, type});
 
-      tracingPlugin.onBootDevice({deviceId, type});
-
-      expect(mockThread.id).toBe(deviceId);
-      expect(mockThread.name).toBe(type);
+      expect(traceMock.startThread).toHaveBeenCalledWith({id: deviceId, name: type});
     });
   });
 
   describe('onSuiteStart', () => {
-    it('should begin trace event', () => {
+    it('should begin trace event', async () => {
       const deviceId = 'testDeviceId';
-      const {MockTraceClass, mockEvent, mockThread} = MockTrace();
       const name = 'testSuiteName';
 
-      const tracingPlugin = new TracingPlugin(configMock, {Trace: MockTraceClass});
-      tracingPlugin.onBootDevice({deviceId});
-      tracingPlugin.onSuiteStart({name});
+      const tracingPlugin = new TracingPlugin(configMock);
+      await tracingPlugin.onBootDevice({deviceId});
+      await tracingPlugin.onSuiteStart({name});
 
-      expect(mockEvent.name).toBe(name);
-      expect(mockEvent.type).toBe('begin');
-      expect(mockEvent.args).toEqual({deviceId: mockThread.id});
+      expect(traceMock.beginEvent).toHaveBeenCalledWith(name, {deviceId});
     });
   });
 
   describe('onSuiteEnd', () => {
-    it('should finish trace event', () => {
-      const {MockTraceClass, mockEvent} = MockTrace();
+    it('should finish trace event', async () => {
       const name = 'testSuiteName';
 
-      const tracingPlugin = new TracingPlugin(configMock, {Trace: MockTraceClass});
+      const tracingPlugin = new TracingPlugin(configMock);
+      await tracingPlugin.onSuiteEnd({name});
 
-      tracingPlugin.onSuiteEnd({name});
-
-      expect(mockEvent.name).toBe(name);
-      expect(mockEvent.type).toBe('end');
+      expect(traceMock.finishEvent).toHaveBeenCalledWith(name);
     });
   });
 
   describe('onTestStart', () => {
-    it('should begin trace event', () => {
-      const {MockTraceClass, mockEvent} = MockTrace();
+    it('should begin trace event', async () => {
       const title = 'testName';
 
-      const tracingPlugin = new TracingPlugin(configMock, {Trace: MockTraceClass});
+      const tracingPlugin = new TracingPlugin(configMock);
+      await tracingPlugin.onTestStart({title});
 
-      tracingPlugin.onTestStart({title});
-
-      expect(mockEvent.name).toBe(title);
-      expect(mockEvent.type).toBe('begin');
+      expect(traceMock.beginEvent).toHaveBeenCalledWith(title);
     });
   });
 
   describe('onTestDone', () => {
     it('should finish trace event', () => {
-      const {MockTraceClass, mockEvent} = MockTrace();
       const title = 'testName';
       const status = 'testStatus';
 
-      const tracingPlugin = new TracingPlugin(configMock, {Trace: MockTraceClass});
-
+      const tracingPlugin = new TracingPlugin(configMock);
       tracingPlugin.onTestDone({title, status});
 
-      expect(mockEvent.name).toBe(title);
-      expect(mockEvent.type).toBe('end');
-      expect(mockEvent.args).toEqual({status});
+      expect(traceMock.finishEvent).toHaveBeenCalledWith(title, {status});
     });
   });
 
   describe('onBeforeCleanup', () => {
-    it('should create log file starting with [', async() => {
-      const mockData = 'mockTrace';
-      const {MockTraceClass} = MockTrace(mockData);
-      const {MockFileArtifactClass, mockFile} = MockFileArtifact();
-      const mockPid = 'testPid';
-
-      const tracingPlugin = new TracingPlugin(configMock, {
-        Trace: MockTraceClass, FileArtifact: MockFileArtifactClass, pid: mockPid, fs: mockFs(async() => {throw new Error()}),
+    const mockArtifactFileNotExists = () => {
+      fs.access.mockImplementation(async () => {
+        throw new Error('Make uut think the file doesnt already exist');
       });
+    };
 
+    const mockArtifactFileAlreadyExists = () => {
+      fs.access.mockResolvedValue(undefined);
+    };
+
+    it('should create log file starting with [', async () => {
+      mockArtifactFileNotExists();
+
+      const pid = 'testPid';
+      const artifactPath = 'detox_pid_testPid.trace.json';
+
+      const tracingPlugin = new TracingPlugin({...configMock, pid});
       await tracingPlugin.onBeforeCleanup();
 
-      expect(mockFile.path).toBe(`detox_pid_${mockPid}.trace.json`);
-      expect(mockFile.append).toBe(true);
-      expect(mockFile.data).toBe(`[${mockData}`);
+      expect(traceMock.traces).toHaveBeenCalledWith({prefix: '['});
+      expect(fileArtifactMock.save).toHaveBeenCalledWith(artifactPath, {append: true});
     });
 
-    it('should append to an existing log file starting with ,', async() => {
-      const mockData = 'mockTrace';
-      const mockExistingData = 'mockExistingTrace';
-      const {MockTraceClass} = MockTrace(mockData);
-      const {MockFileArtifactClass, mockFile} = MockFileArtifact(mockExistingData);
-      const mockPid = 'testPid';
+    it('should append to an existing log file starting with ,', async () => {
+      mockArtifactFileAlreadyExists();
 
-      const tracingPlugin = new TracingPlugin(configMock, {
-        Trace: MockTraceClass, FileArtifact: MockFileArtifactClass, pid: mockPid, fs: mockFs(async() => {}),
-      });
+      const pid = 'testPid';
+      const mockTracesResult = 'mockTracesResult';
+      const artifactPath = 'detox_pid_testPid.trace.json';
+
+      const tracingPlugin = new TracingPlugin({...configMock, pid});
+      traceMock.traces.mockReturnValue(mockTracesResult);
 
       await tracingPlugin.onBeforeCleanup();
 
-      expect(mockFile.path).toBe(`detox_pid_${mockPid}.trace.json`);
-      expect(mockFile.append).toBe(true);
-      expect(mockFile.data).toBe(`${mockExistingData},${mockData}`);
+      expect(traceMock.traces).toHaveBeenCalledWith({prefix: ','});
+      expect(fileArtifactMock.ctor).toHaveBeenCalledWith({temporaryData: mockTracesResult});
+      expect(fileArtifactMock.save).toHaveBeenCalledWith(artifactPath, {append: true});
     });
   });
 });
