@@ -74,10 +74,15 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     void start() {
         if (detoxServerUrl != null && detoxSessionId != null) {
-            initReactNativeIfNeeded();
-            initWSClient();
-            initCrashHandler();
-            initActionHandlers();
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    initReactNativeIfNeeded();
+                    initWSClient();
+                    initCrashHandler();
+                    initActionHandlers();
+                }
+            });
         }
     }
 
