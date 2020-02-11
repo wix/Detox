@@ -1,5 +1,4 @@
 const WholeTestRecorderPlugin = require('../templates/plugin/WholeTestRecorderPlugin');
-const log = require('../../utils/logger').child({ __filename });
 
 class InstrumentsArtifactPlugin extends WholeTestRecorderPlugin {
   constructor({ api }) {

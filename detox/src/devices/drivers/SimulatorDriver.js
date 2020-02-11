@@ -50,7 +50,7 @@ class SimulatorDriver extends IosDriver {
       throw new Error(`Failed to find device matching ${deviceComment}`);
     }
 
-    await this._boot(udid);
+    await this._boot(udid, deviceQuery.type || deviceQuery);
     this._name = `${udid} ${deviceComment}`;
     return udid;
   }
@@ -68,10 +68,10 @@ class SimulatorDriver extends IosDriver {
     }
   }
 
-  async _boot(deviceId) {
+  async _boot(deviceId, type) {
     const deviceLaunchArgs = argparse.getArgValue('deviceLaunchArgs');
     const coldBoot = await this.applesimutils.boot(deviceId, deviceLaunchArgs);
-    await this.emitter.emit('bootDevice', { coldBoot, deviceId });
+    await this.emitter.emit('bootDevice', { coldBoot, deviceId, type });
   }
 
   async installApp(deviceId, binaryPath) {

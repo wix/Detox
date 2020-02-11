@@ -11,7 +11,7 @@ const log = require('../../../utils/logger').child({ __filename });
 class ArtifactPlugin {
   constructor({ api }) {
     this.api = api;
-    this.context = { testSummary: null };
+    this.context = { testSummary: null , suite: null};
     this.enabled = api.userConfig.enabled;
     this.keepOnlyFailedTestsArtifacts = api.userConfig.keepOnlyFailedTestsArtifacts;
     this.priority = 16;
@@ -197,6 +197,39 @@ class ArtifactPlugin {
   }
 
   /**
+   * Hook that is called when test suite starts
+   *
+   * @protected
+   * @async
+   * @param {Suite} suite - has name of currently running test suite
+   * @return {Promise<void>} - when done
+   */
+  async onSuiteStart(suite) {
+    this.context.suite = suite;
+  }
+
+  /**
+   * Hook that is called when test suite finishes
+   *
+   * @protected
+   * @async
+   * @param {Suite} suite - has name of currently running test suite
+   * @return {Promise<void>} - when done
+   */
+  async onSuiteEnd(suite) {
+    this.context.suite = null;
+  }
+
+  /**
+   * Hook that is called when detox.init() finishes
+   *
+   * @protected
+   * @async
+   * @return {Promise<void>} - when done
+   */
+  async onInit() {}
+
+  /**
    * Hook that is called when detox.cleanup() just begins
    *
    * @protected
@@ -230,6 +263,9 @@ class ArtifactPlugin {
     this.onUserAction = _.noop;
     this.onTestStart = _.noop;
     this.onTestDone = _.noop;
+    this.onSuiteStart = _.noop;
+    this.onSuiteEnd = _.noop;
+    this.onInit = _.noop;
     this.onBeforeCleanup = _.noop;
   }
 

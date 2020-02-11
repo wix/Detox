@@ -18,6 +18,7 @@ const ADBLogcatPlugin = require('../../artifacts/log/android/ADBLogcatPlugin');
 const ADBScreencapPlugin = require('../../artifacts/screenshot/ADBScreencapPlugin');
 const ADBScreenrecorderPlugin = require('../../artifacts/video/ADBScreenrecorderPlugin');
 const AndroidDevicePathBuilder = require('../../artifacts/utils/AndroidDevicePathBuilder');
+const TimelineArtifactPlugin = require('../../artifacts/timeline/TimelineArtifactPlugin');
 const temporaryPath = require('../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const sleep = require('../../utils/sleep');
@@ -57,6 +58,7 @@ class AndroidDriver extends DeviceDriverBase {
       log: (api) => new ADBLogcatPlugin({ api, adb, devicePathBuilder }),
       screenshot: (api) => new ADBScreencapPlugin({ api, adb, devicePathBuilder }),
       video: (api) => new ADBScreenrecorderPlugin({ api, adb, devicePathBuilder }),
+      timeline: (api) => new TimelineArtifactPlugin({api, adb, devicePathBuilder}),
     };
   }
 

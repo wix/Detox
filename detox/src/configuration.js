@@ -1,11 +1,11 @@
 const _ = require('lodash');
-const path = require('path');
 const DetoxConfigError = require('./errors/DetoxConfigError');
 const uuid = require('./utils/uuid');
 const argparse = require('./utils/argparse');
 const getPort = require('get-port');
 const buildDefaultArtifactsRootDirpath = require('./artifacts/utils/buildDefaultArtifactsRootDirpath');
 
+const TimelineArtifactPlugin = require('./artifacts/timeline/TimelineArtifactPlugin');
 const InstrumentsArtifactPlugin = require('./artifacts/instruments/InstrumentsArtifactPlugin');
 const LogArtifactPlugin = require('./artifacts/log/LogArtifactPlugin');
 const ScreenshotArtifactPlugin = require('./artifacts/screenshot/ScreenshotArtifactPlugin');
@@ -79,6 +79,7 @@ function getArtifactsCliConfig() {
     takeScreenshots: argparse.getArgValue('take-screenshots'),
     recordVideos: argparse.getArgValue('record-videos'),
     recordPerformance: argparse.getArgValue('record-performance'),
+    recordTimeline: argparse.getArgValue('record-timeline'),
   };
 }
 
@@ -101,6 +102,7 @@ function composeArtifactsConfig({
           screenshot: cliConfig.takeScreenshots,
           video: cliConfig.recordVideos,
           instruments: cliConfig.recordPerformance,
+          timeline: cliConfig.recordTimeline,
         },
       },
       deviceConfig.artifacts,
@@ -113,6 +115,7 @@ function composeArtifactsConfig({
           screenshot: 'manual',
           video: 'none',
           instruments: 'none',
+          timeline: 'none',
         },
       }
   );
@@ -130,6 +133,7 @@ function composeArtifactsConfig({
       case 'log': return LogArtifactPlugin.parseConfig(value);
       case 'screenshot': return ScreenshotArtifactPlugin.parseConfig(value);
       case 'video': return VideoArtifactPlugin.parseConfig(value);
+      case 'timeline': return TimelineArtifactPlugin.parseConfig(value);
     }
   });
 

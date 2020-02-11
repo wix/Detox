@@ -137,7 +137,7 @@ describe('index', () => {
     const expectedConfig = {
       ...schemes.validOneDeviceNoSession.configurations['ios.sim.release'],
       device: 'iPhone X'
-    }
+    };
 
     expect(Detox).toHaveBeenCalledWith({
       artifactsConfig: expect.objectContaining({
@@ -234,7 +234,7 @@ describe('index', () => {
     expect(detox.init(schemes.validOneDeviceNoSession)).rejects.toThrow();
     expect(mockDetox.cleanup).toHaveBeenCalled();
   });
-  
+
   it(`beforeEach() should be covered - with detox initialized`, async() => {
     await detox.init(schemes.validOneDeviceNoSession);
     await detox.beforeEach();

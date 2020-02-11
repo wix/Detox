@@ -92,7 +92,7 @@ class EmulatorDriver extends AndroidDriver {
     }
 
     await this._waitForBootToComplete(adbName);
-    await this.emitter.emit('bootDevice', { coldBoot, deviceId: adbName });
+    await this.emitter.emit('bootDevice', { coldBoot, deviceId: adbName, type: adbName });
   }
 
   async _validateAvd(avdName) {

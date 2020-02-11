@@ -19,6 +19,8 @@ class DetoxExportWrapper {
 
     this._definePassthroughMethod('beforeEach');
     this._definePassthroughMethod('afterEach');
+    this._definePassthroughMethod('suiteStart');
+    this._definePassthroughMethod('suiteEnd');
 
     this._definePassthroughMethod('element');
     this._definePassthroughMethod('expect');
