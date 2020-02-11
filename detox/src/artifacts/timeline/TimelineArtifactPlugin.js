@@ -1,24 +1,31 @@
+const _noop = require('lodash/noop');
 const fs = require('fs-extra');
 const ArtifactPlugin = require('../templates/plugin/ArtifactPlugin');
 const FileArtifact = require('../templates/artifact/FileArtifact');
 const Trace = require('./Trace');
 
-class TracingPlugin extends ArtifactPlugin {
+const traceStub = {
+  startProcess: (stubArgs) => _noop,
+  startThread: _noop,
+  beginEvent: _noop,
+  finishEvent: _noop,
+  traces: _noop,
+};
+
+class TimelineArtifactPlugin extends ArtifactPlugin {
   constructor(config) {
     super(config);
 
     const {
       pid = process.env.DETOX_START_TIMESTAMP,
       processName = 'detox',
-    } = config;
+    } = (config.timeline || {});
 
     this._pid = pid;
-    this._trace = new Trace().startProcess({id: this._pid, name: processName});
     this._deviceId = null;
-  }
 
-  async _logFileExists(traceLogPath) {
-    return fs.access(traceLogPath).then(() => true).catch(() => false);
+    this._trace = this.enabled ? new Trace() : traceStub;
+    this._trace.startProcess({id: this._pid, name: processName});
   }
 
   async onBootDevice(event) {
@@ -32,13 +39,11 @@ class TracingPlugin extends ArtifactPlugin {
 
   async onSuiteStart(suite) {
     super.onSuiteStart(suite);
-
     this._trace.beginEvent(suite.name, {deviceId: this._deviceId});
   }
 
   async onSuiteEnd(suite) {
     super.onSuiteEnd(suite);
-
     this._trace.finishEvent(suite.name);
   }
 
@@ -55,14 +60,28 @@ class TracingPlugin extends ArtifactPlugin {
   }
 
   async onBeforeCleanup() {
+    this._deviceId = null;
+
+    if (!this.enabled) {
+      return;
+    }
+
     const traceLogPath = await this.api.preparePathForArtifact(`detox_pid_${this._pid}.trace.json`);
     const prefix = await this._logFileExists(traceLogPath) ? ',' : '[';
 
-    this._deviceId = null;
+    const fileArtifact = new FileArtifact({temporaryData: this._trace.traces({prefix})});
+    await fileArtifact.save(traceLogPath, {append: true});
+  }
 
-    await new FileArtifact({temporaryData: this._trace.traces({prefix})})
-      .save(traceLogPath, {append: true});
+  async _logFileExists(traceLogPath) {
+    return fs.access(traceLogPath).then(() => true).catch(() => false);
+  }
+
+  static parseConfig(config) {
+    return {
+      enabled: config === 'all',
+    };
   }
 }
 
-module.exports = TracingPlugin;
+module.exports = TimelineArtifactPlugin;

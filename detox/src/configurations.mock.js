@@ -2,6 +2,7 @@ const InstrumentsArtifactPlugin = require('./artifacts/instruments/InstrumentsAr
 const LogArtifactPlugin = require('./artifacts/log/LogArtifactPlugin');
 const ScreenshotArtifactPlugin = require('./artifacts/screenshot/ScreenshotArtifactPlugin');
 const VideoArtifactPlugin = require('./artifacts/video/VideoArtifactPlugin');
+const TimelineArtifactPlugin = require('./artifacts/timeline/TimelineArtifactPlugin');
 
 const defaultArtifactsConfiguration = {
   rootDir: 'artifacts',
@@ -11,6 +12,7 @@ const defaultArtifactsConfiguration = {
     screenshot: 'manual',
     video: 'none',
     instruments: 'none',
+    timeline: 'none',
   },
 };
 
@@ -22,6 +24,7 @@ const allArtifactsConfiguration = {
     screenshot: 'all',
     video: 'all',
     instruments: 'all',
+    timeline: 'all',
   },
 };
 
@@ -30,6 +33,7 @@ const pluginsDefaultsResolved = {
   screenshot: ScreenshotArtifactPlugin.parseConfig('manual'),
   video: VideoArtifactPlugin.parseConfig('none'),
   instruments: InstrumentsArtifactPlugin.parseConfig('none'),
+  timeline: TimelineArtifactPlugin.parseConfig('none'),
 };
 
 const pluginsFailingResolved = {
@@ -43,6 +47,7 @@ const pluginsAllResolved = {
   screenshot: ScreenshotArtifactPlugin.parseConfig('all'),
   video: VideoArtifactPlugin.parseConfig('all'),
   instruments: InstrumentsArtifactPlugin.parseConfig('all'),
+  timeline: TimelineArtifactPlugin.parseConfig('all'),
 };
 
 const validOneDeviceNoSession = {

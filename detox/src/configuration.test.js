@@ -1,10 +1,6 @@
 const _ = require('lodash');
 const path = require('path');
 const schemes = require('./configurations.mock');
-const LogArtifactPlugin = require('./artifacts/log/LogArtifactPlugin');
-const ScreenshotArtifactPlugin = require('./artifacts/screenshot/ScreenshotArtifactPlugin');
-const VideoArtifactPlugin = require('./artifacts/video/VideoArtifactPlugin');
-const ArtifactPathBuilder = require('./artifacts/utils/ArtifactPathBuilder');
 
 describe('configuration', () => {
   let configuration;
@@ -103,6 +99,7 @@ describe('configuration', () => {
           takeScreenshots: 'all',
           recordVideos: 'all',
           recordPerformance: 'all',
+          recordTimeline: 'all',
         }
       })).toMatchObject({
         pathBuilder: expect.objectContaining({
@@ -145,6 +142,7 @@ describe('configuration', () => {
           screenshot: schemes.pluginsAllResolved.screenshot,
           video: schemes.pluginsDefaultsResolved.video,
           instruments: schemes.pluginsDefaultsResolved.instruments,
+          timeline: schemes.pluginsDefaultsResolved.timeline,
         },
       });
     });

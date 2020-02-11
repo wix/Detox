@@ -10,17 +10,6 @@ class Trace {
     this._events = [];
   }
 
-  _event(name, phase, args) {
-    return {
-      name,
-      pid: this._process.id,
-      tid: this._thread.id,
-      ts: this._getTimeStampFn(),
-      ph: phase,
-      args: {...args},
-    }
-  }
-
   startProcess({id, name}) {
     this._process = {id, name};
 
@@ -56,6 +45,17 @@ class Trace {
 
   traces({prefix = '', suffix = ''} = {prefix: '', suffix: ''}) {
     return `${prefix}${this.json().slice(1, -1)}${suffix}`;
+  }
+
+  _event(name, phase, args) {
+    return {
+      name,
+      pid: this._process.id,
+      tid: this._thread.id,
+      ts: this._getTimeStampFn(),
+      ph: phase,
+      args: {...args},
+    }
   }
 }
 
