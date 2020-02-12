@@ -89,7 +89,7 @@ buildscript {
     // ...
     ext.kotlinVersion = '1.3.0'
 
-    dependencies: {
+    dependencies {
         // ...
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
