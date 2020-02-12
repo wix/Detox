@@ -2,17 +2,10 @@ package com.wix.detox.instruments
 
 import android.content.Context
 import com.nhaarman.mockitokotlin2.*
-import com.wix.detox.TestEngineFacade
-import com.wix.detox.UTHelpers.yieldToOtherThreads
-import com.wix.detox.instruments.DetoxInstrumentsManager
-import com.wix.invoke.MethodInvocation
-import org.json.JSONObject
+import org.assertj.core.api.Assertions
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import java.io.File
-import java.lang.reflect.InvocationTargetException
-import java.util.*
-import java.util.concurrent.Executors
 
 object DetoxInstrumentsManagerSpec : Spek({
     describe("Instruments manager") {
@@ -90,6 +83,19 @@ object DetoxInstrumentsManagerSpec : Spek({
 
             verify(instruments).installed()
             verify(instruments, never()).startRecording(any(), any(), any(), any(), any())
+        }
+
+        describe("tryInstallJsi") {
+            it("proxy when instruments installed") {
+                whenever(instruments.installed()).thenReturn(true)
+                instrumentsManager.tryInstallJsi()
+                verify(instruments).tryInstallJsiHook(appContext)
+            }
+            it("skipping when instruments not installed") {
+                whenever(instruments.installed()).thenReturn(false)
+                instrumentsManager.tryInstallJsi()
+                verify(instruments, never()).tryInstallJsiHook(any())
+            }
         }
 
         describe("recording") {
