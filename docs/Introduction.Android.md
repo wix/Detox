@@ -72,7 +72,7 @@ android {
   defaultConfig {
       // ...
       testBuildType System.getProperty('testBuildType', 'debug')  // This will later be used to control the test apk build type
-      testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+      testInstrumentationRunner 'com.wix.detox.DetoxJUnitRunner'
   }
 }
 ```
