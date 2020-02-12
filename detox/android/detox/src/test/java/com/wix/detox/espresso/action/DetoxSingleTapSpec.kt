@@ -66,9 +66,8 @@ object DetoxSingleTapSpec: Spek({
             verify(motionEvents).obtainUpEvent(eq(downEvent), any(), eq(coordinates[0]), eq(coordinates[1]))
         }
 
-        // See UIControllerImpl.injectMotionEventSequence()
-        it("should create up event with max time-gap (10ms) to avoid espresso sleep") {
-            val expectedUpEventTime = DEFAULT_EVENT_TIME + 10
+        it("should create up event with a reasonable time-gap (30ms)") {
+            val expectedUpEventTime = DEFAULT_EVENT_TIME + 30
             val coordinates = dontCareCoordinates()
             val precision = dontCarePrecision()
 
