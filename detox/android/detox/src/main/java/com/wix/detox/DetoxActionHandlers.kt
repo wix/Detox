@@ -120,8 +120,8 @@ class InstrumentsRecordingStateActionHandler(
 
     override fun handle(params: String, messageId: Long) {
         val recordingPath = JSONObject(params).opt("recordingPath")
-        if (recordingPath != null) {
-            instrumentsManager.startRecordingAtLocalPath(recordingPath as String)
+        if (recordingPath is String) {
+            instrumentsManager.startRecordingAtLocalPath(recordingPath)
         } else {
             instrumentsManager.stopRecording()
         }
