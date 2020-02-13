@@ -119,8 +119,8 @@ class InstrumentsRecordingStateActionHandler(
 ) : DetoxActionHandler {
 
     override fun handle(params: String, messageId: Long) {
-        val recordingPath = JSONObject(params).optString("recordingPath", null)
-        if (recordingPath != null) {
+        val recordingPath = JSONObject(params).opt("recordingPath")
+        if (recordingPath is String) {
             instrumentsManager.startRecordingAtLocalPath(recordingPath)
         } else {
             instrumentsManager.stopRecording()

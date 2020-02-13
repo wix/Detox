@@ -16,13 +16,16 @@ public class InstrumentsReflected implements Instruments {
     private static Constructor constructorDtxProfilingConfiguration;
     private static Method methodGetInstanceOfProfiler;
     private static Method methodStartRecording;
+    private static Method methodTryInstallJsiHook;
     private static final boolean hasProfiler;
+    private InstrumentsRecording activeRecording;
 
     static {
         try {
             final String basePackageName = "com.wix.detoxprofiler";
             final Class<?> profilerClass = Class.forName(basePackageName + ".DTXProfiler");
             final Class<?> configurationClass = Class.forName(basePackageName + ".DTXProfilingConfiguration");
+            final Class<?> jsiHookClass = Class.forName(basePackageName + ".JsiHook");
 
             constructorDtxProfilingConfiguration = configurationClass.getConstructor(
                     boolean.class,//recordPerformance
@@ -32,6 +35,8 @@ public class InstrumentsReflected implements Instruments {
             );
             methodGetInstanceOfProfiler = profilerClass.getDeclaredMethod("getInstance", Context.class);
             methodStartRecording = profilerClass.getDeclaredMethod("startProfiling", Context.class, configurationClass);
+            methodTryInstallJsiHook = jsiHookClass.getDeclaredMethod("tryInstall", profilerClass, Context.class);
+            methodTryInstallJsiHook.setAccessible(true);
         } catch (ClassNotFoundException e) {
             methodGetInstanceOfProfiler = null;
         } catch (NoSuchMethodException e) {
@@ -46,6 +51,24 @@ public class InstrumentsReflected implements Instruments {
     @Override
     public boolean installed() {
         return hasProfiler;
+    }
+
+    void resetActiveRecording() {
+        activeRecording = null;
+    }
+
+    public InstrumentsRecording getActiveRecording() {
+        return activeRecording;
+    }
+
+    @Override
+    public void tryInstallJsiHook(Context context) {
+        try {
+            final Object profilerInstance = methodGetInstanceOfProfiler.invoke(null, context);
+            methodTryInstallJsiHook.invoke(null, profilerInstance, context);
+        } catch (Exception e) {
+            throw new DetoxInstrumentsException(e);
+        }
     }
 
     @Override
@@ -65,7 +88,8 @@ public class InstrumentsReflected implements Instruments {
             );
             final Object profilerInstance = methodGetInstanceOfProfiler.invoke(null, context);
             methodStartRecording.invoke(profilerInstance, context, configurationInstance);
-            return new InstrumentsRecordingReflected(profilerInstance);
+            activeRecording = new InstrumentsRecordingReflected(profilerInstance, this);
+            return activeRecording;
         } catch (Exception e) {
             throw new DetoxInstrumentsException(e);
         }

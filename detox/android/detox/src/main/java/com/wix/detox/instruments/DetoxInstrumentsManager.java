@@ -19,6 +19,14 @@ public class DetoxInstrumentsManager {
     public DetoxInstrumentsManager(Context context, Instruments instruments) {
         this.context = context;
         this.instruments = instruments;
+        this.recording = instruments.getActiveRecording();
+    }
+
+    public void tryInstallJsi() {
+        if (!instruments.installed()) {
+            return;
+        }
+        instruments.tryInstallJsiHook(context);
     }
 
     public void startRecordingAtLocalPath(String path) {

@@ -45,9 +45,11 @@ public class InstrumentsRecordingReflected implements InstrumentsRecording {
     }
 
     private final Object profilerInstance;
+    private final InstrumentsReflected instruments;
 
-    public InstrumentsRecordingReflected(Object profilerInstance) {
+    public InstrumentsRecordingReflected(Object profilerInstance, InstrumentsReflected instruments) {
         this.profilerInstance = profilerInstance;
+        this.instruments = instruments;
     }
 
     @Override
@@ -57,6 +59,7 @@ public class InstrumentsRecordingReflected implements InstrumentsRecording {
         } catch (Exception e) {
             throw new DetoxInstrumentsException(e);
         }
+        instruments.resetActiveRecording();
     }
 
     @Override
