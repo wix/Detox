@@ -1,12 +1,13 @@
 const _ = require('lodash');
-const dexpect = require('./InvokeTwo').expect;
-const element = require('./InvokeTwo').element;
-const by = require('./InvokeTwo').by;
-const waitFor = require('./InvokeTwo').waitFor;
 
-describe('InvokeTwo', () => {
+describe('expectTwo', () => {
+  beforeEach(() => {
+    const IosExpect = require('./expectTwo');
+    e = new IosExpect(new MockExecutor());
+  });
+
   it(`element(by.text('tapMe')).tap()`, () => {
-    const testCall = element(by.text('tapMe')).tap();
+    const testCall = e.element(e.by.text('tapMe')).tap();
     const jsonOutput = {
       type: 'action',
       action: 'tap',
@@ -20,7 +21,7 @@ describe('InvokeTwo', () => {
   });
 
   it(`element(by.id('uniqueId').and(by.text('some text'))).tap()`, () => {
-    const testCall = element(by.id('uniqueId').and(by.text('some text'))).tap();
+    const testCall = e.element(e.by.id('uniqueId').and(e.by.text('some text'))).tap();
     const jsonOutput = {
       type: 'action',
       action: 'tap',
@@ -43,7 +44,7 @@ describe('InvokeTwo', () => {
   });
 
   it(`element(by.id('child').withAncestor(by.id('parent'))).tap()`, () => {
-    const testCall = element(by.id('child').withAncestor(by.id('parent'))).tap();
+    const testCall = e.element(e.by.id('child').withAncestor(e.by.id('parent'))).tap();
     const jsonOutput = {
       type: 'action',
       action: 'tap',
@@ -68,8 +69,35 @@ describe('InvokeTwo', () => {
     expect(testCall).deepEquals(jsonOutput);
   });
 
+  it(`element(by.id('child').withAncestor(by.id('parent'))).atIndex(1).tap()`, () => {
+    const testCall = e.element(e.by.id('child').withAncestor(e.by.id('parent'))).atIndex(1).tap();
+    const jsonOutput = {
+      type: 'action',
+      action: 'tap',
+      atIndex: 1,
+      predicate: {
+        type: 'and',
+        predicates: [
+          {
+            type: 'id',
+            value: 'child'
+          },
+          {
+            type: 'ancestor',
+            value: {
+              type: 'id',
+              value: 'parent'
+            }
+          }
+        ]
+      }
+    };
+console.log(JSON.stringify(testCall))
+    expect(testCall).deepEquals(jsonOutput);
+  });
+
   it(`element(by.id('child').withAncestor(by.id('parent').and(by.text('text')))).tap()`, () => {
-    const testCall = element(by.id('child').withAncestor(by.id('parent').and(by.text('text')))).tap();
+    const testCall = e.element(e.by.id('child').withAncestor(e.by.id('parent').and(e.by.text('text')))).tap();
     const jsonOutput = {
       type: 'action',
       action: 'tap',
@@ -104,7 +132,7 @@ describe('InvokeTwo', () => {
   });
 
   it(`element(by.id('tappable')).tapAtPoint({x:5, y:10})`, () => {
-    const testCall = element(by.id('tappable')).tapAtPoint({ x: 5, y: 10 });
+    const testCall = e.element(e.by.id('tappable')).tapAtPoint({ x: 5, y: 10 });
     const jsonOutput = {
       type: 'action',
       action: 'tapAtPoint',
@@ -124,7 +152,7 @@ describe('InvokeTwo', () => {
   });
 
   it(`expect(element(by.text('Tap Working!!!'))).toBeVisible()`, () => {
-    const testCall = dexpect(element(by.text('Tap Working!!!'))).toBeVisible();
+    const testCall = e.expect(e.element(e.by.text('Tap Working!!!'))).toBeVisible();
     const jsonOutput = {
       type: 'expectation',
       predicate: {
@@ -138,7 +166,7 @@ describe('InvokeTwo', () => {
   });
 
   it(`expect(element(by.id('UniqueId204'))).toHaveText('I contain some text')`, () => {
-    const testCall = dexpect(element(by.id('UniqueId204'))).toHaveText('I contain some text');
+    const testCall = e.expect(e.element(e.by.id('UniqueId204'))).toHaveText('I contain some text');
     const jsonOutput = {
       type: 'expectation',
       predicate: {
@@ -153,7 +181,7 @@ describe('InvokeTwo', () => {
   });
 
   it(`waitFor(element(by.text('Text5'))).toBeVisible().whileElement(by.id('ScrollView630')).scroll(50, 'down')`, () => {
-    const testCall = waitFor(element(by.text('Text5'))).toBeVisible().whileElement(by.id('ScrollView630')).scroll(50, 'down');
+    const testCall = e.waitFor(e.element(e.by.text('Text5'))).toBeVisible().whileElement(e.by.id('ScrollView630')).scroll(50, 'down');
     const jsonOutput = {
       type: 'action',
       action: 'scroll',
@@ -176,7 +204,7 @@ describe('InvokeTwo', () => {
   });
 
   it(`waitFor(element(by.id('uniqueId'))).toHaveValue('Some value').withTimeout(2000)`, () => {
-    const testCall = waitFor(element(by.id('uniqueId'))).toHaveValue('Some value').withTimeout(2000);
+    const testCall = e.waitFor(e.element(e.by.id('uniqueId'))).toHaveValue('Some value').withTimeout(2000);
     const jsonOutput = {
       type: 'waitFor',
       timeout: 2000,
@@ -202,3 +230,10 @@ expect.extend({
     };
   }
 });
+
+
+class MockExecutor {
+  execute(invocation) {
+    return invocation;
+  };
+}

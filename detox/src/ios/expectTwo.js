@@ -35,19 +35,28 @@ class Expect {
     return this.expect('toHaveValue', value);
   }
 
+  toNotHaveValue(value) {
+    return this.expect('toNotHaveValue', value);
+  }
+
   expect(expectation, ...params) {
-    return {
+    return _invocationManager.execute({
       type: 'expectation',
       predicate: this.element.matcher.predicate,
       expectation,
       ...(params.length !== 0 && { params })
-    };
+    });
   }
 }
 
 class Element {
   constructor(matcher) {
     this.matcher = matcher;
+  }
+
+  atIndex(index) {
+    this.index = index;
+    return this;
   }
 
   tap() {
@@ -116,12 +125,13 @@ class Element {
       return el != null;
     });
 
-    return {
+    return _invocationManager.execute({
       type: 'action',
       action,
+      ...(this.index && {atIndex: this.index}),
       ...(params.length !== 0 && { params }),
       predicate: this.matcher.predicate
-    };
+    });
   }
 }
 
@@ -132,6 +142,18 @@ class By {
 
   text(text) {
     return new Matcher().text(text);
+  }
+
+  label(label) {
+    return new Matcher().label(label);
+  }
+
+  accessibilityLabel(label) {
+    return new Matcher().accessibilityLabel(label);
+  }
+
+  traits(traits) {
+    return new Matcher().traits(traits);
   }
 }
 
@@ -233,6 +255,11 @@ class WaitFor {
     return this;
   }
 
+  toNotHaveValue(value) {
+    this.expectation = expect(this.element).toNotHaveValue(value);
+    return this;
+  }
+
   withTimeout(timeout) {
     this.timeout = timeout;
     return this.waitForWithTimeout();
@@ -322,25 +349,25 @@ class WaitFor {
     const expectation = this.expectation;
     const action = this.action;
 
-    return {
+    return _invocationManager.execute({
       ...action,
       while: {
         ...expectation
       }
-    };
+    });
   }
 
   waitForWithTimeout() {
     const expectation = this.expectation;
     const action = this.action;
     const timeout = this.timeout;
-    expectation.type = "waitFor";
+    expectation.type = 'waitFor';
 
-    return {
+    return _invocationManager.execute({
       ...action,
       ...expectation,
       timeout
-      }
+    });
   }
 }
 
@@ -356,9 +383,25 @@ function waitFor(element) {
   return new WaitFor(element);
 }
 
-module.exports = {
-  expect,
-  element,
-  waitFor,
-  by: new By()
-};
+let _invocationManager;
+
+class IosExpect {
+  constructor(invocationManager) {
+    _invocationManager = invocationManager;
+    this.by = new By();
+  }
+
+  element(matcher) {
+    return element(matcher);
+  }
+
+  expect(element) {
+    return expect(element);
+  }
+
+  waitFor(element) {
+    return waitFor(element);
+  }
+}
+
+module.exports = IosExpect;
