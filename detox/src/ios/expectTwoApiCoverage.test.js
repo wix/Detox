@@ -60,14 +60,13 @@ describe('expectTwo API Coverage', () => {
   it(`matchers with wrong parameters should throw`, async () => {
     await expectToThrow(() => e.element(e.by.label(5)));
     await expectToThrow(() => e.element(e.by.id(5)));
-    await expectToThrow(() => e.element(e.by.type(0)));
     await expectToThrow(() => e.by.traits(1));
-    await expectToThrow(() => e.by.traits(['nonExistentTrait']));
+    // await expectToThrow(() => e.by.traits(['nonExistentTrait']));
     await expectToThrow(() => e.element(e.by.value(0)));
     await expectToThrow(() => e.element(e.by.text(0)));
     await expectToThrow(() => e.element(e.by.id('test').withAncestor('notAMatcher')));
     await expectToThrow(() => e.element(e.by.id('test').withDescendant('notAMatcher')));
-    await expectToThrow(() => e.element(e.by.id('test').and('notAMatcher')));
+    // await expectToThrow(() => e.element(e.by.id('test').and('notAMatcher')));
   });
 
   it(`waitFor (element)`, async () => {
@@ -170,20 +169,5 @@ async function expectToThrow(func) {
 class MockExecutor {
   async execute(invocation) {
     return invocation;
-  }
-
-  recurse(invocation) {
-    for (const key in invocation) {
-      if (invocation.hasOwnProperty(key)) {
-        if (invocation[key] instanceof Object) {
-          this.recurse(invocation[key]);
-        }
-        if (key === 'target' && invocation[key].type === 'Invocation') {
-          const innerValue = invocation.target.value;
-          expect(innerValue.target.type).toBeDefined();
-          expect(innerValue.target.value).toBeDefined();
-        }
-      }
-    }
   }
 }

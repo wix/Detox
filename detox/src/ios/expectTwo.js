@@ -55,6 +55,7 @@ class Element {
   }
 
   atIndex(index) {
+    if (typeof index !== 'number') throw new Error(`atIndex argument must be a number, got ${typeof index}`);
     this.index = index;
     return this;
   }
@@ -68,6 +69,7 @@ class Element {
   }
 
   multiTap(times) {
+    if (typeof times !== 'number') throw new Error('times should be a number, but got ' + (times + (' (' + (typeof times + ')'))));
     return this.withAction('multiTap', times);
   }
 
@@ -84,10 +86,12 @@ class Element {
   }
 
   typeText(text) {
+    if (typeof text !== 'string') throw new Error('text should be a string, but got ' + (text + (' (' + (typeof text + ')'))));
     return this.withAction('typeText', text);
   }
 
   replaceText(text) {
+    if (typeof text !== 'string') throw new Error('text should be a string, but got ' + (text + (' (' + (typeof text + ')'))));
     return this.withAction('replaceText', text);
   }
 
@@ -95,15 +99,23 @@ class Element {
     return this.withAction('clearText');
   }
 
-  scroll(pixels, direction, startPositionX, startPositionY) {
+  scroll(pixels, direction = 'down', startPositionX = NaN, startPositionY = NaN) {
+    if (!['left', 'right', 'up', 'down'].some(option => option === direction)) throw new Error('direction should be one of [left, right, up, down], but got ' + direction);
+    if (typeof pixels !== 'number') throw new Error('amount of pixels should be a number, but got ' + (pixels + (' (' + (typeof pixels + ')'))));
+    if (typeof startPositionX !== 'number') throw new Error('startPositionX should be a number, but got ' + (startPositionX + (' (' + (typeof startPositionX + ')'))));
+    if (typeof startPositionY !== 'number') throw new Error('startPositionY should be a number, but got ' + (startPositionY + (' (' + (typeof startPositionY + ')'))));
     return this.withAction('scroll', pixels, direction, startPositionX, startPositionY);
   }
 
   scrollTo(edge) {
+    if (!['left', 'right', 'top', 'bottom'].some(option => option === edge)) throw new Error('edge should be one of [left, right, top, bottom], but got ' + edge);
     return this.withAction('scrollTo', edge);
   }
 
-  swipe(direction, speed, percentage) {
+  swipe(direction, speed = 'fast', percentage = 0) {
+    if (!['left', 'right', 'up', 'down'].some(option => option === direction)) throw new Error('direction should be one of [left, right, up, down], but got ' + direction);
+    if (!['slow', 'fast'].some(option => option === speed)) throw new Error('speed should be one of [slow, fast], but got ' + speed);
+    if (!(typeof percentage === 'number' && percentage >= 0 && percentage <= 1)) throw new Error('yOriginStartPercentage should be a number [0.0, 1.0], but got ' + (percentage + (' (' + (typeof percentage + ')'))));
     return this.withAction('swipe', direction, speed, percentage);
   }
 
@@ -115,7 +127,10 @@ class Element {
     return this.withAction('setColumnToValue', dateString, dateFormat);
   }
 
-  pinchWithAngle(direction, speed, angle) {
+  pinchWithAngle(direction, speed = 'slow', angle = 0) {
+    if (!['inward', 'outward'].includes(direction)) throw new Error(`pinchWithAngle direction is either 'inward' or 'outward'`);
+    if (!['slow', 'fast'].includes(speed)) throw new Error(`pinchWithAngle speed is either 'slow' or 'fast'`);
+    if (typeof angle !== 'number') throw new Error(`pinchWithAngle angle must be a number (radiant), got ${typeof angle}`);
     return this.withAction('pinchWithAngle', direction, speed, angle);
   }
 
@@ -128,7 +143,7 @@ class Element {
     return _invocationManager.execute({
       type: 'action',
       action,
-      ...(this.index && {atIndex: this.index}),
+      ...(this.index && { atIndex: this.index }),
       ...(params.length !== 0 && { params }),
       predicate: this.matcher.predicate
     });
@@ -164,11 +179,14 @@ class Matcher {
   }
 
   label(byLabel) {
+    console.log(byLabel);
+    if (typeof byLabel !== 'string') throw new Error('label should be a string, but got ' + (byLabel + (' (' + (typeof byLabel + ')'))));
     this.predicate = { type: 'label', value: byLabel };
     return this;
   }
 
   id(byId) {
+    if (typeof byId !== 'string') throw new Error('id should be a string, but got ' + (byId + (' (' + (typeof byId + ')'))));
     this.predicate = { type: 'id', value: byId };
     return this;
   }
@@ -176,36 +194,53 @@ class Matcher {
   //TODO - no type matcher!!
 
   traits(byTraits) {
+    if (typeof byTraits !== 'object' || !byTraits instanceof Array) throw new Error('traits must be an array, got ' + typeof byTraits);
     this.predicate = { type: 'traits', value: byTraits };
     return this;
   }
 
   value(byValue) {
+    if (typeof byValue !== 'string') throw new Error('value should be a string, but got ' + (byValue + (' (' + (typeof byValue + ')'))));
     this.predicate = { type: 'value', value: byValue };
     return this;
   }
 
   text(byText) {
+    if (typeof byText !== 'string') throw new Error('text should be a string, but got ' + (byText + (' (' + (typeof byText + ')'))));
     this.predicate = { type: 'text', value: byText };
     return this;
   }
 
   withAncestor(matcher) {
+    if (!(matcher instanceof Matcher)) {
+      throwMatcherError(matcher);
+    }
+
     this.and({ predicate: { type: 'ancestor', value: matcher.predicate } });
     return this;
   }
 
   withDescendant(matcher) {
+    if (!(matcher instanceof Matcher)) {
+      throwMatcherError(matcher);
+    }
     this.and({ predicate: { type: 'descendant', value: matcher.predicate } });
     return this;
   }
 
   and(matcher) {
+    // if (!(matcher instanceof Matcher)) {
+    //   throwMatcherError(matcher);
+    // }
+    console.log(this.predicate);
     if (this.predicate.type === 'and') {
       this.predicate.predicates.push(matcher);
+      console.log(this.predicate);
     } else {
       this.predicate = { type: 'and', predicates: [this.predicate, matcher.predicate] };
+      console.log(this.predicate);
     }
+    console.log(this.predicate.type);
     return this;
   }
 }
@@ -261,6 +296,9 @@ class WaitFor {
   }
 
   withTimeout(timeout) {
+
+    if (typeof timeout !== 'number') throw new Error('text should be a number, but got ' + (timeout + (' (' + (typeof timeout + ')'))));
+    if (timeout < 0) throw new Error('timeout must be larger than 0');
     this.timeout = timeout;
     return this.waitForWithTimeout();
   }
@@ -372,14 +410,23 @@ class WaitFor {
 }
 
 function element(matcher) {
+  if (!(matcher instanceof Matcher)) {
+    throwMatcherError(matcher);
+  }
   return new Element(matcher);
 }
 
 function expect(element) {
+  if (!(element instanceof Element)) {
+    throwMatcherError(element);
+  }
   return new Expect(element);
 }
 
 function waitFor(element) {
+  if (!(element instanceof Element)) {
+    throwMatcherError(element);
+  }
   return new WaitFor(element);
 }
 
@@ -402,6 +449,11 @@ class IosExpect {
   waitFor(element) {
     return waitFor(element);
   }
+}
+
+function throwMatcherError(param) {
+  console.log(param);
+  throw new Error(`${param} is not a Detox matcher. More about Detox matchers here: https://github.com/wix/Detox/blob/master/docs/APIRef.Matchers.md`);
 }
 
 module.exports = IosExpect;
