@@ -1,5 +1,5 @@
 const detox = require('detox');
-const config = require('../package.json').detox;
+const config = require('../detox.config');
 
 /*
 Example showing how to use Detox with required objects rather than globally exported.

@@ -29,7 +29,7 @@ describe('test', () => {
   const mockIOSJestConfiguration = () => mockConfiguration('ios.sim', 'jest');
   const mockAndroidMochaConfiguration = () => mockConfiguration('android.emulator');
   const mockIOSMochaConfiguration = () => mockConfiguration('ios.sim');
-  const mockConfiguration = (deviceType, runner) => mockPackageJson({
+  const mockConfiguration = (deviceType, runner) => mockDetoxConfig({
     'test-runner': runner,
     configurations: {
       only: {

@@ -10,7 +10,7 @@ describe('build', () => {
   });
 
   it('runs the build script if there is only one config', async () => {
-    mockPackageJson({
+    mockDetoxConfig({
       configurations: {
         only: {
           build: 'echo "only"'
@@ -23,7 +23,7 @@ describe('build', () => {
   });
 
   it('runs the build script of selected config', async () => {
-    mockPackageJson({
+    mockDetoxConfig({
       configurations: {
         only: {
           build: 'echo "only"'
@@ -39,7 +39,7 @@ describe('build', () => {
   });
 
   it('fails with multiple configs if none is selected', async () => {
-    mockPackageJson({
+    mockDetoxConfig({
       configurations: {
         only: {
           build: 'echo "only"'
@@ -55,14 +55,14 @@ describe('build', () => {
   });
 
   it('fails without configurations', async () => {
-    mockPackageJson({});
+    mockDetoxConfig({});
 
     await expect(callCli('./build', 'build')).rejects.toThrowErrorMatchingSnapshot();
     expect(mockExec).not.toHaveBeenCalled();
   });
 
   it('fails without build script', async () => {
-    mockPackageJson({
+    mockDetoxConfig({
       configurations: {
         only: {}
       }
@@ -73,7 +73,7 @@ describe('build', () => {
   });
 
   it('fails without build script and configuration', async () => {
-    mockPackageJson({
+    mockDetoxConfig({
       configurations: {
         only: {}
       }

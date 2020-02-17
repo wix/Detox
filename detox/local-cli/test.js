@@ -6,7 +6,7 @@ const environment = require('../src/utils/environment');
 const DetoxConfigError = require('../src/errors/DetoxConfigError');
 
 const log = require('../src/utils/logger').child({ __filename });
-const {getDetoxSection, getDefaultConfiguration, getConfigurationByKey} = require('./utils/configurationUtils');
+const {getDetoxConfig, getDefaultConfiguration, getConfigurationByKey} = require('./utils/configurationUtils');
 const shellQuote = require('./utils/shellQuote');
 
 module.exports.command = 'test';
@@ -131,7 +131,7 @@ module.exports.builder = {
 const collectExtraArgs = require('./utils/collectExtraArgs')(module.exports.builder);
 
 module.exports.handler = async function test(program) {
-  const config = getDetoxSection();
+  const config = getDetoxConfig();
   const runner = getConfigFor('test-runner') || 'mocha';
   const runnerConfig = getConfigFor('runner-config') || getDefaultRunnerConfig();
 

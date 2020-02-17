@@ -1,26 +1,24 @@
 const _ = require('lodash');
-const path = require('path');
+const { cosmiconfigSync } = require('cosmiconfig');
+
+const explorer = cosmiconfigSync("detox")
 
 function hintConfigurations(configurations) {
   return Object.keys(configurations).map(c => `* ${c}`).join('\n')
 }
 
-function getDefaultPathToPackageJson() {
-  return path.join(process.cwd(), 'package.json');
-}
-
-function getDetoxSection(pathToPackageJson = getDefaultPathToPackageJson()) {
-  const { detox } = require(pathToPackageJson);
-  if (!detox) {
-    throw new Error('Cannot find "detox" section in package.json');
+function getDetoxConfig(pathToConfig = process.cwd()) {
+  const result = explorer.search(pathToConfig);
+  if (!result || !result.config) {
+    throw new Error('Cannot find detox configuration');
   }
 
-  return detox;
+  return result.config;
 }
 
-function getDefaultConfiguration(pathToPackageJson = getDefaultPathToPackageJson()) {
+function getDefaultConfiguration(pathToConfig) {
   try {
-    const configurations = require(pathToPackageJson).detox.configurations;
+    const { configurations } = getDetoxConfig(pathToConfig);
     const keys = Object.keys(configurations);
     if (keys.length === 1) {
       return keys[0];
@@ -31,7 +29,7 @@ function getDefaultConfiguration(pathToPackageJson = getDefaultPathToPackageJson
 }
 
 function getConfigurationByKey(key) {
-  const { configurations } = getDetoxSection();
+  const { configurations } = getDetoxConfig();
 
   if (_.isEmpty(configurations)) {
     throw new Error('There are no "configurations" in "detox" section of package.json');
@@ -56,7 +54,7 @@ function getConfigurationByKey(key) {
 }
 
 module.exports = {
-  getDetoxSection,
+  getDetoxConfig,
   getDefaultConfiguration,
   getConfigurationByKey,
 };

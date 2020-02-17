@@ -43,6 +43,7 @@
     "bunyan-debug-stream": "^1.1.0",
     "chalk": "^2.4.2",
     "child-process-promise": "^2.2.0",
+    "cosmiconfig": "^6.0.0",
     "fs-extra": "^4.0.2",
     "funpermaproxy": "^1.0.1",
     "get-port": "^2.1.0",
