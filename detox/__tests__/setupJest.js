@@ -20,12 +20,17 @@ function callCli(modulePath, cmd) {
   });
 }
 
-function mockPackageJson(mockContent) {
-  jest.mock(path.join(process.cwd(), 'package.json'), () => ({
-    detox: mockContent
+function mockDetoxConfig(mockContent) {
+  jest.mock('cosmiconfig', () => ({
+    cosmiconfigSync: (key) => ({
+      search: () => ({ config: {
+          detox: mockContent
+        }[key]
+      })
+    })
   }));
 }
 
-global.mockPackageJson = mockPackageJson;
+global.mockDetoxConfig = mockDetoxConfig;
 global.callCli = callCli;
 global.IS_RUNNING_DETOX_UNIT_TESTS = true;
