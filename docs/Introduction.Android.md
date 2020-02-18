@@ -145,6 +145,35 @@ Following device types could be used to control Android devices:
 `android.attached`. Connect to already-attached android device. The device should be listed in the output of `adb devices` command under provided `name`.
 Use this type to connect to Genymotion emulator.
 
+#### 5a. Using product flavors
+
+Instead of using `debug` and `release` configurations to Detox you may want to use your own [productFlavors](https://developer.android.com/studio/build/build-variants#product-flavors):
+
+```json
+"detox" : {
+    "configurations": {
+        "android.emu.myProductFlavor.debug": {
+        "binaryPath": "android/app/build/outputs/apk/myProductFlavor/debug/app-myProductFlavor-debug.apk",
+        "build": "cd android && ./gradlew assembleMyProductFlavorDebug assembleMyProductFlavorDebugAndroidTest -DtestBuildType=debug && cd ..",
+        "type": "android.emulator",
+        "device": {
+          "avdName": "Galaxy_Nexus_API_29"
+        }
+      },
+      "android.emu.myProductFlavor.release": {
+        "binaryPath": "android/app/build/outputs/apk/myProductFlavor/release/app-myProductFlavor-release.apk",
+        "build": "cd android && ./gradlew assembleMyProductFlavorRelease assembleMyProductFlavorReleaseAndroidTest -DtestBuildType=release && cd ..",
+        "type": "android.emulator",
+        "device": {
+          "avdName": "Galaxy_Nexus_API_29"
+        }
+      }
+    }
+}
+```
+
+Simply add your `productFlavor` name to the configuration, here we have used `myProductFlavor` as an example.
+
 ### 6. Run the tests
 
 Using the `android.emu.debug` configuration from above, you can invoke it in the standard way.
