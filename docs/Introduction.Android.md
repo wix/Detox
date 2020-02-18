@@ -147,22 +147,22 @@ Use this type to connect to Genymotion emulator.
 
 #### 5a. Using product flavors
 
-Instead of using `debug` and `release` configurations to Detox you may want to use your own [productFlavors](https://developer.android.com/studio/build/build-variants#product-flavors):
+If you are using custom [productFlavors](https://developer.android.com/studio/build/build-variants#product-flavors) the config needs to be applied a bit differently. This example shows how a `beta` product flavor would look for both debug and release build types:
 
 ```json
 "detox" : {
     "configurations": {
-        "android.emu.myProductFlavor.debug": {
-        "binaryPath": "android/app/build/outputs/apk/myProductFlavor/debug/app-myProductFlavor-debug.apk",
-        "build": "cd android && ./gradlew assembleMyProductFlavorDebug assembleMyProductFlavorDebugAndroidTest -DtestBuildType=debug && cd ..",
+        "android.emu.beta.debug": {
+        "binaryPath": "android/app/build/outputs/apk/beta/debug/app-beta-debug.apk",
+        "build": "cd android && ./gradlew assembleBetaDebug assembleBetaDebugAndroidTest -DtestBuildType=debug && cd ..",
         "type": "android.emulator",
         "device": {
           "avdName": "Galaxy_Nexus_API_29"
         }
       },
-      "android.emu.myProductFlavor.release": {
-        "binaryPath": "android/app/build/outputs/apk/myProductFlavor/release/app-myProductFlavor-release.apk",
-        "build": "cd android && ./gradlew assembleMyProductFlavorRelease assembleMyProductFlavorReleaseAndroidTest -DtestBuildType=release && cd ..",
+      "android.emu.beta.release": {
+        "binaryPath": "android/app/build/outputs/apk/beta/release/app-beta-release.apk",
+        "build": "cd android && ./gradlew assembleBetaRelease assembleBetaReleaseAndroidTest -DtestBuildType=release && cd ..",
         "type": "android.emulator",
         "device": {
           "avdName": "Galaxy_Nexus_API_29"
@@ -171,8 +171,6 @@ Instead of using `debug` and `release` configurations to Detox you may want to u
     }
 }
 ```
-
-Simply add your `productFlavor` name to the configuration, here we have used `myProductFlavor` as an example.
 
 ### 6. Run the tests
 
