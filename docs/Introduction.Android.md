@@ -157,7 +157,7 @@ If you are using custom [productFlavors](https://developer.android.com/studio/bu
         "build": "cd android && ./gradlew assembleBetaDebug assembleBetaDebugAndroidTest -DtestBuildType=debug && cd ..",
         "type": "android.emulator",
         "device": {
-          "avdName": "Galaxy_Nexus_API_29"
+          "avdName": "Pixel_API_29"
         }
       },
       "android.emu.beta.release": {
@@ -165,7 +165,7 @@ If you are using custom [productFlavors](https://developer.android.com/studio/bu
         "build": "cd android && ./gradlew assembleBetaRelease assembleBetaReleaseAndroidTest -DtestBuildType=release && cd ..",
         "type": "android.emulator",
         "device": {
-          "avdName": "Galaxy_Nexus_API_29"
+          "avdName": "Pixel_API_29"
         }
       }
     }
