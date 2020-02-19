@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 class Expect {
   constructor(element) {
     this.element = element;
@@ -44,7 +46,7 @@ class Expect {
       type: 'expectation',
       predicate: this.element.matcher.predicate,
       expectation,
-      ...(params.length !== 0 && { params })
+      ...(params.length !== 0 && { params: _.without(params, NaN, null, undefined) })
     });
   }
 }
@@ -64,7 +66,8 @@ class Element {
     return this.withAction('tap');
   }
 
-  longPress(duration) {
+  longPress(duration = 1000) {
+    if (typeof duration !== 'number') throw new Error('duration should be a number, but got ' + (duration + (' (' + (typeof duration + ')'))));
     return this.withAction('longPress', duration);
   }
 
@@ -74,6 +77,9 @@ class Element {
   }
 
   tapAtPoint(point) {
+    if (typeof point !== 'object') throw new Error('point should be a object, but got ' + (point + (' (' + (typeof point + ')'))));
+    if (typeof point.x !== 'number') throw new Error('point.x should be a number, but got ' + (point.x + (' (' + (typeof point.x + ')'))));
+    if (typeof point.y !== 'number') throw new Error('point.y should be a number, but got ' + (point.y + (' (' + (typeof point.y + ')'))));
     return this.withAction('tapAtPoint', point);
   }
 
@@ -120,11 +126,15 @@ class Element {
   }
 
   setColumnToValue(column, value) {
+    if (typeof column !== 'number') throw new Error('column should be a number, but got ' + (column + (' (' + (typeof column + ')'))));
+    if (typeof value !== 'string') throw new Error('value should be a string, but got ' + (value + (' (' + (typeof value + ')'))));
     return this.withAction('setColumnToValue', column, value);
   }
 
   setDatePickerDate(dateString, dateFormat) {
-    return this.withAction('setColumnToValue', dateString, dateFormat);
+    if (typeof dateString !== 'string') throw new Error('dateString should be a string, but got ' + (dateString + (' (' + (typeof dateString + ')'))));
+    if (typeof dateFormat !== 'string') throw new Error('dateFormat should be a string, but got ' + (dateFormat + (' (' + (typeof dateFormat + ')'))));
+    return this.withAction('setDatePickerDate', dateString, dateFormat);
   }
 
   pinchWithAngle(direction, speed = 'slow', angle = 0) {
@@ -136,15 +146,11 @@ class Element {
 
   withAction(action, ...params) {
 
-    params = params.filter(function(el) {
-      return el != null;
-    });
-
     return _invocationManager.execute({
       type: 'action',
       action,
       ...(this.index && { atIndex: this.index }),
-      ...(params.length !== 0 && { params }),
+      ...(params.length !== 0 && { params: _.without(params, NaN, null, undefined) }),
       predicate: this.matcher.predicate
     });
   }
@@ -170,6 +176,10 @@ class By {
   traits(traits) {
     return new Matcher().traits(traits);
   }
+
+  value(byValue) {
+    return new Matcher().value(byValue);
+  }
 }
 
 class Matcher {
@@ -179,7 +189,6 @@ class Matcher {
   }
 
   label(byLabel) {
-    console.log(byLabel);
     if (typeof byLabel !== 'string') throw new Error('label should be a string, but got ' + (byLabel + (' (' + (typeof byLabel + ')'))));
     this.predicate = { type: 'label', value: byLabel };
     return this;
@@ -232,15 +241,15 @@ class Matcher {
     // if (!(matcher instanceof Matcher)) {
     //   throwMatcherError(matcher);
     // }
-    console.log(this.predicate);
-    if (this.predicate.type === 'and') {
-      this.predicate.predicates.push(matcher);
-      console.log(this.predicate);
+    const tempPredicate = this.predicate;
+    delete this.predicate;
+    this.predicate = { type: 'and', predicates: [] };
+    this.predicate.predicates.push(tempPredicate);
+    if (matcher.predicate.type === 'and') {
+      this.predicate.predicates = this.predicate.predicates.concat(matcher.predicate.predicates);
     } else {
-      this.predicate = { type: 'and', predicates: [this.predicate, matcher.predicate] };
-      console.log(this.predicate);
+      this.predicate.predicates.push(matcher.predicate);
     }
-    console.log(this.predicate.type);
     return this;
   }
 }
@@ -452,7 +461,6 @@ class IosExpect {
 }
 
 function throwMatcherError(param) {
-  console.log(param);
   throw new Error(`${param} is not a Detox matcher. More about Detox matchers here: https://github.com/wix/Detox/blob/master/docs/APIRef.Matchers.md`);
 }
 

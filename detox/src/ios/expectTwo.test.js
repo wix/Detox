@@ -92,7 +92,6 @@ describe('expectTwo', () => {
         ]
       }
     };
-console.log(JSON.stringify(testCall))
     expect(testCall).deepEquals(jsonOutput);
   });
 
@@ -130,6 +129,34 @@ console.log(JSON.stringify(testCall))
 
     expect(testCall).deepEquals(jsonOutput);
   });
+
+  it(`element(by.id('child').withAncestor(by.id('parent').and(by.text('text')))).tap()`, () => {
+    const testCall = e.element(e.by.id('child').and(e.by.text('text').and(e.by.value('value')))).tap();
+    const jsonOutput = {
+      type: 'action',
+      action: 'tap',
+      predicate: {
+        type: 'and',
+        predicates: [
+          {
+            type: 'id',
+            value: 'child'
+          },
+          {
+            type: 'text',
+            value: 'text'
+          },
+          {
+            type: 'value',
+            value: 'value'
+          }
+        ]
+      }
+    };
+
+    expect(testCall).deepEquals(jsonOutput);
+  })
+  ;
 
   it(`element(by.id('tappable')).tapAtPoint({x:5, y:10})`, () => {
     const testCall = e.element(e.by.id('tappable')).tapAtPoint({ x: 5, y: 10 });
@@ -218,7 +245,8 @@ console.log(JSON.stringify(testCall))
 
     expect(testCall).deepEquals(jsonOutput);
   });
-});
+})
+;
 
 expect.extend({
   deepEquals(a, b) {
