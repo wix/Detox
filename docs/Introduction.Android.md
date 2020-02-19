@@ -145,6 +145,33 @@ Following device types could be used to control Android devices:
 `android.attached`. Connect to already-attached android device. The device should be listed in the output of `adb devices` command under provided `name`.
 Use this type to connect to Genymotion emulator.
 
+#### 5a. Using product flavors
+
+If you are using custom [productFlavors](https://developer.android.com/studio/build/build-variants#product-flavors) the config needs to be applied a bit differently. This example shows how a `beta` product flavor would look for both debug and release build types:
+
+```json
+"detox" : {
+    "configurations": {
+        "android.emu.beta.debug": {
+        "binaryPath": "android/app/build/outputs/apk/beta/debug/app-beta-debug.apk",
+        "build": "cd android && ./gradlew assembleBetaDebug assembleBetaDebugAndroidTest -DtestBuildType=debug && cd ..",
+        "type": "android.emulator",
+        "device": {
+          "avdName": "Pixel_API_29"
+        }
+      },
+      "android.emu.beta.release": {
+        "binaryPath": "android/app/build/outputs/apk/beta/release/app-beta-release.apk",
+        "build": "cd android && ./gradlew assembleBetaRelease assembleBetaReleaseAndroidTest -DtestBuildType=release && cd ..",
+        "type": "android.emulator",
+        "device": {
+          "avdName": "Pixel_API_29"
+        }
+      }
+    }
+}
+```
+
 ### 6. Run the tests
 
 Using the `android.emu.debug` configuration from above, you can invoke it in the standard way.
