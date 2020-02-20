@@ -232,8 +232,13 @@ class AppleSimUtils {
     });
   }
 
-  recordVideo(udid, destination) {
-    return exec.spawnAndLog('/usr/bin/xcrun', ['simctl', 'io', udid, 'recordVideo', destination]);
+  recordVideo(udid, destination, options = {}) {
+    const args = ['simctl', 'io', udid, 'recordVideo', destination];
+    if (options.codec) {
+      args.push('--codec');
+      args.push(options.codec);
+    }
+    return exec.spawnAndLog('/usr/bin/xcrun', args);
   }
 
   async _execAppleSimUtils(options, statusLogs, retries, interval) {
