@@ -26,6 +26,9 @@
         "generation",
         "."
       ]
+    },
+    "bootstrap": {
+      "npmClientArgs": ["--no-package-lock"]
     }
   }
 }
