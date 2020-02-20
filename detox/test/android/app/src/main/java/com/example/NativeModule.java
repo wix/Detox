@@ -26,10 +26,11 @@ import java.util.Set;
 
 public class NativeModule extends ReactContextBaseJavaModule {
 
-    public static final String NAME = "NativeModule";
-    ReactApplicationContext reactContext;
+    private static final String NAME = "NativeModule";
 
-    public NativeModule(ReactApplicationContext reactContext) {
+    private ReactApplicationContext reactContext;
+
+    NativeModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
     }
@@ -53,45 +54,31 @@ public class NativeModule extends ReactContextBaseJavaModule {
     public void nativeSetTimeout(int delay, final Callback callback) {
 //        HashMap paramsMap = ((ReadableNativeMap) params).toHashMap();
         Handler handler = new Handler(Looper.getMainLooper());
-
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                callback.invoke();
-            }
-        }, delay);
+        handler.postDelayed(callback::invoke, delay);
     }
 
     @ReactMethod
     public void switchToNativeRoot() {
-        reactContext.getCurrentActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Activity currentActivity = getCurrentActivity();
+        reactContext.getCurrentActivity().runOnUiThread(() -> {
+            Activity currentActivity = getCurrentActivity();
 
-                LinearLayout layout = new LinearLayout(currentActivity);
-                layout.setGravity(Gravity.CENTER);
-                LinearLayout.LayoutParams llp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+            LinearLayout layout = new LinearLayout(currentActivity);
+            layout.setGravity(Gravity.CENTER);
+            LayoutParams llp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
-                TextView tv = new TextView(currentActivity);
-                tv.setText("this is a new native root");
-                LinearLayout.LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-                tv.setLayoutParams(lp);
+            TextView tv = new TextView(currentActivity);
+            tv.setText("this is a new native root");
+            LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            tv.setLayoutParams(lp);
 
-                layout.addView(tv);
-                currentActivity.setContentView(layout, llp);
-            }
+            layout.addView(tv);
+            currentActivity.setContentView(layout, llp);
         });
     }
 
     @ReactMethod
     public void switchToMultipleReactRoots() {
-        reactContext.getCurrentActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        });
+        reactContext.getCurrentActivity().runOnUiThread(() -> {}); // TODO?
     }
 
     @ReactMethod
@@ -111,6 +98,18 @@ public class NativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void spyLongTaps(final String testID) {
         new LongTapCrasher(testID).attach();
+    }
+
+    @ReactMethod
+    public void chokeMainThread() {
+        reactContext.getCurrentActivity().runOnUiThread(() -> {
+            try {
+                Thread.sleep(10500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     /**

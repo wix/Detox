@@ -328,13 +328,31 @@ describe('Client', () => {
     expect(client.getPendingCrashAndReset()).toBeDefined();
 
     function triggerAppWillTerminateWithError() {
-      const event = JSON.stringify({
-        type: "AppWillTerminateWithError",
-        params: {errorDetails: "someDetails"},
-        messageId: -10000
-      });
+      const event = createAppWillTerminateEvent();
+      client.ws.setEventCallback.mock.calls[0][1](JSON.stringify(event));
+    }
+  });
 
-      client.ws.setEventCallback.mock.calls[0][1](event);
+  it(`should allow for a nonresponsiveness listener`, async () => {
+    client.ws.setEventCallback = jest.fn();
+    await connect();
+
+    const callback = setNonresponsiveEventCallbackMock();
+    const event = triggerAppNonresponsiveEvent();
+
+    expect(callback).toHaveBeenCalledWith(event.params);
+
+    function setNonresponsiveEventCallbackMock() {
+      const callback = jest.fn();
+      client.ws.setEventCallback.mockReset();
+      client.setNonresponsivenessListener(callback);
+      return callback;
+    }
+
+    function triggerAppNonresponsiveEvent() {
+      const event = createAppNonresponsiveEvent();
+      client.ws.setEventCallback.mock.calls[0][1](JSON.stringify(event));
+      return event;
     }
   });
 
@@ -353,4 +371,16 @@ describe('Client', () => {
         messageId: messageId
       }));
   }
+
+  const createAppNonresponsiveEvent = () => ({
+    type: "AppNonresponsiveDetected",
+    params: {threadDump: "someThreadStacks"},
+    messageId: -10001
+  });
+
+  const createAppWillTerminateEvent = () => ({
+    type: "AppWillTerminateWithError",
+    params: {errorDetails: "someDetails"},
+    messageId: -10000
+  });
 });

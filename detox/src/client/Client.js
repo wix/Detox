@@ -110,6 +110,10 @@ class Client {
     return crash;
   }
 
+  setNonresponsivenessListener(clientCallback) {
+    this.setActionListener(new actions.AppNonresponsive(), (event) => clientCallback(event.params));
+  }
+
   setActionListener(action, clientCallback) {
     this.ws.setEventCallback(action.messageId, (response) => {
       const parsedResponse = JSON.parse(response);

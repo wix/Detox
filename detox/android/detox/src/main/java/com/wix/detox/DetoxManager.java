@@ -7,6 +7,8 @@ import android.os.Looper;
 import androidx.annotation.NonNull;
 import android.util.Log;
 
+import com.github.anrwatchdog.ANRError;
+import com.github.anrwatchdog.ANRWatchDog;
 import com.wix.detox.instruments.DetoxInstrumentsManager;
 import com.wix.detox.reactnative.ReactNativeExtension;
 import com.wix.detox.systeminfo.Environment;
@@ -72,6 +74,7 @@ class DetoxManager implements WebSocketClient.ActionHandler {
                     initReactNativeIfNeeded();
                     initWSClient();
                     initCrashHandler();
+                    initANRListener();
                     initActionHandlers();
                 }
             });
@@ -136,6 +139,10 @@ class DetoxManager implements WebSocketClient.ActionHandler {
 
     private void initCrashHandler() {
         new DetoxCrashHandler(wsClient).attach();
+    }
+
+    private void initANRListener() {
+        new DetoxANRHandler(wsClient).attach();
     }
 
     private void initActionHandlers() {

@@ -161,6 +161,17 @@ class AppWillTerminateWithError extends Action {
   }
 }
 
+class AppNonresponsive extends Action {
+  constructor(params) {
+    super(params);
+    this.messageId = -10001;
+  }
+
+  handle(response) {
+    this.expectResponseOfType(response, 'AppNonresponsiveDetected');
+  }
+}
+
 module.exports = {
   Login,
   WaitForBackground,
@@ -173,5 +184,6 @@ module.exports = {
   CurrentStatus,
   Shake,
   SetInstrumentsRecordingState,
-  AppWillTerminateWithError
+  AppWillTerminateWithError,
+  AppNonresponsive,
 };
