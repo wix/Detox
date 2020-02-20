@@ -50,7 +50,7 @@
       },
       {
         "type": "ancestor",
-        "value": {
+        "predicate": {
           "type": "id",
           "value": "parent"
         }
@@ -74,7 +74,7 @@
       },
       {
         "type": "ancestor",
-        "value": {
+        "predicate": {
           "type": "and",
              "predicates": [
                 {
@@ -112,6 +112,22 @@
     "value": "tappable"
   }
 }
+```
+
+`element(by.text('tapMe')).atIndex(0).tap();`
+
+
+```json
+{
+  "type": "action",
+  "action": "tap",
+  "predicate": {
+    "type": "text",
+    "value": "Tap Me"
+  },
+  "index": 0
+}
+
 ```
 
 
