@@ -24,7 +24,14 @@ const DEVICE_CLASSES = {
 };
 
 class Detox {
-  constructor({artifactsConfig, deviceConfig, session}) {
+  constructor(config) {
+    log.trace(
+      { event: 'DETOX_CREATE', config },
+      'created a Detox instance with config:\n%j',
+      config
+    );
+
+    const {artifactsConfig, deviceConfig, session} = config;
     this._deviceConfig = deviceConfig;
     this._userSession = deviceConfig.session || session;
     this._client = null;
