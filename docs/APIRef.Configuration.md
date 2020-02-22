@@ -75,7 +75,9 @@ Detox can control artifacts collection via settings from `package.json`:
           "android": {
             "bitRate": 4000000
           },
-          "simulator": {}
+          "simulator": {
+            "codec": "hevc"
+          }
         }
       }
     },
