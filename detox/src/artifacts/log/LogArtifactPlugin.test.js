@@ -5,9 +5,9 @@ describe('LogArtifactPlugin', () => {
         const parseConfig = LogArtifactPlugin.parseConfig;
 
         const ENABLE_MODES = ['all', 'failing'].map(x => [x]);
-        const DISABLE_MODES = ['none', { enabled: true }].map(x => [x]);
+        const DISABLE_MODES = ['none', 'blabla'].map(x => [x]);
 
-        const INCLUSIVE_MODES = ['all', 'manual', 'none', { keepOnlyFailedTestsArtifacts: true }].map(x => [x]);
+        const INCLUSIVE_MODES = ['all', 'manual', 'none', 'blabla'].map(x => [x]);
         const EXCLUSIVE_MODES = ['failing'].map(x => [x]);
 
         it.each(ENABLE_MODES)('should enable plugin if config = %j', (config) =>

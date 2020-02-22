@@ -95,7 +95,7 @@ function composeArtifactsConfig({
   cliConfig = getArtifactsCliConfig()
 }) {
   const artifactsConfig = _.defaultsDeep(
-      {
+      extendArtifactsConfig({
         rootDir: cliConfig.artifactsLocation,
         plugins: {
           log: cliConfig.recordLogs,
@@ -104,10 +104,10 @@ function composeArtifactsConfig({
           instruments: cliConfig.recordPerformance,
           timeline: cliConfig.recordTimeline,
         },
-      },
-      deviceConfig.artifacts,
-      detoxConfig.artifacts,
-      {
+      }),
+      extendArtifactsConfig(deviceConfig.artifacts),
+      extendArtifactsConfig(detoxConfig.artifacts),
+      extendArtifactsConfig({
         rootDir: 'artifacts',
         pathBuilder: null,
         plugins: {
@@ -117,7 +117,7 @@ function composeArtifactsConfig({
           instruments: 'none',
           timeline: 'none',
         },
-      }
+      }),
   );
 
   artifactsConfig.rootDir = buildDefaultArtifactsRootDirpath(
@@ -127,17 +127,30 @@ function composeArtifactsConfig({
 
   artifactsConfig.pathBuilder = resolveArtifactsPathBuilder(artifactsConfig);
 
-  artifactsConfig.plugins = _.mapValues(artifactsConfig.plugins, (value, key) => {
-    switch (key) {
-      case 'instruments': return InstrumentsArtifactPlugin.parseConfig(value);
-      case 'log': return LogArtifactPlugin.parseConfig(value);
-      case 'screenshot': return ScreenshotArtifactPlugin.parseConfig(value);
-      case 'video': return VideoArtifactPlugin.parseConfig(value);
-      case 'timeline': return TimelineArtifactPlugin.parseConfig(value);
-    }
-  });
-
   return artifactsConfig;
+}
+
+function extendArtifactsConfig(config) {
+  const p = config && config.plugins;
+  if (!p) {
+    return config;
+  }
+
+  return {
+    ...config,
+    plugins: {
+      ...config.plugins,
+      log: ifString(p.log, LogArtifactPlugin.parseConfig),
+      screenshot: ifString(p.screenshot, ScreenshotArtifactPlugin.parseConfig),
+      video: ifString(p.video, VideoArtifactPlugin.parseConfig),
+      instruments: ifString(p.instruments, InstrumentsArtifactPlugin.parseConfig),
+      timeline: ifString(p.timeline, TimelineArtifactPlugin.parseConfig),
+    },
+  };
+}
+
+function ifString(value, mapper) {
+  return typeof value === 'string' ? mapper(value) : value;
 }
 
 function resolveArtifactsPathBuilder(artifactsConfig) {

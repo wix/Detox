@@ -5,7 +5,7 @@ describe('InstrumentsArtifactPlugin', () => {
         const parseConfig = InstrumentsArtifactPlugin.parseConfig;
 
         const ENABLE_MODES = ['all'].map(x => [x]);
-        const DISABLE_MODES = ['none', 'manual', 'failing', { enabled: true }].map(x => [x]);
+        const DISABLE_MODES = ['none', 'manual', 'failing', 'blabla'].map(x => [x]);
         const INCLUSIVE_MODES = ['all', 'manual', 'none', 'failing', { keepOnlyFailedTestsArtifacts: true }].map(x => [x]);
 
         it.each(ENABLE_MODES)('should enable plugin if config = %j', (config) =>

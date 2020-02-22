@@ -77,6 +77,7 @@ class TimelineArtifactPlugin extends ArtifactPlugin {
     return fs.access(traceLogPath).then(() => true).catch(() => false);
   }
 
+  /** @param {string} config */
   static parseConfig(config) {
     return {
       enabled: config === 'all',

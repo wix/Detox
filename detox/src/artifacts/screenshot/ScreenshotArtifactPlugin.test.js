@@ -4,13 +4,13 @@ describe('ScreenshotArtifactPlugin', () => {
   describe('static parseConfig(config)', () => {
     const parseConfig = ScreenshotArtifactPlugin.parseConfig;
 
-    const ENABLE_MODES = ['all', 'manual', 'failing', { enabled: false }].map(x => [x]);
+    const ENABLE_MODES = ['all', 'manual', 'failing', 'blabla'].map(x => [x]);
     const DISABLE_MODES = ['none'].map(x => [x]);
 
     const AUTOMATIC_MODES = ['all', 'failing'].map(x => [x]);
-    const MANUAL_MODES = ['manual', 'none', { shouldTakeAutomaticSnapshots: true }].map(x => [x]);
+    const MANUAL_MODES = ['manual', 'none', 'blabla'].map(x => [x]);
 
-    const INCLUSIVE_MODES = ['all', 'manual', 'none', { keepOnlyFailedTestsArtifacts: true }].map(x => [x]);
+    const INCLUSIVE_MODES = ['all', 'manual', 'none', 'blabla'].map(x => [x]);
     const EXCLUSIVE_MODES = ['failing'].map(x => [x]);
 
     it.each(ENABLE_MODES)('should enable plugin if config = %j', (config) =>
