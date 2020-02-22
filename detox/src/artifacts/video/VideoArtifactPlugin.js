@@ -9,6 +9,7 @@ class VideoArtifactPlugin extends WholeTestRecorderPlugin {
     return this.api.preparePathForArtifact('test.mp4', testSummary);
   }
 
+  /** @param {string} config */
   static parseConfig(config) {
     switch (config) {
       case 'failing':

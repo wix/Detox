@@ -227,7 +227,7 @@ describe('TimelineArtifactPlugin', () => {
     it('should enable plugin if config = all', () =>
       expect(parseConfig('all').enabled).toBe(true));
 
-    it('should disable plugin if config = none', () =>
+    it('should disable plugin if config != all', () =>
       expect(parseConfig('none').enabled).toBe(false));
   });
 });

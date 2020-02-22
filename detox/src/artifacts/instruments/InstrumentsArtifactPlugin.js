@@ -34,6 +34,7 @@ class InstrumentsArtifactPlugin extends WholeTestRecorderPlugin {
     }
   }
 
+  /** @param {string} config */
   static parseConfig(config) {
     switch (config) {
       case 'all':

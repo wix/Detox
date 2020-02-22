@@ -48,6 +48,7 @@ class LogArtifactPlugin extends StartupAndTestRecorderPlugin {
     return this.api.preparePathForArtifact('process.log', testSummary);
   }
 
+  /** @param {string} config */
   static parseConfig(config) {
     switch (config) {
       case 'failing':
