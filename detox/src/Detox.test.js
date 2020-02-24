@@ -14,6 +14,8 @@ const defaultPlatformEnv = {
 };
 
 describe('Detox', () => {
+  let client;
+  let mockLogger;
   let fs;
   let Detox;
   let detox;
@@ -27,12 +29,16 @@ describe('Detox', () => {
   const deviceMockData = {lastConstructorArguments: null};
 
   beforeEach(async () => {
-    function setCustomMock(modulePath, dataObject) {
+    function setCustomClassMock(modulePath, dataObject, mockObject = {}) {
       const JestMock = jest.genMockFromModule(modulePath);
       class FinalMock extends JestMock {
         constructor(...rest) {
           super(rest);
           dataObject.lastConstructorArguments = rest;
+
+          Object.keys(mockObject).forEach((key) => {
+            this[key] = mockObject[key].bind(this);
+          });
         }
         on(event, callback) {
           if (event === 'launchApp') {
@@ -43,13 +49,23 @@ describe('Detox', () => {
       jest.setMock(modulePath, FinalMock);
     }
 
-    jest.mock('./utils/logger');
     jest.mock('fs');
     jest.mock('fs-extra');
     fs = require('fs');
     jest.mock('./ios/expect');
-    setCustomMock('./client/Client', clientMockData);
-    setCustomMock('./devices/Device', deviceMockData);
+
+    mockLogger = jest.genMockFromModule('./utils/logger');
+    mockLogger.child.mockReturnValue(mockLogger);
+    jest.mock('./utils/logger', () => mockLogger);
+
+    setCustomClassMock('./devices/Device', deviceMockData);
+
+    client = {
+      setNonresponsivenessListener: jest.fn(),
+      getPendingCrashAndReset: jest.fn(),
+      dumpPendingRequests: jest.fn(),
+    };
+    setCustomClassMock('./client/Client', clientMockData, client);
 
     process.env = Object.assign({}, defaultPlatformEnv[process.platform]);
 
@@ -59,8 +75,6 @@ describe('Detox', () => {
     jest.mock('./devices/drivers/SimulatorDriver');
     jest.mock('./devices/Device');
     jest.mock('./server/DetoxServer');
-    jest.mock('./client/Client');
-    jest.mock('./utils/logger');
   });
 
   it(`Passing --cleanup should shutdown the currently running device`, async () => {
@@ -158,10 +172,11 @@ describe('Detox', () => {
   });
 
   it(`handleAppCrash if client has a pending crash`, async () => {
+    client.getPendingCrashAndReset.mockReturnValueOnce('crash');
+
     Detox = require('./Detox');
     detox = new Detox({deviceConfig: validDeviceConfigWithSession});
     await detox.init();
-    detox._client.getPendingCrashAndReset.mockReturnValueOnce('crash'); // TODO: rewrite to avoid accessing private fields
     await detox.afterEach({ title: 'a', fullName: 'b', status: 'failed' });
     expect(device.launchApp).toHaveBeenCalledTimes(1);
   });
@@ -174,7 +189,7 @@ describe('Detox', () => {
     await detox.init();
     await detox.afterEach(testSummary);
 
-    expect(detox._client.dumpPendingRequests).not.toHaveBeenCalled();
+    expect(client.dumpPendingRequests).not.toHaveBeenCalled();
   });
 
   it(`handleAppCrash should dump pending requests if testSummary has timeout flag`, async () => {
@@ -184,7 +199,42 @@ describe('Detox', () => {
 
     await detox.init();
     await detox.afterEach(testSummary);
-    expect(detox._client.dumpPendingRequests).toHaveBeenCalled();
+    expect(client.dumpPendingRequests).toHaveBeenCalled();
+  });
+
+  it(`should register an async nonresponsiveness listener`, async () => {
+    Detox = require('./Detox');
+    detox = new Detox({deviceConfig: validDeviceConfigWithSession});
+
+    await detox.init();
+
+    expect(client.setNonresponsivenessListener).toHaveBeenCalled();
+  });
+
+  it(`should log thread-dump provided by a nonresponsiveness event`, async () => {
+    const callbackParams = {
+      threadDump: 'mockThreadDump',
+    };
+    const expectedMessage = [
+      'Application nonresponsiveness detected!',
+      'On Android, this could imply an ANR alert, which evidently causes tests to fail.',
+      'Here\'s the native main-thread stacktrace from the device, to help you out (refer to device logs for the complete thread dump):',
+      callbackParams.threadDump,
+      'Refer to https://developer.android.com/training/articles/perf-anr for further details.'
+    ].join('\n');
+
+    Detox = require('./Detox');
+    detox = new Detox({deviceConfig: validDeviceConfigWithSession});
+
+    await detox.init();
+    await invokeDetoxCallback();
+
+    expect(mockLogger.warn).toHaveBeenCalledWith({ event: 'APP_NONRESPONSIVE' }, expectedMessage);
+
+    async function invokeDetoxCallback() {
+      const callback = client.setNonresponsivenessListener.mock.calls[0][0];
+      await callback(callbackParams);
+    }
   });
 
   describe('.artifactsManager', () => {
