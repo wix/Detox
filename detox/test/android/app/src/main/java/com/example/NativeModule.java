@@ -112,6 +112,13 @@ public class NativeModule extends ReactContextBaseJavaModule {
         });
     }
 
+    @ReactMethod
+    public void crashMainThread() {
+        reactContext.getCurrentActivity().runOnUiThread(() -> {
+            throw new RuntimeException("Simulated crash (native)");
+        });
+    }
+
     /**
      * Implementation note: For this purpose, a simpler RN API exists in the same class -
      * {@link ReactFindViewUtil#addViewListener(ReactFindViewUtil.OnViewFoundListener)}.

@@ -71,6 +71,7 @@ import androidx.test.rule.ActivityTestRule;
  * <p>If not set, then Detox tests are no ops. So it's safe to mix it with other tests.</p>
  */
 public final class Detox {
+    private static final String LOG_TAG = "Detox";
     private static final String LAUNCH_ARGS_KEY = "launchArgs";
     private static final String DETOX_URL_OVERRIDE_ARG = "detoxURLOverride";
     private static final long ACTIVITY_LAUNCH_TIMEOUT = 10000L;
@@ -123,9 +124,12 @@ public final class Detox {
         // Kicks off another thread and attaches a Looper to that.
         // The goal is to keep the test thread intact,
         // as Loopers can't run on a thread twice.
-        Thread t = new Thread(new Runnable() {
+        final Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
+                Thread thread = Thread.currentThread();
+                Log.i(LOG_TAG, "Detox thread starting (" + thread.getName() + ")");
+
                 Looper.prepare();
                 new DetoxManager(context).start();
                 Looper.loop();
