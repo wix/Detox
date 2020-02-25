@@ -7,7 +7,7 @@ class DetoxCrashHandler(private val wsClient: WebSocketClient) {
         Thread.setDefaultUncaughtExceptionHandler { thread, exception ->
             Log.e(LOG_TAG, "Crash detected!!! thread=${thread.name} (${thread.id})")
 
-            val crashInfo = mapOf("errorDetails" to "@Thread ${thread.name}(${thread.id}):\n${Log.getStackTraceString(exception)}")
+            val crashInfo = mapOf("errorDetails" to "@Thread ${thread.name}(${thread.id}):\n${Log.getStackTraceString(exception)}\nCheck device logs for full details!")
             wsClient.sendAction(ACTION_NAME, crashInfo, MESSAGE_ID)
         }
     }

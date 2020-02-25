@@ -113,7 +113,14 @@ class example extends Component {
 
           <View style={{flexDirection: 'row', justifyContent: 'center'}}>
             {this.renderButton('Crash', () => {
-              throw new Error('Simulated Crash')
+              // Note: this crashes the native-modules thread (and thus an *uncaught* exception, on Android).
+              throw new Error('Simulated Crash');
+            })}
+            {isAndroid && <Text style={{width: 10}}> | </Text>}
+            {isAndroid && this.renderButton('UI Crash', () => {
+              // Killing main-thread while handling a tap will evidently cause
+              // the tap-action itself to fail and thus for an error to be responded
+              NativeModule.crashMainThread();
             })}
             {isAndroid && <Text style={{width: 10}}> | </Text>}
             {isAndroid && this.renderButton('ANR', () => {
