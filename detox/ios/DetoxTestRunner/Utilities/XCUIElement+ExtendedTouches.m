@@ -15,24 +15,29 @@
 
 @implementation XCUIElement (ExtendedTouches)
 
-- (void)scrollWithOffset:(CGVector)offsetVector
+- (void)dtx_scrollWithOffset:(CGVector)offsetVector
 {
-	[[self coordinateWithNormalizedOffset:CGVectorMake(0.5, 0.5)] scrollWithOffset:offsetVector];
+	[[self coordinateWithNormalizedOffset:CGVectorMake(0.5, 0.5)] dtx_scrollWithOffset:offsetVector];
 }
 
-- (void)tapAtPoint:(CGVector)pointVector
+- (void)dtx_tapAtPoint:(CGVector)pointVector
 {
-	[[[self coordinateWithNormalizedOffset:CGVectorMake(0.0, 0.0)] coordinateWithOffset:pointVector] tap];
+	[[self coordinateWithNormalizedOffset:CGVectorMake(0.0, 0.0)] dtx_tapAtPoint:pointVector];
 }
 
 @end
 
 @implementation XCUICoordinate (ExtendedTouches)
 
-- (void)scrollWithOffset:(CGVector)offsetVector
+- (void)dtx_scrollWithOffset:(CGVector)offsetVector
 {
 	XCUICoordinate* target = [self coordinateWithOffset:offsetVector];
 	[self pressForDuration:0.0 thenDragToCoordinate:target];
+}
+
+- (void)dtx_tapAtPoint:(CGVector)pointVector
+{
+	[[self coordinateWithOffset:pointVector] tap];
 }
 
 @end

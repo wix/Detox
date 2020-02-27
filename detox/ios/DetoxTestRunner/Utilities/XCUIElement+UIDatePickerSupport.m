@@ -8,9 +8,9 @@
 
 #import "XCUIElement+UIDatePickerSupport.h"
 #import "DTXDetoxApplication.h"
+#import "DTXTestCaseAssertions.h"
+#import "_DTXXCUIElementProxy.h"
 @import UIKit;
-
-extern XCTestCase* _XCTCurrentTestCase(void);
 
 @interface NSObject ()
 
@@ -39,11 +39,11 @@ extern XCTestCase* _XCTCurrentTestCase(void);
 
 @end
 
-static UIDatePicker* _datePickerFromValueProvider(id self)
+static UIDatePicker* _datePickerFromValueProvider(XCUIElement* self)
 {
-	if([self elementType] != XCUIElementTypeDatePicker)
+	if(self.elementType != XCUIElementTypeDatePicker)
 	{
-		[NSException raise:NSInvalidArgumentException format:@"%s can only be called with elements of type XCUIElementTypePickerWheel, not valid for %@.", __FUNCTION__, self];
+		DTXFail(@"%s can only be called with elements of type XCUIElementTypePickerWheel, not valid for %@.", __FUNCTION__, self);
 		return nil;
 	}
 	
@@ -53,43 +53,51 @@ static UIDatePicker* _datePickerFromValueProvider(id self)
 
 @implementation XCUIElement (UIDatePickerSupport)
 
-- (NSDate *)ln_date
+- (NSDate *)dtx_date
 {
 	return _datePickerFromValueProvider(self).date;
 }
 
-- (NSTimeInterval)ln_countDownDuration
+- (NSTimeInterval)dtx_countDownDuration
 {
 	return _datePickerFromValueProvider(self).countDownDuration;
 }
 
-- (void)ln_adjustToDatePickerDate:(NSDate *)date
+- (void)dtx_adjustToDatePickerDate:(NSDate *)date
 {
+	[self _dtx_waitForIdleAndDisable];
+	
 	UIDatePicker* datePicker = _datePickerFromValueProvider(self);
 	
 	if(datePicker.datePickerMode == UIDatePickerModeCountDownTimer)
 	{
-		[NSException raise:NSInvalidArgumentException format:@"%s cannot be called with count down timer date pickers.", __FUNCTION__];
+		DTXFail(@"%s cannot be called with count down timer date pickers.", __FUNCTION__);
 		return;
 	}
 	
-	[self _ln_synchronizeComponentPickersWithDatePicker:datePicker selector:@selector(setDate:) value:date];
+	[self _dtx_synchronizeComponentPickersWithDatePicker:datePicker selector:@selector(setDate:) value:date];
+	
+	[self _dtx_enableIdle];
 }
 
-- (void)ln_adjustToCountDownDuration:(NSTimeInterval)countdownDuration
+- (void)dtx_adjustToCountDownDuration:(NSTimeInterval)countdownDuration
 {
+	[self _dtx_waitForIdleAndDisable];
+	
 	UIDatePicker* datePicker = _datePickerFromValueProvider(self);
 	
 	if(datePicker.datePickerMode != UIDatePickerModeCountDownTimer)
 	{
-		[NSException raise:NSInvalidArgumentException format:@"%s can only be called with count down timer date pickers.", __FUNCTION__];
+		DTXFail(@"%s can only be called with count down timer date pickers.", __FUNCTION__);
 		return;
 	}
 	
-	[self _ln_synchronizeComponentPickersWithDatePicker:datePicker selector:@selector(setCountDownDuration:) value:@(countdownDuration)];
+	[self _dtx_synchronizeComponentPickersWithDatePicker:datePicker selector:@selector(setCountDownDuration:) value:@(countdownDuration)];
+	
+	[self _dtx_enableIdle];
 }
 
-- (void)_ln_synchronizeComponentPickersWithDatePicker:(UIDatePicker*)datePicker selector:(SEL)selector value:(id)value
+- (void)_dtx_synchronizeComponentPickersWithDatePicker:(UIDatePicker*)datePicker selector:(SEL)selector value:(id)value
 {
 	NSMutableArray* selectedRows = [NSMutableArray new];
 	

@@ -32,6 +32,33 @@
 	method_setImplementation(m, imp_implementationWithBlock(^ (id _self) {
 		return YES;
 	}));
+	
+//	Protocol* p = @protocol(XCUIElementTypeQueryProvider);
+//	unsigned int methodsCount;
+//	struct objc_method_description* methods = protocol_copyMethodDescriptionList(p, YES, YES, &methodsCount);
+//	
+//	for(unsigned int idx = 0; idx < methodsCount; idx++)
+//	{
+//		if(methods[idx].name != NULL)
+//		{
+//			{
+//				m = class_getInstanceMethod(XCUIElementQuery.class, methods[idx].name);
+//				id (*orig)(id, SEL) = (void*)method_getImplementation(m);
+//				method_setImplementation(m, imp_implementationWithBlock(^ (id _self) {
+//					return orig(_self, methods[idx].name);
+//				}));
+//			}
+//			{
+//				m = class_getInstanceMethod(XCUIElement.class, methods[idx].name);
+//				id (*orig)(id, SEL) = (void*)method_getImplementation(m);
+//				method_setImplementation(m, imp_implementationWithBlock(^ (id _self) {
+//					return orig(_self, methods[idx].name);
+//				}));
+//			}
+//		}
+//	}
+//	
+//	free(methods);
 }
 
 - (void)_commonInit
@@ -94,9 +121,6 @@
 	[super launch];
 	
 	[self waitForIdleWithTimeout:0];
-	
-	[XCUIDevice.sharedDevice pressButton:XCUIDeviceButtonHome];
-	[self activate];
 }
 
 - (BOOL)waitForIdleWithTimeout:(NSTimeInterval)timeout

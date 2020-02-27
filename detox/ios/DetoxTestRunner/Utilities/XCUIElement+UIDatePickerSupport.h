@@ -12,11 +12,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface XCUIElement (UIDatePickerSupport)
 
-@property (readonly, strong) NSDate* ln_date;
-@property (readonly) NSTimeInterval ln_countDownDuration;
+@property (readonly, strong) NSDate* dtx_date;
+@property (readonly) NSTimeInterval dtx_countDownDuration;
 
-- (void)ln_adjustToDatePickerDate:(NSDate *)date;
-- (void)ln_adjustToCountDownDuration:(NSTimeInterval)countDownDuration;
+- (void)dtx_adjustToDatePickerDate:(NSDate *)date;
+- (void)dtx_adjustToCountDownDuration:(NSTimeInterval)countDownDuration;
 
 @end
 

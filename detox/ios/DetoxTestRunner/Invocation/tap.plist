@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>type</key>
+	<string>action</string>
+	<key>action</key>
+	<string>tap</string>
+	<key>predicate</key>
+	<dict>
+		<key>type</key>
+		<string>and</string>
+		<key>predicates</key>
+		<array>
+			<dict>
+				<key>type</key>
+				<string>type</string>
+				<key>value</key>
+				<string>staticText</string>
+			</dict>
+			<dict>
+				<key>modifiers</key>
+				<array>
+					<string>not</string>
+				</array>
+				<key>type</key>
+				<string>label</string>
+				<key>value</key>
+				<string>Detail</string>
+			</dict>
+			<dict>
+				<key>type</key>
+				<string>ancestor</string>
+				<key>predicate</key>
+				<dict>
+					<key>type</key>
+					<string>id</string>
+					<key>value</key>
+					<string>Mein Labeeeen</string>
+				</dict>
+			</dict>
+		</array>
+	</dict>
+</dict>
+</plist>

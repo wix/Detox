@@ -9,8 +9,8 @@
 
 + (instancetype)activeTestConfiguration;
 
-@property(copy) NSString *productModuleName; // @synthesize productModuleName=_productModuleName;
-@property(copy) NSString *targetApplicationBundleID; // @synthesize targetApplicationBundleID=_targetApplicationBundleID;
-@property(copy) NSString *targetApplicationPath; // @synthesize targetApplicationPath=_targetApplicationPath;
+@property(copy) NSString *productModuleName;
+@property(copy) NSString *targetApplicationBundleID;
+@property(copy) NSString *targetApplicationPath;
 
 @end

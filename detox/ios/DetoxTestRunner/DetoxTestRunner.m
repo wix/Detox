@@ -8,6 +8,7 @@
 #import <XCTest/XCTest.h>
 #import "XCUIElement+ExtendedTouches.h"
 #import "XCUIElement+UIDatePickerSupport.h"
+#import "XCUIElement+ExtendedText.h"
 #import "DTXDetoxApplication.h"
 #import "WebSocket.h"
 #import "DTXLogging.h"
@@ -26,6 +27,7 @@ DTX_CREATE_LOG(DetoxTestRunner);
 {
 	WebSocket *_webSocket;
 	DTXDetoxApplication* _testedApplication;
+	DTXInvocationManager* _testedApplicationInvocationManager;
 	
 	NSMutableArray<dispatch_block_t>* _pendingActions;
 	pthread_mutex_t _pendingActionsMutex;
@@ -48,11 +50,16 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	
 	[self _reconnectWebSocket];
 	
-    self.continueAfterFailure = YES;
+//    self.continueAfterFailure = YES;
 }
 
 - (void)tearDown
 {
+}
+
+- (void)recordFailureWithDescription:(NSString *)description inFile:(NSString *)filePath atLine:(NSUInteger)lineNumber expected:(BOOL)expected
+{
+	[NSException raise:@"DTXZZZ" format:@"%@", description];
 }
 
 - (void)_replaceActionsQueue:(NSArray<dispatch_block_t>*)actions
@@ -98,42 +105,15 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	
 //	_testedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.apple.mobilesafari"];
 //	_testedApplication = [[DTXDetoxApplication alloc] initWithBundleIdentifier:@"com.wix.ExampleApp"];
+	//TODO: Obtain application bundle identifier from environment variables or launch arguments.
 	_testedApplication = [[DTXDetoxApplication alloc] init];
 	_testedApplication.delegate = self;
+	_testedApplicationInvocationManager = [[DTXInvocationManager alloc] initWithApplication:_testedApplication];
 	
-//	do {
-//		dispatch_block_t action = [self _dequeueAction];
-//		action();
-//	} while (true);
-	
-	[_testedApplication launch];
-
-	XCUIElement* tableView = _testedApplication.tables.firstMatch;
-	[tableView scrollWithOffset:CGVectorMake(0, -200)];
-	[tableView tapAtPoint:CGVectorMake(200, 200)];
-
-	XCUIElementQuery* query = [[_testedApplication.windows.firstMatch descendantsMatchingType:XCUIElementTypeAny] matchingPredicate:[NSPredicate predicateWithFormat:@"label == 'Second'"]];
-	XCUIElement* element = query.firstMatch;
-	[element tap];
-
-	[[_testedApplication.buttons elementMatchingPredicate:[NSPredicate predicateWithFormat:@"label == 'Second'"]] tap];
-	XCUIElement* label = [_testedApplication.staticTexts elementMatchingPredicate:[NSPredicate predicateWithFormat:@"label == 'Second View'"]];
-	XCTAssertTrue(label.exists);
-	XCTAssertTrue(label.isHittable);
-
-	query = [[_testedApplication.windows.firstMatch descendantsMatchingType:XCUIElementTypeAny] matchingPredicate:[NSPredicate predicateWithFormat:@"identifier == 'picker'"]];
-	XCUIElement* picker = query.firstMatch;
-
-	query = [[_testedApplication.windows.firstMatch descendantsMatchingType:XCUIElementTypeAny] matchingPredicate:[NSPredicate predicateWithFormat:@"identifier == 'TextField'"]];
-	XCUIElement* textField = query.firstMatch;
-	[textField tap];
-	[textField typeText:@"Hello Wordl!"];
-//	[textField typeText:NSProcessInfo.processInfo.environment[@"DETOX_SERVER_PORT"]];
-	[textField typeText:XCUIKeyboardKeyReturn];
-
-	[picker ln_adjustToDatePickerDate:[NSDate dateWithTimeIntervalSinceNow:86400 * 1000 - 48200]];
-
-	[_testedApplication terminate];
+	do {
+		dispatch_block_t action = [self _dequeueAction];
+		action();
+	} while (true);
 }
 
 - (void)_cleanUpAndTerminateIfNeeded
@@ -292,7 +272,23 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	}
 	else if([type isEqualToString:@"invoke"])
 	{
-		//TODO: Implement
+		[self _enqueueAction:^{
+			[_testedApplication waitForIdleWithTimeout:0];
+			@try
+			{
+				NSDictionary* rv = [_testedApplicationInvocationManager invokeWithDictionaryRepresentation:params];
+				if(rv == nil)
+				{
+					rv = @{};
+				}
+				
+				[self _safeSendAction:@"invokeResult" params:@{@"result": rv} messageId:messageId];
+			}
+			@catch(NSException* exception)
+			{
+				[self _safeSendAction:@"testFailed" params:@{@"details": exception.reason} messageId:messageId];
+			}
+		}];
 		return;
 	}
 	else if([type isEqualToString:@"isReady"])

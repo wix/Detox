@@ -8,6 +8,8 @@
 
 #import "FirstViewController.h"
 
+@import ObjectiveC;
+
 @interface FirstViewController ()
 
 @end

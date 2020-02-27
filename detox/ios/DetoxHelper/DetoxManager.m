@@ -162,10 +162,6 @@ static dispatch_queue_t _recordingManagerQueue;
 		return;
 	}
 	
-	[self waitForIdleWithCompletionHandler:^{
-		block();
-	}];
-	
 	[DTXSyncManager enqueueIdleBlock:block queue:dispatch_get_main_queue()];
 }
 
