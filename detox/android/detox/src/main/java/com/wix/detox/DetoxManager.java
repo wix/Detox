@@ -4,11 +4,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import androidx.annotation.NonNull;
 import android.util.Log;
 
-import com.github.anrwatchdog.ANRError;
-import com.github.anrwatchdog.ANRWatchDog;
 import com.wix.detox.instruments.DetoxInstrumentsManager;
 import com.wix.detox.reactnative.ReactNativeExtension;
 import com.wix.detox.systeminfo.Environment;
@@ -17,9 +14,11 @@ import com.wix.invoke.MethodInvocation;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import androidx.test.platform.app.InstrumentationRegistry;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 
 /**
  * Created by rotemm on 04/01/2017.
@@ -31,6 +30,13 @@ class DetoxManager implements WebSocketClient.ActionHandler {
     private final static String DETOX_SERVER_ARG_KEY = "detoxServer";
     private final static String DETOX_SESSION_ID_ARG_KEY = "detoxSessionId";
     private final static String DETOX_RECORDING_PATH_ARG_KEY = "detoxInstrumRecPath";
+
+    private final static Function1<Throwable, String> errorParseFn = new Function1<Throwable, String>() {
+        @Override
+        public String invoke(Throwable t) {
+            return Log.getStackTraceString(t);
+        }
+    };
 
     private String detoxServerUrl;
     private String detoxSessionId;
@@ -150,8 +156,8 @@ class DetoxManager implements WebSocketClient.ActionHandler {
         actionHandlers.clear();
         actionHandlers.put("isReady", readyActionHandler);
         actionHandlers.put("reactNativeReload", new ReactNativeReloadActionHandler(reactNativeHostHolder, wsClient, testEngineFacade));
-        actionHandlers.put("invoke", new InvokeActionHandler(new MethodInvocation(), wsClient));
         actionHandlers.put("currentStatus", new QueryStatusActionHandler(wsClient, testEngineFacade));
+        actionHandlers.put("invoke", new InvokeActionHandler(new MethodInvocation(), wsClient, errorParseFn));
         actionHandlers.put("cleanup", new CleanupActionHandler(wsClient, testEngineFacade, new Function0<Unit>() {
             @Override
             public Unit invoke() {
