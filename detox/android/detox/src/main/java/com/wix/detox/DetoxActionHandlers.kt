@@ -41,10 +41,10 @@ class ReactNativeReloadActionHandler(
     }
 }
 
-class InvokeActionHandler @JvmOverloads constructor(
+class InvokeActionHandler(
         private val methodInvocation: MethodInvocation,
         private val wsClient: WebSocketClient,
-        private val errorParser: (e: Throwable?) -> String = Log::getStackTraceString)
+        private val errorParse: (e: Throwable?) -> String)
     : DetoxActionHandler {
 
     override fun handle(params: String, messageId: Long) {
@@ -53,10 +53,10 @@ class InvokeActionHandler @JvmOverloads constructor(
             wsClient.sendAction("invokeResult", mapOf<String, Any?>("result" to invocationResult), messageId)
         } catch (e: InvocationTargetException) {
             Log.e(LOG_TAG, "Exception", e)
-            wsClient.sendAction("error", mapOf<String, Any?>("error" to "${errorParser(e.targetException)}\nCheck device logs for full details!\n"), messageId)
+            wsClient.sendAction("error", mapOf<String, Any?>("error" to "${errorParse(e.targetException)}\nCheck device logs for full details!\n"), messageId)
         } catch (e: Exception) {
             Log.i(LOG_TAG, "Test exception", e)
-            wsClient.sendAction("testFailed", mapOf<String, Any?>("details" to "${errorParser(e)}\nCheck device logs for full details!\n"), messageId)
+            wsClient.sendAction("testFailed", mapOf<String, Any?>("details" to "${errorParse(e)}\nCheck device logs for full details!\n"), messageId)
         }
     }
 }
