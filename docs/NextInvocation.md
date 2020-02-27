@@ -144,6 +144,20 @@
 }
 ```
 
+`await expect(element(by.text('Tap Working!!!'))).toBeNotVisible();`
+
+```json
+{
+  "type": "expectation",
+  "predicate": {
+    "type": "text",
+    "value": "Tap Working!!!"
+  },
+  "expectation": "toBeVisible",
+  "modifiers": ["not"]
+}
+```
+
 `await expect(element(by.id('UniqueId204'))).toHaveText('I contain some text');`
 
 ```json
