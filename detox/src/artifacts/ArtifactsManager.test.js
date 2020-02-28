@@ -86,6 +86,7 @@ describe('ArtifactsManager', () => {
           onTerminateApp: jest.fn(),
           onBeforeLaunchApp: jest.fn(),
           onLaunchApp: jest.fn(),
+          onAppReady: jest.fn(),
           onCreateExternalArtifact: jest.fn(),
           onTestStart: jest.fn(),
           onTestDone: jest.fn(),
@@ -256,6 +257,12 @@ describe('ArtifactsManager', () => {
         }));
 
         itShouldCatchErrorsOnPhase('onLaunchApp', () => ({
+          bundleId: 'testBundleId',
+          deviceId: 'testDeviceId',
+          pid: 2018,
+        }));
+
+        itShouldCatchErrorsOnPhase('onAppReady', () => ({
           bundleId: 'testBundleId',
           deviceId: 'testDeviceId',
           pid: 2018,
@@ -451,6 +458,20 @@ describe('ArtifactsManager', () => {
         expect(testPlugin.onLaunchApp).not.toHaveBeenCalled();
         await artifactsManager.onLaunchApp(launchInfo);
         expect(testPlugin.onLaunchApp).toHaveBeenCalledWith(launchInfo);
+      });
+    });
+
+    describe('onAppReady', () => {
+      it('should call onAppReady in plugins', async () => {
+        const appInfo = {
+          deviceId: 'testDeviceId',
+          bundleId: 'testBundleId',
+          pid: 2020,
+        };
+
+        expect(testPlugin.onAppReady).not.toHaveBeenCalled();
+        await artifactsManager.onAppReady(appInfo);
+        expect(testPlugin.onAppReady).toHaveBeenCalledWith(appInfo);
       });
     });
   });

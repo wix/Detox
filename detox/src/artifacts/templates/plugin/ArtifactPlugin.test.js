@@ -79,7 +79,7 @@ describe('ArtifactPlugin', () => {
       };
     });
 
-    it('should not update context on .onBeforeLaunchApp', async () => {
+    it('should set isAppReady = false on .onBeforeLaunchApp', async () => {
       await expect(plugin.onBeforeLaunchApp({
         deviceId: 'testDeviceId',
         bundleId: 'testBundleId',
@@ -90,7 +90,8 @@ describe('ArtifactPlugin', () => {
 
       expect(plugin.context).toEqual({
         deviceId: 'someOriginalDeviceId',
-        shouldNotBeDeletedFromContext: 'extraProperty'
+        shouldNotBeDeletedFromContext: 'extraProperty',
+        isAppReady: false,
       });
     });
 
@@ -112,6 +113,20 @@ describe('ArtifactPlugin', () => {
         },
         pid: 2018,
         shouldNotBeDeletedFromContext: 'extraProperty',
+      });
+    });
+
+    it('should set isAppReady = true on .onAppReady', async () => {
+      await expect(plugin.onAppReady({
+        deviceId: 'testDeviceId',
+        bundleId: 'testBundleId',
+        pid: 2020
+      }));
+
+      expect(plugin.context).toEqual({
+        deviceId: 'someOriginalDeviceId',
+        shouldNotBeDeletedFromContext: 'extraProperty',
+        isAppReady: true,
       });
     });
 
@@ -149,6 +164,7 @@ describe('ArtifactPlugin', () => {
         bundleId: '',
         launchArgs: null,
         pid: NaN,
+        isAppReady: undefined,
         deviceId: 'someOriginalDeviceId',
         shouldNotBeDeletedFromContext: 'extraProperty',
       });
@@ -187,6 +203,7 @@ describe('ArtifactPlugin', () => {
         bundleId: '',
         launchArgs: null,
         pid: NaN,
+        isAppReady: undefined,
         shouldNotBeDeletedFromContext: 'extraProperty',
       });
     });

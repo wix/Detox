@@ -86,6 +86,11 @@ class Device {
 
     await this.deviceDriver.waitUntilReady();
     await this.deviceDriver.waitForActive();
+    await this.deviceDriver.emitter.emit('appReady', {
+      deviceId: this._deviceId,
+      bundleId: _bundleId,
+      pid: processId,
+    });
 
     if(params.detoxUserNotificationDataURL) {
       await this.deviceDriver.cleanupRandomDirectory(params.detoxUserNotificationDataURL);
