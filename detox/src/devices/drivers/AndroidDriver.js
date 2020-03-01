@@ -22,6 +22,7 @@ const temporaryPath = require('../../artifacts/utils/temporaryPath');
 const sleep = require('../../utils/sleep');
 const retry = require('../../utils/retry');
 const { interruptProcess, spawnAndLog } = require('../../utils/exec');
+const getAbsoluteBinaryPath = require('../../utils/getAbsoluteBinaryPath');
 const AndroidExpect = require('../../android/expect');
 
 const reservedInstrumentationArgs = ['class', 'package', 'func', 'unit', 'size', 'perf', 'debug', 'log', 'emma', 'coverageFile'];
@@ -54,12 +55,13 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async getBundleIdFromBinary(apkPath) {
-    return await this.aapt.getPackageName(apkPath);
+    return await this.aapt.getPackageName(getAbsoluteBinaryPath(apkPath));
   }
 
   async installApp(deviceId, binaryPath, testBinaryPath) {
+    binaryPath = getAbsoluteBinaryPath(binaryPath);
     await this.adb.install(deviceId, binaryPath);
-    await this.adb.install(deviceId, testBinaryPath ? testBinaryPath : this.getTestApkPath(binaryPath));
+    await this.adb.install(deviceId, testBinaryPath ? getAbsoluteBinaryPath(testBinaryPath) : this.getTestApkPath(binaryPath));
   }
 
   async pressBack(deviceId) {
