@@ -6,6 +6,22 @@ In particular, this applies to CI machines aimed at running automated end-to-end
 
 
 
+> **IMPORTANT UPDATE**
+>
+> We've officially switched to using clean (i.e. AOSP) android images that do not come with any of Google's API's, and we recommend you do the same. Though not as fancy, after using them for quite some time on CI, they've proven very high stability and we are most satisfied with them. We haven't come across any of the issues mentioned here for quite some time now. That includes system ANR's, keyboard issues (gboard isn't even installed). <sup>*</sup>
+>
+> In order to use them in your dev/CI environments, you need to create new emulators using the Android-dev `avdmanager` tool, and use a device package where `default` shows instead of `google_apis` (i.e. for the `--platform` argument). For example (Mac / Linux):
+>
+> ```shell
+> $ANDROID_HOME/tools/bin/avdmanager -n Pixel_API_28_AOSP -d pixel --package "system-images;android-28;default;x86_64"
+> ```
+>
+> This will create a new emulator in the name of `Pixel_API_28_AOSP` (typically, you would use something like `"system-images;android-28;google_apis;x86_64"` or `"system-images;android-28;google_apis_playstore;x86_64"` for this). If you use this name, be sure to update it in the Detox section of your `package.json` file.
+>
+> _<sup>* Regardless, it is recommend you set up quick-boot, as exaplined below in the dedicated section..</sup>_
+
+
+
 ## 1. Minimizing ANR's
 
 Sooner or later, all Android developers (and even users) find themselves facing Android's infamous `Application Not Responding` alerts (i.e. ANR's). They come in various flavors, but in tests-running emulators we've most commonly witnessed this specific flavor -- which seemed to appear shortly after emulators finish starting up:
