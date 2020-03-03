@@ -368,7 +368,7 @@ A common reason for this set of symptoms to take place is the lack of a clear-te
 
 The solution here is therefore to first properly configure clear-text traffic and for all app flavors (e.g. release / debug) -- if you haven't already. Second, the app needs to be configured to allow for clear-text traffic between the emulator and the running host. Examples:
 
-1. Applying `android:cleartextTrafficPermitted="true"` in the application tag of the main `AndroidManifest.xml` **(not recommended)**.
+1. Applying `android:usesCleartextTraffic="true""` in the application tag of the main `AndroidManifest.xml` **(not recommended)**.
 2. **(Untested)** Applying a base config denying clear-text (i.e. using `cleartextTrafficPermitted=false`, or just by omitting it altogether), and enabling it for the special-localhost domain:
 
 ```xml
