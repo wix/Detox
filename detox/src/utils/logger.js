@@ -4,6 +4,7 @@ const bunyan = require('bunyan');
 const bunyanDebugStream = require('bunyan-debug-stream');
 const argparse = require('./argparse');
 const temporaryPath = require('../artifacts/utils/temporaryPath');
+const customConsoleLogger = require('./customConsoleLogger');
 
 function adaptLogLevelName(level) {
   switch (level) {
@@ -21,6 +22,11 @@ function adaptLogLevelName(level) {
     default:
       return 'info';
   }
+}
+
+function overrideConsoleLogger(logger) {
+  const log = logger.child({component: 'USER_LOG'});
+  customConsoleLogger.overrideAllLevels(log);
 }
 
 function createPlainBunyanStream({ logPath, level }) {
@@ -96,6 +102,8 @@ function init() {
   if (plainFileStreamPath) {
     logger.plainFileStreamPath = plainFileStreamPath;
   }
+
+  overrideConsoleLogger(logger);
 
   return logger;
 }

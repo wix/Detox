@@ -41,6 +41,7 @@
     "@babel/core": "^7.4.5",
     "bunyan": "^1.8.12",
     "bunyan-debug-stream": "^1.1.0",
+    "callsites": "^3.1.0",
     "chalk": "^2.4.2",
     "child-process-promise": "^2.2.0",
     "fs-extra": "^4.0.2",
