@@ -52,6 +52,7 @@
 		39A272C12407E181001E8C27 /* Expectation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A272C02407E181001E8C27 /* Expectation.swift */; };
 		39A272CA2407F81A001E8C27 /* Modifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A272C92407F81A001E8C27 /* Modifier.swift */; };
 		39A272CC2407F8A2001E8C27 /* Element.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A272CB2407F8A2001E8C27 /* Element.swift */; };
+		39A272D9240FFA63001E8C27 /* tap-bad.plist in Resources */ = {isa = PBXBuildFile; fileRef = 39A272D3240FFA63001E8C27 /* tap-bad.plist */; };
 		39AC097E23322A8600DF85F8 /* DetoxTestRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AC097D23322A8600DF85F8 /* DetoxTestRunner.m */; };
 		39AC098623322B0800DF85F8 /* XCUIElement+UIDatePickerSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AC098523322B0800DF85F8 /* XCUIElement+UIDatePickerSupport.m */; };
 		39AC099623322CBE00DF85F8 /* DetoxHelper.framework in Resources */ = {isa = PBXBuildFile; fileRef = 39AC098C23322C9A00DF85F8 /* DetoxHelper.framework */; platformFilter = ios; };
@@ -260,6 +261,7 @@
 		39A272C02407E181001E8C27 /* Expectation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Expectation.swift; sourceTree = "<group>"; };
 		39A272C92407F81A001E8C27 /* Modifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Modifier.swift; sourceTree = "<group>"; };
 		39A272CB2407F8A2001E8C27 /* Element.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Element.swift; sourceTree = "<group>"; };
+		39A272D3240FFA63001E8C27 /* tap-bad.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "tap-bad.plist"; sourceTree = "<group>"; };
 		39AC097A23322A8600DF85F8 /* DetoxTestRunner.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DetoxTestRunner.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		39AC097D23322A8600DF85F8 /* DetoxTestRunner.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetoxTestRunner.m; sourceTree = "<group>"; };
 		39AC097F23322A8600DF85F8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -409,6 +411,7 @@
 				3938743F23FF7B0A00B060CF /* Action.swift */,
 				39A272C02407E181001E8C27 /* Expectation.swift */,
 				398E5F9423FF225500379BCE /* InvocationManager.swift */,
+				39A272D3240FFA63001E8C27 /* tap-bad.plist */,
 				393874552405190500B060CF /* tap.plist */,
 			);
 			path = Invocation;
@@ -738,6 +741,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				393874562405190500B060CF /* tap.plist in Resources */,
+				39A272D9240FFA63001E8C27 /* tap-bad.plist in Resources */,
 				39AC099623322CBE00DF85F8 /* DetoxHelper.framework in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

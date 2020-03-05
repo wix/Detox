@@ -34,32 +34,39 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	dispatch_semaphore_t _pendingActionsAvailable;
 }
 
++ (XCTestSuite *)defaultTestSuite
+{
+	XCTestSuite* rv = [[XCTestSuite alloc] initWithName:@"Detox Test Suite"];
+	
+	[rv addTest:[[DetoxTestRunner alloc] initWithSelector:@selector(testDetoxSuite)]];
+	
+	return rv;
+}
+
+- (instancetype)initWithSelector:(SEL)selector
+{
+	self = [super initWithSelector:selector];
+	
+	if(self)
+	{
+		_pendingActions = [NSMutableArray new];
+		pthread_mutex_init(&_pendingActionsMutex, NULL);
+		_pendingActionsAvailable = dispatch_semaphore_create(0);
+		
+		_webSocket = [WebSocket new];
+		_webSocket.delegate = self;
+		
+		[self _reconnectWebSocket];
+		
+		self.continueAfterFailure = YES;
+	}
+	
+	return self;
+}
+
 - (void)dealloc
 {
 	pthread_mutex_destroy(&_pendingActionsMutex);
-}
-
-- (void)setUp
-{
-	_pendingActions = [NSMutableArray new];
-	pthread_mutex_init(&_pendingActionsMutex, NULL);
-	_pendingActionsAvailable = dispatch_semaphore_create(0);
-	
-	_webSocket = [WebSocket new];
-	_webSocket.delegate = self;
-	
-	[self _reconnectWebSocket];
-	
-//    self.continueAfterFailure = YES;
-}
-
-- (void)tearDown
-{
-}
-
-- (void)recordFailureWithDescription:(NSString *)description inFile:(NSString *)filePath atLine:(NSUInteger)lineNumber expected:(BOOL)expected
-{
-	[NSException raise:@"DTXZZZ" format:@"%@", description];
 }
 
 - (void)_replaceActionsQueue:(NSArray<dispatch_block_t>*)actions
@@ -99,6 +106,13 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	return action;
 }
 
+- (void)recordFailureWithDescription:(NSString *)description inFile:(NSString *)filePath atLine:(NSUInteger)lineNumber expected:(BOOL)expected
+{
+	NSString* tree = [_testedApplication debugDescription];
+	
+	[[NSException exceptionWithName:@"DTXTestFailure" reason:@"Test execution failed" userInfo:@{@"failureReason": description, @"appTree": tree}] raise];
+}
+
 - (void)testDetoxSuite
 {
 	NSLog(@"*********************************************************\nArguments: %@\n*********************************************************", NSProcessInfo.processInfo.arguments);
@@ -109,6 +123,11 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	_testedApplication = [[DTXDetoxApplication alloc] init];
 	_testedApplication.delegate = self;
 	_testedApplicationInvocationManager = [[DTXInvocationManager alloc] initWithApplication:_testedApplication];
+	
+//	[self webSocket:nil didReceiveAction:@"launch" withParams:nil withMessageId:@10];
+//	[self webSocket:nil didReceiveAction:@"invoke" withParams:[NSDictionary dictionaryWithContentsOfURL:[[NSBundle bundleForClass:DetoxTestRunner.class] URLForResource:@"tap-bad" withExtension:@"plist"]] withMessageId:@1];
+//	[self webSocket:nil didReceiveAction:@"launch" withParams:nil withMessageId:@10];
+//	[self webSocket:nil didReceiveAction:@"invoke" withParams:[NSDictionary dictionaryWithContentsOfURL:[[NSBundle bundleForClass:DetoxTestRunner.class] URLForResource:@"tap" withExtension:@"plist"]] withMessageId:@2];
 	
 	do {
 		dispatch_block_t action = [self _dequeueAction];
@@ -200,13 +219,13 @@ DTX_CREATE_LOG(DetoxTestRunner);
 	if(detoxServer == nil)
 	{
 		detoxServer = @"ws://localhost:8099";
-		dtx_log_info(@"Using default 'detoxServer': ws://localhost:8099");
+//		dtx_log_info(@"Using default 'detoxServer': ws://localhost:8099");
 	}
 	
 	if(detoxSessionId == nil)
 	{
 		detoxSessionId = XCTestConfiguration.activeTestConfiguration.targetApplicationBundleID;
-		dtx_log_info(@"Using default 'detoxSessionId': %@", detoxSessionId);
+//		dtx_log_info(@"Using default 'detoxSessionId': %@", detoxSessionId);
 	}
 	
 	if(detoxSessionId == nil)
@@ -286,7 +305,13 @@ DTX_CREATE_LOG(DetoxTestRunner);
 			}
 			@catch(NSException* exception)
 			{
-				[self _safeSendAction:@"testFailed" params:@{@"details": exception.reason} messageId:messageId];
+				NSMutableDictionary* params = @{@"details": exception.reason}.mutableCopy;
+				if([exception.name isEqualToString:@"DTXTestFailure"])
+				{
+					[params addEntriesFromDictionary:exception.userInfo];
+				}
+				
+				[self _safeSendAction:@"testFailed" params:params messageId:messageId];
 			}
 		}];
 		return;
@@ -357,6 +382,10 @@ DTX_CREATE_LOG(DetoxTestRunner);
 			[self _safeSendAction:@"currentStatusResult" params:@{@"messageId": messageId, @"syncStatus": information} messageId:messageId];
 		}];
 		return;
+	}
+	else if([type isEqualToString:@"terminateTestRunner"])
+	{
+		[self _cleanupActionsQueueAndTerminateIfNeeded];
 	}
 }
 

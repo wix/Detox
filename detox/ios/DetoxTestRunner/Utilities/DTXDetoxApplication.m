@@ -70,10 +70,6 @@
 	_connection.remoteObjectInterface = [DTXIPCInterface interfaceWithProtocol:@protocol(DetoxHelper)];
 	
 //	_remoteObjectProxy = _connection.remoteObjectProxy;
-	
-	_remoteObjectProxy = [_connection synchronousRemoteObjectProxyWithErrorHandler:^(NSError * _Nonnull error) {
-		NSLog(@"%@", error);
-	}];
 }
 
 - (instancetype)initWithBundleIdentifier:(NSString *)bundleIdentifier
@@ -125,6 +121,11 @@
 
 - (BOOL)waitForIdleWithTimeout:(NSTimeInterval)timeout
 {
+	if(self.detoxHelper == nil)
+	{
+		return YES;
+	}
+	
 	dispatch_group_t gr = dispatch_group_create();
 	dispatch_group_enter(gr);
 	
@@ -153,6 +154,10 @@
 
 - (void)getLaunchArgumentsWithCompletionHandler:(void (^)(NSUInteger waitForDebugger, NSURL* recordingPath, NSDictionary<NSString*, id>* userNotificationData, NSDictionary<NSString*, id>* userActivityData, NSURL* openURL, NSString* sourceApp))completionHandler
 {
+	_remoteObjectProxy = [_connection synchronousRemoteObjectProxyWithErrorHandler:^(NSError * _Nonnull error) {
+		NSLog(@"%@", error);
+	}];
+	
 	completionHandler(self.launchWaitForDebugger, self.launchRecordingPath, self.launchUserNotification, self.launchUserActivity, self.launchOpenURL, self.launchSourceApp);
 }
 
