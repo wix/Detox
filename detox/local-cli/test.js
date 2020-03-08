@@ -130,7 +130,7 @@ module.exports.builder = {
     boolean: true,
     default: true,
     group: 'Execution:',
-    describe: `Use Detox' custom console logging implementation. Disabling will fallback to node.js / test-runner's (e.g. Jest / Mocha) implementation.`,
+    describe: `Use Detox' custom console-logging implementation, for logging Detox (non-device) logs. Disabling will fallback to node.js / test-runner's implementation (e.g. Jest / Mocha).`,
   },
 };
 

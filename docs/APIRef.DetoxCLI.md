@@ -83,7 +83,7 @@ Initiating your test suite. <sup>[[1]](#notice-passthrough)</sup>
 | --gpu                                         | [Android Only] Launch Emulator with the specific -gpu [gpu mode] parameter. |
 | --device-launch-args | A list of passthrough-arguments to use when (if) devices (Android emulator / iOS simulator) are launched by Detox.<br />**Note: the value must be specified after an equal size (`=`) and inside quotes.** Usage example:<br />`--device-launch-args="-http-proxy http://1.1.1.1:8000 -no-snapshot-load"` |
 | --no-color                                    | Disable colors in log output |
-| --use-custom-logger | Use Detox' custom console-logging implementation. Disabling will fallback to node.js / test-runner's (e.g. Jest / Mocha) implementation.<br />*Default: true* |
+| --use-custom-logger | Use Detox' custom console-logging implementation, for logging Detox (non-device) logs. Disabling will fallback to node.js / test-runner's implementation (e.g. Jest / Mocha).<br />*Default: true* |
 | --help                                        | Show help |
 
 ##### Notices
