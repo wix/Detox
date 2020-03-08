@@ -187,6 +187,29 @@ describe('Detox', () => {
     expect(detox._client.dumpPendingRequests).toHaveBeenCalled();
   });
 
+  it('properly instantiates configuration pointing to a plugin driver', async () => {
+    let instantiated = false;
+    class MockDriverPlugin {
+      constructor(config) {
+        instantiated = true;
+      }
+      on() {}
+      declareArtifactPlugins() {}
+    }
+    jest.mock('driver-plugin', () => MockDriverPlugin, { virtual: true });
+    const pluginDeviceConfig = {
+      "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+      "type": "driver-plugin",
+      "name": "MyPlugin"
+    };
+
+    Detox = require('./Detox');
+    detox = new Detox({deviceConfig: pluginDeviceConfig});
+    await detox.init();
+
+    expect(instantiated).toBe(true);
+  });
+
   describe('.artifactsManager', () => {
     let artifactsManager;
 
