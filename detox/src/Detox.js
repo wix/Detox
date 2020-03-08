@@ -52,7 +52,14 @@ class Detox {
     this._client = new Client(sessionConfig);
     await this._client.connect();
 
-    const DeviceDriverClass = DEVICE_CLASSES[this._deviceConfig.type] || require(this._deviceConfig.type);
+    let DeviceDriverClass = DEVICE_CLASSES[this._deviceConfig.type];
+    if (!DeviceDriverClass) {
+      try {
+        DeviceDriverClass = require(this._deviceConfig.type);
+      } catch (e) {
+        // noop, if we don't find a module to require, we'll hit the unsupported error below
+      }
+    }
     if (!DeviceDriverClass) {
       throw new Error(`'${this._deviceConfig.type}' is not supported`);
     }

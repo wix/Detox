@@ -456,7 +456,7 @@ describe('Device', () => {
 
       await device.installApp('newAppPath');
 
-      expect(driverMock.driver.installApp).toHaveBeenCalledWith(device._deviceId, 'newAppPath', undefined);
+      expect(driverMock.driver.installApp).toHaveBeenCalledWith(device._deviceId, 'newAppPath', device._deviceConfig.testBinaryPath);
     });
 
     it(`with a custom test app path should use custom test app path`, async () => {
@@ -472,7 +472,7 @@ describe('Device', () => {
 
       await device.installApp();
 
-      expect(driverMock.driver.installApp).toHaveBeenCalledWith(device._deviceId, device._binaryPath, device._testBinaryPath);
+      expect(driverMock.driver.installApp).toHaveBeenCalledWith(device._deviceId, device._deviceConfig.binaryPath, device._deviceConfig.testBinaryPath);
     });
   });
 
@@ -490,7 +490,7 @@ describe('Device', () => {
 
       await device.uninstallApp();
 
-      expect(driverMock.driver.uninstallApp).toHaveBeenCalledWith(device._deviceId, device._binaryPath);
+      expect(driverMock.driver.uninstallApp).toHaveBeenCalledWith(device._deviceId, device._bundleId);
     });
   });
 
@@ -707,7 +707,7 @@ describe('Device', () => {
 
   it(`should accept relative path for binary`, async () => {
     const actualPath = await launchAndTestBinaryPath('relativePath');
-    expect(actualPath).toEqual(path.join(process.cwd(), 'abcdef/123'));
+    expect(actualPath).toEqual('abcdef/123');
   });
 
   it(`pressBack() should invoke driver's pressBack()`, async () => {
