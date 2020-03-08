@@ -2,19 +2,17 @@ const util = require('util');
 const path = require('path');
 const callsites = require('./callsites');
 
-function callsitesToStack() {
-  return callsites().slice(2).reduce((result, callsite) => {
-    const filename = callsite.getFileName() ? path.relative(process.cwd(), callsite.getFileName()) : '';
-    const filePointer = filename ? `${filename}:${callsite.getLineNumber() || '?'}:${callsite.getColumnNumber() || '?'}` : '<unknown>';
-    const functionName = callsite.getFunctionName() || '<unknown>';
-    return result.concat(`\r    at ${functionName} (${filePointer})\n`)
-  }, '');
+const USER_STACK_FRAME_INDEX = 2;
+const CONSOLE_ASSERT_USER_ARGS_INDEX = 1;
+
+function getStackDump() {
+  return callsites.stackdump(USER_STACK_FRAME_INDEX);
 }
 
 function getOrigin() {
-  const callsite = callsites()[2];
-  const filename = path.relative(process.cwd(), callsite.getFileName());
-  return `at ${filename}:${callsite.getLineNumber() || '?'}:${callsite.getColumnNumber() || '?'}`;
+  const userCallsite = callsites()[USER_STACK_FRAME_INDEX];
+  const filename = path.relative(process.cwd(), userCallsite.getFileName());
+  return `at ${filename}:${userCallsite.getLineNumber() || '?'}:${userCallsite.getColumnNumber() || '?'}`;
 }
 
 function override(consoleLevel, bunyanFn) {
@@ -25,7 +23,7 @@ function override(consoleLevel, bunyanFn) {
 
 function overrideTrace(consoleLevel, bunyanFn) {
   console[consoleLevel] = (...args) => {
-    bunyanFn({ event: 'USER_LOG' }, getOrigin(), '\n  Trace:', util.format(...args), '\n', callsitesToStack());
+    bunyanFn({ event: 'USER_LOG' }, getOrigin(), '\n  Trace:', util.format(...args), '\n\r' + getStackDump());
   };
 }
 
@@ -33,7 +31,7 @@ function overrideAssertion(consoleLevel, bunyanFn) {
   console[consoleLevel] = (...args) => {
     const [condition] = args;
     if (!condition) {
-      bunyanFn({ event: 'USER_LOG' }, getOrigin(), '\n  AssertionError:', util.format(...args.slice(1)));
+      bunyanFn({ event: 'USER_LOG' }, getOrigin(), '\n  AssertionError:', util.format(...args.slice(CONSOLE_ASSERT_USER_ARGS_INDEX)));
     }
   };
 }

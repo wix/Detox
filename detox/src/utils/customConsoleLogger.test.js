@@ -92,56 +92,19 @@ describe('customConsoleLogger', () => {
     logger.overrideTrace('__log', bunyanLogger.mock);
     console.__log('Testing789');
 
-    expect(bunyanLogger.mock).toHaveBeenCalledWith({ event: 'USER_LOG' }, ignored(), ignored(), 'Testing789', '\n', ignored());
+    expect(bunyanLogger.mock).toHaveBeenCalledWith({ event: 'USER_LOG' }, ignored(), ignored(), 'Testing789', ignored());
   });
 
-  it('should log stacktrace when trace-logging', () => {
-    mockCallsites2(
-      {file: 'mockfilename1', func: 'mockfunc1', line: 'l1', col: 'c1'},
-      {file: 'mockfilename2', func: 'mockfunc2', line: 'l2', col: 'c2'},
-    );
+  it('should log stack-trace dump when trace-logging', () => {
+    mockCallsites();
+    const callsites = require('./callsites');
+    callsites.stackdump = jest.fn().mockReturnValue('mockstack\ntrace');
 
     const logger = require('./customConsoleLogger');
     logger.overrideTrace('__log', bunyanLogger.mock);
     console.__log('');
 
-    const stacktrace = bunyanLogger.mock.mock.calls[0][5];
-    const stackLines = stacktrace.split('\n');
-    expect(stackLines[0]).toEqual('\r    at mockfunc1 (mockfilename1:l1:c1)');
-    expect(stackLines[1]).toEqual('\r    at mockfunc2 (mockfilename2:l2:c2)');
-  });
-
-  it('should use <unknown> marker in stack-trace where function name is not available', () => {
-    mockCallsites({file: 'mockfilename', func: undefined, line: 'l', col: 'c'});
-
-    const logger = require('./customConsoleLogger');
-    logger.overrideTrace('__log', bunyanLogger.mock);
-    console.__log('');
-
-    const stacktrace = bunyanLogger.mock.mock.calls[0][5];
-    expect(stacktrace).toEqual(expect.stringContaining('at <unknown>'));
-  });
-
-  it('should use <unknown> marker in stack-trace where file name is not available', () => {
-    mockCallsites({file: undefined, func: 'mockfuncname', line: 'l', col: 'c'});
-
-    const logger = require('./customConsoleLogger');
-    logger.overrideTrace('__log', bunyanLogger.mock);
-    console.__log('');
-
-    const stacktrace = bunyanLogger.mock.mock.calls[0][5];
-    expect(stacktrace).toEqual(expect.stringContaining('at mockfuncname (<unknown>)'));
-  });
-
-  it('should handle missing file line/column in stacktrace', () => {
-    mockCallsites({func: 'mockfuncname', file: 'mockfilename', line: undefined, col: undefined});
-
-    const logger = require('./customConsoleLogger');
-    logger.overrideTrace('__log', bunyanLogger.mock);
-    console.__log('');
-
-    const stacktrace = bunyanLogger.mock.mock.calls[0][5];
-    expect(stacktrace).toEqual(expect.stringContaining('at mockfuncname (mockfilename:?:?)'));
+    expect(bunyanLogger.mock).toHaveBeenCalledWith(ignored(), ignored(), ignored(), ignored(), '\n\rmockstack\ntrace');
   });
 
   it('should override all levels', () => {
@@ -176,13 +139,7 @@ describe('customConsoleLogger', () => {
     jest.mock('./callsites', () => jest.fn().mockReturnValue([{}, {}, mockCallsite]));
   };
 
-  const mockCallsites2 = (callsite1, callsite2) => {
-    const mockCallsite1 = mockACallsite(callsite1);
-    const mockCallsite2 = mockACallsite(callsite2);
-    jest.mock('./callsites', () => jest.fn().mockReturnValue([{}, {}, mockCallsite1, mockCallsite2]));
-  };
-
-  const mockACallsite = ({func, file, line, col}) => ({
+  const mockACallsite = ({func, file, line, col} = {}) => ({
     getFunctionName: jest.fn().mockReturnValue(func || ''),
     getFileName: jest.fn().mockReturnValue(file || ''),
     getLineNumber: jest.fn().mockReturnValue(line),
