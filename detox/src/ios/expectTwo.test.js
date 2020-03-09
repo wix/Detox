@@ -130,7 +130,7 @@ describe('expectTwo', () => {
     expect(testCall).deepEquals(jsonOutput);
   });
 
-  it(`element(by.id('child').withAncestor(by.id('parent').and(by.text('text')))).tap()`, () => {
+  it(`element(by.id('child').and(by.text('text').and(by.value('value')))).tap()`, () => {
     const testCall = e.element(e.by.id('child').and(e.by.text('text').and(e.by.value('value')))).tap();
     const jsonOutput = {
       type: 'action',
