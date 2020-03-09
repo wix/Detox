@@ -63,8 +63,7 @@ id objc_initWeakOrNil(id *location, id newObj);
 
 - (id)object
 {
-	id x = objc_loadWeak(&_object);
-	return x;
+	return objc_loadWeak(&_object);
 }
 
 - (void)dealloc
