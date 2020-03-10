@@ -13,7 +13,7 @@ In particular, this applies to CI machines aimed at running automated end-to-end
 > In order to use them in your dev/CI environments, you need to create new emulators using the Android-dev `avdmanager` tool, and use a device package where `default` shows instead of `google_apis` (i.e. for the `--platform` argument). For example (Mac / Linux):
 >
 > ```shell
-> $ANDROID_HOME/tools/bin/avdmanager -n Pixel_API_28_AOSP -d pixel --package "system-images;android-28;default;x86_64"
+> $ANDROID_HOME/tools/bin/avdmanager create avd -n Pixel_API_28_AOSP -d pixel --package "system-images;android-28;default;x86_64"
 > ```
 >
 > This will create a new emulator in the name of `Pixel_API_28_AOSP` (typically, you would use something like `"system-images;android-28;google_apis;x86_64"` or `"system-images;android-28;google_apis_playstore;x86_64"` for this). If you use this name, be sure to update it in the Detox section of your `package.json` file.
