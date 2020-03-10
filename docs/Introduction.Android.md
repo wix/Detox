@@ -56,8 +56,7 @@ In your app's buildscript (i.e. `app/build.gradle`) add this in `dependencies` s
 ```groovy
 dependencies {
 	  // ...
-    androidTestImplementation('com.wix:detox:+') { transitive = true } 
-    androidTestImplementation 'junit:junit:4.12'
+    androidTestImplementation('com.wix:detox:+')
 }
 ```
 
@@ -242,7 +241,6 @@ In your app's buildscript (i.e. `app/build.gradle`) add this in `dependencies` s
 dependencies {
   	// ...
     androidTestImplementation(project(path: ":detox"))
-    androidTestImplementation 'junit:junit:4.12'
 }
 ```
 
@@ -297,9 +295,8 @@ Of all [Kotlin implementation flavours](https://kotlinlang.org/docs/reference/us
 
 ```diff
 dependencies {
--    androidTestImplementation('com.wix:detox:+') { transitive = true } 
+-    androidTestImplementation('com.wix:detox:+')
 +    androidTestImplementation('com.wix:detox:+') { 
-+        transitive = true
 +        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
 +    }
 }
