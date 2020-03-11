@@ -40,11 +40,7 @@ function projectSetup() {
 function prePublishToNpm() {
   logSection('Prepublish');
 
-  log('Gathering up iOS artifacts...');
-  process.chdir('detox');
-  const {packageIosSources} = require('../detox/scripts/pack_ios');
-  packageIosSources();
-  process.chdir('..');
+  //No longer need to gather up iOS artifacts here, as those are created in a child build on CI.
 }
 
 function publishToNpm() {
