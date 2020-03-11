@@ -15,7 +15,7 @@ popd &> /dev/null
 
 #Package prebuilt framework
 mkdir build_temp
-scripts/build_universal_framework.sh "ios/Detox.xcodeproj" "build_temp" &> build_temp/build.log
+scripts/build_universal_framework.sh "ios/Detox.xcodeproj" "build_temp" &> build_temp/detox_ios.log
 pushd . &> /dev/null
 cd build_temp
 tar --exclude-from=../ios/.tbzignore -cjf ../Detox-ios.tbz .
