@@ -95,7 +95,6 @@ dependencies {
     fromBinImplementation 'com.facebook.react:react-native:+'
 
     androidTestImplementation(project(path: ':detox'))
-    androidTestImplementation 'junit:junit:4.12'
 }
 
 if (isRN60OrHigher) {
