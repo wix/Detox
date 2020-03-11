@@ -18,6 +18,12 @@ In particular, this applies to CI machines aimed at running automated end-to-end
 >
 > This will create a new emulator in the name of `Pixel_API_28_AOSP` (typically, you would use something like `"system-images;android-28;google_apis;x86_64"` or `"system-images;android-28;google_apis_playstore;x86_64"` for this). If you use this name, be sure to update it in the Detox section of your `package.json` file.
 >
+> You might need to download AOSP images as well prior to creating an AVD. A good indication of this is this error message: `Error: Package path is not valid. Valid system image paths are:`, if you get it when running the above command, run these first to download system image and accept the licenses:
+> ```shell
+> $ANDROID_HOME/tools/bin/sdkmanager "system-images;android-28;default;x86_64"
+> $ANDROID_HOME/tools/bin/sdkmanager --licenses
+> ```
+>
 > _<sup>* Regardless, it is recommend you set up quick-boot, as exaplined below in the dedicated section..</sup>_
 
 
