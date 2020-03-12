@@ -6,7 +6,6 @@ const {log, logSection, getVersionSafe} = require('./ci.common');
 function publishNewVersion(packageVersion) {
   validatePrerequisites();
   projectSetup();
-  prePublishToNpm();
   publishToNpm();
 
   const newVersion = getVersionSafe();
@@ -35,12 +34,6 @@ function projectSetup() {
   logSection('Project setup');
   exec.execSync(`lerna bootstrap`);
   exec.execSync(`git checkout master`);
-}
-
-function prePublishToNpm() {
-  logSection('Prepublish');
-
-  //No longer need to gather up iOS artifacts here, as those are created in a child build on CI.
 }
 
 function publishToNpm() {
