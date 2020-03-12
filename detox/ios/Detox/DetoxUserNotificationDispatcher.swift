@@ -91,7 +91,7 @@ public class DetoxUserNotificationDispatcher: NSObject {
 			Swift.fatalError("Unable to read user notification data file.")
 		}
 		
-		guard var jsonObject = (try? JSONSerialization.jsonObject(with: data, options: .init(rawValue: 0)) as! [String: Any]) else {
+		guard var jsonObject = try? (JSONSerialization.jsonObject(with: data, options: .init(rawValue: 0)) as! [String: Any]) else {
 			Swift.fatalError("Unable to parse user notification data file.")
 		}
 		

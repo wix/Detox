@@ -14,21 +14,17 @@ detoxFrameworkPath="${detoxFrameworkDirPath}/Detox.framework"
 function prepareAndBuildFramework () {
   if [ -d "$detoxRootPath"/ios ]; then
     detoxSourcePath="${detoxRootPath}"/ios
-    echo "Dev mode, will build from ${detoxSourcePath}"
+    echo "Dev mode, building from ${detoxSourcePath}"
     buildFramework "${detoxSourcePath}"
   else
-    detoxSourcePath="${detoxRootPath}"/ios_src
-    extractSources "${detoxSourcePath}"
-    buildFramework "${detoxSourcePath}"
-    rm -fr "${detoxSourcePath}"
+    extractFramework
   fi
 }
 
-function extractSources () {
-  detoxSourcePath="${1}"
-  echo "Extracting Detox sources..."
-  mkdir -p "${detoxSourcePath}"
-  tar -xjf "${detoxRootPath}"/Detox-ios-src.tbz -C "${detoxSourcePath}"
+function extractFramework () {
+  echo "Extracting Detox framework..."
+  mkdir -p "${detoxFrameworkDirPath}"
+  tar -xjf "${detoxRootPath}"/Detox-ios.tbz -C "${detoxFrameworkDirPath}"
 }
 
 function buildFramework () {
@@ -55,7 +51,7 @@ function main () {
       rm -rf "${detoxFrameworkDirPath}"
       prepareAndBuildFramework
     else
-      echo "Detox.framework was previously compiled, skipping..."
+      echo "Detox.framework exists, skipping..."
     fi
   else
     prepareAndBuildFramework
