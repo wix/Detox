@@ -96,6 +96,14 @@ describe('Detox', () => {
     expect(() => detox.cleanup()).not.toThrowError();
   });
 
+  it(`Calling detox.init() twice returns the same promise`, async () => {
+    Detox = require('./Detox');
+    detox = new Detox({deviceConfig: validDeviceConfig});
+    const promise1 = await detox.init();
+    const promise2 = await detox.init();
+    expect(promise1).toBe(promise2);
+  });
+
   it(`Not passing --cleanup should keep the currently running device up`, async () => {
     Detox = require('./Detox');
     detox = new Detox({deviceConfig: validDeviceConfig});

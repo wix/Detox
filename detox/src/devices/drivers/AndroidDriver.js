@@ -180,7 +180,7 @@ class AndroidDriver extends DeviceDriverBase {
           'while it was waiting for "ready" message (over WebSocket) ' +
           'from the instrumentation process.',
       debugInfo: this.instrumentationStackTrace
-        ? `Native stack trace: ${this.instrumentationStackTrace}`
+        ? `Native stacktrace dump: ${this.instrumentationStackTrace}`
         : '',
     });
   }
