@@ -26,7 +26,18 @@ beforeAll(async () => {
 }, 300000);
 
 beforeEach(async () => {
-  await adapter.beforeEach();
+  try {
+    await adapter.beforeEach();
+  } catch (err) {
+    // Workaround for the 'jest-jasmine' runner (default one): if 'beforeAll' hook above fails with a timeout,
+    // unfortunately, 'jest' might continue running other hooks and test suites. To prevent that behavior,
+    // adapter.beforeEach() will throw if detox.init() is still running; that allows us to run detox.cleanup()
+    // and disable calling: device, element, expect, by and other Detox globals.
+    // If you switch to 'jest-circus' runner, you can use this one-liner instead: await adapter.beforeEach();
+
+    await detox.cleanup();
+    throw err;
+  }
 });
 
 afterAll(async () => {
