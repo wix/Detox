@@ -31,7 +31,7 @@ public class DetoxUserActivityDispatcher: NSObject {
 			Swift.fatalError("Unable to read user activity data file.")
 		}
 		
-		guard let jsonObject = (try? JSONSerialization.jsonObject(with: data, options: .init(rawValue: 0)) as! [String: Any]) else {
+		guard let jsonObject = try? (JSONSerialization.jsonObject(with: data, options: .init(rawValue: 0)) as! [String: Any]) else {
 			Swift.fatalError("Unable to parse user activity data file.")
 		}
 		

@@ -6,7 +6,6 @@ const {log, logSection, getVersionSafe} = require('./ci.common');
 function publishNewVersion(packageVersion) {
   validatePrerequisites();
   projectSetup();
-  prePublishToNpm();
   publishToNpm();
 
   const newVersion = getVersionSafe();
@@ -35,16 +34,6 @@ function projectSetup() {
   logSection('Project setup');
   exec.execSync(`lerna bootstrap`);
   exec.execSync(`git checkout master`);
-}
-
-function prePublishToNpm() {
-  logSection('Prepublish');
-
-  log('Gathering up iOS artifacts...');
-  process.chdir('detox');
-  const {packageIosSources} = require('../detox/scripts/pack_ios');
-  packageIosSources();
-  process.chdir('..');
 }
 
 function publishToNpm() {

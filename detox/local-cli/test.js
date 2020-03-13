@@ -125,7 +125,13 @@ module.exports.builder = {
   'device-launch-args': {
     group: 'Execution:',
     describe: 'Custom arguments to pass (through) onto the device (emulator/simulator) binary when launched.'
-  }
+  },
+  'use-custom-logger': {
+    boolean: true,
+    default: true,
+    group: 'Execution:',
+    describe: `Use Detox' custom console-logging implementation, for logging Detox (non-device) logs. Disabling will fallback to node.js / test-runner's implementation (e.g. Jest / Mocha).`,
+  },
 };
 
 const collectExtraArgs = require('./utils/collectExtraArgs')(module.exports.builder);
@@ -224,6 +230,7 @@ module.exports.handler = async function test(program) {
         (hasCustomValue('record-performance') ? `--record-performance ${program.recordPerformance}` : ''),
         (program.artifactsLocation ? `--artifacts-location "${program.artifactsLocation}"` : ''),
         (program.deviceName ? `--device-name "${program.deviceName}"` : ''),
+        (program.useCustomLogger ? `--use-custom-logger "${program.useCustomLogger}"` : ''),
       ]),
       ...getPassthroughArguments(),
     ]).join(' ');
@@ -284,6 +291,7 @@ module.exports.handler = async function test(program) {
         'reportSpecs',
         'readOnlyEmu',
         'deviceLaunchArgs',
+        'useCustomLogger'
       ]),
       DETOX_START_TIMESTAMP: Date.now(),
     };

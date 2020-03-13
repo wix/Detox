@@ -6,6 +6,18 @@
 //  Copyright © 2019 Wix. All rights reserved.
 //
 
+/***
+*    ██╗    ██╗ █████╗ ██████╗ ███╗   ██╗██╗███╗   ██╗ ██████╗
+*    ██║    ██║██╔══██╗██╔══██╗████╗  ██║██║████╗  ██║██╔════╝
+*    ██║ █╗ ██║███████║██████╔╝██╔██╗ ██║██║██╔██╗ ██║██║  ███╗
+*    ██║███╗██║██╔══██║██╔══██╗██║╚██╗██║██║██║╚██╗██║██║   ██║
+*    ╚███╔███╔╝██║  ██║██║  ██║██║ ╚████║██║██║ ╚████║╚██████╔╝
+*     ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝ ╚═════╝
+*
+*
+* WARNING: This file compiles with ARC disabled! Take extra care when modifying or adding functionality.
+*/
+
 #import "ReactNativeSupportNoARC.h"
 #include <dlfcn.h>
 #include "fishhook.h"

@@ -6,6 +6,7 @@
     "test:e2e:android": "pushd detox/test && npm run e2e:android && popd",
     "release": "node scripts/ci.release.js",
     "package:android": "node scripts/ci.android-release.js",
+    "package:ios": "scripts/ci.ios-release.sh",
     "postinstall": "scripts/postinstall.sh"
   },
   "publishConfig": {
@@ -17,5 +18,5 @@
     "semver": "5.x.x",
     "shell-utils": "1.x.x"
   },
-  "version": "15.4.2"
+  "version": "16.0.0"
 }

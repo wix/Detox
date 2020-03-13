@@ -1,10 +1,7 @@
 const fs = require('fs-extra');
 const {sh} = require('./utils');
 
-if (process.platform === 'darwin') {
-	const {packageIosSources} = require('./pack_ios');
-  packageIosSources();
-}
+//No need to pack iOS artifacts here. The build_framework.ios.sh script will be called during the post-install phase.
 
 if (process.argv[2] === "android" || process.argv[3] === "android") {
 	console.log("\nBuilding Detox aars");

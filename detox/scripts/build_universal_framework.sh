@@ -1,3 +1,5 @@
+#!/bin/bash -e
+
 PROJECT=$1
 OUTPUT_DIR=$2
 CONFIGURATION=Release
@@ -19,7 +21,7 @@ echo TEMP_DIR = "${TEMP_DIR}"
 
 # Step 0. Xcode version
 
-XCODEVERSION=$(xcodebuild -version | grep -oEi "([0-9]*\.[0-9]*)")
+XCODEVERSION=$(xcodebuild -version | grep -oEi "([0-9]*(\.[0-9]*)+)")
 echo "Xcode ${XCODEVERSION}"
 USE_NEW_BUILD_SYSTEM="YES"
 if [ "${XCODEVERSION}" != "`echo -e "${XCODEVERSION}\n11.0" | sort --version-sort -r | head -n1`" ]; then

@@ -56,8 +56,7 @@ In your app's buildscript (i.e. `app/build.gradle`) add this in `dependencies` s
 ```groovy
 dependencies {
 	  // ...
-    androidTestImplementation('com.wix:detox:+') { transitive = true } 
-    androidTestImplementation 'junit:junit:4.12'
+    androidTestImplementation('com.wix:detox:+')
 }
 ```
 
@@ -242,7 +241,6 @@ In your app's buildscript (i.e. `app/build.gradle`) add this in `dependencies` s
 dependencies {
   	// ...
     androidTestImplementation(project(path: ":detox"))
-    androidTestImplementation 'junit:junit:4.12'
 }
 ```
 
@@ -297,9 +295,8 @@ Of all [Kotlin implementation flavours](https://kotlinlang.org/docs/reference/us
 
 ```diff
 dependencies {
--    androidTestImplementation('com.wix:detox:+') { transitive = true } 
+-    androidTestImplementation('com.wix:detox:+')
 +    androidTestImplementation('com.wix:detox:+') { 
-+        transitive = true
 +        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
 +    }
 }
@@ -368,7 +365,7 @@ A common reason for this set of symptoms to take place is the lack of a clear-te
 
 The solution here is therefore to first properly configure clear-text traffic and for all app flavors (e.g. release / debug) -- if you haven't already. Second, the app needs to be configured to allow for clear-text traffic between the emulator and the running host. Examples:
 
-1. Applying `android:cleartextTrafficPermitted="true"` in the application tag of the main `AndroidManifest.xml` **(not recommended)**.
+1. Applying `android:usesCleartextTraffic="true""` in the application tag of the main `AndroidManifest.xml` **(not recommended)**.
 2. **(Untested)** Applying a base config denying clear-text (i.e. using `cleartextTrafficPermitted=false`, or just by omitting it altogether), and enabling it for the special-localhost domain:
 
 ```xml

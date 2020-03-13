@@ -92,7 +92,10 @@ id<GREYMatcher> detox_grey_parent(id<GREYMatcher> ancestorMatcher)
 	//Either take scroll views or web views that match the provided matcher, or take views whose parent is a RCTScrollView subclass and the parent matches the provided matcher.
 	return grey_anyOf(grey_allOf(
 								   grey_anyOf(grey_kindOfClass([UIScrollView class]),
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 											  grey_kindOfClass([UIWebView class]),
+#pragma clang diagnostic pop
 											  nil),
 								   matcher,
 								   nil),
