@@ -139,10 +139,6 @@ class ArtifactsManager {
     await this._callPlugins('descending', 'onSuiteEnd', suite);
   }
 
-  async onInit() {
-    await this._callPlugins('descending', 'onInit');
-  }
-
   async onBeforeCleanup() {
     await this._callPlugins('descending', 'onBeforeCleanup');
     await this._idlePromise;

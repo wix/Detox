@@ -241,12 +241,6 @@ describe('ArtifactPlugin', () => {
       expect(plugin.context.suite).toBe(null);
     });
 
-    it('should have .onInit, which is doing nothing', async () => {
-      const prevContext = {...plugin.context};
-      await plugin.onInit();
-      expect(plugin.context).toEqual(prevContext);
-    });
-
     it('should have .onBeforeCleanup, which resets context.testSummary if called', async () => {
       plugin.context.testSummary = {};
       await plugin.onBeforeCleanup();
@@ -274,7 +268,6 @@ describe('ArtifactPlugin', () => {
         expect(plugin.onTestDone).toBe(plugin.onTerminate);
         expect(plugin.onSuiteStart).toBe(plugin.onTerminate);
         expect(plugin.onSuiteEnd).toBe(plugin.onTerminate);
-        expect(plugin.onInit).toBe(plugin.onTerminate);
         expect(plugin.onBeforeCleanup).toBe(plugin.onTerminate);
         expect(plugin.onUserAction).toBe(plugin.onTerminate);
       });

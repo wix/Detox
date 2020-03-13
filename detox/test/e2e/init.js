@@ -22,7 +22,12 @@ beforeAll(async () => {
 }, 300000);
 
 beforeEach(async () => {
-  await adapter.beforeEach();
+  try {
+    await adapter.beforeEach();
+  } catch (err) {
+    await detox.cleanup();
+    throw err;
+  }
 });
 
 afterAll(async () => {

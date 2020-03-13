@@ -229,12 +229,6 @@ describe('index', () => {
     await detox.cleanup();
   });
 
-  it(`if detox.init() fails, detox.cleanup() is called automatically`, async () => {
-    mockDetox.init.mockImplementation(() => { throw new Error('test'); });
-    expect(detox.init(schemes.validOneDeviceNoSession)).rejects.toThrow();
-    expect(mockDetox.cleanup).toHaveBeenCalled();
-  });
-
   it(`beforeEach() should be covered - with detox initialized`, async() => {
     await detox.init(schemes.validOneDeviceNoSession);
     await detox.beforeEach();

@@ -1,14 +1,15 @@
+const _ = require('lodash');
+
 class DetoxRuntimeError extends Error {
   constructor({ message = '', hint = '', debugInfo = '' } = {}) {
-    super(`DetoxRuntimeError: ${message}` +
-      (!hint ? '' : '\n\nHINT: ' + hint) +
-      (!debugInfo ? '' : '\n\n' + debugInfo));
+    const formattedMessage = _.compact([
+      message,
+      hint && `HINT: ${hint}`,
+      debugInfo
+    ]).join('\n\n');
 
-    Error.captureStackTrace(this, DetoxRuntimeError);
-  }
-
-  toString() {
-    return super.toString().replace(/^Error: /, '\n');
+    super(formattedMessage);
+    this.name = 'DetoxRuntimeError';
   }
 }
 

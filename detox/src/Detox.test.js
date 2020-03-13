@@ -83,8 +83,9 @@ describe('Detox', () => {
 
     detox = new Detox({deviceConfig: validDeviceConfig});
     await detox.init();
+    const device = detox.device;
     await detox.cleanup();
-    expect(detox.device.shutdown).toHaveBeenCalledTimes(1);
+    expect(device.shutdown).toHaveBeenCalledTimes(1);
   });
 
   it(`Calling detox.cleanup() before .init() should pass without exceptions`, async () => {
@@ -99,8 +100,9 @@ describe('Detox', () => {
     Detox = require('./Detox');
     detox = new Detox({deviceConfig: validDeviceConfig});
     await detox.init();
+    const device = detox.device;
     await detox.cleanup();
-    expect(detox.device.shutdown).toHaveBeenCalledTimes(0);
+    expect(device.shutdown).toHaveBeenCalledTimes(0);
   });
 
   it(`One valid device, detox should init with generated session config and default to this device`, async () => {

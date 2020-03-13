@@ -14,6 +14,7 @@ class ScreenshotArtifactPlugin extends TwoSnapshotsPerTestPlugin {
 
   async onBeforeCleanup(e) {
     if (this.context.isAppReady === false) {
+      this._hasFailingTests = true;
       await this._takeAutomaticSnapshot('appNotReady');
     }
 

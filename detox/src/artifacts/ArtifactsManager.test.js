@@ -92,7 +92,6 @@ describe('ArtifactsManager', () => {
           onTestDone: jest.fn(),
           onSuiteStart: jest.fn(),
           onSuiteEnd: jest.fn(),
-          onInit: jest.fn(),
           onBeforeCleanup: jest.fn(),
         });
       };
@@ -228,8 +227,6 @@ describe('ArtifactsManager', () => {
 
         itShouldCatchErrorsOnPhase('onSuiteEnd', () => (testSuite.mock()));
 
-        itShouldCatchErrorsOnPhase('onInit', () => undefined);
-
         itShouldCatchErrorsOnPhase('onBeforeCleanup', () => undefined);
 
         itShouldCatchErrorsOnPhase('onBootDevice', () => ({
@@ -321,14 +318,6 @@ describe('ArtifactsManager', () => {
           expect(testPlugin.onSuiteEnd).not.toHaveBeenCalled();
           await artifactsManager.onSuiteEnd(suite);
           expect(testPlugin.onSuiteEnd).toHaveBeenCalledWith(suite);
-        });
-      });
-
-      describe('onInit', () => {
-        it('should call onInit in plugins', async () => {
-          expect(testPlugin.onInit).not.toHaveBeenCalled();
-          await artifactsManager.onInit();
-          expect(testPlugin.onInit).toHaveBeenCalled();
         });
       });
 
