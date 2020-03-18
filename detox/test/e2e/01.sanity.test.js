@@ -1,5 +1,6 @@
 describe('Sanity', () => {
   beforeEach(async () => {
+    console.log('Sanity beforeEach');
     await device.reloadReactNative();
     await element(by.text('Sanity')).tap();
   });

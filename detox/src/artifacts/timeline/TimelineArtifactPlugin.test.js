@@ -163,6 +163,25 @@ describe('TimelineArtifactPlugin', () => {
     });
   });
 
+  describe('onUserLog', () => {
+    it('should report user logs as instant events', () => {
+      const config = configMock();
+      const log = {
+        message: 'mockLogMessage',
+        level: 'mockSeverityLevel',
+      };
+      const expectedArgs = {
+        message: log.message,
+        severity: log.level,
+      };
+
+      const timelineArtifactPlugin = new TimelineArtifactPlugin(config);
+      timelineArtifactPlugin.onUserLog(log);
+
+      expect(traceMock.reportInstantEvent).toHaveBeenCalledWith('User log', expectedArgs);
+    });
+  });
+
   describe('onBeforeCleanup', () => {
     const mockArtifactFileNotExists = () => {
       fs.access.mockImplementation(async () => {

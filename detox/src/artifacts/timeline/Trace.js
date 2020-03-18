@@ -12,7 +12,6 @@ class Trace {
 
   startProcess({id, name}) {
     this._process = {id, name};
-
     return this;
   }
 
@@ -23,19 +22,21 @@ class Trace {
       this._event('process_name', 'M', {name: this._process.name}),
       this._event('thread_name', 'M', {name}),
     );
-
     return this;
   }
 
-  beginEvent(name, args = {}) {
+  beginEvent(name, args) {
     this._events.push(this._event(name, 'B', args));
-
     return this;
   }
 
-  finishEvent(name, args = {}) {
+  finishEvent(name, args) {
     this._events.push(this._event(name, 'E', args));
+    return this;
+  }
 
+  reportInstantEvent(name, args) {
+    this._events.push(this._event(name, 'I', args));
     return this;
   }
 

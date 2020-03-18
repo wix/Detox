@@ -65,10 +65,20 @@ function createPlainBunyanStream({ logPath, level }) {
   };
 }
 
+const dummyStream = {
+  write: (_log) => {
+    const log = JSON.parse(_log);
+    process.stdout.write('\n\rASDASD ' + log.event + '\n\n')
+  }
+};
+
 function init() {
   const levelFromArg = argparse.getArgValue('loglevel');
   const level = adaptLogLevelName(levelFromArg);
-  const bunyanStreams = [createPlainBunyanStream({ level })];
+  const bunyanStreams = [{
+    stream: dummyStream,
+    level,
+  }, createPlainBunyanStream({ level })];
 
   let jsonFileStreamPath, plainFileStreamPath;
   if (!global.DETOX_CLI && !global.IS_RUNNING_DETOX_UNIT_TESTS) {

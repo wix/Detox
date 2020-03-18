@@ -49,14 +49,20 @@ class TimelineArtifactPlugin extends ArtifactPlugin {
 
   async onTestStart(testSummary) {
     super.onTestStart(testSummary);
-
     this._trace.beginEvent(testSummary.title);
   }
 
   async onTestDone(testSummary) {
     super.onTestDone(testSummary);
-
     this._trace.finishEvent(testSummary.title, {status: testSummary.status});
+  }
+
+  onUserLog(log) {
+    const eventArgs = {
+      message: log.message,
+      severity: log.level,
+    };
+    this._trace.reportInstantEvent('User log', eventArgs);
   }
 
   async onBeforeCleanup() {

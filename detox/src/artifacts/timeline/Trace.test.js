@@ -100,6 +100,27 @@ describe('Trace', () => {
     });
   });
 
+  describe('reportInstantEvent', () => {
+    it('should report an instant (0-duration) event', () => {
+      const name = 'eventName';
+
+      const trace = new TestTrace().reportInstantEvent(name);
+      const [closedEvent] = trace.json();
+
+      expect(closedEvent).toEqual(event({name, ph: 'I'}));
+    });
+
+    it('should report an instant event with args', () => {
+      const name = 'eventName';
+      const arg = 'eventArg';
+
+      const trace = new TestTrace().reportInstantEvent(name, {arg});
+      const [closedEvent] = trace.json();
+
+      expect(closedEvent).toEqual(event({name, ph: 'I', args: {arg}}));
+    });
+  });
+
   describe('json', () => {
     it('should create json representation of all events', () => {
       const name = 'eventName';

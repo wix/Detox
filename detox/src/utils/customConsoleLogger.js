@@ -4,6 +4,10 @@ const callsites = require('./callsites');
 
 const USER_STACK_FRAME_INDEX = 2;
 const CONSOLE_ASSERT_USER_ARGS_INDEX = 1;
+const EVENT_NAME = 'USER_LOG';
+const bunyanFields = {
+  event: EVENT_NAME
+};
 
 function getStackDump() {
   return callsites.stackdump(USER_STACK_FRAME_INDEX);
@@ -17,13 +21,13 @@ function getOrigin() {
 
 function override(consoleLevel, bunyanFn) {
   console[consoleLevel] = (...args) => {
-    bunyanFn({ event: 'USER_LOG' }, getOrigin(), '\n', util.format(...args));
+    bunyanFn(bunyanFields, getOrigin(), '\n', util.format(...args));
   };
 }
 
 function overrideTrace(consoleLevel, bunyanFn) {
   console[consoleLevel] = (...args) => {
-    bunyanFn({ event: 'USER_LOG' }, getOrigin(), '\n  Trace:', util.format(...args), '\n\r' + getStackDump());
+    bunyanFn(bunyanFields, getOrigin(), '\n  Trace:', util.format(...args), '\n\r' + getStackDump());
   };
 }
 
@@ -31,7 +35,7 @@ function overrideAssertion(consoleLevel, bunyanFn) {
   console[consoleLevel] = (...args) => {
     const [condition] = args;
     if (!condition) {
-      bunyanFn({ event: 'USER_LOG' }, getOrigin(), '\n  AssertionError:', util.format(...args.slice(CONSOLE_ASSERT_USER_ARGS_INDEX)));
+      bunyanFn(bunyanFields, getOrigin(), '\n  AssertionError:', util.format(...args.slice(CONSOLE_ASSERT_USER_ARGS_INDEX)));
     }
   };
 }
