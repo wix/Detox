@@ -14,13 +14,14 @@ import com.wix.detox.instruments.DetoxInstrumentsManager;
 
 public class DetoxJUnitRunner extends AndroidJUnitRunner {
     private DetoxInstrumentsManager instrumentsManager;
+    private ApplicationLifecycleCallback lifecycleCallback;
 
     @Override
     public void onCreate(final Bundle arguments) {
         super.onCreate(arguments);
 
         final ApplicationLifecycleMonitor monitor = ApplicationLifecycleMonitorRegistry.getInstance();
-        monitor.addLifecycleCallback(new ApplicationLifecycleCallback() {
+        lifecycleCallback = new ApplicationLifecycleCallback() {
             @Override
             public void onApplicationLifecycleChanged(Application app, ApplicationStage stage) {
                 if (stage == ApplicationStage.PRE_ON_CREATE) {
@@ -29,7 +30,8 @@ public class DetoxJUnitRunner extends AndroidJUnitRunner {
                     onAfterAppOnCreate();
                 }
             }
-        });
+        };
+        monitor.addLifecycleCallback(lifecycleCallback);
     }
 
     private void onBeforeAppOnCreate(Application app, Bundle arguments) {
