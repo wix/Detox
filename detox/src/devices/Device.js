@@ -16,10 +16,12 @@ class Device {
   }
 
   async prepare(params = {}) {
-    // Run getAbsoluteBinaryPath to ensure that paths exist on disk if provided
-    getAbsoluteBinaryPath(this._deviceConfig.binaryPath);
-    if (this._deviceConfig.testBinaryPath) {
-      getAbsoluteBinaryPath(this._deviceConfig.testBinaryPath);
+    if (params.checkBinaryPath) {
+      // Run getAbsoluteBinaryPath to ensure that paths exist on disk if provided
+      getAbsoluteBinaryPath(this._deviceConfig.binaryPath);
+      if (this._deviceConfig.testBinaryPath) {
+        getAbsoluteBinaryPath(this._deviceConfig.testBinaryPath);
+      }
     }
 
     this._deviceId = await this.deviceDriver.acquireFreeDevice(this._deviceConfig.device || this._deviceConfig.name);
