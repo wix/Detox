@@ -91,8 +91,8 @@ describe('Android driver', () => {
         await promise;
         fail('Expected an error and none was thrown');
       } catch (e) {
-        expect(e.message).toContain('DetoxRuntimeError: Failed to run application on the device');
-        expect(e.message).toContain(`Native stacktrace dump: ${mockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK}`);
+        expect(e.toString()).toContain('DetoxRuntimeError: Failed to run application on the device');
+        expect(e.toString()).toContain(`Native stacktrace dump: ${mockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK}`);
       } finally {
         clientWaitResolve();
       }
