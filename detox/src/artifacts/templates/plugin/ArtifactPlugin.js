@@ -221,15 +221,6 @@ class ArtifactPlugin {
   }
 
   /**
-   * Hook that is called when detox.init() finishes
-   *
-   * @protected
-   * @async
-   * @return {Promise<void>} - when done
-   */
-  async onInit() {}
-
-  /**
    * Hook that is called when detox.cleanup() just begins
    *
    * @protected
@@ -265,7 +256,6 @@ class ArtifactPlugin {
     this.onTestDone = _.noop;
     this.onSuiteStart = _.noop;
     this.onSuiteEnd = _.noop;
-    this.onInit = _.noop;
     this.onBeforeCleanup = _.noop;
   }
 

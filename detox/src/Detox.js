@@ -90,8 +90,6 @@ class Detox {
       Object.assign(global, globalsToExport);
     }
 
-    await this._artifactsManager.onInit();
-
     return this;
   }
 
