@@ -15,5 +15,6 @@ module.exports.stackdump = (endFrame = 0) => {
     .split('\n')
     .slice(2 + endFrame) // 2 = 1 for 'Error:' prefix and 1 for this function's frame
     .join('\n')
-    .replace(new RegExp(cwd, 'g'), '');
+    .split(cwd)
+    .join('');
 };

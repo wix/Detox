@@ -1,3 +1,4 @@
+const path = require('path');
 const ignored = expect.anything;
 
 describe('customConsoleLogger', () => {
@@ -52,7 +53,7 @@ describe('customConsoleLogger', () => {
   });
 
   it('should use relative file-name rather than absolute in origin', () => {
-    const expectedOrigin = 'at src/utils/customConsoleLogger.test.js:';
+    const expectedOrigin = `at ${path.normalize('src/utils/customConsoleLogger.test.js')}:`;
 
     const logger = require('./customConsoleLogger');
     logger.override('__log', bunyanLogger.mock);
