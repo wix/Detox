@@ -1,4 +1,5 @@
 const schemes = require('./configurations.mock');
+const testSummaries = require('./artifacts/__mocks__/testSummaries.mock');
 
 const defaultPlatformEnv = {
   darwin: {},
@@ -177,17 +178,16 @@ describe('Detox', () => {
     Detox = require('./Detox');
     detox = new Detox({deviceConfig: validDeviceConfigWithSession});
     await detox.init();
-    await detox.afterEach({ title: 'a', fullName: 'b', status: 'failed' });
+    await detox.afterEach(testSummaries.failed());
     expect(device.launchApp).toHaveBeenCalledTimes(1);
   });
 
   it(`handleAppCrash should not dump pending requests if testSummary has no timeout flag`, async () => {
     Detox = require('./Detox');
     detox = new Detox({deviceConfig: validDeviceConfigWithSession});
-    const testSummary = { title: 'test', fullName: 'suite - test', status: 'failed' };
 
     await detox.init();
-    await detox.afterEach(testSummary);
+    await detox.afterEach(testSummaries.failed());
 
     expect(client.dumpPendingRequests).not.toHaveBeenCalled();
   });
@@ -195,10 +195,9 @@ describe('Detox', () => {
   it(`handleAppCrash should dump pending requests if testSummary has timeout flag`, async () => {
     Detox = require('./Detox');
     detox = new Detox({deviceConfig: validDeviceConfigWithSession});
-    const testSummary = { title: 'test', fullName: 'suite - test', status: 'failed', timedOut: true };
 
     await detox.init();
-    await detox.afterEach(testSummary);
+    await detox.afterEach(testSummaries.timedOut());
     expect(client.dumpPendingRequests).toHaveBeenCalled();
   });
 
@@ -248,25 +247,25 @@ describe('Detox', () => {
       artifactsManager = detox._artifactsManager; // TODO: rewrite to avoid accessing private fields
     });
 
-    it(`Calling detox.beforeEach() will trigger artifacts manager .onBeforeEach`, async () => {
-      const testSummary = { title: 'test', fullName: 'suite - test', status: 'running' };
+    it(`Calling detox.beforeEach() will trigger artifacts manager .onTestStart`, async () => {
+      const testSummary = testSummaries.running();
       await detox.beforeEach(testSummary);
 
       expect(artifactsManager.onTestStart).toHaveBeenCalledWith(testSummary);
     });
 
     it(`Calling detox.beforeEach() and detox.afterEach() with a deprecated signature will throw an exception`, async () => {
-      const testSummary = { title: 'test', fullName: 'suite - test', status: 'running' };
+      const { title, fullName, status } = testSummaries.running();
 
-      await expect(detox.beforeEach(testSummary.title, testSummary.fullName, testSummary.status)).rejects.toThrowError();
+      await expect(detox.beforeEach(title, fullName, status)).rejects.toThrowError();
       expect(artifactsManager.onTestStart).not.toHaveBeenCalled();
 
-      await expect(detox.afterEach(testSummary.title, testSummary.fullName, testSummary.status)).rejects.toThrowError();
+      await expect(detox.afterEach(title, fullName, status)).rejects.toThrowError();
       expect(artifactsManager.onTestDone).not.toHaveBeenCalled();
     });
 
     it(`Calling detox.beforeEach() and detox.afterEach() with incorrect test status will throw an exception`, async () => {
-      const testSummary = { title: 'test', fullName: 'suite - test', status: 'incorrect status' };
+      const testSummary = { ...testSummaries.running(), status: 'incorrect status' };
 
       await expect(detox.beforeEach(testSummary)).rejects.toThrowError();
       expect(artifactsManager.onTestStart).not.toHaveBeenCalled();
@@ -275,8 +274,8 @@ describe('Detox', () => {
       expect(artifactsManager.onTestDone).not.toHaveBeenCalled();
     });
 
-    it(`Calling detox.afterEach() should trigger artifactsManager.onAfterEach`, async () => {
-      const testSummary = { title: 'test', fullName: 'suite - test', status: 'passed' };
+    it(`Calling detox.afterEach() should trigger artifactsManager.onTestDone`, async () => {
+      const testSummary = testSummaries.passed();
       await detox.afterEach(testSummary);
 
       expect(artifactsManager.onTestDone).toHaveBeenCalledWith(testSummary);
