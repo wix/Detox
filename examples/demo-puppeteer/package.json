@@ -16,6 +16,7 @@
       "puppeteer": {
         "binaryPath": "http://localhost:9191",
         "device": {
+          "headless": true,
           "defaultViewport": {
             "height": 800,
             "width": 1024
