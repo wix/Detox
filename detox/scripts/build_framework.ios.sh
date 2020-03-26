@@ -33,14 +33,12 @@ function buildFramework () {
   mkdir -p "${detoxFrameworkDirPath}"
 	logPath="${detoxFrameworkDirPath}"/detox_ios.log
 	echo -n "" > "${logPath}"
-  "${detoxRootPath}"/scripts/build_universal_framework.sh "${detoxSourcePath}"/Detox.xcodeproj "${detoxFrameworkDirPath}" &> "${logPath}"
-	errno=$?
-	if [ $errno -ne 0 ]; then
+  "${detoxRootPath}"/scripts/build_universal_framework.sh "${detoxSourcePath}"/Detox.xcodeproj "${detoxFrameworkDirPath}" &> "${logPath}" || {
 		echo -e "#################################\nError building Detox.framework:\n----------------------------------\n"
 		cat "${logPath}"
 		echo "#################################"
-	fi
-	exit $errno
+	  exit 1
+  }
 }
 
 function main () {
