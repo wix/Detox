@@ -67,7 +67,7 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
   createTestArtifact() {}
 
   async _takeAutomaticSnapshot(name) {
-    if (this.enabled && this.shouldTakeAutomaticSnapshots) {
+    if (this.enabled && this.shouldTakeAutomaticSnapshots[name]) {
       await this._takeSnapshot(name);
     }
   }

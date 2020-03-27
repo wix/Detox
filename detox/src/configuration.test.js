@@ -190,6 +190,106 @@ describe('configuration', () => {
         rootDir: '.artifacts/',
       });
     });
+
+    describe('screenshot plugin', () => {
+      // undefined + none => !enabled, !failingOnly, !automatic
+      // undefined + manual => enabled, !failingOnly, !automatic
+      // undefined + failing => enabled, failingOnly, automatic
+      // undefined + all => enabled, !failingOnly, automatic
+
+      // ANY + ANY === ANY
+      // ANY + {} === ANY
+
+      // .automatic.x + none => !enabled
+      // .automatic.x + manual => enabled, !automatic
+      // .automatic.x + failing => enabled, failingOnly
+      // .automatic.x + all => enabled, !failingOnly
+
+      // .automatic.!x + none => !enabled, !failingOnly, !automatic
+      // .automatic.!x + manual =>
+      // .automatic.!x + failing =>
+      // .automatic.!x + all =>
+
+      // .!automatic + none => ?
+      // .!automatic + manual + { shouldTakeAutomaticSnapshots: false } + all ===
+      // .!automatic + failing + { shouldTakeAutomaticSnapshots: false } + all ===
+      // .!automatic + all + { shouldTakeAutomaticSnapshots: false } + all ===
+      // defaults + cli:all => all + automatic
+
+      // .enabled
+      // undefined + manual => enabled, !failingOnly, !automatic
+      // undefined + failing => enabled, failingOnly, automatic
+      // undefined + all => enabled, !failingOnly, automatic
+    });
+
+    it('should allow passing custom plugin configurations', () => {
+      expect(configuration.composeArtifactsConfig({
+        configurationName: 'custom',
+        cliConfig: {
+          takeScreenshots: 'all',
+        },
+        detoxConfig: {
+          artifacts: {
+            rootDir: 'configuration',
+            pathBuilder: _.identity,
+            plugins: {
+              screenshot: {
+                shouldTakeAutomaticSnapshots: {
+                  testDone: true,
+                },
+              },
+              video: {
+                android: { bitRate: 4000000 },
+                simulator: { codec: "hevc" },
+              }
+            },
+          },
+        },
+        deviceConfig: {},
+      })).toMatchObject({
+        plugins: expect.objectContaining({
+          screenshot: {
+            ...schemes.pluginsAllResolved.screenshot,
+            shouldTakeAutomaticSnapshots: {
+              testStart: false,
+              testDone: true,
+            },
+          },
+          video: {
+            ...schemes.pluginsDefaultsResolved.video,
+            android: { bitRate: 4000000 },
+            simulator: { codec: "hevc" },
+          },
+        }),
+      });
+    });
+
+    it('should allow simple cases TODO', () => {
+      expect(configuration.composeArtifactsConfig({
+        configurationName: 'custom',
+        cliConfig: {
+          takeScreenshots: 'all',
+        },
+        detoxConfig: {
+          artifacts: {
+            rootDir: 'configuration',
+            pathBuilder: _.identity,
+          },
+        },
+        deviceConfig: {},
+      })).toMatchObject({
+        plugins: expect.objectContaining({
+          screenshot: {
+            enabled: true,
+            keepOnlyFailedTestsArtifacts: false,
+            shouldTakeAutomaticSnapshots: {
+              testStart: true,
+              testDone: true,
+            },
+          },
+        }),
+      });
+    });
   });
 
   function testFaultySession(config) {

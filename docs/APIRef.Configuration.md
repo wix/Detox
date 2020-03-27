@@ -68,7 +68,10 @@ Detox can control artifacts collection via settings from `package.json`:
         "instruments": { "enabled": false },
         "log": { "enabled": true },
         "screenshot": {
-          "shouldTakeAutomaticSnapshots": true,
+          "shouldTakeAutomaticSnapshots": {
+            "testStart": false,
+            "testDone": true,
+          },
           "keepOnlyFailedTestsArtifacts": true
         },
         "video": {

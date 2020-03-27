@@ -1,3 +1,5 @@
+const {sample} = require('lodash');
+
 jest.mock('../../../utils/logger.js');
 const TwoSnapshotsPerTestPlugin = require('./TwoSnapshotsPerTestPlugin');
 const ArtifactMock = require('../artifact/__mocks__/ArtifactMock');
@@ -12,7 +14,10 @@ describe('TwoSnapshotsPerTestPlugin', () => {
     api = new ArtifactsApi({
       config: {
         enabled: true,
-        shouldTakeAutomaticSnapshots: true,
+        shouldTakeAutomaticSnapshots: {
+          testStart: undefined,
+          testDone: undefined,
+        },
         keepOnlyFailedTestsArtifacts: false,
       },
     });
@@ -58,22 +63,93 @@ describe('TwoSnapshotsPerTestPlugin', () => {
     });
   });
 
-  describe('when onTestStart called', function() {
-    beforeEach(async () => {
-      await plugin.onTestStart(testSummaries.running());
+  describe('when shouldTakeAutomaticSnapshots.testStart is false', () => {
+    beforeEach(() => {
+      plugin.shouldTakeAutomaticSnapshots.testStart = false;
+      plugin.shouldTakeAutomaticSnapshots.testDone = sample([false, true]);
     });
 
-    it('should create test artifact', () => {
-      expect(plugin.createTestArtifact).toHaveBeenCalledTimes(1);
+    describe('when onTestStart called', function() {
+      beforeEach(async () => {
+        await plugin.onTestStart(testSummaries.running());
+      });
+
+      it('should not create a test artifact', () => {
+        expect(plugin.createTestArtifact).not.toHaveBeenCalled();
+        expect(plugin.snapshots.fromTest['testStart']).toBe(undefined);
+      });
+    });
+  });
+
+  describe('when shouldTakeAutomaticSnapshots.testStart is not false', () => {
+    beforeEach(() => {
+      plugin.shouldTakeAutomaticSnapshots.testStart = sample([undefined, true]);
+      plugin.shouldTakeAutomaticSnapshots.testDone = sample([false, true]);
     });
 
-    it('should start and stop recording in the artifact', () => {
-      expect(plugin.snapshots.fromTest['testStart'].start).toHaveBeenCalledTimes(1);
-      expect(plugin.snapshots.fromTest['testStart'].stop).toHaveBeenCalledTimes(1);
+    describe('when onTestStart called', function() {
+      beforeEach(async () => {
+        await plugin.onTestStart(testSummaries.running());
+      });
+
+      it('should create test artifact', () => {
+        expect(plugin.createTestArtifact).toHaveBeenCalledTimes(1);
+      });
+
+      it('should start and stop recording in the artifact', () => {
+        expect(plugin.snapshots.fromTest['testStart'].start).toHaveBeenCalledTimes(1);
+        expect(plugin.snapshots.fromTest['testStart'].stop).toHaveBeenCalledTimes(1);
+      });
+
+      it('should put the artifact under tracking', () => {
+        expect(api.trackArtifact).toHaveBeenCalledWith(plugin.snapshots.fromTest['testStart']);
+      });
+    });
+  });
+
+  describe('when shouldTakeAutomaticSnapshots.testDone is false', () => {
+    beforeEach(() => {
+      plugin.shouldTakeAutomaticSnapshots.testStart = false;
+      plugin.shouldTakeAutomaticSnapshots.testDone = false;
     });
 
-    it('should put the artifact under tracking', () => {
-      expect(api.trackArtifact).toHaveBeenCalledWith(plugin.snapshots.fromTest['testStart']);
+    describe('when onTestStart and onTestEnd called', function() {
+      beforeEach(async () => {
+        await plugin.onTestStart(testSummaries.running());
+        await plugin.onTestDone(testSummaries.passed());
+      });
+
+      it('should not create a test artifact', () => {
+        expect(plugin.createTestArtifact).not.toHaveBeenCalled();
+        expect(plugin.snapshots.fromTest['testDone']).toBe(undefined);
+      });
+    });
+  });
+
+  describe('when shouldTakeAutomaticSnapshots.testDone is not false', () => {
+    beforeEach(() => {
+      plugin.shouldTakeAutomaticSnapshots.testStart = false;
+      plugin.shouldTakeAutomaticSnapshots.testDone = sample([undefined, true]);
+    });
+
+    describe('when onTestStart and onTestDone called', function() {
+      beforeEach(async () => {
+        await plugin.onTestStart(testSummaries.running());
+        await plugin.onTestDone(testSummaries.passed());
+      });
+
+      it('should create test artifact', () => {
+        expect(plugin.createTestArtifact).toHaveBeenCalledTimes(1);
+      });
+
+      it('should start and stop recording in the artifact', () => {
+        expect(plugin.snapshots.fromTest['testDone'].start).toHaveBeenCalledTimes(1);
+        expect(plugin.snapshots.fromTest['testDone'].stop).toHaveBeenCalledTimes(1);
+      });
+
+      it('should put the artifact under tracking', () => {
+        expect(api.trackArtifact).toHaveBeenCalledWith(plugin.snapshots.fromTest['testDone']);
+      });
     });
   });
 
