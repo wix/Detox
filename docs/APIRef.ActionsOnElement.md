@@ -149,7 +149,9 @@ await element(by.id('pickerView')).setColumnToValue(2,"34");
 Sets the date of a date picker to a date generated from the provided string and date format.  
 
 dateString - string representing a date in the supplied dateFormat  
-dateFormat - format for the dateString supplied  
+dateFormat - format for the dateString supplied
+
+The `dateString` is converted to `NSDate` using `NSDateFormatter`. If you use JavaScript's [Date.toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString), the corresponding `dateFormat` is `yyyy-MM-dd'T'HH:mm:ss.SSS'Z'`.
 
 ```js
 await expect(element(by.id('datePicker'))).toBeVisible();
