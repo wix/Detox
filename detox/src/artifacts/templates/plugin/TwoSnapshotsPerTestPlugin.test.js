@@ -14,10 +14,6 @@ describe('TwoSnapshotsPerTestPlugin', () => {
         enabled: true,
         shouldTakeAutomaticSnapshots: true,
         keepOnlyFailedTestsArtifacts: false,
-        hooks: {
-          testStart: true,
-          testDone: true,
-        },
       },
     });
     plugin = new FakeTwoSnapshotsPerTestPlugin({ api });
@@ -178,7 +174,7 @@ describe('TwoSnapshotsPerTestPlugin', () => {
     });
   });
 
-  describe('when hooks.testStart and hooks.testDone are both true', function() {
+  describe('when hooks.testStart and hooks.testDone have default values', function() {
     describe('when the plugin should keep a test artifact', () => {
       beforeEach(() => plugin.configureToKeepArtifacts(true));
 
