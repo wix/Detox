@@ -44,7 +44,10 @@ to the platform at hand to implement the expectations.
 
 ### Implementation details
 
-You may want to read through the source of both the built-in, official drivers as well as existing third party drivers to get a sense of how the code is structured. Your driver should extend `DeviceDriverBase` and export as `module.exports`.
+You may want to read through the source of both the built-in, official drivers as well as
+existing third party drivers to get a sense of how the code is structured. You can also look at
+`examples/demo-plugin/driver.js` for a minimal driver implementation that doesn't really do anything
+useful. Your driver should extend `DeviceDriverBase` and export as `module.exports`.
 
 ```
 const DeviceDriverBase = require('detox/src/devices/drivers/DeviceDriverBase');

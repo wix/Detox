@@ -10,6 +10,7 @@
     "examples/demo-react-native-detox-instruments",
     "examples/demo-react-native-jest",
     "examples/demo-puppeteer",
+    "examples/demo-plugin",
     "generation",
     "."
   ],
@@ -20,6 +21,7 @@
       "ignoreChanges": [
         "demo-react-native-jest",
         "demo-puppeteer",
+        "demo-plugin",
         "examples/demo-react-native-detox-instruments",
         "detox-demo-native-android",
         "detox-demo-native-ios",
