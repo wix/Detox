@@ -1,9 +1,9 @@
 const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
-const os = require('os');
 const ini = require('ini');
 const AndroidDriver = require('./AndroidDriver');
+const EmulatorLookupHelper = require('./EmulatorLookupHelper');
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const DeviceRegistry = require('../DeviceRegistry');
 const Emulator = require('../android/Emulator');
@@ -44,32 +44,7 @@ class EmulatorDriver extends AndroidDriver {
     await this._validateAvd(avdName);
     await this._fixEmulatorConfigIniSkinNameIfNeeded(avdName);
 
-    log.debug({ event: ACQUIRE_DEVICE_EV }, `Looking up a device based on ${avdName}`);
-
-    const adbName = await this.deviceRegistry.allocateDevice(async () => {
-      let freeEmulatorAdbName;
-
-      const { devices } = await this.adb.devices();
-      for (const candidate of devices) {
-        const isEmulator = candidate.type === 'emulator';
-        const isBusy = this.deviceRegistry.isDeviceBusy(candidate.adbName);
-
-        if (isEmulator && !isBusy) {
-          if (await candidate.queryName() === avdName) {
-            freeEmulatorAdbName = candidate.adbName;
-            log.debug({ event: ACQUIRE_DEVICE_EV }, `Found ${candidate.adbName}!`);
-            break;
-          }
-          log.debug({ event: ACQUIRE_DEVICE_EV }, `${candidate.adbName} is available but AVD is different`);
-        } else {
-          log.debug({ event: ACQUIRE_DEVICE_EV }, `${candidate.adbName} is not a free emulator`, isEmulator, !isBusy);
-        }
-      }
-
-      return freeEmulatorAdbName || this._createDevice();
-    });
-
-    log.debug({ event: ACQUIRE_DEVICE_EV }, `Settled on ${adbName}`);
+    const adbName = await this._allocateDevice(avdName);
 
     await this._boot(avdName, adbName);
 
@@ -180,6 +155,21 @@ class EmulatorDriver extends AndroidDriver {
       config['skin.name'] = `${width}x${height}`;
       fs.writeFileSync(configFile, ini.stringify(config));
     }
+  }
+
+  async _allocateDevice(avdName) {
+    log.debug({ event: ACQUIRE_DEVICE_EV }, `Looking up a device based on ${avdName}`);
+
+    const adbName = await this.deviceRegistry.allocateDevice(() => this._doAllocateDevice(avdName));
+
+    log.debug({ event: ACQUIRE_DEVICE_EV }, `Settled on ${adbName}`);
+    return adbName;
+  }
+
+  async _doAllocateDevice(avdName) {
+    const emulatorLookupHelper = new EmulatorLookupHelper(this.adb, this.deviceRegistry, avdName);
+    const freeEmulatorAdbName = await emulatorLookupHelper.findFreeDevice();
+    return freeEmulatorAdbName || this._createDevice();
   }
 
   async _createDevice() {
