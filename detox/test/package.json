@@ -46,6 +46,15 @@
       "server": "ws://localhost:8099",
       "sessionId": "test"
     },
+    "artifacts": {
+      "plugins": {
+        "screenshot": {
+          "hooks": {
+            "testDone": true
+          }
+        }
+      }
+    },
     "configurations": {
       "ios.sim.debug": {
         "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
