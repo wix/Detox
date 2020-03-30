@@ -18,6 +18,8 @@ const DetoxEmulatorsPortRange = {
 };
 
 const ACQUIRE_DEVICE_EV = 'ACQUIRE_DEVICE';
+const EMU_BIN_STABLE_SKIN_VER = 28;
+const EMU_BIN_VERSION_DETECT_EV = 'EMU_BIN_VERSION_DETECT';
 
 class EmulatorDriver extends AndroidDriver {
   constructor(config) {
@@ -29,6 +31,7 @@ class EmulatorDriver extends AndroidDriver {
     });
     this.pendingBoots = {};
     this._name = 'Unspecified Emulator';
+    this._binaryVersion = undefined;
   }
 
   get name() {
@@ -82,6 +85,30 @@ class EmulatorDriver extends AndroidDriver {
     await super.cleanup(adbName, bundleId);
   }
 
+  async binaryVersion() {
+    if (this._binaryVersion) {
+      return this._binaryVersion;
+    }
+
+    const rawOutput = await this.emulator.exec('-version') || '';
+    const matches = rawOutput.match(/Android emulator version ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]*)/);
+    if (!matches || !matches[1]) {
+      log.warn({ event: EMU_BIN_VERSION_DETECT_EV, success: false }, 'Could not detect emulator binary version, got:', rawOutput);
+      return null;
+    }
+
+    const version = matches[1];
+    const [major, minor, patch] = version.split('\.');
+    this._binaryVersion = {
+      major: Number(major),
+      minor: Number(minor),
+      patch: Number(patch),
+    };
+
+    log.debug({ event: EMU_BIN_VERSION_DETECT_EV, success: true }, 'Detected emulator binary version', this._binaryVersion);
+    return this._binaryVersion;
+  }
+
   async _boot(avdName, adbName) {
     const coldBoot = !!this.pendingBoots[adbName];
 
@@ -133,6 +160,11 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async _fixEmulatorConfigIniSkinNameIfNeeded(avdName) {
+    const binaryVersion = _.get(await this.binaryVersion(), 'major', EMU_BIN_STABLE_SKIN_VER - 1);
+    if (binaryVersion >= EMU_BIN_STABLE_SKIN_VER) {
+      return;
+    }
+
     const avdPath = environment.getAvdDir(avdName);
     const configFile = path.join(avdPath, 'config.ini');
     const config = ini.parse(fs.readFileSync(configFile, 'utf-8'));
@@ -148,7 +180,6 @@ class EmulatorDriver extends AndroidDriver {
       config['skin.name'] = `${width}x${height}`;
       fs.writeFileSync(configFile, ini.stringify(config));
     }
-    return config;
   }
 
   async _createDevice() {
