@@ -111,11 +111,11 @@ function composeArtifactsConfig({
         rootDir: 'artifacts',
         pathBuilder: null,
         plugins: {
-          log: LogArtifactPlugin.parseConfig(undefined),
-          screenshot: ScreenshotArtifactPlugin.parseConfig(undefined),
-          video: VideoArtifactPlugin.parseConfig(undefined),
-          instruments: InstrumentsArtifactPlugin.parseConfig(undefined),
-          timeline: TimelineArtifactPlugin.parseConfig(undefined),
+          log: 'none',
+          screenshot: 'manual',
+          video: 'none',
+          instruments: 'none',
+          timeline: 'none',
         },
       }),
   );
@@ -141,7 +141,7 @@ function extendArtifactsConfig(config) {
     plugins: {
       ...config.plugins,
       log: ifString(p.log, LogArtifactPlugin.parseConfig),
-      screenshot: ScreenshotArtifactPlugin.mergeConfigs(null, p.screenshot),
+      screenshot: ifString(p.screenshot, ScreenshotArtifactPlugin.parseConfig),
       video: ifString(p.video, VideoArtifactPlugin.parseConfig),
       instruments: ifString(p.instruments, InstrumentsArtifactPlugin.parseConfig),
       timeline: ifString(p.timeline, TimelineArtifactPlugin.parseConfig),
@@ -149,8 +149,8 @@ function extendArtifactsConfig(config) {
   };
 }
 
-function ifString(value, thenMapper, elseMapper = _.identity) {
-  return typeof value === 'string' ? thenMapper(value) : elseMapper(value);
+function ifString(value, mapper) {
+  return typeof value === 'string' ? mapper(value) : value;
 }
 
 function resolveArtifactsPathBuilder(artifactsConfig) {
