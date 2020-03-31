@@ -26,7 +26,7 @@ Homebrew is a package manager for macOS, we'll need it to install other command 
 To ensure everything needed for Homebrew tool installation is installed, run
 
 ```sh
-xcode-select install
+xcode-select --install
 ```
 
 > TIP: Verify it works by typing in terminal `brew -h` to output list of available commands

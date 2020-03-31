@@ -75,20 +75,22 @@ module.exports.builder = {
   'take-screenshots': {
     group: 'Debugging:',
     choices: ['manual', 'failing', 'all', 'none'],
-    describe:
-      'Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only.'
+    describe: 'Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only.'
   },
   'record-videos': {
     group: 'Debugging:',
     choices: ['failing', 'all', 'none'],
-    describe:
-      'Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only.'
+    describe: 'Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only.'
   },
   'record-performance': {
     group: 'Debugging:',
     choices: ['all', 'none'],
-    describe:
-      '[iOS Only] Save Detox Instruments performance recordings of each test to artifacts directory.'
+    describe: '[iOS Only] Save Detox Instruments performance recordings of each test to artifacts directory.'
+  },
+  'record-timeline': {
+    group: 'Debugging:',
+    choices: ['all', 'none'],
+    describe: '[Jest Only] Record tests and events timeline, for visual display on the chrome://tracing tool.'
   },
   w: {
     alias: 'workers',
@@ -123,7 +125,13 @@ module.exports.builder = {
   'device-launch-args': {
     group: 'Execution:',
     describe: 'Custom arguments to pass (through) onto the device (emulator/simulator) binary when launched.'
-  }
+  },
+  'use-custom-logger': {
+    boolean: true,
+    default: true,
+    group: 'Execution:',
+    describe: `Use Detox' custom console-logging implementation, for logging Detox (non-device) logs. Disabling will fallback to node.js / test-runner's implementation (e.g. Jest / Mocha).`,
+  },
 };
 
 const collectExtraArgs = require('./utils/collectExtraArgs')(module.exports.builder);
@@ -222,6 +230,7 @@ module.exports.handler = async function test(program) {
         (hasCustomValue('record-performance') ? `--record-performance ${program.recordPerformance}` : ''),
         (program.artifactsLocation ? `--artifacts-location "${program.artifactsLocation}"` : ''),
         (program.deviceName ? `--device-name "${program.deviceName}"` : ''),
+        (program.useCustomLogger ? `--use-custom-logger "${program.useCustomLogger}"` : ''),
       ]),
       ...getPassthroughArguments(),
     ]).join(' ');
@@ -277,10 +286,12 @@ module.exports.handler = async function test(program) {
         'takeScreenshots',
         'recordVideos',
         'recordPerformance',
+        'recordTimeline',
         'deviceName',
         'reportSpecs',
         'readOnlyEmu',
         'deviceLaunchArgs',
+        'useCustomLogger'
       ]),
       DETOX_START_TIMESTAMP: Date.now(),
     };

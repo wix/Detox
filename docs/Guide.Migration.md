@@ -1,6 +1,16 @@
 # Migration Guide
 
-We are improving detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes. If a newer version has no entries in this document, it means it does not require special migration steps. Refer to the release notes of the later builds to learn about their improvements and changes.
+We are improving Detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes. If a newer version has no entries in this document, it means it does not require special migration steps. Refer to the release notes of the later builds to learn about their improvements and changes.
+
+## 16.0.0
+
+Detox now comes as a prebuilt framework on iOS, thus lowering npm install times and saving some build issues that happen due to unexpected Xcode setups.
+
+To support this, Detox needs Swift 5 support, so the iOS requirements have changed slightly:
+* **Xcode**: 10.2 or higher
+  * **iOS Simulator Runtime**: iOS 12.2 or higher
+
+This does not require that your app require iOS 12.2, only that you build and run your app on Xcode 10.2 or above, and use an iOS 12.2 or above simulator.
 
 ## 14.5.0
 
@@ -281,7 +291,7 @@ buildscript {
     // ...
     ext.kotlinVersion = '1.3.0'
     
-    dependencies: {
+    dependencies {
         // ...
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }

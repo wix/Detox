@@ -25,6 +25,7 @@ class AndroidInstrumentsPlugin extends InstrumentsArtifactPlugin {
   createTestRecording() {
     return new AndroidInstrumentsRecording({
       adb: this.adb,
+      pluginContext: this.context,
       client: this.client,
       deviceId: this.context.deviceId,
       temporaryRecordingPath: this.devicePathBuilder.buildTemporaryArtifactPath('.dtxplain'),

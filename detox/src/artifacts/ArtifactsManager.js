@@ -4,31 +4,14 @@ const path = require('path');
 const util = require('util');
 const FileArtifact = require('./templates/artifact/FileArtifact');
 const log = require('../utils/logger').child({ __filename });
-const ArtifactPathBuilder = require('./utils/ArtifactPathBuilder');
 
 class ArtifactsManager {
-  constructor({ rootDir, pathBuilder, plugins } = {}) {
-    this.onTerminate = _.once(this.onTerminate.bind(this));
-
+  constructor({ pathBuilder, plugins } = {}) {
     this._pluginConfigs = plugins;
     this._idlePromise = Promise.resolve();
     this._idleCallbackRequests = [];
-    this._activeArtifacts = [];
     this._artifactPlugins = {};
-
-    this._pathBuilder = this._instantiatePathBuilder(pathBuilder, rootDir);
-  }
-
-  _instantiatePathBuilder(pathBuilderFactory, rootDir) {
-    if (typeof pathBuilderFactory === 'function') {
-      return pathBuilderFactory({ rootDir });
-    }
-
-    if (pathBuilderFactory) {
-      return pathBuilderFactory;
-    }
-
-    return new ArtifactPathBuilder({ rootDir });
+    this._pathBuilder = pathBuilder;
   }
 
   _instantitateArtifactPlugin(pluginFactory, pluginUserConfig) {
@@ -45,13 +28,8 @@ class ArtifactsManager {
         return artifactPath;
       },
 
-      trackArtifact: (artifact) => {
-        this._activeArtifacts.push(artifact);
-      },
-
-      untrackArtifact: (artifact) => {
-        _.pull(this._activeArtifacts, artifact);
-      },
+      trackArtifact: _.noop,
+      untrackArtifact: _.noop,
 
       requestIdleCallback: (callback) => {
         this._idleCallbackRequests.push({
@@ -62,6 +40,7 @@ class ArtifactsManager {
         this._idlePromise = this._idlePromise.then(() => {
           const nextCallbackRequest = this._idleCallbackRequests.shift();
 
+          /* istanbul ignore else  */
           if (nextCallbackRequest) {
             return this._executeIdleCallbackRequest(nextCallbackRequest);
           }
@@ -147,32 +126,17 @@ class ArtifactsManager {
     await this._callPlugins('descending', 'onTestDone', testSummary);
   }
 
+  async onSuiteStart(suite) {
+    await this._callPlugins('descending', 'onSuiteStart', suite);
+  }
+
+  async onSuiteEnd(suite) {
+    await this._callPlugins('descending', 'onSuiteEnd', suite);
+  }
+
   async onBeforeCleanup() {
     await this._callPlugins('descending', 'onBeforeCleanup');
     await this._idlePromise;
-  }
-
-  async onTerminate() {
-    if (_.isEmpty(this._artifactPlugins)) {
-      return;
-    }
-
-    log.info({ event: 'TERMINATE_START' }, 'finalizing the recorded artifacts, this can take some time...');
-
-    await this._callPlugins('plain', 'onTerminate');
-
-    const allCallbackRequests = this._idleCallbackRequests.splice(0);
-    await Promise.all(allCallbackRequests.map(this._executeIdleCallbackRequest.bind(this)));
-    await this._idlePromise;
-
-    await Promise.all(this._activeArtifacts.map(artifact => artifact.discard()));
-    await this._idlePromise;
-
-    for (const key of Object.keys(this._activeArtifacts)) {
-      delete this._artifactPlugins[key];
-    }
-
-    log.info({ event: 'TERMINATE_SUCCESS' }, 'done.');
   }
 
   async _callSinglePlugin(pluginId, methodName, ...args) {
@@ -251,6 +215,5 @@ class ArtifactsManager {
     })
   }
 }
-
 
 module.exports = ArtifactsManager;

@@ -6,7 +6,6 @@ buildscript {
         targetSdkVersion = 29
         minSdkVersion = 18
     }
-    ext.detoxKotlinVersion = ext.kotlinVersion
 
     repositories {
         jcenter()

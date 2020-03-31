@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "15.1.4",
+  "version": "16.0.2",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -31,7 +31,7 @@
   "devDependencies": {
     "eslint": "^4.11.0",
     "eslint-plugin-node": "^6.0.1",
-    "jest": "24.6.x",
+    "jest": "25.1.x",
     "mockdate": "^2.0.1",
     "prettier": "1.7.0",
     "react-native": "0.60.x",
@@ -85,7 +85,7 @@
       "src/artifacts/instruments",
       "src/artifacts/screenshot",
       "src/artifacts/video",
-      "src/devices/ios/AppleSimUtils.js",
+      "src/devices/drivers/ios/tools/AppleSimUtils.js",
       "src/server/DetoxServer.js",
       ".*Driver.js",
       "MissingDetox.js",

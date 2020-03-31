@@ -14,7 +14,7 @@ describe('Open URLs', () => {
 
   const withSingleInstanceActivityArgs = () => ({
     url: 'detoxtesturlscheme.singleinstance://such-string',
-    launchArgs: { androidSingleInstanceActivity: true },
+    launchArgs: { detoxAndroidSingleInstanceActivity: true },
   });
 
   [

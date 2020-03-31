@@ -1,7 +1,7 @@
 jest.mock('../../../utils/logger.js');
 const WholeTestRecorderPlugin = require('./WholeTestRecorderPlugin');
 const ArtifactsApi = require('./__mocks__/ArtifactsApi.mock');
-const testSummaries = require('./__mocks__/testSummaries.mock');
+const testSummaries = require('../../__mocks__/testSummaries.mock');
 
 describe('WholeTestRecorderPlugin', () => {
   let api;

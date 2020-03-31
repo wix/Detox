@@ -1,16 +1,17 @@
 const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
-const os = require('os');
 const ini = require('ini');
 const AndroidDriver = require('./AndroidDriver');
-const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
-const DeviceRegistry = require('../DeviceRegistry');
-const Emulator = require('../android/Emulator');
-const EmulatorTelnet = require('../android/EmulatorTelnet');
-const environment = require('../../utils/environment');
-const retry = require('../../utils/retry');
-const log = require('../../utils/logger').child({ __filename });
+const EmulatorLookupHelper = require('./EmulatorLookupHelper');
+const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
+const DeviceRegistry = require('../../DeviceRegistry');
+const Emulator = require('./tools/Emulator');
+const EmulatorTelnet = require('./tools/EmulatorTelnet');
+const EmulatorVersion = require('./EmulatorVersion');
+const environment = require('../../../utils/environment');
+const retry = require('../../../utils/retry');
+const log = require('../../../utils/logger').child({ __filename });
 
 const DetoxEmulatorsPortRange = {
   min: 10000,
@@ -18,6 +19,7 @@ const DetoxEmulatorsPortRange = {
 };
 
 const ACQUIRE_DEVICE_EV = 'ACQUIRE_DEVICE';
+const EMU_BIN_STABLE_SKIN_VER = 28;
 
 class EmulatorDriver extends AndroidDriver {
   constructor(config) {
@@ -29,6 +31,7 @@ class EmulatorDriver extends AndroidDriver {
     });
     this.pendingBoots = {};
     this._name = 'Unspecified Emulator';
+    this._emulatorVersion = new EmulatorVersion(this.emulator);
   }
 
   get name() {
@@ -41,32 +44,7 @@ class EmulatorDriver extends AndroidDriver {
     await this._validateAvd(avdName);
     await this._fixEmulatorConfigIniSkinNameIfNeeded(avdName);
 
-    log.debug({ event: ACQUIRE_DEVICE_EV }, `Looking up a device based on ${avdName}`);
-
-    const adbName = await this.deviceRegistry.allocateDevice(async () => {
-      let freeEmulatorAdbName;
-
-      const { devices } = await this.adb.devices();
-      for (const candidate of devices) {
-        const isEmulator = candidate.type === 'emulator';
-        const isBusy = this.deviceRegistry.isDeviceBusy(candidate.adbName);
-
-        if (isEmulator && !isBusy) {
-          if (await candidate.queryName() === avdName) {
-            freeEmulatorAdbName = candidate.adbName;
-            log.debug({ event: ACQUIRE_DEVICE_EV }, `Found ${candidate.adbName}!`);
-            break;
-          }
-          log.debug({ event: ACQUIRE_DEVICE_EV }, `${candidate.adbName} is available but AVD is different`);
-        } else {
-          log.debug({ event: ACQUIRE_DEVICE_EV }, `${candidate.adbName} is not a free emulator`, isEmulator, !isBusy);
-        }
-      }
-
-      return freeEmulatorAdbName || this._createDevice();
-    });
-
-    log.debug({ event: ACQUIRE_DEVICE_EV }, `Settled on ${adbName}`);
+    const adbName = await this._allocateDevice(avdName);
 
     await this._boot(avdName, adbName);
 
@@ -82,6 +60,10 @@ class EmulatorDriver extends AndroidDriver {
     await super.cleanup(adbName, bundleId);
   }
 
+  /*async*/ binaryVersion() {
+    return this._emulatorVersion.resolve();
+  }
+
   async _boot(avdName, adbName) {
     const coldBoot = !!this.pendingBoots[adbName];
 
@@ -92,7 +74,7 @@ class EmulatorDriver extends AndroidDriver {
     }
 
     await this._waitForBootToComplete(adbName);
-    await this.emitter.emit('bootDevice', { coldBoot, deviceId: adbName });
+    await this.emitter.emit('bootDevice', { coldBoot, deviceId: adbName, type: adbName });
   }
 
   async _validateAvd(avdName) {
@@ -133,6 +115,11 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async _fixEmulatorConfigIniSkinNameIfNeeded(avdName) {
+    const binaryVersion = _.get(await this.binaryVersion(), 'major', EMU_BIN_STABLE_SKIN_VER - 1);
+    if (binaryVersion >= EMU_BIN_STABLE_SKIN_VER) {
+      return;
+    }
+
     const avdPath = environment.getAvdDir(avdName);
     const configFile = path.join(avdPath, 'config.ini');
     const config = ini.parse(fs.readFileSync(configFile, 'utf-8'));
@@ -148,7 +135,19 @@ class EmulatorDriver extends AndroidDriver {
       config['skin.name'] = `${width}x${height}`;
       fs.writeFileSync(configFile, ini.stringify(config));
     }
-    return config;
+  }
+
+  async _allocateDevice(avdName) {
+    log.debug({ event: ACQUIRE_DEVICE_EV }, `Looking up a device based on ${avdName}`);
+    const adbName = await this.deviceRegistry.allocateDevice(() => this._doAllocateDevice(avdName));
+    log.debug({ event: ACQUIRE_DEVICE_EV }, `Settled on ${adbName}`);
+    return adbName;
+  }
+
+  async _doAllocateDevice(avdName) {
+    const emulatorLookupHelper = new EmulatorLookupHelper(this.adb, this.deviceRegistry, avdName);
+    const freeEmulatorAdbName = await emulatorLookupHelper.findFreeDevice();
+    return freeEmulatorAdbName || this._createDevice();
   }
 
   async _createDevice() {

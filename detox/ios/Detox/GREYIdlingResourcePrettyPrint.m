@@ -9,50 +9,7 @@
 #import "GREYIdlingResourcePrettyPrint.h"
 @import ObjectiveC;
 #include <os/log.h>
-
-@interface __DTXDeallocSafeProxy : NSObject
-
-@property (nonatomic, weak) id object;
-
-@end
-
-@implementation __DTXDeallocSafeProxy
-{
-	NSString* _cachedDescription;
-	NSString* _cachedDebugDescription;
-}
-
-- (NSString *)description
-{
-	return  self.object? [self.object description] : _cachedDescription;
-}
-
-- (NSString *)debugDescription
-{
-	return  self.object? [self.object debugDescription] : _cachedDebugDescription;
-}
-
-- (void)dealloc
-{
-	self.object = nil;
-}
-
-- (instancetype)initWithObject:(id)object
-{
-	self = [super init];
-	if(self)
-	{
-		self.object = object;
-		_cachedDescription = [object description];
-		if([object respondsToSelector:@selector(debugDescription)])
-		{
-			_cachedDebugDescription = [object debugDescription];
-		}
-	}
-	return self;
-}
-
-@end
+#import "__DTXDeallocSafeProxy.h"
 
 @interface NSMapTable<KeyType, ObjectType> ()
 
@@ -188,18 +145,13 @@ NSDictionary* _prettyPrintAppStateTracker(GREYAppStateTracker* tracker)
 		NSMutableArray* elems = [NSMutableArray new];
 		NSMutableArray* URLs = [NSMutableArray new];
 		
-		[allElements enumerateObjectsUsingBlock:^(__DTXDeallocSafeProxy* _Nonnull actualElement, NSUInteger idx, BOOL * _Nonnull stop) {
-			__strong id actualObject = actualElement.object;
-			if(actualObject == nil)
-			{
-				return;
-			}
+		[allElements enumerateObjectsUsingBlock:^(__DTXDeallocSafeProxy* _Nonnull proxy, NSUInteger idx, BOOL * _Nonnull stop) {
+			[elems addObject:[proxy description]];
 			
-			[elems addObject:[actualObject description]];
-			
-			if([actualObject isKindOfClass:[NSURLSessionTask class]])
+			NSURLRequest* originalRequest = proxy.originalRequest;
+			if(originalRequest != nil)
 			{
-				[URLs addObject:[(NSURLSessionTask*)actualObject originalRequest].URL.absoluteString];
+				[URLs addObject:originalRequest.URL.absoluteString];
 			}
 		}];
 		

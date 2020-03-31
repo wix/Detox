@@ -14,6 +14,8 @@ import java.lang.reflect.InvocationTargetException
 import java.util.*
 import java.util.concurrent.Executors
 
+val mockErrorParser = { error: Throwable? -> "mockErrorParser($error)" }
+
 object DetoxActionHandlersSpec : Spek({
     describe("Action handlers") {
         val params = "{\"mock\": \"params\"}"
@@ -94,7 +96,7 @@ object DetoxActionHandlersSpec : Spek({
         describe("Invoke actions") {
             lateinit var methodInvocationMock: MethodInvocation
 
-            fun uut() = InvokeActionHandler(methodInvocationMock, wsClient)
+            fun uut() = InvokeActionHandler(methodInvocationMock, wsClient, mockErrorParser)
 
             beforeEachTest {
                 methodInvocationMock = mock()
@@ -125,24 +127,27 @@ object DetoxActionHandlersSpec : Spek({
             }
 
             it("should handle runtime errors") {
-                whenever(methodInvocationMock.invoke(isA<String>())).thenThrow(IllegalStateException("mock-error-reason"))
+                val exception = IllegalStateException("mock-error-reason")
+                whenever(methodInvocationMock.invoke(isA<String>())).thenThrow(exception)
+
                 uut().handle(params, messageId)
 
                 verify(wsClient).sendAction(
                         eq("testFailed"),
-                        argThat { size == 1 && this["details"] == "mock-error-reason" },
+                        argThat { size == 1 && this["details"] == "mockErrorParser($exception)\nCheck device logs for full details!\n" },
                         eq(messageId))
             }
 
             it("should handle an InvocationTargetException") {
-                val exception = InvocationTargetException(Exception("mock-error-reason"))
+                val targetException = Exception("mock-error-reason")
+                val exception = InvocationTargetException(targetException)
                 whenever(methodInvocationMock.invoke(isA<String>())).thenThrow(exception)
 
                 uut().handle(params, messageId)
 
                 verify(wsClient).sendAction(
                         eq("error"),
-                        argThat { size == 1 && this["error"] == "mock-error-reason" },
+                        argThat { size == 1 && this["error"] == "mockErrorParser(${targetException})\nCheck device logs for full details!\n" },
                         eq(messageId))
             }
         }

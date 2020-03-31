@@ -1,4 +1,5 @@
 const schemes = require('./configurations.mock');
+const testSummaries = require('./artifacts/__mocks__/testSummaries.mock');
 
 const defaultPlatformEnv = {
   darwin: {},
@@ -14,6 +15,8 @@ const defaultPlatformEnv = {
 };
 
 describe('Detox', () => {
+  let client;
+  let mockLogger;
   let fs;
   let Detox;
   let detox;
@@ -27,12 +30,16 @@ describe('Detox', () => {
   const deviceMockData = {lastConstructorArguments: null};
 
   beforeEach(async () => {
-    function setCustomMock(modulePath, dataObject) {
+    function setCustomClassMock(modulePath, dataObject, mockObject = {}) {
       const JestMock = jest.genMockFromModule(modulePath);
       class FinalMock extends JestMock {
         constructor(...rest) {
           super(rest);
           dataObject.lastConstructorArguments = rest;
+
+          Object.keys(mockObject).forEach((key) => {
+            this[key] = mockObject[key].bind(this);
+          });
         }
         on(event, callback) {
           if (event === 'launchApp') {
@@ -43,24 +50,32 @@ describe('Detox', () => {
       jest.setMock(modulePath, FinalMock);
     }
 
-    jest.mock('./utils/logger');
     jest.mock('fs');
     jest.mock('fs-extra');
     fs = require('fs');
     jest.mock('./ios/expect');
-    setCustomMock('./client/Client', clientMockData);
-    setCustomMock('./devices/Device', deviceMockData);
+
+    mockLogger = jest.genMockFromModule('./utils/logger');
+    mockLogger.child.mockReturnValue(mockLogger);
+    jest.mock('./utils/logger', () => mockLogger);
+
+    setCustomClassMock('./devices/Device', deviceMockData);
+
+    client = {
+      setNonresponsivenessListener: jest.fn(),
+      getPendingCrashAndReset: jest.fn(),
+      dumpPendingRequests: jest.fn(),
+    };
+    setCustomClassMock('./client/Client', clientMockData, client);
 
     process.env = Object.assign({}, defaultPlatformEnv[process.platform]);
 
     global.device = undefined;
 
-    jest.mock('./devices/drivers/IosDriver');
-    jest.mock('./devices/drivers/SimulatorDriver');
+    jest.mock('./devices/drivers/ios/IosDriver');
+    jest.mock('./devices/drivers/ios/SimulatorDriver');
     jest.mock('./devices/Device');
     jest.mock('./server/DetoxServer');
-    jest.mock('./client/Client');
-    jest.mock('./utils/logger');
   });
 
   it(`Passing --cleanup should shutdown the currently running device`, async () => {
@@ -158,33 +173,67 @@ describe('Detox', () => {
   });
 
   it(`handleAppCrash if client has a pending crash`, async () => {
+    client.getPendingCrashAndReset.mockReturnValueOnce('crash');
+
     Detox = require('./Detox');
     detox = new Detox({deviceConfig: validDeviceConfigWithSession});
     await detox.init();
-    detox._client.getPendingCrashAndReset.mockReturnValueOnce('crash'); // TODO: rewrite to avoid accessing private fields
-    await detox.afterEach({ title: 'a', fullName: 'b', status: 'failed' });
+    await detox.afterEach(testSummaries.failed());
     expect(device.launchApp).toHaveBeenCalledTimes(1);
   });
 
   it(`handleAppCrash should not dump pending requests if testSummary has no timeout flag`, async () => {
     Detox = require('./Detox');
     detox = new Detox({deviceConfig: validDeviceConfigWithSession});
-    const testSummary = { title: 'test', fullName: 'suite - test', status: 'failed' };
 
     await detox.init();
-    await detox.afterEach(testSummary);
+    await detox.afterEach(testSummaries.failed());
 
-    expect(detox._client.dumpPendingRequests).not.toHaveBeenCalled();
+    expect(client.dumpPendingRequests).not.toHaveBeenCalled();
   });
 
   it(`handleAppCrash should dump pending requests if testSummary has timeout flag`, async () => {
     Detox = require('./Detox');
     detox = new Detox({deviceConfig: validDeviceConfigWithSession});
-    const testSummary = { title: 'test', fullName: 'suite - test', status: 'failed', timedOut: true };
 
     await detox.init();
-    await detox.afterEach(testSummary);
-    expect(detox._client.dumpPendingRequests).toHaveBeenCalled();
+    await detox.afterEach(testSummaries.timedOut());
+    expect(client.dumpPendingRequests).toHaveBeenCalled();
+  });
+
+  it(`should register an async nonresponsiveness listener`, async () => {
+    Detox = require('./Detox');
+    detox = new Detox({deviceConfig: validDeviceConfigWithSession});
+
+    await detox.init();
+
+    expect(client.setNonresponsivenessListener).toHaveBeenCalled();
+  });
+
+  it(`should log thread-dump provided by a nonresponsiveness event`, async () => {
+    const callbackParams = {
+      threadDump: 'mockThreadDump',
+    };
+    const expectedMessage = [
+      'Application nonresponsiveness detected!',
+      'On Android, this could imply an ANR alert, which evidently causes tests to fail.',
+      'Here\'s the native main-thread stacktrace from the device, to help you out (refer to device logs for the complete thread dump):',
+      callbackParams.threadDump,
+      'Refer to https://developer.android.com/training/articles/perf-anr for further details.'
+    ].join('\n');
+
+    Detox = require('./Detox');
+    detox = new Detox({deviceConfig: validDeviceConfigWithSession});
+
+    await detox.init();
+    await invokeDetoxCallback();
+
+    expect(mockLogger.warn).toHaveBeenCalledWith({ event: 'APP_NONRESPONSIVE' }, expectedMessage);
+
+    async function invokeDetoxCallback() {
+      const callback = client.setNonresponsivenessListener.mock.calls[0][0];
+      await callback(callbackParams);
+    }
   });
 
   it('properly instantiates configuration pointing to a plugin driver', async () => {
@@ -221,25 +270,25 @@ describe('Detox', () => {
       artifactsManager = detox._artifactsManager; // TODO: rewrite to avoid accessing private fields
     });
 
-    it(`Calling detox.beforeEach() will trigger artifacts manager .onBeforeEach`, async () => {
-      const testSummary = { title: 'test', fullName: 'suite - test', status: 'running' };
+    it(`Calling detox.beforeEach() will trigger artifacts manager .onTestStart`, async () => {
+      const testSummary = testSummaries.running();
       await detox.beforeEach(testSummary);
 
       expect(artifactsManager.onTestStart).toHaveBeenCalledWith(testSummary);
     });
 
     it(`Calling detox.beforeEach() and detox.afterEach() with a deprecated signature will throw an exception`, async () => {
-      const testSummary = { title: 'test', fullName: 'suite - test', status: 'running' };
+      const { title, fullName, status } = testSummaries.running();
 
-      await expect(detox.beforeEach(testSummary.title, testSummary.fullName, testSummary.status)).rejects.toThrowError();
+      await expect(detox.beforeEach(title, fullName, status)).rejects.toThrowError();
       expect(artifactsManager.onTestStart).not.toHaveBeenCalled();
 
-      await expect(detox.afterEach(testSummary.title, testSummary.fullName, testSummary.status)).rejects.toThrowError();
+      await expect(detox.afterEach(title, fullName, status)).rejects.toThrowError();
       expect(artifactsManager.onTestDone).not.toHaveBeenCalled();
     });
 
     it(`Calling detox.beforeEach() and detox.afterEach() with incorrect test status will throw an exception`, async () => {
-      const testSummary = { title: 'test', fullName: 'suite - test', status: 'incorrect status' };
+      const testSummary = { ...testSummaries.running(), status: 'incorrect status' };
 
       await expect(detox.beforeEach(testSummary)).rejects.toThrowError();
       expect(artifactsManager.onTestStart).not.toHaveBeenCalled();
@@ -248,8 +297,8 @@ describe('Detox', () => {
       expect(artifactsManager.onTestDone).not.toHaveBeenCalled();
     });
 
-    it(`Calling detox.afterEach() should trigger artifactsManager.onAfterEach`, async () => {
-      const testSummary = { title: 'test', fullName: 'suite - test', status: 'passed' };
+    it(`Calling detox.afterEach() should trigger artifactsManager.onTestDone`, async () => {
+      const testSummary = testSummaries.passed();
       await detox.afterEach(testSummary);
 
       expect(artifactsManager.onTestDone).toHaveBeenCalledWith(testSummary);
@@ -258,6 +307,22 @@ describe('Detox', () => {
     it(`Calling detox.cleanup() should trigger artifactsManager.onBeforeCleanup()`, async () => {
       await detox.cleanup();
       expect(artifactsManager.onBeforeCleanup).toHaveBeenCalledTimes(1);
+    });
+
+    it(`should trigger artifactsManager.onSuiteStart`, async() => {
+      const suite = {name: 'testSuiteName'};
+
+      await detox.suiteStart(suite);
+
+      expect(artifactsManager.onSuiteStart).toHaveBeenCalledWith(suite);
+    });
+
+    it(`should trigger artifactsManager.onSuiteEnd`, async() => {
+      const suite = {name: 'testSuiteName'};
+
+      await detox.suiteEnd(suite);
+
+      expect(artifactsManager.onSuiteEnd).toHaveBeenCalledWith(suite);
     });
   });
 });

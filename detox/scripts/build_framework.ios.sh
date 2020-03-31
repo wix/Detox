@@ -14,21 +14,17 @@ detoxFrameworkPath="${detoxFrameworkDirPath}/Detox.framework"
 function prepareAndBuildFramework () {
   if [ -d "$detoxRootPath"/ios ]; then
     detoxSourcePath="${detoxRootPath}"/ios
-    echo "Dev mode, will build from ${detoxSourcePath}"
+    echo "Dev mode, building from ${detoxSourcePath}"
     buildFramework "${detoxSourcePath}"
   else
-    detoxSourcePath="${detoxRootPath}"/ios_src
-    extractSources "${detoxSourcePath}"
-    buildFramework "${detoxSourcePath}"
-    rm -fr "${detoxSourcePath}"
+    extractFramework
   fi
 }
 
-function extractSources () {
-  detoxSourcePath="${1}"
-  echo "Extracting Detox sources..."
-  mkdir -p "${detoxSourcePath}"
-  tar -xjf "${detoxRootPath}"/Detox-ios-src.tbz -C "${detoxSourcePath}"
+function extractFramework () {
+  echo "Extracting Detox framework..."
+  mkdir -p "${detoxFrameworkDirPath}"
+  tar -xjf "${detoxRootPath}"/Detox-ios.tbz -C "${detoxFrameworkDirPath}"
 }
 
 function buildFramework () {
@@ -37,14 +33,12 @@ function buildFramework () {
   mkdir -p "${detoxFrameworkDirPath}"
 	logPath="${detoxFrameworkDirPath}"/detox_ios.log
 	echo -n "" > "${logPath}"
-  "${detoxRootPath}"/scripts/build_universal_framework.sh "${detoxSourcePath}"/Detox.xcodeproj "${detoxFrameworkDirPath}" &> "${logPath}"
-	errno=$?
-	if [ $errno -ne 0 ]; then
+  "${detoxRootPath}"/scripts/build_universal_framework.sh "${detoxSourcePath}"/Detox.xcodeproj "${detoxFrameworkDirPath}" &> "${logPath}" || {
 		echo -e "#################################\nError building Detox.framework:\n----------------------------------\n"
 		cat "${logPath}"
 		echo "#################################"
-	fi
-	exit $errno
+	  exit 1
+  }
 }
 
 function main () {
@@ -55,7 +49,7 @@ function main () {
       rm -rf "${detoxFrameworkDirPath}"
       prepareAndBuildFramework
     else
-      echo "Detox.framework was previously compiled, skipping..."
+      echo "Detox.framework exists, skipping..."
     fi
   else
     prepareAndBuildFramework

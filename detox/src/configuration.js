@@ -1,15 +1,16 @@
 const _ = require('lodash');
-const path = require('path');
 const DetoxConfigError = require('./errors/DetoxConfigError');
 const uuid = require('./utils/uuid');
 const argparse = require('./utils/argparse');
 const getPort = require('get-port');
 const buildDefaultArtifactsRootDirpath = require('./artifacts/utils/buildDefaultArtifactsRootDirpath');
 
+const TimelineArtifactPlugin = require('./artifacts/timeline/TimelineArtifactPlugin');
 const InstrumentsArtifactPlugin = require('./artifacts/instruments/InstrumentsArtifactPlugin');
 const LogArtifactPlugin = require('./artifacts/log/LogArtifactPlugin');
 const ScreenshotArtifactPlugin = require('./artifacts/screenshot/ScreenshotArtifactPlugin');
 const VideoArtifactPlugin = require('./artifacts/video/VideoArtifactPlugin');
+const ArtifactPathBuilder = require('./artifacts/utils/ArtifactPathBuilder');
 
 async function defaultSession() {
   return {
@@ -78,6 +79,7 @@ function getArtifactsCliConfig() {
     takeScreenshots: argparse.getArgValue('take-screenshots'),
     recordVideos: argparse.getArgValue('record-videos'),
     recordPerformance: argparse.getArgValue('record-performance'),
+    recordTimeline: argparse.getArgValue('record-timeline'),
   };
 }
 
@@ -93,18 +95,19 @@ function composeArtifactsConfig({
   cliConfig = getArtifactsCliConfig()
 }) {
   const artifactsConfig = _.defaultsDeep(
-      {
+      extendArtifactsConfig({
         rootDir: cliConfig.artifactsLocation,
         plugins: {
           log: cliConfig.recordLogs,
           screenshot: cliConfig.takeScreenshots,
           video: cliConfig.recordVideos,
           instruments: cliConfig.recordPerformance,
+          timeline: cliConfig.recordTimeline,
         },
-      },
-      deviceConfig.artifacts,
-      detoxConfig.artifacts,
-      {
+      }),
+      extendArtifactsConfig(deviceConfig.artifacts),
+      extendArtifactsConfig(detoxConfig.artifacts),
+      extendArtifactsConfig({
         rootDir: 'artifacts',
         pathBuilder: null,
         plugins: {
@@ -112,8 +115,9 @@ function composeArtifactsConfig({
           screenshot: 'manual',
           video: 'none',
           instruments: 'none',
+          timeline: 'none',
         },
-      }
+      }),
   );
 
   artifactsConfig.rootDir = buildDefaultArtifactsRootDirpath(
@@ -121,20 +125,54 @@ function composeArtifactsConfig({
     artifactsConfig.rootDir
   );
 
-  if (typeof artifactsConfig.pathBuilder === 'string') {
-    artifactsConfig.pathBuilder = resolveModuleFromPath(artifactsConfig.pathBuilder);
-  }
-
-  artifactsConfig.plugins = _.mapValues(artifactsConfig.plugins, (value, key) => {
-    switch (key) {
-      case 'instruments': return InstrumentsArtifactPlugin.parseConfig(value);
-      case 'log': return LogArtifactPlugin.parseConfig(value);
-      case 'screenshot': return ScreenshotArtifactPlugin.parseConfig(value);
-      case 'video': return VideoArtifactPlugin.parseConfig(value);
-    }
-  });
+  artifactsConfig.pathBuilder = resolveArtifactsPathBuilder(artifactsConfig);
 
   return artifactsConfig;
+}
+
+function extendArtifactsConfig(config) {
+  const p = config && config.plugins;
+  if (!p) {
+    return config;
+  }
+
+  return {
+    ...config,
+    plugins: {
+      ...config.plugins,
+      log: ifString(p.log, LogArtifactPlugin.parseConfig),
+      screenshot: ifString(p.screenshot, ScreenshotArtifactPlugin.parseConfig),
+      video: ifString(p.video, VideoArtifactPlugin.parseConfig),
+      instruments: ifString(p.instruments, InstrumentsArtifactPlugin.parseConfig),
+      timeline: ifString(p.timeline, TimelineArtifactPlugin.parseConfig),
+    },
+  };
+}
+
+function ifString(value, mapper) {
+  return typeof value === 'string' ? mapper(value) : value;
+}
+
+function resolveArtifactsPathBuilder(artifactsConfig) {
+  let { rootDir, pathBuilder } = artifactsConfig;
+
+  if (typeof pathBuilder === 'string') {
+    pathBuilder = resolveModuleFromPath(pathBuilder);
+  }
+
+  if (typeof pathBuilder === 'function') {
+    try {
+      pathBuilder = pathBuilder({ rootDir });
+    } catch (e) {
+      pathBuilder = new pathBuilder({ rootDir });
+    }
+  }
+
+  if (!pathBuilder) {
+    pathBuilder = new ArtifactPathBuilder({ rootDir });
+  }
+
+  return pathBuilder;
 }
 
 module.exports = {

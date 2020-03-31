@@ -1,5 +1,6 @@
 const chalk = require('chalk').default;
 const ReporterBase = require('./ReporterBase');
+const log = require('../../src/utils/logger').child();
 
 const RESULT_SKIPPED = chalk.yellow('SKIPPED');
 const RESULT_FAILED = chalk.red('FAIL');
@@ -51,13 +52,15 @@ class SpecReporter extends ReporterBase {
     this._suites.forEach((suite, index) => {
       this._suitesDesc = this._suitesDesc
         .concat((index > 0) ? ' > ' : '')
-        .concat(chalk.bold.white(suite.description))
+        .concat(suite.description)
         .concat((index === total - 1) ? ': ' : '');
     });
+    this._suitesDesc = chalk.bold.white(this._suitesDesc);
   }
 
   _traceTest({description}, status) {
-    this._traceln(this._suitesDesc + chalk.gray(description) + chalk.gray(status ? ` [${status}]` : ''));
+    const desc = this._suitesDesc + chalk.gray(description) + chalk.gray(status ? ` [${status}]` : '');
+    log.info({event: 'SPEC_STATE_CHANGE'}, desc);
   }
 }
 

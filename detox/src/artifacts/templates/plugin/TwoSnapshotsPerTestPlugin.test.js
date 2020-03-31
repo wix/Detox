@@ -2,7 +2,7 @@ jest.mock('../../../utils/logger.js');
 const TwoSnapshotsPerTestPlugin = require('./TwoSnapshotsPerTestPlugin');
 const ArtifactMock = require('../artifact/__mocks__/ArtifactMock');
 const ArtifactsApi = require('./__mocks__/ArtifactsApi.mock');
-const testSummaries = require('./__mocks__/testSummaries.mock');
+const testSummaries = require('../../__mocks__/testSummaries.mock');
 
 describe('TwoSnapshotsPerTestPlugin', () => {
   let api;

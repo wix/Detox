@@ -11,7 +11,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.lang.reflect.InvocationTargetException
 
-private const val LOG_TAG = "DetoxManager"
+private const val LOG_TAG = "DetoxActionHandlers"
 
 interface DetoxActionHandler {
     fun handle(params: String, messageId: Long)
@@ -43,7 +43,8 @@ class ReactNativeReloadActionHandler(
 
 class InvokeActionHandler(
         private val methodInvocation: MethodInvocation,
-        private val wsClient: WebSocketClient)
+        private val wsClient: WebSocketClient,
+        private val errorParse: (e: Throwable?) -> String)
     : DetoxActionHandler {
 
     override fun handle(params: String, messageId: Long) {
@@ -52,10 +53,10 @@ class InvokeActionHandler(
             wsClient.sendAction("invokeResult", mapOf<String, Any?>("result" to invocationResult), messageId)
         } catch (e: InvocationTargetException) {
             Log.e(LOG_TAG, "Exception", e)
-            wsClient.sendAction("error", mapOf<String, Any?>("error" to e.targetException?.message), messageId)
+            wsClient.sendAction("error", mapOf<String, Any?>("error" to "${errorParse(e.targetException)}\nCheck device logs for full details!\n"), messageId)
         } catch (e: Exception) {
             Log.i(LOG_TAG, "Test exception", e)
-            wsClient.sendAction("testFailed", mapOf<String, Any?>("details" to e.message), messageId)
+            wsClient.sendAction("testFailed", mapOf<String, Any?>("details" to "${errorParse(e)}\nCheck device logs for full details!\n"), messageId)
         }
     }
 }
@@ -119,8 +120,8 @@ class InstrumentsRecordingStateActionHandler(
 ) : DetoxActionHandler {
 
     override fun handle(params: String, messageId: Long) {
-        val recordingPath = JSONObject(params).optString("recordingPath", null)
-        if (recordingPath != null) {
+        val recordingPath = JSONObject(params).opt("recordingPath")
+        if (recordingPath is String) {
             instrumentsManager.startRecordingAtLocalPath(recordingPath)
         } else {
             instrumentsManager.stopRecording()

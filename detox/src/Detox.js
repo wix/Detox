@@ -1,12 +1,12 @@
 const _ = require('lodash');
 const util = require('util');
 const logger = require('./utils/logger');
-const log = require('./utils/logger').child({ __filename });
+const log = logger.child({ __filename });
 const Device = require('./devices/Device');
-const IosDriver = require('./devices/drivers/IosDriver');
-const SimulatorDriver = require('./devices/drivers/SimulatorDriver');
-const EmulatorDriver = require('./devices/drivers/EmulatorDriver');
-const AttachedAndroidDriver = require('./devices/drivers/AttachedAndroidDriver');
+const IosDriver = require('./devices/drivers/ios/IosDriver');
+const SimulatorDriver = require('./devices/drivers/ios/SimulatorDriver');
+const EmulatorDriver = require('./devices/drivers/android/EmulatorDriver');
+const AttachedAndroidDriver = require('./devices/drivers/android/AttachedAndroidDriver');
 const DetoxRuntimeError = require('./errors/DetoxRuntimeError');
 const argparse = require('./utils/argparse');
 const MissingDetox = require('./utils/MissingDetox');
@@ -24,7 +24,14 @@ const DEVICE_CLASSES = {
 };
 
 class Detox {
-  constructor({artifactsConfig, deviceConfig, session}) {
+  constructor(config) {
+    log.trace(
+      { event: 'DETOX_CREATE', config },
+      'created a Detox instance with config:\n%j',
+      config
+    );
+
+    const {artifactsConfig, deviceConfig, session} = config;
     this._deviceConfig = deviceConfig;
     this._userSession = deviceConfig.session || session;
     this._client = null;
@@ -50,6 +57,7 @@ class Detox {
     }
 
     this._client = new Client(sessionConfig);
+    this._client.setNonresponsivenessListener(this._onNonresnponsivenessEvent.bind(this));
     await this._client.connect();
 
     let DeviceDriverClass = DEVICE_CLASSES[this._deviceConfig.type];
@@ -133,6 +141,14 @@ class Detox {
     });
   }
 
+  async suiteStart(suite) {
+    await this._artifactsManager.onSuiteStart(suite);
+  }
+
+  async suiteEnd(suite) {
+    await this._artifactsManager.onSuiteEnd(suite);
+  }
+
   _logTestRunCheckpoint(event, { status, fullName }) {
     log.trace({ event, status }, `${status} test: ${JSON.stringify(fullName)}`);
   }
@@ -161,6 +177,18 @@ class Detox {
           debugInfo: `testSummary was: ${JSON.stringify(testSummary, null, 2)}`,
         });
     }
+  }
+
+  _onNonresnponsivenessEvent(params) {
+    const message = [
+      'Application nonresponsiveness detected!',
+      'On Android, this could imply an ANR alert, which evidently causes tests to fail.',
+      'Here\'s the native main-thread stacktrace from the device, to help you out (refer to device logs for the complete thread dump):',
+      params.threadDump,
+      'Refer to https://developer.android.com/training/articles/perf-anr for further details.'
+    ].join('\n');
+
+    log.warn({ event: 'APP_NONRESPONSIVE' }, message);
   }
 
   async _dumpUnhandledErrorsIfAny({ testName, pendingRequests }) {

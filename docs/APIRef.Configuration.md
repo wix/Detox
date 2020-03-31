@@ -65,10 +65,20 @@ Detox can control artifacts collection via settings from `package.json`:
       "rootDir": ".artifacts",
       "pathBuilder": "./config/pathbuilder.js",
       "plugins": {
-        "instruments": "none",
-        "log": "all",
-        "screenshot": "failing",
-        "video": "none"
+        "instruments": { "enabled": false },
+        "log": { "enabled": true },
+        "screenshot": {
+          "shouldTakeAutomaticSnapshots": true,
+          "keepOnlyFailedTestsArtifacts": true
+        },
+        "video": {
+          "android": {
+            "bitRate": 4000000
+          },
+          "simulator": {
+            "codec": "hevc"
+          }
+        }
       }
     },
     "configurations": {
@@ -77,7 +87,9 @@ Detox can control artifacts collection via settings from `package.json`:
         "device": { /* ... */ },
         "artifacts": {
           "rootDir": ".artifacts/ios",
-          "plugins": { "instruments": "all" }
+          "plugins": {
+            "instruments": "all"
+          }
         }
       }
     }
@@ -85,9 +97,20 @@ Detox can control artifacts collection via settings from `package.json`:
 }
 ```
 
-As can be seen from the example above, in a specific configuration you may override individual properties from the default one.
+As can be seen from the example above, in a specific configuration you may override individual properties from the default artifacts
+configuration. For instance, in the example above you can see that specifically in `ios.sim.release` we turn on `instruments` plugin.
 
 CLI arguments (e.g., `--artifacts-location`, `--record-logs`) still have the highest priority and override their counterparts from JSON.
+
+Also, that example demonstrates that you can use strings (identical to the ones from CLI) in parallel to the object configurations for plugins.
+Below you can see mappings between the string presets and the corresponding objects:
+
+| preset  |  object                                                      |
+|---------|--------------------------------------------------------------|
+| none    | `{ "enabled": false }                                      ` |
+| all     | `{ "enabled": true }                                       ` |
+| failing | `{ "enabled": true, "keepOnlyFailedTestsArtifacts": true } ` |
+| manual  | `{ "enabled": true, "shouldTakeAutomaticSnapshots": false }` |
 
 ### Server Configuration
 

@@ -6,14 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
-import androidx.annotation.NonNull;
 import android.util.Base64;
+import android.util.Log;
 
 import java.util.Arrays;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
@@ -71,6 +71,7 @@ import androidx.test.rule.ActivityTestRule;
  * <p>If not set, then Detox tests are no ops. So it's safe to mix it with other tests.</p>
  */
 public final class Detox {
+    private static final String LOG_TAG = "Detox";
     private static final String LAUNCH_ARGS_KEY = "launchArgs";
     private static final String DETOX_URL_OVERRIDE_ARG = "detoxURLOverride";
     private static final long ACTIVITY_LAUNCH_TIMEOUT = 10000L;
@@ -118,23 +119,19 @@ public final class Detox {
         sActivityTestRule = activityTestRule;
 
         Intent intent = extractInitialIntent();
-        activityTestRule.launchActivity(intent);
+        sActivityTestRule.launchActivity(intent);
 
         // Kicks off another thread and attaches a Looper to that.
         // The goal is to keep the test thread intact,
         // as Loopers can't run on a thread twice.
-        Thread t = new Thread(new Runnable() {
+        final Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
+                Thread thread = Thread.currentThread();
+                Log.i(LOG_TAG, "Detox thread starting (" + thread.getName() + ")");
+
                 Looper.prepare();
-                Handler handler = new Handler();
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        DetoxManager detoxManager = new DetoxManager(context);
-                        detoxManager.start();
-                    }
-                });
+                new DetoxManager(context).start();
                 Looper.loop();
             }
         }, "com.wix.detox.manager");
@@ -144,7 +141,7 @@ public final class Detox {
             t.join();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("Got interrupted", e);
+            throw new RuntimeException("Detox got interrupted prematurely", e);
         }
     }
 

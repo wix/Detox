@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "15.1.4",
+  "version": "16.0.2",
   "private": true,
   "engines": {
     "node": ">=8.3.0"
@@ -12,11 +12,11 @@
     "detox-server": "detox run-server",
     "e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization",
     "e2e:jest-circus:ios": "detox test --configuration ios.sim.release --debug-synchronization -o e2e/config-circus.json",
-    "e2e:ios-ci": "detox test --configuration ios.sim.release --workers 3 --debug-synchronization --take-screenshots all --record-logs all -- --coverage",
+    "e2e:ios-ci": "detox test --configuration ios.sim.release --workers 3 --debug-synchronization --take-screenshots all --record-logs all --record-timeline all -- --coverage",
     "e2e:android": "detox test --configuration android.emu.release",
     "e2e:jest-circus:android": "detox test --configuration android.emu.release -o e2e/config-circus.json",
     "e2e:android-debug": "detox test --configuration android.emu.debug",
-    "e2e:android-ci": "detox test e2e --configuration android.emu.release --workers 3 --take-screenshots all --record-logs all --headless --loglevel verbose --jest-report-specs -- --coverage",
+    "e2e:android-ci": "detox test e2e --configuration android.emu.release --workers 3 --take-screenshots all --record-logs all --record-timeline all --headless --loglevel verbose --jest-report-specs -- --coverage",
     "build:ios": "detox build --configuration ios.sim.release",
     "build:android": "detox build --configuration android.emu.release",
     "build:android-debug": "detox build --configuration android.emu.debug",
@@ -31,10 +31,10 @@
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
-    "detox": "^15.1.4",
+    "detox": "^16.0.2",
     "express": "^4.15.3",
-    "jest": "24.9.x",
-    "jest-circus": "24.9.x",
+    "jest": "25.1.x",
+    "jest-circus": "25.1.x",
     "jest-junit": "^8.0.0",
     "lodash": "^4.14.1",
     "nyc": "^14.0.0",

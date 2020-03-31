@@ -25,6 +25,14 @@ class DetoxAdapterCircus extends CircusTestEventListenerBase {
     await this._adapter.afterAll();
   }
 
+  async _onSuiteStart({describeBlock: {name, tests}}, state) {
+    if (tests.length) await this._adapter.suiteStart({name});
+  }
+
+  async _onSuiteEnd({describeBlock: {name, tests}}, state) {
+    if (tests.length) await this._adapter.suiteEnd({name});
+  }
+
   _onTestStart(event) {
     const { test } = event;
     if (test.mode === 'skip' || test.mode === 'todo') {

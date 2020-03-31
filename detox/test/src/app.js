@@ -5,11 +5,14 @@ import {
   TouchableOpacity,
   Linking,
   Platform,
+  NativeModules,
 } from 'react-native';
 
 import * as Screens from './Screens';
 
 const isAndroid = Platform.OS === 'android';
+
+const { NativeModule } = NativeModules;
 
 class example extends Component {
 
@@ -107,9 +110,24 @@ class example extends Component {
           {this.renderScreenButton('Location', Screens.LocationScreen)}
           {!isAndroid && this.renderScreenButton('DatePicker', Screens.DatePickerScreen)}
           {!isAndroid && this.renderScreenButton('Picker', Screens.PickerViewScreen)}
-          {this.renderButton('Crash', () => {
-            throw new Error('Simulated Crash')
-          })}
+
+          <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+            {this.renderButton('Crash', () => {
+              // Note: this crashes the native-modules thread (and thus an *uncaught* exception, on Android).
+              throw new Error('Simulated Crash');
+            })}
+            {isAndroid && <Text style={{width: 10}}> | </Text>}
+            {isAndroid && this.renderButton('UI Crash', () => {
+              // Killing main-thread while handling a tap will evidently cause
+              // the tap-action itself to fail and thus for an error to be responded
+              NativeModule.crashMainThread();
+            })}
+            {isAndroid && <Text style={{width: 10}}> | </Text>}
+            {isAndroid && this.renderButton('ANR', () => {
+              NativeModule.chokeMainThread();
+            })}
+          </View>
+
           {this.renderScreenButton('Shake', Screens.ShakeScreen)}
           {isAndroid && this.renderScreenButton('Launch Args', Screens.LaunchArgsScreen)}
         </View>

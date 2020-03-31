@@ -1,9 +1,9 @@
 const _ = require('lodash');
 const path = require('path');
-const {joinArgs} = require('../../utils/argparse');
-const exec = require('../../utils/exec');
-const log = require('../../utils/logger').child({ __filename });
-const environment = require('../../utils/environment');
+const {joinArgs} = require('../../../../utils/argparse');
+const exec = require('../../../../utils/exec');
+const log = require('../../../../utils/logger').child({ __filename });
+const environment = require('../../../../utils/environment');
 
 class AppleSimUtils {
   async setPermissions(udid, bundleId, permissionsObj) {
@@ -232,8 +232,13 @@ class AppleSimUtils {
     });
   }
 
-  recordVideo(udid, destination) {
-    return exec.spawnAndLog('/usr/bin/xcrun', ['simctl', 'io', udid, 'recordVideo', destination]);
+  recordVideo(udid, destination, options = {}) {
+    const args = ['simctl', 'io', udid, 'recordVideo', destination];
+    if (options.codec) {
+      args.push('--codec');
+      args.push(options.codec);
+    }
+    return exec.spawnAndLog('/usr/bin/xcrun', args);
   }
 
   async _execAppleSimUtils(options, statusLogs, retries, interval) {
@@ -301,7 +306,7 @@ class AppleSimUtils {
   async _printLoggingHint(udid, bundleId) {
     const appContainer = await this.getAppContainer(udid, bundleId);
     const CFBundleExecutable = await exec.execAsync(`/usr/libexec/PlistBuddy -c "Print CFBundleExecutable" "${path.join(appContainer, 'Info.plist')}"`);
-    const predicate = `process == ${CFBundleExecutable}`;
+    const predicate = `process == "${CFBundleExecutable}"`;
     const command = `/usr/bin/xcrun simctl spawn ${udid} log stream --level debug --style compact --predicate '${predicate}'`;
 
     log.info(`${bundleId} launched. To watch simulator logs, run:\n        ${command}`);

@@ -56,8 +56,7 @@ In your app's buildscript (i.e. `app/build.gradle`) add this in `dependencies` s
 ```groovy
 dependencies {
 	  // ...
-    androidTestImplementation('com.wix:detox:+') { transitive = true } 
-    androidTestImplementation 'junit:junit:4.12'
+    androidTestImplementation('com.wix:detox:+')
 }
 ```
 
@@ -89,7 +88,7 @@ buildscript {
     // ...
     ext.kotlinVersion = '1.3.0'
 
-    dependencies: {
+    dependencies {
         // ...
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
@@ -144,6 +143,33 @@ Following device types could be used to control Android devices:
 
 `android.attached`. Connect to already-attached android device. The device should be listed in the output of `adb devices` command under provided `name`.
 Use this type to connect to Genymotion emulator.
+
+#### 5a. Using product flavors
+
+If you are using custom [productFlavors](https://developer.android.com/studio/build/build-variants#product-flavors) the config needs to be applied a bit differently. This example shows how a `beta` product flavor would look for both debug and release build types:
+
+```json
+"detox" : {
+    "configurations": {
+        "android.emu.beta.debug": {
+        "binaryPath": "android/app/build/outputs/apk/beta/debug/app-beta-debug.apk",
+        "build": "cd android && ./gradlew assembleBetaDebug assembleBetaDebugAndroidTest -DtestBuildType=debug && cd ..",
+        "type": "android.emulator",
+        "device": {
+          "avdName": "Pixel_API_29"
+        }
+      },
+      "android.emu.beta.release": {
+        "binaryPath": "android/app/build/outputs/apk/beta/release/app-beta-release.apk",
+        "build": "cd android && ./gradlew assembleBetaRelease assembleBetaReleaseAndroidTest -DtestBuildType=release && cd ..",
+        "type": "android.emulator",
+        "device": {
+          "avdName": "Pixel_API_29"
+        }
+      }
+    }
+}
+```
 
 ### 6. Run the tests
 
@@ -215,7 +241,6 @@ In your app's buildscript (i.e. `app/build.gradle`) add this in `dependencies` s
 dependencies {
   	// ...
     androidTestImplementation(project(path: ":detox"))
-    androidTestImplementation 'junit:junit:4.12'
 }
 ```
 
@@ -270,9 +295,8 @@ Of all [Kotlin implementation flavours](https://kotlinlang.org/docs/reference/us
 
 ```diff
 dependencies {
--    androidTestImplementation('com.wix:detox:+') { transitive = true } 
+-    androidTestImplementation('com.wix:detox:+')
 +    androidTestImplementation('com.wix:detox:+') { 
-+        transitive = true
 +        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
 +    }
 }
@@ -311,7 +335,7 @@ Could not determine the dependencies of task ':detox:compileDebugAidl'.
 
 Detox requires the Kotlin standard-library as it's own dependency. Due to the [many flavours](https://kotlinlang.org/docs/reference/using-gradle.html#configuring-dependencies) by which Kotlin has been released, multiple dependencies often create a conflict.
 
-For that, Detox allows for the exact specification of the standard library to use using two Gradle globals: `detoxKotlinVerion` and `detoxKotlinStdlib`. You can define both in your  root build-script file (i.e.`android/build.gradle`):
+For that, Detox allows for the exact specification of the standard library to use using two Gradle globals: `detoxKotlinVersion` and `detoxKotlinStdlib`. You can define both in your  root build-script file (i.e.`android/build.gradle`):
 
 ```groovy
 buildscript {
@@ -341,7 +365,7 @@ A common reason for this set of symptoms to take place is the lack of a clear-te
 
 The solution here is therefore to first properly configure clear-text traffic and for all app flavors (e.g. release / debug) -- if you haven't already. Second, the app needs to be configured to allow for clear-text traffic between the emulator and the running host. Examples:
 
-1. Applying `android:cleartextTrafficPermitted="true"` in the application tag of the main `AndroidManifest.xml` **(not recommended)**.
+1. Applying `android:usesCleartextTraffic="true""` in the application tag of the main `AndroidManifest.xml` **(not recommended)**.
 2. **(Untested)** Applying a base config denying clear-text (i.e. using `cleartextTrafficPermitted=false`, or just by omitting it altogether), and enabling it for the special-localhost domain:
 
 ```xml

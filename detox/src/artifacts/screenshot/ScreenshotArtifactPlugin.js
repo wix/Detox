@@ -12,6 +12,7 @@ class ScreenshotArtifactPlugin extends TwoSnapshotsPerTestPlugin {
     return this.api.preparePathForArtifact(`${name}.png`, testSummary);
   }
 
+  /** @param {string} config */
   static parseConfig(config) {
     switch (config) {
       case 'failing':

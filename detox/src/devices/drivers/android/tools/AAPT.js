@@ -1,10 +1,10 @@
 const _ = require('lodash');
-const {getAaptPath} = require('../../utils/environment');
+const {getAaptPath} = require('../../../../utils/environment');
 const path = require('path');
-const exec = require('../../utils/exec').execWithRetriesAndLogs;
-const escape = require('../../utils/pipeCommands').escape.inQuotedString;
-const egrep = require('../../utils/pipeCommands').search.fragment;
-const fsext = require('../../utils/fsext');
+const exec = require('../../../../utils/exec').execWithRetriesAndLogs;
+const escape = require('../../../../utils/pipeCommands').escape.inQuotedString;
+const egrep = require('../../../../utils/pipeCommands').search.fragment;
+const fsext = require('../../../../utils/fsext');
 
 class AAPT {
   constructor() {

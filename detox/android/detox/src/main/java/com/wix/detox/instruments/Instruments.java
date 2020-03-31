@@ -7,6 +7,10 @@ import java.io.File;
 public interface Instruments {
     boolean installed();
 
+    void tryInstallJsiHook(Context context);
+
+    InstrumentsRecording getActiveRecording();
+
     InstrumentsRecording startRecording(
             Context context,
             boolean recordPerformance,

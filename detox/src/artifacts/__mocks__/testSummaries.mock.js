@@ -16,8 +16,14 @@ const failed = () => ({
   status: 'failed',
 });
 
+const timedOut = () => ({
+  ...failed(),
+  timedOut: true,
+});
+
 module.exports = {
   running,
   passed,
   failed,
+  timedOut,
 };

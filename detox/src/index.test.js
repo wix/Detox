@@ -86,11 +86,12 @@ describe('index', () => {
     await detox.init(schemes.validOneDeviceNoSession);
 
     expect(Detox).toHaveBeenCalledWith({
-      artifactsConfig: {
-        ...schemes.defaultArtifactsConfiguration,
+      artifactsConfig: expect.objectContaining({
         plugins: schemes.pluginsDefaultsResolved,
-        rootDir: expect.stringMatching(/^artifacts[\\\/]ios\.sim\.release/),
-      },
+        pathBuilder: expect.objectContaining({
+          rootDir: expect.stringMatching(/^artifacts[\\\/]ios\.sim\.release/),
+        }),
+      }),
       deviceConfig: schemes.validOneDeviceNoSession.configurations['ios.sim.release'],
       session: undefined,
     });
@@ -103,11 +104,12 @@ describe('index', () => {
     await detox.init(schemes.validTwoDevicesNoSession);
 
     expect(Detox).toHaveBeenCalledWith({
-      artifactsConfig: {
-        ...schemes.defaultArtifactsConfiguration,
+      artifactsConfig: expect.objectContaining({
         plugins: schemes.pluginsDefaultsResolved,
-        rootDir: expect.stringMatching(/^artifacts[\\\/]ios\.sim\.debug/),
-      },
+        pathBuilder: expect.objectContaining({
+          rootDir: expect.stringMatching(/^artifacts[\\\/]ios\.sim\.debug/),
+        }),
+      }),
       deviceConfig: schemes.validTwoDevicesNoSession.configurations['ios.sim.debug'],
       session: undefined,
     });
@@ -135,14 +137,15 @@ describe('index', () => {
     const expectedConfig = {
       ...schemes.validOneDeviceNoSession.configurations['ios.sim.release'],
       device: 'iPhone X'
-    }
+    };
 
     expect(Detox).toHaveBeenCalledWith({
-      artifactsConfig: {
-        ...schemes.defaultArtifactsConfiguration,
+      artifactsConfig: expect.objectContaining({
         plugins: schemes.pluginsDefaultsResolved,
-        rootDir: expect.stringMatching(/^artifacts[\\\/]ios\.sim\.release/),
-      },
+        pathBuilder: expect.objectContaining({
+          rootDir: expect.stringMatching(/^artifacts[\\\/]ios\.sim\.release/),
+        }),
+      }),
       deviceConfig: expectedConfig,
       session: undefined,
     });
@@ -231,7 +234,7 @@ describe('index', () => {
     expect(detox.init(schemes.validOneDeviceNoSession)).rejects.toThrow();
     expect(mockDetox.cleanup).toHaveBeenCalled();
   });
-  
+
   it(`beforeEach() should be covered - with detox initialized`, async() => {
     await detox.init(schemes.validOneDeviceNoSession);
     await detox.beforeEach();

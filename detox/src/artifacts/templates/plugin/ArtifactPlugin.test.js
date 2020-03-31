@@ -2,7 +2,8 @@ jest.mock('../../../utils/logger');
 const logger = require('../../../utils/logger');
 const ArtifactPlugin = require('./ArtifactPlugin');
 const FileArtifact = require('../artifact/FileArtifact');
-const testSummaries = require('./__mocks__/testSummaries.mock');
+const testSummaries = require('../../__mocks__/testSummaries.mock');
+const testSuite = require('./__mocks__/testSuite.mock');
 
 class TestArtifactPlugin extends ArtifactPlugin {}
 
@@ -211,6 +212,18 @@ describe('ArtifactPlugin', () => {
       expect(plugin.context.testSummary).toBe(testSummary);
     });
 
+    it('should have .onSuiteStart, which updates context.suite if called', async () => {
+      const suite = testSuite.mock();
+      await plugin.onSuiteStart(suite);
+      expect(plugin.context.suite).toBe(suite);
+    });
+
+    it('should have .onSuiteEnd, which updates context.suite if called', async () => {
+      plugin.context.suite = testSuite.mock();
+      await plugin.onSuiteEnd();
+      expect(plugin.context.suite).toBe(null);
+    });
+
     it('should have .onBeforeCleanup, which resets context.testSummary if called', async () => {
       plugin.context.testSummary = {};
       await plugin.onBeforeCleanup();
@@ -236,6 +249,8 @@ describe('ArtifactPlugin', () => {
         expect(plugin.onTerminateApp).toBe(plugin.onTerminate);
         expect(plugin.onTestStart).toBe(plugin.onTerminate);
         expect(plugin.onTestDone).toBe(plugin.onTerminate);
+        expect(plugin.onSuiteStart).toBe(plugin.onTerminate);
+        expect(plugin.onSuiteEnd).toBe(plugin.onTerminate);
         expect(plugin.onBeforeCleanup).toBe(plugin.onTerminate);
         expect(plugin.onUserAction).toBe(plugin.onTerminate);
       });
