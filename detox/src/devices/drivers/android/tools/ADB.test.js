@@ -8,11 +8,11 @@ describe('ADB', () => {
   let exec;
 
   beforeEach(() => {
-    jest.mock('../../utils/logger');
-    jest.mock('../../utils/environment');
-    require('../../utils/environment').getAdbPath.mockReturnValue(adbBinPath);
+    jest.mock('../../../../utils/logger');
+    jest.mock('../../../../utils/environment');
+    require('../../../../utils/environment').getAdbPath.mockReturnValue(adbBinPath);
 
-    jest.mock('../../utils/encoding', () => ({
+    jest.mock('../../../../utils/encoding', () => ({
       encodeBase64: (text) => `base64(${text})`,
     }));
 
@@ -30,12 +30,12 @@ describe('ADB', () => {
     }
     jest.mock('./EmulatorTelnet', () => MockEmulatorTelnet);
 
-    jest.mock('../../utils/exec', () => {
+    jest.mock('../../../../utils/exec', () => {
       const exec = jest.fn();
       exec.mockReturnValue({ stdout: '' });
       return { execWithRetriesAndLogs: exec };
     });
-    exec = require('../../utils/exec').execWithRetriesAndLogs;
+    exec = require('../../../../utils/exec').execWithRetriesAndLogs;
 
     ADB = require('./ADB');
     adb = new ADB();

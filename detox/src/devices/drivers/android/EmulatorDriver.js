@@ -4,13 +4,13 @@ const path = require('path');
 const ini = require('ini');
 const AndroidDriver = require('./AndroidDriver');
 const EmulatorLookupHelper = require('./EmulatorLookupHelper');
-const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
-const DeviceRegistry = require('../DeviceRegistry');
-const Emulator = require('../android/Emulator');
-const EmulatorTelnet = require('../android/EmulatorTelnet');
-const environment = require('../../utils/environment');
-const retry = require('../../utils/retry');
-const log = require('../../utils/logger').child({ __filename });
+const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
+const DeviceRegistry = require('../../DeviceRegistry');
+const Emulator = require('./tools/Emulator');
+const EmulatorTelnet = require('./tools/EmulatorTelnet');
+const environment = require('../../../utils/environment');
+const retry = require('../../../utils/retry');
+const log = require('../../../utils/logger').child({ __filename });
 
 const DetoxEmulatorsPortRange = {
   min: 10000,
@@ -159,9 +159,7 @@ class EmulatorDriver extends AndroidDriver {
 
   async _allocateDevice(avdName) {
     log.debug({ event: ACQUIRE_DEVICE_EV }, `Looking up a device based on ${avdName}`);
-
     const adbName = await this.deviceRegistry.allocateDevice(() => this._doAllocateDevice(avdName));
-
     log.debug({ event: ACQUIRE_DEVICE_EV }, `Settled on ${adbName}`);
     return adbName;
   }

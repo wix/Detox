@@ -1,20 +1,20 @@
 const path = require('path');
 const fs = require('fs');
-const log = require('../../utils/logger').child({ __filename });
-const DeviceDriverBase = require('./DeviceDriverBase');
-const InvocationManager = require('../../invoke').InvocationManager;
-const invoke = require('../../invoke');
-const GREYConfigurationApi = require('../../ios/earlgreyapi/GREYConfiguration');
-const GREYConfigurationDetox = require('../../ios/earlgreyapi/GREYConfigurationDetox');
-const EarlyGreyImpl = require('../../ios/earlgreyapi/EarlGreyImpl');
-const AppleSimUtils = require('../ios/AppleSimUtils');
+const log = require('../../../utils/logger').child({ __filename });
+const DeviceDriverBase = require('../DeviceDriverBase');
+const InvocationManager = require('../../../invoke').InvocationManager;
+const invoke = require('../../../invoke');
+const GREYConfigurationApi = require('../../../ios/earlgreyapi/GREYConfiguration');
+const GREYConfigurationDetox = require('../../../ios/earlgreyapi/GREYConfigurationDetox');
+const EarlyGreyImpl = require('../../../ios/earlgreyapi/EarlGreyImpl');
+const AppleSimUtils = require('./tools/AppleSimUtils');
 
-const SimulatorLogPlugin = require('../../artifacts/log/ios/SimulatorLogPlugin');
-const SimulatorScreenshotPlugin = require('../../artifacts/screenshot/SimulatorScreenshotPlugin');
-const SimulatorRecordVideoPlugin = require('../../artifacts/video/SimulatorRecordVideoPlugin');
-const SimulatorInstrumentsPlugin = require('../../artifacts/instruments/ios/SimulatorInstrumentsPlugin');
-const TimelineArtifactPlugin = require('../../artifacts/timeline/TimelineArtifactPlugin');
-const IosExpect = require('../../ios/expect');
+const SimulatorLogPlugin = require('../../../artifacts/log/ios/SimulatorLogPlugin');
+const SimulatorScreenshotPlugin = require('../../../artifacts/screenshot/SimulatorScreenshotPlugin');
+const SimulatorRecordVideoPlugin = require('../../../artifacts/video/SimulatorRecordVideoPlugin');
+const SimulatorInstrumentsPlugin = require('../../../artifacts/instruments/ios/SimulatorInstrumentsPlugin');
+const TimelineArtifactPlugin = require('../../../artifacts/timeline/TimelineArtifactPlugin');
+const IosExpect = require('../../../ios/expect');
 
 class IosDriver extends DeviceDriverBase {
   constructor(config) {

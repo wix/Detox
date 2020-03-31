@@ -2,13 +2,13 @@ const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
 const exec = require('child-process-promise').exec;
-const DeviceRegistry = require('../DeviceRegistry');
+const DeviceRegistry = require('../../DeviceRegistry');
 const IosDriver = require('./IosDriver');
-const temporaryPath = require('../../artifacts/utils/temporaryPath');
-const configuration = require('../../configuration');
-const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
-const environment = require('../../utils/environment');
-const argparse = require('../../utils/argparse');
+const temporaryPath = require('../../../artifacts/utils/temporaryPath');
+const configuration = require('../../../configuration');
+const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
+const environment = require('../../../utils/environment');
+const argparse = require('../../../utils/argparse');
 
 class SimulatorDriver extends IosDriver {
 

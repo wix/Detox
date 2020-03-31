@@ -5,7 +5,7 @@ describe('IOS simulator driver', () => {
   const bundleId = 'bundle-id-mock';
 
   beforeEach(() => {
-    jest.mock('../ios/AppleSimUtils', () => mockAppleSimUtils);
+    jest.mock('./tools/AppleSimUtils', () => mockAppleSimUtils);
   });
 
   describe('launch args', () => {
@@ -88,7 +88,7 @@ describe('IOS simulator driver', () => {
       uut = new SimulatorDriver({ client: {} });
       jest.spyOn(uut.deviceRegistry, 'isDeviceBusy').mockReturnValue(false);
       applesimutils = uut.applesimutils;
-      applesimutils.list.mockImplementation(async () => require('../ios/applesimutils.mock')['--list']);
+      applesimutils.list.mockImplementation(async () => require('./tools/applesimutils.mock')['--list']);
     });
 
     it('should accept string as device type', async () => {

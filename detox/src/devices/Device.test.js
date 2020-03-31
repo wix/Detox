@@ -28,7 +28,7 @@ describe('Device', () => {
     jest.mock('./drivers/DeviceDriverBase');
     DeviceDriverBase = require('./drivers/DeviceDriverBase');
 
-    SimulatorDriver = require('./drivers/SimulatorDriver');
+    SimulatorDriver = require('./drivers/ios/SimulatorDriver');
 
     jest.mock('../client/Client');
     Client = require('../client/Client');

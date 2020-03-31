@@ -3,11 +3,11 @@ const fs = require('fs');
 const os = require('os');
 const spawn = require('child-process-promise').spawn;
 const Tail = require('tail').Tail;
-const exec = require('../../utils/exec').execWithRetriesAndLogs;
-const unitLogger = require('../../utils/logger').child({ __filename });
-const {getAndroidEmulatorPath} = require('../../utils/environment');
-const argparse = require('../../utils/argparse');
-const retry = require('../../utils/retry');
+const exec = require('../../../../utils/exec').execWithRetriesAndLogs;
+const unitLogger = require('../../../../utils/logger').child({ __filename });
+const {getAndroidEmulatorPath} = require('../../../../utils/environment');
+const argparse = require('../../../../utils/argparse');
+const retry = require('../../../../utils/retry');
 
 const isUnknownEmulatorError = (err) => (err.message || '').includes('failed with code null');
 

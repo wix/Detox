@@ -24,7 +24,7 @@ describe('emulators lookup helper', () => {
   let mockDeviceRegistry;
   let helper;
   beforeEach(() => {
-    jest.mock('../../utils/logger', () => ({
+    jest.mock('../../../utils/logger', () => ({
       child: jest.fn().mockReturnValue({
         debug: jest.fn(),
       }),
