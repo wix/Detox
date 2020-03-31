@@ -1,4 +1,4 @@
-const log = require('../../utils/logger').child({ __filename });
+const log = require('../../../utils/logger').child({ __filename });
 const AdbDevicesHelper = require('./AdbDevicesHelper');
 
 const ACQUIRE_DEVICE_EV = 'ACQUIRE_DEVICE';

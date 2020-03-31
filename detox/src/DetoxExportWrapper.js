@@ -2,7 +2,6 @@ const _ = require('lodash');
 const funpermaproxy = require('funpermaproxy');
 const Detox = require('./Detox');
 const DetoxConstants = require('./DetoxConstants');
-const argparse = require('./utils/argparse');
 const log = require('./utils/logger').child({ __filename });
 const configuration = require('./configuration');
 

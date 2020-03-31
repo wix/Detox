@@ -1,9 +1,9 @@
 const _ = require('lodash');
 const path = require('path');
-const {joinArgs} = require('../../utils/argparse');
-const exec = require('../../utils/exec');
-const log = require('../../utils/logger').child({ __filename });
-const environment = require('../../utils/environment');
+const {joinArgs} = require('../../../../utils/argparse');
+const exec = require('../../../../utils/exec');
+const log = require('../../../../utils/logger').child({ __filename });
+const environment = require('../../../../utils/environment');
 
 class AppleSimUtils {
   async setPermissions(udid, bundleId, permissionsObj) {

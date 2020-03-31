@@ -85,7 +85,7 @@
       "src/artifacts/instruments",
       "src/artifacts/screenshot",
       "src/artifacts/video",
-      "src/devices/ios/AppleSimUtils.js",
+      "src/devices/drivers/ios/tools/AppleSimUtils.js",
       "src/server/DetoxServer.js",
       ".*Driver.js",
       "MissingDetox.js",

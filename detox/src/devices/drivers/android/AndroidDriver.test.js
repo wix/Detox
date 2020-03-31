@@ -7,14 +7,14 @@ describe('Android driver', () => {
   let client;
   let exec;
   beforeEach(() => {
-    jest.mock('../../utils/encoding', () => ({
+    jest.mock('../../../utils/encoding', () => ({
       encodeBase64: (x) => `base64(${x})`,
     }));
 
-    jest.mock('../android/ADB', () => mockADBClass);
-    jest.mock('../../utils/AsyncEmitter', () => mockAsyncEmitter);
-    jest.mock('../../utils/sleep', () => jest.fn().mockResolvedValue(''));
-    jest.mock('../../utils/retry', () => jest.fn().mockResolvedValue(''));
+    jest.mock('./tools/ADB', () => mockADBClass);
+    jest.mock('../../../utils/AsyncEmitter', () => mockAsyncEmitter);
+    jest.mock('../../../utils/sleep', () => jest.fn().mockResolvedValue(''));
+    jest.mock('../../../utils/retry', () => jest.fn().mockResolvedValue(''));
 
     jest.mock('./InstrumentationLogsParser', () => ({
       InstrumentationLogsParser: mockInstrumentationLogsParserClass,
@@ -23,13 +23,13 @@ describe('Android driver', () => {
     const mockLogger = {
       warn: jest.fn(),
     };
-    jest.mock('../../utils/logger', () => ({
+    jest.mock('../../../utils/logger', () => ({
       child: () => mockLogger,
       ...mockLogger,
     }));
-    logger = require('../../utils/logger');
+    logger = require('../../../utils/logger');
 
-    jest.mock('../../utils/exec', () => ({
+    jest.mock('../../../utils/exec', () => ({
       spawnAndLog: jest.fn().mockReturnValue({
         childProcess: {
           on: jest.fn(),
@@ -41,7 +41,7 @@ describe('Android driver', () => {
       }),
       interruptProcess: jest.fn(),
     }));
-    exec = require('../../utils/exec');
+    exec = require('../../../utils/exec');
 
     client = {
       configuration: {

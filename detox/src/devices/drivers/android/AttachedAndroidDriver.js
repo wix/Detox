@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const AndroidDriver = require('./AndroidDriver');
-const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
+const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 
 class AttachedAndroidDriver extends AndroidDriver {
 
