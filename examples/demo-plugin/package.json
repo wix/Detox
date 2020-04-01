@@ -6,7 +6,7 @@
     "test:plugin": "detox test --configuration plugin -l verbose"
   },
   "devDependencies": {
-    "detox": "^15.1.4",
+    "detox": "^16.0.0",
     "jest": "24.8.x"
   },
   "detox": {
