@@ -1,20 +1,18 @@
 const _ = require('lodash');
 const fs = require('fs');
 const Tail = require('tail').Tail;
+const { LaunchCommand } = require('../tools/EmulatorExec');
 const unitLogger = require('../../../../utils/logger').child({ __filename });
 const retry = require('../../../../utils/retry');
-const {
-  LaunchCommand,
-} = require('./EmulatorExec');
 
 const isUnknownEmulatorError = (err) => (err.message || '').includes('failed with code null');
 
-class Emulator {
+class EmulatorLauncher {
   constructor(emulatorExec) {
-    this.emulatorExec = emulatorExec;
+    this._emulatorExec = emulatorExec;
   }
 
-  async boot(emulatorName, options = {port: undefined}) {
+  async launch(emulatorName, options = {port: undefined}) {
     const launchCommand = new LaunchCommand(emulatorName, options);
 
     return await retry({
@@ -57,8 +55,8 @@ class Emulator {
     }
 
     let log = unitLogger.child({ fn: 'boot' });
-    log.debug({ event: 'SPAWN_CMD' }, this.emulatorExec.toString(), launchCommand.toString());
-    const childProcessPromise = this.emulatorExec.spawn(launchCommand, stdout, stderr);
+    log.debug({ event: 'SPAWN_CMD' }, this._emulatorExec.toString(), launchCommand.toString());
+    const childProcessPromise = this._emulatorExec.spawn(launchCommand, stdout, stderr);
     childProcessPromise.childProcess.unref();
     log = log.child({ child_pid: childProcessPromise.childProcess.pid });
 
@@ -80,4 +78,4 @@ class Emulator {
   }
 }
 
-module.exports = Emulator;
+module.exports = EmulatorLauncher;

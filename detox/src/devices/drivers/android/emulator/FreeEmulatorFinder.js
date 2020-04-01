@@ -1,5 +1,5 @@
-const log = require('../../../../utils/logger').child({ __filename });
 const AdbDevicesHelper = require('../tools/AdbDevicesHelper');
+const log = require('../../../../utils/logger').child({ __filename });
 
 const ACQUIRE_DEVICE_EV = 'ACQUIRE_DEVICE';
 
@@ -32,4 +32,5 @@ class FreeEmulatorFinder {
     return false;
   }
 }
+
 module.exports = FreeEmulatorFinder;

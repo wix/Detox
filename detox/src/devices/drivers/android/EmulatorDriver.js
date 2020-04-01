@@ -5,8 +5,8 @@ const ini = require('ini');
 const AndroidDriver = require('./AndroidDriver');
 const FreeEmulatorFinder = require('./emulator/FreeEmulatorFinder');
 const AVDValidator = require('./emulator/AVDValidator');
+const EmulatorLauncher = require('./emulator/EmulatorLauncher');
 const { EmulatorExec } = require('./tools/EmulatorExec');
-const Emulator = require('./tools/Emulator');
 const EmulatorTelnet = require('./tools/EmulatorTelnet');
 const EmulatorVersionResolver = require('./emulator/EmulatorVersionResolver');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
@@ -27,13 +27,15 @@ class EmulatorDriver extends AndroidDriver {
   constructor(config) {
     super(config);
 
-    this._emulatorExec = new EmulatorExec();
-    this.emulator = new Emulator(this._emulatorExec);
     this.deviceRegistry = new DeviceRegistry({
       lockfilePath: environment.getDeviceLockFilePathAndroid(),
     });
-    this._emuVersionResolver = new EmulatorVersionResolver(this._emulatorExec);
-    this._avdValidator = new AVDValidator(this._emulatorExec);
+
+    const emulatorExec = new EmulatorExec();
+    this._emuVersionResolver = new EmulatorVersionResolver(emulatorExec);
+    this._emuLauncher = new EmulatorLauncher(emulatorExec);
+    this._avdValidator = new AVDValidator(emulatorExec);
+
     this.pendingBoots = {};
     this._name = 'Unspecified Emulator';
   }
@@ -73,7 +75,7 @@ class EmulatorDriver extends AndroidDriver {
 
     if (coldBoot) {
       const port = this.pendingBoots[adbName];
-      await this.emulator.boot(avdName, {port});
+      await this._emuLauncher.launch(avdName, { port });
       delete this.pendingBoots[adbName];
     }
 
@@ -133,8 +135,8 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async _doAllocateDevice(avdName) {
-    const FreeEmulatorFinder = new FreeEmulatorFinder(this.adb, this.deviceRegistry, avdName);
-    const freeEmulatorAdbName = await FreeEmulatorFinder.findFreeDevice();
+    const freeEmulatorFinder = new FreeEmulatorFinder(this.adb, this.deviceRegistry, avdName);
+    const freeEmulatorAdbName = await freeEmulatorFinder.findFreeDevice();
     return freeEmulatorAdbName || this._createDevice();
   }
 
