@@ -22,7 +22,7 @@ describe('Emulator binary version', () => {
   let emulatorVersion;
   beforeEach(() => {
     emulator = {
-      exec: jest.fn().mockResolvedValue(versionResult),
+      queryVersion: jest.fn().mockResolvedValue(versionResult),
     };
 
     jest.mock('../../../utils/logger', () => ({
@@ -39,7 +39,7 @@ describe('Emulator binary version', () => {
 
   it('should query the emulator', async () => {
     await emulatorVersion.resolve();
-    expect(emulator.exec).toHaveBeenCalledWith('-version');
+    expect(emulator.queryVersion).toHaveBeenCalled();
   });
 
   it('should extract version from common log', async () => {
@@ -48,13 +48,13 @@ describe('Emulator binary version', () => {
   });
 
   it('should return null for an empty query result', async () => {
-    emulator.exec.mockResolvedValue(undefined);
+    emulator.queryVersion.mockResolvedValue(undefined);
     const version = await emulatorVersion.resolve();
     expect(version).toEqual(null);
   });
 
   it('should return null for a query result that has an invalid syntax', async () => {
-    emulator.exec.mockResolvedValue('Android emulator version \<invalid\> (build_id 6306047) (CL:N/A)');
+    emulator.queryVersion.mockResolvedValue('Android emulator version \<invalid\> (build_id 6306047) (CL:N/A)');
     const version = await emulatorVersion.resolve();
     expect(version).toEqual(null);
   });
@@ -63,7 +63,7 @@ describe('Emulator binary version', () => {
     await emulatorVersion.resolve();
     const version = await emulatorVersion.resolve();
 
-    expect(emulator.exec).toHaveBeenCalledTimes(1);
+    expect(emulator.queryVersion).toHaveBeenCalledTimes(1);
     expect(version).toEqual(expectedVersion);
   });
 
@@ -73,7 +73,7 @@ describe('Emulator binary version', () => {
   });
 
   it('should log in case of an error', async () => {
-    emulator.exec.mockResolvedValue('mock result');
+    emulator.queryVersion.mockResolvedValue('mock result');
     await emulatorVersion.resolve();
     expect(log.warn).toHaveBeenCalledWith({event: 'EMU_BIN_VERSION_DETECT', success: false}, expect.any(String), 'mock result');
   });

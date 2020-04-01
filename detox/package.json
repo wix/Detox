@@ -90,6 +90,7 @@
       ".*Driver.js",
       "MissingDetox.js",
       "EmulatorTelnet.js",
+      "EmulatorExec.js",
       "Emulator.js",
       "DeviceDriverBase.js",
       "GREYConfiguration.js",
