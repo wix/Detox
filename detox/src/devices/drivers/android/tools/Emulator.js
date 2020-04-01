@@ -4,7 +4,6 @@ const Tail = require('tail').Tail;
 const unitLogger = require('../../../../utils/logger').child({ __filename });
 const retry = require('../../../../utils/retry');
 const {
-  EmulatorExec,
   ListAVDsCommand,
   QueryVersionCommand,
   LaunchCommand,
@@ -13,18 +12,14 @@ const {
 const isUnknownEmulatorError = (err) => (err.message || '').includes('failed with code null');
 
 class Emulator {
-  constructor() {
-    this.emulatorExec = new EmulatorExec();
+  constructor(emulatorExec) {
+    this.emulatorExec = emulatorExec;
   }
 
   async listAvds() {
     const output = await this.emulatorExec.exec(new ListAVDsCommand());
     const avds = output.trim().split('\n');
     return avds;
-  }
-
-  async queryVersion() {
-    return await this.emulatorExec.exec(new QueryVersionCommand());
   }
 
   async boot(emulatorName, options = {port: undefined}) {
