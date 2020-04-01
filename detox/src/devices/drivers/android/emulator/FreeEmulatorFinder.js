@@ -1,9 +1,9 @@
-const log = require('../../../utils/logger').child({ __filename });
-const AdbDevicesHelper = require('./AdbDevicesHelper');
+const AdbDevicesHelper = require('../tools/AdbDevicesHelper');
+const log = require('../../../../utils/logger').child({ __filename });
 
 const ACQUIRE_DEVICE_EV = 'ACQUIRE_DEVICE';
 
-class EmulatorLookupHelper {
+class FreeEmulatorFinder {
   constructor(adb, deviceRegistry, avdName) {
     this.adbDevicesHelper = new AdbDevicesHelper(adb);
     this.deviceRegistry = deviceRegistry;
@@ -32,4 +32,5 @@ class EmulatorLookupHelper {
     return false;
   }
 }
-module.exports = EmulatorLookupHelper;
+
+module.exports = FreeEmulatorFinder;

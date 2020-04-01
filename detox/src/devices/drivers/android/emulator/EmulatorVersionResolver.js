@@ -1,10 +1,11 @@
-const log = require('../../../utils/logger').child({ __filename });
+const {QueryVersionCommand} = require('../tools/EmulatorExec');
+const log = require('../../../../utils/logger').child({ __filename });
 
 const EMU_BIN_VERSION_DETECT_EV = 'EMU_BIN_VERSION_DETECT';
 
-class EmulatorVersion {
-  constructor(emulator) {
-    this.emulator = emulator;
+class EmulatorVersionResolver {
+  constructor(emulatorExec) {
+    this._emulatorExec = emulatorExec;
     this.version = undefined;
   }
 
@@ -16,7 +17,7 @@ class EmulatorVersion {
   }
 
   async _resolve() {
-    const rawOutput = await this.emulator.queryVersion() || '';
+    const rawOutput = await this._emulatorExec.exec(new QueryVersionCommand()) || '';
     const matches = rawOutput.match(/Android emulator version ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]*)/);
     if (!matches) {
       log.warn({ event: EMU_BIN_VERSION_DETECT_EV, success: false }, 'Could not detect emulator binary version, got:', rawOutput);
@@ -37,4 +38,4 @@ class EmulatorVersion {
     };
   }
 }
-module.exports = EmulatorVersion;
+module.exports = EmulatorVersionResolver;

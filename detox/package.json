@@ -91,7 +91,7 @@
       "MissingDetox.js",
       "EmulatorTelnet.js",
       "EmulatorExec.js",
-      "Emulator.js",
+      "EmulatorLauncher.js",
       "DeviceDriverBase.js",
       "GREYConfiguration.js",
       "src/utils/environment.js",
