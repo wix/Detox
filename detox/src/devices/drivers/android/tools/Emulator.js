@@ -4,8 +4,6 @@ const Tail = require('tail').Tail;
 const unitLogger = require('../../../../utils/logger').child({ __filename });
 const retry = require('../../../../utils/retry');
 const {
-  ListAVDsCommand,
-  QueryVersionCommand,
   LaunchCommand,
 } = require('./EmulatorExec');
 
@@ -14,12 +12,6 @@ const isUnknownEmulatorError = (err) => (err.message || '').includes('failed wit
 class Emulator {
   constructor(emulatorExec) {
     this.emulatorExec = emulatorExec;
-  }
-
-  async listAvds() {
-    const output = await this.emulatorExec.exec(new ListAVDsCommand());
-    const avds = output.trim().split('\n');
-    return avds;
   }
 
   async boot(emulatorName, options = {port: undefined}) {

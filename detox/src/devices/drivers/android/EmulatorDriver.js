@@ -4,12 +4,13 @@ const path = require('path');
 const ini = require('ini');
 const AndroidDriver = require('./AndroidDriver');
 const FreeEmulatorFinder = require('./emulator/FreeEmulatorFinder');
-const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
-const DeviceRegistry = require('../../DeviceRegistry');
-const EmulatorExec = require('./tools/EmulatorExec');
+const AVDValidator = require('./emulator/AVDValidator');
+const { EmulatorExec } = require('./tools/EmulatorExec');
 const Emulator = require('./tools/Emulator');
 const EmulatorTelnet = require('./tools/EmulatorTelnet');
 const EmulatorVersionResolver = require('./emulator/EmulatorVersionResolver');
+const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
+const DeviceRegistry = require('../../DeviceRegistry');
 const environment = require('../../../utils/environment');
 const retry = require('../../../utils/retry');
 const log = require('../../../utils/logger').child({ __filename });
@@ -26,12 +27,13 @@ class EmulatorDriver extends AndroidDriver {
   constructor(config) {
     super(config);
 
-    const emulatorExec = new EmulatorExec();
-    this.emulator = new Emulator(emulatorExec);
-    this._emuVersionResolver = new EmulatorVersionResolver(emulatorExec);
+    this._emulatorExec = new EmulatorExec();
+    this.emulator = new Emulator(this._emulatorExec);
     this.deviceRegistry = new DeviceRegistry({
       lockfilePath: environment.getDeviceLockFilePathAndroid(),
     });
+    this._emuVersionResolver = new EmulatorVersionResolver(this._emulatorExec);
+    this._avdValidator = new AVDValidator(this._emulatorExec);
     this.pendingBoots = {};
     this._name = 'Unspecified Emulator';
   }
@@ -43,7 +45,7 @@ class EmulatorDriver extends AndroidDriver {
   async acquireFreeDevice(deviceQuery) {
     const avdName = _.isPlainObject(deviceQuery) ? deviceQuery.avdName : deviceQuery;
 
-    await this._validateAvd(avdName);
+    await this._avdValidator.validate(avdName);
     await this._fixEmulatorConfigIniSkinNameIfNeeded(avdName);
 
     const adbName = await this._allocateDevice(avdName);
@@ -77,22 +79,6 @@ class EmulatorDriver extends AndroidDriver {
 
     await this._waitForBootToComplete(adbName);
     await this.emitter.emit('bootDevice', { coldBoot, deviceId: adbName, type: adbName });
-  }
-
-  async _validateAvd(avdName) {
-    const avds = await this.emulator.listAvds();
-    if (!avds) {
-      const avdmanagerPath = path.join(environment.getAndroidSDKPath(), 'tools', 'bin', 'avdmanager');
-
-      throw new Error(`Could not find any configured Android Emulator. 
-      Try creating a device first, example: ${avdmanagerPath} create avd --force --name Pixel_2_API_26 --abi x86 --package 'system-images;android-26;google_apis_playstore;x86' --device "pixel"
-      or go to https://developer.android.com/studio/run/managing-avds.html for details on how to create an Emulator.`);
-    }
-
-    if (_.indexOf(avds, avdName) === -1) {
-      throw new Error(`Can not boot Android Emulator with the name: '${avdName}',
-      make sure you choose one of the available emulators: ${avds.toString()}`);
-    }
   }
 
   async _waitForBootToComplete(deviceId) {

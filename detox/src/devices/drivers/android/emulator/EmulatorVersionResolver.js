@@ -5,7 +5,7 @@ const EMU_BIN_VERSION_DETECT_EV = 'EMU_BIN_VERSION_DETECT';
 
 class EmulatorVersionResolver {
   constructor(emulatorExec) {
-    this.emulatorExec = emulatorExec;
+    this._emulatorExec = emulatorExec;
     this.version = undefined;
   }
 
@@ -17,7 +17,7 @@ class EmulatorVersionResolver {
   }
 
   async _resolve() {
-    const rawOutput = await this.emulatorExec.exec(new QueryVersionCommand()) || '';
+    const rawOutput = await this._emulatorExec.exec(new QueryVersionCommand()) || '';
     const matches = rawOutput.match(/Android emulator version ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]*)/);
     if (!matches) {
       log.warn({ event: EMU_BIN_VERSION_DETECT_EV, success: false }, 'Could not detect emulator binary version, got:', rawOutput);
