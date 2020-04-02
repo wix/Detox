@@ -16,6 +16,6 @@ fun getInterrogationStrategy(reactContext: ReactContext): IdleInterrogationStrat
         return it
     }
 
-    Log.e(LOG_TAG, "Failed to determine proper implementation-strategy for timers idling resource")
+    Log.e(TimersIdlingResource.LOG_TAG, "Failed to determine proper implementation-strategy for timers idling resource")
     return null
 }
