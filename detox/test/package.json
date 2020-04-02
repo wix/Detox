@@ -8,6 +8,7 @@
   "scripts": {
     "test": ":",
     "postinstall": "node scripts/postinstall.js",
+    "start": "react-native start",
     "packager": "react-native start",
     "detox-server": "detox run-server",
     "e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization",
@@ -30,8 +31,8 @@
   },
   "dependencies": {
     "moment": "^2.24.0",
-    "react": "16.9.0",
-    "react-native": "0.61.4"
+    "react": "16.11.0",
+    "react-native": "0.62.x"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",

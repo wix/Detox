@@ -90,6 +90,8 @@ dependencies {
         implementation 'com.android.support:appcompat-v7:28.0.0'
     }
 
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+
     fromSourceImplementation(project(path: ':ReactAndroid'))
     // noinspection GradleDynamicVersion
     fromBinImplementation 'com.facebook.react:react-native:+'
