@@ -69,7 +69,11 @@ Detox can control artifacts collection via settings from `package.json`:
         "log": { "enabled": true },
         "screenshot": {
           "shouldTakeAutomaticSnapshots": true,
-          "keepOnlyFailedTestsArtifacts": true
+          "keepOnlyFailedTestsArtifacts": true,
+          "takeWhen": {
+            "testStart": false,
+            "testDone": true,
+          },
         },
         "video": {
           "android": {
