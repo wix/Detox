@@ -2,40 +2,17 @@ const _ = require('lodash');
 const fs = require('fs-extra');
 const os = require('os');
 const path = require('path');
-const AsyncEmitter = require('../../utils/AsyncEmitter');
 const log = require('../../utils/logger').child({ __filename });
 
 class DeviceDriverBase {
-  constructor({ client }) {
+  constructor({ client, emitter }) {
     this.client = client;
+    this.emitter = emitter;
     this.matchers = null;
-    this.emitter = new AsyncEmitter({
-      events: [
-        'bootDevice',
-        'beforeShutdownDevice',
-        'shutdownDevice',
-        'beforeTerminateApp',
-        'terminateApp',
-        'beforeUninstallApp',
-        'beforeLaunchApp',
-        'launchApp',
-        'appReady',
-        'createExternalArtifact',
-      ],
-      onError: this._onEmitError.bind(this),
-    });
   }
 
   get name() {
     return 'UNSPECIFIED_DEVICE';
-  }
-
-  off(event, listener) {
-    this.emitter.off(event, listener);
-  }
-
-  on(event, listener) {
-    this.emitter.on(event, listener);
   }
 
   declareArtifactPlugins() {
@@ -209,14 +186,6 @@ class DeviceDriverBase {
   async pressBack() {
     log.warn('pressBack() is an android specific function, make sure you create an android specific test for this scenario');
     return await Promise.resolve('');
-  }
-
-  _onEmitError({ error, eventName, eventObj }) {
-    log.error(
-      { event: 'EMIT_ERROR', className: this.constructor.name, eventName },
-      `Caught an exception in: emitter.emit("${eventName}", ${JSON.stringify(eventObj)})\n\n`,
-      error
-    );
   }
 
   async setStatusBar(deviceId, flags) {

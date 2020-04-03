@@ -89,6 +89,7 @@ describe('Device', () => {
     const device = new Device({
       deviceConfig: scheme.configurations[configuration],
       deviceDriver: driverMock.driver,
+      emitter: new AsyncEmitter(),
       sessionConfig: scheme.session,
     });
 
@@ -700,6 +701,7 @@ describe('Device', () => {
     expect(() => new Device({
       deviceConfig: invalidDeviceNoBinary.configurations['ios.sim.release'],
       deviceDriver: new SimulatorDriver(client),
+      emitter: new AsyncEmitter(),
       sessionConfig: validScheme.session,
     })).toThrowError(/binaryPath.* is missing/);
   });
