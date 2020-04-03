@@ -12,7 +12,7 @@ describe('IOS simulator driver', () => {
     emitter = new AsyncEmitter({
       events: ['beforeLaunchApp'],
       onError: (e) => { throw e },
-    })
+    });
   });
 
   describe('launch args', () => {
