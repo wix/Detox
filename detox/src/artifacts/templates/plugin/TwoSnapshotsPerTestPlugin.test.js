@@ -16,6 +16,7 @@ describe('TwoSnapshotsPerTestPlugin', () => {
         keepOnlyFailedTestsArtifacts: false,
       },
     });
+
     plugin = new FakeTwoSnapshotsPerTestPlugin({ api });
   });
 
@@ -58,8 +59,8 @@ describe('TwoSnapshotsPerTestPlugin', () => {
     });
   });
 
-  describe('when hooks.testStart is false', () => {
-    beforeEach(() => plugin.configureHooks({ testStart: false }));
+  describe('when takeWhen.testStart is false', () => {
+    beforeEach(() => plugin.configureAutomaticSnapshots({ testStart: false }));
 
     describe('when onTestStart called', function() {
       beforeEach(async () => {
@@ -73,8 +74,8 @@ describe('TwoSnapshotsPerTestPlugin', () => {
     });
   });
 
-  describe('when hooks.testStart is true', () => {
-    beforeEach(() => plugin.configureHooks({ testStart: true }));
+  describe('when takeWhen.testStart is true', () => {
+    beforeEach(() => plugin.configureAutomaticSnapshots({ testStart: true }));
 
     describe('when onTestStart called', function() {
       beforeEach(async () => {
@@ -96,8 +97,8 @@ describe('TwoSnapshotsPerTestPlugin', () => {
     });
   });
 
-  describe('when hooks.testDone is false', () => {
-    beforeEach(() => plugin.configureHooks({ testDone: false }));
+  describe('when takeWhen.testDone is false', () => {
+    beforeEach(() => plugin.configureAutomaticSnapshots({ testDone: false }));
 
     describe('when onTestStart and onTestEnd called', function() {
       beforeEach(async () => {
@@ -111,8 +112,8 @@ describe('TwoSnapshotsPerTestPlugin', () => {
       });
     });
 
-    describe('and hooks.testStart is true', () => {
-      beforeEach(() => plugin.configureHooks({ testStart: true }));
+    describe('and takeWhen.testStart is true', () => {
+      beforeEach(() => plugin.configureAutomaticSnapshots({ testStart: true }));
 
       describe('when onTestStart and onTestEnd called', function() {
         it('should save a test artifact from testStart', async () => {
@@ -131,8 +132,8 @@ describe('TwoSnapshotsPerTestPlugin', () => {
     });
   });
 
-  describe('when hooks.testDone is true', () => {
-    beforeEach(() => plugin.configureHooks({ testDone: true }));
+  describe('when takeWhen.testDone is true', () => {
+    beforeEach(() => plugin.configureAutomaticSnapshots({ testDone: true }));
 
     describe('when onTestStart and onTestDone called', function() {
       beforeEach(async () => {
@@ -174,7 +175,7 @@ describe('TwoSnapshotsPerTestPlugin', () => {
     });
   });
 
-  describe('when hooks.testStart and hooks.testDone have default values', function() {
+  describe('when takeWhen.testStart and takeWhen.testDone have default values', function() {
     describe('when the plugin should keep a test artifact', () => {
       beforeEach(() => plugin.configureToKeepArtifacts(true));
 
@@ -373,8 +374,8 @@ class FakeTwoSnapshotsPerTestPlugin extends TwoSnapshotsPerTestPlugin {
     this.snapshots.fromTest = new Proxy(this.snapshots.fromTest, nonDeletable);
   }
 
-  configureHooks(hooks) {
-    this.hooks = hooks;
+  configureAutomaticSnapshots(value) {
+    this.takeAutomaticSnapshots = value;
   }
 
   configureToKeepArtifacts(shouldKeep) {

@@ -49,7 +49,7 @@
     "artifacts": {
       "plugins": {
         "screenshot": {
-          "hooks": {
+          "takeWhen": {
             "testDone": true
           }
         }

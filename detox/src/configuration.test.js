@@ -203,7 +203,7 @@ describe('configuration', () => {
             pathBuilder: _.identity,
             plugins: {
               screenshot: {
-                hooks: {
+                takeWhen: {
                   testDone: true,
                 },
               },
@@ -219,7 +219,7 @@ describe('configuration', () => {
         plugins: expect.objectContaining({
           screenshot: {
             ...schemes.pluginsAllResolved.screenshot,
-            hooks: {
+            takeWhen: {
               testDone: true,
             },
           },

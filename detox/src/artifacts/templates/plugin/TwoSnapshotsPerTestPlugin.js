@@ -9,7 +9,7 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
 
     this.shouldTakeAutomaticSnapshots = this.api.userConfig.shouldTakeAutomaticSnapshots;
     this.keepOnlyFailedTestsArtifacts = this.api.userConfig.keepOnlyFailedTestsArtifacts;
-    this.hooks = this.api.userConfig.hooks || {
+    this.takeAutomaticSnapshots = this.api.userConfig.takeWhen || {
       testStart: true,
       testDone: true,
     };
@@ -73,7 +73,7 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
 
   async _takeAutomaticSnapshot(name) {
     if (this.enabled && this.shouldTakeAutomaticSnapshots) {
-      if (this.hooks[name]) {
+      if (this.takeAutomaticSnapshots[name]) {
         await this._takeSnapshot(name);
       }
     }
