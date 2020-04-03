@@ -10,7 +10,7 @@ describe('Device', () => {
   let fs;
   let DeviceDriverBase;
   let SimulatorDriver;
-  let AsyncEmitter;
+  let emitter;
   let Device;
   let argparse;
   let Client;
@@ -35,7 +35,9 @@ describe('Device', () => {
     Client = require('../client/Client');
 
     jest.mock('../utils/AsyncEmitter');
-    AsyncEmitter = require('../utils/AsyncEmitter');
+    const AsyncEmitter = require('../utils/AsyncEmitter');
+    emitter = new AsyncEmitter({});
+
     Device = require('./Device');
   });
 
@@ -50,8 +52,10 @@ describe('Device', () => {
 
   class DeviceDriverMock {
     constructor() {
-      this.driver = new DeviceDriverBase(client);
-      this.driver.emitter = new AsyncEmitter();
+      this.driver = new DeviceDriverBase({
+        client,
+        emitter,
+      });
     }
 
     expectLaunchCalled(device, expectedArgs, languageAndLocale) {
@@ -89,8 +93,8 @@ describe('Device', () => {
     const device = new Device({
       deviceConfig: scheme.configurations[configuration],
       deviceDriver: driverMock.driver,
-      emitter: new AsyncEmitter(),
       sessionConfig: scheme.session,
+      emitter,
     });
 
     device.deviceDriver.acquireFreeDevice.mockReturnValue('mockDeviceId');
@@ -169,6 +173,19 @@ describe('Device', () => {
       await device.launchApp();
 
       driverMock.expectLaunchCalled(device, expectedArgs);
+    });
+
+    it(`args should launch app and emit appReady`, async () => {
+      driverMock.driver.launchApp = async () => 42;
+
+      const device = validDevice();
+      await device.launchApp();
+
+      expect(emitter.emit).toHaveBeenCalledWith('appReady', {
+        deviceId: device._deviceId,
+        bundleId: device._bundleId,
+        pid: 42,
+      })
     });
 
     it(`(relaunch) with no args should use defaults`, async () => {
@@ -701,8 +718,8 @@ describe('Device', () => {
     expect(() => new Device({
       deviceConfig: invalidDeviceNoBinary.configurations['ios.sim.release'],
       deviceDriver: new SimulatorDriver(client),
-      emitter: new AsyncEmitter(),
       sessionConfig: validScheme.session,
+      emitter,
     })).toThrowError(/binaryPath.* is missing/);
   });
 
