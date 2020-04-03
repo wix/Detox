@@ -10,6 +10,7 @@ describe('Device', () => {
   let fs;
   let DeviceDriverBase;
   let SimulatorDriver;
+  let AsyncEmitter;
   let Device;
   let argparse;
   let Client;
@@ -33,6 +34,8 @@ describe('Device', () => {
     jest.mock('../client/Client');
     Client = require('../client/Client');
 
+    jest.mock('../utils/AsyncEmitter');
+    AsyncEmitter = require('../utils/AsyncEmitter');
     Device = require('./Device');
   });
 
@@ -48,6 +51,7 @@ describe('Device', () => {
   class DeviceDriverMock {
     constructor() {
       this.driver = new DeviceDriverBase(client);
+      this.driver.emitter = new AsyncEmitter();
     }
 
     expectLaunchCalled(device, expectedArgs, languageAndLocale) {

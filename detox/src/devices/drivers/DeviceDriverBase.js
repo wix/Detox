@@ -19,6 +19,7 @@ class DeviceDriverBase {
         'beforeUninstallApp',
         'beforeLaunchApp',
         'launchApp',
+        'appReady',
         'createExternalArtifact',
       ],
       onError: this._onEmitError.bind(this),
