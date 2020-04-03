@@ -38,12 +38,16 @@ class DetoxAdapterImpl {
   }
 
   testComplete({status, timedOut}) {
-    const _test = {
-      ...this._currentTest,
-      status,
-      timedOut,
-    };
-    this._enqueue(() => this._afterEach(_test));
+    if (this._currentTest) {
+      const _test = {
+        ...this._currentTest,
+        status,
+        timedOut,
+      };
+
+      this._currentTest = null;
+      this._enqueue(() => this._afterEach(_test));
+    }
   }
 
   async _afterEach(previousTest) {

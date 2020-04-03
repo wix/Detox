@@ -84,8 +84,9 @@ describe('Detox', () => {
 
     detox = new Detox({deviceConfig: validDeviceConfig});
     await detox.init();
+    const device = detox.device;
     await detox.cleanup();
-    expect(detox.device.shutdown).toHaveBeenCalledTimes(1);
+    expect(device.shutdown).toHaveBeenCalledTimes(1);
   });
 
   it(`Calling detox.cleanup() before .init() should pass without exceptions`, async () => {
@@ -96,12 +97,37 @@ describe('Detox', () => {
     expect(() => detox.cleanup()).not.toThrowError();
   });
 
+  it(`Calling detox.init() twice returns the same promise`, async () => {
+    Detox = require('./Detox');
+    detox = new Detox({deviceConfig: validDeviceConfig});
+    const promise1 = await detox.init();
+    const promise2 = await detox.init();
+    expect(promise1).toBe(promise2);
+  });
+
+  it(`Calling detox.beforeEach() before detox.init() completes, throws error`, async () => {
+    Detox = require('./Detox');
+    detox = new Detox({deviceConfig: validDeviceConfig});
+    const detoxInitPromise = detox.init();
+    await expect(detox.beforeEach(testSummaries.running())).rejects.toThrowError(/Aborted detox.init/);
+    await expect(detoxInitPromise).rejects.toThrowError(/Aborted detox.init/);
+  });
+
+  it(`Calling detox.afterEach() before detox.init() completes, throws error`, async () => {
+    Detox = require('./Detox');
+    detox = new Detox({deviceConfig: validDeviceConfig});
+    const detoxInitPromise = detox.init();
+    await expect(detox.afterEach(testSummaries.failed())).rejects.toThrowError(/Aborted detox.init/);
+    await expect(detoxInitPromise).rejects.toThrowError(/Aborted detox.init/);
+  });
+
   it(`Not passing --cleanup should keep the currently running device up`, async () => {
     Detox = require('./Detox');
     detox = new Detox({deviceConfig: validDeviceConfig});
     await detox.init();
+    const device = detox.device;
     await detox.cleanup();
-    expect(detox.device.shutdown).toHaveBeenCalledTimes(0);
+    expect(device.shutdown).toHaveBeenCalledTimes(0);
   });
 
   it(`One valid device, detox should init with generated session config and default to this device`, async () => {
