@@ -1,11 +1,18 @@
+const AsyncEmitter = require('../../../utils/AsyncEmitter');
+
 describe('IOS simulator driver', () => {
-  let uut, sim;
+  let uut, sim, emitter;
 
   const deviceId = 'device-id-mock';
   const bundleId = 'bundle-id-mock';
 
   beforeEach(() => {
     jest.mock('./tools/AppleSimUtils', () => mockAppleSimUtils);
+
+    emitter = new AsyncEmitter({
+      events: ['beforeLaunchApp'],
+      onError: (e) => { throw e },
+    });
   });
 
   describe('launch args', () => {
@@ -20,7 +27,7 @@ describe('IOS simulator driver', () => {
       languageAndLocale = '';
 
       const SimulatorDriver = require('./SimulatorDriver');
-      uut = new SimulatorDriver({ client: {} });
+      uut = new SimulatorDriver({ client: {}, emitter });
     });
 
     it('should be passed to AppleSimUtils', async () => {
@@ -29,7 +36,7 @@ describe('IOS simulator driver', () => {
     });
 
     it('should be passed to AppleSimUtils even if some of them were received from `beforeLaunchApp` phase', async () => {
-      uut.emitter.on('beforeLaunchApp', ({ launchArgs }) => {
+      emitter.on('beforeLaunchApp', ({ launchArgs }) => {
         launchArgs.dog3 = 'Chika, from plugin';
       });
 
@@ -46,7 +53,7 @@ describe('IOS simulator driver', () => {
       languageAndLocale = '';
 
       const SimulatorDriver = require('./SimulatorDriver');
-      sim = new SimulatorDriver({ client: {} });
+      sim = new SimulatorDriver({ client: {}, emitter });
     });
 
     it('enrolls in biometrics by passing to AppleSimUtils', async () => {
@@ -85,7 +92,7 @@ describe('IOS simulator driver', () => {
 
     beforeEach(() => {
       const SimulatorDriver = require('./SimulatorDriver');
-      uut = new SimulatorDriver({ client: {} });
+      uut = new SimulatorDriver({ client: {}, emitter });
       jest.spyOn(uut.deviceRegistry, 'isDeviceBusy').mockReturnValue(false);
       applesimutils = uut.applesimutils;
       applesimutils.list.mockImplementation(async () => require('./tools/applesimutils.mock')['--list']);

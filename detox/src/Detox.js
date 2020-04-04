@@ -9,6 +9,7 @@ const EmulatorDriver = require('./devices/drivers/android/EmulatorDriver');
 const AttachedAndroidDriver = require('./devices/drivers/android/AttachedAndroidDriver');
 const DetoxRuntimeError = require('./errors/DetoxRuntimeError');
 const argparse = require('./utils/argparse');
+const AsyncEmitter = require('./utils/AsyncEmitter');
 const MissingDetox = require('./utils/MissingDetox');
 const configuration = require('./configuration');
 const Client = require('./client/Client');
@@ -37,6 +38,21 @@ class Detox {
     this._client = null;
     this._server = null;
     this._artifactsManager = new ArtifactsManager(artifactsConfig);
+    this._eventEmitter = new AsyncEmitter({
+      events: [
+        'bootDevice',
+        'beforeShutdownDevice',
+        'shutdownDevice',
+        'beforeTerminateApp',
+        'terminateApp',
+        'beforeUninstallApp',
+        'beforeLaunchApp',
+        'launchApp',
+        'appReady',
+        'createExternalArtifact',
+      ],
+      onError: this._onEmitError.bind(this),
+    });
 
     this.device = null;
   }
@@ -67,13 +83,15 @@ class Detox {
 
     const deviceDriver = new DeviceDriverClass({
       client: this._client,
+      emitter: this._eventEmitter,
     });
 
-    this._artifactsManager.subscribeToDeviceEvents(deviceDriver);
+    this._artifactsManager.subscribeToDeviceEvents(this._eventEmitter);
     this._artifactsManager.registerArtifactPlugins(deviceDriver.declareArtifactPlugins());
 
     const device = new Device({
       deviceConfig: this._deviceConfig,
+      emitter: this._eventEmitter,
       deviceDriver,
       sessionConfig,
     });
@@ -203,6 +221,14 @@ class Detox {
     configuration.validateSession(session);
 
     return session;
+  }
+
+  _onEmitError({ error, eventName, eventObj }) {
+    log.error(
+      { event: 'EMIT_ERROR', fn: eventName },
+      `Caught an exception in: emitter.emit("${eventName}", ${JSON.stringify(eventObj)})\n\n`,
+      error
+    );
   }
 }
 

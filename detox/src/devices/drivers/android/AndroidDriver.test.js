@@ -12,7 +12,6 @@ describe('Android driver', () => {
     }));
 
     jest.mock('./tools/ADB', () => mockADBClass);
-    jest.mock('../../../utils/AsyncEmitter', () => mockAsyncEmitter);
     jest.mock('../../../utils/sleep', () => jest.fn().mockResolvedValue(''));
     jest.mock('../../../utils/retry', () => jest.fn().mockResolvedValue(''));
 
@@ -56,6 +55,7 @@ describe('Android driver', () => {
     const AndroidDriver = require('./AndroidDriver');
     uut = new AndroidDriver({
       client,
+      emitter: new mockAsyncEmitter(),
     });
   });
 
@@ -252,4 +252,5 @@ class mockInstrumentationLogsParserClass {
     this.getStackTrace = () => mockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK;
   }
 }
+
 mockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK = 'Stacktrace mock';

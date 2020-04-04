@@ -5,9 +5,10 @@ const argparse = require('../utils/argparse');
 const debug = require('../utils/debug'); //debug utils, leave here even if unused
 
 class Device {
-  constructor({ deviceConfig, deviceDriver, sessionConfig }) {
+  constructor({ deviceConfig, deviceDriver, emitter, sessionConfig }) {
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
+    this._emitter = emitter;
     this._processes = {};
     this.deviceDriver = deviceDriver;
     this.deviceDriver.validateDeviceConfig(deviceConfig);
@@ -86,6 +87,11 @@ class Device {
 
     await this.deviceDriver.waitUntilReady();
     await this.deviceDriver.waitForActive();
+    await this._emitter.emit('appReady', {
+      deviceId: this._deviceId,
+      bundleId: _bundleId,
+      pid: processId,
+    });
 
     if(params.detoxUserNotificationDataURL) {
       await this.deviceDriver.cleanupRandomDirectory(params.detoxUserNotificationDataURL);
