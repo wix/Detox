@@ -262,6 +262,21 @@ describe('Detox', () => {
     }
   });
 
+  it(`should log EMIT_ERROR if the internal emitter throws an error`, async () => {
+    Detox = require('./Detox');
+    detox = new Detox({deviceConfig: validDeviceConfigWithSession});
+
+    const emitter = detox._eventEmitter;
+    emitter.on('launchApp', () => { throw new Error('TestError'); });
+    await emitter.emit('launchApp');
+
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      { event: 'EMIT_ERROR', fn: 'launchApp' },
+      expect.stringMatching(/Caught an exception in.*emit.*launchApp.*undefined/),
+      expect.any(Error),
+    )
+  });
+
   describe('.artifactsManager', () => {
     let artifactsManager;
 

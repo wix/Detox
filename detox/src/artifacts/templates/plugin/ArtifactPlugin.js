@@ -46,7 +46,11 @@ class ArtifactPlugin {
    * @param {Object} event.launchArgs - Mutable key-value pairs of args before the launch
    * @return {Promise<void>} - when done
    */
-  async onBeforeLaunchApp(event) {}
+  async onBeforeLaunchApp(event) {
+    Object.assign(this.context, {
+      isAppReady: false,
+    });
+  }
 
   /**
    * Hook that is called inside device.launchApp() and
@@ -68,6 +72,24 @@ class ArtifactPlugin {
       launchArgs: event.launchArgs,
       pid: event.pid,
    });
+  }
+
+  /**
+   * Hook that is called after app sends ready signal
+   * over the web socket.
+   *
+   * @protected
+   * @async
+   * @param {Object} event - App ready event object
+   * @param {string} event.deviceId - Current deviceId
+   * @param {string} event.bundleId - Current bundleId
+   * @param {number} event.pid - Process id of the running app
+   * @return {Promise<void>} - when done
+   */
+  async onAppReady(event) {
+    Object.assign(this.context, {
+      isAppReady: true,
+    });
   }
 
   /**
@@ -113,6 +135,7 @@ class ArtifactPlugin {
       bundleId: '',
       launchArgs: null,
       pid: NaN,
+      isAppReady: undefined,
     });
   }
 
@@ -154,6 +177,7 @@ class ArtifactPlugin {
       bundleId: '',
       launchArgs: null,
       pid: NaN,
+      isAppReady: undefined,
     });
   }
 

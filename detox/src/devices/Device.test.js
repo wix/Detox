@@ -10,6 +10,7 @@ describe('Device', () => {
   let fs;
   let DeviceDriverBase;
   let SimulatorDriver;
+  let emitter;
   let Device;
   let argparse;
   let Client;
@@ -33,6 +34,10 @@ describe('Device', () => {
     jest.mock('../client/Client');
     Client = require('../client/Client');
 
+    jest.mock('../utils/AsyncEmitter');
+    const AsyncEmitter = require('../utils/AsyncEmitter');
+    emitter = new AsyncEmitter({});
+
     Device = require('./Device');
   });
 
@@ -47,7 +52,10 @@ describe('Device', () => {
 
   class DeviceDriverMock {
     constructor() {
-      this.driver = new DeviceDriverBase(client);
+      this.driver = new DeviceDriverBase({
+        client,
+        emitter,
+      });
     }
 
     expectLaunchCalled(device, expectedArgs, languageAndLocale) {
@@ -86,6 +94,7 @@ describe('Device', () => {
       deviceConfig: scheme.configurations[configuration],
       deviceDriver: driverMock.driver,
       sessionConfig: scheme.session,
+      emitter,
     });
 
     device.deviceDriver.acquireFreeDevice.mockReturnValue('mockDeviceId');
@@ -164,6 +173,19 @@ describe('Device', () => {
       await device.launchApp();
 
       driverMock.expectLaunchCalled(device, expectedArgs);
+    });
+
+    it(`args should launch app and emit appReady`, async () => {
+      driverMock.driver.launchApp = async () => 42;
+
+      const device = validDevice();
+      await device.launchApp();
+
+      expect(emitter.emit).toHaveBeenCalledWith('appReady', {
+        deviceId: device._deviceId,
+        bundleId: device._bundleId,
+        pid: 42,
+      })
     });
 
     it(`(relaunch) with no args should use defaults`, async () => {
@@ -697,6 +719,7 @@ describe('Device', () => {
       deviceConfig: invalidDeviceNoBinary.configurations['ios.sim.release'],
       deviceDriver: new SimulatorDriver(client),
       sessionConfig: validScheme.session,
+      emitter,
     })).toThrowError(/binaryPath.* is missing/);
   });
 
