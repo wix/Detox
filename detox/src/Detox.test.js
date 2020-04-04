@@ -121,6 +121,14 @@ describe('Detox', () => {
     await expect(detoxInitPromise).rejects.toThrowError(/Aborted detox.init/);
   });
 
+  it(`Calling detox.cleanup() before detox.init() completes makes that .init() throw an error`, async () => {
+    Detox = require('./Detox');
+    detox = new Detox({deviceConfig: validDeviceConfig});
+    const detoxInitPromise = detox.init();
+    await detox.cleanup();
+    await expect(detoxInitPromise).rejects.toThrowError(/Aborted detox.init/);
+  });
+
   it(`Not passing --cleanup should keep the currently running device up`, async () => {
     Detox = require('./Detox');
     detox = new Detox({deviceConfig: validDeviceConfig});
