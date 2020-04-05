@@ -1,8 +1,8 @@
 package com.wix.detox.espresso.action
 
-import android.view.ViewConfiguration
 import androidx.test.espresso.UiController
 import androidx.test.espresso.action.Tapper
+import com.wix.detox.espresso.common.DetoxViewConfigurations.getPracticalTapTimeout
 import com.wix.detox.espresso.common.MotionEvents
 
 /**
@@ -19,13 +19,14 @@ import com.wix.detox.espresso.common.MotionEvents
  */
 class DetoxSingleTap(
         private val motionEvents: MotionEvents = MotionEvents(),
-        private val tapTimeout: Long = (ViewConfiguration.getTapTimeout() * 1.5).toLong())
+        private val tapTimeout: Long = getPracticalTapTimeout())
     : Tapper {
 
     override fun sendTap(uiController: UiController?, coordinates: FloatArray?, precision: FloatArray?): Tapper.Status
         = sendTap(uiController, coordinates, precision, 0, 0)
 
     override fun sendTap(uiController: UiController?, coordinates: FloatArray?, precision: FloatArray?, inputDevice: Int, buttonState: Int): Tapper.Status {
+        uiController!!
         coordinates!!
         precision!!
 
@@ -34,7 +35,7 @@ class DetoxSingleTap(
         val downEvent = motionEvents.obtainDownEvent(x, y, precision)
         val upEvent = motionEvents.obtainUpEvent(downEvent, downEvent.eventTime + EVENTS_TIME_GAP_MS, x, y)
         try {
-            val result = uiController!!.injectMotionEventSequence(arrayListOf(downEvent, upEvent))
+            val result = uiController.injectMotionEventSequence(arrayListOf(downEvent, upEvent))
             if (result) {
                 uiController.loopMainThreadForAtLeast(tapTimeout)
                 return Tapper.Status.SUCCESS
