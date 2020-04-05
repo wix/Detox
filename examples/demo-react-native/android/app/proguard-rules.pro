@@ -14,3 +14,14 @@
 -dontnote sun.misc.Unsafe
 -dontnote okhttp3.**
 -dontnote okio.**
+
+# Do not strip any method/class that is annotated with @DoNotStrip
+-keep @com.facebook.jni.annotations.DoNotStrip class *
+-keep class * {
+    @com.facebook.proguard.annotations.DoNotStrip *;
+    @com.facebook.common.internal.DoNotStrip *;
+    @com.facebook.jni.annotations.DoNotStrip *;
+}
+-keepclassmembers class * {
+    @com.facebook.jni.annotations.DoNotStrip *;
+}

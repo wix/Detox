@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "moment": "^2.24.0",
-    "react": "16.11.0",
+    "react": "16.11.x",
     "react-native": "0.62.x"
   },
   "devDependencies": {
