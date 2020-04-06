@@ -44,7 +44,7 @@ Detox artifacts can be configured in a more advanced way with the `artifacts` co
 }
 ```
 
-Note: when Detox merges artifact configurations, the per-device configuration has a higher priority over the general one.
+**NOTE:** Detox merges artifact configurations from `package.json`, and the per-device artifacts configuration has a higher priority over the general one.
 
 The `artifacts` object has the following properties:
 
