@@ -8,12 +8,11 @@ const GREYConfigurationApi = require('../../../ios/earlgreyapi/GREYConfiguration
 const GREYConfigurationDetox = require('../../../ios/earlgreyapi/GREYConfigurationDetox');
 const EarlyGreyImpl = require('../../../ios/earlgreyapi/EarlGreyImpl');
 const AppleSimUtils = require('./tools/AppleSimUtils');
-const SimulatorLogPlugin = require('../../artifacts/log/ios/SimulatorLogPlugin');
-const SimulatorScreenshotPlugin = require('../../artifacts/screenshot/SimulatorScreenshotPlugin');
-const SimulatorRecordVideoPlugin = require('../../artifacts/video/SimulatorRecordVideoPlugin');
-const SimulatorInstrumentsPlugin = require('../../artifacts/instruments/ios/SimulatorInstrumentsPlugin');
-// const IosExpect = require('../../ios/expect');
-const IosExpectTwo = require('../../ios/expectTwo');
+const SimulatorLogPlugin = require('../../../artifacts/log/ios/SimulatorLogPlugin');
+const SimulatorScreenshotPlugin = require('../../../artifacts/screenshot/SimulatorScreenshotPlugin');
+const SimulatorRecordVideoPlugin = require('../../../artifacts/video/SimulatorRecordVideoPlugin');
+const SimulatorInstrumentsPlugin = require('../../../artifacts/instruments/ios/SimulatorInstrumentsPlugin');
+const IosExpectTwo = require('../../../ios/expectTwo');
 
 
 class IosDriver extends DeviceDriverBase {
