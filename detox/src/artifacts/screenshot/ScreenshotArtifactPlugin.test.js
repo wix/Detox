@@ -1,6 +1,34 @@
 const ScreenshotArtifactPlugin = require('./ScreenshotArtifactPlugin');
 
 describe('ScreenshotArtifactPlugin', () => {
+  describe('default options', () => {
+    it('should have takeAutomaticSnapshots.appReady = true', () => {
+      const plugin = new ScreenshotArtifactPlugin({
+        api: {
+          userConfig: {
+            takeWhen: {},
+          },
+        }
+      });
+
+      expect(plugin.takeAutomaticSnapshots.appNotReady).toBe(true);
+    });
+
+    it('should allow to set takeAutomaticSnapshots.appReady to false', () => {
+      const plugin = new ScreenshotArtifactPlugin({
+        api: {
+          userConfig: {
+            takeWhen: {
+              appNotReady: false,
+            },
+          },
+        }
+      });
+
+      expect(plugin.takeAutomaticSnapshots.appNotReady).toBe(false);
+    });
+  });
+
   describe('static parseConfig(config)', () => {
     const parseConfig = ScreenshotArtifactPlugin.parseConfig;
 
