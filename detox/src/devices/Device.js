@@ -270,6 +270,7 @@ class Device {
 
   async _cleanup() {
     await this.deviceDriver.cleanup(this._deviceId, this._bundleId);
+    this.deviceDriver = null;
   }
 
   async pressBack() {
