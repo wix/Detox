@@ -713,20 +713,33 @@ describe('Device', () => {
     expect(driverMock.driver.cleanup).toHaveBeenCalledTimes(1);
   });
 
-  it(`_cleanup() should not shutdown the device by default`, async () => {
+  it(`_cleanup() should shutdown a prepared device if --cleanup is passed from CLI`, async () => {
+    argparse.getArgValue.mockReturnValue(true);
+
     const device = validDevice();
+    await device.prepare();
+    await device._cleanup();
+
+    expect(driverMock.driver.shutdown).toHaveBeenCalled();
+  });
+
+  it(`_cleanup() should not shutdown a prepared device if --cleanup is not passed from CLI`, async () => {
+    argparse.getArgValue.mockReturnValue(false);
+
+    const device = validDevice();
+    await device.prepare();
     await device._cleanup();
 
     expect(driverMock.driver.shutdown).not.toHaveBeenCalled();
   });
 
-  it(`_cleanup() should shutdown the device if --cleanup is passed form CLI`, async () => {
+  it(`_cleanup() should not shutdown an unprepared device even if --cleanup is passed from CLI`, async () => {
     argparse.getArgValue.mockReturnValue(true);
 
     const device = validDevice();
     await device._cleanup();
 
-    expect(driverMock.driver.shutdown).toHaveBeenCalledTimes(1);
+    expect(driverMock.driver.shutdown).not.toHaveBeenCalled();
   });
 
   it(`new Device() with invalid device config (no binary) should throw`, () => {
