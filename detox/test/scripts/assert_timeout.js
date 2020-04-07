@@ -8,7 +8,7 @@ const testProcess = cp.spawn(command, args, {
   env: {
     ...process.env,
     TIMEOUT_E2E_TEST: '1',
-    DISABLE_JUNIT: '1',
+    DISABLE_JUNIT_REPORTER: '1',
   },
 });
 
