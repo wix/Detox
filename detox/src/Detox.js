@@ -9,7 +9,6 @@ const SimulatorDriver = require('./devices/drivers/ios/SimulatorDriver');
 const EmulatorDriver = require('./devices/drivers/android/EmulatorDriver');
 const AttachedAndroidDriver = require('./devices/drivers/android/AttachedAndroidDriver');
 const DetoxRuntimeError = require('./errors/DetoxRuntimeError');
-const argparse = require('./utils/argparse');
 const AsyncEmitter = require('./utils/AsyncEmitter');
 const MissingDetox = require('./utils/MissingDetox');
 const configuration = require('./configuration');
@@ -97,10 +96,6 @@ class Detox {
     if (this._server) {
       await this._server.close();
       this._server = null;
-    }
-
-    if (argparse.getArgValue('cleanup') && this.device) {
-      await this.device.shutdown();
     }
 
     this.device = null;

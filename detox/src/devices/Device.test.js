@@ -713,6 +713,22 @@ describe('Device', () => {
     expect(driverMock.driver.cleanup).toHaveBeenCalledTimes(1);
   });
 
+  it(`_cleanup() should not shutdown the device by default`, async () => {
+    const device = validDevice();
+    await device._cleanup();
+
+    expect(driverMock.driver.shutdown).not.toHaveBeenCalled();
+  });
+
+  it(`_cleanup() should shutdown the device if --cleanup is passed form CLI`, async () => {
+    argparse.getArgValue.mockReturnValue(true);
+
+    const device = validDevice();
+    await device._cleanup();
+
+    expect(driverMock.driver.shutdown).toHaveBeenCalledTimes(1);
+  });
+
   it(`new Device() with invalid device config (no binary) should throw`, () => {
     // TODO: this is an invalid test, because it will pass only on SimulatorDriver
     expect(() => new Device({

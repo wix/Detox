@@ -78,17 +78,6 @@ describe('Detox', () => {
     jest.mock('./server/DetoxServer');
   });
 
-  it(`Passing --cleanup should shutdown the currently running device`, async () => {
-    process.env.cleanup = true;
-    Detox = require('./Detox');
-
-    detox = new Detox({deviceConfig: validDeviceConfig});
-    await detox.init();
-    const device = detox.device;
-    await detox.cleanup();
-    expect(device.shutdown).toHaveBeenCalledTimes(1);
-  });
-
   it(`Calling detox.cleanup() before .init() should pass without exceptions`, async () => {
     process.env.cleanup = true;
     Detox = require('./Detox');

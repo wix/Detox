@@ -270,6 +270,11 @@ class Device {
 
   async _cleanup() {
     await this.deviceDriver.cleanup(this._deviceId, this._bundleId);
+
+    if (argparse.getArgValue('cleanup')) {
+      await this.deviceDriver.shutdown(this._deviceId);
+    }
+
     this.deviceDriver = null;
   }
 
