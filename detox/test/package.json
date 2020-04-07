@@ -46,6 +46,7 @@
   },
   "detox": {
     "test-runner": "jest",
+    "runner-config": "e2e/config.js",
     "__session": {
       "server": "ws://localhost:8099",
       "sessionId": "test"
