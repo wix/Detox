@@ -229,12 +229,6 @@ describe('index', () => {
     await detox.cleanup();
   });
 
-  it(`if detox.init() fails, detox.cleanup() is called automatically`, async () => {
-    mockDetox.init.mockImplementation(() => { throw new Error('test'); });
-    expect(detox.init(schemes.validOneDeviceNoSession)).rejects.toThrow();
-    expect(mockDetox.cleanup).toHaveBeenCalled();
-  });
-
   it(`beforeEach() should be covered - with detox initialized`, async() => {
     await detox.init(schemes.validOneDeviceNoSession);
     await detox.beforeEach();
@@ -245,10 +239,11 @@ describe('index', () => {
   });
 
   it(`error message should be covered - with detox failed to initialize`, async() => {
-    mockDetox.init.mockReturnValue(Promise.reject(new Error('Test error')));
+    mockDetox.init.mockReturnValue(Promise.reject(new Error('InitMe error')));
 
-    await expect(detox.init(schemes.validOneDeviceNoSession)).rejects.toThrow(/Test error/);
-    await expect(detox.beforeEach()).rejects.toThrow(/There was an error/);
+    await expect(detox.init(schemes.validOneDeviceNoSession)).rejects.toThrow(/InitMe error/);
+    await detox.cleanup(); // cleaning up
+    await expect(detox.beforeEach()).rejects.toThrow(/There was an error[\s\S]*InitMe error/mg);
   });
 
   it(`afterEach() should be covered - with detox initialized`, async() => {

@@ -35,7 +35,7 @@ class DetoxAdapterCircus extends CircusTestEventListenerBase {
 
   _onTestStart(event) {
     const { test } = event;
-    if (test.mode === 'skip' || test.mode === 'todo') {
+    if (test.mode === 'skip' || test.mode === 'todo' || test.errors.length > 0) {
       return;
     }
 
