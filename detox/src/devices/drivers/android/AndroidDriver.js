@@ -176,8 +176,14 @@ class AndroidDriver extends DeviceDriverBase {
   _getInstrumentationCrashError() {
     return new DetoxRuntimeError({
       message: 'Failed to run application on the device',
-      hint: 'Most likely, your main activity has crashed prematurely',
-      debugInfo: 'Native stacktrace dump: ' + this.instrumentationStackTrace,
+      hint: this.instrumentationStackTrace
+        ? 'Most likely, your main activity has crashed prematurely.'
+        : 'Most likely, your tests have timed out and called detox.cleanup() ' +
+          'while it was waiting for "ready" message (over WebSocket) ' +
+          'from the instrumentation process.',
+      debugInfo: this.instrumentationStackTrace
+        ? `Native stacktrace dump: ${this.instrumentationStackTrace}`
+        : '',
     });
   }
 

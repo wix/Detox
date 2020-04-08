@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "16.0.2",
+  "version": "16.1.1",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -90,7 +90,8 @@
       ".*Driver.js",
       "MissingDetox.js",
       "EmulatorTelnet.js",
-      "Emulator.js",
+      "EmulatorExec.js",
+      "EmulatorLauncher.js",
       "DeviceDriverBase.js",
       "GREYConfiguration.js",
       "src/utils/environment.js",

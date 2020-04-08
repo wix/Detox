@@ -190,6 +190,47 @@ describe('configuration', () => {
         rootDir: '.artifacts/',
       });
     });
+
+    it('should allow passing custom plugin configurations', () => {
+      expect(configuration.composeArtifactsConfig({
+        configurationName: 'custom',
+        cliConfig: {
+          takeScreenshots: 'all',
+        },
+        detoxConfig: {
+          artifacts: {
+            rootDir: 'configuration',
+            pathBuilder: _.identity,
+            plugins: {
+              screenshot: {
+                takeWhen: {
+                  testDone: true,
+                },
+              },
+              video: {
+                android: { bitRate: 4000000 },
+                simulator: { codec: "hevc" },
+              }
+            },
+          },
+        },
+        deviceConfig: {},
+      })).toMatchObject({
+        plugins: expect.objectContaining({
+          screenshot: {
+            ...schemes.pluginsAllResolved.screenshot,
+            takeWhen: {
+              testDone: true,
+            },
+          },
+          video: {
+            ...schemes.pluginsDefaultsResolved.video,
+            android: { bitRate: 4000000 },
+            simulator: { codec: "hevc" },
+          },
+        }),
+      });
+    });
   });
 
   function testFaultySession(config) {

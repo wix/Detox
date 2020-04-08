@@ -9,7 +9,9 @@ Artifacts are disabled by default. Two things are required to enable them:
 1. **Call `detox.beforeEach` and `detox.afterEach` before/after each test**:
 	In order for artifacts to work, you have to call `detox.beforeEach(testSummary)` / `detox.afterEach(testSummary)` before / after each test. Their respective signatures are described in [detox object](APIRef.DetoxObjectAPI.md) documentation. As the interface (typing) of `testSummary` may change over the time, and in cases with some test runners it is not trivial to implement test title and status extraction (like with Jest), you are encouraged to use Detox adapter functions like in these examples: [mocha](/examples/demo-react-native/e2e/init.js), [jest](/examples/demo-react-native-jest/e2e/init.js).
 
-2. Specify via launch arguments which types of artifacts you want to record:
+2. Specify via launch arguments or a configuration object what artifacts you want to record.
+
+### Launch arguments
 
 * To record `.log` files, add `--record-logs all` (or `--record-logs failing`, if you want to keep logs only for failing tests).
 * To record `.mp4` test run videos, add `--record-videos all` (or `--record-videos failing`, if you want to keep video recordings only for failing tests).
@@ -18,12 +20,112 @@ Artifacts are disabled by default. Two things are required to enable them:
 Alternatively, you might leverage the [device.takeScreenshot()](APIRef.DeviceObjectAPI.md#devicetakescreenshotname) API for manual control.
 
 * To change artifacts root directory location (by default it is `./artifacts`), add `--artifacts-location <path>`.  
-**NOTE:** There is a slightly obscure convention. If you want to create automatically a subdirectory with timestamp and configuration name (to avoid file overwrites upon consquent re-runs), specify a path to directory that does not end with a slash. Otherwise, if you want to put artifacts straight to the specified directory (in a case where you make a single run only, e.g. on CI), add a slash (or a backslash) to the end.
+**NOTE:** <a id="slash-convention">There</a> is a slightly obscure convention. If you want to create automatically a subdirectory with timestamp and configuration name (to avoid file overwrites upon consquent re-runs), specify a path to directory that does not end with a slash. Otherwise, if you want to put artifacts straight to the specified directory (in a case where you make a single run only, e.g. on CI), add a slash (or a backslash) to the end.
 
 ```sh
 detox test --artifacts-location /tmp/detox_artifacts  # will also append /android.emu.release.2018-06-14 08:54:11Z
 detox test --artifacts-location /tmp/detox_artifacts/ # won't append anything, hereby treating it as a root
 ```
+
+### Configuration object
+
+Detox artifacts can be configured in a more advanced way with the `artifacts` configuration in `package.json`:
+
+```json
+{
+  "detox": {
+    "artifacts": {},
+    "configurations": {
+      "some.device": {
+        "artifacts": {},
+      },
+    },
+  }
+}
+```
+
+**NOTE:** Detox merges artifact configurations from `package.json`, and the per-device artifacts configuration has a higher priority over the general one.
+
+The `artifacts` object has the following properties:
+
+| Property    | Example values                  | Default value | Description |
+|-------------|---------------------------------|---------------|-------------|
+| rootDir     | `".artifacts/"`                 | `./artifacts` | A directory, where all the recorded artifacts will be placed in. Please note that there is a trailing slash convention [described above](#slash-convention). |
+| pathBuilder | `"./e2e/config/pathbuilder.js"` | `undefined`   | Path to a module that implements `PathBuilder` interface[<sup>\[a\]</sup>](#pathBuilder) |
+| plugins     | `{ ... }`                       | ... see below | ... see below |
+
+<a id=pathBuilder><sup>a</sup> PathBuilder</a> should be an object with a method `buildPathForTestArtifact` or a class. The `buildPathForTestArtifact` method has a signature: `(artifactName: string, testSummary?: { title: string; fullName: string; status: 'running' | 'passed' | 'failed' }) => string`, where it accepts a suggested artifact name (e.g., `testDone.png`, `device.log`), a current test summary with its name and status, and it is expected to return a full path to the custom artifact location. If it is a class, its constructor also accepts `{ rootDir }` configuration object. Search for `ArtifactPathBuilder.js` in Detox source code for a technical reference.
+
+The further subsections describe the `plugins` object structure.
+
+#### Screenshot plugin
+
+Below is a default screenshot plugin object configuration, which is loaded implicitly and corresponds to the `manual` preset:
+
+```json
+{
+  "plugins": {
+    "screenshot": {
+      "enabled": true,
+      "shouldTakeAutomaticSnapshots": false,
+      "keepOnlyFailedTestsArtifacts": false,
+      "takeWhen": {
+        "testStart": true,
+	"testDone": true,
+	"appNotReady": true,
+      },
+    }
+  }
+}
+```
+
+The other string presets override the following properties compared to the default configuration:
+
+* `none` => `{ enabled: false }`.
+* `failing` => `{ shouldTakeAutomaticSnapshots: true, keepOnlyFailedTestsArtifacts: true }`.
+* `all` => `{ shouldTakeAutomaticSnapshots: true, keepOnlyFailedTestsArtifacts: true }`
+
+The invidual property behavior is the following:
+
+* If `enabled` is _false_, then the screenshots will never be saved to the artifacts folder.
+* If `shouldTakeAutomaticSnapshots` is _false_, then no one of the events described in `takeWhen` object is going to trigger a screenshot.
+* If `keepOnlyFailedTestsArtifacts` is _true_, then only screenshots from a failed test will be saved to the artifacts folder.
+* If `takeWhen` is _undefined_, it is going to have the default value described above (all props are true).
+* If `takeWhen` is set to be an empty object `{}`, that is equivalent to:
+
+```json
+{
+  "testStart": false,
+  "testDone": false,
+  "appNotReady": true,
+}
+```
+
+Hence, for example, if you wish to enable only `testDone` screenshots and leave taking `appNotReady` screenshots as-is, you have to pass:
+
+```json
+{
+  "artifacts": {
+    "plugins": {
+      "screenshot": {
+        "takeWhen": { "testDone": true }
+      }
+    }
+  }
+}
+```
+
+#### Video plugin
+
+To be done. See meanwhile the example in [APIRef.Configuration.md#artifacts-configuration](APIRef.Configuration.md#artifacts-configuration).
+
+#### Log plugin
+
+To be done. See meanwhile the example in [APIRef.Configuration.md#artifacts-configuration](APIRef.Configuration.md#artifacts-configuration).
+
+#### Instruments plugin
+
+To be done. See meanwhile the example in [APIRef.Configuration.md#artifacts-configuration](APIRef.Configuration.md#artifacts-configuration).
 
 ## Artifacts structure
 

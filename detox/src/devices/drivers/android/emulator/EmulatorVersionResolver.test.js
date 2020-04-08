@@ -17,64 +17,70 @@ describe('Emulator binary version', () => {
     patch: 2,
   };
 
-  let emulator;
+  let MockQueryVersionCommand;
+  let emulatorExec;
   let log;
-  let emulatorVersion;
+  let uut;
   beforeEach(() => {
-    emulator = {
+    MockQueryVersionCommand = jest.genMockFromModule('../tools/EmulatorExec').QueryVersionCommand;
+    jest.mock('../tools/EmulatorExec', () => ({
+      QueryVersionCommand: MockQueryVersionCommand,
+    }));
+
+    emulatorExec = {
       exec: jest.fn().mockResolvedValue(versionResult),
     };
 
-    jest.mock('../../../utils/logger', () => ({
+    jest.mock('../../../../utils/logger', () => ({
       child: jest.fn().mockReturnValue({
         debug: jest.fn(),
         warn: jest.fn(),
       }),
     }));
-    log = require('../../../utils/logger').child();
+    log = require('../../../../utils/logger').child();
 
-    const EmulatorVersion = require('./EmulatorVersion');
-    emulatorVersion = new EmulatorVersion(emulator);
+    const EmulatorVersionResolver = require('./EmulatorVersionResolver');
+    uut = new EmulatorVersionResolver(emulatorExec);
   });
 
   it('should query the emulator', async () => {
-    await emulatorVersion.resolve();
-    expect(emulator.exec).toHaveBeenCalledWith('-version');
+    await uut.resolve();
+    expect(emulatorExec.exec).toHaveBeenCalledWith(expect.any(MockQueryVersionCommand));
   });
 
   it('should extract version from common log', async () => {
-    const version = await emulatorVersion.resolve();
+    const version = await uut.resolve();
     expect(version).toEqual(expectedVersion);
   });
 
   it('should return null for an empty query result', async () => {
-    emulator.exec.mockResolvedValue(undefined);
-    const version = await emulatorVersion.resolve();
+    emulatorExec.exec.mockResolvedValue(undefined);
+    const version = await uut.resolve();
     expect(version).toEqual(null);
   });
 
   it('should return null for a query result that has an invalid syntax', async () => {
-    emulator.exec.mockResolvedValue('Android emulator version \<invalid\> (build_id 6306047) (CL:N/A)');
-    const version = await emulatorVersion.resolve();
+    emulatorExec.exec.mockResolvedValue('Android emulator version \<invalid\> (build_id 6306047) (CL:N/A)');
+    const version = await uut.resolve();
     expect(version).toEqual(null);
   });
 
   it('should cache the version', async () => {
-    await emulatorVersion.resolve();
-    const version = await emulatorVersion.resolve();
+    await uut.resolve();
+    const version = await uut.resolve();
 
-    expect(emulator.exec).toHaveBeenCalledTimes(1);
+    expect(emulatorExec.exec).toHaveBeenCalledTimes(1);
     expect(version).toEqual(expectedVersion);
   });
 
   it('should log the version', async () => {
-    await emulatorVersion.resolve();
+    await uut.resolve();
     expect(log.debug).toHaveBeenCalledWith({event: 'EMU_BIN_VERSION_DETECT', success: true}, expect.any(String), expectedVersion);
   });
 
   it('should log in case of an error', async () => {
-    emulator.exec.mockResolvedValue('mock result');
-    await emulatorVersion.resolve();
+    emulatorExec.exec.mockResolvedValue('mock result');
+    await uut.resolve();
     expect(log.warn).toHaveBeenCalledWith({event: 'EMU_BIN_VERSION_DETECT', success: false}, expect.any(String), 'mock result');
   });
 });

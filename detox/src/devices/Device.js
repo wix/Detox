@@ -6,9 +6,10 @@ const debug = require('../utils/debug'); //debug utils, leave here even if unuse
 const getAbsoluteBinaryPath = require('../utils/getAbsoluteBinaryPath');
 
 class Device {
-  constructor({ deviceConfig, deviceDriver, sessionConfig }) {
+  constructor({ deviceConfig, deviceDriver, emitter, sessionConfig }) {
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
+    this._emitter = emitter;
     this._processes = {};
     this.deviceDriver = deviceDriver;
     this.deviceDriver.validateDeviceConfig(deviceConfig);
@@ -93,6 +94,11 @@ class Device {
 
     await this.deviceDriver.waitUntilReady();
     await this.deviceDriver.waitForActive();
+    await this._emitter.emit('appReady', {
+      deviceId: this._deviceId,
+      bundleId: _bundleId,
+      pid: processId,
+    });
 
     if(params.detoxUserNotificationDataURL) {
       await this.deviceDriver.cleanupRandomDirectory(params.detoxUserNotificationDataURL);
@@ -271,6 +277,12 @@ class Device {
 
   async _cleanup() {
     await this.deviceDriver.cleanup(this._deviceId, this._bundleId);
+
+    if (argparse.getArgValue('cleanup') && this._deviceId) {
+      await this.deviceDriver.shutdown(this._deviceId);
+    }
+
+    this.deviceDriver = null;
   }
 
   async pressBack() {

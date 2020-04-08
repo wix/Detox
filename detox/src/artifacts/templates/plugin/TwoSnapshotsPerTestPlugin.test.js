@@ -16,6 +16,7 @@ describe('TwoSnapshotsPerTestPlugin', () => {
         keepOnlyFailedTestsArtifacts: false,
       },
     });
+
     plugin = new FakeTwoSnapshotsPerTestPlugin({ api });
   });
 
@@ -58,22 +59,105 @@ describe('TwoSnapshotsPerTestPlugin', () => {
     });
   });
 
-  describe('when onTestStart called', function() {
-    beforeEach(async () => {
-      await plugin.onTestStart(testSummaries.running());
+  describe('when takeWhen.testStart is false', () => {
+    beforeEach(() => plugin.configureAutomaticSnapshots({ testStart: false }));
+
+    describe('when onTestStart called', function() {
+      beforeEach(async () => {
+        await plugin.onTestStart(testSummaries.running());
+      });
+
+      it('should not create any tests artifacts', () => {
+        expect(plugin.createTestArtifact).not.toHaveBeenCalled();
+        expect(plugin.snapshots.fromTest['testStart']).toBe(undefined);
+      });
+    });
+  });
+
+  describe('when takeWhen.testStart is true', () => {
+    beforeEach(() => plugin.configureAutomaticSnapshots({ testStart: true }));
+
+    describe('when onTestStart called', function() {
+      beforeEach(async () => {
+        await plugin.onTestStart(testSummaries.running());
+      });
+
+      it('should create test artifact', () => {
+        expect(plugin.createTestArtifact).toHaveBeenCalledTimes(1);
+      });
+
+      it('should start and stop recording in the artifact', () => {
+        expect(plugin.snapshots.fromTest['testStart'].start).toHaveBeenCalledTimes(1);
+        expect(plugin.snapshots.fromTest['testStart'].stop).toHaveBeenCalledTimes(1);
+      });
+
+      it('should put the artifact under tracking', () => {
+        expect(api.trackArtifact).toHaveBeenCalledWith(plugin.snapshots.fromTest['testStart']);
+      });
+    });
+  });
+
+  describe('when takeWhen.testDone is false', () => {
+    beforeEach(() => plugin.configureAutomaticSnapshots({ testDone: false }));
+
+    describe('when onTestStart and onTestEnd called', function() {
+      beforeEach(async () => {
+        await plugin.onTestStart(testSummaries.running());
+        await plugin.onTestDone(testSummaries.passed());
+      });
+
+      it('should not create any test artifacts', () => {
+        expect(plugin.createTestArtifact).not.toHaveBeenCalled();
+        expect(plugin.snapshots.fromTest['testDone']).toBe(undefined);
+      });
     });
 
-    it('should create test artifact', () => {
-      expect(plugin.createTestArtifact).toHaveBeenCalledTimes(1);
-    });
+    describe('and takeWhen.testStart is true', () => {
+      beforeEach(() => plugin.configureAutomaticSnapshots({ testStart: true }));
 
-    it('should start and stop recording in the artifact', () => {
-      expect(plugin.snapshots.fromTest['testStart'].start).toHaveBeenCalledTimes(1);
-      expect(plugin.snapshots.fromTest['testStart'].stop).toHaveBeenCalledTimes(1);
-    });
+      describe('when onTestStart and onTestEnd called', function() {
+        it('should save a test artifact from testStart', async () => {
+          await plugin.onTestStart(testSummaries.running());
+          expect(plugin.createTestArtifact).toHaveBeenCalledTimes(1);
 
-    it('should put the artifact under tracking', () => {
-      expect(api.trackArtifact).toHaveBeenCalledWith(plugin.snapshots.fromTest['testStart']);
+          const startArtifact = plugin.snapshots.fromTest['testStart'];
+          expect(startArtifact.save).not.toHaveBeenCalled();
+
+          await plugin.onTestDone(testSummaries.passed());
+          await api.emulateRunningAllIdleCallbacks();
+
+          expect(startArtifact.save).toHaveBeenCalled();
+        });
+      });
+    });
+  });
+
+  describe('when takeWhen.testDone is true', () => {
+    beforeEach(() => plugin.configureAutomaticSnapshots({ testDone: true }));
+
+    describe('when onTestStart and onTestDone called', function() {
+      beforeEach(async () => {
+        await plugin.onTestStart(testSummaries.running());
+        await plugin.onTestDone(testSummaries.passed());
+      });
+
+      it('should create 1 test artifact', () => {
+        expect(plugin.createTestArtifact).toHaveBeenCalledTimes(1);
+      });
+
+      it('should start and stop recording in the "testDone" artifact', () => {
+        expect(plugin.snapshots.fromTest['testDone'].start).toHaveBeenCalledTimes(1);
+        expect(plugin.snapshots.fromTest['testDone'].stop).toHaveBeenCalledTimes(1);
+      });
+
+      it('should put the "testDone" artifact under tracking', () => {
+        expect(api.trackArtifact).toHaveBeenCalledWith(plugin.snapshots.fromTest['testDone']);
+      });
+
+      it('should eventually save the "testDone" artifact', async () => {
+        await api.emulateRunningAllIdleCallbacks();
+        expect(plugin.snapshots.fromTest['testDone'].save).toHaveBeenCalledTimes(1);
+      });
     });
   });
 
@@ -91,188 +175,190 @@ describe('TwoSnapshotsPerTestPlugin', () => {
     });
   });
 
-  describe('when the plugin should keep a test artifact', () => {
-    beforeEach(() => plugin.configureToKeepArtifacts(true));
+  describe('when takeWhen.testStart and takeWhen.testDone have default values', function() {
+    describe('when the plugin should keep a test artifact', () => {
+      beforeEach(() => plugin.configureToKeepArtifacts(true));
 
-    describe('when onTestStart and onTestDone are called', () => {
-      beforeEach(async () => {
-        await plugin.onTestStart(testSummaries.running());
-        await plugin.onTestDone(testSummaries.passed());
-      });
-
-      it('should create the second test artifact', () => {
-        expect(plugin.createTestArtifact).toHaveBeenCalledTimes(2);
-      });
-
-      it('should start and stop the second test artifact', () => {
-        expect(plugin.snapshots.fromTest['testDone'].start).toHaveBeenCalledTimes(1);
-        expect(plugin.snapshots.fromTest['testDone'].stop).toHaveBeenCalledTimes(1);
-      });
-
-      it('should put the second test artifact under tracking', () => {
-        expect(api.trackArtifact).toHaveBeenCalledWith(plugin.snapshots.fromTest['testDone']);
-      });
-
-      it('should schedule two saving operations and specify itself as an initiator', () => {
-        expect(api.requestIdleCallback).toHaveBeenCalledTimes(2);
-        expect(api.requestIdleCallback.mock.calls[0]).toEqual([expect.any(Function)]);
-        expect(api.requestIdleCallback.mock.calls[1]).toEqual([expect.any(Function)]);
-      });
-
-      it('should schedule to save and untrack the first artifact', async () => {
-        const [saveRequest] = api.requestIdleCallback.mock.calls[0];
-
-        expect(plugin.snapshots.fromTest['testStart'].save).not.toHaveBeenCalled();
-        expect(api.untrackArtifact).not.toHaveBeenCalled();
-
-        await saveRequest();
-
-        expect(plugin.snapshots.fromTest['testStart'].save).toBeCalledWith('test/testStart.png');
-        expect(api.untrackArtifact).toBeCalledWith(plugin.snapshots.fromTest['testStart']);
-      });
-
-      it('should ultimately save and untrack the second artifact', async () => {
-        const [saveRequest] = api.requestIdleCallback.mock.calls[1];
-
-        expect(plugin.snapshots.fromTest['testDone'].save).not.toHaveBeenCalled();
-        expect(api.untrackArtifact).not.toHaveBeenCalled();
-
-        await saveRequest();
-
-        expect(plugin.snapshots.fromTest['testDone'].save).toBeCalledWith('test/testDone.png');
-        expect(api.untrackArtifact).toBeCalledWith(plugin.snapshots.fromTest['testDone']);
-      });
-    });
-
-    describe('when an external snapshot is created in the midst of a test', function() {
-      let artifact;
-
-      beforeEach(async () => {
-        artifact = new ArtifactMock('screenshot');
-
-        await plugin.onTestStart(testSummaries.running());
-        await plugin.onCreateExternalArtifact({
-          artifact,
-          name: 'final_name',
+      describe('when onTestStart and onTestDone are called', () => {
+        beforeEach(async () => {
+          await plugin.onTestStart(testSummaries.running());
+          await plugin.onTestDone(testSummaries.passed());
         });
-        await plugin.onTestDone(testSummaries.passed());
-      });
 
-      it('should be saved using the suggested name and untracked', async () => {
-        expect(artifact.save).not.toBeCalledWith('test/final_name.png');
-        expect(api.untrackArtifact).not.toHaveBeenCalled();
-
-        await Promise.all(api.requestIdleCallback.mock.calls.map(s => s[0]()));
-
-        expect(artifact.save).toBeCalledWith('test/final_name.png');
-        expect(api.untrackArtifact).toHaveBeenCalled();
-      });
-    });
-
-    describe('when an external snapshot is created before beforeEach', function() {
-      let artifact;
-
-      beforeEach(async () => {
-        artifact = new ArtifactMock('screenshot');
-
-        await plugin.onCreateExternalArtifact({
-          artifact,
-          name: 'final_name',
+        it('should create the second test artifact', () => {
+          expect(plugin.createTestArtifact).toHaveBeenCalledTimes(2);
         });
-        await plugin.onTestStart(testSummaries.running());
-      });
 
-      it('should be saved using the suggested name and untracked', async () => {
-        expect(artifact.save).not.toBeCalledWith('final_name.png');
-        expect(api.untrackArtifact).not.toHaveBeenCalled();
-
-        await Promise.all(api.requestIdleCallback.mock.calls.map(s => s[0]()));
-
-        expect(artifact.save).toBeCalledWith('final_name.png');
-        expect(api.untrackArtifact).toHaveBeenCalled();
-      });
-    });
-
-    describe('when an external snapshot is created before Detox cleanup', function() {
-      let artifact;
-
-      beforeEach(async () => {
-        artifact = new ArtifactMock('screenshot');
-
-        await plugin.onTestStart(testSummaries.running());
-        await plugin.onTestDone(testSummaries.passed());
-        await plugin.onCreateExternalArtifact({
-          artifact,
-          name: 'final_name',
+        it('should start and stop the second test artifact', () => {
+          expect(plugin.snapshots.fromTest['testDone'].start).toHaveBeenCalledTimes(1);
+          expect(plugin.snapshots.fromTest['testDone'].stop).toHaveBeenCalledTimes(1);
         });
-        await plugin.onBeforeCleanup();
-      });
 
-      it('should be saved using the suggested name and untracked', async () => {
-        expect(artifact.save).not.toBeCalledWith('final_name.png');
-        expect(api.untrackArtifact).not.toHaveBeenCalled();
-
-        await Promise.all(api.requestIdleCallback.mock.calls.map(s => s[0]()));
-
-        expect(artifact.save).toBeCalledWith('final_name.png');
-        expect(api.untrackArtifact).toHaveBeenCalled();
-      });
-    });
-  });
-
-  describe('when the plugin should not keep a test artifact', () => {
-    beforeEach(() => plugin.configureToKeepArtifacts(false));
-
-    describe('when onTestStart and onTestDone are called', () => {
-      beforeEach(async () => {
-        await plugin.onTestStart(testSummaries.running());
-        await plugin.onTestDone(testSummaries.passed());
-      });
-
-      it('should not create the second test artifact', () => {
-        expect(plugin.createTestArtifact).toHaveBeenCalledTimes(1);
-      });
-
-      it('should schedule a discard operation for the first artifact and specify itself as an initiator', () => {
-        expect(api.requestIdleCallback).toHaveBeenCalledTimes(1);
-        expect(api.requestIdleCallback.mock.calls[0]).toEqual([expect.any(Function)]);
-      });
-
-      it('should ultimately discard and untrack the first artifact', async () => {
-        const [discardRequest] = api.requestIdleCallback.mock.calls[0];
-
-        expect(plugin.snapshots.fromTest['testStart'].discard).not.toHaveBeenCalled();
-        expect(api.untrackArtifact).not.toHaveBeenCalled();
-
-        await discardRequest();
-
-        expect(plugin.snapshots.fromTest['testStart'].discard).toHaveBeenCalledTimes(1);
-        expect(api.untrackArtifact).toBeCalledWith(plugin.snapshots.fromTest['testStart']);
-      });
-    });
-
-    describe('when an external snapshot is created in the midst of a test', function() {
-      let artifact;
-
-      beforeEach(async () => {
-        artifact = new ArtifactMock('screenshot');
-
-        await plugin.onTestStart(testSummaries.running());
-        await plugin.onCreateExternalArtifact({
-          artifact,
-          name: 'final_name',
+        it('should put the second test artifact under tracking', () => {
+          expect(api.trackArtifact).toHaveBeenCalledWith(plugin.snapshots.fromTest['testDone']);
         });
-        await plugin.onTestDone(testSummaries.passed());
+
+        it('should schedule two saving operations and specify itself as an initiator', () => {
+          expect(api.requestIdleCallback).toHaveBeenCalledTimes(2);
+          expect(api.requestIdleCallback.mock.calls[0]).toEqual([expect.any(Function)]);
+          expect(api.requestIdleCallback.mock.calls[1]).toEqual([expect.any(Function)]);
+        });
+
+        it('should schedule to save and untrack the first artifact', async () => {
+          const [saveRequest] = api.requestIdleCallback.mock.calls[0];
+
+          expect(plugin.snapshots.fromTest['testStart'].save).not.toHaveBeenCalled();
+          expect(api.untrackArtifact).not.toHaveBeenCalled();
+
+          await saveRequest();
+
+          expect(plugin.snapshots.fromTest['testStart'].save).toBeCalledWith('test/testStart.png');
+          expect(api.untrackArtifact).toBeCalledWith(plugin.snapshots.fromTest['testStart']);
+        });
+
+        it('should ultimately save and untrack the second artifact', async () => {
+          const [saveRequest] = api.requestIdleCallback.mock.calls[1];
+
+          expect(plugin.snapshots.fromTest['testDone'].save).not.toHaveBeenCalled();
+          expect(api.untrackArtifact).not.toHaveBeenCalled();
+
+          await saveRequest();
+
+          expect(plugin.snapshots.fromTest['testDone'].save).toBeCalledWith('test/testDone.png');
+          expect(api.untrackArtifact).toBeCalledWith(plugin.snapshots.fromTest['testDone']);
+        });
       });
 
-      it('should be discarded and untracked', async () => {
-        expect(artifact.discard).not.toHaveBeenCalled();
-        expect(api.untrackArtifact).not.toHaveBeenCalled();
+      describe('when an external snapshot is created in the midst of a test', function() {
+        let artifact;
 
-        await Promise.all(api.requestIdleCallback.mock.calls.map(s => s[0]()));
+        beforeEach(async () => {
+          artifact = new ArtifactMock('screenshot');
 
-        expect(artifact.discard).toHaveBeenCalled();
-        expect(api.untrackArtifact).toHaveBeenCalledWith(artifact);
+          await plugin.onTestStart(testSummaries.running());
+          await plugin.onCreateExternalArtifact({
+            artifact,
+            name: 'final_name',
+          });
+          await plugin.onTestDone(testSummaries.passed());
+        });
+
+        it('should be saved using the suggested name and untracked', async () => {
+          expect(artifact.save).not.toBeCalledWith('test/final_name.png');
+          expect(api.untrackArtifact).not.toHaveBeenCalled();
+
+          await Promise.all(api.requestIdleCallback.mock.calls.map(s => s[0]()));
+
+          expect(artifact.save).toBeCalledWith('test/final_name.png');
+          expect(api.untrackArtifact).toHaveBeenCalled();
+        });
+      });
+
+      describe('when an external snapshot is created before beforeEach', function() {
+        let artifact;
+
+        beforeEach(async () => {
+          artifact = new ArtifactMock('screenshot');
+
+          await plugin.onCreateExternalArtifact({
+            artifact,
+            name: 'final_name',
+          });
+          await plugin.onTestStart(testSummaries.running());
+        });
+
+        it('should be saved using the suggested name and untracked', async () => {
+          expect(artifact.save).not.toBeCalledWith('final_name.png');
+          expect(api.untrackArtifact).not.toHaveBeenCalled();
+
+          await Promise.all(api.requestIdleCallback.mock.calls.map(s => s[0]()));
+
+          expect(artifact.save).toBeCalledWith('final_name.png');
+          expect(api.untrackArtifact).toHaveBeenCalled();
+        });
+      });
+
+      describe('when an external snapshot is created before Detox cleanup', function() {
+        let artifact;
+
+        beforeEach(async () => {
+          artifact = new ArtifactMock('screenshot');
+
+          await plugin.onTestStart(testSummaries.running());
+          await plugin.onTestDone(testSummaries.passed());
+          await plugin.onCreateExternalArtifact({
+            artifact,
+            name: 'final_name',
+          });
+          await plugin.onBeforeCleanup();
+        });
+
+        it('should be saved using the suggested name and untracked', async () => {
+          expect(artifact.save).not.toBeCalledWith('final_name.png');
+          expect(api.untrackArtifact).not.toHaveBeenCalled();
+
+          await Promise.all(api.requestIdleCallback.mock.calls.map(s => s[0]()));
+
+          expect(artifact.save).toBeCalledWith('final_name.png');
+          expect(api.untrackArtifact).toHaveBeenCalled();
+        });
+      });
+    });
+
+    describe('when the plugin should not keep a test artifact', () => {
+      beforeEach(() => plugin.configureToKeepArtifacts(false));
+
+      describe('when onTestStart and onTestDone are called', () => {
+        beforeEach(async () => {
+          await plugin.onTestStart(testSummaries.running());
+          await plugin.onTestDone(testSummaries.passed());
+        });
+
+        it('should not create the second test artifact', () => {
+          expect(plugin.createTestArtifact).toHaveBeenCalledTimes(1);
+        });
+
+        it('should schedule a discard operation for the first artifact and specify itself as an initiator', () => {
+          expect(api.requestIdleCallback).toHaveBeenCalledTimes(1);
+          expect(api.requestIdleCallback.mock.calls[0]).toEqual([expect.any(Function)]);
+        });
+
+        it('should ultimately discard and untrack the first artifact', async () => {
+          const [discardRequest] = api.requestIdleCallback.mock.calls[0];
+
+          expect(plugin.snapshots.fromTest['testStart'].discard).not.toHaveBeenCalled();
+          expect(api.untrackArtifact).not.toHaveBeenCalled();
+
+          await discardRequest();
+
+          expect(plugin.snapshots.fromTest['testStart'].discard).toHaveBeenCalledTimes(1);
+          expect(api.untrackArtifact).toBeCalledWith(plugin.snapshots.fromTest['testStart']);
+        });
+      });
+
+      describe('when an external snapshot is created in the midst of a test', function() {
+        let artifact;
+
+        beforeEach(async () => {
+          artifact = new ArtifactMock('screenshot');
+
+          await plugin.onTestStart(testSummaries.running());
+          await plugin.onCreateExternalArtifact({
+            artifact,
+            name: 'final_name',
+          });
+          await plugin.onTestDone(testSummaries.passed());
+        });
+
+        it('should be discarded and untracked', async () => {
+          expect(artifact.discard).not.toHaveBeenCalled();
+          expect(api.untrackArtifact).not.toHaveBeenCalled();
+
+          await Promise.all(api.requestIdleCallback.mock.calls.map(s => s[0]()));
+
+          expect(artifact.discard).toHaveBeenCalled();
+          expect(api.untrackArtifact).toHaveBeenCalledWith(artifact);
+        });
       });
     });
   });
@@ -286,6 +372,10 @@ class FakeTwoSnapshotsPerTestPlugin extends TwoSnapshotsPerTestPlugin {
     const nonDeletable = { deleteProperty: () => true };
     this.snapshots.fromSession = new Proxy(this.snapshots.fromSession, nonDeletable);
     this.snapshots.fromTest = new Proxy(this.snapshots.fromTest, nonDeletable);
+  }
+
+  configureAutomaticSnapshots(value) {
+    this.takeAutomaticSnapshots = value;
   }
 
   configureToKeepArtifacts(shouldKeep) {

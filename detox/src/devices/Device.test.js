@@ -10,6 +10,7 @@ describe('Device', () => {
   let fs;
   let DeviceDriverBase;
   let SimulatorDriver;
+  let emitter;
   let Device;
   let argparse;
   let Client;
@@ -33,6 +34,10 @@ describe('Device', () => {
     jest.mock('../client/Client');
     Client = require('../client/Client');
 
+    jest.mock('../utils/AsyncEmitter');
+    const AsyncEmitter = require('../utils/AsyncEmitter');
+    emitter = new AsyncEmitter({});
+
     Device = require('./Device');
   });
 
@@ -47,7 +52,10 @@ describe('Device', () => {
 
   class DeviceDriverMock {
     constructor() {
-      this.driver = new DeviceDriverBase(client);
+      this.driver = new DeviceDriverBase({
+        client,
+        emitter,
+      });
     }
 
     expectLaunchCalled(device, expectedArgs, languageAndLocale) {
@@ -86,6 +94,7 @@ describe('Device', () => {
       deviceConfig: scheme.configurations[configuration],
       deviceDriver: driverMock.driver,
       sessionConfig: scheme.session,
+      emitter,
     });
 
     device.deviceDriver.acquireFreeDevice.mockReturnValue('mockDeviceId');
@@ -164,6 +173,19 @@ describe('Device', () => {
       await device.launchApp();
 
       driverMock.expectLaunchCalled(device, expectedArgs);
+    });
+
+    it(`args should launch app and emit appReady`, async () => {
+      driverMock.driver.launchApp = async () => 42;
+
+      const device = validDevice();
+      await device.launchApp();
+
+      expect(emitter.emit).toHaveBeenCalledWith('appReady', {
+        deviceId: device._deviceId,
+        bundleId: device._bundleId,
+        pid: 42,
+      })
     });
 
     it(`(relaunch) with no args should use defaults`, async () => {
@@ -691,12 +713,42 @@ describe('Device', () => {
     expect(driverMock.driver.cleanup).toHaveBeenCalledTimes(1);
   });
 
+  it(`_cleanup() should shutdown a prepared device if --cleanup is passed from CLI`, async () => {
+    argparse.getArgValue.mockReturnValue(true);
+
+    const device = validDevice();
+    await device.prepare();
+    await device._cleanup();
+
+    expect(driverMock.driver.shutdown).toHaveBeenCalled();
+  });
+
+  it(`_cleanup() should not shutdown a prepared device if --cleanup is not passed from CLI`, async () => {
+    argparse.getArgValue.mockReturnValue(false);
+
+    const device = validDevice();
+    await device.prepare();
+    await device._cleanup();
+
+    expect(driverMock.driver.shutdown).not.toHaveBeenCalled();
+  });
+
+  it(`_cleanup() should not shutdown an unprepared device even if --cleanup is passed from CLI`, async () => {
+    argparse.getArgValue.mockReturnValue(true);
+
+    const device = validDevice();
+    await device._cleanup();
+
+    expect(driverMock.driver.shutdown).not.toHaveBeenCalled();
+  });
+
   it(`new Device() with invalid device config (no binary) should throw`, () => {
     // TODO: this is an invalid test, because it will pass only on SimulatorDriver
     expect(() => new Device({
       deviceConfig: invalidDeviceNoBinary.configurations['ios.sim.release'],
       deviceDriver: new SimulatorDriver(client),
       sessionConfig: validScheme.session,
+      emitter,
     })).toThrowError(/binaryPath.* is missing/);
   });
 
