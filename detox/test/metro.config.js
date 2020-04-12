@@ -1,11 +1,12 @@
-let metroBundler;
+let createBlacklist;
 try {
-  metroBundler = require('metro');
+  createBlacklist = require('metro-config/src/defaults/blacklist');
 } catch (ex) {
-  metroBundler = require('metro-bundler');
+  createBlacklist = require('metro-bundler').createBlacklist;
 }
+
 module.exports = {
   resolver: {
-    blacklistRE: metroBundler.createBlacklist([/detox\/node_modules\/react-native\/.*/]),
+    blacklistRE: createBlacklist([/detox\/node_modules\/react-native\/.*/]),
   },
 };

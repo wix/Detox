@@ -8,6 +8,7 @@
   "scripts": {
     "test": ":",
     "postinstall": "node scripts/postinstall.js",
+    "start": "react-native start",
     "packager": "react-native start",
     "detox-server": "detox run-server",
     "e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization",

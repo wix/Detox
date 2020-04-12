@@ -8,6 +8,7 @@ import com.wix.detox.espresso.common.MotionEvents
 import org.assertj.core.api.Assertions.assertThat
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
+import kotlin.test.assertFailsWith
 
 private fun dontCareCoordinates() = FloatArray(2) { 0f }
 private fun dontCarePrecision() = FloatArray(2) { 0f }
@@ -156,6 +157,22 @@ object DetoxSingleTapSpec: Spek({
             uut(111L).sendTap(uiController, coordinates, precision, 0, 0)
 
             verify(uiController, never()).loopMainThreadForAtLeast(any())
+        }
+
+        it("should throw if no UI-controller provided") {
+            assertFailsWith(KotlinNullPointerException::class) {
+                uut().sendTap(null, dontCareCoordinates(), dontCarePrecision(), 0, 0)
+            }
+        }
+
+        it("should throw if no coordinates / precision are provided") {
+            assertFailsWith(KotlinNullPointerException::class) {
+                uut().sendTap(uiController, null, dontCarePrecision(), 0, 0)
+            }
+
+            assertFailsWith(KotlinNullPointerException::class) {
+                uut().sendTap(uiController, dontCareCoordinates(), null, 0, 0)
+            }
         }
     }
 })

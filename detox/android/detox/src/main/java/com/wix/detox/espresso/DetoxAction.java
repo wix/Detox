@@ -4,6 +4,7 @@ import android.view.View;
 
 import com.wix.detox.espresso.DetoxErrors.DetoxRuntimeException;
 import com.wix.detox.espresso.DetoxErrors.StaleActionException;
+import com.wix.detox.espresso.action.DetoxMultiTap;
 import com.wix.detox.espresso.action.RNClickAction;
 import com.wix.detox.espresso.common.annot.MotionDir;
 import com.wix.detox.espresso.scroll.ScrollEdgeException;
@@ -46,7 +47,7 @@ public class DetoxAction {
     }
 
     public static ViewAction multiClick(int times) {
-        return actionWithAssertions(new GeneralClickAction(new MultiTap(times), GeneralLocation.CENTER, Press.FINGER, 0, 0));
+        return actionWithAssertions(new GeneralClickAction(new DetoxMultiTap(times), GeneralLocation.CENTER, Press.FINGER, 0, 0));
     }
 
     public static ViewAction tapAtLocation(final int x, final int y) {
