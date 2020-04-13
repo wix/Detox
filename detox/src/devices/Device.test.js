@@ -125,22 +125,6 @@ describe('Device', () => {
   });
 
   describe('prepare()', () => {
-    it(`valid scheme, no binary, should throw`, async () => {
-      const device = validDevice();
-      fs.existsSync.mockReturnValue(false);
-      try {
-        await device.prepare({ checkBinaryPath: true });
-        fail('should throw')
-      } catch (ex) {
-        expect(ex.message).toMatch(/app binary not found at/)
-      }
-    });
-
-    it(`valid scheme, no binary, should not throw`, async () => {
-      const device = validDevice();
-      await device.prepare({ checkBinaryPath: true });
-    });
-
     it(`when reuse is enabled in CLI args should not uninstall and install`, async () => {
       const device = validDevice();
       argparse.getArgValue.mockReturnValue(true);

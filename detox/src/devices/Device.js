@@ -2,8 +2,7 @@ const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
 const argparse = require('../utils/argparse');
-const debug = require('../utils/debug'); //debug utils, leave here even if unused
-const getAbsoluteBinaryPath = require('../utils/getAbsoluteBinaryPath');
+const debug = require('../utils/debug'); // debug utils, leave here even if unused
 
 class Device {
   constructor({ deviceConfig, deviceDriver, emitter, sessionConfig }) {
@@ -17,14 +16,6 @@ class Device {
   }
 
   async prepare(params = {}) {
-    if (params.checkBinaryPath) {
-      // Run getAbsoluteBinaryPath to ensure that paths exist on disk if provided
-      getAbsoluteBinaryPath(this._deviceConfig.binaryPath);
-      if (this._deviceConfig.testBinaryPath) {
-        getAbsoluteBinaryPath(this._deviceConfig.testBinaryPath);
-      }
-    }
-
     this._deviceId = await this.deviceDriver.acquireFreeDevice(this._deviceConfig.device || this._deviceConfig.name);
     this._bundleId = await this.deviceDriver.getBundleIdFromBinary(this._deviceConfig.binaryPath);
 
