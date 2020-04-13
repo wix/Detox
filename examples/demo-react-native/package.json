@@ -19,8 +19,8 @@
     "e2e:android-release": "npm run build:android-release && npm run test:android-release"
   },
   "dependencies": {
-    "react": "16.9.0",
-    "react-native": "0.61.4"
+    "react": "16.11.x",
+    "react-native": "0.62.x"
   },
   "devDependencies": {
     "detox": "^16.2.0",
