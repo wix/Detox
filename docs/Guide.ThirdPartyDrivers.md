@@ -11,7 +11,7 @@ Detox comes with built-in support for running on Android and iOS by choosing a d
 
 While React Native officially supports Android and iOS, other platforms such as
 [Web](https://github.com/necolas/react-native-web) and [Windows](https://github.com/microsoft/react-native-windows)
-can be targeted. If your app targets a third party platform, you may which to use a [third party driver](#How-to-use-a-driver) to run your tests on said platform. If one doesn't already exist you may want to [write your own](#Writing-a-new-driver)
+can be targeted. If your app targets a third party platform, you may which to use a [third party driver](#How-to-use-a-driver) to run your tests on said platform as of Detox v16.3.0. If one doesn't already exist you may want to [write your own](#Writing-a-new-driver)
 
 ## How to use a driver
 
@@ -33,7 +33,7 @@ Check to see if a [third party driver](#Existing-Third-party-drivers) already ex
 
 The architecture of a driver is split into a few different pieces. Understanding the [overall architecture of Detox](https://github.com/wix/Detox/blob/master/docs/Introduction.HowDetoxWorks.md#architecture) will help with this section
 
-1. The Device Driver - code runs on the Detox Server. It implements the details for the
+1. The Device Driver - code runs on the Detox tester, within the test runner context. It implements the details for the
 [`device` object](https://github.com/wix/Detox/blob/master/docs/APIRef.DeviceObjectAPI.md) that is exposed in your detox tests. The implementation is responsible for managing device clients your tests will run on.
 1. Matchers - code powering the `expect` `element` `waitFor` and `by` globals in your tests.
 These helpers serialize your test code so they can be sent over the network to the device on which your tests are running.
