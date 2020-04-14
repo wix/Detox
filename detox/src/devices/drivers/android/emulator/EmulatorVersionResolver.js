@@ -17,7 +17,14 @@ class EmulatorVersionResolver {
   }
 
   async _resolve() {
-    const rawOutput = await this._emulatorExec.exec(new QueryVersionCommand()) || '';
+    let rawOutput;
+    try {
+      rawOutput = await this._emulatorExec.exec(new QueryVersionCommand()) || '';
+    } catch (error) {
+      log.error({ event: EMU_BIN_VERSION_DETECT_EV, success: false, error }, 'Could not detect emulator binary version', error);
+      return null;
+    }
+
     const matches = rawOutput.match(/Android emulator version ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]*)/);
     if (!matches) {
       log.warn({ event: EMU_BIN_VERSION_DETECT_EV, success: false }, 'Could not detect emulator binary version, got:', rawOutput);
