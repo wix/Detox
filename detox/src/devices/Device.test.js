@@ -799,7 +799,7 @@ describe('Device', () => {
   async function launchAndTestBinaryPath(configuration) {
     const device = schemeDevice(configurationsMock.pathsTests, configuration);
 
-    await device.prepare({ checkBinaryPath: true });
+    await device.prepare();
     await device.launchApp();
 
     return driverMock.driver.installApp.mock.calls[0][1];
