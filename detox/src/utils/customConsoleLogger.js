@@ -11,7 +11,7 @@ function getStackDump() {
 
 function getOrigin() {
   const userCallsite = callsites()[USER_STACK_FRAME_INDEX];
-  const filename = path.relative(process.cwd(), userCallsite.getFileName());
+  const filename = userCallsite && userCallsite.getFileName() ? path.relative(process.cwd(), userCallsite.getFileName()) : '?';
   return `at ${filename}:${userCallsite.getLineNumber() || '?'}:${userCallsite.getColumnNumber() || '?'}`;
 }
 
