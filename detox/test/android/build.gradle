@@ -1,4 +1,9 @@
 buildscript {
+    apply from: './rninfo.gradle'
+
+    def androidGradlePluginVersion = rnInfo.isRN62OrHigher ? '3.5.3' : '3.4.2'
+    println "[$project] Resorted to Android Gradle-plugin version $androidGradlePluginVersion"
+
     ext {
         isOfficialDetoxApp = true
         kotlinVersion = '1.3.41'
@@ -16,7 +21,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.2'
+        classpath "com.android.tools.build:gradle:$androidGradlePluginVersion"
         classpath 'de.undercouch:gradle-download-task:3.4.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 

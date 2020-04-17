@@ -35,6 +35,7 @@ describe('Emulator binary version', () => {
       child: jest.fn().mockReturnValue({
         debug: jest.fn(),
         warn: jest.fn(),
+        error: jest.fn(),
       }),
     }));
     log = require('../../../../utils/logger').child();
@@ -65,6 +66,25 @@ describe('Emulator binary version', () => {
     expect(version).toEqual(null);
   });
 
+  it('should log in case of a parsing error', async () => {
+    emulatorExec.exec.mockResolvedValue('non-parsable result');
+    await uut.resolve();
+    expect(log.warn).toHaveBeenCalledWith({event: 'EMU_BIN_VERSION_DETECT', success: false}, expect.any(String), 'non-parsable result');
+  });
+
+  it('should return null in case of a version-query failure', async () => {
+    emulatorExec.exec.mockRejectedValue(new Error('some error'));
+    const version = await uut.resolve();
+    expect(version).toEqual(null);
+  });
+
+  it('should log in case of a version-query failure', async () => {
+    const error = new Error('some error');
+    emulatorExec.exec.mockRejectedValue(error);
+    await uut.resolve();
+    expect(log.error).toHaveBeenCalledWith({event: 'EMU_BIN_VERSION_DETECT', success: false, error}, expect.any(String), error);
+  });
+
   it('should cache the version', async () => {
     await uut.resolve();
     const version = await uut.resolve();
@@ -76,11 +96,5 @@ describe('Emulator binary version', () => {
   it('should log the version', async () => {
     await uut.resolve();
     expect(log.debug).toHaveBeenCalledWith({event: 'EMU_BIN_VERSION_DETECT', success: true}, expect.any(String), expectedVersion);
-  });
-
-  it('should log in case of an error', async () => {
-    emulatorExec.exec.mockResolvedValue('mock result');
-    await uut.resolve();
-    expect(log.warn).toHaveBeenCalledWith({event: 'EMU_BIN_VERSION_DETECT', success: false}, expect.any(String), 'mock result');
   });
 });

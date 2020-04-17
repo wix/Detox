@@ -1,5 +1,3 @@
-import groovy.json.JsonSlurper
-
 apply plugin: 'com.android.application'
 
 //project.ext.react = [:]
@@ -8,8 +6,7 @@ project.ext.react = [
 ]
 apply from: '../../node_modules/react-native/react.gradle'
 
-Boolean isRN60OrHigher = getRNVersion() >= 60
-Boolean isRN61OrHigher = getRNVersion() >= 61
+apply from: '../rninfo.gradle'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -83,7 +80,7 @@ android {
 }
 
 dependencies {
-    if (isRN60OrHigher) {
+    if (rnInfo.isRN60OrHigher) {
         implementation 'androidx.appcompat:appcompat:1.1.0'
         implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     } else {
@@ -97,13 +94,13 @@ dependencies {
     androidTestImplementation(project(path: ':detox'))
 }
 
-if (isRN60OrHigher) {
+if (rnInfo.isRN60OrHigher) {
     // refs: https://react-native-community.github.io/upgrade-helper/?from=0.59.9&to=0.60.6
     //       https://react-native-community.github.io/upgrade-helper/?from=0.60.6&to=0.61.4
     dependencies {
         def enableHermes = project.ext.react.get('enableHermes', false)
         if (enableHermes) {
-            def hermesModuleName = isRN61OrHigher ? 'hermes-engine' : 'hermesvm'
+            def hermesModuleName = rnInfo.isRN61OrHigher ? 'hermes-engine' : 'hermesvm'
             def hermesPath = "../../node_modules/$hermesModuleName/android/"
             debugImplementation files(hermesPath + 'hermes-debug.aar')
             releaseImplementation files(hermesPath + 'hermes-release.aar')
@@ -118,12 +115,4 @@ if (isRN60OrHigher) {
 task copyDownloadableDepsToLibs(type: Copy) {
   from configurations.compile
   into 'libs'
-}
-
-static def getRNVersion() {
-    def jsonSlurper = new JsonSlurper()
-    Map<String, Object> packageJSON  = jsonSlurper.parse(new File('../node_modules/react-native/package.json'))
-    String rnVersion = packageJSON.get('version')
-    Integer rnVersionMajor = rnVersion.split('\\.')[1].toInteger()
-    return rnVersionMajor
 }

@@ -1,6 +1,6 @@
 {
   "name": "example",
-  "version": "16.1.1",
+  "version": "16.2.0",
   "private": true,
   "scripts": {
     "start": "react-native start",
@@ -19,11 +19,11 @@
     "e2e:android-release": "npm run build:android-release && npm run test:android-release"
   },
   "dependencies": {
-    "react": "16.8.x",
-    "react-native": "0.60.x"
+    "react": "16.11.x",
+    "react-native": "0.62.x"
   },
   "devDependencies": {
-    "detox": "^16.1.1",
+    "detox": "^16.2.0",
     "mocha": "^6.1.3"
   },
   "detox": {
