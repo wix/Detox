@@ -114,6 +114,7 @@
     ],
     "resetMocks": true,
     "resetModules": true,
+    "coverageReporters": [["lcov", {"projectRoot": ".." }], "html"],
     "coverageThreshold": {
       "global": {
         "statements": 100,
