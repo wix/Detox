@@ -46,6 +46,6 @@ Device logs can be retrieved from the device using `adb logcat`, or if recorded,
  - Node:
  - Device:
  - OS: 
- - Test-runner (select one): Mocha | Jest+jasmine | Jest+jest-circus
+ - Test-runner (select one): `jest-circus` | `jest-jasmine2` (deprecated) | `mocha`
 
 <!-- Note: Test-runner is set in Detox.test-runner in your package.json -->

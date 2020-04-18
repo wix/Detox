@@ -26,8 +26,8 @@ cp coverage/lcov.info ../../coverage/e2e-android-ci.lcov
 run_f "npm run e2e:android-timeout-ci"
 cp coverage/lcov.info ../../coverage/e2e-android-timeout-ci.lcov
 
-run_f "npm run e2e:jest-circus-timeout:android"
-cp coverage/lcov.info ../../coverage/e2e-jest-circus-timeout-android.lcov
+run_f "npm run e2e:legacy-jasmine:android-timeout-ci"
+cp coverage/lcov.info ../../coverage/e2e-legacy-jasmine-android-timeout-ci.lcov
 
 # run_f "npm run verify-artifacts:android"
 popd

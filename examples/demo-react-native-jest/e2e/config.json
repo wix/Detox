@@ -1,5 +1,5 @@
 {
-  "setupFilesAfterEnv": ["./init-circus.js"],
+  "setupFilesAfterEnv": ["./init.js"],
   "testEnvironment": "detox/runners/jest/environment",
   "testRunner": "jest-circus/runner",
   "reporters": ["detox/runners/jest/streamlineReporter"],

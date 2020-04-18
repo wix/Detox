@@ -11,20 +11,18 @@
     "start": "react-native start",
     "packager": "react-native start",
     "detox-server": "detox run-server",
-    "e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization",
-    "e2e:jest-circus:ios": "detox test --configuration ios.sim.release --debug-synchronization -o e2e/config-circus.js",
-    "e2e:jest-circus-timeout:ios": "node scripts/assert_timeout.js npm run e2e:jest-circus:ios -- --take-screenshots failing e2e/26.timeout.test.js",
-    "e2e:ios-ci": "detox test --configuration ios.sim.release --workers 3 --debug-synchronization --take-screenshots all --record-logs all --record-timeline all -- --coverage",
+    "e2e:ios": "detox test -c ios.sim.release --debug-synchronization",
+    "e2e:android": "detox test -c android.emu.release",
+    "e2e:android-debug": "detox test -c android.emu.debug",
+    "e2e:ios-ci": "npm run e2e:ios -- --workers 3 -- --coverage",
     "e2e:ios-timeout-ci": "node scripts/assert_timeout.js npm run e2e:ios-ci -- e2e/26.timeout.test.js",
-    "e2e:android": "detox test --configuration android.emu.release",
-    "e2e:jest-circus:android": "detox test --configuration android.emu.release -o e2e/config-circus.js",
-    "e2e:jest-circus-timeout:android": "node scripts/assert_timeout.js npm run e2e:jest-circus:android -- --take-screenshots failing e2e/26.timeout.test.js",
-    "e2e:android-debug": "detox test --configuration android.emu.debug",
-    "e2e:android-ci": "detox test --configuration android.emu.release --workers 3 --take-screenshots all --record-logs all --record-timeline all --headless --loglevel verbose --jest-report-specs -- --coverage",
+    "e2e:android-ci": "npm run e2e:android -- --workers 3 --headless --loglevel verbose --jest-report-specs -- --coverage",
     "e2e:android-timeout-ci": "node scripts/assert_timeout.js npm run e2e:android-ci -- e2e/26.timeout.test.js",
-    "build:ios": "detox build --configuration ios.sim.release",
-    "build:android": "detox build --configuration android.emu.release",
-    "build:android-debug": "detox build --configuration android.emu.debug",
+    "e2e:legacy-jasmine:ios-timeout-ci": "node scripts/assert_timeout.js npm run e2e:ios -- -o e2e/config-jasmine.js --take-screenshots failing -- --coverage e2e/26.timeout.test.js",
+    "e2e:legacy-jasmine:android-timeout-ci": "node scripts/assert_timeout.js npm run e2e:android -- -o e2e/config-jasmine.js --take-screenshots failing -- --coverage e2e/26.timeout.test.js",
+    "build:ios": "detox build -c ios.sim.release",
+    "build:android": "detox build -c android.emu.release",
+    "build:android-debug": "detox build -c android.emu.debug",
     "clean:android": "pushd android && ./gradlew clean && popd",
     "verify-artifacts:ios": "jest ./scripts/verify_artifacts_are_not_missing.ios.test.js --testEnvironment node",
     "verify-artifacts:android": "jest ./scripts/verify_artifacts_are_not_missing.android.test.js --testEnvironment node"
@@ -54,11 +52,14 @@
     },
     "artifacts": {
       "plugins": {
+        "log": "all",
         "screenshot": {
+          "shouldTakeAutomaticSnapshots": true,
           "takeWhen": {
             "testDone": true
           }
-        }
+        },
+        "timeline": "all"
       }
     },
     "configurations": {

@@ -17,7 +17,6 @@ popd
 # as it runs tests in parallel.
 pushd examples/demo-react-native-jest
 run_f "npm run test:android-release-ci"
-run_f "npm run test:jest-circus:android-release-ci"
 popd
 
 pushd examples/demo-react-native

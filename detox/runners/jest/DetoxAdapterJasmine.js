@@ -1,9 +1,15 @@
 const _ = require('lodash');
 const DetoxAdapter = require('./DetoxAdapterImpl');
+const log = require('../../src/utils/logger').child({ __filename });
 
 class DetoxAdapterJasmine /* extends JasmineReporter */ {
   constructor(detox) {
     this._adapter = new DetoxAdapter(detox, DetoxAdapterJasmine._describeInitError);
+    this._printDeprecationWarning = _.once(() => {
+      log.warn(
+        '"jest-jasmine2" support is going to be dropped soon.\n' +
+        'Please follow the migration guide: https://github.com/wix/Detox/blob/master/docs/Guide.Migration.md#1630');
+    });
   }
 
   static _describeInitError() {
@@ -16,6 +22,7 @@ class DetoxAdapterJasmine /* extends JasmineReporter */ {
   }
 
   async beforeEach() {
+    this._printDeprecationWarning();
     await this._adapter.beforeEach();
   }
 
