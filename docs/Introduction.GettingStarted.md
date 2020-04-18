@@ -120,49 +120,43 @@ Also make sure the simulator model specified under the key `device.type` (e.g. `
 
 Detox CLI supports Jest and Mocha out of the box. You need to choose one now, but it *is* possible to replace it later on.
 
-> Do note that:
->
-> * Jest is more complex to set up, but it's the only one that supports parallel tests execution. In Detox `12.7.0`, we've made Jest more suitable for e2e testing in terms of logging and usability.
-> * Mocha is easy to set up and is lightweight.
+Do note that:
 
-[Jest](http://jestjs.io/):
+* Jest is more complex to set up, but it's the only one that supports parallel tests execution.
+* Mocha is easy to set up and is lightweight.
 
-```sh
-npm install jest --save-dev
-```
+**Tip:** Detox is not tightly coupled to Mocha and Jest, neither to this specific directory structure. Both are just a recommendation and are easy to replace without touching the internal implementation of Detox itself.
 
-[Mocha](https://mochajs.org/):
+##### [Mocha](https://mochajs.org/)
 
 ```sh
 npm install mocha --save-dev
 ```
 
-> Tip: Detox is not tightly coupled to Mocha and Jest, neither to this specific directory structure. Both are just a recommendation and are easy to replace without touching the internal implementation of Detox itself.
+##### [Jest](https://jestjs.io/)
+
+Follow the [Guide.Jest.md](Guide.Jest.md) documentation.
 
 #### 2. Set up test-code scaffolds (automated) :building_construction:
 
 The Detox CLI has a `detox init` convenience method to automate a setup for your first test. Depending on your test runner of choice, run one of these commands:
 
-Jest:
+Note: `detox init` runs these steps, which you can reproduce manually:
 
-```sh
-detox init -r jest
-```
+- Creates an `e2e/` folder in your project root
+- Inside `e2e` folder, creates `mocha.opts` (for `mocha`) or `config.json` (for `jest`). See examples: [mocha.opts](/examples/demo-react-native/e2e/mocha.opts), [config.json](/examples/demo-react-native-jest/e2e/config.json)
+- Inside `e2e` folder, creates `init.js` file. See examples for [Mocha](/examples/demo-react-native/e2e/init.js) and [Jest](/examples/demo-react-native-jest/e2e/init.js).
+- Inside `e2e` folder, creates `firstTest.spec.js` with content similar to [this](/examples/demo-react-native-jest/e2e/app-hello.test.js).
 
-Mocha:
+##### Mocha
 
 ```sh
 detox init -r mocha
 ```
 
-**For a Jest-based environment, please pause and run through the comprehensive [Jest setup guide](Guide.Jest.md).**
+##### Jest
 
-> Note: `detox init` runs these steps, which you can reproduce manually:
->
-> - Creates an `e2e/` folder in your project root
-> - Inside `e2e` folder, creates `mocha.opts` (for `mocha`) or `config.json` (for `jest`). See examples: [mocha.opts](/examples/demo-react-native/e2e/mocha.opts), [config.json](/examples/demo-react-native-jest/e2e/config.json)
-> - Inside `e2e` folder, creates `init.js` file. See examples for [Mocha](/examples/demo-react-native/e2e/init.js) and [Jest](/examples/demo-react-native-jest/e2e/init.js).
-> - Inside `e2e` folder, creates `firstTest.spec.js` with content similar to [this](/examples/demo-react-native/e2e/example.spec.js).
+Follow the [Guide.Jest.md](Guide.Jest.md) documentation.
 
 ## Step 4: Build your app and run Detox tests
 

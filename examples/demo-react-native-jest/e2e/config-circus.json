@@ -1,7 +1,0 @@
-{
-  "setupFilesAfterEnv": ["./init-circus.js"],
-  "testEnvironment": "detox/runners/jest/JestCircusEnvironment",
-  "testRunner": "jest-circus/runner",
-  "reporters": ["detox/runners/jest/streamlineReporter"],
-  "verbose": true
-}

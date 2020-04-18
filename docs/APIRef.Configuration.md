@@ -149,7 +149,17 @@ Session can also be set per configuration:
 
 ### Test Runner Configuration
 
-##### Optional: setting a test runner (Mocha as default, Jest is supported)
+##### Jest (recommended)
+
+```json
+  "detox": {
+    ...
+    "test-runner": "jest"
+    "runner-config": "path/to/jest-config"
+  }
+```
+
+`path/to/jest-config` refers to `--config` in https://facebook.github.io/jest/docs/en/configuration.html
 
 ##### Mocha
 ```json
@@ -161,20 +171,6 @@ Session can also be set per configuration:
 ```
 
 `mocha.opts` refers to `--opts` in https://mochajs.org/#mochaopts
-
-##### Jest
-
-```json
-  "detox": {
-    ...
-    "test-runner": "jest"
-    "runner-config": "path/to/config.json"
-  }
-```
-
-`config.json` refers to `--config` in https://facebook.github.io/jest/docs/en/configuration.html
-
->NOTE: jest tests will run in band, as Detox does not currently supports parallelization.
 
 ## detox-cli
 
