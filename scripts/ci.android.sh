@@ -9,16 +9,25 @@ pushd detox/android
 run_f "./gradlew test"
 popd
 
+mkdir -p coverage
+
 pushd detox/test
+
 # Workaround until react android issue will be fixed - react-native: 0.55
 mv node_modules/react-native/ReactAndroid/release.gradle node_modules/react-native/ReactAndroid/release.gradle.bak
 cp extras/release.gradle node_modules/react-native/ReactAndroid/
 
 run_f "npm run build:android"
-run_f "npm run e2e:android-ci"
-run_f "npm run e2e:android-timeout-ci"
-run_f "npm run e2e:jest-circus-timeout:android"
+cp ../coverage/lcov.info ../../coverage/unit.lcov
 
-cp coverage/lcov.info coverage/e2e.lcov
+run_f "npm run e2e:android-ci"
+cp coverage/lcov.info ../../coverage/e2e-android-ci.lcov
+
+run_f "npm run e2e:android-timeout-ci"
+cp coverage/lcov.info ../../coverage/e2e-android-timeout-ci.lcov
+
+run_f "npm run e2e:jest-circus-timeout:android"
+cp coverage/lcov.info ../../coverage/e2e-jest-circus-timeout-android.lcov
+
 # run_f "npm run verify-artifacts:android"
 popd
