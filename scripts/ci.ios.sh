@@ -4,12 +4,21 @@ source $(dirname "$0")/ci.sh
 
 run_f "$(dirname "$0")/unit.ios.sh"
 
-pushd detox/test
-run_f "npm run build:ios"
-run_f "npm run e2e:ios-ci"
-run_f "npm run e2e:ios-timeout-ci"
-run_f "npm run e2e:jest-circus-timeout:ios"
+mkdir -p coverage
 
-cp coverage/lcov.info coverage/e2e.lcov
+pushd detox/test
+
+run_f "npm run build:ios"
+cp ../coverage/lcov.info ../../coverage/unit.lcov
+
+run_f "npm run e2e:ios-ci"
+cp coverage/lcov.info ../../coverage/e2e-ios-ci.lcov
+
+run_f "npm run e2e:ios-timeout-ci"
+cp coverage/lcov.info ../../coverage/e2e-ios-timeout-ci.lcov
+
+run_f "npm run e2e:jest-circus-timeout:ios"
+cp coverage/lcov.info ../../coverage/e2e-jest-circus-timeout-ios.lcov
+
 # run_f "npm run verify-artifacts:ios"
 popd

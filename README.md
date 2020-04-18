@@ -5,6 +5,7 @@ Gray box end-to-end testing and automation library for mobile apps.
 [![NPM Version](https://img.shields.io/npm/v/detox.svg?style=flat)](https://www.npmjs.com/package/detox)
 [![NPM Downloads](https://img.shields.io/npm/dm/detox.svg?style=flat)](https://www.npmjs.com/package/detox)
 [![Build Status](https://img.shields.io/jenkins/s/http/jenkins-oss.wixpress.com:8080/job/multi-detox-master.svg)](https://jenkins-oss.wixpress.com/job/multi-detox-master/)
+[![Coverage Status](https://coveralls.io/repos/github/wix/Detox/badge.svg?branch=master)](https://coveralls.io/github/wix/Detox?branch=master)
 
 - [About](#about)
 - [Getting Started](/docs/Introduction.GettingStarted.md)
