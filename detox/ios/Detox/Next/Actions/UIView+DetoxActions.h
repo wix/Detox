@@ -11,12 +11,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIView (Detox)
 
-+ (NSMutableArray<UIView*>*)dtx_findViewsInKeySceneWindowsPassingPredicate:(NSPredicate*)predicate;
-+ (NSMutableArray<UIView*>*)dtx_findViewsInWindows:(NSArray<UIWindow*>*)windows passingPredicate:(NSPredicate*)predicate;
-
-- (BOOL)dtx_isHittable;
-- (BOOL)dtx_isVisible;
-
 - (void)dtx_tapAtAccessibilityActivationPoint;
 - (void)dtx_tapAtPoint:(CGPoint)point numberOfTaps:(NSUInteger)numberOfTaps;
 - (void)dtx_longPressAtAccessibilityActivationPoint;

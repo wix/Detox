@@ -56,14 +56,14 @@
 		396EA67B22E0AE7D0087E4D4 /* DTXAddressInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 396EA67922E0AE7C0087E4D4 /* DTXAddressInfo.mm */; };
 		397EC9B51E7EDE0B00D5F2BB /* EarlGreyStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 397EC9B31E7EDE0B00D5F2BB /* EarlGreyStatistics.h */; };
 		397EC9B61E7EDE0B00D5F2BB /* EarlGreyStatistics.m in Sources */ = {isa = PBXBuildFile; fileRef = 397EC9B41E7EDE0B00D5F2BB /* EarlGreyStatistics.m */; };
-		3980D10E2448B52C004812DD /* UIView+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D0FD2448B52A004812DD /* UIView+Detox.m */; };
+		3980D10E2448B52C004812DD /* UIView+DetoxActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D0FD2448B52A004812DD /* UIView+DetoxActions.m */; };
 		3980D10F2448B52C004812DD /* UIApplication+DTXAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D0FE2448B52A004812DD /* UIApplication+DTXAdditions.h */; };
 		3980D1102448B52C004812DD /* DTXSyntheticEvents.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D0FF2448B52A004812DD /* DTXSyntheticEvents.m */; };
 		3980D1112448B52C004812DD /* NSObject+DontCrashOnText.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D1002448B52B004812DD /* NSObject+DontCrashOnText.m */; };
 		3980D1122448B52C004812DD /* UIApplication+DTXAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D1012448B52B004812DD /* UIApplication+DTXAdditions.m */; };
 		3980D1132448B52C004812DD /* NSObject+DontCrashOnText.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D1022448B52B004812DD /* NSObject+DontCrashOnText.h */; };
 		3980D1142448B52C004812DD /* DTXTouchInjector.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D1032448B52B004812DD /* DTXTouchInjector.h */; };
-		3980D1152448B52C004812DD /* UIView+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D1042448B52B004812DD /* UIView+Detox.h */; };
+		3980D1152448B52C004812DD /* UIView+DetoxActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D1042448B52B004812DD /* UIView+DetoxActions.h */; };
 		3980D1162448B52C004812DD /* DTXTouchInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D1052448B52B004812DD /* DTXTouchInfo.m */; };
 		3980D1172448B52C004812DD /* DTXRunLoopSpinner.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D1062448B52B004812DD /* DTXRunLoopSpinner.h */; };
 		3980D1182448B52C004812DD /* UITouch+DTXAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D1072448B52B004812DD /* UITouch+DTXAdditions.h */; };
@@ -73,6 +73,11 @@
 		3980D11C2448B52C004812DD /* DTXSyntheticEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D10B2448B52B004812DD /* DTXSyntheticEvents.h */; };
 		3980D11D2448B52C004812DD /* DTXAppleInternals.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D10C2448B52C004812DD /* DTXAppleInternals.h */; };
 		3980D11E2448B52C004812DD /* DTXTouchInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D10D2448B52C004812DD /* DTXTouchInfo.h */; };
+		3980D12E244C41E1004812DD /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3980D12D244C41E1004812DD /* IOKit.framework */; };
+		3980D135244C4373004812DD /* UIView+DetoxMatchers.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D133244C4373004812DD /* UIView+DetoxMatchers.h */; };
+		3980D136244C4373004812DD /* UIView+DetoxMatchers.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D134244C4373004812DD /* UIView+DetoxMatchers.m */; };
+		3980D13A244C43EA004812DD /* UIView+DetoxExpectations.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D138244C43EA004812DD /* UIView+DetoxExpectations.h */; };
+		3980D13B244C43EA004812DD /* UIView+DetoxExpectations.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D139244C43EA004812DD /* UIView+DetoxExpectations.m */; };
 		398260E8220CC9530061E83E /* GREYActions+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 398260D4220CA56D0061E83E /* GREYActions+Detox.m */; };
 		39999EBA2416339E004E6366 /* __DTXDeallocSafeProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39999EB82416339E004E6366 /* __DTXDeallocSafeProxy.h */; };
 		39999EBB2416339E004E6366 /* __DTXDeallocSafeProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39999EB92416339E004E6366 /* __DTXDeallocSafeProxy.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -259,14 +264,14 @@
 		3975C78220272ED500C59ED8 /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; name = src; path = ../src; sourceTree = "<group>"; };
 		397EC9B31E7EDE0B00D5F2BB /* EarlGreyStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EarlGreyStatistics.h; sourceTree = "<group>"; };
 		397EC9B41E7EDE0B00D5F2BB /* EarlGreyStatistics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EarlGreyStatistics.m; sourceTree = "<group>"; };
-		3980D0FD2448B52A004812DD /* UIView+Detox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Detox.m"; sourceTree = "<group>"; };
+		3980D0FD2448B52A004812DD /* UIView+DetoxActions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+DetoxActions.m"; sourceTree = "<group>"; };
 		3980D0FE2448B52A004812DD /* UIApplication+DTXAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIApplication+DTXAdditions.h"; sourceTree = "<group>"; };
 		3980D0FF2448B52A004812DD /* DTXSyntheticEvents.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTXSyntheticEvents.m; sourceTree = "<group>"; };
 		3980D1002448B52B004812DD /* NSObject+DontCrashOnText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+DontCrashOnText.m"; sourceTree = "<group>"; };
 		3980D1012448B52B004812DD /* UIApplication+DTXAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIApplication+DTXAdditions.m"; sourceTree = "<group>"; };
 		3980D1022448B52B004812DD /* NSObject+DontCrashOnText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+DontCrashOnText.h"; sourceTree = "<group>"; };
 		3980D1032448B52B004812DD /* DTXTouchInjector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTXTouchInjector.h; sourceTree = "<group>"; };
-		3980D1042448B52B004812DD /* UIView+Detox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Detox.h"; sourceTree = "<group>"; };
+		3980D1042448B52B004812DD /* UIView+DetoxActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+DetoxActions.h"; sourceTree = "<group>"; };
 		3980D1052448B52B004812DD /* DTXTouchInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTXTouchInfo.m; sourceTree = "<group>"; };
 		3980D1062448B52B004812DD /* DTXRunLoopSpinner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTXRunLoopSpinner.h; sourceTree = "<group>"; };
 		3980D1072448B52B004812DD /* UITouch+DTXAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITouch+DTXAdditions.h"; sourceTree = "<group>"; };
@@ -276,6 +281,11 @@
 		3980D10B2448B52B004812DD /* DTXSyntheticEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTXSyntheticEvents.h; sourceTree = "<group>"; };
 		3980D10C2448B52C004812DD /* DTXAppleInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTXAppleInternals.h; sourceTree = "<group>"; };
 		3980D10D2448B52C004812DD /* DTXTouchInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTXTouchInfo.h; sourceTree = "<group>"; };
+		3980D12D244C41E1004812DD /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
+		3980D133244C4373004812DD /* UIView+DetoxMatchers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+DetoxMatchers.h"; sourceTree = "<group>"; };
+		3980D134244C4373004812DD /* UIView+DetoxMatchers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+DetoxMatchers.m"; sourceTree = "<group>"; };
+		3980D138244C43EA004812DD /* UIView+DetoxExpectations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+DetoxExpectations.h"; sourceTree = "<group>"; };
+		3980D139244C43EA004812DD /* UIView+DetoxExpectations.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+DetoxExpectations.m"; sourceTree = "<group>"; };
 		398260CE220CA5380061E83E /* GREYActions+Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GREYActions+Detox.h"; sourceTree = "<group>"; };
 		398260D4220CA56D0061E83E /* GREYActions+Detox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "GREYActions+Detox.m"; sourceTree = "<group>"; };
 		39999EB82416339E004E6366 /* __DTXDeallocSafeProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = __DTXDeallocSafeProxy.h; sourceTree = "<group>"; };
@@ -324,6 +334,7 @@
 				393E66ED1FC5F3F40092EE89 /* COSTouchVisualizer.framework in Frameworks */,
 				394767F71DBF994500D72256 /* EarlGrey.framework in Frameworks */,
 				394767F61DBF994200D72256 /* SocketRocket.framework in Frameworks */,
+				3980D12E244C41E1004812DD /* IOKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -496,6 +507,7 @@
 		394767D61DBF990F00D72256 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3980D12D244C41E1004812DD /* IOKit.framework */,
 				393E66E11FC5F3E90092EE89 /* COSTouchVisualizer.xcodeproj */,
 				394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */,
 				394767D71DBF991E00D72256 /* EarlGrey.xcodeproj */,
@@ -527,7 +539,28 @@
 		3980D0FC2448B514004812DD /* Next */ = {
 			isa = PBXGroup;
 			children = (
+				3980D130244C42E7004812DD /* Utilities */,
+				3980D12B244C40D2004812DD /* AppleInternals */,
+				3980D12C244C40E2004812DD /* AppleTouchEvents */,
+				3980D132244C435B004812DD /* Matchers */,
+				3980D131244C4336004812DD /* Actions */,
+				3980D137244C43D6004812DD /* Expectations */,
+				3980D13C244C44C3004812DD /* Invocation */,
+			);
+			path = Next;
+			sourceTree = "<group>";
+		};
+		3980D12B244C40D2004812DD /* AppleInternals */ = {
+			isa = PBXGroup;
+			children = (
 				3980D10C2448B52C004812DD /* DTXAppleInternals.h */,
+			);
+			path = AppleInternals;
+			sourceTree = "<group>";
+		};
+		3980D12C244C40E2004812DD /* AppleTouchEvents */ = {
+			isa = PBXGroup;
+			children = (
 				3980D1062448B52B004812DD /* DTXRunLoopSpinner.h */,
 				3980D10A2448B52B004812DD /* DTXRunLoopSpinner.m */,
 				3980D10B2448B52B004812DD /* DTXSyntheticEvents.h */,
@@ -536,16 +569,55 @@
 				3980D1052448B52B004812DD /* DTXTouchInfo.m */,
 				3980D1032448B52B004812DD /* DTXTouchInjector.h */,
 				3980D1092448B52B004812DD /* DTXTouchInjector.m */,
+				3980D1072448B52B004812DD /* UITouch+DTXAdditions.h */,
+				3980D1082448B52B004812DD /* UITouch+DTXAdditions.m */,
+			);
+			path = AppleTouchEvents;
+			sourceTree = "<group>";
+		};
+		3980D130244C42E7004812DD /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
 				3980D1022448B52B004812DD /* NSObject+DontCrashOnText.h */,
 				3980D1002448B52B004812DD /* NSObject+DontCrashOnText.m */,
 				3980D0FE2448B52A004812DD /* UIApplication+DTXAdditions.h */,
 				3980D1012448B52B004812DD /* UIApplication+DTXAdditions.m */,
-				3980D1072448B52B004812DD /* UITouch+DTXAdditions.h */,
-				3980D1082448B52B004812DD /* UITouch+DTXAdditions.m */,
-				3980D1042448B52B004812DD /* UIView+Detox.h */,
-				3980D0FD2448B52A004812DD /* UIView+Detox.m */,
 			);
-			path = Next;
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		3980D131244C4336004812DD /* Actions */ = {
+			isa = PBXGroup;
+			children = (
+				3980D1042448B52B004812DD /* UIView+DetoxActions.h */,
+				3980D0FD2448B52A004812DD /* UIView+DetoxActions.m */,
+			);
+			path = Actions;
+			sourceTree = "<group>";
+		};
+		3980D132244C435B004812DD /* Matchers */ = {
+			isa = PBXGroup;
+			children = (
+				3980D133244C4373004812DD /* UIView+DetoxMatchers.h */,
+				3980D134244C4373004812DD /* UIView+DetoxMatchers.m */,
+			);
+			path = Matchers;
+			sourceTree = "<group>";
+		};
+		3980D137244C43D6004812DD /* Expectations */ = {
+			isa = PBXGroup;
+			children = (
+				3980D138244C43EA004812DD /* UIView+DetoxExpectations.h */,
+				3980D139244C43EA004812DD /* UIView+DetoxExpectations.m */,
+			);
+			path = Expectations;
+			sourceTree = "<group>";
+		};
+		3980D13C244C44C3004812DD /* Invocation */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Invocation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -582,9 +654,11 @@
 				394767CE1DBF98D900D72256 /* ReactNativeSupport.h in Headers */,
 				394767B61DBF987E00D72256 /* WebSocket.h in Headers */,
 				3980D1172448B52C004812DD /* DTXRunLoopSpinner.h in Headers */,
-				3980D1152448B52C004812DD /* UIView+Detox.h in Headers */,
+				3980D135244C4373004812DD /* UIView+DetoxMatchers.h in Headers */,
+				3980D1152448B52C004812DD /* UIView+DetoxActions.h in Headers */,
 				39CE25AB22197F0900D78AA1 /* DetoxInstrumentsManager.h in Headers */,
 				394767BE1DBF98A700D72256 /* EarlGreyExtensions.h in Headers */,
+				3980D13A244C43EA004812DD /* UIView+DetoxExpectations.h in Headers */,
 				394767B41DBF987E00D72256 /* TestRunner.h in Headers */,
 				390D1CA01E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h in Headers */,
 				3980D1132448B52C004812DD /* NSObject+DontCrashOnText.h in Headers */,
@@ -816,13 +890,15 @@
 				39A34C721E30F10D00BEBB59 /* DetoxAppDelegateProxy.m in Sources */,
 				394767B11DBF987E00D72256 /* DTXMethodInvocation.m in Sources */,
 				3980D1122448B52C004812DD /* UIApplication+DTXAdditions.m in Sources */,
+				3980D13B244C43EA004812DD /* UIView+DetoxExpectations.m in Sources */,
 				39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */,
 				394767C21DBF98A700D72256 /* GREYMatchers+Detox.m in Sources */,
-				3980D10E2448B52C004812DD /* UIView+Detox.m in Sources */,
+				3980D10E2448B52C004812DD /* UIView+DetoxActions.m in Sources */,
 				39F62D42233730F500094FAB /* fishhook.c in Sources */,
 				394767AF1DBF987E00D72256 /* DetoxManager.m in Sources */,
 				398260E8220CC9530061E83E /* GREYActions+Detox.m in Sources */,
 				39FFD9471FD730A600C97030 /* DetoxCrashHandler.mm in Sources */,
+				3980D136244C4373004812DD /* UIView+DetoxMatchers.m in Sources */,
 				46A6A63D1EF697BB00E3AA79 /* GREYConfiguration+Detox.m in Sources */,
 				39CE25AC22197F0900D78AA1 /* DetoxInstrumentsManager.m in Sources */,
 				3980D1162448B52C004812DD /* DTXTouchInfo.m in Sources */,

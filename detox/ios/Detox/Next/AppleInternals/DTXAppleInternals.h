@@ -29,6 +29,7 @@
 
 @interface UIWindow (GREYExposed)
 - (id)firstResponder;
++ (instancetype)keyWindow;
 @end
 
 @interface UIView ()
