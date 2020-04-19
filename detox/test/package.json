@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "16.2.0",
+  "version": "16.2.1",
   "private": true,
   "engines": {
     "node": ">=8.3.0"
@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
-    "detox": "^16.2.0",
+    "detox": "^16.2.1",
     "express": "^4.15.3",
     "jest": "25.3.x",
     "jest-circus": "25.3.x",
