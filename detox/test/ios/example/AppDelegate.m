@@ -86,6 +86,11 @@ RCT_EXPORT_MODULE();
 	[self sendEventWithName:@"ShakeEvent" body:nil];
 }
 
++ (BOOL)requiresMainQueueSetup
+{
+	return YES;
+}
+
 @end
 
 @interface ShakeDetectViewController : UIViewController

@@ -4,8 +4,6 @@ import android.view.Choreographer
 import androidx.test.espresso.IdlingResource
 import java.util.concurrent.atomic.AtomicBoolean
 
-const val LOG_TAG = "TimersIdlingResource"
-
 class TimersIdlingResource @JvmOverloads constructor(
         private val interrogationStrategy: IdleInterrogationStrategy,
         private val getChoreographer: () -> Choreographer = { Choreographer.getInstance() }
@@ -51,4 +49,8 @@ class TimersIdlingResource @JvmOverloads constructor(
     }
 
     private fun checkIdle() = interrogationStrategy.isIdleNow()
+
+    companion object {
+        const val LOG_TAG = "TimersIdlingResource"
+    }
 }

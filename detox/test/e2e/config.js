@@ -1,8 +1,10 @@
-{
+module.exports = {
   "rootDir": "../..",
   "setupFilesAfterEnv": ["./test/e2e/init.js"],
   "testEnvironment": "node",
-  "reporters": ["<rootDir>/runners/jest/streamlineReporter", "<rootDir>/test/node_modules/jest-junit"],
+  "reporters": process.env.DISABLE_JUNIT_REPORTER === '1'
+    ? ["<rootDir>/runners/jest/streamlineReporter"]
+    : ["<rootDir>/runners/jest/streamlineReporter", "<rootDir>/test/node_modules/jest-junit"],
   "verbose": true,
   "bail": false,
   "collectCoverageFrom": [
@@ -14,4 +16,4 @@
   ],
   "coverageDirectory": "test/coverage",
   "coverageReporters": ["lcov", "html"]
-}
+};

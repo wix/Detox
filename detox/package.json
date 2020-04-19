@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "16.0.2",
+  "version": "16.2.0",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -34,7 +34,7 @@
     "jest": "25.1.x",
     "mockdate": "^2.0.1",
     "prettier": "1.7.0",
-    "react-native": "0.60.x",
+    "react-native": "0.62.x",
     "wtfnode": "^0.8.0"
   },
   "dependencies": {

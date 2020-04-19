@@ -1,10 +1,12 @@
 package com.wix.detox.reactnative.idlingresources.timers
 
+import android.util.Log
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.common.RNDropSupportTodo
 import org.joor.Reflect
 
+private const val LOG_TAG = "DelegatedTimingStrategy"
 private const val BUSY_WINDOW_THRESHOLD = 1500L
 
 private class RN62TimingModuleReflected(private val timingModule: NativeModule) {
@@ -32,16 +34,19 @@ class DelegatedIdleInterrogationStrategy(timingModule: NativeModule): IdleInterr
             try {
                 moduleClass = Class.forName("com.facebook.react.modules.core.TimingModule") as Class<NativeModule>
             } catch (ex: Exception) {
+                Log.d(LOG_TAG, "create(): no class", ex)
                 return null
             }
 
             if (!reactContext.hasNativeModule(moduleClass)) {
+                Log.d(LOG_TAG, "create(): no native module")
                 return null
             }
 
             try {
                 moduleClass.getDeclaredMethod("hasActiveTimersInRange", Long::class.java)
             } catch (ex: Exception) {
+                Log.d(LOG_TAG, "create(): no dedicated idle-interrogation method", ex)
                 return null
             }
 
