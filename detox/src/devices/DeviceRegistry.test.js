@@ -15,6 +15,26 @@ describe('DeviceRegistry', () => {
     await fs.remove(lockfilePath);
   });
 
+  it('should allocate the first device', async () => {
+    const deviceId = 'mock-device';
+    const getDeviceIdFn = jest.fn().mockResolvedValue(deviceId);
+    await registry.allocateDevice(getDeviceIdFn);
+
+    const fileContent = await fs.readFile(lockfilePath);
+    expect(JSON.parse(fileContent)).toEqual([deviceId]);
+  });
+
+  it('should return device and \'index\' upon allocation', async () => {
+    const deviceId1 = 'mock-device';
+    const deviceId2 = 'mock-device2';
+
+    const result1 = await registry.allocateDevice(jest.fn().mockResolvedValue(deviceId1));
+    expect(result1).toEqual({ deviceId: deviceId1, deviceIndex: 0 });
+
+    const result2 = await registry.allocateDevice(jest.fn().mockResolvedValue(deviceId2));
+    expect(result2).toEqual({ deviceId: deviceId2, deviceIndex: 1 });
+  });
+
   it('should throw on attempt to checking if device is busy outside of allocation/disposal context', async () => {
     const deviceId = 'emulator-5554';
 
@@ -27,7 +47,7 @@ describe('DeviceRegistry', () => {
       return deviceId;
     });
 
-    expect(result).toBe(deviceId);
+    expect(result.deviceId).toBe(deviceId);
 
     assertForbiddenOutOfContext();
     await registry.disposeDevice(() => {

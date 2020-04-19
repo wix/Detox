@@ -42,7 +42,7 @@ class SimulatorDriver extends IosDriver {
   }
 
   async acquireFreeDevice(deviceQuery) {
-    const udid = await this.deviceRegistry.allocateDevice(async () => {
+    const {deviceId: udid} = await this.deviceRegistry.allocateDevice(async () => {
       return await this._findOrCreateDevice(deviceQuery);
     });
 
