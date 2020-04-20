@@ -12,8 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIView (DetoxExpectations)
 
-@property (nonatomic, readonly, getter=dtx_isVisible) bool dtx_visible;
-@property (nonatomic, readonly, getter=dtx_isHittable) bool dtx_hittable;
+@property (nonatomic, readonly) bool dtx_isVisible;
+@property (nonatomic, readonly) bool dtx_isHittable;
 
 @end
 

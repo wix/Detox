@@ -302,6 +302,9 @@ IOHIDEventRef IOHIDEventCreateDigitizerFingerEvent(CFAllocatorRef allocator,
  *  the main thread.
  */
 - (void)waitUntilAllTasksAreFinished;
+
+- (void)performTask:(void (^)(id ctx))arg1;
+
 @end
 
 @interface UIKeyboardImpl
@@ -367,6 +370,12 @@ IOHIDEventRef IOHIDEventCreateDigitizerFingerEvent(CFAllocatorRef allocator,
  *  to be ignored.
  */
 - (void)showKeyboard;
+
+@property(readonly, nonatomic) UIKeyboardTaskQueue *taskQueue;
+- (void)handleKeyWithString:(id)arg1 forKeyEvent:(id)arg2 executionContext:(id)arg3;
+- (void)setShift:(_Bool)arg1 autoshift:(_Bool)arg2;
+- (void)removeCandidateList;
+
 @end
 
 /**

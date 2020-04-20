@@ -1,0 +1,13 @@
+framework module Detox {
+	umbrella header "Detox.h"
+	export *
+
+	explicit module Private {
+		header "UIView+DetoxMatchers.h"
+		header "UIView+DetoxActions.h"
+		header "UIView+DetoxExpectations.h"
+		header "UIPickerView+DetoxActions.h"
+		header "UIDatePicker+DetoxActions.h"
+		header "UIScrollView+DetoxActions.h"
+	}
+}

@@ -53,6 +53,15 @@
 	return [self dtx_findViewsInWindows:windows passingPredicate:predicate];
 }
 
++ (NSMutableArray<UIView*>*)dtx_findViewsInHierarchy:(UIView*)hierarchy passingPredicate:(NSPredicate*)predicate
+{
+	NSMutableArray<UIView*>* rv = [NSMutableArray new];
+	
+	[self _dtx_appendViewsRecursivelyFromArray:@[hierarchy] passingPredicate:predicate storage:rv];
+	
+	return rv;
+}
+
 + (void)_dtx_sortViewsByCoords:(NSMutableArray<UIView*>*)views
 {
 	[views sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:nil ascending:YES comparator:^NSComparisonResult(UIView* _Nonnull obj1, UIView* _Nonnull obj2) {

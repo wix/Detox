@@ -14,4 +14,9 @@
 	return nil;
 }
 
+- (id)placeholder
+{
+	return nil;
+}
+
 @end
