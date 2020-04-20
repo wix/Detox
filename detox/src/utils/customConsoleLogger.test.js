@@ -62,6 +62,16 @@ describe('customConsoleLogger', () => {
     expect(bunyanLogger.mock).toHaveBeenCalledWith(ignored(), expect.stringContaining(expectedOrigin), ignored(), ignored());
   });
 
+  it('should handle unknown file in origin', () => {
+    mockCallsites({file: undefined, line: undefined, col: undefined});
+
+    const logger = require('./customConsoleLogger');
+    logger.override('__log', bunyanLogger.mock);
+    console.__log('');
+
+    expect(bunyanLogger.mock).toHaveBeenCalledWith(ignored(), expect.stringContaining('<undefined>:?:?'), ignored(), ignored());
+  });  
+  
   it('should handle missing file line/column in origin', () => {
     mockCallsites({file: 'mockfilename', line: undefined, col: undefined});
 
