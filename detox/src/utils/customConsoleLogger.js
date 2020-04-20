@@ -12,8 +12,10 @@ function getStackDump() {
 function getOrigin() {
   const userCallsite = callsites()[USER_STACK_FRAME_INDEX];
   const callsiteFilename = userCallsite && userCallsite.getFileName();
+  const callsiteLine = userCallsite && userCallsite.getLineNumber();
+  const callsiteCol = userCallsite && userCallsite.getColumnNumber();
   const filename = callsiteFilename ? path.relative(process.cwd(), callsiteFilename) : '<unknown>';
-  return `at ${filename}:${userCallsite.getLineNumber() || '?'}:${userCallsite.getColumnNumber() || '?'}`;
+  return `at ${filename}:${callsiteLine || '?'}:${callsiteCol || '?'}`;
 }
 
 function override(consoleLevel, bunyanFn) {
