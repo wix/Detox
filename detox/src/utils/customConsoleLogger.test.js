@@ -69,7 +69,7 @@ describe('customConsoleLogger', () => {
     logger.override('__log', bunyanLogger.mock);
     console.__log('');
 
-    expect(bunyanLogger.mock).toHaveBeenCalledWith(ignored(), expect.stringContaining('<undefined>:?:?'), ignored(), ignored());
+    expect(bunyanLogger.mock).toHaveBeenCalledWith(ignored(), expect.stringContaining('<unknown>:?:?'), ignored(), ignored());
   });  
   
   it('should handle missing file line/column in origin', () => {
