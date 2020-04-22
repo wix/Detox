@@ -1,0 +1,25 @@
+{
+  "name": "demo-plugin",
+  "version": "15.1.4",
+  "private": true,
+  "scripts": {
+    "test:plugin": "detox test --configuration plugin -l verbose"
+  },
+  "devDependencies": {
+    "detox": "^16.0.0",
+    "jest": "24.8.x"
+  },
+  "detox": {
+    "test-runner": "jest",
+    "configurations": {
+      "plugin": {
+        "binaryPath": "my/random/path",
+        "device": {
+          "foo": "bar"
+        },
+        "name": "plugin-example",
+        "type": "../../examples/demo-plugin/driver"
+      }
+    }
+  }
+}

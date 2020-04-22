@@ -125,22 +125,6 @@ describe('Device', () => {
   });
 
   describe('prepare()', () => {
-    it(`valid scheme, no binary, should throw`, async () => {
-      const device = validDevice();
-      fs.existsSync.mockReturnValue(false);
-      try {
-        await device.prepare();
-        fail('should throw')
-      } catch (ex) {
-        expect(ex.message).toMatch(/app binary not found at/)
-      }
-    });
-
-    it(`valid scheme, no binary, should not throw`, async () => {
-      const device = validDevice();
-      await device.prepare();
-    });
-
     it(`when reuse is enabled in CLI args should not uninstall and install`, async () => {
       const device = validDevice();
       argparse.getArgValue.mockReturnValue(true);
@@ -478,7 +462,7 @@ describe('Device', () => {
 
       await device.installApp('newAppPath');
 
-      expect(driverMock.driver.installApp).toHaveBeenCalledWith(device._deviceId, 'newAppPath', undefined);
+      expect(driverMock.driver.installApp).toHaveBeenCalledWith(device._deviceId, 'newAppPath', device._deviceConfig.testBinaryPath);
     });
 
     it(`with a custom test app path should use custom test app path`, async () => {
@@ -494,7 +478,7 @@ describe('Device', () => {
 
       await device.installApp();
 
-      expect(driverMock.driver.installApp).toHaveBeenCalledWith(device._deviceId, device._binaryPath, device._testBinaryPath);
+      expect(driverMock.driver.installApp).toHaveBeenCalledWith(device._deviceId, device._deviceConfig.binaryPath, device._deviceConfig.testBinaryPath);
     });
   });
 
@@ -512,7 +496,7 @@ describe('Device', () => {
 
       await device.uninstallApp();
 
-      expect(driverMock.driver.uninstallApp).toHaveBeenCalledWith(device._deviceId, device._binaryPath);
+      expect(driverMock.driver.uninstallApp).toHaveBeenCalledWith(device._deviceId, device._bundleId);
     });
   });
 
@@ -759,7 +743,7 @@ describe('Device', () => {
 
   it(`should accept relative path for binary`, async () => {
     const actualPath = await launchAndTestBinaryPath('relativePath');
-    expect(actualPath).toEqual(path.join(process.cwd(), 'abcdef/123'));
+    expect(actualPath).toEqual('abcdef/123');
   });
 
   it(`pressBack() should invoke driver's pressBack()`, async () => {

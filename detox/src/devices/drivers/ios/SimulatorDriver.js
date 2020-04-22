@@ -9,6 +9,7 @@ const configuration = require('../../../configuration');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 const environment = require('../../../utils/environment');
 const argparse = require('../../../utils/argparse');
+const getAbsoluteBinaryPath = require('../../../utils/getAbsoluteBinaryPath');
 
 class SimulatorDriver extends IosDriver {
 
@@ -56,6 +57,7 @@ class SimulatorDriver extends IosDriver {
   }
 
   async getBundleIdFromBinary(appPath) {
+    appPath = getAbsoluteBinaryPath(appPath);
     try {
       const result = await exec(`/usr/libexec/PlistBuddy -c "Print CFBundleIdentifier" "${path.join(appPath, 'Info.plist')}"`);
       const bundleId = _.trim(result.stdout);
@@ -75,7 +77,7 @@ class SimulatorDriver extends IosDriver {
   }
 
   async installApp(deviceId, binaryPath) {
-    await this.applesimutils.install(deviceId, binaryPath);
+    await this.applesimutils.install(deviceId, getAbsoluteBinaryPath(binaryPath));
   }
 
   async uninstallApp(deviceId, bundleId) {
