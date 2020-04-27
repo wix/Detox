@@ -104,6 +104,10 @@ class ADB {
     }
   }
 
+  /*async*/ remoteInstall(deviceId, path) {
+    return this.shell(deviceId, `pm install ${path}`);
+  }
+
   async uninstall(deviceId, appId) {
     await this.adbCmd(deviceId, `uninstall ${appId}`);
   }
@@ -214,6 +218,10 @@ class ADB {
     }
 
     return this.spawn(deviceId, ['shell', shellCommand]);
+  }
+
+  async push(deviceId, src, dst) {
+    await this.adbCmd(deviceId, `push "${src}" "${dst}"`);
   }
 
   async pull(deviceId, src, dst = '') {

@@ -67,10 +67,13 @@ class AndroidDriver extends DeviceDriverBase {
     return await this.aapt.getPackageName(getAbsoluteBinaryPath(apkPath));
   }
 
-  async installApp(deviceId, binaryPath, testBinaryPath) {
-    binaryPath = getAbsoluteBinaryPath(binaryPath);
+  async installApp(deviceId, _binaryPath, _testBinaryPath) {
+    const {
+      binaryPath,
+      testBinaryPath,
+    } = this._getInstallPaths(_binaryPath, _testBinaryPath);
     await this.adb.install(deviceId, binaryPath);
-    await this.adb.install(deviceId, testBinaryPath ? getAbsoluteBinaryPath(testBinaryPath) : this.getTestApkPath(binaryPath));
+    await this.adb.install(deviceId, testBinaryPath);
   }
 
   async pressBack(deviceId) {
@@ -81,7 +84,7 @@ class AndroidDriver extends DeviceDriverBase {
     const testApkPath = APKPath.getTestApkPath(originalApkPath);
 
     if (!fs.existsSync(testApkPath)) {
-      throw new Error(`'${testApkPath}' could not be found, did you run './gradlew assembleAndroidTest' ?`);
+      throw new Error(`'${testApkPath}' could not be found, did you run './gradlew assembleAndroidTest'?`);
     }
 
     return testApkPath;
@@ -250,6 +253,15 @@ class AndroidDriver extends DeviceDriverBase {
 
     const call = EspressoDetoxApi.changeOrientation(orientationMapping[orientation]);
     await this.invocationManager.execute(call);
+  }
+
+  _getInstallPaths(_binaryPath, _testBinaryPath) {
+    const binaryPath = getAbsoluteBinaryPath(_binaryPath);
+    const testBinaryPath = _testBinaryPath ? getAbsoluteBinaryPath(_testBinaryPath) : this.getTestApkPath(binaryPath);
+    return {
+      binaryPath,
+      testBinaryPath,
+    };
   }
 
   async _launchInstrumentationProcess(deviceId, bundleId, rawLaunchArgs) {

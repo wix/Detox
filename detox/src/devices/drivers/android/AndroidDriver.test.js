@@ -3,10 +3,21 @@ describe('Android driver', () => {
   const deviceId = 'device-id-mock';
   const bundleId = 'bundle-id-mock';
 
+  const mockGetAbsoluteBinaryPathImpl = (x) => `absolutePathOf(${x})`;
+  const mockAPKPathGetTestApkPathImpl = (x) => `testApkPathOf(${x})`;
+
   let logger;
   let client;
+  let getAbsoluteBinaryPath;
+  let fs;
   let exec;
   beforeEach(() => {
+    jest.mock('fs', () => ({
+      existsSync: jest.fn(),
+      realpathSync: jest.fn(),
+    }));
+    fs = require('fs');
+
     jest.mock('../../../utils/encoding', () => ({
       encodeBase64: (x) => `base64(${x})`,
     }));
@@ -17,6 +28,15 @@ describe('Android driver', () => {
 
     jest.mock('./InstrumentationLogsParser', () => ({
       InstrumentationLogsParser: mockInstrumentationLogsParserClass,
+    }));
+
+    jest.mock('../../../utils/getAbsoluteBinaryPath', () =>
+      jest.fn().mockImplementation((x) => `absolutePathOf(${x})`),
+    );
+    getAbsoluteBinaryPath = require('../../../utils/getAbsoluteBinaryPath');
+
+    jest.mock('./tools/APKPath', () => ({
+      getTestApkPath: mockAPKPathGetTestApkPathImpl,
     }));
 
     const mockLogger = {
@@ -213,6 +233,49 @@ describe('Android driver', () => {
     });
   });
 
+  describe('App installation', () => {
+    const binaryPath = 'mock-bin-path';
+    const testBinaryPath = 'mock-test-bin-path';
+
+    it('should adb-install the app\'s binary', async () => {
+      await uut.installApp(deviceId, binaryPath, testBinaryPath);
+
+      expect(getAbsoluteBinaryPath).toHaveBeenCalledWith(binaryPath);
+      expect(uut.adb.install).toHaveBeenCalledWith(deviceId, mockGetAbsoluteBinaryPathImpl(binaryPath));
+    });
+
+    it('should adb-install the test binary', async () => {
+      await uut.installApp(deviceId, binaryPath, testBinaryPath);
+
+      expect(getAbsoluteBinaryPath).toHaveBeenCalledWith(binaryPath);
+      expect(uut.adb.install).toHaveBeenCalledWith(deviceId, mockGetAbsoluteBinaryPathImpl(testBinaryPath));
+    });
+
+    it('should resort to auto test-binary path resolution, if not specific', async () => {
+      const expectedTestBinPath = mockAPKPathGetTestApkPathImpl(mockGetAbsoluteBinaryPathImpl(binaryPath));
+
+      fs.existsSync.mockReturnValue(true);
+
+      await uut.installApp(deviceId, binaryPath, undefined);
+
+      expect(fs.existsSync).toHaveBeenCalledWith(expectedTestBinPath);
+      expect(uut.adb.install).toHaveBeenCalledWith(deviceId, expectedTestBinPath);
+    });
+
+    it('should throw if auto test-binary path resolves an invalid file', async () => {
+      const expectedTestBinPath = mockAPKPathGetTestApkPathImpl(mockGetAbsoluteBinaryPathImpl(binaryPath));
+
+      fs.existsSync.mockReturnValue(false);
+
+      try {
+        await uut.installApp(deviceId, binaryPath, undefined);
+        fail('Expected an error');
+      } catch (err) {
+        expect(err.message).toContain(`'${expectedTestBinPath}'`);
+      }
+    });
+  });
+
   describe('net-port reversing', () => {
     const deviceId = 1010;
     const port = 1337;
@@ -234,6 +297,7 @@ class mockADBClass {
     this.getInstrumentationRunner = jest.fn();
     this.reverse = jest.fn();
     this.reverseRemove = jest.fn();
+    this.install = jest.fn();
 
     this.adbBin = 'ADB binary mock';
   }

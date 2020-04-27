@@ -1,4 +1,3 @@
-
 describe('ADB', () => {
   const adbBinPath = `/Android/sdk-mock/platform-tools/adb`;
 
@@ -130,9 +129,6 @@ describe('ADB', () => {
     });
   });
 
-  describe('lookup device', () => {
-  });
-
   it(`install`, async () => {
     await adb.install('emulator-5556', 'path inside "quotes" to/app');
 
@@ -165,6 +161,27 @@ describe('ADB', () => {
   it(`pidof (failure)`, async () => {
     jest.spyOn(adb, 'shell').mockImplementation(async () => '');
     expect(await adb.pidof('', 'com.google.android.ext.services')).toBe(NaN);
+  });
+
+  it('push', async () => {
+    const deviceId = 'mockEmulator';
+    const sourceFile = '/mock-source/file.xyz';
+    const destFile = '/sdcard/file.abc';
+    await adb.push(deviceId, sourceFile, destFile);
+
+    expect(exec).toHaveBeenCalledWith(
+      expect.stringContaining(`-s mockEmulator push "${sourceFile}" "${destFile}"`),
+      undefined, undefined, expect.anything());
+  });
+
+  it('remote-install', async () => {
+    const deviceId = 'mockEmulator';
+    const binaryPath = '/mock-path/filename.mock';
+    await adb.remoteInstall(deviceId, binaryPath);
+
+    expect(exec).toHaveBeenCalledWith(
+      expect.stringContaining(`-s mockEmulator shell "pm install ${binaryPath}"`),
+      undefined, undefined, expect.anything());
   });
 
   describe('unlockScreen', () => {

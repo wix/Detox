@@ -6,9 +6,10 @@ const AndroidDriver = require('./AndroidDriver');
 const FreeEmulatorFinder = require('./emulator/FreeEmulatorFinder');
 const AVDValidator = require('./emulator/AVDValidator');
 const EmulatorLauncher = require('./emulator/EmulatorLauncher');
+const EmulatorVersionResolver = require('./emulator/EmulatorVersionResolver');
 const { EmulatorExec } = require('./tools/EmulatorExec');
 const EmulatorTelnet = require('./tools/EmulatorTelnet');
-const EmulatorVersionResolver = require('./emulator/EmulatorVersionResolver');
+const AdbInstallHelper = require('./tools/AdbInstallHelper');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 const DeviceRegistry = require('../../DeviceRegistry');
 const environment = require('../../../utils/environment');
@@ -22,6 +23,9 @@ const DetoxEmulatorsPortRange = {
 
 const ACQUIRE_DEVICE_EV = 'ACQUIRE_DEVICE';
 const EMU_BIN_STABLE_SKIN_VER = 28;
+
+const EMU_TEMP_PATH = '/data/local/tmp';
+const EMU_TEMP_INSTALL_PATH = `${EMU_TEMP_PATH}/detox`;
 
 class EmulatorDriver extends AndroidDriver {
   constructor(config) {
@@ -59,6 +63,16 @@ class EmulatorDriver extends AndroidDriver {
 
     this._name = `${adbName} (${avdName})`;
     return adbName;
+  }
+
+  async installApp(deviceId, _binaryPath, _testBinaryPath) {
+    const {
+      binaryPath,
+      testBinaryPath,
+    } = this._getInstallPaths(_binaryPath, _testBinaryPath);
+
+    const adbInstallHelper = new AdbInstallHelper(this.adb, deviceId);
+    await adbInstallHelper.install(binaryPath, testBinaryPath);
   }
 
   async cleanup(adbName, bundleId) {
