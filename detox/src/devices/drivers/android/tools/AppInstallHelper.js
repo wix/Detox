@@ -1,7 +1,7 @@
 const EMU_TEMP_PATH = '/data/local/tmp';
 const EMU_TEMP_INSTALL_PATH = `${EMU_TEMP_PATH}/detox`;
 
-class AdbInstallHelper {
+class AppInstallHelper {
   constructor(adb, deviceId, tempDir = EMU_TEMP_INSTALL_PATH) {
     this._adb = adb;
     this._deviceId = deviceId;
@@ -34,4 +34,4 @@ class AdbInstallHelper {
   }
 }
 
-module.exports = AdbInstallHelper;
+module.exports = AppInstallHelper;

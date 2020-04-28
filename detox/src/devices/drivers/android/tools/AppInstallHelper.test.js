@@ -3,7 +3,7 @@ const deviceId = 'mock-device-id';
 const appBinaryPath = '/mock-app-binary-path/binary.apk';
 const testBinaryPath = '/mock-test-binary-path/test/binary.apk';
 
-describe('ADB APK-installation helper', () => {
+describe('Android app installation helper', () => {
   let adb;
   class MockAdbClass {
     constructor() {
@@ -21,8 +21,8 @@ describe('ADB APK-installation helper', () => {
 
   let uut;
   beforeEach(() => {
-    const AdbInstallHelper = require('./AdbInstallHelper');
-    uut = new AdbInstallHelper(adb, deviceId, deviceTempDir);
+    const AppInstallHelper = require('./AppInstallHelper');
+    uut = new AppInstallHelper(adb, deviceId, deviceTempDir);
   });
 
   it('should recreate a temp dir on the device', async () => {
@@ -76,8 +76,8 @@ describe('ADB APK-installation helper', () => {
   });
 
   it('should use a default temp-dir', async () => {
-    const AdbInstallHelper = require('./AdbInstallHelper');
-    uut = new AdbInstallHelper(adb, deviceId, undefined);
+    const AppInstallHelper = require('./AppInstallHelper');
+    uut = new AppInstallHelper(adb, deviceId, undefined);
 
     await uut.install(appBinaryPath, testBinaryPath);
 

@@ -9,7 +9,7 @@ const EmulatorLauncher = require('./emulator/EmulatorLauncher');
 const EmulatorVersionResolver = require('./emulator/EmulatorVersionResolver');
 const { EmulatorExec } = require('./tools/EmulatorExec');
 const EmulatorTelnet = require('./tools/EmulatorTelnet');
-const AdbInstallHelper = require('./tools/AdbInstallHelper');
+const AppInstallHelper = require('./tools/AppInstallHelper');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 const DeviceRegistry = require('../../DeviceRegistry');
 const environment = require('../../../utils/environment');
@@ -23,9 +23,6 @@ const DetoxEmulatorsPortRange = {
 
 const ACQUIRE_DEVICE_EV = 'ACQUIRE_DEVICE';
 const EMU_BIN_STABLE_SKIN_VER = 28;
-
-const EMU_TEMP_PATH = '/data/local/tmp';
-const EMU_TEMP_INSTALL_PATH = `${EMU_TEMP_PATH}/detox`;
 
 class EmulatorDriver extends AndroidDriver {
   constructor(config) {
@@ -71,8 +68,10 @@ class EmulatorDriver extends AndroidDriver {
       testBinaryPath,
     } = this._getInstallPaths(_binaryPath, _testBinaryPath);
 
-    const adbInstallHelper = new AdbInstallHelper(this.adb, deviceId);
-    await adbInstallHelper.install(binaryPath, testBinaryPath);
+    await this.uninstallAppByApk(deviceId, binaryPath); // TODO extract this (and all related logic) to a designated helper?
+
+    const installHelper = new AppInstallHelper(this.adb, deviceId);
+    await installHelper.install(binaryPath, testBinaryPath);
   }
 
   async cleanup(adbName, bundleId) {

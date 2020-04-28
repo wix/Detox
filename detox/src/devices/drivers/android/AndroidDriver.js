@@ -64,7 +64,8 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async getBundleIdFromBinary(apkPath) {
-    return await this.aapt.getPackageName(getAbsoluteBinaryPath(apkPath));
+    const binaryPath = getAbsoluteBinaryPath(apkPath);
+    return await this.aapt.getPackageName(binaryPath);
   }
 
   async installApp(deviceId, _binaryPath, _testBinaryPath) {
@@ -74,20 +75,6 @@ class AndroidDriver extends DeviceDriverBase {
     } = this._getInstallPaths(_binaryPath, _testBinaryPath);
     await this.adb.install(deviceId, binaryPath);
     await this.adb.install(deviceId, testBinaryPath);
-  }
-
-  async pressBack(deviceId) {
-    await this.uiDevice.pressBack();
-  }
-
-  getTestApkPath(originalApkPath) {
-    const testApkPath = APKPath.getTestApkPath(originalApkPath);
-
-    if (!fs.existsSync(testApkPath)) {
-      throw new Error(`'${testApkPath}' could not be found, did you run './gradlew assembleAndroidTest'?`);
-    }
-
-    return testApkPath;
   }
 
   async uninstallApp(deviceId, bundleId) {
@@ -101,6 +88,11 @@ class AndroidDriver extends DeviceDriverBase {
     if (await this.adb.isPackageInstalled(deviceId, testBundle)) {
       await this.adb.uninstall(deviceId, testBundle);
     }
+  }
+
+  async uninstallAppByApk(deviceId, apkPath) {
+    const bundleId = await this.getBundleIdFromBinary(apkPath);
+    await this.uninstallApp(deviceId, bundleId);
   }
 
   async launchApp(deviceId, bundleId, launchArgs, languageAndLocale) {
@@ -151,6 +143,10 @@ class AndroidDriver extends DeviceDriverBase {
       } finally {
         this.instrumentationCloseListener = _.noop;
       }
+  }
+
+  async pressBack(deviceId) {
+    await this.uiDevice.pressBack();
   }
 
   async sendToHome(deviceId, params) {
@@ -257,11 +253,20 @@ class AndroidDriver extends DeviceDriverBase {
 
   _getInstallPaths(_binaryPath, _testBinaryPath) {
     const binaryPath = getAbsoluteBinaryPath(_binaryPath);
-    const testBinaryPath = _testBinaryPath ? getAbsoluteBinaryPath(_testBinaryPath) : this.getTestApkPath(binaryPath);
+    const testBinaryPath = _testBinaryPath ? getAbsoluteBinaryPath(_testBinaryPath) : this._getTestApkPath(binaryPath);
     return {
       binaryPath,
       testBinaryPath,
     };
+  }
+
+  _getTestApkPath(originalApkPath) {
+    const testApkPath = APKPath.getTestApkPath(originalApkPath);
+
+    if (!fs.existsSync(testApkPath)) {
+      throw new Error(`'${testApkPath}' could not be found, did you run './gradlew assembleAndroidTest'?`);
+    }
+    return testApkPath;
   }
 
   async _launchInstrumentationProcess(deviceId, bundleId, rawLaunchArgs) {
