@@ -1,3 +1,4 @@
+const path = require('path');
 const NodeEnvironment = require('jest-environment-node'); // eslint-disable-line node/no-extraneous-require
 const {getFullTestName, hasTimedOut} = require('./utils');
 const timely = require('../../src/utils/timely');
@@ -13,12 +14,8 @@ class DetoxEnvironment extends NodeEnvironment {
   constructor(config) {
     super(config);
 
-    this._initTimeout = 300000;
+    this._initTimeout = this.constructor.initTimeout;
     this._testTimeout = 5000;
-  }
-
-  setInitTimeout(ms) {
-    this._initTimeout = ms;
   }
 
   async setup() {
@@ -26,6 +23,7 @@ class DetoxEnvironment extends NodeEnvironment {
 
     this.detox = require('../../src')._setGlobal(this.global);
     await timely(() => this.initDetox(), this._initTimeout, getTimeoutReason(this._initTimeout))();
+    this._expect = this.global.expect;
   }
 
   async teardown() {
@@ -33,29 +31,24 @@ class DetoxEnvironment extends NodeEnvironment {
     await super.teardown();
   }
 
-  /** @protected */
-  async initDetox() {
-    const config = require(path.join(process.cwd(), 'package.json')).detox;
-    await this.detox.init(config);
-  }
-
-  /** @protected */
-  async cleanupDetox() {
-    await this.detox.cleanup();
-  }
-
   async handleTestEvent(event, state) {
+    this._testTimeout = state.testTimeout;
+
     switch (event.name) {
       case 'setup': return this._onSetup(event, state);
       case 'suite_start': return this._onSuiteStart(event, state);
       case 'suite_end': return this._onSuiteEnd(event, state);
       case 'test_start': return this._onTestStart(event, state);
       case 'test_done': return this._onTestDone(event, state);
+      case 'teardown': return this._onTeardown(event, state);
     }
   }
 
-  async _onSetup(event, state) {
-    this._testTimeout = state.testTimeout; // TODO: check this
+  _onSetup(event, state) {
+    if (this._expect) {
+      this.global.expect = this._expect;
+      delete this._expect;
+    }
   }
 
   async _onSuiteStart({describeBlock: {name, tests}}, state) {
@@ -93,6 +86,22 @@ class DetoxEnvironment extends NodeEnvironment {
       timedOut: hasTimedOut(test)
     });
   }
+
+  async _onTeardown(event) {
+  }
+
+  /** @protected */
+  async initDetox() {
+    const config = require(path.join(process.cwd(), 'package.json')).detox;
+    await this.detox.init(config);
+  }
+
+  /** @protected */
+  async cleanupDetox() {
+    await this.detox.cleanup();
+  }
 }
+
+DetoxEnvironment.initTimeout = 300000;
 
 module.exports = DetoxEnvironment;

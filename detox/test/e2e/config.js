@@ -1,5 +1,6 @@
 module.exports = {
   "rootDir": "../..",
+  "setupFilesAfterEnv": ["./test/e2e/init.js"],
   "testEnvironment": "./test/e2e/environment.js",
   "testRunner": "./test/node_modules/jest-circus/runner",
   "reporters": process.env.DISABLE_JUNIT_REPORTER === '1'
