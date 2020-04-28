@@ -9,6 +9,7 @@ const InvocationManager = invoke.InvocationManager;
 const ADB = require('./tools/ADB');
 const AAPT = require('./tools/AAPT');
 const APKPath = require('./tools/APKPath');
+const AppUninstallHelper = require('./tools/AppUninstallHelper');
 const DeviceDriverBase = require('../DeviceDriverBase');
 const DetoxApi = require('../../../android/espressoapi/Detox');
 const EspressoDetoxApi = require('../../../android/espressoapi/EspressoDetox');
@@ -79,15 +80,8 @@ class AndroidDriver extends DeviceDriverBase {
 
   async uninstallApp(deviceId, bundleId) {
     await this.emitter.emit('beforeUninstallApp', { deviceId, bundleId });
-
-    if (await this.adb.isPackageInstalled(deviceId, bundleId)) {
-      await this.adb.uninstall(deviceId, bundleId);
-    }
-
-    const testBundle = `${bundleId}.test`;
-    if (await this.adb.isPackageInstalled(deviceId, testBundle)) {
-      await this.adb.uninstall(deviceId, testBundle);
-    }
+    const uninstallHelper = new AppUninstallHelper(this.adb);
+    await uninstallHelper.uninstall(deviceId, bundleId);
   }
 
   async uninstallAppByApk(deviceId, apkPath) {

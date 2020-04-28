@@ -68,10 +68,10 @@ class EmulatorDriver extends AndroidDriver {
       testBinaryPath,
     } = this._getInstallPaths(_binaryPath, _testBinaryPath);
 
-    await this.uninstallAppByApk(deviceId, binaryPath); // TODO extract this (and all related logic) to a designated helper?
+    await this.uninstallAppByApk(deviceId, binaryPath);
 
-    const installHelper = new AppInstallHelper(this.adb, deviceId);
-    await installHelper.install(binaryPath, testBinaryPath);
+    const installHelper = new AppInstallHelper(this.adb);
+    await installHelper.install(deviceId, binaryPath, testBinaryPath);
   }
 
   async cleanup(adbName, bundleId) {

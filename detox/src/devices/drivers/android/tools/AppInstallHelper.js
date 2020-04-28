@@ -2,30 +2,29 @@ const EMU_TEMP_PATH = '/data/local/tmp';
 const EMU_TEMP_INSTALL_PATH = `${EMU_TEMP_PATH}/detox`;
 
 class AppInstallHelper {
-  constructor(adb, deviceId, tempDir = EMU_TEMP_INSTALL_PATH) {
+  constructor(adb, tempDir = EMU_TEMP_INSTALL_PATH) {
     this._adb = adb;
-    this._deviceId = deviceId;
     this._tempDir = tempDir;
   }
 
-  async install(appBinaryPath, testBinaryPath) {
-    await this._prepareTempDirOnDevice();
+  async install(deviceId, appBinaryPath, testBinaryPath) {
+    await this._prepareTempDirOnDevice(deviceId);
 
     const appBinaryPathOnTarget = this._getTargetBinaryPath(false);
-    await this._pushAndInstallBinary(appBinaryPath, appBinaryPathOnTarget);
+    await this._pushAndInstallBinary(deviceId, appBinaryPath, appBinaryPathOnTarget);
 
     const testBinaryPathOnTarget = this._getTargetBinaryPath(true);
-    await this._pushAndInstallBinary(testBinaryPath, testBinaryPathOnTarget);
+    await this._pushAndInstallBinary(deviceId, testBinaryPath, testBinaryPathOnTarget);
   }
 
-  async _prepareTempDirOnDevice() {
-    await this._adb.shell(this._deviceId, `rm -fr ${this._tempDir}`);
-    await this._adb.shell(this._deviceId, `mkdir -p ${this._tempDir}`);
+  async _prepareTempDirOnDevice(deviceId) {
+    await this._adb.shell(deviceId, `rm -fr ${this._tempDir}`);
+    await this._adb.shell(deviceId, `mkdir -p ${this._tempDir}`);
   }
 
-  async _pushAndInstallBinary(binaryPath, binaryPathOnTarget) {
-    await this._adb.push(this._deviceId, binaryPath, binaryPathOnTarget);
-    await this._adb.remoteInstall(this._deviceId, binaryPathOnTarget);
+  async _pushAndInstallBinary(deviceId, binaryPath, binaryPathOnTarget) {
+    await this._adb.push(deviceId, binaryPath, binaryPathOnTarget);
+    await this._adb.remoteInstall(deviceId, binaryPathOnTarget);
   }
 
   _getTargetBinaryPath(isTestBinary) {
