@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)dtx_scrollToNormalizedEdge:(CGPoint)edge;
 - (void)dtx_scrollWithOffset:(CGPoint)offset;
-- (void)dtx_scrollWithOffset:(CGPoint)offset normalizedStartingOffset:(CGPoint)normalizedStartingOffset;
+- (void)dtx_scrollWithOffset:(CGPoint)offset normalizedStartingPoint:(CGPoint)normalizedStartingPoint NS_SWIFT_NAME(dtx_scroll(withOffset:normalizedStartingPoint:));
 
 @end
 

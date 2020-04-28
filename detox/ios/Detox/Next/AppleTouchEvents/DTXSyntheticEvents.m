@@ -33,12 +33,14 @@
 	NSValue *_lastInjectedTouchPoint;
 }
 
-+ (void)rotateDeviceToOrientation:(UIDeviceOrientation)deviceOrientation {
++ (void)rotateDeviceToOrientation:(UIDeviceOrientation)deviceOrientation
+{
 	NSParameterAssert(NSThread.isMainThread);
 	[[UIDevice currentDevice] setOrientation:deviceOrientation animated:YES];
 }
 
-+ (void)shakeDevice {
++ (void)shakeDevice
+{
 	NSParameterAssert(NSThread.isMainThread);
 	
 	BKSAccelerometer *accelerometer = [UIApplication.sharedApplication._motionEvent valueForKey:@"_motionAccelerometer"];
@@ -53,91 +55,74 @@
 	accelerometer.accelerometerEventsEnabled = prevValue;
 }
 
-+ (void)touchAlongPath:(NSArray *)touchPath
-	  relativeToWindow:(UIWindow *)window
-           forDuration:(NSTimeInterval)duration
-            expendable:(BOOL)expendable {
-  [self touchAlongMultiplePaths:@[touchPath]
-               relativeToWindow:window
-                    forDuration:duration
-                     expendable:expendable];
++ (void)touchAlongPath:(NSArray *)touchPath relativeToWindow:(UIWindow *)window holdDurationOnLastTouch:(NSTimeInterval)holdDuration
+{
+	[self touchAlongMultiplePaths:@[touchPath] relativeToWindow:window holdDurationOnLastTouch:holdDuration];
 }
 
-+ (void)touchAlongMultiplePaths:(NSArray *)touchPaths
-			   relativeToWindow:(UIWindow *)window
-					forDuration:(NSTimeInterval)duration
-					 expendable:(BOOL)expendable {
++ (void)touchAlongMultiplePaths:(NSArray *)touchPaths relativeToWindow:(UIWindow *)window holdDurationOnLastTouch:(NSTimeInterval)holdDuration
+{
 	NSParameterAssert(touchPaths.count >= 1);
-	NSParameterAssert(duration >= 0);
+	NSParameterAssert(holdDuration >= 0);
 	
 	NSUInteger firstTouchPathSize = [touchPaths[0] count];
 	DTXSyntheticEvents *eventGenerator = [DTXSyntheticEvents new];
 	
 	// Inject "begin" event for the first points of each path.
-	[eventGenerator dtx_beginTouchesAtPoints:[self dtx_objectsAtIndex:0 ofArrays:touchPaths]
-							 relativeToWindow:window
-							immediateDelivery:NO];
+	[eventGenerator dtx_beginTouchesAtPoints:[self dtx_objectsAtIndex:0 ofArrays:touchPaths] relativeToWindow:window immediateDelivery:NO];
 	
 	// If the paths have a single point, then just inject an "end" event with the delay being the
 	// provided duration. Otherwise, insert multiple "continue" events with delays being a fraction
 	// of the duration, then inject an "end" event with no delay.
-	if (firstTouchPathSize == 1) {
-		[eventGenerator dtx_endTouchesAtPoints:[self dtx_objectsAtIndex:firstTouchPathSize - 1
-																 ofArrays:touchPaths]
-			  timeElapsedSinceLastTouchDelivery:duration];
-	} else {
+	if(firstTouchPathSize == 1)
+	{
+		[eventGenerator dtx_endTouchesAtPoints:[self dtx_objectsAtIndex:firstTouchPathSize - 1 ofArrays:touchPaths] timeElapsedSinceLastTouchDelivery:holdDuration];
+	}
+	else
+	{
 		// Start injecting "continue touch" events, starting from the second position on the touch
 		// path as it was already injected as a "begin touch" event.
-		CFTimeInterval delayBetweenEachEvent = duration / (double)(firstTouchPathSize - 1);
+//		CFTimeInterval delayBetweenEachEvent = duration / (double)(firstTouchPathSize - 1);
 		
-		for (NSUInteger i = 1; i < firstTouchPathSize; i++) {
-			[eventGenerator dtx_continueTouchAtPoints:[self dtx_objectsAtIndex:i ofArrays:touchPaths]
-				afterTimeElapsedSinceLastTouchDelivery:delayBetweenEachEvent
-                               immediateDelivery:NO
-                                      expendable:expendable];
+		for(NSUInteger i = 1; i < firstTouchPathSize; i++)
+		{
+			[eventGenerator dtx_continueTouchAtPoints:[self dtx_objectsAtIndex:i ofArrays:touchPaths] afterTimeElapsedSinceLastTouchDelivery:i == firstTouchPathSize - 1 ? holdDuration : 0 immediateDelivery:NO expendable:NO];
 		}
 		
-		[eventGenerator dtx_endTouchesAtPoints:[self dtx_objectsAtIndex:firstTouchPathSize - 1
-																 ofArrays:touchPaths]
-			  timeElapsedSinceLastTouchDelivery:0];
+		[eventGenerator dtx_endTouchesAtPoints:[self dtx_objectsAtIndex:firstTouchPathSize - 1 ofArrays:touchPaths] timeElapsedSinceLastTouchDelivery:0];
 	}
 }
 
-- (void)beginTouchAtPoint:(CGPoint)point
-		 relativeToWindow:(UIWindow *)window
-		immediateDelivery:(BOOL)immediate {
+- (void)beginTouchAtPoint:(CGPoint)point relativeToWindow:(UIWindow *)window immediateDelivery:(BOOL)immediate
+{
 	_lastInjectedTouchPoint = [NSValue valueWithCGPoint:point];
-	[self dtx_beginTouchesAtPoints:@[_lastInjectedTouchPoint]
-				   relativeToWindow:window
-				  immediateDelivery:immediate];
+	[self dtx_beginTouchesAtPoints:@[_lastInjectedTouchPoint] relativeToWindow:window immediateDelivery:immediate];
 }
 
-- (void)continueTouchAtPoint:(CGPoint)point
-           immediateDelivery:(BOOL)immediate
-                  expendable:(BOOL)expendable {
+- (void)continueTouchAtPoint:(CGPoint)point immediateDelivery:(BOOL)immediate expendable:(BOOL)expendable
+{
 	_lastInjectedTouchPoint = [NSValue valueWithCGPoint:point];
-	[self dtx_continueTouchAtPoints:@[_lastInjectedTouchPoint]
-afterTimeElapsedSinceLastTouchDelivery:0
-                           immediateDelivery:immediate
-                                  expendable:expendable];
+	[self dtx_continueTouchAtPoints:@[_lastInjectedTouchPoint] afterTimeElapsedSinceLastTouchDelivery:0 immediateDelivery:immediate expendable:expendable];
 }
 
-- (void)endTouch {
-	[self dtx_endTouchesAtPoints:@[_lastInjectedTouchPoint]
-timeElapsedSinceLastTouchDelivery:0];
+- (void)endTouch
+{
+	[self dtx_endTouchesAtPoints:@[_lastInjectedTouchPoint] timeElapsedSinceLastTouchDelivery:0];
 }
 
 #pragma mark - Private
 
 // Given an array containing multiple arrays, returns an array with the index'th element of each
 // array.
-+ (NSArray *)dtx_objectsAtIndex:(NSUInteger)index ofArrays:(NSArray *)arrayOfArrays {
++ (NSArray *)dtx_objectsAtIndex:(NSUInteger)index ofArrays:(NSArray *)arrayOfArrays
+{
 	NSAssert(arrayOfArrays.count > 0, @"arrayOfArrays must contain at least one element.");
 	NSUInteger firstArraySize = [arrayOfArrays[0] count];
 	NSAssert(index < firstArraySize, @"index must be smaller than the size of the arrays.");
 	
 	NSMutableArray *output = [[NSMutableArray alloc] initWithCapacity:[arrayOfArrays count]];
-	for (NSArray *array in arrayOfArrays) {
+	for(NSArray *array in arrayOfArrays)
+	{
 		NSAssert(array.count == firstArraySize, @"All arrays must be of the same size.");
 		[output addObject:array[index]];
 	}
@@ -154,19 +139,16 @@ timeElapsedSinceLastTouchDelivery:0];
  *  @param immediate If @c YES, this method blocks until touch is delivered, otherwise the touch is
  *                   enqueued for delivery the next time runloop drains.
  */
-- (void)dtx_beginTouchesAtPoints:(NSArray *)points
-				 relativeToWindow:(UIWindow *)window
-				immediateDelivery:(BOOL)immediate {
+- (void)dtx_beginTouchesAtPoints:(NSArray *)points relativeToWindow:(UIWindow *)window immediateDelivery:(BOOL)immediate
+{
 	NSAssert(_touchInjector == nil, @"Cannot call this method more than once until endTouch is called.");
 	_touchInjector = [[DTXTouchInjector alloc] initWithWindow:window];
-	DTXTouchInfo *touchInfo = [[DTXTouchInfo alloc] initWithPoints:points
-                                                             phase:DTXTouchInfoPhaseTouchBegan
-                                   deliveryTimeDeltaSinceLastTouch:0
-                                                        expendable:NO];
+	DTXTouchInfo *touchInfo = [[DTXTouchInfo alloc] initWithPoints:points phase:DTXTouchInfoPhaseTouchBegan deliveryTimeDeltaSinceLastTouch:0 expendable:NO];
 	[_touchInjector enqueueTouchInfoForDelivery:touchInfo];
 	
-	if (immediate) {
-    [_touchInjector waitUntilAllTouchesAreDeliveredUsingInjector];
+	if(immediate == YES)
+	{
+		[_touchInjector waitUntilAllTouchesAreDeliveredUsingInjector];
 	}
 }
 
@@ -180,18 +162,13 @@ timeElapsedSinceLastTouchDelivery:0];
  *  @param expendable Indicates that this touch point is intended to be delivered in a timely
  *                    manner rather than reliably.
  */
-- (void)dtx_continueTouchAtPoints:(NSArray *)points
-afterTimeElapsedSinceLastTouchDelivery:(NSTimeInterval)seconds
-                         immediateDelivery:(BOOL)immediate
-                                expendable:(BOOL)expendable {
-	DTXTouchInfo *touchInfo = [[DTXTouchInfo alloc] initWithPoints:points
-                                                             phase:DTXTouchInfoPhaseTouchMoved
-                                   deliveryTimeDeltaSinceLastTouch:seconds
-                                                        expendable:expendable];
+- (void)dtx_continueTouchAtPoints:(NSArray *)points afterTimeElapsedSinceLastTouchDelivery:(NSTimeInterval)seconds immediateDelivery:(BOOL)immediate expendable:(BOOL)expendable {
+	DTXTouchInfo *touchInfo = [[DTXTouchInfo alloc] initWithPoints:points phase:DTXTouchInfoPhaseTouchMoved deliveryTimeDeltaSinceLastTouch:seconds expendable:expendable];
 	[_touchInjector enqueueTouchInfoForDelivery:touchInfo];
-
-	if (immediate) {
-    [_touchInjector waitUntilAllTouchesAreDeliveredUsingInjector];
+	
+	if(immediate == YES)
+	{
+		[_touchInjector waitUntilAllTouchesAreDeliveredUsingInjector];
 	}
 }
 
@@ -201,15 +178,11 @@ afterTimeElapsedSinceLastTouchDelivery:(NSTimeInterval)seconds
  *  @param points  Multiple points at which the touches are to be made.
  *  @param seconds An interval to wait after the every last touch event.
  */
-- (void)dtx_endTouchesAtPoints:(NSArray *)points
-timeElapsedSinceLastTouchDelivery:(NSTimeInterval)seconds {
-	DTXTouchInfo *touchInfo = [[DTXTouchInfo alloc] initWithPoints:points
-                                                             phase:DTXTouchInfoPhaseTouchEnded
-                                   deliveryTimeDeltaSinceLastTouch:seconds
-                                                        expendable:NO];
-
+- (void)dtx_endTouchesAtPoints:(NSArray *)points timeElapsedSinceLastTouchDelivery:(NSTimeInterval)seconds {
+	DTXTouchInfo *touchInfo = [[DTXTouchInfo alloc] initWithPoints:points phase:DTXTouchInfoPhaseTouchEnded deliveryTimeDeltaSinceLastTouch:seconds expendable:NO];
+	
 	[_touchInjector enqueueTouchInfoForDelivery:touchInfo];
-  [_touchInjector waitUntilAllTouchesAreDeliveredUsingInjector];
+	[_touchInjector waitUntilAllTouchesAreDeliveredUsingInjector];
 	
 	_touchInjector = nil;
 }

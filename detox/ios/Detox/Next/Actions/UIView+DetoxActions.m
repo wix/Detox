@@ -12,30 +12,28 @@
 
 #import "DTXAppleInternals.h"
 #import "DTXSyntheticEvents.h"
+#import "UIView+DetoxUtils.h"
 
 @implementation UIView (Detox)
 
-- (CGPoint)_dtx_accessibilityActivationPointInViewCoordinateSpace
-{
-	return [self.window.screen.coordinateSpace convertPoint:self.accessibilityActivationPoint toCoordinateSpace:self.coordinateSpace];
-}
-
 - (void)dtx_tapAtAccessibilityActivationPoint
 {
-	[self dtx_tapAtPoint:self._dtx_accessibilityActivationPointInViewCoordinateSpace numberOfTaps:1];
+	[self dtx_tapAtPoint:self.dtx_accessibilityActivationPointInViewCoordinateSpace numberOfTaps:1];
 }
 
 - (void)dtx_tapAtAccessibilityActivationPointWithNumberOfTaps:(NSUInteger)numberOfTaps
 {
-	[self dtx_tapAtPoint:self._dtx_accessibilityActivationPointInViewCoordinateSpace numberOfTaps:numberOfTaps];
+	[self dtx_tapAtPoint:self.dtx_accessibilityActivationPointInViewCoordinateSpace numberOfTaps:numberOfTaps];
 }
 
 - (void)dtx_tapAtPoint:(CGPoint)point numberOfTaps:(NSUInteger)numberOfTaps
 {
+	[self dtx_assertHittable];
+	
 	NSParameterAssert(numberOfTaps >= 1);
 	point = [self.window convertPoint:point fromView:self];
 	for (NSUInteger idx = 0; idx < numberOfTaps; idx++) {
-		[DTXSyntheticEvents touchAlongPath:@[@(point)] relativeToWindow:self.window forDuration:0 expendable:NO];
+		[DTXSyntheticEvents touchAlongPath:@[@(point)] relativeToWindow:self.window holdDurationOnLastTouch:0.0];
 	}
 }
 
@@ -46,13 +44,184 @@
 
 - (void)dtx_longPressAtAccessibilityActivationPointForDuration:(NSTimeInterval)duration
 {
-	[self dtx_longPressAtPoint:self._dtx_accessibilityActivationPointInViewCoordinateSpace duration:duration];
+	[self dtx_longPressAtPoint:self.dtx_accessibilityActivationPointInViewCoordinateSpace duration:duration];
 }
 
 - (void)dtx_longPressAtPoint:(CGPoint)point duration:(NSTimeInterval)duration
 {
+	[self dtx_assertHittable];
+	
 	point = [self.window convertPoint:point fromView:self];
-	[DTXSyntheticEvents touchAlongPath:@[@(point)] relativeToWindow:self.window forDuration:duration expendable:NO];
+	[DTXSyntheticEvents touchAlongPath:@[@(point)] relativeToWindow:self.window holdDurationOnLastTouch:duration];
+}
+
+__attribute__((always_inline))
+static inline double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
+{
+	return from + p * (to - from);
+}
+
+__attribute__((always_inline))
+static inline void _DTXApplySwipe(UIWindow* window, CGPoint startPoint, CGPoint endPoint, CGFloat velocity)
+{
+	NSCAssert(CGPointEqualToPoint(startPoint, endPoint) == NO, @"Start and end points for swipe cannot be equal");
+
+	NSMutableArray<NSValue*>* points = [NSMutableArray new];
+	
+	for (CGFloat p = 0.0; p <= 1.0; p += 1.0 / (20.0 * velocity))
+	{
+		CGFloat x = LNLinearInterpolate(startPoint.x, endPoint.x, p);
+		CGFloat y = LNLinearInterpolate(startPoint.y, endPoint.y, p);
+		
+		[points addObject:@(CGPointMake(x, y))];
+	}
+
+	[DTXSyntheticEvents touchAlongPath:points relativeToWindow:window holdDurationOnLastTouch:0.0];
+}
+
+#define DTX_CALC_SWIPE_START_END_POINTS(bounds, mainMidFunc, otherMidFunc, main, other, mainSizeFunc) \
+startPoint.other = otherMidFunc(bounds); \
+endPoint.other = otherMidFunc(bounds); \
+startPoint.main = mainMidFunc(bounds) + (-normalizedOffset.main) * 0.5 * mainSizeFunc(bounds); \
+endPoint.main = mainMidFunc(bounds) + normalizedOffset.main * 0.5 * mainSizeFunc(bounds);
+
+- (void)dtx_swipeWithNormalizedOffset:(CGPoint)normalizedOffset velocity:(CGFloat)velocity
+{
+	[self dtx_assertHittable];
+	
+	NSParameterAssert(velocity > 0.0);
+	
+	if(normalizedOffset.x == 0 && normalizedOffset.y == 0)
+	{
+		return;
+	}
+	
+	CGPoint startPoint;
+	CGPoint endPoint;
+	
+	CGRect safeBounds = UIEdgeInsetsInsetRect(self.bounds, self.safeAreaInsets);
+	
+	if(normalizedOffset.x != 0)
+	{
+		DTX_CALC_SWIPE_START_END_POINTS(safeBounds, CGRectGetMidX, CGRectGetMidY, x, y, CGRectGetWidth);
+	}
+	else
+	{
+		DTX_CALC_SWIPE_START_END_POINTS(safeBounds, CGRectGetMidY, CGRectGetMidX, y, x, CGRectGetHeight);
+	}
+	
+	startPoint = [self.window convertPoint:startPoint fromView:self];
+	endPoint = [self.window convertPoint:endPoint fromView:self];
+	
+	_DTXApplySwipe(self.window, startPoint, endPoint, 1.0 / velocity);
+}
+
+__attribute__((always_inline))
+static inline void _DTXApplyPinch(UIWindow* window, CGPoint startPoint1, CGPoint endPoint1, CGPoint startPoint2, CGPoint endPoint2, CGFloat velocity)
+{
+	NSMutableArray<NSValue*>* points1 = [NSMutableArray new];
+	NSMutableArray<NSValue*>* points2 = [NSMutableArray new];
+	
+	for (CGFloat p = 0.0; p <= 1.0; p += 1.0 / (30.0 * velocity))
+	{
+		CGFloat x = LNLinearInterpolate(startPoint1.x, endPoint1.x, p);
+		CGFloat y = LNLinearInterpolate(startPoint1.y, endPoint1.y, p);
+		
+		[points1 addObject:@(CGPointMake(x, y))];
+		
+		x = LNLinearInterpolate(startPoint2.x, endPoint2.x, p);
+		y = LNLinearInterpolate(startPoint2.y, endPoint2.y, p);
+		
+		[points2 addObject:@(CGPointMake(x, y))];
+	}
+
+	[DTXSyntheticEvents touchAlongMultiplePaths:@[points1, points2] relativeToWindow:window holdDurationOnLastTouch:0.0];
+}
+
+__attribute__((always_inline))
+static inline void DTXCalcPinchStartEndPoints(CGRect bounds, CGFloat pixelsScale, CGFloat angle, CGPoint* startPoint1, CGPoint* endPoint1, CGPoint* startPoint2, CGPoint* endPoint2)
+{
+	*startPoint1 = CGPointMake(CGRectGetMidX(bounds), CGRectGetMidY(bounds));
+	*startPoint2 = CGPointMake(CGRectGetMidX(bounds), CGRectGetMidY(bounds));
+	
+	CGFloat x = CGRectGetMinX(bounds);
+	CGFloat y = CGRectGetMinY(bounds);
+	CGFloat w = CGRectGetWidth(bounds);
+	CGFloat h = CGRectGetHeight(bounds);
+	CGFloat alpha = atan((0.5 * h) / (0.5 * w));
+	if(angle <= alpha)
+	{
+		*endPoint1 = CGPointMake(x + w, CGRectGetMidY(bounds) - 0.5 * w * tan(angle));
+		*endPoint2 = CGPointMake(x, CGRectGetMidY(bounds) + 0.5 * w * tan(angle));
+	}
+	else if(angle <= M_PI - alpha)
+	{
+		*endPoint1 = CGPointMake(CGRectGetMidX(bounds) + 0.5 * h * tan(M_PI_2 - angle), y);
+		*endPoint2 = CGPointMake(CGRectGetMidX(bounds) - 0.5 * h * tan(M_PI_2 - angle), y + h);
+	}
+	else
+	{
+		*endPoint1 = CGPointMake(x, CGRectGetMidY(bounds) - 0.5 * w * tan(M_PI - angle));
+		*endPoint2 = CGPointMake(x + w, CGRectGetMidY(bounds) + 0.5 * w * tan(M_PI - angle));
+	}
+	
+	endPoint1->x = LNLinearInterpolate(startPoint1->x, endPoint1->x, pixelsScale);
+	endPoint1->y = LNLinearInterpolate(startPoint1->y, endPoint1->y, pixelsScale);
+	endPoint2->x = LNLinearInterpolate(startPoint2->x, endPoint2->x, pixelsScale);
+	endPoint2->y = LNLinearInterpolate(startPoint2->y, endPoint2->y, pixelsScale);
+	
+	NSLog(@"");
+}
+
+__attribute__((always_inline))
+static inline CGFloat clamp(CGFloat v, CGFloat min, CGFloat max)
+{
+	return MIN(MAX(v, min), max);
+}
+
+- (void)dtx_pinchWithScale:(CGFloat)scale velocity:(CGFloat)velocity angle:(CGFloat)angle
+{
+	[self dtx_assertHittable];
+	
+	NSParameterAssert(velocity > 0.0);
+	NSParameterAssert(scale > 0.0);
+	
+	if(scale == 1.0)
+	{
+		return;
+	}
+	
+	CGRect safeBounds = UIEdgeInsetsInsetRect(self.bounds, self.safeAreaInsets);
+	
+	CGPoint startPoint1;
+	CGPoint endPoint1;
+	CGPoint startPoint2;
+	CGPoint endPoint2;
+	
+	scale = clamp(scale, 0.5005, 1.9995);
+	//There is point symmetry in a rectangle and two fingers—normalize angle to [0, pi).
+	//Negative angles wrap around 180 degrees (pi).
+	angle = fmod(angle, M_PI);
+	if(angle < 0)
+	{
+		angle += M_PI;
+	}
+	
+	if(scale < 1.0)
+	{
+		DTXCalcPinchStartEndPoints(safeBounds, 1.0 - scale, angle, &endPoint1, &startPoint1, &endPoint2, &startPoint2);
+	}
+	else
+	{
+		DTXCalcPinchStartEndPoints(safeBounds, scale - 1.0, angle, &startPoint1, &endPoint1, &startPoint2, &endPoint2);
+	}
+	
+	startPoint1 = [self.window convertPoint:startPoint1 fromView:self];
+	endPoint1 = [self.window convertPoint:endPoint1 fromView:self];
+	startPoint2 = [self.window convertPoint:startPoint2 fromView:self];
+	endPoint2 = [self.window convertPoint:endPoint2 fromView:self];
+	
+	_DTXApplyPinch(self.window, startPoint1, endPoint1, startPoint2, endPoint2, 1.0 / velocity);
 }
 
 static UIView* _isViewOrDescendantFirstResponder(UIView* view)
@@ -92,7 +261,7 @@ static UIView* _ensureFirstResponderIfNeeded(UIView* view)
 	
 	if(firstResponder == nil)
 	{
-		NSCAssert(firstResponder == nil, @"Failed to make view %@ first responder", view);
+		NSCAssert(firstResponder == nil, @"Failed to make view “%@” first responder", view.dtx_shortDescription);
 	}
 	
 	return firstResponder;
@@ -105,7 +274,7 @@ static BOOL _assertFirstResponderSupportsTextInput(UIView* firstResponder, UIVie
 		return YES;
 	}
 	
-	NSCAssert(NO, @"First responder does not conform to UITextInput protocol");
+	NSCAssert(NO, @"First responder does not conform to “UITextInput” protocol");
 	
 	return NO;
 }
@@ -175,6 +344,8 @@ static void _DTXTypeText(NSString* text)
 
 - (void)dtx_clearText
 {
+	[self dtx_assertHittable];
+	
 	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(self);
 	
 	_assertFirstResponderSupportsTextInput(firstResponder, self);
@@ -201,6 +372,8 @@ static void _DTXTypeText(NSString* text)
 
 - (void)dtx_typeText:(NSString*)text
 {
+	[self dtx_assertHittable];
+	
 	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(self);
 	
 	_assertFirstResponderSupportsTextInput(firstResponder, self);
@@ -210,6 +383,8 @@ static void _DTXTypeText(NSString* text)
 
 - (void)dtx_replaceText:(NSString*)text
 {
+	[self dtx_assertHittable];
+	
 	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(self);
 	
 	_assertFirstResponderSupportsTextInput(firstResponder, self);

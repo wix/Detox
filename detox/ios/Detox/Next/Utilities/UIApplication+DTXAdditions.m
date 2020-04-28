@@ -25,30 +25,44 @@
  *  List for all the runloop modes that have been pushed and unpopped using UIApplication's push/pop
  *  runloop mode methods. The most recently pushed runloop mode is at the end of the list.
  */
-static NSMutableArray *gRunLoopModes;
+static NSMutableArray *__runLoopModes;
+static pthread_mutex_t __runLoopModesMutex;
 
 @implementation UIApplication (DTXAdditions)
 
 + (void)load {
 	@autoreleasepool {
-		gRunLoopModes = [[NSMutableArray alloc] init];
+		__runLoopModes = [[NSMutableArray alloc] init];
+		
+		pthread_mutexattr_t attr;
+		pthread_mutexattr_init(&attr);
+		pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+		
+		pthread_mutex_init(&__runLoopModesMutex, &attr);
 		
 		[NSNotificationCenter.defaultCenter addObserverForName:@"_UIApplicationRunLoopModePushNotification" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
-			[gRunLoopModes addObject:note.userInfo[@"_UIApplicationRunLoopMode"]];
+			pthread_mutex_lock(&__runLoopModesMutex);
+			[__runLoopModes addObject:note.userInfo[@"_UIApplicationRunLoopMode"]];
+			pthread_mutex_unlock(&__runLoopModesMutex);
 		}];
 		
 		[NSNotificationCenter.defaultCenter addObserverForName:@"_UIApplicationRunLoopModePopNotification" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
-			NSCParameterAssert([gRunLoopModes.lastObject isEqualToString:note.userInfo[@"_UIApplicationRunLoopMode"]]);
-			[gRunLoopModes removeLastObject];
+			pthread_mutex_lock(&__runLoopModesMutex);
+			NSCParameterAssert([__runLoopModes.lastObject isEqualToString:note.userInfo[@"_UIApplicationRunLoopMode"]]);
+			[__runLoopModes removeLastObject];
+			pthread_mutex_unlock(&__runLoopModesMutex);
 		}];
 	}
 }
 
-- (NSString *)dtx_activeRunLoopMode {
-	@synchronized(gRunLoopModes) {
-		// could be nil.
-		return [gRunLoopModes lastObject];
-	}
+- (NSString *)dtx_activeRunLoopMode
+{
+	NSString* rv;
+	pthread_mutex_lock(&__runLoopModesMutex);
+	rv = [__runLoopModes lastObject];
+	pthread_mutex_unlock(&__runLoopModesMutex);
+	
+	return rv;
 }
 
 + (void)dtx_enableAccessibilityForSimulator
@@ -71,5 +85,16 @@ static NSMutableArray *gRunLoopModes;
 								  notification:(CFStringRef)@"com.apple.accessibility.cache.ax"];
 }
 
++ (CGFloat)panVelocity
+{
+	static CGFloat rv;
+	
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		rv = 25;
+	});
+	
+	return rv;
+}
 
 @end

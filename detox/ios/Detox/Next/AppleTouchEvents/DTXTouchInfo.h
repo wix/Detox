@@ -67,10 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return An instance of DTXTouchInfo, initialized with all required data.
  */
-- (instancetype)initWithPoints:(NSArray *)points
-                              phase:(DTXTouchInfoPhase)phase
-    deliveryTimeDeltaSinceLastTouch:(NSTimeInterval)timeDeltaSinceLastTouchSeconds
-                         expendable:(BOOL)expendable NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithPoints:(NSArray *)points phase:(DTXTouchInfoPhase)phase deliveryTimeDeltaSinceLastTouch:(NSTimeInterval)timeDeltaSinceLastTouchSeconds expendable:(BOOL)expendable NS_DESIGNATED_INITIALIZER;
 
 /**
  *  @remark init is not an available initializer. Use the other initializers.

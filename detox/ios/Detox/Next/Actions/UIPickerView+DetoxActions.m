@@ -8,14 +8,17 @@
 
 #import "UIPickerView+DetoxActions.h"
 #import "UIView+DetoxMatchers.h"
+#import "UIView+DetoxUtils.h"
 
 @implementation UIPickerView (DetoxActions)
 
 - (void)dtx_setComponent:(NSInteger)component toValue:(id)value
 {
+	[self dtx_assertVisible];
+	
 	NSInteger componentCount = [self.dataSource numberOfComponentsInPickerView:self];
 	
-	NSAssert(componentCount > component, @"Invalid component %@ for picker view %@", @(component), self);
+	NSAssert(componentCount > component, @"Invalid component “%@” for picker view “%@”", @(component), self.dtx_shortDescription);
 
 	NSInteger rowCount = [self.dataSource pickerView:self numberOfRowsInComponent:component];
 
@@ -59,7 +62,7 @@
 		}
 	}
 	
-	NSAssert(NO, @"Picker view %@ does not contain value %@ for component %@", self, value, @(component));
+	NSAssert(NO, @"Picker view “%@” does not contain value “%@” for component “%@”", self.dtx_shortDescription, value, @(component));
 }
 
 @end

@@ -14,14 +14,11 @@
 // limitations under the License.
 //
 
-#import "DTXTouchInfo.h"
+#import "DTXTouchInfo-Private.h"
 
 @implementation DTXTouchInfo
 
-- (instancetype)initWithPoints:(NSArray *)points
-						 phase:(DTXTouchInfoPhase)phase
-deliveryTimeDeltaSinceLastTouch:(NSTimeInterval)timeDeltaSinceLastTouchSeconds
-					expendable:(BOOL)expendable
+- (instancetype)initWithPoints:(NSArray *)points phase:(DTXTouchInfoPhase)phase deliveryTimeDeltaSinceLastTouch:(NSTimeInterval)timeDeltaSinceLastTouchSeconds expendable:(BOOL)expendable
 {
 	self = [super init];
 	if (self)
@@ -41,8 +38,16 @@ deliveryTimeDeltaSinceLastTouch:(NSTimeInterval)timeDeltaSinceLastTouchSeconds
 	[desc appendFormat:@" with phase: %ld\n", (long)_phase];
 	[desc appendFormat:@" with delivery delta time: %g\n", _deliveryTimeDeltaSinceLastTouch];
 	[desc appendFormat:@" with points: %@\n", _points];
+	if(_enqueuedMediaTime != 0)
+	{
+		[desc appendFormat:@" projected fire media time: %@\n", @(self.fireMediaTime)];
+	}
 	return desc;
 }
 
+- (NSTimeInterval)fireMediaTime
+{
+	return _enqueuedMediaTime + _deliveryTimeDeltaSinceLastTouch;
+}
 
 @end

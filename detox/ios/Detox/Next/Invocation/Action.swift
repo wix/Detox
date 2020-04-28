@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import WebKit;
 
 class Action : CustomStringConvertible {
 	struct Keys {
@@ -31,7 +32,8 @@ class Action : CustomStringConvertible {
 		static let scrollTo = "scrollTo"
 		
 		static let swipe = "swipe"
-		static let pinchWithAngle = "pinchWithAngle"
+		static let pinch = "pinch"
+		static let pinchWithAngleLegacy = "pinchWithAngle"
 		
 		static let setColumnToValue = "setColumnToValue"
 		static let setDatePickerDate = "setDatePickerDate"
@@ -65,7 +67,8 @@ class Action : CustomStringConvertible {
 		Kind.scrollTo: ScrollToEdgeAction.self,
 		
 		Kind.swipe: SwipeAction.self,
-		Kind.pinchWithAngle: PinchAction.self,
+		Kind.pinch: PinchAction.self,
+		Kind.pinchWithAngleLegacy: LegacyPinchAction.self,
 		
 		Kind.setColumnToValue: SetPickerAction.self,
 		Kind.setDatePickerDate: SetDatePickerAction.self,
@@ -203,21 +206,27 @@ class ScrollAction : Action {
 		if let param2 = params?[2] as? Double, param2.isNaN == false {
 			startPositionX = param2
 		} else {
-			startPositionX = 0.5
+			startPositionX = Double.nan
 		}
 		let startPositionY : Double
 		if let param3 = params?[3] as? Double, param3.isNaN == false {
 			startPositionY = param3
 		} else {
-			startPositionY = 0.5
+			startPositionY = Double.nan
 		}
 		
+		var scrollView : UIScrollView? = nil
 		if let view = view as? UIScrollView {
-			view.dtx_scroll(withOffset: targetOffset, normalizedStartingOffset: CGPoint(x: startPositionX, y: startPositionY))
+			scrollView = view
+		}
+		else if let view = view as? WKWebView {
+			scrollView = view.scrollView
 		}
 		else {
 			assert(false, "View \(view) is not an instance of UISrollView")
 		}
+		
+		scrollView!.dtx_scroll(withOffset: targetOffset, normalizedStartingPoint: CGPoint(x: startPositionX, y: startPositionY))
 		
 		//TODO: Handle while
 		
@@ -255,28 +264,90 @@ class ScrollToEdgeAction : Action {
 		}
 		
 		return nil
+	}
 }
 
 class SwipeAction : Action {
 	override func perform(on view: UIView) -> [String: Any]? {
+		var targetNormalizedOffset : CGPoint
 		let directionString = params![0] as! String
 		switch directionString {
 		case "up":
-			element.swipeUp()
+			targetNormalizedOffset = CGPoint(x: 0, y: -1)
 			break;
 		case "down":
-			element.swipeDown()
+			targetNormalizedOffset = CGPoint(x: 0, y: 1)
 			break;
 		case "left":
-			element.swipeLeft()
+			targetNormalizedOffset = CGPoint(x: -1, y: 0)
 			break;
 		case "right":
-			element.swipeRight()
+			targetNormalizedOffset = CGPoint(x: 1, y: 0)
 			break;
 		default:
 			fatalError("Unknown swipe direction")
 			break;
 		}
+		
+		var velocity = CGFloat(1.0)
+		if let speedString = params?[1] as? String {
+			switch speedString {
+			case "slow":
+				velocity = 0.5
+				break;
+			case "fast":
+				velocity = 1.0
+			default:
+				fatalError("Unknown pinch speed")
+			}
+		}
+		
+		if var percentage = params?[2] as? Double {
+			percentage = Double.minimum(percentage, 1.0)
+			percentage = Double.maximum(0.0, percentage)
+			
+			targetNormalizedOffset.x *= CGFloat(percentage)
+			targetNormalizedOffset.y *= CGFloat(percentage)
+		}
+		
+		view.dtx_swipe(withNormalizedOffset: targetNormalizedOffset, velocity: velocity)
+		
+		return nil
+	}
+}
+
+class LegacyPinchAction : Action {
+	override func perform(on view: UIView) -> [String: Any]? {
+		let directionString = params![0] as! String
+		var scale : CGFloat
+		switch directionString {
+		case "inward":
+			scale = 0.75
+			break;
+		case "outward":
+			scale = 1.5
+			break
+		default:
+			fatalError("Unknown pinch direction")
+		}
+		var velocity = CGFloat(1.0)
+		if let speedString = params?[1] as? String {
+			switch speedString {
+			case "slow":
+				velocity = 1.0
+				break;
+			case "fast":
+				velocity = 2.0
+			default:
+				fatalError("Unknown pinch speed")
+			}
+		}
+		var angle = CGFloat(0.0)
+		if let angleDouble = params?[2] as? Double {
+			angle = CGFloat(angleDouble)
+		}
+		
+		view.dtx_pinch(withScale: scale, velocity: velocity, angle: angle)
 		
 		return nil
 	}
@@ -284,36 +355,31 @@ class SwipeAction : Action {
 
 class PinchAction : Action {
 	override func perform(on view: UIView) -> [String: Any]? {
-		let directionString = params![0] as! String
-		let scale : CGFloat
-		switch directionString {
-		case "inward":
-			scale = 0.75
-			break;
-		case "outward":
-			scale = 1.25
-			break
-		default:
-			fatalError("Unknown pinch direction")
-		}
-		var velocity = CGFloat(0.5)
+		let scale = params![0] as! Double
+		assert(scale.isNaN == false && scale > 0.0, "Scale must be a real number above 0.0")
+		var velocity = CGFloat(2.0)
 		if let speedString = params?[1] as? String {
 			switch speedString {
 			case "slow":
 				velocity = 1.0
 				break;
 			case "fast":
-				velocity = 0.3
+				velocity = 2.0
 			default:
 				fatalError("Unknown pinch speed")
 			}
 		}
+		var angle = CGFloat(0.0)
+		if let angleDouble = params?[2] as? Double {
+			angle = CGFloat(angleDouble)
+		}
 		
-		element.pinch(withScale: scale, velocity: velocity)
+		view.dtx_pinch(withScale: CGFloat(scale), velocity: velocity, angle: angle)
 		
 		return nil
 	}
 }
+
 
 class SetPickerAction : Action {
 	override func perform(on view: UIView) -> [String: Any]? {
@@ -353,6 +419,7 @@ class SetDatePickerAction : Action {
 
 class GetAttributesAction : Action {
 	override func perform(on view: UIView) -> [String : Any]? {
-		return try! ["attributes": Dictionary(uniqueKeysWithValues: element.snapshot().dictionaryRepresentation.map { return ($0.rawValue, $1) })]
+		return [:]
+//		return try! ["attributes": Dictionary(uniqueKeysWithValues: element.snapshot().dictionaryRepresentation.map { return ($0.rawValue, $1) })]
 	}
 }

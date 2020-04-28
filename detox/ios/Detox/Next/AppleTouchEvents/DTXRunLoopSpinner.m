@@ -38,7 +38,8 @@ static void (^gNoopTimerHandler)(CFRunLoopTimerRef timer) = ^(CFRunLoopTimerRef 
 - (instancetype)init
 {
 	self = [super init];
-	if (self) {
+	if(self)
+	{
 		_maxSleepInterval = 0;
 		_minRunLoopDrains = kDefaultMinRunLoopDrains;
 	}
@@ -54,22 +55,22 @@ static void (^gNoopTimerHandler)(CFRunLoopTimerRef timer) = ^(CFRunLoopTimerRef 
 	BOOL stopConditionMet = NO;
 	BOOL needToDrainRunLoop = (CFRunLoopGetCurrent() == CFRunLoopGetMain());
 	
-	if (_minRunLoopDrains > 0) {
-		stopConditionMet = [self dtx_drainRunLoopInActiveModeForDrains:_minRunLoopDrains
-												   explicitRunLoopDrain:needToDrainRunLoop
-														 checkCondition:stopConditionBlock];
-	} else {
+	if(_minRunLoopDrains > 0)
+	{
+		stopConditionMet = [self dtx_drainRunLoopInActiveModeForDrains:_minRunLoopDrains explicitRunLoopDrain:needToDrainRunLoop checkCondition:stopConditionBlock];
+	}
+	else
+	{
 		stopConditionMet =
-		[self dtx_checkConditionInActiveModeWithExplicitRunLoopDrain:needToDrainRunLoop
-												   stopConditionBlock:stopConditionBlock];
+		[self dtx_checkConditionInActiveModeWithExplicitRunLoopDrain:needToDrainRunLoop stopConditionBlock:stopConditionBlock];
 	}
 	
 	CFTimeInterval remainingTime = [self dtx_secondsUntilTime:timeoutTime];
-	while (!stopConditionMet && remainingTime > 0) {
-		@autoreleasepool {
-			stopConditionMet = [self dtx_drainRunLoopInActiveModeAndCheckCondition:stopConditionBlock
-															   explicitRunLoopDrain:needToDrainRunLoop
-																			forTime:remainingTime];
+	while(!stopConditionMet && remainingTime > 0)
+	{
+		@autoreleasepool
+		{
+			stopConditionMet = [self dtx_drainRunLoopInActiveModeAndCheckCondition:stopConditionBlock explicitRunLoopDrain:needToDrainRunLoop forTime:remainingTime];
 			remainingTime = [self dtx_secondsUntilTime:timeoutTime];
 		}
 	}
@@ -92,9 +93,8 @@ static void (^gNoopTimerHandler)(CFRunLoopTimerRef timer) = ^(CFRunLoopTimerRef 
  *  @return @c YES if the condition block was evaluated to @c YES while draining or after the active
  *          runloop finished; @c NO otherwise.
  */
-- (BOOL)dtx_drainRunLoopInActiveModeForDrains:(NSUInteger)drainCount
-						  explicitRunLoopDrain:(BOOL)explicitRunLoopDrain
-								checkCondition:(BOOL (^)(void))stopConditionBlock {
+- (BOOL)dtx_drainRunLoopInActiveModeForDrains:(NSUInteger)drainCount explicitRunLoopDrain:(BOOL)explicitRunLoopDrain checkCondition:(BOOL (^)(void))stopConditionBlock
+{
 	NSAssert(drainCount > 0, @"Requires at least one drain to execute the block");
 	
 	NSString *activeMode = [self dtx_activeRunLoopMode];
@@ -103,20 +103,24 @@ static void (^gNoopTimerHandler)(CFRunLoopTimerRef timer) = ^(CFRunLoopTimerRef 
 	__block BOOL conditionMet = NO;
 	__block BOOL conditionChecked = NO;
 	void (^drainCountingBlock)(void) = ^{
-		if (conditionChecked) {
+		if(conditionChecked)
+		{
 			return;
 		}
 		
 		currentDrainCount++;
 		
-		if (currentDrainCount <= drainCount) {
+		if(currentDrainCount <= drainCount)
+		{
 			return;
 		}
 		
 		conditionMet = stopConditionBlock();
-		if (conditionMet) {
+		if(conditionMet)
+		{
 			void (^conditionMetHandler)(void) = self.conditionMetHandler;
-			if (conditionMetHandler) {
+			if(conditionMetHandler)
+			{
 				conditionMetHandler();
 			}
 		}
@@ -125,9 +129,11 @@ static void (^gNoopTimerHandler)(CFRunLoopTimerRef timer) = ^(CFRunLoopTimerRef 
 		// the main thread doesn't yield just yet. We set a flag here to avoid subsequent entrances
 		// into the runloop after the condition has been checked once.
 		conditionChecked = YES;
-		if (explicitRunLoopDrain) {
+		if(explicitRunLoopDrain)
+		{
 			CFRunLoopStop(CFRunLoopGetMain());
-		} else {
+		} else
+		{
 			dispatch_semaphore_signal(stopCondition);
 		}
 	};
@@ -140,31 +146,34 @@ static void (^gNoopTimerHandler)(CFRunLoopTimerRef timer) = ^(CFRunLoopTimerRef 
 	// Drain the currently active mode in a while loop so that we handle cases where the active mode
 	// finishes or is stopped. In these cases, we want to keep draining the (possibly new) active mode
 	// for the remaining drains.
-	while (currentDrainCount <= drainCount) {
-		@autoreleasepool {
+	while(currentDrainCount <= drainCount)
+	{
+		@autoreleasepool
+		{
 			CFRunLoopObserverRef drainCountingObserver =
-			[self dtx_setupObserverInMode:activeMode
-					withBeforeSourcesBlock:drainCountingBlock
-						beforeWaitingBlock:wakeUpBlock
-					  explicitRunLoopDrain:explicitRunLoopDrain];
-			if (explicitRunLoopDrain) {
+			[self dtx_setupObserverInMode:activeMode withBeforeSourcesBlock:drainCountingBlock beforeWaitingBlock:wakeUpBlock explicitRunLoopDrain:explicitRunLoopDrain];
+			if(explicitRunLoopDrain)
+			{
 				CFRunLoopRunResult result = CFRunLoopRunInMode((CFStringRef)activeMode, DBL_MAX, NO);
 				
 				// In case that no sources are attached to the current runloop where the function returns
 				// immedately and no observer will be called, we schedule an empty block to trigger the
 				// observer, so the @c stopContion will be fired.
-				if (result == kCFRunLoopRunFinished) {
+				if(result == kCFRunLoopRunFinished)
+				{
 					currentDrainCount++;
 					// The trigger is only scheduled when it has one last time to drain so we don't
 					// exhaust CPU
-					if (currentDrainCount >= drainCount) {
+					if(currentDrainCount >= drainCount)
+					{
 						// Empty block to trigger the observer to occur.
-						CFRunLoopPerformBlock(CFRunLoopGetMain(), (CFStringRef)activeMode,
-											  ^{
+						CFRunLoopPerformBlock(CFRunLoopGetMain(), (CFStringRef)activeMode, ^{
 						});
 					}
 				}
-			} else {
+			}
+			else
+			{
 				// Wake up the main runloop in the case it is already in the sleep state.
 				wakeUpBlock();
 				dispatch_semaphore_wait(stopCondition, DISPATCH_TIME_FOREVER);
@@ -195,9 +204,8 @@ static void (^gNoopTimerHandler)(CFRunLoopTimerRef timer) = ^(CFRunLoopTimerRef 
  *          runloop finished; @c NO otherwise.
  *  @note   We only explicitly drain the main runloop on the main thread.
  */
-- (BOOL)dtx_drainRunLoopInActiveModeAndCheckCondition:(BOOL (^)(void))stopConditionBlock
-								  explicitRunLoopDrain:(BOOL)explicitRunLoopDrain
-											   forTime:(CFTimeInterval)time {
+- (BOOL)dtx_drainRunLoopInActiveModeAndCheckCondition:(BOOL (^)(void))stopConditionBlock explicitRunLoopDrain:(BOOL)explicitRunLoopDrain forTime:(CFTimeInterval)time
+{
 	NSString *activeMode = [self dtx_activeRunLoopMode];
 	CFRunLoopTimerRef wakeUpTimer = [self dtx_setupWakeUpTimerInMode:activeMode];
 	__block BOOL conditionMet = NO;
@@ -209,18 +217,24 @@ static void (^gNoopTimerHandler)(CFRunLoopTimerRef timer) = ^(CFRunLoopTimerRef 
 		// It's possible that this block is still invoked while strongSelf is released if the observer
 		// is registered and deregistered from a non-main thread. The main runloop may hold the observer
 		// for one more drain to invoke.
-		if (!strongSelf) {
+		if(!strongSelf)
+		{
 			return;
 		}
 		
-		if (!conditionMet && stopConditionBlock()) {
-			if ([strongSelf conditionMetHandler]) {
+		if(!conditionMet && stopConditionBlock())
+		{
+			if([strongSelf conditionMetHandler])
+			{
 				[strongSelf conditionMetHandler]();
 			}
 			conditionMet = YES;
-			if (explicitRunLoopDrain) {
+			if(explicitRunLoopDrain)
+			{
 				CFRunLoopStop(CFRunLoopGetMain());
-			} else {
+			}
+			else
+			{
 				dispatch_semaphore_signal(stopCondition);
 			}
 		}
@@ -230,11 +244,13 @@ static void (^gNoopTimerHandler)(CFRunLoopTimerRef timer) = ^(CFRunLoopTimerRef 
 	void (^beforeWaitingConditionCheckBlock)(void) = ^{
 		__typeof__(self) strongSelf = weakSelf;
 		// Ditto.
-		if (!strongSelf) {
+		if(!strongSelf)
+		{
 			return;
 		}
 		
-		if (preventRunLoopFromSleeping) {
+		if(preventRunLoopFromSleeping)
+		{
 			CFRunLoopWakeUp(CFRunLoopGetMain());
 		}
 		
@@ -245,45 +261,51 @@ static void (^gNoopTimerHandler)(CFRunLoopTimerRef timer) = ^(CFRunLoopTimerRef 
 		// Do not check stopConditionBlock() if stopConditionMet is already true. This will occur if we
 		// stopped the runloop in the beforeSourcesConditionCheckBlock() handler. In this case, we do
 		// not want to check the stop condition again.
-		if (!conditionMet && stopConditionBlock()) {
-			if ([strongSelf conditionMetHandler]) {
+		if(!conditionMet && stopConditionBlock())
+		{
+			if([strongSelf conditionMetHandler])
+			{
 				[strongSelf conditionMetHandler]();
 			}
 			conditionMet = YES;
-			if (explicitRunLoopDrain) {
+			if(explicitRunLoopDrain)
+			{
 				CFRunLoopStop(CFRunLoopGetMain());
-			} else {
+			}
+			else
+			{
 				dispatch_semaphore_signal(stopCondition);
 			}
 		}
 	};
 	
 	CFRunLoopObserverRef conditionCheckingObserver =
-	[self dtx_setupObserverInMode:activeMode
-			withBeforeSourcesBlock:beforeSourcesConditionCheckBlock
-				beforeWaitingBlock:beforeWaitingConditionCheckBlock
-			  explicitRunLoopDrain:explicitRunLoopDrain];
-	if (explicitRunLoopDrain) {
+	[self dtx_setupObserverInMode:activeMode withBeforeSourcesBlock:beforeSourcesConditionCheckBlock beforeWaitingBlock:beforeWaitingConditionCheckBlock explicitRunLoopDrain:explicitRunLoopDrain];
+	if(explicitRunLoopDrain)
+	{
 		// Only drains the main runloop.
 		NSParameterAssert(NSThread.isMainThread);
 		
 		// In case of no sources or timers, we will drain the runloop one more time with a scheduled
 		// empty block so it can trigger the observer and the @c stopCondition can be checked.
-		for (int i = 0; i < 2; ++i) {
+		for (int i = 0; i < 2; ++i)
+		{
 			CFRunLoopRunResult result = CFRunLoopRunInMode((CFStringRef)activeMode, time, NO);
 			
 			// Exit early if the runloop is handled or the observer is triggered at least once.
-			if (result != kCFRunLoopRunFinished || i >= 1) {
+			if(result != kCFRunLoopRunFinished || i >= 1)
+			{
 				break;
 			}
 			
 			NSAssert(conditionMet == NO, @"If the running the active mode returned finished, the condition should not have been met.");
 			// Empty block to trigger the observer to occur in case of no attached sources or timers.
-			CFRunLoopPerformBlock(CFRunLoopGetMain(), (CFStringRef)activeMode,
-								  ^{
+			CFRunLoopPerformBlock(CFRunLoopGetMain(), (CFStringRef)activeMode, ^{
 			});
 		}
-	} else {
+	}
+	else
+	{
 		// Wake up the main runloop in the case it is already in the sleep state.
 		CFRunLoopWakeUp(CFRunLoopGetMain());
 		
@@ -311,13 +333,14 @@ static void (^gNoopTimerHandler)(CFRunLoopTimerRef timer) = ^(CFRunLoopTimerRef 
  *
  *  @return @c YES if the stop condition block evaluated to @YES; @c NO otherwise.
  */
-- (BOOL)dtx_checkConditionInActiveModeWithExplicitRunLoopDrain:(BOOL)explicitRunLoopDrain
-											 stopConditionBlock:(BOOL (^)(void))stopConditionBlock {
+- (BOOL)dtx_checkConditionInActiveModeWithExplicitRunLoopDrain:(BOOL)explicitRunLoopDrain stopConditionBlock:(BOOL (^)(void))stopConditionBlock
+{
 	__block BOOL conditionMet = NO;
 	__weak __typeof__(self) weakSelf = self;
 	
 	dispatch_semaphore_t stopCondition;
-	if (!explicitRunLoopDrain) {
+	if(!explicitRunLoopDrain)
+	{
 		stopCondition = dispatch_semaphore_create(0L);
 	}
 	NSString *activeMode = [self dtx_activeRunLoopMode];
@@ -325,23 +348,29 @@ static void (^gNoopTimerHandler)(CFRunLoopTimerRef timer) = ^(CFRunLoopTimerRef 
 		__typeof__(self) strongSelf = weakSelf;
 		NSAssert(strongSelf != nil, @"The spinner should not have been deallocated.");
 		
-		if (stopConditionBlock()) {
+		if(stopConditionBlock())
+		{
 			void (^conditionMetHandler)(void) = [strongSelf conditionMetHandler];
-			if (conditionMetHandler) {
+			if(conditionMetHandler)
+			{
 				conditionMetHandler();
 			}
 			conditionMet = YES;
 		}
-		if (!explicitRunLoopDrain) {
+		if(!explicitRunLoopDrain)
+		{
 			dispatch_semaphore_signal(stopCondition);
 		}
 	});
 	
-	if (explicitRunLoopDrain) {
+	if(explicitRunLoopDrain)
+	{
 		// Handles at most one source in the active mode. All enqueued blocks are served before any
 		// sources are served.
 		CFRunLoopRunInMode((CFStringRef)activeMode, 0, true);
-	} else {
+	}
+	else
+	{
 		// Wake up the main runloop in the case of that it is already in the sleep state.
 		CFRunLoopWakeUp(CFRunLoopGetMain());
 		dispatch_semaphore_wait(stopCondition, DISPATCH_TIME_FOREVER);
@@ -367,63 +396,81 @@ static void (^gNoopTimerHandler)(CFRunLoopTimerRef timer) = ^(CFRunLoopTimerRef 
  *
  *  @return The registered observer.
  */
-- (CFRunLoopObserverRef)dtx_setupObserverInMode:(NSString *)mode
-						  withBeforeSourcesBlock:(void (^)(void))beforeSourcesBlock
-							  beforeWaitingBlock:(void (^)(void))beforeWaitingBlock
-							explicitRunLoopDrain:(BOOL)explicitRunLoopDrain {
+- (CFRunLoopObserverRef)dtx_setupObserverInMode:(NSString *)mode withBeforeSourcesBlock:(void (^)(void))beforeSourcesBlock beforeWaitingBlock:(void (^)(void))beforeWaitingBlock explicitRunLoopDrain:(BOOL)explicitRunLoopDrain
+{
 	void (^observerBlock)(CFRunLoopObserverRef observer, CFRunLoopActivity activity);
 	CFOptionFlags observerFlags = 0L;
 	
-	if (explicitRunLoopDrain) {
+	if(explicitRunLoopDrain)
+	{
 		observerFlags = kCFRunLoopEntry | kCFRunLoopExit;
 		__block int numNestedRunLoopModes = 0;
 		observerBlock = ^(CFRunLoopObserverRef observer, CFRunLoopActivity activity) {
-			if (activity & kCFRunLoopEntry) {
+			if(activity & kCFRunLoopEntry)
+			{
 				// When entering a runloop in @c mode, increment the nesting count.
 				numNestedRunLoopModes++;
-			} else if (activity & kCFRunLoopExit) {
+			}
+			else if(activity & kCFRunLoopExit)
+			{
 				// When exiting a runloop in @c mode, decrement the nesting count.
 				numNestedRunLoopModes--;
-			} else if (activity & kCFRunLoopBeforeSources) {
+			}
+			else if(activity & kCFRunLoopBeforeSources)
+			{
 				// When this observer was created, the nesting count was 0. When we started running the
 				// runloop in @c mode, the runloop entered @c mode and incremented the nesting count. So
 				// now, the "unnested" nesting count is 1.
-				if (numNestedRunLoopModes == 1) {
+				if(numNestedRunLoopModes == 1)
+				{
 					beforeSourcesBlock();
 				}
-			} else if (activity & kCFRunLoopBeforeWaiting) {
-				if (numNestedRunLoopModes == 1) {
+			}
+			else if(activity & kCFRunLoopBeforeWaiting)
+			{
+				if(numNestedRunLoopModes == 1)
+				{
 					beforeWaitingBlock();
 				}
-			} else {
+			}
+			else
+			{
 				NSAssert(NO, @"Should not get here. Observer is not registered for any other options.");
 			}
 			
 			NSAssert(numNestedRunLoopModes >= 0, @"The nesting count for |mode| should never be less than zero.");
 		};
-	} else {
+	}
+	else
+	{
 		observerBlock = ^(CFRunLoopObserverRef observer, CFRunLoopActivity activity) {
-			if (activity & kCFRunLoopBeforeSources) {
+			if(activity & kCFRunLoopBeforeSources)
+			{
 				beforeSourcesBlock();
-			} else if (activity & kCFRunLoopBeforeWaiting) {
+			}
+			else if(activity & kCFRunLoopBeforeWaiting)
+			{
 				beforeWaitingBlock();
-			} else {
+			}
+			else
+			{
 				NSAssert(NO, @"Should not get here. Observer is not registered for any other options.");
 			}
 		};
 	}
 	
-	if (beforeSourcesBlock) {
+	if(beforeSourcesBlock)
+	{
 		observerFlags = observerFlags | kCFRunLoopBeforeSources;
 	}
-	if (beforeWaitingBlock) {
+	if(beforeWaitingBlock)
+	{
 		observerFlags = observerFlags | kCFRunLoopBeforeWaiting;
 	}
 	
 	// Order = LONG_MAX so it is serviced last after all other higher priority observers.
 	// Let the other observers do their job before querying for idleness.
-	CFRunLoopObserverRef observer =
-	CFRunLoopObserverCreateWithHandler(NULL, observerFlags, true, LONG_MAX, observerBlock);
+	CFRunLoopObserverRef observer = CFRunLoopObserverCreateWithHandler(NULL, observerFlags, true, LONG_MAX, observerBlock);
 	CFRunLoopAddObserver(CFRunLoopGetMain(), observer, (CFStringRef)mode);
 	return observer;
 }
@@ -437,14 +484,16 @@ static void (^gNoopTimerHandler)(CFRunLoopTimerRef timer) = ^(CFRunLoopTimerRef 
  *
  *  @return The registered timer or @c nil if no timer was added to @c mode.
  */
-- (CFRunLoopTimerRef)dtx_setupWakeUpTimerInMode:(NSString *)mode {
-	if (_maxSleepInterval > 0) {
-		CFRunLoopTimerRef timer = CFRunLoopTimerCreateWithHandler(
-																  kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + _maxSleepInterval, _maxSleepInterval, 0,
-																  0, gNoopTimerHandler);
+- (CFRunLoopTimerRef)dtx_setupWakeUpTimerInMode:(NSString *)mode
+{
+	if(_maxSleepInterval > 0)
+	{
+		CFRunLoopTimerRef timer = CFRunLoopTimerCreateWithHandler(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + _maxSleepInterval, _maxSleepInterval, 0, 0, gNoopTimerHandler);
 		CFRunLoopAddTimer(CFRunLoopGetMain(), timer, (CFStringRef)mode);
 		return timer;
-	} else {
+	}
+	else
+	{
 		return NULL;
 	}
 }
@@ -455,8 +504,10 @@ static void (^gNoopTimerHandler)(CFRunLoopTimerRef timer) = ^(CFRunLoopTimerRef 
  *  @param observer The observer to be removed and released.
  *  @param mode     The mode from which the observer should be removed.
  */
-- (void)dtx_teardownObserver:(CFRunLoopObserverRef)observer inMode:(NSString *)mode {
-	if (observer) {
+- (void)dtx_teardownObserver:(CFRunLoopObserverRef)observer inMode:(NSString *)mode
+{
+	if(observer)
+	{
 		CFRunLoopRemoveObserver(CFRunLoopGetMain(), observer, (CFStringRef)mode);
 		CFRelease(observer);
 	}
@@ -468,8 +519,10 @@ static void (^gNoopTimerHandler)(CFRunLoopTimerRef timer) = ^(CFRunLoopTimerRef 
  *  @param timer The time to be removed and released.
  *  @param mode  The mode from which the timer should be removed.
  */
-- (void)dtx_teardownTimer:(CFRunLoopTimerRef)timer inMode:(NSString *)mode {
-	if (timer) {
+- (void)dtx_teardownTimer:(CFRunLoopTimerRef)timer inMode:(NSString *)mode
+{
+	if(timer)
+	{
 		CFRunLoopRemoveTimer(CFRunLoopGetMain(), timer, (CFStringRef)mode);
 		CFRelease(timer);
 	}
@@ -480,16 +533,19 @@ static void (^gNoopTimerHandler)(CFRunLoopTimerRef timer) = ^(CFRunLoopTimerRef 
  *
  *  @return The time in seconds from now until @c time.
  */
-- (CFTimeInterval)dtx_secondsUntilTime:(CFTimeInterval)time {
+- (CFTimeInterval)dtx_secondsUntilTime:(CFTimeInterval)time
+{
 	return time - CACurrentMediaTime();
 }
 
 /**
  *  @return The active mode for the main runloop.
  */
-- (NSString *)dtx_activeRunLoopMode {
+- (NSString *)dtx_activeRunLoopMode
+{
 	NSString *activeRunLoopMode = [[UIApplication sharedApplication] dtx_activeRunLoopMode];
-	if (!activeRunLoopMode) {
+	if(!activeRunLoopMode)
+	{
 		// If UIKit does not have any modes on its runloop stack, then consider the default
 		// runloop mode as the active mode. We do not use the current runloop mode because if this
 		// spinner is nested within another spinner, we could get stuck spinning the runloop in a
@@ -502,12 +558,14 @@ static void (^gNoopTimerHandler)(CFRunLoopTimerRef timer) = ^(CFRunLoopTimerRef 
 
 #pragma mark - Getters and Setters
 
-- (void)setMaxSleepInterval:(CFTimeInterval)maxSleepInterval {
+- (void)setMaxSleepInterval:(CFTimeInterval)maxSleepInterval
+{
 	NSAssert(maxSleepInterval >= 0, @"Maximum sleep interval must be non-negative.");
 	_maxSleepInterval = maxSleepInterval;
 }
 
-- (void)setTimeout:(CFTimeInterval)timeout {
+- (void)setTimeout:(CFTimeInterval)timeout
+{
 	NSAssert(timeout >= 0, @"Timeout must be non-negative.");
 	_timeout = timeout;
 }

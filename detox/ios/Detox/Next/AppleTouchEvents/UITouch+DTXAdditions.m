@@ -20,11 +20,13 @@
 
 @implementation UITouch (DTXAdditions)
 
-- (id)initAtPoint:(CGPoint)point relativeToWindow:(UIWindow *)window {
+- (id)initAtPoint:(CGPoint)point relativeToWindow:(UIWindow *)window
+{
 	NSParameterAssert(window != nil);
 	
 	self = [super init];
-	if (self) {
+	if (self)
+	{
 		[self setTapCount:1];
 		[self setIsTap:YES];
 		[self setPhase:UITouchPhaseBegan];

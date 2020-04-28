@@ -91,6 +91,8 @@
 		3980D16D244DDCD7004812DD /* UIScrollView+DetoxActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D16B244DDCD7004812DD /* UIScrollView+DetoxActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3980D16E244DDCD7004812DD /* UIScrollView+DetoxActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D16C244DDCD7004812DD /* UIScrollView+DetoxActions.m */; };
 		398260E8220CC9530061E83E /* GREYActions+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 398260D4220CA56D0061E83E /* GREYActions+Detox.m */; };
+		3990BA152457248600B608C8 /* UIView+DetoxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 3990BA132457248600B608C8 /* UIView+DetoxUtils.h */; };
+		3990BA162457248600B608C8 /* UIView+DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3990BA142457248600B608C8 /* UIView+DetoxUtils.m */; };
 		39999EBA2416339E004E6366 /* __DTXDeallocSafeProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39999EB82416339E004E6366 /* __DTXDeallocSafeProxy.h */; };
 		39999EBB2416339E004E6366 /* __DTXDeallocSafeProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39999EB92416339E004E6366 /* __DTXDeallocSafeProxy.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		399BF36821933F0C00F96D50 /* ExternalLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 399BF36621933F0C00F96D50 /* ExternalLogging.h */; };
@@ -313,6 +315,9 @@
 		3980D16C244DDCD7004812DD /* UIScrollView+DetoxActions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+DetoxActions.m"; sourceTree = "<group>"; };
 		398260CE220CA5380061E83E /* GREYActions+Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GREYActions+Detox.h"; sourceTree = "<group>"; };
 		398260D4220CA56D0061E83E /* GREYActions+Detox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "GREYActions+Detox.m"; sourceTree = "<group>"; };
+		3990BA052457093800B608C8 /* DTXTouchInfo-Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DTXTouchInfo-Private.h"; sourceTree = "<group>"; };
+		3990BA132457248600B608C8 /* UIView+DetoxUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+DetoxUtils.h"; sourceTree = "<group>"; };
+		3990BA142457248600B608C8 /* UIView+DetoxUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+DetoxUtils.m"; sourceTree = "<group>"; };
 		39999EB82416339E004E6366 /* __DTXDeallocSafeProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = __DTXDeallocSafeProxy.h; sourceTree = "<group>"; };
 		39999EB92416339E004E6366 /* __DTXDeallocSafeProxy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = __DTXDeallocSafeProxy.m; sourceTree = "<group>"; };
 		399BF36621933F0C00F96D50 /* ExternalLogging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalLogging.h; sourceTree = "<group>"; };
@@ -592,6 +597,7 @@
 				3980D10B2448B52B004812DD /* DTXSyntheticEvents.h */,
 				3980D0FF2448B52A004812DD /* DTXSyntheticEvents.m */,
 				3980D10D2448B52C004812DD /* DTXTouchInfo.h */,
+				3990BA052457093800B608C8 /* DTXTouchInfo-Private.h */,
 				3980D1052448B52B004812DD /* DTXTouchInfo.m */,
 				3980D1032448B52B004812DD /* DTXTouchInjector.h */,
 				3980D1092448B52B004812DD /* DTXTouchInjector.m */,
@@ -608,6 +614,8 @@
 				3980D1002448B52B004812DD /* NSObject+DontCrashOnText.m */,
 				3980D0FE2448B52A004812DD /* UIApplication+DTXAdditions.h */,
 				3980D1012448B52B004812DD /* UIApplication+DTXAdditions.m */,
+				3990BA132457248600B608C8 /* UIView+DetoxUtils.h */,
+				3990BA142457248600B608C8 /* UIView+DetoxUtils.m */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -687,6 +695,7 @@
 				394767BF1DBF98A700D72256 /* GREYCondition+Detox.h in Headers */,
 				390D1C9C1E3A45F1007F5F46 /* UNNotification+PrivateHeaders.h in Headers */,
 				3980D1182448B52C004812DD /* UITouch+DTXAdditions.h in Headers */,
+				3990BA152457248600B608C8 /* UIView+DetoxUtils.h in Headers */,
 				39BCE598224BDBF000B0D357 /* ReactNativeSupportNoARC.h in Headers */,
 				394767B21DBF987E00D72256 /* TestFailureHandler.h in Headers */,
 				3980D10F2448B52C004812DD /* UIApplication+DTXAdditions.h in Headers */,
@@ -922,6 +931,7 @@
 				3980D11B2448B52C004812DD /* DTXRunLoopSpinner.m in Sources */,
 				3980D166244DC8F0004812DD /* UIPickerView+DetoxActions.m in Sources */,
 				391FA5EA1E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.m in Sources */,
+				3990BA162457248600B608C8 /* UIView+DetoxUtils.m in Sources */,
 				394767CF1DBF98D900D72256 /* ReactNativeSupport.m in Sources */,
 				394767B51DBF987E00D72256 /* TestRunner.m in Sources */,
 				39AB2D31205ABBD90029CD1F /* DetoxUserActivityDispatcher.swift in Sources */,
@@ -1030,6 +1040,7 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
@@ -1075,12 +1086,15 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"-Wno-error=unused-command-line-argument",
+					"-fobjc-arc-exceptions",
+				);
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
@@ -1096,6 +1110,7 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
@@ -1134,6 +1149,10 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = (
+					"-Wno-error=unused-command-line-argument",
+					"-fobjc-arc-exceptions",
+				);
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -1141,7 +1160,6 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;

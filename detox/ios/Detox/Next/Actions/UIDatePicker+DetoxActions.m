@@ -7,11 +7,14 @@
 //
 
 #import "UIDatePicker+DetoxActions.h"
+#import "UIView+DetoxUtils.h"
 
 @implementation UIDatePicker (DetoxActions)
 
 - (void)dtx_adjustToDate:(NSDate*)date
 {
+	[self dtx_assertVisible];
+	
 	NSDate* previousDate = self.date;
 	
 	[self setDate:date animated:YES];

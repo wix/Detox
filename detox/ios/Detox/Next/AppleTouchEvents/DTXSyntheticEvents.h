@@ -50,55 +50,8 @@ typedef NS_ENUM(NSInteger, GREYSyntheticEventInjectionErrorCode) {
  */
 + (void)shakeDevice;
 
-/**
- *  Touch along a specified path in a @c CGPoint array.
- *  This method blocks until all touches are delivered.
- *
- *  @param touchPath  An array of @c CGPoints. The first point in @c touchPath is the point where
-                      touch begins, and the last point in @c touchPath is the final touch point
-                      where touch ends. Points in @c touchPath must be in @c window coordinates.
- *  @param window     The UIWindow that contains the points in the @c touchPath where
- *                    the touches are performed. Interaction will begin on the view inside
- *                    @c window which passes the hit-test for the first point in @c touchPath.
- *  @param duration   The time interval over which to space the touches evenly. If 0, all
- *                    touches will be sent one after the other without any delay in-between them.
- *  @param expendable @c YES indicates if the touch path must be delivered with accurate timing even
- *                    if a few touch objects (excluding the last one) have to be skipped,
- *                    use it to model time sensitive gestures like swipes where timing is more
- *                    important than accuracy. Is ignored if @c NO.
- */
-+ (void)touchAlongPath:(NSArray *)touchPath
-      relativeToWindow:(UIWindow *)window
-           forDuration:(NSTimeInterval)duration
-            expendable:(BOOL)expendable;
-
-/**
- *  Injects a multi touch sequence specified by the array of @c touchPaths in the specified @c
- *  duration.
- *  Note that a single touch path is an array of CGPoint structs identifying the path taken by it
- *  relative to the specified @c window. Here @c expendable indicates if the touch path must be
- *  delivered with accurate timing even if a few touch objects (excluding the last one) have to be
- *  skipped. Use it to model time sensitive gestures like pinch where timing is more important than
- *  accuracy.
- *
- *  @param touchPaths An array of @c touchpaths each of which are array of @c CGPoints.
- *                    The first point in @c touchPath is the point where touch begins, and the last
- *                    point in @c touchPath is the final touch point where touch ends. Points in @c
- *                    touchPath Points in @c touchPath must be in @c window coordinates.
- *  @param window     The UIWindow that contains the points in the @c touchPath where
- *                    the touches are performed. Interaction will begin on the view inside
- *                    @c window which passes the hit-test for the first point in @c touchPath.
- *  @param duration   The time interval over which to space the touches evenly. If 0, all
- *                    touches will be sent one after the other without any delay in-between them.
- *  @param expendable @c YES indicates if the touch path must be delivered with accurate timing even
- *                    if a few touch objects (excluding the last one) have to be skipped,
- *                    use it to model time sensitive gestures like swipes where timing is more
- *                    important than accuracy. Is ignored if @c NO.
- */
-+ (void)touchAlongMultiplePaths:(NSArray *)touchPaths
-               relativeToWindow:(UIWindow *)window
-                    forDuration:(NSTimeInterval)duration
-                     expendable:(BOOL)expendable;
++ (void)touchAlongPath:(NSArray *)touchPath relativeToWindow:(UIWindow *)window holdDurationOnLastTouch:(NSTimeInterval)holdDuration;
++ (void)touchAlongMultiplePaths:(NSArray *)touchPaths relativeToWindow:(UIWindow *)window holdDurationOnLastTouch:(NSTimeInterval)holdDuration;
 
 /**
  *  Begins interaction with a new touch starting at a specified point within a specified
