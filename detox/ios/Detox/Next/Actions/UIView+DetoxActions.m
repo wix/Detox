@@ -243,6 +243,11 @@ static UIView* _isViewOrDescendantFirstResponder(UIView* view)
 
 static UIView* _ensureFirstResponderIfNeeded(UIView* view)
 {
+	if(view.window.isKeyWindow == NO)
+	{
+		[view.window makeKeyWindow];
+	}
+	
 	UIView* firstResponder = _isViewOrDescendantFirstResponder(view);
 	
 	if(firstResponder != nil)
@@ -267,14 +272,14 @@ static UIView* _ensureFirstResponderIfNeeded(UIView* view)
 	return firstResponder;
 }
 
-static BOOL _assertFirstResponderSupportsTextInput(UIView* firstResponder, UIView* view)
+static BOOL _assertFirstResponderSupportsTextInput(UIView* firstResponder)
 {
 	if([firstResponder conformsToProtocol:@protocol(UITextInput)])
 	{
 		return YES;
 	}
 	
-	NSCAssert(NO, @"First responder does not conform to “UITextInput” protocol");
+	NSCAssert(NO, @"First responder “%@” does not conform to “UITextInput” protocol", firstResponder);
 	
 	return NO;
 }
@@ -348,7 +353,7 @@ static void _DTXTypeText(NSString* text)
 	
 	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(self);
 	
-	_assertFirstResponderSupportsTextInput(firstResponder, self);
+	_assertFirstResponderSupportsTextInput(firstResponder);
 	
 	UITextPosition* beginningOfDocument = firstResponder.beginningOfDocument;
 	UITextPosition* endOfDocument = firstResponder.endOfDocument;
