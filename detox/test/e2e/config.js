@@ -15,5 +15,5 @@ module.exports = {
     "!**/*.test.js"
   ],
   "coverageDirectory": "test/coverage",
-  "coverageReporters": ["lcov", "html"]
+  "coverageReporters": [["lcov", {"projectRoot": "../.." }], "html"]
 };

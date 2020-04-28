@@ -24,3 +24,7 @@ pushd examples/demo-react-native
 run_f "npm run test:android-release-ci"
 run_f "npm run test:android-explicit-require-ci"
 popd
+
+pushd examples/demo-plugin
+run_f "npm run test:plugin"
+popd

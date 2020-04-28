@@ -77,7 +77,7 @@ Initiating your test suite. <sup>[[1]](#notice-passthrough)</sup>
 | --record-timeline [all/none] | [Jest Only] Record tests and events timeline, for visual display on the [chrome://tracing](chrome://tracing) tool. The default value is **none**. |
 | -r, --reuse                                   | Reuse existing installed app (do not delete + reinstall) for a faster run. |
 | -u, --cleanup                                 | Shutdown simulator when test is over, useful for CI scripts, to make sure detox exists cleanly with no residue |
-| -w, --workers                                 | [iOS Only] Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest). *Note: For workers > 1, Jest's spec-level reporting is disabled, by default (can be overridden using --jest-report-specs).* |
+| -w, --workers                                 | Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest). *Note: For workers > 1, Jest's spec-level reporting is disabled, by default (can be overridden using --jest-report-specs).* |
 | --jest-report-specs | [Jest Only] Whether to output logs per each running spec, in real-time. By default, disabled with multiple workers. |
 | -H, --headless                                | [Android Only] Launch Emulator in headless mode. Useful when running on CI. |
 | --gpu                                         | [Android Only] Launch Emulator with the specific -gpu [gpu mode] parameter. |

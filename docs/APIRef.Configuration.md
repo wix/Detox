@@ -174,8 +174,6 @@ Session can also be set per configuration:
 
 `config.json` refers to `--config` in https://facebook.github.io/jest/docs/en/configuration.html
 
->NOTE: jest tests will run in band, as Detox does not currently supports parallelization.
-
 ## detox-cli
 
 ### Build Configuration
