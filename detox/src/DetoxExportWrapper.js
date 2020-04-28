@@ -31,7 +31,7 @@ class DetoxExportWrapper {
 
   async init(config, params) {
     if (!params || params.initGlobals !== false) {
-      Detox.none.initContext(global);
+      Detox.none.initContext(Detox.global);
     }
 
     Detox.none.setError(null);
@@ -50,7 +50,7 @@ class DetoxExportWrapper {
   }
 
   async cleanup() {
-    Detox.none.cleanupContext(global);
+    Detox.none.cleanupContext(Detox);
 
     if (this[_detox] !== Detox.none) {
       await this[_detox].cleanup();
@@ -68,8 +68,13 @@ class DetoxExportWrapper {
     this[name] = funpermaproxy(() => this[_detox][name]);
   }
 
+  _setGlobal(global) {
+    Detox.global = global;
+    return this;
+  }
+
   static _createInstance(detoxConfig) {
-    if (!detoxConfig) {
+    if (!detoxConfig || _.isError(detoxConfig)) {
       throw new Error(`No configuration was passed to detox, make sure you pass a detoxConfig when calling 'detox.init(detoxConfig)'`);
     }
 
