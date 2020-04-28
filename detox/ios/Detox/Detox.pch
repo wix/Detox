@@ -21,4 +21,8 @@ static void defer_cleanup_block(__strong void(^*block)(void)) {
 }
 #pragma clang diagnostic pop
 
+#ifdef __OBJC__
+#import "DTXAssertionHandler.h"
+#endif
+
 #endif /* Detox_pch */

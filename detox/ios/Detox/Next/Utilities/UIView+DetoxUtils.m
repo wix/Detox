@@ -13,12 +13,12 @@
 
 - (void)dtx_assertVisible
 {
-	NSAssert(self.dtx_isVisible == YES, @"View “%@” is not visible", self.dtx_shortDescription);
+	DTXAssert(self.dtx_isVisible == YES, @"View “%@” is not visible", self.dtx_shortDescription);
 }
 
 - (void)dtx_assertHittable
 {
-	NSAssert(self.dtx_isHittable == YES, @"View “%@” is not hittable", self.dtx_shortDescription);
+	DTXAssert(self.dtx_isHittable == YES, @"View “%@” is not hittable", self.dtx_shortDescription);
 }
 
 - (NSString *)dtx_shortDescription

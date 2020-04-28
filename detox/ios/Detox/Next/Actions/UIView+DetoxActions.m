@@ -266,7 +266,7 @@ static UIView* _ensureFirstResponderIfNeeded(UIView* view)
 	
 	if(firstResponder == nil)
 	{
-		NSCAssert(firstResponder == nil, @"Failed to make view “%@” first responder", view.dtx_shortDescription);
+		DTXCAssert(firstResponder == nil, @"Failed to make view “%@” first responder", view.dtx_shortDescription);
 	}
 	
 	return firstResponder;
@@ -279,7 +279,7 @@ static BOOL _assertFirstResponderSupportsTextInput(UIView* firstResponder)
 		return YES;
 	}
 	
-	NSCAssert(NO, @"First responder “%@” does not conform to “UITextInput” protocol", firstResponder);
+	DTXCAssert(NO, @"First responder “%@” does not conform to “UITextInput” protocol", firstResponder);
 	
 	return NO;
 }
@@ -381,7 +381,7 @@ static void _DTXTypeText(NSString* text)
 	
 	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(self);
 	
-	_assertFirstResponderSupportsTextInput(firstResponder, self);
+	_assertFirstResponderSupportsTextInput(firstResponder);
 	
 	_DTXTypeText(text);
 }
@@ -392,7 +392,7 @@ static void _DTXTypeText(NSString* text)
 	
 	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(self);
 	
-	_assertFirstResponderSupportsTextInput(firstResponder, self);
+	_assertFirstResponderSupportsTextInput(firstResponder);
 	
 	BOOL isControl = [self isKindOfClass:UIControl.class];
 	BOOL isTextField = [self isKindOfClass:UITextField.class];

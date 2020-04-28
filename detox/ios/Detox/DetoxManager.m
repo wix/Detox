@@ -9,7 +9,6 @@
 #import "DetoxManager.h"
 
 #import "WebSocket.h"
-#import "TestRunner.h"
 #import "ReactNativeSupport.h"
 
 #import <Detox/Detox-Swift.h>
@@ -31,11 +30,10 @@ DTX_CREATE_LOG(DetoxManager)
 
 static DetoxInstrumentsManager* _recordingManager;
 
-@interface DetoxManager() <WebSocketDelegate, TestRunnerDelegate>
+@interface DetoxManager() <WebSocketDelegate>
 
 @property (nonatomic) BOOL isReady;
 @property (nonatomic, strong) WebSocket *webSocket;
-@property (nonatomic, strong) TestRunner *testRunner;
 
 - (void)reconnect;
 
@@ -85,8 +83,6 @@ static void detoxConditionalInit()
 	
 	self.webSocket = [[WebSocket alloc] init];
 	self.webSocket.delegate = self;
-	self.testRunner = [[TestRunner alloc] init];
-	self.testRunner.delegate = self;
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidLaunch:) name:UIApplicationDidFinishLaunchingNotification object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
@@ -241,7 +237,9 @@ static void detoxConditionalInit()
 	}
 	else if([type isEqualToString:@"invoke"])
 	{
-		[self.testRunner invoke:params withMessageId:messageId];
+		NSError* error;
+		__unused NSDictionary<NSString*, id>* result = [DTXInvocationManager invokeWithDictionaryRepresentation:params error:&error];
+//		[self.testRunner invoke:params withMessageId:messageId];
 		return;
 	}
 	else if([type isEqualToString:@"isReady"])
@@ -254,7 +252,6 @@ static void detoxConditionalInit()
 	}
 	else if([type isEqualToString:@"cleanup"])
 	{
-		[self.testRunner cleanup];
 		[self.webSocket sendAction:@"cleanupDone" withParams:@{} withMessageId:messageId];
 		return;
 	}
