@@ -50,7 +50,7 @@ class DetoxExportWrapper {
   }
 
   async cleanup() {
-    Detox.none.cleanupContext(Detox);
+    Detox.none.cleanupContext(Detox.global);
 
     if (this[_detox] !== Detox.none) {
       await this[_detox].cleanup();
