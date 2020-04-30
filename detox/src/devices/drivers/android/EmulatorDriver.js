@@ -15,6 +15,7 @@ const DeviceRegistry = require('../../DeviceRegistry');
 const environment = require('../../../utils/environment');
 const retry = require('../../../utils/retry');
 const log = require('../../../utils/logger').child({ __filename });
+const argparse = require('../../../utils/argparse');
 
 const DetoxEmulatorsPortRange = {
   min: 10000,
@@ -63,6 +64,10 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async installApp(deviceId, _binaryPath, _testBinaryPath) {
+    if (argparse.getArgValue('force-adb-install') === 'true') {
+      return await super.installApp(deviceId, _binaryPath, _testBinaryPath);
+    }
+
     const {
       binaryPath,
       testBinaryPath,
