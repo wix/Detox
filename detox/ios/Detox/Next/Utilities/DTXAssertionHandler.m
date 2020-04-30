@@ -19,9 +19,19 @@
 	{
 		rv = block();
 	}
-	@catch (DTXTestAssertionException *exception)
+	@catch(DTXTestAssertionException *exception)
 	{
+		if(*error)
+		{
+			*error = [NSError errorWithDomain:@"Detox" code:0 userInfo:@{NSLocalizedDescriptionKey: exception.reason, @"fullUserInfo": exception.userInfo}];
+		}
+		
 		return nil;
+	}
+	//Only catch DTXTestAssertionException here. Others will be reported by Detox crash reporter.
+	@catch(NSException* exception)
+	{
+		[exception raise];
 	}
 	
 	return rv;
@@ -29,12 +39,38 @@
 
 + (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format, ...
 {
+	va_list argumentList;
+	va_start(argumentList, format);
+	[self handleFailureInFunction:functionName file:fileName lineNumber:line description:format arguments:argumentList];
+	va_end(argumentList);
 	
 }
 
 + (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format, ...
 {
-	
+	va_list argumentList;
+	va_start(argumentList, format);
+	[self handleFailureInMethod:selector object:object file:fileName lineNumber:line description:format arguments:argumentList];
+	va_end(argumentList);
+}
+
++ (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format arguments:(va_list)arguments
+{
+	[[DTXTestAssertionException exceptionWithName:@"DetoxException" reason:[[NSString alloc] initWithFormat:format arguments:arguments] userInfo:@{
+		@"functionName": functionName,
+		@"file": fileName,
+		@"lineNumber": @(line)
+	}] raise];
+}
+
++ (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format arguments:(va_list)arguments
+{
+	[[DTXTestAssertionException exceptionWithName:@"DetoxException" reason:[[NSString alloc] initWithFormat:format arguments:arguments] userInfo:@{
+		@"selector": NSStringFromSelector(selector),
+		@"object": [object debugDescription],
+		@"file": fileName,
+		@"lineNumber": @(line)
+	}] raise];
 }
 
 @end

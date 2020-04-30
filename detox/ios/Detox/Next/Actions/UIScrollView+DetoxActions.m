@@ -50,9 +50,9 @@
 	if(self.dtx_disableDecelerationForScroll == YES &&
 	   //Disallow deceleration only in cases where overscroll was not performed.
 	   self.contentOffset.y >= (-self.adjustedContentInset.top) &&
-	   self.contentOffset.y <= self.contentSize.height-self.bounds.size.height+self.adjustedContentInset.bottom &&
+	   self.contentOffset.y <= self.contentSize.height - self.bounds.size.height + self.adjustedContentInset.bottom &&
 	   self.contentOffset.x >= (-self.adjustedContentInset.left) &&
-	   self.contentOffset.x <= self.contentSize.width-self.bounds.size.width+self.adjustedContentInset.right
+	   self.contentOffset.x <= self.contentSize.width - self.bounds.size.width + self.adjustedContentInset.right
 	   )
 	{
 		deceleration = NO;
@@ -67,24 +67,26 @@
 
 - (void)dtx_scrollToNormalizedEdge:(CGPoint)edge
 {
-	[self dtx_assertVisible];
 	
-	CGFloat pixelSize = 1 / self.window.screen.nativeScale;
 	
-	CGRect rect = CGRectNull;
-	if(edge.x != 0.0)
-	{
-		rect = CGRectMake(edge.x < 0 ? 0 : self.contentSize.width - pixelSize, self.contentOffset.y , pixelSize, pixelSize);
-	}
-	else if(edge.y != 0.0)
-	{
-		rect = CGRectMake(self.contentOffset.x, edge.y < 0 ? 0 : self.contentSize.height - pixelSize, pixelSize, pixelSize);
-	}
-	
-	if(CGRectIsNull(rect) == NO)
-	{
-		[self scrollRectToVisible:rect animated:YES];
-	}
+//	[self dtx_assertVisible];
+//
+//	CGFloat pixelSize = 1 / self.window.screen.nativeScale;
+//
+//	CGRect rect = CGRectNull;
+//	if(edge.x != 0.0)
+//	{
+//		rect = CGRectMake(edge.x < 0 ? 0 : self.contentSize.width - pixelSize, self.contentOffset.y , pixelSize, pixelSize);
+//	}
+//	else if(edge.y != 0.0)
+//	{
+//		rect = CGRectMake(self.contentOffset.x, edge.y < 0 ? 0 : self.contentSize.height - pixelSize, pixelSize, pixelSize);
+//	}
+//
+//	if(CGRectIsNull(rect) == NO)
+//	{
+//		[self scrollRectToVisible:rect animated:YES];
+//	}
 }
 
 - (void)dtx_scrollWithOffset:(CGPoint)offset
@@ -94,7 +96,7 @@
 
 #define DTX_CREATE_SCROLL_POINTS(points, startPoint, offset, main, windowSafeAreaMain, windowMoundsMain) \
 offset.main += (fabs(offset.main) / offset.main * 10); \
-const CGFloat d = fabs(offset.main) / offset.main * UIApplication.panVelocity; \
+const CGFloat d = fabs(offset.main) / offset.main * UIApplication.dtx_panVelocity; \
 while (offset.main != 0 && startPoint.main > window.safeAreaInsets.windowSafeAreaMain && startPoint.main < window.bounds.size.windowMoundsMain) { \
 	CGFloat localD = offset.main < 0 ? MAX(d, offset.main) : MIN(d, offset.main); \
 	startPoint.main += localD; \
@@ -138,13 +140,17 @@ if(isnan(normalizedStartingPoint.main) || normalizedStartingPoint.main < 0 || no
 	normalizedStartingPoint.main = offset < 0 ? 0.99 : 0.01; \
 }
 
+- (void)dtx_assertCanScrollWithOffset:(CGPoint)offset
+{
+	
+}
+
 - (void)dtx_scrollWithOffset:(CGPoint)offset normalizedStartingPoint:(CGPoint)normalizedStartingPoint
 {
-	[self dtx_assertHittable];
-	
 	//TODO: Check if scroll view is scrollable with provided offset
 	
 	NSAssert(offset.x == 0.0 || offset.y == 0.0, @"Scrolling simultaneously in both directions is unsupported");
+	[self dtx_assertCanScrollWithOffset:offset];
 	
 	self.dtx_disableDecelerationForScroll = YES;
 	
@@ -153,7 +159,6 @@ if(isnan(normalizedStartingPoint.main) || normalizedStartingPoint.main < 0 || no
 	if(offset.y != 0)
 	{
 		DTX_RESET_START_POINT(normalizedStartingPoint, y, x, offset.y);
-		
 	}
 	else if (offset.x != 0)
 	{
@@ -161,6 +166,9 @@ if(isnan(normalizedStartingPoint.main) || normalizedStartingPoint.main < 0 || no
 	}
 	
 	CGPoint startPoint = CGPointMake(safeAreaToScroll.origin.x + safeAreaToScroll.size.width * normalizedStartingPoint.x, safeAreaToScroll.origin.y + safeAreaToScroll.size.height * normalizedStartingPoint.y);
+	
+	[self dtx_assertHittableAtPoint:startPoint];
+	
 	startPoint = [self.window convertPoint:startPoint fromView:self];
 	
 	while (offset.x != 0.0 || offset.y != 0.0)

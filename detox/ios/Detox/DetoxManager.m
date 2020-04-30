@@ -15,7 +15,7 @@
 #import "DetoxAppDelegateProxy.h"
 #import "EarlGreyExtensions.h"
 #import "EarlGreyStatistics.h"
-#import <EarlGrey/GREYSyntheticEvents.h>
+#import "UIDevice+DetoxActions.h"
 
 #import "DetoxInstrumentsManager.h"
 
@@ -239,7 +239,6 @@ static void detoxConditionalInit()
 	{
 		NSError* error;
 		__unused NSDictionary<NSString*, id>* result = [DTXInvocationManager invokeWithDictionaryRepresentation:params error:&error];
-//		[self.testRunner invoke:params withMessageId:messageId];
 		return;
 	}
 	else if([type isEqualToString:@"isReady"])
@@ -323,7 +322,7 @@ static void detoxConditionalInit()
 	else if([type isEqualToString:@"shakeDevice"])
 	{
 		[EarlGrey detox_safeExecuteSync:^{
-			[GREYSyntheticEvents shakeDeviceWithError:NULL];
+			[UIDevice dtx_shake];
 			
 			[self _safeSendAction:@"shakeDeviceDone" params:@{} messageId:messageId];
 		}];

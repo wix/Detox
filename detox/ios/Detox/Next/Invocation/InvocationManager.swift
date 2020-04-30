@@ -21,17 +21,18 @@ import UIKit
 	public class func invoke(dictionaryRepresentation: [String: Any]) throws -> [String: Any] {
 		let type = dictionaryRepresentation[Keys.type] as! String
 		
-		return try DTXAssertionHandler.try { () -> Any in
+		return try dtx_try { () -> [String: Any] in
 			switch type {
 			case Types.action:
 				let action = Action.with(dictionaryRepresentation: dictionaryRepresentation)
 				return action.perform() ?? [:]
 			case Types.expectation:
 				let expectation = Expectation.with(dictionaryRepresentation: dictionaryRepresentation)
-				return ["expectationResult": expectation.evaluate()]
+				expectation.evaluate()
+				return [:]
 			default:
 				fatalError("Unknown invocation type \(type)")
 			}
-		} as! [String: Any]
+		}
 	}
 }

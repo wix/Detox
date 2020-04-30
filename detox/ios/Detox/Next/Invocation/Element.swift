@@ -38,16 +38,17 @@ class Element : CustomStringConvertible {
 
 	var view : UIView {
 		get {
-			let array = UIView.dtx_findViewsInKeySceneWindows(passing: predicate.predicateForQuery())
+			let array = UIView.dtx_findViewsInKeySceneWindows(passing: predicate.predicateForQuery()) as! [UIView]
 			
 			let element : UIView
 			if let index = index {
-				element = array[index] as! UIView
+				element = array[index]
 			} else {
-				assert(array.count == 1, "Multiple elements found.")
 				//Will fail test if more than one element are resolved from the query
-				
-				element = array.firstObject as! UIView
+				guard array.count == 1 else {
+					dtx_fatalError("Multiple elements found for “\(self.description)”")
+				}
+				element = array.first!
 			}
 			
 			return element

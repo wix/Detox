@@ -10,5 +10,6 @@ framework module Detox {
 		header "UIDatePicker+DetoxActions.h"
 		header "UIScrollView+DetoxActions.h"
 		header "DTXAssertionHandler.h"
+		header "UIView+DetoxUtils.h"
 	}
 }

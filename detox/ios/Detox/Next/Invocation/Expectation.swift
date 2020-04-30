@@ -78,10 +78,10 @@ class Expectation : CustomStringConvertible {
 		fatalError("Unimplemented perform(on:) called for \(type(of: self))")
 	}
 	
-	func evaluate() -> Bool {
+	func evaluate() {
 		let view = self.element.view
 		
-		return evaluate(with: view)
+		dtx_assert(evaluate(with: view), "Failed expectation: \(self.description)")
 	}
 	
 	var description: String {
@@ -98,8 +98,8 @@ class ToBeVisibleExpectation : Expectation {
 }
 
 class ToExistExpectation : Expectation {
-	override func evaluate() -> Bool {
-		return self.element.exists
+	override func evaluate() {
+		dtx_assert(self.element.exists, "Failed expectation: \(self.description)")
 	}
 }
 

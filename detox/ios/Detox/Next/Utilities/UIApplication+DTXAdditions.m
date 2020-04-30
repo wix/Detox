@@ -52,6 +52,8 @@ static pthread_mutex_t __runLoopModesMutex;
 			[__runLoopModes removeLastObject];
 			pthread_mutex_unlock(&__runLoopModesMutex);
 		}];
+		
+		[self dtx_enableAccessibilityForSimulator];
 	}
 }
 
@@ -85,7 +87,7 @@ static pthread_mutex_t __runLoopModesMutex;
 								  notification:(CFStringRef)@"com.apple.accessibility.cache.ax"];
 }
 
-+ (CGFloat)panVelocity
++ (CGFloat)dtx_panVelocity
 {
 	static CGFloat rv;
 	

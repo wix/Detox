@@ -13,6 +13,7 @@
 #import "DTXAppleInternals.h"
 #import "DTXSyntheticEvents.h"
 #import "UIView+DetoxUtils.h"
+#import "UIView+DetoxExpectations.h"
 
 @implementation UIView (Detox)
 
@@ -28,7 +29,7 @@
 
 - (void)dtx_tapAtPoint:(CGPoint)point numberOfTaps:(NSUInteger)numberOfTaps
 {
-	[self dtx_assertHittable];
+	[self dtx_assertHittableAtPoint:point];
 	
 	NSParameterAssert(numberOfTaps >= 1);
 	point = [self.window convertPoint:point fromView:self];
@@ -49,7 +50,7 @@
 
 - (void)dtx_longPressAtPoint:(CGPoint)point duration:(NSTimeInterval)duration
 {
-	[self dtx_assertHittable];
+	[self dtx_assertHittableAtPoint:point];
 	
 	point = [self.window convertPoint:point fromView:self];
 	[DTXSyntheticEvents touchAlongPath:@[@(point)] relativeToWindow:self.window holdDurationOnLastTouch:duration];
@@ -87,8 +88,6 @@ endPoint.main = mainMidFunc(bounds) + normalizedOffset.main * 0.5 * mainSizeFunc
 
 - (void)dtx_swipeWithNormalizedOffset:(CGPoint)normalizedOffset velocity:(CGFloat)velocity
 {
-	[self dtx_assertHittable];
-	
 	NSParameterAssert(velocity > 0.0);
 	
 	if(normalizedOffset.x == 0 && normalizedOffset.y == 0)
@@ -99,7 +98,7 @@ endPoint.main = mainMidFunc(bounds) + normalizedOffset.main * 0.5 * mainSizeFunc
 	CGPoint startPoint;
 	CGPoint endPoint;
 	
-	CGRect safeBounds = UIEdgeInsetsInsetRect(self.bounds, self.safeAreaInsets);
+	CGRect safeBounds = self.dtx_safeAreaBounds;
 	
 	if(normalizedOffset.x != 0)
 	{
@@ -109,6 +108,8 @@ endPoint.main = mainMidFunc(bounds) + normalizedOffset.main * 0.5 * mainSizeFunc
 	{
 		DTX_CALC_SWIPE_START_END_POINTS(safeBounds, CGRectGetMidY, CGRectGetMidX, y, x, CGRectGetHeight);
 	}
+	
+	[self dtx_assertHittableAtPoint:startPoint];
 	
 	startPoint = [self.window convertPoint:startPoint fromView:self];
 	endPoint = [self.window convertPoint:endPoint fromView:self];
@@ -181,8 +182,6 @@ static inline CGFloat clamp(CGFloat v, CGFloat min, CGFloat max)
 
 - (void)dtx_pinchWithScale:(CGFloat)scale velocity:(CGFloat)velocity angle:(CGFloat)angle
 {
-	[self dtx_assertHittable];
-	
 	NSParameterAssert(velocity > 0.0);
 	NSParameterAssert(scale > 0.0);
 	
@@ -191,7 +190,7 @@ static inline CGFloat clamp(CGFloat v, CGFloat min, CGFloat max)
 		return;
 	}
 	
-	CGRect safeBounds = UIEdgeInsetsInsetRect(self.bounds, self.safeAreaInsets);
+	CGRect safeBounds = self.dtx_safeAreaBounds;
 	
 	CGPoint startPoint1;
 	CGPoint endPoint1;
@@ -215,6 +214,9 @@ static inline CGFloat clamp(CGFloat v, CGFloat min, CGFloat max)
 	{
 		DTXCalcPinchStartEndPoints(safeBounds, scale - 1.0, angle, &startPoint1, &endPoint1, &startPoint2, &endPoint2);
 	}
+	
+	[self dtx_assertHittableAtPoint:startPoint1];
+	[self dtx_assertHittableAtPoint:startPoint2];
 	
 	startPoint1 = [self.window convertPoint:startPoint1 fromView:self];
 	endPoint1 = [self.window convertPoint:endPoint1 fromView:self];
@@ -284,39 +286,39 @@ static BOOL _assertFirstResponderSupportsTextInput(UIView* firstResponder)
 	return NO;
 }
 
-__attribute__((constructor))
-static void _DTXFixupKeyboard(void)
-{
-	static char const *const controllerPrefBundlePath = "/System/Library/PrivateFrameworks/TextInput.framework/TextInput";
-	__unused void *handle = dlopen(controllerPrefBundlePath, RTLD_LAZY);
-	
-	TIPreferencesController* controller = TIPreferencesController.sharedPreferencesController;
-	if([controller respondsToSelector:@selector(setAutocorrectionEnabled:)] == YES)
-	{
-		controller.autocorrectionEnabled = NO;
-	}
-	else
-	{
-		[controller setValue:@NO forPreferenceKey:@"KeyboardAutocorrection"];
-	}
-	
-	if([controller respondsToSelector:@selector(setPredictionEnabled:)])
-	{
-		controller.predictionEnabled = NO;
-	}
-	else
-	{
-		[controller setValue:@NO forPreferenceKey:@"KeyboardPrediction"];
-	}
-	
-	[controller setValue:@YES forPreferenceKey:@"DidShowGestureKeyboardIntroduction"];
-	if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
-	{
-		[controller setValue:@YES forPreferenceKey:@"DidShowContinuousPathIntroduction"];
-	}
-
-	[controller synchronizePreferences];
-}
+//__attribute__((constructor))
+//static void _DTXFixupKeyboard(void)
+//{
+//	static char const *const controllerPrefBundlePath = "/System/Library/PrivateFrameworks/TextInput.framework/TextInput";
+//	__unused void *handle = dlopen(controllerPrefBundlePath, RTLD_LAZY);
+//	
+//	TIPreferencesController* controller = TIPreferencesController.sharedPreferencesController;
+//	if([controller respondsToSelector:@selector(setAutocorrectionEnabled:)] == YES)
+//	{
+//		controller.autocorrectionEnabled = NO;
+//	}
+//	else
+//	{
+//		[controller setValue:@NO forPreferenceKey:@"KeyboardAutocorrection"];
+//	}
+//	
+//	if([controller respondsToSelector:@selector(setPredictionEnabled:)])
+//	{
+//		controller.predictionEnabled = NO;
+//	}
+//	else
+//	{
+//		[controller setValue:@NO forPreferenceKey:@"KeyboardPrediction"];
+//	}
+//	
+//	[controller setValue:@YES forPreferenceKey:@"DidShowGestureKeyboardIntroduction"];
+//	if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+//	{
+//		[controller setValue:@YES forPreferenceKey:@"DidShowContinuousPathIntroduction"];
+//	}
+//
+//	[controller synchronizePreferences];
+//}
 
 static void _DTXTypeText(NSString* text)
 {
@@ -437,6 +439,45 @@ static void _DTXTypeText(NSString* text)
 		[[(UITextView*)self delegate] textViewDidChange:(id)self];
 		[[(UITextView*)self delegate] textViewDidEndEditing:(id)self];
 	}
+}
+
+static NSDictionary* DTXInsetsToDictionary(UIEdgeInsets insets)
+{
+	return @{@"top": @(insets.top), @"bottom": @(insets.bottom), @"left": @(insets.left), @"right": @(insets.right)};
+}
+
+static NSDictionary* DTXRectToDictionary(CGRect rect)
+{
+	return @{@"x": @(rect.origin.x), @"y": @(rect.origin.y), @"width": @(rect.size.width), @"height": @(rect.size.height)};
+}
+
+static NSDictionary* DTXPointToDictionary(CGPoint point)
+{
+	return @{@"x": @(point.x), @"y": @(point.y)};
+}
+
+- (NSDictionary<NSString *,id> *)dtx_attributes
+{
+	NSMutableDictionary* rv = [NSMutableDictionary new];
+	
+	[rv addEntriesFromDictionary:[self dictionaryWithValuesForKeys:@[@"text", @"accessibilityLabel", @"accessibilityIdentifier", @"accessibilityValue", @"placeholder"]]];
+	
+	rv[@"label"] = rv[@"accessibilityLabel"];
+	[rv removeObjectForKey:@"accessibilityLabel"];
+	
+	rv[@"value"] = rv[@"accessibilityValue"];
+	[rv removeObjectForKey:@"accessibilityValue"];
+	
+	rv[@"frame"] = DTXRectToDictionary(self.frame);
+	rv[@"bounds"] = DTXRectToDictionary(self.bounds);
+	rv[@"center"] = DTXPointToDictionary(self.center);
+	rv[@"accessibilityFrame"] = DTXRectToDictionary(self.accessibilityFrame);
+	rv[@"safeAreaInsets"] = DTXInsetsToDictionary(self.safeAreaInsets);
+	rv[@"safeBounds"] = DTXRectToDictionary(self.dtx_safeAreaBounds);
+	
+	rv[@"activationPoint"] = DTXPointToDictionary(self.dtx_accessibilityActivationPointInViewCoordinateSpace);
+	
+	return rv;
 }
 
 @end

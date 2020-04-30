@@ -181,6 +181,31 @@ class ClearTextAction : Action {
 }
 
 class ScrollAction : Action {
+	let whileExpectation : Expectation?
+	
+	override class func with(dictionaryRepresentation: [String: Any]) -> Action {
+		let params = dictionaryRepresentation[Keys.params] as! [CustomStringConvertible]?
+		let element = Element.with(dictionaryRepresentation: dictionaryRepresentation)
+		let whileExpectation : Expectation?
+		if let whileExpectationObj = dictionaryRepresentation[Keys.while] as? [String: Any] {
+			whileExpectation = Expectation.with(dictionaryRepresentation: whileExpectationObj)
+		}
+		else {
+			whileExpectation = nil
+		}
+		
+		return ScrollAction(kind: Kind.scroll, params: params, element: element, whileExpectation: whileExpectation)
+	}
+	
+	required init(kind: String, params: [CustomStringConvertible]?, element: Element, whileExpectation: Expectation?) {
+		self.whileExpectation = whileExpectation
+		super.init(kind: kind, params: params, element: element)
+	}
+	
+	required init(kind: String, params: [CustomStringConvertible]?, element: Element) {
+		fatalError("Call the other initializer")
+	}
+	
 	override func perform(on view: UIView) -> [String: Any]? {
 		let pixels = params![0] as! Double
 		let directionString = params![1] as! String
@@ -223,12 +248,17 @@ class ScrollAction : Action {
 			scrollView = view.scrollView
 		}
 		else {
-			assert(false, "View \(view) is not an instance of UISrollView")
+			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UISrollView”")
 		}
 		
-		scrollView!.dtx_scroll(withOffset: targetOffset, normalizedStartingPoint: CGPoint(x: startPositionX, y: startPositionY))
-		
-		//TODO: Handle while
+		if let whileExpectation = whileExpectation {
+			while (try? dtx_try({ whileExpectation.evaluate(); return true }) ?? false) == false {
+				scrollView!.dtx_scroll(withOffset: targetOffset, normalizedStartingPoint: CGPoint(x: startPositionX, y: startPositionY))
+			}
+		}
+		else {
+			scrollView!.dtx_scroll(withOffset: targetOffset, normalizedStartingPoint: CGPoint(x: startPositionX, y: startPositionY))
+		}
 		
 		return nil
 	}
@@ -260,7 +290,7 @@ class ScrollToEdgeAction : Action {
 			view.dtx_scroll(toNormalizedEdge: targetOffset)
 		}
 		else {
-			assert(false, "View \(view) is not an instance of UISrollView")
+			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UISrollView”")
 		}
 		
 		return nil
@@ -390,7 +420,7 @@ class SetPickerAction : Action {
 			view.dtx_setComponent(column, toValue: value)
 		}
 		else {
-			assert(false, "View \(view) is not an instance of UIPickerView")
+			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UIPickerView”")
 		}
 
 		return nil
@@ -410,7 +440,7 @@ class SetDatePickerAction : Action {
 			view.dtx_adjust(to: date)
 		}
 		else {
-			assert(false, "View \(view) is not an instance of UIDatePicker")
+			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UIDatePicker”")
 		}
 		
 		return nil

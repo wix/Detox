@@ -27,6 +27,8 @@ BOOL DTXTypeText(NSString* text);
 - (void)dtx_typeText:(NSString*)text;
 - (void)dtx_replaceText:(NSString*)text;
 
+@property (nonatomic, readonly, copy) NSDictionary<NSString*, id>* dtx_attributes;
+
 @end
 
 NS_ASSUME_NONNULL_END

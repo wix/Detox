@@ -29,9 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (NSString *_Nullable)dtx_activeRunLoopMode;
 
-+ (void)dtx_enableAccessibilityForSimulator;
-
-+ (CGFloat)panVelocity;
++ (CGFloat)dtx_panVelocity;
 
 @end
 

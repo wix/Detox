@@ -33,23 +33,6 @@ typedef NS_ENUM(NSInteger, GREYSyntheticEventInjectionErrorCode) {
  */
 @interface DTXSyntheticEvents : NSObject
 
-/**
- *  Rotate the device to a given @c deviceOrientation. All device orientations except for
- *  @c UIDeviceOrientationUnknown are supported. If a non-nil @c errorOrNil is provided, it will
- *  be populated with the failure reason if the orientation change fails, otherwise a test failure
- *  will be registered.
- *
- *  @param      deviceOrientation The desired orientation of the device.
- */
-+ (void)rotateDeviceToOrientation:(UIDeviceOrientation)deviceOrientation;
-
-/**
- *  Shakes the device. If a non-nil @c errorOrNil is provided, it will
- *  be populated with the failure reason if the orientation change fails, otherwise a test failure
- *  will be registered.
- */
-+ (void)shakeDevice;
-
 + (void)touchAlongPath:(NSArray *)touchPath relativeToWindow:(UIWindow *)window holdDurationOnLastTouch:(NSTimeInterval)holdDuration;
 + (void)touchAlongMultiplePaths:(NSArray *)touchPaths relativeToWindow:(UIWindow *)window holdDurationOnLastTouch:(NSTimeInterval)holdDuration;
 
@@ -62,9 +45,7 @@ typedef NS_ENUM(NSInteger, GREYSyntheticEventInjectionErrorCode) {
  *  @param immediate If @c YES, this method blocks until touch is delivered, otherwise the touch is
  *                   enqueued for delivery the next time runloop drains.
  */
-- (void)beginTouchAtPoint:(CGPoint)point
-         relativeToWindow:(UIWindow *)window
-        immediateDelivery:(BOOL)immediate;
+- (void)beginTouchAtPoint:(CGPoint)point relativeToWindow:(UIWindow *)window immediateDelivery:(BOOL)immediate;
 
 /**
  *  Continues the current interaction by moving touch to a new point. Providing the same point
@@ -78,9 +59,7 @@ typedef NS_ENUM(NSInteger, GREYSyntheticEventInjectionErrorCode) {
  *  @param expendable @c YES indicates that this touch point is intended to be delivered in a timely
  *                    manner rather than reliably. Is ignored if @c NO.
  */
-- (void)continueTouchAtPoint:(CGPoint)point
-           immediateDelivery:(BOOL)immediate
-                  expendable:(BOOL)expendable;
+- (void)continueTouchAtPoint:(CGPoint)point immediateDelivery:(BOOL)immediate expendable:(BOOL)expendable;
 
 /**
  *  Ends interaction started by GREYSyntheticEvents::beginTouchAtPoint:relativeToWindow.

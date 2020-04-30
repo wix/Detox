@@ -13,12 +13,32 @@
 
 - (void)dtx_assertVisible
 {
-	DTXAssert(self.dtx_isVisible == YES, @"View “%@” is not visible", self.dtx_shortDescription);
+	[self _dtx_assertVisibleAtPoint:self.dtx_accessibilityActivationPointInViewCoordinateSpace isAtActivationPoint:YES];
 }
 
 - (void)dtx_assertHittable
 {
-	DTXAssert(self.dtx_isHittable == YES, @"View “%@” is not hittable", self.dtx_shortDescription);
+	[self _dtx_assertHittableAtPoint:self.dtx_accessibilityActivationPointInViewCoordinateSpace isAtActivationPoint:YES];
+}
+
+- (void)dtx_assertVisibleAtPoint:(CGPoint)point
+{
+	[self _dtx_assertVisibleAtPoint:point isAtActivationPoint:NO];
+}
+
+- (void)dtx_assertHittableAtPoint:(CGPoint)point
+{
+	[self _dtx_assertHittableAtPoint:point isAtActivationPoint:NO];
+}
+
+- (void)_dtx_assertVisibleAtPoint:(CGPoint)point isAtActivationPoint:(BOOL)isAtActivationPoint
+{
+	DTXAssert([self dtx_isVisibleAtPoint:point] == YES, @"View “%@” is not visible%@", self.dtx_shortDescription, !isAtActivationPoint ? [NSString stringWithFormat:@" at point “(x: %@, y: %@)”", @(point.x), @(point.y)] : @"");
+}
+
+- (void)_dtx_assertHittableAtPoint:(CGPoint)point isAtActivationPoint:(BOOL)isAtActivationPoint
+{
+	DTXAssert([self dtx_isHittableAtPoint:point] == YES, @"View “%@” is not hittable%@", self.dtx_shortDescription, !isAtActivationPoint ? [NSString stringWithFormat:@" at point “(x: %@, y: %@)”", @(point.x), @(point.y)] : @"");
 }
 
 - (NSString *)dtx_shortDescription
@@ -26,12 +46,17 @@
 	return [NSString stringWithFormat:@"<%@: %p>", self.class, self];
 }
 
+- (CGRect)dtx_safeAreaBounds
+{
+	return UIEdgeInsetsInsetRect(self.bounds, self.safeAreaInsets);
+}
+
 - (CGPoint)dtx_accessibilityActivationPoint
 {
 	CGPoint activationPoint = self.accessibilityActivationPoint;
 	if(CGPointEqualToPoint(activationPoint, CGPointZero))
 	{
-		activationPoint = [self.coordinateSpace convertPoint:CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds)) toCoordinateSpace:self.window.screen.coordinateSpace];
+		activationPoint = [self.coordinateSpace convertPoint:CGPointMake(CGRectGetMidX(self.dtx_safeAreaBounds), CGRectGetMidY(self.dtx_safeAreaBounds)) toCoordinateSpace:self.window.screen.coordinateSpace];
 	}
 	return activationPoint;
 }

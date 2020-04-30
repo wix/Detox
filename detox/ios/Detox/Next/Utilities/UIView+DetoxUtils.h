@@ -14,9 +14,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)dtx_assertVisible;
 - (void)dtx_assertHittable;
-- (NSString*)dtx_shortDescription;
-- (CGPoint)dtx_accessibilityActivationPoint;
-- (CGPoint)dtx_accessibilityActivationPointInViewCoordinateSpace;
+- (void)dtx_assertVisibleAtPoint:(CGPoint)point;
+- (void)dtx_assertHittableAtPoint:(CGPoint)point;
+
+@property (nonatomic, readonly, copy) NSString* dtx_shortDescription;
+@property (nonatomic, readonly) CGRect dtx_safeAreaBounds;
+@property (nonatomic, readonly) CGPoint dtx_accessibilityActivationPoint;
+@property (nonatomic, readonly) CGPoint dtx_accessibilityActivationPointInViewCoordinateSpace;
 
 @end
 

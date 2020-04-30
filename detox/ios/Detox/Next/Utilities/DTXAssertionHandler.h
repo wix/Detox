@@ -14,11 +14,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DTXAssertionHandler : NSObject
 
-+ (__nullable id)try:(id(NS_NOESCAPE ^)(void))block error:(NSError * __nullable * __null_unspecified)error;
++ (__nullable id)try:(id(NS_NOESCAPE ^)(void))block error:(NSError * __nullable * __null_unspecified)error NS_REFINED_FOR_SWIFT;
 
-+ (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line description:(nullable NSString *)format,... NS_FORMAT_FUNCTION(5,6);
++ (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format,... NS_FORMAT_FUNCTION(5,6);
 
-+ (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line description:(nullable NSString *)format,... NS_FORMAT_FUNCTION(4,5);
++ (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format,... NS_FORMAT_FUNCTION(4,5);
+
++ (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format arguments:(va_list)arguments;
+
++ (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format arguments:(va_list)arguments;
 
 @end
 

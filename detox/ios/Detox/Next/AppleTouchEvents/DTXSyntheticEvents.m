@@ -33,28 +33,6 @@
 	NSValue *_lastInjectedTouchPoint;
 }
 
-+ (void)rotateDeviceToOrientation:(UIDeviceOrientation)deviceOrientation
-{
-	NSParameterAssert(NSThread.isMainThread);
-	[[UIDevice currentDevice] setOrientation:deviceOrientation animated:YES];
-}
-
-+ (void)shakeDevice
-{
-	NSParameterAssert(NSThread.isMainThread);
-	
-	BKSAccelerometer *accelerometer = [UIApplication.sharedApplication._motionEvent valueForKey:@"_motionAccelerometer"];
-	BOOL prevValue = accelerometer.accelerometerEventsEnabled;
-	accelerometer.accelerometerEventsEnabled = YES;
-	
-	// This behaves exactly in the same manner that UIApplication handles the simulator
-	// "Shake Gesture" menu command.
-	[UIApplication.sharedApplication _sendMotionBegan:UIEventSubtypeMotionShake];
-	[UIApplication.sharedApplication _sendMotionEnded:UIEventSubtypeMotionShake];
-	
-	accelerometer.accelerometerEventsEnabled = prevValue;
-}
-
 + (void)touchAlongPath:(NSArray *)touchPath relativeToWindow:(UIWindow *)window holdDurationOnLastTouch:(NSTimeInterval)holdDuration
 {
 	[self touchAlongMultiplePaths:@[touchPath] relativeToWindow:window holdDurationOnLastTouch:holdDuration];
