@@ -132,6 +132,12 @@ module.exports.builder = {
     group: 'Execution:',
     describe: `Use Detox' custom console-logging implementation, for logging Detox (non-device) logs. Disabling will fallback to node.js / test-runner's implementation (e.g. Jest / Mocha).`,
   },
+  'force-adb-install': {
+    boolean: true,
+    default: false,
+    group: 'Execution:',
+    describe: `Due to problems with the "adb install" command on Android, Detox resorts to a different scheme for install APK's. Setting true will disable that and force usage of "adb install", instead.`,
+  }
 };
 
 const collectExtraArgs = require('./utils/collectExtraArgs')(module.exports.builder);
@@ -231,6 +237,7 @@ module.exports.handler = async function test(program) {
         (program.artifactsLocation ? `--artifacts-location "${program.artifactsLocation}"` : ''),
         (program.deviceName ? `--device-name "${program.deviceName}"` : ''),
         (program.useCustomLogger ? `--use-custom-logger "${program.useCustomLogger}"` : ''),
+        (program.forceAdbInstall ? `--force-adb-install "${program.forceAdbInstall}"` : ''),
       ]),
       ...getPassthroughArguments(),
     ]).join(' ');
@@ -291,7 +298,8 @@ module.exports.handler = async function test(program) {
         'reportSpecs',
         'readOnlyEmu',
         'deviceLaunchArgs',
-        'useCustomLogger'
+        'useCustomLogger',
+        'forceAdbInstall',
       ]),
       DETOX_START_TIMESTAMP: Date.now(),
     };
