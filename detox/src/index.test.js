@@ -35,6 +35,7 @@ describe('index', () => {
 
     process.env.DETOX_UNIT_TEST = true;
     detox = require('./index');
+    detox._setGlobal(global);
   });
 
   afterEach(() => {
