@@ -37,9 +37,10 @@ class Detox {
 
     this[_initHandle] = null;
 
-    const {artifactsConfig, deviceConfig, session} = config;
+    const {artifactsConfig, behaviorConfig, deviceConfig, session} = config;
 
     this._artifactsConfig = artifactsConfig;
+    this._behaviorConfig = behaviorConfig;
     this._deviceConfig = deviceConfig;
     this._userSession = deviceConfig.session || session;
     this._client = null;
@@ -64,12 +65,12 @@ class Detox {
     this.device = null;
   }
 
-  init(userParams) {
+  init() {
     if (!this[_initHandle]) {
       this[_initHandle] = new Deferred();
 
       const { resolve, reject } = this[_initHandle];
-      this._doInit(userParams).then(resolve, reject);
+      this._doInit().then(resolve, reject);
     }
 
     return this[_initHandle].promise;
@@ -91,6 +92,10 @@ class Detox {
 
     if (this.device) {
       await this.device._cleanup();
+
+      if (this._behaviorConfig.cleanup.shutdownDevice) {
+        await this.device.shutdown();
+      }
     }
 
     if (this._server) {
@@ -133,13 +138,9 @@ class Detox {
     await this._artifactsManager.onSuiteEnd(suite);
   }
 
-  async _doInit(userParams) {
+  async _doInit() {
+    const behaviorConfig = this._behaviorConfig.init;
     const sessionConfig = await this._getSessionConfig();
-    const params = {
-      launchApp: true,
-      initGlobals: true,
-      ...userParams,
-    };
 
     if (!this._userSession) {
       this._server = new DetoxServer({
@@ -178,7 +179,7 @@ class Detox {
       sessionConfig,
     });
 
-    if (params.initGlobals) {
+    if (behaviorConfig.exposeGlobals) {
       Object.assign(global, {
         ...deviceDriver.matchers,
         device: this.device,
@@ -189,7 +190,19 @@ class Detox {
     this._artifactsManager.subscribeToDeviceEvents(this._eventEmitter);
     this._artifactsManager.registerArtifactPlugins(deviceDriver.declareArtifactPlugins());
 
-    await this.device.prepare(params);
+    await this.device.prepare();
+
+    if (behaviorConfig.reinstallApp) {
+      await this.device.uninstallApp();
+      await this.device.installApp();
+    }
+
+    if (behaviorConfig.launchApp) {
+      await this.device.launchApp({
+        newInstance: true
+      });
+    }
+
     return this;
   }
 

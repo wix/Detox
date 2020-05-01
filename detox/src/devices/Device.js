@@ -5,7 +5,8 @@ const argparse = require('../utils/argparse');
 const debug = require('../utils/debug'); // debug utils, leave here even if unused
 
 class Device {
-  constructor({ deviceConfig, deviceDriver, emitter, sessionConfig }) {
+  constructor({ behaviorConfig, deviceConfig, deviceDriver, emitter, sessionConfig }) {
+    this._behaviorConfig = behaviorConfig;
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
     this._emitter = emitter;
@@ -15,20 +16,11 @@ class Device {
     this.debug = debug;
   }
 
-  async prepare(params = {}) {
+  async prepare() {
     this._deviceId = await this.deviceDriver.acquireFreeDevice(this._deviceConfig.device || this._deviceConfig.name);
     this._bundleId = await this.deviceDriver.getBundleIdFromBinary(this._deviceConfig.binaryPath);
 
     await this.deviceDriver.prepare();
-
-    if (!argparse.getArgValue('reuse') && !params.reuse) {
-      await this.deviceDriver.uninstallApp(this._deviceId, this._bundleId);
-      await this.deviceDriver.installApp(this._deviceId, this._deviceConfig.binaryPath, this._deviceConfig.testBinaryPath);
-    }
-
-    if (params.launchApp) {
-      await this.launchApp({newInstance: true});
-    }
   }
 
   createPayloadFileAndUpdatesParamsObject(key, launchKey, params, baseLaunchArgs) {
@@ -268,12 +260,6 @@ class Device {
 
   async _cleanup() {
     await this.deviceDriver.cleanup(this._deviceId, this._bundleId);
-
-    if (argparse.getArgValue('cleanup') && this._deviceId) {
-      await this.deviceDriver.shutdown(this._deviceId);
-    }
-
-    this.deviceDriver = null;
   }
 
   async pressBack() {

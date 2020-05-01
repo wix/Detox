@@ -89,21 +89,22 @@ describe('Device', () => {
     }
   }
 
-  function schemeDevice(scheme, configuration) {
-    const device = new Device({
+  function schemeDevice(scheme, configuration, overrides) {
+    const device = new Device(_.merge({
+      behaviorConfig: { init: {}, cleanup: {} },
       deviceConfig: scheme.configurations[configuration],
       deviceDriver: driverMock.driver,
       sessionConfig: scheme.session,
       emitter,
-    });
+    }, overrides));
 
     device.deviceDriver.acquireFreeDevice.mockReturnValue('mockDeviceId');
 
     return device;
   }
 
-  function validDevice() {
-    return schemeDevice(validScheme, 'ios.sim.release');
+  function validDevice(overrides) {
+    return schemeDevice(validScheme, 'ios.sim.release', overrides);
   }
 
   it('should return the name from the driver', async () => {
@@ -122,27 +123,6 @@ describe('Device', () => {
     const device = validDevice();
     await device.prepare();
     expect(device.id).toEqual('mockDeviceId');
-  });
-
-  describe('prepare()', () => {
-    it(`when reuse is enabled in CLI args should not uninstall and install`, async () => {
-      const device = validDevice();
-      argparse.getArgValue.mockReturnValue(true);
-
-      await device.prepare();
-
-      expect(driverMock.driver.uninstallApp).not.toHaveBeenCalled();
-      expect(driverMock.driver.installApp).not.toHaveBeenCalled();
-    });
-
-    it(`when reuse is enabled in params should not uninstall and install`, async () => {
-      const device = validDevice();
-
-      await device.prepare({reuse: true});
-
-      expect(driverMock.driver.uninstallApp).not.toHaveBeenCalled();
-      expect(driverMock.driver.installApp).not.toHaveBeenCalled();
-    });
   });
 
   describe('re/launchApp()', () => {
@@ -327,7 +307,8 @@ describe('Device', () => {
       device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
       device.deviceDriver.launchApp.mockReturnValue(processId);
 
-      await device.prepare({launchApp: true});
+      await device.prepare();
+      await device.launchApp({newInstance: true});
       await device.launchApp({newInstance: false});
 
       expect(driverMock.driver.deliverPayload).not.toHaveBeenCalled();
@@ -339,7 +320,8 @@ describe('Device', () => {
       device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
       device.deviceDriver.launchApp.mockReturnValue(processId);
 
-      await device.prepare({launchApp: true});
+      await device.prepare();
+      await device.launchApp({newInstance: true});
       await device.launchApp({url: 'url://me'});
 
       expect(driverMock.driver.deliverPayload).toHaveBeenCalledTimes(1);
@@ -368,7 +350,8 @@ describe('Device', () => {
       device.deviceDriver.getBundleIdFromBinary.mockReturnValue('test.bundle');
       device.deviceDriver.launchApp.mockReturnValue(processId);
 
-      await device.prepare({launchApp: true});
+      await device.prepare();
+      await device.launchApp({newInstance: true});
       await device.launchApp(launchParams);
 
       expect(driverMock.driver.deliverPayload).toHaveBeenCalledWith({delayPayload: true, url: 'url://me'});
@@ -398,7 +381,8 @@ describe('Device', () => {
       device.deviceDriver.launchApp.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
       device.deviceDriver.createPayloadFile = () => 'url';
 
-      await device.prepare({launchApp: true});
+      await device.prepare();
+      await device.launchApp({newInstance: true});
       await device.launchApp(launchParams);
 
       expect(driverMock.driver.deliverPayload).toHaveBeenCalledWith({delayPayload: true, detoxUserActivityDataURL: 'url'});
@@ -414,7 +398,8 @@ describe('Device', () => {
       device.deviceDriver.launchApp.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
       device.deviceDriver.createPayloadFile = () => 'url';
 
-      await device.prepare({launchApp: true});
+      await device.prepare();
+      await device.launchApp({newInstance: true});
       await device.launchApp(launchParams);
 
       expect(driverMock.driver.deliverPayload).toHaveBeenCalledTimes(1);
@@ -697,35 +682,6 @@ describe('Device', () => {
     expect(driverMock.driver.cleanup).toHaveBeenCalledTimes(1);
   });
 
-  it(`_cleanup() should shutdown a prepared device if --cleanup is passed from CLI`, async () => {
-    argparse.getArgValue.mockReturnValue(true);
-
-    const device = validDevice();
-    await device.prepare();
-    await device._cleanup();
-
-    expect(driverMock.driver.shutdown).toHaveBeenCalled();
-  });
-
-  it(`_cleanup() should not shutdown a prepared device if --cleanup is not passed from CLI`, async () => {
-    argparse.getArgValue.mockReturnValue(false);
-
-    const device = validDevice();
-    await device.prepare();
-    await device._cleanup();
-
-    expect(driverMock.driver.shutdown).not.toHaveBeenCalled();
-  });
-
-  it(`_cleanup() should not shutdown an unprepared device even if --cleanup is passed from CLI`, async () => {
-    argparse.getArgValue.mockReturnValue(true);
-
-    const device = validDevice();
-    await device._cleanup();
-
-    expect(driverMock.driver.shutdown).not.toHaveBeenCalled();
-  });
-
   it(`new Device() with invalid device config (no binary) should throw`, () => {
     // TODO: this is an invalid test, because it will pass only on SimulatorDriver
     expect(() => new Device({
@@ -800,7 +756,7 @@ describe('Device', () => {
     const device = schemeDevice(configurationsMock.pathsTests, configuration);
 
     await device.prepare();
-    await device.launchApp();
+    await device.installApp();
 
     return driverMock.driver.installApp.mock.calls[0][1];
   }

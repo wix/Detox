@@ -233,6 +233,21 @@ describe('configuration', () => {
     });
   });
 
+  describe('composeBehaviorConfig', () => {
+    it('should produce a default config', () => {
+      expect(configuration.composeBehaviorConfig({ deviceConfig: {}, detoxConfig: {} })).toEqual({
+        "init": {
+          "reinstallApp": true,
+          "launchApp": true,
+          "exposeGlobals": true
+        },
+        "cleanup": {
+          "shutdownDevice": false
+        }
+      });
+    });
+  });
+
   function testFaultySession(config) {
     try {
       configuration.validateSession(config);

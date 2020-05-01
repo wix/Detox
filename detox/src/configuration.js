@@ -45,6 +45,38 @@ function throwOnEmptyBinaryPath() {
   throw new DetoxConfigError(`'binaryPath' property is missing, should hold the app binary path`);
 }
 
+function composeBehaviorConfig({ detoxConfig, deviceConfig, userParams }) {
+  return _.defaultsDeep(
+    {
+      init: {
+        reinstallApp: argparse.getArgValue('reuse') ? false : undefined,
+      },
+      cleanup: {
+        shutdownDevice: argparse.getArgValue('cleanup') ? true : undefined,
+      },
+    },
+    userParams && {
+      init: {
+        exposeGlobals: userParams.initGlobals,
+        launchApp: userParams.launchApp,
+        reinstallApp: userParams.reuse,
+      },
+    },
+    deviceConfig.behavior,
+    detoxConfig.behavior,
+    {
+      init: {
+        exposeGlobals: true,
+        reinstallApp: true,
+        launchApp: true,
+      },
+      cleanup: {
+        shutdownDevice: false,
+      },
+    }
+  );
+}
+
 function composeDeviceConfig({ configurations }) {
   const configurationName = argparse.getArgValue('configuration');
   const deviceOverride = argparse.getArgValue('device-name');
@@ -181,6 +213,7 @@ module.exports = {
   throwOnEmptyDevice,
   throwOnEmptyType,
   throwOnEmptyBinaryPath,
+  composeBehaviorConfig,
   composeDeviceConfig,
   composeArtifactsConfig,
 };
