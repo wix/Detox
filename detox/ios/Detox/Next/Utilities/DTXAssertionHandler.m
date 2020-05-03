@@ -7,12 +7,30 @@
 //
 
 #import "DTXAssertionHandler.h"
+#import "DTXAppleInternals.h"
 
-@implementation DTXTestAssertionException @end
+@implementation DTXTestAssertionException
+
++ (NSException *)exceptionWithName:(NSExceptionName)name reason:(nullable NSString *)reason userInfo:(nullable NSDictionary *)userInfo view:(nullable UIView*)view
+{
+	DTXTestAssertionException* rv = (id)[super exceptionWithName:name reason:reason userInfo:userInfo];
+	rv.view = view;
+	return rv;
+}
+
+@end
+
+id dtx_try(void (^block)(void), NSError * __nullable * __null_unspecified error)
+{
+	return [DTXAssertionHandler try:^id _Nonnull{
+		block();
+		return nil;
+	} error:error];
+}
 
 @implementation DTXAssertionHandler
 
-+ (__nullable id)try:(id(NS_NOESCAPE ^)(void))block error:(NSError**)error
++ (__nullable id)try:(id(NS_NOESCAPE ^)(void))block error:(NSError * __nullable * __null_unspecified)error
 {
 	id rv = nil;
 	@try
@@ -21,9 +39,16 @@
 	}
 	@catch(DTXTestAssertionException *exception)
 	{
-		if(*error)
+		if(error)
 		{
-			*error = [NSError errorWithDomain:@"Detox" code:0 userInfo:@{NSLocalizedDescriptionKey: exception.reason, @"fullUserInfo": exception.userInfo}];
+			NSMutableDictionary* userInfo = @{NSLocalizedDescriptionKey: exception.reason, @"fullUserInfo": exception.userInfo}.mutableCopy;
+			
+			if(exception.view != nil)
+			{
+				userInfo[@"viewHierarchy"] = exception.view.window.recursiveDescription;
+			}
+			
+			*error = [NSError errorWithDomain:@"Detox" code:0 userInfo:userInfo];
 		}
 		
 		return nil;
@@ -37,40 +62,40 @@
 	return rv;
 }
 
-+ (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format, ...
++ (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line view:(UIView*)view description:(NSString *)format, ...
 {
 	va_list argumentList;
 	va_start(argumentList, format);
-	[self handleFailureInFunction:functionName file:fileName lineNumber:line description:format arguments:argumentList];
+	[self handleFailureInFunction:functionName file:fileName lineNumber:line view:view description:format arguments:argumentList];
 	va_end(argumentList);
 	
 }
 
-+ (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format, ...
++ (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line view:(UIView*)view description:(NSString *)format, ...
 {
 	va_list argumentList;
 	va_start(argumentList, format);
-	[self handleFailureInMethod:selector object:object file:fileName lineNumber:line description:format arguments:argumentList];
+	[self handleFailureInMethod:selector object:object file:fileName lineNumber:line view:view description:format arguments:argumentList];
 	va_end(argumentList);
 }
 
-+ (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format arguments:(va_list)arguments
++ (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line view:(UIView*)view description:(NSString *)format arguments:(va_list)arguments
 {
 	[[DTXTestAssertionException exceptionWithName:@"DetoxException" reason:[[NSString alloc] initWithFormat:format arguments:arguments] userInfo:@{
 		@"functionName": functionName,
 		@"file": fileName,
 		@"lineNumber": @(line)
-	}] raise];
+	} view:view] raise];
 }
 
-+ (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format arguments:(va_list)arguments
++ (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line view:(UIView*)view description:(NSString *)format arguments:(va_list)arguments
 {
 	[[DTXTestAssertionException exceptionWithName:@"DetoxException" reason:[[NSString alloc] initWithFormat:format arguments:arguments] userInfo:@{
 		@"selector": NSStringFromSelector(selector),
 		@"object": [object debugDescription],
 		@"file": fileName,
 		@"lineNumber": @(line)
-	}] raise];
+	} view:view] raise];
 }
 
 @end

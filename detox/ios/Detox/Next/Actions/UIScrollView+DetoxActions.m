@@ -89,12 +89,41 @@
 //	}
 }
 
+#define DTX_CAN_SCROLL_AXIS(main, inset, otherInset, _size) \
+if(offset.main > 0 && self.contentOffset.main <= - self.adjustedContentInset.inset) \
+{ \
+	return NO; \
+} \
+else if(offset.main < 0 && self.contentOffset.main >= self.contentSize._size + self.adjustedContentInset.otherInset - self.bounds.size._size) \
+{ \
+	return NO; \
+}
+
+- (BOOL)_dtx_canScrollWithOffset:(CGPoint)offset
+{
+	if(offset.y != 0)
+	{
+		DTX_CAN_SCROLL_AXIS(y, top, bottom, height);
+	}
+	else if(offset.x != 0)
+	{
+		DTX_CAN_SCROLL_AXIS(x, left, right, width);
+	}
+	
+	return YES;
+}
+
+- (void)_dtx_assertCanScrollWithOffset:(CGPoint)offset
+{
+	DTXViewAssert([self _dtx_canScrollWithOffset:offset], self, @"Unable to perform scroll in “%@”", self.dtx_shortDescription);
+}
+
 - (void)dtx_scrollWithOffset:(CGPoint)offset
 {
 	[self dtx_scrollWithOffset:offset normalizedStartingPoint:CGPointMake(NAN, NAN)];
 }
 
-#define DTX_CREATE_SCROLL_POINTS(points, startPoint, offset, main, windowSafeAreaMain, windowMoundsMain) \
+#define DTX_CREATE_SCROLL_POINTS(window, points, startPoint, offset, main, windowSafeAreaMain, windowMoundsMain) \
 offset.main += (fabs(offset.main) / offset.main * 10); \
 const CGFloat d = fabs(offset.main) / offset.main * UIApplication.dtx_panVelocity; \
 while (offset.main != 0 && startPoint.main > window.safeAreaInsets.windowSafeAreaMain && startPoint.main < window.bounds.size.windowMoundsMain) { \
@@ -105,24 +134,30 @@ while (offset.main != 0 && startPoint.main > window.safeAreaInsets.windowSafeAre
 }
 
 __attribute__((always_inline))
-static inline void _DTXApplyScroll(UIWindow* window, CGPoint startPoint, CGPoint offset, CGPoint* remainingOffset)
+static inline void _DTXApplyScroll(UIScrollView* scrollView, CGPoint startPoint, CGPoint offset, CGPoint* remainingOffset)
 {
+	if([scrollView _dtx_canScrollWithOffset:offset] == NO)
+	{
+		*remainingOffset = CGPointZero;
+		return;
+	}
+	
 	NSMutableArray<NSValue*>* points = [NSMutableArray new];
 	
 	[points addObject:@(startPoint)];
 	
 	if(offset.x != 0)
 	{
-		DTX_CREATE_SCROLL_POINTS(points, startPoint, offset, x, left, width);
+		DTX_CREATE_SCROLL_POINTS(scrollView.window, points, startPoint, offset, x, left, width);
 	}
 	else if(offset.y != 0)
 	{
-		DTX_CREATE_SCROLL_POINTS(points, startPoint, offset, y, top, height);
+		DTX_CREATE_SCROLL_POINTS(scrollView.window, points, startPoint, offset, y, top, height);
 	}
 	
 	if(points.count > 1)
 	{
-		[DTXSyntheticEvents touchAlongPath:points relativeToWindow:window holdDurationOnLastTouch:0.0];
+		[DTXSyntheticEvents touchAlongPath:points relativeToWindow:scrollView.window holdDurationOnLastTouch:0.0];
 		
 		[NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.7]];
 	}
@@ -140,17 +175,12 @@ if(isnan(normalizedStartingPoint.main) || normalizedStartingPoint.main < 0 || no
 	normalizedStartingPoint.main = offset < 0 ? 0.99 : 0.01; \
 }
 
-- (void)dtx_assertCanScrollWithOffset:(CGPoint)offset
-{
-	
-}
-
 - (void)dtx_scrollWithOffset:(CGPoint)offset normalizedStartingPoint:(CGPoint)normalizedStartingPoint
 {
 	//TODO: Check if scroll view is scrollable with provided offset
 	
 	NSAssert(offset.x == 0.0 || offset.y == 0.0, @"Scrolling simultaneously in both directions is unsupported");
-	[self dtx_assertCanScrollWithOffset:offset];
+	[self _dtx_assertCanScrollWithOffset:offset];
 	
 	self.dtx_disableDecelerationForScroll = YES;
 	
@@ -173,7 +203,7 @@ if(isnan(normalizedStartingPoint.main) || normalizedStartingPoint.main < 0 || no
 	
 	while (offset.x != 0.0 || offset.y != 0.0)
 	{
-		_DTXApplyScroll(self.window, startPoint, offset, &offset);
+		_DTXApplyScroll(self, startPoint, offset, &offset);
 	}
 	
 	self.dtx_disableDecelerationForScroll = NO;

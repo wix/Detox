@@ -18,7 +18,7 @@
 	
 	NSInteger componentCount = [self.dataSource numberOfComponentsInPickerView:self];
 	
-	DTXAssert(componentCount > component, @"Invalid component “%@” for picker view “%@”", @(component), self.dtx_shortDescription);
+	DTXViewAssert(componentCount > component, self, @"Invalid component “%@” for picker view “%@”", @(component), self.dtx_shortDescription);
 
 	NSInteger rowCount = [self.dataSource pickerView:self numberOfRowsInComponent:component];
 
@@ -62,7 +62,7 @@
 		}
 	}
 	
-	DTXAssert(NO, @"Picker view “%@” does not contain value “%@” for component “%@”", self.dtx_shortDescription, value, @(component));
+	DTXViewAssert(NO, self, @"Picker view “%@” does not contain value “%@” for component “%@”", self.dtx_shortDescription, value, @(component));
 }
 
 @end

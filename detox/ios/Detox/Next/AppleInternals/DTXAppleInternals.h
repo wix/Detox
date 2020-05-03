@@ -38,6 +38,7 @@
 - (BOOL)isHiddenOrHasHiddenAncestor;
 - (BOOL)_la_isVisible;
 - (NSArray*)_accessibilityHitTestSubviews;
+@property (nonatomic, readonly, copy) NSString* recursiveDescription;
 
 @end
 

@@ -6,27 +6,24 @@
 //  Copyright © 2020 Wix. All rights reserved.
 //
 
+#import "UIView+DetoxUtils.h"
 #import "UIView+DetoxExpectations.h"
 #import "DTXAppleInternals.h"
+
+@import ObjectiveC;
 
 @implementation UIView (DetoxExpectations)
 
 - (UIView*)dtx_visTest:(CGPoint)point withEvent:(UIEvent *)event;
 {
-	NSLog(@"Visiting %@", self);
-	
 	CGPoint localPoint = [self.window.screen.coordinateSpace convertPoint:point toCoordinateSpace:self.coordinateSpace];
 	if([self pointInside:localPoint withEvent:event] == NO)
 	{
-		NSLog(@"- NOPE: !pointInside, frame: %@, point: %@, localPoint: %@", @([self.window.screen.coordinateSpace convertRect:self.bounds fromCoordinateSpace:self.coordinateSpace]), @(point), @(localPoint));
-		
 		return nil;
 	}
 	
 	if(self.isHiddenOrHasHiddenAncestor == YES)
 	{
-		NSLog(@"- NOPE: hidden");
-		
 		return nil;
 	}
 	
@@ -38,14 +35,12 @@
 		
 		if(rv != nil)
 		{
-			NSLog(@"+ YEP: Using child %@", rv);
 			*stop = YES;
 		}
 	}];
 	
 	if(rv == nil)
 	{
-		NSLog(@"+ YEP: self %@", self);
 		rv = self;
 	}
 	
@@ -54,33 +49,35 @@
 
 - (BOOL)dtx_isVisible
 {
-	if(CGRectContainsPoint(self.window.screen.bounds, self.accessibilityActivationPoint) == NO)
-	{
-		return NO;
-	}
-	
-	if([self isHiddenOrHasHiddenAncestor] == YES)
-	{
-		return NO;
-	}
-	
-	//Activation point in window coordinate space
-	CGPoint activationPoint = [self.window.screen.coordinateSpace convertPoint:self.accessibilityActivationPoint toCoordinateSpace:self.window.coordinateSpace];
-	
-	
-	id visibleView = [self.window dtx_visTest:activationPoint withEvent:nil];
-	
-	if(visibleView == self || [visibleView isDescendantOfView:self])
-	{
-		return YES;
-	}
-	
-	return NO;
+	return [self dtx_isVisibleAtPoint:self.dtx_accessibilityActivationPointInViewCoordinateSpace];
 }
 
 - (BOOL)dtx_isHittable
 {
-	if(CGRectContainsPoint(self.window.screen.bounds, self.accessibilityActivationPoint) == NO)
+	return [self dtx_isHittableAtPoint:self.dtx_accessibilityActivationPointInViewCoordinateSpace];
+}
+
+- (BOOL)dtx_isVisibleAtPoint:(CGPoint)point
+{
+	return [self _dtx_someTestAtPoint:point testSelector:@selector(dtx_visTest:withEvent:)];
+}
+
+- (BOOL)dtx_isHittableAtPoint:(CGPoint)point
+{
+	return [self _dtx_someTestAtPoint:point testSelector:@selector(hitTest:withEvent:)];
+}
+
+- (BOOL)_dtx_someTestAtPoint:(CGPoint)point testSelector:(SEL)selector
+{
+	//Point in window coordinate space
+	CGPoint activationPoint = [self.window convertPoint:point fromView:self];
+	
+	if(CGRectContainsPoint(self.window.bounds, activationPoint) == NO)
+	{
+		return NO;
+	}
+	
+	if(CGRectGetWidth(self.dtx_safeAreaBounds) == 0 || CGRectGetHeight(self.dtx_safeAreaBounds) == 0)
 	{
 		return NO;
 	}
@@ -90,13 +87,10 @@
 		return NO;
 	}
 	
-	//Activation point in window coordinate space
-	CGPoint activationPoint = [self.window.screen.coordinateSpace convertPoint:self.accessibilityActivationPoint toCoordinateSpace:self.window.coordinateSpace];
+	id (*testFunc)(id, SEL, CGPoint, id) = (void*)objc_msgSend;
+	id visibleView = testFunc(self.window, selector, activationPoint, nil);
 	
-	
-	id hitTestView = [self.window hitTest:activationPoint withEvent:nil];
-	
-	if(hitTestView == self || [[hitTestView _accessibilityHitTestSubviews] containsObject:self] || [[self _accessibilityHitTestSubviews] containsObject:hitTestView])
+	if(visibleView == self || [visibleView isDescendantOfView:self])
 	{
 		return YES;
 	}

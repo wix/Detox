@@ -268,7 +268,7 @@ static UIView* _ensureFirstResponderIfNeeded(UIView* view)
 	
 	if(firstResponder == nil)
 	{
-		DTXCAssert(firstResponder == nil, @"Failed to make view “%@” first responder", view.dtx_shortDescription);
+		DTXCViewAssert(firstResponder == nil, firstResponder, @"Failed to make view “%@” first responder", view.dtx_shortDescription);
 	}
 	
 	return firstResponder;
@@ -281,7 +281,7 @@ static BOOL _assertFirstResponderSupportsTextInput(UIView* firstResponder)
 		return YES;
 	}
 	
-	DTXCAssert(NO, @"First responder “%@” does not conform to “UITextInput” protocol", firstResponder);
+	DTXCViewAssert(NO, firstResponder, @"First responder “%@” does not conform to “UITextInput” protocol", firstResponder);
 	
 	return NO;
 }
