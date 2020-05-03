@@ -65,28 +65,37 @@
 
 @implementation UIScrollView (DetoxActions)
 
+#define DTXCGMakePointY(y) CGPointMake(0, y)
+#define DTXCGMakePointX(x) CGPointMake(x, 0)
+#define DTX_SCROLL_TO_EDGE(axis, inset, otherInset, _size, pointMakeMacro) \
+CGFloat target = 0; \
+if(edge.axis < 0) \
+{ \
+	target = (- self.adjustedContentInset.inset); \
+} \
+else \
+{ \
+	target = self.contentSize._size + self.adjustedContentInset.otherInset - self.bounds.size._size; \
+} \
+CGFloat delta = self.contentOffset.axis - target; \
+CGPoint offset = pointMakeMacro(delta); \
+if(offset.axis != 0.0 && [self _dtx_canScrollWithOffset:offset] == NO) \
+{\
+	/* Already at edge */ \
+	return; \
+}\
+[self dtx_scrollWithOffset:offset];
+
 - (void)dtx_scrollToNormalizedEdge:(CGPoint)edge
 {
-	
-	
-//	[self dtx_assertVisible];
-//
-//	CGFloat pixelSize = 1 / self.window.screen.nativeScale;
-//
-//	CGRect rect = CGRectNull;
-//	if(edge.x != 0.0)
-//	{
-//		rect = CGRectMake(edge.x < 0 ? 0 : self.contentSize.width - pixelSize, self.contentOffset.y , pixelSize, pixelSize);
-//	}
-//	else if(edge.y != 0.0)
-//	{
-//		rect = CGRectMake(self.contentOffset.x, edge.y < 0 ? 0 : self.contentSize.height - pixelSize, pixelSize, pixelSize);
-//	}
-//
-//	if(CGRectIsNull(rect) == NO)
-//	{
-//		[self scrollRectToVisible:rect animated:YES];
-//	}
+	if(edge.x != 0)
+	{
+		DTX_SCROLL_TO_EDGE(y, left, right, width, DTXCGMakePointX);
+	}
+	else if(edge.y != 0)
+	{
+		DTX_SCROLL_TO_EDGE(y, top, bottom, height, DTXCGMakePointY);
+	}
 }
 
 #define DTX_CAN_SCROLL_AXIS(main, inset, otherInset, _size) \
@@ -101,13 +110,13 @@ else if(offset.main < 0 && self.contentOffset.main >= self.contentSize._size + s
 
 - (BOOL)_dtx_canScrollWithOffset:(CGPoint)offset
 {
-	if(offset.y != 0)
-	{
-		DTX_CAN_SCROLL_AXIS(y, top, bottom, height);
-	}
-	else if(offset.x != 0)
+	if(offset.x != 0)
 	{
 		DTX_CAN_SCROLL_AXIS(x, left, right, width);
+	}
+	else if(offset.y != 0)
+	{
+		DTX_CAN_SCROLL_AXIS(y, top, bottom, height);
 	}
 	
 	return YES;
@@ -177,7 +186,10 @@ if(isnan(normalizedStartingPoint.main) || normalizedStartingPoint.main < 0 || no
 
 - (void)dtx_scrollWithOffset:(CGPoint)offset normalizedStartingPoint:(CGPoint)normalizedStartingPoint
 {
-	//TODO: Check if scroll view is scrollable with provided offset
+	if(offset.x == 0.0 && offset.y == 0.0)
+	{
+		return;
+	}
 	
 	NSAssert(offset.x == 0.0 || offset.y == 0.0, @"Scrolling simultaneously in both directions is unsupported");
 	[self _dtx_assertCanScrollWithOffset:offset];

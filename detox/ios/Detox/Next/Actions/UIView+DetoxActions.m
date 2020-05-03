@@ -170,8 +170,6 @@ static inline void DTXCalcPinchStartEndPoints(CGRect bounds, CGFloat pixelsScale
 	endPoint1->y = LNLinearInterpolate(startPoint1->y, endPoint1->y, pixelsScale);
 	endPoint2->x = LNLinearInterpolate(startPoint2->x, endPoint2->x, pixelsScale);
 	endPoint2->y = LNLinearInterpolate(startPoint2->y, endPoint2->y, pixelsScale);
-	
-	NSLog(@"");
 }
 
 __attribute__((always_inline))
