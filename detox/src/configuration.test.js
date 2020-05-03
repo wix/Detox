@@ -1,9 +1,26 @@
 const _ = require('lodash');
 const path = require('path');
 const schemes = require('./configurations.mock');
-const configuration = require('./configuration');
+
+jest.mock('./utils/argparse');
 
 describe('configuration', () => {
+  let args;
+  let configuration;
+  let detoxConfig;
+  let deviceConfig;
+  let userParams;
+
+  beforeEach(() => {
+    args = {};
+    detoxConfig = {};
+    deviceConfig = {};
+    userParams = undefined;
+
+    require('./utils/argparse').getArgValue.mockImplementation(key => args[key]);
+    configuration = require('./configuration');
+  });
+
   describe('composeArtifactsConfig', () => {
     it('should produce a default config', () => {
       expect(configuration.composeArtifactsConfig({
@@ -204,46 +221,265 @@ describe('configuration', () => {
   });
 
   describe('composeBehaviorConfig', () => {
-    it('should produce a default config', () => {
-      expect(configuration.composeBehaviorConfig({ deviceConfig: {}, detoxConfig: {} })).toEqual({
-        "init": {
-          "reinstallApp": true,
-          "launchApp": true,
-          "exposeGlobals": true
+    let composed = () => configuration.composeBehaviorConfig({
+      deviceConfig,
+      detoxConfig,
+      userParams,
+    });
+
+    it('should return a default behavior if nothing is set', () => {
+      expect(composed()).toEqual({
+        init: {
+          exposeGlobals: true,
+          reinstallApp: true,
+          launchApp: true,
         },
-        "cleanup": {
-          "shutdownDevice": false
-        }
+        cleanup: {
+          shutdownDevice: false,
+        },
+      })
+    });
+
+    describe('if detox config is set', () => {
+      beforeEach(() => {
+        detoxConfig = {
+          behavior: {
+            init: {
+              exposeGlobals: false,
+              reinstallApp: false,
+              launchApp: false,
+            },
+            cleanup: {
+              shutdownDevice: true,
+            },
+          },
+        };
+      });
+
+      it('should override the defaults', () => {
+        const expected = _.cloneDeep(detoxConfig.behavior);
+        const actual = composed();
+
+        expect(actual).toEqual(expected);
+      });
+
+      describe('if device config is set', () => {
+        beforeEach(() => {
+          deviceConfig = {
+            behavior: {
+              init: {
+                exposeGlobals: true,
+                reinstallApp: true,
+                launchApp: true,
+              },
+              cleanup: {
+                shutdownDevice: false,
+              },
+            },
+          };
+        });
+
+        it('should override the defaults from detox config', () => {
+          const expected = _.cloneDeep(deviceConfig.behavior);
+          const actual = composed();
+
+          expect(actual).toEqual(expected);
+        });
+
+        describe('if user params is set', () => {
+          beforeEach(() => {
+            userParams = {
+              initGlobals: false,
+              launchApp: false,
+              reuse: false,
+            };
+          });
+
+          it('should override the defaults from device config', () => {
+            expect(composed()).toEqual({
+              init: {
+                exposeGlobals: false,
+                reinstallApp: true,
+                launchApp: false,
+              },
+              cleanup: {
+                shutdownDevice: false,
+              }
+            });
+          });
+
+          describe('if cli args are set', () => {
+            beforeEach(() => {
+              args.reuse = true;
+              args.cleanup = true;
+            });
+
+            it('should override the user params', () => {
+              expect(composed()).toEqual({
+                init: {
+                  exposeGlobals: false,
+                  reinstallApp: false,
+                  launchApp: false,
+                },
+                cleanup: {
+                  shutdownDevice: true,
+                }
+              });
+            });
+          });
+        });
       });
     });
   });
 
-  describe.skip('composeBehaviorConfig', () => {
-    // TODO: write some tests
+  describe('composeDeviceConfig', () => {
+    describe('validation', () => {
+      it('should throw if configuration driver (type) is not defined', () => {
+        expect(() => configuration.composeDeviceConfig({
+          configurations: {
+            undefinedDriver: {
+              device: { type: 'iPhone X' },
+            },
+          },
+        })).toThrowError(/type.*missing.*ios.simulator.*android.emulator/);
+      });
+
+      it('should throw if device query is not defined', () => {
+        expect(() => configuration.composeDeviceConfig({
+          configurations: {
+            undefinedDeviceQuery: {
+              type: 'ios.simulator',
+            },
+          },
+        })).toThrowError(/device.*empty.*device.*query.*type.*avdName/);
+      });
+    });
+
+    describe('for no specified configuration name', () => {
+      beforeEach(() => { delete args.configuration; });
+
+      it('should return the first and only config', () => {
+        const singleDeviceConfig = {
+          type: 'someDriver',
+          device: 'someDevice'
+        };
+
+        expect(configuration.composeDeviceConfig({
+          configurations: { singleDeviceConfig }
+        })).toBe(singleDeviceConfig);
+      });
+
+      it('should throw if there is more than one config', () => {
+        const [config1, config2] = [1, 2].map(i => ({
+          type: `someDriver${i}`,
+          device: `someDevice${i}`,
+        }));
+
+        expect(() => configuration.composeDeviceConfig({
+          configurations: { config1, config2 }
+        })).toThrowError(/Cannot determine/);
+      });
+    });
+
+    describe('for a specified configuration name', () => {
+      let sampleConfigs;
+
+      beforeEach(() => {
+        args.configuration = 'config2';
+
+        const [config1, config2] = [1, 2].map(i => ({
+          type: `someDriver${i}`,
+          device: `someDevice${i}`,
+        }));
+
+        sampleConfigs = { config1, config2 };
+      });
+
+      it('should return that config', () => {
+        expect(configuration.composeDeviceConfig({
+          configurations: sampleConfigs
+        })).toEqual(sampleConfigs.config2);
+      });
+
+      describe('if device-name override is present', () => {
+        beforeEach(() => { args['device-name'] = 'Override'; });
+
+        it('should return that config with an overriden device query', () => {
+          expect(configuration.composeDeviceConfig({
+            configurations: sampleConfigs
+          })).toEqual({
+            ...sampleConfigs.config2,
+            device: 'Override',
+          });
+        });
+      })
+    });
   });
 
-  describe.skip('composeSessionConfig', () => {
-    it(`generate a default config`, async () => {
-      const config = await configuration.defaultSession();
-      expect(() => config.session.server).toBeDefined();
-      expect(() => config.session.sessionId).toBeDefined();
+  describe('composeSessionConfig', () => {
+    const compose = () => configuration.composeSessionConfig({
+      detoxConfig,
+      deviceConfig,
     });
 
-    it(`providing empty server config should throw`, () => {
-      testFaultySession();
+    it('should generate a default config', async () => {
+      const sessionConfig = await compose();
+
+      expect(sessionConfig).toMatchObject({
+        autoStart: true,
+        server: expect.stringMatching(/^ws:.*localhost:/),
+        sessionId: expect.stringMatching(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i),
+      });
     });
 
-    it(`providing server config with no session should throw`, () => {
-      testFaultySession(schemes.validOneDeviceNoSession.session);
-    });
+    describe('if detoxConfig.session is defined', function() {
+      beforeEach(() => {
+        detoxConfig.session = {
+          server: 'ws://localhost:9999',
+          sessionId: 'someSessionId',
+        };
+      })
 
-    it(`providing server config with no session.server should throw`, () => {
-      testFaultySession(schemes.invalidSessionNoServer.session);
-    });
+      it('should return detoxConfig.session', async () => {
+        expect(await compose()).toEqual({
+          server: 'ws://localhost:9999',
+          sessionId: 'someSessionId',
+        });
+      });
 
-    it(`providing server config with no session.sessionId should throw`, () => {
-      testFaultySession(schemes.invalidSessionNoSessionId.session);
-    });
+      test(`providing empty server config should throw`, () => {
+        delete detoxConfig.session.server;
+        expect(compose()).rejects.toThrowError(/session.server.*missing/);
+      });
 
+      test(`providing server config with no session should throw`, () => {
+        delete detoxConfig.session.sessionId;
+        expect(compose()).rejects.toThrowError(/session.sessionId.*missing/);
+      });
+
+      describe('if deviceConfig.session is defined', function() {
+        beforeEach(() => {
+          detoxConfig.session = {
+            server: 'ws://localhost:1111',
+            sessionId: 'anotherSession',
+          };
+        });
+
+        it('should return deviceConfig.session instead of detoxConfig.session', async () => {
+          expect(await compose()).toEqual({
+            server: 'ws://localhost:1111',
+            sessionId: 'anotherSession',
+          });
+        });
+      });
+    });
   });
+
+  describe('throwOnBinaryPath', () => {
+    it('should throw an error', () => {
+      expect(() => configuration.throwOnEmptyBinaryPath()).toThrowError(
+        /binaryPath.*missing/
+      );
+    })
+  })
 });

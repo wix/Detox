@@ -38,7 +38,7 @@ function composeBehaviorConfig({ detoxConfig, deviceConfig, userParams }) {
       init: {
         exposeGlobals: userParams.initGlobals,
         launchApp: userParams.launchApp,
-        reinstallApp: userParams.reuse,
+        reinstallApp: !userParams.reuse,
       },
     },
     deviceConfig.behavior,
@@ -205,8 +205,6 @@ function resolveArtifactsPathBuilder(artifactsConfig) {
 }
 
 module.exports = {
-  throwOnEmptyDevice,
-  throwOnEmptyType,
   throwOnEmptyBinaryPath,
   composeArtifactsConfig,
   composeBehaviorConfig,
