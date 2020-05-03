@@ -1,15 +1,15 @@
 //
-//  NSObject+DontCrashOnText.h
+//  UIView+DontCrash.h
 //  ExampleApp
 //
 //  Created by Leo Natan (Wix) on 4/16/20.
 //
 
-#import <Foundation/Foundation.h>
+@import UIKit;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSObject (DontCrashOnText)
+@interface UIView (DontCrash)
 
 @end
 
