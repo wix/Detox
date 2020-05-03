@@ -12,27 +12,6 @@ const ScreenshotArtifactPlugin = require('./artifacts/screenshot/ScreenshotArtif
 const VideoArtifactPlugin = require('./artifacts/video/VideoArtifactPlugin');
 const ArtifactPathBuilder = require('./artifacts/utils/ArtifactPathBuilder');
 
-async function defaultSession() {
-  return {
-    server: `ws://localhost:${await getPort()}`,
-    sessionId: uuid.UUID()
-  };
-}
-
-function validateSession(session) {
-  if (!session) {
-    throw new Error(`No session configuration was found, pass settings under the session property`);
-  }
-
-  if (!session.server) {
-    throw new Error(`session.server property is missing, should hold the server address`);
-  }
-
-  if (!session.sessionId) {
-    throw new Error(`session.sessionId property is missing, should hold the server session id`);
-  }
-}
-
 function throwOnEmptyDevice() {
   throw new DetoxConfigError(`'device' property is empty, should hold the device query to run on (e.g. { "type": "iPhone 11 Pro" }, { "avdName": "Nexus_5X_API_29" })`);
 }
@@ -75,6 +54,24 @@ function composeBehaviorConfig({ detoxConfig, deviceConfig, userParams }) {
       },
     }
   );
+}
+
+async function composeSessionConfig({ detoxConfig, deviceConfig }) {
+  const session = deviceConfig.session || detoxConfig.session || {
+    autoStart: true,
+    server: `ws://localhost:${await getPort()}`,
+    sessionId: uuid.UUID(),
+  };
+
+  if (!session.server) {
+    throw new Error(`session.server property is missing, should hold the server address`);
+  }
+
+  if (!session.sessionId) {
+    throw new Error(`session.sessionId property is missing, should hold the server session id`);
+  }
+
+  return session;
 }
 
 function composeDeviceConfig({ configurations }) {
@@ -208,12 +205,11 @@ function resolveArtifactsPathBuilder(artifactsConfig) {
 }
 
 module.exports = {
-  defaultSession,
-  validateSession,
   throwOnEmptyDevice,
   throwOnEmptyType,
   throwOnEmptyBinaryPath,
+  composeArtifactsConfig,
   composeBehaviorConfig,
   composeDeviceConfig,
-  composeArtifactsConfig,
+  composeSessionConfig,
 };

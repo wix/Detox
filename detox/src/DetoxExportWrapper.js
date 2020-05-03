@@ -91,11 +91,16 @@ class DetoxExportWrapper {
       userParams,
     });
 
+    const sessionConfig = configuration.composeSessionConfig({
+      detoxConfig,
+      deviceConfig,
+    });
+
     return new Detox({
       artifactsConfig,
       behaviorConfig,
       deviceConfig,
-      session: detoxConfig.session,
+      sessionConfig,
     });
   }
 }

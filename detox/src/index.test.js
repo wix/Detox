@@ -1,6 +1,6 @@
 const schemes = require('./configurations.mock');
 
-describe('index', () => {
+describe.skip('index', () => {
   let detox;
   let mockDevice;
   let mockDetox;

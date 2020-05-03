@@ -14,7 +14,7 @@ const defaultPlatformEnv = {
   },
 };
 
-describe('Detox', () => {
+describe.skip('Detox', () => {
   let client;
   let mockLogger;
   let fs;
@@ -362,5 +362,40 @@ describe('Detox', () => {
 
       expect(artifactsManager.onSuiteEnd).toHaveBeenCalledWith(suite);
     });
+  });
+
+  describe('.behaviorConfig', () => {
+    let behaviorConfig;
+
+    beforeEach(() => {
+      behaviorConfig = {};
+    });
+
+    function getDetox() {
+      Detox = require('./Detox');
+      detox = new Detox({
+        behaviorConfig,
+        deviceConfig: validDeviceConfig,
+      });
+    }
+
+    describe('.init', () => {
+      describe('.exposeGlobals', () => {
+        beforeEach(() => {
+
+        })
+
+      });
+
+      describe('.reinstallApp', () => {
+
+      });
+
+      describe('.launchApp', () => {
+
+      });
+
+    });
+
   });
 });

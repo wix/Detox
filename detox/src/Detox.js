@@ -11,7 +11,6 @@ const AttachedAndroidDriver = require('./devices/drivers/android/AttachedAndroid
 const DetoxRuntimeError = require('./errors/DetoxRuntimeError');
 const AsyncEmitter = require('./utils/AsyncEmitter');
 const MissingDetox = require('./utils/MissingDetox');
-const configuration = require('./configuration');
 const Client = require('./client/Client');
 const DetoxServer = require('./server/DetoxServer');
 const URL = require('url').URL;
@@ -37,12 +36,13 @@ class Detox {
 
     this[_initHandle] = null;
 
-    const {artifactsConfig, behaviorConfig, deviceConfig, session} = config;
+    const {artifactsConfig, behaviorConfig, deviceConfig, sessionConfig} = config;
 
     this._artifactsConfig = artifactsConfig;
     this._behaviorConfig = behaviorConfig;
     this._deviceConfig = deviceConfig;
-    this._userSession = deviceConfig.session || session;
+    this._sessionConfig = sessionConfig;
+
     this._client = null;
     this._server = null;
     this._artifactsManager = null;
@@ -140,9 +140,9 @@ class Detox {
 
   async _doInit() {
     const behaviorConfig = this._behaviorConfig.init;
-    const sessionConfig = await this._getSessionConfig();
+    const sessionConfig = this._sessionConfig;
 
-    if (!this._userSession) {
+    if (this._sessionConfig.autoStart) {
       this._server = new DetoxServer({
         log: logger,
         port: new URL(sessionConfig.server).port,
@@ -277,14 +277,6 @@ class Detox {
       log.error({ event: 'APP_CRASH' }, `App crashed in test '${testName}', here's the native stack trace: \n${pendingAppCrash}`);
       await this.device.launchApp({ newInstance: true });
     }
-  }
-
-  async _getSessionConfig() {
-    const session = this._userSession || await configuration.defaultSession();
-
-    configuration.validateSession(session);
-
-    return session;
   }
 
   _onEmitError({ error, eventName, eventObj }) {
