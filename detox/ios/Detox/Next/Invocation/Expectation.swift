@@ -81,7 +81,7 @@ class Expectation : CustomStringConvertible {
 	func evaluate() {
 		let view = self.element.view
 		
-		dtx_assert(evaluate(with: view), "Failed expectation: \(self.description)")
+		dtx_assert(evaluate(with: view), "Failed expectation: \(self.description)", view: view)
 	}
 	
 	var description: String {

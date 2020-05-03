@@ -6,7 +6,7 @@
 //  Copyright © 2020 Wix. All rights reserved.
 //
 
-@import UIKit;
+#import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-extern id dtx_try(void (^block)(void), NSError * __nullable * __null_unspecified error) NS_REFINED_FOR_SWIFT;
+extern id dtx_try(void (NS_NOESCAPE ^block)(void), NSError * __nullable * __null_unspecified error) NS_REFINED_FOR_SWIFT;
 
 #define DTXViewAssert(condition, _view, desc, ...)	\
 do {				\

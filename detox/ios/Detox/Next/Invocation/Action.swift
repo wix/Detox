@@ -248,11 +248,11 @@ class ScrollAction : Action {
 			scrollView = view.scrollView
 		}
 		else {
-			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UISrollView”")
+			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UISrollView”", view: view)
 		}
 		
 		if let whileExpectation = whileExpectation {
-			while (try? dtx_try({ whileExpectation.evaluate(); return true }) ?? false) == false {
+			while (try? dtx_try { whileExpectation.evaluate(); return true } ?? false) == false {
 				scrollView!.dtx_scroll(withOffset: targetOffset, normalizedStartingPoint: CGPoint(x: startPositionX, y: startPositionY))
 			}
 		}
@@ -290,7 +290,7 @@ class ScrollToEdgeAction : Action {
 			view.dtx_scroll(toNormalizedEdge: targetOffset)
 		}
 		else {
-			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UISrollView”")
+			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UISrollView”", view: view)
 		}
 		
 		return nil
@@ -420,7 +420,7 @@ class SetPickerAction : Action {
 			view.dtx_setComponent(column, toValue: value)
 		}
 		else {
-			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UIPickerView”")
+			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UIPickerView”", view: view)
 		}
 
 		return nil
@@ -440,7 +440,7 @@ class SetDatePickerAction : Action {
 			view.dtx_adjust(to: date)
 		}
 		else {
-			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UIDatePicker”")
+			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UIDatePicker”", view: view)
 		}
 		
 		return nil
