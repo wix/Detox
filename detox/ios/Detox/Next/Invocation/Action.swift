@@ -449,7 +449,6 @@ class SetDatePickerAction : Action {
 
 class GetAttributesAction : Action {
 	override func perform(on view: UIView) -> [String : Any]? {
-		return [:]
-//		return try! ["attributes": Dictionary(uniqueKeysWithValues: element.snapshot().dictionaryRepresentation.map { return ($0.rawValue, $1) })]
+		return view.dtx_attributes
 	}
 }

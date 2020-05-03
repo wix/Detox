@@ -107,6 +107,7 @@
 		39CE25AC22197F0900D78AA1 /* DetoxInstrumentsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 39CE25AA22197F0900D78AA1 /* DetoxInstrumentsManager.m */; };
 		39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */; };
 		39DA0E2822D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DA0E2722D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m */; };
+		39F5ACEC245F1CB000FB7F18 /* DTXLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39F5ACE5245F1CB000FB7F18 /* DTXLogging.swift */; };
 		39F62D41233730F500094FAB /* fishhook.h in Headers */ = {isa = PBXBuildFile; fileRef = 39F62D39233730F500094FAB /* fishhook.h */; };
 		39F62D42233730F500094FAB /* fishhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 39F62D40233730F500094FAB /* fishhook.c */; };
 		39F642281FDD5EB100468FED /* DTXLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 39F642201FDD5EB000468FED /* DTXLogging.h */; };
@@ -331,6 +332,7 @@
 		39DA0E2622D72AEF001E63A0 /* UIApplication+MockedSharedApplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIApplication+MockedSharedApplication.h"; sourceTree = "<group>"; };
 		39DA0E2722D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIApplication+MockedSharedApplication.m"; sourceTree = "<group>"; };
 		39DA0E3522D72C91001E63A0 /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
+		39F5ACE5245F1CB000FB7F18 /* DTXLogging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DTXLogging.swift; path = DTXLoggingInfra/DTXLogging.swift; sourceTree = SOURCE_ROOT; };
 		39F62D39233730F500094FAB /* fishhook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fishhook.h; path = EarlGrey/fishhook/fishhook.h; sourceTree = SOURCE_ROOT; };
 		39F62D40233730F500094FAB /* fishhook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fishhook.c; path = EarlGrey/fishhook/fishhook.c; sourceTree = SOURCE_ROOT; };
 		39F642201FDD5EB000468FED /* DTXLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTXLogging.h; path = DTXLoggingInfra/DTXLogging.h; sourceTree = SOURCE_ROOT; };
@@ -453,6 +455,7 @@
 				39F62D40233730F500094FAB /* fishhook.c */,
 				39F642201FDD5EB000468FED /* DTXLogging.h */,
 				39F642271FDD5EB000468FED /* DTXLogging.m */,
+				39F5ACE5245F1CB000FB7F18 /* DTXLogging.swift */,
 				39F6422B1FDD5F3300468FED /* DTXLoggingSubsystem.h */,
 				390D1C981E3A2893007F5F46 /* Detox.xcconfig */,
 				390D1C661E3A1480007F5F46 /* UserNotificationsPrivate */,
@@ -941,6 +944,7 @@
 				3980D158244C45EA004812DD /* Modifier.swift in Sources */,
 				3980D15A244C45EA004812DD /* Element.swift in Sources */,
 				3980D1122448B52C004812DD /* UIApplication+DTXAdditions.m in Sources */,
+				39F5ACEC245F1CB000FB7F18 /* DTXLogging.swift in Sources */,
 				3980D15E244C45EA004812DD /* Predicate.swift in Sources */,
 				3980D13B244C43EA004812DD /* UIView+DetoxExpectations.m in Sources */,
 				39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */,
