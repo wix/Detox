@@ -20,22 +20,21 @@
 
 @end
 
-id dtx_try(void (^block)(void), NSError * __nullable * __null_unspecified error)
+BOOL dtx_try(void (^block)(void), NSError * __nullable * __null_unspecified error)
 {
-	return [DTXAssertionHandler try:^id _Nonnull{
+	return [DTXAssertionHandler try:^ {
 		block();
-		return nil;
 	} error:error];
 }
 
 @implementation DTXAssertionHandler
 
-+ (__nullable id)try:(id(NS_NOESCAPE ^)(void))block error:(NSError * __nullable * __null_unspecified)error
++ (BOOL)try:(void(NS_NOESCAPE ^)(void))block error:(NSError * __nullable * __null_unspecified)error
 {
-	id rv = nil;
 	@try
 	{
-		rv = block();
+		block();
+		return YES;
 	}
 	@catch(DTXTestAssertionException *exception)
 	{
@@ -59,7 +58,7 @@ id dtx_try(void (^block)(void), NSError * __nullable * __null_unspecified error)
 		[exception raise];
 	}
 	
-	return rv;
+	return NO;
 }
 
 + (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line view:(UIView*)view description:(NSString *)format, ...

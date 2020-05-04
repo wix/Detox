@@ -46,7 +46,7 @@ static void (^gNoopTimerHandler)(CFRunLoopTimerRef timer) = ^(CFRunLoopTimerRef 
 	return self;
 }
 
-- (BOOL)spinWithStopConditionBlock:(BOOL (^)(void))stopConditionBlock
+- (BOOL)spinWithStopConditionBlock:(BOOL (NS_NOESCAPE ^)(void))stopConditionBlock
 {
 	NSAssert(_spinning == NO, @"Should not spin the same runloop spinner instance concurrently.");
 	

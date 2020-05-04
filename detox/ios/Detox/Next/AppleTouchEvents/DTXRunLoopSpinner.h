@@ -94,6 +94,6 @@
  *
  *  @return @c YES if the spinner evaluated the @c stopConditionBlock to @c YES; @c NO otherwise.
  */
-- (BOOL)spinWithStopConditionBlock:(BOOL (^)(void))stopConditionBlock;
+- (BOOL)spinWithStopConditionBlock:(BOOL (NS_NOESCAPE ^)(void))stopConditionBlock;
 
 @end

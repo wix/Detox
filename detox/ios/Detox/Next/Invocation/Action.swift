@@ -189,8 +189,7 @@ class ScrollAction : Action {
 		let whileExpectation : Expectation?
 		if let whileExpectationObj = dictionaryRepresentation[Keys.while] as? [String: Any] {
 			whileExpectation = Expectation.with(dictionaryRepresentation: whileExpectationObj)
-		}
-		else {
+		} else {
 			whileExpectation = nil
 		}
 		
@@ -246,17 +245,15 @@ class ScrollAction : Action {
 		}
 		else if let view = view as? WKWebView {
 			scrollView = view.scrollView
-		}
-		else {
+		} else {
 			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UISrollView”", view: view)
 		}
 		
 		if let whileExpectation = whileExpectation {
-			while (try? dtx_try { whileExpectation.evaluate(); return true } ?? false) == false {
+			while (try? dtx_try { whileExpectation.evaluate(); } ) == false {
 				scrollView!.dtx_scroll(withOffset: targetOffset, normalizedStartingPoint: CGPoint(x: startPositionX, y: startPositionY))
 			}
-		}
-		else {
+		} else {
 			scrollView!.dtx_scroll(withOffset: targetOffset, normalizedStartingPoint: CGPoint(x: startPositionX, y: startPositionY))
 		}
 		
@@ -288,8 +285,7 @@ class ScrollToEdgeAction : Action {
 		
 		if let view = view as? UIScrollView {
 			view.dtx_scroll(toNormalizedEdge: targetOffset)
-		}
-		else {
+		} else {
 			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UISrollView”", view: view)
 		}
 		
@@ -418,8 +414,7 @@ class SetPickerAction : Action {
 		
 		if let view = view as? UIPickerView {
 			view.dtx_setComponent(column, toValue: value)
-		}
-		else {
+		} else {
 			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UIPickerView”", view: view)
 		}
 
@@ -438,8 +433,7 @@ class SetDatePickerAction : Action {
 		
 		if let view = view as? UIDatePicker {
 			view.dtx_adjust(to: date)
-		}
-		else {
+		} else {
 			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UIDatePicker”", view: view)
 		}
 		

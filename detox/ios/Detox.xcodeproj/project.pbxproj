@@ -59,7 +59,7 @@
 		3980D1142448B52C004812DD /* DTXTouchInjector.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D1032448B52B004812DD /* DTXTouchInjector.h */; };
 		3980D1152448B52C004812DD /* UIView+DetoxActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D1042448B52B004812DD /* UIView+DetoxActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3980D1162448B52C004812DD /* DTXTouchInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D1052448B52B004812DD /* DTXTouchInfo.m */; };
-		3980D1172448B52C004812DD /* DTXRunLoopSpinner.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D1062448B52B004812DD /* DTXRunLoopSpinner.h */; };
+		3980D1172448B52C004812DD /* DTXRunLoopSpinner.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D1062448B52B004812DD /* DTXRunLoopSpinner.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3980D1182448B52C004812DD /* UITouch+DTXAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D1072448B52B004812DD /* UITouch+DTXAdditions.h */; };
 		3980D1192448B52C004812DD /* UITouch+DTXAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D1082448B52B004812DD /* UITouch+DTXAdditions.m */; };
 		3980D11A2448B52C004812DD /* DTXTouchInjector.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D1092448B52B004812DD /* DTXTouchInjector.m */; };

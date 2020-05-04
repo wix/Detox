@@ -11,5 +11,6 @@ framework module Detox {
 		header "UIScrollView+DetoxActions.h"
 		header "DTXAssertionHandler.h"
 		header "UIView+DetoxUtils.h"
+		header "DTXRunLoopSpinner.h"
 	}
 }

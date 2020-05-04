@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DTXAssertionHandler : NSObject
 
-+ (__nullable id)try:(id(NS_NOESCAPE ^)(void))block error:(NSError * __nullable * __null_unspecified)error NS_REFINED_FOR_SWIFT;
++ (BOOL)try:(void(NS_NOESCAPE ^)(void))block error:(NSError * __nullable * __null_unspecified)error NS_REFINED_FOR_SWIFT;
 
 + (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line view:(nullable UIView*)view description:(NSString *)format,... NS_FORMAT_FUNCTION(6,7);
 
@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-extern id dtx_try(void (NS_NOESCAPE ^block)(void), NSError * __nullable * __null_unspecified error) NS_REFINED_FOR_SWIFT;
+extern BOOL dtx_try(void (NS_NOESCAPE ^block)(void), NSError * __nullable * __null_unspecified error) NS_REFINED_FOR_SWIFT;
 
 #define DTXViewAssert(condition, _view, desc, ...)	\
 do {				\

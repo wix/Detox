@@ -8,8 +8,10 @@
 
 import UIKit
 
-func dtx_try<T: Any>(_ block: () -> T) throws -> T {
-	return try DTXAssertionHandler.__try(block) as! T
+@discardableResult
+func dtx_try(_ block: () -> Void) throws -> Bool {
+	try DTXAssertionHandler.__try(block)
+	return true
 }
 
 func dtx_fatalError(_ message: @autoclosure () -> String = String(), view: @autoclosure () -> UIView? = nil, function: String = #function, file: String = #file, line: UInt = #line) -> Never {
