@@ -92,6 +92,7 @@
       "EmulatorTelnet.js",
       "EmulatorExec.js",
       "EmulatorLauncher.js",
+      "EmulatorAllocator.js",
       "DeviceDriverBase.js",
       "GREYConfiguration.js",
       "src/utils/environment.js",

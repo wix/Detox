@@ -3,9 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const ini = require('ini');
 const AndroidDriver = require('./AndroidDriver');
-const FreeEmulatorFinder = require('./emulator/FreeEmulatorFinder');
 const AVDValidator = require('./emulator/AVDValidator');
-const EmulatorLauncher = require('./emulator/EmulatorLauncher');
+const EmulatorAllocator = require('./emulator/EmulatorAllocator');
 const EmulatorVersionResolver = require('./emulator/EmulatorVersionResolver');
 const { EmulatorExec } = require('./tools/EmulatorExec');
 const EmulatorTelnet = require('./tools/EmulatorTelnet');
@@ -17,12 +16,6 @@ const retry = require('../../../utils/retry');
 const log = require('../../../utils/logger').child({ __filename });
 const argparse = require('../../../utils/argparse');
 
-const DetoxEmulatorsPortRange = {
-  min: 10000,
-  max: 20000
-};
-
-const ACQUIRE_DEVICE_EV = 'ACQUIRE_DEVICE';
 const EMU_BIN_STABLE_SKIN_VER = 28;
 
 class EmulatorDriver extends AndroidDriver {
@@ -33,12 +26,10 @@ class EmulatorDriver extends AndroidDriver {
       lockfilePath: environment.getDeviceLockFilePathAndroid(),
     });
 
-    const emulatorExec = new EmulatorExec();
-    this._emuVersionResolver = new EmulatorVersionResolver(emulatorExec);
-    this._emuLauncher = new EmulatorLauncher(emulatorExec);
-    this._avdValidator = new AVDValidator(emulatorExec);
+    this._emulatorExec = new EmulatorExec();
+    this._emuVersionResolver = new EmulatorVersionResolver(this._emulatorExec);
+    this._avdValidator = new AVDValidator(this._emulatorExec);
 
-    this.pendingBoots = {};
     this._name = 'Unspecified Emulator';
   }
 
@@ -53,8 +44,6 @@ class EmulatorDriver extends AndroidDriver {
     await this._fixEmulatorConfigIniSkinNameIfNeeded(avdName);
 
     const adbName = await this._allocateDevice(avdName);
-
-    await this._boot(avdName, adbName);
 
     await this.adb.apiLevel(adbName);
     await this.adb.unlockScreen(adbName);
@@ -84,31 +73,6 @@ class EmulatorDriver extends AndroidDriver {
 
   /*async*/ binaryVersion() {
     return this._emuVersionResolver.resolve();
-  }
-
-  async _boot(avdName, adbName) {
-    const coldBoot = !!this.pendingBoots[adbName];
-
-    if (coldBoot) {
-      const port = this.pendingBoots[adbName];
-      await this._emuLauncher.launch(avdName, { port });
-      delete this.pendingBoots[adbName];
-    }
-
-    await this._waitForBootToComplete(adbName);
-    await this.emitter.emit('bootDevice', { coldBoot, deviceId: adbName, type: adbName });
-  }
-
-  async _waitForBootToComplete(deviceId) {
-    await retry({ retries: 240, interval: 2500 }, async () => {
-      const isBootComplete = await this.adb.isBootComplete(deviceId);
-
-      if (!isBootComplete) {
-        throw new DetoxRuntimeError({
-          message: `Android device ${deviceId} has not completed its boot yet.`,
-        });
-      }
-    });
   }
 
   async shutdown(deviceId) {
@@ -153,26 +117,24 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async _allocateDevice(avdName) {
-    log.debug({ event: ACQUIRE_DEVICE_EV }, `Looking up a device based on ${avdName}`);
-    const adbName = await this.deviceRegistry.allocateDevice(() => this._doAllocateDevice(avdName));
-    log.debug({ event: ACQUIRE_DEVICE_EV }, `Settled on ${adbName}`);
+    const emulatorAllocator = new EmulatorAllocator(avdName, this.adb, this.deviceRegistry, this._emulatorExec);
+
+    const adbName = await this.deviceRegistry.allocateDevice(() => emulatorAllocator.allocate());
+    await this._waitForDevice(adbName);
+    await this.emitter.emit('bootDevice', { coldBoot: emulatorAllocator.coldBooted, deviceId: adbName, type: adbName });
     return adbName;
   }
 
-  async _doAllocateDevice(avdName) {
-    const freeEmulatorFinder = new FreeEmulatorFinder(this.adb, this.deviceRegistry, avdName);
-    const freeEmulatorAdbName = await freeEmulatorFinder.findFreeDevice();
-    return freeEmulatorAdbName || this._createDevice();
-  }
+  async _waitForDevice(deviceId) {
+    await retry({ retries: 240, interval: 2500 }, async () => {
+      const isBootComplete = await this.adb.isBootComplete(deviceId);
 
-  async _createDevice() {
-    const {min, max} = DetoxEmulatorsPortRange;
-    let port = Math.random() * (max - min) + min;
-    port = port & 0xFFFFFFFE; // Should always be even
-
-    const adbName = `emulator-${port}`;
-    this.pendingBoots[adbName] = port;
-    return adbName;
+      if (!isBootComplete) {
+        throw new DetoxRuntimeError({
+          message: `Android device ${deviceId} has failed to launch in too many attempts`,
+        });
+      }
+    });
   }
 }
 
