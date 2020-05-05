@@ -162,8 +162,8 @@ object DetoxActionHandlersSpec : Spek({
             }
 
             it("should start recording with path") {
-                uut().handle("{\"recordingPath\":\"/MockPath\"}", messageId)
-                verify(instrumentsManager).startRecordingAtLocalPath(eq("/MockPath"))
+                uut().handle("{\"recordingPath\":\"/MockPath\", \"samplingInterval\":100500}", messageId)
+                verify(instrumentsManager).startRecordingAtLocalPath(eq("/MockPath"), eq(100500L))
             }
 
             it("should stop recording without path") {

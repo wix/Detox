@@ -90,11 +90,14 @@ static void detoxConditionalInit()
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidLaunch:) name:UIApplicationDidFinishLaunchingNotification object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
-	
-	NSString* recordingPath = [NSUserDefaults.standardUserDefaults objectForKey:@"recordingPath"];
+
+	NSUserDefaults *userDefaults = NSUserDefaults.standardUserDefaults;
+	NSString* recordingPath = [userDefaults objectForKey:@"recordingPath"];
 	if(recordingPath != nil)
 	{
-		[self _handlePerformanceRecording:NSDictionaryOfVariableBindings(recordingPath) isFromLaunch:YES completionHandler:nil];
+		NSString* samplingInterval = [userDefaults objectForKey:@"samplingInterval"];
+
+		[self _handlePerformanceRecording:NSDictionaryOfVariableBindings(recordingPath, samplingInterval) isFromLaunch:YES completionHandler:nil];
 	}
 	
 	return self;
@@ -424,6 +427,10 @@ static void detoxConditionalInit()
 	if(props[@"recordingPath"] != nil)
 	{
 		NSURL* absoluteURL = [NSURL fileURLWithPath:props[@"recordingPath"]];
+		NSTimeInterval samplingInterval = [props[@"samplingInterval"] doubleValue];
+		if (samplingInterval == 0) {
+			samplingInterval = 0.25;
+		}
 		
 		static dispatch_once_t onceToken;
 		dispatch_once(&onceToken, ^{
@@ -431,11 +438,11 @@ static void detoxConditionalInit()
 		});
 		if(launch)
 		{
-			[_recordingManager continueRecordingAtURL:absoluteURL];
+			[_recordingManager continueRecordingAtURL:absoluteURL andSamplingInterval:samplingInterval];
 		}
 		else
 		{
-			[_recordingManager startRecordingAtURL:absoluteURL];
+			[_recordingManager startRecordingAtURL:absoluteURL andSamplingInterval:samplingInterval];
 		}
 	}
 	else

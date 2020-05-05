@@ -8,12 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+
 @interface DetoxInstrumentsManager : NSObject
 
 + (NSURL*)defaultURLForTestName:(NSString*)testName;
 
-- (void)startRecordingAtURL:(NSURL*)URL;
-- (void)continueRecordingAtURL:(NSURL*)URL;
+- (void)startRecordingAtURL:(NSURL*)URL andSamplingInterval:(NSTimeInterval)samplingInterval;
+- (void)continueRecordingAtURL:(NSURL*)URL andSamplingInterval:(NSTimeInterval)samplingInterval;
 - (void)stopRecordingWithCompletionHandler:(void(^)(NSError* error))completionHandler;
 
 @end

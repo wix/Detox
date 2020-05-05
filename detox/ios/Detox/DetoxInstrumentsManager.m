@@ -234,7 +234,7 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 	return self;
 }
 
-- (id)_configForDetoxRecordingWithURL:(NSURL*)URL
+- (id)_configForDetoxRecordingWithURL:(NSURL*)URL andSamplingInterval:(NSTimeInterval)samplingInterval
 {
 	id config = [__DTXMutableProfilingConfiguration defaultProfilingConfiguration];
 	[config setRecordingFileURL:URL];
@@ -252,21 +252,23 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 	[config setRecordThreadInformation:YES];
 	[config setCollectStackTraces:YES];
 	[config setSymbolicateStackTraces:YES];
-	[config setSamplingInterval:0.1];
+	[config setSamplingInterval:samplingInterval];
 	
 	return config;
 }
 
-- (void)startRecordingAtURL:(NSURL*)URL
+- (void)startRecordingAtURL:(NSURL*)URL andSamplingInterval:(NSTimeInterval)samplingInterval
 {
-	dtx_log_info(@"Starting recording at %@", URL);
-	[_recorderInstance startProfilingWithConfiguration:[self _configForDetoxRecordingWithURL:URL]];
+	dtx_log_info(@"Starting recording at %@ with samplingInterval %f", URL, samplingInterval);
+	id config = [self _configForDetoxRecordingWithURL:URL andSamplingInterval:samplingInterval];
+	[_recorderInstance startProfilingWithConfiguration:config];
 }
 
-- (void)continueRecordingAtURL:(NSURL*)URL
+- (void)continueRecordingAtURL:(NSURL*)URL andSamplingInterval:(NSTimeInterval)samplingInterval
 {
-	dtx_log_info(@"Continuing recording at %@", URL);
-	[_recorderInstance continueProfilingWithConfiguration:[self _configForDetoxRecordingWithURL:URL]];
+	dtx_log_info(@"Continuing recording at %@ with samplingInterval %f", URL, samplingInterval);
+	id config = [self _configForDetoxRecordingWithURL:URL andSamplingInterval:samplingInterval];
+	[_recorderInstance continueProfilingWithConfiguration:config];
 }
 
 - (void)stopRecordingWithCompletionHandler:(void(^)(NSError* error))completionHandler

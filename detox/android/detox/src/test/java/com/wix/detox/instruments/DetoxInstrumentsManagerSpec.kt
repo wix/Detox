@@ -2,7 +2,6 @@ package com.wix.detox.instruments
 
 import android.content.Context
 import com.nhaarman.mockitokotlin2.*
-import org.assertj.core.api.Assertions
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import java.io.File
@@ -19,6 +18,7 @@ object DetoxInstrumentsManagerSpec : Spek({
         val mockAdditionalInfo = "MockAdditionalInfo"
         val mockStatus = "MockStatus"
         val mockPath = "/mock"
+        val mockSamplingInterval = 100500L
 
         beforeEachTest {
             appContext = mock()
@@ -28,10 +28,10 @@ object DetoxInstrumentsManagerSpec : Spek({
 
         it("should start recording when instruments installed with default params") {
             whenever(instruments.installed()).thenReturn(true)
-            instrumentsManager.startRecordingAtLocalPath(mockPath)
+            instrumentsManager.startRecordingAtLocalPath(mockPath, mockSamplingInterval)
 
             verify(instruments).installed()
-            verify(instruments).startRecording(appContext, true, 500L, File(mockPath), false)
+            verify(instruments).startRecording(appContext, true, mockSamplingInterval, File(mockPath), false)
         }
 
         describe("proxy events") {
@@ -54,7 +54,7 @@ object DetoxInstrumentsManagerSpec : Spek({
             }
 
             it("passing within started recording") {
-                instrumentsManager.startRecordingAtLocalPath(mockPath)
+                instrumentsManager.startRecordingAtLocalPath(mockPath, mockSamplingInterval)
                 instrumentsManager.eventBeginInterval(mockCategory, mockName, mockId, mockAdditionalInfo)
                 instrumentsManager.eventEndInterval(mockId, mockStatus, mockAdditionalInfo)
                 instrumentsManager.eventMark(mockCategory, mockName, mockId, mockStatus, mockAdditionalInfo)
@@ -65,7 +65,7 @@ object DetoxInstrumentsManagerSpec : Spek({
             }
 
             it("skipping with started recording which was stopped") {
-                instrumentsManager.startRecordingAtLocalPath(mockPath)
+                instrumentsManager.startRecordingAtLocalPath(mockPath, mockSamplingInterval)
                 instrumentsManager.stopRecording()
                 instrumentsManager.eventBeginInterval(mockCategory, mockName, mockId, mockAdditionalInfo)
                 instrumentsManager.eventEndInterval(mockId, mockStatus, mockAdditionalInfo)
@@ -79,7 +79,7 @@ object DetoxInstrumentsManagerSpec : Spek({
 
         it("should not start recording when instruments not installed") {
             whenever(instruments.installed()).thenReturn(false)
-            instrumentsManager.startRecordingAtLocalPath(mockPath)
+            instrumentsManager.startRecordingAtLocalPath(mockPath, mockSamplingInterval)
 
             verify(instruments).installed()
             verify(instruments, never()).startRecording(any(), any(), any(), any(), any())
@@ -109,7 +109,7 @@ object DetoxInstrumentsManagerSpec : Spek({
                         instruments.startRecording(any(), any(), any(), any(), any())
                 ).thenReturn(recording)
 
-                instrumentsManager.startRecordingAtLocalPath(mockPath)
+                instrumentsManager.startRecordingAtLocalPath(mockPath, mockSamplingInterval)
             }
 
             it("should begin event interval") {

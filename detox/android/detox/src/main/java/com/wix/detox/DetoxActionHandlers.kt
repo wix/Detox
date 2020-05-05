@@ -120,9 +120,11 @@ class InstrumentsRecordingStateActionHandler(
 ) : DetoxActionHandler {
 
     override fun handle(params: String, messageId: Long) {
-        val recordingPath = JSONObject(params).opt("recordingPath")
+        val json = JSONObject(params)
+        val recordingPath = json.opt("recordingPath")
         if (recordingPath is String) {
-            instrumentsManager.startRecordingAtLocalPath(recordingPath)
+            val samplingInterval = json.optLong("samplingInterval", 250)
+            instrumentsManager.startRecordingAtLocalPath(recordingPath, samplingInterval)
         } else {
             instrumentsManager.stopRecording()
         }

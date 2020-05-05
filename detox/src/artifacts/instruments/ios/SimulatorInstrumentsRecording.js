@@ -1,11 +1,16 @@
 const _ = require('lodash');
+const fs = require('fs-extra');
 const log = require('../../../utils/logger').child({ __filename });
 const InstrumentsArtifactRecording = require('../InstrumentsArtifactRecording');
 const FileArtifact = require('../../templates/artifact/FileArtifact');
 
 class SimulatorInstrumentsRecording extends InstrumentsArtifactRecording {
-  constructor({ pluginContext, client, temporaryRecordingPath }) {
-    super({ pluginContext, client, temporaryRecordingPath });
+  constructor({ pluginContext, client, userConfig, temporaryRecordingPath }) {
+    super({ pluginContext, client, userConfig, temporaryRecordingPath });
+  }
+
+  prepareSamplingInterval(samplingInterval) {
+    return Number(samplingInterval) / 1000.0;
   }
 
   async doSave(artifactPath) {

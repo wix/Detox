@@ -3,8 +3,8 @@ const SimulatorInstrumentsRecording = require('./SimulatorInstrumentsRecording')
 const temporaryPath = require('../../utils/temporaryPath');
 
 class SimulatorInstrumentsPlugin extends InstrumentsArtifactPlugin {
-  constructor({ api, client }) {
-    super({ api });
+  constructor({api, client}) {
+    super({api});
 
     this.client = client;
   }
@@ -14,6 +14,10 @@ class SimulatorInstrumentsPlugin extends InstrumentsArtifactPlugin {
 
     if (this.testRecording) {
       event.launchArgs['recordingPath'] = this.testRecording.temporaryRecordingPath;
+      event.launchArgs['samplingInterval'] =
+        this.api.userConfig.samplingInterval
+          ? Number(this.api.userConfig.samplingInterval) / 1000.0
+          : 0.25;
     }
 
     if (process.env.DETOX_INSTRUMENTS_PATH) {
@@ -29,6 +33,7 @@ class SimulatorInstrumentsPlugin extends InstrumentsArtifactPlugin {
     return new SimulatorInstrumentsRecording({
       pluginContext: this.context,
       client: this.client,
+      userConfig: this.api.userConfig,
       temporaryRecordingPath: temporaryPath.for.dtxrec(),
     });
   }
