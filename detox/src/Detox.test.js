@@ -16,8 +16,9 @@ jest.mock('./server/DetoxServer', () => {
 describe('Detox', () => {
   let detoxConfig;
 
-  let Device;
+  let logger;
   let FakeDriverRegistry;
+  let Device;
   let Client;
   let DetoxServer;
   let ArtifactsManager;
@@ -47,15 +48,13 @@ describe('Detox', () => {
       },
     });
 
+    logger = require('./utils/logger');
     Device = require('./devices/Device');
     FakeDriverRegistry = require('./devices/DriverRegistry');
     ArtifactsManager = require('./artifacts/ArtifactsManager');
     Client = require('./client/Client');
     DetoxServer = require('./server/DetoxServer');
     Detox = require('./Detox');
-
-    onClientCreate = () => {};
-    onDeviceCreate = () => {};
   });
 
   describe('when detox.init() is called', () => {
@@ -81,10 +80,9 @@ describe('Detox', () => {
       beforeEach(init);
 
       it('should create a DetoxServer automatically', () =>
-        expect(DetoxServer).toHaveBeenCalledWith(
-          expect.objectContaining({
-            port: expect.anything(),
-          })));
+        expect(DetoxServer).toHaveBeenCalledWith({
+          port: expect.anything(),
+        }));
 
       it('should create a new Client', () =>
         expect(Client).toHaveBeenCalledWith(expect.objectContaining({
@@ -103,10 +101,10 @@ describe('Detox', () => {
       it('should resolve a device driver from the registry', () =>
         expect(FakeDriverRegistry.default.resolve).toHaveBeenCalledWith(
           detoxConfig.deviceConfig.type,
-          expect.objectContaining({
+          {
             client: expect.anything(),
             emitter: expect.anything(),
-          })
+          }
         ));
 
       it('should take device driver matchers to Detox', () =>
@@ -116,12 +114,12 @@ describe('Detox', () => {
         expect(detox.device).toBe(device()));
 
       it('should instantiate Device', () =>
-        expect(Device).toHaveBeenCalledWith(expect.objectContaining({
+        expect(Device).toHaveBeenCalledWith({
           deviceConfig: detoxConfig.deviceConfig,
           emitter: expect.anything(),
           deviceDriver: expect.anything(),
           sessionConfig: expect.anything(),
-        })));
+        }));
 
       it('should expose device to global', () =>
         expect(global.device).toBe(device()));
@@ -156,8 +154,8 @@ describe('Detox', () => {
         });
       });
 
-      it('should return itself', () =>
-        expect(detox).toBeInstanceOf(Detox));
+      it('should return itself', async () =>
+        expect(await detox.init()).toBeInstanceOf(Detox));
     });
 
     it('should return the same promise on consequent calls', () => {
@@ -169,7 +167,7 @@ describe('Detox', () => {
       expect(initPromise1).toBe(initPromise2);
     });
 
-    describe('with no sessionConfig.autoStart', () => {
+    describe('with sessionConfig.autoStart undefined', () => {
       beforeEach(() => { delete detoxConfig.sessionConfig.autoStart; });
       beforeEach(init);
 
@@ -236,10 +234,207 @@ describe('Detox', () => {
       it('should not launch the app', () =>
         expect(device().launchApp).not.toHaveBeenCalled());
     });
+
+    describe('and it gets unresponsiveness', () => {
+      let THREAD_DUMP = 'Simulated non-responsiveness';
+
+      beforeEach(init);
+
+      beforeEach(() => {
+        const listener = client().setNonresponsivenessListener.mock.calls[0][0];
+        listener({ threadDump: THREAD_DUMP });
+      });
+
+      it('should log a warning', () =>
+        expect(logger.warn).toHaveBeenCalledWith(
+          { event: 'APP_NONRESPONSIVE' },
+          expect.stringContaining(THREAD_DUMP)
+        ));
+    });
+
+    describe('and it gets emitter error', () => {
+      beforeEach(init);
+
+      it(`should log EMIT_ERROR if the internal emitter throws an error`, async () => {
+        const { emitter } = Device.mock.calls[0][0];
+
+        const testError = new Error();
+        emitter.on('bootDevice', async () => { throw testError; })
+        await emitter.emit('bootDevice', {});
+
+        expect(logger.error).toHaveBeenCalledWith(
+          { event: 'EMIT_ERROR', fn: 'bootDevice' },
+          expect.stringMatching(/^Caught an exception.*bootDevice/),
+          testError
+        );
+      });
+    });
   });
 
-  describe.skip('when detox.beforeEach() is called', () => {
+  describe('when detox.beforeEach() is called', () => {
+    describe('before detox.init() is called', () => {
+      beforeEach(() => {
+        detox = new Detox(detoxConfig);
+      });
 
+      it('should throw an error', () =>
+        expect(detox.beforeEach(testSummaries.running())).rejects.toThrowError(/of null/));
+    });
+
+    describe('before detox.init() is finished', () => {
+      beforeEach(() => {
+        detox = new Detox(detoxConfig);
+      });
+
+      it('should throw an error', async () => {
+        const initPromise = detox.init();
+        await expect(detox.beforeEach(testSummaries.running())).rejects.toThrowError(/Aborted detox.init/);
+        await expect(initPromise).rejects.toThrowError(/Aborted detox.init/);
+      })
+    });
+
+    describe('after detox.init() is finished', () => {
+      beforeEach(async () => {
+        detox = await new Detox(detoxConfig).init();
+        device().launchApp.mockReset();
+      });
+
+      it('should validate test summary object', async () => {
+        await expect(detox.beforeEach('Test')).rejects.toThrowError(
+          /Invalid test summary was passed/
+        );
+      });
+
+      it('should validate test summary status', async () => {
+        await expect(detox.beforeEach({
+          ...testSummaries.running(),
+          status: undefined,
+        })).rejects.toThrowError(/Invalid test summary status/);
+      });
+
+      it('should validate test summary status', async () => {
+        await expect(detox.beforeEach({
+          ...testSummaries.running(),
+          status: undefined,
+        })).rejects.toThrowError(/Invalid test summary status/);
+      });
+
+      describe('with a valid test summary', () => {
+        beforeEach(() => detox.beforeEach(testSummaries.running()));
+
+        it('should trace DETOX_BEFORE_EACH event', () =>
+          expect(logger.trace).toHaveBeenCalledWith(
+            expect.objectContaining({ event: 'DETOX_BEFORE_EACH' }),
+            expect.any(String)
+          ));
+
+        it('should notify artifacts manager about "testStart', () =>
+          expect(artifactsManager().onTestStart).toHaveBeenCalledWith(testSummaries.running()));
+
+        it('should not relaunch app', async () => {
+          await detox.beforeEach(testSummaries.running());
+          expect(device().launchApp).not.toHaveBeenCalled();
+        });
+
+        it('should not dump pending network requests', async () => {
+          await detox.beforeEach(testSummaries.running());
+          expect(client().dumpPendingRequests).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('if app has crashed', () => {
+        beforeEach(async () => {
+          client().getPendingCrashAndReset.mockReturnValueOnce('Simulated crash');
+          await detox.beforeEach(testSummaries.running());
+        });
+
+        it('should print log message', () =>
+          expect(logger.error).toHaveBeenCalledWith(
+            { event: 'APP_CRASH' }, expect.any(String)
+          ));
+
+        it('should also relaunch app', () =>
+          expect(device().launchApp).toHaveBeenCalledWith({ newInstance: true }));
+      });
+    });
+  });
+
+  describe('when detox.afterEach() is called', () => {
+    describe('before detox.init() is called', () => {
+      beforeEach(() => {
+        detox = new Detox(detoxConfig);
+      });
+
+      it('should throw an error', () =>
+        expect(detox.afterEach(testSummaries.running())).rejects.toThrowError(/of null/));
+    });
+
+    describe('before detox.init() is finished', () => {
+      beforeEach(() => {
+        detox = new Detox(detoxConfig);
+      });
+
+      it('should throw an error', async () => {
+        const initPromise = detox.init();
+        await expect(detox.afterEach(testSummaries.running())).rejects.toThrowError(/Aborted detox.init/);
+        await expect(initPromise).rejects.toThrowError(/Aborted detox.init/);
+      })
+    });
+
+    describe('after detox.init() is finished', () => {
+      beforeEach(async () => {
+        detox = await new Detox(detoxConfig).init();
+        await detox.beforeEach(testSummaries.running());
+      });
+
+      it('should validate non-object test summary', () =>
+        expect(detox.afterEach()).rejects.toThrowError(/Invalid test summary was passed/));
+
+      it('should validate against invalid test summary status', () =>
+        expect(detox.afterEach({})).rejects.toThrowError(/Invalid test summary status/));
+
+      describe('with a passing test summary', () => {
+        beforeEach(() => detox.afterEach(testSummaries.passed()));
+
+        it('should trace DETOX_AFTER_EACH event', () =>
+          expect(logger.trace).toHaveBeenCalledWith(
+            expect.objectContaining({ event: 'DETOX_AFTER_EACH' }),
+            expect.any(String)
+          ));
+
+        it('should notify artifacts manager about "testDone"', () =>
+          expect(artifactsManager().onTestDone).toHaveBeenCalledWith(testSummaries.passed()));
+      });
+
+      describe('with a failed test summary (due to failed asseration)', () => {
+        beforeEach(() => detox.afterEach(testSummaries.failed()));
+
+        it('should not dump pending network requests', () =>
+          expect(client().dumpPendingRequests).not.toHaveBeenCalled());
+      });
+
+      describe('with a failed test summary (due to app crash)', () => {
+        beforeEach(async () => {
+          client().getPendingCrashAndReset.mockReturnValueOnce('Simulated crash');
+          await detox.afterEach(testSummaries.failed());
+        });
+
+        it('should print log message', () =>
+          expect(logger.error).toHaveBeenCalledWith(
+            { event: 'APP_CRASH' }, expect.any(String)
+          ));
+
+        it('should also relaunch app', () =>
+          expect(device().launchApp).toHaveBeenCalledWith({ newInstance: true }));
+      });
+
+      describe('with a failed test summary (due to a timeout)', () => {
+        beforeEach(() => detox.afterEach(testSummaries.timedOut()));
+
+        it('should dump pending network requests', () =>
+          expect(client().dumpPendingRequests).toHaveBeenCalled());
+      });
+    });
   });
 
   describe('when detox.cleanup() is called', () => {
@@ -306,16 +501,20 @@ describe('Detox', () => {
     });
 
     describe('after detox.init()', () => {
-      beforeEach(startInit);
-      beforeEach(() => detox.init());
-
-      it(`should not throw`, async () =>
-        await expect(detox.cleanup()).resolves.not.toThrowError());
-
-      it(`should not shutdown the device`, async () => {
+      beforeEach(async () => {
+        detox = new Detox(detoxConfig);
+        await detox.init();
         await detox.cleanup();
-        expect(device().shutdown).not.toHaveBeenCalled();
       });
+
+      it(`should not shutdown the device`, () =>
+        expect(device().shutdown).not.toHaveBeenCalled());
+
+      it(`should trigger artifactsManager.onBeforeCleanup()`, () =>
+        expect(artifactsManager().onBeforeCleanup).toHaveBeenCalled());
+
+      it(`should dump pending network requests`, () =>
+        expect(client().dumpPendingRequests).toHaveBeenCalled());
     });
 
     describe('when behaviorConfig.cleanup.shutdownDevice = true', () => {
@@ -331,204 +530,27 @@ describe('Detox', () => {
     });
   });
 
-  describe.skip('todo', () => {
-
-    it(`Calling detox.beforeEach() before detox.init() completes, throws error`, async () => {
-      Detox = require('./Detox');
-      detox = new Detox({deviceConfig: validDeviceConfig});
-      const detoxInitPromise = detox.init();
-      await expect(detox.beforeEach(testSummaries.running())).rejects.toThrowError(/Aborted detox.init/);
-      await expect(detoxInitPromise).rejects.toThrowError(/Aborted detox.init/);
+  describe('when detox.suiteStart() is called', () => {
+    beforeEach(async () => {
+      detox = await new Detox(detoxConfig).init();
     });
 
-    it(`Calling detox.afterEach() before detox.init() completes, throws error`, async () => {
-      Detox = require('./Detox');
-      detox = new Detox({deviceConfig: validDeviceConfig});
-      const detoxInitPromise = detox.init();
-      await expect(detox.afterEach(testSummaries.failed())).rejects.toThrowError(/Aborted detox.init/);
-      await expect(detoxInitPromise).rejects.toThrowError(/Aborted detox.init/);
+    it(`should pass suite info to artifactsManager.onSuiteStart`, async () => {
+      const suite = { name: 'testSuiteName' };
+      await detox.suiteStart(suite);
+      expect(artifactsManager().onSuiteStart).toHaveBeenCalledWith(suite);
+    });
+  });
+
+  describe('when detox.suiteEnd() is called', () => {
+    beforeEach(async () => {
+      detox = await new Detox(detoxConfig).init();
     });
 
-    it(`Calling detox.cleanup() before detox.init() completes makes that .init() throw an error`, async () => {
-      Detox = require('./Detox');
-      detox = new Detox({deviceConfig: validDeviceConfig});
-      const detoxInitPromise = detox.init();
-      await detox.cleanup();
-      await expect(detoxInitPromise).rejects.toThrowError(/Aborted detox.init/);
-    });
-
-    it(`Not passing --cleanup should keep the currently running device up`, async () => {
-      Detox = require('./Detox');
-      detox = new Detox({deviceConfig: validDeviceConfig});
-      await detox.init();
-      const device = detox.device;
-      await detox.cleanup();
-      expect(device.shutdown).toHaveBeenCalledTimes(0);
-    });
-
-    it(`cleanup on a non initialized detox should not throw`, async () => {
-      Detox = require('./Detox');
-      detox = new Detox({deviceConfig: invalidDeviceConfig});
-      detox.cleanup();
-    });
-
-    it(`Detox should prefer session defined per configuration over common session`, async () => {
-      Detox = require('./Detox');
-      detox = new Detox({deviceConfig: validDeviceConfigWithSession, session: {}});
-      await detox.init();
-
-      const expectedSession = validDeviceConfigWithSession.session;
-      expect(clientMockData.lastConstructorArguments[0]).toBe(expectedSession);
-    });
-
-    it(`handleAppCrash if client has a pending crash`, async () => {
-      client.getPendingCrashAndReset.mockReturnValueOnce('crash');
-
-      Detox = require('./Detox');
-      detox = new Detox({deviceConfig: validDeviceConfigWithSession});
-      await detox.init();
-      await detox.afterEach(testSummaries.failed());
-      expect(device.launchApp).toHaveBeenCalledTimes(1);
-    });
-
-    it(`handleAppCrash should not dump pending requests if testSummary has no timeout flag`, async () => {
-      Detox = require('./Detox');
-      detox = new Detox({deviceConfig: validDeviceConfigWithSession});
-
-      await detox.init();
-      await detox.afterEach(testSummaries.failed());
-
-      expect(client.dumpPendingRequests).not.toHaveBeenCalled();
-    });
-
-    it(`handleAppCrash should dump pending requests if testSummary has timeout flag`, async () => {
-      Detox = require('./Detox');
-      detox = new Detox({deviceConfig: validDeviceConfigWithSession});
-
-      await detox.init();
-      await detox.afterEach(testSummaries.timedOut());
-      expect(client.dumpPendingRequests).toHaveBeenCalled();
-    });
-
-    it(`should log thread-dump provided by a nonresponsiveness event`, async () => {
-      const callbackParams = {
-        threadDump: 'mockThreadDump',
-      };
-      const expectedMessage = [
-        'Application nonresponsiveness detected!',
-        'On Android, this could imply an ANR alert, which evidently causes tests to fail.',
-        'Here\'s the native main-thread stacktrace from the device, to help you out (refer to device logs for the complete thread dump):',
-        callbackParams.threadDump,
-        'Refer to https://developer.android.com/training/articles/perf-anr for further details.'
-      ].join('\n');
-
-      Detox = require('./Detox');
-      detox = new Detox({deviceConfig: validDeviceConfigWithSession});
-
-      await detox.init();
-      await invokeDetoxCallback();
-
-      expect(mockLogger.warn).toHaveBeenCalledWith({ event: 'APP_NONRESPONSIVE' }, expectedMessage);
-
-      async function invokeDetoxCallback() {
-        const callback = client.setNonresponsivenessListener.mock.calls[0][0];
-        await callback(callbackParams);
-      }
-    });
-
-    it('properly instantiates configuration pointing to a plugin driver', async () => {
-      let instantiated = false;
-      class MockDriverPlugin {
-        constructor(config) {
-          instantiated = true;
-        }
-        on() {}
-        declareArtifactPlugins() {}
-      }
-      jest.mock('driver-plugin', () => MockDriverPlugin, { virtual: true });
-      const pluginDeviceConfig = {
-        "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-        "type": "driver-plugin",
-        "name": "MyPlugin"
-      };
-
-      Detox = require('./Detox');
-      detox = new Detox({deviceConfig: pluginDeviceConfig});
-      await detox.init();
-
-      expect(instantiated).toBe(true);
-    });
-
-    it(`should log EMIT_ERROR if the internal emitter throws an error`, async () => {
-      Detox = require('./Detox');
-      detox = new Detox({deviceConfig: validDeviceConfigWithSession});
-
-      const emitter = detox._eventEmitter;
-      emitter.on('launchApp', () => { throw new Error('TestError'); });
-      await emitter.emit('launchApp');
-
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        { event: 'EMIT_ERROR', fn: 'launchApp' },
-        expect.stringMatching(/Caught an exception in.*emit.*launchApp.*undefined/),
-        expect.any(Error),
-      )
-    });
-
-    describe('.artifactsManager', () => {
-      it(`Calling detox.beforeEach() will trigger artifacts manager .onTestStart`, async () => {
-        const testSummary = testSummaries.running();
-        await detox.beforeEach(testSummary);
-
-        expect(artifactsManager().onTestStart).toHaveBeenCalledWith(testSummary);
-      });
-
-      it(`Calling detox.beforeEach() and detox.afterEach() with a deprecated signature will throw an exception`, async () => {
-        const { title, fullName, status } = testSummaries.running();
-
-        await expect(detox.beforeEach(title, fullName, status)).rejects.toThrowError();
-        expect(artifactsManager().onTestStart).not.toHaveBeenCalled();
-
-        await expect(detox.afterEach(title, fullName, status)).rejects.toThrowError();
-        expect(artifactsManager().onTestDone).not.toHaveBeenCalled();
-      });
-
-      it(`Calling detox.beforeEach() and detox.afterEach() with incorrect test status will throw an exception`, async () => {
-        const testSummary = { ...testSummaries.running(), status: 'incorrect status' };
-
-        await expect(detox.beforeEach(testSummary)).rejects.toThrowError();
-        expect(artifactsManager().onTestStart).not.toHaveBeenCalled();
-
-        await expect(detox.afterEach(testSummary)).rejects.toThrowError();
-        expect(artifactsManager().onTestDone).not.toHaveBeenCalled();
-      });
-
-      it(`Calling detox.afterEach() should trigger artifactsManager.onTestDone`, async () => {
-        const testSummary = testSummaries.passed();
-        await detox.afterEach(testSummary);
-
-        expect(artifactsManager().onTestDone).toHaveBeenCalledWith(testSummary);
-      });
-
-      it(`Calling detox.cleanup() should trigger artifactsManager.onBeforeCleanup()`, async () => {
-        await detox.cleanup();
-        expect(artifactsManager().onBeforeCleanup).toHaveBeenCalledTimes(1);
-      });
-
-      it(`should trigger artifactsManager.onSuiteStart`, async() => {
-        const suite = {name: 'testSuiteName'};
-
-        await detox.suiteStart(suite);
-
-        expect(artifactsManager().onSuiteStart).toHaveBeenCalledWith(suite);
-      });
-
-      it(`should trigger artifactsManager.onSuiteEnd`, async() => {
-        const suite = {name: 'testSuiteName'};
-
-        await detox.suiteEnd(suite);
-
-        expect(artifactsManager().onSuiteEnd).toHaveBeenCalledWith(suite);
-      });
+    it(`should pass suite info to artifactsManager.onSuiteStart`, async () => {
+      const suite = { name: 'testSuiteName' };
+      await detox.suiteEnd(suite);
+      expect(artifactsManager().onSuiteEnd).toHaveBeenCalledWith(suite);
     });
   });
 });
