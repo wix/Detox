@@ -74,8 +74,50 @@ async function composeSessionConfig({ detoxConfig, deviceConfig }) {
   return session;
 }
 
-function composeDeviceConfig({ configurations }) {
-  const configurationName = argparse.getArgValue('configuration');
+async function composeDetoxConfig(detoxConfig, userParams, cliConfig = getArtifactsCliConfig()) {
+  if (!detoxConfig) {
+    throw new Error(`No configuration was passed to detox, make sure you pass a detoxConfig when calling 'detox.init(detoxConfig)'`);
+  }
+
+  const deviceConfig = composeDeviceConfig(detoxConfig);
+  const configurationName = _.findKey(detoxConfig.configurations, (config) => {
+    return config === deviceConfig;
+  });
+
+  const artifactsConfig = composeArtifactsConfig({
+    configurationName,
+    detoxConfig,
+    deviceConfig,
+    cliConfig,
+  });
+
+  const behaviorConfig = composeBehaviorConfig({
+    detoxConfig,
+    deviceConfig,
+    userParams,
+  });
+
+  const sessionConfig = composeSessionConfig({
+    detoxConfig,
+    deviceConfig,
+  });
+
+  return {
+    artifactsConfig,
+    behaviorConfig,
+    deviceConfig,
+    sessionConfig,
+  };
+}
+
+function composeDeviceConfig(options) {
+  const { configurations, selectedConfiguration } = options;
+
+  if (_.isEmpty(configurations)) {
+    throw new Error(`There are no device configurations in the detox config`);
+  }
+
+  const configurationName = selectedConfiguration || argparse.getArgValue('configuration');
   const deviceOverride = argparse.getArgValue('device-name');
 
   const deviceConfig = (!configurationName && _.size(configurations) === 1)
@@ -121,7 +163,7 @@ function composeArtifactsConfig({
   configurationName,
   deviceConfig,
   detoxConfig,
-  cliConfig = getArtifactsCliConfig()
+  cliConfig,
 }) {
   const artifactsConfig = _.defaultsDeep(
       extendArtifactsConfig({
@@ -210,4 +252,5 @@ module.exports = {
   composeBehaviorConfig,
   composeDeviceConfig,
   composeSessionConfig,
+  composeDetoxConfig,
 };

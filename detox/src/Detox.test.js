@@ -1,18 +1,6 @@
+const configuration = require('./configuration');
 const schemes = require('./configurations.mock');
 const testSummaries = require('./artifacts/__mocks__/testSummaries.mock');
-
-const defaultPlatformEnv = {
-  darwin: {},
-  linux: {
-    // Not set by default on Ubuntu
-    // XDG_DATA_HOME: '/home/detox-user/.local/share',
-  },
-  win32: {
-    // Required for appdatapath.js
-    LOCALAPPDATA: 'C:\\Users\\detox-user\\AppData\\Local',
-    USERPROFILE: 'C:\\Users\\detox-user',
-  },
-};
 
 describe.skip('Detox', () => {
   let client;
@@ -21,61 +9,49 @@ describe.skip('Detox', () => {
   let Detox;
   let detox;
 
-  const validDeviceConfig = schemes.validOneDeviceNoSession.configurations['ios.sim.release'];
-  const validDeviceConfigWithSession = schemes.sessionPerConfiguration.configurations['ios.sim.none'];
-  const invalidDeviceConfig = schemes.invalidDeviceNoDeviceType.configurations['ios.sim.release'];
-  const invalidDeviceTypeConfig = schemes.invalidOneDeviceTypeEmulatorNoSession.configurations['ios.sim.release'];
-  const validSession = schemes.validOneDeviceAndSession.session;
-  const clientMockData = {lastConstructorArguments: null};
-  const deviceMockData = {lastConstructorArguments: null};
+  let artifactsConfig;
+  let behaviorConfig;
+  let deviceConfig;
+  let sessionConfig;
+
+  let configuration;
 
   beforeEach(async () => {
-    function setCustomClassMock(modulePath, dataObject, mockObject = {}) {
-      const JestMock = jest.genMockFromModule(modulePath);
-      class FinalMock extends JestMock {
-        constructor(...rest) {
-          super(rest);
-          dataObject.lastConstructorArguments = rest;
-
-          Object.keys(mockObject).forEach((key) => {
-            this[key] = mockObject[key].bind(this);
-          });
-        }
-        on(event, callback) {
-          if (event === 'launchApp') {
-            callback({});
-          }
-        }
-      }
-      jest.setMock(modulePath, FinalMock);
-    }
-
-    jest.mock('fs');
-    jest.mock('fs-extra');
-    fs = require('fs');
-    jest.mock('./ios/expect');
-
-    mockLogger = jest.genMockFromModule('./utils/logger');
-    mockLogger.child.mockReturnValue(mockLogger);
-    jest.mock('./utils/logger', () => mockLogger);
-
-    setCustomClassMock('./devices/Device', deviceMockData);
-
-    client = {
-      setNonresponsivenessListener: jest.fn(),
-      getPendingCrashAndReset: jest.fn(),
-      dumpPendingRequests: jest.fn(),
-    };
-    setCustomClassMock('./client/Client', clientMockData, client);
-
-    process.env = Object.assign({}, defaultPlatformEnv[process.platform]);
-
-    global.device = undefined;
-
-    jest.mock('./devices/drivers/ios/IosDriver');
-    jest.mock('./devices/drivers/ios/SimulatorDriver');
+    jest.mock('./utils/logger');
     jest.mock('./devices/Device');
+    jest.mock('./client/Client');
     jest.mock('./server/DetoxServer');
+  });
+
+  describe('', () => {
+    beforeEach(() => {
+      const detoxConfig = {
+        selectedConfiguration: 'test',
+        configurations: {
+          test: {
+
+          },
+        },
+      };
+
+      deviceConfig = configuration.composeDeviceConfig(detoxConfig);
+      artifactsConfig = configuration.composeArtifactsConfig({
+        configurationName: detoxConfig.selectedConfiguration,
+        deviceConfig,
+        detoxConfig,
+        cliConfig: {},
+      });
+      behaviorConfig = configuration.composeBehaviorConfig({
+        detoxConfig,
+        deviceConfig,
+      });
+      sessionConfig = configuration.composeSessionConfig({
+        detoxConfig,
+        deviceConfig,
+      });
+
+    });
+
   });
 
   it(`Calling detox.cleanup() before .init() should pass without exceptions`, async () => {

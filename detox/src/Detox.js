@@ -1,27 +1,18 @@
 const _ = require('lodash');
 const util = require('util');
+const {URL} = require('url');
 const logger = require('./utils/logger');
 const Deferred = require('./utils/Deferred');
-const log = logger.child({ __filename });
 const Device = require('./devices/Device');
-const IosDriver = require('./devices/drivers/ios/IosDriver');
-const SimulatorDriver = require('./devices/drivers/ios/SimulatorDriver');
-const EmulatorDriver = require('./devices/drivers/android/EmulatorDriver');
-const AttachedAndroidDriver = require('./devices/drivers/android/AttachedAndroidDriver');
 const DetoxRuntimeError = require('./errors/DetoxRuntimeError');
 const AsyncEmitter = require('./utils/AsyncEmitter');
 const MissingDetox = require('./utils/MissingDetox');
 const Client = require('./client/Client');
 const DetoxServer = require('./server/DetoxServer');
-const URL = require('url').URL;
 const ArtifactsManager = require('./artifacts/ArtifactsManager');
 
-const DEVICE_CLASSES = {
-  'ios.simulator': SimulatorDriver,
-  'ios.none': IosDriver,
-  'android.emulator': EmulatorDriver,
-  'android.attached': AttachedAndroidDriver,
-};
+const log = logger.child({ __filename });
+const driverRegistry = require('./devices/DriverRegistry').default;
 
 const _initHandle = Symbol('_initHandle');
 const _assertNoPendingInit = Symbol('_assertNoPendingInit');
@@ -153,19 +144,7 @@ class Detox {
     this._client.setNonresponsivenessListener(this._onNonresnponsivenessEvent.bind(this));
     await this._client.connect();
 
-    let DeviceDriverClass = DEVICE_CLASSES[this._deviceConfig.type];
-    if (!DeviceDriverClass) {
-      try {
-        DeviceDriverClass = require(this._deviceConfig.type);
-      } catch (e) {
-        // noop, if we don't find a module to require, we'll hit the unsupported error below
-      }
-    }
-    if (!DeviceDriverClass) {
-      throw new Error(`'${this._deviceConfig.type}' is not supported`);
-    }
-
-    const deviceDriver = new DeviceDriverClass({
+    const deviceDriver = driverRegistry.resolve(this._deviceConfig.type, {
       client: this._client,
       emitter: this._eventEmitter,
     });

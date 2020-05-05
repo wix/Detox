@@ -27,6 +27,7 @@ describe('configuration', () => {
         configurationName: 'abracadabra',
         deviceConfig: {},
         detoxConfig: {},
+        cliConfig: {},
       })).toMatchObject({
         pathBuilder: expect.objectContaining({
           rootDir: expect.stringMatching(/^artifacts[\\\/]abracadabra\.\d{4}/),
@@ -144,6 +145,7 @@ describe('configuration', () => {
           },
         },
         detoxConfig: {},
+        cliConfig: {},
       }).pathBuilder).toBeInstanceOf(FakePathBuilder);
     });
 
@@ -156,6 +158,7 @@ describe('configuration', () => {
           },
         },
         detoxConfig: {},
+        cliConfig: {},
       })).toMatchObject({
         pathBuilder: expect.objectContaining({
           "name": expect.any(String),
@@ -173,6 +176,7 @@ describe('configuration', () => {
           },
         },
         detoxConfig: {},
+        cliConfig: {},
       })).toMatchObject({
         rootDir: '.artifacts/',
       });
@@ -333,7 +337,22 @@ describe('configuration', () => {
   });
 
   describe('composeDeviceConfig', () => {
+    let configs;
+
+    beforeEach(() => {
+      configs = [1, 2].map(i => ({
+        type: `someDriver${i}`,
+        device: `someDevice${i}`,
+      }));
+    });
+
     describe('validation', () => {
+      it('should throw if no configurations are passed', () => {
+        expect(() => configuration.composeDeviceConfig({
+          configurations: {},
+        })).toThrowError(/There are no device configurations/);
+      });
+
       it('should throw if configuration driver (type) is not defined', () => {
         expect(() => configuration.composeDeviceConfig({
           configurations: {
@@ -358,26 +377,34 @@ describe('configuration', () => {
     describe('for no specified configuration name', () => {
       beforeEach(() => { delete args.configuration; });
 
-      it('should return the first and only config', () => {
-        const singleDeviceConfig = {
-          type: 'someDriver',
-          device: 'someDevice'
-        };
+      describe('when there is a single config', () => {
+        it('should return it', () => {
+          const singleDeviceConfig = configs[0];
 
-        expect(configuration.composeDeviceConfig({
-          configurations: { singleDeviceConfig }
-        })).toBe(singleDeviceConfig);
+          expect(configuration.composeDeviceConfig({
+            configurations: {singleDeviceConfig }
+          })).toBe(singleDeviceConfig);
+        });
       });
 
-      it('should throw if there is more than one config', () => {
-        const [config1, config2] = [1, 2].map(i => ({
-          type: `someDriver${i}`,
-          device: `someDevice${i}`,
-        }));
+      describe('when there is more than one config', () => {
+        it('should throw if there is more than one config', () => {
+          const [config1, config2] = configs;
+          expect(() => configuration.composeDeviceConfig({
+            configurations: { config1, config2 },
+          })).toThrowError(/Cannot determine/);
+        });
 
-        expect(() => configuration.composeDeviceConfig({
-          configurations: { config1, config2 }
-        })).toThrowError(/Cannot determine/);
+        describe('but also selectedConfiguration param is specified', () => {
+          it('should select that configuration', () => {
+            const [config1, config2] = configs;
+
+            expect(configuration.composeDeviceConfig({
+              selectedConfiguration: 'config1',
+              configurations: { config1, config2 },
+            })).toEqual(config1);
+          });
+        });
       });
     });
 
@@ -471,6 +498,32 @@ describe('configuration', () => {
             sessionId: 'anotherSession',
           });
         });
+      });
+    });
+  });
+
+  describe('composeDetoxConfig', () => {
+    it('should throw if no config given', async () => {
+      await expect(configuration.composeDetoxConfig()).rejects.toThrowError(
+        /No configuration was passed/
+      );
+    });
+
+    it('should return a complete Detox config', async () => {
+      const config = await configuration.composeDetoxConfig({
+        configurations: {
+          simple: {
+            type: 'ios.simulator',
+            device: 'iPhone X',
+          },
+        },
+      });
+
+      expect(config).toMatchObject({
+        artifactsConfig: expect.objectContaining({}),
+        behaviorConfig: expect.objectContaining({}),
+        deviceConfig: expect.objectContaining({}),
+        sessionConfig: expect.objectContaining({}),
       });
     });
   });

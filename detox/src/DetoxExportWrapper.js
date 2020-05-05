@@ -37,7 +37,8 @@ class DetoxExportWrapper {
     Detox.none.setError(null);
 
     try {
-      this[_detox] = DetoxExportWrapper._createInstance(config, params);
+      const resolvedConfig = await configuration.composeDetoxConfig(config, params);
+      this[_detox] = new Detox(resolvedConfig);
       await this[_detox].init(params);
     } catch (err) {
       Detox.none.setError(err);
@@ -66,42 +67,6 @@ class DetoxExportWrapper {
 
   _defineProxy(name) {
     this[name] = funpermaproxy(() => this[_detox][name]);
-  }
-
-  static _createInstance(detoxConfig, userParams) {
-    if (!detoxConfig) {
-      throw new Error(`No configuration was passed to detox, make sure you pass a detoxConfig when calling 'detox.init(detoxConfig)'`);
-    }
-
-    if (!(detoxConfig.configurations && _.size(detoxConfig.configurations) >= 1)) {
-      throw new Error(`There are no device configurations in the detox config`);
-    }
-
-    const deviceConfig = configuration.composeDeviceConfig(detoxConfig);
-    const configurationName = _.findKey(detoxConfig.configurations, (config) => config === deviceConfig);
-    const artifactsConfig = configuration.composeArtifactsConfig({
-      configurationName,
-      detoxConfig,
-      deviceConfig,
-    });
-
-    const behaviorConfig = configuration.composeBehaviorConfig({
-      detoxConfig,
-      deviceConfig,
-      userParams,
-    });
-
-    const sessionConfig = configuration.composeSessionConfig({
-      detoxConfig,
-      deviceConfig,
-    });
-
-    return new Detox({
-      artifactsConfig,
-      behaviorConfig,
-      deviceConfig,
-      sessionConfig,
-    });
   }
 }
 
