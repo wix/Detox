@@ -135,7 +135,6 @@ class Detox {
 
     if (this._sessionConfig.autoStart) {
       this._server = new DetoxServer({
-        log: logger,
         port: new URL(sessionConfig.server).port,
       });
     }

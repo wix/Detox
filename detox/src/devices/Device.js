@@ -5,8 +5,7 @@ const argparse = require('../utils/argparse');
 const debug = require('../utils/debug'); // debug utils, leave here even if unused
 
 class Device {
-  constructor({ behaviorConfig, deviceConfig, deviceDriver, emitter, sessionConfig }) {
-    this._behaviorConfig = behaviorConfig;
+  constructor({ deviceConfig, deviceDriver, emitter, sessionConfig }) {
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
     this._emitter = emitter;

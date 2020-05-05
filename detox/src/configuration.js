@@ -97,7 +97,7 @@ async function composeDetoxConfig(detoxConfig, userParams, cliConfig = getArtifa
     userParams,
   });
 
-  const sessionConfig = composeSessionConfig({
+  const sessionConfig = await composeSessionConfig({
     detoxConfig,
     deviceConfig,
   });
