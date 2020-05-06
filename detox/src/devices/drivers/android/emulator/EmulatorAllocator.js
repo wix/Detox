@@ -31,7 +31,7 @@ class EmulatorAllocator {
     log.debug({ event: ALLOCATE_DEVICE_EV }, `Settled on ${adbName}`);
 
     if (launchPort) {
-      await this._bootDevice(this._avdName, adbName, launchPort);
+      await this._emuLauncher.launch(this._avdName, { port: launchPort });
     }
     this.coldBooted = !!launchPort;
 
@@ -47,10 +47,6 @@ class EmulatorAllocator {
 
   _nameNewDevice(port) {
     return `emulator-${port}`;
-  }
-
-  async _bootDevice(avdName, adbName, port) {
-    await this._emuLauncher.launch(avdName, { port });
   }
 }
 

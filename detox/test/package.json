@@ -20,7 +20,7 @@
     "e2e:jest-circus:android": "detox test --configuration android.emu.release -o e2e/config-circus.js",
     "e2e:jest-circus-timeout:android": "node scripts/assert_timeout.js npm run e2e:jest-circus:android -- --take-screenshots failing e2e/26.timeout.test.js",
     "e2e:android-debug": "detox test --configuration android.emu.debug",
-    "e2e:android-ci": "detox test --configuration android.emu.release --workers 3 --take-screenshots all --record-logs all --record-timeline all --headless --loglevel verbose --jest-report-specs -- --coverage",
+    "e2e:android-ci": "detox test --configuration android.emu.release --workers 6 --take-screenshots all --record-logs all --record-timeline all --headless --loglevel verbose --jest-report-specs -- --coverage",
     "e2e:android-timeout-ci": "node scripts/assert_timeout.js npm run e2e:android-ci -- e2e/26.timeout.test.js",
     "build:ios": "detox build --configuration ios.sim.release",
     "build:android": "detox build --configuration android.emu.release",
