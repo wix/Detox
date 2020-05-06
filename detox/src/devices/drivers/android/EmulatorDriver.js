@@ -120,6 +120,12 @@ class EmulatorDriver extends AndroidDriver {
     const emulatorAllocator = new EmulatorAllocator(avdName, this.adb, this.deviceRegistry, this._emulatorExec);
 
     const adbName = await this.deviceRegistry.allocateDevice(() => emulatorAllocator.allocate());
+    // TODO temp, just for testing - must not be merged
+    if (emulatorAllocator.coldBooted) {
+      const sleep = require('../../../utils/sleep');
+      await sleep(15000);
+    }
+
     await this._waitForDevice(adbName);
     await this.emitter.emit('bootDevice', { coldBoot: emulatorAllocator.coldBooted, deviceId: adbName, type: adbName });
     return adbName;
