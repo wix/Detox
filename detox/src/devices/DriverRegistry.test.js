@@ -62,6 +62,11 @@ describe('DriverRegistry', () => {
       expect(driver).toBeInstanceOf(FakeDriver);
       expect(driver.constructorArgs).toEqual([opts]);
     });
+
+    it('should throw errors if it cannot resolve a driver', () => {
+      expect(() => registry.resolve('imaginary.driver', opts))
+        .toThrowError(/imaginary.driver.*not supported/);
+    });
   });
 
   describe('constructor', () => {
