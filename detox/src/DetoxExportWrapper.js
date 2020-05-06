@@ -2,8 +2,8 @@ const _ = require('lodash');
 const funpermaproxy = require('funpermaproxy');
 const Detox = require('./Detox');
 const DetoxConstants = require('./DetoxConstants');
-const log = require('./utils/logger').child({ __filename });
 const configuration = require('./configuration');
+const log = require('./utils/logger').child({ __filename });
 
 const _detox = Symbol('detox');
 
@@ -30,32 +30,46 @@ class DetoxExportWrapper {
   }
 
   async init(config, params) {
-    if (!params || params.initGlobals !== false) {
-      Detox.none.initContext(global);
-    }
-
-    Detox.none.setError(null);
+    let configError, exposeGlobals, resolvedConfig;
 
     try {
-      const resolvedConfig = await configuration.composeDetoxConfig(config, params);
+      resolvedConfig = await configuration.composeDetoxConfig(config, params);
+      exposeGlobals = resolvedConfig.behaviorConfig.init.exposeGlobals;
+    } catch (err) {
+      configError = err;
+      exposeGlobals = true;
+    }
+
+    try {
+      if (exposeGlobals) {
+        Detox.none.initContext(global);
+      }
+
+      if (configError) {
+        throw configError;
+      }
+
       this[_detox] = new Detox(resolvedConfig);
       await this[_detox].init(params);
+      Detox.none.setError(null);
+
+      return this[_detox];
     } catch (err) {
       Detox.none.setError(err);
 
       log.error({ event: 'DETOX_INIT_ERROR' }, '\n', err);
       throw err;
     }
-
-    return this[_detox];
   }
 
   async cleanup() {
-    Detox.none.cleanupContext(global);
-
-    if (this[_detox] !== Detox.none) {
-      await this[_detox].cleanup();
+    try {
+      if (this[_detox] !== Detox.none) {
+        await this[_detox].cleanup();
+      }
+    } finally {
       this[_detox] = Detox.none;
+      Detox.none.cleanupContext(global);
     }
   }
 
