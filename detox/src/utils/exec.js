@@ -13,6 +13,12 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 9, int
   const execTimeout = _.get(options, 'timeout', 0);
   const log = execLogger.child({ fn: 'execWithRetriesAndLogs', cmd, trackingId });
   const verbosity = _.get(options, 'verbosity', 'normal');
+
+  const env = _.get(options, 'env') && {
+    ...process.env,
+    ...options.env,
+  };
+
   log.debug({ event: 'EXEC_CMD' }, `${cmd}`);
 
   let result;
@@ -22,7 +28,7 @@ async function execWithRetriesAndLogs(bin, options, statusLogs, retries = 9, int
         log.debug({ event: 'EXEC_TRY', retryNumber }, statusLogs.trying);
       }
 
-      result = await exec(cmd, { timeout: execTimeout });
+      result = await exec(cmd, { timeout: execTimeout, env });
     });
   } catch (err) {
     const _failReason = err.code == null && execTimeout > 0

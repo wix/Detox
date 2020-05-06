@@ -40,6 +40,10 @@ class DeviceRegistry {
     return this._lockfile.read().includes(deviceId);
   }
 
+  readAll() {
+    return this._lockfile.read();
+  }
+
   /***
    * @private
    */

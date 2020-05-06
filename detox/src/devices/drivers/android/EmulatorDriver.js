@@ -2,8 +2,10 @@ const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
 const ini = require('ini');
+const ADB = require('./tools/ADB');
 const AndroidDriver = require('./AndroidDriver');
 const AVDValidator = require('./emulator/AVDValidator');
+const FreeAdbServerFinder = require('./tools/FreeAdbServerFinder');
 const EmulatorAllocator = require('./emulator/EmulatorAllocator');
 const EmulatorVersionResolver = require('./emulator/EmulatorVersionResolver');
 const { EmulatorExec } = require('./tools/EmulatorExec');
@@ -19,6 +21,7 @@ const argparse = require('../../../utils/argparse');
 const EMU_BIN_STABLE_SKIN_VER = 28;
 
 class EmulatorDriver extends AndroidDriver {
+
   constructor(config) {
     super(config);
 
@@ -26,11 +29,19 @@ class EmulatorDriver extends AndroidDriver {
       lockfilePath: environment.getDeviceLockFilePathAndroid(),
     });
 
-    this._emulatorExec = new EmulatorExec();
-    this._emuVersionResolver = new EmulatorVersionResolver(this._emulatorExec);
-    this._avdValidator = new AVDValidator(this._emulatorExec);
+    super.adb = null;
+    this._emulatorExec = null;
+
+    const genericEmulatorExec = new EmulatorExec();
+    this._emuVersionResolver = new EmulatorVersionResolver(genericEmulatorExec);
+    this._avdValidator = new AVDValidator(genericEmulatorExec);
 
     this._name = 'Unspecified Emulator';
+  }
+
+  // TODO temp because artifacts are currently precreated with the wrong adb. Need to figure out.
+  declareArtifactPlugins() {
+    return {};
   }
 
   get name() {
@@ -67,7 +78,7 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async cleanup(adbName, bundleId) {
-    await this.deviceRegistry.disposeDevice(adbName);
+    await this.deviceRegistry.disposeDevice(this.adb.port); // TODO must be done in a scope equivalent to the adb port allocator's
     await super.cleanup(adbName, bundleId);
   }
 
@@ -117,12 +128,30 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async _allocateDevice(avdName) {
-    const emulatorAllocator = new EmulatorAllocator(avdName, this.adb, this.deviceRegistry, this._emulatorExec);
+    let adbName = null;
+    let coldBoot = null;
+    await this.deviceRegistry.allocateDevice(async () => {
+      const adbPort = await this._allocateAdbPort();
+      this._recreateAndroidTools(adbPort);
 
-    const adbName = await this.deviceRegistry.allocateDevice(() => emulatorAllocator.allocate());
+      const emulatorAllocator = new EmulatorAllocator(avdName, this.adb, this._emulatorExec);
+      adbName = await emulatorAllocator.allocate();
+      coldBoot = emulatorAllocator.coldBooted;
+      return adbPort;
+    });
+
     await this._waitForDevice(adbName);
-    await this.emitter.emit('bootDevice', { coldBoot: emulatorAllocator.coldBooted, deviceId: adbName, type: adbName });
+    await this.emitter.emit('bootDevice', { coldBoot, deviceId: adbName, type: adbName });
     return adbName;
+  }
+
+  async _allocateAdbPort() {
+    const freeAdbServerFinder = new FreeAdbServerFinder(this.deviceRegistry);
+    const adbPort = freeAdbServerFinder.findFreeAdbServer();
+    if (!adbPort) {
+      throw new DetoxRuntimeError({ message: 'Ran out of available ports for ADB servers!' });
+    }
+    return adbPort;
   }
 
   async _waitForDevice(deviceId) {
@@ -135,6 +164,11 @@ class EmulatorDriver extends AndroidDriver {
         });
       }
     });
+  }
+
+  _recreateAndroidTools(adbPort) {
+    this.adb = new ADB(adbPort);
+    this._emulatorExec = new EmulatorExec(adbPort);
   }
 }
 

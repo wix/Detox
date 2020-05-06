@@ -24,7 +24,7 @@ const temporaryPath = require('../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 const sleep = require('../../../utils/sleep');
 const retry = require('../../../utils/retry');
-const { interruptProcess, spawnAndLog } = require('../../../utils/exec');
+const { interruptProcess } = require('../../../utils/exec');
 const getAbsoluteBinaryPath = require('../../../utils/getAbsoluteBinaryPath');
 const AndroidExpect = require('../../../android/expect');
 const { InstrumentationLogsParser } = require('./InstrumentationLogsParser');
@@ -264,10 +264,10 @@ class AndroidDriver extends DeviceDriverBase {
     const serverPort = new URL(this.client.configuration.server).port;
     await this.adb.reverse(deviceId, serverPort);
     const testRunner = await this.adb.getInstrumentationRunner(deviceId, bundleId);
-    const spawnFlags = [`-s`, `${deviceId}`, `shell`, `am`, `instrument`, `-w`, `-r`, ...launchArgs, ...additionalLaunchArgs, testRunner];
+    const spawnFlags = [...launchArgs, ...additionalLaunchArgs];
 
     this.instrumentationLogsParser = new InstrumentationLogsParser();
-    this.instrumentationProcess = spawnAndLog(this.adb.adbBin, spawnFlags, { detached: false });
+    this.instrumentationProcess = this.adb.spawnInstrumentation(deviceId, spawnFlags, testRunner);
     this.instrumentationProcess.childProcess.stdout.setEncoding('utf8');
     this.instrumentationProcess.childProcess.stdout.on('data', this._extractStackTraceFromInstrumLogs.bind(this));
     this.instrumentationProcess.childProcess.on('close', async () => {

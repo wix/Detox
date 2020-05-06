@@ -47,6 +47,17 @@ describe('ADB', () => {
       expect(exec).toHaveBeenCalledTimes(1);
     });
 
+    it('should invoke using a custom port if specified', async () => {
+      const port = 1234;
+      const expectEnv = {
+        ANDROID_ADB_SERVER_PORT: port
+      };
+
+      const adb = new ADB(port);
+      await adb.devices();
+      expect(exec).toHaveBeenCalledWith(`"${adbBinPath}"  devices`, { verbosity: 'high', env: expectEnv }, undefined, 1);
+    });
+
     it('should query device name lazily', async () => {
       const adbDevices = 'List of devices attached\n'
         + 'MOCK_SERIAL\tdevice\n'
@@ -138,7 +149,7 @@ describe('ADB', () => {
 
     expect(exec).toHaveBeenCalledWith(
       expect.stringContaining('adb" -s emulator-5556 install -rg "path inside \\"quotes\\" to/app"'),
-      undefined, undefined, 1);
+      {}, undefined, 1);
   });
 
   it(`uninstall`, async () => {
@@ -171,7 +182,7 @@ describe('ADB', () => {
 
     expect(exec).toHaveBeenCalledWith(
       expect.stringContaining(`-s mockEmulator push "${sourceFile}" "${destFile}"`),
-      undefined, undefined, expect.anything());
+      {}, undefined, expect.anything());
   });
 
   it('remote-install', async () => {
@@ -181,7 +192,7 @@ describe('ADB', () => {
 
     expect(exec).toHaveBeenCalledWith(
       expect.stringContaining(`-s mockEmulator shell "pm install -r -g -t ${binaryPath}"`),
-      undefined, undefined, expect.anything());
+      {}, undefined, expect.anything());
   });
 
   describe('unlockScreen', () => {

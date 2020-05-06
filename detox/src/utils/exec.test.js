@@ -182,6 +182,18 @@ describe('exec', () => {
     expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
     expect(cpp.exec).toHaveBeenCalledTimes(6);
   });
+
+  it('should mind the env option', async () => {
+    const env = {
+      mock: 'variable',
+    };
+    mockCppSuccessful(cpp);
+    await exec.execWithRetriesAndLogs('bin', { env });
+
+    const execEnv = cpp.exec.mock.calls[0][1].env;
+    expect(execEnv).toEqual(expect.objectContaining(env));
+    expect(execEnv).toEqual(expect.objectContaining(process.env));
+  });
 });
 
 describe('spawn', () => {

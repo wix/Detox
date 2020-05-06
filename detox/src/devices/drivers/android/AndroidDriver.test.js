@@ -1,16 +1,56 @@
 describe('Android driver', () => {
 
+
   const deviceId = 'device-id-mock';
   const bundleId = 'bundle-id-mock';
 
   const mockGetAbsoluteBinaryPathImpl = (x) => `absolutePathOf(${x})`;
   const mockAPKPathGetTestApkPathImpl = (x) => `testApkPathOf(${x})`;
 
+  class mockADBClass {
+    constructor() {
+      this.getInstrumentationRunner = jest.fn();
+      this.reverse = jest.fn();
+      this.reverseRemove = jest.fn();
+      this.install = jest.fn();
+      this.spawnInstrumentation = jest.fn().mockReturnValue({
+        childProcess: {
+          on: jest.fn(),
+          stdout: {
+            setEncoding: jest.fn(),
+            on: jest.fn(),
+          }
+        }
+      });
+
+      this.adbBin = 'ADB binary mock';
+
+      adb = this;
+    }
+  }
+
+  class mockAsyncEmitter {
+    constructor() {
+      this.emit = jest.fn();
+    }
+  }
+
+  class mockInstrumentationLogsParserClass {
+    constructor() {
+      this.parse = () => {};
+      this.containsStackTraceLog = () => true;
+      this.getStackTrace = () => mockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK;
+    }
+  }
+  mockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK = 'Stacktrace mock';
+
+
   let logger;
   let client;
   let getAbsoluteBinaryPath;
   let fs;
   let exec;
+  let adb;
   beforeEach(() => {
     jest.mock('fs', () => ({
       existsSync: jest.fn(),
@@ -49,15 +89,6 @@ describe('Android driver', () => {
     logger = require('../../../utils/logger');
 
     jest.mock('../../../utils/exec', () => ({
-      spawnAndLog: jest.fn().mockReturnValue({
-        childProcess: {
-          on: jest.fn(),
-          stdout: {
-            setEncoding: jest.fn(),
-            on: jest.fn(),
-          }
-        }
-      }),
       interruptProcess: jest.fn(),
     }));
     exec = require('../../../utils/exec');
@@ -81,11 +112,13 @@ describe('Android driver', () => {
 
   describe('Instrumentation bootstrap', () => {
     it('should launch instrumentation upon app launch', async () => {
-      await uut.launchApp(deviceId, bundleId, {}, '');
+      adb.getInstrumentationRunner.mockResolvedValue('mock test-runner');
 
-      expect(exec.spawnAndLog).toHaveBeenCalledWith(
+      await uut.launchApp(deviceId, bundleId, {}, 'mock test-runner');
+
+      expect(adb.spawnInstrumentation).toHaveBeenCalledWith(
+        deviceId,
         expect.anything(),
-        expect.arrayContaining(['shell', 'am', 'instrument']),
         expect.anything(),
       );
     });
@@ -105,7 +138,7 @@ describe('Android driver', () => {
       const clientWaitResolve = mockDeviceReadyPromise();
 
       const promise = uut.waitUntilReady();
-      setTimeout(async () => await killInstrumentation(exec.spawnAndLog()), 1);
+      setTimeout(async () => await killInstrumentation(adb.spawnInstrumentation()), 1);
 
       try {
         await promise;
@@ -161,10 +194,10 @@ describe('Android driver', () => {
 
       await uut.launchApp(deviceId, bundleId, launchArgs, '');
 
-      const spawnArgs = exec.spawnAndLog.mock.calls[0];
+      const spawnArgs = adb.spawnInstrumentation.mock.calls[0];
       const spawnedFlags = spawnArgs[1];
 
-      let index = 7;
+      let index = 0;
       index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({
         key: 'object-arg',
         value: 'base64({"such":"wow","much":"amaze","very":111})'
@@ -196,10 +229,10 @@ describe('Android driver', () => {
 
       await uut.launchApp(deviceId, bundleId, launchArgs, '');
 
-      const spawnArgs = exec.spawnAndLog.mock.calls[0];
+      const spawnArgs = adb.spawnInstrumentation.mock.calls[0];
       const spawnedFlags = spawnArgs[1];
 
-      let index = 10;
+      let index = 3;
       index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'class', value: 'class-value' });
       index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'package', value: 'package-value' });
       index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'func', value: 'func-value' });
@@ -291,30 +324,3 @@ describe('Android driver', () => {
     });
   });
 });
-
-class mockADBClass {
-  constructor() {
-    this.getInstrumentationRunner = jest.fn();
-    this.reverse = jest.fn();
-    this.reverseRemove = jest.fn();
-    this.install = jest.fn();
-
-    this.adbBin = 'ADB binary mock';
-  }
-}
-
-class mockAsyncEmitter {
-  constructor() {
-    this.emit = jest.fn();
-  }
-}
-
-class mockInstrumentationLogsParserClass {
-  constructor() {
-    this.parse = () => {};
-    this.containsStackTraceLog = () => true;
-    this.getStackTrace = () => mockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK;
-  }
-}
-
-mockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK = 'Stacktrace mock';

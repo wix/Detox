@@ -1,52 +1,41 @@
 const _ = require('lodash');
 const os = require('os');
-const spawn = require('child-process-promise').spawn;
-const exec = require('../../../../utils/exec').execWithRetriesAndLogs;
 const argparse = require('../../../../utils/argparse');
 const {getAndroidEmulatorPath} = require('../../../../utils/environment');
+const {
+  ExecCommand,
+  BinaryExec,
+} = require('./BinaryExec');
 
-class EmulatorExec {
-  constructor() {
-    this.binary = getAndroidEmulatorPath();
+class EmulatorExec extends BinaryExec {
+  constructor(adbPort) {
+    super(getAndroidEmulatorPath());
+
+    this._options = adbPort ? {
+      env: {
+        ANDROID_ADB_SERVER_PORT: adbPort,
+      }
+    } : undefined;
   }
 
-  toString() {
-    return this.binary;
-  }
-
-  async exec(command) {
-    return (await exec(`"${this.binary}" ${command._getArgsString()}`)).stdout;
-  }
-
-  spawn(command, stdout, stderr) {
-    return spawn(this.binary, command._getArgs(), { detached: true, stdio: ['ignore', stdout, stderr] });
-  }
-}
-
-class EmulatorCommand {
-  toString() {
-    return this._getArgsString();
-  }
-
-  _getArgs() {}
-  _getArgsString() {
-    return this._getArgs().join(' ');
+  _getOptions() {
+    return this._options;
   }
 }
 
-class ListAVDsCommand extends EmulatorCommand {
+class ListAVDsCommand extends ExecCommand {
   _getArgs() {
     return ['-list-avds', '--verbose'];
   }
 }
 
-class QueryVersionCommand extends EmulatorCommand {
+class QueryVersionCommand extends ExecCommand {
   _getArgs() {
     return ['-version'];
   }
 }
 
-class LaunchCommand extends EmulatorCommand {
+class LaunchCommand extends ExecCommand {
   constructor(emulatorName, options) {
     super();
     this._args = this._getEmulatorArgs(emulatorName, options);

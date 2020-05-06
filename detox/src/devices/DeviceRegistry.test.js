@@ -16,7 +16,7 @@ describe('DeviceRegistry', () => {
   });
 
   it('should throw on attempt to checking if device is busy outside of allocation/disposal context', async () => {
-    const deviceId = 'emulator-5554';
+    const deviceId = 'mock-deviceId';
 
     const assertForbiddenOutOfContext = () =>
       expect(() => registry.isDeviceBusy(deviceId)).toThrowError();
@@ -42,5 +42,28 @@ describe('DeviceRegistry', () => {
     }).catch(() => {});
 
     assertForbiddenOutOfContext();
+  });
+
+  it('should allow for querying the entire list of registered devices', async () => {
+    const deviceId = 'mock-deviceId';
+    const deviceId2 = 'mock-deviceId2';
+    await registry.allocateDevice(() => {
+      expect(registry.readAll()).toEqual([]);
+      return deviceId;
+    });
+
+    await registry.allocateDevice(() => {
+      expect(registry.readAll()).toEqual([deviceId]);
+      return deviceId2;
+    });
+
+    await registry.disposeDevice(() => {
+      expect(registry.readAll()).toEqual([deviceId, deviceId2]);
+      return deviceId;
+    });
+  });
+
+  it('should throw on attempt to query registered devices outside of allocation/disposal context', async () => {
+    expect(() => registry.readAll()).toThrowError();
   });
 });
