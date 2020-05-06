@@ -1,5 +1,5 @@
 const DriverRegistry = jest.requireActual('../DriverRegistry');
-const DeviceDriverBase = jest.requireActual('../drivers/DeviceDriverBase');
+const FakeDriver = jest.requireActual('../drivers/__mocks__/FakeDriver');
 
 class FakeDriverRegistry extends DriverRegistry {
   constructor(...args) {
@@ -8,19 +8,6 @@ class FakeDriverRegistry extends DriverRegistry {
   }
 }
 
-class FakeDriver extends DeviceDriverBase {
-  constructor(...args) {
-    super(...args);
-    this.matchers = FakeDriver.matchers;
-  }
-
-  declareArtifactPlugins() {
-    return FakeDriver.artifactsPlugins;
-  }
-}
-
-FakeDriver.matchers = {};
-FakeDriver.artifactsPlugins = {};
 FakeDriverRegistry.FakeDriver = FakeDriver;
 FakeDriverRegistry.default = new FakeDriverRegistry({
   'fake.device': FakeDriver,

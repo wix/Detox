@@ -5,6 +5,7 @@ class DriverRegistry {
 
   resolve(deviceType, opts) {
     let DeviceDriverClass = this.deviceClasses[deviceType];
+
     if (!DeviceDriverClass) {
       try {
         DeviceDriverClass = require(deviceType);
