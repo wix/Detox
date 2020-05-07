@@ -52,7 +52,7 @@
       "init": {
         "reinstallApp": true,
         "launchApp": true,
-        "exposeGlobals": false
+        "exposeGlobals": true
       },
       "cleanup": {
         "shutdownDevice": false
