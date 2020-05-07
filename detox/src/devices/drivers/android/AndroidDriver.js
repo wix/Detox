@@ -84,11 +84,6 @@ class AndroidDriver extends DeviceDriverBase {
     await uninstallHelper.uninstall(deviceId, bundleId);
   }
 
-  async uninstallAppByApk(deviceId, apkPath) {
-    const bundleId = await this.getBundleIdFromBinary(apkPath);
-    await this.uninstallApp(deviceId, bundleId);
-  }
-
   async launchApp(deviceId, bundleId, launchArgs, languageAndLocale) {
     await this.emitter.emit('beforeLaunchApp', { deviceId, bundleId, launchArgs });
 
