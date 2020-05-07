@@ -33,8 +33,8 @@ class SpecReporter extends ReporterBase {
     this._traceTest({description});
   }
 
-  onTestEnd({description}, result) {
-    let status = '';
+  onTestEnd({description, invocations = 1}, result) {
+    let status;
     switch (result) {
       case 'skipped': status = RESULT_SKIPPED; break;
       case 'failed': status = RESULT_FAILED; break;
@@ -42,7 +42,7 @@ class SpecReporter extends ReporterBase {
       case 'success': status = RESULT_SUCCESS; break;
       default: status = RESULT_OTHER; break;
     }
-    this._traceTest({description}, status);
+    this._traceTest({description, invocations}, status);
   }
 
   _regenerateSuitesDesc() {
@@ -58,8 +58,11 @@ class SpecReporter extends ReporterBase {
     this._suitesDesc = chalk.bold.white(this._suitesDesc);
   }
 
-  _traceTest({description}, status) {
-    const desc = this._suitesDesc + chalk.gray(description) + chalk.gray(status ? ` [${status}]` : '');
+  _traceTest({description, invocations}, _status = undefined) {
+    const testDescription = chalk.gray(description);
+    const retriesDescription = (invocations > 1) ? chalk.gray(` (retry #${invocations - 1})`) : '';
+    const status = chalk.gray(_status ? ` [${_status}]` : '');
+    const desc = this._suitesDesc + testDescription + retriesDescription + status;
     log.info({event: 'SPEC_STATE_CHANGE'}, desc);
   }
 }
