@@ -1,4 +1,4 @@
-const DeviceDriverBase = jest.requireActual('../DeviceDriverBase');
+const DeviceDriverBase = require('../DeviceDriverBase');
 
 class FakeDriver extends DeviceDriverBase {
   constructor(...args) {

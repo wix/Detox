@@ -1,10 +1,8 @@
 const _ = require('lodash');
-const path = require('path');
 const configurationsMock = require('../configurations.mock');
 
 const validScheme = configurationsMock.validOneDeviceAndSession;
 const invalidDeviceNoBinary = configurationsMock.invalidDeviceNoBinary;
-const invalidDeviceNoDeviceName = configurationsMock.invalidDeviceNoDeviceName;
 
 describe('Device', () => {
   let fs;
@@ -91,7 +89,6 @@ describe('Device', () => {
 
   function schemeDevice(scheme, configuration, overrides) {
     const device = new Device(_.merge({
-      behaviorConfig: { init: {}, cleanup: {} },
       deviceConfig: scheme.configurations[configuration],
       deviceDriver: driverMock.driver,
       sessionConfig: scheme.session,
