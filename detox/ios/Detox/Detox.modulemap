@@ -12,5 +12,6 @@ framework module Detox {
 		header "DTXAssertionHandler.h"
 		header "UIView+DetoxUtils.h"
 		header "DTXRunLoopSpinner.h"
+		header "ReactNativeSupport.h"
 	}
 }

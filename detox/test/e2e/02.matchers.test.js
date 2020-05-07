@@ -15,14 +15,12 @@ describe('Matchers', () => {
   });
 
   it('should match elements by index', async () => {
-    const index = device.getPlatform() === 'ios' ? 2 : 0;
-    await element(by.text('Index')).atIndex(index).tap();
+    await element(by.text('Index')).atIndex(0).tap();
     await expect(element(by.text('First button pressed!!!'))).toBeVisible();
   });
   
   it('should be able to swipe elements matched by index', async () => {
-    const index = device.getPlatform() === 'ios' ? 2 : 0;
-    await element(by.text('Index')).atIndex(index).swipe('down', 'fast', 0.7); //No need to do here anything, just let it not crash.
+    await element(by.text('Index')).atIndex(0).swipe('down', 'fast', 0.7); //No need to do here anything, just let it not crash.
   });
 
   it('should match elements by type (native class)', async () => {

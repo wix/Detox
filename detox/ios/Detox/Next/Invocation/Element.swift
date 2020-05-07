@@ -14,7 +14,7 @@ class Element : CustomStringConvertible {
 	
 	struct Keys {
 		static let predicate = "predicate"
-		static let index = "index"
+		static let index = "atIndex"
 	}
 	
 	required init(predicate: Predicate, index: Int?) {

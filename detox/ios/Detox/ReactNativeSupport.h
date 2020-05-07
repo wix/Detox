@@ -10,7 +10,8 @@
 
 @interface ReactNativeSupport : NSObject
 
-+ (BOOL)isReactNativeApp;
+@property (nonatomic, class, readonly) BOOL isReactNativeApp;
+
 + (void)reloadApp;
 + (void)waitForReactNativeLoadWithCompletionHandler:(void(^)(void))handler;
 

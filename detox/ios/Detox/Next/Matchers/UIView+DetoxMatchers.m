@@ -55,9 +55,14 @@
 
 + (NSMutableArray<UIView*>*)dtx_findViewsInHierarchy:(UIView*)hierarchy passingPredicate:(NSPredicate*)predicate
 {
+	return [self dtx_findViewsInHierarchy:hierarchy includingRoot:YES passingPredicate:predicate];
+}
+
++ (NSMutableArray<UIView*>*)dtx_findViewsInHierarchy:(UIView*)hierarchy includingRoot:(BOOL)includingRoot passingPredicate:(NSPredicate*)predicate
+{
 	NSMutableArray<UIView*>* rv = [NSMutableArray new];
 	
-	[self _dtx_appendViewsRecursivelyFromArray:@[hierarchy] passingPredicate:predicate storage:rv];
+	[self _dtx_appendViewsRecursivelyFromArray:includingRoot ? @[hierarchy] : hierarchy.subviews passingPredicate:predicate storage:rv];
 	
 	return rv;
 }

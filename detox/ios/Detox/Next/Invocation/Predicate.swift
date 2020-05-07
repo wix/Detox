@@ -49,7 +49,25 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 		}
 		
 		switch kind {
-		case Kind.id, Kind.label, Kind.text, Kind.type, Kind.value:
+		case Kind.type:
+			let className = dictionaryRepresentation[Keys.value] as! String
+			return KindOfPredicate(kind: kind, modifiers: modifiers, className: className)
+		case Kind.label:
+			let label = dictionaryRepresentation[Keys.value] as! String
+			if ReactNativeSupport.isReactNativeApp == false {
+				return ValuePredicate(kind: kind, modifiers: modifiers, value: label)
+			} else {
+				//Will crash if RN app and neither class exists
+				let RCTTextViewClass : AnyClass = NSClassFromString("RCTText") ?? NSClassFromString("RCTTextView")!
+				return AndCompoundPredicate(predicates: [
+					ValuePredicate(kind: kind, modifiers: modifiers, value: label),
+					DescendantPredicate(predicate: AndCompoundPredicate(predicates: [
+						KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(RCTTextViewClass)),
+						ValuePredicate(kind: kind, modifiers: modifiers, value: label)
+					], modifiers: []), modifiers: [Modifier.not])
+				], modifiers: [])
+			}
+		case Kind.id, Kind.text, Kind.value:
 			let value = dictionaryRepresentation[Keys.value] as Any
 			return ValuePredicate(kind: kind, modifiers: modifiers, value: value)
 		case Kind.ancestor:
@@ -94,6 +112,30 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 	
 	var debugDescription: String {
 		return description
+	}
+}
+
+class KindOfPredicate : Predicate {
+	let className : String
+	
+	init(kind: String, modifiers: Set<String>, className: String) {
+		self.className = className
+		
+		super.init(kind: kind, modifiers: modifiers)
+	}
+	
+	override func innerPredicateForQuery() -> NSPredicate {
+		if let cls = NSClassFromString(className) {
+			return NSPredicate.init(format: "SELF isKindOfClass: %@", argumentArray: [cls])
+		} else {
+			dtx_fatalError("Unknown class “\(className)”")
+		}
+	}
+	
+	override var description: String {
+		get {
+			return self.predicateForQuery().description
+		}
 	}
 }
 
@@ -142,7 +184,8 @@ class AndCompoundPredicate : Predicate {
 	
 	override var description: String {
 		get {
-			return String(format: "(%@)", predicates.map{ $0.description }.joined(separator: " && "))
+			let containsNot = modifiers.contains(Modifier.not)
+			return String(format: "%@%@%@", containsNot ? "NOT (" : "", predicates.map{ $0.description }.joined(separator: " && "), containsNot ? ")" : "")
 		}
 	}
 }
@@ -160,15 +203,13 @@ class DescendantPredicate : Predicate {
 		return NSPredicate { evaluatedObject, bindings -> Bool in
 			let view = evaluatedObject as! UIView
 			
-			UIView.dtx_findViews(inHierarchy: view, passing: self.predicate.predicateForQuery())
-			
-			return false
+			return UIView.dtx_findViews(inHierarchy: view, includingRoot: false, passing: self.predicate.predicateForQuery()).count > 0
 		}
 	}
 	
 	override var description: String {
 		get {
-			return String(format: "DESCENDANT%@(%@)", predicate.description)
+			return String(format: "%@DESCENDANT(%@)", modifiers.contains(Modifier.not) ? "NOT " : "", predicate.description)
 		}
 	}
 }
@@ -200,7 +241,7 @@ class AncestorPredicate : Predicate {
 	
 	override var description: String {
 		get {
-			return String(format: "ANCESTOR(%@)", predicate.description)
+			return String(format: "%@ANCESTOR(%@)", modifiers.contains(Modifier.not) ? "NOT " : "", predicate.description)
 		}
 	}
 }
