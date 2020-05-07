@@ -116,6 +116,54 @@ Below you can see mappings between the string presets and the corresponding obje
 | failing | `{ "enabled": true, "keepOnlyFailedTestsArtifacts": true } ` |
 | manual  | `{ "enabled": true, "shouldTakeAutomaticSnapshots": false }` |
 
+### Behavior Configuration
+
+If you need to tweak the flow of `detox.init()` or `detox.cleanup()` steps,
+you have a few options to change. These are the default behavior values:
+
+```json
+{
+  "detox": {
+    "behavior": {
+      "init": {
+        "reinstallApp": true,
+        "launchApp": true,
+        "exposeGlobals": true
+      },
+      "cleanup": {
+        "shutdownDevice": false
+      }
+    }
+  }
+}
+```
+
+For example, if you want to launch your tested app manually, e.g. via `device.launchApp()`,
+you should specify in `package.json`:
+
+```json
+{
+  "detox": {
+    "behavior": {
+      "init": {
+        "launchApp": false
+      }
+    }
+  }
+}
+```
+
+Setting `reinstallApp: false` will make the tests reuse the currently installed app on the device,
+provided you have installed it beforehand.
+
+If you do not wish to leak Detox globals (`expect`, `device`, `by`, etc.) to the global
+scope, you can set `"exposeGlobals": false` and destructure them respectively from the
+exported Detox interface:
+
+```js
+const { by, device, expect, element } = require('detox');
+```
+
 ### Server Configuration
 
 Detox can either initialize a server using a generated configuration, or can be overriden with a manual  configuration:

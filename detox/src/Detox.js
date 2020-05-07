@@ -1,28 +1,18 @@
 const _ = require('lodash');
 const util = require('util');
+const {URL} = require('url');
 const logger = require('./utils/logger');
 const Deferred = require('./utils/Deferred');
-const log = logger.child({ __filename });
 const Device = require('./devices/Device');
-const IosDriver = require('./devices/drivers/ios/IosDriver');
-const SimulatorDriver = require('./devices/drivers/ios/SimulatorDriver');
-const EmulatorDriver = require('./devices/drivers/android/EmulatorDriver');
-const AttachedAndroidDriver = require('./devices/drivers/android/AttachedAndroidDriver');
 const DetoxRuntimeError = require('./errors/DetoxRuntimeError');
 const AsyncEmitter = require('./utils/AsyncEmitter');
 const MissingDetox = require('./utils/MissingDetox');
-const configuration = require('./configuration');
 const Client = require('./client/Client');
 const DetoxServer = require('./server/DetoxServer');
-const URL = require('url').URL;
 const ArtifactsManager = require('./artifacts/ArtifactsManager');
 
-const DEVICE_CLASSES = {
-  'ios.simulator': SimulatorDriver,
-  'ios.none': IosDriver,
-  'android.emulator': EmulatorDriver,
-  'android.attached': AttachedAndroidDriver,
-};
+const log = logger.child({ __filename });
+const driverRegistry = require('./devices/DriverRegistry').default;
 
 const _initHandle = Symbol('_initHandle');
 const _assertNoPendingInit = Symbol('_assertNoPendingInit');
@@ -37,11 +27,13 @@ class Detox {
 
     this[_initHandle] = null;
 
-    const {artifactsConfig, deviceConfig, session} = config;
+    const {artifactsConfig, behaviorConfig, deviceConfig, sessionConfig} = config;
 
     this._artifactsConfig = artifactsConfig;
+    this._behaviorConfig = behaviorConfig;
     this._deviceConfig = deviceConfig;
-    this._userSession = deviceConfig.session || session;
+    this._sessionConfig = sessionConfig;
+
     this._client = null;
     this._server = null;
     this._artifactsManager = null;
@@ -64,12 +56,12 @@ class Detox {
     this.device = null;
   }
 
-  init(userParams) {
+  init() {
     if (!this[_initHandle]) {
       this[_initHandle] = new Deferred();
 
       const { resolve, reject } = this[_initHandle];
-      this._doInit(userParams).then(resolve, reject);
+      this._doInit().then(resolve, reject);
     }
 
     return this[_initHandle].promise;
@@ -91,6 +83,10 @@ class Detox {
 
     if (this.device) {
       await this.device._cleanup();
+
+      if (this._behaviorConfig.cleanup.shutdownDevice) {
+        await this.device.shutdown();
+      }
     }
 
     if (this._server) {
@@ -133,17 +129,12 @@ class Detox {
     await this._artifactsManager.onSuiteEnd(suite);
   }
 
-  async _doInit(userParams) {
-    const sessionConfig = await this._getSessionConfig();
-    const params = {
-      launchApp: true,
-      initGlobals: true,
-      ...userParams,
-    };
+  async _doInit() {
+    const behaviorConfig = this._behaviorConfig.init;
+    const sessionConfig = this._sessionConfig;
 
-    if (!this._userSession) {
+    if (this._sessionConfig.autoStart) {
       this._server = new DetoxServer({
-        log: logger,
         port: new URL(sessionConfig.server).port,
       });
     }
@@ -152,19 +143,7 @@ class Detox {
     this._client.setNonresponsivenessListener(this._onNonresnponsivenessEvent.bind(this));
     await this._client.connect();
 
-    let DeviceDriverClass = DEVICE_CLASSES[this._deviceConfig.type];
-    if (!DeviceDriverClass) {
-      try {
-        DeviceDriverClass = require(this._deviceConfig.type);
-      } catch (e) {
-        // noop, if we don't find a module to require, we'll hit the unsupported error below
-      }
-    }
-    if (!DeviceDriverClass) {
-      throw new Error(`'${this._deviceConfig.type}' is not supported`);
-    }
-
-    const deviceDriver = new DeviceDriverClass({
+    const deviceDriver = driverRegistry.resolve(this._deviceConfig.type, {
       client: this._client,
       emitter: this._eventEmitter,
     });
@@ -178,7 +157,7 @@ class Detox {
       sessionConfig,
     });
 
-    if (params.initGlobals) {
+    if (behaviorConfig.exposeGlobals) {
       Object.assign(global, {
         ...deviceDriver.matchers,
         device: this.device,
@@ -189,7 +168,19 @@ class Detox {
     this._artifactsManager.subscribeToDeviceEvents(this._eventEmitter);
     this._artifactsManager.registerArtifactPlugins(deviceDriver.declareArtifactPlugins());
 
-    await this.device.prepare(params);
+    await this.device.prepare();
+
+    if (behaviorConfig.reinstallApp) {
+      await this.device.uninstallApp();
+      await this.device.installApp();
+    }
+
+    if (behaviorConfig.launchApp) {
+      await this.device.launchApp({
+        newInstance: true
+      });
+    }
+
     return this;
   }
 
@@ -264,14 +255,6 @@ class Detox {
       log.error({ event: 'APP_CRASH' }, `App crashed in test '${testName}', here's the native stack trace: \n${pendingAppCrash}`);
       await this.device.launchApp({ newInstance: true });
     }
-  }
-
-  async _getSessionConfig() {
-    const session = this._userSession || await configuration.defaultSession();
-
-    configuration.validateSession(session);
-
-    return session;
   }
 
   _onEmitError({ error, eventName, eventObj }) {

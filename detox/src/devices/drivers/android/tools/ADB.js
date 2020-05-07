@@ -105,7 +105,7 @@ class ADB {
   }
 
   /*async*/ remoteInstall(deviceId, path) {
-    return this.shell(deviceId, `pm install ${path}`);
+    return this.shell(deviceId, `pm install -r -g -t ${path}`);
   }
 
   async uninstall(deviceId, appId) {

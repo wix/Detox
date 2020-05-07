@@ -1,5 +1,4 @@
 const DetoxServer = require('../src/server/DetoxServer');
-const log = require('../src/utils/logger').child({ __filename });
 
 module.exports.command = 'run-server';
 module.exports.desc = 'Start a standalone Detox server';
@@ -30,7 +29,6 @@ module.exports.handler = async function runServer(argv) {
 
   new DetoxServer({
     port: +argv.port,
-    log,
     standalone: true,
   });
 };

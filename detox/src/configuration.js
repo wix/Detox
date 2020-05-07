@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const DetoxConfigError = require('./errors/DetoxConfigError');
 const uuid = require('./utils/uuid');
+const resolveModuleFromPath = require('./utils/resolveModuleFromPath');
 const argparse = require('./utils/argparse');
 const getPort = require('get-port');
 const buildDefaultArtifactsRootDirpath = require('./artifacts/utils/buildDefaultArtifactsRootDirpath');
@@ -11,27 +12,6 @@ const LogArtifactPlugin = require('./artifacts/log/LogArtifactPlugin');
 const ScreenshotArtifactPlugin = require('./artifacts/screenshot/ScreenshotArtifactPlugin');
 const VideoArtifactPlugin = require('./artifacts/video/VideoArtifactPlugin');
 const ArtifactPathBuilder = require('./artifacts/utils/ArtifactPathBuilder');
-
-async function defaultSession() {
-  return {
-    server: `ws://localhost:${await getPort()}`,
-    sessionId: uuid.UUID()
-  };
-}
-
-function validateSession(session) {
-  if (!session) {
-    throw new Error(`No session configuration was found, pass settings under the session property`);
-  }
-
-  if (!session.server) {
-    throw new Error(`session.server property is missing, should hold the server address`);
-  }
-
-  if (!session.sessionId) {
-    throw new Error(`session.sessionId property is missing, should hold the server session id`);
-  }
-}
 
 function throwOnEmptyDevice() {
   throw new DetoxConfigError(`'device' property is empty, should hold the device query to run on (e.g. { "type": "iPhone 11 Pro" }, { "avdName": "Nexus_5X_API_29" })`);
@@ -45,8 +25,100 @@ function throwOnEmptyBinaryPath() {
   throw new DetoxConfigError(`'binaryPath' property is missing, should hold the app binary path`);
 }
 
-function composeDeviceConfig({ configurations }) {
-  const configurationName = argparse.getArgValue('configuration');
+function composeBehaviorConfig({ detoxConfig, deviceConfig, userParams }) {
+  return _.defaultsDeep(
+    {
+      init: {
+        reinstallApp: argparse.getArgValue('reuse') ? false : undefined,
+      },
+      cleanup: {
+        shutdownDevice: argparse.getArgValue('cleanup') ? true : undefined,
+      },
+    },
+    userParams && {
+      init: {
+        exposeGlobals: userParams.initGlobals,
+        launchApp: userParams.launchApp,
+        reinstallApp: !userParams.reuse,
+      },
+    },
+    deviceConfig.behavior,
+    detoxConfig.behavior,
+    {
+      init: {
+        exposeGlobals: true,
+        reinstallApp: true,
+        launchApp: true,
+      },
+      cleanup: {
+        shutdownDevice: false,
+      },
+    }
+  );
+}
+
+async function composeSessionConfig({ detoxConfig, deviceConfig }) {
+  const session = deviceConfig.session || detoxConfig.session || {
+    autoStart: true,
+    server: `ws://localhost:${await getPort()}`,
+    sessionId: uuid.UUID(),
+  };
+
+  if (!session.server) {
+    throw new Error(`session.server property is missing, should hold the server address`);
+  }
+
+  if (!session.sessionId) {
+    throw new Error(`session.sessionId property is missing, should hold the server session id`);
+  }
+
+  return session;
+}
+
+async function composeDetoxConfig(detoxConfig, userParams, cliConfig = getArtifactsCliConfig()) {
+  if (!detoxConfig) {
+    throw new Error(`No configuration was passed to detox, make sure you pass a detoxConfig when calling 'detox.init(detoxConfig)'`);
+  }
+
+  const deviceConfig = composeDeviceConfig(detoxConfig);
+  const configurationName = _.findKey(detoxConfig.configurations, (config) => {
+    return config === deviceConfig;
+  });
+
+  const artifactsConfig = composeArtifactsConfig({
+    configurationName,
+    detoxConfig,
+    deviceConfig,
+    cliConfig,
+  });
+
+  const behaviorConfig = composeBehaviorConfig({
+    detoxConfig,
+    deviceConfig,
+    userParams,
+  });
+
+  const sessionConfig = await composeSessionConfig({
+    detoxConfig,
+    deviceConfig,
+  });
+
+  return {
+    artifactsConfig,
+    behaviorConfig,
+    deviceConfig,
+    sessionConfig,
+  };
+}
+
+function composeDeviceConfig(options) {
+  const { configurations, selectedConfiguration } = options;
+
+  if (_.isEmpty(configurations)) {
+    throw new Error(`There are no device configurations in the detox config`);
+  }
+
+  const configurationName = selectedConfiguration || argparse.getArgValue('configuration');
   const deviceOverride = argparse.getArgValue('device-name');
 
   const deviceConfig = (!configurationName && _.size(configurations) === 1)
@@ -83,16 +155,11 @@ function getArtifactsCliConfig() {
   };
 }
 
-function resolveModuleFromPath(modulePath) {
-  const resolvedModulePath = require.resolve(modulePath, { paths: [process.cwd()]});
-  return require(resolvedModulePath);
-}
-
 function composeArtifactsConfig({
   configurationName,
   deviceConfig,
   detoxConfig,
-  cliConfig = getArtifactsCliConfig()
+  cliConfig,
 }) {
   const artifactsConfig = _.defaultsDeep(
       extendArtifactsConfig({
@@ -176,11 +243,10 @@ function resolveArtifactsPathBuilder(artifactsConfig) {
 }
 
 module.exports = {
-  defaultSession,
-  validateSession,
-  throwOnEmptyDevice,
-  throwOnEmptyType,
   throwOnEmptyBinaryPath,
-  composeDeviceConfig,
   composeArtifactsConfig,
+  composeBehaviorConfig,
+  composeDeviceConfig,
+  composeSessionConfig,
+  composeDetoxConfig,
 };
