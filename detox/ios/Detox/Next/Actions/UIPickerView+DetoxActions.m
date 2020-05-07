@@ -29,6 +29,10 @@
 		{
 			title = [self.delegate pickerView:self titleForRow:idx forComponent:component];
 		}
+		else if([self.delegate respondsToSelector:@selector(pickerView:attributedTitleForRow:forComponent:)])
+		{
+			title = [self.delegate pickerView:self attributedTitleForRow:idx forComponent:component].string;
+		}
 		else if ([self.delegate respondsToSelector:@selector(pickerView:viewForRow:forComponent:reusingView:)])
 		{
 			UIView* view = [self.delegate pickerView:self viewForRow:idx forComponent:component reusingView:nil];
