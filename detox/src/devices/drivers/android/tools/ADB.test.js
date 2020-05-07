@@ -180,7 +180,7 @@ describe('ADB', () => {
     await adb.remoteInstall(deviceId, binaryPath);
 
     expect(exec).toHaveBeenCalledWith(
-      expect.stringContaining(`-s mockEmulator shell "pm install ${binaryPath}"`),
+      expect.stringContaining(`-s mockEmulator shell "pm install -r -g -t ${binaryPath}"`),
       undefined, undefined, expect.anything());
   });
 
