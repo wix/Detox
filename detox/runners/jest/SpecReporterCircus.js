@@ -22,8 +22,10 @@ class SpecReporterCircus extends CircusTestEventListenerBase {
   }
 
   _onTestStart(event) {
+    const { test } = event;
     this._specReporter.onTestStart({
-      description: event.test.name,
+      description: test.name,
+      invocations: test.invocations,
     });
   }
 

@@ -29,8 +29,8 @@ class SpecReporter extends ReporterBase {
     }
   }
 
-  onTestStart({description}) {
-    this._traceTest({description});
+  onTestStart({description, invocations = 1}) {
+    this._traceTest({description, invocations});
   }
 
   onTestEnd({description, invocations = 1}, result) {
@@ -60,7 +60,7 @@ class SpecReporter extends ReporterBase {
 
   _traceTest({description, invocations}, _status = undefined) {
     const testDescription = chalk.gray(description);
-    const retriesDescription = (invocations > 1) ? chalk.gray(` (retry #${invocations - 1})`) : '';
+    const retriesDescription = (invocations > 1) ? chalk.gray(` [Retry #${invocations - 1}]`) : '';
     const status = chalk.gray(_status ? ` [${_status}]` : '');
     const desc = this._suitesDesc + testDescription + retriesDescription + status;
     log.info({event: 'SPEC_STATE_CHANGE'}, desc);
