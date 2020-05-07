@@ -12,3 +12,6 @@
 [submodule "detox/ios/DTXLoggingInfra"]
 	path = detox/ios/DTXLoggingInfra
 	url = https://github.com/wix/DTXLoggingInfra.git
+[submodule "detox/ios/DTXObjectiveCHelpers"]
+	path = detox/ios/DTXObjectiveCHelpers
+	url = https://github.com/wix/DTXObjectiveCHelpers.git
