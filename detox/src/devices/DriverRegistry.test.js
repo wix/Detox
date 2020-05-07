@@ -2,6 +2,7 @@ jest.mock('./drivers/ios/IosDriver');
 jest.mock('./drivers/ios/SimulatorDriver');
 jest.mock('./drivers/android/EmulatorDriver');
 jest.mock('./drivers/android/AttachedAndroidDriver');
+jest.mock('../utils/resolveModuleFromPath');
 
 describe('DriverRegistry', () => {
   let DriverRegistry;
@@ -54,9 +55,11 @@ describe('DriverRegistry', () => {
     });
 
     it('should try to resolve unknown driver as a node.js dependency', () => {
-      jest.mock('fake-driver', () => require('./drivers/__mocks__/FakeDriver'), { virtual: true });
-      // eslint-disable-next-line node/no-missing-require
-      const FakeDriver = require('fake-driver');
+      require('../utils/resolveModuleFromPath').mockImplementation(() => {
+        return require('./drivers/__mocks__/FakeDriver');
+      });
+
+      const FakeDriver = require('./drivers/__mocks__/FakeDriver')
       const driver = registry.resolve('fake-driver', opts);
 
       expect(driver).toBeInstanceOf(FakeDriver);

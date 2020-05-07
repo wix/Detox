@@ -1,3 +1,5 @@
+const resolveModuleFromPath = require('../utils/resolveModuleFromPath');
+
 class DriverRegistry {
   constructor(deviceClasses) {
     this.deviceClasses = deviceClasses;
@@ -8,7 +10,7 @@ class DriverRegistry {
 
     if (!DeviceDriverClass) {
       try {
-        DeviceDriverClass = require(deviceType);
+        DeviceDriverClass = resolveModuleFromPath(deviceType);
       } catch (e) {
         // noop, if we don't find a module to require, we'll hit the unsupported error below
       }

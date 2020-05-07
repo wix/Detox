@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const DetoxConfigError = require('./errors/DetoxConfigError');
 const uuid = require('./utils/uuid');
+const resolveModuleFromPath = require('./utils/resolveModuleFromPath');
 const argparse = require('./utils/argparse');
 const getPort = require('get-port');
 const buildDefaultArtifactsRootDirpath = require('./artifacts/utils/buildDefaultArtifactsRootDirpath');
@@ -152,11 +153,6 @@ function getArtifactsCliConfig() {
     recordPerformance: argparse.getArgValue('record-performance'),
     recordTimeline: argparse.getArgValue('record-timeline'),
   };
-}
-
-function resolveModuleFromPath(modulePath) {
-  const resolvedModulePath = require.resolve(modulePath, { paths: [process.cwd()]});
-  return require(resolvedModulePath);
 }
 
 function composeArtifactsConfig({

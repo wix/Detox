@@ -154,7 +154,7 @@ describe('configuration', () => {
         configurationName: 'customization',
         deviceConfig: {
           artifacts: {
-            pathBuilder: 'package.json',
+            pathBuilder: './package.json',
           },
         },
         detoxConfig: {},
