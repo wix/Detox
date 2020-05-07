@@ -6,7 +6,7 @@ const FileArtifact = require('./templates/artifact/FileArtifact');
 const log = require('../utils/logger').child({ __filename });
 
 class ArtifactsManager {
-  constructor({ pathBuilder, plugins } = {}) {
+  constructor({ pathBuilder, plugins }) {
     this._pluginConfigs = plugins;
     this._idlePromise = Promise.resolve();
     this._idleCallbackRequests = [];
@@ -60,7 +60,7 @@ class ArtifactsManager {
       .catch(e => this._idleCallbackErrorHandle(e, caller));
   }
 
-  registerArtifactPlugins(artifactPluginFactoriesMap = {}) {
+  registerArtifactPlugins(artifactPluginFactoriesMap) {
     for (const [key, factory] of Object.entries(artifactPluginFactoriesMap)) {
       const config = this._pluginConfigs[key];
       this._artifactPlugins[key] = this._instantitateArtifactPlugin(factory, config);

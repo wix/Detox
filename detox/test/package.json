@@ -48,6 +48,16 @@
   "detox": {
     "test-runner": "jest",
     "runner-config": "e2e/config.js",
+    "behavior": {
+      "init": {
+        "reinstallApp": true,
+        "launchApp": true,
+        "exposeGlobals": true
+      },
+      "cleanup": {
+        "shutdownDevice": false
+      }
+    },
     "__session": {
       "server": "ws://localhost:8099",
       "sessionId": "test"

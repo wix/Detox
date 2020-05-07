@@ -464,4 +464,39 @@ describe('ArtifactsManager', () => {
       });
     });
   });
+
+  describe('.subscribeToDeviceEvents', () => {
+    let artifactsManager, emitter;
+
+    beforeEach(() => {
+      artifactsManager = new proxy.ArtifactsManager({
+        pathBuilder: new proxy.ArtifactPathBuilder({
+          rootDir: '/tmp',
+        }),
+        plugins: {
+          mock: { setting: 'value' },
+        },
+      });
+
+      emitter = {
+        on: jest.fn(),
+      };
+    });
+
+    it.each([
+      ['bootDevice'],
+      ['beforeShutdownDevice'],
+      ['shutdownDevice'],
+      ['beforeLaunchApp'],
+      ['launchApp'],
+      ['appReady'],
+      ['beforeUninstallApp'],
+      ['beforeTerminateApp'],
+      ['terminateApp'],
+      ['createExternalArtifact'],
+    ])(`should subscribe to emitter's %s event`, (eventName) => {
+      artifactsManager.subscribeToDeviceEvents(emitter);
+      expect(emitter.on).toHaveBeenCalledWith(eventName, expect.any(Function));
+    });
+  });
 });
