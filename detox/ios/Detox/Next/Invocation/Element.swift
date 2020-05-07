@@ -46,7 +46,11 @@ class Element : CustomStringConvertible {
 			} else {
 				//Will fail test if more than one element are resolved from the query
 				guard array.count == 1 else {
-					dtx_fatalError("Multiple elements found for “\(self.description)”")
+					if array.count == 0 {
+						dtx_fatalError("No elements found for “\(self.description)”")
+					} else {
+						dtx_fatalError("Multiple elements found for “\(self.description)”")
+					}
 				}
 				element = array.first!
 			}

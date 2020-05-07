@@ -17,6 +17,7 @@ import UIKit
 		static let expectation = "expectation"
 	}
 	
+	@discardableResult
 	@objc(invokeWithDictionaryRepresentation:error:)
 	public class func invoke(dictionaryRepresentation: [String: Any]) throws -> [String: Any] {
 		let type = dictionaryRepresentation[Keys.type] as! String
