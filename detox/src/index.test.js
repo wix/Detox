@@ -1,9 +1,13 @@
-const schemes = require('./configurations.mock');
+const _ = require('lodash');
 
 jest.mock('./utils/logger');
 jest.mock('./configuration');
 jest.mock('./Detox');
 jest.mock('./utils/MissingDetox');
+
+const testUtils = {
+  randomObject: () => ({ [Math.random()]: Math.random() }),
+};
 
 describe('index', () => {
   let logger;
@@ -14,11 +18,13 @@ describe('index', () => {
   let detoxInstance;
 
   beforeEach(() => {
+    // valid enough configuration to pass with mocked dependencies
     detoxConfig = {
-      artifactsConfig: {},
-      behaviorConfig: {},
-      deviceConfig: {},
-      sessionConfig: {},
+      behaviorConfig: {
+        init: {
+          exposeGlobals: _.sample([false, true]),
+        },
+      },
     };
 
     logger = require('./utils/logger');
@@ -32,8 +38,6 @@ describe('index', () => {
 
     index = require('./index');
   });
-
-  const randomObject = () => ({ [Math.random()]: Math.random() });
 
   describe('public interface', () => {
     it.each([
@@ -55,24 +59,26 @@ describe('index', () => {
   });
 
   describe('detox.init(config[, userParams])', () => {
-    it(`should pass config and userParams to configuration.composeDetoxConfig`, async () => {
-      const [config, userParams] = [1, 2].map(randomObject);
+    it(`should pass args via calling configuration.composeDetoxConfig(config, userParams)`, async () => {
+      const [config, userParams] = [1, 2].map(testUtils.randomObject);
       await index.init(config, userParams).catch(() => {});
 
       expect(configuration.composeDetoxConfig).toHaveBeenCalledWith(config, userParams);
     });
 
-    it(`should create a Detox instance with the composed config object`, async () => {
-      const config = {
-        behaviorConfig: {
-          init: randomObject(),
-        },
-      };
+    describe('when configuration is valid', () => {
+      beforeEach(async () => {
+        detox = await index.init();
+      });
 
-      configuration.composeDetoxConfig.mockImplementation(async () => config);
+      it(`should create a Detox instance with the composed config object`, () =>
+        expect(Detox).toHaveBeenCalledWith(detoxConfig));
 
-      await index.init();
-      expect(Detox).toHaveBeenCalledWith(config);
+      it(`should return a Detox instance`, () =>
+        expect(detox).toBeInstanceOf(Detox));
+
+      it(`should set the last error to be null in Detox.none's storage`, () =>
+        expect(Detox.none.setError).toHaveBeenCalledWith(null));
     });
 
     describe('when configuration is invalid', () => {
@@ -93,11 +99,15 @@ describe('index', () => {
         await expect(initPromise).rejects.toThrowError(configError);
       });
 
-      it(`should touch globals regardless of the config`, async () => {
+      it(`should not create a Detox instance`, () => {
+        expect(Detox).not.toHaveBeenCalled();
+      });
+
+      it(`should always mutate global with Detox.none vars`, async () => {
         expect(Detox.none.initContext).toHaveBeenCalledWith(global);
       });
 
-      it(`should set last error to Detox.none`, async () => {
+      it(`should set the last error to Detox.none's storage`, async () => {
         expect(Detox.none.setError).toHaveBeenCalledWith(configError);
       });
 
@@ -111,24 +121,53 @@ describe('index', () => {
     });
 
     describe('when behaviorConfig.init.exposeGlobals = true', () => {
-      beforeEach(() => {
-        detoxConfig.behaviorConfig.init = { exposeGlobals: true };
+      beforeEach(async () => {
+        detoxConfig.behaviorConfig.init.exposeGlobals = true;
+        detox = await index.init();
       });
 
-      it(`should touch globals`, async () => {
-        await index.init();
+      it(`should touch globals with Detox.none.initContext`, () => {
         expect(Detox.none.initContext).toHaveBeenCalledWith(global);
       });
     });
 
     describe('when behaviorConfig.init.exposeGlobals = false', () => {
-      beforeEach(() => {
-        detoxConfig.behaviorConfig.init = { exposeGlobals: false };
+      beforeEach(async () => {
+        detoxConfig.behaviorConfig.init.exposeGlobals = false;
+        detox = await index.init();
       });
 
-      it(`should not touch globals`, async () => {
-        await index.init();
+      it(`should not touch globals with Detox.none.initContext`, () => {
         expect(Detox.none.initContext).not.toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('detox.cleanup()', () => {
+    describe('when called before detox.init()', () => {
+      beforeEach(() => index.cleanup());
+
+      it('should nevertheless cleanup globals with Detox.none.cleanupContext', () =>
+        expect(Detox.none.cleanupContext).toHaveBeenCalledWith(global));
+    });
+
+    describe('when called after detox.init()', () => {
+      beforeEach(async () => {
+        detox = await index.init();
+        await index.cleanup();
+      });
+
+      it('should call cleanup in the current Detox instance', () =>
+        expect(detox.cleanup).toHaveBeenCalled());
+
+      it('should call cleanup globals with Detox.none.cleanupContext', () =>
+        expect(Detox.none.cleanupContext).toHaveBeenCalledWith(global));
+
+      describe('twice', () => {
+        beforeEach(() => index.cleanup());
+
+        it('should not call cleanup twice in the former Detox instance', () =>
+          expect(detox.cleanup).toHaveBeenCalledTimes(1));
       });
     });
   });
@@ -145,7 +184,7 @@ describe('index', () => {
     let randomArgs;
 
     beforeEach(() => {
-      randomArgs = [randomObject(), randomObject()];
+      randomArgs = [1, 2].map(testUtils.randomObject);
     });
 
     describe('before detox.init() has been called', () => {
@@ -179,7 +218,7 @@ describe('index', () => {
   ])('detox.%s', (property) => {
     describe('before detox.init() has been called', () => {
       beforeEach(() => {
-        Detox.none[property] = randomObject();
+        Detox.none[property] = testUtils.randomObject();
       });
 
       it(`should return value of Detox.none["${property}"]`, () => {
@@ -191,7 +230,7 @@ describe('index', () => {
       beforeEach(async () => {
         detoxConfig = { behaviorConfig: { init: {} } };
         detoxInstance = await index.init();
-        detoxInstance[property] = randomObject();
+        detoxInstance[property] = testUtils.randomObject();
       });
 
       it(`should forward calls to the current Detox instance`, () => {
@@ -201,134 +240,4 @@ describe('index', () => {
   });
 
 
-  // it(`throws if there was a config was invalid`, async () => {
-  //   let exception;
-  //
-  //   try {
-  //     await index.init();
-  //   } catch (e) {
-  //     exception = e;
-  //   }
-  //
-  //   expect(exception).toBeDefined();
-  //   expect(logger.error).toHaveBeenCalledWith({ event: 'DETOX_INIT_ERROR' }, '\n', exception);
-  // });
-
-//   it(`exposes detox globals by default`, async () => {
-//     await index.init(schemes.validOneDeviceNoSession, { initGlobals: false });
-//
-//     expect('by' in global).toBe(false);
-//   });
-//
-//   it(`exposes detox globals on configuration error`, async () => {
-//     await index.init(schemes.validOneDeviceNoSession, { initGlobals: false });
-//
-//     expect('by' in global).toBe(false);
-//   });
-//
-//   it(`does not exposes detox globals if behaviorConfig.init.exposeGlobals = false`, async () => {
-//     await index.init(schemes.validOneDeviceNoSession, { initGlobals: false });
-//
-//     expect('by' in global).toBe(false);
-//   });
-//
-//   it(`constructs detox without globals if initGlobals = false`, async () => {
-//     await index.init(schemes.validOneDeviceNoSession, { initGlobals: false });
-//
-//     expect('by' in global).toBe(false);
-//   });
-//
-//
-//   it(`constructs detox with a composed config`, async () => {
-//     await index.init(schemes.validOneDeviceNoSession);
-//
-//     // TODO: mock configuration and Detox
-//     expect(Detox).toHaveBeenCalledWith({
-//       artifactsConfig: expect.objectContaining({
-//         plugins: schemes.pluginsDefaultsResolved,
-//         pathBuilder: expect.objectContaining({
-//           rootDir: expect.stringMatching(/^artifacts[\\\/]ios\.sim\.release/),
-//         }),
-//       }),
-//       deviceConfig: schemes.validOneDeviceNoSession.configurations['ios.sim.release'],
-//       session: undefined,
-//     });
-//   });
-//
-//   it(`initializes detox redirects to configuration`, async () => {
-//     const params = {};
-//
-//     await index.init(schemes.validOneDeviceNoSession, params);
-//
-//     expect(mockDetox.init).toHaveBeenCalledWith(params);
-//   });
-//
-//   it(`Basic usage`, async() => {
-//     await index.init(schemes.validOneDeviceNoSession);
-//     await index.cleanup();
-//   });
-//
-//   it(`Basic usage with memorized exported objects`, async() => {
-//     const { device, by } = index;
-//
-//     expect(() => { device, by }).not.toThrowError();
-//     expect(() => { device.launchApp }).toThrowError();
-//     expect(() => { by.id }).toThrowError();
-//
-//     await index.init(schemes.validOneDeviceNoSession);
-//
-//     expect(device.launchApp).toEqual(expect.any(Function));
-//     expect(by.id).toEqual(expect.any(Function));
-//
-//     await index.cleanup();
-//
-//     expect(() => { device, by }).not.toThrowError();
-//     expect(() => { device.launchApp }).toThrowError();
-//     expect(() => { by.id }).toThrowError();
-//   });
-//
-//   it(`Basic usage, do not throw an error if cleanup is done twice`, async() => {
-//     await index.init(schemes.validOneDeviceNoSession);
-//     await index.cleanup();
-//     await index.cleanup();
-//   });
-//
-//   it(`Basic usage, if detox is undefined, do not throw an error`, async() => {
-//     await index.cleanup();
-//   });
-//
-//   it.each([
-//     'beforeEach',
-//     'afterEach',
-//     'suiteStart',
-//     'suiteEnd',
-//     'element',
-//     'expect',
-//     'waitFor',
-//   ])(`%s() method should throw if currently there is no detox instance`, async (method) => {
-//     await expect(index[method]()).rejects.toThrowError(/TODOTDO/);
-//   });
-//
-//   it.each([
-//     'beforeEach',
-//     'afterEach',
-//     'suiteStart',
-//     'suiteEnd',
-//     'element',
-//     'expect',
-//     'waitFor',
-// ])(`%s() method should be forwarded to the current detox instance`, async (method) => {
-//     let args = [Math.random(), Math.random()];
-//     await index.init(schemes.validOneDeviceNoSession);
-//     await index[method](...args);
-//     expect(detoxInstance[method]).toHaveBeenCalledWith(...args);
-//   });
-//
-//   it(`error message should be covered - with detox failed to initialize`, async() => {
-//     mockDetox.init.mockReturnValue(Promise.reject(new Error('InitMe error')));
-//
-//     await expect(detox.init(schemes.validOneDeviceNoSession)).rejects.toThrow(/InitMe error/);
-//     await detox.cleanup(); // cleaning up
-//     await expect(detox.beforeEach()).rejects.toThrow(/There was an error[\s\S]*InitMe error/mg);
-//   });
 });
