@@ -57,7 +57,7 @@ describe('expectTwo', () => {
           },
           {
             type: 'ancestor',
-            value: {
+            predicate: {
               type: 'id',
               value: 'parent'
             }
@@ -84,7 +84,7 @@ describe('expectTwo', () => {
           },
           {
             type: 'ancestor',
-            value: {
+            predicate: {
               type: 'id',
               value: 'parent'
             }
@@ -109,7 +109,7 @@ describe('expectTwo', () => {
           },
           {
             type: 'ancestor',
-            value: {
+            predicate: {
               type: 'and',
               predicates: [
                 {

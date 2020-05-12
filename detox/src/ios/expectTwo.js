@@ -233,7 +233,7 @@ class Matcher {
       throwMatcherError(matcher);
     }
 
-    this.and({ predicate: { type: 'ancestor', value: matcher.predicate } });
+    this.and({ predicate: { type: 'ancestor', predicate: matcher.predicate } });
     return this;
   }
 
@@ -241,7 +241,7 @@ class Matcher {
     if (!(matcher instanceof Matcher)) {
       throwMatcherError(matcher);
     }
-    this.and({ predicate: { type: 'descendant', value: matcher.predicate } });
+    this.and({ predicate: { type: 'descendant', predicate: matcher.predicate } });
     return this;
   }
 
