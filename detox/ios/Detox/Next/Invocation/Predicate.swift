@@ -29,6 +29,7 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 		static let descendant = "descendant"
 		
 		static let and = "and"
+		static let or = "or"
 	}
 	
 	let kind : String
@@ -67,8 +68,27 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 					], modifiers: []), modifiers: [Modifier.not])
 				], modifiers: [])
 			}
-		case Kind.id, Kind.text, Kind.value:
-			let value = dictionaryRepresentation[Keys.value] as Any
+		case Kind.text:
+			let text = dictionaryRepresentation[Keys.value] as! String
+
+			var orPredicates = [
+				KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(UITextView.self)),
+				KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(UITextField.self)),
+				KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(UILabel.self)),
+			]
+			
+			if ReactNativeSupport.isReactNativeApp == true {
+				//Will crash if RN app and neither class exists
+				let RCTTextViewClass : AnyClass = NSClassFromString("RCTText") ?? NSClassFromString("RCTTextView")!
+				orPredicates.append(KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(RCTTextViewClass)))
+			}
+			
+			return AndCompoundPredicate(predicates: [
+				ValuePredicate(kind: kind, modifiers: modifiers, value: text),
+				OrCompoundPredicate(predicates: orPredicates, modifiers: [])
+			], modifiers: [])
+		case Kind.id, Kind.value:
+			let value = dictionaryRepresentation[Keys.value] as! CustomStringConvertible
 			return ValuePredicate(kind: kind, modifiers: modifiers, value: value)
 		case Kind.ancestor:
 			let predicate = Predicate.with(dictionaryRepresentation: dictionaryRepresentation[Keys.predicate] as! [String: Any])
@@ -106,8 +126,24 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 		return rv
 	}
 	
+	fileprivate var operatorDescription: String {
+		get {
+			return ""
+		}
+	}
+	
+	fileprivate var innerDescription: String {
+		get {
+			fatalError("Unimplemented innerDescription.get() called for \(type(of: self))")
+		}
+	}
+	
 	var description: String {
-		fatalError("Unimplemented description.get() called for \(type(of: self))")
+		get {
+			let containsNot = modifiers.contains(Modifier.not)
+	
+			return "\(containsNot ? "NOT \(operatorDescription)(" : "")\(innerDescription)\(containsNot ? ")" : "")"
+		}
 	}
 	
 	var debugDescription: String {
@@ -132,15 +168,15 @@ class KindOfPredicate : Predicate {
 		}
 	}
 	
-	override var description: String {
+	override var innerDescription: String {
 		get {
-			return self.predicateForQuery().description
+			return "class ISKINDOF “\(className)”"
 		}
 	}
 }
 
 class ValuePredicate : Predicate {
-	let value : Any
+	let value : CustomStringConvertible
 	
 	static let mapping : [String: (String, (Any) -> Any)] = [
 		Kind.id: ("accessibilityIdentifier", { return $0 }),
@@ -150,7 +186,7 @@ class ValuePredicate : Predicate {
 		Kind.value: ("accessibilityValue", { return $0 })
 	]
 	
-	init(kind: String, modifiers: Set<String>, value: Any) {
+	init(kind: String, modifiers: Set<String>, value: CustomStringConvertible) {
 		self.value = value
 		
 		super.init(kind: kind, modifiers: modifiers)
@@ -162,14 +198,14 @@ class ValuePredicate : Predicate {
 		return NSComparisonPredicate(leftExpression: NSExpression(forKeyPath: keyPath), rightExpression: NSExpression(forConstantValue: transformer(value)), modifier: .direct, type: .equalTo, options: [])
 	}
 	
-	override var description: String {
-		get {
-			return self.predicateForQuery().description
-		}
+	override var innerDescription: String {
+		let (keyPath, transformer) = ValuePredicate.mapping[kind]!
+		
+		return "\(keyPath) == “\(transformer(value))”"
 	}
 }
 
-class AndCompoundPredicate : Predicate {
+class CompoundPredicate : Predicate{
 	let predicates: [Predicate]
 	
 	init(predicates: [Predicate], modifiers: Set<String>) {
@@ -178,14 +214,34 @@ class AndCompoundPredicate : Predicate {
 		super.init(kind: Kind.and, modifiers: modifiers)
 	}
 	
+	fileprivate func innerDescription(separator: String) -> String {
+		return predicates.map{
+			let isMultiple = (type(of: $0) as AnyClass).isSubclass(of: CompoundPredicate.self)
+			return isMultiple ? "(\($0))" : $0.description
+		}.joined(separator: separator)
+	}
+}
+
+class AndCompoundPredicate : CompoundPredicate {
 	override func innerPredicateForQuery() -> NSPredicate {
 		return NSCompoundPredicate(andPredicateWithSubpredicates: predicates.map { $0.predicateForQuery() } )
 	}
 	
-	override var description: String {
+	override var innerDescription: String {
 		get {
-			let containsNot = modifiers.contains(Modifier.not)
-			return String(format: "%@%@%@", containsNot ? "NOT (" : "", predicates.map{ $0.description }.joined(separator: " && "), containsNot ? ")" : "")
+			return innerDescription(separator: " && ")
+		}
+	}
+}
+
+class OrCompoundPredicate : CompoundPredicate {
+	override func innerPredicateForQuery() -> NSPredicate {
+		return NSCompoundPredicate(orPredicateWithSubpredicates: predicates.map { $0.predicateForQuery() } )
+	}
+	
+	override var innerDescription: String {
+		get {
+			return innerDescription(separator: " || ")
 		}
 	}
 }
@@ -207,9 +263,15 @@ class DescendantPredicate : Predicate {
 		}
 	}
 	
-	override var description: String {
+	override var operatorDescription: String {
 		get {
-			return String(format: "%@DESCENDANT(%@)", modifiers.contains(Modifier.not) ? "NOT " : "", predicate.description)
+			return "DESCENDANT"
+		}
+	}
+	
+	override var innerDescription: String {
+		get {
+			return predicate.description
 		}
 	}
 }
@@ -239,9 +301,15 @@ class AncestorPredicate : Predicate {
 		}
 	}
 	
-	override var description: String {
+	override var operatorDescription: String {
 		get {
-			return String(format: "%@ANCESTOR(%@)", modifiers.contains(Modifier.not) ? "NOT " : "", predicate.description)
+			return "ANCESTOR"
+		}
+	}
+	
+	override var innerDescription: String {
+		get {
+			return predicate.description
 		}
 	}
 }

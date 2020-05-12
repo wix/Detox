@@ -16,6 +16,7 @@ fileprivate func applyModifiers(_ input: Bool, modifiers: Set<String>) -> Bool {
 		case Modifier.not:
 			rv = !rv
 		default:
+			fatalError("Unimplemented modifier “\($0)”")
 			break
 		}
 	}
@@ -83,7 +84,7 @@ class Expectation : CustomStringConvertible {
 			modifiers = []
 		}
 		//Convert ms to seconds
-		let timeout = (((dictionaryRepresentation[Keys.timeout] as! Double?) ?? 0.0) * 1000).truncatingRemainder(dividingBy: 1000)
+		let timeout = ((dictionaryRepresentation[Keys.timeout] as! TimeInterval?) ?? 0.0).fromMSToSeconds()
 		
 		let element = Element.with(dictionaryRepresentation: dictionaryRepresentation)
 		let expectationClass = mapping[kind]!
@@ -171,12 +172,12 @@ class ValueExpectation : Expectation {
 	}
 	
 	override func evaluate(with view: UIView) -> Bool {
-		return NSComparisonPredicate(leftExpression: NSExpression(forKeyPath: key), rightExpression: NSExpression(forConstantValue: value), modifier: .direct, type: .equalTo, options: []).evaluate(with: element)
+		return NSComparisonPredicate(leftExpression: NSExpression(forKeyPath: key), rightExpression: NSExpression(forConstantValue: value), modifier: .direct, type: .equalTo, options: []).evaluate(with: view)
 	}
 	
 	override var additionalDescription: String {
 		get {
-			return "(\(key)==\(value))"
+			return "(\(key) == “\(value)”)"
 		}
 	}
 }

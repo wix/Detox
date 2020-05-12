@@ -62,8 +62,7 @@ class Action : CustomStringConvertible {
 		Kind.typeText: TypeTextAction.self,
 		Kind.replaceText: ReplaceTextAction.self,
 		Kind.clearText: ClearTextAction.self,
-		
-		Kind.scroll: ScrollAction.self,
+	
 		Kind.scrollTo: ScrollToEdgeAction.self,
 		
 		Kind.swipe: SwipeAction.self,
@@ -75,14 +74,14 @@ class Action : CustomStringConvertible {
 		
 		Kind.getAttributes: GetAttributesAction.self
 	]
-	
-	class func with(dictionaryRepresentation: [String: Any]) -> Action {
+
+	dynamic class func with(dictionaryRepresentation: [String: Any]) -> Action {
 		let kind = dictionaryRepresentation[Keys.kind] as! String //Crash on failure
 		var params = dictionaryRepresentation[Keys.params] as! [CustomStringConvertible]?
 		
-		let actionClass = mapping[kind]! //Crash on failure
-		
 		switch kind {
+		case Kind.scroll:
+			return ScrollAction.with(dictionaryRepresentation: dictionaryRepresentation)
 		case Kind.tapBackspaceKey:
 			params = ["\u{8}"]
 		case Kind.tapReturnKey:
@@ -90,6 +89,8 @@ class Action : CustomStringConvertible {
 		default:
 			break
 		}
+		
+		let actionClass = mapping[kind]! //Crash on failure
 		
 		let element = Element.with(dictionaryRepresentation: dictionaryRepresentation)
 		return actionClass.init(kind: kind, params: params, element: element)
@@ -131,7 +132,7 @@ class LongPressAction : Action {
 	override func perform(on view: UIView) -> [String: Any]? {
 		let duration : TimeInterval
 		if let param = params?.first as? TimeInterval {
-			duration = param
+			duration = param.fromMSToSeconds()
 		} else {
 			//TODO: Check default value in Detox
 			duration = 0.8
@@ -183,7 +184,7 @@ class ClearTextAction : Action {
 class ScrollAction : Action {
 	let whileExpectation : Expectation?
 	
-	override class func with(dictionaryRepresentation: [String: Any]) -> Action {
+	dynamic override class func with(dictionaryRepresentation: [String: Any]) -> Action {
 		let params = dictionaryRepresentation[Keys.params] as! [CustomStringConvertible]?
 		let element = Element.with(dictionaryRepresentation: dictionaryRepresentation)
 		let whileExpectation : Expectation?
@@ -227,13 +228,14 @@ class ScrollAction : Action {
 			break;
 		}
 		let startPositionX : Double
-		if let param2 = params?[2] as? Double, param2.isNaN == false {
+		
+		if params?.count ?? 0 > 2, let param2 = params?[2] as? Double, param2.isNaN == false {
 			startPositionX = param2
 		} else {
 			startPositionX = Double.nan
 		}
 		let startPositionY : Double
-		if let param3 = params?[3] as? Double, param3.isNaN == false {
+		if params?.count ?? 0 > 3, let param3 = params?[3] as? Double, param3.isNaN == false {
 			startPositionY = param3
 		} else {
 			startPositionY = Double.nan
@@ -245,6 +247,8 @@ class ScrollAction : Action {
 		}
 		else if let view = view as? WKWebView {
 			scrollView = view.scrollView
+		} else if ReactNativeSupport.isReactNativeApp && NSStringFromClass(type(of: view)) == "RCTScrollView" {
+			scrollView = (view.value(forKey: "scrollView") as! UIScrollView)
 		} else {
 			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UISrollView”", view: view)
 		}
