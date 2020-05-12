@@ -69,12 +69,12 @@ describe('expectTwo', () => {
     expect(testCall).deepEquals(jsonOutput);
   });
 
-  it(`element(by.id('child').withAncestor(by.id('parent'))).atIndex(1).tap()`, () => {
-    const testCall = e.element(e.by.id('child').withAncestor(e.by.id('parent'))).atIndex(1).tap();
+  it(`element(by.id('child').withAncestor(by.id('parent'))).atIndex(0).tap()`, () => {
+    const testCall = e.element(e.by.id('child').withAncestor(e.by.id('parent'))).atIndex(0).tap();
     const jsonOutput = {
       type: 'action',
       action: 'tap',
-      atIndex: 1,
+      atIndex: 0,
       predicate: {
         type: 'and',
         predicates: [

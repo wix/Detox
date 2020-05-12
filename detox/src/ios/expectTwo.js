@@ -175,7 +175,7 @@ class Element {
     return _invocationManager.execute({
       type: 'action',
       action,
-      ...(this.index && { atIndex: this.index }),
+      ...(this.index !== undefined && { atIndex: this.index }),
       ...(params.length !== 0 && { params: _.without(params, NaN, null, undefined) }),
       predicate: this.matcher.predicate
     });
