@@ -44,7 +44,7 @@ describe('expectTwo API Coverage', () => {
     it(`withAncestor, withDescendant`, async () => {
       await e.expect(e.element(e.by.id('test').withAncestor(e.by.id('ancestor')))).toBeVisible();
       await e.expect(e.element(e.by.id('test').withDescendant(e.by.id('descendant')))).toBeVisible();
-      // await e.expect(e.element(e.by.id('test').and(e.by.type('type')))).toBeVisible();
+      await e.expect(e.element(e.by.id('test').and(e.by.type('type')))).toBeVisible();
       // await e.expect(e.element(e.by.id('test').not())).toBeVisible();
     });
 

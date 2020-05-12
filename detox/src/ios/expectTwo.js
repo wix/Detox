@@ -161,6 +161,10 @@ class By {
     return new Matcher().id(byId);
   }
 
+  type(byType) {
+    return new Matcher().type(byType);
+  }
+
   text(text) {
     return new Matcher().text(text);
   }
@@ -200,7 +204,11 @@ class Matcher {
     return this;
   }
 
-  //TODO - no type matcher!!
+  type(byType) {
+    if (typeof byType !== 'string') throw new Error('type should be a string, but got ' + (byType + (' (' + (typeof byType + ')'))));
+    this.predicate = { type: 'type', value: byType };
+    return this;
+  }
 
   traits(byTraits) {
     if (typeof byTraits !== 'object' || !byTraits instanceof Array) throw new Error('traits must be an array, got ' + typeof byTraits);
