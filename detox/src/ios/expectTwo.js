@@ -339,7 +339,6 @@ class WaitFor {
   }
 
   withTimeout(timeout) {
-
     if (typeof timeout !== 'number') throw new Error('text should be a number, but got ' + (timeout + (' (' + (typeof timeout + ')'))));
     if (timeout < 0) throw new Error('timeout must be larger than 0');
     this.timeout = timeout;
@@ -447,7 +446,6 @@ class WaitFor {
     const expectation = this.expectation;
     const action = this.action;
     const timeout = this.timeout;
-    expectation.type = 'waitFor';
 
     return _invocationManager.execute({
       ...action,

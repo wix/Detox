@@ -249,7 +249,7 @@ describe('expectTwo', () => {
   it(`waitFor(element(by.id('uniqueId'))).toHaveValue('Some value').withTimeout(2000)`, () => {
     const testCall = e.waitFor(e.element(e.by.id('uniqueId'))).toHaveValue('Some value').withTimeout(2000);
     const jsonOutput = {
-      type: 'waitFor',
+      type: 'expectation',
       timeout: 2000,
       predicate: {
         type: 'id',
