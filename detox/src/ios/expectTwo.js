@@ -3,6 +3,7 @@ const _ = require('lodash');
 class Expect {
   constructor(element) {
     this.element = element;
+    this.modifier;
   }
 
   toBeVisible() {
@@ -10,7 +11,7 @@ class Expect {
   }
 
   toBeNotVisible() {
-    return this.expect('toBeNotVisible');
+    return this.not().toBeVisible();
   }
 
   toExist() {
@@ -18,19 +19,31 @@ class Expect {
   }
 
   toNotExist() {
-    return this.expect('toNotExist');
+    return this.not().toExist();
   }
 
   toHaveText(text) {
     return this.expect('toHaveText', text);
   }
 
+  toNotHaveText(text) {
+    return this.not().toHaveText(text);
+  }
+
   toHaveLabel(label) {
     return this.expect('toHaveLabel', label);
   }
 
+  toNotHaveLabel(label) {
+    return this.not().toHaveLabel(label);
+  }
+
   toHaveId(id) {
     return this.expect('toHaveId', id);
+  }
+
+  toNotHaveId(id) {
+    return this.not().toHaveId(id);
   }
 
   toHaveValue(value) {
@@ -38,13 +51,19 @@ class Expect {
   }
 
   toNotHaveValue(value) {
-    return this.expect('toNotHaveValue', value);
+    return this.not().toHaveValue(value);
+  }
+
+  not() {
+    this.modifier = 'not';
+    return this;
   }
 
   expect(expectation, ...params) {
     return _invocationManager.execute({
       type: 'expectation',
       predicate: this.element.matcher.predicate,
+      ...(this.modifier && {modifier: this.modifier}),
       expectation,
       ...(params.length !== 0 && { params: _.without(params, NaN, null, undefined) })
     });

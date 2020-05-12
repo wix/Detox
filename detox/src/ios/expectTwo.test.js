@@ -192,6 +192,21 @@ describe('expectTwo', () => {
     expect(testCall).deepEquals(jsonOutput);
   });
 
+  it(`expect(element(by.text('Tap Working!!!'))).toBeNotVisible()`, () => {
+    const testCall = e.expect(e.element(e.by.text('Tap Working!!!'))).toBeNotVisible();
+    const jsonOutput = {
+      type: 'expectation',
+      predicate: {
+        type: 'text',
+        value: 'Tap Working!!!'
+      },
+      modifier: 'not',
+      expectation: 'toBeVisible'
+    };
+
+    expect(testCall).deepEquals(jsonOutput);
+  });
+
   it(`expect(element(by.id('UniqueId204'))).toHaveText('I contain some text')`, () => {
     const testCall = e.expect(e.element(e.by.id('UniqueId204'))).toHaveText('I contain some text');
     const jsonOutput = {
@@ -207,8 +222,8 @@ describe('expectTwo', () => {
     expect(testCall).deepEquals(jsonOutput);
   });
 
-  it(`waitFor(element(by.text('Text5'))).toBeVisible().whileElement(by.id('ScrollView630')).scroll(50, 'down')`, () => {
-    const testCall = e.waitFor(e.element(e.by.text('Text5'))).toBeVisible().whileElement(e.by.id('ScrollView630')).scroll(50, 'down');
+  it(`waitFor(element(by.text('Text5'))).toBeNotVisible().whileElement(by.id('ScrollView630')).scroll(50, 'down')`, () => {
+    const testCall = e.waitFor(e.element(e.by.text('Text5'))).toBeNotVisible().whileElement(e.by.id('ScrollView630')).scroll(50, 'down');
     const jsonOutput = {
       type: 'action',
       action: 'scroll',
@@ -223,6 +238,7 @@ describe('expectTwo', () => {
           type: 'text',
           value: 'Text5'
         },
+        modifier: 'not',
         expectation: 'toBeVisible'
       }
     };
