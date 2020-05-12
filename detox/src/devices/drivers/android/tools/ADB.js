@@ -232,6 +232,14 @@ class ADB {
     await this.shell(deviceId, `rm ${force ? '-f' : ''} "${path}"`);
   }
 
+  /***
+   * @returns {ChildProcessPromise}
+   */
+  spawnInstrumentation(deviceId, userArgs, testRunner) {
+    const spawnArgs = ['shell', 'am', 'instrument', '-w', '-r', ...userArgs, testRunner];
+    return this.spawn(deviceId, spawnArgs, { detached: false });
+  }
+
   async listInstrumentation(deviceId) {
     return this.shell(deviceId, 'pm list instrumentation');
   }
@@ -263,6 +271,7 @@ class ADB {
     return this.adbCmd(deviceId, `reverse --remove tcp:${port}`);
   }
 
+  // TODO refactor the whole thing so as to make usage of BinaryExec -- similar to EmulatorExec
   async adbCmd(deviceId, params, options) {
     const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
     const cmd = `"${this.adbBin}" ${serial} ${params}`;
@@ -275,9 +284,9 @@ class ADB {
   /***
    * @returns {ChildProcessPromise}
    */
-  spawn(deviceId, params) {
+  spawn(deviceId, params, spawnOptions) {
     const serial = deviceId ? ['-s', deviceId] : [];
-    return spawnAndLog(this.adbBin, [...serial, ...params]);
+    return spawnAndLog(this.adbBin, [...serial, ...params], spawnOptions);
   }
 
   static inferDeviceType(adbName) {
