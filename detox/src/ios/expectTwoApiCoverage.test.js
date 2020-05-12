@@ -93,6 +93,8 @@ describe('expectTwo API Coverage', () => {
       await e.element(e.by.id('someId')).replaceText('replaceTo');
       await e.element(e.by.id('someId')).pinchWithAngle('outward', 'fast', 0);
       await e.element(e.by.id('someId')).pinchWithAngle('outward');
+      await e.element(e.by.id('someId')).pinch(0, 'fast', 0);
+      await e.element(e.by.id('someId')).pinch(1.1, 'slow', 1);
       await e.element(e.by.id('someId')).scroll(100);
       await e.element(e.by.id('someId')).scroll(100, 'down');
       await e.element(e.by.id('someId')).scroll(100, 'up');
@@ -119,26 +121,38 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.element(e.by.id('someId')).multiTap('NaN'));
       await expectToThrow(() => e.element(e.by.id('someId')).typeText(0));
       await expectToThrow(() => e.element(e.by.id('someId')).replaceText(3));
+
+      await expectToThrow(() => e.element(e.by.id('someId')).pinch('NaN', 'slow', 0));
+      await expectToThrow(() => e.element(e.by.id('someId')).pinch(1, 1, 0));
+      await expectToThrow(() => e.element(e.by.id('someId')).pinch(1, 'noSpeed', 0));
+      await expectToThrow(() => e.element(e.by.id('someId')).pinch(1, 'slow', 'NaN'));
+
       await expectToThrow(() => e.element(e.by.id('someId')).pinchWithAngle('noDirection', 'slow', 0));
       await expectToThrow(() => e.element(e.by.id('someId')).pinchWithAngle(1, 'slow', 0));
       await expectToThrow(() => e.element(e.by.id('someId')).pinchWithAngle('outward', 1, 0));
       await expectToThrow(() => e.element(e.by.id('someId')).pinchWithAngle('outward', 'noDirection', 0));
       await expectToThrow(() => e.element(e.by.id('someId')).pinchWithAngle('outward', 'slow', 'NaN'));
+
       await expectToThrow(() => e.element(e.by.id('someId')).replaceText(3));
+
       await expectToThrow(() => e.element(e.by.id('someId')).scroll('NaN', 'down'));
       await expectToThrow(() => e.element(e.by.id('someId')).scroll(100, 'noDirection'));
       await expectToThrow(() => e.element(e.by.id('someId')).scroll(100, 'down', 0, 's'));
       await expectToThrow(() => e.element(e.by.id('someId')).scroll(100, 'down', 's', 's'));
       await expectToThrow(() => e.element(e.by.id('someId')).scroll(100, 0));
+
       await expectToThrow(() => e.element(e.by.id('someId')).scrollTo(0));
       await expectToThrow(() => e.element(e.by.id('someId')).scrollTo('noDirection'));
+
       await expectToThrow(() => e.element(e.by.id('someId')).swipe(4, 'fast'));
       await expectToThrow(() => e.element(e.by.id('someId')).swipe('left', 'fast', 20));
       await expectToThrow(() => e.element(e.by.id('someId')).swipe('noDirection', 0));
       await expectToThrow(() => e.element(e.by.id('someId')).swipe('noDirection', 'fast'));
       await expectToThrow(() => e.element(e.by.id('someId')).swipe('down', 'NotFastNorSlow'));
       await expectToThrow(() => e.element(e.by.id('someId')).swipe('down', 'NotFastNorSlow', 0.9));
+
       await expectToThrow(() => e.element(e.by.id('someId')).atIndex('NaN'));
+      
       await expectToThrow(() => e.element(e.by.id('UIPickerView')).setDatePickerDate(0, 'mm'));
       await expectToThrow(() => e.element(e.by.id('UIPickerView')).setDatePickerDate('mm', 0));
       await expectToThrow(() => e.element(e.by.id('UIPickerView')).setDatePickerDate(0, 0));

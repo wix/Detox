@@ -156,6 +156,13 @@ class Element {
     return this.withAction('setDatePickerDate', dateString, dateFormat);
   }
 
+  pinch(scale, speed = 'slow', angle = 0) {
+    if (typeof scale !== 'number') throw new Error(`pinch scale must be a number`);
+    if (!['slow', 'fast'].includes(speed)) throw new Error(`pinchWithAngle speed is either 'slow' or 'fast'`);
+    if (typeof angle !== 'number') throw new Error(`pinchWithAngle angle must be a number (radiant), got ${typeof angle}`);
+    return this.withAction('pinch', scale, speed, angle);
+  }
+
   pinchWithAngle(direction, speed = 'slow', angle = 0) {
     if (!['inward', 'outward'].includes(direction)) throw new Error(`pinchWithAngle direction is either 'inward' or 'outward'`);
     if (!['slow', 'fast'].includes(speed)) throw new Error(`pinchWithAngle speed is either 'slow' or 'fast'`);
@@ -411,6 +418,11 @@ class WaitFor {
 
   setDatePickerDate(dateString, dateFormat) {
     this.action = this.actionableElement.setDatePickerDate(dateString, dateFormat);
+    return this.waitForWithAction();
+  }
+
+  pinch(scale, speed, angle) {
+    this.action = this.actionableElement.pinch(scale, speed, angle);
     return this.waitForWithAction();
   }
 
