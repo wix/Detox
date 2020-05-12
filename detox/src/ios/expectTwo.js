@@ -157,9 +157,9 @@ class Element {
   }
 
   pinch(scale, speed = 'fast', angle = 0) {
-    if (typeof scale !== 'number' && !Number.isNaN(scale) && Number.isFinite(scale) && scale > 0) throw new Error(`pinch scale must be a finite number larger than zero`);
+    if (typeof scale !== 'number' || !Number.isFinite(scale) || scale < 0) throw new Error(`pinch scale must be a finite number larger than zero`);
     if (!['slow', 'fast'].includes(speed)) throw new Error(`pinch speed is either 'slow' or 'fast'`);
-    if (typeof angle !== 'number' && !Number.isNaN(angle) && Number.isFinite(angle)) throw new Error(`pinch angle must be a finite number (radian)`);
+    if (typeof angle !== 'number' || !Number.isFinite(angle)) throw new Error(`pinch angle must be a finite number (radian)`);
     return this.withAction('pinch', scale, speed, angle);
   }
 
