@@ -156,8 +156,8 @@ class Element {
     return this.withAction('setDatePickerDate', dateString, dateFormat);
   }
 
-  pinch(scale, speed = 'slow', angle = 0) {
-    if (typeof scale !== 'number') throw new Error(`pinch scale must be a number`);
+  pinch(scale, speed = 'fast', angle = 0) {
+    if (typeof scale !== 'number' && scale >= 0) throw new Error(`pinch scale must be a number`);
     if (!['slow', 'fast'].includes(speed)) throw new Error(`pinchWithAngle speed is either 'slow' or 'fast'`);
     if (typeof angle !== 'number') throw new Error(`pinchWithAngle angle must be a number (radiant), got ${typeof angle}`);
     return this.withAction('pinch', scale, speed, angle);
