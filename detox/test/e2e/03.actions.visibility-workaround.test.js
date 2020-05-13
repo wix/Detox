@@ -7,7 +7,7 @@ const {expectToThrow} = require('./utils/custom-expects');
  * It basically runs similar 'action' use cases -- all of which involve visibility and scrolling, but in a
  * setup where they <i>can</i> pass, so as to assert that the core Detox functionality is valid nevertheless.
  */
-describe('Visibility-bug workaround actions', () => {
+describe(':android: Visibility-bug workaround actions', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
     await element(by.text('FS Scroll Actions')).tap();
