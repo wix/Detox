@@ -99,6 +99,7 @@ describe('expectTwo API Coverage', () => {
       await e.element(e.by.id('someId')).replaceText('replaceTo');
       await e.element(e.by.id('someId')).pinchWithAngle('outward', 'fast', 0);
       await e.element(e.by.id('someId')).pinchWithAngle('outward');
+      await e.element(e.by.id('someId')).pinch(0.1);
       await e.element(e.by.id('someId')).pinch(0.1, 'fast', 0);
       await e.element(e.by.id('someId')).pinch(1.1, 'slow', 1);
       await e.element(e.by.id('someId')).scroll(100);
