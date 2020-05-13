@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
 const string = require('../../../../utils/string');
@@ -5,6 +6,18 @@ const string = require('../../../../utils/string');
 class APKPath {
 
   static getTestApkPath(originalApkPath) {
+    // fix: custom apk path without build
+    // for example:
+    // "android.att.release": {
+    //   "binaryPath": "./debugger_app/app-20200415.apk",
+    //   "type": "android.attached",
+    //   "device": { "adbName": "123456789" }
+    // }
+    const fullApkPath = path.resolve(originalApkPath);
+    if (fs.existsSync(fullApkPath)) {
+      return fullApkPath;
+    }
+
     const originalApkPathObj = path.parse(originalApkPath);
     let tempPath = originalApkPathObj.dir.split(path.sep);
     const splitFileName = originalApkPathObj.name.split('-');
