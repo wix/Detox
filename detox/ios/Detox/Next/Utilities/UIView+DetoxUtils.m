@@ -9,6 +9,17 @@
 #import "UIView+DetoxUtils.h"
 #import "UIView+DetoxExpectations.h"
 
+BOOL __DTXDoulbeEqualToDouble(double a, double b)
+{
+	double difference = fabs(a * .00001);
+	return fabs(a - b) <= difference;
+}
+
+BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
+{
+	return __DTXDoulbeEqualToDouble(floor(a.x), floor(b.x)) && __DTXDoulbeEqualToDouble(floor(a.y), floor(b.y));
+}
+
 @implementation UIView (DetoxUtils)
 
 - (void)dtx_assertVisible

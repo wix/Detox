@@ -10,6 +10,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+BOOL __DTXDoulbeEqualToDouble(double a, double b);
+BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b);
+
+inline __attribute__((__always_inline__))
+static double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
+{
+	return from + p * (to - from);
+}
+
 @interface UIView (DetoxUtils)
 
 - (void)dtx_assertVisible;

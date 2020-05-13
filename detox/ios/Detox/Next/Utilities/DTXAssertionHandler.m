@@ -11,9 +11,9 @@
 
 @implementation DTXTestAssertionException
 
-+ (NSException *)exceptionWithName:(NSExceptionName)name reason:(nullable NSString *)reason userInfo:(nullable NSDictionary *)userInfo view:(nullable UIView*)view
++ (NSException *)exceptionWithReason:(nullable NSString *)reason userInfo:(nullable NSDictionary *)userInfo view:(nullable UIView*)view
 {
-	DTXTestAssertionException* rv = (id)[super exceptionWithName:name reason:reason userInfo:userInfo];
+	DTXTestAssertionException* rv = (id)[super exceptionWithName:@"DetoxException" reason:reason userInfo:userInfo];
 	rv.view = view;
 	return rv;
 }
@@ -80,7 +80,7 @@ BOOL dtx_try(void (^block)(void), NSError * __nullable * __null_unspecified erro
 
 + (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line view:(UIView*)view description:(NSString *)format arguments:(va_list)arguments
 {
-	[[DTXTestAssertionException exceptionWithName:@"DetoxException" reason:[[NSString alloc] initWithFormat:format arguments:arguments] userInfo:@{
+	[[DTXTestAssertionException exceptionWithReason:[[NSString alloc] initWithFormat:format arguments:arguments] userInfo:@{
 		@"functionName": functionName,
 		@"file": fileName,
 		@"lineNumber": @(line)
@@ -89,7 +89,7 @@ BOOL dtx_try(void (^block)(void), NSError * __nullable * __null_unspecified erro
 
 + (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line view:(UIView*)view description:(NSString *)format arguments:(va_list)arguments
 {
-	[[DTXTestAssertionException exceptionWithName:@"DetoxException" reason:[[NSString alloc] initWithFormat:format arguments:arguments] userInfo:@{
+	[[DTXTestAssertionException exceptionWithReason:[[NSString alloc] initWithFormat:format arguments:arguments] userInfo:@{
 		@"selector": NSStringFromSelector(selector),
 		@"object": [object debugDescription],
 		@"file": fileName,

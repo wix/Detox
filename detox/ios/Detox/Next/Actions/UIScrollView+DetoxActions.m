@@ -164,6 +164,34 @@ static void _DTXApplyScroll(UIScrollView* scrollView, CGPoint startPoint, CGPoin
 		DTX_CREATE_SCROLL_POINTS(scrollView.window, points, startPoint, offset, y, top, height);
 	}
 	
+	//Add several points between first two and last two so that the touch system always handles points 🤦‍♂️
+	const double interpolationCount = 10.0;
+	if(points.count >= 2)
+	{
+		CGPoint first = [points.firstObject CGPointValue];
+		CGPoint second = [points[1] CGPointValue];
+		[points removeObjectAtIndex:0];
+		for(double idx = 0.0; idx < interpolationCount; idx+=1.0)
+		{
+			CGFloat x = LNLinearInterpolate(second.x, first.x, (idx + 1.0) / interpolationCount);
+			CGFloat y = LNLinearInterpolate(second.y, first.y, (idx + 1.0) / interpolationCount);
+			[points insertObject:@(CGPointMake(x, y)) atIndex:0];
+		}
+	}
+	
+	if(points.count >= 3)
+	{
+		CGPoint beforeLast = [points[points.count - 2] CGPointValue];
+		CGPoint last = [points.lastObject CGPointValue];
+		[points removeLastObject];
+		for(double idx = 0.0; idx < interpolationCount; idx+=1.0)
+		{
+			CGFloat x = LNLinearInterpolate(beforeLast.x, last.x, (idx + 1.0) / interpolationCount);
+			CGFloat y = LNLinearInterpolate(beforeLast.y, last.y, (idx + 1.0) / interpolationCount);
+			[points addObject:@(CGPointMake(x, y))];
+		}
+	}
+	
 	if(points.count > 1)
 	{
 		[DTXSyntheticEvents touchAlongPath:points relativeToWindow:scrollView.window holdDurationOnLastTouch:0.0];

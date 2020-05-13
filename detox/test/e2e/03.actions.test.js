@@ -164,9 +164,9 @@ describe('Actions', () => {
   });
 
   it(':ios: should zoom in and out the pinchable scrollview', async () => {
-    await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0);
+    await element(by.id('PinchableScrollView')).pinch(1.5, 'fast');
     await expect(element(by.id('UniqueId007'))).toBeNotVisible();
-    await element(by.id('PinchableScrollView')).pinchWithAngle('inward', 'slow', 0);
+    await element(by.id('PinchableScrollView')).pinch(0.75, 'fast');
     await expect(element(by.id('UniqueId007'))).toBeVisible();
   });
 

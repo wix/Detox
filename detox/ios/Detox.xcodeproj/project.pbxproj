@@ -1195,6 +1195,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = Detox/Detox.pch;
+				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = EarlGrey/fishhook;
 				INFOPLIST_FILE = Detox/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1205,6 +1206,10 @@
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
 				);
 				MODULEMAP_FILE = Detox/Detox.modulemap;
+				OTHER_CFLAGS = (
+					"-Wno-unused-command-line-argument",
+					"-fobjc-arc-exceptions",
+				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",
@@ -1245,6 +1250,10 @@
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
 				);
 				MODULEMAP_FILE = Detox/Detox.modulemap;
+				OTHER_CFLAGS = (
+					"-Wno-unused-command-line-argument",
+					"-fobjc-arc-exceptions",
+				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",

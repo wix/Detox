@@ -57,12 +57,6 @@
 }
 
 __attribute__((always_inline))
-static inline double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
-{
-	return from + p * (to - from);
-}
-
-__attribute__((always_inline))
 static inline void _DTXApplySwipe(UIWindow* window, CGPoint startPoint, CGPoint endPoint, CGFloat velocity)
 {
 	NSCAssert(CGPointEqualToPoint(startPoint, endPoint) == NO, @"Start and end points for swipe cannot be equal");
