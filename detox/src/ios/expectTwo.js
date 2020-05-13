@@ -137,7 +137,7 @@ class Element {
     return this.withAction('scrollTo', edge);
   }
 
-  swipe(direction, speed = 'fast', percentage = 0.5) {
+  swipe(direction, speed = 'fast', percentage = 0.75) {
     if (!['left', 'right', 'up', 'down'].some(option => option === direction)) throw new Error('direction should be one of [left, right, up, down], but got ' + direction);
     if (!['slow', 'fast'].some(option => option === speed)) throw new Error('speed should be one of [slow, fast], but got ' + speed);
     if (!(typeof percentage === 'number' && percentage >= 0 && percentage <= 1)) throw new Error('yOriginStartPercentage should be a number [0.0, 1.0], but got ' + (percentage + (' (' + (typeof percentage + ')'))));
