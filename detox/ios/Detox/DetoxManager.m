@@ -96,8 +96,11 @@ static void detoxConditionalInit()
 	if(recordingPath != nil)
 	{
 		NSString* samplingInterval = [userDefaults objectForKey:@"samplingInterval"];
+		NSMutableDictionary *props = [NSMutableDictionary new];
+		props[@"recordingPath"] = recordingPath;
+		props[@"samplingInterval"] = samplingInterval;
 
-		[self _handlePerformanceRecording:NSDictionaryOfVariableBindings(recordingPath, samplingInterval) isFromLaunch:YES completionHandler:nil];
+		[self _handlePerformanceRecording:props isFromLaunch:YES completionHandler:nil];
 	}
 	
 	return self;
@@ -426,23 +429,18 @@ static void detoxConditionalInit()
 	
 	if(props[@"recordingPath"] != nil)
 	{
-		NSURL* absoluteURL = [NSURL fileURLWithPath:props[@"recordingPath"]];
-		NSTimeInterval samplingInterval = [props[@"samplingInterval"] doubleValue];
-		if (samplingInterval == 0) {
-			samplingInterval = 0.25;
-		}
-		
 		static dispatch_once_t onceToken;
 		dispatch_once(&onceToken, ^{
 			_recordingManager = [DetoxInstrumentsManager new];
 		});
+		DetoxInstrumentsConfiguration *configuration = [_recordingManager configurationFromProps:props];
 		if(launch)
 		{
-			[_recordingManager continueRecordingAtURL:absoluteURL andSamplingInterval:samplingInterval];
+			[_recordingManager continueRecordingWithConfiguration:configuration];
 		}
 		else
 		{
-			[_recordingManager startRecordingAtURL:absoluteURL andSamplingInterval:samplingInterval];
+			[_recordingManager startRecordingWithConfiguration:configuration];
 		}
 	}
 	else
