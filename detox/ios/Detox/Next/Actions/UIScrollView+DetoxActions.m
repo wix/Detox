@@ -165,11 +165,11 @@ static void _DTXApplyScroll(UIScrollView* scrollView, CGPoint startPoint, CGPoin
 	}
 	
 	//Add several points between first two and last two so that the touch system always handles points 🤦‍♂️
-	const double interpolationCount = 10.0;
 	if(points.count >= 2)
 	{
 		CGPoint first = [points.firstObject CGPointValue];
 		CGPoint second = [points[1] CGPointValue];
+		const double interpolationCount = MAX(fabs(first.x - second.x), fabs(first.y - second.y));
 		[points removeObjectAtIndex:0];
 		for(double idx = 0.0; idx < interpolationCount; idx+=1.0)
 		{
@@ -183,6 +183,7 @@ static void _DTXApplyScroll(UIScrollView* scrollView, CGPoint startPoint, CGPoin
 	{
 		CGPoint beforeLast = [points[points.count - 2] CGPointValue];
 		CGPoint last = [points.lastObject CGPointValue];
+		const double interpolationCount = MAX(fabs(beforeLast.x - last.x), fabs(beforeLast.y - last.y));
 		[points removeLastObject];
 		for(double idx = 0.0; idx < interpolationCount; idx+=1.0)
 		{
