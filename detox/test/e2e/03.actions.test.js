@@ -128,18 +128,12 @@ describe('Actions', () => {
   it('should scroll from a custom start-position ratio', async () => {
     await expect(element(by.text('Text8'))).toBeNotVisible();
     await element(by.id('toggleScrollOverlays')).tap();
-    try {
-      await element(by.id('ScrollView161')).scroll(310, 'down', 0.8, 0.6);
-    } catch (err) {
-    }
+    await element(by.id('ScrollView161')).scroll(310, 'down', 0.8, 0.6);
     await element(by.id('toggleScrollOverlays')).tap();
     await expect(element(by.text('Text8'))).toBeVisible();
 
     await element(by.id('toggleScrollOverlays')).tap();
-    try {
-      await element(by.id('ScrollView161')).scroll(310, 'up', 0.2, 0.4);
-    } catch (err) {
-    }
+    await element(by.id('ScrollView161')).scroll(310, 'up', 0.2, 0.4);
     await element(by.id('toggleScrollOverlays')).tap();
     await expect(element(by.text('Text8'))).toBeNotVisible();
   });
@@ -147,18 +141,12 @@ describe('Actions', () => {
   it('should scroll horizontally from a custom start-position ratio', async () => {
     await expect(element(by.text('HText6'))).toBeNotVisible();
     await element(by.id('toggleScrollOverlays')).tap();
-    try {
-      await element(by.id('ScrollViewH')).scroll(220, 'right', 0.8, 0.6);
-    } catch (err) {
-    }
+    await element(by.id('ScrollViewH')).scroll(220, 'right', 0.8, 0.6);
     await element(by.id('toggleScrollOverlays')).tap();
     await expect(element(by.text('HText6'))).toBeVisible();
 
     await element(by.id('toggleScrollOverlays')).tap();
-    try {
-      await element(by.id('ScrollViewH')).scroll(220, 'left', 0.2, 0.4);
-    } catch (err) {
-    }
+    await element(by.id('ScrollViewH')).scroll(220, 'left', 0.2, 0.4);
     await element(by.id('toggleScrollOverlays')).tap();
     await expect(element(by.text('HText6'))).toBeNotVisible();
   });

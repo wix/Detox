@@ -439,16 +439,19 @@ static void _DTXTypeText(NSString* text)
 	}
 }
 
+DTX_ALWAYS_INLINE
 static NSDictionary* DTXInsetsToDictionary(UIEdgeInsets insets)
 {
 	return @{@"top": @(insets.top), @"bottom": @(insets.bottom), @"left": @(insets.left), @"right": @(insets.right)};
 }
 
+DTX_ALWAYS_INLINE
 static NSDictionary* DTXRectToDictionary(CGRect rect)
 {
 	return @{@"x": @(rect.origin.x), @"y": @(rect.origin.y), @"width": @(rect.size.width), @"height": @(rect.size.height)};
 }
 
+DTX_ALWAYS_INLINE
 static NSDictionary* DTXPointToDictionary(CGPoint point)
 {
 	return @{@"x": @(point.x), @"y": @(point.y)};

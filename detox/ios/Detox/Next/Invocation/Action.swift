@@ -7,7 +7,6 @@
 
 import Foundation
 import UIKit
-import WebKit;
 
 class Action : CustomStringConvertible {
 	struct Keys {
@@ -212,16 +211,16 @@ class ScrollAction : Action {
 		let targetOffset : CGPoint
 		switch directionString {
 		case "up":
-			targetOffset = CGPoint(x: 0, y: -pixels)
-			break;
-		case "down":
 			targetOffset = CGPoint(x: 0, y: pixels)
 			break;
+		case "down":
+			targetOffset = CGPoint(x: 0, y: -pixels)
+			break;
 		case "left":
-			targetOffset = CGPoint(x: -pixels, y: 0)
+			targetOffset = CGPoint(x: pixels, y: 0)
 			break;
 		case "right":
-			targetOffset = CGPoint(x: pixels, y: 0)
+			targetOffset = CGPoint(x: -pixels, y: 0)
 			break;
 		default:
 			fatalError("Unknown scroll direction")
@@ -241,24 +240,14 @@ class ScrollAction : Action {
 			startPositionY = Double.nan
 		}
 		
-		var scrollView : UIScrollView? = nil
-		if let view = view as? UIScrollView {
-			scrollView = view
-		}
-		else if let view = view as? WKWebView {
-			scrollView = view.scrollView
-		} else if ReactNativeSupport.isReactNativeApp && NSStringFromClass(type(of: view)) == "RCTScrollView" {
-			scrollView = (view.value(forKey: "scrollView") as! UIScrollView)
-		} else {
-			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UISrollView”", view: view)
-		}
+		let scrollView = view.extractScrollView()
 		
 		if let whileExpectation = whileExpectation {
 			while (try? dtx_try { whileExpectation.evaluate(); } ) == false {
-				scrollView!.dtx_scroll(withOffset: targetOffset, normalizedStartingPoint: CGPoint(x: startPositionX, y: startPositionY))
+				scrollView.dtx_scroll(withOffset: targetOffset, normalizedStartingPoint: CGPoint(x: startPositionX, y: startPositionY))
 			}
 		} else {
-			scrollView!.dtx_scroll(withOffset: targetOffset, normalizedStartingPoint: CGPoint(x: startPositionX, y: startPositionY))
+			scrollView.dtx_scroll(withOffset: targetOffset, normalizedStartingPoint: CGPoint(x: startPositionX, y: startPositionY))
 		}
 		
 		return nil
@@ -270,10 +259,10 @@ class ScrollToEdgeAction : Action {
 		let directionString = params![0] as! String
 		let targetOffset : CGPoint
 		switch directionString {
-		case "up":
+		case "top":
 			targetOffset = CGPoint(x: 0, y: -1)
 			break;
-		case "down":
+		case "bottom":
 			targetOffset = CGPoint(x: 0, y: 1)
 			break;
 		case "left":
@@ -287,11 +276,8 @@ class ScrollToEdgeAction : Action {
 			break;
 		}
 		
-		if let view = view as? UIScrollView {
-			view.dtx_scroll(toNormalizedEdge: targetOffset)
-		} else {
-			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UISrollView”", view: view)
-		}
+		let scrollView = view.extractScrollView()
+		scrollView.dtx_scroll(toNormalizedEdge: targetOffset)
 		
 		return nil
 	}

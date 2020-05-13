@@ -90,7 +90,7 @@ if(offset.axis != 0.0 && [self _dtx_canScrollWithOffset:offset] == NO) \
 {
 	if(edge.x != 0)
 	{
-		DTX_SCROLL_TO_EDGE(y, left, right, width, DTXCGMakePointX);
+		DTX_SCROLL_TO_EDGE(x, left, right, width, DTXCGMakePointX);
 	}
 	else if(edge.y != 0)
 	{
@@ -99,11 +99,11 @@ if(offset.axis != 0.0 && [self _dtx_canScrollWithOffset:offset] == NO) \
 }
 
 #define DTX_CAN_SCROLL_AXIS(main, inset, otherInset, _size) \
-if(offset.main > 0 && self.contentOffset.main <= - self.adjustedContentInset.inset) \
+if(offset.main > 0 && floor(self.contentOffset.main) <= - floor(self.adjustedContentInset.inset)) \
 { \
 	return NO; \
 } \
-else if(offset.main < 0 && self.contentOffset.main >= self.contentSize._size + self.adjustedContentInset.otherInset - self.bounds.size._size) \
+else if(offset.main < 0 && floor(self.contentOffset.main) >= floor(self.contentSize._size + self.adjustedContentInset.otherInset - self.bounds.size._size)) \
 { \
 	return NO; \
 }
@@ -142,8 +142,8 @@ while (offset.main != 0 && startPoint.main > window.safeAreaInsets.windowSafeAre
 	[points addObject:@(startPoint)]; \
 }
 
-__attribute__((always_inline))
-static inline void _DTXApplyScroll(UIScrollView* scrollView, CGPoint startPoint, CGPoint offset, CGPoint* remainingOffset)
+DTX_ALWAYS_INLINE
+static void _DTXApplyScroll(UIScrollView* scrollView, CGPoint startPoint, CGPoint offset, CGPoint* remainingOffset)
 {
 	if([scrollView _dtx_canScrollWithOffset:offset] == NO)
 	{
