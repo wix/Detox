@@ -318,13 +318,28 @@ class WaitFor {
     return this;
   }
 
+  toNotHaveText(text) {
+    this.expectation = expect(this.element).toNotHaveText(text);
+    return this;
+  }
+
   toHaveLabel(label) {
     this.expectation = expect(this.element).toHaveLabel(label);
     return this;
   }
 
+  toNotHaveLabel(label) {
+    this.expectation = expect(this.element).toNotHaveLabel(label);
+    return this;
+  }
+
   toHaveId(id) {
     this.expectation = expect(this.element).toHaveId(id);
+    return this;
+  }
+
+  toNotHaveId(id) {
+    this.expectation = expect(this.element).toNotHaveId(id);
     return this;
   }
 

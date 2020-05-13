@@ -14,9 +14,14 @@ describe('expectTwo API Coverage', () => {
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toExist();
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotExist();
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveText('text');
+      await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveText('text');
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveLabel('label');
+      await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveLabel('label');
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveId('id');
+      await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveId('id');
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveValue('value');
+      await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveValue('value');
+      await e.expect(e.element(e.by.accessibilityLabel('test'))).not().toHaveValue('value');
     });
 
     it(`by.label (for backwards compat)`, async () => {
@@ -52,6 +57,7 @@ describe('expectTwo API Coverage', () => {
     it(`matchers with wrong parameters should throw`, async () => {
       await expectToThrow(() => e.element(e.by.label(5)));
       await expectToThrow(() => e.element(e.by.id(5)));
+      await expectToThrow(() => e.by.type(1));
       await expectToThrow(() => e.by.traits(1));
       // await expectToThrow(() => e.by.traits(['nonExistentTrait']));
       await expectToThrow(() => e.element(e.by.value(0)));
@@ -169,10 +175,15 @@ describe('expectTwo API Coverage', () => {
       await e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout(0);
       await e.waitFor(e.element(e.by.id('id'))).toNotExist().withTimeout(0);
       await e.waitFor(e.element(e.by.id('id'))).toHaveId('text');
+      await e.waitFor(e.element(e.by.id('id'))).toNotHaveId('text');
       await e.waitFor(e.element(e.by.id('id'))).toHaveText('text');
-      await e.waitFor(e.element(e.by.id('id'))).toHaveValue('value');
+      await e.waitFor(e.element(e.by.id('id'))).toNotHaveText('NoText');
       await e.waitFor(e.element(e.by.id('id'))).toHaveLabel('value');
+      await e.waitFor(e.element(e.by.id('id'))).toNotHaveLabel('value');
+      await e.waitFor(e.element(e.by.id('id'))).toHaveValue('value');
       await e.waitFor(e.element(e.by.id('id'))).toNotHaveValue('value');
+
+
     });
 
     it(`waitFor (element) with wrong parameters should throw`, async () => {
@@ -215,6 +226,7 @@ describe('expectTwo API Coverage', () => {
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).setColumnToValue(1, 'value');
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).setDatePickerDate('2019-2-8T05:10:00-08:00', 'yyyy-MM-dd\'T\'HH:mm:ssZZZZZ');
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).pinchWithAngle('outward', 'fast', 0);
+      await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).pinch(1, 'fast', 0);
     });
 
     it(`waitFor (element) with non-elements should throw`, async () => {
