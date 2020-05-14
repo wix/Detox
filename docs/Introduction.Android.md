@@ -366,16 +366,26 @@ A common reason for this set of symptoms to take place is the lack of a clear-te
 The solution here is therefore to first properly configure clear-text traffic and for all app flavors (e.g. release / debug) -- if you haven't already. Second, the app needs to be configured to allow for clear-text traffic between the emulator and the running host. Examples:
 
 1. Applying `android:usesCleartextTraffic="true""` in the application tag of the main `AndroidManifest.xml` **(not recommended)**.
-2. **(Untested)** Applying a base config denying clear-text (i.e. using `cleartextTrafficPermitted=false`, or just by omitting it altogether), and enabling it for the special-localhost domain:
+2. Applying a base config denying clear-text (i.e. using `cleartextTrafficPermitted=false`, or just by omitting it altogether), and enabling it for the special-localhost domain:
 
+In AndroidManifest.xml
+```xml
+<manifest ...>
+    <application 
+	...
+        android:networkSecurityConfig="@xml/network_security_config">
+```
+
+And then create a new file (or update) `android/app/src/main/res/xml/network_security_config.xml` with the following:
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <domain-config cleartextTrafficPermitted="false">
+    <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">10.0.2.2</domain>
     </domain-config>
 </network-security-config>
 ```
+For more about `<domain-config cleartextTrafficPermitted` you can read about it [here](https://developer.android.com/training/articles/security-config#CleartextTrafficPermitted).
 
 > `10.0.2.2` is the IP equivalent to the localhost on the computer hosting the Android emulator, on Google emulators. On Genymotion ones, it is `10.0.3.2`.
 
