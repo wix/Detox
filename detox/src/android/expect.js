@@ -266,10 +266,25 @@ class Expect {
   }
 }
 
+class ExpectElementNotWrapper {
+  constructor(expectElement) {
+    this._expectElement = expectElement;
+  }
+  async toBeVisible() {
+    return await this._expectElement.toBeNotVisible();
+  }
+  async toExist() {
+    return await this._expectElement.toNotExist();
+  }
+}
+
 class ExpectElement extends Expect {
   constructor(invocationManager, element) {
     super(invocationManager);
     this._element = element;
+  }
+  async not() {
+    return await new ExpectElementNotWrapper(this);
   }
   async toBeVisible() {
     return await new MatcherAssertionInteraction(this._invocationManager, this._element, new VisibleMatcher()).execute();
