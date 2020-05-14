@@ -61,7 +61,7 @@ class Element : CustomStringConvertible {
 	
 	var description: String {
 		get {
-			return String(format: "PREDICATE(%@)%@", predicate.description, index != nil ? " AT INDEX(\(index!))" : "")
+			return String(format: "MATCHER(%@)%@", predicate.description, index != nil ? " AT INDEX(\(index!))" : "")
 		}
 	}
 }

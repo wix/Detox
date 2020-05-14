@@ -24,6 +24,7 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 		static let value = "value"
 		static let text = "text"
 		static let type = "type"
+		static let traits = "traits"
 		
 		static let ancestor = "ancestor"
 		static let descendant = "descendant"
@@ -202,6 +203,111 @@ class ValuePredicate : Predicate {
 		let (keyPath, transformer) = ValuePredicate.mapping[kind]!
 		
 		return "\(keyPath) == “\(transformer(value))”"
+	}
+}
+
+/*
+public static var none: UIAccessibilityTraits
+public static var button: UIAccessibilityTraits
+public static var link: UIAccessibilityTraits
+public static var header: UIAccessibilityTraits
+public static var searchField: UIAccessibilityTraits
+public static var image: UIAccessibilityTraits
+public static var selected: UIAccessibilityTraits
+public static var playsSound: UIAccessibilityTraits
+public static var keyboardKey: UIAccessibilityTraits
+public static var staticText: UIAccessibilityTraits
+public static var summaryElement: UIAccessibilityTraits
+public static var notEnabled: UIAccessibilityTraits
+public static var updatesFrequently: UIAccessibilityTraits
+public static var startsMediaSession: UIAccessibilityTraits
+public static var adjustable: UIAccessibilityTraits
+public static var allowsDirectInteraction: UIAccessibilityTraits
+public static var causesPageTurn: UIAccessibilityTraits
+public static var tabBar: UIAccessibilityTraits
+*/
+fileprivate func traitStringsToTrait(_ traitStrings: [String]) -> UIAccessibilityTraits {
+	var rv : UIAccessibilityTraits = []
+	
+	for traitString in traitStrings {
+		switch traitString {
+		case "none":
+			break
+		case "button":
+			rv.insert(.button)
+			break
+		case "link":
+			rv.insert(.link)
+			break
+		case "searchField":
+			rv.insert(.searchField)
+			break
+		case "image":
+			rv.insert(.image)
+			break
+		case "selected":
+			rv.insert(.selected)
+			break
+		case "playsSound":
+			rv.insert(.playsSound)
+			break
+		case "keyboardKey":
+			rv.insert(.keyboardKey)
+			break
+		case "staticText":
+			rv.insert(.staticText)
+			break
+		case "summaryElement":
+			rv.insert(.summaryElement)
+			break
+		case "notEnabled":
+			rv.insert(.notEnabled)
+			break
+		case "updatesFrequently":
+			rv.insert(.updatesFrequently)
+			break
+		case "startsMediaSession":
+			rv.insert(.startsMediaSession)
+			break
+		case "adjustable":
+			rv.insert(.adjustable)
+			break
+		case "allowsDirectInteraction":
+			rv.insert(.allowsDirectInteraction)
+			break
+		case "causesPageTurn":
+			rv.insert(.causesPageTurn)
+			break
+		case "tabBar":
+			rv.insert(.tabBar)
+			break
+		default:
+			dtx_fatalError("Unknown or unsupported accessibility trait “\(traitString)”", view: nil)
+		}
+	}
+	
+	return rv
+}
+
+class TraitPredicate : Predicate {
+	let traits : UIAccessibilityTraits
+	
+	init(kind: String, modifiers: Set<String>, stringTraits: [String]) {
+		self.traits = traitStringsToTrait(stringTraits)
+		
+		super.init(kind: kind, modifiers: modifiers)
+	}
+	
+	override func innerPredicateForQuery() -> NSPredicate {
+		return NSPredicate.init { viewOrElse, _ -> Bool in
+			return true
+		}
+	}
+	
+	override var innerDescription: String {
+		get {
+			return "accessibilityTraits CONFORMSTO “\(traits)”"
+		}
 	}
 }
 
