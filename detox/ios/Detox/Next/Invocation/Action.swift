@@ -417,12 +417,21 @@ class SetDatePickerAction : Action {
 		let dateString = params![0] as! String
 		let formatString = params![1] as! String
 		
-		let dateFormatter = DateFormatter()
-		dateFormatter.dateFormat = formatString
-		let date = dateFormatter.date(from: dateString)!
+		let date: Date?
+		if formatString == "ISO8601" {
+			let dateFormatter = ISO8601DateFormatter()
+			date = dateFormatter.date(from: dateString)
+		}
+		else {
+			let dateFormatter = DateFormatter()
+			dateFormatter.dateFormat = formatString
+			date = dateFormatter.date(from: dateString)
+		}
+		
+		dtx_assert(date != nil, "Incorrect date format “\(formatString)” provided for date string “\(dateString)”", view: view)
 		
 		if let view = view as? UIDatePicker {
-			view.dtx_adjust(to: date)
+			view.dtx_adjust(to: date!)
 		} else {
 			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UIDatePicker”", view: view)
 		}
