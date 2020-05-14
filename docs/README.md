@@ -21,7 +21,7 @@
 - [Actions](APIRef.ActionsOnElement.md)
 - [Expectations](APIRef.Expect.md)
 - [Manual Synchronization](APIRef.waitFor.md)
-- [Mocking Deep Links (App Launch From URL)](APIRef.MockingOpenFromURL.md)
+- [Mocking Deep Links (App Launch With URL)](APIRef.MockingOpenWithURL.md)
 - [Mocking User Notifications](APIRef.MockingUserNotifications.md)
 - [Detox Command Line Tools (detox-cli)](APIRef.DetoxCLI.md)
 - [Test Artifacts](APIRef.Artifacts.md)
