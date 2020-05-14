@@ -16,8 +16,7 @@
 
 - (UIView*)dtx_visTest:(CGPoint)point withEvent:(UIEvent *)event;
 {
-	CGPoint localPoint = [self.window.screen.coordinateSpace convertPoint:point toCoordinateSpace:self.coordinateSpace];
-	if([self pointInside:localPoint withEvent:event] == NO)
+	if([self pointInside:point withEvent:event] == NO)
 	{
 		return nil;
 	}
@@ -27,11 +26,18 @@
 		return nil;
 	}
 	
+	if(self.alpha == 0.0)
+	{
+		return nil;
+	}
+	
 	__block UIView* rv;
 	
 	//Front-most views get priority
 	[self.subviews enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-		rv = [obj dtx_visTest:point withEvent:event];
+		CGPoint localPoint = [self convertPoint:point toView:obj];
+		
+		rv = [obj dtx_visTest:localPoint withEvent:event];
 		
 		if(rv != nil)
 		{
