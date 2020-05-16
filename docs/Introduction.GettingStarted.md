@@ -89,7 +89,12 @@ npm install detox --save-dev
 
 #### 2. Add Detox config to package.json
 
-The basic configuration for Detox should be in your `package.json` file under the `detox` property:
+By default, detox will search for the configuration the `package.json`.   
+You can also write your config in a `.detoxrc` file if you prefer to separate between the configuration and the app's `package.json`.
+Another option is to create a config file and supply it when calling `detox init`.
+Either way the config should look like this: 
+
+##### in package.json
 
 ```json
 "detox": {
@@ -101,6 +106,21 @@ The basic configuration for Detox should be in your `package.json` file under th
       "device": {
         "type": "iPhone 11 Pro"
       }
+    }
+  }
+}
+```
+
+##### in .detoxrc or any config file
+
+```json
+{
+  "configurations": {
+    "ios.sim.debug": {
+      "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
+      "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
+      "type": "ios.simulator",
+      "name": "iPhone 7"
     }
   }
 }

@@ -1,0 +1,5 @@
+{
+    "detox": {
+        "test": "package.json"
+    }
+}
