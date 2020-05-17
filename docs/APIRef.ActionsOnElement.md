@@ -26,12 +26,13 @@ Use [expectations](APIRef.Expect.md) to verify element states.
 ### `tap(point)`
 Simulates a tap on the element at the specified point, or at element's activation point if no point is specified.
 
-`point`—a point in the element's coordinate space (optional)
+`point`—a point in the element's coordinate space (optional, valid input: object with x and y numerical values)
 
 **Note:** Special care should be applied when specifying a point with this method. Elements may have different dimensions when displayed on different device screen sizes, different text sizes, etc.
 
 ```js
 await element(by.id('tappable')).tap();
+await element(by.id('tappable')).tap({x:5, y:10});
 ```
 ### `multiTap(times)`
 Simulates multiple taps on the element at its activation point.
