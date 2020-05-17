@@ -93,8 +93,13 @@ class Element {
     return this;
   }
 
-  tap() {
-    return this.withAction('tap');
+  tap(point) {
+    if (point) {
+      if (typeof point !== 'object') throw new Error('point should be a object, but got ' + (point + (' (' + (typeof point + ')'))));
+      if (typeof point.x !== 'number') throw new Error('point.x should be a number, but got ' + (point.x + (' (' + (typeof point.x + ')'))));
+      if (typeof point.y !== 'number') throw new Error('point.y should be a number, but got ' + (point.y + (' (' + (typeof point.y + ')'))));
+    }
+    return this.withAction('tap', point);
   }
 
   longPress(duration = 1000) {
@@ -108,10 +113,7 @@ class Element {
   }
 
   tapAtPoint(point) {
-    if (typeof point !== 'object') throw new Error('point should be a object, but got ' + (point + (' (' + (typeof point + ')'))));
-    if (typeof point.x !== 'number') throw new Error('point.x should be a number, but got ' + (point.x + (' (' + (typeof point.x + ')'))));
-    if (typeof point.y !== 'number') throw new Error('point.y should be a number, but got ' + (point.y + (' (' + (typeof point.y + ')'))));
-    return this.withAction('tapAtPoint', point);
+    return this.tap(point);
   }
 
   tapBackspaceKey() {
@@ -183,12 +185,11 @@ class Element {
   }
 
   withAction(action, ...params) {
-
     return _invocationManager.execute({
       type: 'action',
       action,
       ...(this.index !== undefined && { atIndex: this.index }),
-      ...(params.length !== 0 && { params: _.without(params, NaN, null, undefined) }),
+      ...(_.without(params, NaN, null, undefined).length !== 0 && { params: _.without(params, NaN, null, undefined) }),
       predicate: this.matcher.predicate
     });
   }
@@ -377,8 +378,8 @@ class WaitFor {
     return this;
   }
 
-  tap() {
-    this.action = this.actionableElement.tap();
+  tap(point) {
+    this.action = this.actionableElement.tap(point);
     return this.waitForWithAction();
   }
 
@@ -393,7 +394,7 @@ class WaitFor {
   }
 
   tapAtPoint(point) {
-    this.action = this.actionableElement.tapAtPoint(point);
+    this.action = this.actionableElement.tap(point);
     return this.waitForWithAction();
   }
 

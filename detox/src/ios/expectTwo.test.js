@@ -20,6 +20,26 @@ describe('expectTwo', () => {
     expect(testCall).deepEquals(jsonOutput);
   });
 
+  it(`element(by.text('tapMe')).tap({x:1, y:2})`, () => {
+    const testCall = e.element(e.by.text('tapMe')).tap({x:1, y:2});
+    const jsonOutput = {
+      type: 'action',
+      action: 'tap',
+      params: [
+      {
+        x: 1,
+        y: 2
+      }
+    ],
+      predicate: {
+        type: 'text',
+        value: 'tapMe'
+      }
+    };
+
+    expect(testCall).deepEquals(jsonOutput);
+  });
+
   it(`element(by.id('uniqueId').and(by.text('some text'))).tap()`, () => {
     const testCall = e.element(e.by.id('uniqueId').and(e.by.text('some text'))).tap();
     const jsonOutput = {
@@ -162,7 +182,7 @@ describe('expectTwo', () => {
     const testCall = e.element(e.by.id('tappable')).tapAtPoint({ x: 5, y: 10 });
     const jsonOutput = {
       type: 'action',
-      action: 'tapAtPoint',
+      action: 'tap',
       params: [
         {
           x: 5,
