@@ -200,7 +200,7 @@ describe('expectTwo', () => {
         type: 'text',
         value: 'Tap Working!!!'
       },
-      modifier: 'not',
+      modifiers: ['not'],
       expectation: 'toBeVisible'
     };
 
@@ -238,7 +238,7 @@ describe('expectTwo', () => {
           type: 'text',
           value: 'Text5'
         },
-        modifier: 'not',
+        modifiers: ['not'],
         expectation: 'toBeVisible'
       }
     };

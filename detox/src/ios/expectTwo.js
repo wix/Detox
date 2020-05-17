@@ -3,7 +3,7 @@ const _ = require('lodash');
 class Expect {
   constructor(element) {
     this.element = element;
-    this.modifier;
+    this.modifiers = [];
   }
 
   toBeVisible() {
@@ -55,7 +55,7 @@ class Expect {
   }
 
   not() {
-    this.modifier = 'not';
+    this.modifiers.push('not');
     return this;
   }
 
@@ -63,7 +63,7 @@ class Expect {
     return _invocationManager.execute({
       type: 'expectation',
       predicate: this.element.matcher.predicate,
-      ...(this.modifier && {modifier: this.modifier}),
+      ...(this.modifiers.length !== 0 && {modifiers: this.modifiers}),
       expectation,
       ...(params.length !== 0 && { params: _.without(params, NaN, null, undefined) })
     });
