@@ -24,7 +24,7 @@ Use [expectations](APIRef.Expect.md) to verify element states.
 
 
 ### `tap(point)`
-Simulates a tap on the element at the specified point, or at its activation point if no point is specified.
+Simulates a tap on the element at the specified point, or at element's activation point if no point is specified.
 
 `point`—a point in the element's coordinate space (optional)
 
