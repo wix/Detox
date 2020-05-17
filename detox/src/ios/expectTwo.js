@@ -59,14 +59,26 @@ class Expect {
     return this;
   }
 
-  expect(expectation, ...params) {
-    return _invocationManager.execute({
+  createInvocation(expectation, ...params) {
+    return {
       type: 'expectation',
       predicate: this.element.matcher.predicate,
       ...(this.modifiers.length !== 0 && {modifiers: this.modifiers}),
       expectation,
       ...(params.length !== 0 && { params: _.without(params, NaN, null, undefined) })
-    });
+    };
+  }
+
+  expect(expectation, ...params) {
+    const invocation = this.createInvocation(expectation, ...params);
+    return _invocationManager.execute(invocation);
+  }
+}
+
+class InternalExpect extends Expect {
+  expect(expectation, ...params) {
+    const invocation = this.createInvocation(expectation, ...params);
+    return invocation;
   }
 }
 
@@ -294,62 +306,62 @@ class WaitFor {
   }
 
   toBeVisible() {
-    this.expectation = expect(this.element).toBeVisible();
+    this.expectation = new InternalExpect(this.element).toBeVisible();
     return this;
   }
 
   toBeNotVisible() {
-    this.expectation = expect(this.element).toBeNotVisible();
+    this.expectation = new InternalExpect(this.element).toBeNotVisible();
     return this;
   }
 
   toExist() {
-    this.expectation = expect(this.element).toExist();
+    this.expectation = new InternalExpect(this.element).toExist();
     return this;
   }
 
   toNotExist() {
-    this.expectation = expect(this.element).toNotExist();
+    this.expectation = new InternalExpect(this.element).toNotExist();
     return this;
   }
 
   toHaveText(text) {
-    this.expectation = expect(this.element).toHaveText(text);
+    this.expectation = new InternalExpect(this.element).toHaveText(text);
     return this;
   }
 
   toNotHaveText(text) {
-    this.expectation = expect(this.element).toNotHaveText(text);
+    this.expectation = new InternalExpect(this.element).toNotHaveText(text);
     return this;
   }
 
   toHaveLabel(label) {
-    this.expectation = expect(this.element).toHaveLabel(label);
+    this.expectation = new InternalExpect(this.element).toHaveLabel(label);
     return this;
   }
 
   toNotHaveLabel(label) {
-    this.expectation = expect(this.element).toNotHaveLabel(label);
+    this.expectation = new InternalExpect(this.element).toNotHaveLabel(label);
     return this;
   }
 
   toHaveId(id) {
-    this.expectation = expect(this.element).toHaveId(id);
+    this.expectation = new InternalExpect(this.element).toHaveId(id);
     return this;
   }
 
   toNotHaveId(id) {
-    this.expectation = expect(this.element).toNotHaveId(id);
+    this.expectation = new InternalExpect(this.element).toNotHaveId(id);
     return this;
   }
 
   toHaveValue(value) {
-    this.expectation = expect(this.element).toHaveValue(value);
+    this.expectation = new InternalExpect(this.element).toHaveValue(value);
     return this;
   }
 
   toNotHaveValue(value) {
-    this.expectation = expect(this.element).toNotHaveValue(value);
+    this.expectation = new InternalExpect(this.element).toNotHaveValue(value);
     return this;
   }
 

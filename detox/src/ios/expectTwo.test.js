@@ -246,6 +246,23 @@ describe('expectTwo', () => {
     expect(testCall).deepEquals(jsonOutput);
   });
 
+
+
+  it(` waitFor(element(by.id('createdAndVisibleText'))).toExist().withTimeout(20000)`, async () => {
+    const testCall = await e.waitFor(e.element(e.by.id('createdAndVisibleText'))).toExist().withTimeout(2000);
+    const jsonOutput = {
+      type: 'expectation',
+      predicate: {
+        type: 'id',
+        value: 'createdAndVisibleText'
+      },
+      expectation: 'toExist',
+      timeout: 2000
+    };
+
+    expect(testCall).deepEquals(jsonOutput);
+  });
+
   it(`waitFor(element(by.id('uniqueId'))).toHaveValue('Some value').withTimeout(2000)`, () => {
     const testCall = e.waitFor(e.element(e.by.id('uniqueId'))).toHaveValue('Some value').withTimeout(2000);
     const jsonOutput = {
@@ -261,8 +278,7 @@ describe('expectTwo', () => {
 
     expect(testCall).deepEquals(jsonOutput);
   });
-})
-;
+});
 
 expect.extend({
   deepEquals(a, b) {
