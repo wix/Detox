@@ -86,7 +86,7 @@ If your project does not already support Kotlin, add the Kotlin Gradle-plugin to
 ```groovy
 buildscript {
     // ...
-    ext.kotlinVersion = '1.3.0'
+    ext.kotlinVersion = '1.3.0' // (check what the latest version is)
 
     dependencies {
         // ...
@@ -120,7 +120,7 @@ Add this part to your `package.json`:
             "cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
             "type": "android.emulator",
             "device": {
-              "avdName": "Nexus_5X_API_24"
+              "avdName": "Pixel_API_29"
             }
         },
         "android.emu.release": {
@@ -128,7 +128,7 @@ Add this part to your `package.json`:
             "build": "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd ..",
             "type": "android.emulator",
             "device": {
-              "avdName": "Nexus_5X_API_26"
+              "avdName": "Pixel_API_29"
             }
         }
     }
@@ -171,15 +171,58 @@ If you are using custom [productFlavors](https://developer.android.com/studio/bu
 }
 ```
 
-### 6. Run the tests
+### 6. Enable clear-text (unencrypted) traffic for Detox
 
-Using the `android.emu.debug` configuration from above, you can invoke it in the standard way.
+Starting Android SDK v28, Google have disabled all clear-text network traffic by default. Namely, unless explicitly configured, all of your application's outgoing unencrypted traffic (i.e. non-TLS using HTTP rather than HTTPS) is blocked by the device.
 
-```sh
-detox test -c android.emu.debug
+For Detox to work, Detox test code running on the device must connect to the test-running host through it's virtual localhost interface<sup>(*)</sup> using simple HTTP traffic. Therefore, the following network-security exemption configuration must be applied --
+
+*In an xml resource file, e.g. `android/app/src/main/res/xml/network_security_config.xml`:*
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">10.0.2.2</domain>
+    </domain-config>
+</network-security-config>
 ```
 
-### 7. Fix your Android emulators
+*In the app's `AndroidManifest.xml`*
+
+```xml
+<manifest>
+  <application 
+        ...
+        android:networkSecurityConfig="@xml/network_security_config">
+  </application>
+</manifest>
+```
+
+> *Refer to the [Detox example app](https://github.com/wix/Detox/tree/master/examples/demo-react-native/android/app/src/main) for an example on this is effectively implemented.* 
+
+**Note: if properly configured, this in no way compromises the security settings of your app.**
+
+For full details, refer to [Android's security-config guide](https://developer.android.com/training/articles/security-config), and the dedicated article in the [Android developres blog](https://android-developers.googleblog.com/2016/04/protecting-against-unintentional.html). 
+
+> *(\*) 10.0.2.2 for Google emulators, 10.0.3.2 for Genymotion emulators.*
+
+
+
+### 7. Run the tests
+
+Using the `android.emu.debug` configuration from above, you can invoke it in the standard way:
+
+```sh
+# build:
+$ detox build -c android.emu.release
+# run tests:
+$ detox test -c android.emu.release
+```
+
+
+
+### 8. Fix your Android emulators
 
 While everything may seem on the working side right now, there are many issues with Google's Android emulators causing flakiness and inefficient usage, we recommend addressing. We highly recommend you take the time and apply the practices we've summed up in our [Emulators Best Practices guide](Introduction.AndroidEmulatorsBestPractices.md), in all relevant machines (dev computers, CI agents and scripts) and AVD's.
 
@@ -357,35 +400,11 @@ More specifically, when this happens:
 2. Eventually, the test runner would time-out.
 3. The last reported Detox-logs before time-out would indicate the device failing to connect to the Detox tester on the host. For example:
 
-```
+```sh
 detox[12345] DEBUG: [DetoxServer.js/CANNOT_FORWARD] role=testee not connected, cannot fw action (sessionId=11111111-2222-3333-4444-555555555555)
 ```
 
-A common reason for this set of symptoms to take place is the lack of a clear-text network traffic policy configuration in app - the kind that would allow both the app _and Detox_ to work properly. These Android developers blog posts ([1](https://android-developers.googleblog.com/2016/04/protecting-against-unintentional.html), [2](https://developer.android.com/training/articles/security-config)) elaborate on what should be configured for apps and how, in great length. The pain-point in this context is that in SDK 28, clear-text traffic was set to be denied by Android, by default. In that mode, Detox, which requires such traffic while testing, is blocked.
+* The main step for getting this fixed is to **revisit [step 6](#6.-Enable-clear-text-(unencrypted)-traffic-for-Detox) in this guide**, which discusses network-security.
 
-The solution here is therefore to first properly configure clear-text traffic and for all app flavors (e.g. release / debug) -- if you haven't already. Second, the app needs to be configured to allow for clear-text traffic between the emulator and the running host. Examples:
-
-1. Applying `android:usesCleartextTraffic="true""` in the application tag of the main `AndroidManifest.xml` **(not recommended)**.
-2. Applying a base config denying clear-text (i.e. using `cleartextTrafficPermitted=false`, or just by omitting it altogether), and enabling it for the special-localhost domain:
-
-In AndroidManifest.xml
-```xml
-<manifest ...>
-    <application 
-	...
-        android:networkSecurityConfig="@xml/network_security_config">
-```
-
-And then create a new file (or update) `android/app/src/main/res/xml/network_security_config.xml` with the following:
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<network-security-config>
-    <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">10.0.2.2</domain>
-    </domain-config>
-</network-security-config>
-```
-For more about `<domain-config cleartextTrafficPermitted` you can read about it [here](https://developer.android.com/training/articles/security-config#CleartextTrafficPermitted).
-
-> `10.0.2.2` is the IP equivalent to the localhost on the computer hosting the Android emulator, on Google emulators. On Genymotion ones, it is `10.0.3.2`.
+* Alternatively, the `android:usesCleartextTraffic="true"` attribute can be configured in the `<application>` tag of the app's `AndroidManifest.xml`, but **that is highly discouraged**.
 
