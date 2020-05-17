@@ -404,7 +404,7 @@ More specifically, when this happens:
 detox[12345] DEBUG: [DetoxServer.js/CANNOT_FORWARD] role=testee not connected, cannot fw action (sessionId=11111111-2222-3333-4444-555555555555)
 ```
 
-* The main step for getting this fixed is to **revisit [step 6](#6.-Enable-clear-text-(unencrypted)-traffic-for-Detox) in this guide**, which discusses network-security.
+* The main step for getting this fixed is to **revisit [step 6](#6-enable-clear-text-unencrypted-traffic-for-detox) in this guide**, which discusses network-security.
 
 * Alternatively, the `android:usesCleartextTraffic="true"` attribute can be configured in the `<application>` tag of the app's `AndroidManifest.xml`, but **that is highly discouraged**.
 
