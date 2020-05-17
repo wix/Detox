@@ -6,8 +6,7 @@ Use [expectations](APIRef.Expect.md) to verify element states.
 
 ## Methods
 
-- [`.tap()`](#tap)
-- [`.tapAtPoint()`](#tapatpointpoint)
+- [`.tap()`](#tappoint)
 - [`.multiTap()`](#multitaptimes)
 - [`.longPress()`](#longpressduration)
 - [`.swipe()`](#swipedirection-speed-percentage)
@@ -24,21 +23,15 @@ Use [expectations](APIRef.Expect.md) to verify element states.
 - [`.setDatePickerDate()`](#setdatepickerdatedatestring-dateformat--ios-only) **iOS only**
 
 
-### `tap()`
-Simulates a tap on the element at its activation point.
+### `tap(point)`
+Simulates a tap on the element at the specified point, or at its activation point if no point is specified.
+
+`point`—a point in the element's coordinate space (optional)
+
+**Note:** Special care should be applied when specifying a point with this method. Elements may have different dimensions when displayed on different device screen sizes, different text sizes, etc.
 
 ```js
 await element(by.id('tappable')).tap();
-```
-### `tapAtPoint(point)`
-Simulates a tap at on the element at the specified point.
-
-`point`—a point in the element's coordinate space
-
-**Note:** Special care should be applied when using this method. Elements may have different dimensions when displayed on different device screen sizes, different text sizes, etc.
-
-```js
-await element(by.id('tappable')).tapAtPoint({x:5, y:10});
 ```
 ### `multiTap(times)`
 Simulates multiple taps on the element at its activation point.
@@ -199,7 +192,20 @@ await element(by.id('datePicker')).setDatePickerDate('2019/02/06', "yyyy/MM/dd")
 
 ## Deprecated Methods
 
+- [`.tapAtPoint()`](#tapatpointpoint)
 - [`.pinchWithAngle()`](#pinchwithangledirection-speed-angle--ios-only) **iOS only**
+
+### `tapAtPoint(point)`
+
+**Deprecated:** Use [`.tap()`](#tappoint) instead.
+
+Simulates a tap at on the element at the specified point.
+
+`point`—a point in the element's coordinate space
+
+```js
+await element(by.id('tappable')).tapAtPoint({x:5, y:10});
+```
 
 ### `pinchWithAngle(direction, speed, angle)`  iOS only
 
