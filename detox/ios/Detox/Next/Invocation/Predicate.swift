@@ -206,26 +206,6 @@ class ValuePredicate : Predicate {
 	}
 }
 
-/*
-public static var none: UIAccessibilityTraits
-public static var button: UIAccessibilityTraits
-public static var link: UIAccessibilityTraits
-public static var header: UIAccessibilityTraits
-public static var searchField: UIAccessibilityTraits
-public static var image: UIAccessibilityTraits
-public static var selected: UIAccessibilityTraits
-public static var playsSound: UIAccessibilityTraits
-public static var keyboardKey: UIAccessibilityTraits
-public static var staticText: UIAccessibilityTraits
-public static var summaryElement: UIAccessibilityTraits
-public static var notEnabled: UIAccessibilityTraits
-public static var updatesFrequently: UIAccessibilityTraits
-public static var startsMediaSession: UIAccessibilityTraits
-public static var adjustable: UIAccessibilityTraits
-public static var allowsDirectInteraction: UIAccessibilityTraits
-public static var causesPageTurn: UIAccessibilityTraits
-public static var tabBar: UIAccessibilityTraits
-*/
 fileprivate func traitStringsToTrait(_ traitStrings: [String]) -> UIAccessibilityTraits {
 	var rv : UIAccessibilityTraits = []
 	
