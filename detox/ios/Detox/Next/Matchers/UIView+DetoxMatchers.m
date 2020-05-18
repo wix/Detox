@@ -63,6 +63,7 @@
 	NSMutableArray<UIView*>* rv = [NSMutableArray new];
 	
 	[self _dtx_appendViewsRecursivelyFromArray:includingRoot ? @[hierarchy] : hierarchy.subviews passingPredicate:predicate storage:rv];
+	[self _dtx_sortViewsByCoords:rv];
 	
 	return rv;
 }
