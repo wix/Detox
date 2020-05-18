@@ -39,11 +39,13 @@ describe('Detox', () => {
 
   beforeEach(async () => {
     detoxConfig = await configuration.composeDetoxConfig({
-      configurations: {
-        test: {
-          type: 'fake.device',
-          binaryPath: '/tmp/fake/path',
-          device: 'a device',
+      override: {
+        configurations: {
+          test: {
+            type: 'fake.device',
+            binaryPath: '/tmp/fake/path',
+            device: 'a device',
+          },
         },
       },
     });

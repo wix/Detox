@@ -1,0 +1,8 @@
+{
+    "configurations": {
+        "simple": {
+            "type": "android.attached",
+            "device": "Hello from detox-config.json"
+        }
+    }
+}

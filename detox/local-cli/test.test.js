@@ -1,42 +1,49 @@
 jest.mock('../src/utils/logger');
+jest.mock('../src/configuration');
+jest.mock('child_process');
+
+const fs = require('fs-extra');
 const {normalize} = require('path');
 const shellQuote = require('./utils/shellQuote');
 
 describe('test', () => {
-  let mockExec;
-  let argv;
-  let logger;
+  let _argv, logger, execSync;
 
   beforeAll(() => {
-    argv = process.argv;
+    _argv = process.argv;
   });
 
   beforeEach(() => {
     process.argv = ['node', 'jest', 'test'];
 
     logger = require('../src/utils/logger');
-    mockExec = jest.fn();
-    jest.mock('child_process', () => ({
-      execSync: mockExec
-    }));
+    execSync = require('child_process').execSync;
   });
 
   afterEach(() => {
-    process.argv = argv;
+    process.argv = _argv;
   });
 
   const mockAndroidJestConfiguration = () => mockConfiguration('android.emulator', 'jest');
   const mockIOSJestConfiguration = () => mockConfiguration('ios.sim', 'jest');
   const mockAndroidMochaConfiguration = () => mockConfiguration('android.emulator');
   const mockIOSMochaConfiguration = () => mockConfiguration('ios.sim');
-  const mockConfiguration = (deviceType, runner) => mockDetoxConfig({
-    'test-runner': runner,
-    configurations: {
-      only: {
-        type: deviceType,
-      }
-    }
-  });
+  const mockConfiguration = (deviceType, runner) => {
+    require('../src/configuration').composeDetoxConfig.mockImplementation(async (options) => {
+      return jest.requireActual('../src/configuration').composeDetoxConfig({
+        ...options,
+        override: {
+          'test-runner': runner,
+          configurations: {
+            only: {
+              type: deviceType,
+              name: 'MyDevice',
+            }
+          },
+        },
+      });
+    });
+  };
 
   describe('mocha', () => {
     it('runs successfully', async () => {
@@ -44,13 +51,8 @@ describe('test', () => {
 
       await callCli('./test', 'test');
 
-      expect(mockExec).toHaveBeenCalledWith(
-        expect.stringContaining(`${normalize('node_modules/.bin/mocha')} --opts e2e/mocha.opts --configuration only --grep :ios: --invert`),
-        expect.anything()
-      );
-
-      expect(mockExec).toHaveBeenCalledWith(
-        expect.stringMatching(/ "e2e"$/),
+      expect(execSync).toHaveBeenCalledWith(
+        `${normalize('node_modules/.bin/mocha')} --opts e2e/mocha.opts --invert --grep :ios: --use-custom-logger "true" e2e`,
         expect.anything()
       );
     });
@@ -60,7 +62,7 @@ describe('test', () => {
 
       await callCli('./test', 'test --device-launch-args="-mocked -launched -args"');
 
-      expect(mockExec).toHaveBeenCalledWith(
+      expect(execSync).toHaveBeenCalledWith(
         expect.anything(),
         expect.objectContaining({
           env: expect.objectContaining({
@@ -75,20 +77,16 @@ describe('test', () => {
     it('runs successfully', async () => {
       mockAndroidJestConfiguration();
 
-      const mockExec = jest.fn();
-      jest.mock('child_process', () => ({
-        execSync: mockExec
-      }));
-
       await callCli('./test', 'test');
 
-      expect(mockExec).toHaveBeenCalledWith(
+      expect(execSync).toHaveBeenCalledWith(
         expect.stringContaining(
-          `${normalize('node_modules/.bin/jest')} --config e2e/config.json ${shellQuote('--testNamePattern=^((?!:ios:).)*$')} --maxWorkers 1 "e2e"`
+          `${normalize('node_modules/.bin/jest')} --config e2e/config.json ${shellQuote('--testNamePattern=^((?!:ios:).)*$')} --maxWorkers 1 e2e`
         ),
         expect.objectContaining({
           env: expect.objectContaining({
-            configuration: 'only',
+            reportSpecs: true,
+            useCustomLogger: true,
           }),
         })
       );
@@ -99,7 +97,7 @@ describe('test', () => {
 
       await callCli('./test', 'test --device-launch-args="-mocked -launched -args"');
 
-      expect(mockExec).toHaveBeenCalledWith(
+      expect(execSync).toHaveBeenCalledWith(
         expect.anything(),
         expect.objectContaining({
           env: expect.objectContaining({
@@ -113,11 +111,11 @@ describe('test', () => {
   it('fails with a different runner', async () => {
     mockConfiguration('android.emulator', 'ava');
     await expect(callCli('./test', 'test')).rejects.toThrowErrorMatchingSnapshot();
-    expect(mockExec).not.toHaveBeenCalled();
+    expect(execSync).not.toHaveBeenCalled();
   });
 
   describe('Jest specs reporting (propagated) switch', () => {
-    const expectReportSpecsArg = ({value}) => expect(mockExec).toHaveBeenCalledWith(
+    const expectReportSpecsArg = ({value}) => expect(execSync).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
         env: expect.objectContaining({
@@ -126,7 +124,7 @@ describe('test', () => {
       })
     );
 
-    const expectWorkersArg = ({value}) => expect(mockExec).toHaveBeenCalledWith(
+    const expectWorkersArg = ({value}) => expect(execSync).toHaveBeenCalledWith(
       expect.stringContaining(`--maxWorkers ${value}`),
       expect.anything(),
     );
@@ -195,7 +193,7 @@ describe('test', () => {
   });
 
   describe('Jest read-only mode for emulators (propagated) switch', () => {
-    const expectReadOnlyEmulatorsArg = ({value}) => expect(mockExec).toHaveBeenCalledWith(
+    const expectReadOnlyEmulatorsArg = ({value}) => expect(execSync).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
         env: expect.objectContaining({
@@ -204,7 +202,7 @@ describe('test', () => {
       })
     );
 
-    const expectNoReadOnlyEmulatorsArg = () => expect(mockExec).toHaveBeenCalledWith(
+    const expectNoReadOnlyEmulatorsArg = () => expect(execSync).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
         env: expect.not.objectContaining({
@@ -240,9 +238,9 @@ describe('test', () => {
     } catch (e) {
       console.log(e);
     }
-    expect(mockExec).toHaveBeenCalledWith(
+    expect(execSync).toHaveBeenCalledWith(
       expect.stringContaining(
-        `${normalize('node_modules/.bin/mocha')} --opts e2e/mocha.opts --configuration only --debug-synchronization 3000 --grep :ios: --invert`
+        `${normalize('node_modules/.bin/mocha')} --opts e2e/mocha.opts --debug-synchronization 3000 --invert --grep :ios:`
       ),
       expect.anything()
     );
@@ -258,6 +256,6 @@ describe('test', () => {
       console.log(e);
     }
 
-    expect(mockExec).toHaveBeenCalledWith(expect.stringContaining('--unknown-property 42 --flag'), expect.anything());
+    expect(execSync).toHaveBeenCalledWith(expect.stringContaining('--unknown-property 42 --flag'), expect.anything());
   });
 });

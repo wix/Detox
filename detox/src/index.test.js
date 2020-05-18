@@ -2,8 +2,8 @@ const _ = require('lodash');
 
 jest.mock('./utils/logger');
 jest.mock('./configuration');
-jest.mock('./Detox');
 jest.mock('./utils/MissingDetox');
+jest.mock('./Detox');
 
 const testUtils = {
   randomObject: () => ({ [Math.random()]: Math.random() }),
@@ -63,7 +63,11 @@ describe('index', () => {
       const [config, userParams] = [1, 2].map(testUtils.randomObject);
       await index.init(config, userParams).catch(() => {});
 
-      expect(configuration.composeDetoxConfig).toHaveBeenCalledWith(config, userParams);
+      expect(configuration.composeDetoxConfig).toHaveBeenCalledWith({
+        selectedConfiguration: undefined,
+        override: config,
+        userParams
+      });
     });
 
     describe('when configuration is valid', () => {
