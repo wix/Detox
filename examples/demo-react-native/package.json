@@ -1,6 +1,6 @@
 {
   "name": "example",
-  "version": "16.5.0",
+  "version": "16.5.1",
   "private": true,
   "scripts": {
     "start": "react-native start",
@@ -23,12 +23,12 @@
     "react-native": "0.62.x"
   },
   "devDependencies": {
-    "detox": "^16.5.0",
+    "detox": "^16.5.1",
     "mocha": "^6.1.3"
   },
   "detox": {
     "test-runner": "mocha",
-    "runner-config": "e2e/mocha.opts",
+    "runner-config": "e2e/.mocharc",
     "configurations": {
       "ios.sim.release": {
         "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",

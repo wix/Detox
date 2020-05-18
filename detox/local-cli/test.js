@@ -217,10 +217,14 @@ module.exports.handler = async function test(program) {
       log.warn('Can not use -w, --workers. Parallel test execution is only supported with iOS and Jest');
     }
 
+    const configParam = path.extname(runnerConfig) === '.opts'
+      ? 'opts'
+      : 'config';
+
     const command = _.compact([
       (path.join('node_modules', '.bin', runner)),
       ...safeGuardArguments([
-        (runnerConfig ? `--opts ${runnerConfig}` : ''),
+        (runnerConfig ? `--${configParam} ${runnerConfig}` : ''),
         (program.configuration ? `--configuration ${program.configuration}` : ''),
         (program.loglevel ? `--loglevel ${program.loglevel}` : ''),
         (program.noColor ? '--no-colors' : ''),

@@ -104,6 +104,19 @@ class Client {
     }
     potentialError.stack = newStack;
 
+    let stackArray = potentialError.stack.split('\n');
+    let newStack = 'Error:\n';
+    var i = 1; //First line is "Error:\n"
+    for(; i < stackArray.length; i++) {
+      if(!stackArray[i].includes('detox/src')) {
+        break;
+      }
+    }
+    for(; i < stackArray.length; i++) {
+      newStack += stackArray[i] + "\n";
+    }
+    potentialError.stack = newStack;
+
     try {
       return await this.sendAction(new actions.Invoke(invocation));
     } catch (err) {
