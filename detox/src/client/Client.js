@@ -90,7 +90,7 @@ class Client {
     // when this test run fails, we want a stack trace from up here where the
     // $callee is still available, and not inside the catch block where it isn't
     const potentialError = new Error();
-	  
+
     let stackArray = potentialError.stack.split('\n');
     let newStack = 'Error:\n';
     var i = 1; //First line is "Error:\n"
