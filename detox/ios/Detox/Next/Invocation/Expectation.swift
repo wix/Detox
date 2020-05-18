@@ -114,25 +114,15 @@ class Expectation : CustomStringConvertible {
 			return
 		}
 		
-		let startDate = Date()
-		var timedOut = false
-		
 		let spinner = DTXRunLoopSpinner()
-		spinner.timeout = Double.greatestFiniteMagnitude
-		spinner.minRunLoopDrains = 0
-		spinner.maxSleepInterval = Double.greatestFiniteMagnitude
-		spinner.spin { () -> Bool in
-			if startDate.timeIntervalSince(Date()) > timeout {
-				timedOut = true
-				return true
-			}
-			
+		spinner.timeout = timeout
+		let success = spinner.spin { () -> Bool in
 			return (try? dtx_try {
 				_evaluate()
 			}) == false
 		}
 		
-		dtx_assert(!timedOut, "Timed out for expectation: \(self.description)", view: nil)
+		dtx_assert(success, "Timed out for expectation: \(self.description)", view: nil)
 	}
 	
 	fileprivate var additionalDescription: String {
