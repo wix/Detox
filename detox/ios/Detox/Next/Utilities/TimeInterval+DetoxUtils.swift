@@ -10,6 +10,6 @@ import Foundation
 
 extension TimeInterval {
 	func fromMSToSeconds() -> TimeInterval {
-		return (self / 1000.0).truncatingRemainder(dividingBy: 1000)
+		return (self / 1000.0)
 	}
 }
