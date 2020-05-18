@@ -26,6 +26,7 @@ module.exports.handler = async function init(argv) {
       createMochaFolderE2E();
       patchDetoxConfigInPackageJSON({
         runner: 'mocha',
+        runnerConfig: 'e2e/.mocharc'
       });
       break;
     case 'jest':
@@ -76,7 +77,7 @@ function createFile(filename, content) {
 
 function createMochaFolderE2E() {
   createFolder('e2e', {
-    'mocha.opts': mochaTemplates.runnerConfig,
+    '.mocharc': mochaTemplates.runnerConfig,
     'init.js': mochaTemplates.initjs,
     'firstTest.spec.js': mochaTemplates.firstTest
   });
@@ -113,7 +114,7 @@ function savePackageJson(filepath, json) {
   }
 }
 
-function patchDetoxConfigInPackageJSON({ runner }) {
+function patchDetoxConfigInPackageJSON({ runner, runnerConfig }) {
   const packageJsonPath = path.join(process.cwd(), 'package.json');
 
   if (fs.existsSync(packageJsonPath)) {
@@ -122,6 +123,10 @@ function patchDetoxConfigInPackageJSON({ runner }) {
     const packageJson = parsePackageJson(packageJsonPath);
     if (packageJson) {
       loggedSet(packageJson, ['detox', 'test-runner'], runner);
+      if (runnerConfig) {
+        loggedSet(packageJson, ['detox', 'runner-config'], runnerConfig);
+      }
+
       savePackageJson(packageJsonPath, packageJson);
     }
   } else {
