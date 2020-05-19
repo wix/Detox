@@ -160,7 +160,7 @@ detox init -r mocha
 > Note: `detox init` runs these steps, which you can reproduce manually:
 >
 > - Creates an `e2e/` folder in your project root
-> - Inside `e2e` folder, creates `mocha.opts` (for `mocha`) or `config.json` (for `jest`). See examples: [mocha.opts](/examples/demo-react-native/e2e/mocha.opts), [config.json](/examples/demo-react-native-jest/e2e/config.json)
+> - Inside `e2e` folder, creates `.mocharc` (for `mocha`) or `config.json` (for `jest`). See examples: [mocha.opts](/examples/demo-react-native/e2e/.mocharc), [config.json](/examples/demo-react-native-jest/e2e/config.json)
 > - Inside `e2e` folder, creates `init.js` file. See examples for [Mocha](/examples/demo-react-native/e2e/init.js) and [Jest](/examples/demo-react-native-jest/e2e/init.js).
 > - Inside `e2e` folder, creates `firstTest.spec.js` with content similar to [this](/examples/demo-react-native/e2e/example.spec.js).
 
