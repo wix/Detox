@@ -184,14 +184,27 @@ class Element {
     return this.withAction('pinchWithAngle', direction, speed, angle);
   }
 
-  withAction(action, ...params) {
-    return _invocationManager.execute({
+  createInvocation(action, ...params) {
+    return ({
       type: 'action',
       action,
       ...(this.index !== undefined && { atIndex: this.index }),
       ...(_.without(params, NaN, null, undefined).length !== 0 && { params: _.without(params, NaN, null, undefined) }),
       predicate: this.matcher.predicate
     });
+  }
+
+  withAction(action, ...params) {
+    const invocation = this.createInvocation(action, ...params);
+    return _invocationManager.execute(invocation);
+  }
+}
+
+class InternalElement extends Element {
+
+  withAction(action, ...params) {
+    const invocation = this.createInvocation(action, ...params);
+    return invocation;
   }
 }
 
@@ -303,8 +316,9 @@ class Matcher {
 
 class WaitFor {
   constructor(element) {
-    this.element = element;
+    this.element = new InternalElement(element.matcher);
   }
+
 
   toBeVisible() {
     this.expectation = new InternalExpect(this.element).toBeVisible();
@@ -374,7 +388,7 @@ class WaitFor {
   }
 
   whileElement(matcher) {
-    this.actionableElement = element(matcher);
+    this.actionableElement = new InternalElement(matcher);
     return this;
   }
 
