@@ -64,6 +64,10 @@ class Client {
     await this.sendAction(new actions.Shake());
   }
 
+  async setOrientation(orientation) {
+    await this.sendAction(new actions.SetOrientation(orientation));
+  }
+
   async startInstrumentsRecording({ recordingPath }) {
     await this.sendAction(new actions.SetInstrumentsRecordingState({
       recordingPath

@@ -55,6 +55,14 @@ describe('Client', () => {
     expect(client.ws.send).toHaveBeenCalledTimes(2);
   });
 
+  it(`setOrientation() - should send a 'setOrientation' action and resolve when 'setOrientationDone' returns`, async () => {
+    await connect();
+    client.ws.send.mockReturnValueOnce(response("setOrientationDone", {}, 1));
+    await client.setOrientation('portrait');
+
+    expect(client.ws.send).toHaveBeenCalledTimes(2);
+  });
+
   it(`startInstrumentsRecording() - should send a 'setRecordingState' action and resolve when 'setRecordingStateDone' returns`, async () => {
     await connect();
     client.ws.send.mockReturnValueOnce(response("setRecordingStateDone", {}, 1));

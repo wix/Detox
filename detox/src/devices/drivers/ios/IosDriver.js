@@ -76,8 +76,8 @@ class IosDriver extends DeviceDriverBase {
   }
 
   async setOrientation(deviceId, orientation) {
-    const call = EarlyGreyImpl.rotateDeviceToOrientationErrorOrNil(invoke.EarlGrey.instance,orientation);
-    await this.client.execute(call);
+    if (!['portrait', 'landscape'].some(option => option === orientation)) throw new Error("orientation should be either 'portrait' or 'landscape', but got " + (orientation + ")"));
+    return await this.client.setOrientation(orientation);
   }
 
   validateDeviceConfig(config) {

@@ -70,6 +70,16 @@ class Shake extends Action {
   }
 }
 
+class SetOrientation extends Action {
+  constructor() {
+    super('setOrientation');
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'setOrientationDone');
+  }
+}
+
 class ReloadReactNative extends Action {
   constructor() {
     super('reactNativeReload');
@@ -183,6 +193,7 @@ module.exports = {
   DeliverPayload,
   CurrentStatus,
   Shake,
+  SetOrientation,
   SetInstrumentsRecordingState,
   AppWillTerminateWithError,
   AppNonresponsive,

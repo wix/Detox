@@ -389,6 +389,7 @@ class WaitFor {
   }
 
   whileElement(matcher) {
+    if (!(matcher instanceof Matcher)) throwMatcherError(matcher);
     this.actionableElement = new InternalElement(matcher);
     return this;
   }
