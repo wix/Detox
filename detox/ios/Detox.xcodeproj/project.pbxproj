@@ -595,8 +595,6 @@
 		3980D12C244C40E2004812DD /* AppleTouchEvents */ = {
 			isa = PBXGroup;
 			children = (
-				3980D1062448B52B004812DD /* DTXRunLoopSpinner.h */,
-				3980D10A2448B52B004812DD /* DTXRunLoopSpinner.m */,
 				3980D10B2448B52B004812DD /* DTXSyntheticEvents.h */,
 				3980D0FF2448B52A004812DD /* DTXSyntheticEvents.m */,
 				3980D10D2448B52C004812DD /* DTXTouchInfo.h */,
@@ -616,6 +614,8 @@
 				3990BA26245882EF00B608C8 /* DTXAssertionHandler.h */,
 				3990BA27245882EF00B608C8 /* DTXAssertionHandler.m */,
 				3990BA35245AC98C00B608C8 /* DTXAssertionHandler+Swift.swift */,
+				3980D1062448B52B004812DD /* DTXRunLoopSpinner.h */,
+				3980D10A2448B52B004812DD /* DTXRunLoopSpinner.m */,
 				3976BF14246C139D00AA20C7 /* DTXSwizzlingHelper.h */,
 				3976BF12246C128600AA20C7 /* Swiftier.h */,
 				3976BF01246AC7DE00AA20C7 /* TimeInterval+DetoxUtils.swift */,

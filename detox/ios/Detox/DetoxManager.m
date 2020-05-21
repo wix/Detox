@@ -237,16 +237,17 @@ static void detoxConditionalInit()
 	}
 	else if([type isEqualToString:@"invoke"])
 	{
-		NSError* error;
-		NSDictionary<NSString*, id>* result = [DTXInvocationManager invokeWithDictionaryRepresentation:params error:&error];
-		if(error == nil)
-		{
-			[self _safeSendAction:@"invokeResult" params:result messageId:messageId];
-		}
-		else
-		{
-			[self _safeSendAction:@"testFailed" params:@{@"details": error.localizedDescription} messageId:messageId];
-		}
+		[DTXInvocationManager invokeWithDictionaryRepresentation:params completionHandler:^(NSDictionary<NSString *,id> * _Nullable result, NSError * _Nullable error) {
+			if(error == nil)
+			{
+				[self _safeSendAction:@"invokeResult" params:result ?: @{} messageId:messageId];
+			}
+			else
+			{
+				[self _safeSendAction:@"testFailed" params:@{@"details": error.localizedDescription} messageId:messageId];
+			}
+		}];
+		return;
 	}
 	else if([type isEqualToString:@"isReady"])
 	{

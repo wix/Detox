@@ -38,4 +38,22 @@ import UIKit
 		
 		return rv ?? [:]
 	}
+	
+	@objc(invokeWithDictionaryRepresentation:completionHandler:)
+	public class func invoke(dictionaryRepresentation: [String: Any], completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
+		let type = dictionaryRepresentation[Keys.type] as! String
+		
+		switch type {
+		case Types.action:
+			let action = Action.with(dictionaryRepresentation: dictionaryRepresentation)
+			action.perform(completionHandler: completionHandler)
+		case Types.expectation:
+			let expectation = Expectation.with(dictionaryRepresentation: dictionaryRepresentation)
+			expectation.evaluate { error in
+				completionHandler(nil, error)
+			}
+		default:
+			fatalError("Unknown invocation type \(type)")
+		}
+	}
 }

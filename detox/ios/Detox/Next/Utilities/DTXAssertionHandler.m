@@ -34,7 +34,6 @@ BOOL dtx_try(void (^block)(void), NSError * __nullable * __null_unspecified erro
 	@try
 	{
 		block();
-		return YES;
 	}
 	@catch(DTXTestAssertionException *exception)
 	{
@@ -50,15 +49,15 @@ BOOL dtx_try(void (^block)(void), NSError * __nullable * __null_unspecified erro
 			*error = [NSError errorWithDomain:@"Detox" code:0 userInfo:userInfo];
 		}
 		
-		return nil;
+		return NO;
 	}
-	//Only catch DTXTestAssertionException here. Others will be reported by Detox crash reporter.
+	//Only catch DTXTestAssertionException here. Others should be handled by the system.
 	@catch(NSException* exception)
 	{
 		[exception raise];
 	}
 	
-	return NO;
+	return YES;
 }
 
 + (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line view:(UIView*)view description:(NSString *)format, ...

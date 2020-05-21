@@ -97,10 +97,29 @@ class Action : CustomStringConvertible {
 		fatalError("Unimplemented perform(on:) called for \(type(of: self))")
 	}
 	
+	fileprivate func perform(on view: UIView, completionHandler: @escaping ([String: Any]?) -> Void) {
+		//Normally, actions are synchronous, so this is enough.
+		completionHandler(perform(on: view))
+	}
+	
 	func perform() -> [String: Any]? {
 		let view = self.element.view
 		
 		return perform(on: view)
+	}
+	
+	func perform(completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
+		do {
+			try dtx_try {
+				let view = self.element.view
+				
+				perform(on: view) { result in
+					completionHandler(result, nil)
+				}
+			}
+		} catch {
+			completionHandler(nil, error)
+		}
 	}
 	
 	var description: String {
@@ -241,7 +260,7 @@ class ScrollAction : Action {
 		let scrollView = view.extractScrollView()
 		
 		if let whileExpectation = whileExpectation {
-			while (try? dtx_try { whileExpectation.evaluate(); } ) == false {
+			while (dtx_try_nothrow { whileExpectation.evaluate(); } ) == false {
 				scrollView.dtx_scroll(withOffset: targetOffset, normalizedStartingPoint: CGPoint(x: startPositionX, y: startPositionY))
 			}
 		} else {

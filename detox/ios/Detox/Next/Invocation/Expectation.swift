@@ -112,13 +112,60 @@ class Expectation : CustomStringConvertible {
 		
 		let spinner = DTXRunLoopSpinner()
 		spinner.timeout = timeout
-		let success = spinner.spin { () -> Bool in
-			return (try? dtx_try {
+		let success : Bool  = spinner.spin { () -> Bool in
+			let rv = dtx_try_nothrow {
 				_evaluate()
-			}) == false
+			}
+				
+			return rv == true
 		}
 		
 		dtx_assert(success, "Timed out for expectation: \(self.description)", view: nil)
+	}
+	
+	fileprivate func evaluate_after(startDate: Date, completionHandler: @escaping (Error?) -> Void) {
+		let evaluationSuccess = dtx_try_nothrow {
+			_evaluate()
+		}
+		
+		let nowDate = Date()
+		guard nowDate.timeIntervalSince(startDate) < timeout else {
+			do {
+				try dtx_try {
+					dtx_fatalError("Timed out for expectation: \(self.description)", view: nil)
+				}
+			} catch {
+				completionHandler(error)
+			}
+			
+			return
+		}
+		
+		guard evaluationSuccess == false else {
+			completionHandler(nil)
+			return;
+		}
+		
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+			self.evaluate_after(startDate: startDate, completionHandler: completionHandler)
+		}
+	}
+	
+	func evaluate(completionHandler: @escaping (Error?) -> Void) {
+		guard timeout != 0.0 else {
+			do {
+				try dtx_try {
+					_evaluate()
+					completionHandler(nil)
+				}
+			} catch {
+				completionHandler(error)
+			}
+			
+			return
+		}
+		
+		evaluate_after(startDate: Date(), completionHandler: completionHandler)
 	}
 	
 	fileprivate var additionalDescription: String {
@@ -129,12 +176,29 @@ class Expectation : CustomStringConvertible {
 	
 	var description: String {
 		get {
-			return String(format: "%@%@%@ WITH %@%@", modifiers.contains(Modifier.not) ? "NOT " : "", self.kind.uppercased(), additionalDescription, element.description, timeout > 0.0 ? " TIMEOUT(\(Int(timeout.truncatingRemainder(dividingBy: 1)) * 1000) ms)" : "")
+			return String(format: "%@%@%@ WITH %@%@", modifiers.contains(Modifier.not) ? "NOT " : "", self.kind.uppercased(), additionalDescription, element.description, timeout > 0.0 ? " TIMEOUT(\(timeout * 1000) ms)" : "")
 		}
 	}
 }
 
 class ToBeVisibleExpectation : Expectation {
+	//This override is to support the special case where non-existent elements are also non-visible.
+	override func _evaluate() {
+		var view : UIView? = nil
+		if self.modifiers.contains(Modifier.not) {
+			try? dtx_try {
+				view = self.element.view
+			}
+			guard view != nil else {
+				return
+			}
+		} else {
+			view = self.element.view
+		}
+		
+		dtx_assert(applyModifiers(evaluate(with: view!), modifiers: modifiers), "Failed expectation: \(self.description)", view: view)
+	}
+	
 	override func evaluate(with view: UIView) -> Bool {
 		return view.dtx_isVisible
 	}
