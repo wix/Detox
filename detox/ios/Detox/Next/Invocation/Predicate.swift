@@ -142,8 +142,8 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 	var description: String {
 		get {
 			let containsNot = modifiers.contains(Modifier.not)
-	
-			return "\(containsNot ? "NOT \(operatorDescription)(" : "")\(innerDescription)\(containsNot ? ")" : "")"
+			let operatorDescription = self.operatorDescription
+			return "\(containsNot ? "NOT " : "")\(operatorDescription)\(containsNot || operatorDescription.count > 0 ? "(" : "")\(innerDescription)\(containsNot || operatorDescription.count > 0 ? ")" : "")"
 		}
 	}
 	
