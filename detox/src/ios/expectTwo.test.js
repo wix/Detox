@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-describe.only('expectTwo', () => {
+describe('expectTwo', () => {
   beforeEach(() => {
     const IosExpect = require('./expectTwo');
     e = new IosExpect(new MockExecutor());
@@ -189,8 +189,7 @@ describe.only('expectTwo', () => {
     };
 
     expect(testCall).deepEquals(jsonOutput);
-  })
-  ;
+  });
 
   it(`element(by.id('tappable')).tapAtPoint({x:5, y:10})`, () => {
     const testCall = e.element(e.by.id('tappable')).tapAtPoint({ x: 5, y: 10 });
@@ -264,6 +263,24 @@ describe.only('expectTwo', () => {
     expect(testCall).deepEquals(jsonOutput);
   });
 
+  it(`expect(element(by.text('Product')).atIndex(2)).toHaveId('ProductId002')`, () => {
+    const testCall = e.expect(e.element(e.by.text('Product')).atIndex(2)).toHaveId('ProductId002');
+    const jsonOutput = {
+      'invocation': {
+        'type': 'expectation',
+        'atIndex': 2,
+        'predicate': {
+          'type': 'text',
+          'value': 'Product'
+        },
+        'expectation': 'toHaveId',
+        'params': ['ProductId002']
+      }
+    };
+
+    expect(testCall).deepEquals(jsonOutput);
+  });
+
   it(`waitFor(element(by.text('Text5'))).toBeNotVisible().whileElement(by.id('ScrollView630')).scroll(50, 'down')`, () => {
     const testCall = e.waitFor(e.element(e.by.text('Text5'))).toBeNotVisible().whileElement(e.by.id('ScrollView630')).scroll(50, 'down');
     const jsonOutput = {
@@ -289,7 +306,6 @@ describe.only('expectTwo', () => {
 
     expect(testCall).deepEquals(jsonOutput);
   });
-
 
   it(` waitFor(element(by.id('createdAndVisibleText'))).toExist().withTimeout(20000)`, async () => {
     const testCall = await e.waitFor(e.element(e.by.id('createdAndVisibleText'))).toExist().withTimeout(2000);

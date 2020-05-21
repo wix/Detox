@@ -63,6 +63,7 @@ class Expect {
     return {
       type: 'expectation',
       predicate: this.element.matcher.predicate,
+      ...(this.element.index !== undefined && { atIndex: this.element.index }),
       ...(this.modifiers.length !== 0 && {modifiers: this.modifiers}),
       expectation,
       ...(params.length !== 0 && { params: _.without(params, NaN, null, undefined) })
