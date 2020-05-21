@@ -374,11 +374,12 @@ class AncestorPredicate : Predicate {
 	override func innerPredicateForQuery() -> NSPredicate {
 		return NSPredicate { evaluatedObject, bindings -> Bool in
 			let view = evaluatedObject as! UIView
+			let predicate = self.predicate.predicateForQuery()
 			
 			var parent : UIView? = view
 			while parent != nil {
-				parent = view.superview
-				if parent != nil && self.predicate.predicateForQuery().evaluate(with: parent) == true {
+				parent = parent!.superview
+				if parent != nil && predicate.evaluate(with: parent) == true {
 					return true
 				}
 			}
