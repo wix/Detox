@@ -65,8 +65,7 @@ describe('Matchers', () => {
     }
   });
 
-  // waiting to upgrade EarlGrey version in order to test this (not supported in our current one)
-  it.skip('should choose from multiple elements matching the same matcher using index', async () => {
+  it(':ios: should choose from multiple elements matching the same matcher using index', async () => {
     await expect(element(by.text('Product')).atIndex(2)).toHaveId('ProductId002');
   });
 });
