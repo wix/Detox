@@ -51,6 +51,9 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 		}
 		
 		switch kind {
+		case Kind.traits:
+			let value = dictionaryRepresentation[Keys.value] as! [String]
+			return TraitPredicate(kind: kind, modifiers: modifiers, stringTraits: value)
 		case Kind.type:
 			let className = dictionaryRepresentation[Keys.value] as! String
 			return KindOfPredicate(kind: kind, modifiers: modifiers, className: className)
@@ -280,7 +283,8 @@ class TraitPredicate : Predicate {
 	
 	override func innerPredicateForQuery() -> NSPredicate {
 		return NSPredicate.init { viewOrElse, _ -> Bool in
-			return true
+			let view = viewOrElse as! UIView
+			return (view.accessibilityTraits.rawValue & self.traits.rawValue) != 0
 		}
 	}
 	
