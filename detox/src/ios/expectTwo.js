@@ -209,12 +209,12 @@ class InternalElement extends Element {
 }
 
 class By {
-  id(byId) {
-    return new Matcher().id(byId);
+  id(id) {
+    return new Matcher().id(id);
   }
 
-  type(byType) {
-    return new Matcher().type(byType);
+  type(type) {
+    return new Matcher().type(type);
   }
 
   text(text) {
@@ -233,50 +233,50 @@ class By {
     return new Matcher().traits(traits);
   }
 
-  value(byValue) {
-    return new Matcher().value(byValue);
+  value(value) {
+    return new Matcher().value(value);
   }
 }
 
 class Matcher {
 
-  accessibilityLabel(byLabel) {
-    return this.label(byLabel);
+  accessibilityLabel(label) {
+    return this.label(label);
   }
 
-  label(byLabel) {
-    if (typeof byLabel !== 'string') throw new Error('label should be a string, but got ' + (byLabel + (' (' + (typeof byLabel + ')'))));
-    this.predicate = { type: 'label', value: byLabel };
+  label(label) {
+    if (typeof label !== 'string') throw new Error('label should be a string, but got ' + (label + (' (' + (typeof label + ')'))));
+    this.predicate = { type: 'label', value: label };
     return this;
   }
 
-  id(byId) {
-    if (typeof byId !== 'string') throw new Error('id should be a string, but got ' + (byId + (' (' + (typeof byId + ')'))));
-    this.predicate = { type: 'id', value: byId };
+  id(id) {
+    if (typeof id !== 'string') throw new Error('id should be a string, but got ' + (id + (' (' + (typeof id + ')'))));
+    this.predicate = { type: 'id', value: id };
     return this;
   }
 
-  type(byType) {
-    if (typeof byType !== 'string') throw new Error('type should be a string, but got ' + (byType + (' (' + (typeof byType + ')'))));
-    this.predicate = { type: 'type', value: byType };
+  type(type) {
+    if (typeof type !== 'string') throw new Error('type should be a string, but got ' + (type + (' (' + (typeof type + ')'))));
+    this.predicate = { type: 'type', value: type };
     return this;
   }
 
-  traits(byTraits) {
-    if (typeof byTraits !== 'object' || !byTraits instanceof Array) throw new Error('traits must be an array, got ' + typeof byTraits);
-    this.predicate = { type: 'traits', value: byTraits };
+  traits(traits) {
+    if (typeof traits !== 'object' || !traits instanceof Array) throw new Error('traits must be an array, got ' + typeof traits);
+    this.predicate = { type: 'traits', value: traits };
     return this;
   }
 
-  value(byValue) {
-    if (typeof byValue !== 'string') throw new Error('value should be a string, but got ' + (byValue + (' (' + (typeof byValue + ')'))));
-    this.predicate = { type: 'value', value: byValue };
+  value(value) {
+    if (typeof value !== 'string') throw new Error('value should be a string, but got ' + (value + (' (' + (typeof value + ')'))));
+    this.predicate = { type: 'value', value: value };
     return this;
   }
 
-  text(byText) {
-    if (typeof byText !== 'string') throw new Error('text should be a string, but got ' + (byText + (' (' + (typeof byText + ')'))));
-    this.predicate = { type: 'text', value: byText };
+  text(text) {
+    if (typeof text !== 'string') throw new Error('text should be a string, but got ' + (text + (' (' + (typeof text + ')'))));
+    this.predicate = { type: 'text', value: text };
     return this;
   }
 
