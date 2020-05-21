@@ -130,14 +130,7 @@ class Expectation : CustomStringConvertible {
 		
 		let nowDate = Date()
 		guard nowDate.timeIntervalSince(startDate) < timeout else {
-			do {
-				try dtx_try {
-					dtx_fatalError("Timed out while waiting for expectation: \(self.description)", view: nil)
-				}
-			} catch {
-				completionHandler(error)
-			}
-			
+			completionHandler(dtx_errorForFatalError("Timed out while waiting for expectation: \(self.description)", view: nil))
 			return
 		}
 		

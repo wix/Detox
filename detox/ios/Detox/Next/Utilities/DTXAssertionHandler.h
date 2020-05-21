@@ -32,6 +32,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line view:(nullable UIView*)view description:(NSString *)format arguments:(va_list)arguments;
 
++ (NSError*)errorForFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line view:(nullable UIView*)view description:(NSString *)format arguments:(va_list)arguments;
+
++ (NSError*)errorForFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line view:(nullable UIView*)view description:(NSString *)format arguments:(va_list)arguments;
+
 @end
 
 extern BOOL dtx_try(void (NS_NOESCAPE ^block)(void), NSError * __nullable * __null_unspecified error) NS_REFINED_FOR_SWIFT;

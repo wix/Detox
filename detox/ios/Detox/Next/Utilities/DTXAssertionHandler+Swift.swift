@@ -32,3 +32,7 @@ func dtx_assert(_ condition: @autoclosure () -> Bool, _ message: @autoclosure ()
 		dtx_fatalError(message(), view: view(), function: function, file: file, line: line)
 	}
 }
+
+func dtx_errorForFatalError(_ message: @autoclosure () -> String, view: @autoclosure () -> UIView? = nil, function: String = #function, file: String = #file, line: UInt = #line) -> Error {
+	return DTXAssertionHandler.errorForFailure(inFunction: function, file: file, lineNumber: Int(line), view: view(), description: message(), arguments: getVaList([]))
+}
