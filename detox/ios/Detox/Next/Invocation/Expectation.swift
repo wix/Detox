@@ -30,7 +30,6 @@ class Expectation : CustomStringConvertible {
 		static let params = "params"
 		static let predicate = "predicate"
 		static let modifiers = "modifiers"
-		static let modifier = "modifier"
 		static let timeout = "timeout"
 	}
 	
@@ -81,9 +80,6 @@ class Expectation : CustomStringConvertible {
 		let modifiers : Set<String>
 		if let modifiersInput = dictionaryRepresentation[Keys.modifiers] as? [String] {
 			modifiers = Set<String>(modifiersInput)
-		//Legacy
-		} else if let modifierInput = dictionaryRepresentation[Keys.modifier] as? String {
-			modifiers = [modifierInput]
 		} else {
 			modifiers = []
 		}

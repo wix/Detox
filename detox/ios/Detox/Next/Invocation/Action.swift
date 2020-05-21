@@ -17,7 +17,6 @@ class Action : CustomStringConvertible {
 	
 	enum Kind {
 		static let tap = "tap"
-		static let tapAtPoint = "tapAtPoint"
 		static let longPress = "longPress"
 		static let multiTap = "multiTap"
 		
@@ -52,7 +51,6 @@ class Action : CustomStringConvertible {
 	
 	static let mapping : [String: Action.Type] = [
 		Kind.tap: TapAction.self,
-		Kind.tapAtPoint: TapAction.self,
 		Kind.longPress: LongPressAction.self,
 		Kind.multiTap: MultiTapAction.self,
 		
