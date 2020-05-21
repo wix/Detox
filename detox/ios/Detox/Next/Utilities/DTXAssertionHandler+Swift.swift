@@ -10,8 +10,13 @@ import UIKit
 
 @discardableResult
 func dtx_try(_ block: () -> Void) throws -> Bool {
-	try DTXAssertionHandler.__try(block)
-	return true
+	do {
+		try DTXAssertionHandler.__try(block)
+		return true
+	}
+	catch {
+		return false
+	}
 }
 
 func dtx_fatalError(_ message: @autoclosure () -> String = String(), view: @autoclosure () -> UIView? = nil, function: String = #function, file: String = #file, line: UInt = #line) -> Never {
@@ -21,8 +26,6 @@ func dtx_fatalError(_ message: @autoclosure () -> String = String(), view: @auto
 
 func dtx_assert(_ condition: @autoclosure () -> Bool, _ message: @autoclosure () -> String = String(), view: @autoclosure () -> UIView? = nil, function: String = #function, file: String = #file, line: UInt = #line) {
 	guard condition() else {
-		DTXAssertionHandler.handleFailure(inFunction: function, file: file, lineNumber: Int(line), view: view(), description: message(), arguments: getVaList([]))
-		
-		return
+		dtx_fatalError(message(), view: view(), function: function, file: file, line: line)
 	}
 }
