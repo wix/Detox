@@ -455,13 +455,30 @@ static NSDictionary* DTXPointToDictionary(CGPoint point)
 {
 	NSMutableDictionary* rv = [NSMutableDictionary new];
 	
-	[rv addEntriesFromDictionary:[self dictionaryWithValuesForKeys:@[@"text", @"accessibilityLabel", @"accessibilityIdentifier", @"accessibilityValue", @"placeholder"]]];
-	
-	rv[@"label"] = rv[@"accessibilityLabel"];
-	[rv removeObjectForKey:@"accessibilityLabel"];
-	
-	rv[@"value"] = rv[@"accessibilityValue"];
-	[rv removeObjectForKey:@"accessibilityValue"];
+	NSDictionary* results = [self dictionaryWithValuesForKeys:@[@"text", @"accessibilityLabel", @"accessibilityIdentifier", @"accessibilityValue", @"placeholder"]];
+	[results enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+		if([obj isKindOfClass:NSNull.class])
+		{
+			return;
+		}
+		
+		if([key isEqualToString:@"accessibilityLabel"])
+		{
+			rv[@"label"] = obj;
+		}
+		else if([key isEqualToString:@"accessibilityValue"])
+		{
+			rv[@"value"] = obj;
+		}
+		else if([key isEqualToString:@"accessibilityIdentifier"])
+		{
+			rv[@"identifier"] = obj;
+		}
+		else
+		{
+			rv[key] = obj;
+		}
+	}];
 	
 	rv[@"frame"] = DTXRectToDictionary(self.frame);
 	rv[@"bounds"] = DTXRectToDictionary(self.bounds);
