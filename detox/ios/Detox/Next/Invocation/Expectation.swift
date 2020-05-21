@@ -120,7 +120,7 @@ class Expectation : CustomStringConvertible {
 			return rv == true
 		}
 		
-		dtx_assert(success, "Timed out for expectation: \(self.description)", view: nil)
+		dtx_assert(success, "Timed out while waiting for expectation: \(self.description)", view: nil)
 	}
 	
 	fileprivate func evaluate_after(startDate: Date, completionHandler: @escaping (Error?) -> Void) {
@@ -132,7 +132,7 @@ class Expectation : CustomStringConvertible {
 		guard nowDate.timeIntervalSince(startDate) < timeout else {
 			do {
 				try dtx_try {
-					dtx_fatalError("Timed out for expectation: \(self.description)", view: nil)
+					dtx_fatalError("Timed out while waiting for expectation: \(self.description)", view: nil)
 				}
 			} catch {
 				completionHandler(error)
