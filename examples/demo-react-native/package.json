@@ -12,8 +12,8 @@
     "test:android-debug": "detox test --configuration android.emu.debug",
     "test:android-release": "detox test --configuration android.emu.release",
     "test:android-release-ci": "detox test --configuration android.emu.release -l verbose --headless --record-logs all --take-screenshots all",
-    "test:android-explicit-require": "detox test e2eExplicitRequire -c android.emu.release --runner-config e2eExplicitRequire/mocha.opts",
-    "test:android-explicit-require-ci": "detox test e2eExplicitRequire -c android.emu.release --runner-config e2eExplicitRequire/mocha.opts -l verbose --headless --record-logs all --take-screenshots all",
+    "test:android-explicit-require": "DETOX_NO_EXPOSE=1 detox test e2eExplicitRequire -c android.emu.release",
+    "test:android-explicit-require-ci": "DETOX_NO_EXPOSE=1 detox test e2eExplicitRequire -c android.emu.release -l verbose --headless --record-logs all --take-screenshots all",
     "e2e:ios": "npm run build:ios && npm run test:ios",
     "e2e:android-debug": "npm run build:android-debug && npm run test:android-debug",
     "e2e:android-release": "npm run build:android-release && npm run test:android-release"

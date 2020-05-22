@@ -1,3 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`build fails with an error if a build script has not been found 1`] = `"Could not find build script for \\"testConfig\\" in Detox config at: /etc/detox/config"`;
+exports[`build fails with an error if a build script has not been found 1`] = `
+"Could not find a build script inside \\"testConfig\\" configuration.
+
+HINT: Check contents of your Detox config at: /etc/detox/config
+
+{}"
+`;

@@ -1,7 +1,6 @@
 const _ = require('lodash');
-const util = require('util');
 
-const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+const DetoxConfigError = require('../errors/DetoxConfigError');
 
 function hintConfigurations(configurations) {
   return _.keys(configurations).map(c => `* ${c}`).join('\n')
@@ -11,14 +10,10 @@ function selectConfiguration({ detoxConfig, cliConfig }) {
   const { configurations } = detoxConfig;
 
   if (_.isEmpty(configurations)) {
-    throw new DetoxRuntimeError({
+    throw new DetoxConfigError({
       message: `There are no device configurations in the given Detox config:`,
-      debugInfo: util.inspect(detoxConfig, {
-        colors: false,
-        compact: false,
-        depth: 1,
-        showHidden: false,
-      }),
+      debugInfo: detoxConfig,
+      inspectOptions: { depth: 1 },
     });
   }
 
@@ -28,14 +23,14 @@ function selectConfiguration({ detoxConfig, cliConfig }) {
   }
 
   if (!configurationName) {
-    throw new DetoxRuntimeError({
+    throw new DetoxConfigError({
       message: 'Cannot determine which configuration to use.',
       hint: 'Use --configuration to choose one of the following:\n' + hintConfigurations(configurations),
     });
   }
 
   if (!configurations.hasOwnProperty(configurationName)) {
-    throw new DetoxRuntimeError({
+    throw new DetoxConfigError({
       message: `Failed to find a configuration named "${configurationName}" in Detox config`,
       hint: 'Below are the configurations Detox has been able to find:\n' + hintConfigurations(configurations),
     });

@@ -1,6 +1,11 @@
 module.exports = {
   "test-runner": "mocha",
-  "runner-config": "e2e/.mocharc",
+  "runner-config": "e2e/.mocharc.json",
+  "behavior": {
+    "init": {
+      "exposeGlobals": process.env.DETOX_NO_EXPOSE === '1' ? false : true,
+    },
+  },
   "configurations": {
     "ios.sim.release": {
       "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",

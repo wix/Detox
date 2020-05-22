@@ -60,13 +60,13 @@ describe('test', () => {
 
     it('changes --opts to --config, when given non ".opts" file extension', async () => {
       mockAndroidMochaConfiguration({
-        'runner-config': 'e2e/.mocharc'
+        'runner-config': 'e2e/.mocharc.json'
       });
 
       await callCli('./test', 'test');
 
       expect(execSync).toHaveBeenCalledWith(
-        expect.stringContaining(`${normalize('node_modules/.bin/mocha')} --config e2e/.mocharc `),
+        expect.stringContaining(`${normalize('node_modules/.bin/mocha')} --config e2e/.mocharc.json `),
         expect.anything()
       );
     });

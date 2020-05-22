@@ -12,7 +12,7 @@ detoxCircus.getEnv().addEventsListener(specReporter);
 jest.setTimeout(90000);
 
 beforeAll(async () => {
-  await detox.init(config);
+  await detox.init();
 }, 300000);
 
 beforeEach(async () => {
