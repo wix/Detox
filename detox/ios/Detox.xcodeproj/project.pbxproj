@@ -14,6 +14,9 @@
 		390D1CA01E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 390D1C9E1E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h */; };
 		391FA5E91E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.h in Headers */ = {isa = PBXBuildFile; fileRef = 391FA5E71E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.h */; };
 		391FA5EA1E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.m in Sources */ = {isa = PBXBuildFile; fileRef = 391FA5E81E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.m */; };
+		392324D72477D87D00A3D119 /* DetoxManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 392324D62477D87D00A3D119 /* DetoxManager.swift */; };
+		392324DF24781CBD00A3D119 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 392324DE24781CBD00A3D119 /* WebSocket.swift */; };
+		392324E324782AE500A3D119 /* DetoxInit.m in Sources */ = {isa = PBXBuildFile; fileRef = 392324E124782AE500A3D119 /* DetoxInit.m */; };
 		3928EFA81E47404900C19B6E /* DetoxUserNotificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3928EFA71E47404900C19B6E /* DetoxUserNotificationTests.swift */; };
 		3928EFAA1E47404900C19B6E /* Detox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 394767971DBF985400D72256 /* Detox.framework */; };
 		3928EFB51E47571500C19B6E /* TestableAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3928EFB41E47571500C19B6E /* TestableAppDelegate.swift */; };
@@ -25,10 +28,6 @@
 		39319D7A1FCA0DA70045BC17 /* COSTouchVisualizer.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 393E66E61FC5F3E90092EE89 /* COSTouchVisualizer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		393E66ED1FC5F3F40092EE89 /* COSTouchVisualizer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 393E66E61FC5F3E90092EE89 /* COSTouchVisualizer.framework */; };
 		3947679C1DBF985400D72256 /* Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 3947679A1DBF985400D72256 /* Detox.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		394767AE1DBF987E00D72256 /* DetoxManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767A41DBF987E00D72256 /* DetoxManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		394767AF1DBF987E00D72256 /* DetoxManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767A51DBF987E00D72256 /* DetoxManager.m */; };
-		394767B61DBF987E00D72256 /* WebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767AC1DBF987E00D72256 /* WebSocket.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		394767B71DBF987E00D72256 /* WebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767AD1DBF987E00D72256 /* WebSocket.m */; };
 		394767BE1DBF98A700D72256 /* EarlGreyExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767B91DBF98A700D72256 /* EarlGreyExtensions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		394767BF1DBF98A700D72256 /* GREYCondition+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767BA1DBF98A700D72256 /* GREYCondition+Detox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		394767C01DBF98A700D72256 /* GREYCondition+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767BB1DBF98A700D72256 /* GREYCondition+Detox.m */; };
@@ -52,7 +51,7 @@
 		3976BF13246C128600AA20C7 /* Swiftier.h in Headers */ = {isa = PBXBuildFile; fileRef = 3976BF12246C128600AA20C7 /* Swiftier.h */; };
 		3976BF15246C139D00AA20C7 /* DTXSwizzlingHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3976BF14246C139D00AA20C7 /* DTXSwizzlingHelper.h */; };
 		3976BF17246C172100AA20C7 /* UIView+ScrollViewExtraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3976BF16246C172100AA20C7 /* UIView+ScrollViewExtraction.swift */; };
-		397EC9B51E7EDE0B00D5F2BB /* EarlGreyStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 397EC9B31E7EDE0B00D5F2BB /* EarlGreyStatistics.h */; };
+		397EC9B51E7EDE0B00D5F2BB /* EarlGreyStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 397EC9B31E7EDE0B00D5F2BB /* EarlGreyStatistics.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		397EC9B61E7EDE0B00D5F2BB /* EarlGreyStatistics.m in Sources */ = {isa = PBXBuildFile; fileRef = 397EC9B41E7EDE0B00D5F2BB /* EarlGreyStatistics.m */; };
 		3980D10E2448B52C004812DD /* UIView+DetoxActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D0FD2448B52A004812DD /* UIView+DetoxActions.m */; };
 		3980D10F2448B52C004812DD /* UIApplication+DTXAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D0FE2448B52A004812DD /* UIApplication+DTXAdditions.h */; };
@@ -105,9 +104,9 @@
 		39BCE599224BDBF000B0D357 /* ReactNativeSupportNoARC.m in Sources */ = {isa = PBXBuildFile; fileRef = 39BCE597224BDBF000B0D357 /* ReactNativeSupportNoARC.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		39C3C3511DBF9A13008177E1 /* EarlGrey.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 394767DC1DBF991E00D72256 /* EarlGrey.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		39C3C3531DBF9A19008177E1 /* SocketRocket.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 394767E91DBF992400D72256 /* SocketRocket.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		39CA978C245B13CB00A7FC43 /* UIDevice+DetoxActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 39CA978A245B13CB00A7FC43 /* UIDevice+DetoxActions.h */; };
+		39CA978C245B13CB00A7FC43 /* UIDevice+DetoxActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 39CA978A245B13CB00A7FC43 /* UIDevice+DetoxActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		39CA978D245B13CB00A7FC43 /* UIDevice+DetoxActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 39CA978B245B13CB00A7FC43 /* UIDevice+DetoxActions.m */; };
-		39CE25AB22197F0900D78AA1 /* DetoxInstrumentsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 39CE25A922197F0900D78AA1 /* DetoxInstrumentsManager.h */; };
+		39CE25AB22197F0900D78AA1 /* DetoxInstrumentsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 39CE25A922197F0900D78AA1 /* DetoxInstrumentsManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		39CE25AC22197F0900D78AA1 /* DetoxInstrumentsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 39CE25AA22197F0900D78AA1 /* DetoxInstrumentsManager.m */; };
 		39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */; };
 		39DA0E2822D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DA0E2722D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m */; };
@@ -117,7 +116,7 @@
 		39F642281FDD5EB100468FED /* DTXLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 39F642201FDD5EB000468FED /* DTXLogging.h */; };
 		39F642291FDD5EB100468FED /* DTXLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 39F642271FDD5EB000468FED /* DTXLogging.m */; };
 		39FFD9471FD730A600C97030 /* DetoxCrashHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */; };
-		468731A51E6C6D0500F151BE /* EarlGrey+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 468731A31E6C6D0500F151BE /* EarlGrey+Detox.h */; };
+		468731A51E6C6D0500F151BE /* EarlGrey+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 468731A31E6C6D0500F151BE /* EarlGrey+Detox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		468731A61E6C6D0500F151BE /* EarlGrey+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 468731A41E6C6D0500F151BE /* EarlGrey+Detox.m */; };
 		46A6A63D1EF697BB00E3AA79 /* GREYConfiguration+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 46A6A63B1EF697BB00E3AA79 /* GREYConfiguration+Detox.m */; };
 		A7F76A151ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F76A131ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.h */; };
@@ -236,6 +235,9 @@
 		390D1C9E1E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UNPushNotificationTrigger+PrivateHeaders.h"; sourceTree = "<group>"; };
 		391FA5E71E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GREYIdlingResourcePrettyPrint.h; sourceTree = "<group>"; };
 		391FA5E81E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GREYIdlingResourcePrettyPrint.m; sourceTree = "<group>"; };
+		392324D62477D87D00A3D119 /* DetoxManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxManager.swift; sourceTree = "<group>"; };
+		392324DE24781CBD00A3D119 /* WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
+		392324E124782AE500A3D119 /* DetoxInit.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetoxInit.m; sourceTree = "<group>"; };
 		3928EFA51E47404900C19B6E /* DetoxUserNotificationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DetoxUserNotificationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3928EFA71E47404900C19B6E /* DetoxUserNotificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxUserNotificationTests.swift; sourceTree = "<group>"; };
 		3928EFA91E47404900C19B6E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -249,10 +251,6 @@
 		394767971DBF985400D72256 /* Detox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Detox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3947679A1DBF985400D72256 /* Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.h; sourceTree = "<group>"; };
 		3947679B1DBF985400D72256 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		394767A41DBF987E00D72256 /* DetoxManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetoxManager.h; sourceTree = "<group>"; };
-		394767A51DBF987E00D72256 /* DetoxManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetoxManager.m; sourceTree = "<group>"; };
-		394767AC1DBF987E00D72256 /* WebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocket.h; sourceTree = "<group>"; };
-		394767AD1DBF987E00D72256 /* WebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebSocket.m; sourceTree = "<group>"; };
 		394767B91DBF98A700D72256 /* EarlGreyExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EarlGreyExtensions.h; sourceTree = "<group>"; };
 		394767BA1DBF98A700D72256 /* GREYCondition+Detox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GREYCondition+Detox.h"; sourceTree = "<group>"; };
 		394767BB1DBF98A700D72256 /* GREYCondition+Detox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GREYCondition+Detox.m"; sourceTree = "<group>"; };
@@ -469,8 +467,6 @@
 				390D1C661E3A1480007F5F46 /* UserNotificationsPrivate */,
 				3980D162244C689A004812DD /* Detox.modulemap */,
 				3947679A1DBF985400D72256 /* Detox.h */,
-				394767A41DBF987E00D72256 /* DetoxManager.h */,
-				394767A51DBF987E00D72256 /* DetoxManager.m */,
 				39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */,
 				396EA67222E0AE7C0087E4D4 /* DTXAddressInfo.h */,
 				396EA67922E0AE7C0087E4D4 /* DTXAddressInfo.mm */,
@@ -478,8 +474,6 @@
 				39A34C701E30F10D00BEBB59 /* DetoxAppDelegateProxy.m */,
 				39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */,
 				39AB2D30205ABBD90029CD1F /* DetoxUserActivityDispatcher.swift */,
-				394767AC1DBF987E00D72256 /* WebSocket.h */,
-				394767AD1DBF987E00D72256 /* WebSocket.m */,
 				394767B81DBF988C00D72256 /* EarlGreyExtensions */,
 				394767C31DBF98B100D72256 /* ReactNativeSupport */,
 				3947679B1DBF985400D72256 /* Info.plist */,
@@ -580,6 +574,9 @@
 				3980D137244C43D6004812DD /* Expectations */,
 				3980D131244C4336004812DD /* Actions */,
 				3980D13C244C44C3004812DD /* Invocation */,
+				392324DE24781CBD00A3D119 /* WebSocket.swift */,
+				392324D62477D87D00A3D119 /* DetoxManager.swift */,
+				392324E124782AE500A3D119 /* DetoxInit.m */,
 			);
 			path = Next;
 			sourceTree = "<group>";
@@ -699,7 +696,6 @@
 				397EC9B51E7EDE0B00D5F2BB /* EarlGreyStatistics.h in Headers */,
 				A7F76A151ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.h in Headers */,
 				3976BF13246C128600AA20C7 /* Swiftier.h in Headers */,
-				394767AE1DBF987E00D72256 /* DetoxManager.h in Headers */,
 				3980D1142448B52C004812DD /* DTXTouchInjector.h in Headers */,
 				3990BA28245882EF00B608C8 /* DTXAssertionHandler.h in Headers */,
 				468731A51E6C6D0500F151BE /* EarlGrey+Detox.h in Headers */,
@@ -714,7 +710,6 @@
 				39BCE598224BDBF000B0D357 /* ReactNativeSupportNoARC.h in Headers */,
 				3980D10F2448B52C004812DD /* UIApplication+DTXAdditions.h in Headers */,
 				394767CE1DBF98D900D72256 /* ReactNativeSupport.h in Headers */,
-				394767B61DBF987E00D72256 /* WebSocket.h in Headers */,
 				3980D1172448B52C004812DD /* DTXRunLoopSpinner.h in Headers */,
 				3980D135244C4373004812DD /* UIView+DetoxMatchers.h in Headers */,
 				3980D16D244DDCD7004812DD /* UIScrollView+DetoxActions.h in Headers */,
@@ -928,12 +923,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				392324E324782AE500A3D119 /* DetoxInit.m in Sources */,
 				3980D1112448B52C004812DD /* UIView+DontCrash.m in Sources */,
 				3980D15C244C45EA004812DD /* Action.swift in Sources */,
 				39F642291FDD5EB100468FED /* DTXLogging.m in Sources */,
 				3976BF02246AC7DE00AA20C7 /* TimeInterval+DetoxUtils.swift in Sources */,
 				39999EBB2416339E004E6366 /* __DTXDeallocSafeProxy.m in Sources */,
-				394767B71DBF987E00D72256 /* WebSocket.m in Sources */,
 				394767D51DBF98D900D72256 /* WXRunLoopIdlingResource.m in Sources */,
 				468731A61E6C6D0500F151BE /* EarlGrey+Detox.m in Sources */,
 				39BCE599224BDBF000B0D357 /* ReactNativeSupportNoARC.m in Sources */,
@@ -967,10 +962,10 @@
 				3980D10E2448B52C004812DD /* UIView+DetoxActions.m in Sources */,
 				3976BF17246C172100AA20C7 /* UIView+ScrollViewExtraction.swift in Sources */,
 				39F62D42233730F500094FAB /* fishhook.c in Sources */,
-				394767AF1DBF987E00D72256 /* DetoxManager.m in Sources */,
 				398260E8220CC9530061E83E /* GREYActions+Detox.m in Sources */,
 				39FFD9471FD730A600C97030 /* DetoxCrashHandler.mm in Sources */,
 				3980D136244C4373004812DD /* UIView+DetoxMatchers.m in Sources */,
+				392324DF24781CBD00A3D119 /* WebSocket.swift in Sources */,
 				3990BA36245AC98C00B608C8 /* DTXAssertionHandler+Swift.swift in Sources */,
 				39CA978D245B13CB00A7FC43 /* UIDevice+DetoxActions.m in Sources */,
 				46A6A63D1EF697BB00E3AA79 /* GREYConfiguration+Detox.m in Sources */,
@@ -979,6 +974,7 @@
 				3990BA29245882EF00B608C8 /* DTXAssertionHandler.m in Sources */,
 				3980D1102448B52C004812DD /* DTXSyntheticEvents.m in Sources */,
 				3980D16E244DDCD7004812DD /* UIScrollView+DetoxActions.m in Sources */,
+				392324D72477D87D00A3D119 /* DetoxManager.swift in Sources */,
 				3980D1192448B52C004812DD /* UITouch+DTXAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

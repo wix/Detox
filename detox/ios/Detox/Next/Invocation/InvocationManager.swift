@@ -7,7 +7,8 @@
 
 import UIKit
 
-@objc(DTXInvocationManager) public class InvocationManager: NSObject {
+@objc(DTXInvocationManager)
+public final class InvocationManager: NSObject {
 	internal struct Keys {
 		static let type = "type"
 	}
@@ -41,19 +42,25 @@ import UIKit
 	
 	@objc(invokeWithDictionaryRepresentation:completionHandler:)
 	public class func invoke(dictionaryRepresentation: [String: Any], completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
-		let type = dictionaryRepresentation[Keys.type] as! String
-		
-		switch type {
-		case Types.action:
-			let action = Action.with(dictionaryRepresentation: dictionaryRepresentation)
-			action.perform(completionHandler: completionHandler)
-		case Types.expectation:
-			let expectation = Expectation.with(dictionaryRepresentation: dictionaryRepresentation)
-			expectation.evaluate { error in
-				completionHandler(nil, error)
+		do {
+			try dtx_try {
+				let type = dictionaryRepresentation[Keys.type] as! String
+				
+				switch type {
+				case Types.action:
+					let action = Action.with(dictionaryRepresentation: dictionaryRepresentation)
+					action.perform(completionHandler: completionHandler)
+				case Types.expectation:
+					let expectation = Expectation.with(dictionaryRepresentation: dictionaryRepresentation)
+					expectation.evaluate { error in
+						completionHandler(nil, error)
+					}
+				default:
+					fatalError("Unknown invocation type \(type)")
+				}
 			}
-		default:
-			fatalError("Unknown invocation type \(type)")
+		} catch {
+			completionHandler(nil, error)
 		}
 	}
 }

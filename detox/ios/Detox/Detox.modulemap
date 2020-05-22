@@ -13,5 +13,10 @@ framework module Detox {
 		header "UIView+DetoxUtils.h"
 		header "DTXRunLoopSpinner.h"
 		header "ReactNativeSupport.h"
+		header "DetoxInstrumentsManager.h"
+		header "DetoxAppDelegateProxy.h"
+		header "EarlGrey+Detox.h"
+		header "UIDevice+DetoxActions.h"
+		header "EarlGreyStatistics.h"
 	}
 }

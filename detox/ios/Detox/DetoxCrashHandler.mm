@@ -9,7 +9,6 @@
 #include "fishhook.h"
 #import <dlfcn.h>
 #import <Foundation/Foundation.h>
-#import "DetoxManager.h"
 #import <Detox/Detox-Swift.h>
 
 #include <cstdlib>
@@ -44,7 +43,7 @@ static void __DTXHandleCrash(NSException* exception, NSNumber* signal, NSString*
 		report[@"errorDetails"] = other;
 	}
 	
-	[DetoxManager.sharedManager notifyOnCrashWithDetails:report];
+	[DTXDetoxManager.sharedManager notifyOnCrashWithDetails:report];
 	
 	[NSThread sleepForTimeInterval:5];
 }

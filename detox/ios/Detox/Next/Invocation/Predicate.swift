@@ -290,7 +290,7 @@ class TraitPredicate : Predicate {
 	
 	override var innerDescription: String {
 		get {
-			return "accessibilityTraits CONFORMSTO “\(traits)”"
+			return "accessibilityTraits CONFORMSTO “\(traits.rawValue)”"
 		}
 	}
 }

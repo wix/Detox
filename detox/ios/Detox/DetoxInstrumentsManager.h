@@ -8,12 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface DetoxInstrumentsManager : NSObject
 
 + (NSURL*)defaultURLForTestName:(NSString*)testName;
 
 - (void)startRecordingAtURL:(NSURL*)URL;
 - (void)continueRecordingAtURL:(NSURL*)URL;
-- (void)stopRecordingWithCompletionHandler:(void(^)(NSError* error))completionHandler;
+- (void)stopRecordingWithCompletionHandler:(void(^)(NSError* _Nullable  error))completionHandler;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -9,12 +9,16 @@
 @import Foundation;
 @import UIKit;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface DetoxAppDelegateProxy : NSObject <UIApplicationDelegate>
 
 @property (class, nonatomic, strong, readonly) DetoxAppDelegateProxy* sharedAppDelegateProxy;
 
-- (void)_dispatchUserActivityFromDataURL:(NSURL*)userActivityDataURL delayUntilActive:(BOOL)delay;
-- (void)_dispatchUserNotificationFromDataURL:(NSURL*)userNotificationDataURL delayUntilActive:(BOOL)delay;
-- (void)_dispatchOpenURL:(NSURL*)URL options:(NSDictionary*)options delayUntilActive:(BOOL)delay;
+- (void)_dispatchUserActivityFromDataURL:(NSURL*)userActivityDataURL delayUntilActive:(BOOL)delay NS_SWIFT_NAME(dispatchUserActivity(from:delayUntilActive:));
+- (void)_dispatchUserNotificationFromDataURL:(NSURL*)userNotificationDataURL delayUntilActive:(BOOL)delay NS_SWIFT_NAME(dispatchUserNotification(from:delayUntilActive:));
+- (void)_dispatchOpenURL:(NSURL*)URL options:(NSDictionary*)options delayUntilActive:(BOOL)delay NS_SWIFT_NAME(dispatchOpenURL(_:options:delayUntilActive:));
 
 @end
+
+NS_ASSUME_NONNULL_END
