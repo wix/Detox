@@ -26,9 +26,9 @@ describe('test', () => {
 
   const mockAndroidJestConfiguration = () => mockConfiguration('android.emulator', 'jest');
   const mockIOSJestConfiguration = () => mockConfiguration('ios.sim', 'jest');
-  const mockAndroidMochaConfiguration = () => mockConfiguration('android.emulator');
+  const mockAndroidMochaConfiguration = (overrides) => mockConfiguration('android.emulator', undefined, overrides);
   const mockIOSMochaConfiguration = () => mockConfiguration('ios.sim');
-  const mockConfiguration = (deviceType, runner) => {
+  const mockConfiguration = (deviceType, runner, overrides) => {
     require('../src/configuration').composeDetoxConfig.mockImplementation(async (options) => {
       return jest.requireActual('../src/configuration').composeDetoxConfig({
         ...options,
@@ -40,6 +40,7 @@ describe('test', () => {
               name: 'MyDevice',
             }
           },
+          ...overrides
         },
       });
     });
@@ -53,6 +54,19 @@ describe('test', () => {
 
       expect(execSync).toHaveBeenCalledWith(
         `${normalize('node_modules/.bin/mocha')} --opts e2e/mocha.opts --invert --grep :ios: --use-custom-logger "true" e2e`,
+        expect.anything()
+      );
+    });
+
+    it('changes --opts to --config, when given non ".opts" file extension', async () => {
+      mockAndroidMochaConfiguration({
+        'runner-config': 'e2e/.mocharc'
+      });
+
+      await callCli('./test', 'test');
+
+      expect(execSync).toHaveBeenCalledWith(
+        expect.stringContaining(`${normalize('node_modules/.bin/mocha')} --config e2e/.mocharc `),
         expect.anything()
       );
     });

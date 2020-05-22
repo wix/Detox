@@ -22,7 +22,7 @@ const DetoxEmulatorsPortRange = {
   max: 20000
 };
 
-const ACQUIRE_DEVICE_EV = 'ACQUIRE_DEVICE';
+const ALLOCATE_DEVICE_LOG_EVT = 'ALLOCATE_DEVICE';
 const EMU_BIN_STABLE_SKIN_VER = 28;
 
 class EmulatorDriver extends AndroidDriver {
@@ -153,9 +153,9 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async _allocateDevice(avdName) {
-    log.debug({ event: ACQUIRE_DEVICE_EV }, `Looking up a device based on ${avdName}`);
+    log.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Trying to allocate a device based on ${avdName}`);
     const adbName = await this.deviceRegistry.allocateDevice(() => this._doAllocateDevice(avdName));
-    log.debug({ event: ACQUIRE_DEVICE_EV }, `Settled on ${adbName}`);
+    log.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Settled on ${adbName}`);
     return adbName;
   }
 

@@ -13,19 +13,19 @@
     "generation",
     "."
   ],
-  "version": "16.4.1",
+  "version": "16.5.1",
   "npmClient": "npm",
   "command": {
     "publish": {
       "ignoreChanges": [
-        "demo-react-native-jest",
-        "demo-plugin",
-        "examples/demo-react-native-detox-instruments",
-        "detox-demo-native-android",
-        "detox-demo-native-ios",
-        "detox-demo-react-native",
-        "detox-test",
-        "generation",
+        "@detox/demo-native-android",
+        "@detox/demo-native-ios",
+        "@detox/demo-plugin",
+        "@detox/demo-react-native",
+        "@detox/demo-react-native-detox-instruments",
+        "@detox/demo-react-native-jest",
+        "@detox/generation",
+        "@detox/test",
         "."
       ]
     },

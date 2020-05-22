@@ -1,5 +1,5 @@
 {
-  "name": "example",
+  "name": "@detox/demo-react-native",
   "version": "16.5.1",
   "private": true,
   "scripts": {
