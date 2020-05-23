@@ -1,7 +1,9 @@
-const _ = require('lodash');
-const path = require('path');
-
 jest.mock('../utils/argparse');
+
+const _ = require('lodash');
+const os = require('os');
+const path = require('path');
+const DetoxConfigErrorBuilder = require('../errors/DetoxConfigErrorBuilder');
 
 describe('composeDetoxConfig', () => {
   let args;
@@ -10,7 +12,12 @@ describe('composeDetoxConfig', () => {
   let deviceConfig;
   let userParams;
 
+  /** @type {DetoxConfigErrorBuilder} */
+  let errorBuilder;
+
   beforeEach(() => {
+    errorBuilder = new DetoxConfigErrorBuilder();
+
     args = {};
     detoxConfig = {};
     deviceConfig = {};
@@ -21,10 +28,24 @@ describe('composeDetoxConfig', () => {
   });
 
   describe('composeDetoxConfig', () => {
-    it('should throw if no config given', async () => {
+    it('should throw an error if no config is found in package.json', async () => {
       await expect(configuration.composeDetoxConfig({})).rejects.toThrowError(
-        /Cannot start Detox without a configuration/
+        /external .detoxrc.json configuration/
       );
+    });
+
+    it('should throw an error if empty config is found at path', async () => {
+      await expect(configuration.composeDetoxConfig({
+        argv: {
+          'config-path': path.join(__dirname, '__mocks__/configuration/priority/empty.js'),
+        },
+      })).rejects.toThrowError(/no device configurations/);
+    });
+
+    it('should throw an error if no config is found at all', async () => {
+      await expect(configuration.composeDetoxConfig({
+        cwd: os.homedir(),
+      })).rejects.toThrowError(errorBuilder.noConfigurationSpecified());
     });
 
     it('should return a complete Detox config merged with the file configuration', async () => {
@@ -64,9 +85,9 @@ describe('composeDetoxConfig', () => {
       });
 
       expect(config).toMatchObject({
-        meta: {
-          configuration: 'another',
-          location: path.join(__dirname, '__mocks__/configuration/packagejson/package.json'),
+        errorBuilder: {
+          configurationName: 'another',
+          filepath: path.join(__dirname, '__mocks__/configuration/packagejson/package.json'),
         },
         artifactsConfig: {
           pathBuilder: {
@@ -93,6 +114,14 @@ describe('composeDetoxConfig', () => {
             shutdownDevice: true,
           }
         },
+        cliConfig: {
+          configuration: 'another',
+          deviceName: 'iPhone XS',
+          cleanup: true,
+          reuse: true,
+          recordLogs: 'all',
+          runnerConfig: 'e2e/.mocharc.js',
+        },
         deviceConfig: expect.objectContaining({
           type: 'ios.simulator',
           device: 'iPhone XS',
@@ -107,12 +136,5 @@ describe('composeDetoxConfig', () => {
         }),
       });
     });
-  });
-});
-
-describe('throwOnEmptyBinaryPath', () => {
-  it('should throw an error', () => {
-    const { throwOnEmptyBinaryPath } = require('./index');
-    expect(throwOnEmptyBinaryPath).toThrowError(/binaryPath.*missing/);
   });
 });

@@ -28,11 +28,29 @@ async function loadConfig(configPath) {
   };
 }
 
-async function loadExternalConfig({ configPath, cwd }) {
-  const resolvedConfigPath = configPath || await locateExternalConfig(cwd);
+/**
+ * @param {DetoxConfigErrorBuilder} errorBuilder
+ * @param {string} configPath
+ * @param {string} cwd
+ * @returns {Promise<null|{filepath: *, config: any}>}
+ */
+async function loadExternalConfig({ errorBuilder, configPath, cwd }) {
+  const resolvedConfigPath = configPath
+    ? path.resolve(configPath)
+    : await locateExternalConfig(cwd);
 
   if (resolvedConfigPath) {
-    return loadConfig(resolvedConfigPath);
+    errorBuilder.setDetoxConfigPath(resolvedConfigPath);
+
+    try {
+      return await loadConfig(resolvedConfigPath);
+    } catch (e) {
+      if (/Cannot find module|ENOENT/.test(`${e}`)) {
+        throw errorBuilder.noConfigurationAtGivenPath();
+      } else {
+        throw errorBuilder.failedToReadConfiguration(e);
+      }
+    }
   }
 
   return null;

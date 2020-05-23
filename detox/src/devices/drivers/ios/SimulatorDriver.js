@@ -5,7 +5,7 @@ const exec = require('child-process-promise').exec;
 const DeviceRegistry = require('../../DeviceRegistry');
 const IosDriver = require('./IosDriver');
 const temporaryPath = require('../../../artifacts/utils/temporaryPath');
-const configuration = require('../../../configuration');
+const DetoxConfigError = require('../../../errors/DetoxConfigError');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 const environment = require('../../../utils/environment');
 const argparse = require('../../../utils/argparse');
@@ -149,7 +149,11 @@ class SimulatorDriver extends IosDriver {
 
   validateDeviceConfig(deviceConfig) {
     if (!deviceConfig.binaryPath) {
-      configuration.throwOnEmptyBinaryPath();
+      throw new DetoxConfigError({
+        message: `'binaryPath' property is missing, should hold the app binary path`,
+        hint: 'Check again your device config:',
+        debugInfo: deviceConfig,
+      });
     }
   }
 

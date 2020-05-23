@@ -1,8 +1,13 @@
+const DetoxConfigErrorBuilder = require('../errors/DetoxConfigErrorBuilder');
+
 describe('composeDeviceConfig', () => {
   let composeDeviceConfig;
   let configurationName, cliConfig, rawDeviceConfig;
+  /** @type {DetoxConfigErrorBuilder} */
+  let errorBuilder;
 
   beforeEach(() => {
+    errorBuilder = new DetoxConfigErrorBuilder();
     composeDeviceConfig = require('./composeDeviceConfig');
     cliConfig = {};
     configurationName = 'someConfig';
@@ -18,17 +23,18 @@ describe('composeDeviceConfig', () => {
     configurationName,
     cliConfig,
     rawDeviceConfig,
+    errorBuilder,
   });
 
   describe('validation', () => {
     it('should throw if configuration driver (type) is not defined', () => {
       delete rawDeviceConfig.type;
-      expect(compose).toThrowError(/Missing.*"type".*inside.*someConfig/);
+      expect(compose).toThrowError(errorBuilder.missingConfigurationType());
     });
 
     it('should throw if device query is not defined', () => {
       delete rawDeviceConfig.device;
-      expect(compose).toThrowError(/device.*empty.in.*someConfig[\s\S]*should hold.*query.*type.*avdName/);
+      expect(compose).toThrowError(errorBuilder.missingDeviceProperty());
     });
   });
 

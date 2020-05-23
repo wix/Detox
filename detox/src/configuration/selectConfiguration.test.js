@@ -1,24 +1,37 @@
+const DetoxConfigErrorBuilder = require('../errors/DetoxConfigErrorBuilder');
+
 describe('selectConfiguration', () => {
   let selectConfiguration;
-  let detoxConfig, cliConfig;
+  /** @type {DetoxConfigErrorBuilder} */
+  let errorBuilder;
+  let configLocation, detoxConfig, cliConfig;
 
   beforeEach(() => {
+    configLocation = '/etc/detox/config.js';
     detoxConfig = {};
     cliConfig = {};
+    errorBuilder = new DetoxConfigErrorBuilder().setDetoxConfig(detoxConfig);
 
     selectConfiguration = require('./selectConfiguration');
   });
 
-  const select = () => selectConfiguration({ cliConfig, detoxConfig });
-
-  it('should throw if there are no .configurations in Detox config', () => {
-    delete detoxConfig.configurations;
-    expect(select).toThrowError(/There are no device configurations/)
+  const select = () => selectConfiguration({
+    configLocation,
+    cliConfig,
+    detoxConfig,
+    errorBuilder,
   });
 
-  it('should throw if there is an empty .configurations object in Detox config', () => {
+  it('should throw if there are no .configurations in Detox config', () => {
+    configLocation = '';
+    delete detoxConfig.configurations;
+    expect(select).toThrowError(errorBuilder.noDeviceConfigurationsInside());
+  });
+
+  it('should throw if there is an empty .configurations object in Detox config and its location is unknown', () => {
+    configLocation = '';
     detoxConfig.configurations = {};
-    expect(select).toThrowError(/There are no device configurations/)
+    expect(select).toThrowError(errorBuilder.noDeviceConfigurationsInside());
   });
 
   it('should return the name of a single configuration', () => {
@@ -30,12 +43,17 @@ describe('selectConfiguration', () => {
     detoxConfig.configurations = { single: {} };
     detoxConfig.selectedConfiguration = 'double';
 
-    expect(select).toThrow(/Failed to find.*double.*in Detox config[\s\S]*^\* single/m);
+    expect(select).toThrow(); // generating a correct error expectation in errorBuilder
+
+    jest.spyOn(errorBuilder, 'setConfigurationName');
+    expect(select).toThrow(errorBuilder.noDeviceConfigurationWithGivenName());
+    expect(errorBuilder.setConfigurationName).toHaveBeenCalledWith('double');
   });
 
   it('should throw if there is more than 1 configuration, and no one is specified', () => {
+    configLocation = '';
     detoxConfig.configurations = { config1: {}, config2: {} };
-    expect(select).toThrow(/Cannot determine which[\s\S]*^\* config2/m);
+    expect(select).toThrow(errorBuilder.cantChooseDeviceConfiguration());
   });
 
   describe('priority', () => {

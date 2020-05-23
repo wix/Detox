@@ -1,9 +1,14 @@
+const DetoxConfigErrorBuilder = require('../errors/DetoxConfigErrorBuilder');
+
 describe('composeSessionConfig', () => {
   let composeSessionConfig;
   let detoxConfig, deviceConfig;
+  /** @type {DetoxConfigErrorBuilder} */
+  let errorBuilder;
 
   beforeEach(() => {
     composeSessionConfig = require('./composeSessionConfig');
+    errorBuilder = new DetoxConfigErrorBuilder();
     detoxConfig = {};
     deviceConfig = {};
   });
@@ -11,6 +16,7 @@ describe('composeSessionConfig', () => {
   const compose = () => composeSessionConfig({
     detoxConfig,
     deviceConfig,
+    errorBuilder,
   });
 
   it('should generate a default config', async () => {
@@ -40,12 +46,12 @@ describe('composeSessionConfig', () => {
 
     test(`providing empty server config should throw`, () => {
       delete detoxConfig.session.server;
-      expect(compose()).rejects.toThrowError(/session.server.*missing/);
+      expect(compose()).rejects.toThrowError(errorBuilder.missingServerProperty());
     });
 
     test(`providing server config with no session should throw`, () => {
       delete detoxConfig.session.sessionId;
-      expect(compose()).rejects.toThrowError(/session.sessionId.*missing/);
+      expect(compose()).rejects.toThrowError(errorBuilder.missingSessionIdProperty());
     });
 
     describe('if deviceConfig.session is defined', function() {

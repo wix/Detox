@@ -2,19 +2,18 @@ jest.mock('child_process');
 jest.mock('../src/utils/logger');
 jest.mock('../src/configuration');
 
+const DetoxConfigErrorBuilder = require('../src/errors/DetoxConfigErrorBuilder');
+
 describe('build', () => {
   let execSync, composeDetoxConfig, detoxConfig;
 
   beforeEach(() => {
     detoxConfig = {
-      meta: {
-        configuration: 'testConfig',
-        location: '/etc/detox/config',
-      },
       artifactsConfig: {},
       behaviorConfig: {},
       deviceConfig: {},
       sessionConfig: {},
+      errorBuilder: new DetoxConfigErrorBuilder(),
     };
 
     execSync = require('child_process').execSync;
@@ -42,6 +41,6 @@ describe('build', () => {
 
   it('fails with an error if a build script has not been found', async () => {
     delete detoxConfig.deviceConfig.build;
-    await expect(callCli('./build', 'build')).rejects.toThrowErrorMatchingSnapshot();
+    await expect(callCli('./build', 'build')).rejects.toThrowError(/Could not find a build script/);
   });
 });

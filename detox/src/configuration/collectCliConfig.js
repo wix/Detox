@@ -2,9 +2,8 @@ const _ = require('lodash');
 const argparse = require('../utils/argparse');
 
 function collectCliConfig({ argv }) {
-  const arg = (key) => argv && argv[key];
   const env = (key) => argparse.getArgValue(key);
-  const get = (key) => arg(key) !== undefined ? arg(key) : env(key);
+  const get = (key) => argv ? argv[key] : env(key);
 
   return _.omitBy({
     artifactsLocation: get('artifacts-location'),

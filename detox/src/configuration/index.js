@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const DetoxConfigError = require('../errors/DetoxConfigError');
+const DetoxConfigErrorBuilder = require('../errors/DetoxConfigErrorBuilder');
 const collectCliConfig = require('./collectCliConfig');
 const loadExternalConfig = require('./loadExternalConfig');
 const composeArtifactsConfig = require('./composeArtifactsConfig');
@@ -15,23 +16,27 @@ async function composeDetoxConfig({
   override,
   userParams,
 }) {
+  const errorBuilder = new DetoxConfigErrorBuilder();
   const cliConfig = collectCliConfig({ argv });
   const findupResult = await loadExternalConfig({
+    errorBuilder,
     configPath: cliConfig.configPath,
     cwd,
   });
 
   const externalConfig = findupResult && findupResult.config;
-  const detoxConfig = _.merge({}, externalConfig, override);
+  errorBuilder.setDetoxConfigPath(findupResult && findupResult.filepath);
+  errorBuilder.setDetoxConfig(externalConfig);
 
-  if (_.isEmpty(detoxConfig)) {
-    throw new DetoxConfigError({
-      message: 'Cannot start Detox without a configuration',
-      hint: 'Make sure your package.json has "detox" section, or there\'s .detoxrc file in the working directory',
-    });
+  const detoxConfig = _.merge({}, externalConfig, override);
+  if (_.isEmpty(detoxConfig) && !externalConfig) {
+    // Advise to create .detoxrc somewhere
+    throw errorBuilder.noConfigurationSpecified();
   }
 
+  errorBuilder.setDetoxConfig(detoxConfig);
   const configName = selectConfiguration({
+    errorBuilder,
     detoxConfig,
     cliConfig,
   });
@@ -43,6 +48,7 @@ async function composeDetoxConfig({
 
   const deviceConfig = composeDeviceConfig({
     cliConfig,
+    errorBuilder,
     rawDeviceConfig: detoxConfig.configurations[configName],
     configurationName: configName,
   });
@@ -69,23 +75,14 @@ async function composeDetoxConfig({
   return {
     artifactsConfig,
     behaviorConfig,
+    cliConfig,
     deviceConfig,
     runnerConfig,
     sessionConfig,
-    meta: {
-      configuration: configName,
-      location: findupResult && findupResult.filepath,
-      cliConfig,
-    },
+    errorBuilder,
   };
 }
 
 module.exports = {
   composeDetoxConfig,
-
-  throwOnEmptyBinaryPath() {
-    throw new DetoxConfigError({
-      message: `'binaryPath' property is missing, should hold the app binary path`,
-    });
-  },
 };

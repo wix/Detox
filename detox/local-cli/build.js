@@ -2,7 +2,7 @@ const _ = require('lodash');
 const cp = require('child_process');
 const log = require('../src/utils/logger').child({ __filename });
 const {composeDetoxConfig} = require('../src/configuration');
-const DetoxConfigError = require('../src/errors/DetoxConfigError');
+const DetoxConfigErrorBuilder = require('../src/errors/DetoxConfigErrorBuilder');
 
 module.exports.command = 'build';
 module.exports.desc = "Convenience method. Run the command defined in 'build' property of the specified configuration.";
@@ -21,7 +21,7 @@ module.exports.builder = {
 };
 
 module.exports.handler = async function build(argv) {
-  const { meta, deviceConfig } = await composeDetoxConfig({ argv });
+  const { errorBuilder, deviceConfig } = await composeDetoxConfig({ argv });
 
   const buildScript = deviceConfig.build;
 
@@ -29,10 +29,6 @@ module.exports.handler = async function build(argv) {
     log.info(buildScript);
     cp.execSync(buildScript, { stdio: 'inherit' });
   } else {
-    throw new DetoxConfigError({
-      message: `Could not find a build script inside "${meta.configuration}" configuration.`,
-      hint: meta.location && `Check contents of your Detox config at: ${meta.location}`,
-      debugInfo: deviceConfig,
-    });
+    throw errorBuilder.missingBuildScript();
   }
 };

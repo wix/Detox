@@ -147,7 +147,7 @@ module.exports.builder = {
 const collectExtraArgs = require('./utils/collectExtraArgs')(module.exports.builder);
 
 module.exports.handler = async function test(program) {
-  const { meta: { cliConfig }, deviceConfig, runnerConfig } = await composeDetoxConfig({ argv: program });
+  const { cliConfig, deviceConfig, runnerConfig } = await composeDetoxConfig({ argv: program });
   const [ platform ] = deviceConfig.type.split('.');
 
   if (!cliConfig.keepLockFile) {

@@ -1,14 +1,22 @@
 const path = require('path');
 const os = require('os');
+const DetoxConfigErrorBuilder = require('../errors/DetoxConfigErrorBuilder');
 
 describe('loadExternalConfig', () => {
   const DIR_PACKAGEJSON = path.join(__dirname, '__mocks__/configuration/packagejson');
   const DIR_PRIORITY = path.join(__dirname, '__mocks__/configuration/priority');
 
+  /** @type {DetoxConfigErrorBuilder} */
+  let errorBuilder;
   let loadExternalConfig;
 
   beforeEach(() => {
-    loadExternalConfig = require('./loadExternalConfig');
+    errorBuilder = new DetoxConfigErrorBuilder();
+
+    loadExternalConfig = (opts) => require('./loadExternalConfig')({
+      ...opts,
+      errorBuilder,
+    });
   });
 
   it('should implicitly use .detoxrc.js, even if there is package.json', async () => {
@@ -42,7 +50,13 @@ describe('loadExternalConfig', () => {
     const configPath = path.join(DIR_PRIORITY, 'non-existent.json');
 
     await expect(loadExternalConfig({ configPath })).rejects.toThrowError(
-      /ENOENT: no such file.*non-existent.json/
+      errorBuilder.noConfigurationAtGivenPath()
     );
+  });
+
+  it('should rethrow if an unexpected error occurs', async () => {
+    const configPath = os.homedir();
+
+    await expect(loadExternalConfig({ configPath })).rejects.toThrowError(/EISDIR/);
   });
 });

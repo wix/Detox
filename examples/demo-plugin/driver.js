@@ -132,8 +132,12 @@ class PluginDriver extends DeviceDriverBase {
 
   validateDeviceConfig(deviceConfig) {
     this.deviceConfig = deviceConfig;
-    if (!deviceConfig.binaryPath) {
-      configuration.throwOnEmptyBinaryPath();
+
+    if (!this.deviceConfig.binaryPath) {
+      throw new Error(
+        "'binaryPath' property is missing, should hold the app binary path:\n" +
+        JSON.stringify(deviceConfig, null, 2)
+      );
     }
   }
 

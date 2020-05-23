@@ -1,7 +1,13 @@
 const getPort = require('get-port');
 const uuid = require('../utils/uuid');
 
-async function composeSessionConfig({ detoxConfig, deviceConfig }) {
+/**
+ *
+ * @param {DetoxConfigErrorBuilder} errorBuilder
+ * @param {*} detoxConfig
+ * @param {*} deviceConfig
+ */
+async function composeSessionConfig({ errorBuilder, detoxConfig, deviceConfig }) {
   const session = deviceConfig.session || detoxConfig.session || {
     autoStart: true,
     server: `ws://localhost:${await getPort()}`,
@@ -9,11 +15,11 @@ async function composeSessionConfig({ detoxConfig, deviceConfig }) {
   };
 
   if (!session.server) {
-    throw new Error(`session.server property is missing, should hold the server address`);
+    throw errorBuilder.missingServerProperty();
   }
 
   if (!session.sessionId) {
-    throw new Error(`session.sessionId property is missing, should hold the server session id`);
+    throw errorBuilder.missingSessionIdProperty();
   }
 
   return session;
