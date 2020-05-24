@@ -1,9 +1,9 @@
 let _ = require('lodash');
 
-describe('Animations', () => {
+describe('React-Native Animations', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
-    await element(by.text('Animations')).tap();
+    await element(by.text('RN Animations')).tap();
   });
 
   async function _startTest(driver, options = {}) {
@@ -56,5 +56,15 @@ describe('Animations', () => {
       await _startTest(driver, {delay: 500});
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toExist();
     });
+  });
+});
+
+describe(':android: Native animations', () => {
+  it('should expect a native android-animator animation to be short-circuited / fully-completed', async () => {
+    await device.reloadReactNative();
+    await element(by.text('Native Animation')).tap();
+
+    await element(by.id('startButton')).tap();
+    await expect(element(by.text('Animation Complete'))).toBeVisible();
   });
 });

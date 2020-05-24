@@ -57,6 +57,7 @@ class EmulatorDriver extends AndroidDriver {
     await this._boot(avdName, adbName);
 
     await this.adb.apiLevel(adbName);
+    await this.adb.disableAndroidAnimations(adbName);
     await this.adb.unlockScreen(adbName);
 
     this._name = `${adbName} (${avdName})`;
