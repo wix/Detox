@@ -12,8 +12,10 @@ import android.util.Log;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
+import androidx.test.espresso.IdlingPolicies;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
@@ -79,6 +81,18 @@ public final class Detox {
 
     private static ActivityTestRule sActivityTestRule;
 
+    /**
+     * Specification of values to use for Espresso's {@link IdlingPolicies} timeouts.
+     * <br/>Overrides Espresso's defaults as they tend to be too short (e.g. when running on heavy-load app
+     * on suboptimal CI machines).
+     */
+    public static class DetoxIdlePolicyConfig {
+        /** Directly binds to {@link IdlingPolicies#setMasterPolicyTimeout(long, TimeUnit)}. Applied in seconds. */
+        public Integer masterTimeoutSec = 120;
+        /** Directly binds to {@link IdlingPolicies#setIdlingResourceTimeout(long, TimeUnit)}. Applied in seconds. */
+        public Integer idleResourceTimeoutSec = 60;
+    }
+
     private Detox() {
     }
 
@@ -91,6 +105,7 @@ public final class Detox {
      * In case you have a non-standard React Native application, consider using
      * {@link #runTests(ActivityTestRule, Context)}}.
      * </p>
+     *
      * @param activityTestRule the activityTestRule
      */
     public static void runTests(ActivityTestRule activityTestRule) {
@@ -99,12 +114,22 @@ public final class Detox {
     }
 
     /**
-     * <p>
-     * Call this method only if you have a React Native application and it
-     * doesn't implement ReactApplication.
-     * </p>
+     * Same as the default {@link #runTests(ActivityTestRule)} method, but allows for the explicit specification of
+     * a custom idle-policy configuration. Note: review {@link DetoxIdlePolicyConfig} for defaults.
      *
-     * Call {@link Detox#runTests(ActivityTestRule)} )} in every other case.
+     * @param idlePolicyConfig The custom idle-policy configuration to pass in; Will be applied into Espresso via
+     *                         the {@link IdlingPolicies} API.
+     */
+    public static void runTests(ActivityTestRule activityTestRule, DetoxIdlePolicyConfig idlePolicyConfig) {
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext();
+        runTests(activityTestRule, appContext, idlePolicyConfig);
+    }
+
+    /**
+     * <p>
+     * Use this method only if you have a React Native application and it
+     * doesn't implement ReactApplication; Otherwise use {@link Detox#runTests(ActivityTestRule)}.
+     * </p>
      *
      * <p>
      * The only requirement is that the passed in object must have
@@ -116,6 +141,20 @@ public final class Detox {
      * @param context an object that has a {@code getReactNativeHost()} method
      */
     public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context context) {
+        runTests(activityTestRule, context, new DetoxIdlePolicyConfig());
+    }
+
+    /**
+     * Same as {@link #runTests(ActivityTestRule, Context)}, but allows for the explicit specification of
+     * a custom idle-policy configuration. Note: review {@link DetoxIdlePolicyConfig} for defaults.
+     *
+     *
+     * @param idlePolicyConfig The custom idle-policy configuration to pass in; Will be applied into Espresso via
+     *                         the {@link IdlingPolicies} API.
+     */
+    public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context context, DetoxIdlePolicyConfig idlePolicyConfig) {
+        applyIdlePolicyConfig(idlePolicyConfig);
+
         sActivityTestRule = activityTestRule;
 
         Intent intent = extractInitialIntent();
@@ -162,6 +201,11 @@ public final class Detox {
 
     public static void startActivityFromUrl(String url) {
         launchActivitySync(intentWithUrl(url, false));
+    }
+
+    private static void applyIdlePolicyConfig(DetoxIdlePolicyConfig idlePolicyConfig) {
+        IdlingPolicies.setMasterPolicyTimeout(idlePolicyConfig.masterTimeoutSec, TimeUnit.SECONDS);
+        IdlingPolicies.setIdlingResourceTimeout(idlePolicyConfig.idleResourceTimeoutSec, TimeUnit.SECONDS);
     }
 
     private static Intent extractInitialIntent() {
