@@ -480,14 +480,23 @@ static NSDictionary* DTXPointToDictionary(CGPoint point)
 		}
 	}];
 	
-	rv[@"frame"] = DTXRectToDictionary(self.frame);
-	rv[@"bounds"] = DTXRectToDictionary(self.bounds);
-	rv[@"center"] = DTXPointToDictionary(self.center);
-	rv[@"accessibilityFrame"] = DTXRectToDictionary(self.accessibilityFrame);
+	BOOL enabled = self.userInteractionEnabled;
+	if([self respondsToSelector:@selector(enabled)])
+	{
+		enabled &&= [[self valueForKey:@"enabled"] boolValue]
+	}
+	rv[@"enabled"] = enabled ? @YES : @NO;
+	
+	rv[@"frame"] = DTXRectToDictionary(self.accessibilityFrame);
+	rv[@"elementFrame"] = DTXRectToDictionary(self.frame);
+	rv[@"elementBounds"] = DTXRectToDictionary(self.bounds);
 	rv[@"safeAreaInsets"] = DTXInsetsToDictionary(self.safeAreaInsets);
-	rv[@"safeBounds"] = DTXRectToDictionary(self.dtx_safeAreaBounds);
+	rv[@"elementSafeBounds"] = DTXRectToDictionary(self.dtx_safeAreaBounds);
 	
 	rv[@"activationPoint"] = DTXPointToDictionary(self.dtx_accessibilityActivationPointInViewCoordinateSpace);
+	
+	rv[@"hittable"] = self.dtx_isHittable ? @YES : @NO;
+	rv[@"visible"] = self.dtx_isVisible ? @YES : @NO;
 	
 	return rv;
 }

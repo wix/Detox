@@ -21,6 +21,7 @@ Use [expectations](APIRef.Expect.md) to verify element states.
 - [`.tapBackspaceKey()`](#tapbackspacekey)
 - [`.setColumnToValue()`](#setcolumntovaluecolumn-value--ios-only) **iOS only**
 - [`.setDatePickerDate()`](#setdatepickerdatedatestring-dateformat--ios-only) **iOS only**
+- [`.getAttributes()`](#getAttributes--ios-only) **iOS only**
 
 
 ### `tap(point)`
@@ -189,6 +190,34 @@ The specified date string is converted by the system to an [`NSDate`](https://de
 ```js
 await element(by.id('datePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', "ISO8601");
 await element(by.id('datePicker')).setDatePickerDate('2019/02/06', "yyyy/MM/dd");
+```
+
+### `getAttributes()`  iOS only
+
+Returns an object, representing the attributes of the element.
+
+Retrieved attributes are:
+
+- `text`—the text value of the element
+- `label`—the label of the element (matches `accessibilityLabel`)
+- `value`—the value of the element (matches `accessibilityValue`)
+- `placeholder`—the placeholder text value of the element
+- `identifier`—the identifier of the element (matches `accessibilityIdentifier`)
+- `enabled`—whether or not the element is enabled for user interaction
+- `activationPoint`—the activation point of the element, in element coordinate space
+- `hittable`—whether the element is hittable at the activation point
+- `visible`—whether the element is visible at the activation point
+- `frame`—the frame of the element, in screen coordinate space
+- `elementFrame`—the frame of the element, in container coordinate space
+- `elementBounds`—the bounds of the element, in element coordinate space
+- `safeAreaInsets`—the safe area insets of the element, in element coordinate space
+- `elementSafeBounds`—the safe area bounds of the element, in element coordinate space
+
+If the value for a given attribute is null or cannot be otherwise computed, the key will not be present, but empty strings may be found in the object.
+
+```js
+const attributes = await element(by.text('Tap Me')).getAttributes();
+jestExpect(attributes.text).toBe('Tap Me');
 ```
 
 ## Deprecated Methods
