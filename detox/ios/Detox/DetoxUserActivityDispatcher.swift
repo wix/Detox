@@ -15,7 +15,7 @@ private struct DetoxUserActivityKeys {
 	static let referrerURL = "referrerURL"
 }
 
-@objc(DetoxUserActivityDispatcher)
+@objc(DTXUserActivityDispatcher)
 public class DetoxUserActivityDispatcher: NSObject {
 	@objc let userActivityData : [String: Any]
 	

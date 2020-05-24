@@ -7,8 +7,7 @@
 
 import UIKit
 
-@objc(DTXInvocationManager)
-public final class InvocationManager: NSObject {
+final class InvocationManager: NSObject {
 	internal struct Keys {
 		static let type = "type"
 	}
@@ -19,8 +18,7 @@ public final class InvocationManager: NSObject {
 	}
 	
 	@discardableResult
-	@objc(invokeWithDictionaryRepresentation:error:)
-	public class func invoke(dictionaryRepresentation: [String: Any]) throws -> [String: Any] {
+	class func invoke(dictionaryRepresentation: [String: Any]) throws -> [String: Any] {
 		let type = dictionaryRepresentation[Keys.type] as! String
 		
 		var rv : [String: Any]? = nil
@@ -40,8 +38,7 @@ public final class InvocationManager: NSObject {
 		return rv ?? [:]
 	}
 	
-	@objc(invokeWithDictionaryRepresentation:completionHandler:)
-	public class func invoke(dictionaryRepresentation: [String: Any], completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
+	class func invoke(dictionaryRepresentation: [String: Any], completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
 		do {
 			try dtx_try {
 				let type = dictionaryRepresentation[Keys.type] as! String

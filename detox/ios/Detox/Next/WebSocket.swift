@@ -68,23 +68,19 @@ class WebSocket : NSObject, SRWebSocketDelegate {
 		}
 	}
 	
-//	@objc(webSocketDidOpen:)
 	public func webSocketDidOpen(_ webSocket: SRWebSocket) {
 		sendAction("login", params: ["sessionId": sessionId!, "role": "testee"], messageId: 0)
 		delegate?.webSocketDidConnect(self)
 	}
 	
-//	@objc(webSocket:didReceiveMessageWithString:)
 	public func webSocket(_ webSocket: SRWebSocket, didReceiveMessageWith string: String) {
 		receiveAction(json: string)
 	}
 	
-//	@objc(webSocket:didFailWithError:)
 	public func webSocket(_ webSocket: SRWebSocket, didFailWithError error: Error) {
 		delegate?.webSocket(self, didFailWith: error)
 	}
 	
-//	@objc(webSocket:didCloseWithCode:reason:wasClean:)
 	public func webSocket(_ webSocket: SRWebSocket, didCloseWithCode code: Int, reason: String?, wasClean: Bool) {
 		delegate?.webSocket(self, didCloseWith: reason)
 	}

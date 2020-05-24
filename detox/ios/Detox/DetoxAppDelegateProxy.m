@@ -42,10 +42,10 @@ static NSObject<UIApplicationDelegate>* _userAppDelegate;
 static DetoxAppDelegateProxy* _appDelegateProxy;
 
 static NSMutableArray<NSDictionary*>* _pendingOpenURLs;
-static NSMutableArray<DetoxUserNotificationDispatcher*>* _pendingUserNotificationDispatchers;
-static DetoxUserNotificationDispatcher* _pendingLaunchUserNotificationDispatcher;
-static NSMutableArray<DetoxUserActivityDispatcher*>* _pendingUserActivityDispatchers;
-static DetoxUserActivityDispatcher* _pendingLaunchUserActivityDispatcher;
+static NSMutableArray<DTXUserNotificationDispatcher*>* _pendingUserNotificationDispatchers;
+static DTXUserNotificationDispatcher* _pendingLaunchUserNotificationDispatcher;
+static NSMutableArray<DTXUserActivityDispatcher*>* _pendingUserActivityDispatchers;
+static DTXUserActivityDispatcher* _pendingLaunchUserActivityDispatcher;
 
 static DTXTouchVisualizerWindow* _touchVisualizerWindow;
 
@@ -145,13 +145,13 @@ static NSURL* _launchUserActivityDataURL()
 		url = _launchUserActivityDataURL();
 		if(url)
 		{
-			_pendingLaunchUserActivityDispatcher = [[DetoxUserActivityDispatcher alloc] initWithUserActivityDataURL:url];
+			_pendingLaunchUserActivityDispatcher = [[DTXUserActivityDispatcher alloc] initWithUserActivityDataURL:url];
 		}
 		
 		url = _launchUserNotificationDataURL();
 		if(url)
 		{
-			_pendingLaunchUserNotificationDispatcher = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationDataURL:url];
+			_pendingLaunchUserNotificationDispatcher = [[DTXUserNotificationDispatcher alloc] initWithUserNotificationDataURL:url];
 		}
 		
 		Method m = class_getInstanceMethod([UIApplication class], @selector(delegate));
@@ -215,7 +215,7 @@ static NSURL* _launchUserActivityDataURL()
 	return [[NSUserDefaults standardUserDefaults] objectForKey:@"detoxSourceAppOverride"];
 }
 
-- (NSDictionary*)_prepareLaunchOptions:(NSDictionary*)launchOptions userNotificationDispatcher:(DetoxUserNotificationDispatcher*)notificationDispatcher userActivityDispatcher:(DetoxUserActivityDispatcher*)activityDispatcher
+- (NSDictionary*)_prepareLaunchOptions:(NSDictionary*)launchOptions userNotificationDispatcher:(DTXUserNotificationDispatcher*)notificationDispatcher userActivityDispatcher:(DTXUserActivityDispatcher*)activityDispatcher
 {
 	NSMutableDictionary* rv = [launchOptions mutableCopy] ?: [NSMutableDictionary new];
 	
@@ -299,12 +299,12 @@ static NSURL* _launchUserActivityDataURL()
 	}];
 	[_pendingOpenURLs removeAllObjects];
 	
-	[_pendingUserNotificationDispatchers enumerateObjectsUsingBlock:^(DetoxUserNotificationDispatcher * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+	[_pendingUserNotificationDispatchers enumerateObjectsUsingBlock:^(DTXUserNotificationDispatcher * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
 		[self _actualDispatchUserNotificationWithDispatcher:obj];
 	}];
 	[_pendingUserNotificationDispatchers removeAllObjects];
 	
-	[_pendingUserActivityDispatchers enumerateObjectsUsingBlock:^(DetoxUserActivityDispatcher * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+	[_pendingUserActivityDispatchers enumerateObjectsUsingBlock:^(DTXUserActivityDispatcher * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
 		[self _actualDispatchUserActivityWithDispatcher:obj];
 	}];
 	[_pendingUserActivityDispatchers removeAllObjects];
@@ -315,14 +315,14 @@ static NSURL* _launchUserActivityDataURL()
 	return _disableTouchIndicator == NO;
 }
 
-- (void)_actualDispatchUserActivityWithDispatcher:(DetoxUserActivityDispatcher*)dispatcher
+- (void)_actualDispatchUserActivityWithDispatcher:(DTXUserActivityDispatcher*)dispatcher
 {
 	[dispatcher dispatchOnAppDelegate:self];
 }
 
 - (void)_dispatchUserActivityFromDataURL:(NSURL*)userActivityDataURL delayUntilActive:(BOOL)delay
 {
-	DetoxUserActivityDispatcher* dispatcher = [[DetoxUserActivityDispatcher alloc] initWithUserActivityDataURL:userActivityDataURL];
+	DTXUserActivityDispatcher* dispatcher = [[DTXUserActivityDispatcher alloc] initWithUserActivityDataURL:userActivityDataURL];
 	
 	if(delay)
 	{
@@ -334,14 +334,14 @@ static NSURL* _launchUserActivityDataURL()
 	}
 }
 
-- (void)_actualDispatchUserNotificationWithDispatcher:(DetoxUserNotificationDispatcher*)dispatcher
+- (void)_actualDispatchUserNotificationWithDispatcher:(DTXUserNotificationDispatcher*)dispatcher
 {
 	[dispatcher dispatchOnAppDelegate:self simulateDuringLaunch:NO];
 }
 
 - (void)_dispatchUserNotificationFromDataURL:(NSURL*)userNotificationDataURL delayUntilActive:(BOOL)delay
 {
-	DetoxUserNotificationDispatcher* dispatcher = [[DetoxUserNotificationDispatcher alloc] initWithUserNotificationDataURL:userNotificationDataURL];
+	DTXUserNotificationDispatcher* dispatcher = [[DTXUserNotificationDispatcher alloc] initWithUserNotificationDataURL:userNotificationDataURL];
 	
 	if(delay && UIApplication.sharedApplication.applicationState != UIApplicationStateActive)
 	{
