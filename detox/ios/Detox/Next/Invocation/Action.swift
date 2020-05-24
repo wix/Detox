@@ -8,6 +8,19 @@
 import Foundation
 import UIKit
 
+@inline(__always)
+@discardableResult
+fileprivate func async_action_dtx_try(completionHandler: @escaping ([String: Any]?, Error?) -> Void, blockToTry: () -> Void) -> Bool {
+	do {
+		try dtx_try(blockToTry)
+	} catch {
+		completionHandler(nil, error)
+		return false
+	}
+	
+	return true
+}
+
 class Action : CustomStringConvertible {
 	struct Keys {
 		static let kind = "action"
@@ -97,28 +110,18 @@ class Action : CustomStringConvertible {
 		fatalError("Unimplemented perform(on:) called for \(type(of: self))")
 	}
 	
-	fileprivate func perform(on view: UIView, completionHandler: @escaping ([String: Any]?) -> Void) {
+	fileprivate func perform(on view: UIView, completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
 		//Normally, actions are synchronous, so this is enough.
-		completionHandler(perform(on: view))
-	}
-	
-	func perform() -> [String: Any]? {
-		let view = self.element.view
-		
-		return perform(on: view)
+		async_action_dtx_try(completionHandler: completionHandler) {
+			completionHandler(perform(on: view), nil)
+		}
 	}
 	
 	func perform(completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
-		do {
-			try dtx_try {
-				let view = self.element.view
-				
-				perform(on: view) { result in
-					completionHandler(result, nil)
-				}
-			}
-		} catch {
-			completionHandler(nil, error)
+		async_action_dtx_try(completionHandler: completionHandler) {
+			let view = self.element.view
+			
+			perform(on: view, completionHandler: completionHandler)
 		}
 	}
 	
@@ -223,6 +226,27 @@ class ScrollAction : Action {
 	}
 	
 	override func perform(on view: UIView) -> [String: Any]? {
+		fatalError("Unimplemented perform(on:) called for \(type(of: self))")
+	}
+	
+	fileprivate func perform_async(on scrollView: UIScrollView, targetOffset: CGPoint, normalizedStartingPoint: CGPoint, expectation: Expectation, completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
+		expectation.evaluate { error in
+			guard error != nil else {
+				completionHandler(nil, nil)
+				return
+			}
+			
+			guard async_action_dtx_try(completionHandler: completionHandler, blockToTry: { scrollView.dtx_scroll(withOffset: targetOffset, normalizedStartingPoint: normalizedStartingPoint) }) else {
+				return
+			}
+			
+			DispatchQueue.main.async {
+				self.perform_async(on: scrollView, targetOffset: targetOffset, normalizedStartingPoint: normalizedStartingPoint, expectation: expectation, completionHandler: completionHandler)
+			}
+		}
+	}
+	
+	override func perform(on view: UIView, completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
 		let pixels = params![0] as! Double
 		let directionString = params![1] as! String
 		let targetOffset : CGPoint
@@ -256,18 +280,20 @@ class ScrollAction : Action {
 		} else {
 			startPositionY = Double.nan
 		}
+		let normalizedStartingPoint = CGPoint(x: startPositionX, y: startPositionY)
 		
 		let scrollView = view.extractScrollView()
 		
-		if let whileExpectation = whileExpectation {
-			while (dtx_try_nothrow { whileExpectation.evaluate(); } ) == false {
-				scrollView.dtx_scroll(withOffset: targetOffset, normalizedStartingPoint: CGPoint(x: startPositionX, y: startPositionY))
+		guard let whileExpectation = whileExpectation else {
+			async_action_dtx_try(completionHandler: completionHandler) {
+				scrollView.dtx_scroll(withOffset: targetOffset, normalizedStartingPoint: normalizedStartingPoint)
+				completionHandler(nil, nil)
 			}
-		} else {
-			scrollView.dtx_scroll(withOffset: targetOffset, normalizedStartingPoint: CGPoint(x: startPositionX, y: startPositionY))
+			
+			return
 		}
 		
-		return nil
+		perform_async(on: scrollView, targetOffset: targetOffset, normalizedStartingPoint: normalizedStartingPoint, expectation: whileExpectation, completionHandler: completionHandler)
 	}
 }
 

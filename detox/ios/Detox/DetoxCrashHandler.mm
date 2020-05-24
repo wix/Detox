@@ -7,14 +7,15 @@
 //
 
 #include "fishhook.h"
-#import <dlfcn.h>
-#import <Foundation/Foundation.h>
 #import <Detox/Detox-Swift.h>
 
+#import <dlfcn.h>
+#import <Foundation/Foundation.h>
 #include <cstdlib>
 #include <exception>
 #include <typeinfo>
 #include <cxxabi.h>
+#import <asl.h>
 
 static void __DTXHandleCrash(NSException* exception, NSNumber* signal, NSString* other)
 {
@@ -59,6 +60,29 @@ static int __dtx_sigaction(int signal, const struct sigaction * __restrict newac
 	}
 	
 	return 0;
+}
+
+OBJC_EXTERN int __dtx_asl_log(asl_object_t client, asl_object_t msg, int level, const char *format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	NSString* asd = [[NSString alloc] initWithFormat:[NSString stringWithUTF8String:format] arguments:args];
+	va_end(args);
+	
+	NSArray<NSString*>* callStackSymbols = NSThread.callStackSymbols;
+	if((callStackSymbols.count > 2 && [callStackSymbols[2] containsString:@"swift_reportError"]) ||
+	   (callStackSymbols.count > 1 && [callStackSymbols[1] containsString:@"swift_reportError"]))
+	{
+		__DTXHandleCrash(nil, nil, asd);
+		
+//		exit(1);
+	}
+
+	va_start(args, format);
+	int rv = asl_vlog(client, msg, level, format, args);
+	va_end(args);
+
+	return rv;
 }
 
 static void __DTXHandleSignal(int signal)
@@ -133,10 +157,11 @@ static void __DTXInstallCrashHandlers()
 	
 	{
 		struct rebinding rebindings[] = {
-			{"sigaction", (void*)__dtx_sigaction, nullptr}
+			{"sigaction", (void*)__dtx_sigaction, nullptr},
+			{"asl_log", (void*)__dtx_asl_log, nullptr},
 		};
 		
-		rebind_symbols(rebindings, 1);
+		rebind_symbols(rebindings, sizeof(rebindings) / sizeof(rebindings[0]));
 	}
 	
 	struct sigaction signalAction;

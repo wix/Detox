@@ -104,34 +104,15 @@ class Expectation : CustomStringConvertible {
 		dtx_assert(applyModifiers(evaluate(with: view), modifiers: modifiers), "Failed expectation: \(self.description)", view: view)
 	}
 	
-	func evaluate() {
-		guard timeout != 0.0 else {
-			_evaluate()
-			return
-		}
-		
-		let spinner = DTXRunLoopSpinner()
-		spinner.timeout = timeout
-		let success : Bool  = spinner.spin { () -> Bool in
-			let rv = dtx_try_nothrow {
-				_evaluate()
-			}
-				
-			return rv == true
-		}
-		
-		dtx_assert(success, "Timed out while waiting for expectation: \(self.description)", view: nil)
-	}
-	
 	fileprivate func evaluate_after(startDate: Date, completionHandler: @escaping (Error?) -> Void) {
-		let evaluationSuccess = dtx_try_nothrow {
-			_evaluate()
-		}
-		
 		let nowDate = Date()
 		guard nowDate.timeIntervalSince(startDate) < timeout else {
 			completionHandler(dtx_errorForFatalError("Timed out while waiting for expectation: \(self.description)", view: nil))
 			return
+		}
+		
+		let evaluationSuccess = dtx_try_nothrow {
+			_evaluate()
 		}
 		
 		guard evaluationSuccess == false else {
@@ -179,10 +160,11 @@ class ToBeVisibleExpectation : Expectation {
 	override func _evaluate() {
 		var view : UIView? = nil
 		if self.modifiers.contains(Modifier.not) {
+			//Don't fail if view doesn't exist 
 			try? dtx_try {
 				view = self.element.view
 			}
-			guard view != nil else {
+			if view == nil {
 				return
 			}
 		} else {

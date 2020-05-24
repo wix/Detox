@@ -102,6 +102,7 @@
 		39AB2D31205ABBD90029CD1F /* DetoxUserActivityDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39AB2D30205ABBD90029CD1F /* DetoxUserActivityDispatcher.swift */; };
 		39BCE598224BDBF000B0D357 /* ReactNativeSupportNoARC.h in Headers */ = {isa = PBXBuildFile; fileRef = 39BCE596224BDBF000B0D357 /* ReactNativeSupportNoARC.h */; };
 		39BCE599224BDBF000B0D357 /* ReactNativeSupportNoARC.m in Sources */ = {isa = PBXBuildFile; fileRef = 39BCE597224BDBF000B0D357 /* ReactNativeSupportNoARC.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		39C32A6D247AC31100C1BC96 /* libswiftCore.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 39C32A6C247AC31100C1BC96 /* libswiftCore.tbd */; };
 		39C3C3511DBF9A13008177E1 /* EarlGrey.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 394767DC1DBF991E00D72256 /* EarlGrey.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		39C3C3531DBF9A19008177E1 /* SocketRocket.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 394767E91DBF992400D72256 /* SocketRocket.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		39CA978C245B13CB00A7FC43 /* UIDevice+DetoxActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 39CA978A245B13CB00A7FC43 /* UIDevice+DetoxActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -330,6 +331,7 @@
 		39AB2D30205ABBD90029CD1F /* DetoxUserActivityDispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetoxUserActivityDispatcher.swift; sourceTree = "<group>"; };
 		39BCE596224BDBF000B0D357 /* ReactNativeSupportNoARC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReactNativeSupportNoARC.h; sourceTree = "<group>"; };
 		39BCE597224BDBF000B0D357 /* ReactNativeSupportNoARC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReactNativeSupportNoARC.m; sourceTree = "<group>"; };
+		39C32A6C247AC31100C1BC96 /* libswiftCore.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswiftCore.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/lib/swift/libswiftCore.tbd; sourceTree = DEVELOPER_DIR; };
 		39CA978A245B13CB00A7FC43 /* UIDevice+DetoxActions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIDevice+DetoxActions.h"; sourceTree = "<group>"; };
 		39CA978B245B13CB00A7FC43 /* UIDevice+DetoxActions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+DetoxActions.m"; sourceTree = "<group>"; };
 		39CE25A922197F0900D78AA1 /* DetoxInstrumentsManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetoxInstrumentsManager.h; sourceTree = "<group>"; };
@@ -367,6 +369,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39C32A6D247AC31100C1BC96 /* libswiftCore.tbd in Frameworks */,
 				393E66ED1FC5F3F40092EE89 /* COSTouchVisualizer.framework in Frameworks */,
 				394767F71DBF994500D72256 /* EarlGrey.framework in Frameworks */,
 				394767F61DBF994200D72256 /* SocketRocket.framework in Frameworks */,
@@ -386,6 +389,16 @@
 				390D1C9E1E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h */,
 			);
 			path = UserNotificationsPrivate;
+			sourceTree = "<group>";
+		};
+		39232594247AAAAC00A3D119 /* Assertions */ = {
+			isa = PBXGroup;
+			children = (
+				3990BA26245882EF00B608C8 /* DTXAssertionHandler.h */,
+				3990BA27245882EF00B608C8 /* DTXAssertionHandler.m */,
+				3990BA35245AC98C00B608C8 /* DTXAssertionHandler+Swift.swift */,
+			);
+			path = Assertions;
 			sourceTree = "<group>";
 		};
 		3928EFA61E47404900C19B6E /* DetoxUserNotificationTests */ = {
@@ -535,6 +548,7 @@
 		394767D61DBF990F00D72256 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				39C32A6C247AC31100C1BC96 /* libswiftCore.tbd */,
 				3980D12D244C41E1004812DD /* IOKit.framework */,
 				393E66E11FC5F3E90092EE89 /* COSTouchVisualizer.xcodeproj */,
 				394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */,
@@ -567,6 +581,7 @@
 		3980D0FC2448B514004812DD /* Next */ = {
 			isa = PBXGroup;
 			children = (
+				39232594247AAAAC00A3D119 /* Assertions */,
 				3980D130244C42E7004812DD /* Utilities */,
 				3980D12B244C40D2004812DD /* AppleInternals */,
 				3980D12C244C40E2004812DD /* AppleTouchEvents */,
@@ -608,9 +623,6 @@
 		3980D130244C42E7004812DD /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				3990BA26245882EF00B608C8 /* DTXAssertionHandler.h */,
-				3990BA27245882EF00B608C8 /* DTXAssertionHandler.m */,
-				3990BA35245AC98C00B608C8 /* DTXAssertionHandler+Swift.swift */,
 				3980D1062448B52B004812DD /* DTXRunLoopSpinner.h */,
 				3980D10A2448B52B004812DD /* DTXRunLoopSpinner.m */,
 				3976BF14246C139D00AA20C7 /* DTXSwizzlingHelper.h */,
@@ -1191,6 +1203,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = Detox/Detox.pch;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = EarlGrey/fishhook;
 				INFOPLIST_FILE = Detox/Info.plist;
@@ -1210,8 +1223,8 @@
 					"-ObjC",
 					"-all_load",
 					"-lstdc++",
-					"-Wl,-U,_OBJC_CLASS_$_DTXProfiler",
-					"-Wl,-U,_OBJC_CLASS_$_TIPreferencesController",
+					"-undefined",
+					dynamic_lookup,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wix.Detox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1236,6 +1249,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = Detox/Detox.pch;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				HEADER_SEARCH_PATHS = EarlGrey/fishhook;
 				INFOPLIST_FILE = Detox/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1254,8 +1268,8 @@
 					"-ObjC",
 					"-all_load",
 					"-lstdc++",
-					"-Wl,-U,_OBJC_CLASS_$_DTXProfiler",
-					"-Wl,-U,_OBJC_CLASS_$_TIPreferencesController",
+					"-undefined",
+					dynamic_lookup,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wix.Detox;
 				PRODUCT_NAME = "$(TARGET_NAME)";

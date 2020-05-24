@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class InvocationManager: NSObject {
+final class InvocationManager {
 	internal struct Keys {
 		static let type = "type"
 	}
@@ -15,27 +15,6 @@ final class InvocationManager: NSObject {
 	internal struct Types {
 		static let action = "action"
 		static let expectation = "expectation"
-	}
-	
-	@discardableResult
-	class func invoke(dictionaryRepresentation: [String: Any]) throws -> [String: Any] {
-		let type = dictionaryRepresentation[Keys.type] as! String
-		
-		var rv : [String: Any]? = nil
-		try dtx_try {
-			switch type {
-			case Types.action:
-				let action = Action.with(dictionaryRepresentation: dictionaryRepresentation)
-				rv = action.perform()
-			case Types.expectation:
-				let expectation = Expectation.with(dictionaryRepresentation: dictionaryRepresentation)
-				expectation.evaluate()
-			default:
-				fatalError("Unknown invocation type \(type)")
-			}
-		}
-		
-		return rv ?? [:]
 	}
 	
 	class func invoke(dictionaryRepresentation: [String: Any], completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
