@@ -114,7 +114,7 @@ class Invoke extends Action {
       case 'testFailed':
         throw new Error(response.params.details);
       case 'invokeResult':
-        break;
+        return response.params;
       case 'error':
         throw new Error(response.params.error);
       default:

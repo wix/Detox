@@ -146,8 +146,7 @@ class Client {
   async sendAction(action) {
     const response = await this.ws.send(action, action.messageId);
     const parsedResponse = JSON.parse(response);
-    await action.handle(parsedResponse);
-    return parsedResponse;
+    return await action.handle(parsedResponse);
   }
 
   slowInvocationStatus() {

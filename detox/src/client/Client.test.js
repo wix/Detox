@@ -170,7 +170,7 @@ describe('Client', () => {
     const call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityLabel:', 'test');
     const invokeResult = await client.execute(call());
 
-    expect(invokeResult).toEqual(someInvocationResult);
+    expect(invokeResult).toEqual(someInvocationResult.params);
   });
 
   describe('slowInvocationStatus', () => {

@@ -94,6 +94,10 @@ class Element {
     return this;
   }
 
+  getAttributes() {
+    return this.withAction('getAttributes');
+  }
+
   tap(point) {
     if (point) {
       if (typeof point !== 'object') throw new Error('point should be a object, but got ' + (point + (' (' + (typeof point + ')'))));
@@ -319,7 +323,6 @@ class WaitFor {
   constructor(element) {
     this.element = new InternalElement(element.matcher);
   }
-
 
   toBeVisible() {
     this.expectation = new InternalExpect(this.element).toBeVisible();

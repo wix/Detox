@@ -87,6 +87,7 @@ describe('expectTwo API Coverage', () => {
 
 
     it(`interactions`, async () => {
+      await e.element(e.by.label('Tap Me')).getAttributes();
       await e.element(e.by.label('Tap Me')).tap();
       await e.element(e.by.label('Tap Me')).tap({ x: 10, y: 10 });
       await e.element(e.by.label('Tap Me')).tapAtPoint({ x: 10, y: 10 });
