@@ -66,19 +66,20 @@ OBJC_EXTERN int __dtx_asl_log(asl_object_t client, asl_object_t msg, int level, 
 {
 	va_list args;
 	va_start(args, format);
-	NSString* asd = [[NSString alloc] initWithFormat:[NSString stringWithUTF8String:format] arguments:args];
-	va_end(args);
-	
+
 	NSArray<NSString*>* callStackSymbols = NSThread.callStackSymbols;
 	if((callStackSymbols.count > 2 && [callStackSymbols[2] containsString:@"swift_reportError"]) ||
 	   (callStackSymbols.count > 1 && [callStackSymbols[1] containsString:@"swift_reportError"]))
 	{
-		__DTXHandleCrash(nil, nil, asd);
+		NSString* message = [[NSString alloc] initWithFormat:[NSString stringWithUTF8String:format] arguments:args];
+		va_end(args);
+		__DTXHandleCrash(nil, nil, message);
 		
 //		exit(1);
+		
+		va_start(args, format);
 	}
-
-	va_start(args, format);
+	
 	int rv = asl_vlog(client, msg, level, format, args);
 	va_end(args);
 
