@@ -481,19 +481,21 @@ static NSDictionary* DTXPointToDictionary(CGPoint point)
 	}];
 	
 	BOOL enabled = self.userInteractionEnabled;
-	if([self respondsToSelector:@selector(enabled)])
+	if([self isKindOfClass:UIControl.class])
 	{
-		enabled &&= [[self valueForKey:@"enabled"] boolValue]
+		enabled = enabled && [[self valueForKey:@"enabled"] boolValue];
 	}
 	rv[@"enabled"] = enabled ? @YES : @NO;
 	
-	rv[@"frame"] = DTXRectToDictionary(self.accessibilityFrame);
+	rv[@"frame"] = DTXRectToDictionary(self.dtx_accessibilityFrame);
 	rv[@"elementFrame"] = DTXRectToDictionary(self.frame);
 	rv[@"elementBounds"] = DTXRectToDictionary(self.bounds);
 	rv[@"safeAreaInsets"] = DTXInsetsToDictionary(self.safeAreaInsets);
 	rv[@"elementSafeBounds"] = DTXRectToDictionary(self.dtx_safeAreaBounds);
 	
-	rv[@"activationPoint"] = DTXPointToDictionary(self.dtx_accessibilityActivationPointInViewCoordinateSpace);
+	CGPoint accessibilityActivationPointInViewCoordinateSpace = self.dtx_accessibilityActivationPointInViewCoordinateSpace;
+	rv[@"activationPoint"] = DTXPointToDictionary(accessibilityActivationPointInViewCoordinateSpace);
+	rv[@"normalizedActivationPoint"] = DTXPointToDictionary(CGPointMake(accessibilityActivationPointInViewCoordinateSpace.x / CGRectGetWidth(self.bounds), accessibilityActivationPointInViewCoordinateSpace.y / CGRectGetHeight(self.bounds)));
 	
 	rv[@"hittable"] = self.dtx_isHittable ? @YES : @NO;
 	rv[@"visible"] = self.dtx_isVisible ? @YES : @NO;

@@ -27,6 +27,7 @@ static double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
 - (void)dtx_assertHittableAtPoint:(CGPoint)point;
 
 @property (nonatomic, readonly, copy) NSString* dtx_shortDescription;
+@property (nonatomic, readonly) CGRect dtx_accessibilityFrame;
 @property (nonatomic, readonly) CGRect dtx_safeAreaBounds;
 @property (nonatomic, readonly) CGPoint dtx_accessibilityActivationPoint;
 @property (nonatomic, readonly) CGPoint dtx_accessibilityActivationPointInViewCoordinateSpace;

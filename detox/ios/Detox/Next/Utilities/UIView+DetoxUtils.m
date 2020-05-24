@@ -57,6 +57,16 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return [NSString stringWithFormat:@"<%@: %p>", self.class, self];
 }
 
+- (CGRect)dtx_accessibilityFrame
+{
+	CGRect accessibilityFrame = self.accessibilityFrame;
+	if(CGRectEqualToRect(accessibilityFrame, CGRectZero))
+	{
+		accessibilityFrame = [self.window.screen.coordinateSpace convertRect:self.bounds fromCoordinateSpace:self.coordinateSpace];
+	}
+	return accessibilityFrame;
+}
+
 - (CGRect)dtx_safeAreaBounds
 {
 	return UIEdgeInsetsInsetRect(self.bounds, self.safeAreaInsets);

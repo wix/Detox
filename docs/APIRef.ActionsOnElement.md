@@ -84,8 +84,8 @@ Simulates a scroll on the element with the provided options.
 
 `offset`—the offset to scroll, in points
 `direction`—the scroll's direction (valid input: `"left"`/`"right"`/`"up"`/`"down"`)
-`startPositionX`—the normalized x position of the element to use as scroll start point (optional, valid input: [0.0, 1.0], `NaN`—choose an optimal value automatically)
-`startPositionY`—the normalized y position of the element to use as scroll start point (optional, valid input: [0.0, 1.0], `NaN`—choose an optimal value automatically)
+`startPositionX`—the normalized x percentage of the element to use as scroll start point (optional, valid input: [0.0, 1.0], `NaN`—choose an optimal value automatically)
+`startPositionY`—the normalized y percentage of the element to use as scroll start point (optional, valid input: [0.0, 1.0], `NaN`—choose an optimal value automatically)
 
 ```js
 await element(by.id('scrollView')).scroll(100, 'up');
@@ -205,6 +205,7 @@ Retrieved attributes are:
 - `identifier`—the identifier of the element (matches `accessibilityIdentifier`)
 - `enabled`—whether or not the element is enabled for user interaction
 - `activationPoint`—the activation point of the element, in element coordinate space
+- `normalizedActivationPoint`—the activation point of the element, in normalized percentage ([0.0, 1.0])
 - `hittable`—whether the element is hittable at the activation point
 - `visible`—whether the element is visible at the activation point
 - `frame`—the frame of the element, in screen coordinate space
