@@ -157,6 +157,12 @@ class ADB {
     return lvl;
   }
 
+  async disableAndroidAnimations(deviceId) {
+    await this.shell(deviceId, `settings put global animator_duration_scale 0`);
+    await this.shell(deviceId, `settings put global window_animation_scale 0`);
+    await this.shell(deviceId, `settings put global transition_animation_scale 0`);
+  }
+
   async screencap(deviceId, path) {
     await this.shell(deviceId, `screencap ${path}`);
   }
