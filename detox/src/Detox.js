@@ -252,7 +252,7 @@ class Detox {
     const pendingAppCrash = this._client.getPendingCrashAndReset();
 
     if (pendingAppCrash) {
-      log.error({ event: 'APP_CRASH' }, `App crashed in test '${testName}', here's the native stack trace: \n${pendingAppCrash}`);
+      log.error({ event: 'APP_CRASH' }, `App crashed in test '${testName}', here are the crash details: \n${pendingAppCrash}`);
       await this.device.launchApp({ newInstance: true });
     }
   }
