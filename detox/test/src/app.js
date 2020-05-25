@@ -105,12 +105,13 @@ class example extends Component {
           {this.renderScreenButton('Orientation', Screens.Orientation)}
           {this.renderScreenButton('Permissions', Screens.Permissions)}
           {this.renderScreenButton('Network', Screens.NetworkScreen)}
-          {this.renderScreenButton('Animations', Screens.AnimationsScreen)}
+          {this.renderAnimationScreenButtons()}
           {this.renderScreenButton('Device', Screens.DeviceScreen)}
           {this.renderScreenButton('Location', Screens.LocationScreen)}
           {!isAndroid && this.renderScreenButton('DatePicker', Screens.DatePickerScreen)}
           {!isAndroid && this.renderScreenButton('Picker', Screens.PickerViewScreen)}
 
+          { /* TODO: Push this into a dedicated screen */ }
           <View style={{flexDirection: 'row', justifyContent: 'center'}}>
             {this.renderButton('Crash', () => {
               // Note: this crashes the native-modules thread (and thus an *uncaught* exception, on Android).
@@ -136,6 +137,16 @@ class example extends Component {
     const Screen = this.state.screen;
     return (
       <Screen/>
+    );
+  }
+
+  renderAnimationScreenButtons() {
+    return (
+      <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+        {this.renderScreenButton('RN Animations', Screens.RNAnimationsScreen)}
+        {isAndroid && <Text style={{width: 10}}> | </Text>}
+        {this.renderScreenButton('Native Animation', Screens.NativeAnimationsScreen)}
+      </View>
     );
   }
 

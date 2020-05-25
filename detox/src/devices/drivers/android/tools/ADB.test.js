@@ -307,4 +307,21 @@ describe('ADB', () => {
     expect(adb.shell).toBeCalledWith('aDeviceId', 'pm list instrumentation');
     expect(result).toEqual(expectedRunner);
   });
+
+  describe('animation disabling', () => {
+    it('should disable animator (e.g. ObjectAnimator) animations', async () => {
+      await adb.disableAndroidAnimations();
+      expect(exec).toHaveBeenCalledWith(`"${adbBinPath}"  shell "settings put global animator_duration_scale 0"`, undefined, undefined, 1);
+    });
+
+    it('should disable window animations', async () => {
+      await adb.disableAndroidAnimations();
+      expect(exec).toHaveBeenCalledWith(`"${adbBinPath}"  shell "settings put global window_animation_scale 0"`, undefined, undefined, 1);
+    });
+
+    it('should disable transition (e.g. activity launch) animations', async () => {
+      await adb.disableAndroidAnimations();
+      expect(exec).toHaveBeenCalledWith(`"${adbBinPath}"  shell "settings put global transition_animation_scale 0"`, undefined, undefined, 1);
+    });
+  });
 });

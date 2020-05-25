@@ -203,7 +203,7 @@ For Detox to work, Detox test code running on the device must connect to the tes
 
 **Note: if properly configured, this in no way compromises the security settings of your app.**
 
-For full details, refer to [Android's security-config guide](https://developer.android.com/training/articles/security-config), and the dedicated article in the [Android developres blog](https://android-developers.googleblog.com/2016/04/protecting-against-unintentional.html). 
+For full details, refer to [Android's security-config guide](https://developer.android.com/training/articles/security-config), and the dedicated article in the [Android developers blog](https://android-developers.googleblog.com/2016/04/protecting-against-unintentional.html). 
 
 > *(\*) 10.0.2.2 for Google emulators, 10.0.3.2 for Genymotion emulators.*
 

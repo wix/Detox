@@ -1,6 +1,6 @@
 {
-  "name": "@detox/demo-react-native",
-  "version": "16.5.1",
+  "name": "example",
+  "version": "16.6.0",
   "private": true,
   "scripts": {
     "start": "react-native start",
@@ -23,7 +23,7 @@
     "react-native": "0.62.x"
   },
   "devDependencies": {
-    "detox": "^16.5.1",
+    "detox": "^16.6.0",
     "mocha": "^6.1.3"
   }
 }
