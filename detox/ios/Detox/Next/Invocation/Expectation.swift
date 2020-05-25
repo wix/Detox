@@ -84,7 +84,7 @@ class Expectation : CustomStringConvertible {
 			modifiers = []
 		}
 		//Convert ms to seconds
-		let timeout = ((dictionaryRepresentation[Keys.timeout] as! TimeInterval?) ?? 0.0).fromMSToSeconds()
+		let timeout = ((dictionaryRepresentation[Keys.timeout] as! Double?) ?? 0.0).toSeconds()
 		
 		let element = Element.with(dictionaryRepresentation: dictionaryRepresentation)
 		let expectationClass = mapping[kind]!
@@ -150,7 +150,7 @@ class Expectation : CustomStringConvertible {
 	
 	var description: String {
 		get {
-			return String(format: "%@%@%@ WITH %@%@", modifiers.contains(Modifier.not) ? "NOT " : "", self.kind.uppercased(), additionalDescription, element.description, timeout > 0.0 ? " TIMEOUT(\(timeout * 1000) ms)" : "")
+			return String(format: "%@%@%@ WITH %@%@", modifiers.contains(Modifier.not) ? "NOT " : "", self.kind.uppercased(), additionalDescription, element.description, timeout > 0.0 ? " TIMEOUT(\(timeout.toMilliseconds()) ms)" : "")
 		}
 	}
 }

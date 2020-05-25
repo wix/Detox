@@ -8,8 +8,14 @@
 
 import Foundation
 
+extension Double {
+	func toSeconds() -> TimeInterval {
+		return self / 1000.0
+	}
+}
+
 extension TimeInterval {
-	func fromMSToSeconds() -> TimeInterval {
-		return (self / 1000.0)
+	func toMilliseconds() -> Double {
+		return self * 1000.0
 	}
 }

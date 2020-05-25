@@ -150,8 +150,8 @@ class TapAction : Action {
 class LongPressAction : Action {
 	override func perform(on view: UIView) -> [String: Any]? {
 		let duration : TimeInterval
-		if let param = params?.first as? TimeInterval {
-			duration = param.fromMSToSeconds()
+		if let param = params?.first as? Double {
+			duration = param.toSeconds()
 		} else {
 			//TODO: Check default value in Detox
 			duration = 0.8
