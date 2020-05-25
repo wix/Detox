@@ -204,11 +204,11 @@ Session can also be set per configuration:
   "detox": {
     ...
     "test-runner": "mocha",
-    "runner-config": "path/to/.mocharc"
+    "runner-config": "path/to/.mocharc.json"
   }
 ```
 
-`.mocharc` refers to `--config` in https://mochajs.org/#-config-path
+`.mocharc.json` refers to `--config` in https://mochajs.org/#-config-path
 
 ##### Jest
 

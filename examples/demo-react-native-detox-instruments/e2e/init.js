@@ -1,9 +1,8 @@
 const detox = require('detox');
-const config = require('../package.json').detox;
 const adapter = require('detox/runners/mocha/adapter');
 
 before(async () => {
-  await detox.init(config);
+  await detox.init();
 });
 
 beforeEach(async function () {

@@ -1,5 +1,10 @@
-const CustomError = require('./CustomError');
+const DetoxRuntimeError = require('./DetoxRuntimeError');
 
-class DetoxConfigError extends CustomError {}
+class DetoxConfigError extends DetoxRuntimeError {
+  constructor(opts) {
+    super(opts);
+    this.name = 'DetoxConfigError';
+  }
+}
 
 module.exports = DetoxConfigError;

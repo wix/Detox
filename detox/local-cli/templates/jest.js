@@ -8,7 +8,6 @@ const runnerConfig = `{
 `;
 
 const initjsContent = `const detox = require('detox');
-const config = require('../package.json').detox;
 const adapter = require('detox/runners/jest/adapter');
 const specReporter = require('detox/runners/jest/specReporter');
 
@@ -22,7 +21,7 @@ jasmine.getEnv().addReporter(adapter);
 jasmine.getEnv().addReporter(specReporter);
 
 beforeAll(async () => {
-  await detox.init(config);
+  await detox.init();
 }, 300000);
 
 beforeEach(async () => {
