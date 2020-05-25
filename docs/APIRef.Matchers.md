@@ -12,7 +12,7 @@ Use [actions]('APIRef.ActionsOnElement.md') to simulate use interaction with ele
 - [`by.label()`](#bylabellabel)
 - [`by.text()`](#bytexttext-discouraged-on-ios)
 - [`by.type()`](#bytypeclassname)
-- [`by.traits()`](#bytraitstraits--ios-only) **iOS Only**
+- [`by.traits()`](#bytraitstraits-ios-only) **iOS Only**
 - [`withAncestor()`](#withancestormatcher)
 - [`withDescendant()`](#withdescendantmatcher)
 - [`and()`](#andmatcher)

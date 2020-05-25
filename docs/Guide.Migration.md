@@ -2,6 +2,42 @@
 
 We are improving Detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes. If a newer version has no entries in this document, it means it does not require special migration steps. Refer to the release notes of the later builds to learn about their improvements and changes.
 
+## X.0.0
+
+Detox for iOS now uses an entirely new, custom built matcher, action and expectation infrastructure. This is the first step in our roadmap of removing Earl Grey as a dependency.
+
+While the new system has been designed to be as compatible as possible with the existing system, some changes we made to existing APIs that may or may not require your attention.
+
+##### New API
+
+- `pinch()`—new API for pinching elements, replacing the deprecated `pinchWithAngle()` (iOS) 
+- `getAttributes()`—new API for obtaining element properties (iOS)
+- `not()`—new API for inverting expectation logic (iOS, Android)
+
+##### Modified API
+
+The following APIs have changed and require attention
+
+- `by.text()`—matching elements by text actually uses the element's text value instead of using the accessibility label (iOS)
+- `by.traits()`—the supported trait values have changed (iOS)
+- `atIndex()`—matched elements are now sorted by x and y axes to allow for stability between tests; indices will most likely change after upgrading to this version of Detox (iOS)
+- `tap()`—this method now accepts an optional point to tap (iOS, Android)
+- `setColumnToValue()`—this method no longer supports date pickers; use `setDatePickerDate()` to change picker dates (iOS)
+- `setDatePickerDate()`—in addition to normal date formats, a new special case is introduced for ISO 8601 formatted date strings: `"ISO8601"` (iOS)
+
+##### Deprecated API
+
+The following APIs have been deprecated, but is still available
+
+- `tapAtPoint()`—the API has been consolidated with `tap(point)` (iOS, Android)
+- `pinchWithAngle()`—this API has been replaced with `pinch()` (iOS)
+- `toBeNotVisible()`—deprecated in favor of `not().toBeVisible()` (iOS, Android)
+- `toNotExist()`—deprecated in favor of `not().toExist()` (iOS, Android)
+
+Make sure to read the API reference for [matchers](https://github.com/wix/Detox/blob/master/docs/APIRef.Matchers.md), [actions](https://github.com/wix/Detox/blob/master/docs/APIRef.ActionsOnElement.md) and [expectations](https://github.com/wix/Detox/blob/master/docs/APIRef.Expect.md).
+
+If you see unexpected results, make sure to open an issue.
+
 ## 16.0.0
 
 Detox now comes as a prebuilt framework on iOS, thus lowering npm install times and saving some build issues that happen due to unexpected Xcode setups.

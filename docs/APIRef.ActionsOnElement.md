@@ -153,6 +153,7 @@ await element(by.id('textField')).tapReturnKey();
 ```
 
 ### `tapBackspaceKey()`
+
 Simulates tapping of the backspace key into the element, using the system's builtin keyboard and typing behavior.
 
 On iOS, any element can be sent backspace key input, as long as it can become first responder and conforms to the [`UITextInput`](https://developer.apple.com/documentation/uikit/uitextinput) protocol.
