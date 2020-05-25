@@ -29,12 +29,12 @@ class DetoxExportWrapper {
     this._defineProxy('device');
   }
 
-  async init(detoxConfigOverride, userParams) {
+  async init(configOverride, userParams) {
     let configError, exposeGlobals, resolvedConfig;
 
     try {
       resolvedConfig = await configuration.composeDetoxConfig({
-        override: detoxConfigOverride,
+        override: configOverride,
         userParams,
       });
 

@@ -8,7 +8,7 @@ const _ = require('lodash');
  * @returns {*}
  */
 function composeDeviceConfig({ errorBuilder, rawDeviceConfig, cliConfig }) {
-  if (!rawDeviceConfig.type) {
+  if (!rawDeviceConfig || !rawDeviceConfig.type) {
     throw errorBuilder.missingConfigurationType();
   }
 

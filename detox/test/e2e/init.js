@@ -19,7 +19,7 @@ jasmine.getEnv().addReporter(assignReporter);
 jest.setTimeout(timeoutUtils.testTimeout);
 
 beforeAll(async () => {
-  await detox.init();
+  await detox.init(config);
 }, timeoutUtils.initTimeout);
 
 beforeEach(async () => {

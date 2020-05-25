@@ -2,7 +2,7 @@ jest.mock('../src/utils/logger');
 jest.mock('../src/configuration');
 jest.mock('child_process');
 
-const fs = require('fs-extra');
+const path = require('path');
 const {normalize} = require('path');
 const shellQuote = require('./utils/shellQuote');
 
@@ -58,6 +58,17 @@ describe('test', () => {
       );
     });
 
+    it('passes custom Detox config', async () => {
+      mockAndroidMochaConfiguration();
+
+      await callCli('./test', `test -C ${path.join(__dirname, '__mocks__/detox.config.js')}`);
+
+      expect(execSync).toHaveBeenCalledWith(
+        expect.stringMatching(/mocha.* --config-path .*__mocks__.detox\.config\.js/),
+        expect.anything()
+      );
+    });
+
     it('changes --opts to --config, when given non ".opts" file extension', async () => {
       mockAndroidMochaConfiguration({
         'runner-config': 'e2e/.mocharc.json'
@@ -101,6 +112,23 @@ describe('test', () => {
           env: expect.objectContaining({
             reportSpecs: true,
             useCustomLogger: true,
+          }),
+        })
+      );
+    });
+
+    it('passes custom Detox config', async () => {
+      mockAndroidJestConfiguration();
+
+      await callCli('./test', `test -C ${path.join(__dirname, '__mocks__/detox.config.js')}`);
+
+      expect(execSync).toHaveBeenCalledWith(
+        expect.stringContaining(
+          `${normalize('node_modules/.bin/jest')} --config e2e/config.json`
+        ),
+        expect.objectContaining({
+          env: expect.objectContaining({
+            configPath: expect.stringMatching(/__mocks__.detox\.config\.js$/),
           }),
         })
       );

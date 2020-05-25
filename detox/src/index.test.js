@@ -64,7 +64,6 @@ describe('index', () => {
       await index.init(config, userParams).catch(() => {});
 
       expect(configuration.composeDetoxConfig).toHaveBeenCalledWith({
-        selectedConfiguration: undefined,
         override: config,
         userParams
       });

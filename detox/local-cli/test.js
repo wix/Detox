@@ -209,6 +209,7 @@ module.exports.handler = async function test(program) {
       (path.join('node_modules', '.bin', runnerConfig.testRunner)),
       ...safeGuardArguments([
         (runnerConfig.runnerConfig ? `--${configParam} ${runnerConfig.runnerConfig}` : ''),
+        (cliConfig.configPath ? `--config-path ${cliConfig.configPath}` : ''),
         (cliConfig.configuration ? `--configuration ${cliConfig.configuration}` : ''),
         (cliConfig.loglevel ? `--loglevel ${cliConfig.loglevel}` : ''),
         (cliConfig.noColor ? '--no-colors' : ''),
@@ -269,6 +270,7 @@ module.exports.handler = async function test(program) {
 
     const detoxEnvironmentVariables = {
       ..._.pick(cliConfig, [
+        'configPath',
         'configuration',
         'loglevel',
         'cleanup',

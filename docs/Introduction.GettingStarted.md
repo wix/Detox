@@ -87,11 +87,25 @@ npm install detox --save-dev
 
 > TIP: Remember to add the "node_modules" folder to your git ignore.
 
-#### 2. Add Detox config to package.json
+#### 2. Add Detox config
 
-By default, detox will search for the configuration the `package.json`.   
-You can also write your config in a `.detoxrc` file if you prefer to separate between the configuration and the app's `package.json`.
-Another option is to create a config file and supply it when calling `detox init`.
+Detox searches for its configuration, starting from the current working directory,
+in the following places:
+
+1. `.detoxrc.js`
+1. `.detoxrc.json`
+1. `.detoxrc`
+1. `detox.config.js`
+1. `detox.config.json`
+1. `package.json` (`"detox"` section)
+
+If you prefer to keep all configs in one place, you can create a "detox" section in
+your`package.json`. Otherwise, if you prefer separating configs, see the available
+config file names above.
+
+To get some help with creating your first Detox config file, you can try running Detox CLI:
+`detox init -r jest` (or `-r mocha`).
+
 Either way the config should look like this: 
 
 ##### in package.json
@@ -111,7 +125,7 @@ Either way the config should look like this:
 }
 ```
 
-##### in .detoxrc or any config file
+##### in .detoxrc.json or another separate config file
 
 ```json
 {

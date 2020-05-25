@@ -2,7 +2,6 @@ const _ = require('lodash');
 const cp = require('child_process');
 const log = require('../src/utils/logger').child({ __filename });
 const {composeDetoxConfig} = require('../src/configuration');
-const DetoxConfigErrorBuilder = require('../src/errors/DetoxConfigErrorBuilder');
 
 module.exports.command = 'build';
 module.exports.desc = "Convenience method. Run the command defined in 'build' property of the specified configuration.";

@@ -3,7 +3,7 @@ module.exports = {
   "runner-config": "e2e/.mocharc.json",
   "behavior": {
     "init": {
-      "exposeGlobals": process.env.DETOX_NO_EXPOSE === '1' ? false : true,
+      "exposeGlobals": process.env.DETOX_EXPOSE_GLOBALS === '0' ? false : true,
     },
   },
   "configurations": {

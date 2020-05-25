@@ -27,6 +27,11 @@ describe('composeDeviceConfig', () => {
   });
 
   describe('validation', () => {
+    it('should throw if configuration is not defined', () => {
+      rawDeviceConfig = undefined;
+      expect(compose).toThrowError(errorBuilder.missingConfigurationType());
+    });
+
     it('should throw if configuration driver (type) is not defined', () => {
       delete rawDeviceConfig.type;
       expect(compose).toThrowError(errorBuilder.missingConfigurationType());

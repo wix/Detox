@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const DetoxConfigError = require('../errors/DetoxConfigError');
 const DetoxConfigErrorBuilder = require('../errors/DetoxConfigErrorBuilder');
 const collectCliConfig = require('./collectCliConfig');
 const loadExternalConfig = require('./loadExternalConfig');
