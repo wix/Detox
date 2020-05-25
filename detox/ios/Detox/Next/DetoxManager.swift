@@ -268,6 +268,26 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 			
 			EarlGrey().detox_safeExecuteSync(closure)
 			return
+		case "setOrientation":
+			let orientationString = params["orientation"] as! String
+			let orientation : UIDeviceOrientation
+			switch orientationString {
+			case "portrait":
+				orientation = .portrait
+				break
+			case "landscape":
+				orientation = .landscapeRight
+				break
+			default:
+				fatalError("Unknown orientation provided: \(orientationString)")
+			}
+			
+			EarlGrey().detox_safeExecuteSync {
+				UIDevice.dtx_setOrientation(orientation)
+				
+				self.safeSend(action: done, messageId: messageId)
+			}
+			return
 		case "shakeDevice":
 			EarlGrey().detox_safeExecuteSync {
 				UIDevice.dtx_shake()

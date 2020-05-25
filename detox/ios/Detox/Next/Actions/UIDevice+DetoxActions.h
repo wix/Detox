@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIDevice (DetoxActions)
 
-+ (void)dtx_rotateToOrientation:(UIDeviceOrientation)deviceOrientation;
++ (void)dtx_setOrientation:(UIDeviceOrientation)deviceOrientation;
 + (void)dtx_shake;
 
 @end

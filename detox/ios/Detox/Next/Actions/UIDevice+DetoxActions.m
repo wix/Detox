@@ -11,7 +11,7 @@
 
 @implementation UIDevice (DetoxActions)
 
-+ (void)dtx_rotateToOrientation:(UIDeviceOrientation)deviceOrientation
++ (void)dtx_setOrientation:(UIDeviceOrientation)deviceOrientation
 {
 	NSParameterAssert(NSThread.isMainThread);
 	[[UIDevice currentDevice] setOrientation:deviceOrientation animated:YES];
