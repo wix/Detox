@@ -169,13 +169,6 @@ module.exports.handler = async function test(program) {
     });
   }
 
-  function hasCustomValue(key) {
-    const value = cliConfig[key];
-    const metadata = module.exports.builder[key];
-
-    return (value !== metadata.default);
-  }
-
   function getPassthroughArguments() {
     const args = collectExtraArgs(process.argv.slice(3));
 
@@ -219,10 +212,10 @@ module.exports.handler = async function test(program) {
         (platform ? `--invert --grep ${getPlatformSpecificString()}` : ''),
         (cliConfig.headless ? `--headless` : ''),
         (cliConfig.gpu ? `--gpu ${cliConfig.gpu}` : ''),
-        (hasCustomValue('record-logs') ? `--record-logs ${cliConfig.recordLogs}` : ''),
-        (hasCustomValue('take-screenshots') ? `--take-screenshots ${cliConfig.takeScreenshots}` : ''),
-        (hasCustomValue('record-videos') ? `--record-videos ${cliConfig.recordVideos}` : ''),
-        (hasCustomValue('record-performance') ? `--record-performance ${cliConfig.recordPerformance}` : ''),
+        (cliConfig.recordLogs ? `--record-logs ${cliConfig.recordLogs}` : ''),
+        (cliConfig.takeScreenshots ? `--take-screenshots ${cliConfig.takeScreenshots}` : ''),
+        (cliConfig.recordVideos ? `--record-videos ${cliConfig.recordVideos}` : ''),
+        (cliConfig.recordPerformance ? `--record-performance ${cliConfig.recordPerformance}` : ''),
         (cliConfig.artifactsLocation ? `--artifacts-location "${cliConfig.artifactsLocation}"` : ''),
         (cliConfig.deviceName ? `--device-name "${cliConfig.deviceName}"` : ''),
         (cliConfig.useCustomLogger ? `--use-custom-logger "${cliConfig.useCustomLogger}"` : ''),

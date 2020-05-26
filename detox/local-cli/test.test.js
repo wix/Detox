@@ -82,6 +82,19 @@ describe('test', () => {
       );
     });
 
+    it('passes artifact recording options', async () => {
+      mockAndroidMochaConfiguration({
+        'runner-config': 'e2e/.mocharc.json'
+      });
+
+      await callCli('./test', 'test --record-logs none --take-screenshots manual --record-videos none --record-performance none');
+
+      expect(execSync).toHaveBeenCalledWith(
+        expect.stringContaining(`--record-logs none --take-screenshots manual --record-videos none --record-performance none`),
+        expect.anything()
+      );
+    });
+
     it('should pass in device-launch-args as an environment variable', async () => {
       mockAndroidMochaConfiguration();
 
