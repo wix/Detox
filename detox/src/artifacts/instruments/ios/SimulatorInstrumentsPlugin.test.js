@@ -7,22 +7,18 @@ describe('SimulatorInstrumentsPlugin', () => {
   const testSummary = 'TestSummary';
   const testPath = 'TestPath';
 
-  let mockedApi, mockedClient;
+  let pluginConfig;
 
   beforeEach(() => {
-    mockedApi = {
+    const mockedApi = {
       trackArtifact: jest.fn(),
       untrackArtifact: jest.fn()
     };
-    mockedClient = {
+    const mockedClient = {
       isConnected: true,
       pandingAppCrash: false
     };
-    temporaryPath.for.dtxrec.mockReturnValueOnce(testPath);
-  });
-
-  it('should not build launchArgs without started test', async () => {
-    const plugin = new SimulatorInstrumentsPlugin({
+    pluginConfig = {
       api: {
         ...mockedApi,
         userConfig: {
@@ -30,8 +26,12 @@ describe('SimulatorInstrumentsPlugin', () => {
         }
       },
       client: mockedClient
-    });
+    };
+    temporaryPath.for.dtxrec.mockReturnValueOnce(testPath);
+  });
 
+  it('should not build launchArgs without started test', async () => {
+    const plugin = new SimulatorInstrumentsPlugin(pluginConfig);
     const event = {
       launchArgs: {}
     };
@@ -40,16 +40,7 @@ describe('SimulatorInstrumentsPlugin', () => {
   });
 
   it('should build launchArgs with empty config', async () => {
-    const plugin = new SimulatorInstrumentsPlugin({
-      api: {
-        ...mockedApi,
-        userConfig: {
-          enabled: true
-        }
-      },
-      client: mockedClient
-    });
-
+    const plugin = new SimulatorInstrumentsPlugin(pluginConfig);
     const event = {
       launchArgs: {}
     };
@@ -61,17 +52,9 @@ describe('SimulatorInstrumentsPlugin', () => {
   });
 
   it('should build launchArgs with samplingInterval from config', async () => {
-    const plugin = new SimulatorInstrumentsPlugin({
-      api: {
-        ...mockedApi,
-        userConfig: {
-          enabled: true,
-          samplingInterval: 100500
-        }
-      },
-      client: mockedClient
-    });
+    pluginConfig.api.userConfig.samplingInterval = 100500;
 
+    const plugin = new SimulatorInstrumentsPlugin(pluginConfig);
     const event = {
       launchArgs: {}
     };
@@ -81,16 +64,7 @@ describe('SimulatorInstrumentsPlugin', () => {
   });
 
   it('should build launchArgs with instrumentsPath from ENV', async () => {
-    const plugin = new SimulatorInstrumentsPlugin({
-      api: {
-        ...mockedApi,
-        userConfig: {
-          enabled: true
-        }
-      },
-      client: mockedClient
-    });
-
+    const plugin = new SimulatorInstrumentsPlugin(pluginConfig);
     const event = {
       launchArgs: {}
     };
@@ -104,14 +78,9 @@ describe('SimulatorInstrumentsPlugin', () => {
 
   it('should prepare path for artifact ', async () => {
     const preparePathForArtifact = jest.fn();
-    const plugin = new SimulatorInstrumentsPlugin({
-      api: {
-        preparePathForArtifact,
-        userConfig: {
-          enabled: true
-        }
-      }
-    });
+    pluginConfig.api.preparePathForArtifact = preparePathForArtifact;
+
+    const plugin = new SimulatorInstrumentsPlugin(pluginConfig);
     preparePathForArtifact.mockReturnValueOnce(testPath);
     const path = await plugin.preparePathForTestArtifact(testSummary);
     expect(preparePathForArtifact).toBeCalledWith('test.dtxrec', testSummary);

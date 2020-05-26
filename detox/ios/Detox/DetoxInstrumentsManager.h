@@ -16,7 +16,7 @@
 
 + (NSURL*)defaultURLForTestName:(NSString*)testName;
 
-- (DetoxInstrumentsConfiguration *)configurationFromProps:(NSDictionary *)props;
+- (DetoxInstrumentsConfiguration *)configurationWithDictionary:(NSDictionary *)props;
 - (void)startRecordingWithConfiguration:(DetoxInstrumentsConfiguration *)configuration;
 - (void)continueRecordingWithConfiguration:(DetoxInstrumentsConfiguration *)configuration;
 - (void)stopRecordingWithCompletionHandler:(void(^)(NSError* error))completionHandler;

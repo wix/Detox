@@ -433,7 +433,7 @@ static void detoxConditionalInit()
 		dispatch_once(&onceToken, ^{
 			_recordingManager = [DetoxInstrumentsManager new];
 		});
-		DetoxInstrumentsConfiguration *configuration = [_recordingManager configurationFromProps:props];
+		DetoxInstrumentsConfiguration *configuration = [_recordingManager configurationWithDictionary:props];
 		if(launch)
 		{
 			[_recordingManager continueRecordingWithConfiguration:configuration];

@@ -15,9 +15,7 @@ class SimulatorInstrumentsPlugin extends InstrumentsArtifactPlugin {
     if (this.testRecording) {
       event.launchArgs['recordingPath'] = this.testRecording.temporaryRecordingPath;
       event.launchArgs['samplingInterval'] =
-        this.api.userConfig.samplingInterval
-          ? Number(this.api.userConfig.samplingInterval) / 1000.0
-          : 0.25;
+        SimulatorInstrumentsRecording.prepareSamplingInterval(this.api.userConfig.samplingInterval);
     }
 
     if (process.env.DETOX_INSTRUMENTS_PATH) {

@@ -250,7 +250,7 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 	return self;
 }
 
-- (DetoxInstrumentsConfiguration *)configurationFromProps:(NSDictionary *)props
+- (DetoxInstrumentsConfiguration *)configurationWithDictionary:(NSDictionary *)props
 {
 	id config = [__DTXMutableProfilingConfiguration defaultProfilingConfiguration];
 	[config setRecordingFileURL:[NSURL fileURLWithPath:props[@"recordingPath"]]];

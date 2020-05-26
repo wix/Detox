@@ -9,8 +9,15 @@ class SimulatorInstrumentsRecording extends InstrumentsArtifactRecording {
     super({ pluginContext, client, userConfig, temporaryRecordingPath });
   }
 
+  static prepareSamplingInterval(samplingInterval) {
+    if (samplingInterval) {
+      return Number(samplingInterval) / 1000.0;
+    }
+    return 0.25;
+  }
+
   prepareSamplingInterval(samplingInterval) {
-    return Number(samplingInterval) / 1000.0;
+    return SimulatorInstrumentsRecording.prepareSamplingInterval(samplingInterval);
   }
 
   async doSave(artifactPath) {
