@@ -340,6 +340,7 @@
 		39DA0E2622D72AEF001E63A0 /* UIApplication+MockedSharedApplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIApplication+MockedSharedApplication.h"; sourceTree = "<group>"; };
 		39DA0E2722D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIApplication+MockedSharedApplication.m"; sourceTree = "<group>"; };
 		39DA0E3522D72C91001E63A0 /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
+		39E91C06247D6BB00099F8F3 /* DetoxCrashHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetoxCrashHandler.h; sourceTree = "<group>"; };
 		39F5ACE5245F1CB000FB7F18 /* DTXLogging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DTXLogging.swift; path = DTXLoggingInfra/DTXLogging.swift; sourceTree = SOURCE_ROOT; };
 		39F62D39233730F500094FAB /* fishhook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fishhook.h; path = EarlGrey/fishhook/fishhook.h; sourceTree = SOURCE_ROOT; };
 		39F62D40233730F500094FAB /* fishhook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fishhook.c; path = EarlGrey/fishhook/fishhook.c; sourceTree = SOURCE_ROOT; };
@@ -480,6 +481,7 @@
 				390D1C661E3A1480007F5F46 /* UserNotificationsPrivate */,
 				3980D162244C689A004812DD /* Detox.modulemap */,
 				3947679A1DBF985400D72256 /* Detox.h */,
+				39E91C06247D6BB00099F8F3 /* DetoxCrashHandler.h */,
 				39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */,
 				396EA67222E0AE7C0087E4D4 /* DTXAddressInfo.h */,
 				396EA67922E0AE7C0087E4D4 /* DTXAddressInfo.mm */,

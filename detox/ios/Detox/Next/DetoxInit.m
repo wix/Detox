@@ -7,12 +7,15 @@
 //
 
 #import <Detox/Detox-Swift.h>
+#import "DetoxCrashHandler.h"
 
 @import EarlGrey.GREYConfiguration;
 
 __attribute__((constructor))
 static void detoxConditionalInit()
 {
+	__DTXInstallCrashHandlersIfNeeded();
+	
 	//This forces accessibility support in the application.
 	[[[NSUserDefaults alloc] initWithSuiteName:@"com.apple.Accessibility"] setBool:YES forKey:@"ApplicationAccessibilityEnabled"];
 	

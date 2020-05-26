@@ -17,7 +17,8 @@
 #include <cxxabi.h>
 #import <asl.h>
 
-static void __DTXHandleCrash(NSException* exception, NSNumber* signal, NSString* other)
+__attribute__ ((visibility ("hidden")))
+OBJC_EXTERN void __DTXHandleCrash(NSException* exception, NSNumber* signal, NSString* other)
 {
 	NSNumber* threadNumber = [[NSThread currentThread] valueForKeyPath:@"private.seqNum"];
 	NSString* queueName = @"";
@@ -62,22 +63,29 @@ static int __dtx_sigaction(int signal, const struct sigaction * __restrict newac
 	return 0;
 }
 
+__attribute__ ((visibility ("hidden")))
 OBJC_EXTERN int __dtx_asl_log(asl_object_t client, asl_object_t msg, int level, const char *format, ...)
 {
 	va_list args;
 	va_start(args, format);
 
+	//No other way to catch Swift fatal errors. We swizzle asl_log, which is called by the Swift runtime
+	// in https://github.com/apple/swift/blob/889e84a2029a28f25dd62c3bfc1a9a0241b0413f/stdlib/public/runtime/Errors.cpp#L310
+	//We then check for a known Swift function in the first few frames of the call stack.
 	NSArray<NSString*>* callStackSymbols = NSThread.callStackSymbols;
-	if((callStackSymbols.count > 2 && [callStackSymbols[2] containsString:@"swift_reportError"]) ||
-	   (callStackSymbols.count > 1 && [callStackSymbols[1] containsString:@"swift_reportError"]))
-	{
-		NSString* message = [[NSString alloc] initWithFormat:[NSString stringWithUTF8String:format] arguments:args];
-		va_end(args);
-		__DTXHandleCrash(nil, nil, message);
-		
-//		exit(1);
-		
-		va_start(args, format);
+	for (NSUInteger idx = 1; idx < MIN(callStackSymbols.count, 4); idx++) {
+		if([callStackSymbols[idx] containsString:@"swift_reportError"])
+		{
+			NSString* message = [[NSString alloc] initWithFormat:[NSString stringWithUTF8String:format] arguments:args];
+			va_end(args);
+			__DTXHandleCrash(nil, nil, message);
+			
+			//		exit(1);
+			
+			va_start(args, format);
+			
+			break;
+		}
 	}
 	
 	int rv = asl_vlog(client, msg, level, format, args);
@@ -86,7 +94,8 @@ OBJC_EXTERN int __dtx_asl_log(asl_object_t client, asl_object_t msg, int level, 
 	return rv;
 }
 
-static void __DTXHandleSignal(int signal)
+__attribute__ ((visibility ("hidden")))
+OBJC_EXTERN void __DTXHandleSignal(int signal)
 {
 	__DTXHandleCrash(nil, @(signal), nil);
 	
@@ -97,7 +106,8 @@ OBJC_EXTERN std::type_info *__cxa_current_exception_type(void);
 OBJC_EXTERN void __cxa_rethrow(void);
 
 static void (*__old_terminate)(void) = nil;
-static void __dtx_terminate(void)
+__attribute__ ((visibility ("hidden")))
+OBJC_EXTERN void __dtx_terminate(void)
 {
 	std::type_info* exceptionType = __cxa_current_exception_type();
 	if (exceptionType == nullptr)
@@ -141,38 +151,40 @@ static void __dtx_terminate(void)
 			}
 			
 			__DTXHandleCrash(nil, nil, [NSString stringWithFormat:@"C++ exception of type \"%@\" was thrown", exceptionTypeName]);
-			// It's not an objc object. Continue to C++ terminate.
 			(*__old_terminate)();
 		}
 	}
 }
 
 __attribute__((constructor))
-static void __DTXInstallCrashHandlers()
+OBJC_EXTERN void __DTXInstallCrashHandlersIfNeeded(void)
 {
-	__old_terminate = std::set_terminate(__dtx_terminate);
-	
-	__supportedSignals = [NSSet setWithArray:@[@(SIGQUIT), @(SIGILL), @(SIGTRAP), @(SIGABRT), @(SIGFPE), @(SIGBUS), @(SIGSEGV), @(SIGSYS)]];
-	
-	__orig_sigaction = (int (*)(int, const struct sigaction * __restrict, struct sigaction * __restrict))dlsym(RTLD_DEFAULT, "sigaction");
-	
-	{
-		struct rebinding rebindings[] = {
-			{"sigaction", (void*)__dtx_sigaction, nullptr},
-			{"asl_log", (void*)__dtx_asl_log, nullptr},
-		};
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		__old_terminate = std::set_terminate(__dtx_terminate);
 		
-		rebind_symbols(rebindings, sizeof(rebindings) / sizeof(rebindings[0]));
-	}
-	
-	struct sigaction signalAction;
-	memset(&signalAction, 0, sizeof(signalAction));
-	sigemptyset(&signalAction.sa_mask);
-	signalAction.sa_handler = &__DTXHandleSignal;
-	
-	[__supportedSignals enumerateObjectsUsingBlock:^(NSNumber * _Nonnull obj, BOOL * _Nonnull stop) {
-		int signum = obj.intValue;
+		__supportedSignals = [NSSet setWithArray:@[@(SIGQUIT), @(SIGILL), @(SIGTRAP), @(SIGABRT), @(SIGFPE), @(SIGBUS), @(SIGSEGV), @(SIGSYS)]];
 		
-		__orig_sigaction(signum, &signalAction, nullptr);
-	}];
+		__orig_sigaction = (int (*)(int, const struct sigaction * __restrict, struct sigaction * __restrict))dlsym(RTLD_DEFAULT, "sigaction");
+		
+		{
+			struct rebinding rebindings[] = {
+				{"sigaction", (void*)__dtx_sigaction, nullptr},
+				{"asl_log", (void*)__dtx_asl_log, nullptr},
+			};
+			
+			rebind_symbols(rebindings, sizeof(rebindings) / sizeof(rebindings[0]));
+		}
+		
+		struct sigaction signalAction;
+		memset(&signalAction, 0, sizeof(signalAction));
+		sigemptyset(&signalAction.sa_mask);
+		signalAction.sa_handler = &__DTXHandleSignal;
+		
+		[__supportedSignals enumerateObjectsUsingBlock:^(NSNumber * _Nonnull obj, BOOL * _Nonnull stop) {
+			int signum = obj.intValue;
+			
+			__orig_sigaction(signum, &signalAction, nullptr);
+		}];
+	});
 }
