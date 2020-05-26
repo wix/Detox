@@ -19,11 +19,10 @@ class InstrumentsArtifactRecording extends Artifact {
       return;
     }
 
-    const params = {
-      recordingPath: this.temporaryRecordingPath
-    };
-    params['samplingInterval'] = this.prepareSamplingInterval(this._userConfig.samplingInterval);
-    await this._client.startInstrumentsRecording(params);
+    await this._client.startInstrumentsRecording({
+      recordingPath: this.temporaryRecordingPath,
+      samplingInterval: this.prepareSamplingInterval(this._userConfig.samplingInterval)
+    });
   }
 
   prepareSamplingInterval(samplingInterval) {
