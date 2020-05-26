@@ -117,6 +117,14 @@
             argument = "-enableAppDelegateVerboseLogging YES"
             isEnabled = "NO">
          </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-recordingPath /Users/lnatan/Desktop/test"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-samplingInterval 0.1"
+            isEnabled = "NO">
+         </CommandLineArgument>
       </CommandLineArguments>
    </LaunchAction>
    <ProfileAction
