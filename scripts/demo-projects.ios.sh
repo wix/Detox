@@ -11,7 +11,7 @@ HOMEBREW_NO_AUTO_UPDATE=1 brew cask reinstall detox-instruments
 pushd examples/demo-react-native
 run_f "detox build -c ios.sim.release"
 run_f "detox test -c ios.sim.release"
-run_f "DETOX_EXPOSE_GLOBALS=0 detox test -c ios.sim.release e2eExplicitRequire"
+DETOX_EXPOSE_GLOBALS=0 run_f "detox test -c ios.sim.release e2eExplicitRequire"
 popd
 
 pushd examples/demo-react-native-jest
