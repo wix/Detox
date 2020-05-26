@@ -30,6 +30,14 @@ describe(DetoxRuntimeError, () => {
           suffix: undefined,
         }, null, 2),
       }),
+      'message with debug info object': new DetoxRuntimeError({
+        message: 'no filename was given to constructSafeFilename()',
+        debugInfo: {
+          prefix: 'detox - ',
+          trimmable: undefined,
+          suffix: undefined,
+        },
+      }),
       'message with hint and debug info': new DetoxRuntimeError({
         message: `Invalid test summary was passed to detox.beforeEach(testSummary)` +
         '\nExpected to get an object of type: { title: string; fullName: string; status: "running" | "passed" | "failed"; }',

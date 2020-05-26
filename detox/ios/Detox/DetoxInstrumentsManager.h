@@ -14,9 +14,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSURL*)defaultURLForTestName:(NSString*)testName;
 
-- (void)startRecordingAtURL:(NSURL*)URL;
-- (void)continueRecordingAtURL:(NSURL*)URL;
+- (void)startRecordingWithConfiguration:(NSDictionary<NSString*, id>*)config;
+- (void)continueRecordingWithConfiguration:(NSDictionary<NSString*, id>*)config;
 - (void)stopRecordingWithCompletionHandler:(void(^)(NSError* _Nullable  error))completionHandler;
+
+
 
 @end
 

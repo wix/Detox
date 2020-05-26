@@ -2,8 +2,8 @@ const log = require('../../../utils/logger').child({ __filename });
 const InstrumentsArtifactRecording = require('../InstrumentsArtifactRecording');
 
 class AndroidInstrumentsRecording extends InstrumentsArtifactRecording {
-  constructor({ adb, pluginContext, client, deviceId, temporaryRecordingPath }) {
-    super({ pluginContext, client, temporaryRecordingPath });
+  constructor({ adb, pluginContext, client, deviceId, userConfig, temporaryRecordingPath }) {
+    super({ pluginContext, client, userConfig, temporaryRecordingPath });
     this.adb = adb;
     this.deviceId = deviceId;
   }

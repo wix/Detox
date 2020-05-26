@@ -17,10 +17,10 @@ The setup phase happens inside `detox.init()`. This is the phase where detox rea
 ##### (if you're using mocha) In your `init.js` add:
 
 ```js
-const config = require('../package.json').detox;
+const detox = require('detox');
 
 before(async () => {
-  await detox.init(config);
+  await detox.init();
 });
 ```
 
@@ -28,8 +28,10 @@ before(async () => {
 Detox exports `device`, `expect`, `element`, `by` and `waitFor` as globals by default, if you want to control their initialization manually, set init detox with `initGlobals` set to `false`. This is useful when during E2E tests you also need to run regular expectations in node. jest `Expect` for instance, will not be overriden by Detox when this option is used.
 
 ```js
+const detox = require('detox');
+
 before(async () => {
-  await detox.init(config, {initGlobals: false});
+  await detox.init(undefined, {initGlobals: false});
 });
 ```
 
@@ -42,34 +44,22 @@ const {device, expect, element, by, waitFor} = require('detox');
 Use [this example](../examples/demo-react-native/e2eExplicitRequire) for initial setup
 
 
-
 #### Controlling first app intialization
-By default `await detox.init(config);` will launch the installed app. If you wish to control when your app is launched, add `{launchApp: false}` param to your init.
-
-```js
-const config = require('../package.json').detox;
-
-before(async () => {
-  await detox.init(config, {launchApp: false});
-});
-```
-
->NOTE: Detox 6.X.X introduced a **breaking change** , setting `launchApp` to `false` by default. In order to prevent any breaking changes to your tests when you upgrade (and if you still would like `init` to launch the app for you) do the following:
+By default `await detox.init([configOverride, userParams]);` will launch the installed app. If you wish to control when your app is launched, add `{launchApp: false}` param to your init.
 
 ```js
 before(async () => {
-  await detox.init(config, {launchApp: true});
+  await detox.init(undefined, { launchApp: false });
 });
 ```
 
 #### Reusing existing app
-By default `await detox.init(config);` will uninstall and install the app. If you wish to reuse the existing app for a faster run, add `{reuse: true}` param to your init.
+
+By default `await detox.init();` will uninstall and install the app. If you wish to reuse the existing app for a faster run, add `{reuse: true}` param to your init.
 
 ```js
-const config = require('../package.json').detox;
-
 before(async () => {
-  await detox.init(config, {reuse: true});
+  await detox.init(undefined, {reuse: true});
 });
 ```
 

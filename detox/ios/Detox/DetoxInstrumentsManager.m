@@ -234,10 +234,10 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 	return self;
 }
 
-- (id)_configForDetoxRecordingWithURL:(NSURL*)URL
+- (id)_configurationWithDictionaryConfiguration:(NSDictionary *)configDict
 {
 	id config = [__DTXMutableProfilingConfiguration defaultProfilingConfiguration];
-	[config setRecordingFileURL:URL];
+	[config setRecordingFileURL:[NSURL fileURLWithPath:configDict[@"recordingPath"]]];
 	
 	//TODO: Finalize the actual config for Detox perf recording.
 	[config setRecordEvents:YES];
@@ -252,21 +252,24 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 	[config setRecordThreadInformation:YES];
 	[config setCollectStackTraces:YES];
 	[config setSymbolicateStackTraces:YES];
-	[config setSamplingInterval:0.1];
+	NSTimeInterval samplingInterval = [configDict[@"samplingInterval"] ?: @0.25 doubleValue];
+	[config setSamplingInterval:samplingInterval];
 	
 	return config;
 }
 
-- (void)startRecordingAtURL:(NSURL*)URL
+- (void)startRecordingWithConfiguration:(NSDictionary<NSString*, id>*)configDict
 {
-	dtx_log_info(@"Starting recording at %@", URL);
-	[_recorderInstance startProfilingWithConfiguration:[self _configForDetoxRecordingWithURL:URL]];
+	id config = [self _configurationWithDictionaryConfiguration:configDict];
+	dtx_log_info(@"Starting recording at %@", [config recordingFileURL]);
+	[_recorderInstance startProfilingWithConfiguration:config];
 }
 
-- (void)continueRecordingAtURL:(NSURL*)URL
+- (void)continueRecordingWithConfiguration:(NSDictionary<NSString*, id>*)configDict
 {
-	dtx_log_info(@"Continuing recording at %@", URL);
-	[_recorderInstance continueProfilingWithConfiguration:[self _configForDetoxRecordingWithURL:URL]];
+	id config = [self _configurationWithDictionaryConfiguration:configDict];
+	dtx_log_info(@"Continuing recording at %@", [config recordingFileURL]);
+	[_recorderInstance continueProfilingWithConfiguration:config];
 }
 
 - (void)stopRecordingWithCompletionHandler:(void(^)(NSError* error))completionHandler

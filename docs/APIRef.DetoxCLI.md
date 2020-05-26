@@ -53,7 +53,8 @@ Run the command defined in `build` property of the specified **configuration**.
 
 | Option | Description |
 | --- | --- |
-| -c, --configuration \<device config\> |  Select a device configuration from your defined configurations, if not supplied, and there's only one configuration, detox will default to it |
+| -c, --configuration \<device config\> | Select a device configuration from your defined configurations, if not supplied, and there's only one configuration, detox will default to it |
+| -C, --config-path \<configPath\>      | Specify Detox config file path. If not supplied, detox searches for .detoxrc[.js] or "detox" section in package.json |
 | --help                                | Show help |
 
 ### test
@@ -64,6 +65,7 @@ Initiating your test suite. <sup>[[1]](#notice-passthrough)</sup>
 
 | Option                                        | Description |
 | ---                                           | --- |
+| -C, --config-path \<configPath\>              | Specify Detox config file path. If not supplied, detox searches for .detoxrc[.js] or "detox" section in package.json |
 | -c, --configuration \<device config\>         | Select a device configuration from your defined configurations, if not supplied, and there's only one configuration, detox will default to it |
 | -o, --runner-config \<config\>                | Test runner config file, defaults to 'e2e/mocha.opts' for mocha and 'e2e/config.json' for jest. |
 | -n, --device-name [name]                      | Override the device name specified in a configuration. Useful for running a single build configuration on multiple devices. |

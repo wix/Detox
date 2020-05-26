@@ -1,5 +1,4 @@
 const detox = require('detox');
-const config = require('../package.json').detox;
 const adapter = require('detox/runners/jest/adapter');
 const specReporter = require('detox/runners/jest/specReporter');
 const assignReporter = require('detox/runners/jest/assignReporter');
@@ -18,7 +17,7 @@ jasmine.getEnv().addReporter(assignReporter);
 jest.setTimeout(90000);
 
 beforeAll(async () => {
-  await detox.init(config);
+  await detox.init();
 }, 300000);
 
 beforeEach(async () => {

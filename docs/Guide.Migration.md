@@ -401,11 +401,10 @@ you are encouraged to reuse the examples of `./e2e/init.js` for  [mocha](/exampl
 
 ```js
 const detox = require('detox');
-const config = require('../package.json').detox;
 const adapter = require('detox/runners/mocha/adapter');
 
 before(async () => {
-  await detox.init(config);
+  await detox.init();
 });
 
 beforeEach(async function () {
@@ -420,6 +419,7 @@ after(async () => {
   await detox.cleanup();
 });
 ```
+
 >*NOTICE:*
 Make sure you use ES5 functions in `beforeEach` and `afterEach`. `this` referes to mocha's test object, using arrow functions will result with failure to to acquire a correct **`this`** inside the adapter.
 
@@ -438,14 +438,13 @@ afterEach(function ( /* ... your content ... */ ) {});
 
 ```js
 const detox = require('detox');
-const config = require('../package.json').detox;
 const adapter = require('detox/runners/jest/adapter');
 
 jest.setTimeout(120000);
 jasmine.getEnv().addReporter(adapter); // don't forget this line
 
 beforeAll(async () => {
-  await detox.init(config);
+  await detox.init();
 });
 
 beforeEach(async () => {

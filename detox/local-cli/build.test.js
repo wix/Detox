@@ -1,85 +1,46 @@
+jest.mock('child_process');
 jest.mock('../src/utils/logger');
+jest.mock('../src/configuration');
+
+const DetoxConfigErrorBuilder = require('../src/errors/DetoxConfigErrorBuilder');
 
 describe('build', () => {
-  let mockExec;
+  let execSync, composeDetoxConfig, detoxConfig;
+
   beforeEach(() => {
-    mockExec = jest.fn();
-    jest.mock('child_process', () => ({
-      execSync: mockExec
-    }));
+    detoxConfig = {
+      artifactsConfig: {},
+      behaviorConfig: {},
+      deviceConfig: {},
+      sessionConfig: {},
+      errorBuilder: new DetoxConfigErrorBuilder(),
+    };
+
+    execSync = require('child_process').execSync;
+    composeDetoxConfig = require('../src/configuration').composeDetoxConfig;
+    composeDetoxConfig.mockReturnValue(Promise.resolve(detoxConfig));
   });
 
-  it('runs the build script if there is only one config', async () => {
-    mockPackageJson({
-      configurations: {
-        only: {
-          build: 'echo "only"'
-        }
-      }
+  it('passes argv to composeConfig', async () => {
+    await callCli('./build', 'build -C /etc/.detoxrc.js -c myconf').catch(() => {});
+
+    expect(composeDetoxConfig).toHaveBeenCalledWith({
+      argv: expect.objectContaining({
+        'config-path': '/etc/.detoxrc.js',
+        'configuration': 'myconf',
+      }),
     });
+  });
+
+  it('runs the build script from the composed device config', async () => {
+    detoxConfig.deviceConfig.build = 'yet another command';
 
     await callCli('./build', 'build');
-    expect(mockExec).toHaveBeenCalledWith(expect.stringContaining('only'), expect.anything());
+    expect(execSync).toHaveBeenCalledWith('yet another command', expect.anything());
   });
 
-  it('runs the build script of selected config', async () => {
-    mockPackageJson({
-      configurations: {
-        only: {
-          build: 'echo "only"'
-        },
-        myconf: {
-          build: 'echo "myconf"'
-        }
-      }
-    });
-
-    await callCli('./build', 'build -c myconf');
-    expect(mockExec).toHaveBeenCalledWith(expect.stringContaining('myconf'), expect.anything());
-  });
-
-  it('fails with multiple configs if none is selected', async () => {
-    mockPackageJson({
-      configurations: {
-        only: {
-          build: 'echo "only"'
-        },
-        myconf: {
-          build: 'echo "myconf"'
-        }
-      }
-    });
-
-    await expect(callCli('./build', 'build')).rejects.toThrowErrorMatchingSnapshot();
-    expect(mockExec).not.toHaveBeenCalled();
-  });
-
-  it('fails without configurations', async () => {
-    mockPackageJson({});
-
-    await expect(callCli('./build', 'build')).rejects.toThrowErrorMatchingSnapshot();
-    expect(mockExec).not.toHaveBeenCalled();
-  });
-
-  it('fails without build script', async () => {
-    mockPackageJson({
-      configurations: {
-        only: {}
-      }
-    });
-
-    await expect(callCli('./build', 'build -c only')).rejects.toThrowErrorMatchingSnapshot();
-    expect(mockExec).not.toHaveBeenCalled();
-  });
-
-  it('fails without build script and configuration', async () => {
-    mockPackageJson({
-      configurations: {
-        only: {}
-      }
-    });
-
-    await expect(callCli('./build', 'build')).rejects.toThrowErrorMatchingSnapshot();
-    expect(mockExec).not.toHaveBeenCalled();
+  it('fails with an error if a build script has not been found', async () => {
+    delete detoxConfig.deviceConfig.build;
+    await expect(callCli('./build', 'build')).rejects.toThrowError(/Could not find a build script/);
   });
 });

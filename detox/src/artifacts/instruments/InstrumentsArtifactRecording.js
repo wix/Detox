@@ -1,11 +1,12 @@
 const Artifact = require('../templates/artifact/Artifact');
 
 class InstrumentsArtifactRecording extends Artifact {
-  constructor({ pluginContext, client, temporaryRecordingPath }) {
+  constructor({ pluginContext, client, userConfig, temporaryRecordingPath }) {
     super();
 
     this._pluginContext = pluginContext;
     this._client = client;
+    this._userConfig = userConfig;
     this.temporaryRecordingPath = temporaryRecordingPath;
   }
 
@@ -20,7 +21,12 @@ class InstrumentsArtifactRecording extends Artifact {
 
     await this._client.startInstrumentsRecording({
       recordingPath: this.temporaryRecordingPath,
+      samplingInterval: this.prepareSamplingInterval(this._userConfig.samplingInterval)
     });
+  }
+
+  prepareSamplingInterval(samplingInterval) {
+    return samplingInterval;
   }
 
   async doStop() {

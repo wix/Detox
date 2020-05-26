@@ -38,6 +38,16 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(appDidLaunch(_:)), name: UIApplication.didFinishLaunchingNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
+		
+		if let recordingPath = UserDefaults.standard.string(forKey: "recordingPath") {
+			var props : [String: Any] = ["recordingPath": recordingPath]
+			if let _ = UserDefaults.standard.string(forKey: "samplingInterval") {
+				let samplingIntervalDouble = UserDefaults.standard.double(forKey: "samplingInterval")
+				props["samplingInterval"] = samplingIntervalDouble
+			}
+			
+			self.handlePerformanceRecording(props: props, isFromLaunch: true, completionHandler: nil)
+		}
 	}
 	
 	private func safeSend(action: String, params: [String: Any] = [:], messageId: NSNumber) {
@@ -115,13 +125,11 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 	private func handlePerformanceRecording(props: [String: Any]?, isFromLaunch launch: Bool, completionHandler: (() -> Void)?) {
 		var completionBlocked = false
 		
-		if let path = props?["recordingPath"] as? String {
-			let absoluteURL = URL.init(fileURLWithPath: path)
-			
+		if let props = props, let _ = props["recordingPath"] as? String {
 			if launch {
-				recordingManager.continueRecording(at: absoluteURL)
+				recordingManager.continueRecording(withConfiguration: props)
 			} else {
-				recordingManager.startRecording(at: absoluteURL)
+				recordingManager.startRecording(withConfiguration: props)
 			}
 		} else {
 			completionBlocked = true

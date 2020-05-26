@@ -64,7 +64,7 @@ xcrun simctl spawn booted log stream --level debug --style compact --predicate "
 For example, change your `/e2e/init.js` like so:
 
 ```js
-await detox.init(config, { launchApp: false });
+await detox.init(undefined, { launchApp: false });
 await device.launchApp({
   newInstance: true,
   launchArgs: { 'detoxPrintBusyIdleResources': 'YES' }

@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "16.6.0",
+  "version": "16.7.0",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -43,6 +43,7 @@
     "bunyan-debug-stream": "^1.1.0",
     "chalk": "^2.4.2",
     "child-process-promise": "^2.2.0",
+    "find-up": "^4.1.0",
     "fs-extra": "^4.0.2",
     "funpermaproxy": "^1.0.1",
     "get-port": "^2.1.0",
@@ -82,7 +83,6 @@
       "__tests__",
       "local-cli/utils",
       "src/artifacts/log",
-      "src/artifacts/instruments",
       "src/artifacts/screenshot",
       "src/artifacts/video",
       "src/devices/drivers/ios/tools/AppleSimUtils.js",
