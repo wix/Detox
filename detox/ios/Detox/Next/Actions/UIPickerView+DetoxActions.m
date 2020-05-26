@@ -47,22 +47,22 @@
 				}]].firstObject;
 				title = label.text;
 			}
-			
-			if([title isEqualToString:value])
+		}
+		
+		if([title isEqualToString:value])
+		{
+			[self selectRow:idx inComponent:component animated:YES];
+			if([self.delegate respondsToSelector:@selector(pickerView:didSelectRow:inComponent:)])
 			{
-				[self selectRow:idx inComponent:component animated:YES];
-				if([self.delegate respondsToSelector:@selector(pickerView:didSelectRow:inComponent:)])
-				{
-					[self.delegate pickerView:self didSelectRow:idx inComponent:component];
-				}
-				
-				//TODO: Is Waiting needed?
-				dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-					//Noop
-				});
-				
-				return;
+				[self.delegate pickerView:self didSelectRow:idx inComponent:component];
 			}
+			
+			//TODO: Is Waiting needed?
+			dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+				//Noop
+			});
+			
+			return;
 		}
 	}
 	
