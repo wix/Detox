@@ -29,12 +29,12 @@ public class DetoxInstrumentsManager {
         instruments.tryInstallJsiHook(context);
     }
 
-    public void startRecordingAtLocalPath(String path) {
+    public void startRecordingAtLocalPath(String path, long samplingInterval) {
         if (!instruments.installed()) {
             return;
         }
 
-        recording = instruments.startRecording(context, true, 500L, new File(path), false);
+        recording = instruments.startRecording(context, true, samplingInterval, new File(path), false);
     }
 
     public void stopRecording() {
