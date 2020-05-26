@@ -42,8 +42,8 @@ class LaunchCommand extends ExecCommand {
       '-verbose',
       '-no-audio',
       '-no-boot-anim',
-      argparse.getArgValue('headless') === 'true' ? '-no-window' : '',
-      argparse.getArgValue('readOnlyEmu') === 'true' ? '-read-only' : '',
+      `${argparse.getArgValue('headless')}` === 'true' ? '-no-window' : '',
+      `${argparse.getArgValue('readOnlyEmu')}` === 'true' ? '-read-only' : '',
       options.port ? `-port` : '',
       options.port ? `${options.port}` : '',
       ...deviceLaunchArgs,
@@ -64,7 +64,8 @@ class LaunchCommand extends ExecCommand {
       return gpuArgument;
     }
 
-    if (argparse.getArgValue('headless')) {
+    const headless = `${argparse.getArgValue('headless')}` === 'true';
+    if (headless) {
       switch (os.platform()) {
         case 'darwin':
           return 'host';
