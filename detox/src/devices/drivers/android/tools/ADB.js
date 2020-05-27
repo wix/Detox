@@ -104,6 +104,10 @@ class ADB {
     }
   }
 
+  /*async*/ remoteInstall(deviceId, path) {
+    return this.shell(deviceId, `pm install -r -g -t ${path}`);
+  }
+
   async uninstall(deviceId, appId) {
     await this.adbCmd(deviceId, `uninstall ${appId}`);
   }
@@ -151,6 +155,12 @@ class ADB {
     this._cachedApiLevels.set(deviceId, lvl);
 
     return lvl;
+  }
+
+  async disableAndroidAnimations(deviceId) {
+    await this.shell(deviceId, `settings put global animator_duration_scale 0`);
+    await this.shell(deviceId, `settings put global window_animation_scale 0`);
+    await this.shell(deviceId, `settings put global transition_animation_scale 0`);
   }
 
   async screencap(deviceId, path) {
@@ -216,12 +226,24 @@ class ADB {
     return this.spawn(deviceId, ['shell', shellCommand]);
   }
 
+  async push(deviceId, src, dst) {
+    await this.adbCmd(deviceId, `push "${src}" "${dst}"`);
+  }
+
   async pull(deviceId, src, dst = '') {
     await this.adbCmd(deviceId, `pull "${src}" "${dst}"`);
   }
 
   async rm(deviceId, path, force = false) {
     await this.shell(deviceId, `rm ${force ? '-f' : ''} "${path}"`);
+  }
+
+  /***
+   * @returns {ChildProcessPromise}
+   */
+  spawnInstrumentation(deviceId, userArgs, testRunner) {
+    const spawnArgs = ['shell', 'am', 'instrument', '-w', '-r', ...userArgs, testRunner];
+    return this.spawn(deviceId, spawnArgs, { detached: false });
   }
 
   async listInstrumentation(deviceId) {
@@ -255,6 +277,7 @@ class ADB {
     return this.adbCmd(deviceId, `reverse --remove tcp:${port}`);
   }
 
+  // TODO refactor the whole thing so as to make usage of BinaryExec -- similar to EmulatorExec
   async adbCmd(deviceId, params, options) {
     const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
     const cmd = `"${this.adbBin}" ${serial} ${params}`;
@@ -267,9 +290,9 @@ class ADB {
   /***
    * @returns {ChildProcessPromise}
    */
-  spawn(deviceId, params) {
+  spawn(deviceId, params, spawnOptions) {
     const serial = deviceId ? ['-s', deviceId] : [];
-    return spawnAndLog(this.adbBin, [...serial, ...params]);
+    return spawnAndLog(this.adbBin, [...serial, ...params], spawnOptions);
   }
 
   static inferDeviceType(adbName) {

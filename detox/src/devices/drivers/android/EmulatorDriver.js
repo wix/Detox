@@ -6,21 +6,23 @@ const AndroidDriver = require('./AndroidDriver');
 const FreeEmulatorFinder = require('./emulator/FreeEmulatorFinder');
 const AVDValidator = require('./emulator/AVDValidator');
 const EmulatorLauncher = require('./emulator/EmulatorLauncher');
+const EmulatorVersionResolver = require('./emulator/EmulatorVersionResolver');
 const { EmulatorExec } = require('./tools/EmulatorExec');
 const EmulatorTelnet = require('./tools/EmulatorTelnet');
-const EmulatorVersionResolver = require('./emulator/EmulatorVersionResolver');
+const AppInstallHelper = require('./tools/AppInstallHelper');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 const DeviceRegistry = require('../../DeviceRegistry');
 const environment = require('../../../utils/environment');
 const retry = require('../../../utils/retry');
 const log = require('../../../utils/logger').child({ __filename });
+const argparse = require('../../../utils/argparse');
 
 const DetoxEmulatorsPortRange = {
   min: 10000,
   max: 20000
 };
 
-const ACQUIRE_DEVICE_EV = 'ACQUIRE_DEVICE';
+const ALLOCATE_DEVICE_LOG_EVT = 'ALLOCATE_DEVICE';
 const EMU_BIN_STABLE_SKIN_VER = 28;
 
 class EmulatorDriver extends AndroidDriver {
@@ -55,10 +57,25 @@ class EmulatorDriver extends AndroidDriver {
     await this._boot(avdName, adbName);
 
     await this.adb.apiLevel(adbName);
+    await this.adb.disableAndroidAnimations(adbName);
     await this.adb.unlockScreen(adbName);
 
     this._name = `${adbName} (${avdName})`;
     return adbName;
+  }
+
+  async installApp(deviceId, _binaryPath, _testBinaryPath) {
+    if (argparse.getArgValue('force-adb-install') === 'true') {
+      return await super.installApp(deviceId, _binaryPath, _testBinaryPath);
+    }
+
+    const {
+      binaryPath,
+      testBinaryPath,
+    } = this._getInstallPaths(_binaryPath, _testBinaryPath);
+
+    const installHelper = new AppInstallHelper(this.adb);
+    await installHelper.install(deviceId, binaryPath, testBinaryPath);
   }
 
   async cleanup(adbName, bundleId) {
@@ -137,9 +154,9 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async _allocateDevice(avdName) {
-    log.debug({ event: ACQUIRE_DEVICE_EV }, `Looking up a device based on ${avdName}`);
+    log.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Trying to allocate a device based on ${avdName}`);
     const adbName = await this.deviceRegistry.allocateDevice(() => this._doAllocateDevice(avdName));
-    log.debug({ event: ACQUIRE_DEVICE_EV }, `Settled on ${adbName}`);
+    log.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Settled on ${adbName}`);
     return adbName;
   }
 

@@ -3,19 +3,23 @@ const path = require('path');
 const cp = require('child_process');
 const fs = require('fs-extra');
 const environment = require('../src/utils/environment');
-const DetoxConfigError = require('../src/errors/DetoxConfigError');
+const DetoxRuntimeError = require('../src/errors/DetoxRuntimeError');
 
 const log = require('../src/utils/logger').child({ __filename });
-const {getDetoxSection, getDefaultConfiguration, getConfigurationByKey} = require('./utils/configurationUtils');
 const shellQuote = require('./utils/shellQuote');
+const { composeDetoxConfig } = require('../src/configuration');
 
 module.exports.command = 'test';
 module.exports.desc = 'Run your test suite with the test runner specified in package.json';
 module.exports.builder = {
+  C: {
+    alias: 'config-path',
+    group: 'Configuration:',
+    describe: 'Specify Detox config file path. If not supplied, detox searches for .detoxrc[.js] or "detox" section in package.json',
+  },
   c: {
     alias: ['configuration'],
     group: 'Configuration:',
-    default: getDefaultConfiguration(),
     describe:
       'Select a device configuration from your defined configurations, if not supplied, and there\'s only one configuration, detox will default to it'
   },
@@ -132,65 +136,44 @@ module.exports.builder = {
     group: 'Execution:',
     describe: `Use Detox' custom console-logging implementation, for logging Detox (non-device) logs. Disabling will fallback to node.js / test-runner's implementation (e.g. Jest / Mocha).`,
   },
+  'force-adb-install': {
+    boolean: true,
+    default: false,
+    group: 'Execution:',
+    describe: `Due to problems with the "adb install" command on Android, Detox resorts to a different scheme for install APK's. Setting true will disable that and force usage of "adb install", instead.`,
+  },
 };
 
 const collectExtraArgs = require('./utils/collectExtraArgs')(module.exports.builder);
 
 module.exports.handler = async function test(program) {
-  const config = getDetoxSection();
-  const runner = getConfigFor('test-runner') || 'mocha';
-  const runnerConfig = getConfigFor('runner-config') || getDefaultRunnerConfig();
+  const { cliConfig, deviceConfig, runnerConfig } = await composeDetoxConfig({ argv: program });
+  const [ platform ] = deviceConfig.type.split('.');
 
-  const currentConfiguration = getConfigurationByKey(program.configuration);
-  if (!currentConfiguration.type) {
-    throw new DetoxConfigError(`Missing "type" inside detox.configurations["${program.configuration}"]`);
-  }
-
-  const platform = currentConfiguration.type.split('.')[0];
-
-  if(!program.keepLockFile){
+  if (!cliConfig.keepLockFile) {
     clearDeviceRegistryLockFile();
   }
 
   function run() {
-    if (runner.includes('jest')) {
+    if (runnerConfig.testRunner.includes('jest')) {
       return runJest();
     }
 
-    if (runner.includes('mocha')) {
+    if (runnerConfig.testRunner.includes('mocha')) {
       return runMocha();
     }
 
-    throw new Error(`${runner} is not supported in detox cli tools. You can still run your tests with the runner's own cli tool`);
-  }
-
-  function getConfigFor(...keys) {
-    for (const key of keys) {
-      const result = program[key] || config[_.camelCase(key)] || config[key];
-
-      if (result) {
-        return result;
-      }
-    }
-  }
-
-  function hasCustomValue(key) {
-    const value = program[key];
-    const metadata = module.exports.builder[key];
-
-    return (value !== metadata.default);
+    throw new DetoxRuntimeError({
+      message: `"${runnerConfig.testRunner}" is not supported in Detox CLI tools.`,
+      hint: `You can still run your tests with the runner's own CLI tool`,
+    });
   }
 
   function getPassthroughArguments() {
     const args = collectExtraArgs(process.argv.slice(3));
 
     const hasFolders = args.some(arg => arg && !arg.startsWith('-'));
-    if (hasFolders) {
-      return args;
-    }
-
-    const fallbackTestFolder = `"${config.specs || 'e2e'}"`;
-    return args.concat(fallbackTestFolder);
+    return hasFolders ? args : [...args, runnerConfig.specs];
   }
 
   function safeGuardArguments(args) {
@@ -207,36 +190,41 @@ module.exports.handler = async function test(program) {
   }
 
   function runMocha() {
-    if (program.workers !== '1') {
+    if (cliConfig.workers != 1) {
       log.warn('Can not use -w, --workers. Parallel test execution is only supported with iOS and Jest');
     }
 
+    const configParam = path.extname(runnerConfig.runnerConfig) === '.opts'
+      ? 'opts'
+      : 'config';
+
     const command = _.compact([
-      (path.join('node_modules', '.bin', runner)),
+      (path.join('node_modules', '.bin', runnerConfig.testRunner)),
       ...safeGuardArguments([
-        (runnerConfig ? `--opts ${runnerConfig}` : ''),
-        (program.configuration ? `--configuration ${program.configuration}` : ''),
-        (program.loglevel ? `--loglevel ${program.loglevel}` : ''),
-        (program.noColor ? '--no-colors' : ''),
-        (program.cleanup ? `--cleanup` : ''),
-        (program.reuse ? `--reuse` : ''),
-        (isFinite(program.debugSynchronization) ? `--debug-synchronization ${program.debugSynchronization}` : ''),
-        (platform ? `--grep ${getPlatformSpecificString()} --invert` : ''),
-        (program.headless ? `--headless` : ''),
-        (program.gpu ? `--gpu ${program.gpu}` : ''),
-        (hasCustomValue('record-logs') ? `--record-logs ${program.recordLogs}` : ''),
-        (hasCustomValue('take-screenshots') ? `--take-screenshots ${program.takeScreenshots}` : ''),
-        (hasCustomValue('record-videos') ? `--record-videos ${program.recordVideos}` : ''),
-        (hasCustomValue('record-performance') ? `--record-performance ${program.recordPerformance}` : ''),
-        (program.artifactsLocation ? `--artifacts-location "${program.artifactsLocation}"` : ''),
-        (program.deviceName ? `--device-name "${program.deviceName}"` : ''),
-        (program.useCustomLogger ? `--use-custom-logger "${program.useCustomLogger}"` : ''),
+        (runnerConfig.runnerConfig ? `--${configParam} ${runnerConfig.runnerConfig}` : ''),
+        (cliConfig.configPath ? `--config-path ${cliConfig.configPath}` : ''),
+        (cliConfig.configuration ? `--configuration ${cliConfig.configuration}` : ''),
+        (cliConfig.loglevel ? `--loglevel ${cliConfig.loglevel}` : ''),
+        (cliConfig.noColor ? '--no-colors' : ''),
+        (cliConfig.cleanup ? `--cleanup` : ''),
+        (cliConfig.reuse ? `--reuse` : ''),
+        (isFinite(cliConfig.debugSynchronization) ? `--debug-synchronization ${cliConfig.debugSynchronization}` : ''),
+        (platform ? `--invert --grep ${getPlatformSpecificString()}` : ''),
+        (cliConfig.headless ? `--headless` : ''),
+        (cliConfig.gpu ? `--gpu ${cliConfig.gpu}` : ''),
+        (cliConfig.recordLogs ? `--record-logs ${cliConfig.recordLogs}` : ''),
+        (cliConfig.takeScreenshots ? `--take-screenshots ${cliConfig.takeScreenshots}` : ''),
+        (cliConfig.recordVideos ? `--record-videos ${cliConfig.recordVideos}` : ''),
+        (cliConfig.recordPerformance ? `--record-performance ${cliConfig.recordPerformance}` : ''),
+        (cliConfig.artifactsLocation ? `--artifacts-location "${cliConfig.artifactsLocation}"` : ''),
+        (cliConfig.deviceName ? `--device-name "${cliConfig.deviceName}"` : ''),
+        (cliConfig.useCustomLogger ? `--use-custom-logger "${cliConfig.useCustomLogger}"` : ''),
+        (cliConfig.forceAdbInstall ? `--force-adb-install "${cliConfig.forceAdbInstall}"` : ''),
       ]),
       ...getPassthroughArguments(),
     ]).join(' ');
 
-
-    const detoxEnvironmentVariables = _.pick(program, [
+    const detoxEnvironmentVariables = _.pick(cliConfig, [
       'deviceLaunchArgs',
     ]);
 
@@ -244,36 +232,38 @@ module.exports.handler = async function test(program) {
   }
 
   function runJest() {
-    const hasMultipleWorkers = program.workers !== '1';
+    const hasMultipleWorkers = cliConfig.workers != 1;
+
     if (platform === 'android') {
-      program.readOnlyEmu = false;
+      cliConfig.readOnlyEmu = false;
       if (hasMultipleWorkers) {
-        program.readOnlyEmu = true;
+        cliConfig.readOnlyEmu = true;
         log.warn('Multiple workers is an experimental feature on Android and requires an emulator binary of version 28.0.16 or higher. ' +
           'Check your version by running: $ANDROID_HOME/tools/bin/sdkmanager --list');
       }
     }
 
-    const jestReportSpecsArg = program['jest-report-specs'];
+    const jestReportSpecsArg = cliConfig.jestReportSpecs;
     if (!_.isUndefined(jestReportSpecsArg)) {
-      program.reportSpecs = (jestReportSpecsArg.toString() === 'true');
+      cliConfig.reportSpecs = `${jestReportSpecsArg}` === 'true';
     } else {
-      program.reportSpecs = !hasMultipleWorkers;
+      cliConfig.reportSpecs = !hasMultipleWorkers;
     }
 
     const command = _.compact([
-      path.join('node_modules', '.bin', runner),
+      path.join('node_modules', '.bin', runnerConfig.testRunner),
       ...safeGuardArguments([
-        (program.noColor ? ' --no-color' : ''),
-        (runnerConfig ? `--config ${runnerConfig}` : ''),
-        (platform ? shellQuote(`--testNamePattern=^((?!${getPlatformSpecificString()}).)*$`) : ''),
-        `--maxWorkers ${program.workers}`,
+        cliConfig.noColor ? ' --no-color' : '',
+        runnerConfig.runnerConfig ? `--config ${runnerConfig.runnerConfig}` : '',
+        platform ? shellQuote(`--testNamePattern=^((?!${getPlatformSpecificString()}).)*$`) : '',
+        `--maxWorkers ${cliConfig.workers}`,
       ]),
       ...getPassthroughArguments(),
     ]).join(' ');
 
     const detoxEnvironmentVariables = {
-      ..._.pick(program, [
+      ..._.pick(cliConfig, [
+        'configPath',
         'configuration',
         'loglevel',
         'cleanup',
@@ -291,7 +281,8 @@ module.exports.handler = async function test(program) {
         'reportSpecs',
         'readOnlyEmu',
         'deviceLaunchArgs',
-        'useCustomLogger'
+        'useCustomLogger',
+        'forceAdbInstall',
       ]),
       DETOX_START_TIMESTAMP: Date.now(),
     };
@@ -307,16 +298,6 @@ module.exports.handler = async function test(program) {
 
       return `${cli}${key}=${JSON.stringify(value)} `;
     }, '');
-  }
-
-  function getDefaultRunnerConfig() {
-    if (runner.includes('jest')) {
-      return 'e2e/config.json';
-    }
-
-    if (runner.includes('mocha')) {
-      return 'e2e/mocha.opts';
-    }
   }
 
   function getPlatformSpecificString() {

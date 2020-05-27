@@ -11,7 +11,8 @@ import TimeoutsScreen from './TimeoutsScreen';
 import Orientation from './Orientation';
 import Permissions from './Permissions';
 import NetworkScreen from './NetworkScreen';
-import AnimationsScreen from './AnimationsScreen';
+import RNAnimationsScreen from './AnimationsScreen';
+import NativeAnimationsScreen from './NativeAnimationsScreen';
 import LocationScreen from './LocationScreen';
 import ShakeScreen from './ShakeScreen';
 import DatePickerScreen from './DatePickerScreen';
@@ -34,7 +35,8 @@ export {
   Orientation,
   Permissions,
   NetworkScreen,
-  AnimationsScreen,
+  RNAnimationsScreen,
+  NativeAnimationsScreen,
   LocationScreen,
   ShakeScreen,
   DatePickerScreen,

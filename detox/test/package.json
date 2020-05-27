@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "16.2.1",
+  "version": "16.7.1",
   "private": true,
   "engines": {
     "node": ">=8.3.0"
@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
-    "detox": "^16.2.1",
+    "detox": "^16.7.1",
     "express": "^4.15.3",
     "jest": "25.3.x",
     "jest-circus": "25.3.x",
@@ -46,6 +46,16 @@
   "detox": {
     "test-runner": "jest",
     "runner-config": "e2e/config.js",
+    "behavior": {
+      "init": {
+        "reinstallApp": true,
+        "launchApp": true,
+        "exposeGlobals": true
+      },
+      "cleanup": {
+        "shutdownDevice": false
+      }
+    },
     "__session": {
       "server": "ws://localhost:8099",
       "sessionId": "test"

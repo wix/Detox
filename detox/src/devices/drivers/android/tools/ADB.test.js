@@ -1,4 +1,3 @@
-
 describe('ADB', () => {
   const adbBinPath = `/Android/sdk-mock/platform-tools/adb`;
 
@@ -6,6 +5,7 @@ describe('ADB', () => {
   let ADB;
   let adb;
   let exec;
+  let spawn;
 
   beforeEach(() => {
     jest.mock('../../../../utils/logger');
@@ -30,12 +30,12 @@ describe('ADB', () => {
     }
     jest.mock('./EmulatorTelnet', () => MockEmulatorTelnet);
 
-    jest.mock('../../../../utils/exec', () => {
-      const exec = jest.fn();
-      exec.mockReturnValue({ stdout: '' });
-      return { execWithRetriesAndLogs: exec };
-    });
+    jest.mock('../../../../utils/exec', () => ({
+      execWithRetriesAndLogs: jest.fn().mockReturnValue({ stdout: '' }),
+      spawnAndLog: jest.fn(),
+    }));
     exec = require('../../../../utils/exec').execWithRetriesAndLogs;
+    spawn = require('../../../../utils/exec').spawnAndLog;
 
     ADB = require('./ADB');
     adb = new ADB();
@@ -130,9 +130,6 @@ describe('ADB', () => {
     });
   });
 
-  describe('lookup device', () => {
-  });
-
   it(`install`, async () => {
     await adb.install('emulator-5556', 'path inside "quotes" to/app');
 
@@ -165,6 +162,27 @@ describe('ADB', () => {
   it(`pidof (failure)`, async () => {
     jest.spyOn(adb, 'shell').mockImplementation(async () => '');
     expect(await adb.pidof('', 'com.google.android.ext.services')).toBe(NaN);
+  });
+
+  it('push', async () => {
+    const deviceId = 'mockEmulator';
+    const sourceFile = '/mock-source/file.xyz';
+    const destFile = '/sdcard/file.abc';
+    await adb.push(deviceId, sourceFile, destFile);
+
+    expect(exec).toHaveBeenCalledWith(
+      expect.stringContaining(`-s mockEmulator push "${sourceFile}" "${destFile}"`),
+      undefined, undefined, expect.anything());
+  });
+
+  it('remote-install', async () => {
+    const deviceId = 'mockEmulator';
+    const binaryPath = '/mock-path/filename.mock';
+    await adb.remoteInstall(deviceId, binaryPath);
+
+    expect(exec).toHaveBeenCalledWith(
+      expect.stringContaining(`-s mockEmulator shell "pm install -r -g -t ${binaryPath}"`),
+      undefined, undefined, expect.anything());
   });
 
   describe('unlockScreen', () => {
@@ -226,6 +244,44 @@ describe('ADB', () => {
     });
   });
 
+  describe('spawnInstrumentation', () => {
+    const deviceId = 'aDeviceId';
+    const testRunner = 'aTestRunner';
+
+    it('should spawn instrumentation', async () => {
+      const userArgs = [];
+      const expectedArgs = ['-s', deviceId, 'shell', 'am', 'instrument', '-w', '-r', testRunner];
+      await adb.spawnInstrumentation(deviceId, userArgs, testRunner);
+      expect(spawn).toHaveBeenCalledWith(adbBinPath, expectedArgs, expect.any(Object));
+    });
+
+    it('should pass through additional args', async () => {
+      const userArgs = ['-mock', '-args'];
+      await adb.spawnInstrumentation(deviceId, userArgs, testRunner);
+      expect(spawn).toHaveBeenCalledWith(adbBinPath, expect.arrayContaining([...userArgs, testRunner]), expect.any(Object));
+    });
+
+    it('should set detaching=false as spawn-options', async () => {
+      const expectedOptions = {
+        detached: false,
+      };
+      const userArgs = [];
+
+      await adb.spawnInstrumentation(deviceId, userArgs, testRunner);
+
+      expect(spawn).toHaveBeenCalledWith(adbBinPath, expect.any(Array), expectedOptions);
+    });
+
+    it('should chain-return the promise from spawn util', async () => {
+      const userArgs = [];
+      const mockPromise = Promise.resolve('mock');
+      spawn.mockReturnValue(mockPromise);
+
+      const childProcessPromise = adb.spawnInstrumentation(deviceId, userArgs, testRunner);
+      expect(childProcessPromise).toEqual(mockPromise);
+    });
+  });
+
   it(`listInstrumentation passes the right deviceId`, async () => {
     const deviceId = 'aDeviceId';
     jest.spyOn(adb, 'shell');
@@ -250,5 +306,22 @@ describe('ADB', () => {
 
     expect(adb.shell).toBeCalledWith('aDeviceId', 'pm list instrumentation');
     expect(result).toEqual(expectedRunner);
+  });
+
+  describe('animation disabling', () => {
+    it('should disable animator (e.g. ObjectAnimator) animations', async () => {
+      await adb.disableAndroidAnimations();
+      expect(exec).toHaveBeenCalledWith(`"${adbBinPath}"  shell "settings put global animator_duration_scale 0"`, undefined, undefined, 1);
+    });
+
+    it('should disable window animations', async () => {
+      await adb.disableAndroidAnimations();
+      expect(exec).toHaveBeenCalledWith(`"${adbBinPath}"  shell "settings put global window_animation_scale 0"`, undefined, undefined, 1);
+    });
+
+    it('should disable transition (e.g. activity launch) animations', async () => {
+      await adb.disableAndroidAnimations();
+      expect(exec).toHaveBeenCalledWith(`"${adbBinPath}"  shell "settings put global transition_animation_scale 0"`, undefined, undefined, 1);
+    });
   });
 });

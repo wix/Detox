@@ -1,11 +1,17 @@
 const firstTestContent = require('./firstTestContent');
-const mochaOptsContent = '--recursive --timeout 120000 --bail --file e2e/init.js\n';
+
+const mochaRcContent = JSON.stringify({
+  recursive: true,
+  timeout: 120000,
+  bail: true,
+  file: 'e2e/init.js',
+}, null, 4);
+
 const initjsContent = `const detox = require('detox');
-const config = require('../package.json').detox;
 const adapter = require('detox/runners/mocha/adapter');
 
 before(async () => {
-  await detox.init(config);
+  await detox.init();
 });
 
 beforeEach(async function () {
@@ -23,4 +29,4 @@ after(async () => {
 
 exports.initjs = initjsContent;
 exports.firstTest = firstTestContent;
-exports.runnerConfig = mochaOptsContent;
+exports.runnerConfig = mochaRcContent;

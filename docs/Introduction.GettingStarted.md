@@ -87,9 +87,28 @@ npm install detox --save-dev
 
 > TIP: Remember to add the "node_modules" folder to your git ignore.
 
-#### 2. Add Detox config to package.json
+#### 2. Add Detox config
 
-The basic configuration for Detox should be in your `package.json` file under the `detox` property:
+Detox searches for its configuration, starting from the current working directory,
+in the following places:
+
+1. `.detoxrc.js`
+1. `.detoxrc.json`
+1. `.detoxrc`
+1. `detox.config.js`
+1. `detox.config.json`
+1. `package.json` (`"detox"` section)
+
+If you prefer to keep all configs in one place, you can create a "detox" section in
+your`package.json`. Otherwise, if you prefer separating configs, see the available
+config file names above.
+
+To get some help with creating your first Detox config file, you can try running Detox CLI:
+`detox init -r jest` (or `-r mocha`).
+
+Either way the config should look like this: 
+
+##### in package.json
 
 ```json
 "detox": {
@@ -101,6 +120,21 @@ The basic configuration for Detox should be in your `package.json` file under th
       "device": {
         "type": "iPhone 11 Pro"
       }
+    }
+  }
+}
+```
+
+##### in .detoxrc.json or another separate config file
+
+```json
+{
+  "configurations": {
+    "ios.sim.debug": {
+      "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
+      "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
+      "type": "ios.simulator",
+      "name": "iPhone 7"
     }
   }
 }

@@ -34,12 +34,25 @@ public class DetoxJUnitRunner extends AndroidJUnitRunner {
         monitor.addLifecycleCallback(lifecycleCallback);
     }
 
+    @Override
+    public void onDestroy() {
+        instrumentsManager.stopRecording();
+        instrumentsManager = null;
+        lifecycleCallback = null;
+
+        super.onDestroy();
+    }
+
     private void onBeforeAppOnCreate(Application app, Bundle arguments) {
         if (DetoxInstrumentsManager.supports()) {
             final String recordingPath = arguments.getString("detoxInstrumRecPath");
             if (recordingPath != null) {
+                final long samplingInterval = Long.parseLong(
+                        arguments.getString("detoxInstrumSamplingInterval", "250")
+                );
+
                 instrumentsManager = new DetoxInstrumentsManager(app);
-                instrumentsManager.startRecordingAtLocalPath(recordingPath);
+                instrumentsManager.startRecordingAtLocalPath(recordingPath, samplingInterval);
             }
         }
     }
