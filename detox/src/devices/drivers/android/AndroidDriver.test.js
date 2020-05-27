@@ -3,20 +3,61 @@ describe('Android driver', () => {
   const deviceId = 'device-id-mock';
   const bundleId = 'bundle-id-mock';
 
+  const mockGetAbsoluteBinaryPathImpl = (x) => `absolutePathOf(${x})`;
+  const mockAPKPathGetTestApkPathImpl = (x) => `testApkPathOf(${x})`;
+
+  class MockADBClass {
+    constructor() {
+      Object.assign(this, adb);
+    }
+  }
+
+  class MockAsyncEmitterClass {
+    constructor() {
+      this.emit = jest.fn();
+    }
+  }
+
+  class MockInstrumentationLogsParserClass {
+    constructor() {
+      this.parse = () => {};
+      this.containsStackTraceLog = () => true;
+      this.getStackTrace = () => MockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK;
+    }
+  }
+  MockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK = 'Stacktrace mock';
+
   let logger;
   let client;
+  let getAbsoluteBinaryPath;
+  let fs;
   let exec;
+  let adb;
   beforeEach(() => {
+    jest.mock('fs', () => ({
+      existsSync: jest.fn(),
+      realpathSync: jest.fn(),
+    }));
+    fs = require('fs');
+
     jest.mock('../../../utils/encoding', () => ({
       encodeBase64: (x) => `base64(${x})`,
     }));
 
-    jest.mock('./tools/ADB', () => mockADBClass);
     jest.mock('../../../utils/sleep', () => jest.fn().mockResolvedValue(''));
     jest.mock('../../../utils/retry', () => jest.fn().mockResolvedValue(''));
 
     jest.mock('./InstrumentationLogsParser', () => ({
-      InstrumentationLogsParser: mockInstrumentationLogsParserClass,
+      InstrumentationLogsParser: MockInstrumentationLogsParserClass,
+    }));
+
+    jest.mock('../../../utils/getAbsoluteBinaryPath', () =>
+      jest.fn().mockImplementation((x) => `absolutePathOf(${x})`),
+    );
+    getAbsoluteBinaryPath = require('../../../utils/getAbsoluteBinaryPath');
+
+    jest.mock('./tools/APKPath', () => ({
+      getTestApkPath: mockAPKPathGetTestApkPathImpl,
     }));
 
     const mockLogger = {
@@ -29,15 +70,6 @@ describe('Android driver', () => {
     logger = require('../../../utils/logger');
 
     jest.mock('../../../utils/exec', () => ({
-      spawnAndLog: jest.fn().mockReturnValue({
-        childProcess: {
-          on: jest.fn(),
-          stdout: {
-            setEncoding: jest.fn(),
-            on: jest.fn(),
-          }
-        }
-      }),
       interruptProcess: jest.fn(),
     }));
     exec = require('../../../utils/exec');
@@ -50,22 +82,40 @@ describe('Android driver', () => {
     };
   });
 
+  beforeEach(() => {
+    const ADB = jest.genMockFromModule('./tools/ADB');
+    adb = new ADB();
+    adb.adbBin = 'ADB binary mock';
+    adb.spawnInstrumentation = jest.fn().mockReturnValue({
+      childProcess: {
+        on: jest.fn(),
+        stdout: {
+          setEncoding: jest.fn(),
+          on: jest.fn(),
+        }
+      }
+    });
+    jest.mock('./tools/ADB', () => MockADBClass);
+  });
+
   let uut;
   beforeEach(() => {
     const AndroidDriver = require('./AndroidDriver');
     uut = new AndroidDriver({
       client,
-      emitter: new mockAsyncEmitter(),
+      emitter: new MockAsyncEmitterClass(),
     });
   });
 
   describe('Instrumentation bootstrap', () => {
     it('should launch instrumentation upon app launch', async () => {
+      adb.getInstrumentationRunner.mockResolvedValue('mock test-runner');
+
       await uut.launchApp(deviceId, bundleId, {}, '');
 
-      expect(exec.spawnAndLog).toHaveBeenCalledWith(
+      expect(adb.spawnInstrumentation).toHaveBeenCalledWith(
+        deviceId,
         expect.anything(),
-        expect.arrayContaining(['shell', 'am', 'instrument']),
         expect.anything(),
       );
     });
@@ -85,14 +135,14 @@ describe('Android driver', () => {
       const clientWaitResolve = mockDeviceReadyPromise();
 
       const promise = uut.waitUntilReady();
-      setTimeout(async () => await killInstrumentation(exec.spawnAndLog()), 1);
+      setTimeout(async () => await killInstrumentation(adb.spawnInstrumentation()), 1);
 
       try {
         await promise;
         fail('Expected an error and none was thrown');
       } catch (e) {
         expect(e.toString()).toContain('DetoxRuntimeError: Failed to run application on the device');
-        expect(e.toString()).toContain(`Native stacktrace dump: ${mockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK}`);
+        expect(e.toString()).toContain(`Native stacktrace dump: ${MockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK}`);
       } finally {
         clientWaitResolve();
       }
@@ -141,10 +191,10 @@ describe('Android driver', () => {
 
       await uut.launchApp(deviceId, bundleId, launchArgs, '');
 
-      const spawnArgs = exec.spawnAndLog.mock.calls[0];
+      const spawnArgs = adb.spawnInstrumentation.mock.calls[0];
       const spawnedFlags = spawnArgs[1];
 
-      let index = 7;
+      let index = 0;
       index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({
         key: 'object-arg',
         value: 'base64({"such":"wow","much":"amaze","very":111})'
@@ -176,10 +226,10 @@ describe('Android driver', () => {
 
       await uut.launchApp(deviceId, bundleId, launchArgs, '');
 
-      const spawnArgs = exec.spawnAndLog.mock.calls[0];
+      const spawnArgs = adb.spawnInstrumentation.mock.calls[0];
       const spawnedFlags = spawnArgs[1];
 
-      let index = 10;
+      let index = 3;
       index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'class', value: 'class-value' });
       index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'package', value: 'package-value' });
       index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'func', value: 'func-value' });
@@ -213,6 +263,49 @@ describe('Android driver', () => {
     });
   });
 
+  describe('App installation', () => {
+    const binaryPath = 'mock-bin-path';
+    const testBinaryPath = 'mock-test-bin-path';
+
+    it('should adb-install the app\'s binary', async () => {
+      await uut.installApp(deviceId, binaryPath, testBinaryPath);
+
+      expect(getAbsoluteBinaryPath).toHaveBeenCalledWith(binaryPath);
+      expect(uut.adb.install).toHaveBeenCalledWith(deviceId, mockGetAbsoluteBinaryPathImpl(binaryPath));
+    });
+
+    it('should adb-install the test binary', async () => {
+      await uut.installApp(deviceId, binaryPath, testBinaryPath);
+
+      expect(getAbsoluteBinaryPath).toHaveBeenCalledWith(binaryPath);
+      expect(uut.adb.install).toHaveBeenCalledWith(deviceId, mockGetAbsoluteBinaryPathImpl(testBinaryPath));
+    });
+
+    it('should resort to auto test-binary path resolution, if not specific', async () => {
+      const expectedTestBinPath = mockAPKPathGetTestApkPathImpl(mockGetAbsoluteBinaryPathImpl(binaryPath));
+
+      fs.existsSync.mockReturnValue(true);
+
+      await uut.installApp(deviceId, binaryPath, undefined);
+
+      expect(fs.existsSync).toHaveBeenCalledWith(expectedTestBinPath);
+      expect(uut.adb.install).toHaveBeenCalledWith(deviceId, expectedTestBinPath);
+    });
+
+    it('should throw if auto test-binary path resolves an invalid file', async () => {
+      const expectedTestBinPath = mockAPKPathGetTestApkPathImpl(mockGetAbsoluteBinaryPathImpl(binaryPath));
+
+      fs.existsSync.mockReturnValue(false);
+
+      try {
+        await uut.installApp(deviceId, binaryPath, undefined);
+        fail('Expected an error');
+      } catch (err) {
+        expect(err.message).toContain(`'${expectedTestBinPath}'`);
+      }
+    });
+  });
+
   describe('net-port reversing', () => {
     const deviceId = 1010;
     const port = 1337;
@@ -228,29 +321,3 @@ describe('Android driver', () => {
     });
   });
 });
-
-class mockADBClass {
-  constructor() {
-    this.getInstrumentationRunner = jest.fn();
-    this.reverse = jest.fn();
-    this.reverseRemove = jest.fn();
-
-    this.adbBin = 'ADB binary mock';
-  }
-}
-
-class mockAsyncEmitter {
-  constructor() {
-    this.emit = jest.fn();
-  }
-}
-
-class mockInstrumentationLogsParserClass {
-  constructor() {
-    this.parse = () => {};
-    this.containsStackTraceLog = () => true;
-    this.getStackTrace = () => mockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK;
-  }
-}
-
-mockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK = 'Stacktrace mock';

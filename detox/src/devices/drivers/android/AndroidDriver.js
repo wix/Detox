@@ -9,6 +9,7 @@ const InvocationManager = invoke.InvocationManager;
 const ADB = require('./tools/ADB');
 const AAPT = require('./tools/AAPT');
 const APKPath = require('./tools/APKPath');
+const AppUninstallHelper = require('./tools/AppUninstallHelper');
 const DeviceDriverBase = require('../DeviceDriverBase');
 const DetoxApi = require('../../../android/espressoapi/Detox');
 const EspressoDetoxApi = require('../../../android/espressoapi/EspressoDetox');
@@ -23,7 +24,7 @@ const temporaryPath = require('../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 const sleep = require('../../../utils/sleep');
 const retry = require('../../../utils/retry');
-const { interruptProcess, spawnAndLog } = require('../../../utils/exec');
+const { interruptProcess } = require('../../../utils/exec');
 const getAbsoluteBinaryPath = require('../../../utils/getAbsoluteBinaryPath');
 const AndroidExpect = require('../../../android/expect');
 const { InstrumentationLogsParser } = require('./InstrumentationLogsParser');
@@ -64,40 +65,23 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async getBundleIdFromBinary(apkPath) {
-    return await this.aapt.getPackageName(getAbsoluteBinaryPath(apkPath));
+    const binaryPath = getAbsoluteBinaryPath(apkPath);
+    return await this.aapt.getPackageName(binaryPath);
   }
 
-  async installApp(deviceId, binaryPath, testBinaryPath) {
-    binaryPath = getAbsoluteBinaryPath(binaryPath);
+  async installApp(deviceId, _binaryPath, _testBinaryPath) {
+    const {
+      binaryPath,
+      testBinaryPath,
+    } = this._getInstallPaths(_binaryPath, _testBinaryPath);
     await this.adb.install(deviceId, binaryPath);
-    await this.adb.install(deviceId, testBinaryPath ? getAbsoluteBinaryPath(testBinaryPath) : this.getTestApkPath(binaryPath));
-  }
-
-  async pressBack(deviceId) {
-    await this.uiDevice.pressBack();
-  }
-
-  getTestApkPath(originalApkPath) {
-    const testApkPath = APKPath.getTestApkPath(originalApkPath);
-
-    if (!fs.existsSync(testApkPath)) {
-      throw new Error(`'${testApkPath}' could not be found, did you run './gradlew assembleAndroidTest' ?`);
-    }
-
-    return testApkPath;
+    await this.adb.install(deviceId, testBinaryPath);
   }
 
   async uninstallApp(deviceId, bundleId) {
     await this.emitter.emit('beforeUninstallApp', { deviceId, bundleId });
-
-    if (await this.adb.isPackageInstalled(deviceId, bundleId)) {
-      await this.adb.uninstall(deviceId, bundleId);
-    }
-
-    const testBundle = `${bundleId}.test`;
-    if (await this.adb.isPackageInstalled(deviceId, testBundle)) {
-      await this.adb.uninstall(deviceId, testBundle);
-    }
+    const uninstallHelper = new AppUninstallHelper(this.adb);
+    await uninstallHelper.uninstall(deviceId, bundleId);
   }
 
   async launchApp(deviceId, bundleId, launchArgs, languageAndLocale) {
@@ -148,6 +132,10 @@ class AndroidDriver extends DeviceDriverBase {
       } finally {
         this.instrumentationCloseListener = _.noop;
       }
+  }
+
+  async pressBack(deviceId) {
+    await this.uiDevice.pressBack();
   }
 
   async sendToHome(deviceId, params) {
@@ -252,16 +240,34 @@ class AndroidDriver extends DeviceDriverBase {
     await this.invocationManager.execute(call);
   }
 
+  _getInstallPaths(_binaryPath, _testBinaryPath) {
+    const binaryPath = getAbsoluteBinaryPath(_binaryPath);
+    const testBinaryPath = _testBinaryPath ? getAbsoluteBinaryPath(_testBinaryPath) : this._getTestApkPath(binaryPath);
+    return {
+      binaryPath,
+      testBinaryPath,
+    };
+  }
+
+  _getTestApkPath(originalApkPath) {
+    const testApkPath = APKPath.getTestApkPath(originalApkPath);
+
+    if (!fs.existsSync(testApkPath)) {
+      throw new Error(`'${testApkPath}' could not be found, did you run './gradlew assembleAndroidTest'?`);
+    }
+    return testApkPath;
+  }
+
   async _launchInstrumentationProcess(deviceId, bundleId, rawLaunchArgs) {
     const launchArgs = this._prepareLaunchArgs(rawLaunchArgs, true);
     const additionalLaunchArgs = this._prepareLaunchArgs({debug: false});
     const serverPort = new URL(this.client.configuration.server).port;
     await this.adb.reverse(deviceId, serverPort);
     const testRunner = await this.adb.getInstrumentationRunner(deviceId, bundleId);
-    const spawnFlags = [`-s`, `${deviceId}`, `shell`, `am`, `instrument`, `-w`, `-r`, ...launchArgs, ...additionalLaunchArgs, testRunner];
+    const spawnFlags = [...launchArgs, ...additionalLaunchArgs];
 
     this.instrumentationLogsParser = new InstrumentationLogsParser();
-    this.instrumentationProcess = spawnAndLog(this.adb.adbBin, spawnFlags, { detached: false });
+    this.instrumentationProcess = this.adb.spawnInstrumentation(deviceId, spawnFlags, testRunner);
     this.instrumentationProcess.childProcess.stdout.setEncoding('utf8');
     this.instrumentationProcess.childProcess.stdout.on('data', this._extractStackTraceFromInstrumLogs.bind(this));
     this.instrumentationProcess.childProcess.on('close', async () => {

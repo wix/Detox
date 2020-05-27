@@ -24,15 +24,9 @@ module.exports.handler = async function init(argv) {
   switch (runner) {
     case 'mocha':
       createMochaFolderE2E();
-      patchDetoxConfigInPackageJSON({
-        runner: 'mocha',
-      });
       break;
     case 'jest':
       createJestFolderE2E();
-      patchDetoxConfigInPackageJSON({
-        runner: 'jest',
-      });
       break;
     default:
       throw new Error([
@@ -66,6 +60,13 @@ function createFolder(dir, files) {
 }
 
 function createFile(filename, content) {
+  if (fs.existsSync(filename)) {
+    return reportError(
+      `Failed to create ${filename} file, ` +
+      `because it already exists at path: ${path.resolve(filename)}`
+    );
+  }
+
   try {
     fs.writeFileSync(filename, content);
     log.info(`Created a file at path: ${filename}`);
@@ -76,10 +77,16 @@ function createFile(filename, content) {
 
 function createMochaFolderE2E() {
   createFolder('e2e', {
-    'mocha.opts': mochaTemplates.runnerConfig,
+    '.mocharc.json': mochaTemplates.runnerConfig,
     'init.js': mochaTemplates.initjs,
     'firstTest.spec.js': mochaTemplates.firstTest
   });
+
+  createFile('.detoxrc.json', JSON.stringify({
+    testRunner: 'mocha',
+    runnerConfig: 'e2e/.mocharc.json',
+    configurations: createDefaultConfigurations(),
+  }, null, 2))
 }
 
 function createJestFolderE2E() {
@@ -88,45 +95,31 @@ function createJestFolderE2E() {
     'init.js': jestTemplates.initjs,
     'firstTest.spec.js': jestTemplates.firstTest
   });
+
+  createFile('.detoxrc.json', JSON.stringify({
+    testRunner: 'jest',
+    runnerConfig: 'e2e/config.json',
+    configurations: createDefaultConfigurations(),
+  }, null, 2))
 }
 
-function parsePackageJson(filepath) {
-  try {
-    return require(filepath);
-  } catch (err) {
-    reportError(`Failed to parse package.json due to an error:\n${err.message}`);
-  }
-}
-
-function loggedSet(obj, path, value) {
-  _.set(obj, path, value);
-
-  const pathString = path.map(segment => `[${JSON.stringify(segment)}]`).join('');
-  log.info(`  json${pathString} = ${JSON.stringify(value)};`);
-}
-
-function savePackageJson(filepath, json) {
-  try {
-    fs.writeFileSync(filepath, JSON.stringify(json, null, 2) + '\n');
-  } catch (err) {
-    reportError(`Failed to write changes back into package.json due to an error:\n${err.message}`);
-  }
-}
-
-function patchDetoxConfigInPackageJSON({ runner }) {
-  const packageJsonPath = path.join(process.cwd(), 'package.json');
-
-  if (fs.existsSync(packageJsonPath)) {
-    log.info(`Patching package.json at path: ${packageJsonPath}`);
-
-    const packageJson = parsePackageJson(packageJsonPath);
-    if (packageJson) {
-      loggedSet(packageJson, ['detox', 'test-runner'], runner);
-      savePackageJson(packageJsonPath, packageJson);
-    }
-  } else {
-    reportError(`Failed to find package.json at path: ${packageJsonPath}`);
-  }
+function createDefaultConfigurations() {
+  return {
+    ios: {
+      type: 'ios.simulator',
+      binaryPath: 'SPECIFY_PATH_TO_YOUR_APP_BINARY',
+      device: {
+        type: 'iPhone 11',
+      },
+    },
+    android: {
+      type: 'android.emulator',
+      binaryPath: 'SPECIFY_PATH_TO_YOUR_APP_BINARY',
+      device: {
+        avdName: 'Pixel_2_API_29',
+      },
+    },
+  };
 }
 
 function reportError(...args) {

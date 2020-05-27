@@ -90,11 +90,17 @@ static void detoxConditionalInit()
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidLaunch:) name:UIApplicationDidFinishLaunchingNotification object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
-	
-	NSString* recordingPath = [NSUserDefaults.standardUserDefaults objectForKey:@"recordingPath"];
+
+	NSUserDefaults *userDefaults = NSUserDefaults.standardUserDefaults;
+	NSString* recordingPath = [userDefaults objectForKey:@"recordingPath"];
 	if(recordingPath != nil)
 	{
-		[self _handlePerformanceRecording:NSDictionaryOfVariableBindings(recordingPath) isFromLaunch:YES completionHandler:nil];
+		NSString* samplingInterval = [userDefaults objectForKey:@"samplingInterval"];
+		NSMutableDictionary *props = [NSMutableDictionary new];
+		props[@"recordingPath"] = recordingPath;
+		props[@"samplingInterval"] = samplingInterval;
+
+		[self _handlePerformanceRecording:props isFromLaunch:YES completionHandler:nil];
 	}
 	
 	return self;
@@ -423,19 +429,18 @@ static void detoxConditionalInit()
 	
 	if(props[@"recordingPath"] != nil)
 	{
-		NSURL* absoluteURL = [NSURL fileURLWithPath:props[@"recordingPath"]];
-		
 		static dispatch_once_t onceToken;
 		dispatch_once(&onceToken, ^{
 			_recordingManager = [DetoxInstrumentsManager new];
 		});
+		DetoxInstrumentsConfiguration *configuration = [_recordingManager configurationWithDictionary:props];
 		if(launch)
 		{
-			[_recordingManager continueRecordingAtURL:absoluteURL];
+			[_recordingManager continueRecordingWithConfiguration:configuration];
 		}
 		else
 		{
-			[_recordingManager startRecordingAtURL:absoluteURL];
+			[_recordingManager startRecordingWithConfiguration:configuration];
 		}
 	}
 	else

@@ -2,8 +2,8 @@ const _ = require('lodash');
 const funpermaproxy = require('funpermaproxy');
 const Detox = require('./Detox');
 const DetoxConstants = require('./DetoxConstants');
-const log = require('./utils/logger').child({ __filename });
 const configuration = require('./configuration');
+const log = require('./utils/logger').child({ __filename });
 
 const _detox = Symbol('detox');
 
@@ -29,32 +29,51 @@ class DetoxExportWrapper {
     this._defineProxy('device');
   }
 
-  async init(config, params) {
-    if (!params || params.initGlobals !== false) {
-      Detox.none.initContext(global);
-    }
-
-    Detox.none.setError(null);
+  async init(configOverride, userParams) {
+    let configError, exposeGlobals, resolvedConfig;
 
     try {
-      this[_detox] = DetoxExportWrapper._createInstance(config);
-      await this[_detox].init(params);
+      resolvedConfig = await configuration.composeDetoxConfig({
+        override: configOverride,
+        userParams,
+      });
+
+      exposeGlobals = resolvedConfig.behaviorConfig.init.exposeGlobals;
+    } catch (err) {
+      configError = err;
+      exposeGlobals = true;
+    }
+
+    try {
+      if (exposeGlobals) {
+        Detox.none.initContext(global);
+      }
+
+      if (configError) {
+        throw configError;
+      }
+
+      this[_detox] = new Detox(resolvedConfig);
+      await this[_detox].init();
+      Detox.none.setError(null);
+
+      return this[_detox];
     } catch (err) {
       Detox.none.setError(err);
 
       log.error({ event: 'DETOX_INIT_ERROR' }, '\n', err);
       throw err;
     }
-
-    return this[_detox];
   }
 
   async cleanup() {
-    Detox.none.cleanupContext(global);
-
-    if (this[_detox] !== Detox.none) {
-      await this[_detox].cleanup();
+    try {
+      if (this[_detox] !== Detox.none) {
+        await this[_detox].cleanup();
+      }
+    } finally {
       this[_detox] = Detox.none;
+      Detox.none.cleanupContext(global);
     }
   }
 
@@ -66,30 +85,6 @@ class DetoxExportWrapper {
 
   _defineProxy(name) {
     this[name] = funpermaproxy(() => this[_detox][name]);
-  }
-
-  static _createInstance(detoxConfig) {
-    if (!detoxConfig) {
-      throw new Error(`No configuration was passed to detox, make sure you pass a detoxConfig when calling 'detox.init(detoxConfig)'`);
-    }
-
-    if (!(detoxConfig.configurations && _.size(detoxConfig.configurations) >= 1)) {
-      throw new Error(`There are no device configurations in the detox config`);
-    }
-
-    const deviceConfig = configuration.composeDeviceConfig(detoxConfig);
-    const configurationName = _.findKey(detoxConfig.configurations, (config) => config === deviceConfig);
-    const artifactsConfig = configuration.composeArtifactsConfig({
-      configurationName,
-      detoxConfig,
-      deviceConfig,
-    });
-
-    return new Detox({
-      deviceConfig,
-      artifactsConfig,
-      session: detoxConfig.session,
-    });
   }
 }
 

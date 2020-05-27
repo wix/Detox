@@ -38,6 +38,11 @@ public class DetoxTest {
 
     @Test
     public void runDetoxTests() {
+        final ActivityTestRule<?> rule = resolveTestRule();
+        Detox.runTests(rule);
+    }
+
+    private ActivityTestRule<?> resolveTestRule() {
         final Bundle arguments = InstrumentationRegistry.getArguments();
         final boolean useSingleTaskActivity = Boolean.parseBoolean(arguments.getString(USE_SINGLE_INSTANCE_ACTIVITY_ARG, "false"));
         final boolean useCrashingActivity = Boolean.parseBoolean(arguments.getString(USE_CRASHING_ACTIVITY_ARG, "false"));
@@ -47,6 +52,6 @@ public class DetoxTest {
                         : useCrashingActivity
                             ? mCrashingActivityTestRule
                             : mActivityRule;
-        Detox.runTests(rule);
+        return rule;
     }
 }

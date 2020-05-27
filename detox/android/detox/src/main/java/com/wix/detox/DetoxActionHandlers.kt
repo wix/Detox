@@ -118,11 +118,16 @@ class InstrumentsRecordingStateActionHandler(
         private val instrumentsManager: DetoxInstrumentsManager,
         private val wsClient: WebSocketClient
 ) : DetoxActionHandler {
+    companion object {
+        const val DEFAULT_SAMPLING_INTERVAL = 250L
+    }
 
     override fun handle(params: String, messageId: Long) {
-        val recordingPath = JSONObject(params).opt("recordingPath")
+        val json = JSONObject(params)
+        val recordingPath = json.opt("recordingPath")
         if (recordingPath is String) {
-            instrumentsManager.startRecordingAtLocalPath(recordingPath)
+            val samplingInterval = json.optLong("samplingInterval", DEFAULT_SAMPLING_INTERVAL)
+            instrumentsManager.startRecordingAtLocalPath(recordingPath, samplingInterval)
         } else {
             instrumentsManager.stopRecording()
         }

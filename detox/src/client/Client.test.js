@@ -1,6 +1,6 @@
 const tempfile = require('tempfile');
 const actions = require('./actions/actions');
-const config = require('../configurations.mock').validOneDeviceAndSession.session;
+const config = require('../configuration/configurations.mock').validOneDeviceAndSession.session;
 const invoke = require('../invoke');
 const sleep = require('../utils/sleep');
 
