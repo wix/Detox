@@ -15,7 +15,6 @@ class DetoxEnvironment extends NodeEnvironment {
     super(config);
 
     this._initTimeout = this.constructor.initTimeout;
-    this._testTimeout = 5000;
   }
 
   async setup() {
