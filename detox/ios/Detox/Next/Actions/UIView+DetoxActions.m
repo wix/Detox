@@ -14,6 +14,7 @@
 #import "DTXSyntheticEvents.h"
 #import "UIView+DetoxUtils.h"
 #import "UIView+DetoxExpectations.h"
+#import "UISlider+DetoxUtils.h"
 
 @implementation UIView (Detox)
 
@@ -499,6 +500,11 @@ static NSDictionary* DTXPointToDictionary(CGPoint point)
 	
 	rv[@"hittable"] = self.dtx_isHittable ? @YES : @NO;
 	rv[@"visible"] = self.dtx_isVisible ? @YES : @NO;
+	
+	if([self isKindOfClass:UISlider.class])
+	{
+		rv[@"sliderPosition"] = @([(UISlider*)self dtx_normalizedSliderPosition]);
+	}
 	
 	return rv;
 }

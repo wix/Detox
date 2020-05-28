@@ -46,6 +46,8 @@ class Action : CustomStringConvertible {
 		static let pinch = "pinch"
 		static let pinchWithAngleLegacy = "pinchWithAngle"
 		
+		static let adjustSliderToPosition = "adjustSliderToPosition"
+		
 		static let setColumnToValue = "setColumnToValue"
 		static let setDatePickerDate = "setDatePickerDate"
 		
@@ -78,6 +80,8 @@ class Action : CustomStringConvertible {
 		Kind.swipe: SwipeAction.self,
 		Kind.pinch: PinchAction.self,
 		Kind.pinchWithAngleLegacy: LegacyPinchAction.self,
+		
+		Kind.adjustSliderToPosition : AdjustSliderAction.self,
 		
 		Kind.setColumnToValue: SetPickerAction.self,
 		Kind.setDatePickerDate: SetDatePickerAction.self,
@@ -439,6 +443,21 @@ class PinchAction : Action {
 	}
 }
 
+class AdjustSliderAction : Action {
+	override func perform(on view: UIView) -> [String : Any]? {
+		let normalizedPosition = params![0] as! Double
+		
+		precondition(normalizedPosition >= 0.0 && normalizedPosition <= 1.0, "Normalized position must be with values between 0.0 and 1.0")
+		
+		guard let slider = view as? UISlider else {
+			dtx_fatalError("View \(view.dtx_shortDescription) is not instance of “UISlider”", view: view)
+		}
+		
+		slider.dtx_normalizedSliderPosition = normalizedPosition
+		
+		return nil
+	}
+}
 
 class SetPickerAction : Action {
 	override func perform(on view: UIView) -> [String: Any]? {

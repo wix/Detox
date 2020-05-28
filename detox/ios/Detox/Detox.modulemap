@@ -17,5 +17,6 @@ framework module Detox {
 		header "EarlGrey+Detox.h"
 		header "UIDevice+DetoxActions.h"
 		header "EarlGreyStatistics.h"
+		header "UISlider+DetoxUtils.h"
 	}
 }

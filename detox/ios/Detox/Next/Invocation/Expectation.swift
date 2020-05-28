@@ -40,7 +40,8 @@ class Expectation : CustomStringConvertible {
 		static let toHaveLabel = "toHaveLabel"
 		static let toHaveId = "toHaveId"
 		static let toHaveValue = "toHaveValue"
-		static let toHavePlaceholderValue = "toHavePlaceholderValue"
+		static let toHavePlaceholder = "toHavePlaceholder"
+		static let toHaveSliderPosition = "toHaveSliderPosition"
 	}
 	
 	let element : Element
@@ -63,7 +64,8 @@ class Expectation : CustomStringConvertible {
 		Kind.toHaveLabel: ValueExpectation.self,
 		Kind.toHaveId: ValueExpectation.self,
 		Kind.toHaveValue: ValueExpectation.self,
-		Kind.toHavePlaceholderValue: ValueExpectation.self
+		Kind.toHavePlaceholder: ValueExpectation.self,
+		Kind.toHaveSliderPosition: ValueExpectation.self
 	]
 	
 	static let keyMapping : [String: String] = [
@@ -71,7 +73,7 @@ class Expectation : CustomStringConvertible {
 		Kind.toHaveLabel: "accessibilityLabel",
 		Kind.toHaveId: "accessibilityIdentifier",
 		Kind.toHaveValue: "accessibilityValue",
-		Kind.toHavePlaceholderValue: "placeholder"
+		Kind.toHavePlaceholder: "placeholder",
 	]
 	
 	class func with(dictionaryRepresentation: [String: Any]) -> Expectation {
@@ -207,6 +209,39 @@ class ValueExpectation : Expectation {
 	override var additionalDescription: String {
 		get {
 			return "(\(key) == “\(value)”)"
+		}
+	}
+}
+
+class DoubleExpectation : ValueExpectation {
+	let tolerance : Double?
+	
+	required init(kind: String, modifiers: Set<String>, element: Element, timeout: TimeInterval, key: String, value: Double, tolerance: Double?) {
+		self.tolerance = tolerance
+		
+		super.init(kind: kind, modifiers: modifiers, element: element, timeout: timeout, key: key, value: value)
+	}
+	
+	required init(kind: String, modifiers: Set<String>, element: Element, timeout: TimeInterval) {
+		fatalError("Call the other initializer")
+	}
+	
+	required init(kind: String, modifiers: Set<String>, element: Element, timeout: TimeInterval, key: String, value: CustomStringConvertible) {
+		fatalError("Call the other initializer")
+	}
+	
+	override func evaluate(with view: UIView) -> Bool {
+		return NSPredicate { view, _ -> Bool in
+			guard let slider = view as? UISlider else {
+				dtx_fatalError("View \((view as! UIView).dtx_shortDescription) is not instance of “UISlider”", view: (view as! UIView))
+			}
+			return fabs(slider.dtx_normalizedSliderPosition.distance(to: self.value as! Double)) <= (self.tolerance ?? 0.00000000001)
+		}.evaluate(with: view)
+	}
+	
+	override var additionalDescription: String {
+		get {
+			return "(sliderPosition ==\(tolerance != nil ? "(~\(tolerance!))" : "") “\(value)”)"
 		}
 	}
 }
