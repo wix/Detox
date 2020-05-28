@@ -9,11 +9,11 @@ const testUtils = {
   randomObject: () => ({ [Math.random()]: Math.random() }),
 };
 
-describe('index', () => {
+describe('index (regular)', () => {
   let logger;
   let configuration;
   let Detox;
-  let index;
+  let detox;
   let detoxConfig;
   let detoxInstance;
 
@@ -33,22 +33,11 @@ describe('index', () => {
 
     Detox = require('./Detox');
 
-    jest
-      .mock('./server/DetoxServer')
-      .mock('./devices/Device')
-      .mock('./utils/logger')
-      .mock('./client/Client')
-      .mock('./Detox', () => {
-        const MissingDetox = require('./utils/MissingDetox');
-        const none = new MissingDetox();
-        none.cleanupContext = () => {}; // avoid ruining global state
-
-        return Object.assign(jest.fn(() => mockDetox), { none });
-      });
-
-    process.env.DETOX_UNIT_TEST = true;
+    const MissingDetox = require('./utils/MissingDetox');
+    Detox.none = new MissingDetox();
     detox = require('./index');
     detox._setGlobal(global);
+    detoxInstance = null;
   });
 
   describe('public interface', () => {
@@ -66,14 +55,14 @@ describe('index', () => {
       ['a',  'function', 'expect'],
       ['a',  'function', 'waitFor'],
     ])('should export %s %s called .%s', (_1, type, name) => {
-      expect(typeof index[name]).toBe(type);
+      expect(typeof detox[name]).toBe(type);
     });
   });
 
   describe('detox.init(config[, userParams])', () => {
-    it(`should pass args via calling configuration.composeDetoxConfig(config, userParams)`, async () => {
+    it(`should pass args via calling configuration.composeDetoxConfig({ override, userParams })`, async () => {
       const [config, userParams] = [1, 2].map(testUtils.randomObject);
-      await index.init(config, userParams).catch(() => {});
+      await detox.init(config, userParams).catch(() => {});
 
       expect(configuration.composeDetoxConfig).toHaveBeenCalledWith({
         override: config,
@@ -83,14 +72,14 @@ describe('index', () => {
 
     describe('when configuration is valid', () => {
       beforeEach(async () => {
-        detox = await index.init();
+        detoxInstance = await detox.init();
       });
 
       it(`should create a Detox instance with the composed config object`, () =>
         expect(Detox).toHaveBeenCalledWith(detoxConfig));
 
       it(`should return a Detox instance`, () =>
-        expect(detox).toBeInstanceOf(Detox));
+        expect(detoxInstance).toBeInstanceOf(Detox));
 
       it(`should set the last error to be null in Detox.none's storage`, () =>
         expect(Detox.none.setError).toHaveBeenCalledWith(null));
@@ -106,7 +95,7 @@ describe('index', () => {
           throw configError;
         });
 
-        initPromise = index.init();
+        initPromise = detox.init();
         await initPromise.catch(() => {});
       });
 
@@ -138,7 +127,7 @@ describe('index', () => {
     describe('when behaviorConfig.init.exposeGlobals = true', () => {
       beforeEach(async () => {
         detoxConfig.behaviorConfig.init.exposeGlobals = true;
-        detox = await index.init();
+        detoxInstance = await detox.init();
       });
 
       it(`should touch globals with Detox.none.initContext`, () => {
@@ -149,7 +138,7 @@ describe('index', () => {
     describe('when behaviorConfig.init.exposeGlobals = false', () => {
       beforeEach(async () => {
         detoxConfig.behaviorConfig.init.exposeGlobals = false;
-        detox = await index.init();
+        detoxInstance = await detox.init();
       });
 
       it(`should not touch globals with Detox.none.initContext`, () => {
@@ -160,7 +149,7 @@ describe('index', () => {
 
   describe('detox.cleanup()', () => {
     describe('when called before detox.init()', () => {
-      beforeEach(() => index.cleanup());
+      beforeEach(() => detox.cleanup());
 
       it('should nevertheless cleanup globals with Detox.none.cleanupContext', () =>
         expect(Detox.none.cleanupContext).toHaveBeenCalledWith(global));
@@ -168,21 +157,21 @@ describe('index', () => {
 
     describe('when called after detox.init()', () => {
       beforeEach(async () => {
-        detox = await index.init();
-        await index.cleanup();
+        detoxInstance = await detox.init();
+        await detox.cleanup();
       });
 
       it('should call cleanup in the current Detox instance', () =>
-        expect(detox.cleanup).toHaveBeenCalled());
+        expect(detoxInstance.cleanup).toHaveBeenCalled());
 
       it('should call cleanup globals with Detox.none.cleanupContext', () =>
         expect(Detox.none.cleanupContext).toHaveBeenCalledWith(global));
 
       describe('twice', () => {
-        beforeEach(() => index.cleanup());
+        beforeEach(() => detox.cleanup());
 
         it('should not call cleanup twice in the former Detox instance', () =>
-          expect(detox.cleanup).toHaveBeenCalledTimes(1));
+          expect(detoxInstance.cleanup).toHaveBeenCalledTimes(1));
       });
     });
   });
@@ -208,7 +197,7 @@ describe('index', () => {
       });
 
       it(`should forward calls to the Detox.none instance`, async () => {
-        await index[method](...randomArgs);
+        await detox[method](...randomArgs);
         expect(Detox.none[method]).toHaveBeenCalledWith(...randomArgs);
       });
     });
@@ -216,12 +205,12 @@ describe('index', () => {
     describe('after detox.init() has been called', () => {
       beforeEach(async () => {
         detoxConfig = { behaviorConfig: { init: {} } };
-        detoxInstance = await index.init();
+        detoxInstance = await detox.init();
         detoxInstance[method] = jest.fn();
       });
 
       it(`should forward calls to the current Detox instance`, async () => {
-        await index[method](...randomArgs);
+        await detoxInstance[method](...randomArgs);
         expect(detoxInstance[method]).toHaveBeenCalledWith(...randomArgs);
       });
     });
@@ -237,22 +226,38 @@ describe('index', () => {
       });
 
       it(`should return value of Detox.none["${property}"]`, () => {
-        expect(index[property]).toEqual(Detox.none[property]);
+        expect(detox[property]).toEqual(Detox.none[property]);
       });
     });
 
     describe('after detox.init() has been called', () => {
       beforeEach(async () => {
         detoxConfig = { behaviorConfig: { init: {} } };
-        detoxInstance = await index.init();
+        detoxInstance = await detox.init();
         detoxInstance[property] = testUtils.randomObject();
       });
 
       it(`should forward calls to the current Detox instance`, () => {
-        expect(index[property]).toEqual(detoxInstance[property]);
+        expect(detox[property]).toEqual(detoxInstance[property]);
       });
     });
   });
+});
 
+describe('index (global detox variable injected with Jest Circus)', () => {
+  beforeEach(() => {
+    if (global.detox) {
+      throw new Error('detox property should not be in globals during unit tests');
+    }
 
+    global.detox = jest.fn();
+  });
+
+  afterEach(() => {
+    delete global.detox;
+  });
+
+  it('should reexport global.detox', () => {
+    expect(require('./index')).toBe(global.detox);
+  });
 });
