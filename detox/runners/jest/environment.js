@@ -1,4 +1,3 @@
-const path = require('path');
 const NodeEnvironment = require('jest-environment-node'); // eslint-disable-line node/no-extraneous-require
 const {getFullTestName, hasTimedOut} = require('./utils');
 const timely = require('../../src/utils/timely');
@@ -15,6 +14,7 @@ class DetoxEnvironment extends NodeEnvironment {
     super(config);
 
     this._initTimeout = this.constructor.initTimeout;
+    this._testTimeout = this.constructor.initTimeout;
   }
 
   async setup() {
@@ -91,8 +91,7 @@ class DetoxEnvironment extends NodeEnvironment {
 
   /** @protected */
   async initDetox() {
-    const config = require(path.join(process.cwd(), 'package.json')).detox;
-    await this.detox.init(config);
+    await this.detox.init();
   }
 
   /** @protected */
