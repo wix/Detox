@@ -1,0 +1,49 @@
+const CircusTestEventListenerBase = require('./CircusTestEventListenerBase');
+const SpecReporter = require('./SpecReporterImpl');
+
+class SpecReporterCircus extends CircusTestEventListenerBase {
+  constructor() {
+    super();
+    this._specReporter = new SpecReporter();
+  }
+
+  _onSuiteStart(event) {
+    if (event.describeBlock.parent !== undefined) {
+      this._specReporter.onSuiteStart({
+        description: event.describeBlock.name,
+      });
+    }
+  }
+
+  _onSuiteEnd(event) {
+    if (event.describeBlock.parent !== undefined) {
+      this._specReporter.onSuiteEnd();
+    }
+  }
+
+  _onTestStart(event) {
+    const { test } = event;
+    this._specReporter.onTestStart({
+      description: test.name,
+      invocations: test.invocations,
+    });
+  }
+
+  _onTestComplete(event) {
+    const { test } = event;
+    const testInfo = {
+      description: test.name,
+      invocations: test.invocations,
+    };
+    this._specReporter.onTestEnd(testInfo, test.errors.length ? 'failed' : 'success');
+  }
+
+  _onTestSkip(event) {
+    const testInfo = {
+      description: event.test.name,
+    };
+    this._specReporter.onTestEnd(testInfo, 'skipped');
+  }
+}
+
+module.exports = SpecReporterCircus;
