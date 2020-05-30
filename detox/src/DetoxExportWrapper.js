@@ -61,6 +61,8 @@ class DetoxExportWrapper {
 
       return this[_detox];
     } catch (err) {
+      log.error({ event: 'DETOX_INIT_ERROR' }, '\n', err);
+
       Detox.none.setError(err);
       throw err;
     }
