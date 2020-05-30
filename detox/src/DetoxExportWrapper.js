@@ -62,8 +62,6 @@ class DetoxExportWrapper {
       return this[_detox];
     } catch (err) {
       Detox.none.setError(err);
-
-      log.error({ event: 'DETOX_INIT_ERROR' }, '\n', err);
       throw err;
     }
   }
@@ -87,6 +85,7 @@ class DetoxExportWrapper {
     this[name] = funpermaproxy(() => this[_detox][name]);
   }
 
+  /** Use for test runners with sandboxed global */
   _setGlobal(global) {
     Detox.global = global;
     return this;

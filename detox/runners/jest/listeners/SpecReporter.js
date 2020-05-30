@@ -1,7 +1,6 @@
 const chalk = require('chalk').default;
-const { traceln } = require('./utils/stdout');
-const log = require('../../src/utils/logger').child();
-const argparse = require('../../src/utils/argparse');
+const { traceln } = require('../utils/stdout');
+const log = require('../../../src/utils/logger');
 
 const RESULT_SKIPPED = chalk.yellow('SKIPPED');
 const RESULT_FAILED = chalk.red('FAIL');
@@ -13,17 +12,9 @@ class SpecReporter {
   constructor() {
     this._suites = [];
     this._suitesDesc = '';
-
-    if (argparse.getArgValue('reportSpecs') === 'true') {
-      this.onSuiteStart = _.noop;
-      this.onSuiteEnd = _.noop;
-      this.onTestStart = _.noop;
-      this.onTestDone = _.noop;
-      this.onTestSkipped = _.noop;
-    }
   }
 
-  onSuiteStart({ describeBlock}) {
+  suite_start({ describeBlock }) {
     if (describeBlock.parent === undefined) {
       return;
     }
@@ -32,7 +23,7 @@ class SpecReporter {
     this._regenerateSuitesDesc();
   }
 
-  onSuiteEnd({ describeBlock }) {
+  suite_end({ describeBlock }) {
     if (describeBlock.parent === undefined) {
       return;
     }
@@ -44,18 +35,18 @@ class SpecReporter {
     }
   }
 
-  onTestStart({test}) {
+  test_start({ test }) {
     this._traceTest({ description: test.name });
   }
 
-  onTestDone({test}) {
+  test_done({ test }) {
     this._traceTest({
       description: test.name,
       status: test.errors.length ? RESULT_FAILED : RESULT_SUCCESS,
     });
   }
 
-  onTestSkipped({test}) {
+  test_skip({ test }) {
     this._traceTest({
       description: test.name,
       status: RESULT_SKIPPED,

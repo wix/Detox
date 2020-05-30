@@ -1,11 +1,13 @@
 const _ = require('lodash');
 const chalk = require('chalk').default;
-const detox = require('../../src');
-const log = require('../../src/utils/logger').child();
+const log = require('../../../src/utils/logger').child();
 
 class WorkerAssignReporter {
-  onSuiteStart(event) {
-    const { describeBlock } = event;
+  constructor({ detox }) {
+    this.detox = detox;
+  }
+
+  suite_start({ describeBlock }) {
     const isTopLevel = describeBlock.parent && describeBlock.parent.parent === undefined;
 
     if (isTopLevel) {
@@ -14,7 +16,7 @@ class WorkerAssignReporter {
   }
 
   _report(suiteName) {
-    const deviceName = _.attempt(() => detox.device.name);
+    const deviceName = _.attempt(() => this.detox.device.name);
     const formattedDeviceName = _.isError(deviceName)
       ? chalk.redBright('undefined')
       : chalk.blueBright(deviceName);

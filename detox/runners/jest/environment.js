@@ -1,10 +1,9 @@
 const NodeEnvironment = require('jest-environment-node'); // eslint-disable-line node/no-extraneous-require
-const {getFullTestName, hasTimedOut} = require('./utils');
+const argparse = require('../../src/utils/argparse');
 const timely = require('../../src/utils/timely');
-
-function getTimeoutReason(ms) {
-  return `Exceeded timeout of ${ms}ms.`;
-}
+const DetoxCoreListener = require('./listeners/DetoxCoreListener');
+const WorkerAssignReporter = require('./listeners/WorkerAssignReporter');
+const SpecReporter = require('./listeners/SpecReporter');
 
 /**
  * @see https://www.npmjs.com/package/jest-circus#overview
@@ -13,8 +12,10 @@ class DetoxEnvironment extends NodeEnvironment {
   constructor(config) {
     super(config);
 
-    this._initTimeout = this.constructor.initTimeout;
-    this._testTimeout = this.constructor.initTimeout;
+    this._hookTimeout = this.constructor.initTimeout;
+    this._enabledListeners = {};
+    /** @protected */
+    this.circusEventListeners = [];
   }
 
   async setup() {
@@ -23,30 +24,34 @@ class DetoxEnvironment extends NodeEnvironment {
     this.detox = require('../../src')._setGlobal(this.global);
 
     try {
-      await timely(() => this.initDetox(), this._initTimeout, getTimeoutReason(this._initTimeout))();
+      await this._timely(() => this.initDetox());
     } catch (e) {
       this._initError = e;
+      throw e;
     }
 
     this._expect = this.global.expect;
   }
 
+  async handleTestEvent(event, state) {
+    this._hookTimeout = state.testTimeout;
+
+    if (event.name === 'setup') {
+      await this._onSetup(event, state);
+    }
+
+    await this._notifyListeners(event, state);
+  }
+
   async teardown() {
-    await timely(() => this.cleanupDetox(), this._testTimeout, getTimeoutReason(this._testTimeout))();
+    await this._timely(() => this.cleanupDetox());
     await super.teardown();
   }
 
-  async handleTestEvent(event, state) {
-    this._testTimeout = state.testTimeout;
-
-    switch (event.name) {
-      case 'setup': return this._onSetup(event, state);
-      case 'suite_start': return this._onSuiteStart(event, state);
-      case 'suite_end': return this._onSuiteEnd(event, state);
-      case 'test_start': return this._onTestStart(event, state);
-      case 'test_done': return this._onTestDone(event, state);
-      case 'teardown': return this._onTeardown(event, state);
-    }
+  _timely(fn) {
+    return timely(fn, this._hookTimeout, () => {
+      return new Error(`Exceeded timeout of ${this._hookTimeout}ms.`);
+    })();
   }
 
   _onSetup(event, state) {
@@ -61,53 +66,48 @@ class DetoxEnvironment extends NodeEnvironment {
     }
   }
 
-  async _onSuiteStart({describeBlock: {name, tests}}, state) {
-    if (tests.length) {
-      await this.detox.suiteStart({ name });
+  async _notifyListeners(event, state) {
+    const name = event.name;
+
+    for (const listener of this.circusEventListeners) {
+      if (typeof listener[name] === 'function') {
+        await listener[name](event, state);
+      }
     }
-  }
-
-  async _onSuiteEnd({describeBlock: {name, tests}}, state) {
-    if (tests.length) {
-      await this.detox.suiteEnd({ name });
-    }
-  }
-
-  async _onTestStart(event) {
-    const { test } = event;
-    if (test.mode === 'skip' || test.mode === 'todo' || test.errors.length > 0) {
-      return;
-    }
-
-    await this.detox.beforeEach({
-      title: test.name,
-      fullName: getFullTestName(test),
-      status: 'running',
-    });
-  }
-
-  async _onTestDone(event) {
-    const { test } = event;
-
-    await this.detox.afterEach({
-      title: test.name,
-      fullName: getFullTestName(test),
-      status: test.errors.length ? 'failed' : 'passed',
-      timedOut: hasTimedOut(test)
-    });
-  }
-
-  async _onTeardown(event) {
   }
 
   /** @protected */
   async initDetox() {
-    await this.detox.init();
+    const detox = await this.detox.init();
+
+    this.circusEventListeners.push(new DetoxCoreListener({ detox }));
+
+    if (this._enabledListeners['WorkerAssignReporter']) {
+      this.circusEventListeners.push(new WorkerAssignReporter({ detox }));
+    }
+
+    if (this._enabledListeners['SpecReporter']) {
+      if (`${argparse.getArgValue('reportSpecs')}` === 'true') {
+        this.circusEventListeners.push(new SpecReporter());
+      }
+    }
   }
 
   /** @protected */
   async cleanupDetox() {
     await this.detox.cleanup();
+  }
+
+  /** @protected */
+  enableListener(type) {
+    switch (type) {
+      case 'WorkerAssignReporter':
+      case 'SpecReporter':
+        this._enabledListeners[type] = true;
+        break;
+      default:
+        throw new Error(`Cannot add unsupported Circus listener: ${type}`);
+    }
   }
 }
 

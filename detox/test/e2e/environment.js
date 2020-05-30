@@ -1,6 +1,13 @@
 const DetoxEnvironment = require('detox/runners/jest/environment');
 
 class CustomDetoxEnvironment extends DetoxEnvironment {
+  constructor(config) {
+    super(config);
+
+    this.enableListener('WorkerAssignReporter');
+    this.enableListener('SpecReporter');
+  }
+
   async initDetox() {
     if (process.env.TIMEOUT_E2E_TEST) {
       await this._initDetoxWithHangingServer();

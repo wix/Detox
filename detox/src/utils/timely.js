@@ -1,6 +1,6 @@
 const isPromise = require('./isPromise');
 
-function timely(fn, ms, rejectReason) {
+function timely(fn, ms, createRejectReason) {
   return function () {
     return new Promise((resolve, reject) => {
       const maybePromise = fn(...arguments);
@@ -9,6 +9,7 @@ function timely(fn, ms, rejectReason) {
       }
 
       const promise = maybePromise;
+      const rejectReason = createRejectReason();
       const handle = setTimeout(reject, ms, rejectReason);
       promise.finally(() => clearTimeout(handle));
       promise.then(resolve, reject);
