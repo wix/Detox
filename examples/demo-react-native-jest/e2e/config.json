@@ -1,5 +1,5 @@
 {
-  "testEnvironment": "detox/runners/jest/environment",
+  "testEnvironment": "detox/runners/jest-circus/environment",
   "testRunner": "jest-circus/runner",
   "testTimeout": 90000,
   "reporters": ["detox/runners/jest/streamlineReporter"],
