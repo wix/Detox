@@ -88,6 +88,11 @@ function init() {
         logPath: plainFileStreamPath,
       }));
     }
+
+    process.on('exit', () => {
+      try { fs.unlinkSync(jsonFileStreamPath); } catch (e) {}
+      try { fs.unlinkSync(plainFileStreamPath); } catch (e) {}
+    });
   }
 
   const logger = bunyan.createLogger({
@@ -106,6 +111,16 @@ function init() {
   if (argparse.getArgValue('use-custom-logger') === 'true') {
     overrideConsoleLogger(logger);
   }
+
+  Object.getPrototypeOf(logger).ensureLogFiles = () => {
+    if (jsonFileStreamPath) {
+      fs.ensureFileSync(jsonFileStreamPath);
+    }
+
+    if (plainFileStreamPath) {
+      fs.ensureFileSync(plainFileStreamPath);
+    }
+  };
 
   return logger;
 }

@@ -36,9 +36,9 @@
     "@babel/core": "^7.4.5",
     "detox": "^16.7.1",
     "express": "^4.15.3",
-    "jest": "25.3.x",
-    "jest-circus": "25.3.x",
-    "jest-junit": "^8.0.0",
+    "jest": "26.x.x",
+    "jest-circus": "26.x.x",
+    "jest-junit": "^10.0.0",
     "lodash": "^4.14.1",
     "nyc": "^14.0.0",
     "pngjs": "^3.4.0"

@@ -32,6 +32,8 @@ class DetoxExportWrapper {
   async init(configOverride, userParams) {
     let configError, exposeGlobals, resolvedConfig;
 
+    log.ensureLogFiles();
+
     try {
       resolvedConfig = await configuration.composeDetoxConfig({
         override: configOverride,

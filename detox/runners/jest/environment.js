@@ -21,7 +21,13 @@ class DetoxEnvironment extends NodeEnvironment {
     await super.setup();
 
     this.detox = require('../../src')._setGlobal(this.global);
-    await timely(() => this.initDetox(), this._initTimeout, getTimeoutReason(this._initTimeout))();
+
+    try {
+      await timely(() => this.initDetox(), this._initTimeout, getTimeoutReason(this._initTimeout))();
+    } catch (e) {
+      this._initError = e;
+    }
+
     this._expect = this.global.expect;
   }
 
@@ -47,6 +53,11 @@ class DetoxEnvironment extends NodeEnvironment {
     if (this._expect) {
       this.global.expect = this._expect;
       delete this._expect;
+    }
+
+    if (this._initError) {
+      state.unhandledErrors.push(this._initError);
+      this._initError = null;
     }
   }
 
