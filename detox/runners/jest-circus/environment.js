@@ -38,6 +38,11 @@ class DetoxEnvironment extends NodeEnvironment {
     this._hookTimeout = state.testTimeout;
   }
 
+  async teardown() {
+    await this._timely(() => this.cleanupDetox());
+    await super.teardown();
+  }
+
   _timely(fn) {
     return timely(fn, this._hookTimeout, () => {
       return new Error(`Exceeded timeout of ${this._hookTimeout}ms.`);
@@ -55,14 +60,7 @@ class DetoxEnvironment extends NodeEnvironment {
   }
 
   async _onSetup() {
-    let detox;
-
-    try {
-      detox = await this.initDetox();
-    } catch (e) {
-      await this.cleanupDetox();
-      throw e;
-    }
+    const detox = await this.initDetox();
 
     this.circusEventListeners.push(new DetoxCoreListener({ detox }));
 
