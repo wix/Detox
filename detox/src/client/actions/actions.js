@@ -71,8 +71,8 @@ class Shake extends Action {
 }
 
 class SetOrientation extends Action {
-  constructor() {
-    super('setOrientation');
+  constructor(params) {
+    super('setOrientation', params);
   }
 
   async handle(response) {
