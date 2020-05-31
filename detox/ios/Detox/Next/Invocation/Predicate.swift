@@ -174,7 +174,7 @@ class KindOfPredicate : Predicate {
 	
 	override var innerDescription: String {
 		get {
-			return "class ISKINDOF “\(className)”"
+			return "class ⊇ “\(className)”"
 		}
 	}
 }
@@ -273,9 +273,11 @@ fileprivate func traitStringsToTrait(_ traitStrings: [String]) -> UIAccessibilit
 }
 
 class TraitPredicate : Predicate {
+	let stringTraits : [String]
 	let traits : UIAccessibilityTraits
 	
 	init(kind: String, modifiers: Set<String>, stringTraits: [String]) {
+		self.stringTraits = stringTraits
 		self.traits = traitStringsToTrait(stringTraits)
 		
 		super.init(kind: kind, modifiers: modifiers)
@@ -290,7 +292,7 @@ class TraitPredicate : Predicate {
 	
 	override var innerDescription: String {
 		get {
-			return "accessibilityTraits CONFORMSTO “\(traits.rawValue)”"
+			return "traits ⊇ “[\(stringTraits.joined(separator: ", "))]”"
 		}
 	}
 }

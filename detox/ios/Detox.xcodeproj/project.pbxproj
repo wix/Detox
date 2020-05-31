@@ -53,6 +53,7 @@
 		3976BF17246C172100AA20C7 /* UIView+ScrollViewExtraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3976BF16246C172100AA20C7 /* UIView+ScrollViewExtraction.swift */; };
 		397CA78C248010B5005E8A71 /* UISlider+DetoxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 397CA78A248010B5005E8A71 /* UISlider+DetoxUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		397CA78D248010B5005E8A71 /* UISlider+DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 397CA78B248010B5005E8A71 /* UISlider+DetoxUtils.m */; };
+		397CA79F2483F07D005E8A71 /* ApproximateEquality.swift in Sources */ = {isa = PBXBuildFile; fileRef = 397CA7982483F07D005E8A71 /* ApproximateEquality.swift */; };
 		397EC9B51E7EDE0B00D5F2BB /* EarlGreyStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 397EC9B31E7EDE0B00D5F2BB /* EarlGreyStatistics.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		397EC9B61E7EDE0B00D5F2BB /* EarlGreyStatistics.m in Sources */ = {isa = PBXBuildFile; fileRef = 397EC9B41E7EDE0B00D5F2BB /* EarlGreyStatistics.m */; };
 		3980D10E2448B52C004812DD /* UIView+DetoxActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D0FD2448B52A004812DD /* UIView+DetoxActions.m */; };
@@ -281,6 +282,7 @@
 		3976BF16246C172100AA20C7 /* UIView+ScrollViewExtraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+ScrollViewExtraction.swift"; sourceTree = "<group>"; };
 		397CA78A248010B5005E8A71 /* UISlider+DetoxUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UISlider+DetoxUtils.h"; sourceTree = "<group>"; };
 		397CA78B248010B5005E8A71 /* UISlider+DetoxUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UISlider+DetoxUtils.m"; sourceTree = "<group>"; };
+		397CA7982483F07D005E8A71 /* ApproximateEquality.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApproximateEquality.swift; sourceTree = "<group>"; };
 		397EC9B31E7EDE0B00D5F2BB /* EarlGreyStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EarlGreyStatistics.h; sourceTree = "<group>"; };
 		397EC9B41E7EDE0B00D5F2BB /* EarlGreyStatistics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EarlGreyStatistics.m; sourceTree = "<group>"; };
 		3980D0FD2448B52A004812DD /* UIView+DetoxActions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+DetoxActions.m"; sourceTree = "<group>"; };
@@ -629,6 +631,7 @@
 		3980D130244C42E7004812DD /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				397CA7982483F07D005E8A71 /* ApproximateEquality.swift */,
 				3980D1062448B52B004812DD /* DTXRunLoopSpinner.h */,
 				3980D10A2448B52B004812DD /* DTXRunLoopSpinner.m */,
 				3976BF14246C139D00AA20C7 /* DTXSwizzlingHelper.h */,
@@ -979,6 +982,7 @@
 				39F5ACEC245F1CB000FB7F18 /* DTXLogging.swift in Sources */,
 				3980D15E244C45EA004812DD /* Predicate.swift in Sources */,
 				3980D13B244C43EA004812DD /* UIView+DetoxExpectations.m in Sources */,
+				397CA79F2483F07D005E8A71 /* ApproximateEquality.swift in Sources */,
 				39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */,
 				394767C21DBF98A700D72256 /* GREYMatchers+Detox.m in Sources */,
 				3980D10E2448B52C004812DD /* UIView+DetoxActions.m in Sources */,

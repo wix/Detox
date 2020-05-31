@@ -217,7 +217,8 @@ class DoubleExpectation : ValueExpectation {
 	let tolerance : Double?
 	
 	required init(kind: String, modifiers: Set<String>, element: Element, timeout: TimeInterval, key: String, value: Double, tolerance: Double?) {
-		self.tolerance = tolerance
+		//Tolerances outside of [DBL_EPSILON, 1) yield well-defined but useless results, so clamp the tolerance.
+		self.tolerance = tolerance != nil ? Double.minimum(Double.maximum(tolerance!, Double.ulpOfOne), 1.0 - Double.ulpOfOne) : nil
 		
 		super.init(kind: kind, modifiers: modifiers, element: element, timeout: timeout, key: key, value: value)
 	}
@@ -235,13 +236,14 @@ class DoubleExpectation : ValueExpectation {
 			guard let slider = view as? UISlider else {
 				dtx_fatalError("View \((view as! UIView).dtx_shortDescription) is not instance of “UISlider”", view: (view as! UIView))
 			}
-			return fabs(slider.dtx_normalizedSliderPosition.distance(to: self.value as! Double)) <= (self.tolerance ?? 0.00000000001)
+			
+			return slider.dtx_normalizedSliderPosition.isAlmostEqual(to: self.value as! Double, tolerance: self.tolerance ?? Double.ulpOfOne.squareRoot())
 		}.evaluate(with: view)
 	}
 	
 	override var additionalDescription: String {
 		get {
-			return "(sliderPosition ==\(tolerance != nil ? "(~\(tolerance!))" : "") “\(value)”)"
+			return "(sliderPosition \(tolerance != nil ? "(~\(tolerance!))" : "")== “\(value)”)"
 		}
 	}
 }
