@@ -30,38 +30,37 @@ class Element : CustomStringConvertible {
 	}
 	
 	var exists : Bool {
-		get {
-			let array = UIView.dtx_findViewsInKeySceneWindows(passing: predicate.predicateForQuery())
-			return array.count > 0
-		}
+		return self.views.count > 0
 	}
-
-	var view : UIView {
-		get {
-			let array = UIView.dtx_findViewsInKeySceneWindows(passing: predicate.predicateForQuery()) as! [UIView]
-			
-			let element : UIView
-			if let index = index {
-				element = array[index]
-			} else {
-				//Will fail test if more than one element are resolved from the query
-				guard array.count == 1 else {
-					if array.count == 0 {
-						dtx_fatalError("No elements found for “\(self.description)”")
-					} else {
-						dtx_fatalError("Multiple elements found for “\(self.description)”")
-					}
-				}
-				element = array.first!
-			}
-			
-			return element
+	
+	var views : [UIView] {
+		let array = UIView.dtx_findViewsInKeySceneWindows(passing: predicate.predicateForQuery()) as! [UIView]
+		
+		guard array.count > 0 else {
+			dtx_fatalError("No elements found for “\(self.description)”")
 		}
+		
+		return array
+	}
+	
+	var view : UIView {
+		let array = self.views
+		
+		let element : UIView
+		if let index = index {
+			element = array[index]
+		} else {
+			//Will fail test if more than one element are resolved from the query
+			guard array.count == 1 else {
+				dtx_fatalError("Multiple elements found for “\(self.description)”")
+			}
+			element = array.first!
+		}
+		
+		return element
 	}
 	
 	var description: String {
-		get {
-			return String(format: "MATCHER(%@)%@", predicate.description, index != nil ? " AT INDEX(\(index!))" : "")
-		}
+		return String(format: "MATCHER(%@)%@", predicate.description, index != nil ? " AT INDEX(\(index!))" : "")
 	}
 }

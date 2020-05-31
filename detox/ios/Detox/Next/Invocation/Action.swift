@@ -130,9 +130,7 @@ class Action : CustomStringConvertible {
 	}
 	
 	var description: String {
-		get {
-			return String(format: "%@%@ WITH %@", self.kind.uppercased(), params != nil ? "(\(params!.map{$0.description} .joined(separator: ", ")))" : "", element.description)
-		}
+		return String(format: "%@%@ WITH %@", self.kind.uppercased(), params != nil ? "(\(params!.map{$0.description} .joined(separator: ", ")))" : "", element.description)
 	}
 }
 
@@ -503,7 +501,23 @@ class SetDatePickerAction : Action {
 }
 
 class GetAttributesAction : Action {
-	override func perform(on view: UIView) -> [String : Any]? {
+	override func perform(completionHandler: @escaping ([String : Any]?, Error?) -> Void) {
+		let views = element.views
+		
+		async_action_dtx_try(completionHandler: completionHandler) {
+			if views.count == 1 {
+				perform(on: views.first!, completionHandler: completionHandler)
+			} else {
+				let elements = views.map {
+					return self.perform(on: $0)
+				}
+				
+				completionHandler(["elements": elements], nil)
+			}
+		}
+	}
+	
+	override func perform(on view: UIView) -> [String : Any] {
 		return view.dtx_attributes
 	}
 }

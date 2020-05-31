@@ -217,9 +217,15 @@ Retrieved attributes are:
 
 If the value for a given attribute is null or cannot be otherwise computed, the key will not be present, but empty strings may be found in the object.
 
+If the query matches multiple elements, the attributes of all matched elements is returned as an array of objects under the `elements` key.
+
 ```js
 const attributes = await element(by.text('Tap Me')).getAttributes();
 jestExpect(attributes.text).toBe('Tap Me');
+
+const multipleMatchedElements = await element(by.text('Multiple')).getAttributes();
+jestExpect(multipleMatchedElements.elements.length).toBe(5);
+jestExpect(multipleMatchedElements.elements[0].identifier).toBe('FirstElement');
 ```
 
 ## Deprecated Methods
