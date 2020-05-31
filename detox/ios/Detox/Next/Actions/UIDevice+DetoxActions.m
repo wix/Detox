@@ -21,16 +21,24 @@
 {
 	NSParameterAssert(NSThread.isMainThread);
 	
-	BKSAccelerometer *accelerometer = [UIApplication.sharedApplication._motionEvent valueForKey:@"_motionAccelerometer"];
-	BOOL prevValue = accelerometer.accelerometerEventsEnabled;
-	accelerometer.accelerometerEventsEnabled = YES;
+	UIApplication *application = UIApplication.sharedApplication;
 	
-	// This behaves exactly in the same manner that UIApplication handles the simulator
-	// "Shake Gesture" menu command.
-	[UIApplication.sharedApplication _sendMotionBegan:UIEventSubtypeMotionShake];
-	[UIApplication.sharedApplication _sendMotionEnded:UIEventSubtypeMotionShake];
+	UIWindow* window;
+	if(@available(iOS 13, *))
+	{
+		window = UIWindowScene._keyWindowScene._keyWindow;
+	}
+	else
+	{
+		window = UIWindow.keyWindow;
+	}
+	UIMotionEvent *motionEvent = [application _motionEvent];
 	
-	accelerometer.accelerometerEventsEnabled = prevValue;
+	[motionEvent setShakeState:1];
+	[motionEvent _setSubtype:UIEventSubtypeMotionShake];
+	[application sendEvent:motionEvent];
+	[window motionBegan:UIEventSubtypeMotionShake withEvent:motionEvent];
+	[window motionEnded:UIEventSubtypeMotionShake withEvent:motionEvent];
 }
 
 

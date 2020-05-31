@@ -24,6 +24,7 @@
 @interface UIWindowScene ()
 
 + (instancetype)_keyWindowScene;
+@property(readonly, nonatomic) UIWindow *_keyWindow;
 
 @end
 
@@ -151,10 +152,25 @@ IOHIDEventRef IOHIDEventCreateDigitizerFingerEvent(CFAllocatorRef allocator,
  *  A private class that represents motion related events. This is sent to UIApplication whenever a
  *  motion occurs.
  */
-@interface UIMotionEvent : NSObject {
+@interface UIMotionEvent : UIEvent
+{
   // The motion accelerometer of the event.
   BKSAccelerometer *_motionAccelerometer;
 }
+
+/**
+ *  Modify the _shakeState ivar inside motion event.
+ *
+ *  shakeState Set as true for 1 being passed. All other values set to false.
+ */
+- (void)setShakeState:(int)shakeState;
+
+/**
+ *  Sets the subtype for the motion event.
+ *
+ *  eventSubType The UIEventSubtype for the motion event.
+ */
+- (void)_setSubtype:(int)eventSubType;
 @end
 
 @interface UIApplication (GREYExposed)
