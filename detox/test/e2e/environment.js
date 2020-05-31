@@ -10,9 +10,9 @@ class CustomDetoxEnvironment extends DetoxEnvironment {
 
   async initDetox() {
     if (process.env.TIMEOUT_E2E_TEST) {
-      await this._initDetoxWithHangingServer();
+      return this._initDetoxWithHangingServer();
     } else {
-      await super.initDetox();
+      return super.initDetox();
     }
   }
 
@@ -28,6 +28,7 @@ class CustomDetoxEnvironment extends DetoxEnvironment {
     };
 
     await instance.device.launchApp();
+    return instance;
   }
 }
 

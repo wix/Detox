@@ -12,58 +12,36 @@ class DetoxEnvironment extends NodeEnvironment {
   constructor(config) {
     super(config);
 
-    this._hookTimeout = this.constructor.initTimeout;
+    this._hookTimeout = this.constructor.initTimeout || 300000;
     this._enabledListeners = {};
     /** @protected */
     this.circusEventListeners = [];
   }
 
-  async setup() {
-    await super.setup();
-
-    this.detox = require('../../src')._setGlobal(this.global);
-
-    try {
-      await this._timely(() => this.initDetox());
-    } catch (e) {
-      this._initError = e;
-      throw e;
-    }
-
-    this._expect = this.global.expect;
+  get detox() {
+    return require('../../src')._setGlobal(this.global);
   }
 
   async handleTestEvent(event, state) {
+    await this._timely(async () => {
+      if (event.name === 'setup') {
+        await this._onSetup();
+      }
+
+      await this._notifyListeners(event, state);
+
+      if (event.name === 'teardown') {
+        await this.cleanupDetox();
+      }
+    });
+
     this._hookTimeout = state.testTimeout;
-
-    if (event.name === 'setup') {
-      await this._onSetup(event, state);
-    }
-
-    await this._notifyListeners(event, state);
-  }
-
-  async teardown() {
-    await this._timely(() => this.cleanupDetox());
-    await super.teardown();
   }
 
   _timely(fn) {
     return timely(fn, this._hookTimeout, () => {
       return new Error(`Exceeded timeout of ${this._hookTimeout}ms.`);
     })();
-  }
-
-  _onSetup(event, state) {
-    if (this._expect) {
-      this.global.expect = this._expect;
-      delete this._expect;
-    }
-
-    if (this._initError) {
-      state.unhandledErrors.push(this._initError);
-      this._initError = null;
-    }
   }
 
   async _notifyListeners(event, state) {
@@ -76,9 +54,15 @@ class DetoxEnvironment extends NodeEnvironment {
     }
   }
 
-  /** @protected */
-  async initDetox() {
-    const detox = await this.detox.init();
+  async _onSetup() {
+    let detox;
+
+    try {
+      detox = await this.initDetox();
+    } catch (e) {
+      await this.cleanupDetox();
+      throw e;
+    }
 
     this.circusEventListeners.push(new DetoxCoreListener({ detox }));
 
@@ -94,8 +78,13 @@ class DetoxEnvironment extends NodeEnvironment {
   }
 
   /** @protected */
+  async initDetox() {
+    return this.detox.init();
+  }
+
+  /** @protected */
   async cleanupDetox() {
-    await this.detox.cleanup();
+    return this.detox.cleanup();
   }
 
   /** @protected */
@@ -110,7 +99,5 @@ class DetoxEnvironment extends NodeEnvironment {
     }
   }
 }
-
-DetoxEnvironment.initTimeout = 300000;
 
 module.exports = DetoxEnvironment;

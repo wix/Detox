@@ -3,6 +3,7 @@ const {getFullTestName, hasTimedOut} = require('../utils');
 class DetoxCoreListener {
   constructor({ detox }) {
     this.detox = detox;
+    this.startedTests = new WeakSet();
   }
 
   async suite_start({describeBlock: {name, tests}}) {
@@ -11,16 +12,12 @@ class DetoxCoreListener {
     }
   }
 
-  async test_start({ test }) {
-    if (test.mode === 'skip' || test.mode === 'todo' || test.errors.length > 0) {
-      return;
-    }
+  async hook_start({ test }) {
+    await this._onBeforeActualTestStart(test);
+  }
 
-    await this.detox.beforeEach({
-      title: test.name,
-      fullName: getFullTestName(test),
-      status: 'running',
-    });
+  async test_fn_start({ test }) {
+    await this._onBeforeActualTestStart(test);
   }
 
   async test_done({ test }) {
@@ -36,6 +33,19 @@ class DetoxCoreListener {
     if (tests.length) {
       await this.detox.suiteEnd({ name });
     }
+  }
+
+  async _onBeforeActualTestStart(test) {
+    if (!test || this.startedTests.has(test)) {
+      return;
+    }
+
+    this.startedTests.add(test);
+    await this.detox.beforeEach({
+      title: test.name,
+      fullName: getFullTestName(test),
+      status: 'running',
+    });
   }
 }
 
