@@ -34,15 +34,15 @@ OBJC_EXTERN void __DTXHandleCrash(NSException* exception, NSNumber* signal, NSSt
 	NSMutableDictionary* report = [@{@"threadNumber": threadNumber, @"queueName": queueName} mutableCopy];
 	if(exception)
 	{
-		report[@"errorDetails"] = exception.debugDescription;
+		report[@"errorDetails"] = [NSString stringWithFormat:@"%@\n%@", exception.reason, exception.dtx_demangledCallStackSymbols];
 	}
 	else if(signal)
 	{
-		report[@"errorDetails"] = [NSString stringWithFormat:@"Signal %@ was raised\n%@", signal, [NSThread callStackSymbols]];
+		report[@"errorDetails"] = [NSString stringWithFormat:@"Signal %@ was raised\n%@", signal, [NSThread dtx_demangledCallStackSymbols]];
 	}
 	else if(other)
 	{
-		report[@"errorDetails"] = other;
+		report[@"errorDetails"] = [NSString stringWithFormat:@"%@\n%@", other, [NSThread dtx_demangledCallStackSymbols]];;
 	}
 	
 	[DTXDetoxManager.sharedManager notifyOnCrashWithDetails:report];
@@ -78,9 +78,7 @@ OBJC_EXTERN int __dtx_asl_log(asl_object_t client, asl_object_t msg, int level, 
 		{
 			NSString* message = [[NSString alloc] initWithFormat:[NSString stringWithUTF8String:format] arguments:args];
 			va_end(args);
-			__DTXHandleCrash(nil, nil, message);
-			
-			//		exit(1);
+			__DTXHandleCrash(nil, nil, [message stringByTrimmingCharactersInSet:NSCharacterSet.newlineCharacterSet]);
 			
 			va_start(args, format);
 			

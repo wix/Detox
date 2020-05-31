@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface DTXAddressInfo : NSObject
 
 - (instancetype)initWithAddress:(NSUInteger)address;
@@ -19,5 +21,6 @@
 
 - (NSString*)formattedDescriptionForIndex:(NSUInteger)index;
 
-
 @end
+
+NS_ASSUME_NONNULL_END
