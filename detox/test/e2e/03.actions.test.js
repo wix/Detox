@@ -27,7 +27,7 @@ describe('Actions', () => {
   });
 
   it('should tap on an element at point', async () => {
-    await element(by.id('View7990')).tapAtPoint({ x: 180, y: 160 });
+    await element(by.id('View7990')).tap({ x: 180, y: 160 });
     await expect(element(by.id('UniqueId819'))).toHaveText('Taps: 1');
   });
 

@@ -27,9 +27,9 @@ function call(maybeAFunction) {
 class Action {}
 
 class TapAction extends Action {
-  constructor() {
+  constructor(value) {
     super();
-    this._call = invoke.callDirectly(DetoxViewActionsApi.click());
+    this._call = invoke.callDirectly(value ? DetoxActionApi.tapAtLocation(value.x, value.y) : DetoxViewActionsApi.click());
   }
 }
 
@@ -216,8 +216,8 @@ class Element {
     this._selectElementWithMatcher(this._originalMatcher);
     return this;
   }
-  async tap() {
-    return await new ActionInteraction(this._invocationManager, this, new TapAction()).execute();
+  async tap(value) {
+    return await new ActionInteraction(this._invocationManager, this, new TapAction(value)).execute();
   }
   async tapAtPoint(value) {
     return await new ActionInteraction(this._invocationManager, this, new TapAtPointAction(value)).execute();
