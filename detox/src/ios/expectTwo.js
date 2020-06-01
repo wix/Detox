@@ -322,65 +322,71 @@ class Matcher {
 class WaitFor {
   constructor(element) {
     this.element = new InternalElement(element.matcher);
+    this.expectation = new InternalExpect(this.element);
   }
 
   toBeVisible() {
-    this.expectation = new InternalExpect(this.element).toBeVisible();
+    this.expectation = this.expectation.toBeVisible();
     return this;
   }
 
   toBeNotVisible() {
-    this.expectation = new InternalExpect(this.element).toBeNotVisible();
+    this.expectation = this.expectation.toBeNotVisible();
     return this;
   }
 
   toExist() {
-    this.expectation = new InternalExpect(this.element).toExist();
+    this.expectation = this.expectation.toExist();
     return this;
   }
 
   toNotExist() {
-    this.expectation = new InternalExpect(this.element).toNotExist();
+    this.expectation = this.expectation.toNotExist();
     return this;
   }
 
   toHaveText(text) {
-    this.expectation = new InternalExpect(this.element).toHaveText(text);
+    this.expectation = this.expectation.toHaveText(text);
     return this;
   }
 
   toNotHaveText(text) {
-    this.expectation = new InternalExpect(this.element).toNotHaveText(text);
+    this.expectation = this.expectation.toNotHaveText(text);
     return this;
   }
 
   toHaveLabel(label) {
-    this.expectation = new InternalExpect(this.element).toHaveLabel(label);
+    this.expectation = this.expectation.toHaveLabel(label);
     return this;
   }
 
   toNotHaveLabel(label) {
-    this.expectation = new InternalExpect(this.element).toNotHaveLabel(label);
+    this.expectation = this.expectation.toNotHaveLabel(label);
     return this;
   }
 
   toHaveId(id) {
-    this.expectation = new InternalExpect(this.element).toHaveId(id);
+    this.expectation = this.expectation.toHaveId(id);
     return this;
   }
 
   toNotHaveId(id) {
-    this.expectation = new InternalExpect(this.element).toNotHaveId(id);
+    this.expectation = this.expectation.toNotHaveId(id);
     return this;
   }
 
   toHaveValue(value) {
-    this.expectation = new InternalExpect(this.element).toHaveValue(value);
+    this.expectation = this.expectation.toHaveValue(value);
     return this;
   }
 
   toNotHaveValue(value) {
-    this.expectation = new InternalExpect(this.element).toNotHaveValue(value);
+    this.expectation = this.expectation.toNotHaveValue(value);
+    return this;
+  }
+
+  get not() {
+    this.expectation.not;
     return this;
   }
 
