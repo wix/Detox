@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const NodeEnvironment = require('jest-environment-node'); // eslint-disable-line node/no-extraneous-require
 const argparse = require('../../src/utils/argparse');
 const timely = require('../../src/utils/timely');
@@ -8,7 +9,7 @@ const SpecReporter = require('./listeners/SpecReporter');
 /**
  * @see https://www.npmjs.com/package/jest-circus#overview
  */
-class DetoxEnvironment extends NodeEnvironment {
+class DetoxCircusEnvironment extends NodeEnvironment {
   constructor(config) {
     super(config);
 
@@ -16,6 +17,26 @@ class DetoxEnvironment extends NodeEnvironment {
     this._enabledListeners = {};
     /** @protected */
     this.circusEventListeners = [];
+    this._assertJestCircus();
+  }
+
+  _assertJestCircus() {
+    const circusVersion = _.attempt(() => {
+      const circusPackageJson = require.resolve('jest-circus/package.json', { paths: [process.cwd()] });
+      return require(circusPackageJson).version || '';
+    });
+
+    if (_.isError(circusVersion)) {
+      throw new Error('Cannot run tests without "jest-circus" npm package, exiting.');
+    }
+
+    const [major] = circusVersion.split('.');
+    if (major < 26) {
+      throw new Error(
+        `Cannot use older versions of "jest-circus", exiting.\n` +
+        `You have jest-circus@${circusVersion}. Update to ^26.0.0 or newer.`
+      );
+    }
   }
 
   get detox() {
@@ -98,4 +119,4 @@ class DetoxEnvironment extends NodeEnvironment {
   }
 }
 
-module.exports = DetoxEnvironment;
+module.exports = DetoxCircusEnvironment;
