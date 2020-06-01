@@ -37,6 +37,30 @@ object DetoxSingleTapSpec: Spek({
             }
         }
 
+        fun verifyMotionEventsInjected(vararg events: MotionEvent) {
+            verify(uiController).injectMotionEventSequence(events.asList())
+        }
+
+        fun verifyDownEventObtained(coordinates: FloatArray, precision: FloatArray) {
+            verify(motionEvents).obtainDownEvent(coordinates[0], coordinates[1], precision)
+        }
+
+        fun verifyUpEventObtained(coordinates: FloatArray) {
+            verify(motionEvents).obtainUpEvent(eq(downEvent), any(), eq(coordinates[0]), eq(coordinates[1]))
+        }
+
+        fun verifyUpEventObtainedWithTimestamp(expectedUpTime: Long) {
+            verify(motionEvents).obtainUpEvent(eq(downEvent), eq(expectedUpTime), any(), any())
+        }
+
+        fun verifyMainThreadSync(expectedSyncTime: Long) {
+            verify(uiController).loopMainThreadForAtLeast(eq(expectedSyncTime))
+        }
+
+        fun verifyMainThreadNeverSynced() {
+            verify(uiController, never()).loopMainThreadForAtLeast(any())
+        }
+
         fun uut() = DetoxSingleTap(motionEvents)
         fun uut(tapTimeout: Long) = DetoxSingleTap(motionEvents, tapTimeout)
 
@@ -46,7 +70,7 @@ object DetoxSingleTapSpec: Spek({
 
             uut().sendTap(uiController, coordinates, precision, 0, 0)
 
-            verify(uiController).injectMotionEventSequence(arrayListOf(downEvent, upEvent))
+            verifyMotionEventsInjected(downEvent, upEvent)
         }
 
         it("should create down event with proper coordinates and precision") {
@@ -55,7 +79,7 @@ object DetoxSingleTapSpec: Spek({
 
             uut().sendTap(uiController, coordinates, precision, 0, 0)
 
-            verify(motionEvents).obtainDownEvent(coordinates[0], coordinates[1], precision)
+            verifyDownEventObtained(coordinates, precision)
         }
 
         it("should create up event with proper coordinates") {
@@ -64,7 +88,7 @@ object DetoxSingleTapSpec: Spek({
 
             uut().sendTap(uiController, coordinates, precision, 0, 0)
 
-            verify(motionEvents).obtainUpEvent(eq(downEvent), any(), eq(coordinates[0]), eq(coordinates[1]))
+            verifyUpEventObtained(coordinates)
         }
 
         it("should create up event with a reasonable time-gap (30ms)") {
@@ -74,7 +98,7 @@ object DetoxSingleTapSpec: Spek({
 
             uut().sendTap(uiController, coordinates, precision, 0, 0)
 
-            verify(motionEvents).obtainUpEvent(eq(downEvent), eq(expectedUpEventTime), any(), any())
+            verifyUpEventObtainedWithTimestamp(expectedUpEventTime);
         }
 
         it("should recycle down+up events") {
@@ -132,7 +156,7 @@ object DetoxSingleTapSpec: Spek({
 
             uut().sendTap(uiController, coordinates, precision)
 
-            verify(uiController).injectMotionEventSequence(arrayListOf(downEvent, upEvent))
+            verifyMotionEventsInjected(downEvent, upEvent)
         }
 
         it("should idle-wait the tap-registration period following a successful tap injection") {
@@ -145,7 +169,7 @@ object DetoxSingleTapSpec: Spek({
 
             uut(expectedWait).sendTap(uiController, coordinates, precision, 0, 0)
 
-            verify(uiController).loopMainThreadForAtLeast(eq(expectedWait))
+            verifyMainThreadSync(expectedWait)
         }
 
         it("should not idle-wait the tap-registration period if tap injection fails") {
@@ -156,7 +180,18 @@ object DetoxSingleTapSpec: Spek({
 
             uut(111L).sendTap(uiController, coordinates, precision, 0, 0)
 
-            verify(uiController, never()).loopMainThreadForAtLeast(any())
+            verifyMainThreadNeverSynced()
+        }
+
+        it("should not idle-wait the tap-registration period if provided time is 0") {
+            whenever(uiController.injectMotionEventSequence(any())).doReturn(true)
+
+            val coordinates = dontCareCoordinates()
+            val precision = dontCarePrecision()
+
+            uut(0).sendTap(uiController, coordinates, precision, 0, 0)
+
+            verifyMainThreadNeverSynced()
         }
 
         it("should throw if no UI-controller provided") {

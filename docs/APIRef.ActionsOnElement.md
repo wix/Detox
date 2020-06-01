@@ -41,7 +41,9 @@ await element(by.id('tappable')).longPress();
 ```
 
 ### `multiTap(times)`
-Simulates multiple taps on an element.
+Simulates a sequence of multiple taps on an element.
+
+**Note:** All taps are applied as a part of the same gesture -- so as to trigger UI actions registered with such special gestures, explicitly. In particular, `multiTap(2)` is not the same as calling `tap()` twice in a row, as the former typically invokes a [_double tap_ gesture](https://developer.android.com/training/gestures/detector#detect) if applicable. Therefore, it **should not be used in that way.**
 
 ```js
 await element(by.id('tappable')).multiTap(3);

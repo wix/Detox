@@ -8,7 +8,7 @@ class DetoxMultiTap(private val times: Int, private val interTapsDelayMs: Long?,
     private var delegateTapper: Tapper = delegatedTapperGenFn()
 
     constructor(times: Int)
-            : this(times, getDoubleTapMinTime(), { DetoxSingleTap() })
+            : this(times, getDoubleTapMinTime(), { DetoxSingleTap(tapTimeout = 0) })
 
     override fun sendTap(uiController: UiController?, coordinates: FloatArray?, precision: FloatArray?)
             = sendTap(uiController, coordinates, precision, 0, 0)

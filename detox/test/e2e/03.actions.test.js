@@ -21,14 +21,59 @@ describe('Actions', () => {
     await expect(element(by.text('Long Press With Duration Working!!!'))).toBeVisible();
   });
 
-  it('should multi tap on an element', async () => {
-    await element(by.id('UniqueId819')).multiTap(3);
-    await expect(element(by.id('UniqueId819'))).toHaveText('Taps: 3');
-  });
-
   it('should tap on an element at point', async () => {
     await element(by.id('View7990')).tapAtPoint({ x: 180, y: 160 });
     await expect(element(by.id('UniqueId819'))).toHaveText('Taps: 1');
+  });
+
+  describe('multi-tapping', () => {
+    const testIdTappable = 'UniqueId819';
+    const testIdDoubleTappable = 'doubleTappableText';
+    const coordsDoubleTappable = { x: 180, y: 200 };
+
+    const doubleTap = () => element(by.id(testIdDoubleTappable)).multiTap(2)
+    const tapTwice = async () => {
+      await element(by.id(testIdDoubleTappable)).tap();
+      await element(by.id(testIdDoubleTappable)).tap();
+    }
+    const tapTwiceAtPoint = async () => {
+      await element(by.id('View7990')).tapAtPoint(coordsDoubleTappable);
+      await element(by.id('View7990')).tapAtPoint(coordsDoubleTappable);
+    };
+    const assertDoubleTapsCountText = (count) => expect(element(by.id(testIdDoubleTappable))).toHaveText(`Double-Taps: ${count}`);
+    const assertNoDoubleTapTextChanges = () => assertDoubleTapsCountText(0)
+
+    it(':ios: should multi tap on an element', async () => {
+      await element(by.id(testIdTappable)).multiTap(3);
+      await expect(element(by.id(testIdTappable))).toHaveText('Taps: 3');
+    });
+
+    it(':android: should properly double-tap on an element', async () => {
+      await doubleTap();
+      await assertDoubleTapsCountText(1);
+
+      await doubleTap();
+      await assertDoubleTapsCountText(2);
+
+      await doubleTap();
+      await assertDoubleTapsCountText(3);
+    });
+
+    it(':android: should fail to apply 2 distinct taps on a double-tap element', async () => {
+      await tapTwice();
+      await assertNoDoubleTapTextChanges();
+
+      await tapTwice();
+      await assertNoDoubleTapTextChanges();
+
+      await tapTwice();
+      await assertNoDoubleTapTextChanges();
+    });
+
+    it(':android: should fail to apply 2 distinct taps on a double-tap element at explicit point', async () => {
+      await tapTwiceAtPoint();
+      await assertNoDoubleTapTextChanges();
+    });
   });
 
   it('should type in an element', async () => {

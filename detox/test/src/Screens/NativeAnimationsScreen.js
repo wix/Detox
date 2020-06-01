@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { requireNativeComponent, View, Text } from 'react-native';
+import { requireNativeComponent, View } from 'react-native';
 
 const NativeAnimatingView = requireNativeComponent('DetoxNativeAnimatingView');
 
 class NativeAnimationsScreen extends Component {
   render() {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'stretch' }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'stretch', backgroundColor: 'red' }}>
         <NativeAnimatingView style={{flex: 1}}/>
       </View>
     );

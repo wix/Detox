@@ -9,8 +9,11 @@ import {
   Platform,
   Dimensions,
   StyleSheet,
+  requireNativeComponent,
 } from 'react-native';
 import TextInput from '../Views/TextInput';
+
+const DoubleTapsText = requireNativeComponent('DetoxDoubleTapsTextView');
 
 const { width } = Dimensions.get('window');
 
@@ -21,6 +24,9 @@ const styles = StyleSheet.create({
   item: { height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10 },
   horizItem: { width: hItemWidth, backgroundColor: '#e8e8f8', margin: 10, textAlign: 'center', textAlignVertical: 'center' },
 });
+
+const isIos = Platform.OS === 'ios';
+const isAndroid = Platform.OS === 'android';
 
 export default class ActionsScreen extends Component {
 
@@ -58,7 +64,7 @@ export default class ActionsScreen extends Component {
           delayLongPress={1200}
           onLongPress={this.onButtonPress.bind(this, 'Long Press With Duration Working')}
         >
-          <Text style={{ color: 'blue', marginBottom: 20, textAlign: 'center' }}>Long Press Me 1.5s</Text>
+          <Text testID='longTappable' style={{ color: 'blue', marginBottom: 20, textAlign: 'center' }}>Long Press Me 1.5s</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={this.onLongTimeout.bind(this)}
@@ -67,9 +73,13 @@ export default class ActionsScreen extends Component {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={this.onMultiTapPress.bind(this)}>
-          <Text style={{ color: 'blue', marginBottom: 20, textAlign: 'center' }}
+          <Text style={{ color: 'blue', marginBottom: (isIos ? 20 : 10), textAlign: 'center' }}
             testID='UniqueId819'>Taps: {this.state.numTaps}</Text>
         </TouchableOpacity>
+
+        {isAndroid && <View style={{ height: 30, width }}>
+            <DoubleTapsText style={{ flex: 1 }}/>
+          </View>}
 
         <View testID='UniqueId937_wrapper'>
           <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }}
@@ -80,7 +90,7 @@ export default class ActionsScreen extends Component {
             />
         </View>
 
-        {Platform.OS === 'ios' && <TouchableOpacity style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }} testID='NoTextInputInside' />}
+        {isIos && <TouchableOpacity style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }} testID='NoTextInputInside' />}
 
         <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }}
           onChangeText={this.onChangeClearText.bind(this)}
