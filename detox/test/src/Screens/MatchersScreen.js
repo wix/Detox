@@ -28,7 +28,7 @@ export default class MatchersScreen extends Component {
           <Text testID='UniqueId345' style={{color: 'blue', marginBottom: 20}}>ID</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={this.onButtonPress.bind(this, 'Traits Working')} accessible={true} accessibilityTraits={['button', 'text']}>
+        <TouchableOpacity onPress={this.onButtonPress.bind(this, 'Traits Working')} accessible={true} accessibilityRole={['button', 'text']}>
           <Text style={{color: 'blue', marginBottom: 10}}>Traits</Text>
         </TouchableOpacity>
 

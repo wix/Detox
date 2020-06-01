@@ -286,7 +286,7 @@ class TraitPredicate : Predicate {
 	override func innerPredicateForQuery() -> NSPredicate {
 		return NSPredicate.init { viewOrElse, _ -> Bool in
 			let view = viewOrElse as! UIView
-			return (view.accessibilityTraits.rawValue & self.traits.rawValue) != 0
+			return (view.accessibilityTraits.rawValue & self.traits.rawValue) == self.traits.rawValue
 		}
 	}
 	

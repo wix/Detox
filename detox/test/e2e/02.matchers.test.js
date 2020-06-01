@@ -31,9 +31,9 @@ describe('Matchers', () => {
     await expect(element(byType)).not.toBeVisible();
   });
 
-  // https://facebook.github.io/react-native/docs/accessibility.html#accessibilitytraits-ios
+  // https://developer.apple.com/documentation/uikit/accessibility/uiaccessibility/accessibility_traits
   // Accessibility Inspector in the simulator can help investigate traits
-  it(':ios: should match elements by accessibility trait', async () => {
+  it(':ios: should match elements by accessibility traits', async () => {
     await element(by.traits(['button', 'staticText'])).tap();
     await expect(element(by.text('Traits Working!!!'))).toBeVisible();
   });
