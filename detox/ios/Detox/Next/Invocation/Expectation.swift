@@ -8,6 +8,20 @@
 import Foundation
 import UIKit
 
+@inline(__always)
+@discardableResult
+fileprivate func async_expectation_dtx_try(completionHandler: @escaping (Error?) -> Void, blockToTry: () -> Void) -> Bool {
+	do {
+		try dtx_try(blockToTry)
+	} catch {
+		completionHandler(error)
+		return false
+	}
+	
+	return true
+}
+
+@inline(__always)
 fileprivate func applyModifiers(_ input: Bool, modifiers: Set<String>) -> Bool {
 	var rv = input
 	
@@ -128,14 +142,16 @@ class Expectation : CustomStringConvertible {
 	}
 	
 	func evaluate(completionHandler: @escaping (Error?) -> Void) {
-		guard timeout != 0.0 else {
-			_evaluate()
-			completionHandler(nil)
+		async_expectation_dtx_try (completionHandler: completionHandler) {
+			guard timeout != 0.0 else {
+				_evaluate()
+				completionHandler(nil)
+				
+				return
+			}
 			
-			return
+			evaluate_after(startDate: Date(), completionHandler: completionHandler)
 		}
-		
-		evaluate_after(startDate: Date(), completionHandler: completionHandler)
 	}
 	
 	fileprivate var additionalDescription: String {
