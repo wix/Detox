@@ -30,7 +30,15 @@ class Element : CustomStringConvertible {
 	}
 	
 	var exists : Bool {
-		return self.views.count > 0
+		do {
+			var moreThanZero : Bool = false
+			try dtx_try {
+				moreThanZero = self.views.count > 0
+			}
+			return moreThanZero
+		} catch {
+			return false
+		}
 	}
 	
 	var views : [UIView] {

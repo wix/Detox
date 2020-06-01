@@ -316,7 +316,7 @@
 		3980D154244C45E9004812DD /* InvocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InvocationManager.swift; sourceTree = "<group>"; };
 		3980D155244C45E9004812DD /* Action.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
 		3980D156244C45E9004812DD /* Expectation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Expectation.swift; sourceTree = "<group>"; };
-		3980D157244C45E9004812DD /* Predicate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Predicate.swift; sourceTree = "<group>"; };
+		3980D157244C45E9004812DD /* Predicate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Predicate.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		3980D162244C689A004812DD /* Detox.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = Detox.modulemap; sourceTree = "<group>"; };
 		3980D163244DC8F0004812DD /* UIPickerView+DetoxActions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIPickerView+DetoxActions.h"; sourceTree = "<group>"; };
 		3980D164244DC8F0004812DD /* UIPickerView+DetoxActions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIPickerView+DetoxActions.m"; sourceTree = "<group>"; };
