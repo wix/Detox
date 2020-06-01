@@ -18,8 +18,6 @@ Test async code with waitFor.
 
 >NOTE: Every `waitFor` call must set a timeout using `withTimeout()`. Calling `waitFor` without setting a timeout **will do nothing**.
 
->NOTE: `waitFor` will not throw when reaching timeout, instead it will just continue to the next line. To make sure your tests work as you expect them to add `expect()` at the following line.  
-
 ### `toBeVisible()`
 Test will hang until expectation is met or a timeout has occurred.
 Wait for the view to be at least 75% visible.
