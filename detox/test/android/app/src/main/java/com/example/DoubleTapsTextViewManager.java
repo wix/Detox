@@ -14,22 +14,18 @@ import com.example.utils.DoubleTapListenerStub;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 
-import androidx.annotation.NonNull;
-
 public class DoubleTapsTextViewManager extends SimpleViewManager<ViewGroup> {
     private static class ViewState {
         int taps = 0;
     }
 
-    @NonNull
     @Override
     public String getName() {
         return "DetoxDoubleTapsTextView";
     }
 
-    @NonNull
     @Override
-    protected ViewGroup createViewInstance(@NonNull ThemedReactContext reactContext) {
+    protected ViewGroup createViewInstance(ThemedReactContext reactContext) {
         final ViewState viewState = new ViewState();
 
         final FrameLayout layout = new FrameLayout(reactContext);

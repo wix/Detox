@@ -64,7 +64,7 @@ export default class ActionsScreen extends Component {
           delayLongPress={1200}
           onLongPress={this.onButtonPress.bind(this, 'Long Press With Duration Working')}
         >
-          <Text testID='longTappable' style={{ color: 'blue', marginBottom: 20, textAlign: 'center' }}>Long Press Me 1.5s</Text>
+          <Text style={{ color: 'blue', marginBottom: 20, textAlign: 'center' }}>Long Press Me 1.5s</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={this.onLongTimeout.bind(this)}
