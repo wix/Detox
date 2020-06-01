@@ -265,7 +265,7 @@ class Expect {
     this._invocationManager = invocationManager;
   }
 
-  not() {
+  get not() {
     this._notCondition = true;
     return this;
   }
@@ -281,14 +281,12 @@ class ExpectElement extends Expect {
     return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new VisibleMatcher().not() : new VisibleMatcher()).execute();
   }
   async toBeNotVisible() {
-    // return await this._invocationManager.execute(DetoxAssertionApi.assertNotVisible(call(this._element._call)));
     return await this.not().toBeVisible();
   }
   async toExist() {
     return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new ExistsMatcher().not() : new ExistsMatcher()).execute();
   }
   async toNotExist() {
-    // return await this._invocationManager.execute(DetoxAssertionApi.assertNotExists(call(this._element._call)));
     return await this.not().toExist();
   }
 

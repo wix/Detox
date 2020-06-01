@@ -11,7 +11,7 @@ class Expect {
   }
 
   toBeNotVisible() {
-    return this.not().toBeVisible();
+    return this.not.toBeVisible();
   }
 
   toExist() {
@@ -19,7 +19,7 @@ class Expect {
   }
 
   toNotExist() {
-    return this.not().toExist();
+    return this.not.toExist();
   }
 
   toHaveText(text) {
@@ -27,7 +27,7 @@ class Expect {
   }
 
   toNotHaveText(text) {
-    return this.not().toHaveText(text);
+    return this.not.toHaveText(text);
   }
 
   toHaveLabel(label) {
@@ -35,7 +35,7 @@ class Expect {
   }
 
   toNotHaveLabel(label) {
-    return this.not().toHaveLabel(label);
+    return this.not.toHaveLabel(label);
   }
 
   toHaveId(id) {
@@ -43,7 +43,7 @@ class Expect {
   }
 
   toNotHaveId(id) {
-    return this.not().toHaveId(id);
+    return this.not.toHaveId(id);
   }
 
   toHaveValue(value) {
@@ -51,10 +51,10 @@ class Expect {
   }
 
   toNotHaveValue(value) {
-    return this.not().toHaveValue(value);
+    return this.not.toHaveValue(value);
   }
 
-  not() {
+  get not() {
     this.modifiers.push('not');
     return this;
   }

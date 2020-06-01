@@ -6,23 +6,27 @@ class Matcher {
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherWithAncestor(this, matcher));
     return this;
   }
+
   withDescendant(matcher) {
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherWithDescendant(this, matcher));
     return this;
   }
+
   and(matcher) {
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherForAnd(this, matcher));
     return this;
   }
+
   or(matcher) {
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherForOr(this, matcher));
     return this;
   }
+
   not() {
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherForNot(this));
     return this;
   }
-  
+
   _avoidProblematicReactNativeElements() {
     /*
     const _originalMatcherCall = this._call;
@@ -37,7 +41,7 @@ class Matcher {
     */
     return this;
   }
-  
+
   _extendPickerViewMatching() {
     return this;
   }

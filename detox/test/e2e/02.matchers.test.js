@@ -28,7 +28,7 @@ describe('Matchers', () => {
 
     await expect(element(byType)).toBeVisible();
     await element(byType).tap();
-    await expect(element(byType)).not().toBeVisible();
+    await expect(element(byType)).not.toBeVisible();
   });
 
   // https://facebook.github.io/react-native/docs/accessibility.html#accessibilitytraits-ios
@@ -40,20 +40,20 @@ describe('Matchers', () => {
 
   it('should match elements with ancenstor (parent)', async () => {
     await expect(element(by.id('Grandson883').withAncestor(by.id('Son883')))).toExist();
-    await expect(element(by.id('Son883').withAncestor(by.id('Grandson883')))).not().toExist();
+    await expect(element(by.id('Son883').withAncestor(by.id('Grandson883')))).not.toExist();
     await expect(element(by.id('Grandson883').withAncestor(by.id('Father883')))).toExist();
-    await expect(element(by.id('Father883').withAncestor(by.id('Grandson883')))).not().toExist();
+    await expect(element(by.id('Father883').withAncestor(by.id('Grandson883')))).not.toExist();
     await expect(element(by.id('Grandson883').withAncestor(by.id('Grandfather883')))).toExist();
-    await expect(element(by.id('Grandfather883').withAncestor(by.id('Grandson883')))).not().toExist();
+    await expect(element(by.id('Grandfather883').withAncestor(by.id('Grandson883')))).not.toExist();
   });
 
   it('should match elements with descendant (child)', async () => {
     await expect(element(by.id('Son883').withDescendant(by.id('Grandson883')))).toExist();
-    await expect(element(by.id('Grandson883').withDescendant(by.id('Son883')))).not().toExist();
+    await expect(element(by.id('Grandson883').withDescendant(by.id('Son883')))).not.toExist();
     await expect(element(by.id('Father883').withDescendant(by.id('Grandson883')))).toExist();
-    await expect(element(by.id('Grandson883').withDescendant(by.id('Father883')))).not().toExist();
+    await expect(element(by.id('Grandson883').withDescendant(by.id('Father883')))).not.toExist();
     await expect(element(by.id('Grandfather883').withDescendant(by.id('Grandson883')))).toExist();
-    await expect(element(by.id('Grandson883').withDescendant(by.id('Grandfather883')))).not().toExist();
+    await expect(element(by.id('Grandson883').withDescendant(by.id('Grandfather883')))).not.toExist();
   });
 
   it('should match elements by using two matchers together with and', async () => {
