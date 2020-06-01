@@ -12,7 +12,7 @@ Use [actions]('APIRef.ActionsOnElement.md') to simulate use interaction with ele
 - [`.toHaveLabel()`](#tohavelabellabel)
 - [`.toHaveId()`](#tohaveidid)
 - [`.toHaveValue()`](#tohavevaluevalue)
-- [`.not()`](#not)
+- [`.not`](#not)
 - [`.withTimeout()`](#withtimeouttimeout)
 
 ### `toBeVisible()`
@@ -63,12 +63,12 @@ Expect the element to have the specified accessibility value. In React Native, t
 await expect(element(by.id('UniqueId533'))).toHaveValue('0');
 ```
 
-### `not()`
+### `not`
 
 Modifies the expectation by negating the expectation.
 
 ```js
-await expect(element(by.id('UniqueId533'))).not().toBeVisible();
+await expect(element(by.id('UniqueId533'))).not.toBeVisible();
 ```
 
 ### `withTimeout(timeout)`
@@ -88,7 +88,7 @@ await waitFor(element(by.id('UniqueId204'))).toBeVisible().withTimeout(2000);
 
 ### `toBeNotVisible()`
 
-**Deprecated:** Use `.not().toBeVisible()` instead.
+**Deprecated:** Use `.not.toBeVisible()` instead.
 
 Expects the element to not be visible on screen.
 
@@ -98,7 +98,7 @@ await expect(element(by.id('UniqueId205'))).toBeNotVisible();
 
 ### `toNotExist()`
 
-**Deprecated:** Use `.not().toExist()` instead.
+**Deprecated:** Use `.not.toExist()` instead.
 
 Expects the element to not exist within the app’s current UI hierarchy.
 
