@@ -8,7 +8,7 @@ describe(':android: Launch arguments', () => {
   }
 
   async function assertNoLaunchArg(launchArgKey) {
-    await expect(element(by.id(`launchArg-${launchArgKey}.name`))).toBeNotVisible();
+    await expect(element(by.id(`launchArg-${launchArgKey}.name`))).not.toBeVisible();
   }
 
   it('should handle primitive args', async () => {

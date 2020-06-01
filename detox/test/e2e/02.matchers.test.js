@@ -58,10 +58,10 @@ describe('Matchers', () => {
 
   it('should match elements by using two matchers together with and', async () => {
     await expect(element(by.id('UniqueId345').and(by.text('ID')))).toExist();
-    await expect(element(by.id('UniqueId345').and(by.text('RandomJunk')))).toNotExist();
-    await expect(element(by.id('UniqueId345').and(by.label('RandomJunk')))).toNotExist();
+    await expect(element(by.id('UniqueId345').and(by.text('RandomJunk')))).not.toExist();
+    await expect(element(by.id('UniqueId345').and(by.label('RandomJunk')))).not.toExist();
     if (device.getPlatform() === 'ios') {
-      await expect(element(by.id('UniqueId345').and(by.traits(['button'])))).toNotExist();
+      await expect(element(by.id('UniqueId345').and(by.traits(['button'])))).not.toExist();
     }
   });
 
