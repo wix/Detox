@@ -19,21 +19,19 @@ final class InvocationManager {
 	
 	class func invoke(dictionaryRepresentation: [String: Any], completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
 		do {
-			try dtx_try {
-				let type = dictionaryRepresentation[Keys.type] as! String
-				
-				switch type {
-				case Types.action:
-					let action = Action.with(dictionaryRepresentation: dictionaryRepresentation)
-					action.perform(completionHandler: completionHandler)
-				case Types.expectation:
-					let expectation = Expectation.with(dictionaryRepresentation: dictionaryRepresentation)
-					expectation.evaluate { error in
-						completionHandler(nil, error)
-					}
-				default:
-					fatalError("Unknown invocation type \(type)")
+			let type = dictionaryRepresentation[Keys.type] as! String
+			
+			switch type {
+			case Types.action:
+				let action = try Action.with(dictionaryRepresentation: dictionaryRepresentation)
+				action.perform(completionHandler: completionHandler)
+			case Types.expectation:
+				let expectation = try Expectation.with(dictionaryRepresentation: dictionaryRepresentation)
+				expectation.evaluate { error in
+					completionHandler(nil, error)
 				}
+			default:
+				fatalError("Unknown invocation type \(type)")
 			}
 		} catch {
 			completionHandler(nil, error)

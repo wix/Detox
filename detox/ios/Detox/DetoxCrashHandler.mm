@@ -8,6 +8,7 @@
 
 #include "fishhook.h"
 #import <Detox/Detox-Swift.h>
+#import "DTXAssertionHandler.h"
 
 #import <dlfcn.h>
 #import <Foundation/Foundation.h>
@@ -34,7 +35,13 @@ OBJC_EXTERN void __DTXHandleCrash(NSException* exception, NSNumber* signal, NSSt
 	NSMutableDictionary* report = [@{@"threadNumber": threadNumber, @"queueName": queueName} mutableCopy];
 	if(exception)
 	{
-		report[@"errorDetails"] = [NSString stringWithFormat:@"%@\n%@", exception.reason, exception.dtx_demangledCallStackSymbols];
+		NSString* prefix = @"";
+		if([exception isKindOfClass:DTXTestAssertionException.class])
+		{
+			prefix = @"THIS SHOULD NOT HAVE HAPPENED AND IS A BUG IN DETOX LOGIC. PLEASE OPEN AN ISSUE IN https://github.com/wix/Detox/issues/new/choose AND POST THIS CRASH";
+		}
+		
+		report[@"errorDetails"] = [NSString stringWithFormat:@"%@%@\n%@", prefix, exception.reason, exception.dtx_demangledCallStackSymbols];
 	}
 	else if(signal)
 	{

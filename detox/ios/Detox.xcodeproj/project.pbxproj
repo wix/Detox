@@ -98,6 +98,8 @@
 		3990BA28245882EF00B608C8 /* DTXAssertionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3990BA26245882EF00B608C8 /* DTXAssertionHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3990BA29245882EF00B608C8 /* DTXAssertionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 3990BA27245882EF00B608C8 /* DTXAssertionHandler.m */; };
 		3990BA36245AC98C00B608C8 /* DTXAssertionHandler+Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3990BA35245AC98C00B608C8 /* DTXAssertionHandler+Swift.swift */; };
+		39996B4C248555AB009B8E45 /* DTXDurationFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 39996B4A248555AB009B8E45 /* DTXDurationFormatter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		39996B4D248555AB009B8E45 /* DTXDurationFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 39996B4B248555AB009B8E45 /* DTXDurationFormatter.m */; };
 		39999EBA2416339E004E6366 /* __DTXDeallocSafeProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 39999EB82416339E004E6366 /* __DTXDeallocSafeProxy.h */; };
 		39999EBB2416339E004E6366 /* __DTXDeallocSafeProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39999EB92416339E004E6366 /* __DTXDeallocSafeProxy.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		399BF36821933F0C00F96D50 /* ExternalLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 399BF36621933F0C00F96D50 /* ExternalLogging.h */; };
@@ -332,6 +334,8 @@
 		3990BA26245882EF00B608C8 /* DTXAssertionHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXAssertionHandler.h; sourceTree = "<group>"; };
 		3990BA27245882EF00B608C8 /* DTXAssertionHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DTXAssertionHandler.m; sourceTree = "<group>"; };
 		3990BA35245AC98C00B608C8 /* DTXAssertionHandler+Swift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DTXAssertionHandler+Swift.swift"; sourceTree = "<group>"; };
+		39996B4A248555AB009B8E45 /* DTXDurationFormatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXDurationFormatter.h; sourceTree = "<group>"; };
+		39996B4B248555AB009B8E45 /* DTXDurationFormatter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DTXDurationFormatter.m; sourceTree = "<group>"; };
 		39999EB82416339E004E6366 /* __DTXDeallocSafeProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = __DTXDeallocSafeProxy.h; sourceTree = "<group>"; };
 		39999EB92416339E004E6366 /* __DTXDeallocSafeProxy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = __DTXDeallocSafeProxy.m; sourceTree = "<group>"; };
 		399BF36621933F0C00F96D50 /* ExternalLogging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalLogging.h; sourceTree = "<group>"; };
@@ -636,6 +640,8 @@
 				397CA7982483F07D005E8A71 /* ApproximateEquality.swift */,
 				396EA67222E0AE7C0087E4D4 /* DTXAddressInfo.h */,
 				396EA67922E0AE7C0087E4D4 /* DTXAddressInfo.mm */,
+				39996B4A248555AB009B8E45 /* DTXDurationFormatter.h */,
+				39996B4B248555AB009B8E45 /* DTXDurationFormatter.m */,
 				3980D1062448B52B004812DD /* DTXRunLoopSpinner.h */,
 				3980D10A2448B52B004812DD /* DTXRunLoopSpinner.m */,
 				3976BF14246C139D00AA20C7 /* DTXSwizzlingHelper.h */,
@@ -723,6 +729,7 @@
 				39A34C711E30F10D00BEBB59 /* DetoxAppDelegateProxy.h in Headers */,
 				39F642281FDD5EB100468FED /* DTXLogging.h in Headers */,
 				397EC9B51E7EDE0B00D5F2BB /* EarlGreyStatistics.h in Headers */,
+				39996B4C248555AB009B8E45 /* DTXDurationFormatter.h in Headers */,
 				397CA78C248010B5005E8A71 /* UISlider+DetoxUtils.h in Headers */,
 				A7F76A151ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.h in Headers */,
 				3976BF13246C128600AA20C7 /* Swiftier.h in Headers */,
@@ -958,6 +965,7 @@
 				3980D15C244C45EA004812DD /* Action.swift in Sources */,
 				39F642291FDD5EB100468FED /* DTXLogging.m in Sources */,
 				3976BF02246AC7DE00AA20C7 /* TimeInterval+DetoxUtils.swift in Sources */,
+				39996B4D248555AB009B8E45 /* DTXDurationFormatter.m in Sources */,
 				39999EBB2416339E004E6366 /* __DTXDeallocSafeProxy.m in Sources */,
 				394767D51DBF98D900D72256 /* WXRunLoopIdlingResource.m in Sources */,
 				468731A61E6C6D0500F151BE /* EarlGrey+Detox.m in Sources */,

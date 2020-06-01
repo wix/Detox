@@ -22,11 +22,11 @@ class Element : CustomStringConvertible {
 		self.index = index
 	}
 	
-	class func with(dictionaryRepresentation: [String: Any]) -> Element {
+	class func with(dictionaryRepresentation: [String: Any]) throws -> Element {
 		let predicateDictionaryRepresentation = dictionaryRepresentation[Keys.predicate] as! [String: Any]
 		let index = dictionaryRepresentation[Keys.index] as! Int?
 		
-		return Element(predicate: Predicate.with(dictionaryRepresentation: predicateDictionaryRepresentation), index: index)
+		return Element(predicate: try Predicate.with(dictionaryRepresentation: predicateDictionaryRepresentation), index: index)
 	}
 	
 	var exists : Bool {

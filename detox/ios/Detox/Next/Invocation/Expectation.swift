@@ -76,7 +76,7 @@ class Expectation : CustomStringConvertible {
 		Kind.toHavePlaceholder: "placeholder",
 	]
 	
-	class func with(dictionaryRepresentation: [String: Any]) -> Expectation {
+	class func with(dictionaryRepresentation: [String: Any]) throws -> Expectation {
 		let kind = dictionaryRepresentation[Keys.kind] as! String //crash on failure
 		let params = dictionaryRepresentation[Keys.params] as! [CustomStringConvertible]?
 		let modifiers : Set<String>
@@ -88,7 +88,7 @@ class Expectation : CustomStringConvertible {
 		//Convert ms to seconds
 		let timeout = ((dictionaryRepresentation[Keys.timeout] as! Double?) ?? 0.0).toSeconds()
 		
-		let element = Element.with(dictionaryRepresentation: dictionaryRepresentation)
+		let element = try Element.with(dictionaryRepresentation: dictionaryRepresentation)
 		let expectationClass = mapping[kind]!
 		if expectationClass == ValueExpectation.self {
 			return ValueExpectation(kind: kind, modifiers: modifiers, element: element, timeout: timeout, key: keyMapping[kind]!, value: params!.first!)
@@ -129,14 +129,8 @@ class Expectation : CustomStringConvertible {
 	
 	func evaluate(completionHandler: @escaping (Error?) -> Void) {
 		guard timeout != 0.0 else {
-			do {
-				try dtx_try {
-					_evaluate()
-					completionHandler(nil)
-				}
-			} catch {
-				completionHandler(error)
-			}
+			_evaluate()
+			completionHandler(nil)
 			
 			return
 		}
@@ -150,9 +144,11 @@ class Expectation : CustomStringConvertible {
 		}
 	}
 	
+	static var durationFormatter : DTXDurationFormatter = DTXDurationFormatter()
+	
 	var description: String {
 		get {
-			return String(format: "%@%@%@ WITH %@%@", modifiers.contains(Modifier.not) ? "NOT " : "", self.kind.uppercased(), additionalDescription, element.description, timeout > 0.0 ? " TIMEOUT(\(timeout.toMilliseconds()) ms)" : "")
+			return String(format: "%@%@%@ WITH %@%@", modifiers.contains(Modifier.not) ? "NOT " : "", self.kind.uppercased(), additionalDescription, element.description, timeout > 0.0 ? " TIMEOUT(\(Expectation.durationFormatter.string(fromTimeInterval: timeout)))" : "")
 		}
 	}
 }

@@ -41,8 +41,27 @@ BOOL dtx_try(void (^block)(void), NSError * __nullable * __null_unspecified erro
 	return [NSError errorWithDomain:@"Detox" code:0 userInfo:userInfo];
 }
 
+#if DEBUG
+static void __detox_nested_try(void)
+{
+	
+}
+#endif
+
 + (BOOL)try:(void(NS_NOESCAPE ^)(void))block error:(NSError * __nullable * __null_unspecified)error
 {
+#if DEBUG
+	if([NSThread.currentThread.threadDictionary[@"__DTXTrying"] boolValue] == YES)
+	{
+		__detox_nested_try();
+	}
+	
+	NSThread.currentThread.threadDictionary[@"__DTXTrying"] = @YES;
+	dtx_defer {
+		[NSThread.currentThread.threadDictionary removeObjectForKey:@"__DTXTrying"];
+	};
+#endif
+	
 	@try
 	{
 		block();

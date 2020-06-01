@@ -89,13 +89,13 @@ class Action : CustomStringConvertible {
 		Kind.getAttributes: GetAttributesAction.self
 	]
 
-	dynamic class func with(dictionaryRepresentation: [String: Any]) -> Action {
+	dynamic class func with(dictionaryRepresentation: [String: Any]) throws -> Action {
 		let kind = dictionaryRepresentation[Keys.kind] as! String //Crash on failure
 		var params = dictionaryRepresentation[Keys.params] as! [CustomStringConvertible]?
 		
 		switch kind {
 		case Kind.scroll:
-			return ScrollAction.with(dictionaryRepresentation: dictionaryRepresentation)
+			return try ScrollAction.with(dictionaryRepresentation: dictionaryRepresentation)
 		case Kind.tapBackspaceKey:
 			params = ["\u{8}"]
 		case Kind.tapReturnKey:
@@ -106,7 +106,7 @@ class Action : CustomStringConvertible {
 		
 		let actionClass = mapping[kind]! //Crash on failure
 		
-		let element = Element.with(dictionaryRepresentation: dictionaryRepresentation)
+		let element = try Element.with(dictionaryRepresentation: dictionaryRepresentation)
 		return actionClass.init(kind: kind, params: params, element: element)
 	}
 	
@@ -115,10 +115,7 @@ class Action : CustomStringConvertible {
 	}
 	
 	fileprivate func perform(on view: UIView, completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
-		//Normally, actions are synchronous, so this is enough.
-		async_action_dtx_try(completionHandler: completionHandler) {
-			completionHandler(perform(on: view), nil)
-		}
+		completionHandler(perform(on: view), nil)
 	}
 	
 	func perform(completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
@@ -205,12 +202,12 @@ class ClearTextAction : Action {
 class ScrollAction : Action {
 	let whileExpectation : Expectation?
 	
-	dynamic override class func with(dictionaryRepresentation: [String: Any]) -> Action {
+	dynamic override class func with(dictionaryRepresentation: [String: Any]) throws -> Action {
 		let params = dictionaryRepresentation[Keys.params] as! [CustomStringConvertible]?
-		let element = Element.with(dictionaryRepresentation: dictionaryRepresentation)
+		let element = try Element.with(dictionaryRepresentation: dictionaryRepresentation)
 		let whileExpectation : Expectation?
 		if let whileExpectationObj = dictionaryRepresentation[Keys.while] as? [String: Any] {
-			whileExpectation = Expectation.with(dictionaryRepresentation: whileExpectationObj)
+			whileExpectation = try Expectation.with(dictionaryRepresentation: whileExpectationObj)
 		} else {
 			whileExpectation = nil
 		}
@@ -287,10 +284,8 @@ class ScrollAction : Action {
 		let scrollView = view.extractScrollView()
 		
 		guard let whileExpectation = whileExpectation else {
-			async_action_dtx_try(completionHandler: completionHandler) {
-				scrollView.dtx_scroll(withOffset: targetOffset, normalizedStartingPoint: normalizedStartingPoint)
-				completionHandler(nil, nil)
-			}
+			scrollView.dtx_scroll(withOffset: targetOffset, normalizedStartingPoint: normalizedStartingPoint)
+			completionHandler(nil, nil)
 			
 			return
 		}

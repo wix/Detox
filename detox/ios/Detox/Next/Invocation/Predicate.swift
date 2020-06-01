@@ -41,7 +41,7 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 		self.modifiers = modifiers
 	}
 	
-	class func with(dictionaryRepresentation: [String: Any]) -> Predicate {
+	class func with(dictionaryRepresentation: [String: Any]) throws -> Predicate {
 		let kind = dictionaryRepresentation[Keys.kind] as! String //crash on failure
 		let modifiers : Set<String>
 		if let modifiersInput = dictionaryRepresentation[Keys.modifiers] as? [String] {
@@ -56,7 +56,7 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 			return TraitPredicate(kind: kind, modifiers: modifiers, stringTraits: value)
 		case Kind.type:
 			let className = dictionaryRepresentation[Keys.value] as! String
-			return KindOfPredicate(kind: kind, modifiers: modifiers, className: className)
+			return try KindOfPredicate(kind: kind, modifiers: modifiers, className: className)
 		case Kind.label:
 			let label = dictionaryRepresentation[Keys.value] as! String
 			if ReactNativeSupport.isReactNativeApp == false {
@@ -67,7 +67,7 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 				return AndCompoundPredicate(predicates: [
 					ValuePredicate(kind: kind, modifiers: modifiers, value: label),
 					DescendantPredicate(predicate: AndCompoundPredicate(predicates: [
-						KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(RCTTextViewClass)),
+						try KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(RCTTextViewClass)),
 						ValuePredicate(kind: kind, modifiers: modifiers, value: label)
 					], modifiers: []), modifiers: [Modifier.not])
 				], modifiers: [])
@@ -76,15 +76,15 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 			let text = dictionaryRepresentation[Keys.value] as! String
 
 			var orPredicates = [
-				KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(UITextView.self)),
-				KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(UITextField.self)),
-				KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(UILabel.self)),
+				try KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(UITextView.self)),
+				try KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(UITextField.self)),
+				try KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(UILabel.self)),
 			]
 			
 			if ReactNativeSupport.isReactNativeApp == true {
 				//Will crash if RN app and neither class exists
 				let RCTTextViewClass : AnyClass = NSClassFromString("RCTText") ?? NSClassFromString("RCTTextView")!
-				orPredicates.append(KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(RCTTextViewClass)))
+				orPredicates.append(try KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(RCTTextViewClass)))
 			}
 			
 			return AndCompoundPredicate(predicates: [
@@ -95,14 +95,14 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 			let value = dictionaryRepresentation[Keys.value] as! CustomStringConvertible
 			return ValuePredicate(kind: kind, modifiers: modifiers, value: value)
 		case Kind.ancestor:
-			let predicate = Predicate.with(dictionaryRepresentation: dictionaryRepresentation[Keys.predicate] as! [String: Any])
+			let predicate = try Predicate.with(dictionaryRepresentation: dictionaryRepresentation[Keys.predicate] as! [String: Any])
 			return AncestorPredicate(predicate: predicate, modifiers: modifiers)
 		case Kind.descendant:
-			let predicate = Predicate.with(dictionaryRepresentation: dictionaryRepresentation[Keys.predicate] as! [String: Any])
+			let predicate = try Predicate.with(dictionaryRepresentation: dictionaryRepresentation[Keys.predicate] as! [String: Any])
 			return DescendantPredicate(predicate: predicate, modifiers: modifiers)
 		case Kind.and:
 			let predicatesDictionaryRepresentation = dictionaryRepresentation[Keys.predicates] as! [[String: Any]]
-			let innerPredicates = predicatesDictionaryRepresentation.compactMap { Predicate.with(dictionaryRepresentation: $0) }
+			let innerPredicates = try predicatesDictionaryRepresentation.compactMap { try Predicate.with(dictionaryRepresentation: $0) }
 			
 			let compoundPredicate : Predicate
 			if innerPredicates.count == 1 {
@@ -157,19 +157,21 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 
 class KindOfPredicate : Predicate {
 	let className : String
+	let cls : AnyClass
 	
-	init(kind: String, modifiers: Set<String>, className: String) {
+	init(kind: String, modifiers: Set<String>, className: String) throws {
 		self.className = className
+		if let cls = NSClassFromString(className) {
+			self.cls = cls
+		} else {
+			throw dtx_errorForFatalError("Unknown class “\(className)”")
+		}
 		
 		super.init(kind: kind, modifiers: modifiers)
 	}
 	
 	override func innerPredicateForQuery() -> NSPredicate {
-		if let cls = NSClassFromString(className) {
-			return NSPredicate.init(format: "SELF isKindOfClass: %@", argumentArray: [cls])
-		} else {
-			dtx_fatalError("Unknown class “\(className)”")
-		}
+		return NSPredicate.init(format: "SELF isKindOfClass: %@", argumentArray: [cls])
 	}
 	
 	override var innerDescription: String {
