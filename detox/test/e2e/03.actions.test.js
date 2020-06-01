@@ -170,7 +170,7 @@ describe('Actions', () => {
     await expect(element(by.id('UniqueId007'))).toBeVisible();
   });
 
-  it.only(':ios: should get element attributes', async () => {
+  it(':ios: should get element attributes', async () => {
     const jestExpect = require('expect');
     const attributes = await element(by.text('Tap Me')).getAttributes();
 
