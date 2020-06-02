@@ -16,11 +16,6 @@
 
 - (UIView*)dtx_visTest:(CGPoint)point withEvent:(UIEvent *)event;
 {
-	if([self pointInside:point withEvent:event] == NO)
-	{
-		return nil;
-	}
-	
 	if(self.isHiddenOrHasHiddenAncestor == YES)
 	{
 		return nil;
@@ -31,19 +26,29 @@
 		return nil;
 	}
 	
+	if([self pointInside:point withEvent:event] == NO)
+	{	
+		return nil;
+	}
+	
 	__block UIView* rv;
+	
+	NSMutableOrderedSet<UIView*>* candidates = [NSMutableOrderedSet new];
 	
 	//Front-most views get priority
 	[self.subviews enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
 		CGPoint localPoint = [self convertPoint:point toView:obj];
 		
-		rv = [obj dtx_visTest:localPoint withEvent:event];
+		UIView* candidate = [obj dtx_visTest:localPoint withEvent:event];
 		
-		if(rv != nil)
+		if(candidate != nil)
 		{
-			*stop = YES;
+			[candidates addObject:candidate];
 		}
 	}];
+
+	//TODO: Consider some strategy to tackle "visible" views under transparent views.
+	rv = candidates.firstObject;
 	
 	if(rv == nil)
 	{
@@ -76,9 +81,9 @@
 - (BOOL)_dtx_someTestAtPoint:(CGPoint)point testSelector:(SEL)selector
 {
 	//Point in window coordinate space
-	CGPoint activationPoint = [self.window convertPoint:point fromView:self];
+	CGPoint windowActivationPoint = [self.window convertPoint:point fromView:self];
 	
-	if(CGRectContainsPoint(self.window.bounds, activationPoint) == NO)
+	if(CGRectContainsPoint(self.window.bounds, windowActivationPoint) == NO)
 	{
 		return NO;
 	}
@@ -94,7 +99,7 @@
 	}
 	
 	id (*testFunc)(id, SEL, CGPoint, id) = (void*)objc_msgSend;
-	id visibleView = testFunc(self.window, selector, activationPoint, nil);
+	id visibleView = testFunc(self.window, selector, windowActivationPoint, nil);
 	
 	if(visibleView == self || [visibleView isDescendantOfView:self])
 	{

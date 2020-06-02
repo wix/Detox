@@ -194,6 +194,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				GREYConfiguration.sharedInstance().setValue((value as! NSString).boolValue, forConfigKey: kGREYConfigKeySynchronizationEnabled)
 				return
 			default:
+				log.error("Unknown synchronization setting received: \(key)")
 				return
 			}
 		}
