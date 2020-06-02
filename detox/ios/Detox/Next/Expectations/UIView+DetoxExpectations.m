@@ -75,11 +75,22 @@
 
 - (BOOL)dtx_isHittableAtPoint:(CGPoint)point
 {
+	if([self isKindOfClass:NSClassFromString(@"UISegmentLabel")] || [self isKindOfClass:NSClassFromString(@"UISegment")])
+	{
+		UISegmentedControl* segmentControl = (id)self;
+		while(segmentControl != nil && [segmentControl isKindOfClass:UISegmentedControl.class] == NO)
+		{
+			segmentControl = (id)segmentControl.superview;
+		}
+
+		return [segmentControl dtx_isHittableAtPoint:[segmentControl convertPoint:point fromView:self]];
+	}
+	
 	return [self _dtx_someTestAtPoint:point testSelector:@selector(hitTest:withEvent:)];
 }
 
 - (BOOL)_dtx_someTestAtPoint:(CGPoint)point testSelector:(SEL)selector
-{
+{	
 	//Point in window coordinate space
 	CGPoint windowActivationPoint = [self.window convertPoint:point fromView:self];
 	
@@ -99,7 +110,7 @@
 	}
 	
 	id (*testFunc)(id, SEL, CGPoint, id) = (void*)objc_msgSend;
-	id visibleView = testFunc(self.window, selector, windowActivationPoint, nil);
+	UIView* visibleView = testFunc(self.window, selector, windowActivationPoint, nil);
 	
 	if(visibleView == self || [visibleView isDescendantOfView:self])
 	{

@@ -105,7 +105,8 @@ class example extends Component {
           {this.renderScreenButton('Orientation', Screens.Orientation)}
           {this.renderScreenButton('Permissions', Screens.Permissions)}
           {this.renderScreenButton('Network', Screens.NetworkScreen)}
-          {this.renderAnimationScreenButtons()}
+          {this.renderScreenButton('RN Animations', Screens.RNAnimationsScreen)}
+          {this.renderScreenButton('Native Animation', Screens.NativeAnimationsScreen)}
           {this.renderScreenButton('Device', Screens.DeviceScreen)}
           {this.renderScreenButton('Location', Screens.LocationScreen)}
           {!isAndroid && this.renderScreenButton('DatePicker', Screens.DatePickerScreen)}
@@ -137,16 +138,6 @@ class example extends Component {
     const Screen = this.state.screen;
     return (
       <Screen/>
-    );
-  }
-
-  renderAnimationScreenButtons() {
-    return (
-      <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-        {this.renderScreenButton('RN Animations', Screens.RNAnimationsScreen)}
-        {isAndroid && <Text style={{width: 10}}> | </Text>}
-        {this.renderScreenButton('Native Animation', Screens.NativeAnimationsScreen)}
-      </View>
     );
   }
 

@@ -185,13 +185,13 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 		settings.forEach { key, value in
 			switch key {
 			case "waitForDebugger":
-				usleep(UInt32(value as! String)! * 1000)
+				usleep((value as! NSNumber).uint32Value * 1000)
 				return
 			case "blacklistURLs":
 				GREYConfiguration.sharedInstance().setValue(value, forConfigKey: kGREYConfigKeyURLBlacklistRegex)
 				return
 			case "enabled":
-				GREYConfiguration.sharedInstance().setValue((value as! NSString).boolValue, forConfigKey: kGREYConfigKeySynchronizationEnabled)
+				GREYConfiguration.sharedInstance().setValue((value as! NSNumber).boolValue, forConfigKey: kGREYConfigKeySynchronizationEnabled)
 				return
 			default:
 				log.error("Unknown synchronization setting received: \(key)")
