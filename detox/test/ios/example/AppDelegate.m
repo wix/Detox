@@ -239,10 +239,6 @@ RCT_EXPORT_MODULE();
 		
 		[someLabel.superview bringSubviewToFront:someLabel];
 	}];
-	
-	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-		[someLabel valueForKey:@"dtx_isVisible"];
-	});
 }
 
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void(^)(NSArray<id<UIUserActivityRestoring>> * __nullable restorableObjects))restorationHandler
