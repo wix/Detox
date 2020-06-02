@@ -22,7 +22,7 @@ class Matcher {
     return this;
   }
 
-  not() {
+  get not() {
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherForNot(this));
     return this;
   }
