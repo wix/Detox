@@ -47,7 +47,7 @@ describe('expect', () => {
     await e.expect(e.element(e.by.id('test').withAncestor(e.by.id('ancestor')))).toBeVisible();
     await e.expect(e.element(e.by.id('test').withDescendant(e.by.id('descendant')))).toBeVisible();
     await e.expect(e.element(e.by.id('test').and(e.by.type('type')))).toBeVisible();
-    await e.expect(e.element(e.by.id('test').not())).toBeVisible();
+    await e.expect(e.element(e.by.id('test'))).not.toBeVisible();
     await e.expect(e.element(e.by.id('test').or(e.by.id('test2')))).toBeVisible();
   });
 

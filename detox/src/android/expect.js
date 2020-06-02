@@ -278,48 +278,48 @@ class ExpectElement extends Expect {
   }
 
   async toBeVisible() {
-    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new VisibleMatcher().not() : new VisibleMatcher()).execute();
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new VisibleMatcher().not : new VisibleMatcher()).execute();
   }
   async toBeNotVisible() {
-    return await this.not().toBeVisible();
+    return await this.not.toBeVisible();
   }
   async toExist() {
-    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new ExistsMatcher().not() : new ExistsMatcher()).execute();
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new ExistsMatcher().not : new ExistsMatcher()).execute();
   }
   async toNotExist() {
-    return await this.not().toExist();
+    return await this.not.toExist();
   }
 
   async toHaveText(value) {
-    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new TextMatcher(value).not() : new TextMatcher(value)).execute();
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new TextMatcher(value).not : new TextMatcher(value)).execute();
   }
 
   async toNotHaveText(value) {
-    return await this.not().toHaveText(value);
+    return await this.not.toHaveText(value);
   }
 
   async toHaveLabel(value) {
-    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new LabelMatcher(value).not() : new LabelMatcher(value)).execute();
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new LabelMatcher(value).not : new LabelMatcher(value)).execute();
   }
 
   async toNotHaveLabel(value) {
-    return await this.not().toHaveLabel(value);
+    return await this.not.toHaveLabel(value);
   }
 
   async toHaveId(value) {
-    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new IdMatcher(value).not() : new IdMatcher(value)).execute();
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new IdMatcher(value).not : new IdMatcher(value)).execute();
   }
 
   async toNotHaveId(value) {
-    return await this.not().toHaveId(value);
+    return await this.not.toHaveId(value);
   }
 
   async toHaveValue(value) {
-    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new ValueMatcher(value).not() : new ValueMatcher(value)).execute();
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new ValueMatcher(value).not : new ValueMatcher(value)).execute();
   }
 
   async toNotHaveValue(value) {
-    return await this.not().toHaveValue(value);
+    return await this.not.toHaveValue(value);
   }
 }
 
@@ -339,25 +339,25 @@ class WaitForElement extends WaitFor {
     return new WaitForInteraction(this._invocationManager, this._element, new VisibleMatcher());
   }
   toBeNotVisible() {
-    return new WaitForInteraction(this._invocationManager, this._element, new VisibleMatcher().not());
+    return new WaitForInteraction(this._invocationManager, this._element, new VisibleMatcher().not);
   }
   toExist() {
     return new WaitForInteraction(this._invocationManager, this._element, new ExistsMatcher());
   }
   toNotExist() {
-    return new WaitForInteraction(this._invocationManager, this._element, new ExistsMatcher().not());
+    return new WaitForInteraction(this._invocationManager, this._element, new ExistsMatcher().not);
   }
   toHaveText(text) {
     return new WaitForInteraction(this._invocationManager, this._element, new TextMatcher(text));
   }
   toNotHaveText(text) {
-    return new WaitForInteraction(this._invocationManager, this._element, new TextMatcher(text).not());
+    return new WaitForInteraction(this._invocationManager, this._element, new TextMatcher(text).not);
   }
   toHaveValue(value) {
     return new WaitForInteraction(this._invocationManager, this._element, new ValueMatcher(value));
   }
   toNotHaveValue(value) {
-    return new WaitForInteraction(this._invocationManager, this._element, new ValueMatcher(value).not());
+    return new WaitForInteraction(this._invocationManager, this._element, new ValueMatcher(value).not);
   }
 }
 
