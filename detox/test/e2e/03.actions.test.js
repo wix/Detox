@@ -1,5 +1,38 @@
 const custom = require('./utils/custom-it');
 
+const driver = {
+  tapsElement: {
+    testId: 'UniqueId819',
+    get coordinates() {
+      const x = (device.getPlatform() === 'ios' ? 180 : 125);
+      return { x, y: 160 };
+    },
+    multiTap: () => element(by.id(driver.tapsElement.testId)).multiTap(3),
+    tapAtPoint: () => element(by.id('View7990')).tapAtPoint(driver.tapsElement.coordinates),
+    assertTapsCount: (count) => expect(element(by.id(driver.tapsElement.testId))).toHaveText(`Taps: ${count}`),
+    assertTappedOnce: () => driver.tapsElement.assertTapsCount(1),
+    assertMultiTapped: () => driver.tapsElement.assertTapsCount(3),
+  },
+  doubleTapsElement: {
+    testId: 'doubleTappableText',
+    coordinates: { x: 180, y: 160 },
+    tapOnce: () => element(by.id(driver.doubleTapsElement.testId)).tap(),
+    tapTwice: async () => {
+      await driver.doubleTapsElement.tapOnce();
+      await driver.doubleTapsElement.tapOnce();
+    },
+    multiTapOnce: () => element(by.id(driver.doubleTapsElement.testId)).multiTap(1),
+    doubleTap: () => element(by.id(driver.doubleTapsElement.testId)).multiTap(2),
+    tapAtPointOnce: () => element(by.id('View7990')).tapAtPoint(driver.doubleTapsElement.coordinates),
+    tapAtPointTwice: async () => {
+      await driver.doubleTapsElement.tapAtPointOnce();
+      await driver.doubleTapsElement.tapAtPointOnce();
+    },
+    assertTapsCount: (count) => expect(element(by.id(driver.doubleTapsElement.testId))).toHaveText(`Double-Taps: ${count}`),
+    assertNoTaps: () => driver.doubleTapsElement.assertTapsCount(0),
+  }
+};
+
 describe('Actions', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
@@ -21,14 +54,49 @@ describe('Actions', () => {
     await expect(element(by.text('Long Press With Duration Working!!!'))).toBeVisible();
   });
 
-  it('should multi tap on an element', async () => {
-    await element(by.id('UniqueId819')).multiTap(3);
-    await expect(element(by.id('UniqueId819'))).toHaveText('Taps: 3');
+  it('should tap on an element at point', async () => {
+    await driver.tapsElement.tapAtPoint();
+    await driver.tapsElement.assertTappedOnce();
   });
 
-  it('should tap on an element at point', async () => {
-    await element(by.id('View7990')).tap({ x: 180, y: 160 });
-    await expect(element(by.id('UniqueId819'))).toHaveText('Taps: 1');
+  describe('multi-tapping', () => {
+    it('should multi tap on an element', async () => {
+      await driver.tapsElement.multiTap();
+      await driver.tapsElement.assertMultiTapped();
+    });
+
+    it(':android: should properly double-tap on an element', async () => {
+      await driver.doubleTapsElement.doubleTap();
+      await driver.doubleTapsElement.assertTapsCount(1);
+
+      await driver.doubleTapsElement.doubleTap();
+      await driver.doubleTapsElement.assertTapsCount(2);
+
+      await driver.doubleTapsElement.doubleTap();
+      await driver.doubleTapsElement.assertTapsCount(3);
+    });
+
+    it(':android: should fail to apply 2 distinct taps on a double-tap element', async () => {
+      await driver.doubleTapsElement.tapTwice();
+      await driver.doubleTapsElement.assertNoTaps();
+
+      await driver.doubleTapsElement.tapTwice();
+      await driver.doubleTapsElement.assertNoTaps();
+
+      await driver.doubleTapsElement.tapTwice();
+      await driver.doubleTapsElement.assertNoTaps();
+    });
+
+    it(':android: should fail to register a tap following a multi-tap as a double-tap', async () => {
+      await driver.doubleTapsElement.multiTapOnce();
+      await driver.doubleTapsElement.tapOnce();
+      await driver.doubleTapsElement.assertNoTaps();
+    });
+
+    it(':android: should fail to apply 2 distinct taps on a double-tap element at explicit point', async () => {
+      await driver.doubleTapsElement.tapAtPointTwice();
+      await driver.doubleTapsElement.assertNoTaps();
+    });
   });
 
   it('should type in an element', async () => {
@@ -87,30 +155,30 @@ describe('Actions', () => {
 
   custom.it.withFailureIf.android.rn58OrNewer('should scroll for a small amount in direction', async () => {
     await expect(element(by.text('Text1'))).toBeVisible();
-    await expect(element(by.text('Text4'))).not.toBeVisible();
+    await expect(element(by.text('Text4'))).toBeNotVisible();
     await expect(element(by.id('ScrollView161'))).toBeVisible();
     await element(by.id('ScrollView161')).scroll(100, 'down');
-    await expect(element(by.text('Text1'))).not.toBeVisible();
+    await expect(element(by.text('Text1'))).toBeNotVisible();
     await expect(element(by.text('Text4'))).toBeVisible();
     await element(by.id('ScrollView161')).scroll(100, 'up');
     await expect(element(by.text('Text1'))).toBeVisible();
-    await expect(element(by.text('Text4'))).not.toBeVisible();
+    await expect(element(by.text('Text4'))).toBeNotVisible();
   });
 
   custom.it.withFailureIf.android.rn58OrNewer('should scroll for a large amount in direction', async () => {
-    await expect(element(by.text('Text6'))).not.toBeVisible();
+    await expect(element(by.text('Text6'))).toBeNotVisible();
     await element(by.id('ScrollView161')).scroll(220, 'down');
     await expect(element(by.text('Text6'))).toBeVisible();
   });
 
   it('should scroll for a large amount in horizontal direction', async () => {
-    await expect(element(by.text('HText7'))).not.toBeVisible();
+    await expect(element(by.text('HText7'))).toBeNotVisible();
     await element(by.id('ScrollViewH')).scroll(220, 'right');
     await expect(element(by.text('HText7'))).toBeVisible();
   });
 
   it('should scroll to edge', async () => {
-    await expect(element(by.text('Text8'))).not.toBeVisible();
+    await expect(element(by.text('Text8'))).toBeNotVisible();
     await element(by.id('ScrollView161')).scrollTo('bottom');
     await expect(element(by.text('Text8'))).toBeVisible();
     await element(by.id('ScrollView161')).scrollTo('top');
@@ -118,7 +186,7 @@ describe('Actions', () => {
   });
 
   it('should scroll horizontally to edge', async () => {
-    await expect(element(by.text('HText8'))).not.toBeVisible();
+    await expect(element(by.text('HText8'))).toBeNotVisible();
     await element(by.id('ScrollViewH')).scrollTo('right');
     await expect(element(by.text('HText8'))).toBeVisible();
     await element(by.id('ScrollViewH')).scrollTo('left');
@@ -126,29 +194,41 @@ describe('Actions', () => {
   });
 
   it('should scroll from a custom start-position ratio', async () => {
-    await expect(element(by.text('Text8'))).not.toBeVisible();
+    await expect(element(by.text('Text8'))).toBeNotVisible();
     await element(by.id('toggleScrollOverlays')).tap();
-    await element(by.id('ScrollView161')).scroll(310, 'down', 0.8, 0.6);
+    try {
+      await element(by.id('ScrollView161')).scroll(310, 'down', 0.8, 0.6);
+    } catch (err) {
+    }
     await element(by.id('toggleScrollOverlays')).tap();
     await expect(element(by.text('Text8'))).toBeVisible();
 
     await element(by.id('toggleScrollOverlays')).tap();
-    await element(by.id('ScrollView161')).scroll(310, 'up', 0.2, 0.4);
+    try {
+      await element(by.id('ScrollView161')).scroll(310, 'up', 0.2, 0.4);
+    } catch (err) {
+    }
     await element(by.id('toggleScrollOverlays')).tap();
-    await expect(element(by.text('Text8'))).not.toBeVisible();
+    await expect(element(by.text('Text8'))).toBeNotVisible();
   });
 
   it('should scroll horizontally from a custom start-position ratio', async () => {
-    await expect(element(by.text('HText6'))).not.toBeVisible();
+    await expect(element(by.text('HText6'))).toBeNotVisible();
     await element(by.id('toggleScrollOverlays')).tap();
-    await element(by.id('ScrollViewH')).scroll(220, 'right', 0.8, 0.6);
+    try {
+      await element(by.id('ScrollViewH')).scroll(220, 'right', 0.8, 0.6);
+    } catch (err) {
+    }
     await element(by.id('toggleScrollOverlays')).tap();
     await expect(element(by.text('HText6'))).toBeVisible();
 
     await element(by.id('toggleScrollOverlays')).tap();
-    await element(by.id('ScrollViewH')).scroll(220, 'left', 0.2, 0.4);
+    try {
+      await element(by.id('ScrollViewH')).scroll(220, 'left', 0.2, 0.4);
+    } catch (err) {
+    }
     await element(by.id('toggleScrollOverlays')).tap();
-    await expect(element(by.text('HText6'))).not.toBeVisible();
+    await expect(element(by.text('HText6'))).toBeNotVisible();
   });
 
   // TODO - swipe is not good enough for triggering pull to refresh. need to come up with something better
@@ -164,17 +244,10 @@ describe('Actions', () => {
   });
 
   it(':ios: should zoom in and out the pinchable scrollview', async () => {
-    await element(by.id('PinchableScrollView')).pinch(1.5, 'fast');
-    await expect(element(by.id('UniqueId007'))).not.toBeVisible();
-    await element(by.id('PinchableScrollView')).pinch(0.75, 'fast');
+    await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0);
+    await expect(element(by.id('UniqueId007'))).toBeNotVisible();
+    await element(by.id('PinchableScrollView')).pinchWithAngle('inward', 'slow', 0);
     await expect(element(by.id('UniqueId007'))).toBeVisible();
   });
 
-  it(':ios: should get element attributes', async () => {
-    const jestExpect = require('expect');
-    const attributes = await element(by.text('Tap Me')).getAttributes();
-
-    jestExpect(attributes.text).toBe('Tap Me');
-    jestExpect(attributes.label).toBe('Tap Me');
-  });
 });

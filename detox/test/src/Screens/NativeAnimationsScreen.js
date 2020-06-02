@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { requireNativeComponent, View, Text } from 'react-native';
+import { requireNativeComponent, View } from 'react-native';
 
 const NativeAnimatingView = requireNativeComponent('DetoxNativeAnimatingView');
 

@@ -22,7 +22,8 @@ public class NativeModulePackage implements ReactPackage {
     @Override
     public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
         return Arrays.asList(
-                new AnimationViewManager()
+                new AnimationViewManager(),
+                new DoubleTapsTextViewManager()
         );
     }
 

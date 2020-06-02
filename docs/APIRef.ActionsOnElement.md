@@ -36,7 +36,7 @@ await element(by.id('tappable')).tap();
 await element(by.id('tappable')).tap({x:5, y:10});
 ```
 ### `multiTap(times)`
-Simulates multiple taps on the element at its activation point.
+Simulates multiple taps on the element at its activation point. All taps are applied as a part of the same gesture and there is no synchronization attempt between taps.
 
 `times`—the number of taps to simulate (number, 1 and above)
 
