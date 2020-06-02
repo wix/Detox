@@ -6,7 +6,7 @@
 //  Copyright © 2017-2019 Wix. All rights reserved.
 //
 
-#import "DTXAddressInfo.h"
+#import "___DTXAddressInfo.h"
 #include <dlfcn.h>
 #include <cxxabi.h>
 
@@ -16,7 +16,7 @@ static char* (*__dtx_swift_demangle)(const char *mangledName,
 									 size_t *outputBufferSize,
 									 uint32_t flags);
 
-@implementation DTXAddressInfo
+@implementation ___DTXAddressInfo
 {
 	Dl_info _info;
 }

@@ -18,7 +18,7 @@ framework module Detox {
 		header "UIDevice+DetoxActions.h"
 		header "EarlGreyStatistics.h"
 		header "UISlider+DetoxUtils.h"
-		header "DTXAddressInfo.h"
+		header "___DTXAddressInfo.h"
 		header "DTXDurationFormatter.h"
 	}
 }

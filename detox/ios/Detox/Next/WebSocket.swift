@@ -21,17 +21,17 @@ protocol WebSocketDelegate : NSObjectProtocol {
 class WebSocket : NSObject, SRWebSocketDelegate {
 	weak var delegate : WebSocketDelegate?
 	private var sessionId : String!
-	private var webSocket : SRWebSocket!
+	private var webSocket : SRWebSocket?
 	
 	func connect(toServer server: URL, withSessionId sessionId: String) {
 		if webSocket != nil {
-			webSocket.close()
+			webSocket?.close()
 			webSocket = nil
 		}
 		self.sessionId = sessionId
 		webSocket = SRWebSocket(url: server)
-		webSocket.delegate = self
-		webSocket.open()
+		webSocket!.delegate = self
+		webSocket!.open()
 	}
 	
 	func close() {
@@ -44,7 +44,7 @@ class WebSocket : NSObject, SRWebSocketDelegate {
 		do {
 			let data = try JSONSerialization.data(withJSONObject: data, options: [])
 			let json = String(data: data, encoding: .utf8)!
-			try? webSocket.send(string: json)
+			try? webSocket?.send(string: json)
 			
 		} catch {
 			log.error("Error decoding sendAction encode: \(error.localizedDescription)")

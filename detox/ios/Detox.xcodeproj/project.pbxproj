@@ -45,8 +45,8 @@
 		394767F61DBF994200D72256 /* SocketRocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 394767E71DBF992400D72256 /* SocketRocket.framework */; };
 		394767F71DBF994500D72256 /* EarlGrey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 394767DC1DBF991E00D72256 /* EarlGrey.framework */; };
 		394D589C1E50B59400556DB9 /* NSBundle+TestsFix.m in Sources */ = {isa = PBXBuildFile; fileRef = 394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */; };
-		396EA67A22E0AE7D0087E4D4 /* DTXAddressInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 396EA67222E0AE7C0087E4D4 /* DTXAddressInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		396EA67B22E0AE7D0087E4D4 /* DTXAddressInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 396EA67922E0AE7C0087E4D4 /* DTXAddressInfo.mm */; };
+		396EA67A22E0AE7D0087E4D4 /* ___DTXAddressInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 396EA67222E0AE7C0087E4D4 /* ___DTXAddressInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		396EA67B22E0AE7D0087E4D4 /* ___DTXAddressInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 396EA67922E0AE7C0087E4D4 /* ___DTXAddressInfo.mm */; };
 		3976BF02246AC7DE00AA20C7 /* TimeInterval+DetoxUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3976BF01246AC7DE00AA20C7 /* TimeInterval+DetoxUtils.swift */; };
 		3976BF13246C128600AA20C7 /* Swiftier.h in Headers */ = {isa = PBXBuildFile; fileRef = 3976BF12246C128600AA20C7 /* Swiftier.h */; };
 		3976BF15246C139D00AA20C7 /* DTXSwizzlingHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3976BF14246C139D00AA20C7 /* DTXSwizzlingHelper.h */; };
@@ -277,8 +277,8 @@
 		394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SocketRocket.xcodeproj; path = SocketRocket/SocketRocket.xcodeproj; sourceTree = "<group>"; };
 		394D589A1E50B59400556DB9 /* NSBundle+TestsFix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+TestsFix.h"; sourceTree = "<group>"; };
 		394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+TestsFix.m"; sourceTree = "<group>"; };
-		396EA67222E0AE7C0087E4D4 /* DTXAddressInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTXAddressInfo.h; sourceTree = "<group>"; };
-		396EA67922E0AE7C0087E4D4 /* DTXAddressInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DTXAddressInfo.mm; sourceTree = "<group>"; };
+		396EA67222E0AE7C0087E4D4 /* ___DTXAddressInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "___DTXAddressInfo.h"; sourceTree = "<group>"; };
+		396EA67922E0AE7C0087E4D4 /* ___DTXAddressInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "___DTXAddressInfo.mm"; sourceTree = "<group>"; };
 		3975C78220272ED500C59ED8 /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; name = src; path = ../src; sourceTree = "<group>"; };
 		3976BF01246AC7DE00AA20C7 /* TimeInterval+DetoxUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeInterval+DetoxUtils.swift"; sourceTree = "<group>"; };
 		3976BF12246C128600AA20C7 /* Swiftier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Swiftier.h; path = DTXObjectiveCHelpers/Swiftier.h; sourceTree = SOURCE_ROOT; };
@@ -637,9 +637,9 @@
 		3980D130244C42E7004812DD /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				396EA67222E0AE7C0087E4D4 /* ___DTXAddressInfo.h */,
+				396EA67922E0AE7C0087E4D4 /* ___DTXAddressInfo.mm */,
 				397CA7982483F07D005E8A71 /* ApproximateEquality.swift */,
-				396EA67222E0AE7C0087E4D4 /* DTXAddressInfo.h */,
-				396EA67922E0AE7C0087E4D4 /* DTXAddressInfo.mm */,
 				39996B4A248555AB009B8E45 /* DTXDurationFormatter.h */,
 				39996B4B248555AB009B8E45 /* DTXDurationFormatter.m */,
 				3980D1062448B52B004812DD /* DTXRunLoopSpinner.h */,
@@ -725,7 +725,7 @@
 				3980D169244DD837004812DD /* UIDatePicker+DetoxActions.h in Headers */,
 				391FA5E91E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.h in Headers */,
 				39999EBA2416339E004E6366 /* __DTXDeallocSafeProxy.h in Headers */,
-				396EA67A22E0AE7D0087E4D4 /* DTXAddressInfo.h in Headers */,
+				396EA67A22E0AE7D0087E4D4 /* ___DTXAddressInfo.h in Headers */,
 				39A34C711E30F10D00BEBB59 /* DetoxAppDelegateProxy.h in Headers */,
 				39F642281FDD5EB100468FED /* DTXLogging.h in Headers */,
 				397EC9B51E7EDE0B00D5F2BB /* EarlGreyStatistics.h in Headers */,
@@ -973,7 +973,7 @@
 				397EC9B61E7EDE0B00D5F2BB /* EarlGreyStatistics.m in Sources */,
 				399BF36921933F0C00F96D50 /* ExternalLogging.m in Sources */,
 				3980D16A244DD837004812DD /* UIDatePicker+DetoxActions.m in Sources */,
-				396EA67B22E0AE7D0087E4D4 /* DTXAddressInfo.mm in Sources */,
+				396EA67B22E0AE7D0087E4D4 /* ___DTXAddressInfo.mm in Sources */,
 				3980D11B2448B52C004812DD /* DTXRunLoopSpinner.m in Sources */,
 				3980D166244DC8F0004812DD /* UIPickerView+DetoxActions.m in Sources */,
 				391FA5EA1E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.m in Sources */,

@@ -17,7 +17,7 @@ extension Thread {
 	
 	internal static func demangledCallStackSymbolsFor(returnAddresses: [NSNumber], startIndex: Int) -> String {
 		let symbols = returnAddresses[startIndex..<returnAddresses.count].enumerated().map {
-			DTXAddressInfo(address: UInt(truncating: $1)).formattedDescription(for: UInt($0))
+			___DTXAddressInfo(address: UInt(truncating: $1)).formattedDescription(for: UInt($0))
 		}
 		return "(\n\t\(symbols.joined(separator: "\n\t"))\n)"
 	}

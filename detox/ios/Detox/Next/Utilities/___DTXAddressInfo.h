@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DTXAddressInfo : NSObject
+@interface ___DTXAddressInfo : NSObject
 
 - (instancetype)initWithAddress:(NSUInteger)address;
 
