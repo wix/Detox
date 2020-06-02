@@ -1,5 +1,35 @@
 const custom = require('./utils/custom-it');
 
+const driver = {
+  tapsElement: {
+    testId: 'UniqueId819',
+    coordinates: { x: 180, y: 160 },
+    multiTap: () => element(by.id(driver.tapsElement.testId)).multiTap(3),
+    tapAtPoint: () => element(by.id('View7990')).tapAtPoint(driver.tapsElement.coordinates),
+    assertTapsCount: (count) => expect(element(by.id(driver.tapsElement.testId))).toHaveText(`Taps: ${count}`),
+    assertTappedOnce: () => driver.tapsElement.assertTapsCount(1),
+    assertMultiTapped: () => driver.tapsElement.assertTapsCount(3),
+  },
+  doubleTapsElement: {
+    testId: 'doubleTappableText',
+    coordinates: { x: 180, y: 200 },
+    tapOnce: () => element(by.id(driver.doubleTapsElement.testId)).tap(),
+    tapTwice: async () => {
+      await driver.doubleTapsElement.tapOnce();
+      await driver.doubleTapsElement.tapOnce();
+    },
+    multiTapOnce: () => element(by.id(driver.doubleTapsElement.testId)).multiTap(1),
+    doubleTap: () => element(by.id(driver.doubleTapsElement.testId)).multiTap(2),
+    tapAtPointOnce: () => element(by.id('View7990')).tapAtPoint(driver.doubleTapsElement.coordinates),
+    tapAtPointTwice: async () => {
+      await driver.doubleTapsElement.tapAtPointOnce();
+      await driver.doubleTapsElement.tapAtPointOnce();
+    },
+    assertTapsCount: (count) => expect(element(by.id(driver.doubleTapsElement.testId))).toHaveText(`Double-Taps: ${count}`),
+    assertNoTaps: () => driver.doubleTapsElement.assertTapsCount(0),
+  }
+};
+
 describe('Actions', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
@@ -22,57 +52,47 @@ describe('Actions', () => {
   });
 
   it('should tap on an element at point', async () => {
-    await element(by.id('View7990')).tapAtPoint({ x: 180, y: 160 });
-    await expect(element(by.id('UniqueId819'))).toHaveText('Taps: 1');
+    await driver.tapsElement.tapAtPoint();
+    await driver.tapsElement.assertTappedOnce();
   });
 
-  describe('multi-tapping', () => {
-    const testIdTappable = 'UniqueId819';
-    const testIdDoubleTappable = 'doubleTappableText';
-    const coordsDoubleTappable = { x: 180, y: 200 };
-
-    const doubleTap = () => element(by.id(testIdDoubleTappable)).multiTap(2)
-    const tapTwice = async () => {
-      await element(by.id(testIdDoubleTappable)).tap();
-      await element(by.id(testIdDoubleTappable)).tap();
-    }
-    const tapTwiceAtPoint = async () => {
-      await element(by.id('View7990')).tapAtPoint(coordsDoubleTappable);
-      await element(by.id('View7990')).tapAtPoint(coordsDoubleTappable);
-    };
-    const assertDoubleTapsCountText = (count) => expect(element(by.id(testIdDoubleTappable))).toHaveText(`Double-Taps: ${count}`);
-    const assertNoDoubleTapTextChanges = () => assertDoubleTapsCountText(0)
-
-    it(':ios: should multi tap on an element', async () => {
-      await element(by.id(testIdTappable)).multiTap(3);
-      await expect(element(by.id(testIdTappable))).toHaveText('Taps: 3');
+  describe.only('multi-tapping', () => {
+    it('should multi tap on an element', async () => {
+      await driver.tapsElement.multiTap();
+      await driver.tapsElement.assertMultiTapped();
     });
 
     it(':android: should properly double-tap on an element', async () => {
-      await doubleTap();
-      await assertDoubleTapsCountText(1);
+      await driver.doubleTapsElement.doubleTap();
+      await driver.doubleTapsElement.assertTapsCount(1);
 
-      await doubleTap();
-      await assertDoubleTapsCountText(2);
+      await driver.doubleTapsElement.doubleTap();
+      await driver.doubleTapsElement.assertTapsCount(2);
 
-      await doubleTap();
-      await assertDoubleTapsCountText(3);
+      await driver.doubleTapsElement.doubleTap();
+      await driver.doubleTapsElement.assertTapsCount(3);
     });
 
     it(':android: should fail to apply 2 distinct taps on a double-tap element', async () => {
-      await tapTwice();
-      await assertNoDoubleTapTextChanges();
+      await driver.doubleTapsElement.tapTwice();
+      await driver.doubleTapsElement.assertNoTaps();
 
-      await tapTwice();
-      await assertNoDoubleTapTextChanges();
+      await driver.doubleTapsElement.tapTwice();
+      await driver.doubleTapsElement.assertNoTaps();
 
-      await tapTwice();
-      await assertNoDoubleTapTextChanges();
+      await driver.doubleTapsElement.tapTwice();
+      await driver.doubleTapsElement.assertNoTaps();
+    });
+
+    it(':android: should fail to register a tap following a multi-tap as a double-tap', async () => {
+      await driver.doubleTapsElement.multiTapOnce();
+      await driver.doubleTapsElement.tapOnce();
+      await driver.doubleTapsElement.assertNoTaps();
     });
 
     it(':android: should fail to apply 2 distinct taps on a double-tap element at explicit point', async () => {
-      await tapTwiceAtPoint();
-      await assertNoDoubleTapTextChanges();
+      await driver.doubleTapsElement.tapAtPointTwice();
+      await driver.doubleTapsElement.assertNoTaps();
     });
   });
 

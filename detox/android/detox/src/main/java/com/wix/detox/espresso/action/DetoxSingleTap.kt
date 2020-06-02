@@ -2,7 +2,7 @@ package com.wix.detox.espresso.action
 
 import androidx.test.espresso.UiController
 import androidx.test.espresso.action.Tapper
-import com.wix.detox.espresso.common.DetoxViewConfigurations.getPostTapTimeout
+import com.wix.detox.espresso.common.DetoxViewConfigurations.getPostTapCooldownTime
 import com.wix.detox.espresso.common.MotionEvents
 
 /**
@@ -19,7 +19,7 @@ import com.wix.detox.espresso.common.MotionEvents
  */
 class DetoxSingleTap(
         private val motionEvents: MotionEvents = MotionEvents(),
-        private val tapTimeout: Long = getPostTapTimeout())
+        private val cooldownTime: Long = getPostTapCooldownTime())
     : Tapper {
 
     override fun sendTap(uiController: UiController?, coordinates: FloatArray?, precision: FloatArray?): Tapper.Status
@@ -37,8 +37,8 @@ class DetoxSingleTap(
         try {
             val result = uiController.injectMotionEventSequence(arrayListOf(downEvent, upEvent))
             if (result) {
-                if (tapTimeout > 0) {
-                    uiController.loopMainThreadForAtLeast(tapTimeout)
+                if (cooldownTime > 0) {
+                    uiController.loopMainThreadForAtLeast(cooldownTime)
                 }
                 return Tapper.Status.SUCCESS
             }

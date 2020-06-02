@@ -17,6 +17,7 @@ object DetoxMultiTapSpec: Spek({
         val coordinates = dontCareCoordinates()
         val precision = dontCarePrecision()
         val interTapDelayMs = 667L
+        val cooldownTimeMs = 123L
 
         lateinit var delegatedTapper: Tapper
         lateinit var uiController: UiController
@@ -26,8 +27,8 @@ object DetoxMultiTapSpec: Spek({
             delegatedTapper = mock()
         }
 
-        fun uut(times: Int) = DetoxMultiTap(times, interTapDelayMs) { delegatedTapper }
-        fun uutNoTapWait(times: Int) = DetoxMultiTap(times, null) { delegatedTapper }
+        fun uut(times: Int) = DetoxMultiTap(times, interTapDelayMs, cooldownTimeMs) { delegatedTapper }
+        fun uutNoTapWait(times: Int) = DetoxMultiTap(times, null, cooldownTimeMs) { delegatedTapper }
 
         it("should trigger a delegated tapper (typically a single-tap tapper)") {
             uut(1).sendTap(uiController, coordinates, precision, 0, 0)
@@ -66,7 +67,13 @@ object DetoxMultiTapSpec: Spek({
 
         it("should not wait in-between taps if time-out was set 'null'") {
             uutNoTapWait(2).sendTap(uiController, coordinates, precision, 0, 0)
-            verify(uiController, never()).loopMainThreadForAtLeast(any())
+            verify(uiController, never()).loopMainThreadForAtLeast(eq(interTapDelayMs))
+        }
+
+        it("should wait the cooldown period post all taps") {
+            uut(1).sendTap(uiController, coordinates, precision, 0, 0)
+            verify(uiController).loopMainThreadForAtLeast(eq(cooldownTimeMs))
+
         }
 
         it("should throw if no UI-controller provided") {

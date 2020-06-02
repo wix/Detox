@@ -37,29 +37,23 @@ object DetoxSingleTapSpec: Spek({
             }
         }
 
-        fun verifyMotionEventsInjected(vararg events: MotionEvent) {
-            verify(uiController).injectMotionEventSequence(events.asList())
-        }
+        fun verifyMotionEventsInjected(vararg events: MotionEvent)
+                = verify(uiController).injectMotionEventSequence(events.asList())
 
-        fun verifyDownEventObtained(coordinates: FloatArray, precision: FloatArray) {
-            verify(motionEvents).obtainDownEvent(coordinates[0], coordinates[1], precision)
-        }
+        fun verifyDownEventObtained(coordinates: FloatArray, precision: FloatArray)
+                = verify(motionEvents).obtainDownEvent(coordinates[0], coordinates[1], precision)
 
-        fun verifyUpEventObtained(coordinates: FloatArray) {
-            verify(motionEvents).obtainUpEvent(eq(downEvent), any(), eq(coordinates[0]), eq(coordinates[1]))
-        }
+        fun verifyUpEventObtained(coordinates: FloatArray)
+                = verify(motionEvents).obtainUpEvent(eq(downEvent), any(), eq(coordinates[0]), eq(coordinates[1]))
 
-        fun verifyUpEventObtainedWithTimestamp(expectedUpTime: Long) {
-            verify(motionEvents).obtainUpEvent(eq(downEvent), eq(expectedUpTime), any(), any())
-        }
+        fun verifyUpEventObtainedWithTimestamp(expectedUpTime: Long)
+                = verify(motionEvents).obtainUpEvent(eq(downEvent), eq(expectedUpTime), any(), any())
 
-        fun verifyMainThreadSync(expectedSyncTime: Long) {
-            verify(uiController).loopMainThreadForAtLeast(eq(expectedSyncTime))
-        }
+        fun verifyMainThreadSynced(expectedSyncTime: Long)
+                = verify(uiController).loopMainThreadForAtLeast(eq(expectedSyncTime))
 
-        fun verifyMainThreadNeverSynced() {
-            verify(uiController, never()).loopMainThreadForAtLeast(any())
-        }
+        fun verifyMainThreadNeverSynced()
+                = verify(uiController, never()).loopMainThreadForAtLeast(any())
 
         fun uut() = DetoxSingleTap(motionEvents)
         fun uut(tapTimeout: Long) = DetoxSingleTap(motionEvents, tapTimeout)
@@ -98,7 +92,7 @@ object DetoxSingleTapSpec: Spek({
 
             uut().sendTap(uiController, coordinates, precision, 0, 0)
 
-            verifyUpEventObtainedWithTimestamp(expectedUpEventTime);
+            verifyUpEventObtainedWithTimestamp(expectedUpEventTime)
         }
 
         it("should recycle down+up events") {
@@ -159,7 +153,7 @@ object DetoxSingleTapSpec: Spek({
             verifyMotionEventsInjected(downEvent, upEvent)
         }
 
-        it("should idle-wait the tap-registration period following a successful tap injection") {
+        it("should idle-wait the cooldown period following a successful tap injection") {
             whenever(uiController.injectMotionEventSequence(any())).doReturn(true)
 
             val expectedWait = 111L
@@ -169,7 +163,7 @@ object DetoxSingleTapSpec: Spek({
 
             uut(expectedWait).sendTap(uiController, coordinates, precision, 0, 0)
 
-            verifyMainThreadSync(expectedWait)
+            verifyMainThreadSynced(expectedWait)
         }
 
         it("should not idle-wait the tap-registration period if tap injection fails") {
