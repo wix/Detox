@@ -12,13 +12,9 @@ const IdMatcher = matchers.IdMatcher;
 const TypeMatcher = matchers.TypeMatcher;
 const TraitsMatcher = matchers.TraitsMatcher;
 const VisibleMatcher = matchers.VisibleMatcher;
-const NotVisibleMatcher = matchers.NotVisibleMatcher;
 const ExistsMatcher = matchers.ExistsMatcher;
-const NotExistsMatcher = matchers.NotExistsMatcher;
 const TextMatcher = matchers.TextMatcher;
 const ValueMatcher = matchers.ValueMatcher;
-
-const DetoxAssertion = 'com.wix.detox.espresso.DetoxAssertion';
 
 function call(maybeAFunction) {
   return maybeAFunction instanceof Function ? maybeAFunction() : maybeAFunction;

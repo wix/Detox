@@ -41,10 +41,6 @@ class Matcher {
     */
     return this;
   }
-
-  _extendPickerViewMatching() {
-    return this;
-  }
 }
 
 class LabelMatcher extends Matcher {
@@ -75,24 +71,10 @@ class VisibleMatcher extends Matcher {
   }
 }
 
-class NotVisibleMatcher extends Matcher {
-  constructor() {
-    super();
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForNotVisible());
-  }
-}
-
 class ExistsMatcher extends Matcher {
   constructor() {
     super();
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherForNotNull());
-  }
-}
-
-class NotExistsMatcher extends Matcher {
-  constructor() {
-    super();
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForNull());
   }
 }
 
@@ -128,9 +110,7 @@ module.exports = {
   TypeMatcher,
   TraitsMatcher,
   VisibleMatcher,
-  NotVisibleMatcher,
   ExistsMatcher,
-  NotExistsMatcher,
   TextMatcher,
   ValueMatcher
 };

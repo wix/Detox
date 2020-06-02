@@ -9,12 +9,22 @@ describe('expect', () => {
   it(`element by accessibilityLabel`, async () => {
     await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeVisible();
     await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeNotVisible();
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toBeVisible();
     await e.expect(e.element(e.by.accessibilityLabel('test'))).toExist();
     await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotExist();
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toExist();
     await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveText('text');
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveText('text');
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toHaveText('text');
     await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveLabel('label');
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveLabel('label');
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toHaveLabel('label');
     await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveId('id');
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveId('id');
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toHaveId('id');
     await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveValue('value');
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveValue('value');
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toHaveValue('value');
   });
 
   it(`element by label (for backwards compat)`, async () => {
@@ -81,6 +91,7 @@ describe('expect', () => {
     await e.waitFor(e.element(e.by.id('id'))).toHaveText('text');
     await e.waitFor(e.element(e.by.id('id'))).toHaveValue('value');
     await e.waitFor(e.element(e.by.id('id'))).toNotHaveValue('value');
+    await e.waitFor(e.element(e.by.id('id'))).toNotHaveText('value');
 
     await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50, 'down');
     await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50);

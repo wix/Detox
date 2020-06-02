@@ -21,7 +21,7 @@ describe('expectTwo API Coverage', () => {
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveId('id');
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveValue('value');
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveValue('value');
-      await e.expect(e.element(e.by.accessibilityLabel('test'))).not().toHaveValue('value');
+      await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toHaveValue('value');
     });
 
     it(`by.label (for backwards compat)`, async () => {
@@ -211,6 +211,7 @@ describe('expectTwo API Coverage', () => {
     it(`waitFor....whileElement() actions`, async () => {
       await e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout(2000);
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).tap();
+      await e.waitFor(e.element(e.by.id('id'))).not.toBeVisible().whileElement(e.by.id('id2')).tap();
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress();
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).multiTap(2);
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).tapAtPoint({ x: 1, y: 1 });
