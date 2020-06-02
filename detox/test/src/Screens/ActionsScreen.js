@@ -9,8 +9,11 @@ import {
   Platform,
   Dimensions,
   StyleSheet,
+  requireNativeComponent,
 } from 'react-native';
 import TextInput from '../Views/TextInput';
+
+const DoubleTapsText = requireNativeComponent('DetoxDoubleTapsTextView');
 
 const { width } = Dimensions.get('window');
 
@@ -21,6 +24,9 @@ const styles = StyleSheet.create({
   item: { height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10 },
   horizItem: { width: hItemWidth, backgroundColor: '#e8e8f8', margin: 10, textAlign: 'center', textAlignVertical: 'center' },
 });
+
+const isIos = Platform.OS === 'ios';
+const isAndroid = Platform.OS === 'android';
 
 export default class ActionsScreen extends Component {
 
@@ -66,10 +72,17 @@ export default class ActionsScreen extends Component {
           <Text testID='WhyDoAllTheTestIDsHaveTheseStrangeNames' style={{ color: 'blue', marginBottom: 20, textAlign: 'center' }}>Tap Me For Long Timeout</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={this.onMultiTapPress.bind(this)}>
-          <Text style={{ color: 'blue', marginBottom: 20, textAlign: 'center' }}
-            testID='UniqueId819'>Taps: {this.state.numTaps}</Text>
-        </TouchableOpacity>
+        <View style={{flexDirection: 'row', justifyContent: 'center', marginBottom: 20}}>
+          <TouchableOpacity onPress={this.onMultiTapPress.bind(this)}>
+            <Text style={{ color: 'blue', textAlign: 'center' }}
+              testID='UniqueId819'>Taps: {this.state.numTaps}</Text>
+          </TouchableOpacity>
+
+          {isAndroid && <Text style={{width: 10}}> | </Text>}
+          {isAndroid && <View style={{ width: 110 }}>
+            <DoubleTapsText style={{ flex: 1 }}/>
+          </View>}
+        </View>
 
         <View testID='UniqueId937_wrapper'>
           <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }}
@@ -80,7 +93,7 @@ export default class ActionsScreen extends Component {
             />
         </View>
 
-        {Platform.OS === 'ios' && <TouchableOpacity style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }} testID='NoTextInputInside' />}
+        {isIos && <TouchableOpacity style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }} testID='NoTextInputInside' />}
 
         <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }}
           onChangeText={this.onChangeClearText.bind(this)}
