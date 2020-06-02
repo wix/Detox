@@ -24,17 +24,26 @@ static void detoxConditionalInit()
 	
 	NSUserDefaults* options = [NSUserDefaults standardUserDefaults];
 	
+	NSMutableDictionary* settings = [NSMutableDictionary new];
+	
+	NSNumber* syncEnabled = [options objectForKey:@"detoxEnableSynchronization"];
+	if(syncEnabled)
+	{
+		settings[@"enabled"] = syncEnabled;
+	}
+	
 	NSArray *blacklistRegex = [options arrayForKey:@"detoxURLBlacklistRegex"];
-	if (blacklistRegex){
-		[[GREYConfiguration sharedInstance] setValue:blacklistRegex forConfigKey:kGREYConfigKeyURLBlacklistRegex];
+	if (blacklistRegex)
+	{
+		settings[@"blacklistURLs"] = blacklistRegex;
 	}
 	
 	NSNumber* waitForDebugger = [options objectForKey:@"detoxWaitForDebugger"];
 	if(waitForDebugger)
 	{
-		usleep(waitForDebugger.unsignedIntValue * 1000);
+		settings[@"waitForDebugger"] = waitForDebugger;
 	}
 	
-	[DTXDetoxManager.sharedManager start];
+	[DTXDetoxManager.sharedManager startWithSynchronizationSettings:settings];
 }
 

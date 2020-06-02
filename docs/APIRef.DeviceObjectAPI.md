@@ -187,9 +187,20 @@ With this API, you can run sets of e2e tests per language. For example:
 });
 ```
 
-##### 10. `detoxURLBlacklistRegex`—Initialize the URL Blacklist at Device Launch
+##### 10. `detoxEnableSynchronization`—Initialize Detox with synchronization enabled or disabled at app launch
 
-Launches the app with an URL blacklist to disable network synchronization on certain endpoints. Useful if the app makes frequent network calls to blacklisted endpoints upon startup. 
+Launches the app with the synchronization mechanism enabled or disabled. Useful if the app cannot be synchronized during the launch process. Synchronization can later be enabled using `device.enableSynchronization()`.
+
+```js
+await device.launchApp({
+  newInstance: true,
+  launchArgs: { detoxEnableSynchronization: 0 }
+}); 
+```
+
+##### 11. `detoxURLBlacklistRegex`—Initialize the URL Blacklist at app launch
+
+Launches the app with a URL blacklist to disable network synchronization on certain endpoints. Useful if the app makes frequent network calls to blacklisted endpoints upon startup. 
 
 ```js
 await device.launchApp({
@@ -199,6 +210,7 @@ await device.launchApp({
 ```
 
 ### `device.relaunchApp(params)`
+
 **Deprecated:** Use `device.launchApp(params)` instead. This method is now calling `launchApp({newInstance: true})` for backwards compatibility.
 
 ### `device.terminateApp()`
@@ -285,6 +297,7 @@ await device.setURLBlacklist(['.*my.ignored.endpoint.*']);
 ```
 
 ### `device.enableSynchronization()`
+
 Enable [EarlGrey's synchronization mechanism](https://github.com/google/EarlGrey/blob/master/docs/api.md#synchronization
 ) (enabled by default). **This is being reset on every new instance of the app.**
 ```js

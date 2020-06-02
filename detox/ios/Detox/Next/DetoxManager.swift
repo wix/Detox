@@ -113,8 +113,18 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 		safeSend(action: "ready", messageId: -1000)
 	}
 	
-	@objc
-	public func start() {
+	private func start() {
+		start(synchronizationSettings: nil)
+	}
+	
+	@objc(startWithSynchronizationSettings:)
+	public func start(synchronizationSettings settings: [String: Any]?) {
+		GREYConfiguration.sharedInstance().setValue(false, forConfigKey: kGREYConfigKeyAnalyticsEnabled)
+		
+		if let settings = settings {
+			setSynchronizationSettings(settings, messageId: nil)
+		}
+		
 		let options = UserDefaults.standard
 		let detoxServer = options.string(forKey: "detoxServer") ?? "ws://localhost:8099"
 		let detoxSessionId = options.string(forKey: "detoxSessionId") ?? Bundle.main.bundleIdentifier!
@@ -171,6 +181,28 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 		webSocket.sendAction("AppWillTerminateWithError", params: details, messageId: -10000)
 	}
 	
+	private func setSynchronizationSettings(_ settings: [String: Any], messageId: NSNumber?) {
+		settings.forEach { key, value in
+			switch key {
+			case "waitForDebugger":
+				usleep((value as! NSNumber).uint32Value * 1000)
+				return
+			case "blacklistURLs":
+				GREYConfiguration.sharedInstance().setValue(value, forConfigKey: kGREYConfigKeyURLBlacklistRegex)
+				return
+			case "enabled":
+				GREYConfiguration.sharedInstance().setValue((value as! NSNumber).boolValue, forConfigKey: kGREYConfigKeySynchronizationEnabled)
+				return
+			default:
+				return
+			}
+		}
+		
+		if let messageId = messageId {
+			safeSend(action: "setSyncSettingsDone", messageId: messageId)
+		}
+	}
+	
 	// MARK: WebSocketDelegate
 	
 	func webSocketDidConnect(_ webSocket: WebSocket) {
@@ -206,6 +238,9 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 			return
 		case "waitForIdle":
 			safeSend(action: done, messageId: messageId)
+			return
+		case "setSyncSettings":
+			setSynchronizationSettings(params, messageId: messageId)
 			return
 		case "invoke":
 			InvocationManager.invoke(dictionaryRepresentation: params) { result, error in
