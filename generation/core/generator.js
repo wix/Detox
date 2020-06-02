@@ -1,7 +1,6 @@
 const t = require('@babel/types');
 const template = require('@babel/template').default;
 const generate = require('@babel/generator').default;
-const objectiveCParser = require('objective-c-parser');
 const javaMethodParser = require('java-method-parser');
 const fs = require('fs');
 const path = require('path');
@@ -17,35 +16,6 @@ module.exports = function getGenerator({
   contentSanitizersForType,
   blacklistedFunctionNames = []
 }) {
-  /**
-   * the input provided by objective-c-parser looks like this:
-   * {
-   *   "name": "BasicName",
-   *   "methods": [
-   *     {
-   *       "args": [],
-   *       "comment": "This is the comment of basic method one",
-   *       "name": "basicMethodOne",
-   *       "returnType": "NSInteger"
-   *     },
-   *     {
-   *       "args": [
-   *         {
-   *           "type": "NSInteger",
-   *           "name": "argOne"
-   *         },
-   *         {
-   *           "type": "NSString",
-   *           "name": "argTwo"
-   *         }
-   *       ],
-   *       "comment": "This is the comment of basic method two.\nIt has multiple lines",
-   *       "name": "basicMethodTwoWithArgOneAndArgTwo",
-   *       "returnType": "NSString"
-   *     }
-   *   ]
-   * }
-   */
   function createClass(json) {
     return t.classDeclaration(
       t.identifier(json.name),
@@ -291,9 +261,7 @@ module.exports = function getGenerator({
 
       globalFunctionUsage = {};
       const input = fs.readFileSync(inputFile, 'utf8');
-      const isObjectiveC = inputFile[inputFile.length - 1] === 'h';
-
-      const json = isObjectiveC ? objectiveCParser(input) : javaMethodParser(input);
+      const json =  javaMethodParser(input);
 
       // set default name
       const pathFragments = outputFile.split('/');

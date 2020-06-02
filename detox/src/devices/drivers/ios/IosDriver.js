@@ -3,10 +3,6 @@ const fs = require('fs');
 const log = require('../../../utils/logger').child({ __filename });
 const DeviceDriverBase = require('../DeviceDriverBase');
 const InvocationManager = require('../../../invoke').InvocationManager;
-const invoke = require('../../../invoke');
-const GREYConfigurationApi = require('../../../ios/earlgreyapi/GREYConfiguration');
-const GREYConfigurationDetox = require('../../../ios/earlgreyapi/GREYConfigurationDetox');
-const EarlyGreyImpl = require('../../../ios/earlgreyapi/EarlGreyImpl');
 const AppleSimUtils = require('./tools/AppleSimUtils');
 
 const SimulatorLogPlugin = require('../../../artifacts/log/ios/SimulatorLogPlugin');
@@ -45,30 +41,16 @@ class IosDriver extends DeviceDriverBase {
     return notificationFilePath;
   }
 
-  async setURLBlacklist(urlList) {
-    await this.client.execute(
-      GREYConfigurationApi.setValueForConfigKey(
-        invoke.callDirectly(GREYConfigurationApi.sharedInstance()),
-        urlList,
-        "GREYConfigKeyURLBlacklistRegex"
-      )
-    );
+  async setURLBlacklist(blacklistURLs) {
+    return await this.client.setSyncSettings({blacklistURLs: blacklistURLs});
   }
 
   async enableSynchronization() {
-    await this.client.execute(
-      GREYConfigurationDetox.enableSynchronization(
-        invoke.callDirectly(GREYConfigurationApi.sharedInstance())
-      )
-    );
+    return await this.client.setSyncSettings({enabled: true});
   }
 
   async disableSynchronization() {
-    await this.client.execute(
-      GREYConfigurationDetox.disableSynchronization(
-        invoke.callDirectly(GREYConfigurationApi.sharedInstance())
-      )
-    );
+    return await this.client.setSyncSettings({enabled: false});
   }
 
   async shake(deviceId) {

@@ -133,6 +133,16 @@ class DeliverPayload extends Action {
   }
 }
 
+class SetSyncSettings extends Action {
+  constructor(params) {
+    super('setSyncSettings', params);
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'setSyncSettingsDone');
+  }
+}
+
 class CurrentStatus extends Action {
   constructor(params) {
     super('currentStatus', params);
@@ -191,6 +201,7 @@ module.exports = {
   ReloadReactNative,
   Cleanup,
   DeliverPayload,
+  SetSyncSettings,
   CurrentStatus,
   Shake,
   SetOrientation,

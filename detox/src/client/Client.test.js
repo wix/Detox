@@ -47,6 +47,14 @@ describe('Client', () => {
     expect(client.ws.send).toHaveBeenCalledTimes(2);
   });
 
+  it(`setSyncSettings() - should send a 'setSyncSettings' action and resolve when 'setSyncSettingsDone' returns`, async () => {
+    await connect();
+    client.ws.send.mockReturnValueOnce(response("setSyncSettingsDone", {}, 1));
+    await client.setSyncSettings({test:test});
+
+    expect(client.ws.send).toHaveBeenCalledTimes(2);
+  });
+
   it(`shake() - should send a 'shake' action and resolve when 'shakeDeviceDone' returns`, async () => {
     await connect();
     client.ws.send.mockReturnValueOnce(response("shakeDeviceDone", {}, 1));

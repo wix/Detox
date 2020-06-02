@@ -60,6 +60,10 @@ class Client {
     await this.sendAction(new actions.CurrentStatus());
   }
 
+  async setSyncSettings(params) {
+    await this.sendAction(new actions.SetSyncSettings(params));
+  }
+
   async shake() {
     await this.sendAction(new actions.Shake());
   }
