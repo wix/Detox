@@ -72,14 +72,17 @@ export default class ActionsScreen extends Component {
           <Text testID='WhyDoAllTheTestIDsHaveTheseStrangeNames' style={{ color: 'blue', marginBottom: 20, textAlign: 'center' }}>Tap Me For Long Timeout</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={this.onMultiTapPress.bind(this)}>
-          <Text style={{ color: 'blue', marginBottom: (isIos ? 20 : 10), textAlign: 'center' }}
-            testID='UniqueId819'>Taps: {this.state.numTaps}</Text>
-        </TouchableOpacity>
+        <View style={{flexDirection: 'row', justifyContent: 'center', marginBottom: 20}}>
+          <TouchableOpacity onPress={this.onMultiTapPress.bind(this)}>
+            <Text style={{ color: 'blue', textAlign: 'center' }}
+              testID='UniqueId819'>Taps: {this.state.numTaps}</Text>
+          </TouchableOpacity>
 
-        {isAndroid && <View style={{ height: 30, width }}>
+          {isAndroid && <Text style={{width: 10}}> | </Text>}
+          {isAndroid && <View style={{ width: 110 }}>
             <DoubleTapsText style={{ flex: 1 }}/>
           </View>}
+        </View>
 
         <View testID='UniqueId937_wrapper'>
           <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }}

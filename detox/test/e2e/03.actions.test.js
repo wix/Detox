@@ -3,7 +3,10 @@ const custom = require('./utils/custom-it');
 const driver = {
   tapsElement: {
     testId: 'UniqueId819',
-    coordinates: { x: 180, y: 160 },
+    get coordinates() {
+      const x = (device.getPlatform() === 'ios' ? 180 : 125);
+      return { x, y: 160 };
+    },
     multiTap: () => element(by.id(driver.tapsElement.testId)).multiTap(3),
     tapAtPoint: () => element(by.id('View7990')).tapAtPoint(driver.tapsElement.coordinates),
     assertTapsCount: (count) => expect(element(by.id(driver.tapsElement.testId))).toHaveText(`Taps: ${count}`),
@@ -12,7 +15,7 @@ const driver = {
   },
   doubleTapsElement: {
     testId: 'doubleTappableText',
-    coordinates: { x: 180, y: 200 },
+    coordinates: { x: 200, y: 160 },
     tapOnce: () => element(by.id(driver.doubleTapsElement.testId)).tap(),
     tapTwice: async () => {
       await driver.doubleTapsElement.tapOnce();
@@ -56,7 +59,7 @@ describe('Actions', () => {
     await driver.tapsElement.assertTappedOnce();
   });
 
-  describe.only('multi-tapping', () => {
+  describe('multi-tapping', () => {
     it('should multi tap on an element', async () => {
       await driver.tapsElement.multiTap();
       await driver.tapsElement.assertMultiTapped();
