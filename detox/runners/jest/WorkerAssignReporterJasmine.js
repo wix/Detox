@@ -2,7 +2,7 @@ const path = require('path');
 const WorkerAssignReporter = require('./WorkerAssignReporterImpl');
 
 class WorkerAssignReporterJasmine {
-  constructor(detox) {
+  constructor({ detox }) {
     this._reporter = new WorkerAssignReporter(detox);
   }
 

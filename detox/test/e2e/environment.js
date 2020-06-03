@@ -1,11 +1,19 @@
-const DetoxEnvironment = require('detox/runners/jest-circus/environment');
+const WorkerAssignReporterCircus = require('detox/runners/jest/WorkerAssignReporterCircus');
+const SpecReporterCircus = require('detox/runners/jest/SpecReporterCircus');
+const DetoxCircusEnvironment = require('detox/runners/jest-circus/environment');
 
-class CustomDetoxEnvironment extends DetoxEnvironment {
+class CustomDetoxEnvironment extends DetoxCircusEnvironment {
   constructor(config) {
     super(config);
 
-    this.enableListener('WorkerAssignReporter');
-    this.enableListener('SpecReporter');
+    if (process.env.TIMEOUT_E2E_TEST) {
+      this.hookTimeout = 30000;
+    }
+
+    this.registerListeners({
+      SpecReporterCircus,
+      WorkerAssignReporterCircus,
+    });
   }
 
   async initDetox() {
@@ -30,10 +38,6 @@ class CustomDetoxEnvironment extends DetoxEnvironment {
     await instance.device.launchApp();
     return instance;
   }
-}
-
-if (process.env.TIMEOUT_E2E_TEST) {
-  CustomDetoxEnvironment.initTimeout = 30000;
 }
 
 process.on('unhandledRejection', (reason, p) => {

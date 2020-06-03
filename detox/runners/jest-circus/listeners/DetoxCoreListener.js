@@ -1,14 +1,21 @@
-const {getFullTestName, hasTimedOut} = require('../utils');
+const _ = require('lodash');
+const {getFullTestName, hasTimedOut} = require('../../jest/utils');
 
 class DetoxCoreListener {
   constructor({ detox }) {
+    this._startedTests = new WeakSet();
     this.detox = detox;
-    this.startedTests = new WeakSet();
   }
 
-  async suite_start({describeBlock: {name, tests}}) {
-    if (tests.length) {
+  async run_describe_start({describeBlock: {name, children}}) {
+    if (children.length) {
       await this.detox.suiteStart({ name });
+    }
+  }
+
+  async run_describe_finish({describeBlock: {name, children}}) {
+    if (children.length) {
+      await this.detox.suiteEnd({ name });
     }
   }
 
@@ -20,31 +27,26 @@ class DetoxCoreListener {
     await this._onBeforeActualTestStart(test);
   }
 
+  async _onBeforeActualTestStart(test) {
+    if (!test || this._startedTests.has(test)) {
+      return;
+    }
+
+    this._startedTests.add(test);
+
+    await this.detox.beforeEach({
+      title: test.name,
+      fullName: getFullTestName(test),
+      status: 'running',
+    });
+  }
+
   async test_done({ test }) {
     await this.detox.afterEach({
       title: test.name,
       fullName: getFullTestName(test),
       status: test.errors.length ? 'failed' : 'passed',
       timedOut: hasTimedOut(test)
-    });
-  }
-
-  async suite_end({describeBlock: {name, tests}}, state) {
-    if (tests.length) {
-      await this.detox.suiteEnd({ name });
-    }
-  }
-
-  async _onBeforeActualTestStart(test) {
-    if (!test || this.startedTests.has(test)) {
-      return;
-    }
-
-    this.startedTests.add(test);
-    await this.detox.beforeEach({
-      title: test.name,
-      fullName: getFullTestName(test),
-      status: 'running',
     });
   }
 }
