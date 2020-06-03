@@ -214,6 +214,7 @@ Retrieved attributes are:
 - `elementBounds`—the bounds of the element, in element coordinate space
 - `safeAreaInsets`—the safe area insets of the element, in element coordinate space
 - `elementSafeBounds`—the safe area bounds of the element, in element coordinate space
+- `date`—the date of the element (in case it is a date picker)
 
 If the value for a given attribute is null or cannot be otherwise computed, the key will not be present, but empty strings may be found in the object.
 

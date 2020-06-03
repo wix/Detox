@@ -506,6 +506,30 @@ static NSDictionary* DTXPointToDictionary(CGPoint point)
 		rv[@"sliderPosition"] = @([(UISlider*)self dtx_normalizedSliderPosition]);
 	}
 	
+	if([self isKindOfClass:UIDatePicker.class])
+	{
+		UIDatePicker* dp = (id)self;
+		rv[@"date"] = [NSISO8601DateFormatter stringFromDate:dp.date timeZone:dp.timeZone ?: NSTimeZone.systemTimeZone formatOptions:NSISO8601DateFormatWithInternetDateTime | NSISO8601DateFormatWithDashSeparatorInDate | NSISO8601DateFormatWithColonSeparatorInTime | NSISO8601DateFormatWithColonSeparatorInTimeZone];
+		NSDateComponents* dc = [dp.calendar componentsInTimeZone:dp.timeZone ?: NSTimeZone.systemTimeZone fromDate:dp.date];
+		
+		NSMutableDictionary* dateComponents = [NSMutableDictionary new];
+		dateComponents[@"era"] = @(dc.era);
+		dateComponents[@"year"] = @(dc.year);
+		dateComponents[@"month"] = @(dc.month);
+		dateComponents[@"day"] = @(dc.day);
+		dateComponents[@"hour"] = @(dc.hour);
+		dateComponents[@"minute"] = @(dc.minute);
+		dateComponents[@"second"] = @(dc.second);
+		dateComponents[@"weekday"] = @(dc.weekday);
+		dateComponents[@"weekdayOrdinal"] = @(dc.weekdayOrdinal);
+		dateComponents[@"quarter"] = @(dc.quarter);
+		dateComponents[@"weekOfMonth"] = @(dc.weekOfMonth);
+		dateComponents[@"weekOfYear"] = @(dc.weekOfYear);
+		dateComponents[@"leapMonth"] = @(dc.leapMonth);
+		
+		rv[@"dateComponents"] = dateComponents;
+	}
+	
 	return rv;
 }
 

@@ -667,14 +667,14 @@
 			children = (
 				3980D167244DD837004812DD /* UIDatePicker+DetoxActions.h */,
 				3980D168244DD837004812DD /* UIDatePicker+DetoxActions.m */,
+				39CA978A245B13CB00A7FC43 /* UIDevice+DetoxActions.h */,
+				39CA978B245B13CB00A7FC43 /* UIDevice+DetoxActions.m */,
 				3980D163244DC8F0004812DD /* UIPickerView+DetoxActions.h */,
 				3980D164244DC8F0004812DD /* UIPickerView+DetoxActions.m */,
 				3980D16B244DDCD7004812DD /* UIScrollView+DetoxActions.h */,
 				3980D16C244DDCD7004812DD /* UIScrollView+DetoxActions.m */,
 				3980D1042448B52B004812DD /* UIView+DetoxActions.h */,
 				3980D0FD2448B52A004812DD /* UIView+DetoxActions.m */,
-				39CA978A245B13CB00A7FC43 /* UIDevice+DetoxActions.h */,
-				39CA978B245B13CB00A7FC43 /* UIDevice+DetoxActions.m */,
 			);
 			path = Actions;
 			sourceTree = "<group>";
