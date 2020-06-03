@@ -13,9 +13,12 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     super(assertJestCircus26(config));
 
     /** @private */
-    this._listenerFactories = { DetoxCoreListener };
+    this._listenerFactories = {
+      DetoxInitErrorListener,
+      DetoxCoreListener,
+    };
     /** @protected */
-    this.circusEventListeners = [];
+    this.testEventListeners = [];
     /** @protected */
     this.hookTimeout = 300000;
   }
@@ -32,7 +35,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
         await this._onSetup(state);
       }
 
-      for (const listener of this.circusEventListeners) {
+      for (const listener of this.testEventListeners) {
         if (typeof listener[name] === 'function') {
           await listener[name](event, state);
         }
@@ -53,17 +56,22 @@ class DetoxCircusEnvironment extends NodeEnvironment {
   }
 
   async _onSetup(state) {
-    let detox;
+    let detox = null;
 
     try {
       detox = await this.initDetox();
-    } catch (err) {
-      state.unhandledErrors.push(err);
-      this._listenerFactories = { DetoxInitErrorListener };
+    } catch (initError) {
+      state.unhandledErrors.push(initError);
+
+      try {
+        await this.cleanupDetox();
+      } catch (cleanupError) {
+        state.unhandledErrors.push(cleanupError);
+      }
     }
 
     for (const Listener of Object.values(this._listenerFactories)) {
-      this.circusEventListeners.push(new Listener({
+      this.testEventListeners.push(new Listener({
         detox,
         env: this,
       }));

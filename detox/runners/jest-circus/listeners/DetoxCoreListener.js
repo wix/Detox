@@ -4,7 +4,12 @@ const {getFullTestName, hasTimedOut} = require('../../jest/utils');
 class DetoxCoreListener {
   constructor({ detox }) {
     this._startedTests = new WeakSet();
-    this.detox = detox;
+    this.detox = detox || {
+      suiteStart: _.noop,
+      suiteEnd: _.noop,
+      beforeEach: _.noop,
+      afterEach: _.noop,
+    };
   }
 
   async run_describe_start({describeBlock: {name, children}}) {

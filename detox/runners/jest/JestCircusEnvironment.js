@@ -25,7 +25,7 @@ class JestCircusEnvironment extends NodeEnvironment {
   async handleTestEvent(event, state) {
     const name = event.name;
 
-    for (const listener of this.circusEventListeners) {
+    for (const listener of this.testEventListeners) {
       if (typeof listener[name] === 'function') {
         await listener[name](event, state);
       }

@@ -4,7 +4,7 @@ const log = require('../../src/utils/logger').child();
 
 class WorkerAssignReporterImpl {
   constructor(detox) {
-    this.device = detox.device;
+    this.device = detox && detox.device;
   }
 
   report(workerName) {
