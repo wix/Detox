@@ -198,9 +198,19 @@ static NSURL* _launchUserActivityDataURL()
 			_touchVisualizerWindow.touchVisualizerWindowDelegate = self;
 			_touchVisualizerWindow.stationaryMorphEnabled = NO;
 			_touchVisualizerWindow.userInteractionEnabled = NO;
-			CGRect statusBarFrame = UIApplication.sharedApplication.statusBarFrame;
-			CGRect screenBounds = UIScreen.mainScreen.bounds;
-			_touchVisualizerWindow.frame = CGRectMake(0, statusBarFrame.size.height, screenBounds.size.width, screenBounds.size.height - statusBarFrame.size.height);
+			_touchVisualizerWindow.frame = UIScreen.mainScreen.bounds;
+			
+//			UIVisualEffectView* blurView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight]];
+//			blurView.translatesAutoresizingMaskIntoConstraints = NO;
+//			
+//			[_touchVisualizerWindow addSubview:blurView];
+//			
+//			[NSLayoutConstraint activateConstraints:@[
+//				[_touchVisualizerWindow.leadingAnchor constraintEqualToAnchor:blurView.leadingAnchor],
+//				[_touchVisualizerWindow.rightAnchor constraintEqualToAnchor:blurView.rightAnchor],
+//				[_touchVisualizerWindow.topAnchor constraintEqualToAnchor:blurView.topAnchor],
+//				[_touchVisualizerWindow.bottomAnchor constraintEqualToAnchor:blurView.bottomAnchor],
+//			]];
 		});
 	}
 }

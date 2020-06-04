@@ -12,6 +12,8 @@
 		390D1C691E3A14EF007F5F46 /* UNNotificationResponse+PrivateHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 390D1C671E3A14EF007F5F46 /* UNNotificationResponse+PrivateHeaders.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		390D1C9C1E3A45F1007F5F46 /* UNNotification+PrivateHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 390D1C9A1E3A45F1007F5F46 /* UNNotification+PrivateHeaders.h */; };
 		390D1CA01E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 390D1C9E1E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h */; };
+		390DED83248906FC00E27BE8 /* UIWindow+DetoxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 390DED81248906FC00E27BE8 /* UIWindow+DetoxUtils.h */; };
+		390DED84248906FC00E27BE8 /* UIWindow+DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 390DED82248906FC00E27BE8 /* UIWindow+DetoxUtils.m */; };
 		391FA5E91E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.h in Headers */ = {isa = PBXBuildFile; fileRef = 391FA5E71E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.h */; };
 		391FA5EA1E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.m in Sources */ = {isa = PBXBuildFile; fileRef = 391FA5E81E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.m */; };
 		392324D72477D87D00A3D119 /* DetoxManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 392324D62477D87D00A3D119 /* DetoxManager.swift */; };
@@ -78,8 +80,6 @@
 		3980D12E244C41E1004812DD /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3980D12D244C41E1004812DD /* IOKit.framework */; };
 		3980D135244C4373004812DD /* UIView+DetoxMatchers.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D133244C4373004812DD /* UIView+DetoxMatchers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3980D136244C4373004812DD /* UIView+DetoxMatchers.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D134244C4373004812DD /* UIView+DetoxMatchers.m */; };
-		3980D13A244C43EA004812DD /* UIView+DetoxExpectations.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D138244C43EA004812DD /* UIView+DetoxExpectations.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3980D13B244C43EA004812DD /* UIView+DetoxExpectations.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D139244C43EA004812DD /* UIView+DetoxExpectations.m */; };
 		3980D158244C45EA004812DD /* Modifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3980D14B244C45E9004812DD /* Modifier.swift */; };
 		3980D15A244C45EA004812DD /* Element.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3980D153244C45E9004812DD /* Element.swift */; };
 		3980D15B244C45EA004812DD /* InvocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3980D154244C45E9004812DD /* InvocationManager.swift */; };
@@ -241,6 +241,8 @@
 		390D1C991E3A292F007F5F46 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		390D1C9A1E3A45F1007F5F46 /* UNNotification+PrivateHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UNNotification+PrivateHeaders.h"; sourceTree = "<group>"; };
 		390D1C9E1E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UNPushNotificationTrigger+PrivateHeaders.h"; sourceTree = "<group>"; };
+		390DED81248906FC00E27BE8 /* UIWindow+DetoxUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIWindow+DetoxUtils.h"; sourceTree = "<group>"; };
+		390DED82248906FC00E27BE8 /* UIWindow+DetoxUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIWindow+DetoxUtils.m"; sourceTree = "<group>"; };
 		391FA5E71E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GREYIdlingResourcePrettyPrint.h; sourceTree = "<group>"; };
 		391FA5E81E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GREYIdlingResourcePrettyPrint.m; sourceTree = "<group>"; };
 		392324D62477D87D00A3D119 /* DetoxManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxManager.swift; sourceTree = "<group>"; };
@@ -311,8 +313,6 @@
 		3980D12D244C41E1004812DD /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
 		3980D133244C4373004812DD /* UIView+DetoxMatchers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+DetoxMatchers.h"; sourceTree = "<group>"; };
 		3980D134244C4373004812DD /* UIView+DetoxMatchers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+DetoxMatchers.m"; sourceTree = "<group>"; };
-		3980D138244C43EA004812DD /* UIView+DetoxExpectations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+DetoxExpectations.h"; sourceTree = "<group>"; };
-		3980D139244C43EA004812DD /* UIView+DetoxExpectations.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+DetoxExpectations.m"; sourceTree = "<group>"; };
 		3980D14B244C45E9004812DD /* Modifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Modifier.swift; sourceTree = "<group>"; };
 		3980D153244C45E9004812DD /* Element.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Element.swift; sourceTree = "<group>"; };
 		3980D154244C45E9004812DD /* InvocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InvocationManager.swift; sourceTree = "<group>"; };
@@ -595,17 +595,16 @@
 		3980D0FC2448B514004812DD /* Next */ = {
 			isa = PBXGroup;
 			children = (
-				39232594247AAAAC00A3D119 /* Assertions */,
-				3980D130244C42E7004812DD /* Utilities */,
+				3980D131244C4336004812DD /* Actions */,
 				3980D12B244C40D2004812DD /* AppleInternals */,
 				3980D12C244C40E2004812DD /* AppleTouchEvents */,
-				3980D132244C435B004812DD /* Matchers */,
-				3980D137244C43D6004812DD /* Expectations */,
-				3980D131244C4336004812DD /* Actions */,
+				39232594247AAAAC00A3D119 /* Assertions */,
 				3980D13C244C44C3004812DD /* Invocation */,
-				392324DE24781CBD00A3D119 /* WebSocket.swift */,
-				392324D62477D87D00A3D119 /* DetoxManager.swift */,
+				3980D132244C435B004812DD /* Matchers */,
+				3980D130244C42E7004812DD /* Utilities */,
 				392324E124782AE500A3D119 /* DetoxInit.m */,
+				392324D62477D87D00A3D119 /* DetoxManager.swift */,
+				392324DE24781CBD00A3D119 /* WebSocket.swift */,
 			);
 			path = Next;
 			sourceTree = "<group>";
@@ -658,6 +657,8 @@
 				3980D1022448B52B004812DD /* UIView+DontCrash.h */,
 				3980D1002448B52B004812DD /* UIView+DontCrash.m */,
 				3976BF16246C172100AA20C7 /* UIView+ScrollViewExtraction.swift */,
+				390DED81248906FC00E27BE8 /* UIWindow+DetoxUtils.h */,
+				390DED82248906FC00E27BE8 /* UIWindow+DetoxUtils.m */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -686,15 +687,6 @@
 				3980D134244C4373004812DD /* UIView+DetoxMatchers.m */,
 			);
 			path = Matchers;
-			sourceTree = "<group>";
-		};
-		3980D137244C43D6004812DD /* Expectations */ = {
-			isa = PBXGroup;
-			children = (
-				3980D138244C43EA004812DD /* UIView+DetoxExpectations.h */,
-				3980D139244C43EA004812DD /* UIView+DetoxExpectations.m */,
-			);
-			path = Expectations;
 			sourceTree = "<group>";
 		};
 		3980D13C244C44C3004812DD /* Invocation */ = {
@@ -754,9 +746,9 @@
 				3980D1152448B52C004812DD /* UIView+DetoxActions.h in Headers */,
 				39CE25AB22197F0900D78AA1 /* DetoxInstrumentsManager.h in Headers */,
 				394767BE1DBF98A700D72256 /* EarlGreyExtensions.h in Headers */,
-				3980D13A244C43EA004812DD /* UIView+DetoxExpectations.h in Headers */,
 				390D1CA01E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h in Headers */,
 				3980D1132448B52C004812DD /* UIView+DontCrash.h in Headers */,
+				390DED83248906FC00E27BE8 /* UIWindow+DetoxUtils.h in Headers */,
 				3902CAD7211342D000C49D04 /* WXRNLoadIdlingResource.h in Headers */,
 				3976BF15246C139D00AA20C7 /* DTXSwizzlingHelper.h in Headers */,
 				394767D01DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.h in Headers */,
@@ -991,13 +983,13 @@
 				394767D11DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.m in Sources */,
 				3980D15B244C45EA004812DD /* InvocationManager.swift in Sources */,
 				39A34C721E30F10D00BEBB59 /* DetoxAppDelegateProxy.m in Sources */,
+				390DED84248906FC00E27BE8 /* UIWindow+DetoxUtils.m in Sources */,
 				397CA7A12483F8AA005E8A71 /* NSThread+DetoxUtils.swift in Sources */,
 				3980D158244C45EA004812DD /* Modifier.swift in Sources */,
 				3980D15A244C45EA004812DD /* Element.swift in Sources */,
 				3980D1122448B52C004812DD /* UIApplication+DTXAdditions.m in Sources */,
 				39F5ACEC245F1CB000FB7F18 /* DTXLogging.swift in Sources */,
 				3980D15E244C45EA004812DD /* Predicate.swift in Sources */,
-				3980D13B244C43EA004812DD /* UIView+DetoxExpectations.m in Sources */,
 				397CA79F2483F07D005E8A71 /* ApproximateEquality.swift in Sources */,
 				39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */,
 				394767C21DBF98A700D72256 /* GREYMatchers+Detox.m in Sources */,

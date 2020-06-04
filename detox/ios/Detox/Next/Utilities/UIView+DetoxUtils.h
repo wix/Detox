@@ -21,6 +21,12 @@ static double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
 
 @interface UIView (DetoxUtils)
 
+@property (nonatomic, readonly) BOOL dtx_isVisible;
+@property (nonatomic, readonly) BOOL dtx_isHittable;
+
+- (BOOL)dtx_isVisibleAtPoint:(CGPoint)point;
+- (BOOL)dtx_isHittableAtPoint:(CGPoint)point;
+
 - (void)dtx_assertVisible;
 - (void)dtx_assertHittable;
 - (void)dtx_assertVisibleAtPoint:(CGPoint)point;
@@ -31,6 +37,8 @@ static double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
 @property (nonatomic, readonly) CGRect dtx_safeAreaBounds;
 @property (nonatomic, readonly) CGPoint dtx_accessibilityActivationPoint;
 @property (nonatomic, readonly) CGPoint dtx_accessibilityActivationPointInViewCoordinateSpace;
+
+- (UIImage*)dtx_imageAroundPoint:(CGPoint)point;
 
 @end
 

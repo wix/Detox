@@ -8,6 +8,7 @@
 
 #import "UIView+DetoxMatchers.h"
 #import "DTXAppleInternals.h"
+#import "UIWindow+DetoxUtils.h"
 
 @implementation UIView (DetoxMatchers)
 
@@ -38,19 +39,14 @@
 	return rv;
 }
 
++ (NSMutableArray<UIView*>*)dtx_findViewsInAllWindowsPassingPredicate:(NSPredicate*)predicate
+{
+	return [self dtx_findViewsInWindows:UIWindow.dtx_allWindows.reverseObjectEnumerator.allObjects passingPredicate:predicate];
+}
+
 + (NSMutableArray<UIView*>*)dtx_findViewsInKeySceneWindowsPassingPredicate:(NSPredicate*)predicate
 {
-	NSArray<UIWindow*>* windows;
-	if (@available(iOS 13.0, *))
-	{
-		windows = UIWindowScene._keyWindowScene.windows;
-	}
-	else
-	{
-		windows = UIApplication.sharedApplication.windows;
-	}
-	
-	return [self dtx_findViewsInWindows:windows passingPredicate:predicate];
+	return [self dtx_findViewsInWindows:UIWindow.dtx_allKeyWindowSceneWindows.reverseObjectEnumerator.allObjects passingPredicate:predicate];
 }
 
 + (NSMutableArray<UIView*>*)dtx_findViewsInHierarchy:(UIView*)hierarchy passingPredicate:(NSPredicate*)predicate

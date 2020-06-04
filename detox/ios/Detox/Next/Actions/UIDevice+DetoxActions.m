@@ -8,6 +8,7 @@
 
 #import "UIDevice+DetoxActions.h"
 #import "DTXAppleInternals.h"
+#import "UIWindow+DetoxUtils.h"
 
 @implementation UIDevice (DetoxActions)
 
@@ -23,15 +24,7 @@
 	
 	UIApplication *application = UIApplication.sharedApplication;
 	
-	UIWindow* window;
-	if(@available(iOS 13, *))
-	{
-		window = UIWindowScene._keyWindowScene._keyWindow;
-	}
-	else
-	{
-		window = UIWindow.keyWindow;
-	}
+	UIWindow* window = UIWindow.dtx_keyWindow;
 	UIMotionEvent *motionEvent = [application _motionEvent];
 	
 	[motionEvent setShakeState:1];

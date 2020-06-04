@@ -13,7 +13,6 @@
 #import "DTXAppleInternals.h"
 #import "DTXSyntheticEvents.h"
 #import "UIView+DetoxUtils.h"
-#import "UIView+DetoxExpectations.h"
 #import "UISlider+DetoxUtils.h"
 
 @implementation UIView (Detox)

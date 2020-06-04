@@ -42,6 +42,7 @@ class Element : CustomStringConvertible {
 	}
 	
 	var views : [UIView] {
+		//TODO: Consider searching here in all windows from all scenes.
 		let array = UIView.dtx_findViewsInKeySceneWindows(passing: predicate.predicateForQuery()) as! [UIView]
 		
 		guard array.count > 0 else {
