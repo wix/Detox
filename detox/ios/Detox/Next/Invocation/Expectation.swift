@@ -79,7 +79,7 @@ class Expectation : CustomStringConvertible {
 		Kind.toHaveId: ValueExpectation.self,
 		Kind.toHaveValue: ValueExpectation.self,
 		Kind.toHavePlaceholder: ValueExpectation.self,
-		Kind.toHaveSliderPosition: ValueExpectation.self
+		Kind.toHaveSliderPosition: SliderPositionExpectation.self
 	]
 	
 	static let keyMapping : [String: String] = [
@@ -88,6 +88,7 @@ class Expectation : CustomStringConvertible {
 		Kind.toHaveId: "accessibilityIdentifier",
 		Kind.toHaveValue: "accessibilityValue",
 		Kind.toHavePlaceholder: "placeholder",
+		Kind.toHaveSliderPosition: "dtx_normalizedSliderPosition",
 	]
 	
 	class func with(dictionaryRepresentation: [String: Any]) throws -> Expectation {
@@ -104,7 +105,9 @@ class Expectation : CustomStringConvertible {
 		
 		let element = try Element.with(dictionaryRepresentation: dictionaryRepresentation)
 		let expectationClass = mapping[kind]!
-		if expectationClass == ValueExpectation.self {
+		if expectationClass == SliderPositionExpectation.self {
+			return SliderPositionExpectation(kind: kind, modifiers: modifiers, element: element, timeout: timeout, value: params!.first! as! Double, tolerance: params!.count > 1 ? (params![1] as! Double) : nil)
+		} else if expectationClass == ValueExpectation.self {
 			return ValueExpectation(kind: kind, modifiers: modifiers, element: element, timeout: timeout, key: keyMapping[kind]!, value: params!.first!)
 		} else {
 			return expectationClass.init(kind: kind, modifiers: modifiers, element: element, timeout: timeout)
@@ -225,14 +228,16 @@ class ValueExpectation : Expectation {
 	}
 }
 
-class DoubleExpectation : ValueExpectation {
+class DoubleExpectation : Expectation {
+	let value : Double
 	let tolerance : Double?
 	
-	required init(kind: String, modifiers: Set<String>, element: Element, timeout: TimeInterval, key: String, value: Double, tolerance: Double?) {
+	required init(kind: String, modifiers: Set<String>, element: Element, timeout: TimeInterval, value: Double, tolerance: Double?) {
 		//Tolerances outside of [DBL_EPSILON, 1) yield well-defined but useless results, so clamp the tolerance.
+		self.value = value
 		self.tolerance = tolerance != nil ? Double.minimum(Double.maximum(tolerance!, Double.ulpOfOne), 1.0 - Double.ulpOfOne) : nil
 		
-		super.init(kind: kind, modifiers: modifiers, element: element, timeout: timeout, key: key, value: value)
+		super.init(kind: kind, modifiers: modifiers, element: element, timeout: timeout)
 	}
 	
 	required init(kind: String, modifiers: Set<String>, element: Element, timeout: TimeInterval) {
@@ -243,13 +248,13 @@ class DoubleExpectation : ValueExpectation {
 		fatalError("Call the other initializer")
 	}
 	
+	fileprivate func valueToTest(from view: UIView) -> Double {
+		fatalError("Unimplemented")
+	}
+	
 	override func evaluate(with view: UIView) -> Bool {
 		return NSPredicate { view, _ -> Bool in
-			guard let slider = view as? UISlider else {
-				dtx_fatalError("View \((view as! UIView).dtx_shortDescription) is not instance of “UISlider”", view: (view as! UIView))
-			}
-			
-			return slider.dtx_normalizedSliderPosition.isAlmostEqual(to: self.value as! Double, tolerance: self.tolerance ?? Double.ulpOfOne.squareRoot())
+			self.valueToTest(from: (view as! UIView)).isAlmostEqual(to: self.value, tolerance: self.tolerance ?? Double.ulpOfOne.squareRoot())
 		}.evaluate(with: view)
 	}
 	
@@ -257,5 +262,15 @@ class DoubleExpectation : ValueExpectation {
 		get {
 			return "(sliderPosition \(tolerance != nil ? "(~\(tolerance!))" : "")== “\(value)”)"
 		}
+	}
+}
+
+class SliderPositionExpectation : DoubleExpectation {
+	override func valueToTest(from view: UIView) -> Double {
+		guard let slider = view as? UISlider else {
+			dtx_fatalError("View \(view.dtx_shortDescription) is not instance of “UISlider”", view: view)
+		}
+		
+		return slider.dtx_normalizedSliderPosition
 	}
 }
