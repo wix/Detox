@@ -1,7 +1,7 @@
 const firstTestContent = require('./firstTestContent');
 const runnerConfig = `{
     "setupFilesAfterEnv": ["./init.js"],
-    "testEnvironment": "detox/runners/jest/environment",
+    "testEnvironment": "detox/runners/jest-circus/environment",
     "testRunner": "jest-circus/runner",
     "reporters": ["detox/runners/jest/streamlineReporter"],
     "verbose": true

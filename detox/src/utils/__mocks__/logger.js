@@ -6,6 +6,7 @@ class FakeLogger {
   constructor(opts = {}) {
     this.opts = opts;
     this.log = jest.fn();
+    this.ensureLogFiles = jest.fn();
 
     for (const method of METHODS) {
       this[method] = jest.fn().mockImplementation((...args) => {

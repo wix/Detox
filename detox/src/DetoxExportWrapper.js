@@ -32,6 +32,8 @@ class DetoxExportWrapper {
   async init(configOverride, userParams) {
     let configError, exposeGlobals, resolvedConfig;
 
+    log.ensureLogFiles();
+
     try {
       resolvedConfig = await configuration.composeDetoxConfig({
         override: configOverride,
@@ -46,7 +48,7 @@ class DetoxExportWrapper {
 
     try {
       if (exposeGlobals) {
-        Detox.none.initContext(global);
+        Detox.none.initContext(Detox.global);
       }
 
       if (configError) {
@@ -59,21 +61,19 @@ class DetoxExportWrapper {
 
       return this[_detox];
     } catch (err) {
-      Detox.none.setError(err);
-
       log.error({ event: 'DETOX_INIT_ERROR' }, '\n', err);
+
+      Detox.none.setError(err);
       throw err;
     }
   }
 
   async cleanup() {
-    try {
-      if (this[_detox] !== Detox.none) {
-        await this[_detox].cleanup();
-      }
-    } finally {
+    Detox.none.cleanupContext(Detox.global);
+
+    if (this[_detox] !== Detox.none) {
+      await this[_detox].cleanup();
       this[_detox] = Detox.none;
-      Detox.none.cleanupContext(global);
     }
   }
 
@@ -85,6 +85,12 @@ class DetoxExportWrapper {
 
   _defineProxy(name) {
     this[name] = funpermaproxy(() => this[_detox][name]);
+  }
+
+  /** Use for test runners with sandboxed global */
+  _setGlobal(global) {
+    Detox.global = global;
+    return this;
   }
 }
 

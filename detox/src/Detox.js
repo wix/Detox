@@ -158,7 +158,7 @@ class Detox {
     });
 
     if (behaviorConfig.exposeGlobals) {
-      Object.assign(global, {
+      Object.assign(Detox.global, {
         ...deviceDriver.matchers,
         device: this.device,
       });
@@ -267,5 +267,6 @@ class Detox {
 }
 
 Detox.none = new MissingDetox();
+Detox.global = global;
 
 module.exports = Detox;

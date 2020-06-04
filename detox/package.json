@@ -31,7 +31,7 @@
   "devDependencies": {
     "eslint": "^4.11.0",
     "eslint-plugin-node": "^6.0.1",
-    "jest": "25.3.x",
+    "jest": "26.x.x",
     "mockdate": "^2.0.1",
     "prettier": "1.7.0",
     "react-native": "0.62.x",
@@ -53,6 +53,7 @@
     "proper-lockfile": "^3.0.2",
     "sanitize-filename": "^1.6.1",
     "shell-utils": "^1.0.9",
+    "signal-exit": "^3.0.3",
     "tail": "^2.0.0",
     "telnet-client": "1.2.8",
     "tempfile": "^2.0.0",
