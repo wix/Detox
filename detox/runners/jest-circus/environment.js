@@ -17,10 +17,12 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       DetoxInitErrorListener,
       DetoxCoreListener,
     };
+    /** @private */
+    this._hookTimeout = undefined;
     /** @protected */
     this.testEventListeners = [];
     /** @protected */
-    this.hookTimeout = 300000;
+    this.initTimeout = 120000;
   }
 
   get detox() {
@@ -30,28 +32,27 @@ class DetoxCircusEnvironment extends NodeEnvironment {
   async handleTestEvent(event, state) {
     const { name } = event;
 
-    await this._timely(async () => {
-      if (name === 'setup') {
-        await this._onSetup(state);
-      }
+    if (name === 'setup') {
+      await this._onSetup(state);
+    }
 
+    await this._timely(async () => {
       for (const listener of this.testEventListeners) {
         if (typeof listener[name] === 'function') {
           await listener[name](event, state);
         }
       }
-
-      if (name === 'teardown') {
-        await this.cleanupDetox();
-      }
     });
 
-    this.hookTimeout = state.testTimeout;
+    if (name === 'teardown') {
+      await this._onTeardown();
+    }
   }
 
   _timely(fn) {
-    return timely(fn, this.hookTimeout, () => {
-      return new Error(`Exceeded timeout of ${this.hookTimeout}ms.`);
+    const ms = this._hookTimeout === undefined ? this.initTimeout : this._hookTimeout;
+    return timely(fn, ms, () => {
+      return new Error(`Exceeded timeout of ${ms}ms.`);
     })();
   }
 
@@ -59,22 +60,33 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     let detox = null;
 
     try {
-      detox = await this.initDetox();
+      try {
+        detox = await this._timely(() => this.initDetox());
+      } finally {
+        this._hookTimeout = state.testTimeout;
+      }
     } catch (initError) {
       state.unhandledErrors.push(initError);
-
-      try {
-        await this.cleanupDetox();
-      } catch (cleanupError) {
-        state.unhandledErrors.push(cleanupError);
-      }
+      await this._onTeardown();
     }
 
+    this._instantiateListeners(detox);
+  }
+
+  _instantiateListeners(detoxInstance) {
     for (const Listener of Object.values(this._listenerFactories)) {
       this.testEventListeners.push(new Listener({
-        detox,
+        detox: detoxInstance,
         env: this,
       }));
+    }
+  }
+
+  async _onTeardown() {
+    try {
+      await this._timely(() => this.cleanupDetox());
+    } catch (cleanupError) {
+      state.unhandledErrors.push(cleanupError);
     }
   }
 

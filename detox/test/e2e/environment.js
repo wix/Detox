@@ -7,7 +7,7 @@ class CustomDetoxEnvironment extends DetoxCircusEnvironment {
     super(config);
 
     if (process.env.TIMEOUT_E2E_TEST) {
-      this.hookTimeout = 30000;
+      this.initTimeout = 30000;
     }
 
     this.registerListeners({
