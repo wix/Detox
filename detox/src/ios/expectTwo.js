@@ -54,6 +54,10 @@ class Expect {
     return this.not.toHaveValue(value);
   }
 
+  toHaveSliderPosition(position, tolerance = 0) {
+    return this.expect('toHaveSliderPosition', position, tolerance);
+  }
+
   get not() {
     this.modifiers.push('not');
     return this;
@@ -189,6 +193,10 @@ class Element {
     return this.withAction('pinchWithAngle', direction, speed, angle);
   }
 
+  adjustSliderToPosition(position) {
+    if (!(typeof position === 'number' && position >= 0 && position <= 1)) throw new Error('position should be a number [0.0, 1.0], but got ' + (position + (' (' + (typeof position + ')'))));
+    return this.withAction('adjustSliderToPosition', position);
+  }
   createInvocation(action, ...params) {
     return ({
       type: 'action',

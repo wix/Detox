@@ -69,11 +69,14 @@ describe('expectTwo API Coverage', () => {
   });
 
   describe('Expect', () => {
+    it('toHaveSliderPosition', async () => {
+      e.expect(e.element(e.by.id('id'))).toHaveSliderPosition(0.5);
+    });
+
     it(`expect with wrong parameters should throw`, async () => {
       await expectToThrow(() => e.expect('notAnElement'));
       await expectToThrow(() => e.expect(e.element('notAMatcher')));
     });
-
   });
 
 
@@ -84,7 +87,6 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.element(e.by.id('pickerView')).setColumnToValue('notAColumn', 1));
       await expectToThrow(() => e.element(e.by.id('pickerView')).setColumnToValue(1, 1));
     });
-
 
     it(`interactions`, async () => {
       await e.element(e.by.label('Tap Me')).getAttributes();
@@ -124,6 +126,7 @@ describe('expectTwo API Coverage', () => {
       await e.element(e.by.id('someId')).swipe('right', 'slow', 0.9);
       await e.element(e.by.id('someId')).atIndex(1).tap();
       await e.element(e.by.id('someId')).setDatePickerDate('2019-2-8T05:10:00-08:00', 'yyyy-MM-dd\'T\'HH:mm:ssZZZZZ');
+      await e.element(e.by.id('slider')).adjustSliderToPosition(0.5);
     });
 
     it(`interactions with wrong parameters should throw`, async () => {
@@ -165,6 +168,10 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.element(e.by.id('UIPickerView')).setDatePickerDate(0, 'mm'));
       await expectToThrow(() => e.element(e.by.id('UIPickerView')).setDatePickerDate('mm', 0));
       await expectToThrow(() => e.element(e.by.id('UIPickerView')).setDatePickerDate(0, 0));
+
+      await expectToThrow(() => e.element(e.by.id('slider')).adjustSliderToPosition(2));
+      await expectToThrow(() => e.element(e.by.id('slider')).adjustSliderToPosition(-1));
+      await expectToThrow(() => e.element(e.by.id('slider')).adjustSliderToPosition(NaN));
     });
 
   });
@@ -185,8 +192,6 @@ describe('expectTwo API Coverage', () => {
       await e.waitFor(e.element(e.by.id('id'))).toNotHaveLabel('value');
       await e.waitFor(e.element(e.by.id('id'))).toHaveValue('value');
       await e.waitFor(e.element(e.by.id('id'))).toNotHaveValue('value');
-
-
     });
 
     it(`waitFor (element) with wrong parameters should throw`, async () => {
@@ -236,10 +241,7 @@ describe('expectTwo API Coverage', () => {
     it(`waitFor (element) with non-elements should throw`, async () => {
       await expectToThrow(() => e.waitFor('notAnElement').toBeVisible());
     });
-
   });
-
-
 });
 
 async function expectToThrow(func) {

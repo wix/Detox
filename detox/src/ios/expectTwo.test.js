@@ -281,6 +281,23 @@ describe('expectTwo', () => {
     expect(testCall).deepEquals(jsonOutput);
   });
 
+  it(`expect(element(by.id('slider'))).toHaveSliderPosition(position, tolerance)`, () => {
+    const testCall = e.expect(e.element(e.by.id('slider'))).toHaveSliderPosition(0.5, 1);
+    const jsonOutput = {
+      'invocation': {
+        'type': 'expectation',
+        'predicate': {
+          'type': 'id',
+          'value': 'slider'
+        },
+        'expectation': 'toHaveSliderPosition',
+        'params': [0.5, 1]
+      }
+    };
+
+    expect(testCall).deepEquals(jsonOutput);
+  });
+
   it(`waitFor(element(by.text('Text5'))).toBeNotVisible().whileElement(by.id('ScrollView630')).scroll(50, 'down')`, () => {
     const testCall = e.waitFor(e.element(e.by.text('Text5'))).toBeNotVisible().whileElement(e.by.id('ScrollView630')).scroll(50, 'down');
     const jsonOutput = {
