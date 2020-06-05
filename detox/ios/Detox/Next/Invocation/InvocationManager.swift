@@ -6,6 +6,9 @@
 //
 
 import UIKit
+import os.signpost
+
+fileprivate let log = DetoxLog(category: "InvocationManager")
 
 final class InvocationManager {
 	internal struct Keys {
@@ -18,23 +21,31 @@ final class InvocationManager {
 	}
 	
 	class func invoke(dictionaryRepresentation: [String: Any], completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
+		let signpostID = OSSignpostID(log: log.osLog)
+		let signpostCompletionHandler : ([String: Any]?, Error?) -> Void = { result, error in
+			os_signpost(.end, log: log.osLog, name: "Invocation", signpostID: signpostID, error != nil ? "error: %{public}s" : "", "\(error?.localizedDescription ?? "")")
+			completionHandler(result, error)
+		}
+		
 		do {
-			let type = dictionaryRepresentation[Keys.type] as! String
+			let kind = dictionaryRepresentation[Keys.type] as! String
 			
-			switch type {
+			switch kind {
 			case Types.action:
 				let action = try Action.with(dictionaryRepresentation: dictionaryRepresentation)
-				action.perform(completionHandler: completionHandler)
+				os_signpost(.begin, log: log.osLog, name: "Invocation", signpostID: signpostID, "Action: %{public}s", "\(type(of: action))")
+				action.perform(completionHandler: signpostCompletionHandler)
 			case Types.expectation:
 				let expectation = try Expectation.with(dictionaryRepresentation: dictionaryRepresentation)
+				os_signpost(.begin, log: log.osLog, name: "Invocation", signpostID: signpostID, "Expectation: %{public}s", "\(type(of: expectation))")
 				expectation.evaluate { error in
-					completionHandler(nil, error)
+					signpostCompletionHandler(nil, error)
 				}
 			default:
-				fatalError("Unknown invocation type \(type)")
+				fatalError("Unknown invocation type “\(kind)”")
 			}
 		} catch {
-			completionHandler(nil, error)
+			signpostCompletionHandler(nil, error)
 		}
 	}
 }
