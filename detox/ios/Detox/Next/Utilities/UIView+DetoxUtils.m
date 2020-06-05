@@ -222,8 +222,6 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	
 	id (*testFunc)(id, SEL, CGPoint, id, id) = (void*)objc_msgSend;
 	
-	UIImage* testedViewImage = [self dtx_imageAroundPoint:point];
-	
 	id scene = nil;
 	if(@available(iOS 13.0, *))
 	{
