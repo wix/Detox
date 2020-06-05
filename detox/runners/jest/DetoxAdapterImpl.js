@@ -1,4 +1,10 @@
 const DetoxRuntimeError = require('../../src/errors/DetoxRuntimeError');
+const {
+  onRunDescribeStart,
+  onTestStart,
+  onTestDone,
+  onRunDescribeFinish,
+} = require('../integration').symbols;
 
 class DetoxAdapterImpl {
   constructor(detox, describeInitErrorFn) {
@@ -14,7 +20,7 @@ class DetoxAdapterImpl {
     }
 
     await this._flush();
-    await this.detox.beforeEach(this._currentTest);
+    await this.detox[onTestStart](this._currentTest);
   }
 
   async afterAll() {
@@ -22,11 +28,11 @@ class DetoxAdapterImpl {
   }
 
   async suiteStart({name}) {
-    this._enqueue(() => this.detox.suiteStart({name}));
+    this._enqueue(() => this.detox[onRunDescribeStart]({name}));
   }
 
   async suiteEnd({name}) {
-    this._enqueue(() => this.detox.suiteEnd({name}));
+    this._enqueue(() => this.detox[onRunDescribeFinish]({name}));
   }
 
   testStart({title, fullName, status}) {
@@ -51,7 +57,7 @@ class DetoxAdapterImpl {
   }
 
   async _afterEach(previousTest) {
-    await this.detox.afterEach(previousTest);
+    await this.detox[onTestDone](previousTest);
   }
 
   _enqueue(fn) {

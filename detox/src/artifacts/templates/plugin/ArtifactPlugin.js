@@ -206,6 +206,32 @@ class ArtifactPlugin {
     this.context.testSummary = testSummary;
   }
 
+  /**
+   * Hook that is called if a hook of a test fails
+   * e.g.: beforeAll, beforeEach, afterEach, afterAll
+   *
+   * @protected
+   * @async
+   * @param {string} failureDetails.hook
+   * @param {*} failureDetails.error
+   * @return {Promise<void>} - when done
+   */
+  async onHookFailure(failureDetails) {
+    this._hasFailingTests = true;
+  }
+
+  /**
+   * Hook that is called if a test function fails
+   *
+   * @protected
+   * @async
+   * @param {*} failureDetails.error
+   * @return {Promise<void>} - when done
+   */
+  async onTestFnFailure(failureDetails) {
+    this._hasFailingTests = true;
+  }
+
   /***
    * @protected
    * @async
@@ -275,8 +301,9 @@ class ArtifactPlugin {
     this.onTerminateApp = _.noop;
     this.onBeforeLaunchApp = _.noop;
     this.onLaunchApp = _.noop;
-    this.onUserAction = _.noop;
     this.onTestStart = _.noop;
+    this.onHookFailure = _.noop;
+    this.onTestFnFailure = _.noop;
     this.onTestDone = _.noop;
     this.onRunDescribeStart = _.noop;
     this.onRunDescribeFinish = _.noop;

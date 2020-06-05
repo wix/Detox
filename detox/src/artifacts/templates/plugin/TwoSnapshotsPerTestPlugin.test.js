@@ -161,6 +161,96 @@ describe('TwoSnapshotsPerTestPlugin', () => {
     });
   });
 
+  describe('when takeWhen.testFailure is false', () =>     {
+    beforeEach(() => plugin.configureAutomaticSnapshots({ testFailure: false }));
+    beforeEach(() => plugin.onTestStart(testSummaries.running()));
+
+    describe('when onHookFailure called', function() {
+      beforeEach(async () => {
+        await plugin.onHookFailure({ hook: 'beforeEach', error: new Error() });
+      });
+
+      it('should not create any tests artifacts', () => {
+        expect(plugin.createTestArtifact).not.toHaveBeenCalled();
+        expect(plugin.snapshots.fromTest['beforeEachFailure']).toBe(undefined);
+      });
+    });
+
+    describe('when onTestFnFailure called', function() {
+      beforeEach(async () => {
+        await plugin.onTestFnFailure({ error: new Error() });
+      });
+
+      it('should not create any tests artifacts', () => {
+        expect(plugin.createTestArtifact).not.toHaveBeenCalled();
+        expect(plugin.snapshots.fromTest['testFailure']).toBe(undefined);
+      });
+    });
+  });
+
+  describe('when takeWhen.testFailure is true', () => {
+    beforeEach(() => plugin.configureAutomaticSnapshots({ testFailure: true }));
+
+    describe('when onHookFailure (beforeAll) called', function() {
+      beforeEach(async () => {
+        await plugin.onHookFailure({ hook: 'beforeAll', error: new Error() });
+      });
+
+      it('should create test artifact', () => {
+        expect(plugin.createTestArtifact).toHaveBeenCalledTimes(1);
+      });
+
+      it('should start and stop recording in the artifact', () => {
+        expect(plugin.snapshots.fromSession['beforeAllFailure'].start).toHaveBeenCalledTimes(1);
+        expect(plugin.snapshots.fromSession['beforeAllFailure'].stop).toHaveBeenCalledTimes(1);
+      });
+
+      it('should put the artifact under tracking', () => {
+        expect(api.trackArtifact).toHaveBeenCalledWith(plugin.snapshots.fromSession['beforeAllFailure']);
+      });
+    });
+
+    describe('when onHookFailure (beforeEach) called', function() {
+      beforeEach(async () => {
+        await plugin.onTestStart(testSummaries.running());
+        await plugin.onHookFailure({ hook: 'beforeEach', error: new Error() });
+      });
+
+      it('should create test artifact', () => {
+        expect(plugin.createTestArtifact).toHaveBeenCalledTimes(1);
+      });
+
+      it('should start and stop recording in the artifact', () => {
+        expect(plugin.snapshots.fromTest['beforeEachFailure'].start).toHaveBeenCalledTimes(1);
+        expect(plugin.snapshots.fromTest['beforeEachFailure'].stop).toHaveBeenCalledTimes(1);
+      });
+
+      it('should put the artifact under tracking', () => {
+        expect(api.trackArtifact).toHaveBeenCalledWith(plugin.snapshots.fromTest['beforeEachFailure']);
+      });
+    });
+
+    describe('when onTestFnFailure called', function() {
+      beforeEach(async () => {
+        await plugin.onTestStart(testSummaries.running());
+        await plugin.onTestFnFailure({ error: new Error() });
+      });
+
+      it('should create test artifact', () => {
+        expect(plugin.createTestArtifact).toHaveBeenCalledTimes(1);
+      });
+
+      it('should start and stop recording in the artifact', () => {
+        expect(plugin.snapshots.fromTest['testFnFailure'].start).toHaveBeenCalledTimes(1);
+        expect(plugin.snapshots.fromTest['testFnFailure'].stop).toHaveBeenCalledTimes(1);
+      });
+
+      it('should put the artifact under tracking', () => {
+        expect(api.trackArtifact).toHaveBeenCalledWith(plugin.snapshots.fromTest['testFnFailure']);
+      });
+    });
+  });
+
   describe('onCreateExternalArtifact', () => {
     it('should throw error if { artifact } is not defined', async () => {
       await expect(plugin.onCreateExternalArtifact({ name: 'Hello'})).rejects.toThrowError();

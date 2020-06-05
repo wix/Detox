@@ -223,6 +223,24 @@ describe('ArtifactPlugin', () => {
       expect(plugin.context.testSummary).toBe(testSummary);
     });
 
+    it('should have .onHookFailure(), which remembers that there were failing tests ', async () => {
+      plugin.enabled = true;
+      plugin.keepOnlyFailedTestsArtifacts = true;
+
+      expect(plugin.shouldKeepArtifactOfSession()).toBe(undefined);
+      await plugin.onHookFailure({ error: new Error, hook: 'beforeEach' });
+      expect(plugin.shouldKeepArtifactOfSession()).toBe(true);
+    });
+
+    it('should have .onTestFnFailure(), which remembers that there were failing tests ', async () => {
+      plugin.enabled = true;
+      plugin.keepOnlyFailedTestsArtifacts = true;
+
+      expect(plugin.shouldKeepArtifactOfSession()).toBe(undefined);
+      await plugin.onTestFnFailure({ error: new Error });
+      expect(plugin.shouldKeepArtifactOfSession()).toBe(true);
+    });
+
     it('should have .onTestDone, which updates context.testSummary if called', async () => {
       const testSummary = testSummaries.failed();
       await plugin.onTestDone(testSummary);
@@ -269,7 +287,6 @@ describe('ArtifactPlugin', () => {
         expect(plugin.onRunDescribeStart).toBe(plugin.onTerminate);
         expect(plugin.onRunDescribeFinish).toBe(plugin.onTerminate);
         expect(plugin.onBeforeCleanup).toBe(plugin.onTerminate);
-        expect(plugin.onUserAction).toBe(plugin.onTerminate);
       });
 
       it('should not work after the first call', async () => {
