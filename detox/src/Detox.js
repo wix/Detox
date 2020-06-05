@@ -17,6 +17,8 @@ const driverRegistry = require('./devices/DriverRegistry').default;
 const _initHandle = Symbol('_initHandle');
 const _assertNoPendingInit = Symbol('_assertNoPendingInit');
 
+const { symbols } = require('../runners/integration');
+
 class Detox {
   constructor(config) {
     log.trace(
@@ -26,6 +28,13 @@ class Detox {
     );
 
     this[_initHandle] = null;
+
+    for (const [key, symbol] of Object.entries(symbols)) {
+      this[symbol] = (...args) => this._artifactsManager[key](...args);
+    }
+
+    this[symbols.onTestStart] = this.beforeEach;
+    this[symbols.onTestDone] = this.afterEach;
 
     const {artifactsConfig, behaviorConfig, deviceConfig, sessionConfig} = config;
 
@@ -119,14 +128,6 @@ class Detox {
       pendingRequests: testSummary.timedOut,
       testName: testSummary.fullName,
     });
-  }
-
-  async suiteStart(suite) {
-    await this._artifactsManager.onSuiteStart(suite);
-  }
-
-  async suiteEnd(suite) {
-    await this._artifactsManager.onSuiteEnd(suite);
   }
 
   async _doInit() {

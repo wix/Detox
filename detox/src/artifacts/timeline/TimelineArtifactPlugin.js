@@ -37,26 +37,24 @@ class TimelineArtifactPlugin extends ArtifactPlugin {
     this._trace.startThread({id: deviceId, name: type});
   }
 
-  async onSuiteStart(suite) {
-    super.onSuiteStart(suite);
+  async onRunDescribeStart(suite) {
+    await super.onRunDescribeStart(suite);
     this._trace.beginEvent(suite.name, {deviceId: this._deviceId});
   }
 
-  async onSuiteEnd(suite) {
-    super.onSuiteEnd(suite);
+  async onRunDescribeFinish(suite) {
     this._trace.finishEvent(suite.name);
+    await super.onRunDescribeFinish(suite);
   }
 
   async onTestStart(testSummary) {
-    super.onTestStart(testSummary);
-
+    await super.onTestStart(testSummary);
     this._trace.beginEvent(testSummary.title);
   }
 
   async onTestDone(testSummary) {
-    super.onTestDone(testSummary);
-
     this._trace.finishEvent(testSummary.title, {status: testSummary.status});
+    await super.onTestDone(testSummary);
   }
 
   async onBeforeCleanup() {

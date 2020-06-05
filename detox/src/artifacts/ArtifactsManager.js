@@ -84,6 +84,18 @@ class ArtifactsManager {
     await this._callPlugins('plain', 'onBootDevice', deviceInfo);
   }
 
+  async onBeforeLaunchApp(appLaunchInfo) {
+    await this._callPlugins('plain', 'onBeforeLaunchApp', appLaunchInfo);
+  }
+
+  async onLaunchApp(appLaunchInfo) {
+    await this._callPlugins('plain', 'onLaunchApp', appLaunchInfo);
+  }
+
+  async onAppReady(appInfo) {
+    await this._callPlugins('plain', 'onAppReady', appInfo);
+  }
+
   async onBeforeTerminateApp(appInfo) {
     await this._callPlugins('plain', 'onBeforeTerminateApp', appInfo);
   }
@@ -104,18 +116,6 @@ class ArtifactsManager {
     await this._callPlugins('plain', 'onShutdownDevice', deviceInfo);
   }
 
-  async onBeforeLaunchApp(appLaunchInfo) {
-    await this._callPlugins('plain', 'onBeforeLaunchApp', appLaunchInfo);
-  }
-
-  async onLaunchApp(appLaunchInfo) {
-    await this._callPlugins('plain', 'onLaunchApp', appLaunchInfo);
-  }
-
-  async onAppReady(appInfo) {
-    await this._callPlugins('plain', 'onAppReady', appInfo);
-  }
-
   async onCreateExternalArtifact({ pluginId, artifactName, artifactPath }) {
     await this._callSinglePlugin(pluginId, 'onCreateExternalArtifact', {
       artifact: new FileArtifact({ temporaryPath: artifactPath }),
@@ -123,20 +123,28 @@ class ArtifactsManager {
     });
   }
 
+  async onRunDescribeStart(suite) {
+    await this._callPlugins('ascending', 'onRunDescribeStart', suite);
+  }
+
   async onTestStart(testSummary) {
     await this._callPlugins('ascending', 'onTestStart', testSummary);
+  }
+
+  async onHookFailure(testSummary) {
+    await this._callPlugins('plain', 'onHookFailure', testSummary);
+  }
+
+  async onTestFnFailure(testSummary) {
+    await this._callPlugins('plain', 'onTestFnFailure', testSummary);
   }
 
   async onTestDone(testSummary) {
     await this._callPlugins('descending', 'onTestDone', testSummary);
   }
 
-  async onSuiteStart(suite) {
-    await this._callPlugins('descending', 'onSuiteStart', suite);
-  }
-
-  async onSuiteEnd(suite) {
-    await this._callPlugins('descending', 'onSuiteEnd', suite);
+  async onRunDescribeFinish(suite) {
+    await this._callPlugins('descending', 'onRunDescribeFinish', suite);
   }
 
   async onBeforeCleanup() {

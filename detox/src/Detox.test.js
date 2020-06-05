@@ -24,6 +24,7 @@ describe('Detox', () => {
   let ArtifactsManager;
   let Detox;
   let detox;
+  let symbols;
 
   function client() {
     return Client.mock.instances[0];
@@ -57,6 +58,7 @@ describe('Detox', () => {
     Client = require('./client/Client');
     DetoxServer = require('./server/DetoxServer');
     Detox = require('./Detox');
+    symbols = require('../runners/integration').symbols;
   });
 
   describe('when detox.init() is called', () => {
@@ -532,27 +534,21 @@ describe('Detox', () => {
     });
   });
 
-  describe('when detox.suiteStart() is called', () => {
+  describe.each([
+    ['onRunDescribeStart', { name: 'testSuiteName' }],
+    ['onRunDescribeFinish', { name: 'testSuiteName' }],
+    ['onTestStart', testSummaries.running()],
+    ['onHookFailure', { error: new Error() }],
+    ['onTestFnFailure', { error: new Error() }],
+    ['onTestDone', testSummaries.passed()],
+  ])('when detox[symbols.%s](%j) is called', (method, arg) => {
     beforeEach(async () => {
       detox = await new Detox(detoxConfig).init();
     });
 
-    it(`should pass suite info to artifactsManager.onSuiteStart`, async () => {
-      const suite = { name: 'testSuiteName' };
-      await detox.suiteStart(suite);
-      expect(artifactsManager().onSuiteStart).toHaveBeenCalledWith(suite);
-    });
-  });
-
-  describe('when detox.suiteEnd() is called', () => {
-    beforeEach(async () => {
-      detox = await new Detox(detoxConfig).init();
-    });
-
-    it(`should pass suite info to artifactsManager.onSuiteStart`, async () => {
-      const suite = { name: 'testSuiteName' };
-      await detox.suiteEnd(suite);
-      expect(artifactsManager().onSuiteEnd).toHaveBeenCalledWith(suite);
+    it(`should pass it through to artifactsManager.${method}()`, async () => {
+      await detox[symbols[method]](arg);
+      expect(artifactsManager()[method]).toHaveBeenCalledWith(arg);
     });
   });
 });

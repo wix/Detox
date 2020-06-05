@@ -2,6 +2,7 @@ const path = require('path');
 const sleep = require('../utils/sleep');
 const testSummaries = require('./__mocks__/testSummaries.mock');
 const testSuite = require('./templates/plugin/__mocks__/testSuite.mock');
+const testError = () => ({ error: new Error() });
 
 describe('ArtifactsManager', () => {
   let proxy, FakePathBuilder;
@@ -89,9 +90,11 @@ describe('ArtifactsManager', () => {
           onAppReady: jest.fn(),
           onCreateExternalArtifact: jest.fn(),
           onTestStart: jest.fn(),
+          onHookFailure: jest.fn(),
+          onTestFnFailure: jest.fn(),
           onTestDone: jest.fn(),
-          onSuiteStart: jest.fn(),
-          onSuiteEnd: jest.fn(),
+          onRunDescribeStart: jest.fn(),
+          onRunDescribeFinish: jest.fn(),
           onBeforeCleanup: jest.fn(),
         });
       };
@@ -221,11 +224,15 @@ describe('ArtifactsManager', () => {
 
         itShouldCatchErrorsOnPhase('onTestStart', () => testSummaries.running());
 
+        itShouldCatchErrorsOnPhase('onHookFailure', () => testError());
+
+        itShouldCatchErrorsOnPhase('onTestFnFailure', () => testError());
+
         itShouldCatchErrorsOnPhase('onTestDone', () => testSummaries.passed());
 
-        itShouldCatchErrorsOnPhase('onSuiteStart', () => (testSuite.mock()));
+        itShouldCatchErrorsOnPhase('onRunDescribeStart', () => (testSuite.mock()));
 
-        itShouldCatchErrorsOnPhase('onSuiteEnd', () => (testSuite.mock()));
+        itShouldCatchErrorsOnPhase('onRunDescribeFinish', () => (testSuite.mock()));
 
         itShouldCatchErrorsOnPhase('onBeforeCleanup', () => undefined);
 
@@ -291,6 +298,26 @@ describe('ArtifactsManager', () => {
         });
       });
 
+      describe('onHookFailure', () => {
+        it('should call onHookFailure in plugins with the passed argument', async () => {
+          const error = testError();
+
+          expect(testPlugin.onHookFailure).not.toHaveBeenCalled();
+          await artifactsManager.onHookFailure(error);
+          expect(testPlugin.onHookFailure).toHaveBeenCalledWith(error);
+        });
+      });
+
+      describe('onTestFnFailure', () => {
+        it('should call onTestFnFailure in plugins with the passed argument', async () => {
+          const error = testError();
+
+          expect(testPlugin.onTestFnFailure).not.toHaveBeenCalled();
+          await artifactsManager.onTestFnFailure(error);
+          expect(testPlugin.onTestFnFailure).toHaveBeenCalledWith(error);
+        });
+      });
+
       describe('onTestDone', () => {
         it('should call onTestDone in plugins with the passed argument', async () => {
           const testSummary = testSummaries.passed();
@@ -301,23 +328,23 @@ describe('ArtifactsManager', () => {
         });
       });
 
-      describe('onSuiteStart', () => {
-        it('should call onSuiteStart in plugins with the passed argument', async () => {
+      describe('onRunDescribeStart', () => {
+        it('should call onRunDescribeStart in plugins with the passed argument', async () => {
           const suite = testSuite.mock();
 
-          expect(testPlugin.onSuiteStart).not.toHaveBeenCalled();
-          await artifactsManager.onSuiteStart(suite);
-          expect(testPlugin.onSuiteStart).toHaveBeenCalledWith(suite);
+          expect(testPlugin.onRunDescribeStart).not.toHaveBeenCalled();
+          await artifactsManager.onRunDescribeStart(suite);
+          expect(testPlugin.onRunDescribeStart).toHaveBeenCalledWith(suite);
         });
       });
 
-      describe('onSuiteEnd', () => {
-        it('should call onSuiteEnd in plugins with the passed argument', async () => {
+      describe('onRunDescribeFinish', () => {
+        it('should call onRunDescribeFinish in plugins with the passed argument', async () => {
           const suite = testSuite.mock();
 
-          expect(testPlugin.onSuiteEnd).not.toHaveBeenCalled();
-          await artifactsManager.onSuiteEnd(suite);
-          expect(testPlugin.onSuiteEnd).toHaveBeenCalledWith(suite);
+          expect(testPlugin.onRunDescribeFinish).not.toHaveBeenCalled();
+          await artifactsManager.onRunDescribeFinish(suite);
+          expect(testPlugin.onRunDescribeFinish).toHaveBeenCalledWith(suite);
         });
       });
 

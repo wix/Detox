@@ -229,15 +229,15 @@ describe('ArtifactPlugin', () => {
       expect(plugin.context.testSummary).toBe(testSummary);
     });
 
-    it('should have .onSuiteStart, which updates context.suite if called', async () => {
+    it('should have .onRunDescribeStart, which updates context.suite if called', async () => {
       const suite = testSuite.mock();
-      await plugin.onSuiteStart(suite);
+      await plugin.onRunDescribeStart(suite);
       expect(plugin.context.suite).toBe(suite);
     });
 
-    it('should have .onSuiteEnd, which updates context.suite if called', async () => {
+    it('should have .onRunDescribeFinish, which updates context.suite if called', async () => {
       plugin.context.suite = testSuite.mock();
-      await plugin.onSuiteEnd();
+      await plugin.onRunDescribeFinish();
       expect(plugin.context.suite).toBe(null);
     });
 
@@ -266,8 +266,8 @@ describe('ArtifactPlugin', () => {
         expect(plugin.onTerminateApp).toBe(plugin.onTerminate);
         expect(plugin.onTestStart).toBe(plugin.onTerminate);
         expect(plugin.onTestDone).toBe(plugin.onTerminate);
-        expect(plugin.onSuiteStart).toBe(plugin.onTerminate);
-        expect(plugin.onSuiteEnd).toBe(plugin.onTerminate);
+        expect(plugin.onRunDescribeStart).toBe(plugin.onTerminate);
+        expect(plugin.onRunDescribeFinish).toBe(plugin.onTerminate);
         expect(plugin.onBeforeCleanup).toBe(plugin.onTerminate);
         expect(plugin.onUserAction).toBe(plugin.onTerminate);
       });
