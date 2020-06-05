@@ -95,60 +95,102 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return [self hitTest:point withEvent:event];
 }
 
+- (UIView*)dtx_visTest_faster:(CGPoint)point withEvent:(UIEvent *)event lookingFor:(UIView*)lookingFor
+{
+	if(self.isHiddenOrHasHiddenAncestor == YES)
+ 	{
+ 		return nil;
+ 	}
+
+ 	if(self.alpha == 0.0)
+ 	{
+ 		return nil;
+ 	}
+
+ 	if([self pointInside:point withEvent:event] == NO)
+ 	{
+ 		return nil;
+ 	}
+
+ 	__block UIView* rv;
+
+ 	NSMutableOrderedSet<UIView*>* candidates = [NSMutableOrderedSet new];
+
+ 	//Front-most views get priority
+ 	[self.subviews enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+ 		CGPoint localPoint = [self convertPoint:point toView:obj];
+
+ 		UIView* candidate = [obj dtx_visTest:localPoint withEvent:event lookingFor:lookingFor];
+
+ 		if(candidate != nil)
+ 		{
+ 			[candidates addObject:candidate];
+ 		}
+ 	}];
+
+ 	//TODO: Consider some strategy to tackle "visible" views under transparent views.
+ 	rv = candidates.firstObject;
+
+ 	if(rv == nil)
+ 	{
+ 		rv = self;
+ 	}
+
+ 	return rv;
+}
+
 - (UIView*)dtx_visTest:(CGPoint)point withEvent:(UIEvent *)event lookingFor:(UIView*)lookingFor
 {
 	if(self.isHiddenOrHasHiddenAncestor == YES)
 	{
 		return nil;
 	}
-	
+
 	if(self.alpha == 0.0)
 	{
 		return nil;
 	}
-	
+
 	if([self pointInside:point withEvent:event] == NO)
 	{
 		return nil;
 	}
-	
+
+	if(self == lookingFor)
+	{
+		//Take a shortcut here, because we found ourselves
+		return self;
+	}
+
 	__block UIView* rv;
-	
+
 	//Front-most views get priority
 	[self.subviews enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
 		CGPoint localPoint = [self convertPoint:point toView:obj];
-		
+
 		UIView* candidate = [obj dtx_visTest:localPoint withEvent:event lookingFor:lookingFor];
-		
+
 		if(candidate == nil)
 		{
 			return;
 		}
-		
+
 		rv = candidate;
 		*stop = YES;
 	}];
 
 	if(rv == nil)
 	{
-		if(self == lookingFor)
+		//Check the candidate view for transparency
+		UIImage* img = [self dtx_imageAroundPoint:point];
+		[UIImagePNGRepresentation(img) writeToFile:@"/Users/lnatan/Desktop/view.png" atomically:YES];
+		if([UIView _dtx_isImageTransparent:img] == NO)
 		{
-			//We've reached the view we are looking for
+			//If a view is not transparent around the hit point, take it as the visible view.
 			rv = self;
 		}
-		else
-		{
-			//Check the candidate view for transparency
-			UIImage* img = [self dtx_imageAroundPoint:point];
-//			[UIImagePNGRepresentation(img) writeToFile:@"/Users/lnatan/Desktop/view.png" atomically:YES];
-			if([UIView _dtx_isImageTransparent:img] == NO)
-			{
-				//If a view is not transparent around the hit point, take it as the visible view.
-				rv = self;
-			}
-		}
 	}
-	
+
 	return rv;
 }
 
@@ -300,8 +342,8 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 - (UIImage*)dtx_imageAroundPoint:(CGPoint)point
 {
 	static const CGFloat maxSize = 44;
-	CGFloat width = MIN(maxSize, self.bounds.size.width);
-	CGFloat height = MIN(maxSize, self.bounds.size.height);
+	CGFloat width = ceil(MIN(maxSize, self.bounds.size.width));
+	CGFloat height = ceil(MIN(maxSize, self.bounds.size.height));
 	CGFloat x = MAX(0, point.x - width / 2.0);
 	CGFloat y = MAX(0, point.y - height / 2.0);
 	
