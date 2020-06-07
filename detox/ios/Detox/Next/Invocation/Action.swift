@@ -56,9 +56,9 @@ class Action : CustomStringConvertible {
 	
 	let element : Element
 	let kind : String
-	let params : [CustomStringConvertible]?
+	let params : [CustomStringConvertible & CustomDebugStringConvertible]?
 	
-	required init(kind: String, params: [CustomStringConvertible]?, element: Element) {
+	required init(kind: String, params: [CustomStringConvertible & CustomDebugStringConvertible]?, element: Element) {
 		self.element = element
 		self.kind = kind
 		self.params = params
@@ -91,7 +91,7 @@ class Action : CustomStringConvertible {
 
 	dynamic class func with(dictionaryRepresentation: [String: Any]) throws -> Action {
 		let kind = dictionaryRepresentation[Keys.kind] as! String //Crash on failure
-		var params = dictionaryRepresentation[Keys.params] as! [CustomStringConvertible]?
+		var params = dictionaryRepresentation[Keys.params] as! [CustomStringConvertible & CustomDebugStringConvertible]?
 		
 		switch kind {
 		case Kind.scroll:
@@ -125,7 +125,20 @@ class Action : CustomStringConvertible {
 	}
 	
 	var description: String {
-		return String(format: "%@%@ WITH %@", self.kind.uppercased(), params != nil ? "(\(params!.map{$0.description} .joined(separator: ", ")))" : "", element.description)
+		let paramsDescription: String
+		if let params = params {
+			let str = params.map({
+				if let dict = $0 as? [String: Any] {
+					//Cast to dictionary here to get the Swift debug description, rather than NSDictionary's 🤦‍♂️
+					return dict.debugDescription
+				}
+				return $0.debugDescription
+			}).joined(separator: ", ")
+			paramsDescription = "(\(str))"
+		} else {
+			paramsDescription = ""
+		}
+		return String(format: "%@%@ WITH %@", self.kind.uppercased(), paramsDescription, element.description)
 	}
 }
 
@@ -202,7 +215,7 @@ class ScrollAction : Action {
 	let whileExpectation : Expectation?
 	
 	dynamic override class func with(dictionaryRepresentation: [String: Any]) throws -> Action {
-		let params = dictionaryRepresentation[Keys.params] as! [CustomStringConvertible]?
+		let params = dictionaryRepresentation[Keys.params] as! [CustomStringConvertible & CustomDebugStringConvertible]?
 		let element = try Element.with(dictionaryRepresentation: dictionaryRepresentation)
 		let whileExpectation : Expectation?
 		if let whileExpectationObj = dictionaryRepresentation[Keys.while] as? [String: Any] {
@@ -214,12 +227,12 @@ class ScrollAction : Action {
 		return ScrollAction(kind: Kind.scroll, params: params, element: element, whileExpectation: whileExpectation)
 	}
 	
-	required init(kind: String, params: [CustomStringConvertible]?, element: Element, whileExpectation: Expectation?) {
+	required init(kind: String, params: [CustomStringConvertible & CustomDebugStringConvertible]?, element: Element, whileExpectation: Expectation?) {
 		self.whileExpectation = whileExpectation
 		super.init(kind: kind, params: params, element: element)
 	}
 	
-	required init(kind: String, params: [CustomStringConvertible]?, element: Element) {
+	required init(kind: String, params: [CustomStringConvertible & CustomDebugStringConvertible]?, element: Element) {
 		fatalError("Call the other initializer")
 	}
 	

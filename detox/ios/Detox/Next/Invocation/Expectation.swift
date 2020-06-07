@@ -84,11 +84,10 @@ class Expectation : CustomStringConvertible {
 	
 	static let keyMapping : [String: String] = [
 		Kind.toHaveText: "text",
-		Kind.toHaveLabel: "accessibilityLabel",
-		Kind.toHaveId: "accessibilityIdentifier",
-		Kind.toHaveValue: "accessibilityValue",
+		Kind.toHaveLabel: "label",
+		Kind.toHaveId: "identifier",
+		Kind.toHaveValue: "value",
 		Kind.toHavePlaceholder: "placeholder",
-		Kind.toHaveSliderPosition: "dtx_normalizedSliderPosition",
 	]
 	
 	class func with(dictionaryRepresentation: [String: Any]) throws -> Expectation {

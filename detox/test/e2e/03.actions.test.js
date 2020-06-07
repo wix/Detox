@@ -55,7 +55,7 @@ describe('Actions', () => {
   });
 
   it(':android: should tap on an element at point', async () => {
-    await driver.tapsElement.tapsElement();
+    await driver.tapsElement.tapAtPoint();
     await driver.tapsElement.assertTappedOnce();
   });
 
@@ -249,5 +249,11 @@ describe('Actions', () => {
     await element(by.id('PinchableScrollView')).pinch(0.75, 'slow');
     await expect(element(by.id('UniqueId007'))).toBeVisible();
   });
-
+  
+  it.only(':ios: should adjust slider and assert its value', async () => {
+    await expect(element(by.id('sliderWithASimpleID'))).toHaveSliderPosition(0.25);
+    await element(by.id('sliderWithASimpleID')).adjustSliderToPosition(0.75);    
+    await expect(element(by.id('sliderWithASimpleID'))).toHaveSliderPosition(0.75);
+    await expect(element(by.id('sliderWithASimpleID'))).toHaveValue("75%");
+  });
 });

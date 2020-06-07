@@ -33,11 +33,11 @@ final class InvocationManager {
 			switch kind {
 			case Types.action:
 				let action = try Action.with(dictionaryRepresentation: dictionaryRepresentation)
-				os_signpost(.begin, log: log.osLog, name: "Invocation", signpostID: signpostID, "Action: %{public}s", "\(type(of: action))")
+				os_signpost(.begin, log: log.osLog, name: "Action Invocation", signpostID: signpostID, "%{public}s", action.description)
 				action.perform(completionHandler: signpostCompletionHandler)
 			case Types.expectation:
 				let expectation = try Expectation.with(dictionaryRepresentation: dictionaryRepresentation)
-				os_signpost(.begin, log: log.osLog, name: "Invocation", signpostID: signpostID, "Expectation: %{public}s", "\(type(of: expectation))")
+				os_signpost(.begin, log: log.osLog, name: "Expectation Invocation", signpostID: signpostID, "%{public}s", expectation.description)
 				expectation.evaluate { error in
 					signpostCompletionHandler(nil, error)
 				}
