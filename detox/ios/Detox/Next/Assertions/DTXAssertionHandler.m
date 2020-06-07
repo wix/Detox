@@ -31,7 +31,7 @@ BOOL dtx_try(void (^block)(void), NSError * __nullable * __null_unspecified erro
 
 + (NSError*)_errorForTestAssertionException:(DTXTestAssertionException*)exception
 {
-	NSMutableDictionary* userInfo = @{NSLocalizedDescriptionKey: exception.reason, @"fullUserInfo": exception.userInfo}.mutableCopy;
+	NSMutableDictionary* userInfo = @{NSLocalizedDescriptionKey: exception.reason, @"DetoxFailureInformation": exception.userInfo}.mutableCopy;
 	
 	if(exception.viewDescription != nil)
 	{

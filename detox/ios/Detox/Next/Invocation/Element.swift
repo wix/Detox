@@ -42,6 +42,7 @@ class Element : NSObject {
 		}
 	}
 	
+	private var failed: Bool = false
 	private var cachedViews : [UIView]?
 	private var views : [UIView] {
 		if let cachedViews = cachedViews {
@@ -49,15 +50,14 @@ class Element : NSObject {
 		}
 		
 		//TODO: Consider searching here in all windows from all scenes.
-		let array = UIView.dtx_findViewsInKeySceneWindows(passing: predicate.predicateForQuery()) as! [UIView]
+		cachedViews = (UIView.dtx_findViewsInKeySceneWindows(passing: predicate.predicateForQuery()) as! [UIView])
 		
-		guard array.count > 0 else {
-			dtx_fatalError("No elements found for “\(self.description)”")
+		guard cachedViews!.count > 0 else {
+			failed = true
+			dtx_fatalError("No elements found for “\(self.description)”", viewDescription: debugAttributes)
 		}
 		
-		cachedViews = array
-		
-		return array
+		return cachedViews!
 	}
 	
 	private var view : UIView {
@@ -69,7 +69,8 @@ class Element : NSObject {
 		} else {
 			//Will fail test if more than one element are resolved from the query
 			guard array.count == 1 else {
-				dtx_fatalError("Multiple elements found for “\(self.description)”")
+				failed = true
+				dtx_fatalError("Multiple elements found for “\(self.description)”", viewDescription: debugAttributes)
 			}
 			element = array.first!
 		}
@@ -94,15 +95,21 @@ class Element : NSObject {
 		return String(format: "MATCHER(%@)%@", predicate.description, index != nil ? " AT INDEX(\(index!))" : "")
 	}
 	
-	var debugAttributes: [String: Any]? {
+	var debugAttributes: [String: Any] {
 		do {
+			guard failed == false else {
+				throw "Nope"
+			}
 			var rv: [String: Any]! = nil
 			try dtx_try {
 				rv = view.dtx_viewDebugAttributes
 			}
 			return rv
 		} catch {
-			return nil
+			guard let keyWindow = UIWindow.dtx_keyWindow else {
+				return [:]
+			}
+			return ["viewHierarchy": keyWindow.recursiveDescription!]
 		}
 	}
 	

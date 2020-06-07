@@ -12,8 +12,9 @@
 		390D1C691E3A14EF007F5F46 /* UNNotificationResponse+PrivateHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 390D1C671E3A14EF007F5F46 /* UNNotificationResponse+PrivateHeaders.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		390D1C9C1E3A45F1007F5F46 /* UNNotification+PrivateHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 390D1C9A1E3A45F1007F5F46 /* UNNotification+PrivateHeaders.h */; };
 		390D1CA01E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 390D1C9E1E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h */; };
-		390DED83248906FC00E27BE8 /* UIWindow+DetoxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 390DED81248906FC00E27BE8 /* UIWindow+DetoxUtils.h */; };
+		390DED83248906FC00E27BE8 /* UIWindow+DetoxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 390DED81248906FC00E27BE8 /* UIWindow+DetoxUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		390DED84248906FC00E27BE8 /* UIWindow+DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 390DED82248906FC00E27BE8 /* UIWindow+DetoxUtils.m */; };
+		390DEDDC248D56F600E27BE8 /* String+LocalizedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 390DEDDB248D56F600E27BE8 /* String+LocalizedError.swift */; };
 		391FA5E91E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.h in Headers */ = {isa = PBXBuildFile; fileRef = 391FA5E71E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.h */; };
 		391FA5EA1E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.m in Sources */ = {isa = PBXBuildFile; fileRef = 391FA5E81E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.m */; };
 		392324D72477D87D00A3D119 /* DetoxManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 392324D62477D87D00A3D119 /* DetoxManager.swift */; };
@@ -74,7 +75,7 @@
 		3980D11A2448B52C004812DD /* DTXTouchInjector.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D1092448B52B004812DD /* DTXTouchInjector.m */; };
 		3980D11B2448B52C004812DD /* DTXRunLoopSpinner.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D10A2448B52B004812DD /* DTXRunLoopSpinner.m */; };
 		3980D11C2448B52C004812DD /* DTXSyntheticEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D10B2448B52B004812DD /* DTXSyntheticEvents.h */; };
-		3980D11D2448B52C004812DD /* DTXAppleInternals.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D10C2448B52C004812DD /* DTXAppleInternals.h */; };
+		3980D11D2448B52C004812DD /* DTXAppleInternals.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D10C2448B52C004812DD /* DTXAppleInternals.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3980D11E2448B52C004812DD /* DTXTouchInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D10D2448B52C004812DD /* DTXTouchInfo.h */; };
 		3980D12E244C41E1004812DD /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3980D12D244C41E1004812DD /* IOKit.framework */; };
 		3980D135244C4373004812DD /* UIView+DetoxMatchers.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D133244C4373004812DD /* UIView+DetoxMatchers.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -242,6 +243,7 @@
 		390D1C9E1E3A4E38007F5F46 /* UNPushNotificationTrigger+PrivateHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UNPushNotificationTrigger+PrivateHeaders.h"; sourceTree = "<group>"; };
 		390DED81248906FC00E27BE8 /* UIWindow+DetoxUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIWindow+DetoxUtils.h"; sourceTree = "<group>"; };
 		390DED82248906FC00E27BE8 /* UIWindow+DetoxUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIWindow+DetoxUtils.m"; sourceTree = "<group>"; };
+		390DEDDB248D56F600E27BE8 /* String+LocalizedError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+LocalizedError.swift"; sourceTree = "<group>"; };
 		391FA5E71E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GREYIdlingResourcePrettyPrint.h; sourceTree = "<group>"; };
 		391FA5E81E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GREYIdlingResourcePrettyPrint.m; sourceTree = "<group>"; };
 		392324D62477D87D00A3D119 /* DetoxManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxManager.swift; sourceTree = "<group>"; };
@@ -644,6 +646,7 @@
 				3976BF14246C139D00AA20C7 /* DTXSwizzlingHelper.h */,
 				397CA7A224840449005E8A71 /* NSException+DetoxUtils.swift */,
 				397CA7A02483F8AA005E8A71 /* NSThread+DetoxUtils.swift */,
+				390DEDDB248D56F600E27BE8 /* String+LocalizedError.swift */,
 				3976BF12246C128600AA20C7 /* Swiftier.h */,
 				3976BF01246AC7DE00AA20C7 /* TimeInterval+DetoxUtils.swift */,
 				3980D0FE2448B52A004812DD /* UIApplication+DTXAdditions.h */,
@@ -996,6 +999,7 @@
 				39FFD9471FD730A600C97030 /* DetoxCrashHandler.mm in Sources */,
 				3980D136244C4373004812DD /* UIView+DetoxMatchers.m in Sources */,
 				392324DF24781CBD00A3D119 /* WebSocket.swift in Sources */,
+				390DEDDC248D56F600E27BE8 /* String+LocalizedError.swift in Sources */,
 				3990BA36245AC98C00B608C8 /* DTXAssertionHandler+Swift.swift in Sources */,
 				39CA978D245B13CB00A7FC43 /* UIDevice+DetoxActions.m in Sources */,
 				46A6A63D1EF697BB00E3AA79 /* GREYConfiguration+Detox.m in Sources */,

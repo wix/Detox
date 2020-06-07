@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIWindow (DetoxUtils)
 
-@property (nonatomic, strong, class, readonly, nullable) UIWindow* dtx_keyWindow;
+@property (nonatomic, strong, class, readonly, nullable) UIWindow* dtx_keyWindow NS_SWIFT_NAME(dtx_keyWindow);
 @property (nonatomic, strong, class, readonly) NSArray<UIWindow*>* dtx_allKeyWindowSceneWindows;
 
 + (NSArray<UIWindow*>*)dtx_allWindows;

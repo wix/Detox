@@ -492,6 +492,9 @@ static NSDictionary* DTXPointToDictionary(CGPoint point)
 		rv[@"viewHierarchy"] = self.window.recursiveDescription;
 	}
 	
+	rv[@"elementAttributes"] = [self dtx_attributes];
+	rv[@"viewDescription"] = self.description;
+	
 	return rv;
 }
 

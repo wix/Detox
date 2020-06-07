@@ -188,7 +188,7 @@ class ToBeVisibleExpectation : Expectation {
 
 class ToExistExpectation : Expectation {
 	override func _evaluate() {
-		dtx_assert(applyModifiers(self.element.exists, modifiers: modifiers), "Failed expectation: \(self.description)")
+		dtx_assert(applyModifiers(self.element.exists, modifiers: modifiers), "Failed expectation: \(self.description)", viewDescription: self.element.debugAttributes)
 	}
 }
 

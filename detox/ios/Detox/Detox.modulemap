@@ -19,5 +19,7 @@ framework module Detox {
 		header "UISlider+DetoxUtils.h"
 		header "___DTXAddressInfo.h"
 		header "DTXDurationFormatter.h"
+		header "UIWindow+DetoxUtils.h"
+		header "DTXAppleInternals.h"
 	}
 }

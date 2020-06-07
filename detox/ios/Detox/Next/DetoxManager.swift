@@ -247,7 +247,10 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 			EarlGrey().detox_safeExecuteSync {
 				InvocationManager.invoke(dictionaryRepresentation: params) { result, error in
 					if let error = error {
-						self.safeSend(action: "testFailed", params: ["details": error.localizedDescription], messageId: messageId)
+						let params: NSMutableDictionary = ["details": error.localizedDescription]
+						params.addEntries(from: (error as NSError).userInfo)
+						
+						self.safeSend(action: "testFailed", params: params as! [String : Any], messageId: messageId)
 					} else {
 						self.safeSend(action: "invokeResult", params: result ?? [:], messageId: messageId)
 					}
