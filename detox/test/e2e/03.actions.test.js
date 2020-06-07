@@ -8,7 +8,7 @@ const driver = {
       return { x, y: 160 };
     },
     multiTap: () => element(by.id(driver.tapsElement.testId)).multiTap(3),
-    tapAtPoint: () => element(by.id('View7990')).tapAtPoint(driver.tapsElement.coordinates),
+    tapAtPoint: () => element(by.id('View7990')).tap(driver.tapsElement.coordinates),
     assertTapsCount: (count) => expect(element(by.id(driver.tapsElement.testId))).toHaveText(`Taps: ${count}`),
     assertTappedOnce: () => driver.tapsElement.assertTapsCount(1),
     assertMultiTapped: () => driver.tapsElement.assertTapsCount(3),
@@ -23,7 +23,7 @@ const driver = {
     },
     multiTapOnce: () => element(by.id(driver.doubleTapsElement.testId)).multiTap(1),
     doubleTap: () => element(by.id(driver.doubleTapsElement.testId)).multiTap(2),
-    tapAtPointOnce: () => element(by.id('View7990')).tapAtPoint(driver.doubleTapsElement.coordinates),
+    tapAtPointOnce: () => element(by.id('View7990')).tap(driver.doubleTapsElement.coordinates),
     tapAtPointTwice: async () => {
       await driver.doubleTapsElement.tapAtPointOnce();
       await driver.doubleTapsElement.tapAtPointOnce();
@@ -54,8 +54,8 @@ describe('Actions', () => {
     await expect(element(by.text('Long Press With Duration Working!!!'))).toBeVisible();
   });
 
-  it('should tap on an element at point', async () => {
-    await driver.tapsElement.tapAtPoint();
+  it(':android: should tap on an element at point', async () => {
+    await driver.tapsElement.tapsElement();
     await driver.tapsElement.assertTappedOnce();
   });
 
