@@ -1,10 +1,4 @@
 const DetoxRuntimeError = require('../../src/errors/DetoxRuntimeError');
-const {
-  onRunDescribeStart,
-  onTestStart,
-  onTestDone,
-  onRunDescribeFinish,
-} = require('../integration').lifecycle;
 
 class DetoxAdapterImpl {
   constructor(detox, describeInitErrorFn) {
@@ -20,7 +14,7 @@ class DetoxAdapterImpl {
     }
 
     await this._flush();
-    await this.detox[onTestStart](this._currentTest);
+    await this.detox.beforeEach(this._currentTest);
   }
 
   async afterAll() {
@@ -28,11 +22,11 @@ class DetoxAdapterImpl {
   }
 
   async suiteStart({name}) {
-    this._enqueue(() => this.detox[onRunDescribeStart]({name}));
+    this._enqueue(() => this.detox.suiteStart({name}));
   }
 
   async suiteEnd({name}) {
-    this._enqueue(() => this.detox[onRunDescribeFinish]({name}));
+    this._enqueue(() => this.detox.suiteEnd({name}));
   }
 
   testStart({title, fullName, status}) {
@@ -57,7 +51,7 @@ class DetoxAdapterImpl {
   }
 
   async _afterEach(previousTest) {
-    await this.detox[onTestDone](previousTest);
+    await this.detox.afterEach(previousTest);
   }
 
   _enqueue(fn) {

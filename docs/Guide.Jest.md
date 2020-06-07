@@ -5,7 +5,7 @@ This guide describes how to install [Jest](https://jestjs.io) as the test runner
 **Disclaimer:**
 
 1. The guide describes installing Detox with Jest on a _fresh project_. If you're migrating an existing project, use the guide but please apply some common sense in the process.
-1. The guide has been officially tested only with `jest-circus@^25.3.0`. We cannot guarantee that everything would work with older versions.
+1. The guide has been officially tested only with `jest-circus@^26.0.1`. We cannot guarantee that everything would work with older versions.
 
 ## Introduction
 
@@ -35,7 +35,7 @@ npm install --save-dev jest jest-circus
 ```
 
 If you had one of them installed before in your project,
-make sure that `jest` and `jest-circus` versions match (e.g. both are `25.3.0`).
+make sure that `jest` and `jest-circus` versions match (e.g. both are `26.0.1`).
 
 ### 2. Set up test-code scaffolds
 
