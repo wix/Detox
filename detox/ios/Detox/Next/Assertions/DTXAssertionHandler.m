@@ -11,10 +11,10 @@
 
 @implementation DTXTestAssertionException
 
-+ (NSException *)exceptionWithReason:(nullable NSString *)reason userInfo:(nullable NSDictionary *)userInfo view:(nullable UIView*)view
++ (NSException *)exceptionWithReason:(nullable NSString *)reason userInfo:(nullable NSDictionary *)userInfo viewDescription:(nullable NSDictionary*)viewDescription
 {
 	DTXTestAssertionException* rv = (id)[super exceptionWithName:@"DetoxException" reason:reason userInfo:userInfo];
-	rv.view = view;
+	rv.viewDescription = viewDescription;
 	return rv;
 }
 
@@ -33,9 +33,9 @@ BOOL dtx_try(void (^block)(void), NSError * __nullable * __null_unspecified erro
 {
 	NSMutableDictionary* userInfo = @{NSLocalizedDescriptionKey: exception.reason, @"fullUserInfo": exception.userInfo}.mutableCopy;
 	
-	if(exception.view != nil)
+	if(exception.viewDescription != nil)
 	{
-		userInfo[@"viewHierarchy"] = exception.view.window.recursiveDescription;
+		[userInfo addEntriesFromDictionary:exception.viewDescription];
 	}
 	
 	return [NSError errorWithDomain:@"Detox" code:0 userInfo:userInfo];
@@ -84,61 +84,61 @@ static void __detox_nested_try(void)
 	return YES;
 }
 
-+ (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line view:(UIView*)view description:(NSString *)format, ...
++ (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line viewDescription:(NSDictionary<NSString*, id>*)viewDescription description:(NSString *)format, ...
 {
 	va_list argumentList;
 	va_start(argumentList, format);
-	[self handleFailureInFunction:functionName file:fileName lineNumber:line view:view description:format arguments:argumentList];
+	[self handleFailureInFunction:functionName file:fileName lineNumber:line viewDescription:viewDescription description:format arguments:argumentList];
 	va_end(argumentList);
 	
 }
 
-+ (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line view:(UIView*)view description:(NSString *)format, ...
++ (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line viewDescription:(NSDictionary<NSString*, id>*)viewDescription description:(NSString *)format, ...
 {
 	va_list argumentList;
 	va_start(argumentList, format);
-	[self handleFailureInMethod:selector object:object file:fileName lineNumber:line view:view description:format arguments:argumentList];
+	[self handleFailureInMethod:selector object:object file:fileName lineNumber:line viewDescription:viewDescription description:format arguments:argumentList];
 	va_end(argumentList);
 }
 
-+ (DTXTestAssertionException*)_exceptionForFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line view:(nullable UIView*)view description:(NSString *)format arguments:(va_list)arguments
++ (DTXTestAssertionException*)_exceptionForFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line viewDescription:(nullable NSDictionary<NSString*, id>*)viewDescription description:(NSString *)format arguments:(va_list)arguments
 {
 	return (id)[DTXTestAssertionException exceptionWithReason:[[NSString alloc] initWithFormat:format arguments:arguments] userInfo:@{
 		@"functionName": functionName,
 		@"file": fileName,
 		@"lineNumber": @(line)
-	} view:view];
+	} viewDescription:viewDescription];
 }
 
 
-+ (DTXTestAssertionException*)_exceptionForFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line view:(nullable UIView*)view description:(NSString *)format arguments:(va_list)arguments
++ (DTXTestAssertionException*)_exceptionForFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line viewDescription:(nullable NSDictionary<NSString*, id>*)viewDescription description:(NSString *)format arguments:(va_list)arguments
 {
 	return (id)[DTXTestAssertionException exceptionWithReason:[[NSString alloc] initWithFormat:format arguments:arguments] userInfo:@{
 		@"selector": NSStringFromSelector(selector),
 		@"object": [object debugDescription],
 		@"file": fileName,
 		@"lineNumber": @(line)
-	} view:view];
+	} viewDescription:viewDescription];
 }
 
-+ (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line view:(UIView*)view description:(NSString *)format arguments:(va_list)arguments
++ (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line viewDescription:(NSDictionary<NSString*, id>*)viewDescription description:(NSString *)format arguments:(va_list)arguments
 {
-	[[self _exceptionForFailureInFunction:functionName file:fileName lineNumber:line view:view description:format arguments:arguments] raise];
+	[[self _exceptionForFailureInFunction:functionName file:fileName lineNumber:line viewDescription:viewDescription description:format arguments:arguments] raise];
 }
 
-+ (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line view:(UIView*)view description:(NSString *)format arguments:(va_list)arguments
++ (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line viewDescription:(NSDictionary<NSString*, id>*)viewDescription description:(NSString *)format arguments:(va_list)arguments
 {
-	[[self _exceptionForFailureInMethod:selector object:object file:fileName lineNumber:line view:view description:format arguments:arguments] raise];
+	[[self _exceptionForFailureInMethod:selector object:object file:fileName lineNumber:line viewDescription:viewDescription description:format arguments:arguments] raise];
 }
 
-+ (NSError*)errorForFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line view:(nullable UIView*)view description:(NSString *)format arguments:(va_list)arguments
++ (NSError*)errorForFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line viewDescription:(nullable NSDictionary<NSString*, id>*)viewDescription description:(NSString *)format arguments:(va_list)arguments
 {
-	return [self _errorForTestAssertionException:[self _exceptionForFailureInFunction:functionName file:fileName lineNumber:line view:view description:format arguments:arguments]];
+	return [self _errorForTestAssertionException:[self _exceptionForFailureInFunction:functionName file:fileName lineNumber:line viewDescription:viewDescription description:format arguments:arguments]];
 }
 
-+ (NSError*)errorForFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line view:(nullable UIView*)view description:(NSString *)format arguments:(va_list)arguments
++ (NSError*)errorForFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line viewDescription:(nullable NSDictionary<NSString*, id>*)viewDescription description:(NSString *)format arguments:(va_list)arguments
 {
-	return [self _errorForTestAssertionException:[self _exceptionForFailureInMethod:selector object:object file:fileName lineNumber:line view:view description:format arguments:arguments]];
+	return [self _errorForTestAssertionException:[self _exceptionForFailureInMethod:selector object:object file:fileName lineNumber:line viewDescription:viewDescription description:format arguments:arguments]];
 }
 
 @end

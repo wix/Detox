@@ -124,7 +124,7 @@ else if(offset.main < 0 && floor(self.contentOffset.main) >= floor(self.contentS
 
 - (void)_dtx_assertCanScrollWithOffset:(CGPoint)offset
 {
-	DTXViewAssert([self _dtx_canScrollWithOffset:offset], self, @"Unable to perform scroll in “%@”", self.dtx_shortDescription);
+	DTXViewAssert([self _dtx_canScrollWithOffset:offset], self.dtx_viewDebugAttributes, @"Unable to perform scroll in “%@”", self.dtx_shortDescription);
 }
 
 - (void)dtx_scrollWithOffset:(CGPoint)offset

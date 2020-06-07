@@ -110,19 +110,17 @@ class Action : CustomStringConvertible {
 		return actionClass.init(kind: kind, params: params, element: element)
 	}
 	
-	fileprivate func perform(on view: UIView) -> [String: Any]? {
+	fileprivate func perform(on element: Element) -> [String: Any]? {
 		fatalError("Unimplemented perform(on:) called for \(type(of: self))")
 	}
 	
-	fileprivate func perform(on view: UIView, completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
-		completionHandler(perform(on: view), nil)
+	fileprivate func perform(on element: Element, completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
+		completionHandler(perform(on: element), nil)
 	}
 	
 	func perform(completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
 		async_action_dtx_try(completionHandler: completionHandler) {
-			let view = self.element.view
-			
-			perform(on: view, completionHandler: completionHandler)
+			perform(on: self.element, completionHandler: completionHandler)
 		}
 	}
 	
@@ -132,68 +130,69 @@ class Action : CustomStringConvertible {
 }
 
 class TapAction : Action {
-	override func perform(on view: UIView) -> [String: Any]? {
+	override func perform(on element: Element) -> [String: Any]? {
 		if let point = params?.first as? [String: Double], let x = point["x"], let y = point["y"] {
-			view.dtx_tap(atPoint: CGPoint(x: x, y: y), numberOfTaps: 1)
+			element.tap(at: CGPoint(x: x, y: y))
 			
 			return nil
 		}
 		
 		//No params or bad params
-		view.dtx_tapAtAccessibilityActivationPoint()
+		element.tap()
 		
 		return nil
 	}
 }
 
 class LongPressAction : Action {
-	override func perform(on view: UIView) -> [String: Any]? {
+	override func perform(on element: Element) -> [String: Any]? {
 		let duration : TimeInterval
 		if let param = params?.first as? Double {
 			duration = param.toSeconds()
 		} else {
 			//TODO: Check default value in Detox
-			duration = 0.8
+			duration = 1.0
 		}
 		
-		view.dtx_longPressAtAccessibilityActivationPoint(forDuration: duration)
+		element.longPress(duration: duration)
 		
 		return nil
 	}
 }
 
 class MultiTapAction : Action {
-	override func perform(on view: UIView) -> [String: Any]? {
-		let taps = params!.first as! UInt
-		view.dtx_tapAtAccessibilityActivationPoint(withNumberOfTaps: taps)
+	override func perform(on element: Element) -> [String: Any]? {
+		let taps = params!.first as! Int
+		
+		element.tap(numberOfTaps: taps)
 		
 		return nil
 	}
 }
 
 class TypeTextAction : Action {
-	override func perform(on view: UIView) -> [String: Any]? {
+	override func perform(on element: Element) -> [String: Any]? {
 		let text = params!.first as! String
 		
-		view.dtx_typeText(text)
+		element.typeText(text)
 		
 		return nil
 	}
 }
 
 class ReplaceTextAction : Action {
-	override func perform(on view: UIView) -> [String: Any]? {
+	override func perform(on element: Element) -> [String: Any]? {
 		let text = params!.first as! String
 		
-		view .dtx_replaceText(text)
+		element.replaceText(text)
 		
 		return nil
 	}
 }
 
 class ClearTextAction : Action {
-	override func perform(on view: UIView) -> [String: Any]? {
-		view.dtx_clearText()
+	override func perform(on element: Element) -> [String: Any]? {
+		element.clearText()
 		
 		return nil
 	}
@@ -224,28 +223,28 @@ class ScrollAction : Action {
 		fatalError("Call the other initializer")
 	}
 	
-	override func perform(on view: UIView) -> [String: Any]? {
+	override func perform(on element: Element) -> [String: Any]? {
 		fatalError("Unimplemented perform(on:) called for \(type(of: self))")
 	}
 	
-	fileprivate func perform_async(on scrollView: UIScrollView, targetOffset: CGPoint, normalizedStartingPoint: CGPoint, expectation: Expectation, completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
+	fileprivate func perform_async(on element: Element, targetOffset: CGPoint, normalizedStartingPoint: CGPoint, expectation: Expectation, completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
 		expectation.evaluate { error in
 			guard error != nil else {
 				completionHandler(nil, nil)
 				return
 			}
 			
-			guard async_action_dtx_try(completionHandler: completionHandler, blockToTry: { scrollView.dtx_scroll(withOffset: targetOffset, normalizedStartingPoint: normalizedStartingPoint) }) else {
+			guard async_action_dtx_try(completionHandler: completionHandler, blockToTry: { element.scroll(withOffset: targetOffset, normalizedStartingPoint: normalizedStartingPoint) }) else {
 				return
 			}
 			
 			DispatchQueue.main.async {
-				self.perform_async(on: scrollView, targetOffset: targetOffset, normalizedStartingPoint: normalizedStartingPoint, expectation: expectation, completionHandler: completionHandler)
+				self.perform_async(on: element, targetOffset: targetOffset, normalizedStartingPoint: normalizedStartingPoint, expectation: expectation, completionHandler: completionHandler)
 			}
 		}
 	}
 	
-	override func perform(on view: UIView, completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
+	override func perform(on element: Element, completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
 		let pixels = params![0] as! Double
 		let directionString = params![1] as! String
 		let targetOffset : CGPoint
@@ -281,21 +280,19 @@ class ScrollAction : Action {
 		}
 		let normalizedStartingPoint = CGPoint(x: startPositionX, y: startPositionY)
 		
-		let scrollView = view.extractScrollView()
-		
 		guard let whileExpectation = whileExpectation else {
-			scrollView.dtx_scroll(withOffset: targetOffset, normalizedStartingPoint: normalizedStartingPoint)
+			element.scroll(withOffset: targetOffset, normalizedStartingPoint: normalizedStartingPoint)
 			completionHandler(nil, nil)
 			
 			return
 		}
 		
-		perform_async(on: scrollView, targetOffset: targetOffset, normalizedStartingPoint: normalizedStartingPoint, expectation: whileExpectation, completionHandler: completionHandler)
+		perform_async(on: element, targetOffset: targetOffset, normalizedStartingPoint: normalizedStartingPoint, expectation: whileExpectation, completionHandler: completionHandler)
 	}
 }
 
 class ScrollToEdgeAction : Action {
-	override func perform(on view: UIView)  -> [String: Any]? {
+	override func perform(on element: Element)  -> [String: Any]? {
 		let directionString = params![0] as! String
 		let targetOffset : CGPoint
 		switch directionString {
@@ -316,15 +313,14 @@ class ScrollToEdgeAction : Action {
 			break;
 		}
 		
-		let scrollView = view.extractScrollView()
-		scrollView.dtx_scroll(toNormalizedEdge: targetOffset)
+		element.scroll(toNormalizedEdge: targetOffset)
 		
 		return nil
 	}
 }
 
 class SwipeAction : Action {
-	override func perform(on view: UIView) -> [String: Any]? {
+	override func perform(on element: Element) -> [String: Any]? {
 		var targetNormalizedOffset : CGPoint
 		let directionString = params![0] as! String
 		switch directionString {
@@ -366,14 +362,14 @@ class SwipeAction : Action {
 			targetNormalizedOffset.y *= CGFloat(percentage)
 		}
 		
-		view.dtx_swipe(withNormalizedOffset: targetNormalizedOffset, velocity: velocity)
+		element.swipe(normalizedOffset: targetNormalizedOffset, velocity: velocity)
 		
 		return nil
 	}
 }
 
 class LegacyPinchAction : Action {
-	override func perform(on view: UIView) -> [String: Any]? {
+	override func perform(on element: Element) -> [String: Any]? {
 		let directionString = params![0] as! String
 		var scale : CGFloat
 		switch directionString {
@@ -403,16 +399,16 @@ class LegacyPinchAction : Action {
 			angle = CGFloat(angleDouble)
 		}
 		
-		view.dtx_pinch(withScale: scale, velocity: velocity, angle: angle)
+		element.pinch(withScale: scale, velocity: velocity, angle: angle)
 		
 		return nil
 	}
 }
 
 class PinchAction : Action {
-	override func perform(on view: UIView) -> [String: Any]? {
+	override func perform(on element: Element) -> [String: Any]? {
 		let scale = params![0] as! Double
-		assert(scale.isNaN == false && scale > 0.0, "Scale must be a real number above 0.0")
+		precondition(scale.isNaN == false && scale > 0.0, "Scale must be a real number above 0.0")
 		var velocity = CGFloat(2.0)
 		if let speedString = params?[1] as? String {
 			switch speedString {
@@ -430,45 +426,37 @@ class PinchAction : Action {
 			angle = CGFloat(angleDouble)
 		}
 		
-		view.dtx_pinch(withScale: CGFloat(scale), velocity: velocity, angle: angle)
+		element.pinch(withScale: CGFloat(scale), velocity: velocity, angle: angle)
 		
 		return nil
 	}
 }
 
 class AdjustSliderAction : Action {
-	override func perform(on view: UIView) -> [String : Any]? {
+	override func perform(on element: Element) -> [String : Any]? {
 		let normalizedPosition = params![0] as! Double
 		
 		precondition(normalizedPosition >= 0.0 && normalizedPosition <= 1.0, "Normalized position must be with values between 0.0 and 1.0")
 		
-		guard let slider = view as? UISlider else {
-			dtx_fatalError("View \(view.dtx_shortDescription) is not instance of “UISlider”", view: view)
-		}
-		
-		slider.dtx_normalizedSliderPosition = normalizedPosition
+		element.adjust(toNormalizedSliderPosition: normalizedPosition)
 		
 		return nil
 	}
 }
 
 class SetPickerAction : Action {
-	override func perform(on view: UIView) -> [String: Any]? {
+	override func perform(on element: Element) -> [String: Any]? {
 		let column = params![0] as! Int
 		let value = params![1] as! String
 		
-		if let view = view as? UIPickerView {
-			view.dtx_setComponent(column, toValue: value)
-		} else {
-			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UIPickerView”", view: view)
-		}
-
+		element.setComponent(column, toValue: value)
+		
 		return nil
 	}
 }
 
 class SetDatePickerAction : Action {
-	override func perform(on view: UIView) -> [String: Any]? {
+	override func perform(on element: Element) -> [String: Any]? {
 		let dateString = params![0] as! String
 		let formatString = params![1] as! String
 		
@@ -483,13 +471,9 @@ class SetDatePickerAction : Action {
 			date = dateFormatter.date(from: dateString)
 		}
 		
-		dtx_assert(date != nil, "Incorrect date format “\(formatString)” provided for date string “\(dateString)”", view: view)
+		dtx_assert(date != nil, "Incorrect date format “\(formatString)” provided for date string “\(dateString)”")
 		
-		if let view = view as? UIDatePicker {
-			view.dtx_adjust(to: date!)
-		} else {
-			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UIDatePicker”", view: view)
-		}
+		element.adjust(toDate: date!)
 		
 		return nil
 	}
@@ -497,22 +481,8 @@ class SetDatePickerAction : Action {
 
 class GetAttributesAction : Action {
 	override func perform(completionHandler: @escaping ([String : Any]?, Error?) -> Void) {
-		let views = element.views
-		
 		async_action_dtx_try(completionHandler: completionHandler) {
-			if views.count == 1 {
-				perform(on: views.first!, completionHandler: completionHandler)
-			} else {
-				let elements = views.map {
-					return self.perform(on: $0)
-				}
-				
-				completionHandler(["elements": elements], nil)
-			}
+			completionHandler(element.attributes, nil)
 		}
-	}
-	
-	override func perform(on view: UIView) -> [String : Any] {
-		return view.dtx_attributes
 	}
 }

@@ -267,7 +267,7 @@ fileprivate func traitStringsToTrait(_ traitStrings: [String]) -> UIAccessibilit
 			rv.insert(.tabBar)
 			break
 		default:
-			dtx_fatalError("Unknown or unsupported accessibility trait “\(traitString)”", view: nil)
+			dtx_fatalError("Unknown or unsupported accessibility trait “\(traitString)”")
 		}
 	}
 	

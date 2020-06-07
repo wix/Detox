@@ -25,19 +25,19 @@ func dtx_try(_ block: () -> Void) throws {
 }
 
 @inline(__always)
-func dtx_fatalError(_ message: @autoclosure () -> String, view: @autoclosure () -> UIView? = nil, function: String = #function, file: String = #file, line: UInt = #line) -> Never {
-	DTXAssertionHandler.handleFailure(inFunction: function, file: file, lineNumber: Int(line), view: view(), description: message(), arguments: getVaList([]))
+func dtx_fatalError(_ message: @autoclosure () -> String, viewDescription: @autoclosure () -> [String: Any]? = nil, function: String = #function, file: String = #file, line: UInt = #line) -> Never {
+	DTXAssertionHandler.handleFailure(inFunction: function, file: file, lineNumber: Int(line), viewDescription: viewDescription(), description: message(), arguments: getVaList([]))
 	abort()
 }
 
 @inline(__always)
-func dtx_assert(_ condition: @autoclosure () -> Bool, _ message: @autoclosure () -> String, view: @autoclosure () -> UIView? = nil, function: String = #function, file: String = #file, line: UInt = #line) {
+func dtx_assert(_ condition: @autoclosure () -> Bool, _ message: @autoclosure () -> String, viewDescription: @autoclosure () -> [String: Any]? = nil, function: String = #function, file: String = #file, line: UInt = #line) {
 	guard condition() else {
-		dtx_fatalError(message(), view: view(), function: function, file: file, line: line)
+		dtx_fatalError(message(), viewDescription: viewDescription(), function: function, file: file, line: line)
 	}
 }
 
 @inline(__always)
-func dtx_errorForFatalError(_ message: @autoclosure () -> String, view: @autoclosure () -> UIView? = nil, function: String = #function, file: String = #file, line: UInt = #line) -> Error {
-	return DTXAssertionHandler.errorForFailure(inFunction: function, file: file, lineNumber: Int(line), view: view(), description: message(), arguments: getVaList([]))
+func dtx_errorForFatalError(_ message: @autoclosure () -> String, viewDescription: @autoclosure () -> [String: Any]? = nil, function: String = #function, file: String = #file, line: UInt = #line) -> Error {
+	return DTXAssertionHandler.errorForFailure(inFunction: function, file: file, lineNumber: Int(line), viewDescription: viewDescription(), description: message(), arguments: getVaList([]))
 }

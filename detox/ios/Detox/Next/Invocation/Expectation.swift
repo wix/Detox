@@ -114,19 +114,18 @@ class Expectation : CustomStringConvertible {
 		}
 	}
 	
-	fileprivate func evaluate(with view: UIView) -> Bool {
+	fileprivate func evaluate(with element: Element) -> Bool {
 		fatalError("Unimplemented perform(on:) called for \(type(of: self))")
 	}
 	
 	fileprivate func _evaluate() {
-		let view = self.element.view
-		dtx_assert(applyModifiers(evaluate(with: view), modifiers: modifiers), "Failed expectation: \(self.description)", view: view)
+		dtx_assert(applyModifiers(evaluate(with: element), modifiers: modifiers), "Failed expectation: \(self.description)", viewDescription: element.debugAttributes)
 	}
 	
 	fileprivate func evaluate_after(startDate: Date, completionHandler: @escaping (Error?) -> Void) {
 		let nowDate = Date()
 		guard nowDate.timeIntervalSince(startDate) < timeout else {
-			completionHandler(dtx_errorForFatalError("Timed out while waiting for expectation: \(self.description)", view: nil))
+			completionHandler(dtx_errorForFatalError("Timed out while waiting for expectation: \(self.description)", viewDescription: element.debugAttributes))
 			return
 		}
 		
@@ -175,24 +174,16 @@ class Expectation : CustomStringConvertible {
 class ToBeVisibleExpectation : Expectation {
 	//This override is to support the special case where non-existent elements are also non-visible.
 	override func _evaluate() {
-		var view : UIView? = nil
-		if self.modifiers.contains(Modifier.not) {
-			//Don't fail if view doesn't exist 
-			try? dtx_try {
-				view = self.element.view
-			}
-			if view == nil {
-				return
-			}
-		} else {
-			view = self.element.view
+		if self.modifiers.contains(Modifier.not) && element.exists == false {
+			//Don't fail if view doesn't exist
+			return
 		}
 		
-		dtx_assert(applyModifiers(evaluate(with: view!), modifiers: modifiers), "Failed expectation: \(self.description)", view: view)
+		dtx_assert(applyModifiers(evaluate(with: element), modifiers: modifiers), "Failed expectation: \(self.description)", viewDescription: element.debugAttributes)
 	}
 	
-	override func evaluate(with view: UIView) -> Bool {
-		return view.dtx_isVisible
+	override func evaluate(with element: Element) -> Bool {
+		return element.isVisible
 	}
 }
 
@@ -217,8 +208,8 @@ class ValueExpectation : Expectation {
 		fatalError("Call the other initializer")
 	}
 	
-	override func evaluate(with view: UIView) -> Bool {
-		return NSComparisonPredicate(leftExpression: NSExpression(forKeyPath: key), rightExpression: NSExpression(forConstantValue: value), modifier: .direct, type: .equalTo, options: []).evaluate(with: view)
+	override func evaluate(with element: Element) -> Bool {
+		return NSComparisonPredicate(leftExpression: NSExpression(forKeyPath: key), rightExpression: NSExpression(forConstantValue: value), modifier: .direct, type: .equalTo, options: []).evaluate(with: element)
 	}
 	
 	override var additionalDescription: String {
@@ -248,29 +239,25 @@ class DoubleExpectation : Expectation {
 		fatalError("Call the other initializer")
 	}
 	
-	fileprivate func valueToTest(from view: UIView) -> Double {
-		fatalError("Unimplemented")
+	fileprivate func valueToTest(from element: Element) -> Double {
+		fatalError("Abstract method valueToTest(from:) called")
 	}
 	
-	override func evaluate(with view: UIView) -> Bool {
+	override func evaluate(with element: Element) -> Bool {
 		return NSPredicate { view, _ -> Bool in
-			self.valueToTest(from: (view as! UIView)).isAlmostEqual(to: self.value, tolerance: self.tolerance ?? Double.ulpOfOne.squareRoot())
-		}.evaluate(with: view)
+			self.valueToTest(from: element).isAlmostEqual(to: self.value, tolerance: self.tolerance ?? Double.ulpOfOne.squareRoot())
+		}.evaluate(with: element)
+	}
+}
+
+class SliderPositionExpectation : DoubleExpectation {
+	override func valueToTest(from element: Element) -> Double {
+		return element.normalizedSliderPosition
 	}
 	
 	override var additionalDescription: String {
 		get {
 			return "(sliderPosition \(tolerance != nil ? "(~\(tolerance!))" : "")== “\(value)”)"
 		}
-	}
-}
-
-class SliderPositionExpectation : DoubleExpectation {
-	override func valueToTest(from view: UIView) -> Double {
-		guard let slider = view as? UISlider else {
-			dtx_fatalError("View \(view.dtx_shortDescription) is not instance of “UISlider”", view: view)
-		}
-		
-		return slider.dtx_normalizedSliderPosition
 	}
 }

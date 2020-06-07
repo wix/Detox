@@ -40,6 +40,9 @@ static double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
 
 - (UIImage*)dtx_imageAroundPoint:(CGPoint)point;
 
+@property (nonatomic, readonly, copy) NSDictionary<NSString*, id>* dtx_attributes;
+@property (nonatomic, readonly, copy) NSDictionary<NSString*, id>* dtx_viewDebugAttributes;
+
 @end
 
 NS_ASSUME_NONNULL_END

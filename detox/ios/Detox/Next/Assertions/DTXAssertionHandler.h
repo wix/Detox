@@ -12,11 +12,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DTXTestAssertionException : NSException
 
-+ (NSException *)exceptionWithReason:(nullable NSString *)reason userInfo:(nullable NSDictionary *)userInfo view:(nullable UIView*)view;
++ (NSException *)exceptionWithReason:(nullable NSString *)reason userInfo:(nullable NSDictionary *)userInfo viewDescription:(nullable NSDictionary<NSString*, id>*)viewDescription;
 
 + (NSException *)exceptionWithName:(NSExceptionName)name reason:(nullable NSString *)reason userInfo:(nullable NSDictionary *)userInfo NS_UNAVAILABLE;
 
-@property (nonatomic, strong, nullable) UIView* view;
+@property (nonatomic, strong, nullable) NSDictionary<NSString*, id>* viewDescription;
 
 @end
 
@@ -24,23 +24,23 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (BOOL)try:(void(NS_NOESCAPE ^)(void))block error:(NSError * __nullable * __null_unspecified)error NS_REFINED_FOR_SWIFT;
 
-+ (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line view:(nullable UIView*)view description:(NSString *)format,... NS_FORMAT_FUNCTION(6,7);
++ (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line viewDescription:(nullable NSDictionary<NSString*, id>*)viewDescription description:(NSString *)format,... NS_FORMAT_FUNCTION(6,7);
 
-+ (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line view:(nullable UIView*)view description:(NSString *)format,... NS_FORMAT_FUNCTION(5,6);
++ (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line viewDescription:(nullable NSDictionary<NSString*, id>*)viewDescription description:(NSString *)format,... NS_FORMAT_FUNCTION(5,6);
 
-+ (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line view:(nullable UIView*)view description:(NSString *)format arguments:(va_list)arguments;
++ (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line viewDescription:(nullable NSDictionary<NSString*, id>*)viewDescription description:(NSString *)format arguments:(va_list)arguments;
 
-+ (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line view:(nullable UIView*)view description:(NSString *)format arguments:(va_list)arguments;
++ (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line viewDescription:(nullable NSDictionary<NSString*, id>*)viewDescription description:(NSString *)format arguments:(va_list)arguments;
 
-+ (NSError*)errorForFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line view:(nullable UIView*)view description:(NSString *)format arguments:(va_list)arguments;
++ (NSError*)errorForFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line viewDescription:(nullable NSDictionary<NSString*, id>*)viewDescription description:(NSString *)format arguments:(va_list)arguments;
 
-+ (NSError*)errorForFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line view:(nullable UIView*)view description:(NSString *)format arguments:(va_list)arguments;
++ (NSError*)errorForFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line viewDescription:(nullable NSDictionary<NSString*, id>*)viewDescription description:(NSString *)format arguments:(va_list)arguments;
 
 @end
 
 extern BOOL dtx_try(void (NS_NOESCAPE ^block)(void), NSError * __nullable * __null_unspecified error) NS_REFINED_FOR_SWIFT;
 
-#define DTXViewAssert(condition, _view, desc, ...)	\
+#define DTXViewAssert(condition, _viewDescription, desc, ...)	\
 do {				\
 	__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
 	if (__builtin_expect(!(condition), 0)) {		\
@@ -48,12 +48,12 @@ do {				\
 			__assert_file__ = __assert_file__ ? __assert_file__ : @"<Unknown File>"; \
 		[DTXAssertionHandler handleFailureInMethod:_cmd \
 		object:self file:__assert_file__ \
-			lineNumber:__LINE__ view:_view description:(desc), ##__VA_ARGS__]; \
+			lineNumber:__LINE__ viewDescription:_viewDescription description:(desc), ##__VA_ARGS__]; \
 	}				\
 	__PRAGMA_POP_NO_EXTRA_ARG_WARNINGS \
 } while(0)
 
-#define DTXCViewAssert(condition, _view, desc, ...) \
+#define DTXCViewAssert(condition, _viewDescription, desc, ...) \
 do {				\
 	__PRAGMA_PUSH_NO_EXTRA_ARG_WARNINGS \
 	if (__builtin_expect(!(condition), 0)) {		\
@@ -63,7 +63,7 @@ do {				\
 		__assert_file__ = __assert_file__ ? __assert_file__ : @"<Unknown File>"; \
 	[DTXAssertionHandler handleFailureInFunction:__assert_fn__ \
 	file:__assert_file__ \
-		lineNumber:__LINE__ view:_view description:(desc), ##__VA_ARGS__]; \
+		lineNumber:__LINE__ viewDescription:_viewDescription description:(desc), ##__VA_ARGS__]; \
 }				\
 	__PRAGMA_POP_NO_EXTRA_ARG_WARNINGS \
 } while(0)
