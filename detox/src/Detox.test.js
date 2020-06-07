@@ -24,7 +24,7 @@ describe('Detox', () => {
   let ArtifactsManager;
   let Detox;
   let detox;
-  let symbols;
+  let lifecycleSymbols;
 
   function client() {
     return Client.mock.instances[0];
@@ -58,7 +58,7 @@ describe('Detox', () => {
     Client = require('./client/Client');
     DetoxServer = require('./server/DetoxServer');
     Detox = require('./Detox');
-    symbols = require('../runners/integration').symbols;
+    lifecycleSymbols = require('../runners/integration').lifecycle;
   });
 
   describe('when detox.init() is called', () => {
@@ -535,19 +535,25 @@ describe('Detox', () => {
   });
 
   describe.each([
+    ['onRunStart', null],
     ['onRunDescribeStart', { name: 'testSuiteName' }],
-    ['onRunDescribeFinish', { name: 'testSuiteName' }],
     ['onTestStart', testSummaries.running()],
+    ['onHookStart', null],
     ['onHookFailure', { error: new Error() }],
+    ['onHookSuccess', null],
+    ['onTestFnStart', null],
     ['onTestFnFailure', { error: new Error() }],
+    ['onTestFnSuccess', null],
     ['onTestDone', testSummaries.passed()],
+    ['onRunDescribeFinish', { name: 'testSuiteName' }],
+    ['onRunFinish', null],
   ])('when detox[symbols.%s](%j) is called', (method, arg) => {
     beforeEach(async () => {
       detox = await new Detox(detoxConfig).init();
     });
 
     it(`should pass it through to artifactsManager.${method}()`, async () => {
-      await detox[symbols[method]](arg);
+      await detox[lifecycleSymbols[method]](arg);
       expect(artifactsManager()[method]).toHaveBeenCalledWith(arg);
     });
   });

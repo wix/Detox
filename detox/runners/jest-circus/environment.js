@@ -3,6 +3,7 @@ const NodeEnvironment = require('jest-environment-node'); // eslint-disable-line
 const DetoxCoreListener = require('./listeners/DetoxCoreListener');
 const DetoxInitErrorListener = require('./listeners/DetoxInitErrorListener');
 const assertJestCircus26 = require('./utils/assertJestCircus26');
+const wrapErrorWithNoopLifecycle = require('./utils/wrapErrorWithNoopLifecycle');
 const timely = require('../../src/utils/timely');
 
 /**
@@ -22,7 +23,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     /** @protected */
     this.testEventListeners = [];
     /** @protected */
-    this.initTimeout = 120000;
+    this.initTimeout = 300000;
   }
 
   get detox() {
@@ -67,6 +68,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       }
     } catch (initError) {
       state.unhandledErrors.push(initError);
+      detox = wrapErrorWithNoopLifecycle(initError);
       await this._onTeardown();
     }
 

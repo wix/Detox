@@ -123,6 +123,8 @@ class ArtifactsManager {
     });
   }
 
+  async onRunStart() {}
+
   async onRunDescribeStart(suite) {
     await this._callPlugins('ascending', 'onRunDescribeStart', suite);
   }
@@ -131,13 +133,21 @@ class ArtifactsManager {
     await this._callPlugins('ascending', 'onTestStart', testSummary);
   }
 
+  async onHookStart() {}
+
   async onHookFailure(testSummary) {
     await this._callPlugins('plain', 'onHookFailure', testSummary);
   }
 
+  async onHookSuccess() {}
+
+  async onTestFnStart() {}
+
   async onTestFnFailure(testSummary) {
     await this._callPlugins('plain', 'onTestFnFailure', testSummary);
   }
+
+  async onTestFnSuccess() {}
 
   async onTestDone(testSummary) {
     await this._callPlugins('descending', 'onTestDone', testSummary);
@@ -146,6 +156,8 @@ class ArtifactsManager {
   async onRunDescribeFinish(suite) {
     await this._callPlugins('descending', 'onRunDescribeFinish', suite);
   }
+
+  async onRunFinish() {}
 
   async onBeforeCleanup() {
     await this._callPlugins('descending', 'onBeforeCleanup');

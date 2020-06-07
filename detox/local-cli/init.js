@@ -92,8 +92,8 @@ function createMochaFolderE2E() {
 function createJestFolderE2E() {
   createFolder('e2e', {
     'config.json': jestTemplates.runnerConfig,
-    'init.js': jestTemplates.initjs,
-    'firstTest.spec.js': jestTemplates.firstTest
+    'environment.js': jestTemplates.environment,
+    'firstTest.spec.js': jestTemplates.firstTest,
   });
 
   createFile('.detoxrc.json', JSON.stringify({

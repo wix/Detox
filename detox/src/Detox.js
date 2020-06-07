@@ -17,7 +17,7 @@ const driverRegistry = require('./devices/DriverRegistry').default;
 const _initHandle = Symbol('_initHandle');
 const _assertNoPendingInit = Symbol('_assertNoPendingInit');
 
-const { symbols } = require('../runners/integration');
+const lifecycleSymbols = require('../runners/integration').lifecycle;
 
 class Detox {
   constructor(config) {
@@ -29,12 +29,12 @@ class Detox {
 
     this[_initHandle] = null;
 
-    for (const [key, symbol] of Object.entries(symbols)) {
+    for (const [key, symbol] of Object.entries(lifecycleSymbols)) {
       this[symbol] = (...args) => this._artifactsManager[key](...args);
     }
 
-    this[symbols.onTestStart] = this.beforeEach;
-    this[symbols.onTestDone] = this.afterEach;
+    this[lifecycleSymbols.onTestStart] = this.beforeEach;
+    this[lifecycleSymbols.onTestDone] = this.afterEach;
 
     const {artifactsConfig, behaviorConfig, deviceConfig, sessionConfig} = config;
 

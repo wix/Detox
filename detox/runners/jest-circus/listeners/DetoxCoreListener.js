@@ -7,19 +7,13 @@ const {
   onTestFnFailure,
   onTestDone,
   onRunDescribeFinish,
-} = require('../../integration').symbols;
+} = require('../../integration').lifecycle;
 
 class DetoxCoreListener {
   constructor({ detox }) {
     this._startedTests = new WeakSet();
     this._testsFailedBeforeStart = new WeakSet();
-
-    this.detox = detox || {
-      suiteStart: _.noop,
-      suiteEnd: _.noop,
-      beforeEach: _.noop,
-      afterEach: _.noop,
-    };
+    this.detox = detox;
   }
 
   async run_describe_start({describeBlock: {name, children}}) {

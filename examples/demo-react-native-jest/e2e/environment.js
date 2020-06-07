@@ -1,15 +1,4 @@
-const firstTestContent = require('./firstTestContent');
-
-const runnerConfig = `{
-    "testEnvironment": "./environment",
-    "testRunner": "jest-circus/runner",
-    "testTimeout": 120000,
-    "reporters": ["detox/runners/jest/streamlineReporter"],
-    "verbose": true
-}
-`;
-
-const environmentJsContent = `const {
+const {
   DetoxCircusEnvironment,
   SpecReporter,
   WorkerAssignReporter,
@@ -32,8 +21,3 @@ class CustomDetoxEnvironment extends DetoxCircusEnvironment {
 }
 
 module.exports = CustomDetoxEnvironment;
-`;
-
-exports.environment = environmentJsContent;
-exports.firstTest = firstTestContent;
-exports.runnerConfig = runnerConfig;

@@ -527,4 +527,22 @@ describe('ArtifactsManager', () => {
       expect(emitter.on).toHaveBeenCalledWith(eventName, expect.any(Function));
     });
   });
+
+  describe('stubs', () => {
+    it.each([
+      ['onRunStart'],
+      ['onHookStart'],
+      ['onHookSuccess'],
+      ['onTestFnStart'],
+      ['onTestFnSuccess'],
+      ['onRunFinish'],
+    ])('should have async .%s() stub', (method) => {
+      const artifactsManager = new proxy.ArtifactsManager({
+        pathBuilder: new proxy.ArtifactPathBuilder({ rootDir: '/tmp' }),
+        plugins: {},
+      });
+
+      expect(artifactsManager[method]()).toEqual(Promise.resolve());
+    });
+  });
 });

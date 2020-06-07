@@ -4,7 +4,7 @@ const {
   onTestStart,
   onTestDone,
   onRunDescribeFinish,
-} = require('../integration').symbols;
+} = require('../integration').lifecycle;
 
 class DetoxAdapterImpl {
   constructor(detox, describeInitErrorFn) {
