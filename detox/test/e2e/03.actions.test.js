@@ -5,7 +5,7 @@ const driver = {
     testId: 'UniqueId819',
     get coordinates() {
       const x = (device.getPlatform() === 'ios' ? 180 : 125);
-      return { x, y: 160 };
+      return { x, y: 107 };
     },
     multiTap: () => element(by.id(driver.tapsElement.testId)).multiTap(3),
     tapAtPoint: () => element(by.id('View7990')).tap(driver.tapsElement.coordinates),
@@ -15,7 +15,7 @@ const driver = {
   },
   doubleTapsElement: {
     testId: 'doubleTappableText',
-    coordinates: { x: 180, y: 160 },
+    coordinates: { x: 180, y: 107 },
     tapOnce: () => element(by.id(driver.doubleTapsElement.testId)).tap(),
     tapTwice: async () => {
       await driver.doubleTapsElement.tapOnce();
@@ -249,10 +249,10 @@ describe('Actions', () => {
     await element(by.id('PinchableScrollView')).pinch(0.75, 'slow');
     await expect(element(by.id('UniqueId007'))).toBeVisible();
   });
-  
+
   it(':ios: should adjust slider and assert its value', async () => {
     await expect(element(by.id('sliderWithASimpleID'))).toHaveSliderPosition(0.25);
-    await element(by.id('sliderWithASimpleID')).adjustSliderToPosition(0.75);    
+    await element(by.id('sliderWithASimpleID')).adjustSliderToPosition(0.75);
     await expect(element(by.id('sliderWithASimpleID'))).toHaveSliderPosition(0.75);
     await expect(element(by.id('sliderWithASimpleID'))).toHaveValue("75%");
   });
