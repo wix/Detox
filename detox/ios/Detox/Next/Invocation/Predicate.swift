@@ -53,7 +53,7 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 		switch kind {
 		case Kind.traits:
 			let value = dictionaryRepresentation[Keys.value] as! [String]
-			return TraitPredicate(kind: kind, modifiers: modifiers, stringTraits: value)
+			return try TraitPredicate(kind: kind, modifiers: modifiers, stringTraits: value)
 		case Kind.type:
 			let className = dictionaryRepresentation[Keys.value] as! String
 			return try KindOfPredicate(kind: kind, modifiers: modifiers, className: className)
@@ -188,8 +188,14 @@ class ValuePredicate : Predicate {
 		Kind.id: ("accessibilityIdentifier", { return $0 }),
 		Kind.label: ("accessibilityLabel", { return $0 }),
 		Kind.text: ("text", { return $0 }),
-		Kind.type: ("className", { return $0 }),
 		Kind.value: ("accessibilityValue", { return $0 })
+	]
+	
+	static let translator : [String: String] = [
+		"accessibilityIdentifier": "identifier:",
+		"accessibilityLabel": "label",
+		"text": "text",
+		"accessibilityValue": "value"
 	]
 	
 	init(kind: String, modifiers: Set<String>, value: CustomStringConvertible) {
@@ -207,11 +213,11 @@ class ValuePredicate : Predicate {
 	override var innerDescription: String {
 		let (keyPath, transformer) = ValuePredicate.mapping[kind]!
 		
-		return "\(keyPath) == “\(transformer(value))”"
+		return "\(ValuePredicate.translator[keyPath] ?? keyPath) == “\(transformer(value))”"
 	}
 }
 
-fileprivate func traitStringsToTrait(_ traitStrings: [String]) -> UIAccessibilityTraits {
+fileprivate func traitStringsToTrait(_ traitStrings: [String]) throws -> UIAccessibilityTraits {
 	var rv : UIAccessibilityTraits = []
 	
 	for traitString in traitStrings {
@@ -267,7 +273,7 @@ fileprivate func traitStringsToTrait(_ traitStrings: [String]) -> UIAccessibilit
 			rv.insert(.tabBar)
 			break
 		default:
-			dtx_fatalError("Unknown or unsupported accessibility trait “\(traitString)”")
+			throw dtx_errorForFatalError("Unknown or unsupported accessibility trait “\(traitString)”")
 		}
 	}
 	
@@ -278,9 +284,9 @@ class TraitPredicate : Predicate {
 	let stringTraits : [String]
 	let traits : UIAccessibilityTraits
 	
-	init(kind: String, modifiers: Set<String>, stringTraits: [String]) {
+	init(kind: String, modifiers: Set<String>, stringTraits: [String]) throws {
 		self.stringTraits = stringTraits
-		self.traits = traitStringsToTrait(stringTraits)
+		self.traits = try traitStringsToTrait(stringTraits)
 		
 		super.init(kind: kind, modifiers: modifiers)
 	}
