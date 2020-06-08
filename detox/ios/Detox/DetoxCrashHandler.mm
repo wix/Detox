@@ -76,20 +76,23 @@ OBJC_EXTERN int __dtx_asl_log(asl_object_t client, asl_object_t msg, int level, 
 	va_list args;
 	va_start(args, format);
 
-	//No other way to catch Swift fatal errors. We swizzle asl_log, which is called by the Swift runtime
-	// in https://github.com/apple/swift/blob/889e84a2029a28f25dd62c3bfc1a9a0241b0413f/stdlib/public/runtime/Errors.cpp#L310
-	//We then check for a known Swift function in the first few frames of the call stack.
-	NSArray<NSString*>* callStackSymbols = NSThread.callStackSymbols;
-	for (NSUInteger idx = 1; idx < MIN(callStackSymbols.count, 4); idx++) {
-		if([callStackSymbols[idx] containsString:@"swift_reportError"])
-		{
-			NSString* message = [[NSString alloc] initWithFormat:[NSString stringWithUTF8String:format] arguments:args];
-			va_end(args);
-			__DTXHandleCrash(nil, nil, [message stringByTrimmingCharactersInSet:NSCharacterSet.newlineCharacterSet]);
-			
-			va_start(args, format);
-			
-			break;
+	if(level == ASL_LEVEL_ERR)
+	{
+		//No other way to catch Swift fatal errors. We swizzle asl_log, which is called by the Swift runtime
+		// in https://github.com/apple/swift/blob/889e84a2029a28f25dd62c3bfc1a9a0241b0413f/stdlib/public/runtime/Errors.cpp#L310
+		//We then check for a known Swift function in the first few frames of the call stack.
+		NSArray<NSString*>* callStackSymbols = NSThread.callStackSymbols;
+		for (NSUInteger idx = 1; idx < MIN(callStackSymbols.count, 4); idx++) {
+			if([callStackSymbols[idx] containsString:@"swift_reportError"])
+			{
+				NSString* message = [[NSString alloc] initWithFormat:[NSString stringWithUTF8String:format] arguments:args];
+				va_end(args);
+				__DTXHandleCrash(nil, nil, [message stringByTrimmingCharactersInSet:NSCharacterSet.newlineCharacterSet]);
+				
+				va_start(args, format);
+				
+				break;
+			}
 		}
 	}
 	
