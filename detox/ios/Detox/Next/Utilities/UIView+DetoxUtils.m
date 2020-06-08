@@ -453,7 +453,7 @@ static NSDictionary* DTXPointToDictionary(CGPoint point)
 	
 	if([self isKindOfClass:UISlider.class])
 	{
-		rv[@"sliderPosition"] = @([(UISlider*)self dtx_normalizedSliderPosition]);
+		rv[@"normalizedSliderPosition"] = @([(UISlider*)self dtx_normalizedSliderPosition]);
 	}
 	
 	if([self isKindOfClass:UIDatePicker.class])

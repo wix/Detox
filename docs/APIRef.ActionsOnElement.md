@@ -21,10 +21,11 @@ Use [expectations](APIRef.Expect.md) to verify element states.
 - [`.tapBackspaceKey()`](#tapbackspacekey)
 - [`.setColumnToValue()`](#setcolumntovaluecolumn-value--ios-only) **iOS only**
 - [`.setDatePickerDate()`](#setdatepickerdatedatestring-dateformat--ios-only) **iOS only**
+- [`.adjustSliderToPosition()`](#adjustslidertopositionnormalizedposition--ios-only) **iOS only**
 - [`.getAttributes()`](#getAttributes--ios-only) **iOS only**
 
-
 ### `tap(point)`
+
 Simulates a tap on the element at the specified point, or at element's activation point if no point is specified.
 
 `point`—a point in the element's coordinate space (optional, valid input: object with x and y numerical values)
@@ -193,6 +194,16 @@ await element(by.id('datePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00'
 await element(by.id('datePicker')).setDatePickerDate('2019/02/06', "yyyy/MM/dd");
 ```
 
+### `adjustSliderToPosition(normalizedPosition)`  iOS only
+
+Manipulates the UI to change the displayed value of the slider element to a new value, based on a normalized position.
+
+`normalizedPosition`—The normalized position to adjust the slider element. (valid input: [0, 1], 0 corresponds to the minimum value of the slider, and 1 corresponds to the maximum value)
+
+```js
+await element(by.id('slider')).adjustSliderToPosition(0.75);
+```
+
 ### `getAttributes()`  iOS only
 
 Returns an object, representing the attributes of the element.
@@ -214,7 +225,8 @@ Retrieved attributes are:
 - `elementBounds`—the bounds of the element, in element coordinate space
 - `safeAreaInsets`—the safe area insets of the element, in element coordinate space
 - `elementSafeBounds`—the safe area bounds of the element, in element coordinate space
-- `date`—the date of the element (in case it is a date picker)
+- `date`—the date of the element (in case the element is a date picker)
+- `normalizedSliderPosition`—the normalized slider position (in case the element is a slider)
 
 If the value for a given attribute is null or cannot be otherwise computed, the key will not be present, but empty strings may be found in the object.
 

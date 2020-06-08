@@ -12,6 +12,7 @@ Use [actions]('APIRef.ActionsOnElement.md') to simulate use interaction with ele
 - [`.toHaveLabel()`](#tohavelabellabel)
 - [`.toHaveId()`](#tohaveidid)
 - [`.toHaveValue()`](#tohavevaluevalue)
+- [`.toHaveSliderPosition()`](#tohavesliderpositionnormalizedposition-tolerance--ios-only) **iOS only**
 - [`.not`](#not)
 - [`.withTimeout()`](#withtimeouttimeout)
 
@@ -57,10 +58,19 @@ await expect(element(by.text('I contain some text'))).toHaveId('UniqueId204');
 
 ### `toHaveValue(value)`
 
-Expect the element to have the specified accessibility value. In React Native, this corresponds to the value in the [`accessibilityValue`](https://reactnative.dev/docs/view.html#accessibilityvalue) prop.
+Expects the element to have the specified accessibility value. In React Native, this corresponds to the value in the [`accessibilityValue`](https://reactnative.dev/docs/view.html#accessibilityvalue) prop.
 
 ```js
 await expect(element(by.id('UniqueId533'))).toHaveValue('0');
+```
+
+### `toHaveSliderPosition(normalizedPosition, tolerance)`  iOS only
+
+Expects the slider element to have the specified normalized position ([0, 1]), within the provided tolerance (optional).
+
+```js
+await expect(element(by.id('slider'))).toHaveSliderPosition(0.75);
+await expect(element(by.id('slider'))).toHaveSliderPosition(0.3113, 0.00001);
 ```
 
 ### `not`
