@@ -42,22 +42,22 @@ class Element : NSObject {
 		}
 	}
 	
-	private var failed: Bool = false
-	private var cachedViews : [UIView]?
+//	private var cachedViews : [UIView]?
 	private var views : [UIView] {
-		if let cachedViews = cachedViews {
-			return cachedViews
-		}
+//		if let cachedViews = cachedViews {
+//			return cachedViews
+//		}
 		
 		//TODO: Consider searching here in all windows from all scenes.
-		cachedViews = (UIView.dtx_findViewsInKeySceneWindows(passing: predicate.predicateForQuery()) as! [UIView])
+		let array = (UIView.dtx_findViewsInKeySceneWindows(passing: predicate.predicateForQuery()) as! [UIView])
 		
-		guard cachedViews!.count > 0 else {
-			failed = true
-			dtx_fatalError("No elements found for “\(self.description)”", viewDescription: debugAttributes)
+		guard array.count > 0 else {
+			dtx_fatalError("No elements found for “\(self.description)”", viewDescription: inDebugAttributes ? nil : debugAttributes)
 		}
 		
-		return cachedViews!
+//		cachedViews = array
+		
+		return array
 	}
 	
 	private var view : UIView {
@@ -69,8 +69,7 @@ class Element : NSObject {
 		} else {
 			//Will fail test if more than one element are resolved from the query
 			guard array.count == 1 else {
-				failed = true
-				dtx_fatalError("Multiple elements found for “\(self.description)”", viewDescription: debugAttributes)
+				dtx_fatalError("Multiple elements found for “\(self.description)”", viewDescription: inDebugAttributes ? nil : debugAttributes)
 			}
 			element = array.first!
 		}
@@ -95,11 +94,16 @@ class Element : NSObject {
 		return String(format: "MATCHER(%@)%@", predicate.description, index != nil ? " AT INDEX(\(index!))" : "")
 	}
 	
+	fileprivate var inDebugAttributes = false
 	var debugAttributes: [String: Any] {
+		inDebugAttributes = true
+		defer {
+			inDebugAttributes = false
+		}
 		do {
-			guard failed == false else {
-				throw "Nope"
-			}
+//			guard failed == false else {
+//				throw "Nope"
+//			}
 			var rv: [String: Any]! = nil
 			try dtx_try {
 				rv = view.dtx_viewDebugAttributes
