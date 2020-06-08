@@ -7,8 +7,8 @@ describe('Network Synchronization', () => {
     mockServer.init();
   });
 
-  afterAll(() => {
-    mockServer.close();
+  afterAll(async () => {
+    await mockServer.close();
   });
 
   beforeEach(async () => {
