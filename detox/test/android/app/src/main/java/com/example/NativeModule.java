@@ -6,11 +6,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.example.utils.ViewSpies;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.Promise;
@@ -18,11 +18,6 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.uimanager.util.ReactFindViewUtil;
-import com.facebook.react.uimanager.util.ReactFindViewUtil.OnMultipleViewsFoundListener;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class NativeModule extends ReactContextBaseJavaModule {
 
@@ -97,7 +92,7 @@ public class NativeModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void spyLongTaps(final String testID) {
-        new LongTapCrasher(testID).attach();
+        new ViewSpies.LongTapCrasher(testID).attach();
     }
 
     @ReactMethod
@@ -117,40 +112,5 @@ public class NativeModule extends ReactContextBaseJavaModule {
         reactContext.getCurrentActivity().runOnUiThread(() -> {
             throw new RuntimeException("Simulated crash (native)");
         });
-    }
-
-    /**
-     * Implementation note: For this purpose, a simpler RN API exists in the same class -
-     * {@link ReactFindViewUtil#addViewListener(ReactFindViewUtil.OnViewFoundListener)}.
-     * However, it is found to be a bit buggy since it removes all listeners immediately
-     * after being called (i.e. while iterating) with no thread-sync mechanisms to protect it.
-     * If real life (CI), we've genuinely seen that it throws ConcurrentModificationException exceptions,
-     * on occasions (and why wouldn't it? - our demo app's ActionsScreen has multiple views subscribing and
-     * called concurrently; could it be that not always everything is run in the main thread?).
-     * Therefore, we use here {@link ReactFindViewUtil#addViewsListener(OnMultipleViewsFoundListener, Set)},
-     * which is too generic but nevertheless allows us to better control when we are to be removed.
-     */
-    private static class LongTapCrasher implements OnMultipleViewsFoundListener {
-
-        private final String testID;
-
-        private LongTapCrasher(String testID) {
-            this.testID = testID;
-        }
-
-        public void attach() {
-            final Set<String> nativeIds = new HashSet<>();
-            nativeIds.add(testID);
-
-            ReactFindViewUtil.addViewsListener(this, nativeIds);
-        }
-
-        @Override
-        public void onViewFound(View view, String nativeId) {
-            view.setOnLongClickListener(v -> {
-                throw new IllegalStateException("Validation failed: component \"" + testID + "\" was long-tapped!!!");
-            });
-            view.post(() -> ReactFindViewUtil.removeViewsListener(this));
-        }
     }
 }
