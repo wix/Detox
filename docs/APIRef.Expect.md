@@ -75,7 +75,7 @@ await expect(element(by.id('slider'))).toHaveSliderPosition(0.3113, 0.00001);
 
 ### `not`
 
-Modifies the expectation by negating the expectation.
+Negates the expectation.
 
 ```js
 await expect(element(by.id('UniqueId533'))).not.toBeVisible();
