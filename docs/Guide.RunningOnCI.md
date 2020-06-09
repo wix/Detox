@@ -152,3 +152,30 @@ workflows:
     - _detox_tests
     after_run: []
 ```
+
+### • Running Detox on [GitlabCI](https://docs.gitlab.com/ee/ci/README.html) - Android Only
+
+Gitlab is also a popular git management service which also include a built-in CI system. They provide free runner up to 2000 minutes for private projects, however, the runners provided by them cannot be used to run Detox due to the lack of KVM support (in order to run Android Emulators). You can, instead, [create your own runner](https://docs.gitlab.com/ee/ci/runners/README.html) with KVM support. Some example of cloud providers offering this are: [Digital Ocean](https://www.digitalocean.com/products/droplets/), AWS (with [c5 instance types](https://aws.amazon.com/ec2/instance-types/c5/)), [Google Cloud](https://cloud.google.com/compute/docs/instances/enable-nested-virtualization-vm-instances) and [Azure](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/nested-virtualization)
+
+One example of such job can be:
+
+```yml
+detox_e2e:
+  stage: test
+  image: reactnativecommunity/react-native-android
+  variables:
+  before_script:
+    - npm i -g envinfo detox-cli && envinfo
+    # Increase file watcher limit, see more here: https://github.com/guard/listen/wiki/Increasing-the-amount-of-inotify-watchers#the-technical-details
+    - echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf && sysctl -p
+    - mkdir -p /root/.android && touch /root/.android/repositories.cfg
+    # The Dockerimage provides two paths for sdkmanager and avdmanager, which the defaults are from $ANDROID_HOME/cmdline-tools
+    # That is not compatible with the one that Detox is using ($ANDROID_HOME/tools/bin)
+    - echo yes | $ANDROID_HOME/tools/bin/sdkmanager --channel=0 --verbose "system-images;android-27;default;x86_64"
+    # Nexus 6P, API 27, XXXHDPI
+    - echo no | $ANDROID_HOME/tools/bin/avdmanager --verbose create avd --force --name "Nexus6P" --package "system-images;android-27;default;x86_64" --sdcard 200M --device 11
+    - adb start-server
+  script:
+    - npx detox build -c android.emu.release.ci
+    - npx detox test -c android.emu.release.ci --headless
+```
