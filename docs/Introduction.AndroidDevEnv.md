@@ -61,7 +61,7 @@ Fortunately, the Android team at Google offers a pretty decent alternative: **AO
 
 *Here's a visual comparison between the two - an SDK 28 (Android 9) AOSP emulator (left) vs. an emulator with Google API's installed (right):*
 
-![AOSP vs Google-API](img/android/aosp-vs-googleapi.png)
+<img src="img/android/aosp-vs-googleapi.png" alt="AOSP vs Google-API" style="zoom:75%;" />
 
 #### Here's how to install them using the command line:
 
@@ -166,9 +166,9 @@ saveOnExit = false
 
 #### Disclaimer
 
-After upgrading the emulator's binary to a newer version, it usually consider all existing snapshots invalid.
+After upgrading the emulator's binary to a newer version, it usually considers all existing snapshots invalid.
 
-This can be addressed by either recreating the AVD's altogher, or just deleting and creating the snapshots as explained.
+This can be addressed by deleting and recreating the snapshots as explained, or by recreating the AVD's altogether.
 
 ## Cheatsheet
 

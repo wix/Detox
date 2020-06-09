@@ -86,7 +86,7 @@ If your project does not already support Kotlin, add the Kotlin Gradle-plugin to
 ```groovy
 buildscript {
     // ...
-    ext.kotlinVersion = '1.3.0' // (check what the latest version is)
+    ext.kotlinVersion = '1.3.0' // (check what the latest version is!)
 
     dependencies {
         // ...
@@ -120,7 +120,7 @@ Add this part to your `package.json`:
             "cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
             "type": "android.emulator",
             "device": {
-              "avdName": "Pixel_API_29"
+              "avdName": "Pixel_API_28"
             }
         },
         "android.emu.release": {
@@ -128,7 +128,7 @@ Add this part to your `package.json`:
             "build": "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd ..",
             "type": "android.emulator",
             "device": {
-              "avdName": "Pixel_API_29"
+              "avdName": "Pixel_API_28"
             }
         }
     }
@@ -156,7 +156,7 @@ If you are using custom [productFlavors](https://developer.android.com/studio/bu
         "build": "cd android && ./gradlew assembleBetaDebug assembleBetaDebugAndroidTest -DtestBuildType=debug && cd ..",
         "type": "android.emulator",
         "device": {
-          "avdName": "Pixel_API_29"
+          "avdName": "Pixel_API_28"
         }
       },
       "android.emu.beta.release": {
@@ -164,7 +164,7 @@ If you are using custom [productFlavors](https://developer.android.com/studio/bu
         "build": "cd android && ./gradlew assembleBetaRelease assembleBetaReleaseAndroidTest -DtestBuildType=release && cd ..",
         "type": "android.emulator",
         "device": {
-          "avdName": "Pixel_API_29"
+          "avdName": "Pixel_API_28"
         }
       }
     }
@@ -209,6 +209,12 @@ For full details, refer to [Android's security-config guide](https://developer.a
 
 
 
+### 6. Setup your test environment
+
+Being able to execute tests requires a properly set-up computer. Walk through the [environment setup guide](Introduction.AndroidDevEnv.md) in order to employ the best practices and avoid common pitfalls when doing so.
+
+
+
 ### 7. Run the tests
 
 Using the `android.emu.debug` configuration from above, you can invoke it in the standard way:
@@ -219,12 +225,6 @@ $ detox build -c android.emu.release
 # run tests:
 $ detox test -c android.emu.release
 ```
-
-
-
-### 8. Fix your Android emulators
-
-While everything may seem on the working side right now, there are many issues with Google's Android emulators causing flakiness and inefficient usage, we recommend addressing. We highly recommend you take the time and apply the practices we've summed up in our [Emulators Best Practices guide](Introduction.AndroidEmulatorsBestPractices.md), in all relevant machines (dev computers, CI agents and scripts) and AVD's.
 
 
 
