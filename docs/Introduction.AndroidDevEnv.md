@@ -45,9 +45,9 @@ Namely, that the version is `1.8.x_abc`.
 
 ---
 
-If `java` isn't in your path (i.e. the command failed altogher), try installing it using [this guide](https://www.java.com/en/download/help/path.xml).
+If `java` isn't in your path or not even installed (i.e. the command failed altogher), try [this guide](https://www.java.com/en/download/help/path.xml).
 
-If otherwise the version is simply wrong, try these refs for Macs; consider employing the `JAVA_HOME` variable to get this to work right:
+If otherwise the version is simply wrong, try these refs for Macs; consider employing the `JAVA_HOME` variable to get things to work right:
 
 * https://java.com/en/download/faq/java_mac.xml#version
 * https://www.java.com/en/download/help/version_manual.xml
@@ -94,27 +94,133 @@ $ANDROID_HOME/tools/bin/avdmanager create avd -n Pixel_API_28_AOSP -d pixel --pa
 
 This isn't mandatory, of course, but it's always good to launch the emulator at least once before running automated tests. The section below will discuss optimizing emulators bootstraping.
 
-At this point, you should be able to launch the emulator from Android Studio, but that can also be done from a command-line console. Assuming the new emulator's name is `Pixel_API_28_AOSP`, execute this:
-
-```shell
-$ANDROID_HOME/emulator/emulator -verbose @Pixel_API_28_AOSP &
-```
-
-Or, if you're aiming, for example, at running a verbose, headless emulator on a UI-less Linux system (e.g. a CI machine):
-
-```shell
-$ANDROID_HOME/emulator/emulator -verbose -no-window -no-audio -gpu swiftshader_indirect @Pixel_API_28_AOSP &
-```
+At this point, you should be able to launch the emulator from Android Studio, but that can also be done from a command line console, as explained in the [cheetsheet below](#locating-the-avds-home-directory).
 
 > See [this guide](https://developer.android.com/studio/run/emulator-commandline) for full details on the `emulator` executable.
 
 #### Installing from Android Studio
 
-We won't go into all the details but once the proper image is installed with the `sdkmanager`, the option becomes available in the AVD creation dialog - see `Target` column of the selected image:
+We won't go into all the details but once the proper image is installed using the `sdkmanager`, the option becomes available in the AVD creation dialog  (see `Target` column of the Virtual Device Configuration screen below):
+
+![Sdk manager](img/android/aosp-image-as.png)
 
 ![Instal AOSP from AS](img/android/install-aosp-as.png)
 
-## Emulator snapshots
+## Emulator Quick-Boot
 
-todo
+If the system allows saving a state (for example, in personal computers or a CI system that can start from prebaked images you can configure), we highly and strongly recommend setting up quick-boot snapshots for any emulator that is used for testing automation.
 
+Quick-boot saves significant time otherwise wasted when emulators cold-boot from scratch. The concept becomes more prominent in environments capable of parallel-executing tests in multiple, concurrently running emulators (as when [Detox is run with multiple Jest workers](Guide.Jest.md)).
+
+This is something that we actually recommend applying in the emulator itself rather than using command-line, but we'll include both options.
+
+In any case, the general principle we're going to instruct is as follows:
+
+1. Enable auto-save for an installed / running emulator.
+2. Launch it, and, when stable, terminate -- a snapshot is saved as a result.
+3. Disable auto-save, so that future, test-tainted snapshots won't be saved. 
+
+#### Setting up a quick-boot snapshot from the Emulator
+
+Start by launching a freshly baked emulator. Wait for it to go stable.
+
+When running, go to settings (3 dots in the sidebar) > `Snapshots` > `Settings` tab. If not already set, select `Yes` in the `auto-save` option. This should prompt for a restart -- choose `Yes`. The emulator should restart **and save a snapshot.**
+
+<img src="img/android/snapshot-autosave.png" alt="Emulator auto-save menu" style="zoom:50%;" />
+
+Do this again after the emulator is back up, but set `No` in the `auto-save` option. Allow it to restart yet again: it will immediately boot into the state saved as a snapshot earlier.
+
+You can also try these as alternative sources for this:
+
+* [Snapshots in Google devs page](https://developer.android.com/studio/run/emulator#snapshots) for full details on snapshots.
+* [Highly detailed blogpost](https://devblogs.microsoft.com/xamarin/android-emulator-quick-boot/)
+
+#### Setting up a quick-boot snapshot from command-line
+
+This is a bit more difficult, but is also applicable even for UI-less machines.
+
+1. [Locate the AVD's `config.ini`](#locating-the-avds-home-directory)
+2. Using your favorite text editor, either change or add these key-value sets:
+
+```ini
+fastboot.chosenSnapshotFile=
+fastboot.forceChosenSnapshotBoot=no
+fastboot.forceColdBoot=no
+fastboot.forceFastBoot=yes
+```
+
+> Empirically, `forceFastBoot=yes` and `forceColdBoot=no` should be enough.
+
+3. Under the AVD's home directory, either create or edit yet another `ini` file called `quickbootChoice.ini` with the following content:
+
+```ini
+saveOnExit = true
+```
+
+4. Now that everything is in place, [launch your emulator](#booting-an-emulator-via-command-line) once (in verbose mode) and wait for it to fully load. Then, shut it down, and make sure the [state has been saved](#verifying-the-emulators-quick-boot-snapshot-has-been-saved). 
+5. Last but not least, go back to `quickbootChoice.ini` and now switch to:
+
+```ini
+saveOnExit = false
+```
+
+#### Disclaimer
+
+After upgrading the emulator's binary to a newer version, it usually consider all existing snapshots invalid.
+
+This can be addressed by either recreating the AVD's altogher, or just deleting and creating the snapshots as explained.
+
+## Cheatsheet
+
+### Locating the AVD's home directory
+
+Each AVD generated by the Android tools gets it's own directory where associated content is stored:
+
+* **Configuration file (i.e. `config.ini`)**
+* Snapshot images
+* SD-card content
+
+to name a few.
+
+On Mac machines, the AVD directory typically maps to:
+
+```
+$HOME/.android/avd/<AVD Name>.avd/
+```
+
+_(for example: `/Users/root/.android/avd/Pixel_API_28_AOSP.avd/`)_
+
+The path should be similar on Linux machines, even though `$HOME` isn't `/Users/root` but typically `/home/root` *(for example: `/home/root/.android/avd/Pixel_API_28_AOSP.avd/`).*
+
+### Booting an emulator via command-line
+
+> * The following examples apply for both Mac and Linux, and should be similar on Windows.
+> * They assume the emulator's name is `Pixel_API_28_AOSP`. If it isn't, adjust the names accordingly:
+
+**Shortcut for booting a verbose, visible emulator in a GUI supporting system**
+
+```shell
+$ANDROID_HOME/emulator/emulator -verbose @Pixel_API_28_AOSP &
+```
+
+**Shortcut for booting a verbose, _headless_ emulator in a UI-less Linux system**
+
+```shell
+$ANDROID_HOME/emulator/emulator -verbose -no-window -no-audio -gpu swiftshader_indirect @Pixel_API_28_AOSP &
+```
+
+### Verifying the emulator's quick-boot snapshot has been saved
+
+If you've run your emulator in verbose mode from a shell, it's easy to verify the state has been saved by following the logs. In particular, when shutting the emulator down, this log asserts the state has been saved:
+
+```
+emulator: Saving state on exit with session uptime 9423 ms
+```
+
+> as a reference, when the state is _not_ saved, the typical output is:
+>
+> ```
+> emulator: WARNING: Not saving state: RAM not mapped as shared
+> ```
+>
+> It can be a result of an improper configuration, or an emulator launch where the `-read-only` argument was provided.
