@@ -161,15 +161,15 @@ Do note that:
 
 **Tip:** Detox is not tightly coupled to Mocha and Jest, neither to this specific directory structure. Both are just a recommendation and are easy to replace without touching the internal implementation of Detox itself.
 
+##### [Jest](https://jestjs.io/)
+
+Follow the [Guide.Jest.md](Guide.Jest.md) documentation.
+
 ##### [Mocha](https://mochajs.org/)
 
 ```sh
 npm install mocha --save-dev
 ```
-
-##### [Jest](https://jestjs.io/)
-
-Follow the [Guide.Jest.md](Guide.Jest.md) documentation.
 
 #### 2. Set up test-code scaffolds (automated) :building_construction:
 

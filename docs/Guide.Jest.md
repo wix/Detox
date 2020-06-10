@@ -1,11 +1,14 @@
 # Jest setup guide
 
-This guide describes how to install [Jest](https://jestjs.io) as the test runner to be used by Detox for effectively running the E2E tests.
+> **NOTE: This article previously focused on deprecated `jest-jasmine2` runner setup, and if for some reason you need to access it, [follow this Git history link](https://github.com/wix/Detox/blob/ef466822129a4befcda71111d02b1a334539889b/docs/Guide.Jest.md).**
+
+
+This guide describes how to install [Jest](https://jestjs.io) as a test runner to be used by Detox for running the E2E tests.
 
 **Disclaimer:**
 
-1. The guide describes installing Detox with Jest on a _fresh project_. If you're migrating an existing project, use the guide but please apply some common sense in the process.
-1. The guide has been officially tested only with `jest-circus@^26.0.1`. We cannot guarantee that everything would work with older versions.
+1. Here we focus on installing Detox on _new projects_. If you're migrating a project with an existing Detox installation, use the guide but please apply some common sense in the process.
+1. The instructions were tested on `jest-circus@^26.0.1`. Most likely, newer versions would work too, but **the older ones** (25.x, 24.x) **are not supported** due to major issues.
 
 ## Introduction
 
@@ -14,18 +17,15 @@ As already mentioned in the [Getting Started](Introduction.GettingStarted.md#ste
 Do note that in turn, Jest itself - much like Detox, also does not effectively run any tests;
 Rather, it is more of a dispatcher and orchestrator of multiple instances of a delegated runner, capable of running in parallel (for more info, refer to [this video](https://youtu.be/3YDiloj8_d0?t=2127); source: [Jest architecture](https://jestjs.io/docs/en/architecture)).
 
-The recommended concrete runner is [`jest-circus`](https://www.npmjs.com/package/jest-circus), which is used by default with Detox because of the planned features, and also bugs in `jest-jasmine2` that are not maintained ([see this one](https://github.com/facebook/jest/issues/6755) in particular).
+Detox has complete support for only one Jest concrete runner, which is [`jest-circus`](https://www.npmjs.com/package/jest-circus). The other runner, `jest-jasmine2` is deprecated due to certain bugs in the past, and architectural limitations in the present. Moreover, Jest team plans to deprecate `jest-jasmine2` in the upcoming major release 27.0.0 ([see blog post](https://jestjs.io/blog/2020/05/05/jest-26)).
 
-This guide covers only the setup of Detox with `jest-circus`. Use of `jest-jasmine2` runner is discouraged
-due to upcoming deprecation and the former guide can be accessed only
-[via Git history](https://github.com/wix/Detox/blob/ef466822129a4befcda71111d02b1a334539889b/docs/Guide.Jest.md)
-in case if you still need it.
+Detox used to support the older, now deprecated `jest-jasmine2`, and, if you need for some reason to check with the archived version of Jest setup guide, [follow this link](https://github.com/wix/Detox/blob/ef466822129a4befcda71111d02b1a334539889b/docs/Guide.Jest.md).
 
 ## Installation
 
 ### 1. Install Jest
 
-Before starting out with Jest, please be sure to go over the fundamentals of the [Getting Started](Introduction.GettingStarted.md) guide,
+Before starting out with Jest, please be sure to go over [Getting Started](Introduction.GettingStarted.md) guide,
 especially **steps 1 and 2**.
 
 Afterwards, install the respective npm packages:
@@ -34,7 +34,7 @@ Afterwards, install the respective npm packages:
 npm install --save-dev jest jest-circus
 ```
 
-If you had one of them installed before in your project,
+If you previously had `jest` installed in your project,
 make sure that `jest` and `jest-circus` versions match (e.g. both are `26.0.1`).
 
 ### 2. Set up test-code scaffolds
@@ -53,28 +53,26 @@ over the checklist below, optionally using our homebrewed
 [`demo-react-native-jest`](https://github.com/wix/Detox/tree/master/examples/demo-react-native-jest)
 example project as a reference in case of ambiguities.
 
-#### package.json
+#### .detoxrc.json
 
 | Property               | Value                                          | Description                                                  |
 | ---------------------- | ---------------------------------------------- | ------------------------------------------------------------ |
-| `detox.test-runner`    | `"jest"`                                       | *Required.* Should be `"jest"` for the proper `detox test` CLI functioning. |
-| `detox.runner-config ` | (optional path to Jest config file)            | *Optional.* This field tells `detox test` CLI where to look for Jest's config file. If omitted, the default value is `e2e/config.json`. |
+| `test-runner`    | `"jest"`                                       | *Required.* Should be `"jest"` for the proper `detox test` CLI functioning. |
+| `runner-config ` | (optional path to Jest config file)            | *Optional.* This field tells `detox test` CLI where to look for Jest's config file. If omitted, the default value is `e2e/config.json`. |
 
-A typical `detox` configuration in a `package.json`file:
+A typical Detox configuration in `.detoxrc.json` file looks lke:
 
 ```json
 {
-  "detox": {
-    "test-runner": "jest",
-    "runner-config": "e2e/config.json",
-    "configurations": {
-      "ios.sim.release": {
-        "type": "ios.simulator",
-        "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-        "build": "...",
-        "device": {
-          "type": "iPhone 11 Pro"
-        }
+  "test-runner": "jest",
+  "runner-config": "e2e/config.json",
+  "configurations": {
+    "ios.sim.release": {
+      "type": "ios.simulator",
+      "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+      "build": "...",
+      "device": {
+        "type": "iPhone 11 Pro"
       }
     }
   }
@@ -85,65 +83,65 @@ A typical `detox` configuration in a `package.json`file:
 
 | Property               | Value                                          | Description                                                  |
 | ---------------------- | ---------------------------------------------- | ------------------------------------------------------------ |
-| `testEnvironment `     | `detox/runners/jest/environment`               | *Required*. Needed for the proper functioning of Jest and Detox. |
-| `testRunner `          | `jest-circus/runner`                           | *Required*. Indicates which files to run before each test suite. The field was [introduced in Jest 24](https://jestjs.io/docs/en/configuration#setupfilesafterenv-array). |
-| `setupFilesAfterEnv `  | `["./init.js"]`                                | *Required*. Indicates which files to run before each test suite. The field was [introduced in Jest 24](https://jestjs.io/docs/en/configuration#setupfilesafterenv-array). |
-| `reporters`            | `["detox/runners/jest/streamlineReporter"]`    | *Optional.* Available since  Detox `12.7.0`. Sets up our highly recommended `streamline-reporter` [Jest reporter](https://jestjs.io/docs/en/configuration#reporters-array-modulename-modulename-options), tailored for running end-to-end tests in Jest - which in itself was mostly intended for running unit tests. For more details, [see the migration guide](Guide.Migration.md#migrating-to-1270-from-older-nonbreaking). |
+| `testEnvironment `     | `./environment`               | *Required*. Needed for the proper functioning of Jest and Detox. |
+| `testRunner `          | `jest-circus/runner`                           | *Required*. Needed for the proper functioning of Jest and Detox. |
+| `testTimeout `          | `120000`                           | *Required*. Overrides the default timeout (5 seconds) which is usually too short to complete steps in E2E test scenario. |
+| `reporters`            | `["detox/runners/jest/streamlineReporter"]`    | *Recommended.* Available since  Detox `12.7.0`. Sets up our highly recommended `streamline-reporter` [Jest reporter](https://jestjs.io/docs/en/configuration#reporters-array-modulename-modulename-options), tailored for running end-to-end tests in Jest - which in itself was mostly intended for running unit tests. For more details, [see the migration guide](Guide.Migration.md#migrating-to-1270-from-older-nonbreaking). |
 | `verbose`              | `true`                                         | Must be `true` if you have replaced Jest's `default` reporter with Detox's `streamlineReporter`. Optional otherwise. |
 
 A typical `jest-circus` configuration in `e2e/config.json` file:
 
 ```json
 {
-  "setupFilesAfterEnv": ["./init.js"],
   "testRunner": "jest-circus/runner",
-  "testEnvironment": "detox/runners/jest/environment",
+  "testEnvironment": "./environment",
+  "testTimeout": 120000,
   "reporters": ["detox/runners/jest/streamlineReporter"],
   "verbose": true
 }
 ```
 
-#### e2e/init.js
+#### e2e/environment.js
 
-See [an example](https://github.com/wix/Detox/blob/master/examples/demo-react-native-jest/e2e/init.js) of custom Jest init script.
+For Detox, having a custom `Environment` class enables implementing cross-cutting concerns such as taking screenshots the exact moment a test function (it/test) or a hook (e.g., beforeEach) fails, skip adding tests if they have `:ios:` or `:android:` within their title, starting device log recordings before test starts and so on.
+
+Its API is not entirely public in a sense that there's no guide on how to write custom `DetoxCircusListeners` and override `initDetox()` and `cleanupDetox()` protected methods, since this is not likely to be needed for typical projects, but this is under consideration if there appears specific demand.
+
+See [an example](https://github.com/wix/Detox/blob/master/examples/demo-react-native-jest/e2e/init.js) of a custom Detox environment for Jest.
 
 ```js
-const detox = require('detox');
-const config = require('../package.json').detox;
-const adapter = require('detox/runners/jest/adapter');
-const specReporter = require('detox/runners/jest/specReporter');
-const assignReporter = require('detox/runners/jest/assignReporter');
+const {
+  DetoxCircusEnvironment,
+  SpecReporter,
+  WorkerAssignReporter,
+} = require('detox/runners/jest-circus');
 
-detoxCircus.getEnv().addEventsListener(adapter);
-detoxCircus.getEnv().addEventsListener(assignReporter);
-detoxCircus.getEnv().addEventsListener(specReporter);
+class CustomDetoxEnvironment extends DetoxCircusEnvironment {
+  constructor(config) {
+    super(config);
 
-// Set the default timeout
-jest.setTimeout(90000);
+    // Can be safely removed, if you are content with the default value (=300000ms)
+    this.initTimeout = 300000;
 
-beforeAll(async () => {
-  await detox.init(config);
-}, 300000);
+    // This takes care of generating status logs on a per-spec basis. By default, Jest only reports at file-level.
+    // This is strictly optional.
+    this.registerListeners({
+      SpecReporter,
+      WorkerAssignReporter,
+    });
+  }
+}
 
-beforeEach(async () => {
-  await adapter.beforeEach();
-});
-
-afterAll(async () => {
-  await adapter.afterAll();
-  await detox.cleanup();
-});
+module.exports = CustomDetoxEnvironment;
 ```
 
 **Notes:**
 
-- `beforeAll()`, `beforeEach()`, `afterAll()` should be registered as hooks
-  for invoking `detox` and/or a custom adapter.
-- (Recommended) Starting Detox `12.7.0`, an additional, custom `spec-reporter` should be registered as a `jasmine` reporter, as well. This one takes care of logging on a per-spec basis (i.e. when `it`'s start and end) — which Jest does not do by default.
-  Should be used in conjunction with the Detox-Jest adapter.
+- The custom `SpecReporter` is recommended to be registered as a listener. It takes care of logging on a per-spec basis (i.e. when `it('...')` functions start and end) — which Jest does not do by default.
+- The custom `WorkerAssignReporter` prints for every next test suite which device is assigned to its execution.
 
 This is how a typical Jest log output looks when a `streamline-reporter` is set up in `config.json` and
-`specReporter` is added in `e2e/init.js`:
+`SpecReporter` added in `e2e/environment.js`:
 
 ![Streamlined output](img/jest-guide/streamlined_logging.png)
 
