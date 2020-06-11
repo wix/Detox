@@ -54,7 +54,7 @@ class DetoxCoreListener {
   }
 
   async _onBeforeActualTestStart(test) {
-    if (!test || this._startedTests.has(test) || this._testsFailedBeforeStart.has(test)) {
+    if (!test || test.status === 'skip' || this._startedTests.has(test) || this._testsFailedBeforeStart.has(test)) {
       return;
     }
 
