@@ -1,45 +1,42 @@
 # Jest setup guide
 
-> **NOTE: This article previously focused on deprecated `jest-jasmine2` runner setup, and if for some reason you need to access it, [follow this Git history link](https://github.com/wix/Detox/blob/ef466822129a4befcda71111d02b1a334539889b/docs/Guide.Jest.md).**
+> **NOTE: This article previously focused on deprecated `jest-jasmine2` runner setup, and if you nevertheless need to access it, [follow this Git history link](https://github.com/wix/Detox/blob/ef466822129a4befcda71111d02b1a334539889b/docs/Guide.Jest.md).**
 
 
 This guide describes how to install [Jest](https://jestjs.io) as a test runner to be used by Detox for running the E2E tests.
 
 **Disclaimer:**
 
-1. Here we focus on installing Detox on _new projects_. If you're migrating a project with an existing Detox installation, use the guide but please apply some common sense in the process.
-1. The instructions were tested on `jest-circus@^26.0.1`. Most likely, newer versions would work too, but **the older ones** (25.x, 24.x) **are not supported** due to major issues.
+1. Here we focus on installing Detox on _new projects_. If you're migrating a project with an existing Detox installation, please apply some common sense while using this guide.
+1. These instructions are relevant for `jest-circus@^26.0.1`. They should likely work for the newer `jest-circus` versions too, but for **the older ones** (25.x, 24.x) &mdash; **they will not, due to blocking issues.**
 
 ## Introduction
 
-As already mentioned in the [Getting Started](Introduction.GettingStarted.md#step-3-create-your-first-test) guide, Detox itself does not effectively run tests logic, but rather delegates that responsibility onto a test runner. Jest is the recommended runner for projects with test suites that have become large enough so as to require parallel execution.
+As already mentioned in the [Getting Started](Introduction.GettingStarted.md#step-3-create-your-first-test) guide, Detox itself does not effectively run tests logic, but rather delegates that responsibility onto a test runner. At the moment, Jest is the only recommended choice, for many reasons, including but not limited to parallel test suite execution capability, and complete integration with Detox API.
 
-Do note that in turn, Jest itself - much like Detox, also does not effectively run any tests;
-Rather, it is more of a dispatcher and orchestrator of multiple instances of a delegated runner, capable of running in parallel (for more info, refer to [this video](https://youtu.be/3YDiloj8_d0?t=2127); source: [Jest architecture](https://jestjs.io/docs/en/architecture)).
+By the way, Jest itself — much like Detox, also does not effectively run any tests. Instead, it is more of a dispatcher and orchestrator of multiple instances of a delegated runner capable of running in parallel. For more info, refer to [this video](https://youtu.be/3YDiloj8_d0?t=2127) (source: [Jest architecture](https://jestjs.io/docs/en/architecture)).
 
-Detox has complete support for only one Jest concrete runner, which is [`jest-circus`](https://www.npmjs.com/package/jest-circus). The other runner, `jest-jasmine2` is deprecated due to certain bugs in the past, and architectural limitations in the present. Moreover, Jest team plans to deprecate `jest-jasmine2` in the upcoming major release 27.0.0 ([see blog post](https://jestjs.io/blog/2020/05/05/jest-26)).
-
-Detox used to support the older, now deprecated `jest-jasmine2`, and, if you need for some reason to check with the archived version of Jest setup guide, [follow this link](https://github.com/wix/Detox/blob/ef466822129a4befcda71111d02b1a334539889b/docs/Guide.Jest.md).
+For its part, Detox supports only one Jest's concrete runner, which is [`jest-circus`](https://www.npmjs.com/package/jest-circus). The former runner, `jest-jasmine2`, is deprecated due to specific bugs in the past, and architectural limitations at present. Moreover, Jest team plans to deprecate `jest-jasmine2` in the upcoming major release 27.0.0 ([see blog post](https://jestjs.io/blog/2020/05/05/jest-26)).
 
 ## Installation
 
 ### 1. Install Jest
 
-Before starting out with Jest, please be sure to go over [Getting Started](Introduction.GettingStarted.md) guide,
+Before starting with Jest setup, please go over [Getting Started](Introduction.GettingStarted.md) guide,
 especially **steps 1 and 2**.
 
-Afterwards, install the respective npm packages:
+Afterward, install the respective npm packages:
 
 ```sh
 npm install --save-dev jest jest-circus
 ```
 
-If you previously had `jest` installed in your project,
-make sure that `jest` and `jest-circus` versions match (e.g. both are `26.0.1`).
+If you are already using Jest in your project,
+make sure that `jest` and `jest-circus` package versions match (e.g., both are `26.0.1`).
 
 ### 2. Set up test-code scaffolds
 
-Run an automated init script:
+Run the automated init script:
 
 ```sh
 detox init -r jest
@@ -48,10 +45,7 @@ detox init -r jest
 
 ### 3. Fix / Verify
 
-Even if `detox init` goes well and everything is green, we still recommend going
-over the checklist below, optionally using our homebrewed
-[`demo-react-native-jest`](https://github.com/wix/Detox/tree/master/examples/demo-react-native-jest)
-example project as a reference in case of ambiguities.
+Even if `detox init` passes well, and everything is green, we still recommend going over the checklist below. You can also use our example project, [`demo-react-native-jest`](https://github.com/wix/Detox/tree/master/examples/demo-react-native-jest), as a reference in case of ambiguities.
 
 #### .detoxrc.json
 
@@ -60,7 +54,7 @@ example project as a reference in case of ambiguities.
 | `test-runner`    | `"jest"`                                       | *Required.* Should be `"jest"` for the proper `detox test` CLI functioning. |
 | `runner-config ` | (optional path to Jest config file)            | *Optional.* This field tells `detox test` CLI where to look for Jest's config file. If omitted, the default value is `e2e/config.json`. |
 
-A typical Detox configuration in `.detoxrc.json` file looks lke:
+A typical Detox configuration in `.detoxrc.json` file looks like:
 
 ```json
 {
@@ -83,13 +77,13 @@ A typical Detox configuration in `.detoxrc.json` file looks lke:
 
 | Property               | Value                                          | Description                                                  |
 | ---------------------- | ---------------------------------------------- | ------------------------------------------------------------ |
-| `testEnvironment `     | `./environment`               | *Required*. Needed for the proper functioning of Jest and Detox. |
-| `testRunner `          | `jest-circus/runner`                           | *Required*. Needed for the proper functioning of Jest and Detox. |
-| `testTimeout `          | `120000`                           | *Required*. Overrides the default timeout (5 seconds) which is usually too short to complete steps in E2E test scenario. |
-| `reporters`            | `["detox/runners/jest/streamlineReporter"]`    | *Recommended.* Available since  Detox `12.7.0`. Sets up our highly recommended `streamline-reporter` [Jest reporter](https://jestjs.io/docs/en/configuration#reporters-array-modulename-modulename-options), tailored for running end-to-end tests in Jest - which in itself was mostly intended for running unit tests. For more details, [see the migration guide](Guide.Migration.md#migrating-to-1270-from-older-nonbreaking). |
-| `verbose`              | `true`                                         | Must be `true` if you have replaced Jest's `default` reporter with Detox's `streamlineReporter`. Optional otherwise. |
+| `testEnvironment `     | `"./environment"`               | *Required.* Needed for the proper functioning of Jest and Detox. See [Jest documentation](https://jestjs.io/docs/en/configuration#testenvironment-string) for more details. |
+| `testRunner `          | `"jest-circus/runner"`                           | *Required.* Needed for the proper functioning of Jest and Detox. See [Jest documentation](https://jestjs.io/docs/en/configuration#testrunner-string) for more details.  |
+| `testTimeout `          | `120000`                           | *Required*. Overrides the default timeout (5 seconds), which is usually too short to complete a single end-to-end test. |
+| `reporters`            | `["detox/runners/jest/streamlineReporter"]`    | *Recommended.* Sets up our streamline replacement for [Jest's default reporter](https://jestjs.io/docs/en/configuration#reporters-array-modulename-modulename-options), which removes Jest's default buffering of `console.log()` output. That is helpful for end-to-end tests since log messages appear on the screen without any artificial delays. For more context, [read Detox 12.7.0 migration guide](Guide.Migration.md#migrating-to-1270-from-older-nonbreaking). |
+| `verbose`              | `true`                                         | *Conditional.* Must be `true` if above you have replaced Jest's default reporter with Detox's `streamlineReporter`. Optional otherwise. |
 
-A typical `jest-circus` configuration in `e2e/config.json` file:
+A typical `jest-circus` configuration in `e2e/config.json` file would look like:
 
 ```json
 {
@@ -158,8 +152,7 @@ Through Detox' CLI, Jest can be started with [multiple workers](Guide.ParallelTe
 Per-spec logging offered by the `spec-reporter` mentioned earlier, does not necessarily make sense, as the workers' outputs get mixed up.
 
 By default, we disable `spec-reporter` in a multi-workers environment.
-If you wish to force-enable it nonetheless, the [`--jest-report-specs`](APIRef.DetoxCLI.md#test) CLI option can be used
-with `detox`.
+If you wish to force-enable it nonetheless, the [`--jest-report-specs`](APIRef.DetoxCLI.md#test) CLI option can be used with `detox test`.
 
 ## How to run unit test and E2E tests in the same project
 
