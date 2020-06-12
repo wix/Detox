@@ -192,4 +192,9 @@ your app](https://github.com/wix/DetoxInstruments/blob/master/Documentation/Xcod
 
 ### Ctrl+C does not terminate Detox+Jest tests correctly
 
-This is a known issue. Video or log recording process under Detox+Jest is apt to keep running even after you press Ctrl+C and stop the tests. Furthermore, some of temporary files won't get erased (e.g. `/sdcard/83541_0.mp4` on Android emulator, or `/private/var/folders/lm/thz8hdxs4v3fppjh0fjc2twhfl_3x2/T/f12a4fcb-0d1f-4d98-866c-e7cea4942ade.png` on your Mac). It cannot be solved on behalf of Detox itself, because the problem has to do with how Jest runner works with its puppet processes. The issue is on our radar, but the ETA for the fix stays unknown. If you feel able to contribute the fix to [Jest](https://github.com/facebook/jest), you are very welcome.
+This is a known issue.
+Video or log recording process under Detox+Jest is apt to keep running even after you press Ctrl+C and stop the tests.
+Furthermore, some of temporary files won't get erased (e.g. `/sdcard/83541_0.mp4` on Android emulator, or `/private/var/folders/lm/thz8hdxs4v3fppjh0fjc2twhfl_3x2/T/f12a4fcb-0d1f-4d98-866c-e7cea4942ade.png` on your Mac).
+It cannot be solved on behalf of Detox itself, because the problem has to do with how Jest runner works with its puppet processes.
+The issue is on our radar, but the ETA for the fix stays unknown.
+If you feel able to contribute the fix to [Jest](https://github.com/facebook/jest), you are very welcome.

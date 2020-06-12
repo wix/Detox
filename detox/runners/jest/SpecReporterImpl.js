@@ -1,5 +1,5 @@
 const chalk = require('chalk').default;
-const ReporterBase = require('./ReporterBase');
+const { traceln } = require('./utils/stdout');
 const log = require('../../src/utils/logger').child();
 
 const RESULT_SKIPPED = chalk.yellow('SKIPPED');
@@ -8,9 +8,8 @@ const RESULT_PENDING = chalk.yellow('PENDING');
 const RESULT_SUCCESS = chalk.green('OK');
 const RESULT_OTHER = 'UNKNOWN';
 
-class SpecReporter extends ReporterBase {
+class SpecReporter {
   constructor() {
-    super();
     this._suites = [];
     this._suitesDesc = '';
   }
@@ -25,7 +24,7 @@ class SpecReporter extends ReporterBase {
     this._regenerateSuitesDesc();
 
     if (!this._suites.length) {
-      this._traceln('');
+      traceln('');
     }
   }
 

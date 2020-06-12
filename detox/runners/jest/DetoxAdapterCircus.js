@@ -1,10 +1,9 @@
 const _ = require('lodash');
-const CircusTestEventListenerBase = require('./CircusTestEventListenerBase');
 const DetoxAdapter = require('./DetoxAdapterImpl');
+const { getFullTestName, hasTimedOut } = require('./utils');
 
-class DetoxAdapterCircus extends CircusTestEventListenerBase {
+class DetoxAdapterCircus {
   constructor(detox) {
-    super();
     this._adapter = new DetoxAdapter(detox, DetoxAdapterCircus._describeInitError);
   }
 
@@ -25,15 +24,15 @@ class DetoxAdapterCircus extends CircusTestEventListenerBase {
     await this._adapter.afterAll();
   }
 
-  async _onSuiteStart({describeBlock: {name, tests}}, state) {
-    if (tests.length) await this._adapter.suiteStart({name});
+  async run_describe_start({describeBlock: {name, children}}, state) {
+    if (children.length) await this._adapter.suiteStart({name});
   }
 
-  async _onSuiteEnd({describeBlock: {name, tests}}, state) {
-    if (tests.length) await this._adapter.suiteEnd({name});
+  async run_describe_finish({describeBlock: {name, children}}, state) {
+    if (children.length) await this._adapter.suiteEnd({name});
   }
 
-  _onTestStart(event) {
+  test_start(event) {
     const { test } = event;
     if (test.mode === 'skip' || test.mode === 'todo' || test.errors.length > 0) {
       return;
@@ -41,43 +40,21 @@ class DetoxAdapterCircus extends CircusTestEventListenerBase {
 
     this._adapter.testStart({
       title: test.name,
-      fullName: this._getFullTestName(test),
+      fullName: getFullTestName(test),
       status: 'running',
     });
   }
 
-  _onTestComplete(event) {
+  test_done(event) {
     const { test } = event;
     this._adapter.testComplete({
       status: test.errors.length ? 'failed' : 'passed',
-      timedOut: this._hasTimedOut(test)
+      timedOut: hasTimedOut(test)
     });
   }
 
-  _onTestSkip(event) {
+  test_skip(event) {
     // Ignored (for clarity)
-  }
-
-  _getFullTestName(test, separator = ' ') {
-    let testName = '';
-    for (let parent = test.parent;
-         parent.parent; // Since there's always an unwanted root made up by jest
-         parent = parent.parent) {
-      testName = parent.name + separator + testName;
-    }
-    testName += test.name;
-    return testName;
-  }
-
-  _hasTimedOut(test) {
-    const { errors } = test;
-    const errorsArray = (_.isArray(errors) ? errors : [errors]);
-    const timedOut = _.chain(errorsArray)
-      .flattenDeep()
-      .filter(_.isObject)
-      .some(e => _.includes(e.message, 'Exceeded timeout'))
-      .value();
-    return timedOut;
   }
 }
 

@@ -11,7 +11,9 @@ function causeAppNotReady() {
 }
 
 if (process.env.TIMEOUT_E2E_TEST === '1') {
-  causeAppNotReady();
+  if (typeof jasmine !== 'undefined') {
+    causeAppNotReady();
+  }
 
   it('timeout test', () => {});
 } else {

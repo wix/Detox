@@ -3,7 +3,6 @@ const path = require('path');
 const callsites = require('./callsites');
 
 const USER_STACK_FRAME_INDEX = 2;
-const CONSOLE_ASSERT_USER_ARGS_INDEX = 1;
 
 function getStackDump() {
   return callsites.stackdump(USER_STACK_FRAME_INDEX);
@@ -32,9 +31,9 @@ function overrideTrace(consoleLevel, bunyanFn) {
 
 function overrideAssertion(consoleLevel, bunyanFn) {
   console[consoleLevel] = (...args) => {
-    const [condition] = args;
+    const [condition, ...message] = args;
     if (!condition) {
-      bunyanFn({ event: 'USER_LOG' }, getOrigin(), '\n  AssertionError:', util.format(...args.slice(CONSOLE_ASSERT_USER_ARGS_INDEX)));
+      bunyanFn({ event: 'USER_LOG' }, getOrigin(), '\n  AssertionError:', util.format(...message));
     }
   };
 }

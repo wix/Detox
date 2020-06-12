@@ -197,7 +197,17 @@ Session can also be set per configuration:
 
 ### Test Runner Configuration
 
-##### Optional: setting a test runner (Mocha as default, Jest is supported)
+##### Jest (recommended)
+
+```json
+  "detox": {
+    ...
+    "test-runner": "jest"
+    "runner-config": "path/to/jest-config"
+  }
+```
+
+`path/to/jest-config` refers to `--config` in https://facebook.github.io/jest/docs/en/configuration.html
 
 ##### Mocha
 ```json
@@ -209,18 +219,6 @@ Session can also be set per configuration:
 ```
 
 `.mocharc.json` refers to `--config` in https://mochajs.org/#-config-path
-
-##### Jest
-
-```json
-  "detox": {
-    ...
-    "test-runner": "jest"
-    "runner-config": "path/to/config.json"
-  }
-```
-
-`config.json` refers to `--config` in https://facebook.github.io/jest/docs/en/configuration.html
 
 ## detox-cli
 

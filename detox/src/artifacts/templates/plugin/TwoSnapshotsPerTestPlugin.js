@@ -9,10 +9,19 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
 
     this.shouldTakeAutomaticSnapshots = this.api.userConfig.shouldTakeAutomaticSnapshots;
     this.keepOnlyFailedTestsArtifacts = this.api.userConfig.keepOnlyFailedTestsArtifacts;
-    this.takeAutomaticSnapshots = this.api.userConfig.takeWhen || {
-      testStart: true,
-      testDone: true,
-    };
+
+    this.takeAutomaticSnapshots = this.api.userConfig.takeWhen
+      ? {
+        testStart: false,
+        testFailure: true,
+        testDone: false,
+        ...this.api.userConfig.takeWhen
+      }
+      : {
+        testStart: true,
+        testFailure: true,
+        testDone: true
+      };
 
     this.snapshots = {
       fromTest: {},
@@ -26,6 +35,20 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
 
     await super.onTestStart(testSummary);
     await this._takeAutomaticSnapshot('testStart');
+  }
+
+  async onHookFailure(event) {
+    await super.onHookFailure(event);
+
+    const shouldTake = this.takeAutomaticSnapshots.testFailure;
+    await this._takeAutomaticSnapshot(`${event.hook}Failure`, shouldTake);
+  }
+
+  async onTestFnFailure(event) {
+    await super.onTestFnFailure(event);
+
+    const shouldTake = this.takeAutomaticSnapshots.testFailure;
+    await this._takeAutomaticSnapshot('testFnFailure', shouldTake);
   }
 
   async onTestDone(testSummary) {
@@ -71,9 +94,9 @@ class TwoSnapshotsPerTestPlugin extends ArtifactPlugin {
    */
   createTestArtifact() {}
 
-  async _takeAutomaticSnapshot(name) {
+  async _takeAutomaticSnapshot(name, force) {
     if (this.enabled && this.shouldTakeAutomaticSnapshots) {
-      if (this.takeAutomaticSnapshots[name]) {
+      if (this.takeAutomaticSnapshots[name] || force) {
         await this._takeSnapshot(name);
       }
     }

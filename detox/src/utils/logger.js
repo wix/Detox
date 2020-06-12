@@ -1,4 +1,5 @@
 const fs = require('fs-extra');
+const onExit = require('signal-exit');
 const path = require('path');
 const bunyan = require('bunyan');
 const bunyanDebugStream = require('bunyan-debug-stream');
@@ -88,6 +89,11 @@ function init() {
         logPath: plainFileStreamPath,
       }));
     }
+
+    onExit(() => {
+      try { fs.unlinkSync(jsonFileStreamPath); } catch (e) {}
+      try { fs.unlinkSync(plainFileStreamPath); } catch (e) {}
+    });
   }
 
   const logger = bunyan.createLogger({
@@ -106,6 +112,16 @@ function init() {
   if (argparse.getArgValue('use-custom-logger') === 'true') {
     overrideConsoleLogger(logger);
   }
+
+  Object.getPrototypeOf(logger).ensureLogFiles = () => {
+    if (jsonFileStreamPath) {
+      fs.ensureFileSync(jsonFileStreamPath);
+    }
+
+    if (plainFileStreamPath) {
+      fs.ensureFileSync(plainFileStreamPath);
+    }
+  };
 
   return logger;
 }
