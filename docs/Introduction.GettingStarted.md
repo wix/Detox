@@ -106,7 +106,7 @@ config file names above.
 To get some help with creating your first Detox config file, you can try running Detox CLI:
 `detox init -r jest` (or `-r mocha`).
 
-Either way the config should look like this: 
+Either way the config should look like this:
 
 ##### in package.json
 
@@ -154,12 +154,10 @@ Also make sure the simulator model specified under the key `device.type` (e.g. `
 
 Detox CLI supports Jest and Mocha out of the box. You need to choose one now, but it *is* possible to replace it later on.
 
-Do note that:
+* **Jest is the recommended choice**, since it provides parallel test execution and complete lifecycle integration for Detox.
+* Mocha, albeit its integration is less complete, is still lightweight, and a bit easier to set up.
 
-* Jest is more complex to set up, but it's the only one that supports parallel tests execution.
-* Mocha is easy to set up and is lightweight.
-
-**Tip:** Detox is not tightly coupled to Mocha and Jest, neither to this specific directory structure. Both are just a recommendation and are easy to replace without touching the internal implementation of Detox itself.
+**Note:** Detox is coupled neither with Mocha or Jest nor with a specific directory structure. Both runners are just a recommendation — with some effort, they can be replaced without touching the internal implementation of Detox itself.
 
 ##### [Jest](https://jestjs.io/)
 
@@ -180,7 +178,7 @@ Note: `detox init` runs these steps, which you can reproduce manually:
 - Creates an `e2e/` folder in your project root
 - Inside `e2e` folder, creates `mocha.opts` (for `mocha`) or `config.json` (for `jest`). See examples: [mocha.opts](/examples/demo-react-native/e2e/mocha.opts), [config.json](/examples/demo-react-native-jest/e2e/config.json)
 - Inside `e2e` folder, creates `init.js` file. See examples for [Mocha](/examples/demo-react-native/e2e/init.js) and [Jest](/examples/demo-react-native-jest/e2e/init.js).
-- Inside `e2e` folder, creates `firstTest.spec.js` with content similar to [this](/examples/demo-react-native-jest/e2e/app-hello.test.js).
+- Inside `e2e` folder, creates `firstTest.e2e.js` with content similar to [this](/examples/demo-react-native-jest/e2e/app-hello.e2e.js).
 
 ##### Mocha
 

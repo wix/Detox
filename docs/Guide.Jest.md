@@ -97,9 +97,11 @@ A typical `jest-circus` configuration in `e2e/config.json` file would look like:
 
 #### e2e/environment.js
 
-For Detox, having a custom `Environment` class enables implementing cross-cutting concerns such as taking screenshots the exact moment a test function (it/test) or a hook (e.g., beforeEach) fails, skip adding tests if they have `:ios:` or `:android:` within their title, starting device log recordings before test starts and so on.
+If you are not familiar with Environment concept in Jest, you could check [their documentation](https://jestjs.io/docs/en/configuration#testenvironment-string).
 
-Its API is not entirely public in a sense that there's no guide on how to write custom `DetoxCircusListeners` and override `initDetox()` and `cleanupDetox()` protected methods, since this is not likely to be needed for typical projects, but this is under consideration if there appears specific demand.
+For Detox, having a `CustomDetoxEnvironment` class derived from `NodeEnvironment` enables implementing cross-cutting concerns such as taking screenshots the exact moment a test function (it/test) or a hook (e.g., beforeEach) fails, skip adding tests if they have `:ios:` or `:android:` within their title, starting device log recordings before test starts and so on.
+
+API of `CustomDetoxEnvironment` is not entirely public in a sense that there's no guide on how to write custom `DetoxCircusListeners` and override `initDetox()` and `cleanupDetox()` protected methods, since this is not likely to be needed for typical projects, but this is under consideration if there appears specific demand.
 
 See [an example](https://github.com/wix/Detox/blob/master/examples/demo-react-native-jest/e2e/init.js) of a custom Detox environment for Jest.
 
@@ -134,7 +136,7 @@ module.exports = CustomDetoxEnvironment;
 - The custom `SpecReporter` is recommended to be registered as a listener. It takes care of logging on a per-spec basis (i.e. when `it('...')` functions start and end) — which Jest does not do by default.
 - The custom `WorkerAssignReporter` prints for every next test suite which device is assigned to its execution.
 
-This is how a typical Jest log output looks when a `streamline-reporter` is set up in `config.json` and
+This is how a typical Jest log output looks when `SpecReporter` and `WorkerAssignReporter` are enabled in `streamline-reporter` is set up in `config.json` and
 `SpecReporter` added in `e2e/environment.js`:
 
 ![Streamlined output](img/jest-guide/streamlined_logging.png)
@@ -148,13 +150,25 @@ There are some things you should notice:
 
 ## Parallel Test Execution
 
-Through Detox' CLI, Jest can be started with [multiple workers](Guide.ParallelTestExecution.md) that run tests simultaneously. In this mode, Jest effectively assigns one worker per each test file.
-Per-spec logging offered by the `spec-reporter` mentioned earlier, does not necessarily make sense, as the workers' outputs get mixed up.
+Through Detox' CLI, Jest can be started with [multiple workers](Guide.ParallelTestExecution.md) that run tests simultaneously, e.g.:
 
-By default, we disable `spec-reporter` in a multi-workers environment.
-If you wish to force-enable it nonetheless, the [`--jest-report-specs`](APIRef.DetoxCLI.md#test) CLI option can be used with `detox test`.
+```bash
+detox test --configuration <yourConfigurationName> --workers 2
+```
 
-## How to run unit test and E2E tests in the same project
+In this mode, Jest effectively assigns one worker per each test file.
+Per-spec logging offered by the `SpecReporter` mentioned earlier, does not necessarily make sense, as the workers' outputs get mixed up.
 
-- If you have a setup file for the unit tests pass `./jest/setup` implementation into your unit setup.
-- Call your E2E tests using `detox-cli`: `detox test`
+By default, we disable `SpecReporter` in a multi-workers environment.
+If you wish to force-enable it nonetheless, the [`--jest-report-specs`](APIRef.DetoxCLI.md#test) CLI option can be used with `detox test`, e.g.:
+
+```bash
+detox test --configuration <yourConfigurationName> --workers 2 --jest-report-specs
+```
+
+## How to run unit and E2E tests in the same project
+
+- Create different Jest configs for unit and E2E tests, e.g. in `e2e/config.json` (for Detox) and `jest.config.js`
+(for unit tests). For example, in Jest's E2E config you can set `testRegex` to look for `\.e2e.js$` regexp,
+ and this way avoid accidental triggering of unit tests with `.test.js` extension.
+- To run your E2E tests, use `detox test` command (or `npx detox test`, if you haven't installed `detox-cli`).

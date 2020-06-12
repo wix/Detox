@@ -93,7 +93,7 @@ function createJestFolderE2E() {
   createFolder('e2e', {
     'config.json': jestTemplates.runnerConfig,
     'environment.js': jestTemplates.environment,
-    'firstTest.spec.js': jestTemplates.firstTest,
+    'firstTest.e2e.js': jestTemplates.firstTest,
   });
 
   createFile('.detoxrc.json', JSON.stringify({
