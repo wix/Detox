@@ -1,13 +1,13 @@
 const _ = require('lodash');
 const lifecycleSymbols = require('../../integration').lifecycle;
 
-function wrapErrorWithNoopLifecycle(rawError) {
-  const error = _.isError(rawError) ? rawError : new Error(rawError);
+function wrapErrorWithNoopLifecycle(error) {
+  const wrapper = { error };
   for (const symbol of Object.values(lifecycleSymbols)) {
-    error[symbol] = _.noop;
+    wrapper[symbol] = _.noop;
   }
 
-  return error;
+  return wrapper;
 }
 
 module.exports = wrapErrorWithNoopLifecycle;
