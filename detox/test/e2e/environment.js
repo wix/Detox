@@ -26,8 +26,7 @@ class CustomDetoxEnvironment extends DetoxCircusEnvironment {
 
   async _initDetoxWithHangingServer() {
     console.log('Making problems with server');
-    const config = require('../package.json').detox;
-    const instance = await this.detox.init(config, { launchApp: false });
+    const instance = await this.detox.init(undefined, { launchApp: false });
     const sendActionOriginal = instance._server.sendAction;
     instance._server.sendAction = function(ws, action) {
       if (action.type !== 'ready') {

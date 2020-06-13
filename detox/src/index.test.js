@@ -35,8 +35,7 @@ describe('index (regular)', () => {
 
     const MissingDetox = require('./utils/MissingDetox');
     Detox.none = new MissingDetox();
-    detox = require('./index');
-    detox._setGlobal(global);
+    detox = require('./index')._setGlobal(global);
     detoxInstance = null;
   });
 
@@ -121,6 +120,21 @@ describe('index (regular)', () => {
           '\n',
           configError
         );
+      });
+    });
+
+    describe('when detox.init() throws with _suppressLoggingInitErrors() configuration', () => {
+      beforeEach(async () => {
+        configuration.composeDetoxConfig.mockImplementation(async () => {
+          throw new Error('Configuration test error');
+        });
+
+        detox._suppressLoggingInitErrors();
+        await detox.init().catch(() => {});
+      });
+
+      it(`should not log init errors with the logger`, async () => {
+        expect(logger.error).not.toHaveBeenCalled();
       });
     });
 

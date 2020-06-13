@@ -6,10 +6,12 @@ const configuration = require('./configuration');
 const log = require('./utils/logger').child({ __filename });
 
 const _detox = Symbol('detox');
+const _shouldLogInitError = Symbol('shouldLogInitError');
 
 class DetoxExportWrapper {
   constructor() {
     this[_detox] = Detox.none;
+    this[_shouldLogInitError] = true;
 
     this.init = this.init.bind(this);
     this.cleanup = this.cleanup.bind(this);
@@ -61,7 +63,9 @@ class DetoxExportWrapper {
 
       return this[_detox];
     } catch (err) {
-      log.error({ event: 'DETOX_INIT_ERROR' }, '\n', err);
+      if (this[_shouldLogInitError]) {
+        log.error({ event: 'DETOX_INIT_ERROR' }, '\n', err);
+      }
 
       Detox.none.setError(err);
       throw err;
@@ -90,6 +94,12 @@ class DetoxExportWrapper {
   /** Use for test runners with sandboxed global */
   _setGlobal(global) {
     Detox.global = global;
+    return this;
+  }
+
+  /** @internal */
+  _suppressLoggingInitErrors() {
+    this[_shouldLogInitError] = false;
     return this;
   }
 }
