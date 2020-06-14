@@ -184,6 +184,7 @@ For Detox to work, Detox test code running on the device must connect to the tes
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">10.0.2.2</domain>
+        <domain includeSubdomains="true">localhost</domain>
     </domain-config>
 </network-security-config>
 ```
