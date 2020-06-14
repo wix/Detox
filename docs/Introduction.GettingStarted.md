@@ -130,7 +130,7 @@ Either way the config should look like this:
 ```json
 {
   "configurations": {
-    "ios.sim.debug": {
+    "ios": {
       "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
       "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
       "type": "ios.simulator",
