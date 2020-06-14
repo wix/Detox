@@ -1,12 +1,10 @@
 const _ = require('lodash');
 const chalk = require('chalk').default;
-const ReporterBase = require('./ReporterBase');
-const log = require('../../src/utils/logger').child();
+const log = require('../../../src/utils/logger');
 
-class WorkerAssignReporterImpl extends ReporterBase {
+class WorkerAssignReporterImpl {
   constructor(detox) {
-    super();
-    this.device = detox.device;
+    this.device = detox && detox.device;
   }
 
   report(workerName) {

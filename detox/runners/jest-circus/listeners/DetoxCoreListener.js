@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const {getFullTestName, hasTimedOut} = require('../../jest/utils');
+const {getFullTestName, hasTimedOut} = require('../temp/utils');
 const {
   onRunDescribeStart,
   onTestStart,

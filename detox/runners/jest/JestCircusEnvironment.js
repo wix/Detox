@@ -1,4 +1,5 @@
 const NodeEnvironment = require('jest-environment-node'); // eslint-disable-line node/no-extraneous-require
+const CircusTestEventListeners = require('./CircusTestEventListeners');
 
 /**
  * @see https://www.npmjs.com/package/jest-circus#overview
@@ -6,7 +7,7 @@ const NodeEnvironment = require('jest-environment-node'); // eslint-disable-line
 class JestCircusEnvironment extends NodeEnvironment {
   constructor(config) {
     super(config);
-    this.testEventListeners = [];
+    this.testEventListeners = new CircusTestEventListeners();
 
     // Enable access to this instance (single in each worker's scope) by exposing a get-function.
     // Note: whatever's set into this.global will be exported in that way. The reason behind it is that
@@ -19,17 +20,11 @@ class JestCircusEnvironment extends NodeEnvironment {
   }
 
   addEventsListener(listener) {
-    this.testEventListeners.push(listener);
+    this.testEventListeners.addListener(listener);
   }
 
   async handleTestEvent(event, state) {
-    const name = event.name;
-
-    for (const listener of this.testEventListeners) {
-      if (typeof listener[name] === 'function') {
-        await listener[name](event, state);
-      }
-    }
+    await this.testEventListeners.notifyAll(event, state);
   }
 }
 
