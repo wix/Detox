@@ -166,6 +166,11 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 					return;
 				}
 				
+				if(__DTXDecryptFramework([profilerBundle.bundleURL URLByAppendingPathComponent:@"Frameworks/DetoxSync.framework/DetoxSync"], [targetBundleURL URLByAppendingPathComponent:@"Frameworks/DetoxSync.framework/DetoxSync"]) == NO)
+				{
+					dtx_log_info(@"Decryption of DetoxSync failed, continuing");
+				}
+				
 				profilerBundle = [NSBundle bundleWithURL:targetBundleURL];
 			}
 			
