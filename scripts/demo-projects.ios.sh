@@ -16,6 +16,7 @@ popd
 
 pushd examples/demo-react-native-jest
 run_f "npm run test:ios-release-ci"
+run_f "npm run test:jest-circus:ios-release-ci"
 popd
 
 pushd examples/demo-react-native-detox-instruments
