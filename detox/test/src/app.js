@@ -145,14 +145,9 @@ class example extends Component {
       <View style={{flexDirection: 'row', justifyContent: 'center'}}>
         {this.renderScreenButton('RN Animations', Screens.RNAnimationsScreen)}
         {isAndroid && <Text style={{width: 10}}> | </Text>}
-        {this.renderScreenButton('Native Animation', Screens.NativeAnimationsScreen)}
+        {isAndroid && this.renderScreenButton('Native Animation', Screens.NativeAnimationsScreen)}
       </View>
     );
-  }
-
-  _onNotification(notification) {
-    console.log('App@onNotification:', notification);
-    this.setState({notification: notification.getAlert()});
   }
 
   _handleOpenURL(params) {
