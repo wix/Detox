@@ -5,5 +5,5 @@ if (argparse.getArgValue('reportSpecs') === 'true') {
   const Reporter = runnerInfo.isJestCircus ? require('./SpecReporterCircus') : require('./SpecReporterJasmine');
   module.exports = new Reporter();
 } else {
-  module.exports = {};
+  module.exports = runnerInfo.isJestCircus ? require('./CircusTestEventListenerBase').stubEventsListener : {};
 }

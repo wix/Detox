@@ -1,13 +1,12 @@
-const CircusTestEventListenerBase = require('./CircusTestEventListenerBase');
+const argparse = require('../../../src/utils/argparse');
 const SpecReporter = require('./SpecReporterImpl');
 
-class SpecReporterCircus extends CircusTestEventListenerBase {
+class SpecReporterCircus {
   constructor() {
-    super();
     this._specReporter = new SpecReporter();
   }
 
-  _onSuiteStart(event) {
+  run_describe_start(event) {
     if (event.describeBlock.parent !== undefined) {
       this._specReporter.onSuiteStart({
         description: event.describeBlock.name,
@@ -15,13 +14,13 @@ class SpecReporterCircus extends CircusTestEventListenerBase {
     }
   }
 
-  _onSuiteEnd(event) {
+  run_describe_finish(event) {
     if (event.describeBlock.parent !== undefined) {
       this._specReporter.onSuiteEnd();
     }
   }
 
-  _onTestStart(event) {
+  test_start(event) {
     const { test } = event;
     this._specReporter.onTestStart({
       description: test.name,
@@ -29,7 +28,7 @@ class SpecReporterCircus extends CircusTestEventListenerBase {
     });
   }
 
-  _onTestComplete(event) {
+  test_done(event) {
     const { test } = event;
     const testInfo = {
       description: test.name,
@@ -38,7 +37,7 @@ class SpecReporterCircus extends CircusTestEventListenerBase {
     this._specReporter.onTestEnd(testInfo, test.errors.length ? 'failed' : 'success');
   }
 
-  _onTestSkip(event) {
+  test_skip(event) {
     const testInfo = {
       description: event.test.name,
     };
@@ -46,4 +45,6 @@ class SpecReporterCircus extends CircusTestEventListenerBase {
   }
 }
 
-module.exports = SpecReporterCircus;
+module.exports = argparse.getArgValue('reportSpecs') === 'true'
+  ? SpecReporterCircus
+  : class {};
