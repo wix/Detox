@@ -1,6 +1,7 @@
 package com.example;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -78,20 +79,18 @@ public class NativeModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void getLaunchArguments(Promise promise) {
-        final Activity currentActivity = getCurrentActivity();
-        if (currentActivity != null) {
-            final Bundle launchArgs = currentActivity.getIntent().getBundleExtra("launchArgs");
-            if (launchArgs != null) {
-                final WritableMap launchArgsMap = Arguments.fromBundle(launchArgs);
-                promise.resolve(launchArgsMap);
-                return;
-            }
-        }
-        promise.resolve(Arguments.createMap());
+        promise.resolve(parseIntentExtras("launchArgs"));
     }
 
     @ReactMethod
-    public void spyLongTaps(final String testID) {
+    public void parseNotificationData(String innerKey, Promise promise) {
+        Bundle data = getIntentExtras(innerKey);
+        data.remove("launchArgs");
+        promise.resolve(Arguments.fromBundle(data));
+    }
+
+    @ReactMethod
+    public void spyLongTaps(String testID) {
         new ViewSpies.LongTapCrasher(testID).attach();
     }
 
@@ -112,5 +111,25 @@ public class NativeModule extends ReactContextBaseJavaModule {
         reactContext.getCurrentActivity().runOnUiThread(() -> {
             throw new RuntimeException("Simulated crash (native)");
         });
+    }
+
+    private WritableMap parseIntentExtras(String bundleKey) {
+        Bundle extras = getIntentExtras(bundleKey);
+        return Arguments.fromBundle(extras);
+    }
+
+    private Bundle getIntentExtras(String bundleKey) {
+        final Activity currentActivity = getCurrentActivity();
+        if (currentActivity == null) {
+            return new Bundle();
+        }
+
+        final Intent intent = currentActivity.getIntent();
+        final Bundle extras = (bundleKey == null ? intent.getExtras() : intent.getBundleExtra(bundleKey));
+        if (extras == null) {
+            return new Bundle();
+        }
+
+        return extras;
     }
 }

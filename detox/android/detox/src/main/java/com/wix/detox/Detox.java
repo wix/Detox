@@ -4,15 +4,9 @@ import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
-import android.util.Base64;
 import android.util.Log;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 import androidx.test.espresso.IdlingPolicies;
@@ -74,24 +68,12 @@ import androidx.test.rule.ActivityTestRule;
  */
 public final class Detox {
     private static final String LOG_TAG = "Detox";
-    private static final String LAUNCH_ARGS_KEY = "launchArgs";
-    private static final String DETOX_URL_OVERRIDE_ARG = "detoxURLOverride";
+    private static final String INTENT_LAUNCH_ARGS_KEY = "launchArgs";
     private static final long ACTIVITY_LAUNCH_TIMEOUT = 10000L;
-    private static final List<String> RESERVED_INSTRUMENTATION_ARGS = Arrays.asList("class", "package", "func", "unit", "size", "perf", "debug", "log", "emma", "coverageFile");
 
+    private static final LaunchArgs sLaunchArgs = new LaunchArgs();
+    private static final LaunchIntentsFactory sIntentsFactory = new LaunchIntentsFactory();
     private static ActivityTestRule sActivityTestRule;
-
-    /**
-     * Specification of values to use for Espresso's {@link IdlingPolicies} timeouts.
-     * <br/>Overrides Espresso's defaults as they tend to be too short (e.g. when running on heavy-load app
-     * on suboptimal CI machines).
-     */
-    public static class DetoxIdlePolicyConfig {
-        /** Directly binds to {@link IdlingPolicies#setMasterPolicyTimeout(long, TimeUnit)}. Applied in seconds. */
-        public Integer masterTimeoutSec = 120;
-        /** Directly binds to {@link IdlingPolicies#setIdlingResourceTimeout(long, TimeUnit)}. Applied in seconds. */
-        public Integer idleResourceTimeoutSec = 60;
-    }
 
     private Detox() {
     }
@@ -153,7 +135,7 @@ public final class Detox {
      *                         the {@link IdlingPolicies} API.
      */
     public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context context, DetoxIdlePolicyConfig idlePolicyConfig) {
-        applyIdlePolicyConfig(idlePolicyConfig);
+        idlePolicyConfig.apply();
 
         sActivityTestRule = activityTestRule;
 
@@ -186,72 +168,25 @@ public final class Detox {
 
     public static void launchMainActivity() {
         final Activity activity = sActivityTestRule.getActivity();
-        final Context appContext = activity.getApplicationContext();
-        final Intent intent = new Intent(appContext, activity.getClass());
-
-        // CLEAR_TOP is important so as to avoid launching the app's main activity over an existing instance (in the same task),
-        // in case it's already running. It *would* happen without the flag, since by default ActivityTestRule instances
-        // are created so as to force the FLAG_ACTIVITY_NEW_TASK flag in the initial launch (see flags-less c'tor), which
-        // evidently causes consequent launches to create additional activity instances on top of it (although inside the same task).
-        // SINGLE_TOP here is needed as well so as to avoid the *relaunch* of the already-running activity (rather, the intent
-        // would be delivered to that activity's onNewIntent(), as explain in the docs for CLEAR_TOP).
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        launchActivitySync(intent);
+        launchActivitySync(sIntentsFactory.activityLaunchIntent(activity));
     }
 
     public static void startActivityFromUrl(String url) {
-        launchActivitySync(intentWithUrl(url, false));
-    }
-
-    private static void applyIdlePolicyConfig(DetoxIdlePolicyConfig idlePolicyConfig) {
-        IdlingPolicies.setMasterPolicyTimeout(idlePolicyConfig.masterTimeoutSec, TimeUnit.SECONDS);
-        IdlingPolicies.setIdlingResourceTimeout(idlePolicyConfig.idleResourceTimeoutSec, TimeUnit.SECONDS);
+        launchActivitySync(sIntentsFactory.intentWithUrl(url, false));
     }
 
     private static Intent extractInitialIntent() {
         Intent intent;
 
-        final String detoxURLOverride = InstrumentationRegistry.getArguments().getString(DETOX_URL_OVERRIDE_ARG);
-        if (detoxURLOverride != null) {
-            intent = intentWithUrl(detoxURLOverride, true);
+        if (sLaunchArgs.hasUrlOverride()) {
+            intent = sIntentsFactory.intentWithUrl(sLaunchArgs.getUrlOverride(), true);
+        } else if (sLaunchArgs.hasNotificationPath()) {
+            Bundle notificationData = new NotificationDataParser(sLaunchArgs.getNotificationPath()).parseNotificationData();
+            intent = sIntentsFactory.intentWithNotificationData(notificationData, true);
         } else {
-            intent = cleanIntent();
+            intent = sIntentsFactory.cleanIntent();
         }
-        intent.putExtra(LAUNCH_ARGS_KEY, readLaunchArgs());
-        return intent;
-    }
-
-    /**
-     * Constructs a near-empty intent, assuming the activityTestRule will fill in all the missing details - namely the activity
-     * class (aka component), which is taken from activityTestRule's own activityClass data member which was set in the c'tor
-     * by the user (outside of Detox)
-     *
-     * @return The resulting intent.
-     */
-    private static Intent cleanIntent() {
-        return new Intent(Intent.ACTION_MAIN);
-    }
-
-    /**
-     * Constructs an intent with a URL such that the resolved activity to be launched would be an activity that has
-     * been defined to match it using an intent-filter xml tag, and has been associated with an {@link Intent#ACTION_VIEW} action.
-     * @param url The URL to associated.
-     *
-     * @return The resulting intent.
-     */
-    private static Intent intentWithUrl(String url, boolean initialLaunch) {
-        final Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(url));
-
-        // CLEAR_TOP+SINGLE_TOP is needed here for the same reasons as in launchMainActivity().
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        // Upon initial launch (first-ever instance of the test activity), we also manually need to add the NEW_TASK flag
-        // so as to mimic the ActivityTestRule's behavior: we get NEW_TASK from it if no flags are specified; here we _do_
-        // specify flags so need to add it ourselves.
-        if (initialLaunch) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        }
+        intent.putExtra(INTENT_LAUNCH_ARGS_KEY, sLaunchArgs.asIntentBundle());
         return intent;
     }
 
@@ -276,28 +211,5 @@ public final class Detox {
         activity.startActivity(intent);
         instrumentation.addMonitor(activityMonitor);
         instrumentation.waitForMonitorWithTimeout(activityMonitor, ACTIVITY_LAUNCH_TIMEOUT);
-    }
-
-    private static Bundle readLaunchArgs() {
-        final Bundle instrumentationArgs = InstrumentationRegistry.getArguments();
-        final Bundle launchArgs = new Bundle();
-
-        for (String arg : instrumentationArgs.keySet()) {
-            if (!RESERVED_INSTRUMENTATION_ARGS.contains(arg)) {
-                launchArgs.putString(arg, decodeLaunchArgValue(arg, instrumentationArgs));
-            }
-        }
-        return launchArgs;
-    }
-
-    private static String decodeLaunchArgValue(String arg, Bundle instrumArgs) {
-        final String rawValue = instrumArgs.getString(arg);
-
-        if (arg.startsWith("detox")) {
-            return rawValue;
-        }
-
-        byte[] base64Value = Base64.decode(rawValue, Base64.DEFAULT);
-        return new String(base64Value);
     }
 }

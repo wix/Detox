@@ -2,6 +2,7 @@ describe('Android driver', () => {
 
   const deviceId = 'device-id-mock';
   const bundleId = 'bundle-id-mock';
+  const mockNotificationDataTargetPath = '/ondevice/path/to/notification.json';
 
   const mockGetAbsoluteBinaryPathImpl = (x) => `absolutePathOf(${x})`;
   const mockAPKPathGetTestApkPathImpl = (x) => `testApkPathOf(${x})`;
@@ -9,6 +10,12 @@ describe('Android driver', () => {
   class MockADBClass {
     constructor() {
       Object.assign(this, adb);
+    }
+  }
+
+  class MockTempFileXferClass {
+    constructor() {
+      Object.assign(this, fileXfer);
     }
   }
 
@@ -32,7 +39,6 @@ describe('Android driver', () => {
   let getAbsoluteBinaryPath;
   let fs;
   let exec;
-  let adb;
   beforeEach(() => {
     jest.mock('fs', () => ({
       existsSync: jest.fn(),
@@ -82,11 +88,12 @@ describe('Android driver', () => {
     };
   });
 
+  let adb;
   beforeEach(() => {
     const ADB = jest.genMockFromModule('./tools/ADB');
     adb = new ADB();
     adb.adbBin = 'ADB binary mock';
-    adb.spawnInstrumentation = jest.fn().mockReturnValue({
+    adb.spawnInstrumentation.mockReturnValue({
       childProcess: {
         on: jest.fn(),
         stdout: {
@@ -96,6 +103,14 @@ describe('Android driver', () => {
       }
     });
     jest.mock('./tools/ADB', () => MockADBClass);
+  });
+
+  let fileXfer;
+  beforeEach(() => {
+    const TempFilesXfer = jest.genMockFromModule('./tools/TempFileXfer');
+    fileXfer = new TempFilesXfer();
+    fileXfer.send.mockResolvedValue(mockNotificationDataTargetPath)
+    jest.mock('./tools/TempFileXfer', () => MockTempFileXferClass);
   });
 
   let uut;
@@ -117,6 +132,43 @@ describe('Android driver', () => {
         deviceId,
         expect.anything(),
         expect.anything(),
+      );
+    });
+  });
+
+  describe('Notification data handling (user-notification-data-URL arg)', () => {
+    const launchArgs = Object.freeze({
+      detoxUserNotificationDataURL: '/path/to/notif.data',
+    });
+
+    it('should prepare the device for receiving notification data file', async () => {
+      await uut.launchApp(deviceId, bundleId, launchArgs, '');
+      expect(fileXfer.prepareDestinationDir).toHaveBeenCalledWith(deviceId);
+    });
+
+    it('should transfer the notification data file to the device', async () => {
+      await uut.launchApp(deviceId, bundleId, launchArgs, '');
+      expect(fileXfer.send).toHaveBeenCalledWith(deviceId, launchArgs.detoxUserNotificationDataURL, 'notification.json');
+    });
+
+    it('should not send the data if device prep fails', async () => {
+      fileXfer.prepareDestinationDir.mockRejectedValue(new Error())
+      try {
+        await uut.launchApp(deviceId, bundleId, launchArgs, '');
+        fail('Expected an error');
+      } catch (e) {
+      }
+    });
+
+    it('should launch instrument with a modified notification data URL arg', async () => {
+      fileXfer.send.mockReturnValue(mockNotificationDataTargetPath);
+
+      await uut.launchApp(deviceId, bundleId, launchArgs, '');
+
+      expect(adb.spawnInstrumentation).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.arrayContaining(['detoxUserNotificationDataURL', mockNotificationDataTargetPath]),
+        undefined,
       );
     });
   });
