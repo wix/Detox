@@ -9,6 +9,7 @@ const InvocationManager = invoke.InvocationManager;
 const ADB = require('./tools/ADB');
 const AAPT = require('./tools/AAPT');
 const APKPath = require('./tools/APKPath');
+const TempFileXfer = require('./tools/TempFileXfer');
 const AppUninstallHelper = require('./tools/AppUninstallHelper');
 const DeviceDriverBase = require('../DeviceDriverBase');
 const DetoxApi = require('../../../android/espressoapi/Detox');
@@ -47,6 +48,7 @@ class AndroidDriver extends DeviceDriverBase {
 
     this.adb = new ADB();
     this.aapt = new AAPT();
+    this.fileXfer = new TempFileXfer(this.adb);
     this.devicePathBuilder = new AndroidDevicePathBuilder();
 
     this.pendingUrl = undefined;
@@ -86,6 +88,16 @@ class AndroidDriver extends DeviceDriverBase {
 
   async launchApp(deviceId, bundleId, launchArgs, languageAndLocale) {
     await this.emitter.emit('beforeLaunchApp', { deviceId, bundleId, launchArgs });
+
+    if (launchArgs.detoxUserNotificationDataURL) {
+      await this.fileXfer.prepareDestinationDir(deviceId);
+      const destNotificationDataFile = await this.fileXfer.send(deviceId, launchArgs.detoxUserNotificationDataURL, 'notification.json');
+
+      launchArgs = {
+        ...launchArgs,
+        detoxUserNotificationDataURL: destNotificationDataFile,
+      }
+    }
 
     if (!this._isInstrumentationRunning()) {
       await this._launchInstrumentationProcess(deviceId, bundleId, launchArgs);

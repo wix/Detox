@@ -37,12 +37,6 @@ class IosDriver extends DeviceDriverBase {
     };
   }
 
-  createPayloadFile(notification) {
-    const notificationFilePath = path.join(this.createRandomDirectory(), `payload.json`);
-    fs.writeFileSync(notificationFilePath, JSON.stringify(notification, null, 2));
-    return notificationFilePath;
-  }
-
   async setURLBlacklist(urlList) {
     await this.client.execute(
       GREYConfigurationApi.setValueForConfigKey(

@@ -74,7 +74,7 @@ class EmulatorDriver extends AndroidDriver {
       testBinaryPath,
     } = this._getInstallPaths(_binaryPath, _testBinaryPath);
 
-    const installHelper = new AppInstallHelper(this.adb);
+    const installHelper = new AppInstallHelper(this.adb, this.fileXfer);
     await installHelper.install(deviceId, binaryPath, testBinaryPath);
   }
 

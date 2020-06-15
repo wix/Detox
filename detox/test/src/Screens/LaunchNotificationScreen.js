@@ -6,16 +6,16 @@ import AbstractArgsListScreen from './AbstractArgsListScreen';
 
 const { NativeModule } = NativeModules;
 
-export default class LaunchArgsScreen extends AbstractArgsListScreen {
+export default class LaunchNotificationScreen extends AbstractArgsListScreen {
   constructor(props) {
-    super(props, 'launchArg');
+    super(props, 'notificationData');
   }
 
   async readArguments() {
-    return await NativeModule.getLaunchArguments();
+    return await NativeModule.parseNotificationData(null);
   }
 
   getTitle() {
-    return 'Launch Arguments';
+    return 'Launch-notification Data';
   }
 }
