@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const log = require('../../utils/logger').child({ __filename });
+const bunyan = require('bunyan');
 
 class Action {
   constructor(type, params = {}) {
@@ -112,7 +113,10 @@ class Invoke extends Action {
   async handle(response) {
     switch (response.type) {
       case 'testFailed':
-        throw new Error(response.params.details);
+        throw new Error('Test Failed:' + response.params.details +
+          (log.level() <= bunyan.DEBUG ?
+          '\nView Hierarchy (presented in loglevel verbose and above):\n' + response.params.viewHierarchy :
+          '\nTIP: To print view hierarchy on failed actions/matches, use loglevel verbose and above.'));
       case 'invokeResult':
         return response.params;
       case 'error':
