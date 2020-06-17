@@ -9,7 +9,8 @@ class NotificationDataParser(private val notificationPath: String) {
     fun parseNotificationData(): Bundle {
         val rawData = readNotificationData()
         val json = JSONObject(rawData)
-        return JsonConverter(json).toBundle()
+        val payload = json.getJSONObject("payload")
+        return JsonConverter(payload).toBundle()
     }
 
     private fun readNotificationData()
