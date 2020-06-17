@@ -35,9 +35,18 @@ class DetoxCircusEnvironment extends NodeEnvironment {
   }
 
   get detox() {
-    return require('../../src')
-      ._setGlobal(this.global)
-      ._suppressLoggingInitErrors();
+    if (!this.global.detox) {
+      // NOTE: require() is deferred on purpose,
+      // to enable calculating line hit coverage
+      // while running internal E2E tests in Detox.
+      // Ideally, it can happen in setup() method.
+
+      this.global.detox = require('../../src')
+        ._setGlobal(this.global)
+        ._suppressLoggingInitErrors();
+    }
+
+    return this.global.detox;
   }
 
   async handleTestEvent(event, state) {

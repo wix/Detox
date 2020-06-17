@@ -1,6 +1,7 @@
 module.exports = {
   "test-runner": "mocha",
   "runner-config": "e2e/.mocharc.json",
+  "specs": process.env.DETOX_EXPOSE_GLOBALS === '0' ? 'e2eExplicitRequire' : 'e2e',
   "behavior": {
     "init": {
       "exposeGlobals": process.env.DETOX_EXPOSE_GLOBALS === '0' ? false : true,

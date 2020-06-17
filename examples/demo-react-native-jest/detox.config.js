@@ -1,6 +1,12 @@
-{
+module.exports = {
   "testRunner": "jest",
-  "runnerConfig": "e2e/config.json",
+  "runnerConfig": process.env.DETOX_EXPOSE_GLOBALS === '0' ? 'e2eExplicitRequire/config.json' : 'e2e/config.json',
+  "specs": process.env.DETOX_EXPOSE_GLOBALS === '0' ? 'e2eExplicitRequire' : 'e2e',
+  "behavior": {
+    "init": {
+      "exposeGlobals": process.env.DETOX_EXPOSE_GLOBALS === '0' ? false : true,
+    },
+  },
   "configurations": {
     "ios.sim.release": {
       "type": "ios.simulator",
@@ -23,4 +29,4 @@
       }
     }
   }
-}
+};
