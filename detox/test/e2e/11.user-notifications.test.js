@@ -50,19 +50,21 @@ describe(':android: User Notifications', () => {
   it('should launch app with extras', async () => {
     const googleProjectId = 284440699462;
     const userNotification = {
-      from: googleProjectId,
-      userData: 'userDataValue',
-      userDataArray: ['rock', 'paper', 'scissors'],
-      'google.sent_time': 1592133826891,
-      'google.ttl': 2419200,
-      'google.original_priority': 'high',
-      'collapse_key': 'com.wix.reactnativenotifications.app',
+      payload: {
+        from: googleProjectId,
+        userData: 'userDataValue',
+        userDataArray: ['rock', 'paper', 'scissors'],
+        'google.sent_time': 1592133826891,
+        'google.ttl': 2419200,
+        'google.original_priority': 'high',
+        'collapse_key': 'com.wix.reactnativenotifications.app',
+      },
     };
     await device.launchApp({ newInstance: true, userNotification });
     await element(by.text('Launch-Notification')).tap();
     await expect(element(by.text('Launch-notification Data'))).toBeVisible();
     await assertNotificationData('from', googleProjectId.toString());
-    await assertNotificationData('userData', userNotification.userData);
-    await assertNotificationData('userDataArray', JSON.stringify(userNotification.userDataArray));
+    await assertNotificationData('userData', userNotification.payload.userData);
+    await assertNotificationData('userDataArray', JSON.stringify(userNotification.payload.userDataArray));
   });
 });
