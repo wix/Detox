@@ -308,7 +308,7 @@ describe('Device', () => {
       await device.launchApp({newInstance: true});
       await device.launchApp({newInstance: false});
 
-      expect(driverMock.driver.deliverPayload).not.toHaveBeenCalled();
+      expect(driverMock.driver.predeliverPayload).not.toHaveBeenCalled();
     });
 
     it(`with a url should check if process is in background and use openURL() instead of launch args`, async () => {
@@ -321,7 +321,7 @@ describe('Device', () => {
       await device.launchApp({newInstance: true});
       await device.launchApp({url: 'url://me'});
 
-      expect(driverMock.driver.deliverPayload).toHaveBeenCalledTimes(1);
+      expect(driverMock.driver.predeliverPayload).toHaveBeenCalledTimes(1);
     });
 
     it(`with a url should check if process is in background and if not use launch args`, async () => {
@@ -336,7 +336,7 @@ describe('Device', () => {
       await device.prepare();
       await device.launchApp(launchParams);
 
-      expect(driverMock.driver.deliverPayload).not.toHaveBeenCalled();
+      expect(driverMock.driver.predeliverPayload).not.toHaveBeenCalled();
     });
 
     it(`with a url should check if process is in background and use openURL() instead of launch args`, async () => {
@@ -351,7 +351,7 @@ describe('Device', () => {
       await device.launchApp({newInstance: true});
       await device.launchApp(launchParams);
 
-      expect(driverMock.driver.deliverPayload).toHaveBeenCalledWith({delayPayload: true, url: 'url://me'});
+      expect(driverMock.driver.predeliverPayload).toHaveBeenCalledWith({url: 'url://me'});
     });
 
     it(`should keep user params unmodified`, async () => {
@@ -382,7 +382,7 @@ describe('Device', () => {
       await device.launchApp({newInstance: true});
       await device.launchApp(launchParams);
 
-      expect(driverMock.driver.deliverPayload).toHaveBeenCalledWith({delayPayload: true, detoxUserActivityDataURL: 'url'});
+      expect(driverMock.driver.predeliverPayload).toHaveBeenCalledWith({detoxUserActivityDataURL: 'url'});
     });
 
 
@@ -399,7 +399,7 @@ describe('Device', () => {
       await device.launchApp({newInstance: true});
       await device.launchApp(launchParams);
 
-      expect(driverMock.driver.deliverPayload).toHaveBeenCalledTimes(1);
+      expect(driverMock.driver.predeliverPayload).toHaveBeenCalledTimes(1);
     });
 
     it(`with userNotification should check if process is in background and if not use launch args`, async () => {
@@ -414,7 +414,7 @@ describe('Device', () => {
       await device.prepare();
       await device.launchApp(launchParams);
 
-      expect(driverMock.driver.deliverPayload).not.toHaveBeenCalled();
+      expect(driverMock.driver.predeliverPayload).not.toHaveBeenCalled();
     });
 
     it(`with userNotification and url should fail`, async () => {
@@ -434,7 +434,7 @@ describe('Device', () => {
         expect(ex).toBeDefined();
       }
 
-      expect(device.deviceDriver.deliverPayload).not.toHaveBeenCalled();
+      expect(device.deviceDriver.predeliverPayload).not.toHaveBeenCalled();
     });
   });
 
@@ -573,7 +573,7 @@ describe('Device', () => {
     const device = validDevice();
     await device.openURL({url: 'url'});
 
-    expect(driverMock.driver.deliverPayload).toHaveBeenCalledWith({url: 'url'});
+    expect(driverMock.driver.deliverPayload).toHaveBeenCalledWith({url: 'url'}, device._deviceId);
   });
 
   it(`openURL(notAnObject) should pass to device driver`, async () => {

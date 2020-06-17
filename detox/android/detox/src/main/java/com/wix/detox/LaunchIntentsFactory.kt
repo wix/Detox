@@ -1,6 +1,7 @@
 package com.wix.detox
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -21,9 +22,9 @@ internal class LaunchIntentsFactory {
         }
 
     /**
-     * Constructs a near-empty, activity-anonymous intent, assuming an ActivityTestRule instance that would handle it will fill in all the missing details -
-     * namely, the activity class (aka component), which is taken from activityTestRule's own activityClass data member
-     * which was set in the c'tor by the user (outside of Detox)
+     * Constructs a near-empty, activity-anonymous intent, assuming an ActivityTestRule instance that would handle it
+     * and fill in all the missing details. Namely, the activity class (aka component), which is taken from activityTestRule's
+     * own activityClass data member which was set in the c'tor by the user (outside of Detox).
      *
      * @return The resulting intent.
      */
@@ -67,9 +68,10 @@ internal class LaunchIntentsFactory {
      *
      * @return The resulting intent.
      */
-    fun intentWithNotificationData(data: Bundle, initialLaunch: Boolean)
+    fun intentWithNotificationData(appContext: Context, data: Bundle, initialLaunch: Boolean)
         = Intent(Intent.ACTION_MAIN).apply {
             addCategory(Intent.CATEGORY_LAUNCHER)
+            setPackage(appContext.packageName)
             putExtras(data)
             flags = coreFlags
             if (initialLaunch) {
