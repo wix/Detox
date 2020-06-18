@@ -114,6 +114,7 @@ class Invoke extends Action {
     switch (response.type) {
       case 'testFailed':
         throw new Error('Test Failed:' + response.params.details +
+          /* istanbul ignore next */
           (log.level() <= bunyan.DEBUG ?
           '\nView Hierarchy (presented in loglevel verbose and above):\n' + response.params.viewHierarchy :
           '\nTIP: To print view hierarchy on failed actions/matches, use loglevel verbose and above.'));

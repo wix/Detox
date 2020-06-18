@@ -11,14 +11,24 @@ describe('expectTwo API Coverage', () => {
     it(`by.accessibilityLabel`, async () => {
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeVisible();
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeNotVisible();
+      await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toBeVisible();
+
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toExist();
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotExist();
+      await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toExist();
+
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveText('text');
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveText('text');
+      await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toHaveText('text');
+
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveLabel('label');
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveLabel('label');
+      await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toHaveLabel('label');
+
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveId('id');
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveId('id');
+      await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toHaveId('id');
+
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveValue('value');
       await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveValue('value');
       await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toHaveValue('value');
@@ -50,7 +60,6 @@ describe('expectTwo API Coverage', () => {
       await e.expect(e.element(e.by.id('test').withAncestor(e.by.id('ancestor')))).toBeVisible();
       await e.expect(e.element(e.by.id('test').withDescendant(e.by.id('descendant')))).toBeVisible();
       await e.expect(e.element(e.by.id('test').and(e.by.type('type')))).toBeVisible();
-      // await e.expect(e.element(e.by.id('test').not())).toBeVisible();
     });
 
 

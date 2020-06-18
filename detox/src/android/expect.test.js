@@ -89,10 +89,24 @@ describe('expect', () => {
     await e.waitFor(e.element(e.by.id('id'))).toExist();
     await e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout(0);
     await e.waitFor(e.element(e.by.id('id'))).toNotExist().withTimeout(0);
+
     await e.waitFor(e.element(e.by.id('id'))).toHaveText('text');
+    await e.waitFor(e.element(e.by.id('id'))).toNotHaveText('value');
+    await e.waitFor(e.element(e.by.id('id'))).not.toHaveText('text');
+
+    await e.waitFor(e.element(e.by.id('id'))).toHaveLabel('text');
+    await e.waitFor(e.element(e.by.id('id'))).toNotHaveLabel('text');
+    await e.waitFor(e.element(e.by.id('id'))).not.toHaveLabel('text');
+
+    await e.waitFor(e.element(e.by.id('id'))).toHaveId('id');
+    await e.waitFor(e.element(e.by.id('id'))).toNotHaveId('id');
+    await e.waitFor(e.element(e.by.id('id'))).not.toHaveId('id');
+
     await e.waitFor(e.element(e.by.id('id'))).toHaveValue('value');
     await e.waitFor(e.element(e.by.id('id'))).toNotHaveValue('value');
-    await e.waitFor(e.element(e.by.id('id'))).toNotHaveText('value');
+    await e.waitFor(e.element(e.by.id('id'))).not.toHaveValue('value');
+
+
 
     await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50, 'down');
     await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50);

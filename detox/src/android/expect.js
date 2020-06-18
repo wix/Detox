@@ -122,7 +122,6 @@ class Interaction {
   }
 
   async execute() {
-    console.log(this._call)
     await this._invocationManager.execute(this._call);
   }
 }
@@ -205,7 +204,6 @@ class Element {
   _selectElementWithMatcher(matcher) {
     // if (!(matcher instanceof Matcher)) throw new Error(`Element _selectElementWithMatcher argument must be a valid Matcher, got ${typeof matcher}`);
     this._call = invoke.call(invoke.Espresso, 'onView', matcher._call);
-    console.log(this._call())
   }
 
   atIndex(index) {
@@ -347,7 +345,6 @@ class WaitFor {
 class WaitForElement extends WaitFor {
   constructor(invocationManager, element) {
     super(invocationManager);
-    if ((!element instanceof Element)) throw new Error(`WaitForElement ctor argument must be a valid Element, got ${typeof element}`);
     this._element = element;
   }
 
@@ -373,7 +370,6 @@ class WaitForElement extends WaitFor {
   }
 
   toHaveText(text) {
-    console.log(""+this._element);
     return new WaitForInteraction(this._invocationManager, this._element, this._notCondition ? new TextMatcher(text).not : new TextMatcher(text));
   }
 
