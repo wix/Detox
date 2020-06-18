@@ -342,18 +342,18 @@ describe('expectTwo', () => {
     expect(testCall).deepEquals(jsonOutput);
   });
 
-  it(`waitFor(element(by.id('uniqueId'))).toHaveValue('Some value').withTimeout(2000)`, () => {
-    const testCall = e.waitFor(e.element(e.by.id('uniqueId'))).toHaveValue('Some value').withTimeout(2000);
+  it(`waitFor(element(by.id('uniqueId'))).not.toHaveValue('Some value').withTimeout(2000)`, () => {
+    const testCall = e.waitFor(e.element(e.by.id('uniqueId'))).not.toBeVisible().withTimeout(2000);
     const jsonOutput = {
       invocation: {
         type: 'expectation',
-        timeout: 2000,
         predicate: {
           type: 'id',
           value: 'uniqueId'
         },
-        expectation: 'toHaveValue',
-        params: ['Some value']
+        modifiers: ['not'],
+        expectation: 'toBeVisible',
+        timeout: 2000
       }
     };
 

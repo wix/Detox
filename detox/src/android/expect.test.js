@@ -83,6 +83,7 @@ describe('expect', () => {
 
   it(`waitFor (element)`, async () => {
     await e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout(0);
+    await e.waitFor(e.element(e.by.id('id'))).not.toExist().withTimeout(0);
     await e.waitFor(e.element(e.by.id('id'))).toBeVisible();
     await e.waitFor(e.element(e.by.id('id'))).toBeNotVisible();
     await e.waitFor(e.element(e.by.id('id'))).toExist();
