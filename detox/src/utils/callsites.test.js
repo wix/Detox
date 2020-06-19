@@ -23,15 +23,6 @@ describe('callsites', () => {
     });
   });
 
-  describe('.getOrigin()', () => {
-    it('should return user code location', function it() {
-      expect(callsites.getOrigin(0)).toMatch(/^at (.*):(\d+):(\d+)$/);
-      expect(callsites.getOrigin(0)).toContain(path.normalize('src/utils/callsites.js'));
-      expect(callsites.getOrigin(1)).toMatch(/^at (.*):(\d+):(\d+)$/);
-      expect(callsites.getOrigin(1)).toContain(path.normalize('src/utils/callsites.test.js'));
-    });
-  });
-
   describe('.getStackDump', () => {
     const callStackDumpFromWrapperFn = (endFrame) => callsites.getStackDump(endFrame);
     const callStackDumpFromTwoWrapperFn = (endFrame) => callStackDumpFromWrapperFn(endFrame);
@@ -50,6 +41,65 @@ describe('callsites', () => {
       const _expectedTopLineRegExp = expected2ndLineRegExp;
       const stackdump = callStackDumpFromTwoWrapperFn(1);
       expect(stackdump).toEqual(expect.stringMatching(_expectedTopLineRegExp));
+    });
+  });
+
+  describe('.getOrigin(callSite)', () => {
+    it('should include log origin', () => {
+      const fakeCallSite = {
+        getFileName: () => 'MOCK_FILE',
+        getLineNumber: () => 200,
+        getColumnNumber: () => 100,
+      };
+
+      const origin = callsites.getOrigin(fakeCallSite);
+      expect(origin).toBe('at MOCK_FILE:200:100');
+    });
+
+    it('should use relative file-name rather than absolute in origin', () => {
+      const fakeCallSite = {
+        getFileName: () => path.join(process.cwd(), 'src/index.js'),
+        getLineNumber: () => 1,
+        getColumnNumber: () => 1,
+      };
+
+      const origin = callsites.getOrigin(fakeCallSite);
+      expect(origin).toBe(`at ${path.normalize('src/index.js')}:1:1`);
+    });
+
+    it('should handle null callsite', () => {
+      const origin = callsites.getOrigin(null);
+      expect(origin).toBe('at <unknown>:?:?');
+    });
+
+    it('should handle null fileName', () => {
+      const origin = callsites.getOrigin({
+        getFileName: () => null,
+        getLineNumber: () => 42,
+        getColumnNumber: () => 42,
+      });
+
+      expect(origin).toBe('at <unknown>:42:42');
+    });
+
+    it('should handle null lineNumber', () => {
+      const origin = callsites.getOrigin({
+        getFileName: () => 'index.js',
+        getLineNumber: () => null,
+        getColumnNumber: () => 42,
+      });
+
+      expect(origin).toBe('at index.js:?:42');
+    });
+
+    it('should handle null columnNumber', () => {
+      const origin = callsites.getOrigin({
+        getFileName: () => 'index.js',
+        getLineNumber: () => 42,
+        getColumnNumber: () => null,
+      });
+
+      expect(origin).toBe('at index.js:42:?');
     });
   });
 });

@@ -105,7 +105,8 @@ function init() {
   }
 
   if (argparse.getArgValue('use-custom-logger') === 'true') {
-    customConsoleLogger.overrideConsoleMethods(console, logger.child({component: 'USER_LOG'}));
+    const userLogger = logger.child({ component: 'USER_LOG' });
+    customConsoleLogger.overrideConsoleMethods(console, userLogger);
   }
 
   Object.getPrototypeOf(logger).ensureLogFiles = () => {

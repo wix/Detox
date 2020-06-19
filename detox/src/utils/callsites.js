@@ -19,11 +19,10 @@ function getStackDump(endFrame = 0) {
     .replace(new RegExp(escapeRegExp(cwd), 'g'), '');
 }
 
-function getOrigin(frameIndex = 0) {
-  const userCallsite = getCallSites()[frameIndex];
-  const callsiteFilename = userCallsite && userCallsite.getFileName();
-  const callsiteLine = userCallsite && userCallsite.getLineNumber();
-  const callsiteCol = userCallsite && userCallsite.getColumnNumber();
+function getOrigin(callSite) {
+  const callsiteFilename = callSite && callSite.getFileName();
+  const callsiteLine = callSite && callSite.getLineNumber();
+  const callsiteCol = callSite && callSite.getColumnNumber();
   const filename = callsiteFilename ? path.relative(process.cwd(), callsiteFilename) : '<unknown>';
   return `at ${filename}:${callsiteLine || '?'}:${callsiteCol || '?'}`;
 }
