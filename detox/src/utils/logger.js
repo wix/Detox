@@ -42,6 +42,10 @@ function createPlainBunyanStream({ logPath, level }) {
     out: process.stderr,
     prefixers: {
       '__filename': (filename, { entry }) => {
+        if (entry.event === 'USER_LOG') {
+          return '';
+        }
+
         const suffix = entry.event ? `/${entry.event}` : '';
         return path.basename(filename) + suffix;
       },
@@ -113,7 +117,7 @@ function init() {
 
   tryOverrideConsole(logger, global);
 
-  Object.getPrototypeOf(logger).reinitialize = (global) => {
+  logger.reinitialize = (global) => {
     if (jsonFileStreamPath) {
       fs.ensureFileSync(jsonFileStreamPath);
     }
