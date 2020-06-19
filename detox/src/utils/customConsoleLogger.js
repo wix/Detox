@@ -1,21 +1,7 @@
 const util = require('util');
-const path = require('path');
 const callsites = require('./callsites');
 
 const USER_STACK_FRAME_INDEX = 2;
-
-function getStackDump() {
-  return callsites.stackdump(USER_STACK_FRAME_INDEX);
-}
-
-function getOrigin() {
-  const userCallsite = callsites()[USER_STACK_FRAME_INDEX];
-  const callsiteFilename = userCallsite && userCallsite.getFileName();
-  const callsiteLine = userCallsite && userCallsite.getLineNumber();
-  const callsiteCol = userCallsite && userCallsite.getColumnNumber();
-  const filename = callsiteFilename ? path.relative(process.cwd(), callsiteFilename) : '<unknown>';
-  return `at ${filename}:${callsiteLine || '?'}:${callsiteCol || '?'}`;
-}
 
 function override(console, method, bunyanLoggerFn) {
   if (method === 'trace') {
@@ -29,19 +15,25 @@ function override(console, method, bunyanLoggerFn) {
 
 function proxyLog(bunyanLoggerFn) {
   return (...args) => {
-    bunyanLoggerFn({ event: 'USER_LOG' }, getOrigin(), '\n', util.format(...args));
+    const origin = callsites.getOrigin(USER_STACK_FRAME_INDEX);
+    bunyanLoggerFn({ event: 'USER_LOG' }, origin, '\n', util.format(...args));
   };
 }
 
 function proxyTracing(bunyanLoggerFn) {
   return (...args) => {
-    bunyanLoggerFn({ event: 'USER_LOG' }, getOrigin(), '\n  Trace:', util.format(...args), '\n\r' + getStackDump());
+    const origin = callsites.getOrigin(USER_STACK_FRAME_INDEX);
+    const stackDump = callsites.getStackDump(USER_STACK_FRAME_INDEX);
+    bunyanLoggerFn({ event: 'USER_LOG' }, origin, '\n  Trace:', util.format(...args), '\n\r' + stackDump);
   };
 }
 
 function proxyAssert(bunyanLoggerFn) {
   return (condition, ...args) => {
-    condition || bunyanLoggerFn({ event: 'USER_LOG' }, getOrigin(), '\n  AssertionError:', util.format(...args));
+    if (!condition) {
+      const origin = callsites.getOrigin(USER_STACK_FRAME_INDEX);
+      bunyanLoggerFn({ event: 'USER_LOG' }, origin, '\n  AssertionError:', util.format(...args));
+    }
   };
 }
 

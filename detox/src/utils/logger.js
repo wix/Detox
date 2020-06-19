@@ -25,11 +25,6 @@ function adaptLogLevelName(level) {
   }
 }
 
-function overrideConsoleLogger(logger) {
-  const log = logger.child({component: 'USER_LOG'});
-  customConsoleLogger.overrideAllLevels(log);
-}
-
 function createPlainBunyanStream({ logPath, level }) {
   const options = {
     showDate: false,
@@ -110,7 +105,7 @@ function init() {
   }
 
   if (argparse.getArgValue('use-custom-logger') === 'true') {
-    overrideConsoleLogger(logger);
+    customConsoleLogger.overrideConsoleMethods(console, logger.child({component: 'USER_LOG'}));
   }
 
   Object.getPrototypeOf(logger).ensureLogFiles = () => {
