@@ -30,8 +30,12 @@ describe('customConsoleLogger.overrideConsoleMethods(console, bunyanLogger)', ()
     });
 
     it('should not override console methods, if it has an internal property __detox_log__', () => {
-      fakeConsole.__detox_log__ = jest.fn();
+      fakeConsole.__detox_log__ = {};
       expect(overrideConsoleMethods({ ...fakeConsole }, bunyanLogger)).toEqual(fakeConsole);
+    });
+
+    it('should set an internal property __detox_log__ after override', () => {
+      expect(overrideConsoleMethods({ ...fakeConsole }, bunyanLogger).__detox_log__).toBeDefined();
     });
   });
 

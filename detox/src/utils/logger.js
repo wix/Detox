@@ -25,6 +25,13 @@ function adaptLogLevelName(level) {
   }
 }
 
+function tryOverrideConsole(logger, global) {
+  if (argparse.getArgValue('use-custom-logger') === 'true') {
+    const userLogger = logger.child({ component: 'USER_LOG' });
+    customConsoleLogger.overrideConsoleMethods(global.console, userLogger);
+  }
+}
+
 function createPlainBunyanStream({ logPath, level }) {
   const options = {
     showDate: false,
@@ -104,12 +111,9 @@ function init() {
     logger.plainFileStreamPath = plainFileStreamPath;
   }
 
-  if (argparse.getArgValue('use-custom-logger') === 'true') {
-    const userLogger = logger.child({ component: 'USER_LOG' });
-    customConsoleLogger.overrideConsoleMethods(console, userLogger);
-  }
+  tryOverrideConsole(logger, global);
 
-  Object.getPrototypeOf(logger).ensureLogFiles = () => {
+  Object.getPrototypeOf(logger).reinitialize = (global) => {
     if (jsonFileStreamPath) {
       fs.ensureFileSync(jsonFileStreamPath);
     }
@@ -117,6 +121,8 @@ function init() {
     if (plainFileStreamPath) {
       fs.ensureFileSync(plainFileStreamPath);
     }
+
+    tryOverrideConsole(logger, global);
   };
 
   return logger;
