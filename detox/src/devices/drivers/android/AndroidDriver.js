@@ -120,11 +120,11 @@ class AndroidDriver extends DeviceDriverBase {
     return pid;
   }
 
-  async predeliverPayload() {
-    // Override the super implementation - this isn't needed on Android
-  }
-
   async deliverPayload(params, deviceId) {
+    if (params.delayPayload) {
+      return;
+    }
+
     const {url, detoxUserNotificationDataURL} = params;
     if (url) {
       await this._startActivityWithUrl(url);
