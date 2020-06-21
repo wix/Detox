@@ -7,6 +7,7 @@
 //
 
 #import "UIView+DetoxMatchers.h"
+#import "UIView+DetoxUtils.h"
 #import "DTXAppleInternals.h"
 #import "UIWindow+DetoxUtils.h"
 
@@ -67,13 +68,13 @@
 + (void)_dtx_sortViewsByCoords:(NSMutableArray<UIView*>*)views
 {
 	[views sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:nil ascending:YES comparator:^NSComparisonResult(UIView* _Nonnull obj1, UIView* _Nonnull obj2) {
-		CGRect frame1 = obj1.accessibilityFrame;
-		CGRect frame2 = obj2.accessibilityFrame;
+		CGRect frame1 = obj1.dtx_accessibilityFrame;
+		CGRect frame2 = obj2.dtx_accessibilityFrame;
 		
 		return frame1.origin.y < frame2.origin.y ? NSOrderedAscending : frame1.origin.y > frame2.origin.y ? NSOrderedDescending : NSOrderedSame;
 	}], [NSSortDescriptor sortDescriptorWithKey:nil ascending:YES comparator:^NSComparisonResult(UIView* _Nonnull obj1, UIView* _Nonnull obj2) {
-		CGRect frame1 = obj1.accessibilityFrame;
-		CGRect frame2 = obj2.accessibilityFrame;
+		CGRect frame1 = obj1.dtx_accessibilityFrame;
+		CGRect frame2 = obj2.dtx_accessibilityFrame;
 		
 		return frame1.origin.x < frame2.origin.x ? NSOrderedAscending : frame1.origin.x > frame2.origin.x ? NSOrderedDescending : NSOrderedSame;
 	}]]];
