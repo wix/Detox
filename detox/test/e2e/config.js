@@ -16,7 +16,6 @@ module.exports = {
     "!**/*.mock.js",
     "!**/*.test.js"
   ],
-  "coverageProvider": "v8",
   "coverageDirectory": "test/coverage",
   "coverageReporters": [["lcov", {"projectRoot": "../.." }], "html"]
 };

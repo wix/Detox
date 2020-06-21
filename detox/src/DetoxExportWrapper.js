@@ -3,7 +3,8 @@ const funpermaproxy = require('funpermaproxy');
 const Detox = require('./Detox');
 const DetoxConstants = require('./DetoxConstants');
 const configuration = require('./configuration');
-const log = require('./utils/logger').child({ __filename });
+const logger = require('./utils/logger');
+const log = logger.child({ __filename });
 
 const _detox = Symbol('detox');
 const _shouldLogInitError = Symbol('shouldLogInitError');
@@ -34,7 +35,7 @@ class DetoxExportWrapper {
   async init(configOverride, userParams) {
     let configError, exposeGlobals, resolvedConfig;
 
-    log.ensureLogFiles();
+    logger.reinitialize(Detox.global);
 
     try {
       resolvedConfig = await configuration.composeDetoxConfig({
