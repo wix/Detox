@@ -172,4 +172,3 @@ angle - value in radiant - default is 0
 await expect(element(by.id('PinchableScrollView'))).toBeVisible();
 await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0);
 ```
-
