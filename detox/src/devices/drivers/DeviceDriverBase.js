@@ -71,10 +71,6 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async predeliverPayload(params) {
-    return await this.client.deliverPayload(params);
-  }
-
   async deliverPayload(params) {
     return await this.client.deliverPayload(params);
   }

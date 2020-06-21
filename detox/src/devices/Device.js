@@ -56,7 +56,7 @@ class Device {
     const _bundleId = bundleId || this._bundleId;
     if (this._isAppInBackground(params, _bundleId)) {
       if (hasPayload) {
-        await this.deviceDriver.predeliverPayload({...params});
+        await this.deviceDriver.deliverPayload({...params, delayPayload: true});
       }
     }
 
