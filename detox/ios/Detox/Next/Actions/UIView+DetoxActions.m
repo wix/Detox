@@ -35,6 +35,12 @@
 	for (NSUInteger idx = 0; idx < numberOfTaps; idx++) {
 		[DTXSyntheticEvents touchAlongPath:@[@(point)] relativeToWindow:self.window holdDurationOnLastTouch:0.0];
 	}
+	
+	if([self isKindOfClass:UISwitch.class])
+	{
+		//Apply a small delay for UISwitch to settle
+		[NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+	}
 }
 
 - (void)dtx_longPressAtAccessibilityActivationPoint

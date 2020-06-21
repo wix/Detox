@@ -106,7 +106,7 @@ class example extends Component {
           {this.renderScreenButton('Permissions', Screens.Permissions)}
           {this.renderScreenButton('Network', Screens.NetworkScreen)}
           {this.renderScreenButton('RN Animations', Screens.RNAnimationsScreen)}
-          {this.renderScreenButton('Native Animation', Screens.NativeAnimationsScreen)}
+          {isAndroid && this.renderScreenButton('Native Animation', Screens.NativeAnimationsScreen)}
           {this.renderScreenButton('Device', Screens.DeviceScreen)}
           {this.renderScreenButton('Location', Screens.LocationScreen)}
           {!isAndroid && this.renderScreenButton('DatePicker', Screens.DatePickerScreen)}
