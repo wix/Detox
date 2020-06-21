@@ -25,7 +25,9 @@ static double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
 @property (nonatomic, readonly) BOOL dtx_isHittable;
 
 - (BOOL)dtx_isVisibleAtPoint:(CGPoint)point;
+- (BOOL)dtx_isVisibleAtPoint:(CGPoint)point error:(NSError* __strong * __nullable)error;
 - (BOOL)dtx_isHittableAtPoint:(CGPoint)point;
+- (BOOL)dtx_isHittableAtPoint:(CGPoint)point error:(NSError* __strong * __nullable)error;
 
 - (void)dtx_assertVisible;
 - (void)dtx_assertHittable;

@@ -11,6 +11,27 @@
 #import "UIWindow+DetoxUtils.h"
 #import "UISlider+DetoxUtils.h"
 
+#define _DTXPopulateError(errOut) if(error) { *error = (errOut); }
+
+DTX_ALWAYS_INLINE
+static NSDictionary* DTXInsetsToDictionary(UIEdgeInsets insets)
+{
+	return @{@"top": @(insets.top), @"bottom": @(insets.bottom), @"left": @(insets.left), @"right": @(insets.right)};
+}
+
+DTX_ALWAYS_INLINE
+static NSDictionary* DTXRectToDictionary(CGRect rect)
+{
+	return @{@"x": @(rect.origin.x), @"y": @(rect.origin.y), @"width": @(rect.size.width), @"height": @(rect.size.height)};
+}
+
+DTX_ALWAYS_INLINE
+static NSDictionary* DTXPointToDictionary(CGPoint point)
+{
+	return @{@"x": @(point.x), @"y": @(point.y)};
+}
+
+
 @import ObjectiveC;
 
 BOOL __DTXDoulbeEqualToDouble(double a, double b)
@@ -48,12 +69,18 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 
 - (void)_dtx_assertVisibleAtPoint:(CGPoint)point isAtActivationPoint:(BOOL)isAtActivationPoint
 {
-	DTXViewAssert([self dtx_isVisibleAtPoint:point] == YES, self.dtx_viewDebugAttributes, @"View “%@” is not visible%@", self.dtx_shortDescription, !isAtActivationPoint ? [NSString stringWithFormat:@" at point “(x: %@, y: %@)”", @(point.x), @(point.y)] : @"");
+	NSError* error;
+	BOOL assert = [self dtx_isVisibleAtPoint:point error:&error];
+	
+	DTXViewAssert(assert == YES, self.dtx_viewDebugAttributes, @"View “%@” is not visible%@%@", self.dtx_shortDescription, !isAtActivationPoint ? [NSString stringWithFormat:@" at point “(x: %@, y: %@)”", @(point.x), @(point.y)] : @"", error ? [NSString stringWithFormat:@": %@", error.localizedDescription] : @"");
 }
 
 - (void)_dtx_assertHittableAtPoint:(CGPoint)point isAtActivationPoint:(BOOL)isAtActivationPoint
 {
-	DTXViewAssert([self dtx_isHittableAtPoint:point] == YES, self.dtx_viewDebugAttributes, @"View “%@” is not hittable%@", self.dtx_shortDescription, !isAtActivationPoint ? [NSString stringWithFormat:@" at point “(x: %@, y: %@)”", @(point.x), @(point.y)] : @"");
+	NSError* error;
+	BOOL assert = [self dtx_isHittableAtPoint:point error:&error];
+	
+	DTXViewAssert(assert == YES, self.dtx_viewDebugAttributes, @"View “%@” is not hittable%@%@", self.dtx_shortDescription, !isAtActivationPoint ? [NSString stringWithFormat:@" at point “(x: %@, y: %@)”", @(point.x), @(point.y)] : @"", error ? [NSString stringWithFormat:@": %@", error.localizedDescription] : @"");
 }
 
 - (NSString *)dtx_shortDescription
@@ -207,10 +234,20 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 
 - (BOOL)dtx_isVisibleAtPoint:(CGPoint)point
 {
-	return [self _dtx_someTestAtPoint:point testSelector:@selector(dtx_visTest:withEvent:lookingFor:)];
+	return [self dtx_isVisibleAtPoint:point error:NULL];
+}
+
+- (BOOL)dtx_isVisibleAtPoint:(CGPoint)point error:(NSError* __strong *)error
+{
+	return [self _dtx_someTestAtPoint:point testSelector:@selector(dtx_visTest:withEvent:lookingFor:) error:error];
 }
 
 - (BOOL)dtx_isHittableAtPoint:(CGPoint)point
+{
+	return [self dtx_isHittableAtPoint:point error:NULL];
+}
+
+- (BOOL)dtx_isHittableAtPoint:(CGPoint)point error:(NSError* __strong *)error
 {
 	if([self isKindOfClass:NSClassFromString(@"UISegmentLabel")] || [self isKindOfClass:NSClassFromString(@"UISegment")])
 	{
@@ -220,16 +257,18 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 			segmentControl = (id)segmentControl.superview;
 		}
 
-		return [segmentControl dtx_isHittableAtPoint:[segmentControl convertPoint:point fromView:self]];
+		return [segmentControl dtx_isHittableAtPoint:[segmentControl convertPoint:point fromView:self] error:error];
 	}
 	
-	return [self _dtx_someTestAtPoint:point testSelector:@selector(dtx_hitTest:withEvent:lookingFor:)];
+	return [self _dtx_someTestAtPoint:point testSelector:@selector(dtx_hitTest:withEvent:lookingFor:) error:error];
 }
 
-- (BOOL)_dtx_someTestAtPoint:(CGPoint)point testSelector:(SEL)selector
+- (BOOL)_dtx_someTestAtPoint:(CGPoint)point testSelector:(SEL)selector error:(NSError* __strong *)error
 {
 	if(self.window == nil || self.window.screen == nil)
 	{
+		_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: @"Either window or screen are nil"}]);
+		
 		return NO;
 	}
 	
@@ -237,6 +276,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	{
 		if(self.window.windowScene == nil)
 		{
+			_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: @"Window scene is nil"}]);
 			return NO;
 		}
 	}
@@ -248,20 +288,28 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	
 	if(CGRectContainsPoint(self.window.bounds, windowActivationPoint) == NO)
 	{
+		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Point “%@” is outside if window bounds", DTXPointToDictionary(windowActivationPoint)]}];
+		_DTXPopulateError(err);
+		
 		return NO;
 	}
 	
 	if(CGRectGetWidth(self.dtx_safeAreaBounds) == 0 || CGRectGetHeight(self.dtx_safeAreaBounds) == 0)
 	{
+		_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: @"View safe area bounds are empty"}]);
+		
 		return NO;
 	}
 	
 	if([self isHiddenOrHasHiddenAncestor] == YES)
 	{
+		_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: @"View is hidden or has hidden ancestor"}]);
+		
 		return NO;
 	}
 	
 	__block BOOL rv = NO;
+	BOOL isHit = (selector == @selector(dtx_hitTest:withEvent:lookingFor:));
 	
 	id (*testFunc)(id, SEL, CGPoint, id, id) = (void*)objc_msgSend;
 	
@@ -280,12 +328,15 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		
 		CGPoint currentWindowActivationPoint = [screen.coordinateSpace convertPoint:screenActivationPoint toCoordinateSpace:obj.coordinateSpace];
 		
-		if(self.window != obj && selector == @selector(dtx_visTest:withEvent:lookingFor:))
+		if(self.window != obj && isHit == NO)
 		{
 			UIImage* windowImage = [obj dtx_imageAroundPoint:currentWindowActivationPoint];
 //			[UIImagePNGRepresentation(windowImage) writeToFile:[NSString stringWithFormat:@"/Users/lnatan/Desktop/%@.png", NSStringFromClass(obj.class)] atomically:YES];
 			if([UIView _dtx_isImageTransparent:windowImage] == NO)
 			{
+				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Window “%@” is not transparent at hit point “%@”", obj.dtx_shortDescription, DTXPointToDictionary(currentWindowActivationPoint)]}];
+				_DTXPopulateError(err);
+				
 				//The window is not transparent at the hit point, stop
 				rv = NO;
 				*stop = YES;
@@ -300,8 +351,11 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		
 		UIView* visibleView = testFunc(obj, selector, currentWindowActivationPoint, nil, self);
 		
-		if(self.window != obj && selector == @selector(dtx_hitTest:withEvent:lookingFor:) && visibleView != nil)
+		if(self.window != obj && isHit && visibleView != nil)
 		{
+			NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Another hittable view “%@” captured test at window “%@” at point “%@”", visibleView.dtx_shortDescription, obj.dtx_shortDescription, DTXPointToDictionary(currentWindowActivationPoint)]}];
+			_DTXPopulateError(err);
+			
 			//We've hit a view in another window
 			rv = NO;
 			*stop = YES;
@@ -312,7 +366,18 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 			rv = YES;
 			*stop = YES;
 		}
+		else
+		{
+			NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Another %@ view “%@” captured test at point “%@”", isHit ? @"hittable" : @"visible", visibleView.dtx_shortDescription, DTXPointToDictionary(currentWindowActivationPoint)]}];
+			_DTXPopulateError(err);
+		}
 	}];
+	
+	if(rv == NO)
+	{
+		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"No view captured test at point “%@”", DTXPointToDictionary(windowActivationPoint)]}];
+		_DTXPopulateError(err);
+	}
 	
 	return rv;
 }
@@ -382,24 +447,6 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	UIImage* image = [UIImage imageWithCGImage:imageRef];
 	
 	return image;
-}
-
-DTX_ALWAYS_INLINE
-static NSDictionary* DTXInsetsToDictionary(UIEdgeInsets insets)
-{
-	return @{@"top": @(insets.top), @"bottom": @(insets.bottom), @"left": @(insets.left), @"right": @(insets.right)};
-}
-
-DTX_ALWAYS_INLINE
-static NSDictionary* DTXRectToDictionary(CGRect rect)
-{
-	return @{@"x": @(rect.origin.x), @"y": @(rect.origin.y), @"width": @(rect.size.width), @"height": @(rect.size.height)};
-}
-
-DTX_ALWAYS_INLINE
-static NSDictionary* DTXPointToDictionary(CGPoint point)
-{
-	return @{@"x": @(point.x), @"y": @(point.y)};
 }
 
 - (NSDictionary<NSString *,id> *)dtx_attributes

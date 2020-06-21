@@ -38,7 +38,7 @@ BOOL dtx_try(void (^block)(void), NSError * __nullable * __null_unspecified erro
 		[userInfo addEntriesFromDictionary:exception.viewDescription];
 	}
 	
-	return [NSError errorWithDomain:@"Detox" code:0 userInfo:userInfo];
+	return [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:userInfo];
 }
 
 #if DEBUG
