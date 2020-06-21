@@ -195,12 +195,24 @@ class Element : NSObject {
 		slider.dtx_normalizedSliderPosition = normalizedSliderPosition
 	}
 	
-	var isVisible: Bool {
-		return view.dtx_isVisible
+	func isVisible() throws -> Bool {
+		var error: NSError? = nil
+		let rv = view.dtx_isVisible(at: view.dtx_accessibilityActivationPointInViewCoordinateSpace, error: &error)
+		if let error = error {
+			throw error
+		}
+		
+		return rv
 	}
 	
-	var isHittable: Bool {
-		return view.dtx_isHittable
+	func isHittable() throws -> Bool {
+		var error: NSError? = nil
+		let rv = view.dtx_isHittable(at: view.dtx_accessibilityActivationPointInViewCoordinateSpace, error: &error)
+		if let error = error {
+			throw error
+		}
+		
+		return rv
 	}
 	
 	@objc

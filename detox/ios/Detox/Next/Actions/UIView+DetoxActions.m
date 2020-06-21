@@ -28,18 +28,19 @@
 
 - (void)dtx_tapAtPoint:(CGPoint)point numberOfTaps:(NSUInteger)numberOfTaps
 {
+	if([self isKindOfClass:UISwitch.class] && numberOfTaps == 1)
+	{
+		//Attempt a long press on the switch, rather than tap.
+		[self dtx_longPressAtPoint:point duration:0.7];
+		return;
+	}
+	
 	[self dtx_assertHittableAtPoint:point];
 	
 	NSParameterAssert(numberOfTaps >= 1);
 	point = [self.window convertPoint:point fromView:self];
 	for (NSUInteger idx = 0; idx < numberOfTaps; idx++) {
 		[DTXSyntheticEvents touchAlongPath:@[@(point)] relativeToWindow:self.window holdDurationOnLastTouch:0.0];
-	}
-	
-	if([self isKindOfClass:UISwitch.class])
-	{
-		//Apply a small delay for UISwitch to settle
-		[NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
 	}
 }
 

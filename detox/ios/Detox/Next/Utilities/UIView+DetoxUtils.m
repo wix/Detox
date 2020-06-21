@@ -270,6 +270,13 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 
 - (BOOL)_dtx_someTestAtPoint:(CGPoint)point testSelector:(SEL)selector error:(NSError* __strong *)error
 {
+	if(UIApplication.sharedApplication._isSpringBoardShowingAnAlert)
+	{
+		_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: @"System alert is shown on screen"}]);
+		
+		return NO;
+	}
+	
 	if(self.window == nil || self.window.screen == nil)
 	{
 		_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: @"Either window or screen are nil"}]);

@@ -113,12 +113,21 @@ class Expectation : CustomStringConvertible {
 		}
 	}
 	
-	fileprivate func evaluate(with element: Element) -> Bool {
+	fileprivate func evaluate(with element: Element) throws -> Bool {
 		fatalError("Unimplemented perform(on:) called for \(type(of: self))")
 	}
 	
 	fileprivate func _evaluate() {
-		dtx_assert(applyModifiers(evaluate(with: element), modifiers: modifiers), "Failed expectation: \(self.description)", viewDescription: element.debugAttributes)
+		var failureReason: String? = nil
+		var assertion: Bool = false
+		
+		do {
+			assertion = try evaluate(with: element)
+		} catch {
+			failureReason = error.localizedDescription
+		}
+		
+		dtx_assert(applyModifiers(assertion, modifiers: modifiers), "Failed expectation: \(self.description)\(failureReason != nil ? ", \(failureReason!)" : "")", viewDescription: element.debugAttributes)
 	}
 	
 	fileprivate func evaluate_after(startDate: Date, completionHandler: @escaping (Error?) -> Void) {
@@ -178,11 +187,20 @@ class ToBeVisibleExpectation : Expectation {
 			return
 		}
 		
-		dtx_assert(applyModifiers(evaluate(with: element), modifiers: modifiers), "Failed expectation: \(self.description)", viewDescription: element.debugAttributes)
+		var failureReason: String? = nil
+		var assertion: Bool = false
+		
+		do {
+			assertion = try evaluate(with: element)
+		} catch {
+			failureReason = error.localizedDescription
+		}
+		
+		dtx_assert(applyModifiers(assertion, modifiers: modifiers), "Failed expectation: \(self.description)\(failureReason != nil ? ", \(failureReason!)" : "")", viewDescription: element.debugAttributes)
 	}
 	
-	override func evaluate(with element: Element) -> Bool {
-		return element.isVisible
+	override func evaluate(with element: Element) throws -> Bool {
+		return try element.isVisible()
 	}
 }
 
