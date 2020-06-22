@@ -2,7 +2,9 @@
 
 source $(dirname "$0")/logger.sh
 
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 nvm install 14
+
 
 if [ ! -z ${REACT_NATIVE_VERSION} ]; then
   node scripts/change_react_native_version.js "detox/test" ${REACT_NATIVE_VERSION}
