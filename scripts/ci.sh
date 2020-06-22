@@ -2,8 +2,10 @@
 
 source $(dirname "$0")/logger.sh
 
+set -x
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 nvm install 14
+set +x
 
 
 if [ ! -z ${REACT_NATIVE_VERSION} ]; then
