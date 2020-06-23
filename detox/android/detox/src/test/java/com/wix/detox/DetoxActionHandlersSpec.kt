@@ -133,8 +133,8 @@ object DetoxActionHandlersSpec : Spek({
                 uut().handle(params, messageId)
 
                 verify(wsClient).sendAction(
-                        eq("testFailed"),
-                        argThat { size == 1 && this["details"] == "mockErrorParser($exception)\nCheck device logs for full details!\n" },
+                        eq("error"),
+                        argThat { size == 1 && this["error"] == "mockErrorParser(${exception})\nCheck device logs for full details!\n" },
                         eq(messageId))
             }
 
@@ -146,8 +146,9 @@ object DetoxActionHandlersSpec : Spek({
                 uut().handle(params, messageId)
 
                 verify(wsClient).sendAction(
-                        eq("error"),
-                        argThat { size == 1 && this["error"] == "mockErrorParser(${targetException})\nCheck device logs for full details!\n" },
+                        eq("testFailed"),
+                        argThat { size == 2 && this["details"] is String &&
+                                               this["viewHierarchy"] is String },
                         eq(messageId))
             }
         }
