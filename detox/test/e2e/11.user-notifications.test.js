@@ -48,6 +48,9 @@ describe(':android: User Notifications', () => {
       from: googleProjectId,
       userData: 'userDataValue',
       userDataArray: ['rock', 'paper', 'scissors'],
+      sub: {
+        objects: 'are supported as well'
+      },
       'google.sent_time': 1592133826891,
       'google.ttl': 2419200,
       'google.original_priority': 'high',
@@ -64,6 +67,7 @@ describe(':android: User Notifications', () => {
     await assertNotificationDataField('from', googleProjectId.toString());
     await assertNotificationDataField('userData', userNotification.payload.userData);
     await assertNotificationDataField('userDataArray', JSON.stringify(userNotification.payload.userDataArray));
+    await assertNotificationDataField('sub', JSON.stringify(userNotification.payload.sub));
   }
 
   async function assertNotificationData() {
