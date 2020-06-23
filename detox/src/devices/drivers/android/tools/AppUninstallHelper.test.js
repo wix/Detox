@@ -12,11 +12,11 @@ describe('Android app uninstall helper', () => {
   }
 
   beforeEach(() => {
-    const ADBMock = jest.genMockFromModule('./ADB');
+    const ADBMock = jest.genMockFromModule('../exec/ADB');
     adb = new ADBMock();
     adb.isPackageInstalled.mockResolvedValue(true);
 
-    jest.mock('./ADB', () => MockAdbClass);
+    jest.mock('../exec/ADB', () => MockAdbClass);
   });
 
   let uut;

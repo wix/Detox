@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const fs = require('fs');
 const Tail = require('tail').Tail;
-const { LaunchCommand } = require('../tools/EmulatorExec');
+const { LaunchCommand } = require('../exec/EmulatorExec');
 const unitLogger = require('../../../../utils/logger').child({ __filename });
 const retry = require('../../../../utils/retry');
 
