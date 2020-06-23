@@ -2,7 +2,7 @@
 // existing tests that check deep-link URLs. Combined with the fact that we do not yet
 // support complex args on iOS -- no point in testing it out.
 describe(':android: Launch arguments', () => {
-  async function assertLaunchArg(launchArgs, key, expectedValue) {
+  async function assertLaunchArg(key, expectedValue) {
     await expect(element(by.id(`launchArg-${key}.name`))).toBeVisible();
     await expect(element(by.id(`launchArg-${key}.value`))).toHaveText(expectedValue);
   }
@@ -21,9 +21,9 @@ describe(':android: Launch arguments', () => {
     await device.launchApp({newInstance: true, launchArgs});
 
     await element(by.text('Launch Args')).tap();
-    await assertLaunchArg(launchArgs, 'hello', 'world');
-    await assertLaunchArg(launchArgs, 'seekthe', 'true');
-    await assertLaunchArg(launchArgs, 'heisthe', '1');
+    await assertLaunchArg('hello', 'world');
+    await assertLaunchArg('seekthe', 'true');
+    await assertLaunchArg('heisthe', '1');
   });
 
   it('should handle complex args', async () => {
@@ -41,8 +41,8 @@ describe(':android: Launch arguments', () => {
 
     await element(by.text('Launch Args')).tap();
 
-    await assertLaunchArg(launchArgs, 'complex', JSON.stringify(launchArgs.complex));
-    await assertLaunchArg(launchArgs, 'complexlist', JSON.stringify(launchArgs.complexlist));
+    await assertLaunchArg('complex', JSON.stringify(launchArgs.complex));
+    await assertLaunchArg('complexlist', JSON.stringify(launchArgs.complexlist));
   });
 
   // Ref: https://developer.android.com/studio/test/command-line#AMOptionsSyntax
@@ -57,7 +57,7 @@ describe(':android: Launch arguments', () => {
     await device.launchApp({newInstance: true, launchArgs});
 
     await element(by.text('Launch Args')).tap();
-    await assertLaunchArg(launchArgs, 'hello', 'world');
+    await assertLaunchArg('hello', 'world');
     await assertNoLaunchArg('debug');
     await assertNoLaunchArg('log');
     await assertNoLaunchArg('size');

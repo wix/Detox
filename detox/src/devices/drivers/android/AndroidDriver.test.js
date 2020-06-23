@@ -2,6 +2,7 @@ describe('Android driver', () => {
 
   const deviceId = 'device-id-mock';
   const bundleId = 'bundle-id-mock';
+  const mockNotificationDataTargetPath = '/ondevice/path/to/notification.json';
 
   const mockGetAbsoluteBinaryPathImpl = (x) => `absolutePathOf(${x})`;
   const mockAPKPathGetTestApkPathImpl = (x) => `testApkPathOf(${x})`;
@@ -9,6 +10,12 @@ describe('Android driver', () => {
   class MockADBClass {
     constructor() {
       Object.assign(this, adb);
+    }
+  }
+
+  class MockTempFileXferClass {
+    constructor() {
+      Object.assign(this, fileXfer);
     }
   }
 
@@ -27,12 +34,18 @@ describe('Android driver', () => {
   }
   MockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK = 'Stacktrace mock';
 
+  class MockInvocationManagerClass {
+    constructor() {
+      Object.assign(this, invocationManager);
+    }
+  }
+
   let logger;
   let client;
   let getAbsoluteBinaryPath;
   let fs;
   let exec;
-  let adb;
+  let detoxApi;
   beforeEach(() => {
     jest.mock('fs', () => ({
       existsSync: jest.fn(),
@@ -80,13 +93,17 @@ describe('Android driver', () => {
       },
       waitUntilReady: jest.fn(),
     };
+
+    jest.mock('../../../android/espressoapi/Detox');
+    detoxApi = require('../../../android/espressoapi/Detox');
   });
 
+  let adb;
   beforeEach(() => {
-    const ADB = jest.genMockFromModule('./tools/ADB');
+    const ADB = jest.genMockFromModule('./exec/ADB');
     adb = new ADB();
     adb.adbBin = 'ADB binary mock';
-    adb.spawnInstrumentation = jest.fn().mockReturnValue({
+    adb.spawnInstrumentation.mockReturnValue({
       childProcess: {
         on: jest.fn(),
         stdout: {
@@ -95,7 +112,24 @@ describe('Android driver', () => {
         }
       }
     });
-    jest.mock('./tools/ADB', () => MockADBClass);
+    jest.mock('./exec/ADB', () => MockADBClass);
+  });
+
+  let fileXfer;
+  beforeEach(() => {
+    const TempFilesXfer = jest.genMockFromModule('./tools/TempFileXfer');
+    fileXfer = new TempFilesXfer();
+    fileXfer.send.mockResolvedValue(mockNotificationDataTargetPath)
+    jest.mock('./tools/TempFileXfer', () => MockTempFileXferClass);
+  });
+
+  let invocationManager;
+  beforeEach(() => {
+    const InvocationManager = jest.genMockFromModule('../../../invoke').InvocationManager;
+    invocationManager = new InvocationManager();
+    jest.mock('../../../invoke', () => ({
+      InvocationManager: MockInvocationManagerClass,
+    }))
   });
 
   let uut;
@@ -119,6 +153,193 @@ describe('Android driver', () => {
         expect.anything(),
       );
     });
+  });
+
+  describe('URL runtime delivery handling', () => {
+    const detoxURLOverride = 'schema://android-url';
+
+    const detoxApiInvocation = {
+      method: 'startActivityFromUrl-mocked'
+    };
+    const mockStartActivityInvokeApi = () => detoxApi.startActivityFromUrl.mockReturnValue(detoxApiInvocation);
+    const assertActivityStartInvoked = () => {
+      expect(invocationManager.execute).toHaveBeenCalledWith(detoxApiInvocation);
+      expect(detoxApi.startActivityFromUrl).toHaveBeenCalledWith(detoxURLOverride);
+    }
+    const assertActivityStartNotInvoked = () => expect(detoxApi.startActivityFromUrl).not.toHaveBeenCalled();
+
+    const assertInstrumentationSpawned = () => expect(adb.spawnInstrumentation).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.arrayContaining(['detoxURLOverride', detoxURLOverride]),
+      expect.anything(),
+    );
+    const resetInstrumentationMock = () => adb.spawnInstrumentation.mockReset();
+    const assertInstrumentationNotSpawned = () => expect(adb.spawnInstrumentation).not.toHaveBeenCalled();
+
+    describe('in app launch (with dedicated arg)', () => {
+      const args = {
+        detoxURLOverride,
+      };
+
+      it('should spawn instrumentation with the URL in a clean launch', async () => {
+        adb.getInstrumentationRunner.mockResolvedValue('mock test-runner');
+
+        await uut.launchApp(deviceId, bundleId, args, '');
+
+        assertInstrumentationSpawned();
+      });
+
+      it('should start the app with URL using invocation-manager', async () => {
+        mockStartActivityInvokeApi();
+
+        await uut.launchApp(deviceId, bundleId, {}, '');
+
+        resetInstrumentationMock();
+        await uut.launchApp(deviceId, bundleId, args, '');
+
+        assertActivityStartInvoked();
+        assertInstrumentationNotSpawned();
+      });
+    });
+
+    describe('via explicit payload-delivery call', () => {
+      const args = {
+        url: detoxURLOverride,
+      };
+      const argsDelayed = {
+        ...args,
+        delayPayload: true,
+      }
+
+      it('should start the app using invocation-manager', async () => {
+        mockStartActivityInvokeApi();
+
+        await uut.launchApp(deviceId, bundleId, {}, '')
+        await uut.deliverPayload(args, deviceId);
+
+        assertActivityStartInvoked();
+      });
+
+      it('should not start the app using invocation-manager', async () => {
+        mockStartActivityInvokeApi();
+
+        await uut.launchApp(deviceId, bundleId, {}, '')
+        await uut.deliverPayload(argsDelayed, deviceId);
+
+        assertActivityStartNotInvoked();
+      });
+    });
+
+  });
+
+  describe('Notification data handling', () => {
+    const notificationArgs = Object.freeze({
+      detoxUserNotificationDataURL: '/path/to/notif.data',
+    });
+
+    const detoxApiInvocation = {
+      method: 'startActivityFromNotification-mocked'
+    };
+    const mockStartActivityInvokeApi = () => detoxApi.startActivityFromNotification.mockReturnValue(detoxApiInvocation);
+    const assertActivityStartInvoked = () => {
+      expect(invocationManager.execute).toHaveBeenCalledWith(detoxApiInvocation);
+      expect(detoxApi.startActivityFromNotification).toHaveBeenCalledWith(mockNotificationDataTargetPath);
+    }
+    const assertActivityStartNotInvoked = () => {
+      expect(detoxApi.startActivityFromNotification).not.toHaveBeenCalled();
+    }
+    const resetInstrumentationMock = () => adb.spawnInstrumentation.mockReset();
+    const assertInstrumentationNotSpawned = () => expect(adb.spawnInstrumentation).not.toHaveBeenCalled();
+
+    describe('in app launch (with dedicated arg)', () => {
+      it('should prepare the device for receiving notification data file', async () => {
+        await uut.launchApp(deviceId, bundleId, notificationArgs, '');
+        expect(fileXfer.prepareDestinationDir).toHaveBeenCalledWith(deviceId);
+      });
+
+      it('should transfer the notification data file to the device', async () => {
+        await uut.launchApp(deviceId, bundleId, notificationArgs, '');
+        expect(fileXfer.send).toHaveBeenCalledWith(deviceId, notificationArgs.detoxUserNotificationDataURL, 'notification.json');
+      });
+
+      it('should not send the data if device prep fails', async () => {
+        fileXfer.prepareDestinationDir.mockRejectedValue(new Error())
+        try {
+          await uut.launchApp(deviceId, bundleId, notificationArgs, '');
+          fail('Expected an error');
+        } catch (e) {
+        }
+      });
+
+      it('should launch instrument with a modified notification data URL arg', async () => {
+        fileXfer.send.mockReturnValue(mockNotificationDataTargetPath);
+
+        await uut.launchApp(deviceId, bundleId, notificationArgs, '');
+
+        expect(adb.spawnInstrumentation).toHaveBeenCalledWith(
+          expect.anything(),
+          expect.arrayContaining(['detoxUserNotificationDataURL', mockNotificationDataTargetPath]),
+          undefined,
+        );
+      });
+    });
+
+    [
+      {
+        description: 'in 2nd app launch (i.e. when running)',
+        applyFn: () => uut.launchApp(deviceId, bundleId, notificationArgs, ''),
+      },
+      {
+        description: 'via explicit payload-delivery call',
+        applyFn: () => uut.deliverPayload(notificationArgs, deviceId),
+      },
+    ].forEach((spec) => {
+      describe(spec.description, () => {
+        beforeEach(async () => {
+          await uut.launchApp(deviceId, bundleId, {}, '')
+        });
+
+        it('should pre-transfer notification data to device', async () => {
+          resetInstrumentationMock();
+          await spec.applyFn();
+
+          expect(fileXfer.prepareDestinationDir).toHaveBeenCalledWith(deviceId);
+          expect(fileXfer.send).toHaveBeenCalledWith(deviceId, notificationArgs.detoxUserNotificationDataURL, 'notification.json');
+        });
+
+        it('should start the app with notification data using invocation-manager', async () => {
+          mockStartActivityInvokeApi();
+
+          resetInstrumentationMock();
+          await spec.applyFn();
+
+          assertActivityStartInvoked();
+          assertInstrumentationNotSpawned();
+        });
+      });
+    });
+
+    describe('via explicit payload-delivery call', () => {
+      const notificationArgsDelayed = {
+        ...notificationArgs,
+        delayPayload: true,
+      }
+
+      it('should not send notification data is payload send-out is set as delayed', async () => {
+        await uut.launchApp(deviceId, bundleId, {}, '')
+        await uut.deliverPayload(notificationArgsDelayed, deviceId);
+
+        expect(fileXfer.send).not.toHaveBeenCalled();
+      });
+
+      it('should not start the app using invocation-manager', async () => {
+        await uut.launchApp(deviceId, bundleId, {}, '')
+        await uut.deliverPayload(notificationArgsDelayed, deviceId);
+
+        assertActivityStartNotInvoked();
+      });
+    });
+
   });
 
   describe('Device ready-wait', () => {

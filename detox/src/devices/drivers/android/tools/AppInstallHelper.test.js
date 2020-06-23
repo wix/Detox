@@ -1,39 +1,32 @@
 const deviceId = 'mock-device-id';
-const deviceTempDir = '/mock-tmp-dir';
 const appBinaryPath = '/mock-app-binary-path/binary.apk';
 const testBinaryPath = '/mock-test-binary-path/test/binary.apk';
 
 describe('Android app installation helper', () => {
   let adb;
-  class MockAdbClass {
-    constructor() {
-      this.shell = (...args) => adb.shell(...args);
-      this.push = (...args) => adb.push(...args);
-      this.remoteInstall = (...args) => adb.remoteInstall(...args);
-    }
-  }
 
   beforeEach(() => {
-    const ADBMock = jest.genMockFromModule('./ADB');
+    const ADBMock = jest.genMockFromModule('../exec/ADB');
     adb = new ADBMock();
-    jest.mock('./ADB', () => MockAdbClass);
   });
 
+  let fileXfer;
   let uut;
   beforeEach(() => {
+    const TempFileXfer = jest.genMockFromModule('./TempFileXfer');
+    fileXfer = new TempFileXfer();
+
     const AppInstallHelper = require('./AppInstallHelper');
-    uut = new AppInstallHelper(adb, deviceTempDir);
+    uut = new AppInstallHelper(adb, fileXfer);
   });
 
-  it('should recreate a temp dir on the device', async () => {
+  it('should recreate the transient dir on the device', async () => {
     await uut.install(deviceId, appBinaryPath, testBinaryPath);
-
-    expect(adb.shell).toHaveBeenCalledWith(deviceId, `rm -fr ${deviceTempDir}`);
-    expect(adb.shell).toHaveBeenCalledWith(deviceId, `mkdir -p ${deviceTempDir}`);
+    expect(fileXfer.prepareDestinationDir).toHaveBeenCalledWith(deviceId);
   });
 
-  it('should throw if shell command fails', async () => {
-    adb.shell.mockRejectedValue(new Error('mocked error in adb-shell'));
+  it('should throw if transient dir prep fails', async () => {
+    fileXfer.prepareDestinationDir.mockRejectedValue(new Error('mocked error in adb-shell'));
 
     try {
       await uut.install(deviceId, appBinaryPath, testBinaryPath);
@@ -41,18 +34,18 @@ describe('Android app installation helper', () => {
     } catch (err) {}
   });
 
-  it('should push app-binary file to temp dir on device', async () => {
+  it('should push app-binary file to the device', async () => {
     await uut.install(deviceId, appBinaryPath, testBinaryPath);
-    expect(adb.push).toHaveBeenCalledWith(deviceId, appBinaryPath, '/mock-tmp-dir/Application.apk');
+    expect(fileXfer.send).toHaveBeenCalledWith(deviceId, appBinaryPath, 'Application.apk');
   });
 
-  it('should push test-binary file to temp dir on device', async () => {
+  it('should push test-binary file to the device', async () => {
     await uut.install(deviceId, appBinaryPath, testBinaryPath);
-    expect(adb.push).toHaveBeenCalledWith(deviceId, testBinaryPath, '/mock-tmp-dir/Test.apk');
+    expect(fileXfer.send).toHaveBeenCalledWith(deviceId, testBinaryPath, 'Test.apk');
   });
 
-  it('should fail if adb-push fails', async () => {
-    adb.push.mockRejectedValue(new Error('mocked error in adb-push'));
+  it('should fail if file push fails', async () => {
+    fileXfer.send.mockRejectedValue(new Error('mocked error in adb-push'));
 
     try {
       await uut.install(deviceId, appBinaryPath, testBinaryPath);
@@ -61,9 +54,13 @@ describe('Android app installation helper', () => {
   });
 
   it('should remote-install both binaries via shell', async () => {
+    fileXfer.send
+      .mockReturnValueOnce('/mocked-final-dir/first.apk')
+      .mockReturnValueOnce('/mocked-final-dir/second.apk');
+
     await uut.install(deviceId, appBinaryPath, testBinaryPath);
-    expect(adb.remoteInstall).toHaveBeenCalledWith(deviceId, '/mock-tmp-dir/Application.apk');
-    expect(adb.remoteInstall).toHaveBeenCalledWith(deviceId, '/mock-tmp-dir/Test.apk');
+    expect(adb.remoteInstall).toHaveBeenCalledWith(deviceId, '/mocked-final-dir/first.apk');
+    expect(adb.remoteInstall).toHaveBeenCalledWith(deviceId, '/mocked-final-dir/second.apk');
   });
 
   it('should fail if remote-install fails', async () => {
@@ -73,14 +70,5 @@ describe('Android app installation helper', () => {
       await uut.install(deviceId, appBinaryPath, testBinaryPath);
       fail('expected to throw');
     } catch(err) {}
-  });
-
-  it('should use a default temp-dir', async () => {
-    const AppInstallHelper = require('./AppInstallHelper');
-    uut = new AppInstallHelper(adb, undefined);
-
-    await uut.install(deviceId, appBinaryPath, testBinaryPath);
-
-    expect(adb.push).toHaveBeenCalledWith(deviceId, appBinaryPath, '/data/local/tmp/detox/Application.apk');
   });
 });

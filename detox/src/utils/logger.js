@@ -1,4 +1,5 @@
 const fs = require('fs-extra');
+const onExit = require('signal-exit');
 const path = require('path');
 const bunyan = require('bunyan');
 const bunyanDebugStream = require('bunyan-debug-stream');
@@ -24,9 +25,11 @@ function adaptLogLevelName(level) {
   }
 }
 
-function overrideConsoleLogger(logger) {
-  const log = logger.child({component: 'USER_LOG'});
-  customConsoleLogger.overrideAllLevels(log);
+function tryOverrideConsole(logger, global) {
+  if (argparse.getArgValue('use-custom-logger') === 'true') {
+    const userLogger = logger.child({ component: 'USER_LOG' });
+    customConsoleLogger.overrideConsoleMethods(global.console, userLogger);
+  }
 }
 
 function createPlainBunyanStream({ logPath, level }) {
@@ -39,6 +42,10 @@ function createPlainBunyanStream({ logPath, level }) {
     out: process.stderr,
     prefixers: {
       '__filename': (filename, { entry }) => {
+        if (entry.event === 'USER_LOG') {
+          return '';
+        }
+
         const suffix = entry.event ? `/${entry.event}` : '';
         return path.basename(filename) + suffix;
       },
@@ -88,6 +95,11 @@ function init() {
         logPath: plainFileStreamPath,
       }));
     }
+
+    onExit(() => {
+      try { fs.unlinkSync(jsonFileStreamPath); } catch (e) {}
+      try { fs.unlinkSync(plainFileStreamPath); } catch (e) {}
+    });
   }
 
   const logger = bunyan.createLogger({
@@ -103,9 +115,19 @@ function init() {
     logger.plainFileStreamPath = plainFileStreamPath;
   }
 
-  if (argparse.getArgValue('use-custom-logger') === 'true') {
-    overrideConsoleLogger(logger);
-  }
+  tryOverrideConsole(logger, global);
+
+  logger.reinitialize = (global) => {
+    if (jsonFileStreamPath) {
+      fs.ensureFileSync(jsonFileStreamPath);
+    }
+
+    if (plainFileStreamPath) {
+      fs.ensureFileSync(plainFileStreamPath);
+    }
+
+    tryOverrideConsole(logger, global);
+  };
 
   return logger;
 }

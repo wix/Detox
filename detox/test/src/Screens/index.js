@@ -18,6 +18,7 @@ import ShakeScreen from './ShakeScreen';
 import DatePickerScreen from './DatePickerScreen';
 import LanguageScreen from './LanguageScreen';
 import LaunchArgsScreen from './LaunchArgsScreen';
+import LaunchNotificationScreen from './LaunchNotificationScreen';
 import PickerViewScreen from './PickerViewScreen';
 import DeviceScreen from './DeviceScreen';
 
@@ -43,5 +44,6 @@ export {
   PickerViewScreen,
   LanguageScreen,
   LaunchArgsScreen,
+  LaunchNotificationScreen,
   DeviceScreen
 };

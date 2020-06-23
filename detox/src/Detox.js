@@ -17,6 +17,8 @@ const driverRegistry = require('./devices/DriverRegistry').default;
 const _initHandle = Symbol('_initHandle');
 const _assertNoPendingInit = Symbol('_assertNoPendingInit');
 
+const lifecycleSymbols = require('../runners/integration').lifecycle;
+
 class Detox {
   constructor(config) {
     log.trace(
@@ -26,6 +28,13 @@ class Detox {
     );
 
     this[_initHandle] = null;
+
+    for (const [key, symbol] of Object.entries(lifecycleSymbols)) {
+      this[symbol] = (...args) => this._artifactsManager[key](...args);
+    }
+
+    this[lifecycleSymbols.onTestStart] = this.beforeEach;
+    this[lifecycleSymbols.onTestDone] = this.afterEach;
 
     const {artifactsConfig, behaviorConfig, deviceConfig, sessionConfig} = config;
 
@@ -121,14 +130,6 @@ class Detox {
     });
   }
 
-  async suiteStart(suite) {
-    await this._artifactsManager.onSuiteStart(suite);
-  }
-
-  async suiteEnd(suite) {
-    await this._artifactsManager.onSuiteEnd(suite);
-  }
-
   async _doInit() {
     const behaviorConfig = this._behaviorConfig.init;
     const sessionConfig = this._sessionConfig;
@@ -158,7 +159,7 @@ class Detox {
     });
 
     if (behaviorConfig.exposeGlobals) {
-      Object.assign(global, {
+      Object.assign(Detox.global, {
         ...deviceDriver.matchers,
         device: this.device,
       });
@@ -267,5 +268,6 @@ class Detox {
 }
 
 Detox.none = new MissingDetox();
+Detox.global = global;
 
 module.exports = Detox;

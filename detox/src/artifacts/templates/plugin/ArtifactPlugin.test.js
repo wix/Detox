@@ -223,21 +223,39 @@ describe('ArtifactPlugin', () => {
       expect(plugin.context.testSummary).toBe(testSummary);
     });
 
+    it('should have .onHookFailure(), which remembers that there were failing tests ', async () => {
+      plugin.enabled = true;
+      plugin.keepOnlyFailedTestsArtifacts = true;
+
+      expect(plugin.shouldKeepArtifactOfSession()).toBe(undefined);
+      await plugin.onHookFailure({ error: new Error, hook: 'beforeEach' });
+      expect(plugin.shouldKeepArtifactOfSession()).toBe(true);
+    });
+
+    it('should have .onTestFnFailure(), which remembers that there were failing tests ', async () => {
+      plugin.enabled = true;
+      plugin.keepOnlyFailedTestsArtifacts = true;
+
+      expect(plugin.shouldKeepArtifactOfSession()).toBe(undefined);
+      await plugin.onTestFnFailure({ error: new Error });
+      expect(plugin.shouldKeepArtifactOfSession()).toBe(true);
+    });
+
     it('should have .onTestDone, which updates context.testSummary if called', async () => {
       const testSummary = testSummaries.failed();
       await plugin.onTestDone(testSummary);
       expect(plugin.context.testSummary).toBe(testSummary);
     });
 
-    it('should have .onSuiteStart, which updates context.suite if called', async () => {
+    it('should have .onRunDescribeStart, which updates context.suite if called', async () => {
       const suite = testSuite.mock();
-      await plugin.onSuiteStart(suite);
+      await plugin.onRunDescribeStart(suite);
       expect(plugin.context.suite).toBe(suite);
     });
 
-    it('should have .onSuiteEnd, which updates context.suite if called', async () => {
+    it('should have .onRunDescribeFinish, which updates context.suite if called', async () => {
       plugin.context.suite = testSuite.mock();
-      await plugin.onSuiteEnd();
+      await plugin.onRunDescribeFinish();
       expect(plugin.context.suite).toBe(null);
     });
 
@@ -266,10 +284,9 @@ describe('ArtifactPlugin', () => {
         expect(plugin.onTerminateApp).toBe(plugin.onTerminate);
         expect(plugin.onTestStart).toBe(plugin.onTerminate);
         expect(plugin.onTestDone).toBe(plugin.onTerminate);
-        expect(plugin.onSuiteStart).toBe(plugin.onTerminate);
-        expect(plugin.onSuiteEnd).toBe(plugin.onTerminate);
+        expect(plugin.onRunDescribeStart).toBe(plugin.onTerminate);
+        expect(plugin.onRunDescribeFinish).toBe(plugin.onTerminate);
         expect(plugin.onBeforeCleanup).toBe(plugin.onTerminate);
-        expect(plugin.onUserAction).toBe(plugin.onTerminate);
       });
 
       it('should not work after the first call', async () => {

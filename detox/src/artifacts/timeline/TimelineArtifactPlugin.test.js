@@ -101,7 +101,7 @@ describe('TimelineArtifactPlugin', () => {
     })
   });
 
-  describe('onSuiteStart', () => {
+  describe('onRunDescribeStart', () => {
     const deviceId = 'testDeviceId';
     const name = 'testSuiteName';
 
@@ -110,7 +110,7 @@ describe('TimelineArtifactPlugin', () => {
 
       const timelineArtifactPlugin = new TimelineArtifactPlugin(config);
       await timelineArtifactPlugin.onBootDevice({deviceId});
-      await timelineArtifactPlugin.onSuiteStart({name});
+      await timelineArtifactPlugin.onRunDescribeStart({name});
 
       expect(traceMock.beginEvent).toHaveBeenCalledWith(name, {deviceId});
     });
@@ -120,19 +120,19 @@ describe('TimelineArtifactPlugin', () => {
 
       const timelineArtifactPlugin = new TimelineArtifactPlugin(config);
       await timelineArtifactPlugin.onBootDevice({deviceId});
-      await timelineArtifactPlugin.onSuiteStart({name});
+      await timelineArtifactPlugin.onRunDescribeStart({name});
 
       expect(traceMock.beginEvent).not.toHaveBeenCalled();
     });
   });
 
-  describe('onSuiteEnd', () => {
+  describe('onRunDescribeFinish', () => {
     it('should finish trace event', async () => {
       const config = configMock();
       const name = 'testSuiteName';
 
       const timelineArtifactPlugin = new TimelineArtifactPlugin(config);
-      await timelineArtifactPlugin.onSuiteEnd({name});
+      await timelineArtifactPlugin.onRunDescribeFinish({name});
 
       expect(traceMock.finishEvent).toHaveBeenCalledWith(name);
     });

@@ -6,9 +6,10 @@ const logger = require('../../../utils/logger');
 const log = logger.child({ __filename });
 const invoke = require('../../../invoke');
 const InvocationManager = invoke.InvocationManager;
-const ADB = require('./tools/ADB');
-const AAPT = require('./tools/AAPT');
+const ADB = require('./exec/ADB');
+const AAPT = require('./exec/AAPT');
 const APKPath = require('./tools/APKPath');
+const TempFileXfer = require('./tools/TempFileXfer');
 const AppUninstallHelper = require('./tools/AppUninstallHelper');
 const DeviceDriverBase = require('../DeviceDriverBase');
 const DetoxApi = require('../../../android/espressoapi/Detox');
@@ -47,9 +48,8 @@ class AndroidDriver extends DeviceDriverBase {
 
     this.adb = new ADB();
     this.aapt = new AAPT();
+    this.fileXfer = new TempFileXfer(this.adb);
     this.devicePathBuilder = new AndroidDevicePathBuilder();
-
-    this.pendingUrl = undefined;
   }
 
   declareArtifactPlugins() {
@@ -85,17 +85,27 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async launchApp(deviceId, bundleId, launchArgs, languageAndLocale) {
+    let notificationPayloadTargetPath;
+
     await this.emitter.emit('beforeLaunchApp', { deviceId, bundleId, launchArgs });
+
+    if (launchArgs.detoxUserNotificationDataURL) {
+      notificationPayloadTargetPath = await this._sendNotificationDataToDevice(launchArgs.detoxUserNotificationDataURL, deviceId);
+      launchArgs = {
+        ...launchArgs,
+        detoxUserNotificationDataURL: notificationPayloadTargetPath,
+      }
+    }
 
     if (!this._isInstrumentationRunning()) {
       await this._launchInstrumentationProcess(deviceId, bundleId, launchArgs);
       await sleep(500);
+    } else if (launchArgs.detoxURLOverride) {
+      await this._startActivityWithUrl(launchArgs.detoxURLOverride);
+    } else if (launchArgs.detoxUserNotificationDataURL) {
+      await this._startActivityFromNotification(launchArgs.detoxUserNotificationDataURL);
     } else {
-      if (this.pendingUrl) {
-        await this._startActivityWithUrl(this._getAndClearPendingUrl());
-      } else {
-        await this._resumeMainActivity();
-      }
+      await this._resumeMainActivity();
     }
 
     let pid = NaN;
@@ -110,14 +120,18 @@ class AndroidDriver extends DeviceDriverBase {
     return pid;
   }
 
-  async deliverPayload(params) {
-    const {delayPayload, url} = params;
-
-    if (url) {
-      await (delayPayload ? this._setPendingUrl(url) : this._startActivityWithUrl(url));
+  async deliverPayload(params, deviceId) {
+    if (params.delayPayload) {
+      return;
     }
 
-    // Other payload content types are not yet supported.
+    const {url, detoxUserNotificationDataURL} = params;
+    if (url) {
+      await this._startActivityWithUrl(url);
+    } else if (detoxUserNotificationDataURL) {
+      const payloadPathOnDevice = await this._sendNotificationDataToDevice(detoxUserNotificationDataURL, deviceId);
+      await this._startActivityFromNotification(payloadPathOnDevice);
+    }
   }
 
   async waitUntilReady() {
@@ -302,18 +316,17 @@ class AndroidDriver extends DeviceDriverBase {
     return NaN;
   }
 
-  _setPendingUrl(url) {
-    this.pendingUrl = url;
-  }
-
-  _getAndClearPendingUrl() {
-    const pendingUrl = this.pendingUrl;
-    this.pendingUrl = undefined;
-    return pendingUrl;
+  async _sendNotificationDataToDevice(dataFileLocalPath, deviceId) {
+    await this.fileXfer.prepareDestinationDir(deviceId);
+    return await this.fileXfer.send(deviceId, dataFileLocalPath, 'notification.json');
   }
 
   _startActivityWithUrl(url) {
     return this.invocationManager.execute(DetoxApi.startActivityFromUrl(url));
+  }
+
+  _startActivityFromNotification(dataFilePath) {
+    return this.invocationManager.execute(DetoxApi.startActivityFromNotification(dataFilePath));
   }
 
   _resumeMainActivity() {

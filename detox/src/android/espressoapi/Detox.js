@@ -46,6 +46,18 @@ class Detox {
     };
   }
 
+  static startActivityFromNotification(dataFilePath) {
+    if (typeof dataFilePath !== "string") throw new Error("dataFilePath should be a string, but got " + (dataFilePath + (" (" + (typeof dataFilePath + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.Detox"
+      },
+      method: "startActivityFromNotification",
+      args: [dataFilePath]
+    };
+  }
+
   static extractInitialIntent() {
     return {
       target: {
@@ -57,40 +69,13 @@ class Detox {
     };
   }
 
-  static cleanIntent() {
+  static getAppContext() {
     return {
       target: {
         type: "Class",
         value: "com.wix.detox.Detox"
       },
-      method: "cleanIntent",
-      args: []
-    };
-  }
-
-  static intentWithUrl(url, initialLaunch) {
-    if (typeof url !== "string") throw new Error("url should be a string, but got " + (url + (" (" + (typeof url + ")"))));
-    if (typeof initialLaunch !== "boolean") throw new Error("initialLaunch should be a boolean, but got " + (initialLaunch + (" (" + (typeof initialLaunch + ")"))));
-    return {
-      target: {
-        type: "Class",
-        value: "com.wix.detox.Detox"
-      },
-      method: "intentWithUrl",
-      args: [url, {
-        type: "boolean",
-        value: initialLaunch
-      }]
-    };
-  }
-
-  static readLaunchArgs() {
-    return {
-      target: {
-        type: "Class",
-        value: "com.wix.detox.Detox"
-      },
-      method: "readLaunchArgs",
+      method: "getAppContext",
       args: []
     };
   }

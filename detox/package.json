@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "16.7.2",
+  "version": "16.9.1",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -31,14 +31,13 @@
   "devDependencies": {
     "eslint": "^4.11.0",
     "eslint-plugin-node": "^6.0.1",
-    "jest": "25.3.x",
+    "jest": "26.x.x",
     "mockdate": "^2.0.1",
     "prettier": "1.7.0",
     "react-native": "0.62.x",
     "wtfnode": "^0.8.0"
   },
   "dependencies": {
-    "@babel/core": "^7.4.5",
     "bunyan": "^1.8.12",
     "bunyan-debug-stream": "^1.1.0",
     "chalk": "^2.4.2",
@@ -53,6 +52,7 @@
     "proper-lockfile": "^3.0.2",
     "sanitize-filename": "^1.6.1",
     "shell-utils": "^1.0.9",
+    "signal-exit": "^3.0.3",
     "tail": "^2.0.0",
     "telnet-client": "1.2.8",
     "tempfile": "^2.0.0",

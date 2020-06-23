@@ -17,8 +17,8 @@ cp coverage/lcov.info ../../coverage/e2e-ios-ci.lcov
 run_f "npm run e2e:ios-timeout-ci"
 cp coverage/lcov.info ../../coverage/e2e-ios-timeout-ci.lcov
 
-run_f "npm run e2e:jest-circus-timeout:ios"
-cp coverage/lcov.info ../../coverage/e2e-jest-circus-timeout-ios.lcov
+run_f "npm run e2e:legacy-jasmine:ios-timeout-ci"
+cp coverage/lcov.info ../../coverage/e2e-legacy-jasmine-ios-timeout-ci.lcov
 
 # run_f "npm run verify-artifacts:ios"
 popd

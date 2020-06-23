@@ -1,4 +1,4 @@
-const { ListAVDsCommand } = require('../tools/EmulatorExec');
+const { ListAVDsCommand } = require('../exec/EmulatorExec');
 
 class AVDsResolver {
   constructor(emulatorExec) {

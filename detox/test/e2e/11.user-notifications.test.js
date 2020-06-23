@@ -1,5 +1,10 @@
 //Leo: I've disabled calendar events as they are exactly the same as push in the code. You may enable them for Android if needed, but set as ":android:".
 
+const {
+  userNotificationPushTrigger,
+  userNotificationCalendarTrigger,
+} = require('./utils/notifications');
+
 describe(':ios: User Notifications', () => {
   it('Init from push notification', async () => {
     await device.launchApp({newInstance: true, userNotification: userNotificationPushTrigger});
@@ -27,8 +32,8 @@ describe(':ios: User Notifications', () => {
 
   it('Foreground push notifications', async () => {
     await device.launchApp({newInstance: true});
-    await device.sendUserNotification(userNotificationCalendarTrigger);
-    await expect(element(by.text('From calendar'))).toBeVisible();
+    await device.sendUserNotification(userNotificationPushTrigger);
+    await expect(element(by.text('From push'))).toBeVisible();
   });
 
   xit('Foreground calendar notifications', async () => {
@@ -38,53 +43,59 @@ describe(':ios: User Notifications', () => {
   });
 });
 
-const userNotificationPushTrigger = {
-  "trigger": {
-    "type": "push"
-  },
-  "title": "From push",
-  "subtitle": "Subtitle",
-  "body": "Body",
-  "badge": 1,
-  "payload": {
-    "key1": "value1",
-    "key2": "value2"
-  },
-  "category": "com.example.category",
-  "content-available": 0,
-  "action-identifier": "default"
-};
-
-const userNotificationCalendarTrigger = {
-  "trigger": {
-    "type": "calendar",
-    "date-components": {
-      "era": 1,
-      "year": 2017,
-      "month": 1,
-      "day": 1,
-      "hour": 0,
-      "minute": 0,
-      "second": 0,
-      "weekday": 0,
-      "weekdayOrdinal": 0,
-      "quarter": 1,
-      "weekOfMonth": 1,
-      "weekOfYear": 1,
-      "leapMonth": false
+describe(':android: User Notifications', () => {
+  const googleProjectId = 284440699462;
+  const userNotification = {
+    payload: {
+      from: googleProjectId,
+      userData: 'userDataValue',
+      userDataArray: ['rock', 'paper', 'scissors'],
+      sub: {
+        objects: 'are supported as well'
+      },
+      'google.sent_time': 1592133826891,
+      'google.ttl': 2419200,
+      'google.original_priority': 'high',
+      'collapse_key': 'com.wix.detox.test',
     },
-    "repeats": true
-  },
-  "title": "From calendar",
-  "subtitle": "Subtitle",
-  "body": "From calendar",
-  "badge": 1,
-  "payload": {
-    "key1": "value1",
-    "key2": "value2"
-  },
-  "category": "com.example.category",
-  "user-text": "Hi there!",
-  "content-available": 0,
-  "action-identifier": "default"
-};
+  };
+
+  async function assertNotificationDataField(key, expectedValue) {
+    await expect(element(by.id(`notificationData-${key}.name`))).toBeVisible();
+    await expect(element(by.id(`notificationData-${key}.value`))).toHaveText(expectedValue);
+  }
+
+  async function assertNotificationDataExtensively() {
+    await assertNotificationDataField('from', googleProjectId.toString());
+    await assertNotificationDataField('userData', userNotification.payload.userData);
+    await assertNotificationDataField('userDataArray', JSON.stringify(userNotification.payload.userDataArray));
+    await assertNotificationDataField('sub', JSON.stringify(userNotification.payload.sub));
+  }
+
+  async function assertNotificationData() {
+    await assertNotificationDataField('userData', userNotification.payload.userData);
+  }
+
+  it('should launch app with data', async () => {
+    await device.launchApp({ newInstance: true, userNotification });
+    await element(by.text('Launch-Notification')).tap();
+    await assertNotificationDataExtensively();
+  });
+
+  it('should resume app with data', async () => {
+    await device.launchApp({ newInstance: true });
+    console.log('Sending app to background...');
+    await device.sendToHome();
+    console.log('Resuming app with user notification');
+    await device.launchApp({ newInstance: false, userNotification });
+    await element(by.text('Launch-Notification')).tap();
+    await assertNotificationData();
+  });
+
+  it('should apply notification using sendUserNotification() when app is running', async () => {
+    await device.launchApp({newInstance: true});
+    await device.sendUserNotification(userNotification);
+    await element(by.text('Launch-Notification')).tap();
+    await assertNotificationData();
+  });
+});

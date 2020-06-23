@@ -3,13 +3,16 @@ const funpermaproxy = require('funpermaproxy');
 const Detox = require('./Detox');
 const DetoxConstants = require('./DetoxConstants');
 const configuration = require('./configuration');
-const log = require('./utils/logger').child({ __filename });
+const logger = require('./utils/logger');
+const log = logger.child({ __filename });
 
 const _detox = Symbol('detox');
+const _shouldLogInitError = Symbol('shouldLogInitError');
 
 class DetoxExportWrapper {
   constructor() {
     this[_detox] = Detox.none;
+    this[_shouldLogInitError] = true;
 
     this.init = this.init.bind(this);
     this.cleanup = this.cleanup.bind(this);
@@ -32,6 +35,8 @@ class DetoxExportWrapper {
   async init(configOverride, userParams) {
     let configError, exposeGlobals, resolvedConfig;
 
+    logger.reinitialize(Detox.global);
+
     try {
       resolvedConfig = await configuration.composeDetoxConfig({
         override: configOverride,
@@ -46,7 +51,7 @@ class DetoxExportWrapper {
 
     try {
       if (exposeGlobals) {
-        Detox.none.initContext(global);
+        Detox.none.initContext(Detox.global);
       }
 
       if (configError) {
@@ -59,21 +64,21 @@ class DetoxExportWrapper {
 
       return this[_detox];
     } catch (err) {
-      Detox.none.setError(err);
+      if (this[_shouldLogInitError]) {
+        log.error({ event: 'DETOX_INIT_ERROR' }, '\n', err);
+      }
 
-      log.error({ event: 'DETOX_INIT_ERROR' }, '\n', err);
+      Detox.none.setError(err);
       throw err;
     }
   }
 
   async cleanup() {
-    try {
-      if (this[_detox] !== Detox.none) {
-        await this[_detox].cleanup();
-      }
-    } finally {
+    Detox.none.cleanupContext(Detox.global);
+
+    if (this[_detox] !== Detox.none) {
+      await this[_detox].cleanup();
       this[_detox] = Detox.none;
-      Detox.none.cleanupContext(global);
     }
   }
 
@@ -85,6 +90,18 @@ class DetoxExportWrapper {
 
   _defineProxy(name) {
     this[name] = funpermaproxy(() => this[_detox][name]);
+  }
+
+  /** Use for test runners with sandboxed global */
+  _setGlobal(global) {
+    Detox.global = global;
+    return this;
+  }
+
+  /** @internal */
+  _suppressLoggingInitErrors() {
+    this[_shouldLogInitError] = false;
+    return this;
   }
 }
 
