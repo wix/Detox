@@ -210,13 +210,13 @@ For full details, refer to [Android's security-config guide](https://developer.a
 
 
 
-### 6. Setup your test environment
+### 7. Setup your test environment
 
 Being able to execute tests requires a properly set-up computer. Walk through the [environment setup guide](Introduction.AndroidDevEnv.md) in order to employ the best practices and avoid common pitfalls when doing so.
 
 
 
-### 7. Run the tests
+### 8. Run the tests
 
 Using the `android.emu.debug` configuration from above, you can invoke it in the standard way:
 
