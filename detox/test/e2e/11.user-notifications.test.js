@@ -42,29 +42,58 @@ describe(':ios: User Notifications', () => {
 });
 
 describe(':android: User Notifications', () => {
-  async function assertNotificationData(key, expectedValue) {
+  const googleProjectId = 284440699462;
+  const userNotification = {
+    payload: {
+      from: googleProjectId,
+      userData: 'userDataValue',
+      userDataArray: ['rock', 'paper', 'scissors'],
+      sub: {
+        objects: 'are supported as well'
+      },
+      'google.sent_time': 1592133826891,
+      'google.ttl': 2419200,
+      'google.original_priority': 'high',
+      'collapse_key': 'com.wix.detox.test',
+    },
+  };
+
+  async function assertNotificationDataField(key, expectedValue) {
     await expect(element(by.id(`notificationData-${key}.name`))).toBeVisible();
     await expect(element(by.id(`notificationData-${key}.value`))).toHaveText(expectedValue);
   }
 
-  it('should launch app with extras', async () => {
-    const googleProjectId = 284440699462;
-    const userNotification = {
-      payload: {
-        from: googleProjectId,
-        userData: 'userDataValue',
-        userDataArray: ['rock', 'paper', 'scissors'],
-        'google.sent_time': 1592133826891,
-        'google.ttl': 2419200,
-        'google.original_priority': 'high',
-        'collapse_key': 'com.wix.reactnativenotifications.app',
-      },
-    };
+  async function assertNotificationDataExtensively() {
+    await assertNotificationDataField('from', googleProjectId.toString());
+    await assertNotificationDataField('userData', userNotification.payload.userData);
+    await assertNotificationDataField('userDataArray', JSON.stringify(userNotification.payload.userDataArray));
+    await assertNotificationDataField('sub', JSON.stringify(userNotification.payload.sub));
+  }
+
+  async function assertNotificationData() {
+    await assertNotificationDataField('userData', userNotification.payload.userData);
+  }
+
+  it('should launch app with data', async () => {
     await device.launchApp({ newInstance: true, userNotification });
     await element(by.text('Launch-Notification')).tap();
-    await expect(element(by.text('Launch-notification Data'))).toBeVisible();
-    await assertNotificationData('from', googleProjectId.toString());
-    await assertNotificationData('userData', userNotification.payload.userData);
-    await assertNotificationData('userDataArray', JSON.stringify(userNotification.payload.userDataArray));
+    await assertNotificationDataExtensively();
+  });
+
+  it('should resume app with data', async () => {
+    await device.launchApp({ newInstance: true });
+    console.log('Sending app to background...');
+    await device.sendToHome();
+    console.log('Resuming app with user notification');
+    await device.launchApp({ newInstance: false, userNotification });
+    await element(by.text('Launch-Notification')).tap();
+    await assertNotificationData();
+  });
+
+  it('should apply notification using sendUserNotification() when app is running', async () => {
+    await device.launchApp({newInstance: true});
+    await device.sendUserNotification(userNotification);
+    await element(by.text('Launch-Notification')).tap();
+    await assertNotificationData();
   });
 });

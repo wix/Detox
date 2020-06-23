@@ -46,6 +46,18 @@ class Detox {
     };
   }
 
+  static startActivityFromNotification(dataFilePath) {
+    if (typeof dataFilePath !== "string") throw new Error("dataFilePath should be a string, but got " + (dataFilePath + (" (" + (typeof dataFilePath + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.Detox"
+      },
+      method: "startActivityFromNotification",
+      args: [dataFilePath]
+    };
+  }
+
   static extractInitialIntent() {
     return {
       target: {
@@ -53,6 +65,17 @@ class Detox {
         value: "com.wix.detox.Detox"
       },
       method: "extractInitialIntent",
+      args: []
+    };
+  }
+
+  static getAppContext() {
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.Detox"
+      },
+      method: "getAppContext",
       args: []
     };
   }

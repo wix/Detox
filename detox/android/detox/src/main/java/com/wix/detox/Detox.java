@@ -110,8 +110,7 @@ public final class Detox {
      * @param activityTestRule the activityTestRule
      */
     public static void runTests(ActivityTestRule activityTestRule) {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext();
-        runTests(activityTestRule, appContext);
+        runTests(activityTestRule, getAppContext());
     }
 
     /**
@@ -122,8 +121,7 @@ public final class Detox {
      *                         the {@link IdlingPolicies} API.
      */
     public static void runTests(ActivityTestRule activityTestRule, DetoxIdlePolicyConfig idlePolicyConfig) {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext();
-        runTests(activityTestRule, appContext, idlePolicyConfig);
+        runTests(activityTestRule, getAppContext(), idlePolicyConfig);
     }
 
     /**
@@ -194,6 +192,12 @@ public final class Detox {
         launchActivitySync(sIntentsFactory.intentWithUrl(url, false));
     }
 
+    public static void startActivityFromNotification(String dataFilePath) {
+        Bundle notificationData = new NotificationDataParser(dataFilePath).parseNotificationData();
+        Intent intent = sIntentsFactory.intentWithNotificationData(getAppContext(), notificationData, false);
+        launchActivitySync(intent);
+    }
+
     private static Intent extractInitialIntent() {
         Intent intent;
 
@@ -201,7 +205,7 @@ public final class Detox {
             intent = sIntentsFactory.intentWithUrl(sLaunchArgs.getUrlOverride(), true);
         } else if (sLaunchArgs.hasNotificationPath()) {
             Bundle notificationData = new NotificationDataParser(sLaunchArgs.getNotificationPath()).parseNotificationData();
-            intent = sIntentsFactory.intentWithNotificationData(notificationData, true);
+            intent = sIntentsFactory.intentWithNotificationData(getAppContext(), notificationData, true);
         } else {
             intent = sIntentsFactory.cleanIntent();
         }
@@ -230,5 +234,9 @@ public final class Detox {
         activity.startActivity(intent);
         instrumentation.addMonitor(activityMonitor);
         instrumentation.waitForMonitorWithTimeout(activityMonitor, ACTIVITY_LAUNCH_TIMEOUT);
+    }
+
+    private static Context getAppContext() {
+        return InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext();
     }
 }

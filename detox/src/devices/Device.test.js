@@ -573,7 +573,7 @@ describe('Device', () => {
     const device = validDevice();
     await device.openURL({url: 'url'});
 
-    expect(driverMock.driver.deliverPayload).toHaveBeenCalledWith({url: 'url'});
+    expect(driverMock.driver.deliverPayload).toHaveBeenCalledWith({url: 'url'}, device._deviceId);
   });
 
   it(`openURL(notAnObject) should pass to device driver`, async () => {
