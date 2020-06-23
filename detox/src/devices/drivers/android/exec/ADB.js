@@ -2,7 +2,7 @@ const _ = require('lodash');
 const {execWithRetriesAndLogs, spawnAndLog} = require('../../../../utils/exec');
 const {escape} = require('../../../../utils/pipeCommands');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
-const EmulatorTelnet = require('./EmulatorTelnet');
+const EmulatorTelnet = require('../tools/EmulatorTelnet');
 const {getAdbPath} = require('../../../../utils/environment');
 const {encodeBase64} = require('../../../../utils/encoding');
 

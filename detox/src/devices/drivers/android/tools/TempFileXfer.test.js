@@ -2,7 +2,7 @@ describe('Temp file transfer', () => {
   let adb;
   let uut;
   beforeEach(() => {
-    const ADB = jest.genMockFromModule('./ADB');
+    const ADB = jest.genMockFromModule('../exec/ADB');
     adb = new ADB();
 
     const TempFileXfer = require('./TempFileXfer');

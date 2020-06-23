@@ -6,7 +6,7 @@ describe('File-transfer util', () => {
   let uut;
 
   beforeEach(() => {
-    const ADBMock = jest.genMockFromModule('./ADB');
+    const ADBMock = jest.genMockFromModule('../exec/ADB');
     adb = new ADBMock();
 
     const FileXfer = require('./FileXfer');

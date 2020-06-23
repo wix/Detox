@@ -100,7 +100,7 @@ describe('Android driver', () => {
 
   let adb;
   beforeEach(() => {
-    const ADB = jest.genMockFromModule('./tools/ADB');
+    const ADB = jest.genMockFromModule('./exec/ADB');
     adb = new ADB();
     adb.adbBin = 'ADB binary mock';
     adb.spawnInstrumentation.mockReturnValue({
@@ -112,7 +112,7 @@ describe('Android driver', () => {
         }
       }
     });
-    jest.mock('./tools/ADB', () => MockADBClass);
+    jest.mock('./exec/ADB', () => MockADBClass);
   });
 
   let fileXfer;

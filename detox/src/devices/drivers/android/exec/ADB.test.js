@@ -28,7 +28,7 @@ describe('ADB', () => {
         this.avdName = mockEmulatorTelnet.avdName;
       }
     }
-    jest.mock('./EmulatorTelnet', () => MockEmulatorTelnet);
+    jest.mock('../tools/EmulatorTelnet', () => MockEmulatorTelnet);
 
     jest.mock('../../../../utils/exec', () => ({
       execWithRetriesAndLogs: jest.fn().mockReturnValue({ stdout: '' }),
