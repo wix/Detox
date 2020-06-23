@@ -73,7 +73,6 @@ describe(':android: User Notifications', () => {
   it('should launch app with data', async () => {
     await device.launchApp({ newInstance: true, userNotification });
     await element(by.text('Launch-Notification')).tap();
-    await expect(element(by.text('Launch-notification Data'))).toBeVisible();
     await assertNotificationDataExtensively();
   });
 
@@ -87,18 +86,8 @@ describe(':android: User Notifications', () => {
     await assertNotificationData();
   });
 
-  it('should apply notification using sendUserNotification() when in foreground', async () => {
+  it('should apply notification using sendUserNotification() when app is running', async () => {
     await device.launchApp({newInstance: true});
-    await device.sendUserNotification(userNotification);
-    await element(by.text('Launch-Notification')).tap();
-    await assertNotificationData();
-  });
-
-  it('should apply notification using sendUserNotification() when in background', async () => {
-    await device.launchApp({newInstance: true});
-    console.log('Sending app to background...');
-    await device.sendToHome();
-    console.log('Sending notification data...');
     await device.sendUserNotification(userNotification);
     await element(by.text('Launch-Notification')).tap();
     await assertNotificationData();
