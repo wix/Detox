@@ -12,15 +12,13 @@ await device.launchApp({newInstance: true, url: url, sourceApp: bundleId}); //so
 
 ```js
 describe('launch app from URL', () => {
-    before(async () => {
+    it('should handle URL successfully', async () => {
       await device.launchApp({
         newInstance: true,
         url: 'scheme://some.url',
         sourceApp: 'com.apple.mobilesafari'
       });
-    });
 
-    it('should tap successfully', async () => {
       await expect(element(by.text('a label'))).toBeVisible();
     });
   });

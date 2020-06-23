@@ -17,7 +17,7 @@
 - [`device.uninstallApp()`](#deviceuninstallapp)
 - [`device.openURL(url)`](#deviceopenurlurl-sourceappoptional)
 - [`device.sendUserNotification(params)`](#devicesendusernotificationparams)
-- [`device.sendUserActivity(params)`](#devicesenduseractivityparams)
+- [`device.sendUserActivity(params)` **iOS Only**](#devicesenduseractivityparams)
 - [`device.setOrientation(orientation)`](#devicesetorientationorientation)
 - [`device.setLocation(lat, lon)`](#devicesetlocationlat-lon)
 - [`device.setURLBlacklist([urls])`](#deviceseturlblacklisturls)
@@ -60,7 +60,7 @@ Launch the app defined in the current [`configuration`](APIRef.Configuration.md)
 
 ##### 1. Restart the app
 Terminate the app and launch it again. 
-If set to `false`, the simulator will try to bring app from background, if the app isn't running, it will launch a new instance. default is `false`
+If set to `false`, the device will try to resume the app (e.g. bring from foreground to background), or, if the app isn't running, **it will launch a new instance** nonetheless. default is `false`.
 
 ```js
 await device.launchApp({newInstance: true});
@@ -87,18 +87,16 @@ await device.launchApp({url: url, newInstance: true});
 ```
 This will launch a new instance of the app and handle the deep link.
 
-######  Mock opening from a URL when app is in background
+######  Mock opening from a URL when app is already running
 
 ```js
 await device.launchApp({url: url, newInstance: false});
 ```
-This will launch the app from background and handle the deep link.
+This will launch or resume the app and handle the the deep-link. Go back to section 1 to read about the full effect of the `newInstance` argument.
 
 Read more in [Mocking Open From URL](APIRef.MockingOpenFromURL.md) section.
 
 ##### 4. Launch with user notifications
-
-> Currently only supported on iOS!
 
 ```js
 await device.launchApp({userNotification: notification});
@@ -110,18 +108,18 @@ await device.launchApp({userNotification: notification, newInstance: true});
 ```
 This will launch a new instance of the app and handle the notification.
 
-######  Mock receiving a notifications when app is in background
+######  Mock receiving a notifications when app is already running
 
 ```js
 await device.launchApp({userNotification: notification, newInstance: false});
 ```
-This will launch the app from background and handle the notification.
+This will launch or resume the app and handle the notification. Go back to section 1 to read about the full effect of the `newInstance` argument.
 
 Read more in [Mocking User Notifications](APIRef.MockingUserNotifications.md) section.
 
 ##### 5. Launch with user activity
 
-> Currently only supported on iOS!
+> iOS-only
 
 ```js
 await device.launchApp({userActivity: activity});
@@ -273,16 +271,19 @@ await device.uninstallApp('other.bundle.id');
 ```
 
 ### `device.openURL({url, sourceApp[optional]})`
-Mock opening the app from URL. `sourceApp` is an optional parameter to specify source application bundle id.
+Mock opening the app from URL. `sourceApp` is an optional **iOS-only** parameter to specify source application bundle id.
 Read more in [Mocking Open From URL](APIRef.MockingOpenFromURL.md) section.
 Check out Detox's [own test suite](../detox/test/e2e/15.urls.test.js)
 
 ### `device.sendUserNotification(params)`
-Mock handling of received user notification when app is in foreground.
+Mock handling of a user notification previously received in the system, while the app is already running.
 Read more in [Mocking User Notifications](APIRef.MockingUserNotifications.md) section.
 Check out Detox's [own test suite](../detox/test/e2e/11.user-notifications.test.js)
 
 ### `device.sendUserActivity(params)`
+
+> iOS-only API
+
 Mock handling of received user activity when app is in foreground.
 Read more in [Mocking User Activity](APIRef.MockingUserActivity.md) section.
 Check out Detox's [own test suite](../detox/test/e2e/18.user-activities.test.js)
