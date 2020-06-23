@@ -77,6 +77,21 @@ describe(':android: User Notifications', () => {
     await assertNotificationDataExtensively();
   });
 
+  const sleep = require('../../src/utils/sleep');
+  it.only('asdasd', async () => {
+    await device.launchApp({ newInstance: true });
+    await element(by.text('Launch-Notification')).tap();
+    await device.launchApp({ newInstance: false });
+    await sleep(3000);
+    // console.log('Sending app to background...');
+    // await device.sendToHome();
+    // await sleep(1000);
+    // console.log('launchApp one last time')
+    // await device.launchApp({ newInstance: false });
+    // await sleep(3000);
+    await device.terminateApp();
+  });
+
   it('should resume app with data', async () => {
     await device.launchApp({ newInstance: true });
     console.log('Sending app to background...');

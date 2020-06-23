@@ -149,6 +149,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
   /** @protected */
   async initDetox() {
     return this.detox.init();
+    return this.detox.init(undefined, {launchApp: false});
   }
 
   /** @protected */

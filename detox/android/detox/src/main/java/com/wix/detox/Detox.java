@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
@@ -157,7 +159,8 @@ public final class Detox {
         sActivityTestRule = activityTestRule;
 
         Intent intent = extractInitialIntent();
-        sActivityTestRule.launchActivity(intent);
+//        sActivityTestRule.launchActivity(intent);
+        launchActivitySync(intent);
 
         // Kicks off another thread and attaches a Looper to that.
         // The goal is to keep the test thread intact,
@@ -184,8 +187,14 @@ public final class Detox {
     }
 
     public static void launchMainActivity() {
-        final Activity activity = sActivityTestRule.getActivity();
-        launchActivitySync(sIntentsFactory.activityLaunchIntent(activity));
+//        final Activity activity = sActivityTestRule.getActivity();
+//        launchActivitySync(sIntentsFactory.activityLaunchIntent(activity));
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        intent.setPackage(getAppContext().getPackageName());
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        launchActivitySync(intent);
     }
 
     public static void startActivityFromUrl(String url) {
@@ -207,7 +216,12 @@ public final class Detox {
             Bundle notificationData = new NotificationDataParser(sLaunchArgs.getNotificationPath()).parseNotificationData();
             intent = sIntentsFactory.intentWithNotificationData(getAppContext(), notificationData, true);
         } else {
-            intent = sIntentsFactory.cleanIntent();
+//            intent = sIntentsFactory.cleanIntent();
+intent = new Intent(Intent.ACTION_MAIN);
+intent.addCategory(Intent.CATEGORY_LAUNCHER);
+intent.setPackage(getAppContext().getPackageName());
+intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
         intent.putExtra(INTENT_LAUNCH_ARGS_KEY, sLaunchArgs.asIntentBundle());
         return intent;
@@ -227,11 +241,15 @@ public final class Detox {
         // 2. Set up an activity monitor by ourselves -- such that it would block until the activity is ready.
         // ^ Hence the code below.
 
-        final Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
-        final Activity activity = sActivityTestRule.getActivity();
-        final Instrumentation.ActivityMonitor activityMonitor = new Instrumentation.ActivityMonitor(activity.getClass().getName(), null, true);
+        Context appContext = getAppContext();
+        ResolveInfo resolveInfo = getAppContext().getPackageManager().resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        String activityName = resolveInfo.activityInfo.name;
 
-        activity.startActivity(intent);
+        final Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
+        final Instrumentation.ActivityMonitor activityMonitor = new Instrumentation.ActivityMonitor(activityName, null, true);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        appContext.startActivity(intent);
         instrumentation.addMonitor(activityMonitor);
         instrumentation.waitForMonitorWithTimeout(activityMonitor, ACTIVITY_LAUNCH_TIMEOUT);
     }
