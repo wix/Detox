@@ -5,28 +5,27 @@ You can mock opening the app from URL to test your app's deep link handling mech
 ## Mocking App Launch with a URL
 
 ```js
-await device.launchApp({newInstance: true, url: url, sourceApp: bundleId}); //sourceApp is optional
+await device.launchApp({newInstance: true, url, sourceApp: bundleId}); // sourceApp is an optional iOS-only argument
 ```
 
 #### Example
 
 ```js
 describe('launch app from URL', () => {
-    before(async () => {
+    it('should handle URL successfully', async () => {
       await device.launchApp({
         newInstance: true,
         url: 'scheme://some.url',
         sourceApp: 'com.apple.mobilesafari'
       });
-    });
-
-    it('should tap successfully', async () => {
       await expect(element(by.text('a label'))).toBeVisible();
     });
   });
 ```
 
 ## Mocking Opening with a URL on a Launched App
+
+> iOS-only
 
 ```js
 await device.openURL({url: 'scheme://some.url', sourceApp: 'com.apple.mobilesafari'});
