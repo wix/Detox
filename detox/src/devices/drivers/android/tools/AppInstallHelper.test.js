@@ -6,7 +6,7 @@ describe('Android app installation helper', () => {
   let adb;
 
   beforeEach(() => {
-    const ADBMock = jest.genMockFromModule('./ADB');
+    const ADBMock = jest.genMockFromModule('../exec/ADB');
     adb = new ADBMock();
   });
 
