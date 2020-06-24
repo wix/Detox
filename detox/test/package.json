@@ -11,17 +11,10 @@
     "start": "react-native start",
     "packager": "react-native start",
     "detox-server": "detox run-server",
-<<<<<<< HEAD
-    "e2e:ios": "detox test --configuration ios.sim.release --debug-synchronization",
-    "e2e:jest-circus:ios": "detox test --configuration ios.sim.release --debug-synchronization -o e2e/config-circus.js",
-    "e2e:jest-circus-timeout:ios": "node scripts/assert_timeout.js npm run e2e:jest-circus:ios -- --take-screenshots failing e2e/26.timeout.test.js",
-    "e2e:ios-ci": "detox test --configuration ios.sim.release --workers 3 --loglevel verbose --debug-synchronization --take-screenshots all --record-logs all --record-timeline all -- --coverage",
-=======
     "e2e:ios": "detox test -c ios.sim.release --debug-synchronization",
     "e2e:android": "detox test -c android.emu.release",
     "e2e:android-debug": "detox test -c android.emu.debug",
     "e2e:ios-ci": "npm run e2e:ios -- --workers 3 -- --coverage",
->>>>>>> master
     "e2e:ios-timeout-ci": "node scripts/assert_timeout.js npm run e2e:ios-ci -- e2e/26.timeout.test.js",
     "e2e:android-ci": "npm run e2e:android -- --workers 3 --headless --loglevel verbose --jest-report-specs -- --coverage",
     "e2e:android-timeout-ci": "node scripts/assert_timeout.js npm run e2e:android-ci -- e2e/26.timeout.test.js",
