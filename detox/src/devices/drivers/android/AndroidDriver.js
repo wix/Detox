@@ -2,7 +2,6 @@ const fs = require('fs');
 const URL = require('url').URL;
 const _ = require('lodash');
 const DeviceDriverBase = require('../DeviceDriverBase');
-const { encodeBase64 } = require('../../../utils/encoding');
 const logger = require('../../../utils/logger');
 const log = logger.child({ __filename });
 const invoke = require('../../../invoke');
