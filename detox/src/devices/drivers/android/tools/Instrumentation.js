@@ -1,14 +1,16 @@
+const _ = require('lodash');
 const { interruptProcess } = require('../../../../utils/exec');
 const { prepareInstrumentationArgs } = require('./instrumentationArgs');
 
 class Instrumentation {
-  constructor(adb, logger, userTerminationFn, userLogListenFn) {
+  constructor(adb, logger, userTerminationFn = _.noop, userLogListenFn = _.noop) {
     this.adb = adb;
     this.logger = logger;
     this.userTerminationFn = userTerminationFn;
     this.userLogListenFn = userLogListenFn;
     this.instrumentationProcess = null;
     this._onTerminated = this._onTerminated.bind(this);
+    this._onLogData = this._onLogData.bind(this);
   }
 
   async launch(deviceId, bundleId, userLaunchArgs) {
@@ -18,7 +20,7 @@ class Instrumentation {
 
     this.instrumentationProcess = this.adb.spawnInstrumentation(deviceId, spawnArgs, testRunner);
     this.instrumentationProcess.childProcess.stdout.setEncoding('utf8');
-    this.instrumentationProcess.childProcess.stdout.on('data', this.userLogListenFn);
+    this.instrumentationProcess.childProcess.stdout.on('data', this._onLogData);
     this.instrumentationProcess.childProcess.on('close', this._onTerminated);
   }
 
@@ -30,12 +32,24 @@ class Instrumentation {
     return !!this.instrumentationProcess;
   }
 
+  setTerminationFn(userTerminationFn) {
+    this.userTerminationFn = userTerminationFn || _.noop;
+  }
+
+  setLogListenFn(userLogListenFn) {
+    this.userLogListenFn = userLogListenFn || _.noop;
+  }
+
   _getSpawnArgs(userLaunchArgs) {
     const launchArgs = prepareInstrumentationArgs(userLaunchArgs);
     const additionalLaunchArgs = prepareInstrumentationArgs({ debug: false });
     this._warnReservedArgsUsedIfNeeded(launchArgs);
 
     return [...launchArgs.args, ...additionalLaunchArgs.args];
+  }
+
+  async _onLogData(data) {
+    await this.userLogListenFn(data);
   }
 
   async _onTerminated() {
