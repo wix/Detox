@@ -46,6 +46,7 @@ describe('Android driver', () => {
   let fs;
   let exec;
   let detoxApi;
+  let instrumentationArgs;
   beforeEach(() => {
     jest.mock('fs', () => ({
       existsSync: jest.fn(),
@@ -96,6 +97,10 @@ describe('Android driver', () => {
 
     jest.mock('../../../android/espressoapi/Detox');
     detoxApi = require('../../../android/espressoapi/Detox');
+
+    jest.mock('./tools/instrumentationArgs');
+    instrumentationArgs = require('./tools/instrumentationArgs');
+    instrumentationArgs.prepareInstrumentationArgs.mockReturnValue({args: [], usedReservedArgs: []});
   });
 
   let adb;
@@ -168,11 +173,8 @@ describe('Android driver', () => {
     }
     const assertActivityStartNotInvoked = () => expect(detoxApi.startActivityFromUrl).not.toHaveBeenCalled();
 
-    const assertInstrumentationSpawned = () => expect(adb.spawnInstrumentation).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.arrayContaining(['detoxURLOverride', detoxURLOverride]),
-      expect.anything(),
-    );
+    const assertArgumentsPreparationWith = (args) => expect(instrumentationArgs.prepareInstrumentationArgs).toHaveBeenCalledWith(args);
+    const assertInstrumentationSpawned = () => expect(adb.spawnInstrumentation).toHaveBeenCalled();
     const resetInstrumentationMock = () => adb.spawnInstrumentation.mockReset();
     const assertInstrumentationNotSpawned = () => expect(adb.spawnInstrumentation).not.toHaveBeenCalled();
 
@@ -186,10 +188,11 @@ describe('Android driver', () => {
 
         await uut.launchApp(deviceId, bundleId, args, '');
 
+        assertArgumentsPreparationWith(args);
         assertInstrumentationSpawned();
       });
 
-      it('should start the app with URL using invocation-manager', async () => {
+      it('should start the app with URL via invocation-manager', async () => {
         mockStartActivityInvokeApi();
 
         await uut.launchApp(deviceId, bundleId, {}, '');
@@ -211,7 +214,7 @@ describe('Android driver', () => {
         delayPayload: true,
       }
 
-      it('should start the app using invocation-manager', async () => {
+      it('should start the app via invocation-manager', async () => {
         mockStartActivityInvokeApi();
 
         await uut.launchApp(deviceId, bundleId, {}, '')
@@ -220,7 +223,7 @@ describe('Android driver', () => {
         assertActivityStartInvoked();
       });
 
-      it('should not start the app using invocation-manager', async () => {
+      it('should not start the app via invocation-manager', async () => {
         mockStartActivityInvokeApi();
 
         await uut.launchApp(deviceId, bundleId, {}, '')
@@ -248,7 +251,10 @@ describe('Android driver', () => {
     const assertActivityStartNotInvoked = () => {
       expect(detoxApi.startActivityFromNotification).not.toHaveBeenCalled();
     }
+
+    const assertArgumentsPreparationWith = (args) => expect(instrumentationArgs.prepareInstrumentationArgs).toHaveBeenCalledWith(args);
     const resetInstrumentationMock = () => adb.spawnInstrumentation.mockReset();
+    const assertInstrumentationSpawned = () => expect(adb.spawnInstrumentation).toHaveBeenCalled();
     const assertInstrumentationNotSpawned = () => expect(adb.spawnInstrumentation).not.toHaveBeenCalled();
 
     describe('in app launch (with dedicated arg)', () => {
@@ -271,16 +277,13 @@ describe('Android driver', () => {
         }
       });
 
-      it('should launch instrument with a modified notification data URL arg', async () => {
+      it('should launch instrumentation with a modified notification data URL arg', async () => {
         fileXfer.send.mockReturnValue(mockNotificationDataTargetPath);
 
         await uut.launchApp(deviceId, bundleId, notificationArgs, '');
 
-        expect(adb.spawnInstrumentation).toHaveBeenCalledWith(
-          expect.anything(),
-          expect.arrayContaining(['detoxUserNotificationDataURL', mockNotificationDataTargetPath]),
-          undefined,
-        );
+        assertArgumentsPreparationWith({ detoxUserNotificationDataURL: mockNotificationDataTargetPath });
+        assertInstrumentationSpawned();
       });
     });
 
@@ -389,96 +392,56 @@ describe('Android driver', () => {
   });
 
   describe('Launch args', () => {
-    const expectSpawnedFlag = (spawnedFlags) => ({
-      startingIndex: (index) => ({
-        toBe: ({key, value}) => {
-          expect(spawnedFlags[index]).toEqual('-e');
-          expect(spawnedFlags[index + 1]).toEqual(key);
-          expect(spawnedFlags[index + 2]).toEqual(value);
-          return index + 3;
-        }
-      }),
-    });
+    it('should prepare user launch args', async () => {
+      instrumentationArgs.prepareInstrumentationArgs.mockReturnValue({args: [], usedReservedArgs: []});
 
-    it('should base64-encode and stringify arg values', async () => {
       const launchArgs = {
-        'object-arg': {
-          such: 'wow',
-          much: 'amaze',
-          very: 111,
-        },
-        'string-arg': 'text, with commas-and-dashes,',
+        anArg: 'aValue',
       };
-
       await uut.launchApp(deviceId, bundleId, launchArgs, '');
 
-      const spawnArgs = adb.spawnInstrumentation.mock.calls[0];
-      const spawnedFlags = spawnArgs[1];
-
-      let index = 0;
-      index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({
-        key: 'object-arg',
-        value: 'base64({"such":"wow","much":"amaze","very":111})'
-      });
-      expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({
-        key: 'string-arg',
-        value: 'base64(text, with commas-and-dashes,)'
-      });
+      expect(instrumentationArgs.prepareInstrumentationArgs).toHaveBeenCalledWith(launchArgs);
     });
 
-    // Ref: https://developer.android.com/studio/test/command-line#AMOptionsSyntax
-    it('should whitelist reserved instrumentation args with respect to base64 encoding', async () => {
-      const launchArgs = {
-        // Free arg
-        'user-arg': 'merry christ-nukah',
-
-        // Reserved instrumentation args
-        'class': 'class-value',
-        'package': 'package-value',
-        'func': 'func-value',
-        'unit': 'unit-value',
-        'size': 'size-value',
-        'perf': 'perf-value',
-        'debug': 'debug-value',
-        'log': 'log-value',
-        'emma': 'emma-value',
-        'coverageFile': 'coverageFile-value',
-      };
-
-      await uut.launchApp(deviceId, bundleId, launchArgs, '');
-
-      const spawnArgs = adb.spawnInstrumentation.mock.calls[0];
-      const spawnedFlags = spawnArgs[1];
-
-      let index = 3;
-      index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'class', value: 'class-value' });
-      index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'package', value: 'package-value' });
-      index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'func', value: 'func-value' });
-      index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'unit', value: 'unit-value' });
-      index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'size', value: 'size-value' });
-      index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'perf', value: 'perf-value' });
-      index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'debug', value: 'debug-value' });
-      index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'log', value: 'log-value' });
-      index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'emma', value: 'emma-value' });
-      expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'coverageFile', value: 'coverageFile-value' });
+    it('should prepare forced debug=false arg', async () => {
+      instrumentationArgs.prepareInstrumentationArgs.mockReturnValue({args: [], usedReservedArgs: []});
+      await uut.launchApp(deviceId, bundleId, {}, '');
+      expect(instrumentationArgs.prepareInstrumentationArgs).toHaveBeenCalledWith({ debug: false });
     });
 
-    it('should log reserved instrumentation args usage warning, if such have been used', async () => {
-      const launchArgs = {
-        'class': 'class-value',
-      };
+    it('should spawn instrumentation with prepared arguments', async () => {
+      const mockedPreparedUserArgs = ['mocked', 'prepared-args'];
+      const mockedPreparedDebugArg = ['debug', 'mocked'];
+      instrumentationArgs.prepareInstrumentationArgs
+        .mockReturnValueOnce({ args: mockedPreparedUserArgs, usedReservedArgs: [] })
+        .mockReturnValueOnce({ args: mockedPreparedDebugArg, usedReservedArgs: [] });
 
-      await uut.launchApp(deviceId, bundleId, launchArgs, '');
-
-      expect(logger.warn).toHaveBeenCalled();
+      await uut.launchApp(deviceId, bundleId, {}, '');
+      expect(adb.spawnInstrumentation).toHaveBeenCalledWith(expect.anything(), [...mockedPreparedUserArgs, ...mockedPreparedDebugArg], undefined);
     });
 
-    it('should NOT log instrumentation args usage warning, if none used', async () => {
-      const launchArgs = {
-        'user-arg': 'merry christ-nukah',
-      };
+    it('should log reserved instrumentation args usage if used in user args', async () => {
+      const mockedPreparedUserArgs = ['mocked', 'prepared-args'];
+      const usedReservedArgs = ['aaa', 'zzz'];
+      const mockedPreparedDebugArg = ['debug', 'mocked'];
+      instrumentationArgs.prepareInstrumentationArgs
+        .mockReturnValueOnce({ args: mockedPreparedUserArgs, usedReservedArgs })
+        .mockReturnValueOnce({ args: mockedPreparedDebugArg, usedReservedArgs: ['shouldnt', 'care'] });
 
-      await uut.launchApp(deviceId, bundleId, launchArgs, '');
+      await uut.launchApp(deviceId, bundleId, {}, '');
+
+      expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('Arguments [aaa,zzz] were passed in as launchArgs to device.launchApp()'));
+      expect(logger.warn).toHaveBeenCalledTimes(1);
+    });
+
+    it('should NOT log reserved instrumentation args usage if none used by user', async () => {
+      const mockedPreparedUserArgs = ['mocked', 'prepared-args'];
+      const mockedPreparedDebugArg = ['debug', 'mocked'];
+      instrumentationArgs.prepareInstrumentationArgs
+        .mockReturnValueOnce({ args: mockedPreparedUserArgs, usedReservedArgs: [] })
+        .mockReturnValueOnce({ args: mockedPreparedDebugArg, usedReservedArgs: ['shouldnt', 'care'] });
+
+      await uut.launchApp(deviceId, bundleId, {}, '');
 
       expect(logger.warn).not.toHaveBeenCalled();
     });

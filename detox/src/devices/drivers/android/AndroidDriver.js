@@ -1,6 +1,7 @@
 const fs = require('fs');
 const URL = require('url').URL;
 const _ = require('lodash');
+const DeviceDriverBase = require('../DeviceDriverBase');
 const { encodeBase64 } = require('../../../utils/encoding');
 const logger = require('../../../utils/logger');
 const log = logger.child({ __filename });
@@ -11,7 +12,7 @@ const AAPT = require('./exec/AAPT');
 const APKPath = require('./tools/APKPath');
 const TempFileXfer = require('./tools/TempFileXfer');
 const AppUninstallHelper = require('./tools/AppUninstallHelper');
-const DeviceDriverBase = require('../DeviceDriverBase');
+const { prepareInstrumentationArgs } = require('./tools/instrumentationArgs');
 const DetoxApi = require('../../../android/espressoapi/Detox');
 const EspressoDetoxApi = require('../../../android/espressoapi/EspressoDetox');
 const UiDeviceProxy = require('../../../android/espressoapi/UiDeviceProxy');
@@ -273,12 +274,14 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async _launchInstrumentationProcess(deviceId, bundleId, rawLaunchArgs) {
-    const launchArgs = this._prepareLaunchArgs(rawLaunchArgs, true);
-    const additionalLaunchArgs = this._prepareLaunchArgs({debug: false});
+    const launchArgs = prepareInstrumentationArgs(rawLaunchArgs);
+    const additionalLaunchArgs = prepareInstrumentationArgs({ debug: false });
+    this._warnReservedArgsUsedIfNeeded(launchArgs);
+
     const serverPort = new URL(this.client.configuration.server).port;
     await this.adb.reverse(deviceId, serverPort);
     const testRunner = await this.adb.getInstrumentationRunner(deviceId, bundleId);
-    const spawnFlags = [...launchArgs, ...additionalLaunchArgs];
+    const spawnFlags = [...launchArgs.args, ...additionalLaunchArgs.args];
 
     this.instrumentationLogsParser = new InstrumentationLogsParser();
     this.instrumentationProcess = this.adb.spawnInstrumentation(deviceId, spawnFlags, testRunner);
@@ -333,30 +336,14 @@ class AndroidDriver extends DeviceDriverBase {
     return this.invocationManager.execute(DetoxApi.launchMainActivity());
   }
 
-  _prepareLaunchArgs(launchArgs, verbose = false) {
-    const usedReservedArgs = [];
-    const preparedLaunchArgs = _.reduce(launchArgs, (result, value, key) => {
-      const valueAsString = _.isString(value) ? value : JSON.stringify(value);
-
-      let valueEncoded = valueAsString;
-      if (isReservedInstrumentationArg(key)) {
-        usedReservedArgs.push(key);
-      } else if (!key.startsWith('detox')) {
-        valueEncoded = encodeBase64(valueAsString);
-      }
-
-      result.push('-e', key, valueEncoded);
-      return result;
-    }, []);
-
-    if (verbose && usedReservedArgs.length) {
-      logger.warn([`Arguments [${usedReservedArgs}] were passed in as launchArgs to device.launchApp() `,
-                   'but are reserved to Android\'s test-instrumentation and will not be passed into the app. ',
-                   'Ignore this message if this is what you meant to do. Refer to ',
-                   'https://developer.android.com/studio/test/command-line#AMOptionsSyntax for ',
-                   'further details.'].join(''));
+  _warnReservedArgsUsedIfNeeded(preparedArgs) {
+    if (preparedArgs.usedReservedArgs.length) {
+      logger.warn([`Arguments [${preparedArgs.usedReservedArgs}] were passed in as launchArgs to device.launchApp() `,
+        'but are reserved to Android\'s test-instrumentation and will not be passed into the app. ',
+        'Ignore this message if this is what you meant to do. Refer to ',
+        'https://developer.android.com/studio/test/command-line#AMOptionsSyntax for ',
+        'further details.'].join(''));
     }
-    return preparedLaunchArgs;
   }
 }
 
