@@ -1,7 +1,7 @@
 const fs = require('fs');
 const URL = require('url').URL;
 const _ = require('lodash');
-const { encodeBase64 } = require('../../../utils/encoding');
+const DeviceDriverBase = require('../DeviceDriverBase');
 const logger = require('../../../utils/logger');
 const log = logger.child({ __filename });
 const invoke = require('../../../invoke');
@@ -11,7 +11,7 @@ const AAPT = require('./exec/AAPT');
 const APKPath = require('./tools/APKPath');
 const TempFileXfer = require('./tools/TempFileXfer');
 const AppUninstallHelper = require('./tools/AppUninstallHelper');
-const DeviceDriverBase = require('../DeviceDriverBase');
+const Instrumentation = require('./tools/Instrumentation');
 const DetoxApi = require('../../../android/espressoapi/Detox');
 const EspressoDetoxApi = require('../../../android/espressoapi/EspressoDetox');
 const UiDeviceProxy = require('../../../android/espressoapi/UiDeviceProxy');
@@ -25,22 +25,13 @@ const temporaryPath = require('../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 const sleep = require('../../../utils/sleep');
 const retry = require('../../../utils/retry');
-const { interruptProcess } = require('../../../utils/exec');
 const getAbsoluteBinaryPath = require('../../../utils/getAbsoluteBinaryPath');
 const AndroidExpect = require('../../../android/expect');
 const { InstrumentationLogsParser } = require('./InstrumentationLogsParser');
 
-const reservedInstrumentationArgs = ['class', 'package', 'func', 'unit', 'size', 'perf', 'debug', 'log', 'emma', 'coverageFile'];
-const isReservedInstrumentationArg = (arg) => reservedInstrumentationArgs.includes(arg);
-
 class AndroidDriver extends DeviceDriverBase {
   constructor(config) {
     super(config);
-
-    this.instrumentationLogsParser = null;
-    this.instrumentationProcess = null;
-    this.instrumentationStackTrace = '';
-    this.instrumentationCloseListener = _.noop;
 
     this.invocationManager = new InvocationManager(this.client);
     this.matchers = new AndroidExpect(this.invocationManager);
@@ -50,6 +41,11 @@ class AndroidDriver extends DeviceDriverBase {
     this.aapt = new AAPT();
     this.fileXfer = new TempFileXfer(this.adb);
     this.devicePathBuilder = new AndroidDevicePathBuilder();
+
+    this.instrumentationLogsParser = null;
+    this.instrumentationStackTrace = '';
+    this.instrumentationCloseListener = _.noop;
+    this.instrumentation = new Instrumentation(this.adb, logger);
   }
 
   declareArtifactPlugins() {
@@ -97,7 +93,7 @@ class AndroidDriver extends DeviceDriverBase {
       }
     }
 
-    if (!this._isInstrumentationRunning()) {
+    if (!this.instrumentation.isRunning()) {
       await this._launchInstrumentationProcess(deviceId, bundleId, launchArgs);
       await sleep(500);
     } else if (launchArgs.detoxURLOverride) {
@@ -140,7 +136,7 @@ class AndroidDriver extends DeviceDriverBase {
           super.waitUntilReady(),
           new Promise((resolve, reject) => {
             this.instrumentationCloseListener = () => reject(this._getInstrumentationCrashError());
-            !this._isInstrumentationRunning() && this.instrumentationCloseListener();
+            !this.instrumentation.isRunning() && this.instrumentationCloseListener();
           }),
         ]);
       } finally {
@@ -161,18 +157,6 @@ class AndroidDriver extends DeviceDriverBase {
     await this._terminateInstrumentation();
     await this.adb.terminate(deviceId, bundleId);
     await this.emitter.emit('terminateApp', { deviceId, bundleId });
-  }
-
-  async _terminateInstrumentation() {
-    if (this._isInstrumentationRunning()) {
-      await interruptProcess(this.instrumentationProcess);
-      this.instrumentationProcess = null;
-      this.instrumentationCloseListener();
-    }
-  }
-
-  _isInstrumentationRunning() {
-    return !!this.instrumentationProcess;
   }
 
   _getInstrumentationCrashError() {
@@ -272,22 +256,30 @@ class AndroidDriver extends DeviceDriverBase {
     return testApkPath;
   }
 
-  async _launchInstrumentationProcess(deviceId, bundleId, rawLaunchArgs) {
-    const launchArgs = this._prepareLaunchArgs(rawLaunchArgs, true);
-    const additionalLaunchArgs = this._prepareLaunchArgs({debug: false});
+  async _launchInstrumentationProcess(deviceId, bundleId, userLaunchArgs) {
     const serverPort = new URL(this.client.configuration.server).port;
     await this.adb.reverse(deviceId, serverPort);
-    const testRunner = await this.adb.getInstrumentationRunner(deviceId, bundleId);
-    const spawnFlags = [...launchArgs, ...additionalLaunchArgs];
 
     this.instrumentationLogsParser = new InstrumentationLogsParser();
-    this.instrumentationProcess = this.adb.spawnInstrumentation(deviceId, spawnFlags, testRunner);
-    this.instrumentationProcess.childProcess.stdout.setEncoding('utf8');
-    this.instrumentationProcess.childProcess.stdout.on('data', this._extractStackTraceFromInstrumLogs.bind(this));
-    this.instrumentationProcess.childProcess.on('close', async () => {
-      await this._terminateInstrumentation();
-      await this.adb.reverseRemove(deviceId, serverPort);
-    });
+    this.instrumentation.setTerminationFn(() => this._onInstrumentationTerminated(deviceId, serverPort));
+    this.instrumentation.setLogListenFn(this._extractStackTraceFromInstrumLogs.bind(this));
+    await this.instrumentation.launch(deviceId, bundleId, userLaunchArgs);
+  }
+
+  async _onInstrumentationTerminated(deviceId, serverPort) {
+    await this.adb.reverseRemove(deviceId, serverPort);
+    this.instrumentationCloseListener();
+
+    this.instrumentation.setTerminationFn(null);
+    this.instrumentation.setLogListenFn(null);
+  }
+
+  async _terminateInstrumentation() {
+    await this.instrumentation.terminate();
+    this.instrumentationCloseListener();
+
+    this.instrumentation.setTerminationFn(null);
+    this.instrumentation.setLogListenFn(null);
   }
 
   _extractStackTraceFromInstrumLogs(logsDump) {
@@ -331,32 +323,6 @@ class AndroidDriver extends DeviceDriverBase {
 
   _resumeMainActivity() {
     return this.invocationManager.execute(DetoxApi.launchMainActivity());
-  }
-
-  _prepareLaunchArgs(launchArgs, verbose = false) {
-    const usedReservedArgs = [];
-    const preparedLaunchArgs = _.reduce(launchArgs, (result, value, key) => {
-      const valueAsString = _.isString(value) ? value : JSON.stringify(value);
-
-      let valueEncoded = valueAsString;
-      if (isReservedInstrumentationArg(key)) {
-        usedReservedArgs.push(key);
-      } else if (!key.startsWith('detox')) {
-        valueEncoded = encodeBase64(valueAsString);
-      }
-
-      result.push('-e', key, valueEncoded);
-      return result;
-    }, []);
-
-    if (verbose && usedReservedArgs.length) {
-      logger.warn([`Arguments [${usedReservedArgs}] were passed in as launchArgs to device.launchApp() `,
-                   'but are reserved to Android\'s test-instrumentation and will not be passed into the app. ',
-                   'Ignore this message if this is what you meant to do. Refer to ',
-                   'https://developer.android.com/studio/test/command-line#AMOptionsSyntax for ',
-                   'further details.'].join(''));
-    }
-    return preparedLaunchArgs;
   }
 }
 

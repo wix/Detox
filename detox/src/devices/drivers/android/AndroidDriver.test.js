@@ -7,6 +7,9 @@ describe('Android driver', () => {
   const mockGetAbsoluteBinaryPathImpl = (x) => `absolutePathOf(${x})`;
   const mockAPKPathGetTestApkPathImpl = (x) => `testApkPathOf(${x})`;
 
+  const mockInstrumentationRunning = () => instrumentation.isRunning.mockReturnValue(true);
+  const mockInstrumentationDead = () => instrumentation.isRunning.mockReturnValue(false);
+
   class MockADBClass {
     constructor() {
       Object.assign(this, adb);
@@ -40,12 +43,21 @@ describe('Android driver', () => {
     }
   }
 
+  class MockInstrumentationClass {
+    constructor(...args) {
+      instrumentation.mockCtor(...args);
+      Object.assign(this, instrumentation);
+    }
+  }
+
   let logger;
   let client;
   let getAbsoluteBinaryPath;
   let fs;
   let exec;
   let detoxApi;
+  let instrumentationArgs;
+  let instrumentation;
   beforeEach(() => {
     jest.mock('fs', () => ({
       existsSync: jest.fn(),
@@ -96,6 +108,16 @@ describe('Android driver', () => {
 
     jest.mock('../../../android/espressoapi/Detox');
     detoxApi = require('../../../android/espressoapi/Detox');
+
+    jest.mock('./tools/instrumentationArgs');
+    instrumentationArgs = require('./tools/instrumentationArgs');
+    instrumentationArgs.prepareInstrumentationArgs.mockReturnValue({args: [], usedReservedArgs: []});
+
+    const Instrumentation = jest.genMockFromModule('./tools/Instrumentation');
+    instrumentation = new Instrumentation();
+    instrumentation.mockCtor = jest.fn();
+    mockInstrumentationDead();
+    jest.mock('./tools/Instrumentation', () => MockInstrumentationClass);
   });
 
   let adb;
@@ -142,16 +164,25 @@ describe('Android driver', () => {
   });
 
   describe('Instrumentation bootstrap', () => {
+    it('should init an instrumentation manager', async () => {
+      expect(instrumentation.mockCtor).toHaveBeenCalledWith(adb, logger);
+    });
+
     it('should launch instrumentation upon app launch', async () => {
-      adb.getInstrumentationRunner.mockResolvedValue('mock test-runner');
+      const userArgs = {
+        anArg: 'aValue',
+      };
+      await uut.launchApp(deviceId, bundleId, userArgs, '');
+      expect(instrumentation.launch).toHaveBeenCalledWith(deviceId, bundleId, userArgs);
+    });
 
-      await uut.launchApp(deviceId, bundleId, {}, '');
+    it('should break if instrumentation launch fails', async () => {
+      instrumentation.launch.mockRejectedValue(new Error());
 
-      expect(adb.spawnInstrumentation).toHaveBeenCalledWith(
-        deviceId,
-        expect.anything(),
-        expect.anything(),
-      );
+      try {
+        await uut.launchApp(deviceId, bundleId, {}, '');
+        fail();
+      } catch (e) {}
     });
   });
 
@@ -168,37 +199,30 @@ describe('Android driver', () => {
     }
     const assertActivityStartNotInvoked = () => expect(detoxApi.startActivityFromUrl).not.toHaveBeenCalled();
 
-    const assertInstrumentationSpawned = () => expect(adb.spawnInstrumentation).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.arrayContaining(['detoxURLOverride', detoxURLOverride]),
-      expect.anything(),
-    );
-    const resetInstrumentationMock = () => adb.spawnInstrumentation.mockReset();
-    const assertInstrumentationNotSpawned = () => expect(adb.spawnInstrumentation).not.toHaveBeenCalled();
+    const assertInstrumentationLaunchedWith = (args) => expect(instrumentation.launch).toHaveBeenCalledWith(deviceId, bundleId, args);
+    const assertInstrumentationNotLaunched = () => expect(instrumentation.launch).not.toHaveBeenCalled();
 
     describe('in app launch (with dedicated arg)', () => {
       const args = {
         detoxURLOverride,
       };
 
-      it('should spawn instrumentation with the URL in a clean launch', async () => {
+      it('should launch instrumentation with the URL in a clean launch', async () => {
         adb.getInstrumentationRunner.mockResolvedValue('mock test-runner');
 
         await uut.launchApp(deviceId, bundleId, args, '');
 
-        assertInstrumentationSpawned();
+        assertInstrumentationLaunchedWith(args);
       });
 
-      it('should start the app with URL using invocation-manager', async () => {
+      it('should start the app with URL via invocation-manager', async () => {
         mockStartActivityInvokeApi();
+        mockInstrumentationRunning();
 
-        await uut.launchApp(deviceId, bundleId, {}, '');
-
-        resetInstrumentationMock();
         await uut.launchApp(deviceId, bundleId, args, '');
 
         assertActivityStartInvoked();
-        assertInstrumentationNotSpawned();
+        assertInstrumentationNotLaunched();
       });
     });
 
@@ -211,7 +235,7 @@ describe('Android driver', () => {
         delayPayload: true,
       }
 
-      it('should start the app using invocation-manager', async () => {
+      it('should start the app via invocation-manager', async () => {
         mockStartActivityInvokeApi();
 
         await uut.launchApp(deviceId, bundleId, {}, '')
@@ -220,7 +244,7 @@ describe('Android driver', () => {
         assertActivityStartInvoked();
       });
 
-      it('should not start the app using invocation-manager', async () => {
+      it('should not start the app via invocation-manager', async () => {
         mockStartActivityInvokeApi();
 
         await uut.launchApp(deviceId, bundleId, {}, '')
@@ -248,8 +272,9 @@ describe('Android driver', () => {
     const assertActivityStartNotInvoked = () => {
       expect(detoxApi.startActivityFromNotification).not.toHaveBeenCalled();
     }
-    const resetInstrumentationMock = () => adb.spawnInstrumentation.mockReset();
-    const assertInstrumentationNotSpawned = () => expect(adb.spawnInstrumentation).not.toHaveBeenCalled();
+
+    const assertInstrumentationLaunchedWith = (args) => expect(instrumentation.launch).toHaveBeenCalledWith(deviceId, bundleId, args);
+    const assertInstrumentationNotSpawned = () => expect(instrumentation.launch).not.toHaveBeenCalled();
 
     describe('in app launch (with dedicated arg)', () => {
       it('should prepare the device for receiving notification data file', async () => {
@@ -271,23 +296,22 @@ describe('Android driver', () => {
         }
       });
 
-      it('should launch instrument with a modified notification data URL arg', async () => {
+      it('should launch instrumentation with a modified notification data URL arg', async () => {
         fileXfer.send.mockReturnValue(mockNotificationDataTargetPath);
 
         await uut.launchApp(deviceId, bundleId, notificationArgs, '');
 
-        expect(adb.spawnInstrumentation).toHaveBeenCalledWith(
-          expect.anything(),
-          expect.arrayContaining(['detoxUserNotificationDataURL', mockNotificationDataTargetPath]),
-          undefined,
-        );
+        assertInstrumentationLaunchedWith({ detoxUserNotificationDataURL: mockNotificationDataTargetPath });
       });
     });
 
     [
       {
-        description: 'in 2nd app launch (i.e. when running)',
-        applyFn: () => uut.launchApp(deviceId, bundleId, notificationArgs, ''),
+        description: 'in app launch when already running',
+        applyFn: () => {
+          mockInstrumentationRunning();
+          return uut.launchApp(deviceId, bundleId, notificationArgs, '');
+        },
       },
       {
         description: 'via explicit payload-delivery call',
@@ -295,12 +319,7 @@ describe('Android driver', () => {
       },
     ].forEach((spec) => {
       describe(spec.description, () => {
-        beforeEach(async () => {
-          await uut.launchApp(deviceId, bundleId, {}, '')
-        });
-
         it('should pre-transfer notification data to device', async () => {
-          resetInstrumentationMock();
           await spec.applyFn();
 
           expect(fileXfer.prepareDestinationDir).toHaveBeenCalledWith(deviceId);
@@ -310,7 +329,6 @@ describe('Android driver', () => {
         it('should start the app with notification data using invocation-manager', async () => {
           mockStartActivityInvokeApi();
 
-          resetInstrumentationMock();
           await spec.applyFn();
 
           assertActivityStartInvoked();
@@ -343,20 +361,20 @@ describe('Android driver', () => {
   });
 
   describe('Device ready-wait', () => {
-    beforeEach(async () => {
-      await uut.launchApp(deviceId, bundleId, {}, '');
-    });
-
     it('should delegate wait to device being ready via client api', async () => {
+      mockInstrumentationRunning();
       await uut.waitUntilReady();
       expect(client.waitUntilReady).toHaveBeenCalled();
     }, 2000);
 
-    it('should fail if instrumentation dies prematurely while waiting for device-ready resolution', async () => {
+    it('should fail if instrumentation async\'ly-dies prematurely while waiting for device-ready resolution', async () => {
+      await uut.launchApp(deviceId, bundleId, {}, '');
+
+      mockInstrumentationRunning();
       const clientWaitResolve = mockDeviceReadyPromise();
 
       const promise = uut.waitUntilReady();
-      setTimeout(async () => await killInstrumentation(adb.spawnInstrumentation()), 1);
+      setTimeout(fakeInstrumentationTermination, 1);
 
       try {
         await promise;
@@ -375,113 +393,14 @@ describe('Android driver', () => {
       return clientResolve;
     };
 
-    const killInstrumentation = async (instrumProcess) => {
-      const { childProcess } = instrumProcess;
+    const fakeInstrumentationTermination = async () => {
+      const instrumentationLoggingCallback = instrumentation.setLogListenFn.mock.calls[0][0];
+      await instrumentationLoggingCallback('Doesnt matter what we put here because actual stacktrace should be read from logs-parser');
 
-      const stdoutSubscribeCallArgs = childProcess.stdout.on.mock.calls[0];
-      const stdoutListenerFn = stdoutSubscribeCallArgs[1];
-      stdoutListenerFn('Doesnt matter what we put here');
-
-      const closeEvCallArgs = childProcess.on.mock.calls[0];
-      const closeEvListenerFn = closeEvCallArgs[1];
-      await closeEvListenerFn();
+      const instrumentationTerminationCallback = instrumentation.setTerminationFn.mock.calls[0][0];
+      await instrumentationTerminationCallback();
+      mockInstrumentationDead();
     };
-  });
-
-  describe('Launch args', () => {
-    const expectSpawnedFlag = (spawnedFlags) => ({
-      startingIndex: (index) => ({
-        toBe: ({key, value}) => {
-          expect(spawnedFlags[index]).toEqual('-e');
-          expect(spawnedFlags[index + 1]).toEqual(key);
-          expect(spawnedFlags[index + 2]).toEqual(value);
-          return index + 3;
-        }
-      }),
-    });
-
-    it('should base64-encode and stringify arg values', async () => {
-      const launchArgs = {
-        'object-arg': {
-          such: 'wow',
-          much: 'amaze',
-          very: 111,
-        },
-        'string-arg': 'text, with commas-and-dashes,',
-      };
-
-      await uut.launchApp(deviceId, bundleId, launchArgs, '');
-
-      const spawnArgs = adb.spawnInstrumentation.mock.calls[0];
-      const spawnedFlags = spawnArgs[1];
-
-      let index = 0;
-      index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({
-        key: 'object-arg',
-        value: 'base64({"such":"wow","much":"amaze","very":111})'
-      });
-      expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({
-        key: 'string-arg',
-        value: 'base64(text, with commas-and-dashes,)'
-      });
-    });
-
-    // Ref: https://developer.android.com/studio/test/command-line#AMOptionsSyntax
-    it('should whitelist reserved instrumentation args with respect to base64 encoding', async () => {
-      const launchArgs = {
-        // Free arg
-        'user-arg': 'merry christ-nukah',
-
-        // Reserved instrumentation args
-        'class': 'class-value',
-        'package': 'package-value',
-        'func': 'func-value',
-        'unit': 'unit-value',
-        'size': 'size-value',
-        'perf': 'perf-value',
-        'debug': 'debug-value',
-        'log': 'log-value',
-        'emma': 'emma-value',
-        'coverageFile': 'coverageFile-value',
-      };
-
-      await uut.launchApp(deviceId, bundleId, launchArgs, '');
-
-      const spawnArgs = adb.spawnInstrumentation.mock.calls[0];
-      const spawnedFlags = spawnArgs[1];
-
-      let index = 3;
-      index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'class', value: 'class-value' });
-      index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'package', value: 'package-value' });
-      index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'func', value: 'func-value' });
-      index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'unit', value: 'unit-value' });
-      index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'size', value: 'size-value' });
-      index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'perf', value: 'perf-value' });
-      index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'debug', value: 'debug-value' });
-      index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'log', value: 'log-value' });
-      index = expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'emma', value: 'emma-value' });
-      expectSpawnedFlag(spawnedFlags).startingIndex(index).toBe({ key: 'coverageFile', value: 'coverageFile-value' });
-    });
-
-    it('should log reserved instrumentation args usage warning, if such have been used', async () => {
-      const launchArgs = {
-        'class': 'class-value',
-      };
-
-      await uut.launchApp(deviceId, bundleId, launchArgs, '');
-
-      expect(logger.warn).toHaveBeenCalled();
-    });
-
-    it('should NOT log instrumentation args usage warning, if none used', async () => {
-      const launchArgs = {
-        'user-arg': 'merry christ-nukah',
-      };
-
-      await uut.launchApp(deviceId, bundleId, launchArgs, '');
-
-      expect(logger.warn).not.toHaveBeenCalled();
-    });
   });
 
   describe('App installation', () => {
