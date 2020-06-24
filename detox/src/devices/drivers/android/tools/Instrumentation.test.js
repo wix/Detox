@@ -180,10 +180,10 @@ describe('Instrumentation', () => {
       expect(exec.interruptProcess).toHaveBeenCalledTimes(1);
     });
 
-    it('should exec user\'s top-level custom termination callback', async () => {
+    it('should NOT exec user\'s top-level custom termination callback', async () => {
       await uut.launch(deviceId, bundleId, []);
       await uut.terminate();
-      expect(userTerminationCallback).toHaveBeenCalled();
+      expect(userTerminationCallback).not.toHaveBeenCalled();
     });
   });
 
@@ -216,10 +216,9 @@ describe('Instrumentation', () => {
 
     const Instrumentation = require('./Instrumentation');
     uut = new Instrumentation(adb, logger, undefined, undefined);
-    await uut.launch(deviceId, bundleId, []);
-
     uut.setTerminationFn(runtimeCallback);
-    await uut.terminate();
+    await uut.launch(deviceId, bundleId, []);
+    await invokeTerminationCallback();
 
     expect(runtimeCallback).toHaveBeenCalled();
   });

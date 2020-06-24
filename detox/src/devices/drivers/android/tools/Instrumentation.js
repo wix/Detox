@@ -24,8 +24,10 @@ class Instrumentation {
     this.instrumentationProcess.childProcess.on('close', this._onTerminated);
   }
 
-  /*async*/ terminate() {
-    return this._onTerminated();
+  async terminate() {
+    if (this.instrumentationProcess) {
+      await this._killProcess();
+    }
   }
 
   isRunning() {
@@ -54,10 +56,14 @@ class Instrumentation {
 
   async _onTerminated() {
     if (this.instrumentationProcess) {
-      await interruptProcess(this.instrumentationProcess);
-      this.instrumentationProcess = null;
+      await this._killProcess();
       await this.userTerminationFn();
     }
+  }
+
+  async _killProcess() {
+    await interruptProcess(this.instrumentationProcess);
+    this.instrumentationProcess = null;
   }
 
   _warnReservedArgsUsedIfNeeded(preparedArgs) {

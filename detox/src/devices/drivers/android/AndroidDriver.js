@@ -154,7 +154,7 @@ class AndroidDriver extends DeviceDriverBase {
 
   async terminate(deviceId, bundleId) {
     await this.emitter.emit('beforeTerminateApp', { deviceId, bundleId });
-    await this.instrumentation.terminate();
+    await this._terminateInstrumentation();
     await this.adb.terminate(deviceId, bundleId);
     await this.emitter.emit('terminateApp', { deviceId, bundleId });
   }
@@ -174,7 +174,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async cleanup(deviceId, bundleId) {
-    await this.instrumentation.terminate();
+    await this._terminateInstrumentation();
     await super.cleanup(deviceId, bundleId);
   }
 
@@ -261,13 +261,21 @@ class AndroidDriver extends DeviceDriverBase {
     await this.adb.reverse(deviceId, serverPort);
 
     this.instrumentationLogsParser = new InstrumentationLogsParser();
-    this.instrumentation.setTerminationFn(() => this._onInstrumentationTermination(deviceId, serverPort));
+    this.instrumentation.setTerminationFn(() => this._onInstrumentationTerminated(deviceId, serverPort));
     this.instrumentation.setLogListenFn(this._extractStackTraceFromInstrumLogs.bind(this));
     await this.instrumentation.launch(deviceId, bundleId, userLaunchArgs);
   }
 
-  async _onInstrumentationTermination(deviceId, serverPort) {
+  async _onInstrumentationTerminated(deviceId, serverPort) {
     await this.adb.reverseRemove(deviceId, serverPort);
+    this.instrumentationCloseListener();
+
+    this.instrumentation.setTerminationFn(null);
+    this.instrumentation.setLogListenFn(null);
+  }
+
+  async _terminateInstrumentation() {
+    await this.instrumentation.terminate();
     this.instrumentationCloseListener();
 
     this.instrumentation.setTerminationFn(null);
