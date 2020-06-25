@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "16.9.2",
+  "version": "17.0.0",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -114,7 +114,18 @@
     ],
     "resetMocks": true,
     "resetModules": true,
-    "coverageReporters": ["html","json", "text", "clover", ["lcov", { "projectRoot" : ".."}]],
+    "coverageReporters": [
+      "html",
+      "json",
+      "text",
+      "clover",
+      [
+        "lcov",
+        {
+          "projectRoot": ".."
+        }
+      ]
+    ],
     "coverageThreshold": {
       "global": {
         "statements": 100,
