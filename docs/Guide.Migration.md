@@ -12,7 +12,7 @@ While the new system has been designed to be as compatible as possible with the 
 
 - `pinch()`—new API for pinching elements, replacing the deprecated `pinchWithAngle()` (iOS) 
 - `getAttributes()`—new API for obtaining element properties (iOS)
-- `not()`—new API for inverting expectation logic (iOS, Android)
+- `not`—new API for inverting expectation logic (iOS, Android)
 
 ##### Modified API (**Potentially Breaking Changes**)
 
