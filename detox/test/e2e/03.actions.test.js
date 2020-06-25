@@ -22,7 +22,7 @@ describe('Actions', () => {
     await expect(element(by.text('Long Press With Duration Working!!!'))).toBeVisible();
   });
 
-  it('should tap on an element at point', async () => {
+  it(':android: should tap on an element at point', async () => {
     await driver.tapsElement.tapAtPoint();
     await driver.tapsElement.assertTappedOnce();
   });
@@ -123,30 +123,30 @@ describe('Actions', () => {
 
   custom.it.withFailureIf.android.rn58OrNewer('should scroll for a small amount in direction', async () => {
     await expect(element(by.text('Text1'))).toBeVisible();
-    await expect(element(by.text('Text4'))).toBeNotVisible();
+    await expect(element(by.text('Text4'))).not.toBeVisible();
     await expect(element(by.id('ScrollView161'))).toBeVisible();
     await element(by.id('ScrollView161')).scroll(100, 'down');
-    await expect(element(by.text('Text1'))).toBeNotVisible();
+    await expect(element(by.text('Text1'))).not.toBeVisible();
     await expect(element(by.text('Text4'))).toBeVisible();
     await element(by.id('ScrollView161')).scroll(100, 'up');
     await expect(element(by.text('Text1'))).toBeVisible();
-    await expect(element(by.text('Text4'))).toBeNotVisible();
+    await expect(element(by.text('Text4'))).not.toBeVisible();
   });
 
   custom.it.withFailureIf.android.rn58OrNewer('should scroll for a large amount in direction', async () => {
-    await expect(element(by.text('Text6'))).toBeNotVisible();
+    await expect(element(by.text('Text6'))).not.toBeVisible();
     await element(by.id('ScrollView161')).scroll(220, 'down');
     await expect(element(by.text('Text6'))).toBeVisible();
   });
 
   it('should scroll for a large amount in horizontal direction', async () => {
-    await expect(element(by.text('HText7'))).toBeNotVisible();
+    await expect(element(by.text('HText7'))).not.toBeVisible();
     await element(by.id('ScrollViewH')).scroll(220, 'right');
     await expect(element(by.text('HText7'))).toBeVisible();
   });
 
   it('should scroll to edge', async () => {
-    await expect(element(by.text('Text8'))).toBeNotVisible();
+    await expect(element(by.text('Text8'))).not.toBeVisible();
     await element(by.id('ScrollView161')).scrollTo('bottom');
     await expect(element(by.text('Text8'))).toBeVisible();
     await element(by.id('ScrollView161')).scrollTo('top');
@@ -154,7 +154,7 @@ describe('Actions', () => {
   });
 
   it('should scroll horizontally to edge', async () => {
-    await expect(element(by.text('HText8'))).toBeNotVisible();
+    await expect(element(by.text('HText8'))).not.toBeVisible();
     await element(by.id('ScrollViewH')).scrollTo('right');
     await expect(element(by.text('HText8'))).toBeVisible();
     await element(by.id('ScrollViewH')).scrollTo('left');
@@ -162,7 +162,7 @@ describe('Actions', () => {
   });
 
   it('should scroll from a custom start-position ratio', async () => {
-    await expect(element(by.text('Text8'))).toBeNotVisible();
+    await expect(element(by.text('Text8'))).not.toBeVisible();
     await element(by.id('toggleScrollOverlays')).tap();
     try {
       await element(by.id('ScrollView161')).scroll(310, 'down', 0.8, 0.6);
@@ -177,11 +177,11 @@ describe('Actions', () => {
     } catch (err) {
     }
     await element(by.id('toggleScrollOverlays')).tap();
-    await expect(element(by.text('Text8'))).toBeNotVisible();
+    await expect(element(by.text('Text8'))).not.toBeVisible();
   });
 
   it('should scroll horizontally from a custom start-position ratio', async () => {
-    await expect(element(by.text('HText6'))).toBeNotVisible();
+    await expect(element(by.text('HText6'))).not.toBeVisible();
     await element(by.id('toggleScrollOverlays')).tap();
     try {
       await element(by.id('ScrollViewH')).scroll(220, 'right', 0.8, 0.6);
@@ -196,7 +196,7 @@ describe('Actions', () => {
     } catch (err) {
     }
     await element(by.id('toggleScrollOverlays')).tap();
-    await expect(element(by.text('HText6'))).toBeNotVisible();
+    await expect(element(by.text('HText6'))).not.toBeVisible();
   });
 
   // TODO - swipe is not good enough for triggering pull to refresh. need to come up with something better
@@ -212,10 +212,16 @@ describe('Actions', () => {
   });
 
   it(':ios: should zoom in and out the pinchable scrollview', async () => {
-    await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0);
-    await expect(element(by.id('UniqueId007'))).toBeNotVisible();
-    await element(by.id('PinchableScrollView')).pinchWithAngle('inward', 'slow', 0);
+    await element(by.id('PinchableScrollView')).pinch(1.5);
+    await expect(element(by.id('UniqueId007'))).not.toBeVisible();
+    await element(by.id('PinchableScrollView')).pinch(0.75, 'slow');
     await expect(element(by.id('UniqueId007'))).toBeVisible();
   });
 
+  it(':ios: should adjust slider and assert its value', async () => {
+    await expect(element(by.id('sliderWithASimpleID'))).toHaveSliderPosition(0.25);
+    await element(by.id('sliderWithASimpleID')).adjustSliderToPosition(0.75);
+    await expect(element(by.id('sliderWithASimpleID'))).toHaveSliderPosition(0.75);
+    await expect(element(by.id('sliderWithASimpleID'))).toHaveValue("75%");
+  });
 });

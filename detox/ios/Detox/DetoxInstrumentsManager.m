@@ -55,22 +55,6 @@ static void (*__DTXProfilerMarkEvent)(NSString* category, NSString* name, __DTXE
 WEAK_IMPORT_ATTRIBUTE
 @interface DTXProfiler : NSObject @end
 
-@interface DetoxInstrumentsConfiguration ()
-- (instancetype)initWithConfig:(id)config;
-@property (nonatomic, retain) id config;
-@end
-
-@implementation DetoxInstrumentsConfiguration
-
-- (instancetype)initWithConfig:(id)config
-{
-	self = [super init];
-	self.config = config;
-	return self;
-}
-
-@end
-
 @implementation DetoxInstrumentsManager
 {
 	id _recorderInstance;
@@ -255,10 +239,10 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 	return self;
 }
 
-- (DetoxInstrumentsConfiguration *)configurationWithDictionary:(NSDictionary *)props
+- (id)_configurationWithDictionaryConfiguration:(NSDictionary *)configDict
 {
 	id config = [__DTXMutableProfilingConfiguration defaultProfilingConfiguration];
-	[config setRecordingFileURL:[NSURL fileURLWithPath:props[@"recordingPath"]]];
+	[config setRecordingFileURL:[NSURL fileURLWithPath:configDict[@"recordingPath"]]];
 	
 	//TODO: Finalize the actual config for Detox perf recording.
 	[config setRecordEvents:YES];
@@ -273,30 +257,23 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 	[config setRecordThreadInformation:YES];
 	[config setCollectStackTraces:YES];
 	[config setSymbolicateStackTraces:YES];
-	NSTimeInterval samplingInterval = [props[@"samplingInterval"] doubleValue];
-	if (samplingInterval == 0) {
-		samplingInterval = 0.25;
-	}
+	NSTimeInterval samplingInterval = [configDict[@"samplingInterval"] ?: @0.25 doubleValue];
 	[config setSamplingInterval:samplingInterval];
 	
-	return [[DetoxInstrumentsConfiguration alloc] initWithConfig:config];
+	return config;
 }
 
-- (void)startRecordingWithConfiguration:(DetoxInstrumentsConfiguration *)configuration
+- (void)startRecordingWithConfiguration:(NSDictionary<NSString*, id>*)configDict
 {
-	id config = configuration.config;
-	dtx_log_info(@"Starting recording at %@ with samplingInterval %f",
-				 [config recordingFileURL],
-				 [config samplingInterval]);
+	id config = [self _configurationWithDictionaryConfiguration:configDict];
+	dtx_log_info(@"Starting recording at %@", [config recordingFileURL]);
 	[_recorderInstance startProfilingWithConfiguration:config];
 }
 
-- (void)continueRecordingWithConfiguration:(DetoxInstrumentsConfiguration *)configuration
+- (void)continueRecordingWithConfiguration:(NSDictionary<NSString*, id>*)configDict
 {
-	id config = configuration.config;
-	dtx_log_info(@"Continuing recording at %@ with samplingInterval %f",
-				 [config recordingFileURL],
-				 [config samplingInterval]);
+	id config = [self _configurationWithDictionaryConfiguration:configDict];
+	dtx_log_info(@"Continuing recording at %@", [config recordingFileURL]);
 	[_recorderInstance continueProfilingWithConfiguration:config];
 }
 

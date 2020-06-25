@@ -6,7 +6,7 @@ const driver = {
     get coordinates() {
       return {
         x: (device.getPlatform() === 'ios' ? 180 : 125),
-        y: 160,
+        y: 107,
       };
     },
     multiTap: () => element(by.id(driver.tapsElement.testId)).multiTap(3),

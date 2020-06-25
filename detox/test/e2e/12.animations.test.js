@@ -49,7 +49,7 @@ describe('React-Native Animations', () => {
 
     it(`should not wait during delays longer than 1.5s (driver: ${driver})`, async () => {
       await _startTest(driver, {delay: 1600});
-      await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toNotExist();
+      await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).not.toExist();
     });
 
     it(`should wait during delays shorter than 1.5s (driver: ${driver})`, async () => {

@@ -114,15 +114,7 @@
     ],
     "resetMocks": true,
     "resetModules": true,
-    "coverageReporters": [
-      [
-        "lcov",
-        {
-          "projectRoot": ".."
-        }
-      ],
-      "html"
-    ],
+    "coverageReporters": ["html","json", "text", "clover", ["lcov", { "projectRoot" : ".."}]],
     "coverageThreshold": {
       "global": {
         "statements": 100,

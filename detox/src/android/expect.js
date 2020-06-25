@@ -12,24 +12,21 @@ const IdMatcher = matchers.IdMatcher;
 const TypeMatcher = matchers.TypeMatcher;
 const TraitsMatcher = matchers.TraitsMatcher;
 const VisibleMatcher = matchers.VisibleMatcher;
-const NotVisibleMatcher = matchers.NotVisibleMatcher;
 const ExistsMatcher = matchers.ExistsMatcher;
-const NotExistsMatcher = matchers.NotExistsMatcher;
 const TextMatcher = matchers.TextMatcher;
 const ValueMatcher = matchers.ValueMatcher;
-
-const DetoxAssertion = 'com.wix.detox.espresso.DetoxAssertion';
 
 function call(maybeAFunction) {
   return maybeAFunction instanceof Function ? maybeAFunction() : maybeAFunction;
 }
 
-class Action {}
+class Action {
+}
 
 class TapAction extends Action {
-  constructor() {
+  constructor(value) {
     super();
-    this._call = invoke.callDirectly(DetoxViewActionsApi.click());
+    this._call = invoke.callDirectly(value ? DetoxActionApi.tapAtLocation(value.x, value.y) : DetoxViewActionsApi.click());
   }
 }
 
@@ -203,11 +200,12 @@ class Element {
     this._originalMatcher = matcher;
     this._selectElementWithMatcher(this._originalMatcher);
   }
+
   _selectElementWithMatcher(matcher) {
-    if (!(matcher instanceof Matcher))
-      throw new Error(`Element _selectElementWithMatcher argument must be a valid Matcher, got ${typeof matcher}`);
+    // if (!(matcher instanceof Matcher)) throw new Error(`Element _selectElementWithMatcher argument must be a valid Matcher, got ${typeof matcher}`);
     this._call = invoke.call(invoke.Espresso, 'onView', matcher._call);
   }
+
   atIndex(index) {
     if (typeof index !== 'number') throw new Error(`Element atIndex argument must be a number, got ${typeof index}`);
     const matcher = this._originalMatcher;
@@ -216,43 +214,55 @@ class Element {
     this._selectElementWithMatcher(this._originalMatcher);
     return this;
   }
-  async tap() {
-    return await new ActionInteraction(this._invocationManager, this, new TapAction()).execute();
+
+  async tap(value) {
+    return await new ActionInteraction(this._invocationManager, this, new TapAction(value)).execute();
   }
+
   async tapAtPoint(value) {
     return await new ActionInteraction(this._invocationManager, this, new TapAtPointAction(value)).execute();
   }
+
   async longPress() {
     return await new ActionInteraction(this._invocationManager, this, new LongPressAction()).execute();
   }
+
   async multiTap(times) {
     return await new ActionInteraction(this._invocationManager, this, new MultiClickAction(times)).execute();
   }
+
   async tapBackspaceKey() {
     return await new ActionInteraction(this._invocationManager, this, new PressKeyAction(67)).execute();
   }
+
   async tapReturnKey() {
     return await new ActionInteraction(this._invocationManager, this, new TypeTextAction('\n')).execute();
   }
+
   async typeText(value) {
     return await new ActionInteraction(this._invocationManager, this, new TypeTextAction(value)).execute();
   }
+
   async replaceText(value) {
     return await new ActionInteraction(this._invocationManager, this, new ReplaceTextAction(value)).execute();
   }
+
   async clearText() {
     return await new ActionInteraction(this._invocationManager, this, new ClearTextAction()).execute();
   }
+
   async scroll(amount, direction = 'down', startPositionX, startPositionY) {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
     // this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
     return await new ActionInteraction(this._invocationManager, this, new ScrollAmountAction(direction, amount, startPositionX, startPositionY)).execute();
   }
+
   async scrollTo(edge) {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
     this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
     return await new ActionInteraction(this._invocationManager, this, new ScrollEdgeAction(edge)).execute();
   }
+
   async swipe(direction, speed = 'fast', percentage = 0) {
     // override the user's element selection with an extended matcher that avoids RN issues with RCTScrollView
     this._selectElementWithMatcher(this._originalMatcher._avoidProblematicReactNativeElements());
@@ -264,6 +274,11 @@ class Expect {
   constructor(invocationManager) {
     this._invocationManager = invocationManager;
   }
+
+  get not() {
+    this._notCondition = true;
+    return this;
+  }
 }
 
 class ExpectElement extends Expect {
@@ -271,29 +286,53 @@ class ExpectElement extends Expect {
     super(invocationManager);
     this._element = element;
   }
+
   async toBeVisible() {
-    return await new MatcherAssertionInteraction(this._invocationManager, this._element, new VisibleMatcher()).execute();
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new VisibleMatcher().not : new VisibleMatcher()).execute();
   }
+
   async toBeNotVisible() {
-    return await this._invocationManager.execute(DetoxAssertionApi.assertNotVisible(call(this._element._call)));
+    return await this.not.toBeVisible();
   }
+
   async toExist() {
-    return await new MatcherAssertionInteraction(this._invocationManager, this._element, new ExistsMatcher()).execute();
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new ExistsMatcher().not : new ExistsMatcher()).execute();
   }
+
   async toNotExist() {
-    return await this._invocationManager.execute(DetoxAssertionApi.assertNotExists(call(this._element._call)));
+    return await this.not.toExist();
   }
-  async toHaveText(value) {
-    return await new MatcherAssertionInteraction(this._invocationManager, this._element, new TextMatcher(value)).execute();
+
+  async toHaveText(text) {
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new TextMatcher(text).not : new TextMatcher(text)).execute();
   }
+
+  async toNotHaveText(text) {
+    return await this.not.toHaveText(text);
+  }
+
   async toHaveLabel(value) {
-    return await new MatcherAssertionInteraction(this._invocationManager, this._element, new LabelMatcher(value)).execute();
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new LabelMatcher(value).not : new LabelMatcher(value)).execute();
   }
+
+  async toNotHaveLabel(value) {
+    return await this.not.toHaveLabel(value);
+  }
+
   async toHaveId(value) {
-    return await new MatcherAssertionInteraction(this._invocationManager, this._element, new IdMatcher(value)).execute();
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new IdMatcher(value).not : new IdMatcher(value)).execute();
   }
+
+  async toNotHaveId(value) {
+    return await this.not.toHaveId(value);
+  }
+
   async toHaveValue(value) {
-    return await new MatcherAssertionInteraction(this._invocationManager, this._element, new ValueMatcher(value)).execute();
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new ValueMatcher(value).not : new ValueMatcher(value)).execute();
+  }
+
+  async toNotHaveValue(value) {
+    return await this.not.toHaveValue(value);
   }
 }
 
@@ -306,29 +345,60 @@ class WaitFor {
 class WaitForElement extends WaitFor {
   constructor(invocationManager, element) {
     super(invocationManager);
-    //if ((!element instanceof Element)) throw new Error(`WaitForElement ctor argument must be a valid Element, got ${typeof element}`);
     this._element = element;
   }
+
+  get not() {
+    this._notCondition = true;
+    return this;
+  }
+
   toBeVisible() {
-    return new WaitForInteraction(this._invocationManager, this._element, new VisibleMatcher());
+    return new WaitForInteraction(this._invocationManager, this._element, this._notCondition ? new VisibleMatcher().not : new VisibleMatcher());
   }
+
   toBeNotVisible() {
-    return new WaitForInteraction(this._invocationManager, this._element, new NotVisibleMatcher());
+    return this.not.toBeVisible();
   }
+
   toExist() {
-    return new WaitForInteraction(this._invocationManager, this._element, new ExistsMatcher());
+    return new WaitForInteraction(this._invocationManager, this._element, this._notCondition ? new ExistsMatcher().not : new ExistsMatcher());
   }
+
   toNotExist() {
-    return new WaitForInteraction(this._invocationManager, this._element, new NotExistsMatcher());
+    return this.not.toExist();
   }
+
   toHaveText(text) {
-    return new WaitForInteraction(this._invocationManager, this._element, new TextMatcher(text));
+    return new WaitForInteraction(this._invocationManager, this._element, this._notCondition ? new TextMatcher(text).not : new TextMatcher(text));
   }
+
+  toNotHaveText(text) {
+    return this.not.toHaveText(text);
+  }
+
+  toHaveLabel(value) {
+    return new WaitForInteraction(this._invocationManager, this._element, this._notCondition ? new LabelMatcher(value).not : new LabelMatcher(value));
+  }
+
+  toNotHaveLabel(value) {
+    return this.not.toHaveLabel(value);
+  }
+
+  toHaveId(value) {
+    return new WaitForInteraction(this._invocationManager, this._element, this._notCondition ? new IdMatcher(value).not : new IdMatcher(value));
+  }
+
+  toNotHaveId(value) {
+    return this.not.toHaveId(value);
+  }
+
   toHaveValue(value) {
-    return new WaitForInteraction(this._invocationManager, this._element, new ValueMatcher(value));
+    return new WaitForInteraction(this._invocationManager, this._element, this._notCondition ? new ValueMatcher(value).not : new ValueMatcher(value));
   }
+
   toNotHaveValue(value) {
-    return new WaitForInteraction(this._invocationManager, this._element, new ValueMatcher(value).not());
+    return this.not.toHaveValue(value);
   }
 }
 

@@ -52,11 +52,15 @@ class InvokeActionHandler(
             val invocationResult = methodInvocation.invoke(params)
             wsClient.sendAction("invokeResult", mapOf<String, Any?>("result" to invocationResult), messageId)
         } catch (e: InvocationTargetException) {
-            Log.e(LOG_TAG, "Exception", e)
-            wsClient.sendAction("error", mapOf<String, Any?>("error" to "${errorParse(e.targetException)}\nCheck device logs for full details!\n"), messageId)
-        } catch (e: Exception) {
             Log.i(LOG_TAG, "Test exception", e)
-            wsClient.sendAction("testFailed", mapOf<String, Any?>("details" to "${errorParse(e)}\nCheck device logs for full details!\n"), messageId)
+            val message = e.targetException.message
+            val error = message?.substringBefore("View Hierarchy:")?.trim()
+            val viewHierarchy = message?.substringAfter("View Hierarchy:")
+            wsClient.sendAction("testFailed", mapOf<String, Any?>("details" to "${error}\n",
+                                                                        "viewHierarchy" to viewHierarchy), messageId)
+        }  catch (e: Exception) {
+            Log.e(LOG_TAG, "Exception", e)
+            wsClient.sendAction("error", mapOf<String, Any?>("error" to "${errorParse(e)}\nCheck device logs for full details!\n"), messageId)
         }
     }
 }

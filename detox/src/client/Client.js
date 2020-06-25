@@ -60,8 +60,16 @@ class Client {
     await this.sendAction(new actions.CurrentStatus());
   }
 
+  async setSyncSettings(params) {
+    await this.sendAction(new actions.SetSyncSettings(params));
+  }
+
   async shake() {
     await this.sendAction(new actions.Shake());
+  }
+
+  async setOrientation(orientation) {
+    await this.sendAction(new actions.SetOrientation(orientation));
   }
 
   async startInstrumentsRecording({ recordingPath, samplingInterval }) {
@@ -93,7 +101,7 @@ class Client {
 
     let stackArray = potentialError.stack.split('\n');
     let newStack = 'Error:\n';
-    var i = 1; //First line is "Error:\n"
+    let i = 1; //First line is "Error:\n"
     for(; i < stackArray.length; i++) {
       if(!stackArray[i].includes('detox/src')) {
         break;
@@ -142,8 +150,7 @@ class Client {
   async sendAction(action) {
     const response = await this.ws.send(action, action.messageId);
     const parsedResponse = JSON.parse(response);
-    await action.handle(parsedResponse);
-    return parsedResponse;
+    return await action.handle(parsedResponse);
   }
 
   slowInvocationStatus() {

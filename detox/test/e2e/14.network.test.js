@@ -30,7 +30,7 @@ describe('Network Synchronization', () => {
     await device.disableSynchronization();
     await waitFor(element(by.id('LongNetworkRequest'))).toBeVisible().withTimeout(4000);
     await element(by.id('LongNetworkRequest')).tap();
-    await expect(element(by.text('Long Network Request Working!!!'))).toBeNotVisible();
+    await expect(element(by.text('Long Network Request Working!!!'))).not.toBeVisible();
     await waitFor(element(by.text('Long Network Request Working!!!'))).toBeVisible().withTimeout(4000);
     await expect(element(by.text('Long Network Request Working!!!'))).toBeVisible();
 
@@ -43,7 +43,7 @@ describe('Network Synchronization', () => {
     await device.setURLBlacklist([url]);
 
     await element(by.id('LongNetworkRequest')).tap();
-    await expect(element(by.text('Long Network Request Working!!!'))).toBeNotVisible();
+    await expect(element(by.text('Long Network Request Working!!!'))).not.toBeVisible();
     await waitFor(element(by.text('Long Network Request Working!!!'))).toBeVisible().withTimeout(4000);
     await expect(element(by.text('Long Network Request Working!!!'))).toBeVisible();
 

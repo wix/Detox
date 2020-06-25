@@ -37,14 +37,14 @@ describe('Open URLs', () => {
 
     it(`${_platform}device.openURL() should trigger open url handling in app when app is in foreground`, async () => {
       await device.launchApp({newInstance: true, launchArgs});
-      await expect(element(by.text(url))).toBeNotVisible();
+      await expect(element(by.text(url))).not.toBeVisible();
       await device.openURL({url});
       await expect(element(by.text(url))).toBeVisible();
     });
 
     it(`${_platform}device.launchApp() with a URL should trigger url handling when app is in background`, async () => {
       await device.launchApp({newInstance: true, launchArgs});
-      await expect(element(by.text(url))).toBeNotVisible();
+      await expect(element(by.text(url))).not.toBeVisible();
       await device.sendToHome();
       await device.launchApp({newInstance: false, url});
       await expect(element(by.text(url))).toBeVisible();

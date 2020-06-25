@@ -9,6 +9,8 @@ import {
   Platform,
   Dimensions,
   StyleSheet,
+  Slider,
+  SafeAreaView,
   requireNativeComponent,
 } from 'react-native';
 import TextInput from '../Views/TextInput';
@@ -52,27 +54,27 @@ export default class ActionsScreen extends Component {
     if (this.state.backPressed) return this.renderPopupBackPressedDetected();
 
     return (
-      <View testID='View7990' style={{ flex: 1, paddingTop: 40, justifyContent: 'flex-start' }}>
+      <SafeAreaView  testID='View7990' style={{ flex: 1 ,justifyContent: 'flex-start' }}>
 
         <TouchableOpacity onPress={this.onButtonPress.bind(this, 'Tap Working')}
           onLongPress={this.onButtonPress.bind(this, 'Long Press Working')}
         >
-          <Text style={{ color: 'blue', marginBottom: 20, textAlign: 'center' }}>Tap Me</Text>
+          <Text style={{ color: 'blue', marginTop: isIos? 40 : 0, marginBottom: 10, textAlign: 'center' }}>Tap Me</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           delayLongPress={1200}
           onLongPress={this.onButtonPress.bind(this, 'Long Press With Duration Working')}
         >
-          <Text style={{ color: 'blue', marginBottom: 20, textAlign: 'center' }}>Long Press Me 1.5s</Text>
+          <Text style={{ color: 'blue', marginBottom: 10, textAlign: 'center' }}>Long Press Me 1.5s</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={this.onLongTimeout.bind(this)}
         >
-          <Text testID='WhyDoAllTheTestIDsHaveTheseStrangeNames' style={{ color: 'blue', marginBottom: 20, textAlign: 'center' }}>Tap Me For Long Timeout</Text>
+          <Text testID='WhyDoAllTheTestIDsHaveTheseStrangeNames' style={{ color: 'blue', marginBottom: 10, textAlign: 'center' }}>Tap Me For Long Timeout</Text>
         </TouchableOpacity>
 
-        <View style={{flexDirection: 'row', justifyContent: 'center', marginBottom: 20}}>
+        <View style={{flexDirection: 'row', justifyContent: 'center', marginBottom: 10}}>
           <TouchableOpacity onPress={this.onMultiTapPress.bind(this)}>
             <Text style={{ color: 'blue', textAlign: 'center' }}
               testID='UniqueId819'>Taps: {this.state.numTaps}</Text>
@@ -85,7 +87,7 @@ export default class ActionsScreen extends Component {
         </View>
 
         <View testID='UniqueId937_wrapper'>
-          <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }}
+          <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10, marginHorizontal: 20, padding: 5 }}
             onChangeText={this.onChangeTypeText.bind(this)}
             value={this.state.typeText}
             testID='UniqueId937'
@@ -93,15 +95,15 @@ export default class ActionsScreen extends Component {
             />
         </View>
 
-        {isIos && <TouchableOpacity style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }} testID='NoTextInputInside' />}
+        {isIos && <TouchableOpacity style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10, marginHorizontal: 20, padding: 5 }} testID='NoTextInputInside' />}
 
-        <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }}
+        <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10, marginHorizontal: 20, padding: 5 }}
           onChangeText={this.onChangeClearText.bind(this)}
           value={this.state.clearText}
           testID='UniqueId005'
         />
 
-        <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, marginHorizontal: 20, padding: 5 }}
+        <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10, marginHorizontal: 20, padding: 5 }}
           onChangeText={this.onReplaceText.bind(this)}
           value={this.state.replaceText}
           testID='UniqueId006'
@@ -143,12 +145,17 @@ export default class ActionsScreen extends Component {
           { this.state.showScrollOverlays ? <View style={{ height: 28, width: width * 0.75, backgroundColor: 'deepskyblue', position: 'absolute', right: 0 }} /> : null }
         </View>
 
-        <View style={{ height: 100, borderColor: '#c0c0c0', borderWidth: 1, backgroundColor: '#f8f8ff', marginBottom: 20 }}>
+        <View style={{ height: 100, borderColor: '#c0c0c0', borderWidth: 1, backgroundColor: '#f8f8ff', marginBottom: 15 }}>
           <ScrollView testID='ScrollView799' refreshControl={
             <RefreshControl refreshing={this.state.isRefreshing} onRefresh={this.onRefresh.bind(this)} title="Loading..." />
           }>
           </ScrollView>
         </View>
+
+        <View style={{ height: 40, borderColor: '#c0c0c0', marginHorizontal: 20 }}>
+          <Slider testID='sliderWithASimpleID' maximumValue={1000.0} minimumValue={0.0} value={250.0} />
+        </View>
+
         <View>
           <ScrollView testID='PinchableScrollView' minimumZoomScale={1} maximumZoomScale={10}>
             <View>
@@ -156,7 +163,7 @@ export default class ActionsScreen extends Component {
             </View>
           </ScrollView>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 

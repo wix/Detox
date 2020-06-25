@@ -47,10 +47,26 @@ describe('Client', () => {
     expect(client.ws.send).toHaveBeenCalledTimes(2);
   });
 
+  it(`setSyncSettings() - should send a 'setSyncSettings' action and resolve when 'setSyncSettingsDone' returns`, async () => {
+    await connect();
+    client.ws.send.mockReturnValueOnce(response("setSyncSettingsDone", {}, 1));
+    await client.setSyncSettings({test:test});
+
+    expect(client.ws.send).toHaveBeenCalledTimes(2);
+  });
+
   it(`shake() - should send a 'shake' action and resolve when 'shakeDeviceDone' returns`, async () => {
     await connect();
     client.ws.send.mockReturnValueOnce(response("shakeDeviceDone", {}, 1));
     await client.shake();
+
+    expect(client.ws.send).toHaveBeenCalledTimes(2);
+  });
+
+  it(`setOrientation() - should send a 'setOrientation' action and resolve when 'setOrientationDone' returns`, async () => {
+    await connect();
+    client.ws.send.mockReturnValueOnce(response("setOrientationDone", {}, 1));
+    await client.setOrientation('portrait');
 
     expect(client.ws.send).toHaveBeenCalledTimes(2);
   });
@@ -162,7 +178,7 @@ describe('Client', () => {
     const call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'matcherForAccessibilityLabel:', 'test');
     const invokeResult = await client.execute(call());
 
-    expect(invokeResult).toEqual(someInvocationResult);
+    expect(invokeResult).toEqual(someInvocationResult.params);
   });
 
   describe('slowInvocationStatus', () => {

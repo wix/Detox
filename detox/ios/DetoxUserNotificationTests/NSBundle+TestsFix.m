@@ -34,7 +34,7 @@
 
 + (instancetype)un_applicationBundle
 {
-	return [NSBundle bundleForClass:NSClassFromString(@"DetoxUserNotificationDispatcher")];
+	return [NSBundle bundleForClass:NSClassFromString(@"DTXUserNotificationDispatcher")];
 }
 
 @end
