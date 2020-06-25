@@ -148,7 +148,15 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 					log.error("Error while stopping recording: \(error)")
 				}
 				
-				completionHandler?()
+				if let completionHandler = completionHandler {
+					if Thread.isMainThread {
+						completionHandler()
+					} else {
+						DispatchQueue.main.async {
+							completionHandler()
+						}
+					}
+				}
 			}
 		}
 		
