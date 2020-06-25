@@ -27,7 +27,7 @@ const sleep = require('../../../utils/sleep');
 const retry = require('../../../utils/retry');
 const getAbsoluteBinaryPath = require('../../../utils/getAbsoluteBinaryPath');
 const AndroidExpect = require('../../../android/expect');
-const { InstrumentationLogsParser } = require('./InstrumentationLogsParser');
+const { InstrumentationLogsParser } = require('./tools/InstrumentationLogsParser');
 
 class AndroidDriver extends DeviceDriverBase {
   constructor(config) {

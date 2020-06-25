@@ -23,6 +23,12 @@ describe('Deferred', () => {
     it('should have pending status', () =>
       expect(deferred.status).toBe(Deferred.PENDING));
 
+    it('should indicate an isPending=true, other statuses as false', () => {
+      expect(deferred.isPending()).toEqual(true);
+      expect(deferred.isResolved()).toEqual(false);
+      expect(deferred.isRejected()).toEqual(false);
+    });
+
     it('should have promise', () =>
       expect(deferred.promise).toBeInstanceOf(Promise));
 
@@ -37,6 +43,12 @@ describe('Deferred', () => {
 
       it('should have a resolved status', () =>
         expect(deferred.status).toBe(Deferred.RESOLVED));
+
+      it('should indicate an isResolved=true, other statuses as false', () => {
+        expect(deferred.isResolved()).toEqual(true);
+        expect(deferred.isPending()).toEqual(false);
+        expect(deferred.isRejected()).toEqual(false);
+      });
 
       it('should have a resolved promise', () =>
         expect(deferred.promise).resolves.toBe(42));
@@ -61,6 +73,12 @@ describe('Deferred', () => {
       it('should have a rejected promise', () =>
         expect(deferred.promise).rejects.toThrowError('RejectionTest'));
 
+      it('should indicate an isRejected=true, other statuses as false', () => {
+        expect(deferred.isRejected()).toEqual(true);
+        expect(deferred.isResolved()).toEqual(false);
+        expect(deferred.isPending()).toEqual(false);
+      });
+
       describe('and then resolved', () => {
         beforeEach(() => deferred.resolve(42));
 
@@ -70,6 +88,29 @@ describe('Deferred', () => {
         it('should still have that rejected promise', () =>
           expect(deferred.promise).rejects.toThrowError('RejectionTest'));
       });
+    });
+  });
+
+  describe('when precreated as resolved', () => {
+    it('should be resolved', async () => {
+      deferred = Deferred.resolved('mock resolution');
+
+      expect(deferred.status).toBe(Deferred.RESOLVED);
+      expect(await deferred.promise).toEqual('mock resolution');
+    });
+  });
+
+  describe('when precreated as rejected', () => {
+    it('should be resolved', async () => {
+      deferred = Deferred.rejected(new Error('error mock'));
+
+      expect(deferred.status).toBe(Deferred.REJECTED);
+      try {
+        await deferred.promise;
+        fail();
+      } catch (e) {
+        expect(e.message).toEqual('error mock');
+      }
     });
   });
 });

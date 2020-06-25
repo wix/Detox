@@ -72,7 +72,7 @@ describe('Android driver', () => {
     jest.mock('../../../utils/sleep', () => jest.fn().mockResolvedValue(''));
     jest.mock('../../../utils/retry', () => jest.fn().mockResolvedValue(''));
 
-    jest.mock('./InstrumentationLogsParser', () => ({
+    jest.mock('./tools/InstrumentationLogsParser', () => ({
       InstrumentationLogsParser: MockInstrumentationLogsParserClass,
     }));
 
