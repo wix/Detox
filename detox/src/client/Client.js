@@ -3,6 +3,7 @@ const AsyncWebSocket = require('./AsyncWebSocket');
 const actions = require('./actions/actions');
 const argparse = require('../utils/argparse');
 const log = require('../utils/logger').child({ __filename });
+const { asError, removeInternalStackEntries } = require('../utils/errorUtils');
 
 class Client {
   constructor(config) {
@@ -87,30 +88,11 @@ class Client {
       this.slowInvocationStatusHandler = this.slowInvocationStatus();
     }
 
-    // when this test run fails, we want a stack trace from up here where the
-    // $callee is still available, and not inside the catch block where it isn't
-    const potentialError = new Error();
-
-    let stackArray = potentialError.stack.split('\n');
-    let newStack = 'Error:\n';
-    var i = 1; //First line is "Error:\n"
-    for(; i < stackArray.length; i++) {
-      if(!stackArray[i].includes('detox/src')) {
-        break;
-      }
-    }
-    for(; i < stackArray.length; i++) {
-      newStack += stackArray[i] + "\n";
-    }
-    potentialError.stack = newStack;
-
     try {
       return await this.sendAction(new actions.Invoke(invocation));
     } catch (err) {
       this.successfulTestRun = false;
-
-      potentialError.message = _.isError(err) ? err.message : String(err);
-      throw potentialError;
+      throw removeInternalStackEntries(asError(err));
     } finally {
       clearTimeout(this.slowInvocationStatusHandler);
     }
