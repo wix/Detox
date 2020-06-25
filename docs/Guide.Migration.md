@@ -31,8 +31,8 @@ The following APIs have been deprecated, but is still available
 
 - `tapAtPoint()`—the API has been consolidated with `tap(point)` (iOS, Android)
 - `pinchWithAngle()`—this API has been replaced with `pinch()` (iOS)
-- `toBeNotVisible()`—deprecated in favor of `not().toBeVisible()` (iOS, Android)
-- `toNotExist()`—deprecated in favor of `not().toExist()` (iOS, Android)
+- `toBeNotVisible()`—deprecated in favor of `not.toBeVisible()` (iOS, Android)
+- `toNotExist()`—deprecated in favor of `not.toExist()` (iOS, Android)
 
 Make sure to read the API reference for [matchers](https://github.com/wix/Detox/blob/master/docs/APIRef.Matchers.md), [actions](https://github.com/wix/Detox/blob/master/docs/APIRef.ActionsOnElement.md) and [expectations](https://github.com/wix/Detox/blob/master/docs/APIRef.Expect.md).
 
