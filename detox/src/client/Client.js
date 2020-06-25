@@ -61,8 +61,16 @@ class Client {
     await this.sendAction(new actions.CurrentStatus());
   }
 
+  async setSyncSettings(params) {
+    await this.sendAction(new actions.SetSyncSettings(params));
+  }
+
   async shake() {
     await this.sendAction(new actions.Shake());
+  }
+
+  async setOrientation(orientation) {
+    await this.sendAction(new actions.SetOrientation(orientation));
   }
 
   async startInstrumentsRecording({ recordingPath, samplingInterval }) {
@@ -124,8 +132,7 @@ class Client {
   async sendAction(action) {
     const response = await this.ws.send(action, action.messageId);
     const parsedResponse = JSON.parse(response);
-    await action.handle(parsedResponse);
-    return parsedResponse;
+    return await action.handle(parsedResponse);
   }
 
   slowInvocationStatus() {

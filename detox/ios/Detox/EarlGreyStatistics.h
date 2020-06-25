@@ -8,11 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface EarlGreyStatistics : NSObject
 
-+ (instancetype)sharedInstance;
+@property (nonatomic, class, readonly) EarlGreyStatistics* sharedInstance NS_SWIFT_NAME(shared);
 
-- (NSDictionary*)currentStatus;
+- (NSDictionary<NSString*, id>*)currentStatus;
 
 
 @end
+
+NS_ASSUME_NONNULL_END

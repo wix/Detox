@@ -6,23 +6,27 @@ class Matcher {
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherWithAncestor(this, matcher));
     return this;
   }
+
   withDescendant(matcher) {
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherWithDescendant(this, matcher));
     return this;
   }
+
   and(matcher) {
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherForAnd(this, matcher));
     return this;
   }
+
   or(matcher) {
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherForOr(this, matcher));
     return this;
   }
-  not() {
+
+  get not() {
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherForNot(this));
     return this;
   }
-  
+
   _avoidProblematicReactNativeElements() {
     /*
     const _originalMatcherCall = this._call;
@@ -35,10 +39,6 @@ class Matcher {
     const _originalMatcherCall = this._call;
     this._call = invoke.call(invoke.IOS.Class('GREYMatchers'), 'detoxMatcherForScrollChildOfMatcher:', _originalMatcherCall);
     */
-    return this;
-  }
-  
-  _extendPickerViewMatching() {
     return this;
   }
 }
@@ -71,24 +71,10 @@ class VisibleMatcher extends Matcher {
   }
 }
 
-class NotVisibleMatcher extends Matcher {
-  constructor() {
-    super();
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForNotVisible());
-  }
-}
-
 class ExistsMatcher extends Matcher {
   constructor() {
     super();
     this._call = invoke.callDirectly(DetoxMatcherApi.matcherForNotNull());
-  }
-}
-
-class NotExistsMatcher extends Matcher {
-  constructor() {
-    super();
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForNull());
   }
 }
 
@@ -124,9 +110,7 @@ module.exports = {
   TypeMatcher,
   TraitsMatcher,
   VisibleMatcher,
-  NotVisibleMatcher,
   ExistsMatcher,
-  NotExistsMatcher,
   TextMatcher,
   ValueMatcher
 };

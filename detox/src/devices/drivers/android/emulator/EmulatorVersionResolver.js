@@ -1,4 +1,4 @@
-const {QueryVersionCommand} = require('../tools/EmulatorExec');
+const {QueryVersionCommand} = require('../exec/EmulatorExec');
 const log = require('../../../../utils/logger').child({ __filename });
 
 const EMU_BIN_VERSION_DETECT_EV = 'EMU_BIN_VERSION_DETECT';

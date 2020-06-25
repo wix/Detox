@@ -2,12 +2,24 @@
 
 `device` is globally available in every test file, it enables control over the current attached device (currently only simulators are supported).
 
-### Public Properties
+## Public Properties
 
 * [`device.id`](#deviceid)
 * [`device.name`](#devicename)
 
-### Methods
+### `device.id`
+
+Holds the environment-unique ID of the device - namely, the `adb` ID on Android (e.g. `emulator-5554`) and the Mac-global simulator UDID on iOS, as used by `simctl` (e.g. `AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE`).
+
+The value will be `undefined` until the device is properly _prepared_ (i.e. in `detox.init()`).
+
+### `device.name`
+
+Holds a descriptive name of the device. Example: `emulator-5554 (Pixel_API_26)`
+
+The value will be `undefined` until the device is properly _prepared_ (i.e. in `detox.init()`).
+
+## Methods
 
 - [`device.launchApp()`](#devicelaunchappparams)
 - [`device.terminateApp()`](#deviceterminateapp)
@@ -40,139 +52,100 @@
 - [`device.pressBack()` **Android Only**](#devicepressback-android-only)
 - [`device.getUIDevice()` **Android Only**](#devicegetuidevice-android-only)
 
-### `device.id`
-
-Holds the environment-unique ID of the device - namely, the `adb` ID on Android (e.g. `emulator-5554`) and the Mac-global simulator UDID on iOS, as used by `simctl` (e.g. `AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE`).
-
-The value will be `undefined` until the device is properly _prepared_ (i.e. in `detox.init()`).
-
-### `device.name`
-
-Holds a descriptive name of the device. Example: `emulator-5554 (Pixel_API_26)`
-
-The value will be `undefined` until the device is properly _prepared_ (i.e. in `detox.init()`).
-
 ### `device.launchApp(params)`
 
 Launch the app defined in the current [`configuration`](APIRef.Configuration.md).
 
-**Options:** 
+`params`—object, containing one of more of the following keys and values:
 
-##### 1. Restart the app
-Terminate the app and launch it again. 
-If set to `false`, the simulator will try to bring app from background, if the app isn't running, it will launch a new instance. default is `false`
+##### 1. `newInstance`—Launching a New Instance of the App
+
+Terminates the app and launch it again. If set to `false`, the simulator will try to bring app from background, if the app isn't running, it will launch a new instance. Default is `false`.
 
 ```js
 await device.launchApp({newInstance: true});
 ```
 
-##### 2. Set runtime permissions
-Grant or deny runtime permissions for your application. 
+##### 2. `permissions`—Set Runtime Permissions (iOS Only)
+
+Grants or denies runtime permissions to your application. This will cause the app to terminate before permissions are applied.
 
 ```js
 await device.launchApp({permissions: {calendar: 'YES'}});
 ```
-Detox uses [AppleSimUtils](https://github.com/wix/AppleSimulatorUtils) on iOS to support this functionality. Read about the different types of permissions and how to set them in AppleSimUtils' Readme.
-Check out Detox's [own test suite](../detox/test/e2e/13.permissions.test.js)
+Detox uses [AppleSimUtils](https://github.com/wix/AppleSimulatorUtils) to implement this functionality for iOS simulators. Read about the different types of permissions and how to set them in AppleSimUtils' documentation and by checking out Detox's [own test suite](../detox/test/e2e/13.permissions.test.js).
 
-##### 3. Launch from URL
-Mock opening the app from URL to test your app's deep link handling mechanism.
+##### 3. `url`—Launching with URL
+
+Launches the app with the specified URL to test your app's deep link handling mechanism.
 
 ```js
 await device.launchApp({url: url});
-```
-###### Mock opening from a URL when app is not running
-```js
-await device.launchApp({url: url, newInstance: true});
-```
-This will launch a new instance of the app and handle the deep link.
-
-######  Mock opening from a URL when app is in background
-
-```js
-await device.launchApp({url: url, newInstance: false});
+await device.launchApp({url: url, newInstance: true}); //Launch a new instance of the app
+await device.launchApp({url: url, newInstance: false}); //Reuse existing instance
 ```
 This will launch the app from background and handle the deep link.
 
-Read more in [Mocking Open From URL](APIRef.MockingOpenFromURL.md) section.
+Read more in [here](APIRef.MockingOpenWithURL.md).
 
-##### 4. Launch with user notifications
+##### 4. `userNotification`—Launching with User Notifications (iOS Only)
 
-> Currently only supported on iOS!
+Launches with the specified user notification
 
 ```js
 await device.launchApp({userNotification: notification});
+await device.launchApp({userNotification: notification, newInstance: true}); //Launch a new instance of the app
+await device.launchApp({userNotification: notification, newInstance: false}); //Reuse existing instance
 ```
 
-###### Mock receiving a notifications when app is not running
-```js
-await device.launchApp({userNotification: notification, newInstance: true});
-```
-This will launch a new instance of the app and handle the notification.
+Read more in [here](APIRef.MockingUserNotifications.md).
 
-######  Mock receiving a notifications when app is in background
+##### 5. `userActivity`—Launch with User Activity (iOS Only)
 
-```js
-await device.launchApp({userNotification: notification, newInstance: false});
-```
-This will launch the app from background and handle the notification.
-
-Read more in [Mocking User Notifications](APIRef.MockingUserNotifications.md) section.
-
-##### 5. Launch with user activity
-
-> Currently only supported on iOS!
+Launches the app with the specified user activity
 
 ```js
 await device.launchApp({userActivity: activity});
+await device.launchApp({userActivity: activity, newInstance: true}); //Launch a new instance of the app
+await device.launchApp({userActivity: activity, newInstance: false}); //Reuse existing instance
 ```
 
-###### Mock receiving an activity when app is not running
-```js
-await device.launchApp({userActivity: activity, newInstance: true});
-```
-This will launch a new instance of the app and handle the activity.
+Read more in [here](APIRef.MockingUserActivity.md).
 
-######  Mock receiving an activity when app is in background
+##### 6. `delete`—Delete and Reinstall Application Before Launching
 
-```js
-await device.launchApp({userActivity: activity, newInstance: false});
-```
-This will launch the app from background and handle the activity.
+Before launching the application, it is uninstalled and then reinstalled.
 
-Read more in [Mocking User Activity](APIRef.MockingUserActivity.md) section.
-
-##### 6. Launch into a fresh installation 
-A flag that enables relaunching into a fresh installation of the app (it will uninstall and install the binary again), default is `false`.
+A flag that enables relaunching into a fresh installation of the app (it will uninstall and install the binary. Default is `false`.
 
 ```js
 await device.launchApp({delete: true});
 ```
 
-##### 7. Additional launch arguments
-Detox can start the app with additional launch arguments
+##### 7. `launchArgs`—Additional Process Launch Arguments
+
+Starts the app's process with the specified launch arguments.
 
 ```js
 await device.launchApp({launchArgs: {arg1: 1, arg2: "2"}});
 ```
 
-* **On iOS**, the added `launchArgs` will be passed through the launch command to the device and be accessible via `[[NSProcessInfo processInfo] arguments]`
-* **On Android**, the `launchArgs` will be set as a bundle-extra into the activity's intent. It will therefore be accessible on the native side via the current activity as: `currentActivity.getIntent().getBundleExtra("launchArgs")`.
+On iOS, the specified launch arguments are passed as the process launch arguments and available through normal means.
 
-Note that there are numerous ways to forward the arguments onto the javascript side of the app, but that is essentially out of Detox' scope. Nevertheless here are some references:
+On Android, the launch arguments are set as bundle-extra into the activity's intent. It will therefore be accessible on the native side via the current activity as: `currentActivity.getIntent().getBundleExtra("launchArgs")`.
 
-* Supported out of the box if you're using [React Native Navigation](https://github.com/wix/react-native-navigation/blob/2.18.5/docs/api/Navigation.md#getlaunchargs).
-* On Android, you can use `ReactNativeDelegate.getLaunchOptions()` , as described [here](https://dev.to/ryohlan/how-to-pass-initial-props-from-android-native-2k2).
-* For iOS, you may find this [this post](https://stackoverflow.com/a/31229533/453052) on stack overflow useful.
+Further handling of these launch arguments is up to the user's responsibility and is out of scope for Detox.
 
-##### 8. Disable touch indicators (iOS only)
-Disable touch indicators on iOS.
+##### 8. `disableTouchIndicators`—Disable Touch Indicators (iOS Only)
+
+Disables touch indicators on iOS. Default is `false`.
 
 ```js
 await device.launchApp({disableTouchIndicators: true});
 ```
 
-##### 9. Launch with a specific language (iOS only)
+##### 9. `languageAndLocale`—Launch with a Specific Language and/or Local (iOS Only)
+
 Launch the app with a specific system language
 
 Information about accepted values can be found [here](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/LanguageandLocaleIDs/LanguageandLocaleIDs.html).
@@ -214,8 +187,20 @@ With this API, you can run sets of e2e tests per language. For example:
 });
 ```
 
-##### 10. Initialize the URL blacklist at device launch
-Launch the app with an URL blacklist to disable network synchronization on certain endpoints. Useful if the app makes frequent network calls to blacklisted endpoints upon startup. 
+##### 10. `detoxEnableSynchronization`—Initialize Detox with synchronization enabled or disabled at app launch
+
+Launches the app with the synchronization mechanism enabled or disabled. Useful if the app cannot be synchronized during the launch process. Synchronization can later be enabled using `device.enableSynchronization()`.
+
+```js
+await device.launchApp({
+  newInstance: true,
+  launchArgs: { detoxEnableSynchronization: 0 }
+}); 
+```
+
+##### 11. `detoxURLBlacklistRegex`—Initialize the URL Blacklist at app launch
+
+Launches the app with a URL blacklist to disable network synchronization on certain endpoints. Useful if the app makes frequent network calls to blacklisted endpoints upon startup. 
 
 ```js
 await device.launchApp({
@@ -225,8 +210,8 @@ await device.launchApp({
 ```
 
 ### `device.relaunchApp(params)`
-**Deprecated** Use `device.launchApp(params)` instead. This method is now calling `launchApp({newInstance: true})` for backwards compatibility.
-Kill and relaunch the app defined in the current [`configuration`](APIRef.Configuration.md).
+
+**Deprecated:** Use `device.launchApp(params)` instead. This method is now calling `launchApp({newInstance: true})` for backwards compatibility.
 
 ### `device.terminateApp()`
 By default, `terminateApp()` with no params will terminate the app file defined in the current [`configuration`](APIRef.Configuration.md).
@@ -312,6 +297,7 @@ await device.setURLBlacklist(['.*my.ignored.endpoint.*']);
 ```
 
 ### `device.enableSynchronization()`
+
 Enable [EarlGrey's synchronization mechanism](https://github.com/google/EarlGrey/blob/master/docs/api.md#synchronization
 ) (enabled by default). **This is being reset on every new instance of the app.**
 ```js

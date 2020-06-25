@@ -46,7 +46,7 @@ private struct DetoxUserNotificationKeys {
 	static let timeInterval = "timeInterval"
 }
 
-@objc(DetoxUserNotificationDispatcher)
+@objc(DTXUserNotificationDispatcher)
 public class DetoxUserNotificationDispatcher: NSObject {
 	@objc let userNotificationData : [String: Any]
 	private let appStateAtCreation : UIApplication.State

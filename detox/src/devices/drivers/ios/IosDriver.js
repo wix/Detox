@@ -3,10 +3,6 @@ const fs = require('fs');
 const log = require('../../../utils/logger').child({ __filename });
 const DeviceDriverBase = require('../DeviceDriverBase');
 const InvocationManager = require('../../../invoke').InvocationManager;
-const invoke = require('../../../invoke');
-const GREYConfigurationApi = require('../../../ios/earlgreyapi/GREYConfiguration');
-const GREYConfigurationDetox = require('../../../ios/earlgreyapi/GREYConfigurationDetox');
-const EarlyGreyImpl = require('../../../ios/earlgreyapi/EarlGreyImpl');
 const AppleSimUtils = require('./tools/AppleSimUtils');
 
 const SimulatorLogPlugin = require('../../../artifacts/log/ios/SimulatorLogPlugin');
@@ -14,14 +10,16 @@ const SimulatorScreenshotPlugin = require('../../../artifacts/screenshot/Simulat
 const SimulatorRecordVideoPlugin = require('../../../artifacts/video/SimulatorRecordVideoPlugin');
 const SimulatorInstrumentsPlugin = require('../../../artifacts/instruments/ios/SimulatorInstrumentsPlugin');
 const TimelineArtifactPlugin = require('../../../artifacts/timeline/TimelineArtifactPlugin');
-const IosExpect = require('../../../ios/expect');
+const IosExpectTwo = require('../../../ios/expectTwo');
+
 
 class IosDriver extends DeviceDriverBase {
   constructor(config) {
     super(config);
 
     this.applesimutils = new AppleSimUtils();
-    this.matchers = new IosExpect(new InvocationManager(this.client));
+    this.matchers = new IosExpectTwo(new InvocationManager(this.client));
+    // this.matchers = new IosExpect(new InvocationManager(this.client));
   }
 
   declareArtifactPlugins() {
@@ -37,30 +35,22 @@ class IosDriver extends DeviceDriverBase {
     };
   }
 
-  async setURLBlacklist(urlList) {
-    await this.client.execute(
-      GREYConfigurationApi.setValueForConfigKey(
-        invoke.callDirectly(GREYConfigurationApi.sharedInstance()),
-        urlList,
-        "GREYConfigKeyURLBlacklistRegex"
-      )
-    );
+  createPayloadFile(notification) {
+    const notificationFilePath = path.join(this.createRandomDirectory(), `payload.json`);
+    fs.writeFileSync(notificationFilePath, JSON.stringify(notification, null, 2));
+    return notificationFilePath;
+  }
+
+  async setURLBlacklist(blacklistURLs) {
+    return await this.client.setSyncSettings({blacklistURLs: blacklistURLs});
   }
 
   async enableSynchronization() {
-    await this.client.execute(
-      GREYConfigurationDetox.enableSynchronization(
-        invoke.callDirectly(GREYConfigurationApi.sharedInstance())
-      )
-    );
+    return await this.client.setSyncSettings({enabled: true});
   }
 
   async disableSynchronization() {
-    await this.client.execute(
-      GREYConfigurationDetox.disableSynchronization(
-        invoke.callDirectly(GREYConfigurationApi.sharedInstance())
-      )
-    );
+    return await this.client.setSyncSettings({enabled: false});
   }
 
   async shake(deviceId) {
@@ -68,8 +58,8 @@ class IosDriver extends DeviceDriverBase {
   }
 
   async setOrientation(deviceId, orientation) {
-    const call = EarlyGreyImpl.rotateDeviceToOrientationErrorOrNil(invoke.EarlGrey.instance,orientation);
-    await this.client.execute(call);
+    if (!['portrait', 'landscape'].some(option => option === orientation)) throw new Error("orientation should be either 'portrait' or 'landscape', but got " + (orientation + ")"));
+    return await this.client.setOrientation({orientation});
   }
 
   validateDeviceConfig(config) {

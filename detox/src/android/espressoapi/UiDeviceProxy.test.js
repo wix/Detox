@@ -3,7 +3,7 @@ const someInstance = 'some_instance';
 const someDisplayHeight = 1920;
 const invocationManager = {
   execute() {
-    return {params: {result: someDisplayHeight}};
+    return {result: someDisplayHeight};
   }
 };
 describe('ui device proxy', () => {

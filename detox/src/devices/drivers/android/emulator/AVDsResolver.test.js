@@ -3,8 +3,8 @@ describe('AVDs resolver', () => {
   let emulatorExec;
   let uut;
   beforeEach(() => {
-    MockListAVDsCommand = jest.genMockFromModule('../tools/EmulatorExec').ListAVDsCommand;
-    jest.mock('../tools/EmulatorExec', () => ({
+    MockListAVDsCommand = jest.genMockFromModule('../exec/EmulatorExec').ListAVDsCommand;
+    jest.mock('../exec/EmulatorExec', () => ({
       ListAVDsCommand: MockListAVDsCommand,
     }));
 

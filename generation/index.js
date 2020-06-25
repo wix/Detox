@@ -1,22 +1,7 @@
 #!/usr/bin/env node
-const generateIOSAdapters = require('./adapters/ios');
 const generateAndroidAdapters = require('./adapters/android');
 const downloadEspressoFileByClass = require('./utils/downloadEspresso');
 const downloadFile = require('./utils/downloadFile');
-
-const iosFiles = {
-  '../detox/ios/EarlGrey/EarlGrey/Action/GREYActions.h': '../detox/src/ios/earlgreyapi/GREYActions.js',
-  '../detox/ios/Detox/GREYMatchers+Detox.h': '../detox/src/ios/earlgreyapi/GREYMatchers+Detox.js',
-  '../detox/ios/EarlGrey/EarlGrey/Matcher/GREYMatchers.h': '../detox/src/ios/earlgreyapi/GREYMatchers.js',
-  '../detox/ios/EarlGrey/EarlGrey/Core/GREYInteraction.h': '../detox/src/ios/earlgreyapi/GREYInteraction.js',
-  '../detox/ios/Detox/GREYCondition+Detox.h': '../detox/src/ios/earlgreyapi/GREYConditionDetox.js',
-  '../detox/ios/EarlGrey/EarlGrey/Synchronization/GREYCondition.h': '../detox/src/ios/earlgreyapi/GREYCondition.js',
-  '../detox/ios/Detox/GREYConfiguration+Detox.h': '../detox/src/ios/earlgreyapi/GREYConfigurationDetox.js',
-  '../detox/ios/EarlGrey/EarlGrey/Common/GREYConfiguration.h': '../detox/src/ios/earlgreyapi/GREYConfiguration.js',
-  '../detox/ios/EarlGrey/EarlGrey/Core/EarlGreyImpl.h': '../detox/src/ios/earlgreyapi/EarlGreyImpl.js',
-  '../detox/ios/Detox/GREYActions+Detox.h': '../detox/src/ios/earlgreyapi/GREYActions+Detox.js'
-};
-generateIOSAdapters(iosFiles);
 
 const espressoFilesToDownload = {
   'androidx.test.espresso.action.ViewActions': '../detox/src/android/espressoapi/ViewActions.js'

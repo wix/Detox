@@ -9,7 +9,7 @@ describe('Assertions', () => {
   });
 
   it('should assert an element is not visible', async () => {
-    await expect(element(by.id('UniqueId205'))).toBeNotVisible();
+    await expect(element(by.id('UniqueId205'))).not.toBeVisible();
   });
 
   // prefer toBeVisible to make sure the user actually sees this element
@@ -18,7 +18,7 @@ describe('Assertions', () => {
   });
 
   it('should assert an element does not exist', async () => {
-    await expect(element(by.id('RandomJunk959'))).toNotExist();
+    await expect(element(by.id('RandomJunk959'))).not.toExist();
   });
 
   // matches specific text elements like UIButton, UILabel, UITextField or UITextView, RCTText

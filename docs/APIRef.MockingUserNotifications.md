@@ -4,7 +4,7 @@ Detox supports mocking user notifications for iOS apps.
 
 >**Note:** The mocking mechanism will not mimic the UI of a user notification. Instead, it will only simulate a user interaction with the notification.
 
-### Mocking App Launch with a Notification
+## Mocking App Launch with a Notification
 
 Using `launchApp()` with custom params (e.g., `userNotification`) will trigger the mocking mechanism.
 
@@ -12,7 +12,7 @@ Using `launchApp()` with custom params (e.g., `userNotification`) will trigger t
 await device.launchApp({newInstance: true, userNotification: notification});
 ```
 
-**Example:**
+#### Example
 
 ```js
 describe('Background push notification', () => {
@@ -29,7 +29,7 @@ describe('Background push notification', () => {
 });
 ```
 
-### Mocking Notification Reception on a Running App
+## Mocking Notification Reception on a Running App
 
 Use the `sendUserNotification()` method to send notification to running app. Notifications can be sent to an active or a background app.
 

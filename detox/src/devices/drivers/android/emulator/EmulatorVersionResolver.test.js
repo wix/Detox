@@ -22,8 +22,8 @@ describe('Emulator binary version', () => {
   let log;
   let uut;
   beforeEach(() => {
-    MockQueryVersionCommand = jest.genMockFromModule('../tools/EmulatorExec').QueryVersionCommand;
-    jest.mock('../tools/EmulatorExec', () => ({
+    MockQueryVersionCommand = jest.genMockFromModule('../exec/EmulatorExec').QueryVersionCommand;
+    jest.mock('../exec/EmulatorExec', () => ({
       QueryVersionCommand: MockQueryVersionCommand,
     }));
 

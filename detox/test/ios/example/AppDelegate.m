@@ -1,6 +1,4 @@
 #import "AppDelegate.h"
-#import <React/RCTEventDispatcher.h>
-#import <React/RCTBridgeModule.h>
 #import <React/RCTRootView.h>
 #import <React/RCTLinkingManager.h>
 @import CoreSpotlight;
@@ -161,9 +159,10 @@ RCT_EXPORT_MODULE();
 														moduleName:@"example"
 												 initialProperties:nil
 													 launchOptions:opts];
-	rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
+	rootView.backgroundColor = UIColor.whiteColor;
 	
-	self.window = [[AnnoyingWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+	self.window = [[AnnoyingWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+	self.window.isAccessibilityElement = YES;
 	ShakeDetectViewController *rootViewController = [ShakeDetectViewController new];
 	rootViewController.bridge = rootView.bridge;
 	rootViewController.view = rootView;
@@ -218,6 +217,28 @@ RCT_EXPORT_MODULE();
 		[someLabel.centerXAnchor constraintEqualToAnchor:self.window.centerXAnchor],
 		[someLabel.topAnchor constraintEqualToAnchor:self.window.annoyingLabel.bottomAnchor],
 	]];
+	
+	[someLabel.superview bringSubviewToFront:someLabel];
+	
+	static id __prevObserver = nil;
+	
+	//Cleanup the previous observer
+	if(__prevObserver != nil)
+	{
+		[NSNotificationCenter.defaultCenter removeObserver:__prevObserver];
+		__prevObserver = nil;
+	}
+	
+	__prevObserver = [NSNotificationCenter.defaultCenter addObserverForName:RCTContentDidAppearNotification object:self.window.rootViewController.view queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+		if(someLabel.window == nil)
+		{
+			[NSNotificationCenter.defaultCenter removeObserver:__prevObserver];
+			__prevObserver = nil;
+			return;
+		}
+		
+		[someLabel.superview bringSubviewToFront:someLabel];
+	}];
 }
 
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void(^)(NSArray<id<UIUserActivityRestoring>> * __nullable restorableObjects))restorationHandler

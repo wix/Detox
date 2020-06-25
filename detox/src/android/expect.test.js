@@ -9,12 +9,22 @@ describe('expect', () => {
   it(`element by accessibilityLabel`, async () => {
     await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeVisible();
     await e.expect(e.element(e.by.accessibilityLabel('test'))).toBeNotVisible();
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toBeVisible();
     await e.expect(e.element(e.by.accessibilityLabel('test'))).toExist();
     await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotExist();
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toExist();
     await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveText('text');
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveText('text');
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toHaveText('text');
     await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveLabel('label');
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveLabel('label');
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toHaveLabel('label');
     await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveId('id');
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveId('id');
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toHaveId('id');
     await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveValue('value');
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveValue('value');
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toHaveValue('value');
   });
 
   it(`element by label (for backwards compat)`, async () => {
@@ -47,7 +57,7 @@ describe('expect', () => {
     await e.expect(e.element(e.by.id('test').withAncestor(e.by.id('ancestor')))).toBeVisible();
     await e.expect(e.element(e.by.id('test').withDescendant(e.by.id('descendant')))).toBeVisible();
     await e.expect(e.element(e.by.id('test').and(e.by.type('type')))).toBeVisible();
-    await e.expect(e.element(e.by.id('test').not())).toBeVisible();
+    await e.expect(e.element(e.by.id('test'))).not.toBeVisible();
     await e.expect(e.element(e.by.id('test').or(e.by.id('test2')))).toBeVisible();
   });
 
@@ -73,14 +83,30 @@ describe('expect', () => {
 
   it(`waitFor (element)`, async () => {
     await e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout(0);
+    await e.waitFor(e.element(e.by.id('id'))).not.toExist().withTimeout(0);
     await e.waitFor(e.element(e.by.id('id'))).toBeVisible();
     await e.waitFor(e.element(e.by.id('id'))).toBeNotVisible();
     await e.waitFor(e.element(e.by.id('id'))).toExist();
     await e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout(0);
     await e.waitFor(e.element(e.by.id('id'))).toNotExist().withTimeout(0);
+
     await e.waitFor(e.element(e.by.id('id'))).toHaveText('text');
+    await e.waitFor(e.element(e.by.id('id'))).toNotHaveText('value');
+    await e.waitFor(e.element(e.by.id('id'))).not.toHaveText('text');
+
+    await e.waitFor(e.element(e.by.id('id'))).toHaveLabel('text');
+    await e.waitFor(e.element(e.by.id('id'))).toNotHaveLabel('text');
+    await e.waitFor(e.element(e.by.id('id'))).not.toHaveLabel('text');
+
+    await e.waitFor(e.element(e.by.id('id'))).toHaveId('id');
+    await e.waitFor(e.element(e.by.id('id'))).toNotHaveId('id');
+    await e.waitFor(e.element(e.by.id('id'))).not.toHaveId('id');
+
     await e.waitFor(e.element(e.by.id('id'))).toHaveValue('value');
     await e.waitFor(e.element(e.by.id('id'))).toNotHaveValue('value');
+    await e.waitFor(e.element(e.by.id('id'))).not.toHaveValue('value');
+
+
 
     await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50, 'down');
     await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50);
@@ -99,6 +125,7 @@ describe('expect', () => {
 
   it(`interactions`, async () => {
     await e.element(e.by.label('Tap Me')).tap();
+    await e.element(e.by.label('Tap Me')).tap({ x: 10, y: 10 });
     await e.element(e.by.label('Tap Me')).tapAtPoint({x: 100, y: 200});
     await e.element(e.by.label('Tap Me')).longPress();
     await e.element(e.by.id('UniqueId819')).multiTap(3);

@@ -135,6 +135,11 @@ class example extends Component {
     );
 }
 
+  _onNotification(notification) {
+    console.log('App@onNotification:', notification);
+    this.setState({notification: notification.getAlert()});
+  }
+
   renderAnimationScreenButtons() {
     return (
       <View style={{flexDirection: 'row', justifyContent: 'center'}}>

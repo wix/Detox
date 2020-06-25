@@ -4,7 +4,7 @@ Detox supports mocking user activity for iOS apps.
 
 The user activity API is used to mock an external user activity state. The app normally uses this state to continue the activity inside the app. This API is also used for associated domains, Spotlight search handling and Siri intents.
 
-### Mocking App Launch with a User Activity
+## Mocking App Launch with a User Activity
 
 Using `lauchApp()` with custom params will trigger the mocking mechanism.
 
@@ -22,7 +22,7 @@ describe('Background user activity', () => {
 });
 ```
 
-### Sending User Activity to a Running App
+## Sending User Activity to a Running App
 
 Use the `sendUserActivity()` method.
 
@@ -31,7 +31,7 @@ await device.sendUserActivity(activity)
 ```
 
 **Example:**
- 
+
 ```js
  
 describe('Foreground user activity', () => {
@@ -88,7 +88,7 @@ Currently supported system-generated activity types:
 * DetoxConstants.userActivityTypes.browsingWeb - Used for associated domains (deep links)
 * DetoxConstants.userActivityTypes.searchableItem - Used for Spotlight search resutls 
 
-#### Spotlight Search Results
+### Spotlight Search Results
 
 In addition to `DetoxConstants.userActivityTypes.searchableItem`, Detox also provides an additional constant, used to provide the item identifier, which was selected in Spotlight. The app uses this identifier to display the item on screen.
 

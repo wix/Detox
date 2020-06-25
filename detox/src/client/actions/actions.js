@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const log = require('../../utils/logger').child({ __filename });
+const bunyan = require('bunyan');
 
 class Action {
   constructor(type, params = {}) {
@@ -70,6 +71,16 @@ class Shake extends Action {
   }
 }
 
+class SetOrientation extends Action {
+  constructor(params) {
+    super('setOrientation', params);
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'setOrientationDone');
+  }
+}
+
 class ReloadReactNative extends Action {
   constructor() {
     super('reactNativeReload');
@@ -102,9 +113,13 @@ class Invoke extends Action {
   async handle(response) {
     switch (response.type) {
       case 'testFailed':
-        throw new Error(response.params.details);
+        throw new Error('Test Failed:' + response.params.details +
+          /* istanbul ignore next */
+          (log.level() <= bunyan.DEBUG ?
+          '\nView Hierarchy (presented in loglevel verbose and above):\n' + response.params.viewHierarchy :
+          '\nTIP: To print view hierarchy on failed actions/matches, use loglevel verbose and above.'));
       case 'invokeResult':
-        break;
+        return response.params;
       case 'error':
         throw new Error(response.params.error);
       default:
@@ -120,6 +135,16 @@ class DeliverPayload extends Action {
 
   async handle(response) {
     this.expectResponseOfType(response, 'deliverPayloadDone');
+  }
+}
+
+class SetSyncSettings extends Action {
+  constructor(params) {
+    super('setSyncSettings', params);
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'setSyncSettingsDone');
   }
 }
 
@@ -181,8 +206,10 @@ module.exports = {
   ReloadReactNative,
   Cleanup,
   DeliverPayload,
+  SetSyncSettings,
   CurrentStatus,
   Shake,
+  SetOrientation,
   SetInstrumentsRecordingState,
   AppWillTerminateWithError,
   AppNonresponsive,

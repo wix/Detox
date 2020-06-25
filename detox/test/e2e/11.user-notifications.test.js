@@ -1,3 +1,5 @@
+//Leo: I've disabled calendar events as they are exactly the same as push in the code. You may enable them for Android if needed, but set as ":android:".
+
 const {
   userNotificationPushTrigger,
   userNotificationCalendarTrigger,
@@ -21,7 +23,7 @@ describe(':ios: User Notifications', () => {
     await expect(element(by.text('From push'))).toBeVisible();
   });
 
-  it('Background calendar notification', async () => {
+  xit('Background calendar notification', async () => {
     await device.launchApp({newInstance: true});
     await device.sendToHome();
     await device.launchApp({newInstance: false, userNotification: userNotificationCalendarTrigger});
@@ -34,7 +36,7 @@ describe(':ios: User Notifications', () => {
     await expect(element(by.text('From push'))).toBeVisible();
   });
 
-  it('Foreground calendar notifications', async () => {
+  xit('Foreground calendar notifications', async () => {
     await device.launchApp({newInstance: true});
     await device.sendUserNotification(userNotificationCalendarTrigger);
     await expect(element(by.text('From calendar'))).toBeVisible();
