@@ -108,6 +108,11 @@ describe('Monitored instrumentation', () => {
       await uut.terminate();
       expect(instrumentation.clearAllCallbackFn).toHaveBeenCalled();
     });
+
+    it('should allow for termination without launch', async () => {
+      await uut.terminate();
+      expect(instrumentation.terminate).toHaveBeenCalled();
+    });
   });
 
   it('should allow for user-initiated clearing of termination callback function', async () => {

@@ -10,10 +10,10 @@ class MonitoredInstrumentation {
     this.instrumentationStackTrace = '';
     this.instrumentation = new Instrumentation(adb, logger, this._onInstrumentationTerminated.bind(this), this._onInstrumentationLogData.bind(this));
     this.userTerminationFn = _.noop;
+    this.pendingPromise = Deferred.resolved();
   }
 
   async launch(deviceId, bundleId, userLaunchArgs) {
-    this.pendingPromise = Deferred.resolved();
     this.instrumentationLogsParser = new InstrumentationLogsParser();
     await this.instrumentation.launch(deviceId, bundleId, userLaunchArgs);
   }
@@ -45,18 +45,16 @@ class MonitoredInstrumentation {
   async terminate() {
     await this.instrumentation.terminate();
     this._rejectPendingCrashPromise();
-    this.instrumentation.clearAllCallbackFn();
   }
 
   async _onInstrumentationTerminated() {
-    // await this.adb.reverseRemove(deviceId, serverPort); // TODO here or there? there!
     this._rejectPendingCrashPromise();
-    this.instrumentation.clearAllCallbackFn();
     await this.userTerminationFn();
   }
 
   _rejectPendingCrashPromise() {
     this.pendingPromise.reject(this._getInstrumentationCrashError());
+    this.instrumentation.clearAllCallbackFn();
   }
 
   _onInstrumentationLogData(logsDump) {

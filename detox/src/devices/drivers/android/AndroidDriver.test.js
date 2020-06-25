@@ -28,22 +28,13 @@ describe('Android driver', () => {
     }
   }
 
-  class MockInstrumentationLogsParserClass {
-    constructor() {
-      this.parse = () => {};
-      this.containsStackTraceLog = () => true;
-      this.getStackTrace = () => MockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK;
-    }
-  }
-  MockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK = 'Stacktrace mock';
-
   class MockInvocationManagerClass {
     constructor() {
       Object.assign(this, invocationManager);
     }
   }
 
-  class MockInstrumentationClass {
+  class MockMonitoredInstrumentationClass {
     constructor(...args) {
       instrumentation.mockCtor(...args);
       Object.assign(this, instrumentation);
@@ -56,7 +47,6 @@ describe('Android driver', () => {
   let fs;
   let exec;
   let detoxApi;
-  let instrumentationArgs;
   let instrumentation;
   beforeEach(() => {
     jest.mock('fs', () => ({
@@ -71,10 +61,6 @@ describe('Android driver', () => {
 
     jest.mock('../../../utils/sleep', () => jest.fn().mockResolvedValue(''));
     jest.mock('../../../utils/retry', () => jest.fn().mockResolvedValue(''));
-
-    jest.mock('./tools/InstrumentationLogsParser', () => ({
-      InstrumentationLogsParser: MockInstrumentationLogsParserClass,
-    }));
 
     jest.mock('../../../utils/getAbsoluteBinaryPath', () =>
       jest.fn().mockImplementation((x) => `absolutePathOf(${x})`),
@@ -109,15 +95,11 @@ describe('Android driver', () => {
     jest.mock('../../../android/espressoapi/Detox');
     detoxApi = require('../../../android/espressoapi/Detox');
 
-    jest.mock('./tools/instrumentationArgs');
-    instrumentationArgs = require('./tools/instrumentationArgs');
-    instrumentationArgs.prepareInstrumentationArgs.mockReturnValue({args: [], usedReservedArgs: []});
-
-    const Instrumentation = jest.genMockFromModule('./tools/Instrumentation');
-    instrumentation = new Instrumentation();
+    const MonitoredInstrumentation = jest.genMockFromModule('./tools/MonitoredInstrumentation');
+    instrumentation = new MonitoredInstrumentation();
     instrumentation.mockCtor = jest.fn();
     mockInstrumentationDead();
-    jest.mock('./tools/Instrumentation', () => MockInstrumentationClass);
+    jest.mock('./tools/MonitoredInstrumentation', () => MockMonitoredInstrumentationClass);
   });
 
   let adb;
@@ -362,44 +344,58 @@ describe('Android driver', () => {
 
   describe('Device ready-wait', () => {
     it('should delegate wait to device being ready via client api', async () => {
-      mockInstrumentationRunning();
       await uut.waitUntilReady();
       expect(client.waitUntilReady).toHaveBeenCalled();
     }, 2000);
 
     it('should fail if instrumentation async\'ly-dies prematurely while waiting for device-ready resolution', async () => {
+      const crashError = new Error('mock instrumentation crash error');
+      let waitForCrashReject = () => {};
+      instrumentation.waitForCrash.mockImplementation(() => {
+        return new Promise((__, reject) => {
+          waitForCrashReject = reject;
+        });
+      });
+
       await uut.launchApp(deviceId, bundleId, {}, '');
 
-      mockInstrumentationRunning();
       const clientWaitResolve = mockDeviceReadyPromise();
-
       const promise = uut.waitUntilReady();
-      setTimeout(fakeInstrumentationTermination, 1);
+      setTimeout(() => waitForCrashReject(crashError), 1);
 
       try {
         await promise;
         fail('Expected an error and none was thrown');
       } catch (e) {
-        expect(e.toString()).toContain('DetoxRuntimeError: Failed to run application on the device');
-        expect(e.toString()).toContain(`Native stacktrace dump: ${MockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK}`);
+        expect(e).toEqual(crashError);
       } finally {
         clientWaitResolve();
       }
     }, 2000);
 
+    it('should abort crash-wait if instrumentation doesnt crash', async () => {
+      client.waitUntilReady.mockResolvedValue('mocked');
+      await uut.waitUntilReady();
+      expect(instrumentation.abortWaitForCrash).toHaveBeenCalled();
+    });
+
+    it('should abort crash-wait if instrumentation crashes', async () => {
+      client.waitUntilReady.mockResolvedValue('mocked');
+      instrumentation.waitForCrash.mockRejectedValue(new Error());
+
+      await uut.launchApp(deviceId, bundleId, {}, '');
+      try {
+        await uut.waitUntilReady();
+        fail();
+      } catch (e) {
+        expect(instrumentation.abortWaitForCrash).toHaveBeenCalled();
+      }
+    });
+
     const mockDeviceReadyPromise = () => {
       let clientResolve;
       client.waitUntilReady.mockReturnValue(new Promise((resolve) => clientResolve = resolve));
       return clientResolve;
-    };
-
-    const fakeInstrumentationTermination = async () => {
-      const instrumentationLoggingCallback = instrumentation.setLogListenFn.mock.calls[0][0];
-      await instrumentationLoggingCallback('Doesnt matter what we put here because actual stacktrace should be read from logs-parser');
-
-      const instrumentationTerminationCallback = instrumentation.setTerminationFn.mock.calls[0][0];
-      await instrumentationTerminationCallback();
-      mockInstrumentationDead();
     };
   });
 
