@@ -2,7 +2,7 @@
 
 We are improving Detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes. If a newer version has no entries in this document, it means it does not require special migration steps. Refer to the release notes of the later builds to learn about their improvements and changes.
 
-## X.0.0
+## 17.0.0
 
 Detox for iOS now uses an entirely new, custom built matcher, action and expectation infrastructure. This is the first step in our roadmap of removing Earl Grey as a dependency.
 
@@ -14,7 +14,7 @@ While the new system has been designed to be as compatible as possible with the 
 - `getAttributes()`—new API for obtaining element properties (iOS)
 - `not()`—new API for inverting expectation logic (iOS, Android)
 
-##### Modified API
+##### Modified API (**Potentially Breaking Changes**)
 
 The following APIs have changed and require attention
 
