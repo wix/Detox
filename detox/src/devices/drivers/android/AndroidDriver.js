@@ -81,37 +81,12 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async launchApp(deviceId, bundleId, launchArgs, languageAndLocale) {
-    let notificationPayloadTargetPath;
-
     await this.emitter.emit('beforeLaunchApp', { deviceId, bundleId, launchArgs });
 
-    if (launchArgs.detoxUserNotificationDataURL) {
-      notificationPayloadTargetPath = await this._sendNotificationDataToDevice(launchArgs.detoxUserNotificationDataURL, deviceId);
-      launchArgs = {
-        ...launchArgs,
-        detoxUserNotificationDataURL: notificationPayloadTargetPath,
-      }
-    }
+    launchArgs = await this._modifyArgsForNotificationHandling(deviceId, bundleId, launchArgs);
+    await this._launchApp(deviceId, bundleId, launchArgs);
 
-    if (!this.instrumentation.isRunning()) {
-      await this._launchInstrumentationProcess(deviceId, bundleId, launchArgs);
-      await sleep(500);
-    } else if (launchArgs.detoxURLOverride) {
-      await this._startActivityWithUrl(launchArgs.detoxURLOverride);
-    } else if (launchArgs.detoxUserNotificationDataURL) {
-      await this._startActivityFromNotification(launchArgs.detoxUserNotificationDataURL);
-    } else {
-      await this._resumeMainActivity();
-    }
-
-    let pid = NaN;
-    try {
-      pid = await retry(() => this._queryPID(deviceId, bundleId));
-    } catch (e) {
-      log.warn(await this.adb.shell(deviceId, 'ps'));
-      throw e;
-    }
-
+    const pid = await this._waitForProcess(deviceId, bundleId);
     await this.emitter.emit('launchApp', { deviceId, bundleId, launchArgs, pid });
     return pid;
   }
@@ -159,20 +134,6 @@ class AndroidDriver extends DeviceDriverBase {
     await this.emitter.emit('terminateApp', { deviceId, bundleId });
   }
 
-  _getInstrumentationCrashError() {
-    return new DetoxRuntimeError({
-      message: 'Failed to run application on the device',
-      hint: this.instrumentationStackTrace
-        ? 'Most likely, your main activity has crashed prematurely.'
-        : 'Most likely, your tests have timed out and called detox.cleanup() ' +
-          'while it was waiting for "ready" message (over WebSocket) ' +
-          'from the instrumentation process.',
-      debugInfo: this.instrumentationStackTrace
-        ? `Native stacktrace dump: ${this.instrumentationStackTrace}`
-        : '',
-    });
-  }
-
   async cleanup(deviceId, bundleId) {
     await this._terminateInstrumentation();
     await super.cleanup(deviceId, bundleId);
@@ -195,18 +156,15 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async setURLBlacklist(urlList) {
-    const call = EspressoDetoxApi.setURLBlacklist(urlList);
-    await this.invocationManager.execute(call);
+    await this.invocationManager.execute(EspressoDetoxApi.setURLBlacklist(urlList));
   }
 
   async enableSynchronization() {
-    const call = EspressoDetoxApi.setSynchronization(true);
-    await this.invocationManager.execute(call);
+    await this.invocationManager.execute(EspressoDetoxApi.setSynchronization(true));
   }
 
   async disableSynchronization() {
-    const call = EspressoDetoxApi.setSynchronization(false);
-    await this.invocationManager.execute(call);
+    await this.invocationManager.execute(EspressoDetoxApi.setSynchronization(false));
   }
 
   async takeScreenshot(deviceId, screenshotName) {
@@ -256,6 +214,31 @@ class AndroidDriver extends DeviceDriverBase {
     return testApkPath;
   }
 
+  async _modifyArgsForNotificationHandling(deviceId, bundleId, launchArgs) {
+    let _launchArgs = launchArgs;
+    if (launchArgs.detoxUserNotificationDataURL) {
+      const notificationPayloadTargetPath = await this._sendNotificationDataToDevice(launchArgs.detoxUserNotificationDataURL, deviceId);
+      _launchArgs = {
+        ...launchArgs,
+        detoxUserNotificationDataURL: notificationPayloadTargetPath,
+      }
+    }
+    return _launchArgs;
+  }
+
+  async _launchApp(deviceId, bundleId, launchArgs) {
+    if (!this.instrumentation.isRunning()) {
+      await this._launchInstrumentationProcess(deviceId, bundleId, launchArgs);
+      await sleep(500);
+    } else if (launchArgs.detoxURLOverride) {
+      await this._startActivityWithUrl(launchArgs.detoxURLOverride);
+    } else if (launchArgs.detoxUserNotificationDataURL) {
+      await this._startActivityFromNotification(launchArgs.detoxUserNotificationDataURL);
+    } else {
+      await this._resumeMainActivity();
+    }
+  }
+
   async _launchInstrumentationProcess(deviceId, bundleId, userLaunchArgs) {
     const serverPort = new URL(this.client.configuration.server).port;
     await this.adb.reverse(deviceId, serverPort);
@@ -269,17 +252,13 @@ class AndroidDriver extends DeviceDriverBase {
   async _onInstrumentationTerminated(deviceId, serverPort) {
     await this.adb.reverseRemove(deviceId, serverPort);
     this.instrumentationCloseListener();
-
-    this.instrumentation.setTerminationFn(null);
-    this.instrumentation.setLogListenFn(null);
+    this.instrumentation.clearAllCallbackFn();
   }
 
   async _terminateInstrumentation() {
     await this.instrumentation.terminate();
     this.instrumentationCloseListener();
-
-    this.instrumentation.setTerminationFn(null);
-    this.instrumentation.setLogListenFn(null);
+    this.instrumentation.clearAllCallbackFn();
   }
 
   _extractStackTraceFromInstrumLogs(logsDump) {
@@ -288,24 +267,6 @@ class AndroidDriver extends DeviceDriverBase {
     if (this.instrumentationLogsParser.containsStackTraceLog(logsDump)) {
       this.instrumentationStackTrace = this.instrumentationLogsParser.getStackTrace(logsDump);
     }
-  }
-
-  async _queryPID(deviceId, bundleId, waitAtStart = true) {
-    if (waitAtStart) {
-      await sleep(500);
-    }
-
-    for (let attempts = 5; attempts > 0; attempts--) {
-      const pid = await this.adb.pidof(deviceId, bundleId);
-
-      if (pid > 0) {
-        return pid;
-      }
-
-      await sleep(1000);
-    }
-
-    return NaN;
   }
 
   async _sendNotificationDataToDevice(dataFileLocalPath, deviceId) {
@@ -323,6 +284,42 @@ class AndroidDriver extends DeviceDriverBase {
 
   _resumeMainActivity() {
     return this.invocationManager.execute(DetoxApi.launchMainActivity());
+  }
+
+  async _waitForProcess(deviceId, bundleId) {
+    let pid = NaN;
+    try {
+      const queryPid = () => this._queryPID(deviceId, bundleId);
+      const retryQueryPid = () => retry({ backoff: 'none', retries: 4 }, queryPid);
+      const retryQueryPidMultiple = () => retry({ backoff: 'linear' }, retryQueryPid);
+      pid = await retryQueryPidMultiple();
+    } catch (e) {
+      log.warn(await this.adb.shell(deviceId, 'ps'));
+      throw e;
+    }
+    return pid;
+  }
+
+  async _queryPID(deviceId, bundleId) {
+    const pid = await this.adb.pidof(deviceId, bundleId);
+    if (!pid) {
+      throw new Error('PID still not available');
+    }
+    return pid;
+  }
+
+  _getInstrumentationCrashError() {
+    return new DetoxRuntimeError({
+      message: 'Failed to run application on the device',
+      hint: this.instrumentationStackTrace
+        ? 'Most likely, your main activity has crashed prematurely.'
+        : 'Most likely, your tests have timed out and called detox.cleanup() ' +
+        'while it was waiting for "ready" message (over WebSocket) ' +
+        'from the instrumentation process.',
+      debugInfo: this.instrumentationStackTrace
+        ? `Native stacktrace dump: ${this.instrumentationStackTrace}`
+        : '',
+    });
   }
 }
 

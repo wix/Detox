@@ -250,6 +250,16 @@ describe('Instrumentation', () => {
     expect(logListenCallback).not.toHaveBeenCalled();
   });
 
+  it('should allow for clearing of all user-callbacks', async () => {
+    uut.clearAllCallbackFn();
+
+    await uut.launch(deviceId, bundleId, []);
+    await invokeDataCallbackWith('data');
+    await invokeTerminationCallback();
+    expect(userTerminationCallback).not.toHaveBeenCalled();
+    expect(logListenCallback).not.toHaveBeenCalled();
+  });
+
   const extractDataCallback = () => childProcess.stdout.on.mock.calls[0][1];
   const invokeDataCallbackWith = async (data) => {
     const fn = extractDataCallback();
