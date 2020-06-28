@@ -263,6 +263,7 @@ IOHIDEventRef IOHIDEventCreateDigitizerFingerEvent(CFAllocatorRef allocator,
  *  @param isTap A boolean to indicate that this is a tap.
  */
 - (void)setIsTap:(BOOL)isTap;
+- (void)_setIsTapToClick:(BOOL)isTap;
 
 /**
  *  Sets location property to @c location. If @c reset is @c NO, the original value of location will

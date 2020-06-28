@@ -29,9 +29,8 @@
 
 + (void)load
 {
-	Method m1 = class_getInstanceMethod(UIScrollView.class, @selector(_scrollViewWillEndDraggingWithDeceleration:));
-	Method m2 = class_getInstanceMethod(UIScrollView.class, @selector(_dtx_scrollViewWillEndDraggingWithDeceleration:));
-	method_exchangeImplementations(m1, m2);
+	NSError* error;
+	DTXSwizzleMethod(UIScrollView.class, @selector(_scrollViewWillEndDraggingWithDeceleration:), @selector(_dtx_scrollViewWillEndDraggingWithDeceleration:), &error);
 }
 
 - (void)setDtx_disableDecelerationForScroll:(BOOL)dtx_disableDecelerationForScroll

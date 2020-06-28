@@ -83,9 +83,7 @@ static NSURL* _launchUserActivityDataURL()
 {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		Method m1 = class_getInstanceMethod(self, @selector(sendEvent:));
-		Method m2 = class_getInstanceMethod(self, @selector(__dtx_sendEvent:));
-		method_exchangeImplementations(m1, m2);
+		DTXSwizzleMethod(self, @selector(sendEvent:), @selector(__dtx_sendEvent:), NULL);
 	});
 }
 

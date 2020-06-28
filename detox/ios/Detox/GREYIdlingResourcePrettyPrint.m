@@ -57,15 +57,8 @@ static dispatch_queue_t __tarckedObjectsQueue;
 		__tarckedObjectsMapping = [NSMapTable mapTableWithKeyOptions:NSMapTableStrongMemory valueOptions:NSMapTableStrongMemory];
 		__tarckedObjectsQueue = dispatch_queue_create("com.wix.tarckedObjectsQueue", DISPATCH_QUEUE_SERIAL);
 		
-		Method m1 = class_getInstanceMethod(self, @selector(trackState:forObject:));
-		Method m2 = class_getInstanceMethod(self, @selector(_pp__trackState:forObject:));
-		
-		method_exchangeImplementations(m1, m2);
-		
-		m1 = class_getInstanceMethod(self, @selector(untrackState:forObject:));
-		m2 = class_getInstanceMethod(self, @selector(_pp__untrackState:forObject:));
-		
-		method_exchangeImplementations(m1, m2);
+		DTXSwizzleMethod(self, @selector(trackState:forObject:), @selector(_pp__trackState:forObject:), NULL);
+		DTXSwizzleMethod(self, @selector(untrackState:forObject:), @selector(_pp__untrackState:forObject:), NULL);
 	});
 }
 
