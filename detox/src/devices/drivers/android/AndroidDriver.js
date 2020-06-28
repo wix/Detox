@@ -119,6 +119,7 @@ class AndroidDriver extends DeviceDriverBase {
   async terminate(deviceId, bundleId) {
     await this.emitter.emit('beforeTerminateApp', { deviceId, bundleId });
     await this.instrumentation.terminate();
+    await this.instrumentation.setTerminationFn(null);
     await this.adb.terminate(deviceId, bundleId);
     await this.emitter.emit('terminateApp', { deviceId, bundleId });
   }

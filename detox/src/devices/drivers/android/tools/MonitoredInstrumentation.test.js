@@ -70,12 +70,6 @@ describe('Monitored instrumentation', () => {
   });
 
   describe('Unexpected termination', () => {
-    it('should clear all existing callbacks', async () => {
-      await uut.launch(deviceId, bundleId, {});
-      await invokeUnderlyingTerminationCallback();
-      expect(instrumentation.clearAllCallbackFn).toHaveBeenCalled();
-    });
-
     it('should invoke user termination callback', async () => {
       const terminationFn = jest.fn();
       uut.setTerminationFn(terminationFn);
@@ -101,12 +95,6 @@ describe('Monitored instrumentation', () => {
         await uut.terminate();
         fail();
       } catch (e) {}
-    });
-
-    it('should clear all existing callbacks', async () => {
-      await uut.launch(deviceId, bundleId, {});
-      await uut.terminate();
-      expect(instrumentation.clearAllCallbackFn).toHaveBeenCalled();
     });
 
     it('should allow for termination without launch', async () => {

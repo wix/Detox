@@ -54,7 +54,6 @@ class MonitoredInstrumentation {
 
   _rejectPendingCrashPromise() {
     this.pendingPromise.reject(this._getInstrumentationCrashError());
-    this.instrumentation.clearAllCallbackFn();
   }
 
   _onInstrumentationLogData(logsDump) {

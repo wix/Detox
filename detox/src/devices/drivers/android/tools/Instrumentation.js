@@ -34,19 +34,6 @@ class Instrumentation {
     return !!this.instrumentationProcess;
   }
 
-  setTerminationFn(userTerminationFn) {
-    this.userTerminationFn = userTerminationFn || _.noop;
-  }
-
-  setLogListenFn(userLogListenFn) {
-    this.userLogListenFn = userLogListenFn || _.noop;
-  }
-
-  clearAllCallbackFn() {
-    this.setTerminationFn(null);
-    this.setLogListenFn(null);
-  }
-
   _getSpawnArgs(userLaunchArgs) {
     const launchArgs = prepareInstrumentationArgs(userLaunchArgs);
     const additionalLaunchArgs = prepareInstrumentationArgs({ debug: false });
