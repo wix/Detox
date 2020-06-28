@@ -2,6 +2,7 @@ describe('Android driver', () => {
 
   const deviceId = 'device-id-mock';
   const bundleId = 'bundle-id-mock';
+  const detoxServerPort = 1234;
   const mockNotificationDataTargetPath = '/ondevice/path/to/notification.json';
 
   const mockGetAbsoluteBinaryPathImpl = (x) => `absolutePathOf(${x})`;
@@ -19,12 +20,6 @@ describe('Android driver', () => {
   class MockTempFileXferClass {
     constructor() {
       Object.assign(this, fileXfer);
-    }
-  }
-
-  class MockAsyncEmitterClass {
-    constructor() {
-      this.emit = jest.fn();
     }
   }
 
@@ -46,6 +41,7 @@ describe('Android driver', () => {
   let getAbsoluteBinaryPath;
   let fs;
   let exec;
+  let emitter;
   let detoxApi;
   let instrumentation;
   beforeEach(() => {
@@ -87,9 +83,14 @@ describe('Android driver', () => {
 
     client = {
       configuration: {
-        server: 'ws://localhost:1234'
+        server: `ws://localhost:${detoxServerPort}`
       },
       waitUntilReady: jest.fn(),
+    };
+
+    emitter = {
+      emit: jest.fn(),
+      off: jest.fn(),
     };
 
     jest.mock('../../../android/espressoapi/Detox');
@@ -141,7 +142,7 @@ describe('Android driver', () => {
     const AndroidDriver = require('./AndroidDriver');
     uut = new AndroidDriver({
       client,
-      emitter: new MockAsyncEmitterClass(),
+      emitter,
     });
   });
 
@@ -166,6 +167,64 @@ describe('Android driver', () => {
         fail();
       } catch (e) {}
     });
+
+    it('should set a termination callback function', async () => {
+      await uut.launchApp(deviceId, bundleId, {}, '');
+      expect(instrumentation.setTerminationFn).toHaveBeenCalledWith(expect.any(Function));
+    });
+
+    it('should adb-reverse the detox server port', async () => {
+      await uut.launchApp(deviceId, bundleId, {}, '');
+      await expect(adb.reverse).toHaveBeenCalledWith(deviceId, detoxServerPort.toString());
+    });
+  });
+
+  describe('Instrumentation unexpected termination', () => {
+    beforeEach(async () => {
+      await uut.launchApp(deviceId, bundleId, {}, '');
+      await invokeTerminationCallbackFn();
+    });
+
+    it('should clear out the termination callback function', () =>
+      expect(instrumentation.setTerminationFn).toHaveBeenCalledWith(null));
+
+    it('should adb-unreverse the detox server port', () =>
+      expect(adb.reverseRemove).toHaveBeenCalledWith(deviceId, detoxServerPort.toString()));
+
+    const extractTerminationCallbackFn = () => instrumentation.setTerminationFn.mock.calls[0][0];
+    const invokeTerminationCallbackFn = async () => {
+      const fn = extractTerminationCallbackFn();
+      await fn();
+    }
+  });
+
+  describe('App termination', () => {
+    beforeEach(async () => {
+      await uut.launchApp(deviceId, bundleId, {}, '');
+      await uut.terminate();
+    });
+
+    it('should terminate instrumentation', () =>
+      expect(instrumentation.terminate).toHaveBeenCalled());
+
+    it('should clear out the termination callback function', () =>
+      expect(instrumentation.setTerminationFn).toHaveBeenCalledWith(null));
+
+    it('should terminate ADB altogether', () =>
+      expect(adb.terminate).toHaveBeenCalled());
+  });
+
+  describe('Cleanup', () => {
+    beforeEach(async () => await uut.cleanup());
+
+    it('should terminate instrumentation', () =>
+      expect(instrumentation.terminate).toHaveBeenCalled());
+
+    it('should clear out the termination callback function', () =>
+      expect(instrumentation.setTerminationFn).toHaveBeenCalledWith(null));
+
+    it('should turn off the events emitter', () =>
+      expect(emitter.off).toHaveBeenCalled());
   });
 
   describe('URL runtime delivery handling', () => {

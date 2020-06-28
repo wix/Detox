@@ -118,14 +118,13 @@ class AndroidDriver extends DeviceDriverBase {
 
   async terminate(deviceId, bundleId) {
     await this.emitter.emit('beforeTerminateApp', { deviceId, bundleId });
-    await this.instrumentation.terminate();
-    await this.instrumentation.setTerminationFn(null);
+    await this._terminateInstrumentation();
     await this.adb.terminate(deviceId, bundleId);
     await this.emitter.emit('terminateApp', { deviceId, bundleId });
   }
 
   async cleanup(deviceId, bundleId) {
-    await this.instrumentation.terminate();
+    await this._terminateInstrumentation();
     await super.cleanup(deviceId, bundleId);
   }
 
@@ -233,8 +232,16 @@ class AndroidDriver extends DeviceDriverBase {
     const serverPort = new URL(this.client.configuration.server).port;
     await this.adb.reverse(deviceId, serverPort);
 
-    this.instrumentation.setTerminationFn(() => this.adb.reverseRemove(deviceId, serverPort));
+    this.instrumentation.setTerminationFn(async () => {
+      await this._terminateInstrumentation();
+      await this.adb.reverseRemove(deviceId, serverPort);
+    });
     await this.instrumentation.launch(deviceId, bundleId, userLaunchArgs);
+  }
+
+  async _terminateInstrumentation() {
+    await this.instrumentation.terminate();
+    await this.instrumentation.setTerminationFn(null);
   }
 
   async _sendNotificationDataToDevice(dataFileLocalPath, deviceId) {
