@@ -11,7 +11,13 @@
 #import "UIWindow+DetoxUtils.h"
 #import "UISlider+DetoxUtils.h"
 
+@interface DTXTouchVisualizerWindow : UIWindow @end
+
+//#ifdef DEBUG
+//#define _DTXPopulateError(errOut) { NSLog(@"🤦‍♂️ %@", errOut); if(error) { *error = (errOut); } }
+//#else
 #define _DTXPopulateError(errOut) if(error) { *error = (errOut); }
+//#endif
 
 DTX_ALWAYS_INLINE
 static NSDictionary* DTXInsetsToDictionary(UIEdgeInsets insets)
@@ -322,6 +328,13 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	
 	__block BOOL rv = NO;
 	BOOL isHit = (selector == @selector(dtx_hitTest:withEvent:lookingFor:));
+
+	if(isHit && self.userInteractionEnabled == NO)
+	{
+		_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: @"View has user interaction disabled (userInteractionEnabled == NO)"}]);
+
+		return NO;
+	}
 	
 	id (*testFunc)(id, SEL, CGPoint, id, id) = (void*)objc_msgSend;
 	
@@ -335,6 +348,11 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		if(obj.screen != screen)
 		{
 			//Irrelevant window, ignore
+			return;
+		}
+		
+		if([obj isKindOfClass:DTXTouchVisualizerWindow.class])
+		{
 			return;
 		}
 		
@@ -363,15 +381,21 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		
 		UIView* visibleView = testFunc(obj, selector, currentWindowActivationPoint, nil, self);
 		
-		if(self.window != obj && isHit && visibleView != nil)
+		if(self.window != obj && isHit)
 		{
-			NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Another view “%@” hittable in window “%@” at window point “%@”", visibleView.dtx_shortDescription, obj.dtx_shortDescription, DTXPointToString(currentWindowActivationPoint)]}];
-			_DTXPopulateError(err);
-			
-			//We've hit a view in another window
-			rv = NO;
-			*stop = YES;
+			if(visibleView != nil)
+			{
+				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Another view “%@” hittable in window “%@” at window point “%@”", visibleView.dtx_shortDescription, obj.dtx_shortDescription, DTXPointToString(currentWindowActivationPoint)]}];
+				_DTXPopulateError(err);
+				
+				//We've hit a view in another window
+				rv = NO;
+				*stop = YES;
+			}
+			return;
 		}
+		
+		NSAssert(self.window == obj, @"Detox logic failure!");
 		
 		if(visibleView == self || [visibleView isDescendantOfView:self])
 		{
@@ -380,16 +404,25 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		}
 		else
 		{
-			NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Another view “%@” is %@ at window point “%@”", visibleView.dtx_shortDescription, isHit ? @"hittable" : @"visible", DTXPointToString(currentWindowActivationPoint)]}];
-			_DTXPopulateError(err);
+			rv = NO;
+			*stop = YES;
+			
+			if(visibleView == NO)
+			{
+				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"No view is %@ at window point “%@”", isHit ? @"hittable" : @"visible", DTXPointToString(windowActivationPoint)]}];
+				_DTXPopulateError(err);
+			}
+			else
+			{
+				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Another view “%@” is %@ at window point “%@”", visibleView.dtx_shortDescription, isHit ? @"hittable" : @"visible", DTXPointToString(currentWindowActivationPoint)]}];
+				_DTXPopulateError(err);
+			}
+			
+			return;
 		}
 	}];
 	
-	if(rv == NO)
-	{
-		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"No view is %@ at window point “%@”", isHit ? @"hittable" : @"visible", DTXPointToString(windowActivationPoint)]}];
-		_DTXPopulateError(err);
-	}
+	
 	
 	return rv;
 }
