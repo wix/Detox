@@ -2,6 +2,15 @@ describe('retry', () => {
   let sleep;
   let retry;
 
+  const mockFailingUserFn = () => jest.fn().mockReturnValue(Promise.reject(new Error('a thing')));
+  const mockFailingOnceUserFn = () => jest.fn()
+    .mockReturnValueOnce(Promise.reject())
+    .mockReturnValueOnce(Promise.resolve());
+  const mockFailingTwiceUserFn = () => jest.fn()
+    .mockReturnValueOnce(Promise.reject('once'))
+    .mockReturnValueOnce(Promise.reject('twice'))
+    .mockReturnValueOnce(Promise.resolve());
+
   beforeEach(() => {
     jest.mock('./sleep', () => jest.fn().mockReturnValue(Promise.resolve()));
     sleep = require('./sleep');
@@ -10,31 +19,25 @@ describe('retry', () => {
   });
 
   it('should retry once over a function that fails once', async () => {
-    const mockFnc = jest.fn()
-                        .mockReturnValueOnce(Promise.reject())
-                        .mockReturnValueOnce(Promise.resolve());
+    const mockFn = mockFailingOnceUserFn();
 
     try {
-      await retry({retries: 999, interval: 0}, mockFnc);
+      await retry({retries: 999, interval: 0}, mockFn);
     } catch (e) {
       fail('expected retry not to fail');
     }
 
-    expect(mockFnc).toHaveBeenCalledTimes(2);
+    expect(mockFn).toHaveBeenCalledTimes(2);
   });
 
   it('should retry multiple times', async () => {
-    const mockFnc = jest.fn()
-                        .mockReturnValueOnce(Promise.reject('once'))
-                        .mockReturnValueOnce(Promise.reject('twice'))
-                        .mockReturnValueOnce(Promise.resolve());
-    await retry({retries: 999, interval: 0}, mockFnc);
-    expect(mockFnc).toHaveBeenCalledTimes(3);
+    const mockFn = mockFailingTwiceUserFn();
+    await retry({retries: 999, interval: 0}, mockFn);
+    expect(mockFn).toHaveBeenCalledTimes(3);
   });
 
   it('should adhere to retries parameter', async () => {
-    const mockFn = jest.fn()
-                       .mockReturnValue(Promise.reject(new Error('a thing')));
+    const mockFn = mockFailingUserFn();
     try {
       await retry({retries: 2, interval: 1}, mockFn);
       fail('expected retry to fail and throw');
@@ -44,15 +47,52 @@ describe('retry', () => {
     }
   });
 
-  it('should adhere to interval parameter, and sleep for increasingly long intervals', async () => {
+  it('should adhere to interval parameter, and sleep for increasingly long intervals (i.e. the default backoff mode)', async () => {
+    const mockFn = mockFailingUserFn();
     const baseInterval = 111;
-    const mockFn = jest.fn().mockReturnValue(Promise.reject(new Error('a thing')));
 
     try {
       await retry({retries: 2, interval: baseInterval}, mockFn);
       fail('expected retry to fail and throw');
-    } catch (error) {
-    }
+    } catch (error) {}
+
+    expect(sleep).toHaveBeenCalledTimes(2);
+    expect(sleep).toHaveBeenCalledWith(baseInterval);
+    expect(sleep).toHaveBeenCalledWith(baseInterval * 2);
+  });
+
+  it('should allow for a constant sleep interval instead of an increasing one by setting backoff="none"', async () => {
+    const mockFn = mockFailingUserFn();
+    const baseInterval = 111;
+    const options = {
+      retries: 2,
+      interval: baseInterval,
+      backoff: 'none',
+    };
+
+    try {
+      await retry(options, mockFn);
+      fail('expected retry to fail and throw');
+    } catch (error) {}
+
+    expect(sleep).toHaveBeenCalledTimes(2);
+    expect(sleep).toHaveBeenNthCalledWith(1, baseInterval);
+    expect(sleep).toHaveBeenNthCalledWith(2, baseInterval);
+  });
+
+  it('should allow for the default linear backoff when set explicitly as "linear"', async () => {
+    const mockFn = mockFailingUserFn();
+    const baseInterval = 111;
+    const options = {
+      retries: 2,
+      interval: baseInterval,
+      backoff: 'linear',
+    };
+
+    try {
+      await retry(options, mockFn);
+      fail('expected retry to fail and throw');
+    } catch (error) {}
 
     expect(sleep).toHaveBeenCalledTimes(2);
     expect(sleep).toHaveBeenCalledWith(baseInterval);
@@ -60,8 +100,7 @@ describe('retry', () => {
   });
 
   it('should adhere to a custom condition', async () => {
-    const mockFn = jest.fn()
-                       .mockReturnValue(Promise.reject(new Error('a thing')));
+    const mockFn = mockFailingUserFn();
     const conditionFn = jest.fn()
                             .mockReturnValueOnce(true)
                             .mockReturnValueOnce(false);
@@ -69,22 +108,21 @@ describe('retry', () => {
     try {
       await retry({retries: 999, interval: 1, conditionFn}, mockFn);
       fail('expected retry to fail and throw');
-    } catch (error) {
-    }
+    } catch (error) {}
 
     expect(mockFn).toHaveBeenCalledTimes(2);
   });
 
   it('should work with default retries+interval values', async () => {
+    const mockFn = mockFailingUserFn();
     const defaultRetries = 9;
     const defaultInterval = 500;
-    const mockFn = jest.fn().mockReturnValue(Promise.reject(new Error('a thing')));
 
     try {
       await retry(mockFn);
       fail('expected retry to fail and throw');
-    } catch (error) {
-    }
+    } catch (error) {}
+
     expect(mockFn).toHaveBeenCalledTimes(defaultRetries + 1);
     expect(sleep).toHaveBeenCalledWith(defaultInterval);
   });
