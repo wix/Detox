@@ -211,53 +211,11 @@ describe('Instrumentation', () => {
     });
   });
 
-  it('should allow for runtime setup of termination callback', async () => {
-    const runtimeCallback = jest.fn();
-
+  it('should work with no user callbacks registration', async () => {
     const Instrumentation = require('./Instrumentation');
     uut = new Instrumentation(adb, logger, undefined, undefined);
-    uut.setTerminationFn(runtimeCallback);
-    await uut.launch(deviceId, bundleId, []);
-    await invokeTerminationCallback();
-
-    expect(runtimeCallback).toHaveBeenCalled();
-  });
-
-  it('should allow for clearing of termination callback', async () => {
-    uut.setTerminationFn(null);
     await uut.launch(deviceId, bundleId, []);
     await uut.terminate();
-    expect(userTerminationCallback).not.toHaveBeenCalled();
-  });
-
-  it('should allow for runtime setup of log-tapping callback', async () => {
-    const runtimeCallback = jest.fn();
-
-    const Instrumentation = require('./Instrumentation');
-    uut = new Instrumentation(adb, logger, undefined, undefined);
-    await uut.launch(deviceId, bundleId, []);
-
-    uut.setLogListenFn(runtimeCallback);
-    await invokeDataCallbackWith('mock data');
-
-    expect(runtimeCallback).toHaveBeenCalledWith('mock data');
-  });
-
-  it('should allow for clearing of log-tapping callback', async () => {
-    uut.setLogListenFn(null);
-    await uut.launch(deviceId, bundleId, []);
-    await invokeDataCallbackWith('data');
-    expect(logListenCallback).not.toHaveBeenCalled();
-  });
-
-  it('should allow for clearing of all user-callbacks', async () => {
-    uut.clearAllCallbackFn();
-
-    await uut.launch(deviceId, bundleId, []);
-    await invokeDataCallbackWith('data');
-    await invokeTerminationCallback();
-    expect(userTerminationCallback).not.toHaveBeenCalled();
-    expect(logListenCallback).not.toHaveBeenCalled();
   });
 
   const extractDataCallback = () => childProcess.stdout.on.mock.calls[0][1];

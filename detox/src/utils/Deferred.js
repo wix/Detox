@@ -18,12 +18,36 @@ class Deferred {
     this.reject = this.reject.bind(this);
   }
 
+  static resolved(value) {
+    const deferred = new Deferred();
+    deferred.resolve(value);
+    return deferred;
+  }
+
+  static rejected(error) {
+    const deferred = new Deferred();
+    deferred.reject(error);
+    return deferred;
+  }
+
   get status() {
     return this[_status];
   }
 
   get promise() {
     return this[_promise];
+  }
+
+  isPending() {
+    return this.status === Deferred.PENDING;
+  }
+
+  isResolved() {
+    return this.status === Deferred.RESOLVED;
+  }
+
+  isRejected() {
+    return this.status === Deferred.REJECTED;
   }
 
   resolve(value) {

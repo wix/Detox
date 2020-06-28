@@ -11,7 +11,7 @@ const AAPT = require('./exec/AAPT');
 const APKPath = require('./tools/APKPath');
 const TempFileXfer = require('./tools/TempFileXfer');
 const AppUninstallHelper = require('./tools/AppUninstallHelper');
-const Instrumentation = require('./tools/Instrumentation');
+const MonitoredInstrumentation = require('./tools/MonitoredInstrumentation');
 const DetoxApi = require('../../../android/espressoapi/Detox');
 const EspressoDetoxApi = require('../../../android/espressoapi/EspressoDetox');
 const UiDeviceProxy = require('../../../android/espressoapi/UiDeviceProxy');
@@ -22,12 +22,10 @@ const ADBScreenrecorderPlugin = require('../../../artifacts/video/ADBScreenrecor
 const AndroidDevicePathBuilder = require('../../../artifacts/utils/AndroidDevicePathBuilder');
 const TimelineArtifactPlugin = require('../../../artifacts/timeline/TimelineArtifactPlugin');
 const temporaryPath = require('../../../artifacts/utils/temporaryPath');
-const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 const sleep = require('../../../utils/sleep');
 const retry = require('../../../utils/retry');
 const getAbsoluteBinaryPath = require('../../../utils/getAbsoluteBinaryPath');
 const AndroidExpect = require('../../../android/expect');
-const { InstrumentationLogsParser } = require('./InstrumentationLogsParser');
 
 class AndroidDriver extends DeviceDriverBase {
   constructor(config) {
@@ -42,10 +40,7 @@ class AndroidDriver extends DeviceDriverBase {
     this.fileXfer = new TempFileXfer(this.adb);
     this.devicePathBuilder = new AndroidDevicePathBuilder();
 
-    this.instrumentationLogsParser = null;
-    this.instrumentationStackTrace = '';
-    this.instrumentationCloseListener = _.noop;
-    this.instrumentation = new Instrumentation(this.adb, logger);
+    this.instrumentation = new MonitoredInstrumentation(this.adb, logger);
   }
 
   declareArtifactPlugins() {
@@ -107,15 +102,9 @@ class AndroidDriver extends DeviceDriverBase {
 
   async waitUntilReady() {
       try {
-        await Promise.race([
-          super.waitUntilReady(),
-          new Promise((resolve, reject) => {
-            this.instrumentationCloseListener = () => reject(this._getInstrumentationCrashError());
-            !this.instrumentation.isRunning() && this.instrumentationCloseListener();
-          }),
-        ]);
+        await Promise.race([super.waitUntilReady(), this.instrumentation.waitForCrash()]);
       } finally {
-        this.instrumentationCloseListener = _.noop;
+        this.instrumentation.abortWaitForCrash();
       }
   }
 
@@ -243,30 +232,16 @@ class AndroidDriver extends DeviceDriverBase {
     const serverPort = new URL(this.client.configuration.server).port;
     await this.adb.reverse(deviceId, serverPort);
 
-    this.instrumentationLogsParser = new InstrumentationLogsParser();
-    this.instrumentation.setTerminationFn(() => this._onInstrumentationTerminated(deviceId, serverPort));
-    this.instrumentation.setLogListenFn(this._extractStackTraceFromInstrumLogs.bind(this));
+    this.instrumentation.setTerminationFn(async () => {
+      await this._terminateInstrumentation();
+      await this.adb.reverseRemove(deviceId, serverPort);
+    });
     await this.instrumentation.launch(deviceId, bundleId, userLaunchArgs);
-  }
-
-  async _onInstrumentationTerminated(deviceId, serverPort) {
-    await this.adb.reverseRemove(deviceId, serverPort);
-    this.instrumentationCloseListener();
-    this.instrumentation.clearAllCallbackFn();
   }
 
   async _terminateInstrumentation() {
     await this.instrumentation.terminate();
-    this.instrumentationCloseListener();
-    this.instrumentation.clearAllCallbackFn();
-  }
-
-  _extractStackTraceFromInstrumLogs(logsDump) {
-    this.instrumentationLogsParser.parse(logsDump);
-
-    if (this.instrumentationLogsParser.containsStackTraceLog(logsDump)) {
-      this.instrumentationStackTrace = this.instrumentationLogsParser.getStackTrace(logsDump);
-    }
+    await this.instrumentation.setTerminationFn(null);
   }
 
   async _sendNotificationDataToDevice(dataFileLocalPath, deviceId) {
@@ -306,20 +281,6 @@ class AndroidDriver extends DeviceDriverBase {
       throw new Error('PID still not available');
     }
     return pid;
-  }
-
-  _getInstrumentationCrashError() {
-    return new DetoxRuntimeError({
-      message: 'Failed to run application on the device',
-      hint: this.instrumentationStackTrace
-        ? 'Most likely, your main activity has crashed prematurely.'
-        : 'Most likely, your tests have timed out and called detox.cleanup() ' +
-        'while it was waiting for "ready" message (over WebSocket) ' +
-        'from the instrumentation process.',
-      debugInfo: this.instrumentationStackTrace
-        ? `Native stacktrace dump: ${this.instrumentationStackTrace}`
-        : '',
-    });
   }
 }
 
