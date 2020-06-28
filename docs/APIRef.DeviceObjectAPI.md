@@ -29,7 +29,7 @@ The value will be `undefined` until the device is properly _prepared_ (i.e. in `
 - [`device.uninstallApp()`](#deviceuninstallapp)
 - [`device.openURL(url)`](#deviceopenurlurl-sourceappoptional)
 - [`device.sendUserNotification(params)`](#devicesendusernotificationparams)
-- [`device.sendUserActivity(params)`](#devicesenduseractivityparams)
+- [`device.sendUserActivity(params)` **iOS Only**](#devicesenduseractivityparams)
 - [`device.setOrientation(orientation)`](#devicesetorientationorientation)
 - [`device.setLocation(lat, lon)`](#devicesetlocationlat-lon)
 - [`device.setURLBlacklist([urls])`](#deviceseturlblacklisturls)
@@ -60,7 +60,9 @@ Launch the app defined in the current [`configuration`](APIRef.Configuration.md)
 
 ##### 1. `newInstance`—Launching a New Instance of the App
 
-Terminates the app and launch it again. If set to `false`, the simulator will try to bring app from background, if the app isn't running, it will launch a new instance. Default is `false`.
+Terminate the app and launch it again. 
+
+If set to `false`, the device will try to resume the app (e.g. bring from foreground to background). If the app isn't running, **it will launch a new instance** nonetheless. **Default is `false`.**
 
 ```js
 await device.launchApp({newInstance: true});
@@ -80,29 +82,28 @@ Detox uses [AppleSimUtils](https://github.com/wix/AppleSimulatorUtils) to implem
 Launches the app with the specified URL to test your app's deep link handling mechanism.
 
 ```js
-await device.launchApp({url: url});
-await device.launchApp({url: url, newInstance: true}); //Launch a new instance of the app
-await device.launchApp({url: url, newInstance: false}); //Reuse existing instance
+await device.launchApp({url});
+await device.launchApp({url, newInstance: true}); // Launch a new instance of the app
+await device.launchApp({url, newInstance: false}); // Reuse existing instance
 ```
-This will launch the app from background and handle the deep link.
 
-Read more in [here](APIRef.MockingOpenWithURL.md).
+Read more [here](APIRef.MockingOpenWithURL.md). Go back to subsection 1 to read about the full effect of the `newInstance` argument.
 
-##### 4. `userNotification`—Launching with User Notifications (iOS Only)
+##### 4. `userNotification`—Launching with User Notifications
 
-Launches with the specified user notification
+Launches with the specified user notification.
 
 ```js
-await device.launchApp({userNotification: notification});
-await device.launchApp({userNotification: notification, newInstance: true}); //Launch a new instance of the app
-await device.launchApp({userNotification: notification, newInstance: false}); //Reuse existing instance
+await device.launchApp({userNotification});
+await device.launchApp({userNotification, newInstance: true}); // Launch a new instance of the app
+await device.launchApp({userNotification, newInstance: false}); // Reuse existing instance
 ```
 
-Read more in [here](APIRef.MockingUserNotifications.md).
+Read more [here](APIRef.MockingUserNotifications.md). Go back to subsection 1 to read about the full effect of the `newInstance` argument.
 
 ##### 5. `userActivity`—Launch with User Activity (iOS Only)
 
-Launches the app with the specified user activity
+Launches the app with the specified user activity.
 
 ```js
 await device.launchApp({userActivity: activity});
@@ -110,7 +111,7 @@ await device.launchApp({userActivity: activity, newInstance: true}); //Launch a 
 await device.launchApp({userActivity: activity, newInstance: false}); //Reuse existing instance
 ```
 
-Read more in [here](APIRef.MockingUserActivity.md).
+Read more in [here](APIRef.MockingUserActivity.md). Go back to subsection 1 to read about the full effect of the `newInstance` argument.
 
 ##### 6. `delete`—Delete and Reinstall Application Before Launching
 
@@ -211,7 +212,7 @@ await device.launchApp({
 
 ### `device.relaunchApp(params)`
 
-**Deprecated:** Use `device.launchApp(params)` instead. This method is now calling `launchApp({newInstance: true})` for backwards compatibility.
+**Deprecated:** Use `device.launchApp(params)` instead. The method calls `launchApp({newInstance: true})` for backwards compatibility.
 
 ### `device.terminateApp()`
 By default, `terminateApp()` with no params will terminate the app file defined in the current [`configuration`](APIRef.Configuration.md).
@@ -258,16 +259,21 @@ await device.uninstallApp('other.bundle.id');
 ```
 
 ### `device.openURL({url, sourceApp[optional]})`
-Mock opening the app from URL. `sourceApp` is an optional parameter to specify source application bundle id.
+Mock opening the app from URL. `sourceApp` is an optional **iOS-only** parameter to specify source application bundle id.
+
 Read more in [Mocking Open From URL](APIRef.MockingOpenFromURL.md) section.
 Check out Detox's [own test suite](../detox/test/e2e/15.urls.test.js)
 
 ### `device.sendUserNotification(params)`
-Mock handling of received user notification when app is in foreground.
+Mock handling of a user notification previously received in the system, while the app is already running.
+
 Read more in [Mocking User Notifications](APIRef.MockingUserNotifications.md) section.
 Check out Detox's [own test suite](../detox/test/e2e/11.user-notifications.test.js)
 
 ### `device.sendUserActivity(params)`
+
+> iOS-only API
+
 Mock handling of received user activity when app is in foreground.
 Read more in [Mocking User Activity](APIRef.MockingUserActivity.md) section.
 Check out Detox's [own test suite](../detox/test/e2e/18.user-activities.test.js)
