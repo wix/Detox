@@ -110,7 +110,6 @@ static void __detox_nested_try(void)
 	} viewDescription:viewDescription];
 }
 
-
 + (DTXTestAssertionException*)_exceptionForFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line viewDescription:(nullable NSDictionary<NSString*, id>*)viewDescription description:(NSString *)format arguments:(va_list)arguments
 {
 	return (id)[DTXTestAssertionException exceptionWithReason:[[NSString alloc] initWithFormat:format arguments:arguments] userInfo:@{
