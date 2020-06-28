@@ -306,7 +306,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	
 	if(CGRectContainsPoint(self.window.bounds, windowActivationPoint) == NO)
 	{
-		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Point “%@” is outside if window bounds", DTXPointToString(windowActivationPoint)]}];
+		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Point “%@” is outside of window bounds", DTXPointToString(windowActivationPoint)]}];
 		_DTXPopulateError(err);
 		
 		return NO;
@@ -364,7 +364,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 //			[UIImagePNGRepresentation(windowImage) writeToFile:[NSString stringWithFormat:@"/Users/lnatan/Desktop/%@.png", NSStringFromClass(obj.class)] atomically:YES];
 			if([UIView _dtx_isImageTransparent:windowImage] == NO)
 			{
-				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Window “%@” is not transparent at window point “%@”", obj.dtx_shortDescription, DTXPointToString(currentWindowActivationPoint)]}];
+				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Window “%@” is above the tested view's window and is not transparent at window point “%@”", obj.dtx_shortDescription, DTXPointToString(currentWindowActivationPoint)]}];
 				_DTXPopulateError(err);
 				
 				//The window is not transparent at the hit point, stop
@@ -381,11 +381,11 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		
 		UIView* visibleView = testFunc(obj, selector, currentWindowActivationPoint, nil, self);
 		
-		if(self.window != obj && isHit)
+		if(self.window != obj && isHit == YES)
 		{
 			if(visibleView != nil)
 			{
-				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Another view “%@” hittable in window “%@” at window point “%@”", visibleView.dtx_shortDescription, obj.dtx_shortDescription, DTXPointToString(currentWindowActivationPoint)]}];
+				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Another view “%@” is hittable in window “%@” at window point “%@”", visibleView.dtx_shortDescription, obj.dtx_shortDescription, DTXPointToString(currentWindowActivationPoint)]}];
 				_DTXPopulateError(err);
 				
 				//We've hit a view in another window
@@ -396,25 +396,26 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		}
 		
 		NSAssert(self.window == obj, @"Detox logic failure!");
+		*stop = YES;
 		
 		if(visibleView == self || [visibleView isDescendantOfView:self])
 		{
 			rv = YES;
-			*stop = YES;
 		}
 		else
 		{
 			rv = NO;
-			*stop = YES;
+			NSString* str = isHit ? @"hittable" : @"visible";
+			
 			
 			if(visibleView == NO)
 			{
-				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"No view is %@ at window point “%@”", isHit ? @"hittable" : @"visible", DTXPointToString(windowActivationPoint)]}];
+				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"No view is %@ at window point “%@”", str, DTXPointToString(windowActivationPoint)]}];
 				_DTXPopulateError(err);
 			}
 			else
 			{
-				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Another view “%@” is %@ at window point “%@”", visibleView.dtx_shortDescription, isHit ? @"hittable" : @"visible", DTXPointToString(currentWindowActivationPoint)]}];
+				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Another view “%@” is %@ at window point “%@”", visibleView.dtx_shortDescription, str, DTXPointToString(currentWindowActivationPoint)]}];
 				_DTXPopulateError(err);
 			}
 			
