@@ -16,7 +16,7 @@ In essence, Detox scans for the configuration to use, through multiple files. It
 Options 1-5 allow for a standalone Detox configuration in either a `json` format or using Javascript syntax.
 Option 6 means the configuration is available in `json` format inside the project's `package.json`, which is more suitable if you like having all of your project's configurations in one place.
 
-Please find the [Detox example app](/examples/demo-react-native/detox.config.js) as a reference.
+Please find the [Detox example app](/examples/demo-react-native/detox.config.js) as a working reference.
 
 ### Device Configuration
 
@@ -72,44 +72,42 @@ Please find the [Detox example app](/examples/demo-react-native/detox.config.js)
 
 ### Artifacts Configuration
 
-Detox can control artifacts collection via settings from `package.json`:
+Detox can store artifacts such as transient screenshots and device logs. You can control artifacts collection via Detox configuration:
 
 ```js
 {
-  "detox": {
-    "artifacts": {
-      "rootDir": ".artifacts",
-      "pathBuilder": "./config/pathbuilder.js",
-      "plugins": {
-        "instruments": { "enabled": false },
-        "log": { "enabled": true },
-        "screenshot": {
-          "shouldTakeAutomaticSnapshots": true,
-          "keepOnlyFailedTestsArtifacts": true,
-          "takeWhen": {
-            "testStart": false,
-            "testDone": true,
-          },
+  "artifacts": {
+    "rootDir": ".artifacts",
+    "pathBuilder": "./config/pathbuilder.js",
+    "plugins": {
+      "instruments": { "enabled": false },
+      "log": { "enabled": true },
+      "screenshot": {
+        "shouldTakeAutomaticSnapshots": true,
+        "keepOnlyFailedTestsArtifacts": true,
+        "takeWhen": {
+          "testStart": false,
+          "testDone": true,
         },
-        "video": {
-          "android": {
-            "bitRate": 4000000
-          },
-          "simulator": {
-            "codec": "hevc"
-          }
+      },
+      "video": {
+        "android": {
+          "bitRate": 4000000
+        },
+        "simulator": {
+          "codec": "hevc"
         }
       }
-    },
-    "configurations": {
-      "ios.sim.release": {
-        "binaryPath": "/path/to/app",
-        "device": { /* ... */ },
-        "artifacts": {
-          "rootDir": ".artifacts/ios",
-          "plugins": {
-            "instruments": "all"
-          }
+    }
+  },
+  "configurations": {
+    "ios.sim.release": {
+      "binaryPath": "/path/to/app",
+      "device": { /* ... */ },
+      "artifacts": {
+        "rootDir": ".artifacts/ios",
+        "plugins": {
+          "instruments": "all"
         }
       }
     }
@@ -155,15 +153,13 @@ you have a few options to change. These are the default behavior values:
 ```
 
 For example, if you want to launch your tested app manually, e.g. via `device.launchApp()`,
-you should specify in `package.json`:
+you should specify in the Detox configuration:
 
 ```json
 {
-  "detox": {
-    "behavior": {
-      "init": {
-        "launchApp": false
-      }
+  "behavior": {
+    "init": {
+      "launchApp": false
     }
   }
 }
@@ -182,59 +178,33 @@ const { by, device, expect, element } = require('detox');
 
 ### Server Configuration
 
-Detox can either initialize a server using a generated configuration, or can be overriden with a manual  configuration:
+Detox can either initialize a server using a generated configuration, or can be overriden with a manual configuration:
 
 ```json
-  "detox": {
-    ...
-    "session": {
-    "server": "ws://localhost:8099",
-    "sessionId": "YourProjectSessionId"
-    }
-  }
+{
+  "session": {
+  "server": "ws://localhost:8099",
+  "sessionId": "YourProjectSessionId"
+}
 ```
 
 Session can also be set per configuration:
 
 ```json
-  "detox": {
-  ...
-    "configurations": {
-      "ios.sim.debug": {
-        ...
-        "session": {
-          "server": "ws://localhost:8099",
-          "sessionId": "YourProjectSessionId"
-        }
+{  
+  "configurations": {
+    "ios.sim.debug": {
+      ...
+      "session": {
+        "server": "ws://localhost:8099",
+        "sessionId": "YourProjectSessionId"
       }
     }
   }
+}
 ```
 
-### Test Runner Configuration
 
-##### Jest (recommended)
-
-```json
-  "detox": {
-    ...
-    "test-runner": "jest"
-    "runner-config": "path/to/jest-config"
-  }
-```
-
-`path/to/jest-config` refers to `--config` in https://facebook.github.io/jest/docs/en/configuration.html
-
-##### Mocha
-```json
-  "detox": {
-    ...
-    "test-runner": "mocha",
-    "runner-config": "path/to/.mocharc.json"
-  }
-```
-
-`.mocharc.json` refers to `--config` in https://mochajs.org/#-config-path
 
 ## detox-cli
 
