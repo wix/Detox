@@ -22,19 +22,18 @@ For its part, Detox supports only one Jest's concrete runner, which is [`jest-ci
 
 ### 1. Install Jest
 
-Before starting with Jest setup, please go over [Getting Started](Introduction.GettingStarted.md) guide,
-especially **steps 1 and 2**.
+Before starting with Jest setup, be sure to complete the preliminary sections of the [Getting Started](Introduction.GettingStarted.md) guide.
 
 Afterward, install the respective npm packages:
 
 ```sh
-npm install --save-dev jest jest-circus
+npm install jest jest-circus --save-dev --no-package-lock
 ```
 
 If you are already using Jest in your project,
 make sure that `jest` and `jest-circus` package versions match (e.g., both are `26.0.1`).
 
-### 2. Set up test-code scaffolds
+### 2. Set up test-code scaffolds :building_construction:
 
 Run the automated init script:
 
@@ -42,6 +41,13 @@ Run the automated init script:
 detox init -r jest
 ```
 > **Note:** errors occurring in the process may appear in red.
+
+If things go well, you should to have this set up:
+
+- An `e2e/` folder in your project root
+- An `e2e/config.json` file; [example](/examples/demo-react-native-jest/e2e/config.json)
+- An `e2e/environment.js` file; [example](/examples/demo-react-native-jest/e2e/environment.js)
+- An `e2e/firstTest.e2e.js` file with content similar to [this](/examples/demo-react-native-jest/e2e/app-hello.e2e.js).
 
 ### 3. Fix / Verify
 

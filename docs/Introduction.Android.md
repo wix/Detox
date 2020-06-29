@@ -2,7 +2,7 @@
 
 ## Breaking Changes :warning:
 
-> If you are installing Detox for Android for the first time, you can skip right over to the setup section.
+**If you are installing Detox for Android for the first time, you can skip right over to the setup section.**
 
 > Follow our [Migration Guide](Guide.Migration.md) for instructions on how to upgrade from older versions.
 
@@ -16,19 +16,85 @@
 
   For older Android gradle plugin support use `detox@6.x.x` instead ([previous setup guide here](https://github.com/wix/detox/blob/97654071573053def90e8207be8eba011408f977/docs/Introduction.Android.md)).
 
-  **Note: As a rule of thumb, we consider all old major versions discontinued; We only support the latest Detox major version.**
 
-
+**Note: As a rule of thumb, we consider all old major versions discontinued; We only support the latest Detox major version.**
 
 ## Setup :gear:
 
-### 1. Run through the initial _Getting Started_ Guide
+### 1. Preliminary
 
-- [Getting Started](Introduction.GettingStarted.md)
+Run through the basic steps of the [Getting Started guide](Introduction.GettingStarted.md), such as the environment and tools setup.
+
+### 2. Apply Detox Configuration
+
+Whether you've selected to apply the configuration in a  `.detoxrc.json` or bundle it into your project's `package.json` (under the `detox` section), this is what the configuration should roughly look like for Android:
+
+```json
+{
+  "configurations": {
+      "android.emu.debug": {
+          "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
+          "build":
+            "cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
+          "type": "android.emulator",
+          "device": {
+            "avdName": "Pixel_API_28"
+          }
+      },
+      "android.emu.release": {
+          "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
+          "build": "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd ..",
+          "type": "android.emulator",
+          "device": {
+            "avdName": "Pixel_API_28"
+          }
+      }
+  }
+}
+```
+
+>For a comprehensive explanation of Detox configuration, refer to the [dedicated API-reference guide](APIRef.Configuration.md).
+
+Pay attention to `-DtestBuildType`, set either to `debug` or `release` according to the main apk type.
 
 
+Following device types could be used to control Android devices:
 
-### 2. Add Detox dependency to an Android project
+- `android.emulator`. Boot stock Android-SDK emulator (AVD) with provided `name`, for example `Pixel_API_28`.
+
+- `android.attached`. Connect to already-attached android device. The device should be listed in the output of `adb devices` command under provided `name`.
+  Use this type to connect to Genymotion emulator.
+
+For a complete, working example, refer to the [Detox example app](/examples/demo-react-native/detox.config.js).
+
+#### 2a. Using product flavors
+
+If you are using custom [productFlavors](https://developer.android.com/studio/build/build-variants#product-flavors) the config needs to be applied a bit differently. This example shows how a `beta` product flavor would look for both debug and release build types:
+
+```json
+"detox" : {
+    "configurations": {
+        "android.emu.beta.debug": {
+        "binaryPath": "android/app/build/outputs/apk/beta/debug/app-beta-debug.apk",
+        "build": "cd android && ./gradlew assembleBetaDebug assembleBetaDebugAndroidTest -DtestBuildType=debug && cd ..",
+        "type": "android.emulator",
+        "device": {
+          "avdName": "Pixel_API_28"
+        }
+      },
+      "android.emu.beta.release": {
+        "binaryPath": "android/app/build/outputs/apk/beta/release/app-beta-release.apk",
+        "build": "cd android && ./gradlew assembleBetaRelease assembleBetaReleaseAndroidTest -DtestBuildType=release && cd ..",
+        "type": "android.emulator",
+        "device": {
+          "avdName": "Pixel_API_28"
+        }
+      }
+    }
+}
+```
+
+### 3. Add the Native Detox dependency
 
 > **Starting Detox 12.5.0, Detox is shipped as a precompiled `.aar`.**
 > To configure Detox as a _compiling dependency_, nevertheless -- refer to the _Setting Detox up as a compiling dependency_ section at the bottom.
@@ -60,9 +126,7 @@ dependencies {
 }
 ```
 
-
-
-In your app's buildscript (i.e. `app/build.gradle`)  add this to the `defaultConfig` subsection:
+... and add this to the `defaultConfig` subsection:
 
 ```groovy
 android {
@@ -79,7 +143,7 @@ Please be aware that the `minSdkVersion` needs to be at least 18.
 
 
 
-### 3. Add Kotlin
+### 4. Add Kotlin
 
 If your project does not already support Kotlin, add the Kotlin Gradle-plugin to your classpath in the root build-script (i.e.`android/build.gradle`):
 
@@ -87,7 +151,6 @@ If your project does not already support Kotlin, add the Kotlin Gradle-plugin to
 buildscript {
     // ...
     ext.kotlinVersion = '1.3.0' // (check what the latest version is!)
-
     dependencies {
         // ...
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
@@ -101,75 +164,11 @@ _Note: most guides advise of defining a global `kotlinVersion` constant - as in 
 
 
 
-### 4. Create Android Test class
+### 5. Create a Detox-Test Class
 
 Add the file `android/app/src/androidTest/java/com/[your.package]/DetoxTest.java` and fill as in [the detox example app for NR](../examples/demo-react-native/android/app/src/androidTest/java/com/example/DetoxTest.java). **Don't forget to change the package name to your project's**.
 
 
-
-### 5. Add Android configuration
-
-Add this part to your `package.json`:
-
-```json
-"detox" : {
-    "configurations": {
-        "android.emu.debug": {
-            "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
-            "build":
-            "cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
-            "type": "android.emulator",
-            "device": {
-              "avdName": "Pixel_API_28"
-            }
-        },
-        "android.emu.release": {
-            "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
-            "build": "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd ..",
-            "type": "android.emulator",
-            "device": {
-              "avdName": "Pixel_API_28"
-            }
-        }
-    }
-}
-```
-Pay attention to `-DtestBuildType`, set either to `debug` or `release` according to the main apk type.
-
-
-Following device types could be used to control Android devices:
-
-`android.emulator`. Boot stock SDK emulator with provided `name`, for example `Nexus_5X_API_25`. After booting connect to it.
-
-`android.attached`. Connect to already-attached android device. The device should be listed in the output of `adb devices` command under provided `name`.
-Use this type to connect to Genymotion emulator.
-
-#### 5a. Using product flavors
-
-If you are using custom [productFlavors](https://developer.android.com/studio/build/build-variants#product-flavors) the config needs to be applied a bit differently. This example shows how a `beta` product flavor would look for both debug and release build types:
-
-```json
-"detox" : {
-    "configurations": {
-        "android.emu.beta.debug": {
-        "binaryPath": "android/app/build/outputs/apk/beta/debug/app-beta-debug.apk",
-        "build": "cd android && ./gradlew assembleBetaDebug assembleBetaDebugAndroidTest -DtestBuildType=debug && cd ..",
-        "type": "android.emulator",
-        "device": {
-          "avdName": "Pixel_API_28"
-        }
-      },
-      "android.emu.beta.release": {
-        "binaryPath": "android/app/build/outputs/apk/beta/release/app-beta-release.apk",
-        "build": "cd android && ./gradlew assembleBetaRelease assembleBetaReleaseAndroidTest -DtestBuildType=release && cd ..",
-        "type": "android.emulator",
-        "device": {
-          "avdName": "Pixel_API_28"
-        }
-      }
-    }
-}
-```
 
 ### 6. Enable clear-text (unencrypted) traffic for Detox
 
@@ -207,25 +206,6 @@ For Detox to work, Detox test code running on the device must connect to the tes
 For full details, refer to [Android's security-config guide](https://developer.android.com/training/articles/security-config), and the dedicated article in the [Android developers blog](https://android-developers.googleblog.com/2016/04/protecting-against-unintentional.html). 
 
 > *(\*) 10.0.2.2 for Google emulators, 10.0.3.2 for Genymotion emulators.*
-
-
-
-### 7. Setup your test environment
-
-Being able to execute tests requires a properly set-up computer. Walk through the [environment setup guide](Introduction.AndroidDevEnv.md) in order to employ the best practices and avoid common pitfalls when doing so.
-
-
-
-### 8. Run the tests
-
-Using the `android.emu.debug` configuration from above, you can invoke it in the standard way:
-
-```sh
-# build:
-$ detox build -c android.emu.release
-# run tests:
-$ detox test -c android.emu.release
-```
 
 
 

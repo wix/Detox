@@ -2,29 +2,13 @@
 
 This guide provides some core practices to follow in setting up a stable, reliable environment for running automated UI tests using Android emulators (using Detox, in particular) -- be it on a personal, _local_ computer, or a powerful CI machine.
 
-It addresses mostly React Native developers - which are not necessarily familiar with all of Android's quirks, but also contains general recommendations regardless of the underlying dev-framework being used, as running automated UI test on Android is not the same as developing Android apps.
+Note that running automated UI tests is _not the same_ as developing Android apps. Hence, you may find yourself not 100% aligned with the recommendations here, and should consider being so.
 
 ## Java Setup
 
-This is the most fundamental step in the process, as without a proper Java SDK installed, nothing Android-ish works -- at least not from command-line, which is mandatory for executing `Detox`. For example, on a Mac with an improper Java version, we've come across cryptic errors such as this one when trying to launch Android's `sdkmanager`:
+This is the most basic step in the process, as without a proper Java SDK installed, nothing Android-ish works -- at least not from command-line, which is mandatory for executing `Detox`. 
 
-```
-Exception in thread "main" java.lang.NoClassDefFoundError: javax/xml/bind/annotation/XmlSchema
-	at com.android.repository.api.SchemaModule$SchemaModuleVersion.<init>(SchemaModule.java:156)
-	at com.android.repository.api.SchemaModule.<init>(SchemaModule.java:75)
-	at com.android.sdklib.repository.AndroidSdkHandler.<clinit>(AndroidSdkHandler.java:81)
-	at com.android.sdklib.tool.sdkmanager.SdkManagerCli.main(SdkManagerCli.java:73)
-	at com.android.sdklib.tool.sdkmanager.SdkManagerCli.main(SdkManagerCli.java:48)
-Caused by: java.lang.ClassNotFoundException: javax.xml.bind.annotation.XmlSchema
-	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:583)
-	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:178)
-	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:521)
-	... 5 more
-```
-
-While the stacktrace might seem intriguing for some, what matters here is the solution: **Android needs Java 1.8 installed**.
-
-On MacOS, in particular, java comes from both the OS _and_ possibly other installers such as `homebrew`, so you are more likely to go into a mess: see [this Stackoverflow post](https://stackoverflow.com/questions/24342886/how-to-install-java-8-on-mac).
+*The bottom line is that **Android needs Java 1.8 installed**.*
 
 To check for your real java-executable's version, in a command-line console, run:
 
@@ -43,6 +27,8 @@ Namely, that the version is `1.8.x_abc`.
 
 > Note: Do not be confused by the Java version potentially used by your browsers, etc. For `Detox`, what the command-line sees is what matters.
 
+On MacOS, in particular, java comes from both the OS _and_ possibly other installers such as `homebrew`, so you are more likely to go into a mess: see [this Stackoverflow post](https://stackoverflow.com/questions/24342886/how-to-install-java-8-on-mac).
+
 ---
 
 If `java` isn't in your path or not even installed (i.e. the command failed altogher), try [this guide](https://www.java.com/en/download/help/path.xml).
@@ -53,9 +39,24 @@ If otherwise the version is simply wrong, try these refs for Macs; consider empl
 * https://www.java.com/en/download/help/version_manual.xml
 * https://medium.com/notes-for-geeks/java-home-and-java-home-on-macos-f246cab643bd
 
-## Android AOSP Emulators
+## Android SDK
 
-We've long proven that for automation - which requires a stable and deterministic environment, Google's emulators running with Google API's simply don't deliver what it takes. Be it the preinstalled Google play-services - which tend to take up a lot of CPU, or even Google's `gboard` Keyboard - which is full-featured but overly bloated: These encourage flakiness in tests, which we are desperate to avoid in automation.
+If you have Android Studio installed - as most of us do, then the SDK should be available for you somewhere on your machine<sup>*</sup>. However, for CI agents -- possibly running with no GUI, or if you simply don't want the somewhat bloated piece of software on your computer, it is possible to simply download the SDK and tool-set, purely. Both cases are covered in the [Android guide about Android Studio](https://developer.android.com/studio/). For the pure-tools option, refer to the `Command line tools only` section at the bottom.
+
+For more help on setting the SDK up, [this guide might be helpful](https://www.androidcentral.com/installing-android-sdk-windows-mac-and-linux-tutorial).
+
+Whatever option you choose, and whichever platform you're running on (Mac, Linux, Windows), we strongly recommend that eventually you would have 2 additional things set up:
+
+* The path to the SDK's root directory is set into the `ANDROID_SDK_ROOT` [environment variable](https://developer.android.com/studio/command-line/variables).
+* The path to the SDK's root directory is set into the global [`PATH`](https://superuser.com/questions/284342/what-are-path-and-other-environment-variables-and-how-can-i-set-or-use-them) on your computer.
+
+_<sup>* Inspect the content of your `ANDROID_SDK_ROOT` and `ANDROID_HOME` environment variables.</sup>_
+
+## Android (AOSP) Emulators
+
+Mobile-apps' automation needs an Android device to run on. If you haven't already done so, you should  [set up an Emulator](https://developer.android.com/studio/run/emulator). But, wait - don't install the default one, just yet: read through.
+
+We've long proven that for automation - which requires a stable and deterministic environment, Google's emulators running with Google API's simply don't deliver what's needed. Be it the preinstalled Google play-services - which tend to take up a lot of CPU, or even Google's `gboard` Keyboard - which is full-featured but overly bloated: These encourage flakiness in tests, which we are desperate to avoid in automation.
 
 Fortunately, the Android team at Google offers a pretty decent alternative: **AOSP emulators** (Android Open-Source Project). While possibly lacking some of the extended Google services, and a bit less fancy overall, **we strongly recommend** to strictly use this flavor of emulators for running automation/Detox tests. They can be installed alongside regular emulators.
 

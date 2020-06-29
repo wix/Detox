@@ -1,6 +1,22 @@
 # Configuration Options
 
-## Configuring package.json
+## Configration file
+
+In order for Detox to know what device & app to use (and a lot more, actually), it needs some configuration to be statically available in a configuration file. It supports both standalone configuration files, and a configuration bundling inside the project's `package.json`.
+
+In essence, Detox scans for the configuration to use, through multiple files. It starts from the current working directory, and runs over the following options, in this order:
+
+1. `.detoxrc.js`
+1. `.detoxrc.json`
+1. `.detoxrc`
+1. `detox.config.js`
+1. `detox.config.json`
+1. `package.json` (`"detox"` section)
+
+Options 1-5 allow for a standalone Detox configuration in either a `json` format or using Javascript syntax.
+Option 6 means the configuration is available in `json` format inside the project's `package.json`, which is more suitable if you like having all of your project's configurations in one place.
+
+Please find the [Detox example app](/examples/demo-react-native/detox.config.js) as a reference.
 
 ### Device Configuration
 
@@ -11,7 +27,7 @@
 |`type`| Device type, available options are `ios.simulator`, `ios.none`, `android.emulator`, and `android.attached`. |
 |`binaryPath`| Relative path to the ipa/app due to be  tested (make sure you build the app in a project relative path)|
 |`testBinaryPath`| (optional, Android only): relative path to the test app (apk) |
-|`device`| Device query, e.g. `{ "byType": "iPhone 11 Pro" }` for iOS simulator or `{ "avdName": "Nexus_5X_API_29" }` |
+|`device`| Device query, e.g. `{ "byType": "iPhone 11 Pro" }` for iOS simulator or `{ "avdName": "Pixel_2_API_29" }` |
 |`build`| **[optional]** Build command (either `xcodebuild`, `react-native run-ios`, etc...), will be later available through detox CLI tool.|
 
 **Example:**
@@ -38,7 +54,7 @@
         "build": "...",
         "type": "android.emulator",
         "device": {
-          "avdName": "Nexus_5X_API_29",
+          "avdName": "Pixel_2_API_29",
         }
       },
       "android.att.release": {

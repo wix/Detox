@@ -1,68 +1,49 @@
 # Getting Started
 
-**This guide is focused on iOS. For installing Detox for Android, be sure to also go over the [Android guide](Introduction.Android.md)**.
+**Welcome to Detox! :tada:**
 
-This is a step-by-step guide for adding Detox to your React Native project.
+In this guide, we will walk you through setting Detox up in your project, one step at a time.
 
-> TIP: You can also check out this [awesome tutorial](https://medium.com/@bogomolnyelad/how-to-test-your-react-native-app-like-a-real-user-ecfc72e9b6bc) on Medium with video by [@bogomolnyelad](https://medium.com/@bogomolnyelad)
+You will find that some steps are longer than the others: some are just one-paragraph long, while for others we have a dedicated multistep guide worked out. Bear with us - it is all necessary, and once set-up, it is easy to move forward with writing tests very rapidly.
 
-## Prerequisites
+## Step 1: Environment Setup
 
-Running Detox (on iOS) requires the following:
+### Install [Node.js](https://nodejs.org/en/)
 
-* Mac with macOS (at least macOS High Sierra 10.13.6)
+`Node.js` is the JavaScript runtime Detox will run on. **Install Node `8.3.0` or above**.
 
-* Xcode 10.2+ with Xcode command line tools
-> TIP: Verify Xcode command line tools is installed by typing `gcc -v` in terminal (shows a popup if not installed)
+There's more than one way to install node.js:
 
-* A working [React Native](https://facebook.github.io/react-native/docs/getting-started.html) app you want to test
+1. Download from the [official download page](https://nodejs.org/en/download/)
+2. Use [homebrew](https://formulae.brew.sh/formula/node)
+3. Use `nvm` - if you need to allow for several versions to be installed on a single machine
 
-## Step 1: Install dependencies
-
-#### 1. Install the latest version of [Homebrew](http://brew.sh)
-
-Homebrew is a package manager for macOS, we'll need it to install other command line tools.
-
-To ensure everything needed for Homebrew tool installation is installed, run
-
-```sh
-xcode-select --install
-```
-
-> TIP: Verify it works by typing in terminal `brew -h` to output list of available commands
-
-#### 2. Install [Node.js](https://nodejs.org/en/)
-
-Node is the JavaScript runtime Detox will run on. **Install Node 8.3.0 or above**
+We recommened using homebrew:
 
  ```sh
- brew update && brew install node
+brew update && brew install node
  ```
 
-> TIP: Verify it works by typing in terminal `node -v` to output current node version, should be 8.3.0 or higher
+> Tip: Verify installation succeeded by typing in `node -v` in the terminal to output current node version. Should be `8.3.0` or higher.
 
-#### 3. Install [applesimutils](https://github.com/wix/AppleSimulatorUtils)
-
-A collection of utils for Apple simulators, Detox uses it to communicate with the simulator.
-
-```sh
-brew tap wix/brew
-brew install applesimutils
-```
-
-> TIP: Verify it works by typing in terminal `applesimutils` to output the tool help screen
-
-#### 4. Install Detox command line tools (detox-cli)
+### Install Detox command line tools (`detox-cli`)
 
 This package makes it easier to operate Detox from the command line. `detox-cli` should be installed globally, enabling usage of the command line tools outside of your npm scripts. `detox-cli` is merely a script that passes commands through to a the command line tool shipped inside `detox` package (in `node_modules/.bin/detox`).
 
   ```sh
-  npm install -g detox-cli
+npm install -g detox-cli
   ```
+
+### Install platform-specific dependencies, tools and dev-kits
+
+Depending on the platform/s you're aiming at (iOS, Android), take the time to run through these environment setup guides:
+
+* [Android](Introduction.AndroidDevEnv.md)
+* [iOS](Introduction.IosDevEnv.md)
 
 ## Step 2: Add Detox to your project
 
-#### 1. Install detox
+### Install the Detox node-module
 
 If you have a React Native project, go to its root folder (where `package.json` is found) and type the following command:
 
@@ -70,7 +51,7 @@ If you have a React Native project, go to its root folder (where `package.json` 
 npm install detox --save-dev
 ```
 
-If you have a project without Node integration (such as a native project), add the following package.json file to the root folder of your project:
+If you have a project without Node integration (such as a native project), add the following `package.json` file to the root folder of your project:
 
 ```json
 {
@@ -79,18 +60,30 @@ If you have a project without Node integration (such as a native project), add t
 }
 ```
 
-Now run the following command:
+Name your project in `package.json` and then run the following command:
 
 ```sh
-npm install detox --save-dev
+npm install detox --save-dev --no-package-lock
 ```
 
-> TIP: Remember to add the "node_modules" folder to your git ignore.
+**You should now have Detox available in `node_modules/detox`**
 
-#### 2. Add Detox config
+> Tip: Remember to add the `node_modules` folder to your git-ignore file (e.g. `.gitignore`).
 
-Detox searches for its configuration, starting from the current working directory,
-in the following places:
+### Set Up a Test Runner :running_man:
+
+Detox delegates the actual Javascript test-code execution to a dedicated test-runner. It supports the popular `Jest` and `Mocha` out of the box. You need to choose and set up one of them now, but it *is* possible to switch later on, should you change your mind.
+
+* **[Jest](https://jestjs.io/) is the recommended choice**, since it provides parallel test execution and a complete lifecycle integration for Detox. To set up, follow [our comprehensive guide for Jest](Guide.Jest.md).
+* [Mocha](https://mochajs.org/), albeit its integration is less complete, is still lightweight, and a bit easier to set up. To set up, follow [our guide for Mocha](Guide.Mocha.md).
+
+> **Note:** Detox is coupled to neither Mocha or Jest, nor with a specific directory structure. Both runners are just a recommendation — with some effort, they can be replaced without touching the internal implementation of Detox itself.
+
+### Apply Detox Configuration
+
+If you've completed the test-runner setup successfully using `detox init`, you should have a `.detoxrc.json` file containing a skeletal configuration for Detox to use. This configuration is only half-baked and needs to be set up properly. You now need to either create or edit that file, and apply the actual configuration suitable for your specific project.
+
+*Note that Detox scans for a configuration through multiple files. It starts from the current working directory, and runs over the following options, in this order:*
 
 1. `.detoxrc.js`
 1. `.detoxrc.json`
@@ -99,98 +92,14 @@ in the following places:
 1. `detox.config.json`
 1. `package.json` (`"detox"` section)
 
-If you prefer to keep all configs in one place, you can create a "detox" section in
-your`package.json`. Otherwise, if you prefer separating configs, see the available
-config file names above.
+*If you prefer to use something other than `.detoxrc.json` - for example, would like to keep all project configs in one place, you can create a `detox` section in your`package.json`. If you otherwise prefer separating configs, all of the other options are valid.*
 
-To get some help with creating your first Detox config file, you can try running Detox CLI:
-`detox init -r jest` (or `-r mocha`).
+Depending on the platform/s you're aiming at (iOS, Android), for a complete, platform-specific configuration explanation (and a bunch of other platform-specific things, where applicable), refer to the dedicated guides:
 
-Either way the config should look like this:
+* [Android](Introduction.Android.md)
+* [iOS](Introduction.Ios.md)
 
-##### in package.json
-
-```json
-"detox": {
-  "configurations": {
-    "ios.sim.debug": {
-      "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
-      "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
-      "type": "ios.simulator",
-      "device": {
-        "type": "iPhone 11 Pro"
-      }
-    }
-  }
-}
-```
-
-##### in .detoxrc.json or another separate config file
-
-```json
-{
-  "configurations": {
-    "ios.sim.debug": {
-      "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
-      "build": "xcodebuild -project ios/example.xcodeproj -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
-      "type": "ios.simulator",
-      "name": "iPhone 7"
-    }
-  }
-}
-```
-
-In the above configuration example, change `example` to your actual project name. Under the key `"binaryPath"`, `example.app` should be `<your_project_name>.app`. Under the key `"build"`, `example.xcodeproj` should be `<your_project_name>.xcodeproj` and `-scheme example` should be `-scheme <your_project_name>`.
-
-For React Native 0.60 or above, or any other iOS apps in a workspace (eg: CocoaPods) use `-workspace ios/example.xcworkspace` instead of `-project`.
-
-Also make sure the simulator model specified under the key `device.type` (e.g. `iPhone 11 Pro` above) is actually available on your machine (it was installed by Xcode). Check this by typing `applesimutils --list` in terminal to display all available simulators.
-
-> TIP: To test a release version, replace 'Debug' with 'Release' in the binaryPath and build properties. For full configuration options see Configuration under the API Reference.
-
-## Step 3: Create your first test
-
-#### 1. Install a test runner :running_man:
-
-Detox CLI supports Jest and Mocha out of the box. You need to choose one now, but it *is* possible to replace it later on.
-
-* **Jest is the recommended choice**, since it provides parallel test execution and complete lifecycle integration for Detox.
-* Mocha, albeit its integration is less complete, is still lightweight, and a bit easier to set up.
-
-**Note:** Detox is coupled neither with Mocha or Jest nor with a specific directory structure. Both runners are just a recommendation — with some effort, they can be replaced without touching the internal implementation of Detox itself.
-
-##### [Jest](https://jestjs.io/)
-
-Follow the [Guide.Jest.md](Guide.Jest.md) documentation.
-
-##### [Mocha](https://mochajs.org/)
-
-```sh
-npm install mocha --save-dev
-```
-
-#### 2. Set up test-code scaffolds (automated) :building_construction:
-
-The Detox CLI has a `detox init` convenience method to automate a setup for your first test. Depending on your test runner of choice, run one of these commands:
-
-Note: `detox init` runs these steps, which you can reproduce manually:
-
-- Creates an `e2e/` folder in your project root
-- Inside `e2e` folder, creates `mocha.opts` (for `mocha`) or `config.json` (for `jest`). See examples: [mocha.opts](/examples/demo-react-native/e2e/mocha.opts), [config.json](/examples/demo-react-native-jest/e2e/config.json)
-- Inside `e2e` folder, creates `init.js` file. See examples for [Mocha](/examples/demo-react-native/e2e/init.js) and [Jest](/examples/demo-react-native-jest/e2e/init.js).
-- Inside `e2e` folder, creates `firstTest.e2e.js` with content similar to [this](/examples/demo-react-native-jest/e2e/app-hello.e2e.js).
-
-##### Mocha
-
-```sh
-detox init -r mocha
-```
-
-##### Jest
-
-Follow the [Guide.Jest.md](Guide.Jest.md) documentation.
-
-## Step 4: Build your app and run Detox tests
+## Step 3: Build your app and run Detox tests
 
 #### 1. Build your app
 
@@ -200,10 +109,11 @@ Use a convenience method in Detox command line tools to build your project easil
 detox build
 ```
 
-> TIP: Notice that the actual build command was specified in the Detox configuration in `package.json` .   
-See `"build": "xcodebuild -project ..."` inside `ios.sim.debug` configuration (step 2.3).
+> Tip: Notice that the actual build command was specified in the Detox configuration (e.g. in `.detoxrc.json` or `package.json` ).
+>
+> See `"build": "xcodebuild -project ..."` inside `ios.sim.debug`, or `./gradlew assembleDebug assembleAndroidTest` in `android.emu.debug`.
 
-#### 2. Run the tests (finally) :tada:
+#### 2. Run the tests (finally!) :beers:
 
 Use the Detox command line tools to test your project easily:
 
@@ -215,6 +125,4 @@ That's it. Your first failing Detox test is running!
 
 Next, we'll go over usage and how to make this test [actually pass](Introduction.WritingFirstTest.md).
 
-## Step 5: Android Setup
 
-If you haven't already done so - now is the time to set Android up using the [Android guide](Introduction.Android.md).
