@@ -55,8 +55,8 @@ public class DetoxJUnitRunner extends AndroidJUnitRunner {
                     if (interval != null) {
                         samplingInterval = Long.parseLong(interval);
                     }
-                } catch (NumberFormatException e) {
-                    Log.w(TAG, "Illegal value for param \"detoxInstrumSamplingInterval\"", e);
+                } catch (NumberFormatException ignore) {
+                    Log.w(TAG, "Invalid value for param \"detoxInstrumSamplingInterval\", default was used");
                 }
 
                 instrumentsManager = new DetoxInstrumentsManager(app);
