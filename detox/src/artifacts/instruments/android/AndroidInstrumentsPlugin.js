@@ -15,7 +15,9 @@ class AndroidInstrumentsPlugin extends InstrumentsArtifactPlugin {
 
     if (this.testRecording) {
       event.launchArgs['detoxInstrumRecPath'] = this.testRecording.temporaryRecordingPath;
-      event.launchArgs['detoxInstrumSamplingInterval'] = this.api.userConfig.samplingInterval;
+      if (this.api.userConfig.samplingInterval) {
+        event.launchArgs['detoxInstrumSamplingInterval'] = this.api.userConfig.samplingInterval;
+      }
     }
   }
 

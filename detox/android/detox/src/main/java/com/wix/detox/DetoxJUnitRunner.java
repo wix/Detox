@@ -2,6 +2,7 @@ package com.wix.detox;
 
 import android.app.Application;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.test.runner.AndroidJUnitRunner;
 import androidx.test.runner.lifecycle.ApplicationLifecycleCallback;
@@ -13,6 +14,7 @@ import com.wix.detox.instruments.DetoxInstrumentsManager;
 
 
 public class DetoxJUnitRunner extends AndroidJUnitRunner {
+    private static final String TAG = "DetoxJUnitRunner";
     private DetoxInstrumentsManager instrumentsManager;
     private ApplicationLifecycleCallback lifecycleCallback;
 
@@ -47,9 +49,15 @@ public class DetoxJUnitRunner extends AndroidJUnitRunner {
         if (DetoxInstrumentsManager.supports()) {
             final String recordingPath = arguments.getString("detoxInstrumRecPath");
             if (recordingPath != null) {
-                final long samplingInterval = Long.parseLong(
-                        arguments.getString("detoxInstrumSamplingInterval", "250")
-                );
+                long samplingInterval = 250;
+                try {
+                    final String interval = arguments.getString("detoxInstrumSamplingInterval");
+                    if (interval != null) {
+                        samplingInterval = Long.parseLong(interval);
+                    }
+                } catch (NumberFormatException e) {
+                    Log.w(TAG, "Illegal value for param \"detoxInstrumSamplingInterval\"", e);
+                }
 
                 instrumentsManager = new DetoxInstrumentsManager(app);
                 instrumentsManager.startRecordingAtLocalPath(recordingPath, samplingInterval);
