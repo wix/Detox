@@ -39,15 +39,8 @@ class AttachedAndroidDriver extends AndroidDriver {
 
   async _allocateDevice(deviceQuery) {
     const adbNameVal = _.isPlainObject(deviceQuery) ? deviceQuery.adbName : deviceQuery;
-
     if (_.isArray(adbNameVal)) {
-      log.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Trying to allocate a device based on the provided list: ${adbNameVal.join(', ')}`);
       const adbName = await this.deviceRegistry.allocateDevice(() => this._doAllocateDevice(adbNameVal));
-
-      if (!adbName) {
-        await this._throwCouldNotFindDevice(adbNameVal);
-      }
-
       log.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Settled on ${adbName}`);
       return adbName;
     }
@@ -61,13 +54,18 @@ class AttachedAndroidDriver extends AndroidDriver {
     return adbNameVal;
   }
 
-  async _doAllocateDevice(adbNameList) {
+  async _doAllocateDevice(adbNames) {
     const { devices } = await this.adb.devices();
-    for (const candidate of devices) {
-      const isBusy = this.deviceRegistry.isDeviceBusy(candidate.adbName);
-      if (!isBusy && adbNameList.includes(candidate.adbName)) {
-        log.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Found ${candidate.adbName}!`);
-        return candidate.adbName;
+    for (const adbName of adbNames) {
+      if (!devices.some((d) => d.adbName === adbName)) {
+        await this._throwCouldNotFindDevice(adbName);
+      }
+
+      const isBusy = this.deviceRegistry.isDeviceBusy(adbName);
+      log.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `"${adbName}" isBusy=${isBusy}`);
+      if (!isBusy) {
+        log.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Found ${adbName}!`);
+        return adbName;
       }
     }
   }
