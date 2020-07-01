@@ -9,7 +9,7 @@ Note that while Mocha is lightweight and easy to set up, we nevertheless encoura
 
 ## Installation
 
-**Disclaimer: ** Here we focus on installing Detox on _new projects_. If you're migrating a project with an existing Detox installation, please apply some common sense while using this guide.
+**Disclaimer:** Here we focus on installing Detox on _new projects_. If you're migrating a project with an existing Detox installation, please apply some common sense while using this guide.
 
 ### 1. Install Mocha :coffee:
 
