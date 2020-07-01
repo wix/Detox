@@ -5,20 +5,20 @@
 
 This guide describes how to install [Jest](https://jestjs.io) as a test runner to be used by Detox for running the E2E tests.
 
-**Disclaimer:**
-
-1. Here we focus on installing Detox on _new projects_. If you're migrating a project with an existing Detox installation, please apply some common sense while using this guide.
-1. These instructions are relevant for `jest-circus@^26.0.1`. They should likely work for the newer `jest-circus` versions too, but for **the older ones** (25.x, 24.x) &mdash; **they will not, due to blocking issues.**
-
 ## Introduction
 
-As already mentioned in the [Getting Started](Introduction.GettingStarted.md#step-3-create-your-first-test) guide, Detox itself does not effectively run tests logic, but rather delegates that responsibility onto a test runner. At the moment, Jest is the only recommended choice, for many reasons, including but not limited to parallel test suite execution capability, and complete integration with Detox API.
+As already mentioned in the [Getting Started](Introduction.GettingStarted.md#step-3-create-your-first-test) guide, Detox itself does not effectively run tests logic, but rather delegates that responsibility onto a test runner. At the moment, Jest is the only recommended choice, for many reasons, including - but not limited to, parallel test suite execution capability, and complete integration with Detox API.
 
 By the way, Jest itself — much like Detox, also does not effectively run any tests. Instead, it is more of a dispatcher and orchestrator of multiple instances of a delegated runner capable of running in parallel. For more info, refer to [this video](https://youtu.be/3YDiloj8_d0?t=2127) (source: [Jest architecture](https://jestjs.io/docs/en/architecture)).
 
 For its part, Detox supports only one Jest's concrete runner, which is [`jest-circus`](https://www.npmjs.com/package/jest-circus). The former runner, `jest-jasmine2`, is deprecated due to specific bugs in the past, and architectural limitations at present. Moreover, Jest team plans to deprecate `jest-jasmine2` in the upcoming major release 27.0.0 ([see blog post](https://jestjs.io/blog/2020/05/05/jest-26)).
 
 ## Installation
+
+**Disclaimer:**
+
+1. Here we focus on installing Detox on _new projects_. If you're migrating a project with an existing Detox installation, please apply some common sense while using this guide.
+1. These instructions are relevant for `jest-circus@^26.0.1`. They should likely work for the newer `jest-circus` versions too, but for **the older ones** (25.x, 24.x) &mdash; **they will not, due to blocking issues.**
 
 ### 1. Install Jest
 
