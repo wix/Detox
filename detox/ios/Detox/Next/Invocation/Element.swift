@@ -110,10 +110,7 @@ class Element : NSObject {
 			}
 			return rv
 		} catch {
-			guard let keyWindow = UIWindow.dtx_keyWindow else {
-				return [:]
-			}
-			return ["viewHierarchy": keyWindow.recursiveDescription!]
+			return UIView.dtx_genericViewDebugAttributes
 		}
 	}
 	

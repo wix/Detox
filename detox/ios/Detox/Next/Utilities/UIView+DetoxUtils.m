@@ -579,6 +579,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 - (NSDictionary<NSString *,id> *)dtx_viewDebugAttributes
 {
 	NSMutableDictionary* rv = [NSMutableDictionary new];
+	[rv addEntriesFromDictionary:[UIView dtx_genericViewDebugAttributes]];
 	
 	if(self.window != nil)
 	{
@@ -587,6 +588,30 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	
 	rv[@"elementAttributes"] = [self dtx_attributes];
 	rv[@"viewDescription"] = self.description;
+	
+	return rv;
+}
+
++ (NSDictionary<NSString*, id> *)dtx_genericViewDebugAttributes
+{
+	NSMutableDictionary* rv = [NSMutableDictionary new];
+	
+	rv[@"viewHierarchy"] = [[UIWindow dtx_keyWindow] recursiveDescription];
+	
+	NSMutableArray* windowDescriptions = [NSMutableArray new];
+	
+	id scene = nil;
+	if(@available(iOS 13.0, *))
+	{
+		scene = UIWindow.dtx_keyWindow.windowScene;
+	}
+	
+	auto windows = [UIWindow dtx_allWindowsForScene:scene];
+	[windows enumerateObjectsUsingBlock:^(UIWindow * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+		[windowDescriptions addObject:[obj dtx_shortDescription]];
+	}];
+	
+	rv[@"windows"] = windowDescriptions;
 	
 	return rv;
 }

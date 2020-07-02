@@ -82,4 +82,11 @@
 	[self _dtx_enumerateWindows:[self dtx_allWindowsForScene:scene] usingBlock:block];
 }
 
+- (NSString *)dtx_shortDescription
+{
+	CGRect frame = self.frame;
+	
+	return [NSString stringWithFormat:@"<%@: %p; frame = (%@ %@; %@ %@);>", self.class, self, @(frame.origin.x), @(frame.origin.y), @(frame.size.width), @(frame.size.height)];
+}
+
 @end
