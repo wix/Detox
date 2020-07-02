@@ -29,6 +29,7 @@ function collectCliConfig({ argv }) {
     runnerConfig: get('runner-config'),
     useCustomLogger: get('use-custom-logger'),
     workers: get('workers'),
+    debugTestRunner: get('debug-test-runner'),
   }, _.isUndefined);
 }
 
