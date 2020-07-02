@@ -46,9 +46,9 @@ public class DetoxJUnitRunner extends AndroidJUnitRunner {
     }
 
     private void onBeforeAppOnCreate(Application app, Bundle arguments) {
-        if (DetoxInstrumentsManager.supports()) {
-            final String recordingPath = arguments.getString("detoxInstrumRecPath");
-            if (recordingPath != null) {
+        final String recordingPath = arguments.getString("detoxInstrumRecPath");
+        if (recordingPath != null) {
+            if (DetoxInstrumentsManager.supports()) {
                 long samplingInterval = 250;
                 try {
                     final String interval = arguments.getString("detoxInstrumSamplingInterval");
