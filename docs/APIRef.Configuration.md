@@ -1,6 +1,6 @@
 # Configuration Options
 
-## Configration file
+## Configuration file
 
 In order for Detox to know what device & app to use (and a lot more, actually), it needs some configuration to be statically available in a configuration file. It supports both standalone configuration files, and a configuration bundling inside the project's `package.json`.
 
@@ -227,6 +227,7 @@ You can choose to build your project in any of these ways...
   ```sh
   detox build --configuration yourConfiguration
   ```
+
 * Building with xcodebuild:
 
   ```sh
@@ -267,5 +268,5 @@ Starting fresh is critical in CI but in dev you might be able to save time betwe
 detox test ./e2e --reuse
 ```
 
-This is especially useful with React Native DEV mode when making Javascript code changes that are getting picked up by the packager (and thus no reinstall is needed). This can save up to 7 seconds per run!
+This is especially useful with React Native dev mode when making Javascript code changes that are getting picked up by the packager (and thus no reinstall is needed). This can save up to 7 seconds per run!
 You should not use this option if you made native code changes or if your app relies on local ("disk") storage.
