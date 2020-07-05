@@ -13,7 +13,7 @@
     "generation",
     "."
   ],
-  "version": "17.0.2",
+  "version": "17.1.0",
   "npmClient": "npm",
   "command": {
     "publish": {
