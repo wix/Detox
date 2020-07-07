@@ -75,6 +75,7 @@
     },
     "android.emu.debug.fromSource": {
       "binaryPath": "android/app/build/outputs/apk/fromSource/debug/app-fromSource-debug.apk",
+      "utilBinaryPaths": ["./cache/test-butler-app.apk"],
       "build": "cd android && ./gradlew assembleFromSourceDebug assembleFromSourceDebugAndroidTest -DtestBuildType=debug && cd ..",
       "type": "android.emulator",
       "device": {

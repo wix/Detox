@@ -502,19 +502,6 @@ describe('Device', () => {
       await device.installUtilBinaries();
       expect(driverMock.driver.installUtilBinaries).not.toHaveBeenCalled();
     });
-
-    it('should throw if util binaries not configured as an array', async () => {
-      const _scheme = _.cloneDeep(scheme);
-      _scheme.configurations[configurationName].utilBinaryPaths = 'valid/path/not/in/array';
-      const device = schemeDevice(_scheme, configurationName);
-      try {
-        await device.installUtilBinaries();
-        fail();
-      } catch (e) {
-        expect(e.toString()).toContain('DetoxRuntimeError');
-        expect(e.toString()).toContain('utilBinaryPaths specified in Detox configuration is invalid: valid/path/not/in/array');
-      }
-    });
   });
 
   it(`sendToHome() should pass to device driver`, async () => {

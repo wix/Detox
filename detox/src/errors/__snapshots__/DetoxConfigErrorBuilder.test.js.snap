@@ -29,6 +29,12 @@ exports[`DetoxConfigErrorBuilder .failedToReadConfiguration should create a simp
 EISDIR: illegal operation on a directory, read]
 `;
 
+exports[`DetoxConfigErrorBuilder .malformedUtilBinaryPaths should create an error with specifying the config name 1`] = `
+[DetoxConfigError: utilBinaryPaths specified in Detox configuration "android.release" is invalid
+
+HINT: Configuration must be applied as an Array of paths]
+`;
+
 exports[`DetoxConfigErrorBuilder .missingBuildScript should create a generic error, if the config location is not known 1`] = `
 [DetoxConfigError: Could not find a build script inside "android.release" configuration.
 

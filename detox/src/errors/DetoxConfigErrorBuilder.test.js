@@ -143,6 +143,25 @@ describe('DetoxConfigErrorBuilder', () => {
     });
   });
 
+  describe('.malformedUtilBinaryPaths', () => {
+    beforeEach(() => {
+      build = () => builder.malformedUtilBinaryPaths()
+      builder.setConfigurationName('android.release');
+      builder.setDetoxConfig({
+        configurations: {
+          'android.release': {
+            type: 'android.emulator',
+            device: 'Pixel 4',
+          },
+        },
+      });
+    });
+
+    it('should create an error with specifying the config name', () => {
+      expect(build()).toMatchSnapshot();
+    });
+  });
+
   describe('.missingDeviceProperty', () => {
     beforeEach(() => {
       build = () => builder.missingDeviceProperty();

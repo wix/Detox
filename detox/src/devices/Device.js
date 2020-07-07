@@ -184,12 +184,6 @@ class Device {
   async installUtilBinaries() {
     const paths = this._deviceConfig.utilBinaryPaths;
     if (paths) {
-      if (!_.isArray(paths)) {
-        throw new DetoxRuntimeError({
-          message: `utilBinaryPaths specified in Detox configuration is invalid: ${paths}`,
-          hint: 'Configuration must be applied as an Array of paths',
-        });
-      }
       await this.deviceDriver.installUtilBinaries(this._deviceId, paths);
     }
   }

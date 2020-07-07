@@ -87,6 +87,13 @@ class DetoxConfigErrorBuilder {
     });
   }
 
+  malformedUtilBinaryPaths() {
+    return new DetoxConfigError({
+      message: `utilBinaryPaths specified in Detox configuration "${this.configurationName}" is invalid`,
+      hint: 'Configuration must be applied as an Array of paths',
+    });
+  }
+
   missingDeviceProperty() {
     return new DetoxConfigError({
       message: `Missing or empty "device" property inside detox.configurations["${this.configurationName}"].\n` +
