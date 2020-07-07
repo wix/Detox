@@ -423,8 +423,6 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		}
 	}];
 	
-	
-	
 	return rv;
 }
 

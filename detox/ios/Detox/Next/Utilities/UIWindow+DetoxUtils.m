@@ -37,7 +37,7 @@
 
 + (NSArray<UIWindow*>*)dtx_allWindowsForScene:(id)scene
 {
-	NSMutableArray<UIWindow*>* windows = [[UIWindow allWindowsIncludingInternalWindows:YES onlyVisibleWindows:YES] mutableCopy];
+	NSMutableArray<UIWindow*>* windows = [[self dtx_allWindows] mutableCopy];
 	
 	if (@available(iOS 13.0, *))
 	{
@@ -50,7 +50,7 @@
 
 + (NSArray<UIWindow*>*)dtx_allWindows
 {
-	return [UIWindow allWindowsIncludingInternalWindows:YES onlyVisibleWindows:YES];
+	return [[UIWindow allWindowsIncludingInternalWindows:YES onlyVisibleWindows:NO] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"hidden == NO"]];
 }
 
 + (void)_dtx_enumerateWindows:(NSArray<UIWindow*>*)windows usingBlock:(void (NS_NOESCAPE ^)(UIWindow* obj, NSUInteger idx, BOOL *stop))block
