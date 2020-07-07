@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const debug = require('../utils/debug'); // debug utils, leave here even if unused
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
 class Device {
   constructor({ deviceConfig, deviceDriver, emitter, sessionConfig }) {
@@ -178,6 +179,19 @@ class Device {
   async uninstallApp(bundleId) {
     const _bundleId = bundleId || this._bundleId;
     await this.deviceDriver.uninstallApp(this._deviceId, _bundleId);
+  }
+
+  async installUtilBinaries() {
+    const paths = this._deviceConfig.utilBinaryPaths;
+    if (paths) {
+      if (!_.isArray(paths)) {
+        throw new DetoxRuntimeError({
+          message: `utilBinaryPaths specified in Detox configuration is invalid: ${paths}`,
+          hint: 'Configuration must be applied as an Array of paths',
+        });
+      }
+      await this.deviceDriver.installUtilBinaries(this._deviceId, paths);
+    }
   }
 
   async reloadReactNative() {

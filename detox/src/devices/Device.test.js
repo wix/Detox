@@ -441,25 +441,19 @@ describe('Device', () => {
   describe('installApp()', () => {
     it(`with a custom app path should use custom app path`, async () => {
       const device = validDevice();
-
       await device.installApp('newAppPath');
-
       expect(driverMock.driver.installApp).toHaveBeenCalledWith(device._deviceId, 'newAppPath', device._deviceConfig.testBinaryPath);
     });
 
     it(`with a custom test app path should use custom test app path`, async () => {
       const device = validDevice();
-
       await device.installApp('newAppPath', 'newTestAppPath');
-
       expect(driverMock.driver.installApp).toHaveBeenCalledWith(device._deviceId, 'newAppPath', 'newTestAppPath');
     });
 
     it(`with no args should use the default path given in configuration`, async () => {
       const device = validDevice();
-
       await device.installApp();
-
       expect(driverMock.driver.installApp).toHaveBeenCalledWith(device._deviceId, device._deviceConfig.binaryPath, device._deviceConfig.testBinaryPath);
     });
   });
@@ -467,18 +461,59 @@ describe('Device', () => {
   describe('uninstallApp()', () => {
     it(`with a custom app path should use custom app path`, async () => {
       const device = validDevice();
-
       await device.uninstallApp('newBundleId');
-
       expect(driverMock.driver.uninstallApp).toHaveBeenCalledWith(device._deviceId, 'newBundleId');
     });
 
     it(`with no args should use the default path given in configuration`, async () => {
       const device = validDevice();
-
       await device.uninstallApp();
-
       expect(driverMock.driver.uninstallApp).toHaveBeenCalledWith(device._deviceId, device._bundleId);
+    });
+  });
+
+  describe('installBinary()', () => {
+    const configurationName = 'android.emu.release';
+    const scheme = configurationsMock.validOneAndroidDevice;
+
+    it('should install the set of util binaries', async () => {
+      const device = schemeDevice(scheme, configurationName);
+      await device.installUtilBinaries();
+      expect(driverMock.driver.installUtilBinaries).toHaveBeenCalledWith(
+        device._deviceId,
+        scheme.configurations[configurationName].utilBinaryPaths
+      );
+    });
+
+    it('should break if driver installation fails', async () => {
+      driverMock.driver.installUtilBinaries.mockRejectedValue(new Error());
+      const device = schemeDevice(scheme, configurationName);
+      try {
+        await device.installUtilBinaries();
+        fail('');
+      } catch (e) {}
+    });
+
+    it('should not install anything if util-binaries havent been configured', async () => {
+      const _scheme = _.cloneDeep(scheme);
+      delete _scheme.configurations[configurationName].utilBinaryPaths;
+
+      const device = schemeDevice(_scheme, configurationName);
+      await device.installUtilBinaries();
+      expect(driverMock.driver.installUtilBinaries).not.toHaveBeenCalled();
+    });
+
+    it('should throw if util binaries not configured as an array', async () => {
+      const _scheme = _.cloneDeep(scheme);
+      _scheme.configurations[configurationName].utilBinaryPaths = 'valid/path/not/in/array';
+      const device = schemeDevice(_scheme, configurationName);
+      try {
+        await device.installUtilBinaries();
+        fail();
+      } catch (e) {
+        expect(e.toString()).toContain('DetoxRuntimeError');
+        expect(e.toString()).toContain('utilBinaryPaths specified in Detox configuration is invalid: valid/path/not/in/array');
+      }
     });
   });
 
