@@ -33,7 +33,7 @@
 
 - (id)firstResponder;
 + (instancetype)keyWindow;
-+ (id)allWindowsIncludingInternalWindows:(_Bool)arg1 onlyVisibleWindows:(_Bool)arg2;
++ (NSArray<UIWindow*>*)allWindowsIncludingInternalWindows:(_Bool)arg1 onlyVisibleWindows:(_Bool)arg2;
 
 @end
 
