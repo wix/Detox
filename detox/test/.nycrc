@@ -1,0 +1,15 @@
+{
+  "cwd": "../..",
+  "reporter": "lcov",
+  "reportDir": "detox/test/coverage",
+  "include": [
+    "detox/**"
+  ],
+  "exclude": [
+    "detox/test/**",
+    "**/__test/**",
+    "**/__mocks__/**",
+    "**/*.mock.js",
+    "**/*.test.js"
+  ]
+}
