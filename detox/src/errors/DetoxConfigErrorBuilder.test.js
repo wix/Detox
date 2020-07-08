@@ -151,6 +151,7 @@ describe('DetoxConfigErrorBuilder', () => {
         configurations: {
           'android.release': {
             type: 'android.emulator',
+            utilBinaryPaths: '/valid/path/outside/of/array',
             device: 'Pixel 4',
           },
         },

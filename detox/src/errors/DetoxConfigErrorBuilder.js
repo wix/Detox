@@ -89,8 +89,10 @@ class DetoxConfigErrorBuilder {
 
   malformedUtilBinaryPaths() {
     return new DetoxConfigError({
-      message: `utilBinaryPaths specified in Detox configuration "${this.configurationName}" is invalid`,
-      hint: 'Configuration must be applied as an Array of paths',
+      message: `Invalid type of "utilBinaryPaths" property in detox.configurations["${this.configurationName}"]\nExpected an array of strings of paths.`,
+      hint: `Check that in your Detox config${_atPath(this.filepath)}`,
+      debugInfo: this._focusOnConfiguration(),
+      inspectOptions: { depth: 2 },
     });
   }
 

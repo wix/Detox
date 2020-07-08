@@ -30,9 +30,20 @@ EISDIR: illegal operation on a directory, read]
 `;
 
 exports[`DetoxConfigErrorBuilder .malformedUtilBinaryPaths should create an error with specifying the config name 1`] = `
-[DetoxConfigError: utilBinaryPaths specified in Detox configuration "android.release" is invalid
+[DetoxConfigError: Invalid type of "utilBinaryPaths" property in detox.configurations["android.release"]
+Expected an array of strings of paths.
 
-HINT: Configuration must be applied as an Array of paths]
+HINT: Check that in your Detox config.
+
+{
+  configurations: {
+    'android.release': {
+      type: 'android.emulator',
+      utilBinaryPaths: '/valid/path/outside/of/array',
+      device: 'Pixel 4'
+    }
+  }
+}]
 `;
 
 exports[`DetoxConfigErrorBuilder .missingBuildScript should create a generic error, if the config location is not known 1`] = `
