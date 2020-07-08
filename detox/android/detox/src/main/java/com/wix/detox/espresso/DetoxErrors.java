@@ -1,12 +1,12 @@
 package com.wix.detox.espresso;
 
-interface DetoxErrors {
+public interface DetoxErrors {
     class DetoxRuntimeException extends RuntimeException {
-        DetoxRuntimeException(Throwable cause) {
+        public DetoxRuntimeException(Throwable cause) {
             super(cause);
         }
 
-        DetoxRuntimeException(String message) {
+        public DetoxRuntimeException(String message) {
             super(message);
         }
     }

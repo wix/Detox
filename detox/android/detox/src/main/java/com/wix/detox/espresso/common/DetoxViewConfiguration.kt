@@ -9,7 +9,8 @@ private const val LOG_TAG = "Detox-ViewConfig"
 
 object DetoxViewConfigurations {
 
-    fun getPostTapCooldownTime() = ViewConfiguration.getDoubleTapTimeout().toLong()
+    fun getMaxTapTime(): Long = ViewConfiguration.getLongPressTimeout().toLong()
+    fun getPostTapCooldownTime(): Long = ViewConfiguration.getDoubleTapTimeout().toLong()
 
     /**
      * Taken from [androidx.test.espresso.action.Tap]

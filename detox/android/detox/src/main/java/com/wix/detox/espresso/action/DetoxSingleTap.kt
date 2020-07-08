@@ -2,6 +2,8 @@ package com.wix.detox.espresso.action
 
 import androidx.test.espresso.UiController
 import androidx.test.espresso.action.Tapper
+import com.wix.detox.common.runWithinTimeFrame
+import com.wix.detox.espresso.common.DetoxViewConfigurations.getMaxTapTime
 import com.wix.detox.espresso.common.DetoxViewConfigurations.getPostTapCooldownTime
 import com.wix.detox.espresso.common.MotionEvents
 
@@ -19,7 +21,8 @@ import com.wix.detox.espresso.common.MotionEvents
  */
 class DetoxSingleTap(
         private val motionEvents: MotionEvents = MotionEvents(),
-        private val cooldownTime: Long = getPostTapCooldownTime())
+        private val cooldownTime: Long = getPostTapCooldownTime(),
+        private val maxTapTime: Long = getMaxTapTime())
     : Tapper {
 
     override fun sendTap(uiController: UiController?, coordinates: FloatArray?, precision: FloatArray?): Tapper.Status
@@ -35,17 +38,24 @@ class DetoxSingleTap(
         val downEvent = motionEvents.obtainDownEvent(x, y, precision)
         val upEvent = motionEvents.obtainUpEvent(downEvent, downEvent.eventTime + EVENTS_TIME_GAP_MS, x, y)
         try {
-            val result = uiController.injectMotionEventSequence(arrayListOf(downEvent, upEvent))
+            val result = runWithinTimeFrame(maxTapTime, TAP_TIME_FAILURE_MESSAGE) {
+                uiController.injectMotionEventSequence(arrayListOf(downEvent, upEvent))
+            }
+
             if (result) {
-                if (cooldownTime > 0) {
-                    uiController.loopMainThreadForAtLeast(cooldownTime)
-                }
+                applyCooldown(uiController)
                 return Tapper.Status.SUCCESS
             }
             return Tapper.Status.FAILURE
         } finally {
             downEvent.recycle()
             upEvent.recycle()
+        }
+    }
+
+    private fun applyCooldown(uiController: UiController) {
+        if (cooldownTime > 0) {
+            uiController.loopMainThreadForAtLeast(cooldownTime)
         }
     }
 
@@ -64,5 +74,6 @@ class DetoxSingleTap(
          * the chance of allowing a frame to be drawn in between the _down_ and _up_ events.
          */
         private const val EVENTS_TIME_GAP_MS = 30
+        private const val TAP_TIME_FAILURE_MESSAGE = "Single-tap has taken too long to complete and was registered as a long-tap, instead!\nThe device was probably too busy."
     }
 }

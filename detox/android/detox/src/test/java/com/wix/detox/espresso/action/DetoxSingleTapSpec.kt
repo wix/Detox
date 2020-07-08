@@ -4,8 +4,10 @@ import android.view.MotionEvent
 import androidx.test.espresso.UiController
 import androidx.test.espresso.action.Tapper
 import com.nhaarman.mockitokotlin2.*
+import com.wix.detox.espresso.DetoxErrors.DetoxRuntimeException
 import com.wix.detox.espresso.common.MotionEvents
 import org.assertj.core.api.Assertions.assertThat
+import org.mockito.Mockito
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertFailsWith
@@ -37,6 +39,22 @@ object DetoxSingleTapSpec: Spek({
             }
         }
 
+        fun mockEventInjectionToSucceed()
+                = whenever(uiController.injectMotionEventSequence(any())).doReturn(true)
+
+        fun mockEventInjectionToFail()
+                = whenever(uiController.injectMotionEventSequence(any())).doReturn(false)
+
+        fun mockEventInjectionToThrow()
+                = whenever(uiController.injectMotionEventSequence(any())).doThrow(RuntimeException("exceptionMock"))
+
+        fun mockEventInjectionToWait(time: Long) {
+            Mockito.doAnswer {
+                Thread.sleep(time + 1)
+                true
+            }.whenever(uiController).injectMotionEventSequence(any())
+        }
+
         fun verifyMotionEventsInjected(vararg events: MotionEvent)
                 = verify(uiController).injectMotionEventSequence(events.asList())
 
@@ -55,8 +73,9 @@ object DetoxSingleTapSpec: Spek({
         fun verifyMainThreadNeverSynced()
                 = verify(uiController, never()).loopMainThreadForAtLeast(any())
 
-        fun uut() = DetoxSingleTap(motionEvents)
-        fun uut(tapTimeout: Long) = DetoxSingleTap(motionEvents, tapTimeout)
+        fun uut() = DetoxSingleTap(motionEvents, maxTapTime = 1000L)
+        fun uutWithMaxTapTime(maxTapTime: Long) = DetoxSingleTap(motionEvents, maxTapTime = maxTapTime)
+        fun uutWithCooldownTime(cooldownTime: Long) = DetoxSingleTap(motionEvents, cooldownTime, 1000L)
 
         it("should send an down-up events sequence") {
             val coordinates = dontCareCoordinates()
@@ -106,26 +125,21 @@ object DetoxSingleTapSpec: Spek({
         }
 
         it("should recycle down_up events even if ui-controller throws") {
-            whenever(uiController.injectMotionEventSequence(any())).doThrow(RuntimeException("exceptionMock"))
+            mockEventInjectionToThrow()
 
             val coordinates = dontCareCoordinates()
             val precision = dontCarePrecision()
 
-            // TODO retry integrating https://junit.org/junit4/javadoc/4.12/org/junit/rules/ExpectedException.html
-            var err: Exception? = null
-            try {
+            assertFailsWith<Exception> {
                 uut().sendTap(uiController, coordinates, precision, 0, 0)
-            } catch (e: Exception) {
-                err = e
             }
 
-            assertThat(err).isNotNull()
             verify(downEvent).recycle()
             verify(upEvent).recycle()
         }
 
         it("should return failure if ui-controller fails") {
-            whenever(uiController.injectMotionEventSequence(any())).doReturn(false)
+            mockEventInjectionToFail()
 
             val coordinates = dontCareCoordinates()
             val precision = dontCarePrecision()
@@ -134,8 +148,22 @@ object DetoxSingleTapSpec: Spek({
             assertThat(result).isEqualTo(Tapper.Status.FAILURE)
         }
 
+        it("should throw if event injection takes too long") {
+            val maxTapTime = 10L
+            mockEventInjectionToWait(maxTapTime)
+
+            val coordinates = dontCareCoordinates()
+            val precision = dontCarePrecision()
+
+            assertFailsWith<DetoxRuntimeException> {
+                uutWithMaxTapTime(maxTapTime).sendTap(uiController, coordinates, precision, 0, 0)
+            }.also {
+                assertThat(it.message).contains("Single-tap has taken too long to complete and was registered as a long-tap, instead!")
+            }
+        }
+
         it("should return success") {
-            whenever(uiController.injectMotionEventSequence(any())).doReturn(true)
+            mockEventInjectionToSucceed()
 
             val coordinates = dontCareCoordinates()
             val precision = dontCarePrecision()
@@ -154,36 +182,36 @@ object DetoxSingleTapSpec: Spek({
         }
 
         it("should idle-wait the cooldown period following a successful tap injection") {
-            whenever(uiController.injectMotionEventSequence(any())).doReturn(true)
+            mockEventInjectionToSucceed()
 
             val expectedWait = 111L
 
             val coordinates = dontCareCoordinates()
             val precision = dontCarePrecision()
 
-            uut(expectedWait).sendTap(uiController, coordinates, precision, 0, 0)
+            uutWithCooldownTime(expectedWait).sendTap(uiController, coordinates, precision, 0, 0)
 
             verifyMainThreadSynced(expectedWait)
         }
 
         it("should not idle-wait the tap-registration period if tap injection fails") {
-            whenever(uiController.injectMotionEventSequence(any())).doReturn(false)
+            mockEventInjectionToFail()
 
             val coordinates = dontCareCoordinates()
             val precision = dontCarePrecision()
 
-            uut(111L).sendTap(uiController, coordinates, precision, 0, 0)
+            uutWithCooldownTime(111L).sendTap(uiController, coordinates, precision, 0, 0)
 
             verifyMainThreadNeverSynced()
         }
 
         it("should not idle-wait the tap-registration period if provided time is 0") {
-            whenever(uiController.injectMotionEventSequence(any())).doReturn(true)
+            mockEventInjectionToSucceed()
 
             val coordinates = dontCareCoordinates()
             val precision = dontCarePrecision()
 
-            uut(0).sendTap(uiController, coordinates, precision, 0, 0)
+            uutWithCooldownTime(0).sendTap(uiController, coordinates, precision, 0, 0)
 
             verifyMainThreadNeverSynced()
         }
