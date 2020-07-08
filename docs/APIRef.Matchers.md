@@ -2,7 +2,7 @@
 
 Detox uses [matchers](APIRef.Matchers.md) to match UI elements in your app.
 
-Use [actions]('APIRef.ActionsOnElement.md') to simulate use interaction with elements and [expectations](APIRef.Expect.md) to verify element states.
+Use [actions](APIRef.ActionsOnElement.md) to simulate use interaction with elements and [expectations](APIRef.Expect.md) to verify element states.
 
 **Note:** For best results, it is recommended to match elements by unique identifiers. Matching by text or labels can introduce test flakiness when your app's text change or when changing your app's localization.
 
