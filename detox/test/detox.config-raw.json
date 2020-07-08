@@ -1,5 +1,5 @@
 {
-  "test-runner": "jest",
+  "test-runner": "nyc jest",
   "runner-config": "e2e/config.js",
   "behavior": {
     "init": {
