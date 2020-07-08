@@ -16,6 +16,7 @@ import {
 import TextInput from '../Views/TextInput';
 
 const DoubleTapsText = requireNativeComponent('DetoxDoubleTapsTextView');
+const SluggishTapsText = requireNativeComponent('DetoxSluggishTapsTextView');
 
 const { width } = Dimensions.get('window');
 
@@ -83,6 +84,10 @@ export default class ActionsScreen extends Component {
           {isAndroid && <Text style={{width: 10}}> | </Text>}
           {isAndroid && <View style={{ width: 110 }}>
             <DoubleTapsText style={{ flex: 1 }}/>
+          </View>}
+          {isAndroid && <Text style={{width: 10}}> | </Text>}
+          {isAndroid && <View style={{ width: 110 }}>
+            <SluggishTapsText style={{ flex: 1 }}/>
           </View>}
         </View>
 
