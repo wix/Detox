@@ -7,15 +7,10 @@
 //
 
 import UIKit
-import EarlGrey
 
 fileprivate let recordingManager : DetoxInstrumentsManager = {
 	return DetoxInstrumentsManager()
 }()
-
-fileprivate func EarlGrey(file: String = #file, lineNumber: Int = #line) -> EarlGreyImpl {
-	return EarlGreyImpl.invoked(fromFile: file, lineNumber: UInt(lineNumber))
-}
 
 fileprivate let log = DetoxLog(category: "DetoxManager")
 
@@ -371,7 +366,6 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 		default:
 			fatalError("Unknown action type received: \(type)")
 		}
-		
 	}
 	
 	func webSocket(_ webSocket: WebSocket, didCloseWith reason: String?) {
