@@ -10,6 +10,7 @@ const ADB = require('./exec/ADB');
 const AAPT = require('./exec/AAPT');
 const APKPath = require('./tools/APKPath');
 const TempFileXfer = require('./tools/TempFileXfer');
+const AppInstallHelper = require('./tools/AppInstallHelper');
 const AppUninstallHelper = require('./tools/AppUninstallHelper');
 const MonitoredInstrumentation = require('./tools/MonitoredInstrumentation');
 const DetoxApi = require('../../../android/espressoapi/Detox');
@@ -38,6 +39,8 @@ class AndroidDriver extends DeviceDriverBase {
     this.adb = new ADB();
     this.aapt = new AAPT();
     this.fileXfer = new TempFileXfer(this.adb);
+    this.appInstallHelper = new AppInstallHelper(this.adb, this.fileXfer);
+    this.appUninstallHelper = new AppUninstallHelper(this.adb);
     this.devicePathBuilder = new AndroidDevicePathBuilder();
 
     this.instrumentation = new MonitoredInstrumentation(this.adb, logger);
@@ -71,8 +74,16 @@ class AndroidDriver extends DeviceDriverBase {
 
   async uninstallApp(deviceId, bundleId) {
     await this.emitter.emit('beforeUninstallApp', { deviceId, bundleId });
-    const uninstallHelper = new AppUninstallHelper(this.adb);
-    await uninstallHelper.uninstall(deviceId, bundleId);
+    await this.appUninstallHelper.uninstall(deviceId, bundleId);
+  }
+
+  async installUtilBinaries(deviceId, paths) {
+    for (const path of paths) {
+      const packageId = await this.getBundleIdFromBinary(path);
+      if (!await this.adb.isPackageInstalled(deviceId, packageId)) {
+        await this.appInstallHelper.install(deviceId, path);
+      }
+    }
   }
 
   async launchApp(deviceId, bundleId, launchArgs, languageAndLocale) {

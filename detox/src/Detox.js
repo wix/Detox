@@ -175,6 +175,7 @@ class Detox {
       await this.device.uninstallApp();
       await this.device.installApp();
     }
+    await this.device.installUtilBinaries();
 
     if (behaviorConfig.launchApp) {
       await this.device.launchApp({

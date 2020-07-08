@@ -1,4 +1,4 @@
-# Setting Up an Android Development and Testing Envrionment
+# Setting Up an Android Development & Testing Envrionment
 
 This guide provides some core practices to follow in setting up a stable, reliable environment for running automated UI tests using Android emulators (using Detox, in particular) -- be it on a personal, _local_ computer, or a powerful CI machine.
 
@@ -41,14 +41,14 @@ If otherwise the version is simply wrong, try these refs for Macs; consider empl
 
 ## Android SDK
 
-If you have Android Studio installed - as most of us do, then the SDK should be available for you somewhere on your machine<sup>*</sup>. However, for CI agents -- possibly running with no GUI, or if you simply don't want the somewhat bloated piece of software on your computer, it is possible to simply download the SDK and tool-set, purely. Both cases are covered in the [Android guide about Android Studio](https://developer.android.com/studio/). For the pure-tools option, refer to the `Command line tools only` section at the bottom.
+If you have Android Studio installed - as most of us do, then the SDK should be available for you somewhere on your machine<sup>*</sup>. However, for CI agents -- possibly running with no GUI, or if you simply don't want the somewhat bloated piece of software on your computer, it is possible to simply download the SDK and tool-set, purely. Both cases are covered in Google's [Android guide about Android Studio](https://developer.android.com/studio/). For the pure-tools option, refer to the `Command line tools only` section at the bottom.
 
 For more help on setting the SDK up, [this guide might be helpful](https://www.androidcentral.com/installing-android-sdk-windows-mac-and-linux-tutorial).
 
 Whatever option you choose, and whichever platform you're running on (Mac, Linux, Windows), we strongly recommend that eventually you would have 2 additional things set up:
 
 * The path to the SDK's root directory is set into the `ANDROID_SDK_ROOT` [environment variable](https://developer.android.com/studio/command-line/variables).
-* The path to the SDK's root directory is set into the global [`PATH`](https://superuser.com/questions/284342/what-are-path-and-other-environment-variables-and-how-can-i-set-or-use-them) on your computer.
+* The path to the SDK's root directory is bundled into the global [`PATH`](https://superuser.com/questions/284342/what-are-path-and-other-environment-variables-and-how-can-i-set-or-use-them) on your computer.
 
 _<sup>* Inspect the content of your `ANDROID_SDK_ROOT` and `ANDROID_HOME` environment variables.</sup>_
 

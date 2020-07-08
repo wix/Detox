@@ -9,7 +9,6 @@ const EmulatorLauncher = require('./emulator/EmulatorLauncher');
 const EmulatorVersionResolver = require('./emulator/EmulatorVersionResolver');
 const { EmulatorExec } = require('./exec/EmulatorExec');
 const EmulatorTelnet = require('./tools/EmulatorTelnet');
-const AppInstallHelper = require('./tools/AppInstallHelper');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 const DeviceRegistry = require('../../DeviceRegistry');
 const environment = require('../../../utils/environment');
@@ -73,9 +72,7 @@ class EmulatorDriver extends AndroidDriver {
       binaryPath,
       testBinaryPath,
     } = this._getInstallPaths(_binaryPath, _testBinaryPath);
-
-    const installHelper = new AppInstallHelper(this.adb, this.fileXfer);
-    await installHelper.install(deviceId, binaryPath, testBinaryPath);
+    await this.appInstallHelper.install(deviceId, binaryPath, testBinaryPath);
   }
 
   async cleanup(adbName, bundleId) {

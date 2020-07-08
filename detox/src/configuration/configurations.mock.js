@@ -74,6 +74,20 @@ const validOneDeviceAndSession = {
   }
 };
 
+const validOneAndroidDevice = {
+  "configurations": {
+    "android.emu.release": {
+      "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
+      "testBinaryPath": "android/app/build/outputs/apk/release/app-release-androidTest.apk",
+      "utilBinaryPaths": ["android/util-app1.apk", "android/util-app2.apk"],
+      "type": "android.emulator",
+      "device": {
+        "avdName": "Pixel_API_28",
+      }
+    }
+  }
+};
+
 const pathsTests = {
   "session": {
     "server": "ws://localhost:8099",
@@ -101,5 +115,6 @@ module.exports = {
   pluginsFailingResolved,
   invalidDeviceNoBinary,
   validOneDeviceAndSession,
+  validOneAndroidDevice,
   pathsTests,
 };

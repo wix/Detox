@@ -41,6 +41,11 @@ describe('composeDeviceConfig', () => {
       delete rawDeviceConfig.device;
       expect(compose).toThrowError(errorBuilder.missingDeviceProperty());
     });
+
+    it('should throw if util-binary paths are malformed', () => {
+      rawDeviceConfig.utilBinaryPaths = 'valid/path/not/in/array';
+      expect(compose).toThrowError(errorBuilder.malformedUtilBinaryPaths());
+    });
   });
 
   describe('if a device configuration has the old .name property', () => {
@@ -84,4 +89,3 @@ describe('composeDeviceConfig', () => {
     });
   });
 });
-
