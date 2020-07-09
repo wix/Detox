@@ -1,13 +1,13 @@
 const _ = require('lodash');
 const AndroidDriver = require('./AndroidDriver');
-const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
+const FreeAdbDeviceFinder = require('./FreeAdbDeviceFinder');
 const DeviceRegistry = require('../../DeviceRegistry');
 const environment = require('../../../utils/environment');
 const log = require('../../../utils/logger').child({ __filename });
+
 const ALLOCATE_DEVICE_LOG_EVT = 'ALLOCATE_DEVICE';
 
 class AttachedAndroidDriver extends AndroidDriver {
-
   constructor(config) {
     super(config);
 
@@ -23,12 +23,14 @@ class AttachedAndroidDriver extends AndroidDriver {
   }
 
   async acquireFreeDevice(deviceQuery) {
-    const adbName = await this._allocateDevice(deviceQuery);
+    const adbNamePattern = _.isPlainObject(deviceQuery) ? deviceQuery.adbName : deviceQuery;
+
+    const adbName = await this._allocateDevice(adbNamePattern);
 
     await this.adb.apiLevel(adbName);
     await this.adb.unlockScreen(adbName);
-    this._name = adbName;
 
+    this._name = adbName;
     return adbName;
   }
 
@@ -37,47 +39,17 @@ class AttachedAndroidDriver extends AndroidDriver {
     await super.cleanup(adbName, bundleId);
   }
 
-  async _allocateDevice(deviceQuery) {
-    const adbNameVal = _.isPlainObject(deviceQuery) ? deviceQuery.adbName : deviceQuery;
-    if (_.isArray(adbNameVal)) {
-      const adbName = await this.deviceRegistry.allocateDevice(() => this._doAllocateDevice(adbNameVal));
-      log.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Settled on ${adbName}`);
-      return adbName;
-    }
-
-    const { devices } = await this.adb.devices();
-
-    if (!devices.some((d) => d.adbName === adbNameVal)) {
-      await this._throwCouldNotFindDevice(adbNameVal);
-    }
-
-    return adbNameVal;
+  async _allocateDevice(adbNamePattern) {
+    log.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Trying to allocate a device based on "${adbNamePattern}"`);
+    const adbName = await this.deviceRegistry.allocateDevice(() => this._doAllocateDevice(adbNamePattern));
+    log.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Settled on ${adbName}`);
+    return adbName;
   }
 
-  async _doAllocateDevice(adbNames) {
-    const { devices } = await this.adb.devices();
-    for (const adbName of adbNames) {
-      if (!devices.some((d) => d.adbName === adbName)) {
-        await this._throwCouldNotFindDevice(adbName);
-      }
-
-      const isBusy = this.deviceRegistry.isDeviceBusy(adbName);
-      log.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `"${adbName}" isBusy=${isBusy}`);
-      if (!isBusy) {
-        log.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Found ${adbName}!`);
-        return adbName;
-      }
-    }
-  }
-
-  async _throwCouldNotFindDevice(adbName) {
-    const { stdout } = await this.adb.devices();
-    throw new DetoxRuntimeError({
-      message: `Could not find '${adbName}' on the currently ADB attached devices:`,
-      debugInfo: stdout,
-      hint: `Make sure your device is connected.\n` + `You can also try restarting adb with 'adb kill-server && adb start-server'.`,
-      inspectOptions: undefined
-    });
+  async _doAllocateDevice(adbNamePattern) {
+    const freeDeviceFinder = new FreeAdbDeviceFinder(this.adb, this.deviceRegistry, adbNamePattern);
+    const freeDeviceAdbName = await freeDeviceFinder.findFreeDevice();
+    return freeDeviceAdbName;
   }
 }
 
