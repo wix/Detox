@@ -11,6 +11,8 @@
 #include <dlfcn.h>
 @import CommonCrypto;
 
+#define LOAD_PROFILER_IF_NEEDED [DetoxInstrumentsManager _loadProfilerFrameworkIfNeeded];
+
 DTX_CREATE_LOG(DetoxInstrumentsManager)
 
 @interface NSObject ()
@@ -100,7 +102,7 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 	}
 }
 
-+ (void)load
++ (void)_loadProfilerFrameworkIfNeeded
 {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
@@ -228,12 +230,7 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 	
 	if(self)
 	{
-		_recorderInstance = [__DTXProfiler new];
 		
-		if(_recorderInstance == nil)
-		{
-			dtx_log_error(@"Profiler framework is not loaded. Did you forget to install Detox Instruments?");
-		}
 	}
 	
 	return self;
@@ -241,6 +238,8 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 
 - (id)_configurationWithDictionaryConfiguration:(NSDictionary *)configDict
 {
+	LOAD_PROFILER_IF_NEEDED
+	
 	id config = [__DTXMutableProfilingConfiguration defaultProfilingConfiguration];
 	[config setRecordingFileURL:[NSURL fileURLWithPath:configDict[@"recordingPath"]]];
 	
@@ -265,6 +264,17 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 
 - (void)startRecordingWithConfiguration:(NSDictionary<NSString*, id>*)configDict
 {
+	LOAD_PROFILER_IF_NEEDED
+	
+	_recorderInstance = [__DTXProfiler new];
+	
+	if(_recorderInstance == nil)
+	{
+		dtx_log_error(@"Profiler framework is not loaded. Did you forget to install Detox Instruments?");
+		
+		return;
+	}
+	
 	id config = [self _configurationWithDictionaryConfiguration:configDict];
 	dtx_log_info(@"Starting recording at %@", [config recordingFileURL]);
 	[_recorderInstance startProfilingWithConfiguration:config];
@@ -272,6 +282,15 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 
 - (void)continueRecordingWithConfiguration:(NSDictionary<NSString*, id>*)configDict
 {
+	LOAD_PROFILER_IF_NEEDED
+	
+	if(_recorderInstance == nil)
+	{
+		dtx_log_error(@"Profiler framework is not loaded. Did you forget to install Detox Instruments?");
+		
+		return;
+	}
+	
 	id config = [self _configurationWithDictionaryConfiguration:configDict];
 	dtx_log_info(@"Continuing recording at %@", [config recordingFileURL]);
 	[_recorderInstance continueProfilingWithConfiguration:config];

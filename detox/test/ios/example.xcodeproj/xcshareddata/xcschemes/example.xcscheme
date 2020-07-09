@@ -116,6 +116,14 @@
             argument = "-samplingInterval 0.1"
             isEnabled = "NO">
          </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-DTXEnableVerboseSyncSystem YES"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-DTXEnableVerboseSyncResources YES"
+            isEnabled = "NO">
+         </CommandLineArgument>
       </CommandLineArguments>
    </LaunchAction>
    <ProfileAction

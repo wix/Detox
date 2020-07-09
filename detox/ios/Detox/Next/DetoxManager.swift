@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import DetoxSync
 
 fileprivate let recordingManager : DetoxInstrumentsManager = {
 	return DetoxInstrumentsManager()
@@ -46,14 +47,14 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 	}
 	
 	private func safeSend(action: String, params: [String: Any] = [:], messageId: NSNumber) {
-		EarlGrey().detox_safeExecuteSync {
+		DTXSyncManager.enqueueMainQueueIdleBlock {
 			self.webSocket.sendAction(action, params: params, messageId: messageId)
 		}
 	}
 	
 	@objc
 	private func appDidLaunch(_ note: Notification) {
-		EarlGrey().detox_safeExecuteSync {
+		DTXSyncManager.enqueueMainQueueIdleBlock {
 			self.isReady = true
 			self.sendGeneralReadyMessage()
 		}
@@ -114,8 +115,6 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 	
 	@objc(startWithSynchronizationSettings:)
 	public func start(synchronizationSettings settings: [String: Any]?) {
-		GREYConfiguration.sharedInstance().setValue(false, forConfigKey: kGREYConfigKeyAnalyticsEnabled)
-		
 		if let settings = settings {
 			setSynchronizationSettings(settings, messageId: nil)
 		}
@@ -191,10 +190,12 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				usleep((value as! NSNumber).uint32Value * 1000)
 				return
 			case "blacklistURLs":
-				GREYConfiguration.sharedInstance().setValue(value, forConfigKey: kGREYConfigKeyURLBlacklistRegex)
+				//TODO: Implement
+//				GREYConfiguration.sharedInstance().setValue(value, forConfigKey: kGREYConfigKeyURLBlacklistRegex)
 				return
 			case "enabled":
-				GREYConfiguration.sharedInstance().setValue((value as! NSNumber).boolValue, forConfigKey: kGREYConfigKeySynchronizationEnabled)
+				//TODO: Implement
+//				GREYConfiguration.sharedInstance().setValue((value as! NSNumber).boolValue, forConfigKey: kGREYConfigKeySynchronizationEnabled)
 				return
 			default:
 				log.error("Unknown synchronization setting received: \(key)")
@@ -247,7 +248,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 			setSynchronizationSettings(params, messageId: messageId)
 			return
 		case "invoke":
-			EarlGrey().detox_safeExecuteSync {
+			DTXSyncManager.enqueueMainQueueIdleBlock {
 				InvocationManager.invoke(dictionaryRepresentation: params) { result, error in
 					if let error = error {
 						let params: NSMutableDictionary = ["details": error.localizedDescription]
@@ -318,7 +319,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				return
 			}
 			
-			EarlGrey().detox_safeExecuteSync(closure)
+			DTXSyncManager.enqueueMainQueueIdleBlock(closure)
 			return
 		case "setOrientation":
 			let orientationString = params["orientation"] as! String
@@ -334,14 +335,14 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				fatalError("Unknown orientation provided: \(orientationString)")
 			}
 			
-			EarlGrey().detox_safeExecuteSync {
+			DTXSyncManager.enqueueMainQueueIdleBlock {
 				UIDevice.dtx_setOrientation(orientation)
 				
 				self.safeSend(action: done, messageId: messageId)
 			}
 			return
 		case "shakeDevice":
-			EarlGrey().detox_safeExecuteSync {
+			DTXSyncManager.enqueueMainQueueIdleBlock {
 				UIDevice.dtx_shake()
 				
 				self.safeSend(action: done, messageId: messageId)
@@ -349,16 +350,15 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 			return
 		case "reactNativeReload":
 			isReady = false
-			EarlGrey().detox_safeExecuteSync {
+			DTXSyncManager.enqueueMainQueueIdleBlock {
 				ReactNativeSupport.reloadApp()
 			}
 			waitForRNLoad(withMessageId: messageId)
 			return
 		case "currentStatus":
-			var stats = EarlGreyStatistics.shared.currentStatus()
-			stats["messageId"] = messageId
-			
-			self.webSocket.sendAction("currentStatusResult", params: stats, messageId: messageId)
+			DTXSyncManager.syncStatus { status in
+				self.webSocket.sendAction("currentStatusResult", params: ["messageId": messageId, "status": status], messageId: messageId)
+			}
 			return
 		case "loginSuccess":
 			log.info("Successfully logged in")
