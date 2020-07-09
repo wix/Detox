@@ -1,19 +1,12 @@
-const AdbDevicesHelper = require('../tools/AdbDevicesHelper');
+const FreeDeviceFinderBase = require('../FreeDeviceFinderBase');
 const log = require('../../../../utils/logger').child({ __filename });
 
 const DEVICE_LOOKUP_LOG_EVT = 'DEVICE_LOOKUP';
 
-class FreeEmulatorFinder {
+class FreeEmulatorFinder extends FreeDeviceFinderBase {
   constructor(adb, deviceRegistry, avdName) {
-    this._adbDevicesHelper = new AdbDevicesHelper(adb);
-    this._deviceRegistry = deviceRegistry;
+    super(adb, deviceRegistry);
     this._avdName = avdName;
-
-    this._matcherFn = this._matcherFn.bind(this);
-  }
-
-  async findFreeDevice() {
-    return await this._adbDevicesHelper.lookupDevice(this._matcherFn);
   }
 
   async _matcherFn(candidate) {
