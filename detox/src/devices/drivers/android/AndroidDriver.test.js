@@ -11,31 +11,6 @@ describe('Android driver', () => {
   const mockInstrumentationRunning = () => instrumentation.isRunning.mockReturnValue(true);
   const mockInstrumentationDead = () => instrumentation.isRunning.mockReturnValue(false);
 
-  class MockADBClass {
-    constructor() {
-      Object.assign(this, adb);
-    }
-  }
-
-  class MockTempFileXferClass {
-    constructor() {
-      Object.assign(this, fileXfer);
-    }
-  }
-
-  class MockInvocationManagerClass {
-    constructor() {
-      Object.assign(this, invocationManager);
-    }
-  }
-
-  class MockMonitoredInstrumentationClass {
-    constructor(...args) {
-      instrumentation.mockCtor(...args);
-      Object.assign(this, instrumentation);
-    }
-  }
-
   let logger;
   let client;
   let getAbsoluteBinaryPath;
@@ -43,7 +18,6 @@ describe('Android driver', () => {
   let exec;
   let emitter;
   let detoxApi;
-  let instrumentation;
   beforeEach(() => {
     jest.mock('fs', () => ({
       existsSync: jest.fn(),
@@ -95,6 +69,16 @@ describe('Android driver', () => {
 
     jest.mock('../../../android/espressoapi/Detox');
     detoxApi = require('../../../android/espressoapi/Detox');
+  });
+
+  let instrumentation;
+  beforeEach(() => {
+    class MockMonitoredInstrumentationClass {
+      constructor(...args) {
+        instrumentation.mockCtor(...args);
+        Object.assign(this, instrumentation);
+      }
+    }
 
     const MonitoredInstrumentation = jest.genMockFromModule('./tools/MonitoredInstrumentation');
     instrumentation = new MonitoredInstrumentation();
@@ -105,6 +89,12 @@ describe('Android driver', () => {
 
   let adb;
   beforeEach(() => {
+    class MockADBClass {
+      constructor() {
+        Object.assign(this, adb);
+      }
+    }
+
     const ADB = jest.genMockFromModule('./exec/ADB');
     adb = new ADB();
     adb.adbBin = 'ADB binary mock';
@@ -120,21 +110,63 @@ describe('Android driver', () => {
     jest.mock('./exec/ADB', () => MockADBClass);
   });
 
+  let aapt;
+  beforeEach(() => {
+    class MockAAPTClass {
+      constructor() {
+        Object.assign(this, aapt);
+      }
+    }
+
+    const AAPT = jest.genMockFromModule('./exec/AAPT');
+    aapt = new AAPT();
+    jest.mock('./exec/AAPT', () => MockAAPTClass);
+  });
+
   let fileXfer;
   beforeEach(() => {
+    class MockTempFileXferClass {
+      constructor(...args) {
+        fileXfer.mockCtor(...args);
+        Object.assign(this, fileXfer);
+      }
+    }
+
     const TempFilesXfer = jest.genMockFromModule('./tools/TempFileXfer');
     fileXfer = new TempFilesXfer();
+    fileXfer.mockCtor = jest.fn();
     fileXfer.send.mockResolvedValue(mockNotificationDataTargetPath)
     jest.mock('./tools/TempFileXfer', () => MockTempFileXferClass);
   });
 
   let invocationManager;
   beforeEach(() => {
+    class MockInvocationManagerClass {
+      constructor() {
+        Object.assign(this, invocationManager);
+      }
+    }
+
     const InvocationManager = jest.genMockFromModule('../../../invoke').InvocationManager;
     invocationManager = new InvocationManager();
     jest.mock('../../../invoke', () => ({
       InvocationManager: MockInvocationManagerClass,
     }))
+  });
+
+  let appInstallHelper;
+  beforeEach(() => {
+    class MockAppInstallHelperClass {
+      constructor(...args) {
+        appInstallHelper.mockCtor(...args);
+        Object.assign(this, appInstallHelper);
+      }
+    }
+
+    const AppInstallHelper = jest.genMockFromModule('./tools/AppInstallHelper');
+    appInstallHelper = new AppInstallHelper();
+    appInstallHelper.mockCtor = jest.fn();
+    jest.mock('./tools/AppInstallHelper', () => MockAppInstallHelperClass);
   });
 
   let uut;
@@ -143,6 +175,16 @@ describe('Android driver', () => {
     uut = new AndroidDriver({
       client,
       emitter,
+    });
+  });
+
+  describe('Initialization', () => {
+    it('should properly create a FileXfer object', async () => {
+      expect(fileXfer.mockCtor).toHaveBeenCalledWith(adb);
+    });
+
+    it('should properly create an app-install helper', async () => {
+      expect(appInstallHelper.mockCtor).toHaveBeenCalledWith(adb, fileXfer);
     });
   });
 
@@ -498,6 +540,49 @@ describe('Android driver', () => {
       } catch (err) {
         expect(err.message).toContain(`'${expectedTestBinPath}'`);
       }
+    });
+  });
+
+  describe('Util-binaries installation', () => {
+    const binaryPaths = ['path/to/bin1.apk', '/path/to/bin/2.apk'];
+
+    it('should install using an app-install helper', async () => {
+      await uut.installUtilBinaries(deviceId, binaryPaths);
+      expect(appInstallHelper.install).toHaveBeenCalledWith(deviceId, binaryPaths[0]);
+      expect(appInstallHelper.install).toHaveBeenCalledWith(deviceId, binaryPaths[1]);
+    });
+
+    it('should break if one installation fails', async () => {
+      appInstallHelper.install
+        .mockResolvedValueOnce()
+        .mockRejectedValueOnce(new Error())
+        .mockResolvedValueOnce();
+
+      try {
+        await uut.installUtilBinaries(deviceId, binaryPaths);
+        fail();
+      } catch (e) {
+        expect(appInstallHelper.install).toHaveBeenCalledWith(deviceId, binaryPaths[0]);
+        expect(appInstallHelper.install).toHaveBeenCalledWith(deviceId, binaryPaths[1]);
+        expect(appInstallHelper.install).toHaveBeenCalledTimes(2);
+      }
+    });
+
+    it('should not install if already installed', async () => {
+      adb.isPackageInstalled.mockResolvedValueOnce(false).mockResolvedValueOnce(true);
+      await uut.installUtilBinaries(deviceId, binaryPaths);
+      expect(appInstallHelper.install).toHaveBeenCalledWith(deviceId, binaryPaths[0]);
+      expect(appInstallHelper.install).not.toHaveBeenCalledWith(deviceId, binaryPaths[1]);
+    });
+
+    it('should properly check for preinstallation', async () => {
+      const packageId = 'mockPackageId';
+      const binaryPath = 'some/path/file.apk';
+      aapt.getPackageName.mockResolvedValue(packageId);
+
+      await uut.installUtilBinaries(deviceId, [binaryPath]);
+      expect(adb.isPackageInstalled).toHaveBeenCalledWith(deviceId, packageId)
+      expect(aapt.getPackageName).toHaveBeenCalledWith(mockGetAbsoluteBinaryPathImpl(binaryPath));
     });
   });
 

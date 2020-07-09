@@ -1,7 +1,9 @@
 package com.example;
 
 import android.os.Bundle;
+import android.view.Surface;
 
+import com.linkedin.android.testbutler.TestButler;
 import com.wix.detox.Detox;
 
 import org.junit.Rule;
@@ -38,8 +40,15 @@ public class DetoxTest {
 
     @Test
     public void runDetoxTests() {
+        verifyTestButlerReady();
+
         final ActivityTestRule<?> rule = resolveTestRule();
         Detox.runTests(rule);
+    }
+
+    private void verifyTestButlerReady() {
+        // This has no effect if test-butler is running. However, if it is not, then unlike TestButler.setup(), it will hard-fail.
+        TestButler.setRotation(Surface.ROTATION_0);
     }
 
     private ActivityTestRule<?> resolveTestRule() {

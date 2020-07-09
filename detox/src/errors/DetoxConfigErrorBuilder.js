@@ -87,6 +87,15 @@ class DetoxConfigErrorBuilder {
     });
   }
 
+  malformedUtilBinaryPaths() {
+    return new DetoxConfigError({
+      message: `Invalid type of "utilBinaryPaths" property in detox.configurations["${this.configurationName}"]\nExpected an array of strings of paths.`,
+      hint: `Check that in your Detox config${_atPath(this.filepath)}`,
+      debugInfo: this._focusOnConfiguration(),
+      inspectOptions: { depth: 2 },
+    });
+  }
+
   missingDeviceProperty() {
     return new DetoxConfigError({
       message: `Missing or empty "device" property inside detox.configurations["${this.configurationName}"].\n` +

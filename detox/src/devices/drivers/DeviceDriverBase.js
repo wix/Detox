@@ -63,12 +63,16 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async installApp() {
+  async installApp(deviceId, binaryPath, testBinaryPath) {
     return await Promise.resolve('');
   }
 
   async uninstallApp() {
     return await Promise.resolve('');
+  }
+
+  installUtilBinaries() {
+    return Promise.resolve('');
   }
 
   async deliverPayload(params) {

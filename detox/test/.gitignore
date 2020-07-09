@@ -1,5 +1,7 @@
 *junit.xml
 
+cache/
+
 # OSX
 #
 .DS_Store

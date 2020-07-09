@@ -1,4 +1,4 @@
-describe('emulators lookup helper', () => {
+describe('FreeEmulatorFinder', () => {
   const mockAdb = {};
   const mockAvdName = 'mock-avd';
 

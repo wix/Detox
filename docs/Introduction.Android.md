@@ -209,7 +209,7 @@ For full details, refer to [Android's security-config guide](https://developer.a
 
 
 
-## Proguard (Minification)
+### 7. Proguard (Minification)
 
 In apps running [minification using Proguard](https://developer.android.com/studio/build/shrink-code), in order for Detox to work well on release builds, please enable some Detox proguard-configuration rules by applying the custom configuration file on top of your own. Typically, this is defined using the `proguardFiles` statement in the minification-enabled build-type in your `app/build.gradle`:
 
@@ -229,6 +229,57 @@ In apps running [minification using Proguard](https://developer.android.com/stud
 ```
 
 
+
+### 8. Test Butler Support (Optional)
+
+If, when [setting up your work environment](Introduction.AndroidDevEnv.md), you've selected Google emulators with an AOSP image as the test target - as recommended, **we strongly encourage** you would also integrate [Test Butler](https://github.com/linkedin/test-butler): in the very least - in order to supress crash & ANR's dialogs. They are a soft spot in UI testing on Android, all around, as - when displayed, they make the UI entirely inaccessible (and thus cause tests to fail in bulks).
+
+Setting Test Butler up for working with Detox is a bit different than explained in their guides. The process, as a whole, is twofold:
+
+1. Preinstalling the test-butler-app APK onto the test device.
+2. Integrating the test-butler-lib into your own test APK, and initializing it in a custom test-runner (as explained).
+
+The library part can be easily acheived as explained there (i.e. by using Gradle's `androidTestImplementation`). Same goes for initialization. As for the APK, the suggested usage of Gradle's `androidTestUtil` is scarce when running with Detox (i.e. non-native instrumentation tests). Here's what to do instead.
+
+#### Solution 1: Prebaked Images
+
+If you have control over the emulators' snapshots, simply download (see test-butler's guide) and install the test-butler APK once (e.g. use `adb install -r -t path/to/test-butler-app.apk`), and save an updated version of the snapshot. This is the best solution.
+
+> Note: you will have to reiterate this if you upgrade to a newer version of Test-Butler, in the future.
+
+#### Solution 2: Dynamic Installation
+
+Assuming you have the APK available in the system, you can dynamically have Detox automatically install it in all of the running target-emulators by utilizing `utilBinaryPaths` in your Detox configuration. Example:
+
+```json
+{
+  "configuration": {
+    "android.emu.release": {
+      "binaryPath": "android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk",
+      "utilBinaryPaths": ["relative/path/to/test-butler-app-2.1.0.apk"],
+      "build": "...",
+      "type": "android.emulator",
+      ...
+    }
+  }
+}
+```
+
+> Refer to our [configuration guide](APIRef.Configuration.md) for further details on `utilBinaryPaths`.
+
+As per _making_ the APK available - for that, we have no really good solution, for the time being (but it's in the works). A few options might be:
+
+a. In a custom script, have it predownloaded from Bintray directly, as suggest in the Test Butler guide. For example (on a Mac / Linux):
+
+```sh
+curl -f -o ./temp/test-butler-app.apk https://linkedin.bintray.com/maven/com/linkedin/testbutler/test-butler-app/2.1.0/test-butler-app-2.1.0.apk`
+```
+
+*Jests' [global-setup](https://jestjs.io/docs/en/configuration#globalsetup-string) is a recommend place for those kind of things.*
+
+> Should you decide to go this path, we recommend you add `./temp/test-butler-app.apk` to the relevant `.gitignore`.
+
+b. (Discouraged) Add it to your source control (e.g. git), as part of the repository.
 
 ## Setting Detox up as a compiling dependency
 

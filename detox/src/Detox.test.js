@@ -158,6 +158,10 @@ describe('Detox', () => {
         });
       });
 
+      it('should install util-binaries', () => {
+        expect(device().installUtilBinaries).toHaveBeenCalled();
+      });
+
       it('should return itself', async () =>
         expect(await detox.init()).toBeInstanceOf(Detox));
     });
