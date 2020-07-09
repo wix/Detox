@@ -29,6 +29,7 @@ class AttachedAndroidDriver extends AndroidDriver {
 
     await this.adb.apiLevel(adbName);
     await this.adb.unlockScreen(adbName);
+    await this.emitter.emit('bootDevice', { deviceId: adbName });
 
     this._name = adbName;
     return adbName;
