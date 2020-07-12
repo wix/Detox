@@ -50,7 +50,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 		}
 		
 		DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-			DTXSyncManager.syncStatus { info in
+			DTXSyncManager.idleStatus { info in
 				print("🤦‍♂️ \(info)")
 			}
 		}
@@ -366,7 +366,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 			waitForRNLoad(withMessageId: messageId)
 			return
 		case "currentStatus":
-			DTXSyncManager.syncStatus { status in
+			DTXSyncManager.idleStatus { status in
 				self.webSocket.sendAction("currentStatusResult", params: ["messageId": messageId, "status": status], messageId: messageId)
 			}
 			return

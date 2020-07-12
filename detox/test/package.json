@@ -51,7 +51,7 @@
     "titleTemplate": "{classname} > {title}"
   },
   "detox": {
-    "test-runner": "nyc jest",
+    "test-runner": "jest",
     "runner-config": "e2e/config.js",
     "behavior": {
       "init": {

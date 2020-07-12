@@ -118,7 +118,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-DTXEnableVerboseSyncSystem YES"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-DTXEnableVerboseSyncResources YES"
