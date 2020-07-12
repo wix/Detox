@@ -26,7 +26,11 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 	}()
 	
 	override init() {
-		webSocket = WebSocket()
+		if #available(iOS 13, *) {
+			webSocket = WebSocketImpl()
+		} else {
+			webSocket = WebSocketLegacyImpl()
+		}
 		
 		super.init()
 		
@@ -44,17 +48,23 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 			
 			self.handlePerformanceRecording(props: props, isFromLaunch: true, completionHandler: nil)
 		}
+		
+		DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+			DTXSyncManager.syncStatus { info in
+				print("🤦‍♂️ \(info)")
+			}
+		}
 	}
 	
 	private func safeSend(action: String, params: [String: Any] = [:], messageId: NSNumber) {
-		DTXSyncManager.enqueueMainQueueIdleBlock {
+		DTXSyncManager.enqueueMainQueueIdleClosure {
 			self.webSocket.sendAction(action, params: params, messageId: messageId)
 		}
 	}
 	
 	@objc
 	private func appDidLaunch(_ note: Notification) {
-		DTXSyncManager.enqueueMainQueueIdleBlock {
+		DTXSyncManager.enqueueMainQueueIdleClosure {
 			self.isReady = true
 			self.sendGeneralReadyMessage()
 		}
@@ -248,7 +258,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 			setSynchronizationSettings(params, messageId: messageId)
 			return
 		case "invoke":
-			DTXSyncManager.enqueueMainQueueIdleBlock {
+			DTXSyncManager.enqueueMainQueueIdleClosure {
 				InvocationManager.invoke(dictionaryRepresentation: params) { result, error in
 					if let error = error {
 						let params: NSMutableDictionary = ["details": error.localizedDescription]
@@ -319,7 +329,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				return
 			}
 			
-			DTXSyncManager.enqueueMainQueueIdleBlock(closure)
+			DTXSyncManager.enqueueMainQueueIdleClosure(closure)
 			return
 		case "setOrientation":
 			let orientationString = params["orientation"] as! String
@@ -335,14 +345,14 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				fatalError("Unknown orientation provided: \(orientationString)")
 			}
 			
-			DTXSyncManager.enqueueMainQueueIdleBlock {
+			DTXSyncManager.enqueueMainQueueIdleClosure {
 				UIDevice.dtx_setOrientation(orientation)
 				
 				self.safeSend(action: done, messageId: messageId)
 			}
 			return
 		case "shakeDevice":
-			DTXSyncManager.enqueueMainQueueIdleBlock {
+			DTXSyncManager.enqueueMainQueueIdleClosure {
 				UIDevice.dtx_shake()
 				
 				self.safeSend(action: done, messageId: messageId)
@@ -350,7 +360,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 			return
 		case "reactNativeReload":
 			isReady = false
-			DTXSyncManager.enqueueMainQueueIdleBlock {
+			DTXSyncManager.enqueueMainQueueIdleClosure {
 				ReactNativeSupport.reloadApp()
 			}
 			waitForRNLoad(withMessageId: messageId)
