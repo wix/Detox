@@ -137,6 +137,7 @@ class WebSocketImpl : NSObject, WebSocket, URLSessionWebSocketDelegate {
 	}
 }
 
+@available(iOS, deprecated: 13.0, message: "Use WebSocketImpl instead.")
 class WebSocketLegacyImpl : NSObject, WebSocket, SRWebSocketDelegate {
 	weak var delegate : WebSocketDelegate?
 	var sessionId : String?

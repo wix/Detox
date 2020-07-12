@@ -20,6 +20,25 @@
  */
 
 #import <UIKit/UIKit.h>
+@import UserNotifications;
+
+@interface UNNotificationResponse ()
+
++ (instancetype)responseWithNotification:(UNNotification*)arg1 actionIdentifier:(NSString*)arg2;
+
+@end
+
+@interface UNNotification ()
+
++ (instancetype)notificationWithRequest:(UNNotificationRequest*)arg1 date:(NSDate*)arg2;
+
+@end
+
+@interface UNPushNotificationTrigger ()
+
++ (instancetype)triggerWithContentAvailable:(BOOL)arg1 mutableContent:(BOOL)arg2;
+
+@end
 
 @interface UIWindowScene ()
 
