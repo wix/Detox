@@ -48,12 +48,6 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 			
 			self.handlePerformanceRecording(props: props, isFromLaunch: true, completionHandler: nil)
 		}
-		
-		DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-			DTXSyncManager.idleStatus { info in
-				print("🤦‍♂️ \(info)")
-			}
-		}
 	}
 	
 	private func safeSend(action: String, params: [String: Any] = [:], messageId: NSNumber) {
