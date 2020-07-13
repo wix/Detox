@@ -10,7 +10,10 @@ const ROLE_TESTEE = 'testee';
 
 class DetoxServer {
   constructor({ port, standalone = false }) {
-    this.wss = new WebSocketServer({ port });
+    this.wss = new WebSocketServer({ 
+      port,
+      perMessageDeflate: {}
+    });
     this.sessions = {};
     this.standalone = standalone;
     logger.info(`server listening on localhost:${this.wss.options.port}...`);
