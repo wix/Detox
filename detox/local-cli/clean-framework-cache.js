@@ -4,7 +4,7 @@ const os = require('os');
 const log = require('../src/utils/logger').child({ __filename });
 
 module.exports.command = 'clean-framework-cache';
-module.exports.desc = "MacOS only. Delete all compiled framework binaries from ~/Library/Detox, they will be rebuilt on 'npm install' or when running 'build-framework-cache'";
+module.exports.desc = "Delete all compiled framework binaries from ~/Library/Detox, they will be rebuilt on 'npm install' or when running 'build-framework-cache'. (macOS only)";
 
 module.exports.handler = async function cleanFrameworkCache() {
   if (os.platform() === 'darwin') {
@@ -12,6 +12,6 @@ module.exports.handler = async function cleanFrameworkCache() {
     log.info(`Removing framework binaries from ${frameworkPath}`);
     await fs.remove(frameworkPath);
   } else {
-    log.info(`The command is supported only on MacOS, skipping the execution.`);
+    log.info(`The command is supported only on macOS, skipping the execution.`);
   }
 };

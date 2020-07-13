@@ -5,7 +5,7 @@ const os = require('os');
 const log = require('../src/utils/logger').child({ __filename });
 
 module.exports.command = 'rebuild-framework-cache';
-module.exports.desc = 'MacOS only. Rebuilds Detox.framework into ~/Library/Detox. The framework cache is specific for each combination of Xcode and Detox versions.';
+module.exports.desc = 'Rebuilds Detox.framework into ~/Library/Detox. The framework cache is specific for each combination of Xcode and Detox versions. (macOS only)';
 
 module.exports.handler = async function buildFrameworkCache() {
   if (os.platform() === 'darwin') {
@@ -14,6 +14,6 @@ module.exports.handler = async function buildFrameworkCache() {
     await fs.remove(frameworkPath);
     cp.execSync(path.join(__dirname, '../scripts/build_framework.ios.sh'), {stdio: 'inherit'});
   } else {
-    log.info(`The command is supported only on MacOS, skipping the execution.`);
+    log.info(`The command is supported only on macOS, skipping the execution.`);
   }
 };
