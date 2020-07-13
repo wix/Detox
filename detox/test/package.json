@@ -11,7 +11,7 @@
     "start": "react-native start",
     "packager": "react-native start",
     "detox-server": "detox run-server",
-    "e2e:ios": "detox test -c ios.sim.release --debug-synchronization",
+    "e2e:ios": "detox test -c ios.sim.release --debug-synchronization --loglevel verbose",
     "e2e:android": "detox test -c android.emu.release",
     "e2e:android-debug": "detox test -c android.emu.debug",
     "e2e:ios-ci": "npm run e2e:ios -- --workers 3",
