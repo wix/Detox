@@ -28,7 +28,7 @@ Please find the [Detox example app](/examples/demo-react-native/detox.config.js)
 |`binaryPath`| Relative path to the ipa/app/apk due to be tested (make sure you build the app in a project relative path) |
 |`testBinaryPath`| (optional, Android only): relative path to the test app (apk) |
 |`utilBinaryPaths`| (optional, Android only): An **array** of relative paths of _utility_ app (apk) binary-files to preinstall on the tested devices - once before the test excution begins.<br />Note: these are not effected by various install-lifecycle events, such as launching an app with `device.launchApp({delete: true})`, which reinstalls the app. A good example of why this might come in handy is [Test Butler](https://github.com/linkedin/test-butler). |
-|`device`| Device query, e.g. `{ "byType": "iPhone 11 Pro" }` for iOS simulator or `{ "avdName": "Pixel_2_API_29" }` |
+|`device`| Device query, e.g. `{ "byType": "iPhone 11 Pro" }` for iOS simulator, `{ "avdName": "Pixel_2_API_29" }` for Android emulator. `{ "adbName": "localhost:555[56]" }` for attached Android device with name that matches a regular expression. |
 |`build`| **[optional]** Build command (either `xcodebuild`, `react-native run-ios`, etc...), will be later available through detox CLI tool.|
 
 **Example:**
@@ -63,7 +63,7 @@ Please find the [Detox example app](/examples/demo-react-native/detox.config.js)
         "build": "...",
         "type": "android.attached",
         "device": {
-          "adbName": "YOGAA1BBB412",
+          "adbName": "localhost:555[56]",
         }
       },
     }
