@@ -51,6 +51,14 @@ module.exports = {
       "device": {
         "avdName": "Pixel_API_28"
       }
+    },
+    "android.att.release": {
+      "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
+      "build": "cd android ; ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release ; cd -",
+      "type": "android.attached",
+      "device": {
+        "adbName": "emulator-.*"
+      }
     }
   }
 };
