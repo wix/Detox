@@ -14,6 +14,7 @@
 #include "fishhook.h"
 @import ObjectiveC;
 @import Darwin;
+#import <DetoxSync/DTXReactNativeSupport.h>
 
 DTX_CREATE_LOG(ReactNativeSupport);
 
@@ -21,16 +22,15 @@ static NSString *const RCTReloadNotification = @"RCTReloadNotification";
 
 @implementation ReactNativeSupport
 
-+ (BOOL) isReactNativeApp
++ (BOOL)isReactNativeApp
 {
-    return (NSClassFromString(@"RCTBridge") != nil);
+	return [DTXReactNativeSupport hasReactNative];
 }
 
 + (void)reloadApp
 {
-	if(NSClassFromString(@"RCTBridge") == nil)
+	if([DTXReactNativeSupport hasReactNative] == NO)
 	{
-		//Not RN app - noop.
 		return;
 	}
 	
@@ -53,16 +53,7 @@ static NSString *const RCTReloadNotification = @"RCTReloadNotification";
 
 + (void)waitForReactNativeLoadWithCompletionHandler:(void (^)(void))handler
 {
-	__block __weak id observer;
-	
-	observer = [[NSNotificationCenter defaultCenter] addObserverForName:@"RCTJavaScriptDidLoadNotification" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
-		if(handler)
-		{
-			handler();
-		}
-		
-		[[NSNotificationCenter defaultCenter] removeObserver:observer];
-	}];
+	[DTXReactNativeSupport waitForReactNativeLoadWithCompletionHandler:handler];
 }
 
 @end

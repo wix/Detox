@@ -18,10 +18,10 @@
 * WARNING: This file compiles with ARC disabled! Take extra care when modifying or adding functionality.
 */
 
-#import "ReactNativeSupportNoARC.h"
-#include <dlfcn.h>
-#include "fishhook.h"
-
+//#import "ReactNativeSupportNoARC.h"
+//#include <dlfcn.h>
+//#include "fishhook.h"
+//
 //Class (*__orig_objc_lookUpClass)(const char * name);
 //Class __dtx_objc_lookUpClass(const char * name)
 //{
@@ -31,7 +31,7 @@
 //	{
 //		return nil;
 //	}
-//	
+//
 //	return __orig_objc_lookUpClass(name);
 //}
 //
