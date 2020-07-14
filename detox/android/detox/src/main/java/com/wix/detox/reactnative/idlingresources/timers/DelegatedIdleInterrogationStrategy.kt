@@ -19,14 +19,14 @@ private class RN62TimingModuleReflected(private val timingModule: NativeModule) 
  * of RN v0.62 (followed by a previous refactor and rename of the class).
  */
 @RNDropSupportTodo(62, """
-    When min RN version supported by Detox is 0.62.x (or higher), 
-    | can (and should) remove any usage of reflection here. That 
+    When min RN version supported by Detox is 0.62.x (or higher),
+    | can (and should) remove any usage of reflection here. That
     | includes the unit test's stub being used for that reason in particular.
     """)
 class DelegatedIdleInterrogationStrategy(timingModule: NativeModule): IdleInterrogationStrategy {
     private val timingModuleReflected = RN62TimingModuleReflected(timingModule)
 
-    override fun isIdleNow(): Boolean = timingModuleReflected.hasActiveTimers()
+    override fun isIdleNow(): Boolean = !timingModuleReflected.hasActiveTimers()
 
     companion object {
         fun createIfSupported(reactContext: ReactContext): DelegatedIdleInterrogationStrategy? {
