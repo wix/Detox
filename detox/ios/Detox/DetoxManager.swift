@@ -190,16 +190,20 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 	private func setSynchronizationSettings(_ settings: [String: Any], messageId: NSNumber?) {
 		settings.forEach { key, value in
 			switch key {
+			case "maxTimerWait":
+				let maxTimerWait = (value as! NSNumber).doubleValue / 1000
+				DTXSyncManager.maximumAllowedDelayedActionTrackingDuration = maxTimerWait
+				DTXSyncManager.maximumTimerIntervalTrackingDuration = maxTimerWait
+				return
 			case "waitForDebugger":
 				usleep((value as! NSNumber).uint32Value * 1000)
 				return
 			case "blacklistURLs":
-				//TODO: Implement
-//				GREYConfiguration.sharedInstance().setValue(value, forConfigKey: kGREYConfigKeyURLBlacklistRegex)
+				DTXSyncManager.urlBlacklist = value as! [String]
+				DTXSyncManager.urlBlacklist = value as! [String]
 				return
 			case "enabled":
-				//TODO: Implement
-//				GREYConfiguration.sharedInstance().setValue((value as! NSNumber).boolValue, forConfigKey: kGREYConfigKeySynchronizationEnabled)
+				DTXSyncManager.synchronizationDisabled = !((value as! NSNumber).boolValue)
 				return
 			default:
 				log.error("Unknown synchronization setting received: \(key)")

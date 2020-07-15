@@ -167,7 +167,6 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
  		}
  	}];
 
- 	//TODO: Consider some strategy to tackle "visible" views under transparent views.
  	rv = candidates.firstObject;
 
  	if(rv == nil)

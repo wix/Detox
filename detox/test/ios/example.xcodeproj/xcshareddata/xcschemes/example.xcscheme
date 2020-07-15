@@ -117,6 +117,14 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "-detoxURLBlacklistRegex &apos;(&quot;.*localhost.*&quot;, &quot;http://192.168.1.253:19001/onchange&quot;,&quot;https://e.crashlytics.com/spi/v2/events&quot;)&apos;"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-detoxEnableSynchronization NO"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-DTXEnableVerboseSyncSystem YES"
             isEnabled = "NO">
          </CommandLineArgument>
@@ -125,6 +133,13 @@
             isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
+      <AdditionalOptions>
+         <AdditionalOption
+            key = "NSZombieEnabled"
+            value = "YES"
+            isEnabled = "YES">
+         </AdditionalOption>
+      </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Debug"

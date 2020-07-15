@@ -42,21 +42,13 @@ class Element : NSObject {
 		}
 	}
 	
-//	private var cachedViews : [UIView]?
 	private var views : [UIView] {
-//		if let cachedViews = cachedViews {
-//			return cachedViews
-//		}
-		
-		//TODO: Consider searching here in all windows from all scenes.
-		let array = (UIView.dtx_findViewsInKeySceneWindows(passing: predicate.predicateForQuery()) as! [UIView])
+		let array = (UIView.dtx_findViewsInAllWindows(passing: predicate.predicateForQuery()) as! [UIView])
 		
 		guard array.count > 0 else {
 			dtx_fatalError("No elements found for “\(self.description)”", viewDescription: debugAttributes)
 		}
-		
-//		cachedViews = array
-		
+
 		return array
 	}
 	
