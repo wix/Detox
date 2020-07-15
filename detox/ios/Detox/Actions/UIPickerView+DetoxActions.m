@@ -16,6 +16,8 @@
 {
 	[self dtx_assertVisible];
 	
+	DTXViewAssert(self.dataSource != nil && self.delegate != nil, self.dtx_viewDebugAttributes, @"The picker view's data source and/or delegate are nil");
+	
 	NSInteger componentCount = [self.dataSource numberOfComponentsInPickerView:self];
 	
 	DTXViewAssert(componentCount > component, self.dtx_viewDebugAttributes, @"Invalid component “%@” for picker view “%@”", @(component), self.dtx_shortDescription);
