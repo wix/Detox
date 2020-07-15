@@ -37,12 +37,12 @@ object DelegatedIdleInterrogationStrategySpec : Spek({
         fun uut() = DelegatedIdleInterrogationStrategy(timingModule)
 
         it("should be idle if timing module has no active timers") {
-            givenActiveTimersInQueue()
+            givenNoActiveTimersInQueue()
             assertThat(uut().isIdleNow()).isTrue()
         }
 
         it("should be busy if timing module has active timers") {
-            givenNoActiveTimersInQueue()
+            givenActiveTimersInQueue()
             assertThat(uut().isIdleNow()).isFalse()
         }
 
