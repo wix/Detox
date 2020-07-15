@@ -99,7 +99,7 @@
 		39DC985A24BB904D00FFB224 /* ReactNativeSupportNoARC.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DC985524BB904D00FFB224 /* ReactNativeSupportNoARC.m */; };
 		39DC985B24BB906A00FFB224 /* DetoxSync.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39DC984F24BB8FCD00FFB224 /* DetoxSync.framework */; };
 		39DC985C24BB906A00FFB224 /* DetoxSync.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 39DC984F24BB8FCD00FFB224 /* DetoxSync.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		39EECB4324BF4FDA009C3364 /* RNPickerCrap.m in Sources */ = {isa = PBXBuildFile; fileRef = 39EECB4224BF4FDA009C3364 /* RNPickerCrap.m */; };
+		39EECB4324BF4FDA009C3364 /* ReactNativeSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39EECB4224BF4FDA009C3364 /* ReactNativeSupport.m */; };
 		39FFD9471FD730A600C97030 /* DetoxCrashHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */; };
 /* End PBXBuildFile section */
 
@@ -306,7 +306,7 @@
 		39DC985424BB904D00FFB224 /* ReactNativeSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactNativeSupport.h; sourceTree = "<group>"; };
 		39DC985524BB904D00FFB224 /* ReactNativeSupportNoARC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactNativeSupportNoARC.m; sourceTree = "<group>"; };
 		39E91C06247D6BB00099F8F3 /* DetoxCrashHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetoxCrashHandler.h; sourceTree = "<group>"; };
-		39EECB4224BF4FDA009C3364 /* RNPickerCrap.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RNPickerCrap.m; sourceTree = "<group>"; };
+		39EECB4224BF4FDA009C3364 /* ReactNativeSupport.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReactNativeSupport.m; sourceTree = "<group>"; };
 		39F6422A1FDD5EEC00468FED /* Detox.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.pch; sourceTree = "<group>"; };
 		39F6422B1FDD5F3300468FED /* DTXLoggingSubsystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXLoggingSubsystem.h; sourceTree = "<group>"; };
 		39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DetoxCrashHandler.mm; sourceTree = "<group>"; };
@@ -523,7 +523,7 @@
 				390DED81248906FC00E27BE8 /* UIWindow+DetoxUtils.h */,
 				390DED82248906FC00E27BE8 /* UIWindow+DetoxUtils.m */,
 				392324DE24781CBD00A3D119 /* WebSocket.swift */,
-				39EECB4224BF4FDA009C3364 /* RNPickerCrap.m */,
+				39EECB4224BF4FDA009C3364 /* ReactNativeSupport.m */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -847,7 +847,7 @@
 				390DED84248906FC00E27BE8 /* UIWindow+DetoxUtils.m in Sources */,
 				397CA7A12483F8AA005E8A71 /* NSThread+DetoxUtils.swift in Sources */,
 				3980D158244C45EA004812DD /* Modifier.swift in Sources */,
-				39EECB4324BF4FDA009C3364 /* RNPickerCrap.m in Sources */,
+				39EECB4324BF4FDA009C3364 /* ReactNativeSupport.m in Sources */,
 				3980D15A244C45EA004812DD /* Element.swift in Sources */,
 				3980D1122448B52C004812DD /* UIApplication+DTXAdditions.m in Sources */,
 				3980D15E244C45EA004812DD /* Predicate.swift in Sources */,
