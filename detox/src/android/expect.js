@@ -403,7 +403,7 @@ class WaitForElement extends WaitFor {
 }
 
 class AndroidExpect {
-  constructor(invocationManager) {
+  constructor({ invocationManager }) {
     this._invocationManager = invocationManager;
 
     this.by = {

@@ -1,8 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const log = require('../../../utils/logger').child({ __filename });
 const DeviceDriverBase = require('../DeviceDriverBase');
-const InvocationManager = require('../../../invoke').InvocationManager;
 const AppleSimUtils = require('./tools/AppleSimUtils');
 
 const SimulatorLogPlugin = require('../../../artifacts/log/ios/SimulatorLogPlugin');
@@ -10,16 +8,12 @@ const SimulatorScreenshotPlugin = require('../../../artifacts/screenshot/Simulat
 const SimulatorRecordVideoPlugin = require('../../../artifacts/video/SimulatorRecordVideoPlugin');
 const SimulatorInstrumentsPlugin = require('../../../artifacts/instruments/ios/SimulatorInstrumentsPlugin');
 const TimelineArtifactPlugin = require('../../../artifacts/timeline/TimelineArtifactPlugin');
-const IosExpectTwo = require('../../../ios/expectTwo');
-
 
 class IosDriver extends DeviceDriverBase {
   constructor(config) {
     super(config);
 
     this.applesimutils = new AppleSimUtils();
-    this.matchers = new IosExpectTwo(new InvocationManager(this.client));
-    // this.matchers = new IosExpect(new InvocationManager(this.client));
   }
 
   declareArtifactPlugins() {

@@ -10,7 +10,7 @@ class DriverRegistry {
 
     if (!DeviceDriverClass) {
       try {
-        DeviceDriverClass = resolveModuleFromPath(deviceType);
+        DeviceDriverClass = resolveModuleFromPath(deviceType).DriverClass;
       } catch (e) {
         // noop, if we don't find a module to require, we'll hit the unsupported error below
       }

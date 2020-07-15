@@ -7,6 +7,8 @@ jest.mock('./devices/DriverRegistry');
 jest.mock('./artifacts/ArtifactsManager');
 jest.mock('./client/Client');
 jest.mock('./devices/Device');
+jest.mock('./matchersRegistry');
+jest.mock('./invoke');
 
 jest.mock('./server/DetoxServer', () => {
   const FakeServer = jest.genMockFromModule('./server/DetoxServer');
@@ -21,7 +23,9 @@ describe('Detox', () => {
   let Device;
   let Client;
   let DetoxServer;
+  let matchersRegistry;
   let ArtifactsManager;
+  let invoke;
   let Detox;
   let detox;
   let lifecycleSymbols;
@@ -55,26 +59,29 @@ describe('Detox', () => {
     Device = require('./devices/Device');
     FakeDriverRegistry = require('./devices/DriverRegistry');
     ArtifactsManager = require('./artifacts/ArtifactsManager');
+    invoke = require('./invoke');
     Client = require('./client/Client');
     DetoxServer = require('./server/DetoxServer');
+    matchersRegistry = require('./matchersRegistry');
     Detox = require('./Detox');
     lifecycleSymbols = require('../runners/integration').lifecycle;
   });
 
   describe('when detox.init() is called', () => {
-    let globalMatcher;
+    let mockGlobalMatcher;
 
     const init = async () => {
       detox = await new Detox(detoxConfig).init();
     };
 
     beforeEach(() => {
-      FakeDriverRegistry.FakeDriver.matchers.globalMatcher = globalMatcher = jest.fn();
+      mockGlobalMatcher = jest.fn();
+      matchersRegistry.resolve.mockReturnValue({
+        globalMatcher: mockGlobalMatcher,
+      });
     });
 
     afterEach(() => {
-      delete FakeDriverRegistry.FakeDriver.matchers.globalMatcher;
-
       // cleanup spilled globals after detox.init()
       delete global.device;
       delete global.globalMatcher;
@@ -94,6 +101,9 @@ describe('Detox', () => {
           sessionId: expect.any(String),
         })));
 
+      it('should create an invocation manager', () =>
+        expect(invoke.InvocationManager).toHaveBeenCalledWith(client()));
+
       it('should add a non-responsiveness listener to client ', () =>
         expect(client().setNonresponsivenessListener).toHaveBeenCalledWith(
           expect.any(Function)
@@ -106,13 +116,19 @@ describe('Detox', () => {
         expect(FakeDriverRegistry.default.resolve).toHaveBeenCalledWith(
           detoxConfig.deviceConfig.type,
           {
-            client: expect.anything(),
+            client: client(),
+            invocationManager: invoke.InvocationManager.mock.instances[0],
             emitter: expect.anything(),
           }
         ));
 
-      it('should take device driver matchers to Detox', () =>
-        expect(detox.globalMatcher).toBe(globalMatcher));
+      it('should resolve matchers implementation', () =>
+        expect(matchersRegistry.resolve).toHaveBeenCalledWith(device(), {
+          invocationManager: invoke.InvocationManager.mock.instances[0],
+        }));
+
+      it('should take the matchers from the matchers-registry to Detox', () =>
+        expect(detox.globalMatcher).toBe(mockGlobalMatcher));
 
       it('should take device to Detox', () =>
         expect(detox.device).toBe(device()));
@@ -128,8 +144,8 @@ describe('Detox', () => {
       it('should expose device to global', () =>
         expect(global.device).toBe(device()));
 
-      it('should expose device driver matchers to global', () =>
-        expect(global.globalMatcher).toBe(globalMatcher));
+      it('should expose matchers to global', () =>
+        expect(global.globalMatcher).toBe(mockGlobalMatcher));
 
       it('should create artifacts manager', () =>
         expect(ArtifactsManager).toHaveBeenCalledWith(detoxConfig.artifactsConfig));
@@ -190,8 +206,8 @@ describe('Detox', () => {
 
       beforeEach(init);
 
-      it('should take device driver matchers to Detox', () =>
-        expect(detox.globalMatcher).toBe(globalMatcher));
+      it('should take the matchers from the matchers-registry to Detox', () =>
+        expect(detox.globalMatcher).toBe(mockGlobalMatcher));
 
       it('should take device to Detox', () =>
         expect(detox.device).toBe(device()));
@@ -199,7 +215,7 @@ describe('Detox', () => {
       it('should not expose device to globals', () =>
         expect(global.device).toBe(undefined));
 
-      it('should not expose globalMatcher to globals', () =>
+      it('should not expose matchers to globals', () =>
         expect(global.globalMatcher).toBe(undefined));
     });
 

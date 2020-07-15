@@ -8,11 +8,12 @@ const DetoxRuntimeError = require('./errors/DetoxRuntimeError');
 const AsyncEmitter = require('./utils/AsyncEmitter');
 const MissingDetox = require('./utils/MissingDetox');
 const Client = require('./client/Client');
+const { InvocationManager } = require('./invoke');
 const DetoxServer = require('./server/DetoxServer');
 const ArtifactsManager = require('./artifacts/ArtifactsManager');
-
 const log = logger.child({ __filename });
 const driverRegistry = require('./devices/DriverRegistry').default;
+const matchersRegistry = require('./matchersRegistry');
 
 const _initHandle = Symbol('_initHandle');
 const _assertNoPendingInit = Symbol('_assertNoPendingInit');
@@ -144,12 +145,12 @@ class Detox {
     this._client.setNonresponsivenessListener(this._onNonresnponsivenessEvent.bind(this));
     await this._client.connect();
 
+    const invocationManager = new InvocationManager(this._client);
     const deviceDriver = driverRegistry.resolve(this._deviceConfig.type, {
       client: this._client,
+      invocationManager,
       emitter: this._eventEmitter,
     });
-
-    Object.assign(this, deviceDriver.matchers);
 
     this.device = new Device({
       deviceConfig: this._deviceConfig,
@@ -158,18 +159,23 @@ class Detox {
       sessionConfig,
     });
 
-    if (behaviorConfig.exposeGlobals) {
-      Object.assign(Detox.global, {
-        ...deviceDriver.matchers,
-        device: this.device,
-      });
-    }
-
     this._artifactsManager = new ArtifactsManager(this._artifactsConfig);
     this._artifactsManager.subscribeToDeviceEvents(this._eventEmitter);
     this._artifactsManager.registerArtifactPlugins(deviceDriver.declareArtifactPlugins());
 
     await this.device.prepare();
+
+    const matchers = matchersRegistry.resolve(this.device, {
+      invocationManager,
+    });
+    Object.assign(this, matchers);
+
+    if (behaviorConfig.exposeGlobals) {
+      Object.assign(Detox.global, {
+        ...matchers,
+        device: this.device,
+      });
+    }
 
     if (behaviorConfig.reinstallApp) {
       await this.device.uninstallApp();

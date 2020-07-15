@@ -56,10 +56,12 @@ describe('DriverRegistry', () => {
 
     it('should try to resolve unknown driver as a node.js dependency', () => {
       require('../utils/resolveModuleFromPath').mockImplementation(() => {
-        return require('./drivers/__mocks__/FakeDriver');
+        return {
+          DriverClass: require('./drivers/__mocks__/FakeDriver'),
+        };
       });
 
-      const FakeDriver = require('./drivers/__mocks__/FakeDriver')
+      const FakeDriver = require('./drivers/__mocks__/FakeDriver');
       const driver = registry.resolve('fake-driver', opts);
 
       expect(driver).toBeInstanceOf(FakeDriver);
