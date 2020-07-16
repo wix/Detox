@@ -15,9 +15,9 @@ framework module Detox {
 		header "DetoxAppDelegateProxy.h"
 		header "UIDevice+DetoxActions.h"
 		header "UISlider+DetoxUtils.h"
-		header "___DTXAddressInfo.h"
 		header "DTXDurationFormatter.h"
 		header "UIWindow+DetoxUtils.h"
 		header "DTXAppleInternals.h"
+		header "NSThread+DetoxUtils.h"
 	}
 }

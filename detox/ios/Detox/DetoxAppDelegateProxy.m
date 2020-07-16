@@ -12,7 +12,7 @@
 @import UserNotifications;
 @import COSTouchVisualizer;
 
-#import "___DTXAddressInfo.h"
+#import "DTXAddressInfo.h"
 
 DTX_CREATE_LOG(AppDelegateProxy)
 __unused static BOOL _enableVerboseLogging = NO;
@@ -157,7 +157,7 @@ static NSURL* _launchUserActivityDataURL()
 		method_setImplementation(m, imp_implementationWithBlock(^(id _self) {
 			NSArray* zz = [NSThread callStackReturnAddresses];
 			NSUInteger caller = [zz[1] unsignedIntegerValue];
-			___DTXAddressInfo* ainfo = [[___DTXAddressInfo alloc] initWithAddress:caller];
+			DTXAddressInfo* ainfo = [[DTXAddressInfo alloc] initWithAddress:caller];
 			NSString* image = ainfo.image;
 			
 			NSMutableString* request = [NSMutableString stringWithFormat:@"Delegate request from “%@`%@”; ", ainfo.image, ainfo.symbol];
