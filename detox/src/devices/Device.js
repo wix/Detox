@@ -148,7 +148,6 @@ class Device {
 
   async unmatchFace() {
     await this.deviceDriver.unmatchFace(this._deviceId);
-    await this.deviceDriver.waitForActive();
   }
 
   async matchFinger() {
@@ -158,7 +157,6 @@ class Device {
 
   async unmatchFinger() {
     await this.deviceDriver.unmatchFinger(this._deviceId);
-    await this.deviceDriver.waitForActive();
   }
 
   async shake() {
