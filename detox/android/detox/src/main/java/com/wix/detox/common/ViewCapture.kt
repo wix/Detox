@@ -5,7 +5,7 @@ import android.graphics.Canvas
 import android.view.View
 import java.io.ByteArrayOutputStream
 
-class Screenshot(private val bitmap: Bitmap) {
+class CaptureResult(private val bitmap: Bitmap) {
     fun asBitmap() = bitmap
     fun asRawBytes(): ByteArray {
         val outStream = ByteArrayOutputStream(if (SDKSupports.API_19_KITKAT) bitmap.allocationByteCount else bitmap.byteCount)
@@ -14,11 +14,11 @@ class Screenshot(private val bitmap: Bitmap) {
     }
 }
 
-class ViewScreenshot() {
-    fun takeOf(view: View): Screenshot {
+class ViewCapture() {
+    fun takeOf(view: View): CaptureResult {
         val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         view.draw(canvas)
-        return Screenshot(bitmap)
+        return CaptureResult(bitmap)
     }
 }
