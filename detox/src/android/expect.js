@@ -1,4 +1,5 @@
 const invoke = require('../invoke');
+const simpleFile = require('../utils/simple-file-io');
 const matchers = require('./matcher');
 const DetoxActionApi = require('./espressoapi/DetoxAction');
 const ViewActionsApi = require('./espressoapi/ViewActions');
@@ -115,6 +116,13 @@ class SwipeAction extends Action {
   }
 }
 
+class TakeElementScreenshot extends Action {
+  constructor() {
+    super();
+    this._call = invoke.callDirectly(DetoxActionApi.takeViewScreenshot());
+  }
+}
+
 class Interaction {
   constructor(invocationManager) {
     this._call = undefined;
@@ -122,7 +130,8 @@ class Interaction {
   }
 
   async execute() {
-    await this._invocationManager.execute(this._call);
+    const resultObj = await this._invocationManager.execute(this._call);
+    return resultObj ? resultObj.result : undefined;
   }
 }
 
@@ -267,6 +276,12 @@ class Element {
     // override the user's element selection with an extended matcher that avoids RN issues with RCTScrollView
     this._selectElementWithMatcher(this._originalMatcher._avoidProblematicReactNativeElements());
     return await new ActionInteraction(this._invocationManager, this, new SwipeAction(direction, speed, percentage)).execute();
+  }
+
+  async takeScreenshot() {
+    // TODO this should be moved to a lower-layer handler of this use-case
+    const resultBase64 = await new ActionInteraction(this._invocationManager, this, new TakeElementScreenshot()).execute();
+    return simpleFile.saveRawBase64Data(resultBase64, { fileSuffix: '.detox.elem-screenshot.png' });
   }
 }
 
