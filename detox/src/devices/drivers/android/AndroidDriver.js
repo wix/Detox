@@ -4,8 +4,6 @@ const _ = require('lodash');
 const DeviceDriverBase = require('../DeviceDriverBase');
 const logger = require('../../../utils/logger');
 const log = logger.child({ __filename });
-const invoke = require('../../../invoke');
-const InvocationManager = invoke.InvocationManager;
 const ADB = require('./exec/ADB');
 const AAPT = require('./exec/AAPT');
 const APKPath = require('./tools/APKPath');
@@ -26,14 +24,12 @@ const temporaryPath = require('../../../artifacts/utils/temporaryPath');
 const sleep = require('../../../utils/sleep');
 const retry = require('../../../utils/retry');
 const getAbsoluteBinaryPath = require('../../../utils/getAbsoluteBinaryPath');
-const AndroidExpect = require('../../../android/expect');
 
 class AndroidDriver extends DeviceDriverBase {
   constructor(config) {
     super(config);
 
-    this.invocationManager = new InvocationManager(this.client);
-    this.matchers = new AndroidExpect(this.invocationManager);
+    this.invocationManager = config.invocationManager;
     this.uiDevice = new UiDeviceProxy(this.invocationManager).getUIDevice();
 
     this.adb = new ADB();

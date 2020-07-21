@@ -8,7 +8,6 @@ class DeviceDriverBase {
   constructor({ client, emitter }) {
     this.client = client;
     this.emitter = emitter;
-    this.matchers = null;
   }
 
   get name() {

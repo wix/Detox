@@ -3,7 +3,9 @@ describe('expectTwo API Coverage', () => {
 
   beforeEach(() => {
     const IosExpect = require('./expectTwo');
-    e = new IosExpect(new MockExecutor());
+    e = new IosExpect({
+      invocationManager: new MockExecutor(),
+    });
   });
 
 

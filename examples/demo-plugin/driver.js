@@ -2,7 +2,7 @@ const DeviceDriverBase = require('detox/src/devices/drivers/DeviceDriverBase');
 const Client = require('detox/src/client/Client');
 
 class Expect {
-  constructor(invocationManager) {
+  constructor({ invocationManager }) {
     this._invocationManager = invocationManager;
 
     this.by = {
@@ -106,9 +106,8 @@ class PluginTestee {
 class PluginDriver extends DeviceDriverBase {
   constructor(config) {
     super(config);
-    this.matchers = {};
+
     this.testee = new PluginTestee(config);
-    this.matchers = new Expect();
   }
 
   async launchApp(deviceId, bundleId, launchArgs, languageAndLocale) {
@@ -146,4 +145,7 @@ class PluginDriver extends DeviceDriverBase {
   }
 }
 
-module.exports = PluginDriver;
+module.exports = {
+  DriverClass: PluginDriver,
+  ExpectClass: Expect,
+};

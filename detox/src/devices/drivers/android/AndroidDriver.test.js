@@ -18,6 +18,7 @@ describe('Android driver', () => {
   let exec;
   let emitter;
   let detoxApi;
+  let invocationManager;
   beforeEach(() => {
     jest.mock('fs', () => ({
       existsSync: jest.fn(),
@@ -69,6 +70,9 @@ describe('Android driver', () => {
 
     jest.mock('../../../android/espressoapi/Detox');
     detoxApi = require('../../../android/espressoapi/Detox');
+
+    const InvocationManager = jest.genMockFromModule('../../../invoke').InvocationManager;
+    invocationManager = new InvocationManager();
   });
 
   let instrumentation;
@@ -139,21 +143,6 @@ describe('Android driver', () => {
     jest.mock('./tools/TempFileXfer', () => MockTempFileXferClass);
   });
 
-  let invocationManager;
-  beforeEach(() => {
-    class MockInvocationManagerClass {
-      constructor() {
-        Object.assign(this, invocationManager);
-      }
-    }
-
-    const InvocationManager = jest.genMockFromModule('../../../invoke').InvocationManager;
-    invocationManager = new InvocationManager();
-    jest.mock('../../../invoke', () => ({
-      InvocationManager: MockInvocationManagerClass,
-    }))
-  });
-
   let appInstallHelper;
   beforeEach(() => {
     class MockAppInstallHelperClass {
@@ -174,6 +163,7 @@ describe('Android driver', () => {
     const AndroidDriver = require('./AndroidDriver');
     uut = new AndroidDriver({
       client,
+      invocationManager,
       emitter,
     });
   });

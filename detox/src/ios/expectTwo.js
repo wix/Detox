@@ -540,7 +540,7 @@ function waitFor(element) {
 let _invocationManager;
 
 class IosExpect {
-  constructor(invocationManager) {
+  constructor({ invocationManager }) {
     _invocationManager = invocationManager;
     this.element = this.element.bind(this);
     this.expect = this.expect.bind(this);

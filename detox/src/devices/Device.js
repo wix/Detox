@@ -89,6 +89,10 @@ class Device {
     return this.deviceDriver.name;
   }
 
+  get type() {
+    return this._deviceConfig.type;
+  }
+
   async takeScreenshot(name) {
     if (!name) {
       throw new Error('Cannot take a screenshot with an empty name.');

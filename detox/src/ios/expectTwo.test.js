@@ -3,7 +3,9 @@ const _ = require('lodash');
 describe('expectTwo', () => {
   beforeEach(() => {
     const IosExpect = require('./expectTwo');
-    e = new IosExpect(new MockExecutor());
+    e = new IosExpect({
+      invocationManager: new MockExecutor(),
+    });
   });
 
   it(`element(by.text('tapMe')).tap()`, () => {
