@@ -1,5 +1,5 @@
 const invoke = require('../invoke');
-const simpleFile = require('../utils/simple-file-io');
+const ezFile = require('../utils/easy-file-io');
 const matchers = require('./matcher');
 const DetoxActionApi = require('./espressoapi/DetoxAction');
 const ViewActionsApi = require('./espressoapi/ViewActions');
@@ -281,7 +281,7 @@ class Element {
   async takeScreenshot() {
     // TODO this should be moved to a lower-layer handler of this use-case
     const resultBase64 = await new ActionInteraction(this._invocationManager, this, new TakeElementScreenshot()).execute();
-    return simpleFile.saveRawBase64Data(resultBase64, { fileSuffix: '.detox.elem-screenshot.png' });
+    return ezFile.saveRawBase64Data(resultBase64, { fileSuffix: '.detox.elem-screenshot.png' });
   }
 }
 

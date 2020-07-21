@@ -3,6 +3,8 @@ describe('expect', () => {
 
   let mockExecutor;
   beforeEach(() => {
+    jest.mock('../utils/easy-file-io');
+
     mockExecutor = new MockExecutor();
 
     const AndroidExpect = require('./expect');
@@ -209,21 +211,20 @@ describe('expect', () => {
   describe('element screenshots', () => {
     const invokeResultInBase64 = 'VGhlcmUgaXMgbm8gc3Bvb24h';
 
-    let simpleFileIo;
+    let ezFileIo;
     let _element;
     beforeEach(() => {
       mockExecutor.executeResult = Promise.resolve(invokeResultInBase64);
 
-      jest.mock('../utils/simple-file-io');
-      simpleFileIo = require('../utils/simple-file-io');
-      simpleFileIo.saveRawBase64Data.mockReturnValue('/mock/file/path');
+      ezFileIo = require('../utils/easy-file-io');
+      ezFileIo.saveRawBase64Data.mockReturnValue('/mock/file/path');
 
       _element = e.element(e.by.id('FancyElement'));
     });
 
     it('should take and save the screenshot in a temp-file', async () => {
       await _element.takeScreenshot();
-      expect(simpleFileIo.saveRawBase64Data).toHaveBeenCalledWith(invokeResultInBase64, { fileSuffix: '.detox.elem-screenshot.png' })
+      expect(ezFileIo.saveRawBase64Data).toHaveBeenCalledWith(invokeResultInBase64, { fileSuffix: '.detox.elem-screenshot.png' })
     });
 
     it('should return the path to the temp-file containing screenshot data', async () => {
@@ -256,9 +257,9 @@ class MockExecutor {
 
     this.recurse(invocation);
     await this.timeout(1);
-    return {
+    return this.executeResult ? {
       result: this.executeResult,
-    };
+    } : undefined;
   }
 
   recurse(invocation) {

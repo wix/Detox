@@ -1,4 +1,4 @@
-describe('Simple-file I/O utilities', () => {
+describe('Easy-file I/O utilities', () => {
   describe('For base-64 encoded data', () => {
     const data = 'VGhlcmUgaXMgbm8gc3Bvb24h'; // There is no spoon!
     const filePath = 'path/to/file.ext'
@@ -17,7 +17,7 @@ describe('Simple-file I/O utilities', () => {
       tempfile = require('tempfile');
       tempfile.mockReturnValue(tempFilePath);
 
-      uut = require('./simple-file-io');
+      uut = require('./easy-file-io');
     });
 
     it('should save raw data to a given file', () => {
