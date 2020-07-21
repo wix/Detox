@@ -23,6 +23,7 @@ Use [expectations](APIRef.Expect.md) to verify element states.
 - [`.setDatePickerDate()`](#setdatepickerdatedatestring-dateformat--ios-only) **iOS only**
 - [`.adjustSliderToPosition()`](#adjustslidertopositionnormalizedposition--ios-only) **iOS only**
 - [`.getAttributes()`](#getAttributes--ios-only) **iOS only**
+- [`.takeScreenshot()`](#takescreenshot-android-only) **Android only**
 
 ### `tap(point)`
 
@@ -239,6 +240,23 @@ jestExpect(attributes.text).toBe('Tap Me');
 const multipleMatchedElements = await element(by.text('Multiple')).getAttributes();
 jestExpect(multipleMatchedElements.elements.length).toBe(5);
 jestExpect(multipleMatchedElements.elements[0].identifier).toBe('FirstElement');
+```
+
+### `takeScreenshot()` Android Only
+
+Take a screenshot of the native view associated with the element in question. Useful for highly-focused visual comparison tests (i.e. comparison between elements rather than a whole screen).
+
+Returns the path of a temporary file containing the resulted `.png` image.
+
+```js
+const bitmapPath = await element(by.id('fancy-element')).takeScreenshot();
+
+const fs = require('fs');
+const bitmapBuffer = fs.readFileSync(bitmapPath);
+const snapshottedBitmapBuffer = fs.readFileSync(snapshottedBitmapPath);
+if (!bitmapBuffer.equals(expectedBitmapBuffer)) {
+  throw new Error('Bitmaps differ!');
+}
 ```
 
 ## Deprecated Methods
