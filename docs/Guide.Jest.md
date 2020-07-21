@@ -107,9 +107,7 @@ If you are not familiar with Environment concept in Jest, you could check [their
 
 For Detox, having a `CustomDetoxEnvironment` class derived from `NodeEnvironment` enables implementing cross-cutting concerns such as taking screenshots the exact moment a test function (it/test) or a hook (e.g., beforeEach) fails, skip adding tests if they have `:ios:` or `:android:` within their title, starting device log recordings before test starts and so on.
 
-API of `CustomDetoxEnvironment` is not entirely public in a sense that there's no guide on how to write custom `DetoxCircusListeners` and override `initDetox()` and `cleanupDetox()` protected methods, since this is not likely to be needed for typical projects, but this is under consideration if there appears specific demand.
-
-See [an example](https://github.com/wix/Detox/blob/master/examples/demo-react-native-jest/e2e/init.js) of a custom Detox environment for Jest.
+API of `CustomDetoxEnvironment` is not entirely public in a sense that there's no guide on how to write custom `DetoxCircusListeners` and override `initDetox()` and `cleanupDetox()` protected methods, since this is not likely to be needed for typical projects, but this is under consideration if there appears specific demand. You may want to check out this [simple example](https://github.com/wix/Detox/pull/2009#issuecomment-648971528) of overriding `initDetox()`, or some [alternative approaches](https://github.com/wix/Detox/pull/2009#issuecomment-649342823) to overriding `initDetox()`.
 
 ```js
 const {
