@@ -3,7 +3,8 @@ describe('expect', () => {
 
   let mockExecutor;
   beforeEach(() => {
-    jest.mock('../utils/easy-file-io');
+    jest.mock('tempfile');
+    jest.mock('fs-extra');
 
     mockExecutor = new MockExecutor();
 
@@ -209,27 +210,31 @@ describe('expect', () => {
   });
 
   describe('element screenshots', () => {
+    const tempFilePath = '/path/to/temp-file.ext';
     const invokeResultInBase64 = 'VGhlcmUgaXMgbm8gc3Bvb24h';
 
-    let ezFileIo;
+    let tempfile;
+    let fs;
     let _element;
     beforeEach(() => {
       mockExecutor.executeResult = Promise.resolve(invokeResultInBase64);
 
-      ezFileIo = require('../utils/easy-file-io');
-      ezFileIo.saveRawBase64Data.mockReturnValue('/mock/file/path');
+      fs = require('fs-extra');
+      tempfile = require('tempfile');
+      tempfile.mockReturnValue(tempFilePath);
 
       _element = e.element(e.by.id('FancyElement'));
     });
 
     it('should take and save the screenshot in a temp-file', async () => {
       await _element.takeScreenshot();
-      expect(ezFileIo.saveRawBase64Data).toHaveBeenCalledWith(invokeResultInBase64, { fileSuffix: '.detox.elem-screenshot.png' })
+      expect(fs.writeFile).toHaveBeenCalledWith(tempFilePath, invokeResultInBase64, 'base64');
+      expect(tempfile).toHaveBeenCalledWith('detox.element-screenshot.png');
     });
 
     it('should return the path to the temp-file containing screenshot data', async () => {
       const result = await _element.takeScreenshot();
-      expect(result).toEqual('/mock/file/path');
+      expect(result).toEqual(tempFilePath);
     });
   });
 });

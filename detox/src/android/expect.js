@@ -1,5 +1,6 @@
+const tempfile = require('tempfile');
+const fs = require('fs-extra');
 const invoke = require('../invoke');
-const ezFile = require('../utils/easy-file-io');
 const matchers = require('./matcher');
 const DetoxActionApi = require('./espressoapi/DetoxAction');
 const ViewActionsApi = require('./espressoapi/ViewActions');
@@ -281,7 +282,9 @@ class Element {
   async takeScreenshot() {
     // TODO this should be moved to a lower-layer handler of this use-case
     const resultBase64 = await new ActionInteraction(this._invocationManager, this, new TakeElementScreenshot()).execute();
-    return ezFile.saveRawBase64Data(resultBase64, { fileSuffix: '.detox.elem-screenshot.png' });
+    const filePath = tempfile('detox.element-screenshot.png');
+    await fs.writeFile(filePath, resultBase64, 'base64');
+    return filePath;
   }
 }
 
