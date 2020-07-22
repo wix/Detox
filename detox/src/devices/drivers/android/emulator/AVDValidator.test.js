@@ -1,40 +1,34 @@
 describe('AVD validator', () => {
-  let mockAvdsResolver;
-
-  class MockAVDsResolver {
-    constructor(...args) {
-      mockAvdsResolver.ctor(...args);
-      this.resolve = mockAvdsResolver.resolve;
-    }
-  }
-
   const emulatorExec = {};
+
+  let AVDsResolverClass;
   let uut;
   beforeEach(() => {
-    mockAvdsResolver = {
-      ctor: jest.fn(),
-      resolve: jest.fn().mockResolvedValue(['mock-avd-name']),
-    };
-    jest.mock('./AVDsResolver', () => MockAVDsResolver);
+    jest.mock('./AVDsResolver');
+    AVDsResolverClass = require('./AVDsResolver');
 
     const AVDValidator = require('./AVDValidator');
     uut = new AVDValidator(emulatorExec);
   });
 
+  const avdsResolverObj = () => AVDsResolverClass.mock.instances[0];
+
   it('should use an AVDs resolver', async () => {
+    avdsResolverObj().resolve.mockResolvedValue(['mock-avd-name']);
+
     await uut.validate('mock-avd-name');
 
-    expect(mockAvdsResolver.ctor).toHaveBeenCalledWith(emulatorExec);
-    expect(mockAvdsResolver.resolve).toHaveBeenCalledWith('mock-avd-name');
+    expect(AVDsResolverClass).toHaveBeenCalledWith(emulatorExec);
+    expect(AVDsResolverClass.mock.instances[0].resolve).toHaveBeenCalledWith('mock-avd-name');
   });
 
   it('should return safely if AVD exists', async () => {
-    mockAvdsResolver.resolve.mockResolvedValue(['mock-avd-name']);
+    avdsResolverObj().resolve.mockResolvedValue(['mock-avd-name']);
     await uut.validate('mock-avd-name');
   });
 
   it('should throw if no AVDs found', async () => {
-    mockAvdsResolver.resolve.mockResolvedValue(undefined);
+    avdsResolverObj().resolve.mockResolvedValue(undefined);
 
     try {
       await uut.validate();
@@ -43,7 +37,7 @@ describe('AVD validator', () => {
   });
 
   it('should throw if specific AVD not found', async () => {
-    mockAvdsResolver.resolve.mockResolvedValue(['other-avd', 'yet-another']);
+    avdsResolverObj().resolve.mockResolvedValue(['other-avd', 'yet-another']);
 
     try {
       await uut.validate();

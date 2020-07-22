@@ -2,53 +2,38 @@ describe('FreeEmulatorFinder', () => {
   const mockAdb = {};
   const mockAvdName = 'mock-avd';
 
-  class MockAdbDevicesHelper {
-    constructor(...args) {
-      adbDevicesHelper.ctor(...args);
-    }
-
-    lookupDevice(...args) {
-      return adbDevicesHelper.lookupDevice(...args);
-    }
-  }
-
-  let adbDevicesHelper;
+  let AdbDevicesHelperClass;
   beforeEach(() => {
-    const AdbDevicesHelper = jest.genMockFromModule('../tools/AdbDevicesHelper');
-    adbDevicesHelper = new AdbDevicesHelper();
-    adbDevicesHelper.ctor = jest.fn();
-    jest.mock('../tools/AdbDevicesHelper', () => MockAdbDevicesHelper);
+    jest.mock('../tools/AdbDevicesHelper');
+    AdbDevicesHelperClass = require('../tools/AdbDevicesHelper');
   });
+  const adbDevicesHelperObj = () => AdbDevicesHelperClass.mock.instances[0];
 
   let mockDeviceRegistry;
   let uut;
   beforeEach(() => {
-    jest.mock('../../../../utils/logger', () => ({
-      child: jest.fn().mockReturnValue({
-        debug: jest.fn(),
-      }),
-    }));
+    jest.mock('../../../../utils/logger');
 
-    mockDeviceRegistry = {
-      isDeviceBusy: jest.fn().mockReturnValue(false),
-    };
+    const DeviceRegistry = jest.genMockFromModule('../../../DeviceRegistry');
+    mockDeviceRegistry = new DeviceRegistry();
+    mockDeviceFree();
 
     const FreeEmulatorFinder = require('./FreeEmulatorFinder');
     uut = new FreeEmulatorFinder(mockAdb, mockDeviceRegistry, mockAvdName);
   });
 
   it('should create an adb devices helper', async () => {
-    expect(adbDevicesHelper.ctor).toHaveBeenCalledWith(mockAdb);
+    expect(AdbDevicesHelperClass).toHaveBeenCalledWith(mockAdb);
   });
 
   it('should pass a custom matcher func onto adb-devices helper for finding a free emulator', async () => {
     await uut.findFreeDevice();
-    expect(adbDevicesHelper.lookupDevice).toHaveBeenCalledWith(expect.any(Function));
+    expect(adbDevicesHelperObj().lookupDevice).toHaveBeenCalledWith(expect.any(Function));
   });
 
   it('should return the matched emulator', async () => {
     const adbName = 'mock-adb-name';
-    adbDevicesHelper.lookupDevice.mockReturnValue(adbName);
+    adbDevicesHelperObj().lookupDevice.mockReturnValue(adbName);
 
     const deviceName = await uut.findFreeDevice();
     expect(deviceName).toEqual(adbName);
@@ -68,7 +53,7 @@ describe('FreeEmulatorFinder', () => {
 
     it('should restrict to free (unoccupied) devices', async () => {
       const device = anEmulatorDevice();
-      mockDeviceRegistry.isDeviceBusy.mockReturnValue(true);
+      mockDeviceBusy();
 
       await uut.findFreeDevice();
 
@@ -89,7 +74,7 @@ describe('FreeEmulatorFinder', () => {
       expect(await matcherFn(device)).toEqual(false);
     });
 
-    const resolveMatcherFn = () => adbDevicesHelper.lookupDevice.mock.calls[0][0];
+    const resolveMatcherFn = () => adbDevicesHelperObj().lookupDevice.mock.calls[0][0];
   });
 
   const anEmulatorDevice = () => ({
@@ -103,4 +88,7 @@ describe('FreeEmulatorFinder', () => {
     adbName: 'mock-name',
     queryName: jest.fn().mockResolvedValue(mockAvdName),
   });
+
+  const mockDeviceBusy = () => mockDeviceRegistry.isDeviceBusy.mockReturnValue(true);
+  const mockDeviceFree = () => mockDeviceRegistry.isDeviceBusy.mockReturnValue(false);
 });

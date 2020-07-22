@@ -1,20 +1,7 @@
 describe('Monitored instrumentation', () => {
   const deviceId = 'mock-device-id';
   const bundleId = 'mock-bundle-id';
-
-  class MockInstrumentationClass {
-    constructor(...args) {
-      instrumentation.mockCtor(...args);
-      Object.assign(this, instrumentation);
-    }
-  }
-
-  class MockInstrumentationLogsParserClass {
-    constructor() {
-      Object.assign(this, instrumentationLogsParser);
-    }
-  }
-  MockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK = 'Stacktrace mock';
+  const INSTRUMENTATION_STACKTRACE_MOCK = 'Stacktrace mock';
 
   let adb;
   let logger;
@@ -25,22 +12,23 @@ describe('Monitored instrumentation', () => {
     logger = {};
   });
 
-  let instrumentation;
-  let instrumentationLogsParser;
+  let InstrumentationClass;
+  let InstrumentationLogsParserClass;
   beforeEach(() => {
+    jest.mock('./Instrumentation');
+    InstrumentationClass = require('./Instrumentation');
 
-    const Instrumentation = jest.genMockFromModule('./Instrumentation');
-    instrumentation = new Instrumentation();
-    instrumentation.mockCtor = jest.fn();
-    jest.mock('./Instrumentation', () => MockInstrumentationClass);
-
-    const { InstrumentationLogsParser } = jest.genMockFromModule('./InstrumentationLogsParser');
-    instrumentationLogsParser = new InstrumentationLogsParser();
-    instrumentationLogsParser.getStackTrace.mockReturnValue(MockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK);
-    jest.mock('./InstrumentationLogsParser', () => ({
-      InstrumentationLogsParser: MockInstrumentationLogsParserClass,
-    }));
+    jest.mock('./InstrumentationLogsParser');
+    InstrumentationLogsParserClass = require('./InstrumentationLogsParser').InstrumentationLogsParser;
+    InstrumentationLogsParserClass.mockImplementation(() => {
+      const instances = InstrumentationLogsParserClass.mock.instances;
+      const _this = instances[instances.length - 1];
+      _this.getStackTrace.mockReturnValue(INSTRUMENTATION_STACKTRACE_MOCK);
+    })
   });
+
+  const instrumentationObj = () => InstrumentationClass.mock.instances[0];
+  const instrumentationLogsParserObj = () => InstrumentationLogsParserClass.mock.instances[0];
 
   let uut;
   beforeEach(() => {
@@ -49,18 +37,18 @@ describe('Monitored instrumentation', () => {
   });
 
   it('should properly init the underlying instrumentation', () => {
-    expect(instrumentation.mockCtor).toHaveBeenCalledWith(adb, logger, expect.any(Function), expect.any(Function));
+    expect(InstrumentationClass).toHaveBeenCalledWith(adb, logger, expect.any(Function), expect.any(Function));
   });
 
   describe('launch', () => {
     it('should launch the underlying instrumentation', async () => {
       const launchArgs = {};
       await uut.launch(deviceId, bundleId, launchArgs);
-      expect(instrumentation.launch).toHaveBeenCalledWith(deviceId, bundleId, launchArgs);
+      expect(instrumentationObj().launch).toHaveBeenCalledWith(deviceId, bundleId, launchArgs);
     });
 
     it('should break if underlying launch fails', async () => {
-      instrumentation.launch.mockRejectedValue(new Error());
+      instrumentationObj().launch.mockRejectedValue(new Error());
 
       try {
         await uut.launch(deviceId, bundleId, {});
@@ -83,11 +71,11 @@ describe('Monitored instrumentation', () => {
     it('should terminate the underlying instrumentation', async () => {
       await uut.launch(deviceId, bundleId, {});
       await uut.terminate();
-      expect(instrumentation.terminate).toHaveBeenCalled();
+      expect(instrumentationObj().terminate).toHaveBeenCalled();
     });
 
     it('should break if underlying termination fails', async () => {
-      instrumentation.terminate.mockRejectedValue(new Error());
+      instrumentationObj().terminate.mockRejectedValue(new Error());
 
       await uut.launch(deviceId, bundleId, {});
 
@@ -99,7 +87,7 @@ describe('Monitored instrumentation', () => {
 
     it('should allow for termination without launch', async () => {
       await uut.terminate();
-      expect(instrumentation.terminate).toHaveBeenCalled();
+      expect(instrumentationObj().terminate).toHaveBeenCalled();
     });
   });
 
@@ -123,14 +111,14 @@ describe('Monitored instrumentation', () => {
 
   describe('Crash monitoring', () => {
     let onReject;
-    beforeEach(() => {
+    beforeEach(async () => {
       onReject = jest.fn();
 
+      await uut.launch(deviceId, bundleId, {});
       mockUnderlyingInstrumentationRunning();
     });
 
     it('should signal termination due to unexpected underlying termination, if waited-for', async () => {
-      await uut.launch(deviceId, bundleId, {});
       uut.waitForCrash().catch(onReject);
 
       await invokeUnderlyingTerminationCallback();
@@ -138,7 +126,6 @@ describe('Monitored instrumentation', () => {
     });
 
     it('should signal termination due to initiated termination, if waited-for', async () => {
-      await uut.launch(deviceId, bundleId, {});
       uut.waitForCrash().catch(onReject);
 
       await uut.terminate();
@@ -146,9 +133,8 @@ describe('Monitored instrumentation', () => {
     });
 
     it('should signal termination with a parsed stack-trace', async () => {
-      instrumentationLogsParser.containsStackTraceLog.mockReturnValue(true);
+      mockLogsParserHasStacktrace();
 
-      await uut.launch(deviceId, bundleId, {});
       uut.waitForCrash().catch(onReject);
 
       await invokeUnderlyingLogListenerCallbackWith('mock data');
@@ -158,15 +144,14 @@ describe('Monitored instrumentation', () => {
     });
 
     it('should signal termination with no stack-trace, if none available', async () => {
-      instrumentationLogsParser.containsStackTraceLog.mockReturnValue(false);
+      mockLogsParserHasNoStacktrace();
 
-      await uut.launch(deviceId, bundleId, {});
       uut.waitForCrash().catch(onReject);
 
       await invokeUnderlyingLogListenerCallbackWith('mock data');
       await invokeUnderlyingTerminationCallback();
 
-      expect(instrumentationLogsParser.parse).toHaveBeenCalledWith('mock data');
+      expect(instrumentationLogsParserObj().parse).toHaveBeenCalledWith('mock data');
 
       assertRejectedWithoutStacktrace();
     });
@@ -174,7 +159,6 @@ describe('Monitored instrumentation', () => {
     it('should allow for user-initiated clearing of app-wait', async () => {
       const onResolve = jest.fn();
 
-      await uut.launch(deviceId, bundleId, {});
       const promise = uut.waitForCrash().then(onResolve);
       uut.abortWaitForCrash();
 
@@ -183,8 +167,6 @@ describe('Monitored instrumentation', () => {
     });
 
     it('should immediately signal termination if already terminated', async () => {
-      await uut.launch(deviceId, bundleId, {});
-
       mockUnderlyingInstrumentationDead();
       await uut.waitForCrash().catch(onReject);
 
@@ -192,8 +174,6 @@ describe('Monitored instrumentation', () => {
     });
 
     it('should account for all waiting crash-wait clients', async () => {
-      await uut.launch(deviceId, bundleId, {});
-
       uut.waitForCrash().catch(onReject);
       uut.waitForCrash().catch(onReject);
 
@@ -205,7 +185,7 @@ describe('Monitored instrumentation', () => {
     const assertRejectedWithNativeStacktrace = () => {
       const e = onReject.mock.calls[0][0];
       expect(e.toString()).toContain('DetoxRuntimeError: Failed to run application on the device');
-      expect(e.toString()).toContain(`Native stacktrace dump: ${MockInstrumentationLogsParserClass.INSTRUMENTATION_STACKTRACE_MOCK}`);
+      expect(e.toString()).toContain(`Native stacktrace dump: ${INSTRUMENTATION_STACKTRACE_MOCK}`);
     };
 
     const assertRejectedWithoutStacktrace = () => {
@@ -215,17 +195,20 @@ describe('Monitored instrumentation', () => {
     };
   });
 
-  const extractUnderlyingTerminationCallback = () => instrumentation.mockCtor.mock.calls[0][2];
+  const extractUnderlyingTerminationCallback = () => InstrumentationClass.mock.calls[0][2];
   const invokeUnderlyingTerminationCallback = async () => {
     const fn = extractUnderlyingTerminationCallback();
     await fn();
   }
-  const extractUnderlyingLogListenerCallback = () => instrumentation.mockCtor.mock.calls[0][3];
+  const extractUnderlyingLogListenerCallback = () => InstrumentationClass.mock.calls[0][3];
   const invokeUnderlyingLogListenerCallbackWith = async (data) => {
     const fn = extractUnderlyingLogListenerCallback();
     await fn(data);
   }
 
-  const mockUnderlyingInstrumentationRunning = () => instrumentation.isRunning.mockReturnValue(true);
-  const mockUnderlyingInstrumentationDead = () => instrumentation.isRunning.mockReturnValue(false);
+  const mockUnderlyingInstrumentationRunning = () => instrumentationObj().isRunning.mockReturnValue(true);
+  const mockUnderlyingInstrumentationDead = () => instrumentationObj().isRunning.mockReturnValue(false);
+
+  const mockLogsParserHasStacktrace = () => instrumentationLogsParserObj().containsStackTraceLog.mockReturnValue(true);
+  const mockLogsParserHasNoStacktrace = () => instrumentationLogsParserObj().containsStackTraceLog.mockReturnValue(false);
 });
