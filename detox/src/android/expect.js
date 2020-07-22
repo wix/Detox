@@ -116,10 +116,10 @@ class SwipeAction extends Action {
   }
 }
 
-class CaptureBitmapAction extends Action {
+class TakeElementScreenshot extends Action {
   constructor() {
     super();
-    this._call = invoke.callDirectly(DetoxActionApi.captureViewBitmap());
+    this._call = invoke.callDirectly(DetoxActionApi.takeViewScreenshot());
   }
 }
 
@@ -278,10 +278,10 @@ class Element {
     return await new ActionInteraction(this._invocationManager, this, new SwipeAction(direction, speed, percentage)).execute();
   }
 
-  async captureBitmap() {
+  async takeScreenshot() {
     // TODO this should be moved to a lower-layer handler of this use-case
-    const resultBase64 = await new ActionInteraction(this._invocationManager, this, new CaptureBitmapAction()).execute();
-    return ezFile.saveRawBase64Data(resultBase64, { fileSuffix: '.detox.element.png' });
+    const resultBase64 = await new ActionInteraction(this._invocationManager, this, new TakeElementScreenshot()).execute();
+    return ezFile.saveRawBase64Data(resultBase64, { fileSuffix: '.detox.elem-screenshot.png' });
   }
 }
 

@@ -156,13 +156,13 @@ class DetoxAction {
     };
   }
 
-  static captureViewBitmap() {
+  static takeViewScreenshot() {
     return {
       target: {
         type: "Class",
         value: "com.wix.detox.espresso.DetoxAction"
       },
-      method: "captureViewBitmap",
+      method: "takeViewScreenshot",
       args: []
     };
   }

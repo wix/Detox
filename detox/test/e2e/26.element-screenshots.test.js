@@ -9,7 +9,7 @@ describe(':android: Element screenshots', () => {
   });
 
   it('should take a screenshot of an element', async () => {
-    const bitmapPath = await element(by.id('Grandfather883')).captureBitmap();
+    const bitmapPath = await element(by.id('Grandfather883')).takeScreenshot();
     const bitmapBuffer = fs.readFileSync(bitmapPath);
     const expectedBitmapBuffer = fs.readFileSync(screenshotAssetPath);
     if (!bitmapBuffer.equals(expectedBitmapBuffer)) {

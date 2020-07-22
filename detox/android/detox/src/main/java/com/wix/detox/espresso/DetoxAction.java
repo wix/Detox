@@ -6,7 +6,7 @@ import com.wix.detox.espresso.DetoxErrors.DetoxRuntimeException;
 import com.wix.detox.espresso.DetoxErrors.StaleActionException;
 import com.wix.detox.espresso.action.DetoxMultiTap;
 import com.wix.detox.espresso.action.RNClickAction;
-import com.wix.detox.espresso.action.CaptureViewBitmapAction;
+import com.wix.detox.espresso.action.TakeViewScreenshotAction;
 import com.wix.detox.espresso.common.annot.MotionDir;
 import com.wix.detox.espresso.scroll.ScrollEdgeException;
 import com.wix.detox.espresso.scroll.ScrollHelper;
@@ -215,8 +215,8 @@ public class DetoxAction {
         }
     }
 
-    public static ViewAction captureViewBitmap() {
-        return new CaptureViewBitmapAction();
+    public static ViewAction takeViewScreenshot() {
+        return new TakeViewScreenshotAction();
     }
 
     private static CoordinatesProvider translate(final CoordinatesProvider coords,

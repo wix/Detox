@@ -223,12 +223,12 @@ describe('expect', () => {
     });
 
     it('should take and save the screenshot in a temp-file', async () => {
-      await _element.captureBitmap();
-      expect(ezFileIo.saveRawBase64Data).toHaveBeenCalledWith(invokeResultInBase64, { fileSuffix: '.detox.element.png' })
+      await _element.takeScreenshot();
+      expect(ezFileIo.saveRawBase64Data).toHaveBeenCalledWith(invokeResultInBase64, { fileSuffix: '.detox.elem-screenshot.png' })
     });
 
     it('should return the path to the temp-file containing screenshot data', async () => {
-      const result = await _element.captureBitmap();
+      const result = await _element.takeScreenshot();
       expect(result).toEqual('/mock/file/path');
     });
   });
