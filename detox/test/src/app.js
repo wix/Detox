@@ -10,6 +10,7 @@ import {
 import * as Screens from './Screens';
 
 const isAndroid = Platform.OS === 'android';
+const isIos = Platform.OS === 'ios';
 
 const { NativeModule } = NativeModules;
 
@@ -125,7 +126,10 @@ class example extends Component {
           })}
         </View>
 
-        {this.renderScreenButton('Shake', Screens.ShakeScreen)}
+        {isIos && this.renderScreenButton('Shake', Screens.ShakeScreen)}
+
+        {isAndroid && this.renderScreenButton('Element-Screenshots', Screens.ElementScreenshotScreen)}
+
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           {isAndroid && this.renderScreenButton('Launch Args', Screens.LaunchArgsScreen)}
           {isAndroid && this.renderInlineSeparator()}

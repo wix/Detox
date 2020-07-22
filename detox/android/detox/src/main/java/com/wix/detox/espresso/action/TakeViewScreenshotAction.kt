@@ -1,6 +1,5 @@
 package com.wix.detox.espresso.action
 
-import android.graphics.Rect
 import android.util.Base64
 import android.view.View
 import androidx.test.espresso.UiController
@@ -16,14 +15,7 @@ class TakeViewScreenshotAction(private val viewScreenshot: ViewScreenshot = View
     private var result: Any? = null
 
     override fun perform(uiController: UiController?, view: View?) {
-        view!!
-
-        val visibleRect = Rect()
-        if (!view.getLocalVisibleRect(visibleRect)) {
-            throw IllegalStateException("Cannot take screenshot of a view that's out of screen's bounds")
-        }
-
-        val rawResult = viewScreenshot.takeOf(view).asRawBytes()
+        val rawResult = viewScreenshot.takeOf(view!!).asRawBytes()
         result = Base64.encodeToString(rawResult, Base64.NO_WRAP or Base64.NO_PADDING)
     }
 
