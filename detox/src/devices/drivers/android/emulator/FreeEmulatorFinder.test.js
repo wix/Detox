@@ -1,77 +1,32 @@
+const FreeEmulatorFinder = require('./FreeEmulatorFinder');
+
 describe('FreeEmulatorFinder', () => {
-  const mockAdb = {};
-  const mockAvdName = 'mock-avd';
+  const avdName = 'mockAvdName';
 
-  let AdbDevicesHelperClass;
-  beforeEach(() => {
-    jest.mock('../tools/AdbDevicesHelper');
-    AdbDevicesHelperClass = require('../tools/AdbDevicesHelper');
-  });
-  const adbDevicesHelperObj = () => AdbDevicesHelperClass.mock.instances[0];
-
-  let mockDeviceRegistry;
   let uut;
   beforeEach(() => {
-    jest.mock('../../../../utils/logger');
-
-    const DeviceRegistry = jest.genMockFromModule('../../../DeviceRegistry');
-    mockDeviceRegistry = new DeviceRegistry();
-    mockDeviceFree();
-
-    const FreeEmulatorFinder = require('./FreeEmulatorFinder');
-    uut = new FreeEmulatorFinder(mockAdb, mockDeviceRegistry, mockAvdName);
+    uut = new FreeEmulatorFinder(undefined, undefined);
   });
 
-  describe('matcher function', () => {
-    it('should restrict matching to emulators', async () => {
-      const emuDevice = anEmulatorDevice();
-      const nonEmuDevice = aNonEmuDevice();
-
-      await uut.findFreeDevice();
-
-      const matcherFn = resolveMatcherFn();
-      expect(await matcherFn(emuDevice)).toEqual(true);
-      expect(await matcherFn(nonEmuDevice)).toEqual(false);
-    });
-
-    it('should restrict to free (unoccupied) devices', async () => {
-      const device = anEmulatorDevice();
-      mockDeviceBusy();
-
-      await uut.findFreeDevice();
-
-      const matcherFn = resolveMatcherFn();
-      expect(await matcherFn(device)).toEqual(false);
-      expect(mockDeviceRegistry.isDeviceBusy).toHaveBeenCalledWith('mock-name');
-    });
-
-    it('should restrict to the AVD name in question', async () => {
-      const device = {
-        ...anEmulatorDevice(),
-        queryName: jest.fn().mockResolvedValue('other ' + mockAvdName),
-      };
-
-      await uut.findFreeDevice();
-
-      const matcherFn = resolveMatcherFn();
-      expect(await matcherFn(device)).toEqual(false);
-    });
-
-    const resolveMatcherFn = () => adbDevicesHelperObj().lookupDevice.mock.calls[0][0];
+  it('should match when is an emulator and avdName matches', async () => {
+    const candidate = createDevice(avdName);
+    expect(await uut.isDeviceMatching(candidate, avdName)).toBe(true);
   });
 
-  const anEmulatorDevice = () => ({
-    type: 'emulator',
-    adbName: 'mock-name',
-    queryName: jest.fn().mockResolvedValue(mockAvdName),
+  it('should not match when not an emulator', async () => {
+    const candidate = createDevice(avdName, 'device');
+    expect(await uut.isDeviceMatching(candidate, avdName)).toBe(false);
   });
 
-  const aNonEmuDevice = () => ({
-    type: 'non-emulator',
-    adbName: 'mock-name',
-    queryName: jest.fn().mockResolvedValue(mockAvdName),
+  it('should not match when avdName does not match', async () => {
+    const candidate = createDevice(avdName);
+    expect(await uut.isDeviceMatching(candidate, 'wrongAvdName')).toBe(false);
   });
 
-  const mockDeviceBusy = () => mockDeviceRegistry.isDeviceBusy.mockReturnValue(true);
-  const mockDeviceFree = () => mockDeviceRegistry.isDeviceBusy.mockReturnValue(false);
+  const createDevice = (avdName, type = 'emulator') => ({
+    type,
+    async queryName() {
+      return avdName;
+    }
+  });
 });

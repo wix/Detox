@@ -24,6 +24,10 @@ const temporaryPath = require('../../../artifacts/utils/temporaryPath');
 const sleep = require('../../../utils/sleep');
 const retry = require('../../../utils/retry');
 const getAbsoluteBinaryPath = require('../../../utils/getAbsoluteBinaryPath');
+const DeviceRegistry = require('../../DeviceRegistry');
+const environment = require('../../../utils/environment');
+
+const ALLOCATE_DEVICE_LOG_EVT = 'ALLOCATE_DEVICE';
 
 class AndroidDriver extends DeviceDriverBase {
   constructor(config) {
@@ -40,6 +44,10 @@ class AndroidDriver extends DeviceDriverBase {
     this.devicePathBuilder = new AndroidDevicePathBuilder();
 
     this.instrumentation = new MonitoredInstrumentation(this.adb, logger);
+
+    this.deviceRegistry = new DeviceRegistry({
+      lockfilePath: environment.getDeviceLockFilePathAndroid()
+    });
   }
 
   declareArtifactPlugins() {
@@ -57,6 +65,21 @@ class AndroidDriver extends DeviceDriverBase {
   async getBundleIdFromBinary(apkPath) {
     const binaryPath = getAbsoluteBinaryPath(apkPath);
     return await this.aapt.getPackageName(binaryPath);
+  }
+
+  async allocateDevice(deviceQuery) {
+    log.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Trying to allocate a device based on "${deviceQuery}"`);
+    const adbName = await this.deviceRegistry.allocateDevice(() => this.doAllocateDevice(deviceQuery));
+    log.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Settled on ${adbName}`);
+    return adbName;
+  }
+
+  /**
+   * @protected
+   * @return {Promise<string>} adbName of a free matching device
+   */
+  async doAllocateDevice(deviceQuery) {
+    throw Error('Not implemented!');
   }
 
   async installApp(deviceId, _binaryPath, _testBinaryPath) {
@@ -131,6 +154,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async cleanup(deviceId, bundleId) {
+    await this.deviceRegistry.disposeDevice(deviceId);
     await this._terminateInstrumentation();
     await super.cleanup(deviceId, bundleId);
   }
