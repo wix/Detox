@@ -142,6 +142,10 @@ module.exports.builder = {
     group: 'Execution:',
     describe: `Due to problems with the "adb install" command on Android, Detox resorts to a different scheme for install APK's. Setting true will disable that and force usage of "adb install", instead.`,
   },
+  'inspect-brk': {
+    group: 'Debugging:',
+    describe: 'Allows debugging of the underlying test runner',
+  }
 };
 
 const collectExtraArgs = require('./utils/collectExtraArgs')(module.exports.builder);
@@ -199,6 +203,7 @@ module.exports.handler = async function test(program) {
       : 'config';
 
     const command = _.compact([
+      cliConfig.inspectBrk ? 'node --inspect-brk' : '',
       (path.join('node_modules', '.bin', runnerConfig.testRunner)),
       ...safeGuardArguments([
         (runnerConfig.runnerConfig ? `--${configParam} ${runnerConfig.runnerConfig}` : ''),
@@ -251,6 +256,7 @@ module.exports.handler = async function test(program) {
     }
 
     const command = _.compact([
+      cliConfig.inspectBrk ? 'node --inspect-brk' : '',
       path.join('node_modules', '.bin', runnerConfig.testRunner),
       ...safeGuardArguments([
         cliConfig.noColor ? ' --no-color' : '',
