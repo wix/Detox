@@ -156,6 +156,17 @@ class DetoxAction {
     };
   }
 
+  static takeViewScreenshot() {
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxAction"
+      },
+      method: "takeViewScreenshot",
+      args: []
+    };
+  }
+
 }
 
 module.exports = DetoxAction;

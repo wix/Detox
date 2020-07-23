@@ -34,10 +34,13 @@ import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 public class EspressoDetox {
     private static final String LOG_TAG = "detox";
 
-    private static final String METHOD_GET_ACTIVITY = "getCurrentActivity";
+    public static Object perform(ViewInteraction interaction, ViewAction action) {
+        interaction.perform(action);
 
-    public static ViewInteraction perform(ViewInteraction interaction, ViewAction action) {
-        return interaction.perform(action);
+        if (action instanceof ActionWithResult) {
+            return ((ActionWithResult) action).getResult();
+        }
+        return null;
     }
 
     public static Activity getActivity(Context context) {

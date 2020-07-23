@@ -21,6 +21,7 @@ import LaunchArgsScreen from './LaunchArgsScreen';
 import LaunchNotificationScreen from './LaunchNotificationScreen';
 import PickerViewScreen from './PickerViewScreen';
 import DeviceScreen from './DeviceScreen';
+import ElementScreenshotScreen from './ElementScreenshotScreen';
 
 export {
   SanityScreen,
@@ -45,5 +46,6 @@ export {
   LanguageScreen,
   LaunchArgsScreen,
   LaunchNotificationScreen,
-  DeviceScreen
+  DeviceScreen,
+  ElementScreenshotScreen,
 };
