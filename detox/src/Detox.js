@@ -167,6 +167,7 @@ class Detox {
 
     const matchers = matchersRegistry.resolve(this.device, {
       invocationManager,
+      emitter: this._eventEmitter,
     });
     Object.assign(this, matchers);
 

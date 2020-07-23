@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const configuration = require('./configuration');
 const testSummaries = require('./artifacts/__mocks__/testSummaries.mock');
 
@@ -30,17 +29,10 @@ describe('Detox', () => {
   let detox;
   let lifecycleSymbols;
 
-  function client() {
-    return Client.mock.instances[0];
-  }
-
-  function device() {
-    return Device.mock.instances[0];
-  }
-
-  function artifactsManager() {
-    return ArtifactsManager.mock.instances[0];
-  }
+  const client = () => Client.mock.instances[0];
+  const device = () => Device.mock.instances[0];
+  const artifactsManager = () => ArtifactsManager.mock.instances[0];
+  const invocationManager = () => invoke.InvocationManager.mock.instances[0];
 
   beforeEach(async () => {
     detoxConfig = await configuration.composeDetoxConfig({
@@ -117,15 +109,18 @@ describe('Detox', () => {
           detoxConfig.deviceConfig.type,
           {
             client: client(),
-            invocationManager: invoke.InvocationManager.mock.instances[0],
+            invocationManager: invocationManager(),
             emitter: expect.anything(),
           }
         ));
 
-      it('should resolve matchers implementation', () =>
+      it('should resolve matchers implementation', () => {
+        const { emitter } = Device.mock.calls[0][0];
         expect(matchersRegistry.resolve).toHaveBeenCalledWith(device(), {
-          invocationManager: invoke.InvocationManager.mock.instances[0],
-        }));
+          invocationManager: invocationManager(),
+          emitter,
+        });
+      });
 
       it('should take the matchers from the matchers-registry to Detox', () =>
         expect(detox.globalMatcher).toBe(mockGlobalMatcher));

@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const debug = require('../utils/debug'); // debug utils, leave here even if unused
-const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
 class Device {
   constructor({ deviceConfig, deviceDriver, emitter, sessionConfig }) {
