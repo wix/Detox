@@ -20,7 +20,7 @@ describe(':android: Element screenshots', () => {
 
     await element(by.id('switchOrientation')).tap();
 
-    const bitmapPath = await element(by.id('fancyElement')).takeScreenshot();
+    const bitmapPath = await element(by.id('fancyElement')).takeScreenshot('fancy-element');
     expectBitmapsToBeEqual(bitmapPath, screenshotAssetPath);
   });
 

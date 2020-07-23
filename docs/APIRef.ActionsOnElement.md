@@ -23,7 +23,7 @@ Use [expectations](APIRef.Expect.md) to verify element states.
 - [`.setDatePickerDate()`](#setdatepickerdatedatestring-dateformat--ios-only) **iOS only**
 - [`.adjustSliderToPosition()`](#adjustslidertopositionnormalizedposition--ios-only) **iOS only**
 - [`.getAttributes()`](#getAttributes--ios-only) **iOS only**
-- [`.takeScreenshot(name)`](#takescreenshotname-android-only) **Android only**
+- [`.takeScreenshot([name])`](#takescreenshotname-android-only) **Android only**
 
 ### `tap(point)`
 
@@ -242,11 +242,11 @@ jestExpect(multipleMatchedElements.elements.length).toBe(5);
 jestExpect(multipleMatchedElements.elements[0].identifier).toBe('FirstElement');
 ```
 
-### `takeScreenshot(name)` Android Only
+### `takeScreenshot([name])` Android Only
 
 Takes a screenshot of the native view associated with the element in question, and schedules putting it to the [artifacts folder](https://github.com/wix/Detox/blob/master/docs/APIRef.Artifacts.md#enabling-artifacts) upon completion of the current test. Useful for highly-focused visual comparison tests (i.e. comparison between elements rather than of [complete screens](https://github.com/wix/Detox/blob/master/docs/APIRef.DeviceObjectAPI.md#devicetakescreenshotname) with "visual noise").
 
-`name (optional)` - Name of the final file to store as the image artifact. For example, `my-text-field` would result in a file named `my-text-field.png`. In case the name isn't provided, Detox would self-generate a distinct name, instead (though not a very descriptive one).
+`name (optional)` - Name of the final image-file to store as the artifact. For example, `my-text-field` would result in a file named `my-text-field.png`. In case the name isn't provided, Detox would self-generate a random distinct name, instead (though not a very descriptive one).
 
 Returns the path of a temporary file containing the resulted `.png` image.
 

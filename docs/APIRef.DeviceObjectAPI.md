@@ -37,7 +37,7 @@ The value will be `undefined` until the device is properly _prepared_ (i.e. in `
 - [`device.disableSynchronization()`](#devicedisablesynchronization)
 - [`device.resetContentAndSettings()` **iOS Only**](#deviceresetcontentandsettings-ios-only)
 - [`device.getPlatform()`](#devicegetplatform)
-- [`device.takeScreenshot(name)`](#devicetakescreenshotname)
+- [`device.takeScreenshot([name])`](#devicetakescreenshotname)
 - [`device.shake()` **iOS Only**](#deviceshake-ios-only)
 - [`device.setBiometricEnrollment(bool)` **iOS Only**](#devicesetbiometricenrollmentbool-ios-only)
 - [`device.matchFace()` **iOS Only**](#devicematchface-ios-only)
@@ -337,16 +337,16 @@ if (device.getPlatform() === 'ios') {
 }
 ```
 
-### `device.takeScreenshot(name)`
+### `device.takeScreenshot([name])`
 
-Takes a screenshot on the device and schedules putting it to
-the [artifacts folder](APIRef.Artifacts.md#enabling-artifacts) upon
+Takes a screenshot on the device and schedules putting it tothe [artifacts folder](APIRef.Artifacts.md#enabling-artifacts) upon
 completion of the current test.
 
-Returns a temporary path to the screenshot.
+`name (optional)` - Name of the final image-file to store as the artifact. For example, `my-text-field` would result in a file named `my-text-field.png`. In case the name isn't provided, Detox would self-generate a random, distinct name, instead (though not a very descriptive one).
 
-**NOTE:** The returned path is guaranteed to be valid only during the test execution.
-Later on, the screenshot will be moved to the artifacts location.
+Returns the path of a temporary file containing the resulted `.png` image.
+
+**NOTE:** The returned path is guaranteed to be valid only during the test execution. Later on, the screenshot will be moved to the artifacts location.
 
 Consider the example below:
 

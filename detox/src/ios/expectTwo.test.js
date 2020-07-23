@@ -361,6 +361,15 @@ describe('expectTwo', () => {
 
     expect(testCall).deepEquals(jsonOutput);
   });
+
+  it(`element().takeScreenshot`, () => {
+    try {
+      e.element(e.by.id('uniqueId')).takeScreenshot();
+      fail();
+    } catch (e) {
+      expect(e.message).toContain('not supported on iOS');
+    }
+  });
 });
 
 expect.extend({

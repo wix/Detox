@@ -175,7 +175,7 @@ class SimulatorDriver extends IosDriver {
 
     await this.emitter.emit('createExternalArtifact', {
       pluginId: 'screenshot',
-      artifactName: screenshotName,
+      artifactName: screenshotName || path.basename(tempPath, '.png'),
       artifactPath: tempPath,
     });
 
