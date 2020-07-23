@@ -2,36 +2,31 @@ const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
 const ini = require('ini');
-const AndroidDriver = require('./AndroidDriver');
-const FreeEmulatorFinder = require('./emulator/FreeEmulatorFinder');
-const AVDValidator = require('./emulator/AVDValidator');
-const EmulatorLauncher = require('./emulator/EmulatorLauncher');
-const EmulatorVersionResolver = require('./emulator/EmulatorVersionResolver');
-const { EmulatorExec } = require('./exec/EmulatorExec');
-const EmulatorTelnet = require('./tools/EmulatorTelnet');
-const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
-const DeviceRegistry = require('../../DeviceRegistry');
-const environment = require('../../../utils/environment');
-const retry = require('../../../utils/retry');
-const log = require('../../../utils/logger').child({ __filename });
-const argparse = require('../../../utils/argparse');
+const AndroidDriver = require('../AndroidDriver');
+const FreeEmulatorFinder = require('./FreeEmulatorFinder');
+const AVDValidator = require('./AVDValidator');
+const EmulatorLauncher = require('./EmulatorLauncher');
+const EmulatorVersionResolver = require('./EmulatorVersionResolver');
+const { EmulatorExec } = require('../exec/EmulatorExec');
+const EmulatorTelnet = require('../tools/EmulatorTelnet');
+const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
+const environment = require('../../../../utils/environment');
+const retry = require('../../../../utils/retry');
+const log = require('../../../../utils/logger').child({ __filename });
+const argparse = require('../../../../utils/argparse');
 
 const DetoxEmulatorsPortRange = {
   min: 10000,
   max: 20000
 };
 
-const ALLOCATE_DEVICE_LOG_EVT = 'ALLOCATE_DEVICE';
 const EMU_BIN_STABLE_SKIN_VER = 28;
 
 class EmulatorDriver extends AndroidDriver {
   constructor(config) {
     super(config);
 
-    this.deviceRegistry = new DeviceRegistry({
-      lockfilePath: environment.getDeviceLockFilePathAndroid(),
-    });
-
+    this.freeDeviceFinder = new FreeEmulatorFinder(this.adb, this.deviceRegistry);
     const emulatorExec = new EmulatorExec();
     this._emuVersionResolver = new EmulatorVersionResolver(emulatorExec);
     this._emuLauncher = new EmulatorLauncher(emulatorExec);
@@ -42,7 +37,7 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   get name() {
-    return this._name
+    return this._name;
   }
 
   async acquireFreeDevice(deviceQuery) {
@@ -51,7 +46,7 @@ class EmulatorDriver extends AndroidDriver {
     await this._avdValidator.validate(avdName);
     await this._fixEmulatorConfigIniSkinNameIfNeeded(avdName);
 
-    const adbName = await this._allocateDevice(avdName);
+    const adbName = await this.allocateDevice(avdName) || this._createDevice();
 
     await this._boot(avdName, adbName);
 
@@ -61,6 +56,10 @@ class EmulatorDriver extends AndroidDriver {
 
     this._name = `${adbName} (${avdName})`;
     return adbName;
+  }
+
+  async doAllocateDevice(deviceQuery) {
+    return this.freeDeviceFinder.findFreeDevice(deviceQuery);
   }
 
   async installApp(deviceId, _binaryPath, _testBinaryPath) {
@@ -73,11 +72,6 @@ class EmulatorDriver extends AndroidDriver {
       testBinaryPath,
     } = this._getInstallPaths(_binaryPath, _testBinaryPath);
     await this.appInstallHelper.install(deviceId, binaryPath, testBinaryPath);
-  }
-
-  async cleanup(adbName, bundleId) {
-    await this.deviceRegistry.disposeDevice(adbName);
-    await super.cleanup(adbName, bundleId);
   }
 
   /*async*/ binaryVersion() {
@@ -94,7 +88,7 @@ class EmulatorDriver extends AndroidDriver {
     }
 
     await this._waitForBootToComplete(adbName);
-    await this.emitter.emit('bootDevice', { coldBoot, deviceId: adbName, type: adbName });
+    await this.emitter.emit('bootDevice', { coldBoot, deviceId: adbName, type: avdName });
   }
 
   async _waitForBootToComplete(deviceId) {
@@ -148,19 +142,6 @@ class EmulatorDriver extends AndroidDriver {
       config['skin.name'] = `${width}x${height}`;
       fs.writeFileSync(configFile, ini.stringify(config));
     }
-  }
-
-  async _allocateDevice(avdName) {
-    log.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Trying to allocate a device based on ${avdName}`);
-    const adbName = await this.deviceRegistry.allocateDevice(() => this._doAllocateDevice(avdName));
-    log.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Settled on ${adbName}`);
-    return adbName;
-  }
-
-  async _doAllocateDevice(avdName) {
-    const freeEmulatorFinder = new FreeEmulatorFinder(this.adb, this.deviceRegistry, avdName);
-    const freeEmulatorAdbName = await freeEmulatorFinder.findFreeDevice();
-    return freeEmulatorAdbName || this._createDevice();
   }
 
   async _createDevice() {

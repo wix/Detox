@@ -27,8 +27,8 @@ class DriverRegistry {
 DriverRegistry.default = new DriverRegistry({
   'ios.none': require('./drivers/ios/IosDriver'),
   'ios.simulator': require('./drivers/ios/SimulatorDriver'),
-  'android.emulator': require('./drivers/android/EmulatorDriver'),
-  'android.attached': require('./drivers/android/AttachedAndroidDriver'),
+  'android.emulator': require('./drivers/android/emulator/EmulatorDriver'),
+  'android.attached': require('./drivers/android/attached/AttachedAndroidDriver'),
 });
 
 module.exports = DriverRegistry;
