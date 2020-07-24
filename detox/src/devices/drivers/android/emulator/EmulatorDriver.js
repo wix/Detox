@@ -144,7 +144,7 @@ class EmulatorDriver extends AndroidDriver {
     }
   }
 
-  async _createDevice() {
+  _createDevice() {
     const {min, max} = DetoxEmulatorsPortRange;
     let port = Math.random() * (max - min) + min;
     port = port & 0xFFFFFFFE; // Should always be even
