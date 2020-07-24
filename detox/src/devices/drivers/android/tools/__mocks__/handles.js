@@ -13,6 +13,7 @@ const emulator5558 = new MockEmulatorHandle('emulator-5558\tdevice');
 const emulator5560 = new MockEmulatorHandle('emulator-5560\tdevice');
 const localhost5555 = new DeviceHandle('localhost:5555\tdevice');
 const ip5557 = new DeviceHandle('192.168.4.19:5557\tdevice');
+const deviceOffline = new MockEmulatorHandle('192.168.4.19:5559\toffline');
 
 module.exports = {
   mockAvdName,
@@ -21,4 +22,5 @@ module.exports = {
   emulator5560,
   localhost5555,
   ip5557,
+  deviceOffline,
 };

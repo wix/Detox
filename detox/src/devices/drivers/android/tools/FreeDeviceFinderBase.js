@@ -17,7 +17,14 @@ class FreeDeviceFinderBase {
         continue;
       }
 
-      if (await this.isDeviceMatching(candidate, deviceQuery)) {
+      const isOffline = candidate.status === 'offline';
+      if (isOffline) {
+        log.debug({ event: DEVICE_LOOKUP_LOG_EVT }, `Device ${candidate.adbName} is offline, skipping...`);
+        continue;
+      }
+
+      const isMatching = await this.isDeviceMatching(candidate, deviceQuery);
+      if (isMatching) {
         log.debug({ event: DEVICE_LOOKUP_LOG_EVT }, `Found a matching free device ${candidate.adbName}`);
         return candidate.adbName;
       } else {
