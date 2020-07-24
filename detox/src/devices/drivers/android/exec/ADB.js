@@ -2,9 +2,10 @@ const _ = require('lodash');
 const {execWithRetriesAndLogs, spawnAndLog} = require('../../../../utils/exec');
 const {escape} = require('../../../../utils/pipeCommands');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
-const EmulatorTelnet = require('../tools/EmulatorTelnet');
 const {getAdbPath} = require('../../../../utils/environment');
 const {encodeBase64} = require('../../../../utils/encoding');
+const DeviceHandle = require('../tools/DeviceHandle');
+const EmulatorHandle = require('../tools/EmulatorHandle');
 
 class ADB {
   constructor() {
@@ -294,18 +295,6 @@ class ADB {
     const serial = deviceId ? ['-s', deviceId] : [];
     return spawnAndLog(this.adbBin, [...serial, ...params], spawnOptions);
   }
-
-  static inferDeviceType(adbName) {
-    if (adbName.startsWith('emulator-')) {
-      return 'emulator';
-    }
-
-    if ((/^((1?\d?\d|25[0-5]|2[0-4]\d)(\.|:)){4}[0-9]{4}/.test(adbName))) {
-      return 'genymotion';
-    }
-
-    return 'device';
-  }
 }
 
 function assertEmulatorHasPort(device, stdout) {
@@ -324,42 +313,6 @@ function assertEmulatorHasPort(device, stdout) {
   ].join('\n');
 
   throw new Error(errorMessage);
-}
-
-class DeviceHandle {
-  constructor(deviceString) {
-    const [adbName, status] = deviceString.split('\t');
-    this.type = ADB.inferDeviceType(adbName);
-    this.adbName = adbName;
-    this.status = status;
-  }
-}
-
-class EmulatorHandle extends DeviceHandle {
-  constructor(deviceString) {
-    super(deviceString);
-
-    this.port = this.adbName.split('-')[1];
-  }
-
-  queryName() {
-    if (!this._name) {
-      this._name = this._queryNameViaTelnet();
-    }
-
-    return this._name;
-  }
-
-  async _queryNameViaTelnet() {
-    const telnet = new EmulatorTelnet();
-
-    await telnet.connect(this.port);
-    try {
-      return await telnet.avdName();
-    } finally {
-      await telnet.quit();
-    }
-  }
 }
 
 module.exports = ADB;
