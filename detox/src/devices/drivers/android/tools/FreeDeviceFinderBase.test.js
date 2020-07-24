@@ -1,5 +1,5 @@
 const FreeDeviceFinderBase = require('./FreeDeviceFinderBase');
-const { emulator5556, emulator5558, emulator5560 } = require('../tools/__mocks__/handles');
+const { emulator5556, emulator5558, emulator5560, deviceOffline } = require('../tools/__mocks__/handles');
 
 describe('devices lookup helper', () => {
   const mockAdb = { devices: jest.fn() };
@@ -37,6 +37,11 @@ describe('devices lookup helper', () => {
 
   it('should return null when device is busy', async () => {
     mockAllDevicesBusy();
+    expect(await uut.findFreeDevice()).toEqual(null);
+  });
+
+  it('should return null when device is offline', async () => {
+    mockAdbDevices([deviceOffline]);
     expect(await uut.findFreeDevice()).toEqual(null);
   });
 
