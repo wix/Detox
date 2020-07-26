@@ -1,6 +1,6 @@
 # Taking Screenshots
 
-Detox supports taking in-test screenshots from the device, making the result immediately available in the form of an image file.
+Detox supports taking in-test screenshots of the device, making the result immediately available in the form of an image file.
 
 Screenshots can be taken in two levels:
 
@@ -71,7 +71,7 @@ This API well-captures all elements, although alongside surrounding "visual nois
 
 ![device-screenshot](img/device-screenshot.png)
 
-As the image includes, for example, the current time (at the top-left corner), running the test in any _different_ time would unnecessarily result in an utter comparison failure, making the test downright useless. Fortunately, this can be resolved, by putting the device into "demo mode" (i.e. freezing the irrelevant, volatile elements) . For example:
+As the image includes, for example, the current time (at the top-left corner), running the test in any _different_ time would unnecessarily result in an utter comparison failure, making the test downright useless. Fortunately, this can be resolved, by putting the device into "demo mode" (i.e. freezing the irrelevant, volatile elements) . For example (credits - [Miki](https://github.com/M-i-k-e-l)):
 
 ```js
 async function setDemoMode() {
