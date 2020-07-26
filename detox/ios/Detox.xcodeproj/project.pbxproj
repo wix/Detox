@@ -241,7 +241,6 @@
 		397CA78A248010B5005E8A71 /* UISlider+DetoxUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UISlider+DetoxUtils.h"; sourceTree = "<group>"; };
 		397CA78B248010B5005E8A71 /* UISlider+DetoxUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UISlider+DetoxUtils.m"; sourceTree = "<group>"; };
 		397CA7982483F07D005E8A71 /* ApproximateEquality.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApproximateEquality.swift; sourceTree = "<group>"; };
-		397CA7A02483F8AA005E8A71 /* NSThread+DetoxUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSThread+DetoxUtils.swift"; sourceTree = "<group>"; };
 		397CA7A224840449005E8A71 /* NSException+DetoxUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSException+DetoxUtils.swift"; sourceTree = "<group>"; };
 		3980D0FD2448B52A004812DD /* UIView+DetoxActions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+DetoxActions.m"; sourceTree = "<group>"; };
 		3980D0FE2448B52A004812DD /* UIApplication+DTXAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIApplication+DTXAdditions.h"; sourceTree = "<group>"; };
@@ -518,7 +517,6 @@
 				397CA7A224840449005E8A71 /* NSException+DetoxUtils.swift */,
 				39EECB7A24C0A5AE009C3364 /* NSThread+DetoxUtils.h */,
 				39EECB7B24C0A5AF009C3364 /* NSThread+DetoxUtils.m */,
-				397CA7A02483F8AA005E8A71 /* NSThread+DetoxUtils.swift */,
 				39DC985024BB903800FFB224 /* ReactNativeSupport */,
 				39EECB4224BF4FDA009C3364 /* ReactNativeSupport.m */,
 				390DEDDB248D56F600E27BE8 /* String+LocalizedError.swift */,
