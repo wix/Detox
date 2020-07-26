@@ -12,7 +12,7 @@
 
 - (double)dtx_normalizedSliderPosition
 {
-	if(self.maximumValue) == 0.0)
+	if(self.maximumValue == 0.0)
 	{
 		//No nans allowed.
 		return 0.0;
