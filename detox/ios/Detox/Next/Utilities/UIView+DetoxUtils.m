@@ -20,21 +20,27 @@
 //#endif
 
 DTX_ALWAYS_INLINE
+static id DTXJSONSafeNSNumberOrString(double d)
+{
+	return isnan(d) ? @"NaN" : @(d);
+}
+
+DTX_ALWAYS_INLINE
 static NSDictionary* DTXInsetsToDictionary(UIEdgeInsets insets)
 {
-	return @{@"top": @(insets.top), @"bottom": @(insets.bottom), @"left": @(insets.left), @"right": @(insets.right)};
+	return @{@"top": DTXJSONSafeNSNumberOrString(insets.top), @"bottom": DTXJSONSafeNSNumberOrString(insets.bottom), @"left": DTXJSONSafeNSNumberOrString(insets.left), @"right": DTXJSONSafeNSNumberOrString(insets.right)};
 }
 
 DTX_ALWAYS_INLINE
 static NSDictionary* DTXRectToDictionary(CGRect rect)
 {
-	return @{@"x": @(rect.origin.x), @"y": @(rect.origin.y), @"width": @(rect.size.width), @"height": @(rect.size.height)};
+	return @{@"x": DTXJSONSafeNSNumberOrString(rect.origin.x), @"y": DTXJSONSafeNSNumberOrString(rect.origin.y), @"width": DTXJSONSafeNSNumberOrString(rect.size.width), @"height": DTXJSONSafeNSNumberOrString(rect.size.height)};
 }
 
 DTX_ALWAYS_INLINE
 static NSDictionary* DTXPointToDictionary(CGPoint point)
 {
-	return @{@"x": @(point.x), @"y": @(point.y)};
+	return @{@"x": DTXJSONSafeNSNumberOrString(point.x), @"y": DTXJSONSafeNSNumberOrString(point.y)};
 }
 
 DTX_ALWAYS_INLINE
@@ -537,7 +543,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	
 	CGPoint accessibilityActivationPointInViewCoordinateSpace = self.dtx_accessibilityActivationPointInViewCoordinateSpace;
 	rv[@"activationPoint"] = DTXPointToDictionary(accessibilityActivationPointInViewCoordinateSpace);
-	rv[@"normalizedActivationPoint"] = DTXPointToDictionary(CGPointMake(accessibilityActivationPointInViewCoordinateSpace.x / CGRectGetWidth(self.bounds), accessibilityActivationPointInViewCoordinateSpace.y / CGRectGetHeight(self.bounds)));
+	rv[@"normalizedActivationPoint"] = DTXPointToDictionary(CGPointMake(CGRectGetWidth(self.bounds) == 0 ? 0 : accessibilityActivationPointInViewCoordinateSpace.x / CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds) == 0 ? 0 : accessibilityActivationPointInViewCoordinateSpace.y / CGRectGetHeight(self.bounds)));
 	
 	rv[@"hittable"] = self.dtx_isHittable ? @YES : @NO;
 	rv[@"visible"] = self.dtx_isVisible ? @YES : @NO;
