@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
 class Expect {
   constructor(element) {
@@ -197,6 +198,11 @@ class Element {
     if (!(typeof position === 'number' && position >= 0 && position <= 1)) throw new Error('position should be a number [0.0, 1.0], but got ' + (position + (' (' + (typeof position + ')'))));
     return this.withAction('adjustSliderToPosition', position);
   }
+
+  takeScreenshot() {
+    throw new DetoxRuntimeError({message: 'Element screenshots are not supported on iOS, at the moment!'});
+  }
+
   createInvocation(action, ...params) {
     return ({
       type: 'action',

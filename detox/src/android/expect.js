@@ -1,5 +1,6 @@
-const tempfile = require('tempfile');
 const fs = require('fs-extra');
+const path = require('path');
+const tempfile = require('tempfile');
 const invoke = require('../invoke');
 const matchers = require('./matcher');
 const DetoxActionApi = require('./espressoapi/DetoxAction');
@@ -205,8 +206,9 @@ class WaitForActionInteraction extends WaitForActionInteractionBase {
 }
 
 class Element {
-  constructor(invocationManager, matcher) {
+  constructor(invocationManager, emitter, matcher) {
     this._invocationManager = invocationManager;
+    this._emitter = emitter;
     this._originalMatcher = matcher;
     this._selectElementWithMatcher(this._originalMatcher);
   }
@@ -279,11 +281,17 @@ class Element {
     return await new ActionInteraction(this._invocationManager, this, new SwipeAction(direction, speed, percentage)).execute();
   }
 
-  async takeScreenshot() {
+  async takeScreenshot(screenshotName) {
     // TODO this should be moved to a lower-layer handler of this use-case
     const resultBase64 = await new ActionInteraction(this._invocationManager, this, new TakeElementScreenshot()).execute();
     const filePath = tempfile('detox.element-screenshot.png');
     await fs.writeFile(filePath, resultBase64, 'base64');
+
+    await this._emitter.emit('createExternalArtifact', {
+      pluginId: 'screenshot',
+      artifactName: screenshotName || path.basename(filePath, '.png'),
+      artifactPath: filePath,
+    });
     return filePath;
   }
 }
@@ -421,8 +429,9 @@ class WaitForElement extends WaitFor {
 }
 
 class AndroidExpect {
-  constructor({ invocationManager }) {
+  constructor({ invocationManager, emitter }) {
     this._invocationManager = invocationManager;
+    this._emitter = emitter;
 
     this.by = {
       accessibilityLabel: value => new LabelMatcher(value),
@@ -440,7 +449,7 @@ class AndroidExpect {
   }
 
   element(matcher) {
-    return new Element(this._invocationManager, matcher);
+    return new Element(this._invocationManager, this._emitter, matcher);
   }
 
   expect(element) {

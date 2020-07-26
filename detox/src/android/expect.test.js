@@ -2,15 +2,20 @@ describe('expect', () => {
   let e;
 
   let mockExecutor;
+  let emitter;
   beforeEach(() => {
     jest.mock('tempfile');
     jest.mock('fs-extra');
 
     mockExecutor = new MockExecutor();
 
+    const Emitter = jest.genMockFromModule('../utils/AsyncEmitter');
+    emitter = new Emitter();
+
     const AndroidExpect = require('./expect');
     e = new AndroidExpect({
       invocationManager: mockExecutor,
+      emitter,
     });
   });
 
@@ -210,7 +215,7 @@ describe('expect', () => {
   });
 
   describe('element screenshots', () => {
-    const tempFilePath = '/path/to/temp-file.ext';
+    const tempFilePath = '/path/to/temp-file.png';
     const invokeResultInBase64 = 'VGhlcmUgaXMgbm8gc3Bvb24h';
 
     let tempfile;
@@ -235,6 +240,26 @@ describe('expect', () => {
     it('should return the path to the temp-file containing screenshot data', async () => {
       const result = await _element.takeScreenshot();
       expect(result).toEqual(tempFilePath);
+    });
+
+    it('should emit a named-artifact creation event', async () => {
+      const screenshotName = 'mock-screenshot-name';
+      await _element.takeScreenshot(screenshotName);
+      expect(emitter.emit).toHaveBeenCalledWith('createExternalArtifact', {
+        pluginId: 'screenshot',
+        artifactName: screenshotName,
+        artifactPath: tempFilePath,
+      });
+    });
+
+    it('should emit an artifact creation event with a default name', async () => {
+      await _element.takeScreenshot(undefined);
+      expect(emitter.emit).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          artifactName: 'temp-file',
+        },
+      ));
     });
   });
 });

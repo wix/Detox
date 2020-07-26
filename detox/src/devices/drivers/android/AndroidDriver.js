@@ -1,6 +1,6 @@
+const path = require('path');
 const fs = require('fs');
 const URL = require('url').URL;
-const _ = require('lodash');
 const DeviceDriverBase = require('../DeviceDriverBase');
 const logger = require('../../../utils/logger');
 const log = logger.child({ __filename });
@@ -175,7 +175,7 @@ class AndroidDriver extends DeviceDriverBase {
 
     await this.emitter.emit('createExternalArtifact', {
       pluginId: 'screenshot',
-      artifactName: screenshotName,
+      artifactName: screenshotName || path.basename(tempPath, '.png'),
       artifactPath: tempPath,
     });
 
