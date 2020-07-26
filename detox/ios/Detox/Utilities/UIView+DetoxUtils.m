@@ -337,11 +337,22 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	__block BOOL rv = NO;
 	BOOL isHit = (selector == @selector(dtx_hitTest:withEvent:lookingFor:));
 
-	if(isHit && self.userInteractionEnabled == NO)
+	if(isHit)
 	{
-		_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: @"View has user interaction disabled (userInteractionEnabled == NO)"}]);
-
-		return NO;
+		if(self.userInteractionEnabled == NO)
+		{
+			_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: @"View has user interaction disabled (userInteractionEnabled == NO)"}]);
+			
+			return NO;
+		}
+		
+		UIView* hitTest = [self hitTest:point withEvent:nil];
+		if(hitTest == nil)
+		{
+			_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: @"View declined to accept touch (hitTest:withEvent: == nil)"}]);
+			
+			return NO;
+		}
 	}
 	
 	id (*testFunc)(id, SEL, CGPoint, id, id) = (void*)objc_msgSend;
