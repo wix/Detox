@@ -339,33 +339,7 @@ if (device.getPlatform() === 'ios') {
 
 ### `device.takeScreenshot([name])`
 
-Takes a screenshot on the device and schedules putting it tothe [artifacts folder](APIRef.Artifacts.md#enabling-artifacts) upon
-completion of the current test.
-
-`name (optional)` - Name of the final image-file to store as the artifact. For example, `my-text-field` would result in a file named `my-text-field.png`. In case the name isn't provided, Detox would self-generate a random, distinct name, instead (though not a very descriptive one).
-
-Returns the path of a temporary file containing the resulted `.png` image.
-
-**NOTE:** The returned path is guaranteed to be valid only during the test execution. Later on, the screenshot will be moved to the artifacts location.
-
-Consider the example below:
-
-```js
-describe('Menu items', () => {
-  it('should have Logout', async () => {
-    // ...
-    const screenshotPath = await device.takeScreenshot('tap on menu');
-    // ...
-  });
-});
-```
-
-In this example:
-
-* If `--take-screenshots none` is set, the screenshot will be taken, but it won't be saved to `<artifacts-location>` after the test ends.
-* If `--take-screenshots failing` is set, and the test passes, the screenshot won't be saved to `<artifacts-location>` after the test ends.
-* In the other modes (`manual` and `all`), if the test passes, the screenshot will be put to `<artifacts-location>/✓ Menu items should have Logout/tap on menu.png`.
-* In the other modes (`manual` and `all`), if the test fails, the screenshot will be put to `<artifacts-location>/✗ Menu items should have Logout/tap on menu.png`.
+Takes a screenshot of the device. For full details on taking screenshots with Detox, refer to the [screen-shots guide](APIRef.Screenshots.md).
 
 ### `device.shake()` **iOS Only**
 Simulate shake

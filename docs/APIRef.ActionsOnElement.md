@@ -244,34 +244,7 @@ jestExpect(multipleMatchedElements.elements[0].identifier).toBe('FirstElement');
 
 ### `takeScreenshot([name])` Android Only
 
-Takes a screenshot of the native view associated with the element in question, and schedules putting it to the [artifacts folder](https://github.com/wix/Detox/blob/master/docs/APIRef.Artifacts.md#enabling-artifacts) upon completion of the current test. Useful for highly-focused visual comparison tests (i.e. comparison between elements rather than of [complete screens](https://github.com/wix/Detox/blob/master/docs/APIRef.DeviceObjectAPI.md#devicetakescreenshotname) with "visual noise").
-
-`name (optional)` - Name of the final image-file to store as the artifact. For example, `my-text-field` would result in a file named `my-text-field.png`. In case the name isn't provided, Detox would self-generate a random distinct name, instead (though not a very descriptive one).
-
-Returns the path of a temporary file containing the resulted `.png` image.
-
-**NOTE:** The returned path is guaranteed to be valid only during the test execution. Later on, the screenshot will be moved to the artifacts location.
-
-```js
-const bitmapPath = await element(by.id('fancy-element')).takeScreenshot();
-```
-
-A typical use case of this API is like so (i.e. taking a screenshot and saving the resulted image once, then keeping it as a snapshot of the expected result):
-
-```js
-const fs = require('fs');
-const bitmapBuffer = fs.readFileSync(bitmapPath); // bitmapPath: see above
-const snapshottedBitmapBuffer = fs.readFileSync(snapshottedBitmapPath);
-if (!bitmapBuffer.equals(expectedBitmapBuffer)) {
-  throw new Error('Bitmaps differ!');
-}
-```
-
-> The recommended, more practical way of doing this, is by utilizing more advanced 3rd-party image snapshotting & comparison tools such as [applitools](https://applitools.com).
-
-**Artifacts management**
-
-Adheres to the artifacts management rules of the equivalent device-level API, [device.takeScreenshot(name)](https://github.com/wix/Detox/blob/master/docs/APIRef.DeviceObjectAPI.md#devicetakescreenshotname).
+Takes a screenshot containing the matched element. For full details on taking screenshots with Detox, refer to the [screen-shots guide](APIRef.Screenshots.md).
 
 ## Deprecated Methods
 
