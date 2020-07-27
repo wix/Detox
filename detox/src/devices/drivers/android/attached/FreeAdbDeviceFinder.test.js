@@ -6,7 +6,7 @@ describe('FreeAdbDeviceFinder', () => {
     const finder = new FreeAdbDeviceFinder(undefined, undefined);
     const localhost = '^localhost:\\d+$';
 
-    expect(await finder.isDeviceMatching(localhost5555, localhost)).toBe(true);
-    expect(await finder.isDeviceMatching(ip5557, localhost)).toBe(false);
+    expect(await finder._isDeviceMatching(localhost5555, localhost)).toBe(true);
+    expect(await finder._isDeviceMatching(ip5557, localhost)).toBe(false);
   });
 });

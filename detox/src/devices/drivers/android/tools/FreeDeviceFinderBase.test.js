@@ -15,7 +15,7 @@ describe('devices lookup helper', () => {
     const FreeDeviceFinderImpl = class extends FreeDeviceFinderBase {
       constructor(adb, deviceRegistry) {
         super(adb, deviceRegistry);
-        this.isDeviceMatching = mockIsDeviceMatching;
+        this._isDeviceMatching = mockIsDeviceMatching;
       }
     };
     uut = new FreeDeviceFinderImpl(mockAdb, mockDeviceRegistry);

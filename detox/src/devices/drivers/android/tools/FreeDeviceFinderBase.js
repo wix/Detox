@@ -23,7 +23,7 @@ class FreeDeviceFinderBase {
         continue;
       }
 
-      const isMatching = await this.isDeviceMatching(candidate, deviceQuery);
+      const isMatching = await this._isDeviceMatching(candidate, deviceQuery);
       if (isMatching) {
         log.debug({ event: DEVICE_LOOKUP_LOG_EVT }, `Found a matching free device ${candidate.adbName}`);
         return candidate.adbName;
@@ -39,7 +39,7 @@ class FreeDeviceFinderBase {
    * @protected
    * @return {Promise<boolean>} `true` when the `candidate` matches the `deviceQuery`
    */
-  async isDeviceMatching(candidate, deviceQuery) {
+  async _isDeviceMatching(candidate, deviceQuery) {
     throw Error('Not implemented!');
   }
 }

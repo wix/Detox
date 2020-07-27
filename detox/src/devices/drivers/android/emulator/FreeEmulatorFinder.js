@@ -1,7 +1,7 @@
 const FreeDeviceFinderBase = require('../tools/FreeDeviceFinderBase');
 
 class FreeEmulatorFinder extends FreeDeviceFinderBase {
-  async isDeviceMatching(candidate, avdName) {
+  async _isDeviceMatching(candidate, avdName) {
     return candidate.type === 'emulator' && (await candidate.queryName()) === avdName;
   }
 }
