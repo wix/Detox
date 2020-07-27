@@ -5,6 +5,7 @@ import android.view.Surface;
 
 import com.linkedin.android.testbutler.TestButler;
 import com.wix.detox.Detox;
+import com.wix.detox.config.DetoxConfig;
 
 import org.junit.Rule;
 import org.junit.Test;

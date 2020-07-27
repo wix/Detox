@@ -5,6 +5,8 @@ import android.util.Log
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.bridge.ReactContext
+import com.wix.detox.common.DetoxErrors
+import com.wix.detox.config.DetoxConfig
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
@@ -13,7 +15,8 @@ private const val LOG_TAG = "DetoxRNLoading"
 open class ReactNativeLoadingMonitor(
         private val instrumentation: Instrumentation,
         private val rnApplication: ReactApplication,
-        private val previousReactContext: ReactContext?) {
+        private val previousReactContext: ReactContext?,
+        private val config: DetoxConfig = DetoxConfig.CONFIG) {
     val countDownLatch = CountDownLatch(1)
 
     fun getNewContext(): ReactContext? {
@@ -50,10 +53,11 @@ open class ReactNativeLoadingMonitor(
             try {
                 if (!countDownLatch.await(1, TimeUnit.SECONDS)) {
                     i++
-                    if (i >= 60) {
+                    if (i >= config.rnContextLoadTimeoutSec) {
+
                         // First load can take a lot of time. (packager)
                         // Loads afterwards should take less than a second.
-                        throw RuntimeException("waited a whole minute for the new RN-context")
+                        throw DetoxErrors.DetoxRuntimeException("Waited for the new RN-context for too long! (${config.rnContextLoadTimeoutSec} seconds)")
                     }
                 } else {
                     break
