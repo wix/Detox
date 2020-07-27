@@ -1,12 +1,12 @@
 class DeviceHandle {
   constructor(deviceString) {
     const [adbName, status] = deviceString.split('\t');
-    this.type = this.inferDeviceType(adbName);
+    this.type = this._inferDeviceType(adbName);
     this.adbName = adbName;
     this.status = status;
   }
 
-  inferDeviceType(adbName) {
+  _inferDeviceType(adbName) {
     if (adbName.startsWith('emulator-')) {
       return 'emulator';
     }
