@@ -1,6 +1,9 @@
-const FreeDeviceFinderBase = require('../tools/FreeDeviceFinderBase');
+const FreeDeviceFinder = require('../tools/FreeDeviceFinder');
 
-class FreeEmulatorFinder extends FreeDeviceFinderBase {
+class FreeEmulatorFinder extends FreeDeviceFinder {
+  /**
+   * @override
+   */
   async _isDeviceMatching(candidate, avdName) {
     return candidate.type === 'emulator' && (await candidate.queryName()) === avdName;
   }

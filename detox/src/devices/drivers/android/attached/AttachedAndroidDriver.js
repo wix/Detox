@@ -1,12 +1,12 @@
 const _ = require('lodash');
 const AndroidDriver = require('../AndroidDriver');
-const FreeAdbDeviceFinder = require('./FreeAdbDeviceFinder');
+const FreeDeviceFinder = require('../tools/FreeDeviceFinder');
 
 class AttachedAndroidDriver extends AndroidDriver {
   constructor(config) {
     super(config);
     
-    this.freeDeviceFinder = new FreeAdbDeviceFinder(this.adb, this.deviceRegistry);
+    this.freeDeviceFinder = new FreeDeviceFinder(this.adb, this.deviceRegistry);
     this._name = 'Unnamed Android Device';
   }
 

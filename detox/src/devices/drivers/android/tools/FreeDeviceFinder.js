@@ -2,7 +2,7 @@ const log = require('../../../../utils/logger').child({ __filename });
 
 const DEVICE_LOOKUP_LOG_EVT = 'DEVICE_LOOKUP';
 
-class FreeDeviceFinderBase {
+class FreeDeviceFinder {
   constructor(adb, deviceRegistry) {
     this.adb = adb;
     this.deviceRegistry = deviceRegistry;
@@ -37,11 +37,10 @@ class FreeDeviceFinderBase {
 
   /**
    * @protected
-   * @return {Promise<boolean>} `true` when the `candidate` matches the `deviceQuery`
    */
   async _isDeviceMatching(candidate, deviceQuery) {
-    throw Error('Not implemented!');
+    return RegExp(deviceQuery).test(candidate.adbName);
   }
 }
 
-module.exports = FreeDeviceFinderBase;
+module.exports = FreeDeviceFinder;
