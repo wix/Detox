@@ -46,7 +46,7 @@ class EmulatorDriver extends AndroidDriver {
     await this._avdValidator.validate(avdName);
     await this._fixEmulatorConfigIniSkinNameIfNeeded(avdName);
 
-    const adbName = await this.allocateDevice(avdName) || this._createDevice();
+    const adbName = await this.allocateDevice(avdName);
 
     await this._boot(avdName, adbName);
 
@@ -59,7 +59,8 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async doAllocateDevice(deviceQuery) {
-    return await this.freeDeviceFinder.findFreeDevice(deviceQuery);
+    const freeEmulatorAdbName = await this.freeDeviceFinder.findFreeDevice(deviceQuery);
+    return freeEmulatorAdbName || this._createDevice();
   }
 
   async installApp(deviceId, _binaryPath, _testBinaryPath) {
