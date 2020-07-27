@@ -28,7 +28,7 @@ class AttachedAndroidDriver extends AndroidDriver {
   }
 
   async doAllocateDevice(deviceQuery) {
-    return this.freeDeviceFinder.findFreeDevice(deviceQuery);
+    return await this.freeDeviceFinder.findFreeDevice(deviceQuery);
   }
 }
 
