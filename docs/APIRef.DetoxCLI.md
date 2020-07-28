@@ -87,6 +87,7 @@ Initiating your test suite. <sup>[[1]](#notice-passthrough)</sup>
 | --no-color                                    | Disable colors in log output |
 | --use-custom-logger | Use Detox' custom console-logging implementation, for logging Detox (non-device) logs. Disabling will fallback to node.js / test-runner's implementation (e.g. Jest / Mocha).<br />*Default: true* |
 | --force-adb-install | Due to problems with the `adb install` command on Android, Detox resorts to a different scheme for install APK's. Setting true will disable that and force usage of `adb install`, instead.<br/>This flag is temporary until the Detox way proves stable.<br/>*Default: false* |
+| --inspect-brk | Uses [node's --inspect-brk](https://nodejs.org/en/docs/guides/debugging-getting-started/#enable-inspector) flag to let users debug the jest/mocha test runner <br />*Default: false* |
 | --help                                        | Show help |
 
 ##### Notices

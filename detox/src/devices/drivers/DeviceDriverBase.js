@@ -8,7 +8,6 @@ class DeviceDriverBase {
   constructor({ client, emitter }) {
     this.client = client;
     this.emitter = emitter;
-    this.matchers = null;
   }
 
   get name() {
@@ -20,7 +19,7 @@ class DeviceDriverBase {
   }
 
   async acquireFreeDevice(deviceQuery) {
-    await Promise.resolve('');
+    return await Promise.resolve('');
   }
 
   async prepare() {

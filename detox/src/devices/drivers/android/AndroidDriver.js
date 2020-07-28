@@ -1,11 +1,9 @@
+const path = require('path');
 const fs = require('fs');
 const URL = require('url').URL;
-const _ = require('lodash');
 const DeviceDriverBase = require('../DeviceDriverBase');
 const logger = require('../../../utils/logger');
 const log = logger.child({ __filename });
-const invoke = require('../../../invoke');
-const InvocationManager = invoke.InvocationManager;
 const ADB = require('./exec/ADB');
 const AAPT = require('./exec/AAPT');
 const APKPath = require('./tools/APKPath');
@@ -26,14 +24,16 @@ const temporaryPath = require('../../../artifacts/utils/temporaryPath');
 const sleep = require('../../../utils/sleep');
 const retry = require('../../../utils/retry');
 const getAbsoluteBinaryPath = require('../../../utils/getAbsoluteBinaryPath');
-const AndroidExpect = require('../../../android/expect');
+const DeviceRegistry = require('../../DeviceRegistry');
+const environment = require('../../../utils/environment');
+
+const ALLOCATE_DEVICE_LOG_EVT = 'ALLOCATE_DEVICE';
 
 class AndroidDriver extends DeviceDriverBase {
   constructor(config) {
     super(config);
 
-    this.invocationManager = new InvocationManager(this.client);
-    this.matchers = new AndroidExpect(this.invocationManager);
+    this.invocationManager = config.invocationManager;
     this.uiDevice = new UiDeviceProxy(this.invocationManager).getUIDevice();
 
     this.adb = new ADB();
@@ -44,6 +44,10 @@ class AndroidDriver extends DeviceDriverBase {
     this.devicePathBuilder = new AndroidDevicePathBuilder();
 
     this.instrumentation = new MonitoredInstrumentation(this.adb, logger);
+
+    this.deviceRegistry = new DeviceRegistry({
+      lockfilePath: environment.getDeviceLockFilePathAndroid()
+    });
   }
 
   declareArtifactPlugins() {
@@ -61,6 +65,21 @@ class AndroidDriver extends DeviceDriverBase {
   async getBundleIdFromBinary(apkPath) {
     const binaryPath = getAbsoluteBinaryPath(apkPath);
     return await this.aapt.getPackageName(binaryPath);
+  }
+
+  async allocateDevice(deviceQuery) {
+    log.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Trying to allocate a device based on "${deviceQuery}"`);
+    const adbName = await this.deviceRegistry.allocateDevice(() => this.doAllocateDevice(deviceQuery));
+    log.debug({ event: ALLOCATE_DEVICE_LOG_EVT }, `Settled on ${adbName}`);
+    return adbName;
+  }
+
+  /**
+   * @protected
+   * @return {Promise<string>} adbName of a free matching device
+   */
+  async doAllocateDevice(deviceQuery) {
+    throw Error('Not implemented!');
   }
 
   async installApp(deviceId, _binaryPath, _testBinaryPath) {
@@ -135,6 +154,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async cleanup(deviceId, bundleId) {
+    await this.deviceRegistry.disposeDevice(deviceId);
     await this._terminateInstrumentation();
     await super.cleanup(deviceId, bundleId);
   }
@@ -179,7 +199,7 @@ class AndroidDriver extends DeviceDriverBase {
 
     await this.emitter.emit('createExternalArtifact', {
       pluginId: 'screenshot',
-      artifactName: screenshotName,
+      artifactName: screenshotName || path.basename(tempPath, '.png'),
       artifactPath: tempPath,
     });
 

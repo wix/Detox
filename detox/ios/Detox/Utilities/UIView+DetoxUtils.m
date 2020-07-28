@@ -28,21 +28,18 @@ static id DTXJSONSafeNSNumberOrString(double d)
 DTX_ALWAYS_INLINE
 static NSDictionary* DTXInsetsToDictionary(UIEdgeInsets insets)
 {
-	return @{@"top": @(insets.top), @"bottom": @(insets.bottom), @"left": @(insets.left), @"right": @(insets.right)};
 	return @{@"top": DTXJSONSafeNSNumberOrString(insets.top), @"bottom": DTXJSONSafeNSNumberOrString(insets.bottom), @"left": DTXJSONSafeNSNumberOrString(insets.left), @"right": DTXJSONSafeNSNumberOrString(insets.right)};
 }
 
 DTX_ALWAYS_INLINE
 static NSDictionary* DTXRectToDictionary(CGRect rect)
 {
-	return @{@"x": @(rect.origin.x), @"y": @(rect.origin.y), @"width": @(rect.size.width), @"height": @(rect.size.height)};
 	return @{@"x": DTXJSONSafeNSNumberOrString(rect.origin.x), @"y": DTXJSONSafeNSNumberOrString(rect.origin.y), @"width": DTXJSONSafeNSNumberOrString(rect.size.width), @"height": DTXJSONSafeNSNumberOrString(rect.size.height)};
 }
 
 DTX_ALWAYS_INLINE
 static NSDictionary* DTXPointToDictionary(CGPoint point)
 {
-	return @{@"x": @(point.x), @"y": @(point.y)};
 	return @{@"x": DTXJSONSafeNSNumberOrString(point.x), @"y": DTXJSONSafeNSNumberOrString(point.y)};
 }
 

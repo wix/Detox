@@ -2,6 +2,31 @@
 
 We are improving Detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes. If a newer version has no entries in this document, it means it does not require special migration steps. Refer to the release notes of the later builds to learn about their improvements and changes.
 
+## 17.3.0
+
+In the context of introducting the element screenshots feature ([#2012](https://github.com/wix/Detox/issues/2012)), we decided to slightly change the contract between Detox and externally-implemented _drivers_. These should be modified according to the follow diff-snippet:
+
+```diff
+class Expect {
+-  constructor(invocationManager) {
++  constructor({ invocationManager }) {
+     this._invocationManager = invocationManager;
+  }
+}
+
+class PluginDriver {
+  constructor() {
+-    this.matchers = new Expect(new invocationManager());
+  }
+}
+
+-module.exports = PluginDriver;
++module.exports = {
++  DriverClass: PluginDriver,
++  ExpectClass: Expect,
++}
+```
+
 ## 17.0.0
 
 Detox for iOS now uses an entirely new, custom built matcher, action and expectation infrastructure. This is the first step in our roadmap of removing Earl Grey as a dependency.

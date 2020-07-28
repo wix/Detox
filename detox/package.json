@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "17.2.0",
+  "version": "17.3.1",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -101,6 +101,8 @@
       "src/utils/sleep.js",
       "AAPT.js",
       "ADB.js",
+      "DeviceHandle.js",
+      "EmulatorHandle.js",
       "fsext.js",
       "debug.js",
       "src/ios/earlgreyapi",

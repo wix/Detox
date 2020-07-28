@@ -23,6 +23,7 @@ Use [expectations](APIRef.Expect.md) to verify element states.
 - [`.setDatePickerDate()`](#setdatepickerdatedatestring-dateformat--ios-only) **iOS only**
 - [`.adjustSliderToPosition()`](#adjustslidertopositionnormalizedposition--ios-only) **iOS only**
 - [`.getAttributes()`](#getAttributes--ios-only) **iOS only**
+- [`.takeScreenshot([name])`](#takescreenshotname-android-only) **Android only**
 
 ### `tap(point)`
 
@@ -240,6 +241,10 @@ const multipleMatchedElements = await element(by.text('Multiple')).getAttributes
 jestExpect(multipleMatchedElements.elements.length).toBe(5);
 jestExpect(multipleMatchedElements.elements[0].identifier).toBe('FirstElement');
 ```
+
+### `takeScreenshot([name])` Android Only
+
+Takes a screenshot containing the matched element. For full details on taking screenshots with Detox, refer to the [screen-shots guide](APIRef.Screenshots.md).
 
 ## Deprecated Methods
 

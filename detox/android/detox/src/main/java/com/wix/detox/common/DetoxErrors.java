@@ -1,12 +1,12 @@
-package com.wix.detox.espresso;
+package com.wix.detox.common;
 
-interface DetoxErrors {
+public interface DetoxErrors {
     class DetoxRuntimeException extends RuntimeException {
-        DetoxRuntimeException(Throwable cause) {
+        public DetoxRuntimeException(Throwable cause) {
             super(cause);
         }
 
-        DetoxRuntimeException(String message) {
+        public DetoxRuntimeException(String message) {
             super(message);
         }
     }
@@ -16,7 +16,7 @@ interface DetoxErrors {
      * example, scrolling a view when it's already at the scrollable limit.
      */
     class StaleActionException extends DetoxRuntimeException {
-        StaleActionException(Throwable cause) {
+        public StaleActionException(Throwable cause) {
             super(cause);
         }
     }

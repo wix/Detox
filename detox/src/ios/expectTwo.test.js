@@ -3,7 +3,9 @@ const _ = require('lodash');
 describe('expectTwo', () => {
   beforeEach(() => {
     const IosExpect = require('./expectTwo');
-    e = new IosExpect(new MockExecutor());
+    e = new IosExpect({
+      invocationManager: new MockExecutor(),
+    });
   });
 
   it(`element(by.text('tapMe')).tap()`, () => {
@@ -358,6 +360,15 @@ describe('expectTwo', () => {
     };
 
     expect(testCall).deepEquals(jsonOutput);
+  });
+
+  it(`element().takeScreenshot`, () => {
+    try {
+      e.element(e.by.id('uniqueId')).takeScreenshot();
+      fail();
+    } catch (e) {
+      expect(e.message).toContain('not supported on iOS');
+    }
   });
 });
 

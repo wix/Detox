@@ -10,7 +10,7 @@ class DriverRegistry {
 
     if (!DeviceDriverClass) {
       try {
-        DeviceDriverClass = resolveModuleFromPath(deviceType);
+        DeviceDriverClass = resolveModuleFromPath(deviceType).DriverClass;
       } catch (e) {
         // noop, if we don't find a module to require, we'll hit the unsupported error below
       }
@@ -27,8 +27,8 @@ class DriverRegistry {
 DriverRegistry.default = new DriverRegistry({
   'ios.none': require('./drivers/ios/IosDriver'),
   'ios.simulator': require('./drivers/ios/SimulatorDriver'),
-  'android.emulator': require('./drivers/android/EmulatorDriver'),
-  'android.attached': require('./drivers/android/AttachedAndroidDriver'),
+  'android.emulator': require('./drivers/android/emulator/EmulatorDriver'),
+  'android.attached': require('./drivers/android/attached/AttachedAndroidDriver'),
 });
 
 module.exports = DriverRegistry;

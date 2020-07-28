@@ -38,6 +38,7 @@ describe('collectCliConfig', () => {
     ['runnerConfig', 'runner-config'],
     ['useCustomLogger', 'use-custom-logger'],
     ['workers', 'workers'],
+    ['inspectBrk', 'inspect-brk'],
   ])('.%s property', (key, argName) => {
     beforeEach(() => {
       argv[argName] = Math.random();

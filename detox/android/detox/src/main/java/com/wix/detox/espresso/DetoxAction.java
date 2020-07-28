@@ -2,10 +2,11 @@ package com.wix.detox.espresso;
 
 import android.view.View;
 
-import com.wix.detox.espresso.DetoxErrors.DetoxRuntimeException;
-import com.wix.detox.espresso.DetoxErrors.StaleActionException;
+import com.wix.detox.common.DetoxErrors.DetoxRuntimeException;
+import com.wix.detox.common.DetoxErrors.StaleActionException;
 import com.wix.detox.espresso.action.DetoxMultiTap;
 import com.wix.detox.espresso.action.RNClickAction;
+import com.wix.detox.espresso.action.TakeViewScreenshotAction;
 import com.wix.detox.espresso.common.annot.MotionDir;
 import com.wix.detox.espresso.scroll.ScrollEdgeException;
 import com.wix.detox.espresso.scroll.ScrollHelper;
@@ -212,6 +213,10 @@ public class DetoxAction {
             default:
                 throw new RuntimeException("Unsupported swipe direction: " + direction);
         }
+    }
+
+    public static ViewAction takeViewScreenshot() {
+        return new TakeViewScreenshotAction();
     }
 
     private static CoordinatesProvider translate(final CoordinatesProvider coords,

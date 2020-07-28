@@ -111,6 +111,11 @@ describe('Device', () => {
     expect(device.name).toEqual('mock-device-name-from-driver');
   });
 
+  it('should return the type from the configuration', async () => {
+    const device = validDevice();
+    expect(device.type).toEqual('ios.simulator');
+  });
+
   it('should return an undefined ID for an unprepared device', async() => {
     const device = validDevice();
     expect(device.id).toBeUndefined();
