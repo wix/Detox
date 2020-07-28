@@ -2,8 +2,8 @@ package com.wix.detox.espresso;
 
 import android.view.View;
 
-import com.wix.detox.espresso.DetoxErrors.DetoxRuntimeException;
-import com.wix.detox.espresso.DetoxErrors.StaleActionException;
+import com.wix.detox.common.DetoxErrors.DetoxRuntimeException;
+import com.wix.detox.common.DetoxErrors.StaleActionException;
 
 import junit.framework.AssertionFailedError;
 

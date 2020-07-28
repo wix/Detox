@@ -2,6 +2,7 @@
 package com.example;
 
 import com.wix.detox.Detox;
+import com.wix.detox.config.DetoxConfig;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -14,7 +15,6 @@ import androidx.test.rule.ActivityTestRule;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class DetoxTest {
-
     @Rule
     // Replace 'MainActivity' with the value of android:name entry in 
     // <activity> in AndroidManifest.xml
@@ -22,10 +22,11 @@ public class DetoxTest {
 
     @Test
     public void runDetoxTests() {
-        Detox.DetoxIdlePolicyConfig idlePolicyConfig = new Detox.DetoxIdlePolicyConfig();
-        idlePolicyConfig.masterTimeoutSec = 60;
-        idlePolicyConfig.idleResourceTimeoutSec = 30;
+        DetoxConfig detoxConfig = new DetoxConfig();
+        detoxConfig.idlePolicyConfig.masterTimeoutSec = 90;
+        detoxConfig.idlePolicyConfig.idleResourceTimeoutSec = 60;
+        detoxConfig.rnContextLoadTimeoutSec = (com.example.BuildConfig.DEBUG ? 180 : 60);
 
-        Detox.runTests(mActivityRule, idlePolicyConfig);
+        Detox.runTests(mActivityRule, detoxConfig);
     }
 }

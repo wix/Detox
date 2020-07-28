@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
 
+import com.wix.detox.config.DetoxConfig;
+
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
@@ -79,18 +81,23 @@ public final class Detox {
 
     /**
      * Specification of values to use for Espresso's {@link IdlingPolicies} timeouts.
-     * <br/>Overrides Espresso's defaults as they tend to be too short (e.g. when running on heavy-load app
+     * <br/>Overrides Espresso's defaults as they tend to be too short (e.g. when running a heavy-load app
      * on suboptimal CI machines).
+     *
+     * @deprecated Use {@link com.wix.detox.config.DetoxConfig}.
      */
+    @Deprecated
     public static class DetoxIdlePolicyConfig {
         /** Directly binds to {@link IdlingPolicies#setMasterPolicyTimeout(long, TimeUnit)}. Applied in seconds. */
         public Integer masterTimeoutSec = 120;
         /** Directly binds to {@link IdlingPolicies#setIdlingResourceTimeout(long, TimeUnit)}. Applied in seconds. */
         public Integer idleResourceTimeoutSec = 60;
 
-        void apply() {
-            IdlingPolicies.setMasterPolicyTimeout(masterTimeoutSec, TimeUnit.SECONDS);
-            IdlingPolicies.setIdlingResourceTimeout(idleResourceTimeoutSec, TimeUnit.SECONDS);
+        private com.wix.detox.config.DetoxIdlePolicyConfig toNewConfig() {
+            com.wix.detox.config.DetoxIdlePolicyConfig newConfig = new com.wix.detox.config.DetoxIdlePolicyConfig();
+            newConfig.masterTimeoutSec = masterTimeoutSec;
+            newConfig.idleResourceTimeoutSec = idleResourceTimeoutSec;
+            return newConfig;
         }
     }
 
@@ -115,11 +122,24 @@ public final class Detox {
 
     /**
      * Same as the default {@link #runTests(ActivityTestRule)} method, but allows for the explicit specification of
+     * various configurations. Note: review {@link DetoxConfig} for defaults.
+     *
+     * @param detoxConfig The configurations to apply.
+     */
+    public static void runTests(ActivityTestRule activityTestRule, DetoxConfig detoxConfig) {
+        runTests(activityTestRule, getAppContext(), detoxConfig);
+    }
+
+    /**
+     * Same as the default {@link #runTests(ActivityTestRule)} method, but allows for the explicit specification of
      * a custom idle-policy configuration. Note: review {@link DetoxIdlePolicyConfig} for defaults.
      *
      * @param idlePolicyConfig The custom idle-policy configuration to pass in; Will be applied into Espresso via
      *                         the {@link IdlingPolicies} API.
+     *
+     * @deprecated Use {@link #runTests(ActivityTestRule, DetoxConfig)}
      */
+    @Deprecated
     public static void runTests(ActivityTestRule activityTestRule, DetoxIdlePolicyConfig idlePolicyConfig) {
         runTests(activityTestRule, getAppContext(), idlePolicyConfig);
     }
@@ -140,7 +160,7 @@ public final class Detox {
      * @param context an object that has a {@code getReactNativeHost()} method
      */
     public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context context) {
-        runTests(activityTestRule, context, new DetoxIdlePolicyConfig());
+        runTests(activityTestRule, context, new DetoxConfig());
     }
 
     /**
@@ -150,9 +170,26 @@ public final class Detox {
      *
      * @param idlePolicyConfig The custom idle-policy configuration to pass in; Will be applied into Espresso via
      *                         the {@link IdlingPolicies} API.
+     *
+     * @deprecated Use {@link #runTests(ActivityTestRule, Context, DetoxConfig)}
      */
+    @Deprecated
     public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context context, DetoxIdlePolicyConfig idlePolicyConfig) {
-        idlePolicyConfig.apply();
+        DetoxConfig config = new DetoxConfig();
+        config.idlePolicyConfig = idlePolicyConfig.toNewConfig();
+
+        runTests(activityTestRule, context, config);
+    }
+
+    /**
+     * Same as {@link #runTests(ActivityTestRule, Context)}, but allows for the explicit specification of
+     * various configurations. Note: review {@link DetoxConfig} for defaults.
+     *
+     * @param detoxConfig The configurations to apply.
+     */
+    public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context context, DetoxConfig detoxConfig) {
+        DetoxConfig.CONFIG = detoxConfig;
+        detoxConfig.apply();
 
         sActivityTestRule = activityTestRule;
 
