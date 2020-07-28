@@ -12,3 +12,15 @@
 -dontnote org.joor.**
 -dontnote org.hamcrest.**
 -dontnote com.facebook.**
+-dontwarn java.lang.invoke.LambdaMetafactory
+
+# Detox dynamic access to declared methods of RN's timing module
+
+-keep class com.facebook.react.modules.core.TimingModule { *; } # RN >= .63
+-keep class com.facebook.react.modules.core.Timing { *; } # RN <= .62
+-dontnote com.wix.detox.reactnative.idlingresources.timers.**
+
+# Detox profiler (optional)
+
+-keep class com.wix.detoxprofiler { *; }
+-dontnote  com.wix.detox.instruments.reflected.**
