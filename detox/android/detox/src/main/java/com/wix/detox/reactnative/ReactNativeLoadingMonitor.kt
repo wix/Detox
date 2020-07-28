@@ -56,7 +56,10 @@ open class ReactNativeLoadingMonitor(
                     if (i >= config.rnContextLoadTimeoutSec) {
                         // First load can take a lot of time. (packager)
                         // Loads afterwards should take less than a second.
-                        throw DetoxErrors.DetoxRuntimeException("Waited for the new RN-context for too long! (${config.rnContextLoadTimeoutSec} seconds)")
+                        throw DetoxErrors.DetoxRuntimeException(
+                                """Waited for the new RN-context for too long! (${config.rnContextLoadTimeoutSec} seconds)
+                                  |If you think that's not long enough, consider applying a custom Detox runtime-config in DetoxTest.runTests()."""
+                                .trimMargin())
                     }
                 } else {
                     break
