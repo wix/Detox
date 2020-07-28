@@ -64,6 +64,7 @@ Following device types could be used to control Android devices:
 
 - `android.attached`. Connect to already-attached android device. The device should be listed in the output of `adb devices` command under provided `name`.
   Use this type to connect to Genymotion emulator.
+  The `adbName` property accepts a regular expression pattern that allows to specify the pool of device candidates to which you wish to connect. Use this property to run tests in parallel on multiple attached devices.
 
 For a complete, working example, refer to the [Detox example app](/examples/demo-react-native/detox.config.js).
 

@@ -1,7 +1,7 @@
 jest.mock('./drivers/ios/IosDriver');
 jest.mock('./drivers/ios/SimulatorDriver');
-jest.mock('./drivers/android/EmulatorDriver');
-jest.mock('./drivers/android/AttachedAndroidDriver');
+jest.mock('./drivers/android/emulator/EmulatorDriver');
+jest.mock('./drivers/android/attached/AttachedAndroidDriver');
 jest.mock('../utils/resolveModuleFromPath');
 
 describe('DriverRegistry', () => {
@@ -39,7 +39,7 @@ describe('DriverRegistry', () => {
     });
 
     it('should resolve "android.attached" to AttachedAndroidDriver', () => {
-      const AttachedAndroidDriver = require('./drivers/android/AttachedAndroidDriver');
+      const AttachedAndroidDriver = require('./drivers/android/attached/AttachedAndroidDriver');
       const driver = registry.resolve('android.attached', opts);
 
       expect(driver).toBeInstanceOf(AttachedAndroidDriver);
@@ -47,7 +47,7 @@ describe('DriverRegistry', () => {
     });
 
     it('should resolve "android.emulator" to EmulatorDriver', () => {
-      const EmulatorDriver = require('./drivers/android/EmulatorDriver');
+      const EmulatorDriver = require('./drivers/android/emulator/EmulatorDriver');
       const driver = registry.resolve('android.emulator', opts);
 
       expect(driver).toBeInstanceOf(EmulatorDriver);

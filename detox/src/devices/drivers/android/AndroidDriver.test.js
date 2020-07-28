@@ -119,7 +119,7 @@ describe('Android driver', () => {
   });
 
   describe('Cleanup', () => {
-    beforeEach(async () => await uut.cleanup());
+    beforeEach(async () => await uut.cleanup(deviceId));
 
     it('should terminate instrumentation', () =>
       expect(instrumentationObj().terminate).toHaveBeenCalled());
@@ -129,6 +129,10 @@ describe('Android driver', () => {
 
     it('should turn off the events emitter', () =>
       expect(emitter.off).toHaveBeenCalled());
+
+    it('should dispose device', () => {
+      expect(mockDisposeDevice).toHaveBeenCalledWith(deviceId);
+    });
   });
 
   describe('URL runtime delivery handling', () => {
@@ -463,6 +467,7 @@ describe('Android driver', () => {
     });
   });
 
+  const mockDisposeDevice = jest.fn();
   const setUpModuleDepMocks = () => {
     jest.mock('fs', () => ({
       existsSync: jest.fn(),
@@ -511,6 +516,12 @@ describe('Android driver', () => {
 
     const InvocationManager = jest.genMockFromModule('../../../invoke').InvocationManager;
     invocationManager = new InvocationManager();
+
+    jest.mock('../../DeviceRegistry', () => class {
+      constructor() {
+        this.disposeDevice = mockDisposeDevice;
+      }
+    });
   };
 
   const setUpClassDepMocks = () => {
