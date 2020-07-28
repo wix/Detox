@@ -11,28 +11,38 @@ class FreeDeviceFinder {
   async findFreeDevice(deviceQuery) {
     const { devices } = await this.adb.devices();
     for (const candidate of devices) {
-      const isBusy = this.deviceRegistry.isDeviceBusy(candidate.adbName);
-      if (isBusy) {
-        log.debug({ event: DEVICE_LOOKUP_LOG_EVT }, `Device ${candidate.adbName} is busy, skipping...`);
-        continue;
-      }
-
-      const isOffline = candidate.status === 'offline';
-      if (isOffline) {
-        log.debug({ event: DEVICE_LOOKUP_LOG_EVT }, `Device ${candidate.adbName} is offline, skipping...`);
-        continue;
-      }
-
-      const isMatching = await this._isDeviceMatching(candidate, deviceQuery);
-      if (isMatching) {
-        log.debug({ event: DEVICE_LOOKUP_LOG_EVT }, `Found a matching free device ${candidate.adbName}`);
+      if (await this._isDeviceFreeAndMatching(candidate, deviceQuery)) {
+        log.debug({ event: DEVICE_LOOKUP_LOG_EVT }, `Found a matching & free device ${candidate.adbName}`);
         return candidate.adbName;
-      } else {
-        log.debug({ event: DEVICE_LOOKUP_LOG_EVT }, `Device ${candidate.adbName} does not match "${deviceQuery}"`);
       }
     }
-
     return null;
+  }
+
+  /**
+   * @protected
+   */
+  async _isDeviceFreeAndMatching(candidate, deviceQuery) {
+    const { adbName } = candidate;
+
+    const isBusy = this.deviceRegistry.isDeviceBusy(adbName);
+    if (isBusy) {
+      log.debug({ event: DEVICE_LOOKUP_LOG_EVT }, `Device ${adbName} is busy, skipping...`);
+      return false;
+    }
+
+    const isOffline = candidate.status === 'offline';
+    if (isOffline) {
+      log.debug({ event: DEVICE_LOOKUP_LOG_EVT }, `Device ${adbName} is offline, skipping...`);
+      return false;
+    }
+
+    const isMatching = await this._isDeviceMatching(candidate, deviceQuery);
+    if (!isMatching) {
+      log.debug({ event: DEVICE_LOOKUP_LOG_EVT }, `Device ${adbName} does not match "${deviceQuery}"`);
+      return false;
+    }
+    return true;
   }
 
   /**

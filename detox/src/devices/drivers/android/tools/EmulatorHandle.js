@@ -5,25 +5,23 @@ class EmulatorHandle extends DeviceHandle {
   constructor(deviceString) {
     super(deviceString);
 
+    this.telnet = new EmulatorTelnet();
     this.port = this.adbName.split('-')[1];
   }
 
-  queryName() {
+  async queryName() {
     if (!this._name) {
-      this._name = this._queryNameViaTelnet();
+      this._name = await this._queryNameViaTelnet();
     }
-
     return this._name;
   }
 
   async _queryNameViaTelnet() {
-    const telnet = new EmulatorTelnet();
-
-    await telnet.connect(this.port);
+    await this.telnet.connect(this.port);
     try {
-      return await telnet.avdName();
+      return await this.telnet.avdName();
     } finally {
-      await telnet.quit();
+      await this.telnet.quit();
     }
   }
 }
