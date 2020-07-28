@@ -9,7 +9,6 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.wix.detox.config.DetoxConfig;
-import com.wix.detox.config.DetoxIdlePolicyConfig;
 
 import java.util.concurrent.TimeUnit;
 
@@ -96,8 +95,8 @@ public final class Detox {
 
         private com.wix.detox.config.DetoxIdlePolicyConfig toNewConfig() {
             com.wix.detox.config.DetoxIdlePolicyConfig newConfig = new com.wix.detox.config.DetoxIdlePolicyConfig();
-            newConfig.setMasterTimeoutSec(masterTimeoutSec);
-            newConfig.setIdleResourceTimeoutSec(idleResourceTimeoutSec);
+            newConfig.masterTimeoutSec = masterTimeoutSec;
+            newConfig.idleResourceTimeoutSec = idleResourceTimeoutSec;
             return newConfig;
         }
     }
@@ -177,7 +176,7 @@ public final class Detox {
     @Deprecated
     public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context context, DetoxIdlePolicyConfig idlePolicyConfig) {
         DetoxConfig config = new DetoxConfig();
-        config.setIdlePolicyConfig(idlePolicyConfig.toNewConfig());
+        config.idlePolicyConfig = idlePolicyConfig.toNewConfig();
 
         runTests(activityTestRule, context, config);
     }

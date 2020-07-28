@@ -3,7 +3,6 @@ package com.example;
 
 import com.wix.detox.Detox;
 import com.wix.detox.config.DetoxConfig;
-import com.wix.detox.config.DetoxIdlePolicyConfig;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,13 +22,10 @@ public class DetoxTest {
 
     @Test
     public void runDetoxTests() {
-        DetoxIdlePolicyConfig idlePolicyConfig = new DetoxIdlePolicyConfig();
-        idlePolicyConfig.setMasterTimeoutSec(90);
-        idlePolicyConfig.setIdleResourceTimeoutSec(60);
-
         DetoxConfig detoxConfig = new DetoxConfig();
-        detoxConfig.setIdlePolicyConfig(idlePolicyConfig);
-        detoxConfig.setRnContextLoadTimeoutSec(com.example.BuildConfig.DEBUG ? 180 : 60);
+        detoxConfig.idlePolicyConfig.masterTimeoutSec = 90;
+        detoxConfig.idlePolicyConfig.idleResourceTimeoutSec = 60;
+        detoxConfig.rnContextLoadTimeoutSec = (com.example.BuildConfig.DEBUG ? 180 : 60);
 
         Detox.runTests(mActivityRule, detoxConfig);
     }

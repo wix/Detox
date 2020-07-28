@@ -54,7 +54,6 @@ open class ReactNativeLoadingMonitor(
                 if (!countDownLatch.await(1, TimeUnit.SECONDS)) {
                     i++
                     if (i >= config.rnContextLoadTimeoutSec) {
-
                         // First load can take a lot of time. (packager)
                         // Loads afterwards should take less than a second.
                         throw DetoxErrors.DetoxRuntimeException("Waited for the new RN-context for too long! (${config.rnContextLoadTimeoutSec} seconds)")

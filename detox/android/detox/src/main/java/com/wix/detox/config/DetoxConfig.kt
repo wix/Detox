@@ -1,11 +1,11 @@
 package com.wix.detox.config
 
 class DetoxConfig {
-    var idlePolicyConfig: DetoxIdlePolicyConfig? = DetoxIdlePolicyConfig()
-    var rnContextLoadTimeoutSec = 60
+    @JvmField var idlePolicyConfig: DetoxIdlePolicyConfig = DetoxIdlePolicyConfig()
+    @JvmField var rnContextLoadTimeoutSec = 60
 
     fun apply() {
-        idlePolicyConfig?.apply()
+        idlePolicyConfig.apply()
     }
 
     companion object {
