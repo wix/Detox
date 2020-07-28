@@ -1,12 +1,10 @@
 package com.wix.detox.reactnative.idlingresources.timers
 
-import android.util.Log
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.common.RNDropSupportTodo
 import org.joor.Reflect
 
-private const val LOG_TAG = "DelegatedTimingStrategy"
 private const val BUSY_WINDOW_THRESHOLD = 1500L
 
 private class RN62TimingModuleReflected(private val timingModule: NativeModule) {
@@ -20,8 +18,8 @@ private class RN62TimingModuleReflected(private val timingModule: NativeModule) 
  */
 @RNDropSupportTodo(62, """
     When min RN version supported by Detox is 0.62.x (or higher),
-    | can (and should) remove any usage of reflection here. That
-    | includes the unit test's stub being used for that reason in particular.
+    can (and should) remove any usage of reflection here.
+    That includes the unit test's stub being used for that reason in particular.
     """)
 class DelegatedIdleInterrogationStrategy(timingModule: NativeModule): IdleInterrogationStrategy {
     private val timingModuleReflected = RN62TimingModuleReflected(timingModule)
@@ -34,19 +32,16 @@ class DelegatedIdleInterrogationStrategy(timingModule: NativeModule): IdleInterr
             try {
                 moduleClass = Class.forName("com.facebook.react.modules.core.TimingModule") as Class<NativeModule>
             } catch (ex: Exception) {
-                Log.d(LOG_TAG, "create(): no class", ex)
                 return null
             }
 
             if (!reactContext.hasNativeModule(moduleClass)) {
-                Log.d(LOG_TAG, "create(): no native module")
                 return null
             }
 
             try {
                 moduleClass.getDeclaredMethod("hasActiveTimersInRange", Long::class.java)
             } catch (ex: Exception) {
-                Log.d(LOG_TAG, "create(): no dedicated idle-interrogation method", ex)
                 return null
             }
 

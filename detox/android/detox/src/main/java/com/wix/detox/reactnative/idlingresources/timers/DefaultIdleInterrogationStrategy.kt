@@ -2,14 +2,12 @@
 
 package com.wix.detox.reactnative.idlingresources.timers
 
-import android.util.Log
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.common.RNDropSupportTodo
 import org.joor.Reflect
 import java.util.*
 
-private const val LOG_TAG = "DefaultTimingStrategy"
 private const val BUSY_WINDOW_THRESHOLD = 1500
 
 private class TimerReflected(timer: Any) {
@@ -74,7 +72,6 @@ class DefaultIdleInterrogationStrategy
             try {
                 val timingClass: Class<NativeModule> = Class.forName("com.facebook.react.modules.core.TimingModule") as Class<NativeModule>
                 if (!reactContext.hasNativeModule(timingClass)) {
-                    Log.d(LOG_TAG, "create(): new class - no native module")
                     return null
                 }
 
@@ -82,7 +79,6 @@ class DefaultIdleInterrogationStrategy
                 val timersManager = Reflect.on(timingModule).get<Any>("mJavaTimerManager")
                 return DefaultIdleInterrogationStrategy(timersManager)
             } catch (ex: Exception) {
-                Log.d(LOG_TAG, "create(): no new timing-module class implementation", ex)
             }
 
             // RN < 0.62
@@ -90,7 +86,6 @@ class DefaultIdleInterrogationStrategy
                 val timingClass: Class<NativeModule> = Class.forName("com.facebook.react.modules.core.Timing") as Class<NativeModule>
                 return DefaultIdleInterrogationStrategy(reactContext.getNativeModule(timingClass))
             } catch (ex: Exception) {
-                Log.d(LOG_TAG, "create(): no old timing-module class implementation", ex)
             }
 
             return null
