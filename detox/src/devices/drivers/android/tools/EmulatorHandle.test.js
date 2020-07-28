@@ -5,7 +5,6 @@ describe('Emulator handle', () => {
   beforeEach(() => {
     jest.mock('./EmulatorTelnet');
     EmulatorTelnet = require('./EmulatorTelnet');
-
     EmulatorHandle = require('./EmulatorHandle');
   });
 

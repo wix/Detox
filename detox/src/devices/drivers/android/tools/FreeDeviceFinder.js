@@ -12,7 +12,6 @@ class FreeDeviceFinder {
     const { devices } = await this.adb.devices();
     for (const candidate of devices) {
       if (await this._isDeviceFreeAndMatching(candidate, deviceQuery)) {
-        log.debug({ event: DEVICE_LOOKUP_LOG_EVT }, `Found a matching & free device ${candidate.adbName}`);
         return candidate.adbName;
       }
     }
@@ -42,6 +41,8 @@ class FreeDeviceFinder {
       log.debug({ event: DEVICE_LOOKUP_LOG_EVT }, `Device ${adbName} does not match "${deviceQuery}"`);
       return false;
     }
+
+    log.debug({ event: DEVICE_LOOKUP_LOG_EVT }, `Found a matching & free device ${candidate.adbName}`);
     return true;
   }
 

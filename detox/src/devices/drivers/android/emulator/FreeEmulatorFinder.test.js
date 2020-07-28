@@ -6,8 +6,6 @@ describe('FreeEmulatorFinder', () => {
   let mockDeviceRegistry;
   let uut;
   beforeEach(() => {
-    mockAdbDevices([emulator5556]);
-
     const DeviceRegistry = jest.genMockFromModule('../../../DeviceRegistry');
     mockDeviceRegistry = new DeviceRegistry();
     mockDeviceRegistry.isDeviceBusy.mockReturnValue(false);
@@ -17,11 +15,13 @@ describe('FreeEmulatorFinder', () => {
   });
 
   it('should return device when it is an emulator and avdName matches', async () => {
+    mockAdbDevices([emulator5556]);
     const result = await uut.findFreeDevice(mockAvdName);
     expect(result).toBe(emulator5556.adbName);
   });
 
   it('should return null when avdName does not match', async () => {
+    mockAdbDevices([emulator5556]);
     expect(await uut.findFreeDevice('wrongAvdName')).toBe(null);
   });
 
