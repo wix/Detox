@@ -33,7 +33,7 @@
     "react-native": "0.62.x"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.5",
+    "@babel/core": "^7.8.7",
     "detox": "^17.3.2",
     "express": "^4.15.3",
     "jest": "26.x.x",

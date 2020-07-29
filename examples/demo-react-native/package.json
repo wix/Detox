@@ -14,7 +14,8 @@
     "test:android-release-ci": "detox test --configuration android.emu.release -l verbose --headless --record-logs all --take-screenshots all",
     "e2e:ios": "npm run build:ios && npm run test:ios",
     "e2e:android-debug": "npm run build:android-debug && npm run test:android-debug",
-    "e2e:android-release": "npm run build:android-release && npm run test:android-release"
+    "e2e:android-release": "npm run build:android-release && npm run test:android-release",
+    "clean:android": "pushd android && ./gradlew clean && popd"
   },
   "dependencies": {
     "react": "16.11.x",
