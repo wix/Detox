@@ -17,3 +17,6 @@
 [submodule "detox/ios/fishhook"]
 	path = detox/ios/fishhook
 	url = https://github.com/facebook/fishhook.git
+[submodule "detox/ios/LNViewHierarchyDumper"]
+	path = detox/ios/LNViewHierarchyDumper
+	url = https://github.com/LeoNatan/LNViewHierarchyDumper.git
