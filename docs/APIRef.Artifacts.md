@@ -51,10 +51,74 @@ The `artifacts` object has the following properties:
 | Property    | Example values                  | Default value | Description |
 |-------------|---------------------------------|---------------|-------------|
 | rootDir     | `".artifacts/"`                 | `./artifacts` | A directory, where all the recorded artifacts will be placed in. Please note that there is a trailing slash convention [described above](#slash-convention). |
-| pathBuilder | `"./e2e/config/pathbuilder.js"` | `undefined`   | Path to a module that implements `PathBuilder` interface[<sup>\[a\]</sup>](#pathBuilder) |
+| pathBuilder | `"./e2e/config/pathbuilder.js"` | `undefined`   | Path to a module that exports a custom `PathBuilder` [<sup>\[a\]</sup>](#pathBuilder) |
 | plugins     | `{ ... }`                       | ... see below | ... see below |
 
-<a id=pathBuilder><sup>a</sup> PathBuilder</a> should be an object with a method `buildPathForTestArtifact` or a class. The `buildPathForTestArtifact` method has a signature: `(artifactName: string, testSummary?: { title: string; fullName: string; status: 'running' | 'passed' | 'failed' }) => string`, where it accepts a suggested artifact name (e.g., `testDone.png`, `device.log`), a current test summary with its name and status, and it is expected to return a full path to the custom artifact location. If it is a class, its constructor also accepts `{ rootDir }` configuration object. Search for `ArtifactPathBuilder.js` in Detox source code for a technical reference.
+<a id=pathBuilder><sup>a</sup><code>PathBuilder</code></a> should be either an _object_ with a method `buildPathForTestArtifact` or a _class_ &mdash; see the corresponding interfaces below:
+
+```typescript
+interface PathBuilder {
+    buildPathForTestArtifact(artifactPath: string, testSummary?: TestSummary): string;
+}
+
+interface PathBuilderClass {
+    new(opts: { rootDir: string; }): PathBuilder;
+}
+```
+
+As one can see, if a custom implementation of `PathBuilder` exports a class instead of an object, then the class constructor can also get and save `rootDir` location:
+
+```js
+class MyPathBuilder {
+  constructor({ rootDir }) {
+    this._rootDir = rootDir;
+  }
+
+  buildPathForTestArtifact(artifactName, testSummary) {
+    /* ... use this._rootDir ... */
+  }
+}
+
+module.exports = MyPathBuilder;
+```
+
+Its main method, `buildPathForTestArtifact` should return a full path to the custom artifact location, when called with a suggested artifact name (e.g., `testDone.png`, `device.log`) and the current `TestSummary`, where `TestSummary` is:
+
+```typescript
+interface TestSummary {
+    /**
+     * Name of the current test, e.g., for:
+     * describe('that screen', () =>
+     *   it('should have a menu', () =>
+     * The expected string would be: "should have a menu".
+     */
+    title: string;
+    /**
+     * Full name of the current test, usually preceeded by a suite name, e.g.:
+     * describe('that screen', () =>
+     *   it('should have a menu', () =>
+     * The expected string would be: "that screen should have a menu".
+     */
+    fullName: string;
+    /**
+     * Status of the current test. Free-form strings are not allowed.
+     */
+    status: 'running' | 'passed' | 'failed';
+    /**
+     * Clarifies the reason for why the test has failed.
+     * Expected to coincide only with status: 'failed'.
+     */
+    timedOut?: boolean;
+    /**
+     * If the test runner is capable of retrying failed tests, then
+     * this property indicates for which time this test is running.
+     * When the property is undefined, its value is considered to be 1.
+     * */
+    invocations?: number;
+}
+```
+
+For more technical details, search for `ArtifactPathBuilder.js` in Detox source code.
 
 The further subsections describe the `plugins` object structure.
 
