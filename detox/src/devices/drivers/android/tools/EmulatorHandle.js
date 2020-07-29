@@ -4,26 +4,24 @@ const EmulatorTelnet = require('./EmulatorTelnet');
 class EmulatorHandle extends DeviceHandle {
   constructor(deviceString) {
     super(deviceString);
+    this._telnet = new EmulatorTelnet();
 
     this.port = this.adbName.split('-')[1];
   }
 
-  queryName() {
-    if (!this._name) {
-      this._name = this._queryNameViaTelnet();
+  /* async */ queryName() {
+    if (!this._namePromise) {
+      this._namePromise = this._queryNameViaTelnet();
     }
-
-    return this._name;
+    return this._namePromise;
   }
 
   async _queryNameViaTelnet() {
-    const telnet = new EmulatorTelnet();
-
-    await telnet.connect(this.port);
+    await this._telnet.connect(this.port);
     try {
-      return await telnet.avdName();
+      return await this._telnet.avdName();
     } finally {
-      await telnet.quit();
+      await this._telnet.quit();
     }
   }
 }

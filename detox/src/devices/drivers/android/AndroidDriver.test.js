@@ -1,5 +1,7 @@
 const _ = require('lodash');
 
+const latestInstanceOf = (clazz) => _.last(clazz.mock.instances);
+
 describe('Android driver', () => {
   const deviceId = 'device-id-mock';
   const bundleId = 'bundle-id-mock';
@@ -20,12 +22,14 @@ describe('Android driver', () => {
   let AAPTClass;
   let FileXferClass;
   let AppInstallHelperClass;
+  let DeviceRegistryClass;
 
-  const adbObj = () => _.last(ADBClass.mock.instances);
-  const aaptObj = () => _.last(AAPTClass.mock.instances);
-  const fileXferObj = () => _.last(FileXferClass.mock.instances);
-  const appInstallHelperObj = () => _.last(AppInstallHelperClass.mock.instances);
-  const instrumentationObj = () => _.last(InstrumentationClass.mock.instances);
+  const adbObj = () => latestInstanceOf(ADBClass);
+  const aaptObj = () => latestInstanceOf(AAPTClass);
+  const fileXferObj = () => latestInstanceOf(FileXferClass);
+  const appInstallHelperObj = () => latestInstanceOf(AppInstallHelperClass);
+  const instrumentationObj = () => latestInstanceOf(InstrumentationClass);
+  const deviceRegistryObj = () => latestInstanceOf(DeviceRegistryClass);
 
   let uut;
   beforeEach(() => {
@@ -131,7 +135,7 @@ describe('Android driver', () => {
       expect(emitter.off).toHaveBeenCalled());
 
     it('should dispose device', () => {
-      expect(mockDisposeDevice).toHaveBeenCalledWith(deviceId);
+      expect(deviceRegistryObj().disposeDevice).toHaveBeenCalledWith(deviceId);
     });
   });
 
@@ -467,7 +471,6 @@ describe('Android driver', () => {
     });
   });
 
-  const mockDisposeDevice = jest.fn();
   const setUpModuleDepMocks = () => {
     jest.mock('fs', () => ({
       existsSync: jest.fn(),
@@ -516,12 +519,6 @@ describe('Android driver', () => {
 
     const InvocationManager = jest.genMockFromModule('../../../invoke').InvocationManager;
     invocationManager = new InvocationManager();
-
-    jest.mock('../../DeviceRegistry', () => class {
-      constructor() {
-        this.disposeDevice = mockDisposeDevice;
-      }
-    });
   };
 
   const setUpClassDepMocks = () => {
@@ -534,7 +531,7 @@ describe('Android driver', () => {
     jest.mock('./exec/ADB');
     ADBClass = require('./exec/ADB');
     ADBClass.mockImplementation(() => {
-      const _this = _.last(ADBClass.mock.instances);
+      const _this = latestInstanceOf(ADBClass);
       _this.adbBin = 'ADB binary mock';
       _this.spawnInstrumentation.mockReturnValue({
         childProcess: {
@@ -553,12 +550,15 @@ describe('Android driver', () => {
     jest.mock('./tools/TempFileXfer');
     FileXferClass = require('./tools/TempFileXfer');
     FileXferClass.mockImplementation(() => {
-      const _this = _.last(FileXferClass.mock.instances);
+      const _this = latestInstanceOf(FileXferClass);
       _this.send.mockResolvedValue(mockNotificationDataTargetPath)
     });
 
     jest.mock('./tools/AppInstallHelper');
     AppInstallHelperClass = require('./tools/AppInstallHelper');
+
+    jest.mock('../../DeviceRegistry');
+    DeviceRegistryClass = require('../../DeviceRegistry');
   };
 
   const mockGetAbsoluteBinaryPathImpl = (x) => `absolutePathOf(${x})`;

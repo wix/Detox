@@ -101,8 +101,6 @@
       "src/utils/sleep.js",
       "AAPT.js",
       "ADB.js",
-      "DeviceHandle.js",
-      "EmulatorHandle.js",
       "fsext.js",
       "debug.js",
       "src/ios/earlgreyapi",
