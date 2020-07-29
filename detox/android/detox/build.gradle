@@ -91,7 +91,7 @@ dependencies {
 
 // Third-party deps.
 dependencies {
-    implementation 'org.apache.commons:commons-lang3:3.11' // Needed by invoke.
+    implementation 'org.apache.commons:commons-lang3:3.7' // Needed by invoke. Warning: Upgrading to newer versions is not seamless.
     implementation 'com.github.anrwatchdog:anrwatchdog:1.4.0'
 }
 
