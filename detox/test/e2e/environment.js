@@ -17,11 +17,19 @@ class CustomDetoxEnvironment extends DetoxCircusEnvironment {
   }
 
   async initDetox() {
+    let instance;
+
     if (process.env.TIMEOUT_E2E_TEST) {
-      return this._initDetoxWithHangingServer();
+      instance = await this._initDetoxWithHangingServer();
     } else {
-      return super.initDetox();
+      instance = await super.initDetox();
     }
+
+    this.global.detox.__waitUntilArtifactsManagerIsIdle__ = () => {
+      return instance._artifactsManager._idlePromise;
+    };
+
+    return instance;
   }
 
   async _initDetoxWithHangingServer() {
