@@ -51,7 +51,7 @@ The most difficult part of automated testing on mobile is the tip of the testing
 
 ### Environment
 
-* **OS**: MacOS 10.13 (High Sierra) or higher
+* **OS**: macOS 10.14 (Mojave) or higher
 * **Xcode**: 10.2 or higher
   * **iOS Simulator Runtime**: iOS 12.2 or higher
 
@@ -63,11 +63,10 @@ The following React Native versions have been tested:
 
 | iOS    | Android                                                      |
 | ------ | ------------------------------------------------------------ |
-| <=0.62 | <=0.56 - Full support                                        |
+| <=0.63 | <=0.56 - Full support                                        |
 |        | >=0.57 <=0.63 - Visibility edge-case: see this [RN issue](https://github.com/facebook/react-native/issues/23870)* |
 
 Future versions are most likely supported, but have not been tested yet. Please open issues if you find specific issues with newer React Native versions.
-
 
 ## Get Started With Detox!
 
