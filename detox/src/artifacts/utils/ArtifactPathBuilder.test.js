@@ -73,6 +73,20 @@ describe(ArtifactPathBuilder, () => {
 
       expect(asPosixPath(artifactPath)).toBe('/tmp/subdir/✗ test/1.log');
     });
+
+    it('should append (2) invocations count for a test that fails for the second time', () => {
+      const testSummary = {title: '', fullName: 'test', status: 'failed', invocations: 2 };
+      const artifactPath = pathBuilder.buildPathForTestArtifact('1.log', testSummary);
+
+      expect(asPosixPath(artifactPath)).toBe('/tmp/subdir/✗ test (2)/1.log');
+    });
+
+    it('should append (3) invocations count for a test that passes for the third time', () => {
+      const testSummary = {title: '', fullName: 'test', status: 'passed', invocations: 3 };
+      const artifactPath = pathBuilder.buildPathForTestArtifact('1.log', testSummary);
+
+      expect(asPosixPath(artifactPath)).toBe('/tmp/subdir/✓ test (3)/1.log');
+    });
   });
 
   function asPosixPath(maybeWin32Path) {

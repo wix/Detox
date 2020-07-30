@@ -32,8 +32,9 @@ class ArtifactPathBuilder {
   }
 
   _constructDirectoryNameForCurrentRunningTest(testSummary) {
-    const testDirectoryPrefix = this._buildTestDirectoryPrefix(testSummary);
-    const testArtifactsDirname = constructSafeFilename(testDirectoryPrefix, testSummary.fullName);
+    const prefix = this._buildTestDirectoryPrefix(testSummary);
+    const suffix = testSummary.invocations > 1 ? ` (${testSummary.invocations})` : '';
+    const testArtifactsDirname = constructSafeFilename(prefix, testSummary.fullName, suffix);
 
     return testArtifactsDirname;
   }
@@ -43,6 +44,8 @@ class ArtifactPathBuilder {
   }
 
   _getStatusSign(testSummary) {
+    const invocations = testSummary.invocations || 1;
+
     switch (testSummary.status) {
       case 'passed': return '✓ ';
       case 'failed': return '✗ ';

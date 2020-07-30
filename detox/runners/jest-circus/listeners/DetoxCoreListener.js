@@ -64,6 +64,7 @@ class DetoxCoreListener {
       title: test.name,
       fullName: getFullTestName(test),
       status: 'running',
+      invocations: test.invocations,
     });
   }
 
@@ -73,6 +74,7 @@ class DetoxCoreListener {
         title: test.name,
         fullName: getFullTestName(test),
         status: test.errors.length ? 'failed' : 'passed',
+        invocations: test.invocations,
         timedOut: hasTimedOut(test)
       });
     }
