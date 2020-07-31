@@ -147,7 +147,7 @@ The other string presets override the following properties compared to the defau
 
 * `none` => `{ enabled: false }`.
 * `failing` => `{ shouldTakeAutomaticSnapshots: true, keepOnlyFailedTestsArtifacts: true }`.
-* `all` => `{ shouldTakeAutomaticSnapshots: true, keepOnlyFailedTestsArtifacts: true }`
+* `all` => `{ shouldTakeAutomaticSnapshots: true, keepOnlyFailedTestsArtifacts: false }`
 
 The invidual property behavior is the following:
 
