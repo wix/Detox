@@ -75,7 +75,7 @@ If you are using custom [productFlavors](https://developer.android.com/studio/bu
 ```json
 "detox" : {
     "configurations": {
-        "android.emu.beta.debug": {
+      "android.emu.beta.debug": {
         "binaryPath": "android/app/build/outputs/apk/beta/debug/app-beta-debug.apk",
         "build": "cd android && ./gradlew assembleBetaDebug assembleBetaDebugAndroidTest -DtestBuildType=debug && cd ..",
         "type": "android.emulator",
