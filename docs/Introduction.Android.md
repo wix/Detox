@@ -6,16 +6,15 @@
 
 > Follow our [Migration Guide](Guide.Migration.md) for instructions on how to upgrade from older versions.
 
-* **In version 11 we switched to using Android Espresso of Android's new [androidx.\*  support libraries](https://developer.android.com/jetpack/androidx/).** We did this in order to stay up to date with Google's latest features and bug fixes, in the hopes of using them to improve our own Android support (which gets better every day!).
+- **In version 11 we switched to using Android Espresso of Android's new [androidx.\* support libraries](https://developer.android.com/jetpack/androidx/).** We did this in order to stay up to date with Google's latest features and bug fixes, in the hopes of using them to improve our own Android support (which gets better every day!).
 
-* **In version 10, we've made [Kotlin](https://kotlinlang.org/) mandatory for integrating Detox into your Android project.** In the very least, you must include the Kotlin gradle plugin in your project, as we shall see later on. Nevertheless, this is a breaking change so bear that in mind when upgrading. In any case, worry not of the impact on your app, as - unless you effectively use Kotlin in your own native code, **there will be no impact on the final APK**, in terms of size and methods count.
+- **In version 10, we've made [Kotlin](https://kotlinlang.org/) mandatory for integrating Detox into your Android project.** In the very least, you must include the Kotlin gradle plugin in your project, as we shall see later on. Nevertheless, this is a breaking change so bear that in mind when upgrading. In any case, worry not of the impact on your app, as - unless you effectively use Kotlin in your own native code, **there will be no impact on the final APK**, in terms of size and methods count.
 
-* **As of version 7** we require Android gradle plugin 3.0.0 or newer. This is a breaking change that makes it impossible to support previous Android gradle plugin versions.
+- **As of version 7** we require Android gradle plugin 3.0.0 or newer. This is a breaking change that makes it impossible to support previous Android gradle plugin versions.
 
   https://developer.android.com/studio/build/gradle-plugin-3-0-0-migration.html
 
   For older Android gradle plugin support use `detox@6.x.x` instead ([previous setup guide here](https://github.com/wix/detox/blob/97654071573053def90e8207be8eba011408f977/docs/Introduction.Android.md)).
-
 
 **Note: As a rule of thumb, we consider all old major versions discontinued; We only support the latest Detox major version.**
 
@@ -27,36 +26,34 @@ Run through the basic steps of the [Getting Started guide](Introduction.GettingS
 
 ### 2. Apply Detox Configuration
 
-Whether you've selected to apply the configuration in a  `.detoxrc.json` or bundle it into your project's `package.json` (under the `detox` section), this is what the configuration should roughly look like for Android:
+Whether you've selected to apply the configuration in a `.detoxrc.json` or bundle it into your project's `package.json` (under the `detox` section), this is what the configuration should roughly look like for Android:
 
 ```json
 {
   "configurations": {
-      "android.emu.debug": {
-          "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
-          "build":
-            "cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
-          "type": "android.emulator",
-          "device": {
-            "avdName": "Pixel_API_28"
-          }
-      },
-      "android.emu.release": {
-          "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
-          "build": "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd ..",
-          "type": "android.emulator",
-          "device": {
-            "avdName": "Pixel_API_28"
-          }
+    "android.emu.debug": {
+      "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
+      "build": "cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
+      "type": "android.emulator",
+      "device": {
+        "avdName": "Pixel_API_28"
       }
+    },
+    "android.emu.release": {
+      "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
+      "build": "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd ..",
+      "type": "android.emulator",
+      "device": {
+        "avdName": "Pixel_API_28"
+      }
+    }
   }
 }
 ```
 
->For a comprehensive explanation of Detox configuration, refer to the [dedicated API-reference guide](APIRef.Configuration.md).
+> For a comprehensive explanation of Detox configuration, refer to the [dedicated API-reference guide](APIRef.Configuration.md).
 
 Pay attention to `-DtestBuildType`, set either to `debug` or `release` according to the main apk type.
-
 
 Following device types could be used to control Android devices:
 
@@ -100,7 +97,7 @@ If you are using custom [productFlavors](https://developer.android.com/studio/bu
 > **Starting Detox 12.5.0, Detox is shipped as a precompiled `.aar`.**
 > To configure Detox as a _compiling dependency_, nevertheless -- refer to the _Setting Detox up as a compiling dependency_ section at the bottom.
 
-In your *root* buildscript (i.e. `build.gradle`), register both `google()` _and_ detox as repository lookup points in all projects:
+In your _root_ buildscript (i.e. `build.gradle`), register both `google()` _and_ detox as repository lookup points in all projects:
 
 ```groovy
 // Note: add the 'allproject' section if it doesn't exist
@@ -116,8 +113,6 @@ allprojects {
 }
 ```
 
-
-
 In your app's buildscript (i.e. `app/build.gradle`) add this in `dependencies` section:
 
 ```groovy
@@ -132,7 +127,7 @@ dependencies {
 ```groovy
 android {
   // ...
-  
+
   defaultConfig {
       // ...
       testBuildType System.getProperty('testBuildType', 'debug')  // This will later be used to control the test apk build type
@@ -140,9 +135,8 @@ android {
   }
 }
 ```
+
 Please be aware that the `minSdkVersion` needs to be at least 18.
-
-
 
 ### 4. Add Kotlin
 
@@ -161,23 +155,19 @@ buildscript {
 
 _Note: most guides advise of defining a global `kotlinVersion` constant - as in this example, but that is not mandatory._
 
-***Note that Detox has been tested for version 1.1.0 of Kotlin, and higher!***
-
-
+**_Note that Detox has been tested for version 1.1.0 of Kotlin, and higher!_**
 
 ### 5. Create a Detox-Test Class
 
 Add the file `android/app/src/androidTest/java/com/[your.package]/DetoxTest.java` and fill as in [the detox example app for NR](../examples/demo-react-native/android/app/src/androidTest/java/com/example/DetoxTest.java). **Don't forget to change the package name to your project's**.
 
-
-
 ### 6. Enable clear-text (unencrypted) traffic for Detox
 
 Starting Android SDK v28, Google have disabled all clear-text network traffic by default. Namely, unless explicitly configured, all of your application's outgoing unencrypted traffic (i.e. non-TLS using HTTP rather than HTTPS) is blocked by the device.
 
-For Detox to work, Detox test code running on the device must connect to the test-running host through it's virtual localhost interface<sup>(*)</sup> using simple HTTP traffic. Therefore, the following network-security exemption configuration must be applied --
+For Detox to work, Detox test code running on the device must connect to the test-running host through it's virtual localhost interface<sup>(\*)</sup> using simple HTTP traffic. Therefore, the following network-security exemption configuration must be applied --
 
-*In an xml resource file, e.g. `android/app/src/main/res/xml/network_security_config.xml`:*
+_In an xml resource file, e.g. `android/app/src/main/res/xml/network_security_config.xml`:_
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -189,26 +179,24 @@ For Detox to work, Detox test code running on the device must connect to the tes
 </network-security-config>
 ```
 
-*In the app's `AndroidManifest.xml`*
+_In the app's `AndroidManifest.xml`_
 
 ```xml
 <manifest>
-  <application 
+  <application
         ...
         android:networkSecurityConfig="@xml/network_security_config">
   </application>
 </manifest>
 ```
 
-> *Refer to the [Detox example app](https://github.com/wix/Detox/tree/master/examples/demo-react-native/android/app/src/main) for an example on this is effectively implemented.* 
+> _Refer to the [Detox example app](https://github.com/wix/Detox/tree/master/examples/demo-react-native/android/app/src/main) for an example on how this is effectively implemented._
 
 **Note: if properly configured, this in no way compromises the security settings of your app.**
 
-For full details, refer to [Android's security-config guide](https://developer.android.com/training/articles/security-config), and the dedicated article in the [Android developers blog](https://android-developers.googleblog.com/2016/04/protecting-against-unintentional.html). 
+For full details, refer to [Android's security-config guide](https://developer.android.com/training/articles/security-config), and the dedicated article in the [Android developers blog](https://android-developers.googleblog.com/2016/04/protecting-against-unintentional.html).
 
-> *(\*) 10.0.2.2 for Google emulators, 10.0.3.2 for Genymotion emulators.*
-
-
+> _(\*) 10.0.2.2 for Google emulators, 10.0.3.2 for Genymotion emulators._
 
 ### 7. Proguard (Minification)
 
@@ -228,8 +216,6 @@ In apps running [minification using Proguard](https://developer.android.com/stud
     }
 
 ```
-
-
 
 ### 8. Test Butler Support (Optional)
 
@@ -276,7 +262,7 @@ a. In a custom script, have it predownloaded from Bintray directly, as suggest i
 curl -f -o ./temp/test-butler-app.apk https://linkedin.bintray.com/maven/com/linkedin/testbutler/test-butler-app/2.1.0/test-butler-app-2.1.0.apk`
 ```
 
-*Jests' [global-setup](https://jestjs.io/docs/en/configuration#globalsetup-string) is a recommend place for those kind of things.*
+_Jests' [global-setup](https://jestjs.io/docs/en/configuration#globalsetup-string) is a recommend place for those kind of things._
 
 > Should you decide to go this path, we recommend you add `./temp/test-butler-app.apk` to the relevant `.gitignore`.
 
@@ -286,8 +272,6 @@ b. (Discouraged) Add it to your source control (e.g. git), as part of the reposi
 
 This is an **alternative** to the setup process described under the previous section, on adding Detox as a dependency.
 
-
-
 In your project's `settings.gradle` add:
 
 ```groovy
@@ -295,9 +279,7 @@ include ':detox'
 project(':detox').projectDir = new File(rootProject.projectDir, '../node_modules/detox/android/detox')
 ```
 
-
-
-In your *root* buildscript (i.e. `build.gradle`), register `google()` as a repository lookup point in all projects:
+In your _root_ buildscript (i.e. `build.gradle`), register `google()` as a repository lookup point in all projects:
 
 ```groovy
 // Note: add the 'allproject' section if it doesn't exist
@@ -309,8 +291,6 @@ allprojects {
 }
 ```
 
-
-
 In your app's buildscript (i.e. `app/build.gradle`) add this in `dependencies` section:
 
 ```groovy
@@ -320,14 +300,12 @@ dependencies {
 }
 ```
 
-
-
 In your app's buildscript (i.e. `app/build.gradle`) add this to the `defaultConfig` subsection:
 
 ```groovy
 android {
   // ...
-  
+
   defaultConfig {
       // ...
       testBuildType System.getProperty('testBuildType', 'debug')  // This will later be used to control the test apk build type
@@ -337,8 +315,6 @@ android {
 ```
 
 Please be aware that the `minSdkVersion` needs to be at least 18.
-
-
 
 ## Troubleshooting
 
@@ -359,8 +335,6 @@ packagingOptions {
 }
 ```
 
-
-
 ### Problem: Kotlin stdlib version conflicts
 
 The problems and resolutions here are different if you're using Detox as a precompiled dependency artifact (i.e. an `.aar`) - which is the default, or compiling it yourself.
@@ -372,7 +346,7 @@ Of all [Kotlin implementation flavours](https://kotlinlang.org/docs/reference/us
 ```diff
 dependencies {
 -    androidTestImplementation('com.wix:detox:+')
-+    androidTestImplementation('com.wix:detox:+') { 
++    androidTestImplementation('com.wix:detox:+') {
 +        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
 +    }
 }
@@ -405,13 +379,14 @@ Could not determine the dependencies of task ':detox:compileDebugAidl'.
            Dependency path 'OurApp:detox:unspecified' --> 'com.squareup.okhttp3:okhttp:4.0.0-alpha01' --> 'org.jetbrains.kotlin:kotlin-stdlib:1.3.30' --> 'org.jetbrains.kotlin:kotlin-stdlib-common:1.3.30'
            Constraint path 'OurApp:detox:unspecified' --> 'org.jetbrains.kotlin:kotlin-stdlib-common' strictly '1.3.0' because of the following reason: debugRuntimeClasspath uses version 1.3.0
 ```
+
 (i.e. the project indirectly depends on different versions of `kotlin-stdlib`, such as `1.3.0`, `1.3.30`, `1.2.60`)
 
 #### Resolving for a compiling subproject
 
 Detox requires the Kotlin standard-library as it's own dependency. Due to the [many flavours](https://kotlinlang.org/docs/reference/using-gradle.html#configuring-dependencies) by which Kotlin has been released, multiple dependencies often create a conflict.
 
-For that, Detox allows for the exact specification of the standard library to use using two Gradle globals: `detoxKotlinVersion` and `detoxKotlinStdlib`. You can define both in your  root build-script file (i.e.`android/build.gradle`):
+For that, Detox allows for the exact specification of the standard library to use using two Gradle globals: `detoxKotlinVersion` and `detoxKotlinStdlib`. You can define both in your root build-script file (i.e.`android/build.gradle`):
 
 ```groovy
 buildscript {
@@ -420,8 +395,6 @@ buildscript {
     ext.detoxKotlinStdlib = 'kotlin-stdlib-jdk7' // Detox' default is kotlin-stdlib-jdk8
 }
 ```
-
-
 
 ### Problem: The app loads but tests fail to start in SDK >= 28
 
@@ -437,7 +410,6 @@ More specifically, when this happens:
 detox[12345] DEBUG: [DetoxServer.js/CANNOT_FORWARD] role=testee not connected, cannot fw action (sessionId=11111111-2222-3333-4444-555555555555)
 ```
 
-* The main step for getting this fixed is to **revisit [step 6](#6-enable-clear-text-unencrypted-traffic-for-detox) in this guide**, which discusses network-security.
+- The main step for getting this fixed is to **revisit [step 6](#6-enable-clear-text-unencrypted-traffic-for-detox) in this guide**, which discusses network-security.
 
-* Alternatively, the `android:usesCleartextTraffic="true"` attribute can be configured in the `<application>` tag of the app's `AndroidManifest.xml`, but **that is highly discouraged**.
-
+- Alternatively, the `android:usesCleartextTraffic="true"` attribute can be configured in the `<application>` tag of the app's `AndroidManifest.xml`, but **that is highly discouraged**.
