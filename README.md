@@ -1,14 +1,7 @@
-[![NPM Version](https://img.shields.io/npm/v/detox.svg?style=flat)](https://www.npmjs.com/package/detox)
-[![NPM Downloads](https://img.shields.io/npm/dm/detox.svg?style=flat)](https://www.npmjs.com/package/detox)
-[![Build Status](https://img.shields.io/jenkins/s/http/jenkins-oss.wixpress.com:8080/job/multi-detox-master.svg)](https://jenkins-oss.wixpress.com/job/multi-detox-master/)
-[![Coverage Status](https://coveralls.io/repos/github/wix/Detox/badge.svg?branch=master)](https://coveralls.io/github/wix/Detox?branch=master)
-[![Detox is released under the MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![PR's welcome!](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](docs/Guide.Contributing.md)
-
-# Detox
-
-Gray box end-to-end testing and automation library for mobile apps.
-
+|<img alt="Detox" width=50% src="https://user-images.githubusercontent.com/1962469/89643713-0c018200-d8bf-11ea-8a7d-d21de37cf3ec.png">|
+|:----:|
+|Gray box end-to-end testing and automation library for mobile apps.|
+|[![NPM Version](https://img.shields.io/npm/v/detox.svg?style=flat)](https://www.npmjs.com/package/detox)[![NPM Downloads](https://img.shields.io/npm/dm/detox.svg?style=flat)](https://www.npmjs.com/package/detox)[![Build Status](https://img.shields.io/jenkins/s/http/jenkins-oss.wixpress.com:8080/job/multi-detox-master.svg)](https://jenkins-oss.wixpress.com/job/multi-detox-master/)[![Coverage Status](https://coveralls.io/repos/github/wix/Detox/badge.svg?branch=master)](https://coveralls.io/github/wix/Detox?branch=master)[![Detox is released under the MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)[![PR's welcome!](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](docs/Guide.Contributing.md)|
 <img src="http://i.imgur.com/eoaDEYp.gif">
 
 ## What does a Detox test look like?
