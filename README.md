@@ -1,10 +1,10 @@
-<p style="text-align: center;">
+<p align="center">
 	<img alt="Detox" width=405 src="https://user-images.githubusercontent.com/1962469/89643713-0c018200-d8bf-11ea-8a7d-d21de37cf3ec.png"/>
 </p>
-<p style="text-align: center;">
+<p align="center">
 <b>Gray box end-to-end testing and automation library for mobile apps.</b>
 </p>
-<p style="text-align: center;">
+<p align="center">
 <img alt="Demo" src="http://i.imgur.com/eoaDEYp.gif"/>
 </p>
 
