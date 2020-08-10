@@ -233,6 +233,11 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		return [segmentControl dtx_isHittableAtPoint:[segmentControl convertPoint:point fromView:self] error:error];
 	}
 	
+	if([self isKindOfClass:UILabel.class] && [self.dtx_containingViewController isKindOfClass:UIAlertController.class])
+	{		
+		return YES;
+	}
+	
 	return [self _dtx_someTestAtPoint:point testSelector:@selector(dtx_hitTest:withEvent:lookingFor:) error:error];
 }
 
@@ -551,6 +556,17 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	
 	rv[@"elementAttributes"] = [self dtx_attributes];
 	rv[@"viewDescription"] = self.description;
+	
+	return rv;
+}
+
+- (UIViewController *)dtx_containingViewController
+{
+	UIViewController* rv = (id)self.nextResponder;
+	while(rv != nil && [rv isKindOfClass:UIViewController.class] == NO)
+	{
+		rv = (id)rv.nextResponder;
+	}
 	
 	return rv;
 }
