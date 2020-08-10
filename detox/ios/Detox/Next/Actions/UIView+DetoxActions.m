@@ -349,7 +349,7 @@ static void _DTXTypeText(NSString* text)
 
 - (void)dtx_clearText
 {
-	[self dtx_assertHittable];
+//	[self dtx_assertHittable];
 	
 	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(self);
 	
@@ -377,7 +377,7 @@ static void _DTXTypeText(NSString* text)
 
 - (void)dtx_typeText:(NSString*)text
 {
-	[self dtx_assertHittable];
+//	[self dtx_assertHittable];
 	
 	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(self);
 	
@@ -388,7 +388,7 @@ static void _DTXTypeText(NSString* text)
 
 - (void)dtx_replaceText:(NSString*)text
 {
-	[self dtx_assertHittable];
+//	[self dtx_assertHittable];
 	
 	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(self);
 	
