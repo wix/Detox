@@ -89,7 +89,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	NSError* error;
 	BOOL assert = [self dtx_isVisibleAtPoint:point error:&error];
 	
-	DTXViewAssert(assert == YES, self.dtx_viewDebugAttributes, @"View “%@” is not visible%@%@", self.dtx_shortDescription, !isAtActivationPoint ? [NSString stringWithFormat:@" at point “%@”", DTXPointToString(point)] : @"", error ? [NSString stringWithFormat:@": %@", error.localizedDescription] : @"");
+	DTXViewAssert(assert == YES, self.dtx_viewDebugAttributes, @"%@", error.localizedDescription);
 }
 
 - (void)_dtx_assertHittableAtPoint:(CGPoint)point isAtActivationPoint:(BOOL)isAtActivationPoint
@@ -97,7 +97,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	NSError* error;
 	BOOL assert = [self dtx_isHittableAtPoint:point error:&error];
 	
-	DTXViewAssert(assert == YES, self.dtx_viewDebugAttributes, @"View “%@” is not hittable%@%@", self.dtx_shortDescription, !isAtActivationPoint ? [NSString stringWithFormat:@" at point “%@”", DTXPointToString(point)] : @"", error ? [NSString stringWithFormat:@": %@", error.localizedDescription] : @"");
+	DTXViewAssert(assert == YES, self.dtx_viewDebugAttributes, @"%@", error.localizedDescription);
 }
 
 - (NSString *)dtx_shortDescription
@@ -279,18 +279,23 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return [self _dtx_someTestAtPoint:point testSelector:@selector(dtx_hitTest:withEvent:lookingFor:) error:error];
 }
 
+#define APPLY_PREFIX(...) [NSString stringWithFormat:@"%@ %@", prefix, __VA_ARGS__]
+
 - (BOOL)_dtx_someTestAtPoint:(CGPoint)point testSelector:(SEL)selector error:(NSError* __strong *)error
 {
+	BOOL isHit = (selector == @selector(dtx_hitTest:withEvent:lookingFor:));
+	NSString* prefix = [NSString stringWithFormat:@"View “%@” is not %@ at point “%@”;", self.dtx_shortDescription, isHit ? @"hittable" : @"visible", DTXPointToString(point)];
+
 	if(UIApplication.sharedApplication._isSpringBoardShowingAnAlert)
 	{
-		_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: @"System alert is shown on screen"}]);
+		_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX(@"System alert is shown on screen")}]);
 		
 		return NO;
 	}
 	
 	if(self.window == nil || self.window.screen == nil)
 	{
-		_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: @"Either window or screen are nil"}]);
+		_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX(@"Either window or screen are nil")}]);
 		
 		return NO;
 	}
@@ -299,7 +304,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	{
 		if(self.window.windowScene == nil)
 		{
-			_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: @"Window scene is nil"}]);
+			_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX(@"Window scene is nil")}]);
 			return NO;
 		}
 	}
@@ -311,7 +316,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	
 	if(CGRectContainsPoint(self.window.bounds, windowActivationPoint) == NO)
 	{
-		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Point “%@” is outside of window bounds", DTXPointToString(windowActivationPoint)]}];
+		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"Point “%@” is outside of window bounds", DTXPointToString(windowActivationPoint)])}];
 		_DTXPopulateError(err);
 		
 		return NO;
@@ -319,14 +324,14 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	
 	if(CGRectGetWidth(self.dtx_safeAreaBounds) == 0 || CGRectGetHeight(self.dtx_safeAreaBounds) == 0)
 	{
-		_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: @"View safe area bounds are empty"}]);
+		_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX(@"View safe area bounds are empty")}]);
 		
 		return NO;
 	}
 	
 	if([self isHiddenOrHasHiddenAncestor] == YES)
 	{
-		_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: @"View is hidden or has hidden ancestor"}]);
+		_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX(@"View is hidden or has hidden ancestor")}]);
 		
 		return NO;
 	}
@@ -338,7 +343,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	{
 		if(self.userInteractionEnabled == NO)
 		{
-			_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: @"View has user interaction disabled (userInteractionEnabled == NO)"}]);
+			_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX(@"View has user interaction disabled (userInteractionEnabled == NO)")}]);
 			
 			return NO;
 		}
@@ -346,7 +351,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		UIView* hitTest = [self hitTest:point withEvent:nil];
 		if(hitTest == nil)
 		{
-			_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: @"View declined to accept touch (hitTest:withEvent: == nil)"}]);
+			_DTXPopulateError([NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX(@"View declined to accept touch (hitTest:withEvent: == nil)")}]);
 			
 			return NO;
 		}
@@ -380,7 +385,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 //			[UIImagePNGRepresentation(windowImage) writeToFile:[NSString stringWithFormat:@"/Users/lnatan/Desktop/%@.png", NSStringFromClass(obj.class)] atomically:YES];
 			if([UIView _dtx_isImageTransparent:windowImage] == NO)
 			{
-				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Window “%@” is above the tested view's window and is not transparent at window point “%@”", obj.dtx_shortDescription, DTXPointToString(currentWindowActivationPoint)]}];
+				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"Window “%@” is above the tested view's window and is not transparent at window point “%@”", obj.dtx_shortDescription, DTXPointToString(currentWindowActivationPoint)])}];
 				_DTXPopulateError(err);
 				
 				//The window is not transparent at the hit point, stop
@@ -401,7 +406,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		{
 			if(visibleView != nil)
 			{
-				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Another view “%@” is hittable in window “%@” at window point “%@”", visibleView.dtx_shortDescription, obj.dtx_shortDescription, DTXPointToString(currentWindowActivationPoint)]}];
+				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"Another view “%@” is hittable in window “%@” at window point “%@”", visibleView.dtx_shortDescription, obj.dtx_shortDescription, DTXPointToString(currentWindowActivationPoint)])}];
 				_DTXPopulateError(err);
 				
 				//We've hit a view in another window
@@ -426,12 +431,12 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 			
 			if(visibleView == NO)
 			{
-				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"No view is %@ at window point “%@”", str, DTXPointToString(windowActivationPoint)]}];
+				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"No view is %@ at window point “%@”", str, DTXPointToString(windowActivationPoint)])}];
 				_DTXPopulateError(err);
 			}
 			else
 			{
-				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Another view “%@” is %@ at window point “%@”", visibleView.dtx_shortDescription, str, DTXPointToString(currentWindowActivationPoint)]}];
+				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"Another view “%@” is %@ at window point “%@”", visibleView.dtx_shortDescription, str, DTXPointToString(currentWindowActivationPoint)])}];
 				_DTXPopulateError(err);
 			}
 			
