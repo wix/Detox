@@ -140,49 +140,6 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return [self hitTest:point withEvent:event];
 }
 
-- (UIView*)dtx_visTest_faster:(CGPoint)point withEvent:(UIEvent *)event lookingFor:(UIView*)lookingFor
-{
-	if(self.isHiddenOrHasHiddenAncestor == YES)
- 	{
- 		return nil;
- 	}
-
- 	if(self.alpha == 0.0)
- 	{
- 		return nil;
- 	}
-
- 	if([self pointInside:point withEvent:event] == NO)
- 	{
- 		return nil;
- 	}
-
- 	__block UIView* rv;
-
- 	NSMutableOrderedSet<UIView*>* candidates = [NSMutableOrderedSet new];
-
- 	//Front-most views get priority
- 	[self.subviews enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
- 		CGPoint localPoint = [self convertPoint:point toView:obj];
-
- 		UIView* candidate = [obj dtx_visTest:localPoint withEvent:event lookingFor:lookingFor];
-
- 		if(candidate != nil)
- 		{
- 			[candidates addObject:candidate];
- 		}
- 	}];
-
- 	rv = candidates.firstObject;
-
- 	if(rv == nil)
- 	{
- 		rv = self;
- 	}
-
- 	return rv;
-}
-
 - (UIView*)dtx_visTest:(CGPoint)point withEvent:(UIEvent *)event lookingFor:(UIView*)lookingFor
 {
 	if(self.isHiddenOrHasHiddenAncestor == YES)
@@ -227,7 +184,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	{
 		//Check the candidate view for transparency
 		UIImage* img = [self dtx_imageAroundPoint:point];
-		[UIImagePNGRepresentation(img) writeToFile:@"/Users/lnatan/Desktop/view.png" atomically:YES];
+//		[UIImagePNGRepresentation(img) writeToFile:@"/Users/lnatan/Desktop/view.png" atomically:YES];
 		if([UIView _dtx_isImageTransparent:img] == NO)
 		{
 			//If a view is not transparent around the hit point, take it as the visible view.
@@ -478,7 +435,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	CGFloat x = MAX(0, point.x - width / 2.0);
 	CGFloat y = MAX(0, point.y - height / 2.0);
 	
-	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+	CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
 	if (colorSpace == NULL)
 	{
 		return nil;
@@ -487,7 +444,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		CGColorSpaceRelease(colorSpace);
 	};
 	
-	CGContextRef context = CGBitmapContextCreate(NULL, width, height, 8, width * 4, colorSpace, (CGBitmapInfo)kCGImageAlphaPremultipliedFirst);
+	CGContextRef context = CGBitmapContextCreate(NULL, width, height, 8, width * 4, colorSpace, (CGBitmapInfo)kCGImageAlphaPremultipliedLast);
 	if(context == NULL)
 	{
 		return nil;
