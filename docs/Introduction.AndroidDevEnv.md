@@ -54,7 +54,7 @@ _<sup>* Inspect the content of your `ANDROID_SDK_ROOT` and `ANDROID_HOME` enviro
 
 ## Android (AOSP) Emulators
 
-Mobile-apps' automation needs an Android device to run on. If you haven't already done so, you should  [set up an Emulator](https://developer.android.com/studio/run/emulator). But, wait - don't install the default one, just yet: read through.
+Mobile-apps' automation needs an Android device to run on. If you haven't already done so, you should  [set up an Emulator](https://developer.android.com/studio/run/emulator). But, wait - don't go and install the default one: read through, first.
 
 We've long proven that for automation - which requires a stable and deterministic environment, Google's emulators running with Google API's simply don't deliver what's needed. Be it the preinstalled Google play-services - which tend to take up a lot of CPU, or even Google's `gboard` Keyboard - which is full-featured but overly bloated: These encourage flakiness in tests, which we are desperate to avoid in automation.
 
@@ -68,8 +68,15 @@ Fortunately, the Android team at Google offers a pretty decent alternative: **AO
 
 While it's possible to do this using Android Studio, we'll focus on the command line, as it also good for _headless_ CI machines.
 
-1. Locate your 'Android home' folder - typically set in the `ANDROID_HOME` environment variable on linux and mac machines, or in it's successor - `ANDROID_SDK_ROOT`. If `ANDROID_HOME` isn't set, either set it yourself or run the following commands after `cd`-ing into the home folder.
-2. Install the Google-API's-less emulator-image:
+1. Locate your 'Android home' folder - typically set in the `ANDROID_HOME` environment variable, or in it's successor - `ANDROID_SDK_ROOT`. If `ANDROID_HOME` isn't set, either set it yourself or run the following commands after `cd`-ing into the home folder.
+2. Preliminary: Upgrade your `emulator` executable to the latest version.
+   _Note: It is OK if the emulator's version is not aligned with the SDK or platform-tools' version you currently have installed (e.g. 30.x.x vs. SDK 29)_
+
+```sh
+$ANDROID_HOME/tools/bin/sdkmanager --install emulator
+```
+
+3. Install the Google-API's-less emulator-image:
 
 ```shell
 $ANDROID_HOME/tools/bin/sdkmanager "system-images;android-28;default;x86_64"
@@ -79,7 +86,7 @@ $ANDROID_HOME/tools/bin/sdkmanager --licenses
 > * With `;android-28;`, we assumed SDK 28 here, but other API's are supported just the same.
 > * The `;default;` part replaces `;google_apis;`, which is the default, and is what matters here.
 
-3. Create an emulator (i.e. AVD - Android Virtual Device):
+4. Create an emulator (i.e. AVD - Android Virtual Device):
 
 ```shell
 $ANDROID_HOME/tools/bin/avdmanager create avd -n Pixel_API_28_AOSP -d pixel --package "system-images;android-28;default;x86_64"
@@ -91,7 +98,7 @@ $ANDROID_HOME/tools/bin/avdmanager create avd -n Pixel_API_28_AOSP -d pixel --pa
 >
 > Run `avdmanager create --help` for the full list of options.
 
-4. Launch the emulator:
+5. Launch the emulator:
 
 This isn't mandatory, of course, but it's always good to launch the emulator at least once before running automated tests. The section below will discuss optimizing emulators bootstraping.
 
@@ -103,9 +110,15 @@ At this point, you should be able to launch the emulator from Android Studio, bu
 
 We won't go into all the details but once the proper image is installed using the `sdkmanager`, the option becomes available in the AVD creation dialog  (see `Target` column of the Virtual Device Configuration screen below):
 
-![Sdk manager](img/android/aosp-image-as.png)
+![Sdk manager in AS](img/android/aosp-image-as.png)
 
-![Instal AOSP from AS](img/android/install-aosp-as.png)
+![Install AOSP in AS](img/android/install-aosp-as.png)
+
+Also, be sure to upgrade your emulator executable to the latest version: If it isn't up-to-date, you will get an "Update Available" message under the _status_ column, instead of "Installed":
+
+![Upgrade emulator in AS](img/android/upgrade-emulator-as.png)
+
+*Note: It is OK if the emulator's version is not aligned with the SDK or platform-tools' version you currently have installed (e.g. 30.x.x vs. SDK 29)*
 
 ## Emulator Quick-Boot
 
