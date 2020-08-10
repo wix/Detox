@@ -1,15 +1,7 @@
-[![NPM Version](https://img.shields.io/npm/v/detox.svg?style=flat)](https://www.npmjs.com/package/detox)
-[![NPM Downloads](https://img.shields.io/npm/dm/detox.svg?style=flat)](https://www.npmjs.com/package/detox)
-[![Build Status](https://img.shields.io/jenkins/s/http/jenkins-oss.wixpress.com:8080/job/multi-detox-master.svg)](https://jenkins-oss.wixpress.com/job/multi-detox-master/)
-[![Coverage Status](https://coveralls.io/repos/github/wix/Detox/badge.svg?branch=master)](https://coveralls.io/github/wix/Detox?branch=master)
-[![Detox is released under the MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![PR's welcome!](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](docs/Guide.Contributing.md)
-
-# Detox
-
-Gray box end-to-end testing and automation library for mobile apps.
-
-<img src="http://i.imgur.com/eoaDEYp.gif">
+|<img alt="Detox" width=405 src="https://user-images.githubusercontent.com/1962469/89643713-0c018200-d8bf-11ea-8a7d-d21de37cf3ec.png"><br>Gray box end-to-end testing and automation library for mobile apps.|
+|:----:|
+|<img src="https://user-images.githubusercontent.com/1962469/89655670-1c235c80-d8d3-11ea-9320-0f865767ef5d.png" alt="" height=24 width=1> [![NPM Version](https://img.shields.io/npm/v/detox.svg?style=flat)](https://www.npmjs.com/package/detox) [![NPM Downloads](https://img.shields.io/npm/dm/detox.svg?style=flat)](https://www.npmjs.com/package/detox) [![Build Status](https://img.shields.io/jenkins/s/http/jenkins-oss.wixpress.com:8080/job/multi-detox-master.svg)](https://jenkins-oss.wixpress.com/job/multi-detox-master/) [![Coverage Status](https://coveralls.io/repos/github/wix/Detox/badge.svg?branch=master)](https://coveralls.io/github/wix/Detox?branch=master) [![Detox is released under the MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![PR's welcome!](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](docs/Guide.Contributing.md)|
+|<img alt="Demo" src="http://i.imgur.com/eoaDEYp.gif">|
 
 ## What does a Detox test look like?
 
@@ -51,7 +43,7 @@ The most difficult part of automated testing on mobile is the tip of the testing
 
 ### Environment
 
-* **OS**: MacOS 10.13 (High Sierra) or higher
+* **OS**: macOS 10.14 (Mojave) or higher
 * **Xcode**: 10.2 or higher
   * **iOS Simulator Runtime**: iOS 12.2 or higher
 
@@ -63,11 +55,10 @@ The following React Native versions have been tested:
 
 | iOS    | Android                                                      |
 | ------ | ------------------------------------------------------------ |
-| <=0.62 | <=0.56 - Full support                                        |
-|        | >=0.57 <=0.62 - Visibility edge-case: see this [RN issue](https://github.com/facebook/react-native/issues/23870)* |
+| <=0.63 | <=0.56 - Full support                                        |
+|        | >=0.57 <=0.63 - Visibility edge-case: see this [RN issue](https://github.com/facebook/react-native/issues/23870)* |
 
 Future versions are most likely supported, but have not been tested yet. Please open issues if you find specific issues with newer React Native versions.
-
 
 ## Get Started With Detox!
 

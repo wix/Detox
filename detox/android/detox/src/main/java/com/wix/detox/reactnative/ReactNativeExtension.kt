@@ -106,7 +106,7 @@ object ReactNativeExtension {
     }
 
     private fun hackRN50OrHigherWaitForReady() {
-        if (ReactNativeInfo.rnVersion().minor >= 50) {
+        if (ReactNativeInfo.rnVersion().minor in 50..62) {
             try {
                 //TODO- Temp hack to make Detox usable for RN>=50 till we find a better sync solution.
                 Thread.sleep(1000)

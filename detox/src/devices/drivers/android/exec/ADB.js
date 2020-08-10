@@ -3,7 +3,6 @@ const {execWithRetriesAndLogs, spawnAndLog} = require('../../../../utils/exec');
 const {escape} = require('../../../../utils/pipeCommands');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const {getAdbPath} = require('../../../../utils/environment');
-const {encodeBase64} = require('../../../../utils/encoding');
 const DeviceHandle = require('../tools/DeviceHandle');
 const EmulatorHandle = require('../tools/EmulatorHandle');
 
@@ -24,13 +23,6 @@ class ADB {
         ? new EmulatorHandle(s)
         : new DeviceHandle(s))
       .value();
-
-    for (const device of devices) {
-      if (device.type === 'emulator') {
-        assertEmulatorHasPort(device, stdout);
-      }
-    }
-
     return { devices, stdout };
   }
 
@@ -295,24 +287,6 @@ class ADB {
     const serial = deviceId ? ['-s', deviceId] : [];
     return spawnAndLog(this.adbBin, [...serial, ...params], spawnOptions);
   }
-}
-
-function assertEmulatorHasPort(device, stdout) {
-  if (device.port) {
-    return;
-  }
-
-  const errorMessage = [
-    `Failed to determine telnet port for emulator device '${device.adbName}'!`,
-    `Please help us out by reporting dump below in: https://github.com/wix/Detox/issues/1427`,
-    `------ BEGIN DUMP ------`,
-    `adb devices base64: ${encodeBase64(stdout)}`,
-    `adb devices: ${stdout}`,
-    `port: ${device.port}`,
-    `------  END DUMP  ------`,
-  ].join('\n');
-
-  throw new Error(errorMessage);
 }
 
 module.exports = ADB;

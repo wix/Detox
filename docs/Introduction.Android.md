@@ -75,7 +75,7 @@ If you are using custom [productFlavors](https://developer.android.com/studio/bu
 ```json
 "detox" : {
     "configurations": {
-        "android.emu.beta.debug": {
+      "android.emu.beta.debug": {
         "binaryPath": "android/app/build/outputs/apk/beta/debug/app-beta-debug.apk",
         "build": "cd android && ./gradlew assembleBetaDebug assembleBetaDebugAndroidTest -DtestBuildType=debug && cd ..",
         "type": "android.emulator",
@@ -200,7 +200,7 @@ For Detox to work, Detox test code running on the device must connect to the tes
 </manifest>
 ```
 
-> *Refer to the [Detox example app](https://github.com/wix/Detox/tree/master/examples/demo-react-native/android/app/src/main) for an example on this is effectively implemented.* 
+> *Refer to the [Detox example app](https://github.com/wix/Detox/tree/master/examples/demo-react-native/android/app/src/main) for an example on how this is effectively implemented.* 
 
 **Note: if properly configured, this in no way compromises the security settings of your app.**
 

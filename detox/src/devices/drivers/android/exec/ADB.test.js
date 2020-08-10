@@ -1,9 +1,10 @@
 describe('ADB', () => {
   const adbBinPath = `/Android/sdk-mock/platform-tools/adb`;
 
-  let mockEmulatorTelnet;
   let ADB;
   let adb;
+  let DeviceHandle;
+  let EmulatorHandle;
   let exec;
   let spawn;
 
@@ -16,19 +17,11 @@ describe('ADB', () => {
       encodeBase64: (text) => `base64(${text})`,
     }));
 
-    mockEmulatorTelnet = {
-      connect: jest.fn(),
-      quit: jest.fn(),
-      avdName: jest.fn(),
-    };
-    class MockEmulatorTelnet {
-      constructor() {
-        this.connect = mockEmulatorTelnet.connect;
-        this.quit = mockEmulatorTelnet.quit;
-        this.avdName = mockEmulatorTelnet.avdName;
-      }
-    }
-    jest.mock('../tools/EmulatorTelnet', () => MockEmulatorTelnet);
+    jest.mock('../tools/DeviceHandle');
+    DeviceHandle = require('../tools/DeviceHandle');
+
+    jest.mock('../tools/EmulatorHandle');
+    EmulatorHandle = require('../tools/EmulatorHandle');
 
     jest.mock('../../../../utils/exec', () => ({
       execWithRetriesAndLogs: jest.fn().mockReturnValue({ stdout: '' }),
@@ -42,57 +35,37 @@ describe('ADB', () => {
   });
 
   describe('devices', () => {
+    const mockDevices = [
+      'MOCK_SERIAL\tdevice',
+      '192.168.60.101:6666\tdevice',
+      'emulator-5554\tdevice',
+      'emulator-5556\toffline',
+    ];
+    const adbDevices = ['List of devices attached', ...mockDevices, ''].join('\n');
+
     it(`should invoke ADB`, async () => {
       await adb.devices();
       expect(exec).toHaveBeenCalledWith(`"${adbBinPath}"  devices`, { verbosity: 'high' }, undefined, 1);
       expect(exec).toHaveBeenCalledTimes(1);
     });
 
-    it('should query device name lazily', async () => {
-      const adbDevices = 'List of devices attached\n'
-        + 'MOCK_SERIAL\tdevice\n'
-        + '192.168.60.101:6666\tdevice\n'
-        + 'emulator-5554\tdevice\n'
-        + 'emulator-5556\toffline\n'
-        + '\n';
-
-
+    it('should return proper, type-based device handles', async () => {
       exec.mockReturnValue({ stdout: adbDevices });
 
       const { devices, stdout } = await adb.devices();
+
       expect(stdout).toBe(adbDevices);
       expect(devices).toHaveLength(4);
-
       expect(devices).toEqual([
-        { type: 'device', adbName: 'MOCK_SERIAL', status: 'device' },
-        { type: 'genymotion', adbName: '192.168.60.101:6666', status: 'device' },
-        { type: 'emulator', adbName: 'emulator-5554', port: '5554', status: 'device' },
-        { type: 'emulator', adbName: 'emulator-5556', port: '5556', status: 'offline' },
+        DeviceHandle.mock.instances[0],
+        DeviceHandle.mock.instances[1],
+        EmulatorHandle.mock.instances[0],
+        EmulatorHandle.mock.instances[1],
       ]);
-
-      mockEmulatorTelnet.avdName.mockReturnValue('Nexus_5X_API_29_x86');
-      expect(await devices[2].queryName()).toBe('Nexus_5X_API_29_x86');
-      expect(mockEmulatorTelnet.connect).toHaveBeenCalledWith('5554');
-    });
-
-    it(`Parse 'adb device' output with devices of all kinds`, async () => {
-      const adbDevicesConsoleOutput = "List of devices attached\n"
-        + "192.168.60.101:5555\tdevice\n"
-        + "emulator-5556\tdevice\n"
-        + "emulator-5554\tdevice\n"
-        + "sx432wsds\tdevice\n"
-        + "\n";
-      exec.mockReturnValue({
-        stdout: adbDevicesConsoleOutput
-      });
-
-      const { devices } = await adb.devices();
-      expect(devices).toEqual([
-        { "adbName": "192.168.60.101:5555", "type": "genymotion", status: "device" },
-        { "adbName": "emulator-5556", "port": "5556", "type": "emulator", status: "device" },
-        { "adbName": "emulator-5554", "port": "5554", "type": "emulator", status: "device" },
-        { "adbName": "sx432wsds", "type": "device", status: "device" }
-      ]);
+      expect(DeviceHandle).toHaveBeenCalledWith(mockDevices[0]);
+      expect(DeviceHandle).toHaveBeenCalledWith(mockDevices[1]);
+      expect(EmulatorHandle).toHaveBeenCalledWith(mockDevices[2]);
+      expect(EmulatorHandle).toHaveBeenCalledWith(mockDevices[3]);
     });
 
     it(`should return an empty list if no devices are available`, async () => {
@@ -102,31 +75,6 @@ describe('ADB', () => {
 
       const {devices} = await adb.devices();
       expect(devices.length).toEqual(0);
-    });
-
-    it(`should abort if port can't be parsed`, async () => {
-      const adbDevicesResult = 'List of devices attached\nemulator-\tdevice\n';
-      exec.mockReturnValue({
-        stdout: adbDevicesResult
-      });
-
-      try {
-        await adb.devices();
-        fail('Expected an error');
-      } catch (error) {
-        expect(mockEmulatorTelnet.connect).not.toHaveBeenCalled();
-        expect(error.message).toContain(`Failed to determine telnet port for emulator device 'emulator-'!`);
-        expect(error.message).toContain(`base64(${adbDevicesResult})`);
-      }
-    });
-
-    it(`should skip telnet if no devices are available`, async () => {
-      exec.mockReturnValue({
-        stdout: 'List of devices attached\n'
-      });
-
-      await adb.devices();
-      expect(mockEmulatorTelnet.connect).not.toHaveBeenCalled();
     });
   });
 
