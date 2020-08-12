@@ -184,10 +184,10 @@ RCT_EXPORT_MODULE();
 {
 	__dtx_external_logger("Got openURL:");
 	
-    BOOL rv = [RCTLinkingManager application:application
-								  openURL:url
-                        sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
-                               annotation:options[UIApplicationOpenURLOptionsAnnotationKey]];
+	BOOL rv = [RCTLinkingManager application:application
+									 openURL:url
+						   sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
+								  annotation:options[UIApplicationOpenURLOptionsAnnotationKey]];
 	
 	__dtx_external_logger("Finished openURL:");
 	

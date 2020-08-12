@@ -52,13 +52,13 @@ detox test --debug-synchronization 200
 If `--debug-synchronization` does not provide the necessary information, on iOS you can add the following launch argument to your app (using `launchArgs` in your `launchApp()` call) to enable a very verbose logging of the idling resource system to the system log:
 
 ```shell
--detoxPrintBusyIdleResources YES
+-DTXEnableVerboseSyncSystem YES -DTXEnableVerboseSyncResources YES
 ```
 
 You can then obtain this log by running the following command:
 
 ```shell
-xcrun simctl spawn booted log stream --level debug --style compact --predicate "category=='EarlGreyStatistics'"
+xcrun simctl spawn booted log stream --level debug --style compact --predicate "category=='SyncManager'"
 ```
 
 For example, change your `/e2e/init.js` like so:
@@ -67,7 +67,7 @@ For example, change your `/e2e/init.js` like so:
 await detox.init(undefined, { launchApp: false });
 await device.launchApp({
   newInstance: true,
-  launchArgs: { 'detoxPrintBusyIdleResources': 'YES' }
+  launchArgs: { 'DTXEnableVerboseSyncSystem': 'YES', 'DTXEnableVerboseSyncResources': 'YES' }
 });
 ```
 
