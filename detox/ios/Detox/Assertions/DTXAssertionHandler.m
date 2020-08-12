@@ -48,7 +48,9 @@ static void __detox_nested_try(void)
 }
 #endif
 
+#if DEBUG
 static thread_local BOOL __DTXTrying = NO;
+#endif
 
 + (BOOL)try:(void(NS_NOESCAPE ^)(void))block error:(NSError * __nullable * __null_unspecified)error
 {
