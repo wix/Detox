@@ -299,7 +299,6 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	}
 	
 	__block BOOL rv = NO;
-	BOOL isHit = (selector == @selector(dtx_hitTest:withEvent:lookingFor:));
 
 	if(isHit)
 	{
