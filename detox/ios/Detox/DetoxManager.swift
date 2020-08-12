@@ -196,7 +196,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				DTXSyncManager.maximumTimerIntervalTrackingDuration = maxTimerWait
 				return
 			case "waitForDebugger":
-				usleep((value as! NSNumber).uint32Value * 1000)
+				Thread.sleep(forTimeInterval: Double(truncating: value as! NSNumber) / 1000)
 				return
 			case "blacklistURLs":
 				DTXSyncManager.urlBlacklist = value as! [String]

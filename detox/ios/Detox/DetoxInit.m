@@ -33,13 +33,13 @@ static void detoxConditionalInit()
 		settings[@"blacklistURLs"] = blacklistRegex;
 	}
 	
-	NSNumber* maxTimerWait = [options objectForKey:@"detoxMaxSynchronizedDelay"];
-	settings[@"maxTimerWait"] = @(maxTimerWait ? maxTimerWait.unsignedIntegerValue : 1500);
+	NSString* maxTimerWait = [options objectForKey:@"detoxMaxSynchronizedDelay"];
+	settings[@"maxTimerWait"] = @(maxTimerWait ? maxTimerWait.integerValue : 1500);
 	
-	NSNumber* waitForDebugger = [options objectForKey:@"detoxWaitForDebugger"];
+	NSString* waitForDebugger = [options objectForKey:@"detoxWaitForDebugger"];
 	if(waitForDebugger)
 	{
-		settings[@"waitForDebugger"] = @([waitForDebugger unsignedIntegerValue]);
+		settings[@"waitForDebugger"] = @([waitForDebugger integerValue]);
 	}
 	
 	[DTXDetoxManager.sharedManager startWithSynchronizationSettings:settings];
