@@ -441,3 +441,8 @@ detox[12345] DEBUG: [DetoxServer.js/CANNOT_FORWARD] role=testee not connected, c
 
 * Alternatively, the `android:usesCleartextTraffic="true"` attribute can be configured in the `<application>` tag of the app's `AndroidManifest.xml`, but **that is highly discouraged**.
 
+### Problem: Detox can't find the test APK
+
+You may see an error message like this: `detox[53027] ERROR: Error: 'android/app/build/outputs/androidTest/x86_64/debug/app-x86_64-debug-androidTest.apk' could not be found, did you run './gradlew assembleAndroidTest'?`
+
+You can use `testBinaryPath` in your configuration to override `binaryPath` and point directly at your test APK.
