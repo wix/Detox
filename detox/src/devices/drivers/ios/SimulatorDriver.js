@@ -182,6 +182,28 @@ class SimulatorDriver extends IosDriver {
     return tempPath;
   }
 
+  async captureViewHierarchy(_udid, artifactName) {
+    const viewHierarchyURL = await temporaryPath.for.viewHierarchy();
+    const { params } = await this.client.captureViewHierarchy({
+      viewHierarchyURL
+    });
+
+    if (params.captureViewHierarchyError) {
+      throw new DetoxRuntimeError({
+        message: 'Failed to capture view hierarchy. Reason:\n',
+        debugInfo: params.captureViewHierarchyError,
+      })
+    }
+
+    await this.emitter.emit('createExternalArtifact', {
+      pluginId: 'uiHierarchy',
+      artifactName: artifactName,
+      artifactPath: viewHierarchyURL,
+    });
+
+    return viewHierarchyURL;
+  }
+
   /***
    * @private
    * @param {String | Object} rawDeviceQuery

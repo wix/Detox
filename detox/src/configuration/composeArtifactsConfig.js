@@ -7,6 +7,7 @@ const InstrumentsArtifactPlugin = require('../artifacts/instruments/InstrumentsA
 const LogArtifactPlugin = require('../artifacts/log/LogArtifactPlugin');
 const ScreenshotArtifactPlugin = require('../artifacts/screenshot/ScreenshotArtifactPlugin');
 const VideoArtifactPlugin = require('../artifacts/video/VideoArtifactPlugin');
+const IosUIHierarchyPlugin = require('../artifacts/uiHierarchy/IosUIHierarchyPlugin');
 const ArtifactPathBuilder = require('../artifacts/utils/ArtifactPathBuilder');
 
 function composeArtifactsConfig({
@@ -66,6 +67,7 @@ function extendArtifactsConfig(config) {
       video: ifString(p.video, VideoArtifactPlugin.parseConfig),
       instruments: ifString(p.instruments, InstrumentsArtifactPlugin.parseConfig),
       timeline: ifString(p.timeline, TimelineArtifactPlugin.parseConfig),
+      uiHierarchy: ifString(p.uiHierarchy, IosUIHierarchyPlugin.parseConfig),
     },
   };
 }

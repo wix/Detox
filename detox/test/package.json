@@ -76,7 +76,8 @@
             "testDone": true
           }
         },
-        "timeline": "all"
+        "timeline": "all",
+        "uiHierarchy": "enabled"
       }
     },
     "configurations": {

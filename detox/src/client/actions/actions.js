@@ -197,6 +197,17 @@ class AppNonresponsive extends Action {
   }
 }
 
+class CaptureViewHierarchy extends Action {
+  constructor(params) {
+    super('captureViewHierarchy', params);
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'captureViewHierarchyDone');
+    return response;
+  }
+}
+
 module.exports = {
   Login,
   WaitForBackground,
@@ -213,4 +224,5 @@ module.exports = {
   SetInstrumentsRecordingState,
   AppWillTerminateWithError,
   AppNonresponsive,
+  CaptureViewHierarchy,
 };

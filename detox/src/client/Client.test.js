@@ -345,7 +345,7 @@ describe('Client', () => {
 
     function triggerAppWillTerminateWithError() {
       const event = createAppWillTerminateEvent();
-      client.ws.setEventCallback.mock.calls[0][1](JSON.stringify(event));
+      client.ws.setEventCallback.mock.calls[0][1](event);
     }
   });
 
@@ -367,7 +367,7 @@ describe('Client', () => {
 
     function triggerAppNonresponsiveEvent() {
       const event = createAppNonresponsiveEvent();
-      client.ws.setEventCallback.mock.calls[0][1](JSON.stringify(event));
+      client.ws.setEventCallback.mock.calls[0][1](event);
       return event;
     }
   });

@@ -100,6 +100,10 @@ class Device {
     return this.deviceDriver.takeScreenshot(this._deviceId, name);
   }
 
+  async captureViewHierarchy(name = 'capture') {
+    return this.deviceDriver.captureViewHierarchy(this._deviceId, name);
+  }
+
   _createPayloadFileAndUpdatesParamsObject(key, launchKey, params, baseLaunchArgs) {
     const payloadFilePath = this.deviceDriver.createPayloadFile(params[key]);
     baseLaunchArgs[launchKey] = payloadFilePath;
