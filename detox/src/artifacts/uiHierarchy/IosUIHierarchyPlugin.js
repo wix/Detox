@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const Client = require('../../client/Client');
 const ArtifactPlugin = require('../templates/plugin/ArtifactPlugin');
 const FileArtifact = require('../templates/artifact/FileArtifact');
@@ -11,6 +12,7 @@ class IosUIHierarchyPlugin extends ArtifactPlugin {
   constructor({ api, client }) {
     super({ api });
 
+    this._pendingDeletions = [];
     this._artifacts = {
       perTest: {},
       perSession: {},
@@ -28,14 +30,22 @@ class IosUIHierarchyPlugin extends ArtifactPlugin {
   }
 
   _onInvokeFailure({ params: { viewHierarchyURL } }) {
+    if (!viewHierarchyURL) {
+      return;
+    }
+
     this._registerSnapshot('ui', new FileArtifact({
       temporaryPath: viewHierarchyURL,
     }));
   }
 
   _registerSnapshot(name, artifact) {
-    const scope = this.context.testSummary ? 'perTest' : 'perSession';
-    setUniqueProperty(this._artifacts[scope], name, artifact);
+    if (this.enabled) {
+      const scope = this.context.testSummary ? 'perTest' : 'perSession';
+      setUniqueProperty(this._artifacts[scope], name, artifact);
+    } else {
+      this._pendingDeletions.push(artifact.discard());
+    }
   }
 
   async onTestStart(testSummary) {
@@ -60,13 +70,19 @@ class IosUIHierarchyPlugin extends ArtifactPlugin {
   async _flushArtifacts(testSummary) {
     const scope = testSummary ? 'perTest' : 'perSession';
     const artifacts = this._artifacts[scope];
-    const promises = Object.entries(artifacts).map(async ([key, artifact]) => {
-      const destination = await this.api.preparePathForArtifact(`${key}.viewhierarchy`, testSummary);
-      await artifact.save(destination);
-    });
+    const pendingSaves = _(artifacts)
+      .pickBy(_.identity)
+      .entries()
+      .map(async ([key, artifact]) => {
+        const destination = await this.api.preparePathForArtifact(`${key}.viewhierarchy`, testSummary);
+        await artifact.save(destination);
+      })
+      .value();
 
-    this._artifacts[scope] = {};
-    await Promise.all(promises);
+    const pendingDeletions = this._pendingDeletions.splice(0);
+    this._artifacts[scope] = _.mapValues(artifacts, _.constant(null));
+
+    await Promise.all([...pendingSaves, ...pendingDeletions ]);
   }
 
   /** @param {string} config */

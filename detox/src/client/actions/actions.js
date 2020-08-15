@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const log = require('../../utils/logger').child({ __filename });
 const bunyan = require('bunyan');
+const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 
 class Action {
   constructor(type, params = {}) {
@@ -204,6 +205,15 @@ class CaptureViewHierarchy extends Action {
 
   async handle(response) {
     this.expectResponseOfType(response, 'captureViewHierarchyDone');
+
+    const {captureViewHierarchyError} = response.params;
+    if (captureViewHierarchyError) {
+      throw new DetoxRuntimeError({
+        message: 'Failed to capture view hierarchy. Reason:\n',
+        debugInfo: captureViewHierarchyError,
+      });
+    }
+
     return response;
   }
 }
