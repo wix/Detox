@@ -175,8 +175,8 @@ class SetInstrumentsRecordingState extends Action {
 }
 
 class AppWillTerminateWithError extends Action {
-  constructor(params) {
-    super(params);
+  constructor() {
+    super('AppWillTerminateWithError');
     this.messageId = -10000;
   }
 
@@ -187,8 +187,8 @@ class AppWillTerminateWithError extends Action {
 }
 
 class AppNonresponsive extends Action {
-  constructor(params) {
-    super(params);
+  constructor() {
+    super('AppNonresponsiveDetected');
     this.messageId = -10001;
   }
 

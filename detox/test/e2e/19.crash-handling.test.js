@@ -8,16 +8,14 @@ describe('Crash Handling', () => {
 
   it('Should throw error upon internal app crash', async () => {
     await device.reloadReactNative();
-    let failed = false;
 
     try {
       await element(by.text('Crash')).tap();
       await element(by.text('Crash')).tap();
-    } catch (ex) { // Note: exception will be logged as an APP_CRASH event
-      failed = true;
+      fail('Test should have thrown an error, but did not');
+    } catch (_ex) {
+      // Note: exception will be logged as an APP_CRASH event
     }
-
-    if (!failed) throw new Error('Test should have thrown an error, but did not');
   });
 
   it('Should recover from app crash', async () => {
@@ -27,29 +25,24 @@ describe('Crash Handling', () => {
 
   it(':android: should throw error upon invoke crash', async () => {
     await device.reloadReactNative();
-    let failed = false;
 
     try {
       await element(by.text('UI Crash')).tap();
+      fail('Test should have thrown an error, but did not');
     } catch (ex) {
       console.error(ex); // Log explicitly or it wouldn't show
-      failed = true;
     }
-
-    if (!failed) throw new Error('Test should have thrown an error, but did not');
   });
 
   it(':android: Should throw error upon app bootstrap crash', async () => {
-    let failed = false;
     try {
       await device.launchApp({ newInstance: true, launchArgs: { detoxAndroidCrashingActivity: true }});
+      fail('Test should have thrown an error, but did not');
     } catch (ex) {
       console.error(ex); // Log explicitly or it wouldn't show
-      failed = true;
     }
 
     // This is not effectively needed, as if crash handling doesn't go right launchApp would typically
     // just hang forever (and thus a timeout will fail the test - not this assertion).
-    if (!failed) throw new Error('Test should have thrown an error, but did not');
   }, 60000);
 });
