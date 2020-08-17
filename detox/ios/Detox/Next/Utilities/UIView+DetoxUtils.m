@@ -152,33 +152,28 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		return nil;
 	}
 
-	if([self pointInside:point withEvent:event] == NO)
-	{
-		return nil;
-	}
-
 	if(self == lookingFor)
 	{
 		//Take a shortcut here, because we found ourselves
 		return self;
 	}
 
-	__block UIView* rv;
+	UIView* rv;
 
 	//Front-most views get priority
-	[self.subviews enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+	for (__kindof UIView * _Nonnull obj in self.subviews.reverseObjectEnumerator) {
 		CGPoint localPoint = [self convertPoint:point toView:obj];
 
 		UIView* candidate = [obj dtx_visTest:localPoint withEvent:event lookingFor:lookingFor];
 
 		if(candidate == nil)
 		{
-			return;
+			continue;
 		}
 
 		rv = candidate;
-		*stop = YES;
-	}];
+		break;
+	}
 
 	if(rv == nil)
 	{
@@ -425,8 +420,8 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	static const CGFloat maxSize = 44;
 	CGFloat width = ceil(MIN(maxSize, self.bounds.size.width));
 	CGFloat height = ceil(MIN(maxSize, self.bounds.size.height));
-	CGFloat x = MAX(0, point.x - width / 2.0);
-	CGFloat y = MAX(0, point.y - height / 2.0);
+	CGFloat x = point.x - width / 2.0;
+	CGFloat y = point.y - height / 2.0;
 	
 	CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
 	if (colorSpace == NULL)
