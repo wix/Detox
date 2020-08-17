@@ -152,7 +152,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		return nil;
 	}
 	
-	if([self isKindOfClass:UIScrollView.class] && [self pointInside:point withEvent:event] == NO)
+	if(self.clipsToBounds == YES && [self pointInside:point withEvent:event] == NO)
 	{
 		return nil;
 	}
