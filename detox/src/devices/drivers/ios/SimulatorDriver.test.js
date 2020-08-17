@@ -1,6 +1,7 @@
 const AsyncEmitter = require('../../../utils/AsyncEmitter');
 
 describe('IOS simulator driver', () => {
+  let MockClient;
   let uut, sim, emitter;
 
   const deviceId = 'device-id-mock';
@@ -13,6 +14,8 @@ describe('IOS simulator driver', () => {
       events: ['beforeLaunchApp'],
       onError: (e) => { throw e },
     });
+
+    MockClient = jest.requireMock('../../../client/Client');
   });
 
   describe('launch args', () => {
@@ -45,6 +48,33 @@ describe('IOS simulator driver', () => {
         ...launchArgs,
         dog3: 'Chika, from plugin',
       }, '');
+    });
+  });
+
+  describe('.captureViewHierarchy', () => {
+    let client;
+
+    beforeEach(async () => {
+      const SimulatorDriver = require('./SimulatorDriver');
+      client = new MockClient();
+      jest.spyOn(emitter, 'emit');
+
+      uut = new SimulatorDriver({ client, emitter });
+      await uut.captureViewHierarchy('', 'named hierarchy');
+    });
+
+    it('should call client.captureViewHierarchy', async () => {
+      expect(client.captureViewHierarchy).toHaveBeenCalledWith({
+        viewHierarchyURL: expect.any(String),
+      });
+    });
+
+    it('should emit "createExternalArtifact" event for uiHierarchy plugin', async () => {
+      expect(emitter.emit).toHaveBeenCalledWith('createExternalArtifact', {
+        pluginId: 'uiHierarchy',
+        artifactName: 'named hierarchy',
+        artifactPath: expect.any(String),
+      });
     });
   });
 

@@ -47,6 +47,8 @@
 		394767D51DBF98D900D72256 /* WXRunLoopIdlingResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767CC1DBF98D900D72256 /* WXRunLoopIdlingResource.m */; };
 		394767F61DBF994200D72256 /* SocketRocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 394767E71DBF992400D72256 /* SocketRocket.framework */; };
 		394767F71DBF994500D72256 /* EarlGrey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 394767DC1DBF991E00D72256 /* EarlGrey.framework */; };
+		39477C2824D1C92700D87E1C /* LNViewHierarchyDumper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39477C2224D1C91B00D87E1C /* LNViewHierarchyDumper.framework */; };
+		39477C2924D1C92700D87E1C /* LNViewHierarchyDumper.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 39477C2224D1C91B00D87E1C /* LNViewHierarchyDumper.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		394D589C1E50B59400556DB9 /* NSBundle+TestsFix.m in Sources */ = {isa = PBXBuildFile; fileRef = 394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */; };
 		396EA67A22E0AE7D0087E4D4 /* ___DTXAddressInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 396EA67222E0AE7C0087E4D4 /* ___DTXAddressInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		396EA67B22E0AE7D0087E4D4 /* ___DTXAddressInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 396EA67922E0AE7C0087E4D4 /* ___DTXAddressInfo.mm */; };
@@ -216,6 +218,20 @@
 			remoteGlobalIDString = FD1000E81C5B466F00B2DB0A;
 			remoteInfo = EarlGrey;
 		};
+		39477C2124D1C91B00D87E1C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 39477C1C24D1C91B00D87E1C /* LNViewHierarchyDumper.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 39CA7FF524AEA316009883BC;
+			remoteInfo = LNViewHierarchyDumper;
+		};
+		39477C2A24D1C93000D87E1C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 39477C1C24D1C91B00D87E1C /* LNViewHierarchyDumper.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 39CA7FF424AEA316009883BC;
+			remoteInfo = LNViewHierarchyDumper;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -225,6 +241,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				39477C2924D1C92700D87E1C /* LNViewHierarchyDumper.framework in CopyFiles */,
 				39319D7A1FCA0DA70045BC17 /* COSTouchVisualizer.framework in CopyFiles */,
 				39C3C3531DBF9A19008177E1 /* SocketRocket.framework in CopyFiles */,
 				39C3C3511DBF9A13008177E1 /* EarlGrey.framework in CopyFiles */,
@@ -278,6 +295,7 @@
 		394767CC1DBF98D900D72256 /* WXRunLoopIdlingResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXRunLoopIdlingResource.m; sourceTree = "<group>"; };
 		394767D71DBF991E00D72256 /* EarlGrey.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = EarlGrey.xcodeproj; path = EarlGrey/EarlGrey.xcodeproj; sourceTree = "<group>"; };
 		394767DD1DBF992400D72256 /* SocketRocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SocketRocket.xcodeproj; path = SocketRocket/SocketRocket.xcodeproj; sourceTree = "<group>"; };
+		39477C1C24D1C91B00D87E1C /* LNViewHierarchyDumper.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LNViewHierarchyDumper.xcodeproj; path = LNViewHierarchyDumper/LNViewHierarchyDumper/LNViewHierarchyDumper.xcodeproj; sourceTree = "<group>"; };
 		394D589A1E50B59400556DB9 /* NSBundle+TestsFix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+TestsFix.h"; sourceTree = "<group>"; };
 		394D589B1E50B59400556DB9 /* NSBundle+TestsFix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+TestsFix.m"; sourceTree = "<group>"; };
 		396EA67222E0AE7C0087E4D4 /* ___DTXAddressInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "___DTXAddressInfo.h"; sourceTree = "<group>"; };
@@ -386,6 +404,7 @@
 			files = (
 				39C32A6D247AC31100C1BC96 /* libswiftCore.tbd in Frameworks */,
 				393E66ED1FC5F3F40092EE89 /* COSTouchVisualizer.framework in Frameworks */,
+				39477C2824D1C92700D87E1C /* LNViewHierarchyDumper.framework in Frameworks */,
 				394767F71DBF994500D72256 /* EarlGrey.framework in Frameworks */,
 				394767F61DBF994200D72256 /* SocketRocket.framework in Frameworks */,
 				3980D12E244C41E1004812DD /* IOKit.framework in Frameworks */,
@@ -562,6 +581,7 @@
 		394767D61DBF990F00D72256 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				39477C1C24D1C91B00D87E1C /* LNViewHierarchyDumper.xcodeproj */,
 				39C32A6C247AC31100C1BC96 /* libswiftCore.tbd */,
 				3980D12D244C41E1004812DD /* IOKit.framework */,
 				393E66E11FC5F3E90092EE89 /* COSTouchVisualizer.xcodeproj */,
@@ -588,6 +608,14 @@
 				394767ED1DBF992400D72256 /* SocketRocket.framework */,
 				394767EF1DBF992400D72256 /* SocketRocketTests-iOS.xctest */,
 				394767F11DBF992400D72256 /* TestChat.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		39477C1D24D1C91B00D87E1C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				39477C2224D1C91B00D87E1C /* LNViewHierarchyDumper.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -792,6 +820,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				39477C2B24D1C93000D87E1C /* PBXTargetDependency */,
 				393E67021FC728360092EE89 /* PBXTargetDependency */,
 				394767F51DBF993900D72256 /* PBXTargetDependency */,
 				394767F31DBF993400D72256 /* PBXTargetDependency */,
@@ -841,6 +870,10 @@
 				{
 					ProductGroup = 394767D81DBF991E00D72256 /* Products */;
 					ProjectRef = 394767D71DBF991E00D72256 /* EarlGrey.xcodeproj */;
+				},
+				{
+					ProductGroup = 39477C1D24D1C91B00D87E1C /* Products */;
+					ProjectRef = 39477C1C24D1C91B00D87E1C /* LNViewHierarchyDumper.xcodeproj */;
 				},
 				{
 					ProductGroup = 394767DE1DBF992400D72256 /* Products */;
@@ -910,6 +943,13 @@
 			fileType = wrapper.application;
 			path = TestChat.app;
 			remoteRef = 394767F01DBF992400D72256 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		39477C2224D1C91B00D87E1C /* LNViewHierarchyDumper.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = LNViewHierarchyDumper.framework;
+			remoteRef = 39477C2124D1C91B00D87E1C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1035,6 +1075,11 @@
 			isa = PBXTargetDependency;
 			name = EarlGrey;
 			targetProxy = 394767F41DBF993900D72256 /* PBXContainerItemProxy */;
+		};
+		39477C2B24D1C93000D87E1C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = LNViewHierarchyDumper;
+			targetProxy = 39477C2A24D1C93000D87E1C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

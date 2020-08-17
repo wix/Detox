@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const log = require('../../utils/logger').child({ __filename });
 const bunyan = require('bunyan');
+const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 
 class Action {
   constructor(type, params = {}) {
@@ -175,8 +176,8 @@ class SetInstrumentsRecordingState extends Action {
 }
 
 class AppWillTerminateWithError extends Action {
-  constructor(params) {
-    super(params);
+  constructor() {
+    super('AppWillTerminateWithError');
     this.messageId = -10000;
   }
 
@@ -187,13 +188,33 @@ class AppWillTerminateWithError extends Action {
 }
 
 class AppNonresponsive extends Action {
-  constructor(params) {
-    super(params);
+  constructor() {
+    super('AppNonresponsiveDetected');
     this.messageId = -10001;
   }
 
   handle(response) {
     this.expectResponseOfType(response, 'AppNonresponsiveDetected');
+  }
+}
+
+class CaptureViewHierarchy extends Action {
+  constructor(params) {
+    super('captureViewHierarchy', params);
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'captureViewHierarchyDone');
+
+    const {captureViewHierarchyError} = response.params;
+    if (captureViewHierarchyError) {
+      throw new DetoxRuntimeError({
+        message: 'Failed to capture view hierarchy. Reason:\n',
+        debugInfo: captureViewHierarchyError,
+      });
+    }
+
+    return response;
   }
 }
 
@@ -213,4 +234,5 @@ module.exports = {
   SetInstrumentsRecordingState,
   AppWillTerminateWithError,
   AppNonresponsive,
+  CaptureViewHierarchy,
 };

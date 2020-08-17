@@ -8,6 +8,7 @@ const SimulatorScreenshotPlugin = require('../../../artifacts/screenshot/Simulat
 const SimulatorRecordVideoPlugin = require('../../../artifacts/video/SimulatorRecordVideoPlugin');
 const SimulatorInstrumentsPlugin = require('../../../artifacts/instruments/ios/SimulatorInstrumentsPlugin');
 const TimelineArtifactPlugin = require('../../../artifacts/timeline/TimelineArtifactPlugin');
+const IosUIHierarchyPlugin = require('../../../artifacts/uiHierarchy/IosUIHierarchyPlugin');
 
 class IosDriver extends DeviceDriverBase {
   constructor(config) {
@@ -26,6 +27,7 @@ class IosDriver extends DeviceDriverBase {
       screenshot: (api) => new SimulatorScreenshotPlugin({ api, appleSimUtils }),
       video: (api) => new SimulatorRecordVideoPlugin({ api, appleSimUtils }),
       timeline: (api) => new TimelineArtifactPlugin({api, appleSimUtils}),
+      uiHierarchy: (api) => new IosUIHierarchyPlugin({ api, client }),
     };
   }
 

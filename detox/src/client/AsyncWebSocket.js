@@ -36,15 +36,18 @@ class AsyncWebSocket {
       this.ws.onmessage = (response) => {
         this.log.trace({ event: 'WEBSOCKET_MESSAGE' }, `${response.data}`);
 
-        let messageId = JSON.parse(response.data).messageId;
-        let pendingPromise = this.inFlightPromises[messageId];
+        const data = JSON.parse(response.data);
+        const pendingPromise = this.inFlightPromises[data.messageId];
         if (pendingPromise) {
           pendingPromise.resolve(response.data);
-          delete this.inFlightPromises[messageId];
+          delete this.inFlightPromises[data.messageId];
         }
-        let eventCallback = this.eventCallbacks[messageId];
-        if (eventCallback) {
-          eventCallback(response.data);
+
+        const eventCallbacks = this.eventCallbacks[data.type];
+        if (!_.isEmpty(eventCallbacks)) {
+          for (const callback of eventCallbacks) {
+            callback(data);
+          }
         }
       };
 
@@ -66,8 +69,12 @@ class AsyncWebSocket {
     });
   }
 
-  setEventCallback(eventId, callback) {
-    this.eventCallbacks[eventId] = callback;
+  setEventCallback(event, callback) {
+    if (_.isEmpty(this.eventCallbacks[event])) {
+      this.eventCallbacks[event] = [callback];
+    } else {
+      this.eventCallbacks[event].push(callback);
+    }
   }
 
   async close() {

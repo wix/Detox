@@ -96,6 +96,29 @@ describe('Client', () => {
     }), undefined);
   });
 
+  it(`captureViewHierarchy() - should receive "captureViewHierarchyDone" from device and resolve`, async () => {
+    await connect();
+    client.ws.send.mockReturnValueOnce(response("captureViewHierarchyDone", {}, 1));
+
+    const viewHierarchyURL = tempfile('.viewhierarchy');
+    await client.captureViewHierarchy({ viewHierarchyURL });
+
+    expect(client.ws.send).toHaveBeenCalledWith(expect.objectContaining({
+      type: 'captureViewHierarchy',
+      params: expect.objectContaining({ viewHierarchyURL }),
+    }), undefined);
+  });
+
+  it(`captureViewHierarchy() - should throw an error if the response has "captureViewHierarchyError" in params`, async () => {
+    await connect();
+    client.ws.send.mockReturnValueOnce(response("captureViewHierarchyDone", {
+      captureViewHierarchyError: 'Test error to check',
+    }, 1));
+
+    const viewHierarchyURL = tempfile('.viewhierarchy');
+    await expect(client.captureViewHierarchy({ viewHierarchyURL })).rejects.toThrowError(/Test error to check/m);
+  });
+
   it(`waitUntilReady() - should receive ready from device and resolve`, async () => {
     await connect();
     client.ws.send.mockReturnValueOnce(response("ready", {}, 1));
@@ -345,7 +368,7 @@ describe('Client', () => {
 
     function triggerAppWillTerminateWithError() {
       const event = createAppWillTerminateEvent();
-      client.ws.setEventCallback.mock.calls[0][1](JSON.stringify(event));
+      client.ws.setEventCallback.mock.calls[0][1](event);
     }
   });
 
@@ -367,7 +390,7 @@ describe('Client', () => {
 
     function triggerAppNonresponsiveEvent() {
       const event = createAppNonresponsiveEvent();
-      client.ws.setEventCallback.mock.calls[0][1](JSON.stringify(event));
+      client.ws.setEventCallback.mock.calls[0][1](event);
       return event;
     }
   });

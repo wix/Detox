@@ -15,3 +15,6 @@
 [submodule "detox/ios/DTXObjectiveCHelpers"]
 	path = detox/ios/DTXObjectiveCHelpers
 	url = https://github.com/wix/DTXObjectiveCHelpers.git
+[submodule "detox/ios/LNViewHierarchyDumper"]
+	path = detox/ios/LNViewHierarchyDumper
+	url = https://github.com/LeoNatan/LNViewHierarchyDumper.git
