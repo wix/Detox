@@ -300,25 +300,25 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				
 				closure = {
 					DetoxAppDelegateProxy.shared.dispatch(openURL: urlToOpen, options: options, delayUntilActive: delay)
+					
+					sendDoneAction()
 				}
-				
-				sendDoneAction()
 			} else if let notificationParam = params["detoxUserNotificationDataURL"] as? String {
 				let userNotificationDataURL = URL(fileURLWithPath: notificationParam)
 				
 				closure = {
 					DetoxAppDelegateProxy.shared.dispatch(userNotificationFrom: userNotificationDataURL, delayUntilActive: delay)
+					
+					sendDoneAction()
 				}
-				
-				sendDoneAction()
 			} else if let activityParam = params["detoxUserActivityDataURL"] as? String {
 				let userActivityDataURL = URL(fileURLWithPath: activityParam)
 				
 				closure = {
 					DetoxAppDelegateProxy.shared.dispatch(userActivityFrom: userActivityDataURL, delayUntilActive: delay)
+					
+					sendDoneAction()
 				}
-				
-				sendDoneAction()
 			}
 			else
 			{
