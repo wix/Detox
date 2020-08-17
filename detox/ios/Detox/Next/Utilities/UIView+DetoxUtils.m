@@ -151,6 +151,11 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	{
 		return nil;
 	}
+	
+	if([self isKindOfClass:UIScrollView.class] && [self pointInside:point withEvent:event] == NO)
+	{
+		return nil;
+	}
 
 	if(self == lookingFor)
 	{
@@ -174,8 +179,8 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		rv = candidate;
 		break;
 	}
-
-	if(rv == nil)
+	
+	if(rv == nil && CGRectGetWidth(self.bounds) > 0 && CGRectGetHeight(self.bounds) > 0)
 	{
 		//Check the candidate view for transparency
 		UIImage* img = [self dtx_imageAroundPoint:point];
