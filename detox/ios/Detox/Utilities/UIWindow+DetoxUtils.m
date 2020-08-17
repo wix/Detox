@@ -55,9 +55,16 @@
 
 + (void)_dtx_enumerateWindows:(NSArray<UIWindow*>*)windows usingBlock:(void (NS_NOESCAPE ^)(UIWindow* obj, NSUInteger idx, BOOL *stop))block
 {
-	[windows enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(UIWindow * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-		block(obj, idx, stop);
-	}];
+	NSUInteger idx = 0;
+	for (UIWindow * _Nonnull obj in windows.reverseObjectEnumerator)
+	{
+		BOOL stop = NO;
+		block(obj, idx, &stop);
+		if(stop == YES)
+		{
+			break;
+		}
+	}
 }
 
 + (void)dtx_enumerateAllWindowsUsingBlock:(void (NS_NOESCAPE ^)(UIWindow* obj, NSUInteger idx, BOOL *stop))block
