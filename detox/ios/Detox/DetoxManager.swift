@@ -8,6 +8,7 @@
 
 import UIKit
 import DetoxSync
+import LNViewHierarchyDumper
 
 fileprivate let recordingManager : DetoxInstrumentsManager = {
 	return DetoxInstrumentsManager()
@@ -262,6 +263,12 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 						let params: NSMutableDictionary = ["details": error.localizedDescription]
 						params.addEntries(from: (error as NSError).userInfo)
 						
+						let url = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("\(NSUUID().uuidString).viewhierarchy")
+						do {
+							try LNViewHierarchyDumper.shared.dumpViewHierarchy(to: url)
+							params["viewHierarchyURL"] = url.path
+						} catch {}
+						
 						self.safeSend(action: "testFailed", params: params as! [String : Any], messageId: messageId)
 					} else {
 						self.safeSend(action: "invokeResult", params: result ?? [:], messageId: messageId)
@@ -368,6 +375,16 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 		case "loginSuccess":
 			log.info("Successfully logged in")
 			return
+		case "captureViewHierarchy":
+			let url = URL(fileURLWithPath: params["viewHierarchyURL"] as! String)
+			precondition(url.lastPathComponent.hasSuffix(".viewhierarchy"), "Provided view Hierarchy URL is not in the expected format, ending with “.viewhierarchy”")
+			var rvParams: [String: Any] = [:]
+			do {
+				try LNViewHierarchyDumper.shared.dumpViewHierarchy(to: url)
+			} catch {
+				rvParams["captureViewHierarchyError"] = error.localizedDescription
+			}
+			self.webSocket.sendAction(done, params: rvParams, messageId: messageId)
 		default:
 			fatalError("Unknown action type received: \(type)")
 		}

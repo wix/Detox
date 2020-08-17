@@ -85,6 +85,8 @@
 		39CE25AB22197F0900D78AA1 /* DetoxInstrumentsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 39CE25A922197F0900D78AA1 /* DetoxInstrumentsManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		39CE25AC22197F0900D78AA1 /* DetoxInstrumentsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 39CE25AA22197F0900D78AA1 /* DetoxInstrumentsManager.m */; };
 		39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */; };
+		39D7BF9D24EAE520003E0694 /* LNViewHierarchyDumper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39D7BF9524EAE510003E0694 /* LNViewHierarchyDumper.framework */; };
+		39D7BF9E24EAE520003E0694 /* LNViewHierarchyDumper.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 39D7BF9524EAE510003E0694 /* LNViewHierarchyDumper.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		39DA0E2822D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DA0E2722D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m */; };
 		39DC984724BB8E8900FFB224 /* DTXLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DC984424BB8E8900FFB224 /* DTXLogging.h */; };
 		39DC984824BB8E8900FFB224 /* DTXLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DC984524BB8E8900FFB224 /* DTXLogging.m */; };
@@ -177,6 +179,20 @@
 			remoteGlobalIDString = 2D4227611BB4358C000C1A6C;
 			remoteInfo = "SocketRocket-iOS-Dynamic";
 		};
+		39D7BF9424EAE510003E0694 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 39D7BF9024EAE510003E0694 /* LNViewHierarchyDumper.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 39CA7FF524AEA316009883BC;
+			remoteInfo = LNViewHierarchyDumper;
+		};
+		39D7BF9B24EAE51B003E0694 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 39D7BF9024EAE510003E0694 /* LNViewHierarchyDumper.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 39CA7FF424AEA316009883BC;
+			remoteInfo = LNViewHierarchyDumper;
+		};
 		39DC984E24BB8FCD00FFB224 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 39DC984A24BB8FCD00FFB224 /* DetoxSync.xcodeproj */;
@@ -200,6 +216,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				39D7BF9E24EAE520003E0694 /* LNViewHierarchyDumper.framework in CopyFiles */,
 				39319D7A1FCA0DA70045BC17 /* COSTouchVisualizer.framework in CopyFiles */,
 				39DC985C24BB906A00FFB224 /* DetoxSync.framework in CopyFiles */,
 				39C3C3531DBF9A19008177E1 /* SocketRocket.framework in CopyFiles */,
@@ -293,6 +310,7 @@
 		39CE25A922197F0900D78AA1 /* DetoxInstrumentsManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetoxInstrumentsManager.h; sourceTree = "<group>"; };
 		39CE25AA22197F0900D78AA1 /* DetoxInstrumentsManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetoxInstrumentsManager.m; sourceTree = "<group>"; };
 		39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetoxUserNotificationDispatcher.swift; sourceTree = "<group>"; };
+		39D7BF9024EAE510003E0694 /* LNViewHierarchyDumper.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LNViewHierarchyDumper.xcodeproj; path = LNViewHierarchyDumper/LNViewHierarchyDumper/LNViewHierarchyDumper.xcodeproj; sourceTree = SOURCE_ROOT; };
 		39DA0E2622D72AEF001E63A0 /* UIApplication+MockedSharedApplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIApplication+MockedSharedApplication.h"; sourceTree = "<group>"; };
 		39DA0E2722D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIApplication+MockedSharedApplication.m"; sourceTree = "<group>"; };
 		39DA0E3522D72C91001E63A0 /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
@@ -334,6 +352,7 @@
 				39DC985B24BB906A00FFB224 /* DetoxSync.framework in Frameworks */,
 				393E66ED1FC5F3F40092EE89 /* COSTouchVisualizer.framework in Frameworks */,
 				394767F61DBF994200D72256 /* SocketRocket.framework in Frameworks */,
+				39D7BF9D24EAE520003E0694 /* LNViewHierarchyDumper.framework in Frameworks */,
 				3980D12E244C41E1004812DD /* IOKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -423,6 +442,7 @@
 				3980D12B244C40D2004812DD /* AppleInternals */,
 				3980D12C244C40E2004812DD /* AppleTouchEvents */,
 				39232594247AAAAC00A3D119 /* Assertions */,
+				39D7BF9024EAE510003E0694 /* LNViewHierarchyDumper.xcodeproj */,
 				39DC984A24BB8FCD00FFB224 /* DetoxSync.xcodeproj */,
 				3980D13C244C44C3004812DD /* Invocation */,
 				3980D132244C435B004812DD /* Matchers */,
@@ -576,6 +596,14 @@
 			path = Invocation;
 			sourceTree = "<group>";
 		};
+		39D7BF9124EAE510003E0694 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				39D7BF9524EAE510003E0694 /* LNViewHierarchyDumper.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		39DC984B24BB8FCD00FFB224 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -673,6 +701,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				39D7BF9C24EAE51B003E0694 /* PBXTargetDependency */,
 				39DC985E24BB907200FFB224 /* PBXTargetDependency */,
 				393E67021FC728360092EE89 /* PBXTargetDependency */,
 				394767F31DBF993400D72256 /* PBXTargetDependency */,
@@ -722,6 +751,10 @@
 				{
 					ProductGroup = 39DC984B24BB8FCD00FFB224 /* Products */;
 					ProjectRef = 39DC984A24BB8FCD00FFB224 /* DetoxSync.xcodeproj */;
+				},
+				{
+					ProductGroup = 39D7BF9124EAE510003E0694 /* Products */;
+					ProjectRef = 39D7BF9024EAE510003E0694 /* LNViewHierarchyDumper.xcodeproj */;
 				},
 				{
 					ProductGroup = 394767DE1DBF992400D72256 /* Products */;
@@ -784,6 +817,13 @@
 			fileType = wrapper.application;
 			path = TestChat.app;
 			remoteRef = 394767F01DBF992400D72256 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		39D7BF9524EAE510003E0694 /* LNViewHierarchyDumper.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = LNViewHierarchyDumper.framework;
+			remoteRef = 39D7BF9424EAE510003E0694 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		39DC984F24BB8FCD00FFB224 /* DetoxSync.framework */ = {
@@ -900,6 +940,11 @@
 			isa = PBXTargetDependency;
 			name = "SocketRocket-iOS-Dynamic";
 			targetProxy = 394767F21DBF993400D72256 /* PBXContainerItemProxy */;
+		};
+		39D7BF9C24EAE51B003E0694 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = LNViewHierarchyDumper;
+			targetProxy = 39D7BF9B24EAE51B003E0694 /* PBXContainerItemProxy */;
 		};
 		39DC985E24BB907200FFB224 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
