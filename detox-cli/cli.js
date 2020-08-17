@@ -1,44 +1,60 @@
 #!/usr/bin/env node
 const cp = require('child_process');
-const path = require('path');
 const fs = require('fs');
+const path = require('path');
 
-const detoxPath = path.join(process.cwd(), 'node_modules/detox');
-const detoxPackageJsonPath = path.join(detoxPath, 'package.json');
+function main([_$0, _detox, ...cliArgs]) {
+  const [command] = cliArgs;
 
-if (fs.existsSync(detoxPackageJsonPath)) {
-  // { shell: true } option seems to break quoting on windows? Otherwise this would be much simpler.
-  if (process.platform === 'win32') {
-    const result = cp.spawnSync(
-      'cmd',
-      ['/c', path.join(process.cwd(), 'node_modules/.bin/detox.cmd')].concat(process.argv.slice(2)),
-      { stdio: 'inherit' });
-    process.exit(result.status);
+  if (command === 'recorder' && process.platform === 'darwin') {
+    return spawnRecorder(cliArgs);
   } else {
-    const cliArgs = process.argv.slice(2);
-    if(cliArgs.length == 0 || cliArgs[0] !== "recorder") {
-      //Detox path
-      const result = cp.spawnSync(
-        path.join(process.cwd(), 'node_modules/.bin/detox'),
-        cliArgs,
-        { stdio: 'inherit' });
-      process.exit(result.status);
-    } else {
-      //Detox Recorder path
-      const detoxRecorderPath = path.join(process.cwd(), 'node_modules/detox-recorder');
-      const detoxRecorderCLIPath = path.join(detoxRecorderPath, "DetoxRecorderCLI");
-      const recorderCLIArgs = process.argv.slice(3);
-      
-      if (fs.existsSync(detoxRecorderCLIPath)) {
-        const result = cp.spawnSync(detoxRecorderCLIPath, recorderCLIArgs, { stdio: 'inherit' });
-        process.exit(result.status);
-      } else {
-        console.log(`Detox Recorder is not installed in this directory: ${detoxRecorderPath}`);
-        process.exit(1);
-      }
-    }
+    return spawnDetoxBinary(cliArgs);
   }
-} else {
-  console.log(`Detox is not installed in this directory: ${detoxPath}`);
-  process.exit(1);
 }
+
+function spawnDetoxBinary(cliArgs) {
+  const isWin32 = process.platform === 'win32';
+  const nodeBinariesPath = path.join(process.cwd(), 'node_modules/.bin');
+  const binaryPath = path.join(nodeBinariesPath, `detox${isWin32 ? '.cmd' : ''}`);
+
+  if (!fs.existsSync(binaryPath)) {
+    console.log(`Failed to find Detox executable at path: ${binaryPath}`);
+    console.log(`\nPossible solutions:`);
+    console.log(`1. Make sure your current working directory is correct.`);
+    console.log(`2. Run "npm install" to ensure your "node_modules" directory is up-to-date.`);
+    console.log(`3. Run "npm install detox --save-dev" for the fresh Detox installation in your project.\n`);
+
+    return 1;
+  }
+
+  const spawnOptions = {
+    stdio: 'inherit',
+    env: {
+      ...process.env,
+      PATH: [nodeBinariesPath, process.env.PATH].join(path.delimiter),
+    }
+  };
+
+  const result = isWin32
+    // { shell: true } option seems to break quoting on windows? Otherwise this would be much simpler.
+    ? cp.spawnSync('cmd', ['/c', binaryPath, ...cliArgs], spawnOptions)
+    : cp.spawnSync(binaryPath, cliArgs, spawnOptions);
+
+  return result.status;
+}
+
+function spawnRecorder([_recorder, ...recorderArgs]) {
+  const detoxRecorderPath = path.join(process.cwd(), 'node_modules/detox-recorder');
+  const detoxRecorderCLIPath = path.join(detoxRecorderPath, 'DetoxRecorderCLI');
+
+  if (fs.existsSync(detoxRecorderCLIPath)) {
+    const result = cp.spawnSync(detoxRecorderCLIPath, recorderArgs, { stdio: 'inherit' });
+    return result.status;
+  } else {
+    console.log(`Detox Recorder is not installed in this directory: ${detoxRecorderPath}`);
+    return 1;
+  }
+}
+
+process.exit(main(process.argv));
