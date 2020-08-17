@@ -776,6 +776,20 @@ describe('Device', () => {
     expect(device.deviceDriver.takeScreenshot).toHaveBeenCalledWith(device._deviceId, 'name');
   });
 
+  it('captureViewHierarchy(name) should delegate the work to the driver', async () => {
+    device = validDevice();
+
+    await device.captureViewHierarchy('name');
+    expect(device.deviceDriver.captureViewHierarchy).toHaveBeenCalledWith(device._deviceId, 'name');
+  });
+
+  it('captureViewHierarchy([name]) should set name = "capture" by default', async () => {
+    device = validDevice();
+
+    await device.captureViewHierarchy();
+    expect(device.deviceDriver.captureViewHierarchy).toHaveBeenCalledWith(device._deviceId, 'capture');
+  });
+
   async function launchAndTestBinaryPath(configuration) {
     const device = schemeDevice(configurationsMock.pathsTests, configuration);
 

@@ -43,6 +43,12 @@ class Client {
     await this.sendAction(new actions.WaitForActive());
   }
 
+  async captureViewHierarchy({ viewHierarchyURL }) {
+    return await this.sendAction(new actions.CaptureViewHierarchy({
+      viewHierarchyURL
+    }));
+  }
+
   async cleanup() {
     clearTimeout(this.slowInvocationStatusHandler);
     if (this.isConnected && !this.pandingAppCrash) {
@@ -118,15 +124,14 @@ class Client {
   }
 
   setActionListener(action, clientCallback) {
-    this.ws.setEventCallback(action.messageId, (response) => {
-      const parsedResponse = JSON.parse(response);
-      action.handle(parsedResponse);
-
-      /* istanbul ignore next */
-      if (clientCallback) {
-        clientCallback(parsedResponse);
-      }
+    this.setEventCallback(action.type, (response) => {
+      action.handle(response);
+      clientCallback(response);
     });
+  }
+
+  setEventCallback(event, callback) {
+    this.ws.setEventCallback(event, callback);
   }
 
   async sendAction(action) {

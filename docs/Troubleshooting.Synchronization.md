@@ -108,7 +108,7 @@ await device.setURLBlacklist([]);
 
 #### How do we wait manually?
 
-This makes sense only if we're not waiting enough (or if we've disabled automatic synchronization). Use the `waitFor` API to poll until an expectation is met. The API is documented [here](/docs/APIRef.waitFor.md).
+This makes sense only if we're not waiting enough (or if we've disabled automatic synchronization). Use the `withTimeout()` API to wait until an expectation is met. The API is documented [here](/docs/APIRef.Expect.md#withtimeouttimeout).
 
 ### Tweaking and fine-tuning the synchronization mechanisms
 

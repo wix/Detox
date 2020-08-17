@@ -57,15 +57,15 @@ Even if `detox init` passes well, and everything is green, we still recommend go
 
 | Property               | Value                                          | Description                                                  |
 | ---------------------- | ---------------------------------------------- | ------------------------------------------------------------ |
-| `test-runner`    | `"jest"`                                       | *Required.* Should be `"jest"` for the proper `detox test` CLI functioning. |
-| `runner-config ` | (optional path to Jest config file)            | *Optional.* This field tells `detox test` CLI where to look for Jest's config file. If omitted, the default value is `e2e/config.json`. |
+| `testRunner`    | `"jest"`                                       | *Required.* Should be `"jest"` for the proper `detox test` CLI functioning. |
+| `runnerConfig ` | (optional path to Jest config file)            | *Optional.* This field tells `detox test` CLI where to look for Jest's config file. If omitted, the default value is `e2e/config.json`. |
 
 A typical Detox configuration in `.detoxrc.json` file looks like:
 
 ```json
 {
-  "test-runner": "jest",
-  "runner-config": "e2e/config.json",
+  "testRunner": "jest",
+  "runnerConfig": "e2e/config.json",
   "configurations": {
     "ios.sim.release": {
       "type": "ios.simulator",

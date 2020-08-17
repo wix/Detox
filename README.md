@@ -1,7 +1,16 @@
-|<img alt="Detox" width=405 src="https://user-images.githubusercontent.com/1962469/89643713-0c018200-d8bf-11ea-8a7d-d21de37cf3ec.png"><br>Gray box end-to-end testing and automation library for mobile apps.|
-|:----:|
-|<img src="https://user-images.githubusercontent.com/1962469/89655670-1c235c80-d8d3-11ea-9320-0f865767ef5d.png" alt="" height=24 width=1> [![NPM Version](https://img.shields.io/npm/v/detox.svg?style=flat)](https://www.npmjs.com/package/detox) [![NPM Downloads](https://img.shields.io/npm/dm/detox.svg?style=flat)](https://www.npmjs.com/package/detox) [![Build Status](https://img.shields.io/jenkins/s/http/jenkins-oss.wixpress.com:8080/job/multi-detox-master.svg)](https://jenkins-oss.wixpress.com/job/multi-detox-master/) [![Coverage Status](https://coveralls.io/repos/github/wix/Detox/badge.svg?branch=master)](https://coveralls.io/github/wix/Detox?branch=master) [![Detox is released under the MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![PR's welcome!](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](docs/Guide.Contributing.md)|
-|<img alt="Demo" src="http://i.imgur.com/eoaDEYp.gif">|
+<p align="center">
+	<img alt="Detox" width=405 src="https://user-images.githubusercontent.com/1962469/89643713-0c018200-d8bf-11ea-8a7d-d21de37cf3ec.png"/>
+</p>
+<p align="center">
+<b>Gray box end-to-end testing and automation library for mobile apps.</b>
+</p>
+<p align="center">
+<img alt="Demo" src="http://i.imgur.com/eoaDEYp.gif"/>
+</p>
+
+---
+
+<img src="https://user-images.githubusercontent.com/1962469/89655670-1c235c80-d8d3-11ea-9320-0f865767ef5d.png" alt="" height=24 width=1> [![NPM Version](https://img.shields.io/npm/v/detox.svg?style=flat)](https://www.npmjs.com/package/detox) [![NPM Downloads](https://img.shields.io/npm/dm/detox.svg?style=flat)](https://www.npmjs.com/package/detox) [![Build Status](https://img.shields.io/jenkins/s/http/jenkins-oss.wixpress.com:8080/job/multi-detox-master.svg)](https://jenkins-oss.wixpress.com/job/multi-detox-master/) [![Coverage Status](https://coveralls.io/repos/github/wix/Detox/badge.svg?branch=master)](https://coveralls.io/github/wix/Detox?branch=master) [![Detox is released under the MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![PR's welcome!](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](docs/Guide.Contributing.md)
 
 ## What does a Detox test look like?
 

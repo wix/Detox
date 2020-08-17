@@ -165,14 +165,29 @@ describe('AsyncWebSocket', () => {
     }
   });
 
-  it(`eventCallback should be triggered on a registered messageId when sent from testee`, async () => {
+  it(`eventCallback should be triggered on a registered action.type when sent from testee`, async () => {
     const mockCallback = jest.fn();
-    const mockedResponse = generateResponse('onmessage', -10000);
+    const mockedResponse = generateResponse('someEvent', -10000);
     await connect(client);
-    client.setEventCallback(-10000, mockCallback);
+    client.setEventCallback('someEvent', mockCallback);
 
     client.ws.onmessage(mockedResponse);
-    expect(mockCallback).toHaveBeenCalledWith(mockedResponse.data);
+    expect(mockCallback).toHaveBeenCalledWith(JSON.parse(mockedResponse.data));
+  });
+
+  it(`multiple eventCallbacks can be triggered on the same action.type`, async () => {
+    const mockCallbacks = [0, 1].map(i => jest.fn());
+    const mockedResponse = generateResponse('someEvent', -10000);
+    const mockResponseData = JSON.parse(mockedResponse.data);
+
+    await connect(client);
+    client.setEventCallback('someEvent', mockCallbacks[0]);
+    client.setEventCallback('someEvent', mockCallbacks[1]);
+
+    client.ws.onmessage(mockedResponse);
+
+    expect(mockCallbacks[0]).toHaveBeenCalledWith(mockResponseData);
+    expect(mockCallbacks[1]).toHaveBeenCalledWith(mockResponseData);
   });
 
   it(`rejectAll should throw error to all pending promises`, async () => {
@@ -208,6 +223,12 @@ describe('AsyncWebSocket', () => {
   }
 
   function generateResponse(message, messageId) {
-    return {data: JSON.stringify({response: message, messageId: messageId})};
+    return {
+      data: JSON.stringify({
+        type: message,
+        response: message,
+        messageId: messageId
+      })
+    };
   }
 });

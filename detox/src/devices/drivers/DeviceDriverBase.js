@@ -199,6 +199,9 @@ class DeviceDriverBase {
   async resetStatusBar(deviceId) {
   }
 
+  async captureViewHierarchy() {
+    return '';
+  }
 }
 
 module.exports = DeviceDriverBase;
