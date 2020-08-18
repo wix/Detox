@@ -408,7 +408,6 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
     const UInt8* data = CFDataGetBytePtr(pixelData);
 	
 	for (NSUInteger y = 0; y < image.size.height; y++) {
-		NSMutableArray* alphas = [NSMutableArray new];
 		double alphaSum = 0.0;
 		for (NSUInteger x = 0; x < image.size.width; x++) {
 			uint8_t alpha = data[((NSUInteger)image.size.width * y + x) * 4 + 3];
