@@ -428,7 +428,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 - (UIImage*)dtx_imageAroundPoint:(CGPoint)point maxSize:(CGSize)maxSize
 {
 	static const CGFloat maxDimension = 44;
-	CGFloat width = ceil(MIN(maxDimension / 2, maxSize.width));
+	CGFloat width = ceil(MIN(maxDimension, maxSize.width));
 	CGFloat height = ceil(MIN(maxDimension, maxSize.height));
 	CGFloat x = point.x - width / 2.0;
 	CGFloat y = point.y - height / 2.0;
