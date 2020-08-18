@@ -183,9 +183,9 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	if(rv == nil && CGRectGetWidth(self.bounds) > 0 && CGRectGetHeight(self.bounds) > 0)
 	{
 		//Check the candidate view for transparency
-		UIImage* img = [self dtx_imageAroundPoint:point];
+		UIImage* img = [self dtx_imageAroundPoint:point maxSize:lookingFor.bounds.size];
 //		[UIImagePNGRepresentation(img) writeToFile:@"/Users/lnatan/Desktop/view.png" atomically:YES];
-		if([UIView _dtx_isImageTransparent:img] == NO)
+		if([UIView _dtx_isImageTransparentEnough:img threshold:0.15] == NO)
 		{
 			//If a view is not transparent around the hit point, take it as the visible view.
 			rv = self;
@@ -331,9 +331,9 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		
 		if(self.window != obj && isHit == NO)
 		{
-			UIImage* windowImage = [obj dtx_imageAroundPoint:currentWindowActivationPoint];
+			UIImage* windowImage = [obj dtx_imageAroundPoint:currentWindowActivationPoint maxSize:self.window.bounds.size];
 //			[UIImagePNGRepresentation(windowImage) writeToFile:[NSString stringWithFormat:@"/Users/lnatan/Desktop/%@.png", NSStringFromClass(obj.class)] atomically:YES];
-			if([UIView _dtx_isImageTransparent:windowImage] == NO)
+			if([UIView _dtx_isImageTransparentEnough:windowImage threshold:0.15] == NO)
 			{
 				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"Window “%@” is above the tested view's window and is not transparent at window point “%@”", obj.dtx_shortDescription, DTXPointToString(currentWindowActivationPoint)])}];
 				_DTXPopulateError(err);
@@ -397,7 +397,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return rv;
 }
 
-+ (BOOL)_dtx_isImageTransparent:(UIImage*)image
++ (BOOL)_dtx_isImageTransparentEnough:(UIImage*)image threshold:(CGFloat)threshold
 {
 	CGImageRef cgImage = image.CGImage;
 		
@@ -407,24 +407,28 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	};
     const UInt8* data = CFDataGetBytePtr(pixelData);
 	
-	for (NSUInteger x = 0; x < image.size.width; x++) {
-		for (NSUInteger y = 0; y < image.size.height; y++) {
+	for (NSUInteger y = 0; y < image.size.height; y++) {
+		double alphaSum = 0.0;
+		for (NSUInteger x = 0; x < image.size.width; x++) {
 			uint8_t alpha = data[((NSUInteger)image.size.width * y + x) * 4 + 3];
-			if(alpha != 0)
-			{
-				return NO;
-			}
+			alphaSum += (alpha / 255.0);
+		}
+		CGFloat avg = alphaSum / image.size.width;
+		
+		if(avg > threshold)
+		{
+			return NO;
 		}
 	}
 	
 	return YES;
 }
 
-- (UIImage*)dtx_imageAroundPoint:(CGPoint)point
+- (UIImage*)dtx_imageAroundPoint:(CGPoint)point maxSize:(CGSize)maxSize
 {
-	static const CGFloat maxSize = 44;
-	CGFloat width = ceil(MIN(maxSize, self.bounds.size.width));
-	CGFloat height = ceil(MIN(maxSize, self.bounds.size.height));
+	static const CGFloat maxDimension = 44;
+	CGFloat width = ceil(MIN(maxDimension, maxSize.width));
+	CGFloat height = ceil(MIN(maxDimension, maxSize.height));
 	CGFloat x = point.x - width / 2.0;
 	CGFloat y = point.y - height / 2.0;
 	
