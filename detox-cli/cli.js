@@ -28,11 +28,12 @@ function spawnDetoxBinary(cliArgs) {
     return 1;
   }
 
+  const PATH = isWin32 ? findPathKey() : 'PATH';
   const spawnOptions = {
     stdio: 'inherit',
     env: {
       ...process.env,
-      PATH: [nodeBinariesPath, process.env.PATH].join(path.delimiter),
+      [PATH]: [nodeBinariesPath, process.env.PATH].join(path.delimiter),
     }
   };
 
@@ -55,6 +56,14 @@ function spawnRecorder([_recorder, ...recorderArgs]) {
     console.log(`Detox Recorder is not installed in this directory: ${detoxRecorderPath}`);
     return 1;
   }
+}
+
+function findPathKey() {
+  return Object.keys(process.env).find(isCaseInsensitivePath);
+}
+
+function isCaseInsensitivePath(key) {
+  return key.toLowerCase() === 'path';
 }
 
 process.exit(main(process.argv));
