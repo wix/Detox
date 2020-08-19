@@ -40,7 +40,7 @@ static double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
 @property (nonatomic, readonly) CGPoint dtx_accessibilityActivationPoint;
 @property (nonatomic, readonly) CGPoint dtx_accessibilityActivationPointInViewCoordinateSpace;
 
-- (UIImage*)dtx_imageAroundPoint:(CGPoint)point;
+- (UIImage*)dtx_imageAroundPoint:(CGPoint)point maxSize:(CGSize)maxSize;
 
 @property (nonatomic, readonly, class, copy) NSDictionary<NSString*, id>* dtx_genericViewDebugAttributes;
 @property (nonatomic, readonly, copy) NSDictionary<NSString*, id>* dtx_attributes;
