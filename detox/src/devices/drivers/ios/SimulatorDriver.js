@@ -16,10 +16,7 @@ class SimulatorDriver extends IosDriver {
   constructor(config) {
     super(config);
 
-    this.deviceRegistry = new DeviceRegistry({
-      lockfilePath: environment.getDeviceLockFilePathIOS(),
-    });
-
+    this.deviceRegistry = DeviceRegistry.forIOS();
     this._name = 'Unspecified Simulator';
   }
 

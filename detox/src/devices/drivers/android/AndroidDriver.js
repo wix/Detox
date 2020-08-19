@@ -45,9 +45,7 @@ class AndroidDriver extends DeviceDriverBase {
 
     this.instrumentation = new MonitoredInstrumentation(this.adb, logger);
 
-    this.deviceRegistry = new DeviceRegistry({
-      lockfilePath: environment.getDeviceLockFilePathAndroid()
-    });
+    this.deviceRegistry = DeviceRegistry.forAndroid();
   }
 
   declareArtifactPlugins() {
