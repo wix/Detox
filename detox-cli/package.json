@@ -1,6 +1,6 @@
 {
   "name": "detox-cli",
-  "version": "17.4.0",
+  "version": "17.4.3",
   "description": "detox CLI tool wrapper",
   "main": "index.js",
   "scripts": {
