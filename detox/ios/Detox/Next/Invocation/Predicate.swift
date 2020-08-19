@@ -35,6 +35,7 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 	
 	let kind : String
 	let modifiers : Set<String>
+	var hidden = false
 	
 	fileprivate init(kind: String, modifiers: Set<String>) {
 		self.kind = kind
@@ -64,12 +65,16 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 			} else {
 				//Will crash if RN app and neither class exists
 				let RCTTextViewClass : AnyClass = NSClassFromString("RCTText") ?? NSClassFromString("RCTTextView")!
+				
+				let descendantPredicate = DescendantPredicate(predicate: AndCompoundPredicate(predicates: [
+					try KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(RCTTextViewClass)),
+					ValuePredicate(kind: kind, modifiers: modifiers, value: label)
+				], modifiers: []), modifiers: [Modifier.not])
+				descendantPredicate.hidden = true
+				
 				return AndCompoundPredicate(predicates: [
 					ValuePredicate(kind: kind, modifiers: modifiers, value: label),
-					DescendantPredicate(predicate: AndCompoundPredicate(predicates: [
-						try KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(RCTTextViewClass)),
-						ValuePredicate(kind: kind, modifiers: modifiers, value: label)
-					], modifiers: []), modifiers: [Modifier.not])
+					descendantPredicate
 				], modifiers: [])
 			}
 		case Kind.text:
@@ -87,9 +92,12 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 				orPredicates.append(try KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(RCTTextViewClass)))
 			}
 			
+			let orCompoundPredicate = OrCompoundPredicate(predicates: orPredicates, modifiers: [])
+			orCompoundPredicate.hidden = true
+			
 			return AndCompoundPredicate(predicates: [
 				ValuePredicate(kind: kind, modifiers: modifiers, value: text),
-				OrCompoundPredicate(predicates: orPredicates, modifiers: [])
+				orCompoundPredicate
 			], modifiers: [])
 		case Kind.id, Kind.value:
 			let value = dictionaryRepresentation[Keys.value] as! CustomStringConvertible
@@ -315,7 +323,7 @@ class CompoundPredicate : Predicate{
 	}
 	
 	fileprivate func innerDescription(separator: String) -> String {
-		return predicates.map{
+		return predicates.filter { $0.hidden == false }.map {
 			let isMultiple = (type(of: $0) as AnyClass).isSubclass(of: CompoundPredicate.self)
 			return isMultiple ? "(\($0))" : $0.description
 		}.joined(separator: separator)

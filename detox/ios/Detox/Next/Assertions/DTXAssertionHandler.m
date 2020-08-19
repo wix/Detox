@@ -140,4 +140,12 @@ static void __detox_nested_try(void)
 	return [self _errorForTestAssertionException:[self _exceptionForFailureInMethod:selector object:object file:fileName lineNumber:line viewDescription:viewDescription description:format arguments:arguments]];
 }
 
++ (NSError*)errorWithReworedReason:(NSString*)reworded existingError:(NSError*)error
+{
+	NSMutableDictionary* userInfo = [error.userInfo mutableCopy];
+	userInfo[NSLocalizedDescriptionKey] = reworded;
+	
+	return [NSError errorWithDomain:error.domain code:error.code userInfo:userInfo];
+}
+
 @end
