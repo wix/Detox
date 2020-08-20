@@ -2,7 +2,8 @@ const _ = require('lodash');
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
 class Expect {
-  constructor(element) {
+  constructor(invocationManager, element) {
+    this._invocationManager = invocationManager;
     this.element = element;
     this.modifiers = [];
   }
@@ -77,7 +78,7 @@ class Expect {
 
   expect(expectation, ...params) {
     const invocation = this.createInvocation(expectation, ...params);
-    return _invocationManager.execute(invocation);
+    return this._invocationManager.execute(invocation);
   }
 }
 
@@ -89,7 +90,8 @@ class InternalExpect extends Expect {
 }
 
 class Element {
-  constructor(matcher) {
+  constructor(invocationManager, matcher) {
+    this._invocationManager = invocationManager;
     this.matcher = matcher;
   }
 
@@ -215,7 +217,7 @@ class Element {
 
   withAction(action, ...params) {
     const invocation = this.createInvocation(action, ...params);
-    return _invocationManager.execute(invocation);
+    return this._invocationManager.execute(invocation);
   }
 }
 
@@ -334,9 +336,10 @@ class Matcher {
 }
 
 class WaitFor {
-  constructor(element) {
-    this.element = new InternalElement(element.matcher);
-    this.expectation = new InternalExpect(this.element);
+  constructor(invocationManager, element) {
+    this._invocationManager = invocationManager;
+    this.element = new InternalElement(invocationManager, element.matcher);
+    this.expectation = new InternalExpect(invocationManager, this.element);
   }
 
   toBeVisible() {
@@ -413,7 +416,7 @@ class WaitFor {
 
   whileElement(matcher) {
     if (!(matcher instanceof Matcher)) throwMatcherError(matcher);
-    this.actionableElement = new InternalElement(matcher);
+    this.actionableElement = new InternalElement(this._invocationManager, matcher);
     return this;
   }
 
@@ -501,7 +504,7 @@ class WaitFor {
     const expectation = this.expectation;
     const action = this.action;
 
-    return _invocationManager.execute({
+    return this._invocationManager.execute({
       ...action,
       while: {
         ...expectation
@@ -514,7 +517,7 @@ class WaitFor {
     const action = this.action;
     const timeout = this.timeout;
 
-    return _invocationManager.execute({
+    return this._invocationManager.execute({
       ...action,
       ...expectation,
       timeout
@@ -522,32 +525,30 @@ class WaitFor {
   }
 }
 
-function element(matcher) {
+function element(invocationManager, matcher) {
   if (!(matcher instanceof Matcher)) {
     throwMatcherError(matcher);
   }
-  return new Element(matcher);
+  return new Element(invocationManager, matcher);
 }
 
-function expect(element) {
+function expect(invocationManager, element) {
   if (!(element instanceof Element)) {
     throwMatcherError(element);
   }
-  return new Expect(element);
+  return new Expect(invocationManager, element);
 }
 
-function waitFor(element) {
+function waitFor(invocationManager, element) {
   if (!(element instanceof Element)) {
     throwMatcherError(element);
   }
-  return new WaitFor(element);
+  return new WaitFor(invocationManager, element);
 }
-
-let _invocationManager;
 
 class IosExpect {
   constructor({ invocationManager }) {
-    _invocationManager = invocationManager;
+    this._invocationManager = invocationManager;
     this.element = this.element.bind(this);
     this.expect = this.expect.bind(this);
     this.waitFor = this.waitFor.bind(this);
@@ -555,15 +556,15 @@ class IosExpect {
   }
 
   element(matcher) {
-    return element(matcher);
+    return element(this._invocationManager, matcher);
   }
 
   expect(element) {
-    return expect(element);
+    return expect(this._invocationManager, element);
   }
 
   waitFor(element) {
-    return waitFor(element);
+    return waitFor(this._invocationManager, element);
   }
 }
 
