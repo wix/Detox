@@ -559,6 +559,8 @@ describe('Android driver', () => {
 
     jest.mock('../../DeviceRegistry');
     DeviceRegistryClass = require('../../DeviceRegistry');
+    const createRegistry = jest.fn(() => new DeviceRegistryClass());
+    DeviceRegistryClass.forIOS = DeviceRegistryClass.forAndroid = createRegistry;
   };
 
   const mockGetAbsoluteBinaryPathImpl = (x) => `absolutePathOf(${x})`;

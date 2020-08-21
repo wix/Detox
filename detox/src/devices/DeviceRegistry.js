@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const environment = require('../utils/environment');
 const ExclusiveLockfile = require('../utils/ExclusiveLockfile');
 const safeAsync = require('../utils/safeAsync');
 
@@ -10,6 +11,13 @@ class DeviceRegistry {
      */
     this._lockfile = new ExclusiveLockfile(lockfilePath, {
       getInitialState: this._getInitialLockFileState.bind(this),
+    });
+  }
+
+  async reset() {
+    await this._lockfile.exclusively(() => {
+      const empty = this._getInitialLockFileState();
+      this._lockfile.write(empty);
     });
   }
 
@@ -58,6 +66,18 @@ class DeviceRegistry {
       : _.without(state, deviceId);
 
     this._lockfile.write(newState);
+  }
+
+  static forIOS() {
+    return new DeviceRegistry({
+      lockfilePath: environment.getDeviceLockFilePathIOS(),
+    });
+  }
+
+  static forAndroid() {
+    return new DeviceRegistry({
+      lockfilePath: environment.getDeviceLockFilePathAndroid(),
+    });
   }
 }
 

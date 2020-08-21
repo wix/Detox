@@ -1,8 +1,7 @@
 const _ = require('lodash');
 const path = require('path');
 const cp = require('child_process');
-const fs = require('fs-extra');
-const environment = require('../src/utils/environment');
+const DeviceRegistry = require('../src/devices/DeviceRegistry');
 const DetoxRuntimeError = require('../src/errors/DetoxRuntimeError');
 
 const log = require('../src/utils/logger').child({ __filename });
@@ -155,7 +154,7 @@ module.exports.handler = async function test(program) {
   const [ platform ] = deviceConfig.type.split('.');
 
   if (!cliConfig.keepLockFile) {
-    clearDeviceRegistryLockFile();
+    await clearDeviceRegistryLockFile();
   }
 
   function run() {
@@ -317,10 +316,14 @@ module.exports.handler = async function test(program) {
     return platformRevertString;
   }
 
-  function clearDeviceRegistryLockFile() {
-    const lockFilePath = platform === 'ios' ? environment.getDeviceLockFilePathIOS() : environment.getDeviceLockFilePathAndroid();
-    fs.ensureFileSync(lockFilePath);
-    fs.writeFileSync(lockFilePath, '[]');
+  async function clearDeviceRegistryLockFile() {
+    if (platform === 'ios') {
+      await DeviceRegistry.forIOS().reset();
+    }
+
+    if (platform === 'android') {
+      await DeviceRegistry.forAndroid().reset();
+    }
   }
 
   function launchTestRunner(command, detoxEnvironmentVariables) {
