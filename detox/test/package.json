@@ -70,6 +70,12 @@
     "artifacts": {
       "plugins": {
         "log": "all",
+        "screenshot": {
+          "shouldTakeAutomaticSnapshots": true,
+          "takeWhen": {
+            "testDone": true
+          }
+        },
         "timeline": "all",
         "uiHierarchy": "enabled"
       }
