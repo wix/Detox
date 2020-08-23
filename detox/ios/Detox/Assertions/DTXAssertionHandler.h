@@ -36,6 +36,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSError*)errorForFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line viewDescription:(nullable NSDictionary<NSString*, id>*)viewDescription description:(NSString *)format arguments:(va_list)arguments;
 
++ (NSError*)errorWithReworedReason:(NSString*)reworded existingError:(NSError*)error;
+
 @end
 
 extern BOOL dtx_try(void (NS_NOESCAPE ^block)(void), NSError * __nullable * __null_unspecified error) NS_REFINED_FOR_SWIFT;

@@ -121,9 +121,18 @@ else if(offset.main < 0 && floor(self.contentOffset.main) >= floor(self.contentS
 	return YES;
 }
 
+DTX_ALWAYS_INLINE
+static NSString* _DTXScrollDirectionDescriptionWithOffset(CGPoint offset)
+{
+	
+	//	return [NSString stringWithFormat:@"%@ for %@ points", offset.x < 0 ? @"right" : offset.x > 0 ? @"left" : offset.y < 0 ? @"down" : @"up", @(MAX(fabs(offset.x), fabs(offset.y)))];
+	
+	return offset.x < 0 ? @"right" : offset.x > 0 ? @"left" : offset.y < 0 ? @"down" : @"up";
+}
+
 - (void)_dtx_assertCanScrollWithOffset:(CGPoint)offset
 {
-	DTXViewAssert([self _dtx_canScrollWithOffset:offset], self.dtx_viewDebugAttributes, @"Unable to perform scroll in “%@”", self.dtx_shortDescription);
+	DTXViewAssert([self _dtx_canScrollWithOffset:offset], self.dtx_viewDebugAttributes, @"Unable to scroll %@ in “%@”", _DTXScrollDirectionDescriptionWithOffset(offset), self.dtx_shortDescription);
 }
 
 - (void)dtx_scrollWithOffset:(CGPoint)offset
