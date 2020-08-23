@@ -29,9 +29,13 @@
 __attribute__((constructor))
 static void __setupRNSupport()
 {
-	DTXSwizzleMethod(NSClassFromString(@"RCTDevSettingsUserDefaultsDataSource"), NSSelectorFromString(@"_reloadWithDefaults:"), @selector(__detox_sync__reloadWithDefaults:), NULL);
+	Class cls = NSClassFromString(@"RCTDevSettingsUserDefaultsDataSource");
+	if(cls != nil)
+	{
+		DTXSwizzleMethod(cls, NSSelectorFromString(@"_reloadWithDefaults:"), @selector(__detox_sync__reloadWithDefaults:), NULL);
+	}
 	
-	Class cls = NSClassFromString(@"RCTPicker");
+	cls = NSClassFromString(@"RCTPicker");
 	if(cls != nil)
 	{
 		SEL sel = @selector(initWithFrame:);
