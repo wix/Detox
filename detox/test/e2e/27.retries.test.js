@@ -5,7 +5,7 @@ const {
   waitUntilArtifactsManagerIsIdle,
 } = require('./utils/artifactUtils');
 
-describe('jest.retryTimes() support', () => {
+describe.skip('jest.retryTimes() support', () => {
   let counter = 3;
 
   beforeAll(async () => {
