@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const fs = require('fs');
+const fs = require('fs-extra');
 const plockfile = require('proper-lockfile');
 const retry = require('./retry');
 
@@ -37,7 +37,7 @@ class ExclusiveLockfile {
     try {
       return (await fn());
     } finally {
-      this._unlock();
+      await this._unlock();
     }
   }
 
@@ -117,6 +117,7 @@ class ExclusiveLockfile {
    */
   _ensureFileExists() {
     if (!fs.existsSync(this._lockFilePath)) {
+      fs.ensureFileSync(this._lockFilePath);
       const initialState = this._options.getInitialState();
       this._doWrite(initialState);
     }

@@ -1,7 +1,4 @@
-const S = require('path').sep;
 const { isError } = require('lodash');
-
-const DETOX_SRC_PATH =  `${S}detox${S}src`;
 
 function removeInternalStackEntries(error) {
   const lines = error.stack.split('\n');
@@ -9,7 +6,7 @@ function removeInternalStackEntries(error) {
   const filtered = lines.filter(rawLine => {
     const line = rawLine.trim();
 
-    if (line.startsWith('at ') && line.includes(DETOX_SRC_PATH)) {
+    if (line.startsWith('at ') && line.includes('/detox/src')) {
       return false;
     }
 
