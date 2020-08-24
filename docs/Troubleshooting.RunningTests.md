@@ -223,7 +223,7 @@ First, install, build and make sure the tests are indeed passing. If they are, t
 
 ### Take a look at past issues
 
-Before opening a new issue, search the [list of issues](https://github.com/wix/detox/issues?utf8=%E2%9C%93&q=is%3Aissue) on GitHub. There's a good chance somebody faced the same problem you are.
+Before opening a new issue, search the [list of issues](https://github.com/wix/detox/issues?utf8=%E2%9C%93&q=is%3Aissue) on GitHub. There's a good chance somebody faced the same problem already.
 
 ### How to open a new issue
 
