@@ -185,7 +185,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		//Check the candidate view for transparency
 		UIImage* img = [self dtx_imageAroundPoint:point maxSize:lookingFor.bounds.size];
 //		[UIImagePNGRepresentation(img) writeToFile:@"/Users/lnatan/Desktop/view.png" atomically:YES];
-		if([UIView _dtx_isImageTransparentEnough:img threshold:0.15] == NO)
+		if([UIView _dtx_isImageTransparentEnough:img threshold:0.5] == NO)
 		{
 			//If a view is not transparent around the hit point, take it as the visible view.
 			rv = self;
@@ -333,9 +333,9 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		{
 			UIImage* windowImage = [obj dtx_imageAroundPoint:currentWindowActivationPoint maxSize:self.window.bounds.size];
 //			[UIImagePNGRepresentation(windowImage) writeToFile:[NSString stringWithFormat:@"/Users/lnatan/Desktop/%@.png", NSStringFromClass(obj.class)] atomically:YES];
-			if([UIView _dtx_isImageTransparentEnough:windowImage threshold:0.15] == NO)
+			if([UIView _dtx_isImageTransparentEnough:windowImage threshold:0.5] == NO)
 			{
-				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"Window “%@” is above the tested view's window and is not transparent at window point “%@”", obj.dtx_shortDescription, DTXPointToString(currentWindowActivationPoint)])}];
+				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"Window “%@” is above the tested view's window and its transparency around point “%@” is below the tested threshold (0.5)", obj.dtx_shortDescription, DTXPointToString(currentWindowActivationPoint)])}];
 				_DTXPopulateError(err);
 				
 				//The window is not transparent at the hit point, stop
@@ -378,15 +378,22 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 			rv = NO;
 			NSString* str = isHit ? @"hittable" : @"visible";
 			
-			
-			if(visibleView == NO)
+			if(visibleView == nil)
 			{
 				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"No view is %@ at window point “%@”", str, DTXPointToString(windowActivationPoint)])}];
 				_DTXPopulateError(err);
 			}
 			else
 			{
-				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"Another view “%@” is %@ at window point “%@”", visibleView.dtx_shortDescription, str, DTXPointToString(currentWindowActivationPoint)])}];
+				NSError* err;
+				if(isHit)
+				{
+					err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"Another view “%@” is hittable at window point “%@”", visibleView.dtx_shortDescription, DTXPointToString(currentWindowActivationPoint)])}];
+				}
+				else
+				{
+					err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"View “%@” is above the tested view “%@”'s screen position and its transparency around point “%@” is below the tested threshold (0.5)", visibleView.dtx_shortDescription, str, DTXPointToString(currentWindowActivationPoint)])}];
+				}
 				_DTXPopulateError(err);
 			}
 			
