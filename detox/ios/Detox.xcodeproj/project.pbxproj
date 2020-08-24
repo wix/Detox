@@ -442,8 +442,6 @@
 				3980D12B244C40D2004812DD /* AppleInternals */,
 				3980D12C244C40E2004812DD /* AppleTouchEvents */,
 				39232594247AAAAC00A3D119 /* Assertions */,
-				39D7BF9024EAE510003E0694 /* LNViewHierarchyDumper.xcodeproj */,
-				39DC984A24BB8FCD00FFB224 /* DetoxSync.xcodeproj */,
 				3980D13C244C44C3004812DD /* Invocation */,
 				3980D132244C435B004812DD /* Matchers */,
 				3980D130244C42E7004812DD /* Utilities */,
@@ -510,6 +508,8 @@
 		3980D130244C42E7004812DD /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				39D7BF9024EAE510003E0694 /* LNViewHierarchyDumper.xcodeproj */,
+				39DC984A24BB8FCD00FFB224 /* DetoxSync.xcodeproj */,
 				397CA7982483F07D005E8A71 /* ApproximateEquality.swift */,
 				39E91C06247D6BB00099F8F3 /* DetoxCrashHandler.h */,
 				39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */,
