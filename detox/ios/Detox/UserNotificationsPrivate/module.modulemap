@@ -1,6 +1,0 @@
-module UserNotificationsPrivate {
-	header "UNNotificationResponse+PrivateHeaders.h"
-	header "UNNotification+PrivateHeaders.h"
-	header "UNPushNotificationTrigger+PrivateHeaders.h"
-	export *
-}
