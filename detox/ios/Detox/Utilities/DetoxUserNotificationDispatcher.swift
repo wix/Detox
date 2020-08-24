@@ -8,7 +8,6 @@
 
 import UIKit
 import UserNotifications
-import UserNotificationsPrivate
 import CoreLocation
 
 private struct DetoxUserNotificationKeys {
@@ -236,8 +235,8 @@ public class DetoxUserNotificationDispatcher: NSObject {
 			notificationResponseType = UNNotificationResponse.self
 		}
 		
-		let rv = notificationResponseType.init(notification: notification, actionIdentifier: self.userNotificationData[DetoxUserNotificationKeys.actionIdentifier] as? String ?? UNNotificationDefaultActionIdentifier)
-
+		let rv = notificationResponseType.init(notification: notification, actionIdentifier: self.userNotificationData[DetoxUserNotificationKeys.actionIdentifier] as? String ?? UNNotificationDefaultActionIdentifier)!
+		
 		if userText != nil {
 			rv.setValue(userText, forKey: "userText")
 		}
