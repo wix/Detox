@@ -28,6 +28,7 @@ DriverRegistry.default = new DriverRegistry({
   'ios.none': require('./drivers/ios/IosDriver'),
   'ios.simulator': require('./drivers/ios/SimulatorDriver'),
   'android.emulator': require('./drivers/android/emulator/EmulatorDriver'),
+  'android.genymotion': require('./drivers/android/GenymotionDriver'),
   'android.attached': require('./drivers/android/attached/AttachedAndroidDriver'),
 });
 

@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.12.0",
+    "minimist": "^1.2.5",
     "moment": "^2.24.0",
     "react": "16.11.x",
     "react-native": "0.62.x"
@@ -114,7 +115,7 @@
         "build": "cd android && ./gradlew assembleFromBinDebug assembleFromBinDebugAndroidTest -DtestBuildType=debug && cd ..",
         "type": "android.emulator",
         "device": {
-          "avdName": "Pixel_API_28"
+          "avdName": "Nexus_5_API_25"
         }
       },
       "android.emu.release": {
@@ -125,7 +126,18 @@
         "build": "cd android && ./gradlew assembleFromBinRelease assembleFromBinReleaseAndroidTest -DtestBuildType=release && cd ..",
         "type": "android.emulator",
         "device": {
-          "avdName": "Pixel_API_28"
+          "avdName": "Nexus_5_API_25"
+        }
+      },
+      "android.geny.release": {
+        "binaryPath": "android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk",
+        "utilBinaryPaths": [
+          "./cache/test-butler-app.apk"
+        ],
+        "build": "cd android && ./gradlew assembleFromBinRelease assembleFromBinReleaseAndroidTest -DtestBuildType=release && cd ..",
+        "type": "android.genymotion",
+        "device": {
+          "avdName": "Nexus_5_API_25"
         }
       },
       "android.emu.debug.fromSource": {
