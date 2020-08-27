@@ -6,24 +6,7 @@ let instanceCounter = 0
 
 const DEFAULT_RECIPE_NAME = "Google Pixel 3a"
 
-type UUID = string;
-
-type RawRecipesList = {
-  recipes: {
-    uuid: UUID,
-    name: string,
-    android_version: string,
-    screen: string,
-    screen_width: number,
-    screen_height: number,
-    screen_density: number,
-    source: string,
-  }[]
-}
-
 class GenymotionDriver extends AndroidDriver {
-  adbSerial: string
-
   constructor(config) {
     super(config);
 
@@ -35,7 +18,7 @@ class GenymotionDriver extends AndroidDriver {
   }
 
   async acquireFreeDevice(deviceQuery) {
-    const rawResult: RawRecipesList = JSON.parse(cp.execSync('gmsaas --format json recipes list').toString());
+    const rawResult = JSON.parse(cp.execSync('gmsaas --format json recipes list').toString());
     const {recipes} = rawResult
     let recipe;
     let selectedRecipeName = deviceQuery;
@@ -57,9 +40,9 @@ class GenymotionDriver extends AndroidDriver {
     return adbSerial;
   }
 
-  async _boot(recipeUUID: UUID, recipeName: string) {
+  async _boot(recipeUUID, recipeName) {
     const name = `instance-${++instanceCounter}`;
-    const instanceUUID: UUID = cp.execSync(`gmsaas instances start ${recipeUUID} ${name}`).toString().trim();
+    const instanceUUID = cp.execSync(`gmsaas instances start ${recipeUUID} ${name}`).toString().trim();
     const adbSerial = JSON.parse(cp.execSync(`gmsaas --format json instances adbconnect ${instanceUUID}`).toString()).instance.adb_serial;
 
     await this.emitter.emit('bootDevice', { coldBoot: true, deviceId: adbSerial, type: recipeName});
