@@ -1,8 +1,11 @@
 const AndroidDriver = require('./AndroidDriver');
 const environment = require('../../../utils/environment');
+const FreeGenymotionFinder = require('./FreeGenymotionFinder');
 const cp = require('child_process');
+const {default: ADB} = require('./exec/ADB');
 
 let instanceCounter = 0
+let globalAdbSerial;
 
 const DEFAULT_RECIPE_NAME = "Google Pixel 3a"
 
@@ -10,6 +13,7 @@ class GenymotionDriver extends AndroidDriver {
   constructor(config) {
     super(config);
 
+    this.freeDeviceFinder = new FreeGenymotionFinder(this.adb, this.deviceRegistry);
     this._name = 'Unspecified Genymotion Cloud Emulator';
   }
 
@@ -40,13 +44,22 @@ class GenymotionDriver extends AndroidDriver {
     return adbSerial;
   }
 
+  async doAllocateDevice(deviceQuery) {
+    const freeEmulatorAdbName = await this.freeDeviceFinder.findFreeDevice(deviceQuery);
+    return freeEmulatorAdbName || this._createDevice();
+  }
+
   async _boot(recipeUUID, recipeName) {
+    if (globalAdbSerial) {
+      return globalAdbSerial
+    }
     const name = `instance-${++instanceCounter}`;
     const instanceUUID = cp.execSync(`gmsaas instances start ${recipeUUID} ${name}`).toString().trim();
     const adbSerial = JSON.parse(cp.execSync(`gmsaas --format json instances adbconnect ${instanceUUID}`).toString()).instance.adb_serial;
 
     await this.emitter.emit('bootDevice', { coldBoot: true, deviceId: adbSerial, type: recipeName});
 
+    globalAdbSerial = adbSerial
     return adbSerial;
   }
 

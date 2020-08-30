@@ -11,6 +11,10 @@ class DeviceHandle {
       return 'emulator';
     }
 
+    if (adbName.startsWith('localhost')) {
+      return 'genymotion-cloud';
+    }
+
     if (/^((1?\d?\d|25[0-5]|2[0-4]\d)(\.|:)){4}[0-9]{4}/.test(adbName)) {
       return 'genymotion';
     }

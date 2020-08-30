@@ -4,7 +4,7 @@ import android.os.Build;
 
 public class Environment {
     public static final String EMULATOR_LOCALHOST = "ws://10.0.2.2";
-    public static final String GENYMOTION_LOCALHOST = "ws://10.0.3.2";
+    public static final String GENYMOTION_LOCALHOST = "ws://localhost";
     public static final String DEVICE_LOCALHOST = "ws://localhost";
 
     private static boolean isRunningOnGenymotion() {
@@ -26,14 +26,7 @@ public class Environment {
         // Since genymotion runs in vbox it use different hostname to refer to adb host.
         // We detect whether app runs on genymotion and replace js bundle server hostname accordingly
 
-        if (isRunningOnGenymotion()) {
-            return GENYMOTION_LOCALHOST;
-        }
-
-        if (isRunningOnStockEmulator()) {
-            return EMULATOR_LOCALHOST;
-        }
-
-        return DEVICE_LOCALHOST;
+        //TODO: Fix it
+        return GENYMOTION_LOCALHOST;
     }
 }
