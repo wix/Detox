@@ -1,0 +1,18 @@
+data:text/html,<root>
+                    <errorCode>0</errorCode>
+                    <name>hamud</name>
+                    <orderCode>1</orderCode>
+                    <level>3</level>
+                    <exPoints>290</exPoints>
+                    <money>747</money>
+                    <ingredient1>241</ingredient1>
+                    <ingredient2>248</ingredient2>
+                    <ingredient3>237</ingredient3>
+                    <ingredient4>259</ingredient4>
+                    <pastQuestsIds>1,1,1,1,1,1,1,1,1,1,2,2</pastQuestsIds>
+                    <pastDungeonsIds>1</pastDungeonsIds>
+                    <cards>1,2,3,4,5,10,100,105</cards>
+                    <magic>1,2,80</magic>
+                    <items>502,702,803,605,125,213,343,405,411,532,535,234,154</items>
+                    <itemsInUse>125,213,343,405,535,605,702,803</itemsInUse>
+            </root>

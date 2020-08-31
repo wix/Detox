@@ -5,7 +5,6 @@ const cp = require('child_process');
 const {default: ADB} = require('./exec/ADB');
 
 let instanceCounter = 0
-let globalAdbSerial;
 
 const DEFAULT_RECIPE_NAME = "Google Pixel 3a"
 
@@ -21,45 +20,70 @@ class GenymotionDriver extends AndroidDriver {
     return this._name
   }
 
-  async acquireFreeDevice(deviceQuery) {
+  _getRecipesRaw() {
     const rawResult = JSON.parse(cp.execSync('gmsaas --format json recipes list').toString());
     const {recipes} = rawResult
+    retun recipes
+  }
+
+  // This is OK since the function has no arguments (lodash memoize cache size is ∞)
+  getRecipes = _.memoize(this._getRecipesRaw)
+
+  async acquireFreeDevice(deviceQuery) {
     let recipe;
-    let selectedRecipeName = deviceQuery;
+    let recipes = await this.getRecipes();
     recipe = recipes.find(recipe => recipe.name === deviceQuery)
     if (!recipe) {
       console.warn(`Couldn't find desired emulator, resorting to ${DEFAULT_RECIPE_NAME}`)
       recipe = recipes.find(recipe => recipe.name === DEFAULT_RECIPE_NAME);
-      selectedRecipeName = DEFAULT_RECIPE_NAME;
     }
 
-    const adbSerial = await this._boot(recipe.uuid, recipe.name);
+    const adbSerial = await this._boot(recipe);
 
     this.adbSerial = adbSerial;
     await this.adb.apiLevel(this.adbSerial);
     await this.adb.disableAndroidAnimations(this.adbSerial);
     await this.adb.unlockScreen(this.adbSerial);
 
-    this._name = `${selectedRecipeName} - ${this.adbSerial}`;
+    this._name = `${recipe.name} - ${this.adbSerial}`;
     return adbSerial;
   }
 
-  async doAllocateDevice(deviceQuery) {
-    const freeEmulatorAdbName = await this.freeDeviceFinder.findFreeDevice(deviceQuery);
-    return freeEmulatorAdbName || this._createDevice();
+  async _groupDevicesByStatus(recipeName) {
+    const searchResults = await this._queryDevices(recipeName);
+
+    const { busy, free}  = _.groupBy(searchResults, device => {
+      return this.deviceRegistry.isDeviceBusy(device.uuid)
+        ? 'busy'
+        : 'free';
+    });
+
+    return {
+      busy,
+      free,
+    }
   }
 
-  async _boot(recipeUUID, recipeName) {
-    if (globalAdbSerial) {
-      return globalAdbSerial
+  _queryDevices(recipeName) {
+    const instances = JSON.parse(cp.execSync('gmsaas --format json instances list').toString()).instances;
+    const recipes = this.getRecipes();
+    const matchingRecipes = recipes.filter(recipe => recipe.name === recipeName);
+    return instances.filter(instance => matchingRecipes.any(recipe => recipe.uuid === instance.recipe.uuid));
+  }
+
+  async _boot(recipe) {
+    let adbSerial;
+    const { free, busy } = await this._groupDevicesByStatus(recipe.name);
+    if (!_.isEmpty)
+      adbSerial = free[0].adb_serial;
+      return adbSerial
     }
-    const name = `instance-${++instanceCounter}`;
-    const instanceUUID = cp.execSync(`gmsaas instances start ${recipeUUID} ${name}`).toString().trim();
+    const instanceName = `instance-${++instanceCounter}`;
+    const instanceUUID = cp.execSync(`gmsaas instances start ${recipe.uuid} ${instanceName}`).toString().trim();
     const adbSerial = JSON.parse(cp.execSync(`gmsaas --format json instances adbconnect ${instanceUUID}`).toString()).instance.adb_serial;
 
-    await this.emitter.emit('bootDevice', { coldBoot: true, deviceId: adbSerial, type: recipeName});
+    await this.emitter.emit('bootDevice', { coldBoot: true, deviceId: adbSerial, type: recipe.name});
 
-    globalAdbSerial = adbSerial
     return adbSerial;
   }
 
