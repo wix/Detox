@@ -2,6 +2,7 @@ const AndroidDriver = require('./AndroidDriver');
 const environment = require('../../../utils/environment');
 const FreeGenymotionFinder = require('./FreeGenymotionFinder');
 const cp = require('child_process');
+const _ = require('lodash');
 const {default: ADB} = require('./exec/ADB');
 
 let instanceCounter = 0
@@ -14,6 +15,9 @@ class GenymotionDriver extends AndroidDriver {
 
     this.freeDeviceFinder = new FreeGenymotionFinder(this.adb, this.deviceRegistry);
     this._name = 'Unspecified Genymotion Cloud Emulator';
+    // This is OK since the function has no arguments (lodash memoize cache size is ∞)
+    this.getRecipes = _.memoize(this._getRecipesRaw);
+
   }
 
   get name() {
@@ -22,12 +26,9 @@ class GenymotionDriver extends AndroidDriver {
 
   _getRecipesRaw() {
     const rawResult = JSON.parse(cp.execSync('gmsaas --format json recipes list').toString());
-    const {recipes} = rawResult
-    retun recipes
+    const {recipes} = rawResult;
+    return recipes
   }
-
-  // This is OK since the function has no arguments (lodash memoize cache size is ∞)
-  getRecipes = _.memoize(this._getRecipesRaw)
 
   async acquireFreeDevice(deviceQuery) {
     let recipe;
@@ -49,38 +50,30 @@ class GenymotionDriver extends AndroidDriver {
     return adbSerial;
   }
 
-  async _groupDevicesByStatus(recipeName) {
-    const searchResults = await this._queryDevices(recipeName);
+  async _getFreeInstances(recipeName) {
+    const searchResults = await this._getInstancesByRecipeName(recipeName);
 
-    const { busy, free}  = _.groupBy(searchResults, device => {
-      return this.deviceRegistry.isDeviceBusy(device.uuid)
-        ? 'busy'
-        : 'free';
-    });
-
-    return {
-      busy,
-      free,
-    }
+    return searchResults.filter(instance => !this.deviceRegistry.isDeviceBusy(instance.uuid));
   }
 
-  _queryDevices(recipeName) {
-    const instances = JSON.parse(cp.execSync('gmsaas --format json instances list').toString()).instances;
+  _getInstancesByRecipeName(recipeName) {
     const recipes = this.getRecipes();
     const matchingRecipes = recipes.filter(recipe => recipe.name === recipeName);
-    return instances.filter(instance => matchingRecipes.any(recipe => recipe.uuid === instance.recipe.uuid));
+    const instances = JSON.parse(cp.execSync('gmsaas --format json instances list').toString()).instances;
+    return instances.filter(instance => matchingRecipes.some(recipe => recipe.uuid === instance.recipe.uuid));
   }
 
   async _boot(recipe) {
     let adbSerial;
-    const { free, busy } = await this._groupDevicesByStatus(recipe.name);
-    if (!_.isEmpty)
-      adbSerial = free[0].adb_serial;
-      return adbSerial
+    const freeInstances = await this._getFreeInstances(recipe.name);
+    if (!_.isEmpty(freeInstances)) {
+      adbSerial = freeInstances[0].adb_serial;
+      await this.emitter.emit('bootDevice', { coldBoot: false, deviceId: adbSerial, type: recipe.name});
+      return adbSerial;
     }
     const instanceName = `instance-${++instanceCounter}`;
     const instanceUUID = cp.execSync(`gmsaas instances start ${recipe.uuid} ${instanceName}`).toString().trim();
-    const adbSerial = JSON.parse(cp.execSync(`gmsaas --format json instances adbconnect ${instanceUUID}`).toString()).instance.adb_serial;
+    adbSerial = JSON.parse(cp.execSync(`gmsaas --format json instances adbconnect ${instanceUUID}`).toString()).instance.adb_serial;
 
     await this.emitter.emit('bootDevice', { coldBoot: true, deviceId: adbSerial, type: recipe.name});
 
