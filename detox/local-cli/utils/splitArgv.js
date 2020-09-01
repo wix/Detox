@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const testCommandArgs = require('./testCommandArgs'); 
 
-function extractAliasedSet(yargsBuilder) {
+function extractKnownKeys(yargsBuilder) {
   return Object.entries(yargsBuilder).reduce(
     (set, [key, option]) => {
       if (option.alias) {
@@ -52,7 +52,7 @@ function getJestBooleanArgs() {
   return _(require('jest-cli/build/cli/args'))
     .thru(args => args.options)
     .pickBy(({ type }) => type === 'boolean')
-    .thru(extractAliasedSet)
+    .thru(extractKnownKeys)
     .value();
 }
 
@@ -66,7 +66,7 @@ function getMochaBooleanArgs() {
 }
 
 function splitDetoxArgv(argv) {
-  const aliases = extractAliasedSet(testCommandArgs);
+  const aliases = extractKnownKeys(testCommandArgs);
   const isDetoxArg = (_value, key) => aliases.has(key);
 
   const detoxArgs = _.pickBy(argv, isDetoxArg);

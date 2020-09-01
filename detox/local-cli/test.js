@@ -18,11 +18,13 @@ module.exports.handler = async function test(argv) {
   const { detoxArgs, runnerArgs } = splitArgv.detox(argv);
   const { cliConfig, deviceConfig, runnerConfig } = await composeDetoxConfig({ argv: detoxArgs });
   const [ platform ] = deviceConfig.type.split('.');
+  const runner = deduceTestRunner(runnerConfig.testRunner);
 
   const prepareArgs = choosePrepareArgs({
     cliConfig,
-    runner: deduceTestRunner(runnerConfig.testRunner),
+    runner,
     platform,
+    detoxArgs,
   });
 
   const forwardedArgs = prepareArgs({
@@ -42,13 +44,18 @@ module.exports.handler = async function test(argv) {
     await resetLockFile({ platform });
   }
 
-  await runTestRunnerWithRetries(forwardedArgs, detoxArgs.retries);
+  const retries = runner === 'jest' ? detoxArgs.retries : 0;
+  await runTestRunnerWithRetries(forwardedArgs, retries);
 };
 
-function choosePrepareArgs({ cliConfig, runner, platform }) {
+function choosePrepareArgs({ cliConfig, detoxArgs, runner, platform }) {
   if (runner === 'mocha') {
     if (hasMultipleWorkers(cliConfig)) {
       log.warn('Can not use -w, --workers. Parallel test execution is only supported with iOS and Jest');
+    }
+
+    if (detoxArgs.retries > 0) {
+      log.warn('Can not use -R, --retries. The test retry mechanism is only supported with Jest runner');
     }
 
     return prepareMochaArgs;
