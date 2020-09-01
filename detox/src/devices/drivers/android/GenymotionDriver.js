@@ -31,15 +31,18 @@ class GenymotionDriver extends AndroidDriver {
   }
 
   async acquireFreeDevice(deviceQuery) {
+    const {recipeName} = deviceQuery;
     let recipe;
     let recipes = await this.getRecipes();
-    recipe = recipes.find(recipe => recipe.name === deviceQuery)
+    recipe = recipes.find(recipe => recipe.name === recipeName)
     if (!recipe) {
       console.warn(`Couldn't find desired emulator, resorting to ${DEFAULT_RECIPE_NAME}`)
       recipe = recipes.find(recipe => recipe.name === DEFAULT_RECIPE_NAME);
+    } else {
+      console.log(`Found recipe ${recipeName}`)
     }
 
-    const adbSerial = await this._boot(recipe);
+    const adbSerial = await this.deviceRegistry.allocateDevice(() => this._boot(recipe));
 
     this.adbSerial = adbSerial;
     await this.adb.apiLevel(this.adbSerial);

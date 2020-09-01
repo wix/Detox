@@ -137,7 +137,7 @@
         "build": "cd android && ./gradlew assembleFromBinRelease assembleFromBinReleaseAndroidTest -DtestBuildType=release && cd ..",
         "type": "android.genymotion",
         "device": {
-          "avdName": "Nexus_5_API_25"
+          "recipeName": "Google Pixel 3a"
         }
       },
       "android.emu.debug.fromSource": {
