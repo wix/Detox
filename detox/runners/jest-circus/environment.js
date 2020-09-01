@@ -31,7 +31,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     /** @protected */
     this.testEventListeners = [];
     /** @protected */
-    this.initTimeout = 30000000;
+    this.initTimeout = 300000;
   }
 
   async setup() {
