@@ -60,7 +60,7 @@ Simulates a swipe on the element with the provided options.
 
 `direction`—the swipe's direction (valid input: `"left"`/`"right"`/`"up"`/`"down"`) <br/>
 `speed`—the speed of the swipe (optional, valid input: `"fast"`/`"slow"` , default is `"fast"`) <br/>
-`percentage`—the percentage of the element to swipe on (optional, valid input: [0.0, 1.0], default is 0.75)
+`percentage`—the percentage of the screen to swipe (optional, valid input: [0.0, 1.0], default is 0.75)
 
 ```js
 await element(by.id('scrollView')).swipe('down');

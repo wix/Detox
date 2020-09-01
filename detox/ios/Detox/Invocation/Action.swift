@@ -372,19 +372,22 @@ class SwipeAction : Action {
 				velocity = 0.5
 				break;
 			case "fast":
-				velocity = 1.0
+				break
 			default:
 				fatalError("Unknown pinch speed")
 			}
 		}
 		
-		if var percentage = params?[2] as? Double {
-			percentage = Double.minimum(percentage, 1.0)
-			percentage = Double.maximum(0.0, percentage)
-			
-			targetNormalizedOffset.x *= CGFloat(percentage)
-			targetNormalizedOffset.y *= CGFloat(percentage)
+		var appliedPercentage = 0.75
+		if let percentage = params?[2] as? Double {
+			appliedPercentage = percentage
 		}
+		
+		appliedPercentage = Double.minimum(appliedPercentage, 1.0)
+		appliedPercentage = Double.maximum(0.0, appliedPercentage)
+		
+		targetNormalizedOffset.x *= CGFloat(appliedPercentage)
+		targetNormalizedOffset.y *= CGFloat(appliedPercentage)
 		
 		element.swipe(normalizedOffset: targetNormalizedOffset, velocity: velocity)
 		
