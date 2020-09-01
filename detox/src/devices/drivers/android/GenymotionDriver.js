@@ -81,10 +81,22 @@ class GenymotionDriver extends AndroidDriver {
     return adbSerial;
   }
 
+  async cleanup(deviceId, bundleId) {
+    await super.cleanup(deviceId, bundleId);
+    await this.shutdown(deviceId);
+  }
+
   async shutdown(deviceId) {
     await this.emitter.emit('beforeShutdownDevice', { deviceId });
-    cp.execSync(`gmsaas instances stop ${deviceId}`);
-    await this.emitter.emit('shutdownDevice', { deviceId });
+    // TODO: Maybe register deviceId to adb serial to make this redundant?
+    const instances = JSON.parse(cp.execSync(`gmsaas --format json instances list`).toString()).instances;
+    const deviceInstanceUUID = (instances.find(instance => instance.adb_serial === deviceId) || {}).uuid;
+    if (deviceInstanceUUID) {
+      cp.execSync(`gmsaas instances stop ${deviceInstanceUUID}`);
+      await this.emitter.emit('shutdownDevice', { deviceId });
+    } else {
+      console.error('Failed to find instance to shutdown');
+    }
   }
 }
 
