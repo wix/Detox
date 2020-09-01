@@ -3,7 +3,6 @@ jest.mock('../src/configuration');
 jest.mock('child_process');
 
 const path = require('path');
-const {normalize} = require('path');
 const shellQuote = require('./utils/shellQuote');
 
 describe('test', () => {
@@ -53,7 +52,7 @@ describe('test', () => {
       await callCli('./test', 'test');
 
       expect(execSync).toHaveBeenCalledWith(
-        `${normalize('node_modules/.bin/mocha')} --opts e2e/mocha.opts --invert --grep :ios: --use-custom-logger "true" e2e`,
+        `mocha --opts e2e/mocha.opts --grep :ios: --invert --use-custom-logger true e2e`,
         expect.anything()
       );
     });
@@ -77,7 +76,7 @@ describe('test', () => {
       await callCli('./test', 'test');
 
       expect(execSync).toHaveBeenCalledWith(
-        expect.stringContaining(`${normalize('node_modules/.bin/mocha')} --config e2e/.mocharc.json `),
+        expect.stringContaining(`mocha --config e2e/.mocharc.json `),
         expect.anything()
       );
     });
@@ -87,10 +86,10 @@ describe('test', () => {
         'runner-config': 'e2e/.mocharc.json'
       });
 
-      await callCli('./test', 'test --record-logs none --take-screenshots manual --record-videos none --record-performance none');
+      await callCli('./test', 'test --record-logs none --record-performance none --record-videos none --take-screenshots manual');
 
       expect(execSync).toHaveBeenCalledWith(
-        expect.stringContaining(`--record-logs none --take-screenshots manual --record-videos none --record-performance none`),
+        expect.stringContaining(`--record-logs none --record-performance none --record-videos none --take-screenshots manual`),
         expect.anything()
       );
     });
@@ -119,7 +118,7 @@ describe('test', () => {
 
       expect(execSync).toHaveBeenCalledWith(
         expect.stringContaining(
-          `${normalize('node_modules/.bin/jest')} --config e2e/config.json ${shellQuote('--testNamePattern=^((?!:ios:).)*$')} --maxWorkers 1 e2e`
+          `jest --config e2e/config.json --testNamePattern ${shellQuote('^((?!:ios:).)*$')} --maxWorkers 1 e2e`
         ),
         expect.objectContaining({
           env: expect.objectContaining({
@@ -137,7 +136,7 @@ describe('test', () => {
 
       expect(execSync).toHaveBeenCalledWith(
         expect.stringContaining(
-          `${normalize('node_modules/.bin/jest')} --config e2e/config.json`
+          `jest --config e2e/config.json`
         ),
         expect.objectContaining({
           env: expect.objectContaining({
@@ -295,7 +294,7 @@ describe('test', () => {
     }
     expect(execSync).toHaveBeenCalledWith(
       expect.stringContaining(
-        `${normalize('node_modules/.bin/mocha')} --opts e2e/mocha.opts --debug-synchronization 3000 --invert --grep :ios:`
+        `${'mocha'} --opts e2e/mocha.opts --grep :ios: --invert --debug-synchronization 3000`
       ),
       expect.anything()
     );

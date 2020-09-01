@@ -1,7 +1,16 @@
 const DetoxRuntimeError = require('../../src/errors/DetoxRuntimeError');
+const log = require('../../src/utils/logger').child({ __filename });
 
 class DetoxAdapterImpl {
   constructor(detox, describeInitErrorFn) {
+    if (process.env.DETOX_RERUN_INDEX) {
+      log.warn(
+        'While Detox CLI supports "-R <N>, --retries <N>" mechanism, ' +
+        'this outdated Jest integration does not. ' +
+        'Please migrate to the new Jest Circus integration.\n\n' +
+        'See: https://github.com/wix/Detox/blob/master/docs/Guide.Jest.md\n');
+    }
+
     this.detox = detox;
     this._describeInitError = describeInitErrorFn;
     this._currentTest = null;

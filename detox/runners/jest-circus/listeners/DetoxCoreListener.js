@@ -8,12 +8,26 @@ const {
   onTestDone,
   onRunDescribeFinish,
 } = require('../../integration').lifecycle;
+const { RETRY_TIMES } = require('jest-circus/build/types');
 
 class DetoxCoreListener {
-  constructor({ detox }) {
+  constructor({ detox, env }) {
     this._startedTests = new WeakSet();
     this._testsFailedBeforeStart = new WeakSet();
+    this._env = env;
+    this._testRunTimes = 1;
     this.detox = detox;
+  }
+
+  _getTestInvocations(test) {
+    const {DETOX_RERUN_INDEX} = process.env;
+
+    if (DETOX_RERUN_INDEX) {
+      const previousReruns = parseInt(DETOX_RERUN_INDEX, 10);
+      return previousReruns * this._testRunTimes + test.invocations;
+    } else {
+      return test.invocations;
+    }
   }
 
   async run_describe_start({describeBlock: {name, children}}) {
@@ -32,6 +46,8 @@ class DetoxCoreListener {
     if (!_.isEmpty(test.errors)) {
       this._testsFailedBeforeStart.add(test);
     }
+
+    this._testRunTimes = 1 + parseInt(this._env.global[RETRY_TIMES], 10) || 0;
   }
 
   async hook_start(_event, state) {
@@ -64,7 +80,7 @@ class DetoxCoreListener {
       title: test.name,
       fullName: getFullTestName(test),
       status: 'running',
-      invocations: test.invocations,
+      invocations: this._getTestInvocations(test),
     });
   }
 
@@ -74,9 +90,11 @@ class DetoxCoreListener {
         title: test.name,
         fullName: getFullTestName(test),
         status: test.errors.length ? 'failed' : 'passed',
-        invocations: test.invocations,
+        invocations: this._getTestInvocations(test),
         timedOut: hasTimedOut(test)
       });
+
+      this._startedTests.delete(test);
     }
   }
 }

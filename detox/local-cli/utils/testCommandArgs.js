@@ -25,6 +25,13 @@ module.exports = {
     describe: 'Disable colors in log output',
     boolean: true,
   },
+  R: {
+    alias: 'retries',
+    group: 'Execution:',
+    describe: 'TODO',
+    number: true,
+    default: 0,
+  },
   r: {
     alias: 'reuse',
     group: 'Execution:',

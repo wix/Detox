@@ -1,5 +1,8 @@
+const fs = require('fs-extra');
+const path = require('path');
 const {VerboseReporter: JestVerboseReporter} = require('@jest/reporters'); // eslint-disable-line node/no-extraneous-require
 const DetoxRuntimeError = require('../../src/errors/DetoxRuntimeError');
+const { saveLastFailedTests } = require('../../src/utils/lastFailedTests');
 
 class DetoxStreamlineJestReporter extends JestVerboseReporter {
 
@@ -90,6 +93,16 @@ class DetoxStreamlineJestReporter extends JestVerboseReporter {
       const [reporterName] = reporterDef;
       return reporterName === 'default';
     });
+  }
+
+  async onRunComplete(_contexts, { testResults }) {
+    await super.onRunComplete();
+
+    const failedFiles = testResults
+      .filter(result => result.numFailingTests > 0)
+      .map(result => result.testFilePath);
+
+    await saveLastFailedTests(failedFiles);
   }
 }
 
