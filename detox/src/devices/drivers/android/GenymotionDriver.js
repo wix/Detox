@@ -1,6 +1,5 @@
 const AndroidDriver = require('./AndroidDriver');
 const environment = require('../../../utils/environment');
-const FreeGenymotionFinder = require('./FreeGenymotionFinder');
 const cp = require('child_process');
 const _ = require('lodash');
 const {default: ADB} = require('./exec/ADB');
@@ -13,7 +12,6 @@ class GenymotionDriver extends AndroidDriver {
   constructor(config) {
     super(config);
 
-    this.freeDeviceFinder = new FreeGenymotionFinder(this.adb, this.deviceRegistry);
     this._name = 'Unspecified Genymotion Cloud Emulator';
     // This is OK since the function has no arguments (lodash memoize cache size is ∞)
     this.getRecipes = _.memoize(this._getRecipesRaw);
