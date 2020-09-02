@@ -80,11 +80,11 @@ static inline void _DTXApplySwipe(UIWindow* window, CGPoint startPoint, CGPoint 
 	[DTXSyntheticEvents touchAlongPath:points relativeToWindow:window holdDurationOnLastTouch:0.0];
 }
 
-#define DTX_CALC_SWIPE_START_END_POINTS(bounds, mainMidFunc, otherMidFunc, main, other, mainSizeFunc) \
+#define DTX_CALC_SWIPE_START_END_POINTS(bounds, screenBounds, mainMidFunc, otherMidFunc, main, other, mainSizeFunc, normalizedOffset) \
+startPoint.main = mainMidFunc(bounds); \
 startPoint.other = otherMidFunc(bounds); \
-endPoint.other = otherMidFunc(bounds); \
-startPoint.main = mainMidFunc(bounds) + (-normalizedOffset.main) * 0.5 * mainSizeFunc(bounds); \
-endPoint.main = mainMidFunc(bounds) + normalizedOffset.main * 0.5 * mainSizeFunc(bounds);
+endPoint.main = mainMidFunc(bounds) + normalizedOffset.main * mainSizeFunc(screenBounds); \
+endPoint.other = otherMidFunc(bounds);
 
 - (void)dtx_swipeWithNormalizedOffset:(CGPoint)normalizedOffset velocity:(CGFloat)velocity
 {
@@ -102,11 +102,11 @@ endPoint.main = mainMidFunc(bounds) + normalizedOffset.main * 0.5 * mainSizeFunc
 	
 	if(normalizedOffset.x != 0)
 	{
-		DTX_CALC_SWIPE_START_END_POINTS(safeBounds, CGRectGetMidX, CGRectGetMidY, x, y, CGRectGetWidth);
+		DTX_CALC_SWIPE_START_END_POINTS(safeBounds, self.window.screen.bounds, CGRectGetMidX, CGRectGetMidY, x, y, CGRectGetWidth, normalizedOffset);
 	}
 	else
 	{
-		DTX_CALC_SWIPE_START_END_POINTS(safeBounds, CGRectGetMidY, CGRectGetMidX, y, x, CGRectGetHeight);
+		DTX_CALC_SWIPE_START_END_POINTS(safeBounds, self.window.screen.bounds, CGRectGetMidY, CGRectGetMidX, y, x, CGRectGetHeight, normalizedOffset);
 	}
 	
 	[self dtx_assertHittableAtPoint:startPoint];

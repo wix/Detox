@@ -199,10 +199,9 @@ describe('Actions', () => {
     await expect(element(by.text('HText6'))).not.toBeVisible();
   });
 
-  // TODO - swipe is not good enough for triggering pull to refresh. need to come up with something better
   // directions: 'up'/'down'/'left'/'right', speed: 'fast'/'slow'
-  xit('should swipe down until pull to reload is triggered', async () => {
-    await element(by.id('ScrollView799')).swipe('down', 'slow');
+  it(':ios: should swipe down until pull to reload is triggered', async () => {
+    await element(by.id('ScrollView799')).swipe('down', 'fast');
     await expect(element(by.text('PullToReload Working!!!'))).toBeVisible();
   });
 
