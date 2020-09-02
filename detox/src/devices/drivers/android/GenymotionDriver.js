@@ -54,7 +54,7 @@ class GenymotionDriver extends AndroidDriver {
   async _getFreeInstances(recipeName) {
     const searchResults = await this._getInstancesByRecipeName(recipeName);
 
-    return searchResults.filter(instance => !this.deviceRegistry.isDeviceBusy(instance.uuid));
+    return searchResults.filter(instance => !this.deviceRegistry.isDeviceBusy(instance.uuid) && instance.adb_serial !== '0.0.0.0');
   }
 
   _getInstancesByRecipeName(recipeName) {
