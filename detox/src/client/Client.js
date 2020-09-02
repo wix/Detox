@@ -98,17 +98,11 @@ class Client {
       invocation = invocation();
     }
 
-    if (this.slowInvocationTimeout) {
-      this.slowInvocationStatusHandler = this.slowInvocationStatus();
-    }
-
     try {
       return await this.sendAction(new actions.Invoke(invocation));
     } catch (err) {
       this.successfulTestRun = false;
       throw removeInternalStackEntries(asError(err));
-    } finally {
-      clearTimeout(this.slowInvocationStatusHandler);
     }
   }
 
@@ -135,9 +129,16 @@ class Client {
   }
 
   async sendAction(action) {
+    if (this.slowInvocationTimeout) {
+      this.slowInvocationStatusHandler = this.slowInvocationStatus();
+    }
+
     const response = await this.ws.send(action, action.messageId);
     const parsedResponse = JSON.parse(response);
-    return await action.handle(parsedResponse);
+    const handledResponse = await action.handle(parsedResponse);
+
+    clearTimeout(this.slowInvocationStatusHandler);
+    return handledResponse;
   }
 
   slowInvocationStatus() {
