@@ -179,6 +179,8 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 	
 	@objc(notifyOnCrashWithDetails:)
 	public func notifyOnCrash(details: [String: Any]) {
+		log.error("App crashed: \(details["errorDetails"]!)")
+		
 		let semaphore = DispatchSemaphore(value: 1)
 		
 		recordingManager.stopRecording { error in
