@@ -1258,7 +1258,6 @@
 					"-ObjC",
 					"-all_load",
 					"-lstdc++",
-					"-Wl,-U,_OBJC_CLASS_$_DTXProfiler",
 					"-Wl,-U,_OBJC_CLASS_$_TIPreferencesController",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wix.Detox;
@@ -1303,7 +1302,6 @@
 					"-ObjC",
 					"-all_load",
 					"-lstdc++",
-					"-Wl,-U,_OBJC_CLASS_$_DTXProfiler",
 					"-Wl,-U,_OBJC_CLASS_$_TIPreferencesController",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wix.Detox;
