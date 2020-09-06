@@ -1,12 +1,11 @@
 apply plugin: 'com.android.application'
+apply from: '../rninfo.gradle'
 
 //project.ext.react = [:]
 project.ext.react = [
-    enableHermes: false
+    enableHermes: rnInfo.isRN60OrHigher
 ]
 apply from: '../../node_modules/react-native/react.gradle'
-
-apply from: '../rninfo.gradle'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
