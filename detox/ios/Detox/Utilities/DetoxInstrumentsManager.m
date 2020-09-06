@@ -53,10 +53,6 @@ static NSString* (*__DTXProfilerMarkEventIntervalBegin)(NSString* category, NSSt
 static void (*__DTXProfilerMarkEventIntervalEnd)(NSString* identifier, __DTXEventStatus eventStatus, NSString* __nullable endMessage);
 static void (*__DTXProfilerMarkEvent)(NSString* category, NSString* name, __DTXEventStatus eventStatus, NSString* __nullable startMessage);
 
-//Weak link
-WEAK_IMPORT_ATTRIBUTE
-@interface DTXProfiler : NSObject @end
-
 @implementation DetoxInstrumentsManager
 {
 	id _recorderInstance;
@@ -106,11 +102,11 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		__DTXProfiler = [DTXProfiler class];
+		__DTXProfiler = NSClassFromString(@"DTXProfiler");
 		
 		if(__DTXProfiler == NULL)
 		{
-			dtx_log_info(@"DTXProfiler class was not found, loading Profiler framework manually");
+			dtx_log_info(@"DTXProfiler class was not found in hosting process, loading Profiler framework manually");
 			
 			//The user has not linked the Profiler framework. Load it manually.
 			
@@ -170,7 +166,7 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 		}
 		else
 		{
-			dtx_log_info(@"DTXProfiler class was found in hosting process");
+			dtx_log_info(@"Using DTXProfiler class from hosting process");
 		}
 		
 		static void (^cleanupOnError)(void) = ^ {
@@ -240,6 +236,13 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 {
 	LOAD_PROFILER_IF_NEEDED
 	
+	if(__DTXMutableProfilingConfiguration == nil)
+	{
+		dtx_log_error(@"Profiler framework is not loaded. Did you forget to install Detox Instruments?");
+		
+		return nil;
+	}
+	
 	id config = [__DTXMutableProfilingConfiguration defaultProfilingConfiguration];
 	[config setRecordingFileURL:[NSURL fileURLWithPath:configDict[@"recordingPath"]]];
 	
@@ -266,14 +269,21 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 {
 	LOAD_PROFILER_IF_NEEDED
 	
-	_recorderInstance = [__DTXProfiler new];
-	
-	if(_recorderInstance == nil)
+	if(__DTXProfiler == nil)
 	{
 		dtx_log_error(@"Profiler framework is not loaded. Did you forget to install Detox Instruments?");
 		
 		return;
 	}
+	
+	if(_recorderInstance != nil)
+	{
+		dtx_log_error(@"Another recording is already in progress: %@", [[_recorderInstance profilingConfiguration] recordingFileURL]);
+		
+		return;
+	}
+	
+	_recorderInstance = [__DTXProfiler new];
 	
 	id config = [self _configurationWithDictionaryConfiguration:configDict];
 	dtx_log_info(@"Starting recording at %@", [config recordingFileURL]);
@@ -284,12 +294,21 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 {
 	LOAD_PROFILER_IF_NEEDED
 	
-	if(_recorderInstance == nil)
+	if(__DTXProfiler == nil)
 	{
 		dtx_log_error(@"Profiler framework is not loaded. Did you forget to install Detox Instruments?");
 		
 		return;
 	}
+	
+	if(_recorderInstance != nil)
+	{
+		dtx_log_error(@"Another recording is already in progress: %@", [[_recorderInstance profilingConfiguration] recordingFileURL]);
+		
+		return;
+	}
+	
+	_recorderInstance = [__DTXProfiler new];
 	
 	id config = [self _configurationWithDictionaryConfiguration:configDict];
 	dtx_log_info(@"Continuing recording at %@", [config recordingFileURL]);
@@ -298,6 +317,10 @@ static BOOL __DTXDecryptFramework(NSURL* encryptedBinaryURL, NSURL* targetBinary
 
 - (void)stopRecordingWithCompletionHandler:(void(^)(NSError* error))completionHandler
 {
+	dtx_defer {
+		_recorderInstance = nil;
+	};
+	
 	if(_recorderInstance == nil || [_recorderInstance isRecording] == NO)
 	{
 		dtx_log_info(@"Called stop but no recording in progress");

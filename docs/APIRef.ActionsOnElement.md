@@ -58,9 +58,9 @@ await element(by.id('tappable')).longPress(1500);
 
 Simulates a swipe on the element with the provided options.
 
-`direction`—the swipe's direction (valid input: `"left"`/`"right"`/`"up"`/`"down"`)
-`speed`—the speed of the swipe (optional, valid input: `"fast"`/`"slow"` , default is `"fast"`)
-`percentage`—the percentage of the element to swipe on (optional, valid input: [0.0, 1.0], default is 0.75)
+`direction`—the swipe's direction (valid input: `"left"`/`"right"`/`"up"`/`"down"`) <br/>
+`speed`—the speed of the swipe (optional, valid input: `"fast"`/`"slow"` , default is `"fast"`) <br/>
+`percentage`—the percentage of the screen to swipe (optional, valid input: [0.0, 1.0], default is 0.75)
 
 ```js
 await element(by.id('scrollView')).swipe('down');
@@ -71,8 +71,8 @@ await element(by.id('scrollView')).swipe('down', 'fast', 0.5);
 
 Simulates a pinch on the element with the provided options.
 
-`scale`—the scale of the pinch gesture; use a scale between 0 and 1 to zoom out, and a scale greater than 1 to zoom in; the system makes a best effort to accommodate the requested scale, taking into account the element's dimensions (valid input: (0.0, inf])
-`speed`—the speed of the pinch (optional, valid input: `"fast"`/`"slow"` , default is `"slow"`)
+`scale`—the scale of the pinch gesture; use a scale between 0 and 1 to zoom out, and a scale greater than 1 to zoom in; the system makes a best effort to accommodate the requested scale, taking into account the element's dimensions (valid input: (0.0, inf]) <br/>
+`speed`—the speed of the pinch (optional, valid input: `"fast"`/`"slow"` , default is `"slow"`) <br/>
 `angle`—the angle of the pinch, in radians (optional, default is 0.0)
 
 ```js
@@ -84,9 +84,9 @@ await element(by.id('PinchableScrollView')).pinch(0.001); //Zooms out a lot
 
 Simulates a scroll on the element with the provided options.
 
-`offset`—the offset to scroll, in points
-`direction`—the scroll's direction (valid input: `"left"`/`"right"`/`"up"`/`"down"`)
-`startPositionX`—the normalized x percentage of the element to use as scroll start point (optional, valid input: [0.0, 1.0], `NaN`—choose an optimal value automatically)
+`offset`—the offset to scroll, in points <br/>
+`direction`—the scroll's direction (valid input: `"left"`/`"right"`/`"up"`/`"down"`) <br/>
+`startPositionX`—the normalized x percentage of the element to use as scroll start point (optional, valid input: [0.0, 1.0], `NaN`—choose an optimal value automatically) <br/>
 `startPositionY`—the normalized y percentage of the element to use as scroll start point (optional, valid input: [0.0, 1.0], `NaN`—choose an optimal value automatically)
 
 ```js
@@ -171,7 +171,7 @@ Values accepted by this method are strings only, and the system will do its best
 
 This function does not support date pickers. Use [`.setDatePickerDate()`](#setdatepickerdatedatestring-dateformat--ios-only) instead.
 
-`column`—the element's column to set (valid input: number, 0 and above)
+`column`—the element's column to set (valid input: number, 0 and above) <br/>
 `value`—the string value to set (valid input: string)
 
 ```js
@@ -187,7 +187,7 @@ Sets the element's date to the specified date string, parsed using the specified
 
 The specified date string is converted by the system to an [`NSDate`](https://developer.apple.com/documentation/foundation/nsdate) object, using [`NSDateFormatter`](https://developer.apple.com/documentation/foundation/dateformatter) with the specified date format, or [`NSISO8601DateFormatter`](https://developer.apple.com/documentation/foundation/iso8601dateformatter) in case of ISO 8601 date strings. If you use JavaScript's [Date.toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString) or otherwise provide a valid ISO 8601 date string, set the date format to `"ISO8601"`, which is supported as a special case.
 
-`dateString`—the date to set (valid input: valid, parsable date string)
+`dateString`—the date to set (valid input: valid, parsable date string) <br/>
 `dateFormat`—the date format of `dateString` (valid input: `"ISO8601"` or a valid, parsable date format supported by [`NSDateFormatter`](https://developer.apple.com/documentation/foundation/dateformatter))
 
 ```js
@@ -211,22 +211,22 @@ Returns an object, representing the attributes of the element.
 
 Retrieved attributes are:
 
-- `text`—the text value of the element
-- `label`—the label of the element (matches `accessibilityLabel`)
-- `value`—the value of the element (matches `accessibilityValue`)
-- `placeholder`—the placeholder text value of the element
-- `identifier`—the identifier of the element (matches `accessibilityIdentifier`)
-- `enabled`—whether or not the element is enabled for user interaction
-- `activationPoint`—the activation point of the element, in element coordinate space
-- `normalizedActivationPoint`—the activation point of the element, in normalized percentage ([0.0, 1.0])
-- `hittable`—whether the element is hittable at the activation point
-- `visible`—whether the element is visible at the activation point
-- `frame`—the frame of the element, in screen coordinate space
-- `elementFrame`—the frame of the element, in container coordinate space
-- `elementBounds`—the bounds of the element, in element coordinate space
-- `safeAreaInsets`—the safe area insets of the element, in element coordinate space
-- `elementSafeBounds`—the safe area bounds of the element, in element coordinate space
-- `date`—the date of the element (in case the element is a date picker)
+- `text`—the text value of the element <br/>
+- `label`—the label of the element (matches `accessibilityLabel`) <br/>
+- `value`—the value of the element (matches `accessibilityValue`) <br/>
+- `placeholder`—the placeholder text value of the element <br/>
+- `identifier`—the identifier of the element (matches `accessibilityIdentifier`) <br/>
+- `enabled`—whether or not the element is enabled for user interaction <br/>
+- `activationPoint`—the activation point of the element, in element coordinate space <br/>
+- `normalizedActivationPoint`—the activation point of the element, in normalized percentage ([0.0, 1.0]) <br/>
+- `hittable`—whether the element is hittable at the activation point <br/>
+- `visible`—whether the element is visible at the activation point <br/>
+- `frame`—the frame of the element, in screen coordinate space <br/>
+- `elementFrame`—the frame of the element, in container coordinate space <br/>
+- `elementBounds`—the bounds of the element, in element coordinate space <br/>
+- `safeAreaInsets`—the safe area insets of the element, in element coordinate space <br/>
+- `elementSafeBounds`—the safe area bounds of the element, in element coordinate space <br/>
+- `date`—the date of the element (in case the element is a date picker) <br/>
 - `normalizedSliderPosition`—the normalized slider position (in case the element is a slider)
 
 If the value for a given attribute is null or cannot be otherwise computed, the key will not be present, but empty strings may be found in the object.
@@ -269,8 +269,8 @@ await element(by.id('tappable')).tapAtPoint({x:5, y:10});
 
 Simulates a pinch on the element with the provided options.
 
-`direction`—the direction of the pinch gesture (valid input: `"inward"`/`"outward"`)
-`speed`—the speed of the pinch (optional, valid input: `"fast"`/`"slow"` , default is `"slow"`)
+`direction`—the direction of the pinch gesture (valid input: `"inward"`/`"outward"`) <br/>
+`speed`—the speed of the pinch (optional, valid input: `"fast"`/`"slow"` , default is `"slow"`) <br/>
 `angle`—the angle of the pinch, in radians (optional, default is 0.0)
 
 ```js
