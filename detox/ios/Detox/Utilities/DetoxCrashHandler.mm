@@ -35,13 +35,15 @@ OBJC_EXTERN void __DTXHandleCrash(NSException* exception, NSNumber* signal, NSSt
 	NSMutableDictionary* report = [@{@"threadNumber": threadNumber, @"queueName": queueName} mutableCopy];
 	if(exception)
 	{
-		NSString* prefix = @"";
+		NSString* prefix = @"Exception was thrown: ";
 		if([exception isKindOfClass:DTXTestAssertionException.class])
 		{
 			prefix = @"THIS SHOULD NOT HAVE HAPPENED AND IS A BUG IN DETOX LOGIC. PLEASE OPEN AN ISSUE IN https://github.com/wix/Detox/issues/new/choose AND POST THIS CRASH\n";
 		}
 		
-		report[@"errorDetails"] = [NSString stringWithFormat:@"%@%@\n%@", prefix, exception.reason, exception.dtx_demangledCallStackSymbols];
+		report[@"errorDetails"] = [NSString stringWithFormat:@"%@\n%@\n%@\n%@", prefix, exception.name, exception.reason, exception.dtx_demangledCallStackSymbols];
+		report[@"exceptionName"] = exception.name ?: @"<Unknown>";
+		report[@"exceptionReason"] = exception.reason ?: @"<Unknown>";
 	}
 	else if(signal)
 	{
@@ -113,15 +115,25 @@ OBJC_EXTERN void __DTXHandleSignal(int signal)
 OBJC_EXTERN std::type_info *__cxa_current_exception_type(void);
 OBJC_EXTERN void __cxa_rethrow(void);
 
-static void (*__old_terminate)(void) = nil;
+thread_local BOOL __alreadyTerminating = NO;
+
+static void (*__old_terminate)(void) = nullptr;
 __attribute__ ((visibility ("hidden")))
-OBJC_EXTERN void __dtx_terminate(void)
+static void __dtx_terminate(void)
 {
+	if(__alreadyTerminating)
+	{
+		(*__old_terminate)();
+		return;
+	}
+	
+	__alreadyTerminating = YES;
+	
 	std::type_info* exceptionType = __cxa_current_exception_type();
 	if (exceptionType == nullptr)
 	{
 		// No current exception.
-		__DTXHandleCrash(nil, nil, @"Unknown error");
+		__DTXHandleCrash(nil, nil, @"Exception of unknown type was thrown");
 		(*__old_terminate)();
 	}
 	else
@@ -131,15 +143,15 @@ OBJC_EXTERN void __dtx_terminate(void)
 		{
 			__cxa_rethrow();
 		}
-		@catch (id e)
+		@catch (NSException* e)
 		{
 			__DTXHandleCrash(e, nil, nil);
-			// It's an objc object. Call Foundation's handler, if any.
-			void (*handler)(NSException*) = NSGetUncaughtExceptionHandler();
-			if(handler != nullptr)
-			{
-				handler(e);
-			}
+			(*__old_terminate)();
+		}
+		@catch (id obj)
+		{
+			__DTXHandleCrash(nil, nil, [NSString stringWithFormat:@"ObjC exception of type “%@” was thrown", [obj class]]);
+			(*__old_terminate)();
 		}
 		@catch (...)
 		{
@@ -158,10 +170,18 @@ OBJC_EXTERN void __dtx_terminate(void)
 				exceptionTypeName = [NSString stringWithUTF8String:exceptionTypeMangledName];
 			}
 			
-			__DTXHandleCrash(nil, nil, [NSString stringWithFormat:@"C++ exception of type \"%@\" was thrown", exceptionTypeName]);
+			__DTXHandleCrash(nil, nil, [NSString stringWithFormat:@"C++ exception of type “%@” was thrown", exceptionTypeName]);
 			(*__old_terminate)();
 		}
 	}
+}
+
+static std::terminate_handler (*__old_std_set_terminate)(std::terminate_handler) = nil;
+static std::terminate_handler __dtx_std_set_terminate(std::terminate_handler new_handler)
+{
+	std::terminate_handler rv = __old_terminate;
+	__old_terminate = new_handler;
+	return rv;
 }
 
 __attribute__((constructor))
@@ -169,10 +189,17 @@ OBJC_EXTERN void __DTXInstallCrashHandlersIfNeeded(void)
 {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		__old_terminate = std::set_terminate(__dtx_terminate);
+		__old_std_set_terminate = (std::terminate_handler (*)(std::terminate_handler))dlsym(RTLD_DEFAULT, "_ZSt13set_terminatePFvvE");
+		{
+			//Mnagled name of "std::set_terminate()"
+			struct rebinding rebindings[] = {
+				{"_ZSt13set_terminatePFvvE", (void*)__dtx_std_set_terminate, nullptr }
+			};
+			rebind_symbols(rebindings, 1);
+		}
 		
+		__old_terminate = __old_std_set_terminate(__dtx_terminate);
 		__supportedSignals = [NSSet setWithArray:@[@(SIGQUIT), @(SIGILL), @(SIGTRAP), @(SIGABRT), @(SIGFPE), @(SIGBUS), @(SIGSEGV), @(SIGSYS)]];
-		
 		__orig_sigaction = (int (*)(int, const struct sigaction * __restrict, struct sigaction * __restrict))dlsym(RTLD_DEFAULT, "sigaction");
 		
 		{
