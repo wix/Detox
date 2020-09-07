@@ -34,7 +34,7 @@ module.exports.handler = async function test(argv) {
     platform,
   });
 
-  if (detoxArgs.inspectBrk) {
+  if (detoxArgs['inspect-brk']) {
     forwardedArgs.argv.$0 = `node --inspect-brk ${runnerConfig.testRunner}`;
   } else {
     forwardedArgs.argv.$0 = runnerConfig.testRunner;
@@ -51,11 +51,15 @@ module.exports.handler = async function test(argv) {
 function choosePrepareArgs({ cliConfig, detoxArgs, runner, platform }) {
   if (runner === 'mocha') {
     if (hasMultipleWorkers(cliConfig)) {
-      log.warn('Can not use -w, --workers. Parallel test execution is only supported with iOS and Jest');
+      log.warn('Cannot use -w, --workers. Parallel test execution is only supported with iOS and Jest');
     }
 
     if (detoxArgs.retries > 0) {
-      log.warn('Can not use -R, --retries. The test retry mechanism is only supported with Jest runner');
+      log.warn('Cannot use -R, --retries. The test retry mechanism is only supported with Jest runner');
+    }
+
+    if (cliConfig.recordTimeline) {
+      log.warn('Cannot use --record-timeline. This artifact type is only supported with Jest runner');
     }
 
     return prepareMochaArgs;
@@ -94,21 +98,23 @@ function prepareMochaArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
     ? 'opts'
     : 'config';
 
+  const platformFilter = getPlatformSpecificString(platform);
+
   return {
     argv: {
-      [configParam]: runnerConfig.runnerConfig || undefined,
+      [configParam]: runnerConfig.runnerConfig /* istanbul ignore next */ || undefined,
       cleanup: Boolean(cliConfig.cleanup) || undefined,
       colors: !cliConfig.noColor && undefined,
       configuration: cliConfig.configuration || undefined,
       gpu: cliConfig.gpu || undefined,
       // TODO: check if we can --grep from user
-      grep: platform ? getPlatformSpecificString(platform) : undefined,
-      invert: Boolean(platform) || undefined,
+      grep: platformFilter || undefined,
+      invert: Boolean(platformFilter) || undefined,
       headless: Boolean(cliConfig.headless) || undefined,
       loglevel: cliConfig.loglevel || undefined,
       reuse: cliConfig.reuse || undefined,
       'artifacts-location': cliConfig.artifactsLocation || undefined,
-      'config-path': cliConfig.configPath || undefined,
+      'config-path': cliConfig.configPath /* istanbul ignore next */ || undefined,
       'debug-synchronization': isFinite(cliConfig.debugSynchronization) ? cliConfig.debugSynchronization : undefined,
       'device-name': cliConfig.deviceName || undefined,
       'force-adb-install': platform === 'android' && cliConfig.forceAdbInstall || undefined,
@@ -127,19 +133,20 @@ function prepareMochaArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
 
 function prepareJestArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
   const { specs, passthrough } = splitArgv.jest(runnerArgs);
+  const platformFilter = getPlatformSpecificString(platform);
 
   return {
     argv: {
       color: !cliConfig.noColor && undefined,
-      config: runnerConfig.runnerConfig || undefined,
-      testNamePattern: platform ? shellQuote(`^((?!${getPlatformSpecificString(platform)}).)*$`) : undefined,
+      config: runnerConfig.runnerConfig /* istanbul ignore next */ || undefined,
+      testNamePattern: platformFilter ? shellQuote(`^((?!${platformFilter}).)*$`) : undefined,
       maxWorkers: cliConfig.workers,
 
       ...passthrough,
     },
 
     env: _.omitBy({
-      ..._.pick(cliConfig, [
+      ..._.pick(cliConfig, _.compact([
         'configPath',
         'configuration',
         'loglevel',
@@ -157,8 +164,8 @@ function prepareJestArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
         'deviceName',
         'deviceLaunchArgs',
         'useCustomLogger',
-        'forceAdbInstall',
-      ]),
+        platform === 'android' && 'forceAdbInstall',
+      ])),
       DETOX_START_TIMESTAMP: Date.now(),
       readOnlyEmu: platform === 'android' ? hasMultipleWorkers(cliConfig) : undefined,
       reportSpecs: _.isUndefined(cliConfig.jestReportSpecs)

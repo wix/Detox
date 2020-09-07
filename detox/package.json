@@ -118,7 +118,6 @@
       "src/android/matcher.js",
       "src/ios/matchers.js",
       "appdatapath.js",
-      ".test.js",
       ".mock.js",
       "src/ios/expect.js"
     ],
