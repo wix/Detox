@@ -362,6 +362,10 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 			}
 			return
 		case "reactNativeReload":
+			if ReactNativeSupport.isReactNativeApp == false {
+				self.sendGeneralReadyMessage()
+				return
+			}
 			isReady = false
 			EarlGrey().detox_safeExecuteSync {
 				ReactNativeSupport.reloadApp()
