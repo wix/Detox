@@ -220,7 +220,7 @@ describe('Client', () => {
     it(`execute() - slow invocation should trigger "slowInvocationStatus:`, async () => {
       argparse.getArgValue.mockReturnValue(2); // set debug-slow-invocations
       await connect();
-      await executeWithSlowInvocation(4);
+      await executeWithSlowInvocation(3);
       expect(client.ws.send).toHaveBeenLastCalledWith({"params": {}, "type": "currentStatus"}, undefined);
       expect(client.ws.send).toHaveBeenCalledTimes(3);
     });
