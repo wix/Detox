@@ -198,7 +198,6 @@ function launchTestRunner({ argv, env, specs, rerunIndex }) {
     env: _.omitBy({
       ...process.env,
       ...env,
-      DETOX_RERUN_INDEX: rerunIndex,
     }, _.isUndefined),
   });
 }
@@ -229,7 +228,7 @@ async function runTestRunnerWithRetries(forwardedArgs, retries) {
       }
 
       forwardedArgs.specs = lastFailedTests;
-      forwardedArgs.rerunIndex = 1 + (forwardedArgs.rerunIndex || 0);
+      forwardedArgs.env.DETOX_RERUN_INDEX = 1 + (forwardedArgs.env.DETOX_RERUN_INDEX || 0);
 
       const failedSpecs = lastFailedTests.map((file, index) => `${index + 1}. ${file}`).join('\n');
       log.error(`Test run has failed for the following specs:\n${failedSpecs}\n`);
