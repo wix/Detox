@@ -1239,6 +1239,7 @@
 				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = Detox/Detox.pch;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				GCC_WARN_UNUSED_FUNCTION = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = EarlGrey/fishhook;
 				INFOPLIST_FILE = Detox/Info.plist;
@@ -1258,7 +1259,6 @@
 					"-ObjC",
 					"-all_load",
 					"-lstdc++",
-					"-Wl,-U,_OBJC_CLASS_$_DTXProfiler",
 					"-Wl,-U,_OBJC_CLASS_$_TIPreferencesController",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wix.Detox;
@@ -1285,6 +1285,7 @@
 				ENABLE_BITCODE = NO;
 				GCC_PREFIX_HEADER = Detox/Detox.pch;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				GCC_WARN_UNUSED_FUNCTION = NO;
 				HEADER_SEARCH_PATHS = EarlGrey/fishhook;
 				INFOPLIST_FILE = Detox/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1303,7 +1304,6 @@
 					"-ObjC",
 					"-all_load",
 					"-lstdc++",
-					"-Wl,-U,_OBJC_CLASS_$_DTXProfiler",
 					"-Wl,-U,_OBJC_CLASS_$_TIPreferencesController",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wix.Detox;
