@@ -38,7 +38,7 @@ public class DetoxTest {
 
     @Test
     public void runDetoxTests() {
-        TestButlerProbe.assertTestButlerReady();
+        TestButlerProbe.assertReadyIfInstalled();
 
         final ActivityTestRule<?> rule = resolveTestRule();
         Detox.runTests(rule);
