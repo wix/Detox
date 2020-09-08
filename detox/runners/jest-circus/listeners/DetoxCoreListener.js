@@ -46,7 +46,8 @@ class DetoxCoreListener {
       this._testsFailedBeforeStart.add(test);
     }
 
-    this._testRunTimes = 1 + parseInt(this._env.global[RETRY_TIMES], 10) || 0;
+    const circusRetryTimes = +this._env.global[RETRY_TIMES];
+    this._testRunTimes = isNaN(circusRetryTimes) ? 1 : 1 + circusRetryTimes;
   }
 
   async hook_start(_event, state) {
