@@ -213,7 +213,11 @@ async function runTestRunnerWithRetries(forwardedArgs, retries) {
   do {
     try {
       if (launchError) {
-        log.error('Re-running tests for the failed specs...\n');
+        const list = forwardedArgs.specs.map((file, index) => `  ${index + 1}. ${file}`).join('\n');
+        log.error(
+          `There were failing tests in the following files:\n${list}\n\n` +
+          'Detox CLI is going to restart the test runner with those files...\n'
+        );
       }
 
       await resetLastFailedTests();
@@ -229,9 +233,6 @@ async function runTestRunnerWithRetries(forwardedArgs, retries) {
 
       forwardedArgs.specs = lastFailedTests;
       forwardedArgs.env.DETOX_RERUN_INDEX = 1 + (forwardedArgs.env.DETOX_RERUN_INDEX || 0);
-
-      const failedSpecs = lastFailedTests.map((file, index) => `${index + 1}. ${file}`).join('\n');
-      log.error(`Test run has failed for the following specs:\n${failedSpecs}\n`);
     }
   } while (launchError && --runsLeft > 0);
 
