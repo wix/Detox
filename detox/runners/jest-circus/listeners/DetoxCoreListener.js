@@ -22,9 +22,8 @@ class DetoxCoreListener {
   _getTestInvocations(test) {
     const {DETOX_RERUN_INDEX} = process.env;
 
-    if (DETOX_RERUN_INDEX) {
-      const previousReruns = parseInt(DETOX_RERUN_INDEX, 10);
-      return previousReruns * this._testRunTimes + test.invocations;
+    if (!isNaN(DETOX_RERUN_INDEX)) {
+      return Number(DETOX_RERUN_INDEX) * this._testRunTimes + test.invocations;
     } else {
       return test.invocations;
     }
