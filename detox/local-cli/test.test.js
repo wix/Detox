@@ -167,14 +167,14 @@ describe('CLI', () => {
     });
 
     test('--force-adb-install should be ignored for iOS', async () => {
-      Object.values(detoxConfig.configurations)[0].type = 'ios.simulator';
+      singleConfig().type = 'ios.simulator';
       await run(`--force-adb-install`);
 
       expect(cliCall().command).not.toContain('--force-adb-install');
     });
 
     test('--force-adb-install should be passed as CLI argument for Android', async () => {
-      Object.values(detoxConfig.configurations)[0].type = 'android.emulator';
+      singleConfig().type = 'android.emulator';
       await run(`--force-adb-install`);
 
       expect(cliCall().command).toContain('--force-adb-install');
@@ -187,7 +187,7 @@ describe('CLI', () => {
 
     test('should omit --grep --invert for custom platforms', async () => {
       const customDriver = `module.exports = class CustomDriver {};`
-      Object.values(detoxConfig.configurations)[0].type = tempfile('.js', customDriver);
+      singleConfig().type = tempfile('.js', customDriver);
 
       await run();
       expect(cliCall().command).not.toContain(' --invert ');
@@ -225,7 +225,7 @@ describe('CLI', () => {
 
     describe('given no extra args (iOS)', () => {
       beforeEach(async () => {
-        Object.values(detoxConfig.configurations)[0].type = 'ios.simulator';
+        singleConfig().type = 'ios.simulator';
         await run();
       });
 
@@ -246,7 +246,7 @@ describe('CLI', () => {
 
     describe('given no extra args (Android)', () => {
       beforeEach(async () => {
-        Object.values(detoxConfig.configurations)[0].type = 'android.emulator';
+        singleConfig().type = 'android.emulator';
         await run();
       });
 
@@ -404,38 +404,38 @@ describe('CLI', () => {
     });
 
     test.each([['-w'], ['--workers']])('%s <value> should not warn anything for iOS', async (__workers) => {
-      Object.values(detoxConfig.configurations)[0].type = 'ios.simulator';
+      singleConfig().type = 'ios.simulator';
       await run(`${__workers} 2`);
       expect(logger.warn).not.toHaveBeenCalled();
     });
 
     test.each([['-w'], ['--workers']])('%s <value> should not put readOnlyEmu environment variable for iOS', async (__workers) => {
-      Object.values(detoxConfig.configurations)[0].type = 'ios.simulator';
+      singleConfig().type = 'ios.simulator';
       await run(`${__workers} 2`);
       expect(cliCall().env).not.toHaveProperty('readOnlyEmu');
     });
 
     test.each([['-w'], ['--workers']])('%s <value> should warn about experimental Android support', async (__workers) => {
-      Object.values(detoxConfig.configurations)[0].type = 'android.emulator';
+      singleConfig().type = 'android.emulator';
       await run(`${__workers} 2`);
       expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('an experimental feature'));
     });
 
     test.each([['-w'], ['--workers']])('%s <value> should put readOnlyEmu environment variable for Android if there is a single worker', async (__workers) => {
-      Object.values(detoxConfig.configurations)[0].type = 'android.emulator';
+      singleConfig().type = 'android.emulator';
       await run(`${__workers} 1`);
       expect(cliCall().env).toEqual(expect.objectContaining({ readOnlyEmu: false }));
     });
 
     test.each([['-w'], ['--workers']])('%s <value> should put readOnlyEmu environment variable for Android if there are multiple workers', async (__workers) => {
-      Object.values(detoxConfig.configurations)[0].type = 'android.emulator';
+      singleConfig().type = 'android.emulator';
       await run(`${__workers} 2`);
       expect(cliCall().env).toEqual(expect.objectContaining({ readOnlyEmu: true }));
     });
 
     test('should omit --testNamePattern for custom platforms', async () => {
       const customDriver = `module.exports = class CustomDriver {};`
-      Object.values(detoxConfig.configurations)[0].type = tempfile('.js', customDriver);
+      singleConfig().type = tempfile('.js', customDriver);
 
       await run();
       expect(cliCall().command).not.toContain('--testNamePattern');
@@ -486,13 +486,13 @@ describe('CLI', () => {
     });
 
     test('--force-adb-install should be ignored for iOS', async () => {
-      Object.values(detoxConfig.configurations)[0].type = 'ios.simulator';
+      singleConfig().type = 'ios.simulator';
       await run(`--force-adb-install`);
       expect(cliCall().env).not.toHaveProperty('forceAdbInstall');
     });
 
     test('--force-adb-install should be passed as environment variable', async () => {
-      Object.values(detoxConfig.configurations)[0].type = 'android.emulator';
+      singleConfig().type = 'android.emulator';
       await run(`--force-adb-install`);
       expect(cliCall().env).toEqual(expect.objectContaining({
         forceAdbInstall: true,
@@ -513,10 +513,26 @@ describe('CLI', () => {
       expect(cliCall().command).toMatch(/ e2e\/01.sanity.test.js e2e\/02.sanity.test.js$/);
     });
 
-    test.each([['-d'], ['--debug-synchronization']])('%s e2eFolder should be treated separately', async (__debug_synchronization) => {
-      await run(`${__debug_synchronization} e2eFolder`);
-      expect(cliCall().command).toMatch(/ e2eFolder$/);
-      expect(cliCall().env).toEqual(expect.objectContaining({ debugSynchronization: 3000 }));
+    test.each([
+      ['--inspect-brk e2eFolder', /^node --inspect-brk jest .* e2eFolder$/, {}],
+      ['-d e2eFolder', / e2eFolder$/, { debugSynchronization: 3000 }],
+      ['--debug-synchronization e2eFolder', / e2eFolder$/, { debugSynchronization: 3000 }],
+      ['-r e2eFolder', / e2eFolder$/, { reuse: true }],
+      ['--reuse e2eFolder', / e2eFolder$/, { reuse: true }],
+      ['-u e2eFolder', / e2eFolder$/, { cleanup: true }],
+      ['--cleanup e2eFolder', / e2eFolder$/, { cleanup: true }],
+      ['--jest-report-specs e2eFolder', / e2eFolder$/, { reportSpecs: true }],
+      ['-H e2eFolder', / e2eFolder$/, { headless: true }],
+      ['--headless e2eFolder', / e2eFolder$/, { headless: true }],
+      ['--keepLockFile e2eFolder', / e2eFolder$/, {}],
+      ['--use-custom-logger e2eFolder', / e2eFolder$/, { useCustomLogger: true }],
+      ['--force-adb-install e2eFolder', / e2eFolder$/, { forceAdbInstall: true }],
+    ])('"%s" should be disambigued correctly', async (command, commandMatcher, envMatcher) => {
+      singleConfig().type = 'android.emulator';
+      await run(command);
+
+      expect(cliCall().command).toMatch(commandMatcher);
+      expect(cliCall().env).toEqual(expect.objectContaining(envMatcher));
     });
 
     test('e.g., --debug should be passed through', async () => {
@@ -642,5 +658,9 @@ describe('CLI', () => {
       command,
       env: _.omitBy(opts.env, (_value, key) => key in process.env),
     };
+  }
+
+  function singleConfig() {
+    return Object.values(detoxConfig.configurations)[0];
   }
 });

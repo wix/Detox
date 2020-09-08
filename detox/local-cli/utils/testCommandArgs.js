@@ -8,7 +8,7 @@ module.exports = {
     alias: ['configuration'],
     group: 'Configuration:',
     describe:
-      'Select a device configuration from your defined configurations, if not supplied, and there\'s only one configuration, detox will default to it'
+      'Select a device configuration from your defined configurations, if not supplied, and there\'s only one configuration, detox will default to it',
   },
   o: {
     alias: 'runner-config',
@@ -19,7 +19,7 @@ module.exports = {
     alias: 'loglevel',
     group: 'Debugging:',
     choices: ['fatal', 'error', 'warn', 'info', 'verbose', 'trace'],
-    describe: 'Log level'
+    describe: 'Log level',
   },
   'no-color': {
     describe: 'Disable colors in log output',
@@ -35,12 +35,14 @@ module.exports = {
   r: {
     alias: 'reuse',
     group: 'Execution:',
-    describe: 'Reuse existing installed app (do not delete + reinstall) for a faster run.'
+    describe: 'Reuse existing installed app (do not delete + reinstall) for a faster run.',
+    boolean: true,
   },
   u: {
     alias: 'cleanup',
     group: 'Execution:',
-    describe: 'Shutdown simulator when test is over, useful for CI scripts, to make sure detox exists cleanly with no residue'
+    describe: 'Shutdown simulator when test is over, useful for CI scripts, to make sure detox exists cleanly with no residue',
+    boolean: true,
   },
   d: {
     alias: 'debug-synchronization',
@@ -58,71 +60,74 @@ module.exports = {
     },
     describe:
       'When an action/expectation takes a significant amount of time use this option to print device synchronization status.' +
-      'The status will be printed if the action takes more than [value]ms to complete'
+      'The status will be printed if the action takes more than [value]ms to complete',
   },
   a: {
     alias: 'artifacts-location',
     group: 'Debugging:',
-    describe: 'Artifacts (logs, screenshots, etc) root directory.'
+    describe: 'Artifacts (logs, screenshots, etc) root directory.',
   },
   'record-logs': {
     group: 'Debugging:',
     choices: ['failing', 'all', 'none'],
-    describe: 'Save logs during each test to artifacts directory. Pass "failing" to save logs of failing tests only.'
+    describe: 'Save logs during each test to artifacts directory. Pass "failing" to save logs of failing tests only.',
   },
   'take-screenshots': {
     group: 'Debugging:',
     choices: ['manual', 'failing', 'all', 'none'],
-    describe: 'Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only.'
+    describe: 'Save screenshots before and after each test to artifacts directory. Pass "failing" to save screenshots of failing tests only.',
   },
   'record-videos': {
     group: 'Debugging:',
     choices: ['failing', 'all', 'none'],
-    describe: 'Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only.'
+    describe: 'Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only.',
   },
   'record-performance': {
     group: 'Debugging:',
     choices: ['all', 'none'],
-    describe: '[iOS Only] Save Detox Instruments performance recordings of each test to artifacts directory.'
+    describe: '[iOS Only] Save Detox Instruments performance recordings of each test to artifacts directory.',
   },
   'record-timeline': {
     group: 'Debugging:',
     choices: ['all', 'none'],
-    describe: '[Jest Only] Record tests and events timeline, for visual display on the chrome://tracing tool.'
+    describe: '[Jest Only] Record tests and events timeline, for visual display on the chrome://tracing tool.',
   },
   w: {
     alias: 'workers',
     group: 'Execution:',
     describe:
       '[iOS Only] Specifies the number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest)',
-    string: true,
-    default: '1'
+    number: true,
+    default: 1,
   },
   'jest-report-specs': {
     group: 'Execution:',
     describe: '[Jest Only] Whether to output logs per each running spec, in real-time. By default, disabled with multiple workers.',
+    boolean: true,
   },
   H: {
     alias: 'headless',
     group: 'Execution:',
-    describe: '[Android Only] Launch emulator in headless mode. Useful when running on CI.'
+    describe: '[Android Only] Launch emulator in headless mode. Useful when running on CI.',
+    boolean: true,
   },
   gpu: {
     group: 'Execution:',
-    describe: '[Android Only] Launch emulator with the specific -gpu [gpu mode] parameter.'
+    describe: '[Android Only] Launch emulator with the specific -gpu [gpu mode] parameter.',
   },
   keepLockFile:{
     group: 'Configuration:',
-    describe:'Keep the device lock file when running Detox tests'
+    describe:'Keep the device lock file when running Detox tests',
+    boolean: true,
   },
   n: {
     alias: 'device-name',
     group: 'Configuration:',
-    describe: 'Override the device name specified in a configuration. Useful for running a single build configuration on multiple devices.'
+    describe: 'Override the device name specified in a configuration. Useful for running a single build configuration on multiple devices.',
   },
   'device-launch-args': {
     group: 'Execution:',
-    describe: 'Custom arguments to pass (through) onto the device (emulator/simulator) binary when launched.'
+    describe: 'Custom arguments to pass (through) onto the device (emulator/simulator) binary when launched.',
   },
   'use-custom-logger': {
     boolean: true,
@@ -139,5 +144,6 @@ module.exports = {
   'inspect-brk': {
     group: 'Debugging:',
     describe: 'Allows debugging of the underlying test runner',
+    boolean: true,
   }
 };
