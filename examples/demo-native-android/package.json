@@ -1,6 +1,6 @@
 {
   "name": "detox-demo-native-android",
-  "version": "17.4.6",
+  "version": "17.4.7",
   "private": true,
   "scripts": {
     "packager": "react-native start",
@@ -8,7 +8,7 @@
     "e2e": "mocha e2e --opts ./e2e/mocha.opts"
   },
   "devDependencies": {
-    "detox": "^17.4.6",
+    "detox": "^17.4.7",
     "mocha": "^6.1.3"
   },
   "detox": {}

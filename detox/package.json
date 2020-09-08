@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "17.4.6",
+  "version": "17.4.7",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -66,10 +66,10 @@
     "yargs-unparser": "^1.6.3"
   },
   "peerDependencies": {
-    "mocha": ">=6.0.0",
     "jest-circus": ">=26.0.0",
     "jest-cli": ">=25.0.0",
-    "jest-environment-node": ">=25.0.0"
+    "jest-environment-node": ">=25.0.0",
+    "mocha": ">=6.0.0"
   },
   "engines": {
     "node": ">=8.3.0"
