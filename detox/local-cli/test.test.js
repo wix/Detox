@@ -305,6 +305,12 @@ describe('CLI', () => {
       expect(cliCall(1)).toBe(null);
     });
 
+    test.each([['-R'], ['--retries']])('%s <value> should clear failed tests file', async (__retries) => {
+      await run(`-R 1`);
+      const { resetLastFailedTests } = require('../src/utils/lastFailedTests');
+      expect(resetLastFailedTests).toHaveBeenCalled();
+    });
+
     test.each([['-R'], ['--retries']])('%s <value> should execute unsuccessful run N extra times', async (__retries) => {
       const { loadLastFailedTests } = require('../src/utils/lastFailedTests');
       loadLastFailedTests.mockReturnValueOnce(['e2e/failing1.test.js', 'e2e/failing2.test.js']);

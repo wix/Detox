@@ -1,10 +1,15 @@
 const fs = require('fs-extra');
 const environment = require('./environment');
 
+async function resetLastFailedTests() {
+  const lastFailedTxt = environment.getLastFailedTestsPath();
+  await fs.remove(lastFailedTxt);
+}
+
 async function loadLastFailedTests() {
   const lastFailedTxt = environment.getLastFailedTestsPath();
   const lastFailedTests = await fs.exists(lastFailedTxt)
-    ? await fs.readFile(lastFailedTxt, 'utf8')
+    ? (await fs.readFile(lastFailedTxt, 'utf8')).trim()
     : '';
 
   if (lastFailedTests) {
@@ -26,6 +31,7 @@ async function saveLastFailedTests(failedFiles) {
 }
 
 module.exports = {
+  resetLastFailedTests,
   loadLastFailedTests,
   saveLastFailedTests,
 };

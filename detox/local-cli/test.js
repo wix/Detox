@@ -4,7 +4,7 @@ const path = require('path');
 const unparse = require('yargs-unparser');
 const DetoxRuntimeError = require('../src/errors/DetoxRuntimeError');
 const DeviceRegistry = require('../src/devices/DeviceRegistry');
-const { loadLastFailedTests } = require('../src/utils/lastFailedTests');
+const { loadLastFailedTests, resetLastFailedTests } = require('../src/utils/lastFailedTests');
 const { composeDetoxConfig } = require('../src/configuration');
 const log = require('../src/utils/logger').child({ __filename });
 const shellQuote = require('./utils/shellQuote');
@@ -217,6 +217,7 @@ async function runTestRunnerWithRetries(forwardedArgs, retries) {
         log.error('Re-running tests for the failed specs...\n');
       }
 
+      await resetLastFailedTests();
       launchTestRunner(forwardedArgs);
       launchError = null;
     } catch (e) {

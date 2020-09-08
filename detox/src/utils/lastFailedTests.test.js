@@ -54,4 +54,27 @@ describe('lastFailedTests', () => {
       expect(await fs.readFile(lastFailedTestsPath, 'utf8')).toBe('1\n2\n3');
     });
   });
+
+  describe('resetLastFailedTests', () => {
+    let resetLastFailedTests;
+
+    beforeEach(() => {
+      resetLastFailedTests = require('./lastFailedTests').resetLastFailedTests;
+    });
+
+    it('should delete the file', async () => {
+      await resetLastFailedTests();
+      expect(await fs.exists(lastFailedTestsPath)).toBe(false);
+    });
+
+    it('should not fail if the file does not exist', async () => {
+      await resetLastFailedTests();
+      await expect(resetLastFailedTests()).resolves.not.toThrow();
+    });
+
+    it('should save a given array of strings to the file, separating them by newline', async () => {
+      await saveLastFailedTests(['1', '2', '3']);
+      expect(await fs.readFile(lastFailedTestsPath, 'utf8')).toBe('1\n2\n3');
+    });
+  });
 });
