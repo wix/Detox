@@ -497,6 +497,12 @@ describe('CLI', () => {
       expect(cliCall().command).toMatch(/ e2e\/01.sanity.test.js e2e\/02.sanity.test.js$/);
     });
 
+    test.each([['-d'], ['--debug-synchronization']])('%s e2eFolder should be treated separately', async (__debug_synchronization) => {
+      await run(`${__debug_synchronization} e2eFolder`);
+      expect(cliCall().command).toMatch(/ e2eFolder$/);
+      expect(cliCall().env).toEqual(expect.objectContaining({ debugSynchronization: 3000 }));
+    });
+
     test('e.g., --debug should be passed through', async () => {
       await run(`--debug`);
       expect(cliCall().command).toContain('--debug');

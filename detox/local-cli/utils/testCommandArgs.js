@@ -46,7 +46,7 @@ module.exports = {
     alias: 'debug-synchronization',
     group: 'Debugging:',
     coerce(value) {
-      if (value == null) {
+      if (value == null || value === false || value === 'false') {
         return undefined;
       }
 
@@ -54,7 +54,7 @@ module.exports = {
         return 3000;
       }
 
-      return Number(value);
+      return Number.isNaN(+value) ? value : +value;
     },
     describe:
       'When an action/expectation takes a significant amount of time use this option to print device synchronization status.' +

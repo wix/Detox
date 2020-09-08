@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const testCommandArgs = require('./testCommandArgs'); 
+const testCommandArgs = require('./testCommandArgs');
 
 function extractKnownKeys(yargsBuilder) {
   return Object.entries(yargsBuilder).reduce(
@@ -71,7 +71,12 @@ function splitDetoxArgv(argv) {
 
   const detoxArgs = _.pickBy(argv, isDetoxArg);
   const runnerArgs = _.omitBy(argv, isDetoxArg);
-  runnerArgs._ = runnerArgs._.slice(1);
+  runnerArgs._ = runnerArgs._.slice(1); // omit 'test' string, as in 'detox test'
+  if (typeof detoxArgs['debug-synchronization'] === 'string') {
+    const erroneousPassthrough = detoxArgs['debug-synchronization'];
+    detoxArgs['debug-synchronization'] = 3000;
+    runnerArgs._.unshift(erroneousPassthrough);
+  }
 
   return { detoxArgs, runnerArgs };
 }
