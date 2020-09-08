@@ -322,6 +322,16 @@ describe('CLI', () => {
       expect(cliCall(2).env.DETOX_RERUN_INDEX).toBe(2);
     });
 
+    test.each([['-R'], ['--retries']])('%s <value> should not restart test runner if there are no failing tests paths', async (__retries) => {
+      const { loadLastFailedTests } = require('../src/utils/lastFailedTests');
+      loadLastFailedTests.mockReturnValueOnce([]);
+      cp.execSync.mockImplementation(() => { throw new Error; });
+
+      await run(`-R 1`).catch(_.noop);
+      expect(cliCall(0)).not.toBe(null);
+      expect(cliCall(1)).toBe(null);
+    });
+
     test.each([['-R'], ['--retries']])('%s <value> should retain -- <...explicitPassthroughArgs>', async (__retries) => {
       const { loadLastFailedTests } = require('../src/utils/lastFailedTests');
       loadLastFailedTests.mockReturnValue(['tests/failing.test.js']);

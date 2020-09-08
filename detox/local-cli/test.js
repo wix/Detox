@@ -223,7 +223,7 @@ async function runTestRunnerWithRetries(forwardedArgs, retries) {
       launchError = e;
 
       const lastFailedTests = await loadLastFailedTests();
-      if (!lastFailedTests) {
+      if (_.isEmpty(lastFailedTests)) {
         throw e;
       }
 
