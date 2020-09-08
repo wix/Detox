@@ -135,9 +135,15 @@ class Client {
 
     const response = await this.ws.send(action, action.messageId);
     const parsedResponse = JSON.parse(response);
-    const handledResponse = await action.handle(parsedResponse);
+    let handledResponse;
+    try {
+      handledResponse = await action.handle(parsedResponse);
+    } catch (ex) {
+      throw ex;
+    } finally {
+      clearTimeout(this.slowInvocationStatusHandler);
+    }
 
-    clearTimeout(this.slowInvocationStatusHandler);
     return handledResponse;
   }
 
