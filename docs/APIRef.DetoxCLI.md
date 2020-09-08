@@ -77,6 +77,7 @@ Initiating your test suite. <sup>[[1]](#notice-passthrough)</sup>
 | --record-videos [failing/all/none]            | Save screen recordings of each test to artifacts directory. Pass "failing" to save recordings of failing tests only. The default value is **none**. |
 | --record-performance [all/none]               | [iOS Only] Save Detox Instruments performance recordings of each test to artifacts directory. The default value is **none**. |
 | --record-timeline [all/none] | [Jest Only] Record tests and events timeline, for visual display on the [chrome://tracing](chrome://tracing) tool. The default value is **none**. |
+| -R, --retries                                 | [Jest Circus Only] Re-spawn the test runner for individual failing suite files until they pass, or &lt;N&gt; times at least.|
 | -r, --reuse                                   | Reuse existing installed app (do not delete + reinstall) for a faster run. |
 | -u, --cleanup                                 | Shutdown simulator when test is over, useful for CI scripts, to make sure detox exists cleanly with no residue |
 | -w, --workers                                 | Specifies number of workers the test runner should spawn, requires a test runner with parallel execution support (Detox CLI currently supports Jest). *Note: For workers > 1, Jest's spec-level reporting is disabled, by default (can be overridden using --jest-report-specs).* |

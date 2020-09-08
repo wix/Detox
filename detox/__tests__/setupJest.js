@@ -22,6 +22,12 @@ function callCli(modulePath, cmd) {
 
     return yargs
       .scriptName('detox')
+      .parserConfiguration({
+        'boolean-negation': false,
+        'camel-case-expansion': false,
+        'dot-notation': false,
+        'duplicate-arguments-array': false,
+      })
       .command(spiedModule)
       .exitProcess(false)
       .fail((msg, err) => reject(err || msg))

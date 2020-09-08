@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const NodeEnvironment = require('jest-environment-node'); // eslint-disable-line node/no-extraneous-require
+const NodeEnvironment = require('jest-environment-node');
 const DetoxCoreListener = require('./listeners/DetoxCoreListener');
 const DetoxInitErrorListener = require('./listeners/DetoxInitErrorListener');
 const assertJestCircus26 = require('./utils/assertJestCircus26');

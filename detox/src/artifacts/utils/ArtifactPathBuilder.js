@@ -44,8 +44,6 @@ class ArtifactPathBuilder {
   }
 
   _getStatusSign(testSummary) {
-    const invocations = testSummary.invocations || 1;
-
     switch (testSummary.status) {
       case 'passed': return '✓ ';
       case 'failed': return '✗ ';

@@ -7,8 +7,10 @@ yargs
   .scriptName('detox')
   .parserConfiguration({
     'boolean-negation': false,
+    'camel-case-expansion': false,
     'dot-notation': false,
     'duplicate-arguments-array': false,
+    'populate--': true,
   })
   .commandDir('./', {
     exclude: function(path) {
