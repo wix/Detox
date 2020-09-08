@@ -28,7 +28,7 @@ module.exports = {
   R: {
     alias: 'retries',
     group: 'Execution:',
-    describe: 'TODO',
+    describe: '[Jest Circus Only] Re-spawn the test runner for individual failing suite files until they pass, or <N> times at least.',
     number: true,
     default: 0,
   },
