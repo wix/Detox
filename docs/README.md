@@ -26,6 +26,7 @@
 - [Mocking User Notifications](APIRef.MockingUserNotifications.md)
 - [Detox Command Line Tools (detox-cli)](APIRef.DetoxCLI.md)
 - [Test Artifacts](APIRef.Artifacts.md)
+- [Taking Screenshots](APIRef.Screenshots.md)
 
 ## Troubleshooting
 
