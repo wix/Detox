@@ -415,12 +415,6 @@ describe('CLI', () => {
       expect(cliCall().env).not.toHaveProperty('readOnlyEmu');
     });
 
-    test.each([['-w'], ['--workers']])('%s <value> should warn about experimental Android support', async (__workers) => {
-      singleConfig().type = 'android.emulator';
-      await run(`${__workers} 2`);
-      expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('an experimental feature'));
-    });
-
     test.each([['-w'], ['--workers']])('%s <value> should put readOnlyEmu environment variable for Android if there is a single worker', async (__workers) => {
       singleConfig().type = 'android.emulator';
       await run(`${__workers} 1`);

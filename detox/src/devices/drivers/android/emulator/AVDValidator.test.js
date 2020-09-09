@@ -1,34 +1,48 @@
 describe('AVD validator', () => {
-  const emulatorExec = {};
-
-  let AVDsResolverClass;
+  let logger;
+  let avdsResolver;
+  let versionResolver;
   let uut;
   beforeEach(() => {
-    jest.mock('./AVDsResolver');
-    AVDsResolverClass = require('./AVDsResolver');
+    jest.mock('../../../../utils/logger');
+    logger = require('../../../../utils/logger');
+
+    const AVDsResolver = jest.genMockFromModule('./AVDsResolver');
+    avdsResolver = new AVDsResolver();
+
+    const EmulatorVersionResolver = jest.genMockFromModule('./EmulatorVersionResolver');
+    versionResolver = new EmulatorVersionResolver();
+    versionResolver.resolve.mockResolvedValue('');
 
     const AVDValidator = require('./AVDValidator');
-    uut = new AVDValidator(emulatorExec);
+    uut = new AVDValidator(avdsResolver, versionResolver);
   });
 
-  const avdsResolverObj = () => AVDsResolverClass.mock.instances[0];
+  const givenExpectedAVD = () => avdsResolver.resolve.mockResolvedValue(['mock-avd-name']);
+  const givenNoAVDs = () => avdsResolver.resolve.mockResolvedValue(undefined);
+  const givenOtherAVDs = () => avdsResolver.resolve.mockResolvedValue(['other-avd', 'yet-another']);
 
-  it('should use an AVDs resolver', async () => {
-    avdsResolverObj().resolve.mockResolvedValue(['mock-avd-name']);
-
-    await uut.validate('mock-avd-name');
-
-    expect(AVDsResolverClass).toHaveBeenCalledWith(emulatorExec);
-    expect(AVDsResolverClass.mock.instances[0].resolve).toHaveBeenCalledWith('mock-avd-name');
+  const givenOldEmulatorVersion = () => versionResolver.resolve.mockResolvedValue({
+    major: 28,
+    minor: 999,
+    patch: 999,
+    toString: () => '28.mock.ver',
   });
+  const givenProperEmulatorVersion = () => versionResolver.resolve.mockResolvedValue({
+    major: 29,
+    minor: 0,
+    patch: 0,
+    toString: () => '29.x.y',
+  })
+  const givenUnknownEmulatorVersion = () => versionResolver.resolve.mockResolvedValue(null);
 
   it('should return safely if AVD exists', async () => {
-    avdsResolverObj().resolve.mockResolvedValue(['mock-avd-name']);
+    givenExpectedAVD();
     await uut.validate('mock-avd-name');
   });
 
   it('should throw if no AVDs found', async () => {
-    avdsResolverObj().resolve.mockResolvedValue(undefined);
+    givenNoAVDs();
 
     try {
       await uut.validate();
@@ -37,11 +51,45 @@ describe('AVD validator', () => {
   });
 
   it('should throw if specific AVD not found', async () => {
-    avdsResolverObj().resolve.mockResolvedValue(['other-avd', 'yet-another']);
+    givenOtherAVDs();
 
     try {
-      await uut.validate();
+      await uut.validate('mock-avd-name');
       fail('expected to throw');
     } catch (err) {}
+  });
+
+  it('should warn about emulators that are too old', async () => {
+    givenExpectedAVD();
+    givenOldEmulatorVersion();
+
+    await uut.validate('mock-avd-name');
+
+    expect(logger.warn).toHaveBeenCalledWith({ event: 'AVD_VALIDATION' }, [
+      `Your installed emulator binary version (28.mock.ver) is too old, and may not be suitable for parallel test execution.`,
+      'We strongly recommend you upgrade to the latest version using the SDK manager: $ANDROID_HOME/tools/bin/sdkmanager --list'
+    ].join('\n'));
+    expect(versionResolver.resolve).toHaveBeenCalled();
+  });
+
+  it('should not warn about emulators that are sufficiently new', async () => {
+    givenExpectedAVD();
+    givenProperEmulatorVersion();
+
+    await uut.validate('mock-avd-name');
+
+    expect(logger.warn).not.toHaveBeenCalled();
+  });
+
+  it('should provide specific warning if emulator version detection failed', async () => {
+    givenExpectedAVD();
+    givenUnknownEmulatorVersion();
+
+    await uut.validate('mock-avd-name');
+
+    expect(logger.warn).toHaveBeenCalledWith(
+      { event: 'AVD_VALIDATION' },
+      'Emulator version detection failed (See previous logs)'
+      );
   });
 });
