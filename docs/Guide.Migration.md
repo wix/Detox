@@ -18,8 +18,8 @@ You should add `jest-cli` to your `package.json`'s `devDependencies` and re-run 
 
 ```diff
  "devDependencies": {
-   "jest": "25.5.4",
-+  "jest-cli": "25.5.4",
+   "jest": "26.x.x",
++  "jest-cli": "26.x.x",
 ```
 
 ### detox-cli
