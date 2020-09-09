@@ -261,11 +261,13 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 						let params: NSMutableDictionary = ["details": error.localizedDescription]
 						params.addEntries(from: (error as NSError).userInfo)
 						
-						let url = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("\(NSUUID().uuidString).viewhierarchy")
-						do {
-							try LNViewHierarchyDumper.shared.dumpViewHierarchy(to: url)
-							params["viewHierarchyURL"] = url.path
-						} catch {}
+						if UserDefaults.standard.bool(forKey: "detoxDisableHierarchyDump") == false {
+							let url = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("\(NSUUID().uuidString).viewhierarchy")
+							do {
+								try LNViewHierarchyDumper.shared.dumpViewHierarchy(to: url)
+								params["viewHierarchyURL"] = url.path
+							} catch {}
+						}
 						
 						self.safeSend(action: "testFailed", params: params as! [String : Any], messageId: messageId)
 					} else {
@@ -385,10 +387,14 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 			let url = URL(fileURLWithPath: params["viewHierarchyURL"] as! String)
 			precondition(url.lastPathComponent.hasSuffix(".viewhierarchy"), "Provided view Hierarchy URL is not in the expected format, ending with “.viewhierarchy”")
 			var rvParams: [String: Any] = [:]
-			do {
-				try LNViewHierarchyDumper.shared.dumpViewHierarchy(to: url)
-			} catch {
-				rvParams["captureViewHierarchyError"] = error.localizedDescription
+			if UserDefaults.standard.bool(forKey: "detoxDisableHierarchyDump") == false {
+				do {
+					try LNViewHierarchyDumper.shared.dumpViewHierarchy(to: url)
+				} catch {
+					rvParams["captureViewHierarchyError"] = error.localizedDescription
+				}
+			} else {
+				rvParams["captureViewHierarchyError"] = "User ran process with -detoxDisableHierarchyDump YES"
 			}
 			self.webSocket.sendAction(done, params: rvParams, messageId: messageId)
 		default:
