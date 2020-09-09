@@ -66,7 +66,6 @@ class Expect {
   }
 
   createInvocation(expectation, ...params) {
-    params = _.map(params, (param) => _.isNaN(param) ? null : param);
     return {
       type: 'expectation',
       predicate: this.element.matcher.predicate,
