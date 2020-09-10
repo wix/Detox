@@ -6,6 +6,7 @@ jest.mock('../../client/Client');
 describe('IosUIHierarchyPlugin', () => {
   let Client, FileArtifact, IosUIHierarchyPlugin;
   let plugin, api, client, onTestFailed;
+  const testSummary = 'TestSummary';
 
   beforeEach(() => {
     Client = require('../../client/Client');
@@ -93,6 +94,16 @@ describe('IosUIHierarchyPlugin', () => {
     beforeEach(() => {
       api.userConfig.enabled = false;
       plugin = new IosUIHierarchyPlugin({ api, client });
+    });
+
+    it('should propogate launchArg to native', async () => {
+      const event = {
+        launchArgs: {}
+      };
+
+      await plugin.onTestStart(testSummary);
+      await plugin.onBeforeLaunchApp(event);
+      expect(event.launchArgs.detoxDisableHierarchyDump).toBeDefined();
     });
 
     it('should remove the file artifact', () => {
