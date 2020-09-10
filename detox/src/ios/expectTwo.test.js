@@ -306,7 +306,7 @@ describe('expectTwo', () => {
       invocation: {
         type: 'action',
         action: 'scroll',
-        params: [50, 'down'],
+        params: [50, 'down', null, null],
         predicate: {
           type: 'id',
           value: 'ScrollView630'

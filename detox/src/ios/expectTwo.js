@@ -72,7 +72,7 @@ class Expect {
       ...(this.element.index !== undefined && { atIndex: this.element.index }),
       ...(this.modifiers.length !== 0 && {modifiers: this.modifiers}),
       expectation,
-      ...(params.length !== 0 && { params: _.without(params, NaN, null, undefined) })
+      ...(params.length !== 0 && { params: _.without(params, undefined) })
     };
   }
 
@@ -206,11 +206,12 @@ class Element {
   }
 
   createInvocation(action, ...params) {
+    params = _.map(params, (param) => _.isNaN(param) ? null : param);
     return ({
       type: 'action',
       action,
       ...(this.index !== undefined && { atIndex: this.index }),
-      ...(_.without(params, NaN, null, undefined).length !== 0 && { params: _.without(params, NaN, null, undefined) }),
+      ...(_.without(params, undefined).length !== 0 && { params: _.without(params, undefined) }),
       predicate: this.matcher.predicate
     });
   }
