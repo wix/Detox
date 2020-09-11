@@ -23,11 +23,7 @@ cp ../coverage/lcov.info ../../coverage/unit.lcov
 run_f "npm run e2e:android-ci"
 cp coverage/lcov.info ../../coverage/e2e-android-ci.lcov
 
-run_f "npm run e2e:android-timeout-ci"
-cp coverage/lcov.info ../../coverage/e2e-android-timeout-ci.lcov
-
-run_f "npm run e2e:legacy-jasmine:android-timeout-ci"
-cp coverage/lcov.info ../../coverage/e2e-legacy-jasmine-android-timeout-ci.lcov
+run_f "scripts/ci_unhappy.sh android"
 
 # run_f "npm run verify-artifacts:android"
 popd

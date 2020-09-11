@@ -6,6 +6,7 @@ class CustomDetoxEnvironment extends DetoxCircusEnvironment {
   constructor(config) {
     super(config);
 
+    this.initTimeout = 30000;
     this.registerListeners({
       SpecReporterCircus,
       WorkerAssignReporterCircus,
@@ -13,18 +14,19 @@ class CustomDetoxEnvironment extends DetoxCircusEnvironment {
   }
 
   async initDetox() {
-    const instance = await super.initDetox();
+    console.log('Making problems with server');
 
-    this.global.detox.__waitUntilArtifactsManagerIsIdle__ = () => {
-      return instance._artifactsManager._idlePromise;
+    const instance = await this.detox.init(undefined, { launchApp: false });
+    const sendActionOriginal = instance._server.sendAction;
+    instance._server.sendAction = function(ws, action) {
+      if (action.type !== 'ready') {
+        sendActionOriginal.call(this, ws, action);
+      }
     };
 
+    await instance.device.launchApp();
     return instance;
   }
 }
-
-process.on('unhandledRejection', (reason, p) => {
-  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
-});
 
 module.exports = CustomDetoxEnvironment;
