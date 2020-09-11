@@ -15,7 +15,7 @@ node scripts/assert_timeout.js npm run "e2e:$platform" -- -H -o e2e-unhappy/deto
 cp coverage/lcov.info "../../coverage/e2e-legacy-jasmine-$platform-timeout-ci.lcov"
 
 echo "Running e2e stack trace mangling test..."
-runnerOutput="$(npm run "e2e:$platform" -- -H e2e-unhappy/failing-matcher.test.js 2>&1 | tee /dev/tty)"
+runnerOutput="$(npm run "e2e:$platform" -- -H e2e-unhappy/failing-matcher.test.js 2>&1 | tee /dev/stdout)"
 
 if grep -q "await element.*supercalifragilisticexpialidocious" <<< "$runnerOutput" ;
 then
