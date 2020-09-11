@@ -1,40 +1,73 @@
-const { asError, removeInternalStackEntries } = require('./errorUtils');
+const _ = require("lodash");
+const errorUtils = require("./errorUtils");
 
-describe('removeInternalStackEntries', () => {
-  let error;
-
-  beforeEach(() => {
-    error = new Error('This is a test error\non multiple lines.');
-    error.stack = `Error: This is a test error
-on multiple lines.
-    at Object.<anonymous> (/home/noomorph/Projects/wix/Detox/detox/src/utils/errorUtils.test.js:19:12)
-    at Object.asyncJestTest (/home/noomorph/Projects/wix/Detox/detox/node_modules/jest-jasmine2/build/jasmineAsyncInstall.js:100:37)
-    at /home/noomorph/Projects/wix/Detox/detox/node_modules/jest-jasmine2/build/queueRunner.js:47:12
-    at new Promise (<anonymous>)
-    at mapper (/home/noomorph/Projects/wix/Detox/detox/node_modules/jest-jasmine2/build/queueRunner.js:30:19)
-    at /home/noomorph/Projects/wix/Detox/detox/node_modules/jest-jasmine2/build/queueRunner.js:77:41
-    at processTicksAndRejections (internal/process/task_queues.js:97:5)`;
+describe('sliceErrorStack(error, fromIndex)', () => {
+  it('should clean up error stack by N first lines containing at:', () => {
+    function innerFunction() { throw new Error('Source Error'); }
+    function outerFunction() { innerFunction(); }
+    const slicer = at => (_line) => --at < 0;
+    const error0 = errorUtils.filterErrorStack(_.attempt(outerFunction), slicer(0));
+    const error2 = errorUtils.filterErrorStack(_.attempt(outerFunction), slicer(1));
+    const error3 = errorUtils.filterErrorStack(_.attempt(outerFunction), slicer(2));
+    expect(error0.stack).toMatch(/at innerFunction/);
+    expect(error0.stack).toMatch(/at outerFunction/);
+    expect(error2.stack).not.toMatch(/at innerFunction/);
+    expect(error2.stack).toMatch(/at outerFunction/);
+    expect(error3.stack).not.toMatch(/at innerFunction/);
+    expect(error3.stack).not.toMatch(/at outerFunction/);
   });
 
-  it('should include regular stack lines and omit detox/src stack lines', () => {
-    expect(removeInternalStackEntries(error).stack).toBe(`Error: This is a test error
-on multiple lines.
-    at Object.asyncJestTest (/home/noomorph/Projects/wix/Detox/detox/node_modules/jest-jasmine2/build/jasmineAsyncInstall.js:100:37)
-    at /home/noomorph/Projects/wix/Detox/detox/node_modules/jest-jasmine2/build/queueRunner.js:47:12
-    at new Promise (<anonymous>)
-    at mapper (/home/noomorph/Projects/wix/Detox/detox/node_modules/jest-jasmine2/build/queueRunner.js:30:19)
-    at /home/noomorph/Projects/wix/Detox/detox/node_modules/jest-jasmine2/build/queueRunner.js:77:41
-    at processTicksAndRejections (internal/process/task_queues.js:97:5)`);
+  it('should not fail if an error stack is empty', () => {
+    const err = new Error();
+    delete err.stack;
+
+    errorUtils.filterErrorStack(err, () => true)
+    expect(err.stack).toBe('');
   });
 });
 
-describe('asError', () => {
-  it('should pass through errors', () => {
-    const e = new Error();
-    expect(asError(e)).toBe(e);
+describe('replaceErrorStack(source, target)', () => {
+  it('should replace error stack in the target error using the source error', () => {
+    function sourceFunction() { throw new Error('Source Error'); }
+    function targetFunction() { throw new Error('Target Error'); }
+    const source = _.attempt(sourceFunction);
+    const target = _.attempt(targetFunction);
+    expect(target.stack).toMatch(/Target Error/);
+    expect(target.stack).toMatch(/at targetFunction/);
+    expect(target.stack).not.toMatch(/at sourceFunction/);
+    expect(errorUtils.replaceErrorStack(source, target)).toBe(target);
+    expect(target.stack).toMatch(/Target Error/);
+    expect(target.stack).toMatch(/at sourceFunction/);
+    expect(target.stack).not.toMatch(/at targetFunction/);
   });
 
-  it('should wrap non-errors with new Error()', () => {
-    expect(asError(42)).toEqual(new Error('42'));
+  it('should not ruin already malformed errors', () => {
+    const err1 = new Error('Source');
+    const err2 = new Error('Target');
+    delete err1.stack;
+    delete err2.stack;
+
+    errorUtils.replaceErrorStack(err1, err2);
+    expect(err2.stack).toBe('Target');
+  });
+});
+
+describe('createErrorWithUserStack()', () => {
+  it('should not have /detox/src/ lines in stack', () => {
+    expect(new Error().stack).toContain('/detox/src/'); // sanity assertion
+    expect(errorUtils.createErrorWithUserStack()).not.toContain('/detox/src/');
+  });
+});
+
+describe('asError(err)', () => {
+  it('should passthrough Error instances', () => {
+    const err = new Error();
+    expect(errorUtils.asError(err)).toBe(err);
+  });
+
+  it('should wrap non-Error with Error', () => {
+    const err = 'non-Error'
+    expect(errorUtils.asError(err)).toBeInstanceOf(Error);
+    expect(errorUtils.asError(err).message).toBe(err);
   });
 });
