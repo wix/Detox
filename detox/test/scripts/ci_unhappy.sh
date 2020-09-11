@@ -17,9 +17,9 @@ cp coverage/lcov.info "../../coverage/e2e-legacy-jasmine-$platform-timeout-ci.lc
 echo "Running e2e stack trace mangling test..."
 runnerOutput="$(npm run "e2e:$platform" -- -H e2e-unhappy/failing-matcher.test.js 2>&1 | tee /dev/tty)"
 
-if grep -q "supercalifragilisticexpialidocious" <<< "$runnerOutput" ;
+if grep -q "await element.*supercalifragilisticexpialidocious" <<< "$runnerOutput" ;
 then
-    echo "Stack trace mangling test has found the failed line"
+    echo "Stack trace mangling has passed OK."
     cp coverage/lcov.info "../../coverage/e2e-$platform-error-stack-mangling.lcov"
 else
     echo "Stack trace mangling test has failed"
