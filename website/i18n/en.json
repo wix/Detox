@@ -12,7 +12,7 @@
     "APIRef.DeviceObjectAPI": "The `device` Object",
     "APIRef.Expect": "Expect",
     "APIRef.Matchers": "Matchers",
-    "APIRef.MockingOpenFromURL": "Mocking Open from URL (Deep Links)",
+    "APIRef.MockingOpenWithURL": "Mocking Open with URL (Deep Links)",
     "APIRef.MockingUserNotifications": "Mocking User Notifications",
     "APIRef.TestLifecycle": "Test Lifecycle",
     "APIRef.waitFor": "Manual Synchronization Using `waitFor`",
