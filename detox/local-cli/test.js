@@ -67,11 +67,6 @@ function choosePrepareArgs({ cliConfig, detoxArgs, runner, platform }) {
   }
 
   if (runner === 'jest') {
-    if (platform === 'android' && hasMultipleWorkers(cliConfig)) {
-      log.warn('Multiple workers is an experimental feature on Android and requires an emulator binary of version 28.0.16 or higher. ' +
-        'Check your version by running: $ANDROID_HOME/tools/bin/sdkmanager --list');
-    }
-
     return prepareJestArgs;
   }
 

@@ -16,6 +16,7 @@ describe('Emulator binary version', () => {
     minor: 1,
     patch: 2,
   };
+  const expectedVersionRaw = '30.1.2.3';
 
   let MockQueryVersionCommand;
   let emulatorExec;
@@ -51,7 +52,8 @@ describe('Emulator binary version', () => {
 
   it('should extract version from common log', async () => {
     const version = await uut.resolve();
-    expect(version).toEqual(expectedVersion);
+    expect(version).toEqual(expect.objectContaining(expectedVersion));
+    expect(version.toString()).toEqual(expectedVersionRaw);
   });
 
   it('should return null for an empty query result', async () => {
@@ -90,11 +92,11 @@ describe('Emulator binary version', () => {
     const version = await uut.resolve();
 
     expect(emulatorExec.exec).toHaveBeenCalledTimes(1);
-    expect(version).toEqual(expectedVersion);
+    expect(version).toEqual(expect.objectContaining(expectedVersion));
   });
 
   it('should log the version', async () => {
     await uut.resolve();
-    expect(log.debug).toHaveBeenCalledWith({event: 'EMU_BIN_VERSION_DETECT', success: true}, expect.any(String), expectedVersion);
+    expect(log.debug).toHaveBeenCalledWith({event: 'EMU_BIN_VERSION_DETECT', success: true}, expect.any(String), expect.objectContaining(expectedVersion));
   });
 });

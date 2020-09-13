@@ -49,6 +49,14 @@ function getAvdDir(avdName) {
   return avdIni.path;
 }
 
+function getAvdManagerPath() {
+  return path.join(getAndroidSDKPath(), 'tools', 'bin', 'avdmanager');
+}
+
+function getAndroidSdkManagerPath() {
+  return path.join(getAndroidSDKPath(), 'tools', 'bin', 'sdkmanager');
+}
+
 function getAndroidEmulatorPath() {
   const sdkRoot = getAndroidSDKPath();
   if (!sdkRoot) {
@@ -171,6 +179,8 @@ module.exports = {
   getAdbPath,
   getAvdHome,
   getAvdDir,
+  getAvdManagerPath,
+  getAndroidSdkManagerPath,
   getDetoxVersion,
   getFrameworkPath,
   getAndroidSDKPath,
