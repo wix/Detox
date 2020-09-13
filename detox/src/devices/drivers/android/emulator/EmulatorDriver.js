@@ -5,6 +5,7 @@ const ini = require('ini');
 const AndroidDriver = require('../AndroidDriver');
 const FreeEmulatorFinder = require('./FreeEmulatorFinder');
 const AVDValidator = require('./AVDValidator');
+const AVDsResolver = require('./AVDsResolver');
 const EmulatorLauncher = require('./EmulatorLauncher');
 const EmulatorVersionResolver = require('./EmulatorVersionResolver');
 const { EmulatorExec } = require('../exec/EmulatorExec');
@@ -26,11 +27,13 @@ class EmulatorDriver extends AndroidDriver {
   constructor(config) {
     super(config);
 
-    this.freeDeviceFinder = new FreeEmulatorFinder(this.adb, this.deviceRegistry);
     const emulatorExec = new EmulatorExec();
     this._emuVersionResolver = new EmulatorVersionResolver(emulatorExec);
     this._emuLauncher = new EmulatorLauncher(emulatorExec);
-    this._avdValidator = new AVDValidator(emulatorExec);
+
+    const avdsResolver = new AVDsResolver(emulatorExec);
+    this._avdValidator = new AVDValidator(avdsResolver, this._emuVersionResolver);
+    this._freeDeviceFinder = new FreeEmulatorFinder(this.adb, this.deviceRegistry);
 
     this.pendingBoots = {};
     this._name = 'Unspecified Emulator';
@@ -59,7 +62,7 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async doAllocateDevice(deviceQuery) {
-    const freeEmulatorAdbName = await this.freeDeviceFinder.findFreeDevice(deviceQuery);
+    const freeEmulatorAdbName = await this._freeDeviceFinder.findFreeDevice(deviceQuery);
     return freeEmulatorAdbName || this._createDevice();
   }
 

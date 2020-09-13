@@ -1,3 +1,5 @@
+const path = require('path');
+
 function getPlatformSpecificString(platform) {
   switch (platform) {
     case 'ios': return ':android:';
@@ -16,7 +18,20 @@ function printEnvironmentVariables(envObject) {
   }, '');
 }
 
+function prependNodeModulesBinToPATH(env) {
+  const PATH = Object.keys(env).find(key => `${key.toUpperCase()}` === 'PATH');
+  if (!PATH) {
+    return;
+  }
+
+  const nodeBinariesPath = path.dirname(process.argv[1]) + path.delimiter;
+  if (!env[PATH].startsWith(nodeBinariesPath)) {
+    env[PATH] = nodeBinariesPath + env[PATH];
+  }
+}
+
 module.exports = {
   getPlatformSpecificString,
   printEnvironmentVariables,
+  prependNodeModulesBinToPATH,
 };

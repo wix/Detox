@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "17.4.7",
+  "version": "17.4.10",
   "bin": {
     "detox": "local-cli/cli.js"
   },

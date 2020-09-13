@@ -10,6 +10,7 @@ const log = require('../src/utils/logger').child({ __filename });
 const shellQuote = require('./utils/shellQuote');
 const splitArgv = require('./utils/splitArgv');
 const { getPlatformSpecificString, printEnvironmentVariables } = require('./utils/misc');
+const { prependNodeModulesBinToPATH } = require('./utils/misc');
 
 module.exports.command = 'test';
 module.exports.desc = 'Run your test suite with the test runner specified in package.json';
@@ -66,11 +67,6 @@ function choosePrepareArgs({ cliConfig, detoxArgs, runner, platform }) {
   }
 
   if (runner === 'jest') {
-    if (platform === 'android' && hasMultipleWorkers(cliConfig)) {
-      log.warn('Multiple workers is an experimental feature on Android and requires an emulator binary of version 28.0.16 or higher. ' +
-        'Check your version by running: $ANDROID_HOME/tools/bin/sdkmanager --list');
-    }
-
     return prepareJestArgs;
   }
 
@@ -195,10 +191,12 @@ function launchTestRunner({ argv, env, specs, rerunIndex }) {
 
   cp.execSync(fullCommand, {
     stdio: 'inherit',
-    env: _.omitBy({
-      ...process.env,
-      ...env,
-    }, _.isUndefined),
+    env: _({})
+      .assign(process.env)
+      .assign(env)
+      .omitBy(_.isUndefined)
+      .tap(prependNodeModulesBinToPATH)
+      .value()
   });
 }
 

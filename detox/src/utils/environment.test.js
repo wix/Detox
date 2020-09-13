@@ -120,6 +120,40 @@ describe('Environment', () => {
       });
     });
 
+    describe('getAvdManagerPath', () => {
+      it('should return path to AVD-manager executable', () => {
+        process.env.ANDROID_SDK_ROOT = 'mock/path/to/sdk';
+
+        const avdManagerPath = Environment.getAvdManagerPath();
+        expect(avdManagerPath).toEqual('mock/path/to/sdk/tools/bin/avdmanager');
+      });
+
+      it('should fall back to using ANDROID_HOME instead of ANDROID_SDK_ROOT', () => {
+        delete process.env.ANDROID_SDK_ROOT;
+        process.env.ANDROID_HOME = 'mock/path/to/sdk';
+
+        const avdManagerPath = Environment.getAvdManagerPath();
+        expect(avdManagerPath).toEqual('mock/path/to/sdk/tools/bin/avdmanager');
+      });
+    });
+
+    describe('getAndroidSdkManagerPath', () => {
+      it('should return path to SDK-manager executable', () => {
+        process.env.ANDROID_SDK_ROOT = 'mock/path/to/sdk';
+
+        const sdkManagerPath = Environment.getAndroidSdkManagerPath();
+        expect(sdkManagerPath).toEqual('mock/path/to/sdk/tools/bin/sdkmanager');
+      });
+
+      it('should fall back to using ANDROID_HOME instead of ANDROID_SDK_ROOT', () => {
+        delete process.env.ANDROID_SDK_ROOT;
+        process.env.ANDROID_HOME = 'mock/path/to/sdk';
+
+        const sdkManagerPath = Environment.getAndroidSdkManagerPath();
+        expect(sdkManagerPath).toEqual('mock/path/to/sdk/tools/bin/sdkmanager');
+      });
+    });
+
     describe('getAndroidEmulatorPath', () => {
       describe('if $ANDROID_SDK_ROOT is set', () => {
         beforeEach(() => {
