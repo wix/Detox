@@ -30,8 +30,9 @@ class EmulatorDriver extends AndroidDriver {
     const emulatorExec = new EmulatorExec();
     this._emuVersionResolver = new EmulatorVersionResolver(emulatorExec);
     this._emuLauncher = new EmulatorLauncher(emulatorExec);
-    this._avdsResolver = new AVDsResolver(emulatorExec);
-    this._avdValidator = new AVDValidator(this._avdsResolver, this._emuVersionResolver);
+
+    const avdsResolver = new AVDsResolver(emulatorExec);
+    this._avdValidator = new AVDValidator(avdsResolver, this._emuVersionResolver);
     this._freeDeviceFinder = new FreeEmulatorFinder(this.adb, this.deviceRegistry);
 
     this.pendingBoots = {};

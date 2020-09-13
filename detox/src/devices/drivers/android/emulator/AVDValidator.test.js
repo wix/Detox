@@ -1,11 +1,15 @@
 describe('AVD validator', () => {
   let logger;
+  let environment;
   let avdsResolver;
   let versionResolver;
   let uut;
   beforeEach(() => {
     jest.mock('../../../../utils/logger');
     logger = require('../../../../utils/logger');
+
+    jest.mock('../../../../utils/environment');
+    environment = require('../../../../utils/environment');
 
     const AVDsResolver = jest.genMockFromModule('./AVDsResolver');
     avdsResolver = new AVDsResolver();
@@ -36,18 +40,27 @@ describe('AVD validator', () => {
   })
   const givenUnknownEmulatorVersion = () => versionResolver.resolve.mockResolvedValue(null);
 
+  const givenMockedAvdManagerPath = () => environment.getAvdManagerPath.mockReturnValue('mock/path/avdmng');
+  const givenMockedAndroidSdkPath = () => environment.getAndroidSdkManagerPath.mockReturnValue('mock/path/sdkmng');
+
   it('should return safely if AVD exists', async () => {
     givenExpectedAVD();
     await uut.validate('mock-avd-name');
   });
 
   it('should throw if no AVDs found', async () => {
+    givenMockedAvdManagerPath();
     givenNoAVDs();
 
     try {
       await uut.validate();
       fail('expected to throw');
-    } catch (err) {}
+    } catch (err) {
+      const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
+      expect(err).toBeInstanceOf(DetoxRuntimeError);
+      expect(err.toString()).toEqual(expect.stringContaining('Could not find any configured Android Emulator.'));
+      expect(err.toString()).toEqual(expect.stringContaining('mock/path/avdmng create avd'));
+    }
   });
 
   it('should throw if specific AVD not found', async () => {
@@ -56,10 +69,16 @@ describe('AVD validator', () => {
     try {
       await uut.validate('mock-avd-name');
       fail('expected to throw');
-    } catch (err) {}
+    } catch (err) {
+      const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
+      expect(err).toBeInstanceOf(DetoxRuntimeError);
+      expect(err.toString()).toEqual(expect.stringContaining(`Cannot boot Android Emulator with the name: 'mock-avd-name'`));
+      expect(err.toString()).toEqual(expect.stringContaining(`Make sure you choose one of the available emulators`));
+    }
   });
 
   it('should warn about emulators that are too old', async () => {
+    givenMockedAndroidSdkPath();
     givenExpectedAVD();
     givenOldEmulatorVersion();
 
@@ -67,7 +86,7 @@ describe('AVD validator', () => {
 
     expect(logger.warn).toHaveBeenCalledWith({ event: 'AVD_VALIDATION' }, [
       `Your installed emulator binary version (28.mock.ver) is too old, and may not be suitable for parallel test execution.`,
-      'We strongly recommend you upgrade to the latest version using the SDK manager: $ANDROID_HOME/tools/bin/sdkmanager --list'
+      'We strongly recommend you upgrade to the latest version using the SDK manager: mock/path/sdkmng --list'
     ].join('\n'));
     expect(versionResolver.resolve).toHaveBeenCalled();
   });
