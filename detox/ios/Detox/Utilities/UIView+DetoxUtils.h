@@ -47,6 +47,11 @@ static double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
 
 @property (nonatomic, readonly, weak) UIViewController* dtx_containingViewController;
 
+#if DEBUG
+- (void)dtx_saveSnapshotToDesktop;
+- (void)dtx_saveSnapshotToDesktopWithPoint:(CGPoint)point;
+#endif
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -10,6 +10,7 @@
 #import "DTXAppleInternals.h"
 #import "UIWindow+DetoxUtils.h"
 #import "UISlider+DetoxUtils.h"
+#import "UIImage+DetoxUtils.h"
 
 @interface DTXTouchVisualizerWindow : UIWindow @end
 
@@ -140,7 +141,17 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return [self hitTest:point withEvent:event];
 }
 
+- (UIView *)dtx_hitVisTest:(CGPoint)point withEvent:(UIEvent *)event lookingFor:(UIView*)lookingFor
+{
+	return [self dtx_visTest:point withEvent:event lookingFor:lookingFor maxSize:CGSizeMake(1, 1)];
+}
+
 - (UIView*)dtx_visTest:(CGPoint)point withEvent:(UIEvent *)event lookingFor:(UIView*)lookingFor
+{
+	return [self dtx_visTest:point withEvent:event lookingFor:lookingFor maxSize:CGSizeMake(44, 44)];
+}
+
+- (UIView*)dtx_visTest:(CGPoint)point withEvent:(UIEvent *)event lookingFor:(UIView*)lookingFor maxSize:(CGSize)maxSize
 {
 	if(self.isHiddenOrHasHiddenAncestor == YES)
 	{
@@ -169,7 +180,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	for (__kindof UIView * _Nonnull obj in self.subviews.reverseObjectEnumerator) {
 		CGPoint localPoint = [self convertPoint:point toView:obj];
 
-		UIView* candidate = [obj dtx_visTest:localPoint withEvent:event lookingFor:lookingFor];
+		UIView* candidate = [obj dtx_visTest:localPoint withEvent:event lookingFor:lookingFor maxSize:maxSize];
 
 		if(candidate == nil)
 		{
@@ -183,10 +194,13 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	if(rv == nil && CGRectGetWidth(self.bounds) > 0 && CGRectGetHeight(self.bounds) > 0)
 	{
 		//Check the candidate view for transparency
-		UIImage* img = [self dtx_imageAroundPoint:point maxSize:lookingFor.bounds.size];
-//		[UIImagePNGRepresentation(img) writeToFile:@"/Users/lnatan/Desktop/view.png" atomically:YES];
-		if([UIView _dtx_isImageTransparentEnough:img threshold:0.5] == NO)
+		UIImage* img = [self dtx_imageAroundPoint:point maxSize:CGSizeMake(MIN(lookingFor.bounds.size.width, maxSize.width), MIN(lookingFor.bounds.size.height, maxSize.height))];
+		if([img dtx_isTransparentEnoughWithThreshold:0.5] == NO)
 		{
+#if DEBUG
+//			[self.window dtx_saveSnapshotToDesktopWithPoint:[self.window convertPoint:point fromView:self]];
+//			[img dtx_saveToDesktop];
+#endif
 			//If a view is not transparent around the hit point, take it as the visible view.
 			rv = self;
 		}
@@ -222,7 +236,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 
 - (BOOL)dtx_isHittableAtPoint:(CGPoint)point error:(NSError* __strong *)error
 {
-	return [self dtx_isVisibleAtPoint:point error:error];
+	return [self _dtx_someTestAtPoint:point testSelector:@selector(dtx_hitVisTest:withEvent:lookingFor:) error:error];
 }
 
 - (BOOL)dtx_isActuallyHittableAtPoint:(CGPoint)point error:(NSError* __strong *)error
@@ -354,8 +368,12 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		{
 			UIImage* windowImage = [obj dtx_imageAroundPoint:currentWindowActivationPoint maxSize:self.window.bounds.size];
 //			[UIImagePNGRepresentation(windowImage) writeToFile:[NSString stringWithFormat:@"/Users/lnatan/Desktop/%@.png", NSStringFromClass(obj.class)] atomically:YES];
-			if([UIView _dtx_isImageTransparentEnough:windowImage threshold:0.5] == NO)
+			if([windowImage dtx_isTransparentEnoughWithThreshold:0.5] == NO)
 			{
+#if DEBUG
+//				[windowImage dtx_saveToDesktop];
+#endif
+				
 				NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"Window “%@” is above the tested view's window and its transparency around point “%@” is below the tested threshold (0.5)", obj.dtx_shortDescription, DTXPointToString(currentWindowActivationPoint)])}];
 				_DTXPopulateError(err);
 				
@@ -413,7 +431,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 				}
 				else
 				{
-					err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"View “%@” is above the tested view “%@”'s screen position and its transparency around point “%@” is below the tested threshold (0.5)", visibleView.dtx_shortDescription, str, DTXPointToString(currentWindowActivationPoint)])}];
+					err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"View “%@” is above the tested view “%@”'s screen position and its transparency around window point “%@” is below the tested threshold (0.5)", visibleView.dtx_shortDescription, self.dtx_shortDescription, DTXPointToString(currentWindowActivationPoint)])}];
 				}
 				_DTXPopulateError(err);
 			}
@@ -423,33 +441,6 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	}];
 	
 	return rv;
-}
-
-+ (BOOL)_dtx_isImageTransparentEnough:(UIImage*)image threshold:(CGFloat)threshold
-{
-	CGImageRef cgImage = image.CGImage;
-		
-	CFDataRef pixelData = CGDataProviderCopyData(CGImageGetDataProvider(cgImage));
-	dtx_defer {
-		CFRelease(pixelData);
-	};
-    const UInt8* data = CFDataGetBytePtr(pixelData);
-	
-	for (NSUInteger y = 0; y < image.size.height; y++) {
-		double alphaSum = 0.0;
-		for (NSUInteger x = 0; x < image.size.width; x++) {
-			uint8_t alpha = data[((NSUInteger)image.size.width * y + x) * 4 + 3];
-			alphaSum += (alpha / 255.0);
-		}
-		CGFloat avg = alphaSum / image.size.width;
-		
-		if(avg > threshold)
-		{
-			return NO;
-		}
-	}
-	
-	return YES;
 }
 
 - (UIImage*)dtx_imageAroundPoint:(CGPoint)point maxSize:(CGSize)maxSize
@@ -482,7 +473,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	
 	CGContextTranslateCTM(context, -x, -y);
 	
-	[self.layer renderInContext:context];
+	[self.layer.presentationLayer renderInContext:context];
 	
 	UIGraphicsPopContext();
 	
@@ -602,5 +593,36 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	
 	return rv;
 }
+
+#if DEBUG
+- (void)dtx_saveSnapshotToDesktop
+{
+	[self _dtx_saveSnapshotToDesktopWithPointPtr:NULL];
+}
+
+- (void)dtx_saveSnapshotToDesktopWithPoint:(CGPoint)point
+{
+	[self _dtx_saveSnapshotToDesktopWithPointPtr:&point];
+}
+
+- (void)_dtx_saveSnapshotToDesktopWithPointPtr:(CGPoint*)pointPtrOrNULL
+{
+	UIWindow* windowToUse = [self isKindOfClass:UIWindow.class] ? (id)self : self.window;
+	UIGraphicsBeginImageContextWithOptions(self.bounds.size, NO, windowToUse.screen.scale);
+	[self drawViewHierarchyInRect:self.bounds afterScreenUpdates:NO];
+	
+	if(pointPtrOrNULL != NULL)
+	{
+		CGContextRef ctx = UIGraphicsGetCurrentContext();
+		[UIColor.systemRedColor setFill];
+		CGContextFillRect(ctx, CGRectMake(pointPtrOrNULL->x, pointPtrOrNULL->y, 1, 1));
+	}
+	
+	UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+	UIGraphicsEndImageContext();
+	
+	[image dtx_saveToDesktop];
+}
+#endif
 
 @end
