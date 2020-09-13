@@ -121,6 +121,8 @@
 		39E7AB3E24F40DA10011CE29 /* DTXLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 39E7AB3B24F40DA00011CE29 /* DTXLogging.h */; };
 		39E7AB3F24F40DA10011CE29 /* DTXLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E7AB3C24F40DA10011CE29 /* DTXLogging.swift */; };
 		39E7AB4024F40DA10011CE29 /* DTXLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 39E7AB3D24F40DA10011CE29 /* DTXLogging.m */; };
+		39FA2BDE250E74210047F419 /* UIImage+DetoxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 39FA2BDC250E74210047F419 /* UIImage+DetoxUtils.h */; };
+		39FA2BDF250E74210047F419 /* UIImage+DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FA2BDD250E74210047F419 /* UIImage+DetoxUtils.m */; };
 		39FFD9471FD730A600C97030 /* DetoxCrashHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */; };
 		468731A51E6C6D0500F151BE /* EarlGrey+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 468731A31E6C6D0500F151BE /* EarlGrey+Detox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		468731A61E6C6D0500F151BE /* EarlGrey+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 468731A41E6C6D0500F151BE /* EarlGrey+Detox.m */; };
@@ -371,6 +373,8 @@
 		39E91C06247D6BB00099F8F3 /* DetoxCrashHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetoxCrashHandler.h; sourceTree = "<group>"; };
 		39F6422A1FDD5EEC00468FED /* Detox.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.pch; sourceTree = "<group>"; };
 		39F6422B1FDD5F3300468FED /* DTXLoggingSubsystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXLoggingSubsystem.h; sourceTree = "<group>"; };
+		39FA2BDC250E74210047F419 /* UIImage+DetoxUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImage+DetoxUtils.h"; sourceTree = "<group>"; };
+		39FA2BDD250E74210047F419 /* UIImage+DetoxUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImage+DetoxUtils.m"; sourceTree = "<group>"; };
 		39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DetoxCrashHandler.mm; sourceTree = "<group>"; };
 		468731A31E6C6D0500F151BE /* EarlGrey+Detox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "EarlGrey+Detox.h"; sourceTree = "<group>"; };
 		468731A41E6C6D0500F151BE /* EarlGrey+Detox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "EarlGrey+Detox.m"; sourceTree = "<group>"; };
@@ -649,6 +653,8 @@
 				3980D1012448B52B004812DD /* UIApplication+DTXAdditions.m */,
 				397CA78A248010B5005E8A71 /* UISlider+DetoxUtils.h */,
 				397CA78B248010B5005E8A71 /* UISlider+DetoxUtils.m */,
+				39FA2BDC250E74210047F419 /* UIImage+DetoxUtils.h */,
+				39FA2BDD250E74210047F419 /* UIImage+DetoxUtils.m */,
 				3990BA132457248600B608C8 /* UIView+DetoxUtils.h */,
 				3990BA142457248600B608C8 /* UIView+DetoxUtils.m */,
 				3980D1022448B52B004812DD /* UIView+DontCrash.h */,
@@ -745,6 +751,7 @@
 				39E7AB3A24F40CDE0011CE29 /* fishhook.h in Headers */,
 				3902CAD7211342D000C49D04 /* WXRNLoadIdlingResource.h in Headers */,
 				3976BF15246C139D00AA20C7 /* DTXSwizzlingHelper.h in Headers */,
+				39FA2BDE250E74210047F419 /* UIImage+DetoxUtils.h in Headers */,
 				394767D01DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.h in Headers */,
 				394767C11DBF98A700D72256 /* GREYMatchers+Detox.h in Headers */,
 				3980D11D2448B52C004812DD /* DTXAppleInternals.h in Headers */,
@@ -969,6 +976,7 @@
 				468731A61E6C6D0500F151BE /* EarlGrey+Detox.m in Sources */,
 				39BCE599224BDBF000B0D357 /* ReactNativeSupportNoARC.m in Sources */,
 				397EC9B61E7EDE0B00D5F2BB /* EarlGreyStatistics.m in Sources */,
+				39FA2BDF250E74210047F419 /* UIImage+DetoxUtils.m in Sources */,
 				399BF36921933F0C00F96D50 /* ExternalLogging.m in Sources */,
 				3980D16A244DD837004812DD /* UIDatePicker+DetoxActions.m in Sources */,
 				396EA67B22E0AE7D0087E4D4 /* ___DTXAddressInfo.mm in Sources */,
