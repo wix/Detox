@@ -222,6 +222,11 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 
 - (BOOL)dtx_isHittableAtPoint:(CGPoint)point error:(NSError* __strong *)error
 {
+	return [self dtx_isVisibleAtPoint:point error:error];
+}
+
+- (BOOL)dtx_isActuallyHittableAtPoint:(CGPoint)point error:(NSError* __strong *)error
+{
 	if([self isKindOfClass:NSClassFromString(@"UISegmentLabel")] || [self isKindOfClass:NSClassFromString(@"UISegment")])
 	{
 		UISegmentedControl* segmentControl = (id)self;
