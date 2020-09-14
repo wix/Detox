@@ -1,5 +1,7 @@
 package com.wix.detox.espresso.action
 
+import android.os.SystemClock
+import android.view.MotionEvent
 import androidx.test.espresso.UiController
 import androidx.test.espresso.action.Tapper
 import com.wix.detox.espresso.common.DetoxViewConfigurations.getPostTapCooldownTime
@@ -30,12 +32,9 @@ class DetoxSingleTap(
         coordinates!!
         precision!!
 
-        val x = coordinates[0]
-        val y = coordinates[1]
-        val downEvent = motionEvents.obtainDownEvent(x, y, precision)
-        val upEvent = motionEvents.obtainUpEvent(downEvent, downEvent.eventTime + EVENTS_TIME_GAP_MS, x, y)
+        val tapEvents = createTapEvents(motionEvents, coordinates, precision)
         try {
-            val result = uiController.injectMotionEventSequence(arrayListOf(downEvent, upEvent))
+            val result = uiController.injectMotionEventSequence(tapEvents)
             if (result) {
                 if (cooldownTime > 0) {
                     uiController.loopMainThreadForAtLeast(cooldownTime)
@@ -44,8 +43,7 @@ class DetoxSingleTap(
             }
             return Tapper.Status.FAILURE
         } finally {
-            downEvent.recycle()
-            upEvent.recycle()
+            tapEvents.forEach { it.recycle() }
         }
     }
 
@@ -64,5 +62,15 @@ class DetoxSingleTap(
          * the chance of allowing a frame to be drawn in between the _down_ and _up_ events.
          */
         private const val EVENTS_TIME_GAP_MS = 30
+
+        fun createTapEvents(motionEvents: MotionEvents, coordinates: FloatArray, precision: FloatArray)
+                = createTapEvents(motionEvents, coordinates, precision, null)
+
+        fun createTapEvents(motionEvents: MotionEvents, coordinates: FloatArray, precision: FloatArray, downTime: Long?): List<MotionEvent> {
+            val (x, y) = coordinates
+            val downEvent = motionEvents.obtainDownEvent(x, y, precision, downTime)
+            val upEvent = motionEvents.obtainUpEvent(downEvent, downEvent.eventTime + EVENTS_TIME_GAP_MS, x, y)
+            return arrayListOf(downEvent, upEvent)
+        }
     }
 }

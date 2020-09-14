@@ -33,6 +33,7 @@ object DetoxSingleTapSpec: Spek({
             upEvent = mock(name = "upEventMock")
             motionEvents = mock {
                 on { obtainDownEvent(any(), any(), any()) }.doReturn(downEvent)
+                on { obtainDownEvent(any(), any(), any(), eq(null)) }.doReturn(downEvent)
                 on { obtainUpEvent(eq(downEvent), any(), any(), any()) }.doReturn(upEvent)
             }
         }
@@ -41,7 +42,7 @@ object DetoxSingleTapSpec: Spek({
                 = verify(uiController).injectMotionEventSequence(events.asList())
 
         fun verifyDownEventObtained(coordinates: FloatArray, precision: FloatArray)
-                = verify(motionEvents).obtainDownEvent(coordinates[0], coordinates[1], precision)
+                = verify(motionEvents).obtainDownEvent(coordinates[0], coordinates[1], precision, null)
 
         fun verifyUpEventObtained(coordinates: FloatArray)
                 = verify(motionEvents).obtainUpEvent(eq(downEvent), any(), eq(coordinates[0]), eq(coordinates[1]))
