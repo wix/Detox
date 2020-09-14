@@ -1,4 +1,6 @@
 const _ = require('lodash');
+const path = require('path');
+const resolveFrom = require('resolve-from');
 const testCommandArgs = require('./testCommandArgs');
 
 function extractKnownKeys(yargsBuilder) {
@@ -49,7 +51,10 @@ function disengageBooleanArgs(argv, booleanKeys) {
 }
 
 function getJestBooleanArgs() {
-  return _(require('jest-cli/build/cli/args'))
+  const jestLocation = path.dirname(resolveFrom(process.cwd(), 'jest/package.json'));
+  const jestCliArgsPath = resolveFrom(jestLocation, 'jest-cli/build/cli/args');
+
+  return _(require(jestCliArgsPath))
     .thru(args => args.options)
     .pickBy(({ type }) => type === 'boolean')
     .thru(extractKnownKeys)
