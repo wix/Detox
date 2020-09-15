@@ -92,6 +92,13 @@ class ValueMatcher extends Matcher {
   }
 }
 
+class ToggleMatcher extends Matcher {
+  constructor(toggleState) {
+    super();
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForToggleable(toggleState));
+  }
+}
+
 // TODO
 // Please be aware, that this is just a dummy matcher
 class TraitsMatcher extends Matcher {
@@ -112,5 +119,6 @@ module.exports = {
   VisibleMatcher,
   ExistsMatcher,
   TextMatcher,
-  ValueMatcher
+  ValueMatcher,
+  ToggleMatcher,
 };
