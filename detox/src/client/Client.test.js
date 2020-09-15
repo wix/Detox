@@ -234,6 +234,18 @@ describe('Client', () => {
       expect(client.ws.send).toHaveBeenCalledTimes(2);
     });
 
+    // NOTE: this test prevents geometrical progression of currentStatus calls
+    // when the device gets really busy. Otherwise, we can get 1000 pending currentStatus calls.
+    it(`slowInvocationStatus() - should not schedule currentStatus thrice`, async () => {
+      argparse.getArgValue.mockReturnValue(2); // set debug-slow-invocations
+      await connect();
+
+      jest.spyOn(client, 'slowInvocationStatus');
+      await executeWithSlowInvocation(3);
+
+      expect(client.slowInvocationStatus).toHaveBeenCalledTimes(2);
+    });
+
     async function executeWithSlowInvocation(invocationTime) {
       client.ws.send
         .mockImplementationOnce(async function () {
