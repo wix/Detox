@@ -22,8 +22,10 @@ class DetoxAdapterImpl {
       throw new DetoxRuntimeError(this._describeInitError());
     }
 
+    const currentTest = this._currentTest;
+
     await this._flush();
-    await this.detox.beforeEach(this._currentTest);
+    await this.detox.beforeEach(currentTest);
   }
 
   async afterAll() {
