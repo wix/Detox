@@ -46,10 +46,6 @@
 		NSString* somePath = NSHomeDirectory();
 		NSString* userPath = [somePath substringToIndex:[somePath rangeOfString:@"/Library"].location];
 		desktopURL = [[NSURL fileURLWithPath:userPath] URLByAppendingPathComponent:@"Desktop"];
-		
-//		let somePath = NSHomeDirectory()
-//		let userPath = somePath[somePath.startIndex..<somePath.range(of: "/Library")!.lowerBound]
-//		try! LNViewHierarchyDumper.shared.dumpViewHierarchy(to: URL(fileURLWithPath: String(userPath)).appendingPathComponent("Desktop"))
 	});
 	
 	[UIImagePNGRepresentation(self) writeToURL:[desktopURL URLByAppendingPathComponent:@"view.png"] atomically:YES];
