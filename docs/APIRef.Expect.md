@@ -13,7 +13,7 @@ Use [actions](APIRef.ActionsOnElement.md) to simulate use interaction with eleme
 - [`.toHaveId()`](#tohaveidid)
 - [`.toHaveValue()`](#tohavevaluevalue)
 - [`.toHaveSliderPosition()`](#tohavesliderpositionnormalizedposition-tolerance--ios-only) **iOS only**
-- [`.toHaveToggleableValue()`](#tohavetoggleablevaluevalue)
+- [`.toHaveToggleValue()`](#tohavetogglevaluevalue)
 - [`.not`](#not)
 - [`.withTimeout()`](#withtimeouttimeout)
 
@@ -74,13 +74,13 @@ await expect(element(by.id('slider'))).toHaveSliderPosition(0.75);
 await expect(element(by.id('slider'))).toHaveSliderPosition(0.3113, 0.00001);
 ```
 
-### `toHaveToggleableValue(value)`
+### `toHaveToggleValue(value)`
 
-Expects a toggleable element (e.g. a Switch or a Check-Box) to be on/checked or off/unchecked. In react-native, this is the [equivalent switch component](https://reactnative.dev/docs/switch).
+Expects a toggle-able element (e.g. a Switch or a Check-Box) to be on/checked or off/unchecked. As a reference, in react-native, this is the [equivalent switch component](https://reactnative.dev/docs/switch).
 
 ```js
-await expect(element(by.id('switch'))).toHaveToggleableValue(true);
-await expect(element(by.id('checkbox'))).toHaveToggleableValue(false);
+await expect(element(by.id('switch'))).toHaveToggleValue(true);
+await expect(element(by.id('checkbox'))).toHaveToggleValue(false);
 ```
 
 ### `not`

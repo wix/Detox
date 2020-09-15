@@ -363,7 +363,7 @@ class ExpectElement extends Expect {
     return await this.not.toHaveValue(value);
   }
 
-  async toHaveToggleableValue(value) {
+  async toHaveToggleValue(value) {
     return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new ToggleMatcher(value).not : new ToggleMatcher(value)).execute()
   }
 }

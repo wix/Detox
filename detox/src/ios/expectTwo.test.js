@@ -300,8 +300,8 @@ describe('expectTwo', () => {
     expect(testCall).deepEquals(jsonOutput);
   });
 
-  it(`expect(element(by.id('switch'))).toHaveToggleableValue(value)`, () => {
-    const testCall = e.expect(e.element(e.by.id('switch'))).toHaveToggleableValue(true);
+  it(`expect(element(by.id('switch'))).toHaveToggleValue(value)`, () => {
+    const testCall = e.expect(e.element(e.by.id('switch'))).toHaveToggleValue(true);
     const jsonOutput = {
       'invocation': {
         'type': 'expectation',

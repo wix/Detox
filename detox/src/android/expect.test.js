@@ -38,8 +38,8 @@ describe('expect', () => {
     await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveValue('value');
     await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveValue('value');
     await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toHaveValue('value');
-    await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveToggleableValue(true);
-    await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toHaveToggleableValue(true);
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveToggleValue(true);
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toHaveToggleValue(true);
   });
 
   it(`element by label (for backwards compat)`, async () => {
@@ -51,8 +51,8 @@ describe('expect', () => {
     await e.expect(e.element(e.by.label('test'))).toHaveLabel('label');
     await e.expect(e.element(e.by.label('test'))).toHaveId('id');
     await e.expect(e.element(e.by.label('test'))).toHaveValue('value');
-    await e.expect(e.element(e.by.label('test'))).toHaveToggleableValue(false);
-    await e.expect(e.element(e.by.label('test'))).not.toHaveToggleableValue(false);
+    await e.expect(e.element(e.by.label('test'))).toHaveToggleValue(false);
+    await e.expect(e.element(e.by.label('test'))).not.toHaveToggleValue(false);
   });
 
   it(`element by id`, async () => {
