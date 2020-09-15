@@ -1,101 +1,140 @@
 package com.wix.detox.espresso.action
 
+import android.view.MotionEvent
 import androidx.test.espresso.UiController
 import androidx.test.espresso.action.Tapper
 import com.nhaarman.mockitokotlin2.*
+import com.wix.detox.espresso.common.TapEvents
+import org.assertj.core.api.Assertions.*
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
-import org.assertj.core.api.Assertions.assertThat
-import kotlin.test.*
-
-private fun dontCareCoordinates() = FloatArray(2) { 0f }
-private fun dontCarePrecision() = FloatArray(2) { 0f }
+import java.lang.RuntimeException
+import kotlin.test.assertFailsWith
 
 object DetoxMultiTapSpec: Spek({
     describe("Detox multi-tapper replacement for Espresso") {
 
-        val coordinates = dontCareCoordinates()
-        val precision = dontCarePrecision()
+        val COOLDOWN_TIME = 111L
+        val coordinates = FloatArray(2) { 1f }
+        val precision = FloatArray(2) { 2f }
         val interTapDelayMs = 667L
-        val cooldownTimeMs = 123L
 
-        lateinit var delegatedTapper: Tapper
         lateinit var uiController: UiController
+        lateinit var mock1stTapEventsSeq: List<MotionEvent>
+        lateinit var mock2ndTapEventsSeq: List<MotionEvent>
+        lateinit var tapEvents: TapEvents
 
         beforeEachTest {
             uiController = mock()
-            delegatedTapper = mock()
-        }
 
-        fun uut(times: Int) = DetoxMultiTap(times, interTapDelayMs, cooldownTimeMs) { delegatedTapper }
-        fun uutNoTapWait(times: Int) = DetoxMultiTap(times, null, cooldownTimeMs) { delegatedTapper }
+            val downEvent: MotionEvent = mock(name = "mockSeq1Event1")
+            val upEvent: MotionEvent = mock(name = "mockSeq1Event2") {
+                on { eventTime }.thenReturn(6000)
+            }
 
-        it("should trigger a delegated tapper (typically a single-tap tapper)") {
-            uut(1).sendTap(uiController, coordinates, precision, 0, 0)
-            verify(delegatedTapper, times(1)).sendTap(uiController, coordinates, precision, 0, 0)
-        }
-
-        it("should trigger the delegated tapper multiple times") {
-            uut(2).sendTap(uiController, coordinates, precision, 0, 0)
-            verify(delegatedTapper, times(2)).sendTap(uiController, coordinates, precision, 0, 0)
-        }
-
-        it("should return a successful result") {
-            val result = uut(2).sendTap(uiController, coordinates, precision, 0, 0)
-            assertThat(result).isEqualTo(Tapper.Status.SUCCESS)
-        }
-
-        it("should break early if delegated tapper fails") {
-            whenever(delegatedTapper.sendTap(eq(uiController), any(), any(), any(), any())).thenReturn(Tapper.Status.FAILURE)
-
-            val result = uut(2).sendTap(uiController, coordinates, precision, 0, 0)
-
-            verify(delegatedTapper, times(1)).sendTap(uiController, coordinates, precision, 0, 0)
-            assertThat(result).isEqualTo(Tapper.Status.FAILURE)
-        }
-
-        it("should wait in-between taps") {
-            uut(2).sendTap(uiController, coordinates, precision, 0, 0)
-
-            verify(uiController, times(1)).loopMainThreadForAtLeast(interTapDelayMs)
-            inOrder(delegatedTapper, uiController) {
-                verify(delegatedTapper).sendTap(any(), any(), any(), any(), any())
-                verify(uiController).loopMainThreadForAtLeast(any())
-                verify(delegatedTapper).sendTap(any(), any(), any(), any(), any())
+            mock1stTapEventsSeq = arrayListOf(downEvent, upEvent)
+            mock2ndTapEventsSeq = arrayListOf(mock(name = "mockSeq2Event1"), mock(name = "mockSeq2Event2"))
+            tapEvents = mock {
+                on { createEventsSeq(any(), any(), isNull()) }.doReturn(mock1stTapEventsSeq)
+                on { createEventsSeq(any(), any(), any()) }.doReturn(mock2ndTapEventsSeq)
             }
         }
 
-        it("should not wait in-between taps if time-out was set 'null'") {
-            uutNoTapWait(2).sendTap(uiController, coordinates, precision, 0, 0)
-            verify(uiController, never()).loopMainThreadForAtLeast(eq(interTapDelayMs))
+        fun verify1stTapEventsSeqGenerated() = verify(tapEvents).createEventsSeq(coordinates, precision, null)
+        fun verify2ndTapEventsSeqGenerated() = verify(tapEvents).createEventsSeq(eq(coordinates), eq(precision), any())
+        fun verify2ndTapEventsGenerateWithTimestamp(downTimestamp: Long) = verify(tapEvents).createEventsSeq(any(), any(), eq(downTimestamp))
+        fun verifyAllTapEventsInjected() = verify(uiController).injectMotionEventSequence(arrayListOf(mock1stTapEventsSeq, mock2ndTapEventsSeq).flatten())
+        fun verifyMainThreadSynced() = verify(uiController).loopMainThreadForAtLeast(eq(COOLDOWN_TIME))
+        fun verifyMainThreadNeverSynced() = verify(uiController, never()).loopMainThreadForAtLeast(any())
+
+        fun givenInjectionSuccess() = whenever(uiController.injectMotionEventSequence(any())).thenReturn(true)
+        fun givenInjectionFailure() = whenever(uiController.injectMotionEventSequence(any())).thenReturn(false)
+        fun givenInjectionError() = whenever(uiController.injectMotionEventSequence(any())).doThrow(RuntimeException("exceptionMock"))
+
+        fun uut(times: Int) = DetoxMultiTap(times, interTapDelayMs, COOLDOWN_TIME, tapEvents)
+        fun sendOneTap() = uut(1).sendTap(uiController, coordinates, precision, -1, -1)
+        fun sendTwoTaps() = uut(2).sendTap(uiController, coordinates, precision, -1, -1)
+
+        it("should generate a single-tap events sequence using tap-events helper") {
+            sendOneTap()
+            verify1stTapEventsSeqGenerated()
         }
 
-        it("should wait the cooldown period post all taps") {
-            uut(1).sendTap(uiController, coordinates, precision, 0, 0)
-            verify(uiController).loopMainThreadForAtLeast(eq(cooldownTimeMs))
+        it("should generate multiple sets of single-tap event sequences using tap-events helper") {
+            sendTwoTaps()
+            verify1stTapEventsSeqGenerated()
+            verify2ndTapEventsSeqGenerated()
+        }
 
+        it("should generate 2nd event sequence with proper down-event timestamp") {
+            val expectedDownTimestamp = mock1stTapEventsSeq.last().eventTime + interTapDelayMs
+            sendTwoTaps()
+            verify2ndTapEventsGenerateWithTimestamp(expectedDownTimestamp)
+        }
+
+        it("should inject the events sequence") {
+            sendTwoTaps()
+            verifyAllTapEventsInjected()
+        }
+
+        it("should recycle tap events") {
+            sendTwoTaps()
+            verify(mock1stTapEventsSeq.first()).recycle()
+            verify(mock2ndTapEventsSeq.last()).recycle()
+        }
+
+        it("should recycle events even if ui-controller throws") {
+            givenInjectionError()
+
+            assertFailsWith<RuntimeException> {
+                sendTwoTaps()
+            }
+            verify(mock2ndTapEventsSeq.last()).recycle()
+        }
+
+        it("should return failure if ui-controller fails") {
+            givenInjectionFailure()
+            val result = sendOneTap()
+            assertThat(result).isEqualTo(Tapper.Status.FAILURE)
+        }
+
+        it("should return success") {
+            givenInjectionSuccess()
+            val result = sendOneTap()
+            assertThat(result).isEqualTo(Tapper.Status.SUCCESS)
+        }
+
+        it("should manage without inputDevice and buttonState args") {
+            uut(2).sendTap(uiController, coordinates, precision)
+            verifyAllTapEventsInjected()
+        }
+
+        it("should post idle-wait the cool-down period following a successful tap injection") {
+            givenInjectionSuccess()
+            sendOneTap()
+            verifyMainThreadSynced()
+        }
+
+        it("should not post idle-wait if tap injection fails") {
+            givenInjectionFailure()
+            sendOneTap()
+            verifyMainThreadNeverSynced()
         }
 
         it("should throw if no UI-controller provided") {
             assertFailsWith(KotlinNullPointerException::class) {
-                uut(2).sendTap(null, coordinates, precision, 0, 0)
+                uut(1).sendTap(null, coordinates, precision, -1, -1)
             }
         }
 
         it("should throw if no coordinates / precision are provided") {
             assertFailsWith(KotlinNullPointerException::class) {
-                uut(2).sendTap(uiController, null, precision, 0, 0)
+                uut(1).sendTap(uiController, null, precision, -1, -1)
             }
 
             assertFailsWith(KotlinNullPointerException::class) {
-                uut(2).sendTap(uiController, coordinates, null, 0, 0)
+                uut(1).sendTap(uiController, coordinates, null, -1, -1)
             }
-        }
-
-        it("should support the tapper's deprecated sendTap() call") {
-            val result = uut(1).sendTap(uiController, coordinates, precision)
-            verify(delegatedTapper, times(1)).sendTap(uiController, coordinates, precision, 0, 0)
-            assertThat(result).isEqualTo(Tapper.Status.SUCCESS)
         }
     }
 })
