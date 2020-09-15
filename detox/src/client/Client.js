@@ -131,7 +131,7 @@ class Client {
   }
 
   async sendAction(action) {
-    if (this.slowInvocationTimeout) {
+    if (this.slowInvocationTimeout && action.type !== 'currentStatus') {
       this.slowInvocationStatusHandler = this.slowInvocationStatus();
     }
 
