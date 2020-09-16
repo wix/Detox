@@ -60,6 +60,10 @@ class Expect {
     return this.expect('toHaveSliderPosition', position, tolerance);
   }
 
+  toHaveToggleValue(value) {
+    return this.toHaveValue(`${Number(value)}`);
+  }
+
   get not() {
     this.modifiers.push('not');
     return this;

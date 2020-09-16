@@ -38,6 +38,8 @@ describe('expect', () => {
     await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveValue('value');
     await e.expect(e.element(e.by.accessibilityLabel('test'))).toNotHaveValue('value');
     await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toHaveValue('value');
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).toHaveToggleValue(true);
+    await e.expect(e.element(e.by.accessibilityLabel('test'))).not.toHaveToggleValue(true);
   });
 
   it(`element by label (for backwards compat)`, async () => {
@@ -49,6 +51,8 @@ describe('expect', () => {
     await e.expect(e.element(e.by.label('test'))).toHaveLabel('label');
     await e.expect(e.element(e.by.label('test'))).toHaveId('id');
     await e.expect(e.element(e.by.label('test'))).toHaveValue('value');
+    await e.expect(e.element(e.by.label('test'))).toHaveToggleValue(false);
+    await e.expect(e.element(e.by.label('test'))).not.toHaveToggleValue(false);
   });
 
   it(`element by id`, async () => {
@@ -119,10 +123,9 @@ describe('expect', () => {
     await e.waitFor(e.element(e.by.id('id'))).toNotHaveValue('value');
     await e.waitFor(e.element(e.by.id('id'))).not.toHaveValue('value');
 
-
-
     await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50, 'down');
     await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50);
+
   });
 
   it(`waitFor (element) with wrong parameters should throw`, async () => {

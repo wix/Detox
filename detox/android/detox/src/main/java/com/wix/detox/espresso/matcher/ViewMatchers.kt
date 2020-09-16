@@ -23,7 +23,7 @@ fun isOfClassName(className: String): Matcher<View> {
         // empty
     }
 
-    return object : BaseMatcher<View>() {
+    return object: BaseMatcher<View>() {
         override fun matches(item: Any) = false
         override fun describeTo(description: Description) {
             description.appendText("Class $className not found on classpath. Are you using full class name?")

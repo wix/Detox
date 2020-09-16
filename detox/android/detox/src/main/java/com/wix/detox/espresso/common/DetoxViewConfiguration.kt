@@ -9,12 +9,12 @@ private const val LOG_TAG = "Detox-ViewConfig"
 
 object DetoxViewConfigurations {
 
-    fun getPostTapCooldownTime() = ViewConfiguration.getDoubleTapTimeout().toLong()
+    fun getPostTapCoolDownTime() = ViewConfiguration.getDoubleTapTimeout().toLong()
 
     /**
      * Taken from [androidx.test.espresso.action.Tap]
      */
-    fun getDoubleTapMinTime(): Long? {
+    fun getDoubleTapMinTime(): Long {
         if (Build.VERSION.SDK_INT > 18) {
             try {
                 val getDoubleTapMinTimeMethod = ViewConfiguration::class.java.getDeclaredMethod("getDoubleTapMinTime")
@@ -27,6 +27,6 @@ object DetoxViewConfigurations {
                 Log.w(LOG_TAG, "Unable to query multi-tap min time!", iae)
             }
         }
-        return null
+        return 40 // Based on hard-coded value in raw implementation of ViewConfiguration
     }
 }

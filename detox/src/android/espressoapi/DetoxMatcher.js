@@ -50,6 +50,21 @@ class DetoxMatcher {
     };
   }
 
+  static matcherForToggleable(value) {
+    if (typeof value !== "boolean") throw new Error("value should be a boolean, but got " + (value + (" (" + (typeof value + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxMatcher"
+      },
+      method: "matcherForToggleable",
+      args: [{
+        type: "boolean",
+        value: value
+      }]
+    };
+  }
+
   static matcherForAnd(m1, m2) {
     return {
       target: {
