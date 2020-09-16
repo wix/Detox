@@ -445,7 +445,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		else
 		{
 			rv = NO;
-			NSString* str = isHit ? @"hittable" : @"visible";
+//			NSString* str = isHit ? @"hittable" : @"visible";
 			
 			if(visibleView == nil)
 			{
