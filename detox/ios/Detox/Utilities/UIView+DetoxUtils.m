@@ -509,7 +509,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		CGColorSpaceRelease(colorSpace);
 	};
 
-	CGContextRef context = CGBitmapContextCreate(NULL, testedRegion.size.width, testedRegion.size.height, 8, testedRegion.size.width * 4, colorSpace, (CGBitmapInfo)kCGImageAlphaPremultipliedLast);
+	CGContextRef context = CGBitmapContextCreate(NULL, ceil(testedRegion.size.width), ceil(testedRegion.size.height), 8, ceil(testedRegion.size.width) * 4, colorSpace, (CGBitmapInfo)kCGImageAlphaPremultipliedLast);
 	if(context == NULL)
 	{
 		return nil;
