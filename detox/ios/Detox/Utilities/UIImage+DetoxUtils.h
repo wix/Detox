@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIImage (DetoxUtils)
 
-- (BOOL)dtx_isTransparentEnoughWithThreshold:(CGFloat)threshold;
+- (NSUInteger)dtx_numberOfVisiblePixelsWithThreshold:(CGFloat)threshold totalPixels:(NSUInteger*)totalPixels;
 
 #if DEBUG
 - (void)dtx_saveToDesktop;

@@ -40,17 +40,10 @@ static double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
 @property (nonatomic, readonly) CGPoint dtx_accessibilityActivationPoint;
 @property (nonatomic, readonly) CGPoint dtx_accessibilityActivationPointInViewCoordinateSpace;
 
-- (UIImage*)dtx_imageAroundPoint:(CGPoint)point maxSize:(CGSize)maxSize;
-
 @property (nonatomic, readonly, copy) NSDictionary<NSString*, id>* dtx_attributes;
 @property (nonatomic, readonly, copy) NSDictionary<NSString*, id>* dtx_viewDebugAttributes;
 
 @property (nonatomic, readonly, weak) UIViewController* dtx_containingViewController;
-
-#if DEBUG
-- (void)dtx_saveSnapshotToDesktop;
-- (void)dtx_saveSnapshotToDesktopWithPoint:(CGPoint)point;
-#endif
 
 @end
 

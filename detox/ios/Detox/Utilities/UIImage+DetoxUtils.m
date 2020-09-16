@@ -10,7 +10,7 @@
 
 @implementation UIImage (DetoxUtils)
 
-- (BOOL)dtx_isTransparentEnoughWithThreshold:(CGFloat)threshold
+- (NSUInteger)dtx_numberOfVisiblePixelsWithThreshold:(CGFloat)threshold totalPixels:(NSUInteger*)totalPixels
 {
 	CGImageRef cgImage = self.CGImage;
 	
@@ -20,21 +20,27 @@
 	};
 	const UInt8* data = CFDataGetBytePtr(pixelData);
 	
+	NSUInteger visible = 0;
+	NSUInteger total = 0;
+	
 	for (NSUInteger y = 0; y < self.size.height; y++) {
-		double alphaSum = 0.0;
 		for (NSUInteger x = 0; x < self.size.width; x++) {
-			uint8_t alpha = data[((NSUInteger)self.size.width * y + x) * 4 + 3];
-			alphaSum += (alpha / 255.0);
-		}
-		CGFloat avg = alphaSum / self.size.width;
-		
-		if(avg > threshold)
-		{
-			return NO;
+			total++;
+			uint8_t alpha255 = data[((NSUInteger)self.size.width * y + x) * 4 + 3];
+			CGFloat alpha = alpha255 / 255.0;
+			if(alpha < threshold)
+			{
+				visible++;
+			}
 		}
 	}
 	
-	return YES;
+	if(totalPixels != NULL)
+	{
+		*totalPixels = total;
+	}
+	
+	return visible;
 }
 
 #if DEBUG
