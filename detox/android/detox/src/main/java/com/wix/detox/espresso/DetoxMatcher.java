@@ -8,9 +8,11 @@ import androidx.test.espresso.matcher.ViewMatchers.Visibility;
 
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
+import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayingAtLeast;
+import static androidx.test.espresso.matcher.ViewMatchers.isNotChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withTagValue;
@@ -45,6 +47,10 @@ public class DetoxMatcher {
 
     public static Matcher<View> matcherForTestId(String testId) {
         return allOf(withTagValue(is((Object) testId)), withEffectiveVisibility(Visibility.VISIBLE));
+    }
+
+    public static Matcher<View> matcherForToggleable(boolean value) {
+        return (value ? isChecked() : isNotChecked());
     }
 
     public static Matcher<View> matcherForAnd(Matcher<View> m1, Matcher<View> m2) {
