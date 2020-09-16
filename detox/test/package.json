@@ -68,7 +68,7 @@
       "plugins": {
         "log": "all",
         "screenshot": {
-          "shouldTakeAutomaticSnapshots": true,
+          "shouldTakeAutomaticSnapshots": false,
           "takeWhen": {
             "testDone": true
           }
