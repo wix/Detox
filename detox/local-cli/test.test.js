@@ -344,8 +344,8 @@ describe('CLI', () => {
       cp.execSync.mockImplementation(() => { throw new Error; });
 
       await run(`-R 1 tests -- --debug`).catch(_.noop);
-      expect(cliCall(0).command).toMatch(/ --debug tests$/);
-      expect(cliCall(1).command).toMatch(/ --debug tests\/failing.test.js$/);
+      expect(cliCall(0).command).toMatch(/ --debug .* tests$/);
+      expect(cliCall(1).command).toMatch(/ --debug .* tests\/failing.test.js$/);
     });
 
     test.each([['-r'], ['--reuse']])('%s <value> should be passed as environment variable', async (__reuse) => {
@@ -574,8 +574,15 @@ describe('CLI', () => {
 
     test('-- <...explicitPassthroughArgs> should be forwarded to the test runner CLI as-is', async () => {
       await run('--device-launch-args detoxArgs e2eFolder -- a -a --a --device-launch-args runnerArgs');
-      expect(cliCall().command).toMatch(/a -a --a --device-launch-args runnerArgs e2eFolder$/);
+      expect(cliCall().command).toMatch(/a -a --a --device-launch-args runnerArgs .* e2eFolder$/);
       expect(cliCall().env).toEqual(expect.objectContaining({ deviceLaunchArgs: 'detoxArgs' }));
+    });
+
+    test('-- <...explicitPassthroughArgs> should omit double-dash "--" itself, when forwarding args', async () => {
+      await run('./detox -- --forceExit');
+
+      expect(cliCall().command).toMatch(/ --forceExit .* \.\/detox$/);
+      expect(cliCall().command).not.toMatch(/ -- --forceExit .* \.\/detox$/);
     });
 
     test('--inspect-brk should prepend "node --inspect-brk" to the command', async () => {
