@@ -30,7 +30,7 @@ function disengageBooleanArgs(argv, booleanKeys) {
 
   for (const entry of Object.entries(argv)) {
     const [key, value] = entry;
-    if (key === '_') {
+    if (key === '_' || key === '--') {
       continue;
     }
 
@@ -46,7 +46,7 @@ function disengageBooleanArgs(argv, booleanKeys) {
   return {
     specs: passthrough.concat(argv._),
     passthrough: {
-      _: [],
+      _: argv['--'] || [],
       ...result,
     },
   };
