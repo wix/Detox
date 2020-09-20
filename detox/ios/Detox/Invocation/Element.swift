@@ -171,6 +171,12 @@ class Element : NSObject {
 		view.dtx_replaceText(text)
 	}
 	
+	func accessibilityAction(_ actionName: String) {
+		let action = view.accessibilityCustomActions!.first(where: { $0.name == actionName })
+
+		action?.target?.performSelector(onMainThread: action!.selector, with: action, waitUntilDone: true)
+	}
+	
 	func adjust(toDate date: Date) {
 		if let view = view as? UIDatePicker {
 			view.dtx_adjust(to: date)

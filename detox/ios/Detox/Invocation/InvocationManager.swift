@@ -29,7 +29,7 @@ final class InvocationManager {
 		
 		do {
 			let kind = dictionaryRepresentation[Keys.type] as! String
-			
+
 			switch kind {
 			case Types.action:
 				let action = try Action.with(dictionaryRepresentation: dictionaryRepresentation)

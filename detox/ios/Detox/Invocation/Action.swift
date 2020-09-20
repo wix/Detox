@@ -32,6 +32,7 @@ class Action : CustomStringConvertible {
 		static let tap = "tap"
 		static let longPress = "longPress"
 		static let multiTap = "multiTap"
+		static let accessibilityAction = "accessibilityAction"
 		
 		static let tapBackspaceKey = "tapBackspaceKey"
 		static let tapReturnKey = "tapReturnKey"
@@ -68,6 +69,7 @@ class Action : CustomStringConvertible {
 		Kind.tap: TapAction.self,
 		Kind.longPress: LongPressAction.self,
 		Kind.multiTap: MultiTapAction.self,
+		Kind.accessibilityAction: AccessibilityActionAction.self,
 		
 		Kind.tapBackspaceKey: TypeTextAction.self,
 		Kind.tapReturnKey: TypeTextAction.self,
@@ -178,6 +180,16 @@ class MultiTapAction : Action {
 		let taps = params!.first as! Int
 		
 		element.tap(numberOfTaps: taps)
+		
+		return nil
+	}
+}
+
+class AccessibilityActionAction : Action {
+	override func perform(on element: Element) -> [String: Any]? {
+		let actionName = params!.first as! String
+
+		element.accessibilityAction(actionName)
 		
 		return nil
 	}

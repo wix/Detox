@@ -154,6 +154,11 @@ class Element {
     return this.withAction('clearText');
   }
 
+  accessibilityAction(actionName) {
+    if (typeof actionName !== 'string') throw new Error('actionName should be a string, but got ' + (actionName + (' (' + (typeof actionName + ')'))));
+    return this.withAction('accessibilityAction', actionName);
+  }
+
   scroll(pixels, direction = 'down', startPositionX = NaN, startPositionY = NaN) {
     if (!['left', 'right', 'up', 'down'].some(option => option === direction)) throw new Error('direction should be one of [left, right, up, down], but got ' + direction);
     if (typeof pixels !== 'number') throw new Error('amount of pixels should be a number, but got ' + (pixels + (' (' + (typeof pixels + ')'))));
@@ -527,6 +532,11 @@ class WaitFor {
       ...expectation,
       timeout
     });
+  }
+
+  accessibilityAction(actionName = 'activate') {
+    this.action = this.actionableElement.accessibilityAction(actionName);
+    return this.waitForWithAction();
   }
 }
 
