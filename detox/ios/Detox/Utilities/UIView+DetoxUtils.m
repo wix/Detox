@@ -248,11 +248,9 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		return NO;
 	}
 	
-	UIScreen* screen = windowToUse.screen;
-	CGPoint screenActivationPoint = [self convertPoint:point toCoordinateSpace:screen.coordinateSpace];
-	CGRect windowTestedRegion = [windowToUse convertRect:self.bounds fromView:self];
+	CGRect testedRegionInWindowCoords = [windowToUse convertRect:self.bounds fromView:self];
 	
-	if([self _dtx_isTestedRegionObscured:windowTestedRegion inWindowBounds:windowToUse.bounds])
+	if([self _dtx_isTestedRegionObscured:testedRegionInWindowCoords inWindowBounds:windowToUse.bounds])
 	{
 		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"View “%@” does not pass visibility threshold (%@) within window bounds", self.dtx_shortDescription, DetoxPolicy.activePolicy.visibilityVisiblePixelRatioThresholdDescription])}];
 		_DTXPopulateError(err);
