@@ -21,7 +21,7 @@
 	}
 }
 
-void _dtx_backdrop_renderInContext(CALayer* self, SEL _sel, CGContextRef ctx)
+static void _dtx_backdrop_renderInContext(CALayer* self, SEL _sel, CGContextRef ctx)
 {
 	CGContextSaveGState(ctx);
 	CGContextBeginTransparencyLayer(ctx, nil);
@@ -56,7 +56,7 @@ void _dtx_backdrop_renderInContext(CALayer* self, SEL _sel, CGContextRef ctx)
 
 - (void)dtx_drawViewHierarchyUpToSubview:(UIView*)subview inRect:(CGRect)rect afterScreenUpdates:(BOOL)afterUpdates
 {
-	return [self _dtx_drawViewHierarchyUpToSubview:subview rootView:self inRect:rect afterScreenUpdates:afterUpdates suspectDescendant:YES];
+	return [self _dtx_drawViewHierarchyUpToSubview:subview rootView:self inRect:rect afterScreenUpdates:afterUpdates];
 }
 
 CALayer* _DTXLayerForView(UIView* view, BOOL afterUpdates)
@@ -64,19 +64,12 @@ CALayer* _DTXLayerForView(UIView* view, BOOL afterUpdates)
 	return afterUpdates ? view.layer : view.layer.presentationLayer;
 }
 
-- (void)_dtx_drawViewHierarchyUpToSubview:(UIView*)subview rootView:(UIView*)rootView inRect:(CGRect)rect afterScreenUpdates:(BOOL)afterUpdates suspectDescendant:(BOOL)suspectDescendant
+- (void)_dtx_drawViewHierarchyUpToSubview:(UIView*)subview rootView:(UIView*)rootView inRect:(CGRect)rect afterScreenUpdates:(BOOL)afterUpdates
 {
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
 	
 	if(subview == self)
 	{
-		return;
-	}
-	
-	if(suspectDescendant == NO)
-	{
-		[_DTXLayerForView(self, afterUpdates) renderInContext:ctx];
-		
 		return;
 	}
 	
@@ -99,7 +92,7 @@ CALayer* _DTXLayerForView(UIView* view, BOOL afterUpdates)
 		}
 		else
 		{
-			[obj _dtx_drawViewHierarchyUpToSubview:subview rootView:rootView inRect:obj.bounds afterScreenUpdates:afterUpdates suspectDescendant:YES];
+			[obj _dtx_drawViewHierarchyUpToSubview:subview rootView:rootView inRect:obj.bounds afterScreenUpdates:afterUpdates];
 			
 			//Everything else is now under the view we are searching for.
 			return;
