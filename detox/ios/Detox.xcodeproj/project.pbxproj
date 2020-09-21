@@ -113,6 +113,8 @@
 		39CE25AC22197F0900D78AA1 /* DetoxInstrumentsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 39CE25AA22197F0900D78AA1 /* DetoxInstrumentsManager.m */; };
 		39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */; };
 		39DA0E2822D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DA0E2722D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m */; };
+		39E23FF82513AF430035A162 /* UIView+Drawing.h in Headers */ = {isa = PBXBuildFile; fileRef = 39E23FF62513AF430035A162 /* UIView+Drawing.h */; };
+		39E23FF92513AF430035A162 /* UIView+Drawing.m in Sources */ = {isa = PBXBuildFile; fileRef = 39E23FF72513AF430035A162 /* UIView+Drawing.m */; };
 		39E7AB3924F40CDE0011CE29 /* fishhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 39E7AB3724F40CDE0011CE29 /* fishhook.c */; };
 		39E7AB3A24F40CDE0011CE29 /* fishhook.h in Headers */ = {isa = PBXBuildFile; fileRef = 39E7AB3824F40CDE0011CE29 /* fishhook.h */; };
 		39E7AB3E24F40DA10011CE29 /* DTXLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 39E7AB3B24F40DA00011CE29 /* DTXLogging.h */; };
@@ -358,6 +360,8 @@
 		39DA0E2622D72AEF001E63A0 /* UIApplication+MockedSharedApplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIApplication+MockedSharedApplication.h"; sourceTree = "<group>"; };
 		39DA0E2722D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIApplication+MockedSharedApplication.m"; sourceTree = "<group>"; };
 		39DA0E3522D72C91001E63A0 /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
+		39E23FF62513AF430035A162 /* UIView+Drawing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+Drawing.h"; sourceTree = "<group>"; };
+		39E23FF72513AF430035A162 /* UIView+Drawing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+Drawing.m"; sourceTree = "<group>"; };
 		39E7AB3724F40CDE0011CE29 /* fishhook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fishhook.c; path = fishhook/fishhook.c; sourceTree = SOURCE_ROOT; };
 		39E7AB3824F40CDE0011CE29 /* fishhook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fishhook.h; path = fishhook/fishhook.h; sourceTree = SOURCE_ROOT; };
 		39E7AB3B24F40DA00011CE29 /* DTXLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTXLogging.h; path = DTXLoggingInfra/DTXLogging.h; sourceTree = SOURCE_ROOT; };
@@ -654,6 +658,8 @@
 				39FA2BDD250E74210047F419 /* UIImage+DetoxUtils.m */,
 				3990BA132457248600B608C8 /* UIView+DetoxUtils.h */,
 				3990BA142457248600B608C8 /* UIView+DetoxUtils.m */,
+				39E23FF62513AF430035A162 /* UIView+Drawing.h */,
+				39E23FF72513AF430035A162 /* UIView+Drawing.m */,
 				3980D1022448B52B004812DD /* UIView+DontCrash.h */,
 				3980D1002448B52B004812DD /* UIView+DontCrash.m */,
 				390DED81248906FC00E27BE8 /* UIWindow+DetoxUtils.h */,
@@ -748,6 +754,7 @@
 				39E7AB3A24F40CDE0011CE29 /* fishhook.h in Headers */,
 				3902CAD7211342D000C49D04 /* WXRNLoadIdlingResource.h in Headers */,
 				3976BF15246C139D00AA20C7 /* DTXSwizzlingHelper.h in Headers */,
+				39E23FF82513AF430035A162 /* UIView+Drawing.h in Headers */,
 				39FA2BDE250E74210047F419 /* UIImage+DetoxUtils.h in Headers */,
 				394767D01DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.h in Headers */,
 				3980D11D2448B52C004812DD /* DTXAppleInternals.h in Headers */,
@@ -1012,6 +1019,7 @@
 				46A6A63D1EF697BB00E3AA79 /* GREYConfiguration+Detox.m in Sources */,
 				392487AE25114B1E0024CD61 /* DetoxPolicy.m in Sources */,
 				39CE25AC22197F0900D78AA1 /* DetoxInstrumentsManager.m in Sources */,
+				39E23FF92513AF430035A162 /* UIView+Drawing.m in Sources */,
 				3980D1162448B52C004812DD /* DTXTouchInfo.m in Sources */,
 				3990BA29245882EF00B608C8 /* DTXAssertionHandler.m in Sources */,
 				3980D1102448B52C004812DD /* DTXSyntheticEvents.m in Sources */,
