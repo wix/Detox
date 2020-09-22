@@ -284,39 +284,50 @@ static BOOL _assertFirstResponderSupportsTextInput(UIView* firstResponder)
 	return NO;
 }
 
-//__attribute__((constructor))
-//static void _DTXFixupKeyboard(void)
-//{
-//	static char const *const controllerPrefBundlePath = "/System/Library/PrivateFrameworks/TextInput.framework/TextInput";
-//	__unused void *handle = dlopen(controllerPrefBundlePath, RTLD_LAZY);
-//	
-//	TIPreferencesController* controller = TIPreferencesController.sharedPreferencesController;
-//	if([controller respondsToSelector:@selector(setAutocorrectionEnabled:)] == YES)
-//	{
-//		controller.autocorrectionEnabled = NO;
-//	}
-//	else
-//	{
-//		[controller setValue:@NO forPreferenceKey:@"KeyboardAutocorrection"];
-//	}
-//	
-//	if([controller respondsToSelector:@selector(setPredictionEnabled:)])
-//	{
-//		controller.predictionEnabled = NO;
-//	}
-//	else
-//	{
-//		[controller setValue:@NO forPreferenceKey:@"KeyboardPrediction"];
-//	}
-//	
-//	[controller setValue:@YES forPreferenceKey:@"DidShowGestureKeyboardIntroduction"];
-//	if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
-//	{
-//		[controller setValue:@YES forPreferenceKey:@"DidShowContinuousPathIntroduction"];
-//	}
-//
-//	[controller synchronizePreferences];
-//}
+static void _ensureSelectionAtRange(id<UITextInput> textInput, UITextRange* textRange)
+{
+	if(textRange == nil)
+	{
+		//If none provided, move selection to end of document.
+		textRange = [textInput textRangeFromPosition:textInput.endOfDocument toPosition:textInput.endOfDocument];
+	}
+	
+	textInput.selectedTextRange = textRange;
+}
+
+__attribute__((constructor))
+static void _DTXFixupKeyboard(void)
+{
+	static char const *const controllerPrefBundlePath = "/System/Library/PrivateFrameworks/TextInput.framework/TextInput";
+	__unused void *handle = dlopen(controllerPrefBundlePath, RTLD_LAZY);
+	
+	TIPreferencesController* controller = TIPreferencesController.sharedPreferencesController;
+	if([controller respondsToSelector:@selector(setAutocorrectionEnabled:)] == YES)
+	{
+		controller.autocorrectionEnabled = NO;
+	}
+	else
+	{
+		[controller setValue:@NO forPreferenceKey:@"KeyboardAutocorrection"];
+	}
+	
+	if([controller respondsToSelector:@selector(setPredictionEnabled:)])
+	{
+		controller.predictionEnabled = NO;
+	}
+	else
+	{
+		[controller setValue:@NO forPreferenceKey:@"KeyboardPrediction"];
+	}
+	
+	[controller setValue:@YES forPreferenceKey:@"DidShowGestureKeyboardIntroduction"];
+	if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+	{
+		[controller setValue:@YES forPreferenceKey:@"DidShowContinuousPathIntroduction"];
+	}
+
+	[controller synchronizePreferences];
+}
 
 static void _DTXTypeText(NSString* text)
 {
@@ -352,36 +363,36 @@ static void _DTXTypeText(NSString* text)
 //	[self dtx_assertHittable];
 	
 	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(self);
-	
 	_assertFirstResponderSupportsTextInput(firstResponder);
 	
 	UITextPosition* beginningOfDocument = firstResponder.beginningOfDocument;
 	UITextPosition* endOfDocument = firstResponder.endOfDocument;
 		
 	UITextRange* range = [firstResponder textRangeFromPosition:beginningOfDocument toPosition:endOfDocument];
-	NSString* textStr = [firstResponder textInRange:range];
-	
-	NSMutableString* deleteStr = [NSMutableString new];
-	for(NSUInteger i = 0; i < textStr.length; i++)
-	{
-		[deleteStr appendString:@"\b"];
-	}
-	
-	if (deleteStr.length == 0)
+	if(range.isEmpty == YES)
 	{
 		return;
 	}
 	
-	_DTXTypeText(deleteStr);
+	//Select entire text range
+	firstResponder.selectedTextRange = range;
+	[NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.3]];
+	//Delete it
+	_DTXTypeText(@"\b");
 }
 
 - (void)dtx_typeText:(NSString*)text
 {
+	[self dtx_typeText:text atTextRange:nil];
+}
+
+- (void)dtx_typeText:(NSString*)text atTextRange:(UITextRange*)textRange
+{
 //	[self dtx_assertHittable];
 	
 	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(self);
-	
 	_assertFirstResponderSupportsTextInput(firstResponder);
+	_ensureSelectionAtRange(firstResponder, textRange);
 	
 	_DTXTypeText(text);
 }
@@ -391,7 +402,6 @@ static void _DTXTypeText(NSString* text)
 //	[self dtx_assertHittable];
 	
 	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(self);
-	
 	_assertFirstResponderSupportsTextInput(firstResponder);
 	
 	BOOL isControl = [self isKindOfClass:UIControl.class];

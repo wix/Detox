@@ -106,15 +106,12 @@ describe('Actions', () => {
     await expect(element(by.text('Return Working!!!'))).toBeVisible();
   });
 
-  it.only('should clear text in an element', async () => {
-    await element(by.id('UniqueId005')).clearText();
-    await expect(element(by.text('Clear Working!!!'))).toBeVisible();
-  });
-
-  it(':ios: should clear text in an element after replacing with a complex string', async () => {
-    //Add a complex string on iOS to ensure clear works as expected.
-    const typedText = 'Clear this אֱבּג';
-    await element(by.id('UniqueId005')).replaceText(typedText);
+  it('should clear text in an element', async () => {
+    if(device.getPlatform() === 'ios') {
+      //Add a complex string on iOS to ensure clear works as expected.
+      const typedText = 'Clear this אֱבּג';
+      await element(by.id('UniqueId005')).replaceText(typedText);
+    }
     await element(by.id('UniqueId005')).clearText();
     await expect(element(by.text('Clear Working!!!'))).toBeVisible();
   });

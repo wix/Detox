@@ -25,6 +25,7 @@ BOOL DTXTypeText(NSString* text);
 
 - (void)dtx_clearText;
 - (void)dtx_typeText:(NSString*)text;
+- (void)dtx_typeText:(NSString*)text atTextRange:(UITextRange*)textRange;
 - (void)dtx_replaceText:(NSString*)text;
 
 @end
