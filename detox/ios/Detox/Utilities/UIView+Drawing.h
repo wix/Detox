@@ -12,8 +12,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIView (Drawing)
 
-@property(nonatomic, readonly) CGRect dtx_recursiveBounds;
-
 - (void)dtx_drawViewHierarchyUpToSubview:(UIView*)subview inRect:(CGRect)rect afterScreenUpdates:(BOOL)afterUpdates;
 
 @end

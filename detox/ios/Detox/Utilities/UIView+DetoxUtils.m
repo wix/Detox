@@ -139,9 +139,57 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return [self.window.screen.coordinateSpace convertPoint:self.dtx_accessibilityActivationPoint toCoordinateSpace:self.coordinateSpace];
 }
 
+- (CGRect)dtx_contentBounds
+{
+	CGRect contentBounds = self.bounds;
+	
+	if(self.clipsToBounds == YES)
+	{
+		return contentBounds;
+	}
+	
+	for (UIView* subview in self.subviews) {
+		contentBounds = CGRectUnion(contentBounds, subview.dtx_contentBounds);
+	}
+	
+	return contentBounds;
+}
+
+- (CGRect)dtx_visibleBounds
+{
+	CGRect visibleBounds = self.bounds;
+	
+	UIView* superview = self.superview;
+	while(superview != nil)
+	{
+		if([superview clipsToBounds] == YES)
+		{
+			CGRect boundsInSelfCoords = [self convertRect:superview.bounds fromView:superview];
+			visibleBounds = CGRectIntersection(boundsInSelfCoords, visibleBounds);
+		}
+		
+		if(CGRectIsNull(visibleBounds))
+		{
+			break;
+		}
+		
+		superview = superview.superview;
+	}
+	
+	return visibleBounds;
+}
+
 - (BOOL)dtx_isVisible
 {
-	return [self dtx_isVisibleAtPoint:self.dtx_accessibilityActivationPointInViewCoordinateSpace error:NULL];
+	NSError* error;
+	BOOL rv = [self dtx_isVisibleAtPoint:self.dtx_accessibilityActivationPointInViewCoordinateSpace error:&error];
+#if DEBUG
+	if(rv == NO)
+	{
+		NSLog(@"%@", error.localizedDescription);
+	}
+#endif
+	return rv;
 }
 
 - (BOOL)dtx_isVisibleAtPoint:(CGPoint)point
@@ -206,15 +254,20 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return (visible / (double)total) < DetoxPolicy.activePolicy.visibilityVisiblePixelRatioThreshold;
 }
 
+- (BOOL)_dtx_isRegionObscured:(CGRect)intersection fromTestedRegion:(CGRect)testedRegion
+{
+	return (intersection.size.width * intersection.size.height) / (testedRegion.size.width * testedRegion.size.height) < DetoxPolicy.activePolicy.visibilityVisiblePixelRatioThreshold;
+}
+
 - (BOOL)_dtx_isTestedRegionObscured:(CGRect)testedRegion inWindowBounds:(CGRect)windowBounds
 {
 	CGRect intersection = CGRectIntersection(windowBounds, testedRegion);
-	return (intersection.size.width * intersection.size.height) / (testedRegion.size.width * testedRegion.size.height) < DetoxPolicy.activePolicy.visibilityVisiblePixelRatioThreshold;
+	return [self _dtx_isRegionObscured:intersection fromTestedRegion:testedRegion];
 }
 
 - (BOOL)dtx_isVisibleAtPoint:(CGPoint)point error:(NSError* __strong *)error
 {
-	NSString* prefix = [NSString stringWithFormat:@"View “%@” is not visible;", self.dtx_shortDescription];
+	NSString* prefix = [NSString stringWithFormat:@"View “%@” is not visible:", self.dtx_shortDescription];
 	
 	if(UIApplication.sharedApplication._isSpringBoardShowingAnAlert)
 	{
@@ -250,9 +303,19 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	
 	CGRect testedRegionInWindowCoords = [windowToUse convertRect:self.bounds fromView:self];
 	
+	CGRect visibleBounds = self.dtx_visibleBounds;
+	
+	if(CGRectIsNull(visibleBounds) || [self _dtx_isRegionObscured:visibleBounds fromTestedRegion:self.dtx_visibleBounds])
+	{
+		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"view is clipped by one or more of its superviews' bounds and does not pass visibility threshold (%@)", DetoxPolicy.activePolicy.visibilityVisiblePixelRatioThresholdDescription])}];
+		_DTXPopulateError(err);
+		
+		return NO;
+	}
+	
 	if([self _dtx_isTestedRegionObscured:testedRegionInWindowCoords inWindowBounds:windowToUse.bounds])
 	{
-		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"View “%@” does not pass visibility threshold (%@) within window bounds", self.dtx_shortDescription, DetoxPolicy.activePolicy.visibilityVisiblePixelRatioThresholdDescription])}];
+		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"view is obscured by its window bounds and does not pass visibility threshold (%@)", DetoxPolicy.activePolicy.visibilityVisiblePixelRatioThresholdDescription])}];
 		_DTXPopulateError(err);
 		
 		return NO;
@@ -267,7 +330,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	
 	if([self _dtx_isTestedRegionWithVisiblePixelsObscured:visible totalPixels:total ofView:self] == YES)
 	{
-		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"View “%@” does not pass visibility threshold (%@)", self.dtx_shortDescription, DetoxPolicy.activePolicy.visibilityVisiblePixelRatioThresholdDescription])}];
+		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"view does not pass visibility threshold (%@)", DetoxPolicy.activePolicy.visibilityVisiblePixelRatioThresholdDescription])}];
 		_DTXPopulateError(err);
 		
 #if DEBUG

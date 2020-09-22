@@ -40,20 +40,6 @@ static void _dtx_backdrop_renderInContext(CALayer* self, SEL _sel, CGContextRef 
 
 @implementation UIView (Drawing)
 
-- (CGRect)dtx_recursiveBounds
-{
-	if(self.clipsToBounds == YES)
-	{
-		return self.bounds;
-	}
-	
-	CGRect rv = self.bounds;
-	for (UIView* subview in self.subviews) {
-		rv = CGRectUnion(rv, subview.dtx_recursiveBounds);
-	}
-	return rv;
-}
-
 - (void)dtx_drawViewHierarchyUpToSubview:(UIView*)subview inRect:(CGRect)rect afterScreenUpdates:(BOOL)afterUpdates
 {
 	return [self _dtx_drawViewHierarchyUpToSubview:subview rootView:self inRect:rect afterScreenUpdates:afterUpdates];
