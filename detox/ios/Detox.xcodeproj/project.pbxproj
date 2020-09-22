@@ -17,6 +17,8 @@
 		392324D72477D87D00A3D119 /* DetoxManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 392324D62477D87D00A3D119 /* DetoxManager.swift */; };
 		392324DF24781CBD00A3D119 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 392324DE24781CBD00A3D119 /* WebSocket.swift */; };
 		392324E324782AE500A3D119 /* DetoxInit.m in Sources */ = {isa = PBXBuildFile; fileRef = 392324E124782AE500A3D119 /* DetoxInit.m */; };
+		392487AD25114B1E0024CD61 /* DetoxPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 392487AB25114B1E0024CD61 /* DetoxPolicy.h */; };
+		392487AE25114B1E0024CD61 /* DetoxPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = 392487AC25114B1E0024CD61 /* DetoxPolicy.m */; };
 		3928EFA81E47404900C19B6E /* DetoxUserNotificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3928EFA71E47404900C19B6E /* DetoxUserNotificationTests.swift */; };
 		3928EFAA1E47404900C19B6E /* Detox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 394767971DBF985400D72256 /* Detox.framework */; };
 		3928EFB51E47571500C19B6E /* TestableAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3928EFB41E47571500C19B6E /* TestableAppDelegate.swift */; };
@@ -260,6 +262,8 @@
 		392324D62477D87D00A3D119 /* DetoxManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxManager.swift; sourceTree = "<group>"; };
 		392324DE24781CBD00A3D119 /* WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
 		392324E124782AE500A3D119 /* DetoxInit.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetoxInit.m; sourceTree = "<group>"; };
+		392487AB25114B1E0024CD61 /* DetoxPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetoxPolicy.h; sourceTree = "<group>"; };
+		392487AC25114B1E0024CD61 /* DetoxPolicy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetoxPolicy.m; sourceTree = "<group>"; };
 		3928EFA51E47404900C19B6E /* DetoxUserNotificationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DetoxUserNotificationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3928EFA71E47404900C19B6E /* DetoxUserNotificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxUserNotificationTests.swift; sourceTree = "<group>"; };
 		3928EFA91E47404900C19B6E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -418,6 +422,15 @@
 			path = Assertions;
 			sourceTree = "<group>";
 		};
+		392487A425114AB50024CD61 /* Policy */ = {
+			isa = PBXGroup;
+			children = (
+				392487AB25114B1E0024CD61 /* DetoxPolicy.h */,
+				392487AC25114B1E0024CD61 /* DetoxPolicy.m */,
+			);
+			path = Policy;
+			sourceTree = "<group>";
+		};
 		3928EFA61E47404900C19B6E /* DetoxUserNotificationTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -491,6 +504,7 @@
 				3980D12C244C40E2004812DD /* AppleTouchEvents */,
 				39232594247AAAAC00A3D119 /* Assertions */,
 				3980D13C244C44C3004812DD /* Invocation */,
+				392487A425114AB50024CD61 /* Policy */,
 				3980D132244C435B004812DD /* Matchers */,
 				3980D130244C42E7004812DD /* Utilities */,
 				392324E124782AE500A3D119 /* DetoxInit.m */,
@@ -719,6 +733,7 @@
 				39E7AB3E24F40DA10011CE29 /* DTXLogging.h in Headers */,
 				3980D169244DD837004812DD /* UIDatePicker+DetoxActions.h in Headers */,
 				391FA5E91E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.h in Headers */,
+				392487AD25114B1E0024CD61 /* DetoxPolicy.h in Headers */,
 				39999EBA2416339E004E6366 /* __DTXDeallocSafeProxy.h in Headers */,
 				396EA67A22E0AE7D0087E4D4 /* ___DTXAddressInfo.h in Headers */,
 				39A34C711E30F10D00BEBB59 /* DetoxAppDelegateProxy.h in Headers */,
@@ -1017,6 +1032,7 @@
 				39E7AB3924F40CDE0011CE29 /* fishhook.c in Sources */,
 				39CA978D245B13CB00A7FC43 /* UIDevice+DetoxActions.m in Sources */,
 				46A6A63D1EF697BB00E3AA79 /* GREYConfiguration+Detox.m in Sources */,
+				392487AE25114B1E0024CD61 /* DetoxPolicy.m in Sources */,
 				39CE25AC22197F0900D78AA1 /* DetoxInstrumentsManager.m in Sources */,
 				3980D1162448B52C004812DD /* DTXTouchInfo.m in Sources */,
 				3990BA29245882EF00B608C8 /* DTXAssertionHandler.m in Sources */,

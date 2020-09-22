@@ -41,4 +41,11 @@ describe('Assertions', () => {
     await element(by.id('UniqueId146')).tap();
     await expect(element(by.id('UniqueId146'))).toHaveValue('1');
   });
+
+  it('assert toggle-switch widget', async () => {
+    await expect(element(by.id('UniqueId146'))).toHaveToggleValue(false);
+    await element(by.id('UniqueId146')).tap();
+    await expect(element(by.id('UniqueId146'))).toHaveToggleValue(true);
+    await expect(element(by.id('UniqueId146'))).not.toHaveToggleValue(false);
+  });
 });

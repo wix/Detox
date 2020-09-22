@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "17.5.1",
+  "version": "17.5.7",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -31,9 +31,9 @@
   "devDependencies": {
     "eslint": "^4.11.0",
     "eslint-plugin-node": "^6.0.1",
-    "jest-circus": ">=26.0.0",
-    "jest-cli": ">=25.0.0",
-    "jest-environment-node": ">=25.0.0",
+    "jest": "^26.0.0",
+    "jest-circus": "^26.0.0",
+    "jest-environment-node": "^26.0.0",
     "mocha": ">=6.0.0",
     "mockdate": "^2.0.1",
     "prettier": "1.7.0",
@@ -53,6 +53,7 @@
     "lodash": "^4.17.5",
     "minimist": "^1.2.0",
     "proper-lockfile": "^3.0.2",
+    "resolve-from": "^5.0.0",
     "sanitize-filename": "^1.6.1",
     "shell-utils": "^1.0.9",
     "signal-exit": "^3.0.3",
@@ -67,7 +68,6 @@
   },
   "peerDependencies": {
     "jest-circus": ">=26.0.0",
-    "jest-cli": ">=25.0.0",
     "jest-environment-node": ">=25.0.0",
     "mocha": ">=6.0.0"
   },

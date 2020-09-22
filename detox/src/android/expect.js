@@ -2,22 +2,24 @@ const fs = require('fs-extra');
 const path = require('path');
 const tempfile = require('tempfile');
 const invoke = require('../invoke');
-const matchers = require('./matcher');
 const DetoxActionApi = require('./espressoapi/DetoxAction');
 const ViewActionsApi = require('./espressoapi/ViewActions');
 const DetoxViewActionsApi = require('./espressoapi/DetoxViewActions');
 const DetoxAssertionApi = require('./espressoapi/DetoxAssertion');
 const EspressoDetoxApi = require('./espressoapi/EspressoDetox');
 const DetoxMatcherApi = require('./espressoapi/DetoxMatcher');
-const Matcher = matchers.Matcher;
-const LabelMatcher = matchers.LabelMatcher;
-const IdMatcher = matchers.IdMatcher;
-const TypeMatcher = matchers.TypeMatcher;
-const TraitsMatcher = matchers.TraitsMatcher;
-const VisibleMatcher = matchers.VisibleMatcher;
-const ExistsMatcher = matchers.ExistsMatcher;
-const TextMatcher = matchers.TextMatcher;
-const ValueMatcher = matchers.ValueMatcher;
+const {
+  Matcher,
+  LabelMatcher,
+  IdMatcher,
+  TypeMatcher,
+  TraitsMatcher,
+  VisibleMatcher,
+  ExistsMatcher,
+  TextMatcher,
+  ValueMatcher,
+  ToggleMatcher,
+} = require('./matcher');
 
 function call(maybeAFunction) {
   return maybeAFunction instanceof Function ? maybeAFunction() : maybeAFunction;
@@ -359,6 +361,10 @@ class ExpectElement extends Expect {
 
   async toNotHaveValue(value) {
     return await this.not.toHaveValue(value);
+  }
+
+  async toHaveToggleValue(value) {
+    return await new MatcherAssertionInteraction(this._invocationManager, this._element, this._notCondition ? new ToggleMatcher(value).not : new ToggleMatcher(value)).execute()
   }
 }
 
