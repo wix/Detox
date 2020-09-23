@@ -577,7 +577,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wix.detox-example";
 				PRODUCT_NAME = example;
-				VALID_ARCHS = "arm64 arm64e";
 			};
 			name = Debug;
 		};
@@ -606,7 +605,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wix.detox-example";
 				PRODUCT_NAME = example;
-				VALID_ARCHS = "arm64 arm64e";
 			};
 			name = Release;
 		};
@@ -632,7 +630,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wix.detox-example";
 				PRODUCT_NAME = example;
-				VALID_ARCHS = "arm64 arm64e";
 			};
 			name = Debug;
 		};
@@ -657,7 +654,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wix.detox-example";
 				PRODUCT_NAME = example;
-				VALID_ARCHS = "arm64 arm64e";
 			};
 			name = Release;
 		};
