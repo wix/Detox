@@ -171,10 +171,12 @@ class Element : NSObject {
 		view.dtx_replaceText(text)
 	}
 	
-	func accessibilityAction(_ actionName: String) {
-		let action = view.accessibilityCustomActions!.first(where: { $0.name == actionName })
+	func performAccessibilityAction(_ actionName: String) {
+		guard let action = view.accessibilityCustomActions!.first(where: { $0.name == actionName }) else {
+			dtx_fatalError("Accessibility custom action with name “\(actionName)” not found for view “\(view.dtx_shortDescription)”", viewDescription: debugAttributes)
+		}
 
-		action?.target?.performSelector(onMainThread: action!.selector, with: action, waitUntilDone: true)
+		action.target?.performSelector(onMainThread: action.selector, with: action, waitUntilDone: true)
 	}
 	
 	func adjust(toDate date: Date) {
