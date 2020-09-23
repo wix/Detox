@@ -172,11 +172,11 @@ class Element : NSObject {
 	}
 	
 	func performAccessibilityAction(_ actionName: String) {
-		guard let action = view.accessibilityCustomActions!.first(where: { $0.name == actionName }) else {
+		guard let action = view.accessibilityCustomActions?.first(where: { $0.name == actionName }) as? UIAccessibilityCustomAction else {
 			dtx_fatalError("Accessibility custom action with name “\(actionName)” not found for view “\(view.dtx_shortDescription)”", viewDescription: debugAttributes)
 		}
 
-		action.target?.performSelector(onMainThread: action.selector, with: action, waitUntilDone: true)
+		UIApplication.shared.sendAction(action.selector, to: action.target, from: nil, for: nil)
 	}
 	
 	func adjust(toDate date: Date) {
