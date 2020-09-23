@@ -112,6 +112,7 @@ export default class ActionsScreen extends Component {
           onChangeText={this.onChangeClearText.bind(this)}
           value={this.state.clearText}
           testID='UniqueId005'
+          multiline
         />
 
         <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10, marginHorizontal: 20, padding: 5 }}

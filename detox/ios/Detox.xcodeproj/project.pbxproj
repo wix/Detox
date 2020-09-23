@@ -31,10 +31,6 @@
 		393E66ED1FC5F3F40092EE89 /* COSTouchVisualizer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 393E66E61FC5F3E90092EE89 /* COSTouchVisualizer.framework */; };
 		3947679C1DBF985400D72256 /* Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 3947679A1DBF985400D72256 /* Detox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		394767BE1DBF98A700D72256 /* EarlGreyExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767B91DBF98A700D72256 /* EarlGreyExtensions.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		394767BF1DBF98A700D72256 /* GREYCondition+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767BA1DBF98A700D72256 /* GREYCondition+Detox.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		394767C01DBF98A700D72256 /* GREYCondition+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767BB1DBF98A700D72256 /* GREYCondition+Detox.m */; };
-		394767C11DBF98A700D72256 /* GREYMatchers+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767BC1DBF98A700D72256 /* GREYMatchers+Detox.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		394767C21DBF98A700D72256 /* GREYMatchers+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767BD1DBF98A700D72256 /* GREYMatchers+Detox.m */; };
 		394767CD1DBF98D900D72256 /* ReactNativeHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767C41DBF98D900D72256 /* ReactNativeHeaders.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		394767CE1DBF98D900D72256 /* ReactNativeSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 394767C51DBF98D900D72256 /* ReactNativeSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		394767CF1DBF98D900D72256 /* ReactNativeSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 394767C61DBF98D900D72256 /* ReactNativeSupport.m */; };
@@ -93,7 +89,6 @@
 		3980D16A244DD837004812DD /* UIDatePicker+DetoxActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D168244DD837004812DD /* UIDatePicker+DetoxActions.m */; };
 		3980D16D244DDCD7004812DD /* UIScrollView+DetoxActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3980D16B244DDCD7004812DD /* UIScrollView+DetoxActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3980D16E244DDCD7004812DD /* UIScrollView+DetoxActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3980D16C244DDCD7004812DD /* UIScrollView+DetoxActions.m */; };
-		398260E8220CC9530061E83E /* GREYActions+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 398260D4220CA56D0061E83E /* GREYActions+Detox.m */; };
 		3990BA152457248600B608C8 /* UIView+DetoxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 3990BA132457248600B608C8 /* UIView+DetoxUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3990BA162457248600B608C8 /* UIView+DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3990BA142457248600B608C8 /* UIView+DetoxUtils.m */; };
 		3990BA28245882EF00B608C8 /* DTXAssertionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3990BA26245882EF00B608C8 /* DTXAssertionHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -118,6 +113,8 @@
 		39CE25AC22197F0900D78AA1 /* DetoxInstrumentsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 39CE25AA22197F0900D78AA1 /* DetoxInstrumentsManager.m */; };
 		39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */; };
 		39DA0E2822D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DA0E2722D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m */; };
+		39E23FF82513AF430035A162 /* UIView+Drawing.h in Headers */ = {isa = PBXBuildFile; fileRef = 39E23FF62513AF430035A162 /* UIView+Drawing.h */; };
+		39E23FF92513AF430035A162 /* UIView+Drawing.m in Sources */ = {isa = PBXBuildFile; fileRef = 39E23FF72513AF430035A162 /* UIView+Drawing.m */; };
 		39E7AB3924F40CDE0011CE29 /* fishhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 39E7AB3724F40CDE0011CE29 /* fishhook.c */; };
 		39E7AB3A24F40CDE0011CE29 /* fishhook.h in Headers */ = {isa = PBXBuildFile; fileRef = 39E7AB3824F40CDE0011CE29 /* fishhook.h */; };
 		39E7AB3E24F40DA10011CE29 /* DTXLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 39E7AB3B24F40DA00011CE29 /* DTXLogging.h */; };
@@ -278,10 +275,6 @@
 		3947679A1DBF985400D72256 /* Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detox.h; sourceTree = "<group>"; };
 		3947679B1DBF985400D72256 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		394767B91DBF98A700D72256 /* EarlGreyExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EarlGreyExtensions.h; sourceTree = "<group>"; };
-		394767BA1DBF98A700D72256 /* GREYCondition+Detox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GREYCondition+Detox.h"; sourceTree = "<group>"; };
-		394767BB1DBF98A700D72256 /* GREYCondition+Detox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GREYCondition+Detox.m"; sourceTree = "<group>"; };
-		394767BC1DBF98A700D72256 /* GREYMatchers+Detox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GREYMatchers+Detox.h"; sourceTree = "<group>"; };
-		394767BD1DBF98A700D72256 /* GREYMatchers+Detox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GREYMatchers+Detox.m"; sourceTree = "<group>"; };
 		394767C41DBF98D900D72256 /* ReactNativeHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactNativeHeaders.h; sourceTree = "<group>"; };
 		394767C51DBF98D900D72256 /* ReactNativeSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactNativeSupport.h; sourceTree = "<group>"; };
 		394767C61DBF98D900D72256 /* ReactNativeSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactNativeSupport.m; sourceTree = "<group>"; };
@@ -342,8 +335,6 @@
 		3980D168244DD837004812DD /* UIDatePicker+DetoxActions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIDatePicker+DetoxActions.m"; sourceTree = "<group>"; };
 		3980D16B244DDCD7004812DD /* UIScrollView+DetoxActions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+DetoxActions.h"; sourceTree = "<group>"; };
 		3980D16C244DDCD7004812DD /* UIScrollView+DetoxActions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+DetoxActions.m"; sourceTree = "<group>"; };
-		398260CE220CA5380061E83E /* GREYActions+Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GREYActions+Detox.h"; sourceTree = "<group>"; };
-		398260D4220CA56D0061E83E /* GREYActions+Detox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "GREYActions+Detox.m"; sourceTree = "<group>"; };
 		3990BA052457093800B608C8 /* DTXTouchInfo-Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DTXTouchInfo-Private.h"; sourceTree = "<group>"; };
 		3990BA132457248600B608C8 /* UIView+DetoxUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+DetoxUtils.h"; sourceTree = "<group>"; };
 		3990BA142457248600B608C8 /* UIView+DetoxUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+DetoxUtils.m"; sourceTree = "<group>"; };
@@ -369,6 +360,8 @@
 		39DA0E2622D72AEF001E63A0 /* UIApplication+MockedSharedApplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIApplication+MockedSharedApplication.h"; sourceTree = "<group>"; };
 		39DA0E2722D72AEF001E63A0 /* UIApplication+MockedSharedApplication.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIApplication+MockedSharedApplication.m"; sourceTree = "<group>"; };
 		39DA0E3522D72C91001E63A0 /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
+		39E23FF62513AF430035A162 /* UIView+Drawing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+Drawing.h"; sourceTree = "<group>"; };
+		39E23FF72513AF430035A162 /* UIView+Drawing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+Drawing.m"; sourceTree = "<group>"; };
 		39E7AB3724F40CDE0011CE29 /* fishhook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fishhook.c; path = fishhook/fishhook.c; sourceTree = SOURCE_ROOT; };
 		39E7AB3824F40CDE0011CE29 /* fishhook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fishhook.h; path = fishhook/fishhook.h; sourceTree = SOURCE_ROOT; };
 		39E7AB3B24F40DA00011CE29 /* DTXLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTXLogging.h; path = DTXLoggingInfra/DTXLogging.h; sourceTree = SOURCE_ROOT; };
@@ -530,16 +523,10 @@
 				394767B91DBF98A700D72256 /* EarlGreyExtensions.h */,
 				397EC9B31E7EDE0B00D5F2BB /* EarlGreyStatistics.h */,
 				397EC9B41E7EDE0B00D5F2BB /* EarlGreyStatistics.m */,
-				398260CE220CA5380061E83E /* GREYActions+Detox.h */,
-				398260D4220CA56D0061E83E /* GREYActions+Detox.m */,
-				394767BA1DBF98A700D72256 /* GREYCondition+Detox.h */,
-				394767BB1DBF98A700D72256 /* GREYCondition+Detox.m */,
 				46A6A6341EF696B600E3AA79 /* GREYConfiguration+Detox.h */,
 				46A6A63B1EF697BB00E3AA79 /* GREYConfiguration+Detox.m */,
 				391FA5E71E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.h */,
 				391FA5E81E7FD96D0056F82F /* GREYIdlingResourcePrettyPrint.m */,
-				394767BC1DBF98A700D72256 /* GREYMatchers+Detox.h */,
-				394767BD1DBF98A700D72256 /* GREYMatchers+Detox.m */,
 			);
 			path = EarlGreyExtensions;
 			sourceTree = "<group>";
@@ -671,6 +658,8 @@
 				39FA2BDD250E74210047F419 /* UIImage+DetoxUtils.m */,
 				3990BA132457248600B608C8 /* UIView+DetoxUtils.h */,
 				3990BA142457248600B608C8 /* UIView+DetoxUtils.m */,
+				39E23FF62513AF430035A162 /* UIView+Drawing.h */,
+				39E23FF72513AF430035A162 /* UIView+Drawing.m */,
 				3980D1022448B52B004812DD /* UIView+DontCrash.h */,
 				3980D1002448B52B004812DD /* UIView+DontCrash.m */,
 				390DED81248906FC00E27BE8 /* UIWindow+DetoxUtils.h */,
@@ -748,7 +737,6 @@
 				399BF36821933F0C00F96D50 /* ExternalLogging.h in Headers */,
 				394767CD1DBF98D900D72256 /* ReactNativeHeaders.h in Headers */,
 				394767D41DBF98D900D72256 /* WXRunLoopIdlingResource.h in Headers */,
-				394767BF1DBF98A700D72256 /* GREYCondition+Detox.h in Headers */,
 				3980D1182448B52C004812DD /* UITouch+DTXAdditions.h in Headers */,
 				3990BA152457248600B608C8 /* UIView+DetoxUtils.h in Headers */,
 				39BCE598224BDBF000B0D357 /* ReactNativeSupportNoARC.h in Headers */,
@@ -766,9 +754,9 @@
 				39E7AB3A24F40CDE0011CE29 /* fishhook.h in Headers */,
 				3902CAD7211342D000C49D04 /* WXRNLoadIdlingResource.h in Headers */,
 				3976BF15246C139D00AA20C7 /* DTXSwizzlingHelper.h in Headers */,
+				39E23FF82513AF430035A162 /* UIView+Drawing.h in Headers */,
 				39FA2BDE250E74210047F419 /* UIImage+DetoxUtils.h in Headers */,
 				394767D01DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.h in Headers */,
-				394767C11DBF98A700D72256 /* GREYMatchers+Detox.h in Headers */,
 				3980D11D2448B52C004812DD /* DTXAppleInternals.h in Headers */,
 				3980D11E2448B52C004812DD /* DTXTouchInfo.h in Headers */,
 			);
@@ -1006,7 +994,6 @@
 				3902CAD8211342D000C49D04 /* WXRNLoadIdlingResource.m in Sources */,
 				397CA78D248010B5005E8A71 /* UISlider+DetoxUtils.m in Sources */,
 				3980D15D244C45EA004812DD /* Expectation.swift in Sources */,
-				394767C01DBF98A700D72256 /* GREYCondition+Detox.m in Sources */,
 				3980D11A2448B52C004812DD /* DTXTouchInjector.m in Sources */,
 				A7F76A161ED33DE500FFE77E /* WXAnimatedDisplayLinkIdlingResource.m in Sources */,
 				394767D11DBF98D900D72256 /* WXJSDisplayLinkIdlingResource.m in Sources */,
@@ -1021,9 +1008,7 @@
 				397CA79F2483F07D005E8A71 /* ApproximateEquality.swift in Sources */,
 				39E7AB4024F40DA10011CE29 /* DTXLogging.m in Sources */,
 				39CEFCDB1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift in Sources */,
-				394767C21DBF98A700D72256 /* GREYMatchers+Detox.m in Sources */,
 				3980D10E2448B52C004812DD /* UIView+DetoxActions.m in Sources */,
-				398260E8220CC9530061E83E /* GREYActions+Detox.m in Sources */,
 				39FFD9471FD730A600C97030 /* DetoxCrashHandler.mm in Sources */,
 				3980D136244C4373004812DD /* UIView+DetoxMatchers.m in Sources */,
 				392324DF24781CBD00A3D119 /* WebSocket.swift in Sources */,
@@ -1034,6 +1019,7 @@
 				46A6A63D1EF697BB00E3AA79 /* GREYConfiguration+Detox.m in Sources */,
 				392487AE25114B1E0024CD61 /* DetoxPolicy.m in Sources */,
 				39CE25AC22197F0900D78AA1 /* DetoxInstrumentsManager.m in Sources */,
+				39E23FF92513AF430035A162 /* UIView+Drawing.m in Sources */,
 				3980D1162448B52C004812DD /* DTXTouchInfo.m in Sources */,
 				3990BA29245882EF00B608C8 /* DTXAssertionHandler.m in Sources */,
 				3980D1102448B52C004812DD /* DTXSyntheticEvents.m in Sources */,

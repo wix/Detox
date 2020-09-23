@@ -45,6 +45,7 @@
 + (instancetype)_keyWindowScene;
 @property(readonly, nonatomic) UIWindow *_keyWindow;
 - (id)_allWindowsIncludingInternalWindows:(_Bool)arg1 onlyVisibleWindows:(_Bool)arg2;
++ (id)_keyboardWindowSceneForScreen:(UIScreen*)arg1 create:(_Bool)arg2;
 
 @end
 

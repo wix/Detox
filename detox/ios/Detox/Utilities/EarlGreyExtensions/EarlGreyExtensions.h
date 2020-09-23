@@ -20,10 +20,3 @@
 - (NSDictionary *)grey_errorDictionaryForBusyResources:(NSOrderedSet *)busyResources;
 
 @end
-
-FOUNDATION_EXPORT id HC_hasProperty(NSString *propertyName, id valueMatcher);
-
-static inline id hasProperty(NSString *propertyName, id valueMatcher)
-{
-	return HC_hasProperty(propertyName, valueMatcher);
-}

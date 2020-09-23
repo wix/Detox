@@ -105,6 +105,13 @@ export default class AnimationsScreen extends Component {
     let numOfIterationsColor = this.state.enableLoop ? 'black' : 'grey';
     return (
       <View style={{ flex: 1, paddingTop: 20, paddingLeft: 20, paddingRight: 20, justifyContent: 'center', alignItems: 'stretch' }}>
+        <Button
+          style={{paddingTop: 20}}
+          title="Start"
+          testID="UniqueId_AnimationsScreen_startButton"
+          disabled={this.state.useNativeDriver === undefined}
+          onPress={() => this.setState({ testStarted: true })}
+        />
         <View>
           <Text>Driver:</Text>
           <SegmentedControl
@@ -145,13 +152,6 @@ export default class AnimationsScreen extends Component {
             placeholder={String(this.state.delay)}
           />
         </View>
-        <Button
-          style={{paddingTop: 20}}
-          title="Start"
-          testID="UniqueId_AnimationsScreen_startButton"
-          disabled={this.state.useNativeDriver === undefined}
-          onPress={() => this.setState({ testStarted: true })}
-        />
       </View>
     );
   }

@@ -21,6 +21,9 @@ static double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
 
 @interface UIView (DetoxUtils)
 
+@property (nonatomic, readonly) CGRect dtx_contentBounds;
+@property (nonatomic, readonly) CGRect dtx_visibleBounds;
+
 @property (nonatomic, readonly) BOOL dtx_isVisible;
 @property (nonatomic, readonly) BOOL dtx_isHittable;
 
