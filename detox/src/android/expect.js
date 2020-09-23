@@ -127,6 +127,13 @@ class TakeElementScreenshot extends Action {
   }
 }
 
+class AccessibilityActionAction extends Action {
+  constructor(actionName) {
+    super();
+    this._call = invoke.callDirectly(DetoxActionApi.accessibilityAction(actionName));
+  }
+}
+
 class Interaction {
   constructor(invocationManager) {
     this._call = undefined;
@@ -295,6 +302,10 @@ class Element {
       artifactPath: filePath,
     });
     return filePath;
+  }
+
+  async accessibilityAction(actionName = 'activate') {
+    return await new ActionInteraction(this._invocationManager, this, new AccessibilityActionAction(actionName)).execute();
   }
 }
 

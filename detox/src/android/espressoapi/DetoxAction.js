@@ -167,6 +167,19 @@ class DetoxAction {
     };
   }
 
+  static accessibilityAction(actionName) {
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxAction"
+      },
+      method: "accessibilityAction",
+      args: [{
+        type: "String",
+        value: actionName
+      }]
+    }
+  }
 }
 
 module.exports = DetoxAction;

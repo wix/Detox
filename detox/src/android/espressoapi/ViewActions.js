@@ -326,7 +326,6 @@ class ViewActions {
       }]
     };
   }
-
 }
 
 module.exports = ViewActions;

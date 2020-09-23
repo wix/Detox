@@ -4,6 +4,7 @@ import android.view.View;
 
 import com.wix.detox.common.DetoxErrors.DetoxRuntimeException;
 import com.wix.detox.common.DetoxErrors.StaleActionException;
+import com.wix.detox.espresso.action.DetoxAccessibilityAction;
 import com.wix.detox.espresso.action.DetoxMultiTap;
 import com.wix.detox.espresso.action.RNClickAction;
 import com.wix.detox.espresso.action.TakeViewScreenshotAction;
@@ -217,6 +218,10 @@ public class DetoxAction {
 
     public static ViewAction takeViewScreenshot() {
         return new TakeViewScreenshotAction();
+    }
+
+    public static ViewAction accessibilityAction(final String actionName) {
+        return new DetoxAccessibilityAction(actionName);
     }
 
     private static CoordinatesProvider translate(final CoordinatesProvider coords,
