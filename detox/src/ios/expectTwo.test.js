@@ -387,6 +387,25 @@ describe('expectTwo', () => {
       expect(e.message).toContain('not supported on iOS');
     }
   });
+
+  it(`element(e.by.text('tapMe')).accessibilityAction('activate')`, () => {
+    const testCall = e.element(e.by.text('tapMe')).accessibilityAction('activate');
+    const jsonOutput = {
+      invocation: {
+        type: 'action',
+        action: 'accessibilityAction',
+        predicate: {
+          type: 'text',
+          value: 'tapMe'
+        },
+        params: [
+          'activate'
+        ]
+      }
+    };
+
+    expect(testCall).deepEquals(jsonOutput);
+  });
 });
 
 expect.extend({

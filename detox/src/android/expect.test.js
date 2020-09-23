@@ -215,6 +215,10 @@ describe('expect', () => {
     it('should fail to find index-based element given invalid args', async () => {
       await expectToThrow(() => e.element(e.by.id('ScrollView799')).atIndex('NaN'));
     });
+
+    it('should perform accessibility actions', async () => {
+      await e.element(e.by.id("View7991")).accessibilityAction('activate');
+    })
   });
 
   describe('element screenshots', () => {
