@@ -154,7 +154,7 @@ class Element {
     return this.withAction('clearText');
   }
 
-  accessibilityAction(actionName) {
+  performAccessibilityAction(actionName) {
     if (typeof actionName !== 'string') throw new Error('actionName should be a string, but got ' + (actionName + (' (' + (typeof actionName + ')'))));
     return this.withAction('accessibilityAction', actionName);
   }
@@ -534,8 +534,8 @@ class WaitFor {
     });
   }
 
-  accessibilityAction(actionName = 'activate') {
-    this.action = this.actionableElement.accessibilityAction(actionName);
+  performAccessibilityAction(actionName = 'activate') {
+    this.action = this.actionableElement.performAccessibilityAction(actionName);
     return this.waitForWithAction();
   }
 }

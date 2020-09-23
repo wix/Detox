@@ -304,7 +304,7 @@ class Element {
     return filePath;
   }
 
-  async accessibilityAction(actionName = 'activate') {
+  async performAccessibilityAction(actionName = 'activate') {
     return await new ActionInteraction(this._invocationManager, this, new AccessibilityActionAction(actionName)).execute();
   }
 }

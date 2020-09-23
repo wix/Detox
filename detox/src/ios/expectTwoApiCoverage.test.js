@@ -138,7 +138,7 @@ describe('expectTwo API Coverage', () => {
       await e.element(e.by.id('someId')).atIndex(1).tap();
       await e.element(e.by.id('someId')).setDatePickerDate('2019-2-8T05:10:00-08:00', 'yyyy-MM-dd\'T\'HH:mm:ssZZZZZ');
       await e.element(e.by.id('slider')).adjustSliderToPosition(0.5);
-      await e.element(e.by.id('slider')).accessibilityAction('activate');
+      await e.element(e.by.id('someId')).performAccessibilityAction('activate');
     });
 
     it(`interactions with wrong parameters should throw`, async () => {

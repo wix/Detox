@@ -24,7 +24,7 @@ Use [expectations](APIRef.Expect.md) to verify element states.
 - [`.adjustSliderToPosition()`](#adjustslidertopositionnormalizedposition--ios-only) **iOS only**
 - [`.getAttributes()`](#getAttributes--ios-only) **iOS only**
 - [`.takeScreenshot([name])`](#takescreenshotname-android-only) **Android only**
-- [`.accessibilityAction()`](#accessibilityactionactionname)
+- [`.performAccessibilityAction()`](#performaccessibilityactionactionname)
 
 ### `tap(point)`
 
@@ -247,7 +247,7 @@ jestExpect(multipleMatchedElements.elements[0].identifier).toBe('FirstElement');
 
 Takes a screenshot containing the matched element. For full details on taking screenshots with Detox, refer to the [screen-shots guide](APIRef.Screenshots.md).
 
-### `accessibilityAction(actionName)`
+### `performAccessibilityAction(actionName)`
 
 Simulates a swipe on the element with the provided options.
 Triggers [accessibility action](https://reactnative.dev/docs/accessibility#accessibility-actions).
@@ -255,7 +255,7 @@ Triggers [accessibility action](https://reactnative.dev/docs/accessibility#acces
 `actionName`—the name of the accessibility action <br/>
 
 ```js
-await element(by.id('scrollView')).accessibilityAction("activate");
+await element(by.id('scrollView')).performAccessibilityAction("activate");
 ```
 
 ## Deprecated Methods

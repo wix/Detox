@@ -18,37 +18,37 @@ describe('Actions', () => {
   });
 
   it('should perform activate accessibility action', async () => {
-    await element(by.id("View7991")).accessibilityAction('activate');
+    await element(by.id("View7991")).performAccessibilityAction('activate');
     await expect(element(by.text('Accessibility Action activate Working!!!'))).toBeVisible();
   });
 
   it('should perform magicTap accessibility action', async () => {
-    await element(by.id("View7991")).accessibilityAction('magicTap');
+    await element(by.id("View7991")).performAccessibilityAction('magicTap');
     await expect(element(by.text('Accessibility Action magicTap Working!!!'))).toBeVisible();
   });
 
   it('should perform escape accessibility action', async () => {
-    await element(by.id("View7991")).accessibilityAction('escape');
+    await element(by.id("View7991")).performAccessibilityAction('escape');
     await expect(element(by.text('Accessibility Action escape Working!!!'))).toBeVisible();
   });
 
   it('should perform increment accessibility action', async () => {
-    await element(by.id("View7991")).accessibilityAction('increment');
+    await element(by.id("View7991")).performAccessibilityAction('increment');
     await expect(element(by.text('Accessibility Action increment Working!!!'))).toBeVisible();
   });
 
   it('should perform decrement accessibility action', async () => {
-    await element(by.id("View7991")).accessibilityAction('decrement');
+    await element(by.id("View7991")).performAccessibilityAction('decrement');
     await expect(element(by.text('Accessibility Action decrement Working!!!'))).toBeVisible();
   });
 
   it('should perform longpress accessibility action', async () => {
-    await element(by.id("View7991")).accessibilityAction('longpress');
+    await element(by.id("View7991")).performAccessibilityAction('longpress');
     await expect(element(by.text('Accessibility Action longpress Working!!!'))).toBeVisible();
   });
 
   it('should perform custom accessibility action', async () => {
-    await element(by.id("View7991")).accessibilityAction('custom');
+    await element(by.id("View7991")).performAccessibilityAction('custom');
     await expect(element(by.text('Accessibility Action custom Working!!!'))).toBeVisible();
   });
 

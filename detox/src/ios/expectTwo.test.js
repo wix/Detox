@@ -388,8 +388,8 @@ describe('expectTwo', () => {
     }
   });
 
-  it(`element(e.by.text('tapMe')).accessibilityAction('activate')`, () => {
-    const testCall = e.element(e.by.text('tapMe')).accessibilityAction('activate');
+  it(`element(e.by.text('tapMe')).performAccessibilityAction('activate')`, () => {
+    const testCall = e.element(e.by.text('tapMe')).performAccessibilityAction('activate');
     const jsonOutput = {
       invocation: {
         type: 'action',

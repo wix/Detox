@@ -217,7 +217,7 @@ describe('expect', () => {
     });
 
     it('should perform accessibility actions', async () => {
-      await e.element(e.by.id("View7991")).accessibilityAction('activate');
+      await e.element(e.by.id("View7991")).performAccessibilityAction('activate');
     })
   });
 
