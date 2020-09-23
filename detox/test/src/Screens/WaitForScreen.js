@@ -4,7 +4,7 @@ import {
   View,
   ScrollView,
   Animated,
-  TouchableOpacity
+  TouchableOpacity, Dimensions, StyleSheet, SafeAreaView
 } from 'react-native';
 
 export default class WaitForScreen extends Component {
@@ -46,6 +46,13 @@ export default class WaitForScreen extends Component {
           <Text testID='GoButton' style={{color: 'blue', textAlign: 'center'}}>Go</Text>
         </TouchableOpacity>
 
+        <View style={styles.horizontalScrollView}>
+          <ScrollView testID='horizontalScrollView' horizontal>
+            {[1,2,3,4,5,6,7,8].map(i => (
+              <Text key={i} style={styles.horizontalItem}>HText{i}</Text>
+            ))}
+          </ScrollView>
+        </View>
       </View>
     );
   }
@@ -58,3 +65,19 @@ export default class WaitForScreen extends Component {
     }, 2000);
   }
 }
+
+const styles = StyleSheet.create({
+  horizontalScrollView: {
+    height: 50,
+    borderColor: '#c0c0c0',
+    borderWidth: 1,
+    backgroundColor: '#f8f8ff',
+  },
+  horizontalItem: {
+    width: 0.25 * Dimensions.get('window').width - 20, // to have four items
+    backgroundColor: '#e8e8f8',
+    margin: 10,
+    textAlign: 'center',
+    textAlignVertical: 'center'
+  },
+});
