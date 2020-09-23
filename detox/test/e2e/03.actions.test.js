@@ -17,6 +17,41 @@ describe('Actions', () => {
     await expect(element(by.text('Long Press Working!!!'))).toBeVisible();
   });
 
+  it('should perform activate accessibility action', async () => {
+    await element(by.id("View7991")).accessibilityAction('activate');
+    await expect(element(by.text('Accessibility Action activate Working!!!'))).toBeVisible();
+  });
+
+  it('should perform magicTap accessibility action', async () => {
+    await element(by.id("View7991")).accessibilityAction('magicTap');
+    await expect(element(by.text('Accessibility Action magicTap Working!!!'))).toBeVisible();
+  });
+
+  it('should perform escape accessibility action', async () => {
+    await element(by.id("View7991")).accessibilityAction('escape');
+    await expect(element(by.text('Accessibility Action escape Working!!!'))).toBeVisible();
+  });
+
+  it('should perform increment accessibility action', async () => {
+    await element(by.id("View7991")).accessibilityAction('increment');
+    await expect(element(by.text('Accessibility Action increment Working!!!'))).toBeVisible();
+  });
+
+  it('should perform decrement accessibility action', async () => {
+    await element(by.id("View7991")).accessibilityAction('decrement');
+    await expect(element(by.text('Accessibility Action decrement Working!!!'))).toBeVisible();
+  });
+
+  it('should perform longpress accessibility action', async () => {
+    await element(by.id("View7991")).accessibilityAction('longpress');
+    await expect(element(by.text('Accessibility Action longpress Working!!!'))).toBeVisible();
+  });
+
+  it('should perform custom accessibility action', async () => {
+    await element(by.id("View7991")).accessibilityAction('custom');
+    await expect(element(by.text('Accessibility Action custom Working!!!'))).toBeVisible();
+  });
+
   it('should long press with duration on an element', async () => {
     await element(by.text('Long Press Me 1.5s')).longPress(1500);
     await expect(element(by.text('Long Press With Duration Working!!!'))).toBeVisible();

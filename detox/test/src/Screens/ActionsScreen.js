@@ -56,8 +56,19 @@ export default class ActionsScreen extends Component {
     return (
       <SafeAreaView  testID='View7990' style={{ flex: 1 ,justifyContent: 'flex-start' }}>
 
-        <TouchableOpacity onPress={this.onButtonPress.bind(this, 'Tap Working')}
+        <TouchableOpacity testID="View7991"
+          onPress={this.onButtonPress.bind(this, 'Tap Working')}
           onLongPress={this.onButtonPress.bind(this, 'Long Press Working')}
+          accessibilityActions={[
+            { name: 'activate', label: 'activate' },
+            { name: 'increment', label: 'increment' },
+            { name: 'decrement', label: 'decrement' },
+            { name: 'magicTap', label: 'magicTap' },
+            { name: 'escape', label: 'escape' },
+            { name: 'longpress', label: 'longpress' },
+            { name: 'custom', label: 'custom' }
+          ]}
+          onAccessibilityAction={({ nativeEvent: { actionName }}) => this.onButtonPress(`Accessibility Action ${actionName} Working`)}
         >
           <Text style={{ color: 'blue', marginTop: isIos? 40 : 0, marginBottom: 10, textAlign: 'center' }}>Tap Me</Text>
         </TouchableOpacity>
