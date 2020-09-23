@@ -189,7 +189,7 @@ class AccessibilityActionAction : Action {
 	override func perform(on element: Element) -> [String: Any]? {
 		let actionName = params!.first as! String
 
-		element.accessibilityAction(actionName)
+		element.performAccessibilityAction(actionName)
 		
 		return nil
 	}
