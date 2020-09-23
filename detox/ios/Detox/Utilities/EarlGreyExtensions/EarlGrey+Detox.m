@@ -7,7 +7,6 @@
 //
 
 #import "EarlGrey+Detox.h"
-#import "GREYMatchers+Detox.h"
 
 @implementation EarlGreyImpl (Detox)
 
@@ -18,11 +17,6 @@
 			block();
 		} error:NULL];
 	});
-}
-
-- (GREYElementInteraction *)detox_selectElementWithMatcher:(id<GREYMatcher>)elementMatcher
-{
-    return [self selectElementWithMatcher:[GREYMatchers detoxMatcherAvoidingProblematicReactNativeElements:elementMatcher]];
 }
 
 @end

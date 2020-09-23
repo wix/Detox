@@ -246,7 +246,7 @@ if(isnan(normalizedStartingPoint.main) || normalizedStartingPoint.main < 0 || no
 	
 	CGPoint startPoint = CGPointMake(safeAreaToScroll.origin.x + safeAreaToScroll.size.width * normalizedStartingPoint.x, safeAreaToScroll.origin.y + safeAreaToScroll.size.height * normalizedStartingPoint.y);
 	
-	[self dtx_assertHittableAtPoint:startPoint];
+//	[self dtx_assertHittableAtPoint:startPoint];
 	
 	startPoint = [self.window convertPoint:startPoint fromView:self];
 	
