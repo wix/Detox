@@ -249,8 +249,7 @@ Takes a screenshot containing the matched element. For full details on taking sc
 
 ### `performAccessibilityAction(actionName)`
 
-Simulates a swipe on the element with the provided options.
-Triggers [accessibility action](https://reactnative.dev/docs/accessibility#accessibility-actions).
+Triggers an [accessibility action](https://reactnative.dev/docs/accessibility#accessibility-actions).
 
 `actionName`—the name of the accessibility action <br/>
 
