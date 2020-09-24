@@ -81,6 +81,10 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "-detoxDebugVisibility YES"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-detoxSourceAppOverride com.apple.mobilesafari"
             isEnabled = "NO">
          </CommandLineArgument>

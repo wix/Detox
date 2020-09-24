@@ -197,7 +197,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return [self dtx_isVisibleAtPoint:point error:NULL];
 }
 
-- (UIImage*)_dtx_imageForVisibilityTestingInWindow:(UIWindow*)windowToUse testedView:(UIView*)testedView drawTestedRectWithColor:(UIColor*)testedRectColor
+- (UIImage*)_dtx_imageForVisibilityTestingInWindow:(UIWindow*)windowToUse testedView:(UIView*)testedView drawTestedRectWithColors:(NSArray<UIColor*>*)testedRectColors
 {
 	UIGraphicsBeginImageContextWithOptions(windowToUse.bounds.size, NO, windowToUse.screen.scale);
 	
@@ -212,7 +212,16 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	
 	DTXAssert(indexOfTestedWindow != NSNotFound, @"Window hierarchy mutated while iterated; should not happen");
 	
-	[windowToUse dtx_drawViewHierarchyUpToSubview:testedView inRect:windowToUse.bounds afterScreenUpdates:NO];
+	if(testedView != nil)
+	{
+		[windowToUse dtx_drawViewHierarchyUpToSubview:testedView inRect:windowToUse.bounds afterScreenUpdates:NO];
+	}
+	else
+	{
+		[UIColor.blackColor setFill];
+		[[UIBezierPath bezierPathWithRect:windowToUse.bounds] fill];
+		[windowToUse drawViewHierarchyInRect:windowToUse.bounds afterScreenUpdates:NO];
+	}
 	
 	for (NSUInteger idx = indexOfTestedWindow + 1; idx < windows.count; idx++) {
 		UIWindow* currentWindow = windows[idx];
@@ -234,13 +243,17 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		}
 	}
 	
-	if(testedRectColor != nil)
+	if(testedRectColors.count > 0 && testedView != nil)
 	{
 		CGContextRef ctx = UIGraphicsGetCurrentContext();
-		CGRect testedRect = [windowToUse convertRect:testedView.bounds fromView:testedView];
-		CGContextSetLineWidth(ctx, 1);
-		[testedRectColor setStroke];
-		CGContextStrokeRect(ctx, testedRect);
+		CGFloat* lengths = (CGFloat[]){4.0};
+		[testedRectColors enumerateObjectsUsingBlock:^(UIColor * _Nonnull color, NSUInteger idx, BOOL * _Nonnull stop) {
+			CGContextSetLineDash(ctx, idx * 4.0, lengths, 1);
+			CGRect testedRect = [windowToUse convertRect:testedView.bounds fromView:testedView];
+			CGContextSetLineWidth(ctx, 1);
+			[color setStroke];
+			CGContextStrokeRect(ctx, testedRect);
+		}];
 	}
 	
 	UIImage* rv = UIGraphicsGetImageFromCurrentImageContext();
@@ -321,7 +334,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		return NO;
 	}
 	
-	UIImage* image = [self _dtx_imageForVisibilityTestingInWindow:windowToUse testedView:self drawTestedRectWithColor:nil];
+	UIImage* image = [self _dtx_imageForVisibilityTestingInWindow:windowToUse testedView:self drawTestedRectWithColors:nil];
 	CGRect testedRect = [windowToUse convertRect:self.bounds fromView:self];
 	image = [image dtx_imageByCroppingInRect:testedRect];
 	
@@ -332,11 +345,12 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	{
 		NSError* err = [NSError errorWithDomain:@"DetoxErrorDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: APPLY_PREFIX([NSString stringWithFormat:@"view does not pass visibility threshold (%@)", DetoxPolicy.activePolicy.visibilityVisiblePixelRatioThresholdDescription])}];
 		_DTXPopulateError(err);
-		
-#if DEBUG
-//		[image dtx_saveToDesktop];
-//		[[self _dtx_imageForVisibilityTestingInWindow:windowToUse testedView:self drawTestedRectWithColor:UIColor.blackColor] dtx_saveToDesktop];
-#endif
+
+		if([NSUserDefaults.standardUserDefaults boolForKey:@"detoxDebugVisibility"])
+		{
+			[[self _dtx_imageForVisibilityTestingInWindow:windowToUse testedView:nil drawTestedRectWithColors:nil] dtx_saveToDesktopWithName:[NSString stringWithFormat:@"DETOX_VISIBILITY_%@ <%p>_SCREEN.png", NSStringFromClass(self.class), self]];
+			[[self _dtx_imageForVisibilityTestingInWindow:windowToUse testedView:self drawTestedRectWithColors:@[UIColor.blackColor, UIColor.systemRedColor, UIColor.whiteColor]] dtx_saveToDesktopWithName:[NSString stringWithFormat:@"DETOX_VISIBILITY_%@ <%p>_TEST.png", NSStringFromClass(self.class), self]];
+		}
 		
 		return NO;
 	}
@@ -465,45 +479,5 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	
 	return rv;
 }
-
-#if DEBUG
-- (void)dtx_saveSnapshotToDesktop
-{
-	[self _dtx_saveSnapshotToDesktopWithPointPtr:NULL rects:nil];
-}
-
-- (void)dtx_saveSnapshotToDesktopWithPoint:(CGPoint)point rects:(NSArray*)rects
-{
-	[self _dtx_saveSnapshotToDesktopWithPointPtr:&point rects:rects];
-}
-
-- (void)_dtx_saveSnapshotToDesktopWithPointPtr:(CGPoint*)pointPtrOrNULL rects:(NSArray*)rects
-{
-	UIWindow* windowToUse = [self isKindOfClass:UIWindow.class] ? (id)self : self.window;
-	UIGraphicsBeginImageContextWithOptions(self.bounds.size, NO, windowToUse.screen.scale);
-	[self drawViewHierarchyInRect:self.bounds afterScreenUpdates:NO];
-	
-	if(pointPtrOrNULL != NULL)
-	{
-		CGContextRef ctx = UIGraphicsGetCurrentContext();
-		[UIColor.blackColor setFill];
-		CGContextFillRect(ctx, CGRectMake(pointPtrOrNULL->x - 0.5, pointPtrOrNULL->y - 0.5, 1, 1));
-	}
-	
-	[rects enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-		CGRect rect = [obj CGRectValue];
-		
-		CGContextRef ctx = UIGraphicsGetCurrentContext();
-		[UIColor.blackColor setStroke];
-		CGContextSetLineWidth(ctx, 1.0);
-		CGContextStrokeRect(ctx, rect);
-	}];
-	
-	UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-	UIGraphicsEndImageContext();
-	
-	[image dtx_saveToDesktop];
-}
-#endif
 
 @end
