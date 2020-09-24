@@ -4,7 +4,7 @@ module.exports = {
   "testRunner": "./test/node_modules/jest-circus/runner",
   "setupFilesAfterEnv": [],
   "globalSetup": "./test/e2e/global-setup.js",
-  "testTimeout": 40000,
+  "testTimeout": 120000,
   "reporters": process.env.DISABLE_JUNIT_REPORTER === '1'
     ? ["<rootDir>/runners/jest/streamlineReporter"]
     : ["<rootDir>/runners/jest/streamlineReporter", "<rootDir>/test/node_modules/jest-junit"],

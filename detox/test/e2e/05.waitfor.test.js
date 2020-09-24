@@ -42,11 +42,6 @@ describe('WaitFor', () => {
     await expectToThrow(() => waitFor(element(by.id('neverAppearingText'))).toExist().withTimeout(1000));
   });
 
-  it.only('should continously scroll until it finds an item in the list', async () => {
-    await expect(element(by.text('HText8'))).not.toBeVisible();
-    await waitFor(element(by.text('HText8'))).toBeVisible().whileElement(by.id('horizontalScrollView')).scroll(20, 'right');
-  });
-
   it('should abort scrolling if element was not found', async () => {
     await element(by.id('GoButton')).tap();
     await expectToThrow(() => waitFor(element(by.text('Text1000'))).toBeVisible().whileElement(by.id('ScrollView')).scroll(50, 'down'));
