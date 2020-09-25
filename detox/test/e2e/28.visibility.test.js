@@ -13,9 +13,27 @@ describe('Visibility Cases', () => {
       .scroll(200, 'right');
   });
 
-  it('should be able to tap on the main ScrollView regardless of the on-screen keyboard', async () => {
+  it(':ios: should be able to tap on the main ScrollView in a blind way, on the center, when the on-screen keyboard is enabled', async () => {
+    await element(by.id('screenScroll')).tap();
+    await element(by.id('inputExample')).tap();
+
+    const { frame: { x, y, width, height } } = await element(by.id('screenScroll')).getAttributes();
+
+    await element(by.id('screenScroll')).tap({
+      x: Math.floor(x + 0.5 * width),
+      y: Math.floor(y + 0.5 * height),
+    });
+  });
+
+  it(':android: should be able to tap on the main ScrollView regardless of the on-screen keyboard', async () => {
     await element(by.id('screenScroll')).tap();
     await element(by.id('inputExample')).tap();
     await element(by.id('screenScroll')).tap();
+  });
+
+  it('should be able to tap on the badged button', async () => {
+    await expect(element(by.id('badgeButtonExample.badge'))).toBeVisible();
+    await element(by.id('badgeButtonExample')).tap();
+    await expect(element(by.id('badgeButtonExample.badge'))).not.toBeVisible();
   });
 });

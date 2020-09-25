@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  Image,
   Text,
   View,
   ScrollView,
@@ -10,6 +11,7 @@ import {
 } from 'react-native';
 
 import ScrollBarGradient from '../Views/ScrollBarGradient';
+import BadgeButton from "../Views/BadgeButton";
 
 export default class VisibilityScreen extends Component {
   constructor(props) {
@@ -38,9 +40,18 @@ export default class VisibilityScreen extends Component {
             <ScrollBarGradient left={false} />
             <ScrollBarGradient left={true} />
           </View>
+
           <Text style={styles.header}>Dismiss the on-screen keyboard</Text>
           <Text style={styles.text}>The upper &lt;ScrollView&gt; should be tappable even if the on-screen keyboard is on.</Text>
           <TextInput testID='inputExample' style={styles.input} placeholder={'Tap to turn on the keyboard'} />
+
+          <Text style={styles.header}>Buttons with non-interactive badges</Text>
+          <Text style={styles.text}>The button with a badge should be tappable.</Text>
+
+          <View style={styles.badgesContainer} testID='badgeButtonsContainer'>
+            <BadgeButton testID={'badgeButtonExample'} icon={require('../assets/search.png')} text="5" />
+          </View>
+
         </ScrollView>
       </SafeAreaView>
     );
@@ -86,5 +97,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 30,
     height: 30,
+  },
+  badgesContainer: {
+    flexDirection: 'row',
+    paddingVertical: 6,
+    justifyContent: 'center',
+    height: 40,
   },
 });
