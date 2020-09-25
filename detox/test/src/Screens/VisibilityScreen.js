@@ -6,6 +6,7 @@ import {
   Dimensions,
   StyleSheet,
   SafeAreaView,
+  TextInput
 } from 'react-native';
 
 import ScrollBarGradient from '../Views/ScrollBarGradient';
@@ -20,22 +21,27 @@ export default class VisibilityScreen extends Component {
   render() {
     return (
       <SafeAreaView testID='VisibilityScreen' style={styles.screen}>
-        <Text style={styles.header}>Tab Bar with Gradient</Text>
-        <Text style={styles.text}>Should be scrollable because pointerEvents="none"</Text>
-        <View style={styles.scrollContainer}>
-          <ScrollView contentContainerStyle={styles.scrollView} testID='tabBarWithGradient' horizontal>
-            <Text style={styles.horizontalItem}>Tab 1</Text>
-            <Text style={styles.horizontalItem}>Tab 2</Text>
-            <Text style={styles.horizontalItem}>Tab 3</Text>
-            <Text style={styles.horizontalItem}>Tab 4</Text>
-            <Text style={styles.horizontalItem}>Tab 5</Text>
-            <Text style={styles.horizontalItem}>Tab 6</Text>
-            <Text style={styles.horizontalItem}>Tab 7</Text>
-            <Text style={styles.horizontalItem}>Tab 8</Text>
-          </ScrollView>
-          <ScrollBarGradient left={false} />
-          <ScrollBarGradient left={true} />
-        </View>
+        <ScrollView contentContainerStyle={styles.screenScroll} testID='screenScroll'>
+          <Text style={styles.header}>Tab Bar with Gradient</Text>
+          <Text style={styles.text}>Should be scrollable because pointerEvents="none"</Text>
+          <View style={styles.scrollContainer}>
+            <ScrollView contentContainerStyle={styles.scrollView} testID='tabBarWithGradient' horizontal>
+              <Text style={styles.horizontalItem}>Tab 1</Text>
+              <Text style={styles.horizontalItem}>Tab 2</Text>
+              <Text style={styles.horizontalItem}>Tab 3</Text>
+              <Text style={styles.horizontalItem}>Tab 4</Text>
+              <Text style={styles.horizontalItem}>Tab 5</Text>
+              <Text style={styles.horizontalItem}>Tab 6</Text>
+              <Text style={styles.horizontalItem}>Tab 7</Text>
+              <Text style={styles.horizontalItem}>Tab 8</Text>
+            </ScrollView>
+            <ScrollBarGradient left={false} />
+            <ScrollBarGradient left={true} />
+          </View>
+          <Text style={styles.header}>Dismiss the on-screen keyboard</Text>
+          <Text style={styles.text}>The upper &lt;ScrollView&gt; should be tappable even if the on-screen keyboard is on.</Text>
+          <TextInput testID='inputExample' style={styles.input} placeholder={'Tap to turn on the keyboard'} />
+        </ScrollView>
       </SafeAreaView>
     );
   }
@@ -65,6 +71,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     paddingLeft: 18,
     marginVertical: 12,
+  },
+  input: {
+    marginHorizontal: 18,
+    padding: 12,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 5,
   },
   horizontalItem: {
     width: 0.25 * Dimensions.get('window').width - 20, // to have four items

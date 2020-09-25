@@ -12,4 +12,10 @@ describe('Visibility Cases', () => {
       .whileElement(by.id('tabBarWithGradient'))
       .scroll(200, 'right');
   });
+
+  it('should be able to tap on the main ScrollView regardless of the on-screen keyboard', async () => {
+    await element(by.id('screenScroll')).tap();
+    await element(by.id('inputExample')).tap();
+    await element(by.id('screenScroll')).tap();
+  });
 });
