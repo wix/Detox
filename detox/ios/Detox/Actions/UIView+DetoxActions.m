@@ -81,9 +81,9 @@ static inline void _DTXApplySwipe(UIWindow* window, CGPoint startPoint, CGPoint 
 }
 
 #define DTX_CALC_SWIPE_START_END_POINTS(bounds, screenBounds, mainMidFunc, otherMidFunc, main, other, mainSizeFunc, normalizedOffset) \
-startPoint.main = mainMidFunc(bounds); \
+startPoint.main = mainMidFunc(bounds) - 0.5 * normalizedOffset.main * mainSizeFunc(screenBounds); \
 startPoint.other = otherMidFunc(bounds); \
-endPoint.main = mainMidFunc(bounds) + normalizedOffset.main * mainSizeFunc(screenBounds); \
+endPoint.main = mainMidFunc(bounds) + 0.5 * normalizedOffset.main * mainSizeFunc(screenBounds); \
 endPoint.other = otherMidFunc(bounds);
 
 - (void)dtx_swipeWithNormalizedOffset:(CGPoint)normalizedOffset velocity:(CGFloat)velocity
