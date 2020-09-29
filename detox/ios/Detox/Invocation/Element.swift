@@ -65,6 +65,9 @@ class Element : NSObject {
 		
 		let element : UIView
 		if let index = index {
+			guard index < array.count else {
+				dtx_fatalError("Index \(index) beyond bounds [0 .. \(array.count - 1)] for “\(self.description)”")
+			}
 			element = array[index]
 		} else {
 			//Will fail test if more than one element are resolved from the query
