@@ -80,11 +80,13 @@ static inline void _DTXApplySwipe(UIWindow* window, CGPoint startPoint, CGPoint 
 	[DTXSyntheticEvents touchAlongPath:points relativeToWindow:window holdDurationOnLastTouch:0.0];
 }
 
-#define DTX_CALC_SWIPE_START_END_POINTS(bounds, screenBounds, mainMidFunc, otherMidFunc, main, other, mainSizeFunc, normalizedOffset) \
-startPoint.main = mainMidFunc(bounds) - 0.5 * normalizedOffset.main * mainSizeFunc(screenBounds); \
-startPoint.other = otherMidFunc(bounds); \
-endPoint.main = mainMidFunc(bounds) + 0.5 * normalizedOffset.main * mainSizeFunc(screenBounds); \
-endPoint.other = otherMidFunc(bounds);
+#define DTX_CALC_SWIPE_START_END_POINTS(safeBoundsInScreenSpace, screenBounds, normalizedOffset, main, other, CGRectGetMinMain, CGRectGetMidMain, CGRectGetMidOther, CGRectGetMaxMain, CGRectGetMainSize) \
+CGFloat mainStart = MAX(MIN(CGRectGetMidMain(screenBounds) - 0.5 * normalizedOffset.main * CGRectGetMainSize(screenBounds), CGRectGetMaxMain(safeBoundsInScreenSpace) - 1), CGRectGetMinMain(safeBoundsInScreenSpace) + 1); \
+startPoint.main = mainStart; \
+startPoint.other = CGRectGetMidOther(safeBoundsInScreenSpace); \
+endPoint.main = MIN(MAX(mainStart + normalizedOffset.main * CGRectGetMainSize(screenBounds), CGRectGetMinMain(screenBounds) + 1), CGRectGetMaxMain(screenBounds) - 1); \
+endPoint.other = CGRectGetMidOther(safeBoundsInScreenSpace);
+
 
 - (void)dtx_swipeWithNormalizedOffset:(CGPoint)normalizedOffset velocity:(CGFloat)velocity
 {
@@ -99,20 +101,22 @@ endPoint.other = otherMidFunc(bounds);
 	CGPoint endPoint;
 	
 	CGRect safeBounds = self.dtx_safeAreaBounds;
+	CGRect safeBoundsInScreenSpace = [self.window.screen.coordinateSpace convertRect:safeBounds fromCoordinateSpace:self.coordinateSpace];
+	CGRect screenBounds = self.window.screen.bounds;
 	
 	if(normalizedOffset.x != 0)
 	{
-		DTX_CALC_SWIPE_START_END_POINTS(safeBounds, self.window.screen.bounds, CGRectGetMidX, CGRectGetMidY, x, y, CGRectGetWidth, normalizedOffset);
+		DTX_CALC_SWIPE_START_END_POINTS(safeBoundsInScreenSpace, screenBounds, normalizedOffset, x, y, CGRectGetMinX, CGRectGetMidX, CGRectGetMidY, CGRectGetMaxX, CGRectGetWidth);
 	}
 	else
 	{
-		DTX_CALC_SWIPE_START_END_POINTS(safeBounds, self.window.screen.bounds, CGRectGetMidY, CGRectGetMidX, y, x, CGRectGetHeight, normalizedOffset);
+		DTX_CALC_SWIPE_START_END_POINTS(safeBoundsInScreenSpace, screenBounds, normalizedOffset, y, x, CGRectGetMinY, CGRectGetMidY, CGRectGetMidX, CGRectGetMaxY, CGRectGetHeight);
 	}
 	
 	[self dtx_assertHittableAtPoint:startPoint];
 	
-	startPoint = [self.window convertPoint:startPoint fromView:self];
-	endPoint = [self.window convertPoint:endPoint fromView:self];
+	startPoint = [self.window.coordinateSpace convertPoint:startPoint fromCoordinateSpace:self.window.screen.coordinateSpace];
+	endPoint = [self.window.coordinateSpace convertPoint:endPoint fromCoordinateSpace:self.window.screen.coordinateSpace];
 	
 	_DTXApplySwipe(self.window, startPoint, endPoint, 1.0 / velocity);
 }
