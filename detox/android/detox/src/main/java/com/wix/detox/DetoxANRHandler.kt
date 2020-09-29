@@ -16,7 +16,7 @@ class DetoxANRHandler(private val wsClient: WebSocketClient) {
     }
 
     companion object {
-        val LOG_TAG: String = DetoxANRHandler::class.java.simpleName
+        private val LOG_TAG: String = DetoxANRHandler::class.java.simpleName
 
         private const val ACTION_NAME = "AppNonresponsiveDetected"
         private const val MESSAGE_ID = -10001L

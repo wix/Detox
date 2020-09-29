@@ -18,63 +18,9 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okio.ByteString;
 
-/**
- * Created by rotemm on 27/12/2016.
- */
-
-public class WebSocketClient extends WebSocketListener {
-
-    @Override
-    public void onOpen(WebSocket webSocket, Response response) {
-        Log.i(LOG_TAG, "At onOpen");
-        HashMap params = new HashMap();
-        params.put("sessionId", sessionId);
-        params.put("role", "testee");
-        sendAction("login", params, 0L);
-        actionHandler.onConnect();
-    }
-
-    @Override
-    public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-//        Log.e(LOG_TAG, "Detox Error: ", t);
-
-        //OKHttp won't recover from failure if it got ConnectException,
-        // this is a workaround to make the websocket client try reconnecting when failed.
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e2) {
-            Log.d(LOG_TAG, "interrupted", e2);
-        }
-        Log.d(LOG_TAG, "Retrying...");
-        connectToServer(url, sessionId);
-    }
-
-    @Override
-    public void onMessage(WebSocket webSocket, String text) {
-        Log.i(LOG_TAG, "At onMessage");
-        receiveAction(websocket, text);
-    }
-
-    @Override
-    public void onMessage(WebSocket webSocket, ByteString bytes) {
-        Log.e(LOG_TAG, "Unexpected binary ws message from detox server.");
-    }
+public class WebSocketClient {
 
     private volatile boolean closing = false;
-
-    @Override
-    public void onClosed(WebSocket webSocket, int code, String reason) {
-        Log.d(LOG_TAG, "Detox WS Closed: " + code + " " + reason);
-        closing = true;
-        actionHandler.onClosed();
-    }
-
-    @Override
-    public void onClosing(WebSocket webSocket, int code, String reason) {
-        Log.i(LOG_TAG, "At onClose");
-        closing = true;
-        websocket.close(NORMAL_CLOSURE_STATUS, null);
-    }
 
     public void close() {
         if (closing) return;
@@ -86,9 +32,10 @@ public class WebSocketClient extends WebSocketListener {
 
     private String url;
     private String sessionId;
-    private OkHttpClient client;
     private WebSocket websocket = null;
-    private ActionHandler actionHandler;
+
+    private final ActionHandler actionHandler;
+    private final WebSocketEventsHandler wsEventsHandler = new WebSocketEventsHandler();
 
     private static final int NORMAL_CLOSURE_STATUS = 1000;
 
@@ -97,59 +44,53 @@ public class WebSocketClient extends WebSocketListener {
     }
 
     public void connectToServer(String sessionId) {
-
         connectToServer(Environment.getServerHost(), sessionId);
     }
 
     public void connectToServer(String url, String sessionId) {
         Log.i(LOG_TAG, "At connectToServer");
+
         this.url = url;
         this.sessionId = sessionId;
 
-        client = new OkHttpClient.Builder().
-                retryOnConnectionFailure(true).
-                connectTimeout(1500, TimeUnit.MILLISECONDS).
-                readTimeout(0, TimeUnit.MILLISECONDS).build();
+        final OkHttpClient client = new OkHttpClient.Builder()
+                .retryOnConnectionFailure(true)
+                .connectTimeout(1500, TimeUnit.MILLISECONDS)
+                .readTimeout(0, TimeUnit.MILLISECONDS)
+                .build();
 
-        Request request = new Request.Builder().url(url).build();
-
-        this.websocket = client.newWebSocket(request, this);
+        final Request request = new Request.Builder().url(url).build();
+        this.websocket = client.newWebSocket(request, wsEventsHandler);
 
         client.dispatcher().executorService().shutdown();
     }
 
     public void sendAction(String type, Map params, Long messageId) {
         Log.i(LOG_TAG, "At sendAction");
-        HashMap data = new HashMap();
+
+        final Map<String, Object> data = new HashMap<>();
         data.put("type", type);
         data.put("params", params);
         data.put("messageId", messageId);
-        JSONObject json = new JSONObject(data);
 
+        final JSONObject json = new JSONObject(data);
         websocket.send(json.toString());
         Log.d(LOG_TAG, "Detox Action Sent: " + type);
     }
 
-    public void receiveAction(WebSocket webSocket,  String json) {
+    private void receiveAction(String json) {
         Log.i(LOG_TAG, "At receiveAction");
         try {
-            JSONObject object = new JSONObject(json);
-
-            String type = (String) object.get("type");
-            if (type == null) {
-                Log.e(LOG_TAG, "Detox Error: receiveAction missing type");
-                return;
-            }
-
-            Object params = object.get("params");
-            if (params != null && !(params instanceof JSONObject)) {
-                Log.d(LOG_TAG, "Detox Error: receiveAction invalid params");
-            }
-            long messageId = object.getLong("messageId");
+            final JSONObject object = new JSONObject(json);
+            final String type = (String) object.get("type");
+            final Object params = object.get("params");
+            final long messageId = object.getLong("messageId");
 
             Log.d(LOG_TAG, "Detox Action Received: " + type);
 
-            if (actionHandler != null) actionHandler.onAction(type, params.toString(), messageId);
+            if (actionHandler != null) {
+                actionHandler.onAction(type, params.toString(), messageId);
+            }
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Detox Error: receiveAction decode - " + e.toString());
         }
@@ -163,5 +104,58 @@ public class WebSocketClient extends WebSocketListener {
         void onAction(String type, String params, long messageId);
         void onConnect();
         void onClosed();
+    }
+
+    private class WebSocketEventsHandler extends WebSocketListener {
+        @Override
+        public void onOpen(WebSocket webSocket, Response response) {
+            Log.i(LOG_TAG, "At onOpen");
+
+            Map<String, Object> params = new HashMap<>();
+            params.put("sessionId", sessionId);
+            params.put("role", "testee");
+            sendAction("login", params, 0L);
+            actionHandler.onConnect();
+        }
+
+        @Override
+        public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+//        Log.e(LOG_TAG, "Detox Error: ", t);
+
+            //OKHttp won't recover from failure if it got ConnectException,
+            // this is a workaround to make the websocket client try reconnecting when failed.
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e2) {
+                Log.d(LOG_TAG, "interrupted", e2);
+            }
+            Log.d(LOG_TAG, "Retrying...");
+            connectToServer(url, sessionId);
+        }
+
+        @Override
+        public void onMessage(WebSocket webSocket, String text) {
+            Log.i(LOG_TAG, "At onMessage");
+            receiveAction(text);
+        }
+
+        @Override
+        public void onMessage(WebSocket webSocket, ByteString bytes) {
+            Log.e(LOG_TAG, "Unexpected binary ws message from detox server.");
+        }
+
+        @Override
+        public void onClosed(WebSocket webSocket, int code, String reason) {
+            Log.d(LOG_TAG, "Detox WS Closed: " + code + " " + reason);
+            closing = true;
+            actionHandler.onClosed();
+        }
+
+        @Override
+        public void onClosing(WebSocket webSocket, int code, String reason) {
+            Log.i(LOG_TAG, "At onClosing");
+            closing = true;
+            websocket.close(NORMAL_CLOSURE_STATUS, null);
+        }
     }
 }
