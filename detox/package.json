@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "17.4.5",
+  "version": "17.6.1",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -31,7 +31,10 @@
   "devDependencies": {
     "eslint": "^4.11.0",
     "eslint-plugin-node": "^6.0.1",
-    "jest": "26.x.x",
+    "jest": "^26.0.0",
+    "jest-circus": "^26.0.0",
+    "jest-environment-node": "^26.0.0",
+    "mocha": ">=6.0.0",
     "mockdate": "^2.0.1",
     "prettier": "1.7.0",
     "react-native": "0.62.x",
@@ -50,6 +53,7 @@
     "lodash": "^4.17.5",
     "minimist": "^1.2.0",
     "proper-lockfile": "^3.0.2",
+    "resolve-from": "^5.0.0",
     "sanitize-filename": "^1.6.1",
     "shell-utils": "^1.0.9",
     "signal-exit": "^3.0.3",
@@ -59,7 +63,13 @@
     "which": "^1.3.1",
     "ws": "^3.3.1",
     "yargs": "^13.0.0",
-    "yargs-parser": "^13.0.0"
+    "yargs-parser": "^13.0.0",
+    "yargs-unparser": "^1.6.3"
+  },
+  "peerDependencies": {
+    "jest-circus": ">=26.0.0",
+    "jest-environment-node": ">=25.0.0",
+    "mocha": ">=6.0.0"
   },
   "engines": {
     "node": ">=8.3.0"
@@ -108,7 +118,6 @@
       "src/android/matcher.js",
       "src/ios/matchers.js",
       "appdatapath.js",
-      ".test.js",
       ".mock.js",
       "src/ios/expect.js"
     ],

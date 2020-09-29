@@ -218,7 +218,7 @@ if(isnan(normalizedStartingPoint.other) || normalizedStartingPoint.other < 0 || 
 } \
 if(isnan(normalizedStartingPoint.main) || normalizedStartingPoint.main < 0 || normalizedStartingPoint.main > 1) \
 { \
-	normalizedStartingPoint.main = offset < 0 ? 0.99 : 0.01; \
+	normalizedStartingPoint.main = offset < 0 ? 0.95 : 0.05; \
 }
 
 - (void)dtx_scrollWithOffset:(CGPoint)offset normalizedStartingPoint:(CGPoint)normalizedStartingPoint
@@ -246,7 +246,7 @@ if(isnan(normalizedStartingPoint.main) || normalizedStartingPoint.main < 0 || no
 	
 	CGPoint startPoint = CGPointMake(safeAreaToScroll.origin.x + safeAreaToScroll.size.width * normalizedStartingPoint.x, safeAreaToScroll.origin.y + safeAreaToScroll.size.height * normalizedStartingPoint.y);
 	
-	[self dtx_assertHittableAtPoint:startPoint];
+//	[self dtx_assertHittableAtPoint:startPoint];
 	
 	startPoint = [self.window convertPoint:startPoint fromView:self];
 	

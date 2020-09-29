@@ -23,12 +23,13 @@ class WholeTestRecorderPlugin extends ArtifactPlugin {
     await super.onTestDone(testSummary);
 
     if (this.testRecording) {
-      await this.testRecording.stop();
+      const testRecording = this.testRecording;
+      await testRecording.stop();
 
       if (this.shouldKeepArtifactOfTest(testSummary)) {
-        this._startSavingTestRecording(this.testRecording, testSummary)
+        this._startSavingTestRecording(testRecording, testSummary)
       } else {
-        this._startDiscardingTestRecording(this.testRecording);
+        this._startDiscardingTestRecording(testRecording);
       }
 
       this.testRecording = null;

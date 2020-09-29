@@ -3,14 +3,7 @@ const cp = require('child_process');
 
 const [_0, _1, command, ...args] = process.argv;
 
-const testProcess = cp.spawn(command, args, {
-  stdio: 'inherit',
-  env: {
-    ...process.env,
-    TIMEOUT_E2E_TEST: '1',
-    DISABLE_JUNIT_REPORTER: '1',
-  },
-});
+const testProcess = cp.spawn(command, args, { stdio: 'inherit' });
 
 let handle = setTimeout(() => {
   handle = null;

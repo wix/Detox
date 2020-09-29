@@ -2,6 +2,42 @@
 
 We are improving Detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes. If a newer version has no entries in this document, it means it does not require special migration steps. Refer to the release notes of the later builds to learn about their improvements and changes.
 
+## 17.4.7
+
+This release was not meant to be breaking in any sense, but unfortunately there are two minor caveats that leaked in.
+
+### jest-cli
+
+From now on, Detox explicitly depends on `jest-cli` package (marked as a peerDependency), that's why if you see an error like the one below:
+
+```
+Cannot find module 'jest-cli/build/cli/args'
+```
+
+You should add `jest-cli` to your `package.json`'s `devDependencies` and re-run `npm install`, e.g.:
+
+```diff
+ "devDependencies": {
+   "jest": "26.x.x",
++  "jest-cli": "26.x.x",
+```
+
+### detox-cli
+
+If you were using `detox-cli` global package, make sure to upgrade it before proceeding to `detox@17.4.7`.
+
+```
+npm -g install detox-cli
+```
+
+If you have an older version of `detox-cli`, then you might see the following error on an attempt to run  `detox test <...args>`:
+
+```
+'jest' is not recognized as an internal or external command,
+operable program or batch file.
+detox[43764] ERROR: [cli.js] Error: Command failed: jest --config e2e/config.json --testNamePattern "^((?!:android:).)*$" --maxWorkers 1 e2e
+```
+
 ## 17.3.0
 
 In the context of introducting the element screenshots feature ([#2012](https://github.com/wix/Detox/issues/2012)), we decided to slightly change the contract between Detox and externally-implemented _drivers_. These should be modified according to the follow diff-snippet:

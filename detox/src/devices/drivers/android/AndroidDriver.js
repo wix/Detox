@@ -25,7 +25,6 @@ const sleep = require('../../../utils/sleep');
 const retry = require('../../../utils/retry');
 const getAbsoluteBinaryPath = require('../../../utils/getAbsoluteBinaryPath');
 const DeviceRegistry = require('../../DeviceRegistry');
-const environment = require('../../../utils/environment');
 
 const ALLOCATE_DEVICE_LOG_EVT = 'ALLOCATE_DEVICE';
 

@@ -3,7 +3,7 @@ const AsyncWebSocket = require('./AsyncWebSocket');
 const actions = require('./actions/actions');
 const argparse = require('../utils/argparse');
 const log = require('../utils/logger').child({ __filename });
-const { asError, removeInternalStackEntries } = require('../utils/errorUtils');
+const { asError, createErrorWithUserStack, replaceErrorStack } = require('../utils/errorUtils');
 
 class Client {
   constructor(config) {
@@ -94,21 +94,17 @@ class Client {
   }
 
   async execute(invocation) {
+    const errorWithUserStack = createErrorWithUserStack();
+
     if (typeof invocation === 'function') {
       invocation = invocation();
-    }
-
-    if (this.slowInvocationTimeout) {
-      this.slowInvocationStatusHandler = this.slowInvocationStatus();
     }
 
     try {
       return await this.sendAction(new actions.Invoke(invocation));
     } catch (err) {
       this.successfulTestRun = false;
-      throw removeInternalStackEntries(asError(err));
-    } finally {
-      clearTimeout(this.slowInvocationStatusHandler);
+      throw replaceErrorStack(errorWithUserStack, asError(err));
     }
   }
 
@@ -135,9 +131,20 @@ class Client {
   }
 
   async sendAction(action) {
+    if (this.slowInvocationTimeout && action.type !== 'currentStatus') {
+      this.slowInvocationStatusHandler = this.slowInvocationStatus();
+    }
+
     const response = await this.ws.send(action, action.messageId);
     const parsedResponse = JSON.parse(response);
-    return await action.handle(parsedResponse);
+    let handledResponse;
+    try {
+      handledResponse = await action.handle(parsedResponse);
+    } finally {
+      clearTimeout(this.slowInvocationStatusHandler);
+    }
+
+    return handledResponse;
   }
 
   slowInvocationStatus() {

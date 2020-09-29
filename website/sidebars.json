@@ -25,7 +25,7 @@
       "APIRef.ActionsOnElement",
       "APIRef.Expect",
       "APIRef.waitFor",
-      "APIRef.MockingOpenFromURL",
+      "APIRef.MockingOpenWithURL",
       "APIRef.MockingUserNotifications",
       "APIRef.DetoxCLI"
     ],

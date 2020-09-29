@@ -258,6 +258,15 @@ describe('index (regular)', () => {
   });
 });
 
+describe(':ios: test', () => {
+  it('should pass', () => {});
+});
+
+describe(':android: test', () => {
+  it('should pass 1', () => {});
+  it('should pass 2', () => {});
+});
+
 describe('index (global detox variable injected with Jest Circus)', () => {
   beforeEach(() => {
     if (global.detox) {

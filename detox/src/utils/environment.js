@@ -17,6 +17,7 @@ const MISSING_SDK_ERROR = `$ANDROID_SDK_ROOT is not defined, set the path to the
 Go to https://developer.android.com/studio/command-line/variables.html for more details`;
 const DEVICE_LOCK_FILE_PATH_IOS = path.join(DETOX_LIBRARY_ROOT_PATH, 'device.registry.state.lock');
 const DEVICE_LOCK_FILE_PATH_ANDROID = path.join(DETOX_LIBRARY_ROOT_PATH, 'android-device.registry.state.lock');
+const LAST_FAILED_TESTS_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'last-failed.txt');
 
 function getAndroidSDKPath() {
   return process.env.ANDROID_SDK_ROOT || process.env.ANDROID_HOME || '';
@@ -46,6 +47,14 @@ function getAvdDir(avdName) {
   }
 
   return avdIni.path;
+}
+
+function getAvdManagerPath() {
+  return path.join(getAndroidSDKPath(), 'tools', 'bin', 'avdmanager');
+}
+
+function getAndroidSdkManagerPath() {
+  return path.join(getAndroidSDKPath(), 'tools', 'bin', 'sdkmanager');
 }
 
 function getAndroidEmulatorPath() {
@@ -157,6 +166,10 @@ function getDeviceLockFilePathAndroid() {
   return DEVICE_LOCK_FILE_PATH_ANDROID;
 }
 
+function getLastFailedTestsPath() {
+  return LAST_FAILED_TESTS_PATH;
+}
+
 function getHomeDir() {
   return os.homedir();
 }
@@ -166,6 +179,8 @@ module.exports = {
   getAdbPath,
   getAvdHome,
   getAvdDir,
+  getAvdManagerPath,
+  getAndroidSdkManagerPath,
   getDetoxVersion,
   getFrameworkPath,
   getAndroidSDKPath,
@@ -173,5 +188,6 @@ module.exports = {
   getDetoxLibraryRootPath,
   getDeviceLockFilePathIOS,
   getDeviceLockFilePathAndroid,
+  getLastFailedTestsPath,
   getHomeDir,
 };

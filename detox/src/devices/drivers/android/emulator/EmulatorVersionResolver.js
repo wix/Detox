@@ -42,6 +42,7 @@ class EmulatorVersionResolver {
       major: Number(major),
       minor: Number(minor),
       patch: Number(patch),
+      toString: () => versionRaw,
     };
   }
 }

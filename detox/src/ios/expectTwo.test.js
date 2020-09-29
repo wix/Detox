@@ -300,13 +300,30 @@ describe('expectTwo', () => {
     expect(testCall).deepEquals(jsonOutput);
   });
 
+  it(`expect(element(by.id('switch'))).toHaveToggleValue(value)`, () => {
+    const testCall = e.expect(e.element(e.by.id('switch'))).toHaveToggleValue(true);
+    const jsonOutput = {
+      'invocation': {
+        'type': 'expectation',
+        'predicate': {
+          'type': 'id',
+          'value': 'switch'
+        },
+        'expectation': 'toHaveValue',
+        'params': ['1']
+      }
+    };
+
+    expect(testCall).deepEquals(jsonOutput);
+  });
+
   it(`waitFor(element(by.text('Text5'))).toBeNotVisible().whileElement(by.id('ScrollView630')).scroll(50, 'down')`, () => {
     const testCall = e.waitFor(e.element(e.by.text('Text5'))).toBeNotVisible().whileElement(e.by.id('ScrollView630')).scroll(50, 'down');
     const jsonOutput = {
       invocation: {
         type: 'action',
         action: 'scroll',
-        params: [50, 'down'],
+        params: [50, 'down', null, null],
         predicate: {
           type: 'id',
           value: 'ScrollView630'

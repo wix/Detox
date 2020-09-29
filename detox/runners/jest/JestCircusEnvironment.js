@@ -1,4 +1,4 @@
-const NodeEnvironment = require('jest-environment-node'); // eslint-disable-line node/no-extraneous-require
+const NodeEnvironment = require('jest-environment-node');
 
 /**
  * @see https://www.npmjs.com/package/jest-circus#overview
