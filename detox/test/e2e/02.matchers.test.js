@@ -19,7 +19,7 @@ describe('Matchers', () => {
     await expect(element(by.text('First button pressed!!!'))).toBeVisible();
   });
 
-  it.only(':ios: should fail matching out of bounds index with a suitable error', async () => {
+  it(':ios: should fail matching out of bounds index with a suitable error', async () => {
     try {
       await element(by.text('Index')).atIndex(123456).tap();
     } catch(e) {
