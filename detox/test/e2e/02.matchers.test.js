@@ -19,6 +19,19 @@ describe('Matchers', () => {
     await expect(element(by.text('First button pressed!!!'))).toBeVisible();
   });
 
+  it(':ios: should fail matching out of bounds index with a suitable error', async () => {
+    try {
+      await element(by.text('Index')).atIndex(123456).tap();
+    } catch(e) {
+      if(e.message.includes("Index 123456 beyond bounds") == false)
+      {
+        let err = Error();
+        err.message = "Unexpected error message";
+        throw err;
+      }
+    }
+  });
+
   it('should be able to swipe elements matched by index', async () => {
     await element(by.text('Index')).atIndex(0).swipe('down', 'fast', 0.7); //No need to do here anything, just let it not crash.
   });
