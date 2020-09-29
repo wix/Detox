@@ -52,7 +52,7 @@ class Element : NSObject {
 		let array = (UIView.dtx_findViewsInKeySceneWindows(passing: predicate.predicateForQuery()) as! [UIView])
 		
 		guard array.count > 0 else {
-			dtx_fatalError("No elements found for “\(self.description)”", viewDescription: inDebugAttributes ? nil : debugAttributes)
+			dtx_fatalError("No elements found for “\(self.description)”", viewDescription: failDebugAttributes)
 		}
 		
 //		cachedViews = array
@@ -66,13 +66,13 @@ class Element : NSObject {
 		let element : UIView
 		if let index = index {
 			guard index < array.count else {
-				dtx_fatalError("Index \(index) beyond bounds [0 .. \(array.count - 1)] for “\(self.description)”")
+				dtx_fatalError("Index \(index) beyond bounds [0 .. \(array.count - 1)] for “\(self.description)”", viewDescription: failDebugAttributes)
 			}
 			element = array[index]
 		} else {
 			//Will fail test if more than one element are resolved from the query
 			guard array.count == 1 else {
-				dtx_fatalError("Multiple elements found for “\(self.description)”", viewDescription: inDebugAttributes ? nil : debugAttributes)
+				dtx_fatalError("Multiple elements found for “\(self.description)”", viewDescription: failDebugAttributes)
 			}
 			element = array.first!
 		}
@@ -97,12 +97,14 @@ class Element : NSObject {
 		return String(format: "MATCHER(%@)%@", predicate.description, index != nil ? " AT INDEX(\(index!))" : "")
 	}
 	
-	fileprivate var inDebugAttributes = false
-	var debugAttributes: [String: Any] {
-		inDebugAttributes = true
-		defer {
-			inDebugAttributes = false
+	fileprivate var failDebugAttributes: [String: Any] {
+		guard let keyWindow = UIWindow.dtx_keyWindow else {
+			return [:]
 		}
+		return ["viewHierarchy": keyWindow.recursiveDescription!]
+	}
+	
+	var debugAttributes: [String: Any] {
 		do {
 //			guard failed == false else {
 //				throw "Nope"
@@ -113,10 +115,7 @@ class Element : NSObject {
 			}
 			return rv
 		} catch {
-			guard let keyWindow = UIWindow.dtx_keyWindow else {
-				return [:]
-			}
-			return ["viewHierarchy": keyWindow.recursiveDescription!]
+			return failDebugAttributes
 		}
 	}
 	
