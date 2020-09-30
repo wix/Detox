@@ -14,6 +14,7 @@
 #import "DTXSyntheticEvents.h"
 #import "UIView+DetoxUtils.h"
 
+DTX_DIRECT_MEMBERS
 @implementation UIView (Detox)
 
 - (void)dtx_tapAtAccessibilityActivationPoint
@@ -62,8 +63,7 @@
 	[DTXSyntheticEvents touchAlongPath:@[@(point)] relativeToWindow:self.window holdDurationOnLastTouch:duration];
 }
 
-__attribute__((always_inline))
-static inline void _DTXApplySwipe(UIWindow* window, CGPoint startPoint, CGPoint endPoint, CGFloat velocity)
+static void _DTXApplySwipe(UIWindow* window, CGPoint startPoint, CGPoint endPoint, CGFloat velocity)
 {
 	NSCAssert(CGPointEqualToPoint(startPoint, endPoint) == NO, @"Start and end points for swipe cannot be equal");
 
@@ -86,7 +86,6 @@ startPoint.main = mainStart; \
 startPoint.other = CGRectGetMidOther(safeBoundsInScreenSpace); \
 endPoint.main = MIN(MAX(mainStart + normalizedOffset.main * CGRectGetMainSize(screenBounds), CGRectGetMinMain(screenBounds) + 1), CGRectGetMaxMain(screenBounds) - 1); \
 endPoint.other = CGRectGetMidOther(safeBoundsInScreenSpace);
-
 
 - (void)dtx_swipeWithNormalizedOffset:(CGPoint)normalizedOffset velocity:(CGFloat)velocity
 {
@@ -122,8 +121,7 @@ endPoint.other = CGRectGetMidOther(safeBoundsInScreenSpace);
 	_DTXApplySwipe(self.window, startPoint, endPoint, 1.0 / velocity);
 }
 
-__attribute__((always_inline))
-static inline void _DTXApplyPinch(UIWindow* window, CGPoint startPoint1, CGPoint endPoint1, CGPoint startPoint2, CGPoint endPoint2, CGFloat velocity)
+static void _DTXApplyPinch(UIWindow* window, CGPoint startPoint1, CGPoint endPoint1, CGPoint startPoint2, CGPoint endPoint2, CGFloat velocity)
 {
 	NSMutableArray<NSValue*>* points1 = [NSMutableArray new];
 	NSMutableArray<NSValue*>* points2 = [NSMutableArray new];
@@ -144,8 +142,7 @@ static inline void _DTXApplyPinch(UIWindow* window, CGPoint startPoint1, CGPoint
 	[DTXSyntheticEvents touchAlongMultiplePaths:@[points1, points2] relativeToWindow:window holdDurationOnLastTouch:0.0];
 }
 
-__attribute__((always_inline))
-static inline void DTXCalcPinchStartEndPoints(CGRect bounds, CGFloat pixelsScale, CGFloat angle, CGPoint* startPoint1, CGPoint* endPoint1, CGPoint* startPoint2, CGPoint* endPoint2)
+static void DTXCalcPinchStartEndPoints(CGRect bounds, CGFloat pixelsScale, CGFloat angle, CGPoint* startPoint1, CGPoint* endPoint1, CGPoint* startPoint2, CGPoint* endPoint2)
 {
 	*startPoint1 = CGPointMake(CGRectGetMidX(bounds), CGRectGetMidY(bounds));
 	*startPoint2 = CGPointMake(CGRectGetMidX(bounds), CGRectGetMidY(bounds));
@@ -177,8 +174,8 @@ static inline void DTXCalcPinchStartEndPoints(CGRect bounds, CGFloat pixelsScale
 	endPoint2->y = LNLinearInterpolate(startPoint2->y, endPoint2->y, pixelsScale);
 }
 
-__attribute__((always_inline))
-static inline CGFloat clamp(CGFloat v, CGFloat min, CGFloat max)
+DTX_ALWAYS_INLINE
+static CGFloat clamp(CGFloat v, CGFloat min, CGFloat max)
 {
 	return MIN(MAX(v, min), max);
 }
@@ -300,7 +297,6 @@ static void _ensureSelectionAtRange(id<UITextInput> textInput, UITextRange* text
 	textInput.selectedTextRange = textRange;
 }
 
-__attribute__((constructor))
 static void _DTXFixupKeyboard(void)
 {
 	static char const *const controllerPrefBundlePath = "/System/Library/PrivateFrameworks/TextInput.framework/TextInput";
@@ -365,8 +361,6 @@ static void _DTXTypeText(NSString* text)
 
 - (void)dtx_clearText
 {
-//	[self dtx_assertHittable];
-	
 	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(self);
 	_assertFirstResponderSupportsTextInput(firstResponder);
 	
@@ -393,8 +387,6 @@ static void _DTXTypeText(NSString* text)
 
 - (void)dtx_typeText:(NSString*)text atTextRange:(UITextRange*)textRange
 {
-//	[self dtx_assertHittable];
-	
 	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(self);
 	_assertFirstResponderSupportsTextInput(firstResponder);
 	_ensureSelectionAtRange(firstResponder, textRange);
@@ -404,14 +396,13 @@ static void _DTXTypeText(NSString* text)
 
 - (void)dtx_replaceText:(NSString*)text
 {
-//	[self dtx_assertHittable];
-	
 	UIView<UITextInput>* firstResponder = (id)_ensureFirstResponderIfNeeded(self);
 	_assertFirstResponderSupportsTextInput(firstResponder);
 	
 	BOOL isControl = [self isKindOfClass:UIControl.class];
 	BOOL isTextField = [self isKindOfClass:UITextField.class];
 	BOOL isTextView = [self isKindOfClass:UITextView.class];
+	UITextView* textView = (UITextView*)self;
 	
 	if(isControl == YES)
 	{
@@ -425,7 +416,10 @@ static void _DTXTypeText(NSString* text)
 	
 	if(isTextView == YES)
 	{
-		[[(UITextView*)self delegate] textViewDidBeginEditing:(id)self];
+		if([textView.delegate respondsToSelector:@selector(textViewDidBeginEditing:)])
+		{
+			[textView.delegate textViewDidBeginEditing:(id)self];
+		}
 	}
 	
 	UITextPosition* beginningOfDocument = firstResponder.beginningOfDocument;
@@ -449,8 +443,14 @@ static void _DTXTypeText(NSString* text)
 	
 	if(isTextView == YES)
 	{
-		[[(UITextView*)self delegate] textViewDidChange:(id)self];
-		[[(UITextView*)self delegate] textViewDidEndEditing:(id)self];
+		if([textView.delegate respondsToSelector:@selector(textViewDidChange:)])
+		{
+			[textView.delegate textViewDidChange:(id)self];
+		}
+		if([textView.delegate respondsToSelector:@selector(textViewDidEndEditing:)])
+		{
+			[textView.delegate textViewDidEndEditing:(id)self];
+		}
 	}
 }
 

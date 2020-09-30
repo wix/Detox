@@ -38,6 +38,7 @@ static void _dtx_backdrop_renderInContext(CALayer* self, SEL _sel, CGContextRef 
 
 @end
 
+DTX_DIRECT_MEMBERS
 @implementation UIView (Drawing)
 
 - (void)dtx_drawViewHierarchyUpToSubview:(UIView*)subview inRect:(CGRect)rect afterScreenUpdates:(BOOL)afterUpdates

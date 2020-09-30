@@ -66,6 +66,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	return __DTXDoulbeEqualToDouble(floor(a.x), floor(b.x)) && __DTXDoulbeEqualToDouble(floor(a.y), floor(b.y));
 }
 
+DTX_DIRECT_MEMBERS
 @implementation UIView (DetoxUtils)
 
 - (void)dtx_assertVisible
