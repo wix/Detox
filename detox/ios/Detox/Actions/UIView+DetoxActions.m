@@ -402,6 +402,7 @@ static void _DTXTypeText(NSString* text)
 	BOOL isControl = [self isKindOfClass:UIControl.class];
 	BOOL isTextField = [self isKindOfClass:UITextField.class];
 	BOOL isTextView = [self isKindOfClass:UITextView.class];
+	UITextView* textView = (UITextView*)self;
 	
 	if(isControl == YES)
 	{
@@ -415,7 +416,10 @@ static void _DTXTypeText(NSString* text)
 	
 	if(isTextView == YES)
 	{
-		[[(UITextView*)self delegate] textViewDidBeginEditing:(id)self];
+		if([textView.delegate respondsToSelector:@selector(textViewDidBeginEditing:)])
+		{
+			[textView.delegate textViewDidBeginEditing:(id)self];
+		}
 	}
 	
 	UITextPosition* beginningOfDocument = firstResponder.beginningOfDocument;
@@ -439,8 +443,14 @@ static void _DTXTypeText(NSString* text)
 	
 	if(isTextView == YES)
 	{
-		[[(UITextView*)self delegate] textViewDidChange:(id)self];
-		[[(UITextView*)self delegate] textViewDidEndEditing:(id)self];
+		if([textView.delegate respondsToSelector:@selector(textViewDidChange:)])
+		{
+			[textView.delegate textViewDidChange:(id)self];
+		}
+		if([textView.delegate respondsToSelector:@selector(textViewDidEndEditing:)])
+		{
+			[textView.delegate textViewDidEndEditing:(id)self];
+		}
 	}
 }
 
