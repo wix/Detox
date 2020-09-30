@@ -113,7 +113,8 @@ endPoint.other = CGRectGetMidOther(safeBoundsInScreenSpace);
 		DTX_CALC_SWIPE_START_END_POINTS(safeBoundsInScreenSpace, screenBounds, normalizedOffset, y, x, CGRectGetMinY, CGRectGetMidY, CGRectGetMidX, CGRectGetMaxY, CGRectGetHeight);
 	}
 	
-	[self dtx_assertHittableAtPoint:startPoint];
+	
+	[self dtx_assertHittableAtPoint:[self.coordinateSpace convertPoint:startPoint fromCoordinateSpace:self.window.screen.coordinateSpace]];
 	
 	startPoint = [self.window.coordinateSpace convertPoint:startPoint fromCoordinateSpace:self.window.screen.coordinateSpace];
 	endPoint = [self.window.coordinateSpace convertPoint:endPoint fromCoordinateSpace:self.window.screen.coordinateSpace];
