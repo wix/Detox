@@ -46,7 +46,7 @@ class Element : NSObject {
 		let array = (UIView.dtx_findViewsInAllWindows(passing: predicate.predicateForQuery()) as! [UIView])
 		
 		guard array.count > 0 else {
-			dtx_fatalError("No elements found for “\(self.description)”", viewDescription: debugAttributes)
+			dtx_fatalError("No elements found for “\(self.description)”", viewDescription: failDebugAttributes)
 		}
 
 		return array
@@ -57,11 +57,14 @@ class Element : NSObject {
 		
 		let element : UIView
 		if let index = index {
+			guard index < array.count else {
+				dtx_fatalError("Index \(index) beyond bounds [0 .. \(array.count - 1)] for “\(self.description)”", viewDescription: failDebugAttributes)
+			}
 			element = array[index]
 		} else {
 			//Will fail test if more than one element are resolved from the query
 			guard array.count == 1 else {
-				dtx_fatalError("Multiple elements found for “\(self.description)”", viewDescription: debugAttributes)
+				dtx_fatalError("Multiple elements found for “\(self.description)”", viewDescription: failDebugAttributes)
 			}
 			element = array.first!
 		}
@@ -86,16 +89,11 @@ class Element : NSObject {
 		return String(format: "MATCHER(%@)%@", predicate.description, index != nil ? " AT INDEX(\(index!))" : "")
 	}
 	
-	fileprivate var inDebugAttributes = false
+	fileprivate var failDebugAttributes: [String: Any] {
+		return UIView.dtx_genericViewDebugAttributes
+	}
+	
 	var debugAttributes: [String: Any] {
-		guard inDebugAttributes else {
-			return UIView.dtx_genericViewDebugAttributes
-		}
-		
-		inDebugAttributes = true
-		defer {
-			inDebugAttributes = false
-		}
 		do {
 			var rv: [String: Any]! = nil
 			try dtx_try {
@@ -103,7 +101,7 @@ class Element : NSObject {
 			}
 			return rv
 		} catch {
-			return UIView.dtx_genericViewDebugAttributes
+			return failDebugAttributes
 		}
 	}
 	

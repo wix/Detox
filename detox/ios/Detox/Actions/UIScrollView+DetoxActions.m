@@ -21,10 +21,12 @@
 
 @interface UIScrollView (DetoxScrolling)
 
-@property (nonatomic, assign) BOOL dtx_disableDecelerationForScroll;
+- (BOOL)_dtx_scrollViewWillEndDraggingWithDeceleration:(BOOL)arg1;
+@property (nonatomic, assign, setter=dtx_setDisableDecelerationForScroll:) BOOL dtx_disableDecelerationForScroll;
 
 @end
 
+DTX_DIRECT_MEMBERS
 @implementation UIScrollView (DetoxScrolling)
 
 + (void)load
@@ -33,7 +35,7 @@
 	DTXSwizzleMethod(UIScrollView.class, @selector(_scrollViewWillEndDraggingWithDeceleration:), @selector(_dtx_scrollViewWillEndDraggingWithDeceleration:), &error);
 }
 
-- (void)setDtx_disableDecelerationForScroll:(BOOL)dtx_disableDecelerationForScroll
+- (void)dtx_setDisableDecelerationForScroll:(BOOL)dtx_disableDecelerationForScroll
 {
 	objc_setAssociatedObject(self, "dtx_disableDecelerationForScroll", @(dtx_disableDecelerationForScroll), OBJC_ASSOCIATION_RETAIN);
 }

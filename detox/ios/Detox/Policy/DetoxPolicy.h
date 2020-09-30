@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) CGFloat visibilityPixelAlphaThreshold;
 @property (nonatomic, readonly) CGFloat visibilityVisiblePixelRatioThreshold;
+
++ (NSString*)descriptionForDouble:(CGFloat)number;
 @property (nonatomic, copy, readonly) NSString* visibilityVisiblePixelRatioThresholdDescription;
 
 @end
