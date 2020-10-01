@@ -141,11 +141,11 @@ export default class StressScreen extends Component {
 
   async storageStressButtonPressed() {
     try {
-      await NativeModule.toggleNoneStorageSynchronization(false);
+      await NativeModule.toggleNonStorageSynchronization(false);
       await AsyncStorage.clear();
       await storageHelper.runStressTest();
     } finally {
-      await NativeModule.toggleNoneStorageSynchronization(true);
+      await NativeModule.toggleNonStorageSynchronization(true);
       await AsyncStorage.clear();
     }
 

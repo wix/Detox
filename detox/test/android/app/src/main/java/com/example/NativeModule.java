@@ -115,7 +115,7 @@ public class NativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void toggleNoneStorageSynchronization(Boolean enable) {
+    public void toggleNonStorageSynchronization(Boolean enable) {
         ReactNativeExtensionReflected rnExtension = ReactNativeExtensionReflected.getInstance();
         rnExtension.toggleUISynchronization(enable);
         rnExtension.toggleJSBridgeSynchronization(enable);
