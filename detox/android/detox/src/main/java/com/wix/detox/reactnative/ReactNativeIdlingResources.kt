@@ -55,6 +55,8 @@ class ReactNativeIdlingResources constructor(
     }
 
     private var timersIdlingResource: TimersIdlingResource? = null
+    private var asyncStorageIdlingResource: AsyncStorageIdlingResource? = null
+    private var legacyAsyncStorageIdlingResource: AsyncStorageIdlingResource? = null
     private var rnBridgeIdlingResource: BridgeIdlingResource? = null
     private var uiModuleIdlingResource: UIModuleIdlingResource? = null
     private var animIdlingResource: AnimatedModuleIdlingResource? = null
@@ -90,8 +92,18 @@ class ReactNativeIdlingResources constructor(
         networkSyncEnabled = enable
     }
 
+    fun pauseNetworkSynchronization() = networkIdlingResource?.pause()
+    fun resumeNetworkSynchronization() {
+        if (networkSyncEnabled) {
+            networkIdlingResource?.resume()
+        }
+    }
     fun pauseRNTimersIdlingResource() = timersIdlingResource?.pause()
     fun resumeRNTimersIdlingResource() = timersIdlingResource?.resume()
+    fun pauseUIIdlingResource() = uiModuleIdlingResource?.pause()
+    fun resumeUIIdlingResource() = uiModuleIdlingResource?.resume()
+    fun pauseJSBridgeIdlingResource() = rnBridgeIdlingResource?.pause()
+    fun resumeJSBridgeIdlingResource() = rnBridgeIdlingResource?.resume()
 
     private fun setupMQThreadsInterrogators() {
         if (IdlingRegistry.getInstance().loopers.isEmpty()) {
@@ -124,6 +136,7 @@ class ReactNativeIdlingResources constructor(
         if (networkSyncEnabled) {
             setupNetworkIdlingResource()
         }
+        setupAsyncStorageIdlingResource()
     }
 
     private fun syncIdlingResources() {
@@ -147,6 +160,27 @@ class ReactNativeIdlingResources constructor(
         rnBridgeIdlingResource?.onDetach()
 
         removeNetworkIdlingResource()
+        removeAsyncStorageIdlingResource()
+    }
+
+    private fun setupAsyncStorageIdlingResource() {
+        asyncStorageIdlingResource = AsyncStorageIdlingResource.createIfNeeded(reactContext, false)?.also {
+            IdlingRegistry.getInstance().register(it)
+        }
+
+        legacyAsyncStorageIdlingResource = AsyncStorageIdlingResource.createIfNeeded(reactContext, true)?.also {
+            IdlingRegistry.getInstance().register(it)
+        }
+    }
+
+    private fun removeAsyncStorageIdlingResource() {
+        asyncStorageIdlingResource?.also {
+            IdlingRegistry.getInstance().unregister(it)
+        }
+
+        legacyAsyncStorageIdlingResource?.also {
+            IdlingRegistry.getInstance().unregister(it)
+        }
     }
 
     private fun setupNetworkIdlingResource() {
@@ -160,7 +194,7 @@ class ReactNativeIdlingResources constructor(
 
     private fun removeNetworkIdlingResource() {
         networkIdlingResource?.let {
-            it.stop()
+            it.pause()
             IdlingRegistry.getInstance().unregister(it)
             networkIdlingResource = null
         }

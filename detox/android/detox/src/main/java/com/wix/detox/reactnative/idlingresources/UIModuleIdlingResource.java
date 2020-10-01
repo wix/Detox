@@ -1,13 +1,12 @@
 package com.wix.detox.reactnative.idlingresources;
 
-import androidx.annotation.NonNull;
 import android.util.Log;
 import android.view.Choreographer;
 
 import org.joor.Reflect;
 import org.joor.ReflectException;
 
-import androidx.test.espresso.IdlingResource;
+import androidx.annotation.NonNull;
 
 /**
  * Created by simonracz on 26/07/2017.
@@ -21,8 +20,10 @@ import androidx.test.espresso.IdlingResource;
  * <p>
  * Hooks up to React Native internals to grab the pending ui operations from it.
  * </p>
+ *
+ * TODO Rewrite this awful, awful class
  */
-public class UIModuleIdlingResource implements IdlingResource, Choreographer.FrameCallback {
+public class UIModuleIdlingResource extends DetoxBaseIdlingResource implements Choreographer.FrameCallback {
     private static final String LOG_TAG = "Detox";
 
     private final static String CLASS_UI_MANAGER_MODULE = "com.facebook.react.uimanager.UIManagerModule";
@@ -37,8 +38,8 @@ public class UIModuleIdlingResource implements IdlingResource, Choreographer.Fra
     private final static String LOCK_RUNNABLES = "mDispatchRunnablesLock";
     private final static String LOCK_OPERATIONS = "mNonBatchedOperationsLock";
 
-    private ResourceCallback callback = null;
-    private Object reactContext = null;
+    private ResourceCallback callback;
+    private Object reactContext;
 
     public UIModuleIdlingResource(@NonNull Object reactContext) {
         this.reactContext = reactContext;
@@ -50,15 +51,13 @@ public class UIModuleIdlingResource implements IdlingResource, Choreographer.Fra
     }
 
     @Override
-    public boolean isIdleNow() {
-        Class<?> uiModuleClass = null;
+    protected boolean checkIdle() {
+        Class<?> uiModuleClass;
         try {
             uiModuleClass = Class.forName(CLASS_UI_MANAGER_MODULE);
         } catch (ClassNotFoundException e) {
             Log.e(LOG_TAG, "UIManagerModule is not on classpath.");
-            if (callback != null) {
-                callback.onTransitionToIdle();
-            }
+            notifyIdle();
             return true;
         }
 
@@ -72,9 +71,7 @@ public class UIModuleIdlingResource implements IdlingResource, Choreographer.Fra
 
             if (!(boolean)Reflect.on(reactContext).call(METHOD_HAS_NATIVE_MODULE, uiModuleClass).get()) {
                 Log.e(LOG_TAG, "Can't find UIManagerModule.");
-                if (callback != null) {
-                    callback.onTransitionToIdle();
-                }
+                notifyIdle();
                 return true;
             }
 
@@ -102,35 +99,37 @@ public class UIModuleIdlingResource implements IdlingResource, Choreographer.Fra
             boolean isOperationQueueEmpty = (Boolean) Reflect.on(uiOperationQueue).call(METHOD_IS_EMPTY).get();
 
             if (runnablesAreEmpty && nonBatchesOpsEmpty && isOperationQueueEmpty) {
-                if (callback != null) {
-                    callback.onTransitionToIdle();
-                }
+                notifyIdle();
                 // Log.i(LOG_TAG, "UIManagerModule is idle.");
                 return true;
             }
 
-            Log.i(LOG_TAG, "UIManagerModule is busy.");
+            Log.i(LOG_TAG, "UIManagerModule is busy");
             Choreographer.getInstance().postFrameCallback(this);
             return false;
         } catch (ReflectException e) {
             Log.e(LOG_TAG, "Can't set up RN UIModule listener", e.getCause());
         }
 
-        if (callback != null) {
-            callback.onTransitionToIdle();
-        }
+        notifyIdle();
         return true;
     }
 
     @Override
     public void registerIdleTransitionCallback(ResourceCallback callback) {
         this.callback = callback;
-
         Choreographer.getInstance().postFrameCallback(this);
     }
 
     @Override
     public void doFrame(long frameTimeNanos) {
         isIdleNow();
+    }
+
+    @Override
+    protected void notifyIdle() {
+        if (callback != null) {
+            callback.onTransitionToIdle();
+        }
     }
 }

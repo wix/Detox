@@ -71,7 +71,8 @@ import androidx.test.rule.ActivityTestRule;
  * <p>If not set, then Detox tests are no ops. So it's safe to mix it with other tests.</p>
  */
 public final class Detox {
-    private static final String LOG_TAG = "Detox";
+    public static final String LOG_TAG = "Detox";
+
     private static final String INTENT_LAUNCH_ARGS_KEY = "launchArgs";
     private static final long ACTIVITY_LAUNCH_TIMEOUT = 10000L;
 

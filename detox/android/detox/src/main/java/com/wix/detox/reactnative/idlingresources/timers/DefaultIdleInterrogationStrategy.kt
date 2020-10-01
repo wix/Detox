@@ -2,9 +2,9 @@
 
 package com.wix.detox.reactnative.idlingresources.timers
 
-import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.common.RNDropSupportTodo
+import com.wix.detox.reactnative.helpers.RNHelpers
 import org.joor.Reflect
 import java.util.*
 
@@ -70,25 +70,15 @@ class DefaultIdleInterrogationStrategy
             // Should have been handled by DelegatedIdleInterrogationStrategy.createIfSupported() but seems the new TimingModule class
             // was released without the awaited-for "hasActiveTimersInRange()" method.
             try {
-                val timingClass: Class<NativeModule> = Class.forName("com.facebook.react.modules.core.TimingModule") as Class<NativeModule>
-                if (!reactContext.hasNativeModule(timingClass)) {
-                    return null
-                }
-
-                val timingModule = reactContext.getNativeModule(timingClass)
+                val timingModule = RNHelpers.getNativeModule(reactContext, "com.facebook.react.modules.core.TimingModule")
                 val timersManager = Reflect.on(timingModule).get<Any>("mJavaTimerManager")
                 return DefaultIdleInterrogationStrategy(timersManager)
             } catch (ex: Exception) {
             }
 
             // RN < 0.62
-            try {
-                val timingClass: Class<NativeModule> = Class.forName("com.facebook.react.modules.core.Timing") as Class<NativeModule>
-                return DefaultIdleInterrogationStrategy(reactContext.getNativeModule(timingClass))
-            } catch (ex: Exception) {
-            }
-
-            return null
+            val timingModule = RNHelpers.getNativeModule(reactContext, "com.facebook.react.modules.core.Timing") ?: return null
+            return DefaultIdleInterrogationStrategy(timingModule)
         }
     }
 }

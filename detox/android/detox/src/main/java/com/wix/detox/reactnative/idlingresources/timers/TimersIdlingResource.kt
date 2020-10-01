@@ -2,15 +2,14 @@ package com.wix.detox.reactnative.idlingresources.timers
 
 import android.view.Choreographer
 import androidx.test.espresso.IdlingResource
-import java.util.concurrent.atomic.AtomicBoolean
+import com.wix.detox.reactnative.idlingresources.DetoxBaseIdlingResource
 
 class TimersIdlingResource @JvmOverloads constructor(
         private val interrogationStrategy: IdleInterrogationStrategy,
         private val getChoreographer: () -> Choreographer = { Choreographer.getInstance() }
-    ) : IdlingResource, Choreographer.FrameCallback {
+    ) : DetoxBaseIdlingResource(), Choreographer.FrameCallback {
 
     private var callback: IdlingResource.ResourceCallback? = null
-    private var paused = AtomicBoolean(false)
 
     override fun getName(): String = this.javaClass.name
 
@@ -19,14 +18,10 @@ class TimersIdlingResource @JvmOverloads constructor(
         getChoreographer().postFrameCallback(this)
     }
 
-    override fun isIdleNow(): Boolean {
-        if (paused.get()) {
-            return true
-        }
-
-        return checkIdle().also { result ->
+    override fun checkIdle(): Boolean {
+        return interrogationStrategy.isIdleNow().also { result ->
             if (result) {
-                callback?.onTransitionToIdle()
+                notifyIdle()
             } else {
                 getChoreographer().postFrameCallback(this@TimersIdlingResource)
             }
@@ -39,18 +34,11 @@ class TimersIdlingResource @JvmOverloads constructor(
         }
     }
 
-    fun pause() {
-        paused.set(true)
+    override fun notifyIdle() {
         callback?.onTransitionToIdle()
     }
 
-    fun resume() {
-        paused.set(false)
-    }
-
-    private fun checkIdle() = interrogationStrategy.isIdleNow()
-
     companion object {
-        const val LOG_TAG = "TimersIdlingResource"
+        internal const val LOG_TAG = "TimersIdlingResource"
     }
 }
