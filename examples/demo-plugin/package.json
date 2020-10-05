@@ -7,7 +7,7 @@
   },
   "devDependencies": {
     "detox": "^17.8.1",
-    "jest": "26.x.x"
+    "jest": "26.4.x"
   },
   "detox": {
     "test-runner": "jest",
