@@ -2,6 +2,10 @@
 
 We are improving Detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes. If a newer version has no entries in this document, it means it does not require special migration steps. Refer to the release notes of the later builds to learn about their improvements and changes.
 
+## 17.5.2
+
+Fixes the issue from **17.4.7** (see below) - now the migration guide for **17.4.7** can be safely ignored.
+
 ## 17.4.7
 
 This release was not meant to be breaking in any sense, but unfortunately there are two minor caveats that leaked in.
@@ -14,12 +18,14 @@ From now on, Detox explicitly depends on `jest-cli` package (marked as a peerDep
 Cannot find module 'jest-cli/build/cli/args'
 ```
 
-You should add `jest-cli` to your `package.json`'s `devDependencies` and re-run `npm install`, e.g.:
+~You should add `jest-cli` to your `package.json`'s `devDependencies` and re-run `npm install`, e.g.:~
+
+**UPD**: since `detox@17.5.2` you can ignore this advice. The problem should go away **without** these edits:
 
 ```diff
  "devDependencies": {
-   "jest": "26.4.x",
-+  "jest-cli": "26.4.x",
+   "jest": "26.x.x",
++  "jest-cli": "26.x.x",
 ```
 
 ### detox-cli
