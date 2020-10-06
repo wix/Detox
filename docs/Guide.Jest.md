@@ -27,7 +27,7 @@ Before starting with Jest setup, be sure to complete the preliminary sections of
 Afterward, install the respective npm packages:
 
 ```sh
-npm install jest@26.4.x jest-circus@26.4.x --save-dev --no-package-lock
+npm install jest jest-circus --save-dev --no-package-lock
 ```
 
 If you are already using Jest in your project,
