@@ -11,6 +11,7 @@ import {
   StyleSheet,
   Slider,
   SafeAreaView,
+  FlatList,
   requireNativeComponent,
 } from 'react-native';
 import TextInput from '../Views/TextInput';
@@ -25,6 +26,17 @@ const hItemWidth = (width / 5) - 20;
 const styles = StyleSheet.create({
   item: { height: 30, backgroundColor: '#e8e8f8', padding: 5, margin: 10 },
   horizItem: { width: hItemWidth, backgroundColor: '#e8e8f8', margin: 10, textAlign: 'center', textAlignVertical: 'center' },
+  clickableLinkContainer: {
+    height: 30,
+    borderColor: '#c0c0c0',
+    borderWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+  },
+  inverted: {
+    transform: [{ scaleY: -1 }],
+  },
 });
 
 const isIos = Platform.OS === 'ios';
@@ -42,7 +54,11 @@ export default class ActionsScreen extends Component {
       isRefreshing: false,
       backPressed: false,
       showScrollOverlays: false,
+      showScrollInverted: false,
+      items: [1, 2, 3, 4, 5, 6, 7, 8],
     };
+
+    this.renderScrollListItem = this.renderScrollListItem.bind(this);
   }
 
   componentDidMount() {
@@ -110,23 +126,24 @@ export default class ActionsScreen extends Component {
           testID='UniqueId006'
         />
 
-        <View style={{ height: 20, borderColor: '#c0c0c0', borderWidth: 1, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' }}>
+        <View style={styles.clickableLinkContainer}>
           <TouchableOpacity onPress={this.onToggleScrollViewVisibility.bind(this)}>
             <Text testID='toggleScrollOverlays' style={{ color: 'blue' }}>Toggle scroll overlays</Text>
           </TouchableOpacity>
         </View>
 
+        <View style={styles.clickableLinkContainer}>
+          <TouchableOpacity onPress={this.onToggleScrollDirection.bind(this)}>
+            <Text testID='toggleScrollDirection' style={{ color: 'blue' }}>Toggle scroll direction</Text>
+          </TouchableOpacity>
+        </View>
+
         <View style={{ height: 100, borderColor: '#c0c0c0', borderWidth: 1, backgroundColor: '#f8f8ff' }}>
-          <ScrollView testID='ScrollView161'>
-            <Text style={styles.item}>Text1</Text>
-            <Text style={styles.item}>Text2</Text>
-            <Text style={styles.item}>Text3</Text>
-            <Text style={styles.item}>Text4</Text>
-            <Text style={styles.item}>Text5</Text>
-            <Text style={styles.item}>Text6</Text>
-            <Text style={styles.item}>Text7</Text>
-            <Text style={styles.item}>Text8</Text>
-          </ScrollView>
+          <FlatList testID='ScrollView161'
+                    contentInsetAdjustmentBehavior={'never'}
+                    renderItem={this.renderScrollListItem}
+                    data={this.state.items}
+                    style={this.state.showScrollInverted ? styles.inverted : undefined} />
           { this.state.showScrollOverlays ? <View style={{ height: 55, width: width * 0.75, backgroundColor: 'deepskyblue', position: 'absolute', bottom: 0 }} /> : null }
           { this.state.showScrollOverlays ? <View style={{ height: 55, width: width * 0.75, backgroundColor: 'goldenrod', position: 'absolute', right: 0 }} /> : null }
         </View>
@@ -165,6 +182,17 @@ export default class ActionsScreen extends Component {
           </ScrollView>
         </View>
       </SafeAreaView>
+    );
+  }
+
+  renderScrollListItem({ item, index }) {
+    const style = this.state.showScrollInverted ? [
+      styles.item,
+      styles.inverted,
+    ] : styles.item;
+
+    return (
+      <Text key={index} style={style}>Text{item}</Text>
     );
   }
 
@@ -265,6 +293,13 @@ export default class ActionsScreen extends Component {
     this.setState({
       showScrollOverlays: !this.state.showScrollOverlays,
     })
+  }
+
+  onToggleScrollDirection() {
+    this.setState({
+      items: this.state.items.slice().reverse(),
+      showScrollInverted: !this.state.showScrollInverted,
+    });
   }
 
   backHandler() {

@@ -153,6 +153,17 @@ describe('Actions', () => {
     await expect(element(by.text('Text1'))).toBeVisible();
   });
 
+  it.only('should be able to scroll up, when the scroll is inverted', async () => {
+    await element(by.id('toggleScrollDirection')).tap();
+    await expect(element(by.text('Text8'))).toBeVisible();
+
+    await element(by.id('ScrollView161')).scrollTo('top', 200);
+    await expect(element(by.text('Text8'))).not.toBeVisible();
+
+    await element(by.id('ScrollView161')).scrollTo('bottom', 200);
+    await expect(element(by.text('Text8'))).toBeVisible();
+  });
+
   it('should scroll horizontally to edge', async () => {
     await expect(element(by.text('HText8'))).not.toBeVisible();
     await element(by.id('ScrollViewH')).scrollTo('right');
