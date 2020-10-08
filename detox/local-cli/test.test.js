@@ -403,6 +403,22 @@ describe('CLI', () => {
       expect(cliCall().command).toContain('--maxWorkers 2');
     });
 
+    test.each([['-w'], ['--workers']])('%s <value> should be replaced with --maxWorkers <value>', async (__workers) => {
+      await run(`${__workers} 2 --maxWorkers 3`);
+
+      const { command } = cliCall();
+      expect(command).toContain('--maxWorkers 3');
+      expect(command).not.toContain('--maxWorkers 2');
+    });
+
+    test.each([['-w'], ['--workers']])('%s <value> can be overriden by a later value', async (__workers) => {
+      await run(`${__workers} 2 ${__workers} 3`);
+
+      const { command } = cliCall();
+      expect(command).toContain('--maxWorkers 3');
+      expect(command).not.toContain('--maxWorkers 2');
+    });
+
     test.each([['-w'], ['--workers']])('%s <value> should not warn anything for iOS', async (__workers) => {
       singleConfig().type = 'ios.simulator';
       await run(`${__workers} 2`);
@@ -433,6 +449,14 @@ describe('CLI', () => {
 
       await run();
       expect(cliCall().command).not.toContain('--testNamePattern');
+    });
+
+    test.each([['-t'], ['--testNamePattern']])('should override --testNamePattern if a custom %s value is passed', async (__testNamePattern) => {
+      await run(`${__testNamePattern} customPattern`);
+      const { command } = cliCall();
+
+      expect(command).not.toMatch(/--testNamePattern .*(ios|android)/);
+      expect(command).toMatch(/--testNamePattern customPattern($| )/);
     });
 
     test('--jest-report-specs, by default, should be true, as environment variable', async () => {

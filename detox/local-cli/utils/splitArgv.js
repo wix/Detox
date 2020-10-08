@@ -117,7 +117,16 @@ function splitMochaArgv(argv) {
 }
 
 function splitJestArgv(argv) {
-  return disengageBooleanArgs(argv, getJestBooleanArgs());
+  return realiasJestArgv(disengageBooleanArgs(argv, getJestBooleanArgs()));
+}
+
+function realiasJestArgv({ specs, passthrough }) {
+  if (passthrough.hasOwnProperty('t')) {
+    passthrough.testNamePattern = passthrough.t;
+    delete passthrough.t;
+  }
+
+  return { specs, passthrough };
 }
 
 module.exports = {
