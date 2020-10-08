@@ -24,7 +24,6 @@ module.exports.handler = async function test(argv) {
   const prepareArgs = choosePrepareArgs({
     cliConfig,
     runner,
-    platform,
     detoxArgs,
   });
 
@@ -49,7 +48,7 @@ module.exports.handler = async function test(argv) {
   await runTestRunnerWithRetries(forwardedArgs, retries);
 };
 
-function choosePrepareArgs({ cliConfig, detoxArgs, runner, platform }) {
+function choosePrepareArgs({ cliConfig, detoxArgs, runner }) {
   if (runner === 'mocha') {
     if (hasMultipleWorkers(cliConfig)) {
       log.warn('Cannot use -w, --workers. Parallel test execution is only supported with iOS and Jest');
