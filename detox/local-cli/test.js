@@ -24,7 +24,6 @@ module.exports.handler = async function test(argv) {
   const prepareArgs = choosePrepareArgs({
     cliConfig,
     runner,
-    platform,
     detoxArgs,
   });
 
@@ -49,7 +48,7 @@ module.exports.handler = async function test(argv) {
   await runTestRunnerWithRetries(forwardedArgs, retries);
 };
 
-function choosePrepareArgs({ cliConfig, detoxArgs, runner, platform }) {
+function choosePrepareArgs({ cliConfig, detoxArgs, runner }) {
   if (runner === 'mocha') {
     if (hasMultipleWorkers(cliConfig)) {
       log.warn('Cannot use -w, --workers. Parallel test execution is only supported with iOS and Jest');
@@ -132,14 +131,14 @@ function prepareJestArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
   const platformFilter = getPlatformSpecificString(platform);
 
   return {
-    argv: {
+    argv: _.omitBy({
       color: !cliConfig.noColor && undefined,
       config: runnerConfig.runnerConfig /* istanbul ignore next */ || undefined,
       testNamePattern: platformFilter ? shellQuote(`^((?!${platformFilter}).)*$`) : undefined,
       maxWorkers: cliConfig.workers,
 
       ...passthrough,
-    },
+    }, _.isUndefined),
 
     env: _.omitBy({
       ..._.pick(cliConfig, _.compact([
