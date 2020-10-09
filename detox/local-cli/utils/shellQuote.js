@@ -1,4 +1,9 @@
-// This is very incomplete, don't use this for user input!
-module.exports = function shellQuote(input) {
-  return process.platform !== 'win32' ? `'${input}'` : `"${input}"`;
+const { autoEscape } = require('../../src/utils/shellUtils');
+
+function quote(argv) {
+  return argv.map(arg => autoEscape(arg)).join(' ');
+}
+
+module.exports = {
+  quote,
 };

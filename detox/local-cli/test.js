@@ -2,13 +2,13 @@ const _ = require('lodash');
 const cp = require('child_process');
 const path = require('path');
 const unparse = require('yargs-unparser');
-const { quote } = require('shell-quote');
+const { quote } = require('./utils/shellQuote');
+const splitArgv = require('./utils/splitArgv');
 const DetoxRuntimeError = require('../src/errors/DetoxRuntimeError');
 const DeviceRegistry = require('../src/devices/DeviceRegistry');
 const { loadLastFailedTests, resetLastFailedTests } = require('../src/utils/lastFailedTests');
 const { composeDetoxConfig } = require('../src/configuration');
 const log = require('../src/utils/logger').child({ __filename });
-const splitArgv = require('./utils/splitArgv');
 const { getPlatformSpecificString, printEnvironmentVariables } = require('./utils/misc');
 const { prependNodeModulesBinToPATH } = require('./utils/misc');
 
