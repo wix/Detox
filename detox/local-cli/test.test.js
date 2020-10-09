@@ -51,7 +51,7 @@ describe('CLI', () => {
       test('should pass --use-custom-logger true', () => expect(cliCall().command).toMatch(/--use-custom-logger true/));
       test('should not override process.env', () => expect(cliCall().env).toStrictEqual({}));
       test('should produce a default command (integration test)', () => {
-        const args = `--opts e2e/mocha.opts --grep :android: --invert --config-path ${detoxConfigPath} --use-custom-logger true`;
+        const args = `--opts e2e/mocha.opts --grep \\:android\\: --invert --config-path ${detoxConfigPath} --use-custom-logger true`;
         expect(cliCall().command).toBe(`mocha ${args} e2e`);
       });
     });
@@ -230,7 +230,7 @@ describe('CLI', () => {
       });
 
       test('should produce a default command (integration test, ios)', () => {
-        const args = `--config e2e/config.json --testNamePattern '^((?!:android:).)*$' --maxWorkers 1`;
+        const args = `--config e2e/config.json --testNamePattern \\^\\(\\(\\?\\!\\:android:\\).\\)\\*\\$ --maxWorkers 1`;
         expect(cliCall().command).toBe(`jest ${args} e2e`);
       });
 
@@ -251,7 +251,7 @@ describe('CLI', () => {
       });
 
       test('should produce a default command (integration test)', () => {
-        const args = `--config e2e/config.json --testNamePattern '^((?!:ios:).)*$' --maxWorkers 1`;
+        const args = `--config e2e/config.json --testNamePattern \\^\\(\\(\\?\\!\\:ios:\\).\\)\\*\\$ --maxWorkers 1`;
         expect(cliCall().command).toBe(`jest ${args} e2e`);
       });
 
@@ -276,11 +276,11 @@ describe('CLI', () => {
         detoxConfig.configurations.androidTest.type = 'android.emulator';
 
         await run(`${__configuration} androidTest`);
-        expect(cliCall(0).command).toContain(`--testNamePattern '^((?!:ios:).)*$'`);
+        expect(cliCall(0).command).toContain(`--testNamePattern \\^\\(\\(\\?\\!\\:ios:\\).\\)\\*\\$`);
         expect(cliCall(0).env.configuration).toBe('androidTest');
 
         await run(`${__configuration} iosTest`);
-        expect(cliCall(1).command).toContain(`--testNamePattern '^((?!:android:).)*$'`);
+        expect(cliCall(1).command).toContain(`--testNamePattern \\^\\(\\(\\?\\!\\:android:\\).\\)\\*\\$`);
         expect(cliCall(1).env.configuration).toBe('iosTest');
       }
     );
