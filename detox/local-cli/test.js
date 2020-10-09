@@ -2,12 +2,12 @@ const _ = require('lodash');
 const cp = require('child_process');
 const path = require('path');
 const unparse = require('yargs-unparser');
+const { quote } = require('shell-quote');
 const DetoxRuntimeError = require('../src/errors/DetoxRuntimeError');
 const DeviceRegistry = require('../src/devices/DeviceRegistry');
 const { loadLastFailedTests, resetLastFailedTests } = require('../src/utils/lastFailedTests');
 const { composeDetoxConfig } = require('../src/configuration');
 const log = require('../src/utils/logger').child({ __filename });
-const shellQuote = require('./utils/shellQuote');
 const splitArgv = require('./utils/splitArgv');
 const { getPlatformSpecificString, printEnvironmentVariables } = require('./utils/misc');
 const { prependNodeModulesBinToPATH } = require('./utils/misc');
@@ -134,7 +134,7 @@ function prepareJestArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
     argv: _.omitBy({
       color: !cliConfig.noColor && undefined,
       config: runnerConfig.runnerConfig /* istanbul ignore next */ || undefined,
-      testNamePattern: platformFilter ? shellQuote(`^((?!${platformFilter}).)*$`) : undefined,
+      testNamePattern: platformFilter ? `^((?!${platformFilter}).)*$` : undefined,
       maxWorkers: cliConfig.workers,
 
       ...passthrough,
@@ -182,9 +182,9 @@ async function resetLockFile({ platform }) {
   }
 }
 
-function launchTestRunner({ argv, env, specs, rerunIndex }) {
+function launchTestRunner({ argv, env, specs }) {
   const { $0: command, ...restArgv } = argv;
-  const fullCommand = [command, ...unparse(restArgv), ...specs].join(' ');
+  const fullCommand = [command, quote(unparse(restArgv)), specs.join(' ')].join(' ');
 
   log.info(printEnvironmentVariables(env) + fullCommand);
 
