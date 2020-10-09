@@ -1,16 +1,17 @@
-const SPECIAL_CHARS = /([\^\$\[\]\*\.\\])/g;
-
-const escapeInQuotedString = (fragment) => fragment.replace(/"/g, '\\"');
-const escapeInQuotedRegexp = (fragment) => fragment.replace(SPECIAL_CHARS, "\\$1");
+const {
+  escapeInDoubleQuotedString,
+  escapeInDoubleQuotedRegexp,
+  isRunningInCMDEXE,
+} = require('./shellUtils');
 
 function win32Implementation() {
-  const searchRegexpWin32 = (pattern) => `findstr /R /C:"${escapeInQuotedString(pattern)}"`;
-  const searchFragmentWin32 = (fragment) => `findstr /C:"${escapeInQuotedString(fragment)}"`;
+  const searchRegexpWin32 = (pattern) => `findstr /R /C:"${escapeInDoubleQuotedString(pattern)}"`;
+  const searchFragmentWin32 = (fragment) => `findstr /C:"${escapeInDoubleQuotedString(fragment)}"`;
 
   return {
     escape: {
-      inQuotedString: escapeInQuotedString,
-      inQuotedRegexp: escapeInQuotedRegexp,
+      inQuotedString: escapeInDoubleQuotedString,
+      inQuotedRegexp: escapeInDoubleQuotedRegexp,
     },
     search: {
       regexp: searchRegexpWin32,
@@ -20,13 +21,13 @@ function win32Implementation() {
 }
 
 function nixImplementation() {
-  const searchRegexpNix = (pattern) => `grep "${escapeInQuotedString(pattern)}"`;
-  const searchFragmentNix = (fragment) => `grep -e "${escapeInQuotedString(fragment)}"`;
+  const searchRegexpNix = (pattern) => `grep "${escapeInDoubleQuotedString(pattern)}"`;
+  const searchFragmentNix = (fragment) => `grep -e "${escapeInDoubleQuotedString(fragment)}"`;
 
   return {
     escape: {
-      inQuotedString: escapeInQuotedString,
-      inQuotedRegexp: escapeInQuotedRegexp,
+      inQuotedString: escapeInDoubleQuotedString,
+      inQuotedRegexp: escapeInDoubleQuotedRegexp,
     },
     search: {
       regexp: searchRegexpNix,
@@ -35,8 +36,6 @@ function nixImplementation() {
   };
 }
 
-const isRunningInCMDEXE = process.platform === 'win32' && !process.env['SHELL'];
-
-module.exports = isRunningInCMDEXE
+module.exports = isRunningInCMDEXE()
   ? win32Implementation()
   : nixImplementation();

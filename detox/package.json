@@ -55,8 +55,6 @@
     "proper-lockfile": "^3.0.2",
     "resolve-from": "^5.0.0",
     "sanitize-filename": "^1.6.1",
-    "shell-quote": "^1.7.2",
-    "shell-utils": "^1.0.9",
     "signal-exit": "^3.0.3",
     "tail": "^2.0.0",
     "telnet-client": "1.2.8",
