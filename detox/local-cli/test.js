@@ -131,14 +131,14 @@ function prepareJestArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
   const platformFilter = getPlatformSpecificString(platform);
 
   return {
-    argv: _.omitBy({
+    argv: {
       color: !cliConfig.noColor && undefined,
       config: runnerConfig.runnerConfig /* istanbul ignore next */ || undefined,
       testNamePattern: platformFilter ? `^((?!${platformFilter}).)*$` : undefined,
       maxWorkers: cliConfig.workers,
 
       ...passthrough,
-    }, _.isUndefined),
+    },
 
     env: _.omitBy({
       ..._.pick(cliConfig, _.compact([
@@ -184,7 +184,11 @@ async function resetLockFile({ platform }) {
 
 function launchTestRunner({ argv, env, specs }) {
   const { $0: command, ...restArgv } = argv;
-  const fullCommand = [command, quote(unparse(restArgv)), specs.join(' ')].join(' ');
+  const fullCommand = [
+    command,
+    quote(unparse(_.omitBy(restArgv, _.isUndefined))),
+    specs.join(' ')
+  ].join(' ');
 
   log.info(printEnvironmentVariables(env) + fullCommand);
 

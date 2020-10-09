@@ -216,6 +216,15 @@ describe('CLI', () => {
       expect(cliCall().command).toContain('--bail --reporter spec e2e/Login.test.js');
     });
 
+    test.each([
+      [`--runner-config "mocha configs/.mocharc"`, `--config 'mocha configs/.mocharc'`],
+      [`--artifacts-location "artifacts dir/"`, `--artifacts-location 'artifacts dir/'`],
+      [`--device-name "iPhone X"`, `--device-name 'iPhone X'`],
+      [`"e2e tests/first test.spec.js"`, `"e2e tests/first test.spec.js"`],
+    ])('should escape %s when forwarding it as a CLI argument', async (cmd, expected) => {
+      await run(cmd);
+      expect(cliCall().command).toContain(` ${expected}`);
+    });
   });
 
   describe('(jest)', () => {
@@ -566,6 +575,14 @@ describe('CLI', () => {
     test('e.g., --debug e2e/Login.test.js should be split to --debug and e2e/Login.test.js', async () => {
       await run(`--debug e2e/Login.test.js --coverageProvider v8`);
       expect(cliCall().command).toMatch(/--debug --coverageProvider v8 e2e\/Login.test.js$/);
+    });
+
+    test.each([
+      [`--testNamePattern "should tap"`, `--testNamePattern 'should tap'`],
+      [`"e2e tests/first test.spec.js"`, `"e2e tests/first test.spec.js"`],
+    ])('should escape %s when forwarding it as a CLI argument', async (cmd, expected) => {
+      await run(cmd);
+      expect(cliCall().command).toContain(` ${expected}`);
     });
   });
 
