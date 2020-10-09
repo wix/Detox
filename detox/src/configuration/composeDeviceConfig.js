@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const parse = require('yargs/yargs').Parser;
 
 function validateType({ errorBuilder, rawDeviceConfig }) {
   if (!rawDeviceConfig || !rawDeviceConfig.type) {
@@ -12,6 +13,12 @@ function getValidatedDeviceName({ errorBuilder, rawDeviceConfig, cliConfig }) {
     throw errorBuilder.missingDeviceProperty();
   }
   return device;
+}
+
+function validateAppLaunchArgs({ errorBuilder, rawDeviceConfig }) {
+  if (rawDeviceConfig.launchArgs && !_.isObject(rawDeviceConfig.launchArgs)) {
+    throw errorBuilder.malformedAppLaunchArgs();
+  }
 }
 
 function validateUtilBinaryPaths({ errorBuilder, rawDeviceConfig }) {
@@ -29,9 +36,23 @@ function validateUtilBinaryPaths({ errorBuilder, rawDeviceConfig }) {
  */
 function composeDeviceConfig({ errorBuilder, rawDeviceConfig, cliConfig }) {
   validateType({ errorBuilder, rawDeviceConfig });
+  validateAppLaunchArgs({ errorBuilder, rawDeviceConfig });
 
   rawDeviceConfig.device = getValidatedDeviceName({ errorBuilder, rawDeviceConfig, cliConfig });
   delete rawDeviceConfig.name;
+
+  if (cliConfig.appLaunchArgs) {
+    rawDeviceConfig.launchArgs = _.chain({})
+      .thru(() => parse(cliConfig.appLaunchArgs, {
+        configuration: {
+          'short-option-groups': false,
+        },
+      }))
+      .omit(['_', '--'])
+      .defaults(rawDeviceConfig.launchArgs)
+      .omitBy(value => value === false)
+      .value();
+  }
 
   validateUtilBinaryPaths({ errorBuilder, rawDeviceConfig });
   return rawDeviceConfig;

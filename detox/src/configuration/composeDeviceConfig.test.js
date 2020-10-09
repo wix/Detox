@@ -46,6 +46,11 @@ describe('composeDeviceConfig', () => {
       rawDeviceConfig.utilBinaryPaths = 'valid/path/not/in/array';
       expect(compose).toThrowError(errorBuilder.malformedUtilBinaryPaths());
     });
+
+    it('should throw if app launch args is a string', () => {
+      rawDeviceConfig.launchArgs = '-detoxAppArgument NO';
+      expect(compose).toThrowError(errorBuilder.malformedAppLaunchArgs());
+    });
   });
 
   describe('if a device configuration has the old .name property', () => {
@@ -85,6 +90,39 @@ describe('composeDeviceConfig', () => {
 
         expect(type).toBe('ios.simulator');
         expect(device).toBe('iPad Air');
+      });
+    });
+  });
+
+  describe('if a device configuration has .launchArgs property', () => {
+    beforeEach(() => {
+      rawDeviceConfig.launchArgs = {
+        arg1: 'value 1',
+        arg2: 'value 2',
+      };
+    });
+
+    it('should be left intact', () => {
+      const { launchArgs } = compose();
+
+      expect(launchArgs).toEqual({
+        arg1: 'value 1',
+        arg2: 'value 2',
+      });
+    });
+
+    describe('and there is a CLI override', () => {
+      beforeEach(() => {
+        cliConfig.appLaunchArgs = '-arg3="value 3" --no-arg2';
+      });
+
+      it('should parse it and merge the values inside', () => {
+        const { launchArgs } = compose();
+
+        expect(launchArgs).toEqual({
+          arg1: 'value 1',
+          arg3: 'value 3',
+        });
       });
     });
   });
