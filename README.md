@@ -77,12 +77,6 @@ Read the [Getting Started Guide](/docs/Introduction.GettingStarted.md) to get De
 
 Explore further about using Detox from the [documents directory](/docs/README.md).
 
-## See it in Action
-
-Open the [React Native demo project](/examples/demo-react-native) and follow the instructions.
-
-Not using React Native? we have a [pure native demo project](/examples/demo-native-ios) too.
-
 ## Rethinking Core Principles
 
 We believe that the only way to address the core difficulties with mobile end-to-end testing is by rethinking some of the  principles of the entire approach. See what Detox [does differently](/docs/More.DesignPrinciples.md).
@@ -98,3 +92,7 @@ Dive into Detox core by reading the [Detox Contribution Guide](/docs/Guide.Contr
 * Detox by itself and all original source code in this repo is MIT
 * Detox relies on some important dependencies, their respective licenses are:
   * [EarlGrey](https://github.com/google/EarlGrey/blob/master/LICENSE)
+
+## Non-English Resources (External)
+
+- [Getting Started (Brazilian Portuguese)](https://medium.com/quia-digital/iniciando-com-detox-framework-1-4-ce31ad7ae812)
