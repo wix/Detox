@@ -102,21 +102,6 @@ static NSString* _DTXScrollDirectionDescriptionWithOffset(CGPoint offset)
 	return offset.x < 0 ? @"right" : offset.x > 0 ? @"left" : offset.y < 0 ? @"down" : @"up";
 }
 
-- (void)_dtx_assertSupportedTransform
-{
-	BOOL isAffineIdentity = CGAffineTransformIsIdentity(self.transform);
-	BOOL is3DIdentity = YES;
-	if (@available(iOS 13.0, *))
-	{
-		is3DIdentity = CATransform3DIsIdentity(self.transform3D);
-	}
-	
-	BOOL identity = isAffineIdentity && is3DIdentity;
-	BOOL scaleMinusOneY = CGAffineTransformEqualToTransform(self.transform, CGAffineTransformMakeScale(1.0, -1.0));
-	
-	DTXViewAssert(identity || scaleMinusOneY, self.dtx_viewDebugAttributes, @"Unsupported transform for “%@”", self.dtx_shortDescription);
-}
-
 - (void)dtx_scrollWithOffset:(CGPoint)offset
 {
 	[self dtx_scrollWithOffset:offset normalizedStartingPoint:CGPointMake(NAN, NAN)];
@@ -209,7 +194,7 @@ static BOOL _DTXApplyScroll(UIScrollView* scrollView, CGPoint startPoint, CGPoin
 			return NO;
 		}
 		
-		[NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.7]];
+		[NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:[[scrollView valueForKeyPath:@"animation.duration"] doubleValue]]];
 	}
 	
 	*remainingOffset = offset;
@@ -235,8 +220,6 @@ if(isnan(normalizedStartingPoint.main) || normalizedStartingPoint.main < 0 || no
 	}
 	
 	NSAssert(offset.x == 0.0 || offset.y == 0.0, @"Scrolling simultaneously in both directions is unsupported");
-//	[self _dtx_assertSupportedTransform];
-//	[self _dtx_assertCanScrollWithOffset:offset];
 	
 	self.dtx_disableDecelerationForScroll = YES;
 	BOOL oldBounces = self.bounces;
